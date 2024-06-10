@@ -12,9 +12,8 @@ cardinality).
 In the following code, sets are represented as integers, where the `i`-th bit is
 set if element `i` belongs to the set.
 """
-
-from libc.stdint cimport uint8_t
 from cysignals.memory cimport check_allocarray, check_calloc, sig_free
+
 
 cdef class FastDigraph:
 
@@ -42,18 +41,18 @@ cdef class FastDigraph:
             ....: 'cdef FastDigraph F = FastDigraph(G)',
             ....: 'cdef int i',
             ....: 'print([F.degree[i] for i in range(F.n)])']
-            sage: cython(os.linesep.join(cython_code))
+            sage: cython(os.linesep.join(cython_code))                                  # needs sage.misc.cython
             [1, 2, 1]
         """
         if D.order() > 8*sizeof(int):
             raise OverflowError("Too many vertices. This structure can only "
                                 "encode digraphs on at most "
-                                "%i vertices"%(8 * sizeof(int)))
+                                "%i vertices" % (8 * sizeof(int)))
 
         self.n = D.order()
         self.graph = <int *>check_calloc(self.n, sizeof(int))
 
-        cdef int i, j
+        cdef int i
         cdef int tmp
 
         # When the vertices are not consecutive integers
@@ -99,7 +98,7 @@ cdef class FastDigraph:
             ....: 'from sage.graphs.graph import Graph',
             ....: 'from sage.graphs.graph_decompositions.fast_digraph cimport FastDigraph',
             ....: 'FastDigraph(Graph([(0, 1), (1, 2)])).print_adjacency_matrix()']
-            sage: cython(os.linesep.join(cython_code))
+            sage: cython(os.linesep.join(cython_code))                                  # needs sage.misc.cython
             010
             101
             010
@@ -107,10 +106,10 @@ cdef class FastDigraph:
         cdef int i, j
         for i in range(self.n):
             for j in range(self.n):
-                print(((self.graph[i]>>j) & 1), end="")
+                print(((self.graph[i] >> j) & 1), end="")
             print("")
 
-cdef inline int compute_out_neighborhood_cardinality(FastDigraph g, int S):
+cdef inline int compute_out_neighborhood_cardinality(FastDigraph g, int S) noexcept:
     r"""
     Return the cardinality of `N^+(S)\S`.
 
@@ -129,7 +128,7 @@ cdef inline int compute_out_neighborhood_cardinality(FastDigraph g, int S):
         ....: 'cdef FastDigraph F = FastDigraph(Graph([(0, 1), (1, 2)]))',
         ....: 'cdef int i',
         ....: 'print([compute_out_neighborhood_cardinality(F, 1<<i) for i in range(F.n)])']
-        sage: cython(os.linesep.join(cython_code))
+        sage: cython(os.linesep.join(cython_code))                                      # needs sage.misc.cython
         [1, 2, 1]
     """
     cdef int i
@@ -140,7 +139,7 @@ cdef inline int compute_out_neighborhood_cardinality(FastDigraph g, int S):
     tmp &= (~S)
     return popcount32(tmp)
 
-cdef inline int popcount32(int i):
+cdef inline int popcount32(int i) noexcept:
     r"""
     Return the number of '1' bits in a 32-bits integer.
 
@@ -153,7 +152,7 @@ cdef inline int popcount32(int i):
         ....: 'from sage.graphs.graph_decompositions.fast_digraph cimport popcount32',
         ....: 'cdef int i',
         ....: 'print([popcount32(i) for i in range(16)])']
-        sage: cython(os.linesep.join(cython_code))
+        sage: cython(os.linesep.join(cython_code))                                      # needs sage.misc.cython
         [0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4]
     """
     i = i - ((i >> 1) & 0x55555555)
@@ -185,7 +184,7 @@ def test_popcount():
         i += 1
 
 
-cdef inline int slow_popcount32(int i):
+cdef inline int slow_popcount32(int i) noexcept:
     """
     Return the number of '1' bits in a 32-bits integer.
 
@@ -199,7 +198,7 @@ cdef inline int slow_popcount32(int i):
         ....: 'from sage.graphs.graph_decompositions.fast_digraph cimport slow_popcount32',
         ....: 'cdef int i',
         ....: 'print(all(popcount32(i) == slow_popcount32(i) for i in range(16)))']
-        sage: cython(os.linesep.join(cython_code))
+        sage: cython(os.linesep.join(cython_code))                                      # needs sage.misc.cython
         True
     """
     # Slow popcount for 32bits integers

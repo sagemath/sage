@@ -1,7 +1,7 @@
+# sage.doctest: needs sage.libs.pari
 """
-Modular Forms over a Non-minimal Base Ring
+Modular forms over a non-minimal base ring
 """
-from __future__ import absolute_import
 
 #########################################################################
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -13,7 +13,7 @@ from __future__ import absolute_import
 
 from . import ambient
 from .cuspidal_submodule import CuspidalSubmodule_R
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.misc.cachefunc import cached_method
 
 class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
@@ -23,9 +23,10 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
 
         EXAMPLES::
 
-            sage: M = ModularForms(23,2,base_ring=GF(7)) ## indirect doctest
+            sage: M = ModularForms(23, 2, base_ring=GF(7)) # indirect doctest
             sage: M
-            Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(23) of weight 2 over Finite Field of size 7
+            Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(23)
+             of weight 2 over Finite Field of size 7
             sage: M == loads(dumps(M))
             True
         """
@@ -43,10 +44,12 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
 
         TESTS::
 
+            sage: # needs sage.rings.number_field
             sage: K.<i> = QuadraticField(-1)
-            sage: chi = DirichletGroup(5, base_ring = K).0
+            sage: chi = DirichletGroup(5, base_ring=K).0
+            sage: x = polygen(ZZ, 'x')
             sage: L.<c> = K.extension(x^2 - 402*i)
-            sage: M = ModularForms(chi, 7, base_ring = L)
+            sage: M = ModularForms(chi, 7, base_ring=L)
             sage: symbs = M.modular_symbols()
             sage: symbs.character() == chi
             True
@@ -58,14 +61,15 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
 
     def _repr_(self):
         """
-        String representation for self.
+        String representation for ``self``.
 
         EXAMPLES::
 
-            sage: M = ModularForms(23,2,base_ring=GF(7)) ## indirect doctest
+            sage: M = ModularForms(23,2,base_ring=GF(7)) # indirect doctest
             sage: M._repr_()
             'Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(23) of weight 2 over Finite Field of size 7'
 
+            sage: # needs sage.rings.number_field
             sage: chi = DirichletGroup(109).0 ** 36
             sage: ModularForms(chi, 2, base_ring = chi.base_ring())
             Modular Forms space of dimension 9, character [zeta3] and weight 2 over Cyclotomic Field of order 108 and degree 36
@@ -74,7 +78,7 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
         i = s.find('over')
         if i != -1:
             s = s[:i]
-        return s + 'over %s'%self.base_ring()
+        return s + 'over %s' % self.base_ring()
 
     def _compute_q_expansion_basis(self, prec=None):
         """
@@ -85,18 +89,19 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
             sage: M = ModularForms(23,2,base_ring=GF(7))
             sage: M._compute_q_expansion_basis(10)
             [q + 6*q^3 + 6*q^4 + 5*q^6 + 2*q^7 + 6*q^8 + 2*q^9 + O(q^10),
-            q^2 + 5*q^3 + 6*q^4 + 2*q^5 + q^6 + 2*q^7 + 5*q^8 + O(q^10),
-            1 + 5*q^3 + 5*q^4 + 5*q^6 + 3*q^8 + 5*q^9 + O(q^10)]
+             q^2 + 5*q^3 + 6*q^4 + 2*q^5 + q^6 + 2*q^7 + 5*q^8 + O(q^10),
+             1 + 5*q^3 + 5*q^4 + 5*q^6 + 3*q^8 + 5*q^9 + O(q^10)]
 
         TESTS:
 
-        This checks that :trac:`13445` is fixed::
+        This checks that :issue:`13445` is fixed::
 
-            sage: M = ModularForms(Gamma1(29), base_ring=GF(29))
+            sage: M = ModularForms(Gamma0(11), base_ring=GF(11))
             sage: S = M.cuspidal_subspace()
             sage: 0 in [f.valuation() for f in S.basis()]
             False
-            sage: len(S.basis()) == dimension_cusp_forms(Gamma1(29), 2)
+            sage: from sage.modular.dims import dimension_cusp_forms
+            sage: len(S.basis()) == dimension_cusp_forms(Gamma0(11), 2)
             True
         """
         if prec is None:
@@ -109,7 +114,7 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
         elif c.is_prime_power():
             K = self.base_ring()
             p = K.characteristic().prime_factors()[0]
-            from sage.rings.all import GF
+            from sage.rings.finite_rings.finite_field_constructor import GF
             Kp = GF(p)
             newB = [f.change_ring(K) for f in list(self.__M.cuspidal_subspace().q_integral_basis(prec))]
             A = Kp**prec
@@ -123,7 +128,7 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
                     newB.append(f)
                     V = A.span(gens)
             if len(newB) != self.dimension():
-                raise RuntimeError("The dimension of the space is %s but the basis we computed has %s elements"%(self.dimension(), len(newB)))
+                raise RuntimeError("The dimension of the space is %s but the basis we computed has %s elements" % (self.dimension(), len(newB)))
             lst = [R(f) for f in newB]
             return [f/f[f.valuation()] for f in lst]
         else:
@@ -141,12 +146,12 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
 
         EXAMPLES::
 
-            sage: C = CuspForms(7, 4, base_ring=CyclotomicField(5)) # indirect doctest
+            sage: # needs sage.rings.number_field
+            sage: C = CuspForms(7, 4, base_ring=CyclotomicField(5))  # indirect doctest
             sage: type(C)
             <class 'sage.modular.modform.cuspidal_submodule.CuspidalSubmodule_R_with_category'>
         """
         return CuspidalSubmodule_R(self)
-
 
     def change_ring(self, R):
         r"""
@@ -154,10 +159,12 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: chi = DirichletGroup(109, CyclotomicField(3)).0
             sage: M9 = ModularForms(chi, 2, base_ring = CyclotomicField(9))
             sage: M9.change_ring(CyclotomicField(15))
-            Modular Forms space of dimension 10, character [zeta3 + 1] and weight 2 over Cyclotomic Field of order 15 and degree 8
+            Modular Forms space of dimension 10, character [zeta3 + 1] and weight 2
+             over Cyclotomic Field of order 15 and degree 8
             sage: M9.change_ring(QQ)
             Traceback (most recent call last):
             ...

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Various functions to deal with conversion mpz <-> Python int/long
 
@@ -8,10 +9,10 @@ AUTHORS:
 - Gonzalo Tornaria (2006): initial version
 
 - David Harvey (2007-08-18): added ``mpz_get_pyintlong`` function
-  (:trac:`440`)
+  (:issue:`440`)
 
 - Jeroen Demeyer (2015-02-24): moved from c_lib, rewritten using
-  ``mpz_export`` and ``mpz_import`` (:trac:`17853`)
+  ``mpz_export`` and ``mpz_import`` (:issue:`17853`)
 """
 
 #*****************************************************************************
@@ -26,13 +27,22 @@ AUTHORS:
 
 
 from cpython.object cimport Py_SIZE
-from cpython.int cimport PyInt_FromLong
 from cpython.long cimport PyLong_FromLong
 from cpython.longintrepr cimport _PyLong_New, py_long, digit, PyLong_SHIFT
-from .mpz cimport *
+from sage.cpython.pycore_long cimport (ob_digit, _PyLong_IsNegative,
+    _PyLong_DigitCount, _PyLong_SetSignAndDigitCount)
+from sage.libs.gmp.mpz cimport *
 
 cdef extern from *:
-    Py_ssize_t* Py_SIZE_PTR "&Py_SIZE"(object)
+    """
+    /* Compatibility for python 3.8, can be removed later */
+    #if PY_VERSION_HEX < 0x030900A4 && !defined(Py_SET_SIZE)
+    static inline void _Py_SET_SIZE(PyVarObject *ob, Py_ssize_t size)
+    { ob->ob_size = size; }
+    #define Py_SET_SIZE(ob, size) _Py_SET_SIZE((PyVarObject*)(ob), size)
+    #endif
+    """
+    void Py_SET_SIZE(object, Py_ssize_t)
     int hash_bits """
         #ifdef _PyHASH_BITS
         _PyHASH_BITS         /* Python 3 */
@@ -53,14 +63,9 @@ cdef mpz_get_pylong_large(mpz_srcptr z):
     """
     cdef size_t nbits = mpz_sizeinbase(z, 2)
     cdef size_t pylong_size = (nbits + PyLong_SHIFT - 1) // PyLong_SHIFT
-    L = _PyLong_New(pylong_size)
-    mpz_export(L.ob_digit, NULL,
-            -1, sizeof(digit), 0, PyLong_nails, z)
-    if mpz_sgn(z) < 0:
-        # Set correct size (use a pointer to hack around Cython's
-        # non-support for lvalues).
-        sizeptr = Py_SIZE_PTR(L)
-        sizeptr[0] = -pylong_size
+    cdef py_long L = _PyLong_New(pylong_size)
+    mpz_export(ob_digit(L), NULL, -1, sizeof(digit), 0, PyLong_nails, z)
+    _PyLong_SetSignAndDigitCount(L, mpz_sgn(z), pylong_size)
     return L
 
 
@@ -79,24 +84,21 @@ cdef mpz_get_pyintlong(mpz_srcptr z):
     if the value is too large.
     """
     if mpz_fits_slong_p(z):
-        return PyInt_FromLong(mpz_get_si(z))
+        return PyLong_FromLong(mpz_get_si(z))
     return mpz_get_pylong_large(z)
 
 
-cdef int mpz_set_pylong(mpz_ptr z, L) except -1:
+cdef int mpz_set_pylong(mpz_ptr z, py_long L) except -1:
     """
     Convert a Python ``long`` `L` to an ``mpz``.
     """
-    cdef Py_ssize_t pylong_size = Py_SIZE(L)
-    if pylong_size < 0:
-        pylong_size = -pylong_size
-    mpz_import(z, pylong_size, -1, sizeof(digit), 0, PyLong_nails,
-            (<py_long>L).ob_digit)
-    if Py_SIZE(L) < 0:
+    cdef Py_ssize_t pylong_size = _PyLong_DigitCount(L)
+    mpz_import(z, pylong_size, -1, sizeof(digit), 0, PyLong_nails, ob_digit(L))
+    if _PyLong_IsNegative(L):
         mpz_neg(z, z)
 
 
-cdef Py_hash_t mpz_pythonhash(mpz_srcptr z):
+cdef Py_hash_t mpz_pythonhash(mpz_srcptr z) noexcept:
     """
     Hash an ``mpz``, where the hash value is the same as the hash value
     of the corresponding Python ``int`` or ``long``, except that we do

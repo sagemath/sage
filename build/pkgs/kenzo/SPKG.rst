@@ -1,5 +1,5 @@
-Kenzo
-=====
+kenzo: Construct topological spaces and compute homology groups
+===============================================================
 
 Description
 -----------
@@ -19,7 +19,5 @@ Upstream Contact
 
 -  https://github.com/gheber/kenzo
 
-Dependencies
-------------
+-  https://github.com/miguelmarco/kenzo/
 
--  ECL (Embedded Common Lisp)

@@ -1,0 +1,226 @@
+{% extends "furo/page.html" %}
+
+{% block htmltitle %}
+<title>Sage Documentation{{ titlesuffix }}</title>
+{% endblock %}
+
+{%- block extrahead %}
+<style type="text/css">
+  img.icon {
+    border: none;
+  }
+  a.pdf {
+    margin-right: 0.3em;
+    {%- if hide_pdf_links %}
+    display: none;
+    {%- endif %}
+  }
+  a.pdf:hover {
+    text-decoration: none;
+  }
+  table.contentstable {
+    align: center;
+    border-spacing: 20px;
+  }
+  table.contentstable span {  {# issue #33600 comment:22 #}
+    border-spacing: initial;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>{{ docstitle|e }}</h1>
+<p>
+This is documentation for Sage {{ release }}.
+Documentations in other languages are available <a href="../../index.html">here</a>.
+</p>
+{% block tables %}
+<h2>
+  <strong>
+    Tutorials and FAQ
+  </strong>
+</h2>
+<table class="contentstable">
+   <tr valign="top">
+    <td width="50%">
+      <p class="biglink">
+        <a title="PDF" class="pdf" href="../../pdf/en/a_tour_of_sage/a_tour_of_sage.pdf">
+          <img class="icon" src="_static/pdf.png"></img>
+        </a>
+        <a class="biglink" href="a_tour_of_sage/index.html">
+          A Tour of Sage
+        </a>
+        <br>
+        <span class="linkdescr">
+          A one page introduction to Sage as a handy calculator.
+        </span>
+      </p>
+    </td>
+    <td width="50%">
+      <p class="biglink">
+        <a title="PDF" class="pdf" href="../../pdf/en/prep/prep_tutorials.pdf">
+          <img class="icon" src="_static/pdf.png"></img>
+        </a>
+        <a class="biglink" href="prep/index.html">
+          PREP Tutorials
+        </a>
+        <br>
+        <span class="linkdescr">
+          This set of tutorials takes the reader from very minimal
+          computer background to a good understanding of basic
+          undergraduate Sage functionality.  It includes several
+          thematic "Quickstart" tutorials, and was originally
+          developed as professional development material for the MAA.
+        </span>
+      </p>
+    </td>
+  </tr>
+  <tr valign="top">
+    <td width="50%">
+      <p class="biglink">
+        <a title="PDF" class="pdf" href="../../pdf/en/tutorial/sage_tutorial.pdf">
+          <img class="icon" src="_static/pdf.png"></img>
+        </a>
+        <a class="biglink" href="tutorial/index.html">
+          Tutorial
+        </a>
+        <br>
+        <span class="linkdescr">
+          The best way to become familiar with Sage
+          in only a few hours.
+        </span>
+      </p>
+    </td>
+    <td width="50%">
+      <p class="biglink">
+        <a title="PDF" class="pdf" href="../../pdf/en/constructions/constructions.pdf">
+          <img class="icon" src="_static/pdf.png"></img>
+        </a>
+        <a class="biglink" href="constructions/index.html">
+          Constructions
+        </a>
+        <br>
+        <span class="linkdescr">
+          This document collects answers to some questions along the line "How
+          do I construct ... in Sage?" Try to find out how to see the Riemann zeta
+          function \(\zeta(s)\) along the line \(s=\frac{1}{2}+it\).
+        </span>
+      </p>
+    </td>
+  </tr>
+  <tr valign="top">
+    <td width="50%">
+      <p class="biglink">
+        <a title="PDF" class="pdf" href="../../pdf/en/thematic_tutorials/thematic_tutorials.pdf">
+          <img class="icon" src="_static/pdf.png"></img>
+        </a>
+        <a class="biglink" href="thematic_tutorials/index.html">
+          Thematic Tutorials
+        </a>
+        <br>
+        <span class="linkdescr">
+          A collection of in-depth tutorials on specific topics. These
+          thematic tutorials are designed to help you get started on
+          Sage functionalities relating to topics such as coding
+          theory, combinatorics, cryptography, functional programming,
+          group theory, linear programming, etc. If you feel
+          uncomfortable consulting the reference manual, you are
+          encouraged to browse through these thematic tutorials.
+        </span>
+      </p>
+    </td>
+    <td width="50%">
+      <p class="biglink">
+        <a title="PDF" class="pdf" href="../../pdf/en/faq/faq.pdf">
+          <img class="icon" src="_static/pdf.png"></img>
+        </a>
+        <a class="biglink" href="faq/index.html">
+          FAQ
+        </a>
+        <br>
+        <span class="linkdescr">
+          A collection of frequently asked questions, together with
+          answers to those questions. You are encouraged to read these
+          before asking questions on one of many Sage mailing lists.
+        </span>
+      </p>
+    </td>
+  </tr>
+</table>
+<h2>
+  <strong>
+    Comprehensive Reference Manual
+  </strong>
+</h2>
+<table class="contentstable" align="center" cellspacing="20">
+  <tr valign="top">
+    <td width="50%">
+      <p class="biglink">
+        <a title="PDF" class="pdf" href="reference/index-pdf.html">
+          <img class="icon" src="_static/pdf.png"></img>
+        </a>
+        <a class="biglink" href="reference/index.html">
+          Reference Manual
+        </a>
+        <br>
+        <span class="linkdescr">
+          This is the reference manual for the Sage mathematics
+          software system. The reference manual contains many examples
+          that illustrate the usage of Sage. It consists primarily of
+          documentation that has been automatically generated from the
+          Sage source code.  The examples are all tested with each
+          release of Sage, and should produce exactly the same output
+          as in this manual, except for line breaks.
+        </span>
+      </p>
+    </td>
+    <td width="50%">
+    </td>
+  </tr>
+</table>
+<h2>
+  <strong>
+    Installation and Developer Guides
+  </strong>
+</h2>
+<table class="contentstable" align="center" cellspacing="20">
+  <tr valign="top">
+    <td width="50%">
+      <p class="biglink">
+        <a title="PDF" class="pdf" href="../../pdf/en/installation/installation.pdf">
+          <img class="icon" src="_static/pdf.png"></img>
+        </a>
+        <a class="biglink" href="installation/index.html">
+          Installation Guide
+        </a>
+        <br>
+        <span class="linkdescr">
+          A guide on how to install Sage. You can install a Sage
+          source distribution or a binary distribution. Also covered
+          are topics relating to a system-wide installation of Sage,
+          and installing Sage for your own personal use.
+        </span>
+      </p>
+    </td>
+    <td width="50%">
+      <p class="biglink">
+        <a title="PDF" class="pdf" href="../../pdf/en/developer/developer.pdf">
+          <img class="icon" src="_static/pdf.png"></img>
+        </a>
+        <a class="biglink" href="developer/index.html">
+          Developer Guide
+        </a>
+        <br>
+        <span class="linkdescr">
+          This document describes guidelines and policies regarding
+          Sage development. It explains how to write programs using Sage,
+          how to modify and extend the core Sage libraries, and how to
+          modify Sage's documentation. It also discusses how to share
+          your new and modified code with other Sage users.
+        </span>
+      </p>
+    </td>
+  </tr>
+</table>
+{% endblock %}
+{% endblock %}

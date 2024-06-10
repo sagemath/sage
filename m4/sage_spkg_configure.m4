@@ -29,8 +29,8 @@
 #
 #   - REQUIRED-CHECK - this checks whether or not the package is a required
 #     dependency of Sage at all, depending typically on the platform.  Some
-#     packages (e.g. yasm, among others) are only dependencies on certain
-#     platforms, and otherwise do not need to be checked for at all.  If
+#     packages (e.g. sqlite) are only dependencies in some circumstances
+#     and otherwise do not need to be checked for at all.  If
 #     a REQUIRED-CHECK determines that the package is not required it sets
 #     sage_require_<packagename>="no".
 #
@@ -58,6 +58,31 @@ dnl   indicate why
 m4_pushdef([SPKG_USE_SYSTEM], [sage_use_system_]SPKG_NAME)
 # BEGIN SAGE_SPKG_CONFIGURE_]m4_toupper($1)[
 
+dnl Hide the output from Python (system site package) checks
+dnl when --enable-system-site-packages was not given. This
+dnl doesn't affect the test results but it minimizes the noise
+dnl in the ./configure output. The config.log however retains
+dnl everything.
+dnl
+dnl Open descriptor 9 as a copy of AS_MESSAGE_FD, so that it
+dnl can later be used to restore AS_MESSAGE_FD. Afterwards,
+dnl send AS_MESSAGE_FD to /dev/null. We'll restore it if this
+dnl isn't a python package or if --enable-system-site-packages
+dnl was given (or at the end of this macro, if nothing else).
+exec 9<&AS_MESSAGE_FD
+exec AS_MESSAGE_FD>/dev/null
+
+AS_IF([test "${enable_system_site_packages}" = "yes"], [
+  dnl Python package checks are enabled, so restore AS_MESSAGE_FD
+  exec AS_MESSAGE_FD<&9
+])
+
+SPKG_CONFIGURE="${SAGE_ROOT}/build/pkgs/$1/spkg-configure.m4"
+AS_IF([! grep -q [SAGE_PYTHON_PACKAGE_CHECK] "${SPKG_CONFIGURE}"],[
+  dnl Not a python package, so restore AS_MESSAGE_FD
+  exec AS_MESSAGE_FD<&9
+])
+
 echo "-----------------------------------------------------------------------------" >& AS_MESSAGE_FD
 echo "Checking whether SageMath should install SPKG $1..." >& AS_MESSAGE_FD
 AS_BOX([Checking whether SageMath should install SPKG $1...]) >& AS_MESSAGE_LOG_FD
@@ -65,11 +90,13 @@ AS_BOX([Checking whether SageMath should install SPKG $1...]) >& AS_MESSAGE_LOG_
 AC_ARG_WITH([system-]SPKG_NAME,
        AS_HELP_STRING(--with-system-SPKG_NAME={no|yes (default)|force (exit with an error if no usable version is found)},
            [detect and use an existing system SPKG_NAME]),
-       [AS_VAR_SET(SPKG_USE_SYSTEM, [$withval])],
-       [AS_VAR_SET(SPKG_USE_SYSTEM, [yes])]
+       [AS_VAR_SET(SPKG_USE_SYSTEM, [$withval])]
 )
 
 AS_VAR_SET([sage_spkg_name], SPKG_NAME)
+
+dnl Default value for most packages
+AS_VAR_SET_IF([SPKG_USE_SYSTEM], [], [AS_VAR_SET([SPKG_USE_SYSTEM], [yes])])
 
 dnl The default is not to install a package, unless a check below finds that we should.
 AS_VAR_SET(SPKG_INSTALL, [no])
@@ -83,7 +110,7 @@ $4
 dnl If a version of this package is already installed in local/ we have no
 dnl choice but to use it and we will actually also update it even if it is not
 dnl required.
-AS_IF([test -n "`ls "${SAGE_SPKG_INST}/${sage_spkg_name}"-* 2>/dev/null`"], [
+AS_IF([test -n "`ls "${SAGE_LOCAL}/var/lib/sage/installed/${sage_spkg_name}"-* 2>/dev/null`"], [
     AC_MSG_NOTICE(m4_normalize(SPKG_NAME[ has already been installed by SageMath]))
     AS_VAR_SET(SPKG_INSTALL, [yes])
     AS_VAR_SET(SPKG_USE_SYSTEM, [installed])
@@ -113,7 +140,10 @@ AS_VAR_IF(SPKG_INSTALL, [no], [
                     AC_MSG_NOTICE(m4_normalize([will use system package and not install SPKG ]SPKG_NAME))
                 ], [
                     AS_VAR_IF(SPKG_USE_SYSTEM, [force], [
-                        AC_MSG_ERROR(m4_normalize([given --with-system-]SPKG_NAME[=force but no system package could be used]))
+                        AS_VAR_APPEND([SAGE_SPKG_ERRORS], ["
+    Given --with-system-]SPKG_NAME[=force, but no system package could be used.
+    That's an error.  Please install the indicated package to continue.
+    (To override this error, use ./configure --without-system-]SPKG_NAME[)"])
                     ], [
                         AC_MSG_NOTICE(m4_normalize([no suitable system package found for SPKG ]SPKG_NAME))
                     ])
@@ -134,6 +164,13 @@ AS_VAR_IF(SPKG_INSTALL, [no], [
 
 dnl Run POST
 $5
+
+dnl Restore the message file descriptor that we clobbered earlier
+dnl for the sake of hiding site package check noise. It's possible
+dnl that we've already done this above, but it doesn't hurt to do
+dnl it again, and we want everything "back to normal" at the end
+dnl of this macro.
+exec AS_MESSAGE_FD<&9
 
 # END SAGE_SPKG_CONFIGURE_]m4_toupper($1)[
 m4_popdef([SPKG_USE_SYSTEM])

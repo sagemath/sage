@@ -1,3 +1,4 @@
+# cython: binding=True
 r"""
 Cutwidth
 
@@ -117,7 +118,7 @@ optimal layout for the cutwidth of `G`.
 
 - `z` -- Objective value to minimize. It is equal to the maximum over all
   position `k` of the number of edges with one extremity at position at most `k`
-  and the other at position stricly more than `k`, that is `\sum_{uv\in
+  and the other at position strictly more than `k`, that is `\sum_{uv\in
   E}y_{u,v}^{k}`.
 
 
@@ -142,7 +143,7 @@ optimal layout for the cutwidth of `G`.
 Constraints (1)-(3) ensure that all vertices have a distinct position.
 Constraints (4)-(5) force variable `y_{u,v}^k` to 1 if the edge is in the cut.
 Constraint (6) count the number of edges starting at position at most `k` and
-ending at a position stricly larger than `k`.
+ending at a position strictly larger than `k`.
 
 This formulation corresponds to method :meth:`cutwidth_MILP`.
 
@@ -157,7 +158,7 @@ Methods
 -------
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 David Coudert <david.coudert@inria.fr>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -165,7 +166,7 @@ Methods
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from libc.stdint cimport uint8_t
 from libc.string cimport memset
@@ -173,6 +174,7 @@ from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport sig_check
 
 from sage.graphs.graph_decompositions.fast_digraph cimport FastDigraph, popcount32
+from sage.graphs.graph_decompositions.vertex_separation cimport find_order
 from sage.graphs.graph_decompositions.vertex_separation import is_valid_ordering
 from sage.rings.integer_ring import ZZ
 
@@ -206,7 +208,7 @@ def width_of_cut_decomposition(G, L):
 
         sage: from sage.graphs.graph_decompositions import cutwidth
         sage: G = graphs.CycleGraph(6)
-        sage: L = G.vertices()
+        sage: L = G.vertices(sort=False)
         sage: cutwidth.width_of_cut_decomposition(G, L)
         2
 
@@ -237,7 +239,7 @@ def width_of_cut_decomposition(G, L):
         return 0
 
     cdef int i, x, y
-    cdef dict position = {u: i for i,u in enumerate(L)}
+    cdef dict position = {u: i for i, u in enumerate(L)}
 
     # We count for each position `i` the number of edges going from vertices at
     # positions in `0..i` to vertices at positions in `i+1..n-1`, for each
@@ -261,7 +263,8 @@ def width_of_cut_decomposition(G, L):
 # Front end method for cutwidth
 ################################################################################
 
-def cutwidth(G, algorithm="exponential", cut_off=0, solver=None, verbose=False):
+def cutwidth(G, algorithm="exponential", cut_off=0, solver=None, verbose=False,
+             *, integrality_tolerance=1e-3):
     r"""
     Return the cutwidth of the graph and the corresponding vertex ordering.
 
@@ -283,16 +286,20 @@ def cutwidth(G, algorithm="exponential", cut_off=0, solver=None, verbose=False):
       solution with width at most ``cut_off`` is found, if any. If this bound
       cannot be reached, the best solution found is returned.
 
-    - ``solver`` -- string (default: ``None``); specify a Linear Program (LP)
-      solver to be used. If set to ``None``, the default one is used. This
-      parameter is used only when ``algorithm='MILP'``. For more information on
-      LP solvers and which default solver is used, see the method
-      :meth:`solve<sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the
-      class
-      :class:`MixedIntegerLinearProgram<sage.numerical.mip.MixedIntegerLinearProgram>`.
+    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+      Programming (MILP) solver to be used. If set to ``None``, the default one
+      is used. For more information on MILP solvers and which default solver is
+      used, see the method :meth:`solve
+      <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+      :class:`MixedIntegerLinearProgram
+      <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
     - ``verbose`` -- boolean (default: ``False``); whether to display
       information on the computations.
+
+    - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
+      over an inexact base ring; see
+      :meth:`MixedIntegerLinearProgram.get_values`.
 
     OUTPUT:
 
@@ -328,7 +335,7 @@ def cutwidth(G, algorithm="exponential", cut_off=0, solver=None, verbose=False):
     Comparison of algorithms::
 
         sage: from sage.graphs.graph_decompositions.cutwidth import cutwidth
-        sage: for i in range(2):  # long time
+        sage: for i in range(2):                # long time                             # needs sage.numerical.mip
         ....:     G = graphs.RandomGNP(7, 0.3)
         ....:     ve, le = cutwidth(G, algorithm="exponential")
         ....:     vm, lm = cutwidth(G, algorithm="MILP", solver='GLPK')
@@ -358,13 +365,32 @@ def cutwidth(G, algorithm="exponential", cut_off=0, solver=None, verbose=False):
         Traceback (most recent call last):
         ...
         ValueError: the specified cut off parameter must be an integer
+
+    Cutwidth of a graph with one edge (:issue:`32131`)::
+
+        sage: from sage.graphs.graph_decompositions.cutwidth import cutwidth
+        sage: G = Graph([(0, 1)])
+        sage: cutwidth(G, algorithm="exponential")
+        (1, [0, 1])
+        sage: cutwidth(G, algorithm="MILP", solver='GLPK')                              # needs sage.numerical.mip
+        (1, [0, 1])
+
+    Cutwidth of a disconnected graph::
+
+        sage: from sage.graphs.graph_decompositions.cutwidth import cutwidth
+        sage: G = Graph(5)
+        sage: G.add_edge(2, 3)
+        sage: cutwidth(G, algorithm="exponential")
+        (1, [2, 3, 0, 1, 4])
+        sage: cutwidth(G, algorithm="MILP", solver='GLPK')                              # needs sage.numerical.mip
+        (1, [2, 3, 0, 1, 4])
     """
     from sage.graphs.graph import Graph
 
     if not isinstance(G, Graph):
         raise ValueError('the first parameter must be a Graph')
 
-    if not cut_off in ZZ:
+    if cut_off not in ZZ:
         raise ValueError("the specified cut off parameter must be an integer")
     elif G.size() <= cut_off:
         # We have a trivial solution
@@ -394,10 +420,11 @@ def cutwidth(G, algorithm="exponential", cut_off=0, solver=None, verbose=False):
         else:
             # We have a connected graph and we call the desired algorithm
             if algorithm == "exponential":
-                cwH, LH = cutwidth_dyn(G, lower_bound=this_cut_off)
+                cwH, LH = cutwidth_dyn(H, lower_bound=this_cut_off)
 
             elif algorithm == "MILP":
-                cwH, LH = cutwidth_MILP(G, lower_bound=this_cut_off, solver=solver, verbose=verbose)
+                cwH, LH = cutwidth_MILP(H, lower_bound=this_cut_off, solver=solver,
+                                        verbose=verbose, integrality_tolerance=integrality_tolerance)
 
             else:
                 raise ValueError('algorithm "{}" has not been implemented yet, please contribute'.format(algorithm))
@@ -413,7 +440,6 @@ def cutwidth(G, algorithm="exponential", cut_off=0, solver=None, verbose=False):
 ################################################################################
 # Dynamic Programming algorithm for cutwidth
 ################################################################################
-from sage.graphs.graph_decompositions.vertex_separation cimport find_order
 
 def cutwidth_dyn(G, lower_bound=0):
     r"""
@@ -477,7 +503,7 @@ def cutwidth_dyn(G, lower_bound=0):
     if G.order() >= 32:
         raise ValueError("the graph should have at most 31 vertices")
 
-    if not lower_bound in ZZ:
+    if lower_bound not in ZZ:
         raise ValueError("the specified lower bound must be an integer")
 
     cdef FastDigraph g = FastDigraph(G)
@@ -491,19 +517,20 @@ def cutwidth_dyn(G, lower_bound=0):
     cdef list order
 
     try:
-        for k in range(lower_bound, G.size()):
+        for k in range(lower_bound, G.size() + 1):
             for i in range(g.n):
                 sig_check()
                 if exists(g, neighborhoods, 0, 0, i, k) <= k:
                     order = find_order(g, neighborhoods, k)
                     return k, [g.int_to_vertices[i] for i in order]
+
+        order = find_order(g, neighborhoods, k)
+        return k, [g.int_to_vertices[i] for i in order]
     finally:
         sig_free(neighborhoods)
 
-    order = find_order(g, neighborhoods, k)
-    return k, [g.int_to_vertices[i] for i in order]
 
-cdef inline int exists(FastDigraph g, uint8_t* neighborhoods, int S, int cost_S, int v, int k):
+cdef inline int exists(FastDigraph g, uint8_t* neighborhoods, int S, int cost_S, int v, int k) noexcept:
     r"""
     Check whether an ordering with the given cost `k` exists, and updates data
     in the neighborhoods array at the same time. See the module's documentation.
@@ -526,7 +553,7 @@ cdef inline int exists(FastDigraph g, uint8_t* neighborhoods, int S, int cost_S,
 
     - ``k`` -- integer; the maximum admissible cost for a solution
     """
-    cdef int current = S | 1<<v
+    cdef int current = S | 1 << v
     # If this is true, it means the set has not been evaluated yet
     if neighborhoods[current] == <uint8_t> -1:
         # The number of edges from `current` to `V\setminus current` is the
@@ -546,12 +573,11 @@ cdef inline int exists(FastDigraph g, uint8_t* neighborhoods, int S, int cost_S,
     cdef int mini = (<uint8_t> -1)
 
     cdef int i
-    cdef int next_set
 
-    # For each possible extension of the current set witha vertex, check whether
+    # For each possible extension of the current set with a vertex, check whether
     # there exists a cheap path toward {1..n}, and update the cost.
     for i in range(g.n):
-        if (current >> i) & 1: # if i in S
+        if (current >> i) & 1:  # if i in S
             continue
 
         mini = min(mini, exists(g, neighborhoods, current, neighborhoods[current], i, k))
@@ -566,11 +592,13 @@ cdef inline int exists(FastDigraph g, uint8_t* neighborhoods, int S, int cost_S,
 
     return neighborhoods[current]
 
+
 ################################################################################
 # MILP formulations for cutwidth
 ################################################################################
 
-def cutwidth_MILP(G, lower_bound=0, solver=None, verbose=0):
+def cutwidth_MILP(G, lower_bound=0, solver=None, verbose=0,
+                  *, integrality_tolerance=1e-3):
     r"""
     MILP formulation for the cutwidth of a Graph.
 
@@ -589,15 +617,20 @@ def cutwidth_MILP(G, lower_bound=0, solver=None, verbose=0):
       optimal. If the given bound is too high, the algorithm might not be able
       to find a feasible solution.
 
-    - ``solver`` -- string (default: ``None``); specify a Linear Program (LP)
-      solver to be used. If set to ``None``, the default one is used. For more
-      information on LP solvers and which default solver is used, see the method
-      :meth:`solve<sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the
-      class
-      :class:`MixedIntegerLinearProgram<sage.numerical.mip.MixedIntegerLinearProgram>`.
+    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+      Programming (MILP) solver to be used. If set to ``None``, the default one
+      is used. For more information on MILP solvers and which default solver is
+      used, see the method :meth:`solve
+      <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+      :class:`MixedIntegerLinearProgram
+      <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
     - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
       to 0 by default, which means quiet.
+
+    - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
+      over an inexact base ring; see
+      :meth:`MixedIntegerLinearProgram.get_values`.
 
     OUTPUT:
 
@@ -610,9 +643,9 @@ def cutwidth_MILP(G, lower_bound=0, solver=None, verbose=0):
 
         sage: from sage.graphs.graph_decompositions import cutwidth
         sage: G = graphs.CycleGraph(5)
-        sage: cw, L = cutwidth.cutwidth_MILP(G); cw
+        sage: cw, L = cutwidth.cutwidth_MILP(G); cw                                     # needs sage.numerical.mip
         2
-        sage: cw == cutwidth.width_of_cut_decomposition(G, L)
+        sage: cw == cutwidth.width_of_cut_decomposition(G, L)                           # needs sage.numerical.mip
         True
         sage: cwe, Le = cutwidth.cutwidth_dyn(G); cwe
         2
@@ -621,18 +654,18 @@ def cutwidth_MILP(G, lower_bound=0, solver=None, verbose=0):
 
         sage: from sage.graphs.graph_decompositions import cutwidth
         sage: G = graphs.CompleteGraph(4)
-        sage: cw, L = cutwidth.cutwidth_MILP(G); cw
+        sage: cw, L = cutwidth.cutwidth_MILP(G); cw                                     # needs sage.numerical.mip
         4
-        sage: cw == cutwidth.width_of_cut_decomposition(G, L)
+        sage: cw == cutwidth.width_of_cut_decomposition(G, L)                           # needs sage.numerical.mip
         True
 
     Cutwidth of a Path graph::
 
         sage: from sage.graphs.graph_decompositions import cutwidth
         sage: G = graphs.PathGraph(3)
-        sage: cw, L = cutwidth.cutwidth_MILP(G); cw
+        sage: cw, L = cutwidth.cutwidth_MILP(G); cw                                     # needs sage.numerical.mip
         1
-        sage: cw == cutwidth.width_of_cut_decomposition(G, L)
+        sage: cw == cutwidth.width_of_cut_decomposition(G, L)                           # needs sage.numerical.mip
         True
 
     TESTS:
@@ -640,7 +673,7 @@ def cutwidth_MILP(G, lower_bound=0, solver=None, verbose=0):
     Comparison with exponential algorithm::
 
         sage: from sage.graphs.graph_decompositions import cutwidth
-        sage: for i in range(2):  # long time
+        sage: for i in range(2):                # long time                             # needs sage.numerical.mip
         ....:     G = graphs.RandomGNP(7, 0.3)
         ....:     ve, le = cutwidth.cutwidth_dyn(G)
         ....:     vm, lm = cutwidth.cutwidth_MILP(G, solver='GLPK')
@@ -651,7 +684,7 @@ def cutwidth_MILP(G, lower_bound=0, solver=None, verbose=0):
 
         sage: from sage.graphs.graph_decompositions.cutwidth import cutwidth_MILP
         sage: G = graphs.CycleGraph(3)
-        sage: cutwidth_MILP(G, lower_bound=G.size()+1)
+        sage: cutwidth_MILP(G, lower_bound=G.size()+1)                                  # needs sage.numerical.mip
         Traceback (most recent call last):
         ...
         MIPSolverException: ...
@@ -681,17 +714,17 @@ def cutwidth_MILP(G, lower_bound=0, solver=None, verbose=0):
     # All vertices at different positions
     for v in G:
         for k in range(N - 1):
-            p.add_constraint(p.sum(x[v,i] for i in range(k)) <= k * x[v,k])
-        p.add_constraint(x[v,N-1] == 1)
+            p.add_constraint(p.sum(x[v, i] for i in range(k)) <= k * x[v, k])
+        p.add_constraint(x[v, N - 1] == 1)
     for k in range(N):
-        p.add_constraint(p.sum(x[v,k] for v in G) == k + 1)
+        p.add_constraint(p.sum(x[v, k] for v in G) == k + 1)
 
     # Edge uv counts at position i if one of u or v is placed at a position in
     # [0,i] and the other is placed at a position in [i+1,n].
-    for u,v in G.edge_iterator(labels=None):
+    for u, v in G.edge_iterator(labels=None):
         for i in range(N):
-            p.add_constraint(x[u,i] - x[v,i] <= y[u,v,i])
-            p.add_constraint(x[v,i] - x[u,i] <= y[u,v,i])
+            p.add_constraint(x[u, i] - x[v, i] <= y[u, v, i])
+            p.add_constraint(x[v, i] - x[u, i] <= y[u, v, i])
 
     # Lower bound on the solution
     p.add_constraint(lower_bound <= z['z'])
@@ -699,20 +732,20 @@ def cutwidth_MILP(G, lower_bound=0, solver=None, verbose=0):
     # Objective
     p.add_constraint(z['z'] <= G.size())
     for i in range(N):
-        p.add_constraint(p.sum(y[u,v,i] for u,v in G.edge_iterator(labels=None)) <= z['z'])
+        p.add_constraint(p.sum(y[u, v, i] for u, v in G.edge_iterator(labels=None)) <= z['z'])
 
     p.set_objective(z['z'])
 
-    obj = p.solve(log=verbose)
+    _ = p.solve(log=verbose)
 
     # We now extract the ordering and the cost of the solution
-    val_x = p.get_values(x)
-    cdef int cw = int(p.get_values(z)['z'])
+    val_x = p.get_values(x, convert=bool, tolerance=integrality_tolerance)
+    cdef int cw = p.get_values(z['z'], convert=True, tolerance=integrality_tolerance)
     cdef list seq = []
     cdef set to_see = set(G)
     for k in range(N):
         for u in to_see:
-            if val_x[u,k]:
+            if val_x[u, k]:
                 seq.append(u)
                 to_see.discard(u)
                 break

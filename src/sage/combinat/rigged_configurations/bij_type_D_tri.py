@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Bijection classes for type `D_4^{(3)}`
 
@@ -20,7 +21,7 @@ TESTS::
     sage: TestSuite(bijection).run()
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Travis Scrimshaw <tscrim@ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -32,11 +33,12 @@ TESTS::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.combinat.rigged_configurations.bij_type_A import KRTToRCBijectionTypeA
 from sage.combinat.rigged_configurations.bij_type_A import RCToKRTBijectionTypeA
+
 
 class KRTToRCBijectionTypeDTri(KRTToRCBijectionTypeA):
     r"""
@@ -46,6 +48,7 @@ class KRTToRCBijectionTypeDTri(KRTToRCBijectionTypeA):
     This inherits from type `A_n^{(1)}` because we use the same methods in
     some places.
     """
+
     def next_state(self, val):
         r"""
         Build the next state for type `D_4^{(3)}`.
@@ -167,7 +170,7 @@ class KRTToRCBijectionTypeDTri(KRTToRCBijectionTypeA):
                     else:
                         j = i - 1
                         while j >= 0 and P._list[j] <= max_width + 2:
-                            P.rigging[j+1] = P.rigging[j] # Shuffle it along
+                            P.rigging[j+1] = P.rigging[j]  # Shuffle it along
                             j -= 1
                         P._list.pop(i)
                         P._list.insert(j+1, max_width + 2)
@@ -191,7 +194,7 @@ class KRTToRCBijectionTypeDTri(KRTToRCBijectionTypeA):
                     if P.rigging[i] is None:
                         j = i - 1
                         while j >= 0 and P._list[j] == P._list[i]:
-                            P.rigging[j+1] = P.rigging[j] # Shuffle it along
+                            P.rigging[j+1] = P.rigging[j]  # Shuffle it along
                             j -= 1
                         P._list[j+1] += 1
                         P.rigging[j+1] = None
@@ -208,7 +211,7 @@ class KRTToRCBijectionTypeDTri(KRTToRCBijectionTypeA):
                     if P.rigging[i] is None:
                         j = i - 1
                         while j >= 0 and P._list[j] == P._list[i]:
-                            P.rigging[j+1] = P.rigging[j] # Shuffle it along
+                            P.rigging[j+1] = P.rigging[j]  # Shuffle it along
                             j -= 1
                         P._list[j+1] += 1
                         P.rigging[j+1] = None
@@ -233,11 +236,13 @@ class KRTToRCBijectionTypeDTri(KRTToRCBijectionTypeA):
                     P.rigging[j-1] -= 1
                     break
 
+
 class RCToKRTBijectionTypeDTri(RCToKRTBijectionTypeA):
     r"""
     Specific implementation of the bijection from rigged configurations to
     tensor products of KR tableaux for type `D_4^{(3)}`.
     """
+
     def next_state(self, height):
         r"""
         Build the next state for type `D_4^{(3)}`.
@@ -250,7 +255,7 @@ class RCToKRTBijectionTypeDTri(RCToKRTBijectionTypeA):
             sage: bijection.next_state(2)
             -3
         """
-        height -= 1 # indexing
+        height -= 1  # indexing
         ell = [None] * 6
         case_S = [False] * 3
         case_Q = False
@@ -301,7 +306,7 @@ class RCToKRTBijectionTypeDTri(RCToKRTBijectionTypeA):
                 else:
                     b = 0
 
-        if b is None: # Going back
+        if b is None:  # Going back
             if self.cur_partitions[1][ell[1]] == last_size:
                 ell[4] = ell[1]
                 case_S[1] = True
@@ -313,7 +318,7 @@ class RCToKRTBijectionTypeDTri(RCToKRTBijectionTypeA):
                 else:
                     last_size = self.cur_partitions[1][ell[4]]
 
-        if b is None: # Final partition
+        if b is None:  # Final partition
             P = self.cur_partitions[0]
             if ell[0] is not None and P[ell[0]] == last_size:
                 ell[5] = ell[0]
@@ -342,7 +347,7 @@ class RCToKRTBijectionTypeDTri(RCToKRTBijectionTypeA):
 
         if case_S[0]:
             row0 = [self.cur_partitions[0].remove_cell(ell[5], 2)]
-            row0.append( self.cur_partitions[0].remove_cell(ell[3], 2) )
+            row0.append(self.cur_partitions[0].remove_cell(ell[3], 2))
         else:
             if case_Q:
                 if ell[0] is None or ell[0] < ell[2]:
@@ -356,9 +361,9 @@ class RCToKRTBijectionTypeDTri(RCToKRTBijectionTypeA):
             else:
                 row0 = [self.cur_partitions[0].remove_cell(ell[0])]
                 if case_S[2]:
-                    row0.append( self.cur_partitions[0].remove_cell(ell[3], 2) )
+                    row0.append(self.cur_partitions[0].remove_cell(ell[3], 2))
 
-            row0.append( self.cur_partitions[0].remove_cell(ell[5]) )
+            row0.append(self.cur_partitions[0].remove_cell(ell[5]))
 
         self._update_vacancy_numbers(0)
         self._update_vacancy_numbers(1)
@@ -383,5 +388,4 @@ class RCToKRTBijectionTypeDTri(RCToKRTBijectionTypeA):
                 j += 1
             P.rigging[j-1] = vac_num - 1
 
-        return(b)
-
+        return b

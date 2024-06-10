@@ -1,4 +1,3 @@
-##      -*-   coding: utf-8   -*-     ##
 ##          Sage Doctest File         ##
 #**************************************#
 #*    Generated from PreTeXt source   *#
@@ -45,7 +44,7 @@ r"""
     sage: results = G.direct_product(H)
     sage: phi = results[2]
     sage: H.gens()
-    [(1,2,3,4), (1,4)(2,3)]
+    ((1,2,3,4), (1,4)(2,3))
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 

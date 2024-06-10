@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.graphs
 r"""
 Cluster complex (or generalized dual associahedron)
 
@@ -37,26 +38,29 @@ AUTHORS:
 - Christian Stump (2011) Initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011      Christian Stump <christian.stump@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.categories.coxeter_groups import CoxeterGroups
-from sage.combinat.root_system.coxeter_group import CoxeterGroup
 from sage.combinat.subword_complex import SubwordComplex, SubwordComplexFacet
+from sage.misc.lazy_import import lazy_import
 from sage.rings.semirings.non_negative_integer_semiring import NN
+
+lazy_import('sage.combinat.root_system.coxeter_group', 'CoxeterGroup')
 
 
 class ClusterComplexFacet(SubwordComplexFacet):
     r"""
     A cluster (i.e., a facet) of a cluster complex.
     """
+
     def cluster(self):
         """
         Return this cluster as a set of almost positive roots.
@@ -221,10 +225,6 @@ class ClusterComplex(SubwordComplex):
         self._W = W
         self._w0 = w
         self._k = k
-        if k == 1:
-            self.__custom_name = 'Cluster complex'
-        else:
-            self.__custom_name = 'Multi-cluster complex'
 
         self.set_immutable()
 
@@ -270,7 +270,10 @@ class ClusterComplex(SubwordComplex):
             sage: ClusterComplex(['A', 2])._repr_()
             "Cluster complex of type ['A', 2] with 5 vertices and 5 facets"
         """
-        name = self.__custom_name
+        if self._k == 1:
+            name = 'Cluster complex'
+        else:
+            name = 'Multi-cluster complex'
         name += (' of type %s with %s vertices and %s facets'
                  % (self.cartan_type(), len(self.vertices()),
                     len(self._facets)))

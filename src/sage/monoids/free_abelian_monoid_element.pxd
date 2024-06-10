@@ -13,4 +13,3 @@ cdef class FreeAbelianMonoidElement(MonoidElement):
         cdef FreeAbelianMonoidElement x = <FreeAbelianMonoidElement>(t.__new__(t))
         x._init(self._n, self._parent)
         return x
-

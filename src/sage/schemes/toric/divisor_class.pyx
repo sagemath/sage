@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.geometry.polyhedron sage.graphs
 r"""
 Toric rational divisor classes
 
@@ -33,15 +34,15 @@ They behave much like ordinary vectors::
     sage: D * E
     Traceback (most recent call last):
     ...
-    TypeError: cannot multiply two divisor classes!
+    TypeError: cannot multiply two divisor classes
 
 The only special method is :meth:`~ToricRationalDivisorClass.lift` to get a
 divisor representing a divisor class::
 
     sage: D.lift()
-    V(x) - 2*V(u) + 3*V(y) - 4*V(v)
+    -3*V(x) - 9*V(u) + 7*V(z) + 3*V(w)
     sage: E.lift()
-    1/2*V(x) - 2/3*V(u) + 3/4*V(y) - 4/5*V(v)
+    -3/10*V(x) - 133/60*V(u) + 31/20*V(z) + 3/4*V(w)
 """
 
 
@@ -52,18 +53,18 @@ divisor representing a divisor class::
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from sage.libs.gmp.mpq cimport *
 
-from sage.misc.all import latex
-from sage.modules.all import vector
+from sage.misc.latex import latex
+from sage.modules.free_module_element import vector
 from sage.modules.vector_rational_dense cimport Vector_rational_dense
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 from sage.rings.rational cimport Rational
-from sage.structure.element cimport Element, Vector
-from sage.structure.element import is_Vector
+from sage.structure.element cimport Vector
+from sage.structure.element import Vector
 
 
 def is_ToricRationalDivisorClass(x):
@@ -80,13 +81,11 @@ def is_ToricRationalDivisorClass(x):
 
     EXAMPLES::
 
-        sage: from sage.schemes.toric.divisor_class import (
-        ....:   is_ToricRationalDivisorClass)
+        sage: from sage.schemes.toric.divisor_class import is_ToricRationalDivisorClass
         sage: is_ToricRationalDivisorClass(1)
         False
         sage: dP6 = toric_varieties.dP6()
-        sage: D = dP6.rational_class_group().gen(0)
-        sage: D
+        sage: D = dP6.rational_class_group().gen(0); D
         Divisor class [1, 0, 0, 0]
         sage: is_ToricRationalDivisorClass(D)
         True
@@ -135,7 +134,8 @@ cdef class ToricRationalDivisorClass(Vector_rational_dense):
             Divisor class [1, -2, 3, -4]
         """
         return (_ToricRationalDivisorClass_unpickle_v1,
-                (self._parent, list(self), self._degree, self._is_mutable))
+                (self._parent, list(self), self._degree,
+                 not self._is_immutable))
 
     cpdef _act_on_(self, other, bint self_on_left):
         """
@@ -143,7 +143,7 @@ cdef class ToricRationalDivisorClass(Vector_rational_dense):
 
         INPUT:
 
-        - ``other`` - something that
+        - ``other`` -- something that
           :class:`~sage.modules.vector_rational_dense.Vector_rational_dense`
           can act on *except* for another toric rational divisor class.
 
@@ -162,7 +162,7 @@ cdef class ToricRationalDivisorClass(Vector_rational_dense):
             sage: D * D
             Traceback (most recent call last):
             ...
-            TypeError: cannot multiply two divisor classes!
+            TypeError: cannot multiply two divisor classes
 
         We test standard behaviour::
 
@@ -192,7 +192,7 @@ cdef class ToricRationalDivisorClass(Vector_rational_dense):
         if isinstance(other, Vector_rational_dense):
             return Vector_rational_dense._dot_product_(self, other)
         cdef Vector v
-        if is_Vector(other) and not is_ToricRationalDivisorClass(other):
+        if isinstance(other, Vector) and not is_ToricRationalDivisorClass(other):
             try:
                 v = vector(QQ, other)
                 if v._degree == self._degree:
@@ -204,17 +204,17 @@ cdef class ToricRationalDivisorClass(Vector_rational_dense):
 
     cpdef _dot_product_(self, Vector right):
         r"""
-        Raise a ``TypeError`` exception.
+        Raise a :class:`TypeError` exception.
 
         Dot product is not defined on toric rational divisor classes.
 
         INPUT:
 
-        - ``right`` - vector.
+        - ``right`` -- vector.
 
         OUTPUT:
 
-        - ``TypeError`` exception is raised.
+        A :class:`TypeError` exception is raised.
 
         TESTS::
 
@@ -222,13 +222,13 @@ cdef class ToricRationalDivisorClass(Vector_rational_dense):
             sage: c[0]._dot_product_(c[1])
             Traceback (most recent call last):
             ...
-            TypeError: cannot multiply two divisor classes!
+            TypeError: cannot multiply two divisor classes
             sage: c[0] * c[1]      # indirect doctest
             Traceback (most recent call last):
             ...
-            TypeError: cannot multiply two divisor classes!
+            TypeError: cannot multiply two divisor classes
         """
-        raise TypeError("cannot multiply two divisor classes!")
+        raise TypeError("cannot multiply two divisor classes")
 
     def _latex_(self):
         r"""
@@ -245,7 +245,7 @@ cdef class ToricRationalDivisorClass(Vector_rational_dense):
             \left[ 1, 0, 0, 0 \right]_{\mathop{Cl}_{\QQ}\left(\mathbb{P}_{\Delta^{2}_{9}}\right)}
         """
         return r"\left[ %s \right]_{%s}" % (
-                    ", ".join([latex(e) for e in self]), latex(self.parent()))
+                    ", ".join(latex(e) for e in self), latex(self.parent()))
 
     def _repr_(self):
         r"""
@@ -278,7 +278,7 @@ cdef class ToricRationalDivisorClass(Vector_rational_dense):
             sage: D.divisor_class()
             Divisor class [29, 6, 8, 10, 0]
             sage: Dequiv = D.divisor_class().lift(); Dequiv
-            6*V(z1) - 17*V(z2) - 22*V(z3) - 7*V(z4) + 25*V(z6) + 32*V(z7)
+            15*V(z1) - 11*V(z2) - 9*V(z5) + 19*V(z6) + 10*V(z7)
             sage: Dequiv == D
             False
             sage: Dequiv.divisor_class() == D.divisor_class()
@@ -328,8 +328,8 @@ def _ToricRationalDivisorClass_unpickle_v1(parent, entries,
     v._init(degree, parent)
     cdef Rational z
     cdef Py_ssize_t i
-    for i from 0 <= i < degree:
+    for i in range(degree):
         z = Rational(entries[i])
         mpq_set(v._entries[i], z.value)
-    v._is_mutable = is_mutable
+    v._is_immutable = not is_mutable
     return v

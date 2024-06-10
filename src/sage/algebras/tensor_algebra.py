@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Tensor Algebras
 
@@ -28,6 +29,7 @@ from sage.combinat.free_module import CombinatorialFreeModule, CombinatorialFree
 from sage.monoids.indexed_free_monoid import IndexedFreeMonoid
 from sage.misc.cachefunc import cached_method
 from sage.sets.family import Family
+
 
 class TensorAlgebra(CombinatorialFreeModule):
     r"""
@@ -375,7 +377,7 @@ class TensorAlgebra(CombinatorialFreeModule):
                                                 for i,M in enumerate(modules)]),
                                      codomain=self)
 
-        return super(TensorAlgebra, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
     def construction(self):
         """
@@ -425,7 +427,7 @@ class TensorAlgebra(CombinatorialFreeModule):
     @cached_method
     def one_basis(self):
         r"""
-        Return the empty word, which indexes of `1` of this algebra.
+        Return the empty word, which indexes the `1` of this algebra.
 
         EXAMPLES::
 
@@ -583,6 +585,7 @@ class TensorAlgebra(CombinatorialFreeModule):
 #####################################################################
 ## TensorAlgebra functor
 
+
 class TensorAlgebraFunctor(ConstructionFunctor):
     r"""
     The tensor algebra functor.
@@ -683,6 +686,7 @@ class TensorAlgebraFunctor(ConstructionFunctor):
 #####################################################################
 ## Lift map from the base ring
 
+
 class BaseRingLift(Morphism):
     r"""
     Morphism `R \to T(M)` which identifies the base ring `R` of a tensor
@@ -702,4 +706,3 @@ class BaseRingLift(Morphism):
         T = self.codomain()
         R = T.base_ring()
         return T.term(T.indices().one(), R(x))
-

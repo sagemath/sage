@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 `\mathcal{B}(\infty)` Crystal Of PBW Monomials
 
@@ -32,10 +32,12 @@ from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.crystals.pbw_datum import PBWData, PBWDatum
 
+
 class PBWCrystalElement(Element):
     """
     A crystal element in the PBW model.
     """
+
     def __init__(self, parent, lusztig_datum, long_word=None):
         """
         Initialize ``self``.
@@ -79,7 +81,7 @@ class PBWCrystalElement(Element):
             sage: latex(b)
             f_{\alpha_{4}}^{2}
              f_{\alpha_{3}}
-             f_{\alpha_{1} + \alpha_{2} + 2\alpha_{3}}
+             f_{\alpha_{1} + \alpha_{2} + 2 \alpha_{3}}
              f_{\alpha_{1} + \alpha_{2}}
              f_{\alpha_{2}}^{2}
         """
@@ -87,7 +89,7 @@ class PBWCrystalElement(Element):
         lusztig_datum = list(pbw_datum.lusztig_datum)
         al = self.parent()._pbw_datum_parent._root_list_from(self.parent()._default_word)
         from sage.misc.latex import latex
-        ret_str = ' '.join("f_{%s}%s"%(latex(al[i]), "^{%s}"%latex(exp) if exp > 1 else "")
+        ret_str = ' '.join("f_{%s}%s" % (latex(al[i]), "^{%s}" % latex(exp) if exp > 1 else "")
                            for i, exp in enumerate(lusztig_datum) if exp)
         if ret_str == '':
             return '1'
@@ -401,7 +403,7 @@ class PBWCrystal(Parent, UniqueRepresentation):
         cartan_type = CartanType(cartan_type)
         if not cartan_type.is_finite():
             raise NotImplementedError("only implemented for finite types")
-        return super(PBWCrystal, cls).__classcall__(cls, cartan_type)
+        return super().__classcall__(cls, cartan_type)
 
     def __init__(self, cartan_type):
         """
@@ -506,4 +508,3 @@ class PBWCrystal(Parent, UniqueRepresentation):
         self._default_word = tuple(word)
 
     Element = PBWCrystalElement
-

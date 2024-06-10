@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.geometry.polyhedron sage.graphs
 r"""
 Morphisms of toric varieties
 
@@ -48,12 +49,11 @@ First, consider the following embedding of `\mathbb{P}^1` into
 
     sage: P2.<x,y,z> = toric_varieties.P2()
     sage: P1.<u,v> = toric_varieties.P1()
-    sage: P1.hom([0,u^2+v^2,u*v], P2)
+    sage: P1.hom([0, u^2 + v^2, u*v], P2)
     Scheme morphism:
       From: 1-d CPR-Fano toric variety covered by 2 affine patches
       To:   2-d CPR-Fano toric variety covered by 3 affine patches
-      Defn: Defined on coordinates by sending [u : v] to
-            [0 : u^2 + v^2 : u*v]
+      Defn: Defined on coordinates by sending [u : v] to [0 : u^2 + v^2 : u*v]
 
 This is a well-defined morphism of algebraic varieties because
 homogeneously rescaled coordinates of a point of `\mathbb{P}^1` map to the same
@@ -78,8 +78,7 @@ difficulty. For example, consider ::
     Scheme morphism:
       From: 1-d CPR-Fano toric variety covered by 2 affine patches
       To:   2-d CPR-Fano toric variety covered by 3 affine patches
-      Defn: Defined on coordinates by sending [u : v] to
-            [0 : u : v]
+      Defn: Defined on coordinates by sending [u : v] to [0 : u : v]
 
 This map is actually the embedding of the
 :meth:`~sage.schemes.toric.variety.ToricVariety_field.orbit_closure`
@@ -93,7 +92,7 @@ z\not=0 \}` of `\mathbb{P}^2`.
 
 Consider instead the following morphism of fans::
 
-    sage: fm = FanMorphism( matrix(ZZ,[[1,0]]), P1.fan(), P2.fan() );  fm
+    sage: fm = FanMorphism(matrix(ZZ, [[1,0]]), P1.fan(), P2.fan());  fm
     Fan morphism defined by the matrix
     [1 0]
     Domain fan: Rational polyhedral fan in 1-d lattice N
@@ -114,8 +113,7 @@ The fan morphism map is equivalent to the following polynomial map::
     Scheme morphism:
       From: 1-d CPR-Fano toric variety covered by 2 affine patches
       To:   2-d CPR-Fano toric variety covered by 3 affine patches
-      Defn: Defined on coordinates by sending [u : v] to
-            [u : v : v]
+      Defn: Defined on coordinates by sending [u : v] to [u : v : v]
 
 Finally, here is an example of a fan morphism that cannot be written
 using homogeneous polynomials. Consider the blowup `O_{\mathbb{P}^1}(2)
@@ -131,7 +129,7 @@ using homogeneous polynomials. Consider the blowup `O_{\mathbb{P}^1}(2)
     sage: blowup.as_polynomial_map()
     Traceback (most recent call last):
     ...
-    TypeError: The fan morphism cannot be written in homogeneous polynomials.
+    TypeError: the fan morphism cannot be written in homogeneous polynomials
 
 If we denote the homogeneous coordinates of `O_{\mathbb{P}^1}(2)` by
 `x`, `t`, `y` corresponding to the rays `(1,2)`, `(1,1)`, and `(1,0)`
@@ -158,7 +156,7 @@ otherwise (however, note that you can always
 that is dominant over the image or its closure).
 
 For example, consider the blow-up restricted to one of the two
-coordinate charts of $O_{\mathbb{P}^1}(2)$ ::
+coordinate charts of `O_{\mathbb{P}^1}(2)` ::
 
 
     sage: O2_P1_chart = ToricVariety(Fan([O2_P1.fan().generating_cones()[0]]))
@@ -174,8 +172,7 @@ coordinate charts of $O_{\mathbb{P}^1}(2)$ ::
     Scheme morphism:
       From: 0-d affine toric variety
       To:   2-d affine toric variety
-      Defn: Defined on coordinates by sending [] to
-            [1 : 1]
+      Defn: Defined on coordinates by sending [] to [1 : 1]
 
 The fibers are labeled by torus orbits in the base, that is, cones of
 the codomain fan. In this case, the fibers over lower-dimensional
@@ -185,12 +182,12 @@ torus orbits are::
     sage: table([('cone', 'dim')] +
     ....:       [(cone.ambient_ray_indices(), single_chart.fiber_dimension(cone))
     ....:        for cone in A2_Z2_cones], header_row=True)
-      cone     dim
-    +--------+-----+
-      ()       0
-      (0,)     0
-      (1,)     -1
-      (0, 1)   1
+        cone     dim
+      ├────────┼─────┤
+        ()       0
+        (0,)     0
+        (1,)     -1
+        (0, 1)   1
 
 Lets look closer at the one-dimensional fiber. Although not the case
 in this example, connected components of fibers over higher-dimensional cones
@@ -205,19 +202,20 @@ base that defines the torus orbit::
     ....:       [(cone.ambient_ray_indices(),
     ....:         single_chart.fan_morphism().primitive_preimage_cones(cone))
     ....:        for cone in A2_Z2_cones], header_row=True)
-      base cone   primitive preimage cones
-    +-----------+---------------------------------------------------------+
-      ()          (0-d cone of Rational polyhedral fan in 2-d lattice N,)
-      (0,)        (1-d cone of Rational polyhedral fan in 2-d lattice N,)
-      (1,)        ()
-      (0, 1)      (1-d cone of Rational polyhedral fan in 2-d lattice N,)
+        base cone   primitive preimage cones
+      ├───────────┼─────────────────────────────────────────────────────────┤
+        ()          (0-d cone of Rational polyhedral fan in 2-d lattice N,)
+        (0,)        (1-d cone of Rational polyhedral fan in 2-d lattice N,)
+        (1,)        ()
+        (0, 1)      (1-d cone of Rational polyhedral fan in 2-d lattice N,)
 
 The fiber over the trivial cone is the generic fiber that we have
 already encountered. The interesting fiber is the one over the
 2-dimensional cone, which represents the exceptional set of the
 blow-up in this single coordinate chart. Lets investigate further::
 
-    sage: exceptional_cones = single_chart.fan_morphism().primitive_preimage_cones(A2_Z2.fan(2)[0])
+    sage: fm = single_chart.fan_morphism()
+    sage: exceptional_cones = fm.primitive_preimage_cones(A2_Z2.fan(2)[0])
     sage: exceptional_set = single_chart.fiber_component(exceptional_cones[0])
     sage: exceptional_set
     1-d affine toric variety
@@ -225,19 +223,18 @@ blow-up in this single coordinate chart. Lets investigate further::
     Scheme morphism:
       From: 1-d affine toric variety
       To:   2-d affine toric variety
-      Defn: Defined on coordinates by sending [z0] to
-            [z0 : 0]
+      Defn: Defined on coordinates by sending [z0] to [z0 : 0]
 
 So we see that the fiber over this point is an affine line. Together
 with another affine line in the other coordinate patch, this covers
-the exceptional $\mathbb{P}^1$ of the blowup $O_{\mathbb{P}^1}(2) \to
-\CC^2/\ZZ_2$.
+the exceptional `\mathbb{P}^1` of the blowup `O_{\mathbb{P}^1}(2) \to
+\CC^2/\ZZ_2`.
 
 Here is an example with higher dimensional varieties involved::
 
     sage: A3 = toric_varieties.A(3)
     sage: P3 = toric_varieties.P(3)
-    sage: m = matrix([(2,0,0), (1,1,0), (3, 1, 0)])
+    sage: m = matrix([(2,0,0), (1,1,0), (3,1,0)])
     sage: phi = A3.hom(m, P3)
     sage: phi.as_polynomial_map()
     Scheme morphism:
@@ -249,7 +246,7 @@ Here is an example with higher dimensional varieties involved::
     Traceback (most recent call last):
     ...
     AttributeError: 'SchemeMorphism_fan_toric_variety' object
-    has no attribute 'fiber_generic'
+    has no attribute 'fiber_generic'...
 
 Let's use factorization mentioned above::
 
@@ -287,7 +284,7 @@ verified by ::
     sage: phi_d.codomain().fan().is_isomorphic(toric_varieties.P2().fan()) # known bug
     True
 
-(Unfortunately it cannot be verified correctly until :trac:`16012` is fixed.)
+(Unfortunately it cannot be verified correctly until :issue:`16012` is fixed.)
 
 We now have access to fiber methods::
 
@@ -348,7 +345,7 @@ fan::
     1 connected components over (1, 2), each with 2 irreducible components.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
 #       Copyright (C) 2010 Andrey Novoseltsev <novoselt@gmail.com>
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -357,9 +354,8 @@ fan::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 # For now, the scheme morphism base class cannot derive from Morphism
 # since this would clash with elliptic curves. So we derive only on
@@ -370,14 +366,15 @@ from sage.categories.morphism import Morphism
 from sage.structure.richcmp import richcmp_not_equal, richcmp
 
 from sage.structure.sequence import Sequence
-from sage.rings.all import ZZ
-from sage.arith.all import gcd
-from sage.misc.all import cached_method
+from sage.rings.integer_ring import ZZ
+from sage.arith.misc import GCD as gcd
+from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import matrix, identity_matrix
 from sage.modules.free_module_element import vector
-from sage.geometry.all import Cone, Fan
+from sage.geometry.cone import Cone
+from sage.geometry.fan import Fan
 
-from sage.schemes.generic.scheme import is_Scheme
+from sage.schemes.generic.scheme import Scheme
 from sage.schemes.generic.morphism import (
     is_SchemeMorphism,
     SchemeMorphism, SchemeMorphism_point, SchemeMorphism_polynomial
@@ -408,9 +405,7 @@ class SchemeMorphism_point_toric_field(SchemeMorphism_point, Morphism):
     - ``check`` -- if ``True`` (default), the input will be checked for
       correctness.
 
-    OUTPUT:
-
-    A :class:`SchemeMorphism_point_toric_field`.
+    OUTPUT: A :class:`SchemeMorphism_point_toric_field`.
 
     TESTS::
 
@@ -430,9 +425,9 @@ class SchemeMorphism_point_toric_field(SchemeMorphism_point, Morphism):
             [1 : 2 : 3 : 4]
         """
         # Convert scheme to its set of points over the base ring
-        if is_Scheme(X):
+        if isinstance(X, Scheme):
             X = X(X.base_ring())
-        super(SchemeMorphism_point_toric_field, self).__init__(X)
+        super().__init__(X)
         if check:
             # Verify that there are the right number of coords
             # Why is it not done in the parent?
@@ -440,17 +435,16 @@ class SchemeMorphism_point_toric_field(SchemeMorphism_point, Morphism):
                 coordinates = list(coordinates)
             if not isinstance(coordinates, (list, tuple)):
                 raise TypeError("coordinates must be a scheme point, list, "
-                                "or tuple. Got %s" % coordinates)
+                                "or tuple; got %s" % coordinates)
             d = X.codomain().ambient_space().ngens()
             if len(coordinates) != d:
-                raise ValueError("there must be %d coordinates! Got only %d: "
+                raise ValueError("there must be %d coordinates; got only %d: "
                                  "%s" % (d, len(coordinates), coordinates))
             # Make sure the coordinates all lie in the appropriate ring
             coordinates = Sequence(coordinates, X.value_ring())
             # Verify that the point satisfies the equations of X.
             X.codomain()._check_satisfies_equations(coordinates)
         self._coords = coordinates
-
 
 
 ############################################################################
@@ -472,16 +466,14 @@ class SchemeMorphism_polynomial_toric_variety(SchemeMorphism_polynomial, Morphis
     Same as for
     :class:`~sage.schemes.toric.morphism.SchemeMorphism_polynomial`.
 
-    OUTPUT:
-
-    A :class:`~sage.schemes.toric.morphism.SchemeMorphism_polynomial_toric_variety`.
+    OUTPUT: A :class:`~sage.schemes.toric.morphism.SchemeMorphism_polynomial_toric_variety`.
 
     TESTS::
 
         sage: P1xP1 = toric_varieties.P1xP1()
         sage: P1xP1.inject_variables()
         Defining s, t, x, y
-        sage: P1 = P1xP1.subscheme(s-t)
+        sage: P1 = P1xP1.subscheme(s - t)
         sage: H = P1xP1.Hom(P1)
         sage: import sage.schemes.toric.morphism as MOR
         sage: MOR.SchemeMorphism_polynomial_toric_variety(H, [s, s, x, y])
@@ -503,7 +495,7 @@ class SchemeMorphism_polynomial_toric_variety(SchemeMorphism_polynomial, Morphis
             sage: P1xP1 = toric_varieties.P1xP1()
             sage: P1xP1.inject_variables()
             Defining s, t, x, y
-            sage: P1 = P1xP1.subscheme(s-t)
+            sage: P1 = P1xP1.subscheme(s - t)
             sage: H = P1xP1.Hom(P1)
             sage: import sage.schemes.toric.morphism as MOR
             sage: MOR.SchemeMorphism_polynomial_toric_variety(H, [s, s, x, y])
@@ -521,16 +513,16 @@ class SchemeMorphism_polynomial_toric_variety(SchemeMorphism_polynomial, Morphis
             # different if the target uses weighted coordinates)
             for p in self.defining_polynomials():
                 if not self.domain().ambient_space().is_homogeneous(p):
-                    raise ValueError("%s is not homogeneous!" % p)
+                    raise ValueError("%s is not homogeneous" % p)
 
     def as_fan_morphism(self):
         """
         Express the morphism as a map defined by a fan morphism.
 
-        OUTPUT:
+        OUTPUT: A :class:`SchemeMorphism_polynomial_toric_variety`.
 
-        A :class:`SchemeMorphism_polynomial_toric_variety`. Raises a
-        ``TypeError`` if the morphism cannot be written in such a way.
+        This raises a :class:`TypeError` if the morphism cannot be written
+        in such a way.
 
         EXAMPLES::
 
@@ -541,10 +533,10 @@ class SchemeMorphism_polynomial_toric_variety(SchemeMorphism_polynomial, Morphis
             Traceback (most recent call last):
             ...
             NotImplementedError: expressing toric morphisms as fan morphisms is
-            not implemented yet!
+            not implemented yet
         """
         raise NotImplementedError("expressing toric morphisms as fan "
-                                  "morphisms is not implemented yet!")
+                                  "morphisms is not implemented yet")
 
 
 ############################################################################
@@ -613,9 +605,7 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
         r"""
         Return the cone corresponding to the torus orbit.
 
-        OUTPUT:
-
-        A cone of the fan of the ambient toric variety.
+        OUTPUT: A cone of the fan of the ambient toric variety.
 
         EXAMPLES::
 
@@ -636,8 +626,8 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
 
         OUTPUT:
 
-        Return a dictionary `{orbit ray generator : preimage ray
-        index}`. Note that the orbit ray generator need not be
+        A dictionary ``{orbit ray generator: preimage ray
+        index}``. Note that the orbit ray generator need not be
         primitive. Also, the preimage ray is not necessarily unique.
 
         EXAMPLES::
@@ -652,7 +642,7 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
         """
         orbit = self.parent().domain()
         codomain_fan = self.parent().codomain().fan()
-        reverse_ray_dict = dict()
+        reverse_ray_dict = {}
         for n1, n2 in self._ray_map.items():
             ray_index = codomain_fan.rays().index(n1)
             if n2.is_zero():
@@ -680,7 +670,7 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
             'Defined by embedding the torus closure associated to the 1-d cone of
              Rational polyhedral fan in 2-d lattice N.'
         """
-        s  = 'Defined by embedding the torus closure associated to the '
+        s = 'Defined by embedding the torus closure associated to the '
         s += str(self._defining_cone)
         s += '.'
         return s
@@ -691,9 +681,10 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
 
         OUTPUT:
 
-        A :class:`SchemeMorphism_polynomial_toric_variety`. Raises a
-        ``TypeError`` if the morphism cannot be written in terms of
-        homogeneous polynomials.
+        A :class:`SchemeMorphism_polynomial_toric_variety`.
+
+        This raises a :class:`TypeError` if the morphism cannot be
+        written in terms of homogeneous polynomials.
 
         The defining polynomials are not necessarily unique. There are
         choices if multiple ambient space ray generators project to
@@ -712,8 +703,7 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
             Scheme morphism:
               From: 1-d toric variety covered by 2 affine patches
               To:   2-d CPR-Fano toric variety covered by 3 affine patches
-              Defn: Defined on coordinates by sending [z0 : z1] to
-                    [0 : z1 : z0]
+              Defn: Defined on coordinates by sending [z0 : z1] to [0 : z1 : z0]
 
         If the toric variety is singular, then some orbit closure
         embeddings cannot be written with homogeneous polynomials::
@@ -723,12 +713,12 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
             sage: P1.embedding_morphism().as_polynomial_map()
             Traceback (most recent call last):
             ...
-            TypeError: The embedding cannot be written with homogeneous polynomials.
+            TypeError: the embedding cannot be written with homogeneous polynomials
         """
         orbit = self.domain()
         codomain_fan = self.codomain().fan()
         R = orbit.coordinate_ring()
-        polys = [ R.one() ] * codomain_fan.nrays()
+        polys = [R.one()] * codomain_fan.nrays()
         for i in self._defining_cone.ambient_ray_indices():
             polys[i] = R.zero()
         ray_index_map = self._reverse_ray_map()
@@ -736,7 +726,7 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
             try:
                 ray_index = ray_index_map[ray]
             except KeyError:
-                raise TypeError('The embedding cannot be written with homogeneous polynomials.')
+                raise TypeError('the embedding cannot be written with homogeneous polynomials')
             polys[ray_index] = R.gen(i)
         return SchemeMorphism_polynomial_toric_variety(self.parent(), polys)
 
@@ -746,7 +736,7 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
 
         INPUT:
 
-        - ``divisor`` -- a torus-invariant QQ-Cartier divisor on the
+        - ``divisor`` -- a torus-invariant `\QQ`-Cartier divisor on the
           codomain of the embedding map.
 
         OUTPUT:
@@ -767,13 +757,13 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
         """
         from sage.schemes.toric.divisor import is_ToricDivisor
         if not (is_ToricDivisor(divisor) and divisor.is_QQ_Cartier()):
-            raise ValueError('The divisor must be torus-invariant and QQ-Cartier.')
+            raise ValueError('the divisor must be torus-invariant and QQ-Cartier')
         m = divisor.m(self._defining_cone)
         values = []
         codomain_rays = self.codomain().fan().rays()
         for ray in self.domain().fan().rays():
             ray = codomain_rays[self._reverse_ray_map()[ray]]
-            value = divisor.function_value(ray) - m*ray
+            value = divisor.function_value(ray) - m * ray
             values.append(value)
         return self.domain().divisor(values)
 
@@ -800,7 +790,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
       fans equal the fans of the domain and codomain in the ``parent``
       Hom-set.
 
-    - ``check`` -- boolean (optional, default:``True``). Whether to
+    - ``check`` -- boolean (default:``True``). Whether to
       check the input for consistency.
 
     .. WARNING::
@@ -813,9 +803,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
         :class:`SchemeMorphism_fan_toric_variety_dominant` for
         additional functionality for fibrations.
 
-    OUTPUT:
-
-    A :class:`~sage.schemes.toric.morphism.SchemeMorphism_fan_toric_variety`.
+    OUTPUT: A :class:`~sage.schemes.toric.morphism.SchemeMorphism_fan_toric_variety`.
 
     EXAMPLES::
 
@@ -835,13 +823,13 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
         sage: P1xP1 = toric_varieties.P1xP1()
         sage: P1 = toric_varieties.P1()
         sage: hom_set = P1xP1.Hom(P1)
-        sage: fm = FanMorphism( matrix(ZZ,[[1],[0]]), P1xP1.fan(), P1.fan() )
+        sage: fm = FanMorphism(matrix(ZZ, [[1],[0]]), P1xP1.fan(), P1.fan())
         sage: hom_set(fm)
         Scheme morphism:
           From: 2-d CPR-Fano toric variety covered by 4 affine patches
           To:   1-d CPR-Fano toric variety covered by 2 affine patches
           Defn: Defined by sending Rational polyhedral fan in 2-d lattice N
-               to Rational polyhedral fan in 1-d lattice N.
+                to Rational polyhedral fan in 1-d lattice N.
 
         sage: P1xP1.hom(fm, P1)
         Scheme morphism:
@@ -860,7 +848,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
             sage: P1xP1 = toric_varieties.P1xP1()
             sage: P1 = toric_varieties.P1()
             sage: hom_set = P1xP1.Hom(P1)
-            sage: fan_morphism = FanMorphism( matrix(ZZ,[[1],[0]]), P1xP1.fan(), P1.fan() )
+            sage: fan_morphism = FanMorphism(matrix(ZZ, [[1],[0]]), P1xP1.fan(), P1.fan())
             sage: from sage.schemes.toric.morphism import SchemeMorphism_fan_toric_variety
             sage: SchemeMorphism_fan_toric_variety(hom_set, fan_morphism)
             Scheme morphism:
@@ -870,10 +858,10 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
                     to Rational polyhedral fan in 1-d lattice N.
         """
         SchemeMorphism.__init__(self, parent)
-        if check and self.domain().fan()!=fan_morphism.domain_fan():
-            raise ValueError('The fan morphism domain must be the fan of the domain.')
-        if check and self.codomain().fan()!=fan_morphism.codomain_fan():
-            raise ValueError('The fan morphism codomain must be the fan of the codomain.')
+        if check and self.domain().fan() != fan_morphism.domain_fan():
+            raise ValueError('the fan morphism domain must be the fan of the domain')
+        if check and self.codomain().fan() != fan_morphism.codomain_fan():
+            raise ValueError('the fan morphism codomain must be the fan of the codomain')
         self._fan_morphism = fan_morphism
 
     def _richcmp_(self, right, op):
@@ -884,9 +872,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
 
         - ``right`` -- another toric morphism
 
-        OUTPUT:
-
-        - boolean
+        OUTPUT: A boolean.
 
         Comparison is done first by domain, then by codomain, then by
         fan morphism.
@@ -927,9 +913,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
 
         - ``right`` -- a toric morphism defined by a fan morphism.
 
-        OUTPUT:
-
-        - a toric morphism.
+        OUTPUT: A toric morphism.
 
         EXAMPLES::
 
@@ -966,7 +950,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
             sage: f._repr_defn()
             'Defined by sending Rational polyhedral fan in 2-d lattice N to Rational polyhedral fan in 1-d lattice N.'
         """
-        s  = 'Defined by sending '
+        s = 'Defined by sending '
         s += str(self.domain().fan())
         s += ' to '
         s += str(self.codomain().fan())
@@ -1036,8 +1020,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
             Scheme morphism:
               From: 2-d affine toric variety
               To:   2-d affine toric variety
-              Defn: Defined on coordinates by sending [x : y] to
-                    [x^2 : y]
+              Defn: Defined on coordinates by sending [x : y] to [x^2 : y]
 
         Blowup chart (birational)::
 
@@ -1045,8 +1028,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
             Scheme morphism:
               From: 2-d affine toric variety
               To:   2-d toric variety covered by 3 affine patches
-              Defn: Defined on coordinates by sending [z0 : z1] to
-                    [1 : z1 : z0*z1]
+              Defn: Defined on coordinates by sending [z0 : z1] to [1 : z1 : z0*z1]
 
         Coordinate plane inclusion (injective)::
 
@@ -1054,11 +1036,10 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
             Scheme morphism:
               From: 2-d toric variety covered by 3 affine patches
               To:   3-d CPR-Fano toric variety covered by 4 affine patches
-              Defn: Defined on coordinates by sending [z0 : z1 : z2] to
-                    [z2 : z1 : z0 : z0]
+              Defn: Defined on coordinates by sending [z0 : z1 : z2] to [z2 : z1 : z0 : z0]
         """
         phi_i, phi_b, phi_s = self.fan_morphism().factor()
-        from sage.schemes.toric.all import ToricVariety
+        from sage.schemes.toric.variety import ToricVariety
         X = self.domain()
         X_s = ToricVariety(phi_s.codomain_fan())
         X_i = ToricVariety(phi_i.domain_fan())
@@ -1069,9 +1050,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
         """
         Return the defining fan morphism.
 
-        OUTPUT:
-
-        A :class:`~sage.geometry.fan_morphism.FanMorphism`.
+        OUTPUT: A :class:`~sage.geometry.fan_morphism.FanMorphism`.
 
         EXAMPLES::
 
@@ -1091,11 +1070,10 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
         """
         Express the morphism via homogeneous polynomials.
 
-        OUTPUT:
+        OUTPUT: A :class:`SchemeMorphism_polynomial_toric_variety`.
 
-        A :class:`SchemeMorphism_polynomial_toric_variety`. Raises a
-        ``TypeError`` if the morphism cannot be written in terms of
-        homogeneous polynomials.
+        This raises a :class:`TypeError` if the morphism cannot be written
+        in terms of homogeneous polynomials.
 
         EXAMPLES::
 
@@ -1103,8 +1081,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
             sage: square = A1.hom(matrix([[2]]), A1)
             sage: square.as_polynomial_map()
             Scheme endomorphism of 1-d affine toric variety
-              Defn: Defined on coordinates by sending [z] to
-                    [z^2]
+              Defn: Defined on coordinates by sending [z] to [z^2]
 
             sage: P1 = toric_varieties.P1()
             sage: patch = A1.hom(matrix([[1]]), P1)
@@ -1112,8 +1089,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
             Scheme morphism:
               From: 1-d affine toric variety
               To:   1-d CPR-Fano toric variety covered by 2 affine patches
-              Defn: Defined on coordinates by sending [z] to
-                    [z : 1]
+              Defn: Defined on coordinates by sending [z] to [z : 1]
         """
         R = self.domain().coordinate_ring()
         phi = self.fan_morphism()
@@ -1126,12 +1102,12 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
                 try:
                     d = ZZ(d)
                 except TypeError:
-                    raise TypeError('The fan morphism cannot be written in '
-                                    'homogeneous polynomials.')
+                    raise TypeError('the fan morphism cannot be written in '
+                                    'homogeneous polynomials')
                 polys[i] *= x**d
         if phi.domain_fan().virtual_rays():
-            raise NotImplementedError("polynomial representations for fans "
-                                    "with virtual rays are not implemented yet")
+            raise NotImplementedError("polynomial representations for fans with"
+                                      " virtual rays are not implemented yet")
         return SchemeMorphism_polynomial_toric_variety(self.parent(), polys)
 
     def is_bundle(self):
@@ -1302,7 +1278,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
 
         INPUT:
 
-        - ``divisor`` -- a torus-invariant QQ-Cartier divisor on the
+        - ``divisor`` -- a torus-invariant `\QQ`-Cartier divisor on the
           codomain of ``self``.
 
         OUTPUT:
@@ -1313,7 +1289,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
 
             sage: A2_Z2 = toric_varieties.A2_Z2()
             sage: A2 = toric_varieties.A2()
-            sage: f = A2.hom( matrix([[1,0],[1,2]]), A2_Z2)
+            sage: f = A2.hom(matrix([[1,0], [1,2]]), A2_Z2)
             sage: f.pullback_divisor(A2_Z2.divisor(0))
             V(x)
 
@@ -1326,14 +1302,13 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
         """
         from sage.schemes.toric.divisor import is_ToricDivisor
         if not (is_ToricDivisor(divisor) and divisor.is_QQ_Cartier()):
-            raise ValueError('The divisor must be torus-invariant and QQ-Cartier.')
+            raise ValueError('the divisor must be torus-invariant and QQ-Cartier')
         fm = self.fan_morphism()
         values = []
         for ray in self.domain().fan().rays():
             value = divisor.function_value(fm(ray))
             values.append(value)
         return self.domain().divisor(values)
-
 
 
 ############################################################################
@@ -1360,9 +1335,7 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
     morphism :meth:`must be dominant
     <sage.geometry.fan_morphism.FanMorphism.is_dominant>`.
 
-    OUTPUT:
-
-    A :class:`~sage.schemes.toric.morphism.SchemeMorphism_fan_toric_variety_dominant`.
+    OUTPUT: A :class:`~sage.schemes.toric.morphism.SchemeMorphism_fan_toric_variety_dominant`.
 
     EXAMPLES::
 
@@ -1422,11 +1395,10 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
             Scheme morphism:
               From: 1-d toric variety covered by 2 affine patches
               To:   2-d CPR-Fano toric variety covered by 4 affine patches
-              Defn: Defined on coordinates by sending [z0 : z1] to
-                    [1 : 1 : z0 : z1]
+              Defn: Defined on coordinates by sending [z0 : z1] to [1 : 1 : z0 : z1]
 
             sage: A1 = toric_varieties.A1()
-            sage: fan = Fan([(0,1,2)], [(1,1,0),(1,0,1),(1,-1,-1)])
+            sage: fan = Fan([(0,1,2)], [(1,1,0), (1,0,1), (1,-1,-1)])
             sage: fan = fan.subdivide(new_rays=[(1,0,0)])
             sage: f = ToricVariety(fan).hom(matrix([[1],[0],[0]]), A1)
             sage: f.fiber_generic()
@@ -1481,10 +1453,11 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
             ....:      (0,1,0,0),(0,2,-1,-1),(1,0,0,0),(2,0,-1,-1)])
             sage: coarse_fan = FaceFan(polytope)
             sage: P2 = toric_varieties.P2()
-            sage: proj24 = matrix([[0,0],[1,0],[0,0],[0,1]])
+            sage: proj24 = matrix([[0,0], [1,0], [0,0], [0,1]])
             sage: fm = FanMorphism(proj24, coarse_fan, P2.fan(), subdivide=True)
             sage: fibration = ToricVariety(fm.domain_fan()).hom(fm, P2)
-            sage: primitive_cones = fibration.fan_morphism().primitive_preimage_cones(P2.fan(1)[0])
+            sage: ffm = fibration.fan_morphism()
+            sage: primitive_cones = ffm.primitive_preimage_cones(P2.fan(1)[0])
             sage: primitive_cone = primitive_cones[0]
             sage: fibration.fiber_component(primitive_cone)
             2-d toric variety covered by 4 affine patches
@@ -1506,7 +1479,7 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
         embedding = SchemeMorphism_fan_fiber_component_toric_variety(self, domain_cone)
         if multiplicity:
             return embedding.domain(), \
-               self.fan_morphism().index(embedding.base_cone())
+                self.fan_morphism().index(embedding.base_cone())
         else:
             return embedding.domain()
 
@@ -1564,12 +1537,11 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
         dim = []
         fm = self.fan_morphism()
         base_dim = codomain_cone.dim()
-        for c in fm.primitive_preimage_cones(codomain_cone):
-            dim.append(base_dim - c.dim())
+        dim.extend(base_dim - c.dim()
+                   for c in fm.primitive_preimage_cones(codomain_cone))
         if dim:
             return max(dim) + self.domain().dimension() - self.codomain().dimension()
-        else:
-            return ZZ(-1)
+        return ZZ(-1)
 
     def fiber_graph(self, codomain_cone):
         r"""
@@ -1600,11 +1572,12 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
             sage: coarse_fan = FaceFan(polytope, lattice=ToricLattice(4))
 
             sage: P2 = toric_varieties.P2()
-            sage: proj34 = block_matrix(2,1,[zero_matrix(2,2), identity_matrix(2)])
+            sage: proj34 = block_matrix(2, 1, [zero_matrix(2,2),
+            ....:                              identity_matrix(2)])
             sage: fm = FanMorphism(proj34, coarse_fan, P2.fan(), subdivide=True)
             sage: fibration = ToricVariety(fm.domain_fan()).hom(fm, P2)
 
-            sage: fibration.fiber_graph( P2.fan(0)[0] )
+            sage: fibration.fiber_graph(P2.fan(0)[0])
             Graph on 1 vertex
             sage: for c1 in P2.fan(1):
             ....:     fibration.fiber_graph(c1)
@@ -1637,7 +1610,7 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
             except ValueError:
                 return False
 
-        m = matrix(ZZ, n, n, lambda i,j:is_union_in_fan(self,prim[i], prim[j]))
+        m = matrix(ZZ, n, n, lambda i, j: is_union_in_fan(self, prim[i], prim[j]))
 
         for i in range(n):
             m[i, i] = 0
@@ -1677,7 +1650,8 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
         sage: proj24 = matrix([[0,0],[1,0],[0,0],[0,1]])
         sage: fm = FanMorphism(proj24, coarse_fan, P2.fan(), subdivide=True)
         sage: fibration = ToricVariety(fm.domain_fan()).hom(fm, P2)
-        sage: primitive_cones = fibration.fan_morphism().primitive_preimage_cones(P2.fan(1)[0])
+        sage: ffm = fibration.fan_morphism()
+        sage: primitive_cones = ffm.primitive_preimage_cones(P2.fan(1)[0])
         sage: primitive_cone = primitive_cones[0]
         sage: fiber_component = fibration.fiber_component(primitive_cone)
         sage: fiber_component
@@ -1693,7 +1667,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
           From: 2-d toric variety covered by 4 affine patches
           To:   4-d toric variety covered by 23 affine patches
           Defn: Defined on coordinates by sending [z0 : z1 : z2 : z3] to
-                [1 : 1 : 1 : 1 : z3 : 0 : 1 : z2 : 1 : 1 : 1 : z1 : z0 : 1 : 1]
+                [1 : 1 : 1 : 1 : z2 : 0 : 1 : z3 : 1 : 1 : 1 : z1 : z0 : 1 : 1]
         sage: type(fiber_component.embedding_morphism())
         <class 'sage.schemes.toric.morphism.SchemeMorphism_fan_fiber_component_toric_variety'>
     """
@@ -1709,7 +1683,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
             ....:      (0,1,0,0),(0,2,-1,-1),(1,0,0,0),(2,0,-1,-1)])
             sage: coarse_fan = FaceFan(polytope, lattice=ToricLattice(4))
             sage: P2 = toric_varieties.P2()
-            sage: proj24 = matrix([[0,0],[1,0],[0,0],[0,1]])
+            sage: proj24 = matrix([[0,0], [1,0], [0,0], [0,1]])
             sage: fm = FanMorphism(proj24, coarse_fan, P2.fan(), subdivide=True)
             sage: fibration = ToricVariety(fm.domain_fan()).hom(fm, P2)
             sage: primitive_cone = Cone([(-1, 2, -1, 0)])
@@ -1754,9 +1728,10 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
 
         OUTPUT:
 
-        A :class:`SchemeMorphism_polynomial_toric_variety`. Raises a
-        ``ValueError`` if the morphism cannot be written in terms of
-        homogeneous polynomials.
+        A :class:`SchemeMorphism_polynomial_toric_variety`.
+
+        This raises a :class:`ValueError` if the morphism cannot be
+        written in terms of homogeneous polynomials.
 
         EXAMPLES::
 
@@ -1765,7 +1740,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
             ....:      (0,1,0,0),(0,2,-1,-1),(1,0,0,0),(2,0,-1,-1)])
             sage: coarse_fan = FaceFan(polytope, lattice=ToricLattice(4))
             sage: P2 = toric_varieties.P2()
-            sage: proj24 = matrix([[0,0],[1,0],[0,0],[0,1]])
+            sage: proj24 = matrix([[0,0], [1,0], [0,0], [0,1]])
             sage: fm = FanMorphism(proj24, coarse_fan, P2.fan(), subdivide=True)
             sage: fibration = ToricVariety(fm.domain_fan()).hom(fm, P2)
 
@@ -1776,14 +1751,14 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
               From: 2-d toric variety covered by 4 affine patches
               To:   4-d toric variety covered by 23 affine patches
               Defn: Defined on coordinates by sending [z0 : z1 : z2 : z3] to
-                    [1 : 1 : 1 : 1 : z3 : 0 : 1 : z2 : 1 : 1 : 1 : z1 : z0 : 1 : 1]
+                    [1 : 1 : 1 : 1 : z2 : 0 : 1 : z3 : 1 : 1 : 1 : z1 : z0 : 1 : 1]
 
             sage: primitive_cone = Cone([(-1, 2, -1, 0)])
             sage: f = fibration.fiber_component(primitive_cone).embedding_morphism()
             sage: f.as_polynomial_map()
             Traceback (most recent call last):
             ...
-            ValueError: The morphism cannot be written using homogeneous polynomials.
+            ValueError: the morphism cannot be written using homogeneous polynomials
         """
         fc = self.domain()
         toric_variety = self.codomain()
@@ -1795,7 +1770,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
             try:
                 ray_index = self._ray_index_map[ray]
             except KeyError:
-                raise ValueError('The morphism cannot be written using homogeneous polynomials.')
+                raise ValueError('the morphism cannot be written using homogeneous polynomials')
             polys[ray_index] = x
         return SchemeMorphism_polynomial_toric_variety(self.parent(), polys)
 
@@ -1844,7 +1819,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
         ker = fm.kernel().basis()
         m = fm.matrix() * base_cone.lattice().basis_matrix()
         base_cone_preimg = [m.solve_left(r) for r in base_cone.rays()]
-        L = fm.domain_fan().lattice().span(ker+base_cone_preimg).saturation()
+        L = fm.domain_fan().lattice().span(ker + base_cone_preimg).saturation()
 
         cone_L = Cone([L.coordinates(r) for r in defining_cone.rays()])
         L_quotient = cone_L.sublattice_quotient()
@@ -1857,11 +1832,11 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
         star_rays = set()
         for cone in fm.relative_star_generators(defining_cone):
             star_rays.update(cone.rays())
-            projected_rays = [ projection(r) for r in cone.rays() ]
+            projected_rays = [projection(r) for r in cone.rays()]
             cones.append(Cone(projected_rays))
         fiber_fan = Fan(cones)
 
-        ray_index_map = dict()
+        ray_index_map = {}
         for ray in star_rays:
             ray_index = fm.domain_fan().rays().index(ray)
             projected_ray = fiber_fan.lattice()(projection(ray))
@@ -1942,7 +1917,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
             ....:      (0,1,0,0),(0,2,-1,-1),(1,0,0,0),(2,0,-1,-1)])
             sage: coarse_fan = FaceFan(polytope, lattice=ToricLattice(4))
             sage: P2 = toric_varieties.P2()
-            sage: proj24 = matrix([[0,0],[1,0],[0,0],[0,1]])
+            sage: proj24 = matrix([[0,0], [1,0], [0,0], [0,1]])
             sage: fm = FanMorphism(proj24, coarse_fan, P2.fan(), subdivide=True)
             sage: fibration = ToricVariety(fm.domain_fan()).hom(fm, P2)
             sage: primitive_cone = Cone([(-1, 2, -1, 0)])
@@ -1950,11 +1925,11 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
             sage: f = fc.embedding_morphism()
             sage: for r in fc.fan().rays():
             ....:     print("{} {}".format(r, f._image_ray_multiplicity(r)))
-            N(-1, 2) (11, 1)
+            N(-1, -1) (9, 2)
             N(0, 1) (5, 1)
-            N(1, -3) (9, 2)
+            N(1, 0) (11, 1)
             sage: f._ray_index_map
-            {N(-3, 4): 10, N(-1, 2): 11, N(0, 1): 5, N(1, 0): 4, N(2, -6): 9}
+            {N(-2, -2): 9, N(-1, 2): 4, N(0, 1): 5, N(1, 0): 11, N(3, -2): 10}
         """
         try:
             image_ray_index = self._ray_index_map[fiber_ray]
@@ -1967,7 +1942,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
             d = gcd(ray)
             if d * fiber_ray != ray:
                 continue
-            if multiplicity is not None and d>multiplicity:
+            if multiplicity is not None and d > multiplicity:
                 continue
             multiplicity = d
             image_ray_index = index
@@ -1979,7 +1954,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
 
         INPUT:
 
-        - ``divisor`` -- a torus-invariant QQ-Cartier divisor on the
+        - ``divisor`` -- a torus-invariant `\QQ`-Cartier divisor on the
           codomain of the embedding map.
 
         OUTPUT:
@@ -1998,23 +1973,21 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
             V(z0) + V(z1) + 3*V(z2) + 4*V(z3)
             sage: fc = f.fiber_component(Cone([(1,1,0)]))
             sage: fc.embedding_morphism().pullback_divisor(D)
-            2*V(z0) + 3*V(z1)
+            4*V(z0) + V(z1) + 4*V(z2)
             sage: fc = f.fiber_component(Cone([(1,0,0)]))
             sage: fc.embedding_morphism().pullback_divisor(D)
             -V(z0) - 3*V(z1) - 3*V(z2)
         """
         from sage.schemes.toric.divisor import is_ToricDivisor
         if not (is_ToricDivisor(divisor) and divisor.is_QQ_Cartier()):
-            raise ValueError('The divisor must be torus-invariant and QQ-Cartier.')
+            raise ValueError('the divisor must be torus-invariant and QQ-Cartier')
         m = divisor.m(self.defining_cone())
         values = []
         codomain_rays = self.codomain().fan().rays()
         for ray in self.domain().fan().rays():
             image_ray_index, multiplicity = self._image_ray_multiplicity(ray)
             image_ray = codomain_rays[image_ray_index]
-            value = divisor.function_value(image_ray) - m*image_ray
+            value = divisor.function_value(image_ray) - m * image_ray
             value /= multiplicity
             values.append(value)
         return self.domain().divisor(values)
-
-

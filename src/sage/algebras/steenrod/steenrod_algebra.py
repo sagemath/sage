@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 The Steenrod algebra
 
@@ -324,7 +324,7 @@ Here are some simple examples::
     sage: (Sq(0,0,1) + Sq(5,3)).degree()
     Traceback (most recent call last):
     ...
-    ValueError: Element is not homogeneous.
+    ValueError: element is not homogeneous
     sage: Sq(7,2,1).excess()
     10
     sage: z.excess()
@@ -402,13 +402,13 @@ corresponding value representing the coefficient of that term::
     (1, (2, 1))
     sage: c.monomial_coefficients() == {(2, 1): 1, (5,): 1}
     True
-    sage: sorted(c.monomials(), key=lambda x: x.support())
+    sage: sorted(c.monomials(), key=lambda x: tuple(x.support()))
     [Sq(2,1), Sq(5)]
     sage: sorted(c.support())
     [(2, 1), (5,)]
     sage: Adem = SteenrodAlgebra(basis='adem')
     sage: elt = Adem.Sq(10) + Adem.Sq(9) * Adem.Sq(1)
-    sage: sorted(elt.monomials(), key=lambda x: x.support())
+    sage: sorted(elt.monomials(), key=lambda x: tuple(x.support()))
     [Sq^9 Sq^1, Sq^10]
 
     sage: A7 = SteenrodAlgebra(p=7)
@@ -451,12 +451,13 @@ examples.
 #  Copyright (C) 2008-2010 John H. Palmieri <palmieri@math.washington.edu>
 #  Distributed under the terms of the GNU General Public License (GPL)
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
-from sage.categories.all import ModulesWithBasis, tensor, Hom
+from sage.categories.modules_with_basis import ModulesWithBasis
+from sage.categories.tensor import tensor
+from sage.categories.homset import Hom
 
 ######################################################
 # the main class
@@ -501,31 +502,34 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         truncation_type = kwds.get('truncation_type', 'auto')
         generic = kwds.get('generic', 'auto')
         if generic == 'auto':
-            std_generic = False if p == 2 else True
+            std_generic = p != 2
         else:
             std_generic = generic
         if p != 2:
             std_generic = True
-        if not(std_generic is True or std_generic is False):
+        if not (std_generic is True or std_generic is False):
             raise ValueError("option 'generic' is not a boolean")
 
         std_basis = get_basis_name(basis, p, generic=std_generic)
-        std_profile, std_type = normalize_profile(profile, precision=precision, truncation_type=truncation_type, p=p, generic=std_generic)
-        return super(SteenrodAlgebra_generic, self).__classcall__(self, p=p, basis=std_basis, profile=std_profile,
-                                                                  truncation_type=std_type, generic=std_generic)
+        std_profile, std_type = normalize_profile(profile, precision=precision,
+                                                  truncation_type=truncation_type, p=p, generic=std_generic)
+        return super().__classcall__(self, p=p, basis=std_basis, profile=std_profile,
+                                     truncation_type=std_type, generic=std_generic)
 
     def __init__(self, p=2, basis='milnor', **kwds):
         r"""
         INPUT:
 
-        - ``p`` - positive prime integer (optional, default 2)
-        - ``basis`` - string (optional, default = 'milnor')
-        - ``profile`` - profile function (optional, default ``None``)
-        - ``truncation_type`` - (optional, default 'auto')
-        - ``precision`` - (optional, default ``None``)
-        - ``generic`` - (optional, default 'auto')
+        - ``p`` -- positive prime integer (default: 2)
+        - ``basis`` -- string (default: ``'milnor'``)
+        - ``profile`` -- profile function (default: ``None``)
+        - ``truncation_type`` -- (default: ``'auto'``)
+        - ``precision`` -- (default: ``None``)
+        - ``generic`` -- (default: ``'auto'``)
 
-        OUTPUT: mod `p` Steenrod algebra with basis, or a sub-Hopf
+        OUTPUT:
+
+        mod `p` Steenrod algebra with basis, or a sub-Hopf
         algebra of the mod `p` Steenrod algebra defined by the given
         profile function.
 
@@ -542,31 +546,29 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: SteenrodAlgebra(2, 'adem').Sq(0,1)
             Sq^2 Sq^1 + Sq^3
 
-        TESTS:
-
-        ::
+        TESTS::
 
             sage: TestSuite(SteenrodAlgebra()).run()
             sage: TestSuite(SteenrodAlgebra(profile=[4,3,2,2,1])).run()
             sage: TestSuite(SteenrodAlgebra(basis='adem')).run()
             sage: TestSuite(SteenrodAlgebra(basis='wall')).run()
-            sage: TestSuite(SteenrodAlgebra(basis='arnonc')).run() # long time
-            sage: TestSuite(SteenrodAlgebra(basis='woody')).run() # long time
+            sage: TestSuite(SteenrodAlgebra(basis='arnonc')).run()  # long time
+            sage: TestSuite(SteenrodAlgebra(basis='woody')).run()   # long time
             sage: A3 = SteenrodAlgebra(3)
             sage: A3.category()
-            Category of supercocommutative super hopf algebras
+            Category of supercocommutative super Hopf algebras
              with basis over Finite Field of size 3
             sage: TestSuite(A3).run()  # long time
             sage: TestSuite(SteenrodAlgebra(basis='adem', p=3)).run()
             sage: TestSuite(SteenrodAlgebra(basis='pst_llex', p=7)).run()  # long time
             sage: TestSuite(SteenrodAlgebra(basis='comm_deg', p=5)).run()  # long time
-            sage: TestSuite(SteenrodAlgebra(p=2, generic=True)).run()  # long time
+            sage: TestSuite(SteenrodAlgebra(p=2, generic=True)).run()      # long time
 
         Two Steenrod algebras are equal iff their associated primes,
         bases, and profile functions (if present) are equal.  Because
         this class inherits from :class:`UniqueRepresentation`, this
         means that they are equal if and only they are identical: ``A
-        == B`` is True if and only if ``A is B`` is True::
+        == B`` is True if and only if ``A is B`` is ``True``::
 
             sage: A = SteenrodAlgebra(2)
             sage: B = SteenrodAlgebra(2, 'adem')
@@ -584,7 +586,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: A1 == SteenrodAlgebra(2, profile=[2,1], basis='pst')
             False
         """
-        from sage.arith.all import is_prime
+        from sage.arith.misc import is_prime
         from sage.categories.super_hopf_algebras_with_basis import SuperHopfAlgebrasWithBasis
         from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
         from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -592,24 +594,24 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         from sage.sets.set_from_iterator import EnumeratedSetFromIterator
         from functools import partial
         from .steenrod_algebra_bases import steenrod_algebra_basis
-        from sage.rings.all import GF
+        from sage.rings.finite_rings.finite_field_constructor import GF
         profile = kwds.get('profile', None)
         truncation_type = kwds.get('truncation_type', 'auto')
         self._generic = kwds.get('generic')
         assert (self._generic is True or (p == 2 and self._generic is False))
 
         if not is_prime(p):
-            raise ValueError("%s is not prime." % p)
+            raise ValueError("%s is not prime" % p)
         self._prime = p
         base_ring = GF(p)
         self._profile = profile
         self._truncation_type = truncation_type
-        if ((not self._generic and ((profile and profile[0] < Infinity)))
+        if ((not self._generic and profile and profile[0] < Infinity)
             or (self._generic and profile != ((), ()) and profile[0]
                 and profile[0][0] < Infinity)
                 or (truncation_type < Infinity)):
             if basis != 'milnor' and basis.find('pst') == -1:
-                raise NotImplementedError("For sub-Hopf algebras of the Steenrod algebra, only the Milnor basis and the pst bases are implemented.")
+                raise NotImplementedError("for sub-Hopf algebras of the Steenrod algebra, only the Milnor basis and the pst bases are implemented")
         self._basis_name = basis
         basis_category = FiniteEnumeratedSets() if self.is_finite() else InfiniteEnumeratedSets()
         basis_set = EnumeratedSetFromIterator(self._basis_key_iterator,
@@ -632,6 +634,11 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                                          element_class=self.Element,
                                          category=cat,
                                          scalar_mult=' ')
+
+        # For the graded modules
+        from sage.modules.fp_graded.steenrod.module import SteenrodFPModule, SteenrodFreeModule
+        self._fp_graded_module_class = SteenrodFPModule
+        self._free_graded_module_class = SteenrodFreeModule
 
     def _basis_key_iterator(self):
         """
@@ -719,7 +726,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: SteenrodAlgebra(generic=True, profile=[[3,2,1], []])._has_nontrivial_profile()
             True
 
-        Check that a bug in :trac:`11832` has been fixed::
+        Check that a bug in :issue:`11832` has been fixed::
 
             sage: P3 = SteenrodAlgebra(p=3, profile=(lambda n: Infinity, lambda n: 1))
             sage: P3._has_nontrivial_profile()
@@ -746,8 +753,8 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             mod 3 Steenrod algebra, milnor basis
             sage: SteenrodAlgebra(2, basis='adem')
             mod 2 Steenrod algebra, serre-cartan basis
-            sage: B = SteenrodAlgebra(2003)
-            sage: B._repr_()
+            sage: B = SteenrodAlgebra(2003)                                             # needs sage.rings.finite_rings
+            sage: B._repr_()                                                            # needs sage.rings.finite_rings
             'mod 2003 Steenrod algebra, milnor basis'
             sage: SteenrodAlgebra(generic=True, basis='adem')
             generic mod 2 Steenrod algebra, serre-cartan basis
@@ -811,7 +818,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``t`` - tuple, representing basis element in the current basis.
+        - ``t`` -- tuple, representing basis element in the current basis.
 
         OUTPUT: string
 
@@ -902,7 +909,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``t`` - tuple, representing basis element in the current basis.
+        - ``t`` -- tuple, representing basis element in the current basis.
 
         OUTPUT: string
 
@@ -950,8 +957,8 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - `i` - integer
-        - ``component`` - either 0 or 1, optional (default 0)
+        - `i` -- integer
+        - ``component`` -- either 0 or 1, optional (default 0)
 
         OUTPUT: integer or `\infty`
 
@@ -1031,10 +1038,11 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - `n` - integer
+        - `n` -- integer
 
-        OUTPUT: a vector space spanned by the basis for this algebra
-        in dimension `n`
+        OUTPUT:
+
+        a vector space spanned by the basis for this algebra in dimension `n`
 
         EXAMPLES::
 
@@ -1072,7 +1080,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: a.antipode() # not defined
             Traceback (most recent call last):
             ...
-            AttributeError: 'CombinatorialFreeModule_with_category.element_class' object has no attribute 'antipode'
+            AttributeError: 'CombinatorialFreeModule_with_category.element_class' object has no attribute 'antipode'...
             sage: A(a).antipode() # convert to elt of A, then compute antipode
             Sq(2,1) + Sq(5)
 
@@ -1089,7 +1097,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: max([H[n].dimension() - G[n].dimension() for n in range(100)])
             0
         """
-        from sage.rings.all import GF
+        from sage.rings.finite_rings.finite_field_constructor import GF
         basis = self._basis_fcn(n)
         M = CombinatorialFreeModule(GF(self.prime()), basis,
                                     element_class=self.Element,
@@ -1125,7 +1133,9 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         - ``t1``, ``t2`` -- tuples, the indices of two basis elements of self
 
-        OUTPUT: the product of the two corresponding basis elements,
+        OUTPUT:
+
+        the product of the two corresponding basis elements,
         as an element of self
 
         ALGORITHM: If the two elements are represented in the Milnor
@@ -1205,12 +1215,12 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 if t1[-1] + t2[0] == 2:
                     return self.zero()
                 mono = t1[:-1] + (t1[-1] + t2[0],) + t2[1:]
-                d = make_mono_admissible(mono, p,generic=self._generic)
+                d = make_mono_admissible(mono, p, generic=self._generic)
             else:  # p=2
                 mono = t1 + t2
                 while len(mono) > 1 and mono[-1] == 0:
                     mono = mono[:-1]
-                d = make_mono_admissible(mono,generic=self._generic)
+                d = make_mono_admissible(mono, generic=self._generic)
             return self._from_dict(d, coerce=True)
         else:
             x = self({t1: 1})
@@ -1248,7 +1258,9 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         Which of these methods is used is controlled by whether
         ``algorithm`` is 'milnor' or 'serre-cartan'.
 
-        OUTPUT: the coproduct of the corresponding basis element,
+        OUTPUT:
+
+        the coproduct of the corresponding basis element,
         as an element of ``self`` tensor ``self``.
 
         EXAMPLES::
@@ -1294,7 +1306,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             if basis == 'milnor':
                 if not self._generic:
                     left = coprod_list(t)
-                    right = [[x-y for (x,y) in zip(t, m)] for m in left]
+                    right = [[x - y for x, y in zip(t, m)] for m in left]
                     old = list(left)
                     left = []
                     # trim trailing zeros:
@@ -1308,14 +1320,14 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                         while a and a[-1] == 0:
                             a = a[:-1]
                         right.append(tuple(a))
-                    tens = dict().fromkeys(zip(left, right), 1)
+                    tens = dict.fromkeys(zip(left, right), 1)
                     return self.tensor_square()._from_dict(tens, coerce=True)
                 else:  # p odd
                     from sage.combinat.permutation import Permutation
                     from .steenrod_algebra_misc import convert_perm
                     from sage.sets.set import Set
                     left_p = coprod_list(t[1])
-                    right_p = [[x-y for (x,y) in zip(t[1], m)] for m in left_p]
+                    right_p = [[x - y for x, y in zip(t[1], m)] for m in left_p]
                     old = list(left_p)
                     left_p = []
                     # trim trailing zeros:
@@ -1370,9 +1382,10 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             A = SteenrodAlgebra(p=p, basis=algorithm, generic=self._generic)
             x = A(self._change_basis_on_basis(t, algorithm)).coproduct(algorithm=algorithm)
             result = []
-            for (a,b), coeff in x:
+            for (a, b), coeff in x:
                 result.append((tensor((A._change_basis_on_basis(a, basis),
-                                       A._change_basis_on_basis(b, basis))),coeff))
+                                       A._change_basis_on_basis(b, basis))),
+                               coeff))
             return self.tensor_square().linear_combination(result)
 
     def coproduct(self, x, algorithm='milnor'):
@@ -1381,14 +1394,14 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``x`` -- element of self
+        - ``x`` -- element of ``self``
 
-        - ``algorithm`` -- ``None`` or a string, either 'milnor' or
-          'serre-cartan' (or anything which will be converted to one
+        - ``algorithm`` -- ``None`` or a string, either ``'milnor'`` or
+          ``'serre-cartan'`` (or anything which will be converted to one
           of these by the function :func:`get_basis_name
           <sage.algebras.steenrod.steenrod_algebra_misc.get_basis_name>`.
-          If ``None``, default to 'serre-cartan' if current basis is
-          'serre-cartan'; otherwise use 'milnor'.
+          If ``None``, default to ``'serre-cartan'`` if current basis is
+          ``'serre-cartan'``; otherwise use ``'milnor'``.
 
         This calls :meth:`coproduct_on_basis` on the summands of ``x``
         and extends linearly.
@@ -1428,10 +1441,12 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``t`` -- tuple, the index of a basis element of self
+        - ``t`` -- tuple, the index of a basis element of ``self``
 
-        OUTPUT: the antipode of the corresponding basis element,
-        as an element of self.
+        OUTPUT:
+
+        the antipode of the corresponding basis element,
+        as an element of ``self``.
 
         ALGORITHM: according to a result of Milnor's, the antipode of
         `\text{Sq}(n)` is the sum of all of the Milnor basis elements
@@ -1476,7 +1491,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         TESTS::
 
             sage: Milnor = SteenrodAlgebra()
-            sage: all(x.antipode().antipode() == x for x in Milnor.basis(11)) # long time
+            sage: all(x.antipode().antipode() == x for x in Milnor.basis(11))  # long time
             True
             sage: A5 = SteenrodAlgebra(p=5, basis='adem')
             sage: all(x.antipode().antipode() == x for x in A5.basis(25))
@@ -1502,7 +1517,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                         if n != 0:
                             antipode = -self.Q(0) * antipode * (-1)**antipode.degree()
                     else:
-                        B = SteenrodAlgebra(p=p,generic=self._generic).basis(n * 2 * (p-1))
+                        B = SteenrodAlgebra(p=p, generic=self._generic).basis(n * 2 * (p-1))
                         s = self(0)
                         for b in B:
                             if len(b.leading_support()[0]) == 0:
@@ -1517,7 +1532,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``t`` -- tuple, the index of a basis element of self
+        - ``t`` -- tuple, the index of a basis element of ``self``
 
         EXAMPLES::
 
@@ -1550,7 +1565,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``t`` - tuple, representing basis element in the current basis.
+        - ``t`` -- tuple, representing basis element in the current basis.
 
         OUTPUT: element of the Steenrod algebra with the Milnor basis
 
@@ -1606,7 +1621,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         """
         basis = self.basis_name()
         p = self.prime()
-        A = SteenrodAlgebra(p=p,generic=self._generic)
+        A = SteenrodAlgebra(p=p, generic=self._generic)
         # milnor
         if basis == 'milnor':
             return A({t: 1})
@@ -1631,14 +1646,14 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         elif basis == 'woody' or basis == 'woodz':
             # each entry in t is a pair (m,k), corresponding to w(m,k), defined by
             # `w(m,k) = \text{Sq}^{2^m (2^{k+1}-1)}`.
-            for (m,k) in t:
+            for (m, k) in t:
                 ans = ans * A.Sq(2**m * (2**(k+1) - 1))
 
         # wall[_long]
         elif basis.find('wall') >= 0:
             # each entry in t is a pair (m,k), corresponding to Q^m_k, defined by
             # `Q^m_k = Sq(2^k) Sq(2^{k+1}) ... Sq(2^m)`.
-            for (m,k) in t:
+            for (m, k) in t:
                 exponent = 2**k
                 ans = ans * A.Sq(exponent)
                 for i in range(m-k):
@@ -1729,9 +1744,9 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``t`` - tuple, representing basis element in the current basis.
+        - ``t`` -- tuple, representing basis element in the current basis.
 
-        - ``basis`` - string, the basis to which to convert, optional
+        - ``basis`` -- string, the basis to which to convert, optional
           (default 'milnor')
 
         OUTPUT: an element of the Steenrod algebra with basis ``basis``.
@@ -1781,8 +1796,8 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             P^4 P^2 + P^5 P^1 + P^6
         """
         from sage.matrix.constructor import matrix
-        from sage.rings.all import GF
-        from .steenrod_algebra_bases import steenrod_algebra_basis,\
+        from sage.rings.finite_rings.finite_field_constructor import GF
+        from .steenrod_algebra_bases import steenrod_algebra_basis, \
             convert_from_milnor_matrix
         from .steenrod_algebra_misc import get_basis_name
         basis = get_basis_name(basis, self.prime(), generic=self._generic)
@@ -1799,9 +1814,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             return A(a.leading_coefficient())
         Bnew = steenrod_algebra_basis(deg, basis, p, generic=self._generic)
         Bmil = steenrod_algebra_basis(deg, 'milnor', p, generic=self._generic)
-        v = []
-        for a in Bmil:
-            v.append(d.get(a, 0))
+        v = [d.get(a, 0) for a in Bmil]
         out = (matrix(GF(p), 1, len(v), v) *
                convert_from_milnor_matrix(deg, basis, p, generic=self._generic))
         new_d = dict(zip(Bnew, out[0]))
@@ -1813,9 +1826,9 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``x`` - an element of this algebra.
+        - ``x`` -- an element of this algebra.
 
-        - ``basis`` - string, the basis to which to convert, optional
+        - ``basis`` -- string, the basis to which to convert, optional
           (default 'milnor')
 
         OUTPUT: an element of the Steenrod algebra with basis ``basis``.
@@ -1849,7 +1862,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``t`` - tuple, representing basis element in the current basis.
+        - ``t`` -- tuple, representing basis element in the current basis.
 
         OUTPUT: integer, the degree of the corresponding element.
 
@@ -1938,7 +1951,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         if basis == 'woody' or basis == 'woodz':
             # each entry in t is a pair (m,k), corresponding to w(m,k), defined by
             # `w(m,k) = \text{Sq}^{2^m (2^{k+1}-1)}`.
-            return sum(2**m * (2**(k+1)-1) for (m,k) in t)
+            return sum(2**m * (2**(k+1)-1) for (m, k) in t)
 
         # wall, arnon_a
         if basis.find('wall') >= 0 or basis.find('arnona') >= 0:
@@ -1949,7 +1962,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             # Arnon A: each entry in t is a pair (m,k), corresponding
             # to X^m_k, defined by `X^m_k = Sq(2^m) ... Sq(2^{k+1})
             # Sq(2^k)`
-            return sum(2**k * (2**(m-k+1)-1) for (m,k) in t)
+            return sum(2**k * (2**(m-k+1)-1) for (m, k) in t)
 
         # pst, comm
         if basis.find('pst') >= 0 or basis.find('comm') >= 0:
@@ -1960,7 +1973,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 # to c_{i,j}, the iterated commutator defined by
                 # c_{i,1} = Sq(2^i) and c_{i,j} = [c_{i,j-1},
                 # Sq(2^{i+j-1})].
-                return sum(2**m * (2**k - 1) for (m,k) in t)
+                return sum(2**m * (2**k - 1) for (m, k) in t)
             # p odd:
             #
             # Pst: have pair (Q, P) where Q is a tuple of Q's, as in
@@ -1973,7 +1986,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             # iterated commutator defined by c_{s,1} = P(p^s) and
             # c_{s,t} = [P(p^{s+t-1}), c_{s,t-1}].
             q_deg = q_degree(t[0], prime=p)
-            p_deg = sum(2 * n * p**s * (p**t - 1) for ((s,t), n) in t[1])
+            p_deg = sum(2 * n * p**s * (p**t - 1) for ((s, t), n) in t[1])
             return q_deg + p_deg
 
     # coercion methods:
@@ -1984,7 +1997,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        -  ``S`` - a Sage object.
+        -  ``S`` -- a Sage object.
 
         The algebras that coerce into the mod p Steenrod algebra are:
 
@@ -2038,7 +2051,8 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: B3._coerce_map_from_(A31)
             False
         """
-        from sage.rings.all import ZZ, GF
+        from sage.rings.integer_ring import ZZ
+        from sage.rings.finite_rings.finite_field_constructor import GF
         from sage.rings.infinity import Infinity
         p = self.prime()
         if S == ZZ or S == GF(p):
@@ -2073,7 +2087,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``x`` - an element of some Steenrod algebra or an element of
+        - ``x`` -- an element of some Steenrod algebra or an element of
           `\ZZ` or `\GF{p}` or a dict
 
         OUTPUT: ``x`` as a member of ``self``.
@@ -2100,7 +2114,8 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: A1({(2,): 1, (1,): 13})
             Sq(1) + Sq(2)
         """
-        from sage.rings.all import ZZ, GF
+        from sage.rings.integer_ring import ZZ
+        from sage.rings.finite_rings.finite_field_constructor import GF
         if x in GF(self.prime()) or x in ZZ:
             return self.from_base_ring_from_one_basis(x)
 
@@ -2152,7 +2167,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: A_3.P(1) * A_3.Q(2) in B_3
             False
         """
-        from sage.rings.all import GF
+        from sage.rings.finite_rings.finite_field_constructor import GF
         p = self.prime()
         if x in GF(p):
             return True
@@ -2179,7 +2194,9 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         - `d` -- integer or ``None``, optional (default ``None``)
 
-        OUTPUT: If `d` is ``None``, then return a basis of the algebra.
+        OUTPUT:
+
+        If `d` is ``None``, then return a basis of the algebra.
         Otherwise, return the basis in degree `d`.
 
         EXAMPLES::
@@ -2219,7 +2236,9 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         This does not print in a very helpful way, unfortunately::
 
             sage: A7.basis()
-            Lazy family (Term map from basis key family of mod 7 Steenrod algebra, milnor basis to mod 7 Steenrod algebra, milnor basis(i))_{i in basis key family of mod 7 Steenrod algebra, milnor basis}
+            Lazy family (Term map from basis key family of mod 7 Steenrod algebra, milnor basis
+             to mod 7 Steenrod algebra, milnor basis(i))_{i in basis key family
+             of mod 7 Steenrod algebra, milnor basis}
             sage: for (idx,a) in zip((1,..,9),A7.basis()):
             ....:      print("{} {}".format(idx, a))
             1 1
@@ -2233,7 +2252,8 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             9 Q_0 P(2)
             sage: D = SteenrodAlgebra(p=3, profile=([1], [2,2]))
             sage: sorted(D.basis())
-            [1, P(1), P(2), Q_0, Q_0 P(1), Q_0 P(2), Q_0 Q_1, Q_0 Q_1 P(1), Q_0 Q_1 P(2), Q_1, Q_1 P(1), Q_1 P(2)]
+            [1, P(1), P(2), Q_0, Q_0 P(1), Q_0 P(2), Q_0 Q_1,
+             Q_0 Q_1 P(1), Q_0 Q_1 P(2), Q_1, Q_1 P(1), Q_1 P(2)]
         """
         from sage.sets.family import Family
         if d is None:
@@ -2248,7 +2268,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``t`` - tuple of ...
+        - ``t`` -- tuple of ...
 
         EXAMPLES::
 
@@ -2284,8 +2304,8 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         # p odd:
         if any(self.profile(i, 1) != 2 for i in t[0]):
             return False
-        return all(self.profile(i + 1,0) == Infinity
-                   or t[1][i] < p**self.profile(i + 1,0)
+        return all(self.profile(i + 1, 0) == Infinity
+                   or t[1][i] < p**self.profile(i + 1, 0)
                    for i in range(len(t[1])))
 
     def P(self, *nums):
@@ -2294,9 +2314,11 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        -  ``a, b, c, ...`` - non-negative integers
+        -  ``a``, ``b``, ``c``, ... -- non-negative integers
 
-        OUTPUT: element of the Steenrod algebra given by the Milnor
+        OUTPUT:
+
+        element of the Steenrod algebra given by the Milnor
         single basis element `P(a, b, c, ...)`
 
         Note that at the prime 2, this is the same element as
@@ -2320,7 +2342,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: SteenrodAlgebra(generic=True).P(2,0,1)
             P(2,0,1)
         """
-        from sage.rings.all import Integer
+        from sage.rings.integer import Integer
         if self.basis_name() != 'milnor':
             return self(SteenrodAlgebra(p=self.prime(),generic=self._generic).P(*nums))
         while nums and nums[-1] == 0:
@@ -2350,7 +2372,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``e0, e1, ...`` - sequence of 0s and 1s
+        - ``e0``, ``e1``, ... -- sequence of 0s and 1s
 
         OUTPUT: The element `Q_0^{e_0} Q_1^{e_1} ...`
 
@@ -2404,7 +2426,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``n0, n1, ...`` - non-negative integers
+        - ``n0``, ``n1``, ... -- non-negative integers
 
         OUTPUT: The element `Q_{n0} Q_{n1} ...`
 
@@ -2477,7 +2499,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: SteenrodAlgebra(basis='pst', profile=[3,2,1]).an_element()
             P^0_1
         """
-        from sage.rings.all import GF
+        from sage.rings.finite_rings.finite_field_constructor import GF
         basis = self.basis_name()
         p = self.prime()
 
@@ -2518,11 +2540,11 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        -  ``s`` - non-negative integer
+        -  ``s`` -- non-negative integer
 
-        -  ``t`` - positive integer
+        -  ``t`` -- positive integer
 
-        -  ``p`` - positive prime number
+        -  ``p`` -- positive prime number
 
         OUTPUT: element of the Steenrod algebra
 
@@ -2541,7 +2563,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: SteenrodAlgebra(5).pst(3,5)
             P(0,0,0,0,125)
         """
-        from sage.rings.all import Integer
+        from sage.rings.integer import Integer
         if self.basis_name() != 'milnor':
             return self(SteenrodAlgebra(p=self.prime(),generic=self._generic).pst(s,t))
         if not isinstance(s, (Integer, int)) and s >= 0:
@@ -2553,7 +2575,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
     def ngens(self):
         r"""
-        Number of generators of self.
+        Number of generators of ``self``.
 
         OUTPUT: number or Infinity
 
@@ -2581,7 +2603,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             3
             sage: SteenrodAlgebra(profile=[3,2,1], basis='pst').ngens()
             3
-            sage: SteenrodAlgebra(p=3, profile=[[3,2,1], [2,2,2,2]]).ngens() # A(3) at p=3
+            sage: SteenrodAlgebra(p=3, profile=[[3,2,1], [2,2,2,2]]).ngens()  # A(3) at p=3
             4
             sage: SteenrodAlgebra(profile=[1,2,1,1]).ngens()
             5
@@ -2627,7 +2649,8 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
             sage: A3 = SteenrodAlgebra(3, 'adem')
             sage: A3.gens()
-            Lazy family (<bound method SteenrodAlgebra_generic_with_category.gen of mod 3 Steenrod algebra, serre-cartan basis>(i))_{i in Non negative integers}
+            Lazy family (<bound method SteenrodAlgebra_generic.gen of mod 3 Steenrod algebra,
+             serre-cartan basis>(i))_{i in Non negative integers}
             sage: A3.gens()[0]
             beta
             sage: A3.gens()[1]
@@ -2646,7 +2669,9 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: SteenrodAlgebra(p=5, profile=[[2,1], [2,2,2]]).gens()
             Family (Q_0, P(1), P(5))
             sage: SteenrodAlgebra(profile=lambda n: n).gens()
-            Lazy family (<bound method SteenrodAlgebra_mod_two_with_category.gen of sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [1, 2, 3, ..., 98, 99, +Infinity, +Infinity, +Infinity, ...]>(i))_{i in Non negative integers}
+            Lazy family (<bound method SteenrodAlgebra_generic.gen of sub-Hopf algebra
+             of mod 2 Steenrod algebra, milnor basis, profile function [1, 2, 3, ...,
+             98, 99, +Infinity, +Infinity, +Infinity, ...]>(i))_{i in Non negative integers}
 
         You may also use ``algebra_generators`` instead of ``gens``::
 
@@ -2669,7 +2694,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``i`` - non-negative integer
+        - ``i`` -- non-negative integer
 
         OUTPUT: the ith generator of this algebra
 
@@ -2730,7 +2755,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             P^1_1
         """
         from sage.rings.infinity import Infinity
-        from sage.rings.all import Integer
+        from sage.rings.integer import Integer
         p = self.prime()
         if not isinstance(i, (Integer, int)) and i >= 0:
             raise ValueError("%s is not a non-negative integer" % i)
@@ -2763,7 +2788,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 for t in range(1, min(j, last_t) + 1):
                     s = j - t
                     if self.profile(t) > s:
-                        guess = self.pst(s,t)
+                        guess = self.pst(s, t)
                         idx += 1
                     if idx == i:
                         elt = guess
@@ -2774,7 +2799,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         if self.profile(1) == Infinity:
             if not self._generic:
                 return self.Sq(p**i)
-            elif self.profile(0,1) == 2:
+            elif self.profile(0, 1) == 2:
                 if i == 0:
                     return self.Q(0)
                 else:
@@ -2784,7 +2809,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         idx = -1
         tot = 1
         found = False
-        A = SteenrodAlgebra(p=p,generic=self._generic)
+        A = SteenrodAlgebra(p=p, generic=self._generic)
         while not found:
             if self._generic:
                 test = A.Q(tot-1)
@@ -2794,7 +2819,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                         break
             for t in range(1, tot+1):
                 s = tot - t
-                test = A.pst(s,t)
+                test = A.pst(s, t)
                 if test in self:
                     idx += 1
                     if idx == i:
@@ -2852,8 +2877,8 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             n = max(self._profile)
             return all(self.profile(i) == 0 for i in range(1, n))
         n = max(self._profile[0])
-        return (all(self.profile(i,0) == 0 for i in range(1, n))
-                and all(self.profile(i,1) == 1 for i in range(n)))
+        return (all(self.profile(i, 0) == 0 for i in range(1, n))
+                and all(self.profile(i, 1) == 1 for i in range(n)))
 
     def is_finite(self):
         r"""
@@ -2912,16 +2937,16 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: SteenrodAlgebra(2,profile=(3,2,1)).top_class()
+            sage: SteenrodAlgebra(2, profile=(3,2,1)).top_class()
             Sq(7,3,1)
-            sage: SteenrodAlgebra(3,profile=((2,2,1),(1,2,2,2,2))).top_class()
+            sage: SteenrodAlgebra(3, profile=((2,2,1),(1,2,2,2,2))).top_class()
             Q_1 Q_2 Q_3 Q_4 P(8,8,2)
 
         TESTS::
 
-            sage: SteenrodAlgebra(2,profile=(3,2,1),basis='pst').top_class()
+            sage: SteenrodAlgebra(2, profile=(3,2,1), basis='pst').top_class()
             P^0_1 P^0_2 P^1_1 P^0_3 P^1_2 P^2_1
-            sage: SteenrodAlgebra(5,profile=((0,),(2,1,2,2))).top_class()
+            sage: SteenrodAlgebra(5, profile=((0,),(2,1,2,2))).top_class()
             Q_0 Q_2 Q_3
             sage: SteenrodAlgebra(5).top_class()
             Traceback (most recent call last):
@@ -2933,12 +2958,12 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         but far from optimal for the 'pst' basis.  Occasionally, it also gives an awkward
         leading coefficient::
 
-            sage: SteenrodAlgebra(3,profile=((2,1),(1,2,2)),basis='pst').top_class()
+            sage: SteenrodAlgebra(3, profile=((2,1),(1,2,2)), basis='pst').top_class()
             2 Q_1 Q_2 (P^0_1)^2 (P^0_2)^2 (P^1_1)^2
 
         TESTS::
 
-            sage: A=SteenrodAlgebra(2,profile=(3,2,1),basis='pst')
+            sage: A=SteenrodAlgebra(2, profile=(3,2,1), basis='pst')
             sage: A.top_class().parent() is A
             True
         """
@@ -2953,7 +2978,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             rp, ep = self._profile
             e = [kk for kk in range(len(ep)) if ep[kk] == 2]
             r = [p**kk-1 for kk in rp]
-            ans = AM.monomial((tuple(e),tuple(r)))
+            ans = AM.monomial((tuple(e), tuple(r)))
         return self(ans.change_basis(self.basis_name()))
 
     def order(self):
@@ -3029,7 +3054,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
     def is_noetherian(self):
         """
-        This algebra is noetherian if and only if it is finite.
+        This algebra is Noetherian if and only if it is finite.
 
         EXAMPLES::
 
@@ -3060,7 +3085,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             True
             sage: SteenrodAlgebra(2).is_generic()
             False
-            sage: SteenrodAlgebra(2,generic=True).is_generic()
+            sage: SteenrodAlgebra(2, generic=True).is_generic()
             True
         """
         return self._generic
@@ -3095,7 +3120,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             (1, (2, 1))
             sage: c.monomial_coefficients() == {(2, 1): 1, (5,): 1}
             True
-            sage: sorted(c.monomials(), key=lambda x: x.support())
+            sage: sorted(c.monomials(), key=lambda x: tuple(x.support()))
             [Sq(2,1), Sq(5)]
             sage: sorted(c.support())
             [(2, 1), (5,)]
@@ -3197,7 +3222,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 sage: (Sq(0,0,1) + Sq(2)).degree()
                 Traceback (most recent call last):
                 ...
-                ValueError: Element is not homogeneous.
+                ValueError: element is not homogeneous
 
                 sage: A11 = SteenrodAlgebra(p=11)
                 sage: A11.P(1).degree()
@@ -3233,9 +3258,9 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 True
             """
             if len(self.support()) == 0:
-                raise ValueError("The zero element does not have a well-defined degree.")
+                raise ValueError("the zero element does not have a well-defined degree")
             if not self.is_homogeneous():
-                raise ValueError("Element is not homogeneous.")
+                raise ValueError("element is not homogeneous")
             return self.parent().degree_on_basis(self.leading_support())
 
         def milnor(self):
@@ -3263,7 +3288,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
             INPUT:
 
-            - ``basis`` - string, basis in which to work.
+            - ``basis`` -- string, basis in which to work.
 
             OUTPUT: representation of self in given basis
 
@@ -3305,7 +3330,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             A = self.parent()
             return A._change_basis(self, basis)
 
-        def _basis_dictionary(self,basis):
+        def _basis_dictionary(self, basis):
             r"""
             Convert self to ``basis``, returning a dictionary of terms of
             the form (mono: coeff), where mono is a monomial in the given
@@ -3313,7 +3338,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
             INPUT:
 
-            - ``basis`` - string, basis in which to work
+            - ``basis`` -- string, basis in which to work
 
             OUTPUT: dictionary
 
@@ -3435,7 +3460,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             r"""
             Excess of element.
 
-            OUTPUT: ``excess`` - non-negative integer
+            OUTPUT: ``excess`` -- non-negative integer
 
             The excess of a Milnor basis element `\text{Sq}(a,b,c,...)` is
             `a + b + c + \cdots`. When `p` is odd, the excess of `Q_{0}^{e_0}
@@ -3453,7 +3478,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 sage: (Sq(0,0,1) + Sq(4,1) + Sq(7)).excess()
                 1
                 sage: elt = Sq(0,0,1) + Sq(4,1) + Sq(7)
-                sage: M = sorted(elt.monomials(), key=lambda x: x.support())
+                sage: M = sorted(elt.monomials(), key=lambda x: tuple(x.support()))
                 sage: [m.excess() for m in M]
                 [1, 5, 7]
                 sage: [m for m in M]
@@ -3534,7 +3559,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             r"""
             May's 'weight' of element.
 
-            OUTPUT: ``weight`` - non-negative integer
+            OUTPUT: ``weight`` -- non-negative integer
 
             If we let `F_* (A)` be the May filtration of the Steenrod
             algebra, the weight of an element `x` is the integer `k` so
@@ -3585,7 +3610,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 3
             """
             from sage.rings.infinity import Infinity
-            from sage.rings.all import Integer
+            from sage.rings.integer import Integer
             p = self.prime()
             generic = self.parent()._generic
             if self == 0:
@@ -3693,9 +3718,9 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 sage: Sq(0,0,3).wall_height()
                 [1, 2, 2, 1]
             """
-            from sage.rings.all import Integer
+            from sage.rings.integer import Integer
             if self.parent()._generic:
-                raise NotImplementedError("Wall height is not defined at odd primes.")
+                raise NotImplementedError("Wall height is not defined at odd primes")
             if self == 0 or self == 1:
                 return []
             result = []
@@ -3707,7 +3732,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                     if x > 0:
                         for j in range(1+Integer(x).exact_log(2)):
                             if (2**j & x) != 0:
-                                for k in range(j,i+j):
+                                for k in range(j, i+j):
                                     h[k] += 1
                     i += 1
                 h.reverse()
@@ -3752,7 +3777,7 @@ class SteenrodAlgebra_mod_two(SteenrodAlgebra_generic):
 
         INPUT:
 
-        - ``a, b, c, ...`` - non-negative integers
+        - ``a``, ``b``, ``c``, ... -- non-negative integers
 
         OUTPUT: element of the Steenrod algebra
 
@@ -3782,14 +3807,16 @@ def SteenrodAlgebra(p=2, basis='milnor', generic='auto', **kwds):
 
     INPUT:
 
-    - ``p`` - positive prime integer (optional, default = 2)
-    - ``basis`` - string (optional, default = 'milnor')
-    - ``profile`` - a profile function in form specified below (optional, default ``None``)
-    - ``truncation_type`` - 0 or `\infty` or 'auto' (optional, default 'auto')
-    - ``precision`` - integer or ``None`` (optional, default ``None``)
-    - ``generic`` - (optional, default 'auto')
+    - ``p`` -- positive prime integer (default: 2)
+    - ``basis`` -- string (default: ``'milnor'``)
+    - ``profile`` -- a profile function in form specified below (default: ``None``)
+    - ``truncation_type`` -- 0 or `\infty` or 'auto' (default: ``'auto'``)
+    - ``precision`` -- integer or ``None`` (default: ``None``)
+    - ``generic`` -- (default: ``'auto'``)
 
-    OUTPUT: mod `p` Steenrod algebra or one of its sub-Hopf algebras,
+    OUTPUT:
+
+    mod `p` Steenrod algebra or one of its sub-Hopf algebras,
     elements of which are printed using ``basis``
 
     See below for information about ``basis``, ``profile``, etc.
@@ -3814,7 +3841,7 @@ def SteenrodAlgebra(p=2, basis='milnor', generic='auto', **kwds):
         sage: A.is_division_algebra()
         False
         sage: A.category()
-        Category of supercocommutative super hopf algebras
+        Category of supercocommutative super Hopf algebras
          with basis over Finite Field of size 2
 
     There are methods for constructing elements of the Steenrod
@@ -3977,7 +4004,7 @@ def SteenrodAlgebra(p=2, basis='milnor', generic='auto', **kwds):
       to the value of ``truncation_type``.
     - a function from positive integers to non-negative integers (and
       `\infty`), e.g., ``lambda n: n+2``.
-    - ``None`` or ``Infinity`` - use this for the profile function for
+    - ``None`` or ``Infinity`` -- use this for the profile function for
       the whole Steenrod algebra.
 
     In the first and third cases, ``precision`` is ignored.  In the
@@ -4055,7 +4082,7 @@ def SteenrodAlgebra(p=2, basis='milnor', generic='auto', **kwds):
       integers to the set `\{1,2\}`, e.g., ``(lambda n: n+2, lambda n:
       1 if n<3 else 2)``.
 
-    - ``None`` or ``Infinity`` - use this for the profile function for
+    - ``None`` or ``Infinity`` -- use this for the profile function for
       the whole Steenrod algebra.
 
     You can also mix and match the first two, passing a pair with
@@ -4096,7 +4123,7 @@ def SteenrodAlgebra(p=2, basis='milnor', generic='auto', **kwds):
         sage: SteenrodAlgebra(profile=[1,2,1,1], basis='adem')
         Traceback (most recent call last):
         ...
-        NotImplementedError: For sub-Hopf algebras of the Steenrod algebra, only the Milnor basis and the pst bases are implemented.
+        NotImplementedError: for sub-Hopf algebras of the Steenrod algebra, only the Milnor basis and the pst bases are implemented
 
     .. rubric:: The generic Steenrod algebra at the prime `2`:
 
@@ -4124,7 +4151,8 @@ def SteenrodAlgebra(p=2, basis='milnor', generic='auto', **kwds):
         sage: EA = SteenrodAlgebra(p=2,generic=True) ; EA
         generic mod 2 Steenrod algebra, milnor basis
         sage: EA[8]
-        Vector space spanned by (Q_0 Q_2, Q_0 Q_1 P(2), P(1,1), P(4)) over Finite Field of size 2
+        Vector space spanned by (Q_0 Q_2, Q_0 Q_1 P(2), P(1,1), P(4))
+         over Finite Field of size 2
 
     TESTS:
 
@@ -4145,7 +4173,7 @@ def SteenrodAlgebra(p=2, basis='milnor', generic='auto', **kwds):
         True
     """
     if generic == 'auto':
-        generic = False if p == 2 else True
+        generic = p != 2
     if not generic:
         return SteenrodAlgebra_mod_two(p=2, basis=basis, **kwds)
     else:
@@ -4158,10 +4186,12 @@ def AA(n=None, p=2):
 
     INPUT:
 
-    - `n` - non-negative integer, optional (default ``None``)
-    - `p` - prime number, optional (default 2)
+    - `n` -- non-negative integer, optional (default ``None``)
+    - `p` -- prime number, optional (default 2)
 
-    OUTPUT: If `n` is ``None``, then return the full Steenrod algebra.
+    OUTPUT:
+
+    If `n` is ``None``, then return the full Steenrod algebra.
     Otherwise, return `A(n)`.
 
     When `p=2`, `A(n)` is the sub-Hopf algebra generated by the
@@ -4177,9 +4207,11 @@ def AA(n=None, p=2):
         sage: A()
         mod 2 Steenrod algebra, milnor basis
         sage: A(2)
-        sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [3, 2, 1]
+        sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis,
+         profile function [3, 2, 1]
         sage: A(2, p=5)
-        sub-Hopf algebra of mod 5 Steenrod algebra, milnor basis, profile function ([2, 1], [2, 2, 2])
+        sub-Hopf algebra of mod 5 Steenrod algebra, milnor basis,
+         profile function ([2, 1], [2, 2, 2])
     """
     if n is None:
         return SteenrodAlgebra(p=p)
@@ -4194,7 +4226,7 @@ def Sq(*nums):
 
     INPUT:
 
-    -  ``a, b, c, ...`` - non-negative integers
+    -  ``a``, ``b``, ``c``, ... -- non-negative integers
 
     OUTPUT: element of the Steenrod algebra
 

@@ -8,6 +8,7 @@ How to implement new algebraic structures in Sage
 
 .. contents::
    :depth: 3
+   :class: this-will-duplicate-information-and-it-is-still-useful-here
 
 --------------------------------------
 Sage's category and coercion framework
@@ -15,7 +16,7 @@ Sage's category and coercion framework
 
 .. MODULEAUTHOR::
     Simon King,
-    Friedrich\--Schiller\--Universität Jena,
+    Friedrich\-Schiller\-Universität Jena,
     <simon.king@uni-jena.de>
     © 2011/2013
 
@@ -90,7 +91,6 @@ elements. But some old stuff in Sage doesn't use it.  **Volunteers for
 refactoring are welcome!**
 
 
-
 The parent
 ----------
 
@@ -104,44 +104,31 @@ it makes sense to build on top of the base class
 This base class provides a lot more methods than a general parent::
 
     sage: [p for p in dir(Field) if p not in dir(Parent)]
-    ['__fraction_field',
-     '__ideal_monoid',
+    ['_CommutativeRing__fraction_field',
      '__iter__',
      '__len__',
-     '__pow__',
-     '__rpow__',
-     '__rtruediv__',
      '__rxor__',
-     '__truediv__',
      '__xor__',
      '_an_element_impl',
      '_coerce_',
      '_coerce_c',
      '_coerce_impl',
-     '_coerce_try',
      '_default_category',
      '_gens',
-     '_ideal_class_',
+     '_ideal_monoid',
      '_latex_names',
      '_list',
      '_one_element',
      '_pseudo_fraction_field',
-     '_random_nonzero_element',
      '_unit_ideal',
      '_zero_element',
      '_zero_ideal',
      'algebraic_closure',
      'base_extend',
-     'class_group',
-     'content',
-     'derivation',
-     'derivation_module',
      'divides',
      'epsilon',
      'extension',
      'fraction_field',
-     'frobenius_endomorphism',
-     'gcd',
      'gen',
      'gens',
      'ideal',
@@ -149,7 +136,6 @@ This base class provides a lot more methods than a general parent::
      'integral_closure',
      'is_commutative',
      'is_field',
-     'is_integral_domain',
      'is_integrally_closed',
      'is_noetherian',
      'is_prime_field',
@@ -161,9 +147,6 @@ This base class provides a lot more methods than a general parent::
      'order',
      'prime_subfield',
      'principal_ideal',
-     'quo',
-     'quotient',
-     'quotient_ring',
      'random_element',
      'unit_ideal',
      'zero',
@@ -398,7 +381,7 @@ There is a default implementation of element tests. We can already do
 
 .. end of output
 
-since `a` is defined as an element of `P`. However, we can not verify yet that
+since `a` is defined as an element of `P`. However, we cannot verify yet that
 the integers are contained in the fraction field of the ring of integers. It
 does not even give a wrong answer, but results in an error::
 
@@ -535,9 +518,7 @@ methods are place-holders: There is no default implementation, but it is
     sage: from sage.misc.abstract_method import abstract_methods_of_class
     sage: abstract_methods_of_class(QuotientFields().element_class)['optional']
     ['_add_', '_mul_']
-    sage: abstract_methods_of_class(QuotientFields().element_class)['required'] # py2
-    ['__nonzero__', 'denominator', 'numerator']
-    sage: abstract_methods_of_class(QuotientFields().element_class)['required'] # py3
+    sage: abstract_methods_of_class(QuotientFields().element_class)['required']
     ['__bool__', 'denominator', 'numerator']
 
 Hence, when implementing elements of a quotient field, it is *required* to
@@ -733,7 +714,7 @@ A first note on performance
 ---------------------------
 
 The category framework is sometimes blamed for speed regressions, as in
-:trac:`9138` and :trac:`11900`. But if the category framework is *used
+:issue:`9138` and :issue:`11900`. But if the category framework is *used
 properly*, then it is fast. For illustration, we determine the time needed to
 access an attribute inherited from the element class. First, we consider an
 element that uses the class that we implemented above, but does not use the
@@ -847,7 +828,7 @@ The four axioms requested for coercions
           sage: ZZ(P2.gen(1))
           Traceback (most recent call last):
           ...
-          TypeError: not a constant polynomial
+          TypeError: v is not a constant polynomial
 
       Hence, we only have a *partial* map. This is fine for a *conversion*,
       but a partial map does not qualify as a *coercion*.
@@ -868,7 +849,9 @@ The four axioms requested for coercions
       rational field is a homomorphism of euclidean domains::
 
           sage: QQ.coerce_map_from(ZZ).category_for()
-          Join of Category of euclidean domains and Category of infinite sets
+          Join of Category of euclidean domains
+          and Category of noetherian rings
+          and Category of infinite sets
           and Category of metric spaces
 
       .. end of output
@@ -908,7 +891,7 @@ Implementing a conversion
 -------------------------
 
 We have seen above that some conversions into our fraction fields became
-available after providing the attribute ``Element``.  However, we can not
+available after providing the attribute ``Element``.  However, we cannot
 convert elements of a fraction field into elements of another fraction field,
 yet::
 
@@ -1043,7 +1026,7 @@ Why is that?
 The default element containment test `x \in P` is based on the interplay of
 three building blocks: conversion, coercion, and equality test.
 
-#. Clearly, if the conversion `P(x)` raises an error, then `x` can not be seen as an element of `P`. On the other hand, a conversion `P(x)` can generally do very nasty things. So, the fact that `P(x)` works without error is necessary, but not sufficient for `x \in P`.
+#. Clearly, if the conversion `P(x)` raises an error, then `x` cannot be seen as an element of `P`. On the other hand, a conversion `P(x)` can generally do very nasty things. So, the fact that `P(x)` works without error is necessary, but not sufficient for `x \in P`.
 #. If `P` is the parent of `x`, then the conversion `P(x)` will not change `x` (at least, that's the default). Hence, we will have `x=P(x)`.
 #. Sage uses coercion not only for arithmetic operations, but also for comparison: *If* there is a coercion from the parent of `x` to `P`, then the equality test ``x==P(x)`` reduces to ``P(x)==P(x)``. Otherwise, ``x==P(x)`` will evaluate as false.
 
@@ -1231,7 +1214,7 @@ However, only "elementary" construction functors have a rank::
     sage: (Fract*Poly).rank
     Traceback (most recent call last):
     ...
-    AttributeError: 'CompositeConstructionFunctor' object has no attribute 'rank'
+    AttributeError: 'CompositeConstructionFunctor' object has no attribute 'rank'...
 
 .. end of output
 
@@ -1437,7 +1420,7 @@ Being able to do arithmetics involving elements of different parents, with the
 automatic creation of a pushout to contain the result, is certainly
 convenient\---but one should not rely on it, if speed matters. Simply the
 conversion of elements into different parents takes time. Moreover, by
-:trac:`14058`, the pushout may be subject to Python's cyclic garbage
+:issue:`14058`, the pushout may be subject to Python's cyclic garbage
 collection. Hence, if one does not keep a strong reference to it, the same
 parent may be created repeatedly, which is a waste of time. In the following
 example, we illustrate the slow\--down resulting from blindly relying on
@@ -1500,16 +1483,14 @@ The elements have to provide more::
 
     sage: abstract_methods_of_class(QuotientFields().element_class)['optional']
     ['_add_', '_mul_']
-    sage: abstract_methods_of_class(QuotientFields().element_class)['required'] # py2
-    ['__nonzero__', 'denominator', 'numerator']
-    sage: abstract_methods_of_class(QuotientFields().element_class)['required'] # py3
+    sage: abstract_methods_of_class(QuotientFields().element_class)['required']
     ['__bool__', 'denominator', 'numerator']
 
 .. end of output
 
 Hence, the elements must provide ``denominator()`` and ``numerator()``
 methods, and must be able to tell whether they are zero or not. The base class
-:class:`~sage.structure.element.Element` provides a default ``__nonzero__()``
+:class:`~sage.structure.element.Element` provides a default ``__bool__()``
 method. In addition, the elements may provide Sage's single underscore
 arithmetic methods (actually any ring element *should* provide them).
 
@@ -1744,7 +1725,7 @@ The new test is inherited from the category. Since ``an_element()`` is returning
 complicated element, ``_test_factorisation`` is a serious test::
 
     sage: P.an_element()._test_factorisation
-    <bound method MyFrac_with_category.element_class._test_factorisation of (x^2):(x^3 + 3*x^2 + 3*x + 1)>
+    <bound method QuotientFieldsWithTest.ElementMethods._test_factorisation of (x^2):(x^3 + 3*x^2 + 3*x + 1)>
 
 .. end of output
 

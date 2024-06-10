@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Topological Vector Bundle
 
@@ -22,7 +21,6 @@ REFERENCES:
 
 - [Lee2013]_
 - [Mil1974]_
-
 """
 
 #******************************************************************************
@@ -37,9 +35,9 @@ REFERENCES:
 from sage.structure.category_object import CategoryObject
 from sage.categories.vector_bundles import VectorBundles
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.rings.all import CC
-from sage.rings.real_mpfr import RR, RealField_class
-from sage.rings.complex_field import ComplexField_class
+import sage.rings.abc
+from sage.rings.cc import CC
+from sage.rings.real_mpfr import RR
 from sage.rings.integer import Integer
 from sage.manifolds.vector_bundle_fiber import VectorBundleFiber
 
@@ -218,9 +216,9 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             self._field_type = field
         else:
             self._field = field
-            if isinstance(field, RealField_class):
+            if isinstance(field, sage.rings.abc.RealField):
                 self._field_type = 'real'
-            elif isinstance(field, ComplexField_class):
+            elif isinstance(field, sage.rings.abc.ComplexField):
                 self._field_type = 'complex'
             else:
                 self._field_type = 'neither_real_nor_complex'
@@ -928,7 +926,7 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
           :class:`~sage.tensor.modules.free_module_automorphism.FreeModuleAutomorphism`
           describing the automorphism `P` that relates the basis `(e_i)` to
           the basis `(f_i)` according to `f_i = P(e_i)`
-        - ``compute_inverse`` (default: True) -- if set to True, the inverse
+        - ``compute_inverse`` (default: ``True``) -- if set to True, the inverse
           automorphism is computed and the change from basis `(f_i)` to `(e_i)`
           is set to it in the internal dictionary ``self._frame_changes``
 

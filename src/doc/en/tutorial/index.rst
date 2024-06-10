@@ -4,8 +4,9 @@
 
 .. _tutorial:
 
-Welcome to the Sage Tutorial!
-=============================
+========================
+Welcome to Sage Tutorial
+========================
 
 Sage is free, open-source math software that supports research and
 teaching in algebra, geometry, number theory, cryptography,
@@ -44,5 +45,4 @@ Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`

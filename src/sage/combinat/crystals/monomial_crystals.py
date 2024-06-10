@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Crystals of Modified Nakajima Monomials
 
@@ -302,9 +303,9 @@ class NakajimaMonomial(Element):
         return_str = ''
         for x in L:
             if x[1] != 1:
-                return_str += "Y_{%s,%s}"%(x[0][0],x[0][1]) + "^{%s} "%x[1]
+                return_str += "Y_{%s,%s}" % (x[0][0],x[0][1]) + "^{%s} " % x[1]
             else:
-                return_str += "Y_{%s,%s} "%(x[0][0],x[0][1])
+                return_str += "Y_{%s,%s} " % (x[0][0],x[0][1])
         return return_str
 
     def _latex_A(self):
@@ -330,15 +331,15 @@ class NakajimaMonomial(Element):
         return_str = ''
         for x in L:
             if x[1] != 1:
-                return_str += "Y_{%s,%s}"%(x[0][0],x[0][1]) + "^{%s} "%x[1]
+                return_str += "Y_{%s,%s}" % (x[0][0],x[0][1]) + "^{%s} " % x[1]
             else:
-                return_str += "Y_{%s,%s} "%(x[0][0],x[0][1])
+                return_str += "Y_{%s,%s} " % (x[0][0],x[0][1])
         L = sorted(self._A.items(), key=lambda x:(x[0][0],x[0][1]))
         for x in L:
             if x[1] != 1:
-                return_str += "A_{%s,%s}"%(x[0][0],x[0][1]) + "^{%s} "%x[1]
+                return_str += "A_{%s,%s}" % (x[0][0],x[0][1]) + "^{%s} " % x[1]
             else:
-                return_str += "A_{%s,%s} "%(x[0][0],x[0][1])
+                return_str += "A_{%s,%s} " % (x[0][0],x[0][1])
         return return_str
 
     def _classical_weight(self):
@@ -662,6 +663,7 @@ class NakajimaMonomial(Element):
             del A[(i,kf)]
         return self.__class__(self.parent(), newdict, A)
 
+
 class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
     r"""
     Crystal `B(\infty)` in terms of (modified) Nakajima monomials.
@@ -836,7 +838,7 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
         cartan_type = CartanType(ct)
         n = len(cartan_type.index_set())
         c = InfinityCrystalOfNakajimaMonomials._normalize_c(c, n)
-        M = super(InfinityCrystalOfNakajimaMonomials, cls).__classcall__(cls, cartan_type, c)
+        M = super().__classcall__(cls, cartan_type, c)
         M.set_variables('Y')
         return M
 
@@ -971,8 +973,8 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
 
         - ``letter`` -- can be one of the following:
 
-          * ``'Y'`` - use `Y_{i,k}`, corresponds to fundamental weights
-          * ``'A'`` - use `A_{i,k}`, corresponds to simple roots
+          * ``'Y'`` -- use `Y_{i,k}`, corresponds to fundamental weights
+          * ``'A'`` -- use `A_{i,k}`, corresponds to simple roots
 
         EXAMPLES::
 
@@ -1015,6 +1017,7 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
 
     Element = NakajimaMonomial
 
+
 class CrystalOfNakajimaMonomialsElement(NakajimaMonomial):
     r"""
     Element class for
@@ -1038,6 +1041,7 @@ class CrystalOfNakajimaMonomialsElement(NakajimaMonomial):
         Y(0,0)^2 Y(0,1)^-1 Y(2,0)
         sage: TestSuite(m).run()
     """
+
     def f(self, i):
         r"""
         Return the action of `f_i` on ``self``.
@@ -1074,7 +1078,7 @@ class CrystalOfNakajimaMonomialsElement(NakajimaMonomial):
         """
         if self.phi(i) == 0:
             return None
-        return super(CrystalOfNakajimaMonomialsElement, self).f(i)
+        return super().f(i)
 
     def weight(self):
         r"""
@@ -1089,6 +1093,7 @@ class CrystalOfNakajimaMonomialsElement(NakajimaMonomial):
         """
         P = self.parent().weight_lattice_realization()
         return P(self.weight_in_root_lattice()) + P(self.parent().hw)
+
 
 class CrystalOfNakajimaMonomials(InfinityCrystalOfNakajimaMonomials):
     r"""
@@ -1197,7 +1202,7 @@ class CrystalOfNakajimaMonomials(InfinityCrystalOfNakajimaMonomials):
             La = RootSystem(cartan_type).weight_lattice()(La)
         n = len(cartan_type.index_set())
         c = InfinityCrystalOfNakajimaMonomials._normalize_c(c, n)
-        return super(CrystalOfNakajimaMonomials, cls).__classcall__(cls, cartan_type, La, c)
+        return super().__classcall__(cls, cartan_type, La, c)
 
     def __init__(self, ct, La, c):
         r"""
@@ -1255,4 +1260,3 @@ class CrystalOfNakajimaMonomials(InfinityCrystalOfNakajimaMonomials):
         return super(InfinityCrystalOfNakajimaMonomials, self).cardinality()
 
     Element = CrystalOfNakajimaMonomialsElement
-

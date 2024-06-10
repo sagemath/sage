@@ -1,5 +1,5 @@
-pplpy
-=====
+pplpy: Python interface to the Parma Polyhedra Library
+======================================================
 
 Description
 -----------
@@ -20,4 +20,4 @@ GPL version 3
 Upstream Contact
 ----------------
 
--  https://github.com/videlec/pplpy
+-  https://github.com/sagemath/pplpy

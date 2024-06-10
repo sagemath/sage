@@ -1,24 +1,24 @@
-# distutils: libraries = gmp ntl zn_poly
+# distutils: libraries = gmp NTL_LIBRARIES
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 "Univariate rational functions over prime fields"
-
-import sys
 
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.rings.finite_rings.stdint cimport INTEGER_MOD_INT32_LIMIT
 
 from sage.libs.gmp.mpz cimport *
-from sage.rings.all import GF
 from sage.libs.flint.nmod_poly cimport *
 from sage.libs.flint.ulong_extras cimport n_jacobi
-from sage.structure.element cimport Element, ModuleElement, FieldElement
+from sage.structure.element cimport Element, FieldElement
 from sage.rings.integer_ring import ZZ
-from sage.rings.fraction_field import FractionField_generic, FractionField_1poly_field
+from sage.rings.fraction_field import FractionField_1poly_field
 from sage.rings.finite_rings.integer_mod cimport IntegerMod_int
 from sage.rings.integer cimport Integer
 from sage.rings.polynomial.polynomial_zmod_flint cimport Polynomial_zmod_flint, get_cparent
-import sage.algebras.algebra
 
 from sage.structure.richcmp cimport rich_to_bool
 from sage.rings.finite_rings.integer_mod cimport mod_inverse_int
@@ -26,7 +26,7 @@ from sage.rings.finite_rings.integer_mod cimport mod_inverse_int
 
 class FpT(FractionField_1poly_field):
     r"""
-    This class represents the fraction field GF(p)(T) for `2 < p < \sqrt{2^31-1}`.
+    This class represents the fraction field `\GF{p}(T)` for `2 < p < \sqrt{2^31-1}`.
 
     EXAMPLES::
 
@@ -44,19 +44,30 @@ class FpT(FractionField_1poly_field):
         """
         INPUT:
 
-        - ``R`` -- A polynomial ring over a finite field of prime order `p` with `2 < p < 2^16`
+        - ``R`` -- a dense polynomial ring over a finite field of prime order
+          `p` with `2 < p < 2^{16}`
 
         EXAMPLES::
 
             sage: R.<x> = GF(31)[]
             sage: K = R.fraction_field(); K
             Fraction Field of Univariate Polynomial Ring in x over Finite Field of size 31
+
+        TESTS::
+
+            sage: from sage.rings.fraction_field_FpT import FpT
+            sage: FpT(PolynomialRing(GF(37), ['x'], sparse=True))
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported polynomial ring
         """
         cdef long p = R.base_ring().characteristic()
         assert 2 < p < FpT.INTEGER_LIMIT
+        if not issubclass(R.element_class, Polynomial_zmod_flint):
+            raise TypeError("unsupported polynomial ring")
         self.p = p
         self.poly_ring = R
-        FractionField_1poly_field.__init__(self, R, element_class = FpTElement)
+        FractionField_1poly_field.__init__(self, R, element_class=FpTElement)
         self._populate_coercion_lists_(coerce_list=[Polyring_FpT_coerce(self), Fp_FpT_coerce(self), ZZ_FpT_coerce(self)])
 
     def __iter__(self):
@@ -86,16 +97,17 @@ class FpT(FractionField_1poly_field):
         """
         return FpT_iter(self, bound, start)
 
+
 cdef class FpTElement(FieldElement):
     """
-    An element of an FpT fraction field.
+    An element of an :class:`FpT` fraction field.
 
     TESTS::
 
         sage: R.<t> = GF(5)[]
         sage: K = R.fraction_field()
         sage: A.<x> = K[]
-        sage: x.divides(x)  # Testing ticket #27064
+        sage: x.divides(x)  # Testing issue #27064
         True
     """
 
@@ -267,7 +279,7 @@ cdef class FpTElement(FieldElement):
         """
         return self.numer()(*args, **kwds) / self.denom()(*args, **kwds)
 
-    def subs(self, *args, **kwds):
+    def subs(self, in_dict=None, *args, **kwds):
         """
         EXAMPLES::
 
@@ -279,7 +291,7 @@ cdef class FpTElement(FieldElement):
             sage: f.subs(X=2)
             (t + 1)/(t + 10)
         """
-        return self.numer().subs(*args, **kwds) / self.denom().subs(*args, **kwds)
+        return self.numer().subs(in_dict, *args, **kwds) / self.denom().subs(in_dict, *args, **kwds)
 
     def valuation(self, v):
         """
@@ -404,7 +416,8 @@ cdef class FpTElement(FieldElement):
         """
         # They are normalized.
         cdef int j = sage_cmp_nmod_poly_t(self._numer, (<FpTElement>other)._numer)
-        if j: return rich_to_bool(op, j)
+        if j:
+            return rich_to_bool(op, j)
         j = sage_cmp_nmod_poly_t(self._denom, (<FpTElement>other)._denom)
         return rich_to_bool(op, j)
 
@@ -483,7 +496,7 @@ cdef class FpTElement(FieldElement):
         cdef FpTElement other = <FpTElement>_other
         cdef FpTElement x = self._new_c()
         nmod_poly_mul(x._numer, self._numer, other._denom)
-        nmod_poly_mul(x._denom, self._denom, other._numer) # use x._denom as a temp
+        nmod_poly_mul(x._denom, self._denom, other._numer)  # use x._denom as a temp
         nmod_poly_add(x._numer, x._numer, x._denom)
         nmod_poly_mul(x._denom, self._denom, other._denom)
         normalize(x._numer, x._denom, self.p)
@@ -505,7 +518,7 @@ cdef class FpTElement(FieldElement):
         cdef FpTElement other = <FpTElement>_other
         cdef FpTElement x = self._new_c()
         nmod_poly_mul(x._numer, self._numer, other._denom)
-        nmod_poly_mul(x._denom, self._denom, other._numer) # use x._denom as a temp
+        nmod_poly_mul(x._denom, self._denom, other._numer)  # use x._denom as a temp
         nmod_poly_sub(x._numer, x._numer, x._denom)
         nmod_poly_mul(x._denom, self._denom, other._denom)
         normalize(x._numer, x._denom, self.p)
@@ -557,7 +570,7 @@ cdef class FpTElement(FieldElement):
 
     cpdef FpTElement next(self):
         """
-        This function iterates through all polynomials, returning the "next" polynomial after this one.
+        Iterate through all polynomials, returning the "next" polynomial after this one.
 
         The strategy is as follows:
 
@@ -566,7 +579,7 @@ cdef class FpTElement(FieldElement):
         - We progress through the elements with both numerator and denominator monic, and with the denominator less than the numerator.
           For each such, we output all the scalar multiples of it, then all of the scalar multiples of its inverse.
 
-        - So if the leading coefficient of the numerator is less than p-1, we scale the numerator to increase it by 1.
+        - So if the leading coefficient of the numerator is less than `p-1`, we scale the numerator to increase it by 1.
 
         - Otherwise, we consider the multiple with numerator and denominator monic.
 
@@ -733,9 +746,9 @@ cdef class FpTElement(FieldElement):
             nmod_poly_clear(denom)
             return None
 
-    cpdef bint is_square(self):
+    cpdef bint is_square(self) noexcept:
         """
-        Return True if this element is the square of another element of the fraction field.
+        Return ``True`` if this element is the square of another element of the fraction field.
 
         EXAMPLES::
 
@@ -755,11 +768,11 @@ cdef class FpTElement(FieldElement):
 
         INPUT:
 
-        -  ``extend`` - bool (default: True); if True, return a
+        -  ``extend`` -- bool (default: ``True``); if True, return a
            square root in an extension ring, if necessary. Otherwise, raise a
            ValueError if the square is not in the base ring.
 
-        -  ``all`` - bool (default: False); if True, return all
+        -  ``all`` -- bool (default: ``False``); if True, return all
            square roots of self, instead of just one.
 
         EXAMPLES::
@@ -888,8 +901,8 @@ cdef class FpT_iter:
             ....:         print(a); break
             2*t/(t + 3)
         """
-        #if degree is None:
-        #    raise NotImplementedError
+        # if degree is None:
+        #     raise NotImplementedError
         self.parent = parent
         self.cur = start
         self.degree = -2 if degree is None else degree
@@ -1027,7 +1040,7 @@ cdef class Polyring_FpT_coerce(RingHomomorphism):
           From: Univariate Polynomial Ring in t over Finite Field of size 5
           To:   Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5
         sage: type(f)
-        <type 'sage.rings.fraction_field_FpT.Polyring_FpT_coerce'>
+        <class 'sage.rings.fraction_field_FpT.Polyring_FpT_coerce'>
 
     TESTS::
 
@@ -1126,7 +1139,7 @@ cdef class Polyring_FpT_coerce(RingHomomorphism):
 
         TESTS:
 
-        Check that :trac:`12217` and :trac:`16811` are fixed::
+        Check that :issue:`12217` and :issue:`16811` are fixed::
 
             sage: R.<t> = GF(5)[]
             sage: K = R.fraction_field()
@@ -1216,12 +1229,12 @@ cdef class FpT_Polyring_section(Section):
           From: Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5
           To:   Univariate Polynomial Ring in t over Finite Field of size 5
         sage: type(f)
-        <type 'sage.rings.fraction_field_FpT.FpT_Polyring_section'>
+        <class 'sage.rings.fraction_field_FpT.FpT_Polyring_section'>
 
     .. WARNING::
 
         Comparison of ``FpT_Polyring_section`` objects is not currently
-        implemented. See :trac: `23469`. ::
+        implemented. See :issue:`23469`. ::
 
             sage: fprime = loads(dumps(f))
             sage: fprime == f
@@ -1345,7 +1358,7 @@ cdef class Fp_FpT_coerce(RingHomomorphism):
           From: Finite Field of size 5
           To:   Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5
         sage: type(f)
-        <type 'sage.rings.fraction_field_FpT.Fp_FpT_coerce'>
+        <class 'sage.rings.fraction_field_FpT.Fp_FpT_coerce'>
 
     TESTS::
 
@@ -1518,12 +1531,12 @@ cdef class FpT_Fp_section(Section):
           From: Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5
           To:   Finite Field of size 5
         sage: type(f)
-        <type 'sage.rings.fraction_field_FpT.FpT_Fp_section'>
+        <class 'sage.rings.fraction_field_FpT.FpT_Fp_section'>
 
     .. WARNING::
 
         Comparison of ``FpT_Fp_section`` objects is not currently
-        implemented. See :trac: `23469`. ::
+        implemented. See :issue:`23469`. ::
 
             sage: fprime = loads(dumps(f))
             sage: fprime == f
@@ -1648,7 +1661,7 @@ cdef class FpT_Fp_section(Section):
                 raise ValueError("not constant")
         ans = IntegerMod_int.__new__(IntegerMod_int)
         ans._parent = self.codomain()
-        ans.__modulus = ans._parent._pyx_order
+        ans._modulus = ans._parent._pyx_order
         if nmod_poly_get_coeff_ui(x._denom, 0) != 1:
             normalize(x._numer, x._denom, self.p)
         ans.ivalue = nmod_poly_get_coeff_ui(x._numer, 0)
@@ -1667,7 +1680,7 @@ cdef class ZZ_FpT_coerce(RingHomomorphism):
           From: Integer Ring
           To:   Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 17
         sage: type(f)
-        <type 'sage.rings.fraction_field_FpT.ZZ_FpT_coerce'>
+        <class 'sage.rings.fraction_field_FpT.ZZ_FpT_coerce'>
 
     TESTS::
 
@@ -1840,13 +1853,13 @@ cdef class ZZ_FpT_coerce(RingHomomorphism):
         """
         return ZZ.convert_map_from(self.codomain().base_ring()) * Fp_FpT_coerce(self.codomain()).section()
 
-cdef inline bint normalize(nmod_poly_t numer, nmod_poly_t denom, long p):
+cdef inline bint normalize(nmod_poly_t numer, nmod_poly_t denom, long p) noexcept:
     """
-    Put numer/denom into a normal form: denominator monic and sharing no common factor with the numerator.
+    Put ``numer`` / ``denom`` into a normal form: denominator monic and sharing no common factor with the numerator.
 
     The normalized form of 0 is 0/1.
 
-    Return True if numer and denom were changed.
+    Return ``True`` if ``numer`` and ``denom`` were changed.
     """
     cdef long a
     cdef bint changed
@@ -1885,14 +1898,14 @@ cdef inline bint normalize(nmod_poly_t numer, nmod_poly_t denom, long p):
         nmod_poly_clear(g)
 
 
-cdef inline unsigned long nmod_poly_leading(nmod_poly_t poly):
+cdef inline unsigned long nmod_poly_leading(nmod_poly_t poly) noexcept:
     """
     Return the leading coefficient of ``poly``.
     """
     return nmod_poly_get_coeff_ui(poly, nmod_poly_degree(poly))
 
 
-cdef inline void nmod_poly_inc(nmod_poly_t poly, bint monic):
+cdef inline void nmod_poly_inc(nmod_poly_t poly, bint monic) noexcept:
     """
     Set poly to the "next" polynomial: this is just counting in base p.
 
@@ -1910,16 +1923,16 @@ cdef inline void nmod_poly_inc(nmod_poly_t poly, bint monic):
             break
     if monic and a == 2 and n == nmod_poly_degree(poly):
         nmod_poly_set_coeff_ui(poly, n, 0)
-        nmod_poly_set_coeff_ui(poly, n+1, 1)
+        nmod_poly_set_coeff_ui(poly, n + 1, 1)
 
 
-cdef inline long nmod_poly_cmp(nmod_poly_t a, nmod_poly_t b):
+cdef inline long nmod_poly_cmp(nmod_poly_t a, nmod_poly_t b) noexcept:
     """
     Compare `a` and `b`, returning 0 if they are equal.
 
-    - If the degree of `a` is less than that of `b`, returns -1.
+    - If the degree of `a` is less than that of `b`, returns `-1`.
 
-    - If the degree of `b` is less than that of `a`, returns 1.
+    - If the degree of `b` is less than that of `a`, returns `1`.
 
     - Otherwise, compares `a` and `b` lexicographically, starting at the leading terms.
     """
@@ -1941,16 +1954,16 @@ cdef inline long nmod_poly_cmp(nmod_poly_t a, nmod_poly_t b):
     return 0
 
 
-cdef bint nmod_poly_sqrt_check(nmod_poly_t poly):
-     """
-     Quick check to see if poly could possibly be a square.
-     """
-     # We could use Sage's jacobi_int which is for 32 bits integers rather
-     # than FLINT's n_jacobi which is for longs as the FpT class is crafted
-     # for primes 2 < p < 2^16
-     return (nmod_poly_degree(poly) % 2 == 0
-         and n_jacobi(nmod_poly_leading(poly), poly.mod.n) == 1
-         and n_jacobi(nmod_poly_get_coeff_ui(poly, 0), poly.mod.n) != -1)
+cdef bint nmod_poly_sqrt_check(nmod_poly_t poly) noexcept:
+    """
+    Quick check to see if ``poly`` could possibly be a square.
+    """
+    # We could use Sage's jacobi_int which is for 32 bits integers rather
+    # than FLINT's n_jacobi which is for longs as the FpT class is crafted
+    # for primes 2 < p < 2^16
+    return (nmod_poly_degree(poly) % 2 == 0
+            and n_jacobi(nmod_poly_leading(poly), poly.mod.n) == 1
+            and n_jacobi(nmod_poly_get_coeff_ui(poly, 0), poly.mod.n) != -1)
 
 
 def unpickle_FpT_element(K, numer, denom):
@@ -1969,24 +1982,28 @@ def unpickle_FpT_element(K, numer, denom):
 
 #  Somehow this isn't in FLINT, evidently.  It could be moved
 #  elsewhere at some point.
-cdef int sage_cmp_nmod_poly_t(nmod_poly_t L, nmod_poly_t R):
+cdef int sage_cmp_nmod_poly_t(nmod_poly_t L, nmod_poly_t R) noexcept:
     """
-    Compare two nmod_poly_t in a Pythonic way, so this returns -1, 0,
-    or 1, and is consistent.
+    Compare two ``nmod_poly_t`` in a Pythonic way, so this returns `-1`, `0`,
+    or `1`, and is consistent.
     """
     cdef int j
     cdef Py_ssize_t i
 
     # First compare the degrees
     j = nmod_poly_degree(L) - nmod_poly_degree(R)
-    if j<0: return -1
-    elif j>0: return 1
+    if j < 0:
+        return -1
+    elif j > 0:
+        return 1
 
     # Same degree, so compare coefficients, term by term
-    for i in range(nmod_poly_degree(L)+1):
-        j = nmod_poly_get_coeff_ui(L,i) - nmod_poly_get_coeff_ui(R,i)
-        if j<0: return -1
-        elif j>0: return 1
+    for i in range(nmod_poly_degree(L) + 1):
+        j = nmod_poly_get_coeff_ui(L, i) - nmod_poly_get_coeff_ui(R, i)
+        if j < 0:
+            return -1
+        elif j > 0:
+            return 1
 
     # Two polynomials are equal
     return 0

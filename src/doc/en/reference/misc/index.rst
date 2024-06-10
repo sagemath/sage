@@ -68,17 +68,6 @@ Database Access
 
    sage/databases/sql_db
 
-Media
-~~~~~
-
-.. toctree::
-   :maxdepth: 1
-
-   sage/structure/graphics_file
-   sage/media/wav
-.. underscore-methods only
-..   sage/media/channels
-
 Warnings
 ~~~~~~~~
 
@@ -99,7 +88,7 @@ Miscellaneous Useful Functions
    sage/misc/misc_c
    sage/misc/verbose
 
-Lazyness
+Laziness
 ~~~~~~~~
 
 .. toctree::
@@ -168,6 +157,7 @@ Formatted Output
    sage/typeset/character_art_factory
    sage/typeset/ascii_art
    sage/typeset/unicode_art
+   sage/typeset/unicode_characters
    sage/misc/repr
    sage/misc/sage_input
    sage/misc/table
@@ -190,6 +180,7 @@ LaTeX
    sagetex
    sage/misc/latex
    sage/misc/latex_macros
+   sage/misc/latex_standalone
 
 Saving and Loading Sage Objects
 -------------------------------
@@ -218,6 +209,7 @@ Interactive Sage Sessions
    sage/misc/viewer
    sage/misc/pager
    sage/misc/sagedoc
+   sage/misc/sagedoc_conf
    sage/misc/sphinxify
 
 Distribution
@@ -227,15 +219,7 @@ Distribution
    :maxdepth: 1
 
    sage/misc/package
-   sage/misc/dist
-   sage/features
-   sage/features/bliss
-   sage/features/csdp
-   sage/features/databases
-   sage/features/fes
-   sage/features/gap
-   sage/features/graph_generators
-   sage/features/lrs
+
 
 Credits
 ~~~~~~~
@@ -257,7 +241,7 @@ Testing
 
    sage/misc/sage_unittest
    sage/misc/random_testing
-   sage/misc/nested_class_test
+   sage/misc/test_nested_class
 
 Benchmarking and Profiling
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -277,10 +261,9 @@ Miscellaneous Inspection and Development Tools
 .. toctree::
    :maxdepth: 1
 
-   sage/docs/instancedoc
+   sage/misc/instancedoc
    sage/misc/sageinspect
    sage/misc/edit_module
-   sage/misc/getusage
    sage/misc/classgraph
    sage/misc/dev_tools
    sage/misc/function_mangling

@@ -2,26 +2,25 @@
 Parallel iterator built using the ``fork()`` system call
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from __future__ import absolute_import, print_function
 
 from shutil import rmtree
 from cysignals.alarm import AlarmInterrupt, alarm, cancel_alarm
 
 from sage.interfaces.process import ContainChildren
-from sage.misc.misc import walltime
+from sage.misc.timing import walltime
 
 
-class WorkerData(object):
+class WorkerData():
     """
     Simple class which stores data about a running ``p_iter_fork``
     worker.
@@ -42,7 +41,7 @@ class WorkerData(object):
         sage: W.starttime  # random
         1499330252.463206
     """
-    def __init__(self, input, starttime=None, failure=""):
+    def __init__(self, input_value, starttime=None, failure=""):
         r"""
         See the class documentation for description of the inputs.
 
@@ -51,12 +50,12 @@ class WorkerData(object):
             sage: from sage.parallel.use_fork import WorkerData
             sage: W = WorkerData(42)
         """
-        self.input = input
+        self.input = input_value
         self.starttime = starttime or walltime()
         self.failure = failure
 
 
-class p_iter_fork(object):
+class p_iter_fork():
     """
     A parallel iterator implemented using ``fork()``.
 
@@ -66,10 +65,10 @@ class p_iter_fork(object):
         subprocesses to spawn
     - ``timeout`` -- (float, default: 0) wall time in seconds until
         a subprocess is automatically killed
-    - ``verbose`` -- (default: False) whether to print
+    - ``verbose`` -- (default: ``False``) whether to print
         anything about what the iterator does (e.g., killing
         subprocesses)
-    - ``reset_interfaces`` -- (default: True) whether to reset
+    - ``reset_interfaces`` -- (default: ``True``) whether to reset
         all pexpect interfaces
 
     EXAMPLES::
@@ -198,8 +197,7 @@ class p_iter_fork(object):
                             if T - W.starttime > timeout:
                                 if self.verbose:
                                     print(
-                                        "Killing subprocess %s with input %s which took too long"
-                                         % (pid, W.input) )
+                                        "Killing subprocess %s with input %s which took too long" % (pid, W.input))
                                 os.kill(pid, signal.SIGKILL)
                                 W.failure = " (timed out)"
                     except KeyError:
@@ -207,11 +205,11 @@ class p_iter_fork(object):
                         pass
                     else:
                         # collect data from process that successfully terminated
-                        sobj = os.path.join(dir, '%s.sobj'%pid)
+                        sobj = os.path.join(dir, '%s.sobj' % pid)
                         try:
                             with open(sobj, "rb") as file:
                                 data = file.read()
-                        except IOError:
+                        except OSError:
                             answer = "NO DATA" + W.failure
                         else:
                             os.unlink(sobj)
@@ -220,12 +218,12 @@ class p_iter_fork(object):
                             except Exception as E:
                                 answer = "INVALID DATA {}".format(E)
 
-                        out = os.path.join(dir, '%s.out'%pid)
+                        out = os.path.join(dir, '%s.out' % pid)
                         try:
                             with open(out) as file:
                                 sys.stdout.write(file.read())
                             os.unlink(out)
-                        except IOError:
+                        except OSError:
                             pass
 
                         yield (W.input, answer)
@@ -303,7 +301,12 @@ class p_iter_fork(object):
         # The pexpect interfaces (and objects defined in them) are
         # not valid.
         if self.reset_interfaces:
-            sage.interfaces.quit.invalidate_all()
+            try:
+                from sage.interfaces.quit import invalidate_all
+            except ImportError:
+                pass
+            else:
+                invalidate_all()
 
         # Now evaluate the function f.
         value = f(*args, **kwds)

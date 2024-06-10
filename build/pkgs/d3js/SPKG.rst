@@ -1,5 +1,5 @@
-d3js
-====
+d3js: JavaScript library for manipulating documents based on data
+=================================================================
 
 Description
 -----------
@@ -19,12 +19,6 @@ Upstream Contact
 
 - Author: Mike Bostock (http://bost.ocks.org/mike/)
 - Home page: http://d3js.org/
-
-Dependencies
-------------
-
-None.
-
 
 Special Update/Build Instructions
 ---------------------------------

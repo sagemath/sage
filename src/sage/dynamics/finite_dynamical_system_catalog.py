@@ -5,7 +5,7 @@ This module contains constructors for several specific discrete
 dynamical systems.
 These are accessible through
 :mod:`sage.dynamics.finite_dynamical_system_catalog. <sage.dynamics.finite_dynamical_system_catalog>`
-or just through `finite_dynamical_systems.`
+or just through ``finite_dynamical_systems.``
 (type either of these in Sage and hit ``tab`` for a list).
 
 AUTHORS:
@@ -83,11 +83,13 @@ def one_line(xs):
         [2]
     """
     n = len(xs)
-    X = range(1, n+1)
+    X = range(1, n + 1)
     xs2 = tuple(xs)
+
     def pi(i):
         return xs2[i - 1]
     return FiniteDynamicalSystem(X, pi, create_tuple=True)
+
 
 def bitstring_rotation(n, ones=None):
     r"""
@@ -231,12 +233,14 @@ def striker_sweep(E, predicate, elements, lazy=False):
     from sage.combinat.subset import Subsets
     from sage.sets.set import Set
     X = [F for F in Subsets(E) if predicate(F)]
+
     def phi(F):
         for e in elements:
             G = F.symmetric_difference(Set([e]))
             if predicate(G):
                 F = G
         return F
+
     def psi(F):
         for e in reversed(elements):
             G = F.symmetric_difference(Set([e]))
@@ -244,6 +248,7 @@ def striker_sweep(E, predicate, elements, lazy=False):
                 F = G
         return F
     return InvertibleFiniteDynamicalSystem(X, phi, inverse=psi)
+
 
 def syt_promotion(lam):
     r"""
@@ -266,10 +271,12 @@ def syt_promotion(lam):
         True
     """
     from sage.combinat.partition import Partition
-    lam = Partition(lam)
     from sage.combinat.tableau import StandardTableaux
+    lam = Partition(lam)
     X = StandardTableaux(lam)
-    return InvertibleFiniteDynamicalSystem(X, lambda T : T.promotion(), inverse=lambda T : T.promotion_inverse())
+    return InvertibleFiniteDynamicalSystem(X, lambda T: T.promotion(),
+                                           inverse=lambda T: T.promotion_inverse())
+
 
 def order_ideal_rowmotion(P):
     r"""
@@ -299,13 +306,15 @@ def order_ideal_rowmotion(P):
     # Using P.order_ideals_lattice() instead causes intransparency issues:
     # sage can't always do P.rowmotion(I) when I is in P.order_ideals_lattice().
     # Bug in P.order_ideals_lattice() when P is facade?
-    phi = lambda I : P.rowmotion(I)
-    def psi(I): # inverse of rowmotion
+    phi = P.rowmotion
+
+    def psi(I):  # inverse of rowmotion
         result = I
         for i in P.linear_extension():
             result = P.order_ideal_toggle(result, i)
         return result
     return InvertibleFiniteDynamicalSystem(X, phi, inverse=psi)
+
 
 def bulgarian_solitaire(n):
     r"""
@@ -359,9 +368,9 @@ def bulgarian_solitaire(n):
     """
     from sage.combinat.partition import Partition, Partitions
     X = Partitions(n)
+
     def phi(lam):
         mu = [p - 1 for p in lam if p > 0]
         nu = sorted(mu + [len(lam)], reverse=True)
         return Partition(nu)
     return FiniteDynamicalSystem(X, phi)
-

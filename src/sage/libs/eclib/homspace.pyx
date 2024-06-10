@@ -3,17 +3,15 @@
 from cysignals.signals cimport sig_on, sig_off
 from cython.operator cimport dereference as deref
 from cython.operator cimport preincrement as inc
-from libcpp.map cimport map
 
-from ..eclib cimport vec, svec, mat, smat
-from .mat cimport MatrixFactory
+from sage.libs.eclib cimport svec, mat, smat
+from sage.libs.eclib.mat cimport MatrixFactory
 
-from sage.matrix.all import MatrixSpace
-from sage.matrix.matrix_integer_sparse cimport Matrix_integer_sparse
-from sage.rings.all import ZZ
-from sage.rings.integer cimport Integer
+from sage.matrix.matrix_space import MatrixSpace
+from sage.rings.integer_ring import ZZ
 
 cdef MatrixFactory MF = MatrixFactory()
+
 
 cdef class ModularSymbols:
     """
@@ -23,7 +21,7 @@ cdef class ModularSymbols:
 
         sage: M = CremonaModularSymbols(225)
         sage: type(M)
-        <type 'sage.libs.eclib.homspace.ModularSymbols'>
+        <class 'sage.libs.eclib.homspace.ModularSymbols'>
     """
     def __init__(self, long level, int sign=0, bint cuspidal=False, int verbose=0):
         """
@@ -33,7 +31,7 @@ cdef class ModularSymbols:
 
         - ``level`` (int) -- the level: an integer, at least 2.
         - ``sign`` (int, default 0) -- the sign: 0, +1 or -1
-        - ``cuspidal`` (boolean, default False) -- True for cuspidal homology
+        - ``cuspidal`` (boolean, default: ``False``) -- True for cuspidal homology
         - ``verbose`` (int, default 0) -- verbosity level
 
         EXAMPLES::
@@ -102,13 +100,13 @@ cdef class ModularSymbols:
             156
         """
         if self.is_cuspidal():
-           return self.H.h1cuspdim()
+            return self.H.h1cuspdim()
         else:
-           return self.H.h1dim()
+            return self.H.h1dim()
 
     def number_of_cusps(self):
         r"""
-        Return the number of cusps for $\Gamma_0(N)$, where $N$ is the
+        Return the number of cusps for `\Gamma_0(N)`, where `N` is the
         level.
 
         EXAMPLES::
@@ -166,11 +164,11 @@ cdef class ModularSymbols:
 
         - ``p`` -- a prime number
 
-        - ``dual`` -- (default: False) whether to compute the Hecke
+        - ``dual`` -- (default: ``False``) whether to compute the Hecke
                     operator acting on the dual space, i.e., the
                     transpose of the Hecke operator
 
-        - ``verbose`` -- (default: False) print verbose output
+        - ``verbose`` -- (default: ``False``) print verbose output
 
         OUTPUT:
 
@@ -226,11 +224,11 @@ cdef class ModularSymbols:
 
         - ``p`` -- a prime number
 
-        - ``dual`` -- (default: False) whether to compute the Hecke
+        - ``dual`` -- (default: ``False``) whether to compute the Hecke
                     operator acting on the dual space, i.e., the
                     transpose of the Hecke operator
 
-        - ``verbose`` -- (default: False) print verbose output
+        - ``verbose`` -- (default: ``False``) print verbose output
 
         OUTPUT:
 
@@ -242,7 +240,7 @@ cdef class ModularSymbols:
 
             sage: M = CremonaModularSymbols(37)
             sage: t = M.sparse_hecke_matrix(2); type(t)
-            <type 'sage.matrix.matrix_integer_sparse.Matrix_integer_sparse'>
+            <class 'sage.matrix.matrix_integer_sparse.Matrix_integer_sparse'>
             sage: print(t)
             [ 3  0  0  0  0]
             [-1 -1  1  1  0]
@@ -261,7 +259,7 @@ cdef class ModularSymbols:
             sage: print(T == U.change_ring(GF(7)))
             True
 
-        This concerns an issue reported on :trac:`21303`::
+        This concerns an issue reported on :issue:`21303`::
 
             sage: C = CremonaModularSymbols(45, cuspidal=True,sign=-1)
             sage: T2a = C.hecke_matrix(2).sage_matrix_over_ZZ()
@@ -283,6 +281,4 @@ cdef class ModularSymbols:
                 inc(iter)
         MS = MatrixSpace(base_ring, n, sparse=True)
         # The next step is the bottleneck.
-        ans = MS(entries=d)
-        return ans
-
+        return MS(d)

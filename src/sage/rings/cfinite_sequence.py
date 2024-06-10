@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.symbolic
 r"""
 C-Finite Sequences
 
@@ -77,39 +77,40 @@ REFERENCES:
 - [Zei2011]_
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Ralf Stephan <gtrwst9@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from sage.categories.fields import Fields
+from numbers import Integral
+
+from sage.categories.rings import Rings
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
-from sage.rings.ring import CommutativeRing
-from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.arith.all import gcd
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.fraction_field import FractionField
 from sage.structure.element import FieldElement, parent
+from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 from sage.interfaces.gp import Gp
-from sage.misc.all import sage_eval
+from sage.misc.sage_eval import sage_eval
 
 _gp = None
 
-def CFiniteSequences(base_ring, names = None, category = None):
+
+def CFiniteSequences(base_ring, names=None, category=None):
     r"""
-    Return the ring of C-Finite sequences.
+    Return the commutative ring of C-Finite sequences.
 
     The ring is defined over a base ring (`\ZZ` or `\QQ` )
     and each element is represented by its ordinary generating function (ogf)
@@ -150,30 +151,30 @@ def CFiniteSequences(base_ring, names = None, category = None):
         base_ring = polynomial_ring.base_ring()
     if names is None:
         names = ['x']
-    elif len(names)>1:
+    elif len(names) > 1:
         raise NotImplementedError("Multidimensional o.g.f. not implemented.")
     if category is None:
-        category = Fields()
-    if not(base_ring in (QQ, ZZ)):
+        category = Rings().Commutative()
+    if base_ring not in [QQ, ZZ]:
         raise ValueError("O.g.f. base not rational.")
     polynomial_ring = PolynomialRing(base_ring, names)
     return CFiniteSequences_generic(polynomial_ring, category)
 
 
 class CFiniteSequence(FieldElement,
-        metaclass=InheritComparisonClasscallMetaclass):
+                      metaclass=InheritComparisonClasscallMetaclass):
     r"""
     Create a C-finite sequence given its ordinary generating function.
 
     INPUT:
 
     - ``ogf`` -- a rational function, the ordinary generating function
-      (can be a an element from the symbolic ring, fraction field or polynomial
+      (can be an element from the symbolic ring, fraction field or polynomial
       ring)
 
     OUTPUT:
 
-    - A CFiniteSequence object
+    A CFiniteSequence object
 
     EXAMPLES::
 
@@ -246,7 +247,7 @@ class CFiniteSequence(FieldElement,
     @staticmethod
     def __classcall_private__(cls, ogf):
         r"""
-        Ensures that elements created by :class:`CFiniteSequence` have the same
+        Ensure that elements created by :class:`CFiniteSequence` have the same
         parent than the ones created by the parent itself and follow the category
         framework (they should be instance of :class:`CFiniteSequences` automatic
         element class).
@@ -298,26 +299,25 @@ class CFiniteSequence(FieldElement,
             sage: f4.parent()
             The ring of C-Finite sequences in y over Rational Field
         """
-
         br = ogf.base_ring()
-        if not(br in (QQ, ZZ)):
+        if br not in [QQ, ZZ]:
             br = QQ  # if the base ring of the o.g.f is not QQ, we force it to QQ and see if the o.g.f converts nicely
 
         # trying to figure out the ogf variables
         variables = []
-        if not ogf in br:
+        if ogf not in br:
             if hasattr(ogf, 'variables'):
-                variables =  ogf.variables()
+                variables = ogf.variables()
             elif hasattr(ogf.parent(), 'gens'):
                 variables = ogf.parent().gens()
                 # for some reason, fraction field elements don't have the variables
                 # method, but symbolic elements don't have the gens method so we check both
 
-        if len(variables)==0:
-            parent = CFiniteSequences(QQ) # if we cannot find variables, we create the default parent (with x)
+        if not variables:
+            parent = CFiniteSequences(QQ)  # if we cannot find variables, we create the default parent (with x)
         else:
             parent = CFiniteSequences(QQ, variables)
-        return parent(ogf) # if ogf cannot be converted to a fraction field, this will break and raise the proper error
+        return parent(ogf)  # if ogf cannot be converted to a fraction field, this will break and raise the proper error
 
     def __init__(self, parent, ogf):
         r"""
@@ -358,41 +358,37 @@ class CFiniteSequence(FieldElement,
             if ogf == 0:
                 self._a = [0]
             else:
-                self._a = P((num / (P.gen()) ** self._off)).list()
+                self._a = num.shift(-self._off).list()
         else:
-
             # Transform the ogf numerator and denominator to canonical form
             # to get the correct offset, degree, and recurrence coeffs and
             # start values.
             self._off = 0
             self._deg = 0
-            x = P.gen()
             if num.constant_coefficient() == 0:
                 self._off = num.valuation()
-                num = P(num / x ** self._off)
+                num = num.shift(-self._off)
             elif den.constant_coefficient() == 0:
                 self._off = -den.valuation()
-                den = P(den * x ** self._off)
+                den = den.shift(self._off)
             f = den.constant_coefficient()
             num = P(num / f)
             den = P(den / f)
-            f = gcd(num, den)
+            f = num.gcd(den)
             num = P(num / f)
             den = P(den / f)
             self._deg = den.degree()
-            self._c = [-den.list()[i] for i in range(1, self._deg + 1)]
+            self._c = [-den[i] for i in range(1, self._deg + 1)]
             if self._off >= 0:
-                num = x ** self._off * num
+                num = num.shift(self._off)
             else:
-                den = x ** (-self._off) * den
+                den = den.shift(-self._off)
 
             # determine start values (may be different from _get_item_ values)
             alen = max(self._deg, num.degree() + 1)
             R = LaurentSeriesRing(br, parent.variable_name(), default_prec=alen)
-            rem = num % den
             if den != 1:
                 self._a = R(num / den).list()
-                self._aa = R(rem / den).list()[:self._deg]  # needed for _get_item_
             else:
                 self._a = num.list()
             if len(self._a) < alen:
@@ -402,8 +398,7 @@ class CFiniteSequence(FieldElement,
 
         self._ogf = ogf
 
-
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return textual definition of sequence.
 
@@ -417,10 +412,8 @@ class CFiniteSequence(FieldElement,
         if self._deg == 0:
             if self.ogf() == 0:
                 return 'Constant infinite sequence 0.'
-            else:
-                return 'Finite sequence ' + str(self._a) + ', offset = ' + str(self._off)
-        else:
-            return 'C-finite sequence, generated by ' + str(self.ogf())
+            return 'Finite sequence ' + str(self._a) + ', offset = ' + str(self._off)
+        return 'C-finite sequence, generated by ' + str(self.ogf())
 
     def __hash__(self):
         r"""
@@ -636,33 +629,55 @@ class CFiniteSequence(FieldElement,
             sage: s=C(1/((1-x^2)*(1-x^6)*(1-x^8)*(1-x^12)))
             sage: s[999998]
             289362268629630
+            sage: s = C.from_recurrence([1,1],[1,1,1])
+            sage: s[0:5]
+            [1, 1, 1, 2, 3]
+            sage: s = C((1 - x)^-2); s[0:10]
+            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            sage: s = C(x * (1 - x)^-2); s[0:10]
+            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+            sage: s = C(x^2 * (1 - x)^-2); s[0:10]
+            [0, 0, 1, 2, 3, 4, 5, 6, 7, 8]
+            sage: s = C(x^3 * (1 - x)^-2); s[0:10]
+            [0, 0, 0, 1, 2, 3, 4, 5, 6, 7]
+            sage: s = C(1/(1-x^1000)); s[10^18]
+            1
+            sage: s = C(1/(1-x^1000)); s[10^20]
+            1
+
+        REFERENCES:
+
+        - [BM2021]_
         """
         if isinstance(key, slice):
             m = max(key.start, key.stop)
             return [self[ii] for ii in range(*key.indices(m + 1))]
-        elif isinstance(key, (int, Integer)):
-            from sage.matrix.constructor import Matrix
-            d = self._deg
-            if (self._off <= key and key < self._off + len(self._a)):
-                return self._a[key - self._off]
-            elif d == 0:
-                return 0
-            (quo, rem) = self.numerator().quo_rem(self.denominator())
-            wp = quo[key - self._off]
-            if key < self._off:
-                return wp
-            A = Matrix(QQ, 1, d, self._c)
-            B = Matrix.identity(QQ, d - 1)
-            C = Matrix(QQ, d - 1, 1, 0)
-            if quo == 0:
-                V = Matrix(QQ, d, 1, self._a[:d][::-1])
-            else:
-                V = Matrix(QQ, d, 1, self._aa[:d][::-1])
-            M = Matrix.block([[A], [B, C]], subdivide=False)
 
-            return wp + list(M ** (key - self._off) * V)[d - 1][0]
-        else:
-            raise TypeError("invalid argument type")
+        if isinstance(key, Integral):
+            n = key - self._off
+            if n < 0:
+                return 0
+            den = self.denominator()
+            num = self.numerator()
+            if self._off >= 0:
+                num = num.shift(-self._off)
+            else:
+                den = den.shift(self._off)
+            (quo, num) = num.quo_rem(den)
+            if quo.degree() < n:
+                wp = 0
+            else:
+                wp = quo[n]
+            P = self.parent().polynomial_ring()
+            x = P.gen()
+            while n:
+                nden = den(-x)
+                num = P((num * nden).list()[n % 2::2])
+                den = P((den * nden).list()[::2])
+                n //= 2
+            return wp + num[0] / den[0]
+
+        raise TypeError("invalid argument type")
 
     def ogf(self):
         """
@@ -708,14 +723,14 @@ class CFiniteSequence(FieldElement,
         """
         return self.ogf().denominator()
 
-    def recurrence_repr(self):
+    def recurrence_repr(self) -> str:
         """
         Return a string with the recurrence representation of
         the C-finite sequence.
 
         OUTPUT:
 
-        - A string
+        A string
 
         EXAMPLES::
 
@@ -778,12 +793,12 @@ class CFiniteSequence(FieldElement,
             sage: s = r.series(4); s
             x + 2*x^2 + 3*x^3 + 4*x^4 + O(x^5)
             sage: type(s)
-            <type 'sage.rings.laurent_series_ring_element.LaurentSeries'>
+            <class 'sage.rings.laurent_series_ring_element.LaurentSeries'>
         """
         R = LaurentSeriesRing(QQ, 'x', default_prec=n)
         return R(self.ogf())
 
-    def closed_form(self, n = 'n'):
+    def closed_form(self, n='n'):
         r"""
         Return a symbolic expression in ``n``, which equals the n-th term of
         the sequence.
@@ -840,12 +855,12 @@ class CFiniteSequence(FieldElement,
             sage: CFiniteSequence((x/(1-x-x^2))^2).closed_form()
             1/5*(n - sqrt(1/5))*(1/2*sqrt(5) + 1/2)^n + 1/5*(n + sqrt(1/5))*(-1/2*sqrt(5) + 1/2)^n
         """
-        from sage.arith.all import binomial
+        from sage.arith.misc import binomial
         from sage.rings.qqbar import QQbar
 
         from sage.symbolic.ring import SR
         n = SR(n)
-        expr = SR(0)
+        expr = SR.zero()
 
         R = FractionField(PolynomialRing(QQbar, self.parent().variable_name()))
         ogf = R(self.ogf())
@@ -860,20 +875,21 @@ class CFiniteSequence(FieldElement,
             b = denom_base.constant_coefficient()
             # check that the partial fraction decomposition was indeed done correctly
             # (that is, there is only one factor, of degree 1, and monic)
-            assert len(denom) == 1 and len(denom_base.list()) == 2 and denom_base.list()[1] == 1 and denom.unit() == 1
+            assert len(denom) == 1 and len(denom_base.list()) == 2 and denom_base[1] == 1 and denom.unit() == 1
 
-            r = SR((-1/b).radical_expression())
-            c = SR(0)
-            for (k, a) in enumerate(part.numerator().list()):
-                a = QQbar(a)
-                c += binomial(n+m-k,m) * SR(((-1)**k*a*b**(k-m-1)).radical_expression())
+            r = SR((-1 / b).radical_expression())
+            c = SR.zero()
+            for k, a in enumerate(part.numerator()):
+                a = -QQbar(a) if k % 2 else QQbar(a)
+                bino = binomial(n + m - k, m)
+                c += bino * SR((a * b**(k - m - 1)).radical_expression())
 
             expr += c.expand() * r**n
 
         return expr
 
 
-class CFiniteSequences_generic(CommutativeRing, UniqueRepresentation):
+class CFiniteSequences_generic(Parent, UniqueRepresentation):
     r"""
     The class representing the ring of C-Finite Sequences
 
@@ -890,15 +906,16 @@ class CFiniteSequences_generic(CommutativeRing, UniqueRepresentation):
     """
 
     Element = CFiniteSequence
+
     def __init__(self, polynomial_ring, category):
         r"""
-        Create the ring of CFiniteSequences over ``base_ring``
+        Create the ring of CFiniteSequences over ``base_ring``.
 
         INPUT:
 
         - ``base_ring`` -- the base ring for the o.g.f (either ``QQ`` or ``ZZ``)
         - ``names`` -- an iterable of variables (should contain only one variable)
-        - ``category`` -- the category of the ring (default: ``Fields()``)
+        - ``category`` -- the category of the ring (default: ``Rings().Commutative()``)
 
         TESTS::
 
@@ -920,11 +937,14 @@ class CFiniteSequences_generic(CommutativeRing, UniqueRepresentation):
         base_ring = polynomial_ring.base_ring()
         self._polynomial_ring = polynomial_ring
         self._fraction_field = FractionField(self._polynomial_ring)
-        CommutativeRing.__init__(self,base_ring, self._polynomial_ring.gens(), category)
+        if category is None:
+            category = Rings().Commutative()
+        Parent.__init__(self, base_ring, names=self._polynomial_ring.gens(),
+                        category=category)
 
     def _repr_(self):
         r"""
-        Return the string representation of ``self``
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -936,7 +956,7 @@ class CFiniteSequences_generic(CommutativeRing, UniqueRepresentation):
 
     def _element_constructor_(self, ogf):
         r"""
-        Construct a C-Finite Sequence
+        Construct a C-Finite Sequence.
 
         INPUT:
 
@@ -966,9 +986,9 @@ class CFiniteSequences_generic(CommutativeRing, UniqueRepresentation):
         ogf = self.fraction_field()(ogf)
         return self.element_class(self, ogf)
 
-    def ngens(self):
+    def ngens(self) -> int:
         r"""
-        Return the number of generators of ``self``
+        Return the number of generators of ``self``.
 
         EXAMPLES::
 
@@ -979,7 +999,7 @@ class CFiniteSequences_generic(CommutativeRing, UniqueRepresentation):
         """
         return 1
 
-    def gen(self,i=0):
+    def gen(self, i=0):
         r"""
         Return the i-th generator of ``self``.
 
@@ -1002,9 +1022,21 @@ class CFiniteSequences_generic(CommutativeRing, UniqueRepresentation):
             ...
             ValueError: The ring of C-Finite sequences in x over Rational Field has only one generator (i=0)
         """
-        if i!= 0:
+        if i:
             raise ValueError("{} has only one generator (i=0)".format(self))
         return self.polynomial_ring().gen()
+
+    def gens(self) -> tuple:
+        """
+        Return the generators of ``self``.
+
+        EXAMPLES::
+
+            sage: C.<x> = CFiniteSequences(QQ)
+            sage: C.gens()
+            (x,)
+        """
+        return (self.gen(0),)
 
     def an_element(self):
         r"""
@@ -1021,11 +1053,11 @@ class CFiniteSequences_generic(CommutativeRing, UniqueRepresentation):
             C-finite sequence, generated by (x - 2)/(x^2 + x - 1)
         """
         x = self.gen()
-        return self((2-x)/(1-x-x**2))
+        return self((2 - x) / (1 - x - x**2))
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
-        Return True if x is an element of ``CFiniteSequences`` or
+        Return ``True`` if x is an element of ``CFiniteSequences`` or
         canonically coerces to this ring.
 
         EXAMPLES::
@@ -1093,8 +1125,8 @@ class CFiniteSequences_generic(CommutativeRing, UniqueRepresentation):
 
     def from_recurrence(self, coefficients, values):
         r"""
-        Create a C-finite sequence given the coefficients $c$ and
-        starting values $a$ of a homogeneous linear recurrence.
+        Create a C-finite sequence given the coefficients `c` and
+        starting values `a` of a homogeneous linear recurrence.
 
         .. MATH::
 
@@ -1135,15 +1167,13 @@ class CFiniteSequences_generic(CommutativeRing, UniqueRepresentation):
             raise ValueError("Wrong type for recurrence start value list.")
         deg = len(coefficients)
 
-        co = coefficients[::-1]
-        co.extend([0] * (len(values) - deg))
+        co = coefficients[::-1] + [0] * (len(values) - deg)
         R = self.polynomial_ring()
-        x = R.gen()
-        den = -1 + sum([x ** (n + 1) * co[n] for n in range(deg)])
-        num = -values[0] + sum([x ** n * (-values[n]
-                                          + sum([values[k] * co[n - 1 - k]
-                                                 for k in range(n)]))
-                                for n in range(1, len(values))])
+        den = R([-1] + co[:deg])
+        num = R([-values[0]] +
+                [-values[n] + sum(values[k] * co[n - 1 - k]
+                                  for k in range(n))
+                 for n in range(1, len(values))])
         return self(num / den)
 
     def guess(self, sequence, algorithm='sage'):
@@ -1156,9 +1186,9 @@ class CFiniteSequences_generic(CommutativeRing, UniqueRepresentation):
 
         - ``sequence`` -- list of integers
         - ``algorithm`` -- string
-            - 'sage' - the default is to use Sage's matrix kernel function
-            - 'pari' - use Pari's implementation of LLL
-            - 'bm' - use Sage's Berlekamp-Massey algorithm
+            - 'sage' -- the default is to use Sage's matrix kernel function
+            - 'pari' -- use Pari's implementation of LLL
+            - 'bm' -- use Sage's Berlekamp-Massey algorithm
 
         OUTPUT:
 
@@ -1176,7 +1206,7 @@ class CFiniteSequences_generic(CommutativeRing, UniqueRepresentation):
             sage: r = C.guess([1,2,3,4,5])
             Traceback (most recent call last):
             ...
-            ValueError: Sequence too short for guessing.
+            ValueError: sequence too short for guessing
 
         With Berlekamp-Massey, if an odd number of values is given, the last one is dropped.
         So with an odd number of values the result may not generate the last value::
@@ -1187,22 +1217,24 @@ class CFiniteSequences_generic(CommutativeRing, UniqueRepresentation):
             [1, 2, 4, 8, 16]
         """
         S = self.polynomial_ring()
+
         if algorithm == 'bm':
             from sage.matrix.berlekamp_massey import berlekamp_massey
             if len(sequence) < 2:
-                raise ValueError('Sequence too short for guessing.')
+                raise ValueError('sequence too short for guessing')
             R = PowerSeriesRing(QQ, 'x')
-            if len(sequence) % 2 == 1:
-                sequence = sequence[:-1]
+            if len(sequence) % 2:
+                sequence.pop()
             l = len(sequence) - 1
-            denominator = S(berlekamp_massey(sequence).list()[::-1])
+            denominator = S(berlekamp_massey(sequence).reverse())
             numerator = R(S(sequence) * denominator, prec=l).truncate()
 
             return CFiniteSequence(numerator / denominator)
-        elif algorithm == 'pari':
+
+        if algorithm == 'pari':
             global _gp
             if len(sequence) < 6:
-                raise ValueError('Sequence too short for guessing.')
+                raise ValueError('sequence too short for guessing')
             if _gp is None:
                 _gp = Gp()
                 _gp("ggf(v)=local(l,m,p,q,B);l=length(v);B=floor(l/2);\
@@ -1218,45 +1250,45 @@ class CFiniteSequences_generic(CommutativeRing, UniqueRepresentation):
             den = S(sage_eval(_gp.eval("Vec(denominator(gf))"))[::-1])
             if num == 0:
                 return 0
-            else:
-                return CFiniteSequence(num / den)
-        else:
-            from sage.matrix.constructor import matrix
-            from sage.functions.other import floor, ceil
-            from numpy import trim_zeros
-            l = len(sequence)
-            while l > 0 and sequence[l-1] == 0:
-                l -= 1
-            sequence = sequence[:l]
-            if l == 0:
-                return 0
-            if l < 6:
-                raise ValueError('Sequence too short for guessing.')
+            return CFiniteSequence(num / den)
 
-            hl = ceil(ZZ(l)/2)
-            A = matrix([sequence[k:k+hl] for k in range(hl)])
-            K = A.kernel()
-            if K.dimension() == 0:
-                return 0
-            R = PolynomialRing(QQ, 'x')
-            den = R(trim_zeros(K.basis()[-1].list()[::-1]))
-            if den == 1:
-                return 0
-            offset = next((i for i, x in enumerate(sequence) if x!=0), None)
-            S = PowerSeriesRing(QQ, 'x', default_prec=l-offset)
-            num = S(R(sequence)*den).add_bigoh(floor(ZZ(l)/2+1)).truncate()
-            if num == 0 or sequence != S(num/den).list():
-                return 0
-            else:
-                return CFiniteSequence(num / den)
+        from sage.matrix.constructor import matrix
+        from sage.arith.misc import integer_ceil as ceil
+        from numpy import trim_zeros
+        seq = sequence[:]
+        while seq and sequence[-1] == 0:
+            seq.pop()
+        l = len(seq)
+        if l == 0:
+            return 0
+        if l < 6:
+            raise ValueError('sequence too short for guessing')
+
+        hl = ceil(ZZ(l) / 2)
+        A = matrix([sequence[k: k + hl] for k in range(hl)])
+        K = A.kernel()
+        if K.dimension() == 0:
+            return 0
+        R = PolynomialRing(QQ, 'x')
+        den = R(trim_zeros(K.basis()[-1].list()[::-1]))
+        if den == 1:
+            return 0
+        offset = next((i for i, x in enumerate(sequence) if x), None)
+        S = PowerSeriesRing(QQ, 'x', default_prec=l - offset)
+        num = S(R(sequence) * den).truncate(ZZ(l) // 2 + 1)
+        if num == 0 or sequence != S(num / den).list():
+            return 0
+        return CFiniteSequence(num / den)
+
 
 r"""
 .. TODO::
 
-    sage: CFiniteSequence(x+x^2+x^3+x^4+x^5+O(x^6)) # not implemented
-    sage: latex(r)        # not implemented
+    sage: # not implemented
+    sage: CFiniteSequence(x+x^2+x^3+x^4+x^5+O(x^6))
+    sage: latex(r)
     \big\{a_{n\ge0}\big|a_{n+2}=\sum_{i=0}^{1}c_ia_{n+i}, c=\{1,1\}, a_{n<2}=\{0,0,0,1\}\big\}
-    sage: r.egf()      # not implemented
+    sage: r.egf()
     exp(2*x)
-    sage: r = CFiniteSequence(1/(1-y-x*y), x) # not implemented
+    sage: r = CFiniteSequence(1/(1-y-x*y), x)
 """

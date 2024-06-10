@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Chain homotopies and chain contractions
 
@@ -31,7 +30,6 @@ Such a chain homotopy provides a strong relation between the chain
 complexes `C` and `D`; for example, their homology groups are
 isomorphic.
 """
-from __future__ import absolute_import
 
 ########################################################################
 #       Copyright (C) 2015 John H. Palmieri <palmieri@math.washington.edu>
@@ -40,12 +38,13 @@ from __future__ import absolute_import
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ########################################################################
 
 from sage.categories.morphism import Morphism
 from sage.categories.homset import Hom
 from sage.homology.chain_complex_morphism import ChainComplexMorphism
+
 
 # In a perfect world, this would inherit from something like
 # "TwoMorphism" rather than "Morphism"...
@@ -121,7 +120,8 @@ class ChainHomotopy(Morphism):
         `f - (H \partial + \partial H)`. ::
 
             sage: from sage.homology.chain_homotopy import ChainHomotopy
-            sage: C = ChainComplex({1: matrix(ZZ, 1, 2, (1,0)), 2: matrix(ZZ, 2, 1, (0, 2))}, degree_of_differential=-1)
+            sage: C = ChainComplex({1: matrix(ZZ, 1, 2, (1,0)), 2: matrix(ZZ, 2, 1, (0, 2))},
+            ....:                  degree_of_differential=-1)
             sage: D = ChainComplex({2: matrix(ZZ, 1, 1, (6,))}, degree_of_differential=-1)
             sage: f_d = {1: matrix(ZZ, 1, 2, (0,3)), 2: identity_matrix(ZZ, 1)}
             sage: f = Hom(C,D)(f_d)
@@ -212,15 +212,23 @@ class ChainHomotopy(Morphism):
         `\ZZ` in degree 0. Two chain maps `C \to C` will be chain
         homotopic as long as they agree in degree 0. ::
 
-            sage: f = Hom(C,C)({0: identity_matrix(ZZ, 1), 1: matrix(ZZ, 1, 1, [3]), 2: matrix(ZZ, 1, 1, [3])})
-            sage: g = Hom(C,C)({0: identity_matrix(ZZ, 1), 1: matrix(ZZ, 1, 1, [2]), 2: matrix(ZZ, 1, 1, [2])})
-            sage: H = ChainHomotopy({0: zero_matrix(ZZ, 0, 1), 1: zero_matrix(ZZ, 1), 2: identity_matrix(ZZ, 1)}, f, g)
+            sage: f = Hom(C,C)({0: identity_matrix(ZZ, 1),
+            ....:               1: matrix(ZZ, 1, 1, [3]),
+            ....:               2: matrix(ZZ, 1, 1, [3])})
+            sage: g = Hom(C,C)({0: identity_matrix(ZZ, 1),
+            ....:               1: matrix(ZZ, 1, 1, [2]),
+            ....:               2: matrix(ZZ, 1, 1, [2])})
+            sage: H = ChainHomotopy({0: zero_matrix(ZZ, 0, 1),
+            ....:                    1: zero_matrix(ZZ, 1),
+            ....:                    2: identity_matrix(ZZ, 1)}, f, g)
             sage: H.is_algebraic_gradient_vector_field()
             True
 
         A chain homotopy which is not an algebraic gradient vector field::
 
-            sage: H = ChainHomotopy({0: zero_matrix(ZZ, 0, 1), 1: identity_matrix(ZZ, 1), 2: identity_matrix(ZZ, 1)}, f, g)
+            sage: H = ChainHomotopy({0: zero_matrix(ZZ, 0, 1),
+            ....:                    1: identity_matrix(ZZ, 1),
+            ....:                    2: identity_matrix(ZZ, 1)}, f, g)
             sage: H.is_algebraic_gradient_vector_field()
             False
         """
@@ -251,9 +259,15 @@ class ChainHomotopy(Morphism):
             sage: from sage.homology.chain_homotopy import ChainHomotopy
             sage: C = ChainComplex({0: zero_matrix(ZZ, 1), 1: identity_matrix(ZZ, 1)})
 
-            sage: f = Hom(C,C)({0: identity_matrix(ZZ, 1), 1: matrix(ZZ, 1, 1, [3]), 2: matrix(ZZ, 1, 1, [3])})
-            sage: g = Hom(C,C)({0: identity_matrix(ZZ, 1), 1: matrix(ZZ, 1, 1, [2]), 2: matrix(ZZ, 1, 1, [2])})
-            sage: H = ChainHomotopy({0: zero_matrix(ZZ, 0, 1), 1: zero_matrix(ZZ, 1), 2: identity_matrix(ZZ, 1)}, f, g)
+            sage: f = Hom(C,C)({0: identity_matrix(ZZ, 1),
+            ....:               1: matrix(ZZ, 1, 1, [3]),
+            ....:               2: matrix(ZZ, 1, 1, [3])})
+            sage: g = Hom(C,C)({0: identity_matrix(ZZ, 1),
+            ....:               1: matrix(ZZ, 1, 1, [2]),
+            ....:               2: matrix(ZZ, 1, 1, [2])})
+            sage: H = ChainHomotopy({0: zero_matrix(ZZ, 0, 1),
+            ....:                    1: zero_matrix(ZZ, 1),
+            ....:                    2: identity_matrix(ZZ, 1)}, f, g)
             sage: H.is_homology_gradient_vector_field()
             True
         """
@@ -269,7 +283,7 @@ class ChainHomotopy(Morphism):
             if matrices[i] * self.domain().differential(i-deg) * matrices[i] != matrices[i]:
                 return False
         return True
-       
+
     def in_degree(self, n):
         """
         The matrix representing this chain homotopy in degree ``n``.
@@ -281,8 +295,8 @@ class ChainHomotopy(Morphism):
         EXAMPLES::
 
             sage: from sage.homology.chain_homotopy import ChainHomotopy
-            sage: C = ChainComplex({1: matrix(ZZ, 0, 2)}) # one nonzero term in degree 1
-            sage: D = ChainComplex({0: matrix(ZZ, 0, 1)}) # one nonzero term in degree 0
+            sage: C = ChainComplex({1: matrix(ZZ, 0, 2)})  # one nonzero term in degree 1
+            sage: D = ChainComplex({0: matrix(ZZ, 0, 1)})  # one nonzero term in degree 0
             sage: f = Hom(C, D)({})
             sage: H = ChainHomotopy({1: matrix(ZZ, 1, 2, (3,1))}, f, f)
             sage: H.in_degree(1)
@@ -316,8 +330,8 @@ class ChainHomotopy(Morphism):
         EXAMPLES::
 
             sage: from sage.homology.chain_homotopy import ChainHomotopy
-            sage: C = ChainComplex({1: matrix(ZZ, 0, 2)}) # one nonzero term in degree 1
-            sage: D = ChainComplex({0: matrix(ZZ, 0, 1)}) # one nonzero term in degree 0
+            sage: C = ChainComplex({1: matrix(ZZ, 0, 2)})  # one nonzero term in degree 1
+            sage: D = ChainComplex({0: matrix(ZZ, 0, 1)})  # one nonzero term in degree 0
             sage: f = Hom(C, D)({})
             sage: H = ChainHomotopy({1: matrix(ZZ, 1, 2, (3,1))}, f, f)
             sage: H.in_degree(1)
@@ -336,8 +350,8 @@ class ChainHomotopy(Morphism):
         TESTS::
 
             sage: from sage.homology.chain_homotopy import ChainHomotopy
-            sage: C = ChainComplex({1: matrix(ZZ, 0, 2)}) # one nonzero term in degree 1
-            sage: D = ChainComplex({0: matrix(ZZ, 0, 1)}) # one nonzero term in degree 0
+            sage: C = ChainComplex({1: matrix(ZZ, 0, 2)})  # one nonzero term in degree 1
+            sage: D = ChainComplex({0: matrix(ZZ, 0, 1)})  # one nonzero term in degree 0
             sage: f = Hom(C, D)({})
             sage: H = ChainHomotopy({1: matrix(ZZ, 1, 2, (3,1))}, f, f)
             sage: hash(H)  # random
@@ -347,7 +361,7 @@ class ChainHomotopy(Morphism):
 
     def _repr_(self):
         """
-        String representation
+        String representation.
 
         EXAMPLES::
 
@@ -369,6 +383,7 @@ class ChainHomotopy(Morphism):
         s += '\n  {}'.format('\n  '.join(self._f._repr_().split('\n')))
         s += '\n  and {}'.format('\n  '.join(self._g._repr_().split('\n')))
         return s
+
 
 class ChainContraction(ChainHomotopy):
     r"""
@@ -403,7 +418,9 @@ class ChainContraction(ChainHomotopy):
 
         sage: pi = Hom(C,D)({0: identity_matrix(ZZ, 1)})
         sage: iota = Hom(D,C)({0: identity_matrix(ZZ, 1)})
-        sage: H = ChainContraction({0: zero_matrix(ZZ, 0, 1), 1: zero_matrix(ZZ, 1), 2: identity_matrix(ZZ, 1)}, pi, iota)
+        sage: H = ChainContraction({0: zero_matrix(ZZ, 0, 1),
+        ....:                       1: zero_matrix(ZZ, 1),
+        ....:                       2: identity_matrix(ZZ, 1)}, pi, iota)
     """
     def __init__(self, matrices, pi, iota):
         r"""
@@ -488,6 +505,7 @@ class ChainContraction(ChainHomotopy):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: S2 = simplicial_complexes.Sphere(2)
             sage: phi, M = S2.algebraic_topological_model(QQ)
             sage: phi.pi()
@@ -501,7 +519,7 @@ class ChainContraction(ChainHomotopy):
 
         The degree 2 homology generator is detected on a single simplex::
 
-            sage: phi.pi().in_degree(2)
+            sage: phi.pi().in_degree(2)                                                 # needs sage.graphs
             [0 0 0 1]
         """
         return self._pi
@@ -512,16 +530,16 @@ class ChainContraction(ChainHomotopy):
 
         EXAMPLES::
 
-            sage: S2 = simplicial_complexes.Sphere(2)
-            sage: phi, M = S2.algebraic_topological_model(QQ)
-            sage: phi.iota()
+            sage: S2 = simplicial_complexes.Sphere(2)                                   # needs sage.graphs
+            sage: phi, M = S2.algebraic_topological_model(QQ)                           # needs sage.graphs
+            sage: phi.iota()                                                            # needs sage.graphs
             Chain complex morphism:
               From: Chain complex with at most 3 nonzero terms over Rational Field
               To: Chain complex with at most 3 nonzero terms over Rational Field
 
         Lifting the degree zero homology class gives a single vertex::
 
-            sage: phi.iota().in_degree(0)
+            sage: phi.iota().in_degree(0)                                               # needs sage.graphs
             [0]
             [0]
             [0]
@@ -530,7 +548,7 @@ class ChainContraction(ChainHomotopy):
         Lifting the degree two homology class gives the signed sum of
         all of the 2-simplices::
 
-            sage: phi.iota().in_degree(2)
+            sage: phi.iota().in_degree(2)                                               # needs sage.graphs
             [-1]
             [ 1]
             [-1]
@@ -546,9 +564,9 @@ class ChainContraction(ChainHomotopy):
 
         EXAMPLES::
 
-            sage: S2 = simplicial_complexes.Sphere(2)
-            sage: phi, M = S2.algebraic_topological_model(QQ)
-            sage: phi.iota()
+            sage: S2 = simplicial_complexes.Sphere(2)                                   # needs sage.graphs
+            sage: phi, M = S2.algebraic_topological_model(QQ)                           # needs sage.graphs
+            sage: phi.iota()                                                            # needs sage.graphs
             Chain complex morphism:
               From: Chain complex with at most 3 nonzero terms over Rational Field
               To: Chain complex with at most 3 nonzero terms over Rational Field
@@ -557,6 +575,7 @@ class ChainContraction(ChainHomotopy):
         but the degree zero cohomology class needs to be detected on
         every vertex, and vice versa for degree 2::
 
+            sage: # needs sage.graphs
             sage: phi.iota().in_degree(0)
             [0]
             [0]
@@ -582,4 +601,3 @@ class ChainContraction(ChainHomotopy):
         deg = self.domain().degree_of_differential()
         matrices = {i-deg: matrix_dict[i].transpose() for i in matrix_dict}
         return ChainContraction(matrices, self.iota().dual(), self.pi().dual())
-

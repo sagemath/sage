@@ -1,5 +1,5 @@
-Jinja2
-======
+jinja2: General purpose template engine for Python
+==================================================
 
 Description
 -----------
@@ -15,25 +15,10 @@ adding functionality useful for templating environments.
 License
 -------
 
-Modified BSD License
-
+BSD-3-Clause
 
 Upstream Contact
 ----------------
 
-Author: Pocoo Team <http://pocoo.org> Homepage: http://jinja.pocoo.org/
+https://pypi.org/project/Jinja2/
 
-Dependencies
-------------
-
--  Python (>= 2.4)
--  setuptools (or distribute)
--  Pygments (according to 'spkg/standard/deps')
--  docutils (dito, as a note only)
-
-
-Special Update/Build Instructions
----------------------------------
-
-None. (Just make sure its prerequisites are new enough in Sage, to avoid
-downloads during the build / installation.)

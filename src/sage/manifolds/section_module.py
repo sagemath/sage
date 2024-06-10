@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Section Modules
 
@@ -15,7 +14,6 @@ Depending on the domain, there are two classes of section modules:
 AUTHORS:
 
 - Michael Jung (2019): initial version
-
 """
 
 #******************************************************************************
@@ -260,14 +258,12 @@ class SectionModule(UniqueRepresentation, Parent):
 
         """
         resu = self.element_class(self)
-        # Non-trivial open covers of the domain:
-        open_covers = self._domain.open_covers()[1:]  # the open cover 0
-                                                      # is trivial
-        if open_covers != []:
-            oc = open_covers[0]  # the first non-trivial open cover is selected
+        for oc in self._domain.open_covers(trivial=False):
+            # the first non-trivial open cover is selected
             for dom in oc:
                 smodule_dom = self._vbundle.section_module(domain=dom)
                 resu.set_restriction(smodule_dom._an_element_())
+            return resu
         return resu
 
     def _coerce_map_from_(self, other):

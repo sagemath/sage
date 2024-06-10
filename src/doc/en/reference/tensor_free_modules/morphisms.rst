@@ -2,7 +2,7 @@ Morphisms
 =========
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/tensor/modules/free_module_homset
 

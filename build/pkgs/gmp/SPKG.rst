@@ -1,5 +1,5 @@
-GMP
-===
+gmp: Library for arbitrary precision arithmetic
+===============================================
 
 Description
 -----------

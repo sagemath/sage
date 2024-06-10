@@ -1,6 +1,6 @@
 cd src/
 
-# Use newer version of config.guess and config.sub (see Trac #19724)
+# Use newer version of config.guess and config.sub (see Issue #19724)
 cp "$SAGE_ROOT"/config/config.* .
 
 ###############################################################################
@@ -52,6 +52,8 @@ if [ -n "$system_gmp_h" ]; then
     esac
 fi
 
+CFLAGS="$CFLAGS_O3"
+
 
 # libtool should add the proper flags, but doesn't use "-fPIC"
 # for the *static* library (which the Sage library links to unless
@@ -62,6 +64,7 @@ if ! (echo $ECM_CONFIGURE | egrep -- "--enable-shared|--with-pic" >/dev/null) ||
 then
     echo "Adding '-fPIC' to CFLAGS since we don't (also) build a shared library."
     CFLAGS="$CFLAGS -fPIC" # alternatively add '--with-pic' to 'configure' options
+    ORIGINAL_CFLAGS="$ORIGINAL_CFLAGS -fPIC"
 else
     # PIC usually slows down the execution, so don't use it for the *static*
     # library (unless '--with-pic' was given). libtool does the right thing
@@ -70,16 +73,9 @@ else
     echo "to, or '--with-pic' was given in ECM_CONFIGURE."
 fi
 
-if [ "$UNAME" == "CYGWIN" ]; then
-    # Force shared library build only on Cygwin; it will not build otherwise
-    ECM_CONFIGURE="$ECM_CONFIGURE --enable-shared --disable-static"
-fi
-
-
 if [ "$SAGE_DEBUG" = yes ]; then
     # Add debug symbols and disable optimization:
     echo >&2 "Warning: Setting SAGE_DEBUG=yes completely disables optimization."
-    CFLAGS="-g -O0 $CFLAGS"
     echo "You may in addition (or instead) pass '--enable-assert' and/or"
     echo "'--enable-memory-debug' to GMP-ECM's 'configure' by setting (and"
     echo "of course exporting) ECM_CONFIGURE accordingly."
@@ -90,16 +86,14 @@ else
             # Don't add debug symbols because configure otherwise
             # fails due to a bus error in Apple's 'ld' when trying
             # to determine if global symbols are prefixed with an
-            # underscore (cf. http://trac.sagemath.org/sage_trac/ticket/5847#comment:35 ff.):
+            # underscore (cf. https://github.com/sagemath/sage/issues/5847#comment:35 ff.):
             echo >&2 "Warning: Disabling debug symbols on MacOS X 10.5" \
                 "PowerPC because of a linker (?) bug."
-            echo >&2 "See http://trac.sagemath.org/sage_trac/ticket/5847#comment:35" \
+            echo >&2 "See https://github.com/sagemath/sage/issues/5847#comment:35" \
                 "ff. for details."
             echo >&2
-            CFLAGS="-O3 $CFLAGS"
+            CFLAGS="-O3 $ORIGINAL_CFLAGS"
             ;;
-        *)
-            CFLAGS="-g -O3 $CFLAGS"
     esac
 fi
 
@@ -189,6 +183,12 @@ export CFLAGS # Not exported by 'sage-env'.  LDFLAGS are exported above if
               # necessary.  We currently don't set (or modify) any other
               # environment variables, so don't have to export them here.
 
+# Workaround for build failure with Xcode 15, https://github.com/sagemath/sage/issues/36342
+case "$UNAME" in
+    Darwin*)
+        export gmp_cv_asm_underscore=yes
+        ;;
+esac
 
 ###############################################################################
 # Now configure ECM:
@@ -231,17 +231,6 @@ sdh_configure $SAGE_CONFIGURE_GMP $ECM_CONFIGURE
 ###############################################################################
 
 sdh_make
-
-###############################################################################
-# Remove old executable/header/libraries/manpage:
-###############################################################################
-
-echo
-echo "Build succeeded.  Now removing old binary, header file, manual page and libraries..."
-rm -f "$SAGE_LOCAL"/bin/ecm
-rm -f "$SAGE_LOCAL"/lib/libecm.*
-rm -f "$SAGE_LOCAL"/include/ecm.h
-rm -f "$SAGE_LOCAL"/share/man/man1/ecm.1
 
 ###############################################################################
 # Now install ECM:

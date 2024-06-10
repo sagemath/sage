@@ -16,7 +16,7 @@ cdef class PowComputer_(PowComputer_flint_unram):
 
             sage: R.<a> = ZqFP(125)
             sage: type(R.prime_pow)
-            <type 'sage.rings.padics.qadic_flint_FP.PowComputer_'>
+            <class 'sage.rings.padics.qadic_flint_FP.PowComputer_'>
             sage: R.prime_pow._prec_type
             'floating-point'
         """
@@ -29,8 +29,8 @@ cdef class qAdicFloatingPointElement(FPElement):
     norm = norm_unram
 
     def matrix_mod_pn(self):
-        """
-        Returns the matrix of right multiplication by the element on
+        r"""
+        Return the matrix of right multiplication by the element on
         the power basis `1, x, x^2, \ldots, x^{d-1}` for this
         extension field.  Thus the *rows* of this matrix give the
         images of each of the `x^i`.  The entries of the matrices are
@@ -54,7 +54,7 @@ cdef class qAdicFloatingPointElement(FPElement):
             sage: M.base_ring()
             Integer Ring
 
-        Check that :trac:`13617` has been fixed::
+        Check that :issue:`13617` has been fixed::
 
             sage: R(0).matrix_mod_pn()
             [0 0 0 0 0]
@@ -66,7 +66,7 @@ cdef class qAdicFloatingPointElement(FPElement):
         if self.ordp < 0:
             raise ValueError("self must be integral")
         if very_pos_val(self.ordp):
-            from sage.matrix.all import matrix
+            from sage.matrix.constructor import matrix
             return matrix(ZZ, self.prime_pow.deg, self.prime_pow.deg)
         else:
             return cmatrix_mod_pn(self.unit, self.ordp + self.prime_pow.prec_cap, self.ordp, self.prime_pow)
@@ -108,7 +108,6 @@ cdef class qAdicFloatingPointElement(FPElement):
         cshift_notrunc(self.prime_pow.poly_flint_rep, self.unit, self.ordp, self.ordp + self.prime_pow.prec_cap, self.prime_pow, False)
         return self.prime_pow._new_fmpz_poly(self.prime_pow.poly_flint_rep, var), Integer(0)
 
-
     def _modp_rep(self, use_smallest_mode=False, return_list=True):
         r"""
         Return the element with the same reduction mod p that can be expressed
@@ -148,7 +147,7 @@ cdef class qAdicFloatingPointElement(FPElement):
     def __hash__(self):
         r"""
         Raise a ``TypeError`` since this element is not hashable
-        (:trac:`11895`.)
+        (:issue:`11895`.)
 
         TESTS::
 

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.gap
 """
 Branching Rules
 """
@@ -7,7 +8,6 @@ Branching Rules
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 import sage.combinat.root_system.weyl_characters
 from sage.combinat.root_system.root_system import RootSystem
@@ -16,7 +16,7 @@ from sage.misc.flatten import flatten
 from sage.structure.sage_object import SageObject
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.modules.free_module_element import vector
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 from sage.misc.functional import is_even, is_odd
 
 
@@ -55,7 +55,7 @@ def branch_weyl_character(chi, R, S, rule="default"):
       * ``"triality"``
       * ``"miscellaneous"``
 
-    The ``BranchingRule`` class is a wrapper for functions
+    The :class:`BranchingRule` class is a wrapper for functions
     from the weight lattice of `G` to the weight lattice of `H`.
     An instance of this class encodes an embedding of `H` into
     `G`. The usual way to specify an embedding is to supply a
@@ -980,7 +980,7 @@ def branch_weyl_character(chi, R, S, rule="default"):
         sage: A3(0,1,0).branch(C2,rule=br)
         C2(0,0) + C2(0,1)
     """
-    if isinstance(rule, str) or isinstance(rule, list):
+    if isinstance(rule, (str, list)):
         rule = branching_rule(R._cartan_type, S._cartan_type, rule)
     if hasattr(rule, "_S"):
         if rule._S != S.cartan_type():
@@ -1010,13 +1010,14 @@ class BranchingRule(SageObject):
     """
     A class for branching rules.
     """
+
     def __init__(self, R, S, f, name="default", intermediate_types=[],
                  intermediate_names=[]):
         """
         INPUT:
 
-        - ``R, S`` -- CartanTypes
-        -  ``f`` -- a function from the weight lattice of R to the weight lattice of S.
+        - ``R``, ``S`` -- CartanTypes
+        -  ``f`` -- a function from the weight lattice of R to the weight lattice of S
         """
         self._R = CartanType(R)
         self._S = CartanType(S)
@@ -1124,7 +1125,7 @@ class BranchingRule(SageObject):
             sage: b1 != b2
             True
         """
-        return not(self == other)
+        return not (self == other)
 
     def __mul__(self, other):
         """
@@ -1950,6 +1951,7 @@ def branching_rule(Rtype, Stype, rule="default"):
                                  lambda x: [x[1]+x[2]+2*x[3]+2*x[4]+3*x[5]+4*x[6]+15*x[7],-(x[1]+x[2]+2*x[3]+2*x[4]+3*x[5]+4*x[6]+15*x[7])], "vii")
         raise ValueError("Wrong source Cartan Type for rule %s" % rule)
     raise ValueError("Rule not found")
+
 
 get_branching_rule = branching_rule
 

@@ -1,10 +1,9 @@
 """
-Elements of Arithmetic Subgroups
+Elements of arithmetic subgroups
 """
-
-################################################################################
+# ##############################################################################
 #
-#       Copyright (C) 2009, The Sage Group -- http://www.sagemath.org/
+#       Copyright (C) 2009, The Sage Group -- https://www.sagemath.org/
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -12,12 +11,11 @@ Elements of Arithmetic Subgroups
 #
 #                  https://www.gnu.org/licenses/
 #
-################################################################################
+# ##############################################################################
 
-from sage.structure.element cimport MultiplicativeGroupElement, MonoidElement, Element
+from sage.structure.element cimport MultiplicativeGroupElement
 from sage.structure.richcmp cimport richcmp
-from sage.rings.all import ZZ
-from sage.modular.cusps import Cusp
+from sage.rings.integer_ring import ZZ
 
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
@@ -27,7 +25,7 @@ M2Z = MatrixSpace(ZZ, 2)
 
 cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
     r"""
-    An element of the group `{\rm SL}_2(\ZZ)`, i.e. a 2x2 integer matrix of
+    An element of the group `\SL_2(\ZZ)`, i.e. a 2x2 integer matrix of
     determinant 1.
     """
 
@@ -41,12 +39,11 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
 
         - ``parent`` -- an arithmetic subgroup
 
-        - `x` -- data defining a 2x2 matrix over ZZ
-                 which lives in parent
+        - ``x`` -- data defining a 2x2 matrix over ZZ
+          which lives in ``parent``
 
         - ``check`` -- if ``True``, check that parent is an arithmetic
-                       subgroup, and that `x` defines a matrix of
-                       determinant `1`.
+          subgroup, and that `x` defines a matrix of determinant `1`.
 
         We tend not to create elements of arithmetic subgroups that are not
         SL2Z, in order to avoid coercion issues (that is, the other arithmetic
@@ -80,8 +77,8 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
             True
         """
         if check:
-            from .arithgroup_generic import is_ArithmeticSubgroup
-            if not is_ArithmeticSubgroup(parent):
+            from .arithgroup_generic import ArithmeticSubgroup
+            if not isinstance(parent, ArithmeticSubgroup):
                 raise TypeError("parent (= %s) must be an arithmetic subgroup" % parent)
 
             x = M2Z(x, copy=True, coerce=True)
@@ -109,7 +106,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
             sage: unpickle_build(si, (Gamma0(13), {'_ArithmeticSubgroupElement__x': x}))
         """
         from .congroup_sl2z import SL2Z
-        oldparent, kwdict = state
+        _, kwdict = state
         self._parent = SL2Z
         if '_ArithmeticSubgroupElement__x' in kwdict:
             self.__x = M2Z(kwdict['_ArithmeticSubgroupElement__x'])
@@ -182,7 +179,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
             sage: x != y
             True
 
-        This once caused a segfault (see :trac:`5443`)::
+        This once caused a segfault (see :issue:`5443`)::
 
             sage: r,s,t,u,v = map(SL2Z, [[1, 1, 0, 1], [-1, 0, 0, -1], [1, -1, 0, 1], [1, -1, 2, -1], [-1, 1, -2, 1]])
             sage: v == s*u
@@ -193,8 +190,8 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
         cdef ArithmeticSubgroupElement right = <ArithmeticSubgroupElement>right_r
         return richcmp(self.__x, right.__x, op)
 
-    def __nonzero__(self):
-        """
+    def __bool__(self):
+        r"""
         Return ``True``, since the ``self`` lives in SL(2,\Z), which does not
         contain the zero matrix.
 
@@ -218,7 +215,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
             sage: x.parent()
             Modular Group SL(2,Z)
 
-        We check that :trac:`5048` is fixed::
+        We check that :issue:`5048` is fixed::
 
             sage: a = Gamma0(10).1 * Gamma0(5).2; a # random
             sage: a.parent()
@@ -254,7 +251,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
             [4 5]
             [3 4]
             sage: type(x.matrix())
-            <type 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
+            <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
         """
         return self.__x
 
@@ -336,12 +333,14 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
 
         An example of g acting on a symbolic variable::
 
-            sage: z = var('z')
-            sage: g.acton(z)
+            sage: z = var('z')                                                          # needs sage.symbolic
+            sage: g.acton(z)                                                            # needs sage.symbolic
             (z + 2)/(15*z + 31)
 
         An example involving the Gaussian numbers::
 
+            sage: # needs sage.rings.number_field
+            sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: g.acton(i)
             1/1186*i + 77/1186

@@ -1,4 +1,8 @@
-# distutils: libraries = ntl gmp m
+# distutils: libraries = NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 
 #*****************************************************************************
@@ -24,19 +28,13 @@ include 'decl.pxi'
 
 from cpython.object cimport Py_EQ, Py_NE
 
-from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
 from sage.rings.integer cimport Integer
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZ_p cimport ntl_ZZ_p
 from sage.rings.integer cimport Integer
-from sage.rings.integer_ring cimport IntegerRing_class
 
 from sage.libs.ntl.convert cimport PyLong_to_ZZ, mpz_to_ZZ
-from sage.libs.ntl.ntl_ZZ import unpickle_class_args
-
-from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
-from sage.libs.ntl.ntl_ZZ_pContext import ntl_ZZ_pContext
 
 from sage.libs.ntl.ntl_ZZ_pEContext cimport ntl_ZZ_pEContext_class
 from sage.libs.ntl.ntl_ZZ_pEContext import ntl_ZZ_pEContext
@@ -50,14 +48,14 @@ ZZ_sage = IntegerRing()
 # ZZ_pE_c: An extension of the integers modulo p
 #
 ##############################################################################
-cdef class ntl_ZZ_pE(object):
+cdef class ntl_ZZ_pE():
     r"""
-    The \class{ZZ_pE} class is used to model $\Z / p\Z [x] / (f(x))$.
-    The modulus $p$ may be any positive integer, not necessarily prime,
+    The \class{ZZ_pE} class is used to model `\Z / p\Z [x] / (f(x))`.
+    The modulus `p` may be any positive integer, not necessarily prime,
     and the modulus f is not required to be irreducible.
 
     Objects of the class \class{ZZ_pE} are represented as a \code{ZZ_pX} of
-    degree less than the degree of $f$.
+    degree less than the degree of `f`.
 
     Each \class{ZZ_pE} contains a pointer of a \class{ZZ_pEContext} which
     contains pre-computed data for NTL.  These can be explicitly constructed
@@ -109,15 +107,13 @@ cdef class ntl_ZZ_pE(object):
                 if (<ntl_ZZ_pX>v).c is not self.c.pc:
                     raise ValueError("You cannot cast between rings with different moduli")
                 self.x = ZZ_pX_to_ZZ_pE((<ntl_ZZ_pX>v).x)
-            elif isinstance(v, list) or isinstance(v, tuple):
+            elif isinstance(v, (list, tuple)):
                 tmp_zzpx = <ntl_ZZ_pX>ntl_ZZ_pX(v, self.c.pc)
-                self.c.restore_c()   # allocating tmp_zzpx can change the current modulus trac #25790
+                self.c.restore_c()   # allocating tmp_zzpx can change the current modulus; Issue #25790
                 self.x = ZZ_pX_to_ZZ_pE(tmp_zzpx.x)
-            elif isinstance(v, long):
+            elif isinstance(v, int):
                 PyLong_to_ZZ(&temp, v)
                 self.x = ZZ_to_ZZ_pE(temp)
-            elif isinstance(v, int):
-                self.x = long_to_ZZ_pE(v)
             elif isinstance(v, ntl_ZZ_p):
                 self.x = ZZ_p_to_ZZ_pE((<ntl_ZZ_p>v).x)
             elif isinstance(v, ntl_ZZ):
@@ -126,7 +122,7 @@ cdef class ntl_ZZ_pE(object):
                 mpz_to_ZZ(&temp, (<Integer>v).value)
                 self.x = ZZ_to_ZZ_pE(temp)
             else:
-                str_v = str(v)  # can cause modulus to change  trac #25790
+                str_v = str(v)  # can cause modulus to change; Issue #25790
                 self.c.restore_c()
                 ccreadstr(self.x, str_v)
 
@@ -162,9 +158,11 @@ cdef class ntl_ZZ_pE(object):
 
     def __reduce__(self):
         """
-        sage: a = ntl.ZZ_pE([4],ntl.ZZ_pX([1,1,1],ntl.ZZ(7)))
-        sage: loads(dumps(a)) == a
-        True
+        EXAMPLES::
+
+            sage: a = ntl.ZZ_pE([4],ntl.ZZ_pX([1,1,1],ntl.ZZ(7)))
+            sage: loads(dumps(a)) == a
+            True
         """
         return make_ZZ_pE, (self.get_as_ZZ_pX(), self.get_modulus_context())
 
@@ -223,7 +221,7 @@ cdef class ntl_ZZ_pE(object):
         if not isinstance(other, ntl_ZZ_pE):
             other = ntl_ZZ_pE(other,self.c)
         elif self.c is not (<ntl_ZZ_pE>other).c:
-            raise ValueError("You can not perform arithmetic with elements of different moduli.")
+            raise ValueError("You cannot perform arithmetic with elements of different moduli.")
         y = other
         self.c.restore_c()
         ZZ_pE_mul(r.x, self.x, y.x)
@@ -233,7 +231,7 @@ cdef class ntl_ZZ_pE(object):
         if not isinstance(other, ntl_ZZ_pE):
             other = ntl_ZZ_pE(other,self.c)
         elif self.c is not (<ntl_ZZ_pE>other).c:
-            raise ValueError("You can not perform arithmetic with elements of different moduli.")
+            raise ValueError("You cannot perform arithmetic with elements of different moduli.")
         cdef ntl_ZZ_pE r = self._new()
         self.c.restore_c()
         ZZ_pE_sub(r.x, self.x, (<ntl_ZZ_pE>other).x)
@@ -245,7 +243,7 @@ cdef class ntl_ZZ_pE(object):
         if not isinstance(other, ntl_ZZ_pE):
             other = ntl_ZZ_pE(other,modulus=self.c)
         elif self.c is not (<ntl_ZZ_pE>other).c:
-            raise ValueError("You can not perform arithmetic with elements of different moduli.")
+            raise ValueError("You cannot perform arithmetic with elements of different moduli.")
         y = other
         sig_on()
         self.c.restore_c()
@@ -269,7 +267,6 @@ cdef class ntl_ZZ_pE(object):
         sig_off()
         return r
 
-
     cdef ntl_ZZ_pX get_as_ZZ_pX(ntl_ZZ_pE self):
         r"""
         Returns value as ntl_ZZ_pX.
@@ -292,11 +289,11 @@ cdef class ntl_ZZ_pE(object):
         sage: i
         [9 1]
         sage: type(i)
-        <type 'sage.libs.ntl.ntl_ZZ_pX.ntl_ZZ_pX'>
+        <class 'sage.libs.ntl.ntl_ZZ_pX.ntl_ZZ_pX'>
         """
         return self.get_as_ZZ_pX()
 
-    cdef void set_from_ZZ_pX(ntl_ZZ_pE self, ntl_ZZ_pX value):
+    cdef void set_from_ZZ_pX(ntl_ZZ_pE self, ntl_ZZ_pX value) noexcept:
         r"""
         Sets the value from a ZZ_pX.
         """
@@ -346,6 +343,6 @@ def make_ZZ_pE(x, c):
         sage: sage.libs.ntl.ntl_ZZ_pE.make_ZZ_pE([4,3], c)
         [4 3]
         sage: type(sage.libs.ntl.ntl_ZZ_pE.make_ZZ_pE([4,3], c))
-        <type 'sage.libs.ntl.ntl_ZZ_pE.ntl_ZZ_pE'>
+        <class 'sage.libs.ntl.ntl_ZZ_pE.ntl_ZZ_pE'>
     """
     return ntl_ZZ_pE(x, c)

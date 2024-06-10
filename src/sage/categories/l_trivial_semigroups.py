@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-categories
 r"""
 L-trivial semigroups
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2016 Nicolas M. Thiéry <nthiery at users.sf.net>
 #
@@ -14,8 +13,9 @@ from __future__ import absolute_import
 #*****************************************************************************
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
-from .magmas import Magmas
-from .semigroups import Semigroups
+from sage.categories.magmas import Magmas
+from sage.categories.semigroups import Semigroups
+
 
 class LTrivialSemigroups(CategoryWithAxiom):
     def extra_super_categories(self):

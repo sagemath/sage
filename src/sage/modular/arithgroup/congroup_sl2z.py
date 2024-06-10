@@ -1,12 +1,10 @@
 r"""
-The modular group `{\rm SL}_2(\ZZ)`
+The modular group `\SL_2(\ZZ)`
 
 AUTHORS:
 
-- Niles Johnson (2010-08): :trac:`3893`: ``random_element()`` should pass on ``*args`` and ``**kwds``.
-
+- Niles Johnson (2010-08): :issue:`3893`: ``random_element()`` should pass on ``*args`` and ``**kwds``.
 """
-from __future__ import absolute_import
 
 ################################################################################
 #
@@ -20,36 +18,43 @@ from __future__ import absolute_import
 #
 ################################################################################
 
+from sage.arith.misc import gcd
+from sage.modular.cusps import Cusp
+from sage.modular.modsym.p1list import lift_to_sl2z
+from sage.rings.integer_ring import ZZ
+
 from .congroup_gamma0 import Gamma0_class
 from .arithgroup_element import ArithmeticSubgroupElement
-from sage.rings.integer_ring import ZZ
-from sage.modular.cusps import Cusp
-from sage.arith.all import gcd
-from sage.modular.modsym.p1list import lift_to_sl2z
+
 
 def is_SL2Z(x):
     r"""
-    Return True if x is the modular group `{\rm SL}_2(\ZZ)`.
+    Return True if x is the modular group `\SL_2(\ZZ)`.
 
     EXAMPLES::
 
         sage: from sage.modular.arithgroup.all import is_SL2Z
         sage: is_SL2Z(SL2Z)
+        doctest:warning...
+        DeprecationWarning: The function is_SL2Z is deprecated; use 'isinstance(..., SL2Z_class)' instead.
+        See https://github.com/sagemath/sage/issues/38035 for details.
         True
         sage: is_SL2Z(Gamma0(6))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38035, "The function is_SL2Z is deprecated; use 'isinstance(..., SL2Z_class)' instead.")
     return isinstance(x, SL2Z_class)
 
 class SL2Z_class(Gamma0_class):
     r"""
-    The full modular group `{\rm SL}_2(\ZZ)`, regarded as a congruence
+    The full modular group `\SL_2(\ZZ)`, regarded as a congruence
     subgroup of itself.
     """
 
     def __init__(self):
         r"""
-        The modular group ${\rm SL}_2(\Z)$.
+        The modular group `\SL_2(\Z)`.
 
         EXAMPLES::
 
@@ -145,7 +150,7 @@ class SL2Z_class(Gamma0_class):
             sage: latex(SL2Z)
             \mbox{\rm SL}_2(\Bold{Z})
         """
-        return "\\mbox{\\rm SL}_2(%s)"%(ZZ._latex_())
+        return "\\mbox{\\rm SL}_2(%s)" % (ZZ._latex_())
 
     def is_subgroup(self, right):
         """
@@ -166,7 +171,7 @@ class SL2Z_class(Gamma0_class):
         r"""
         Return the unique reduced cusp equivalent to c under the
         action of self. Always returns Infinity, since there is only
-        one equivalence class of cusps for $SL_2(Z)$.
+        one equivalence class of cusps for `SL_2(Z)`.
 
         EXAMPLES::
 
@@ -177,14 +182,14 @@ class SL2Z_class(Gamma0_class):
 
     def random_element(self, bound=100, *args, **kwds):
         r"""
-        Return a random element of `{\rm SL}_2(\ZZ)` with entries whose
+        Return a random element of `\SL_2(\ZZ)` with entries whose
         absolute value is strictly less than bound (default 100).
         Additional arguments and keywords are passed to the random_element
         method of ZZ.
 
         (Algorithm: Generate a random pair of integers at most bound. If they
         are not coprime, throw them away and start again. If they are, find an
-        element of `{\rm SL}_2(\ZZ)` whose bottom row is that, and
+        element of `\SL_2(\ZZ)` whose bottom row is that, and
         left-multiply it by `\begin{pmatrix} 1 & w \\ 0 & 1\end{pmatrix}` for
         an integer `w` randomly chosen from a small enough range that the
         answer still has entries at most bound.)
@@ -195,20 +200,26 @@ class SL2Z_class(Gamma0_class):
 
         EXAMPLES::
 
-            sage: SL2Z.random_element()
-            [60 13]
-            [83 18]
-            sage: SL2Z.random_element(5)
-            [-1  3]
-            [ 1 -4]
+            sage: s = SL2Z.random_element()
+            sage: s.parent() is SL2Z
+            True
+            sage: all(a in range(-99, 100) for a in list(s))
+            True
+            sage: S = set()
+            sage: while len(S) < 180:
+            ....:     s = SL2Z.random_element(5)
+            ....:     assert all(a in range(-4, 5) for a in list(s))
+            ....:     assert s.parent() is SL2Z
+            ....:     assert s in SL2Z
+            ....:     S.add(s)
 
         Passes extra positional or keyword arguments through::
 
-            sage: SL2Z.random_element(5, distribution='1/n')
-            [ 1 -4]
-            [ 0  1]
+            sage: SL2Z.random_element(5, distribution='1/n').parent() is SL2Z
+            True
         """
-        if bound <= 1: raise ValueError("bound must be greater than 1")
+        if bound <= 1:
+            raise ValueError("bound must be greater than 1")
         c = ZZ.random_element(1-bound, bound, *args, **kwds)
         d = ZZ.random_element(1-bound, bound, *args, **kwds)
         if gcd(c,d) != 1: # try again
@@ -251,5 +262,3 @@ def _SL2Z_ref():
         True
     """
     return SL2Z
-
-

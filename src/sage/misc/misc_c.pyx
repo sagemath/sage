@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Miscellaneous functions (Cython)
 
@@ -22,8 +23,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-import sys
 
 from cpython.sequence cimport *
 from cpython.list cimport *
@@ -587,7 +586,7 @@ cpdef list normalize_index(object key, int size):
             raise IndexError("index out of range")
         return [index]
     elif isinstance(key, slice):
-        return list(xrange(*key.indices(size)))
+        return list(range(*key.indices(size)))
     elif type(key) is tuple:
         index_tuple = key
     elif type(key) is list:
@@ -737,7 +736,7 @@ def cyflush():
     Starting with Python 3, some output from external libraries (like
     FLINT) is not flushed, and so if a doctest produces such output,
     the output may not appear until a later doctest. See
-    :trac:`28649`.
+    :issue:`28649`.
 
     Use this function after a doctest which produces potentially
     unflushed output to force it to be flushed.
@@ -745,7 +744,7 @@ def cyflush():
     EXAMPLES::
 
         sage: R.<t> = QQ[]
-        sage: t^(sys.maxsize//2)
+        sage: t^(sys.maxsize//2)                                                        # needs sage.libs.flint
         Traceback (most recent call last):
         ...
         RuntimeError: FLINT exception

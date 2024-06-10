@@ -122,9 +122,7 @@ in memory::
 
     sage: sum([binomial(8, i) for i in range(9)])
     256
-    sage: sum(binomial(8, i) for i in xrange(9))  # py2
-    256
-    sage: sum(binomial(8, i) for i in range(9))  # py3
+    sage: sum(binomial(8, i) for i in range(9))
     256
 
 .. TOPIC:: Exercises

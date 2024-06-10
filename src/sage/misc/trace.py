@@ -1,7 +1,6 @@
 """
 Interactively tracing execution of a command
 """
-from __future__ import print_function
 
 
 def trace(code, preparse=True):
@@ -15,9 +14,9 @@ def trace(code, preparse=True):
     INPUT:
 
 
-    -  ``code`` - str
+    -  ``code`` -- str
 
-    -  ``preparse`` - bool (default: True); if True, run
+    -  ``preparse`` -- bool (default: ``True``); if True, run
        expression through the Sage preparser.
 
 
@@ -27,9 +26,10 @@ def trace(code, preparse=True):
 
     ::
 
+        sage: from sage.misc.trace import trace
         sage: trace("factor(100)")             # not tested
 
-    then at the (Pdb) prompt type ``s`` (or ``step``), then press return
+    then at the (Pdb) prompt type ``s`` (or ``step``), then press :kbd:`Return`
     over and over to step through every line of Python that is called
     in the course of the above computation. Type ``?`` at any time for
     help on how to use the debugger (e.g., ``l`` lists 11 lines around
@@ -46,7 +46,7 @@ def trace(code, preparse=True):
 
     TESTS:
 
-    For tests we disable garbage collection, see :trac:`21258` ::
+    For tests we disable garbage collection, see :issue:`21258` ::
 
         sage: import gc
         sage: gc.disable()
@@ -54,9 +54,10 @@ def trace(code, preparse=True):
     The only real way to test this is via pexpect spawning a
     sage subprocess that uses IPython::
 
+        sage: # needs pexpect sage.all
         sage: import pexpect
         sage: s = pexpect.spawn('sage')
-        sage: _ = s.sendline("trace('print(factor(10))'); print(3+97)")
+        sage: _ = s.sendline("from sage.misc.trace import trace; trace('print(factor(10))'); print(3+97)")
         sage: _ = s.expect('ipdb>', timeout=90)
         sage: _ = s.sendline("s"); _ = s.sendline("c")
         sage: _ = s.expect('100', timeout=90)
@@ -64,27 +65,15 @@ def trace(code, preparse=True):
     Seeing the ipdb prompt and the 2 \* 5 in the output below is a
     strong indication that the trace command worked correctly::
 
-        sage: print(s.before[s.before.find(b'--'):].decode())
+        sage: print(s.before[s.before.find(b'--'):].decode())                           # needs pexpect sage.all
         --...
-        ipdb> c
-        2 * 5
-
-    We test what happens in notebook embedded mode::
-
-        sage: sage.plot.plot.EMBEDDED_MODE = True
-        sage: trace('print(factor(10))')
-        Traceback (most recent call last):
-        ...
-        NotImplementedError: the trace command is not implemented in the Sage notebook; you must use the command line.
+        ...ipdb> c
+        ...2 * 5...
 
     Re-enable garbage collection::
 
         sage: gc.enable()
     """
-    from sage.plot.plot import EMBEDDED_MODE
-    if EMBEDDED_MODE:
-        raise NotImplementedError("the trace command is not implemented in the Sage notebook; you must use the command line.")
-
     from IPython.core.debugger import Pdb
     pdb = Pdb()
 

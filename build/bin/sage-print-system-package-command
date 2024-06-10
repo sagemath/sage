@@ -5,9 +5,23 @@ shift
 IF_VERBOSE=:
 SUDO=
 PROMPT=
+SPKG=no
+if [ -n "$OUTPUT_RST" ]; then
+    COMMENT="$RST_INDENT"
+else
+    COMMENT="# "
+fi
 while :
 do
     case "$1" in
+        --spkg)
+            # Whether given package names are SPKG names instead of system package names
+            SPKG=yes
+            ;;
+        --verbose=*)
+            IF_VERBOSE=
+            COMMENT="${1#--verbose=}"
+            ;;
         --verbose)
             IF_VERBOSE=
             ;;
@@ -16,10 +30,26 @@ do
             SUDO="sudo "
             ;;
         --prompt=*)
-            PROMPT=${1#--prompt=}
+            PROMPT="${1#--prompt=}"
             ;;
         --prompt)
             PROMPT='  $ '
+            CONTINUATION='        '
+            ;;
+        --continuation=*)
+            CONTINUATION="${1#--continuation=}"
+            ;;
+        --wrap)
+            WRAP=78
+            ;;
+        --wrap=*)
+            WRAP="${1#--wrap=}"
+            ;;
+        --no-install-recommends)
+            NO_INSTALL_RECOMMENDS=yes
+            ;;
+        --yes)
+            YES=yes
             ;;
         -*)
             echo >&2 "$0: unknown option $1"
@@ -33,18 +63,72 @@ done
 command=$1
 shift
 if [ -z "$system" -o -z "$command" ]; then
-    echo >&2 "usage: $0 {debian|arch|conda|...} [--verbose] [--sudo] [--prompt] {update|install|setup-build-env|remove|...} PACKAGES..."
+    echo >&2 "usage: $0 {auto|debian|arch|conda|...} [--verbose] [--sudo] [--prompt] {update|install|setup-build-env|remove|...} PACKAGES..."
     exit 1
 fi
-system_packages="$*"
+if [ "$system" = auto ]; then
+    system=$(sage-guess-package-system 2>/dev/null)
+    if [ "$system" = unknown ]; then
+        echo >&2 "unknown package system"
+        exit 1
+    fi
+fi
+if [ "$SPKG" = "yes" ]; then
+    system_packages=$(echo $(sage-get-system-packages $system $*))
+else
+    system_packages="$*"
+fi
+options=
+env=
 shopt -s extglob
+
+function print_shell_command()
+{
+    if [ -n "$OUTPUT_RST" ]; then
+        echo
+        echo "$RST_INDENT.. CODE-BLOCK:: bash"
+        echo
+    fi
+    # shell-quote arguments if necessary
+    quoted=$(for a in "$@"; do printf "%q " $a; done)
+    if [ -z "$WRAP" -o $# -lt 6 ]; then
+        echo "${PROMPT}${quoted}"
+    else
+        sage-bootstrap-python -c "import textwrap; print(' \\\\\n'.join(textwrap.wrap(r'''${quoted}''', $WRAP, initial_indent=r'''${PROMPT}''', subsequent_indent=r'''${CONTINUATION}''', break_long_words=False, break_on_hyphens=False)))"
+    fi
+    if [ -n "$OUTPUT_RST" ]; then
+        echo
+    fi
+}
+
+function print_comment()
+{
+    if [ -n "$OUTPUT_RST" ]; then
+        echo
+    fi
+    echo "${COMMENT}$1"
+}
+
 case $system:$command in
     homebrew*:setup-build-env)
-        $IF_VERBOSE echo "# To automatically take care of homebrew messages regarding "
-        $IF_VERBOSE echo "# keg-only packages for the current shell session:"
+        $IF_VERBOSE echo "${COMMENT}"
+        $IF_VERBOSE echo "${COMMENT}Homebrew can issue suggestions regarding keg-only packages."
+        $IF_VERBOSE echo "${COMMENT}The following command is to automatically apply these suggestions"
+        $IF_VERBOSE echo "${COMMENT}for packages relevant for Sage to make them available for the build."
+        $IF_VERBOSE echo "${COMMENT}Run it once to apply the suggestions for the current session."
+        $IF_VERBOSE echo "${COMMENT}Add it to your shell profile to apply them for all future sessions."
+        $IF_VERBOSE echo "${COMMENT}"
         [ -n "$SAGE_ROOT" ] || SAGE_ROOT=.
         echo "${PROMPT}source $SAGE_ROOT/.homebrew-build-env"
-        $IF_VERBOSE echo "# Add this to your shell profile if you want it to persist between shell sessions."
+        ;;
+    macports*:setup-build-env)
+        $IF_VERBOSE echo "${COMMENT}"
+        $IF_VERBOSE echo "${COMMENT}WARNING: Use of MacPorts is experimental"
+        $IF_VERBOSE echo "${COMMENT}"
+        $IF_VERBOSE echo "${COMMENT}MacPorts does not provide unversioned gfortran executables by default"
+        $IF_VERBOSE echo "${COMMENT}To make gfortran available (and build with gcc from XCode), use:"
+        $IF_VERBOSE echo "${COMMENT}"
+        $IF_VERBOSE print_shell_command ./configure FC=gfortran-mp-11
         ;;
     *:setup-build-env)
         # Nothing needed
@@ -53,49 +137,92 @@ case $system:$command in
     # Verbs handled above are our own inventions. Verbs handled below are apt-get verbs.
     #
     @(debian*|ubuntu*):update)
-        echo "${PROMPT}${SUDO}apt-get $command $system_packages"
+        print_shell_command ${SUDO}apt-get $command $system_packages
         ;;
     @(debian*|ubuntu*):*)
-        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}apt-get $command $system_packages"
+        [ "$NO_INSTALL_RECOMMENDS" = yes ] && options="$options --no-install-recommends"
+        [ "$YES" = yes ] && options="$options --yes" env="DEBIAN_FRONTEND=noninteractive "
+        [ -n "$system_packages" ] && print_shell_command ${SUDO}${env}apt-get $command $options $system_packages
         ;;
     @(fedora*|redhat*|centos*):install)
-        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}yum install $system_packages"
+        [ "$YES" = yes ] && options="$options -y"
+        [ -n "$system_packages" ] && print_shell_command ${SUDO}yum install $options $system_packages
         ;;
     gentoo*:install)
-        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}emerge $system_packages"
+        [ -n "$system_packages" ] && print_shell_command ${SUDO}emerge $system_packages
+        ;;
+    arch*:update)
+        print_shell_command "${SUDO}pacman -Sy"
         ;;
     arch*:install)
-        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}pacman -S $system_packages"
+        [ "$YES" = yes ] && options="$options --noconfirm"
+        [ -n "$system_packages" ] && print_shell_command ${SUDO}pacman -S $options $system_packages
         ;;
-
+    void*:update)
+        print_shell_command "${SUDO}xbps-install -Su"
+        ;;
     void*:install)
-        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}xbps-install $system_packages"
+        [ "$YES" = yes ] && options="$options --yes"
+        [ -n "$system_packages" ] && print_shell_command ${SUDO}xbps-install $options $system_packages
+        ;;
+    opensuse*:install)
+        [ -n "$system_packages" ] && print_shell_command ${SUDO}zypper install $system_packages
         ;;
     *conda*:install)
-        [ -n "$system_packages" ] && echo "${PROMPT}conda install $system_packages"
+        [ "$YES" = yes ] && options="$options --yes"
+        [ -n "$system_packages" ] && print_shell_command conda install $options $system_packages
         ;;
     homebrew*:install)
-        [ -n "$system_packages" ] && echo "${PROMPT}brew install $system_packages"
+        [ -n "$system_packages" ] && print_shell_command brew install $system_packages
+        ;;
+    macports*:install)
+        [ "$YES" = yes ] && options="$options -N"
+        [ -n "$system_packages" ] && print_shell_command ${SUDO}port $options install $system_packages
         ;;
     slackware*:install)
-        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}slackpkg install $system_packages"
+        [ -n "$system_packages" ] && print_shell_command ${SUDO}slackpkg install $system_packages
         ;;
     cygwin*:update)
-        echo "# first install apt-cyg from https://github.com/transcode-open/apt-cyg"
+        print_comment "first install apt-cyg from https://github.com/transcode-open/apt-cyg"
         ;;
     cygwin*:install)
-        [ -n "$system_packages" ] && echo "${PROMPT}apt-cyg install $system_packages"
+        [ -n "$system_packages" ] && print_shell_command apt-cyg install $system_packages
         ;;
     freebsd*:install)
-        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}pkg install $system_packages"
+        [ -n "$system_packages" ] && print_shell_command ${SUDO}pkg install $system_packages
+        ;;
+    nix*:install)
+        [ -n "$system_packages" ] && print_shell_command nix-env --install $system_packages
+        ;;
+    alpine:update)
+        print_shell_command "apk update"
+        ;;
+    alpine:install)
+        [ -n "$system_packages" ] && print_shell_command apk add $system_packages
         ;;
     pip:install)
-        [ -n "$system_packages" ] && echo "${PROMPT}sage -pip install $system_packages"
+        [ -n "$system_packages" ] && print_shell_command sage -pip install $system_packages
+        ;;
+    cpan:install)
+        [ -n "$system_packages" ] && print_shell_command cpan -i $system_packages
+        ;;
+    repology:install)
+        if [ -n "$system_packages" ]; then
+            links=""
+            for pkg in $system_packages; do
+                link="https://repology.org/project/$pkg/versions"
+                if [ -n "$links" ]; then
+                    links="$links, "
+                fi
+                links="$links$link"
+            done
+            print_comment "See ${links}"
+        fi
         ;;
     *:update)
         # Nothing needed
         ;;
     *)
-        echo "# $command the following packages: $system_packages"
+        print_comment "$command the following packages: $system_packages"
         ;;
 esac

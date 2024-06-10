@@ -1,0 +1,4 @@
+ | $(PYTHON_TOOLCHAIN) pint palettable mathics_scanner $(PYTHON)
+
+----------
+All lines of this file are ignored except the first.

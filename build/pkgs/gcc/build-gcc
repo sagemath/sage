@@ -54,9 +54,11 @@ fi
 if [ -n "$AS" -a "$AS" != "as" ]; then
     CONFIGURE_AS="--with-as=$AS"
 fi
+unset AS
 if [ -n "$LD" -a "$LD" != "ld" ]; then
     CONFIGURE_LD="--with-ld=$LD"
 fi
+unset LD
 
 # Use SAGE_CXX_WITHOUT_STD instead of CXX.
 # This fixes #29162 (gfortran 9.2.0 compile error on debian-jessie with gcc 4.9.2)

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Codes
 
@@ -123,11 +124,11 @@ def _explain_constructor(cl):
         reqs = "The constructor requires the arguments {}.".format(args)
     else:
         reqs = "The constructor requires no arguments."
-    if argspec.varargs or argspec.keywords:
+    if argspec.varargs or argspec.varkw:
         var = "It accepts unspecified arguments as well.\n"
     else:
         var = ""
-    return("{}\n{}\n{}See the documentation of {}.{} for more details."\
+    return ("{}\n{}\n{}See the documentation of {}.{} for more details."
             .format(reqs, opts, var, cl.__module__, cl.__name__))
 
 
@@ -151,10 +152,10 @@ class AbstractCode(Parent):
 
     To implement a code, you need to:
 
-    - inherit from AbstractCode
+    - inherit from :class:`AbstractCode`
 
-    - call AbstractCode ``__init__`` method in the subclass constructor.
-      Example: ``super(SubclassName, self).__init__(length, "EncoderName",
+    - call :class:`AbstractCode` ``__init__`` method in the subclass constructor.
+      Example: ``super().__init__(length, "EncoderName",
       "DecoderName", "metric")``. "EncoderName" and "DecoderName" are set to
       ``None`` by default, a generic code class such as AbstractCode does
       not necessarily have to have general encoders/decoders. However, if you
@@ -196,9 +197,9 @@ class AbstractCode(Parent):
       ``MyDecoderClass``.
 
 
-    As AbstractCode is not designed to be implemented, it does not have any
-    representation methods. You should implement ``_repr_`` and ``_latex_``
-    methods in the subclass.
+    As the class :class:`AbstractCode` is not designed to be instantiated, it
+    does not have any representation methods. You should implement ``_repr_``
+    and ``_latex_`` methods in the subclass.
     """
 
     def __init__(self, length, default_encoder_name=None,
@@ -226,13 +227,13 @@ class AbstractCode(Parent):
 
         EXAMPLES:
 
-        The following example demonstrates how to use subclass `AbstractCode`
+        The following example demonstrates how to use a subclass of ``AbstractCode``
         for representing a new family of codes::
 
             sage: from sage.coding.abstract_code import AbstractCode
             sage: class MyCodeFamily(AbstractCode):
             ....:   def __init__(self, length):
-            ....:       super(MyCodeFamily, self).__init__(length)
+            ....:       super().__init__(length)
             ....:   def __iter__(self):
             ....:       for i in range(self.length() + 1):
             ....:            yield vector([1 for j in range(i)] + [0 for k in range(i, self.length())])
@@ -281,7 +282,7 @@ class AbstractCode(Parent):
             ValueError: length must be a Python int or a Sage Integer
 
         If the length of the code is not a non-zero positive integer
-        (See :trac:`21326`), it will raise an exception::
+        (See :issue:`21326`), it will raise an exception::
 
             sage: C = MyCodeFamily(0)
             Traceback (most recent call last):
@@ -314,7 +315,7 @@ class AbstractCode(Parent):
             sage: '_registered_encoders' in C.__getstate__()
             True
         """
-        d = super(AbstractCode, self).__getstate__()
+        d = super().__getstate__()
         d['_registered_encoders'] = self._registered_encoders
         d['_registered_decoders'] = self._registered_decoders
         return d
@@ -334,10 +335,10 @@ class AbstractCode(Parent):
             sage: from sage.coding.abstract_code import AbstractCode
             sage: class MyCode(AbstractCode):
             ....:    def __init__(self):
-            ....:        super(MyCode, self).__init__(10)
+            ....:        super().__init__(10)
 
         We check we get a sensible error message while asking for an
-        iterator over the elements of our new class:
+        iterator over the elements of our new class::
 
             sage: C = MyCode()
             sage: list(C)
@@ -362,10 +363,10 @@ class AbstractCode(Parent):
             sage: from sage.coding.abstract_code import AbstractCode
             sage: class MyCode(AbstractCode):
             ....:    def __init__(self, length):
-            ....:        super(MyCode, self).__init__(length)
+            ....:        super().__init__(length)
 
         We check we get a sensible error message while asking if an element is
-        in our new class:
+        in our new class::
 
             sage: C = MyCode(3)
             sage: vector((1, 0, 0, 0, 0, 1, 1)) in C
@@ -386,7 +387,7 @@ class AbstractCode(Parent):
             sage: from sage.coding.abstract_code import AbstractCode
             sage: class MyCode(AbstractCode):
             ....:    def __init__(self, length):
-            ....:        super(MyCode, self).__init__(length)
+            ....:        super().__init__(length)
             sage: C = MyCode(3)
             sage: C.ambient_space()
             Traceback (most recent call last):
@@ -458,10 +459,10 @@ class AbstractCode(Parent):
             sage: from sage.coding.abstract_code import AbstractCode
             sage: class MyCode(AbstractCode):
             ....:    def __init__(self):
-            ....:        super(MyCode, self).__init__(10)
+            ....:        super().__init__(10)
 
         We check we get a sensible error message while asking for a string
-        representation of an instance of our new class:
+        representation of an instance of our new class::
 
             sage: C = MyCode()
             sage: C #random
@@ -486,10 +487,10 @@ class AbstractCode(Parent):
             sage: from sage.coding.abstract_code import AbstractCode
             sage: class MyCode(AbstractCode):
             ....:    def __init__(self):
-            ....:        super(MyCode, self).__init__(10)
+            ....:        super().__init__(10)
 
         We check we get a sensible error message while asking for a string
-        representation of an instance of our new class:
+        representation of an instance of our new class::
 
             sage: C = MyCode()
             sage: latex(C)
@@ -511,7 +512,7 @@ class AbstractCode(Parent):
             (1, 0, 1, 0, 1, 0, 1)
             True
         """
-        return [x for x in self]
+        return list(self)
 
     def length(self):
         r"""
@@ -561,7 +562,7 @@ class AbstractCode(Parent):
 
             sage: class MyDecoder(sage.coding.decoder.Decoder):
             ....:   def __init__(self, code):
-            ....:       super(MyDecoder, self).__init__(code)
+            ....:       super().__init__(code)
             ....:   def _repr_(self):
             ....:       return "MyDecoder decoder with associated code %s" % self.code()
 
@@ -623,7 +624,7 @@ class AbstractCode(Parent):
 
             sage: class MyEncoder(sage.coding.encoder.Encoder):
             ....:   def __init__(self, code):
-            ....:       super(MyEncoder, self).__init__(code)
+            ....:       super().__init__(code)
             ....:   def _repr_(self):
             ....:       return "MyEncoder encoder with associated code %s" % self.code()
 
@@ -665,7 +666,7 @@ class AbstractCode(Parent):
 
     def decode_to_code(self, word, decoder_name=None, *args, **kwargs):
         r"""
-        Corrects the errors in ``word`` and returns a codeword.
+        Correct the errors in ``word`` and returns a codeword.
 
         INPUT:
 
@@ -683,7 +684,8 @@ class AbstractCode(Parent):
 
         EXAMPLES::
 
-            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0],[1,0,0,1,1,0,0],[0,1,0,1,0,1,0],[1,1,0,1,0,0,1]])
+            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0], [1,0,0,1,1,0,0],
+            ....:                    [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: word = vector(GF(2), (1, 1, 0, 0, 1, 1, 0))
             sage: w_err = word + vector(GF(2), (1, 0, 0, 0, 0, 0, 0))
@@ -720,7 +722,8 @@ class AbstractCode(Parent):
 
         EXAMPLES::
 
-            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0],[1,0,0,1,1,0,0],[0,1,0,1,0,1,0],[1,1,0,1,0,0,1]])
+            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0], [1,0,0,1,1,0,0],
+            ....:                    [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: word = vector(GF(2), (1, 1, 0, 0, 1, 1, 0))
             sage: C.decode_to_message(word)
@@ -759,7 +762,8 @@ class AbstractCode(Parent):
 
         EXAMPLES::
 
-            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0],[1,0,0,1,1,0,0],[0,1,0,1,0,1,0],[1,1,0,1,0,0,1]])
+            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0], [1,0,0,1,1,0,0],
+            ....:                    [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: C.decoder()
             Syndrome decoder for [7, 4] linear code over GF(2) handling errors of weight up to 1
@@ -790,7 +794,8 @@ class AbstractCode(Parent):
             sage: C.decoder('Try')
             Traceback (most recent call last):
             ...
-            ValueError: There is no Decoder named 'Try'. The known Decoders are: ['InformationSet', 'NearestNeighbor', 'Syndrome']
+            ValueError: There is no Decoder named 'Try'.
+            The known Decoders are: ['InformationSet', 'NearestNeighbor', 'Syndrome']
 
         Some decoders take extra arguments. If the user forgets to supply these,
         the error message attempts to be helpful::
@@ -798,11 +803,13 @@ class AbstractCode(Parent):
             sage: C.decoder('InformationSet')
             Traceback (most recent call last):
             ...
-            ValueError: Constructing the InformationSet decoder failed, possibly due to missing or incorrect parameters.
+            ValueError: Constructing the InformationSet decoder failed,
+            possibly due to missing or incorrect parameters.
             The constructor requires the arguments ['number_errors'].
             It takes the optional arguments ['algorithm'].
-            It accepts unspecified arguments as well.
-            See the documentation of sage.coding.information_set_decoder.LinearCodeInformationSetDecoder for more details.
+            It accepts unspecified arguments as well. See the documentation of
+            sage.coding.information_set_decoder.LinearCodeInformationSetDecoder
+            for more details.
 
         """
         if not self._default_decoder_name:
@@ -830,14 +837,15 @@ class AbstractCode(Parent):
         INPUT:
 
         - ``classes`` -- (default: ``False``) if ``classes`` is set to ``True``,
-          return instead a ``dict`` mapping available decoder name to the
+          return instead a :class:`dict` mapping available decoder name to the
           associated decoder class.
 
-        OUTPUT: a list of strings, or a `dict` mapping strings to classes.
+        OUTPUT: a list of strings, or a :class:`dict` mapping strings to classes.
 
         EXAMPLES::
 
-            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0],[1,0,0,1,1,0,0],[0,1,0,1,0,1,0],[1,1,0,1,0,0,1]])
+            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0], [1,0,0,1,1,0,0],
+            ....:                    [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: C.decoders_available()
             ['InformationSet', 'NearestNeighbor', 'Syndrome']
@@ -878,7 +886,8 @@ class AbstractCode(Parent):
 
         EXAMPLES::
 
-            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0],[1,0,0,1,1,0,0],[0,1,0,1,0,1,0],[1,1,0,1,0,0,1]])
+            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0], [1,0,0,1,1,0,0],
+            ....:                    [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: word = vector((0, 1, 1, 0))
             sage: C.encode(word)
@@ -928,7 +937,8 @@ class AbstractCode(Parent):
 
         EXAMPLES::
 
-            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0],[1,0,0,1,1,0,0],[0,1,0,1,0,1,0],[1,1,0,1,0,0,1]])
+            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0], [1,0,0,1,1,0,0],
+            ....:                    [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: C.encoder()
             Generator matrix-based encoder for [7, 4] linear code over GF(2)
@@ -944,7 +954,8 @@ class AbstractCode(Parent):
             ....:   def field(self):
             ....:       return self._field
             ....:   def _repr_(self):
-            ....:       return "%d dummy code over GF(%s)" % (self.length(), self.field().cardinality())
+            ....:       return "%d dummy code over GF(%s)" % (self.length(),
+            ....:                                             self.field().cardinality())
             sage: D = MyCodeFamily(5, GF(2))
             sage: D.encoder()
             Traceback (most recent call last):
@@ -964,7 +975,8 @@ class AbstractCode(Parent):
             sage: C.encoder('NonExistingEncoder')
             Traceback (most recent call last):
             ...
-            ValueError: There is no Encoder named 'NonExistingEncoder'. The known Encoders are: ['GeneratorMatrix', 'Systematic']
+            ValueError: There is no Encoder named 'NonExistingEncoder'.
+            The known Encoders are: ['GeneratorMatrix', 'Systematic']
 
         Some encoders take extra arguments. If the user incorrectly supplies
         these, the error message attempts to be helpful::
@@ -972,10 +984,12 @@ class AbstractCode(Parent):
             sage: C.encoder('Systematic', strange_parameter=True)
             Traceback (most recent call last):
             ...
-            ValueError: Constructing the Systematic encoder failed, possibly due to missing or incorrect parameters.
-            The constructor requires no arguments.
-            It takes the optional arguments ['systematic_positions'].
-            See the documentation of sage.coding.linear_code_no_metric.LinearCodeSystematicEncoder for more details.
+            ValueError: Constructing the Systematic encoder failed,
+            possibly due to missing or incorrect parameters.
+            The constructor requires no arguments. It takes the optional
+            arguments ['systematic_positions']. See the documentation of
+            sage.coding.linear_code_no_metric.LinearCodeSystematicEncoder
+            for more details.
         """
         if not self._default_encoder_name:
             raise NotImplementedError("No encoder implemented for this code.")
@@ -1002,14 +1016,15 @@ class AbstractCode(Parent):
         INPUT:
 
         - ``classes`` -- (default: ``False``) if ``classes`` is set to ``True``,
-          return instead a ``dict`` mapping available encoder name to the
+          return instead a :class:`dict` mapping available encoder name to the
           associated encoder class.
 
-        OUTPUT: a list of strings, or a `dict` mapping strings to classes.
+        OUTPUT: a list of strings, or a :class:`dict` mapping strings to classes.
 
         EXAMPLES::
 
-            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0],[1,0,0,1,1,0,0],[0,1,0,1,0,1,0],[1,1,0,1,0,0,1]])
+            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0], [1,0,0,1,1,0,0],
+            ....:                    [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: C.encoders_available()
             ['GeneratorMatrix', 'Systematic']
@@ -1051,7 +1066,8 @@ class AbstractCode(Parent):
 
         EXAMPLES::
 
-            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0],[1,0,0,1,1,0,0],[0,1,0,1,0,1,0],[1,1,0,1,0,0,1]])
+            sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0], [1,0,0,1,1,0,0],
+            ....:                    [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
             sage: C = LinearCode(G)
             sage: c = vector(GF(2), (1, 1, 0, 0, 1, 1, 0))
             sage: C.unencode(c)
@@ -1082,14 +1098,14 @@ class AbstractCode(Parent):
 
         TESTS:
 
-        Test that the codeword returned is immutable (see :trac:`16469`)::
+        Test that the codeword returned is immutable (see :issue:`16469`)::
 
             sage: c = C.random_element()
             sage: c.is_immutable()
             True
 
         Test that codeword returned has the same parent as any non-random codeword
-        (see :trac:`19653`)::
+        (see :issue:`19653`)::
 
             sage: C = codes.random_linear_code(GF(16, 'a'), 10, 4)
             sage: c1 = C.random_element()

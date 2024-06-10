@@ -1,8 +1,10 @@
-IPython
-=======
+ipython: Interactive computing environment with an enhanced interactive Python shell
+====================================================================================
 
 Description
 -----------
+
+Interactive computing environment with an enhanced interactive Python shell
 
 From the IPython website:
 
@@ -30,7 +32,7 @@ BSD
 Upstream Contact
 ----------------
 
-http://ipython.scipy.org/
+http://ipython.org
 
 ipython-dev@scipy.org
 

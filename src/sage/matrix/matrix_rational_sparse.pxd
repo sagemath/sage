@@ -1,6 +1,6 @@
 from sage.libs.gmp.types cimport mpz_t
 from sage.modules.vector_rational_sparse cimport mpq_vector
-from .matrix_sparse cimport Matrix_sparse
+from sage.matrix.matrix_sparse cimport Matrix_sparse
 
 
 cdef class Matrix_rational_sparse(Matrix_sparse):

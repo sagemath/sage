@@ -1,5 +1,5 @@
-cysignals
-=========
+cysignals: Interrupt and signal handling for Cython
+===================================================
 
 Description
 -----------
@@ -17,9 +17,3 @@ Upstream Contact
 
 https://github.com/sagemath/cysignals
 
-Dependencies
-------------
-
--  Python
--  Cython
--  PARI (optional)

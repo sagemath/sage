@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Weyl Lie Conformal Algebra
 
@@ -23,20 +24,21 @@ AUTHORS:
 - Reimundo Heluani (2019-08-09): Initial implementation.
 """
 
-#******************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2019 Reimundo Heluani <heluani@potuz.net>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from .lie_conformal_algebra_with_structure_coefs import \
-                                LieConformalAlgebraWithStructureCoefficients
+    LieConformalAlgebraWithStructureCoefficients
 from sage.matrix.special import identity_matrix
 from sage.structure.indexed_generators import standardize_names_index_set
+
 
 class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
     r"""
@@ -108,7 +110,7 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
         sage: alpha0.degree()
         Traceback (most recent call last):
         ...
-        AttributeError: 'WeylLieConformalAlgebra_with_category.element_class' object has no attribute 'degree'
+        AttributeError: 'WeylLieConformalAlgebra_with_category.element_class' object has no attribute 'degree'...
 
     TESTS::
 
@@ -119,7 +121,7 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
         [0 1 0]
         [0 0 1]
     """
-    def __init__(self,R,ngens=None, gram_matrix=None, names=None,
+    def __init__(self, R, ngens=None, gram_matrix=None, names=None,
                  index_set=None):
         """
         Initialize self.
@@ -131,47 +133,46 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
         """
         from sage.matrix.matrix_space import MatrixSpace
         if ngens:
-            try:
-                from sage.rings.all import ZZ
-                assert ngens in ZZ and ngens % 2 == 0
-            except AssertionError:
-                raise ValueError("ngens needs to be an even positive "+
-                                 "Integer, got {}".format(ngens))
-        if (gram_matrix is not None):
+            from sage.rings.integer_ring import ZZ
+            if not (ngens in ZZ and not ngens % 2):
+                raise ValueError("ngens needs to be an even positive Integer, "
+                                 f"got {ngens}")
+        if gram_matrix is not None:
             if ngens is None:
                 ngens = gram_matrix.dimensions()[0]
             try:
-                assert (gram_matrix in MatrixSpace(R,ngens,ngens))
+                assert (gram_matrix in MatrixSpace(R, ngens, ngens))
             except AssertionError:
-                raise ValueError("The gram_matrix should be a skew-symmetric "+
-                    "{0} x {0} matrix, got {1}".format(ngens,gram_matrix))
-            if (not gram_matrix.is_skew_symmetric()) or \
-                                                (gram_matrix.is_singular()):
-                raise ValueError("The gram_matrix should be a non degenerate " +
-                                 "skew-symmetric {0} x {0} matrix, got {1}"\
-                                 .format(ngens,gram_matrix))
-        elif (gram_matrix is None):
+                raise ValueError("The gram_matrix should be a skew-symmetric "
+                    "{0} x {0} matrix, got {1}".format(ngens, gram_matrix))
+            if (not gram_matrix.is_skew_symmetric() or
+                    gram_matrix.is_singular()):
+                raise ValueError("The gram_matrix should be a non degenerate "
+                                 "skew-symmetric {0} x {0} matrix, got {1}"
+                                 .format(ngens, gram_matrix))
+        elif gram_matrix is None:
             if ngens is None:
-                ngens = 2;
-            A = identity_matrix(R,ngens/2)
+                ngens = 2
+            A = identity_matrix(R, ngens // 2)
             from sage.matrix.special import block_matrix
-            gram_matrix = block_matrix([[R.zero(),A],[-A,R.zero()]])
+            gram_matrix = block_matrix([[R.zero(), A], [-A, R.zero()]])
 
         latex_names = None
         if (names is None) and (index_set is None):
             names = 'alpha'
-            latex_names = tuple(r'\alpha_{%d}' % i \
-                                      for i in range (ngens)) + ('K',)
-        names,index_set = standardize_names_index_set(names=names,
+            latex_names = tuple(r'\alpha_{%d}' % i
+                                for i in range(ngens)) + ('K',)
+        names, index_set = standardize_names_index_set(names=names,
                                                       index_set=index_set,
                                                       ngens=ngens)
-        weyldict = { (i,j): {0: {('K',0): gram_matrix[index_set.rank(i),
-                    index_set.rank(j)]}} for i in index_set for j in index_set}
+        weyldict = {(i, j): {0: {('K', 0): gram_matrix[index_set.rank(i),
+                                                       index_set.rank(j)]}}
+                    for i in index_set for j in index_set}
 
-        super(WeylLieConformalAlgebra,self).__init__(R,weyldict,names=names,
-                                           latex_names=latex_names,
-                                           index_set=index_set,
-                                           central_elements=('K',))
+        super().__init__(R, weyldict, names=names,
+                         latex_names=latex_names,
+                         index_set=index_set,
+                         central_elements=('K',))
         self._gram_matrix = gram_matrix
 
     def _repr_(self):
@@ -184,7 +185,7 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
             The Weyl Lie conformal algebra with generators (alpha0, alpha1, K) over Integer Ring
         """
         return "The Weyl Lie conformal algebra with generators {} over {}"\
-                .format(self.gens(),self.base_ring())
+            .format(self.gens(), self.base_ring())
 
     def gram_matrix(self):
         r"""
@@ -202,5 +203,3 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
             [ 0 -1| 0  0]
         """
         return self._gram_matrix
-
-

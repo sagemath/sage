@@ -11,8 +11,9 @@ vous tombiez sur la version en anglais).
 Sage est écrit en grande partie en Python, mais aucune connaissance de
 Python n'est nécessaire pour lire ce tutoriel. Par la suite, vous
 souhaiterez sans doute apprendre Python, et il existe pour cela de
-nombreuses ressources libres d'excellente qualité, dont [PyT]_ et
-[Dive]_. Mais si ce que vous voulez est découvrir rapidement Sage, ce
+nombreuses ressources libres d'excellente qualité: le Python Beginner's Guide
+[PyB]_ répertorie de nombreuses options.
+Mais si ce que vous voulez est découvrir rapidement Sage, ce
 tutoriel est le bon endroit où commencer. Voici quelques exemples :
 
 ::
@@ -95,16 +96,16 @@ Nous nous limiterons ici à quelques remarques.
    d'environnement.
 
    La documentation de SageTeX se trouve dans le répertoire
-   ``$SAGE_ROOT/local/share/texmf/tex/latex/sagetex/``, où
+   ``$SAGE_ROOT/venv/share/texmf/tex/latex/sagetex/``, où
    "``$SAGE_ROOT``" est le répertoire où vous avez installé Sage, par
-   exemple ``/opt/sage-4.3.4``.
+   exemple ``/opt/sage-9.6``.
 
 Les différentes manières d'utiliser Sage
 ========================================
 
 Il y a plusieurs façons d'utiliser Sage.
 
--  **Interface graphique (« notebook ») :** démarrer `sage -n jupyter`; lire 
+-  **Interface graphique (« notebook ») :** démarrer ``sage -n jupyter``; lire 
    `Jupyter documentation on-line <https://jupyter-notebook.readthedocs.io/en/latest/notebook.html>`_ ;
 
 -  **Ligne de commande :** voir :ref:`chapter-interactive_shell` ;

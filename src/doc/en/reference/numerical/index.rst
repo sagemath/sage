@@ -13,6 +13,7 @@ Numerical Optimization
    sage/numerical/linear_tensor_constraints
    sage/numerical/optimize
    sage/numerical/interactive_simplex_method
+   sage/numerical/gauss_legendre
 
 Linear Optimization (LP) and Mixed Integer Linear Optimization (MIP) Solver backends
 ------------------------------------------------------------------------------------

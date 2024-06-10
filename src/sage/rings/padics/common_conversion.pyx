@@ -26,7 +26,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from cpython.int cimport *
+from cpython.long cimport *
 from sage.ext.stdsage cimport PY_NEW
 from sage.libs.gmp.all cimport *
 from sage.arith.rational_reconstruction cimport mpq_rational_reconstruction
@@ -42,7 +42,7 @@ from sage.structure.element cimport parent
 
 cdef long maxordp = (1L << (sizeof(long) * 8 - 2)) - 1
 cdef long minusmaxordp = -maxordp
-# The following Integer (resp. Rational) is used so that 
+# The following Integer (resp. Rational) is used so that
 # the functions here don't need to initialize an mpz_t (resp. mpq_t)
 cdef Integer temp = PY_NEW(Integer)
 cdef Rational rat_temp = PY_NEW(Rational)
@@ -84,7 +84,7 @@ cdef long get_ordp(x, PowComputer_class prime_pow) except? -10000:
         if x == 0:
             return maxordp
         try:
-            n = PyInt_AsLong(x)
+            n = PyLong_AsLong(x)
         except OverflowError:
             return get_ordp(Integer(x), prime_pow)
         else:
@@ -129,6 +129,8 @@ cdef long get_ordp(x, PowComputer_class prime_pow) except? -10000:
         # We don't want to multiply by e again.
         return k
     elif isinstance(x, pAdicGenericElement):
+        if x.parent().is_relaxed():
+            return x.valuation()
         k = (<pAdicGenericElement>x).valuation_c()
         if not (<pAdicGenericElement>x)._is_base_elt(prime_pow.prime):
             # We have to be careful with overflow
@@ -152,7 +154,7 @@ cdef long get_ordp(x, PowComputer_class prime_pow) except? -10000:
             return maxordp
         k = mpz_remove(temp.value, value.value, prime_pow.prime.value)
     else:
-        raise NotImplementedError("Can not determine p-adic valuation of an element of %s"%parent(x))
+        raise NotImplementedError("Cannot determine p-adic valuation of an element of %s"%parent(x))
     # Should check for overflow
     return k * e
 
@@ -209,6 +211,8 @@ cdef long get_preccap(x, PowComputer_class prime_pow) except? -10000:
         if (<pAdicGenericElement>x)._is_exact_zero():
             return maxordp
         prec = <Integer>x.precision_absolute()
+        if prec is infinity:
+            return maxordp
         k = mpz_get_si(prec.value)
         if not (<pAdicGenericElement>x)._is_base_elt(prime_pow.prime):
             # since x lives in a subfield, the ramification index of x's parent will divide e.
@@ -222,7 +226,7 @@ cdef long get_preccap(x, PowComputer_class prime_pow) except? -10000:
         if mpz_cmp_ui(temp.value, 1) != 0:
             raise TypeError("cannot coerce from the given integer mod ring (not a power of the same prime)")
     else:
-        raise NotImplementedError("Can not determine p-adic precision of an element of %s"%parent(x))
+        raise NotImplementedError("Cannot determine p-adic precision of an element of %s"%parent(x))
     return k * e
 
 cdef long comb_prec(iprec, long prec) except? -10000:
@@ -246,7 +250,7 @@ cdef long comb_prec(iprec, long prec) except? -10000:
             raise OverflowError("precision overflow")
         return mpz_get_si(intprec.value)
     if isinstance(iprec, int):
-        return min(PyInt_AS_LONG(iprec), prec)
+        return min(PyLong_AsLong(iprec), prec)
     return comb_prec(Integer(iprec), prec)
 
 cdef int _process_args_and_kwds(long *aprec, long *rprec, args, kwds, bint absolute, PowComputer_class prime_pow) except -1:
@@ -401,11 +405,13 @@ cdef inline int cconv_shared(mpz_t out, x, long prec, long valshift, PowComputer
     - ``prime_pow`` -- a PowComputer for the ring.
 
     """
-    if PyInt_Check(x):
+    if PyLong_Check(x):
         x = Integer(x)
     elif isinstance(x, pari_gen):
         x = x.sage()
-    if isinstance(x, pAdicGenericElement) or sage.rings.finite_rings.integer_mod.is_IntegerMod(x):
+    if isinstance(x, pAdicGenericElement) and x.parent().is_relaxed():
+        x = x.lift(valshift + prec)
+    elif isinstance(x, pAdicGenericElement) or sage.rings.finite_rings.integer_mod.is_IntegerMod(x):
         x = x.lift()
     if isinstance(x, Integer):
         if valshift > 0:

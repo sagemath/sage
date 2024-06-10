@@ -1,0 +1,18 @@
+// See https://aka.ms/devcontainer.json for format details.
+{
+    "name": "computop/sage Docker",
+    "image": "computop/sage",
+    "containerEnv": {
+        "MAKE": "make -j4"
+    },
+    // Install build tools, get rid of sourcing /sage/activate in non-login shells.
+    // libgmp.a is broken and leads to a build failure of ecm.
+    "onCreateCommand": ".devcontainer/onCreate.sh --sudo && sudo rm -f /sage/local/lib/libgmp.a && sed -i.bak '/sage.*activate/d' ~/.bashrc",
+    // Do not run configure within a sage-env (see #29485).
+    // The pari package is broken in the computop/sage 9.5 image, need to reinstall.
+    // Also libnauty is broken.
+    "updateContentCommand": "make configure && (export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin && unset CFLAGS LDFLAGS CXXFLAGS CPATH LIBRARY_PATH && ./configure --prefix=/sage/local --with-sage-venv) && make pari-clean nauty-clean build V=0",
+    "extensions": [
+        "ms-python.python"
+    ]
+}

@@ -1,0 +1,2 @@
+barvinok
+pkgconfig(barvinok)

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Free Bosons Lie Conformal Algebra
 
@@ -34,6 +35,7 @@ AUTHORS:
 from sage.matrix.special import identity_matrix
 from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
 from sage.structure.indexed_generators import standardize_names_index_set
+
 
 class FreeBosonsLieConformalAlgebra(GradedLieConformalAlgebra):
     r"""
@@ -121,14 +123,14 @@ class FreeBosonsLieConformalAlgebra(GradedLieConformalAlgebra):
                     "{0} x {0} matrix, got {1}".format(ngens,gram_matrix))
         else:
             if ngens is None:
-                ngens = 1;
-            gram_matrix = identity_matrix(R,ngens,ngens)
+                ngens = 1
+            gram_matrix = identity_matrix(R, ngens, ngens)
 
         latex_names = None
         if (names is None) and (index_set is None):
             names = 'alpha'
-            latex_names = tuple(r'\alpha_{%d}' % i \
-                                      for i in range (ngens)) + ('K',)
+            latex_names = tuple(r'\alpha_{%d}' % i
+                                for i in range(ngens)) + ('K',)
         names,index_set = standardize_names_index_set(names=names,
                                                       index_set=index_set,
                                                       ngens=ngens)
@@ -167,4 +169,3 @@ class FreeBosonsLieConformalAlgebra(GradedLieConformalAlgebra):
             [0 1]
         """
         return self._gram_matrix
-

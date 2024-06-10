@@ -1,0 +1,5 @@
+# Packages needed for ./bootstrap
+autoconf
+automake
+libtool
+pkgconf

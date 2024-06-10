@@ -92,6 +92,7 @@ Functions
 ---------
 """
 
+
 def breadth_first_level_search(G, start):
     r"""
     Generate a sequence of dictionaries, each mapping the vertices at
@@ -109,8 +110,8 @@ def breadth_first_level_search(G, start):
 
     EXAMPLES::
 
-        sage: H = digraphs.DeBruijn(3,2)
-        sage: list(sage.graphs.partial_cube.breadth_first_level_search(H, '00'))
+        sage: H = digraphs.DeBruijn(3,2)                                                # needs sage.combinat
+        sage: list(sage.graphs.partial_cube.breadth_first_level_search(H, '00'))        # needs sage.combinat
         [{'00': {'01', '02'}},
          {'01': {'10', '11', '12'}, '02': {'20', '21', '22'}},
          {'10': set(),
@@ -139,6 +140,7 @@ def breadth_first_level_search(G, start):
         yield levelGraph
         currentLevel = nextLevel
 
+
 def depth_first_traversal(G, start):
     r"""
     Generate a sequence of triples (v,w,edgetype) for DFS of graph G.
@@ -160,11 +162,10 @@ def depth_first_traversal(G, start):
 
     EXAMPLES::
 
-        sage: H = digraphs.DeBruijn(3,2)
-        sage: t = list(sage.graphs.partial_cube.depth_first_traversal(H, '00'))
-        sage: len(t)
+        sage: H = digraphs.DeBruijn(3,2)                                                # needs sage.combinat
+        sage: t = list(sage.graphs.partial_cube.depth_first_traversal(H, '00'))         # needs sage.combinat
+        sage: len(t)                                                                    # needs sage.combinat
         16
-
     """
     neighbors = G.neighbor_out_iterator
     seen = set()
@@ -188,6 +189,7 @@ def depth_first_traversal(G, start):
                 stack.pop()
                 if stack:
                     yield (stack[-1][0], parent, False)
+
 
 def is_partial_cube(G, certificate=False):
     r"""
@@ -262,7 +264,6 @@ def is_partial_cube(G, certificate=False):
 
         sage: Graph().is_partial_cube(certificate=True)
         (True, {})
-
     """
     G._scream_if_not_simple()
 
@@ -284,7 +285,7 @@ def is_partial_cube(G, certificate=False):
     # Initial sanity check: are there few enough edges?
     # Needed so that we don't try to use union-find on a dense
     # graph and incur superquadratic runtimes.
-    if 1 << (2*G.size()//n) > n:
+    if 1 << (2 * G.size() // n) > n:
         return fail
 
     # Check for bipartiteness.
@@ -300,7 +301,7 @@ def is_partial_cube(G, certificate=False):
     from sage.graphs.graph import Graph
     from sage.sets.disjoint_set import DisjointSet
     contracted = DiGraph({v: {w: (v, w) for w in G[v]} for v in G})
-    unionfind = DisjointSet(contracted.edges(labels=False))
+    unionfind = DisjointSet(contracted.edges(sort=True, labels=False))
     available = n - 1
 
     # Main contraction loop in place of the original algorithm's recursion
@@ -325,10 +326,10 @@ def is_partial_cube(G, certificate=False):
                     bitvec[w] |= bitvec[v]
 
         # Make graph of labeled edges and union them together
-        labeled = Graph([contracted.vertices(), []])
+        labeled = Graph([contracted.vertices(sort=False), []])
         for v, w in contracted.edge_iterator(labels=False):
-            diff = bitvec[v]^bitvec[w]
-            if not diff or not bitvec[w] &~ bitvec[v]:
+            diff = bitvec[v] ^ bitvec[w]
+            if not diff or not bitvec[w] & ~bitvec[v]:
                 continue    # zero edge or wrong direction
             if diff not in neighbors:
                 return fail
@@ -341,7 +342,7 @@ def is_partial_cube(G, certificate=False):
 
         # Map vertices to components of labeled-edge graph
         component = {}
-        for i, SCC in enumerate(labeled.connected_components()):
+        for i, SCC in enumerate(labeled.connected_components(sort=False)):
             for v in SCC:
                 component[v] = i
 
@@ -362,7 +363,7 @@ def is_partial_cube(G, certificate=False):
     # Make a digraph with edges labeled by the equivalence classes in unionfind
     g = DiGraph({v: {w: unionfind.find((v, w)) for w in G[v]} for v in G})
 
-    # Associates to a vertex the token that acts on it, an check that
+    # Associates to a vertex the token that acts on it, and check that
     # no two edges on a single vertex have the same label
     action = {}
     for v in g:
@@ -397,13 +398,14 @@ def is_partial_cube(G, certificate=False):
 
     # Rest of data structure: point from states to list and list to states
     state_to_active_token = {v: -1 for v in g}
-    token_to_states = [[] for i in activeTokens] # (i.e. vertices on which each token acts)
+    token_to_states = [[] for _ in activeTokens]  # (i.e. vertices on which each token acts)
 
     def scan(v):
-        """Find the next token that is effective for v."""
-        a = next(i for i in range(state_to_active_token[v]+1, len(activeTokens))
-                 if activeTokens[i] is not None
-                    and activeTokens[i] in action[v])
+        """
+        Find the next token that is effective for v.
+        """
+        a = next(i for i in range(state_to_active_token[v] + 1, len(activeTokens))
+                 if activeTokens[i] is not None and activeTokens[i] in action[v])
         state_to_active_token[v] = a
         token_to_states[a].append(v)
 
@@ -437,7 +439,7 @@ def is_partial_cube(G, certificate=False):
         state_to_active_token[prev] = len(activeTokens) - 1
         token_to_states.append([prev])
 
-        # Inactivate reverse token, find new token for its states
+        # Deactivate reverse token, find new token for its states
         #
         # (the 'active' token of 'current' is necessarily the label of
         #  (current, previous))

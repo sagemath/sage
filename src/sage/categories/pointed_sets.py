@@ -1,7 +1,7 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Pointed sets
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2008 David Kohel <kohel@maths.usyd.edu> and
 #                     William Stein <wstein@math.ucsd.edu>
@@ -12,7 +12,8 @@ from __future__ import absolute_import
 #******************************************************************************
 
 from sage.categories.category_singleton import Category_singleton
-from .sets_cat import Sets
+from sage.categories.sets_cat import Sets
+
 
 class PointedSets(Category_singleton):
     """

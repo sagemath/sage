@@ -1,4 +1,5 @@
-from __future__ import absolute_import
+# sage.doctest: needs sage.modules
+
 ############################################################
 # Backwards compatible unpickling
 ############################################################
@@ -16,4 +17,3 @@ def unpickle_QuaternionAlgebra_v0(*key):
     """
     from .quatalg.quaternion_algebra import QuaternionAlgebra
     return QuaternionAlgebra(*key)
-

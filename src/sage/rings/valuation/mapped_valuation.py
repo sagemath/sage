@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Valuations which are implemented through a map to another valuation
 
@@ -6,22 +5,22 @@ EXAMPLES:
 
 Extensions of valuations over finite field extensions `L=K[x]/(G)` are realized
 through an infinite valuation on `K[x]` which maps `G` to infinity::
-    
+
+    sage: # needs sage.rings.function_field
     sage: K.<x> = FunctionField(QQ)
     sage: R.<y> = K[]
     sage: L.<y> = K.extension(y^2 - x)
 
-    sage: v = K.valuation(0)
-    sage: w = v.extension(L); w
+    sage: v = K.valuation(0)                                                            # needs sage.rings.function_field
+    sage: w = v.extension(L); w                                                         # needs sage.rings.function_field
     (x)-adic valuation
 
-    sage: w._base_valuation
+    sage: w._base_valuation                                                             # needs sage.rings.function_field
     [ Gauss valuation induced by (x)-adic valuation, v(y) = 1/2 , … ]
 
 AUTHORS:
 
 - Julian Rüth (2016-11-10): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2016-2017 Julian Rüth <julian.rueth@fsfe.org>
@@ -31,7 +30,6 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from .valuation import DiscreteValuation, DiscretePseudoValuation
 from sage.misc.abstract_method import abstract_method
@@ -43,17 +41,17 @@ class MappedValuation_base(DiscretePseudoValuation):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.function_field
         sage: K.<x> = FunctionField(QQ)
         sage: R.<y> = K[]
         sage: L.<y> = K.extension(y^2 - x)
-
         sage: v = K.valuation(0)
         sage: w = v.extension(L); w
         (x)-adic valuation
 
     TESTS::
 
-        sage: TestSuite(w).run() # long time
+        sage: TestSuite(w).run()                # long time                             # needs sage.rings.function_field
 
     """
     def __init__(self, parent, base_valuation):
@@ -68,10 +66,10 @@ class MappedValuation_base(DiscretePseudoValuation):
 
         TESTS::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x^2 + 1)
-
             sage: v = K.valuation(0)
             sage: w = v.extension(L); w
             (x)-adic valuation
@@ -82,7 +80,7 @@ class MappedValuation_base(DiscretePseudoValuation):
         """
         DiscretePseudoValuation.__init__(self, parent)
 
-        self._base_valuation = base_valuation 
+        self._base_valuation = base_valuation
 
     @abstract_method
     def _repr_(self):
@@ -95,9 +93,9 @@ class MappedValuation_base(DiscretePseudoValuation):
 
             sage: K = QQ
             sage: R.<t> = K[]
-            sage: L.<t> = K.extension(t^2 + 1)
+            sage: L.<t> = K.extension(t^2 + 1)                                          # needs sage.rings.number_field
             sage: v = valuations.pAdicValuation(QQ, 2)
-            sage: v.extension(L) # indirect doctest
+            sage: v.extension(L)  # indirect doctest                                    # needs sage.rings.number_field
             2-adic valuation
 
         """
@@ -110,9 +108,9 @@ class MappedValuation_base(DiscretePseudoValuation):
 
             sage: K = QQ
             sage: R.<t> = K[]
-            sage: L.<t> = K.extension(t^2 + 1)
+            sage: L.<t> = K.extension(t^2 + 1)                                          # needs sage.rings.number_field
             sage: v = valuations.pAdicValuation(QQ, 2)
-            sage: v.extension(L).residue_ring()
+            sage: v.extension(L).residue_ring()                                         # needs sage.rings.number_field
             Finite Field of size 2
 
         """
@@ -126,9 +124,9 @@ class MappedValuation_base(DiscretePseudoValuation):
 
             sage: K = QQ
             sage: R.<t> = K[]
-            sage: L.<t> = K.extension(t^2 + 1)
+            sage: L.<t> = K.extension(t^2 + 1)                                          # needs sage.rings.number_field
             sage: v = valuations.pAdicValuation(QQ, 2)
-            sage: v.extension(L).uniformizer()
+            sage: v.extension(L).uniformizer()                                          # needs sage.rings.number_field
             t + 1
 
         """
@@ -140,10 +138,10 @@ class MappedValuation_base(DiscretePseudoValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x)
-
             sage: v = K.valuation(0)
             sage: w = v.extensions(L)[0]
             sage: w._to_base_domain(y).parent()
@@ -158,10 +156,10 @@ class MappedValuation_base(DiscretePseudoValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x)
-
             sage: v = K.valuation(0)
             sage: w = v.extension(L)
             sage: w._from_base_domain(w._base_valuation.domain().gen()).parent()
@@ -176,13 +174,13 @@ class MappedValuation_base(DiscretePseudoValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x)
-
             sage: v = K.valuation(0)
             sage: w = v.extension(L)
-            sage: w(y) # indirect doctest
+            sage: w(y)  # indirect doctest
             1/2
 
         """
@@ -194,10 +192,10 @@ class MappedValuation_base(DiscretePseudoValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - (x - 2))
-
             sage: v = K.valuation(0)
             sage: w = v.extension(L)
             sage: w.reduce(y)
@@ -213,10 +211,10 @@ class MappedValuation_base(DiscretePseudoValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x)
-
             sage: v = K.valuation(2)
             sage: w = v.extension(L)
             sage: w.lift(w.residue_field().gen())
@@ -235,29 +233,29 @@ class MappedValuation_base(DiscretePseudoValuation):
         Produce an element which differs from ``x`` by an element of
         valuation strictly greater than the valuation of ``x`` (or strictly
         greater than ``error`` if set.)
-        
+
         If ``force`` is not set, then expensive simplifications may be avoided.
 
         EXAMPLES::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x)
-
             sage: v = K.valuation(0)
             sage: w = v.extensions(L)[0]
 
         As :meth:`_relative_size` misses the bloated term ``x^32``, the
         following term does not get simplified::
 
-            sage: w.simplify(y + x^32)
+            sage: w.simplify(y + x^32)                                                  # needs sage.rings.function_field
             y + x^32
 
         In this case the simplification can be forced but this should not
         happen as a default as the recursive simplification can be quite
         costly::
 
-            sage: w.simplify(y + x^32, force=True)
+            sage: w.simplify(y + x^32, force=True)                                      # needs sage.rings.function_field
             y
 
         """
@@ -277,6 +275,7 @@ class MappedValuation_base(DiscretePseudoValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x)
@@ -286,7 +285,7 @@ class MappedValuation_base(DiscretePseudoValuation):
         In this example, the method misses the size of the bloated term
         ``x^32``::
 
-            sage: w._relative_size(y + x^32)
+            sage: w._relative_size(y + x^32)                                            # needs sage.rings.function_field
             1
 
         """
@@ -299,10 +298,10 @@ class MappedValuation_base(DiscretePseudoValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x)
-
             sage: v = K.valuation(0)
             sage: w = v.extensions(L)[0]
             sage: w._to_base_residue_ring(1)
@@ -318,10 +317,10 @@ class MappedValuation_base(DiscretePseudoValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x)
-
             sage: v = K.valuation(0)
             sage: w = v.extensions(L)[0]
             sage: w._from_base_residue_ring(1)
@@ -336,6 +335,7 @@ class MappedValuation_base(DiscretePseudoValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: K = QQ
             sage: R.<t> = K[]
             sage: L.<t> = K.extension(t^2 + 1)
@@ -354,10 +354,10 @@ class MappedValuation_base(DiscretePseudoValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x)
-
             sage: v = K.valuation(0)
             sage: w = v.extensions(L)[0]
             sage: w._test_to_from_base_domain()
@@ -376,10 +376,10 @@ class MappedValuation_base(DiscretePseudoValuation):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x)
-
             sage: v = K.valuation(0)
             sage: w = v.extensions(L)[0]
             sage: w._test_to_from_base_residue_ring()
@@ -409,10 +409,10 @@ class FiniteExtensionFromInfiniteValuation(MappedValuation_base, DiscreteValuati
 
     EXAMPLES::
 
+        sage: # needs sage.rings.function_field
         sage: K.<x> = FunctionField(QQ)
         sage: R.<y> = K[]
         sage: L.<y> = K.extension(y^2 - x)
-
         sage: v = K.valuation(0)
         sage: w = v.extension(L); w
         (x)-adic valuation
@@ -421,18 +421,18 @@ class FiniteExtensionFromInfiniteValuation(MappedValuation_base, DiscreteValuati
     def __init__(self, parent, base_valuation):
         r"""
         TESTS::
-    
+
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x)
-    
             sage: v = K.valuation(0)
             sage: w = v.extension(L)
             sage: from sage.rings.valuation.mapped_valuation import FiniteExtensionFromInfiniteValuation
             sage: isinstance(w, FiniteExtensionFromInfiniteValuation)
             True
-            sage: TestSuite(w).run() # long time
-    
+            sage: TestSuite(w).run()            # long time
+
         """
         MappedValuation_base.__init__(self, parent, base_valuation)
         DiscreteValuation.__init__(self, parent)
@@ -443,6 +443,7 @@ class FiniteExtensionFromInfiniteValuation(MappedValuation_base, DiscreteValuati
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: K = QQ
             sage: R.<t> = K[]
             sage: L.<t> = K.extension(t^2 + 1)
@@ -462,6 +463,7 @@ class FiniteExtensionFromInfiniteValuation(MappedValuation_base, DiscreteValuati
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: K = QQ
             sage: R.<t> = K[]
             sage: L.<t> = K.extension(t^2 + 1)
@@ -473,7 +475,7 @@ class FiniteExtensionFromInfiniteValuation(MappedValuation_base, DiscreteValuati
         """
         if ring.is_subring(self._base_valuation.domain().base()):
             return self._base_valuation.restriction(ring)
-        return super(FiniteExtensionFromInfiniteValuation, self).restriction(ring)
+        return super().restriction(ring)
 
     def _weakly_separating_element(self, other):
         r"""
@@ -484,6 +486,7 @@ class FiniteExtensionFromInfiniteValuation(MappedValuation_base, DiscreteValuati
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: K = QQ
             sage: R.<t> = K[]
             sage: L.<t> = K.extension(t^2 + 1)
@@ -497,7 +500,7 @@ class FiniteExtensionFromInfiniteValuation(MappedValuation_base, DiscreteValuati
         """
         if isinstance(other, FiniteExtensionFromInfiniteValuation):
             return self.domain()(self._base_valuation._weakly_separating_element(other._base_valuation))
-        super(FiniteExtensionFromInfiniteValuation, self)._weakly_separating_element(other)
+        super()._weakly_separating_element(other)
 
     def _relative_size(self, x):
         r"""
@@ -511,8 +514,9 @@ class FiniteExtensionFromInfiniteValuation(MappedValuation_base, DiscreteValuati
         coefficients is going to lead to a significant shrinking of the
         coefficients of ``x``.
 
-        EXAMPLES:: 
+        EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: K = QQ
             sage: R.<t> = K[]
             sage: L.<t> = K.extension(t^2 + 1)
@@ -534,6 +538,7 @@ class FiniteExtensionFromInfiniteValuation(MappedValuation_base, DiscreteValuati
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: K = QQ
             sage: R.<t> = K[]
             sage: L.<t> = K.extension(t^2 + 1)
@@ -553,13 +558,14 @@ class FiniteExtensionFromInfiniteValuation(MappedValuation_base, DiscreteValuati
 
     def lower_bound(self, x):
         r"""
-        Return an lower bound of this valuation at ``x``.
+        Return a lower bound of this valuation at ``x``.
 
         Use this method to get an approximation of the valuation of ``x``
         when speed is more important than accuracy.
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: K = QQ
             sage: R.<t> = K[]
             sage: L.<t> = K.extension(t^2 + 1)
@@ -583,6 +589,7 @@ class FiniteExtensionFromInfiniteValuation(MappedValuation_base, DiscreteValuati
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: K = QQ
             sage: R.<t> = K[]
             sage: L.<t> = K.extension(t^2 + 1)
@@ -605,6 +612,7 @@ class FiniteExtensionFromLimitValuation(FiniteExtensionFromInfiniteValuation):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.function_field
         sage: K.<x> = FunctionField(QQ)
         sage: R.<y> = K[]
         sage: L.<y> = K.extension(y^2 - x)
@@ -615,8 +623,8 @@ class FiniteExtensionFromLimitValuation(FiniteExtensionFromInfiniteValuation):
 
     TESTS::
 
-        sage: TestSuite(w[0]).run() # long time
-        sage: TestSuite(w[1]).run() # long time
+        sage: TestSuite(w[0]).run()             # long time                             # needs sage.rings.function_field
+        sage: TestSuite(w[1]).run()             # long time                             # needs sage.rings.function_field
 
     """
     def __init__(self, parent, approximant, G, approximants):
@@ -626,6 +634,7 @@ class FiniteExtensionFromLimitValuation(FiniteExtensionFromInfiniteValuation):
         Note that this implementation is also used when the underlying limit is
         only taken over a finite sequence of valuations::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x)
@@ -651,26 +660,26 @@ class FiniteExtensionFromLimitValuation(FiniteExtensionFromInfiniteValuation):
 
         EXAMPLES::
 
-            sage: valuations.pAdicValuation(GaussianIntegers().fraction_field(), 2) # indirect doctest
+            sage: valuations.pAdicValuation(GaussianIntegers().fraction_field(), 2)  # indirect doctest                 # needs sage.rings.number_field
             2-adic valuation
 
         """
         from .limit_valuation import MacLaneLimitValuation
         if isinstance(self._base_valuation, MacLaneLimitValuation):
             # print the minimal information that singles out this valuation from all approximants
-            assert(self._base_valuation._initial_approximation in self._approximants)
+            assert (self._base_valuation._initial_approximation in self._approximants)
             approximants = [v.augmentation_chain()[::-1] for v in self._approximants]
             augmentations = self._base_valuation._initial_approximation.augmentation_chain()[::-1]
             unique_approximant = None
             for l in range(len(augmentations)):
-                if len([a for a in approximants if a[:l+1] == augmentations[:l+1]]) == 1:
-                    unique_approximant = augmentations[:l+1]
+                if len([a for a in approximants if a[:l + 1] == augmentations[:l + 1]]) == 1:
+                    unique_approximant = augmentations[:l + 1]
                     break
-            assert(unique_approximant is not None)
+            assert (unique_approximant is not None)
             if unique_approximant[0].is_gauss_valuation():
                 unique_approximant[0] = unique_approximant[0].restriction(unique_approximant[0].domain().base_ring())
             if len(unique_approximant) == 1:
                 return repr(unique_approximant[0])
             from .augmented_valuation import AugmentedValuation_base
-            return "[ %s ]-adic valuation"%(", ".join("v(%r) = %r"%(v._phi, v._mu) if (isinstance(v, AugmentedValuation_base) and v.domain() == self._base_valuation.domain()) else repr(v) for v in unique_approximant))
-        return "%s-adic valuation"%(self._base_valuation)
+            return "[ %s ]-adic valuation" % (", ".join("v(%r) = %r" % (v._phi, v._mu) if (isinstance(v, AugmentedValuation_base) and v.domain() == self._base_valuation.domain()) else repr(v) for v in unique_approximant))
+        return "%s-adic valuation" % (self._base_valuation)

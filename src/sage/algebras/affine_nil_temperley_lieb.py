@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Affine nilTemperley Lieb Algebra of type A
 """
@@ -7,11 +8,11 @@ Affine nilTemperley Lieb Algebra of type A
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.categories.all import AlgebrasWithBasis
+from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.weyl_group import WeylGroup
-from sage.rings.ring import Ring
-from sage.rings.all import ZZ
+from sage.categories.rings import Rings
+from sage.rings.integer_ring import ZZ
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.misc.cachefunc import cached_method
 
@@ -41,9 +42,9 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
         2*a0 + 1 + 3*a1 + a0*a1*a2*a3
     """
 
-    def __init__(self, n, R = ZZ, prefix = 'a'):
+    def __init__(self, n, R=ZZ, prefix='a'):
         """
-        Initiates the affine nilTemperley Lieb algebra over the ring `R`.
+        Initiate the affine nilTemperley Lieb algebra over the ring `R`.
 
         EXAMPLES::
 
@@ -53,16 +54,16 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
             sage: A = AffineNilTemperleyLiebTypeA(3, QQ); A
             The affine nilTemperley Lieb algebra A3 over the ring Rational Field
         """
-        if not isinstance(R, Ring):
-            raise TypeError("Argument R must be a ring.")
-        self._cartan_type = CartanType(['A',n-1,1])
+        if R not in Rings():
+            raise TypeError("argument R must be a ring")
+        self._cartan_type = CartanType(['A', n - 1, 1])
         self._n = n
         W = WeylGroup(self._cartan_type)
         self._prefix = prefix
         self._index_set = W.index_set()
         self._base_ring = R
         category = AlgebrasWithBasis(R)
-        CombinatorialFreeModule.__init__(self, R, W, category = category)
+        CombinatorialFreeModule.__init__(self, R, W, category=category)
 
     def _element_constructor_(self, w):
         """
@@ -85,12 +86,11 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
             a2*a1
         """
         W = self.weyl_group()
-        assert(w in W)
+        assert w in W
         word = w.reduced_word()
-        if all( self.has_no_braid_relation(W.from_reduced_word(word[:i]), word[i]) for i in range(len(word)) ):
+        if all(self.has_no_braid_relation(W.from_reduced_word(word[:i]), word[i]) for i in range(len(word))):
             return self.monomial(w)
-        else:
-            return self.zero()
+        return self.zero()
 
     @cached_method
     def one_basis(self):
@@ -120,7 +120,7 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
             sage: A = AffineNilTemperleyLiebTypeA(3); A
             The affine nilTemperley Lieb algebra A3 over the ring Integer Ring
         """
-        return "The affine nilTemperley Lieb algebra A%s over the ring %s"%(self._n, self._base_ring)
+        return "The affine nilTemperley Lieb algebra A%s over the ring %s" % (self._n, self._base_ring)
 
     def weyl_group(self):
         """
@@ -203,7 +203,7 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
             ...
             AssertionError
         """
-        assert(self(w) != self.zero())
+        assert self(w) != self.zero()
         for i in w1.reduced_word():
             if self.has_no_braid_relation(w, i):
                 w = w.apply_simple_reflection(i)
@@ -234,15 +234,16 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
         if i in w.descents():
             return False
         s = w.parent().simple_reflections()
-        wi = w*s[i]
-        adjacent = [(i-1)%w.parent().n, (i+1)%w.parent().n]
+        wi = w * s[i]
+        adjacent = [(i - 1) % w.parent().n,
+                    (i + 1) % w.parent().n]
         for j in adjacent:
             if j in w.descents():
                 if j in wi.descents():
                     return False
                 else:
                     return True
-        return self.has_no_braid_relation(w*s[w.first_descent()],i)
+        return self.has_no_braid_relation(w * s[w.first_descent()], i)
 
     def _repr_term(self, t, short_display=True):
         """
@@ -259,6 +260,6 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
         if len(redword) == 0:
             return "1"
         elif short_display:
-            return "*".join("%s%d"%(self._prefix, i) for i in redword)
+            return "*".join("%s%d" % (self._prefix, i) for i in redword)
         else:
-            return "*".join("%s[%d]"%(self._prefix, i) for i in redword)
+            return "*".join("%s[%d]" % (self._prefix, i) for i in redword)

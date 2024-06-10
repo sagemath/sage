@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules sage.rings.finite_rings
 r"""
 Mini-AES
 
@@ -65,9 +66,8 @@ class MiniAES(SageObject):
         [    x^3 + x^2       x^3 + x]
         [x^3 + x^2 + x   x^2 + x + 1]
         sage: C = maes.encrypt(P, key); C
-        <BLANKLINE>
-        [            x       x^2 + x]
-        [x^3 + x^2 + x       x^3 + x]
+        [    x^3 + x^2 + 1 x^3 + x^2 + x + 1]
+        [                x     x^3 + x^2 + x]
 
     Decrypt the result::
 
@@ -92,7 +92,7 @@ class MiniAES(SageObject):
         sage: P = bin.encoding("Encrypt this secret message!"); P
         01000101011011100110001101110010011110010111000001110100001000000111010001101000011010010111001100100000011100110110010101100011011100100110010101110100001000000110110101100101011100110111001101100001011001110110010100100001
         sage: C = maes(P, key, algorithm="encrypt"); C
-        10001000101001101111000001111000010011001110110101000111011011010101001011101111101011001110011100100011101100101010100010100111110110011001010001000111011011010010000011000110001100000111000011100110101111000000001110001001
+        11100000101000010110001101101001110110010010111011010001100111100000101000101111100110010010100001110101011100111001000010101000001111000101010011010001100111100111001100000001101100110110101001001000011100000101010110110101
         sage: plaintxt = maes(C, key, algorithm="decrypt")
         sage: plaintxt == P
         True
@@ -110,7 +110,7 @@ class MiniAES(SageObject):
         sage: key = maes.integer_to_binary(key); key
         0010001110110000
         sage: C = maes(P, key, algorithm="encrypt"); C
-        1100100000100011111001010101010101011011100111110001000011100001
+        0011101000101110010011000101010100011101010000111000100100011010
         sage: plaintxt = maes(C, key, algorithm="decrypt")
         sage: plaintxt == P
         True
@@ -293,7 +293,7 @@ class MiniAES(SageObject):
             sage: P = bin.encoding("Encrypt this secret message!"); P
             01000101011011100110001101110010011110010111000001110100001000000111010001101000011010010111001100100000011100110110010101100011011100100110010101110100001000000110110101100101011100110111001101100001011001110110010100100001
             sage: C = maes(P, key, algorithm="encrypt"); C
-            10001000101001101111000001111000010011001110110101000111011011010101001011101111101011001110011100100011101100101010100010100111110110011001010001000111011011010010000011000110001100000111000011100110101111000000001110001001
+            11100000101000010110001101101001110110010010111011010001100111100000101000101111100110010010100001110101011100111001000010101000001111000101010011010001100111100111001100000001101100110110101001001000011100000101010110110101
             sage: plaintxt = maes(C, key, algorithm="decrypt")
             sage: plaintxt == P
             True
@@ -613,9 +613,8 @@ class MiniAES(SageObject):
             [        x^3 + x^2 x^3 + x^2 + x + 1]
             [            x + 1                 0]
             sage: C = maes.encrypt(P, key); C
-            <BLANKLINE>
-            [x^2 + x + 1   x^3 + x^2]
-            [          x     x^2 + x]
+            [            x + 1           x^2 + 1]
+            [x^3 + x^2 + x + 1               x^2]
             sage: plaintxt = maes.decrypt(C, key)
             sage: plaintxt; P
             <BLANKLINE>
@@ -784,9 +783,8 @@ class MiniAES(SageObject):
             [        x^3 + x^2 x^3 + x^2 + x + 1]
             [            x + 1                 0]
             sage: maes.encrypt(P, key)
-            <BLANKLINE>
-            [x^2 + x + 1   x^3 + x^2]
-            [          x     x^2 + x]
+            [            x + 1           x^2 + 1]
+            [x^3 + x^2 + x + 1               x^2]
 
         But we can also work with binary strings::
 
@@ -1310,13 +1308,12 @@ class MiniAES(SageObject):
             [        x^3 + x^2 x^3 + x^2 + x + 1]
             [            x + 1                 0]
             sage: maes.round_key(key, 1)
-            <BLANKLINE>
-            [            x + 1 x^3 + x^2 + x + 1]
-            [                0 x^3 + x^2 + x + 1]
+            [x^3 + x x^2 + x]
+            [x^3 + 1 x^2 + x]
             sage: maes.round_key(key, 2)
             <BLANKLINE>
-            [x^2 + x x^3 + 1]
-            [x^2 + x x^2 + x]
+            [  x^2 + 1   x^3 + x]
+            [x^3 + x^2 x^3 + x^2]
 
         TESTS:
 
@@ -1514,7 +1511,6 @@ class MiniAES(SageObject):
                    [block[1][1], block[1][0]] ] )
         return mat
 
-
     ### conversion functions to convert between different data formats
 
     def GF_to_binary(self, G):
@@ -1655,13 +1651,14 @@ class MiniAES(SageObject):
         elif isinstance(G, list):
             if len(G) == 0:
                 raise ValueError("input G must be an element of GF(16), a list of elements of GF(16), or a matrix over GF(16)")
-            S = "".join([str(self._GF_to_bin[g]) for g in G])
+            S = "".join(str(self._GF_to_bin[g]) for g in G)
             return B(S)
         # G is a matrix over GF(16)
         elif isinstance(G, Matrix_dense):
             if not (G.base_ring() is K):
                 raise TypeError("input G must be an element of GF(16), a list of elements of GF(16), or a matrix over GF(16)")
-            S = "".join([str(self._GF_to_bin[G[i][j]]) for i in range(G.nrows()) for j in range(G.ncols())])
+            S = "".join(str(self._GF_to_bin[G[i][j]])
+                        for i in range(G.nrows()) for j in range(G.ncols()))
             return B(S)
         # the type of G doesn't match the supported types
         else:
@@ -2057,7 +2054,7 @@ class MiniAES(SageObject):
             bin = BinaryStrings()
             # Here, we assume that each element of the list is an integer n
             # such that 0 <= n <= 15. An error will be raised if otherwise.
-            b = "".join([str(self._int_to_bin[n]) for n in N])
+            b = "".join(str(self._int_to_bin[n]) for n in N)
             return bin(b)
         elif isinstance(N, Integer):
             # Here, we assume that N is an integer such that 0 <= n <= 15.

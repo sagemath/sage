@@ -381,7 +381,7 @@ The column vector `a` with these entries spans the nullspace of `A`::
 
     sage: RS = RootSystem(['E',6,2]); RS
     Root system of type ['F', 4, 1]^*
-    sage: A=RS.cartan_matrix(); A
+    sage: A = RS.cartan_matrix(); A
     [ 2 -1  0  0  0]
     [-1  2 -1  0  0]
     [ 0 -1  2 -2  0]
@@ -471,4 +471,3 @@ It may be constructed in Sage as follows::
 See the documentation in
 :mod:`~sage.combinat.root_system.extended_affine_weyl_group`
 if you need this.
-

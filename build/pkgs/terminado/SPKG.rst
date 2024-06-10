@@ -1,5 +1,5 @@
-terminado
-=========
+terminado: Tornado websocket backend for the term.js Javascript terminal emulator library
+=========================================================================================
 
 Description
 -----------

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Schur symmetric functions
 """
@@ -16,15 +17,18 @@ Schur symmetric functions
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from . import classical
-import sage.libs.lrcalc.lrcalc as lrcalc
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
+from sage.misc.lazy_import import lazy_import
+from sage.data_structures.blas_dict import convert_remove_zeroes
 from sage.rings.infinity import infinity
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.functions.other import factorial
+from sage.arith.misc import factorial
 from sage.combinat.tableau import StandardTableaux
+
+lazy_import('sage.libs.lrcalc', 'lrcalc')
+
 
 class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classical):
     def __init__(self, Sym):
@@ -73,9 +77,9 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
         """
         return self
 
-    def _multiply_basis(self, left, right): # TODO: factor out this code for all bases (as is done for coercions)
+    def product_on_basis(self, left, right):
         """
-        Returns the product of ``left`` and ``right``.
+        Return the product of ``left`` and ``right``.
 
         INPUT:
 
@@ -92,7 +96,8 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
             sage: a = s([2,1]) + 1; a
             s[] + s[2, 1]
             sage: a^2   # indirect doctest
-            s[] + 2*s[2, 1] + s[2, 2, 1, 1] + s[2, 2, 2] + s[3, 1, 1, 1] + 2*s[3, 2, 1] + s[3, 3] + s[4, 1, 1] + s[4, 2]
+            s[] + 2*s[2, 1] + s[2, 2, 1, 1] + s[2, 2, 2] + s[3, 1, 1, 1]
+             + 2*s[3, 2, 1] + s[3, 3] + s[4, 1, 1] + s[4, 2]
 
         Examples failing with three different messages in symmetrica::
 
@@ -110,14 +115,26 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
             sage: a = x^2*s([2,1]) + 2*x; a
             2*x*s[] + x^2*s[2, 1]
             sage: a^2
-            4*x^2*s[] + 4*x^3*s[2, 1] + x^4*s[2, 2, 1, 1] + x^4*s[2, 2, 2] + x^4*s[3, 1, 1, 1] + 2*x^4*s[3, 2, 1] + x^4*s[3, 3] + x^4*s[4, 1, 1] + x^4*s[4, 2]
+            4*x^2*s[] + 4*x^3*s[2, 1] + x^4*s[2, 2, 1, 1] + x^4*s[2, 2, 2]
+             + x^4*s[3, 1, 1, 1] + 2*x^4*s[3, 2, 1] + x^4*s[3, 3]
+             + x^4*s[4, 1, 1] + x^4*s[4, 2]
 
         ::
 
             sage: 0*s([2,1])
             0
+
+        Example over a field with positive characteristic::
+
+            sage: s[2,1]^2
+            s[2, 2, 1, 1] + s[2, 2, 2] + s[3, 1, 1, 1] + 2*s[3, 2, 1]
+             + s[3, 3] + s[4, 1, 1] + s[4, 2]
+            sage: s = SymmetricFunctions(GF(2)).s()
+            sage: s[2,1]^2
+            s[2, 2, 1, 1] + s[2, 2, 2] + s[3, 1, 1, 1] + s[3, 3] + s[4, 1, 1] + s[4, 2]
         """
-        return lrcalc.mult(left,right)
+        return self.element_class(self, convert_remove_zeroes(lrcalc.mult(left, right),
+                                                            self.base_ring()))
 
     def coproduct_on_basis(self, mu):
         r"""
@@ -142,9 +159,16 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
             sage: s = Sym.schur()
             sage: s.coproduct_on_basis([2])
             s[] # s[2] + s[1] # s[1] + s[2] # s[]
+
+        TESTS::
+
+            sage: s = SymmetricFunctions(QQ['t']).s()
+            sage: s[2].coproduct() / 2
+            1/2*s[] # s[2] + 1/2*s[1] # s[1] + 1/2*s[2] # s[]
         """
         T = self.tensor_square()
-        return T._from_dict( lrcalc.coprod(mu, all=1) )
+        return T.element_class(T, convert_remove_zeroes(lrcalc.coprod(mu, all=1),
+                                                      self.base_ring()))
 
     def _element_constructor_(self, x):
         """
@@ -164,7 +188,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
         try:
             return self.skew_schur(x)
         except ValueError:
-            return super(SymmetricFunctionAlgebra_schur, self)._element_constructor_(x)
+            return super()._element_constructor_(x)
 
     def _repeated_bernstein_creation_operator_on_basis(self, la, nu):
         r"""
@@ -640,10 +664,10 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
                 q^4 + q^3 + 2*q^2 + q + 1
 
                 sage: x = 3*s[2,2] + 2*s[1] + 1
-                sage: x.principal_specialization(3, q=var("q"))
+                sage: x.principal_specialization(3, q=var("q"))                         # needs sage.symbolic
                 3*(q^4 - 1)*(q^3 - 1)*q^2/((q^2 - 1)*(q - 1)) + 2*(q^3 - 1)/(q - 1) + 1
 
-                sage: x.principal_specialization(q=var("q"))
+                sage: x.principal_specialization(q=var("q"))                            # needs sage.symbolic
                 -2/(q - 1) + 3*q^2/((q^3 - 1)*(q^2 - 1)^2*(q - 1)) + 1
 
             TESTS::
@@ -675,11 +699,12 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
                 from sage.rings.integer_ring import ZZ
                 ZZq = PolynomialRing(ZZ, "q")
                 q_lim = ZZq.gen()
+
                 def f(partition):
                     if n < len(partition):
                         return 0
-                    power = q**sum(i*part for i, part in enumerate(partition))
-                    denom = prod(1-q**h for h in partition.hooks())
+                    power = q**sum(i * part for i, part in enumerate(partition))
+                    denom = prod(1 - q**h for h in partition.hooks())
                     try:
                         ~denom
                         rational = (power
@@ -693,10 +718,9 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
                         quotient = ZZq((prod(1-q_lim**(n+j-i)
                                              for (i, j) in partition.cells()))
                                     / prod(1-q_lim**h for h in partition.hooks()))
-                        return (power * quotient.subs({q_lim: q}))
+                        return power * quotient.subs({q_lim: q})
 
             return self.parent()._apply_module_morphism(self, f, q.parent())
-
 
         def exponential_specialization(self, t=None, q=1):
             r"""
@@ -784,7 +808,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
 
             We also support the `q`-exponential_specialization::
 
-                sage: factor(s[3].exponential_specialization(q=var("q"), t=var("t")))
+                sage: factor(s[3].exponential_specialization(q=var("q"), t=var("t")))   # needs sage.symbolic
                 t^3/((q^2 + q + 1)*(q + 1))
 
             TESTS::

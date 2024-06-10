@@ -1,7 +1,6 @@
 """
 Composition species
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
@@ -21,6 +20,7 @@ from .structure import GenericSpeciesStructure
 from .partition_species import PartitionSpecies
 from sage.structure.unique_representation import UniqueRepresentation
 
+
 class CompositionSpeciesStructure(GenericSpeciesStructure):
     def __init__(self, parent, labels, pi, f, gs):
         """
@@ -28,8 +28,8 @@ class CompositionSpeciesStructure(GenericSpeciesStructure):
 
             sage: E = species.SetSpecies(); C = species.CycleSpecies()
             sage: L = E(C)
-            sage: a = L.structures(['a','b','c']).random_element()
-            sage: a == loads(dumps(a))
+            sage: a = L.structures(['a','b','c']).random_element()                      # needs sage.libs.flint
+            sage: a == loads(dumps(a))                                                  # needs sage.libs.flint
             True
         """
         self._partition = pi
@@ -41,29 +41,29 @@ class CompositionSpeciesStructure(GenericSpeciesStructure):
 
             sage: E = species.SetSpecies(); C = species.CycleSpecies()
             sage: L = E(C)
-            sage: L.structures(['a','b','c'])[0]
+            sage: L.structures(['a','b','c'])[0]                                        # needs sage.libs.flint
             F-structure: {{'a', 'b', 'c'}}; G-structures: (('a', 'b', 'c'),)
         """
         f, gs = self._list
-        return "F-structure: %s; G-structures: %s"%(repr(f), repr(gs))
+        return "F-structure: %s; G-structures: %s" % (repr(f), repr(gs))
 
     def transport(self, perm):
         """
         EXAMPLES::
 
-            sage: p = PermutationGroupElement((2,3))
+            sage: p = PermutationGroupElement((2,3))                                    # needs sage.groups
             sage: E = species.SetSpecies(); C = species.CycleSpecies()
             sage: L = E(C)
-            sage: S = L.structures(['a','b','c']).list()
-            sage: a = S[2]; a
+            sage: S = L.structures(['a','b','c']).list()                                # needs sage.libs.flint
+            sage: a = S[2]; a                                                           # needs sage.libs.flint
             F-structure: {{'a', 'c'}, {'b'}}; G-structures: (('a', 'c'), ('b'))
-            sage: a.transport(p)
+            sage: a.transport(p)                                                        # needs sage.groups sage.libs.flint
             F-structure: {{'a', 'b'}, {'c'}}; G-structures: (('a', 'c'), ('b'))
         """
         f, gs = self._list
         pi = self._partition.transport(perm)
         f = f.change_labels(pi._list)
-        g = [g.change_labels(part) for g,part in zip(gs, pi)]
+        _ = [g.change_labels(part) for g, part in zip(gs, pi)]  # TODO: BUG HERE ?
         return self.__class__(self, self._labels, pi, f, gs)
 
     def change_labels(self, labels):
@@ -81,19 +81,18 @@ class CompositionSpeciesStructure(GenericSpeciesStructure):
 
         EXAMPLES::
 
-            sage: p = PermutationGroupElement((2,3))
             sage: E = species.SetSpecies(); C = species.CycleSpecies()
             sage: L = E(C)
-            sage: S = L.structures(['a','b','c']).list()
-            sage: a = S[2]; a
+            sage: S = L.structures(['a','b','c']).list()                                # needs sage.libs.flint
+            sage: a = S[2]; a                                                           # needs sage.libs.flint
             F-structure: {{'a', 'c'}, {'b'}}; G-structures: (('a', 'c'), ('b'))
-            sage: a.change_labels([1,2,3])
+            sage: a.change_labels([1,2,3])                                              # needs sage.libs.flint
             F-structure: {{1, 3}, {2}}; G-structures: [(1, 3), (2)]
         """
         f, gs = self._list
         pi = self._partition.change_labels(labels)
         f = f.change_labels(list(pi))
-        g = [g.change_labels(part) for g,part in zip(gs, pi)]
+        g = [g.change_labels(part) for g, part in zip(gs, pi)]
         return self.__class__(self, labels, pi, f, g)
 
 
@@ -107,7 +106,7 @@ class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: E = species.SetSpecies()
             sage: C = species.CycleSpecies()
             sage: S = E(C)
-            sage: S.generating_series().coefficients(5)
+            sage: S.generating_series()[:5]
             [1, 1, 1, 1, 1]
             sage: E(C) is S
             True
@@ -116,15 +115,15 @@ class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: E = species.SetSpecies(); C = species.CycleSpecies()
             sage: L = E(C)
-            sage: c = L.generating_series().coefficients(3)
-            sage: L._check() #False due to isomorphism types not being implemented
+            sage: c = L.generating_series()[:3]
+            sage: L._check()  #False due to isomorphism types not being implemented     # needs sage.libs.flint
             False
             sage: L == loads(dumps(L))
             True
         """
         self._F = F
         self._G = G
-        self._name = "Composition of (%s) and (%s)"%(F, G)
+        self._name = "Composition of (%s) and (%s)" % (F, G)
         self._state_info = [F, G]
         GenericCombinatorialSpecies.__init__(self, min=None, max=None, weight=None)
 
@@ -136,7 +135,7 @@ class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: E = species.SetSpecies(); C = species.CycleSpecies()
             sage: L = E(C)
-            sage: L.structures(['a','b','c']).list()
+            sage: L.structures(['a','b','c']).list()                                    # needs sage.libs.flint
             [F-structure: {{'a', 'b', 'c'}}; G-structures: (('a', 'b', 'c'),),
              F-structure: {{'a', 'b', 'c'}}; G-structures: (('a', 'c', 'b'),),
              F-structure: {{'a', 'c'}, {'b'}}; G-structures: (('a', 'c'), ('b')),
@@ -146,6 +145,7 @@ class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
         TESTS::
 
+            sage: # needs sage.libs.flint
             sage: a = _[2]
             sage: f, gs = a._list
             sage: f
@@ -181,13 +181,12 @@ class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: E = species.SetSpecies(); C = species.CycleSpecies()
             sage: L = E(C)
-            sage: L.isotypes(['a','b','c']).list()
+            sage: L.isotypes(['a','b','c']).list()                                      # needs sage.modules
             Traceback (most recent call last):
             ...
             NotImplementedError
         """
         raise NotImplementedError
-
 
     def _gs(self, series_ring, base_ring):
         """
@@ -195,7 +194,7 @@ class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: E = species.SetSpecies(); C = species.CycleSpecies()
             sage: L = E(C)
-            sage: L.generating_series().coefficients(5)
+            sage: L.generating_series()[:5]
             [1, 1, 1, 1, 1]
         """
         return self._F.generating_series(base_ring)(self._G.generating_series(base_ring))
@@ -206,7 +205,7 @@ class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: E = species.SetSpecies(); C = species.CycleSpecies()
             sage: L = E(C)
-            sage: L.isotype_generating_series().coefficients(10)
+            sage: L.isotype_generating_series()[:10]                                    # needs sage.modules
             [1, 1, 2, 3, 5, 7, 11, 15, 22, 30]
         """
         cis = self.cycle_index_series(base_ring)
@@ -218,7 +217,7 @@ class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: E = species.SetSpecies(); C = species.CycleSpecies()
             sage: L = E(C)
-            sage: L.cycle_index_series().coefficients(5)
+            sage: L.cycle_index_series()[:5]                                            # needs sage.modules
             [p[],
              p[1],
              p[1, 1] + p[2],
@@ -235,7 +234,7 @@ class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: E = species.SetSpecies()
             sage: C = species.CycleSpecies(weight=t)
             sage: S = E(C)
-            sage: S.isotype_generating_series().coefficients(5) #indirect
+            sage: S.isotype_generating_series()[:5]  #indirect                          # needs sage.modules
             [1, t, t^2 + t, t^3 + t^2 + t, t^4 + t^3 + 2*t^2 + t]
 
         We do the same thing with set partitions weighted by the number of
@@ -247,17 +246,11 @@ class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: E = species.SetSpecies()
             sage: E_t = species.SetSpecies(min=1,weight=t)
             sage: Par = E(E_t)
-            sage: Par.isotype_generating_series().coefficients(5)
+            sage: Par.isotype_generating_series()[:5]                                   # needs sage.modules
             [1, t, t^2 + t, t^3 + t^2 + t, t^4 + t^3 + 2*t^2 + t]
         """
         f_cis = self._F.cycle_index_series(base_ring)
         g_cis = self._G.cycle_index_series(base_ring)
-
-        #If G is a weighted species, then we can't use the default
-        #algorithm for the composition of the cycle index series
-        #since we must raise the weighting to the power.
-        if self._G.is_weighted():
-            return f_cis.weighted_composition(self._G)
         return f_cis(g_cis)
 
     def weight_ring(self):

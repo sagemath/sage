@@ -1,13 +1,14 @@
+# sage.doctest: needs sage.libs.gap sage.groups
 r"""
 Hecke algebra representations
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2013 Nicolas M. Thiery <nthiery at users.sf.net>
 #                          Anne Schilling <anne at math.ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 import functools
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
@@ -18,6 +19,7 @@ from sage.sets.family import Family
 from sage.combinat.subset import Subsets
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
+
 
 class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
     r"""
@@ -41,7 +43,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
     - ``domain`` -- a vector space
     - ``f`` -- a function ``f(l,i)`` taking a basis element `l` of ``domain`` and an index `i`, and returning `F_i`
     - ``cartan_type`` -- The Cartan type of the Hecke algebra
-    - ``q1,q2`` -- The eigenvalues of the generators `T` of the Hecke algebra
+    - ``q1``, ``q2`` -- The eigenvalues of the generators `T` of the Hecke algebra
     - ``side`` -- "left" or "right" (default: "right")
       whether this is a left or right representation
 
@@ -80,11 +82,9 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
 
     REFERENCES:
 
-    .. [HST2008] \F. Hivert, A. Schilling, N. Thiery,
-       *Hecke group algebras as quotients of affine Hecke algebras at level 0*,
-       Journal of Combinatorial Theory, Series A 116 (2009) 844-863
-       (:arxiv:`0804.3781`)
+    - [HST2008]_
     """
+
     def __init__(self, domain, on_basis, cartan_type, q1, q2, q=ZZ.one(), side="right"):
         r"""
         TESTS::
@@ -113,7 +113,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
             on Algebra of Weyl Group of type ['A', 3]
             (as a matrix group acting on the ambient space) over Rational Field"
         """
-        return "A representation of the %s-Hecke algebra of type %s on %s"%((self._q1,self._q2), self.cartan_type(), self.domain())
+        return "A representation of the %s-Hecke algebra of type %s on %s" % ((self._q1,self._q2), self.cartan_type(), self.domain())
 
     @cached_method
     def parameters(self, i):
@@ -168,7 +168,8 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
 
             sage: H = WeylGroup(["A",3]).algebra(QQ).demazure_lusztig_operators(-1,1)
             sage: H.domain()
-            Algebra of Weyl Group of type ['A', 3] (as a matrix group acting on the ambient space) over Rational Field
+            Algebra of Weyl Group of type ['A', 3] (as a matrix group
+             acting on the ambient space) over Rational Field
         """
         return self._domain
 
@@ -358,7 +359,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
             sage: q1, q2 = K.gens()
             sage: KW = W.algebra(K)
             sage: x = KW.an_element(); x
-            123 + 3*32 + 2*3 + e
+            123 + 3*2312 + 2*31 + e
 
             sage: T = KW.demazure_lusztig_operators(q1,q2)
             sage: T12 = T.Tw( (1,2) )
@@ -393,13 +394,12 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         """
         word = self.straighten_word(word)
         result = self._domain.module_morphism(functools.partial(self.on_basis, word=word, signs=signs, scalar=scalar),
-                                            codomain = self._domain)
+                                            codomain=self._domain)
         # For debugging purpose, make the parameters easily accessible:
         result.word = word
         result.signs = signs
         result.scalar = scalar
         return result
-
 
     def Tw_inverse(self, word):
         r"""
@@ -430,7 +430,8 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
             sage: x = KW.monomial(W.an_element()); x
             123
             sage: rho.Tw_inverse(word)(x)
-            1/q2^2*12321 + ((-q1-q2)/(q1*q2^2))*1231 + ((-q1-q2)/(q1*q2^2))*1232 + ((q1^2+2*q1*q2+q2^2)/(q1^2*q2^2))*123
+            1/q2^2*12321 + ((-q1-q2)/(q1*q2^2))*1231 + ((-q1-q2)/(q1*q2^2))*1232
+             + ((q1^2+2*q1*q2+q2^2)/(q1^2*q2^2))*123
             sage: rho.Tw(word)(_)
             123
         """
@@ -463,28 +464,33 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         q1 = self._q1
         q2 = self._q2
         T = self
+
         def Ti(x,i,c):
             return T[i](x)+c*x
-        # Check the quadratic relation
-        for i in cartan_type.index_set():
-            for x in elements:
-                tester.assertTrue(Ti(Ti(x,i,-q2),i,-q1).is_zero())
-        G = cartan_type.coxeter_diagram()
-        # Check the braid relation
-        for (i, j) in Subsets(cartan_type.index_set(), 2):
-            if G.has_edge(i,j):
-                o = G.edge_label(i,j)
-            else:
-                o = 2
-            if o == infinity:
-                continue
-            for x in elements:
-                y = x
-                for k in range(o):
-                    x = T[i](x)
-                    y = T[j](y)
-                    y,x = x,y
-                tester.assertEqual(x, y)
+
+        try:
+            # Check the quadratic relation
+            for i in cartan_type.index_set():
+                for x in elements:
+                    tester.assertTrue(Ti(Ti(x,i,-q2),i,-q1).is_zero())
+            G = cartan_type.coxeter_diagram()
+            # Check the braid relation
+            for (i, j) in Subsets(cartan_type.index_set(), 2):
+                if G.has_edge(i,j):
+                    o = G.edge_label(i,j)
+                else:
+                    o = 2
+                if o == infinity:
+                    continue
+                for x in elements:
+                    y = x
+                    for k in range(o):
+                        x = T[i](x)
+                        y = T[j](y)
+                        y,x = x,y
+                    tester.assertEqual(x, y)
+        except ImportError:
+            pass
 
     def _test_inverse(self, **options):
         r"""
@@ -503,14 +509,17 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         elements = self.domain().some_elements()
         q1 = self._q1
         q2 = self._q2
-        if q1.is_unit() and q2.is_unit():
-            I = self.cartan_type().index_set()
-            for w in [[i] for i in I] + [tuple(I)]:
-                Tw = self.Tw(w)
-                Tw_inverse = self.Tw_inverse(w)
-                for x in elements:
-                    tester.assertEqual(Tw_inverse(Tw(x)), x)
-                    tester.assertEqual(Tw(Tw_inverse(x)), x)
+        try:
+            if q1.is_unit() and q2.is_unit():
+                I = self.cartan_type().index_set()
+                for w in [[i] for i in I] + [tuple(I)]:
+                    Tw = self.Tw(w)
+                    Tw_inverse = self.Tw_inverse(w)
+                    for x in elements:
+                        tester.assertEqual(Tw_inverse(Tw(x)), x)
+                        tester.assertEqual(Tw(Tw_inverse(x)), x)
+        except ImportError:
+            pass
 
     def Y_lambdacheck(self, lambdacheck):
         r"""
@@ -541,9 +550,12 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
             sage: x = KW.monomial(W.an_element()); x
             12
             sage: Y1(x)
-            ((-q1^2-2*q1*q2-q2^2)/(-q2^2))*2121 + ((q1^3+q1^2*q2+q1*q2^2+q2^3)/(-q1*q2^2))*121 + ((q1^2+q1*q2)/(-q2^2))*212 + ((-q1^2)/(-q2^2))*12
+            ((-q1^2-2*q1*q2-q2^2)/(-q2^2))*2121
+             + ((q1^3+q1^2*q2+q1*q2^2+q2^3)/(-q1*q2^2))*121
+             + ((q1^2+q1*q2)/(-q2^2))*212 + ((-q1^2)/(-q2^2))*12
             sage: Y2(x)
-            ((-q1^4-q1^3*q2-q1*q2^3-q2^4)/(-q1^3*q2))*2121 + ((q1^3+q1^2*q2+q1*q2^2+q2^3)/(-q1^2*q2))*121 + (q2^3/(-q1^3))*12
+            ((-q1^4-q1^3*q2-q1*q2^3-q2^4)/(-q1^3*q2))*2121
+             + ((q1^3+q1^2*q2+q1*q2^2+q2^3)/(-q1^2*q2))*121 + (q2^3/(-q1^3))*12
             sage: Y1(Y2(x))
             ((q1*q2+q2^2)/q1^2)*212 + ((-q2)/q1)*12
             sage: Y2(Y1(x))
@@ -614,7 +626,6 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         alphacheck = P_check.simple_roots()
         c = Q_check.cartan_type().translation_factors()
         t = P_check.linear_combination( (alphacheck[i], c[i] * coeff) for i,coeff in lambdacheck )
-        #print lambdacheck, "=", t
         # In type BC, c[i] may introduce rational coefficients
         # If we want to work in the lattice we might want to use the
         # following workaround after the fact ...
@@ -626,8 +637,8 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         # works for our two main examples (action of affine W on W,
         # and Macdonald polynomials)
         if self._side == "left":
-            word = tuple([x for x in reversed(word)])
-            signs = tuple([x for x in reversed(signs)])
+            word = tuple(reversed(word))
+            signs = tuple(reversed(signs))
         # The power of q implements the fact that Y^\deltacheck = 1/q.
         # The classical simple coroots have no \deltacheck term.
         # alpha[0] has a \deltacheck with coefficient one
@@ -744,9 +755,11 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
             sage: [E[w] for w in W]
             [2121 - 121 - 212 + 12 + 21 - 1 - 2 + ,
              -2121 + 212,
-             (q2/(q1-q2))*2121 + (q2/(-q1+q2))*121 + (q2/(-q1+q2))*212 - 12 + ((-q2)/(-q1+q2))*21 + 2,
+             (q2/(q1-q2))*2121 + (q2/(-q1+q2))*121
+                 + (q2/(-q1+q2))*212 - 12 + ((-q2)/(-q1+q2))*21 + 2,
              ((-q2^2)/(-q1^2+q1*q2-q2^2))*2121 - 121 + (q2^2/(-q1^2+q1*q2-q2^2))*212 + 21,
-             ((q1^2+q2^2)/(-q1^2+q1*q2-q2^2))*2121 + ((-q1^2-q2^2)/(-q1^2+q1*q2-q2^2))*121 + ((-q2^2)/(-q1^2+q1*q2-q2^2))*212 + (q2^2/(-q1^2+q1*q2-q2^2))*12 - 21 + 1,
+             ((-q1^2-q2^2)/(q1^2-q1*q2+q2^2))*2121 + ((-q1^2-q2^2)/(-q1^2+q1*q2-q2^2))*121
+                 + ((-q2^2)/(-q1^2+q1*q2-q2^2))*212 + (q2^2/(-q1^2+q1*q2-q2^2))*12 - 21 + 1,
              2121,
              (q2/(-q1+q2))*2121 + ((-q2)/(-q1+q2))*121 - 212 + 12,
              -2121 + 121]
@@ -756,6 +769,8 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         return CherednikOperatorsEigenvectors(self)
 
 # TODO: this should probably inherit from family!
+
+
 class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
     r"""
     A class for the family of eigenvectors of the `Y` Cherednik
@@ -801,7 +816,8 @@ class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
         Add tests for the above assumptions, and also that the
         classical operators `T_1, \ldots, T_n` from `T` and `T_Y` coincide.
     """
-    def __init__(self, T, T_Y = None, normalized = True):
+
+    def __init__(self, T, T_Y=None, normalized=True):
         r"""
         INPUT:
 
@@ -812,7 +828,7 @@ class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
           of the generators of an affine Hecke algebra on ``self``. By
           default, this is ``T``.
 
-        - ``normalized`` -- boolean (default: True) whether the
+        - ``normalized`` -- boolean (default: ``True``) whether the
           eigenvector `E_\mu` is normalized so that `\mu` has
           coefficient `1`.
 
@@ -829,7 +845,8 @@ class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
             sage: E.keys()
             Weyl Group of type ['B', 3] (as a matrix group acting on the ambient space)
             sage: E.domain()
-            Algebra of Weyl Group of type ['B', 3] (as a matrix group acting on the ambient space) over Fraction Field of Multivariate Polynomial Ring in q1, q2 over Rational Field
+            Algebra of Weyl Group of type ['B', 3] (as a matrix group acting on the ambient space)
+             over Fraction Field of Multivariate Polynomial Ring in q1, q2 over Rational Field
             sage: E._T == E._T_Y
             True
         """
@@ -854,7 +871,7 @@ class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
             sage: E.cartan_type()
             ['B', 3, 1]
 
-            sage: NonSymmetricMacdonaldPolynomials(["B", 2, 1]).cartan_type()
+            sage: NonSymmetricMacdonaldPolynomials(["B", 2, 1]).cartan_type()           # needs sage.graphs
             ['B', 2, 1]
         """
         return self._T_Y.cartan_type()
@@ -871,7 +888,9 @@ class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
             sage: KW = W.algebra(K)
             sage: E = KW.demazure_lusztig_eigenvectors(q1, q2)
             sage: E.domain()
-            Algebra of Weyl Group of type ['B', 3] (as a matrix group acting on the ambient space) over Multivariate Polynomial Ring in q1, q2 over Rational Field
+            Algebra of Weyl Group of type ['B', 3]
+             (as a matrix group acting on the ambient space)
+             over Multivariate Polynomial Ring in q1, q2 over Rational Field
         """
         return self._T.domain()
 
@@ -1141,9 +1160,7 @@ class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
         muaffi = self.twist(muaff, i)
         mui = self.affine_retract(muaffi)
         E_mui = self[mui]
-        #print "Computing %s from E_%s=%s with T_%s"%(l, mui, E_mui, i)
-        q1,q2 = self.hecke_parameters(i)
-        #print q1, q2, self.eigenvalue(mui, -alphacheck[i])
+        q1, q2 = self.hecke_parameters(i)
         coroot = alphacheck[i]
         ct = self.cartan_type()
         special_node = ct.special_node()

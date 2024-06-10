@@ -10,7 +10,7 @@ Kenzo:
 - https://www-fourier.ujf-grenoble.fr/~sergerar/Kenzo/
 - https://github.com/gheber/kenzo
 
-The results for CP^2, CP^3, and CP^4 have been saved in the corresponding text files. The file S4.txt includes the 4-sphere, just for testing purposes. These files can be processed by the function "simplicial_data_from_kenzo_output" in sage/homology/simplicial_set.py. To get a simplicial set structure for CP^n using Kenzo in sbcl, do the following. 
+The results for CP^2, CP^3, and CP^4 have been saved in the corresponding text files. The file S4.txt includes the 4-sphere, just for testing purposes. These files can be processed by the function "simplicial_data_from_kenzo_output" in sage/topology/simplicial_set.py. To get a simplicial set structure for CP^n using Kenzo in sbcl, do the following. 
 
 ;;
 ;; Start Kenzo.

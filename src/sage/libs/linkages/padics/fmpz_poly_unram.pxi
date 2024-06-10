@@ -5,7 +5,6 @@ using FLINT's fmpz_poly_t.
 AUTHORS:
 
 - David Roe, Julian Rueth (2013-03-21) -- initial version
-
 """
 #*****************************************************************************
 #       Copyright (C) 2013 David Roe <roed.math@gmail.com>
@@ -32,6 +31,8 @@ from sage.rings.finite_rings.integer_mod_ring import Zmod
 
 from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpz_poly cimport *
+from sage.libs.flint.fmpz_poly_sage cimport *
+
 
 DEF CELEMENT_IS_PY_OBJECT = False
 
@@ -87,20 +88,25 @@ cdef inline int ccmp(celement a, celement b, long prec, bint reduce_a, bint redu
     if prec == 0:
         return 0
 
-    if ciszero(prime_pow.poly_ccmp, prime_pow): return 0
+    if ciszero(prime_pow.poly_ccmp, prime_pow):
+        return 0
 
     cdef long da = fmpz_poly_degree(a)
     cdef long db = fmpz_poly_degree(b)
-    if da < db: return -1
-    elif da > db: return 1
+    if da < db:
+        return -1
+    elif da > db:
+        return 1
 
     cdef long cmp
     cdef long i
     for i in range(da+1):
         fmpz_poly_get_coeff_fmpz(prime_pow.fmpz_ccmp, prime_pow.poly_ccmp, i)
         cmp = fmpz_cmp_si(prime_pow.fmpz_ccmp, 0)
-        if cmp < 0: return -1
-        elif cmp > 0: return 1
+        if cmp < 0:
+            return -1
+        elif cmp > 0:
+            return 1
     assert False
 
 cdef inline int cneg(celement out, celement a, long prec, PowComputer_ prime_pow) except -1:
@@ -189,7 +195,7 @@ cdef inline long cremove(celement out, celement a, long prec, PowComputer_ prime
     - ``a`` -- the element whose valuation and unit are desired.
     - ``prec`` -- a long, used if `a = 0`.
     - ``prime_pow`` -- the PowComputer for the ring.
-    - ``reduce_relative`` -- a bint: whether the final result          
+    - ``reduce_relative`` -- a bint: whether the final result
       should be reduced at precision ``prec`` (case ``False``)
       or ``prec - valuation`` (case ``True``)
 
@@ -238,7 +244,8 @@ cdef inline long cvaluation(celement a, long prec, PowComputer_ prime_pow) excep
         if fmpz_is_zero(prime_pow.fmpz_cval):
             continue
         val = fmpz_remove(prime_pow.fmpz_cval, prime_pow.fmpz_cval, prime_pow.fprime)
-        if val < ret: ret = val
+        if val < ret:
+            ret = val
     return ret
 
 cdef inline bint cisunit(celement a, PowComputer_ prime_pow) except -1:
@@ -354,10 +361,12 @@ cdef inline int cinvert(celement out, celement a, long prec, PowComputer_ prime_
         fmpz_poly_scalar_divexact_fmpz(out, a, prime_pow.fmpz_cinv)
 
         fmpz_poly_xgcd(prime_pow.fmpz_cinv2, out, prime_pow.poly_cinv2, out, prime_pow.poly_cinv)
-        if fmpz_is_zero(prime_pow.fmpz_cinv2): raise ValueError("polynomials are not coprime")
+        if fmpz_is_zero(prime_pow.fmpz_cinv2):
+            raise ValueError("polynomials are not coprime")
 
         fmpz_mul(prime_pow.fmpz_cinv2, prime_pow.fmpz_cinv, prime_pow.fmpz_cinv2)
-        if not fmpz_invmod(prime_pow.fmpz_cinv2, prime_pow.fmpz_cinv2, prime_pow.pow_fmpz_t_tmp(prec)[0]): raise ValueError("content or xgcd is not a unit")
+        if not fmpz_invmod(prime_pow.fmpz_cinv2, prime_pow.fmpz_cinv2, prime_pow.pow_fmpz_t_tmp(prec)[0]):
+            raise ValueError("content or xgcd is not a unit")
         fmpz_poly_scalar_mul_fmpz(out, out, prime_pow.fmpz_cinv2)
 
         creduce(out, out, prec, prime_pow)
@@ -581,7 +590,8 @@ cdef inline cexpansion_next(fmpz_poly_t value, expansion_mode mode, long curpowe
       is being found.  Only used in ``smallest_mode``.
     - ``prime_pow`` -- A ``PowComputer`` holding `p`-adic data.
     """
-    if mode == teichmuller_mode: raise NotImplementedError
+    if mode == teichmuller_mode:
+        raise NotImplementedError
     ans = []
     cdef fmpz* c
     cdef long i
@@ -659,7 +669,7 @@ cdef list ccoefficients(celement x, long valshift, long prec, PowComputer_ prime
     return ans
 
 cdef int cteichmuller(celement out, celement value, long prec, PowComputer_ prime_pow) except -1:
-    """
+    r"""
     Teichmuller lifting.
 
     INPUT:
@@ -728,7 +738,8 @@ cdef int cconv(celement out, x, long prec, long valshift, PowComputer_ prime_pow
         for i in range(len(x)):
             cconv(prime_pow.poly_cconv, x[i], prec, valshift, prime_pow)
             degree = fmpz_poly_degree(prime_pow.poly_cconv)
-            if degree == -1: continue
+            if degree == -1:
+                continue
             elif degree == 0:
                 fmpz_poly_get_coeff_fmpz(prime_pow.fmpz_cconv, prime_pow.poly_cconv, 0)
                 fmpz_poly_set_coeff_fmpz(out, i, prime_pow.fmpz_cconv)
@@ -838,7 +849,7 @@ cdef inline int cconv_mpz_t_out(mpz_t out, celement x, long valshift, long prec,
 ## Extra functions ##
 
 cdef cmatrix_mod_pn(celement a, long aprec, long valshift, PowComputer_ prime_pow):
-    """
+    r"""
     Returns the matrix of right multiplication by the element on
     the power basis `1, x, x^2, \ldots, x^{d-1}` for this
     extension field.  Thus the *rows* of this matrix give the
@@ -864,5 +875,5 @@ cdef cmatrix_mod_pn(celement a, long aprec, long valshift, PowComputer_ prime_po
             L[-1].append(zero)
         fmpz_poly_shift_left(prime_pow.poly_matmod, prime_pow.poly_matmod, 1)
         creduce(prime_pow.poly_matmod, prime_pow.poly_matmod, aprec, prime_pow)
-    from sage.matrix.all import matrix
+    from sage.matrix.constructor import matrix
     return matrix(R, deg, deg, L)

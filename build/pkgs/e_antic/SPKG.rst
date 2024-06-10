@@ -1,6 +1,5 @@
-
-e-antic
-=======
+e_antic: Real embedded number fields
+====================================
 
 Description
 -----------
@@ -20,10 +19,3 @@ Upstream Contact
 ----------------
 
 -  https://github.com/videlec/e-antic
-
-Dependencies
-------------
-
--  GMP/MPIR
--  FLINT
--  ARB

@@ -1,0 +1,26 @@
+# This file, build/pkgs/_prereq/distros/debian.txt, contains names of
+# Debian/Ubuntu/... packages needed for installation of Sage from source.
+#
+# In addition, the files build/pkgs/SPKG/distros/debian.txt contain
+# the names of packages that provide the equivalent of SPKG.
+#
+# One package per line. No need to escape special characters.
+# Everything on a line after a # character is ignored.
+#
+binutils
+make
+m4
+perl
+# python3-minimal is not enough on debian buster, ubuntu bionic - it does not have urllib
+# system python for bootstrapping the build
+python3
+tar
+bc
+gcc
+# On debian buster, need C++ even to survive 'configure'. Otherwise:
+# checking how to run the C++ preprocessor... /lib/cpp
+# configure: error: in `/sage':
+# configure: error: C++ preprocessor "/lib/cpp" fails sanity check
+g++
+# Needed if we download some packages from a https upstream URL
+ca-certificates

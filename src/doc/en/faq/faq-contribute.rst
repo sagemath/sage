@@ -4,6 +4,7 @@
 FAQ: Contributing to Sage
 =========================
 
+
 How can I start contributing to Sage?
 """""""""""""""""""""""""""""""""""""
 
@@ -11,9 +12,10 @@ The first step is to use Sage and encourage your friends to use
 Sage. If you find bugs or confusing documentation along the way,
 please report your problems!
 
-Two popular ways to contribute to Sage are to write code and to 
-create documentation or tutorials. Some steps in each direction 
+Two popular ways to contribute to Sage are to write code and to
+create documentation or tutorials. Some steps in each direction
 are described below.
+
 
 I want to contribute code to Sage. How do I get started?
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -22,20 +24,19 @@ Take a look at the
 `official development guide <https://doc.sagemath.org/html/en/developer>`_
 for Sage. At a minimum, the first chapter in that guide is required
 reading for any Sage developer. Also pay special attention to the
-`trac guidelines <https://doc.sagemath.org/html/en/developer/trac.html>`_.
+`GitHub guidelines <https://doc.sagemath.org/html/en/developer/github.html>`_.
 You can also join the
 `sage-devel <https://groups.google.com/group/sage-devel>`_
 mailing list or hang around on the
-``#sage-devel`` IRC channel on
-`freenode <http://freenode.net>`_. While you are getting to know 
-the community, grab a copy of the Sage
+`SageMath Zulip chat channel <https://sagemath.zulipchat.com/>`_.
+While you are getting to know the community, grab a copy of the Sage
 source and familiarize yourself with the
-`git <https://git-scm.com>`_ version control system. 
+`git <https://git-scm.com>`_ version control system.
 
 The best way to become familiar with the Sage development process is
-to choose a ticket from the
-`trac server <https://trac.sagemath.org>`_
-and review the proposed changes contained in that ticket. If you want
+to choose an issue from
+`the Sage repository on GitHub <https://github.com/sagemath/sage/issues>`_
+and review the proposed changes contained in that issue. If you want
 to implement something, it is a good practice to discuss your ideas on
 the ``sage-devel`` mailing list first, so that other developers have a
 chance to comment on your ideas/proposals. They are pretty open to new
@@ -54,7 +55,7 @@ optimization. In the following paper
 
 * D. Knuth. Structured Programming with go to Statements.
   *ACM Journal Computing Surveys*, 6(4), 1974.
- 
+
 Don Knuth observes that: "We should forget about small efficiencies,
 say about 97% of the time: premature optimization is the root of all
 evil."
@@ -73,20 +74,21 @@ by Steven F. Lott is suitable for anyone who is already comfortable
 with programming.
 
 If you want, you can
-try to learn Python by using Sage. However, 
+try to learn Python by using Sage. However,
 it is helpful to know what is pure Python and when Sage is doing its
 "magic". There are many things that work in Python but not in Sage,
-and vice versa. Furthermore, even when the syntax is identical, many 
-programming concepts are explained more thoroughly in Python-centered 
-resources than in Sage-centered resources; in the latter, 
+and vice versa. Furthermore, even when the syntax is identical, many
+programming concepts are explained more thoroughly in Python-centered
+resources than in Sage-centered resources; in the latter,
 mathematics is usually the priority.
+
 
 I am not a programmer. Is there another way I can help out?
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 Yes. As with any free open source software project, there are numerous
 ways in which you could help out within the Sage community, and
-programming is only one of many ways to contribute. 
+programming is only one of many ways to contribute.
 
 Many people like writing technical tutorials. One of the joys of doing
 so is that you also learn something new in the process. At the same
@@ -156,6 +158,7 @@ resources can be found by a web search.
   by A. M. Kuchling
 * `reStructuredText <https://docutils.sourceforge.io/rst.html>`_
 
+
 Are there any coding conventions I need to follow?
 """"""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -165,13 +168,13 @@ Also consult the Sage Developer's Guide, especially the chapter
 `Conventions for Coding in Sage <https://doc.sagemath.org/html/en/developer/#sage-coding-details>`_.
 
 
-I submitted a bug fix to the trac server several weeks ago. Why are you ignoring my branch?
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+I submitted a bug fix to the GitHub Sage repo several weeks ago. Why are you ignoring my branch?
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 We are not trying to ignore your branch. Most people who work on Sage do so
-in their free time. With hundreds of open tickets of varying degrees of
-impacts on the whole Sage community, people who work on tickets need
-to prioritize their time and work on those tickets that interest
+in their free time. With hundreds of open PRs of varying degrees of
+impacts on the whole Sage community, people who work on PRs need
+to prioritize their time and work on those PRs that interest
 them. Sometimes you may be the only person who understands your
 branch. In that case, you are encouraged to take extra care to make it
 as easy as possible for anyone to review. Here are some
@@ -186,15 +189,15 @@ tips on making your branch easy to review:
 * Have you clearly described how your branch solves the problem under
   consideration?
 * Have you clearly described how to test the changes in your branch?
-* Have you listed any tickets that your branch depends on?
-* Is your branch based on a recent (peferably, the lastest) Sage beta version?
+* Have you listed any issues/PRs that your branch depends on?
+* Is your branch based on a recent (preferably, the latest) Sage beta version?
 * Does your branch
   `follow relevant conventions <https://doc.sagemath.org/html/en/developer/#writing-code-for-sage>`_
   as documented in the Developer's Guide?
 
 If your branch stands no chance of being merged in the Sage source
 tree, we will not ignore your branch but simply close the relevant
-ticket with an explanation why we cannot include your changes.
+PR with an explanation why we cannot include your changes.
 
 
 When and how might I remind the Sage community of a branch I care about?

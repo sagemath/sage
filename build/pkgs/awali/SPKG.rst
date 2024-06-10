@@ -1,5 +1,5 @@
-awali
-=====
+awali: Computation of/with finite state machines
+================================================
 
 Description
 -----------
@@ -28,16 +28,5 @@ Upstream Contact
 Dependencies
 ------------
 
--  Python
--  CMake
--  Cython
--  ncurses
-
 -  graphviz must be installed from your distro, and available in the
    path.
-
-
-Special Update/Build Instructions
----------------------------------
-
--  None

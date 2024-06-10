@@ -1,7 +1,11 @@
-# distutils: libraries = givaro ntl gmp m
+# distutils: libraries = givaro NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 """
-Finite field morphisms using Givaro
+Givaro finite field morphisms
 
 Special implementation for givaro finite fields of:
 
@@ -18,33 +22,32 @@ AUTHOR:
 - Xavier Caruso (2012-06-29)
 """
 
-#############################################################################
+# ###########################################################################
 #    Copyright (C) 2012 Xavier Caruso <xavier.caruso@normalesup.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 
-from .hom_finite_field cimport SectionFiniteFieldHomomorphism_generic
-from .hom_finite_field cimport FiniteFieldHomomorphism_generic
-from .hom_finite_field cimport FrobeniusEndomorphism_finite_field
+from sage.rings.finite_rings.hom_finite_field cimport SectionFiniteFieldHomomorphism_generic
+from sage.rings.finite_rings.hom_finite_field cimport FiniteFieldHomomorphism_generic
+from sage.rings.finite_rings.hom_finite_field cimport FrobeniusEndomorphism_finite_field
 
-from .hom_prime_finite_field cimport FiniteFieldHomomorphism_prime
+from sage.rings.finite_rings.hom_prime_finite_field cimport FiniteFieldHomomorphism_prime
 
 from sage.categories.homset import Hom
 from sage.structure.element cimport Element
-from sage.rings.morphism cimport RingHomomorphism_im_gens
 
 from sage.rings.finite_rings.finite_field_givaro import FiniteField_givaro
-from .element_givaro cimport FiniteField_givaroElement
+from sage.rings.finite_rings.element_givaro cimport FiniteField_givaroElement
 #from element_givaro cimport make_FiniteField_givaroElement
 
 from sage.structure.parent cimport Parent
-from .element_givaro cimport Cache_givaro
+from sage.rings.finite_rings.element_givaro cimport Cache_givaro
 
 
 cdef class SectionFiniteFieldHomomorphism_givaro(SectionFiniteFieldHomomorphism_generic):
@@ -56,11 +59,15 @@ cdef class SectionFiniteFieldHomomorphism_givaro(SectionFiniteFieldHomomorphism_
             sage: k.<t> = GF(3^2)
             sage: K.<T> = GF(3^4)
             sage: f = FiniteFieldHomomorphism_givaro(Hom(k, K))
-            sage: g = f.section(); g
+            sage: g = f.section(); g # random
             Section of Ring morphism:
               From: Finite Field in t of size 3^2
               To:   Finite Field in T of size 3^4
               Defn: t |--> 2*T^3 + 2*T^2 + 1
+            sage: a = k.random_element()
+            sage: b = k.random_element()
+            sage: g(f(a) + f(b)) == g(f(a)) + g(f(b)) == a + b
+            True
         """
         if not isinstance(inverse, FiniteFieldHomomorphism_givaro):
             raise TypeError("The given map is not an instance of FiniteFieldHomomorphism_givaro")
@@ -78,8 +85,12 @@ cdef class SectionFiniteFieldHomomorphism_givaro(SectionFiniteFieldHomomorphism_
         cdef long sb, sy
         while b != 0:
             q = a // b
-            sb = b; b = a-q*b; a = sb
-            sy = y; y = x-q*y; x = sy
+            sb = b
+            b = a - q * b
+            a = sb
+            sy = y
+            y = x - q * y
+            x = sy
 
         self._gcd = a
         if x < 0:
@@ -107,7 +118,7 @@ cdef class SectionFiniteFieldHomomorphism_givaro(SectionFiniteFieldHomomorphism_
             ValueError: T is not in the image of Ring morphism:
               From: Finite Field in t of size 3^2
               To:   Finite Field in T of size 3^4
-              Defn: t |--> 2*T^3 + 2*T^2 + 1
+              Defn: t |--> ...
         """
         if x.parent() != self.domain():
             raise TypeError("%s is not in %s" % (x, self.domain()))
@@ -133,11 +144,15 @@ cdef class FiniteFieldHomomorphism_givaro(FiniteFieldHomomorphism_generic):
             sage: from sage.rings.finite_rings.hom_finite_field_givaro import FiniteFieldHomomorphism_givaro
             sage: k.<t> = GF(3^2)
             sage: K.<T> = GF(3^4)
-            sage: f = FiniteFieldHomomorphism_givaro(Hom(k, K)); f
+            sage: f = FiniteFieldHomomorphism_givaro(Hom(k, K)); f # random
             Ring morphism:
               From: Finite Field in t of size 3^2
               To:   Finite Field in T of size 3^4
               Defn: t |--> 2*T^3 + 2*T^2 + 1
+            sage: a = k.random_element()
+            sage: b = k.random_element()
+            sage: f(a) + f(b) == f(a + b)
+            True
 
             sage: k.<t> = GF(3^10)
             sage: K.<T> = GF(3^20)
@@ -175,8 +190,10 @@ cdef class FiniteFieldHomomorphism_givaro(FiniteFieldHomomorphism_generic):
             sage: k.<t> = GF(3^2)
             sage: K.<T> = GF(3^4)
             sage: f = FiniteFieldHomomorphism_givaro(Hom(k, K))
-            sage: f(t)
+            sage: f(t) # random
             2*T^3 + 2*T^2 + 1
+            sage: f(t) == f.im_gens()[0]
+            True
         """
         if x.parent() != self.domain():
             raise TypeError("%s is not in %s" % (x, self.domain()))
@@ -190,7 +207,6 @@ cdef class FiniteFieldHomomorphism_givaro(FiniteFieldHomomorphism_generic):
         return make_FiniteField_givaroElement(self._codomain_cache, log)
 
 
-
 cdef class FrobeniusEndomorphism_givaro(FrobeniusEndomorphism_finite_field):
     def __init__(self, domain, power=1):
         """
@@ -200,13 +216,13 @@ cdef class FrobeniusEndomorphism_givaro(FrobeniusEndomorphism_finite_field):
             sage: Frob = k.frobenius_endomorphism(); Frob
             Frobenius endomorphism t |--> t^5 on Finite Field in t of size 5^3
             sage: type(Frob)
-            <type 'sage.rings.finite_rings.hom_finite_field_givaro.FrobeniusEndomorphism_givaro'>
+            <class 'sage.rings.finite_rings.hom_finite_field_givaro.FrobeniusEndomorphism_givaro'>
 
             sage: k.<t> = GF(5^20)
             sage: Frob = k.frobenius_endomorphism(); Frob
             Frobenius endomorphism t |--> t^5 on Finite Field in t of size 5^20
             sage: type(Frob)
-            <type 'sage.rings.finite_rings.hom_finite_field.FrobeniusEndomorphism_finite_field'>
+            <class 'sage.rings.finite_rings.hom_finite_field.FrobeniusEndomorphism_finite_field'>
         """
         if not isinstance(domain, FiniteField_givaro):
             raise TypeError("The domain is not an instance of FiniteField_givaro")
@@ -235,14 +251,14 @@ cdef class FrobeniusEndomorphism_givaro(FrobeniusEndomorphism_finite_field):
             sage: kfixed, embed = f.fixed_field()
             sage: kfixed
             Finite Field in t_fixed of size 5^2
-            sage: embed
+            sage: embed # random
             Ring morphism:
               From: Finite Field in t_fixed of size 5^2
               To:   Finite Field in t of size 5^6
               Defn: t_fixed |--> 4*t^5 + 2*t^4 + 4*t^2 + t
 
             sage: tfixed = kfixed.gen()
-            sage: embed(tfixed)
+            sage: embed(tfixed) # random
             4*t^5 + 2*t^4 + 4*t^2 + t
         """
         if self._degree_fixed == 1:

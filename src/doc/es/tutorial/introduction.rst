@@ -8,7 +8,8 @@ notebook (interfaz interactiva vía web) de Sage (haz click en ``Help``, luego h
 Aunque gran parte de Sage está implementada usando el lenguaje de programación
 Python, no es necesario ningún conocimiento previo de Python para poder leer este tutorial.
 En algún punto seguramente querrás aprender Python (¡un lenguaje muy divertido!), y hay muchos
-recursos gratuitos excelentes para hacerlo, incluyendo [PyT]_ y [Dive]_.
+recursos gratuitos excelentes para hacerlo, La Guía Para Principiantes De Python [PyB]_
+enumera muchas opciones.
 Si tan solo quieres experimentar ligeramente con Sage, este tutorial es el
 lugar justo para empezar. Por ejemplo:
 
@@ -89,9 +90,9 @@ Sage en tu computador. Aquí hacemos simplemente dos comentarios:
    en un directorio en el que TeX va a buscar.
 
    La documentación para usar SageTeX se encuentra en
-   ``$SAGE_ROOT/local/share/texmf/tex/latex/sagetex/``, donde
+   ``$SAGE_ROOT/venv/share/texmf/tex/latex/sagetex/``, donde
    "``$SAGE_ROOT``" se refiere al directorio donde Sage está instalado --
-   por ejemplo, ``/opt/sage-4.2.1``.
+   por ejemplo, ``/opt/sage-9.6``.
 
 
 Formas de usar Sage
@@ -100,7 +101,7 @@ Formas de usar Sage
 Puedes usar Sage de varias maneras.
 
 
--  **Interfaz gráfico del Notebook:** iniciar `sage -n jupyter`; leer
+-  **Interfaz gráfico del Notebook:** iniciar ``sage -n jupyter``; leer
    `Jupyter documentation on-line <https://jupyter-notebook.readthedocs.io/en/latest/notebook.html>`_,
 
 -  **Línea de comandos interactiva:**,
@@ -156,9 +157,11 @@ Metas a largo plazo de Sage
    la documentación y el código fuente, así como alcanzar un alto nivel
    de soporte al usuario.
 
-.. [Dive] Sumérgete en Python, líbremente disponible online en
-          http://diveintopython.net
+.. [PyT] El Tutorial De Python,
+   https://docs.python.org/es/3/tutorial/
 
-.. [PyT] El Tutorial De Python, http://www.python.org/
+.. [PyB] La Guía Para Principiantes De Python,
+   https://wiki.python.org/moin/BeginnersGuide
 
 .. [Sage] Sage, https://www.sagemath.org
+

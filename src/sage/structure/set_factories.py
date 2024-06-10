@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Set factories
 =============
@@ -790,8 +791,6 @@ class FacadeParentPolicy(SetFactoryPolicy):
         """
         return "Set factory policy for facade parent {}".format(
             self._parent_for)
-
-
 
 
 class BareFunctionPolicy(SetFactoryPolicy):

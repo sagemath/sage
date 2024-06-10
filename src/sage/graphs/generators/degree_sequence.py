@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Graphs with a given degree sequence
 
@@ -24,145 +23,144 @@ from sage.misc.randstate import current_randstate
 
 def DegreeSequence(deg_sequence):
     """
-    Returns a graph with the given degree sequence. Raises a NetworkX
-    error if the proposed degree sequence cannot be that of a graph.
+    Return a graph with the given degree sequence.
 
-    Graph returned is the one returned by the Havel-Hakimi algorithm,
-    which constructs a simple graph by connecting vertices of highest
-    degree to other vertices of highest degree, resorting the remaining
-    vertices by degree and repeating the process. See Theorem 1.4 in
-    [CL1996]_.
+    This method raises a NetworkX error if the proposed degree sequence cannot
+    be that of a graph.
+
+    Graph returned is the one returned by the Havel-Hakimi algorithm, which
+    constructs a simple graph by connecting vertices of highest degree to other
+    vertices of highest degree, resorting the remaining vertices by degree and
+    repeating the process. See Theorem 1.4 in [CL1996]_.
 
     INPUT:
 
-    -  ``deg_sequence`` - a list of integers with each
-       entry corresponding to the degree of a different vertex.
-
+    - ``deg_sequence`` -- list of integers with each entry corresponding to the
+      degree of a different vertex
 
     EXAMPLES::
 
-        sage: G = graphs.DegreeSequence([3,3,3,3])
-        sage: G.edges(labels=False)
+        sage: G = graphs.DegreeSequence([3,3,3,3])                                      # needs networkx
+        sage: G.edges(sort=True, labels=False)                                          # needs networkx
         [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]
-        sage: G.show()  # long time
+        sage: G.show()                          # long time                             # needs networkx sage.plot
 
     ::
 
-        sage: G = graphs.DegreeSequence([3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3])
-        sage: G.show()  # long time
+        sage: G = graphs.DegreeSequence([3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3])  # needs networkx
+        sage: G.show()                          # long time                             # needs networkx sage.plot
 
     ::
 
-        sage: G = graphs.DegreeSequence([4,4,4,4,4,4,4,4])
-        sage: G.show()  # long time
+        sage: G = graphs.DegreeSequence([4,4,4,4,4,4,4,4])                              # needs networkx
+        sage: G.show()                          # long time                             # needs networkx sage.plot
 
     ::
 
-        sage: G = graphs.DegreeSequence([1,2,3,4,3,4,3,2,3,2,1])
-        sage: G.show()  # long time
+        sage: G = graphs.DegreeSequence([1,2,3,4,3,4,3,2,3,2,1])                        # needs networkx
+        sage: G.show()                          # long time                             # needs networkx sage.plot
     """
     import networkx
     return Graph(networkx.havel_hakimi_graph([int(i) for i in deg_sequence]))
 
-def DegreeSequenceBipartite(s1 ,s2 ):
-    r"""
-    Returns a bipartite graph whose two sets have the given
-    degree sequences.
 
-    Given two different sequences of degrees `s_1` and `s_2`,
-    this functions returns ( if possible ) a bipartite graph
-    on sets `A` and `B` such that the vertices in `A` have
-    `s_1` as their degree sequence, while `s_2` is the degree
-    sequence of the vertices in `B`.
+def DegreeSequenceBipartite(s1, s2):
+    r"""
+    Return a bipartite graph whose two sets have the given degree sequences.
+
+    Given two different sequences of degrees `s_1` and `s_2`, this functions
+    returns ( if possible ) a bipartite graph on sets `A` and `B` such that the
+    vertices in `A` have `s_1` as their degree sequence, while `s_2` is the
+    degree sequence of the vertices in `B`.
 
     INPUT:
 
-    - ``s_1`` -- list of integers corresponding to the degree
-      sequence of the first set.
-    - ``s_2`` -- list of integers corresponding to the degree
-      sequence of the second set.
+    - ``s_1`` -- list of integers corresponding to the degree sequence of the
+      first set of vertices
+
+    - ``s_2`` -- list of integers corresponding to the degree sequence of the
+      second set of vertices
 
     ALGORITHM:
 
-    This function works through the computation of the matrix
-    given by the Gale-Ryser theorem, which is in this case
-    the adjacency matrix of the bipartite graph.
+    This function works through the computation of the matrix given by the
+    Gale-Ryser theorem, which is in this case the adjacency matrix of the
+    bipartite graph.
 
     EXAMPLES:
 
-    If we are given as sequences ``[2,2,2,2,2]`` and ``[5,5]``
-    we are given as expected the complete bipartite
-    graph `K_{2,5}` ::
+    If we are given as sequences ``[2,2,2,2,2]`` and ``[5,5]`` we are given as
+    expected the complete bipartite graph `K_{2,5}`::
 
-        sage: g = graphs.DegreeSequenceBipartite([2,2,2,2,2],[5,5])
-        sage: g.is_isomorphic(graphs.CompleteBipartiteGraph(5,2))
+        sage: g = graphs.DegreeSequenceBipartite([2,2,2,2,2],[5,5])                     # needs sage.combinat sage.modules
+        sage: g.is_isomorphic(graphs.CompleteBipartiteGraph(5,2))                       # needs sage.combinat sage.modules
         True
 
-    Some sequences being incompatible if, for example, their sums
-    are different, the functions raises a ``ValueError`` when no
-    graph corresponding to the degree sequences exists. ::
+    Some sequences being incompatible if, for example, their sums are different,
+    the functions raises a :class:`ValueError` when no graph corresponding
+    to the degree sequences exists::
 
-        sage: g = graphs.DegreeSequenceBipartite([2,2,2,2,1],[5,5])
+        sage: g = graphs.DegreeSequenceBipartite([2,2,2,2,1],[5,5])                     # needs sage.combinat sage.modules
         Traceback (most recent call last):
         ...
-        ValueError: There exists no bipartite graph corresponding to the given degree sequences
+        ValueError: there exists no bipartite graph corresponding to the given degree sequences
 
     TESTS:
 
-    :trac:`12155`::
+    :issue:`12155`::
 
-        sage: graphs.DegreeSequenceBipartite([2,2,2,2,2],[5,5]).complement()
+        sage: graphs.DegreeSequenceBipartite([2,2,2,2,2],[5,5]).complement()            # needs sage.combinat sage.modules
         Graph on 7 vertices
     """
-
     from sage.combinat.integer_vector import gale_ryser_theorem
     from sage.graphs.bipartite_graph import BipartiteGraph
 
-    s1 = sorted(s1, reverse = True)
-    s2 = sorted(s2, reverse = True)
+    s1 = sorted(s1, reverse=True)
+    s2 = sorted(s2, reverse=True)
 
-    m = gale_ryser_theorem(s1,s2)
+    m = gale_ryser_theorem(s1, s2)
 
     if m is False:
-        raise ValueError("There exists no bipartite graph corresponding to the given degree sequences")
-    else:
-        return Graph(BipartiteGraph(m))
+        raise ValueError("there exists no bipartite graph corresponding to "
+                         "the given degree sequences")
+    return Graph(BipartiteGraph(m))
+
 
 def DegreeSequenceConfigurationModel(deg_sequence, seed=None):
     """
-    Returns a random pseudograph with the given degree sequence. Raises
-    a NetworkX error if the proposed degree sequence cannot be that of
-    a graph with multiple edges and loops.
+    Return a random pseudograph with the given degree sequence.
 
-    One requirement is that the sum of the degrees must be even, since
-    every edge must be incident with two vertices.
+    This method raises a NetworkX error if the proposed degree sequence cannot
+    be that of a graph with multiple edges and loops.
+
+    One requirement is that the sum of the degrees must be even, since every
+    edge must be incident with two vertices.
 
     INPUT:
 
-    - ``deg_sequence`` - a list of integers with each entry corresponding to the
-      expected degree of a different vertex.
+    - ``deg_sequence`` -- list of integers with each entry corresponding to the
+      expected degree of a different vertex
 
-    - ``seed`` - a ``random.Random`` seed or a Python ``int`` for the random
-      number generator (default: ``None``).
-
+    - ``seed`` -- (optional) a ``random.Random`` seed or a Python ``int`` for
+      the random number generator
 
     EXAMPLES::
 
-        sage: G = graphs.DegreeSequenceConfigurationModel([1,1])
-        sage: G.adjacency_matrix()
+        sage: G = graphs.DegreeSequenceConfigurationModel([1,1])                        # needs networkx
+        sage: G.adjacency_matrix()                                                      # needs networkx sage.modules
         [0 1]
         [1 0]
 
-    Note: as of this writing, plotting of loops and multiple edges is
-    not supported, and the output is allowed to contain both types of
-    edges.
+    The output is allowed to contain both loops and multiple edges::
 
-    ::
-
-        sage: G = graphs.DegreeSequenceConfigurationModel([3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3])
-        sage: len(G.edges())
-        30
-        sage: G.show()  # long time
+        sage: # needs networkx
+        sage: deg_sequence = [3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3]
+        sage: G = graphs.DegreeSequenceConfigurationModel(deg_sequence)
+        sage: G.order(), G.size()
+        (20, 30)
+        sage: G.has_loops() or G.has_multiple_edges()  # random
+        True
+        sage: G.show()                          # long time                             # needs sage.plot
 
     REFERENCE:
 
@@ -171,57 +169,59 @@ def DegreeSequenceConfigurationModel(deg_sequence, seed=None):
     if seed is None:
         seed = int(current_randstate().long_seed() % sys.maxsize)
     import networkx
-    return Graph(networkx.configuration_model([int(i) for i in deg_sequence], seed=seed), loops=True, multiedges=True, sparse=True)
+    deg_sequence = [int(i) for i in deg_sequence]
+    return Graph(networkx.configuration_model(deg_sequence, seed=seed),
+                 loops=True, multiedges=True, sparse=True)
 
 
 def DegreeSequenceTree(deg_sequence):
     """
-    Returns a tree with the given degree sequence. Raises a NetworkX
-    error if the proposed degree sequence cannot be that of a tree.
+    Return a tree with the given degree sequence.
+
+    This method raises a NetworkX error if the proposed degree sequence cannot
+    be that of a tree.
 
     Since every tree has one more vertex than edge, the degree sequence
-    must satisfy len(deg_sequence) - sum(deg_sequence)/2 == 1.
+    must satisfy ``len(deg_sequence) - sum(deg_sequence)/2 == 1``.
 
     INPUT:
 
-    -  ``deg_sequence`` - a list of integers with each
-       entry corresponding to the expected degree of a different vertex.
-
+    - ``deg_sequence`` -- list of integers with each entry corresponding to the
+      expected degree of a different vertex
 
     EXAMPLES::
 
-        sage: G = graphs.DegreeSequenceTree([3,1,3,3,1,1,1,2,1])
-        sage: G
+        sage: G = graphs.DegreeSequenceTree([3,1,3,3,1,1,1,2,1]); G                     # needs networkx
         Graph on 9 vertices
-        sage: G.show()  # long time
+        sage: G.show()                          # long time                             # needs networkx sage.plot
     """
     import networkx
     return Graph(networkx.degree_sequence_tree([int(i) for i in deg_sequence]))
 
+
 def DegreeSequenceExpected(deg_sequence, seed=None):
     """
-    Returns a random graph with expected given degree sequence. Raises
-    a NetworkX error if the proposed degree sequence cannot be that of
-    a graph.
+    Return a random graph with expected given degree sequence.
 
-    One requirement is that the sum of the degrees must be even, since
-    every edge must be incident with two vertices.
+    This method raises a NetworkX error if the proposed degree sequence cannot
+    be that of a graph.
+
+    One requirement is that the sum of the degrees must be even, since every
+    edge must be incident with two vertices.
 
     INPUT:
 
-    - ``deg_sequence`` - a list of integers with each entry corresponding to the
-      expected degree of a different vertex.
+    - ``deg_sequence`` -- list of integers with each entry corresponding to the
+      expected degree of a different vertex
 
-    - ``seed`` - a ``random.Random`` seed or a Python ``int`` for the random
-      number generator (default: ``None``).
-
+    - ``seed`` -- (optional) a ``random.Random`` seed or a Python ``int`` for
+      the random number generator
 
     EXAMPLES::
 
-        sage: G = graphs.DegreeSequenceExpected([1,2,3,2,3])
-        sage: G
+        sage: G = graphs.DegreeSequenceExpected([1,2,3,2,3]); G                         # needs networkx
         Looped graph on 5 vertices
-        sage: G.show()  # long time
+        sage: G.show()                          # long time                             # needs networkx sage.plot
 
     REFERENCE:
 
@@ -230,4 +230,5 @@ def DegreeSequenceExpected(deg_sequence, seed=None):
     if seed is None:
         seed = int(current_randstate().long_seed() % sys.maxsize)
     import networkx
-    return Graph(networkx.expected_degree_graph([int(i) for i in deg_sequence], seed=seed), loops=True)
+    deg_sequence = [int(i) for i in deg_sequence]
+    return Graph(networkx.expected_degree_graph(deg_sequence, seed=seed), loops=True)

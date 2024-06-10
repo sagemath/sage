@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Direct Sum of Crystals
 """
@@ -21,6 +22,7 @@ from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
 from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.element import get_coercion_model
+
 
 class DirectSumOfCrystals(DisjointUnionEnumeratedSets):
     r"""
@@ -114,7 +116,7 @@ class DirectSumOfCrystals(DisjointUnionEnumeratedSets):
             else:
                 ret.append(x)
         category = Category.meet([Category.join(c.categories()) for c in ret])
-        return super(DirectSumOfCrystals, cls).__classcall__(cls,
+        return super().__classcall__(cls,
             Family(ret), facade=facade, keepkey=keepkey, category=category)
 
     def __init__(self, crystals, facade, keepkey, category, **options):
@@ -140,11 +142,12 @@ class DirectSumOfCrystals(DisjointUnionEnumeratedSets):
         if len(crystals) == 0:
             raise ValueError("the direct sum is empty")
         else:
-            assert(crystal.cartan_type() == crystals[0].cartan_type() for crystal in crystals)
+            assert all(crystal.cartan_type() == crystals[0].cartan_type() for crystal in crystals)
             self._cartan_type = crystals[0].cartan_type()
         if keepkey:
-            self.module_generators = tuple([ self((i,b)) for i,B in enumerate(crystals)
-                                             for b in B.module_generators ])
+            self.module_generators = tuple([self((i, b))
+                                            for i, B in enumerate(crystals)
+                                            for b in B.module_generators])
         else:
             self.module_generators = sum((tuple(B.module_generators) for B in crystals), ())
 
@@ -178,6 +181,7 @@ class DirectSumOfCrystals(DisjointUnionEnumeratedSets):
         r"""
         A class for elements of direct sums of crystals.
         """
+
         def e(self, i):
             r"""
             Return the action of `e_i` on ``self``.
@@ -253,4 +257,3 @@ class DirectSumOfCrystals(DisjointUnionEnumeratedSets):
                 0
             """
             return self.value[1].epsilon(i)
-

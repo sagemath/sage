@@ -1,5 +1,5 @@
-numpy
-=====
+numpy: Package for scientific computing with Python
+===================================================
 
 Description
 -----------
@@ -11,20 +11,10 @@ capabilities to python.
 Upstream Contact
 ----------------
 
+-  https://numpy.org/
 -  Travis Oliphant
 -  Fernando Perez
 -  Brian Granger
-
-Dependencies
-------------
-
--  GNU patch
--  Python
--  Lapack
--  Blas
--  Atlas
--  Fortran
-
 
 Special Update/Build Instructions
 ---------------------------------

@@ -1,0 +1,34 @@
+# This file, build/pkgs/_prereq/distros/void.txt, contains names of
+# Void Linux packages needed for installation of Sage from source.
+#
+# In addition, the files build/pkgs/SPKG/distros/void.txt contain
+# the names of packages that provide the equivalent of SPKG.
+#
+# One package per line. No need to escape special characters.
+# Everything on a line after a # character is ignored.
+#
+bc
+binutils
+gcc
+libgomp-devel
+m4
+make
+perl
+python3
+tar
+bash
+which
+# needed by gfortran
+diffutils
+# needed by ppl
+gzip
+# void may need special patches for musl libc support in python3,
+# so require full python 3 and its prereqs
+python3-devel
+bzip2-devel
+xz
+liblzma-devel
+libffi-devel
+zlib-devel
+# to build python3 with the crypto module; there may be other packages that need it
+libxcrypt-devel

@@ -1,0 +1,18 @@
+# This file, build/pkgs/_prereq/distros/nix.txt, contains names of
+# nix packages needed for installation of Sage from source.
+#
+# In addition, the files build/pkgs/SPKG/distros/nix.txt contain
+# the names of packages that provide the equivalent of SPKG.
+#
+# One package per line. No need to escape special characters.
+# Everything on a line after a # character is ignored.
+#
+binutils
+gnumake
+gnum4
+perl
+python3    # system python for bootstrapping the build
+gnutar
+bc
+gcc
+bash

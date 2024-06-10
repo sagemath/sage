@@ -1,5 +1,8 @@
-# distutils: libraries = m ntl Lfunction
-# distutils: extra_compile_args = -O3 -ffast-math
+# distutils: libraries = m NTL_LIBRARIES Lfunction
+# distutils: extra_compile_args = NTL_CFLAGS -O3 -ffast-math
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 r"""
 Rubinstein's lcalc library
@@ -7,22 +10,22 @@ Rubinstein's lcalc library
 This is a wrapper around Michael Rubinstein's lcalc.
 See http://oto.math.uwaterloo.ca/~mrubinst/L_function_public/CODE/.
 
-AUTHORS: 
+AUTHORS:
 
 - Rishikesh (2010): added compute_rank() and hardy_z_function()
 - Yann Laigle-Chapuy (2009): refactored
 - Rishikesh (2009): initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 
@@ -32,8 +35,8 @@ from sage.libs.gmp.mpz cimport *
 from sage.libs.mpfr cimport *
 from sage.rings.integer cimport Integer
 
-from sage.rings.complex_number cimport ComplexNumber
-from sage.rings.complex_field import ComplexField
+from sage.rings.complex_mpfr cimport ComplexNumber
+from sage.rings.complex_mpfr import ComplexField
 CCC = ComplexField()
 
 from sage.rings.real_mpfr cimport RealNumber
@@ -96,7 +99,7 @@ cdef class Lfunction:
             tmpc=CCC(residue[i])
             r[i+1] = new_Complex(mpfr_get_d(tmpc.__re, MPFR_RNDN), mpfr_get_d(tmpc.__im, MPFR_RNDN))
 
-        self.__init_fun(NAME, what_type, dirichlet_coefficient, Period, q,  w,  A, g, l, n_poles, p, r)
+        self._init_fun(NAME, what_type, dirichlet_coefficient, Period, q,  w,  A, g, l, n_poles, p, r)
 
         if name:
             name += ': '
@@ -129,84 +132,99 @@ cdef class Lfunction:
 
         INPUT:
 
-        - ``s`` -  a complex number
-        - ``derivative`` - integer (default: 0)  the derivative to be evaluated
-        - ``rotate`` - (default: False) If True, this returns the value of the
+        - ``s`` --  a complex number
+        - ``derivative`` -- integer (default: 0)  the derivative to be evaluated
+        - ``rotate`` -- (default: ``False``) If True, this returns the value of the
           Hardy Z-function (sometimes called the Riemann-Siegel Z-function or
           the Siegel Z-function).
 
         EXAMPLES::
 
-            sage: chi=DirichletGroup(5)[2] #This is a quadratic character
             sage: from sage.libs.lcalc.lcalc_Lfunction import *
-            sage: L=Lfunction_from_character(chi, type="int")
-            sage: L.value(.5)  # abs tol 3e-15
-            0.231750947504016 + 5.75329642226136e-18*I
-            sage: L.value(.2+.4*I)
-            0.102558603193... + 0.190840777924...*I
+            sage: chi = DirichletGroup(5)[2] # This is a quadratic character
+            sage: L = Lfunction_from_character(chi, type="int")
+            sage: (L.value(0.5) - 0.231750947504016).abs() < 1e-8
+            True
+            sage: v = L.value(0.2 + 0.4*I)
+            sage: (v - (0.102558603193 + 0.190840777924*I)).abs() < 1e-8
+            True
+            sage: L = Lfunction_from_character(chi, type="double")
+            sage: (L.value(0.6) - 0.274633355856345).abs() < 1e-8
+            True
+            sage: v = L.value(0.6 + I)
+            sage: (v - (0.362258705721 + 0.43388825062*I)).abs() < 1e-8
+            True
 
-            sage: L=Lfunction_from_character(chi, type="double")
-            sage: L.value(.6)  # abs tol 3e-15
-            0.274633355856345 + 6.59869267328199e-18*I
-            sage: L.value(.6+I)
-            0.362258705721... + 0.433888250620...*I
+        ::
 
-            sage: chi=DirichletGroup(5)[1]
-            sage: L=Lfunction_from_character(chi, type="complex")
-            sage: L.value(.5)
-            0.763747880117... + 0.216964767518...*I
-            sage: L.value(.6+5*I)
-            0.702723260619... - 1.10178575243...*I
+            sage: from sage.libs.lcalc.lcalc_Lfunction import *
+            sage: chi = DirichletGroup(5)[1]
+            sage: L = Lfunction_from_character(chi, type="complex")
+            sage: v = L.value(0.5)
+            sage: (v - (0.763747880117 + 0.21696476751*I)).abs() < 1e-8
+            True
+            sage: v = L.value(0.6 + 5*I)
+            sage: (v - (0.702723260619 - 1.10178575243*I)).abs() < 1e-8
+            True
 
-            sage: L=Lfunction_Zeta()
-            sage: L.value(.5)
-            -1.46035450880...
-            sage: L.value(.4+.5*I)
-            -0.450728958517... - 0.780511403019...*I
+        ::
+
+            sage: from sage.libs.lcalc.lcalc_Lfunction import *
+            sage: L = Lfunction_Zeta()
+            sage: (L.value(0.5) + 1.46035450880).abs() < 1e-8
+            True
+            sage: v = L.value(0.4 + 0.5*I)
+            sage: (v - (-0.450728958517 - 0.780511403019*I)).abs() < 1e-8
+            True
+
         """
         cdef ComplexNumber complexified_s = CCC(s)
         cdef c_Complex z = new_Complex(mpfr_get_d(complexified_s.__re, MPFR_RNDN), mpfr_get_d(complexified_s.__im, MPFR_RNDN))
-        cdef c_Complex result = self.__value(z, derivative)
+        cdef c_Complex result = self._value(z, derivative)
         return CCC(result.real(),result.imag())
 
     def hardy_z_function(self, s):
         """
         Computes the Hardy Z-function of the L-function at s
-        
+
         INPUT:
 
-        - ``s`` - a complex number with imaginary part between -0.5 and 0.5
+        - ``s`` -- a complex number with imaginary part between -0.5 and 0.5
 
         EXAMPLES::
 
-            sage: chi = DirichletGroup(5)[2]  # Quadratic character
             sage: from sage.libs.lcalc.lcalc_Lfunction import *
+            sage: chi = DirichletGroup(5)[2]  # Quadratic character
             sage: L = Lfunction_from_character(chi, type="int")
-            sage: L.hardy_z_function(0)
-            0.231750947504... 
-            sage: L.hardy_z_function(.5).imag()  # abs tol 1e-15
-            1.17253174178320e-17
-            sage: L.hardy_z_function(.4+.3*I)
-            0.2166144222685... - 0.00408187127850...*I
+            sage: (L.hardy_z_function(0) - 0.231750947504).abs() < 1e-8
+            True
+            sage: L.hardy_z_function(0.5).imag().abs() < 1e-8
+            True
+
+        ::
+
+            sage: from sage.libs.lcalc.lcalc_Lfunction import *
             sage: chi = DirichletGroup(5)[1]
             sage: L = Lfunction_from_character(chi, type="complex")
-            sage: L.hardy_z_function(0)
-            0.793967590477...
-            sage: L.hardy_z_function(.5).imag()  # abs tol 1e-15
-            0.000000000000000
+            sage: (L.hardy_z_function(0) - 0.793967590477).abs() < 1e-8
+            True
+            sage: L.hardy_z_function(0.5).imag().abs() < 1e-8
+            True
+
+        ::
+
+            sage: from sage.libs.lcalc.lcalc_Lfunction import *
             sage: E = EllipticCurve([-82,0])
             sage: L = Lfunction_from_elliptic_curve(E, number_of_coeffs=40000)
-            sage: L.hardy_z_function(2.1)
-            -0.00643179176869...
-            sage: L.hardy_z_function(2.1).imag()  # abs tol 1e-15
-            -3.93833660115668e-19
+            sage: (L.hardy_z_function(2.1) - (-0.006431791768)).abs() < 1e-8
+            True
+
         """
         #This takes s -> .5 + I*s
         cdef ComplexNumber complexified_s = CCC(0.5)+ CCC(0,1)*CCC(s)
         cdef c_Complex z = new_Complex(mpfr_get_d(complexified_s.__re, MPFR_RNDN), mpfr_get_d(complexified_s.__im, MPFR_RNDN))
-        cdef c_Complex result = self.__hardy_z_function(z)
+        cdef c_Complex result = self._hardy_z_function(z)
         return CCC(result.real(),result.imag())
-
 
     def compute_rank(self):
         """
@@ -215,19 +233,24 @@ cdef class Lfunction:
 
         EXAMPLES::
 
-            sage: chi=DirichletGroup(5)[2] #This is a quadratic character
             sage: from sage.libs.lcalc.lcalc_Lfunction import *
-            sage: L=Lfunction_from_character(chi, type="int")
+            sage: chi = DirichletGroup(5)[2] # This is a quadratic character
+            sage: L = Lfunction_from_character(chi, type="int")
             sage: L.compute_rank()
             0
-            sage: E=EllipticCurve([-82,0])
-            sage: L=Lfunction_from_elliptic_curve(E, number_of_coeffs=40000)
+
+        ::
+
+            sage: from sage.libs.lcalc.lcalc_Lfunction import *
+            sage: E = EllipticCurve([-82,0])
+            sage: L = Lfunction_from_elliptic_curve(E, number_of_coeffs=40000)
             sage: L.compute_rank()
             3
-        """
-        return self.__compute_rank()
 
-    def __N(self, T):
+        """
+        return self._compute_rank()
+
+    def _N(self, T):
         """
         Compute the number of zeroes upto height `T` using the formula for
         `N(T)` with the error of `S(T)`. Please do not use this. It is only
@@ -236,19 +259,19 @@ cdef class Lfunction:
         EXAMPLES::
 
             sage: from sage.libs.lcalc.lcalc_Lfunction import *
-            sage: chi=DirichletGroup(5)[2] #This is a quadratic character
+            sage: chi = DirichletGroup(5)[2] #This is a quadratic character
             sage: L=Lfunction_from_character(chi, type="complex")
-            sage: L.__N(10)
-            3.17043978326...
+            sage: L._N(10) # abs tol 1e-8
+            4.0
         """
         cdef RealNumber real_T=RRR(T)
         cdef double double_T = mpfr_get_d(real_T.value, MPFR_RNDN)
-        cdef double res_d = self.__typedN(double_T)
+        cdef double res_d = self._typedN(double_T)
         return RRR(res_d)
 
     def find_zeros(self, T1, T2, stepsize):
         """
-        Finds zeros on critical line between ``T1`` and ``T2`` using step size 
+        Finds zeros on critical line between ``T1`` and ``T2`` using step size
         of stepsize. This function might miss zeros if step size is too
         large. This function computes the zeros of the L-function by using
         change in signs of areal valued function whose zeros coincide with
@@ -257,7 +280,7 @@ cdef class Lfunction:
         Use :meth:`find_zeros_via_N` for slower but more rigorous computation.
 
         INPUT:
-        
+
         - ``T1`` -- a real number giving the lower bound
         - ``T2`` -- a real number giving the upper bound
         - ``stepsize`` -- step size to be used for the zero search
@@ -269,21 +292,26 @@ cdef class Lfunction:
         EXAMPLES::
 
             sage: from sage.libs.lcalc.lcalc_Lfunction import *
-            sage: chi=DirichletGroup(5)[2] #This is a quadratic character
-            sage: L=Lfunction_from_character(chi, type="int")
+            sage: chi = DirichletGroup(5)[2] # This is a quadratic character
+            sage: L = Lfunction_from_character(chi, type="int")
             sage: L.find_zeros(5,15,.1)
             [6.64845334472..., 9.83144443288..., 11.9588456260...]
-
-            sage: L=Lfunction_from_character(chi, type="double")
+            sage: L = Lfunction_from_character(chi, type="double")
             sage: L.find_zeros(1,15,.1)
             [6.64845334472..., 9.83144443288..., 11.9588456260...]
 
-            sage: chi=DirichletGroup(5)[1]
-            sage: L=Lfunction_from_character(chi, type="complex")
+        ::
+
+            sage: from sage.libs.lcalc.lcalc_Lfunction import *
+            sage: chi = DirichletGroup(5)[1]
+            sage: L = Lfunction_from_character(chi, type="complex")
             sage: L.find_zeros(-8,8,.1)
             [-4.13290370521..., 6.18357819545...]
 
-            sage: L=Lfunction_Zeta()
+        ::
+
+            sage: from sage.libs.lcalc.lcalc_Lfunction import *
+            sage: L = Lfunction_Zeta()
             sage: L.find_zeros(10,29.1,.1)
             [14.1347251417..., 21.0220396387..., 25.0108575801...]
         """
@@ -294,7 +322,7 @@ cdef class Lfunction:
         cdef RealNumber real_T2 = RRR(T2)
         cdef RealNumber real_stepsize = RRR(stepsize)
         sig_on()
-        self.__find_zeros_v( mpfr_get_d(real_T1.value, MPFR_RNDN), mpfr_get_d(real_T2.value, MPFR_RNDN), mpfr_get_d(real_stepsize.value, MPFR_RNDN),&result)
+        self._find_zeros_v( mpfr_get_d(real_T1.value, MPFR_RNDN), mpfr_get_d(real_T2.value, MPFR_RNDN), mpfr_get_d(real_stepsize.value, MPFR_RNDN),&result)
         sig_off()
         i=result.size()
         returnvalue = []
@@ -304,63 +332,73 @@ cdef class Lfunction:
         return returnvalue
 
     #The default values are from L.h. See L.h
-    def find_zeros_via_N(self, count=0, do_negative=False, max_refine=1025,
-                         rank=-1, test_explicit_formula=0):
+    def find_zeros_via_N(self, count=0, start=0, max_refine=1025, rank=-1):
         """
-        Finds ``count`` number of zeros with positive imaginary part
-        starting at real axis. This function also verifies that all
-        the zeros have been found.
+        Find ``count`` zeros (in order of increasing magnitude) and output
+        their imaginary parts. This function verifies that no zeros
+        are missed, and that all values output are indeed zeros.
+
+        If this L-function is self-dual (if its Dirichlet coefficients
+        are real, up to a tolerance of 1e-6), then only the zeros with
+        positive imaginary parts are output. Their conjugates, which
+        are also zeros, are not output.
 
         INPUT:
 
-        - ``count`` - number of zeros to be found
-        - ``do_negative`` - (default: False) False to ignore zeros below the
-          real axis.
-        - ``max_refine`` - when some zeros are found to be missing, the step
+        - ``count`` -- number of zeros to be found
+        - ``start`` -- (default: 0) how many initial zeros to skip
+        - ``max_refine`` -- when some zeros are found to be missing, the step
           size used to find zeros is refined. max_refine gives an upper limit
           on when lcalc should give up. Use default value unless you know
           what you are doing.
-        - ``rank`` - integer (default: -1) analytic rank of the L-function.
+        - ``rank`` -- integer (default: -1) analytic rank of the L-function.
           If -1 is passed, then we attempt to compute it. (Use default if in
           doubt)
-        - ``test_explicit_formula`` - integer (default: 0) If nonzero, test
-          the explicit formula for additional confidence that all the zeros
-          have been found and are accurate. This is still being tested, so
-          using the default is recommended.
 
         OUTPUT:
-        
+
         list -- A list of the imaginary parts of the zeros that have been found
 
         EXAMPLES::
 
             sage: from sage.libs.lcalc.lcalc_Lfunction import *
-            sage: chi=DirichletGroup(5)[2] #This is a quadratic character
-            sage: L=Lfunction_from_character(chi, type="int")
+            sage: chi = DirichletGroup(5)[2] #This is a quadratic character
+            sage: L = Lfunction_from_character(chi, type="int")
+            sage: L.find_zeros_via_N(3)
+            [6.64845334472..., 9.83144443288..., 11.9588456260...]
+            sage: L = Lfunction_from_character(chi, type="double")
             sage: L.find_zeros_via_N(3)
             [6.64845334472..., 9.83144443288..., 11.9588456260...]
 
-            sage: L=Lfunction_from_character(chi, type="double")
-            sage: L.find_zeros_via_N(3)
-            [6.64845334472..., 9.83144443288..., 11.9588456260...]
+        ::
 
-            sage: chi=DirichletGroup(5)[1]
-            sage: L=Lfunction_from_character(chi, type="complex")
-            sage: L.find_zeros_via_N(3)
-            [6.18357819545..., 8.45722917442..., 12.6749464170...]
+            sage: from sage.libs.lcalc.lcalc_Lfunction import *
+            sage: chi = DirichletGroup(5)[1]
+            sage: L = Lfunction_from_character(chi, type="complex")
+            sage: zeros = L.find_zeros_via_N(3)
+            sage: (zeros[0] - (-4.13290370521286)).abs() < 1e-8
+            True
+            sage: (zeros[1]  - 6.18357819545086).abs() < 1e-8
+            True
+            sage: (zeros[2]  - 8.45722917442320).abs() < 1e-8
+            True
 
-            sage: L=Lfunction_Zeta()
+        ::
+
+            sage: from sage.libs.lcalc.lcalc_Lfunction import *
+            sage: L = Lfunction_Zeta()
             sage: L.find_zeros_via_N(3)
             [14.1347251417..., 21.0220396387..., 25.0108575801...]
+
         """
-        cdef Integer count_I = Integer(count)
-        cdef Integer do_negative_I = Integer(do_negative)
-        cdef RealNumber max_refine_R = RRR(max_refine)
-        cdef Integer rank_I = Integer(rank)
-        cdef Integer test_explicit_I = Integer(test_explicit_formula)
+
+        # This is the default value for message_stamp, but we have to
+        # pass it explicitly since we're passing in the next argument,
+        # our &result pointer.
+        cdef const char* message_stamp = ""
         cdef doublevec result
         sig_on()
-        self.__find_zeros_via_N_v(mpz_get_si(count_I.value), mpz_get_si(do_negative_I.value), mpfr_get_d(max_refine_R.value, MPFR_RNDN), mpz_get_si(rank_I.value), mpz_get_si(test_explicit_I.value), &result)
+        self._find_zeros(count, start, max_refine, rank, message_stamp, &result)
         sig_off()
         returnvalue = []
         for i in range(result.size()):
@@ -368,26 +406,26 @@ cdef class Lfunction:
         result.clear()
         return returnvalue
 
-    #### Needs to be overriden
-    cdef void __init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r):
+    # Needs to be overriden
+    cdef void _init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r) noexcept:
         raise NotImplementedError
 
-    cdef c_Complex __value(self,c_Complex s,int derivative):
+    cdef c_Complex _value(self,c_Complex s,int derivative) noexcept:
         raise NotImplementedError
 
-    cdef c_Complex __hardy_z_function(self,c_Complex s):
-        raise NotImplementedError
-    
-    cdef int __compute_rank(self):
+    cdef c_Complex _hardy_z_function(self,c_Complex s) noexcept:
         raise NotImplementedError
 
-    cdef double __typedN(self,double T):
+    cdef int _compute_rank(self) noexcept:
         raise NotImplementedError
 
-    cdef void __find_zeros_v(self,double T1, double T2, double stepsize, doublevec *result):
+    cdef double _typedN(self,double T) noexcept:
         raise NotImplementedError
 
-    cdef void __find_zeros_via_N_v(self, long count,int do_negative,double max_refine, int rank, int test_explicit_formula, doublevec *result):
+    cdef void _find_zeros_v(self,double T1, double T2, double stepsize, doublevec *result) noexcept:
+        raise NotImplementedError
+
+    cdef int _find_zeros(self, long count, long start, double max_refine, int rank, const char* message_stamp, doublevec *result) noexcept:
         raise NotImplementedError
 
 ##############################################################################
@@ -410,36 +448,35 @@ cdef class Lfunction_I(Lfunction):
 
         \Lambda(s) = Q^s \left( \prod_{j=1}^a \Gamma(\kappa_j s + \gamma_j) \right) L(s)
 
-
     See (23) in :arxiv:`math/0412181`
 
     INPUT:
 
-    - ``what_type_L`` - integer, this should be set to 1 if the coefficients are
-      periodic and 0 otherwise.
+    - ``what_type_L`` -- integer, this should be set to 1 if the coefficients
+      are periodic and 0 otherwise.
 
-    - ``dirichlet_coefficient`` - List of dirichlet coefficients of the
+    - ``dirichlet_coefficient`` -- List of Dirichlet coefficients of the
       L-function. Only first `M` coefficients are needed if they are periodic.
 
-    - ``period`` - If the coefficients are periodic, this should be the
+    - ``period`` -- If the coefficients are periodic, this should be the
       period of the coefficients.
 
-    - ``Q`` - See above
+    - ``Q`` -- See above
 
-    - ``OMEGA`` - See above
+    - ``OMEGA`` -- See above
 
-    - ``kappa`` - List of the values of `\kappa_j` in the functional equation
+    - ``kappa`` -- List of the values of `\kappa_j` in the functional equation
 
-    - ``gamma`` - List of the values of `\gamma_j` in the functional equation
+    - ``gamma`` -- List of the values of `\gamma_j` in the functional equation
 
-    - ``pole`` - List of the poles of L-function
+    - ``pole`` -- List of the poles of L-function
 
-    - ``residue`` - List of the residues of the L-function
+    - ``residue`` -- List of the residues of the L-function
 
     .. NOTE::
 
-        If an L-function satisfies `\Lambda(s) = \omega Q^s \Lambda(k-s)`,
-        by replacing `s` by `s+(k-1)/2`, one can get it in the form we need.
+         If an L-function satisfies `\Lambda(s) = \omega Q^s \Lambda(k-s)`,
+         by replacing `s` by `s+(k-1)/2`, one can get it in the form we need.
     """
 
     def __init__(self, name, what_type_L, dirichlet_coefficient,
@@ -450,16 +487,16 @@ cdef class Lfunction_I(Lfunction):
         EXAMPLES::
 
             sage: from sage.libs.lcalc.lcalc_Lfunction import *
-            sage: chi=DirichletGroup(5)[2] #This is a quadratic character
+            sage: chi = DirichletGroup(5)[2] #This is a quadratic character
             sage: L=Lfunction_from_character(chi, type="int")
             sage: type(L)
-            <type 'sage.libs.lcalc.lcalc_Lfunction.Lfunction_I'>
+            <class 'sage.libs.lcalc.lcalc_Lfunction.Lfunction_I'>
         """
         Lfunction.__init__(self, name, what_type_L, dirichlet_coefficient,  period, Q, OMEGA, gamma,lambd, pole,residue)
         self._repr += " with integer Dirichlet coefficients"
 
-    ### override
-    cdef void __init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r):
+    # override
+    cdef void _init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r) noexcept:
         cdef int N = len(dirichlet_coeff)
         cdef Integer tmpi
         cdef int * coeffs = new_ints(N+1) #lcalc ignores 0the coefficient
@@ -469,25 +506,25 @@ cdef class Lfunction_I(Lfunction):
         self.thisptr=new_c_Lfunction_I(NAME, what_type,  N, coeffs, Period, q,  w,  A, g, l, n_poles, p, r)
         del_ints(coeffs)
 
-    cdef inline c_Complex __value(self,c_Complex s,int derivative):
+    cdef inline c_Complex _value(self,c_Complex s,int derivative) noexcept:
         return (<c_Lfunction_I *>(self.thisptr)).value(s, derivative, "pure")
-            
-    cdef inline c_Complex __hardy_z_function(self,c_Complex s):
+
+    cdef inline c_Complex _hardy_z_function(self,c_Complex s) noexcept:
         return (<c_Lfunction_I *>(self.thisptr)).value(s, 0, "rotated pure")
 
-    cdef int __compute_rank(self):
+    cdef int _compute_rank(self) noexcept:
         return (<c_Lfunction_I *>(self.thisptr)).compute_rank()
 
-    cdef void __find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result):
+    cdef void _find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result) noexcept:
         (<c_Lfunction_I *>self.thisptr).find_zeros_v(T1,T2,stepsize,result[0])
 
-    cdef double __typedN(self, double T):
+    cdef double _typedN(self, double T) noexcept:
         return (<c_Lfunction_I *>self.thisptr).N(T)
 
-    cdef void __find_zeros_via_N_v(self, long count,int do_negative,double max_refine, int rank, int test_explicit_formula, doublevec *result):
-        (<c_Lfunction_I *>self.thisptr).find_zeros_via_N_v(count, do_negative, max_refine, rank, test_explicit_formula, result[0])
+    cdef int _find_zeros(self, long count, long start, double max_refine, int rank, const char* message_stamp, doublevec *result) noexcept:
+        (<c_Lfunction_I *>self.thisptr).find_zeros(count, start, max_refine, rank, message_stamp, result)
 
-    ### debug tools
+    # debug tools
     def _print_data_to_standard_output(self):
         """
         This is used in debugging. It prints out information from
@@ -496,9 +533,9 @@ cdef class Lfunction_I(Lfunction):
         EXAMPLES::
 
             sage: from sage.libs.lcalc.lcalc_Lfunction import *
-            sage: chi=DirichletGroup(5)[2] #This is a quadratic character
+            sage: chi = DirichletGroup(5)[2] #This is a quadratic character
             sage: L=Lfunction_from_character(chi, type="int")
-            sage: L._print_data_to_standard_output() # tol 1e-15
+            sage: L._print_data_to_standard_output() # tol 1e-8
             -----------------------------------------------
             <BLANKLINE>
             Name of L_function:
@@ -552,26 +589,26 @@ cdef class Lfunction_D(Lfunction):
 
     INPUT:
 
-    - ``what_type_L`` - integer, this should be set to 1 if the coefficients are
+    - ``what_type_L`` -- integer, this should be set to 1 if the coefficients are
       periodic and 0 otherwise.
 
-    - ``dirichlet_coefficient`` - List of dirichlet coefficients of the
+    - ``dirichlet_coefficient`` -- List of Dirichlet coefficients of the
       L-function. Only first `M` coefficients are needed if they are periodic.
 
-    - ``period`` - If the coefficients are periodic, this should be the
+    - ``period`` -- If the coefficients are periodic, this should be the
       period of the coefficients.
 
-    - ``Q`` - See above
+    - ``Q`` -- See above
 
-    - ``OMEGA`` - See above
+    - ``OMEGA`` -- See above
 
-    - ``kappa`` - List of the values of `\kappa_j` in the functional equation
+    - ``kappa`` -- List of the values of `\kappa_j` in the functional equation
 
-    - ``gamma`` - List of the values of `\gamma_j` in the functional equation
+    - ``gamma`` -- List of the values of `\gamma_j` in the functional equation
 
-    - ``pole`` - List of the poles of L-function
+    - ``pole`` -- List of the poles of L-function
 
-    - ``residue`` - List of the residues of the L-function
+    - ``residue`` -- List of the residues of the L-function
 
     .. NOTE::
 
@@ -586,16 +623,16 @@ cdef class Lfunction_D(Lfunction):
         EXAMPLES::
 
             sage: from sage.libs.lcalc.lcalc_Lfunction import *
-            sage: chi=DirichletGroup(5)[2] #This is a quadratic character
+            sage: chi = DirichletGroup(5)[2] #This is a quadratic character
             sage: L=Lfunction_from_character(chi, type="double")
             sage: type(L)
-            <type 'sage.libs.lcalc.lcalc_Lfunction.Lfunction_D'>
+            <class 'sage.libs.lcalc.lcalc_Lfunction.Lfunction_D'>
         """
         Lfunction.__init__(self, name, what_type_L, dirichlet_coefficient,  period, Q, OMEGA, gamma,lambd, pole,residue)
         self._repr += " with real Dirichlet coefficients"
 
-    ### override
-    cdef void __init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r):
+    # override
+    cdef void _init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r) noexcept:
         cdef int i
         cdef RealNumber tmpr
         cdef int N = len(dirichlet_coeff)
@@ -606,26 +643,25 @@ cdef class Lfunction_D(Lfunction):
         self.thisptr=new_c_Lfunction_D(NAME, what_type,  N, coeffs, Period, q,  w,  A, g, l, n_poles, p, r)
         del_doubles(coeffs)
 
-    cdef inline c_Complex __value(self,c_Complex s,int derivative):
+    cdef inline c_Complex _value(self,c_Complex s,int derivative) noexcept:
         return (<c_Lfunction_D *>(self.thisptr)).value(s, derivative, "pure")
 
-
-    cdef inline c_Complex __hardy_z_function(self,c_Complex s):
+    cdef inline c_Complex _hardy_z_function(self,c_Complex s) noexcept:
         return (<c_Lfunction_D *>(self.thisptr)).value(s, 0, "rotated pure")
 
-    cdef inline int __compute_rank(self):
+    cdef inline int _compute_rank(self) noexcept:
         return (<c_Lfunction_D *>(self.thisptr)).compute_rank()
 
-    cdef void __find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result):
+    cdef void _find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result) noexcept:
         (<c_Lfunction_D *>self.thisptr).find_zeros_v(T1,T2,stepsize,result[0])
 
-    cdef double __typedN(self, double T):
+    cdef double _typedN(self, double T) noexcept:
         return (<c_Lfunction_D *>self.thisptr).N(T)
 
-    cdef void __find_zeros_via_N_v(self, long count,int do_negative,double max_refine, int rank, int test_explicit_formula, doublevec *result):
-        (<c_Lfunction_D *>self.thisptr).find_zeros_via_N_v(count, do_negative, max_refine, rank, test_explicit_formula, result[0])
+    cdef int _find_zeros(self, long count, long start,double max_refine, int rank, const char* message_stamp, doublevec *result) noexcept:
+        (<c_Lfunction_D *>self.thisptr).find_zeros(count, start, max_refine, rank, message_stamp, result)
 
-    ### debug tools
+    # debug tools
     def _print_data_to_standard_output(self):
         """
         This is used in debugging. It prints out information from
@@ -634,9 +670,9 @@ cdef class Lfunction_D(Lfunction):
         EXAMPLES::
 
             sage: from sage.libs.lcalc.lcalc_Lfunction import *
-            sage: chi=DirichletGroup(5)[2] #This is a quadratic character
+            sage: chi = DirichletGroup(5)[2] #This is a quadratic character
             sage: L=Lfunction_from_character(chi, type="double")
-            sage: L._print_data_to_standard_output() # tol 1e-15
+            sage: L._print_data_to_standard_output() # tol 1e-8
             -----------------------------------------------
             <BLANKLINE>
             Name of L_function:
@@ -691,26 +727,26 @@ cdef class Lfunction_C:
 
     INPUT:
 
-    - ``what_type_L`` - integer, this should be set to 1 if the coefficients are
+    - ``what_type_L`` -- integer, this should be set to 1 if the coefficients are
       periodic and 0 otherwise.
 
-    - ``dirichlet_coefficient`` - List of dirichlet coefficients of the
+    - ``dirichlet_coefficient`` -- List of Dirichlet coefficients of the
       L-function. Only first `M` coefficients are needed if they are periodic.
 
-    - ``period`` - If the coefficients are periodic, this should be the
+    - ``period`` -- If the coefficients are periodic, this should be the
       period of the coefficients.
 
-    - ``Q`` - See above
+    - ``Q`` -- See above
 
-    - ``OMEGA`` - See above
+    - ``OMEGA`` -- See above
 
-    - ``kappa`` - List of the values of `\kappa_j` in the functional equation
+    - ``kappa`` -- List of the values of `\kappa_j` in the functional equation
 
-    - ``gamma`` - List of the values of `\gamma_j` in the functional equation
+    - ``gamma`` -- List of the values of `\gamma_j` in the functional equation
 
-    - ``pole`` - List of the poles of L-function
+    - ``pole`` -- List of the poles of L-function
 
-    - ``residue`` - List of the residues of the L-function
+    - ``residue`` -- List of the residues of the L-function
 
     .. NOTE::
 
@@ -726,16 +762,16 @@ cdef class Lfunction_C:
         EXAMPLES::
 
             sage: from sage.libs.lcalc.lcalc_Lfunction import *
-            sage: chi=DirichletGroup(5)[1]
+            sage: chi = DirichletGroup(5)[1]
             sage: L=Lfunction_from_character(chi, type="complex")
             sage: type(L)
-            <type 'sage.libs.lcalc.lcalc_Lfunction.Lfunction_C'>
+            <class 'sage.libs.lcalc.lcalc_Lfunction.Lfunction_C'>
         """
         Lfunction.__init__(self, name, what_type_L, dirichlet_coefficient,  period, Q, OMEGA, gamma,lambd, pole,residue)
         self._repr += " with complex Dirichlet coefficients"
 
-    ### override
-    cdef void __init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r):
+    # override
+    cdef void _init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r) noexcept:
         cdef int i
         cdef int N = len(dirichlet_coeff)
         cdef ComplexNumber tmpc
@@ -750,27 +786,25 @@ cdef class Lfunction_C:
 
         del_Complexes(coeffs)
 
-    cdef inline c_Complex __value(self,c_Complex s,int derivative):
+    cdef inline c_Complex _value(self,c_Complex s,int derivative) noexcept:
         return (<c_Lfunction_C *>(self.thisptr)).value(s, derivative, "pure")
 
-
-    cdef inline c_Complex __hardy_z_function(self,c_Complex s):
+    cdef inline c_Complex _hardy_z_function(self,c_Complex s) noexcept:
         return (<c_Lfunction_C *>(self.thisptr)).value(s, 0,"rotated pure")
 
-    cdef inline int __compute_rank(self):
+    cdef inline int _compute_rank(self) noexcept:
         return (<c_Lfunction_C *>(self.thisptr)).compute_rank()
 
-
-    cdef void __find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result):
+    cdef void _find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result) noexcept:
         (<c_Lfunction_C *>self.thisptr).find_zeros_v(T1,T2,stepsize,result[0])
 
-    cdef double __typedN(self, double T):
+    cdef double _typedN(self, double T) noexcept:
         return (<c_Lfunction_C *>self.thisptr).N(T)
 
-    cdef void __find_zeros_via_N_v(self, long count,int do_negative,double max_refine, int rank, int test_explicit_formula, doublevec *result):
-        (<c_Lfunction_C *>self.thisptr).find_zeros_via_N_v(count, do_negative, max_refine, rank, test_explicit_formula, result[0])
+    cdef int _find_zeros(self, long count, long start, double max_refine, int rank, const char* message_stamp, doublevec *result) noexcept:
+        (<c_Lfunction_C *>self.thisptr).find_zeros(count, start, max_refine, rank, message_stamp, result)
 
-    ### debug tools
+    # debug tools
     def _print_data_to_standard_output(self):
         """
         This is used in debugging. It prints out information from
@@ -779,9 +813,9 @@ cdef class Lfunction_C:
         EXAMPLES::
 
             sage: from sage.libs.lcalc.lcalc_Lfunction import *
-            sage: chi=DirichletGroup(5)[1]
+            sage: chi = DirichletGroup(5)[1]
             sage: L=Lfunction_from_character(chi, type="complex")
-            sage: L._print_data_to_standard_output() # tol 1e-15
+            sage: L._print_data_to_standard_output() # tol 1e-8
             -----------------------------------------------
             <BLANKLINE>
             Name of L_function:
@@ -815,7 +849,7 @@ cdef class Lfunction_C:
 
 
 ##############################################################################
-#Zeta function
+# Zeta function
 ##############################################################################
 
 cdef class Lfunction_Zeta(Lfunction):
@@ -835,25 +869,23 @@ cdef class Lfunction_Zeta(Lfunction):
         self.thisptr = new_c_Lfunction_Zeta()
         self._repr = "The Riemann zeta function"
 
-    cdef inline c_Complex __value(self,c_Complex s,int derivative):
+    cdef inline c_Complex _value(self,c_Complex s,int derivative) noexcept:
         return (<c_Lfunction_Zeta *>(self.thisptr)).value(s, derivative, "pure")
 
-
-    cdef inline c_Complex __hardy_z_function(self,c_Complex s):
+    cdef inline c_Complex _hardy_z_function(self,c_Complex s) noexcept:
         return (<c_Lfunction_Zeta *>(self.thisptr)).value(s, 0, "rotated pure")
 
-    cdef inline int __compute_rank(self):
+    cdef inline int _compute_rank(self) noexcept:
         return (<c_Lfunction_Zeta *>(self.thisptr)).compute_rank()
 
-
-    cdef void __find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result):
+    cdef void _find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result) noexcept:
         (<c_Lfunction_Zeta *>self.thisptr).find_zeros_v(T1,T2,stepsize,result[0])
 
-    cdef double __typedN(self, double T):
+    cdef double _typedN(self, double T) noexcept:
         return (<c_Lfunction_Zeta *>self.thisptr).N(T)
 
-    cdef void __find_zeros_via_N_v(self, long count,int do_negative,double max_refine, int rank, int test_explicit_formula, doublevec *result):
-        (<c_Lfunction_Zeta *>self.thisptr).find_zeros_via_N_v(count, do_negative, max_refine, rank, test_explicit_formula, result[0])
+    cdef int _find_zeros(self, long count, long start, double max_refine, int rank, const char* message_stamp, doublevec *result) noexcept:
+        (<c_Lfunction_Zeta *>self.thisptr).find_zeros(count, start, max_refine, rank, message_stamp, result)
 
     def __dealloc__(self):
         """
@@ -861,19 +893,20 @@ cdef class Lfunction_Zeta(Lfunction):
         """
         del_c_Lfunction_Zeta(<c_Lfunction_Zeta *>(self.thisptr))
 
+
 ##############################################################################
 # Tools
 ##############################################################################
 
 def Lfunction_from_character(chi, type="complex"):
     """
-    Given a primitive Dirichlet character, this function returns 
+    Given a primitive Dirichlet character, this function returns
     an lcalc L-function object for the L-function of the character.
 
     INPUT:
 
-    - ``chi`` - A Dirichlet character
-    - ``use_type`` - string (default: "complex") type used for the Dirichlet
+    - ``chi`` -- A Dirichlet character
+    - ``use_type`` -- string (default: "complex") type used for the Dirichlet
       coefficients. This can be "int", "double" or "complex".
 
     OUTPUT:
@@ -911,17 +944,17 @@ def Lfunction_from_character(chi, type="complex"):
     OMEGA=1.0/ ( CCC(0,1)**a * (CCC(modulus)).sqrt()/chi.gauss_sum() )
 
     if type == "complex":
-        dir_coeffs = [CCC(chi(n)) for n in xrange(1, modulus + 1)]
+        dir_coeffs = [CCC(chi(n)) for n in range(1, modulus + 1)]
         return Lfunction_C("", 1,dir_coeffs, period,Q,OMEGA,[.5],[a/2.],poles,residues)
-    if not type in ["double","int"]:
+    if type not in ["double", "int"]:
         raise ValueError("unknown type")
     if chi.order() != 2:
         raise ValueError("For non quadratic characters you must use type=\"complex\"")
     if type == "double":
-        dir_coeffs = [RRR(chi(n)) for n in xrange(1, modulus + 1)]
+        dir_coeffs = [RRR(chi(n)) for n in range(1, modulus + 1)]
         return Lfunction_D("", 1,dir_coeffs, period,Q,OMEGA,[.5],[a/2.],poles,residues)
     if type == "int":
-        dir_coeffs = [Integer(chi(n)) for n in xrange(1, modulus + 1)]
+        dir_coeffs = [Integer(chi(n)) for n in range(1, modulus + 1)]
         return Lfunction_I("", 1,dir_coeffs, period,Q,OMEGA,[.5],[a/2.],poles,residues)
 
 
@@ -932,8 +965,8 @@ def Lfunction_from_elliptic_curve(E, number_of_coeffs=10000):
 
     INPUT:
 
-    - ``E`` - An elliptic curve
-    - ``number_of_coeffs`` - integer (default: 10000) The number of
+    - ``E`` -- An elliptic curve
+    - ``number_of_coeffs`` -- integer (default: 10000) The number of
       coefficients to be used when constructing the L-function object. Right
       now this is fixed at object creation time, and is not automatically
       set intelligently.
@@ -948,18 +981,17 @@ def Lfunction_from_elliptic_curve(E, number_of_coeffs=10000):
         sage: L = Lfunction_from_elliptic_curve(EllipticCurve('37'))
         sage: L
         L-function with real Dirichlet coefficients
-        sage: L.value(0.5).abs() < 1e-15   # "noisy" zero on some platforms (see #9615)
+        sage: L.value(0.5).abs() < 1e-8
         True
-        sage: L.value(0.5, derivative=1)
-        0.305999...
+        sage: (L.value(0.5, derivative=1) - 0.305999773835200).abs() < 1e-6
+        True
     """
-    import sage.libs.lcalc.lcalc_Lfunction
     Q = RRR(E.conductor()).sqrt() / RRR(2 * pi)
     poles = []
     residues = []
     dir_coeffs = E.anlist(number_of_coeffs)
     dir_coeffs = [RRR(dir_coeffs[i]) / (RRR(i)).sqrt()
-                  for i in xrange(1, number_of_coeffs)]
+                  for i in range(1, number_of_coeffs)]
     OMEGA = E.root_number()
     return Lfunction_D("", 2, dir_coeffs, 0, Q, OMEGA, [1], [.5],
                        poles, residues)

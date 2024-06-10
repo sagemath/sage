@@ -30,7 +30,7 @@ def _to_space_separated_string(l, base_ring=None):
         sage: import sage.geometry.polyhedron.misc as P
         sage: P._to_space_separated_string([2,3])
         '2 3'
-        sage: P._to_space_separated_string([2, 1/5], RDF)
+        sage: P._to_space_separated_string([2, 1/5], RDF)                               # needs sage.rings.real_double
         '2.0 0.2'
     """
     if base_ring:
@@ -40,8 +40,9 @@ def _to_space_separated_string(l, base_ring=None):
 
 def _set_to_None_if_empty(x):
     """
-    Helper function to clean up arguments: Returns None if x==None or
-    x is an empty container.
+    Helper function to clean up arguments.
+
+    This returns None if x is None or x is an empty container.
 
     EXAMPLES::
 

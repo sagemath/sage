@@ -6,7 +6,7 @@
 #############################################################################
 
 
-from sage.finance.time_series cimport TimeSeries
+from sage.stats.time_series cimport TimeSeries
 from sage.stats.intlist cimport IntList
 
 cdef class HiddenMarkovModel:

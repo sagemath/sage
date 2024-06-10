@@ -1,15 +1,13 @@
-#*****************************************************************************
+# sage_setup: distribution = sagemath-objects
+# ****************************************************************************
 #       Copyright (C) 2017 Erik M. Bray <erik.bray@lri.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-from __future__ import absolute_import
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 cdef extern from "string_impl.h":
     str _cstr_to_str(const char* c, encoding, errors)

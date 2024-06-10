@@ -1,4 +1,4 @@
-.. -*- coding: utf-8 -*-
+.. sage-doctest: needs sage.plot sage.symbolic
 
 .. linkall
 
@@ -32,7 +32,7 @@ the Cartesian coordinates (there is no need to declare them via :func:`var`,
 i.e. to type ``x, y = var('x y')``)::
 
     sage: type(y)
-    <type 'sage.symbolic.expression.Expression'>
+    <class 'sage.symbolic.expression.Expression'>
 
 Instead of using the variables ``x`` and ``y``, one may also access to the
 coordinates by their indices in the chart of Cartesian coordinates::
@@ -54,7 +54,6 @@ Each of the Cartesian coordinates spans the entire real line::
 
     sage: cartesian.coord_range()
     x: (-oo, +oo); y: (-oo, +oo)
-
 
 
 2. Vector fields
@@ -138,8 +137,8 @@ A shortcut alias of
 ::
 
     sage: s.display()
-    v.w: E^2 --> R
-       (x, y) |--> -y*w_x(x, y) + x*w_y(x, y)
+    v.w: E^2 → ℝ
+       (x, y) ↦ -y*w_x(x, y) + x*w_y(x, y)
 
 The symbolic expression representing the scalar field `v\cdot w` is obtained
 by means of the method :meth:`~sage.manifolds.scalarfield.ScalarField.expr`::
@@ -152,8 +151,8 @@ The Euclidean norm of the vector field `v` is a scalar field on
 
     sage: s = norm(v)
     sage: s.display()
-    |v|: E^2 --> R
-       (x, y) |--> sqrt(x^2 + y^2)
+    |v|: E^2 → ℝ
+       (x, y) ↦ sqrt(x^2 + y^2)
 
 Again, the corresponding symbolic expression is obtained via
 :meth:`~sage.manifolds.scalarfield.ScalarField.expr`::
@@ -218,7 +217,6 @@ see :ref:`vector_fields_as_derivations_plane` below)::
     (pi*w_x(-2, 3) - 3) e_x + (pi*w_y(-2, 3) - 2) e_y
 
 
-
 3. Differential operators
 -------------------------
 
@@ -242,8 +240,8 @@ The divergence of a vector field is returned by the function
     sage: div(v)
     Scalar field div(v) on the Euclidean plane E^2
     sage: div(v).display()
-    div(v): E^2 --> R
-       (x, y) |--> 0
+    div(v): E^2 → ℝ
+       (x, y) ↦ 0
 
 In the present case, `\mathrm{div}\, v` vanishes identically::
 
@@ -253,8 +251,8 @@ In the present case, `\mathrm{div}\, v` vanishes identically::
 On the contrary, the divergence of `w` is::
 
     sage: div(w).display()
-    div(w): E^2 --> R
-       (x, y) |--> d(w_x)/dx + d(w_y)/dy
+    div(w): E^2 → ℝ
+       (x, y) ↦ d(w_x)/dx + d(w_y)/dy
     sage: div(w).expr()
     diff(w_x(x, y), x) + diff(w_y(x, y), y)
 
@@ -298,8 +296,8 @@ The Laplace operator `\Delta` is obtained by the function
 :func:`~sage.manifolds.operators.laplacian`; it acts on scalar fields::
 
     sage: laplacian(F).display()
-    Delta(F): E^2 --> R
-       (x, y) |--> d^2(f)/dx^2 + d^2(f)/dy^2
+    Delta(F): E^2 → ℝ
+       (x, y) ↦ d^2(f)/dx^2 + d^2(f)/dy^2
 
 as well as on vector fields::
 
@@ -375,12 +373,12 @@ We may check that `(e_r, e_\phi)` is an orthonormal frame::
 Scalar fields can be expressed in terms of polar coordinates::
 
     sage: F.display()
-    F: E^2 --> R
-       (x, y) |--> f(x, y)
-       (r, ph) |--> f(r*cos(ph), r*sin(ph))
+    F: E^2 → ℝ
+       (x, y) ↦ f(x, y)
+       (r, ph) ↦ f(r*cos(ph), r*sin(ph))
     sage: F.display(polar)
-    F: E^2 --> R
-       (r, ph) |--> f(r*cos(ph), r*sin(ph))
+    F: E^2 → ℝ
+       (r, ph) ↦ f(r*cos(ph), r*sin(ph))
 
 and we may ask for the components of vector fields in terms of the polar
 frame::
@@ -408,8 +406,8 @@ Let us define a generic scalar field in terms of polar coordinates::
 
     sage: H = E.scalar_field({polar: function('h')(r,ph)}, name='H')
     sage: H.display(polar)
-    H: E^2 --> R
-       (r, ph) |--> h(r, ph)
+    H: E^2 → ℝ
+       (r, ph) ↦ h(r, ph)
 
 The gradient of `H` is then::
 
@@ -441,8 +439,8 @@ Let us define a generic vector field in terms of polar coordinates::
 Its divergence is::
 
     sage: div(u).display(polar)
-    div(u): E^2 --> R
-       (r, ph) |--> (r*d(u_r)/dr + u_r(r, ph) + d(u_ph)/dph)/r
+    div(u): E^2 → ℝ
+       (r, ph) ↦ (r*d(u_r)/dr + u_r(r, ph) + d(u_ph)/dph)/r
     sage: div(u).expr(polar)
     (r*diff(u_r(r, ph), r) + u_r(r, ph) + diff(u_ph(r, ph), ph))/r
     sage: div(u).expr(polar).expand()
@@ -493,13 +491,14 @@ manifold endowed with a positive definite metric tensor::
     sage: E.category()
     Join of
      Category of smooth manifolds over Real Field with 53 bits of precision and
+     Category of connected manifolds over Real Field with 53 bits of precision and
      Category of complete metric spaces
     sage: E.base_field() is RR
     True
 
 Actually ``RR`` is used here as a proxy for the real field (this should
 be replaced in the future, see the discussion at
-`#24456 <https://trac.sagemath.org/ticket/24456>`__) and the 53 bits of
+:issue:`24456`) and the 53 bits of
 precision play of course no role for the symbolic computations.
 
 The user atlas of `\mathbb{E}^2` has two charts::
@@ -511,7 +510,7 @@ while there are three vector frames defined on `\mathbb{E}^2`::
 
     sage: E.frames()
     [Coordinate frame (E^2, (e_x,e_y)),
-     Coordinate frame (E^2, (d/dr,d/dph)),
+     Coordinate frame (E^2, (∂/∂r,∂/∂ph)),
      Vector frame (E^2, (e_r,e_ph))]
 
 Indeed, there are two frames associated with polar coordinates: the coordinate
@@ -527,7 +526,7 @@ The default metric tensor of `\mathbb{E}^2` is::
     sage: g
     Riemannian metric g on the Euclidean plane E^2
     sage: g.display()
-    g = e^r*e^r + e^ph*e^ph
+    g = e^r⊗e^r + e^ph⊗e^ph
 
 In the above display, ``e^r`` = `e^r` and ``e^ph`` = `e^\phi` are the 1-forms
 defining the coframe dual to the orthonormal polar frame `(e_r, e_\phi)`,
@@ -540,9 +539,9 @@ Of course, we may ask for some display with respect to frames different from
 the default one::
 
     sage: g.display(cartesian.frame())
-    g = dx*dx + dy*dy
+    g = dx⊗dx + dy⊗dy
     sage: g.display(polar.frame())
-    g = dr*dr + r^2 dph*dph
+    g = dr⊗dr + r^2 dph⊗dph
     sage: g[:]
     [1 0]
     [0 1]
@@ -576,9 +575,9 @@ Vector fields act as derivations on scalar fields::
     sage: v(F)
     Scalar field v(F) on the Euclidean plane E^2
     sage: v(F).display()
-    v(F): E^2 --> R
-       (x, y) |--> -y*d(f)/dx + x*d(f)/dy
-       (r, ph) |--> -r*sin(ph)*d(f)/d(r*cos(ph)) + r*cos(ph)*d(f)/d(r*sin(ph))
+    v(F): E^2 → ℝ
+       (x, y) ↦ -y*d(f)/dx + x*d(f)/dy
+       (r, ph) ↦ -r*sin(ph)*d(f)/d(r*cos(ph)) + r*cos(ph)*d(f)/d(r*sin(ph))
     sage: v(F) == v.dot(grad(F))
     True
 
@@ -611,7 +610,7 @@ on `\mathbb{E}^2`, `C^\infty(\mathbb{E}^2)`::
     sage: CE is XE.base_ring()
     True
     sage: CE.category()
-    Category of commutative algebras over Symbolic Ring
+    Join of Category of commutative algebras over Symbolic Ring and Category of homsets of topological spaces
     sage: rank(XE)
     2
 
@@ -620,7 +619,7 @@ vector frames defined on `\mathbb{E}^2`::
 
     sage: XE.bases()
     [Coordinate frame (E^2, (e_x,e_y)),
-     Coordinate frame (E^2, (d/dr,d/dph)),
+     Coordinate frame (E^2, (∂/∂r,∂/∂ph)),
      Vector frame (E^2, (e_r,e_ph))]
 
 
@@ -646,8 +645,7 @@ A vector field evaluated at a point $p$ is a vector in the tangent space
     sage: isinstance(Tp, FiniteRankFreeModule)
     True
     sage: sorted(Tp.bases(), key=str)
-    [Basis (d/dr,d/dph) on the Tangent space at Point p on the Euclidean plane E^2,
-     Basis (e_r,e_ph) on the Tangent space at Point p on the Euclidean plane E^2,
+    [Basis (e_r,e_ph) on the Tangent space at Point p on the Euclidean plane E^2,
      Basis (e_x,e_y) on the Tangent space at Point p on the Euclidean plane E^2]
 
 

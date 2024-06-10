@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Facade Sets
 
@@ -11,6 +12,7 @@ For background, see :ref:`What is a facade set? <facade-sets>`.
 #******************************************************************************
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
+
 
 class FacadeSets(CategoryWithAxiom):
     def example(self, choice='subset'):
@@ -100,7 +102,7 @@ class FacadeSets(CategoryWithAxiom):
                         return parent(element)
                     except Exception:
                         pass
-            raise ValueError("Can't coerce `%s` in any parent `%s` is a facade for"%(element, self))
+            raise ValueError("Can't coerce `%s` in any parent `%s` is a facade for" % (element, self))
 
         def facade_for(self):
             """
@@ -118,7 +120,7 @@ class FacadeSets(CategoryWithAxiom):
                 sage: S.facade_for()
                 (Integer Ring,)
 
-            Check that :trac:`13801` is corrected::
+            Check that :issue:`13801` is corrected::
 
                 sage: class A(Parent):
                 ....:     def __init__(self):
@@ -186,8 +188,10 @@ class FacadeSets(CategoryWithAxiom):
             Returns whether ``element`` is in one of the parents
             ``self`` is a facade for.
 
-            .. warning:: this default implementation is currently
-            overriden by :meth:`Parent.__contains__`.
+            .. warning::
+
+                this default implementation is currently
+                overridden by :meth:`Parent.__contains__`.
 
             EXAMPLES::
 
@@ -207,8 +211,8 @@ class FacadeSets(CategoryWithAxiom):
 
             For each parent ``self`` is a facade for, this default
             implementation tries the method ``an_element`` until it finds an
-            element in ``self``. If none is found raise a
-            ``NotImplementedError``.
+            element in ``self``. If none is found, this raises a
+            :class:`NotImplementedError`.
 
             EXAMPLES::
 

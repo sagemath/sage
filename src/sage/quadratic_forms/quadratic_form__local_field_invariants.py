@@ -5,7 +5,7 @@ This contains routines to compute local (p-adic) invariants of
 quadratic forms over the rationals.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein and Jonathan Hanke
 #       Copyright (C) 2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
@@ -13,23 +13,21 @@ quadratic forms over the rationals.
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 ###########################################################################
-## TO DO: Add routines for hasse invariants at all places, anisotropic
-## places, is_semi_definite, and support for number fields.
+# TO DO: Add routines for hasse invariants at all places, anisotropic
+# places, is_semi_definite, and support for number fields.
 ###########################################################################
-
 
 from copy import deepcopy
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.rings.real_mpfr import RR
-from sage.arith.all import prime_divisors, hilbert_symbol
-from sage.functions.all import sgn
+
+from sage.arith.misc import hilbert_symbol, prime_divisors
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 
 
 def rational_diagonal_form(self, return_matrix=False):
@@ -39,18 +37,18 @@ def rational_diagonal_form(self, return_matrix=False):
 
     INPUT:
 
-    - ``return_matrix`` -- (boolean, default: False) also return the
+    - ``return_matrix`` -- (boolean, default: ``False``) also return the
       transformation matrix
 
-    OUTPUT: either ``D`` (if ``return_matrix`` is false) or ``(D,T)``
-    (if ``return_matrix`` is true) where
+    OUTPUT: either the diagonal quadratic form `D` (if ``return_matrix`` is false)
+    or the pair `(D, T)` (if ``return_matrix`` is true) where
 
-    - ``D`` -- the diagonalized form of this quadratic form.
+    - `D` -- the diagonalized form of this quadratic form
 
-    - ``T`` -- transformation matrix. This is such that
+    - `T` -- transformation matrix. This is such that
       ``T.transpose() * self.matrix() * T`` gives ``D.matrix()``.
 
-    Both ``D`` and ``T`` are defined over the fraction field of the
+    Both `D` and `T` are defined over the fraction field of the
     base ring of the given form.
 
     EXAMPLES::
@@ -142,7 +140,8 @@ def rational_diagonal_form(self, return_matrix=False):
         ...
         TypeError
         sage: Q.rational_diagonal_form()
-        Quadratic form in 4 variables over Real Interval Field with 53 bits of precision with coefficients:
+        Quadratic form in 4 variables over Real Interval Field with 53 bits of precision
+        with coefficients:
         [ 5 0.?e-14 0.?e-13 0.?e-13 ]
         [ * -0.05000000000000? 0.?e-12 0.?e-12 ]
         [ * * 13.00000000000? 0.?e-10 ]
@@ -188,14 +187,14 @@ def _rational_diagonal_form_and_transformation(self):
     the corresponding transformation matrix. This is over the fraction
     field of the base ring of the given quadratic form.
 
-    OUTPUT: a tuple ``(D,T)`` where
+    OUTPUT: a tuple `(D,T)` where
 
-    - ``D`` -- the diagonalized form of this quadratic form.
+    - `D` -- the diagonalized form of this quadratic form
 
-    - ``T`` -- transformation matrix. This is such that
+    - `T` -- transformation matrix. This is such that
       ``T.transpose() * self.matrix() * T`` gives ``D.matrix()``.
 
-    Both ``D`` and ``T`` are defined over the fraction field of the
+    Both `D` and `T` are defined over the fraction field of the
     base ring of the given form.
 
     EXAMPLES::
@@ -223,7 +222,7 @@ def _rational_diagonal_form_and_transformation(self):
     """
     n = self.dim()
     K = self.base_ring().fraction_field()
-    Q = self.base_change_to(K)
+    Q = self.change_ring(K)
     MS = MatrixSpace(K, n, n)
 
     try:
@@ -238,12 +237,12 @@ def _rational_diagonal_form_and_transformation(self):
         # Diagonal matrix
         D = MS()
         for i in range(n):
-            D[i,i] = R[i,i]
+            D[i, i] = R[i, i]
         Q = Q.parent()(D)
         # Transformation matrix (inverted)
         T = MS(R.sage())
         for i in range(n):
-            T[i,i] = K.one()
+            T[i, i] = K.one()
         try:
             return Q, ~T
         except ZeroDivisionError:
@@ -253,31 +252,31 @@ def _rational_diagonal_form_and_transformation(self):
     # General case if conversion to/from PARI failed
     T = MS(1)
 
-    ## Clear the entries one row at a time.
+    # Clear the entries one row at a time.
     for i in range(n):
 
-        ## Deal with rows where the diagonal entry is zero.
-        if Q[i,i] == 0:
+        # Deal with rows where the diagonal entry is zero.
+        if Q[i, i] == 0:
 
-            ## Look for a non-zero entry and use it to make the diagonal non-zero (if it exists)
-            for j in range(i+1, n):
-                if Q[i,j] != 0:
+            # Look for a non-zero entry and use it to make the diagonal non-zero (if it exists)
+            for j in range(i + 1, n):
+                if Q[i, j] != 0:
                     temp = MS(1)
-                    if Q[i,j] + Q[j,j] == 0:
+                    if Q[i, j] + Q[j, j] == 0:
                         temp[j, i] = -1
                     else:
                         temp[j, i] = 1
 
-                    ## Apply the transformation
+                    # Apply the transformation
                     Q = Q(temp)
                     T = T * temp
                     break
 
-        ## Create a matrix which deals with off-diagonal entries (all at once for each row)
+        # Create a matrix which deals with off-diagonal entries (all at once for each row)
         temp = MS(1)
-        for j in range(i+1, n):
-            if Q[i,j] != 0:
-                temp[i,j] = -Q[i,j] / (Q[i,i] * 2)    ## This should only occur when Q[i,i] != 0, which the above step guarantees.
+        for j in range(i + 1, n):
+            if Q[i, j] != 0:
+                temp[i, j] = -Q[i, j] / (Q[i, i] * 2)    # This should only occur when Q[i,i] != 0, which the above step guarantees.
 
         Q = Q(temp)
         T = T * temp
@@ -286,22 +285,16 @@ def _rational_diagonal_form_and_transformation(self):
 
 
 def signature_vector(self):
-    """
-    Returns the triple `(p, n, z)` of integers where
+    r"""
+    Return the triple `(p, n, z)` of integers where
 
     - `p` = number of positive eigenvalues
     - `n` = number of negative eigenvalues
     - `z` = number of zero eigenvalues
 
-    for the symmetric matrix associated to Q.
+    for the symmetric matrix associated to `Q`.
 
-    INPUT:
-
-    (none)
-
-    OUTPUT:
-
-    a triple of integers >= 0
+    OUTPUT: a triple of integers `\geq 0`
 
     EXAMPLES::
 
@@ -332,9 +325,9 @@ def signature_vector(self):
     n = 0
     z = 0
     for i in range(diag.dim()):
-        if diag[i,i] > 0:
+        if diag[i, i] > 0:
             p += 1
-        elif diag[i,i] < 0:
+        elif diag[i, i] < 0:
             n += 1
         else:
             z += 1
@@ -342,22 +335,15 @@ def signature_vector(self):
     return (p, n, z)
 
 
-
 def signature(self):
     """
-    Returns the signature of the quadratic form, defined as:
+    Return the signature of the quadratic form, defined as:
 
-       number of positive eigenvalues - number of negative eigenvalues
+       number of positive eigenvalues `-` number of negative eigenvalues
 
     of the matrix of the quadratic form.
 
-    INPUT:
-
-        None
-
-    OUTPUT:
-
-        an integer
+    OUTPUT: an integer
 
     EXAMPLES::
 
@@ -381,16 +367,15 @@ def signature(self):
         [ * * * 9 ]
         sage: Q.signature()
         2
-
     """
-    (p, n, z) = self.signature_vector()
+    p, n, _ = self.signature_vector()
     return p - n
 
 
 def hasse_invariant(self, p):
     r"""
-    Computes the Hasse invariant at a prime `p` or at infinity, as given on p55 of
-    Cassels's book.  If Q is diagonal with coefficients `a_i`, then the
+    Compute the Hasse invariant at a prime `p` or at infinity, as given on p55 of
+    Cassels's book.  If `Q` is diagonal with coefficients `a_i`, then the
     (Cassels) Hasse invariant is given by
 
     .. MATH::
@@ -398,27 +383,25 @@ def hasse_invariant(self, p):
         c_p = \prod_{i < j} (a_i, a_j)_p
 
     where `(a,b)_p` is the Hilbert symbol at `p`.  The underlying
-    quadratic form must be non-degenerate over `Q_p` for this to make
+    quadratic form must be non-degenerate over `\QQ_p` for this to make
     sense.
 
     .. WARNING::
 
         This is different from the O'Meara Hasse invariant, which
-        allows `i <= j` in the product.  That is given by the method
-        hasse_invariant__OMeara(p).
+        allows `i \leq j` in the product.  That is given by the method
+        :meth:`hasse_invariant__OMeara`.
 
     .. NOTE::
 
-        We should really rename this hasse_invariant__Cassels(), and
-        set hasse_invariant() as a front-end to it.
+        We should really rename this ``hasse_invariant__Cassels``, and
+        set :meth:`hasse_invariant` as a front-end to it.
 
     INPUT:
 
-    - `p` -- a prime number > 0 or `-1` for the infinite place
+    - ``p`` -- a prime number > 0 or `-1` for the infinite place
 
-    OUTPUT:
-
-    1 or -1
+    OUTPUT: `1` or `-1`
 
     EXAMPLES::
 
@@ -427,55 +410,54 @@ def hasse_invariant(self, p):
         Quadratic form in 2 variables over Rational Field with coefficients:
         [ 1 0 ]
         [ * 2 ]
-        sage: [Q.hasse_invariant(p) for p in prime_range(20)]
+        sage: [Q.hasse_invariant(p) for p in prime_range(20)]                           # needs sage.libs.pari
         [1, 1, 1, 1, 1, 1, 1, 1]
-        sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]
+        sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]                   # needs sage.libs.pari
         [1, 1, 1, 1, 1, 1, 1, 1]
 
     ::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,-1])
-        sage: [Q.hasse_invariant(p) for p in prime_range(20)]
+        sage: [Q.hasse_invariant(p) for p in prime_range(20)]                           # needs sage.libs.pari
         [1, 1, 1, 1, 1, 1, 1, 1]
-        sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]
+        sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]                   # needs sage.libs.pari
         [-1, 1, 1, 1, 1, 1, 1, 1]
 
     ::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,-1,5])
-        sage: [Q.hasse_invariant(p) for p in prime_range(20)]
+        sage: [Q.hasse_invariant(p) for p in prime_range(20)]                           # needs sage.libs.pari
         [1, 1, 1, 1, 1, 1, 1, 1]
-        sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]
+        sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]                   # needs sage.libs.pari
         [-1, 1, 1, 1, 1, 1, 1, 1]
 
     ::
 
-        sage: K.<a>=NumberField(x^2-23)
-        sage: Q=DiagonalQuadraticForm(K,[-a,a+2])
-        sage: [Q.hasse_invariant(p) for p in K.primes_above(19)]
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - 23)                                             # needs sage.rings.number_field
+        sage: Q = DiagonalQuadraticForm(K, [-a, a + 2])                                 # needs sage.rings.number_field
+        sage: [Q.hasse_invariant(p) for p in K.primes_above(19)]                        # needs sage.rings.number_field
         [-1, 1]
     """
-    ## TO DO: Need to deal with the case n=1 separately somewhere!
+    # TO DO: Need to deal with the case n=1 separately somewhere!
 
     Diag = self.rational_diagonal_form()
     R = Diag.base_ring()
-
-    ## DIAGNOSTIC
-    #print "\n Q = " + str(self)
-    #print "\n Q diagonalized at p = " + str(p) + " gives " + str(Diag)
 
     hasse_temp = 1
     n = Diag.dim()
 
     if R == QQ:
-        for j in range(n-1):
-            for k in range(j+1, n):
-                hasse_temp = hasse_temp * hilbert_symbol(Diag[j,j], Diag[k,k], p)
+        for j in range(n - 1):
+            for k in range(j + 1, n):
+                hasse_temp = hasse_temp * hilbert_symbol(Diag[j, j],
+                                                         Diag[k, k], p)
 
     else:
-        for j in range(n-1):
-            for k in range(j+1, n):
-                hasse_temp = hasse_temp * R.hilbert_symbol(Diag[j,j], Diag[k,k], p)
+        for j in range(n - 1):
+            for k in range(j + 1, n):
+                hasse_temp = hasse_temp * R.hilbert_symbol(Diag[j, j],
+                                                           Diag[k, k], p)
 
     return hasse_temp
 
@@ -485,12 +467,12 @@ def hasse_invariant__OMeara(self, p):
     Compute the O'Meara Hasse invariant at a prime `p`.
 
     This is defined on
-    p167 of O'Meara's book. If Q is diagonal with coefficients `a_i`,
+    p167 of O'Meara's book. If `Q` is diagonal with coefficients `a_i`,
     then the (Cassels) Hasse invariant is given by
 
     .. MATH::
 
-        c_p = \prod_{i <= j} (a_i, a_j)_p
+        c_p = \prod_{i \leq j} (a_i, a_j)_p
 
     where `(a,b)_p` is the Hilbert symbol at `p`.
 
@@ -502,11 +484,9 @@ def hasse_invariant__OMeara(self, p):
 
     INPUT:
 
-    - `p` -- a prime number > 0 or `-1` for the infinite place
+    - ``p`` -- a prime number > 0 or `-1` for the infinite place
 
-    OUTPUT:
-
-    1 or -1
+    OUTPUT: `1` or `-1`
 
     EXAMPLES::
 
@@ -515,80 +495,78 @@ def hasse_invariant__OMeara(self, p):
         Quadratic form in 2 variables over Rational Field with coefficients:
         [ 1 0 ]
         [ * 2 ]
-        sage: [Q.hasse_invariant(p) for p in prime_range(20)]
+        sage: [Q.hasse_invariant(p) for p in prime_range(20)]                           # needs sage.libs.pari
         [1, 1, 1, 1, 1, 1, 1, 1]
-        sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]
+        sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]                   # needs sage.libs.pari
         [1, 1, 1, 1, 1, 1, 1, 1]
 
     ::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,-1])
-        sage: [Q.hasse_invariant(p) for p in prime_range(20)]
+        sage: [Q.hasse_invariant(p) for p in prime_range(20)]                           # needs sage.libs.pari
         [1, 1, 1, 1, 1, 1, 1, 1]
-        sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]
+        sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]                   # needs sage.libs.pari
         [-1, 1, 1, 1, 1, 1, 1, 1]
 
     ::
 
         sage: Q = DiagonalQuadraticForm(ZZ,[1,-1,-1])
-        sage: [Q.hasse_invariant(p) for p in prime_range(20)]
+        sage: [Q.hasse_invariant(p) for p in prime_range(20)]                           # needs sage.libs.pari
         [-1, 1, 1, 1, 1, 1, 1, 1]
-        sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]
+        sage: [Q.hasse_invariant__OMeara(p) for p in prime_range(20)]                   # needs sage.libs.pari
         [-1, 1, 1, 1, 1, 1, 1, 1]
 
     ::
 
-        sage: K.<a>=NumberField(x^2-23)
-        sage: Q = DiagonalQuadraticForm(K,[-a,a+2])
-        sage: [Q.hasse_invariant__OMeara(p) for p in K.primes_above(19)]
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<a> = NumberField(x^2 - 23)                                             # needs sage.rings.number_field
+        sage: Q = DiagonalQuadraticForm(K, [-a, a + 2])                                 # needs sage.rings.number_field
+        sage: [Q.hasse_invariant__OMeara(p) for p in K.primes_above(19)]                # needs sage.rings.number_field
         [1, 1]
     """
-    ## TO DO: Need to deal with the case n=1 separately somewhere!
+    # TO DO: Need to deal with the case n=1 separately somewhere!
 
     Diag = self.rational_diagonal_form()
     R = Diag.base_ring()
-
-    ## DIAGNOSTIC
-    #print "\n Q = " + str(self)
-    #print "\n Q diagonalized at p = " + str(p) + " gives " + str(Diag)
 
     hasse_temp = 1
     n = Diag.dim()
     if R == QQ:
         for j in range(n):
             for k in range(j, n):
-                hasse_temp = hasse_temp * hilbert_symbol(Diag[j,j], Diag[k,k], p)
+                hasse_temp = hasse_temp * hilbert_symbol(Diag[j, j],
+                                                         Diag[k, k], p)
 
     else:
         for j in range(n):
             for k in range(j, n):
-                hasse_temp = hasse_temp * R.hilbert_symbol(Diag[j,j], Diag[k,k], p)
+                hasse_temp = hasse_temp * R.hilbert_symbol(Diag[j, j],
+                                                           Diag[k, k], p)
 
     return hasse_temp
 
 
-def is_hyperbolic(self, p):
+def is_hyperbolic(self, p) -> bool:
     r"""
     Check if the quadratic form is a sum of hyperbolic planes over
     the `p`-adic numbers `\QQ_p` or over the real numbers `\RR`.
 
     REFERENCES:
 
-    This criteria follows from Cassels's "Rational Quadratic Forms":
+    This criterion follows from Cassels's "Rational Quadratic Forms":
 
     - local invariants for hyperbolic plane (Lemma 2.4, p58)
     - direct sum formulas (Lemma 2.3, p58)
 
     INPUT:
 
-    - `p` -- a prime number > 0 or `-1` for the infinite place
+    - ``p`` -- a prime number > 0 or `-1` for the infinite place
 
-    OUTPUT:
-
-    boolean
+    OUTPUT: boolean
 
     EXAMPLES::
 
+        sage: # needs sage.libs.pari
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1])
         sage: Q.is_hyperbolic(-1)
         False
@@ -596,24 +574,24 @@ def is_hyperbolic(self, p):
         False
         sage: Q.is_hyperbolic(3)
         False
-        sage: Q.is_hyperbolic(5)     ## Here -1 is a square, so it's true.
+        sage: Q.is_hyperbolic(5)     # Here -1 is a square, so it's true.
         True
         sage: Q.is_hyperbolic(7)
         False
-        sage: Q.is_hyperbolic(13)    ## Here -1 is a square, so it's true.
+        sage: Q.is_hyperbolic(13)    # Here -1 is a square, so it's true.
         True
     """
-    ## False for odd-dim'l forms
+    # False for odd-dim'l forms
     if self.dim() % 2:
         return False
 
-    ## True for the zero form
+    # True for the zero form
     if not self.dim():
         return True
 
-    ## Compare local invariants
-    ## Note: since the dimension is even, the extra powers of 2 in
-    ##        self.det() := Det(2*Q) don't affect the answer!
+    # Compare local invariants
+    # Note: since the dimension is even, the extra powers of 2 in
+    #        self.det() := Det(2*Q) don't affect the answer!
     m = ZZ(self.dim() // 2)
     if p == -1:
         return self.signature() == 0
@@ -629,47 +607,49 @@ def is_hyperbolic(self, p):
 
 def is_anisotropic(self, p):
     r"""
-    Check if the quadratic form is anisotropic over the p-adic numbers `\QQ_p` or `\RR`.
+    Check if the quadratic form is anisotropic over the `p`-adic numbers `\QQ_p` or `\RR`.
 
     INPUT:
 
-    - `p` -- a prime number > 0 or `-1` for the infinite place
+    - ``p`` -- a prime number > 0 or `-1` for the infinite place
 
-    OUTPUT:
-
-    boolean
+    OUTPUT: boolean
 
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1])
-        sage: Q.is_anisotropic(2)
+        sage: Q.is_anisotropic(2)                                                       # needs sage.libs.pari
         True
-        sage: Q.is_anisotropic(3)
+        sage: Q.is_anisotropic(3)                                                       # needs sage.libs.pari
         True
-        sage: Q.is_anisotropic(5)
+        sage: Q.is_anisotropic(5)                                                       # needs sage.libs.pari
         False
 
     ::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,-1])
-        sage: Q.is_anisotropic(2)
+        sage: Q.is_anisotropic(2)                                                       # needs sage.libs.pari
         False
-        sage: Q.is_anisotropic(3)
+        sage: Q.is_anisotropic(3)                                                       # needs sage.libs.pari
         False
-        sage: Q.is_anisotropic(5)
+        sage: Q.is_anisotropic(5)                                                       # needs sage.libs.pari
         False
 
     ::
 
-        sage: [DiagonalQuadraticForm(ZZ, [1, -least_quadratic_nonresidue(p)]).is_anisotropic(p)  for p in prime_range(3, 30)]
+        sage: [DiagonalQuadraticForm(ZZ,                                                # needs sage.libs.pari
+        ....:                        [1, -least_quadratic_nonresidue(p)]).is_anisotropic(p)
+        ....:  for p in prime_range(3, 30)]
         [True, True, True, True, True, True, True, True, True]
 
     ::
 
-        sage: [DiagonalQuadraticForm(ZZ, [1, -least_quadratic_nonresidue(p), p, -p*least_quadratic_nonresidue(p)]).is_anisotropic(p)  for p in prime_range(3, 30)]
+        sage: [DiagonalQuadraticForm(ZZ, [1, -least_quadratic_nonresidue(p),            # needs sage.libs.pari
+        ....:                             p, -p*least_quadratic_nonresidue(p)]).is_anisotropic(p)
+        ....:  for p in prime_range(3, 30)]
         [True, True, True, True, True, True, True, True, True]
     """
-    ## TO DO: Should check that p is prime
+    # TO DO: Should check that p is prime
     if p == -1:
         return self.is_definite()
 
@@ -692,49 +672,51 @@ def is_anisotropic(self, p):
     if n == 1:
         return self[0, 0] != 0
 
-    raise NotImplementedError("Oops!  We haven't established a convention for 0-dim'l quadratic forms... =(")
+    raise NotImplementedError("we have not established a convention for 0-dim'l quadratic forms")
 
 
 def is_isotropic(self, p):
-    """
-    Checks if Q is isotropic over the p-adic numbers `Q_p` or `RR`.
+    r"""
+    Checks if `Q` is isotropic over the `p`-adic numbers `\QQ_p` or `\RR`.
 
     INPUT:
 
-    - `p` -- a prime number > 0 or `-1` for the infinite place
+    - ``p`` -- a prime number > 0 or `-1` for the infinite place
 
-    OUTPUT:
-
-    boolean
+    OUTPUT: boolean
 
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1])
-        sage: Q.is_isotropic(2)
+        sage: Q.is_isotropic(2)                                                         # needs sage.libs.pari
         False
-        sage: Q.is_isotropic(3)
+        sage: Q.is_isotropic(3)                                                         # needs sage.libs.pari
         False
-        sage: Q.is_isotropic(5)
+        sage: Q.is_isotropic(5)                                                         # needs sage.libs.pari
         True
 
     ::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,-1])
-        sage: Q.is_isotropic(2)
+        sage: Q.is_isotropic(2)                                                         # needs sage.libs.pari
         True
-        sage: Q.is_isotropic(3)
+        sage: Q.is_isotropic(3)                                                         # needs sage.libs.pari
         True
-        sage: Q.is_isotropic(5)
+        sage: Q.is_isotropic(5)                                                         # needs sage.libs.pari
         True
 
     ::
 
-        sage: [DiagonalQuadraticForm(ZZ, [1, -least_quadratic_nonresidue(p)]).is_isotropic(p)  for p in prime_range(3, 30)]
+        sage: [DiagonalQuadraticForm(ZZ,                                                # needs sage.libs.pari
+        ....:                        [1, -least_quadratic_nonresidue(p)]).is_isotropic(p)
+        ....:  for p in prime_range(3, 30)]
         [False, False, False, False, False, False, False, False, False]
 
     ::
 
-        sage: [DiagonalQuadraticForm(ZZ, [1, -least_quadratic_nonresidue(p), p, -p*least_quadratic_nonresidue(p)]).is_isotropic(p)  for p in prime_range(3, 30)]
+        sage: [DiagonalQuadraticForm(ZZ, [1, -least_quadratic_nonresidue(p),            # needs sage.libs.pari
+        ....:                             p, -p*least_quadratic_nonresidue(p)]).is_isotropic(p)
+        ....:  for p in prime_range(3, 30)]
         [False, False, False, False, False, False, False, False, False]
 
     """
@@ -750,15 +732,15 @@ def anisotropic_primes(self):
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
-        sage: Q.anisotropic_primes()
+        sage: Q.anisotropic_primes()                                                    # needs sage.libs.pari
         [2, -1]
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1])
-        sage: Q.anisotropic_primes()
+        sage: Q.anisotropic_primes()                                                    # needs sage.libs.pari
         [2, -1]
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1,1])
-        sage: Q.anisotropic_primes()
+        sage: Q.anisotropic_primes()                                                    # needs sage.libs.pari
         [-1]
     """
     # Look at all prime divisors of 2 * Det(Q) to find the
@@ -769,25 +751,23 @@ def anisotropic_primes(self):
 
 def compute_definiteness(self):
     """
-    Computes whether the given quadratic form is positive-definite,
+    Compute whether the given quadratic form is positive-definite,
     negative-definite, indefinite, degenerate, or the zero form.
 
-    This caches one of the following strings in self.__definiteness_string:
+    This caches one of the following strings in ``self.__definiteness_string``:
     "pos_def", "neg_def", "indef", "zero", "degenerate".  It is called
-    from all routines like:
+    from all routines like: :meth:`is_positive_definite`, :meth:`is_negative_definite`,
+    :meth:`is_indefinite`, etc.
 
-        is_positive_definite(), is_negative_definite(), is_indefinite(), etc.
+    .. NOTE::
 
-    Note:  A degenerate form is considered neither definite nor indefinite.
-    Note:  The zero-dim'l form is considered both positive definite and negative definite.
+        A degenerate form is considered neither definite nor indefinite.
 
-    INPUT:
+    .. NOTE:
 
-        QuadraticForm
+        The zero-dimensional form is considered both positive definite and negative definite.
 
-    OUTPUT:
-
-        boolean
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -829,21 +809,23 @@ def compute_definiteness(self):
         False
 
     """
-    ## Sanity Check
-    if not ((self.base_ring() == ZZ) or (self.base_ring() == QQ) or (self.base_ring() == RR)):
-        raise NotImplementedError("Oops!  We can only check definiteness over ZZ, QQ, and RR for now.")
+    # Sanity Check
+    from sage.rings.real_mpfr import RR
 
-    ## Some useful variables
+    if not ((self.base_ring() == ZZ) or (self.base_ring() == QQ) or (self.base_ring() == RR)):
+        raise NotImplementedError("we can only check definiteness over ZZ, QQ, and RR for now")
+
+    # Some useful variables
     n = self.dim()
 
-    ## Deal with the zero-diml form
+    # Deal with the zero-diml form
     if n == 0:
         self.__definiteness_string = "zero"
         return
 
     sig_pos, sig_neg, sig_zer = self.signature_vector()
 
-    ## Determine and cache the definiteness string
+    # Determine and cache the definiteness string
     if sig_zer > 0:
         self.__definiteness_string = "degenerate"
         return
@@ -862,15 +844,9 @@ def compute_definiteness_string_by_determinants(self):
     """
     Compute the (positive) definiteness of a quadratic form by looking
     at the signs of all of its upper-left subdeterminants.  See also
-    self.compute_definiteness() for more documentation.
+    :meth:`compute_definiteness` for more documentation.
 
-    INPUT:
-
-        None
-
-    OUTPUT:
-
-        string describing the definiteness
+    OUTPUT: string describing the definiteness
 
     EXAMPLES::
 
@@ -901,68 +877,58 @@ def compute_definiteness_string_by_determinants(self):
         sage: Q = DiagonalQuadraticForm(ZZ, [-1,-1])
         sage: Q.compute_definiteness_string_by_determinants()
         'neg_def'
-
     """
-    ## Sanity Check
-    if not ((self.base_ring() == ZZ) or (self.base_ring() == QQ) or (self.base_ring() == RR)):
-        raise NotImplementedError("Oops!  We can only check definiteness over ZZ, QQ, and RR for now.")
+    # Sanity Check
+    from sage.rings.real_mpfr import RR
 
-    ## Some useful variables
+    if not ((self.base_ring() == ZZ) or (self.base_ring() == QQ) or (self.base_ring() == RR)):
+        raise NotImplementedError("we can only check definiteness over ZZ, QQ, and RR for now")
+
+    from sage.functions.all import sgn
+
+    # Some useful variables
     n = self.dim()
     M = self.matrix()
 
-
-    ## Deal with the zero-diml form
+    # Deal with the zero-diml form
     if n == 0:
         return "zero"
 
-
-
-    ## Deal with degenerate forms
+    # Deal with degenerate forms
     if self.det() == 0:
         return "degenerate"
 
-
-    ## Check the sign of the ratios of consecutive determinants of the upper triangular r x r submatrices
-    first_coeff = self[0,0]
-    for r in range(1,n+1):
+    # Check the sign of the ratios of consecutive determinants of the upper triangular r x r submatrices
+    first_coeff = self[0, 0]
+    for r in range(1, n + 1):
         I = list(range(r))
         new_det = M.matrix_from_rows_and_columns(I, I).det()
 
-        ## Check for a (non-degenerate) zero -- so it's indefinite
+        # Check for a (non-degenerate) zero -- so it's indefinite
         if new_det == 0:
             return "indefinite"
 
-
-        ## Check for a change of signs in the upper r x r submatrix -- so it's indefinite
+        # Check for a change of signs in the upper r x r submatrix -- so it's indefinite
         if sgn(first_coeff)**r != sgn(new_det):
             return "indefinite"
 
-
-    ## Here all ratios of determinants have the correct sign, so the matrix is (pos or neg) definite.
-    if first_coeff > 0:
-        return "pos_def"
-    else:
-        return "neg_def"
-
-
-
+    # Here all ratios of determinants have the correct sign, so the matrix is (pos or neg) definite.
+    return "pos_def" if first_coeff > 0 else "neg_def"
 
 
 def is_positive_definite(self):
     """
     Determines if the given quadratic form is positive-definite.
 
-    Note:  A degenerate form is considered neither definite nor indefinite.
-    Note:  The zero-dim'l form is considered both positive definite and negative definite.
+    .. NOTE::
 
-    INPUT:
+        A degenerate form is considered neither definite nor indefinite.
 
-        None
+    .. NOTE::
 
-    OUTPUT:
+        The zero-dimensional form is considered both positive definite and negative definite.
 
-        boolean -- True or False
+    OUTPUT: boolean -- True or False
 
     EXAMPLES::
 
@@ -975,35 +941,31 @@ def is_positive_definite(self):
         sage: Q = DiagonalQuadraticForm(ZZ, [1,-3,5])
         sage: Q.is_positive_definite()
         False
-
     """
-    ## Try to use the cached value
+    # Try to use the cached value
     try:
         def_str = self.__definiteness_string
     except AttributeError:
         self.compute_definiteness()
         def_str = self.__definiteness_string
 
-    ## Return the answer
+    # Return the answer
     return (def_str == "pos_def") or (def_str == "zero")
-
-
 
 
 def is_negative_definite(self):
     """
     Determines if the given quadratic form is negative-definite.
 
-    Note:  A degenerate form is considered neither definite nor indefinite.
-    Note:  The zero-dim'l form is considered both positive definite and negative definite.
+    .. NOTE::
 
-    INPUT:
+        A degenerate form is considered neither definite nor indefinite.
 
-        None
+    .. NOTE::
 
-    OUTPUT:
+        The zero-dimensional form is considered both positive definite and negative definite.
 
-        boolean -- True or False
+    OUTPUT: boolean -- True or False
 
     EXAMPLES::
 
@@ -1016,34 +978,31 @@ def is_negative_definite(self):
         sage: Q = DiagonalQuadraticForm(ZZ, [1,-3,5])
         sage: Q.is_negative_definite()
         False
-
     """
-    ## Try to use the cached value
+    # Try to use the cached value
     try:
         def_str = self.__definiteness_string
     except AttributeError:
         self.compute_definiteness()
         def_str = self.__definiteness_string
 
-    ## Return the answer
+    # Return the answer
     return (def_str == "neg_def") or (def_str == "zero")
-
 
 
 def is_indefinite(self):
     """
     Determines if the given quadratic form is indefinite.
 
-    Note:  A degenerate form is considered neither definite nor indefinite.
-    Note:  The zero-dim'l form is not considered indefinite.
+    .. NOTE::
 
-    INPUT:
+        A degenerate form is considered neither definite nor indefinite.
 
-        None
+    .. NOTE::
 
-    OUTPUT:
+        The zero-dimensional form is not considered indefinite.
 
-        boolean -- True or False
+    OUTPUT: boolean -- True or False
 
     EXAMPLES::
 
@@ -1058,14 +1017,14 @@ def is_indefinite(self):
         True
 
     """
-    ## Try to use the cached value
+    # Try to use the cached value
     try:
         def_str = self.__definiteness_string
     except AttributeError:
         self.compute_definiteness()
         def_str = self.__definiteness_string
 
-    ## Return the answer
+    # Return the answer
     return def_str == "indefinite"
 
 
@@ -1073,16 +1032,15 @@ def is_definite(self):
     """
     Determines if the given quadratic form is (positive or negative) definite.
 
-    Note:  A degenerate form is considered neither definite nor indefinite.
-    Note:  The zero-dim'l form is considered indefinite.
+    .. NOTE::
 
-    INPUT:
+        A degenerate form is considered neither definite nor indefinite.
 
-        None
+    .. NOTE::
 
-    OUTPUT:
+        The zero-dimensional form is considered indefinite.
 
-        boolean -- True or False
+    OUTPUT: boolean -- True or False
 
     EXAMPLES::
 
@@ -1090,21 +1048,16 @@ def is_definite(self):
         sage: Q.is_definite()
         True
 
-    ::
-
         sage: Q = DiagonalQuadraticForm(ZZ, [1,-3,5])
         sage: Q.is_definite()
         False
-
     """
-    ## Try to use the cached value
+    # Try to use the cached value
     try:
         def_str = self.__definiteness_string
     except AttributeError:
         self.compute_definiteness()
         def_str = self.__definiteness_string
 
-    ## Return the answer
+    # Return the answer
     return (def_str == "pos_def") or (def_str == "neg_def") or (def_str == "zero")
-
-

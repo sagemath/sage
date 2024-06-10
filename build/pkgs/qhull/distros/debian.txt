@@ -1,0 +1,2 @@
+qhull-bin
+libqhull-dev

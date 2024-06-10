@@ -79,14 +79,14 @@ class PairwiseCompatibleSubsets(RecursivelyEnumeratedSet_forest):
     lexicographic order.
     """
 
-    #@staticmethod
-    #def __classcall__(cls, ambient, predicate):
-    #    ambient = Set(ambient)
-    #    return super(PairwiseCompatibleSubsets, cls).__classcall__(cls, ambient, predicate)
+    # @staticmethod
+    # def __classcall__(cls, ambient, predicate):
+    #     ambient = Set(ambient)
+    #     return super().__classcall__(cls, ambient, predicate)
 
     __len__ = None
 
-    def __init__(self, ambient, predicate, maximal = False, element_class = Set_object_enumerated):
+    def __init__(self, ambient, predicate, maximal=False, element_class=Set_object_enumerated):
         """
         TESTS::
 
@@ -105,7 +105,7 @@ class PairwiseCompatibleSubsets(RecursivelyEnumeratedSet_forest):
         # TODO: use self.element_class for consistency
         # At this point (2011/03) TestSuite fails if we do so
         self._element_class = element_class
-        RecursivelyEnumeratedSet_forest.__init__(self, algorithm = 'depth', category = FiniteEnumeratedSets())
+        RecursivelyEnumeratedSet_forest.__init__(self, algorithm='depth', category=FiniteEnumeratedSets())
 
     def __eq__(self, other):
         """

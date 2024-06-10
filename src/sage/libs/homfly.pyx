@@ -22,24 +22,24 @@ AUTHORS:
 - Miguel Marco (2015-03-24): initial version.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Miguel Marco  <mmarco@unizar.es>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at youroption) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.cpython.string cimport str_to_bytes, char_to_str
 
 cdef extern from "homfly.h":
-    ctypedef int  word;
-    ctypedef signed long int sb4;
-    ctypedef unsigned short int ub2;
-    ctypedef signed short int sb2;
+    ctypedef int  word
+    ctypedef signed long int sb4
+    ctypedef unsigned short int ub2
+    ctypedef signed short int sb2
     struct Term:
         sb4 coef
         sb2 m
@@ -102,9 +102,8 @@ def homfly_polynomial_dict(link):
     cdef Poly* c_output = homfly(link)
     sig_off()
     cdef int l = c_output.len
-    d = dict()
+    d = {}
     for i in range(l):
         ter = c_output.term[i]
         d[(int(ter.l), int(ter.m))] = int(ter.coef)
     return d
-

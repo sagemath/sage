@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Test of the :mod:`~sage.structure.factory` module
 """
@@ -16,12 +17,11 @@ Test of the :mod:`~sage.structure.factory` module
 #
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
-from __future__ import print_function
 
 from sage.structure.factory import UniqueFactory
 
 
-class A(object):
+class A():
     # something we can weakref
     pass
 
@@ -50,5 +50,6 @@ class UniqueFactoryTester(UniqueFactory):
         """
         print("Making object", key)
         return A()
+
 
 test_factory = UniqueFactoryTester('sage.structure.test_factory.test_factory')

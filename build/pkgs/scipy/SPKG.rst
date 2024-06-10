@@ -1,5 +1,5 @@
-scipy
-=====
+scipy: Scientific tools for Python
+==================================
 
 Description
 -----------
@@ -24,7 +24,7 @@ under the BSD terms. See http://www.scipy.org/License_Compatibility
 Upstream Contact
 ----------------
 
-   http://www.scipy.org/
+   https://www.scipy.org/
 
 Dependencies
 ------------

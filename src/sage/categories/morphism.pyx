@@ -1,31 +1,45 @@
+# sage_setup: distribution = sagemath-objects
 """
 Morphisms
 
+This module defines the base classes of morphisms between objects of a given
+category.
+
+EXAMPLES:
+
+Typically, a morphism is defined by the images of the generators of the domain. ::
+
+    sage: X.<a, b> = ZZ[]
+    sage: Y.<c> = ZZ[]
+    sage: X.hom([c, c^2])
+    Ring morphism:
+      From: Multivariate Polynomial Ring in a, b over Integer Ring
+      To:   Univariate Polynomial Ring in c over Integer Ring
+      Defn: a |--> c
+            b |--> c^2
+
 AUTHORS:
 
-- William Stein: initial version
+- William Stein (2005): initial version
 
-- David Joyner (12-17-2005): added examples
+- David Joyner (2005-12-17): added examples
 
-- Robert Bradshaw (2007-06-25) Pyrexification
+- Robert Bradshaw (2007-06-25): Pyrexification
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cpython.object cimport *
+
 from sage.misc.constant_function import ConstantFunction
-
-import operator
-
-
 
 from sage.structure.element cimport Element, ModuleElement
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
@@ -33,7 +47,10 @@ from sage.structure.parent cimport Parent
 
 
 def is_Morphism(x):
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38103, "The function is_Morphism is deprecated; use 'isinstance(..., Morphism)' instead.")
     return isinstance(x, Morphism)
+
 
 cdef class Morphism(Map):
 
@@ -54,13 +71,14 @@ cdef class Morphism(Map):
         EXAMPLES::
 
             sage: R.<t> = ZZ[]
-            sage: f = R.hom([t+1])
+            sage: f = R.hom([t + 1])
             sage: f     # indirect doctest
             Ring endomorphism of Univariate Polynomial Ring in t over Integer Ring
               Defn: t |--> t + 1
 
         TESTS::
 
+            sage: # needs sage.rings.number_field
             sage: K = CyclotomicField(12)
             sage: L = CyclotomicField(132)
             sage: phi = L._internal_coerce_map_from(K); phi
@@ -68,7 +86,6 @@ cdef class Morphism(Map):
             Generic morphism:
               From: Cyclotomic Field of order 12 and degree 4
               To:   Cyclotomic Field of order 132 and degree 40
-
             sage: del K
             sage: import gc
             sage: _ = gc.collect()
@@ -163,10 +180,15 @@ cdef class Morphism(Map):
             sage: f = R.hom([t**2])
             sage: f.category()
             Category of endsets of unital magmas and right modules over
-             (euclidean domains and infinite enumerated sets and metric spaces)
-             and left modules over (euclidean domains
-             and infinite enumerated sets and metric spaces)
+             (Dedekind domains and euclidean domains
+              and noetherian rings
+              and infinite enumerated sets and metric spaces)
+             and left modules over
+             (Dedekind domains and euclidean domains
+              and noetherian rings
+              and infinite enumerated sets and metric spaces)
 
+            sage: # needs sage.rings.number_field
             sage: K = CyclotomicField(12)
             sage: L = CyclotomicField(132)
             sage: phi = L._internal_coerce_map_from(K)
@@ -187,6 +209,7 @@ cdef class Morphism(Map):
             sage: f.is_endomorphism()
             True
 
+            sage: # needs sage.rings.number_field
             sage: K = CyclotomicField(12)
             sage: L = CyclotomicField(132)
             sage: phi = L._internal_coerce_map_from(K)
@@ -209,7 +232,7 @@ cdef class Morphism(Map):
             sage: f = R.hom([t])
             sage: f.is_identity()
             True
-            sage: g = R.hom([t+1])
+            sage: g = R.hom([t + 1])
             sage: g.is_identity()
             False
 
@@ -245,7 +268,9 @@ cdef class Morphism(Map):
             sage: x^2 + y
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for +: 'Univariate Polynomial Ring in x over Integer Ring' and 'Univariate Polynomial Ring in y over Integer Ring'
+            TypeError: unsupported operand parent(s) for +:
+            'Univariate Polynomial Ring in x over Integer Ring' and
+            'Univariate Polynomial Ring in y over Integer Ring'
 
         Let us declare a coercion from `\ZZ[x]` to `\ZZ[z]`::
 
@@ -269,7 +294,9 @@ cdef class Morphism(Map):
             sage: phi.register_as_coercion()
             Traceback (most recent call last):
             ...
-            AssertionError: coercion from Univariate Polynomial Ring in x over Integer Ring to Univariate Polynomial Ring in z over Integer Ring already registered or discovered
+            AssertionError: coercion from Univariate Polynomial Ring in x over Integer Ring
+            to Univariate Polynomial Ring in z over Integer Ring
+            already registered or discovered
 
         """
         self._codomain.register_coercion(self)
@@ -285,6 +312,7 @@ cdef class Morphism(Map):
         Let us declare a conversion from the symmetric group to `\ZZ`
         through the sign map::
 
+            sage: # needs sage.groups
             sage: S = SymmetricGroup(4)
             sage: phi = Hom(S, ZZ)(lambda x: ZZ(x.sign()))
             sage: x = S.an_element(); x
@@ -331,14 +359,30 @@ cdef class Morphism(Map):
 
         TESTS::
 
+            sage: # needs sage.combinat
             sage: from sage.categories.morphism import SetMorphism
             sage: E = End(Partitions(5))
             sage: f = E.identity()
-            sage: g = SetMorphism(E, lambda x:x)
+            sage: g = SetMorphism(E, lambda x: x)
             sage: f == g
             Traceback (most recent call last):
             ...
-            NotImplementedError: unable to compare morphisms of type <... 'sage.categories.morphism.IdentityMorphism'> and <... 'sage.categories.morphism.SetMorphism'> with domain Partitions of the integer 5
+            NotImplementedError: unable to compare morphisms of type <... 'sage.categories.morphism.IdentityMorphism'>
+            and <... 'sage.categories.morphism.SetMorphism'> with domain Partitions of the integer 5
+
+        We check that :issue:`28617` is fixed::
+
+            sage: FF = GF(2^20)                                                         # needs sage.rings.finite_rings
+            sage: f = FF.frobenius_endomorphism()                                       # needs sage.rings.finite_rings
+            sage: f == FF.frobenius_endomorphism()                                      # needs sage.rings.finite_rings
+            True
+
+        and that :issue:`29632` is fixed::
+
+            sage: R.<x,y> = QuadraticField(-1)[]                                        # needs sage.rings.number_field
+            sage: f = R.hom(R.gens(), R)                                                # needs sage.rings.number_field
+            sage: f.is_identity()                                                       # needs sage.rings.number_field
+            True
         """
         if self is other:
             return rich_to_bool(op, 0)
@@ -361,13 +405,19 @@ cdef class Morphism(Map):
             # If so, we see the base as a ring of scalars and create new
             # gens by picking an element of the initial domain (e) and
             # multiplying it with the gens of the scalar ring.
+            #
+            # It is known that this way of comparing morphisms may give
+            # a mathematically wrong answer. See Issue #28617 and #31783.
             if e is not None and isinstance(e, ModuleElement):
-                gens = [(<ModuleElement>e)._lmul_(x) for x in gens]
-            for e in gens:
-                x = self(e)
-                y = other(e)
+                B = (<ModuleElement>e)._parent._base
+                gens = [e * B.coerce(x) for x in gens]
+            for g in gens:
+                x = self(g)
+                y = other(g)
                 if x != y:
                     return richcmp_not_equal(x, y, op)
+                if e is None and g:
+                    e = g
             # Check base
             base = domain._base
             if base is None or base is domain:
@@ -375,7 +425,7 @@ cdef class Morphism(Map):
             domain = <Parent?>base
         return rich_to_bool(op, 0)
 
-    def __nonzero__(self):
+    def __bool__(self):
         r"""
         Return whether this morphism is not a zero morphism.
 
@@ -423,7 +473,7 @@ cdef class CallMorphism(Morphism):
 cdef class IdentityMorphism(Morphism):
 
     def __init__(self, parent):
-        from .homset import Homset, Hom
+        from sage.categories.homset import Homset, Hom
         if not isinstance(parent, Homset):
             parent = Hom(parent, parent)
         Morphism.__init__(self, parent)
@@ -434,24 +484,22 @@ cdef class IdentityMorphism(Morphism):
     cpdef Element _call_(self, x):
         return x
 
-    cpdef Element _call_with_args(self, x, args=(), kwds={}): 
+    cpdef Element _call_with_args(self, x, args=(), kwds={}):
         if not args and not kwds:
             return x
         cdef Parent C = self._codomain
-        if C._element_init_pass_parent:
-            from sage.misc.superseded import deprecation
-            deprecation(26879, "_element_init_pass_parent=True is deprecated. This probably means that _element_constructor_ should be a method and not some other kind of callable")
-            return C._element_constructor(C, x, *args, **kwds)
-        else:
-            return C._element_constructor(x, *args, **kwds)
+        return C._element_constructor(x, *args, **kwds)
 
     def __mul__(left, right):
         if not isinstance(right, Map):
-            raise TypeError("right (=%s) must be a map to multiply it by %s"%(right, left))
+            raise TypeError(f"right (={right}) must be a map "
+                            f"to multiply it by {left}")
         if not isinstance(left, Map):
-            raise TypeError("left (=%s) must be a map to multiply it by %s"%(left, right))
+            raise TypeError(f"left (={left}) must be a map "
+                            f"to multiply it by {right}")
         if right.codomain() != left.domain():
-            raise TypeError("self (=%s) domain must equal right (=%s) codomain"%(left, right))
+            raise TypeError(f"self (={left}) domain must equal "
+                            f"right (={right}) codomain")
         if isinstance(left, IdentityMorphism):
             return right
         else:
@@ -469,12 +517,13 @@ cdef class IdentityMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: E = End(Partitions(5))
-            sage: E.identity().is_identity()
+            sage: E = End(Partitions(5))                                                # needs sage.combinat
+            sage: E.identity().is_identity()                                            # needs sage.combinat
             True
 
-        Check that :trac:`15478` is fixed::
+        Check that :issue:`15478` is fixed::
 
+            sage: # needs sage.rings.finite_rings
             sage: K.<z> = GF(4)
             sage: phi = End(K)([z^2])
             sage: R.<t> = K[]
@@ -526,7 +575,7 @@ cdef class SetMorphism(Morphism):
 
         - ``parent`` -- a Homset
         - ``function`` -- a Python function that takes elements
-          of the domain as input and returns elements of the domain.
+          of the domain as input and returns elements of the codomain.
 
         EXAMPLES::
 
@@ -637,7 +686,7 @@ cdef class SetMorphism(Morphism):
         self._function = _slots['_function']
         Map._update_slots(self, _slots)
 
-    cpdef bint _eq_c_impl(self, Element other):
+    cpdef bint _eq_c_impl(self, Element other) noexcept:
         """
         Equality test
 
@@ -645,7 +694,7 @@ cdef class SetMorphism(Morphism):
 
             sage: f = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Sets()),    operator.__abs__)
             sage: g = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Sets()),    operator.__abs__)
-            sage: h = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Rings()),   operator.__abs__) # todo: replace by the more correct Monoids
+            sage: h = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Rings()),   operator.__abs__)  # todo: replace by the more correct Monoids
             sage: i = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Sets()),    operator.__neg__)
             sage: f._eq_c_impl(g)
             True
@@ -671,7 +720,7 @@ cdef class SetMorphism(Morphism):
 
             sage: f = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Sets()),    operator.__abs__)
             sage: g = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Sets()),    operator.__abs__)
-            sage: h = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Rings()),   operator.__abs__) # todo: replace by the more correct Monoids
+            sage: h = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Rings()),   operator.__abs__)  # todo: replace by the more correct Monoids
             sage: i = sage.categories.morphism.SetMorphism(Hom(ZZ,ZZ, Sets()),    operator.__neg__)
             sage: f == f, f != f, f < f, f > f, f <= f, f >= f
             (True, False, False, False, True, True)
@@ -692,3 +741,159 @@ cdef class SetMorphism(Morphism):
             return not (isinstance(right, Element) and self._eq_c_impl(right))
         else:
             return False
+
+
+cdef class SetIsomorphism(SetMorphism):
+    r"""
+    An isomorphism of sets.
+
+    INPUT:
+
+    - ``parent`` -- a Homset
+    - ``function`` -- a Python function that takes elements
+      of the domain as input and returns elements of the codomain.
+
+    EXAMPLES::
+
+        sage: f = sage.categories.morphism.SetIsomorphism(Hom(ZZ, ZZ, Sets()),
+        ....:                                             operator.__neg__); f
+        Generic endomorphism of Integer Ring
+        sage: f._set_inverse(f)
+        sage: ~f is f
+        True
+    """
+    def _set_inverse(self, inverse):
+        r"""
+        Set the inverse morphism of ``self`` to be ``inverse``.
+
+        INPUT:
+
+        - ``inverse`` -- a :class:`SetIsomorphism`
+
+        EXAMPLES::
+
+            sage: f = sage.categories.morphism.SetIsomorphism(Hom(ZZ, ZZ, Sets()),
+            ....:                                             operator.__neg__)
+            sage: f._set_inverse(f)
+            sage: ~f is f
+            True
+        """
+        self._inverse = inverse
+
+    def __invert__(self):
+        r"""
+        Return the inverse morphism of ``self``.
+
+        If :meth:`_set_inverse` has not been called yet, an error is raised.
+
+        EXAMPLES::
+
+            sage: f = sage.categories.morphism.SetIsomorphism(Hom(ZZ, ZZ, Sets()),
+            ....:                                             operator.__neg__)
+            sage: ~f
+            Traceback (most recent call last):
+            ...
+            RuntimeError: inverse morphism has not been set
+            sage: f._set_inverse(f)
+            sage: ~f
+            Generic endomorphism of Integer Ring
+        """
+        if not self._inverse:
+            raise RuntimeError('inverse morphism has not been set')
+        return self._inverse
+
+    cdef dict _extra_slots(self) noexcept:
+        """
+        Extend the dictionary with extra slots for this class.
+
+        INPUT:
+
+        - ``_slots`` -- a dictionary
+
+        EXAMPLES::
+
+            sage: f = sage.categories.morphism.SetIsomorphism(Hom(ZZ, ZZ, Sets()),
+            ....:                                             operator.__neg__)
+            sage: f._set_inverse(f)
+            sage: f._extra_slots_test()
+            {'_codomain': Integer Ring,
+             '_domain': Integer Ring,
+             '_function': <built-in function neg>,
+             '_inverse': Generic endomorphism of Integer Ring,
+             '_is_coercion': False,
+             '_repr_type_str': None}
+        """
+        slots = SetMorphism._extra_slots(self)
+        slots['_inverse'] = self._inverse
+        return slots
+
+    cdef _update_slots(self, dict _slots) noexcept:
+        """
+        Update the slots of ``self`` from the data in the dictionary.
+
+        INPUT:
+
+        - ``_slots`` -- a dictionary
+
+        EXAMPLES::
+
+            sage: f = sage.categories.morphism.SetIsomorphism(Hom(ZZ, ZZ, Sets()),
+            ....:                                             operator.__neg__)
+            sage: f._update_slots_test({'_function': operator.__neg__,
+            ....:                       '_inverse': f,
+            ....:                       '_domain': QQ,
+            ....:                       '_codomain': QQ,
+            ....:                       '_repr_type_str': 'bla'})
+            sage: f(3)
+            -3
+            sage: f._repr_type()
+            'bla'
+            sage: f.domain()
+            Rational Field
+            sage: f.codomain()
+            Rational Field
+            sage: f.inverse() == f
+            True
+        """
+        self._inverse = _slots['_inverse']
+        SetMorphism._update_slots(self, _slots)
+
+    def section(self):
+        """
+        Return a section of this morphism.
+
+        EXAMPLES::
+
+            sage: f = sage.categories.morphism.SetIsomorphism(Hom(ZZ, ZZ, Sets()),
+            ....:                                             operator.__neg__)
+            sage: f._set_inverse(f)
+            sage: f.section() is f
+            True
+        """
+        return self.__invert__()
+
+    def is_surjective(self):
+        r"""
+        Return whether this morphism is surjective.
+
+        EXAMPLES::
+
+            sage: f = sage.categories.morphism.SetIsomorphism(Hom(ZZ, ZZ, Sets()),
+            ....:                                             operator.__neg__)
+            sage: f.is_surjective()
+            True
+        """
+        return True
+
+    def is_injective(self):
+        r"""
+        Return whether this morphism is injective.
+
+        EXAMPLES::
+
+            sage: f = sage.categories.morphism.SetIsomorphism(Hom(ZZ, ZZ, Sets()),
+            ....:                                             operator.__neg__)
+            sage: f.is_injective()
+            True
+        """
+        return True

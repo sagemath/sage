@@ -89,7 +89,7 @@ cdef class TreeIterator:
             sage: print(t)  # indirect doctest
             Iterator over all trees with 100 vertices
         """
-        return "Iterator over all trees with %s vertices"%(self.vertices)
+        return "Iterator over all trees with %s vertices" % (self.vertices)
 
     def __iter__(self):
         r"""
@@ -119,7 +119,7 @@ cdef class TreeIterator:
         TESTS:
 
         This used to be broken for trees with no vertices
-        and was fixed in :trac:`13719` ::
+        and was fixed in :issue:`13719` ::
 
             sage: from sage.graphs.trees import TreeIterator
             sage: T = TreeIterator(0)
@@ -157,7 +157,7 @@ cdef class TreeIterator:
 
         return G
 
-    cdef int generate_first_level_sequence(self):
+    cdef int generate_first_level_sequence(self) noexcept:
         r"""
         Generates the level sequence representing the first tree with `n` vertices
         """
@@ -174,7 +174,7 @@ cdef class TreeIterator:
         self.h1 = k
         self.h2 = self.vertices
         if self.vertices % 2:
-            self.c = INT_MAX # oo
+            self.c = INT_MAX  # oo
         else:
             self.c = self.vertices + 1
 
@@ -193,7 +193,7 @@ cdef class TreeIterator:
 
         return 0
 
-    cdef int generate_next_level_sequence(self):
+    cdef int generate_next_level_sequence(self) noexcept:
         r"""
         Generates the level sequence representing the next tree with `n` vertices
         """
@@ -229,9 +229,9 @@ cdef class TreeIterator:
         if p <= h1:
             h1 = p - 1
         if p <= r:
-           needr = 1
+            needr = 1
         elif p <= h2:
-           needh2 = 1
+            needh2 = 1
         elif l[h2 - 1] == l[h1 - 1] - 1 and n - h2 == r - h1:
             if p <= c:
                 needc = 1

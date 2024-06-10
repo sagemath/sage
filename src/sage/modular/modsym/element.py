@@ -1,10 +1,9 @@
+# sage.doctest: needs sage.libs.flint
 """
 A single element of an ambient space of modular symbols
 """
-from __future__ import absolute_import
-
-#*****************************************************************************
-#       Sage: System for Algebra and Geometry Experimentation
+# ****************************************************************************
+#       Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -17,9 +16,8 @@ from __future__ import absolute_import
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import sage.modules.free_module_element
 from sage.misc.repr import repr_lincomb
@@ -27,9 +25,11 @@ import sage.structure.formal_sum as formal_sum
 import sage.modular.hecke.all as hecke
 import sage.misc.latex as latex
 
+
 _print_mode = "manin"
 
-def is_ModularSymbolsElement(x):
+
+def is_ModularSymbolsElement(x) -> bool:
     r"""
     Return True if x is an element of a modular symbols space.
 
@@ -49,16 +49,16 @@ def set_modsym_print_mode(mode="manin"):
 
     INPUT:
 
-    -  ``mode`` - a string. The possibilities are as
+    -  ``mode`` -- a string. The possibilities are as
        follows:
 
-    -  ``'manin'`` - (the default) formal sums of Manin
+    -  ``'manin'`` -- (the default) formal sums of Manin
        symbols [P(X,Y),(u,v)]
 
-    -  ``'modular'`` - formal sums of Modular symbols
+    -  ``'modular'`` -- formal sums of Modular symbols
        P(X,Y)\*alpha,beta, where alpha and beta are cusps
 
-    -  ``'vector'`` - as vectors on the basis for the
+    -  ``'vector'`` -- as vectors on the basis for the
        ambient space
 
     OUTPUT: none
@@ -76,10 +76,11 @@ def set_modsym_print_mode(mode="manin"):
         sage: set_modsym_print_mode()
     """
     mode = str(mode).lower()
-    if not (mode in ['manin', 'modular', 'vector']):
+    if mode not in ['manin', 'modular', 'vector']:
         raise ValueError("mode must be one of 'manin', 'modular', or 'vector'")
     global _print_mode
     _print_mode = mode
+
 
 class ModularSymbolsElement(hecke.HeckeModuleElement):
     """
@@ -118,7 +119,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
             if not isinstance(x, sage.modules.free_module_element.FreeModuleElement):
                 raise TypeError("x must be a free module element.")
             if x.degree() != parent.degree():
-                raise TypeError("x (of degree %s) must be of degree the same as the degree of the parent (of degree %s)."%(x.degree(), parent.degree()))
+                raise TypeError("x (of degree %s) must be of degree the same as the degree of the parent (of degree %s)." % (x.degree(), parent.degree()))
         hecke.HeckeModuleElement.__init__(self, parent, x)
 
     def _repr_(self):
@@ -144,7 +145,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
             m = self.manin_symbol_rep()
         elif _print_mode == "modular":
             m = self.modular_symbol_rep()
-        return repr_lincomb([(t,c) for c,t in m])
+        return repr_lincomb([(t, c) for c, t in m])
 
     def _latex_(self):
         r"""
@@ -205,7 +206,8 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
             ...
             TypeError: unsupported operand parent(s) for *: 'Modular Symbols space of dimension 8 for Gamma_0(3) of weight 12 with sign 0 over Rational Field' and 'Ring of integers modulo 17'
         """
-        return ModularSymbolsElement(self.parent(), self.element()*other, check=False)
+        return ModularSymbolsElement(self.parent(), self.element() * other,
+                                     check=False)
 
     def _lmul_(self, left):
         r"""
@@ -223,7 +225,8 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
             ...
             TypeError: unsupported operand parent(s) for *: 'Ring of integers modulo 17' and 'Modular Symbols space of dimension 8 for Gamma_0(3) of weight 12 with sign 0 over Rational Field'
         """
-        return ModularSymbolsElement(self.parent(), left*self.element(), check=False)
+        return ModularSymbolsElement(self.parent(), left * self.element(),
+                                     check=False)
 
     def _neg_(self):
         r"""
@@ -272,7 +275,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
 
     def manin_symbol_rep(self):
         """
-        Returns a representation of self as a formal sum of Manin symbols.
+        Return a representation of self as a formal sum of Manin symbols.
 
         EXAMPLES::
 
@@ -292,15 +295,14 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
             v = self.element()
             manin_symbols = A.ambient_hecke_module().manin_symbols_basis()
             F = formal_sum.FormalSums(A.base_ring())
-            ms = F([(v[i], manin_symbols[i]) for i in \
-                  range(v.degree()) if v[i] != 0], check=False, reduce=False)
+            ms = F([(v[i], manin_symbols[i]) for i in range(v.degree())
+                    if v[i] != 0], check=False, reduce=False)
             self.__manin_symbols = ms
         return self.__manin_symbols
 
     def modular_symbol_rep(self):
         """
-        Returns a representation of self as a formal sum of modular
-        symbols.
+        Return a representation of ``self`` as a formal sum of modular symbols.
 
         EXAMPLES::
 
@@ -322,5 +324,3 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
             w = [c * x.modular_symbol_rep() for c, x in v]
             self.__modular_symbols = sum(w)
             return self.__modular_symbols
-
-

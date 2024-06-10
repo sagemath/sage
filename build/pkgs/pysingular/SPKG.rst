@@ -1,5 +1,5 @@
-PySingular
-==========
+pysingular: A basic Python interface to Singular
+================================================
 
 Description
 -----------

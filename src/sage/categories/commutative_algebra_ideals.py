@@ -1,7 +1,7 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Commutative algebra ideals
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
@@ -11,8 +11,11 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from .category_types import Category_ideal, Category_in_ambient
-from .algebra_ideals import AlgebraIdeals
+from sage.categories.algebra_ideals import AlgebraIdeals
+from sage.categories.category_types import Category_ideal, Category_in_ambient
+from sage.categories.commutative_algebras import CommutativeAlgebras
+from sage.categories.commutative_rings import CommutativeRings
+
 
 class CommutativeAlgebraIdeals(Category_ideal):
     """
@@ -22,14 +25,16 @@ class CommutativeAlgebraIdeals(Category_ideal):
 
         sage: C = CommutativeAlgebraIdeals(QQ['x'])
         sage: C
-        Category of commutative algebra ideals in Univariate Polynomial Ring in x over Rational Field
+        Category of commutative algebra ideals in
+         Univariate Polynomial Ring in x over Rational Field
     """
     def __init__(self, A):
         """
         EXAMPLES::
 
             sage: CommutativeAlgebraIdeals(ZZ['x'])
-            Category of commutative algebra ideals in Univariate Polynomial Ring in x over Integer Ring
+            Category of commutative algebra ideals in
+             Univariate Polynomial Ring in x over Integer Ring
 
             sage: CommutativeAlgebraIdeals(ZZ)
             Traceback (most recent call last):
@@ -41,7 +46,7 @@ class CommutativeAlgebraIdeals(Category_ideal):
             ...
             TypeError: A (=Ring of integers modulo 4) must be a commutative algebra
 
-            sage: CommutativeAlgebraIdeals(Partitions(4))
+            sage: CommutativeAlgebraIdeals(Partitions(4))                               # needs sage.combinat
             Traceback (most recent call last):
             ...
             TypeError: A (=Partitions of the integer 4) must be a commutative algebra
@@ -52,10 +57,14 @@ class CommutativeAlgebraIdeals(Category_ideal):
         """
         # TODO: replace by ``A in CommutativeAlgebras(*)`` once a
         # suitable mantra has been implemented for this.
-        from sage.algebras.algebra import is_Algebra
-        from sage.rings.ring import CommutativeRing
-        if not (is_Algebra(A) and isinstance(A, CommutativeRing)):
-            raise TypeError("A (=%s) must be a commutative algebra"%A)
+        try:
+            base_ring = A.base_ring()
+        except AttributeError:
+            raise TypeError(f"A (={A}) must be a commutative algebra")
+        else:
+            if base_ring not in CommutativeRings() or A not in CommutativeAlgebras(base_ring.category()):
+                raise TypeError(f"A (={A}) must be a commutative algebra")
+
         Category_in_ambient.__init__(self, A)
 
     def algebra(self):

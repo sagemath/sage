@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 """
 Tensor Products of Crystal Elements
 
@@ -30,13 +30,11 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 #****************************************************************************
 
-from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 from sage.structure.parent cimport Parent
 
 from sage.misc.cachefunc import cached_method, cached_in_parent_method
-from sage.functions.other import ceil
 from sage.combinat.tableau import Tableau
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 ##############################################################################
 # Support classes
@@ -59,18 +57,6 @@ cdef class ImmutableListWithParent(ClonableArray):
             sage: TestSuite(b).run()
         """
         ClonableArray.__init__(self, parent, list, check=False)
-
-    cpdef long _hash_(self) except? -1:
-        """
-        Return the hash of ``self``.
-
-        TESTS::
-
-            sage: b = crystals.Tableaux(['A',2], shape=[2,1]).module_generators[0]
-            sage: b._hash_() == hash(b)
-            True
-        """
-        return hash(tuple(self._list))
 
     def __setstate__(self, state):
         """
@@ -145,8 +131,8 @@ cdef class TensorProductOfCrystalsElement(ImmutableListWithParent):
         """
         from sage.misc.latex import latex
         if self._parent.options.convention == "Kashiwara":
-            return ' \otimes '.join(latex(c) for c in reversed(self))
-        return ' \otimes '.join(latex(c) for c in self)
+            return r' \otimes '.join(latex(c) for c in reversed(self))
+        return r' \otimes '.join(latex(c) for c in self)
 
     def _ascii_art_(self):
         """
@@ -336,7 +322,7 @@ cdef class TensorProductOfCrystalsElement(ImmutableListWithParent):
 
         TESTS:
 
-        Check that :trac:`15462` is fixed::
+        Check that :issue:`15462` is fixed::
 
             sage: B = crystals.Tableaux(['A',2], shape=[2,1])
             sage: La = RootSystem(['A',2]).ambient_space().fundamental_weights()
@@ -385,7 +371,7 @@ cdef class TensorProductOfCrystalsElement(ImmutableListWithParent):
 
         TESTS:
 
-        Check that :trac:`18469` is fixed::
+        Check that :issue:`18469` is fixed::
 
             sage: E1 = crystals.elementary.B(['A',2], 1)
             sage: E2 = crystals.elementary.B(['A',2], 2)
@@ -478,6 +464,7 @@ cdef class TensorProductOfCrystalsElement(ImmutableListWithParent):
                     return None
                 return self._set_index(-k, crystal)
         return None
+
 
 cdef class TensorProductOfRegularCrystalsElement(TensorProductOfCrystalsElement):
     """
@@ -725,7 +712,7 @@ cdef class CrystalOfTableauxElement(TensorProductOfRegularCrystalsElement):
             [[1, 2], [3, 4]]
 
         Currently inputting the empty tableau as an empty sequence is
-        broken due to a bug in the generic __call__ method (see :trac:`8648`).
+        broken due to a bug in the generic __call__ method (see :issue:`8648`).
 
         EXAMPLES::
 
@@ -739,15 +726,15 @@ cdef class CrystalOfTableauxElement(TensorProductOfRegularCrystalsElement):
         Integer types that are not a Sage ``Integer`` (such as a Python ``int``
         and typically arise from compiled code) were not converted into a
         letter. This caused certain functions to fail. This is fixed in
-        :trac:`13204`::
+        :issue:`13204`::
 
             sage: T = crystals.Tableaux(['A',3], shape = [2,2])
             sage: t = T(list=[int(3),1,4,2])
             sage: type(t[0])
-            <... 'sage.combinat.crystals.letters.Crystal_of_letters_type_A_element'>
+            <class 'sage.combinat.crystals.letters.Crystal_of_letters_type_A_element'>
             sage: t = T(list=[3,int(1),4,2])
             sage: type(t[1])
-            <... 'sage.combinat.crystals.letters.Crystal_of_letters_type_A_element'>
+            <class 'sage.combinat.crystals.letters.Crystal_of_letters_type_A_element'>
             sage: C = crystals.KirillovReshetikhin(['A',int(3),1], 1,1)
             sage: C[0].e(0)
             [[4]]
@@ -771,7 +758,9 @@ cdef class CrystalOfTableauxElement(TensorProductOfRegularCrystalsElement):
                 the_list += col
         else:
             the_list = [i for i in args]
-        TensorProductOfRegularCrystalsElement.__init__(self, parent, [parent.letters(_) for _ in the_list])
+        TensorProductOfRegularCrystalsElement.__init__(self, parent,
+                                                       [parent.letters(i)
+                                                        for i in the_list])
 
     def _repr_(self):
         """
@@ -817,7 +806,7 @@ cdef class CrystalOfTableauxElement(TensorProductOfRegularCrystalsElement):
 
         EXAMPLES:
 
-        We check that :trac:`16486` is fixed::
+        We check that :issue:`16486` is fixed::
 
             sage: T = crystals.Tableaux(['B',6], shape=[1]*5)
             sage: ascii_art(T.module_generators[0])
@@ -917,7 +906,7 @@ cdef class CrystalOfTableauxElement(TensorProductOfRegularCrystalsElement):
             sage: type(t)
             <class 'sage.combinat.tableau.Tableaux_all_with_category.element_class'>
             sage: type(t[0][0])
-            <... 'int'>
+            <class 'int'>
             sage: T = crystals.Tableaux(['D',3], shape = [1,1])
             sage: t=T(rows=[[-3],[3]]).to_tableau(); t
             [[-3], [3]]
@@ -1169,7 +1158,7 @@ cdef class InfinityCrystalOfTableauxElementTypeD(InfinityCrystalOfTableauxElemen
         return ret
 
 #####################################################################
-## BKK crystal elements
+#  BKK crystal elements
 
 cdef class TensorProductOfSuperCrystalsElement(TensorProductOfRegularCrystalsElement):
     r"""
@@ -1314,7 +1303,7 @@ cdef class CrystalOfBKKTableauxElement(TensorProductOfSuperCrystalsElement):
         return repr(self.to_tableau())
 
     def _repr_diagram(self):
-        """
+        r"""
         Return a string representation of ``self`` as a diagram.
 
         EXAMPLES::
@@ -1416,7 +1405,7 @@ cdef class CrystalOfBKKTableauxElement(TensorProductOfSuperCrystalsElement):
         return Tableau(tab).conjugate()
 
 #####################################################################
-## Queer crystal elements
+#  Queer crystal elements
 
 cdef class TensorProductOfQueerSuperCrystalsElement(TensorProductOfRegularCrystalsElement):
     r"""
@@ -1529,24 +1518,24 @@ cdef class TensorProductOfQueerSuperCrystalsElement(TensorProductOfRegularCrysta
                 b = b.s(a)
             b = b.e(-1)
             if b is None:
-               return None
+                return None
             for a in range(2, j+1):
                 b = b.s(a)
             for a in range(1, j):
                 b = b.s(a)
             return b
         if i < -n:
-           j = -(i+n)
-           w = <tuple> (self._parent._long_element())
-           b = self
-           for a in w:
-               b = b.s(a)
-           b = b.f(-(n+1-j))
-           if b is None:
-               return None
-           for a in w:
-               b = b.s(a)
-           return b
+            j = -(i+n)
+            w = <tuple> (self._parent._long_element())
+            b = self
+            for a in w:
+                b = b.s(a)
+            b = b.f(-(n+1-j))
+            if b is None:
+                return None
+            for a in w:
+                b = b.s(a)
+            return b
         return None
 
     def f(self, i):
@@ -1589,24 +1578,24 @@ cdef class TensorProductOfQueerSuperCrystalsElement(TensorProductOfRegularCrysta
                 b = b.s(a)
             b = b.f(-1)
             if b is None:
-               return None
+                return None
             for a in range(2, j+1):
                 b = b.s(a)
             for a in range(1, j):
                 b = b.s(a)
             return b
         if i < -n:
-           j = -(i+n)
-           w = <tuple> (self._parent._long_element())
-           b = self
-           for a in w:
-               b = b.s(a)
-           b = b.e(-(n+1-j))
-           if b is None:
-               return None
-           for a in w:
-               b = b.s(a)
-           return b
+            j = -(i+n)
+            w = <tuple> (self._parent._long_element())
+            b = self
+            for a in w:
+                b = b.s(a)
+            b = b.e(-(n+1-j))
+            if b is None:
+                return None
+            for a in w:
+                b = b.s(a)
+            return b
         return None
 
     # Override epsilon/phi (for now)
@@ -1650,8 +1639,9 @@ cdef class TensorProductOfQueerSuperCrystalsElement(TensorProductOfRegularCrysta
             x = x.f(i)
         return string_length
 
+
 cdef class InfinityQueerCrystalOfTableauxElement(TensorProductOfQueerSuperCrystalsElement):
-    def __init__(self, parent, list, row_lengths=[]):
+    def __init__(self, parent, list, row_lengths=None):
         """
         Initialize ``self``.
 
@@ -1663,6 +1653,8 @@ cdef class InfinityQueerCrystalOfTableauxElement(TensorProductOfQueerSuperCrysta
             [[4, 4, 4, 4, 2, 1], [3, 3, 3], [2, 2], [1]]
             sage: TestSuite(t).run()
         """
+        if row_lengths is None:
+            row_lengths = []
         if not row_lengths and list and not isinstance(list[0], parent.letters.element_class):
             ret = []
             L = parent.letters
@@ -1672,7 +1664,7 @@ cdef class InfinityQueerCrystalOfTableauxElement(TensorProductOfQueerSuperCrysta
                 row_lengths.append(len(row))
             list = ret
         self._row_lengths = row_lengths
-        super(InfinityQueerCrystalOfTableauxElement, self).__init__(parent, list)
+        super().__init__(parent, list)
 
     def _repr_(self):
         r"""
@@ -1767,7 +1759,7 @@ cdef class InfinityQueerCrystalOfTableauxElement(TensorProductOfQueerSuperCrysta
             [[4, 4, 4, 4, 4, 3, 2, 1], [3, 3, 3, 3], [2, 2, 1], [1]]
             sage: t.e(-1)
         """
-        ret = super(InfinityQueerCrystalOfTableauxElement, self).e(i)
+        ret = super().e(i)
         if ret is None:
             return None
         (<InfinityQueerCrystalOfTableauxElement> ret)._row_lengths = self._row_lengths
@@ -1856,6 +1848,7 @@ cdef class InfinityQueerCrystalOfTableauxElement(TensorProductOfQueerSuperCrysta
         n = self._parent._cartan_type.n + 1
         zero = self._parent.weight_lattice_realization().zero()
         La = self._parent.weight_lattice_realization().fundamental_weights()
+
         def fwt(i):
             return zero if i == n else La[i]
         ret -= sum((self._row_lengths[i] - 1 - self._row_lengths[i+1])*(fwt(n-i)-fwt(n-i-1))
@@ -1865,7 +1858,7 @@ cdef class InfinityQueerCrystalOfTableauxElement(TensorProductOfQueerSuperCrysta
         ret -= L(1).weight()  # From the 1 on the bottom row
         return ret
 
-cdef Py_ssize_t count_leading(list row, letter):
+cdef Py_ssize_t count_leading(list row, letter) noexcept:
     cdef Py_ssize_t i
     for i in range(len(row)-1,-1,-1):
         if row[i] != letter:
@@ -1874,5 +1867,4 @@ cdef Py_ssize_t count_leading(list row, letter):
 
 # for unpickling
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.crystals.tensor_product', 'ImmutableListWithParent',  ImmutableListWithParent)
-
+register_unpickle_override('sage.combinat.crystals.tensor_product', 'ImmutableListWithParent', ImmutableListWithParent)

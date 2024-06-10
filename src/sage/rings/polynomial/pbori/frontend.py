@@ -5,7 +5,7 @@ a given context.
 
 EXAMPLES::
 
-    sage: from sage.rings.polynomial.pbori.frontend import *
+    sage: from sage.rings.polynomial.pbori.frontend import x
     sage: x(0)
     x(0)
     sage: x(0)*x(0)
@@ -19,7 +19,7 @@ EXAMPLES::
     sage: x(9999) + x(9999)
     0
 
-    sage: from sage.rings.polynomial.pbori.frontend import *
+    sage: from sage.rings.polynomial.pbori.frontend import x, polybori_start
     sage: context = dict(globals())
     sage: polybori_start(context)
     ipbori...
@@ -30,9 +30,9 @@ EXAMPLES::
     a
 """
 
-from __future__ import print_function
 
-from . import *
+from .PyPolyBoRi import Ring
+from .pbori import VariableFactory
 from .blocks import declare_ring as orig_declare_ring
 
 
@@ -40,12 +40,12 @@ def block_scheme_names(blocks):
     r"""
     Helper for Singular interface.
     """
-
-    context = dict()
+    context = {}
     from .blocks import declare_block_scheme
     declare_block_scheme(blocks, context)
 
     return list(context.keys())
+
 
 ipbname = 'ipbori'
 
@@ -61,6 +61,7 @@ def polybori_start(global_context):
 
     print(ipbname + """ -- The interactive command line tool of PolyBoRi/BRiAL %s
 """ % global_context.get("polybori_version", ''))
+
 
 # Here come the defaults
 r = Ring(10000)

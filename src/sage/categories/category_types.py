@@ -1,10 +1,10 @@
+# sage_setup: distribution = sagemath-objects
 """
 Specific category classes
 
 This is placed in a separate file from categories.py to avoid circular imports
 (as morphisms must be very low in the hierarchy with the new coercion model).
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #  Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu> and
@@ -15,9 +15,10 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.unknown import Unknown
-from .category import JoinCategory, Category, CategoryWithParameters
+from sage.categories.category import Category, CategoryWithParameters, JoinCategory
 from sage.misc.lazy_import import lazy_import
+from sage.misc.unknown import Unknown
+
 lazy_import('sage.categories.objects', 'Objects')
 lazy_import('sage.misc.latex', 'latex')
 
@@ -31,6 +32,8 @@ lazy_import('sage.categories.chain_complexes', 'ChainComplexes',
 #############################################################
 # Category of elements of some object
 #############################################################
+
+
 class Elements(Category):
     """
     The category of all elements of a given parent.
@@ -73,12 +76,13 @@ class Elements(Category):
         """
         EXAMPLES::
 
-            sage: V = VectorSpace(QQ,3)
+            sage: # needs sage.modules
+            sage: V = VectorSpace(QQ, 3)
             sage: x = V.0
             sage: C = x.category()
             sage: C
             Category of elements of Vector space of dimension 3 over Rational Field
-            sage: w = C([1,2,3]); w # indirect doctest
+            sage: w = C([1, 2, 3]); w  # indirect doctest
             (1, 2, 3)
             sage: w.category()
             Category of elements of Vector space of dimension 3 over Rational Field
@@ -124,18 +128,18 @@ class Elements(Category):
             sage: Elements(ZZ)._repr_object_names()
             'elements of Integer Ring'
         """
-        return "elements of %s"%self.object()
+        return "elements of %s" % self.object()
 
     def _latex_(self):
         r"""
         EXAMPLES::
 
-            sage: V = VectorSpace(QQ,3)
-            sage: x = V.0
-            sage: latex(x.category()) # indirect doctest
+            sage: V = VectorSpace(QQ, 3)                                                # needs sage.modules
+            sage: x = V.0                                                               # needs sage.modules
+            sage: latex(x.category())  # indirect doctest                               # needs sage.modules
             \mathbf{Elt}_{\Bold{Q}^{3}}
         """
-        return "\\mathbf{Elt}_{%s}"%latex(self.__object)
+        return "\\mathbf{Elt}_{%s}" % latex(self.__object)
 
 
 #############################################################
@@ -150,7 +154,7 @@ class Category_over_base(CategoryWithParameters):
     - ``base`` -- a category `C` or an object of such a category
 
     Assumption: the classes for the parents, elements, morphisms, of
-    ``self`` should only depend on `C`. See :trac:`11935` for details.
+    ``self`` should only depend on `C`. See :issue:`11935` for details.
 
     EXAMPLES::
 
@@ -170,6 +174,8 @@ class Category_over_base(CategoryWithParameters):
         r"""
         Initialize ``self``.
 
+        The ``name`` parameter is ignored.
+
         EXAMPLES::
 
             sage: S = Spec(ZZ)
@@ -182,7 +188,7 @@ class Category_over_base(CategoryWithParameters):
             sage: TestSuite(C).run()
         """
         self.__base = base
-        Category.__init__(self, name)
+        Category.__init__(self)
 
     def _test_category_over_bases(self, **options):
         """
@@ -196,6 +202,7 @@ class Category_over_base(CategoryWithParameters):
         """
         tester = self._tester(**options)
         from sage.categories.category_singleton import Category_singleton
+
         from .bimodules import Bimodules
         from .schemes import Schemes
         for cat in self.super_categories():
@@ -209,7 +216,7 @@ class Category_over_base(CategoryWithParameters):
         r"""
         Return what the element/parent/... classes depend on.
 
-        Since :trac:`11935`, the element and parent classes of a
+        Since :issue:`11935`, the element and parent classes of a
         category over base only depend on the category of the base (or
         the base itself if it is a category).
 
@@ -221,7 +228,9 @@ class Category_over_base(CategoryWithParameters):
         EXAMPLES::
 
             sage: Modules(ZZ)._make_named_class_key('element_class')
-            Join of Category of euclidean domains
+            Join of Category of Dedekind domains
+             and Category of euclidean domains
+             and Category of noetherian rings
              and Category of infinite enumerated sets
              and Category of metric spaces
             sage: Modules(QQ)._make_named_class_key('parent_class')
@@ -290,7 +299,7 @@ class Category_over_base(CategoryWithParameters):
                 name = base._repr_object_names()
         else:
             name = base
-        return Category._repr_object_names(self) + " over %s"%name
+        return Category._repr_object_names(self) + " over %s" % name
 
     def _latex_(self):
         r"""
@@ -299,7 +308,7 @@ class Category_over_base(CategoryWithParameters):
             sage: latex(ModulesWithBasis(ZZ))
             \mathbf{ModulesWithBasis}_{\Bold{Z}}
         """
-        return "\\mathbf{%s}_{%s}"%(self._label, latex(self.__base))
+        return "\\mathbf{%s}_{%s}" % (self._label, latex(self.__base))
 
 #    def construction(self):
 #        return (self.__class__, self.__base)
@@ -320,6 +329,8 @@ class Category_over_base(CategoryWithParameters):
 #############################################################
 # Category of objects over some base ring
 #############################################################
+
+
 class AbelianCategory(Category):
     def is_abelian(self):
         """
@@ -331,6 +342,7 @@ class AbelianCategory(Category):
             True
         """
         return True
+
 
 class Category_over_base_ring(Category_over_base):
     def __init__(self, base, name=None):
@@ -344,7 +356,7 @@ class Category_over_base_ring(Category_over_base):
             sage: TestSuite(C).run()
         """
         from sage.categories.rings import Rings
-        if not (base in Rings or
+        if not (base in Rings() or
                 isinstance(base, Category) and base.is_subcategory(Rings())):
             raise ValueError("base must be a ring or a subcategory of Rings()")
         Category_over_base.__init__(self, base, name)
@@ -400,6 +412,8 @@ class Category_over_base_ring(Category_over_base):
 
             sage: VectorSpaces(QQ)._subcategory_hook_(VectorSpaces(QQ) & Rings())
             Unknown
+
+            sage: # needs sage.combinat sage.modules
             sage: Sym = SymmetricFunctions(QQ)
             sage: from sage.combinat.sf.sfa import SymmetricFunctionsBases
             sage: Modules(QQ)._subcategory_hook_(SymmetricFunctionsBases(Sym))
@@ -412,7 +426,7 @@ class Category_over_base_ring(Category_over_base):
 
             sage: VectorSpaces(Fields())._subcategory_hook_(Algebras(Fields()))
             True
-            sage: VectorSpaces(Fields())._subcategory_hook_(Algebras(Fields().Finite())) # todo: not implemented
+            sage: VectorSpaces(Fields())._subcategory_hook_(Algebras(Fields().Finite()))  # todo: not implemented
             True
             sage: VectorSpaces(Fields().Finite())._subcategory_hook_(Algebras(Fields()))
             False
@@ -420,7 +434,7 @@ class Category_over_base_ring(Category_over_base):
         Case 2: the base of ``self`` is a category; then the base of
         ``C`` shall be a parent in this category::
 
-            sage: VectorSpaces(Fields())._subcategory_hook_(Algebras(QQ))                # todo: not implemented
+            sage: VectorSpaces(Fields())._subcategory_hook_(Algebras(QQ))                 # todo: not implemented
             True
             sage: VectorSpaces(Fields().Finite())._subcategory_hook_(Algebras(QQ))
             False
@@ -429,23 +443,26 @@ class Category_over_base_ring(Category_over_base):
 
             sage: VectorSpaces(QQ)._subcategory_hook_(Algebras(QQ))
             True
-            sage: VectorSpaces(CC)._subcategory_hook_(Algebras(QQ))       # base ring in different categories
+            sage: VectorSpaces(CC)._subcategory_hook_(Algebras(QQ))         # base ring in different categories         # needs sage.rings.real_mpfr
             False
-            sage: VectorSpaces(GF(2))._subcategory_hook_(Algebras(GF(3))) # base ring in the same category
+            sage: VectorSpaces(GF(2))._subcategory_hook_(Algebras(GF(3)))   # base ring in the same category
             False
 
         Note; we need both previous tests since the distinction is
         made respectively using the parent class or the base ring::
 
-            sage: issubclass(Algebras(QQ).parent_class, VectorSpaces(CC).parent_class)
+            sage: issubclass(Algebras(QQ).parent_class,                                 # needs sage.modules
+            ....:            VectorSpaces(CC).parent_class)
             False
-            sage: issubclass(Algebras(GF(2)).parent_class, VectorSpaces(GF(3)).parent_class)
+            sage: issubclass(Algebras(GF(2)).parent_class,
+            ....:            VectorSpaces(GF(3)).parent_class)
             True
 
-        Check that :trac:`16618` is fixed: this `_subcategory_hook_`
+        Check that :issue:`16618` is fixed: this `_subcategory_hook_`
         method is only valid for :class:`Category_over_base_ring`, not
         :class:`Category_over_base`::
 
+            sage: # needs sage.groups
             sage: from sage.categories.category_types import Category_over_base
             sage: D = Modules(Rings())
             sage: class Cs(Category_over_base):
@@ -509,7 +526,7 @@ class Category_over_base_ring(Category_over_base):
                 else:
                     return x.base_ring() is self.base_ring()
             else:
-                return super(Category_over_base_ring, self).__contains__(x)
+                return super().__contains__(x)
         except AttributeError:
             return False
 
@@ -522,13 +539,15 @@ class Category_in_ambient(Category):
         """
         Initialize ``self``.
 
+        The parameter ``name`` is ignored.
+
         EXAMPLES::
 
             sage: C = Ideals(IntegerRing())
             sage: TestSuite(C).run()
         """
         self.__ambient = ambient
-        Category.__init__(self, name)
+        Category.__init__(self)
 
     def ambient(self):
         """
@@ -550,13 +569,15 @@ class Category_in_ambient(Category):
             sage: Ideals(IntegerRing())
             Category of ring ideals in Integer Ring
         """
-        return Category._repr_(self) + " in %s"%self.__ambient
+        return Category._repr_(self) + " in %s" % self.__ambient
 
 #    def construction(self):
 #        return (self.__class__, self.__ambient)
 
+
 class Category_module(AbelianCategory, Category_over_base_ring):
     pass
+
 
 class Category_ideal(Category_in_ambient):
 
@@ -593,12 +614,10 @@ class Category_ideal(Category_in_ambient):
             sage: IntegerRing().zero_ideal() in C
             True
         """
-        if super(Category_ideal, self).__contains__(x):
+        if super().__contains__(x):
             return True
         from sage.rings.ideal import is_Ideal
-        if is_Ideal(x) and x.ring() == self.ring():
-            return True
-        return False
+        return is_Ideal(x) and x.ring() == self.ring()
 
     def __call__(self, v):
         """

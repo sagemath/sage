@@ -1,14 +1,6 @@
-###############################################################################
-#
-# e-antic Sage install script
-#
-###############################################################################
-if [ "$SAGE_DEBUG" = "yes" ]; then
-    CFLAGS="-O0 -g $CFLAGS"; export CFLAGS
-fi
-
 cd src
 
-sdh_configure
+# Following https://github.com/Normaliz/Normaliz/blob/master/install_scripts_opt/install_nmz_e-antic.sh
+sdh_configure --without-byexample --without-doc --without-benchmark --without-pyeantic
 sdh_make
 sdh_make_install

@@ -8,9 +8,9 @@ doctests to use a different random seed; but we also want to be able
 to reproduce the problems when debugging.  This module provides a
 decorator to help write random testers that meet these goals.
 """
-from __future__ import print_function, absolute_import
 
 from functools import wraps
+
 
 def random_testing(fn):
     r"""
@@ -21,7 +21,7 @@ def random_testing(fn):
 
     INPUT:
 
-        - ``fn`` - The function that we are wrapping for random testing.
+        - ``fn`` -- The function that we are wrapping for random testing.
 
     The resulting function will take two additional arguments, *seed*
     (default ``None``) and *print_seed* (default ``False``).  The
@@ -54,9 +54,9 @@ def random_testing(fn):
     fails (raises an exception).
 
     If you want a very long-running test using this setup, you should do
-    something like (in Python 2)::
+    something like::
 
-        for _ in xrange(10^10): test_foo(100)
+        for _ in range(10^10): test_foo(100)
 
     instead of::
 
@@ -122,6 +122,7 @@ def random_testing(fn):
     """
     from sage.misc.randstate import seed, initial_seed
     from sys import stdout
+
     @wraps(fn)
     def wrapped_fun(*args, **kwargs):
         arg_seed = None
@@ -157,6 +158,7 @@ def random_testing(fn):
                 print(repr(e))
     return wrapped_fun
 
+
 @random_testing
 def test_add_commutes(trials, verbose=False):
     r"""
@@ -176,15 +178,16 @@ def test_add_commutes(trials, verbose=False):
         sage: test_add_commutes(10)
         sage: test_add_commutes(1000) # long time
     """
-    from sage.rings.all import QQ
+    from sage.rings.rational_field import QQ
     for _ in range(trials):
         a = QQ.random_element()
         b = QQ.random_element()
         if verbose:
             print("a == {}, b == {} ...".format(a, b))
-        assert(a+b == b+a)
+        assert a + b == b + a
         if verbose:
             print("Passes!")
+
 
 @random_testing
 def test_add_is_mul(trials, verbose=False):
@@ -249,13 +252,12 @@ def test_add_is_mul(trials, verbose=False):
         Random seed: 216390410596009428782506007128692114173
         AssertionError()
     """
-    from sage.rings.all import QQ
+    from sage.rings.rational_field import QQ
     for _ in range(trials):
         a = QQ.random_element()
         b = QQ.random_element()
         if verbose:
             print("a == {}, b == {} ...".format(a, b))
-        assert(a+b == a*b)
+        assert a + b == a * b
         if verbose:
             print("Passes!")
-

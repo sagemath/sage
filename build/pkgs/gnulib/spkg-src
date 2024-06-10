@@ -1,0 +1,40 @@
+#! /usr/bin/env bash
+
+# the commit hash below is the latest as of 2022-07-31
+# For updating gnulib, change this hash and run
+#
+# ./sage -sh -c 'build/pkgs/gnulib/spkg-src'
+#
+# Then commit the results.
+
+gnulibcommit="f9b39c4e337f1dc0dd07c4f3985c476fb875d799"
+
+gnulibtool="$SAGE_ROOT/upstream/gnulib/gnulib-tool"
+
+if [ -x "$gnulibtool" ]; then
+    cd upstream/gnulib
+    gnulibinstalled=`git rev-parse HEAD`
+    cd ../..
+    if [ ! x${gnulibcommit} = x${gnulibinstalled} ]; then
+        rm -rf upstream/gnulib
+    fi
+fi
+if [ ! -x "$gnulibtool" ]; then
+    echo >&2 "gnulib-tool needs to be installed and in your PATH. We install a copy in upstream/ "
+    mkdir -p upstream
+    cd upstream # use github mirror - faster, only needed stuff
+    mkdir -p gnulib
+    cd gnulib
+    eval git init ${quietquiet}
+    eval git remote add origin https://github.com/coreutils/gnulib.git ${quietquiet}
+    eval git fetch origin ${gnulibcommit} --depth 1 ${quietquiet}
+    eval git checkout FETCH_HEAD ${quietquiet}
+    cd ../..
+    if [ ! -x "$gnulibtool" ]; then
+        echo >&2 "Failure installing/updating gnulib in upstream/. "
+        exit 179
+    fi
+fi
+eval $gnulibtool --import iconv ${quietquiet}
+rm -rf lib/
+echo "${gnulibcommit}" > build/pkgs/gnulib/package-version.txt

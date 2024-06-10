@@ -1,8 +1,8 @@
-# -*- encoding: utf-8 -*-
+# sage_setup: distribution = sagemath-repl
 r"""
 Base Class for Backends
 
-The display backends are the commandline, the SageNB notebook, the
+The display backends are the commandline, the
 IPython notebook, the Emacs sage mode, the Sage doctester, .... All of
 these have different capabilities for what they can display.
 
@@ -24,7 +24,7 @@ display specific output types in your own backend.
 * Subclass the rich output container to attach your backend-specific
   functionality. Then :meth:`~BackendBase.display_immediately` will
   receive instances of your subclass. See
-  :class:`~sage.repl.rich_output.backend_test.BackendTest` for an
+  :class:`~sage.repl.rich_output.test_backend.BackendTest` for an
   example of how this is done.
 
 You can also mix both ways of implementing different rich output types.
@@ -39,15 +39,14 @@ EXAMPLES::
     [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import builtins
 from io import StringIO
@@ -154,6 +153,7 @@ class BackendBase(SageObject):
             sage: backend = BackendBase()
             sage: backend.default_preferences()
             Display preferences:
+            * align_latex is not specified
             * graphics is not specified
             * supplemental_plot is not specified
             * text is not specified
@@ -319,7 +319,7 @@ class BackendBase(SageObject):
             sage: out = backend.plain_text_formatter(list(range(20)), concatenate=True)
             sage: out.text.get_str()
             '0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19'
-       """
+        """
         from sage.repl.display.pretty_print import SagePrettyPrinter
         if kwds.get('concatenate', False):
             plain_text = ' '.join(
@@ -369,7 +369,7 @@ class BackendBase(SageObject):
             sage: backend.ascii_art_formatter([1,2,3], concatenate=True).ascii_art.get_str()
             '1 2 3'
         """
-        from sage.typeset.ascii_art import ascii_art, empty_ascii_art
+        from sage.typeset.ascii_art import ascii_art
         if kwds.get('concatenate', False):
             result = ascii_art(*obj, sep=' ')
         else:
@@ -418,7 +418,7 @@ class BackendBase(SageObject):
             sage: backend.unicode_art_formatter([1,2,3], concatenate=True).unicode_art.get_str()
             '1 2 3'
         """
-        from sage.typeset.unicode_art import unicode_art, empty_unicode_art
+        from sage.typeset.unicode_art import unicode_art
         if kwds.get('concatenate', False):
             result = unicode_art(*obj, sep=' ')
         else:
@@ -428,7 +428,7 @@ class BackendBase(SageObject):
 
     def latex_formatter(self, obj, **kwds):
         r"""
-        Hook to override how Latex is being formatted.
+        Hook to override how latex is being formatted.
 
         INPUT:
 
@@ -444,8 +444,7 @@ class BackendBase(SageObject):
 
         OUTPUT:
 
-        Instance of
-        :class:`~sage.repl.rich_output.output_basic.OutputLatex`
+        Instance of :class:`~sage.repl.rich_output.output_browser.OutputHtml`
         containing the latex string representation of the object.
 
         EXAMPLES::
@@ -454,37 +453,31 @@ class BackendBase(SageObject):
             sage: backend = BackendBase()
             sage: out = backend.latex_formatter(1/2)
             sage: out
-            OutputLatex container
-            sage: out.latex
-            buffer containing 45 bytes
-            sage: out.latex.get_str()
-            '\\newcommand{\\Bold}[1]{\\mathbf{#1}}\\frac{1}{2}'
-            sage: out.mathjax()
-            '<html><script type="math/tex; mode=display">\\newcommand{\\Bold}[1]{\\mathbf{#1}}\\frac{1}{2}</script></html>'
+            OutputHtml container
+            sage: out.html
+            buffer containing 42 bytes
+            sage: out.html.get_str()
+            '<html>\\(\\displaystyle \\frac{1}{2}\\)</html>'
 
+            sage: # needs sage.symbolic
             sage: out = backend.latex_formatter([1/2, x, 3/4, ZZ], concatenate=False)
-            sage: out.latex.get_str()
-            '\\newcommand{\\Bold}[1]{\\mathbf{#1}}\\left[\\frac{1}{2}, x, \\frac{3}{4}, \\Bold{Z}\\right]'
+            sage: out.html.get_str()
+            '<html>\\(\\displaystyle \\newcommand{\\Bold}[1]{\\mathbf{#1}}\\left[\\frac{1}{2}, x, \\frac{3}{4}, \\Bold{Z}\\right]\\)</html>'
             sage: out = backend.latex_formatter([1/2, x, 3/4, ZZ], concatenate=True)
-            sage: out.latex.get_str()
-            '\\newcommand{\\Bold}[1]{\\mathbf{#1}}\\frac{1}{2} x \\frac{3}{4} \\Bold{Z}'
+            sage: out.html.get_str()
+            '<html>\\(\\displaystyle \\newcommand{\\Bold}[1]{\\mathbf{#1}}\\frac{1}{2} x \\frac{3}{4} \\Bold{Z}\\)</html>'
 
         TESTS::
 
-            sage: backend.latex_formatter([], concatenate=False).latex.get_str()
-            '\\newcommand{\\Bold}[1]{\\mathbf{#1}}\\left[\\right]'
-            sage: backend.latex_formatter([], concatenate=True).latex.get_str()
-            '\\newcommand{\\Bold}[1]{\\mathbf{#1}}'
+            sage: backend.latex_formatter([], concatenate=False).html.get_str()
+            '<html>\\(\\displaystyle \\left[\\right]\\)</html>'
+            sage: backend.latex_formatter([], concatenate=True).html.get_str()
+            '<html>\\(\\displaystyle \\)</html>'
         """
         concatenate = kwds.get('concatenate', False)
-        from sage.misc.latex import MathJax
-        if concatenate:
-            obj = tuple(obj)    # MathJax treats tuples special
-            mathjax = MathJax().eval(obj, mode='plain', combine_all=True)
-        else:
-            mathjax = MathJax().eval(obj, mode='plain', combine_all=False)
-        from sage.repl.rich_output.output_basic import OutputLatex
-        return OutputLatex(str(mathjax))
+        from sage.misc.html import html
+        from sage.repl.rich_output.output_browser import OutputHtml
+        return OutputHtml(html(obj, concatenate=concatenate, strict=True))
 
     def set_underscore_variable(self, obj):
         """

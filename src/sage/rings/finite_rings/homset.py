@@ -1,5 +1,6 @@
+# sage.doctest: needs sage.rings.finite_rings
 """
-Homset for Finite Fields
+Homset for finite fields
 
 This is the set of all field homomorphisms between two finite fields.
 
@@ -37,7 +38,9 @@ We can also create endomorphisms::
 
 from sage.rings.homset import RingHomset_generic
 from sage.rings.finite_rings.hom_finite_field import FiniteFieldHomomorphism_generic
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.integer import Integer
+from sage.rings.morphism import RingHomomorphism_im_gens
 from sage.structure.sequence import Sequence
 
 class FiniteFieldHomset(RingHomset_generic):
@@ -94,7 +97,14 @@ class FiniteFieldHomset(RingHomset_generic):
             if self.domain().degree() == 1:
                 from sage.rings.finite_rings.hom_prime_finite_field import FiniteFieldHomomorphism_prime
                 return FiniteFieldHomomorphism_prime(self, im_gens, base_map=base_map, check=check)
-            return FiniteFieldHomomorphism_generic(self, im_gens, base_map=base_map, check=check)
+            if isinstance(self.codomain(), FiniteField):
+                return FiniteFieldHomomorphism_generic(self, im_gens, base_map=base_map, check=check)
+            # Currently, FiniteFieldHomomorphism_generic does not work if
+            # the codomain is not derived from the finite field base class;
+            # in that case, we have to fall back to the generic
+            # implementation for rings
+            else:
+                return RingHomomorphism_im_gens(self, im_gens, base_map=base_map, check=check)
         except (NotImplementedError, ValueError):
             try:
                 return self._coerce_impl(im_gens)
@@ -143,9 +153,9 @@ class FiniteFieldHomset(RingHomset_generic):
         D = self.domain()
         C = self.codomain()
         if C == D:
-            return "Automorphism group of %s"%D
+            return "Automorphism group of %s" % D
         else:
-            return "Set of field embeddings from %s to %s"%(D, C)
+            return "Set of field embeddings from %s to %s" % (D, C)
 
     def is_aut(self):
         """
@@ -255,7 +265,7 @@ class FiniteFieldHomset(RingHomset_generic):
 
         TESTS:
 
-        Check that :trac:`11390` is fixed::
+        Check that :issue:`11390` is fixed::
 
             sage: K = GF(1<<16,'a'); L = GF(1<<32,'b')
             sage: K.Hom(L)[0]
@@ -324,7 +334,7 @@ class FiniteFieldHomset(RingHomset_generic):
 
         TESTS::
 
-            sage: Hom(GF(3^3, 'a'), GF(3^6, 'b')).an_element()
+            sage: Hom(GF(3^3, 'a'), GF(3^6, 'b')).an_element()  # random
             Ring morphism:
               From: Finite Field in a of size 3^3
               To:   Finite Field in b of size 3^6
@@ -337,7 +347,7 @@ class FiniteFieldHomset(RingHomset_generic):
 
         .. TODO::
 
-            Use a more sophisticated algorithm; see also :trac:`8751`.
+            Use a more sophisticated algorithm; see also :issue:`8751`.
 
         """
         K = self.domain()

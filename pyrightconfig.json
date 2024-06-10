@@ -1,0 +1,25 @@
+{
+    "include": [
+      "src/sage"
+    ],
+    "executionEnvironments": [
+      {
+        "root": "src"
+      }
+    ],  
+    "pythonVersion": "3.9",
+    "exclude": ["venv"],
+    "venvPath": "./venv/",
+    "venv": "./",
+
+    "reportGeneralTypeIssues": "warning",
+    "reportUnboundVariable": "warning",
+    "reportDuplicateImport": "error",
+    "reportOptionalMemberAccess": "warning",
+    "reportOptionalCall": "warning",
+    "reportOptionalSubscript": "warning",
+    "reportOptionalIterable": "warning",
+    "reportUndefinedVariable": "warning",
+    "reportOptionalOperand": "warning",
+    "reportMissingImports": "warning",
+}

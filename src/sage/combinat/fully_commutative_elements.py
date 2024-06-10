@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Fully commutative elements of Coxeter groups
 
@@ -27,16 +28,18 @@ Natalie Schoenhals for their contribution to the project and the code.
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.structure.parent import Parent
-from sage.structure.list_clone import NormalizedClonableList
-from sage.categories.enumerated_sets import EnumeratedSets
-from sage.structure.unique_representation import UniqueRepresentation
-from .root_system.coxeter_matrix import CoxeterMatrix
 from collections import deque
-from sage.combinat.posets.posets import Poset
+
 from sage.categories.coxeter_groups import CoxeterGroups
-from sage.combinat.root_system.coxeter_group import CoxeterGroup
-import itertools
+from sage.categories.enumerated_sets import EnumeratedSets
+from sage.misc.lazy_import import lazy_import
+from sage.structure.list_clone import NormalizedClonableList
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import('sage.combinat.posets.posets', 'Poset')
+lazy_import('sage.combinat.root_system.coxeter_group', 'CoxeterGroup')
+lazy_import('sage.combinat.root_system.coxeter_matrix', 'CoxeterMatrix')
 
 
 class FullyCommutativeElement(NormalizedClonableList):
@@ -80,7 +83,7 @@ class FullyCommutativeElement(NormalizedClonableList):
         r"""
         Called automatically when an element is created.
 
-        TESTS::
+        EXAMPLES::
 
             sage: CoxeterGroup(['A', 3]).fully_commutative_elements()([1, 2]) # indirect doctest
             [1, 2]
@@ -124,7 +127,7 @@ class FullyCommutativeElement(NormalizedClonableList):
 
         out_word = []
 
-        while len(self) > 0:
+        while self:
             fronts = self.descents()
             out_word.extend(sorted(fronts))
             for s in fronts:
@@ -145,53 +148,32 @@ class FullyCommutativeElement(NormalizedClonableList):
 
         :func:`check` is an alias of this method, and is called automatically
         when an element is created.
-        
-        TESTS::
 
-            sage: FC = CoxeterGroup(['A', 3]).fully_commutative_elements() 
+        EXAMPLES::
+
+            sage: FC = CoxeterGroup(['A', 3]).fully_commutative_elements()
             sage: x = FC([1, 2]); x.is_fully_commutative()
             True
             sage: x = FC.element_class(FC, [1, 2, 1], check=False); x.is_fully_commutative()
             False
         """
-        matrix = self.parent().coxeter_group().coxeter_matrix()
-        w = tuple(self)
-        
-        # The following function detects 'braid' words.
-        def contains_long_braid(w):
-            for i in range(0, len(w) - 2):
-                a = w[i]
-                b = w[i + 1]
-                m = matrix[a, b]
-                if m > 2 and i + m <= len(w):
-                    ab_braid = (a, b) * (m // 2) + ((a,) if m % 2 == 1 else ())
-                    if w[i:i + m] == ab_braid:
-                        return True
-            return False
+        word = list(self)
+        from sage.combinat.root_system.braid_orbit import is_fully_commutative as is_fully_comm
 
-        # The following function applies a commutation relation on a word.
-        def commute_once(word, i):
-            return word[:i] + (word[i + 1], word[i]) + word[i + 2:]
+        group = self.parent().coxeter_group()
+        braid_rels = group.braid_relations()
+        I = group.index_set()
 
-        # A word is the reduced word of an FC element iff no sequence of
-        # commutation relations on it yields a word with a 'braid' word: 
-        if contains_long_braid(w):
-            return False
-        else:
-            l, checked, queue = len(w), {w}, deque([w])
-            while queue:
-                word = queue.pop()
-                for i in range(l - 1):
-                    a, b = word[i], word[i + 1]
-                    if matrix[a, b] == 2:
-                        new_word = commute_once(word, i)
-                        if new_word not in checked:
-                            if contains_long_braid(new_word):
-                                return False
-                            else:
-                                checked.add(new_word)
-                                queue.appendleft(new_word)
-            return True
+        from sage.rings.integer_ring import ZZ
+        be_careful = any(i not in ZZ for i in I)
+
+        if be_careful:
+            Iinv = {i: j for j, i in enumerate(I)}
+            word = [Iinv[i] for i in word]
+            braid_rels = [[[Iinv[i] for i in l],
+                           [Iinv[i] for i in r]] for l, r in braid_rels]
+
+        return is_fully_comm(word, braid_rels)
 
     # Representing FC elements: Heaps
     def heap(self, **kargs):
@@ -209,13 +191,15 @@ class FullyCommutativeElement(NormalizedClonableList):
 
         - ``self`` -- list, a reduced word `w=s_0... s_{k-1}` of an FC element
 
-        - ``one_index`` -- boolean (default: False). Setting the value to True
+        - ``one_index`` -- boolean (default: ``False``). Setting the value to True
           will change the underlying set of the poset to `\{1, 2, \dots, n\}`
 
-        - ``display_labeling`` -- boolean (default: False). Setting the value to
+        - ``display_labeling`` -- boolean (default: ``False``). Setting the value to
           True will display the label `s_i` for each element `i` of the poset
 
-        OUTPUT: A labeled poset where the underlying set is `\{0,1,...,k-1\}`
+        OUTPUT:
+
+        A labeled poset where the underlying set is `\{0,1,...,k-1\}`
         and where each element `i` carries `s_i` as its label. The partial order
         `\prec` on the poset is defined by declaring `i\prec j` if `i<j` and
         `m(s_i,s_j)\neq 2`.
@@ -241,8 +225,8 @@ class FullyCommutativeElement(NormalizedClonableList):
             return self[index - 1] if one_index else self[index]
 
         # specify the partial order:
-        relations = [(i, j) for [i, j] in itertools.product(
-            elements, repeat=2) if i < j and m[letter(i), letter(j)] != 2]
+        relations = [(i, j) for i in elements for j in elements
+                     if i < j and m[letter(i), letter(j)] != 2]
         p = Poset((elements, relations))
 
         if not display_labeling:
@@ -267,11 +251,11 @@ class FullyCommutativeElement(NormalizedClonableList):
         EXAMPLES::
 
             sage: FC = CoxeterGroup(['B', 5]).fully_commutative_elements()
-            sage: FC([3,2,4,3,1]).plot_heap()
+            sage: FC([3,2,4,3,1]).plot_heap()                                           # needs sage.plot
             Graphics object consisting of 15 graphics primitives
 
         .. PLOT::
-            :width: 400px
+            :width: 400 px
 
             FC = CoxeterGroup(['B', 5]).fully_commutative_elements()
             g = FC([3,2,4,3,1]).plot_heap()
@@ -372,7 +356,6 @@ class FullyCommutativeElement(NormalizedClonableList):
         the index of the leftmost occurrence of ``s`` in ``self`` if so and
         return ``None`` if not.
 
-
         EXAMPLES::
 
             sage: FC = CoxeterGroup(['B', 5]).fully_commutative_elements()
@@ -464,7 +447,7 @@ class FullyCommutativeElement(NormalizedClonableList):
     # Coset decompositions
     def coset_decomposition(self, J, side='left'):
         r"""
-        Return the coset decomposition of ``self`` with repsect to the parabolic
+        Return the coset decomposition of ``self`` with respect to the parabolic
         subgroup generated by ``J``.
 
         INPUT:
@@ -604,7 +587,7 @@ class FullyCommutativeElement(NormalizedClonableList):
             removing the leftmost `s` from `u_2`;
 
             ...
-            
+
             (m-1) the appropriate element in `\{s, t\}` is a left descent
             of the word `u_{m-1}` obtained by removing the leftmost letter
             required to be a descent in Condition (m-2) from `u_{m-2}`.
@@ -628,13 +611,13 @@ class FullyCommutativeElement(NormalizedClonableList):
 
         # Find the first letter in that doesn't commute with s.
         try:
-            (j, t) = next((i, x) for (i, x) in enumerate(self) if m[s, x] >= 3)
+            j, t = next((i, x) for i, x in enumerate(self) if m[s, x] >= 3)
         except StopIteration:
             return True
 
         u = self.clone()
         u._set_list(self[j:])
-        x, y = u.coset_decomposition({s, t})
+        x, _ = u.coset_decomposition({s, t})
         return len(x) != m[s, t] - 1
 
     ###########################################################################
@@ -702,7 +685,7 @@ class FullyCommutativeElement(NormalizedClonableList):
             sage: w.coset_decomposition({5, 6})
             ([6, 5, 6], [1, 2, 4, 5])
 
-        Only the lower star operation is defined on the left on `w`:: 
+        Only the lower star operation is defined on the left on `w`::
 
             sage: w.star_operation({5,6}, 'upper')
             <BLANKLINE>
@@ -820,7 +803,7 @@ class FullyCommutativeElements(UniqueRepresentation, Parent):
         True
 
     Attempting to create an element from an input that is not the reduced word
-    of a fully commutative element throws a ``ValueError``::
+    of a fully commutative element throws a :class:`ValueError`::
 
         sage: FC([1,2,1])
         Traceback (most recent call last):
@@ -925,7 +908,7 @@ class FullyCommutativeElements(UniqueRepresentation, Parent):
             group = data
         else:
             group = CoxeterGroup(data)
-        return super(cls, FullyCommutativeElements).__classcall__(cls, group)
+        return super().__classcall__(cls, group)
 
     def __init__(self, coxeter_group):
         r"""
@@ -939,14 +922,14 @@ class FullyCommutativeElements(UniqueRepresentation, Parent):
 
         # Start with the category of enumerated sets and refine it to finite or
         # infinite enumerated sets for Coxeter groups of Cartan types.
-        category = EnumeratedSets() 
+        category = EnumeratedSets()
 
         coxeter_type = self._coxeter_group.coxeter_type()
 
         if not isinstance(coxeter_type, CoxeterMatrix):
             # This case handles all finite or affine Coxeter types (or products thereof)
             ctypes = [coxeter_type] if coxeter_type.is_irreducible() else coxeter_type.component_types()
-            
+
             is_finite = True
             # this type will be FC-finite if and only if each component type is:
             for ctype in ctypes:
@@ -958,7 +941,7 @@ class FullyCommutativeElements(UniqueRepresentation, Parent):
                 if not (ctype.is_finite() or (family == 'F' and rank == 5) or (family == 'E' and rank == 9)):
                     is_finite = False
                     break
-            
+
             if is_finite:
                 category = category.Finite()
             else:

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Rigged Configuration Elements
 
@@ -11,7 +12,7 @@ AUTHORS:
 - Travis Scrimshaw (2012-10-25): Added virtual rigged configurations
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010-2012 Travis Scrimshaw <tscrim@ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -23,19 +24,17 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function, division
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.misc.cachefunc import cached_method
 from sage.structure.list_clone import ClonableArray
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.combinat.rigged_configurations.rigged_partition import RiggedPartition, \
-  RiggedPartitionTypeB
+from sage.combinat.rigged_configurations.rigged_partition import RiggedPartition, RiggedPartitionTypeB
+
 
 ####################################################
-## Base classes for rigged configuration elements ##
+#  Base classes for rigged configuration elements  #
 ####################################################
 
 class RiggedConfigurationElement(ClonableArray):
@@ -146,6 +145,7 @@ class RiggedConfigurationElement(ClonableArray):
         (/)  1[ ]0  0[ ]0  0[ ]0  0[ ]0
                     0[ ]0
     """
+
     def __init__(self, parent, rigged_partitions=[], **options):
         r"""
         Construct a rigged configuration element.
@@ -156,7 +156,7 @@ class RiggedConfigurationElement(ClonableArray):
             if the rigged partitions comes from another rigged configuration,
             a deep copy should be made before being passed here. We do not
             make a deep copy here because the crystal operators generate
-            their own rigged partitions. See :trac:`17054`.
+            their own rigged partitions. See :issue:`17054`.
 
         EXAMPLES::
 
@@ -199,11 +199,9 @@ class RiggedConfigurationElement(ClonableArray):
             if len(data) == 0:
                 # Create a size n array of empty rigged tableau since no tableau
                 #   were given
-                nu = []
-                for i in range(n):
-                    nu.append(RiggedPartition())
+                nu = [RiggedPartition() for _ in range(n)]
             else:
-                if len(data) != n: # otherwise n should be equal to the number of tableaux
+                if len(data) != n:  # otherwise n should be equal to the number of tableaux
                     raise ValueError("incorrect number of partitions")
 
                 nu = []
@@ -214,8 +212,8 @@ class RiggedConfigurationElement(ClonableArray):
                         raise ValueError("incorrect number of riggings")
 
                     for i in range(n):
-                       nu.append(RiggedPartition(tuple(data[i]), \
-                          list(rigging_data[i])))
+                        nu.append(RiggedPartition(tuple(data[i]),
+                                                  list(rigging_data[i])))
                 else:
                     for partition_data in data:
                         nu.append(RiggedPartition(tuple(partition_data)))
@@ -233,8 +231,8 @@ class RiggedConfigurationElement(ClonableArray):
             nu = []
             for i in range(n):
                 nu.append(RiggedPartition())
-            #raise ValueError("Invalid input")
-            #raise ValueError("Incorrect number of rigged partitions")
+            # raise ValueError("Invalid input")
+            # raise ValueError("Incorrect number of rigged partitions")
 
         # Set the vacancy numbers
         for a, partition in enumerate(nu):
@@ -331,7 +329,7 @@ class RiggedConfigurationElement(ClonableArray):
         ret_str = ""
         for tableau in self:
             ret_str += "\n" + repr(tableau)
-        return(ret_str)
+        return ret_str
 
     def _repr_horizontal(self):
         """
@@ -450,7 +448,7 @@ class RiggedConfigurationElement(ClonableArray):
         if Partitions.options.convention == "French":
             baseline = lambda s: 0
         else:
-            baseline = lambda s: len(s)
+            baseline = len
         from sage.typeset.ascii_art import AsciiArt
         s = repr(self[0]).splitlines()
         ret = AsciiArt(s, baseline=baseline(s))
@@ -601,7 +599,6 @@ class RiggedConfigurationElement(ClonableArray):
 
                     new_vac_nums[i] += M[a,b]
                     new_rigging[i] += M[a,b]
-
 
                 if k != 1 and not set_vac_num: # If we did not remove a row nor found another row of length k-1
                     new_vac_nums[rigging_index] += 2
@@ -924,6 +921,7 @@ class RiggedConfigurationElement(ClonableArray):
             riggings.append(list(p.rigging))
         return [partitions, riggings]
 
+
 class RCNonSimplyLacedElement(RiggedConfigurationElement):
     """
     Rigged configuration elements for non-simply-laced types.
@@ -943,6 +941,7 @@ class RCNonSimplyLacedElement(RiggedConfigurationElement):
         <BLANKLINE>
         sage: TestSuite(elt).run()
     """
+
     def to_virtual_configuration(self):
         """
         Return the corresponding rigged configuration in the virtual crystal.
@@ -1039,8 +1038,9 @@ class RCNonSimplyLacedElement(RiggedConfigurationElement):
         return self.parent().from_virtual(virtual_rc)
 
 ##########################################################
-## Highest weight crystal rigged configuration elements ##
+#  Highest weight crystal rigged configuration elements  #
 ##########################################################
+
 
 class RCHighestWeightElement(RiggedConfigurationElement):
     """
@@ -1061,6 +1061,7 @@ class RCHighestWeightElement(RiggedConfigurationElement):
         <BLANKLINE>
         sage: TestSuite(elt).run()
     """
+
     def check(self):
         """
         Make sure all of the riggings are less than or equal to the
@@ -1146,6 +1147,7 @@ class RCHighestWeightElement(RiggedConfigurationElement):
         alpha = list(P.simple_roots())
         return self.parent()._wt - sum(sum(x) * alpha[i] for i,x in enumerate(self))
 
+
 class RCHWNonSimplyLacedElement(RCNonSimplyLacedElement):
     """
     Rigged configurations in highest weight crystals.
@@ -1160,6 +1162,7 @@ class RCHWNonSimplyLacedElement(RCNonSimplyLacedElement):
         -1[ ]-1
         sage: TestSuite(elt).run()
     """
+
     def check(self):
         """
         Make sure all of the riggings are less than or equal to the
@@ -1225,8 +1228,9 @@ class RCHWNonSimplyLacedElement(RCNonSimplyLacedElement):
         return self.parent()._wt - sum(sum(x) * alpha[i] for i,x in enumerate(self))
 
 ##############################################
-## KR crystal rigged configuration elements ##
+#  KR crystal rigged configuration elements  #
 ##############################################
+
 
 class KRRiggedConfigurationElement(RiggedConfigurationElement):
     r"""
@@ -1253,6 +1257,7 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
         sage: tp_krtab.to_rigged_configuration() == rc_elt
         True
     """
+
     def __init__(self, parent, rigged_partitions=[], **options):
         r"""
         Construct a rigged configuration element.
@@ -1301,9 +1306,8 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
             shape_data = data[0]
             rigging_data = data[1]
             vac_data = data[2]
-            nu = []
-            for i in range(n):
-                nu.append(RiggedPartition(shape_data[i], rigging_data[i], vac_data[i]))
+            nu = [RiggedPartition(a, b, c)
+                  for a, b, c in zip(shape_data, rigging_data, vac_data)]
             # Special display case
             if parent.cartan_type().type() == 'B':
                 nu[-1] = RiggedPartitionTypeB(nu[-1])
@@ -1554,7 +1558,6 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
             wt -= sum(nu) * alpha[rc_index[a]]
         return wt
 
-
     def to_tensor_product_of_kirillov_reshetikhin_tableaux(self, display_steps=False, build_graph=False):
         r"""
         Perform the bijection from this rigged configuration to a tensor
@@ -1769,7 +1772,7 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
              1[ ]0         0[ ][ ]0  -1[ ]-1
                            0[ ]0
 
-        We check that the bijection commutes with the right spliting map::
+        We check that the bijection commutes with the right splitting map::
 
             sage: RC = RiggedConfigurations(['A', 3, 1], [[1,1], [2,2]])
             sage: all(rc.right_split().to_tensor_product_of_kirillov_reshetikhin_tableaux()
@@ -2032,7 +2035,7 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
 
         TESTS:
 
-        We check that :trac:`18898` is fixed::
+        We check that :issue:`18898` is fixed::
 
             sage: RC = RiggedConfigurations(['D',4,1], [[2,1], [2,1], [2,3]])
             sage: x = RC(partition_list=[[1], [1,1], [1], [1]], rigging_list=[[0], [2,1], [0], [0]])
@@ -2065,6 +2068,7 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
 
         rc = P(partition_list=nu, rigging_list=rig)
         return rc.f_string(reversed(e_str))
+
 
 class KRRCSimplyLacedElement(KRRiggedConfigurationElement):
     r"""
@@ -2145,6 +2149,7 @@ class KRRCSimplyLacedElement(KRRiggedConfigurationElement):
             B._max_charge = max(b.cocharge() for b in B.module_generators)
         return B._max_charge - self.cocharge()
 
+
 class KRRCNonSimplyLacedElement(KRRiggedConfigurationElement, RCNonSimplyLacedElement):
     r"""
     `U_q^{\prime}(\mathfrak{g})` rigged configurations in non-simply-laced
@@ -2160,6 +2165,7 @@ class KRRCNonSimplyLacedElement(KRRiggedConfigurationElement, RCNonSimplyLacedEl
         0[ ][ ]0
         sage: TestSuite(elt).run()
     """
+
     def e(self, a):
         r"""
         Return the action of `e_a` on ``self``.
@@ -2270,7 +2276,7 @@ class KRRCNonSimplyLacedElement(KRRiggedConfigurationElement, RCNonSimplyLacedEl
             sage: RC(partition_list=[[1,1],[2,1],[1,1]]).cocharge()
             1
         """
-        #return self.to_virtual_configuration().cocharge() / self.parent()._folded_ct.gamma[0]
+        # return self.to_virtual_configuration().cocharge() / self.parent()._folded_ct.gamma[0]
         vct = self.parent()._folded_ct
         cc = ZZ.zero()
         rigging_sum = ZZ.zero()
@@ -2291,11 +2297,13 @@ class KRRCNonSimplyLacedElement(KRRiggedConfigurationElement, RCNonSimplyLacedEl
 
     cc = cocharge
 
+
 class KRRCTypeA2DualElement(KRRCNonSimplyLacedElement):
     r"""
     `U_q^{\prime}(\mathfrak{g})` rigged configurations in type
     `A_{2n}^{(2)\dagger}`.
     """
+
     def epsilon(self, a):
         r"""
         Return the value of `\varepsilon_a` of ``self``.
@@ -2408,4 +2416,3 @@ class KRRCTypeA2DualElement(KRRCNonSimplyLacedElement):
         return cc / ZZ(2) + rigging_sum
 
     cc = cocharge
-

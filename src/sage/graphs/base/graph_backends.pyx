@@ -1,12 +1,11 @@
-# -*- coding: utf-8 -*-
 r"""
-Backends for Sage (di)graphs.
+Backends for Sage (di)graphs
 
 This module implements :class:`GenericGraphBackend` (the base class for
 backends).
 
 Any graph backend must redefine the following methods (for which
-:class:`GenericGraphBackend` raises a ``NotImplementedError``)
+:class:`GenericGraphBackend` raises a :class:`NotImplementedError`)
 
 .. csv-table::
     :class: contentstable
@@ -47,7 +46,6 @@ For an overview of graph data structures in sage, see
 Classes and methods
 -------------------
 """
-
 # ****************************************************************************
 #       Copyright (C) 2008 Robert L. Miller <rlmillster@gmail.com>
 #                     2018 Julian Rüth <julian.rueth@fsfe.org>
@@ -58,8 +56,7 @@ Classes and methods
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-from .c_graph cimport CGraphBackend, CGraph
+from sage.graphs.base.c_graph cimport CGraphBackend
 
 
 cdef class GenericGraphBackend(SageObject):
@@ -87,7 +84,7 @@ cdef class GenericGraphBackend(SageObject):
 
         INPUT:
 
-        - ``u,v`` -- vertices
+        - ``u``, ``v`` -- vertices
         - ``l`` -- edge label
         - ``directed`` -- boolean
 
@@ -235,7 +232,7 @@ cdef class GenericGraphBackend(SageObject):
 
         INPUT:
 
-        - ``u,v`` -- vertices
+        - ``u``, ``v`` -- vertices
         - ``l`` -- edge label
         - ``directed`` -- boolean
 
@@ -291,7 +288,7 @@ cdef class GenericGraphBackend(SageObject):
 
         INPUT:
 
-        - ``u,v`` -- vertex labels
+        - ``u``, ``v`` -- vertex labels
 
         OUTPUT:
 
@@ -313,7 +310,7 @@ cdef class GenericGraphBackend(SageObject):
 
         INPUT:
 
-        - ``u,v`` -- vertex labels
+        - ``u``, ``v`` -- vertex labels
         - ``l`` -- label
 
         OUTPUT:
@@ -664,7 +661,7 @@ cdef class GenericGraphBackend(SageObject):
 
         INPUT:
 
-        - ``u,v`` -- vertices
+        - ``u``, ``v`` -- vertices
         - ``l`` -- edge label
         - ``directed`` -- boolean
 
@@ -724,9 +721,9 @@ cdef class GenericGraphBackend(SageObject):
             sage: loads(dumps(gi)) == gi
             True
         """
-        from .static_sparse_backend import StaticSparseBackend
-        from .sparse_graph import SparseGraphBackend
-        from .dense_graph import DenseGraphBackend
+        from sage.graphs.base.static_sparse_backend import StaticSparseBackend
+        from sage.graphs.base.sparse_graph import SparseGraphBackend
+        from sage.graphs.base.dense_graph import DenseGraphBackend
 
         # implementation, data_structure, multiedges, directed, loops
         if isinstance(self, CGraphBackend):
@@ -740,22 +737,23 @@ cdef class GenericGraphBackend(SageObject):
             else:
                 raise Exception
             multiedges = (<CGraphBackend> self)._multiple_edges
-            directed   = (<CGraphBackend> self)._directed
-            loops      = (<CGraphBackend> self)._loops
+            directed = (<CGraphBackend> self)._directed
+            loops = (<CGraphBackend> self)._loops
         else:
             raise Exception
 
         # Vertices and edges
         vertices = list(self.iterator_verts(None))
         if directed:
-            edges    = list(self.iterator_out_edges(vertices, True))
+            edges = list(self.iterator_out_edges(vertices, True))
         else:
-            edges    = list(self.iterator_edges(vertices, True))
+            edges = list(self.iterator_edges(vertices, True))
 
         return (unpickle_graph_backend,
                 (directed, vertices, edges,
                  {'loops': loops,
                   'multiedges': multiedges}))
+
 
 def unpickle_graph_backend(directed, vertices, edges, kwds):
     r"""

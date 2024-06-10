@@ -6,23 +6,22 @@ This is the helper file providing functionality for projective_ds.py.
 AUTHORS:
 
 - Dillon Rose (2014-01):  Speed enhancements
-
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.arith.functions cimport LCM_list
 from sage.rings.finite_rings.finite_field_constructor import GF
-from sage.sets.all import Set
-from sage.misc.misc import subsets
+from sage.combinat.subset import subsets
+
 
 cpdef _fast_possible_periods(self, return_points=False):
     r"""
@@ -35,7 +34,7 @@ cpdef _fast_possible_periods(self, return_points=False):
 
     INPUT:
 
-    - ``return_points`` - (default: ``False``) boolean; if ``True``, then
+    - ``return_points`` -- (default: ``False``) boolean; if ``True``, then
       return the points as well as the possible periods
 
     OUTPUT:
@@ -82,14 +81,14 @@ cpdef _fast_possible_periods(self, return_points=False):
         raise TypeError("must be prime field")
 
     PS = self.domain()
-    from sage.schemes.projective.projective_space import is_ProjectiveSpace
-    if not is_ProjectiveSpace(PS) or PS != self.codomain():
+    from sage.schemes.projective.projective_space import ProjectiveSpace_ring
+    if not isinstance(PS, ProjectiveSpace_ring) or PS != self.codomain():
         raise NotImplementedError("must be an endomorphism of projective space")
 
     p = PS.base_ring().order()
     N = int(PS.dimension_relative())
 
-    point_table = [[0,0] for i in xrange(p**(N + 1))]
+    point_table = [[0,0] for i in range(p**(N + 1))]
     index = 1
     periods = set()
     points_periods = []
@@ -115,13 +114,13 @@ cpdef _fast_possible_periods(self, return_points=False):
                 points_periods.append([P_proj, period])
                 l = P_proj.multiplier(self, period, False)
                 lorders = set()
-                for poly,_ in l.charpoly().factor():
+                for poly, _ in l.charpoly().factor():
                     if poly.degree() == 1:
                         eig = -poly.constant_coefficient()
                         if not eig:
-                            continue # exclude 0
+                            continue  # exclude 0
                     else:
-                        eig = GF(p**poly.degree(), 't', modulus=poly).gen()
+                        eig = GF((p, poly.degree()), 't', modulus=poly).gen()
                     if eig:
                         lorders.add(eig.multiplicative_order())
                 S = subsets(lorders)
@@ -151,7 +150,8 @@ cpdef _fast_possible_periods(self, return_points=False):
     if not return_points:
         return sorted(periods)
     else:
-        return(points_periods)
+        return points_periods
+
 
 def _enum_points(int prime, int dimension):
     """
@@ -173,11 +173,12 @@ def _enum_points(int prime, int dimension):
     highest_range = prime**dimension
 
     while current_range <= highest_range:
-        for value in xrange(current_range, 2*current_range):
+        for value in range(current_range, 2*current_range):
             yield _get_point_from_hash(value, prime, dimension)
         current_range = current_range * prime
 
-cpdef int _hash(list Point, int prime):
+
+cpdef int _hash(list Point, int prime) noexcept:
     """
     Hash point given as list to unique number.
 
@@ -211,13 +212,13 @@ cpdef list _get_point_from_hash(int value, int prime, int dimension):
     cdef list P = []
     cdef int i
 
-    for i in xrange(dimension + 1):
+    for i in range(dimension + 1):
         P.append(value % prime)
         value /= prime
 
     return P
 
-cdef inline int _mod_inv(int num, int prime):
+cdef inline int _mod_inv(int num, int prime) noexcept:
     """
     Find the inverse of the number modulo the given prime.
     """
@@ -258,7 +259,7 @@ cpdef _normalize_coordinates(list point, int prime, int len_points):
     """
     cdef int last_coefficient, coefficient, mod_inverse, val
 
-    for coefficient in xrange(len_points):
+    for coefficient in range(len_points):
         val = ((<int> point[coefficient]) + prime) % prime
         point[coefficient] = val
         if val != 0:
@@ -266,7 +267,7 @@ cpdef _normalize_coordinates(list point, int prime, int len_points):
 
     mod_inverse = _mod_inv(last_coefficient, prime)
 
-    for coefficient in xrange(len_points):
+    for coefficient in range(len_points):
         point[coefficient] = (point[coefficient] * mod_inverse) % prime
 
 cpdef _all_periodic_points(self):

@@ -1,18 +1,19 @@
+# sage.doctest: needs sage.rings.finite_rings
 """
-Base Classes for Finite Fields
+Base class for finite fields
 
 TESTS::
 
-    sage: K.<a> = NumberField(x^2 + 1)
-    sage: F = K.factor(3)[0][0].residue_field()
-    sage: loads(dumps(F)) == F
+    sage: x = polygen(ZZ)
+    sage: K.<a> = NumberField(x^2 + 1)                                                  # needs sage.rings.number_field
+    sage: F = K.factor(3)[0][0].residue_field()                                         # needs sage.rings.number_field
+    sage: loads(dumps(F)) == F                                                          # needs sage.rings.number_field
     True
 
 AUTHORS:
 
 - Adrien Brochard, David Roe, Jeroen Demeyer, Julian Rueth, Niles Johnson,
   Peter Bruin, Travis Scrimshaw, Xavier Caruso: initial version
-
 """
 #*****************************************************************************
 #       Copyright (C) 2009 David Roe <roed@math.harvard.edu>
@@ -27,7 +28,7 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 cimport cython
@@ -35,12 +36,12 @@ from cysignals.signals cimport sig_check
 from cpython.array cimport array
 
 from sage.categories.finite_fields import FiniteFields
-from sage.structure.parent cimport Parent
 from sage.misc.persist import register_unpickle_override
 from sage.misc.cachefunc import cached_method
 from sage.misc.prandom import randrange
 from sage.rings.integer cimport Integer
-from sage.misc.superseded import deprecation
+import sage.rings.abc
+from sage.misc.superseded import deprecation_cython as deprecation, deprecated_function_alias
 
 # Copied from sage.misc.fast_methods, used in __hash__() below.
 cdef int SIZEOF_VOID_P_SHIFT = 8*sizeof(void *) - 4
@@ -81,7 +82,7 @@ cdef class FiniteField(Field):
 
     def __hash__(self):
         """
-        The hash provided by this class coincides with that of ``<type 'object'>``.
+        The hash provided by this class coincides with that of ``<class 'object'>``.
 
         TESTS::
 
@@ -225,13 +226,14 @@ cdef class FiniteField(Field):
 
         EXAMPLES::
 
-            sage: GF(97,'a')._magma_init_(magma)            # optional - magma
+            sage: # optional - magma
+            sage: GF(97,'a')._magma_init_(magma)
             'GF(97)'
-            sage: GF(9,'a')._magma_init_(magma)             # optional - magma
+            sage: GF(9,'a')._magma_init_(magma)
             'SageCreateWithNames(ext<GF(3)|_sage_[...]![GF(3)!2,GF(3)!2,GF(3)!1]>,["a"])'
-            sage: magma(GF(9,'a'))                          # optional - magma
+            sage: magma(GF(9,'a'))
             Finite field of size 3^2
-            sage: magma(GF(9,'a')).1                        # optional - magma
+            sage: magma(GF(9,'a')).1
             a
         """
         if self.degree() == 1:
@@ -261,7 +263,7 @@ cdef class FiniteField(Field):
 
         TESTS:
 
-        The variable name is preserved (:trac:`28566`)::
+        The variable name is preserved (:issue:`28566`)::
 
             sage: K = macaulay2(GF(49, 'b'))  # optional - macaulay2
             sage: K.gens()                    # optional - macaulay2
@@ -273,7 +275,6 @@ cdef class FiniteField(Field):
             return "ZZ/%s" % self.order()
         return "GF(%s,Variable=>symbol %s)" % (self.order(),
                                                self.variable_name())
-
 
     def _sage_input_(self, sib, coerced):
         r"""
@@ -326,7 +327,7 @@ cdef class FiniteField(Field):
             sage: p = next_prime(2^64)
             sage: k.<a> = FiniteField(p^2, impl="pari")
             sage: it = iter(k); it
-            <generator object at ...>
+            <...generator object at ...>
             sage: [next(it) for i in range(10)]
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
@@ -336,11 +337,11 @@ cdef class FiniteField(Field):
 
             sage: L = []
             sage: from sage.rings.finite_rings.finite_field_base import FiniteField
-            sage: for impl in ("givaro", "pari", "ntl"):
-            ....:     k = GF(8, impl=impl, names="z")
-            ....:     print(list(FiniteField.__iter__(k)))
+            sage: print(list(FiniteField.__iter__(GF(8, impl="givaro", names="z"))))    # needs sage.libs.linbox
             [0, 1, z, z + 1, z^2, z^2 + 1, z^2 + z, z^2 + z + 1]
+            sage: print(list(FiniteField.__iter__(GF(8, impl="pari", names="z"))))
             [0, 1, z, z + 1, z^2, z^2 + 1, z^2 + z, z^2 + z + 1]
+            sage: print(list(FiniteField.__iter__(GF(8, impl="ntl", names="z"))))       # needs sage.libs.ntl
             [0, 1, z, z + 1, z^2, z^2 + 1, z^2 + z, z^2 + z + 1]
         """
         cdef Py_ssize_t n = self.degree()
@@ -405,13 +406,68 @@ cdef class FiniteField(Field):
         if lim == <unsigned long>(-1):
             raise NotImplementedError("iterating over all elements of a large finite field is not supported")
 
+    def from_integer(self, n, reverse=False):
+        r"""
+        Return the finite field element obtained by reinterpreting the base-`p`
+        expansion of `n` as a polynomial and evaluating it at the generator of
+        this finite field.
+
+        If ``reverse`` is set to ``True`` (default: ``False``),
+        the list of digits is reversed prior to evaluation.
+
+        Inverse of :meth:`sage.rings.finite_rings.element_base.FinitePolyExtElement.to_integer`.
+
+        INPUT:
+
+        - `n` -- integer between `0` and the cardinality of this field minus `1`.
+
+        EXAMPLES::
+
+            sage: p = 4091
+            sage: F = GF(p^4, 'a')
+            sage: n = 100*p^3 + 37*p^2 + 12*p + 6
+            sage: F.from_integer(n)
+            100*a^3 + 37*a^2 + 12*a + 6
+            sage: F.from_integer(n) in F
+            True
+            sage: F.from_integer(n, reverse=True)
+            6*a^3 + 12*a^2 + 37*a + 100
+
+        TESTS::
+
+            sage: F = GF(19^5)
+            sage: F.from_integer(0)
+            0
+            sage: _.parent()
+            Finite Field in ... of size 19^5
+            sage: F.from_integer(-5)
+            Traceback (most recent call last):
+            ...
+            ValueError: n must be between 0 and self.order()
+            sage: F.from_integer(F.cardinality())
+            Traceback (most recent call last):
+            ...
+            ValueError: n must be between 0 and self.order()
+        """
+        n = Integer(n)
+        if not 0 <= n < self.order():
+            raise ValueError("n must be between 0 and self.order()")
+        cdef list digs = n.digits(self.characteristic())
+        g = self.gen()
+        r = self.zero()
+        for d in (digs if reverse else digs[::-1]):
+            r = r * g + self(d)
+        return r
+
+    fetch_int = deprecated_function_alias(33941, from_integer)
+
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         """
         Return ``True`` if the map from self to codomain sending
         ``self.0`` to the unique element of ``im_gens`` is a valid field
         homomorphism. Otherwise, return ``False``.
 
-        EXAMPLES::
+        EXAMPLES:
 
         Between prime fields::
 
@@ -477,12 +533,13 @@ cdef class FiniteField(Field):
         from sage.rings.finite_rings.homset import FiniteFieldHomset
         if category.is_subcategory(FiniteFields()):
             return FiniteFieldHomset(self, codomain, category)
-        return super(FiniteField, self)._Hom_(codomain, category)
+        return super()._Hom_(codomain, category)
 
     def _squarefree_decomposition_univariate_polynomial(self, f):
         """
-        Return the square-free decomposition of this polynomial.  This is a
-        partial factorization into square-free, coprime polynomials.
+        Return the square-free decomposition of this polynomial.
+
+        This is a partial factorization into square-free, coprime polynomials.
 
         This is a helper method for
         :meth:`sage.rings.polynomial.squarefree_decomposition`.
@@ -491,8 +548,8 @@ cdef class FiniteField(Field):
 
         - ``f`` -- a univariate non-zero polynomial over this field
 
-        ALGORITHM; [Coh1993]_, algorithm 3.4.2 which is basically the algorithm in
-        [Yun1976]_ with special treatment for powers divisible by `p`.
+        ALGORITHM: [Coh1993]_, Algorithm 3.4.2 which is basically the algorithm
+        in [Yun1976]_ with special treatment for powers divisible by `p`.
 
         EXAMPLES::
 
@@ -520,54 +577,70 @@ cdef class FiniteField(Field):
             ....:             for j in range(len(F)):
             ....:                 if i == j: continue
             ....:                 assert gcd(F[i][0], F[j][0]) == 1
-            ....:
+
+        Check that :issue:`35323` is fixed::
+
+            sage: R.<x> = GF(2)[]
+            sage: (x^2 + 1).squarefree_decomposition()
+            (x + 1)^2
+            sage: R.<x> = PolynomialRing(GF(65537), sparse=True)
+            sage: (x^65537 + 2).squarefree_decomposition()
+            (x + 2)^65537
+
         """
         from sage.structure.factorization import Factorization
         if f.degree() == 0:
             return Factorization([], unit=f[0])
 
-        factors = []
-        p = self.characteristic()
+        cdef Py_ssize_t i, k
+        cdef list factors = []
+        cdef Integer p = Integer(self.characteristic())
         unit = f.leading_coefficient()
         T0 = f.monic()
-        e = 1
-        if T0.degree() > 0:
+        cdef Integer e = Integer(1)
+        cdef Integer T0_deg = T0.degree()
+        if T0_deg > 0:
+            P = T0.parent()
             der = T0.derivative()
+            pth_root = self.frobenius_endomorphism(-1)
             while der.is_zero():
-                T0 = T0.parent()([T0[p*i].pth_root() for i in range(T0.degree()//p + 1)])
+                T0 = P([pth_root(T0[p*i]) for i in range(T0_deg//p + 1)])
+                T0_deg //= p
                 if T0 == 1:
                     raise RuntimeError
                 der = T0.derivative()
-                e = e*p
+                e *= p
             T = T0.gcd(der)
             V = T0 // T
             k = 0
-            while T0.degree() > 0:
+            while T0_deg > 0:
                 k += 1
                 if p.divides(k):
                     T = T // V
                     k += 1
                 W = V.gcd(T)
                 if W.degree() < V.degree():
-                    factors.append((V // W, e*k))
+                    factors.append((V // W, e * k))
                     V = W
                     T = T // V
                     if V.degree() == 0:
                         if T.degree() == 0:
                             break
                         # T is of the form sum_{i=0}^n t_i X^{pi}
-                        T0 = T0.parent()([T[p*i].pth_root() for i in range(T.degree()//p + 1)])
+                        T0 = P([pth_root(T[p*i]) for i in range(T.degree()//p + 1)])
+                        T0_deg //= p
                         der = T0.derivative()
-                        e = p*e
+                        e *= p
                         while der.is_zero():
-                            T0 = T0.parent()([T0[p*i].pth_root() for i in range(T0.degree()//p + 1)])
+                            T0 = P([pth_root(T0[p*i]) for i in range(T0_deg//p + 1)])
+                            T0_deg //= p
                             der = T0.derivative()
-                            e = p*e
+                            e *= p
                         T = T0.gcd(der)
                         V = T0 // T
                         k = 0
                 else:
-                    T = T//V
+                    T = T // V
 
         return Factorization(factors, unit=unit, sort=False)
 
@@ -645,7 +718,7 @@ cdef class FiniteField(Field):
             a + 1
 
         This works even in very large finite fields, provided that ``n``
-        can be factored (see :trac:`25203`)::
+        can be factored (see :issue:`25203`)::
 
             sage: k.<a> = GF(2^2000)
             sage: p = 8877945148742945001146041439025147034098690503591013177336356694416517527310181938001
@@ -698,7 +771,7 @@ cdef class FiniteField(Field):
 
         TESTS:
 
-        Check that large characteristics work (:trac:`11946`)::
+        Check that large characteristics work (:issue:`11946`)::
 
             sage: p = 10^20 + 39
             sage: x = polygen(GF(p))
@@ -707,7 +780,7 @@ cdef class FiniteField(Field):
             a + 12
         """
         if self.degree() == 1:
-            from sage.arith.all import primitive_root
+            from sage.arith.misc import primitive_root
             return self(primitive_root(self.order()))
         F, = self.factored_unit_order()
         return self._element_of_factored_order(F)
@@ -801,7 +874,7 @@ cdef class FiniteField(Field):
         return self.characteristic()**self.degree()
 
     # cached because constructing the Factorization is slow;
-    # see trac #11628.
+    # see Issue #11628.
     @cached_method
     def factored_order(self):
         """
@@ -828,8 +901,25 @@ cdef class FiniteField(Field):
 
             sage: GF(7^2,'a').factored_unit_order()
             (2^4 * 3,)
+
+        TESTS:
+
+        Check that :issue:`31686` is fixed::
+
+            sage: p = 1100585370631
+            sage: F = GF(p^24, 'a')
+            sage: F.factored_unit_order()
+            (2^6 * 3^2 * 5 * 7 * 11 * 13 * 17 * 53 * 97 * 229 * 337 * 421
+             * 3929 * 215417 * 249737 * 262519 * 397897 * 59825761 * 692192057
+             * 12506651939 * 37553789761 * 46950147799 * 172462808473 * 434045140817
+             * 81866093016401 * 617237859576697 * 659156729361017707
+             * 268083135725348991493995910983015600019336657
+             * 90433843562394341719266736354746485652016132372842876085423636587989263202299569913,)
         """
-        F = (self.order() - 1).factor()
+        from sage.structure.factorization import Factorization
+        from sage.rings.polynomial.cyclotomic import cyclotomic_value as cv
+        p, d = self.characteristic(), self.degree()
+        F = Factorization(f for n in d.divisors() for f in cv(n, p).factor())
         return (F,)
 
     def cardinality(self):
@@ -858,7 +948,7 @@ cdef class FiniteField(Field):
             sage: GF(3, 'a').is_prime_field()
             True
         """
-        return self.degree()==1
+        return self.degree() == 1
 
     def modulus(self):
         r"""
@@ -921,7 +1011,7 @@ cdef class FiniteField(Field):
 
         The given modulus is always made monic::
 
-            sage: k.<a> = GF(7^2, modulus=2*x^2-3, impl="pari_ffelt")
+            sage: k.<a> = GF(7^2, modulus=2*x^2 - 3, impl="pari_ffelt")
             sage: k.modulus()
             x^2 + 2
 
@@ -931,19 +1021,19 @@ cdef class FiniteField(Field):
 
             sage: GF(2, impl="modn").modulus()
             x + 1
-            sage: GF(2, impl="givaro").modulus()
+            sage: GF(2, impl="givaro").modulus()                                        # needs sage.libs.linbox
             x + 1
-            sage: GF(2, impl="ntl").modulus()
+            sage: GF(2, impl="ntl").modulus()                                           # needs sage.libs.ntl
             x + 1
             sage: GF(2, impl="modn", modulus=x).modulus()
             x
-            sage: GF(2, impl="givaro", modulus=x).modulus()
+            sage: GF(2, impl="givaro", modulus=x).modulus()                             # needs sage.libs.linbox
             x
-            sage: GF(2, impl="ntl", modulus=x).modulus()
+            sage: GF(2, impl="ntl", modulus=x).modulus()                                # needs sage.libs.ntl
             x
-            sage: GF(13^2, 'a', impl="givaro", modulus=x^2+2).modulus()
+            sage: GF(13^2, 'a', impl="givaro", modulus=x^2 + 2).modulus()               # needs sage.libs.linbox
             x^2 + 2
-            sage: GF(13^2, 'a', impl="pari_ffelt", modulus=x^2+2).modulus()
+            sage: GF(13^2, 'a', impl="pari_ffelt", modulus=x^2 + 2).modulus()           # needs sage.libs.pari
             x^2 + 2
         """
         # Normally, this is set by the constructor of the implementation
@@ -952,14 +1042,14 @@ cdef class FiniteField(Field):
         except AttributeError:
             pass
 
-        from sage.rings.all import PolynomialRing
-        from .finite_field_constructor import GF
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        from sage.rings.finite_rings.finite_field_constructor import GF
         R = PolynomialRing(GF(self.characteristic()), 'x')
         self._modulus = R((-1,1))  # Polynomial x - 1
         return self._modulus
 
     def polynomial(self, name=None):
-        """
+        r"""
         Return the minimal polynomial of the generator of ``self`` over
         the prime finite field.
 
@@ -995,6 +1085,7 @@ cdef class FiniteField(Field):
             sage: f(F.gen())
             0
 
+            sage: # needs sage.libs.ntl
             sage: k.<a> = GF(2^20, impl='ntl')
             sage: k.polynomial()
             a^20 + a^10 + a^9 + a^7 + a^6 + a^5 + a^4 + a + 1
@@ -1022,7 +1113,6 @@ cdef class FiniteField(Field):
         """
         return self.order() - 1
 
-
     def random_element(self, *args, **kwds):
         r"""
         A random element of the finite field.  Passes arguments to
@@ -1031,12 +1121,12 @@ cdef class FiniteField(Field):
         EXAMPLES::
 
             sage: k = GF(19^4, 'a')
-            sage: k.random_element()
-            a^3 + 3*a^2 + 6*a + 9
+            sage: k.random_element().parent() is k                                      # needs sage.modules
+            True
 
         Passes extra positional or keyword arguments through::
 
-            sage: k.random_element(prob=0)
+            sage: k.random_element(prob=0)                                              # needs sage.modules
             0
 
         """
@@ -1053,7 +1143,7 @@ cdef class FiniteField(Field):
         EXAMPLES::
 
             sage: k = GF(2^8,'a')
-            sage: k.some_elements() # random output
+            sage: k.some_elements()  # random output                                    # needs sage.modules
             [a^4 + a^3 + 1, a^6 + a^4 + a^3, a^5 + a^4 + a, a^2 + a]
         """
         return [self.random_element() for i in range(4)]
@@ -1081,7 +1171,7 @@ cdef class FiniteField(Field):
             else:
                 return PolynomialRing(GF(self.characteristic()), variable_name)
 
-    def free_module(self, base=None, basis=None, map=None, subfield=None):
+    def free_module(self, base=None, basis=None, map=True):
         """
         Return the vector space over the subfield isomorphic to this
         finite field as a vector space, along with the isomorphisms.
@@ -1114,9 +1204,10 @@ cdef class FiniteField(Field):
 
         EXAMPLES::
 
-            sage: GF(27,'a').vector_space(map=False)
+            sage: GF(27,'a').vector_space(map=False)                                    # needs sage.modules
             Vector space of dimension 3 over Finite Field of size 3
 
+            sage: # needs sage.modules
             sage: F = GF(8)
             sage: E = GF(64)
             sage: V, from_V, to_V = E.vector_space(F, map=True)
@@ -1131,6 +1222,7 @@ cdef class FiniteField(Field):
             sage: all(to_V(c * e) == c * to_V(e) for e in E for c in F)
             True
 
+            sage: # needs sage.modules
             sage: basis = [E.gen(), E.gen() + 1]
             sage: W, from_W, to_W = E.vector_space(F, basis, map=True)
             sage: all(from_W(to_W(e)) == e for e in E)
@@ -1143,7 +1235,9 @@ cdef class FiniteField(Field):
             (1, 0)
             (0, 1)
 
-            sage: F = GF(9, 't', modulus=(x^2+x-1))
+            sage: # needs sage.modules
+            sage: x = polygen(ZZ)
+            sage: F = GF(9, 't', modulus=x^2 + x - 1)
             sage: E = GF(81)
             sage: h = Hom(F,E).an_element()
             sage: V, from_V, to_V = E.vector_space(h, map=True)
@@ -1158,16 +1252,12 @@ cdef class FiniteField(Field):
             sage: all(to_V(h(c) * e) == c * to_V(e) for e in E for c in F)
             True
         """
-        from sage.modules.all import VectorSpace
-        from sage.categories.morphism import is_Morphism
-        if subfield is not None:
-            if base is not None:
-                raise ValueError
-            deprecation(28481, "The subfield keyword argument has been renamed to base")
-            base = subfield
-        if map is None:
-            deprecation(28481, "The default value for map will be changing to True.  To keep the current behavior, explicitly pass map=False.")
-            map = False
+        if base is None and self.__vector_space is not None and not map:
+            # A very common case: return as early as possible.
+            return self.__vector_space
+
+        from sage.modules.free_module import VectorSpace
+        from sage.categories.morphism import Morphism
 
         if base is None:
             base = self.prime_subfield()
@@ -1176,7 +1266,7 @@ cdef class FiniteField(Field):
                 self.__vector_space = VectorSpace(base, s)
             V = self.__vector_space
             inclusion_map = None
-        elif is_Morphism(base):
+        elif isinstance(base, Morphism):
             inclusion_map = base
             base = inclusion_map.domain()
             s = self.degree() // base.degree()
@@ -1188,15 +1278,14 @@ cdef class FiniteField(Field):
         else:
             raise ValueError("{} is not a subfield".format(base))
 
-        if map is False: # shortcut
+        if map is False:  # shortcut
             return V
 
         if inclusion_map is None:
             inclusion_map = self.coerce_map_from(base)
 
-        from sage.modules.all import vector
-        from sage.matrix.all import matrix
-        from .maps_finite_field import (
+        from sage.matrix.constructor import matrix
+        from sage.rings.finite_rings.maps_finite_field import (
             MorphismVectorSpaceToFiniteField, MorphismFiniteFieldToVectorSpace)
 
         E = self
@@ -1249,26 +1338,26 @@ cdef class FiniteField(Field):
             a + 1
 
             sage: k = GF(4, 'a')
-            sage: k._coerce_(GF(2)(1))
+            sage: k.coerce(GF(2)(1))
             1
-            sage: k._coerce_(k.0)
+            sage: k.coerce(k.0)
             a
-            sage: k._coerce_(3)
+            sage: k.coerce(3)
             1
-            sage: k._coerce_(2/3)
+            sage: k.coerce(2/3)
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Rational Field to Finite Field in a of size 2^2
 
-            sage: FiniteField(16)._coerce_(FiniteField(4).0)
+            sage: FiniteField(16).coerce(FiniteField(4).0)
             z4^2 + z4
 
-            sage: FiniteField(8, 'a')._coerce_(FiniteField(4, 'a').0)
+            sage: FiniteField(8, 'a').coerce(FiniteField(4, 'a').0)
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Finite Field in a of size 2^2 to Finite Field in a of size 2^3
 
-            sage: FiniteField(8, 'a')._coerce_(FiniteField(7, 'a')(2))
+            sage: FiniteField(8, 'a').coerce(FiniteField(7, 'a')(2))
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Finite Field of size 7 to Finite Field in a of size 2^3
@@ -1280,15 +1369,14 @@ cdef class FiniteField(Field):
             False
         """
         from sage.rings.integer_ring import ZZ
-        from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
         if R is int or R is long or R is ZZ:
             return True
-        if is_IntegerModRing(R) and self.characteristic().divides(R.characteristic()):
+        if isinstance(R, sage.rings.abc.IntegerModRing) and self.characteristic().divides(R.characteristic()):
             return R.hom((self.one(),), check=False)
-        if is_FiniteField(R):
+        if isinstance(R, FiniteField):
             if R is self:
                 return True
-            from .residue_field import ResidueField_generic
+            from sage.rings.finite_rings.residue_field import ResidueField_generic
             if isinstance(R, ResidueField_generic):
                 return False
             if R.characteristic() == self.characteristic():
@@ -1304,16 +1392,16 @@ cdef class FiniteField(Field):
 
         EXAMPLES::
 
-            sage: K.<a> = Qq(49); k = K.residue_field()
-            sage: k.convert_map_from(K)
+            sage: K.<a> = Qq(49); k = K.residue_field()                                 # needs sage.rings.padics
+            sage: k.convert_map_from(K)                                                 # needs sage.rings.padics
             Reduction morphism:
               From: 7-adic Unramified Extension Field in a defined by x^2 + 6*x + 3
               To:   Finite Field in a0 of size 7^2
 
-        Check that :trac:`8240 is resolved::
+        Check that :issue:`8240 is resolved::
 
-            sage: R.<a> = Zq(81); k = R.residue_field()
-            sage: k.convert_map_from(R)
+            sage: R.<a> = Zq(81); k = R.residue_field()                                 # needs sage.rings.padics
+            sage: k.convert_map_from(R)                                                 # needs sage.rings.padics
             Reduction morphism:
               From: 3-adic Unramified Extension Ring in a defined by x^4 + 2*x^3 + 2
               To:   Finite Field in a0 of size 3^4
@@ -1336,7 +1424,7 @@ cdef class FiniteField(Field):
             sage: v = GF(2^1000, 'a').construction(); v[0].polys[0]
             a^1000 + a^5 + a^4 + a^3 + 1
 
-        The implementation is taken into account, by :trac:`15223`::
+        The implementation is taken into account, by :issue:`15223`::
 
             sage: k = FiniteField(9, 'a', impl='pari_ffelt')
             sage: F, R = k.construction()
@@ -1420,28 +1508,40 @@ cdef class FiniteField(Field):
               To:   Finite Field in b of size 5^2
               Defn: 1 |--> 1
             sage: f.parent()
-            Set of field embeddings from Finite Field of size 5 to Finite Field in b of size 5^2
+            Set of field embeddings
+             from Finite Field of size 5
+               to Finite Field in b of size 5^2
 
         Extensions of non-prime finite fields by polynomials are not yet
         supported: we fall back to generic code::
 
             sage: k.extension(x^5 + x^2 + x - 1)
-            Univariate Quotient Polynomial Ring in x over Finite Field in z4 of size 3^4 with modulus x^5 + x^2 + x + 2
+            Univariate Quotient Polynomial Ring in x over Finite Field in z4 of size 3^4
+             with modulus x^5 + x^2 + x + 2
 
         TESTS:
 
-        We check that :trac:`18915` is fixed::
+        We check that :issue:`18915` is fixed::
 
             sage: F = GF(2)
             sage: F.extension(int(3), 'a')
             Finite Field in a of size 2^3
 
-            sage: F = GF(2 ** 4, 'a')
+            sage: F = GF((2,4), 'a')
             sage: F.extension(int(3), 'aa')
             Finite Field in aa of size 2^12
+
+        Randomized test for :issue:`33937`::
+
+            sage: p = random_prime(100)
+            sage: a,b = (randrange(1,10) for _ in 'ab')
+            sage: K.<u> = GF((p,a))
+            sage: L.<v> = K.extension(b)
+            sage: L(u).minpoly() == u.minpoly()
+            True
         """
-        from .finite_field_constructor import GF
-        from sage.rings.polynomial.polynomial_element import is_Polynomial
+        from sage.rings.finite_rings.finite_field_constructor import GF
+        from sage.rings.polynomial.polynomial_element import Polynomial
         from sage.rings.integer import Integer
         if name is None and names is not None:
             name = names
@@ -1449,22 +1549,22 @@ cdef class FiniteField(Field):
             latex_name = latex_names
         if self.degree() == 1:
             if isinstance(modulus, (int, Integer)):
-                E = GF(self.characteristic()**modulus, name=name, **kwds)
+                E = GF((self.characteristic(), modulus), name=name, **kwds)
             elif isinstance(modulus, (list, tuple)):
-                E = GF(self.characteristic()**(len(modulus) - 1), name=name, modulus=modulus, **kwds)
-            elif is_Polynomial(modulus):
+                E = GF((self.characteristic(), len(modulus) - 1), name=name, modulus=modulus, **kwds)
+            elif isinstance(modulus, Polynomial):
                 if modulus.change_ring(self).is_irreducible():
-                    E = GF(self.characteristic()**(modulus.degree()), name=name, modulus=modulus, **kwds)
+                    E = GF((self.characteristic(), modulus.degree()), name=name, modulus=modulus, **kwds)
                 else:
                     E = Field.extension(self, modulus, name=name, embedding=embedding, **kwds)
         elif isinstance(modulus, (int, Integer)):
-            E = GF(self.order()**modulus, name=name, **kwds)
+            E = GF((self.characteristic(), self.degree() * modulus), name=name, **kwds)
             if E is self:
                 pass # coercion map (identity map) is automatically found
             elif hasattr(E, '_prefix') and hasattr(self, '_prefix'):
                 pass # coercion map is automatically found
             else:
-                if self.is_conway(): # and E is Conway
+                if self.is_conway() and E.is_conway():
                     alpha = E.gen()**((E.order()-1)//(self.order()-1))
                 else:
                     alpha = self.modulus().any_root(E)
@@ -1479,15 +1579,82 @@ cdef class FiniteField(Field):
         else:
             return E
 
-    def subfield(self, degree, name=None):
+    @cached_method
+    def _compatible_family(self):
+        """
+        Return a family of elements of this field that generate each subfield in a compatible way.
+
+        OUTPUT:
+
+        - A dictionary `D` so that if `n` is a positive integer dividing the degree of this field then
+        ``D[n] = (a, f)`` where `a` generates the subfield of order `p^n` and `f` is the minimal polynomial of `a`.
+        Moreover, if `a` and `b` are elements in this family of degree `m` and `n` respectively and `m` divides `n`
+        then `a = b^{(p^n-1)/(p^m-1)}`.
+
+        EXAMPLES::
+
+            sage: k.<a> = GF(3^72)
+            sage: F = k._compatible_family()
+            sage: all(f(b) == 0 for (b, f) in F.values())
+            True
+            sage: all(f.degree() == n for (n, (b, f)) in F.items())
+            True
+            sage: D = 72.divisors()
+            sage: for (m,n) in zip(D, D):
+            ....:     if (n/m) in [2,3]:
+            ....:         b, c = F[m][0], F[n][0]
+            ....:         assert c^((3^n-1)//(3^m-1)) == b
+        """
+        p = self.characteristic()
+        # We try to use the appropriate power of the generator,
+        # as in the definition of Conway polynomials.
+        # this can fail if the generator is not a primitive element,
+        # but it can succeed sometimes even
+        # if the generator is not primitive.
+        g = self.gen()
+        f = self.modulus()
+        d = self.degree()
+        D = list(reversed(d.divisors()[:-1]))
+        P = d.support()
+
+        def make_family(gen, poly):
+            if poly.degree() != d:
+                return False, {}
+            fam = {d: (gen, poly)}
+            for n in D:
+                for l in P:
+                    if l*n in fam:
+                        a, _ = fam[l*n]
+                        b = a**((p**(l*n) - 1)//(p**n - 1))
+                        bpoly = b.minimal_polynomial()
+                        if bpoly.degree() != n:
+                            return False, fam
+                        fam[n] = (b, bpoly)
+            return True, fam
+        while True:
+            ok, fam = make_family(g, f)
+            if ok:
+                return fam
+            g = self.random_element()
+            f = g.minimal_polynomial()
+
+    def subfield(self, degree, name=None, map=False):
         """
         Return the subfield of the field of ``degree``.
+
+        The inclusion maps between these subfields will always commute, but they are only added as coercion maps
+        if the following condition holds for the generator `g` of the field, where `d` is the degree of this field
+        over the prime field:
+
+        The element `g^{(p^d - 1)/(p^n - 1)}` generates the subfield of degree `n` for all divisors `n` of `d`.
 
         INPUT:
 
         - ``degree`` -- integer; degree of the subfield
 
         - ``name`` -- string; name of the generator of the subfield
+
+        - ``map`` -- boolean (default ``False``); whether to also return the inclusion map
 
         EXAMPLES::
 
@@ -1505,25 +1672,87 @@ cdef class FiniteField(Field):
             Traceback (most recent call last):
             ...
             ValueError: no subfield of order 2^8
+
+        TESTS:
+
+        We check that :issue:`23801` is resolved::
+
+            sage: k.<a> = GF(5^240)
+            sage: l, inc = k.subfield(3, 'z', map=True); l
+            Finite Field in z of size 5^3
+            sage: inc
+            Ring morphism:
+              From: Finite Field in z of size 5^3
+              To:   Finite Field in a of size 5^240
+              Defn: z |--> ...
+
+        There is no coercion since we can't ensure compatibility with larger
+        fields in this case::
+
+            sage: k.has_coerce_map_from(l)
+            False
+
+        But there is still a compatibility among the generators chosen for the subfields::
+
+            sage: ll, iinc = k.subfield(12, 'w', map=True)
+            sage: x = iinc(ll.gen())^((5^12-1)/(5^3-1))
+            sage: x.minimal_polynomial() == l.modulus()
+            True
+
+            sage: S = GF(37^16).subfields()
+            sage: len(S) == len(16.divisors())
+            True
+            sage: all(f is not None for (l, f) in S)
+            True
+
+            sage: S = GF(2^93).subfields()
+            sage: len(S) == len(93.divisors())
+            True
+            sage: all(f is not None for (l, f) in S)
+            True
+
+        We choose a default variable name::
+
+            sage: GF(3^8, 'a').subfield(4)
+            Finite Field in a4 of size 3^4
         """
-        from .finite_field_constructor import GF
+        from sage.rings.finite_rings.finite_field_constructor import GF
         p = self.characteristic()
         n = self.degree()
         if not n % degree == 0:
             raise ValueError("no subfield of order {}^{}".format(p, degree))
 
-        if hasattr(self, '_prefix'):
-            K = GF(p**degree, name=name, prefix=self._prefix)
-        elif degree == 1:
-            K = GF(p)
+        if name is None:
+            if hasattr(self, '_prefix'):
+                name = self._prefix + str(degree)
+            else:
+                name = self.variable_name() + str(degree)
+
+        if degree == 1:
+            K = self.prime_subfield()
+            inc = self.coerce_map_from(K)
+        elif degree == n:
+            K = self
+            inc = self.coerce_map_from(self)
+        elif hasattr(self, '_prefix'):
+            modulus = self.prime_subfield().algebraic_closure(self._prefix)._get_polynomial(degree)
+            K = GF((p, degree), name=name, prefix=self._prefix, modulus=modulus, check_irreducible=False)
+            a = self.gen()**((p**n-1)//(p**degree - 1))
+            inc = K.hom([a], codomain=self, check=False)
         else:
-            gen = self.gen()**((self.order() - 1)//(p**degree - 1))
-            K = GF(p**degree, modulus=gen.minimal_polynomial(), name=name)
-            try: # to register a coercion map, embedding of K to self
-                self.register_coercion(K.hom([gen], codomain=self, check=False))
-            except AssertionError: # coercion already exists
-                pass
-        return K
+            fam = self._compatible_family()
+            a, modulus = fam[degree]
+            K = GF((p, degree), modulus=modulus, name=name)
+            inc = K.hom([a], codomain=self, check=False)
+            if fam[n][0] == self.gen():
+                try: # to register a coercion map, embedding of K to self
+                    self.register_coercion(inc)
+                except AssertionError: # coercion already exists
+                    pass
+        if map:
+            return K, inc
+        else:
+            return K
 
     def subfields(self, degree=0, name=None):
         """
@@ -1567,17 +1796,16 @@ cdef class FiniteField(Field):
               Ring morphism:
                   From: Finite Field in z3 of size 2^3
                   To:   Finite Field in z21 of size 2^21
-                  Defn: z3 |--> z21^20 + z21^19 + z21^17 + z21^15 + z21^11 + z21^9 + z21^8 + z21^6 + z21^2),
+                  Defn: z3 |--> z21^20 + z21^19 + z21^17 + z21^15 + z21^11
+                                 + z21^9 + z21^8 + z21^6 + z21^2),
              (Finite Field in z7 of size 2^7,
               Ring morphism:
                   From: Finite Field in z7 of size 2^7
                   To:   Finite Field in z21 of size 2^21
-                  Defn: z7 |--> z21^20 + z21^19 + z21^17 + z21^15 + z21^14 + z21^6 + z21^4 + z21^3 + z21),
+                  Defn: z7 |--> z21^20 + z21^19 + z21^17 + z21^15 + z21^14
+                                 + z21^6 + z21^4 + z21^3 + z21),
              (Finite Field in z21 of size 2^21,
-              Ring morphism:
-                  From: Finite Field in z21 of size 2^21
-                  To:   Finite Field in z21 of size 2^21
-                  Defn: z21 |--> z21)]
+              Identity endomorphism of Finite Field in z21 of size 2^21)]
         """
         n = self.degree()
 
@@ -1585,8 +1813,8 @@ cdef class FiniteField(Field):
             if not n % degree == 0:
                 return []
             else:
-                K = self.subfield(degree, name=name)
-                return [(K, self.coerce_map_from(K))]
+                K, inc = self.subfield(degree, name=name, map=True)
+                return [(K, inc)]
 
         divisors = n.divisors()
 
@@ -1602,8 +1830,8 @@ cdef class FiniteField(Field):
 
         pairs = []
         for m in divisors:
-            K = self.subfield(m, name=name[m])
-            pairs.append((K, self.coerce_map_from(K)))
+            K, inc = self.subfield(m, name=name[m], map=True)
+            pairs.append((K, inc))
         return pairs
 
     @cached_method
@@ -1695,7 +1923,7 @@ cdef class FiniteField(Field):
             sage: GF(next_prime(2^16, 2), 'a').is_conway()
             False
         """
-        from .conway_polynomials import conway_polynomial, exists_conway_polynomial
+        from sage.rings.finite_rings.conway_polynomials import conway_polynomial, exists_conway_polynomial
         p = self.characteristic()
         n = self.degree()
         return (exists_conway_polynomial(p, n)
@@ -1718,8 +1946,8 @@ cdef class FiniteField(Field):
             sage: Frob = k.frobenius_endomorphism(); Frob
             Frobenius endomorphism t |--> t^3 on Finite Field in t of size 3^5
 
-            sage: a = k.random_element()
-            sage: Frob(a) == a^3
+            sage: a = k.random_element()                                                # needs sage.modules
+            sage: Frob(a) == a^3                                                        # needs sage.modules
             True
 
         We can specify a power::
@@ -1748,6 +1976,24 @@ cdef class FiniteField(Field):
         """
         from sage.rings.finite_rings.hom_finite_field import FrobeniusEndomorphism_finite_field
         return FrobeniusEndomorphism_finite_field(self, n)
+
+    def galois_group(self):
+        r"""
+        Return the Galois group of this finite field, a cyclic group generated by Frobenius.
+
+        EXAMPLES::
+
+            sage: # needs sage.groups
+            sage: G = GF(3^6).galois_group(); G
+            Galois group C6 of GF(3^6)
+            sage: F = G.gen()
+            sage: F^2
+            Frob^2
+            sage: F^6
+            1
+        """
+        from sage.rings.finite_rings.galois_group import GaloisGroup_GF
+        return GaloisGroup_GF(self)
 
     def dual_basis(self, basis=None, check=True):
         r"""
@@ -1794,13 +2040,14 @@ cdef class FiniteField(Field):
         EXAMPLES::
 
             sage: F.<a> = GF(2^4)
-            sage: F.dual_basis(basis=None, check=False)
+            sage: F.dual_basis(basis=None, check=False)                                 # needs sage.modules
             [a^3 + 1, a^2, a, 1]
 
         We can test that the dual basis returned satisfies the defining
         property of a dual basis:
         `\mathrm{Tr}(e_i d_j) = \delta_{i,j}, 0 \leq i,j \leq n-1` ::
 
+            sage: # needs sage.modules
             sage: F.<a> = GF(7^4)
             sage: e = [4*a^3, 2*a^3 + a^2 + 3*a + 5,
             ....:      3*a^3 + 5*a^2 + 4*a + 2, 2*a^3 + 2*a^2 + 2]
@@ -1814,17 +2061,18 @@ cdef class FiniteField(Field):
         We can test that if `d` is the dual basis of `e`, then `e` is the dual
         basis of `d`::
 
+            sage: # needs sage.modules
             sage: F.<a> = GF(7^8)
             sage: e = [a^0, a^1, a^2, a^3, a^4, a^5, a^6, a^7]
             sage: d = F.dual_basis(e, check=False); d
             [6*a^6 + 4*a^5 + 4*a^4 + a^3 + 6*a^2 + 3,
-            6*a^7 + 4*a^6 + 4*a^5 + 2*a^4 + a^2,
-            4*a^6 + 5*a^5 + 5*a^4 + 4*a^3 + 5*a^2 + a + 6,
-            5*a^7 + a^6 + a^4 + 4*a^3 + 4*a^2 + 1,
-            2*a^7 + 5*a^6 + a^5 + a^3 + 5*a^2 + 2*a + 4,
-            a^7 + 2*a^6 + 5*a^5 + a^4 + 5*a^2 + 4*a + 4,
-            a^7 + a^6 + 2*a^5 + 5*a^4 + a^3 + 4*a^2 + 4*a + 6,
-            5*a^7 + a^6 + a^5 + 2*a^4 + 5*a^3 + 6*a]
+             6*a^7 + 4*a^6 + 4*a^5 + 2*a^4 + a^2,
+             4*a^6 + 5*a^5 + 5*a^4 + 4*a^3 + 5*a^2 + a + 6,
+             5*a^7 + a^6 + a^4 + 4*a^3 + 4*a^2 + 1,
+             2*a^7 + 5*a^6 + a^5 + a^3 + 5*a^2 + 2*a + 4,
+             a^7 + 2*a^6 + 5*a^5 + a^4 + 5*a^2 + 4*a + 4,
+             a^7 + a^6 + 2*a^5 + 5*a^4 + a^3 + 4*a^2 + 4*a + 6,
+             5*a^7 + a^6 + a^5 + 2*a^4 + 5*a^3 + 6*a]
             sage: F.dual_basis(d)
             [1, a, a^2, a^3, a^4, a^5, a^6, a^7]
 
@@ -1832,12 +2080,12 @@ cdef class FiniteField(Field):
         ::
 
             sage: F.<a> = GF(2^3)
-            sage: F.dual_basis([a], check=True)
+            sage: F.dual_basis([a], check=True)                                         # needs sage.modules
             Traceback (most recent call last):
             ...
             ValueError: basis length should be 3, not 1
 
-            sage: F.dual_basis([a^0, a, a^0 + a], check=True)
+            sage: F.dual_basis([a^0, a, a^0 + a], check=True)                           # needs sage.modules
             Traceback (most recent call last):
             ...
             ValueError: value of 'basis' keyword is not a basis
@@ -1866,6 +2114,51 @@ cdef class FiniteField(Field):
         return [sum(x * y for x, y in zip(col, basis))
                 for col in B.columns()]
 
+    def from_bytes(self, input_bytes, byteorder="big"):
+        r"""
+        Return the integer represented by the given array of bytes.
+
+        Internally relies on the python ``int.from_bytes()`` method.
+
+        INPUT:
+
+        - ``input_bytes`` -- a bytes-like object or iterable producing bytes
+        - ``byteorder`` -- str (default: ``"big"``); determines the byte order of
+          ``input_bytes``; can only be ``"big"`` or ``"little"``
+
+        EXAMPLES::
+
+            sage: input_bytes = b"some_bytes"
+            sage: F = GF(2**127 - 1)
+            sage: F.from_bytes(input_bytes)
+            545127616933790290830707
+            sage: a = F.from_bytes(input_bytes, byteorder="little"); a
+            544943659528996309004147
+            sage: type(a)
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
+
+        ::
+
+            sage: input_bytes = b"some_bytes"
+            sage: F_ext = GF(65537**5)
+            sage: F_ext.from_bytes(input_bytes)
+            29549*z5^4 + 40876*z5^3 + 52171*z5^2 + 13604*z5 + 20843
+            sage: F_ext.from_bytes(input_bytes, byteorder="little")
+            29539*z5^4 + 42728*z5^3 + 47440*z5^2 + 12423*z5 + 27473
+
+        TESTS::
+
+            sage: fields = [GF(2), GF(3), GF(65537), GF(2^10), GF(163^5)]
+            sage: for F in fields:
+            ....:     for _ in range(1000):
+            ....:         a = F.random_element()
+            ....:         order = choice(["little", "big"])
+            ....:         a_bytes = a.to_bytes(byteorder=order)
+            ....:         assert F.from_bytes(a_bytes, byteorder=order) == a
+        """
+        python_int = int.from_bytes(input_bytes, byteorder=byteorder)
+        return self.from_integer(python_int)
+
 
 def unpickle_FiniteField_ext(_type, order, variable_name, modulus, kwargs):
     r"""
@@ -1882,26 +2175,33 @@ def unpickle_FiniteField_prm(_type, order, variable_name, kwargs):
     """
     return _type(order, variable_name, **kwargs)
 
+
 register_unpickle_override(
     'sage.rings.ring', 'unpickle_FiniteField_prm', unpickle_FiniteField_prm)
 
 
-def is_FiniteField(x):
-    """
-    Return ``True`` if ``x`` is of type finite field, and ``False`` otherwise.
+def is_FiniteField(R):
+    r"""
+    Return whether the implementation of ``R`` has the interface provided by
+    the standard finite field implementation.
+
+    This function is deprecated.
 
     EXAMPLES::
 
         sage: from sage.rings.finite_rings.finite_field_base import is_FiniteField
         sage: is_FiniteField(GF(9,'a'))
+        doctest:...: DeprecationWarning: the function is_FiniteField is deprecated; use isinstance(x, sage.rings.finite_rings.finite_field_base.FiniteField) instead
+        See https://github.com/sagemath/sage/issues/32664 for details.
         True
         sage: is_FiniteField(GF(next_prime(10^10)))
         True
 
-    Note that the integers modulo n are not of type finite field,
-    so this function returns ``False``::
+    Note that the integers modulo n are not backed by the finite field type::
 
         sage: is_FiniteField(Integers(7))
         False
     """
-    return isinstance(x, FiniteField)
+    from sage.misc.superseded import deprecation
+    deprecation(32664, "the function is_FiniteField is deprecated; use isinstance(x, sage.rings.finite_rings.finite_field_base.FiniteField) instead")
+    return isinstance(R, FiniteField)

@@ -8,14 +8,14 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .gap_includes cimport Obj, UInt
+from sage.libs.gap.gap_includes cimport Obj, UInt
 from sage.structure.sage_object cimport SageObject
 from sage.structure.element cimport Element, ModuleElement, RingElement
 
 cdef Obj make_gap_list(sage_list) except NULL
 cdef Obj make_gap_matrix(sage_list, gap_ring) except NULL
 cdef Obj make_gap_record(sage_dict) except NULL
-cdef Obj make_gap_integer(sage_dict) except NULL
+cdef Obj make_gap_integer(sage_int) except NULL
 cdef Obj make_gap_string(sage_string) except NULL
 
 cdef GapElement make_any_gap_element(parent, Obj obj)
@@ -29,9 +29,9 @@ cdef GapElement_Boolean make_GapElement_Boolean(parent, Obj obj)
 cdef GapElement_Function make_GapElement_Function(parent, Obj obj)
 cdef GapElement_Permutation make_GapElement_Permutation(parent, Obj obj)
 
-cdef char *capture_stdout(Obj, Obj)
-cdef char *gap_element_str(Obj)
-cdef char *gap_element_repr(Obj)
+cdef char *capture_stdout(Obj, Obj) noexcept
+cdef char *gap_element_str(Obj) noexcept
+cdef char *gap_element_repr(Obj) noexcept
 
 
 cdef class GapElement(RingElement):
@@ -87,9 +87,9 @@ cdef class GapElement_MethodProxy(GapElement_Function):
     cdef GapElement first_argument
 
 cdef class GapElement_Record(GapElement):
-    cpdef UInt record_name_to_index(self, name)
+    cpdef UInt record_name_to_index(self, name) noexcept
 
-cdef class GapElement_RecordIterator(object):
+cdef class GapElement_RecordIterator():
     cdef GapElement_Record rec
     cdef UInt i
 

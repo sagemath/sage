@@ -13,7 +13,8 @@ slopes (and hence a last infinite slope).
 #
 #                  https://www.gnu.org/licenses/
 #############################################################################
-from __future__ import division
+
+import sage.geometry.abc
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
@@ -23,7 +24,6 @@ from sage.misc.cachefunc import cached_method
 
 from sage.rings.infinity import Infinity
 from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.geometry.polyhedron.base import is_Polyhedron
 
 
 class NewtonPolygon_element(Element):
@@ -54,6 +54,8 @@ class NewtonPolygon_element(Element):
         Element.__init__(self, parent)
         self._polyhedron = polyhedron
         self._vertices = None
+        if polyhedron.is_mutable():
+            polyhedron._add_dependent_object(self)
 
     def _repr_(self):
         """
@@ -271,7 +273,7 @@ class NewtonPolygon_element(Element):
 
         This Newton polygon scaled by a factor ``exp``.
 
-        NOTE::
+        .. NOTE::
 
             If ``self`` is the Newton polygon of a polynomial `f`, then
             ``self^exp`` is the Newton polygon of `f^{exp}`.
@@ -463,7 +465,7 @@ class NewtonPolygon_element(Element):
 
             sage: from sage.geometry.newton_polygon import NewtonPolygon
             sage: NP = NewtonPolygon([ (0,0), (1,1), (2,6) ])
-            sage: polygon = NP.plot()
+            sage: polygon = NP.plot()                                                   # needs sage.plot
         """
         vertices = self.vertices()
         if len(vertices) == 0:
@@ -520,8 +522,6 @@ class NewtonPolygon_element(Element):
         parent = self.parent()
         polyhedron = Polyhedron(base_ring=parent.base_ring(), vertices=vertices, rays=[(0,1)])
         return parent(polyhedron)
-
-
 
 
 class ParentNewtonPolygon(Parent, UniqueRepresentation):
@@ -629,13 +629,15 @@ class ParentNewtonPolygon(Parent, UniqueRepresentation):
         """
         Parent class for all Newton polygons.
 
+        EXAMPLES::
+
             sage: from sage.geometry.newton_polygon import ParentNewtonPolygon
             sage: ParentNewtonPolygon()
             Parent for Newton polygons
 
         TESTS:
 
-        This class is a singleton.
+        This class is a singleton::
 
             sage: ParentNewtonPolygon() is ParentNewtonPolygon()
             True
@@ -715,26 +717,27 @@ class ParentNewtonPolygon(Parent, UniqueRepresentation):
             sage: NewtonPolygon(1)
             Finite Newton polygon with 1 vertex: (0, 0)
         """
-        if is_Polyhedron(arg):
+        if isinstance(arg, sage.geometry.abc.Polyhedron):
             return self.element_class(arg, parent=self)
         if arg == 0:
             polyhedron = Polyhedron(base_ring=self.base_ring(), ambient_dim=2)
             return self.element_class(polyhedron, parent=self)
         if arg == 1:
             polyhedron = Polyhedron(base_ring=self.base_ring(),
-                                    vertices=[(0,0)], rays=[(0,1)])
+                                    vertices=[(0, 0)], rays=[(0, 1)])
             return self.element_class(polyhedron, parent=self)
         if not isinstance(arg, list):
             try:
                 arg = list(arg)
             except TypeError:
                 raise TypeError("argument must be a list of coordinates or a list of (rational) slopes")
-        if len(arg) > 0 and arg[0] in self.base_ring():
-            if sort_slopes: arg.sort()
+        if arg and arg[0] in self.base_ring():
+            if sort_slopes:
+                arg.sort()
             x = y = 0
             vertices = [(x, y)]
             for slope in arg:
-                if not slope in self.base_ring():
+                if slope not in self.base_ring():
                     raise TypeError("argument must be a list of coordinates or a list of (rational) slopes")
                 x += 1
                 y += slope

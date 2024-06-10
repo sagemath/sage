@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.pari
 r"""
-Congruence Subgroup `\Gamma_1(N)`
+Congruence subgroup `\Gamma_1(N)`
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 # This program is free software: you can redistribute it and/or modify
@@ -15,10 +14,10 @@ from __future__ import absolute_import
 
 from sage.misc.cachefunc import cached_method
 
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from .congroup_gammaH import GammaH_class, is_GammaH, GammaH_constructor
-from sage.rings.all import ZZ
-from sage.arith.all import euler_phi as phi, moebius, divisors
+from sage.rings.integer_ring import ZZ
+from sage.arith.misc import euler_phi as phi, moebius, divisors
 from sage.modular.dirichlet import DirichletGroup
 
 
@@ -30,6 +29,9 @@ def is_Gamma1(x):
 
         sage: from sage.modular.arithgroup.all import is_Gamma1
         sage: is_Gamma1(SL2Z)
+        doctest:warning...
+        DeprecationWarning: The function is_Gamma1 is deprecated; use 'isinstance(..., Gamma1_class)' instead.
+        See https://github.com/sagemath/sage/issues/38035 for details.
         False
         sage: is_Gamma1(Gamma1(13))
         True
@@ -40,6 +42,8 @@ def is_Gamma1(x):
         sage: is_Gamma1(GammaH(12, [5]))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38035, "The function is_Gamma1 is deprecated; use 'isinstance(..., Gamma1_class)' instead.")
     #from congroup_sl2z import is_SL2Z
     #return (isinstance(x, Gamma1_class) or is_SL2Z(x))
     return isinstance(x, Gamma1_class)
@@ -118,7 +122,7 @@ class Gamma1_class(GammaH_class):
             sage: Gamma1(133)._repr_()
             'Congruence Subgroup Gamma1(133)'
         """
-        return "Congruence Subgroup Gamma1(%s)"%self.level()
+        return "Congruence Subgroup Gamma1(%s)" % self.level()
 
     def __reduce__(self):
         """
@@ -142,7 +146,7 @@ class Gamma1_class(GammaH_class):
             sage: latex(Gamma1(3))
             \Gamma_1(3)
         """
-        return "\\Gamma_1(%s)"%self.level()
+        return "\\Gamma_1(%s)" % self.level()
 
     def is_even(self):
         """
@@ -182,7 +186,7 @@ class Gamma1_class(GammaH_class):
         """
         if right.level() == 1:
             return True
-        if is_GammaH(right):
+        if isinstance(right, GammaH_class):
             return self.level() % right.level() == 0
         else:
             raise NotImplementedError
@@ -215,16 +219,16 @@ class Gamma1_class(GammaH_class):
             ]
             sage: Gamma1(3).generators(algorithm="todd-coxeter")
             [
-            [1 1]  [-20   9]  [ 4  1]  [-5 -2]  [ 1 -1]  [1 0]  [1 1]  [-5  2]
-            [0 1], [ 51 -23], [-9 -2], [ 3  1], [ 0  1], [3 1], [0 1], [12 -5],
+            [1 1]  [-2  1]  [1 1]  [ 1 -1]  [1 0]  [1 1]  [-5  2]  [ 1  0]
+            [0 1], [-3  1], [0 1], [ 0  1], [3 1], [0 1], [12 -5], [-3  1],
             <BLANKLINE>
-            [ 1  0]  [ 4 -1]  [ -5   3]  [ 1 -1]  [ 7 -3]  [ 4 -1]  [ -5   3]
-            [-3  1], [ 9 -2], [-12   7], [ 3 -2], [12 -5], [ 9 -2], [-12   7]
+            [ 1 -1]  [ 1 -1]  [ 4 -1]  [ -5   3]
+            [ 3 -2], [ 3 -2], [ 9 -2], [-12   7]
             ]
         """
-        if algorithm=="farey":
+        if algorithm == "farey":
             return self.farey_symbol().generators()
-        elif algorithm=="todd-coxeter":
+        elif algorithm == "todd-coxeter":
             from sage.modular.modsym.g1list import G1list
             from .congroup import generators_helper
             level = self.level()
@@ -254,7 +258,7 @@ class Gamma1_class(GammaH_class):
         """
         N = self.level()
         # don't need to check d == 1 mod N as this is automatic from det
-        return ((a%N == 1) and (c%N == 0))
+        return ((a % N == 1) and (c % N == 0))
 
     def nu2(self):
         r"""
@@ -271,8 +275,10 @@ class Gamma1_class(GammaH_class):
             [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         """
         N = self.level()
-        if N > 2: return 0
-        elif N == 2 or N == 1: return 1
+        if N > 2:
+            return 0
+        elif N == 2 or N == 1:
+            return 1
 
     def nu3(self):
         r"""
@@ -291,8 +297,10 @@ class Gamma1_class(GammaH_class):
             [1, 0, 1, 0, 0, 0, 0, 0, 0, 0]
         """
         N = self.level()
-        if N > 3 or N == 2: return 0
-        else: return 1
+        if N > 3 or N == 2:
+            return 0
+        else:
+            return 1
 
     def ncusps(self):
         r"""
@@ -339,9 +347,9 @@ class Gamma1_class(GammaH_class):
 
         INPUT:
 
-        - ``k`` - an integer (default: 2), the weight.
+        - ``k`` -- an integer (default: 2), the weight.
 
-        - ``eps`` - either None or a Dirichlet character modulo N, where N is
+        - ``eps`` -- either None or a Dirichlet character modulo N, where N is
           the level of this group. If this is None, then the dimension of the
           whole space is returned; otherwise, the dimension of the subspace of
           forms of character eps.
@@ -354,10 +362,10 @@ class Gamma1_class(GammaH_class):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: K = CyclotomicField(3)
             sage: eps = DirichletGroup(7*43,K).0^2
             sage: G = Gamma1(7*43)
-
             sage: G.dimension_modular_forms(2, eps)
             32
             sage: G.dimension_modular_forms(2, eps, algorithm="Quer")
@@ -365,8 +373,10 @@ class Gamma1_class(GammaH_class):
 
         TESTS:
 
-        Check that :trac:`18436` is fixed::
+        Check that :issue:`18436` is fixed::
 
+            sage: # needs sage.rings.number_field
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + x + 1)
             sage: G = DirichletGroup(13, base_ring=K)
             sage: Gamma1(13).dimension_modular_forms(2, G[1])
@@ -382,15 +392,15 @@ class Gamma1_class(GammaH_class):
 
     def dimension_cusp_forms(self, k=2, eps=None, algorithm="CohenOesterle"):
         r"""
-        Return the dimension of the space of cusp forms for self, or the
+        Return the dimension of the space of cusp forms for ``self``, or the
         dimension of the subspace corresponding to the given character if one
         is supplied.
 
         INPUT:
 
-        - ``k`` - an integer (default: 2), the weight.
+        - ``k`` -- an integer (default: 2), the weight.
 
-        - ``eps`` - either None or a Dirichlet character modulo N, where N is
+        - ``eps`` -- either None or a Dirichlet character modulo N, where N is
           the level of this group. If this is None, then the dimension of the
           whole space is returned; otherwise, the dimension of the subspace of
           forms of character eps.
@@ -405,18 +415,19 @@ class Gamma1_class(GammaH_class):
 
         We compute the same dimension in two different ways ::
 
+            sage: # needs sage.rings.number_field
             sage: K = CyclotomicField(3)
             sage: eps = DirichletGroup(7*43,K).0^2
             sage: G = Gamma1(7*43)
 
         Via Cohen--Oesterle::
 
-            sage: Gamma1(7*43).dimension_cusp_forms(2, eps)
+            sage: Gamma1(7*43).dimension_cusp_forms(2, eps)                             # needs sage.rings.number_field
             28
 
         Via Quer's method::
 
-            sage: Gamma1(7*43).dimension_cusp_forms(2, eps, algorithm="Quer")
+            sage: Gamma1(7*43).dimension_cusp_forms(2, eps, algorithm="Quer")           # needs sage.rings.number_field
             28
 
         Some more examples::
@@ -455,7 +466,7 @@ class Gamma1_class(GammaH_class):
         if eps.is_trivial():
             return Gamma0(N).dimension_cusp_forms(k)
 
-        if (k <= 0) or ((k % 2) == 1 and eps.is_even()) or ((k%2) == 0 and eps.is_odd()):
+        if (k <= 0) or ((k % 2) == 1 and eps.is_even()) or ((k % 2) == 0 and eps.is_odd()):
             return ZZ(0)
 
         if k == 1:
@@ -487,9 +498,9 @@ class Gamma1_class(GammaH_class):
 
         INPUT:
 
-        - ``k`` - an integer (default: 2), the weight.
+        - ``k`` -- an integer (default: 2), the weight.
 
-        - ``eps`` - either None or a Dirichlet character modulo N, where N is
+        - ``eps`` -- either None or a Dirichlet character modulo N, where N is
           the level of this group. If this is None, then the dimension of the
           whole space is returned; otherwise, the dimension of the subspace of
           Eisenstein series of character eps.
@@ -539,7 +550,7 @@ class Gamma1_class(GammaH_class):
             return Gamma0(N).dimension_eis(k)
 
         # Note case of k = 0 and trivial character already dealt with separately, so k <= 0 here is valid:
-        if (k <= 0) or ((k % 2) == 1 and eps.is_even()) or ((k%2) == 0 and eps.is_odd()):
+        if (k <= 0) or ((k % 2) == 1 and eps.is_even()) or ((k % 2) == 0 and eps.is_odd()):
             return ZZ(0)
 
         if algorithm == "Quer":
@@ -572,13 +583,13 @@ class Gamma1_class(GammaH_class):
 
         INPUT:
 
-        - ``k`` - an integer (default: 2)
+        - ``k`` -- an integer (default: 2)
 
-        - ``eps`` - a Dirichlet character
+        - ``eps`` -- a Dirichlet character
 
-        -  ``p`` - a prime (default: 0); just the `p`-new subspace if given
+        -  ``p`` -- a prime (default: 0); just the `p`-new subspace if given
 
-        - ``algorithm`` - either "CohenOesterle" (the default) or "Quer". This
+        - ``algorithm`` -- either "CohenOesterle" (the default) or "Quer". This
           specifies the method to use in the case of nontrivial character:
           either the Cohen--Oesterle formula as described in Stein's book, or
           by Möbius inversion using the subgroups GammaH (a method due to
@@ -633,7 +644,7 @@ class Gamma1_class(GammaH_class):
 
         from .congroup_gammaH import mumu
 
-        if p == 0 or N%p != 0 or eps.conductor().valuation(p) == N.valuation(p):
+        if p == 0 or N % p != 0 or eps.conductor().valuation(p) == N.valuation(p):
             D = [eps.conductor()*d for d in divisors(N//eps.conductor())]
             return sum([Gamma1_constructor(M).dimension_cusp_forms(k, eps.restrict(M), algorithm)*mumu(N//M) for M in D])
         eps_p = eps.restrict(N//p)

@@ -2,7 +2,7 @@ Modular Abelian Varieties
 =========================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/modular/abvar/constructor
    sage/modular/abvar/abvar

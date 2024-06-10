@@ -2,190 +2,169 @@
 
 .. _chapter-workflows:
 
-=======================
-Distributed Development
-=======================
+=====================
+Using Git with GitHub
+=====================
 
-Git is a tool to exchange commits (organized into branches) with other
-developers. As a distributed revision control system, it does not have
-the notion of a central server. The Sage trac server is just one of
-many possible remote repositories from your point of view. This lets
-you use and experiment with different ways to interact with other
-developers. In this chapter, we describe some common ways to develop
-for Sage.
+We continue our introduction to Sage development from :ref:`chapter-walkthrough`.
+We discuss how to push your local changes to your fork of the GitHub Sage repository
+so that your changes can be reviewed for inclusion in Sage.
 
-For simplicity, let us assume two developers (Alice and Bob) are
-collaborating on a ticket. The first step of opening the ticket is
-always the same, and could be performed by either Alice or Bob or a
-third person.
+Before proceeding, check that you have ``origin`` and ``upstream`` remotes right::
 
+    [alice@localhost sage]$ git remote -v
+    origin  https://github.com/alice/sage.git (fetch)
+    origin  https://github.com/alice/sage.git (push)
+    upstream    https://github.com/sagemath/sage.git (fetch)
+    upstream    https://github.com/sagemath/sage.git (push)
 
 
+Development workflow at a glance
+================================
 
-
-Simple Workflow
-===============
-
-.. IMAGE:: static/flowchart.*
+.. IMAGE:: static/workflow.*
     :align: center
 
-
 1. Alice creates a :ref:`new local branch <section-walkthrough-branch>` and
-   :ref:`commits <section-walkthrough-commit>` changes to the Sage sources.
+   :ref:`commits <section-walkthrough-commit>` changes to the Sage source files.
 
-2. Alice :ref:`uploads her branch <section-git_trac-push>` to the trac
-   server. This fills in the "Branch:" field with her remote branch
-   name ``u/alice/description``.
+2. Alice pushes the local branch to the remote ``origin``, her fork of the Sage
+   repo on GitHub, and with it :ref:`creates a PR <section-workflows-push>` to
+   the Sage repo. When ready, Alice sets the PR to ``needs review`` status.
 
-3. Bob :ref:`downloads Alice's branch <section-git_trac-checkout>`, looks
-   through the source, and leaves a comment on the ticket about a
-   mistake in Alice's code.
+3. Bob, a developer acting as reviewer, :ref:`examines the PR
+   <section-workflows-pr-checkout>`, looks through the changes, leaves comments
+   on the PR, and requests fixes (``needs work``).
 
-4. Alice fixes the bug on top of her current branch, and uploads the
-   updated branch.
+4. Alice makes more commits on top of her local branch, and pushes the new
+   commits to the remote ``origin``. These new commits are reflected in the PR.
 
-5. Bob :ref:`retrieves Alice's updates <section-git_trac-pull>` and reviews
-   the changes.
+5. Bob looks through the changes in the new commits and reviews the changes.
 
-6. Once Bob is satisfied, he sets the ticket to positive review. The
-   "Author:" field is set to Alice's full name, and the "Reviewer:"
-   field is set to Bob's full name.
-
-Alternatively, Bob might want to make some changes himself. Then,
-instead, we would have
-
-3. Bob :ref:`downloads Alice's branch <section-git_trac-checkout>`, makes
-   changes, and :ref:`commits <section-walkthrough-commit>` them to his local
-   branch.
-
-4. Bob :ref:`uploads his branch <section-git_trac-push>` to the trac
-   server. This fills in the "Branch:" field with his remote branch name
-   ``u/bob/description``.
-
-5. Alice :ref:`downloads Bob's branch <section-git_trac-checkout>` and
-   reviews his changes.
-
-6. Once Alice is satisfied, she sets the ticket to positive review. If
-   both contributions are of comparable size, then the "Author:" and
-   "Reviewer:" fields are set to both Alice's and Bob's full name.
+6. After a few of iterations of commenting and fixing, finally the reviewer Bob
+   is satisfied, and then he approves the PR and sets it to ``positive review``
+   status.
 
 
+.. _section-workflows-pr-create:
 
-
-Public Repository
+Creating a new PR
 =================
 
-In addition to the user branches (``u/<user>/<description>`` on the
-Sage trac server with ``<user>`` replaced by your trac user name) that
-only you can write to, you can also create a public branch that
-everybody with a trac account can write to. These start with
-``public/`` plus some description. To avoid branch name collisions it
-is a good idea to include your trac user name in the branch name, so
-it is recommended that you use ``public/<user>/<description>`` as the
-branch name. Now all ticket authors push to the same remote branch.
+Suppose you have written an algorithm for calculating the last twin prime,
+committed the code to a local branch based upon ``develop`` branch. Now you
+want to add it to Sage. You would first open a PR for that::
 
-1. Alice creates a :ref:`new local branch <section-walkthrough-branch>` and
-   :ref:`commits <section-walkthrough-commit>` some changes to the Sage library.
+    [alice@localhost sage]$ gh pr create
+    ? Where should we push the 'last-twin-prime' branch? user/sage
 
-2. Alice :ref:`uploads her branch <section-git_trac-push>` as a public
-   branch to the trac server. This fills in the "Branch:" field with
-   her remote branch name ``public/alice/description``.
+    Creating pull request for user:last-twin-prime into develop in sagemath/sage
 
-3. Bob :ref:`downloads Alice's branch <section-git_trac-checkout>` and
-   makes changes to his local copy.
+    ? Title Last twin prime
+    ? Choose a template PULL_REQUEST_TEMPLATE.md
+    ? Body <Received>
+    ? What's next? Submit as draft
+    https://github.com/sagemath/sage/pull/12345
 
-4. Bob :ref:`commits <section-walkthrough-commit>` changes to his local branch
-   of the Sage sources.
+This will create a new PR titled "Last twin prime" in the Sage repo for the
+branch pushed to your fork ``alice/sage`` from the local branch on your
+desktop. The title is automatically derived from the last commit title. If you
+don't like this, then you can use the ``-t`` switch to specify it explicitly.
+See the manual page of the command `gh pr create
+<https://cli.github.com/manual/gh_pr_create>`_ for details.
 
-5. Bob uploads his changes to the joint remote repository::
-
-       [bob@localhost sage]$ git push trac local_branch:public/alice/description
-
-6. Alice :ref:`retrieves Bob's updates <section-git_trac-pull>`, makes
-   more changes, commits, and pushes them to trac.
-
-7. Charly reviews the final version, and then sets the ticket to
-   positive review. The "Author:" field is set to Alice's and Bob's
-   full name, and the "Reviewer:" field is set to Charly's full name.
+If you did not provide enough details about the PR at the prompts, you may want
+to edit the PR further via the web interface.
 
 
+.. _section-workflows-pr-checkout:
+
+Checking out an existing PR
+===========================
+
+If you want to base your work on an existing PR or want to review the code of a PR,
+then you would run::
+
+    [alice@localhost sage]$ gh pr checkout 12345
+    remote: Enumerating objects: 7, done.
+    remote: Counting objects: 100% (7/7), done.
+    remote: Compressing objects: 100% (7/7), done.
+    remote: Total 7 (delta 0), reused 0 (delta 0), pack-reused 0
+    Unpacking objects: 100% (7/7), 25.50 KiB | 2.83 MiB/s, done.
+    From https://github.com/sagemath/sage
+     * [new ref]               refs/pull/12345/head -> last-twin-prime
+    Switched to branch 'last-twin-prime'
+
+The command ``gh pr checkout`` downloads the branch of the PR. Just
+like the ``create`` command, you can specify the local branch name explicitly using
+the ``-b`` switch if you want.
 
 
-GitHub
-======
+.. _section-workflows-push:
 
-Yet another possible workflow is to use GitHub (or any other
-third-party git repository) to collaboratively edit your new branch,
-and only push the result to trac once you and your ticket co-authors
-are satisfied.
+Uploading more changes to GitHub
+================================
 
+Once you have created a PR, edit the appropriate files and commit your changes
+to your local branch as described in :ref:`section-walkthrough-add-edit` and
+:ref:`section-walkthrough-commit`.
 
-Fork
-----
+If you are ready to share the changes up to now, upload your new commits to
+your fork by::
 
-The first step is to create your own fork of the Sage repository;
-simply click "Fork" on the `Sage GitHub repository
-<https://github.com/sagemath/sage>`_. Then add it as one of the
-remotes to your local Sage repository. In the following, we will use
-the label "github" for this remote repository, though you are of
-course free to use a different one::
+    [alice@localhost sage]$ git push origin
+    Enumerating objects: 13, done.
+    Counting objects: 100% (13/13), done.
+    Delta compression using up to 12 threads
+    Compressing objects: 100% (7/7), done.
+    Writing objects: 100% (7/7), 1.98 KiB | 1.98 MiB/s, done.
+    Total 7 (delta 6), reused 0 (delta 0), pack-reused 0
+    remote: Resolving deltas: 100% (6/6), completed with 6 local objects.
+    To https://github.com/alice/sage.git
+     + 352d842907...56ffdab967 last-twin-prime -> last-twin-prime
 
-    $ git remote add github git@github.com:github_user_name/sage.git
-    $ git remote -v
-    github      git@github.com:github_user_name/sage.git (fetch)
-    github      git@github.com:github_user_name/sage.git (push)
-    trac        git@trac.sagemath.org:sage.git (fetch)
-    trac        git@trac.sagemath.org:sage.git (push)
-    $ git fetch github
-    remote: Counting objects: 107, done.
-    remote: Compressing objects: 100% (63/63), done.
-    remote: Total 74 (delta 41), reused 40 (delta 10)
-    Unpacking objects: 100% (74/74), done.
-    From github.com:github_user_name/sage
-    * [new branch]      master     -> github/master
+Note that you do not push the branch to the remote ``upstream`` the Sage repo.
+Instead the new commits pushed to the remote ``origin`` are shown in the PR at
+the Sage repo.
 
 
-Develop
--------
+.. _section-workflows-finish:
 
-You now use the github repository to develop your ticket branch; First
-create a new branch::
+Finishing it up
+===============
 
-    $ git checkout -b my_branch --track github/master
-    Branch my_branch set up to track remote branch master from github.
-    Switched to a new branch 'my_branch'
-    $ git push github my_branch
-    Total 0 (delta 0), reused 0 (delta 0)
-    To git@github.com:github_user_name/sage.git
-     * [new branch]      my_branch -> my_branch
+It is common to go through a few iterations of commits before you
+push the branch, and you will probably also have pushed your branch a few
+times before your branch is ready for review.
 
-Because of the ``--track`` option, the ``git pull`` command will
-default to downloading your coauthor's changes from your github
-branch. Alternatively, you can create a new branch on your fork's
-GitHub webpage.
-
-At this point you can use the GitHub workflow that you prefer. In
-particular, your choices are
-
-* Give your coauthors write permissions to your github fork. Every
-  author edits/commits to their own local copy and they jointly push
-  to your github branch.
-
-* Have every coauthor create their own fork and send you (the lead
-  author) pull requests to your GitHub fork.
-
-* Use the GitHub web page editing & commiting feature, that way you
-  can make changes without ever using your local machine.
+Once you are happy with the changes you pushed, they must be
+reviewed by someone else before they can be included in the next
+release of Sage. To mark your PR as ready for review, you should
+set it to ``needs review`` status.
 
 
-Push to Trac
-------------
+.. _section-workflows-merge:
 
-When you are satisfied with your branch, you push it to the Sage trac
-server::
+Merging the upstream develop branch
+===================================
 
-    $ git push trac HEAD:u/user/description
+It commonly happens that ``develop`` branch at the remote ``upstream`` was
+updated and you need to merge the upstream changes to your local branch. Then
+you do::
 
-and then fill in the "Branch" field in the trac ticket description as
-explained in :ref:`section-git-push`.
+    [alice@localhost sage]$ git fetch upstream develop:develop
+
+This fast-forwards your local ``develop`` branch to the upstream
+``develop`` branch.
+
+Now you go back to your working branch and merge the updated ``develop`` branch::
+
+    [alice@localhost sage]$ git merge develop
+    ....
+
+If there was no upstream change conflicting with the changes you made locally,
+this merge operation will finish cleanly. Otherwise, you are in *merge
+conflict*. This rarely happens since Git is smart in merging changes. However,
+once merge conflict occurs, you have to manually resolve the conflicts. The
+conflict resolving procedure is explained in :ref:`section-git-conflict`.
 

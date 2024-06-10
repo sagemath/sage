@@ -88,7 +88,7 @@ class LinearExpression(ModuleElement):
 
             sage: TestSuite(linear).run()
         """
-        super(LinearExpression, self).__init__(parent)
+        super().__init__(parent)
         self._coeffs = coefficients
         self._const = constant
         if check:
@@ -225,7 +225,7 @@ class LinearExpression(ModuleElement):
         - ``include_constant`` -- whether to include the constant
           term
 
-        - ``multiplication`` -- string (optional, default: ``*``); the
+        - ``multiplication`` -- string (default: ``*``); the
           multiplication symbol to use
 
         OUTPUT:
@@ -440,7 +440,7 @@ class LinearExpression(ModuleElement):
             9
             sage: ex([1,1])    # syntactic sugar
             9
-            sage: ex([pi, e])
+            sage: ex([pi, e])                                                           # needs sage.symbolic
             2*pi + 3*e + 4
         """
         try:
@@ -490,7 +490,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
             sage: TestSuite(L).run()
         """
         from sage.categories.modules import Modules
-        super(LinearExpressionModule, self).__init__(base_ring, category=Modules(base_ring).WithBasis().FiniteDimensional())
+        super().__init__(base_ring, category=Modules(base_ring).WithBasis().FiniteDimensional())
         self._names = names
 
     @cached_method
@@ -534,7 +534,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
         return len(self._names)
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 
@@ -685,7 +685,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
             sage: M.ambient_vector_space()
             Vector space of dimension 2 over Rational Field
         """
-        from sage.modules.all import FreeModule
+        from sage.modules.free_module import FreeModule
         return FreeModule(self.base_ring(), self.ngens())
 
     @cached_method
@@ -714,7 +714,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
             sage: M.ambient_vector_space()
             Vector space of dimension 2 over Rational Field
         """
-        from sage.modules.all import VectorSpace
+        from sage.modules.free_module import VectorSpace
         field = self.base_ring().fraction_field()
         return VectorSpace(field, self.ngens())
 
@@ -746,7 +746,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
                 self.base().has_coerce_map_from(P.base())
         except AttributeError:
             pass
-        return super(LinearExpressionModule, self)._coerce_map_from_(P)
+        return super()._coerce_map_from_(P)
 
     def _repr_(self):
         """
@@ -761,7 +761,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
             sage: from sage.geometry.linear_expression import LinearExpressionModule
             sage: L.<x> = LinearExpressionModule(QQ);  L
             Module of linear expressions in variable x over Rational Field
-       """
+        """
         return 'Module of linear expressions in variable{2} {0} over {1}'.format(
             ', '.join(self._names), self.base_ring(), 's' if self.ngens() > 1 else '')
 

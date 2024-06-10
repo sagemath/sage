@@ -1,49 +1,215 @@
 .. _installation-guide:
 
-Welcome to the SageMath Installation Guide
-==========================================
+==================================
+Welcome to Sage Installation Guide
+==================================
 
-You can install SageMath either from a package manager, a pre-built binary
-tarball or from its sources.
+If you are reading this manual at https://doc.sagemath.org/, note that
+it was built at the time the most recent stable release of SageMath
+was made.
 
-Installing SageMath from your distribution package manager is the preferred and
-fastest solution (dependencies will be automatically taken care of and SageMath
-will be using your system Python). It is the case at least for the following
-GNU/Linux distributions: Debian version >= 9, Ubuntu version >= 18.04,
-Arch Linux, and NixOS. If you are in this situation, see
-:ref:`sec-GNU-Linux`.
+More up-to-date information and details regarding supported platforms
+may have become available afterwards and can be found in the section
+"Availability and installation help" of the
+`release tour <https://wiki.sagemath.org/ReleaseTours>`_ for each
+SageMath release.
 
-If your operating system does not provide SageMath, you can also use a
-pre-built binary. See the section :ref:`sec-installation-from-binaries`.
+**Where would you like to run SageMath?** Pick one of the following sections.
 
-Or you could install the ``sage`` package from the `conda-forge
-<https://conda-forge.org/>`_ project. See the section
-:ref:`sec-installation-conda`.
+.. _installation-guide-macos:
 
-By compiling SageMath from its sources you might be able to run a slightly more
-up-to-date version. You can also modify it and contribute back to the project.
-Compiling SageMath might take up to 4 hours on a recent computer. To build
-SageMath from source, go to the section :ref:`sec-installation-from-sources`.
+macOS
+=====
 
-Note that there are other alternatives to use SageMath that completely avoid
-installing it:
+- **Do you want to do SageMath development?**
 
-- the `Sage Debian Live USB key <https://sagedebianlive.metelu.net/>`_: a full
-  featured USB key that contains a whole Linux distribution including SageMath.
-  This might be an option if you fail installing SageMath on your operating
-  system.
+  - **Yes, development:**
 
-- `CoCalc <https://cocalc.com/>`_: an online service that provides SageMath and
+    Obtain the SageMath sources via ``git`` as described in `The Sage
+    Developer's Guide
+    <https://doc.sagemath.org/html/en/developer/walkthrough.html#chapter-walkthrough>`_.
+
+    - Then build SageMath from source as described in section
+      :ref:`sec-installation-from-sources`.
+
+    - Alternatively, follow the instructions in section
+      :ref:`sec-installation-conda-develop`;
+      these describe an experimental method that gets all required
+      packages, including Python packages, from conda-forge.
+
+  - **No development:**
+
+    - Install the `binary build of SageMath <https://github.com/3-manifolds/Sage_macOS/releases>`_
+      from the 3-manifolds project.  It is a signed and notarized app, which
+      works for macOS 10.12 and newer. It is completely self-contained and
+      provides the standard Sage distribution together with many optional
+      packages. Additional optional Python packages can be installed with the
+      ``%pip`` magic command and will go into your ``~/.sage`` directory.
+
+    - Alternatively, install SageMath from the `conda-forge
+      <https://conda-forge.org/>`_ project, as described in section
+      :ref:`sec-installation-conda`.
+
+    - Alternatively, build SageMath from source as described in section
+      :ref:`sec-installation-from-sources`.
+
+.. _installation-guide-windows:
+
+Windows
+=======
+
+- **Do you want to do SageMath development?**
+
+  - **Yes, development:**
+
+    Enable `Windows Subsystem for Linux (WSL)
+    <https://learn.microsoft.com/en-us/windows/wsl/>`_ and install
+    Ubuntu as follows.
+
+    - Make sure that hardware-assisted virtualization is enabled in
+      the EFI or BIOS of your system. If in doubt, refer to your
+      system's documentation for instructions on how to do this.
+
+    - `Run the WSL install command as administrator.
+      <https://learn.microsoft.com/en-us/windows/wsl/setup/environment#get-started>`_
+      This will install Ubuntu Linux.
+
+      Note that the basic instructions in the linked article apply to
+      up-to-date installations of Windows 10 and 11, but there are
+      also links to the procedures for older builds of Windows 10.
+
+    - If you had installed WSL previously or installed it using
+      different instructions, `verify that you are running WSL 2
+      <https://learn.microsoft.com/en-us/windows/wsl/install#check-which-version-of-wsl-you-are-running>`_.
+
+    - `Set up your Linux username and password.
+      <https://learn.microsoft.com/en-us/windows/wsl/setup/environment#set-up-your-linux-username-and-password>`_
+      Do not include any spaces in your username.
+
+    - If your computer has less than 10GB of RAM, `change the WSL settings
+      <https://learn.microsoft.com/en-us/windows/wsl/wsl-config#main-wsl-settings>`_
+      to make at least 5GB of RAM available to WSL.
+
+    Start Ubuntu from the Start menu. Then follow the instructions for
+    development on Linux below.
+
+  - **No development:**
+
+    Enable `Windows Subsystem for Linux (WSL)
+    <https://learn.microsoft.com/en-us/windows/wsl/>`_ and install
+    Ubuntu as follows.
+
+    - Make sure that hardware-assisted virtualization is enabled in
+      the EFI or BIOS of your system. If in doubt, refer to your
+      system's documentation for instructions on how to do this.
+
+    - `Run the WSL install command as administrator.
+      <https://learn.microsoft.com/en-us/windows/wsl/setup/environment#get-started>`_
+      This will install Ubuntu Linux.
+
+      Note that the basic instructions in the linked article apply to
+      up-to-date installations of Windows 10 and 11, but there are
+      also links to the procedures for older builds of Windows 10.
+
+    - If you had installed WSL previously or installed it using
+      different instructions, `verify that you are running WSL 2
+      <https://learn.microsoft.com/en-us/windows/wsl/install#check-which-version-of-wsl-you-are-running>`_.
+
+    - `Set up your Linux username and password.
+      <https://learn.microsoft.com/en-us/windows/wsl/setup/environment#set-up-your-linux-username-and-password>`_
+      Do not include any spaces in your username.
+
+    - If your computer has less than 8GB of RAM, `change the WSL settings
+      <https://learn.microsoft.com/en-us/windows/wsl/wsl-config#main-wsl-settings>`_
+      to make at least 4GB of RAM available to WSL.
+
+    Start Ubuntu from the Start menu, and type the following commands
+    to install Sage from conda-forge. (The ``$`` represents the command
+    line prompt, don't type it!) The second step will ask a few questions,
+    and you may need to hit :kbd:`Enter` to confirm or type ``yes``
+    and then hit :kbd:`Enter`.
+
+    .. code-block:: shell
+
+       $ curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+       $ bash Miniforge3-$(uname)-$(uname -m).sh
+       $ conda create -n sage sage python=3.11
+
+    (If there are any installation failures, please report them to
+    the conda-forge maintainers by opening a `GitHub Issue for
+    conda-forge/sage-feedstock <https://github.com/conda-forge/sage-feedstock/issues>`_.)
+
+    You can now start SageMath as follows:
+
+    .. code-block:: shell
+
+       $ conda activate sage
+       $ sage
+
+    This way of starting Sage gives you the most basic way of using
+    Sage in the terminal. See :ref:`sec-launching` for recommended next steps,
+    in particular for setting up the Jupyter notebook, which is required if
+    you want to use graphics.
+
+.. _installation-guide-linux:
+
+Linux
+=====
+
+- **Do you want to do SageMath development?**
+
+  - **Yes, development:**
+
+    Obtain the SageMath sources via ``git`` as described in `The Sage
+    Developer's Guide
+    <https://doc.sagemath.org/html/en/developer/walkthrough.html#chapter-walkthrough>`_.
+
+    - Then build SageMath from source as described in section
+      :ref:`sec-installation-from-sources`.
+
+    - Alternatively, follow the instructions in section
+      :ref:`sec-installation-conda-develop`;
+      these describe an experimental method that gets all required
+      packages, including Python packages, from conda-forge.
+
+  - No development: **Do you have root access (sudo)?**
+
+    - **Yes, root access:** Then the easiest way to install SageMath is
+      through a Linux distribution that provides it as a package.  Some
+      Linux distributions have up-to-date versions of SageMath,
+      see `repology.org: sagemath
+      <https://repology.org/project/sagemath/versions>`_ for an
+      overview.  See :ref:`sec-GNU-Linux` for additional information.
+
+      If you are on an older version of your distribution and a recent
+      version of SageMath is only available on a newer version of the
+      distribution, consider upgrading your distribution.
+      In particular, do not install a version of Sage older than 9.5.
+
+    - **No root access, or on an older distribution:** Install SageMath from
+      the `conda-forge <https://conda-forge.org/>`_ project, as described in section
+      :ref:`sec-installation-conda`.
+
+    - Alternatively, build SageMath from source as described in section
+      :ref:`sec-installation-from-sources`.
+
+In the cloud
+============
+
+- `Sage Binder repo <https://github.com/sagemath/sage-binder-env>`_ provides a
+  Binder badge to launch JupyterLab environment with Sage.
+
+- `Sage Cell Server <https://sagecell.sagemath.org/>`_ is a free online service for
+  quick computations with Sage.
+
+- `CoCalc <https://cocalc.com/>`_ is an online commercial service that provides Sage and
   many other tools.
 
-- `Sage Cell Server <https://sagecell.sagemath.org/>`_: an online service for
-  elementary SageMath computations.
+- `Docker image sagemathinc/cocalc
+  <https://hub.docker.com/r/sagemathinc/cocalc>`_ can be used on any system with Docker to run CoCalc locally.
 
-- `Docker images <https://hub.docker.com/r/sagemath/sagemath/>`_: SageMath in a
-  container for more experienced users.
 
-The rest of this document describes how to install SageMath from pre-built
-binaries and from sources.
+More information:
 
 .. toctree::
    :maxdepth: 2
@@ -53,7 +219,6 @@ binaries and from sources.
    conda
    source
    launching
-   standard_packages
    troubles
 
 This work is licensed under a `Creative Commons Attribution-Share Alike

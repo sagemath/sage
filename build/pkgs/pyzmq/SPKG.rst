@@ -1,5 +1,5 @@
-pyzmq
-=====
+pyzmq: Python bindings for the zeromq networking library
+========================================================
 
 Description
 -----------
@@ -16,14 +16,6 @@ Upstream Contact
 ----------------
 
 http://www.zeromq.org
-
-Dependencies
-------------
-
--  Python
--  Cython
--  zeromq
-
 
 Special Update/Build Instructions
 ---------------------------------

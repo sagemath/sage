@@ -8,7 +8,6 @@ conventions for conversion functions
 - ``new_sage_XXX``   : create a new Sage object
 - ``set_ntl_XXX`` : set the entries of the ntl object
 - ``set_sage_XXX``   : set the entries of the Sage object
-
 """
 #*****************************************************************************
 #       Copyright (C) 2007 Martin Albrecht
@@ -23,7 +22,7 @@ conventions for conversion functions
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .types cimport mat_ZZ_p_c
+from sage.libs.ntl.types cimport mat_ZZ_p_c
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
 from sage.libs.ntl.ntl_ZZ_p cimport ntl_ZZ_p
 
@@ -36,7 +35,7 @@ from sage.matrix.matrix_generic_dense cimport Matrix_generic_dense
 # matrix_modn_dense_float (dense matrix over Z/nZ) #
 ################################################
 
-cdef inline void set_ntl_matrix_modn_dense_float(mat_ZZ_p_c& A, ntl_ZZ_pContext_class c, Matrix_modn_dense_float m):
+cdef inline void set_ntl_matrix_modn_dense_float(mat_ZZ_p_c& A, ntl_ZZ_pContext_class c, Matrix_modn_dense_float m) noexcept:
     r"""
     set the entries of a NTL matrix from a Sage matrix.
 
@@ -53,7 +52,7 @@ cdef inline void set_ntl_matrix_modn_dense_float(mat_ZZ_p_c& A, ntl_ZZ_pContext_
             tmp = ntl_ZZ_p(m[i,j], c)
             A.put(i, j, tmp.x)
 
-cdef inline void set_ntl_matrix_modn_dense_double(mat_ZZ_p_c& A, ntl_ZZ_pContext_class c, Matrix_modn_dense_double m):
+cdef inline void set_ntl_matrix_modn_dense_double(mat_ZZ_p_c& A, ntl_ZZ_pContext_class c, Matrix_modn_dense_double m) noexcept:
     r"""
     set the entries of a NTL matrix from a Sage matrix.
 
@@ -70,7 +69,7 @@ cdef inline void set_ntl_matrix_modn_dense_double(mat_ZZ_p_c& A, ntl_ZZ_pContext
             tmp = ntl_ZZ_p(m[i,j], c)
             A.put(i, j, tmp.x)
 
-cdef inline void set_ntl_matrix_modn_generic_dense(mat_ZZ_p_c& A, ntl_ZZ_pContext_class c, Matrix_generic_dense m):
+cdef inline void set_ntl_matrix_modn_generic_dense(mat_ZZ_p_c& A, ntl_ZZ_pContext_class c, Matrix_generic_dense m) noexcept:
     r"""
     set the entries of a NTL matrix from a Sage matrix.
 
@@ -87,7 +86,7 @@ cdef inline void set_ntl_matrix_modn_generic_dense(mat_ZZ_p_c& A, ntl_ZZ_pContex
             tmp = ntl_ZZ_p(m[i,j], c)
             A.put(i, j, tmp.x)
 
-cdef inline void set_ntl_matrix_modn_dense(mat_ZZ_p_c& A, ntl_ZZ_pContext_class c, m):
+cdef inline void set_ntl_matrix_modn_dense(mat_ZZ_p_c& A, ntl_ZZ_pContext_class c, m) noexcept:
     r"""
     set the entries of a NTL matrix from a Sage matrix.
 

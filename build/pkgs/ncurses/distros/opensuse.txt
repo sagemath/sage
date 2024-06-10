@@ -1,0 +1,2 @@
+pkgconfig(ncurses)
+pkgconfig(ncursesw)

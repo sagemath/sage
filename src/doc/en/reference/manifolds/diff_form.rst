@@ -2,7 +2,7 @@ Differential Forms
 ==================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/manifolds/differentiable/diff_form_module
 

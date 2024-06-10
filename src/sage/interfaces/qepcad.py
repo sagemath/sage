@@ -3,31 +3,31 @@ Interface to QEPCAD
 ===================
 
 The basic function of QEPCAD is to construct cylindrical algebraic
-decompositions (CADs) of $\RR^k$, given a list of polynomials.  Using
+decompositions (CADs) of `\RR^k`, given a list of polynomials.  Using
 this CAD, it is possible to perform quantifier elimination and formula
 simplification.
 
-A CAD for a set $A$ of $k$-variate polynomials decomposes $\RR^j$ into
-disjoint cells, for each $j$ in $0 \leq j \leq k$.  The sign of each
-polynomial in $A$ is constant in each cell of $\RR^k$, and for each
-cell in $\RR^j$ ($j > 1$), the projection of that cell into
-$\RR^{j-1}$ is a cell of $\RR^{j-1}$.  (This property makes the
+A CAD for a set `A` of `k`-variate polynomials decomposes `\RR^j` into
+disjoint cells, for each `j` in `0 \leq j \leq k`.  The sign of each
+polynomial in `A` is constant in each cell of `\RR^k`, and for each
+cell in `\RR^j` (`j > 1`), the projection of that cell into
+`\RR^{j-1}` is a cell of `\RR^{j-1}`.  (This property makes the
 decomposition 'cylindrical'.)
 
-Given a formula $\exists x. P(a,b,x) = 0$ (for a polynomial $P$), and
-a cylindrical algebraic decomposition for $P$, we can eliminate the
-quantifier (find an equivalent formula in the two variables $a$, $b$
-without the quantifier $\exists$) as follows.  For each cell $C$ in
-$\RR^2$, find the cells of $\RR^3$ which project to $C$.  (This
-collection is called the ``stack`` over $C$.)  Mark $C$ as true if
-some member of the stack has sign $= 0$; otherwise, mark $C$ as false.
-Then, construct a polynomial formula in $a$, $b$ which specifies
+Given a formula `\exists x. P(a,b,x) = 0` (for a polynomial `P`), and
+a cylindrical algebraic decomposition for `P`, we can eliminate the
+quantifier (find an equivalent formula in the two variables `a`, `b`
+without the quantifier `\exists`) as follows.  For each cell `C` in
+`\RR^2`, find the cells of `\RR^3` which project to `C`.  (This
+collection is called the ``stack`` over `C`.)  Mark `C` as true if
+some member of the stack has sign `= 0`; otherwise, mark `C` as false.
+Then, construct a polynomial formula in `a`, `b` which specifies
 exactly the true cells (this is always possible).  The same technique
 works if the body of the quantifier is any boolean combination of
 polynomial equalities and inequalities.
 
 Formula simplification is a similar technique.  Given a formula which
-describes a simple set of $\RR^k$ in a complicated way as a boolean
+describes a simple set of `\RR^k` in a complicated way as a boolean
 combination of polynomial equalities and inequalities, QEPCAD can
 construct a CAD for the polynomials and recover a simple equivalent
 formula.
@@ -64,7 +64,7 @@ ellipse::
 
     sage: ellipse = 3*x^2 + 2*x*y + y^2 - x + y - 7
 
-What is the projection onto the $x$ axis of this ellipse?  First we
+What is the projection onto the `x` axis of this ellipse?  First we
 construct a formula asking this question. ::
 
     sage: F = qf.exists(y, ellipse == 0); F
@@ -75,7 +75,7 @@ Then we run qepcad to get the answer::
     sage: qepcad(F)                            # optional - qepcad
     8 x^2 - 8 x - 29 <= 0
 
-How about the projection onto the $y$ axis? ::
+How about the projection onto the `y` axis? ::
 
     sage: qepcad(qf.exists(x, ellipse == 0))   # optional - qepcad
     8 y^2 + 16 y - 85 <= 0
@@ -90,7 +90,7 @@ First we construct a circle::
 
     sage: circle = x^2 + y^2 - 3
 
-For what values $k$ does a vertical line $x=k$ intersect the combined
+For what values `k` does a vertical line `x=k` intersect the combined
 figure of the circle and ellipse exactly three times? ::
 
     sage: F = qf.exactly_k(3, y, circle * ellipse == 0); F
@@ -98,7 +98,7 @@ figure of the circle and ellipse exactly three times? ::
     sage: qepcad(F)                                         # not tested (random order)
     x^2 - 3 <= 0 /\ 8 x^2 - 8 x - 29 <= 0 /\ 8 x^4 - 26 x^2 - 4 x + 13 >= 0 /\ [ 8 x^4 - 26 x^2 - 4 x + 13 = 0 \/ x^2 - 3 = 0 \/ 8 x^2 - 8 x - 29 = 0 ]
 
-Here we see that the solutions are among the eight ($4 + 2 + 2$) roots
+Here we see that the solutions are among the eight (`4 + 2 + 2`) roots
 of the three polynomials inside the brackets, but not all of these
 roots are solutions; the polynomial inequalities outside the brackets
 are needed to select those roots that are solutions.
@@ -168,7 +168,7 @@ set. ::
 There is another reason to prefer output using _root_ expressions; not
 only does it sometimes give added insight into the geometric
 structure, it also can be more efficient to construct.  Consider this
-formula for the projection of a particular semicircle onto the $x$
+formula for the projection of a particular semicircle onto the `x`
 axis::
 
     sage: F = qf.exists(y, qf.and_(circle == 0, x + y > 0)); F
@@ -176,9 +176,9 @@ axis::
     sage: qepcad(F)                                             # not tested (random order)
     x^2 - 3 <= 0 /\ [ x > 0 \/ 2 x^2 - 3 < 0 ]
 
-Here, the formula $x > 0$ had to be introduced in order to get a
+Here, the formula `x > 0` had to be introduced in order to get a
 solution formula; the original CAD of F did not include the
-polynomial $x$.  To avoid having QEPCAD do the extra work to come up
+polynomial `x`.  To avoid having QEPCAD do the extra work to come up
 with a solution formula, we can tell it to use the extended language;
 it is always possible to construct a solution formula in the extended
 language without introducing new polynomials. ::
@@ -251,7 +251,7 @@ intersect the union of the circle and the ellipse exactly three times. ::
     sage: pts = qepcad(F, solution='all-points'); pts       # optional - qepcad
     [{'x': 1.732050807568878?}, {'x': 1.731054913462534?}, {'x': 0.678911384208004?}, {'x': -0.9417727377417167?}, {'x': -1.468193559928821?}, {'x': -1.468501968502953?}]
 
-Since $y$ is bound by the quantifier, the solutions only refer to $x$.
+Since `y` is bound by the quantifier, the solutions only refer to `x`.
 
 We can substitute one of these solutions into the original equation::
 
@@ -339,19 +339,19 @@ resulting ``qe`` object. ::
 
 We said before that QEPCAD creates 'cylindrical algebraic
 decompositions'; since we have a bivariate polynomial, we get
-decompositions of $\RR^0$, $\RR^1$, and $\RR^2$.  In this case, where
-our example is a circle of radius $\sqrt{3}$ centered on the origin,
+decompositions of `\RR^0`, `\RR^1`, and `\RR^2`.  In this case, where
+our example is a circle of radius `\sqrt{3}` centered on the origin,
 these decompositions are as follows:
 
-The decomposition of $\RR^0$ is trivial (of course).  The
-decomposition of $\RR^1$ has five cells: $x < -\sqrt{3}$, $x =
--\sqrt{3}$, $-\sqrt{3} < x < \sqrt{3}$, $x = \sqrt{3}$, and $x >
-\sqrt{3}$.  These five cells comprise the ``stack`` over the single
-cell in the trivial decomposition of $\RR^0$.
+The decomposition of `\RR^0` is trivial (of course).  The
+decomposition of `\RR^1` has five cells: `x < -\sqrt{3}`, `x =
+-\sqrt{3}`, `-\sqrt{3} < x < \sqrt{3}`, `x = \sqrt{3}`, and `x >
+\sqrt{3}`.  These five cells comprise the ``stack`` over the single
+cell in the trivial decomposition of `\RR^0`.
 
-These five cells give rise to five stacks in $\RR^2$.  The first and
+These five cells give rise to five stacks in `\RR^2`.  The first and
 fifth stack have just one cell apiece.  The second and fourth stacks
-have three cells: $y < 0$, $y = 0$, and $y > 0$.  The third stack has
+have three cells: `y < 0`, `y = 0`, and `y > 0`.  The third stack has
 five cells: below the circle, the lower semicircle, the interior of
 the circle, the upper semicircle, and above the circle.
 
@@ -359,7 +359,7 @@ QEPCAD (and this QEPCAD interface) number the cells in a stack
 starting with 1.  Each cell has an ``index``, which is a tuple of
 integers describing the path to the cell in the tree of all cells.
 For example, the cell 'below the circle' has index (3,1) (the first
-cell in the stack over the third cell of $\RR^1$) and the interior of
+cell in the stack over the third cell of `\RR^1`) and the interior of
 the circle has index (3,3).
 
 We can view these cells with the QEPCAD command ``d_cell``.  For
@@ -389,7 +389,7 @@ instance, let us look at the cell for the upper semicircle::
     ----------------------------------------------------
 
 We see that, the level of this cell is 2, meaning that it is part of
-the decomposition of $\RR^2$.  The dimension is 1, meaning that the
+the decomposition of `\RR^2`.  The dimension is 1, meaning that the
 cell is homeomorphic to a line (rather than a plane or a point).  The
 sample point gives the coordinates of one point in the cell, both
 symbolically and numerically.
@@ -404,13 +404,14 @@ For programmatic access to cells, we have defined a \sage wrapper class
 A :class:`QepcadCell` has accessor methods for the important state held
 within a cell.  For instance::
 
-    sage: c.level()                                  # optional - qepcad
+    sage: # optional - qepcad
+    sage: c.level()
     2
-    sage: c.index()                                  # optional - qepcad
+    sage: c.index()
     (3, 4)
-    sage: qe.cell(3).number_of_children()            # optional - qepcad
+    sage: qe.cell(3).number_of_children()
     5
-    sage: len(qe.cell(3))                            # optional - qepcad
+    sage: len(qe.cell(3))
     5
 
 One particularly useful thing we can get from a cell is its sample point,
@@ -482,8 +483,8 @@ just need to use a formula that uses both polynomials.) ::
     QEPCAD object has moved to phase 'Before Choice'
     QEPCAD object has moved to phase 'Before Solution'
 
-Now we want to find all cells $c$ in the decomposition of $\RR^1$ such
-that the stack over $c$ contains exactly two cells on the ellipse, and
+Now we want to find all cells `c` in the decomposition of `\RR^1` such
+that the stack over `c` contains exactly two cells on the ellipse, and
 also contains exactly two cells on the circle.
 
 Our input polynomials are 'level-2 projection factors', we see::
@@ -530,9 +531,9 @@ TESTS:
 
 Check the qepcad configuration file::
 
-    sage: with open(os.path.join(SAGE_LOCAL, 'default.qepcadrc')) as f:  # optional - qepcad
+    sage: with open(os.path.join(SAGE_LOCAL, 'etc', 'default.qepcadrc')) as f:  # optional - qepcad
     ....:     f.readlines()[-1]
-    'SINGULAR .../bin\n'
+    'SINGULAR yes\n'
 
 Tests related to the not tested examples (nondeterministic order of atoms)::
 
@@ -574,19 +575,20 @@ Tests related to the not tested examples (nondeterministic order of atoms)::
     sage: _qepcad_atoms(qepcad(F, solution='extended'))            # optional - qepcad
     {'x > _root_1 2 x^2 - 3', 'x^2 - 3 <= 0'}
 
-    sage: qe = qepcad(qf.and_(ellipse == 0, circle == 0), interact=True)       # optional - qepcad
-    sage: qe.go(); qe.go(); qe.go()                         # optional - qepcad
+    sage: # optional - qepcad
+    sage: qe = qepcad(qf.and_(ellipse == 0, circle == 0), interact=True)
+    sage: qe.go(); qe.go(); qe.go()
     QEPCAD object has moved to phase 'Before Projection (y)'
     QEPCAD object has moved to phase 'Before Choice'
     QEPCAD object has moved to phase 'Before Solution'
-    sage: for c in qe.cell():                               # optional - qepcad
+    sage: for c in qe.cell():
     ....:     count_ellipse = 0
     ....:     count_circle = 0
     ....:     for c2 in c:
     ....:         count_ellipse += (c2.signs()[1][0] == 0)
     ....:         count_circle += (c2.signs()[1][1] == 0)
     ....:     c.set_truth(count_ellipse == 2 and count_circle == 2)
-    sage: _qepcad_atoms(qe.solution_extension('G'))                # optional - qepcad
+    sage: _qepcad_atoms(qe.solution_extension('G'))
     {'8 x^2 - 8 x - 29 < 0', 'x^2 - 3 < 0'}
 
 
@@ -595,17 +597,15 @@ AUTHORS:
 - Carl Witty (2008-03): initial version
 - Thierry Monteil (2015-07) repackaging + noncommutative doctests.
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Carl Witty <Carl.Witty@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function, absolute_import
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+import os
 from sage.env import SAGE_LOCAL
 import pexpect
 import re
@@ -616,7 +616,7 @@ from sage.misc.flatten import flatten
 from sage.misc.sage_eval import sage_eval
 from sage.repl.preparse import implicit_mul
 from sage.interfaces.tab_completion import ExtraTabCompletion
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 from .expect import Expect, ExpectFunction
 from sage.interfaces.interface import AsciiArtString
 
@@ -627,18 +627,22 @@ def _qepcad_atoms(formula):
 
     INPUT:
 
-    - `formula` (string) - a quantifier-free formula.
+    - `formula` (string) -- a quantifier-free formula.
 
-    .. note:: this function is pis-aller used for doctesting, not a complete
-    parser, which should be written in a further ticket.
+    .. NOTE::
+
+        This function is pis-aller used for doctesting, not a complete
+        parser, which should be written in a later PR.
 
     EXAMPLES::
 
-    sage: from sage.interfaces.qepcad import _qepcad_atoms
-    sage: _qepcad_atoms('y^5 + 4 y + 8 >= 0 /\\ y <= 0 /\\ [ y = 0 \\/ y^5 + 4 y + 8 = 0 ]')
-    {'y <= 0', 'y = 0', 'y^5 + 4 y + 8 = 0', 'y^5 + 4 y + 8 >= 0'}
+        sage: from sage.interfaces.qepcad import _qepcad_atoms
+        sage: _qepcad_atoms('y^5 + 4 y + 8 >= 0 /\\ y <= 0 /\\ [ y = 0 \\/ y^5 + 4 y + 8 = 0 ]')
+        {'y <= 0', 'y = 0', 'y^5 + 4 y + 8 = 0', 'y^5 + 4 y + 8 >= 0'}
     """
-    return set(i.strip() for i in flatten([i.split('\\/') for i in formula.replace('[','').replace(']','').split('/\\')]))
+    L = flatten([i.split('\\/') for i in formula.replace('[', '').replace(']', '').split('/\\')])
+    return {i.strip() for i in L}
+
 
 def _qepcad_cmd(memcells=None):
     r"""
@@ -657,10 +661,11 @@ def _qepcad_cmd(memcells=None):
         True
     """
     if memcells is not None:
-        memcells_arg = '+N%s' % memcells
+        memcells_arg = f'+N{memcells}'
     else:
         memcells_arg = ''
-    return "env qe=%s qepcad %s"%(SAGE_LOCAL, memcells_arg)
+    return f"env qe={SAGE_LOCAL} qepcad {memcells_arg}"
+
 
 _command_info_cache = None
 
@@ -685,8 +690,8 @@ def _update_command_info():
 
     cache = {}
 
-    with open(os.path.join(SAGE_LOCAL, 'bin', 'qepcad.help')) as help:
-        assert(help.readline().strip() == '@')
+    with open(os.path.join(SAGE_LOCAL, 'share/qepcad', 'qepcad.help')) as help:
+        assert help.readline().strip() == '@'
 
         while True:
             cmd_line = help.readline()
@@ -697,7 +702,7 @@ def _update_command_info():
                 break
 
             (cmd, id, phases, kind) = cmd_line.split()
-            assert(help.readline().strip() == '@')
+            assert help.readline().strip() == '@'
 
             help_text = ''
             help_line = help.readline()
@@ -793,7 +798,7 @@ class Qepcad:
         Requires a formula, which
         may be a :class:`qformula` as returned by the methods of
         ``qepcad_formula``, a symbolic equality or inequality, a
-        polynomial $p$ (meaning $p = 0$), or a string, which is passed
+        polynomial `p` (meaning `p = 0`), or a string, which is passed
         straight to QEPCAD.
 
         ``vars`` specifies the variables to use; this gives the variable
@@ -821,20 +826,20 @@ class Qepcad:
             sage: Qepcad(x^2 - 1 == 0)            # optional - qepcad
             QEPCAD object in phase 'Before Normalization'
 
-        To check that :trac:`20126` is fixed::
+        To check that :issue:`20126` is fixed::
 
             sage: (x, y, z) = var('x, y, z')
             sage: conds = [-z < 0, -y + z < 0, x^2 + x*y + 2*x*z + 2*y*z - x < 0, \
                            x^2 + x*y + 3*x*z + 2*y*z + 2*z^2 - x - z < 0, \
                            -2*x + 1 < 0, -x*y - x*z - 2*y*z - 2*z^2 + z < 0, \
                            x + 3*y + 3*z - 1 < 0]
-            sage: qepcad(conds, memcells=2000000) # optional - qepcad
+            sage: qepcad(conds, memcells=3000000) # optional - qepcad
             2 x - 1 > 0 /\ z > 0 /\ z - y < 0 /\ 3 z + 3 y + x - 1 < 0
         """
         self._cell_cache = {}
 
         if verbose:
-            logfile=sys.stdout
+            logfile = sys.stdout
 
         varlist = None
         if vars is not None:
@@ -891,7 +896,7 @@ class Qepcad:
             sage: qepcad(x - 1 == 0, interact=True) # optional - qepcad
             QEPCAD object in phase 'Before Normalization'
         """
-        return "QEPCAD object in phase '{}'".format(self.phase())
+        return f"QEPCAD object in phase '{self.phase()}'"
 
     def assume(self, assume):
         r"""
@@ -1035,7 +1040,7 @@ class Qepcad:
             sage: qe.set_truth_value(1, 1) # optional - qepcad
         """
         index_str = _format_cell_index([index])
-        self._eval_line('set-truth-value\n%s\n%s' % (index_str, nv))
+        self._eval_line(f'set-truth-value\n{index_str}\n{nv}')
 
     def phase(self):
         r"""
@@ -1043,24 +1048,25 @@ class Qepcad:
 
         EXAMPLES::
 
-            sage: qe = qepcad(x > 2/3, interact=True) # optional - qepcad
-            sage: qe.phase() # optional - qepcad
+            sage: # optional - qepcad
+            sage: qe = qepcad(x > 2/3, interact=True)
+            sage: qe.phase()
             'Before Normalization'
-            sage: qe.go() # optional - qepcad
+            sage: qe.go()
             QEPCAD object has moved to phase 'At the end of projection phase'
-            sage: qe.phase() # optional  - qepcad
+            sage: qe.phase()
             'At the end of projection phase'
-            sage: qe.go() # optional - qepcad
+            sage: qe.go()
             QEPCAD object has moved to phase 'Before Choice'
-            sage: qe.phase() # optional - qepcad
+            sage: qe.phase()
             'Before Choice'
-            sage: qe.go() # optional - qepcad
+            sage: qe.go()
             QEPCAD object has moved to phase 'Before Solution'
-            sage: qe.phase() # optional - qepcad
+            sage: qe.phase()
             'Before Solution'
-            sage: qe.go() # optional - qepcad
+            sage: qe.go()
             3 x - 2 > 0
-            sage: qe.phase() # optional - qepcad
+            sage: qe.phase()
             'EXITED'
         """
         match = self._qex.expect().match
@@ -1078,14 +1084,15 @@ class Qepcad:
 
         EXAMPLES::
 
-            sage: qe = qepcad(x^2 > 2, interact=True) # optional - qepcad
-            sage: qe.finish() # optional - qepcad
+            sage: # optional - qepcad
+            sage: qe = qepcad(x^2 > 2, interact=True)
+            sage: qe.finish()
             x^2 - 2 > 0
-            sage: (ans, stats) = qe._parse_answer_stats() # optional - qepcad
-            sage: ans # optional - qepcad
+            sage: (ans, stats) = qe._parse_answer_stats()
+            sage: ans
             'x^2 - 2 > 0'
-            sage: stats # random, optional - qepcad
-            '-----------------------------------------------------------------------------\r\n0 Garbage collections, 0 Cells and 0 Arrays reclaimed, in 0 milliseconds.\r\n492514 Cells in AVAIL, 500000 Cells in SPACE.\r\n\r\nSystem time: 16 milliseconds.\r\nSystem time after the initialization: 4 milliseconds.\r\n-----------------------------------------------------------------------------\r\n'
+            sage: stats
+            '-----------------------------------------------------------------------------\r\n0 Garbage collections, 0 Cells and 0 Arrays reclaimed, in 0 ...
         """
         if self.phase() != 'EXITED':
             raise ValueError("QEPCAD is not finished yet")
@@ -1167,14 +1174,15 @@ class Qepcad:
 
         EXAMPLES::
 
-            sage: qe = qepcad(x + 3 == 42, interact=True) # optional - qepcad
-            sage: qe.go(); qe.go(); qe.go() # optional - qepcad
+            sage: # optional - qepcad
+            sage: qe = qepcad(x + 3 == 42, interact=True)
+            sage: qe.go(); qe.go(); qe.go()
             QEPCAD object has moved to phase 'At the end of projection phase'
             QEPCAD object has moved to phase 'Before Choice'
             QEPCAD object has moved to phase 'Before Solution'
-            sage: qe.cell(2) # optional - qepcad
+            sage: qe.cell(2)
             QEPCAD cell (2)
-            sage: qe.cell(2) is qe.cell(2) # optional - qepcad
+            sage: qe.cell(2) is qe.cell(2)
             True
         """
         index_str = _format_cell_index(index)
@@ -1215,14 +1223,14 @@ class Qepcad:
         for line in lines:
             if 'Information about the cell' in line:
                 in_cell = True
-            if in_cell: cell_lines.append(line)
+            if in_cell:
+                cell_lines.append(line)
             if line == '----------------------------------------------------':
                 cells.append(QepcadCell(self, cell_lines))
                 cell_lines = []
                 in_cell = False
 
         return cells
-
 
     def __getattr__(self, attrname):
         r"""
@@ -1236,7 +1244,7 @@ class Qepcad:
         """
         if attrname[:1] == "_":
             raise AttributeError
-        if not attrname in self._tab_completion():
+        if attrname not in self._tab_completion():
             raise AttributeError
         return QepcadFunction(self, attrname)
 
@@ -1286,10 +1294,12 @@ class Qepcad:
         result = self._qex._eval_line(cmd + ' &')
 
         nl = result.find('\n')
-        if nl < 0: nl = len(result)
+        if nl < 0:
+            nl = len(result)
 
         amp = result.find('&', 0, nl)
-        if amp > 0: result = result[amp+1:]
+        if amp > 0:
+            result = result[amp+1:]
 
         result = result.strip()
 
@@ -1317,14 +1327,15 @@ class Qepcad:
         name = name.replace('_', '-')
         args = [str(_) for _ in args]
         pre_phase = self.phase()
-        result = self._eval_line('%s %s'%(name, ' '.join(args)))
+        result = self._eval_line('{} {}'.format(name, ' '.join(args)))
         post_phase = self.phase()
         if len(result) and post_phase != 'EXITED':
             return AsciiArtString(result)
         if pre_phase != post_phase:
             if post_phase == 'EXITED' and name != 'quit':
                 return self.answer()
-            return AsciiArtString("QEPCAD object has moved to phase '%s'"%post_phase)
+            return AsciiArtString("QEPCAD object has moved to phase '%s'" % post_phase)
+
 
 def _format_cell_index(a):
     """
@@ -1469,7 +1480,7 @@ def qepcad(formula, assume=None, interact=False, solution=None,
         sage: qepcad(qf.exists(x, a*x^2 + b*x + c == 0), assume=(a != 0))    # optional - qepcad
         4 a c - b^2 <= 0
 
-    For which values of $a$, $b$, $c$ does $a x^2 + b x + c$ have
+    For which values of `a`, `b`, `c` does `a x^2 + b x + c` have
     2 real zeroes? ::
 
         sage: exact2 = qepcad(qf.exactly_k(2, x, a*x^2 + b*x + c == 0)); exact2   # not tested (random order)
@@ -1485,7 +1496,7 @@ def qepcad(formula, assume=None, interact=False, solution=None,
         sage: exact0 = qepcad(qf.forall(x, a*x^2 + b*x + c != 0)); exact0     # not tested (random order)
         4 a c - b^2 >= 0 /\ c /= 0 /\ [ b = 0 \/ 4 a c - b^2 > 0 ]
 
-    $3^{75}$ real zeroes? ::
+    `3^{75}` real zeroes? ::
 
         sage: qepcad(qf.exactly_k(3^75, x, a*x^2 + b*x + c == 0))    # optional - qepcad
         FALSE
@@ -1504,7 +1515,7 @@ def qepcad(formula, assume=None, interact=False, solution=None,
         sage: qepcad(r'[[%s] \/ [%s] \/ [%s]]' % (exact0, exact1, exact2), vars=(a,b,c))  # not tested (random order)
         b /= 0 \/ a /= 0 \/ c /= 0
 
-    So we have finitely many zeroes if $a$, $b$, or $c$ is nonzero;
+    So we have finitely many zeroes if `a`, `b`, or `c` is nonzero;
     which means we should have infinitely many zeroes if they are all
     zero. ::
 
@@ -1531,7 +1542,7 @@ def qepcad(formula, assume=None, interact=False, solution=None,
         sage: qepcad(r'[[%s] \/ [%s] \/ [a = 0 /\ b = 0 /\ c = 0]]' % (exact0, exact1), vars='a,b,c')   # not tested (random order)
         a = 0 \/ 4 a c - b^2 >= 0
 
-    Since polynomials are continuous and $y > 0$ is an open set,
+    Since polynomials are continuous and `y > 0` is an open set,
     they are positive infinitely often iff they are positive at
     least once. ::
 
@@ -1540,9 +1551,9 @@ def qepcad(formula, assume=None, interact=False, solution=None,
         sage: qepcad(qf.exists(x, a*x^2 + b*x + c > 0))                 # not tested (random order)
         c > 0 \/ a > 0 \/ 4 a c - b^2 < 0
 
-    However, since $y >= 0$ is not open, the equivalence does not
+    However, since `y >= 0` is not open, the equivalence does not
     hold if you replace 'positive' with 'nonnegative'.
-    (We assume $a \neq 0$ to get simpler formulas.) ::
+    (We assume `a \neq 0` to get simpler formulas.) ::
 
         sage: qepcad(qf.infinitely_many(x, a*x^2 + b*x + c >= 0), assume=(a != 0))    # not tested (random order)
         a > 0 \/ 4 a c - b^2 < 0
@@ -1670,13 +1681,12 @@ def qepcad(formula, assume=None, interact=False, solution=None,
                                      "infinitely many points")
             return [c.sample_point_dict() for c in cells]
         else:
-            raise ValueError("Unknown solution type ({})".format(solution))
+            raise ValueError(f"Unknown solution type ({solution})")
 
 
-import os
 def qepcad_console(memcells=None):
     r"""
-    Run QEPCAD directly.  To exit early, press Control-C.
+    Run QEPCAD directly.  To exit early, press :kbd:`Control` + :kbd:`C`.
 
     EXAMPLES::
 
@@ -1719,6 +1729,7 @@ def qepcad_banner():
     qex._start()
     banner = bytes_to_str(qex.expect().before)
     return AsciiArtString(banner)
+
 
 def qepcad_version():
     """
@@ -1803,15 +1814,23 @@ class qepcad_formula_factory:
             '='
         """
         import operator
-        if op == operator.eq: return '='
-        if op == operator.ne: return '/='
-        if op == operator.lt: return '<'
-        if op == operator.gt: return '>'
-        if op == operator.le: return '<='
-        if op == operator.ge: return '>='
+        if op == operator.eq:
+            return '='
+        if op == operator.ne:
+            return '/='
+        if op == operator.lt:
+            return '<'
+        if op == operator.gt:
+            return '>'
+        if op == operator.le:
+            return '<='
+        if op == operator.ge:
+            return '>='
 
-        if op == '==': return '='
-        if op == '!=': return '/='
+        if op == '==':
+            return '='
+        if op == '!=':
+            return '/='
 
         return op
 
@@ -1914,15 +1933,13 @@ class qepcad_formula_factory:
         if isinstance(lhs, qformula):
             return lhs
 
-        from sage.symbolic.expression import is_SymbolicEquation
-        if is_SymbolicEquation(lhs):
-            rhs = lhs.rhs()
-            op = lhs.operator()
-            lhs = lhs.lhs()
+        from sage.structure.element import Expression
+        if isinstance(lhs, Expression) and lhs.is_relational():
+            lhs, op, rhs = lhs.lhs(), lhs.operator(), lhs.rhs()
 
         op = self._normalize_op(op)
 
-        formula = ('%r %s %r' % (lhs, op, rhs))
+        formula = f'{lhs!r} {op} {rhs!r}'
         formula = formula.replace('*', ' ')
         vars = self._varset(lhs) | self._varset(rhs)
 
@@ -1937,7 +1954,7 @@ class qepcad_formula_factory:
         - ``formula`` -- a polynomial, a symbolic equality or inequality,
           or a list of polynomials, equalities, or inequalities
 
-        A polynomial $p$ is interpreted as the equation $p = 0$.
+        A polynomial `p` is interpreted as the equation `p = 0`.
         A list is interpreted as the conjunction ('and') of the elements.
 
         EXAMPLES::
@@ -1964,7 +1981,7 @@ class qepcad_formula_factory:
 
         Each input formula may be a :class:`qformula` as returned by the
         methods of ``qepcad_formula``, a symbolic equality or
-        inequality, or a polynomial $p$ (meaning $p = 0$).
+        inequality, or a polynomial `p` (meaning `p = 0`).
 
         EXAMPLES::
 
@@ -1990,7 +2007,7 @@ class qepcad_formula_factory:
 
         Each input formula may be a :class:`qformula` as returned by the
         methods of ``qepcad_formula``, a symbolic equality or
-        inequality, or a polynomial $p$ (meaning $p = 0$).
+        inequality, or a polynomial `p` (meaning `p = 0`).
 
         EXAMPLES::
 
@@ -2016,7 +2033,7 @@ class qepcad_formula_factory:
 
         The input formula may be a :class:`qformula` as returned by the
         methods of ``qepcad_formula``, a symbolic equality or
-        inequality, or a polynomial $p$ (meaning $p = 0$).
+        inequality, or a polynomial `p` (meaning `p = 0`).
 
         EXAMPLES::
 
@@ -2037,11 +2054,11 @@ class qepcad_formula_factory:
     def implies(self, f1, f2):
         r"""
         Return the implication of its input formulas (that is, given
-        formulas $P$ and $Q$, returns '$P$ implies $Q$').
+        formulas `P` and `Q`, returns '`P` implies `Q`').
 
         The input formulas may be a :class:`qformula` as returned by the
         methods of ``qepcad_formula``, a symbolic equality or
-        inequality, or a polynomial $p$ (meaning $p = 0$).
+        inequality, or a polynomial `p` (meaning `p = 0`).
 
         EXAMPLES::
 
@@ -2063,11 +2080,11 @@ class qepcad_formula_factory:
     def iff(self, f1, f2):
         r"""
         Return the equivalence of its input formulas (that is, given
-        formulas $P$ and $Q$, returns '$P$ iff $Q$').
+        formulas `P` and `Q`, returns '`P` iff `Q`').
 
         The input formulas may be a :class:`qformula` as returned by the
         methods of ``qepcad_formula``, a symbolic equality or
-        inequality, or a polynomial $p$ (meaning $p = 0$).
+        inequality, or a polynomial `p` (meaning `p = 0`).
 
         EXAMPLES::
 
@@ -2093,7 +2110,7 @@ class qepcad_formula_factory:
 
         The input formula may be a :class:`qformula` as returned by the
         methods of ``qepcad_formula``, a symbolic equality or
-        inequality, or a polynomial $p$ (meaning $p = 0$).
+        inequality, or a polynomial `p` (meaning `p = 0`).
 
         EXAMPLES::
 
@@ -2120,7 +2137,7 @@ class qepcad_formula_factory:
 
         The input formula may be a :class:`qformula` as returned by the
         methods of ``qepcad_formula``, a symbolic equality or
-        inequality, or a polynomial $p$ (meaning $p = 0$).
+        inequality, or a polynomial `p` (meaning `p = 0`).
 
         EXAMPLES::
 
@@ -2148,7 +2165,7 @@ class qepcad_formula_factory:
 
         The input formula may be a :class:`qformula` as returned by the
         methods of ``qepcad_formula``, a symbolic equality or
-        inequality, or a polynomial $p$ (meaning $p = 0$).
+        inequality, or a polynomial `p` (meaning `p = 0`).
 
         EXAMPLES::
 
@@ -2174,7 +2191,7 @@ class qepcad_formula_factory:
 
         The input formula may be a :class:`qformula` as returned by the
         methods of ``qepcad_formula``, a symbolic equality or
-        inequality, or a polynomial $p$ (meaning $p = 0$).
+        inequality, or a polynomial `p` (meaning `p = 0`).
 
         EXAMPLES::
 
@@ -2201,7 +2218,7 @@ class qepcad_formula_factory:
 
         The input formula may be a :class:`qformula` as returned by the
         methods of ``qepcad_formula``, a symbolic equality or
-        inequality, or a polynomial $p$ (meaning $p = 0$).
+        inequality, or a polynomial `p` (meaning `p = 0`).
 
         EXAMPLES::
 
@@ -2218,20 +2235,20 @@ class qepcad_formula_factory:
 
     def exactly_k(self, k, v, formula, allow_multi=False):
         r"""
-        Given a nonnegative integer $k$, a variable, and a formula,
+        Given a nonnegative integer `k`, a variable, and a formula,
         returns a new formula which is true iff the original formula
-        is true for exactly $k$ values of the variable.
+        is true for exactly `k` values of the variable.
 
         This method is available both as :meth:`exactly_k`
         and :meth:`X` (the QEPCAD name for this quantifier).
 
-        (Note that QEPCAD does not support $k=0$ with this syntax, so if
-        $k=0$ is requested we implement it with :meth:`forall` and
+        (Note that QEPCAD does not support `k=0` with this syntax, so if
+        `k=0` is requested we implement it with :meth:`forall` and
         :meth:`not_`.)
 
         The input formula may be a :class:`qformula` as returned by the
         methods of ``qepcad_formula``, a symbolic equality or
-        inequality, or a polynomial $p$ (meaning $p = 0$).
+        inequality, or a polynomial `p` (meaning `p = 0`).
 
         EXAMPLES::
 
@@ -2243,7 +2260,7 @@ class qepcad_formula_factory:
             sage: qf.exactly_k(0, b, a*b == 1)
             (A b)[~a b = 1]
         """
-        from sage.all import ZZ
+        from sage.rings.integer_ring import ZZ
         k = ZZ(k)
         if k < 0:
             raise ValueError("negative k in exactly_k quantifier")
@@ -2277,7 +2294,7 @@ class qepcad_formula_factory:
         formula = self.formula(formula)
 
         if allow_multi and isinstance(v, (list, tuple)):
-            if len(v) == 0:
+            if not v:
                 return formula
             else:
                 return self.quantifier(kind, v[0],
@@ -2287,10 +2304,10 @@ class qepcad_formula_factory:
         if form_str[-1] != ']':
             form_str = '[' + form_str + ']'
         v = str(v)
-        if not (v in formula.vars):
+        if v not in formula.vars:
             raise ValueError("Attempting to quantify variable which "
                              "does not occur in formula")
-        form_str = "(%s %s)%s" % (kind, v, form_str)
+        form_str = f"({kind} {v}){form_str}"
         return qformula(form_str, formula.vars - frozenset([v]),
                         [v] + formula.qvars)
 
@@ -2340,8 +2357,7 @@ def _eval_qepcad_algebraic(text):
         if intv.lower().exact_rational() == lbound and intv.upper().exact_rational() == ubound:
             return AA.polynomial_root(p, intv)
 
-    raise ValueError("%s or %s not an exact floating-point number" % (lbound,
-                                                                      ubound))
+    raise ValueError(f"{lbound} or {ubound} not an exact floating-point number")
 
 
 class QepcadCell:
@@ -2412,7 +2428,7 @@ class QepcadCell:
             if 'Information about the cell' in line:
                 tail = line.split('(')[1]
                 index = tail.split(')')[0]
-                if index == '':
+                if not index:
                     index = ()
                 else:
                     index = sage_eval(index)
@@ -2420,7 +2436,7 @@ class QepcadCell:
                         index = (index,)
                 self._index = index
 
-                self._dimension = sum([r&1 for r in index])
+                self._dimension = sum([r & 1 for r in index])
             if 'Level        ' in line:
                 self._level = int(line.split(':')[1].strip())
             if 'Number of children' in line:
@@ -2430,7 +2446,7 @@ class QepcadCell:
                 else:
                     self._number_of_children = None
             if 'Truth value' in line:
-                pass # might change
+                pass  # might change
             if 'Degrees after substitution' in line:
                 if self._level == max_level or self._level == 0:
                     self._degrees = None
@@ -2442,9 +2458,9 @@ class QepcadCell:
                 saw_signs = True
             if saw_signs and 'Level' in line:
                 (lev, n, colon, signs) = line.split()
-                assert(lev == 'Level' and colon == ':')
-                assert(int(n) == len(all_signs) + 1)
-                signs = signs.replace('+','1').replace('-','-1').replace(')',',)')
+                assert lev == 'Level' and colon == ':'
+                assert int(n) == len(all_signs) + 1
+                signs = signs.replace('+', '1').replace('-', '-1').replace(')', ',)')
                 all_signs.append(sage_eval(signs))
             if 'PRIMITIVE' in line:
                 saw_primitive = True
@@ -2456,13 +2472,13 @@ class QepcadCell:
             if 'Coordinate ' in line:
                 (coord_n, val) = line.split('=')
                 n = int(coord_n.split()[1])
-                assert(n == len(all_coordinates) + 1)
+                assert n == len(all_coordinates) + 1
                 if n == self._level and saw_extended:
                     grab_extended = True
                 else:
                     all_coordinates.append(val)
             elif grab_extended:
-                assert('=' in line)
+                assert '=' in line
                 grab_extended = False
                 all_coordinates.append(line.split('=')[1])
 
@@ -2688,16 +2704,17 @@ class QepcadCell:
 
         EXAMPLES::
 
-            sage: qe = qepcad(x^2 - x - 1 == 0, interact=True) # optional - qepcad
-            sage: qe.go(); qe.go(); qe.go() # optional - qepcad
+            sage: # optional - qepcad
+            sage: qe = qepcad(x^2 - x - 1 == 0, interact=True)
+            sage: qe.go(); qe.go(); qe.go()
             QEPCAD object has moved to phase 'At the end of projection phase'
             QEPCAD object has moved to phase 'Before Choice'
             QEPCAD object has moved to phase 'Before Solution'
-            sage: v1 = qe.cell(2).sample_point()[0]; v1 # optional - qepcad
+            sage: v1 = qe.cell(2).sample_point()[0]; v1
             -0.618033988749895?
-            sage: v2 = qe.cell(4).sample_point()[0]; v2 # optional - qepcad
+            sage: v2 = qe.cell(4).sample_point()[0]; v2
             1.618033988749895?
-            sage: v1 + v2 == 1 # optional - qepcad
+            sage: v1 + v2 == 1
             True
         """
         try:
@@ -2743,6 +2760,4 @@ class QepcadCell:
         """
         points = self.sample_point()
         vars = self._parent._varlist
-
-        return dict([(vars[i], points[i]) for i in range(len(points))])
-
+        return {vars[i]: points[i] for i in range(len(points))}

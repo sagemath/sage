@@ -66,7 +66,7 @@ can compute its set of :math:`\mathbb{F}`-rational points
     sage: E
     Elliptic Curve defined by y^2 + y = x^3 + 4*x^2 over Finite Field of size 5
     sage: E.points()
-    [(0 : 0 : 1), (0 : 1 : 0), (0 : 4 : 1), (1 : 0 : 1), (1 : 4 : 1)]
+    [(0 : 1 : 0), (0 : 0 : 1), (0 : 4 : 1), (1 : 0 : 1), (1 : 4 : 1)]
     sage: E.cardinality()
     5
     sage: G = E.abelian_group()

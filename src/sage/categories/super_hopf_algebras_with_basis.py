@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Super Hopf algebras with basis
 """
@@ -18,11 +19,11 @@ class SuperHopfAlgebrasWithBasis(SuperModulesCategory):
     EXAMPLES::
 
         sage: C = HopfAlgebras(ZZ).WithBasis().Super(); C
-        Category of super hopf algebras with basis over Integer Ring
+        Category of super Hopf algebras with basis over Integer Ring
         sage: sorted(C.super_categories(), key=str)
-        [Category of super algebras with basis over Integer Ring,
-         Category of super coalgebras with basis over Integer Ring,
-         Category of super hopf algebras over Integer Ring]
+        [Category of super Hopf algebras over Integer Ring,
+         Category of super algebras with basis over Integer Ring,
+         Category of super coalgebras with basis over Integer Ring]
 
     TESTS::
 
@@ -42,20 +43,21 @@ class SuperHopfAlgebrasWithBasis(SuperModulesCategory):
 
             EXAMPLES::
 
-                sage: A = SteenrodAlgebra(7)
-                sage: a = A.an_element()
-                sage: a, A.antipode(a)
+                sage: A = SteenrodAlgebra(7)                                            # needs sage.combinat sage.modules
+                sage: a = A.an_element()                                                # needs sage.combinat sage.modules
+                sage: a, A.antipode(a)                                                  # needs sage.combinat sage.modules
                 (6 Q_1 Q_3 P(2,1), Q_1 Q_3 P(2,1))
 
             TESTS::
 
-                sage: E.<x,y> = ExteriorAlgebra(QQ)
-                sage: [b.antipode() for b in E.basis()]
+                sage: E.<x,y> = ExteriorAlgebra(QQ)                                     # needs sage.modules
+                sage: [b.antipode() for b in E.basis()]                                 # needs sage.modules
                 [1, -x, -y, x*y]
             """
             if self.antipode_on_basis is not NotImplemented:
                 # Should give the information that this is an anti-morphism of algebra
-                return self._module_morphism(self.antipode_on_basis, codomain = self)
+                return self._module_morphism(self.antipode_on_basis,
+                                             codomain=self)
             elif hasattr(self, "antipode_by_coercion"):
                 return self.antipode_by_coercion
 
@@ -87,8 +89,8 @@ class SuperHopfAlgebrasWithBasis(SuperModulesCategory):
 
             TESTS::
 
-                sage: A = SteenrodAlgebra(7)
-                sage: A._test_antipode()  # long time
+                sage: A = SteenrodAlgebra(7)                                            # needs sage.combinat sage.modules
+                sage: A._test_antipode()        # long time                             # needs sage.combinat sage.modules
             """
             tester = self._tester(**options)
 
@@ -122,4 +124,3 @@ class SuperHopfAlgebrasWithBasis(SuperModulesCategory):
 
                 # mu * (I # S) * delta == counit * unit
                 tester.assertEqual(IS(x), self.counit(x) * self.one())
-

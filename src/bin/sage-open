@@ -1,9 +1,0 @@
-#!/bin/sh
-
-# SAGE open command for OS X -- needed since
-# the SAGE libraries clash with some OS X libraries,
-# will leads to a crash.
-
-unset LIBRARY_PATH
-
-open "$@"

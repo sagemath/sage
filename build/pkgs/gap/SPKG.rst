@@ -1,5 +1,5 @@
-GAP
-===
+gap: Groups, Algorithms, Programming - a system for computational discrete algebra
+==================================================================================
 
 Description
 -----------
@@ -22,15 +22,9 @@ architecture-independent, are in a separate package.
 Upstream Contact
 ----------------
 
-David Joyner, wdjoyner@gmail.com (on the GAP team, but Steve Linton,
-sal@dcs.st-and.ac.uk, is basically the lead developer)
+https://www.gap-system.org
 
-Dependencies
-------------
-
--  Readline
--  MPIR
-
+Mailing list at https://mail.gap-system.org/mailman/listinfo/gap
 
 Special Update/Build Instructions
 ---------------------------------
@@ -54,6 +48,3 @@ update GAP, please also update and use the spkg-src script.
 
 Patches
 ~~~~~~~
-
--  writeandcheck.patch: fix infinite loop in writeandcheck() when
-   writing an error message fails.

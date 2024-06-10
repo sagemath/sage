@@ -1,11 +1,10 @@
 """
-List Plots
+List plots
 """
-from __future__ import absolute_import
 
-from sage.structure.element import is_Matrix
-from sage.matrix.all import matrix
-from sage.rings.all import RDF
+from sage.structure.element import Matrix
+from sage.matrix.constructor import matrix
+from sage.rings.real_double import RDF
 from sage.misc.superseded import deprecation
 
 
@@ -16,18 +15,18 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
 
     INPUT:
 
-    - ``v`` - something that defines a set of points in 3 space:
+    - ``v`` -- something that defines a set of points in 3 space:
 
       - a matrix
 
       - a list of 3-tuples
 
-      - a list of lists (all of the same length) - this is treated the same as
+      - a list of lists (all of the same length) -- this is treated the same as
         a matrix.
 
     OPTIONAL KEYWORDS:
 
-    - ``interpolation_type`` - 'linear', 'clough' (CloughTocher2D), 'spline'
+    - ``interpolation_type`` -- 'linear', 'clough' (CloughTocher2D), 'spline'
 
       'linear' will perform linear interpolation
 
@@ -43,19 +42,19 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
       When v is a matrix the default is to use linear interpolation, when
       v is a list of points the default is 'clough'.
 
-    - ``degree`` - an integer between 1 and 5, controls the degree of spline
+    - ``degree`` -- an integer between 1 and 5, controls the degree of spline
       used for spline interpolation. For data that is highly oscillatory
       use higher values
 
-    - ``point_list`` - If point_list=True is passed, then if the array
+    - ``point_list`` -- If point_list=True is passed, then if the array
       is a list of lists of length three, it will be treated as an
       array of points rather than a 3xn array.
 
-    - ``num_points`` - Number of points to sample interpolating
+    - ``num_points`` -- Number of points to sample interpolating
       function in each direction, when ``interpolation_type`` is not
       ``default``. By default for an `n\times n` array this is `n`.
 
-    - ``**kwds`` - all other arguments are passed to the surface function
+    - ``**kwds`` -- all other arguments are passed to the surface function
 
     OUTPUT: a 3d plot
 
@@ -67,45 +66,103 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
         sage: list_plot3d(matrix(RDF, n, [(i+j)%n for i in [1..n] for j in [1..n]]))
         Graphics3d Object
 
+    .. PLOT::
+
+        sphinx_plot(list_plot3d(matrix(RDF, 5, [(i+j)%5 for i in range(1,6) for j in range(1,6)])))
+
     We plot a matrix of values of ``sin``::
 
-        sage: pi = float(pi)
-        sage: m = matrix(RDF, 6, [sin(i^2 + j^2) for i in [0,pi/5,..,pi] for j in [0,pi/5,..,pi]])
+        sage: from math import pi
+        sage: m = matrix(RDF, 6, [sin(i^2 + j^2)
+        ....:                     for i in [0,pi/5,..,pi] for j in [0,pi/5,..,pi]])
         sage: list_plot3d(m, color='yellow', frame_aspect_ratio=[1, 1, 1/3])
         Graphics3d Object
 
-    Though it does not change the shape of the graph, increasing
-    num_points can increase the clarity of the graph::
+    .. PLOT::
 
-        sage: list_plot3d(m, color='yellow', frame_aspect_ratio=[1, 1, 1/3], num_points=40)
+        pi = float(pi)
+        import numpy as np
+        m = matrix(RDF, 6, [sin(i**2 + j**2) for i in np.linspace(0,pi,6) for j in np.linspace(0,pi,6)])
+        sphinx_plot(list_plot3d(m, color='yellow', frame_aspect_ratio=[1, 1, 1/3]))
+
+    Though it does not change the shape of the graph, increasing
+    ``num_points`` can increase the clarity of the graph::
+
+        sage: list_plot3d(m, color='yellow', num_points=40,
+        ....:             frame_aspect_ratio=[1, 1, 1/3])
         Graphics3d Object
+
+    .. PLOT::
+
+        pi = float(pi)
+        import numpy as np
+        m = matrix(RDF, 6, [sin(i**2 + j**2) for i in np.linspace(0,pi,6) for j in np.linspace(0,pi,6)])
+        sphinx_plot(list_plot3d(m, color='yellow', frame_aspect_ratio=[1, 1, 1/3], num_points=40))
 
     We can change the interpolation type::
 
         sage: import warnings
         sage: warnings.simplefilter('ignore', UserWarning)
-        sage: list_plot3d(m, color='yellow', interpolation_type='clough', frame_aspect_ratio=[1, 1, 1/3])
+        sage: list_plot3d(m, color='yellow', interpolation_type='clough',
+        ....:             frame_aspect_ratio=[1, 1, 1/3])
         Graphics3d Object
+
+    .. PLOT::
+
+        import warnings
+        warnings.simplefilter('ignore', UserWarning)
+        import numpy as np
+        pi = float(pi)
+        m = matrix(RDF, 6, [sin(i**2 + j**2) for i in np.linspace(0,pi,6) for j in np.linspace(0,pi,6)])
+        sphinx_plot(list_plot3d(m, color='yellow', interpolation_type='clough', frame_aspect_ratio=[1, 1, 1/3]))
 
     We can make this look better by increasing the number of samples::
 
-        sage: list_plot3d(m, color='yellow', interpolation_type='clough', frame_aspect_ratio=[1, 1, 1/3], num_points=40)
+        sage: list_plot3d(m, color='yellow', interpolation_type='clough',
+        ....:             frame_aspect_ratio=[1, 1, 1/3], num_points=40)
         Graphics3d Object
+
+    .. PLOT::
+
+        import numpy as np
+        pi = float(pi)
+        m = matrix(RDF, 6, [sin(i**2 + j**2) for i in np.linspace(0,pi,6) for j in np.linspace(0,pi,6)])
+        sphinx_plot(list_plot3d(m, color='yellow', interpolation_type='clough', frame_aspect_ratio=[1, 1, 1/3], num_points=40))
 
     Let us try a spline::
 
-        sage: list_plot3d(m, color='yellow', interpolation_type='spline', frame_aspect_ratio=[1, 1, 1/3])
+        sage: list_plot3d(m, color='yellow', interpolation_type='spline',
+        ....:             frame_aspect_ratio=[1, 1, 1/3])
         Graphics3d Object
+
+    .. PLOT::
+
+        import numpy as np
+        pi = float(pi)
+        m = matrix(RDF, 6, [sin(i**2 + j**2) for i in np.linspace(0,pi,6) for j in np.linspace(0,pi,6)])
+        sphinx_plot(list_plot3d(m, color='yellow', interpolation_type='spline', frame_aspect_ratio=[1, 1, 1/3]))
 
     That spline does not capture the oscillation very well; let's try a
     higher degree spline::
 
-        sage: list_plot3d(m, color='yellow', interpolation_type='spline', degree=5, frame_aspect_ratio=[1, 1, 1/3])
+        sage: list_plot3d(m, color='yellow', interpolation_type='spline', degree=5,
+        ....:             frame_aspect_ratio=[1, 1, 1/3])
         Graphics3d Object
+
+    .. PLOT::
+
+        import numpy as np
+        pi = float(pi)
+        m = matrix(RDF, 6, [sin(i**2 + j**2) for i in np.linspace(0,pi,6) for j in np.linspace(0,pi,6)])
+        sphinx_plot(list_plot3d(m, color='yellow', interpolation_type='spline', degree=5, frame_aspect_ratio=[1, 1, 1/3]))
 
     We plot a list of lists::
 
         sage: show(list_plot3d([[1, 1, 1, 1], [1, 2, 1, 2], [1, 1, 3, 1], [1, 2, 1, 4]]))
+
+    .. PLOT::
+
+        sphinx_plot(list_plot3d([[1, 1, 1, 1], [1, 2, 1, 2], [1, 1, 3, 1], [1, 2, 1, 4]]))
 
     We plot a list of points.  As a first example we can extract the
     (x,y,z) coordinates from the above example and make a list plot
@@ -118,17 +175,44 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
         sage: list_plot3d(l, color='red')
         Graphics3d Object
 
+    .. PLOT::
+
+        l = []
+        import numpy as np
+        pi = float(pi)
+        m = matrix(RDF, 6, [sin(i**2 + j**2) for i in np.linspace(0,pi,6) for j in np.linspace(0,pi,6)])
+        for i in range(6):
+             for j in range(6):
+                 l.append((float(i*pi/5), float(j*pi/5), m[i, j]))
+        sphinx_plot(list_plot3d(l, color='red'))
+
     Note that the points do not have to be regularly sampled. For example::
 
         sage: l = []
         sage: for i in range(-5, 5):
         ....:     for j in range(-5, 5):
-        ....:         l.append((normalvariate(0, 1), normalvariate(0, 1), normalvariate(0, 1)))
-        sage: L = list_plot3d(l, interpolation_type='clough', color='orange', num_points=100)
+        ....:         l.append((normalvariate(0, 1),
+        ....:                   normalvariate(0, 1),
+        ....:                   normalvariate(0, 1)))
+        sage: L = list_plot3d(l, interpolation_type='clough',
+        ....:                 color='orange', num_points=100)
         sage: L
         Graphics3d Object
 
-    Check that no NaNs are produced (see :trac:`13135`)::
+    .. PLOT::
+
+        l = []
+        import numpy as np
+        pi = float(pi)
+        m = matrix(RDF, 6, [sin(i**2 + j**2) for i in np.linspace(0,pi,6) for j in np.linspace(0,pi,6)])
+        for i in range(-5, 5):
+            for j in range(-5, 5):
+                l.append((normalvariate(0, 1), normalvariate(0, 1), normalvariate(0, 1)))
+        L = list_plot3d(l, interpolation_type='clough', color='orange', num_points=100)
+        sphinx_plot(L)
+
+
+    Check that no NaNs are produced (see :issue:`13135`)::
 
         sage: any(math.isnan(c) for v in L.vertices() for c in v)
         False
@@ -169,7 +253,7 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
         sage: P = list_plot3d([(0, 0, 1), (2, 3, 4)], texture='tomato')
         doctest:warning...:
         DeprecationWarning: please use 'color' instead of 'texture'
-        See https://trac.sagemath.org/27084 for details.
+        See https://github.com/sagemath/sage/issues/27084 for details.
     """
     import numpy
     if 'texture' in kwds:
@@ -178,9 +262,9 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
         if txtr == "automatic":
             txtr = "lightblue"
         kwds['color'] = txtr
-    if is_Matrix(v):
+    if isinstance(v, Matrix):
         if (interpolation_type == 'default' or
-            interpolation_type == 'linear' and 'num_points' not in kwds):
+                interpolation_type == 'linear' and 'num_points' not in kwds):
             return list_plot3d_matrix(v, **kwds)
         else:
             data = [(i, j, v[i, j])
@@ -224,7 +308,7 @@ def list_plot3d_matrix(m, **kwds):
 
     OPTIONAL KEYWORDS:
 
-    - ``**kwds`` - all other arguments are passed to the surface function
+    - ``**kwds`` -- all other arguments are passed to the surface function
 
     OUTPUT: a 3d plot
 
@@ -233,20 +317,42 @@ def list_plot3d_matrix(m, **kwds):
     We plot a matrix that illustrates summation modulo `n`::
 
         sage: n = 5
-        sage: list_plot3d(matrix(RDF, n, [(i+j)%n for i in [1..n] for j in [1..n]])) # indirect doctest
+        sage: list_plot3d(matrix(RDF, n, [(i+j) % n         # indirect doctest
+        ....:                             for i in [1..n] for j in [1..n]]))
         Graphics3d Object
+
+    .. PLOT::
+
+        sphinx_plot(list_plot3d(matrix(RDF, 5, [(i+j)%5 for i in range(1,6) for j in range(1,6)])))
 
     The interpolation type for matrices is 'linear'; for other types
     use other :func:`list_plot3d` input types.
 
     We plot a matrix of values of `sin`::
 
-        sage: pi = float(pi)
-        sage: m = matrix(RDF, 6, [sin(i^2 + j^2) for i in [0,pi/5,..,pi] for j in [0,pi/5,..,pi]])
-        sage: list_plot3d(m, color='yellow', frame_aspect_ratio=[1, 1, 1/3]) # indirect doctest
+        sage: from math import pi
+        sage: m = matrix(RDF, 6, [sin(i^2 + j^2)
+        ....:                     for i in [0,pi/5,..,pi] for j in [0,pi/5,..,pi]])
+        sage: list_plot3d(m, color='yellow', frame_aspect_ratio=[1, 1, 1/3])  # indirect doctest
         Graphics3d Object
-        sage: list_plot3d(m, color='yellow', interpolation_type='linear') # indirect doctest
+
+    .. PLOT::
+
+        import numpy as np
+        pi = float(pi)
+        m = matrix(RDF, 6, [sin(i**2 + j**2) for i in np.linspace(0,pi,6) for j in np.linspace(0,pi,6)])
+        sphinx_plot(list_plot3d(m, color='yellow', frame_aspect_ratio=[1, 1, 1/3]))
+
+    ::
+        sage: list_plot3d(m, color='yellow', interpolation_type='linear')  # indirect doctest
         Graphics3d Object
+
+    .. PLOT::
+
+        import numpy as np
+        pi = float(pi)
+        m = matrix(RDF, 6, [sin(i**2 + j**2) for i in np.linspace(0,pi,6) for j in np.linspace(0,pi,6)])
+        sphinx_plot(list_plot3d(m, color='yellow', interpolation_type='linear'))
 
     Here is a colored example, using a colormap and a coloring function
     which must take values in (0, 1)::
@@ -255,7 +361,7 @@ def list_plot3d_matrix(m, **kwds):
         sage: n = 20
         sage: cf = lambda x, y: ((2*(x-y)/n)**2) % 1
         sage: list_plot3d(matrix(RDF, n, [cos(pi*(i+j)/n) for i in [1..n]
-        ....:   for j in [1..n]]), color=(cf,cm))
+        ....:                             for j in [1..n]]), color=(cf,cm))
         Graphics3d Object
 
     .. PLOT::
@@ -286,12 +392,12 @@ def list_plot3d_array_of_arrays(v, interpolation_type, **kwds):
 
     INPUT:
 
-    - ``v`` - a list of lists, all the same length
-    - ``interpolation_type`` - (default: 'linear')
+    - ``v`` -- a list of lists, all the same length
+    - ``interpolation_type`` -- (default: 'linear')
 
     OPTIONAL KEYWORDS:
 
-    - ``**kwds`` - all other arguments are passed to the surface function
+    - ``**kwds`` -- all other arguments are passed to the surface function
 
     OUTPUT: a 3d plot
 
@@ -301,15 +407,28 @@ def list_plot3d_array_of_arrays(v, interpolation_type, **kwds):
 
         sage: show(list_plot3d([[1, 1, 1, 1], [1, 2, 1, 2], [1, 1, 3, 1]])) # indirect doctest
 
+    .. PLOT::
+
+        sphinx_plot(list_plot3d([[1, 1, 1, 1], [1, 2, 1, 2], [1, 1, 3, 1]]))
+
     The normal route is for the list of lists to be turned into a matrix
     and use :func:`list_plot3d_matrix`::
 
         sage: show(list_plot3d([[1, 1, 1, 1], [1, 2, 1, 2], [1, 1, 3, 1], [1, 2, 1, 4]]))
 
+    .. PLOT::
+
+        sphinx_plot(list_plot3d([[1, 1, 1, 1], [1, 2, 1, 2], [1, 1, 3, 1], [1, 2, 1, 4]]))
+
     With certain extra keywords (see :func:`list_plot3d_matrix`), this function
     will end up using :func:`list_plot3d_tuples`::
 
-        sage: show(list_plot3d([[1, 1, 1, 1], [1, 2, 1, 2], [1, 1, 3, 1], [1, 2, 1, 4]], interpolation_type='spline'))
+        sage: show(list_plot3d([[1, 1, 1, 1], [1, 2, 1, 2], [1, 1, 3, 1], [1, 2, 1, 4]],
+        ....:                  interpolation_type='spline'))
+
+    .. PLOT::
+
+        sphinx_plot(list_plot3d([[1, 1, 1, 1], [1, 2, 1, 2], [1, 1, 3, 1], [1, 2, 1, 4]], interpolation_type='spline'))
     """
     m = matrix(RDF, len(v), len(v[0]), v)
     G = list_plot3d(m, interpolation_type, **kwds)
@@ -324,14 +443,14 @@ def list_plot3d_tuples(v, interpolation_type, **kwds):
 
     INPUT:
 
-    - ``v`` - something that defines a set of points in 3
+    - ``v`` -- something that defines a set of points in 3
       space, for example:
 
       - a matrix
 
-        This will be if using an interpolation type other than
-        'linear', or if using ``num_points`` with 'linear'; otherwise
-        see :func:`list_plot3d_matrix`.
+        This will be if using an ``interpolation_type`` other than
+        ``'linear'``, or if using ``num_points`` with ``'linear'``;
+        otherwise see :func:`list_plot3d_matrix`.
 
       - a list of 3-tuples
 
@@ -340,33 +459,34 @@ def list_plot3d_tuples(v, interpolation_type, **kwds):
 
     OPTIONAL KEYWORDS:
 
-    - ``interpolation_type`` - 'linear', 'clough' (CloughTocher2D), 'spline'
+    - ``interpolation_type`` -- one of ``'linear'``, ``'clough'``
+      (CloughTocher2D), ``'spline'``
 
-      'linear' will perform linear interpolation
+      ``'linear'`` will perform linear interpolation
 
       The option 'clough' will interpolate by using a piecewise cubic
       interpolating Bezier polynomial on each triangle, using a
       Clough-Tocher scheme.  The interpolant is guaranteed to be
       continuously differentiable.
 
-      The option 'spline' interpolates using a bivariate B-spline.
+      The option ``'spline'`` interpolates using a bivariate B-spline.
 
-      When v is a matrix the default is to use linear interpolation, when
-      v is a list of points the default is 'clough'.
+      When ``v`` is a matrix the default is to use linear interpolation, when
+      ``v`` is a list of points the default is ``'clough'``.
 
-    - ``degree`` - an integer between 1 and 5, controls the degree of spline
+    - ``degree`` -- an integer between 1 and 5, controls the degree of spline
       used for spline interpolation. For data that is highly oscillatory
       use higher values
 
-    - ``point_list`` - If point_list=True is passed, then if the array
+    - ``point_list`` -- If ``point_list=True`` is passed, then if the array
       is a list of lists of length three, it will be treated as an
       array of points rather than a `3\times n` array.
 
-    - ``num_points`` - Number of points to sample interpolating
+    - ``num_points`` -- Number of points to sample interpolating
       function in each direction.  By default for an `n\times n`
       array this is `n`.
 
-    - ``**kwds`` - all other arguments are passed to the
+    - ``**kwds`` -- all other arguments are passed to the
       surface function
 
     OUTPUT: a 3d plot
@@ -376,24 +496,52 @@ def list_plot3d_tuples(v, interpolation_type, **kwds):
     All of these use this function; see :func:`list_plot3d` for other
     list plots::
 
-        sage: pi = float(pi)
-        sage: m = matrix(RDF, 6, [sin(i^2 + j^2) for i in [0,pi/5,..,pi] for j in [0,pi/5,..,pi]])
-        sage: list_plot3d(m, color='yellow', interpolation_type='linear', num_points=5) # indirect doctest
+        sage: from math import pi
+        sage: m = matrix(RDF, 6, [sin(i^2 + j^2)
+        ....:                     for i in [0,pi/5,..,pi] for j in [0,pi/5,..,pi]])
+        sage: list_plot3d(m, color='yellow', interpolation_type='linear',  # indirect doctest
+        ....:             num_points=5)
         Graphics3d Object
+
+    .. PLOT::
+
+        import numpy as np
+        pi = float(pi)
+        m = matrix(RDF, 6, [sin(i**2 + j**2) for i in np.linspace(0,pi,6) for j in np.linspace(0,pi,6)])
+        sphinx_plot(list_plot3d(m, color='yellow', interpolation_type='linear', num_points=5))
 
     ::
 
-        sage: list_plot3d(m, color='yellow', interpolation_type='spline', frame_aspect_ratio=[1, 1, 1/3])
+        sage: list_plot3d(m, color='yellow', interpolation_type='spline',
+        ....:             frame_aspect_ratio=[1, 1, 1/3])
         Graphics3d Object
+
+    .. PLOT::
+
+        import numpy as np
+        pi = float(pi)
+        m = matrix(RDF, 6, [sin(i**2 + j**2) for i in np.linspace(0,pi,6) for j in np.linspace(0,pi,6)])
+        sphinx_plot(list_plot3d(m, color='yellow', interpolation_type='spline', frame_aspect_ratio=[1, 1, 1/3]))
 
     ::
 
-        sage: show(list_plot3d([[1, 1, 1], [1, 2, 1], [0, 1, 3], [1, 0, 4]], point_list=True))
+        sage: show(list_plot3d([[1, 1, 1], [1, 2, 1], [0, 1, 3], [1, 0, 4]],
+        ....:                  point_list=True))
+
+    .. PLOT::
+
+        sphinx_plot(list_plot3d([[1, 1, 1], [1, 2, 1], [0, 1, 3], [1, 0, 4]],
+                                point_list=True))
 
     ::
 
-        sage: list_plot3d([(1, 2, 3), (0, 1, 3), (2, 1, 4), (1, 0, -2)], color='yellow', num_points=50)  # long time
+        sage: list_plot3d([(1, 2, 3), (0, 1, 3), (2, 1, 4), (1, 0, -2)],  # long time
+        ....:             color='yellow', num_points=50)
         Graphics3d Object
+
+    .. PLOT::
+
+        sphinx_plot(list_plot3d([(1, 2, 3), (0, 1, 3), (2, 1, 4), (1, 0, -2)], color='yellow', num_points=50))
     """
     from matplotlib import tri
     import numpy
@@ -415,7 +563,7 @@ def list_plot3d_tuples(v, interpolation_type, **kwds):
     # noise to avoid the problem if needed.
     corr_matrix = numpy.corrcoef(x, y)
     if not (-0.9 <= corr_matrix[0, 1] <= 0.9):
-        ep = float(.000001)
+        ep = .000001
         x = [float(p[0]) + random() * ep for p in v]
         y = [float(p[1]) + random() * ep for p in v]
 
@@ -453,12 +601,13 @@ def list_plot3d_tuples(v, interpolation_type, **kwds):
     if interpolation_type == 'linear':
         T = tri.Triangulation(x, y)
         f = tri.LinearTriInterpolator(T, z)
-        j = numpy.complex(0, 1)
+        j = complex(0, 1)
         from .parametric_surface import ParametricSurface
 
         def g(x, y):
             z = f(x, y)
             return (x, y, z)
+
         G = ParametricSurface(g, (list(numpy.r_[xmin:xmax:num_points * j]),
                                   list(numpy.r_[ymin:ymax:num_points * j])),
                               **kwds)
@@ -468,13 +617,14 @@ def list_plot3d_tuples(v, interpolation_type, **kwds):
     if interpolation_type == 'clough' or interpolation_type == 'default':
 
         points = [[x[i], y[i]] for i in range(len(x))]
-        j = numpy.complex(0, 1)
+        j = complex(0, 1)
         f = interpolate.CloughTocher2DInterpolator(points, z)
         from .parametric_surface import ParametricSurface
 
         def g(x, y):
-            z = f([x, y])
+            z = f([x, y]).item()
             return (x, y, z)
+
         G = ParametricSurface(g, (list(numpy.r_[xmin:xmax:num_points * j]),
                                   list(numpy.r_[ymin:ymax:num_points * j])),
                               **kwds)
@@ -488,10 +638,11 @@ def list_plot3d_tuples(v, interpolation_type, **kwds):
             kx = kwds['degree']
             ky = kwds['degree']
         s = kwds.get('smoothing', len(x) - numpy.sqrt(2 * len(x)))
-        s = interpolate.bisplrep(x, y, z, [int(1)] * len(x), xmin, xmax,
+        s = interpolate.bisplrep(x, y, z, [1] * len(x), xmin, xmax,
                                  ymin, ymax, kx=kx, ky=ky, s=s)
 
         def f(x, y):
             return interpolate.bisplev(x, y, s)
+
         return plot3d(f, (xmin, xmax), (ymin, ymax),
                       plot_points=[num_points, num_points], **kwds)

@@ -12,36 +12,37 @@ AUTHORS:
 - Thierry Monteil (2018): initial version.
 """
 
-import sys
-import re
+if __name__ == '__main__':
 
-file_name = sys.argv[1]
+    import sys
+    import re
 
-with open(file_name, 'r') as f:
-        lines = f.readlines()
+    file_name = sys.argv[1]
 
-# states of the parser
-wrong_math_def_started = False
-wrong_math_fixed = False
-wrong_title_fixed = False
+    with open(file_name, 'r') as f:
+            lines = f.readlines()
 
-# processing
-new_file = ''
-for i,line in enumerate(lines):
-    if line.startswith(' # ') and not wrong_title_fixed:
-        new_file += re.sub('^ # ', '', line)
-        new_file += '=' * (len(line) - 4) + '\n'
-        wrong_title_fixed = True
-    elif line.startswith('.. math::') and not wrong_math_fixed:
-        pass
-    elif line.startswith('   \\def') and not wrong_math_fixed:
-        wrong_math_def_started = True
-    elif wrong_math_def_started and not wrong_math_fixed:
-        wrong_math_fixed = True
-    else:
-        new_file += re.sub(':math:', '', line)
+    # states of the parser
+    wrong_math_def_started = False
+    wrong_math_fixed = False
+    wrong_title_fixed = False
 
-# write new file
-with open(file_name, 'w') as f:
-    f.write(new_file)
+    # processing
+    new_file = ''
+    for i, line in enumerate(lines):
+        if line.startswith(' # ') and not wrong_title_fixed:
+            new_file += re.sub('^ # ', '', line)
+            new_file += '=' * (len(line) - 4) + '\n'
+            wrong_title_fixed = True
+        elif line.startswith('.. math::') and not wrong_math_fixed:
+            pass
+        elif line.startswith('   \\def') and not wrong_math_fixed:
+            wrong_math_def_started = True
+        elif wrong_math_def_started and not wrong_math_fixed:
+            wrong_math_fixed = True
+        else:
+            new_file += re.sub(':math:', '', line)
 
+    # write new file
+    with open(file_name, 'w') as f:
+        f.write(new_file)

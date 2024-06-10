@@ -29,7 +29,8 @@ cdef extern from "planarity/graph.h":
     cdef int gp_Embed(graphP theGraph, int embedFlags)
     cdef int gp_SortVertices(graphP theGraph)
 
-def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=False):
+
+def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False):
     r"""
     Check whether ``g`` is planar using Boyer's planarity algorithm.
 
@@ -54,9 +55,6 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=
       combinatorial embedding returned (see
       :meth:`~sage.graphs.generic_graph.GenericGraph.get_embedding`)
 
-    - ``circular`` -- boolean (default: ``False``); whether to test for circular
-      planarity
-
     EXAMPLES::
 
         sage: G = graphs.DodecahedralGraph()
@@ -72,21 +70,33 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=
     vertices.  In fact, to try to track down a segfault, we do it
     twice. ::
 
-        sage: import networkx.generators.atlas  # long time
-        sage: atlas_graphs = [Graph(i) for i in networkx.generators.atlas.graph_atlas_g()] # long time
-        sage: a = [i for i in [1..1252] if atlas_graphs[i].is_planar()] # long time
-        sage: b = [i for i in [1..1252] if atlas_graphs[i].is_planar()] # long time
-        sage: a == b # long time
+        sage: # long time, needs networkx
+        sage: import networkx.generators.atlas
+        sage: atlas_graphs = [Graph(i) for i in networkx.generators.atlas.graph_atlas_g()]
+        sage: a = [i for i in [1..1252] if atlas_graphs[i].is_planar()]
+        sage: b = [i for i in [1..1252] if atlas_graphs[i].is_planar()]
+        sage: a == b
         True
 
     There were some problems with ``set_pos`` stability in the past,
     so let's check if this runs without exception::
 
-        sage: for i, g in enumerate(atlas_graphs):           # long time
+        sage: for i, g in enumerate(atlas_graphs):      # long time                     # needs networkx
         ....:     if (not g.is_connected() or i == 0):
         ....:         continue
         ....:     _ = g.is_planar(set_embedding=True, set_pos=True)
+
+        Argument saving::
+
+            sage: G = Graph([(1, 2)])
+            sage: for set_embedding, set_pos in ((True,True), (True,False), (False, True), (False, False)):
+            ....:     G = Graph([(1, 2)])
+            ....:     assert is_planar(G, set_embedding=set_embedding, set_pos=set_pos)
+            ....:     assert (hasattr(G, '_embedding') and G._embedding is not None) == set_embedding, (set_embedding, set_pos)
+            ....:     assert (hasattr(G, '_pos') and G._pos is not None) == set_pos, (set_embedding, set_pos)
+
     """
+    g._scream_if_not_simple()
     if set_pos and not g.is_connected():
         raise ValueError("is_planar() cannot set vertex positions for a disconnected graph")
 
@@ -98,9 +108,9 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=
         return (True, None) if kuratowski else True
     if g.order() == 2 and g.is_connected():
         # P_2 is too small to be triangulated
-        u,v = list(g)
+        u, v = list(g)
         if set_embedding:
-            g._embedding =  {u: [v], v: [u]}
+            g._embedding = {u: [v], v: [u]}
         if set_pos:
             g._pos = {u: [0, 0], v: [0, 1]}
         return (True, None) if kuratowski else True
@@ -109,9 +119,8 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=
     # (planarity 3 uses 1-based array indexing, with 0 representing NIL)
     cdef int i
     cdef list listto = list(g)
-    cdef dict ffrom = {vvv: i + 1 for i, vvv in enumerate(listto)}
-    cdef dict to = {i + 1: vvv for i, vvv in enumerate(listto)}
-    g.relabel(ffrom)
+    cdef dict ffrom = {vvv: i for i, vvv in enumerate(listto, start=1)}
+    cdef dict to = {i: vvv for i, vvv in enumerate(listto, start=1)}
 
     cdef graphP theGraph
     theGraph = gp_New()
@@ -120,7 +129,7 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=
     if status != OK:
         raise RuntimeError("gp_InitGraph status is not ok")
     for u, v in g.edge_iterator(labels=False):
-        status = gp_AddEdge(theGraph, u, 0, v, 0)
+        status = gp_AddEdge(theGraph, ffrom[u], 0, ffrom[v], 0)
         if status == NOTOK:
             raise RuntimeError("gp_AddEdge status is not ok")
         elif status == NONEMBEDDABLE:
@@ -132,17 +141,17 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=
             break
 
     status = gp_Embed(theGraph, EMBEDFLAGS_PLANAR)
-    gp_SortVertices(theGraph)
-
-    # Use to and from mappings to relabel vertices back from the set {1,...,n}
-    g.relabel(to)
 
     if status == NOTOK:
         raise RuntimeError("status is not ok")
-    elif status == NONEMBEDDABLE:
+
+    gp_SortVertices(theGraph)
+
+    if status == NONEMBEDDABLE:
         # Kuratowski subgraph isolator
+        if not kuratowski:
+            return False
         g_dict = {}
-        from sage.graphs.graph import Graph
         for i in range(1, theGraph.N + 1):
             linked_list = []
             j = theGraph.V[i].link[1]
@@ -151,48 +160,30 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=
                 j = theGraph.E[j].link[1]
             if linked_list:
                 g_dict[to[i]] = linked_list
-        G = Graph(g_dict)
         gp_Free(&theGraph)
-        if kuratowski:
-            return (False, G)
-        else:
-            return False
-    else:
-        if not circular:
-            if set_embedding:
-                emb_dict = {}
-                #for i in range(theGraph.N):
-                for i in range(1, theGraph.N + 1):
-                    linked_list = []
-                    j = theGraph.V[i].link[1]
-                    while j:
-                        linked_list.append(to[theGraph.E[j].neighbor])
-                        j = theGraph.E[j].link[1]
-                    emb_dict[to[i]] = linked_list
-                g._embedding = emb_dict
-            if set_pos:
-                g.layout(layout='planar', save_pos=True)
-        else:
-            if set_embedding:
-                # Take counter-clockwise embedding if circular planar test
-                # Also, pos must be set after removing extra vertex and edges
+        G = g.__class__(data=g_dict, weighted=g._weighted,
+                        loops=g.allows_loops(),
+                        multiedges=g.allows_multiple_edges(),
+                        name="Kuratowski subgraph of (%s)" % g.name())
+        if g.get_pos():
+            G.set_pos({u: g._pos[u] for u in g_dict})
+        return (False, G)
 
-                # This is separated out here for now because in the circular case,
-                # setting positions would have to come into play while the extra
-                # "wheel" or "star" is still part of the graph.
+    if set_pos or set_embedding:
+        emb_dict = {}
+        for i in range(1, theGraph.N + 1):
+            linked_list = []
+            j = theGraph.V[i].link[1]
+            while j:
+                linked_list.append(to[theGraph.E[j].neighbor])
+                j = theGraph.E[j].link[1]
+            emb_dict[to[i]] = linked_list
+        if set_embedding:
+            g._embedding = emb_dict
+        if set_pos:
+            g.layout(layout='planar', save_pos=True, on_embedding=emb_dict)
 
-                emb_dict = {}
-                #for i in range(theGraph.N):
-                for i in range(1, theGraph.N + 1):
-                    linked_list = []
-                    j = theGraph.V[i].link[0]
-                    while j:
-                        linked_list.append(to[theGraph.E[j].neighbor])
-                        j = theGraph.E[j].link[0]
-                    emb_dict[to[i]] = linked_list
-                g._embedding = emb_dict
-        gp_Free(&theGraph)
-        if kuratowski:
-            return (True,None)
-        else:
-            return True
+    gp_Free(&theGraph)
+    if kuratowski:
+        return (True, None)
+    return True

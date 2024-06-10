@@ -2,6 +2,7 @@
 # the Python installer.
 unset PYTHONHOME
 unset PYTHONPATH
+unset SETUPTOOLS_USE_DISTUTILS
 
 # Prevent use of the system hg and svn as it might make the installation fail
 export HAS_HG=no
@@ -20,11 +21,8 @@ if [ "$SAGE_VALGRIND" = "yes" ]; then
     PYTHON_CONFIGURE="$PYTHON_CONFIGURE --without-pymalloc"
 fi
 
-# Use EXTRA_CFLAGS for user-defined CFLAGS since Python puts its own
-# default flags like -O3 after CFLAGS but before EXTRA_CFLAGS.
-# We also disable warnings about unused variables/functions which are
-# common in Cython-generated code.
-export EXTRA_CFLAGS="`testcflags.sh -Wno-unused` $CFLAGS"
+# We will use EXTRA_CFLAGS for user-defined CFLAGS below.
+OLD_CFLAGS="$CFLAGS"
 unset CFLAGS
 
 if [ "$UNAME" = Darwin ]; then
@@ -50,48 +48,50 @@ if [ "$UNAME" = Darwin ]; then
         echo "OS X 10.$[$MACOSX_VERSION-4] Building with clang."
         CC=clang
     fi
-elif [ "$UNAME" = SunOS ]; then
-    # Enable some C99 features on Solaris. This in particular enables
-    # the isinf() and isfinite() functions. It works both for C and
-    # C++ code (which is not true for -std=c99).  See
-    # http://trac.sagemath.org/sage_trac/ticket/14265
-    export CFLAGS="-D__C99FEATURES__ $CFLAGS"
 fi
 
-# Remove old symbolic link: it is not needed and its presence can
-# interfere with the Python build.
-rm -f "$SAGE_LOCAL/lib/python"
+# Use EXTRA_CFLAGS for user-defined CFLAGS since Python puts its own
+# default flags like -O3 after CFLAGS but before EXTRA_CFLAGS.
+# We also disable warnings about unused variables/functions which are
+# common in Cython-generated code.
+export EXTRA_CFLAGS="`testcflags.sh -Wno-unused $OLD_CFLAGS`"
 
-# Remove old libraries. We really need to do this before building Python
-# since Python tries to import some modules (e.g. ctypes) at build-time.
-# We need to make sure that the old installed libraries in local/lib are
-# not used for that. See https://trac.sagemath.org/ticket/24605
-rm -f "$SAGE_LOCAL"/lib/lib"$PKG_BASE"*
-
-
-if [ "$PKG_BASE" = "python2" ]; then
-    PYTHON_CONFIGURE="$PYTHON_CONFIGURE --enable-unicode=ucs4"
-else
     # Note: --without-ensurepip ensures that setuptools+pip are *not* installed
     # automatically when installing python3. They will be installed instead by
     # the separate setuptools and pip packages; see
-    # https://trac.sagemath.org/ticket/23398
+    # https://github.com/sagemath/sage/issues/23398
     PYTHON_CONFIGURE="$PYTHON_CONFIGURE --without-ensurepip"
-fi
 
 sdh_configure --enable-shared $PYTHON_CONFIGURE
 
 # Make sure -L. is placed before -L$SAGE_LOCAL/lib so that python and extension
 # modules are linked with the right libpython; we pass this in at make time
 # only, since we don't want -L. to be saved as one of the default LDFLAGS
-# used for building third-party extension modules
-sdh_make LDFLAGS="-L. $LDFLAGS"
+# used for building third-party extension modules.
+#
+# Issue #32442: As we now install python in SAGE_VENV, not SAGE_LOCAL,
+# we need to provide paths into $SAGE_LOCAL, so that setup.py finds
+# the libraries needed for the extension modules - in particular sqlite3.
+# (The search code there does not know about CPATH and LIBRARY_PATH.)
 
 if [ "$UNAME" = "Darwin" ]; then
+    make_LDFLAGS="-L$SAGE_LOCAL/lib -L$SAGE_INST_LOCAL/lib $LDFLAGS"
+    # This enables python to find libpython
     export DYLD_LIBRARY_PATH="."
-else
+fi
+if [ "$UNAME" = "Linux" ]; then
+    make_LDFLAGS="-L. -Wl,-rpath,. -L$SAGE_LOCAL/lib $LDFLAGS"
+    make_CPPFLAGS="-I$SAGE_LOCAL/include $CPPFLAGS"
+    # Also, we need to add an rpath, like we do for SAGE_LOCAL in src/bin/sage-env.
+    # SAGE_INST_LOCAL is the installation hierarchy for the current package
+    # -- for python3, this is SAGE_VENV.
+    make_LDFLAGS="-Wl,-rpath,$SAGE_INST_LOCAL/lib $make_LDFLAGS"
+    make_LDFLAGS="-Wl,-rpath-link,$SAGE_INST_LOCAL/lib $make_LDFLAGS"
+    # This enables python to find libpython
     export LD_LIBRARY_PATH="."
 fi
+
+sdh_make LDFLAGS="$make_LDFLAGS" CPPFLAGS="$make_CPPFLAGS"
 
 # When building on a case-insensitive filesystem (on any OS, not just Windows)
 # the Python executable is output to the build directory as 'python.exe'
@@ -107,7 +107,8 @@ fi
 
 echo "Testing importing of various modules..."
 import_errors=false
-test_modules="ctypes math hashlib crypt readline socket zlib sqlite3"
+# Issue #31160: We no longer check for readline here.
+test_modules="ctypes math hashlib crypt socket zlib sqlite3 ssl"
 if [ "$UNAME" = "Darwin" ]; then
     test_modules="$test_modules _scproxy"
 fi

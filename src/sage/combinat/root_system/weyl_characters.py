@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs sage.groups sage.modules
 """
 Weyl Character Rings
 """
@@ -8,10 +9,10 @@ Weyl Character Rings
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 import sage.combinat.root_system.branching_rules
-from sage.categories.all import Category, Algebras, AlgebrasWithBasis
+from sage.categories.algebras import Algebras
+from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.root_system import RootSystem
@@ -19,7 +20,9 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
 from sage.misc.functional import is_even
-from sage.rings.all import ZZ
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+
 
 class WeylCharacterRing(CombinatorialFreeModule):
     r"""
@@ -90,7 +93,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
     https://doc.sagemath.org/html/en/thematic_tutorials/lie.html
     """
     @staticmethod
-    def __classcall__(cls, ct, base_ring=ZZ, prefix=None, style="lattice", k=None, conjugate=False, cyclotomic_order=None):
+    def __classcall__(cls, ct, base_ring=ZZ, prefix=None, style="lattice", k=None, conjugate=False, cyclotomic_order=None, fusion_labels=None, inject_variables=False):
         """
         TESTS::
 
@@ -103,12 +106,12 @@ class WeylCharacterRing(CombinatorialFreeModule):
         ct = CartanType(ct)
         if prefix is None:
             if ct.is_atomic():
-                prefix = ct[0]+str(ct[1])
+                prefix = ct[0] + str(ct[1])
             else:
                 prefix = repr(ct)
-        return super(WeylCharacterRing, cls).__classcall__(cls, ct, base_ring=base_ring, prefix=prefix, style=style, k=k, conjugate=conjugate, cyclotomic_order=cyclotomic_order)
+        return super().__classcall__(cls, ct, base_ring=base_ring, prefix=prefix, style=style, k=k, conjugate=conjugate, cyclotomic_order=cyclotomic_order, fusion_labels=fusion_labels, inject_variables=inject_variables)
 
-    def __init__(self, ct, base_ring=ZZ, prefix=None, style="lattice", k=None, conjugate=False, cyclotomic_order=None):
+    def __init__(self, ct, base_ring=ZZ, prefix=None, style="lattice", k=None, conjugate=False, cyclotomic_order=None, fusion_labels=None, inject_variables=False):
         """
         EXAMPLES::
 
@@ -123,13 +126,17 @@ class WeylCharacterRing(CombinatorialFreeModule):
         self._origin = self._space.zero()
         if prefix is None:
             if ct.is_atomic():
-                prefix = ct[0]+str(ct[1])
+                prefix = ct[0] + str(ct[1])
             else:
                 prefix = repr(ct)
         self._prefix = prefix
         self._style = style
         self._fusion_labels = None
+        self._field = None
+        self._basecoer = None
         self._k = k
+        if k is not None:
+            self._k = Integer(k)
         if ct.is_irreducible():
             self._opposition = ct.opposition_automorphism()
             self._highest = self._space.highest_root()
@@ -141,6 +148,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
         if k is not None:
             self._prefix += str(k)
             fw = self._space.fundamental_weights()
+
             def next_level(wt):
                 return [wt + la for la in fw if self.level(wt + la) <= k]
             B = list(RecursivelyEnumeratedSet([self._space.zero()], next_level))
@@ -148,12 +156,12 @@ class WeylCharacterRing(CombinatorialFreeModule):
         else:
             B = self._space
 
-        # TODO: remove the Category.join once not needed anymore (bug in CombinatorialFreeModule)
-        category = Category.join([AlgebrasWithBasis(base_ring),
-                                  Algebras(base_ring).Subobjects()])
+        cat = AlgebrasWithBasis(base_ring).Commutative()
         if k is None:
-            category = category.Graded()
-        CombinatorialFreeModule.__init__(self, base_ring, B, category=category)
+            cat = cat.Subobjects().Graded()
+        else:
+            cat = cat.FiniteDimensional()
+        CombinatorialFreeModule.__init__(self, base_ring, B, category=cat)
 
         # Register the embedding of self into ambient as a coercion
         self.lift.register_as_coercion()
@@ -171,7 +179,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
                 self._m_g = 2
             else:
                 self._m_g = 3
-            if ct[0] in ['B','F']:
+            if ct[0] in ['B', 'F']:
                 self._nf = 2
             else:
                 self._nf = 1
@@ -195,6 +203,9 @@ class WeylCharacterRing(CombinatorialFreeModule):
                 self._cyclotomic_order = self._fg * self._l
             else:
                 self._cyclotomic_order = cyclotomic_order
+            self._fusion_labels = fusion_labels
+            if fusion_labels:
+                self.fusion_labels(labels=fusion_labels, inject_variables=inject_variables)
 
     @cached_method
     def ambient(self):
@@ -229,7 +240,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
             sage: A2.lift_on_basis(v)
             2*a2(1,1,1) + a2(1,2,0) + a2(1,0,2) + a2(2,1,0) + a2(2,0,1) + a2(0,1,2) + a2(0,2,1)
 
-        This is consistent with the analoguous calculation with symmetric
+        This is consistent with the analogous calculation with symmetric
         Schur functions::
 
             sage: s = SymmetricFunctions(QQ).s()
@@ -272,8 +283,8 @@ class WeylCharacterRing(CombinatorialFreeModule):
             a2(0,0) + a2(-2,1) + a2(2,-1) + a2(1,1) + a2(-1,2)
         """
         if self._style != "coroots":
-            raise ValueError('demazure method unavailable. Use style="coroots".')
-        hwv = self._space.from_vector_notation(hwv, style = "coroots")
+            raise ValueError('demazure method unavailable: use style="coroots"')
+        hwv = self._space.from_vector_notation(hwv, style="coroots")
         return self.ambient()._from_dict(self._demazure_weights(hwv, word=word, debug=debug))
 
     @lazy_attribute
@@ -307,8 +318,8 @@ class WeylCharacterRing(CombinatorialFreeModule):
             a2(1,3,0) + a2(1,0,3) + a2(3,1,0) + a2(3,0,1) + a2(0,1,3) + a2(0,3,1)
         """
         return self.module_morphism(self.lift_on_basis,
-                                    codomain = self.ambient(),
-                                    category = AlgebrasWithBasis(self.base_ring()))
+                                    codomain=self.ambient(),
+                                    category=AlgebrasWithBasis(self.base_ring()))
 
     def _retract(self, chi):
         """
@@ -396,7 +407,6 @@ class WeylCharacterRing(CombinatorialFreeModule):
         else:
             return "The Fusion Ring of Type {} and level {} with {} coefficients".format(self._cartan_type._repr_(compact=True), self._k, self._base_ring)
 
-
     def __call__(self, *args):
         """
         Construct an element of ``self``.
@@ -450,7 +460,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
         # object which can't be coerced into self
         if len(args) > 1:
             args = (args,)
-        return super(WeylCharacterRing, self).__call__(*args)
+        return super().__call__(*args)
 
     def _element_constructor_(self, weight):
         """
@@ -471,7 +481,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
             sage: A2._element_constructor_([2,1,0])
             A2(2,1,0)
         """
-        weight = self._space.from_vector_notation(weight, style = self._style)
+        weight = self._space.from_vector_notation(weight, style=self._style)
         if not weight.is_dominant_weight():
             raise ValueError("{} is not a dominant element of the weight lattice".format(weight))
         if self._k is not None:
@@ -501,7 +511,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
         # smaller character is the one that is decomposed
         # into weights.
         if sum(a.coefficients()) > sum(b.coefficients()):
-            a,b = b,a
+            a, b = b, a
         return self._product_helper(self._irr_weights(a), b)
 
     def _product_helper(self, d1, b):
@@ -526,12 +536,12 @@ class WeylCharacterRing(CombinatorialFreeModule):
         """
         d = {}
         for k in d1:
-            [epsilon,g] = self.dot_reduce(b+k)
+            [epsilon, g] = self.dot_reduce(b + k)
             if epsilon == 1:
-                d[g] = d.get(g,0) + d1[k]
+                d[g] = d.get(g, 0) + d1[k]
             elif epsilon == -1:
-                d[g] = d.get(g,0)- d1[k]
-        return self._from_dict(d)
+                d[g] = d.get(g, 0) - d1[k]
+        return self._from_dict(d, coerce=True)
 
     def dot_reduce(self, a):
         r"""
@@ -567,30 +577,31 @@ class WeylCharacterRing(CombinatorialFreeModule):
                     return [0, self._space.zero()]
                 elif c < -1:
                     epsilon = -epsilon
-                    ret -= (1+c)*alpha[i]
+                    ret -= (1 + c) * alpha[i]
                     done = False
                     break
             if self._k is not None:
                 l = self.level(ret)
                 k = self._k
                 if l > k:
-                    if l == k+1:
+                    if l == k + 1:
                         return [0, self._space.zero()]
                     else:
                         epsilon = -epsilon
-                        ret = self.affine_reflect(ret,k+1)
+                        ret = self.affine_reflect(ret, k + 1)
                         done = False
         return [epsilon, ret]
 
     def affine_reflect(self, wt, k=0):
         r"""
+        Return the reflection of wt in the hyperplane `\theta`.
+
+        Optionally, this also shifts by a multiple `k` of `\theta`.
+
         INPUT:
 
         - ``wt`` -- a weight
         - ``k`` -- (optional) a positive integer
-
-        Returns the reflection of wt in the hyperplane
-        `\theta`. Optionally shifts by a multiple `k`of `\theta`.
 
         EXAMPLES::
 
@@ -600,8 +611,8 @@ class WeylCharacterRing(CombinatorialFreeModule):
             sage: [B22.affine_reflect(x,2) for x in fw]
             [(2, 1), (3/2, 3/2)]
         """
-        coef = ZZ(2*wt.inner_product(self._highest)/self._hip)
-        return wt+(k-coef)*self._highest
+        coef = ZZ(2 * wt.inner_product(self._highest) / self._hip)
+        return wt + (k - coef) * self._highest
 
     def some_elements(self):
         """
@@ -680,7 +691,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
         dd = {}
         h = tuple(int(hwv.inner_product(alphacheck[j]))
                   for j in self._space.index_set())
-        dd[h] = int(1)
+        dd[h] = 1
         return self._demazure_helper(dd, word=word, debug=debug)
 
     def _demazure_helper(self, dd, word="long", debug=False):
@@ -703,14 +714,21 @@ class WeylCharacterRing(CombinatorialFreeModule):
             {(0, 0, 0): 1, (-1, 1, 0): 1, (1, -1, 0): 1, (1, 0, -1): 1, (0, 1, -1): 1}
         """
         if self._style != "coroots":
-            raise ValueError('_demazure_helper method unavailable. Use style="coroots".')
+            raise ValueError('_demazure_helper method unavailable: use style="coroots"')
         index_set = self._space.index_set()
         alphacheck = self._space.simple_coroots()
         alpha = self._space.simple_roots()
         r = self.rank()
         cm = {}
+        supp = []
         for i in index_set:
-            cm[i] = tuple(int(alpha[i].inner_product(alphacheck[j])) for j in index_set)
+            temp = []
+            cm[i] = [0] * r
+            for ind, j in enumerate(index_set):
+                cm[i][ind] = int(alpha[i].inner_product(alphacheck[j]))
+                if cm[i][ind]:
+                    temp.append(ind)
+            supp.append(temp)
             if debug:
                 print("cm[%s]=%s" % (i, cm[i]))
         accum = dd
@@ -721,21 +739,27 @@ class WeylCharacterRing(CombinatorialFreeModule):
                 print("i=%s" % i)
             next = {}
             for v in accum:
-                coroot = v[i-1]
+                coroot = v[i - 1]
                 if debug:
                     print("   v=%s, coroot=%s" % (v, coroot))
                 if coroot >= 0:
                     mu = v
-                    for j in range(coroot+1):
-                        next[mu] = next.get(mu,0)+accum[v]
+                    for j in range(coroot + 1):
+                        next[mu] = next.get(mu, 0) + accum[v]
                         if debug:
                             print("     mu=%s, next[mu]=%s" % (mu, next[mu]))
-                        mu = tuple(mu[k] - cm[i][k] for k in range(r))
+                        mu = list(mu)
+                        for k in supp[i - 1]:
+                            mu[k] -= cm[i][k]
+                        mu = tuple(mu)
                 else:
                     mu = v
-                    for j in range(-1-coroot):
-                        mu = tuple(mu[k] + cm[i][k] for k in range(r))
-                        next[mu] = next.get(mu,0)-accum[v]
+                    for j in range(-1 - coroot):
+                        mu = list(mu)
+                        for k in supp[i - 1]:
+                            mu[k] += cm[i][k]
+                        mu = tuple(mu)
+                        next[mu] = next.get(mu, 0) - accum[v]
                         if debug:
                             print("     mu=%s, next[mu]=%s" % (mu, next[mu]))
             accum = {}
@@ -767,9 +791,9 @@ class WeylCharacterRing(CombinatorialFreeModule):
             d1 = self._irr_weights(k)
             for l in d1:
                 if l in d:
-                    d[l] += c*d1[l]
+                    d[l] += c * d1[l]
                 else:
-                    d[l] = c*d1[l]
+                    d[l] = c * d1[l]
         for k in list(d):
             if d[k] == 0:
                 del d[k]
@@ -802,7 +826,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
             sage: [B3.irr_repr(v) for v in B3.fundamental_weights()]
             ['B3(1,0,0)', 'B3(0,1,0)', 'B3(0,0,1)']
         """
-        return self._prefix+self._wt_repr(hwv)
+        return self._prefix + self._wt_repr(hwv)
 
     def level(self, wt):
         """
@@ -816,7 +840,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
             sage: [CartanType("F4~").dual().a()[x] for x in [1..4]]
             [2, 3, 2, 1]
         """
-        return ZZ(2*wt.inner_product(self._highest)/self._hip)
+        return ZZ(2 * wt.inner_product(self._highest) / self._hip)
 
     def _dual_helper(self, wt):
         """
@@ -829,13 +853,13 @@ class WeylCharacterRing(CombinatorialFreeModule):
             sage: [A3._dual_helper(x) for x in A3.fundamental_weights()]
             [(0, 0, 0, -1), (0, 0, -1, -1), (0, -1, -1, -1)]
         """
-        if self.cartan_type()[0] == 'A': # handled separately for GL(n) compatibility
+        if self.cartan_type()[0] == 'A':  # handled separately for GL(n) compatibility
             return self.space()([-x for x in reversed(wt.to_vector().list())])
         ret = 0
         alphacheck = self._space.simple_coroots()
         fw = self._space.fundamental_weights()
         for i in self._space.index_set():
-            ret += wt.inner_product(alphacheck[i])*fw[self._opposition[i]]
+            ret += wt.inner_product(alphacheck[i]) * fw[self._opposition[i]]
         return ret
 
     def _wt_repr(self, wt):
@@ -862,9 +886,9 @@ class WeylCharacterRing(CombinatorialFreeModule):
         else:
             raise ValueError("unknown style")
         hstring = str(vec[0])
-        for i in range(1,len(vec)):
-            hstring=hstring+","+str(vec[i])
-        return "("+hstring+")"
+        for i in range(1, len(vec)):
+            hstring = hstring + "," + str(vec[i])
+        return "(" + hstring + ")"
 
     def _repr_term(self, t):
         """
@@ -1056,7 +1080,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
         hdict = {}
         ddict = mdict.copy()
         while ddict:
-            highest = max((x.inner_product(self._space.rho()),x) for x in ddict)[1]
+            highest = max((x.inner_product(self._space.rho()), x) for x in ddict)[1]
             if not highest.is_dominant():
                 raise ValueError("multiplicity dictionary may not be Weyl group invariant")
             sdict = self._irr_weights(highest)
@@ -1180,6 +1204,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
         """
         A class for Weyl characters.
         """
+
         def cartan_type(self):
             """
             Return the Cartan type of ``self``.
@@ -1256,8 +1281,10 @@ class WeylCharacterRing(CombinatorialFreeModule):
 
         def highest_weight(self):
             """
-            This method is only available for basis elements. Returns the
-            parametrizing dominant weight of an irreducible character.
+            Return the parametrizing dominant weight
+            of an irreducible character.
+
+            This method is only available for basis elements.
 
             EXAMPLES::
 
@@ -1300,7 +1327,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
                 n = -n
 
             res = self
-            for i in range(n-1):
+            for i in range(n - 1):
                 res = self * res
             return res
 
@@ -1348,13 +1375,12 @@ class WeylCharacterRing(CombinatorialFreeModule):
             if k == 1:
                 return self
             ret = par.zero()
-            for r in range(1,k+1):
-                adam_r = self._adams_operation_helper(r)
-                ret += par.linear_combination( (par._product_helper(adam_r, l), c) for (l, c) in self.symmetric_power(k-r))
-            dd = {}
+            for r in range(1, k + 1):
+                adam_r = self._adams_operator_helper(r)
+                ret += par.linear_combination((par._product_helper(adam_r, l), c)
+                                              for l, c in self.symmetric_power(k - r))
             m = ret.weight_multiplicities()
-            for l in m:
-                dd[l] = m[l]/k
+            dd = {key: val / k for key, val in m.items()}
             return self.parent().char_from_weights(dd)
 
         @cached_method
@@ -1387,19 +1413,19 @@ class WeylCharacterRing(CombinatorialFreeModule):
             if k == 1:
                 return self
             ret = par.zero()
-            for r in range(1,k+1):
-                adam_r = self._adams_operation_helper(r)
+            for r in range(1, k + 1):
+                adam_r = self._adams_operator_helper(r)
                 if is_even(r):
-                    ret -= par.linear_combination( (par._product_helper(adam_r, l), c) for (l, c) in self.exterior_power(k-r))
+                    ret -= par.linear_combination((par._product_helper(adam_r, l), c) for (l, c) in self.exterior_power(k-r))
                 else:
-                    ret += par.linear_combination( (par._product_helper(adam_r, l), c) for (l, c) in self.exterior_power(k-r))
+                    ret += par.linear_combination((par._product_helper(adam_r, l), c) for (l, c) in self.exterior_power(k-r))
             dd = {}
             m = ret.weight_multiplicities()
             for l in m:
                 dd[l] = m[l]/k
             return self.parent().char_from_weights(dd)
 
-        def adams_operation(self, r):
+        def adams_operator(self, r):
             """
             Return the `r`-th Adams operation of ``self``.
 
@@ -1413,12 +1439,14 @@ class WeylCharacterRing(CombinatorialFreeModule):
             EXAMPLES::
 
                 sage: A2 = WeylCharacterRing("A2")
-                sage: A2(1,1,0).adams_operation(3)
+                sage: A2(1,1,0).adams_operator(3)
                 A2(2,2,2) - A2(3,2,1) + A2(3,3,0)
             """
-            return self.parent().char_from_weights(self._adams_operation_helper(r))
+            return self.parent().char_from_weights(self._adams_operator_helper(r))
 
-        def _adams_operation_helper(self, r):
+        adams_operation = adams_operator
+
+        def _adams_operator_helper(self, r):
             """
             Helper function for Adams operations.
 
@@ -1432,14 +1460,11 @@ class WeylCharacterRing(CombinatorialFreeModule):
             EXAMPLES::
 
                 sage: A2 = WeylCharacterRing("A2")
-                sage: A2(1,1,0)._adams_operation_helper(3)
+                sage: A2(1,1,0)._adams_operator_helper(3)
                 {(3, 3, 0): 1, (3, 0, 3): 1, (0, 3, 3): 1}
             """
             d = self.weight_multiplicities()
-            dd = {}
-            for k in d:
-                dd[r*k] = d[k]
-            return dd
+            return {r * key: val for key, val in d.items()}
 
         def symmetric_square(self):
             """
@@ -1627,6 +1652,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
                 raise ValueError("{} is not irreducible".format(other))
             return self.coefficient(other.support()[0])
 
+
 def irreducible_character_freudenthal(hwv, debug=False):
     r"""
     Return the dictionary of multiplicities for the irreducible
@@ -1656,7 +1682,7 @@ def irreducible_character_freudenthal(hwv, debug=False):
     L = hwv.parent()
     rho = L.rho()
     mdict = {}
-    current_layer = {hwv:1}
+    current_layer = {hwv: 1}
 
     simple_roots = L.simple_roots()
     positive_roots = L.positive_roots()
@@ -1667,7 +1693,7 @@ def irreducible_character_freudenthal(hwv, debug=False):
             if current_layer[mu] != 0:
                 mdict[mu] = current_layer[mu]
                 for alpha in simple_roots:
-                    next_layer[mu-alpha] = None
+                    next_layer[mu - alpha] = None
         if debug:
             print(next_layer)
 
@@ -1677,16 +1703,17 @@ def irreducible_character_freudenthal(hwv, debug=False):
                 for alpha in positive_roots:
                     mu_plus_i_alpha = mu + alpha
                     while mu_plus_i_alpha in mdict:
-                        accum += mdict[mu_plus_i_alpha]*(mu_plus_i_alpha).inner_product(alpha)
+                        accum += mdict[mu_plus_i_alpha] * (mu_plus_i_alpha).inner_product(alpha)
                         mu_plus_i_alpha += alpha
                 if accum == 0:
                     next_layer[mu] = 0
                 else:
                     hwv_plus_rho = hwv + rho
-                    mu_plus_rho  = mu  + rho
-                    next_layer[mu] = ZZ(2*accum)/ZZ((hwv_plus_rho).inner_product(hwv_plus_rho)-(mu_plus_rho).inner_product(mu_plus_rho))
+                    mu_plus_rho = mu + rho
+                    next_layer[mu] = ZZ(2 * accum) / ZZ((hwv_plus_rho).inner_product(hwv_plus_rho) - (mu_plus_rho).inner_product(mu_plus_rho))
         current_layer = next_layer
     return mdict
+
 
 class WeightRing(CombinatorialFreeModule):
     """
@@ -1733,7 +1760,7 @@ class WeightRing(CombinatorialFreeModule):
             sage: a3.cartan_type(), a3.base_ring(), a3.parent()
             (['A', 3], Integer Ring, The Weyl Character Ring of Type A3 with Integer Ring coefficients)
         """
-        return super(WeightRing, cls).__classcall__(cls, parent, prefix=prefix)
+        return super().__classcall__(cls, parent, prefix=prefix)
 
     def __init__(self, parent, prefix):
         """
@@ -1761,17 +1788,17 @@ class WeightRing(CombinatorialFreeModule):
         self._base_ring = parent._base_ring
         if prefix is None:
             # TODO: refactor this fragile logic into CartanType's
-            if self._parent._prefix.replace('x','_').isupper():
+            if self._parent._prefix.replace('x', '_').isupper():
                 # The 'x' workaround above is to support reducible Cartan types like 'A1xB2'
                 prefix = self._parent._prefix.lower()
             elif self._parent._prefix.islower():
                 prefix = self._parent._prefix.upper()
             else:
                 # TODO: this only works for irreducible Cartan types!
-                prefix = (self._cartan_type[0].lower()+str(self._rank))
+                prefix = (self._cartan_type[0].lower() + str(self._rank))
         self._prefix = prefix
-        category = AlgebrasWithBasis(self._base_ring)
-        CombinatorialFreeModule.__init__(self, self._base_ring, self._space, category = category)
+        category = AlgebrasWithBasis(self._base_ring).Commutative()
+        CombinatorialFreeModule.__init__(self, self._base_ring, self._space, category=category)
 
     def _repr_(self):
         """
@@ -1782,7 +1809,7 @@ class WeightRing(CombinatorialFreeModule):
             sage: WeightRing(G2) # indirect doctest
             The Weight ring attached to The Weyl Character Ring of Type G2 with Univariate Polynomial Ring in q over Rational Field coefficients
         """
-        return "The Weight ring attached to %s"%self._parent
+        return "The Weight ring attached to %s" % self._parent
 
     def __call__(self, *args):
         """
@@ -1818,7 +1845,7 @@ class WeightRing(CombinatorialFreeModule):
         # object which can't be coerced into self
         if len(args) > 1:
             args = (args,)
-        return super(WeightRing, self).__call__(*args)
+        return super().__call__(*args)
 
     def _element_constructor_(self, weight):
         """
@@ -1839,7 +1866,7 @@ class WeightRing(CombinatorialFreeModule):
             sage: A2._element_constructor_([2,1,0])
             A2(2,1,0)
         """
-        weight = self._space.from_vector_notation(weight, style = self._style)
+        weight = self._space.from_vector_notation(weight, style=self._style)
         return self.monomial(weight)
 
     def product_on_basis(self, a, b):
@@ -1853,7 +1880,7 @@ class WeightRing(CombinatorialFreeModule):
             sage: a2(1,0,0) * a2(0,1,0) # indirect doctest
             a2(1,1,0)
         """
-        return self(a+b)
+        return self(a + b)
 
     def some_elements(self):
         """
@@ -1987,7 +2014,7 @@ class WeightRing(CombinatorialFreeModule):
             sage: [G2.ambient().wt_repr(x) for x in G2.fundamental_weights()]
             ['g2(1,0)', 'g2(0,1)']
         """
-        return self._prefix+self.parent()._wt_repr(wt)
+        return self._prefix + self.parent()._wt_repr(wt)
 
     def _repr_term(self, t):
         """
@@ -2006,6 +2033,7 @@ class WeightRing(CombinatorialFreeModule):
         """
         A class for weight ring elements.
         """
+
         def cartan_type(self):
             """
             Return the Cartan type.
@@ -2072,9 +2100,7 @@ class WeightRing(CombinatorialFreeModule):
             if k == 0:
                 raise ValueError("parameter must be nonzero")
             d1 = self.monomial_coefficients()
-            d2 = {}
-            for mu in d1:
-                d2[k * mu] = d1[mu]
+            d2 = {k * mu: coeff for mu, coeff in d1.items()}
             return self.parent()._from_dict(d2)
 
         def shift(self, mu):
@@ -2094,9 +2120,7 @@ class WeightRing(CombinatorialFreeModule):
                 [g2(2,2), g2(1,3)]
             """
             d1 = self.monomial_coefficients()
-            d2 = {}
-            for nu in d1:
-                d2[mu + nu] = d1[nu]
+            d2 = {mu + nu: val for nu, val in d1.items()}
             return self.parent()._from_dict(d2)
 
         def demazure(self, w, debug=False):
@@ -2202,16 +2226,16 @@ class WeightRing(CombinatorialFreeModule):
                 True
             """
             if i in self.parent().space().index_set():
-                rho = self.parent().space().from_vector_notation(self.parent().space().rho(),style="coroots")
+                rho = self.parent().space().from_vector_notation(self.parent().space().rho(), style="coroots")
                 inv = self.scale(-1)
-                return (-inv.shift(-rho).demazure([i]).shift(rho)+v*inv.demazure([i])).scale(-1)
+                return (-inv.shift(-rho).demazure([i]).shift(rho) + v * inv.demazure([i])).scale(-1)
             elif isinstance(i, list):
-                if len(i) == 0:
+                if not i:
                     return self
                 elif len(i) == 1:
                     return self.demazure_lusztig(i[0], v)
                 else:
-                    return self.demazure_lusztig(i[1:], v).demazure_lusztig(i[:1],v)
+                    return self.demazure_lusztig(i[1:], v).demazure_lusztig(i[:1], v)
             else:
                 try:
                     return self.demazure_lusztig(i.reduced_word(), v)

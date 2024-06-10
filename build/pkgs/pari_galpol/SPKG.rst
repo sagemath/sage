@@ -1,5 +1,5 @@
-pari_galpol
-===========
+pari_galpol: PARI data package for polynomials defining Galois extensions of the rationals
+==========================================================================================
 
 Description
 -----------

@@ -1,5 +1,5 @@
-fplll
-=====
+fplll: Lattice algorithms, including LLL with floating-point orthogonalization
+==============================================================================
 
 Description
 -----------
@@ -21,9 +21,3 @@ Upstream Contact
 
 -  Martin Albrecht <martinralbrecht+fplll@googlemail.com>
 -  Mailing List https://groups.google.com/forum/#!forum/fplll-devel
-
-Dependencies
-------------
-
--  gmp
--  mpfr

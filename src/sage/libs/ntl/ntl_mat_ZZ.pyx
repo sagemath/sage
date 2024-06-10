@@ -1,4 +1,8 @@
-# distutils: libraries = ntl gmp m
+# distutils: libraries = NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 
 #*****************************************************************************
@@ -26,7 +30,7 @@ from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZX cimport ntl_ZZX
 from cpython.object cimport PyObject_RichCompare
 
-from .ntl_ZZ import unpickle_class_args
+from sage.libs.ntl.ntl_ZZ import unpickle_class_args
 
 cdef inline ntl_ZZ make_ZZ(ZZ_c* x):
     cdef ntl_ZZ y
@@ -63,14 +67,14 @@ cdef inline ntl_mat_ZZ make_mat_ZZ_sig_off(mat_ZZ_c* x):
 #
 ##############################################################################
 
-cdef class ntl_mat_ZZ(object):
+cdef class ntl_mat_ZZ():
     # see ntl_mat_ZZ.pxd for data members
     r"""
-    The \class{mat_ZZ} class implements arithmetic with matrices over $\Z$.
+    The \class{mat_ZZ} class implements arithmetic with matrices over `\Z`.
     """
     def __init__(self, nrows=0,  ncols=0, v=None):
-        """
-        The \class{mat_ZZ} class implements arithmetic with matrices over $\Z$.
+        r"""
+        The \class{mat_ZZ} class implements arithmetic with matrices over `\Z`.
 
         EXAMPLES::
 
@@ -101,7 +105,6 @@ cdef class ntl_mat_ZZ(object):
                 for j from 0 <= j < ncols:
                     tmp = ntl_ZZ(v[i*ncols+j])
                     mat_ZZ_setitem(&self.x, i, j, &tmp.x)
-
 
     def __reduce__(self):
         """
@@ -315,6 +318,8 @@ cdef class ntl_mat_ZZ(object):
 
     def __getitem__(self, ij):
         """
+        EXAMPLES::
+
             sage: m = ntl.mat_ZZ(3, 2, range(6))
             sage: m[0,0] ## indirect doctest
             0
@@ -369,7 +374,7 @@ cdef class ntl_mat_ZZ(object):
             TypeError: cannot take determinant of non-square matrix.
             sage: ntl.mat_ZZ(4,4,[next_prime(2**i) for i in range(16)]).determinant()
             -10248
-            sage: ntl.mat_ZZ(4,4,[ ZZ.random_element() for _ in range(16) ]).determinant()
+            sage: ntl.mat_ZZ(4,4,[ ZZ.random_element() for _ in range(16) ]).determinant()  # random
             678
         """
         if self.__nrows != self.__ncols:
@@ -449,7 +454,7 @@ cdef class ntl_mat_ZZ(object):
             sage: M.charpoly()
             [-2 -5 1]
             sage: type(_)
-            <type 'sage.libs.ntl.ntl_ZZX.ntl_ZZX'>
+            <class 'sage.libs.ntl.ntl_ZZX.ntl_ZZX'>
             sage: M.determinant()
             -2
         """
@@ -490,7 +495,7 @@ cdef class ntl_mat_ZZ(object):
             delta -- reduction parameter (default: 0.99)
             BlockSize -- see above (default: 10)
             prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+            verbose -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -560,7 +565,7 @@ cdef class ntl_mat_ZZ(object):
             delta -- reduction parameter (default: 0.99)
             BlockSize -- see above (default: 10)
             prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+            verbose -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -630,7 +635,7 @@ cdef class ntl_mat_ZZ(object):
             delta -- reduction parameter (default: 0.99)
             BlockSize -- see above (default: 10)
             prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+            verbose -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -700,7 +705,7 @@ cdef class ntl_mat_ZZ(object):
             delta -- reduction parameter (default: 0.99)
             BlockSize -- see above (default: 10)
             prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+            verbose -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -770,7 +775,7 @@ cdef class ntl_mat_ZZ(object):
             delta -- reduction parameter (default: 0.99)
             BlockSize -- see above (default: 10)
             prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+            verbose -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -840,7 +845,7 @@ cdef class ntl_mat_ZZ(object):
             delta -- reduction parameter (default: 0.99)
             BlockSize -- see above (default: 10)
             prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+            verbose -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -910,7 +915,7 @@ cdef class ntl_mat_ZZ(object):
             delta -- reduction parameter (default: 0.99)
             BlockSize -- see above (default: 10)
             prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+            verbose -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -980,7 +985,7 @@ cdef class ntl_mat_ZZ(object):
             delta -- reduction parameter (default: 0.99)
             BlockSize -- see above (default: 10)
             prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+            verbose -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -1050,7 +1055,7 @@ cdef class ntl_mat_ZZ(object):
             delta -- reduction parameter (default: 0.99)
             BlockSize -- see above (default: 10)
             prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+            verbose -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -1120,7 +1125,7 @@ cdef class ntl_mat_ZZ(object):
             delta -- reduction parameter (default: 0.99)
             BlockSize -- see above (default: 10)
             prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+            verbose -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -1163,19 +1168,19 @@ cdef class ntl_mat_ZZ(object):
         r"""
         Performs LLL reduction of self (puts \code{self} in an LLL form).
 
-        \code{self} is an $m x n$ matrix, viewed as $m$ rows of
-        $n$-vectors.  $m$ may be less than, equal to, or greater than $n$,
+        \code{self} is an `m x n` matrix, viewed as `m` rows of
+        `n`-vectors.  `m` may be less than, equal to, or greater than `n`,
         and the rows need not be linearly independent. self is
         transformed into an LLL-reduced basis, and the return value is
-        the rank r of self so as det2 (see below).  The first $m-r$ rows
+        the rank r of self so as det2 (see below).  The first `m-r` rows
         of self are zero.
 
         More specifically, elementary row transformations are
         performed on \code{self} so that the non-zero rows of
         new-\code{self} form an LLL-reduced basis for the lattice
         spanned by the rows of old-\code{self}.  The default reduction
-        parameter is $\delta=3/4$, which means that the squared length
-        of the first non-zero basis vector is no more than $2^{r-1}$
+        parameter is `\delta=3/4`, which means that the squared length
+        of the first non-zero basis vector is no more than `2^{r-1}`
         times that of the shortest vector in the lattice.
 
         det2 is calculated as the \emph{square} of the determinant of
@@ -1189,10 +1194,10 @@ cdef class ntl_mat_ZZ(object):
         of old-B.
 
         The parameters a and b allow an arbitrary reduction parameter
-        $\delta=a/b$, where $1/4 < a/b \leq 1$, where a and b are positive
+        `\delta=a/b`, where `1/4 < a/b \leq 1`, where a and b are positive
         integers.  For a basis reduced with parameter delta, the
         squared length of the first non-zero basis vector is no more
-        than $1/(delta-1/4)^{r-1}$ times that of the shortest vector in
+        than `1/(delta-1/4)^{r-1}` times that of the shortest vector in
         the lattice.
 
         The algorithm employed here is essentially the one in Cohen's
@@ -1204,7 +1209,7 @@ cdef class ntl_mat_ZZ(object):
            b        -- parameter b as described above (default: 4)
            return_U -- return U as described above
            verbose  -- if True NTL will produce some verbatim messages on
-                       what's going on internally (default: False)
+                       what's going on internally (default: ``False``)
 
         OUTPUT:
             (rank,det2,[U]) where rank,det2, and U are as described
@@ -1245,9 +1250,10 @@ cdef class ntl_mat_ZZ(object):
         cdef ZZ_c *det2
         cdef ntl_mat_ZZ U
         if return_U:
-            U = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
+            U = ntl_mat_ZZ(self.__nrows, self.__nrows)
             sig_on()
             rank = int(mat_ZZ_LLL_U(&det2, &self.x, &U.x, int(a), int(b), int(verbose)))
+
             return rank, make_ZZ_sig_off(det2), U
         else:
             sig_on()
@@ -1275,7 +1281,7 @@ cdef class ntl_mat_ZZ(object):
         different, improving both stability and performance.
 
         If return_U is True, then also U is returned which is
-        the transition matrix: $U * self_{old} = self_{new}$
+        the transition matrix: `U * self_{old} = self_{new}`
 
         The optional argument 'delta' is the reduction parameter, and
         may be set so that 0.50 <= delta < 1.  Setting it close to 1
@@ -1291,7 +1297,7 @@ cdef class ntl_mat_ZZ(object):
            delta    -- as described above (0.5 <= delta < 1.0) (default: 0.75)
            return_U -- return U as described above
            verbose  -- if True NTL will produce some verbatim messages on
-                       what's going on internally (default: False)
+                       what's going on internally (default: ``False``)
 
         OUTPUT:
             (rank,[U]) where rank and U are as described above and U
@@ -1330,7 +1336,7 @@ cdef class ntl_mat_ZZ(object):
         """
         cdef ntl_mat_ZZ U
         if return_U:
-            U = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
+            U = ntl_mat_ZZ(self.__nrows, self.__nrows)
             sig_on()
             rank = int(mat_ZZ_LLL_FP_U(self.x, U.x, float(delta), 0, 0, int(verbose)))
             sig_off()
@@ -1354,7 +1360,7 @@ cdef class ntl_mat_ZZ(object):
         """
         cdef ntl_mat_ZZ U
         if return_U:
-            U = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
+            U = ntl_mat_ZZ(self.__nrows, self.__nrows)
             sig_on()
             rank = int(mat_ZZ_LLL_QP_U(self.x, U.x, float(delta), 0, 0, int(verbose)))
             sig_off()
@@ -1379,7 +1385,7 @@ cdef class ntl_mat_ZZ(object):
         """
         cdef ntl_mat_ZZ U
         if return_U:
-            U = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
+            U = ntl_mat_ZZ(self.__nrows, self.__nrows)
             sig_on()
             rank = int(mat_ZZ_LLL_XD_U(self.x, U.x, float(delta), 0, 0, int(verbose)))
             sig_off()
@@ -1434,7 +1440,7 @@ cdef class ntl_mat_ZZ(object):
         """
         cdef ntl_mat_ZZ U
         if return_U:
-            U = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
+            U = ntl_mat_ZZ(self.__nrows, self.__nrows)
             sig_on()
             rank = int(mat_ZZ_G_LLL_FP_U(self.x, U.x, float(delta), 0, 0, int(verbose)))
             sig_off()
@@ -1452,7 +1458,7 @@ cdef class ntl_mat_ZZ(object):
         """
         cdef ntl_mat_ZZ U
         if return_U:
-            U = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
+            U = ntl_mat_ZZ(self.__nrows, self.__nrows)
             sig_on()
             rank = int(mat_ZZ_G_LLL_QP_U(self.x, U.x, float(delta), 0, 0, int(verbose)))
             sig_off()
@@ -1471,7 +1477,7 @@ cdef class ntl_mat_ZZ(object):
         """
         cdef ntl_mat_ZZ U
         if return_U:
-            U = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
+            U = ntl_mat_ZZ(self.__nrows, self.__nrows)
             sig_on()
             rank = int(mat_ZZ_G_LLL_XD_U(self.x, U.x, float(delta), 0, 0, int(verbose)))
             sig_off()
@@ -1490,7 +1496,7 @@ cdef class ntl_mat_ZZ(object):
         """
         cdef ntl_mat_ZZ U
         if return_U:
-            U = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
+            U = ntl_mat_ZZ(self.__nrows, self.__nrows)
             sig_on()
             rank = int(mat_ZZ_G_LLL_RR_U(self.x, U.x, float(delta), 0, 0, int(verbose)))
             sig_off()

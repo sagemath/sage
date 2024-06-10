@@ -18,7 +18,7 @@ http://katlas.math.toronto.edu/wiki/The_Rolfsen_Knot_Table
 .. NOTE::
 
     Some of the knots are not represented by a diagram with the
-    minimal number of crossings. 
+    minimal number of crossings.
 
 .. TODO::
 

@@ -1,7 +1,8 @@
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 BCH code
 
-Let `F = GF(q)` and `\Phi` be the splitting field of `x^{n} - 1` over `F`, with
+Let `F = \GF{q}` and `\Phi` be the splitting field of `x^{n} - 1` over `F`, with
 `n` a positive integer. Let also `\alpha` be an element of multiplicative order
 `n` in `\Phi`. Finally, let `b, \delta, \ell` be integers such that `0 \le b
 \le n`, `1 \le \delta \le n` and `\alpha^\ell` generates the multiplicative
@@ -11,24 +12,6 @@ A BCH code over `F` with designed distance `\delta` is a cyclic code whose
 codewords `c(x) \in F[x]` satisfy `c(\alpha^{a}) = 0`, for all integers `a` in
 the arithmetic sequence `b, b + \ell, b + 2 \times \ell, \dots, b + (\delta -
 2) \times \ell`.
-
-TESTS:
-
-This class uses the following experimental feature:
-:class:`sage.coding.relative_finite_field_extension.RelativeFiniteFieldExtension`.
-This test block is here only to trigger the experimental warning so it does not
-interferes with doctests::
-
-    sage: from sage.coding.relative_finite_field_extension import *
-    sage: Fqm.<aa> = GF(16)
-    sage: Fq.<a> = GF(4)
-    sage: RelativeFiniteFieldExtension(Fqm, Fq)
-    doctest:...: FutureWarning: This class/method/function is marked as
-    experimental. It, its functionality or its interface might change without a
-    formal deprecation.
-    See http://trac.sagemath.org/20284 for details.
-    Relative field extension between Finite Field in aa of size 2^4 and Finite
-    Field in a of size 2^2
 """
 # *****************************************************************************
 #       Copyright (C) 2016 David Lucas <david.lucas@inria.fr>
@@ -45,8 +28,8 @@ from copy import copy
 from sage.modules.free_module_element import vector
 from sage.misc.misc_c import prod
 from sage.categories.fields import Fields
-from sage.arith.all import gcd
-from sage.rings.all import Zmod
+from sage.arith.misc import gcd
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Zmod
 
 from .cyclic_code import CyclicCode
 from .grs_code import GeneralizedReedSolomonCode
@@ -69,7 +52,7 @@ class BCHCode(CyclicCode):
       splitting field. It has to be of multiplicative order ``length`` over
       this field. If the splitting field is not ``field``, it also has to be a
       polynomial in ``zx``, where ``x`` is the degree of the extension field.
-      For instance, over `GF(16)`, it has to be a polynomial in ``z4``.
+      For instance, over `\GF{16}`, it has to be a polynomial in ``z4``.
 
     - ``offset`` -- (default: ``1``) the first element in the defining set
 
@@ -97,7 +80,7 @@ class BCHCode(CyclicCode):
         sage: C.generator_polynomial()
         x^8 + x^7 + x^6 + x^4 + 1
 
-    BCH codes are cyclic, and can be interfaced into the CyclicCode class.
+    BCH codes are cyclic, and can be interfaced into the :class:`CyclicCode` class.
     The smallest GRS code which contains a given BCH code can also be computed,
     and these two codes may be equal::
 
@@ -136,7 +119,7 @@ class BCHCode(CyclicCode):
         if not (0 < designed_distance <= length):
             raise ValueError("designed_distance must belong to [1, n]")
 
-        if base_field not in Fields or not base_field.is_finite():
+        if base_field not in Fields() or not base_field.is_finite():
             raise ValueError("base_field has to be a finite field")
 
         q = base_field.cardinality()
@@ -148,8 +131,8 @@ class BCHCode(CyclicCode):
         D = [(offset + jump_size * i) % length
              for i in range(designed_distance - 1)]
 
-        super(BCHCode, self).__init__(field=base_field, length=length,
-                                      D=D, primitive_root=primitive_root)
+        super().__init__(field=base_field, length=length,
+                         D=D, primitive_root=primitive_root)
         self._default_decoder_name = "UnderlyingGRS"
         self._jump_size = jump_size
         self._offset = offset
@@ -176,7 +159,7 @@ class BCHCode(CyclicCode):
 
     def _repr_(self):
         r"""
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -190,7 +173,7 @@ class BCHCode(CyclicCode):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -204,7 +187,7 @@ class BCHCode(CyclicCode):
 
     def jump_size(self):
         r"""
-        Returns the jump size between two consecutive elements of the defining
+        Return the jump size between two consecutive elements of the defining
         set of ``self``.
 
         EXAMPLES::
@@ -217,7 +200,7 @@ class BCHCode(CyclicCode):
 
     def offset(self):
         r"""
-        Returns the offset which was used to compute the elements in
+        Return the offset which was used to compute the elements in
         the defining set of ``self``.
 
         EXAMPLES::
@@ -230,7 +213,7 @@ class BCHCode(CyclicCode):
 
     def designed_distance(self):
         r"""
-        Returns the designed distance of ``self``.
+        Return the designed distance of ``self``.
 
         EXAMPLES::
 
@@ -242,7 +225,7 @@ class BCHCode(CyclicCode):
 
     def bch_to_grs(self):
         r"""
-        Returns the underlying GRS code from which ``self`` was derived.
+        Return the underlying GRS code from which ``self`` was derived.
 
         EXAMPLES::
 
@@ -300,12 +283,11 @@ class BCHUnderlyingGRSDecoder(Decoder):
         self._grs_code = code.bch_to_grs()
         self._grs_decoder = self._grs_code.decoder(grs_decoder, **kwargs)
         self._decoder_type = copy(self._grs_decoder.decoder_type())
-        super(BCHUnderlyingGRSDecoder, self).__init__(
-            code, code.ambient_space(), "Vector")
+        super().__init__(code, code.ambient_space(), "Vector")
 
     def _repr_(self):
         r"""
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -318,7 +300,7 @@ class BCHUnderlyingGRSDecoder(Decoder):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -332,7 +314,7 @@ class BCHUnderlyingGRSDecoder(Decoder):
 
     def grs_code(self):
         r"""
-        Returns the underlying GRS code of :meth:`sage.coding.decoder.Decoder.code`.
+        Return the underlying GRS code of :meth:`sage.coding.decoder.Decoder.code`.
 
         .. NOTE::
 
@@ -385,7 +367,7 @@ class BCHUnderlyingGRSDecoder(Decoder):
 
     def grs_decoder(self):
         r"""
-        Returns the decoder used to decode words of :meth:`grs_code`.
+        Return the decoder used to decode words of :meth:`grs_code`.
 
         EXAMPLES::
 
@@ -398,7 +380,7 @@ class BCHUnderlyingGRSDecoder(Decoder):
 
     def bch_word_to_grs(self, c):
         r"""
-        Returns ``c`` converted as a codeword of :meth:`grs_code`.
+        Return ``c`` converted as a codeword of :meth:`grs_code`.
 
         EXAMPLES::
 
@@ -411,13 +393,12 @@ class BCHUnderlyingGRSDecoder(Decoder):
             sage: y in D.grs_code()
             True
         """
-        mapping = self.code().field_embedding().embedding()
-        a = map(mapping, c)
-        return vector(a)
+        phi = self.code().field_embedding()
+        return vector([phi(x) for x in c])
 
     def grs_word_to_bch(self, c):
         r"""
-        Returns ``c`` converted as a codeword of :meth:`sage.coding.decoder.Decoder.code`.
+        Return ``c`` converted as a codeword of :meth:`sage.coding.decoder.Decoder.code`.
 
         EXAMPLES::
 
@@ -426,14 +407,14 @@ class BCHUnderlyingGRSDecoder(Decoder):
             sage: Cgrs = D.grs_code()
             sage: Fgrs = Cgrs.base_field()
             sage: b = Fgrs.gen()
-            sage: c = vector(Fgrs, [0, b^2 + b, 1, b^2 + b, 0, 1, 1, 1, b^2 + b, 0, 0, b^2 + b + 1, b^2 + b, 0, 1])
+            sage: c = vector(Fgrs, [0, b^2 + b, 1, b^2 + b, 0, 1, 1, 1,
+            ....:                   b^2 + b, 0, 0, b^2 + b + 1, b^2 + b, 0, 1])
             sage: D.grs_word_to_bch(c)
             (0, a, 1, a, 0, 1, 1, 1, a, 0, 0, a + 1, a, 0, 1)
         """
         C = self.code()
-        FE = C.field_embedding()
-        a = map(FE.cast_into_relative_field, c)
-        return vector(a)
+        sec = C.field_embedding().section()
+        return vector([sec(x) for x in c])
 
     def decode_to_code(self, y):
         r"""
@@ -445,7 +426,8 @@ class BCHUnderlyingGRSDecoder(Decoder):
             sage: a = F.gen()
             sage: C = codes.BCHCode(F, 15, 3, jump_size=2)
             sage: D = codes.decoders.BCHUnderlyingGRSDecoder(C)
-            sage: y = vector(F, [a, a + 1, 1, a + 1, 1, a, a + 1, a + 1, 0, 1, a + 1, 1, 1, 1, a])
+            sage: y = vector(F, [a, a + 1, 1, a + 1, 1, a, a + 1,
+            ....:                a + 1, 0, 1, a + 1, 1, 1, 1, a])
             sage: D.decode_to_code(y)
             (a, a + 1, 1, a + 1, 1, a, a + 1, a + 1, 0, 1, a + 1, 1, 1, 1, a)
             sage: D.decode_to_code(y) in C
@@ -459,12 +441,18 @@ class BCHUnderlyingGRSDecoder(Decoder):
             [31, 6] BCH Code over GF(2) with designed distance 15
             sage: D = codes.decoders.BCHUnderlyingGRSDecoder(C, "GuruswamiSudan", tau=8)
             sage: Dgrs = D.grs_decoder()
-            sage: c = vector(GF(2), [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0])
-            sage: y = vector(GF(2), [1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0])
+            sage: c = vector(GF(2), [1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0,
+            ....:                    1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0])
+            sage: y = vector(GF(2), [1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1,
+            ....:                    1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0])
             sage: print (c in C and (c-y).hamming_weight() == 8)
             True
             sage: Dgrs.decode_to_code(y)
-            [(1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0), (1, z5^3 + z5^2 + z5 + 1, z5^4 + z5^2 + z5, z5^4 + z5^3 + z5^2 + 1, 0, 0, z5^4 + z5 + 1, 1, z5^4 + z5^2 + z5, 0, 1, z5^4 + z5, 1, 0, 1, 1, 1, 0, 0, z5^4 + z5^3 + 1, 1, 0, 1, 1, 1, 1, z5^4 + z5^3 + z5 + 1, 1, 1, 0, 0)]
+            [(1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1,
+                 0, 1, 1, 0, 1, 0, 0),
+             (1, z5^3 + z5^2 + z5 + 1, z5^4 + z5^2 + z5, z5^4 + z5^3 + z5^2 + 1, 0, 0,
+                 z5^4 + z5 + 1, 1, z5^4 + z5^2 + z5, 0, 1, z5^4 + z5, 1, 0, 1, 1, 1, 0,
+                 0, z5^4 + z5^3 + 1, 1, 0, 1, 1, 1, 1, z5^4 + z5^3 + z5 + 1, 1, 1, 0, 0)]
             sage: D.decode_to_code(y) == [c]
             True
         """
@@ -485,7 +473,7 @@ class BCHUnderlyingGRSDecoder(Decoder):
 
     def decoding_radius(self):
         r"""
-        Returns maximal number of errors that ``self`` can decode.
+        Return maximal number of errors that ``self`` can decode.
 
         EXAMPLES::
 

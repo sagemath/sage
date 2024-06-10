@@ -1,8 +1,26 @@
-Thanks for contributing to Sage! Unfortunately we are not accepting pull
-requests on GitHub yet. To propose a change to Sage, please log in with your
-GitHub account at https://trac.sagemath.org, create a ticket, and push your
-changes to that ticket as explained in our
-[Developer's Guide](https://doc.sagemath.org/html/en/developer/manual_git.html).
+<!-- ^ Please provide a concise and informative title. -->
+<!-- ^ Don't put issue numbers in the title, do this in the PR description below. -->
+<!-- ^ For example, instead of "Fixes #12345" use "Introduce new method to calculate 1 + 2". -->
+<!-- v Describe your changes below in detail. -->
+<!-- v Why is this change required? What problem does it solve? -->
+<!-- v If this PR resolves an open issue, please link to it here. For example, "Fixes #12345". -->
 
-Please make sure to also have a look at our
-[Code Style Conventions](https://doc.sagemath.org/html/en/developer/coding_basics.html).
+
+
+### :memo: Checklist
+
+<!-- Put an `x` in all the boxes that apply. -->
+
+- [ ] The title is concise and informative.
+- [ ] The description explains in detail what this PR is about.
+- [ ] I have linked a relevant issue or discussion.
+- [ ] I have created tests covering the changes.
+- [ ] I have updated the documentation and checked the documentation preview.
+
+### :hourglass: Dependencies
+
+<!-- List all open PRs that this PR logically depends on. For example, -->
+<!-- - #12345: short description why this is a dependency -->
+<!-- - #34567: ... -->
+
+

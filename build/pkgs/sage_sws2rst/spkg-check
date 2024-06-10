@@ -1,2 +1,11 @@
 #! /bin/sh
-cd src && ./check.sh
+cd src
+./check.sh
+if [ $? -ne 0 ]; then
+    if [ "$SAGE_CHECK" = "warn" ]; then
+        echo >&2 "Warning: Failures testing package $PKG_NAME (ignored)"
+    else
+        echo >&2 "Error testing package $PKG_NAME"
+        exit 1
+    fi
+fi

@@ -1,0 +1,10 @@
+cd src
+
+# building pGroupCohomology's documentation
+
+if [ "x$SAGE_SPKG_INSTALL_DOCS" = xyes ] ; then
+    cd `ls -d pGroupCohomology*/doc`
+    $MAKE html || sdh_die "Error building documentation"
+    sdh_install build/html/* "$SAGE_SHARE/doc/p_group_cohomology/" || sdh_die "Error moving documentation to $SAGE_SHARE/doc/p_group_cohomology"
+fi
+

@@ -1,5 +1,5 @@
-cypari2
-=======
+cypari2: Python interface to the number theory library libpari
+==============================================================
 
 Description
 -----------
@@ -16,11 +16,3 @@ Upstream Contact
 ----------------
 
 https://github.com/defeo/cypari2
-
-Dependencies
-------------
-
--  Python
--  Cython
--  PARI
--  cysignals

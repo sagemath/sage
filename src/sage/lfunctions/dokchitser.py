@@ -1,12 +1,5 @@
 """
-Dokchitser's L-functions Calculator
-
-AUTHORS:
-
-- Tim Dokchitser (2002): original PARI code and algorithm (and the
-  documentation below is based on Dokchitser's docs).
-
-- William Stein (2006-03-08): Sage interface
+Dokchitser's `L`-functions calculator
 
 .. TODO::
 
@@ -15,17 +8,23 @@ AUTHORS:
 
     - plug this code into number fields and modular forms code (elliptic
       curves are done).
+
+AUTHORS:
+
+- Tim Dokchitser (2002): original PARI code and algorithm (and the
+  documentation below is based on Dokchitser's docs).
+
+- William Stein (2006-03-08): Sage interface
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import, print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import copy
 import os
@@ -33,8 +32,9 @@ import re
 import string
 
 from sage.structure.sage_object import SageObject
-from sage.rings.all import ComplexField, Integer
-from sage.misc.all import sage_eval, SAGE_TMP
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.integer import Integer
+from sage.misc.sage_eval import sage_eval
 from sage.misc.verbose import verbose
 import sage.interfaces.gp
 from sage.env import SAGE_EXTCODE
@@ -61,7 +61,7 @@ class Dokchitser(SageObject):
 
     - ``eps`` -- complex number; sign in functional equation
 
-    - ``poles`` -- (default: []) list of points where `L^*(s)` has
+    - ``poles`` -- (default: ``[]``) list of points where `L^*(s)` has
       (simple) poles; only poles with `Re(s)>weight/2` should be
       included
 
@@ -174,9 +174,11 @@ class Dokchitser(SageObject):
     """
 
     __gp = None
-    __globals = set()  # set of global variables defined in a run of the
-                       # computel.gp script that are replaced by indexed copies
-                       # in the computel.gp.template
+    __globals = set()
+    # set of global variables defined in a run of the
+    # computel.gp script that are replaced by indexed copies
+    # in the computel.gp.template
+
     __globals_re = None
     __instance = 0  # Monotonically increasing unique instance ID
     __n_instances = 0  # Number of currently allocated instances
@@ -185,15 +187,15 @@ class Dokchitser(SageObject):
     __init = False
 
     def __new__(cls, *args, **kwargs):
-        inst = super(Dokchitser, cls).__new__(cls, *args, **kwargs)
+        inst = super().__new__(cls, *args, **kwargs)
         inst.__instance = cls.__instance
         cls.__n_instances += 1
         cls.__instance += 1
         return inst
 
-    def __init__(self, conductor, gammaV, weight, eps, \
-                       poles=[], residues='automatic', prec=53,
-                       init=None):
+    def __init__(self, conductor, gammaV, weight, eps,
+                 poles=None, residues='automatic', prec=53,
+                 init=None):
         """
         Initialization of Dokchitser calculator EXAMPLES::
 
@@ -205,7 +207,7 @@ class Dokchitser(SageObject):
         self.gammaV = gammaV
         self.weight = weight
         self.eps = eps
-        self.poles = poles
+        self.poles = poles if poles is not None else []
         self.residues = residues
         self.prec = prec
         self.__CC = ComplexField(self.prec)
@@ -250,14 +252,12 @@ class Dokchitser(SageObject):
 
         with open(self.__template_filename) as tf:
             template = string.Template(tf.read())
-        tmp_script = os.path.join(SAGE_TMP, 'computel_%s.gp' % self.__instance)
-        with open(tmp_script, 'w') as f:
-            f.write(template.substitute(i=str(self.__instance)))
 
-        try:
-            self.__gp.read(tmp_script)
-        finally:
-            os.unlink(tmp_script)
+        from tempfile import NamedTemporaryFile
+        with NamedTemporaryFile(suffix=".gp", mode="w+t") as f:
+            f.write(template.substitute(i=str(self.__instance)))
+            f.flush()
+            self.__gp.read(f.name)
 
         self._gp_eval('default(realprecision, %s)' % (self.prec // 3 + 2))
         self._gp_set_inst('conductor', self.conductor)
@@ -332,11 +332,12 @@ class Dokchitser(SageObject):
         try:
             t = self.gp().eval(s)
         except (RuntimeError, TypeError):
-            raise RuntimeError("Unable to create L-series, due to precision or other limits in PARI.")
+            raise RuntimeError("unable to create L-series, due to precision or other limits in PARI")
         if not self.__init and '***' in t:
             # After init_coeffs is called, future calls to this method should
-            # return the full output for futher parsing
-            raise RuntimeError("Unable to create L-series, due to precision or other limits in PARI.")
+            # return the full output for further parsing
+            raise RuntimeError("unable to create L-series, due to precision or other limits in PARI")
+        t = t.replace("  *** _^_: Warning: normalizing a series with 0 leading term.\n", "")
         return t
 
     def __check_init(self):
@@ -416,11 +417,11 @@ class Dokchitser(SageObject):
             sage: L(14)
             0.998583063162746
             sage: a = delta_qexp(1000)
-            sage: sum(a[n]/float(n)^14 for n in range(1,1000))
-            0.9985830631627459
+            sage: sum(a[n]/float(n)^14 for n in reversed(range(1,1000)))
+            0.9985830631627461
 
         Illustrate that one can give a list of complex numbers for v
-        (see :trac:`10937`)::
+        (see :issue:`10937`)::
 
             sage: L2 = Dokchitser(conductor=1, gammaV=[0,1], weight=12, eps=1)
             sage: L2.init_coeffs(list(delta_qexp(1000))[1:])
@@ -430,7 +431,7 @@ class Dokchitser(SageObject):
         TESTS:
 
         Verify that setting the `w` parameter does not raise an error
-        (see :trac:`10937`).  Note that the meaning of `w` does not seem to
+        (see :issue:`10937`).  Note that the meaning of `w` does not seem to
         be documented anywhere in Dokchitser's package yet, so there is
         no claim that the example below is meaningful! ::
 
@@ -600,13 +601,13 @@ class Dokchitser(SageObject):
             sage: L.taylor_series(1,3)
             ...e-82 + (...e-82)*z + 0.75931650028842677023019260789472201907809751649492435158581*z^2 + O(z^3)
 
-        Check that :trac:`25402` is fixed::
+        Check that :issue:`25402` is fixed::
 
             sage: L = EllipticCurve("24a1").modular_form().lseries()
             sage: L.taylor_series(-1, 3)
             0.000000000000000 - 0.702565506265199*z + 0.638929001045535*z^2 + O(z^3)
 
-        Check that :trac:`25965` is fixed::
+        Check that :issue:`25965` is fixed::
 
             sage: L2 = EllipticCurve("37a1").modular_form().lseries(); L2
             L-series associated to the cusp form q - 2*q^2 - 3*q^3 + 2*q^4 - 2*q^5 + O(q^6)

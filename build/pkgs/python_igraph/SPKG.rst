@@ -1,6 +1,5 @@
-
-python-igraph
-=============
+python_igraph: Python bindings for igraph
+=========================================
 
 Description
 -----------
@@ -19,13 +18,6 @@ Upstream Contact
 ----------------
 
 http://igraph.org/python/
-
-Dependencies
-------------
-
--  python
--  igraph
-
 
 Special Update/Build Instructions
 ---------------------------------

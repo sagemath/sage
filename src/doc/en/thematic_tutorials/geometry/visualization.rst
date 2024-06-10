@@ -74,11 +74,32 @@ It is possible to visualize 4-dimensional polytopes using a schlegel diagram.
 
 .. end of output
 
-We can see it from a different perspective:
+We can see it from a different perspective by choosing point at a different
+distance:
 
 ::
 
-    sage: HC.schlegel_projection([2,5,11,17]).plot()
+    sage: HC.schlegel_projection(position=1/4).plot()
+    Graphics3d Object
+
+.. end of output
+
+It is possible to choose from which facet one sees the projection:
+
+::
+
+    sage: tHC = HC.face_truncation(HC.faces(0)[0])
+    sage: tHC.facets()
+    (A 3-dimensional face of a Polyhedron in QQ^4 defined as the convex hull of 10 vertices,
+     A 3-dimensional face of a Polyhedron in QQ^4 defined as the convex hull of 10 vertices,
+     A 3-dimensional face of a Polyhedron in QQ^4 defined as the convex hull of 10 vertices,
+     A 3-dimensional face of a Polyhedron in QQ^4 defined as the convex hull of 10 vertices,
+     A 3-dimensional face of a Polyhedron in QQ^4 defined as the convex hull of 4 vertices,
+     A 3-dimensional face of a Polyhedron in QQ^4 defined as the convex hull of 8 vertices,
+     A 3-dimensional face of a Polyhedron in QQ^4 defined as the convex hull of 8 vertices,
+     A 3-dimensional face of a Polyhedron in QQ^4 defined as the convex hull of 8 vertices,
+     A 3-dimensional face of a Polyhedron in QQ^4 defined as the convex hull of 8 vertices)
+    sage: tHC.schlegel_projection(tHC.facets()[4]).plot()
     Graphics3d Object
 
 .. end of output
@@ -92,11 +113,22 @@ This method returns a tikz picture of the polytope (must be 2 or
 ::
 
     sage: c = polytopes.cube()
-    sage: c.tikz().splitlines()[:5]
-    ['\\begin{tikzpicture}%',
-     '\t[x={(1.000000cm, 0.000000cm)},',
-     '\ty={(-0.000000cm, 1.000000cm)},',
-     '\tz={(0.000000cm, -0.000000cm)},',
-     '\tscale=1.000000,']
+    sage: c.tikz(output_type='TikzPicture')
+    \documentclass[tikz]{standalone}
+    \begin{document}
+    \begin{tikzpicture}%
+            [x={(1.000000cm, 0.000000cm)},
+            y={(-0.000000cm, 1.000000cm)},
+            z={(0.000000cm, -0.000000cm)},
+            scale=1.000000,
+    ...
+    Use print to see the full content.
+    ...
+    \node[vertex] at (-1.00000, -1.00000, 1.00000)     {};
+    \node[vertex] at (-1.00000, 1.00000, 1.00000)     {};
+    %%
+    %%
+    \end{tikzpicture}
+    \end{document}
 
 .. end of output

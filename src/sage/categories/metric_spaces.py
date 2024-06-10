@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Metric Spaces
 """
@@ -16,6 +17,7 @@ from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.covariant_functorial_construction import RegressiveCovariantConstructionCategory
 from sage.categories.with_realizations import WithRealizationsCategory
 from sage.categories.homsets import HomsetsCategory
+
 
 class MetricSpacesCategory(RegressiveCovariantConstructionCategory):
 
@@ -60,7 +62,7 @@ class MetricSpacesCategory(RegressiveCovariantConstructionCategory):
             Join of Category of topological groups and Category of metric spaces
         """
         return Category.join([category.Topological(),
-                              super(MetricSpacesCategory, cls).default_super_categories(category)])
+                              super().default_super_categories(category)])
 
     # We currently don't have a use for this, but we probably will
     def _repr_object_names(self):
@@ -71,6 +73,7 @@ class MetricSpacesCategory(RegressiveCovariantConstructionCategory):
             Join of Category of topological groups and Category of metric spaces
         """
         return "metric {}".format(self.base_category()._repr_object_names())
+
 
 class MetricSpaces(MetricSpacesCategory):
     r"""
@@ -127,6 +130,7 @@ class MetricSpaces(MetricSpacesCategory):
 
             EXAMPLES::
 
+                sage: # needs sage.symbolic
                 sage: UHP = HyperbolicPlane().UHP()
                 sage: UHP._test_metric_function()
                 sage: elts = [UHP.random_element() for i in range(5)]
@@ -149,6 +153,7 @@ class MetricSpaces(MetricSpacesCategory):
 
             EXAMPLES::
 
+                sage: # needs sage.symbolic
                 sage: UHP = HyperbolicPlane().UHP()
                 sage: m = UHP.metric_function()
                 sage: p1 = UHP.get_point(5 + 7*I)
@@ -166,27 +171,28 @@ class MetricSpaces(MetricSpacesCategory):
 
             EXAMPLES::
 
+                sage: # needs sage.symbolic
                 sage: UHP = HyperbolicPlane().UHP()
                 sage: p1 = UHP.get_point(5 + 7*I)
                 sage: p2 = UHP.get_point(1.0 + I)
                 sage: UHP.dist(p1, p2)
                 2.23230104635820
 
-                sage: PD = HyperbolicPlane().PD()
-                sage: PD.dist(PD.get_point(0), PD.get_point(I/2))
+                sage: PD = HyperbolicPlane().PD()                                       # needs sage.symbolic
+                sage: PD.dist(PD.get_point(0), PD.get_point(I/2))                       # needs sage.symbolic
                 arccosh(5/3)
 
             TESTS::
 
-                sage: RR.dist(-1, pi)
+                sage: RR.dist(-1, pi)                                                   # needs sage.rings.real_mpfr sage.symbolic
                 4.14159265358979
                 sage: RDF.dist(1, -1/2)
                 1.5
-                sage: CC.dist(3, 2)
+                sage: CC.dist(3, 2)                                                     # needs sage.rings.real_mpfr
                 1.00000000000000
-                sage: CC.dist(-1, I)
+                sage: CC.dist(-1, I)                                                    # needs sage.rings.real_mpfr sage.symbolic
                 1.41421356237310
-                sage: CDF.dist(-1, I)
+                sage: CDF.dist(-1, I)                                                   # needs sage.rings.real_mpfr sage.symbolic
                 1.4142135623730951
             """
             return (self(a) - self(b)).abs()
@@ -198,7 +204,7 @@ class MetricSpaces(MetricSpacesCategory):
 
             EXAMPLES::
 
-                sage: CC(I).abs()
+                sage: CC(I).abs()                                                       # needs sage.rings.real_mpfr sage.symbolic
                 1.00000000000000
             """
             P = self.parent()
@@ -210,6 +216,7 @@ class MetricSpaces(MetricSpacesCategory):
 
             EXAMPLES::
 
+                sage: # needs sage.symbolic
                 sage: UHP = HyperbolicPlane().UHP()
                 sage: p1 = UHP.get_point(5 + 7*I)
                 sage: p2 = UHP.get_point(1 + I)
@@ -266,6 +273,7 @@ class MetricSpaces(MetricSpacesCategory):
 
                 EXAMPLES::
 
+                    sage: # needs sage.symbolic
                     sage: H = HyperbolicPlane()
                     sage: PD = H.PD()
                     sage: p1 = PD.get_point(0)

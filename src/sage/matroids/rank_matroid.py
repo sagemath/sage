@@ -47,8 +47,7 @@ AUTHORS:
 Methods
 =======
 """
-from __future__ import absolute_import
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
 #       Copyright (C) 2013 Stefan van Zwam <stefanvanzwam@gmail.com>
 #
@@ -56,9 +55,9 @@ from __future__ import absolute_import
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from .matroid import Matroid
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from sage.matroids.matroid import Matroid
 
 
 class RankMatroid(Matroid):
@@ -98,7 +97,6 @@ class RankMatroid(Matroid):
             ....:                 rank_function=matroids.Uniform(3, 6).rank)
             sage: M
             Matroid of rank 3 on 6 elements
-
         """
         self._groundset = frozenset(groundset)
         self._rank_function = rank_function
@@ -114,7 +112,6 @@ class RankMatroid(Matroid):
             ....:                 rank_function=matroids.Uniform(3, 6).rank)
             sage: sorted(M.groundset())
             [0, 1, 2, 3, 4, 5]
-
         """
         return self._groundset
 
@@ -250,54 +247,6 @@ class RankMatroid(Matroid):
 
     # Copying, loading, saving:
 
-    def __copy__(self):
-        """
-        Create a shallow copy.
-
-        EXAMPLES::
-
-            sage: from sage.matroids.advanced import *
-            sage: M = Matroid(groundset=range(10),
-            ....:             rank_function=lambda X: min(len(X), 4))
-            sage: N = copy(M)  # indirect doctest
-            sage: M == N
-            True
-            sage: M.groundset() is N.groundset()
-            True
-        """
-        N = RankMatroid(groundset=[], rank_function=None)
-        N._groundset = self._groundset
-        N._rank_function = self._rank_function
-        if getattr(self, '__custom_name') is not None:
-            # because of name wrangling, this is not caught by the default copy
-            N.rename(getattr(self, '__custom_name'))
-        return N
-
-    def __deepcopy__(self, memo={}):
-        """
-        Create a deep copy.
-
-        .. NOTE::
-
-            Since matroids are immutable, a shallow copy normally suffices.
-
-        EXAMPLES::
-
-            sage: M = Matroid(groundset=range(10),
-            ....:             rank_function=lambda X: min(len(X), 4))
-            sage: N = deepcopy(M)  # indirect doctest
-            sage: M == N
-            True
-            sage: M.groundset() is N.groundset()
-            False
-        """
-        from copy import deepcopy
-        # Since matroids are immutable, N cannot reference itself in correct code, so no need to worry about the recursion.
-        N = RankMatroid(groundset=deepcopy(self._groundset), rank_function=deepcopy(self._rank_function))
-        if getattr(self, '__custom_name') is not None:  # because of name wrangling, this is not caught by the default deepcopy
-            N.rename(deepcopy(getattr(self, '__custom_name'), memo))
-        return N
-
     def __reduce__(self):
         """
         Save the matroid for later reloading.
@@ -317,6 +266,5 @@ class RankMatroid(Matroid):
             TypeError: unfortunately, functions cannot be saved reliably, so
             this class doesn't have load/save support. Convert to another
             class, such as BasisMatroid, instead.
-
         """
         raise TypeError("unfortunately, functions cannot be saved reliably, so this class doesn't have load/save support. Convert to another class, such as BasisMatroid, instead.")

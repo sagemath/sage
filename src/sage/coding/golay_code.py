@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Golay code
 
@@ -103,7 +104,7 @@ class GolayCode(AbstractLinearCode):
             self._dimension = 6
         if extended:
             length += 1
-        super(GolayCode, self).__init__(base_field, length, "GeneratorMatrix", "Syndrome")
+        super().__init__(base_field, length, "GeneratorMatrix", "Syndrome")
 
     def __eq__(self, other):
         r"""
@@ -118,7 +119,7 @@ class GolayCode(AbstractLinearCode):
         """
         return isinstance(other, GolayCode) \
                 and self.base_field() == other.base_field() \
-                and self.length() == other.length() \
+                and self.length() == other.length()
 
     def _repr_(self):
         r"""
@@ -133,8 +134,8 @@ class GolayCode(AbstractLinearCode):
         ext = ""
         if n % 2 == 0:
             ext = "Extended"
-        return "[%s, %s, %s] %s Golay code over GF(%s)"\
-                % (n, self.dimension(), self.minimum_distance(), ext, self.base_field().cardinality())
+        return "[%s, %s, %s] %s Golay code over GF(%s)" % (n, self.dimension(),
+            self.minimum_distance(), ext, self.base_field().cardinality())
 
     def _latex_(self):
         r"""
@@ -174,7 +175,7 @@ class GolayCode(AbstractLinearCode):
         n = self.length()
         if n % 2 == 0:
             return self
-        return super(GolayCode, self).dual_code()
+        return super().dual_code()
 
     def minimum_distance(self):
         r"""
@@ -261,17 +262,17 @@ class GolayCode(AbstractLinearCode):
             True
 
             sage: C = codes.GolayCode(GF(3))
-            sage: C.weight_distribution() == super(codes.GolayCode, C).weight_distribution()
+            sage: C.weight_distribution() == super(codes.GolayCode, C).weight_distribution()        # needs sage.libs.gap
             True
 
             sage: C = codes.GolayCode(GF(3), extended=False)
-            sage: C.weight_distribution() == super(codes.GolayCode, C).weight_distribution()
+            sage: C.weight_distribution() == super(codes.GolayCode, C).weight_distribution()        # needs sage.libs.gap
             True
         """
         n = self.length()
         if n == 23:
             return ([1]+[0]*6+[253]+[506]+[0]*2+[1288]*2+[0]*2+[506]
-                    +[253]+[0]*6+[1])
+                    + [253]+[0]*6+[1])
         if n == 24:
             return ([1]+[0]*7+[759]+[0]*3+[2576]+[0]*3+[759]+[0]*7+[1])
         if n == 11:
@@ -394,8 +395,6 @@ class GolayCode(AbstractLinearCode):
         else:
             H = self.generator_matrix()
         return H
-
-
 
 
 ####################### registration ###############################

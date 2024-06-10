@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Hyperbolic Points
 
@@ -60,15 +59,17 @@ Some more examples::
 #                  http://www.gnu.org/licenses/
 #***********************************************************************
 
+from collections.abc import Iterable
 from sage.structure.element import Element
 from sage.structure.richcmp import richcmp, op_NE
-from sage.symbolic.all import I
+from sage.symbolic.constants import I
 from sage.misc.latex import latex
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from sage.rings.infinity import infinity
-from sage.rings.all import RR, CC
+from sage.rings.cc import CC
+from sage.rings.real_mpfr import RR
 from sage.functions.other import real, imag
 
 from sage.geometry.hyperbolic_space.hyperbolic_isometry import HyperbolicIsometry
@@ -191,6 +192,10 @@ class HyperbolicPoint(Element):
 
             sage: p = HyperbolicPlane().UHP().get_point(I)
             sage: TestSuite(p).run()
+            sage: p1 = HyperbolicPlane().KM().get_point((0,0))
+            sage: p2 = HyperbolicPlane().KM().get_point([0,0])
+            sage: p1 == p2
+            True
         """
         if is_boundary:
             if not model.is_bounded():
@@ -204,7 +209,7 @@ class HyperbolicPoint(Element):
                 "{0} is not a valid".format(coordinates) +
                 " point in the {0} model".format(model.short_name()))
 
-        if isinstance(coordinates, tuple):
+        if isinstance(coordinates, Iterable):
             coordinates = vector(coordinates)
         self._coordinates = coordinates
         self._bdry = is_boundary
@@ -293,8 +298,8 @@ class HyperbolicPoint(Element):
             sage: p1 == p2
             True
         """
-        if not(isinstance(other, HyperbolicPoint)
-               or self.parent() is other.parent()):
+        if not (isinstance(other, HyperbolicPoint)
+                or self.parent() is other.parent()):
             return op == op_NE
         # bool is required to convert symbolic (in)equalities
         return bool(richcmp(self._coordinates, other._coordinates, op))
@@ -319,7 +324,7 @@ class HyperbolicPoint(Element):
         """
         if isinstance(other, HyperbolicIsometry):
             return other(self)
-        elif is_Matrix(other):
+        elif isinstance(other, Matrix):
             # TODO: Currently the __mul__ from the matrices gets called first
             #    and returns an error instead of calling this method
             A = self.parent().get_isometry(other)
@@ -531,8 +536,6 @@ class HyperbolicPoint(Element):
         else:  # It is an interior point
             if p in RR:
                 p = CC(p)
-            elif hasattr(p, 'items') or hasattr(p, '__iter__'):
-                p = [numerical_approx(k) for k in p]
             else:
                 p = numerical_approx(p)
             pic = point(p, **opts)

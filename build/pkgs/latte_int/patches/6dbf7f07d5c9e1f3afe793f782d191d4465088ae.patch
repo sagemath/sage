@@ -1,0 +1,53 @@
+From 6dbf7f07d5c9e1f3afe793f782d191d4465088ae Mon Sep 17 00:00:00 2001
+From: Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+Date: Thu, 7 Jul 2022 15:42:35 -0700
+Subject: [PATCH] Remove dynamic exception specifications to conform to ISO
+ C++17
+
+---
+ code/latte/ExponentialSubst.cpp     | 2 --
+ code/latte/ExponentialSubst.h       | 6 ++----
+ code/latte/sqlite/IntegrationDB.cpp | 2 +-
+ code/latte/sqlite/IntegrationDB.h   | 2 +-
+ 4 files changed, 4 insertions(+), 8 deletions(-)
+
+diff --git a/code/latte/ExponentialSubst.cpp b/code/latte/ExponentialSubst.cpp
+index a839b820..bcbfa934 100644
+--- a/code/latte/ExponentialSubst.cpp
++++ b/code/latte/ExponentialSubst.cpp
+@@ -57,7 +57,6 @@ mpq_vector
+ computeExponentialResidueWeights(const vec_ZZ &generic_vector,
+ 				 mpz_class &prod_ray_scalar_products,
+ 				 const listCone *cone, int numOfVars)
+-  throw(NotGenericException)
+ {
+   // Compute dimension; can be smaller than numOfVars
+   int dimension = 0;
+@@ -95,7 +94,6 @@ computeExponentialResidueWeights(const vec_ZZ &generic_vector,
+ mpq_vector
+ computeExponentialResidueWeights(const vec_ZZ &generic_vector,
+ 				 const listCone *cone, int numOfVars)
+-  throw(NotGenericException)
+ {
+   mpz_class prod_ray_scalar_products;
+   return computeExponentialResidueWeights(generic_vector,
+diff --git a/code/latte/ExponentialSubst.h b/code/latte/ExponentialSubst.h
+index c9fa4ace..43a4ab63 100644
+--- a/code/latte/ExponentialSubst.h
++++ b/code/latte/ExponentialSubst.h
+@@ -58,13 +58,11 @@ class Exponential_Single_Cone_Parameters
+ mpq_vector /* FIXME: This version can probably go away */
+ computeExponentialResidueWeights(const vec_ZZ &generic_vector,
+ 				 mpz_class &prod_ray_scalar_products,
+-				 const listCone *cone, int numOfVars)
+-  throw(NotGenericException);
++				 const listCone *cone, int numOfVars);
+ 
+ mpq_vector
+ computeExponentialResidueWeights(const vec_ZZ &generic_vector,
+-				 const listCone *cone, int numOfVars)
+-  throw(NotGenericException);
++				 const listCone *cone, int numOfVars);
+ 
+ ZZ
+ scalar_power(const vec_ZZ &generic_vector,

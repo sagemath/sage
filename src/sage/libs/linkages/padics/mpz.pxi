@@ -367,7 +367,7 @@ cdef inline int csetone(mpz_t out, PowComputer_ prime_pow) except -1:
     - ``prime_pow`` -- the PowComputer for the ring.
     """
     mpz_set_ui(out, 1)
-    
+
 cdef inline int csetzero(mpz_t out, PowComputer_ prime_pow) except -1:
     """
     Sets to 0.
@@ -378,7 +378,7 @@ cdef inline int csetzero(mpz_t out, PowComputer_ prime_pow) except -1:
     - ``prime_pow`` -- the PowComputer for the ring.
     """
     mpz_set_ui(out, 0)
-    
+
 cdef inline bint cisone(mpz_t out, PowComputer_ prime_pow) except -1:
     """
     Returns whether this element is equal to 1.
@@ -505,7 +505,8 @@ cdef inline cexpansion_next(mpz_t value, expansion_mode mode, long curpower, Pow
       is being found.  Only used in ``smallest_mode``.
     - ``prime_pow`` -- A ``PowComputer`` holding `p`-adic data.
     """
-    if mode == teichmuller_mode: raise NotImplementedError
+    if mode == teichmuller_mode:
+        raise NotImplementedError
     cdef Integer ans = PY_NEW(Integer)
     cdef bint neg
     mpz_mod(ans.value, value, prime_pow.prime.value)
@@ -567,7 +568,7 @@ cdef list ccoefficients(mpz_t x, long valshift, long prec, PowComputer_ prime_po
         return [ansq]
 
 cdef int cteichmuller(mpz_t out, mpz_t value, long prec, PowComputer_ prime_pow) except -1:
-    """
+    r"""
     Teichmuller lifting.
 
     INPUT:

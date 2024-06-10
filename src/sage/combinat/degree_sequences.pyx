@@ -40,8 +40,8 @@ With the object ``DegreeSequences(n)``, one can:
     For instance::
 
         sage: ds = [3, 3, 2, 2, 2, 2, 2, 1, 1, 0]
-        sage: g = graphs.DegreeSequence(ds)
-        sage: g.degree_sequence()
+        sage: g = graphs.DegreeSequence(ds)                                             # needs networkx sage.graphs
+        sage: g.degree_sequence()                                                       # needs networkx sage.graphs
         [3, 3, 2, 2, 2, 2, 2, 1, 1, 0]
 
 Definitions
@@ -57,9 +57,9 @@ An integer sequence need not necessarily be a degree sequence. Indeed, in a
 degree sequence of length `n` no integer can be larger than `n-1` -- the degree
 of a vertex is at most `n-1` -- and the sum of them is at most `n(n-1)`.
 
-Degree sequences are completely characterized by a result from Erdos and Gallai:
+Degree sequences are completely characterized by a result from Erdős and Gallai:
 
-**Erdos and Gallai:** *The sequence of integers* `d_1 \geq \cdots \geq d_n`
+**Erdős and Gallai:** *The sequence of integers* `d_1 \geq \cdots \geq d_n`
 *is a degree sequence if and only if* `\sum_i d_i` is even and `\forall i`
 
 .. MATH::
@@ -210,7 +210,7 @@ the run of ``enum``.
 **Extending the current partial sequence**
 
 The two cases for which the maximum degree of the partial sequence does not
-change are easy to detect. It is (sligthly) harder to enumerate all the sets
+change are easy to detect. It is (slightly) harder to enumerate all the sets
 `I` corresponding to possible extensions of the partial sequence. As said
 previously, to each set `I` one can associate an integer ``current_box`` such
 that `I` contains all the `i` satisfying `d_i>current\_box`. The variable
@@ -236,16 +236,16 @@ The sequences produced by random graphs *are* degree sequences::
 
     sage: n = 30
     sage: DS = DegreeSequences(30)
-    sage: for i in range(10):
+    sage: for i in range(10):                                                           # needs networkx sage.graphs
     ....:     g = graphs.RandomGNP(n,.2)
     ....:     if not g.degree_sequence() in DS:
     ....:         print("Something is very wrong !")
 
 Checking that we indeed enumerate *all* the degree sequences for `n=5`::
 
-    sage: ds1 = Set([tuple(g.degree_sequence()) for g in graphs(5)])
+    sage: ds1 = Set([tuple(g.degree_sequence()) for g in graphs(5)])                    # needs sage.graphs
     sage: ds2 = Set(map(tuple,list(DegreeSequences(5))))
-    sage: ds1 == ds2
+    sage: ds1 == ds2                                                                    # needs sage.graphs
     True
 
 Checking the consistency of enumeration and test::
@@ -264,26 +264,23 @@ Checking the consistency of enumeration and test::
     than a couple of minutes.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Nathann Cohen <nathann.cohen@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-
-from libc.string cimport memset
 from cysignals.memory cimport check_calloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
-
-from sage.rings.integer cimport Integer
 
 
 cdef unsigned char * seq
 cdef list sequences
+
 
 class DegreeSequences:
 
@@ -306,21 +303,21 @@ class DegreeSequences:
 
         TESTS:
 
-        :trac:`21824`::
+        :issue:`21824`::
 
             sage: DegreeSequences(-1)
             Traceback (most recent call last):
             ...
-            ValueError: The input parameter must be >= 0.
+            ValueError: the input parameter must be >= 0
         """
         if n < 0:
-            raise ValueError("The input parameter must be >= 0.")
+            raise ValueError("the input parameter must be >= 0")
         self._n = n
 
     def __contains__(self, seq):
         """
-        Checks whether a given integer sequence is the degree sequence
-        of a graph on `n` elements
+        Check whether a given integer sequence is the degree sequence
+        of a graph on `n` elements.
 
         EXAMPLES::
 
@@ -329,12 +326,12 @@ class DegreeSequences:
 
         TESTS:
 
-        :trac:`15503`::
+        :issue:`15503`::
 
             sage: [2,2,2,2,1,1,1] in DegreeSequences(7)
             False
 
-        :trac:`21824`::
+        :issue:`21824`::
 
             sage: [d for d in DegreeSequences(0)]
             [[]]
@@ -346,7 +343,7 @@ class DegreeSequences:
             [[0]]
         """
         cdef int n = self._n
-        if len(seq)!=n:
+        if len(seq) != n:
             return False
 
         # Is the sum even ?
@@ -356,13 +353,13 @@ class DegreeSequences:
         # Partial represents the left side of Erdos and Gallai's inequality,
         # i.e. the sum of the i first integers.
         cdef int partial = 0
-        cdef int i,d,dd, right
+        cdef int i, d, dd, right
 
         # Temporary variable to ensure that the sequence is indeed
         # non-increasing
-        cdef int prev = n-1
+        cdef int prev = n - 1
 
-        for i,d in enumerate(seq):
+        for i, d in enumerate(seq):
 
             # Non-increasing ?
             if d > prev:
@@ -374,9 +371,9 @@ class DegreeSequences:
             partial += d
 
             # Evaluating the right hand side
-            right = i*(i+1)
-            for dd in seq[i+1:]:
-                right += min(dd,i+1)
+            right = i * (i + 1)
+            for dd in seq[i + 1:]:
+                right += min(dd, i + 1)
 
             # Comparing the two
             if partial > right:
@@ -408,13 +405,14 @@ class DegreeSequences:
             sage: all(seq in DS for seq in DS)
             True
         """
-        return iter( init(self._n) )
+        yield from init(self._n)
 
     def __dealloc__():
         """
         Freeing the memory
         """
         sig_free(seq)
+
 
 cdef init(int n):
     """
@@ -436,31 +434,32 @@ cdef init(int n):
 
     N = n
     sequences = []
-    enum(1,0)
+    enum(1, 0)
     sig_free(seq)
     return sequences
 
 cdef inline add_seq():
-     """
-     This function is called whenever a sequence is found.
+    """
+    This function is called whenever a sequence is found.
 
-     Build the degree sequence corresponding to the current state of the
-     algorithm and adds it to the sequences list.
-     """
-     global sequences
-     global N
-     global seq
+    Build the degree sequence corresponding to the current state of the
+    algorithm and adds it to the sequences list.
+    """
+    global sequences
+    global N
+    global seq
 
-     cdef list s = []
-     cdef int i, j
+    cdef list s = []
+    cdef int i, j
 
-     for N > i >= 0:
-         for 0<= j < seq[i]:
-             s.append(i)
+    for N > i >= 0:
+        for 0 <= j < seq[i]:
+            s.append(i)
 
-     sequences.append(s)
+    sequences.append(s)
 
-cdef void enum(int k, int M):
+
+cdef void enum(int k, int M) noexcept:
     r"""
     Main function; for an explanation of the algorithm please refer to the
     :mod:`sage.combinat.degree_sequences` documentation.
@@ -470,7 +469,7 @@ cdef void enum(int k, int M):
     - ``k`` -- depth of the partial degree sequence
     - ``M`` -- value of a maximum element in the partial degree sequence
     """
-    cdef int i,j
+    cdef int i, j
     global seq
     cdef int taken = 0
     cdef int current_box
@@ -494,21 +493,21 @@ cdef void enum(int k, int M):
     if M == 0:
 
         seq[0] += 1
-        enum(k+1, M)
+        enum(k + 1, M)
         seq[0] -= 1
 
     # We need not automatically increase the degree at each step. In this case,
     # we have no other choice but to link the new vertex of degree M to vertices
     # of degree M-1, which will become vertices of degree M too.
-    elif seq[M-1] >= M:
+    elif seq[M - 1] >= M:
 
-        seq[M]   += M+1
-        seq[M-1] -= M
+        seq[M] += M + 1
+        seq[M - 1] -= M
 
-        enum(k+1, M)
+        enum(k + 1, M)
 
-        seq[M]   -= M+1
-        seq[M-1] += M
+        seq[M] -= M + 1
+        seq[M - 1] += M
 
     ###############################################
     # Creating vertices of Vertices of degree > M #
@@ -545,13 +544,13 @@ cdef void enum(int k, int M):
             seq[current_box] -= i
             seq[current_box+1] += i
 
-            for max(0,((M+1)-taken-i)) <= j <= n_previous_box:
+            for max(0, ((M+1)-taken-i)) <= j <= n_previous_box:
                 seq[current_box-1] -= j
                 seq[current_box] += j
 
                 new_vertex = taken + i + j
                 seq[new_vertex] += 1
-                enum(k+1,new_vertex)
+                enum(k+1, new_vertex)
                 seq[new_vertex] -= 1
 
                 seq[current_box-1] += j
@@ -569,7 +568,7 @@ cdef void enum(int k, int M):
     # Now current_box = 0. All the vertices of nonzero degree are taken, we just
     # want to know how many vertices of degree 0 will be neighbors of the new
     # vertex.
-    for max(0,((M+1)-taken)) <= i <= seq[0]:
+    for max(0, ((M+1)-taken)) <= i <= seq[0]:
 
         seq[1] += i
         seq[0] -= i
@@ -586,4 +585,3 @@ cdef void enum(int k, int M):
         seq[i] = seq[i+1]
 
     sig_off()
-

@@ -148,7 +148,6 @@ Classes and their Methods
 #  the License, or (at your option) any later version.
 #                https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 from sage.structure.sage_object import SageObject
 
@@ -211,7 +210,7 @@ class MutablePosetShell(SageObject):
         self._key_ = self.poset.get_key(element)
         self._predecessors_ = set()
         self._successors_ = set()
-        super(MutablePosetShell, self).__init__()
+        super().__init__()
 
     @property
     def poset(self):
@@ -948,9 +947,8 @@ class MutablePosetShell(SageObject):
         if key is not None:
             S = sorted(S, key=key)
         for shell in S:
-            for e in shell._iter_depth_first_visit_(marked, reverse,
-                                                    key, condition):
-                yield e
+            yield from shell._iter_depth_first_visit_(marked, reverse,
+                                                    key, condition)
 
     def iter_depth_first(self, reverse=False, key=None, condition=None):
         r"""
@@ -1073,9 +1071,8 @@ class MutablePosetShell(SageObject):
         if key is not None and len(S) > 1:
             S = sorted(S, key=key)
         for shell in S:
-            for e in shell._iter_topological_visit_(marked, reverse,
-                                                    key, condition):
-                yield e
+            yield from shell._iter_topological_visit_(marked, reverse,
+                                                    key, condition)
         yield self
 
     def iter_topological(self, reverse=False, key=None, condition=None):
@@ -1285,8 +1282,15 @@ def is_MutablePoset(P):
         sage: from sage.data_structures.mutable_poset import is_MutablePoset
         sage: P = MP()
         sage: is_MutablePoset(P)
+        doctest:warning...
+        DeprecationWarning: The function is_MutablePoset is deprecated; use 'isinstance(..., MutablePoset)' instead.
+        See https://github.com/sagemath/sage/issues/38125 for details.
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38125,
+                "The function is_MutablePoset is deprecated; "
+                "use 'isinstance(..., MutablePoset)' instead.")
     return isinstance(P, MutablePoset)
 
 
@@ -1405,7 +1409,7 @@ class MutablePoset(SageObject):
             ...
             TypeError: 33 is not iterable; do not know what to do with it.
         """
-        if is_MutablePoset(data):
+        if isinstance(data, MutablePoset):
             if key is not None:
                 raise TypeError('Cannot use key when data is a poset.')
             self._copy_shells_(data, lambda e: e)
@@ -1431,7 +1435,7 @@ class MutablePoset(SageObject):
                     raise TypeError('%s is not iterable; do not know what to '
                                     'do with it.' % (data,))
                 self.union_update(it)
-        super(MutablePoset, self).__init__()
+        super().__init__()
 
     def clear(self):
         r"""
@@ -1557,7 +1561,7 @@ class MutablePoset(SageObject):
 
         INPUT:
 
-        ``key`` -- the key of an object.
+        - ``key`` -- the key of an object.
 
         OUTPUT:
 
@@ -1591,7 +1595,7 @@ class MutablePoset(SageObject):
 
         INPUT:
 
-        ``key`` -- the key of an object.
+        - ``key`` -- the key of an object.
 
         OUTPUT:
 
@@ -1605,7 +1609,7 @@ class MutablePoset(SageObject):
             sage: e = P.element(42); e
             42
             sage: type(e)
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
 
         .. SEEALSO::
 
@@ -1769,8 +1773,7 @@ class MutablePoset(SageObject):
         """
         if include_special:
             yield self.null
-        for e in self._shells_.values():
-            yield e
+        yield from self._shells_.values()
         if include_special:
             yield self.oo
 
@@ -1851,9 +1854,9 @@ class MutablePoset(SageObject):
             sage: from sage.data_structures.mutable_poset import MutablePoset as MP
             sage: P = MP([3, 42, 7])
             sage: [(v, type(v)) for v in sorted(P.elements())]
-            [(3, <type 'sage.rings.integer.Integer'>),
-             (7, <type 'sage.rings.integer.Integer'>),
-             (42, <type 'sage.rings.integer.Integer'>)]
+            [(3, <class 'sage.rings.integer.Integer'>),
+             (7, <class 'sage.rings.integer.Integer'>),
+             (42, <class 'sage.rings.integer.Integer'>)]
 
         Note that
 
@@ -1938,14 +1941,14 @@ class MutablePoset(SageObject):
             sage: from sage.data_structures.mutable_poset import MutablePoset as MP
             sage: P = MP([3, 42, 7], key=lambda c: -c)
             sage: [(v, type(v)) for v in sorted(P.keys())]
-            [(-42, <type 'sage.rings.integer.Integer'>),
-             (-7, <type 'sage.rings.integer.Integer'>),
-             (-3, <type 'sage.rings.integer.Integer'>)]
+            [(-42, <class 'sage.rings.integer.Integer'>),
+             (-7, <class 'sage.rings.integer.Integer'>),
+             (-3, <class 'sage.rings.integer.Integer'>)]
 
             sage: [(v, type(v)) for v in sorted(P.elements())]
-            [(3, <type 'sage.rings.integer.Integer'>),
-             (7, <type 'sage.rings.integer.Integer'>),
-             (42, <type 'sage.rings.integer.Integer'>)]
+            [(3, <class 'sage.rings.integer.Integer'>),
+             (7, <class 'sage.rings.integer.Integer'>),
+             (42, <class 'sage.rings.integer.Integer'>)]
 
             sage: [(v, type(v)) for v in sorted(P.shells(),
             ....:                               key=lambda c: c.element)]
@@ -1985,9 +1988,9 @@ class MutablePoset(SageObject):
             sage: P = MP([(1, 1), (2, 1), (4, 4)],
             ....:        key=lambda c: c[0])
             sage: [(v, type(v)) for v in P.keys_topological(key=repr)]
-            [(1, <type 'sage.rings.integer.Integer'>),
-             (2, <type 'sage.rings.integer.Integer'>),
-             (4, <type 'sage.rings.integer.Integer'>)]
+            [(1, <class 'sage.rings.integer.Integer'>),
+             (2, <class 'sage.rings.integer.Integer'>),
+             (4, <class 'sage.rings.integer.Integer'>)]
             sage: [(v, type(v)) for v in P.elements_topological(key=repr)]
             [((1, 1), <... 'tuple'>),
              ((2, 1), <... 'tuple'>),
@@ -2303,21 +2306,21 @@ class MutablePoset(SageObject):
         - ``key`` -- the key of an object.
 
         - ``raise_key_error`` -- (default: ``True``) switch raising
-          ``KeyError`` on and off.
+          :class:`KeyError` on and off.
 
         OUTPUT:
 
         Nothing.
 
         If the element is not a member and ``raise_key_error`` is set
-        (default), raise a ``KeyError``.
+        (default), raise a :class:`KeyError`.
 
         .. NOTE::
 
             As with Python's ``set``, the methods :meth:`remove`
             and :meth:`discard` only differ in their behavior when an
             element is not contained in the poset: :meth:`remove`
-            raises a ``KeyError`` whereas :meth:`discard` does not
+            raises a :class:`KeyError` whereas :meth:`discard` does not
             raise any exception.
 
             This default behavior can be overridden with the
@@ -2483,21 +2486,21 @@ class MutablePoset(SageObject):
         - ``key`` -- the key of an object.
 
         - ``raise_key_error`` -- (default: ``False``) switch raising
-          ``KeyError`` on and off.
+          :class:`KeyError` on and off.
 
         OUTPUT:
 
         Nothing.
 
         If the element is not a member and ``raise_key_error`` is set
-        (not default), raise a ``KeyError``.
+        (not default), raise a :class:`KeyError`.
 
         .. NOTE::
 
             As with Python's ``set``, the methods :meth:`remove`
             and :meth:`discard` only differ in their behavior when an
             element is not contained in the poset: :meth:`remove`
-            raises a ``KeyError`` whereas :meth:`discard` does not
+            raises a :class:`KeyError` whereas :meth:`discard` does not
             raise any exception.
 
             This default behavior can be overridden with the
@@ -2628,7 +2631,7 @@ class MutablePoset(SageObject):
 
             sage: P.union(P, Q, Q, P)
             poset(3, 4, 7, 8, 42)
-       """
+        """
         new = self.copy()
         new.update(*other)
         return new
@@ -3346,7 +3349,7 @@ class MutablePoset(SageObject):
             ....:         return all(l <= r for l, r in zip(left, right))
             sage: P = MP([T((1, 3)), T((2, 1)),
             ....:         T((4, 4)), T((1, 2)), T((2, 2))])
-            sage: list(P.minimal_elements())
+            sage: sorted(P.minimal_elements())
             [(1, 2), (2, 1)]
 
         .. SEEALSO::

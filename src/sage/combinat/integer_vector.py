@@ -27,10 +27,9 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import, division
 
-from sage.combinat.integer_lists import IntegerListsLex
 from itertools import product
+from collections.abc import Sequence
 import numbers
 
 from sage.structure.parent import Parent
@@ -42,12 +41,13 @@ from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.rings.infinity import PlusInfinity
-from sage.arith.all import binomial
-from sage.rings.all import ZZ
-from sage.rings.semirings.all import NN
+from sage.arith.misc import binomial
+from sage.rings.integer_ring import ZZ
+from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.rings.integer import Integer
 
-def is_gale_ryser(r,s):
+
+def is_gale_ryser(r, s):
     r"""
     Tests whether the given sequences satisfy the condition
     of the Gale-Ryser theorem.
@@ -91,11 +91,11 @@ def is_gale_ryser(r,s):
     EXAMPLES::
 
         sage: from sage.combinat.integer_vector import is_gale_ryser
-        sage: is_gale_ryser([4,2,2],[3,3,1,1])
+        sage: is_gale_ryser([4,2,2], [3,3,1,1])                                         # needs sage.combinat
         True
-        sage: is_gale_ryser([4,2,1,1],[3,3,1,1])
+        sage: is_gale_ryser([4,2,1,1], [3,3,1,1])                                       # needs sage.combinat
         True
-        sage: is_gale_ryser([3,2,1,1],[3,3,1,1])
+        sage: is_gale_ryser([3,2,1,1], [3,3,1,1])                                       # needs sage.combinat
         False
 
     REMARK: In the literature, what we are calling a
@@ -110,8 +110,8 @@ def is_gale_ryser(r,s):
     # builds the corresponding partitions, i.e.
     # removes the 0 and sorts the sequences
     from sage.combinat.partition import Partition
-    r2 = Partition(sorted([x for x in r if x>0], reverse=True))
-    s2 = Partition(sorted([x for x in s if x>0], reverse=True))
+    r2 = Partition(sorted([x for x in r if x > 0], reverse=True))
+    s2 = Partition(sorted([x for x in s if x > 0], reverse=True))
 
     # If the two sequences only contained zeroes
     if len(r2) == 0 and len(s2) == 0:
@@ -122,7 +122,9 @@ def is_gale_ryser(r,s):
     #                                same number of 1s           domination
     return len(rstar) <= len(s2) and sum(r2) == sum(s2) and rstar.dominates(s)
 
-def gale_ryser_theorem(p1, p2, algorithm="gale"):
+
+def gale_ryser_theorem(p1, p2, algorithm="gale",
+                       *, solver=None, integrality_tolerance=1e-3):
     r"""
     Returns the binary matrix given by the Gale-Ryser theorem.
 
@@ -134,13 +136,24 @@ def gale_ryser_theorem(p1, p2, algorithm="gale"):
 
     INPUT:
 
-    - ``p1, p2``-- list of integers representing the vectors
+    - ``p1``, ``p2`` -- list of integers representing the vectors
       of row/column sums
 
     - ``algorithm`` -- two possible string values:
 
       - ``'ryser'`` implements the construction due to Ryser [Ryser63]_.
       - ``'gale'`` (default) implements the construction due to Gale [Gale57]_.
+
+    - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear Programming
+      (MILP) solver to be used. If set to ``None``, the default one is used. For
+      more information on MILP solvers and which default solver is used, see
+      the method
+      :meth:`solve <sage.numerical.mip.MixedIntegerLinearProgram.solve>`
+      of the class
+      :class:`MixedIntegerLinearProgram <sage.numerical.mip.MixedIntegerLinearProgram>`.
+
+    - ``integrality_tolerance`` -- parameter for use with MILP solvers over an
+      inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`.
 
     OUTPUT:
 
@@ -190,10 +203,11 @@ def gale_ryser_theorem(p1, p2, algorithm="gale"):
 
     Computing the matrix for `p_1=p_2=2+2+1`::
 
+        sage: # needs sage.combinat sage.modules
         sage: from sage.combinat.integer_vector import gale_ryser_theorem
         sage: p1 = [2,2,1]
         sage: p2 = [2,2,1]
-        sage: print(gale_ryser_theorem(p1, p2))     # not tested
+        sage: print(gale_ryser_theorem(p1, p2))         # not tested
         [1 1 0]
         [1 0 1]
         [0 1 0]
@@ -207,30 +221,31 @@ def gale_ryser_theorem(p1, p2, algorithm="gale"):
     Or for a non-square matrix with `p_1=3+3+2+1` and `p_2=3+2+2+1+1`,
     using Ryser's algorithm::
 
+        sage: # needs sage.combinat sage.modules
         sage: from sage.combinat.integer_vector import gale_ryser_theorem
         sage: p1 = [3,3,1,1]
         sage: p2 = [3,3,1,1]
-        sage: gale_ryser_theorem(p1, p2, algorithm = "ryser")
+        sage: gale_ryser_theorem(p1, p2, algorithm="ryser")
         [1 1 1 0]
         [1 1 0 1]
         [1 0 0 0]
         [0 1 0 0]
         sage: p1 = [4,2,2]
         sage: p2 = [3,3,1,1]
-        sage: gale_ryser_theorem(p1, p2, algorithm = "ryser")
+        sage: gale_ryser_theorem(p1, p2, algorithm="ryser")
         [1 1 1 1]
         [1 1 0 0]
         [1 1 0 0]
         sage: p1 = [4,2,2,0]
         sage: p2 = [3,3,1,1,0,0]
-        sage: gale_ryser_theorem(p1, p2, algorithm = "ryser")
+        sage: gale_ryser_theorem(p1, p2, algorithm="ryser")
         [1 1 1 1 0 0]
         [1 1 0 0 0 0]
         [1 1 0 0 0 0]
         [0 0 0 0 0 0]
         sage: p1 = [3,3,2,1]
         sage: p2 = [3,2,2,1,1]
-        sage: print(gale_ryser_theorem(p1, p2, algorithm="gale"))  # not tested
+        sage: print(gale_ryser_theorem(p1, p2, algorithm="gale"))       # not tested
         [1 1 1 0 0]
         [1 1 0 0 1]
         [1 0 1 0 0]
@@ -239,7 +254,7 @@ def gale_ryser_theorem(p1, p2, algorithm="gale"):
     With `0` in the sequences, and with unordered inputs::
 
         sage: from sage.combinat.integer_vector import gale_ryser_theorem
-        sage: gale_ryser_theorem([3,3,0,1,1,0], [3,1,3,1,0], algorithm="ryser")
+        sage: gale_ryser_theorem([3,3,0,1,1,0], [3,1,3,1,0], algorithm="ryser")         # needs sage.combinat sage.modules
         [1 1 1 0 0]
         [1 0 1 1 0]
         [0 0 0 0 0]
@@ -247,7 +262,7 @@ def gale_ryser_theorem(p1, p2, algorithm="gale"):
         [0 0 1 0 0]
         [0 0 0 0 0]
         sage: p1 = [3,1,1,1,1]; p2 = [3,2,2,0]
-        sage: gale_ryser_theorem(p1, p2, algorithm="ryser")
+        sage: gale_ryser_theorem(p1, p2, algorithm="ryser")                             # needs sage.combinat sage.modules
         [1 1 1 0]
         [1 0 0 0]
         [1 0 0 0]
@@ -262,7 +277,7 @@ def gale_ryser_theorem(p1, p2, algorithm="gale"):
     ``gale_ryser_theorem`` is then called on these sequences, and the output
     checked for correction.::
 
-        sage: def test_algorithm(algorithm, low = 10, high = 50):
+        sage: def test_algorithm(algorithm, low=10, high=50):
         ....:    n,m = randint(low,high), randint(low,high)
         ....:    g = graphs.RandomBipartite(n, m, .3)
         ....:    s1 = sorted(g.degree([(0,i) for i in range(n)]), reverse = True)
@@ -274,17 +289,17 @@ def gale_ryser_theorem(p1, p2, algorithm="gale"):
         ....:        print("Algorithm %s failed with this input:" % algorithm)
         ....:        print(s1, s2)
 
-        sage: for algorithm in ["gale", "ryser"]:             # long time
-        ....:    for i in range(50):                          # long time
-        ....:       test_algorithm(algorithm, 3, 10)          # long time
+        sage: for algorithm in ["gale", "ryser"]:       # long time                     # needs sage.combinat sage.modules
+        ....:    for i in range(50):
+        ....:       test_algorithm(algorithm, 3, 10)
 
     Null matrix::
 
-        sage: gale_ryser_theorem([0,0,0],[0,0,0,0], algorithm="gale")
+        sage: gale_ryser_theorem([0,0,0],[0,0,0,0], algorithm="gale")                   # needs sage.combinat sage.modules
         [0 0 0 0]
         [0 0 0 0]
         [0 0 0 0]
-        sage: gale_ryser_theorem([0,0,0],[0,0,0,0], algorithm="ryser")
+        sage: gale_ryser_theorem([0,0,0],[0,0,0,0], algorithm="ryser")                  # needs sage.combinat sage.modules
         [0 0 0 0]
         [0 0 0 0]
         [0 0 0 0]
@@ -298,20 +313,20 @@ def gale_ryser_theorem(p1, p2, algorithm="gale"):
     """
     from sage.matrix.constructor import matrix
 
-    if not is_gale_ryser(p1,p2):
+    if not is_gale_ryser(p1, p2):
         return False
 
-    if algorithm == "ryser": # ryser's algorithm
+    if algorithm == "ryser":  # ryser's algorithm
         from sage.combinat.permutation import Permutation
 
         # Sorts the sequences if they are not, and remembers the permutation
         # applied
-        tmp = sorted(enumerate(p1), reverse=True, key=lambda x:x[1])
+        tmp = sorted(enumerate(p1), reverse=True, key=lambda x: x[1])
         r = [x[1] for x in tmp]
         r_permutation = [x-1 for x in Permutation([x[0]+1 for x in tmp]).inverse()]
         m = len(r)
 
-        tmp = sorted(enumerate(p2), reverse=True, key=lambda x:x[1])
+        tmp = sorted(enumerate(p2), reverse=True, key=lambda x: x[1])
         s = [x[1] for x in tmp]
         s_permutation = [x-1 for x in Permutation([x[0]+1 for x in tmp]).inverse()]
 
@@ -324,12 +339,12 @@ def gale_ryser_theorem(p1, p2, algorithm="gale"):
                 k = i + 1
                 while k < m and r[i] == r[k]:
                     k += 1
-                if t >= k - i: # == number rows of the same length
+                if t >= k - i:  # == number rows of the same length
                     for j in range(i, k):
                         r[j] -= 1
                         c[j] = 1
                     t -= k - i
-                else: # Remove the t last rows of that length
+                else:  # Remove the t last rows of that length
                     for j in range(k-t, k):
                         r[j] -= 1
                         c[j] = 1
@@ -347,20 +362,20 @@ def gale_ryser_theorem(p1, p2, algorithm="gale"):
 
     elif algorithm == "gale":
         from sage.numerical.mip import MixedIntegerLinearProgram
-        k1, k2=len(p1), len(p2)
-        p = MixedIntegerLinearProgram()
-        b = p.new_variable(binary = True)
-        for (i,c) in enumerate(p1):
-            p.add_constraint(p.sum([b[i,j] for j in range(k2)]) ==c)
-        for (i,c) in enumerate(p2):
-            p.add_constraint(p.sum([b[j,i] for j in range(k1)]) ==c)
+        k1, k2 = len(p1), len(p2)
+        p = MixedIntegerLinearProgram(solver=solver)
+        b = p.new_variable(binary=True)
+        for (i, c) in enumerate(p1):
+            p.add_constraint(p.sum([b[i, j] for j in range(k2)]) == c)
+        for (i, c) in enumerate(p2):
+            p.add_constraint(p.sum([b[j, i] for j in range(k1)]) == c)
         p.set_objective(None)
         p.solve()
-        b = p.get_values(b)
+        b = p.get_values(b, convert=ZZ, tolerance=integrality_tolerance)
         M = [[0]*k2 for i in range(k1)]
         for i in range(k1):
             for j in range(k2):
-                M[i][j] = int(b[i,j])
+                M[i][j] = b[i, j]
         return matrix(M)
 
     else:
@@ -432,6 +447,7 @@ class IntegerVector(ClonableArray):
     """
     An integer vector.
     """
+
     def check(self):
         """
         Check to make sure this is a valid integer vector by making sure
@@ -442,9 +458,97 @@ class IntegerVector(ClonableArray):
             sage: IV = IntegerVectors()
             sage: elt = IV([1,2,1])
             sage: elt.check()
+
+        Check :issue:`34510`::
+
+            sage: IV3 = IntegerVectors(n=3)
+            sage: IV3([2,2])
+            Traceback (most recent call last):
+            ...
+            ValueError: [2, 2] doesn't satisfy correct constraints
+            sage: IVk3 = IntegerVectors(k=3)
+            sage: IVk3([2,2])
+            Traceback (most recent call last):
+            ...
+            ValueError: [2, 2] doesn't satisfy correct constraints
+            sage: IV33 = IntegerVectors(n=3, k=3)
+            sage: IV33([2,2])
+            Traceback (most recent call last):
+            ...
+            ValueError: [2, 2] doesn't satisfy correct constraints
         """
         if any(x < 0 for x in self):
             raise ValueError("all entries must be non-negative")
+        if self not in self.parent():
+            raise ValueError(f"{self} doesn't satisfy correct constraints")
+
+    def trim(self):
+        """
+        Remove trailing zeros from the integer vector.
+
+        EXAMPLES::
+
+            sage: IV = IntegerVectors()
+            sage: IV([5,3,5,1,0,0]).trim()
+            [5, 3, 5, 1]
+            sage: IV([5,0,5,1,0]).trim()
+            [5, 0, 5, 1]
+            sage: IV([4,3,3]).trim()
+            [4, 3, 3]
+            sage: IV([0,0,0]).trim()
+            []
+
+            sage: IV = IntegerVectors(k=4)
+            sage: v = IV([4,3,2,0]).trim(); v
+            [4, 3, 2]
+            sage: v.parent()
+            Integer vectors
+        """
+        P = IntegerVectors()
+        v = list(self)
+        if all(i == 0 for i in v):
+            return P.element_class(P, [], check=False)
+        while not v[-1]:
+            v = v[:-1]
+        return P.element_class(P, v, check=False)
+
+    def specht_module(self, base_ring=None):
+        r"""
+        Return the Specht module corresponding to ``self``.
+
+        EXAMPLES::
+
+            sage: SM = IntegerVectors()([2,0,1,0,2]).specht_module(QQ); SM              # needs sage.combinat sage.modules
+            Specht module of [(0, 0), (0, 1), (2, 0), (4, 0), (4, 1)] over Rational Field
+            sage: s = SymmetricFunctions(QQ).s()                                        # needs sage.combinat sage.modules
+            sage: s(SM.frobenius_image())                                               # needs sage.combinat sage.modules
+            s[2, 2, 1]
+        """
+        from sage.combinat.specht_module import SpechtModule
+        from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
+        if base_ring is None:
+            from sage.rings.rational_field import QQ
+            base_ring = QQ
+        R = SymmetricGroupAlgebra(base_ring, sum(self))
+        return SpechtModule(R, self)
+
+    def specht_module_dimension(self, base_ring=None):
+        r"""
+        Return the dimension of the Specht module corresponding to ``self``.
+
+        INPUT:
+
+        - ``BR`` -- (default: `\QQ`) the base ring
+
+        EXAMPLES::
+
+            sage: IntegerVectors()([2,0,1,0,2]).specht_module_dimension()               # needs sage.combinat sage.modules
+            5
+            sage: IntegerVectors()([2,0,1,0,2]).specht_module_dimension(GF(2))          # needs sage.combinat sage.modules sage.rings.finite_rings
+            5
+        """
+        from sage.combinat.specht_module import specht_module_rank
+        return specht_module_rank(self, base_ring)
 
 
 class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
@@ -510,9 +614,9 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
 
     Further examples::
 
-        sage: IntegerVectors(-1, 0, min_part = 1).list()
+        sage: IntegerVectors(-1, 0, min_part=1).list()
         []
-        sage: IntegerVectors(-1, 2, min_part = 1).list()
+        sage: IntegerVectors(-1, 2, min_part=1).list()
         []
         sage: IntegerVectors(0, 0, min_part=1).list()
         [[]]
@@ -570,7 +674,7 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
 
     .. SEEALSO::
 
-        :class: `sage.combinat.integer_lists.invlex.IntegerListsLex`.
+        :class:`sage.combinat.integer_lists.invlex.IntegerListsLex`
     """
     @staticmethod
     def __classcall_private__(cls, n=None, k=None, **kwargs):
@@ -591,7 +695,7 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
             ...
             ValueError: k and length both specified
 
-        :trac:`29524`::
+        :issue:`29524`::
 
             sage: IntegerVectors(3, 3/1)
             Traceback (most recent call last):
@@ -665,7 +769,7 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
         if isinstance(x, IntegerVector):
             return True
 
-        if not isinstance(x, (list, tuple)):
+        if not isinstance(x, Sequence):
             return False
 
         for i in x:
@@ -675,11 +779,49 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
                 return False
         return True
 
+    def _unrank_helper(self, x, rtn):
+        """
+        Return the element at rank ``x`` by iterating through all integer vectors beginning with ``rtn``.
+
+        INPUT:
+
+        - ``x`` -- a nonnegative integer
+        - ``rtn`` -- a list of nonnegative integers
+
+
+        EXAMPLES::
+
+            sage: IV = IntegerVectors(k=5)
+            sage: IV._unrank_helper(10, [2,0,0,0,0])
+            [1, 0, 0, 0, 1]
+
+            sage: IV = IntegerVectors(n=7)
+            sage: IV._unrank_helper(100, [7,0,0,0])
+            [2, 0, 0, 5]
+
+            sage: IV = IntegerVectors(n=12, k=7)
+            sage: IV._unrank_helper(1000, [12,0,0,0,0,0,0])
+            [5, 3, 1, 1, 1, 1, 0]
+        """
+        ptr = 0
+        while True:
+            current_rank = self.rank(rtn)
+            if current_rank < x:
+                rtn[ptr+1] = rtn[ptr]
+                rtn[ptr] = 0
+                ptr += 1
+            elif current_rank > x:
+                rtn[ptr] -= 1
+                rtn[ptr-1] += 1
+            else:
+                return self._element_constructor_(rtn)
+
 
 class IntegerVectors_all(UniqueRepresentation, IntegerVectors):
     """
     Class of all integer vectors.
     """
+
     def __init__(self):
         """
         Initialize ``self``.
@@ -724,6 +866,7 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
     """
     Integer vectors that sum to `n`.
     """
+
     def __init__(self, n):
         """
         TESTS::
@@ -732,7 +875,10 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
             sage: TestSuite(IV).run()
         """
         self.n = n
-        IntegerVectors.__init__(self, category=InfiniteEnumeratedSets())
+        if self.n == 0:
+            IntegerVectors.__init__(self, category=EnumeratedSets())
+        else:
+            IntegerVectors.__init__(self, category=InfiniteEnumeratedSets())
 
     def _repr_(self):
         """
@@ -791,11 +937,74 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
             return False
         return sum(x) == self.n
 
+    def rank(self, x):
+        """
+        Return the rank of a given element.
+
+        INPUT:
+
+        - ``x`` -- a list with ``sum(x) == n``
+
+        EXAMPLES::
+
+            sage: IntegerVectors(n=5).rank([5,0])
+            1
+            sage: IntegerVectors(n=5).rank([3,2])
+            3
+        """
+        if sum(x) != self.n:
+            raise ValueError("argument is not a member of IntegerVectors({},{})".format(self.n, None))
+
+        n, k, s = self.n, len(x), 0
+        r = binomial(k + n - 1, n + 1)
+        for i in range(k - 1):
+            s += x[k - 1 - i]
+            r += binomial(s + i, i + 1)
+        return r
+
+    def unrank(self, x):
+        """
+        Return the element at given rank x.
+
+        INPUT:
+
+        - ``x`` -- an integer.
+
+        EXAMPLES::
+
+            sage: IntegerVectors(n=5).unrank(2)
+            [4, 1]
+            sage: IntegerVectors(n=10).unrank(10)
+            [1, 9]
+        """
+        rtn = [self.n]
+        while self.rank(rtn) <= x:
+            rtn.append(0)
+        rtn.pop()
+
+        return IntegerVectors._unrank_helper(self, x, rtn)
+
+    def cardinality(self):
+        """
+        Return the cardinality of ``self``.
+
+        EXAMPLES::
+
+            sage: IntegerVectors(n=0).cardinality()
+            1
+            sage: IntegerVectors(n=10).cardinality()
+            +Infinity
+        """
+        if self.n == 0:
+            return Integer(1)
+        return PlusInfinity()
+
 
 class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
     """
     Integer vectors of length `k`.
     """
+
     def __init__(self, k):
         """
         TESTS::
@@ -804,7 +1013,10 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
             sage: TestSuite(IV).run()
         """
         self.k = k
-        IntegerVectors.__init__(self, category=InfiniteEnumeratedSets())
+        if self.k == 0:
+            IntegerVectors.__init__(self, category=EnumeratedSets())
+        else:
+            IntegerVectors.__init__(self, category=InfiniteEnumeratedSets())
 
     def _repr_(self):
         """
@@ -860,6 +1072,75 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
             return False
         return len(x) == self.k
 
+    def rank(self, x):
+        """
+        Return the rank of a given element.
+
+        INPUT:
+
+        - ``x`` -- a list with ``len(x) == k``
+
+        EXAMPLES::
+
+            sage: IntegerVectors(k=5).rank([0,0,0,0,0])
+            0
+            sage: IntegerVectors(k=5).rank([1,1,0,0,0])
+            7
+        """
+        if len(x) != self.k:
+            raise ValueError("argument is not a member of IntegerVectors({},{})".format(None, self.k))
+
+        n, k, s = sum(x), self.k, 0
+        r = binomial(n + k - 1, k)
+        for i in range(k - 1):
+            s += x[k - 1 - i]
+            r += binomial(s + i, i + 1)
+        return r
+
+    def unrank(self, x):
+        """
+        Return the element at given rank x.
+
+        INPUT:
+
+        - ``x`` -- an integer such that x < self.cardinality()``
+
+        EXAMPLES::
+
+            sage: IntegerVectors(k=5).unrank(10)
+            [1, 0, 0, 0, 1]
+            sage: IntegerVectors(k=5).unrank(15)
+            [0, 0, 2, 0, 0]
+            sage: IntegerVectors(k=0).unrank(0)
+            []
+        """
+        if self.k == 0 and x != 0:
+            raise IndexError(f"Index {x} is out of range for the IntegerVector.")
+        rtn = [0]*self.k
+        if self.k == 0 and x == 0:
+            return rtn
+
+        while self.rank(rtn) <= x:
+            rtn[0] += 1
+        rtn[0] -= 1
+
+        return IntegerVectors._unrank_helper(self, x, rtn)
+
+    def cardinality(self):
+        """
+        Return the cardinality of ``self``.
+
+        EXAMPLES::
+
+            sage: IntegerVectors(k=0).cardinality()
+            1
+            sage: IntegerVectors(k=10).cardinality()
+            +Infinity
+        """
+        if self.k == 0:
+            return Integer(1)
+        return PlusInfinity()
+
 
 class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
     """
@@ -870,6 +1151,7 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
     - Martin Albrecht
     - Mike Hansen
     """
+
     def __init__(self, n, k):
         """
         TESTS::
@@ -901,11 +1183,11 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
         res = []
 
         if k == 1:
-            return [ (n, ) ]
+            return [(n, )]
 
         for nbar in range(n + 1):
             n_diff = n - nbar
-            for rest in self._list_rec( nbar , k - 1):
+            for rest in self._list_rec(nbar, k - 1):
                 res.append((n_diff,) + rest)
         return res
 
@@ -1004,10 +1286,15 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
             False
             sage: [3,2,2,1] in IntegerVectors(8, 4)
             True
-        """
-        if isinstance(x, IntegerVector) and x.parent() is self:
-            return True
 
+        Check :issue:`34510`::
+
+            sage: IV33 = IntegerVectors(n=3, k=3)
+            sage: IV33([0])
+            Traceback (most recent call last):
+            ...
+            ValueError: [0] doesn't satisfy correct constraints
+        """
         if not IntegerVectors.__contains__(self, x):
             return False
 
@@ -1039,16 +1326,48 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
         if x not in self:
             raise ValueError("argument is not a member of IntegerVectors({},{})".format(self.n, self.k))
 
-        n = self.n
-        k = self.k
-
-        r = 0
+        k, s, r = self.k, 0, 0
         for i in range(k - 1):
-            k -= 1
-            n -= x[i]
-            r += binomial(k + n - 1, k)
-
+            s += x[k - 1 - i]
+            r += binomial(s + i, i + 1)
         return r
+
+    def unrank(self, x):
+        """
+        Return the element at given rank x.
+
+        INPUT:
+
+        - ``x`` -- an integer such that ``x < self.cardinality()``
+
+        EXAMPLES::
+
+            sage: IntegerVectors(4,5).unrank(30)
+            [1, 0, 1, 0, 2]
+            sage: IntegerVectors(2,3).unrank(5)
+            [0, 0, 2]
+        """
+        if x >= self.cardinality():
+            raise IndexError(f"Index {x} is out of range for the IntegerVector.")
+        rtn = [0]*self.k
+        rtn[0] = self.n
+        return IntegerVectors._unrank_helper(self, x, rtn)
+
+    def cardinality(self):
+        """
+        Return the cardinality of ``self``.
+
+        EXAMPLES::
+
+            sage: IntegerVectors(3,5).cardinality()
+            35
+            sage: IntegerVectors(99, 3).cardinality()
+            5050
+            sage: IntegerVectors(10^9 - 1, 3).cardinality()
+            500000000500000000
+        """
+        n, k = self.n, self.k
+        return Integer(binomial(n + k - 1, n))
 
 
 class IntegerVectors_nnondescents(UniqueRepresentation, IntegerVectors):
@@ -1085,7 +1404,7 @@ class IntegerVectors_nnondescents(UniqueRepresentation, IntegerVectors):
             sage: IntegerVectors(4, [2,1]) is IntegerVectors(int(4), (2,1))
             True
         """
-        return super(IntegerVectors_nnondescents, cls).__classcall__(cls, n, tuple(comp))
+        return super().__classcall__(cls, n, tuple(comp))
 
     def __init__(self, n, comp):
         """
@@ -1175,6 +1494,7 @@ class IntegerVectorsConstraints(IntegerVectors):
     """
     Class of integer vectors subject to various constraints.
     """
+
     def __init__(self, n=None, k=None, **constraints):
         """
         Initialize ``self``.
@@ -1205,11 +1525,11 @@ class IntegerVectorsConstraints(IntegerVectors):
                 category = FiniteEnumeratedSets()
             else:
                 category = EnumeratedSets()
-        elif k is not None and 'max_part' in constraints: # n is None
+        elif k is not None and 'max_part' in constraints:  # n is None
             category = FiniteEnumeratedSets()
         else:
             category = EnumeratedSets()
-        IntegerVectors.__init__(self, category=category) # placeholder category
+        IntegerVectors.__init__(self, category=category)  # placeholder category
 
     def _repr_(self):
         """
@@ -1278,12 +1598,12 @@ class IntegerVectorsConstraints(IntegerVectors):
         """
         TESTS::
 
-            sage: [3,2,2,1] in IntegerVectors(8,4, min_part = 1)
+            sage: [3,2,2,1] in IntegerVectors(8, 4, min_part=1)                         # needs sage.combinat
             True
-            sage: [3,2,2,1] in IntegerVectors(8,4, min_part = 2)
+            sage: [3,2,2,1] in IntegerVectors(8, 4, min_part=2)                         # needs sage.combinat
             False
 
-            sage: [0,3,0,1,2] in IntegerVectors(6, max_length=3)
+            sage: [0,3,0,1,2] in IntegerVectors(6, max_length=3)                        # needs sage.combinat
             False
         """
         if isinstance(x, IntegerVector) and x.parent() is self:
@@ -1341,17 +1661,19 @@ class IntegerVectorsConstraints(IntegerVectors):
                     return Integer(binomial(self.n + self.k - 1, self.n))
                 # do by inclusion / exclusion on the number
                 # i of parts greater than m
-                return Integer(sum( (-1)**i * binomial(self.n+self.k-1-i*(m+1), self.k-1) \
-                    * binomial(self.k,i) for i in range(self.n/(m+1)+1) ))
+                n, k = self.n, self.k
+                return Integer(sum(
+                    (-1)**i * binomial(n + k - 1 - i * (m + 1), k - 1)
+                    * binomial(k, i) for i in range(self.n // (m + 1) + 1)))
         return ZZ.sum(ZZ.one() for x in self)
 
     def __iter__(self):
         """
         EXAMPLES::
 
-            sage: IntegerVectors(-1, 0, min_part = 1).list()
+            sage: IntegerVectors(-1, 0, min_part=1).list()
             []
-            sage: IntegerVectors(-1, 2, min_part = 1).list()
+            sage: IntegerVectors(-1, 2, min_part=1).list()
             []
             sage: IntegerVectors(0, 0, min_part=1).list()
             [[]]
@@ -1396,10 +1718,12 @@ class IntegerVectorsConstraints(IntegerVectors):
             sage: all(map(lambda x: x.cardinality() == len(x.list()), iv))
             True
             sage: essai = [[1,1,1], [2,5,6], [6,5,2]]
-            sage: iv = [ IntegerVectors(x[0], x[1], max_part = x[2]-1) for x in essai ]
+            sage: iv = [ IntegerVectors(x[0], x[1], max_part=x[2]-1) for x in essai ]
             sage: all(map(lambda x: x.cardinality() == len(x.list()), iv))
             True
         """
+        from sage.combinat.integer_lists import IntegerListsLex
+
         if self.n is None:
             if self.k is not None and 'max_part' in self.constraints:
                 n_list = range((self.constraints['max_part'] + 1) * self.k)

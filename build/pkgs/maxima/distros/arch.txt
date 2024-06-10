@@ -1,1 +1,1 @@
-maxima-ecl
+maxima-fas

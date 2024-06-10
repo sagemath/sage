@@ -1,6 +1,5 @@
-
-jupyter-kernel-gap
-==================
+gap_jupyter: Jupyter kernel for GAP
+===================================
 
 Description
 -----------

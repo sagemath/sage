@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 """
 Free algebra elements
 
@@ -71,14 +71,14 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
             #   convert the keys/values
             x = x._monomial_coefficients
         R = A.base_ring()
-        if isinstance(x, AlgebraElement): #and x.parent() == A.base_ring():
+        if isinstance(x, AlgebraElement):  # and x.parent() == A.base_ring():
             x = {A.monoid()(1): R(x)}
         elif isinstance(x, FreeMonoidElement):
             x = {x: R(1)}
         elif True:
-            x = {A.monoid()(e1): R(e2) for e1,e2 in x.items()}
+            x = {A.monoid()(e1): R(e2) for e1, e2 in x.items()}
         else:
-            raise TypeError("Argument x (= {}) is of the wrong type.".format(x))
+            raise TypeError("argument x (= {}) is of the wrong type".format(x))
 
         IndexedFreeModuleElement.__init__(self, A, x)
 
@@ -92,7 +92,7 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
             sage: repr(-x+3*y*z)    # indirect doctest
             '-x + 3*y*z'
 
-        Trac ticket :trac:`11068` enables the use of local variable names::
+        Github issue :issue:`11068` enables the use of local variable names::
 
             sage: from sage.structure.parent_gens import localvars
             sage: with localvars(A, ['a','b','c']):
@@ -116,7 +116,7 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
 
             sage: A.<x,y,z>=FreeAlgebra(ZZ,3)
             sage: latex(-x+3*y^20*z)   # indirect doctest
-            -x + 3y^{20}z
+            -x + 3 y^{20}z
             sage: alpha,beta,gamma=FreeAlgebra(ZZ,3,'alpha,beta,gamma').gens()
             sage: latex(alpha-beta)
             \alpha - \beta
@@ -150,7 +150,8 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
 
         if kwds:
             p = self.parent()
-            def extract_from(kwds,g):
+
+            def extract_from(kwds, g):
                 for x in g:
                     try:
                         return kwds[x]
@@ -202,6 +203,56 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
                     del z_elt[key]
         return A._from_dict(z_elt)
 
+    def is_unit(self):
+        r"""
+        Return ``True`` if ``self`` is invertible.
+
+        EXAMPLES::
+
+            sage: A.<x, y, z> = FreeAlgebra(ZZ)
+            sage: A(-1).is_unit()
+            True
+            sage: A(2).is_unit()
+            False
+            sage: A(1 + x).is_unit()
+            False
+            sage: A.<x, y> = FreeAlgebra(QQ, degrees=(1,-1))
+            sage: A(x * y).is_unit()
+            False
+            sage: A(2).is_unit()
+            True
+        """
+        mc = self._monomial_coefficients
+        if not mc or len(mc) > 1:
+            return False
+        m, c = next(iter(mc.items()))
+        return m.is_one() and c.is_unit()
+
+    def __invert__(self):
+        """
+        EXAMPLES::
+
+            sage: A.<x, y, z> = FreeAlgebra(QQ)
+            sage: ~A(1)
+            1
+
+        TESTS::
+
+            sage: ~A(0)
+            Traceback (most recent call last):
+            ...
+            ArithmeticError: element is not invertible
+
+            sage: ~A(1 + x)
+            Traceback (most recent call last):
+            ...
+            ArithmeticError: element is not invertible
+        """
+        if self.is_unit():
+            m, c = next(iter(self._monomial_coefficients.items()))
+            return type(self)(self.parent(), {m: c.inverse_of_unit()})
+        raise ArithmeticError("element is not invertible")
+
     def _acted_upon_(self, scalar, self_on_left=False):
         """
         Return the action of a scalar on ``self``.
@@ -223,11 +274,11 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
             if self_on_left:
                 return Factorization([(self, 1)]) * scalar
             return scalar * Factorization([(self, 1)])
-        return super(FreeAlgebraElement, self)._acted_upon_(scalar, self_on_left)
+        return super()._acted_upon_(scalar, self_on_left)
 
     # For backward compatibility
-    #_lmul_ = _acted_upon_
-    #_rmul_ = _acted_upon_
+    # _lmul_ = _acted_upon_
+    # _rmul_ = _acted_upon_
 
     def variables(self):
         """
@@ -246,9 +297,9 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
             sage: elt.variables()
             [x, y, z]
         """
-        v = set([])
-        for s in self._monomial_coefficients: # Only gets the keys
-            for var,exp in s:
+        v = set()
+        for s in self._monomial_coefficients:  # Only gets the keys
+            for var, _ in s:
                 v.add(var)
         A = self.parent()
         return sorted(map(A, v))
@@ -266,4 +317,3 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
              + 2*PBW[x*y]*PBW[x] + PBW[y]*PBW[x]^2
         """
         return self.parent().pbw_element(self)
-

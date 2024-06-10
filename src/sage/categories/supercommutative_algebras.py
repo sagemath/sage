@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Supercommutative Algebras
 """
@@ -12,6 +13,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.super_algebras import SuperAlgebras
 from sage.categories.signed_tensor import SignedTensorProductsCategory
 from sage.misc.cachefunc import cached_method
+
 
 class SupercommutativeAlgebras(CategoryWithAxiom_over_base_ring):
     r"""
@@ -73,15 +75,15 @@ class SupercommutativeAlgebras(CategoryWithAxiom_over_base_ring):
                 By default, this method tests only the elements returned by
                 ``self.some_elements()``::
 
-                    sage: E.<x,y,z> = ExteriorAlgebra(QQ)
-                    sage: E._test_supercommutativity()
+                    sage: E.<x,y,z> = ExteriorAlgebra(QQ)                               # needs sage.modules
+                    sage: E._test_supercommutativity()                                  # needs sage.modules
 
                 However, the elements tested can be customized with the
                 ``elements`` keyword argument, but the elements must be
                 homogeneous::
 
-                    sage: E._test_supercommutativity(elements=[x+y, x*y-3*y*z, x*y*z])
-                    sage: E._test_supercommutativity(elements=[x+x*y])
+                    sage: E._test_supercommutativity(elements=[x+y, x*y-3*y*z, x*y*z])  # needs sage.modules
+                    sage: E._test_supercommutativity(elements=[x+x*y])                  # needs sage.modules
                     Traceback (most recent call last):
                     ...
                     ValueError: element is not homogeneous
@@ -95,4 +97,3 @@ class SupercommutativeAlgebras(CategoryWithAxiom_over_base_ring):
                     tester.assertEqual((x * y),
                                        (-1)**(x.is_even_odd() * y.is_even_odd())
                                        * (y * x))
-

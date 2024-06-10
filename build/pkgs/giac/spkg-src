@@ -13,9 +13,9 @@ fi
 # Exit on failure
 set -e
 
-VERSION="1.5.0"
-VERSIONREV="87"
-PATCHSUFFIX="p2"
+VERSION="1.9.0"
+VERSIONREV="15"
+PATCHSUFFIX="p0"
 
 # The upstream tarball name is: giac"$SOURCEORIG".tar.gz
 SOURCEORIG=_"$VERSION"-"$VERSIONREV"
@@ -31,6 +31,7 @@ fi
 
 # Build a temporary working dir. (preferably, a subdir of SAGE_DISTFILES)
 TARGET=$(mktemp -d -p"$SAGE_DISTFILES" 2>/dev/null || mktemp -d)
+echo "Working in $TARGET"
 ORIGDIR=`pwd`
 cd "$TARGET"
 
@@ -47,6 +48,9 @@ mv giac-"$VERSION" src
 
 # remove unnecessary files
 rm -rf src/doc/pari/*.html
+
+rm -f src/doc/*.wasm src/doc/*.js
+sed -E -i.bak '/XCASHTML/s/[^ ]*[.](wasm|js)//g' src/doc/Makefile.am
 
 # removing french html doc, but keep keywords, and working makefiles.
 # NB: the french html doc is huge and not GPL.
@@ -70,6 +74,10 @@ touch html_vall
 # building giac source tarball for the spkg
 cd ../../
 
+# get rid of micropython
+rm -rf micropython*
+sed -i.bak 's/micropython-[^ ]*//' Makefile.am configure.ac
+
 for a in "$SAGE_ROOT"/build/pkgs/giac/patches/autotools/*.patch; do
     patch -p1 < $a
 done
@@ -80,7 +88,7 @@ tar -cjf "$OUTPUTFILEBASENAME".tar.bz2 src
 
 # cleaning extracted dir.
 cd ..
-rm -rf "$TARGET"
+### rm -rf "$TARGET"
 
 # going back to starting dir
 cd "$ORIGDIR"

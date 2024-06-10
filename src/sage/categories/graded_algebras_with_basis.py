@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Graded algebras with basis
 """
@@ -12,6 +13,7 @@ Graded algebras with basis
 from sage.categories.graded_modules import GradedModulesCategory
 from sage.categories.signed_tensor import SignedTensorProductsCategory, tensor_signed
 from sage.misc.cachefunc import cached_method
+
 
 class GradedAlgebrasWithBasis(GradedModulesCategory):
     """
@@ -46,8 +48,8 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
             EXAMPLES::
 
-                sage: m = SymmetricFunctions(QQ).m()
-                sage: m.graded_algebra() is m
+                sage: m = SymmetricFunctions(QQ).m()                                    # needs sage.combinat sage.modules
+                sage: m.graded_algebra() is m                                           # needs sage.combinat sage.modules
                 True
 
             TESTS:
@@ -57,6 +59,7 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
             and :meth:`projection` (which form the interface of the
             associated graded algebra) work correctly here::
 
+                sage: # needs sage.combinat sage.modules
                 sage: to_gr = m.to_graded_conversion()
                 sage: from_gr = m.from_graded_conversion()
                 sage: m[2] == to_gr(m[2]) == from_gr(m[2])
@@ -83,6 +86,70 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
         # identity morphisms other than using the identity matrix.
         # Also, ``projection`` could be overridden by, well, a
         # projection.
+
+        def free_graded_module(self, generator_degrees, names=None):
+            """
+            Create a finitely generated free graded module over ``self``
+
+            INPUT:
+
+            - ``generator_degrees`` -- tuple of integers defining the
+              number of generators of the module and their degrees
+
+            - ``names`` -- (optional) the names of the generators. If
+              ``names`` is a comma-separated string like ``'a, b,
+              c'``, then those will be the names. Otherwise, for
+              example if ``names`` is ``abc``, then the names will be
+              ``abc[d,i]``.
+
+            By default, if all generators are in distinct degrees,
+            then the ``names`` of the generators will have the form
+            ``g[d]`` where ``d`` is the degree of the generator. If
+            the degrees are not distinct, then the generators will be
+            called ``g[d,i]`` where ``d`` is the degree and ``i`` is
+            its index in the list of generators in that degree.
+
+            See :mod:`sage.modules.fp_graded.free_module` for more
+            examples and details.
+
+            EXAMPLES::
+
+                sage: # needs sage.combinat sage.modules
+                sage: Q = QuadraticForm(QQ, 3, [1,2,3,4,5,6])
+                sage: Cl = CliffordAlgebra(Q)
+                sage: M = Cl.free_graded_module((0, 2, 3))
+                sage: M.gens()
+                (g[0], g[2], g[3])
+                sage: N.<xy, z> = Cl.free_graded_module((1, 2))
+                sage: N.generators()
+                (xy, z)
+            """
+            try:
+                return self._free_graded_module_class(self, generator_degrees, names=names)
+            except AttributeError:
+                from sage.modules.fp_graded.free_module import FreeGradedModule
+                return FreeGradedModule(self, generator_degrees, names=names)
+
+        def formal_series_ring(self):
+            r"""
+            Return the completion of all formal linear combinations of
+            ``self`` with finite linear combinations in each homogeneous
+            degree (computed lazily).
+
+            EXAMPLES::
+
+                sage: # needs sage.combinat sage.modules
+                sage: NCSF = NonCommutativeSymmetricFunctions(QQ)
+                sage: S = NCSF.Complete()
+                sage: L = S.formal_series_ring()
+                sage: L
+                Lazy completion of Non-Commutative Symmetric Functions over
+                 the Rational Field in the Complete basis
+            """
+            from sage.rings.lazy_series_ring import LazyCompletionGradedAlgebra
+            return LazyCompletionGradedAlgebra(self)
+
+        completion = formal_series_ring
 
     class ElementMethods:
         pass
@@ -123,12 +190,13 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
                 EXAMPLES::
 
+                    sage: # needs sage.combinat sage.modules
                     sage: A.<x,y> = ExteriorAlgebra(QQ)
                     sage: A.one_basis()
-                    ()
+                    0
                     sage: B = tensor((A, A, A))
                     sage: B.one_basis()
-                    ((), (), ())
+                    (0, 0, 0)
                     sage: B.one()
                     1 # 1 # 1
                 """
@@ -149,6 +217,7 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
                 Test the sign in the super tensor product::
 
+                    sage: # needs sage.combinat sage.modules
                     sage: A = SteenrodAlgebra(3)
                     sage: x = A.Q(0)
                     sage: y = x.coproduct()
@@ -157,8 +226,8 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
                 TODO: optimize this implementation!
                 """
-                basic = tensor_signed((module.monomial(x0) * module.monomial(x1)
-                                      for (module, x0, x1) in zip(self._sets, t0, t1)))
+                basic = tensor_signed(module.monomial(x0) * module.monomial(x1)
+                                      for (module, x0, x1) in zip(self._sets, t0, t1))
                 n = len(self._sets)
                 parity0 = [self._sets[idx].degree_on_basis(x0)
                            for (idx, x0) in enumerate(t0)]
@@ -167,4 +236,3 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
                 parity = sum(parity0[i] * parity1[j]
                              for j in range(n) for i in range(j+1,n))
                 return (-1)**parity * basic
-

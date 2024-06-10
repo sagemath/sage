@@ -4,7 +4,7 @@ from libc.stdio cimport FILE
 cdef enum:
     GSL_SUCCESS
 
-from .blas_types cimport *
+from sage.libs.gsl.blas_types cimport *
 
 cdef extern from "gsl/gsl_mode.h":
     ctypedef unsigned int gsl_mode_t
@@ -43,9 +43,7 @@ cdef extern from "gsl/gsl_complex.h":
     ctypedef double * gsl_complex_packed_ptr
 
     ctypedef struct gsl_complex:
-        double dat[2]
-        double real "dat[0]"
-        double imag "dat[1]"
+        pass
 
 
 cdef extern from "gsl/gsl_block_double.h":

@@ -1,5 +1,5 @@
-pari_seadata
-============
+pari_seadata: PARI data package needed by ellap for large primes (full version)
+===============================================================================
 
 Description
 -----------

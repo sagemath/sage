@@ -1,0 +1,7 @@
+cd src
+
+# since the module is not built in place, go to a new directory
+mkdir empty
+cd empty
+
+python3 ../bin/test_python.py

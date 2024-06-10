@@ -7,7 +7,7 @@ AUTHOR:
 
 EXAMPLES::
 
-    sage: v = vector(ZZ,[1,2,3,4,5])
+    sage: v = vector(ZZ, [1,2,3,4,5])
     sage: v
     (1, 2, 3, 4, 5)
     sage: 3*v
@@ -43,33 +43,31 @@ TESTS::
     True
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
-from sage.structure.element cimport Element, ModuleElement, RingElement, Vector
+from sage.structure.element cimport Element, Vector
 from sage.structure.richcmp cimport rich_to_bool
 from sage.rings.integer cimport Integer, _Integer_from_mpz
 
 cimport sage.modules.free_module_element as free_module_element
 
-from .free_module_element import vector
-
 from sage.libs.gmp.mpz cimport *
 
 cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
-    cdef bint is_dense_c(self):
+    cdef bint is_dense_c(self) noexcept:
         return 1
-    cdef bint is_sparse_c(self):
+    cdef bint is_sparse_c(self) noexcept:
         return 0
 
     def __copy__(self):
@@ -106,7 +104,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
 
     def __cinit__(self, parent=None, x=None, coerce=True, copy=True):
         self._entries = NULL
-        self._is_mutable = 1
+        self._is_immutable = 0
         if parent is None:
             self._degree = 0
             return
@@ -210,11 +208,12 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
             (1, 2, 3, 4)
         """
         cdef int i
-        return [_Integer_from_mpz(self._entries[i]) for i in
-                                  xrange(self._degree)]
+        return [_Integer_from_mpz(self._entries[i])
+                for i in range(self._degree)]
 
     def __reduce__(self):
-        return (unpickle_v1, (self._parent, self.list(), self._degree, self._is_mutable))
+        return (unpickle_v1, (self._parent, self.list(), self._degree,
+                              not self._is_immutable))
 
     cpdef _add_(self, right):
         cdef Vector_integer_dense z, r
@@ -224,7 +223,6 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
         for i in range(self._degree):
             mpz_add(z._entries[i], self._entries[i], r._entries[i])
         return z
-
 
     cpdef _sub_(self, right):
         cdef Vector_integer_dense z, r
@@ -315,11 +313,10 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
 
             sage: A = random_matrix(ZZ,1,3)
             sage: v = A.row(0)
-            sage: vs = singular(v); vs
-            -8,
-            2,
-            0
-            sage: vs.type()
+            sage: vs = singular(v)                                                      # needs sage.libs.singular
+            sage: vs._repr_() == '{},\n{},\n{}'.format(*v)                              # needs sage.libs.singular
+            True
+            sage: vs.type()                                                             # needs sage.libs.singular
             'intvec'
         """
         if singular is None:
@@ -332,6 +329,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
 
         from sage.interfaces.singular import SingularElement
         return SingularElement(singular, 'foobar', name, True)
+
 
 def unpickle_v0(parent, entries, degree):
     # If you think you want to change this function, don't.
@@ -348,6 +346,7 @@ def unpickle_v0(parent, entries, degree):
         mpz_set(v._entries[i], z.value)
     return v
 
+
 def unpickle_v1(parent, entries, degree, is_mutable):
     cdef Vector_integer_dense v
     v = Vector_integer_dense.__new__(Vector_integer_dense)
@@ -357,5 +356,5 @@ def unpickle_v1(parent, entries, degree, is_mutable):
     for i in range(degree):
         z = Integer(entries[i])
         mpz_set(v._entries[i], z.value)
-    v._is_mutable = is_mutable
+    v._is_immutable = not is_mutable
     return v

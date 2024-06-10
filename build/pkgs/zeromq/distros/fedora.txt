@@ -1,1 +1,2 @@
-zeromq zeromq-devel
+zeromq
+zeromq-devel

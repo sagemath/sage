@@ -100,7 +100,7 @@ class LibSingularGBDefaultContext:
         self.libsingular_option_context.__exit__(typ,value,tb)
 
 def libsingular_gb_standard_options(func):
-    """
+    r"""
     Decorator to force a reduced Singular groebner basis.
 
     TESTS::
@@ -111,13 +111,14 @@ def libsingular_gb_standard_options(func):
         sage: "basis.reduced" in sage_getsource(J.interreduced_basis)
         True
 
-    The following tests against a bug that was fixed in :trac:`11298`::
+    The following tests against a bug that was fixed in :issue:`11298`::
 
         sage: from sage.misc.sageinspect import sage_getsourcelines, sage_getargspec
         sage: P.<x,y> = QQ[]
         sage: I = P*[x,y]
         sage: sage_getargspec(I.interreduced_basis)
-        ArgSpec(args=['self'], varargs=None, keywords=None, defaults=None)
+        FullArgSpec(args=['self'], varargs=None, varkw=None, defaults=None,
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
         sage: sage_getsourcelines(I.interreduced_basis)
         (['    @handle_AA_and_QQbar\n',
           '    @singular_gb_standard_options\n',
@@ -132,6 +133,7 @@ def libsingular_gb_standard_options(func):
        does not need to use it manually.
     """
     from sage.misc.decorators import sage_wraps
+
     @sage_wraps(func)
     def wrapper(*args, **kwds):
         """

@@ -1,7 +1,7 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Power sum symmetric functions
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2012 Mike Zabrocki <mike.zabrocki@gmail.com>
@@ -20,10 +20,12 @@ from __future__ import absolute_import
 #*****************************************************************************
 from . import sfa, multiplicative, classical
 from sage.combinat.partition import Partition
-from sage.arith.all import divisors
-from sage.rings.all import infinity
+from sage.arith.misc import divisors
+from sage.rings.infinity import infinity
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
+from sage.misc.superseded import deprecated_function_alias
+
 
 class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_multiplicative):
     def __init__(self, Sym):
@@ -399,12 +401,12 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
                 return self
             return p._apply_module_morphism(self, self._derivative)
 
-        def frobenius(self, n):
+        def adams_operator(self, n):
             r"""
             Return the image of the symmetric function ``self`` under the
-            `n`-th Frobenius operator.
+            `n`-th Adams operator.
 
-            The `n`-th Frobenius operator `\mathbf{f}_n` is defined to be the
+            The `n`-th Adams operator `\mathbf{f}_n` is defined to be the
             map from the ring of symmetric functions to itself that sends
             every symmetric function `P(x_1, x_2, x_3, \ldots)` to
             `P(x_1^n, x_2^n, x_3^n, \ldots)`. This operator `\mathbf{f}_n`
@@ -420,15 +422,15 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
             `\mathbf{f}_n (p_r) = p_{nr}` for every positive integer `r` (where
             `p_k` denotes the `k`-th powersum symmetric function).
 
-            The `n`-th Frobenius operator is also called the `n`-th
+            The `n`-th Adams operator is also called the `n`-th
             Frobenius endomorphism. It is not related to the Frobenius map
             which connects the ring of symmetric functions with the
             representation theory of the symmetric group.
 
-            The `n`-th Frobenius operator is also the `n`-th Adams operator
+            The `n`-th Adams operator is the `n`-th Adams operator
             of the `\Lambda`-ring of symmetric functions over the integers.
 
-            The `n`-th Frobenius operator can also be described via plethysm:
+            The `n`-th Adams operator can also be described via plethysm:
             Every symmetric function `P` satisfies
             `\mathbf{f}_n(P) = p_n \circ P = P \circ p_n`,
             where `p_n` is the `n`-th powersum symmetric function, and `\circ`
@@ -440,22 +442,22 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
 
             OUTPUT:
 
-            The result of applying the `n`-th Frobenius operator (on the ring
+            The result of applying the `n`-th Adams operator (on the ring
             of symmetric functions) to ``self``.
 
             EXAMPLES::
 
                 sage: Sym = SymmetricFunctions(ZZ)
                 sage: p = Sym.p()
-                sage: p[3].frobenius(2)
+                sage: p[3].adams_operator(2)
                 p[6]
-                sage: p[4,2,1].frobenius(3)
+                sage: p[4,2,1].adams_operator(3)
                 p[12, 6, 3]
-                sage: p([]).frobenius(4)
+                sage: p([]).adams_operator(4)
                 p[]
-                sage: p[3].frobenius(1)
+                sage: p[3].adams_operator(1)
                 p[3]
-                sage: (p([3]) - p([2]) + p([])).frobenius(3)
+                sage: (p([3]) - p([2]) + p([])).adams_operator(3)
                 p[] - p[6] + p[9]
 
             TESTS:
@@ -466,10 +468,10 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
 
                 sage: Sym = SymmetricFunctions(QQ)
                 sage: p = Sym.p(); h = Sym.h()
-                sage: all( h(p(lam)).frobenius(3) == h(p(lam).frobenius(3))
+                sage: all( h(p(lam)).adams_operator(3) == h(p(lam).adams_operator(3))
                 ....:      for lam in Partitions(3) )
                 True
-                sage: all( p(h(lam)).frobenius(2) == p(h(lam).frobenius(2))
+                sage: all( p(h(lam)).adams_operator(2) == p(h(lam).adams_operator(2))
                 ....:      for lam in Partitions(4) )
                 True
 
@@ -477,11 +479,13 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
 
                 :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.plethysm`
             """
-            dct = {Partition([n * i for i in lam]): coeff
-                   for (lam, coeff) in self.monomial_coefficients().items()}
+            dct = {lam.stretch(n): coeff
+                   for lam, coeff in self.monomial_coefficients().items()}
             return self.parent()._from_dict(dct)
 
-        adams_operation = frobenius
+        frobenius = deprecated_function_alias(36396, adams_operator)
+
+        adams_operation = deprecated_function_alias(36396, adams_operator)
 
         def verschiebung(self, n):
             r"""
@@ -515,7 +519,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
             (German for "shift") endomorphism of the Witt vectors.
 
             The `n`-th Verschiebung operator is adjoint to the `n`-th
-            Frobenius operator (see :meth:`frobenius` for its definition)
+            Adams operator (see :meth:`adams_operator` for its definition)
             with respect to the Hall scalar product (:meth:`scalar`).
 
             The action of the `n`-th Verschiebung operator on the Schur basis
@@ -571,14 +575,14 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
                 ....:      for lam in Partitions(4) )
                 True
 
-            Testing the adjointness between the Frobenius operators
+            Testing the adjointness between the Adams operators
             `\mathbf{f}_n` and the Verschiebung operators
             `\mathbf{V}_n`::
 
                 sage: Sym = SymmetricFunctions(QQ)
                 sage: p = Sym.p()
                 sage: all( all( p(lam).verschiebung(2).scalar(p(mu))
-                ....:           == p(lam).scalar(p(mu).frobenius(2))
+                ....:           == p(lam).scalar(p(mu).adams_operator(2))
                 ....:           for mu in Partitions(2) )
                 ....:      for lam in Partitions(4) )
                 True
@@ -760,11 +764,11 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
 
                 sage: p = SymmetricFunctions(QQ).p()
                 sage: x = p[8,7,3,1]
-                sage: x.principal_specialization(3, q=var("q"))
+                sage: x.principal_specialization(3, q=var("q"))                         # needs sage.symbolic
                 (q^24 - 1)*(q^21 - 1)*(q^9 - 1)/((q^8 - 1)*(q^7 - 1)*(q - 1))
 
                 sage: x = 5*p[1,1,1] + 3*p[2,1] + 1
-                sage: x.principal_specialization(3, q=var("q"))
+                sage: x.principal_specialization(3, q=var("q"))                         # needs sage.symbolic
                 5*(q^3 - 1)^3/(q - 1)^3 + 3*(q^6 - 1)*(q^3 - 1)/((q^2 - 1)*(q - 1)) + 1
 
             By default, we return a rational function in `q`::
@@ -774,7 +778,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
 
             If ``n`` is not given we return the stable principal specialization::
 
-                sage: x.principal_specialization(q=var("q"))
+                sage: x.principal_specialization(q=var("q"))                            # needs sage.symbolic
                 3/((q^2 - 1)*(q - 1)) - 5/(q - 1)^3 + 1
 
             TESTS::
@@ -805,11 +809,12 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
                 from sage.rings.integer_ring import ZZ
                 ZZq = PolynomialRing(ZZ, "q")
                 q_lim = ZZq.gen()
+
                 def f(partition):
-                    denom = prod((1-q**part) for part in partition)
+                    denom = prod((1 - q**part) for part in partition)
                     try:
                         ~denom
-                        rational = prod((1-q**(n*part)) for part in partition)/denom
+                        rational = prod((1 - q**(n*part)) for part in partition) / denom
                         return q.parent()(rational)
                     except (ZeroDivisionError, NotImplementedError, TypeError):
                         # If denom is not invertible, we need to do the
@@ -880,12 +885,12 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
                 sage: x.exponential_specialization()
                 0
                 sage: x = p[3] + 5*p[1,1] + 2*p[1] + 1
-                sage: x.exponential_specialization(t=var("t"))
+                sage: x.exponential_specialization(t=var("t"))                          # needs sage.symbolic
                 5*t^2 + 2*t + 1
 
             We also support the `q`-exponential_specialization::
 
-                sage: factor(p[3].exponential_specialization(q=var("q"), t=var("t")))
+                sage: factor(p[3].exponential_specialization(q=var("q"), t=var("t")))   # needs sage.symbolic
                 (q - 1)^2*t^3/(q^2 + q + 1)
 
             TESTS::
@@ -934,6 +939,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
                 return (1-q)**n * t**n / m
 
             return self.parent()._apply_module_morphism(self, f, t.parent())
+
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override

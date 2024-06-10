@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Valuations which are scaled versions of another valuation
 
@@ -10,17 +9,15 @@ EXAMPLES::
 AUTHORS:
 
 - Julian Rüth (2016-11-10): initial version
-
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016-2017 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
+# ****************************************************************************
 
 from sage.structure.factory import UniqueFactory
 
@@ -35,7 +32,6 @@ class ScaledValuationFactory(UniqueFactory):
 
         sage: 3*ZZ.valuation(2) # indirect doctest
         3 * 2-adic valuation
-
     """
     def create_key(self, base, s):
         r"""
@@ -45,9 +41,9 @@ class ScaledValuationFactory(UniqueFactory):
 
             sage: 3*ZZ.valuation(2) is 2*(3/2*ZZ.valuation(2)) # indirect doctest
             True
-            
         """
-        from sage.rings.all import infinity, QQ
+        from sage.rings.infinity import infinity
+        from sage.rings.rational_field import QQ
         if s is infinity or s not in QQ or s <= 0:
             # for these values we can not return a TrivialValuation() in
             # create_object() because that would override that instance's
@@ -63,7 +59,7 @@ class ScaledValuationFactory(UniqueFactory):
             raise ValueError("s must not be 1")
 
         if isinstance(base, ScaledValuation_generic):
-            return self.create_key(base._base_valuation, s*base._scale)
+            return self.create_key(base._base_valuation, s * base._scale)
 
         return base, s
 
@@ -88,6 +84,7 @@ class ScaledValuationFactory(UniqueFactory):
 
 ScaledValuation = ScaledValuationFactory("sage.rings.valuation.scaled_valuation.ScaledValuation")
 
+
 class ScaledValuation_generic(DiscreteValuation):
     r"""
     A valuation which scales another ``base_valuation`` by a finite positive factor ``s``.
@@ -99,7 +96,7 @@ class ScaledValuation_generic(DiscreteValuation):
 
     TESTS::
 
-        sage: TestSuite(v).run() # long time
+        sage: TestSuite(v).run()                # long time                             # needs sage.geometry.polyhedron
 
     """
     def __init__(self, parent, base_valuation, s):
@@ -121,8 +118,7 @@ class ScaledValuation_generic(DiscreteValuation):
 
         """
         DiscreteValuation.__init__(self, parent)
-
-        self._base_valuation = base_valuation 
+        self._base_valuation = base_valuation
         self._scale = s
 
     def _repr_(self):
@@ -133,9 +129,8 @@ class ScaledValuation_generic(DiscreteValuation):
 
             sage: 3*ZZ.valuation(2) # indirect doctest
             3 * 2-adic valuation
-
         """
-        return "%r * %r"%(self._scale, self._base_valuation)
+        return "%r * %r" % (self._scale, self._base_valuation)
 
     def residue_ring(self):
         r"""
@@ -211,7 +206,7 @@ class ScaledValuation_generic(DiscreteValuation):
         EXAMPLES::
 
             sage: v = 3*ZZ.valuation(5)
-            sage: v.extensions(GaussianIntegers().fraction_field())
+            sage: v.extensions(GaussianIntegers().fraction_field())                     # needs sage.rings.number_field
             [3 * [ 5-adic valuation, v(x + 2) = 1 ]-adic valuation,
              3 * [ 5-adic valuation, v(x + 3) = 1 ]-adic valuation]
 
@@ -301,7 +296,7 @@ class ScaledValuation_generic(DiscreteValuation):
             assert not self.is_trivial()
             if self._base_valuation <= other:
                 return False
-        return super(ScaledValuation_generic, self)._ge_(other)
+        return super()._ge_(other)
 
     def _le_(self, other):
         r"""

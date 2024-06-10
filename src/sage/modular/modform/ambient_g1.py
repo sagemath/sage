@@ -1,5 +1,5 @@
 r"""
-Modular Forms for `\Gamma_1(N)` and `\Gamma_H(N)` over `\QQ`
+Modular forms for `\Gamma_1(N)` and `\Gamma_H(N)` over `\QQ`
 
 EXAMPLES::
 
@@ -33,15 +33,13 @@ TESTS::
     True
 
 
-We check that :trac:`10453` is fixed::
+We check that :issue:`10453` is fixed::
 
     sage: CuspForms(Gamma1(11), 2).old_submodule()
     Modular Forms subspace of dimension 0 of Modular Forms space of dimension 10 for Congruence Subgroup Gamma1(11) of weight 2 over Rational Field
     sage: ModularForms(Gamma1(3), 12).old_submodule()
     Modular Forms subspace of dimension 4 of Modular Forms space of dimension 5 for Congruence Subgroup Gamma1(3) of weight 12 over Rational Field
-
 """
-from __future__ import absolute_import
 
 #########################################################################
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -51,7 +49,7 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 #########################################################################
 
-import sage.rings.all as rings
+from sage.rings.rational_field import Q as QQ
 
 import sage.modular.arithgroup.all as arithgroup
 
@@ -78,7 +76,7 @@ class ModularFormsAmbient_gH_Q(ambient.ModularFormsAmbient):
             sage: type(m)
             <class 'sage.modular.modform.ambient_g1.ModularFormsAmbient_gH_Q_with_category'>
         """
-        ambient.ModularFormsAmbient.__init__(self, group, weight, rings.QQ, eis_only=eis_only)
+        ambient.ModularFormsAmbient.__init__(self, group, weight, QQ, eis_only=eis_only)
 
     ####################################################################
     # Computation of Special Submodules
@@ -171,7 +169,7 @@ class ModularFormsAmbient_g1_Q(ModularFormsAmbient_gH_Q):
             sage: type(m)
             <class 'sage.modular.modform.ambient_g1.ModularFormsAmbient_g1_Q_with_category'>
         """
-        ambient.ModularFormsAmbient.__init__(self, arithgroup.Gamma1(level), weight, rings.QQ, eis_only=eis_only)
+        ambient.ModularFormsAmbient.__init__(self, arithgroup.Gamma1(level), weight, QQ, eis_only=eis_only)
 
     ####################################################################
     # Computation of Special Submodules
@@ -208,4 +206,3 @@ class ModularFormsAmbient_g1_Q(ModularFormsAmbient_gH_Q):
             Eisenstein subspace of dimension 12 of Modular Forms space of dimension 69 for Congruence Subgroup Gamma1(13) of weight 10 over Rational Field
         """
         return eisenstein_submodule.EisensteinSubmodule_g1_Q(self)
-

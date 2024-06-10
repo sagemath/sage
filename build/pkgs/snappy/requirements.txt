@@ -1,0 +1,10 @@
+# Note: As of 2021-01, snappy will pull in cypari (!= cypari2) as a dependency
+# if installed as a wheel but will actually use Sage's cypari2.
+# cypari contains a statically linked copy of pari and other libraries
+# and will remain completely unused (wastes 30M).  Snappy is about 165M.
+# See https://github.com/sagemath/sage/issues/31180
+snappy
+# cypari 2.4.0 has a broken sdist, https://github.com/sagemath/sage/issues/31180
+cypari !=2.4.0
+# An optional database (110M uncompressed)
+snappy_15_knots

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Filtered Algebras
 """
@@ -10,6 +11,7 @@ Filtered Algebras
 
 from sage.misc.abstract_method import abstract_method
 from sage.categories.filtered_modules import FilteredModulesCategory
+
 
 class FilteredAlgebras(FilteredModulesCategory):
     r"""
@@ -59,4 +61,3 @@ class FilteredAlgebras(FilteredModulesCategory):
                  the universal enveloping algebra of
                  Lie algebra of RR^3 with cross product over Integer Ring
             """
-

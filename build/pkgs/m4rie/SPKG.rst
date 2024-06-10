@@ -1,5 +1,5 @@
-M4RIE
-=====
+m4rie: Arithmetic with dense matrices over GF(2^e)
+==================================================
 
 Description
 -----------

@@ -1,5 +1,5 @@
-defusedxml
-==========
+defusedxml: Addresses vulnerabilities of XML parsers and XML libraries
+======================================================================
 
 Description
 -----------
@@ -18,12 +18,6 @@ Upstream Contact
 ----------------
 
 https://pypi.org/project/defusedxml/
-
-Dependencies
-------------
-
--  pip
-
 
 Special Update/Build Instructions
 ---------------------------------

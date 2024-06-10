@@ -75,7 +75,7 @@ The same holds for the group elements::
     sage: a.gap().Order()
     2
     sage: type(_)    # note that the above output is not a Sage integer
-    <type 'sage.libs.gap.element.GapElement_Integer'>
+    <class 'sage.libs.gap.element.GapElement_Integer'>
 
 You can use call syntax to replace the generators with a set of
 arbitrary ring elements. For example, take the free abelian group
@@ -128,17 +128,22 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.arith.misc import GCD as gcd
+from sage.categories.morphism import SetMorphism
+from sage.functions.generalized import sign
+from sage.groups.free_group import FreeGroup
+from sage.groups.free_group import FreeGroupElement
 from sage.groups.group import Group
 from sage.groups.libgap_wrapper import ParentLibGAP, ElementLibGAP
 from sage.groups.libgap_mixin import GroupMixinLibGAP
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.libs.gap.libgap import libgap
 from sage.libs.gap.element import GapElement
-from sage.misc.cachefunc import cached_method
-from sage.groups.free_group import FreeGroupElement
-from sage.functions.generalized import sign
+from sage.libs.gap.libgap import libgap
 from sage.matrix.constructor import matrix
-from sage.categories.morphism import SetMorphism
+from sage.misc.cachefunc import cached_method
+from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
+from sage.rings.rational_field import QQ
+from sage.sets.set import Set
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class GroupMorphismWithGensImages(SetMorphism):
@@ -146,9 +151,9 @@ class GroupMorphismWithGensImages(SetMorphism):
     Class used for morphisms from finitely presented groups to
     other groups. It just adds the images of the generators at the
     end of the representation.
-    
+
     EXAMPLES::
-    
+
         sage: F = FreeGroup(3)
         sage: G = F / [F([1, 2, 3, 1, 2, 3]), F([1, 1, 1])]
         sage: H = AlternatingGroup(3)
@@ -161,14 +166,13 @@ class GroupMorphismWithGensImages(SetMorphism):
         Defn: x0 |--> ()
               x1 |--> ()
               x2 |--> ()
-
     """
     def _repr_defn(self):
         r"""
         Return the part of the representation that includes the images of the generators.
-        
+
         EXAMPLES::
-        
+
             sage: F = FreeGroup(3)
             sage: G = F / [F([1,2,3,1,2,3]),F([1,1,1])]
             sage: H = AlternatingGroup(3)
@@ -177,11 +181,9 @@ class GroupMorphismWithGensImages(SetMorphism):
             sage: f = GroupMorphismWithGensImages(HS, lambda a: H.one())
             sage: f._repr_defn()
             'x0 |--> ()\nx1 |--> ()\nx2 |--> ()'
-
         """
-        D = self.domain()
-        return '\n'.join(['%s |--> %s'%(i, self(i)) for\
-                       i in D.gens()])
+        return '\n'.join(f'{i} |--> {self(i)}' for i in self.domain().gens())
+
 
 class FinitelyPresentedGroupElement(FreeGroupElement):
     """
@@ -261,15 +263,11 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
             (Finitely presented group < a, b, c | a*b*c*a^-1*c^-1*b^-1, a*b*c*b^-1*a^-1*c^-1 >,
              ((1, 2, 3),))
         """
-        return (self.parent(), tuple([self.Tietze()]))
+        return (self.parent(), (self.Tietze(),))
 
     def _repr_(self):
         """
         Return a string representation.
-
-        OUTPUT:
-
-        String.
 
         EXAMPLES::
 
@@ -298,9 +296,7 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         the letter corresponding to the `i`-th generator of the group.
         Negative integers represent the inverses of generators.
 
-        OUTPUT:
-
-        A tuple of integers.
+        OUTPUT: tuple of integers
 
         EXAMPLES::
 
@@ -324,16 +320,14 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         INPUT:
 
         - ``*values`` -- a list/tuple/iterable of the same length as
-          the number of generators.
+          the number of generators
 
-        - ``check=True`` -- boolean keyword (default:
-          ``True``). Whether to verify that ``values`` satisfy the
-          relations in the finitely presented group.
+        - ``check=True`` -- boolean keyword (default: ``True``); whether to
+          verify that ``values`` satisfy the relations in the finitely
+          presented group
 
-        OUTPUT:
-
-        The product of ``values`` in the order and with exponents
-        specified by ``self``.
+        OUTPUT: the product of ``values`` in the order and with exponents
+        specified by ``self``
 
         EXAMPLES::
 
@@ -365,7 +359,7 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
                 rel = rel(values)
                 if rel != 1:
                     raise ValueError('the values do not satisfy all relations of the group')
-        return super(FinitelyPresentedGroupElement, self).__call__(values)
+        return super().__call__(values)
 
 
 def wrap_FpGroup(libgap_fpgroup):
@@ -384,9 +378,7 @@ def wrap_FpGroup(libgap_fpgroup):
 
     - ``libgap_fpgroup`` -- a LibGAP finitely presented group
 
-    OUTPUT:
-
-    A Sage :class:`FinitelyPresentedGroup`.
+    OUTPUT: a Sage :class:`FinitelyPresentedGroup`
 
     EXAMPLES:
 
@@ -397,7 +389,7 @@ def wrap_FpGroup(libgap_fpgroup):
         sage: P = F / libgap([ a_cubed ]);   P
         <fp group of size infinity on the generators [ a, b ]>
         sage: type(P)
-        <type 'sage.libs.gap.element.GapElement'>
+        <class 'sage.libs.gap.element.GapElement'>
 
     Now wrap it::
 
@@ -409,12 +401,12 @@ def wrap_FpGroup(libgap_fpgroup):
     libgap_fpgroup._set_compare_by_id()
     from sage.groups.free_group import wrap_FreeGroup
     free_group = wrap_FreeGroup(libgap_fpgroup.FreeGroupOfFpGroup())
-    relations = tuple( free_group(rel.UnderlyingElement())
-                       for rel in libgap_fpgroup.RelatorsOfFpGroup() )
+    relations = tuple(free_group(rel.UnderlyingElement())
+                      for rel in libgap_fpgroup.RelatorsOfFpGroup())
     return FinitelyPresentedGroup(free_group, relations)
 
 
-class RewritingSystem(object):
+class RewritingSystem:
     """
     A class that wraps GAP's rewriting systems.
 
@@ -511,7 +503,7 @@ class RewritingSystem(object):
                 a^2    --->    1
         """
         ret = "Rewriting system of {}\nwith rules:".format(self._fp_group)
-        for i in sorted(self.rules().items()): # Make sure they are sorted to the repr is unique
+        for i in sorted(self.rules().items()):  # Make sure they are sorted to the repr is unique
             ret += "\n    {}    --->    {}".format(i[0], i[1])
         return ret
 
@@ -561,7 +553,7 @@ class RewritingSystem(object):
 
     def reduce(self, element):
         """
-        Applies the rules in the rewriting system to the element, to obtain
+        Apply the rules in the rewriting system to the element, to obtain
         a reduced form.
 
         If the rewriting system is confluent, this reduced form is unique
@@ -591,14 +583,14 @@ class RewritingSystem(object):
 
         EXAMPLES::
 
-            sage: F.<a,b>=FreeGroup()
-            sage: G=F/[a*a,b*b]
-            sage: k=G.rewriting_system()
+            sage: F.<a,b> = FreeGroup()
+            sage: G = F/[a*a,b*b]
+            sage: k = G.rewriting_system()
             sage: k.gap()
             Knuth Bendix Rewriting System for Monoid( [ a, A, b, B ] ) with rules
-            [ [ a^2, <identity ...> ], [ a*A, <identity ...> ],
-              [ A*a, <identity ...> ], [ b^2, <identity ...> ],
-              [ b*B, <identity ...> ], [ B*b, <identity ...> ] ]
+            [ [ a*A, <identity ...> ], [ A*a, <identity ...> ],
+              [ b*B, <identity ...> ], [ B*b, <identity ...> ],
+              [ a^2, <identity ...> ], [ b^2, <identity ...> ] ]
         """
         return self._gap
 
@@ -644,7 +636,7 @@ class RewritingSystem(object):
                 bfg = self._monoid_isomorphism.PreImagesRepresentative(bfpmon)
                 btz = bfg.UnderlyingElement().TietzeWordAbstractWord(self._free_group.gap().GeneratorsOfGroup())
                 bf = self._free_group(btz.sage())
-                dic[af]=bf
+                dic[af] = bf
         return dic
 
     def is_confluent(self):
@@ -691,7 +683,7 @@ class RewritingSystem(object):
 
     def make_confluent(self):
         """
-        Applies Knuth-Bendix algorithm to try to transform the rewriting
+        Apply the Knuth-Bendix algorithm to try to transform the rewriting
         system into a confluent one.
 
         Note that this method does not return any object, just changes the
@@ -738,8 +730,7 @@ class RewritingSystem(object):
             raise ValueError('could not make the system confluent')
 
 
-class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
-    Group, ParentLibGAP):
+class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, ParentLibGAP):
     """
     A class that wraps GAP's Finitely Presented Groups.
 
@@ -775,7 +766,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         sage: H.gap()
         <fp group on the generators [ x0, x1 ]>
         sage: type(_)
-        <type 'sage.libs.gap.element.GapElement'>
+        <class 'sage.libs.gap.element.GapElement'>
     """
     Element = FinitelyPresentedGroupElement
 
@@ -812,10 +803,6 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
-
         TESTS::
 
             sage: G.<a,b> = FreeGroup()
@@ -826,23 +813,21 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             'Finitely presented group < a, b | a, b^3 >'
         """
         gens = ', '.join(self.variable_names())
-        rels = ', '.join([ str(r) for r in self.relations() ])
-        return 'Finitely presented group ' + '< '+ gens + ' | ' + rels + ' >'
+        rels = ', '.join([str(r) for r in self.relations()])
+        return 'Finitely presented group ' + '< ' + gens + ' | ' + rels + ' >'
 
     def _latex_(self):
         """
-        Return a LaTeX representation
+        Return a LaTeX representation.
 
-        OUTPUT:
-
-        String. A valid LaTeX math command sequence.
+        OUTPUT: string; a valid LaTeX math command sequence
 
         TESTS::
 
-            sage: F=FreeGroup(4)
+            sage: F = FreeGroup(4)
             sage: F.inject_variables()
             Defining x0, x1, x2, x3
-            sage: G=F.quotient([x0*x2, x3*x1*x3, x2*x1*x2])
+            sage: G = F.quotient([x0*x2, x3*x1*x3, x2*x1*x2])
             sage: G._latex_()
             '\\langle x_{0}, x_{1}, x_{2}, x_{3} \\mid x_{0}\\cdot x_{2} , x_{3}\\cdot x_{1}\\cdot x_{3} , x_{2}\\cdot x_{1}\\cdot x_{2}\\rangle'
         """
@@ -863,9 +848,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         """
         Return the free group (without relations).
 
-        OUTPUT:
-
-        A :func:`~sage.groups.free_group.FreeGroup`.
+        OUTPUT: a :func:`~sage.groups.free_group.FreeGroup`
 
         EXAMPLES::
 
@@ -882,9 +865,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         """
         Return the relations of the group.
 
-        OUTPUT:
-
-        The relations as a tuple of elements of :meth:`free_group`.
+        OUTPUT: the relations as a tuple of elements of :meth:`free_group`
 
         EXAMPLES::
 
@@ -906,12 +887,10 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
 
         INPUT:
 
-        - ``limit`` -- integer (default: 4096000). The maximal number
-          of cosets before the computation is aborted.
+        - ``limit`` -- integer (default: 4096000); the maximal number
+          of cosets before the computation is aborted
 
-        OUTPUT:
-
-        Integer or ``Infinity``. The number of elements in the group.
+        OUTPUT: integer or ``Infinity``; the number of elements in the group
 
         EXAMPLES::
 
@@ -958,15 +937,15 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
 
         INPUT:
 
-        - ``limit`` -- integer (default: 4096000). The maximal number
-          of cosets before the computation is aborted.
+        - ``limit`` -- integer (default: 4096000); the maximal number
+          of cosets before the computation is aborted
 
         OUTPUT:
 
         A Sage
         :func:`~sage.groups.perm_gps.permgroup.PermutationGroup`. If
         the number of cosets exceeds the given ``limit``, a
-        ``ValueError`` is returned.
+        :class:`ValueError` is returned.
 
         EXAMPLES::
 
@@ -1004,7 +983,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         from sage.combinat.permutation import Permutation
         from sage.groups.perm_gps.permgroup import PermutationGroup
         return PermutationGroup([
-                Permutation(coset_table[2*i]) for i in range(len(coset_table)//2)])
+            Permutation(coset_table[2*i]) for i in range(len(coset_table)//2)])
 
     def direct_product(self, H, reduced=False, new_names=True):
         r"""
@@ -1014,7 +993,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         Calls GAP function ``DirectProduct``, which returns the direct
         product of a list of groups of any representation.
 
-        From [Joh1990]_ (pg 45, proposition 4): If `G`, `H` are groups
+        From [Joh1990]_ (p. 45, proposition 4): If `G`, `H` are groups
         presented by `\langle X \mid R \rangle` and `\langle Y \mid S \rangle`
         respectively, then their direct product has the presentation
         `\langle X, Y \mid R, S, [X, Y] \rangle` where `[X, Y]` denotes the
@@ -1035,10 +1014,8 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
           to keep the old variable names, as they may change meaning
           in the output group if its presentation is reduced.
 
-        OUTPUT:
-
-        The direct product of ``self`` with ``H`` as a finitely
-        presented group.
+        OUTPUT: the direct product of ``self`` with ``H`` as a finitely
+        presented group
 
         EXAMPLES::
 
@@ -1110,14 +1087,14 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         fp_product = libgap.DirectProduct([self.gap(), H.gap()])
         GAP_gens = fp_product.FreeGeneratorsOfFpGroup()
         if new_names:
-            name_itr = _lexi_gen() # Python generator for lexicographical variable names
+            name_itr = _lexi_gen()  # Python generator for lexicographical variable names
             gen_names = [next(name_itr) for i in GAP_gens]
         else:
-            gen_names= [str(g) for g in self.gens()] + [str(g) for g in H.gens()]
+            gen_names = [str(g) for g in self.gens()] + [str(g) for g in H.gens()]
         # Build the direct product in Sage for better variable names
         ret_F = FreeGroup(gen_names)
         ret_rls = tuple([ret_F(rel_word.TietzeWordAbstractWord(GAP_gens).sage())
-            for rel_word in fp_product.RelatorsOfFpGroup()])
+                         for rel_word in fp_product.RelatorsOfFpGroup()])
         ret_fpg = FinitelyPresentedGroup(ret_F, ret_rls)
         if reduced:
             ret_fpg = ret_fpg.simplified()
@@ -1201,7 +1178,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             sage: D = C2.semidirect_product(C8, hom); D
             Finitely presented group < a, b | a^2, b^8, a^-1*b*a*b >
             sage: D = C2.semidirect_product(C8, hom, reduced=True); D
-            Finitely presented group < a, b | a^2, (a*b)^2, b^8 >
+            Finitely presented group < a, b | a^2, a*b*a*b, b^8 >
 
             sage: C3 = groups.presentation.Cyclic(3)
             sage: C4 = groups.presentation.Cyclic(4)
@@ -1264,12 +1241,13 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         if not isinstance(H, FinitelyPresentedGroup):
             raise TypeError("input must be a finitely presented group")
 
-        GAP_self = self.gap(); GAP_H = H.gap()
+        GAP_self = self.gap()
+        GAP_H = H.gap()
         auto_grp = libgap.AutomorphismGroup(H.gap())
         self_gens = [h.gap() for h in hom[0]]
         # construct image automorphisms in GAP
-        GAP_aut_imgs = [ libgap.GroupHomomorphismByImages(GAP_H, GAP_H, [g.gap() for g in gns],
-            [i.gap() for i in img]) for (gns, img) in hom[1] ]
+        GAP_aut_imgs = [libgap.GroupHomomorphismByImages(GAP_H, GAP_H, [g.gap() for g in gns],
+                        [i.gap() for i in img]) for (gns, img) in hom[1]]
 
         # check for automorphism validity in images of operation defining homomorphism,
         # and construct the defining homomorphism.
@@ -1279,22 +1257,22 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
                 raise ValueError("images of input homomorphism must be automorphisms")
             GAP_def_hom = libgap.GroupHomomorphismByImages(GAP_self, auto_grp, self_gens, GAP_aut_imgs)
         else:
-            GAP_def_hom = GAP_self.GroupHomomorphismByImagesNC( auto_grp, self_gens, GAP_aut_imgs)
+            GAP_def_hom = GAP_self.GroupHomomorphismByImagesNC(auto_grp, self_gens, GAP_aut_imgs)
 
         prod = libgap.SemidirectProduct(GAP_self, GAP_def_hom, GAP_H)
         # Convert pc group to fp group
         if prod.IsPcGroup():
-            prod = libgap.Image(libgap.IsomorphismFpGroupByPcgs(prod.FamilyPcgs() , 'x'))
+            prod = libgap.Image(libgap.IsomorphismFpGroupByPcgs(prod.FamilyPcgs(), 'x'))
         if not prod.IsFpGroup():
             raise NotImplementedError("unable to convert GAP output to equivalent Sage fp group")
 
         # Convert GAP group object to Sage via Tietze
         # lists for readability of variable names
         GAP_gens = prod.FreeGeneratorsOfFpGroup()
-        name_itr = _lexi_gen() # Python generator for lexicographical variable names
+        name_itr = _lexi_gen()  # Python generator for lexicographical variable names
         ret_F = FreeGroup([next(name_itr) for i in GAP_gens])
         ret_rls = tuple([ret_F(rel_word.TietzeWordAbstractWord(GAP_gens).sage())
-            for rel_word in prod.RelatorsOfFpGroup()])
+                         for rel_word in prod.RelatorsOfFpGroup()])
         ret_fpg = FinitelyPresentedGroup(ret_F, ret_rls)
         if reduced:
             ret_fpg = ret_fpg.simplified()
@@ -1313,10 +1291,10 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             sage: H([1, 2, 1, -2]) # indirect doctest
             a*b*a*b^-1
         """
-        if len(args)!=1:
+        if len(args) != 1:
             return self.element_class(self, *args, **kwds)
         x = args[0]
-        if x==1:
+        if x == 1:
             return self.one()
         try:
             P = x.parent()
@@ -1349,7 +1327,105 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         Uses GAP.
         """
         invariants = self.gap().AbelianInvariants()
-        return tuple( i.sage() for i in invariants )
+        return tuple(i.sage() for i in invariants)
+
+    @cached_method
+    def abelianization_map(self):
+        r"""
+        Return the abelianization map of ``self``.
+
+        OUTPUT: the abelianization map of ``self`` as a homomorphism of
+        finitely presented groups
+
+        EXAMPLES::
+
+            sage: G = FreeGroup(4, 'g')
+            sage: G.inject_variables(verbose=False)
+            sage: H = G.quotient([g1^2, g2*g1*g2^(-1)*g1^(-1), g1*g3^(-2), g0^4])
+            sage: H.abelianization_map()
+            Group morphism:
+                From: Finitely presented group  < g0, g1, g2, g3 | g1^2, g2*g1*g2^-1*g1^-1, g1*g3^-2, g0^4 >
+                To:   Finitely presented group  < f2, f3, f4 | f2^-1*f3^-1*f2*f3, f2^-1*f4^-1*f2*f4, f3^-1*f4^-1*f3*f4, f2^4, f3^4 >
+            sage: g = FreeGroup(0) / []
+            sage: g.abelianization_map()
+            Group endomorphism of Finitely presented group  <  |  >
+        """
+        if not self.generators():
+            return self.hom(codomain=self, im_gens=[])
+        hom_ab_libgap = libgap(self).MaximalAbelianQuotient()
+        ab_libgap = hom_ab_libgap.Range()
+        hom_ab_fp = ab_libgap.IsomorphismFpGroup()
+        ab_libgap_fp = hom_ab_fp.Range()
+        hom_simply = ab_libgap_fp.IsomorphismSimplifiedFpGroup()
+        ab = wrap_FpGroup(hom_simply.Range())
+        images = []
+        for f in self.gens():
+            f0 = hom_ab_libgap.Image(f)
+            f1 = hom_ab_fp.Image(f0)
+            f2 = hom_simply.Image(f1)
+            L = f2.UnderlyingElement().LetterRepAssocWord()
+            images.append(ab([int(j) for j in L]))
+        return self.hom(codomain=ab, im_gens=images)
+
+    @cached_method
+    def abelianization_to_algebra(self, ring=QQ):
+        r"""
+        Return the group algebra of the abelianization of ``self``
+        together with the monomials representing the generators of ``self``.
+
+        INPUT:
+
+        - ``ring`` -- (default: ``QQ``); the base ring for
+          the group algebra of ``self``
+
+        OUTPUT:
+
+        - ``ab`` -- the abelianization  of ``self`` as a finitely presented group
+          with a minimal number `n` of generators.
+        -  ``R`` -- a Laurent polynomial ring with `n` variables with base ring ``ring``.
+        - ``ideal`` -- a list of generators of an ideal ``I`` in ``R`` such that ``R/I``
+          is the group algebra of the abelianization over ``ring``
+        - ``image`` -- a list  with the images of the generators of ``self`` in ``R/I``
+
+        EXAMPLES::
+
+            sage: G = FreeGroup(4, 'g')
+            sage: G.inject_variables()
+            Defining g0, g1, g2, g3
+            sage: H = G.quotient([g1^2, g2*g1*g2^(-1)*g1^(-1), g1*g3^(-2), g0^4])
+            sage: H.abelianization_to_algebra()
+            (Finitely presented group  < f2, f3, f4 | f2^-1*f3^-1*f2*f3, f2^-1*f4^-1*f2*f4,
+                                                      f3^-1*f4^-1*f3*f4, f2^4, f3^4 >,
+             Multivariate Laurent Polynomial Ring in f2, f3, f4 over Rational Field,
+             [f2^4 - 1, f3^4 - 1], [f2^-1*f3^-2, f3^-2, f4, f3])
+            sage: g=FreeGroup(0) / []
+            sage: g.abelianization_to_algebra()
+            (Finitely presented group  <  |  >, Rational Field, [], [])
+        """
+        if not self.generators():
+            return self, ring, [], []
+        hom_ab = self.abelianization_map()
+        ab = hom_ab.codomain()
+        R = LaurentPolynomialRing(ring, ab.gens())
+        ideal = []
+        for a in ab.relations():
+            a_T = a.Tietze()
+            a_S = Set(a_T)
+            if a_S.cardinality() == 1:
+                j = a_T[0]
+                m = len(a_T)
+                ideal.append(R.gen(j - 1) ** m - 1)
+        images0 = [hom_ab(g).Tietze() for g in self.gens()]
+        images = []
+        for L in images0:
+            p = R.one()
+            for a in L:
+                if a > 0:
+                    p *= R.gen(a - 1)
+                elif a < 0:
+                    p /= R.gen(-a - 1)
+            images.append(p)
+        return ab, R, ideal, images
 
     def simplification_isomorphism(self):
         """
@@ -1389,9 +1465,9 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
 
         Uses GAP.
         """
-        I = self.gap().IsomorphismSimplifiedFpGroup()
-        codomain = wrap_FpGroup(I.Range())
-        phi = lambda x: codomain(I.ImageElm(x.gap()))
+        II = self.gap().IsomorphismSimplifiedFpGroup()
+        codomain = wrap_FpGroup(II.Range())
+        phi = lambda x: codomain(II.ImageElm(x.gap()))
         HS = self.Hom(codomain)
         return GroupMorphismWithGensImages(HS, phi)
 
@@ -1426,45 +1502,75 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             Finitely presented group < e0 | e0^2 >
         """
         return self.simplification_isomorphism().codomain()
-    
+
+    def sorted_presentation(self):
+        """
+        Return the same presentation with the relations sorted to ensure
+        equality.
+
+        OUTPUT: a new finitely presented group with the relations sorted
+
+        EXAMPLES::
+
+            sage: G = FreeGroup(2) / [(1, 2, -1, -2), ()]; G
+            Finitely presented group < x0, x1 | x0*x1*x0^-1*x1^-1, 1 >
+            sage: G.sorted_presentation()
+            Finitely presented group < x0, x1 | 1, x1^-1*x0^-1*x1*x0 >
+        """
+        F = FreeGroup(self.ngens())
+        L0 = [r.Tietze() for r in self.relations()]
+        L1 = []
+        for rel in L0:
+            C = [rel]
+            C.extend(rel[j + 1:] + rel[:j + 1] for j in range(len(rel) - 1))
+            C1 = [tuple(-j for j in reversed(l)) for l in C]
+            C += C1
+            C.sort()
+            L1.append(C[0])
+        L1.sort()
+        return F / L1
+
     def epimorphisms(self, H):
         r"""
-        Return the epimorphisms from `self` to `H`, up to automorphism of `H`.
-        
+        Return the epimorphisms from ``self`` to `H`, up to automorphism of `H`.
+
         INPUT:
-        
-        - `H` -- Another group
-        
+
+        - ``H`` -- another group
+
         EXAMPLES::
-        
+
             sage: F = FreeGroup(3)
             sage: G = F / [F([1, 2, 3, 1, 2, 3]), F([1, 1, 1])]
             sage: H = AlternatingGroup(3)
             sage: G.epimorphisms(H)
             [Generic morphism:
-               From: Finitely presented group < x0, x1, x2 | (x0*x1*x2)^2, x0^3 >
+               From: Finitely presented group < x0, x1, x2 | x0*x1*x2*x0*x1*x2, x0^3 >
                To:   Alternating group of order 3!/2 as a permutation group
                Defn: x0 |--> ()
                      x1 |--> (1,3,2)
-                     x2 |--> (1,2,3), Generic morphism:
-               From: Finitely presented group < x0, x1, x2 | (x0*x1*x2)^2, x0^3 >
+                     x2 |--> (1,2,3),
+             Generic morphism:
+               From: Finitely presented group < x0, x1, x2 | x0*x1*x2*x0*x1*x2, x0^3 >
                To:   Alternating group of order 3!/2 as a permutation group
                Defn: x0 |--> (1,3,2)
                      x1 |--> ()
-                     x2 |--> (1,2,3), Generic morphism:
-               From: Finitely presented group < x0, x1, x2 | (x0*x1*x2)^2, x0^3 >
+                     x2 |--> (1,2,3),
+             Generic morphism:
+               From: Finitely presented group < x0, x1, x2 | x0*x1*x2*x0*x1*x2, x0^3 >
                To:   Alternating group of order 3!/2 as a permutation group
                Defn: x0 |--> (1,3,2)
                      x1 |--> (1,2,3)
-                     x2 |--> (), Generic morphism:
-               From: Finitely presented group < x0, x1, x2 | (x0*x1*x2)^2, x0^3 >
+                     x2 |--> (),
+             Generic morphism:
+               From: Finitely presented group < x0, x1, x2 | x0*x1*x2*x0*x1*x2, x0^3 >
                To:   Alternating group of order 3!/2 as a permutation group
                Defn: x0 |--> (1,2,3)
                      x1 |--> (1,2,3)
                      x2 |--> (1,2,3)]
 
         ALGORITHM:
-        
+
         Uses libgap's GQuotients function.
         """
         from sage.misc.misc_c import prod
@@ -1482,7 +1588,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             res.append(fhom)
         return res
 
-    def alexander_matrix(self, im_gens = None):
+    def alexander_matrix(self, im_gens=None):
         """
         Return the Alexander matrix of the group.
 
@@ -1530,7 +1636,218 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         rel = self.relations()
         gen = self._free_group.gens()
         return matrix(len(rel), len(gen),
-                      lambda i,j: rel[i].fox_derivative(gen[j], im_gens))
+                      lambda i, j: rel[i].fox_derivative(gen[j], im_gens))
+
+    @cached_method
+    def abelian_alexander_matrix(self, ring=QQ, simplified=True):
+        """
+        Return the Alexander matrix of the group with values in the group
+        algebra of the abelianized.
+
+        INPUT:
+
+        - ``ring`` -- (default: ``QQ``) the base ring of the
+          group algebra
+        - ``simplified`` -- boolean (default: ``False``); if set to
+          ``True`` use Gauss elimination and erase rows and columns
+
+        OUTPUT:
+
+        - ``A`` -- a matrix with coefficients in ``R``
+        - ``ideal`` -- an list of generators of an ideal ``I`` of
+          ``R = A.base_ring()`` such that ``R/I`` is the group algebra of the
+          abelianization of ``self``
+
+        EXAMPLES::
+
+            sage: G.<a,b,c> = FreeGroup()
+            sage: H = G.quotient([a*b/a/b, a*c/a/c, c*b/c/b])
+            sage: A, ideal = H.abelian_alexander_matrix()
+            sage: A
+            [-f2 + 1  f1 - 1       0]
+            [-f3 + 1       0  f1 - 1]
+            [      0  f3 - 1 -f2 + 1]
+            sage: A.base_ring()
+            Multivariate Laurent Polynomial Ring in f1, f2, f3 over Rational Field
+            sage: ideal
+            []
+            sage: G = FreeGroup(3)/[(2, 1, 1), (1, 2, 2, 3, 3)]
+            sage: A, ideal = G.abelian_alexander_matrix(simplified=True); A
+            [-f3^2 - f3^4 - f3^6         f3^3 + f3^6]
+            sage: g = FreeGroup(1) / []
+            sage: g.abelian_alexander_matrix()
+            ([], [])
+            sage: g.abelian_alexander_matrix()[0].base_ring()
+            Univariate Laurent Polynomial Ring in f1 over Rational Field
+            sage: g = FreeGroup(0) / []
+            sage: A, ideal = g.abelian_alexander_matrix(); A
+            []
+            sage: A.base_ring()
+            Rational Field
+        """
+        ab, R, ideal, images = self.abelianization_to_algebra(ring=ring)
+        A = self.alexander_matrix(im_gens=images)
+        if A.base_ring() != R:
+            A = A.change_ring(R)
+        if simplified:
+            n, m = A.dimensions()
+            if n == 0 or m == 0:
+                return A, ideal
+            simpli = True
+            while simpli:
+                i = 0
+                j = 0
+                unidad = False
+                while not unidad and i < n and j < m:
+                    p = A[i, j]
+                    unidad = p.is_unit()
+                    if unidad:
+                        A.swap_rows(0, i)
+                        A.swap_columns(0, j)
+                        for k in range(1, n):
+                            A.add_multiple_of_row(k, 0, -A[k, 0] * p ** -1)
+                        A = A.delete_rows([0]).delete_columns([0])
+                        n, m = A.dimensions()
+                    else:
+                        if j < m - 1:
+                            j += 1
+                        else:
+                            i += 1
+                            j = 0
+                simpli = unidad
+        return A, ideal
+
+    def characteristic_varieties(self, ring=QQ, matrix_ideal=None, groebner=False):
+        r"""
+        Return the characteristic varieties of the group ``self``.
+
+        There are several definitions of the characteristic varieties of a
+        group `G`, see e.g. [CS1999a]_. Let `\Lambda` be the group algebra of
+        `G/G'` and `\mathbb{T}` its associated algebraic variety (a torus).
+        Each element `\xi\in\mathbb{T}` defines a local system of coefficients
+        and the `k`-th characteristic variety is
+
+        .. MATH::
+
+            V_k(G) = \{\xi\in\mathbb{T}\mid \dim H^1(G;\xi)\geq k\}.
+
+        These varieties are defined by ideals in `\Lambda`.
+
+        INPUT:
+
+        - ``ring`` -- (default: ``QQ``) the base ring of the group algebra
+        - ``groebner`` -- boolean (default: ``False``); If set to
+          ``True`` the minimal associated primes of the ideals and their
+          groebner bases are computed; ignored if the base ring
+          is not a field
+
+        OUTPUT:
+
+        A dictionary with keys the indices of the varieties. If ``groebner`` is ``False``
+        the values are the ideals defining the characteristic varieties.
+        If it is ``True``, lists for Gröbner bases for the ideal of each irreducible
+        component, stopping when the first time a characteristic variety is empty.
+
+        EXAMPLES::
+
+            sage: L = [2*(i, j) + 2* (-i, -j) for i, j in ((1, 2), (2, 3), (3, 1))]
+            sage: G = FreeGroup(3) / L
+            sage: G.characteristic_varieties(groebner=True)
+            {0: [(0,)],
+             1: [(f1 - 1, f2 - 1, f3 - 1), (f1*f3 + 1, f2 - 1), (f1*f2 + 1, f3 - 1), (f2*f3 + 1, f1 - 1),
+                 (f2*f3 + 1, f1 - f2), (f2*f3 + 1, f1 - f3), (f1*f3 + 1, f2 - f3)],
+             2: [(f1 - 1, f2 - 1, f3 - 1), (f1 + 1, f2 - 1, f3 - 1), (f1 - 1, f2 - 1, f3 + 1),
+                 (f3^2 + 1, f1 - f3, f2 - f3), (f1 - 1, f2 + 1, f3 - 1)],
+             3: [(f1 - 1, f2 - 1, f3 - 1)],
+             4: []}
+            sage: G = FreeGroup(2)/[2*(1,2,-1,-2)]
+            sage: G.characteristic_varieties()
+            {0: Ideal (0) of Multivariate Laurent Polynomial Ring in f1, f2 over Rational Field,
+             1: Ideal (f2 - 1, f1 - 1) of Multivariate Laurent Polynomial Ring in f1, f2 over Rational Field,
+             2: Ideal (f2 - 1, f1 - 1) of Multivariate Laurent Polynomial Ring in f1, f2 over Rational Field,
+             3: Ideal (1) of Multivariate Laurent Polynomial Ring in f1, f2 over Rational Field}
+            sage: G.characteristic_varieties(ring=ZZ)
+            {0: Ideal (0) of Multivariate Laurent Polynomial Ring in f1, f2 over Integer Ring,
+             1: Ideal (2*f2 - 2, 2*f1 - 2) of Multivariate Laurent Polynomial Ring in f1, f2 over Integer Ring,
+             2: Ideal (f2 - 1, f1 - 1) of Multivariate Laurent Polynomial Ring in f1, f2 over Integer Ring,
+             3: Ideal (1) of Multivariate Laurent Polynomial Ring in f1, f2 over Integer Ring}
+            sage: G = FreeGroup(2)/[(1,2,1,-2,-1,-2)]
+            sage: G.characteristic_varieties()
+            {0: Ideal (0) of Univariate Laurent Polynomial Ring in f2 over Rational Field,
+             1: Ideal (-1 + 2*f2 - 2*f2^2 + f2^3) of Univariate Laurent Polynomial Ring in f2 over Rational Field,
+             2: Ideal (1) of Univariate Laurent Polynomial Ring in f2 over Rational Field}
+            sage: G.characteristic_varieties(groebner=True)
+            {0: [0], 1: [-1 + f2, 1 - f2 + f2^2], 2: []}
+            sage: G = FreeGroup(2)/[3 * (1, ), 2 * (2, )]
+            sage: G.characteristic_varieties(groebner=True)
+            {0: [-1 + F1, 1 + F1, 1 - F1 + F1^2, 1 + F1 + F1^2], 1: [1 - F1 + F1^2],  2: []}
+            sage: G = FreeGroup(2)/[2 * (2, )]
+            sage: G.characteristic_varieties(groebner=True)
+            {0: [(f1 + 1,), (f1 - 1,)], 1: [(f1 + 1,), (f1 - 1, f2 - 1)], 2: []}
+            sage: G = (FreeGroup(0) / [])
+            sage: G.characteristic_varieties()
+            {0: Principal ideal (0) of Rational Field,
+             1: Principal ideal (1) of Rational Field}
+            sage: G.characteristic_varieties(groebner=True)
+            {0: [(0,)], 1: [(1,)]}
+        """
+        if self.ngens() == 0:
+            if groebner:
+                return {j: [(ring(j),)] for j in (0, 1)}
+            return {j: ring.ideal(j) for j in (0, 1)}
+        A, rels = self.abelian_alexander_matrix(ring=ring, simplified=True)
+        R = A.base_ring()
+        eval_1 = {x: ring(1) for x in R.gens()}
+        A_scalar = A.apply_map(lambda p: p.subs(eval_1))
+        n = A.ncols()
+        n1 = n - A_scalar.rank()
+        ideal_1 = R.ideal([x - 1 for x in R.gens()])
+        S = R.polynomial_ring()
+        K = R.base_ring()
+        id_rels = R.ideal(rels)
+        res = {}
+        bound = n + 1
+        for j in range(bound + 1):
+            J = id_rels + A.fitting_ideal(j)
+            # J = R.ideal(id_rels.gens() + A.fitting_ideal(j).gens())
+            if j <= n1:
+                J1 = K.ideal([K(p.subs(eval_1)) for p in J.gens()])
+                if J1:
+                    J *= ideal_1
+            res[j] = R.ideal(J.gens_reduced())
+            if R(1) in res[j].gens():
+                bound = j
+                break
+        if not groebner or not ring.is_field():
+            return res
+        if R.ngens() == 1:
+            res = {j: gcd(S(p) for p in res[j].gens()) for j in range(bound + 1)}
+            char_var = {}
+            strict = True
+            j = 0
+            while strict and j <= bound:
+                if res[j] == 0:
+                    char_var[j] = [R(0)]
+                else:
+                    fct = [q[0] for q in R(res[j]).factor()]
+                    if fct:
+                        char_var[j] = fct
+                    else:
+                        char_var[j] = []
+                        strict = False
+                j += 1
+            return char_var
+        char_var = {}
+        strict = True
+        j = 0
+        while strict and j <= bound:
+            LJ = res[j].minimal_associated_primes()
+            fct = [id.groebner_basis() for id in LJ]
+            char_var[j] = fct
+            if not fct:
+                strict = False
+            j += 1
+        return char_var
 
     def rewriting_system(self):
         """
@@ -1548,11 +1865,11 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             sage: G = F / [a^2,b^3,(a*b/a)^3,b*a*b*a]
             sage: k = G.rewriting_system()
             sage: k
-            Rewriting system of Finitely presented group < a, b | a^2, b^3, a*b^3*a^-1, (b*a)^2 >
+            Rewriting system of Finitely presented group < a, b | a^2, b^3, a*b^3*a^-1, b*a*b*a >
             with rules:
                 a^2    --->    1
                 b^3    --->    1
-                (b*a)^2    --->    1
+                b*a*b*a    --->    1
                 a*b^3*a^-1    --->    1
 
             sage: G([1,1,2,2,2])

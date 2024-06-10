@@ -24,13 +24,13 @@ if [ "$SAGE_FAT_BINARY" = yes ]; then
 fi
 
 # Need to use 'bash' for configure, see
-# https://trac.sagemath.org/ticket/23451
+# https://github.com/sagemath/sage/issues/23451
 if [ -z "$CONFIG_SHELL" ]; then
     export CONFIG_SHELL=`command -v bash`
 fi
 
 # We disable openmp because of build failures, see
-# http://trac.sagemath.org/ticket/17635#comment:67
+# https://github.com/sagemath/sage/issues/17635#comment:67
 sdh_configure --with-default="$SAGE_LOCAL" --with-blas-libs="$LINBOX_BLAS" \
               "$LINBOX_BLAS_CFLAGS" --disable-static \
               --enable-precompilation $FFLAS_FFPACK_CONFIGURE

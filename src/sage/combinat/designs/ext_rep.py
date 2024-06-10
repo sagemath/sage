@@ -18,7 +18,6 @@ written by Peter Dobcsanyi [Do2009]_ peter@designtheory.org.
 
 Functions
 ---------
-
 """
 
 ###########################################################################
@@ -42,11 +41,11 @@ import bz2
 
 from urllib.request import urlopen
 
-from sage.misc.all import tmp_filename
+from sage.misc.temporary_file import tmp_filename
 
 
-XML_NAMESPACE   = 'http://designtheory.org/xml-namespace'
-DTRS_PROTOCOL   = '2.0'
+XML_NAMESPACE = 'http://designtheory.org/xml-namespace'
+DTRS_PROTOCOL = '2.0'
 
 # The following string is the file
 # http://designtheory.org/database/v-b-k/v2-b2-k2.icgsa.txt.bz2
@@ -565,6 +564,7 @@ def open_extrep_url(url):
     else:
         return f.read()
 
+
 pattern_integer = re.compile(r'\d+$')
 pattern_decimal = re.compile(r'-?\d+\.\d+$')
 pattern_rational = re.compile(r'-?\d+/\d+$')
@@ -600,7 +600,7 @@ def _encode_attribute(string):
     else:
         return string
 
-class XTree(object):
+class XTree:
     '''
     A lazy class to wrap a rooted tree representing an XML document.
     The tree's nodes are tuples of the structure:
@@ -659,7 +659,6 @@ class XTree(object):
              ('block', {}, [[6, 7, 11]]),
              ('block', {}, [[6, 8, 10]])]
         """
-
 
         if isinstance(node, str):
             node = (node, {}, [])
@@ -774,7 +773,7 @@ class XTree(object):
 
         return len(self.xt_children)
 
-class XTreeProcessor(object):
+class XTreeProcessor:
     '''
     An incremental event-driven parser for ext-rep documents.
     The processing stages:
@@ -922,7 +921,7 @@ class XTreeProcessor(object):
                     self.block_design_proc(self.current_node[2][0])
                 if self.save_designs:
                     init_bd = XTree(self.current_node[2][0])
-                    self.list_of_designs.append((init_bd.v, [b for b in init_bd.blocks]))
+                    self.list_of_designs.append((init_bd.v, list(init_bd.blocks)))
                 #print_subxt(self.current_node[2][0], level=2, outf=self.outf)
                 self._init()
             elif name == 'info':
@@ -961,8 +960,8 @@ class XTreeProcessor(object):
             #@ this stripping may distort char data in the <info> subtree
             # if they are not bracketed in some way.
             data = data.strip()
-            if data != '':
-                # we use the xtree's childrens list here to collect char data
+            if data:
+                # we use the xtree's children list here to collect char data
                 # since only leaves have char data.
                 self.current_node[2].append(data)
 

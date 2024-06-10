@@ -1,6 +1,7 @@
+# sage_setup: distribution = sagemath-objects
 # distutils: libraries = gmp
 
-from .types cimport *
+from sage.libs.gmp.types cimport *
 from libc.stdio cimport FILE
 
 from libc.stdint cimport intmax_t, uintmax_t

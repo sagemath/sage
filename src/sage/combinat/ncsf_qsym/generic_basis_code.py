@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Generic code for bases
 
@@ -34,11 +35,12 @@ from sage.combinat.composition import Compositions, Composition
 from sage.combinat.partition import Partition
 from sage.combinat.permutation import Permutations
 from sage.rings.integer import Integer
-from sage.categories.all import AlgebrasWithBasis
+from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.abstract_method import abstract_method
 from sage.categories.category_types import Category_over_base_ring
 from sage.categories.realizations import RealizationsCategory
+
 
 class BasesOfQSymOrNCSF(Category_realization_of_parent):
 
@@ -67,8 +69,8 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             sage: QSym = QuasiSymmetricFunctions(QQ)
             sage: BasesOfQSymOrNCSF(QSym).super_categories()
             [Category of realizations of Quasisymmetric functions over the Rational Field,
-             Category of graded hopf algebras with basis over Rational Field,
-             Join of Category of realizations of hopf algebras over Rational Field
+             Category of graded Hopf algebras with basis over Rational Field,
+             Join of Category of realizations of Hopf algebras over Rational Field
               and Category of graded algebras over Rational Field
               and Category of graded coalgebras over Rational Field]
         """
@@ -106,7 +108,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
                 sage: Psi[Composition([2,1])]
                 Psi[2, 1]
 
-            .. todo::
+            .. TODO::
 
                 This should call ``super.monomial`` if the input can't
                 be made into a composition so as not to interfere with
@@ -136,7 +138,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
 
             EXAMPLES::
 
-                sage: L=NonCommutativeSymmetricFunctions(QQ).L()
+                sage: L = NonCommutativeSymmetricFunctions(QQ).L()
                 sage: parent(L)
                 <class 'sage.combinat.ncsf_qsym.ncsf.NonCommutativeSymmetricFunctions.Elementary_with_category'>
                 sage: parent(L).one_basis()
@@ -161,10 +163,10 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
 
             EXAMPLES::
 
-                sage: L=NonCommutativeSymmetricFunctions(QQ).L()
+                sage: L = NonCommutativeSymmetricFunctions(QQ).L()
                 sage: L.sum_of_finer_compositions(Composition([2,1]))
                 L[1, 1, 1] + L[2, 1]
-                sage: R=NonCommutativeSymmetricFunctions(QQ).R()
+                sage: R = NonCommutativeSymmetricFunctions(QQ).R()
                 sage: R.sum_of_finer_compositions(Composition([1,3]))
                 R[1, 1, 1, 1] + R[1, 1, 2] + R[1, 2, 1] + R[1, 3]
             """
@@ -186,10 +188,10 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
 
             EXAMPLES::
 
-                sage: L=NonCommutativeSymmetricFunctions(QQ).L()
+                sage: L = NonCommutativeSymmetricFunctions(QQ).L()
                 sage: L.sum_of_fatter_compositions(Composition([2,1]))
                 L[2, 1] + L[3]
-                sage: R=NonCommutativeSymmetricFunctions(QQ).R()
+                sage: R = NonCommutativeSymmetricFunctions(QQ).R()
                 sage: R.sum_of_fatter_compositions(Composition([1,3]))
                 R[1, 3] + R[4]
             """
@@ -216,7 +218,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
 
             EXAMPLES::
 
-                sage: L=NonCommutativeSymmetricFunctions(QQ).L()
+                sage: L = NonCommutativeSymmetricFunctions(QQ).L()
                 sage: L.alternating_sum_of_compositions(0)
                 L[]
                 sage: L.alternating_sum_of_compositions(1)
@@ -225,7 +227,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
                 L[1, 1] - L[2]
                 sage: L.alternating_sum_of_compositions(3)
                 L[1, 1, 1] - L[1, 2] - L[2, 1] + L[3]
-                sage: S=NonCommutativeSymmetricFunctions(QQ).S()
+                sage: S = NonCommutativeSymmetricFunctions(QQ).S()
                 sage: S.alternating_sum_of_compositions(3)
                 S[1, 1, 1] - S[1, 2] - S[2, 1] + S[3]
             """
@@ -233,7 +235,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             return (-ring.one())**(n)*self.sum_of_terms(
                 (compo, ring((-1)**(len(compo)))) for compo in Compositions(n) )
 
-        def alternating_sum_of_finer_compositions(self, composition, conjugate = False):
+        def alternating_sum_of_finer_compositions(self, composition, conjugate=False):
             """
             Return the alternating sum of finer compositions in a basis of the
             non-commutative symmetric functions.
@@ -471,8 +473,9 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
                 x = self(x)
                 y = self.dual()(y)
                 v = 1 if side == 'left' else 0
-                return self.sum(coeff * y[IJ[1-v]] * self[IJ[v]] \
-                                for (IJ, coeff) in x.coproduct() if IJ[1-v] in y)
+                return self.sum(coeff * y[IJ[1-v]] * self[IJ[v]]
+                                for (IJ, coeff) in x.coproduct()
+                                if IJ[1-v] in y.support())
             else:
                 return self._skew_by_coercion(x, y, side=side)
 
@@ -709,9 +712,9 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             # TODO: generalize to keys indexing the basis of the graded component
             from sage.combinat.composition import Compositions
             return matrix(self.base_ring(),
-                    [[self.duality_pairing(self[I], basis[J]) \
-                            for J in Compositions(degree)] \
-                            for I in Compositions(degree)])
+                          [[self.duality_pairing(self[I], basis[J])
+                            for J in Compositions(degree)]
+                           for I in Compositions(degree)])
 
         def counit_on_basis(self, I):
             r"""
@@ -737,7 +740,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
                 sage: M.counit_on_basis(Composition([]))
                 1
             """
-            if I != []:
+            if I:
                 return self.base_ring().zero()
             else:
                 return self.base_ring().one()
@@ -794,7 +797,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
 
                 Generalize this to all graded vector spaces?
             """
-            return self.sum_of_terms([ (lam, (-1)**(sum(lam)%2) * a)
+            return self.sum_of_terms([ (lam, (-1)**(sum(lam) % 2) * a)
                                        for lam, a in self(element) ],
                                      distinct=True)
 
@@ -838,7 +841,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
 
                 Generalize this to all graded vector spaces?
             """
-            return self.parent().sum_of_terms([ (lam, (-1)**(sum(lam)%2) * a)
+            return self.parent().sum_of_terms([ (lam, (-1)**(sum(lam) % 2) * a)
                                                 for lam, a in self ],
                                               distinct=True)
 
@@ -993,7 +996,8 @@ class AlgebraMorphism(ModuleMorphismByLinearity): # Find a better name
     """
     A class for algebra morphism defined on a free algebra from the image of the generators
     """
-    def __init__(self, domain, on_generators, position = 0, codomain = None, category = None, anti = False):
+
+    def __init__(self, domain, on_generators, position=0, codomain=None, category=None, anti=False):
         """
         Given a map on the multiplicative basis of a free algebra, this method
         returns the algebra morphism that is the linear extension of its image
@@ -1047,7 +1051,7 @@ class AlgebraMorphism(ModuleMorphismByLinearity): # Find a better name
             sage: f(2*Psi[[]] + 3 * Psi[1,3,2] + Psi[2,4] )
             2*Psi[] - 3*Psi[1, 3, 2] + Psi[2, 4]
             sage: f.category()
-            Category of endsets of hopf algebras over Rational Field and graded modules over Rational Field
+            Category of endsets of Hopf algebras over Rational Field and graded modules over Rational Field
 
         If ``anti`` is true, this returns an anti-algebra morphism::
 
@@ -1076,12 +1080,15 @@ class AlgebraMorphism(ModuleMorphismByLinearity): # Find a better name
         assert codomain is not None
         if category is None:
             if anti:
-                category = ModulesWithBasis (domain.base_ring())
+                category = ModulesWithBasis(domain.base_ring())
             else:
                 category = AlgebrasWithBasis(domain.base_ring())
         self._anti = anti
         self._on_generators = on_generators
-        ModuleMorphismByLinearity.__init__(self, domain = domain, codomain = codomain, position = position, category = category)
+        ModuleMorphismByLinearity.__init__(self, domain=domain,
+                                           codomain=codomain,
+                                           position=position,
+                                           category=category)
 
     def __eq__(self, other):
         """
@@ -1150,6 +1157,7 @@ class AlgebraMorphism(ModuleMorphismByLinearity): # Find a better name
         if self._anti:
             c = reversed(c)
         return self.codomain().prod(self._on_generators(i) for i in c)
+
 
 class GradedModulesWithInternalProduct(Category_over_base_ring):
     r"""
@@ -1381,7 +1389,7 @@ class GradedModulesWithInternalProduct(Category_over_base_ring):
                 True
                 sage: testall(3)  # long time
                 True
-                sage: testall(4)  # long time
+                sage: testall(4)  # not tested, too long
                 True
 
             The internal product on the algebra of non-commutative symmetric
@@ -1424,7 +1432,7 @@ class GradedModulesWithInternalProduct(Category_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: S=NonCommutativeSymmetricFunctions(QQ).S()
+                    sage: S = NonCommutativeSymmetricFunctions(QQ).S()
                     sage: S.internal_product_by_coercion(S[2,1], S[3])
                     S[2, 1]
                     sage: S.internal_product_by_coercion(S[2,1], S[4])
@@ -1432,4 +1440,3 @@ class GradedModulesWithInternalProduct(Category_over_base_ring):
                 """
                 R = self.realization_of().a_realization()
                 return self(R.internal_product(R(left), R(right)))
-

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Monomial symmetric functions
 """
@@ -17,15 +18,14 @@ Monomial symmetric functions
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from . import classical
 import sage.libs.symmetrica.all as symmetrica
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
-from sage.combinat.partition import Partition, _Partitions
-from sage.functions.other import factorial, binomial
-from sage.arith.misc import multinomial
+from sage.combinat.partition import _Partitions
+from sage.arith.misc import multinomial, factorial, binomial
+
 
 class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_classical):
     def __init__(self, Sym):
@@ -75,7 +75,7 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
         """
         return self.realization_of().h()
 
-    def _multiply(self, left, right):
+    def product(self, left, right):
         """
         Return the product of ``left`` and ``right``.
 
@@ -132,7 +132,7 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
                         z_elt[m] += left_c * right_c * d[m]
                     else:
                         z_elt[m] = left_c * right_c * d[m]
-        return z_elt
+        return self._from_dict(z_elt)
 
     def from_polynomial(self, f, check=True):
         """
@@ -176,7 +176,7 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
         """
         assert self.base_ring() == f.base_ring()
         if check and not f.is_symmetric():
-            raise ValueError("%s is not a symmetric polynomial"%f)
+            raise ValueError("%s is not a symmetric polynomial" % f)
         out = self._from_dict({_Partitions.element_class(_Partitions, list(e)): c
                                for (e,c) in f.dict().items()
                                if all(e[i+1] <= e[i] for i in range(len(e)-1))},
@@ -190,7 +190,7 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
         INPUT:
 
         - ``self`` -- a monomial symmetric function basis
-        - ``p`` -- a multivariate polynomial over the same base ring as ``self``
+        - ``p`` -- a polynomial over the same base ring as ``self``
 
         OUTPUT:
 
@@ -229,8 +229,8 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
             :func:`Partition`, :meth:`Partition.to_exp`
         """
         assert self.base_ring() == p.parent().base_ring()
-        return self.sum_of_terms((Partition(exp=monomial), coeff)
-                                 for monomial, coeff in p.dict().items())
+        from sage.combinat.sf.sfa import _from_polynomial
+        return _from_polynomial(p, self)
 
     def antipode_by_coercion(self, element):
         r"""
@@ -366,7 +366,7 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
                 q^7 + q^6 + q^5 + q^3 + q^2 + q
 
                 sage: x = 5*m[2] + 3*m[1] + 1
-                sage: x.principal_specialization(3, q=var("q"))
+                sage: x.principal_specialization(3, q=var("q"))                         # needs sage.symbolic
                 -10*(q^3 - 1)*q/(q - 1) + 5*(q^3 - 1)^2/(q - 1)^2 + 3*(q^3 - 1)/(q - 1) + 1
 
             TESTS::
@@ -452,7 +452,7 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
 
             We also support the `q`-exponential_specialization::
 
-                sage: factor(m[3].exponential_specialization(q=var("q"), t=var("t")))
+                sage: factor(m[3].exponential_specialization(q=var("q"), t=var("t")))   # needs sage.symbolic
                 (q - 1)^2*t^3/(q^2 + q + 1)
 
             TESTS::
@@ -473,13 +473,14 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
             if q == 1:
                 if t is None:
                     t = get_variable(self.base_ring(), 't')
+
                 def f(partition):
                     n = 0
                     for part in partition:
                         if part != 1:
                             return 0
                         n += 1
-                    return t**n/factorial(n)
+                    return t**n / factorial(n)
 
                 return self.parent()._apply_module_morphism(self, f, t.parent())
 
@@ -487,6 +488,7 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
             # elementary basis - using the powersum basis would
             # introduce singularities, because it is not a Z-basis
             return self.parent().realization_of().elementary()(self).exponential_specialization(t=t, q=q)
+
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override

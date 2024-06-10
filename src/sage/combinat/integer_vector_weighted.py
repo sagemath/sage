@@ -14,19 +14,20 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.sets_with_grading import SetsWithGrading
+from sage.misc.lazy_import import lazy_import
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.rings.integer import Integer
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.combinat.integer_vector import IntegerVector
-from sage.combinat.words.word import Word
 from sage.combinat.permutation import Permutation
+
+lazy_import('sage.combinat.words.word', 'Word')
 
 
 class WeightedIntegerVectors(Parent, UniqueRepresentation):
@@ -100,7 +101,7 @@ class WeightedIntegerVectors(Parent, UniqueRepresentation):
         if n is None:
             return WeightedIntegerVectors_all(weight)
 
-        return super(WeightedIntegerVectors, cls).__classcall__(cls, n, weight)
+        return super().__classcall__(cls, n, weight)
 
     def __init__(self, n, weight):
         """
@@ -238,12 +239,12 @@ class WeightedIntegerVectors(Parent, UniqueRepresentation):
             return
 
         perm = Word(self._weights).standard_permutation()
-        perm = [len(self._weights)-i for i in perm]
-        l = [x for x in sorted(self._weights, reverse=True)]
+        perm = [len(self._weights) - i for i in perm]
+        l = sorted(self._weights, reverse=True)
         for x in iterator_fast(self._n, l):
             yield self.element_class(self, [x[i] for i in perm])
-            #.action(x)
-            #_left_to_right_multiply_on_right(Permutation(x))
+            # .action(x)
+            # _left_to_right_multiply_on_right(Permutation(x))
 
 
 class WeightedIntegerVectors_all(DisjointUnionEnumeratedSets):
@@ -272,6 +273,7 @@ class WeightedIntegerVectors_all(DisjointUnionEnumeratedSets):
         [0, 11, 1, 0, 0]
         [0, 12, 0, 0, 0]
     """
+
     def __init__(self, weight):
         """
         TESTS::
@@ -282,7 +284,8 @@ class WeightedIntegerVectors_all(DisjointUnionEnumeratedSets):
             sage: TestSuite(C).run()
         """
         self._weights = weight
-        from sage.sets.all import Family, NonNegativeIntegers
+        from sage.sets.family import Family
+        from sage.sets.non_negative_integers import NonNegativeIntegers
         # Use "partial" to make the basis function (with the weights
         # argument specified) pickleable.  Otherwise, it seems to
         # cause problems...
@@ -318,7 +321,7 @@ class WeightedIntegerVectors_all(DisjointUnionEnumeratedSets):
                 and len(x) == len(self._weights)
                 and all(i in ZZ and i >= 0 for i in x))
 
-    def subset(self, size = None):
+    def subset(self, size=None):
         """
         EXAMPLES::
 
@@ -358,10 +361,10 @@ def iterator_fast(n, l):
         sage: list(iterator_fast(2, [2]))
         [[1]]
 
-    Test that :trac:`20491` is fixed::
+    Test that :issue:`20491` is fixed::
 
         sage: type(list(iterator_fast(2, [2]))[0][0])
-        <... 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
     """
     if n < 0:
         return

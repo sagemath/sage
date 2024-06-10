@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Bijection between rigged configurations and KR tableaux
 
@@ -56,6 +57,7 @@ from sage.combinat.rigged_configurations.bij_type_D_tri import RCToKRTBijectionT
 from sage.combinat.rigged_configurations.bij_type_E67 import KRTToRCBijectionTypeE67
 from sage.combinat.rigged_configurations.bij_type_E67 import RCToKRTBijectionTypeE67
 
+
 def KRTToRCBijection(tp_krt):
     r"""
     Return the correct KR tableaux to rigged configuration bijection helper class.
@@ -97,6 +99,7 @@ def KRTToRCBijection(tp_krt):
             return KRTToRCBijectionTypeDTri(tp_krt)
     raise NotImplementedError
 
+
 def RCToKRTBijection(rigged_configuration_elt):
     r"""
     Return the correct rigged configuration to KR tableaux bijection helper class.
@@ -137,4 +140,3 @@ def RCToKRTBijection(rigged_configuration_elt):
         if typ == 'G': # D_4^{(3)}
             return RCToKRTBijectionTypeDTri(rigged_configuration_elt)
     raise NotImplementedError
-

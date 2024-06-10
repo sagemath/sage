@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 An example of set factory
 =========================
@@ -23,8 +24,6 @@ where `(a, b)\in S`
     S^b := \{(x,y) \in S \mid y = b\},
 
     S_a^b := \{(x,y) \in S \mid x = a, y = b\}.
-
-
 """
 #*****************************************************************************
 #  Copyright (C) 2012 Florent Hivert <florent.hivert at lri.fr>
@@ -37,7 +36,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.set_factories import (
     SetFactory, ParentWithSetFactory, TopMostParentPolicy)
-from sage.sets.all import DisjointUnionEnumeratedSets
+from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import LazyFamily
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.rings.integer import Integer
@@ -168,6 +167,7 @@ class XYPairsFactory(SetFactory):
             Factory for XY pairs
         """
         return "Factory for XY pairs"
+
 
 XYPairs = XYPairsFactory()
 XYPairs.__doc__ = XYPairsFactory.__call__.__doc__

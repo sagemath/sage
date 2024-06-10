@@ -1,6 +1,5 @@
-
-MCQD 1.0
-========
+mcqd: An exact algorithm for finding a maximum clique in an undirected graph
+============================================================================
 
 Description
 -----------
@@ -20,7 +19,3 @@ Upstream Contact
 MCQD is currently being maintained by Janez Konc.
 https://gitlab.com/janezkonc/mcqd
 
-Dependencies
-------------
-
-None

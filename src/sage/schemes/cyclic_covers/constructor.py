@@ -1,7 +1,6 @@
 """
 Cyclic cover curve constructor
 """
-from __future__ import absolute_import
 
 # *****************************************************************************
 #  Copyright (C) 2018 Edgar Costa <edgarcosta@math.dartmouth.edu>
@@ -9,9 +8,10 @@ from __future__ import absolute_import
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.rings.polynomial.polynomial_element import is_Polynomial
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.schemes.affine.affine_space import AffineSpace
+
 from .cycliccover_generic import CyclicCover_generic
 from .cycliccover_finite_field import CyclicCover_finite_field
 
@@ -23,14 +23,14 @@ def CyclicCover(r, f, names=None, check_smooth=True):
 
     INPUT:
 
-    - ``r`` - the order of the cover
+    - ``r`` -- the order of the cover
 
-    - ``f`` - univariate polynomial if not given, then it defaults to 0.
+    - ``f`` -- univariate polynomial if not given, then it defaults to 0.
 
-    - ``names``  (default: ``["x","y"]``) - names for the
-       coordinate functions
+    - ``names``  (default: ``["x","y"]``) -- names for the
+      coordinate functions
 
-    - ``check_squarefree`` (default: ``True``) - test if
+    - ``check_squarefree`` (default: ``True``) -- test if
       the input defines a unramified cover of the projective line.
 
     .. WARNING::
@@ -64,44 +64,49 @@ def CyclicCover(r, f, names=None, check_smooth=True):
         sage: CyclicCover(15, x^9 + x + 1)
         Cyclic Cover of P^1 over Rational Field defined by y^15 = x^9 + x + 1
 
-        sage: k.<a> = GF(9); R.<x> = k[]
-        sage: CyclicCover(5, x^9 + x + 1)
-        Cyclic Cover of P^1 over Finite Field in a of size 3^2 defined by y^5 = x^9 + x + 1
-        sage: CyclicCover(15, x^9 + x + 1)
+        sage: k.<a> = GF(9); R.<x> = k[]                                                # needs sage.rings.finite_rings
+        sage: CyclicCover(5, x^9 + x + 1)                                               # needs sage.rings.finite_rings
+        Cyclic Cover of P^1 over Finite Field in a of size 3^2
+         defined by y^5 = x^9 + x + 1
+        sage: CyclicCover(15, x^9 + x + 1)                                              # needs sage.rings.finite_rings
         Traceback (most recent call last):
         ...
-        ValueError: As the characteristic divides the order of the cover, this model is not smooth.
+        ValueError: As the characteristic divides the order of the cover,
+        this model is not smooth.
 
     We can change the names of the variables in the output::
 
-        sage: k.<a> = GF(9); R.<x> = k[]
-        sage: CyclicCover(5, x^9 + x + 1, names = ["A","B"])
-        Cyclic Cover of P^1 over Finite Field in a of size 3^2 defined by B^5 = A^9 + A + 1
+        sage: k.<a> = GF(9); R.<x> = k[]                                                # needs sage.rings.finite_rings
+        sage: CyclicCover(5, x^9 + x + 1, names=["A","B"])                              # needs sage.rings.finite_rings
+        Cyclic Cover of P^1 over Finite Field in a of size 3^2
+         defined by B^5 = A^9 + A + 1
 
     Double roots::
 
         sage: P.<x> = GF(7)[]
-        sage: CyclicCover(2,(x^3-x+2)^2*(x^6-1))
+        sage: CyclicCover(2, (x^3-x+2)^2*(x^6-1))
         Traceback (most recent call last):
         ...
         ValueError: Not a smooth Cyclic Cover of P^1: singularity in the provided affine patch.
 
-        sage: CyclicCover(2, (x^3-x+2)^2*(x^6-1), check_smooth=False)
-        Cyclic Cover of P^1 over Finite Field of size 7 defined by y^2 = x^12 - 2*x^10 - 3*x^9 + x^8 + 3*x^7 + 3*x^6 + 2*x^4 + 3*x^3 - x^2 - 3*x + 3
+        sage: CyclicCover(2, (x^3-x+2)^2*(x^6-1), check_smooth=False)                   # needs sage.rings.finite_rings
+        Cyclic Cover of P^1 over Finite Field of size 7
+         defined by y^2 = x^12 - 2*x^10 - 3*x^9 + x^8 + 3*x^7 + 3*x^6
+                          + 2*x^4 + 3*x^3 - x^2 - 3*x + 3
 
 
     Input with integer coefficients creates objects with the integers
     as base ring, but only checks smoothness over `\QQ`, not over Spec(`\ZZ`).
     In other words, it is checked that the discriminant is non-zero, but it is
-    not checked whether the discriminant is a unit in `\ZZ^*`.::
+    not checked whether the discriminant is a unit in `\ZZ^*`::
 
         sage: R.<x> = ZZ[]
-        sage: CyclicCover(5,(x^3-x+2)*(x^6-1))
+        sage: CyclicCover(5, (x^3-x+2)*(x^6-1))
         Cyclic Cover of P^1 over Integer Ring defined by y^5 = x^9 - x^7 + 2*x^6 - x^3 + x - 2
 
 
     """
-    if not is_Polynomial(f):
+    if not isinstance(f, Polynomial):
         raise TypeError("Arguments f (= %s) must be a polynomial" % (f,))
     P = f.parent()
     f = P(f)
@@ -128,7 +133,7 @@ def CyclicCover(r, f, names=None, check_smooth=True):
         names = ["x", "y"]
     A2 = AffineSpace(2, R, names=names)
 
-    if is_FiniteField(R):
+    if isinstance(R, FiniteField):
         return CyclicCover_finite_field(A2, r, f, names=names)
     else:
         return CyclicCover_generic(A2, r, f, names=names)

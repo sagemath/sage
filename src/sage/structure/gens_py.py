@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Pure python code for abstract base class for objects with generators
 """
@@ -19,7 +20,7 @@ Pure python code for abstract base class for objects with generators
 
 
 def multiplicative_iterator(M):
-    from sage.rings.all import infinity
+    from sage.rings.infinity import infinity
     G = M.gens()
     if len(G) == 0:
         yield M(1)
@@ -28,7 +29,7 @@ def multiplicative_iterator(M):
     stop = [g.multiplicative_order() for g in G]
     for i in range(len(stop)):
         if stop[i] is infinity:
-            raise ArithmeticError("%s is not finite."%M)
+            raise ArithmeticError("%s is not finite." % M)
         stop[i] = stop[i] - 1
     z = M(1)
     yield z
@@ -46,7 +47,7 @@ def multiplicative_iterator(M):
 
 
 def abelian_iterator(M):
-    from sage.rings.all import infinity
+    from sage.rings.infinity import infinity
     G = M.gens()
     if len(G) == 0:
         yield M(0)
@@ -55,7 +56,7 @@ def abelian_iterator(M):
     stop = [g.additive_order() for g in G]
     for i in range(len(stop)):
         if stop[i] is infinity:
-            raise ArithmeticError("%s is not finite."%M)
+            raise ArithmeticError("%s is not finite." % M)
         stop[i] = stop[i] - 1
     z = M(0)
     yield z

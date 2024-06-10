@@ -13,7 +13,6 @@ This module currently implements the canonical ring homomorphism from
 AUTHORS:
 
 - Peter Bruin (March 2014): initial version
-
 """
 
 from sage.rings.morphism cimport RingHomomorphism_from_base
@@ -55,7 +54,7 @@ cdef class PolynomialRingHomomorphism_from_base(RingHomomorphism_from_base):
             sage: g = QQ.hom(RR)
             sage: G = PolynomialRingHomomorphism_from_base(A.Hom(B), g)
             sage: G(A.gen()^1000000)
-            1.00000000000000*x^1000000
+            1.0...*x^1000000
 
         """
         P = self.codomain()
@@ -76,9 +75,10 @@ cdef class PolynomialRingHomomorphism_from_base(RingHomomorphism_from_base):
             sage: S = GF(5)['x']
             sage: f = ZZ.hom(GF(5))
             sage: F = PolynomialRingHomomorphism_from_base(R.Hom(S), f)
-            sage: F(2*x, check=True)
+            sage: F(2 * x, check=True)
             2*x
 
+            sage: # needs sage.rings.finite_rings
             sage: k = GF(49, 'z')
             sage: A = PolynomialRing(GF(7), 'x', sparse=True)
             sage: B = PolynomialRing(k, 'x', sparse=True)

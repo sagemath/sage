@@ -6,6 +6,7 @@ measure is expected to take a symbolic expression as an argument, and
 return a number.
 """
 
+
 def string_length(expr):
     """
     Returns the length of ``expr`` after converting it to a string.
@@ -22,11 +23,11 @@ def string_length(expr):
 
     If the expression is longer on-screen, then a human would probably
     consider it more complex.
-    
+
     EXAMPLES:
 
     This expression has three characters, ``x``, ``^``, and ``2``::
-    
+
         sage: from sage.symbolic.complexity_measures import string_length
         sage: f = x^2
         sage: string_length(f)

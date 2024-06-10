@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 """
 Solving quadratic equations
 
@@ -10,12 +11,12 @@ AUTHORS:
 - Nick Alexander (Sage interface)
 
 - Jeroen Demeyer (2014-09-23): use PARI instead of GP scripts,
-  return vectors instead of tuples (:trac:`16997`).
+  return vectors instead of tuples (:issue:`16997`).
 
 - Tyler Gaona (2015-11-14): added the `solve` method
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Nick Alexander
 #       Copyright (C) 2014 Jeroen Demeyer
 #
@@ -23,10 +24,12 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from sage.rings.all import ZZ, QQ, Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.integer import Integer
 from sage.modules.free_module_element import vector
 from sage.matrix.constructor import Matrix
 
@@ -44,7 +47,7 @@ def qfsolve(G):
 
     ALGORITHM:
 
-    Uses PARI/GP function ``qfsolve``.
+    Uses PARI/GP function :pari:`qfsolve`.
 
     EXAMPLES::
 
@@ -70,32 +73,33 @@ def qfsolve(G):
 
         sage: M = Matrix(QQ, [[3, 0, 0, 0], [0, 5, 0, 0], [0, 0, -7, 0], [0, 0, 0, -11]])
         sage: qfsolve(M)
-        (3, -4, -3, -2)
+        (3, 4, -3, -2)
     """
     ret = G.__pari__().qfsolve()
     if ret.type() == 't_COL':
         return vector(QQ, ret)
     return ZZ(ret)
 
+
 def qfparam(G, sol):
     r"""
-    Parametrizes the conic defined by the matrix ``G``.
+    Parametrize the conic defined by the matrix `G`.
 
     INPUT:
 
-     - ``G`` -- a `3 \times 3`-matrix over `\QQ`.
+    - ``G`` -- a `3 \times 3`-matrix over `\QQ`
 
-     - ``sol`` -- a triple of rational numbers providing a solution
-       to sol*G*sol^t = 0.
+    - ``sol`` -- a triple of rational numbers providing a solution
+      to `x\cdot G\cdot x^t = 0`
 
     OUTPUT:
 
     A triple of polynomials that parametrizes all solutions of
-    x*G*x^t = 0 up to scaling.
+    `x\cdot G\cdot x^t = 0` up to scaling.
 
     ALGORITHM:
 
-    Uses PARI/GP function ``qfparam``.
+    Uses PARI/GP function :pari:`qfparam`.
 
     EXAMPLES::
 
@@ -108,7 +112,8 @@ def qfparam(G, sol):
         sage: ret = qfparam(M, sol); ret
         (-12*t^2 - 1, 24*t, 24)
         sage: ret.parent()
-        Ambient free module of rank 3 over the principal ideal domain Univariate Polynomial Ring in t over Rational Field
+        Ambient free module of rank 3 over the principal ideal domain
+         Univariate Polynomial Ring in t over Rational Field
     """
     R = QQ['t']
     mat = G.__pari__().qfparam(sol)
@@ -122,15 +127,13 @@ def solve(self, c=0):
 
     INPUT:
 
-    - ``c`` -- (default: 0) a rational number.
+    - ``c`` -- (default: 0) a rational number
 
-    OUTPUT:
-
-    - A non-zero vector `x` satisfying ``self(x) == c``.
+    OUTPUT: A non-zero vector `x` satisfying ``self(x) == c``.
 
     ALGORITHM:
 
-    Uses PARI's qfsolve(). Algorithm described by Jeroen Demeyer; see comments on :trac:`19112`
+    Uses PARI's :pari:`qfsolve`. Algorithm described by Jeroen Demeyer; see comments on :issue:`19112`
 
     EXAMPLES::
 
@@ -210,7 +213,7 @@ def solve(self, c=0):
     if not c:
         x = qfsolve(M)
         if isinstance(x, Integer):
-            raise ArithmeticError("no solution found (local obstruction at {})".format(x))
+            raise ArithmeticError(f"no solution found (local obstruction at {x})")
         return x
 
     # If c != 0, define a new quadratic form Q = self - c*z^2
@@ -218,14 +221,14 @@ def solve(self, c=0):
     N = Matrix(self.base_ring(), d+1, d+1)
     for i in range(d):
         for j in range(d):
-            N[i,j] = M[i,j]
-    N[d,d] = -c
+            N[i, j] = M[i, j]
+    N[d, d] = -c
 
     # Find a solution x to Q(x) = 0, using qfsolve()
     x = qfsolve(N)
     # Raise an error if qfsolve() doesn't find a solution
     if isinstance(x, Integer):
-        raise ArithmeticError("no solution found (local obstruction at {})".format(x))
+        raise ArithmeticError(f"no solution found (local obstruction at {x})")
 
     # Let z be the last term of x, and remove z from x
     z = x[-1]

@@ -1,0 +1,28 @@
+From b6d02652abaf7340473ffac8941f07039ff78780 Mon Sep 17 00:00:00 2001
+From: Michael Orlitzky <michael@orlitzky.com>
+Date: Wed, 18 Aug 2021 14:15:07 -0400
+Subject: [PATCH 2/2] source/main/BEGINQEPCAD.c: move default.qepcadrc to etc.
+
+Instead of $qe/default.qepcadrc, this file is more appropriate at
+$qe/etc/default.qepcadrc, especially in SageMath where $qe is defined
+to be $SAGE_LOCAL.
+---
+ source/main/BEGINQEPCAD.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/source/main/BEGINQEPCAD.c b/source/main/BEGINQEPCAD.c
+index 9999400..7a6ecf7 100644
+--- a/source/main/BEGINQEPCAD.c
++++ b/source/main/BEGINQEPCAD.c
+@@ -128,7 +128,7 @@ void QEPCAD_ProcessRC(int argc, char **argv)
+ {
+   char *qepath = getenv("qe");
+   if (qepath == NULL) { FAIL("QEPCAD_ProcessRC","Environment variable qe not defined!"); }
+-  string rcFileName = qepath + string("/default.qepcadrc");
++  string rcFileName = qepath + string("/etc/default.qepcadrc");
+   ifstream rcin(rcFileName.c_str());
+   if (!rcin) { return; }
+   string name, tmp;
+-- 
+2.31.1
+

@@ -1,20 +1,22 @@
+# sage_setup: distribution = sagemath-categories
+# sage.doctest: needs sage.combinat sage.graphs
 r"""
 Example of a crystal
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2010 Anne Schilling <anne at math.ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 from sage.structure.parent import Parent
 from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.classical_crystals import ClassicalCrystals
-from sage.graphs.all import DiGraph
+from sage.graphs.digraph import DiGraph
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.combinat.root_system.cartan_type import CartanType
+
 
 class HighestWeightCrystalOfTypeA(UniqueRepresentation, Parent):
     r"""
@@ -96,7 +98,7 @@ class HighestWeightCrystalOfTypeA(UniqueRepresentation, Parent):
         running ._test_stembridge_local_axioms() . . . pass
     """
 
-    def __init__(self, n = 3):
+    def __init__(self, n=3):
         """
         EXAMPLES::
 
@@ -104,10 +106,10 @@ class HighestWeightCrystalOfTypeA(UniqueRepresentation, Parent):
             sage: C == Crystals().example(n=4)
             True
         """
-        Parent.__init__(self, category = ClassicalCrystals())
+        Parent.__init__(self, category=ClassicalCrystals())
         self.n = n
-        self._cartan_type = CartanType(['A',n])
-        self.module_generators = [ self(1) ]
+        self._cartan_type = CartanType(['A', n])
+        self.module_generators = [self(1)]
 
     def _repr_(self):
         """
@@ -116,9 +118,9 @@ class HighestWeightCrystalOfTypeA(UniqueRepresentation, Parent):
             sage: Crystals().example()
             Highest weight crystal of type A_3 of highest weight omega_1
         """
-        return "Highest weight crystal of type A_%s of highest weight omega_1"%(self.n)
+        return "Highest weight crystal of type A_%s of highest weight omega_1" % (self.n)
 
-    # temporary workaround while an_element is overriden by Parent
+    # temporary workaround while an_element is overridden by Parent
     _an_element_ = EnumeratedSets.ParentMethods._an_element_
 
     class Element(ElementWrapper):
@@ -183,12 +185,12 @@ class NaiveCrystal(UniqueRepresentation, Parent):
             sage: C == Crystals().example(choice='naive')
             True
         """
-        Parent.__init__(self, category = ClassicalCrystals())
+        Parent.__init__(self, category=ClassicalCrystals())
         self.n = 2
-        self._cartan_type = CartanType(['A',2])
+        self._cartan_type = CartanType(['A', 2])
         self.G = DiGraph(5)
         self.G.add_edges([ [0,1,1], [1,2,1], [2,3,1], [3,5,1],  [0,4,2], [4,5,2] ])
-        self.module_generators = [ self(0) ]
+        self.module_generators = [self(0)]
 
     def __repr__(self):
         """
@@ -211,9 +213,9 @@ class NaiveCrystal(UniqueRepresentation, Parent):
                 [[1, 1, 0], [2, 1, 1], [3, 1, 2], [5, 1, 3], [4, 2, 0], [5, 2, 4]]
             """
             assert i in self.index_set()
-            for edge in self.parent().G.edges():
-               if edge[1]==int(str(self)) and edge[2]==i:
-                   return self.parent()(edge[0])
+            for edge in self.parent().G.edges(sort=False):
+                if edge[1] == int(str(self)) and edge[2] == i:
+                    return self.parent()(edge[0])
             return None
 
         def f(self, i):
@@ -231,5 +233,3 @@ class NaiveCrystal(UniqueRepresentation, Parent):
                 if edge[2] == i:
                     return self.parent()(edge[1])
             return None
-
-

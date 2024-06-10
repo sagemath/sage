@@ -1,5 +1,5 @@
-SuiteSparse
-===========
+suitesparse: A suite of sparse matrix software
+==============================================
 
 SuiteSparse is a collection of software to deal with sparse matrix. It is
 hosted at http://faculty.cse.tamu.edu/davis/suitesparse.html

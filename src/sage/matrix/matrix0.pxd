@@ -31,12 +31,12 @@ cdef class Matrix(sage.structure.element.Matrix):
 
     # Implementation of hash function
     cdef long _hash_(self) except -1
-    cdef void get_hash_constants(self, long C[5])
+    cdef void get_hash_constants(self, long C[5]) noexcept
 
     # Cache
     cdef public object _cache
     cdef long hash  # cached hash value
-    cdef void clear_cache(self)
+    cdef void clear_cache(self) noexcept
     cdef fetch(self, key)
     cdef cache(self, key, x)
 
@@ -49,7 +49,7 @@ cdef class Matrix(sage.structure.element.Matrix):
     cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, object x)
     cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j)
     cdef _coerce_element(self, x)
-    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j)
+    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1
 
     # Row and column operations
     cdef check_row_bounds(self, Py_ssize_t r1, Py_ssize_t r2)

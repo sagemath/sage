@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Subobjects Functorial Construction
 
@@ -14,6 +15,7 @@ AUTHORS:
 
 from sage.categories.category import Category
 from sage.categories.covariant_functorial_construction import RegressiveCovariantConstructionCategory
+
 
 class SubobjectsCategory(RegressiveCovariantConstructionCategory):
 
@@ -59,4 +61,4 @@ class SubobjectsCategory(RegressiveCovariantConstructionCategory):
             sage: sage.categories.subobjects.SubobjectsCategory.default_super_categories(Groups())
             Join of Category of groups and Category of subquotients of monoids and Category of subobjects of sets
         """
-        return Category.join([category.Subquotients(), super(SubobjectsCategory, cls).default_super_categories(category)])
+        return Category.join([category.Subquotients(), super().default_super_categories(category)])

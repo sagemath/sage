@@ -1,6 +1,5 @@
-
-bliss 0.73+debian-1
-===================
+bliss: Computing automorphism groups and canonical forms of graphs
+==================================================================
 
 Description
 -----------
@@ -11,22 +10,16 @@ canonical forms of graphs.
 License
 -------
 
-LGPL
+LGPL3
 
 
 Upstream Contact
 ----------------
 
-Bliss is currently being maintained by Tommi Junttila and Petteri Kaski.
+Bliss is currently being maintained by Tommi Junttila at
+
+https://users.aalto.fi/~tjunttil/bliss/index.html
+
+Bliss used to be maintained by Tommi Junttila and Petteri Kaski up to version 0.73 at
 
 http://www.tcs.tkk.fi/Software/bliss/index.html
-
-We apply patches generated from https://github.com/mkoeppe/bliss (branch
-apply_debian_patches) as our upstream. This tracks the patches from the
-Debian package, adding an autotools build system and adjusting the
-include file locations.
-
-Dependencies
-------------
-
-None

@@ -118,7 +118,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import, print_function
 
 from sage.categories.sets_cat import Sets
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
@@ -137,6 +136,7 @@ from .tableau_tuple import (StandardTableaux_residue,
 # -------------------------------------------------
 # Residue sequences
 # -------------------------------------------------
+
 
 # needed for __classcall_private__
 class ResidueSequence(ClonableArray,
@@ -265,11 +265,11 @@ class ResidueSequence(ClonableArray,
             sage: TestSuite( ResidueSequence(3, [0,0,1,2])).run(skip='_test_pickling')
         """
         residues = tuple(parent._base_ring(i) for i in residues)
-        super(ResidueSequence, self).__init__(parent, residues, check)
+        super().__init__(parent, residues, check)
 
     def check(self):
         r"""
-        Raise a ``ValueError`` if ``self`` is not a residue sequence.
+        Raise a :class:`ValueError` if ``self`` is not a residue sequence.
 
         EXAMPLES::
 
@@ -340,7 +340,7 @@ class ResidueSequence(ClonableArray,
         except (IndexError, KeyError):
             raise IndexError('k must be in the range 1, 2, ..., {}'.format(len(self)))
 
-    def residues(self):
+    def residues(self) -> list:
         r"""
         Return a list of the residue sequence.
 
@@ -350,7 +350,7 @@ class ResidueSequence(ClonableArray,
             sage: ResidueSequence(3,(0,0,1),[0,0,1,1,2,2,3,3]).residues()
             [0, 0, 1, 1, 2, 2, 0, 0]
         """
-        return [r for r in self]
+        return list(self)
 
     def restrict(self, m):
         r"""
@@ -440,7 +440,7 @@ class ResidueSequence(ClonableArray,
         - ``i`` and ``j`` -- two integers between `1` and the length of
           the residue sequence
 
-        If residue sequence ``self`` is of Te form `(r_1, \ldots, r_n)`, and
+        If residue sequence ``self`` is of the form `(r_1, \ldots, r_n)`, and
         `i < j`, then the residue sequence
         `(r_1, \ldots, r_j, \ldots, r_i, \ldots, r_m)`, with the same
         :meth:`quantum_characteristic` and :meth:`multicharge`, is returned.
@@ -727,7 +727,7 @@ class ResidueSequences(UniqueRepresentation, Parent):
         self._quantum_characteristic = e
         self._base_ring = IntegerModRing(self._quantum_characteristic)
         self._multicharge = tuple(self._base_ring(i) for i in multicharge)
-        super(ResidueSequences, self).__init__(category=Sets())
+        super().__init__(category=Sets())
 
     def _repr_(self):
         r"""

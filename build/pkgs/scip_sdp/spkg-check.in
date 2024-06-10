@@ -1,0 +1,6 @@
+cd src
+cd build
+$MAKE test
+if [ $? != 0 ]; then
+   ctest --rerun-failed --output-on-failure
+fi

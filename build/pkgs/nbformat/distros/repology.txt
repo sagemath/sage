@@ -1,0 +1,4 @@
+nbformat
+python:nbformat
+jupyter-nbformat
+python:jupyter-nbformat

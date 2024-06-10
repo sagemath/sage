@@ -1,6 +1,9 @@
-# distutils: libraries = ntl gmp m
+# distutils: libraries = NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
-
 """
 ntl_lzz_pX.pyx
 
@@ -30,7 +33,6 @@ from cpython.object cimport Py_EQ, Py_NE
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
 from sage.rings.integer cimport Integer
-from sage.rings.integer_ring cimport IntegerRing_class
 
 from sage.rings.finite_rings.integer_mod cimport IntegerMod_gmp, IntegerMod_int, IntegerMod_int64
 
@@ -48,9 +50,9 @@ ZZ_sage = IntegerRing()
 #
 ##############################################################################
 
-cdef class ntl_zz_pX(object):
+cdef class ntl_zz_pX():
     r"""
-    The class \class{zz_pX} implements polynomial arithmetic modulo $p$,
+    The class \class{zz_pX} implements polynomial arithmetic modulo `p`,
     for p smaller than a machine word.
 
     Polynomial arithmetic is implemented using the FFT, combined with
@@ -105,17 +107,17 @@ cdef class ntl_zz_pX(object):
             a = ls[i]
 
             if isinstance(a, IntegerMod_int):
-                if (self.c.p == (<IntegerMod_int>a).__modulus.int32): ## this is slow
+                if (self.c.p == (<IntegerMod_int>a)._modulus.int32): ## this is slow
                     zz_pX_SetCoeff_long(self.x, i, (<IntegerMod_int>a).ivalue)
                 else:
                     raise ValueError("Mismatched modulus for converting to zz_pX.")
             elif isinstance(a, IntegerMod_int64):
-                if (self.c.p == (<IntegerMod_int64>a).__modulus.int64): ## this is slow
+                if (self.c.p == (<IntegerMod_int64>a)._modulus.int64): ## this is slow
                     zz_pX_SetCoeff_long(self.x, i, (<IntegerMod_int64>a).ivalue)
                 else:
                     raise ValueError("Mismatched modulus for converting to zz_pX.")
             elif isinstance(a, IntegerMod_gmp):
-                if (p_sage == (<IntegerMod_gmp>a).__modulus.sageInteger): ## this is slow
+                if (p_sage == (<IntegerMod_gmp>a)._modulus.sageInteger): ## this is slow
                     zz_pX_SetCoeff_long(self.x, i, mpz_get_si((<IntegerMod_gmp>a).value))
                 else:
                     raise ValueError("Mismatched modulus for converting to zz_pX.")
@@ -151,7 +153,7 @@ cdef class ntl_zz_pX(object):
             self.c = <ntl_zz_pContext_class>modulus
         elif isinstance(modulus, Integer):
             self.c = <ntl_zz_pContext_class>ntl_zz_pContext(modulus)
-        elif isinstance(modulus, long):
+        elif isinstance(modulus, int):
             self.c = <ntl_zz_pContext_class>ntl_zz_pContext(modulus)
         else:
             try:
@@ -405,7 +407,7 @@ cdef class ntl_zz_pX(object):
         """
         Returns the quotient and remainder when self is divided by right.
 
-        Specifically, this return r, q such that $self = q * right + r$
+        Specifically, this return r, q such that `self = q * right + r`
 
         EXAMPLES::
 
@@ -430,7 +432,7 @@ cdef class ntl_zz_pX(object):
 
     def __floordiv__(ntl_zz_pX self, ntl_zz_pX right):
         """
-        Returns the whole part of $self / right$.
+        Returns the whole part of `self / right`.
 
         EXAMPLES::
 
@@ -448,7 +450,7 @@ cdef class ntl_zz_pX(object):
 
     def __lshift__(ntl_zz_pX self, long n):
         """
-        Shifts this polynomial to the left, which is multiplication by $x^n$.
+        Shifts this polynomial to the left, which is multiplication by `x^n`.
 
         EXAMPLES::
 
@@ -463,7 +465,7 @@ cdef class ntl_zz_pX(object):
 
     def __rshift__(ntl_zz_pX self, long n):
         """
-        Shifts this polynomial to the right, which is division by $x^n$ (and truncation).
+        Shifts this polynomial to the right, which is division by `x^n` (and truncation).
 
         EXAMPLES::
 
@@ -493,7 +495,7 @@ cdef class ntl_zz_pX(object):
 
     def reverse(self):
         """
-        Returns self with coefficients reversed, i.e. $x^n self(x^{-n})$.
+        Returns self with coefficients reversed, i.e. `x^n self(x^{-n})`.
 
         EXAMPLES::
 
@@ -718,7 +720,7 @@ cdef class ntl_zz_pX(object):
 
     def invert_and_truncate(self, long m):
         """
-        Compute and return the inverse of self modulo $x^m$.
+        Compute and return the inverse of self modulo `x^m`.
         The constant term of self must be 1 or -1.
 
         EXAMPLES::
@@ -746,7 +748,6 @@ cdef class ntl_zz_pX(object):
             zz_pX_InvTrunc(y.x, self.x, m)
             sig_off()
         return y
-
 
     def is_zero(self):
         """
@@ -802,8 +803,8 @@ cdef class ntl_zz_pX(object):
         """
         self.c.restore_c()
         if zz_pX_IsZero(self.x):
-             return False
-        return ( zz_p_rep(zz_pX_LeadCoeff(self.x)) == 1 )
+            return False
+        return zz_p_rep(zz_pX_LeadCoeff(self.x)) == 1
 
     def set_x(self):
         """

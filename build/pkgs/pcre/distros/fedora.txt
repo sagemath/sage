@@ -1,1 +1,0 @@
-pcre pcre-devel

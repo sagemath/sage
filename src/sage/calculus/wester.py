@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.symbolic
 r"""
 Further examples from Wester's paper
 
@@ -168,6 +169,7 @@ explicit calls to Maxima or other systems.
 ::
 
     sage: # (YES) Factorize  x^4-3*x^2+1 in the field of rational numbers extended by roots of  x^2-x-1.
+    sage: x = polygen(ZZ, 'x')
     sage: k.< a> = NumberField(x^2 - x -1)
     sage: R.< y> = k[]
     sage: f = y^4 - 3*y^2 + 1
@@ -226,16 +228,16 @@ explicit calls to Maxima or other systems.
     sage: # Maxima doesn't solve inequalities
     sage: # (but some Maxima packages do):
     sage: eqn = abs(x-1) > 2
-    sage: eqn
-                                    abs(x - 1) > 2
+    sage: eqn.solve(x)
+    [[x < -1], [3 < x]]
 
 ::
 
     sage: # (NO) Solve the inequality (x-1)*...*(x-5)<0.
     sage: eqn = prod(x-i for i in range(1,5 +1)) < 0
     sage: # but don't know how to solve
-    sage: eqn
-    (x - 1)*(x - 2)*(x - 3)*(x - 4)*(x - 5) < 0
+    sage: eqn.solve(x)
+    [[x < 1], [x > 2, x < 3], [x > 4, x < 5]]
 
 ::
 
@@ -294,7 +296,9 @@ explicit calls to Maxima or other systems.
     True
     sage: abs(float(a)) < 1e-10
     True
-    sage: ## or we can do it using number fields.
+
+Or we can do it using number fields. ::
+
     sage: reset('x')
     sage: k.<b> = NumberField(x^3-2)
     sage: a = (b  + b^2)^3 - 6*(b  + b^2) - 6
@@ -326,8 +330,7 @@ explicit calls to Maxima or other systems.
     sage: # (NO) Ln((2*Sqrt(r) + 1)/Sqrt(4*r 4*Sqrt(r) 1))=0.
     sage: var('r')
     r
-    sage: f = log( (2*sqrt(r) + 1) / sqrt(4*r  + 4*sqrt(r) +  1))
-    sage: f
+    sage: f = log( (2*sqrt(r) + 1) / sqrt(4*r  + 4*sqrt(r) +  1)); f
     log((2*sqrt(r) + 1)/sqrt(4*r + 4*sqrt(r) + 1))
     sage: bool(f == 0)
     False
@@ -389,7 +392,7 @@ explicit calls to Maxima or other systems.
     sage: # domain.
     sage: # To stick with the behaviour of previous versions, the domain is set
     sage: # to 'real' in the following.
-    sage: # See Trac #10682 for further details.
+    sage: # See Issue #10682 for further details.
     sage: n = var('n')
     sage: f = x^(1/n)*y^(1/n)-(x*y)^(1/n)
     sage: assume(real(x) > 0, real(y) > 0)

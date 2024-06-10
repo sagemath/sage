@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Parallel computations using RecursivelyEnumeratedSet and Map-Reduce
 
@@ -50,8 +49,8 @@ properties to do its job. Not only mapping and reducing but also
 How can I use all that stuff?
 -----------------------------
 
-First, you need to set the environment variable `SAGE_NUM_THREADS` to the
-desired number of parallel threads to be used:
+First, you need to set the environment variable ``SAGE_NUM_THREADS`` to the
+desired number of parallel threads to be used::
 
       sage: import os                                 # not tested
       sage: os.environ["SAGE_NUM_THREADS"] = '8'      # not tested
@@ -184,8 +183,8 @@ Second, you need the information necessary to describe a
 
   Compare::
 
-      sage: from sage.combinat.q_analogues import q_factorial
-      sage: q_factorial(5)
+      sage: from sage.combinat.q_analogues import q_factorial                           # needs sage.combinat
+      sage: q_factorial(5)                                                              # needs sage.combinat
       q^10 + 4*q^9 + 9*q^8 + 15*q^7 + 20*q^6 + 22*q^5 + 20*q^4 + 15*q^3 + 9*q^2 + 4*q + 1
 
 * **Listing the objects.** One can also compute the list of objects in a
@@ -293,8 +292,9 @@ It is possible to profile a map/reduce computation. First we create a
 The profiling is activated by the ``profile`` parameter. The value provided
 should be a prefix (including a possible directory) for the profile dump::
 
-    sage: prof = tmp_dir('RESetMR_profile') + 'profcomp'
-    sage: res = S.run(profile=prof)  # random
+    sage: import tempfile
+    sage: d = tempfile.TemporaryDirectory(prefix="RESetMR_profile")
+    sage: res = S.run(profile=d.name)  # random
     [RESetMapReduceWorker-1:58] (20:00:41.444) Profiling in
     /home/user/.sage/temp/.../32414/RESetMR_profilewRCRAx/profcomp1
     ...
@@ -309,7 +309,7 @@ In this example, the profiles have been dumped in files such as
 :class:`cProfile.Profile` for more details::
 
     sage: import cProfile, pstats
-    sage: st = pstats.Stats(prof+'0')
+    sage: st = pstats.Stats(d.name+'0')
     sage: st.strip_dirs().sort_stats('cumulative').print_stats()  # random
     ...
        Ordered by: cumulative time
@@ -319,6 +319,11 @@ In this example, the profiles have been dumped in files such as
         11968    0.151    0.000    0.223    0.000 map_reduce.py:1292(walk_branch_locally)
     ...
     <pstats.Stats instance at 0x7fedea40c6c8>
+
+Like a good neighbor we clean up our temporary directory as soon as
+possible::
+
+    sage: d.cleanup()
 
 .. SEEALSO::
 
@@ -410,7 +415,7 @@ Each **worker** is a process (:class:`RESetMapReduceWorker` inherits from
 - ``worker._request`` -- a :class:`~multiprocessing.queues.SimpleQueue` storing
   steal request submitted to ``worker``.
 - ``worker._read_task``, ``worker._write_task`` -- a
-  :class:`~multiprocessing.queues.Pipe` used to transfert node during steal.
+  :class:`~multiprocessing.queues.Pipe` used to transfer node during steal.
 - ``worker._thief`` -- a :class:`~threading.Thread` which is in charge of
   stealing from ``worker._todo``.
 
@@ -541,22 +546,21 @@ Classes and methods
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
+import copy
+import ctypes
+import logging
+import multiprocessing as mp
+import queue
+import random
+import sys
 from collections import deque
 from threading import Thread
-from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet # _generic
+
 from sage.misc.lazy_attribute import lazy_attribute
-import copy
-import sys
-import random
-import queue
-import ctypes
+from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet  # _generic
 
-
-import logging
 logger = logging.getLogger(__name__)
-logger.__doc__ = (
-"""
+logger.__doc__ = ("""
 A logger for :mod:`sage.parallel.map_reduce`
 
 .. SEEALSO::
@@ -578,7 +582,6 @@ logger.addHandler(ch)
 
 # Set up a multiprocessing context to use for this modules (using the
 # 'fork' method which is basically same as on Python 2)
-import multiprocessing as mp
 mp = mp.get_context('fork')
 
 
@@ -626,7 +629,7 @@ class AbortError(Exception):
     pass
 
 
-class ActiveTaskCounterDarwin(object):
+class ActiveTaskCounterDarwin():
     r"""
     Handling the number of active tasks.
 
@@ -739,7 +742,7 @@ class ActiveTaskCounterDarwin(object):
             self._active_tasks.value = 0
 
 
-class ActiveTaskCounterPosix(object):
+class ActiveTaskCounterPosix():
     r"""
     Handling the number of active tasks.
 
@@ -882,8 +885,7 @@ ActiveTaskCounter = (ActiveTaskCounterDarwin if sys.platform == 'darwin'
 # ActiveTaskCounter = ActiveTaskCounterDarwin  # to debug Darwin implementation
 
 
-
-class RESetMapReduce(object):
+class RESetMapReduce():
     r"""
     Map-Reduce on recursively enumerated sets.
 
@@ -944,12 +946,18 @@ class RESetMapReduce(object):
             if hasattr(forest, 'post_process'):
                 self.post_process = forest.post_process
         else:
-            if roots is not None: self._roots = roots
-            if children is not None: self.children = children
-            if post_process is not None: self.post_process = post_process
-        if map_function is not None: self.map_function = map_function
-        if reduce_function is not None: self.reduce_function = reduce_function
-        if reduce_init is not None: self._reduce_init = reduce_init
+            if roots is not None:
+                self._roots = roots
+            if children is not None:
+                self.children = children
+            if post_process is not None:
+                self.post_process = post_process
+        if map_function is not None:
+            self.map_function = map_function
+        if reduce_function is not None:
+            self.reduce_function = reduce_function
+        if reduce_init is not None:
+            self._reduce_init = reduce_init
         self._profile = None
 
     @lazy_attribute
@@ -972,7 +980,6 @@ class RESetMapReduce(object):
             post_process=self.post_process,
             structure='forest',
             enumeration='depth')
-
 
     def roots(self):
         r"""
@@ -1016,7 +1023,7 @@ class RESetMapReduce(object):
             sage: S = RESetMapReduce(map_function = lambda x: 3*x + 5)
             sage: S.map_function(7)
             26
-         """
+        """
         return 1
 
     def reduce_function(self, a, b):
@@ -1043,7 +1050,7 @@ class RESetMapReduce(object):
             sage: S.reduce_function(4, 3)
             12
         """
-        return a+b
+        return a + b
 
     def post_process(self, a):
         r"""
@@ -1069,7 +1076,6 @@ class RESetMapReduce(object):
             16
         """
         return a
-
 
     _reduce_init = 0
 
@@ -1118,7 +1124,9 @@ class RESetMapReduce(object):
         self._results = mp.Queue()
         self._active_tasks = ActiveTaskCounter(self._nprocess)
         self._done = mp.Lock()
-        self._aborted = mp.Value(ctypes.c_bool, False)
+        # We use lock=False here, as a compromise, to avoid deadlocking when a
+        # subprocess holding a lock is terminated. (:issue:`33236`)
+        self._aborted = mp.Value(ctypes.c_bool, False, lock=False)
         sys.stdout.flush()
         sys.stderr.flush()
         self._workers = [RESetMapReduceWorker(self, i, reduce_locally)
@@ -1134,17 +1142,22 @@ class RESetMapReduce(object):
 
             sage: from sage.parallel.map_reduce import RESetMapReduce
             sage: def children(x):
+            ....:     print(f"Starting: {x}", flush=True)
             ....:     sleep(float(0.5))
+            ....:     print(f"Finished: {x}", flush=True)
             ....:     return []
-            sage: S = RESetMapReduce(roots=[1], children=children)
+            sage: S = RESetMapReduce(roots=[1, 2], children=children)
             sage: S.setup_workers(2)
-            sage: S.start_workers()
-            sage: all(w.is_alive() for w in S._workers)
-            True
-
-            sage: sleep(1)
-            sage: all(not w.is_alive() for w in S._workers)
-            True
+            sage: S.start_workers(); sleep(float(0.4))
+            Starting: ...
+            Starting: ...
+            sage: [w.is_alive() for w in S._workers]
+            [True, True]
+            sage: sleep(float(1.5))
+            Finished: ...
+            Finished: ...
+            sage: [not w.is_alive() for w in S._workers]
+            [True, True]
 
         Cleanup::
 
@@ -1159,7 +1172,8 @@ class RESetMapReduce(object):
         logger.debug("Starting processes")
         sys.stdout.flush()
         sys.stderr.flush()
-        for w in self._workers: w.start()
+        for w in self._workers:
+            w.start()
 
     def get_results(self, timeout=None):
         r"""
@@ -1187,9 +1201,9 @@ class RESetMapReduce(object):
         active_proc = self._nprocess
         while active_proc > 0:
             try:
-                logger.debug('Waiting on results; active_proc: %s, '
-                             'timeout: %s, aborted: %s' %
-                             (active_proc, timeout, self._aborted.value))
+                logger.debug('Waiting on results; active_proc: {}, '
+                             'timeout: {}, aborted: {}'.format(
+                                 active_proc, timeout, self._aborted.value))
                 newres = self._results.get(timeout=timeout)
             except queue.Empty:
                 logger.debug('Timed out waiting for results; aborting')
@@ -1206,7 +1220,6 @@ class RESetMapReduce(object):
                 active_proc -= 1
 
         return res
-
 
     def finish(self):
         r"""
@@ -1226,7 +1239,7 @@ class RESetMapReduce(object):
             sage: S.print_communication_statistics()
             Traceback (most recent call last):
             ...
-            AttributeError: 'RESetMPExample' object has no attribute '_stats'
+            AttributeError: 'RESetMPExample' object has no attribute '_stats'...
 
             sage: S.finish()
 
@@ -1241,13 +1254,13 @@ class RESetMapReduce(object):
         if not self._aborted.value:
             logger.debug("Joining worker processes...")
             for worker in self._workers:
-                logger.debug("Joining %s" % worker.name)
+                logger.debug(f"Joining {worker.name}")
                 worker.join()
             logger.debug("Joining done")
         else:
             logger.debug("Killing worker processes...")
             for worker in self._workers:
-                logger.debug("Terminating %s" % worker.name)
+                logger.debug(f"Terminating {worker.name}")
                 worker.terminate()
             logger.debug("Killing done")
 
@@ -1403,7 +1416,7 @@ class RESetMapReduce(object):
 
             sage: del EX._results, EX._active_tasks, EX._done, EX._workers
         """
-        victim = random.randint(0, len(self._workers)-1)
+        victim = random.randint(0, len(self._workers) - 1)
         return self._workers[victim]
 
     def run(self,
@@ -1464,7 +1477,7 @@ class RESetMapReduce(object):
             Computation normally finished
             40320*x^8 + 5040*x^7 + 720*x^6 + 120*x^5 + 24*x^4 + 6*x^3 + 2*x^2 + x + 1
         """
-        self._profile=profile
+        self._profile = profile
         self.setup_workers(max_proc, reduce_locally)
         self.start_workers()
         if timeout is not None:
@@ -1492,9 +1505,7 @@ class RESetMapReduce(object):
             sage: S.run()  # indirect doctest
             720*x^6 + 120*x^5 + 24*x^4 + 6*x^3 + 2*x^2 + x + 1
         """
-        res = []
-        for i in range(self._nprocess):
-            res.append(tuple(self._workers[i]._stats))
+        res = [tuple(self._workers[i]._stats) for i in range(self._nprocess)]
         self._stats = res
 
     def print_communication_statistics(self, blocksize=16):
@@ -1518,11 +1529,12 @@ class RESetMapReduce(object):
         res = [""]  # classic trick to have a local variable shared with the
         # local function (see e.g:
         # https://stackoverflow.com/questions/2609518/python-nested-function-scopes).
-        def pstat(name, start, end, ist):
+
+        def pstat(name, start, end, istat):
             res[0] += ("\n" + name + " ".join(
-                "%4i" % (self._stats[i][ist]) for i in range(start, end)))
+                "%4i" % (self._stats[i][istat]) for i in range(start, end)))
         for start in range(0, self._nprocess, blocksize):
-            end = min(start+blocksize, self._nprocess)
+            end = min(start + blocksize, self._nprocess)
             res[0] = ("#proc:     " +
                       " ".join("%4i" % (i) for i in range(start, end)))
             pstat("reqs sent: ", start, end, 0)
@@ -1589,7 +1601,7 @@ class RESetMapReduceWorker(mp.Process):
         # on the following Pipe. So there is no need to have a queue.
         self._read_task, self._write_task = mp.Pipe(duplex=False)
         self._mapred = mapred
-        self._stats  =  mp.RawArray('i', 4)
+        self._stats = mp.RawArray('i', 4)
         self._reduce_locally = reduce_locally
 
     def _thief(self):
@@ -1602,19 +1614,19 @@ class RESetMapReduceWorker(mp.Process):
 
         try:
             for ireq in iter(self._request.get, AbortError):
-                reqs +=1
+                reqs += 1
                 target = self._mapred._workers[ireq]
-                logger.debug("Got a Steal request from %s" % target.name)
+                logger.debug(f"Got a Steal request from {target.name}")
                 self._mapred._signal_task_start()
                 try:
                     work = self._todo.popleft()
                 except IndexError:
                     target._write_task.send(None)
-                    logger.debug("Failed Steal %s" % target.name)
+                    logger.debug(f"Failed Steal {target.name}")
                     self._mapred._signal_task_done()
                 else:
                     target._write_task.send(work)
-                    logger.debug("Succesful Steal %s" % target.name)
+                    logger.debug(f"Successful Steal {target.name}")
                     thefts += 1
         except AbortError:
             logger.debug("Thief aborted")
@@ -1644,14 +1656,14 @@ class RESetMapReduceWorker(mp.Process):
             sage: EX = RESetMPExample(maxl=6)
             sage: EX.setup_workers(2)
 
+            sage: # known bug (Issue #27537)
             sage: w0, w1 = EX._workers
             sage: w0._todo.append(42)
             sage: thief0 = Thread(target = w0._thief, name="Thief")
-            sage: thief0.start()  # known bug (Trac #27537)
-
-            sage: w1.steal()  # known bug (Trac #27537)
+            sage: thief0.start()
+            sage: w1.steal()
             42
-            sage: w0._todo  # known bug (Trac #27537)
+            sage: w0._todo
             deque([])
         """
         self._mapred._signal_task_done()
@@ -1659,10 +1671,10 @@ class RESetMapReduceWorker(mp.Process):
         while node is None:
             victim = self._mapred.random_worker()
             if victim is not self:
-                logger.debug("Trying to steal from %s" % victim.name)
+                logger.debug(f"Trying to steal from {victim.name}")
                 victim._request.put(self._iproc)
                 self._stats[0] += 1
-                logger.debug("waiting for steal answer from %s" % victim.name)
+                logger.debug(f"waiting for steal answer from {victim.name}")
                 node = self._read_task.recv()
                 # logger.debug("Request answer: %s" % (node,))
                 if node is AbortError:
@@ -1687,7 +1699,7 @@ class RESetMapReduceWorker(mp.Process):
             sage: w._todo.append(EX.roots()[0])
 
             sage: w.run()
-            sage: sleep(1)
+            sage: sleep(int(1))
             sage: w._todo.append(None)
 
             sage: EX.get_results()
@@ -1704,7 +1716,7 @@ class RESetMapReduceWorker(mp.Process):
             PROFILER.runcall(self.run_myself)
 
             output = profile + str(self._iproc)
-            logger.warn("Profiling in %s ..." % output)
+            logger.warning(f"Profiling in {output} ...")
             PROFILER.dump_stats(output)
         else:
             self.run_myself()
@@ -1723,7 +1735,7 @@ class RESetMapReduceWorker(mp.Process):
             sage: w._todo.append(EX.roots()[0])
             sage: w.run_myself()
 
-            sage: sleep(1)
+            sage: sleep(int(1))
             sage: w._todo.append(None)
 
             sage: EX.get_results()
@@ -1741,7 +1753,7 @@ class RESetMapReduceWorker(mp.Process):
         self._stats[0] = 0
         self._stats[3] = 0
         logger.debug("Launching thief")
-        self._thief = Thread(target = self._thief, name="Thief")
+        self._thief = Thread(target=self._thief, name="Thief")
         self._thief.start()
         self._res = reduce_init()
 
@@ -1771,7 +1783,7 @@ class RESetMapReduceWorker(mp.Process):
         r"""
         Send results to the MapReduce process.
 
-        Send the result stored in ``self._res`` to the master an reinitialize it to
+        Send the result stored in ``self._res`` to the master and reinitialize it to
         ``master.reduce_init``.
 
         EXAMPLES::
@@ -1871,7 +1883,7 @@ class RESetMPExample(RESetMapReduce):
     .. SEEALSO:: This is an example of :class:`RESetMapReduce`
 
     """
-    def __init__(self, maxl = 9):
+    def __init__(self, maxl=9):
         r"""
         TESTS::
 
@@ -1880,8 +1892,8 @@ class RESetMPExample(RESetMapReduce):
             <sage.parallel.map_reduce.RESetMPExample object at 0x...>
         """
         RESetMapReduce.__init__(self)
-        from sage.rings.polynomial.polynomial_ring import polygen
         from sage.rings.integer_ring import ZZ
+        from sage.rings.polynomial.polynomial_ring import polygen
         self.x = polygen(ZZ, 'x')
         self.maxl = maxl
 
@@ -1915,8 +1927,8 @@ class RESetMPExample(RESetMapReduce):
             sage: RESetMPExample().children([1,0])
             [[2, 1, 0], [1, 2, 0], [1, 0, 2]]
         """
-        return [ l[:i] + [len(l)] + l[i:]
-                 for i in range(len(l)+1) ] if len(l) < self.maxl else []
+        return [l[:i] + [len(l)] + l[i:]
+                for i in range(len(l) + 1)] if len(l) < self.maxl else []
 
     def map_function(self, l):
         r"""
@@ -2001,8 +2013,7 @@ class RESetParallelIterator(RESetMapReduce):
             newres = self._results.get()
             if newres is not None:
                 logger.debug("Got some results")
-                for r in newres:
-                    yield r
+                yield from newres
             else:
                 active_proc -= 1
                 if active_proc == 0:

@@ -14,10 +14,8 @@ EXAMPLES::
     sage: List(_, Order)
     [ 2, 4, 2 ]
 """
-
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.assigned_names import FUNCTIONS as _FUNCTIONS
-
 
 
 for _f in _FUNCTIONS:

@@ -18,7 +18,6 @@ AUTHORS:
 REFERENCES:
 
 - Chap. 15 of R. Godement : *Algebra* [God1968]_
-
 """
 #******************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
@@ -120,7 +119,7 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
         sage: a.tensor_type()
         (1, 1)
         sage: a.display(e)
-        e_0*e^0 - e_1*e^1 + e_2*e^2
+        e_0⊗e^0 - e_1⊗e^1 + e_2⊗e^2
         sage: type(a)
         <class 'sage.tensor.modules.free_module_linear_group.FreeModuleLinearGroup_with_category.element_class'>
 
@@ -407,7 +406,6 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
             resu.set_comp(basis)[:] = comp
         return resu
 
-
     def _an_element_(self):
         r"""
         Construct some specific free module automorphism.
@@ -434,7 +432,7 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
         self._fmodule.an_element()
         comp = resu.set_comp()
         for i in self._fmodule.irange():
-            if i%2 == 0:
+            if i % 2 == 0:
                 comp[[i,i]] = self._fmodule._ring.one()
             else:
                 comp[[i,i]] = -(self._fmodule._ring.one())
@@ -548,8 +546,7 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
 
         """
         from sage.misc.latex import latex
-        return r"\mathrm{GL}\left("+ latex(self._fmodule)+ r"\right)"
-
+        return r"\mathrm{GL}\left(" + latex(self._fmodule) + r"\right)"
 
     def base_module(self):
         r"""

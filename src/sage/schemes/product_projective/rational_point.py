@@ -17,7 +17,7 @@ Product Projective, over `\QQ`::
     sage: PP.<x,y,z> = ProductProjectiveSpaces([1,0], QQ)
     sage: from sage.schemes.product_projective.rational_point import \
             enum_product_projective_rational_field
-    sage: enum_product_projective_rational_field(PP,3)
+    sage: enum_product_projective_rational_field(PP, 3)
     [(-3 : 1 , 1), (-2 : 1 , 1), (-3/2 : 1 , 1),
      (-1 : 1 , 1), (-2/3 : 1 , 1), (-1/2 : 1 , 1),
      (-1/3 : 1 , 1), (0 : 1 , 1), (1/3 : 1 , 1),
@@ -27,8 +27,8 @@ Product Projective, over `\QQ`::
 
 Product projective over finite field::
 
-    sage: P1.<x,y,a,b> = ProductProjectiveSpaces([1,1], GF(7))
-    sage: X = P1.subscheme([2*x+3*y])
+    sage: P1.<x,y,a,b> = ProductProjectiveSpaces([1, 1], GF(7))
+    sage: X = P1.subscheme([2*x + 3*y])
     sage: from sage.schemes.product_projective.rational_point import \
             enum_product_projective_finite_field
     sage: enum_product_projective_finite_field(X)
@@ -41,7 +41,6 @@ AUTHORS:
 - Volker Braun and Ben Hutz (2014): initial version
 
 - Raghukul Raman (2018): code cleanup and added support for rational fields
-
 """
 
 # ****************************************************************************
@@ -55,16 +54,19 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.schemes.generic.scheme import is_Scheme
-from sage.schemes.product_projective.space import is_ProductProjectiveSpaces
+from sage.schemes.generic.scheme import Scheme
+from sage.schemes.product_projective.space import ProductProjectiveSpaces_ring
+from sage.misc.lazy_import import lazy_import
 from sage.misc.mrange import xmrange
-from sage.misc.all import prod
-from sage.arith.all import next_prime, previous_prime, crt
-from sage.rings.all import ZZ, RR
+from sage.misc.misc_c import prod
+from sage.arith.misc import next_prime, previous_prime, crt
+from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.parallel.ncpus import ncpus
 from sage.parallel.use_fork import p_iter_fork
-from sage.matrix.constructor import matrix
+
+lazy_import('sage.matrix.constructor', 'matrix')
+lazy_import('sage.rings.real_mpfr', 'RR')
 
 
 def enum_product_projective_rational_field(X, B):
@@ -88,7 +90,7 @@ def enum_product_projective_rational_field(X, B):
         sage: PP.<x0,x1,x2,x3,x4> = ProductProjectiveSpaces([1, 2], QQ)
         sage: from sage.schemes.product_projective.rational_point import \
                 enum_product_projective_rational_field
-        sage: enum_product_projective_rational_field(PP,1)
+        sage: enum_product_projective_rational_field(PP, 1)
         [(-1 : 1 , -1 : -1 : 1), (-1 : 1 , -1 : 0 : 1), (-1 : 1 , -1 : 1 : 0),
          (-1 : 1 , -1 : 1 : 1), (-1 : 1 , 0 : -1 : 1), (-1 : 1 , 0 : 0 : 1),
          (-1 : 1 , 0 : 1 : 0), (-1 : 1 , 0 : 1 : 1), (-1 : 1 , 1 : -1 : 1),
@@ -110,30 +112,30 @@ def enum_product_projective_rational_field(X, B):
 
     ::
 
-        sage: PP.<x,y,z,u,v> = ProductProjectiveSpaces([2,1], QQ)
-        sage: X = PP.subscheme([x^2 + x*y + y*z, u*u-v*u])
+        sage: PP.<x,y,z,u,v> = ProductProjectiveSpaces([2, 1], QQ)
+        sage: X = PP.subscheme([x^2 + x*y + y*z, u*u - v*u])
         sage: from sage.schemes.product_projective.rational_point import \
                 enum_product_projective_rational_field
-        sage: enum_product_projective_rational_field(X,4)
+        sage: enum_product_projective_rational_field(X, 4)
         [(-2 : 4 : 1 , 0 : 1), (-2 : 4 : 1 , 1 : 1), (-1 : 1 : 0 , 0 : 1),
          (-1 : 1 : 0 , 1 : 1), (-2/3 : -4/3 : 1 , 0 : 1), (-2/3 : -4/3 : 1 , 1 : 1),
          (-1/2 : -1/2 : 1 , 0 : 1), (-1/2 : -1/2 : 1 , 1 : 1),
          (0 : 0 : 1 , 0 : 1), (0 : 0 : 1 , 1 : 1), (0 : 1 : 0 , 0 : 1),
          (0 : 1 : 0 , 1 : 1), (1 : -1/2 : 1 , 0 : 1), (1 : -1/2 : 1 , 1 : 1)]
     """
-    if(is_Scheme(X)):
-        if (not is_ProductProjectiveSpaces(X.ambient_space())):
+    if isinstance(X, Scheme):
+        if not isinstance(X.ambient_space(), ProductProjectiveSpaces_ring):
             raise TypeError("ambient space must be product of projective space over the rational field")
         X = X(X.base_ring())
     else:
-        if (not is_ProductProjectiveSpaces(X.codomain().ambient_space())):
+        if not isinstance(X.codomain().ambient_space(), ProductProjectiveSpaces_ring):
             raise TypeError("codomain must be product of projective space over the rational field")
 
     R = X.codomain().ambient_space()
     m = R.num_components()
     iters = [ R[i].points_of_bounded_height(bound=B) for i in range(m) ]
     dim = [R[i].dimension_relative() + 1 for i in range(m)]
-    
+
     dim_prefix = [0, dim[0]] # prefixes dim list
     for i in range(1, len(dim)):
         dim_prefix.append(dim_prefix[i] + dim[i])
@@ -188,16 +190,16 @@ def enum_product_projective_number_field(X, **kwds):
 
     This is an implementation of the revised algorithm (Algorithm 4) in
     [DK2013]_. Algorithm 5 is used for imaginary quadratic fields.
-    
+
     INPUT:
 
     kwds:
 
-    - ``bound`` - a real number
+    - ``bound`` -- a real number
 
-    - ``tolerance`` - a rational number in (0,1] used in doyle-krumm algorithm-4
+    - ``tolerance`` -- a rational number in (0,1] used in doyle-krumm algorithm-4
 
-    - ``precision`` - the precision to use for computing the elements of bounded height of number fields.
+    - ``precision`` -- the precision to use for computing the elements of bounded height of number fields.
 
     OUTPUT:
 
@@ -206,6 +208,7 @@ def enum_product_projective_number_field(X, **kwds):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.number_field
         sage: u = QQ['u'].0
         sage: K = NumberField(u^2 + 2, 'v')
         sage: PP.<x,y,z,w> = ProductProjectiveSpaces([1, 1], K)
@@ -224,12 +227,12 @@ def enum_product_projective_number_field(X, **kwds):
     tol = kwds.pop('tolerance', 1e-2)
     prec = kwds.pop('precision', 53)
 
-    if(is_Scheme(X)):
-        if (not is_ProductProjectiveSpaces(X.ambient_space())):
+    if isinstance(X, Scheme):
+        if not isinstance(X.ambient_space(), ProductProjectiveSpaces_ring):
             raise TypeError("ambient space must be product of projective space over the rational field")
         X = X(X.base_ring())
     else:
-        if (not is_ProductProjectiveSpaces(X.codomain().ambient_space())):
+        if not isinstance(X.codomain().ambient_space(), ProductProjectiveSpaces_ring):
             raise TypeError("codomain must be product of projective space over the rational field")
 
     R = X.codomain().ambient_space()
@@ -250,7 +253,7 @@ def enum_product_projective_finite_field(X):
 
     INPUT:
 
-    - ``X`` -  a scheme defined over a finite field or a set of abstract
+    - ``X`` --  a scheme defined over a finite field or a set of abstract
       rational points of such a scheme.
 
     OUTPUT:
@@ -280,12 +283,12 @@ def enum_product_projective_finite_field(X):
         sage: len(enum_product_projective_finite_field(X))
         36
     """
-    if(is_Scheme(X)):
-        if (not is_ProductProjectiveSpaces(X.ambient_space())):
+    if isinstance(X, Scheme):
+        if not isinstance(X.ambient_space(), ProductProjectiveSpaces_ring):
             raise TypeError("ambient space must be product of projective space over the rational field")
         X = X(X.base_ring())
     else:
-        if (not is_ProductProjectiveSpaces(X.codomain().ambient_space())):
+        if not isinstance(X.codomain().ambient_space(), ProductProjectiveSpaces_ring):
             raise TypeError("codomain must be product of projective space over the rational field")
 
     R = X.codomain().ambient_space()
@@ -300,6 +303,7 @@ def enum_product_projective_finite_field(X):
 
     return pts
 
+
 def sieve(X, bound):
     r"""
     Returns the list of all rational points on scheme
@@ -309,7 +313,7 @@ def sieve(X, bound):
 
     Main idea behind the algorithm is to find points modulo primes
     and then reconstruct them using chinese remainder theorem.
-    We compute the points modulo primes parallely and then lift
+    We compute the points modulo primes parallelly and then lift
     them via chinese remainder theorem in parallel. The LLL reduction
     algorithm is applied to each component of the points, and finally
     the result is merged and converted to a point on the subscheme.
@@ -320,9 +324,9 @@ def sieve(X, bound):
 
     INPUT:
 
-    - ``X`` - a scheme with ambient space defined over a product of projective spaces
+    - ``X`` -- a scheme with ambient space defined over a product of projective spaces
 
-    - ``bound`` - a positive integer bound
+    - ``bound`` -- a positive integer bound
 
     OUTPUT:
 
@@ -332,9 +336,9 @@ def sieve(X, bound):
     EXAMPLES::
 
         sage: from sage.schemes.product_projective.rational_point import sieve
-        sage: PP.<x,y,z,u,v> = ProductProjectiveSpaces([2,1], QQ)
-        sage: X = PP.subscheme([x^2 + y^2 - x*z, u*u-v*u])
-        sage: sieve(X, 2)
+        sage: PP.<x,y,z,u,v> = ProductProjectiveSpaces([2, 1], QQ)
+        sage: X = PP.subscheme([x^2 + y^2 - x*z, u*u - v*u])
+        sage: sieve(X, 2)                                                               # needs sage.libs.singular
         [(0 : 0 : 1 , 0 : 1), (0 : 0 : 1 , 1 : 1), (1/2 : -1/2 : 1 , 0 : 1),
          (1/2 : -1/2 : 1 , 1 : 1), (1/2 : 1/2 : 1 , 0 : 1), (1/2 : 1/2 : 1 , 1 : 1),
          (1 : 0 : 1 , 0 : 1), (1 : 0 : 1 , 1 : 1)]
@@ -388,7 +392,7 @@ def sieve(X, bound):
         of the ambient space.
         """
 
-        M = dict() # stores optimal list of primes, corresponding to list size
+        M = {}  # stores optimal list of primes, corresponding to list size
         small_primes = sufficient_primes(B)
         max_length = len(small_primes)
         M[max_length] = small_primes
@@ -442,7 +446,7 @@ def sieve(X, bound):
     def points_modulo_primes(X, primes):
         r"""
         Return a list of rational points modulo all `p` in primes,
-        computed parallely.
+        computed parallelly.
         """
         normalized_input = []
         for p in primes_list:
@@ -469,15 +473,16 @@ def sieve(X, bound):
                 # lift all coordinates of given point using chinese remainder theorem
                 L = [modulo_points[j][tupl[j]][k].lift() for j in range(len_primes - 1)]
                 L.append(point_p_max[k].lift())
-                point.append( crt(L, primes_list) )
+                point.append(crt(L, primes_list))
 
             for i in range(num_comp):
                 for j in range(comp_dim_relative[i]):
                     m[i][j] = point[dim_prefix[i] + j]
 
             # generating matrix to compute LLL reduction for each component
-            M = [matrix(ZZ, comp_dim_relative[i] + 1, comp_dim_relative[i], m[i]) \
-                                                                for i in range(num_comp)]
+            M = [matrix(ZZ, comp_dim_relative[i] + 1,
+                        comp_dim_relative[i], m[i])
+                 for i in range(num_comp)]
             A = [M[i].LLL() for i in range(num_comp)]
             point = []
             for i in range(num_comp):
@@ -493,15 +498,16 @@ def sieve(X, bound):
                 continue
 
             try:
-                rat_points.add(X(point)) # checks if this point lies on X or not
-            except:
+                # checks if this point lies on X or not
+                rat_points.add(X(point))
+            except (TypeError, ValueError):
                 pass
 
-        return [list(_) for _ in rat_points]
+        return [list(pt) for pt in rat_points]
 
     def lift_all_points():
         r"""
-        Returns list of all rational points lifted parallely.
+        Return list of all rational points lifted parallelly.
         """
         normalized_input = []
         points = modulo_points.pop() # remove the list of points corresponding to largest prime
@@ -537,5 +543,5 @@ def sieve(X, bound):
         m.append(temp)
 
     rat_points = lift_all_points()
-    
+
     return sorted(rat_points)

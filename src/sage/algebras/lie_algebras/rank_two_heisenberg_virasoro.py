@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Rank Two Heisenberg-Virasoro Algebras
 
@@ -19,13 +18,14 @@ AUTHORS:
 
 from sage.misc.cachefunc import cached_method
 from sage.categories.lie_algebras import LieAlgebras
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.sets.family import Family
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.structure.indexed_generators import IndexedGenerators
 from sage.algebras.lie_algebras.lie_algebra_element import LieAlgebraElement
 from sage.algebras.lie_algebras.lie_algebra import (InfinitelyGeneratedLieAlgebra)
+
 
 class RankTwoHeisenbergVirasoro(InfinitelyGeneratedLieAlgebra, IndexedGenerators):
     r"""
@@ -351,4 +351,3 @@ class RankTwoHeisenbergVirasoro(InfinitelyGeneratedLieAlgebra, IndexedGenerators
 
     class Element(LieAlgebraElement):
         pass
-

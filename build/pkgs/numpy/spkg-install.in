@@ -1,34 +1,30 @@
+# -*- shell-script -*-
 cd src
 
 set -e
 
-if [ `uname` = "Darwin" ]; then
-    unset ATLAS
-    unset BLAS
-    unset LAPACK
+# https://github.com/scipy/scipy/issues/16536 - meson breaks when CXX="g++ -std=gnu++11"
+# -- this also affects numpy
+export CXX=$(echo "$CXX" | sed 's/-std=[a-z0-9+]*//g')
+
+if [ "$SAGE_FAT_BINARY" = "yes" ]; then
+    export NUMPY_FCONFIG="--cpu-baseline=NONE"
 else
-    export {ATLAS,PTATLAS,OPENBLAS,MKL,MKLROOT}=None
-    export LDFLAGS="${LDFLAGS} -shared"
+    export NUMPY_FCONFIG=""
 fi
 
-if [ "$UNAME" = "CYGWIN" ]; then
-    # Trac #30643
-    export CPPFLAGS="${CPPFLAGS} -D_GNU_SOURCE"
-fi
+### Per https://github.com/numpy/numpy/releases/tag/v1.26.0b1
+### "NumPy-specific build customization":
+###
+### The NPY_* environment variables which control BLAS/LAPACK, SIMD,
+### threading, and other such options are no longer supported, nor is
+### a site.cfg file to select BLAS and LAPACK. Instead, there are
+### command-line flags that can be passed to the build via pip/build's
+### config-settings interface.  These flags are all listed in
+### https://github.com/numpy/numpy/blob/main/meson_options.txt
+###
+### 1.26.0b1 temporarily vendors Meson and meson-python
+### http://scipy.github.io/devdocs/building/index.html
 
-sage-python23 ../lapack_conf.py
 
-# Make sure that the fortran objects are compiled with -fPIC
-export FFLAGS="$FFLAGS -fPIC"
-export FCFLAGS="$FCFLAGS -fPIC"
-
-export NUMPY_FCONFIG="config_fc --noopt --noarch"
-
-################################################
-
-sage-python23 setup.py \
-        --no-user-cfg \
-       bdist_wheel \
-       ${NUMPY_FCONFIG} || sdh_die "Error building wheel for numpy"
-
-sdh_store_and_pip_install_wheel .
+sdh_pip_install .

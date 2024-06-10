@@ -1,0 +1,85 @@
+--- a/dietz/solver/cubex.cpp	2008-01-04 01:26:59.000000000 -0700
++++ b/dietz/solver/cubex.cpp	2020-10-29 17:19:18.491548547 -0600
+@@ -704,7 +704,7 @@ const string Cubex::Concise(string a)
+   }
+   // part 1: remove middle, and whole cube moves by interpolating them
+   // part 1a - getting rid of middle slice moves
+-  for (int i = 1; i <= s.length() / 3; i++) {
++  for (int i = 1; i <= static_cast<int>(s.length()) / 3; i++) {
+     s1 = s.substr(i * 3 - 3, 1);
+     s2 = s.substr(i * 3 - 2, 1);
+     if (s1 == "M") {
+@@ -722,7 +722,7 @@ const string Cubex::Concise(string a)
+   s = t;
+   // part 1b - interpolating whole cube moves
+   c = 1;
+-  while (c <= s.length() / 3) {
++  while (c <= static_cast<int>(s.length()) / 3) {
+     s1 = s.substr(c * 3 - 3, 1);
+     s2 = s.substr(c * 3 - 2, 1);
+     if (s1 == "C") {
+@@ -753,7 +753,7 @@ const string Cubex::Concise(string a)
+         kk = "R"; jj = "L"; mm = "U"; ll = "D";
+       }
+       t = "";
+-      for (int i = c + 1; i <= s.length() / 3; i++) {
++      for (int i = c + 1; i <= static_cast<int>(s.length()) / 3; i++) {
+         t1 = s.substr(i * 3 - 3, 1);
+         t2 = s.substr(i * 3 - 2, 1);
+         if      (t1 == "U") { t += zz; }
+@@ -784,7 +784,7 @@ const string Cubex::Concise(string a)
+     // part 2: unshuffle possible opposite face groups, e.g., "UL.DR.UR.DL." to "UL.UR.DR.DL."
+     // this will make it much easier to identify redundancies like "top left, top right" later on
+     b = 0;
+-    while (b <= s.length() / 3 - 1 && s.length() / 3 > 0) {
++    while (b <= static_cast<int>(s.length()) / 3 - 1 && static_cast<int>(s.length()) / 3 > 0) {
+       s1 = s.substr(b * 3, 2);
+       t1 = s1.substr(0, 1);
+       if      (t1 == "U") { t3 = "D"; }
+@@ -796,7 +796,7 @@ const string Cubex::Concise(string a)
+       c = 0;
+       s2 = s.substr(b * 3 + 3, 2);
+       t2 = s2.substr(0, 1);
+-      while ((t2 == t1 || t2 == t3) && c <= s.length() / 3 - b - 2 && s != "") {
++      while ((t2 == t1 || t2 == t3) && c <= static_cast<int>(s.length()) / 3 - b - 2 && s != "") {
+         if (t2 == t1 && c > 0) {
+           t = s.substr(0, b * 3 + 3);
+           t += s.substr(b * 3 + c * 3 + 3, 3);
+@@ -811,7 +811,7 @@ const string Cubex::Concise(string a)
+         else {
+           c = s.length() / 3;
+         }
+-        if (c < s.length() / 3) {
++        if (c < static_cast<int>(s.length()) / 3) {
+           s2 = s.substr(b * 3 + c * 3 + 3, 2);
+           t2 = s2.substr(0, 1);
+         }
+@@ -820,7 +820,7 @@ const string Cubex::Concise(string a)
+     }
+     // part 3: change things like "top left, top left, top left" to simply "top right"
+     b = 0;
+-    while (b <= s.length() / 3 - 2 && s.length() / 3 >= 3) {
++    while (b <= static_cast<int>(s.length()) / 3 - 2 && static_cast<int>(s.length()) / 3 >= 3) {
+       s1 = s.substr(b * 3, 2);
+       s2 = s.substr(b * 3 + 3, 2);
+       s3 = s.substr(b * 3 + 6, 2);
+@@ -857,7 +857,7 @@ const string Cubex::Concise(string a)
+     }
+     // part 4: remove explicit redundancies like "top left, top right"
+     b = 0;
+-    while (b <= s.length() / 3 - 2 && s.length() / 3 >= 2) {
++    while (b <= static_cast<int>(s.length()) / 3 - 2 && static_cast<int>(s.length()) / 3 >= 2) {
+       t1 = s.substr(b * 3, 1);
+       t2 = s.substr(b * 3 + 3, 1);
+       s1 = s.substr(b * 3 + 1, 1);
+--- a/dietz/solver/main.cpp	2008-01-04 01:26:59.000000000 -0700
++++ b/dietz/solver/main.cpp	2020-10-29 16:55:33.339563260 -0600
+@@ -142,7 +142,7 @@ int ScrambleCubeGet() {
+     if (r < min) min = r; if (r > max) max = r;
+     if (f < min) min = f; if (f > max) max = f;
+     if (b < min) min = b; if (b > max) max = b;
+-    if (min < 0 || max > cm.length() - N * N - 2 || c > cm.length() - 6 - 2)
++    if (min < 0 || max > static_cast<int>(cm.length()) - N * N - 2 || c > static_cast<int>(cm.length()) - 6 - 2)
+       return 1;
+     cm  = cmd.substr(u+2,N*N);
+     cm += cmd.substr(l+2,N*N);

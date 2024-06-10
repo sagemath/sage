@@ -1,4 +1,5 @@
-cdef class _LazyString(object):
+# sage_setup: distribution = sagemath-objects
+cdef class _LazyString():
     cdef func
     cdef args
     cdef kwargs

@@ -1,4 +1,3 @@
-##      -*-   coding: utf-8   -*-     ##
 ##          Sage Doctest File         ##
 #**************************************#
 #*    Generated from PreTeXt source   *#
@@ -103,7 +102,6 @@ r"""
     sage: (3*a^3 + 2*a^2 + a + 3).log(a^2 + 4*a + 4)
     Traceback (most recent call last):
     ...
-    ValueError: No discrete log of 3*a^3 + 2*a^2 + a + 3 found
+    ValueError: no discrete log of 3*a^3 + 2*a^2 + a + 3 found
     to base a^2 + 4*a + 4
-
 """

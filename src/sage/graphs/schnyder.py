@@ -1,5 +1,5 @@
 """
-Schnyder's Algorithm for straight-line planar embeddings
+Schnyder's algorithm for straight-line planar embeddings
 
 A module for computing the (x,y) coordinates for a straight-line planar
 embedding of any connected planar graph with at least three vertices.  Uses
@@ -15,7 +15,6 @@ AUTHORS:
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
 #                         https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from sage.sets.set import Set
 from .all import DiGraph
@@ -67,7 +66,7 @@ def _triangulate(g, comb_emb):
 
     TESTS:
 
-    :trac:`29522` is fixed::
+    :issue:`29522` is fixed::
 
         sage: g = Graph(2)
         sage: _triangulate(g, {})
@@ -108,7 +107,7 @@ def _triangulate(g, comb_emb):
             continue  # This face is already triangulated
         elif len(face) == 4:  # In this special case just add diagonal edge to square
             u, v, w, x = (e[0] for e in face)
-            if w == u or g.has_edge(w,u):
+            if w == u or g.has_edge(w, u):
                 u, v, w, x = v, w, x, u
             new_face = (w, u)
             comb_emb[w].insert(comb_emb[w].index(x), u)
@@ -196,9 +195,7 @@ def _normal_label(g, comb_emb, external_face):
     v1, v2, v3 = external_vertices
     v1_neighbors = Set(g.neighbors(v1))
 
-    neighbor_count = {}
-    for v in g.vertices():
-        neighbor_count[v] = 0
+    neighbor_count = {v: 0 for v in g}
     for v in g.neighbors(v1):
         neighbor_count[v] = len(v1_neighbors.intersection(Set(g.neighbors(v))))
 
@@ -216,7 +213,6 @@ def _normal_label(g, comb_emb, external_face):
         except Exception:
             raise RuntimeError('Contractible list is empty but graph still has %d vertices.  (Expected 3.)' % g.order())
 
-            break
         # going to contract v
         v_neighbors = Set(g.neighbors(v))
         contracted.append((v, v_neighbors,
@@ -237,7 +233,7 @@ def _normal_label(g, comb_emb, external_face):
 
     # expansion phase:
 
-    v1, v2, v3 = g.vertices()  # always in sorted order
+    v1, v2, v3 = g.vertices(sort=True)  # always in sorted order
 
     labels[v1] = {(v2, v3): 1}
     labels[v2] = {(v1, v3): 2}
@@ -517,7 +513,7 @@ def _compute_coordinates(g, x):
     coordinates[t2.label] = [0, g.order() - 2]
     coordinates[t3.label] = [1, 0]
 
-    for v in g.vertices():
+    for v in g.vertices(sort=False):
         if v not in [t1.label, t2.label, t3.label]:
             # Computing coordinates for v
             r = list((0, 0, 0))
@@ -559,7 +555,7 @@ def _compute_coordinates(g, x):
     g.set_pos(coordinates)  # Setting _pos attribute to store coordinates
 
 
-class TreeNode(object):
+class TreeNode:
     """
     A class to represent each node in the trees used by ``_realizer`` and
     ``_compute_coordinates`` when finding a planar geometric embedding in
@@ -745,9 +741,9 @@ def minimal_schnyder_wood(graph, root_edge=None, minimal=True, check=True):
         sage: g.set_embedding({-1:[-2,0,-3],-2:[-3,0,-1],
         ....:  -3:[-1,0,-2],0:[-1,-2,-3]})
         sage: newg = minimal_schnyder_wood(g)
-        sage: newg.edges()
+        sage: newg.edges(sort=True)
         [(0, -3, 'red'), (0, -2, 'blue'), (0, -1, 'green')]
-        sage: newg.plot(color_by_label={'red':'red','blue':'blue',
+        sage: newg.plot(color_by_label={'red':'red','blue':'blue',                      # needs sage.plot
         ....:  'green':'green',None:'black'})
         Graphics object consisting of 8 graphics primitives
 
@@ -758,7 +754,7 @@ def minimal_schnyder_wood(graph, root_edge=None, minimal=True, check=True):
         sage: g.set_embedding({-1:[-2,2,0,-3],-2:[-3,1,2,-1],
         ....: -3:[-1,0,1,-2],0:[-1,2,1,-3],1:[-2,-3,0,2],2:[-1,-2,1,0]})
         sage: newg = minimal_schnyder_wood(g)
-        sage: sorted(newg.edges(), key=lambda e:(str(e[0]),str(e[1])))
+        sage: newg.edges(sort=True, key=lambda e:(str(e[0]),str(e[1])))
         [(0, -1, 'green'),
          (0, -3, 'red'),
          (0, 2, 'blue'),
@@ -769,7 +765,7 @@ def minimal_schnyder_wood(graph, root_edge=None, minimal=True, check=True):
          (2, -2, 'blue'),
          (2, 1, 'red')]
         sage: newg2 = minimal_schnyder_wood(g, minimal=False)
-        sage: sorted(newg2.edges(), key=lambda e:(str(e[0]),str(e[1])))
+        sage: newg2.edges(sort=True, key=lambda e:(str(e[0]),str(e[1])))
         [(0, -1, 'green'),
          (0, -3, 'red'),
          (0, 1, 'blue'),
@@ -808,7 +804,7 @@ def minimal_schnyder_wood(graph, root_edge=None, minimal=True, check=True):
             raise ValueError('not a planar graph')
         if not all(len(u) == 3 for u in graph.faces()):
             raise ValueError('not a triangulation')
-        if not(a in graph.neighbors(b)):
+        if a not in graph.neighbors(b):
             raise ValueError('not a valid root edge')
 
     new_g = DiGraph()

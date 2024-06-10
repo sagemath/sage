@@ -1,7 +1,8 @@
+# sage.doctest: needs sage.symbolic
 """
-Streamline Plots
+Streamline plots
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 Alex Clemesha <clemesha@gmail.com>,
 #                          William Stein <wstein@gmail.com>,
 #                     2008 Mike Hansen <mhansen@gmail.com>,
@@ -15,11 +16,12 @@ Streamline Plots
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.plot.primitive import GraphicPrimitive
 from sage.misc.decorators import options
 from sage.arith.srange import xsrange
+
 
 class StreamlinePlot(GraphicPrimitive):
     """
@@ -107,7 +109,7 @@ class StreamlinePlot(GraphicPrimitive):
             sage: P[0]
             StreamlinePlot defined by a 20 x 20 vector grid
 
-        TESTS:
+        TESTS::
 
             sage: x, y = var('x y')
             sage: P = streamline_plot((sin(x), cos(y)), (x,-3,3), (y,-3,3), wrong_option='nonsense')
@@ -198,7 +200,8 @@ def streamline_plot(f_g, xrange, yrange, **options):
 
     We increase the density of the plot::
 
-        sage: streamline_plot((y, (cos(x)-2) * sin(x)), (x,-pi,pi), (y,-pi,pi), density=2)
+        sage: streamline_plot((y, (cos(x)-2) * sin(x)),
+        ....:                 (x,-pi,pi), (y,-pi,pi), density=2)
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -210,7 +213,8 @@ def streamline_plot(f_g, xrange, yrange, **options):
     We ignore function values that are infinite or NaN::
 
         sage: x, y = var('x y')
-        sage: streamline_plot((-x/sqrt(x^2+y^2), -y/sqrt(x^2+y^2)), (x,-10,10), (y,-10,10))
+        sage: streamline_plot((-x/sqrt(x^2+y^2), -y/sqrt(x^2+y^2)),
+        ....:                 (x,-10,10), (y,-10,10))
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -224,7 +228,7 @@ def streamline_plot(f_g, xrange, yrange, **options):
 
         sage: streamline_plot((x, y), (x,-2,2), (y,-2,2), xmax=10)
         Graphics object consisting of 1 graphics primitive
-        sage: streamline_plot((x, y), (x,-2,2), (y,-2,2)).show(xmax=10) # These are equivalent
+        sage: streamline_plot((x, y), (x,-2,2), (y,-2,2)).show(xmax=10)  # These are equivalent
 
     .. PLOT::
 
@@ -247,7 +251,8 @@ def streamline_plot(f_g, xrange, yrange, **options):
     We choose some particular points the streamlines pass through::
 
         sage: pts = [[1, 1], [-2, 2], [1, -3/2]]
-        sage: g = streamline_plot((x + y) / sqrt(x^2 + y^2), (x,-3,3), (y,-3,3), start_points=pts)
+        sage: g = streamline_plot((x + y) / sqrt(x^2 + y^2),
+        ....:                     (x,-3,3), (y,-3,3), start_points=pts)
         sage: g += point(pts, color='red')
         sage: g
         Graphics object consisting of 2 graphics primitives
@@ -271,9 +276,9 @@ def streamline_plot(f_g, xrange, yrange, **options):
     if isinstance(f_g, (list, tuple)):
         (f,g) = f_g
     else:
-        from sage.functions.all import sqrt
-        from inspect import isfunction
-        if isfunction(f_g):
+        from sage.misc.functional import sqrt
+        from sage.misc.sageinspect import is_function_or_cython_function
+        if is_function_or_cython_function(f_g):
             f = lambda x,y: 1 / sqrt(f_g(x, y)**2 + 1)
             g = lambda x,y: f_g(x, y) * f(x, y)
         else:
@@ -321,4 +326,3 @@ def streamline_plot(f_g, xrange, yrange, **options):
     g.add_primitive(StreamlinePlot(xpos_array, ypos_array,
                                    xvec_array, yvec_array, options))
     return g
-

@@ -34,8 +34,11 @@ The default domain of a symbolic variable is the complex plane::
 
 Here is the list of acceptable features::
 
-    sage: maxima('features')
-    [integer,noninteger,even,odd,rational,irrational,real,imaginary,complex,analytic,increasing,decreasing,oddfun,evenfun,posfun,constant,commutative,lassociative,rassociative,symmetric,antisymmetric,integervalued]
+    sage: ", ".join(map(str, maxima("features")._sage_()))
+    'integer, noninteger, even, odd, rational, irrational, real, imaginary,
+    complex, analytic, increasing, decreasing, oddfun, evenfun, posfun,
+    constant, commutative, lassociative, rassociative, symmetric,
+    antisymmetric, integervalued'
 
 Set positive domain using a relation::
 
@@ -68,8 +71,11 @@ Assumptions are added and in some cases checked for consistency::
     ValueError: Assumption is inconsistent
     sage: forget()
 """
-from sage.rings.all import ZZ, QQ, RR, CC
-from sage.symbolic.ring import is_SymbolicVariable
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RR
+from sage.rings.cc import CC
+from sage.structure.element import Expression
 from sage.structure.unique_representation import UniqueRepresentation
 
 # #30074: We use the keys of a dict to store the assumptions.
@@ -79,6 +85,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 _assumptions = dict()
 
 _valid_feature_strings = set()
+
 
 class GenericDeclaration(UniqueRepresentation):
     """
@@ -110,8 +117,11 @@ class GenericDeclaration(UniqueRepresentation):
 
     Here is the list of acceptable features::
 
-        sage: maxima('features')
-        [integer,noninteger,even,odd,rational,irrational,real,imaginary,complex,analytic,increasing,decreasing,oddfun,evenfun,posfun,constant,commutative,lassociative,rassociative,symmetric,antisymmetric,integervalued]
+        sage: ", ".join(map(str, maxima("features")._sage_()))
+        'integer, noninteger, even, odd, rational, irrational, real, imaginary,
+        complex, analytic, increasing, decreasing, oddfun, evenfun, posfun,
+        constant, commutative, lassociative, rassociative, symmetric,
+        antisymmetric, integervalued'
 
     Test unique representation behavior::
 
@@ -148,8 +158,11 @@ class GenericDeclaration(UniqueRepresentation):
 
         Here is the list of acceptable features::
 
-            sage: maxima('features')
-            [integer,noninteger,even,odd,rational,irrational,real,imaginary,complex,analytic,increasing,decreasing,oddfun,evenfun,posfun,constant,commutative,lassociative,rassociative,symmetric,antisymmetric,integervalued]
+            sage: ", ".join(map(str, maxima("features")._sage_()))
+            'integer, noninteger, even, odd, rational, irrational, real,
+            imaginary, complex, analytic, increasing, decreasing, oddfun,
+            evenfun, posfun, constant, commutative, lassociative, rassociative,
+            symmetric, antisymmetric, integervalued'
         """
         self._var = var
         self._assumption = assumption
@@ -248,7 +261,7 @@ class GenericDeclaration(UniqueRepresentation):
             cur = maxima.get("context")
             # Redeclaring on the existing context does not seem to trigger
             # inconsistency checking.
-            ## maxima.set("context", self._context._maxima_init_())
+            # maxima.set("context", self._context._maxima_init_())
             # Instead, use a temporary context for this purpose
             context = maxima.newcontext('context' + maxima._next_var_name())
             must_declare = True
@@ -259,7 +272,7 @@ class GenericDeclaration(UniqueRepresentation):
             try:
                 maxima.eval("declare(%s, %s)" % (self._var._maxima_init_(), self._assumption))
             except RuntimeError as mess:
-                if 'inconsistent' in str(mess): # note Maxima doesn't tell you if declarations are redundant
+                if 'inconsistent' in str(mess):  # note Maxima doesn't tell you if declarations are redundant
                     # Inconsistency with one of the active contexts.
                     raise ValueError("Assumption is inconsistent")
                 else:
@@ -303,9 +316,9 @@ class GenericDeclaration(UniqueRepresentation):
             except KeyError:
                 return
             maxima.deactivate(self._context)
-        else: # trying to forget a declaration explicitly rather than implicitly
+        else:  # trying to forget a declaration explicitly rather than implicitly
             for x in _assumptions:
-                if repr(self) == repr(x): # so by implication x is also a GenericDeclaration
+                if repr(self) == repr(x):  # so by implication x is also a GenericDeclaration
                     x.forget()
                     break
             return
@@ -359,7 +372,7 @@ class GenericDeclaration(UniqueRepresentation):
             True
             sage: GenericDeclaration(x, 'rational').contradicts({z: pi, y: pi})
             False
-       """
+        """
         if isinstance(soln, dict):
             value = soln.get(self._var)
             if value is None:
@@ -414,7 +427,8 @@ def preprocess_assumptions(args):
         if isinstance(x, str):
             del args[i]
             last = x
-        elif ((not hasattr(x, 'assume') or is_SymbolicVariable(x))
+        elif ((not hasattr(x, 'assume')
+               or (isinstance(x, Expression) and x.is_symbol()))
               and last is not None):
             args[i] = GenericDeclaration(x, last)
         else:
@@ -581,7 +595,7 @@ def assume(*args):
     TESTS:
 
     Test that you can do two non-relational
-    declarations at once (fixing :trac:`7084`)::
+    declarations at once (fixing :issue:`7084`)::
 
         sage: var('m,n')
         (m, n)
@@ -596,7 +610,7 @@ def assume(*args):
         sage: sin(m*pi).simplify()
         sin(pi*m)
 
-    Check that positive integers can be created (:trac:`20132`)
+    Check that positive integers can be created (:issue:`20132`)
 
         sage: x = SR.var('x', domain='positive')
         sage: assume(x, 'integer')
@@ -622,7 +636,7 @@ def assume(*args):
         Traceback (most recent call last):
         ...
         AttributeError: 'sage.rings.integer.Integer' object has no
-        attribute 'assume'
+        attribute 'assume'...
 
     Ensure that we can combine the two types of assumptions, as documented::
 
@@ -648,7 +662,7 @@ def assume(*args):
         [0 < x]
         sage: forget()
 
-    Check that :trac:`28538` is fixed::
+    Check that :issue:`28538` is fixed::
 
         sage: x, y = SR.var('x, y')
         sage: assume(x > 0)
@@ -712,7 +726,7 @@ def forget(*args):
             try:
                 x.forget()
             except KeyError:
-                raise TypeError("forget not defined for objects of type '%s'"%type(x))
+                raise TypeError("forget not defined for objects of type '%s'" % type(x))
 
 
 def assumptions(*args):
@@ -769,11 +783,11 @@ def assumptions(*args):
     result = []
     if len(args) == 1:
         result.extend([statement for statement in _assumptions
-            if statement.has(args[0])])
+                       if statement.has(args[0])])
     else:
         for v in args:
-            result += [ statement for statement in list(_assumptions) \
-                            if str(v) in str(statement) ]
+            result += [statement for statement in list(_assumptions)
+                       if str(v) in str(statement)]
     return result
 
 
@@ -801,7 +815,7 @@ def _forget_all():
 
     TESTS:
 
-    Check that :trac:`7315` is fixed::
+    Check that :issue:`7315` is fixed::
 
         sage: var('m,n')
         (m, n)
@@ -817,10 +831,10 @@ def _forget_all():
         sin(pi*m)
     """
     global _assumptions
-    if not(_assumptions):
+    if not _assumptions:
         return
-    #maxima._eval_line('forget([%s]);'%(','.join([x._maxima_init_() for x in _assumptions])))
-    for x in list(_assumptions): # need to do this because x.forget() removes x from _assumptions
+    for x in list(_assumptions):
+        # need to do this because x.forget() removes x from _assumptions
         x.forget()
     _assumptions = dict()
 
@@ -828,11 +842,11 @@ def _forget_all():
 class assuming:
     """
     Temporarily modify assumptions.
-    
+
     Create a context manager in which temporary assumptions are added
     (or substituted) to the current assumptions set.
 
-    The set of possible assumptions and declarations  is the same as for 
+    The set of possible assumptions and declarations  is the same as for
     :func:`assume`.
 
     This can be useful in interactive mode to discover the assumptions
@@ -870,7 +884,6 @@ class assuming:
         [x == -2, x == 2]
         sage: with assuming(x > 0):
         ....:     solve(x^2 == 4,x)
-        ....:     
         [x == 2]
         sage: assumptions()
         []
@@ -915,34 +928,32 @@ class assuming:
         Traceback (most recent call last):
         ...
         ValueError: Assumption is redundant
-        
+
         sage: with assuming(x < -1): "I won't see this"
         Traceback (most recent call last):
         ...
         ValueError: Assumption is inconsistent
-
     """
-    def __init__(self,*args, **kwds):
+    def __init__(self, *args, **kwds):
         r"""
         EXAMPLES::
 
             sage: forget()
-            sage: foo=assuming(x>0)
+            sage: foo = assuming(x>0)
             sage: foo.Ass
             (x > 0,)
             sage: bool(x>-1)
             False
-
         """
-        self.replace=kwds.pop("replace",False)
-        self.Ass=args
+        self.replace = kwds.pop("replace", False)
+        self.Ass = args
 
     def __enter__(self):
         r"""
         EXAMPLES::
 
             sage: forget()
-            sage: foo=assuming(x>0)
+            sage: foo = assuming(x>0)
             sage: bool(x>-1)
             False
             sage: foo.__enter__()
@@ -951,10 +962,9 @@ class assuming:
             sage: foo.__exit__()
             sage: bool(x>-1)
             False
-
         """
         if self.replace:
-            self.OldAss=assumptions()
+            self.OldAss = assumptions()
             forget(assumptions())
         assume(self.Ass)
 
@@ -963,7 +973,7 @@ class assuming:
         EXAMPLES::
 
             sage: forget()
-            sage: foo=assuming(x>0)
+            sage: foo = assuming(x>0)
             sage: bool(x>-1)
             False
             sage: foo.__enter__()
@@ -973,7 +983,6 @@ class assuming:
             sage: bool(x>-1)
             False
             sage: forget()
-
         """
         if self.replace:
             forget(assumptions())

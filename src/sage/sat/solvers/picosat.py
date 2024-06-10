@@ -10,24 +10,21 @@ AUTHORS:
 - Thierry Monteil (2018): initial version.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2018 Thierry Monteil <sage!lma.metelu.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-# Support of Python 3
-from __future__ import division, absolute_import, print_function, unicode_literals
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from .satsolver import SatSolver
 
 from sage.misc.lazy_import import lazy_import
 from sage.features import PythonModule
 lazy_import('pycosat', ['solve'],
             feature=PythonModule('pycosat', spkg='pycosat'))
+
 
 class PicoSAT(SatSolver):
     r"""
@@ -46,7 +43,7 @@ class PicoSAT(SatSolver):
     """
     def __init__(self, verbosity=0, prop_limit=0):
         r"""
-        Constuct a new PicoSAT instance.
+        Construct a new PicoSAT instance.
 
         See the documentation class for the description of inputs.
 
@@ -88,10 +85,11 @@ class PicoSAT(SatSolver):
 
     def nvars(self):
         r"""
-        Return the number of variables. Note that for compatibility with DIMACS
-        convention, the number of variables corresponds to the maximal index of
-        the variables used. 
-        
+        Return the number of variables.
+
+        Note that for compatibility with DIMACS convention, the number
+        of variables corresponds to the maximal index of the variables used.
+
         EXAMPLES::
 
             sage: from sage.sat.solvers.picosat import PicoSAT
@@ -149,12 +147,13 @@ class PicoSAT(SatSolver):
 
         EXAMPLES::
 
+            sage: # optional - pycosat
             sage: from sage.sat.solvers.picosat import PicoSAT
-            sage: solver = PicoSAT()                       # optional - pycosat
-            sage: solver.add_clause((1,2))                 # optional - pycosat
-            sage: solver.add_clause((-1,2))                # optional - pycosat
-            sage: solver.add_clause((-1,-2))               # optional - pycosat
-            sage: solver()                                 # optional - pycosat
+            sage: solver = PicoSAT()
+            sage: solver.add_clause((1,2))
+            sage: solver.add_clause((-1,2))
+            sage: solver.add_clause((-1,-2))
+            sage: solver()
             (None, False, True)
 
             sage: solver.add_clause((1,-2))                # optional - pycosat
@@ -209,13 +208,14 @@ class PicoSAT(SatSolver):
 
         DIMACS format output::
 
+            sage: # optional - pycosat
             sage: from sage.sat.solvers.picosat import PicoSAT
-            sage: solver = PicoSAT()                       # optional - pycosat
-            sage: solver.add_clause((1, 2, 4))             # optional - pycosat
-            sage: solver.add_clause((1, 2, -4))            # optional - pycosat
-            sage: fn = tmp_filename()                      # optional - pycosat
-            sage: solver.clauses(fn)                       # optional - pycosat
-            sage: print(open(fn).read())                   # optional - pycosat
+            sage: solver = PicoSAT()
+            sage: solver.add_clause((1, 2, 4))
+            sage: solver.add_clause((1, 2, -4))
+            sage: fn = tmp_filename()
+            sage: solver.clauses(fn)
+            sage: print(open(fn).read())
             p cnf 4 2
             1 2 4 0
             1 2 -4 0
@@ -223,7 +223,5 @@ class PicoSAT(SatSolver):
         """
         if filename is None:
             return self._clauses
-        else:
-            from sage.sat.solvers.dimacs import DIMACS
-            DIMACS.render_dimacs(self._clauses, filename, self.nvars())
-
+        from sage.sat.solvers.dimacs import DIMACS
+        DIMACS.render_dimacs(self._clauses, filename, self.nvars())

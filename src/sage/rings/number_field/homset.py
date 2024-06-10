@@ -2,7 +2,7 @@
 Sets of homomorphisms between number fields
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #       Copyright (C) 2020 Peter Bruin <P.J.Bruin@math.leidenuniv.nl>
 #
@@ -10,12 +10,10 @@ Sets of homomorphisms between number fields
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.misc.superseded import deprecation
-
 from sage.rings.homset import RingHomset_generic
 from sage.rings.number_field.morphism import (NumberFieldHomomorphism_im_gens,
                                               RelativeNumberFieldHomomorphism_from_abs,
@@ -41,8 +39,9 @@ class NumberFieldHomset(RingHomset_generic):
         """
         TESTS:
 
-        Check that :trac:`23647` is fixed::
+        Check that :issue:`23647` is fixed::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 - 2, x^2 - 3])
             sage: e, u, v, w = End(K)
             sage: e.abs_hom().parent().category()
@@ -51,10 +50,11 @@ class NumberFieldHomset(RingHomset_generic):
             Category of homsets of number fields
         """
         if category is None:
-            from sage.categories.all import Fields, NumberFields
-            if S in NumberFields:
+            from sage.categories.fields import Fields
+            from sage.categories.number_fields import NumberFields
+            if S in NumberFields():
                 category = NumberFields()
-            elif S in Fields:
+            elif S in Fields():
                 category = Fields()
         RingHomset_generic.__init__(self, R, S, category)
 
@@ -84,7 +84,7 @@ class NumberFieldHomset(RingHomset_generic):
             sage: f == End(H1.domain(), category=NumberFields())(g)
             True
 
-        Check that :trac:`28869` is fixed::
+        Check that :issue:`28869` is fixed::
 
             sage: K.<a> = CyclotomicField(8)
             sage: L.<b> = K.absolute_field()
@@ -102,7 +102,8 @@ class NumberFieldHomset(RingHomset_generic):
         """
         if not isinstance(x, NumberFieldHomomorphism_im_gens):
             return self.element_class(self, x, check=check)
-        from sage.categories.all import NumberFields, Rings
+        from sage.categories.number_fields import NumberFields
+        from sage.categories.rings import Rings
         if (x.parent() == self or
             (x.domain() == self.domain() and x.codomain() == self.codomain() and
              # This would be the better check, however it returns False currently:
@@ -140,7 +141,7 @@ class NumberFieldHomset(RingHomset_generic):
         else:
             from sage.categories.sets_cat import EmptySetError
             raise EmptySetError("There is no morphism from {} to {}".format(
-                                              self.domain(), self.codomain()))
+                self.domain(), self.codomain()))
 
     def _repr_(self):
         r"""
@@ -166,6 +167,7 @@ class NumberFieldHomset(RingHomset_generic):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField(x^2 + 1)
             sage: End(k)
             Automorphism group of Number Field in a with defining polynomial x^2 + 1
@@ -175,7 +177,7 @@ class NumberFieldHomset(RingHomset_generic):
             sage: End(k).order()
             1
 
-            sage: K.<a> = NumberField( [x^3 + 2, x^2 + x + 1] )
+            sage: K.<a> = NumberField([x^3 + 2, x^2 + x + 1])
             sage: End(K).order()
             6
         """
@@ -186,10 +188,11 @@ class NumberFieldHomset(RingHomset_generic):
     @cached_method
     def list(self):
         """
-        Return a list of all the elements of self.
+        Return a list of all the elements of ``self``.
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^3 - 3*x + 1)
             sage: End(K).list()
             [
@@ -233,7 +236,7 @@ class NumberFieldHomset(RingHomset_generic):
             v = [D.hom([r], codomain=C, check=False) for r in roots]
         else:
             v = []
-        return Sequence(v, universe=self, check=False, immutable=True, cr=v!=[])
+        return Sequence(v, universe=self, check=False, immutable=True, cr=bool(v))
 
     def __getitem__(self, n):
         r"""
@@ -257,15 +260,17 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
     We construct a homomorphism from a relative field by giving
     the image of a generator::
 
+        sage: x = polygen(ZZ, 'x')
         sage: L.<cuberoot2, zeta3> = CyclotomicField(3).extension(x^3 - 2)
         sage: phi = L.hom([cuberoot2 * zeta3]); phi
-        Relative number field endomorphism of Number Field in cuberoot2 with defining polynomial x^3 - 2 over its base field
+        Relative number field endomorphism of
+         Number Field in cuberoot2 with defining polynomial x^3 - 2 over its base field
           Defn: cuberoot2 |--> zeta3*cuberoot2
                 zeta3 |--> zeta3
         sage: phi(cuberoot2 + zeta3)
         zeta3*cuberoot2 + zeta3
 
-    In fact, this phi is a generator for the Kummer Galois group of this
+    In fact, this ``phi`` is a generator for the Kummer Galois group of this
     cyclic extension::
 
         sage: phi(phi(cuberoot2 + zeta3))
@@ -276,7 +281,7 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
 
     Element = RelativeNumberFieldHomomorphism_from_abs
 
-    def _element_constructor_(self, x, base_map=None, base_hom=None, check=True):
+    def _element_constructor_(self, x, base_map=None, check=True):
         """
         Construct an element of ``self`` from ``x``.
 
@@ -298,6 +303,7 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 1)
             sage: L.<b> = K.extension(x^4 - 2)
             sage: E = End(L)
@@ -334,10 +340,10 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
         are only approximate::
 
             sage: K.<a> = QuadraticField(-7)
-            sage: f = K.hom([CC(sqrt(-7))], check=False)
+            sage: f = K.hom([CC(sqrt(-7))], check=False)                                # needs sage.symbolic
             sage: x = polygen(K)
             sage: L.<b> = K.extension(x^2 - a - 5)
-            sage: L.Hom(CC)(f(a + 5).sqrt(), f, check=False)
+            sage: L.Hom(CC)(f(a + 5).sqrt(), f, check=False)                            # needs sage.symbolic
             Relative number field morphism:
               From: Number Field in b with defining polynomial x^2 - a - 5 over its base field
               To:   Complex Field with 53 bits of precision
@@ -354,7 +360,7 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
               Defn: a |--> a
                     b |--> b
 
-        Check that :trac:`28869` is fixed::
+        Check that :issue:`28869` is fixed::
 
             sage: K.<a,b> = NumberField((x^2 + 1, x^2 - 2))
             sage: L.<c> = K.absolute_field()
@@ -369,9 +375,6 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
             sage: (x^2 + a).change_ring(phi)
             x^2 + 1/6*c^3 + 1/6*c
         """
-        if base_hom is not None:
-            deprecation(26105, "Use base_map rather than base_hom")
-            base_map = base_hom
         if isinstance(x, NumberFieldHomomorphism_im_gens):
             # Then it must be a homomorphism from the corresponding
             # absolute number field
@@ -381,7 +384,7 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
                 raise ValueError("codomain of absolute homomorphism must be codomain of this homset.")
             return self.element_class(self, x)
         if (isinstance(x, RelativeNumberFieldHomomorphism_from_abs)
-            and x.parent() == self):
+                and x.parent() == self):
             return self.element_class(self, x.abs_hom())
         if base_map is None:
             base_map = self.default_base_hom()
@@ -398,6 +401,7 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + 23)
             sage: L.<b> = K.extension(x^3 - x + 1)
             sage: End(L)._from_im( -3/23*a*b^2 + (-9/46*a - 1/2)*b + 2/23*a, K.hom([-a], K))
@@ -420,11 +424,12 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
     @cached_method
     def default_base_hom(self):
         r"""
-        Pick an embedding of the base field of self into the codomain of this
+        Pick an embedding of the base field of ``self`` into the codomain of this
         homset. This is done in an essentially arbitrary way.
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a, b> = NumberField([x^3 - x + 1, x^2 + 23])
             sage: M.<c> = NumberField(x^4 + 80*x^2 + 36)
             sage: Hom(L, M).default_base_hom()
@@ -432,8 +437,33 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
               From: Number Field in b with defining polynomial x^2 + 23
               To:   Number Field in c with defining polynomial x^4 + 80*x^2 + 36
               Defn: b |--> 1/12*c^3 + 43/6*c
+
+        TESTS:
+
+        Check that :issue:`30518` is fixed::
+
+            sage: K.<i> = QuadraticField(-1, embedding=QQbar.gen())
+            sage: L.<a> = K.extension(x^2 - 6*x - 4)
+            sage: a0, a1 = a.galois_conjugates(QQbar)
+            sage: f0 = hom(L, QQbar, a0)
+            sage: assert f0(i) == QQbar.gen()
+            sage: f1 = hom(L, QQbar, a1)
+            sage: assert f1(i) == QQbar.gen()
+
+            sage: K.<i> = QuadraticField(-1, embedding=-QQbar.gen())
+            sage: L.<a> = K.extension(x^2 - 6*x - 4)
+            sage: a0, a1 = a.galois_conjugates(QQbar)
+            sage: f0 = hom(L, QQbar, a0)
+            sage: assert f0(i) == -QQbar.gen()
+            sage: f1 = hom(L, QQbar, a1)
+            sage: assert f1(i) == -QQbar.gen()
         """
-        v = self.domain().base_field().embeddings(self.codomain())
+        K = self.domain().base_field()
+        C = self.codomain()
+        f = C.coerce_map_from(K)
+        if f is not None:
+            return f
+        v = K.embeddings(C)
         if len(v) == 0:
             raise ValueError("no way to map base field to codomain.")
         return v[0]
@@ -441,25 +471,29 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
     @cached_method
     def list(self):
         """
-        Return a list of all the elements of self (for which the domain
+        Return a list of all the elements of ``self`` (for which the domain
         is a relative number field).
 
         EXAMPLES::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 + x + 1, x^3 + 2])
             sage: End(K).list()
             [
-            Relative number field endomorphism of Number Field in a with defining polynomial x^2 + x + 1 over its base field
+            Relative number field endomorphism of
+             Number Field in a with defining polynomial x^2 + x + 1 over its base field
               Defn: a |--> a
                     b |--> b,
             ...
-            Relative number field endomorphism of Number Field in a with defining polynomial x^2 + x + 1 over its base field
+            Relative number field endomorphism of
+             Number Field in a with defining polynomial x^2 + x + 1 over its base field
               Defn: a |--> a
                     b |--> -b*a - b
             ]
 
         An example with an absolute codomain::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 - 3, x^2 + 2])
             sage: Hom(K, CyclotomicField(24, 'z')).list()
             [
@@ -480,7 +514,7 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
         C = self.codomain()
         D_abs = D.absolute_field('a')
         v = [self(f, check=False) for f in D_abs.Hom(C).list()]
-        return Sequence(v, universe=self, check=False, immutable=True, cr=v!=[])
+        return Sequence(v, universe=self, check=False, immutable=True, cr=bool(v))
 
 
 class CyclotomicFieldHomset(NumberFieldHomset):
@@ -525,7 +559,7 @@ class CyclotomicFieldHomset(NumberFieldHomset):
 
         TESTS:
 
-        Check that :trac:`28869` is fixed::
+        Check that :issue:`28869` is fixed::
 
             sage: K.<a> = CyclotomicField(8)
             sage: L.<b> = K.absolute_field()
@@ -540,14 +574,14 @@ class CyclotomicFieldHomset(NumberFieldHomset):
             x^2 + b
         """
         if (isinstance(x, CyclotomicFieldHomomorphism_im_gens)
-            and x.parent() == self):
+                and x.parent() == self):
             return self.element_class(self, x.im_gens())
         return self.element_class(self, x, check=check)
 
     @cached_method
     def list(self):
         """
-        Return a list of all the elements of self (for which the domain
+        Return a list of all the elements of ``self`` (for which the domain
         is a cyclotomic field).
 
         EXAMPLES::
@@ -557,6 +591,7 @@ class CyclotomicFieldHomset(NumberFieldHomset):
             Automorphism group of Cyclotomic Field of order 12 and degree 4
             sage: [g(z) for g in G]
             [z, z^3 - z, -z, -z^3 + z]
+            sage: x = polygen(ZZ, 'x')
             sage: L.<a, b> = NumberField([x^2 + x + 1, x^4 + 1])
             sage: L
             Number Field in a with defining polynomial x^2 + x + 1 over its base field
@@ -575,11 +610,11 @@ class CyclotomicFieldHomset(NumberFieldHomset):
         z = D.gen()
         n = z.multiplicative_order()
         if not n.divides(C.zeta_order()):
-            v =[]
+            v = []
         else:
             if D == C:
                 w = z
             else:
                 w = C.zeta(n)
             v = [self([w**k], check=False) for k in Zmod(n) if k.is_unit()]
-        return Sequence(v, universe=self, check=False, immutable=True, cr=v!=[])
+        return Sequence(v, universe=self, check=False, immutable=True, cr=bool(v))

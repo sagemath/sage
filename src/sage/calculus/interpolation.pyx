@@ -55,9 +55,9 @@ cdef class Spline:
 
     This example is in the GSL documentation::
 
-        sage: v = [(i + sin(i)/2, i+cos(i^2)) for i in range(10)]
+        sage: v = [(i + RDF(i).sin()/2, i + RDF(i^2).cos()) for i in range(10)]
         sage: s = spline(v)
-        sage: show(point(v) + plot(s,0,9, hue=.8))
+        sage: show(point(v) + plot(s,0,9, hue=.8))                                      # needs sage.plot
 
     We compute the area underneath the spline::
 
@@ -77,13 +77,13 @@ cdef class Spline:
     We compute the first and second-order derivatives at a few points::
 
         sage: s.derivative(5)
-        -0.16230085261803...
+        -0.1623008526180...
         sage: s.derivative(6)
-        0.20997986285714...
+        0.2099798628571...
         sage: s.derivative(5, order=2)
-        -3.08747074561380...
+        -3.0874707456138...
         sage: s.derivative(6, order=2)
-        2.61876848274853...
+        2.6187684827485...
 
     Only the first two derivatives are supported::
 
@@ -91,18 +91,17 @@ cdef class Spline:
         Traceback (most recent call last):
         ...
         ValueError: Order of derivative must be 1 or 2.
-
     """
-    def __init__(self, v=[]):
+    def __init__(self, v=None):
         """
         EXAMPLES::
 
             sage: S = spline([(1,1), (2,3), (4,5)]); S
             [(1, 1), (2, 3), (4, 5)]
             sage: type(S)
-            <type 'sage.calculus.interpolation.Spline'>
+            <class 'sage.calculus.interpolation.Spline'>
         """
-        self.v = list(v)
+        self.v = [] if v is None else list(v)
         self.started = 0
 
     def __dealloc__(self):
@@ -119,7 +118,7 @@ cdef class Spline:
 
         Replace `0`-th point, which changes the spline::
 
-            sage: S[0]=(0,1); S
+            sage: S[0] = (0,1); S
             [(0, 1), (2, 3), (4, 5)]
             sage: S(1.5)
             2.5
@@ -136,8 +135,8 @@ cdef class Spline:
         if i < len(self.v):
             self.v[i] = xy
         else:
-            for j from len(self.v) <= j <= i:
-                self.v.append((0,0))
+            for j in range(len(self.v), i + 1):
+                self.v.append((0, 0))
             self.v[i] = xy
         self.stop_interp()
 
@@ -164,7 +163,7 @@ cdef class Spline:
             sage: S
             [(1, 1), (4, 5)]
 
-        The spline is recomputed when points are deleted (:trac:`13519`)::
+        The spline is recomputed when points are deleted (:issue:`13519`)::
 
             sage: S = spline([(1,1), (2,3), (4,5), (5, 5)]); S
             [(1, 1), (2, 3), (4, 5), (5, 5)]
@@ -186,7 +185,7 @@ cdef class Spline:
             sage: S = spline([(1,1), (2,3), (4,5)]); S.append((5,7)); S
             [(1, 1), (2, 3), (4, 5), (5, 7)]
 
-        The spline is recomputed when points are appended (:trac:`13519`)::
+        The spline is recomputed when points are appended (:issue:`13519`)::
 
             sage: S = spline([(1,1), (2,3), (4,5)]); S
             [(1, 1), (2, 3), (4, 5)]
@@ -210,7 +209,7 @@ cdef class Spline:
             sage: S = spline([(1,1), (2,3), (4,5)]); S.list()
             [(1, 1), (2, 3), (4, 5)]
 
-        This is a copy of the list, not a reference (:trac:`13530`)::
+        This is a copy of the list, not a reference (:issue:`13530`)::
 
             sage: S = spline([(1,1), (2,3), (4,5)])
             sage: L = S.list(); L
@@ -263,7 +262,7 @@ cdef class Spline:
             raise MemoryError
 
         cdef int i
-        for i from 0 <= i < n:
+        for i in range(n):
             self.x[i] = v[i][0]
             self.y[i] = v[i][1]
 
@@ -385,7 +384,8 @@ cdef class Spline:
         I = gsl_spline_eval_integ(self.spline, a, b, self.acc)
         sig_off()
 
-        if bounds_swapped: I = -I
+        if bounds_swapped:
+            I = -I
         return I
 
 spline = Spline

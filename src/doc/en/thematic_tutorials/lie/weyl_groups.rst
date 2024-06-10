@@ -122,13 +122,12 @@ and whose values are the roots, you may use the inverse family::
 
 .. NOTE::
 
-    The behaviour of this function was changed in :trac:`20027`.
+    The behaviour of this function was changed in :issue:`20027`.
 
 The Weyl group is implemented as a GAP matrix group. You therefore can
-display its character table. The character table is returned as a
-string, which you can print::
+display its character table as follows::
 
-    sage: print(WeylGroup("D4").character_table())
+    sage: WeylGroup("D4").character_table()
     CT1
     <BLANKLINE>
           2  6  4  5  1  3  5  5  4  3  3  1  4  6
@@ -139,12 +138,12 @@ string, which you can print::
     X.1      1  1  1  1  1  1  1  1  1  1  1  1  1
     X.2      1 -1  1  1 -1  1  1 -1 -1 -1  1  1  1
     X.3      2  .  2 -1  .  2  2  .  .  . -1  2  2
-    X.4      3 -1 -1  .  1 -1  3 -1  1 -1  . -1  3
-    X.5      3 -1 -1  .  1  3 -1 -1 -1  1  . -1  3
-    X.6      3  1 -1  . -1 -1  3  1 -1  1  . -1  3
-    X.7      3  1 -1  . -1  3 -1  1  1 -1  . -1  3
-    X.8      3 -1  3  . -1 -1 -1 -1  1  1  . -1  3
-    X.9      3  1  3  .  1 -1 -1  1 -1 -1  . -1  3
+    X.4      3 -1 -1  .  1  3 -1 -1 -1  1  . -1  3
+    X.5      3  1 -1  . -1  3 -1  1  1 -1  . -1  3
+    X.6      3 -1  3  . -1 -1 -1 -1  1  1  . -1  3
+    X.7      3 -1 -1  .  1 -1  3 -1  1 -1  . -1  3
+    X.8      3  1  3  .  1 -1 -1  1 -1 -1  . -1  3
+    X.9      3  1 -1  . -1 -1  3  1 -1  1  . -1  3
     X.10     4 -2  . -1  .  .  .  2  .  .  1  . -4
     X.11     4  2  . -1  .  .  . -2  .  .  1  . -4
     X.12     6  . -2  .  . -2 -2  .  .  .  .  2  6

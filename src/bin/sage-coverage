@@ -1,6 +1,4 @@
-#!/usr/bin/env sage-system-python
-from __future__ import print_function
-
+#!/usr/bin/env python3
 import os
 import sys
 from tokenize import (NEWLINE, COMMENT, INDENT, DEDENT, STRING, NL,
@@ -8,11 +6,68 @@ from tokenize import (NEWLINE, COMMENT, INDENT, DEDENT, STRING, NL,
 import argparse
 
 parser = argparse.ArgumentParser(description='Look into Sage files for wrong doctests.')
-parser.add_argument('filename', type=str, nargs='+', help='filename or a directory')
+parser.add_argument('filename', type=str, nargs='*', help='filename or a directory')
+parser.add_argument('--all', action='store_true', help='give summary info about all files in the Sage library')
 parser.add_argument('--only-bad', action='store_true', help='only print info for bad formatted files')
 parser.add_argument('--summary', action='store_true', help='only print a short summary')
 
 args = parser.parse_args()
+
+
+def coverage_all(directory):
+    os.chdir(directory)
+    r = os.popen('sage-coverage * | grep SCORE').readlines()
+
+    s = []
+    scr = 0
+    total = 0
+    for x in r:
+        y = x.lstrip('SCORE ')
+        i = y.rfind(' of ')
+        j = y.rfind(')')
+        n = int(y[i+4:j])
+
+        i = y.rfind(':')
+        j = y.rfind('%')
+        scr += float(y[i+1:j]) * float(n)
+
+        total += n
+
+        s.append(y)
+
+    print(''.join(s))
+
+    # Issue #5859: Don't crash if there isn't anything to test.
+    score = 100.0
+    if total != 0:
+        score = (float(scr) / total)
+
+    print("Overall weighted coverage score: {:.1f}%".format(score))
+    print("Total number of functions: {}".format(total))
+
+    # Print up to 3 doctest coverage goals.
+    i = 0
+    for goal in [70, 75, 80, 85, 90, 95, 99]:
+        if score < goal:
+            i += 1
+            if i > 3: break
+            need = int((goal*total - scr)/100.0)
+            print("We need {:>4} more function{} to get to {}% coverage."
+                  .format(need, "" if (need == 1) else "s", goal))
+
+if args.all:
+    if not args.filename:
+        coverage_all(os.path.join(os.environ["SAGE_SRC"], 'sage'))
+    elif len(args.filename) == 1:
+        coverage_all(args.filename[0])
+    else:
+        print("sage-coverage: error: --all only accepts one filename argument")
+        sys.exit(1)
+    sys.exit(0)
+
+if not args.filename:
+    print("sage-coverage: error: if --all is not given, at least one filename argument is expected")
+    sys.exit(1)
 
 # Collect coverage results for one file
 class CoverageResults:
@@ -75,7 +130,12 @@ class CoverageResults:
         if not docstring:
             self.no_doc.append(fullname)
             return
-        if not "sage: " in docstring:
+
+        if "pytest" in docstring:
+            self.good.append(fullname)
+            return
+
+        if "sage: " not in docstring:
             self.no_test.append(fullname)
             return
 
@@ -201,6 +261,8 @@ possibly_wrong = 0
 bad_files      = []
 
 first = True
+
+
 def go(filename):
     r"""
     If ``filename`` is a file, launch the inspector on this file. If
@@ -219,6 +281,10 @@ def go(filename):
             or filename.endswith('.sage')):
         return
 
+    # Filter pytest files which are not supposed to have doctests
+    if filename.endswith('_test.py'):
+        return
+
     with open(filename, 'r') as f:
         cr = CoverageResults(filename).check_file(f)
     bad = cr.no_doc or cr.no_test or cr.possibly_wrong
@@ -230,18 +296,20 @@ def go(filename):
         no_test        += len(cr.no_test)
         possibly_wrong += len(cr.possibly_wrong)
         good           += len(cr.good)
-        if bad: bad_files.append(filename)
+        if bad:
+            bad_files.append(filename)
         return
     if not bad and args.only_bad:
         return
 
     global first
     if first:
-        print('-'*72)
+        print('-' * 72)
         first = False
 
-    cr.report() # Print the report
-    print('-'*72)
+    cr.report()  # Print the report
+    print('-' * 72)
+
 
 for arg in args.filename:
     go(arg)

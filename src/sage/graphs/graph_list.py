@@ -144,8 +144,13 @@ def from_sparse6(data):
 
     EXAMPLES::
 
-        sage: l = [':P_`cBaC_ACd`C_@BC`ABDHaEH_@BF_@CHIK_@BCEHKL_BIKM_BFGHI', ':f`??KO?B_OOSCGE_?OWONDBO?GOJBDO?_SSJdApcOIG`?og_UKEbg?_SKFq@[CCBA`p?oYMFp@gw]Qaa@xEMHDb@hMCBCbQ@ECHEcAKKQKFPOwo[PIDQ{KIHEcQPOkVKEW_WMNKqPWwcRKOOWSKIGCqhWt??___WMJFCahWzEBa`xOu[MpPPKqYNoOOOKHHDBPs|??__gWMKEcAHKgTLErqA?A@a@G{kVLErs?GDBA@XCs\\NggWSOJIDbHh@?A@aF']
-        sage: graphs_list.from_sparse6(l)
+        sage: g1 = ':P_`cBaC_ACd`C_@BC`ABDHaEH_@BF_@CHIK_@BCEHKL_BIKM_BFGHI'
+        sage: g2 = ':f`??KO?B_OOSCGE_?OWONDBO?GOJBDO?_SSJdApcOIG`?og_UKEbg?_SKF'
+        sage: g2 += 'q@[CCBA`p?oYMFp@gw]Qaa@xEMHDb@hMCBCbQ@ECHEcAKKQKFPOwo[PIDQ'
+        sage: g2 += '{KIHEcQPOkVKEW_WMNKqPWwcRKOOWSKIGCqhWt??___WMJFCahWzEBa`xO'
+        sage: g2 += 'u[MpPPKqYNoOOOKHHDBPs|??__gWMKEcAHKgTLErqA?A@a@G{kVLErs?GD'
+        sage: g2 += 'BA@XCs\\NggWSOJIDbHh@?A@aF'
+        sage: graphs_list.from_sparse6([g1, g2])
         [Looped multi-graph on 17 vertices, Looped multi-graph on 39 vertices]
     """
     return _from_whatever(data, fmt='sparse6')
@@ -206,7 +211,7 @@ def to_sparse6(graphs, file=None, output_list=False):
 
 
 def _to_graph6(graphs, file=None, output_list=False, sparse=False):
-    """
+    r"""
     Internal implementation of :func:`to_graph6` and :func:`to_sparse6`.
 
     EXAMPLES::
@@ -253,17 +258,17 @@ def to_graphics_array(graph_list, **kwds):
         sage: glist = []
         sage: for i in range(999):
         ....:     glist.append(graphs.RandomGNP(6, .45))
-        sage: garray = graphs_list.to_graphics_array(glist)
-        sage: garray.nrows(), garray.ncols()
+        sage: garray = graphs_list.to_graphics_array(glist)                             # needs sage.plot
+        sage: garray.nrows(), garray.ncols()                                            # needs sage.plot
         (250, 4)
 
     See the .plot() or .show() documentation for an individual graph for
     options, all of which are available from :func:`to_graphics_array`::
 
         sage: glist = []
-        sage: for _ in range(10):
+        sage: for _ in range(10):                                                       # needs networkx
         ....:     glist.append(graphs.RandomLobster(41, .3, .4))
-        sage: graphs_list.to_graphics_array(glist, layout='spring', vertex_size=20)
+        sage: graphs_list.to_graphics_array(glist, layout='spring', vertex_size=20)     # needs networkx sage.plot
         Graphics Array of size 3 x 4
     """
     from sage.graphs import graph
@@ -337,7 +342,7 @@ def show_graphs(graph_list, **kwds):
 
     Show the graphs in a graphics array::
 
-        sage: graphs_list.show_graphs(glist)
+        sage: graphs_list.show_graphs(glist)                                            # needs sage.plot
 
     Example where more than one graphics array is used::
 
@@ -345,15 +350,15 @@ def show_graphs(graph_list, **kwds):
         sage: g = gq.get_graphs_list()
         sage: len(g)
         34
-        sage: graphs_list.show_graphs(g)
+        sage: graphs_list.show_graphs(g)                                                # needs sage.plot
 
     See the .plot() or .show() documentation for an individual graph for
     options, all of which are available from :func:`to_graphics_array`::
 
         sage: glist = []
-        sage: for _ in range(10):
+        sage: for _ in range(10):                                                       # needs networkx
         ....:     glist.append(graphs.RandomLobster(41, .3, .4))
-        sage: graphs_list.show_graphs(glist, layout='spring', vertex_size=20)
+        sage: graphs_list.show_graphs(glist, layout='spring', vertex_size=20)           # needs sage.plot
     """
     graph_list = list(graph_list)
     for i in range(len(graph_list) // 20 + 1):

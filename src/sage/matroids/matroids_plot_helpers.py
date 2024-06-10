@@ -1,3 +1,4 @@
+# sage.doctest: optional - scipy
 r"""
 Helper functions for plotting the geometric representation of matroids
 
@@ -19,8 +20,9 @@ AUTHORS:
     via an optimization that gives aesthetically pleasing point placement (in
     some sense. This is not yet implemented).    One can then use
     ``createline`` function to produce sequence of ``100`` points on a smooth
-    curve containing the points in the specified line which inturn uses
-    ``scipy.interpolate.splprep`` and ``scipy.interpolate.splev``.  Then one
+    curve containing the points in the specified line which in turn uses
+    :func:`scipy:scipy.interpolate.splprep` and
+    :func:`scipy:scipy.interpolate.splev`.  Then one
     can use sage's graphics primitives ``line``, ``point``, ``text`` and
     ``points`` to produce graphics object containing points (ground set
     elements) and lines (for a rank 3 matroid, these are flats of rank 2 of
@@ -40,7 +42,6 @@ AUTHORS:
                              'plot_lineorders':<list of lists>}
 
 
-
 REFERENCES
 ==========
 
@@ -50,15 +51,15 @@ REFERENCES
 EXAMPLES::
 
     sage: from sage.matroids import matroids_plot_helpers
-    sage: M1=Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1,0,1],
-    ....: [0, 1, 0, 1, 0, 1, 1,0,0,1,0], [0, 0, 1, 1, 1, 0, 1,0,0,0,0]])
-    sage: pos_dict= {0: (0, 0),  1: (2, 0),  2: (1, 2),  3: (1.5, 1.0),
-    ....: 4: (0.5, 1.0),  5: (1.0, 0.0), 6: (1.0, 0.666666666666667),
-    ....: 7: (3,3), 8: (4,0), 9: (-1,1), 10: (-2,-2)}
-    sage: M1._cached_info={'plot_positions': pos_dict, 'plot_lineorders': None}
-    sage: matroids_plot_helpers.geomrep(M1, sp=True)
+    sage: M1 = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1,0,1],
+    ....:                                  [0, 1, 0, 1, 0, 1, 1,0,0,1,0],
+    ....:                                  [0, 0, 1, 1, 1, 0, 1,0,0,0,0]])
+    sage: pos_dict = {0: (0, 0),  1: (2, 0),  2: (1, 2),  3: (1.5, 1.0),
+    ....:             4: (0.5, 1.0),  5: (1.0, 0.0), 6: (1.0, 0.666666666666667),
+    ....:             7: (3,3), 8: (4,0), 9: (-1,1), 10: (-2,-2)}
+    sage: M1._cached_info = {'plot_positions': pos_dict, 'plot_lineorders': None}
+    sage: matroids_plot_helpers.geomrep(M1, sp=True)                                    # needs sage.plot sage.rings.finite_rings
     Graphics object consisting of 22 graphics primitives
-
 """
 # *****************************************************************************
 #       Copyright (C) 2013 Jayant Apte <jayant91089@gmail.com>
@@ -69,13 +70,13 @@ EXAMPLES::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-from __future__ import print_function
 
 import scipy
 import scipy.interpolate
 import numpy as np
-from sage.plot.all import Graphics, line, text, polygon2d, point, points
-from sage.plot.colors import Color
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.all", ["Graphics", "line", "text", "polygon2d", "point", "points"])
+lazy_import("sage.plot.colors", "Color")
 from sage.sets.set import Set
 from sage.matroids.advanced import newlabel
 
@@ -88,18 +89,18 @@ def it(M, B1, nB1, lps):
     INPUT:
 
     - ``M`` -- A matroid.
-    - ``B1``-- A list of groundset elements of ``M`` that corresponds to a
+    - ``B1`` -- A list of groundset elements of ``M`` that corresponds to a
       basis of matroid ``M``.
-    - ``nB1``-- A list of elements in the ground set of M that corresponds to
+    - ``nB1`` -- A list of elements in the ground set of M that corresponds to
       ``M.simplify.groundset() \ B1``.
-    - ``lps``-- A list of elements in the ground set of matroid M that are
+    - ``lps`` -- A list of elements in the ground set of matroid M that are
       loops.
 
     OUTPUT:
 
     A tuple containing 4 elements in this order:
 
-    1. A dictionary containing 2-tuple (x,y) co-ordinates with
+    1. A dictionary containing 2-tuple (x,y) coordinates with
        ``M.simplify.groundset()`` elements that can be placed on the sides of
        the triangle as keys.
     2. A list of 3 lists of elements of ``M.simplify.groundset()`` that can
@@ -185,7 +186,7 @@ def trigrid(tripts):
     INPUT:
 
     - ``tripts`` -- A list of 3 lists of the form [x,y] where x and y are the
-      Cartesian co-ordinates of a point.
+      Cartesian coordinates of a point.
 
     OUTPUT:
 
@@ -208,7 +209,6 @@ def trigrid(tripts):
     .. NOTE::
 
             This method does NOT do any checks.
-
     """
     pairs = [[0, 1], [1, 2], [0, 2]]
     cpt = list((float(tripts[0][0]+tripts[1][0]+tripts[2][0])/3,
@@ -232,7 +232,7 @@ def addnontripts(tripts_labels, nontripts_labels, ptsdict):
       vertices of the triangle.
     - ``ptsdict`` -- A dictionary (at least) containing ground set elements in
       ``tripts`` as keys and their (x,y) position as values.
-    - ``nontripts``-- A list of ground set elements whose corresponding points
+    - ``nontripts`` -- A list of ground set elements whose corresponding points
       are to be placed inside the triangle.
 
     OUTPUT:
@@ -264,7 +264,6 @@ def addnontripts(tripts_labels, nontripts_labels, ptsdict):
     .. NOTE::
 
             This method does NOT do any checks.
-
     """
     tripts = [list(ptsdict[p]) for p in tripts_labels]
     pairs = [[0, 1], [1, 2], [0, 2]]
@@ -284,16 +283,14 @@ def addnontripts(tripts_labels, nontripts_labels, ptsdict):
             n = n + 4
         else:
             n = n + 3
-    j = 0
-    for p in nontripts_labels:
+    for j, p in enumerate(nontripts_labels):
         ptsdict[p] = tuple(gridpts[j])
-        j = j + 1
     return ptsdict
 
 
 def createline(ptsdict, ll, lineorders2=None):
     """
-    Return ordered lists of co-ordinates of points to be traversed to draw a
+    Return ordered lists of coordinates of points to be traversed to draw a
     2D line.
 
     INPUT:
@@ -302,7 +299,7 @@ def createline(ptsdict, ll, lineorders2=None):
       values.
     - ``ll`` -- A list of keys in ``ptsdict`` through which a line is to be
       drawn.
-    - ``lineorders2``-- (optional) A list of ordered lists of keys in
+    - ``lineorders2`` -- (optional) A list of ordered lists of keys in
       ``ptsdict`` such that if ll is setwise same as any of these then points
       corresponding to values of the keys will be traversed in that order thus
       overriding internal order deciding heuristic.
@@ -323,27 +320,26 @@ def createline(ptsdict, ll, lineorders2=None):
     EXAMPLES::
 
         sage: from sage.matroids import matroids_plot_helpers
-        sage: ptsdict={'a':(1,3),'b':(2,1),'c':(4,5),'d':(5,2)}
-        sage: x,y,x_i,y_i=matroids_plot_helpers.createline(ptsdict,
+        sage: ptsdict = {'a':(1,3),'b':(2,1),'c':(4,5),'d':(5,2)}
+        sage: x,y,x_i,y_i = matroids_plot_helpers.createline(ptsdict,
         ....: ['a','b','c','d'])
         sage: [len(x), len(y), len(x_i), len(y_i)]
         [4, 4, 100, 100]
-        sage: G = line(zip(x_i, y_i),color='black',thickness=3,zorder=1)
-        sage: G+=points(zip(x, y), color='black', size=300,zorder=2)
-        sage: G.show()
-        sage: x,y,x_i,y_i=matroids_plot_helpers.createline(ptsdict,
+        sage: G = line(zip(x_i, y_i), color='black', thickness=3, zorder=1)             # needs sage.plot
+        sage: G += points(zip(x, y), color='black', size=300, zorder=2)                 # needs sage.plot
+        sage: G.show()                                                                  # needs sage.plot
+        sage: x,y,x_i,y_i = matroids_plot_helpers.createline(ptsdict,
         ....: ['a','b','c','d'],lineorders2=[['b','a','c','d'],
         ....: ['p','q','r','s']])
         sage: [len(x), len(y), len(x_i), len(y_i)]
         [4, 4, 100, 100]
-        sage: G = line(zip(x_i, y_i),color='black',thickness=3,zorder=1)
-        sage: G+=points(zip(x, y), color='black', size=300,zorder=2)
-        sage: G.show()
+        sage: G = line(zip(x_i, y_i), color='black', thickness=3, zorder=1)             # needs sage.plot
+        sage: G += points(zip(x, y), color='black', size=300, zorder=2)                 # needs sage.plot
+        sage: G.show()                                                                  # needs sage.plot
 
     .. NOTE::
 
             This method does NOT do any checks.
-
     """
     x, lo = line_hasorder(ll, lineorders2)
     flip = False
@@ -403,27 +399,28 @@ def slp(M1, pos_dict=None, B=None):
 
         sage: from sage.matroids import matroids_plot_helpers
         sage: from sage.matroids.advanced import setprint
-        sage: M1=Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1,0,1],
-        ....: [0, 1, 0, 1, 0, 1, 1,0,0,1,0],[0, 0, 1, 1, 1, 0, 1,0,0,0,0]])
-        sage: [M,L,P]=matroids_plot_helpers.slp(M1)
-        sage: M.is_simple()
+        sage: M1 = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1,0,1],
+        ....:                                  [0, 1, 0, 1, 0, 1, 1,0,0,1,0],
+        ....:                                  [0, 0, 1, 1, 1, 0, 1,0,0,0,0]])
+        sage: [M,L,P] = matroids_plot_helpers.slp(M1)                                   # needs sage.rings.finite_rings
+        sage: M.is_simple()                                                             # needs sage.rings.finite_rings
         True
-        sage: setprint([L,P])
+        sage: setprint([L,P])                                                           # needs sage.rings.finite_rings
         [{10, 8, 9}, {7}]
-        sage: M1=Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1,0,1],
-        ....: [0, 1, 0, 1, 0, 1, 1,0,0,1,0],[0, 0, 1, 1, 1, 0, 1,0,0,0,0]])
-        sage: posdict= {8: (0, 0),  1: (2, 0),  2: (1, 2),  3: (1.5, 1.0),
-        ....: 4: (0.5, 1.0),  5: (1.0, 0.0), 6: (1.0, 0.6666666666666666)}
-        sage: [M,L,P]=matroids_plot_helpers.slp(M1,pos_dict=posdict)
-        sage: M.is_simple()
+        sage: M1 = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1,0,1],
+        ....:                                  [0, 1, 0, 1, 0, 1, 1,0,0,1,0],
+        ....:                                  [0, 0, 1, 1, 1, 0, 1,0,0,0,0]])
+        sage: posdict = {8: (0, 0),  1: (2, 0),  2: (1, 2),  3: (1.5, 1.0),
+        ....:            4: (0.5, 1.0),  5: (1.0, 0.0), 6: (1.0, 0.6666666666666666)}
+        sage: [M,L,P] = matroids_plot_helpers.slp(M1, pos_dict=posdict)                 # needs sage.rings.finite_rings
+        sage: M.is_simple()                                                             # needs sage.rings.finite_rings
         True
-        sage: setprint([L,P])
+        sage: setprint([L,P])                                                           # needs sage.rings.finite_rings
         [{0, 10, 9}, {7}]
 
     .. NOTE::
 
             This method does NOT do any checks.
-
     """
     L = set(M1.loops())
     nP = L | set(M1.simplify().groundset())
@@ -472,7 +469,7 @@ def addlp(M, M1, L, P, ptsdict, G=None, limits=None):
       necessarily containing elements of ``L``.
     - ``G`` -- (optional) A sage graphics object to which loops and parallel
       elements of matroid `M` added .
-    - ``limits``-- (optional) Current axes limits [xmin,xmax,ymin,ymax].
+    - ``limits`` -- (optional) Current axes limits [xmin,xmax,ymin,ymax].
 
     OUTPUT:
 
@@ -485,16 +482,16 @@ def addlp(M, M1, L, P, ptsdict, G=None, limits=None):
     EXAMPLES::
 
         sage: from sage.matroids import matroids_plot_helpers
-        sage: M=Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1],
-        ....: [0, 1, 0, 1, 0, 1, 1,0,0],[0, 0, 1, 1, 1, 0, 1,0,0]])
-        sage: [M1,L,P]=matroids_plot_helpers.slp(M)
-        sage: G,lims=matroids_plot_helpers.addlp(M,M1,L,P,{0:(0,0)})
-        sage: G.show(axes=False)
+        sage: M = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1],
+        ....:                                 [0, 1, 0, 1, 0, 1, 1,0,0],
+        ....:                                 [0, 0, 1, 1, 1, 0, 1,0,0]])
+        sage: [M1,L,P] = matroids_plot_helpers.slp(M)                                   # needs sage.rings.finite_rings
+        sage: G, lims = matroids_plot_helpers.addlp(M,M1,L,P,{0:(0,0)})                 # needs sage.plot sage.rings.finite_rings
+        sage: G.show(axes=False)                                                        # needs sage.plot sage.rings.finite_rings
 
     .. NOTE::
 
             This method does NOT do any checks.
-
     """
     if G is None:
         G = Graphics()
@@ -630,7 +627,6 @@ def lineorders_union(lineorders1, lineorders2):
         sage: matroids_plot_helpers.lineorders_union([['a','b','c'],
         ....: ['p','q','r'],['i','j','k','l']],[['r','p','q']])
         [['a', 'b', 'c'], ['p', 'q', 'r'], ['i', 'j', 'k', 'l']]
-
     """
     if lineorders1 is not None and lineorders2 is not None:
         lineorders = lineorders1
@@ -666,15 +662,16 @@ def posdict_is_sane(M1, pos_dict):
     EXAMPLES::
 
         sage: from sage.matroids import matroids_plot_helpers
-        sage: M1=Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1,0,1],
-        ....: [0, 1, 0, 1, 0, 1, 1,0,0,1,0],[0, 0, 1, 1, 1, 0, 1,0,0,0,0]])
-        sage: pos_dict= {0: (0, 0),  1: (2, 0),  2: (1, 2),  3: (1.5, 1.0),
+        sage: M1 = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1,0,1],
+        ....:                                  [0, 1, 0, 1, 0, 1, 1,0,0,1,0],
+        ....:                                  [0, 0, 1, 1, 1, 0, 1,0,0,0,0]])
+        sage: pos_dict = {0: (0, 0),  1: (2, 0),  2: (1, 2),  3: (1.5, 1.0),
         ....: 4: (0.5, 1.0),  5: (1.0, 0.0), 6: (1.0, 0.6666666666666666)}
-        sage: matroids_plot_helpers.posdict_is_sane(M1,pos_dict)
+        sage: matroids_plot_helpers.posdict_is_sane(M1,pos_dict)                        # needs sage.rings.finite_rings
         True
-        sage: pos_dict= {1: (2, 0),  2: (1, 2),  3: (1.5, 1.0),
-        ....: 4: (0.5, 1.0), 5: (1.0, 0.0), 6: (1.0, 0.6666666666666666)}
-        sage: matroids_plot_helpers.posdict_is_sane(M1,pos_dict)
+        sage: pos_dict = {1: (2, 0),  2: (1, 2),  3: (1.5, 1.0),
+        ....:             4: (0.5, 1.0), 5: (1.0, 0.0), 6: (1.0, 0.6666666666666666)}
+        sage: matroids_plot_helpers.posdict_is_sane(M1,pos_dict)                        # needs sage.rings.finite_rings
         False
 
     .. NOTE::
@@ -746,7 +743,7 @@ def geomrep(M1, B1=None, lineorders1=None, pd=None, sp=False):
       ``M1.groundset()`` such that if a line in geometric representation is
       setwise same as any of these then points contained will be traversed in
       that order thus overriding internal order deciding heuristic.
-    - ``pd`` - (optional) A dictionary mapping ground set elements to their
+    - ``pd`` -- (optional) A dictionary mapping ground set elements to their
       (x,y) positions.
     - ``sp`` -- (optional) If True, a positioning dictionary and line orders
       will be placed in ``M._cached_info``.
@@ -759,12 +756,12 @@ def geomrep(M1, B1=None, lineorders1=None, pd=None, sp=False):
     EXAMPLES::
 
         sage: from sage.matroids import matroids_plot_helpers
-        sage: M=matroids.named_matroids.P7()
-        sage: G=matroids_plot_helpers.geomrep(M)
-        sage: G.show(xmin=-2, xmax=3, ymin=-2, ymax=3)
-        sage: M=matroids.named_matroids.P7()
-        sage: G=matroids_plot_helpers.geomrep(M,lineorders1=[['f','e','d']])
-        sage: G.show(xmin=-2, xmax=3, ymin=-2, ymax=3)
+        sage: M = matroids.catalog.P7()
+        sage: G = matroids_plot_helpers.geomrep(M)                                      # needs sage.plot
+        sage: G.show(xmin=-2, xmax=3, ymin=-2, ymax=3)                                  # needs sage.plot
+        sage: M = matroids.catalog.P7()
+        sage: G = matroids_plot_helpers.geomrep(M, lineorders1=[['f','e','d']])         # needs sage.plot
+        sage: G.show(xmin=-2, xmax=3, ymin=-2, ymax=3)                                  # needs sage.plot
 
     .. NOTE::
 
@@ -780,10 +777,10 @@ def geomrep(M1, B1=None, lineorders1=None, pd=None, sp=False):
     if M.rank() == 0:
         limits = None
         loops = L
-        looptext = ", ".join([str(l) for l in loops])
+        looptext = ", ".join(str(l) for l in loops)
         rectx = -1
         recty = -1
-        rectw = 0.5 + 0.4*len(loops) + 0.5  # controlled based on len(loops)
+        rectw = 0.5 + 0.4 * len(loops) + 0.5  # controlled based on len(loops)
         recth = 0.6
         G += polygon2d([[rectx, recty], [rectx, recty+recth],
                         [rectx+rectw, recty+recth], [rectx+rectw, recty]],
@@ -819,11 +816,8 @@ def geomrep(M1, B1=None, lineorders1=None, pd=None, sp=False):
         lims = tracklims([None, None, None, None], [pnt[0] for pnt in pl],
                          [pnt[1] for pnt in pl])
     elif M.rank() == 2:
-        nB1 = list(set(list(M.groundset())) - set(B1))
-        bline = []
-        for j in nB1:
-            if M.is_dependent([j, B1[0], B1[1]]):
-                bline.append(j)
+        nB1 = set(M.groundset()) - set(B1)
+        bline = [j for j in nB1 if M.is_dependent([j, B1[0], B1[1]])]
         interval = len(bline)+1
         if M._cached_info is not None and \
            'plot_positions' in M._cached_info.keys() and \

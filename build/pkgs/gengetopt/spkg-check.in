@@ -1,0 +1,8 @@
+cd src
+
+# See spkg-build.in for an explanation of this hack.
+cd src
+sdh_make_check
+cd ../tests
+sdh_make_check
+cd ..

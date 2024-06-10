@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.groups sage.modules
 r"""
 Group algebras
 
@@ -35,8 +36,8 @@ Check that unpicking old group algebra classes works::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.all import IntegerRing
-from sage.categories.all import Rings
+from sage.rings.integer_ring import IntegerRing
+from sage.categories.rings import Rings
 from sage.categories.magmas import Magmas
 from sage.categories.additive_magmas import AdditiveMagmas
 from sage.categories.sets_cat import Sets
@@ -108,10 +109,11 @@ def GroupAlgebra(G, R=IntegerRing()):
          over Rational Field
     """
     if not (G in Magmas() or G in AdditiveMagmas()):
-        raise ValueError("%s is not a magma or additive magma"%G)
-    if not R in Rings():
-        raise ValueError("%s is not a ring"%R)
+        raise ValueError("%s is not a magma or additive magma" % G)
+    if R not in Rings():
+        raise ValueError("%s is not a ring" % R)
     return G.algebra(R)
+
 
 class GroupAlgebra_class(CombinatorialFreeModule):
     def _coerce_map_from_(self, S):
@@ -155,9 +157,16 @@ class GroupAlgebra_class(CombinatorialFreeModule):
             sage: QG = G.algebra(QQ)
             sage: ZG = G.algebra(ZZ)
             sage: ZG.coerce_map_from(H)
-            Coercion map:
+            Composite map:
               From: Cyclic group of order 3 as a permutation group
               To:   Algebra of Dihedral group of order 6 as a permutation group over Integer Ring
+              Defn:   Coercion map:
+                      From: Cyclic group of order 3 as a permutation group
+                      To:   Dihedral group of order 6 as a permutation group
+                    then
+                      Coercion map:
+                      From: Dihedral group of order 6 as a permutation group
+                      To:   Algebra of Dihedral group of order 6 as a permutation group over Integer Ring
             sage: QG.coerce_map_from(ZG)
             Generic morphism:
               From: Algebra of Dihedral group of order 6 as a permutation group over Integer Ring
@@ -170,6 +179,14 @@ class GroupAlgebra_class(CombinatorialFreeModule):
             Generic morphism:
               From: Algebra of Cyclic group of order 3 as a permutation group over Integer Ring
               To:   Algebra of Dihedral group of order 6 as a permutation group over Rational Field
+
+            sage: H = PermutationGroup([ [(1,2), (3,4)], [(5,6,7),(12,14,18)] ])
+            sage: kH = H.algebra(GF(2))
+            sage: [a, b] = kH.gens()
+            sage: x = kH(a) + kH(b) + kH.one(); print(x)
+            () + (5,6,7)(12,14,18) + (1,2)(3,4)
+            sage: x*x  #checks :issue:34292
+            (5,7,6)(12,18,14)
 
         As expected, there is no coercion when restricting the
         field::
@@ -187,11 +204,16 @@ class GroupAlgebra_class(CombinatorialFreeModule):
         G = self.basis().keys()
         K = self.base_ring()
 
-        if G.has_coerce_map_from(S):
+        G_coercion = G.coerce_map_from(S)
+        if G_coercion is not None:
             from sage.categories.groups import Groups
             # No coercion for additive groups because of ambiguity of +
             #   being the group action or addition of a new term.
-            return self.category().is_subcategory(Groups().Algebras(K))
+            if not self.category().is_subcategory(Groups().Algebras(K)):
+                return None
+            if S is G:
+                return True
+            return self.coerce_map_from(G) * G_coercion
 
         if S in Sets.Algebras:
             S_K = S.base_ring()
@@ -202,6 +224,6 @@ class GroupAlgebra_class(CombinatorialFreeModule):
                 return SetMorphism(S.Hom(self, category=self.category() | S.category()),
                                    lambda x: self.sum_of_terms( (hom_G(g), hom_K(c)) for g,c in x ))
 
+
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.algebras.group_algebras', 'GroupAlgebra',  GroupAlgebra_class)
-

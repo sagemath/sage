@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Realizations Covariant Functorial Construction
 
@@ -21,6 +22,7 @@ from sage.categories.category import Category
 from sage.categories.category_types import Category_over_base
 from sage.categories.covariant_functorial_construction import RegressiveCovariantConstructionCategory
 
+
 class RealizationsCategory(RegressiveCovariantConstructionCategory):
     """
     An abstract base class for all categories of realizations category
@@ -36,7 +38,7 @@ class RealizationsCategory(RegressiveCovariantConstructionCategory):
     TESTS::
 
         sage: Sets().Realizations
-        <bound method Sets_with_category.Realizations of Category of sets>
+        <bound method Realizations of Category of sets>
         sage: Sets().Realizations()
         Category of realizations of sets
         sage: Sets().Realizations().super_categories()
@@ -46,6 +48,7 @@ class RealizationsCategory(RegressiveCovariantConstructionCategory):
     """
 
     _functor_category = "Realizations"
+
 
 def Realizations(self):
     """
@@ -66,19 +69,23 @@ def Realizations(self):
     The category of realizations of some algebra::
 
         sage: Algebras(QQ).Realizations()
-        Join of Category of algebras over Rational Field and Category of realizations of unital magmas
+        Join of Category of algebras over Rational Field
+            and Category of realizations of unital magmas
 
     The category of realizations of a given algebra::
 
-        sage: A = Sets().WithRealizations().example(); A
+        sage: A = Sets().WithRealizations().example(); A                                # needs sage.modules
         The subset algebra of {1, 2, 3} over Rational Field
-        sage: A.Realizations()
-        Category of realizations of The subset algebra of {1, 2, 3} over Rational Field
+        sage: A.Realizations()                                                          # needs sage.modules
+        Category of realizations of
+         The subset algebra of {1, 2, 3} over Rational Field
 
         sage: C = GradedHopfAlgebrasWithBasis(QQ).Realizations(); C
-        Join of Category of graded hopf algebras with basis over Rational Field and Category of realizations of hopf algebras over Rational Field
+        Join of Category of graded Hopf algebras with basis over Rational Field
+            and Category of realizations of Hopf algebras over Rational Field
         sage: C.super_categories()
-        [Category of graded hopf algebras with basis over Rational Field, Category of realizations of hopf algebras over Rational Field]
+        [Category of graded Hopf algebras with basis over Rational Field,
+         Category of realizations of Hopf algebras over Rational Field]
 
         sage: TestSuite(C).run()
 
@@ -91,14 +98,16 @@ def Realizations(self):
 
         Add an optional argument to allow for::
 
-            sage: Realizations(A, category = Blahs()) # todo: not implemented
+            sage: Realizations(A, category=Blahs()) # todo: not implemented
     """
     if isinstance(self, Category):
         return RealizationsCategory.category_of(self)
     else:
         return getattr(self.__class__, "Realizations")(self)
 
+
 Category.Realizations = Realizations
+
 
 class Category_realization_of_parent(Category_over_base, BindableClass):
     """
@@ -112,7 +121,7 @@ class Category_realization_of_parent(Category_over_base, BindableClass):
 
     EXAMPLES::
 
-        sage: A = Sets().WithRealizations().example(); A
+        sage: A = Sets().WithRealizations().example(); A                                # needs sage.modules
         The subset algebra of {1, 2, 3} over Rational Field
 
     The role of this base class is to implement some technical goodies, like
@@ -120,8 +129,9 @@ class Category_realization_of_parent(Category_over_base, BindableClass):
     implemented as a nested class in ``A``
     (see the :mod:`code of the example <sage.categories.examples.with_realizations.SubsetAlgebra>`)::
 
-        sage: C = A.Realizations(); C
-        Category of realizations of The subset algebra of {1, 2, 3} over Rational Field
+        sage: C = A.Realizations(); C                                                   # needs sage.modules
+        Category of realizations of
+         The subset algebra of {1, 2, 3} over Rational Field
 
     as well as the name for that category.
     """
@@ -129,11 +139,13 @@ class Category_realization_of_parent(Category_over_base, BindableClass):
         """
         TESTS::
 
+            sage: # needs sage.combinat sage.modules
             sage: from sage.categories.realizations import Category_realization_of_parent
             sage: A = Sets().WithRealizations().example(); A
             The subset algebra of {1, 2, 3} over Rational Field
             sage: C = A.Realizations(); C
-            Category of realizations of The subset algebra of {1, 2, 3} over Rational Field
+            Category of realizations of
+             The subset algebra of {1, 2, 3} over Rational Field
             sage: isinstance(C, Category_realization_of_parent)
             True
             sage: C.parent_with_realization
@@ -161,8 +173,8 @@ class Category_realization_of_parent(Category_over_base, BindableClass):
             sage: from sage.categories.realizations import Category_realization_of_parent
             sage: class MultiplicativeBasesOnPrimitiveElements(Category_realization_of_parent):
             ....:     def super_categories(self): return [Objects()]
-            sage: Sym = SymmetricFunctions(QQ); Sym.rename("Sym")
-            sage: MultiplicativeBasesOnPrimitiveElements(Sym)._get_name()
+            sage: Sym = SymmetricFunctions(QQ); Sym.rename("Sym")                       # needs sage.combinat sage.modules
+            sage: MultiplicativeBasesOnPrimitiveElements(Sym)._get_name()               # needs sage.combinat sage.modules
             'multiplicative bases on primitive elements'
         """
         import re
@@ -179,11 +191,10 @@ class Category_realization_of_parent(Category_over_base, BindableClass):
             sage: from sage.categories.realizations import Category_realization_of_parent
             sage: class MultiplicativeBasesOnPrimitiveElements(Category_realization_of_parent):
             ....:     def super_categories(self): return [Objects()]
-            sage: Sym = SymmetricFunctions(QQ); Sym.rename("Sym")
-            sage: C = MultiplicativeBasesOnPrimitiveElements(Sym); C
+            sage: Sym = SymmetricFunctions(QQ); Sym.rename("Sym")                       # needs sage.combinat sage.modules
+            sage: C = MultiplicativeBasesOnPrimitiveElements(Sym); C                    # needs sage.combinat sage.modules
             Category of multiplicative bases on primitive elements of Sym
-            sage: C._repr_object_names()
+            sage: C._repr_object_names()                                                # needs sage.combinat sage.modules
             'multiplicative bases on primitive elements of Sym'
         """
         return "{} of {}".format(self._get_name(), self.base())
-

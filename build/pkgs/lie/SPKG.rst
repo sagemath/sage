@@ -1,5 +1,5 @@
-LiE
-===
+lie: Library for the representation theory of complex semisimple Lie groups and algebras
+========================================================================================
 
 Description
 -----------

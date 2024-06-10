@@ -1,5 +1,5 @@
-ptyprocess
-==========
+ptyprocess: Python interaction with subprocesses in a pseudoterminal
+====================================================================
 
 Description
 -----------
@@ -26,7 +26,3 @@ Upstream Contact
 
 https://github.com/pexpect/ptyprocess
 
-Dependencies
-------------
-
--  Python

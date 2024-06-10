@@ -1,6 +1,7 @@
 # cython: binding=True
+# sage.doctest: needs sage.libs.flint sage.graphs
 """
-Matching Polynomial
+Matching polynomial
 
 This module contains the following methods:
 
@@ -25,15 +26,15 @@ Methods
 -------
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Robert Miller
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport sig_on, sig_off
@@ -41,16 +42,17 @@ from cysignals.signals cimport sig_on, sig_off
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
-from sage.misc.all import prod
 
 from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpz_poly cimport *
+from sage.libs.flint.fmpz_poly_sage cimport *
+
 
 x = polygen(ZZ, 'x')
 
 
 def matching_polynomial(G, complement=True, name=None):
-    """
+    r"""
     Computes the matching polynomial of the graph `G`.
 
     If `p(G, k)` denotes the number of `k`-matchings (matchings with `k` edges)
@@ -62,11 +64,11 @@ def matching_polynomial(G, complement=True, name=None):
 
     INPUT:
 
-    - ``complement`` - (default: ``True``) whether to use Godsil's duality
+    - ``complement`` -- (default: ``True``) whether to use Godsil's duality
       theorem to compute the matching polynomial from that of the graphs
       complement (see ALGORITHM).
 
-    - ``name`` - optional string for the variable name in the polynomial
+    - ``name`` -- optional string for the variable name in the polynomial
 
     .. NOTE::
 
@@ -86,7 +88,7 @@ def matching_polynomial(G, complement=True, name=None):
       polynomial of `G` is equal to that of `G'` minus that of `G''`.
 
       (the algorithm actually computes the *signless* matching polynomial, for
-      which the recursion is the same when one replaces the substraction by an
+      which the recursion is the same when one replaces the subtraction by an
       addition. It is then converted into the matching polynomial and returned)
 
     Depending on the value of ``complement``, Godsil's duality theorem
@@ -201,11 +203,11 @@ def matching_polynomial(G, complement=True, name=None):
         x^12 - 66*x^10 + 1485*x^8 - 13860*x^6 + 51975*x^4 - 62370*x^2 + 10395
         sage: matching_polynomial(graphs.CompleteGraph(13), complement=False)
         x^13 - 78*x^11 + 2145*x^9 - 25740*x^7 + 135135*x^5 - 270270*x^3 + 135135*x
-        
+
     TESTS:
-    
-    Non-integer labels should work, (:trac:`15545`):: 
-    
+
+    Non-integer labels should work, (:issue:`15545`)::
+
         sage: G = Graph(10)
         sage: G.add_vertex((0,1))
         sage: G.add_vertex('X')
@@ -217,14 +219,14 @@ def matching_polynomial(G, complement=True, name=None):
 
     cdef int i, j, d
     cdef fmpz_poly_t pol
-    cdef nverts = G.num_verts()
+    cdef int nverts = G.num_verts()
 
     # Using Godsil's duality theorem when the graph is dense
 
     if complement and G.density() > 0.5:  # this cutoff could probably be tuned
         f_comp = matching_polynomial(G.complement()).list()
         f = x.parent().zero()
-        for i from 0 <= i <= nverts / 2:  # implicit floor
+        for i in range(nverts // 2 + 1):
             j = nverts - 2 * i
             f += complete_poly(j) * f_comp[j] * (-1)**i
         return f
@@ -290,6 +292,7 @@ def matching_polynomial(G, complement=True, name=None):
         return f.change_variable_name(name)
     return f
 
+
 # The following is a cache of complete graph matching polynomials.
 
 cdef list complete_matching_polys = [x.parent().one(), x]
@@ -328,9 +331,9 @@ def complete_poly(n):
 
     Checking the numerical results up to 20::
 
-        sage: from sage.functions.orthogonal_polys import hermite
-        sage: p = lambda n: 2^(-n/2)*hermite(n, x/sqrt(2))
-        sage: all(p(i) == complete_poly(i) for i in range(2, 20))
+        sage: from sage.functions.orthogonal_polys import hermite                       # needs sage.symbolic
+        sage: p = lambda n: 2^(-n/2)*hermite(n, x/sqrt(2))                              # needs sage.symbolic
+        sage: all(p(i) == complete_poly(i) for i in range(2, 20))                       # needs sage.symbolic
         True
     """
     # global complete_matching_polys # if we do eventually make it a C array...
@@ -346,7 +349,8 @@ def complete_poly(n):
         complete_matching_polys.append(b)
     return b
 
-cdef void delete_and_add(int **edges, int nverts, int nedges, int totverts, int depth, fmpz_poly_t pol):
+
+cdef void delete_and_add(int **edges, int nverts, int nedges, int totverts, int depth, fmpz_poly_t pol) noexcept:
     """
     Add matching polynomial to pol via recursion.
 
@@ -387,18 +391,18 @@ cdef void delete_and_add(int **edges, int nverts, int nedges, int totverts, int 
     cdef int edge1 = edges1[nedges]
     cdef int edge2 = edges2[nedges]
     cdef int new_nedges = 0
-    cdef int i, new_edge1, new_edge2
+    cdef int i
 
     # The new edges are all the edges that are not incident with (edge1, edge2)
 
     for i in range(nedges):
         if edge1 == edges1[i]:
-            break  # since the rest of the edges are incident to edge1
-                   # (the edges
-                   # are sorted by increasing order of their first component)
+            # Since the rest of the edges are incident to edge1 (the edges are
+            # sorted by increasing order of their first component), we can stop
+            break
 
         if edge1 != edges2[i] and edge2 != edges2[i]:
-            # since edge2 > edge1 > edges1[i], only need to check edges2[i]
+            # since edge2 > edge1 > edges1[i], we only need to check edges2[i]
             new_edges1[new_nedges] = edges1[i]
             new_edges2[new_nedges] = edges2[i]
             new_nedges += 1

@@ -1,8 +1,10 @@
+.. _sage.combinat:
+
 Combinatorics
 =============
 
-.. automodule:: sage.combinat
-
+.. automodule:: sage.combinat.all
+   :noindex:
 
 Comprehensive Module List
 -------------------------

@@ -3,8 +3,7 @@ Weighted homogeneous elements of free algebras, in letterplace implementation
 
 AUTHOR:
 
-- Simon King (2011-03-23): Trac ticket :trac:`7797`
-
+- Simon King (2011-03-23): Github issue :issue:`7797`
 """
 
 # ****************************************************************************
@@ -17,15 +16,14 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.groups.perm_gps.permgroup_named import CyclicPermutationGroup
 from sage.libs.singular.function import lib, singular_function
-from sage.misc.repr import repr_lincomb
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 from cpython.object cimport PyObject_RichCompare
 
 # Define some singular functions
 lib("freegb.lib")
 poly_reduce = singular_function("NF")
-singular_system=singular_function("system")
 
 #####################
 # Free algebra elements
@@ -92,11 +90,12 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
         cdef FreeAlgebra_letterplace P = A
         if check:
             if not x.is_homogeneous():
-                raise ValueError("Free algebras based on Letterplace can currently only work with weighted homogeneous elements")
+                raise ValueError("free algebras based on Letterplace can currently only work with weighted homogeneous elements")
             P.set_degbound(x.degree())
             x = P._current_ring(x)
-        AlgebraElement.__init__(self,P)
+        AlgebraElement.__init__(self, P)
         self._poly = x
+
     def __reduce__(self):
         """
         Pickling.
@@ -106,9 +105,9 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
             sage: loads(dumps(x*y*x)) == x*y*x   # indirect doctest
             True
-
         """
-        return self.__class__, (self._parent,self._poly)
+        return self.__class__, (self._parent, self._poly)
+
     def __copy__(self):
         """
         TESTS::
@@ -116,10 +115,10 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
             sage: copy(x*y*z+z*y*x) == x*y*z+z*y*x   # indirect doctest
             True
-
         """
         self._poly = (<FreeAlgebra_letterplace>self._parent)._current_ring(self._poly)
-        return self.__class__(self._parent,self._poly,check=False)
+        return self.__class__(self._parent, self._poly, check=False)
+
     def __hash__(self):
         """
         TESTS::
@@ -127,7 +126,6 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
             sage: set([x*y*z, z*y+x*z,x*y*z])  # indirect doctest
             {x*z + z*y, x*y*z}
-
         """
         return hash(self._poly)
 
@@ -162,66 +160,64 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             w + (z + 1)*x - y
             sage: print(a+b*(z+1)-c)
             a + (z + 1)*b - c
-
         """
         cdef list L = []
         cdef FreeAlgebra_letterplace P = self._parent
-        cdef int ngens = P.__ngens
         if P._base._repr_option('element_is_atomic'):
-            for E,c in zip(self._poly.exponents(),self._poly.coefficients()):
+            for E, c in zip(self._poly.exponents(), self._poly.coefficients()):
                 monstr = P.exponents_to_string(E)
                 if monstr:
-                    if c==1:
+                    if c == 1:
                         if L:
-                            L.extend(['+',monstr])
+                            L.extend(['+', monstr])
                         else:
                             L.append(monstr)
-                    elif c==-1:
+                    elif c == -1:
                         if L:
-                            L.extend(['-',monstr])
+                            L.extend(['-', monstr])
                         else:
-                            L.append('-'+monstr)
+                            L.append('-' + monstr)
                     else:
                         if L:
-                            if c>=0:
-                                L.extend(['+',repr(c)+'*'+monstr])
+                            if c >= 0:
+                                L.extend(['+', repr(c) + '*' + monstr])
                             else:
-                                L.extend(['-',repr(-c)+'*'+monstr])
+                                L.extend(['-', repr(-c) + '*' + monstr])
                         else:
-                            L.append(repr(c)+'*'+monstr)
+                            L.append(repr(c) + '*' + monstr)
                 else:
-                    if c>=0:
+                    if c >= 0:
                         if L:
-                            L.extend(['+',repr(c)])
+                            L.extend(['+', repr(c)])
                         else:
                             L.append(repr(c))
                     else:
                         if L:
-                            L.extend(['-',repr(-c)])
+                            L.extend(['-', repr(-c)])
                         else:
                             L.append(repr(c))
         else:
-            for E,c in zip(self._poly.exponents(),self._poly.coefficients()):
+            for E, c in zip(self._poly.exponents(), self._poly.coefficients()):
                 monstr = P.exponents_to_string(E)
                 if monstr:
-                    if c==1:
+                    if c == 1:
                         if L:
-                            L.extend(['+',monstr])
+                            L.extend(['+', monstr])
                         else:
                             L.append(monstr)
-                    elif c==-1:
+                    elif c == -1:
                         if L:
-                            L.extend(['-',monstr])
+                            L.extend(['-', monstr])
                         else:
-                            L.append('-'+monstr)
+                            L.append('-' + monstr)
                     else:
                         if L:
-                            L.extend(['+','('+repr(c)+')*'+monstr])
+                            L.extend(['+', '(' + repr(c) + ')*' + monstr])
                         else:
-                            L.append('('+repr(c)+')*'+monstr)
+                            L.append('(' + repr(c) + ')*' + monstr)
                 else:
                     if L:
-                        L.extend(['+',repr(c)])
+                        L.extend(['+', repr(c)])
                     else:
                         L.append(repr(c))
         if L:
@@ -229,7 +225,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
         return '0'
 
     def _latex_(self):
-        """
+        r"""
         TESTS::
 
             sage: K.<z> = GF(25)
@@ -238,67 +234,65 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             (2*z + 1)*a*b*a*b + (z + 1)*a*b*c + (z + 1)*c*a*b - c*c
             sage: latex(-(a*b*(z+1)-c)^2)     # indirect doctest
             \left(2 z + 1\right) a b a b + \left(z + 1\right) a b c + \left(z + 1\right) c a b - c c
-
         """
         cdef list L = []
         cdef FreeAlgebra_letterplace P = self._parent
-        cdef int ngens = P.__ngens
         from sage.misc.latex import latex
         if P._base._repr_option('element_is_atomic'):
-            for E,c in zip(self._poly.exponents(),self._poly.coefficients()):
+            for E, c in zip(self._poly.exponents(), self._poly.coefficients()):
                 monstr = P.exponents_to_latex(E)
                 if monstr:
-                    if c==1:
+                    if c == 1:
                         if L:
-                            L.extend(['+',monstr])
+                            L.extend(['+', monstr])
                         else:
                             L.append(monstr)
-                    elif c==-1:
+                    elif c == -1:
                         if L:
-                            L.extend(['-',monstr])
+                            L.extend(['-', monstr])
                         else:
-                            L.append('-'+monstr)
+                            L.append('-' + monstr)
                     else:
                         if L:
-                            if c>=0:
-                                L.extend(['+',repr(latex(c))+' '+monstr])
+                            if c >= 0:
+                                L.extend(['+', repr(latex(c)) + ' ' + monstr])
                             else:
-                                L.extend(['-',repr(latex(-c))+' '+monstr])
+                                L.extend(['-', repr(latex(-c)) + ' ' + monstr])
                         else:
-                            L.append(repr(latex(c))+' '+monstr)
+                            L.append(repr(latex(c)) + ' ' + monstr)
                 else:
-                    if c>=0:
+                    if c >= 0:
                         if L:
-                            L.extend(['+',repr(latex(c))])
+                            L.extend(['+', repr(latex(c))])
                         else:
                             L.append(repr(latex(c)))
                     else:
                         if L:
-                            L.extend(['-',repr(latex(-c))])
+                            L.extend(['-', repr(latex(-c))])
                         else:
                             L.append(repr(c))
         else:
-            for E,c in zip(self._poly.exponents(),self._poly.coefficients()):
+            for E, c in zip(self._poly.exponents(), self._poly.coefficients()):
                 monstr = P.exponents_to_latex(E)
                 if monstr:
-                    if c==1:
+                    if c == 1:
                         if L:
-                            L.extend(['+',monstr])
+                            L.extend(['+', monstr])
                         else:
                             L.append(monstr)
-                    elif c==-1:
+                    elif c == -1:
                         if L:
-                            L.extend(['-',monstr])
+                            L.extend(['-', monstr])
                         else:
-                            L.append('-'+monstr)
+                            L.append('-' + monstr)
                     else:
                         if L:
-                            L.extend(['+','\\left('+repr(latex(c))+'\\right) '+monstr])
+                            L.extend(['+', '\\left(' + repr(latex(c)) + '\\right) ' + monstr])
                         else:
-                            L.append('\\left('+repr(latex(c))+'\\right) '+monstr)
+                            L.append('\\left(' + repr(latex(c)) + '\\right) ' + monstr)
                 else:
                     if L:
-                        L.extend(['+',repr(latex(c))])
+                        L.extend(['+', repr(latex(c))])
                     else:
                         L.append(repr(latex(c)))
         if L:
@@ -309,10 +303,10 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
         """
         Return the degree of this element.
 
-        NOTE:
+        .. NOTE::
 
-        Generators may have a positive integral degree weight. All
-        elements must be weighted homogeneous.
+            Generators may have a positive integral degree weight. All
+            elements must be weighted homogeneous.
 
         EXAMPLES::
 
@@ -322,7 +316,6 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace', degrees=[2,1,3])
             sage: ((x*y+z)^3).degree()
             9
-
         """
         return self._poly.degree()
 
@@ -342,7 +335,6 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace', degrees=[2,1,3])
             sage: ((x*y+z)^2).letterplace_polynomial()
             x*x__1*y_2*x_3*x__4*y_5 + x*x__1*y_2*z_3*x__4*x__5 + z*x__1*x__2*x_3*x__4*y_5 + z*x__1*x__2*z_3*x__4*x__5
-
         """
         return self._poly
 
@@ -358,7 +350,6 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace', degrees=[2,1,3])
             sage: ((2*x*y+z)^2).lm()
             x*y*x*y
-
         """
         return FreeAlgebraElement_letterplace(self._parent, self._poly.lm())
 
@@ -375,7 +366,6 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace', degrees=[2,1,3])
             sage: ((2*x*y+z)^2).lt()
             4*x*y*x*y
-
         """
         return FreeAlgebraElement_letterplace(self._parent, self._poly.lt())
 
@@ -394,11 +384,10 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace', degrees=[2,1,3])
             sage: ((2*x*y+z)^2).lc()
             4
-
         """
         return self._poly.lc()
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         TESTS::
 
@@ -407,7 +396,6 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             True
             sage: bool(F.zero())
             False
-
         """
         return bool(self._poly)
 
@@ -416,10 +404,10 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
         Tell whether or not the leading monomial of self divides the
         leading monomial of another element.
 
-        NOTE:
+        .. NOTE::
 
-        A free algebra element `p` divides another one `q` if there are
-        free algebra elements `s` and `t` such that `spt = q`.
+            A free algebra element `p` divides another one `q` if there are
+            free algebra elements `s` and `t` such that `spt = q`.
 
         EXAMPLES::
 
@@ -430,25 +418,25 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             y*x*y
             sage: (y*x*y-y^4).lm_divides((2*x*y+z)^2*z)
             True
-
         """
         if self._parent is not p._parent:
-            raise TypeError("The two arguments must be elements in the same free algebra.")
+            raise TypeError("the two arguments must be elements in the same free algebra")
         cdef FreeAlgebra_letterplace A = self._parent
         P = A._current_ring
         p_poly = p._poly = P(p._poly)
         s_poly = self._poly = P(self._poly)
         cdef int p_d = p_poly.degree()
         cdef int s_d = s_poly.degree()
-        if s_d>p_d:
+        if s_d > p_d:
             return False
         cdef int i
-        if P.monomial_divides(s_poly,p_poly):
+        if P.monomial_divides(s_poly, p_poly):
             return True
-        for i from 0 <= i < p_d-s_d:
-            s_poly = singular_system("stest",s_poly,1,
-                                     A._degbound,A.__ngens,ring=P)
-            if P.monomial_divides(s_poly,p_poly):
+        realngens = A._commutative_ring.ngens()
+        CG = CyclicPermutationGroup(P.ngens())
+        for i in range(p_d - s_d):
+            s_poly = s_poly * CG[realngens]
+            if P.monomial_divides(s_poly, p_poly):
                 return True
         return False
 
@@ -468,7 +456,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
         return PyObject_RichCompare(left, right, op)
 
     ################################
-    ## Arithmetic
+    # Arithmetic
     cpdef _neg_(self):
         """
         TESTS::
@@ -482,7 +470,9 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             -3*x*y - 2*z*z
 
         """
-        return FreeAlgebraElement_letterplace(self._parent,-self._poly,check=False)
+        return FreeAlgebraElement_letterplace(self._parent, -self._poly,
+                                              check=False)
+
     cpdef _add_(self, other):
         """
         Addition, under the side condition that either one summand
@@ -496,25 +486,26 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             sage: x+1
             Traceback (most recent call last):
             ...
-            ArithmeticError: Can only add elements of the same weighted degree
+            ArithmeticError: can only add elements of the same weighted degree
             sage: x+0
             x
             sage: 0+x
             x
-
         """
         if not other:
             return self
         if not self:
             return other
         cdef FreeAlgebraElement_letterplace right = other
-        if right._poly.degree()!=self._poly.degree():
-            raise ArithmeticError("Can only add elements of the same weighted degree")
+        if right._poly.degree() != self._poly.degree():
+            raise ArithmeticError("can only add elements of the same weighted degree")
         # update the polynomials
         cdef FreeAlgebra_letterplace A = self._parent
         self._poly = A._current_ring(self._poly)
         right._poly = A._current_ring(right._poly)
-        return FreeAlgebraElement_letterplace(self._parent,self._poly+right._poly,check=False)
+        return FreeAlgebraElement_letterplace(self._parent,
+                                              self._poly + right._poly,
+                                              check=False)
 
     cpdef _sub_(self, other):
         """
@@ -529,7 +520,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             sage: x-1
             Traceback (most recent call last):
             ...
-            ArithmeticError: Can only subtract elements of the same degree
+            ArithmeticError: can only subtract elements of the same degree
             sage: x-0
             x
             sage: 0-x
@@ -540,20 +531,21 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace', degrees=[2,1,3])
             sage: x*y+z
             x*y + z
-
         """
         if not other:
             return self
         if not self:
             return -other
         cdef FreeAlgebraElement_letterplace right = other
-        if right._poly.degree()!=self._poly.degree():
-            raise ArithmeticError("Can only subtract elements of the same degree")
+        if right._poly.degree() != self._poly.degree():
+            raise ArithmeticError("can only subtract elements of the same degree")
         # update the polynomials
         cdef FreeAlgebra_letterplace A = self._parent
         self._poly = A._current_ring(self._poly)
         right._poly = A._current_ring(right._poly)
-        return FreeAlgebraElement_letterplace(self._parent,self._poly-right._poly,check=False)
+        return FreeAlgebraElement_letterplace(self._parent,
+                                              self._poly - right._poly,
+                                              check=False)
 
     cpdef _lmul_(self, Element right):
         """
@@ -565,9 +557,10 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             sage: F.<a,b,c> = FreeAlgebra(K, implementation='letterplace')
             sage: (a+b)*(z+1)    # indirect doctest
             (z + 1)*a + (z + 1)*b
-
         """
-        return FreeAlgebraElement_letterplace(self._parent,self._poly._lmul_(right),check=False)
+        return FreeAlgebraElement_letterplace(self._parent,
+                                              self._poly._lmul_(right),
+                                              check=False)
 
     cpdef _rmul_(self, Element left):
         """
@@ -579,9 +572,10 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             sage: F.<a,b,c> = FreeAlgebra(K, implementation='letterplace')
             sage: (z+1)*(a+b)   # indirect doctest
             (z + 1)*a + (z + 1)*b
-
         """
-        return FreeAlgebraElement_letterplace(self._parent,self._poly._rmul_(left),check=False)
+        return FreeAlgebraElement_letterplace(self._parent,
+                                              self._poly._rmul_(left),
+                                              check=False)
 
     cpdef _mul_(self, other):
         """
@@ -597,12 +591,15 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
         cdef FreeAlgebraElement_letterplace left = self
         cdef FreeAlgebraElement_letterplace right = other
         cdef FreeAlgebra_letterplace A = left._parent
-        A.set_degbound(left._poly.degree()+right._poly.degree())
+        A.set_degbound(left._poly.degree() + right._poly.degree())
         # we must put the polynomials into the same ring
         left._poly = A._current_ring(left._poly)
         right._poly = A._current_ring(right._poly)
-        rshift = singular_system("stest",right._poly,left._poly.degree(),A._degbound,A.__ngens, ring=A._current_ring)
-        return FreeAlgebraElement_letterplace(A,left._poly*rshift, check=False)
+        realngens = A._commutative_ring.ngens()
+        CG = CyclicPermutationGroup(A._current_ring.ngens())
+        rshift = right._poly * CG[left._poly.degree() * realngens]
+        return FreeAlgebraElement_letterplace(A, left._poly * rshift,
+                                              check=False)
 
     def __pow__(FreeAlgebraElement_letterplace self, int n, k):
         """
@@ -612,29 +609,29 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             sage: F.<a,b,c> = FreeAlgebra(K, implementation='letterplace')
             sage: (a+z*b)^3    # indirect doctest
             a*a*a + (z)*a*a*b + (z)*a*b*a + (z + 3)*a*b*b + (z)*b*a*a + (z + 3)*b*a*b + (z + 3)*b*b*a + (4*z + 3)*b*b*b
-
         """
         cdef FreeAlgebra_letterplace A = self._parent
-        if n<0:
-            raise ValueError("Negative exponents are not allowed")
-        if n==0:
+        if n < 0:
+            raise ValueError("negative exponents are not allowed")
+        if n == 0:
             return FreeAlgebraElement_letterplace(A, A._current_ring(1),
                                                   check=False)
-        if n==1:
+        if n == 1:
             return self
-        A.set_degbound(self._poly.degree()*n)
-        cdef MPolynomial_libsingular p,q
+        A.set_degbound(self._poly.degree() * n)
+        cdef MPolynomial_libsingular p, q
         self._poly = A._current_ring(self._poly)
         cdef int d = self._poly.degree()
         q = p = self._poly
+        realngens = A._commutative_ring.ngens()
         cdef int i
-        for i from 0<i<n:
-            q = singular_system("stest",q,d,A._degbound,A.__ngens,
-                                     ring=A._current_ring)
+        CG = CyclicPermutationGroup(A._current_ring.ngens())
+        for i in range(1, n):
+            q = q * CG[d * realngens]
             p *= q
         return FreeAlgebraElement_letterplace(A, p, check=False)
 
-    ## Groebner related stuff
+    # Groebner related stuff
     def reduce(self, G):
         """
         Reduce this element by a list of elements or by a
@@ -685,32 +682,31 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             y*y*z*z*z + y*z*y*z*z - y*z*z*y*z + y*z*z*z*z
             sage: p.reduce(I) != p.reduce(G) != p.normal_form(I) != p.reduce(I)
             True
-
         """
         cdef FreeAlgebra_letterplace P = self._parent
-        if not isinstance(G,(list,tuple)):
-            if G==P:
+        if not isinstance(G, (list, tuple)):
+            if G == P:
                 return P.zero()
-            if not (isinstance(G,MPolynomialIdeal) and G.ring()==P._current_ring):
+            if not (isinstance(G, MPolynomialIdeal) and G.ring() == P._current_ring):
                 G = G.gens()
         C = P.current_ring()
         cdef int selfdeg = self._poly.degree()
-        if isinstance(G,MPolynomialIdeal):
+        if isinstance(G, MPolynomialIdeal):
             gI = G
         else:
-            gI = P._reductor_(G,selfdeg) #C.ideal(g,coerce=False)
+            gI = P._reductor_(G, selfdeg)  # C.ideal(g,coerce=False)
         from sage.libs.singular.option import LibSingularOptions
         libsingular_options = LibSingularOptions()
-        bck = (libsingular_options['redTail'],libsingular_options['redSB'])
+        bck = (libsingular_options['redTail'], libsingular_options['redSB'])
         libsingular_options['redTail'] = True
         libsingular_options['redSB'] = True
-        poly = poly_reduce(C(self._poly),gI, ring=C,
-                           attributes={gI:{"isSB":1}})
+        poly = poly_reduce(C(self._poly), gI, ring=C,
+                           attributes={gI: {"isSB": 1}})
         libsingular_options['redTail'] = bck[0]
         libsingular_options['redSB'] = bck[1]
-        return FreeAlgebraElement_letterplace(P,poly,check=False)
+        return FreeAlgebraElement_letterplace(P, poly, check=False)
 
-    def normal_form(self,I):
+    def normal_form(self, I):
         """
         Return the normal form of this element with respect to
         a twosided weighted homogeneous ideal.
@@ -724,10 +720,10 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
 
         The normal form of `x` wrt. `I`.
 
-        NOTE:
+        .. NOTE::
 
-        The normal form is computed by reduction with respect
-        to a Groebnerbasis of `I` with degree bound `deg(x)`.
+            The normal form is computed by reduction with respect
+            to a Groebnerbasis of `I` with degree bound `deg(x)`.
 
         EXAMPLES::
 
@@ -757,9 +753,8 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             True
             sage: ((x*y)^3+2*z*I.0*z+y*I.1*z-x*I.2*y).normal_form(I) == ((x*y)^3).normal_form(I)
             True
-
         """
         if self._parent != I.ring():
-            raise ValueError("Can not compute normal form wrt an ideal that does not belong to %s" % self._parent)
+            raise ValueError("cannot compute normal form wrt an ideal that does not belong to %s" % self._parent)
         sdeg = self._poly.degree()
         return self.reduce(self._parent._reductor_(I.groebner_basis(degbound=sdeg).gens(), sdeg))

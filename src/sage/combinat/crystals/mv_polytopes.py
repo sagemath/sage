@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Crystal Of Mirković-Vilonen (MV) Polytopes
 
@@ -45,6 +45,7 @@ class MVPolytope(PBWCrystalElement):
         ....:     f.axes(False)
         sage: animate(frames).show(delay=60) # optional -- ImageMagick # long time
     """
+
     def _repr_(self):
         """
         Return a string representation of ``self``.
@@ -84,7 +85,7 @@ class MVPolytope(PBWCrystalElement):
             sage: MV = crystals.infinity.MVPolytopes(['A',2])
             sage: u = MV.highest_weight_vector()
             sage: b = u.f_string([1,2,2,1])
-            sage: latex(b)
+            sage: latex(b)                                                              # needs sage.symbolic
             \begin{tikzpicture}
             \draw (0, 0) -- (3/2, -989/1142) -- (3/2, -2967/1142) -- (0, -1978/571);
             \draw (0, 0) -- (-3/2, -989/1142) -- (-3/2, -2967/1142) -- (0, -1978/571);
@@ -217,7 +218,7 @@ class MVPolytope(PBWCrystalElement):
 
             sage: MV = crystals.infinity.MVPolytopes(['C', 2])
             sage: b = MV.highest_weight_vector().f_string([1,2,1,2,2,2,1,1,1,1,2,1])
-            sage: b.plot()
+            sage: b.plot()                                                              # needs sage.plot
             Graphics object consisting of 12 graphics primitives
 
         Here is the above example placed inside the ambient space
@@ -237,6 +238,7 @@ class MVPolytope(PBWCrystalElement):
         if P is None:
             P = self.parent().weight_lattice_realization()
         return P.plot_mv_polytope(self, **options)
+
 
 class MVPolytopes(PBWCrystal):
     r"""
@@ -355,6 +357,7 @@ class MVPolytopes(PBWCrystal):
     - [Kam2007]_
     - [Kam2010]_
     """
+
     def __init__(self, cartan_type):
         """
         Initialize ``self``.
@@ -461,4 +464,3 @@ class MVPolytopes(PBWCrystal):
         return copy(self._latex_options)
 
     Element = MVPolytope
-

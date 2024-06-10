@@ -31,36 +31,37 @@ REFERENCES:
 .. [NS] \T. Nakanishi, S. Stella, Wonder of sine-Gordon Y-systems,
    to appear in Trans. Amer. Math. Soc., :arxiv:`1212.6853`
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Salvatore Stella <sstella@ncsu.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.sage_object import SageObject
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
-from sage.rings.all import NN
+from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.functions.trig import cos, sin
-from sage.plot.plot import parametric_plot
-from sage.plot.graphics import Graphics
-from sage.plot.polygon import polygon2d
-from sage.plot.circle import circle
-from sage.plot.bezier_path import bezier_path
-from sage.plot.point import point
-from sage.plot.line import line
+from sage.misc.lazy_import import lazy_import
 from sage.symbolic.constants import pi, I
 from sage.functions.log import exp
 from sage.functions.other import ceil
 from sage.misc.flatten import flatten
-from sage.calculus.var import var
+from sage.symbolic.ring import SR
 from sage.functions.other import real_part, imag_part
 from sage.misc.cachefunc import cached_method
+lazy_import("sage.plot.plot", "parametric_plot")
+lazy_import("sage.plot.graphics", "Graphics")
+lazy_import("sage.plot.polygon", "polygon2d")
+lazy_import("sage.plot.circle", "circle")
+lazy_import("sage.plot.bezier_path", "bezier_path")
+lazy_import("sage.plot.point", "point")
+lazy_import("sage.plot.line", "line")
 
 
 class SineGordonYsystem(SageObject):
@@ -98,6 +99,7 @@ class SineGordonYsystem(SageObject):
          (103, 105))
         sage: Y.plot()     #not tested
     """
+
     def __init__(self, X, na):
         """
         TESTS::
@@ -109,17 +111,17 @@ class SineGordonYsystem(SageObject):
             sage: SineGordonYsystem('E',(6,4,3))
             Traceback (most recent call last):
             ...
-            ValueError: the type must be either 'A' of 'D'.
+            ValueError: the type must be either 'A' or 'D'
             sage: SineGordonYsystem('A',(2,4,3))
             Traceback (most recent call last):
             ...
             ValueError: the first integer in the defining sequence must be
-            greater than 2.
+            greater than 2
             sage: SineGordonYsystem('A',(6,-4,3))
             Traceback (most recent call last):
             ...
             ValueError: the defining sequence must contain only positive
-            integers.
+            integers
             sage: SineGordonYsystem('A',(3,))
             Traceback (most recent call last):
             ...
@@ -127,14 +129,14 @@ class SineGordonYsystem(SageObject):
             as input
         """
         if X not in ['A', 'D']:
-            raise ValueError("the type must be either 'A' of 'D'.")
+            raise ValueError("the type must be either 'A' or 'D'")
         self._type = X
         if na[0] <= 2:
             raise ValueError("the first integer in the defining sequence "
-                             "must be greater than 2.")
+                             "must be greater than 2")
         if any(x not in NN for x in na):
             raise ValueError("the defining sequence must contain only "
-                             "positive integers.")
+                             "positive integers")
         self._na = tuple(na)
         if self._na == (3,) and self._type == 'A':
             raise ValueError("the integer sequence (3,) in type 'A'"
@@ -156,7 +158,7 @@ class SineGordonYsystem(SageObject):
         """
         msg = "A sine-Gordon Y-system of type {}"
         msg += " with defining integer tuple {}"
-        return  msg.format(self._type, self._na)
+        return msg.format(self._type, self._na)
 
     def type(self):
         r"""
@@ -233,8 +235,8 @@ class SineGordonYsystem(SageObject):
         pa = [1]
         if F > 1:
             pa.append(na[0])
-            for k in range(2, F):
-                pa.append(na[k-1] * pa[k-1] + pa[k-2])
+            for k in range(1, F - 1):
+                pa.append(na[k] * pa[k] + pa[k - 1])
         return tuple(pa)
 
     @cached_method
@@ -346,7 +348,7 @@ class SineGordonYsystem(SageObject):
                 done = False
                 while not done:
                     if left:
-                        edge = (edge[0] + vert(rk[a+1]), edge[1])
+                        edge = (edge[0] + vert(rk[a + 1]), edge[1])
                     else:
                         edge = (edge[0], edge[1] - vert(rk[a + 1]))
                     left = not left
@@ -402,7 +404,7 @@ class SineGordonYsystem(SageObject):
                         last_ccw = vert(last_cw + rk[a + 2])
                         x = first
                         while x < last_cw:
-                            new_intervals.append((vert(x), vert(x + rk[a+1]), "L"))
+                            new_intervals.append((vert(x), vert(x + rk[a + 1]), "L"))
                             x = vert(x + rk[a + 1])
                         if typ == "L":
                             new_intervals.append((last_cw, last_ccw, "NL"))
@@ -410,7 +412,7 @@ class SineGordonYsystem(SageObject):
                             new_intervals.append((last_cw, last_ccw, "NR"))
                         x = last_ccw
                         while x != last:
-                            new_intervals.append((vert(x), vert(x+rk[a+1]), "R"))
+                            new_intervals.append((vert(x), vert(x + rk[a + 1]), "R"))
                             x = vert(x + rk[a + 1])
             else:
                 for (first, last, typ) in intervals[a]:
@@ -426,15 +428,15 @@ class SineGordonYsystem(SageObject):
                         last_ccw = vert(last_cw + rk[a + 2])
                         x = first
                         while x < last_cw:
-                            new_intervals.append((vert(x), vert(x + rk[a+1]), "L"))
-                            x = vert(x + rk[a+1])
+                            new_intervals.append((vert(x), vert(x + rk[a + 1]), "L"))
+                            x = vert(x + rk[a + 1])
                         if typ == "L":
                             new_intervals.append((last_cw, last_ccw, "NR"))
                         else:
                             new_intervals.append((last_cw, last_ccw, "NL"))
                         x = last_ccw
                         while x != last:
-                            new_intervals.append((vert(x), vert(x + rk[a+1]), "R"))
+                            new_intervals.append((vert(x), vert(x + rk[a + 1]), "R"))
                             x = vert(x + rk[a + 1])
             intervals.append(new_intervals)
         return tuple(map(tuple, intervals))
@@ -445,23 +447,23 @@ class SineGordonYsystem(SageObject):
 
         INPUT:
 
-        - ``radius`` - the radius of the disk; by default the length of
+        - ``radius`` -- the radius of the disk; by default the length of
           the circle is the number of vertices
-        - ``points_color`` - the color of the vertices; default 'black'
-        - ``points_size`` - the size of the vertices; default 7
-        - ``triangulation_color`` - the color of the arcs; default 'black'
-        - ``triangulation_thickness`` - the thickness of the arcs; default 0.5
-        - ``shading_color`` - the color of the shading used on neuter
+        - ``points_color`` -- the color of the vertices; default 'black'
+        - ``points_size`` -- the size of the vertices; default 7
+        - ``triangulation_color`` -- the color of the arcs; default 'black'
+        - ``triangulation_thickness`` -- the thickness of the arcs; default 0.5
+        - ``shading_color`` -- the color of the shading used on neuter
           intervals; default 'lightgray'
-        - ``reflections_color`` - the color of the reflection axes; default
+        - ``reflections_color`` -- the color of the reflection axes; default
           'blue'
-        - ``reflections_thickness`` - the thickness of the reflection axes;
+        - ``reflections_thickness`` -- the thickness of the reflection axes;
           default 1
 
         EXAMPLES::
 
             sage: Y = SineGordonYsystem('A',(6,4,3))
-            sage: Y.plot()  # long time 2s  # known bug
+            sage: Y.plot()                      # long time (2s)                        # needs sage.plot
             Graphics object consisting of 219 graphics primitives
         """
         # Set up plotting options
@@ -516,7 +518,7 @@ class SineGordonYsystem(SageObject):
             # plot the arc from p to q differently depending on the type of self
             p = ZZ(p)
             q = ZZ(q)
-            t = var('t')
+            t = SR.var('t')
             if p - q in [1, -1]:
                 def f(t):
                     return (radius * cos(t), radius * sin(t))
@@ -533,7 +535,7 @@ class SineGordonYsystem(SageObject):
                 if internal_angle > pi:
                     (angle_p, angle_q) = (angle_q + 2 * pi, angle_p)
                     internal_angle = angle_p - angle_q
-                angle_center = (angle_p+angle_q) / 2
+                angle_center = (angle_p + angle_q) / 2
                 hypotenuse = radius / cos(internal_angle / 2)
                 radius_arc = hypotenuse * sin(internal_angle / 2)
                 center = (hypotenuse * cos(angle_center),

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Graded bialgebras with basis
 """
@@ -8,6 +9,7 @@ Graded bialgebras with basis
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
+
 
 def GradedBialgebrasWithBasis(base_ring):
     """
@@ -26,5 +28,5 @@ def GradedBialgebrasWithBasis(base_ring):
 
         sage: TestSuite(C).run()
     """
-    from sage.categories.all import BialgebrasWithBasis
+    from sage.categories.bialgebras_with_basis import BialgebrasWithBasis
     return BialgebrasWithBasis(base_ring).Graded()

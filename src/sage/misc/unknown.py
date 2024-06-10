@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 The Unknown truth value
 
@@ -79,10 +80,10 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import print_function
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.richcmp import richcmp_method, rich_to_bool
+
 
 class UnknownError(TypeError):
     """
@@ -96,6 +97,7 @@ class UnknownError(TypeError):
         UnknownError: Unknown does not evaluate in boolean context
     """
     pass
+
 
 @richcmp_method
 class UnknownClass(UniqueRepresentation):
@@ -143,8 +145,6 @@ class UnknownClass(UniqueRepresentation):
             UnknownError: Unknown does not evaluate in boolean context
         """
         raise UnknownError('Unknown does not evaluate in boolean context')
-
-    __nonzero__ = __bool__
 
     def __and__(self, other):
         """

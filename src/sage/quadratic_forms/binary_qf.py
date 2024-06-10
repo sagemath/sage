@@ -1,5 +1,5 @@
 """
-Binary Quadratic Forms with Integer Coefficients
+Binary quadratic forms with integer coefficients
 
 This module provides a specialized class for working with a binary quadratic
 form `a x^2 + b x y + c y^2`, stored as a triple of integers `(a, b, c)`.
@@ -11,7 +11,7 @@ EXAMPLES::
     x^2 + 2*x*y  + 3*y^2
     sage: Q.discriminant()
     -8
-    sage: Q.reduced_form()
+    sage: Q.reduced_form()                                                              # needs sage.libs.pari
     x^2 + 2*y^2
     sage: Q(1, 1)
     6
@@ -37,9 +37,7 @@ AUTHORS:
 
 - William Stein (2009-09-18): make immutable.
 
-- Justin C. Walker (2011-02-06):
-
-  - Add support for indefinite forms.
+- Justin C. Walker (2011-02-06): Add support for indefinite forms.
 """
 
 # ****************************************************************************
@@ -53,13 +51,19 @@ AUTHORS:
 # ****************************************************************************
 from functools import total_ordering
 
-from sage.libs.pari.all import pari_gen
-from sage.rings.all import ZZ, is_fundamental_discriminant
-from sage.arith.all import gcd
+from sage.rings.integer_ring import ZZ
+from sage.arith.misc import gcd
 from sage.structure.sage_object import SageObject
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import Matrix
 from sage.misc.cachefunc import cached_method
+
+
+try:
+    from sage.libs.pari.all import pari_gen, pari
+except ImportError:
+    pari_gen = ()
+
 
 @total_ordering
 class BinaryQF(SageObject):
@@ -78,7 +82,7 @@ class BinaryQF(SageObject):
 
     OUTPUT:
 
-    the binary quadratic form a*x^2 + b*x*y + c*y^2.
+    The binary quadratic form `a x^2 + b xy + c y^2`.
 
     EXAMPLES::
 
@@ -131,18 +135,17 @@ class BinaryQF(SageObject):
             sage: BinaryQF(0)
             0
         """
-        from sage.rings.polynomial.multi_polynomial_element import is_MPolynomial
+        from sage.rings.polynomial.multi_polynomial import MPolynomial
         if b is None and c is None:
-            if (isinstance(a, (list, tuple))
-                and len(a) == 3):
+            if isinstance(a, (list, tuple)) and len(a) == 3:
                 a, b, c = a
             elif a == 0:
                 a = b = c = 0
-            elif (is_MPolynomial(a) and a.is_homogeneous() and a.base_ring() == ZZ
+            elif (isinstance(a, MPolynomial) and a.is_homogeneous() and a.base_ring() == ZZ
                   and a.degree() == 2 and a.parent().ngens() == 2):
                 x, y = a.parent().gens()
-                a, b, c = [a.monomial_coefficient(mon) for mon in [x**2, x*y, y**2]]
-            elif isinstance(a, pari_gen) and a.type() in ('t_QFI', 't_QFR'):
+                a, b, c = (a.monomial_coefficient(mon) for mon in [x**2, x*y, y**2])
+            elif isinstance(a, pari_gen) and a.type() in ('t_QFI', 't_QFR', 't_QFB'):
                 # a has 3 or 4 components
                 a, b, c = a[0], a[1], a[2]
         try:
@@ -163,6 +166,8 @@ class BinaryQF(SageObject):
             2*x^2 + 3*x*y + 4*y^2
             sage: f._pari_init_()
             'Qfb(2,3,4)'
+
+            sage: # needs sage.libs.pari
             sage: pari(f)
             Qfb(2, 3, 4)
             sage: type(pari(f))
@@ -172,7 +177,50 @@ class BinaryQF(SageObject):
             sage: type(gp(f))
             <class 'sage.interfaces.gp.GpElement'>
         """
-        return 'Qfb(%s,%s,%s)' % (self._a, self._b, self._c)
+        return f'Qfb({self._a},{self._b},{self._c})'
+
+    @staticmethod
+    def principal(D):
+        r"""
+        Return the principal binary quadratic form of the given discriminant.
+
+        EXAMPLES::
+
+            sage: BinaryQF.principal(8)
+            x^2 - 2*y^2
+            sage: BinaryQF.principal(5)
+            x^2 + x*y - y^2
+            sage: BinaryQF.principal(4)
+            x^2 - y^2
+            sage: BinaryQF.principal(1)
+            x^2 + x*y
+            sage: BinaryQF.principal(-3)
+            x^2 + x*y + y^2
+            sage: BinaryQF.principal(-4)
+            x^2 + y^2
+            sage: BinaryQF.principal(-7)
+            x^2 + x*y + 2*y^2
+            sage: BinaryQF.principal(-8)
+            x^2 + 2*y^2
+
+        TESTS:
+
+        Some randomized testing::
+
+            sage: D = 1
+            sage: while D.is_square():
+            ....:     D = choice((-4,+4)) * randrange(9999) + randrange(2)
+            sage: Q = BinaryQF.principal(D)
+            sage: Q.discriminant() == D     # correct discriminant
+            True
+            sage: (Q*Q).is_equivalent(Q)    # idempotent (hence identity)
+            True
+        """
+        D = ZZ(D)
+        D4 = D % 4
+        if D4 not in (0, 1):
+            raise ValueError('discriminant must be congruent to 0 or 1 modulo 4')
+        return BinaryQF([1, D4, (D4-D)//4])
 
     def __mul__(self, right):
         """
@@ -185,6 +233,7 @@ class BinaryQF(SageObject):
         We explicitly compute in the group of classes of positive
         definite binary quadratic forms of discriminant -23::
 
+            sage: # needs sage.libs.pari
             sage: R = BinaryQF_reduced_representatives(-23, primitive_only=False); R
             [x^2 + x*y + 6*y^2, 2*x^2 - x*y + 3*y^2, 2*x^2 + x*y + 3*y^2]
             sage: R[0] * R[0]
@@ -195,6 +244,7 @@ class BinaryQF(SageObject):
             2*x^2 + x*y + 3*y^2
             sage: (R[1] * R[1] * R[1]).reduced_form()
             x^2 + x*y + 6*y^2
+
             sage: q1 = BinaryQF(1, 1, 4)
             sage: M = Matrix(ZZ, [[1, 3], [0, 1]])
             sage: q1*M
@@ -211,16 +261,12 @@ class BinaryQF(SageObject):
             return BinaryQF(self.__pari__().qfbcompraw(right))
         # ...or a 2x2 matrix...
         if (isinstance(right.parent(), MatrixSpace)
-            and right.nrows() == right.ncols() == 2):
-            aa = right[0, 0]
-            bb = right[0, 1]
-            cc = right[1, 0]
-            dd = right[1, 1]
+                and right.nrows() == right.ncols() == 2):
+            aa, bb, cc, dd = right.list()
             A = self.polynomial()(aa, cc)
             C = self.polynomial()(bb, dd)
             B = self.polynomial()(aa + bb, cc + dd) - A - C
-            qf = BinaryQF(A, B, C)
-            return qf
+            return BinaryQF(A, B, C)
         raise TypeError("right operand must be a binary quadratic form or 2x2 matrix")
 
     def __getitem__(self, n):
@@ -415,7 +461,21 @@ class BinaryQF(SageObject):
         """
         return BinaryQF([self._a - Q._a, self._b - Q._b, self._c - Q._c])
 
-    def _repr_(self):
+    def __neg__(self):
+        r"""
+        Return the negative of this binary quadratic form.
+
+        EXAMPLES::
+
+            sage: Q = BinaryQF([1,-2,3])
+            sage: -Q
+            -x^2 + 2*x*y - 3*y^2
+            sage: -Q == BinaryQF([0,0,0]) - Q
+            True
+        """
+        return BinaryQF([-self._a, -self._b, -self._c])
+
+    def _repr_(self) -> str:
         """
         Display the quadratic form.
 
@@ -432,7 +492,7 @@ class BinaryQF(SageObject):
         """
         return repr(self.polynomial())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         """
         Return latex representation of this binary quadratic form.
 
@@ -445,9 +505,10 @@ class BinaryQF(SageObject):
         """
         return self.polynomial()._latex_()
 
+    @cached_method
     def content(self):
-        """
-        Return the content of the form, i.e., the gcd of the coefficients.
+        r"""
+        Return the content of the form, i.e., the `\gcd` of the coefficients.
 
         EXAMPLES::
 
@@ -477,14 +538,55 @@ class BinaryQF(SageObject):
             sage: Q = BinaryQF([0, 0, 0])
             sage: Q.polynomial()
             0
-
         """
-        # Note: Cacheing in _poly seems to give a very slight
+        # Note: Caching in _poly seems to give a very slight
         # improvement (~0.2 usec) in 'timeit()' runs.  Not sure it
         # is worth the instance variable.
         if self._poly is None:
             self._poly = self(ZZ['x, y'].gens())
         return self._poly
+
+    @staticmethod
+    def from_polynomial(poly):
+        r"""
+        Construct a :class:`BinaryQF` from a bivariate polynomial
+        with integer coefficients. Inverse of :meth:`polynomial`.
+
+        EXAMPLES::
+
+            sage: R.<u,v> = ZZ[]
+            sage: f = u^2 + 419*v^2
+            sage: Q = BinaryQF.from_polynomial(f); Q
+            x^2 + 419*y^2
+            sage: Q.polynomial()
+            x^2 + 419*y^2
+            sage: Q.polynomial()(R.gens()) == f
+            True
+
+        The method fails if the given polynomial is not a quadratic form::
+
+            sage: BinaryQF.from_polynomial(u^3 - 5*v)
+            Traceback (most recent call last):
+            ...
+            ValueError: polynomial has monomials of degree != 2
+
+        ...or if the coefficients aren't integers::
+
+            sage: BinaryQF.from_polynomial(u^2/7 + v^2)
+            Traceback (most recent call last):
+            ...
+            TypeError: no conversion of this rational to integer
+        """
+        R = poly.parent()
+        from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
+        if not isinstance(R, MPolynomialRing_base) or R.ngens() != 2:
+            raise TypeError(f'not a bivariate polynomial ring: {R}')
+        if not all(mon.degree() == 2 for mon in poly.monomials()):
+            raise ValueError('polynomial has monomials of degree != 2')
+        x, y = R.gens()
+        coeffs = (poly.monomial_coefficient(mon) for mon in (x**2, x*y, y**2))
+        a, b, c = map(ZZ, coeffs)
+        return BinaryQF(a, b, c)
 
     @cached_method
     def discriminant(self):
@@ -516,7 +618,7 @@ class BinaryQF(SageObject):
             [  a  b/2]
             [b/2    c]
 
-        as a rational
+        as a rational.
 
         REMARK:
 
@@ -529,38 +631,37 @@ class BinaryQF(SageObject):
             sage: q.determinant()
             267/4
         """
-        return self._a*self._c - (self._b**2)/4
+        return -self.discriminant() / 4
 
     # for consistency with general quadratic form code
     det = determinant
 
     @cached_method
-    def has_fundamental_discriminant(self):
+    def has_fundamental_discriminant(self) -> bool:
         """
-        Return if the discriminant `D` of this form is a fundamental
-        discriminant (i.e. `D` is the smallest element of its
-        squareclass with `D = 0` or `1` modulo `4`).
+        Return whether the discriminant `D` of this form is a
+        fundamental discriminant (i.e. `D` is the smallest element
+        of its squareclass with `D = 0` or `1` modulo `4`).
 
         EXAMPLES::
 
             sage: Q = BinaryQF([1, 0, 1])
             sage: Q.discriminant()
             -4
-            sage: Q.has_fundamental_discriminant()
+            sage: Q.has_fundamental_discriminant()                                      # needs sage.libs.pari
             True
 
             sage: Q = BinaryQF([2, 0, 2])
             sage: Q.discriminant()
             -16
-            sage: Q.has_fundamental_discriminant()
+            sage: Q.has_fundamental_discriminant()                                      # needs sage.libs.pari
             False
         """
-        return is_fundamental_discriminant(self.discriminant())
+        return self.discriminant().is_fundamental_discriminant()
 
-    @cached_method
-    def is_primitive(self):
+    def is_primitive(self) -> bool:
         r"""
-        Checks if the form `ax^2 + bxy + cy^2`  satisfies
+        Return whether the form `ax^2 + bxy + cy^2` satisfies
         `\gcd(a, b, c) = 1`, i.e., is primitive.
 
         EXAMPLES::
@@ -597,13 +698,16 @@ class BinaryQF(SageObject):
             4*x^2 - x*y + 13*y^2,
             4*x^2 + x*y + 13*y^2,
             8*x^2 + 7*x*y + 8*y^2]
-        """
-        return gcd([self._a, self._b, self._c]) == 1
 
-    @cached_method
-    def is_zero(self):
+        .. SEEALSO::
+
+            :meth:`content`
         """
-        Return if ``self`` is identically zero.
+        return self.content().is_one()
+
+    def is_zero(self) -> bool:
+        """
+        Return whether ``self`` is identically zero.
 
         EXAMPLES::
 
@@ -614,10 +718,10 @@ class BinaryQF(SageObject):
             sage: Q.is_zero()
             True
         """
-        return self.content() == 0
+        return self.content().is_zero()
 
     @cached_method
-    def is_weakly_reduced(self):
+    def is_weakly_reduced(self) -> bool:
         r"""
         Check if the form `ax^2 + bxy + cy^2` satisfies
         `|b| \leq a \leq c`, i.e., is weakly reduced.
@@ -641,9 +745,9 @@ class BinaryQF(SageObject):
         return (abs(self._b) <= self._a) and (self._a <= self._c)
 
     @cached_method
-    def is_reducible(self):
+    def is_reducible(self) -> bool:
         r"""
-        Return if this form is reducible and cache the result.
+        Return whether this form is reducible and cache the result.
 
         A binary form `q` is called reducible if it is the product of
         two linear forms `q = (a x + b y) (c x + d y)`, or
@@ -654,6 +758,12 @@ class BinaryQF(SageObject):
             sage: q = BinaryQF([1, 0, -1])
             sage: q.is_reducible()
             True
+
+        .. WARNING::
+
+            Despite the similar name, this method is unrelated to
+            reduction of binary quadratic forms as implemented by
+            :meth:`reduced_form` and :meth:`is_reduced`.
         """
         return self.discriminant().is_square()
 
@@ -733,36 +843,37 @@ class BinaryQF(SageObject):
 
         - ``self`` -- binary quadratic form of non-square discriminant
 
-        - ``transformation`` -- boolean (default: False): if ``True``, return
-          both the reduced form and a matrix transforming ``self`` into the
-          reduced form.  Currently only implemented for indefinite forms.
+        - ``transformation`` -- boolean (default: ``False``): if ``True``, return
+          both the reduced form and a matrix whose :meth:`matrix_action_right`
+          transforms ``self`` into the reduced form.
 
-        - ``algorithm`` -- String. The algorithm to use: Valid options are:
+        - ``algorithm`` -- string; the algorithm to use. Valid options are:
 
-          * ``'default'`` -- Let Sage pick an algorithm (default).
-          * ``'pari'`` -- use PARI
+          * ``'default'`` -- let Sage pick an algorithm (default)
+          * ``'pari'`` -- use PARI (:pari:`qfbred` or :pari:`qfbredsl2`)
           * ``'sage'`` -- use Sage
 
         .. SEEALSO::
 
-            :meth:`is_reduced`
+            - :meth:`is_reduced`
+            - :meth:`is_equivalent`
 
         EXAMPLES::
 
             sage: a = BinaryQF([33, 11, 5])
             sage: a.is_reduced()
             False
-            sage: b = a.reduced_form(); b
+            sage: b = a.reduced_form(); b                                               # needs sage.libs.pari
             5*x^2 - x*y + 27*y^2
-            sage: b.is_reduced()
+            sage: b.is_reduced()                                                        # needs sage.libs.pari
             True
 
             sage: a = BinaryQF([15, 0, 15])
             sage: a.is_reduced()
             True
-            sage: b = a.reduced_form(); b
+            sage: b = a.reduced_form(); b                                               # needs sage.libs.pari
             15*x^2 + 15*y^2
-            sage: b.is_reduced()
+            sage: b.is_reduced()                                                        # needs sage.libs.pari
             True
 
         Examples of reducing indefinite forms::
@@ -770,59 +881,101 @@ class BinaryQF(SageObject):
             sage: f = BinaryQF(1, 0, -3)
             sage: f.is_reduced()
             False
-            sage: g = f.reduced_form(); g
+            sage: g = f.reduced_form(); g                                               # needs sage.libs.pari
             x^2 + 2*x*y - 2*y^2
-            sage: g.is_reduced()
+            sage: g.is_reduced()                                                        # needs sage.libs.pari
             True
 
             sage: q = BinaryQF(1, 0, -1)
-            sage: q.reduced_form()
+            sage: q.reduced_form()                                                      # needs sage.libs.pari
             x^2 + 2*x*y
 
-            sage: BinaryQF(1, 9, 4).reduced_form(transformation=True)
+            sage: BinaryQF(1, 9, 4).reduced_form(transformation=True)                   # needs sage.libs.pari
             (
                                  [ 0 -1]
             4*x^2 + 7*x*y - y^2, [ 1  2]
             )
-            sage: BinaryQF(3, 7, -2).reduced_form(transformation=True)
+            sage: BinaryQF(3, 7, -2).reduced_form(transformation=True)                  # needs sage.libs.pari
             (
                                    [1 0]
             3*x^2 + 7*x*y - 2*y^2, [0 1]
             )
-            sage: BinaryQF(-6, 6, -1).reduced_form(transformation=True)
+            sage: BinaryQF(-6, 6, -1).reduced_form(transformation=True)                 # needs sage.libs.pari
             (
                                   [ 0 -1]
             -x^2 + 2*x*y + 2*y^2, [ 1 -4]
             )
+
+        TESTS:
+
+        Check for :issue:`34229`::
+
+            sage: BinaryQF([1,2,3]).reduced_form(transformation=True)                   # needs sage.libs.pari
+            (
+                         [ 1 -1]
+            x^2 + 2*y^2, [ 0  1]
+            )
+            sage: BinaryQF([-225, -743, -743]).reduced_form().is_reduced()              # needs sage.libs.pari
+            True
+
+        Some randomized testing::
+
+            sage: while True:
+            ....:     f = BinaryQF([randrange(-10^3, 10^3) for _ in 'abc'])
+            ....:     if not f.discriminant().is_square():
+            ....:         break
+            sage: algos = ['default']
+            sage: assert pari; algos.append('pari')                                     # needs sage.libs.pari
+            sage: if f.discriminant() > 0:
+            ....:     algos.append('sage')
+            sage: a = choice(algos)
+            sage: g = f.reduced_form(algorithm=a)
+            sage: g.is_reduced()
+            True
+            sage: g.is_equivalent(f)
+            True
+            sage: g,M = f.reduced_form(transformation=True, algorithm=a)
+            sage: g.is_reduced()
+            True
+            sage: g.is_equivalent(f)
+            True
+            sage: f * M == g
+            True
         """
         if self.is_reduced():
             if transformation:
-                return self, Matrix(ZZ, 2, 2, [1, 0, 0, 1])
-            else:
-                return self
+                return self, Matrix.identity(2)
+            return self
 
         if algorithm == "default":
-            if self.is_reducible() or (self.discriminant() > 0 and transformation):
-                algorithm = 'sage'
-            elif not transformation:
-                algorithm = 'pari'
-            else:
-                raise NotImplementedError('reduction of definite binary '
-                        'quadratic forms with transformation=True is not '
-                        'implemented')
+            algorithm = 'sage' if self.is_reducible() else 'pari'
+
         if algorithm == 'sage':
             if self.discriminant() <= 0:
                 raise NotImplementedError('reduction of definite binary '
-                    'quadratic forms is not implemented in Sage')
+                                          'quadratic forms is not implemented '
+                                          'in Sage')
             return self._reduce_indef(transformation)
+
         elif algorithm == 'pari':
-            if transformation:
-                raise NotImplementedError('transformation=True is not '
-                                        'supported using PARI')
-            elif self.is_reducible():
+            # Negative definite forms are not supported by PARI. We can
+            # work around this by reducing [-a,b,-c] instead of [a,b,c].
+            if self.is_negative_definite():
+                M = Matrix.diagonal([-1, 1])
+                r = (-self*M).reduced_form(transformation=transformation, algorithm=algorithm)
+                if transformation:
+                    return (-r[0]*M, M*r[1]*M)
+                return -r*M
+
+            if self.is_reducible():
                 raise NotImplementedError('reducible forms are not '
                                           'supported using PARI')
+
+            if transformation:
+                y, g = self.__pari__().qfbredsl2()
+                return BinaryQF(y), Matrix(ZZ, g)
             return BinaryQF(self.__pari__().qfbred())
+
         else:
             raise ValueError('unknown implementation for binary quadratic form '
                              'reduction: %s' % algorithm)
@@ -915,7 +1068,7 @@ class BinaryQF(SageObject):
         change of variables, and then multiplying by the determinant of the
         change-of-variables matrix. It is important to note that `g` might not be
         equivalent to `f` (because of multiplying by the determinant).  However,
-        either 'g' or '-g' must be equivalent to `f`. Also note that the cycle
+        either `g` or `-g` must be equivalent to `f`. Also note that the cycle
         does contain `f`. (Under the definition in [BUVO2007]_, the cycle might
         not contain `f`, because all forms in the cycle are required to have
         positive `a`-coefficient, even if the `a`-coefficient of `f` is negative.)
@@ -938,34 +1091,34 @@ class BinaryQF(SageObject):
             sage: Q = BinaryQF(1, 8, -3)
             sage: Q.cycle()
             [x^2 + 8*x*y - 3*y^2,
-            3*x^2 + 4*x*y - 5*y^2,
-            5*x^2 + 6*x*y - 2*y^2,
-            2*x^2 + 6*x*y - 5*y^2,
-            5*x^2 + 4*x*y - 3*y^2,
-            3*x^2 + 8*x*y - y^2]
+             3*x^2 + 4*x*y - 5*y^2,
+             5*x^2 + 6*x*y - 2*y^2,
+             2*x^2 + 6*x*y - 5*y^2,
+             5*x^2 + 4*x*y - 3*y^2,
+             3*x^2 + 8*x*y - y^2]
             sage: Q.cycle(proper=True)
             [x^2 + 8*x*y - 3*y^2,
-            -3*x^2 + 4*x*y + 5*y^2,
-             5*x^2 + 6*x*y - 2*y^2,
-             -2*x^2 + 6*x*y + 5*y^2,
-             5*x^2 + 4*x*y - 3*y^2,
-             -3*x^2 + 8*x*y + y^2]
+             -3*x^2 + 4*x*y + 5*y^2,
+              5*x^2 + 6*x*y - 2*y^2,
+              -2*x^2 + 6*x*y + 5*y^2,
+              5*x^2 + 4*x*y - 3*y^2,
+              -3*x^2 + 8*x*y + y^2]
 
             sage: Q = BinaryQF(1, 7, -6)
             sage: Q.cycle()
             [x^2 + 7*x*y - 6*y^2,
-            6*x^2 + 5*x*y - 2*y^2,
-            2*x^2 + 7*x*y - 3*y^2,
-            3*x^2 + 5*x*y - 4*y^2,
-            4*x^2 + 3*x*y - 4*y^2,
-            4*x^2 + 5*x*y - 3*y^2,
-            3*x^2 + 7*x*y - 2*y^2,
-            2*x^2 + 5*x*y - 6*y^2,
-            6*x^2 + 7*x*y - y^2]
+             6*x^2 + 5*x*y - 2*y^2,
+             2*x^2 + 7*x*y - 3*y^2,
+             3*x^2 + 5*x*y - 4*y^2,
+             4*x^2 + 3*x*y - 4*y^2,
+             4*x^2 + 5*x*y - 3*y^2,
+             3*x^2 + 7*x*y - 2*y^2,
+             2*x^2 + 5*x*y - 6*y^2,
+             6*x^2 + 7*x*y - y^2]
 
         TESTS:
 
-        Check an example in :trac:`28989`::
+        Check an example in :issue:`28989`::
 
             sage: Q = BinaryQF(1, 1, -1)
             sage: Q.cycle(proper=True)
@@ -1045,14 +1198,15 @@ class BinaryQF(SageObject):
         if self.discriminant().is_square():
             # Buchmann/Vollmer assume the discriminant to be non-square
             raise NotImplementedError('computation of cycles is only '
-                    'implemented for non-square discriminants')
+                                      'implemented for non-square '
+                                      'discriminants')
         if proper:
             # Prop 6.10.5 in Buchmann Vollmer
-            C = list(self.cycle(proper=False)) # make a copy so we can modify it
+            C = list(self.cycle(proper=False))  # make a copy that we can modify
             if len(C) % 2:
                 C += C
-            for i in range(len(C)//2):
-                C[2*i+1] = C[2*i+1]._Tau()
+            for i in range(len(C) // 2):
+                C[2 * i + 1] = C[2 * i + 1]._Tau()
             return C
         if not hasattr(self, '_cycle_list'):
             C = [self]
@@ -1100,7 +1254,7 @@ class BinaryQF(SageObject):
 
     def is_indefinite(self):
         """
-        Return if ``self`` is indefinite, i.e., has positive discriminant.
+        Return whether ``self`` is indefinite, i.e., has positive discriminant.
 
         EXAMPLES::
 
@@ -1114,7 +1268,7 @@ class BinaryQF(SageObject):
 
     def is_singular(self):
         """
-        Return if ``self`` is singular, i.e., has zero discriminant.
+        Return whether ``self`` is singular, i.e., has zero discriminant.
 
         EXAMPLES::
 
@@ -1129,7 +1283,7 @@ class BinaryQF(SageObject):
 
     def is_nonsingular(self):
         """
-        Return if this form is nonsingular, i.e., has non-zero discriminant.
+        Return whether this form is nonsingular, i.e., has non-zero discriminant.
 
         EXAMPLES::
 
@@ -1144,7 +1298,7 @@ class BinaryQF(SageObject):
 
     def is_equivalent(self, other, proper=True):
         """
-        Return if ``self`` is equivalent to ``other``.
+        Return whether ``self`` is equivalent to ``other``.
 
         INPUT:
 
@@ -1154,6 +1308,7 @@ class BinaryQF(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari
             sage: Q3 = BinaryQF(4, 4, 15)
             sage: Q2 = BinaryQF(4, -4, 15)
             sage: Q2.is_equivalent(Q3)
@@ -1170,15 +1325,16 @@ class BinaryQF(SageObject):
 
             sage: Q1 = BinaryQF(9, 8, -7)
             sage: Q2 = BinaryQF(9, -8, -7)
-            sage: Q1.is_equivalent(Q2, proper=True)
+            sage: Q1.is_equivalent(Q2, proper=True)                                     # needs sage.libs.pari
             False
-            sage: Q1.is_equivalent(Q2, proper=False)
+            sage: Q1.is_equivalent(Q2, proper=False)                                    # needs sage.libs.pari
             True
 
         TESTS:
 
-        We check that :trac:`25888` is fixed::
+        We check that :issue:`25888` is fixed::
 
+            sage: # needs sage.libs.pari
             sage: Q1 = BinaryQF(3, 4, -2)
             sage: Q2 = BinaryQF(-2, 4, 3)
             sage: Q1.is_equivalent(Q2) == Q2.is_equivalent(Q1)
@@ -1188,30 +1344,30 @@ class BinaryQF(SageObject):
             sage: Q1.is_equivalent(Q2, proper=True)
             True
 
-        We check that the first part of :trac:`29028` is fixed::
+        We check that the first part of :issue:`29028` is fixed::
 
             sage: Q = BinaryQF(0, 2, 0)
             sage: Q.discriminant()
             4
-            sage: Q.is_equivalent(Q, proper=True)
+            sage: Q.is_equivalent(Q, proper=True)                                       # needs sage.libs.pari
             True
-            sage: Q.is_equivalent(Q, proper=False)
+            sage: Q.is_equivalent(Q, proper=False)                                      # needs sage.libs.pari
             True
 
         A test for rational forms::
 
             sage: Q1 = BinaryQF(0, 4, 2)
             sage: Q2 = BinaryQF(2, 4, 0)
-            sage: Q1.is_equivalent(Q2, proper=False)
+            sage: Q1.is_equivalent(Q2, proper=False)                                    # needs sage.libs.pari
             True
 
-        Test another part of :trac:`28989`::
+        Test another part of :issue:`28989`::
 
             sage: Q1, Q2 = BinaryQF(1, 1, -1), BinaryQF(-1, 1, 1)
-            sage: Q1.is_equivalent(Q2, proper=True)
+            sage: Q1.is_equivalent(Q2, proper=True)                                     # needs sage.libs.pari
             True
         """
-        if type(other) != type(self):
+        if not isinstance(other, BinaryQF):
             raise TypeError("%s is not a BinaryQF" % other)
         if self.discriminant() != other.discriminant():
             return False
@@ -1230,14 +1386,14 @@ class BinaryQF(SageObject):
                 a = selfred._a
                 ao = otherred._a
                 assert otherred._b == b
-                # p. 359 of Conway-Sloane [Co1999]_
+                # p. 359 of Conway-Sloane [CS1999]_
                 # but `2b` in their notation is `b` in our notation
                 is_properly_equiv = ((a-ao) % b == 0)
                 if proper:
                     return is_properly_equiv
                 else:
                     g = gcd(a, b)
-                    return is_properly_equiv or ((gcd(ao,b) == g) and ((a*ao - g**2) % (b*g) == 0))
+                    return is_properly_equiv or ((gcd(ao, b) == g) and ((a*ao - g**2) % (b*g) == 0))
 
             proper_cycle = otherred.cycle(proper=True)
 
@@ -1272,7 +1428,7 @@ class BinaryQF(SageObject):
     @cached_method
     def is_reduced(self):
         r"""
-        Return if ``self`` is reduced.
+        Return whether ``self`` is reduced.
 
         Let `f = a x^2 + b xy + c y^2` be a binary quadratic form of
         discriminant `D`.
@@ -1286,9 +1442,10 @@ class BinaryQF(SageObject):
           coefficients `(-a, b, -c)` is reduced.
 
         - If `f` is indefinite (`D > 0`), then `f` is reduced if and
-          only if `|\sqrt{D} - 2|a|| < b < \sqrt{D}`
-          or `a = 0` and `-b < 2c \leq b`
-          or `c = 0` and `-b < 2a \leq b`
+          only if [`b > 0`, `ac < 0` and `(a-c)^2 < D`]
+          (equivalently if `|\sqrt{D} - 2|a|| < b < \sqrt{D}`)
+          or [`a = 0` and `-b < 2c \leq b`]
+          or [`c = 0` and `-b < 2a \leq b`].
 
         EXAMPLES::
 
@@ -1318,20 +1475,31 @@ class BinaryQF(SageObject):
             sage: BinaryQF(1, 5, -1).is_reduced()
             True
 
+        TESTS:
+
+        We check that :issue:`37635` is fixed::
+
+            sage: list = range(0xa19ae44106b09bfffffffffff0, 0xa19ae44106b09c000000000010)
+            sage: all(BinaryQF([1, 0, -x]).reduced_form().is_reduced() for x in list)
+            True
         """
         D = self.discriminant()
+        if D.is_zero():
+            raise ValueError('the quadratic form must be non-singular')
+
         a = self._a
         b = self._b
         c = self._c
         if D < 0 and a > 0:
             return ((-a < b <= a < c)
                     or (ZZ(0) <= b <= a == c))
-        elif D < 0 and self._a < 0:
+        elif D < 0 and a < 0:
             return ((a < b <= -a < -c)
                     or (ZZ(0) <= b <= -a == -c))
+
+        # Note that a = 0 implies D > 0 here
         else:
-            d = D.sqrt(prec=53)
-            return (((d - 2*a.abs()).abs() < b < d)
+            return ((b > 0 and a*c < 0 and (a-c)**2 < D)
                     or (0 == a and -b < 2*c <= b)
                     or (0 == c and -b < 2*a <= b))
 
@@ -1350,7 +1518,7 @@ class BinaryQF(SageObject):
         EXAMPLES::
 
             sage: Q = BinaryQF([1, 0, 1])
-            sage: Q.complex_point()
+            sage: Q.complex_point()                                                     # needs sage.libs.pari
             1.00000000000000*I
         """
         if self.discriminant() >= 0:
@@ -1406,15 +1574,13 @@ class BinaryQF(SageObject):
 
     def small_prime_value(self, Bmax=1000):
         r"""
-        Returns a prime represented by this (primitive positive definite) binary form.
+        Return a prime represented by this (primitive positive definite) binary form.
 
         INPUT:
 
-        - ``Bmax`` -- a positive bound on the representing integers.
+        - ``Bmax`` -- a positive bound on the representing integers
 
-        OUTPUT:
-
-        A prime number represented by the form.
+        OUTPUT: a prime number represented by the form
 
         .. NOTE::
 
@@ -1423,12 +1589,14 @@ class BinaryQF(SageObject):
 
         EXAMPLES::
 
-            sage: [Q.small_prime_value() for Q in BinaryQF_reduced_representatives(-23, primitive_only=True)]
+            sage: [Q.small_prime_value()                                                # needs sage.libs.pari
+            ....:  for Q in BinaryQF_reduced_representatives(-23, primitive_only=True)]
             [23, 2, 2]
-            sage: [Q.small_prime_value() for Q in BinaryQF_reduced_representatives(-47, primitive_only=True)]
+            sage: [Q.small_prime_value()                                                # needs sage.libs.pari
+            ....:  for Q in BinaryQF_reduced_representatives(-47, primitive_only=True)]
             [47, 2, 2, 3, 3]
         """
-        from sage.sets.all import Set
+        from sage.sets.set import Set
         from sage.arith.srange import xsrange
         B = 10
         while True:
@@ -1440,47 +1608,222 @@ class BinaryQF(SageObject):
                 raise ValueError("Unable to find a prime value of %s" % self)
             B += 10
 
-    def solve_integer(self, n):
+    def solve_integer(self, n, *, algorithm="general", _flag=2):
         r"""
         Solve `Q(x, y) = n` in integers `x` and `y` where `Q` is this
         quadratic form.
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- a positive integer or a
+          `:sage:`~sage.structure.factorization.Factorization` object
+
+        - ``algorithm`` -- ``"general"`` (default) or ``"cornacchia"``
+
+        - ``_flag`` -- ``1``, ``2`` (default) or ``3``; passed onto the pari
+          function``qfbsolve``. For internal use only.
+
+        To use the Cornacchia algorithm, the quadratic form must have
+        `a=1` and `b=0` and `c>0`, and ``n`` must be a prime or four
+        times a prime (but this is not checked).
 
         OUTPUT:
 
-        A tuple `(x, y)` of integers satisfying `Q(x, y) = n` or ``None``
-        if no such `x` and `y` exist.
+        A tuple `(x, y)` of integers satisfying `Q(x, y) = n`, or ``None``
+        if no solution exists.
+
+        ALGORITHM: :pari:`qfbsolve` or :pari:`qfbcornacchia`
+
+        TODO:: Replace `_flag` with human-readable parameters c.f. :issue:`37119`
 
         EXAMPLES::
 
+            sage: Q = BinaryQF([1, 0, 419])
+            sage: Q.solve_integer(773187972)                                            # needs sage.libs.pari
+            (4919, 1337)
+
+        If `Q` is of the form `[1,0,c]` as above and `n` is a prime
+        (or four times a prime whenever `c \equiv 3 \pmod 4`), then
+        Cornacchia's algorithm can be used, which is typically much
+        faster than the general method::
+
+            sage: Q = BinaryQF([1, 0, 12345])
+            sage: n = 2^99 + 5273
+            sage: Q.solve_integer(n)                                                    # needs sage.libs.pari
+            (-67446480057659, 7139620553488)
+            sage: Q.solve_integer(n, algorithm='cornacchia')                            # needs sage.libs.pari
+            (67446480057659, 7139620553488)
+            sage: timeit('Q.solve_integer(n)')                          # not tested
+            125 loops, best of 3: 3.13 ms per loop
+            sage: timeit('Q.solve_integer(n, algorithm="cornacchia")')  # not tested
+            625 loops, best of 3: 18.6 μs per loop
+
+        ::
+
+            sage: # needs sage.libs.pari
             sage: Qs = BinaryQF_reduced_representatives(-23, primitive_only=True)
             sage: Qs
             [x^2 + x*y + 6*y^2, 2*x^2 - x*y + 3*y^2, 2*x^2 + x*y + 3*y^2]
             sage: [Q.solve_integer(3) for Q in Qs]
-            [None, (0, 1), (0, 1)]
+            [None, (0, -1), (0, -1)]
             sage: [Q.solve_integer(5) for Q in Qs]
             [None, None, None]
             sage: [Q.solve_integer(6) for Q in Qs]
-            [(0, 1), (-1, 1), (1, 1)]
+            [(1, -1), (1, -1), (-1, -1)]
+
+        ::
+
+            sage: # needs sage.libs.pari
+            sage: n = factor(126)
+            sage: Q = BinaryQF([1, 0, 5])
+            sage: Q.solve_integer(n)
+            (11, -1)
+
+        TESTS:
+
+        The returned solutions are correct (random inputs)::
+
+            sage: Q = BinaryQF([randrange(-10^3, 10^3) for _ in 'abc'])
+            sage: n = randrange(-10^9, 10^9)
+            sage: xy = Q.solve_integer(n)                                               # needs sage.libs.pari
+            sage: xy is None or Q(*xy) == n                                             # needs sage.libs.pari
+            True
+
+        Also when using the ``"cornacchia"`` algorithm::
+
+            sage: # needs sage.libs.pari
+            sage: n = random_prime(10^9)
+            sage: c = randrange(1, 10^3)
+
+            sage: # needs sage.libs.pari
+            sage: Q1 = BinaryQF(1, 0, c)
+            sage: xy = Q1.solve_integer(n, algorithm='cornacchia')
+            sage: xy is None or Q1(*xy) == n
+            True
+            sage: (xy is None) == (Q1.solve_integer(n) is None)
+            True
+
+            sage: # needs sage.libs.pari
+            sage: Q3 = BinaryQF(1, 0, 4*c+3)
+            sage: xy = Q3.solve_integer(n, algorithm='cornacchia')
+            sage: xy is None or Q3(*xy) == n
+            True
+            sage: (xy is None) == (Q3.solve_integer(n) is None)
+            True
+
+            sage: # needs sage.libs.pari
+            sage: xy = Q3.solve_integer(4*n, algorithm='cornacchia')
+            sage: xy is None or Q3(*xy) == 4*n
+            True
+            sage: (xy is None) == (Q3.solve_integer(4*n) is None)
+            True
+
+        Test for square discriminants specifically (:issue:`33026`)::
+
+            sage: n = randrange(-10^3, 10^3)
+            sage: Q = BinaryQF([n, randrange(-10^3, 10^3), 0][::(-1)**randrange(2)])
+            sage: U = random_matrix(ZZ, 2, 2, 'unimodular')
+            sage: U.rescale_row(0, choice((+1,-1)))
+            sage: assert U.det() in (+1,-1)
+            sage: Q = Q.matrix_action_right(U)
+            sage: Q.discriminant().is_square()
+            True
+            sage: # needs sage.libs.pari
+            sage: xy = Q.solve_integer(n)
+            sage: Q(*xy) == n
+            True
+
+        Also test the `n=0` special case separately::
+
+            sage: # needs sage.libs.pari
+            sage: xy = Q.solve_integer(0)
+            sage: Q(*xy)
+            0
+
+        Test for different `_flag` values::
+
+            sage: # needs sage.libs.pari
+            sage: Q = BinaryQF([1, 0, 5])
+            sage: Q.solve_integer(126, _flag=1)
+            [(11, -1), (-1, -5), (-1, 5), (-11, -1)]
+            sage: Q.solve_integer(126, _flag=2)
+            (11, -1)
+            sage: Q.solve_integer(126, _flag=3)
+            [(11, -1), (-1, -5), (-1, 5), (-11, -1), (-9, -3), (9, -3)]
         """
-        a, b, c = self
-        d = self.discriminant()
-        if d >= 0 or a <= 0:
-            raise NotImplementedError("%s is not positive definite" % self)
-        ad = -d
-        an4 = 4*a*n
-        a2 = 2*a
-        from sage.arith.srange import xsrange
-        for y in xsrange(0, 1+an4//ad):
-            z2 = an4 + d*y**2
-            for z in z2.sqrt(extend=False, all=True):
-                if a2.divides(z-b*y):
-                    x = (z-b*y)//a2
-                    return (x, y)
-        return None
+        if self.is_negative_definite():  # not supported by PARI
+            return (-self).solve_integer(-n)
+
+        if self.is_reducible():  # square discriminant; not supported by PARI
+            from sage.structure.factorization import Factorization
+            if isinstance(n, Factorization):
+                n = ZZ(n.value())
+            else:
+                n = ZZ(n)
+
+            if self._a:
+                # https://math.stackexchange.com/a/980075
+                w = self.discriminant().sqrt()
+                r = (-self._b + (w if w != self._b else -w)) / (2*self._a)
+                p, q = r.as_integer_ratio()
+                _, u, v = p.xgcd(q)
+                M = Matrix(ZZ, [[v, p], [-u, q]])
+            elif self._c:
+                M = Matrix(ZZ, [[0, 1], [1, 0]])
+            else:
+                M = Matrix(ZZ, [[1, 0], [0, 1]])
+            assert M.is_unit()
+            Q = self.matrix_action_right(M)
+            assert not Q._c
+
+            if not Q._b:
+                # at this point, Q = a*x^2
+                if Q._a.divides(n) and (n // Q._a).is_square():
+                    x = (n // Q._a).isqrt()
+                    return tuple(row[0] * x for row in M.rows())
+                return None
+
+            # at this point, Q = a*x^2 + b*x*y
+            if not n:
+                return tuple(M.columns()[1])
+            for x in n.divisors():
+                y_num = n // x - Q._a * x
+                if Q._b.divides(y_num):
+                    y = y_num // Q._b
+                    return tuple([row[0]*x + row[1]*y for row in M.rows()])
+
+            return None
+
+        if algorithm == 'cornacchia':
+            if not (self._a.is_one() and self._b.is_zero() and self._c > 0):
+                raise ValueError("Cornacchia's algorithm requires a=1 and b=0 and c>0")
+            sol = pari.qfbcornacchia(self._c, n)
+            return tuple(map(ZZ, sol)) if sol else None
+
+        if algorithm != 'general':
+            raise ValueError(f'algorithm {algorithm!r} is not a valid algorithm')
+
+        sol = self.__pari__().qfbsolve(n, _flag)
+        if _flag == 2:
+            return tuple(map(ZZ, sol)) if sol else None
+        return [tuple(map(ZZ, tup)) for tup in sol]
+
+    def form_class(self):
+        r"""
+        Return the class of this form modulo equivalence.
+
+        EXAMPLES::
+
+            sage: F = BinaryQF([3, -16, 161])
+            sage: cl = F.form_class(); cl
+            Class of 3*x^2 + 2*x*y + 140*y^2
+            sage: cl.parent()
+            Form Class Group of Discriminant -1676
+            sage: cl.parent() is BQFClassGroup(-4*419)
+            True
+        """
+        from sage.quadratic_forms.bqf_class_group import BQFClassGroup
+        return BQFClassGroup(self.discriminant())(self)
 
 
 def BinaryQF_reduced_representatives(D, primitive_only=False, proper=True):
@@ -1520,23 +1863,25 @@ def BinaryQF_reduced_representatives(D, primitive_only=False, proper=True):
         [x^2 + 4*y^2, 2*x^2 + 2*y^2]
 
         sage: BinaryQF_reduced_representatives(-63)
-        [x^2 + x*y + 16*y^2, 2*x^2 - x*y + 8*y^2, 2*x^2 + x*y + 8*y^2, 3*x^2 + 3*x*y + 6*y^2, 4*x^2 + x*y + 4*y^2]
+        [x^2 + x*y + 16*y^2, 2*x^2 - x*y + 8*y^2, 2*x^2 + x*y + 8*y^2,
+         3*x^2 + 3*x*y + 6*y^2, 4*x^2 + x*y + 4*y^2]
 
     The number of inequivalent reduced binary forms with a fixed negative
-    fundamental discriminant D is the class number of the quadratic field
+    fundamental discriminant `D` is the class number of the quadratic field
     `\QQ(\sqrt{D})`::
 
         sage: len(BinaryQF_reduced_representatives(-13*4))
         2
-        sage: QuadraticField(-13*4, 'a').class_number()
+        sage: QuadraticField(-13*4, 'a').class_number()                                 # needs sage.rings.number_field
         2
+
+        sage: # needs sage.libs.pari
         sage: p = next_prime(2^20); p
         1048583
         sage: len(BinaryQF_reduced_representatives(-p))
         689
-        sage: QuadraticField(-p, 'a').class_number()
+        sage: QuadraticField(-p, 'a').class_number()                                    # needs sage.rings.number_field
         689
-
         sage: BinaryQF_reduced_representatives(-23*9)
         [x^2 + x*y + 52*y^2,
         2*x^2 - x*y + 26*y^2,
@@ -1559,7 +1904,7 @@ def BinaryQF_reduced_representatives(D, primitive_only=False, proper=True):
 
         sage: BinaryQF_reduced_representatives(73)
         [4*x^2 + 3*x*y - 4*y^2]
-        sage: BinaryQF_reduced_representatives(76, primitive_only=True)
+        sage: BinaryQF_reduced_representatives(76, primitive_only=True)                 # needs sage.libs.pari
         [-3*x^2 + 4*x*y + 5*y^2,
          3*x^2 + 4*x*y - 5*y^2]
         sage: BinaryQF_reduced_representatives(136)
@@ -1574,9 +1919,9 @@ def BinaryQF_reduced_representatives(D, primitive_only=False, proper=True):
 
         sage: BinaryQF_reduced_representatives(148, proper=False, primitive_only=False)
         [x^2 + 12*x*y - y^2, 4*x^2 + 6*x*y - 7*y^2, 6*x^2 + 2*x*y - 6*y^2]
-        sage: BinaryQF_reduced_representatives(148, proper=False, primitive_only=True)
+        sage: BinaryQF_reduced_representatives(148, proper=False, primitive_only=True)  # needs sage.libs.pari
         [x^2 + 12*x*y - y^2, 4*x^2 + 6*x*y - 7*y^2]
-        sage: BinaryQF_reduced_representatives(148, proper=True, primitive_only=True)
+        sage: BinaryQF_reduced_representatives(148, proper=True, primitive_only=True)   # needs sage.libs.pari
         [-7*x^2 + 6*x*y + 4*y^2, x^2 + 12*x*y - y^2, 4*x^2 + 6*x*y - 7*y^2]
         sage: BinaryQF_reduced_representatives(148, proper=True, primitive_only=False)
         [-7*x^2 + 6*x*y + 4*y^2,
@@ -1584,7 +1929,7 @@ def BinaryQF_reduced_representatives(D, primitive_only=False, proper=True):
          4*x^2 + 6*x*y - 7*y^2,
          6*x^2 + 2*x*y - 6*y^2]
 
-    Test another part of :trac:`29028`::
+    Test another part of :issue:`29028`::
 
         sage: BinaryQF_reduced_representatives(10^2, proper=False, primitive_only=False)
         [-4*x^2 + 10*x*y,
@@ -1595,9 +1940,9 @@ def BinaryQF_reduced_representatives(D, primitive_only=False, proper=True):
          x^2 + 10*x*y,
          2*x^2 + 10*x*y,
          5*x^2 + 10*x*y]
-        sage: BinaryQF_reduced_representatives(10^2, proper=False, primitive_only=True)
+        sage: BinaryQF_reduced_representatives(10^2, proper=False, primitive_only=True)             # needs sage.libs.pari
         [-3*x^2 + 10*x*y, -x^2 + 10*x*y, x^2 + 10*x*y]
-        sage: BinaryQF_reduced_representatives(10^2, proper=True, primitive_only=True)
+        sage: BinaryQF_reduced_representatives(10^2, proper=True, primitive_only=True)  # needs sage.libs.pari
         [-3*x^2 + 10*x*y, -x^2 + 10*x*y, x^2 + 10*x*y, 3*x^2 + 10*x*y]
         sage: BinaryQF_reduced_representatives(10^2, proper=True, primitive_only=False)
         [-4*x^2 + 10*x*y,
@@ -1615,7 +1960,7 @@ def BinaryQF_reduced_representatives(D, primitive_only=False, proper=True):
 
     # For a fundamental discriminant all forms are primitive so we need not check:
     if primitive_only:
-        primitive_only = not is_fundamental_discriminant(D)
+        primitive_only = not D.is_fundamental_discriminant()
 
     form_list = []
 
@@ -1627,11 +1972,13 @@ def BinaryQF_reduced_representatives(D, primitive_only=False, proper=True):
     if D > 0:           # Indefinite
         if D.is_square():
             b = D.sqrt()
-            c = ZZ(0)
+            c = ZZ.zero()
             # -b/2 < a <= b/2
-            for a in xsrange((-b/2).floor() + 1, (b/2).floor() + 1):
-                if (not primitive_only) or (gcd([a,b,c]) == 1):
-                    form_list.append(BinaryQF(a, b, c))
+            form_list.extend(BinaryQF(a, b, c)
+                             for a in xsrange((-b / 2).floor() + 1,
+                                              (b / 2).floor() + 1)
+                             if not primitive_only or (gcd([a, b, c]) == 1))
+
         # We follow the description of Buchmann/Vollmer 6.7.1.  They
         # enumerate all reduced forms.  We only want representatives.
         else:
@@ -1664,13 +2011,14 @@ def BinaryQF_reduced_representatives(D, primitive_only=False, proper=True):
             a4 = 4*a
             s = D + a*a4
             w = 1+(s-1).isqrt() if s > 0 else 0
-            if w%2 != D%2: w += 1
+            if w % 2 != D % 2:
+                w += 1
             for b in xsrange(w, a+1, 2):
                 t = b*b-D
                 if t % a4 == 0:
                     c = t // a4
-                    if (not primitive_only) or gcd([a, b, c]) == 1:
-                        if b>0 and a>b and c>a:
+                    if not primitive_only or gcd([a, b, c]) == 1:
+                        if c > a > b > 0:
                             form_list.append(BinaryQF([a, -b, c]))
                         form_list.append(BinaryQF([a, b, c]))
     if not proper or D > 0:

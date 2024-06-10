@@ -1,24 +1,22 @@
-importlib_metadata
-==================
+importlib_metadata: Library to access the metadata for a Python package
+=======================================================================
 
 Description
 -----------
 
-importlib_metadata is a library to access the metadata for a Python package.
-It is intended to be ported to Python 3.8.
+This is a backport package, supplying access to the functionality of
+``importlib.metadata`` including improvements added to subsequent Python versions.
+
 
 License
 -------
 
-Apache Software License 
+Apache Software License
 
 
 Upstream Contact
 ----------------
 
-Home page: http://importlib-metadata.readthedocs.io/
+- https://pypi.org/project/importlib-metadata/
 
-Dependencies
-------------
-
-Python, Setuptools, zipp
+- http://importlib-metadata.readthedocs.io/

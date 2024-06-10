@@ -1,13 +1,14 @@
+# sage.doctest: optional - numpy
 r"""
-Dense real double vectors using a NumPy backend.
+Dense real double vectors using a NumPy backend
 
 EXAMPLES::
 
-    sage: v = vector(RDF,[1, pi, sqrt(2)])
-    sage: v
+    sage: # needs sage.symbolic
+    sage: v = vector(RDF, [1, pi, sqrt(2)]); v
     (1.0, 3.141592653589793, 1.414213562373095)
     sage: type(v)
-    <type 'sage.modules.vector_real_double_dense.Vector_real_double_dense'>
+    <class 'sage.modules.vector_real_double_dense.Vector_real_double_dense'>
     sage: parent(v)
     Vector space of dimension 3 over Real Double Field
     sage: v[0] = 5
@@ -71,12 +72,11 @@ cdef class Vector_real_double_dense(Vector_double_dense):
         EXAMPLES::
 
             sage: v = vector(RDF, range(9))
-            sage: v.stats_skew()
+            sage: v.stats_skew()                                                        # needs scipy
             0.0
         """
         import scipy.stats
         return self._sage_dtype(scipy.stats.skew(self._vector_numpy))
-
 
     def __reduce__(self):
         """
@@ -88,7 +88,8 @@ cdef class Vector_real_double_dense(Vector_double_dense):
             sage: loads(dumps(a)) == a
             True
         """
-        return (unpickle_v1, (self._parent, self.list(), self._degree, self._is_mutable))
+        return (unpickle_v1, (self._parent, self.list(), self._degree,
+                              not self._is_immutable))
 
 
 # For backwards compatibility, we must keep the function unpickle_v0
@@ -105,6 +106,7 @@ def unpickle_v0(parent, entries, degree):
     """
     return unpickle_v1(parent, entries, degree)
 
+
 def unpickle_v1(parent, entries, degree, is_mutable=None):
     """
     Create a real double vector with the given parent, entries,
@@ -113,11 +115,11 @@ def unpickle_v1(parent, entries, degree, is_mutable=None):
     EXAMPLES::
 
         sage: v = vector(RDF, [1,2,3])
-        sage: w = sage.modules.vector_real_double_dense.unpickle_v1(v.parent(), list(v), v.degree(), v.is_mutable())
+        sage: w = sage.modules.vector_real_double_dense.unpickle_v1(v.parent(), list(v), v.degree(), v.is_immutable())
         sage: v == w
         True
     """
     cdef Vector_real_double_dense v = Vector_real_double_dense(parent, entries)
     if is_mutable is not None:
-        v._is_mutable = is_mutable
+        v._is_immutable = not is_mutable
     return v

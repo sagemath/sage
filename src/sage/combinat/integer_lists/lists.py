@@ -157,7 +157,7 @@ class IntegerLists(Parent):
         TESTS:
 
         This used to fail due to poor equality testing. See
-        :trac:`17979`, comment 433::
+        :issue:`17979`, comment 433::
 
             sage: DisjointUnionEnumeratedSets(Family([2,2],
             ....:     lambda n: IntegerListsLex(n, length=2))).list()
@@ -261,7 +261,7 @@ class IntegerLists(Parent):
             sage: L.foo
             Traceback (most recent call last):
             ...
-            AttributeError: 'NoneType' object has no attribute 'foo'
+            AttributeError: 'NoneType' object has no attribute 'foo'...
         """
         return getattr(self.backend, name)
 
@@ -299,7 +299,7 @@ class IntegerLists(Parent):
             ....:     Element = MyElt
             sage: L = MyIntegersLists(5)
             sage: L._element_constructor_
-            <bound method MyIntegersLists._element_constructor_default of Integer lists of sum 5 satisfying certain constraints>
+            <bound method IntegerLists._element_constructor_default of Integer lists of sum 5 satisfying certain constraints>
         """
         return self.element_class(self, l)
 
@@ -320,7 +320,7 @@ class IntegerLists(Parent):
         iterator::
 
             sage: L._element_constructor_
-            <bound method IntegerListsLex._element_constructor_nocheck of ...>
+            <bound method IntegerLists._element_constructor_nocheck of ...>
             sage: L._element_constructor_([1,2,3])
             [1, 2, 3]
         """

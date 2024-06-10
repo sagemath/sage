@@ -8400,7 +8400,7 @@ cdef class GiacMethods_base:
         r'''From Giac's documentation:
         Help for is_conjugate:
         is_conjugate(Crcle||Line,Pnt||Line,Pnt||Line,[Pnt||Line])
-        Returns 1 if the 3 (resp 4) arguments are conjugate with repect to the circle (resp 2 lines) and 0 otherwise.
+        Returns 1 if the 3 (resp 4) arguments are conjugate with respect to the circle (resp 2 lines) and 0 otherwise.
         See also: 1/ harmonic_conjugate 2/ pole 3/ polar 
         Ex1:is_conjugate(circle(0,1+i),point(1-i),point(3+i))
         Ex2:is_conjugate(circle(0,1),point((1+i)/2),line(1+i,2))
@@ -12943,7 +12943,7 @@ cdef class GiacMethods_base:
         r'''From Giac's documentation:
         Help for polar_coordinates:
         polar_coordinates(Pnt or Cplx or LstRectCoord)
-        Returns the list of the norm and of the argument of the affix of a point (for 2D) or of a complex number or of the the list of rectangular coordinates.
+        Returns the list of the norm and of the argument of the affix of a point (for 2D) or of a complex number or of the list of rectangular coordinates.
         See also: 1/ abscissapoint 2/ ordinate 3/ rectangular_coordinates 4/ polar_point 
         Ex1:polar_coordinates(point(1+2*i))
         Ex2:polar_coordinates(-1-i)

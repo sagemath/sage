@@ -1,8 +1,16 @@
 .. _developers-guide:
 
-======================================
-Welcome to the Sage Developer's Guide!
-======================================
+===============================
+Welcome to Sage Developer Guide
+===============================
+
+.. NOTE::
+
+    Sage development moved to `GitHub <https://github.com/sagemath>`_ in
+    February 2023, from `the Sage Trac server <https://trac.sagemath.org>`_,
+    which had been the center of Sage development for a long time. After the
+    transition, this guide was updated accordingly. However, the legacy is
+    still with us in many aspects of the current Sage development.
 
 Everybody who uses Sage is encouraged to contribute something back to Sage at
 some point. You could:
@@ -10,162 +18,177 @@ some point. You could:
 * Add examples to the documentation
 * Find bugs or typos
 * Fix a bug
-* Implement a new function
+* Implement a new function or create a new class
 * Contribute a useful tutorial for a mathematical topic
 * Translate an existing document to a new language
-* Create a new class, create a fast new C library, etc.
+* Upgrade a package, create a fast new C library, etc.
 
-This document tells you what you need to know to do all the above, from
-reporting bugs to modifying and extending Sage and its documentation.  We also
-discuss how to share your new and modified code with other Sage users around the
-globe.
+This document tells you what you need to know to do all the above. We also
+discuss how to share your new and modified code with other Sage users around
+the globe.
 
-Here are brief overviews of each part; for more details, see the extended table
-of contents below.  No matter where you start, good luck and welcome to Sage
-development!
+To begin with, you need of course your own copy of Sage source code to change
+it. Use our `Installation guide
+<http://doc.sagemath.org/html/en/installation/source.html>`_ to get the source
+code and build Sage from source. If you have never worked on software before,
+pay close attention to the prerequisites to build on your platform.
 
-- **Trac server:** all changes go through `the Sage Trac server
-  <https://trac.sagemath.org>`_ at some point. It contains bug reports, upgrade
-  requests, changes in progress, and those already part of Sage
-  today. :ref:`Click here <chapter-sage-trac>` for more information.
+Now here is a brief overview of this guide.
 
-  Importantly, you will need to :ref:`create a trac account
-  <section-trac-account>` in order to contribute.
+- :ref:`section-first-steps`: To share changes with the Sage community, you
+  need to learn about revision control. We use the software Git for this
+  purpose. Here we walk you through from setting up Git on your platform
+  and to preparing a local branch to share with all Sage users.
 
-- **Source code:** You need your own copy of Sage's source code to change it.
-  `Go there <http://doc.sagemath.org/html/en/installation/source.html>`_ to get it
-  and for instructions to build it.
+  .. NOTE::
 
-  If you have never worked on software before, pay close attention to the
-  `prerequisites to compile
-  <http://doc.sagemath.org/html/en/installation/source.html#prerequisites>`_ on your
-  system.
+    As an easy way to get started, you can run and edit Sage's code and contribute
+    your changes using `Gitpod <https://www.gitpod.io>`_, a free online development
+    environment based on VS Code.  It will launch a pre-made workspace with all
+    dependencies and tools installed so that you can start contributing straight
+    away.  Start by `going to Gitpod
+    <https://gitpod.io/#https://github.com/sagemath/sage>`_, and read :ref:`our
+    Gitpod guidelines <section-gitpod>` to learn more.
 
-- **Conventions:** read our :ref:`conventions and guidelines
-  <section-writing-code-for-sage>` for code and documentation.
+- :ref:`section-development-on-github`: All changes go through `the Sage
+  repository on GitHub <https://github.com/sagemath/sage>`_ at some point. It contains
+  bug reports, enhancement proposals, changes in progress, and indeed all the
+  history of Sage today. You have to be familiar with it to be involved in Sage
+  development.
 
-  For everything related to manuals, tutorials, and languages, :ref:`click here
-  <chapter-sage_manuals>`.
+- :ref:`section-git-tricks-and-tips`: Here we give an in-depth guide for
+  working with Git for Sage development. Read this when you need help on Git in
+  a tricky situation such as merge conflict.
 
-- **Git (revision control):** To share changes with the Sage community, you will
-  need to learn about revision control; we use the software Git for this
-  purpose.
+- :ref:`section-writing-code-for-sage`: This is a guide on conventions in
+  writing code and documentation. A beginning developer should read this to be
+  a good developer. As conventions evolve over time, also experienced Sage
+  contributors may want to review this chapter once in a while.
 
-  - :ref:`Here is <chapter-walkthrough>` an overview of our development flow.
-  - :ref:`Unfamiliar with Git or revision control? <chapter-git_trac>`
-  - :ref:`How to install it? <section-git-install>`
-  - :ref:`How to configure it for use with Trac? <section-git-setup-name>`
+- :ref:`section-testing-sage`: We value testing Sage highest. Every change of
+  Sage source code has a risk to break Sage, and must be tested before being
+  merged.  This part explains our various tools to help test Sage.
 
-Git for Sage development
-========================
+- :ref:`section-updating-documentation`: All features of Sage are documented in
+  our manuals. This part explains the technical aspect of updating Sage
+  documentation.
 
-First Steps with Git
---------------------
+- :ref:`section-more-on-coding`: When you need to know the technical details of
+  Sage for deep coding, read this.
 
-Sage uses git for version control.
+- :ref:`section-packaging`: Sage is composed of many third-party packages and
+  its own distribution packages. This part is for advanced developers.
 
-.. toctree::
-   :maxdepth: 3
+For more details, see the table of contents below. No matter where you start,
+good luck and welcome to Sage development!
 
-   git_setup
-   walk_through
 
-The git-trac command
---------------------
+Table of Contents
+=================
 
-Putting your local changes on a Trac ticket.
+.. _section-first-steps:
+
+First Steps
+-----------
 
 .. toctree::
    :maxdepth: 2
 
-   git_trac
+   walkthrough
+   git_setup
+
+
+.. _section-development-on-github:
+
+Working on GitHub
+-----------------
+
+.. toctree::
+   :maxdepth: 2
+
+   github
+   workflows
+   review
+
 
 .. _section-git-tricks-and-tips:
 
-Git Tricks & Tips
------------------
-
-When ``git trac`` is not enough.
+Working with Git
+----------------
 
 .. toctree::
    :maxdepth: 2
 
-   manual_git
+   git_basic
+   git_advanced
    git_background
-   advanced_git
-   workflows
-
-Sage Trac and tickets
-=====================
-
-All changes to Sage source code require a ticket on the
-`Sage trac server <http://trac.sagemath.org>`_.
-
-.. toctree::
-   :maxdepth: 2
-
-   trac
 
 
 .. _section-writing-code-for-sage:
 
 Writing Code for Sage
-=====================
+---------------------
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
+   workspace
    coding_basics
-   reviewer_checklist
 
-Running Sage's tests
---------------------
+
+.. _section-testing-sage:
+
+Testing Sage
+------------
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    doctesting
-
-Testing on multiple platforms
------------------------------
-
-.. toctree::
-   :maxdepth: 3
-
    portability_testing
+   tools
 
-Contributing to Manuals and Tutorials
--------------------------------------
+
+.. _section-updating-documentation:
+
+Updating Sage Documentation
+---------------------------
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    sage_manuals
 
-Sage Coding Details
--------------------
+
+.. _section-more-on-coding:
+
+More on Coding for Sage
+-----------------------
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    coding_in_python
    coding_in_cython
    coding_in_other
 
-Packaging Third-Party Code
---------------------------
+
+.. _section-packaging:
+
+Packaging
+---------
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    packaging
+   packaging_sage_library
 
 
 Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
 
 This work is licensed under a `Creative Commons Attribution-Share Alike

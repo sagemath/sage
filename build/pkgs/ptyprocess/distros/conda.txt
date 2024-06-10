@@ -1,0 +1,3 @@
+# The version should be fixed to 0.5.1 (see https://github.com/sagemath/sage/issues/32147), but this is not available on conda-forge
+# thus don't install ptyprocess with conda, but let pip handle it
+# ptyprocess

@@ -7,11 +7,6 @@ if [ ! -f "$JMOL_JAR" ]; then
     echo >&2 "Jmol.jar not found in $JMOL_HOME"
 fi
 
-if [ "$UNAME" = "CYGWIN" ]; then
-    # We are using the native Windows Java so we must provide Windows paths
-    JMOL_JAR="$(cygpath -w "$JMOL_JAR")"
-fi
-
 # May also pass arguments to the Java interpreter, in which case they
 # should come first in the argument list
 java -Xmx512m -jar "$JMOL_JAR" $@

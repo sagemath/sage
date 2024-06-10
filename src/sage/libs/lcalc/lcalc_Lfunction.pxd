@@ -21,7 +21,7 @@ cdef extern from "lcalc_sage.h":
         int (* compute_rank) ()
         double (* N) (double T)
         void  (* find_zeros_v)(double T1, double T2, double stepsize, doublevec result )
-        void (*find_zeros_via_N_v)(long count,int do_negative,double max_refine, int rank, int test_explicit_formula, doublevec result)
+        int (*find_zeros)(long count, long start, double max_refine, int rank, const char* message_stamp, doublevec* result)
         void (*print_data_L)()
 
         #Constructor and destructor
@@ -38,7 +38,7 @@ cdef extern from "lcalc_sage.h":
         double (* N) (double T)
         double *dirichlet_coefficient
         void  (* find_zeros_v)(double T1, double T2, double stepsize, doublevec result )
-        void (*find_zeros_via_N_v)(long count,int do_negative,double max_refine, int rank, int test_explicit_formula, doublevec result)
+        int (*find_zeros)(long count, long start, double max_refine, int rank, const char* message_stamp, doublevec* result)
         void (*print_data_L)()
 
         #Constructor and destructor
@@ -54,7 +54,7 @@ cdef extern from "lcalc_sage.h":
         int (* compute_rank) ()
         double (* N) (double T)
         void  (* find_zeros_v)(double T1, double T2, double stepsize, doublevec result )
-        void (*find_zeros_via_N_v)(long count,int do_negative,double max_refine, int rank, int test_explicit_formula, doublevec result)
+        int (*find_zeros)(long count, long start, double max_refine, int rank, const char* message_stamp, doublevec* result)
         void (*print_data_L)()
 
         #Constructor and destructor
@@ -70,7 +70,7 @@ cdef extern from "lcalc_sage.h":
         int (* compute_rank) ()
         double (* N) (double T)
         void  (* find_zeros_v)(double T1, double T2, double stepsize, doublevec result )
-        void (*find_zeros_via_N_v)(long count,int do_negative,double max_refine, int rank, int test_explicit_formula, doublevec result)#puts result in vector<double> result
+        int (*find_zeros)(long count, long start, double max_refine, int rank, const char* message_stamp, doublevec* result)
         void (*find_zeros_via_N)(long count,int do_negative,double max_refine, int rank, int test_explicit_formula, char *filename) #puts result in filename
 
         #Constructor and destructor
@@ -99,19 +99,19 @@ cdef extern from "lcalc_sage.h":
 ################
 
 # strange bug, I can't compile without this trick ???
-# it's only used in __typedN
+# it's only used in _typedN
 ctypedef double Double
 
 cdef class Lfunction:
     cdef void *thisptr
-    cdef void __init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r)
-    cdef c_Complex __value(self,c_Complex s,int derivative)
-    cdef c_Complex __hardy_z_function(self,c_Complex s)
-    cdef int __compute_rank(self)
+    cdef void _init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r) noexcept
+    cdef c_Complex _value(self,c_Complex s,int derivative) noexcept
+    cdef c_Complex _hardy_z_function(self,c_Complex s) noexcept
+    cdef int _compute_rank(self) noexcept
     #strange bug, replacing Double with double gives me a compile error
-    cdef Double __typedN(self, double T)
-    cdef void __find_zeros_v(self, double T1, double T2, double stepsize,doublevec *result)
-    cdef void __find_zeros_via_N_v(self, long count,int do_negative,double max_refine, int rank, int test_explicit_formula,doublevec *result)
+    cdef Double _typedN(self, double T) noexcept
+    cdef void _find_zeros_v(self, double T1, double T2, double stepsize,doublevec *result) noexcept
+    cdef int _find_zeros(self, long count, long start, double max_refine, int rank, const char* message_stamp, doublevec* result) noexcept
 
     cdef str _repr
 

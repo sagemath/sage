@@ -1,17 +1,12 @@
+# sage.doctest: needs sage.rings.padics
 r"""
-
 Computation of the Frobenius polynomial using Newton's identities
-
 """
-
-
 # *****************************************************************************
 #  Copyright (C) 2018 Edgar Costa <edgarc@mit.edu>
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-
-from __future__ import division
 from sage.rings.integer_ring import ZZ
 from sage.functions.log import log
 
@@ -24,21 +19,21 @@ def charpoly_frobenius(frob_matrix, charpoly_prec, p, weight, a=1, known_factor=
 
     - ``frob_matrix`` -- a matrix representing the Frobenius matrix up to some precision
 
-    - ``charpoly_prec`` -- a vector ai, such that, `frob_matrix.change_ring(ZZ).charpoly()[i]`
-        will be correct mod `p^ai`, this can be easily deduced from the Hodge numbers and
-        knowing the q-adic precision of ``frob_matrix``
+    - ``charpoly_prec`` -- a vector ai, such that, ``frob_matrix.change_ring(ZZ).charpoly()[i]``
+      will be correct mod `p^ai`, this can be easily deduced from the
+      Hodge numbers and knowing the q-adic precision of ``frob_matrix``
 
     - ``p`` -- prime `p`
 
     - ``weight`` -- weight of the motive
 
-    - ``a`` -- `q = q^a`
+    - ``a`` -- `p = q^a`
 
     - ``known_factor`` -- the list of coefficients of the known factor
 
     OUTPUT:
 
-    A list of integers corresponding to the characteristic polynomial of the Frobenius action
+    A list of integers corresponding to the characteristic polynomial of the Frobenius action.
 
     EXAMPLES::
 
@@ -47,29 +42,33 @@ def charpoly_frobenius(frob_matrix, charpoly_prec, p, weight, a=1, known_factor=
         sage: charpoly_frobenius(M, [2, 1, 1], 17, 1, 1)
         [17, 2, 1]
 
-        sage: R = Zq(17**2 , names=('a',))
-        sage: M = Matrix(R, [[8*17 + 16*17**2 + O(17**3), 8 + 11*17 + O(17**2)], [7*17**2 + O(17**3), 15 + 8*17 + O(17**2)]])
+        sage: R = Zq(17**2, names=('a',))
+        sage: M = Matrix(R, [[8*17 + 16*17**2 + O(17**3), 8 + 11*17 + O(17**2)],
+        ....:                [7*17**2 + O(17**3), 15 + 8*17 + O(17**2)]])
         sage: charpoly_frobenius(M*M, [3, 2, 2], 17, 1, 2)
         [289, 30, 1]
 
-        sage: M = Matrix([[8*31 + 8*31**2 + O(31**3), O(31**3), O(31**3), O(31**3)], [O(31**3), 23*31 + 22*31**2 + O(31**3), O(31**3), O(31**3)], [O(31**3), O(31**3), 27 + 7*31 + O(31**3), O(31**3)], [O(31**3), O(31**3), O(31**3), 4 + 23*31 + O(31**3)]])
+        sage: M = Matrix([[8*31 + 8*31**2 + O(31**3), O(31**3), O(31**3), O(31**3)],
+        ....:             [O(31**3), 23*31 + 22*31**2 + O(31**3), O(31**3), O(31**3)],
+        ....:             [O(31**3), O(31**3), 27 + 7*31 + O(31**3), O(31**3)],
+        ....:             [O(31**3), O(31**3), O(31**3), 4 + 23*31 + O(31**3)]])
         sage: charpoly_frobenius(M, [4, 3, 2, 2, 2], 31, 1, 1)
         [961, 0, 46, 0, 1]
 
         sage: M = Matrix([(4*43^2 + O(43^3), 17*43 + 11*43^2 + O(43^3), O(43^3), O(43^3), 17 + 37*43 + O(43^3), O(43^3)),
-        ....:  (30*43 + 23*43^2 + O(43^3), 5*43 + O(43^3), O(43^3), O(43^3), 3 + 38*43 + O(43^3), O(43^3)),
-        ....:  (O(43^3), O(43^3), 9*43 + 32*43^2 + O(43^3), 13 + 25*43 + O(43^3), O(43^3), 17 + 18*43 + O(43^3)),
-        ....:  (O(43^3), O(43^3), 22*43 + 25*43^2 + O(43^3), 11 + 24*43 + O(43^3), O(43^3), 36 + 5*43 + O(43^3)),
-        ....:  (42*43 + 15*43^2 + O(43^3), 22*43 + 8*43^2 + O(43^3), O(43^3), O(43^3), 29 + 4*43 + O(43^3), O(43^3)),
-        ....:  (O(43^3), O(43^3), 6*43 + 19*43^2 + O(43^3), 8 + 24*43 + O(43^3), O(43^3), 31 + 42*43 + O(43^3))])
+        ....:             (30*43 + 23*43^2 + O(43^3), 5*43 + O(43^3), O(43^3), O(43^3), 3 + 38*43 + O(43^3), O(43^3)),
+        ....:             (O(43^3), O(43^3), 9*43 + 32*43^2 + O(43^3), 13 + 25*43 + O(43^3), O(43^3), 17 + 18*43 + O(43^3)),
+        ....:             (O(43^3), O(43^3), 22*43 + 25*43^2 + O(43^3), 11 + 24*43 + O(43^3), O(43^3), 36 + 5*43 + O(43^3)),
+        ....:             (42*43 + 15*43^2 + O(43^3), 22*43 + 8*43^2 + O(43^3), O(43^3), O(43^3), 29 + 4*43 + O(43^3), O(43^3)),
+        ....:             (O(43^3), O(43^3), 6*43 + 19*43^2 + O(43^3), 8 + 24*43 + O(43^3), O(43^3), 31 + 42*43 + O(43^3))])
         sage: charpoly_frobenius(M, [5, 4, 3, 2, 2, 2, 2], 43, 1, 1)
             [79507, 27735, 6579, 1258, 153, 15, 1]
 
         sage: M = Matrix([(1 + O(4999), O(4999), 0, 0),
-        ....:  (O(4999), 4860 + O(4999), 0, 0),
-        ....:  (0, 0, O(4999), O(4999)),
-        ....:  (0, 0, O(4999), 1 + O(4999))])
-        sage: charpoly_frobenius(M, [2, 1, 1], 4999, 1, 1, [1, -2 ,1 ])
+        ....:             (O(4999), 4860 + O(4999), 0, 0),
+        ....:             (0, 0, O(4999), O(4999)),
+        ....:             (0, 0, O(4999), 1 + O(4999))])
+        sage: charpoly_frobenius(M, [2, 1, 1], 4999, 1, 1, [1, -2, 1])
         [4999, 139, 1]
 
     TESTS::
@@ -196,14 +195,12 @@ def charpoly_frobenius(frob_matrix, charpoly_prec, p, weight, a=1, known_factor=
         sage: F+= F.base_ring()(0).add_bigoh(6)*ones_matrix(*F.dimensions())
         sage: charpoly_frobenius(F, [6, 5, 4, 4], 17, 2)
         [-4913, -221, 13, 1]
-
-
     """
     assert known_factor[-1] == 1
     try:
         cp = frob_matrix.change_ring(ZZ).charpoly().list()
     except ValueError:
-        # the given matrix wasn't integral
+        # the given matrix was not integral
         cp = frob_matrix.charpoly().change_ring(ZZ).list()
     assert len(charpoly_prec) == len(cp) - (len(known_factor) - 1)
     assert cp[-1] == 1
@@ -217,7 +214,7 @@ def charpoly_frobenius(frob_matrix, charpoly_prec, p, weight, a=1, known_factor=
 
     # figure out the sign
     # i.e., if it is a reciprocal or an antireciprocal polynomial
-    if weight % 2 == 1:
+    if weight % 2:
         # for odd weight the sign is always 1
         # it's the charpoly of a USp matrix
         # and charpoly of a symplectic matrix is reciprocal
@@ -228,7 +225,7 @@ def charpoly_frobenius(frob_matrix, charpoly_prec, p, weight, a=1, known_factor=
             raise NotImplementedError()
         # we compare ith coefficient and  (degree - i)th coefficient to deduce the sign
         # note, if degree is even, the middle coefficient will not help us determine the sign
-        for i in range((degree + 1)//2):
+        for i in range((degree + 1) // 2):
             # Note: degree*weight is even
             p_power = p**min(
                 charpoly_prec[i],
@@ -249,19 +246,21 @@ def charpoly_frobenius(frob_matrix, charpoly_prec, p, weight, a=1, known_factor=
     # note, this includes the middle coefficient if degree is even
     halfdegree = degree // 2 + 1
 
-    cp[0] = sign * p**((a * degree * weight) // 2) # Note: degree*weight is even
+    cp[0] = sign * p**((a * degree * weight) // 2)
+    # Note: degree*weight is even
+
     # calculate the i-th power sum of the roots and correct cp along the way
     e = cp[-halfdegree:]
     e.reverse()
     for k in range(halfdegree):
-        if k % 2 != 0:
+        if k % 2:
             e[k] = -e[k] % mod[degree - k]
         # e[k] = cp[degree - k] if (k%2 ==0) else -cp[degree - k]
         if k > 0:
             # verify if p^charpoly_prec[degree - k] > 2*degree/k * q^(w*k/2)
             assert (
-                log(k) / log(p) + charpoly_prec[degree - k]
-                > log(2 * degree) / log(p) + a * 0.5 * weight * k
+                log(k, p) + charpoly_prec[degree - k]
+                > log(2 * degree, p) + a * 0.5 * weight * k
             ), (
                 "log(k)/log(p) + charpoly_prec[degree - k] <= log(2*degree)/log(p) + a*0.5*weight*k, k = %d"
                 % k
@@ -272,7 +271,7 @@ def charpoly_frobenius(frob_matrix, charpoly_prec, p, weight, a=1, known_factor=
     if len(fix_e) < halfdegree:
         fix_e.extend([0] * (halfdegree - len(fix_e)))
     for i in range(halfdegree):
-        if i % 2 != 0:
+        if i % 2:
             fix_e[i] *= -1
 
     # e[k] = \sum x_{i_1} x_{i_2} ... x_{i_k} # where x_* are eigenvalues
@@ -281,7 +280,9 @@ def charpoly_frobenius(frob_matrix, charpoly_prec, p, weight, a=1, known_factor=
     # s[k] = \sum x_i ^k for k>0
     s = [None] * (halfdegree)
     res = [None] * len(charpoly_prec)
-    res[0] = sign * p**((a * degree * weight) // 2) # Note: degree*weight is even
+    res[0] = sign * p**((a * degree * weight) // 2)
+    # Note: degree*weight is even
+
     res[-1] = 1
     e[1] -= fix_e[1]
     e[1] = e[1] % mod[degree - 1]
@@ -307,8 +308,9 @@ def charpoly_frobenius(frob_matrix, charpoly_prec, p, weight, a=1, known_factor=
         # (-1)^(k-1) s[k] - S = k*e[k]
         e[k] = (-S + (-1)**(k - 1) * s[k]) // k
         assert (-S + (-1)**(k - 1) * s[k]) % k == 0
-        res[degree - k] = e[k] if k % 2 == 0 else -e[k]
+        res[degree - k] = e[k] if not k % 2 else -e[k]
         # Note: degree*weight is even
+
         res[k] = sign * res[degree - k] * p**((a * (degree - 2 * k) * weight) // 2)
         # fix e[k + 1]
         if k + 1 < halfdegree:

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 Utility functions
 
@@ -10,17 +11,19 @@ AUTHORS:
 
 # ****************************************************************************
 #       Copyright (C) 2012 David Roe <roed.math@gmail.com>
-#                          Robert Bradshaw <robertwb@gmail.com>
-#                          William Stein <wstein@gmail.com>
+#                     2012 Robert Bradshaw <robertwb@gmail.com>
+#                     2012 William Stein <wstein@gmail.com>
+#                     2013 Jeroen Demeyer <jdemeyer@cage.ugent.be>
+#                     2014 Volker Braun
+#                     2017 Frédéric Chapoton
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
-from sage.misc.misc import walltime, cputime
+from sage.misc.timing import walltime, cputime
 
 
 def count_noun(number, noun, plural=None, pad_number=False, pad_noun=False):
@@ -49,18 +52,18 @@ def count_noun(number, noun, plural=None, pad_number=False, pad_noun=False):
     else:
         pad_noun = ""
     if pad_number:
-        number_str = ("%%%sd"%pad_number)%number
+        number_str = ("%%%sd" % pad_number) % number
     else:
-        number_str = "%d"%number
+        number_str = "%d" % number
     if number == 1:
-        return "%s %s%s"%(number_str, noun, pad_noun)
+        return "%s %s%s" % (number_str, noun, pad_noun)
     else:
-        return "%s %s"%(number_str, plural)
+        return "%s %s" % (number_str, plural)
 
 
 def dict_difference(self, other):
     """
-    Return a dict with all key-value pairs occuring in ``self`` but not
+    Return a dict with all key-value pairs occurring in ``self`` but not
     in ``other``.
 
     EXAMPLES::
@@ -79,7 +82,7 @@ def dict_difference(self, other):
         sage: dict_difference(D2.__dict__, D1.__dict__)
         {'foobar': 'hello', 'timeout': 100}
     """
-    D = dict()
+    D = {}
     for k, v in self.items():
         try:
             if other[k] == v:
@@ -195,7 +198,7 @@ class Timer:
 
     def __ne__(self, other):
         """
-        Test for unequality
+        Test for non-equality
 
         EXAMPLES::
 
@@ -273,8 +276,8 @@ class RecordingDict(dict):
             sage: D.start(); D.set
             set()
         """
-        self.set = set([])
-        self.got = set([])
+        self.set = set()
+        self.got = set()
 
     def __getitem__(self, name):
         """
@@ -377,9 +380,10 @@ class RecordingDict(dict):
         """
         return make_recording_dict, (dict(self), self.set, self.got)
 
+
 def make_recording_dict(D, st, gt):
     """
-    Auxilliary function for pickling.
+    Auxiliary function for pickling.
 
     EXAMPLES::
 
@@ -509,7 +513,7 @@ class NestedName:
 
     def __ne__(self, other):
         """
-        Test for unequality.
+        Test for non-equality.
 
         EXAMPLES::
 

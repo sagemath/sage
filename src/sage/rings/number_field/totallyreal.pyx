@@ -1,5 +1,5 @@
-"""
-Enumeration of Primitive Totally Real Fields
+r"""
+Enumeration of primitive totally real fields
 
 This module contains functions for enumerating all primitive
 totally real number fields of given degree and small discriminant.
@@ -9,8 +9,7 @@ subfields except `\QQ`.
 See also :mod:`sage.rings.number_field.totallyreal_rel`, which handles the non-primitive
 case using relative extensions.
 
-Algorithm
----------
+ALGORITHM:
 
 We use Hunter's algorithm ([Coh2000]_, Section 9.3) with modifications
 due to Takeuchi [Tak1999]_ and the author [Voi2008]_.
@@ -22,13 +21,10 @@ Hunter's theorem gives bounds on `a_{n-1}` and `a_{n-2}`; then given
 looking at the zeros of successive derivatives and applying
 Rolle's theorem. See [Tak1999]_ for more details.
 
-Examples
---------
+EXAMPLES:
 
 In this first simple example, we compute the totally real quadratic
-fields of discriminant `\le 50`.
-
-::
+fields of discriminant `\le 50`. ::
 
     sage: enumerate_totallyreal_fields_prim(2,50)
     [[5, x^2 - x - 1],
@@ -45,7 +41,8 @@ fields of discriminant `\le 50`.
      [40, x^2 - 10],
      [41, x^2 - x - 10],
      [44, x^2 - 11]]
-    sage: [ d for d in range(5,50) if (is_squarefree(d) and d%4 == 1) or (d%4 == 0 and is_squarefree(d/4)) ]
+    sage: [d for d in range(5,50)
+    ....:    if (is_squarefree(d) and d%4 == 1) or (d%4 == 0 and is_squarefree(d/4))]
     [5, 8, 12, 13, 17, 20, 21, 24, 28, 29, 33, 37, 40, 41, 44]
 
 Next, we compute all totally real quintic fields of discriminant `\le 10^5`::
@@ -67,29 +64,24 @@ We see that there are 9 such fields (up to isomorphism!).
 
 See also [Mar1980]_.
 
-Authors
--------
+AUTHORS:
 
-- John Voight (2007-09-01): Initial version.
-- John Voight (2007-09-19): Various optimization tweaks.
-- John Voight (2007-10-09): Added DSage module.
-- John Voight (2007-10-17): Added pari functions to avoid recomputations.
-- John Voight (2007-10-27): Separated DSage component.
-- Craig Citro and John Voight (2007-11-04): Additional doctests and type checking.
-- Craig Citro and John Voight (2008-02-10): Final modifications for submission.
-
-------
+- John Voight (2007-09-01): initial version; various optimization tweaks
+- John Voight (2007-10-09): added DSage module; added pari functions to avoid
+  recomputations; separated DSage component
+- Craig Citro and John Voight (2007-11-04): additional doctests and type checking
+- Craig Citro and John Voight (2008-02-10): final modifications for submission
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein and John Voight
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.memory cimport check_calloc, sig_free
 
@@ -104,26 +96,25 @@ from sage.libs.pari.misc cimport new_t_POL_from_int_star
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer import Integer
 from sage.rings.integer cimport Integer
-from sage.rings.integer_ring import IntegerRing
-from sage.rings.all import ZZ, QQ
-from sage.misc.misc import cputime
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 
 from sage.rings.number_field.totallyreal_data import tr_data, int_has_small_square_divisor
 from sage.rings.number_field.totallyreal_data cimport tr_data
 
 
-cpdef double odlyzko_bound_totallyreal(int n):
+cpdef double odlyzko_bound_totallyreal(int n) noexcept:
     r"""
     This function returns the unconditional Odlyzko bound for the root
-    discriminant of a totally real number field of degree n.
+    discriminant of a totally real number field of degree `n`.
 
     .. NOTE::
 
-        The bounds for n > 50 are not necessarily optimal.
+        The bounds for `n > 50` are not necessarily optimal.
 
     INPUT:
 
-    - n (integer) the degree
+    - ``n`` -- (integer) the degree
 
     OUTPUT:
 
@@ -131,15 +122,17 @@ cpdef double odlyzko_bound_totallyreal(int n):
 
     EXAMPLES::
 
-        sage: [sage.rings.number_field.totallyreal.odlyzko_bound_totallyreal(n) for n in range(1,5)]
+        sage: from sage.rings.number_field.totallyreal import odlyzko_bound_totallyreal
+        sage: [odlyzko_bound_totallyreal(n) for n in range(1, 5)]
         [1.0, 2.223, 3.61, 5.067]
 
     AUTHORS:
 
     - John Voight (2007-09-03)
 
-    NOTES:
-    The values are calculated by Martinet [Mar1980]_.
+    .. NOTE::
+
+        The values are calculated by Martinet [Mar1980]_.
     """
 
     if n <= 10:
@@ -162,7 +155,7 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
                                       just_print=False,
                                       return_pari_objects=True):
     r"""
-    This function enumerates primitive totally real fields of degree
+    Enumerate primitive totally real fields of degree
     `n>1` with discriminant `d \leq B`; optionally one can specify the
     first few coefficients, where the sequence `a` corresponds to
 
@@ -181,26 +174,26 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
 
     - ``n`` -- (integer) the degree
     - ``B`` -- (integer) the discriminant bound
-    - ``a`` -- (list, default: []) the coefficient list to begin with
+    - ``a`` -- (list, default: ``[]``) the coefficient list to begin with
     - ``verbose`` -- (integer or string, default: 0) if ``verbose == 1``
       (or ``2``), then print to the screen (really) verbosely; if verbose is
       a string, then print verbosely to the file specified by verbose.
-    - ``return_seqs`` -- (boolean, default False) If ``True``, then return
+    - ``return_seqs`` -- (boolean, default ``False``) If ``True``, then return
       the polynomials as sequences (for easier exporting to a file).
-    - ``phc`` -- boolean or integer (default: False)
-    - ``keep_fields`` -- (boolean or integer, default: False) If
-      ``keep_fields`` is True, then keep fields up to ``B*log(B)``; if
+    - ``phc`` -- boolean or integer (default: ``False``)
+    - ``keep_fields`` -- (boolean or integer, default: ``False``) If
+      ``keep_fields`` is ``True``, then keep fields up to ``B*log(B)``; if
       ``keep_fields`` is an integer, then keep fields up to that integer.
-    - ``t_2`` -- (boolean or integer, default: False) If ``t_2 = T``, then
+    - ``t_2`` -- (boolean or integer, default: ``False``) If ``t_2 = T``, then
       keep only polynomials with t_2 norm >= T.
-    - ``just_print`` -- (boolean, default: False): if ``just_print`` is not
-      False, instead of creating a sorted list of totally real number
+    - ``just_print`` -- (boolean, default: ``False``): if ``just_print`` is not
+      ``False``, instead of creating a sorted list of totally real number
       fields, we simply write each totally real field we find to the file
       whose filename is given by ``just_print``. In this case, we don't
       return anything.
-    - ``return_pari_objects`` -- (boolean, default: True) if
+    - ``return_pari_objects`` -- (boolean, default: ``True``) if
       both ``return_seqs`` and ``return_pari_objects`` are ``False`` then
-      it returns the elements as Sage objects; otherwise it returns pari
+      it returns the elements as Sage objects; otherwise it returns PARI
       objects.
 
     OUTPUT:
@@ -236,7 +229,7 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
         sage: enumerate_totallyreal_fields_prim(2, 10)
         [[5, x^2 - x - 1], [8, x^2 - 2]]
         sage: type(enumerate_totallyreal_fields_prim(2, 10)[0][1])
-        <type 'cypari2.gen.Gen'>
+        <class 'cypari2.gen.Gen'>
         sage: enumerate_totallyreal_fields_prim(2, 10, return_pari_objects=False)[0][0].parent()
         Integer Ring
         sage: enumerate_totallyreal_fields_prim(2, 10, return_pari_objects=False)[0][1].parent()
@@ -254,7 +247,6 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
     cdef Py_ssize_t k0, lenS
     cdef tr_data T
     cdef Integer dB
-    cdef double db_odlyzko
 
     if not isinstance(n, Integer):
         try:
@@ -278,7 +270,6 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
     t2val = B_pari
     ngt2 = B_pari
     ng = B_pari
-    pari_tmp1 = B_pari
 
     dB = Integer.__new__(Integer)
     dB_odlyzko = odlyzko_bound_totallyreal(n_int)
@@ -292,7 +283,7 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
     f_out[n_int] = 1
 
     if keep_fields:
-        if type(keep_fields) == bool:
+        if isinstance(keep_fields, bool):
             keepB = pari(int(math.floor(B*math.log(B))))
         else:
             keepB = pari(keep_fields)
@@ -337,7 +328,7 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
     if verbose:
         verb_int = 1
         saveout = sys.stdout
-        if type(verbose) == str:
+        if isinstance(verbose, str):
             fsock = open(verbose, 'w')
             sys.stdout = fsock
         # Else, print to screen
@@ -458,7 +449,7 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
         print("Polynomials with nfdisc <= B:", counts[3])
         for i from 0 <= i < lenS:
             print(S[i])
-        if type(verbose) == str:
+        if isinstance(verbose, str):
             fsock.close()
         sys.stdout = saveout
 
@@ -474,10 +465,11 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
         return [[ZZ(s[0]), Px([QQ(x) for x in s[1].list()])]
                 for s in S]
 
+
 def weed_fields(S, Py_ssize_t lenS=0):
     r"""
     Function used internally by the :func:`~enumerate_totallyreal_fields_prim`
-    routine. (Weeds the fields listed by [discriminant, polynomial]
+    routine. (Weeds the fields listed by ``[discriminant, polynomial]``
     for isomorphism classes.) Returns the size of the resulting list.
 
     EXAMPLES::
@@ -493,25 +485,25 @@ def weed_fields(S, Py_ssize_t lenS=0):
         lenS = len(S)
     i = 0
     if not lenS:
-       return lenS
+        return lenS
     n = len(S[0][1])-1
     while i < lenS-1:
-       j = i+1
-       while j < lenS and S[i][0] == S[j][0]:
-           if S[i][1].nfisisom(S[j][1]):
-               # Keep the one with a smallest T_2
-               T_2i = S[i][1][n-1]**2 - 2*S[i][1][n-2]
-               T_2j = S[j][1][n-1]**2 - 2*S[j][1][n-2]
-               if T_2i <= T_2j:
-                   S.pop(j)
-                   lenS -= 1
-               else:
-                   t = S.pop(j)
-                   S.pop(i)
-                   S.insert(i, t)
-                   lenS -= 1
-           else:
-               j += 1
-       i += 1
+        j = i+1
+        while j < lenS and S[i][0] == S[j][0]:
+            if S[i][1].nfisisom(S[j][1]):
+                # Keep the one with a smallest T_2
+                T_2i = S[i][1][n-1]**2 - 2*S[i][1][n-2]
+                T_2j = S[j][1][n-1]**2 - 2*S[j][1][n-2]
+                if T_2i <= T_2j:
+                    S.pop(j)
+                    lenS -= 1
+                else:
+                    t = S.pop(j)
+                    S.pop(i)
+                    S.insert(i, t)
+                    lenS -= 1
+            else:
+                j += 1
+        i += 1
 
     return lenS

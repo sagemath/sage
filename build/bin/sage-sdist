@@ -2,7 +2,8 @@
 
 ########################################################
 # Build Sage source distribution
-# This script should be called by the spkg/bin/sage script
+# This script should not be invoked directly.
+# Use "sage --sdist" or "make dist".
 ########################################################
 
 set -e
@@ -24,11 +25,11 @@ if [ $# -gt 1 ]; then
 fi
 
 if [ -z "$SAGE_ROOT" ]; then
-    die "must be run from within a Sage enviroment, or with SAGE_ROOT provided"
+    die "must be run from within a Sage environment, or with SAGE_ROOT provided"
 fi
 
 if [ -z "$SAGE_SRC" ]; then
-    die "must be run from within a Sage enviroment, or with SAGE_SRC provided"
+    die "must be run from within a Sage environment, or with SAGE_SRC provided"
 fi
 
 if [ "$#" -gt 0 ]; then

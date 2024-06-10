@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint sage.libs.pari
 """
 Spaces of homomorphisms between modular abelian varieties
 
@@ -16,7 +17,8 @@ nontrivially in J0(37).
     Simple abelian subvariety 37b(1,37) of dimension 1 of J0(37)
     ]
     sage: D[0].intersection(D[1])
-    (Finite subgroup with invariants [2, 2] over QQ of Simple abelian subvariety 37a(1,37) of dimension 1 of J0(37),
+    (Finite subgroup with invariants [2, 2] over QQ of
+      Simple abelian subvariety 37a(1,37) of dimension 1 of J0(37),
      Simple abelian subvariety of dimension 0 of J0(37))
 
 As an abstract product, since these newforms are distinct, the
@@ -148,14 +150,15 @@ of T in its saturation, which is 1 in this case.
 
 ::
 
-    sage: T = E.image_of_hecke_algebra()  # long time
-    sage: T.gens()  # long time
+    sage: # long time
+    sage: T = E.image_of_hecke_algebra()
+    sage: T.gens()
     (Abelian variety endomorphism of Abelian variety J0(33) of dimension 3,
      Abelian variety endomorphism of Abelian variety J0(33) of dimension 3,
      Abelian variety endomorphism of Abelian variety J0(33) of dimension 3)
-    sage: T.index_in(E)  # long time
+    sage: T.index_in(E)
     +Infinity
-    sage: T.index_in_saturation()  # long time
+    sage: T.index_in_saturation()
     1
 
 AUTHORS:
@@ -165,42 +168,42 @@ AUTHORS:
 - Craig Citro, Robert Bradshaw (2008-03): Rewrote with modabvar overhaul
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from __future__ import absolute_import
 
 from copy import copy
 
 from sage.categories.homset import HomsetWithBase
 from sage.structure.all import parent
+from sage.structure.parent import Parent
 from sage.misc.lazy_attribute import lazy_attribute
 
 
 from . import morphism
 
-import sage.rings.integer_ring
-import sage.rings.all
+from sage.rings.infinity import Infinity
 
-from sage.rings.ring import Ring
 from sage.matrix.matrix_space import MatrixSpace
-from sage.matrix.constructor import Matrix, identity_matrix
-from sage.structure.element import is_Matrix
+from sage.matrix.constructor import matrix, identity_matrix
+from sage.structure.element import Matrix
 
-ZZ = sage.rings.integer_ring.ZZ
+from sage.rings.integer_ring import ZZ
+
 
 class Homspace(HomsetWithBase):
     """
     A space of homomorphisms between two modular abelian varieties.
     """
     Element = morphism.Morphism
+
     def __init__(self, domain, codomain, cat):
         """
         Create a homspace.
@@ -208,15 +211,16 @@ class Homspace(HomsetWithBase):
         INPUT:
 
 
-        -  ``domain, codomain`` - modular abelian varieties
+        -  ``domain, codomain`` -- modular abelian varieties
 
-        -  ``cat`` - category
+        -  ``cat`` -- category
 
 
         EXAMPLES::
 
             sage: H = Hom(J0(11), J0(22)); H
-            Space of homomorphisms from Abelian variety J0(11) of dimension 1 to Abelian variety J0(22) of dimension 2
+            Space of homomorphisms from Abelian variety J0(11) of dimension 1
+             to Abelian variety J0(22) of dimension 2
             sage: Hom(J0(11), J0(11))
             Endomorphism ring of Abelian variety J0(11) of dimension 1
             sage: type(H)
@@ -224,10 +228,10 @@ class Homspace(HomsetWithBase):
             sage: H.homset_category()
             Category of modular abelian varieties over Rational Field
         """
-        from .abvar import is_ModularAbelianVariety
-        if not is_ModularAbelianVariety(domain):
+        from .abvar import ModularAbelianVariety_abstract
+        if not isinstance(domain, ModularAbelianVariety_abstract):
             raise TypeError("domain must be a modular abelian variety")
-        if not is_ModularAbelianVariety(codomain):
+        if not isinstance(codomain, ModularAbelianVariety_abstract):
             raise TypeError("codomain must be a modular abelian variety")
         self._gens = None
         HomsetWithBase.__init__(self, domain, codomain, category=cat)
@@ -264,14 +268,14 @@ class Homspace(HomsetWithBase):
 
             During unpickling, the domain and codomain may be unable to
             provide the necessary information. This is why this is a lazy
-            attribute. See :trac:`14793`.
+            attribute. See :issue:`14793`.
 
         EXAMPLES::
 
             sage: Hom(J0(11), J0(22))._matrix_space
             Full MatrixSpace of 2 by 4 dense matrices over Integer Ring
         """
-        return MatrixSpace(ZZ,2*self.domain().dimension(), 2*self.codomain().dimension())
+        return MatrixSpace(ZZ, 2*self.domain().dimension(), 2*self.codomain().dimension())
 
     def _element_constructor_from_element_class(self, *args, **keywords):
         """
@@ -289,7 +293,7 @@ class Homspace(HomsetWithBase):
         """
         return self.element_class(self, *args, **keywords)
 
-    def __call__(self, M):
+    def __call__(self, M, **kwds):
         r"""
         Create a homomorphism in this space from M. M can be any of the
         following:
@@ -344,6 +348,7 @@ class Homspace(HomsetWithBase):
             [-1  0  1 -1]
             [ 0 -1  0 -1]
         """
+        side = kwds.get("side", "left")
         if isinstance(M, morphism.Morphism):
             if M.parent() is self:
                 return M
@@ -351,16 +356,20 @@ class Homspace(HomsetWithBase):
                 M = M.matrix()
             else:
                 raise ValueError("cannot convert %s into %s" % (M, self))
-        elif is_Matrix(M):
+        elif isinstance(M, Matrix):
             if M.base_ring() != ZZ:
                 M = M.change_ring(ZZ)
-            if M.nrows() != 2*self.domain().dimension() or M.ncols() != 2*self.codomain().dimension():
-                raise TypeError("matrix has wrong dimension")
+            if side == "left":
+                if M.nrows() != 2*self.domain().dimension() or M.ncols() != 2*self.codomain().dimension():
+                    raise TypeError("matrix has wrong dimension")
+            else:
+                if M.ncols() != 2*self.domain().dimension() or M.nrows() != 2*self.codomain().dimension():
+                    raise TypeError("matrix has wrong dimension")
         elif self.matrix_space().has_coerce_map_from(parent(M)):
             M = self.matrix_space()(M)
         else:
             raise TypeError("can only coerce in matrices or morphisms")
-        return self.element_class(self, M)
+        return self.element_class(self, M, side)
 
     def _coerce_impl(self, x):
         """
@@ -390,7 +399,7 @@ class Homspace(HomsetWithBase):
             sage: End(J)._repr_()
             'Endomorphism ring of Abelian variety J0(11) of dimension 1'
         """
-        return "Space of homomorphisms from %s to %s"%\
+        return "Space of homomorphisms from %s to %s" %\
                (self.domain(), self.codomain())
 
     def _get_matrix(self, g):
@@ -401,7 +410,7 @@ class Homspace(HomsetWithBase):
         INPUT:
 
 
-        -  ``g`` - a matrix or morphism or object with a list
+        -  ``g`` -- a matrix or morphism or object with a list
            method
 
 
@@ -469,17 +478,15 @@ class Homspace(HomsetWithBase):
         """
         self.calculate_generators()
         V = ZZ**(4*self.domain().dimension() * self.codomain().dimension())
-        return V.submodule([ V(m.matrix().list()) for m in self.gens() ])
+        return V.submodule([V(m.matrix().list()) for m in self.gens()])
 
     def gen(self, i=0):
         """
-        Return i-th generator of self.
+        Return i-th generator of ``self``.
 
         INPUT:
 
-
-        -  ``i`` - an integer
-
+        -  ``i`` -- an integer
 
         OUTPUT: a morphism
 
@@ -494,12 +501,12 @@ class Homspace(HomsetWithBase):
         """
         self.calculate_generators()
         if i > self.ngens():
-            raise ValueError("self only has %s generators"%self.ngens())
+            raise ValueError("self only has %s generators" % self.ngens())
         return self.element_class(self, self._gens[i])
 
     def ngens(self):
         """
-        Return number of generators of self.
+        Return number of generators of ``self``.
 
         OUTPUT: integer
 
@@ -560,7 +567,7 @@ class Homspace(HomsetWithBase):
             return
 
         if (self.domain() == self.codomain()) and (self.domain().dimension() == 1):
-            self._gens = tuple([ identity_matrix(ZZ,2) ])
+            self._gens = (identity_matrix(ZZ, 2),)
             return
 
         phi = self.domain()._isogeny_to_product_of_powers()
@@ -573,9 +580,9 @@ class Homspace(HomsetWithBase):
         Mt = psi.complementary_isogeny().matrix()
 
         R = ZZ**(4*self.domain().dimension()*self.codomain().dimension())
-        gens = R.submodule([ (M*self._get_matrix(g)*Mt).list()
-                             for g in im_gens ]).saturation().basis()
-        self._gens = tuple([ self._get_matrix(g) for g in gens ])
+        gens = R.submodule([(M*self._get_matrix(g)*Mt).list()
+                            for g in im_gens]).saturation().basis()
+        self._gens = tuple([self._get_matrix(g) for g in gens])
 
     def _calculate_product_gens(self):
         """
@@ -652,10 +659,12 @@ class Homspace(HomsetWithBase):
 
     def _calculate_simple_gens(self):
         """
-        Calculate generators for self, where both the domain and codomain
-        for self are assumed to be simple abelian varieties. The saturation
-        of the span of these generators in self will be the full space of
-        homomorphisms from the domain of self to its codomain.
+        Calculate generators for ``self``, where both the domain and codomain
+        for ``self`` are assumed to be simple abelian varieties.
+
+        The saturation of the span of these generators in ``self``
+        will be the full space of homomorphisms from the domain of
+        ``self`` to its codomain.
 
         EXAMPLES::
 
@@ -736,12 +745,13 @@ class Homspace(HomsetWithBase):
         Mf = f.matrix()
         Mg = g.matrix()
 
-        return [ Mf * self._get_matrix(e) * Mg for e in ls ]
+        return [Mf * self._get_matrix(e) * Mg for e in ls]
+
 
 # NOTE/WARNING/TODO:  Below in the __init__, etc. we do *not* check
-# that the input gens are give something that spans a sub*ring*, as apposed
+# that the input gens are give something that spans a sub*ring*, as opposed
 # to just a subgroup.
-class EndomorphismSubring(Homspace, Ring):
+class EndomorphismSubring(Homspace):
 
     def __init__(self, A, gens=None, category=None):
         """
@@ -749,12 +759,10 @@ class EndomorphismSubring(Homspace, Ring):
 
         INPUT:
 
+        -  ``A`` -- an abelian variety
 
-        -  ``A`` - an abelian variety
-
-        -  ``gens`` - (default: None); optional; if given
+        -  ``gens`` -- (default: ``None``); optional; if given
            should be a tuple of the generators as matrices
-
 
         EXAMPLES::
 
@@ -776,12 +784,12 @@ class EndomorphismSubring(Homspace, Ring):
         TESTS:
 
         The following tests against a problem on 32 bit machines that
-        occured while working on :trac:`9944`::
+        occurred while working on :issue:`9944`::
 
             sage: sage.modular.abvar.homspace.EndomorphismSubring(J1(12345))
             Endomorphism ring of Abelian variety J1(12345) of dimension 5405473
 
-        :trac:`16275` removed the custom ``__reduce__`` method, since
+        :issue:`16275` removed the custom ``__reduce__`` method, since
         :meth:`Homset.__reduce__` already implements appropriate
         unpickling by construction::
 
@@ -798,24 +806,23 @@ class EndomorphismSubring(Homspace, Ring):
         self._A = A
 
         # Initialise self with the correct category.
-        # We need to initialise it as a ring first
         if category is None:
             homset_cat = A.category()
         else:
             homset_cat = category
-        # Remark: Ring.__init__ will automatically form the join
+        # Remark: Parent.__init__ will automatically form the join
         # of the category of rings and of homset_cat
-        Ring.__init__(self, A.base_ring(), category=homset_cat.Endsets())
+        Parent.__init__(self, A.base_ring(), category=homset_cat.Endsets())
         Homspace.__init__(self, A, A, cat=homset_cat)
         if gens is None:
             self._gens = None
         else:
-            self._gens = tuple([ self._get_matrix(g) for g in gens ])
+            self._gens = tuple([self._get_matrix(g) for g in gens])
         self._is_full_ring = gens is None
 
     def _repr_(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -843,17 +850,15 @@ class EndomorphismSubring(Homspace, Ring):
 
     def index_in(self, other, check=True):
         """
-        Return the index of self in other.
+        Return the index of ``self`` in ``other``.
 
         INPUT:
 
-
-        -  ``other`` - another endomorphism subring of the
+        -  ``other`` -- another endomorphism subring of the
            same abelian variety
 
-        -  ``check`` - bool (default: True); whether to do some
+        -  ``check`` -- bool (default: ``True``); whether to do some
            type and other consistency checks
-
 
         EXAMPLES::
 
@@ -876,7 +881,7 @@ class EndomorphismSubring(Homspace, Ring):
         M = self.free_module()
         N = other.free_module()
         if M.rank() < N.rank():
-            return sage.rings.all.Infinity
+            return Infinity
         return M.index_in(N)
 
     def index_in_saturation(self):
@@ -893,7 +898,7 @@ class EndomorphismSubring(Homspace, Ring):
         A = self.abelian_variety()
         d = A.dimension()
         M = ZZ**(4*d**2)
-        gens = [ x.matrix().list() for x in self.gens() ]
+        gens = [x.matrix().list() for x in self.gens()]
         R = M.submodule(gens)
         return R.index_in_saturation()
 
@@ -924,8 +929,8 @@ class EndomorphismSubring(Homspace, Ring):
             2
         """
         g = self.gens()
-        M = Matrix(ZZ,len(g), [ (g[i]*g[j]).trace()
-                                for i in range(len(g)) for j in range(len(g)) ])
+        M = matrix(ZZ, len(g), [(g[i]*g[j]).trace()
+                                for i in range(len(g)) for j in range(len(g))])
         return M.determinant()
 
     def image_of_hecke_algebra(self, check_every=1):
@@ -949,7 +954,7 @@ class EndomorphismSubring(Homspace, Ring):
 
         OUTPUT:
 
-        - The image of the Hecke algebra as an subring of ``self``.
+        - The image of the Hecke algebra as a subring of ``self``.
 
         EXAMPLES::
 
@@ -992,21 +997,18 @@ class EndomorphismSubring(Homspace, Ring):
         EndVecZ = ZZ**(4*d**2)
 
         if d == 1:
-            self.__hecke_algebra_image = EndomorphismSubring(A, [[1,0,0,1]])
+            self.__hecke_algebra_image = EndomorphismSubring(A, [[1, 0, 0, 1]])
             return self.__hecke_algebra_image
 
         V = EndVecZ.submodule([A.hecke_operator(1).matrix().list()])
 
-        for n in range(2,M.sturm_bound()+1):
+        for n in range(2, M.sturm_bound()+1):
             if (check_every > 0 and
                     n % check_every == 0 and
                     V.dimension() == d and
                     V.index_in_saturation() == 1):
                 break
-            V += EndVecZ.submodule([ A.hecke_operator(n).matrix().list() ])
+            V += EndVecZ.submodule([A.hecke_operator(n).matrix().list()])
 
         self.__hecke_algebra_image = EndomorphismSubring(A, V.basis())
         return self.__hecke_algebra_image
-
-
-

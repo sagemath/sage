@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Goppa code
 
@@ -19,7 +20,6 @@ EXAMPLES::
 AUTHORS:
 
 - Filip Ion, Marketa Slukova (2019-06): initial version
-
 """
 #*****************************************************************************
 #       Copyright (C) 2019 Filip Ion <filip.alexandru.ion@gmail.com>,
@@ -113,7 +113,7 @@ class GoppaCode(AbstractLinearCode):
         self._generating_pol = generating_pol
         self._defining_set = defining_set
 
-        super(GoppaCode, self).__init__(self._field, self._length, "GoppaEncoder", "Syndrome")
+        super().__init__(self._field, self._length, "GoppaEncoder", "Syndrome")
 
         if not generating_pol.is_monic():
             raise ValueError("generating polynomial must be monic")
@@ -139,7 +139,9 @@ class GoppaCode(AbstractLinearCode):
             [8, 2] Goppa code over GF(2)
         """
         return "[{}, {}] Goppa code over GF({})".format(
-                self.length(), self.dimension(), self.base_field().cardinality())
+            self.length(), self.dimension(),
+            self.base_field().cardinality())
+
     def _latex_(self):
         r"""
         Return a latex representation of ``self``.
@@ -305,7 +307,7 @@ class GoppaCode(AbstractLinearCode):
             [8, 2] Goppa code over GF(2)
             sage: C.distance_bound()
             3
-            sage: C.minimum_distance()
+            sage: C.minimum_distance()                                                  # needs sage.libs.gap
             5
         """
         return 1 + (self._generating_pol).degree()
@@ -353,7 +355,7 @@ class GoppaCodeEncoder(Encoder):
             sage: E = codes.encoders.GoppaCodeEncoder(C)
             sage: TestSuite(E).run()
         """
-        super(GoppaCodeEncoder, self).__init__(code)
+        super().__init__(code)
 
     def _repr_(self):
         """
@@ -432,5 +434,6 @@ class GoppaCodeEncoder(Encoder):
         pmat = c.parity_check_matrix()
         aux = codes.from_parity_check_matrix(pmat)
         return aux.generator_matrix()
+
 
 GoppaCode._registered_encoders["GoppaEncoder"] = GoppaCodeEncoder

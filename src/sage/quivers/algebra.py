@@ -1,7 +1,6 @@
 """
 Path Algebras
 """
-from __future__ import absolute_import
 
 # ****************************************************************************
 #  Copyright (C) 2012 Jim Stark <jstarx@gmail.com>
@@ -109,7 +108,7 @@ class PathAlgebra(CombinatorialFreeModule):
         sage: x.degree()
         Traceback (most recent call last):
         ...
-        ValueError: Element is not homogeneous.
+        ValueError: element is not homogeneous
         sage: y.is_homogeneous()
         True
         sage: y.degree()
@@ -166,14 +165,14 @@ class PathAlgebra(CombinatorialFreeModule):
         self._quiver = P.quiver()
         self._semigroup = P
         self._ordstr = order
-        super(PathAlgebra, self).__init__(k, self._semigroup,
-                                          prefix='',
-                                          # element_class=self.Element,
-                                          category=GradedAlgebrasWithBasis(k),
-                                          bracket=False)
+        super().__init__(k, self._semigroup,
+                         prefix='',
+                         # element_class=self.Element,
+                         category=GradedAlgebrasWithBasis(k),
+                         bracket=False)
         self._assign_names(self._semigroup.variable_names())
 
-    def order_string(self):
+    def order_string(self) -> str:
         """
         Return the string that defines the monomial order of this algebra.
 
@@ -196,7 +195,7 @@ class PathAlgebra(CombinatorialFreeModule):
         return self._ordstr
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of this algebra (idempotents and arrows).
 
@@ -330,7 +329,7 @@ class PathAlgebra(CombinatorialFreeModule):
             return self.element_class(self, x)
 
         # Otherwise let CombinatorialFreeModule try
-        return super(PathAlgebra, self)._element_constructor_(x)
+        return super()._element_constructor_(x)
 
     def _coerce_map_from_(self, other):
         """
@@ -462,7 +461,7 @@ class PathAlgebra(CombinatorialFreeModule):
             sage: A = DiGraph({0:{1:['a'], 2:['b']}, 1:{0:['c'], 1:['d']}, 2:{0:['e'],2:['f']}}).path_semigroup().algebra(ZZ.quo(15))
             sage: X = sage_eval('a+2*b+3*c+5*e_0+3*e_2', A.gens_dict())
             sage: latex(X)  # indirect doctest
-            5e_0 + a + 2b + 3c + 3e_2
+            5 e_0 + a + 2 b + 3 c + 3 e_2
 
         """
         arrows = self.variable_names()
@@ -588,6 +587,48 @@ class PathAlgebra(CombinatorialFreeModule):
         """
         return sum(iter_of_elements, self.zero())
 
+    def linear_combination(self, iter_of_elements_coeff, factor_on_left=True):
+        r"""
+        Return the linear combination `\lambda_1 v_1 + \cdots +
+        \lambda_k v_k` (resp.  the linear combination `v_1 \lambda_1 +
+        \cdots + v_k \lambda_k`) where ``iter_of_elements_coeff`` iterates
+        through the sequence `((v_1, \lambda_1), ..., (v_k, \lambda_k))`.
+
+        INPUT:
+
+        - ``iter_of_elements_coeff`` -- iterator of pairs ``(element, coeff)``
+          with ``element`` in ``self`` and ``coeff`` in ``self.base_ring()``
+
+        - ``factor_on_left`` -- (optional) if ``True``, the coefficients are
+          multiplied from the left if ``False``, the coefficients are
+          multiplied from the right
+
+        .. NOTE::
+
+            It overrides a method inherited from
+            :class:`~sage.combinat.free_module.CombinatorialFreeModule`,
+            which relies on a private attribute of elements---an
+            implementation detail that is simply not available for
+            :class:`~sage.quivers.algebra_elements.PathAlgebraElement`.
+
+        EXAMPLES::
+
+            sage: A = DiGraph({0: {1: ['a'], 2: ['b']},
+            ....:              1: {0: ['c'], 1: ['d']},
+            ....:              2: {0: ['e'], 2: ['f']}}).path_semigroup().algebra(ZZ)
+            sage: A.inject_variables()
+            Defining e_0, e_1, e_2, a, b, c, d, e, f
+            sage: A.linear_combination([(a, 1), (b, 2), (c*e, 3),
+            ....:                       (a*d, -1), (e_0, 5), (e_2, 3)])
+            5*e_0 + a - a*d + 2*b + 3*e_2
+        """
+        if factor_on_left:
+            return self.sum(coeff * element
+                            for element, coeff in iter_of_elements_coeff)
+        else:
+            return self.sum(element * coeff
+                            for element, coeff in iter_of_elements_coeff)
+
     def homogeneous_component(self, n):
         """
         Return the `n`-th homogeneous piece of the path algebra.
@@ -641,8 +682,8 @@ class PathAlgebra(CombinatorialFreeModule):
 
         .. WARNING::
 
-             Backward incompatible change: since :trac:`12630` and
-             until :trac:`8678`, this feature was implemented under
+             Backward incompatible change: since :issue:`12630` and
+             until :issue:`8678`, this feature was implemented under
              the syntax ``list(A)`` by means of ``A.__iter__``. This
              was incorrect since ``A.__iter__``, when defined for a
              parent, should iterate through the elements of `A`.

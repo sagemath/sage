@@ -96,12 +96,11 @@ Or you can create a homomorphism from one lattice to any other::
 
 from sage.libs.gmp.mpz cimport *
 
-from sage.geometry.toric_plotter import ToricPlotter
 from sage.modules.vector_integer_dense cimport Vector_integer_dense
 from sage.structure.coerce_exceptions import CoercionException
-from sage.structure.element cimport Element, Vector
+from sage.structure.element cimport Vector
 from sage.rings.integer cimport Integer
-from sage.structure.richcmp cimport richcmp_not_equal, richcmp
+from sage.structure.richcmp cimport richcmp_not_equal
 
 
 def is_ToricLatticeElement(x):
@@ -121,6 +120,10 @@ def is_ToricLatticeElement(x):
         sage: from sage.geometry.toric_lattice_element import (
         ....:   is_ToricLatticeElement)
         sage: is_ToricLatticeElement(1)
+        doctest:warning...
+        DeprecationWarning: The function is_ToricLatticeElement is deprecated;
+        use 'isinstance(..., ToricLatticeElement)' instead.
+        See https://github.com/sagemath/sage/issues/38126 for details.
         False
         sage: e = ToricLattice(3).an_element()
         sage: e
@@ -128,6 +131,10 @@ def is_ToricLatticeElement(x):
         sage: is_ToricLatticeElement(e)
         True
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38126,
+                       "The function is_ToricLatticeElement is deprecated; "
+                       "use 'isinstance(..., ToricLatticeElement)' instead.")
     return isinstance(x, ToricLatticeElement)
 
 
@@ -189,7 +196,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
             sage: n is n2
             False
         """
-        if not is_ToricLatticeElement(right):
+        if not isinstance(right, ToricLatticeElement):
             return NotImplemented
 
         PL_ambient = self.parent().ambient_module()
@@ -229,7 +236,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
 
         INPUT:
 
-        - ``other`` - :class:`ToricLatticeElement`.
+        - ``other`` -- :class:`ToricLatticeElement`.
 
         OUTPUT:
 
@@ -271,7 +278,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
         """
         Ns = self.parent()
         # We try to deal only with the case of two lattice elements...
-        if is_ToricLatticeElement(other):
+        if isinstance(other, ToricLatticeElement):
             if other.parent().ambient_module() is Ns.ambient_module().dual():
                 # Our own _dot_product_ is disabled
                 return Vector_integer_dense._dot_product_(self, other)
@@ -285,7 +292,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
         # We also allow action on elements of lattice quotients
         try:
             lift = other.lift()
-            if is_ToricLatticeElement(lift):
+            if isinstance(lift, ToricLatticeElement):
                 if other.parent().W().is_submodule(Ns.dual().W()):
                     return Vector_integer_dense._dot_product_(self, lift)
                 raise CoercionException("only elements of dual toric lattices "
@@ -300,18 +307,18 @@ cdef class ToricLatticeElement(Vector_integer_dense):
     # is wrong from our point of view.
     cpdef _dot_product_(self, Vector right):
         """
-        Raise a ``TypeError`` exception.
+        Raise a :class:`TypeError` exception.
 
         Dot product is not defined on toric lattices (there are actions of
         dual lattices on each other instead).
 
         INPUT:
 
-        - ``right`` - vector.
+        - ``right`` -- vector.
 
         OUTPUT:
 
-        - ``TypeError`` exception is raised.
+        - :class:`TypeError` exception is raised.
 
         TESTS::
 
@@ -343,7 +350,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
             sage: e._latex_()
             '\\left(1,\\,2,\\,3\\right)_{L^*}'
         """
-        return "%s_{%s}" % (super(ToricLatticeElement, self)._latex_(),
+        return "%s_{%s}" % (super()._latex_(),
                             self.parent().ambient_module()._latex_name)
 
     def _repr_(self):
@@ -362,7 +369,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
             'L*(1, 2, 3)'
         """
         return (self.parent().ambient_module()._name
-                + super(ToricLatticeElement, self)._repr_())
+                + super()._repr_())
 
     def __reduce__(self):
         """
@@ -374,7 +381,8 @@ cdef class ToricLatticeElement(Vector_integer_dense):
             sage: loads(dumps(N(1,2,3)))
             N(1, 2, 3)
         """
-        return (unpickle_v1, (self._parent, self.list(), self._degree, self._is_mutable))
+        return (unpickle_v1, (self._parent, self.list(), self._degree,
+                              not self._is_immutable))
 
     def plot(self, **options):
         r"""
@@ -393,9 +401,10 @@ cdef class ToricLatticeElement(Vector_integer_dense):
 
             sage: N = ToricLattice(3)
             sage: n = N(1,2,3)
-            sage: n.plot()
+            sage: n.plot()                                                              # needs sage.plot
             Graphics3d Object
         """
+        from sage.geometry.toric_plotter import ToricPlotter
         tp = ToricPlotter(options, self.parent().degree())
         tp.adjust_options()
         return tp.plot_points([self])
@@ -413,8 +422,7 @@ def unpickle_v1(parent, entries, degree, is_mutable):
 
     - ``degree`` -- integer. the dimension of the toric lattice.
 
-    - ``is_mutable`` -- boolean. Whether the lattice element is
-      mutable.
+    - ``is_mutable`` -- boolean. Whether the lattice element is mutable.
 
     OUTPUT:
 
@@ -437,5 +445,5 @@ def unpickle_v1(parent, entries, degree, is_mutable):
     for i in range(degree):
         z = Integer(entries[i])
         mpz_set(v._entries[i], z.value)
-    v._is_mutable = is_mutable
+    v._is_immutable = not is_mutable
     return v

@@ -1,34 +1,40 @@
 SAGE_SPKG_CONFIGURE([lcalc], [
-    m4_pushdef([SAGE_LCALC_MINVER],["1.22"])
-    SAGE_SPKG_DEPCHECK([pari mpfr], [
-        AC_PATH_PROG([LCALC], [lcalc])
-        AS_IF([test x$LCALC = x], [
-           AC_MSG_NOTICE([lcalc not found. Installing lcalc])
-           sage_spkg_install_lcalc=yes], [
-           AC_MSG_CHECKING([is lcalc's version good enough? ])
-           lcalc_ver=`$LCALC --version 2>>/dev/null | $SED -e 's/lcalc\ //' | $SED -e 's/\ .*//g'`
-           AX_COMPARE_VERSION([$lcalc_ver], [ge], [$SAGE_LCALC_MINVER], [
-               AC_MSG_RESULT([yes.])
-               AC_CHECK_HEADER([Lfunction/L.h], [], [sage_spkg_install_lcalc=yes])
-          AC_MSG_CHECKING([whether we can link and run a program using libLfunction])
-          LCALC_SAVED_LIBS=$LIBS
-          LIBS="$LIBS -lLfunction"
-          AC_RUN_IFELSE([
-            AC_LANG_PROGRAM([[#include <Lfunction/L.h>]],
+  SAGE_SPKG_DEPCHECK([pari], [
+
+    dnl Ensure that the "lcalc" program is in the user's executable PATH,
+    dnl and that our headers are in his compiler's "include" path.
+    AC_PATH_PROG([LCALC_BIN], [lcalc])
+    AS_IF([test -z "${LCALC_BIN}"], [sage_spkg_install_lcalc=yes])
+    AC_CHECK_HEADER([lcalc/L.h], [], [sage_spkg_install_lcalc=yes])
+
+    dnl Check for the lcalc-2.x API that we now use, ensure that
+    dnl that HAVE_LIBPARI is defined in L.h (via lcalc/config.h),
+    dnl and check for PRECISION_DOUBLE in the same place.
+    AC_MSG_CHECKING([for double-precision libLfunction >= 2.0.0 with pari support])
+    AC_LANG_PUSH([C++])
+    LCALC_SAVED_LIBS="${LIBS}"
+    LIBS="${LIBS} -lLfunction"
+    AC_LINK_IFELSE([
+      AC_LANG_PROGRAM([[#include <lcalc/L.h>
+                        #if !HAVE_LIBPARI
+                        #error libLfunction missing PARI support
+                        #endif
+                        #if !PRECISION_DOUBLE
+                        #error libLfunction must use double-precision
+                        #endif]],
                       [[initialize_globals();
-                        Complex x;
-                        x = Pi*I;
-                        L_function<int> L4;
-                        return 0;]]
-            )], [AC_MSG_RESULT([yes; use lcalc from the system])], [
-            AC_MSG_RESULT([no; install lcalc])
-            sage_spkg_install_lcalc=yes
-            LIBS=$LCALC_SAVED_LIBS
-          ])
-               ], [
-               AC_MSG_RESULT([no. Install lcalc])
-               sage_spkg_install_lcalc=yes])
-        ])
+                        vector<Double> zeros;
+                        L_function<int> zeta;
+                        zeta.find_zeros(1, 0, 1025, -1, "", &zeros);
+                        return 0;]])
+    ], [
+      AC_MSG_RESULT([found; using lcalc from the system])
+    ], [
+      AC_MSG_RESULT([not found; installing the lcalc SPKG])
+      sage_spkg_install_lcalc=yes
+      LIBS="${LCALC_SAVED_LIBS}"
     ])
-    m4_popdef([SAGE_LCALC_MINVER])
+    AC_LANG_POP([C++])
+
+  ])
 ])

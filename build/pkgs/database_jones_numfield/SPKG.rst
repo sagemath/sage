@@ -1,5 +1,5 @@
-database_jones_numfield
-=======================
+database_jones_numfield: Table of number fields
+===============================================
 
 Description
 -----------
@@ -17,12 +17,6 @@ Upstream Contact
 ----------------
 
 sage-devel@googlegroups.com
-
-Dependencies
-------------
-
-None
-
 
 Special Update/Build Instructions
 ---------------------------------

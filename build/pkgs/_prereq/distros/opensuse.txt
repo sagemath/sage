@@ -1,0 +1,28 @@
+# This file, build/pkgs/_prereq/distros/opensuse.txt, contains names of
+# OpenSuse packages needed for installation of Sage from source.
+#
+# In addition, the files build/pkgs/SPKG/distros/opensuse.txt contain
+# the names of packages that provide the equivalent of SPKG.
+#
+# One package per line. No need to escape special characters.
+# Everything on a line after a # character is ignored.
+#
+binutils
+make
+m4
+gawk
+perl
+python3
+tar
+bc
+which
+glibc-locale-base
+gcc
+gcc-c++
+# Needed if we download some packages from a https upstream URL
+ca-certificates
+# gunzip needed for ppl spkg
+gzip
+# Issue #32368
+findutils
+diffutils

@@ -1,11 +1,10 @@
 """
 Plane curves
 """
-from __future__ import absolute_import
 
-#*****************************************************************************
+# *****************************************************************************
 #
-#   Sage: System for Algebra and Geometry Experimentation
+#   Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005 William Stein <was@math.harvard.edu>
 #
@@ -18,10 +17,16 @@ from __future__ import absolute_import
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
-from .constructor import Curve
+from sage.schemes.curves.constructor import Curve
+from sage.schemes.curves.projective_curve import Hasse_bounds
 
-from .projective_curve import Hasse_bounds
+from sage.misc.lazy_import import lazy_import
 
+lazy_import('sage.schemes.curves.plane_curve_arrangement', 'PlaneCurveArrangements')
+
+lazy_import('sage.schemes.curves.plane_curve_arrangement', 'AffinePlaneCurveArrangements')
+
+lazy_import('sage.schemes.curves.plane_curve_arrangement', 'ProjectivePlaneCurveArrangements')

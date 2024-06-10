@@ -1,0 +1,8 @@
+--- a/dik/longtype.h	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/longtype.h	2020-10-29 16:51:22.243724831 -0600
+@@ -1,4 +1,4 @@
+-#define TYPE		unsigned long
++#define TYPE		unsigned int
+ #define BITSPER		32
+ #define POW		5
+ 

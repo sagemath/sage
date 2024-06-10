@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Metaclass for inheriting comparison functions
 
@@ -22,7 +23,7 @@ methods anyway.
 
 AUTHOR:
 
-- Jeroen Demeyer (2015-05-22): initial version, see :trac:`18329`
+- Jeroen Demeyer (2015-05-22): initial version, see :issue:`18329`
 """
 
 #*****************************************************************************
@@ -51,10 +52,14 @@ cdef class InheritComparisonMetaclass(type):
 
     EXAMPLES::
 
-        sage: cython('''
+        sage: # needs sage.misc.cython
+        sage: cython(
+        ....: '''
+        ....: cimport cython
+        ....:
         ....: from sage.misc.inherit_comparison cimport InheritComparisonMetaclass
         ....:
-        ....: cdef class Base(object):
+        ....: cdef class Base():
         ....:     def __richcmp__(left, right, int op):
         ....:         print("Calling Base.__richcmp__")
         ....:         return left is right
@@ -64,6 +69,7 @@ cdef class InheritComparisonMetaclass(type):
         ....:         return 1
         ....:
         ....: cdef class DerivedWithRichcmp(Base):
+        ....:     @cython.always_allow_keywords(False)
         ....:     def __getmetaclass__(_):
         ....:         from sage.misc.inherit_comparison import InheritComparisonMetaclass
         ....:         return InheritComparisonMetaclass

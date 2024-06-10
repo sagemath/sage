@@ -5,7 +5,7 @@
 .. _chapter-doctesting:
 
 =======================
-Running Sage's doctests
+Running Sage's Doctests
 =======================
 
 Doctesting a function ensures that the function performs as claimed by
@@ -13,11 +13,11 @@ its documentation. Testing can be performed using one thread or
 multiple threads. After compiling a source version of Sage, doctesting
 can be run on the whole Sage library, on all modules under a given
 directory, or on a specified module only. For the purposes of this
-chapter, suppose we have compiled Sage 6.0 from source and the top
-level Sage directory is::
+chapter, suppose we have compiled Sage from source and the top
+level directory is::
 
-    [jdemeyer@sage sage-6.0]$ pwd
-    /scratch/jdemeyer/build/sage-6.0
+    [jdemeyer@localhost sage]$ pwd
+    /home/jdemeyer/sage
 
 See the section :ref:`chapter-testing` for information on Sage's
 automated testing process. The general syntax for doctesting is as
@@ -26,7 +26,7 @@ this syntax:
 
 .. CODE-BLOCK:: text
 
-    /path/to/sage-x.y.z/sage -t [--long] /path/to/sage-x.y.z/path/to/module.py[x]
+    /path/to/sage_root/sage -t [--long] /path/to/sage_root/path/to/module.py[x]
 
 where ``--long`` is an optional argument (see :ref:`section-options`
 for more options). The version of ``sage`` used must match the version
@@ -35,7 +35,7 @@ either a Python script (with the file extension ".py") or it can be a
 Cython script, in which case it has the file extension ".pyx".
 
 
-Testing a Module
+Testing a module
 ================
 
 Say we want to run all tests in the sudoku module
@@ -43,7 +43,7 @@ Say we want to run all tests in the sudoku module
 top level Sage directory of our local Sage installation. Now  we can
 start doctesting as demonstrated in the following terminal session::
 
-    [jdemeyer@sage sage-6.0]$ ./sage -t src/sage/games/sudoku.py
+    [jdemeyer@localhost sage]$ ./sage -t src/sage/games/sudoku.py
     Running doctests with ID 2012-07-03-03-36-49-d82849c6.
     Doctesting 1 file.
     sage -t src/sage/games/sudoku.py
@@ -63,7 +63,7 @@ one module so it is not surprising that the total testing time is
 approximately the same as the time required to test only that one
 module. Notice that the syntax is::
 
-    [jdemeyer@sage sage-6.0]$ ./sage -t src/sage/games/sudoku.py
+    [jdemeyer@localhost sage]$ ./sage -t src/sage/games/sudoku.py
     Running doctests with ID 2012-07-03-03-39-02-da6accbb.
     Doctesting 1 file.
     sage -t src/sage/games/sudoku.py
@@ -77,7 +77,7 @@ module. Notice that the syntax is::
 
 but not::
 
-    [jdemeyer@sage sage-6.0]$ ./sage -t sage/games/sudoku.py
+    [jdemeyer@localhost sage]$ ./sage -t sage/games/sudoku.py
     Running doctests with ID 2012-07-03-03-40-53-6cc4f29f.
     No files matching sage/games/sudoku.py
     No files to doctest
@@ -85,11 +85,11 @@ but not::
 We can also first ``cd`` to the directory containing the module
 ``sudoku.py`` and doctest that module as follows::
 
-    [jdemeyer@sage sage-6.0]$ cd src/sage/games/
-    [jdemeyer@sage games]$ ls
+    [jdemeyer@localhost sage]$ cd src/sage/games/
+    [jdemeyer@localhost games]$ ls
     __init__.py  hexad.py       sudoku.py           sudoku_backtrack.pyx
     all.py       quantumino.py  sudoku_backtrack.c
-    [jdemeyer@sage games]$ ../../../../sage -t sudoku.py
+    [jdemeyer@localhost games]$ ../../../../sage -t sudoku.py
     Running doctests with ID 2012-07-03-03-41-39-95ebd2ff.
     Doctesting 1 file.
     sage -t sudoku.py
@@ -106,11 +106,11 @@ Sage to test its own modules. Even if we have a system-wide Sage
 installation, using that version to doctest the modules of a local
 installation is a recipe for confusion.
 
-If your system Python has the ``tox`` package, you can also run the Sage
-doctester as follows::
+You can also run the Sage doctester as follows::
 
-   [jdemeyer@sage sage-6.0]$ cd src
-   [jdemeyer@sage src]$ tox -- sage/games/sudoku.py
+   [jdemeyer@localhost sage]$ ./sage -tox -e doctest -- src/sage/games/sudoku.py
+
+See :ref:`chapter-tools` for more information about tox.
 
 
 Troubleshooting
@@ -126,7 +126,7 @@ our system has multiple Sage installations. For example, the following
 syntax is acceptable because we explicitly specify the Sage
 installation in the current ``SAGE_ROOT``::
 
-    [jdemeyer@sage sage-6.0]$ ./sage -t src/sage/games/sudoku.py
+    [jdemeyer@localhost sage]$ ./sage -t src/sage/games/sudoku.py
     Running doctests with ID 2012-07-03-03-43-24-a3449f54.
     Doctesting 1 file.
     sage -t src/sage/games/sudoku.py
@@ -137,7 +137,7 @@ installation in the current ``SAGE_ROOT``::
     Total time for all tests: 4.9 seconds
         cpu time: 3.6 seconds
         cumulative wall time: 3.6 seconds
-    [jdemeyer@sage sage-6.0]$ ./sage -t "src/sage/games/sudoku.py"
+    [jdemeyer@localhost sage]$ ./sage -t "src/sage/games/sudoku.py"
     Running doctests with ID 2012-07-03-03-43-54-ac8ca007.
     Doctesting 1 file.
     sage -t src/sage/games/sudoku.py
@@ -156,10 +156,10 @@ Sage installation (if it exists):
 
 ::
 
-    [jdemeyer@sage sage-6.0]$ sage -t src/sage/games/sudoku.py
+    [jdemeyer@localhost sage]$ sage -t src/sage/games/sudoku.py
     sage -t  "src/sage/games/sudoku.py"
     **********************************************************************
-    File "/home/jdemeyer/sage/sage-6.0/src/sage/games/sudoku.py", line 515:
+    File "/home/jdemeyer/sage/src/sage/games/sudoku.py", line 515:
         sage: next(h.solve(algorithm='backtrack'))
     Exception raised:
         Traceback (most recent call last):
@@ -198,7 +198,7 @@ installation is a different (older) version than the one we are
 using for Sage development.  Make sure you always test the files
 with the correct version of Sage.
 
-Parallel Testing Many Modules
+Parallel testing many modules
 =============================
 
 So far we have used a single thread to doctest a module in the Sage
@@ -215,7 +215,7 @@ and then using four threads. For this example, suppose we want to test
 all the modules under ``sage/crypto/``. We can use a syntax similar to
 that shown above to achieve this::
 
-    [jdemeyer@sage sage-6.0]$ ./sage -t src/sage/crypto
+    [jdemeyer@localhost sage]$ ./sage -t src/sage/crypto
     Running doctests with ID 2012-07-03-03-45-40-7f837dcf.
     Doctesting 24 files.
     sage -t src/sage/crypto/__init__.py
@@ -256,7 +256,7 @@ that shown above to achieve this::
         [320 tests, 9.1 s]
     sage -t src/sage/crypto/mq/mpolynomialsystemgenerator.py
         [42 tests, 0.1 s]
-    sage -t src/sage/crypto/sbox.py
+    sage -t src/sage/crypto/sbox.pyx
         [124 tests, 0.8 s]
     sage -t src/sage/crypto/mq/sr.py
         [435 tests, 5.5 s]
@@ -276,7 +276,7 @@ that shown above to achieve this::
 Now we do the same thing, but this time we also use the optional
 argument ``--long``::
 
-    [jdemeyer@sage sage-6.0]$ ./sage -t --long src/sage/crypto/
+    [jdemeyer@localhost sage]$ ./sage -t --long src/sage/crypto/
     Running doctests with ID 2012-07-03-03-48-11-c16721e6.
     Doctesting 24 files.
     sage -t --long src/sage/crypto/__init__.py
@@ -317,7 +317,7 @@ argument ``--long``::
         [320 tests, 7.5 s]
     sage -t --long src/sage/crypto/mq/mpolynomialsystemgenerator.py
         [42 tests, 0.1 s]
-    sage -t --long src/sage/crypto/sbox.py
+    sage -t --long src/sage/crypto/sbox.pyx
         [124 tests, 0.7 s]
     sage -t --long src/sage/crypto/mq/sr.py
         [437 tests, 82.4 s]
@@ -372,7 +372,7 @@ as taking a long time:
 
 Now we doctest the same directory in parallel using 4 threads::
 
-    [jdemeyer@sage sage-6.0]$ ./sage -tp 4 src/sage/crypto/
+    [jdemeyer@localhost sage]$ ./sage -tp 4 src/sage/crypto/
     Running doctests with ID 2012-07-07-00-11-55-9b17765e.
     Sorting sources by runtime so that slower doctests are run first....
     Doctesting 24 files using 4 threads.
@@ -382,7 +382,7 @@ Now we doctest the same directory in parallel using 4 threads::
         [429 tests, 1.1 s]
     sage -t src/sage/crypto/mq/sr.py
         [432 tests, 5.7 s]
-    sage -t src/sage/crypto/sbox.py
+    sage -t src/sage/crypto/sbox.pyx
         [123 tests, 0.8 s]
     sage -t src/sage/crypto/block_cipher/sdes.py
         [289 tests, 0.6 s]
@@ -430,7 +430,7 @@ Now we doctest the same directory in parallel using 4 threads::
     Total time for all tests: 12.9 seconds
         cpu time: 30.5 seconds
         cumulative wall time: 31.7 seconds
-    [jdemeyer@sage sage-6.0]$ ./sage -tp 4 --long src/sage/crypto/
+    [jdemeyer@localhost sage]$ ./sage -tp 4 --long src/sage/crypto/
     Running doctests with ID 2012-07-07-00-13-04-d71f3cd4.
     Sorting sources by runtime so that slower doctests are run first....
     Doctesting 24 files using 4 threads.
@@ -438,7 +438,7 @@ Now we doctest the same directory in parallel using 4 threads::
         [252 tests, 3.7 s]
     sage -t --long src/sage/crypto/block_cipher/miniaes.py
         [429 tests, 1.0 s]
-    sage -t --long src/sage/crypto/sbox.py
+    sage -t --long src/sage/crypto/sbox.pyx
         [123 tests, 0.8 s]
     sage -t --long src/sage/crypto/block_cipher/sdes.py
         [289 tests, 0.6 s]
@@ -495,16 +495,16 @@ decreases.
 
 .. _section-parallel-test-whole-library:
 
-Parallel Testing the Whole Sage Library
+Parallel testing the whole Sage library
 =======================================
 
 The main Sage library resides in the directory
-``SAGE_ROOT/src/``. We can use the syntax described above
+:sage_root:`src/`. We can use the syntax described above
 to doctest the main library using multiple threads. When doing release
 management or patching the main Sage library, a release manager would
 parallel test the library using 10 threads with the following command::
 
-    [jdemeyer@sage sage-6.0]$ ./sage -tp 10 --long src/
+    [jdemeyer@localhost sage]$ ./sage -tp 10 --long src/
 
 Another way is run ``make ptestlong``, which builds Sage (if necessary),
 builds the Sage documentation (if necessary), and then runs parallel
@@ -512,11 +512,14 @@ doctests.  This determines the number of threads by reading the
 environment variable :envvar:`MAKE`: if it is set to ``make -j12``, then
 use 12 threads.  If :envvar:`MAKE` is not set, then by default it uses
 the number of CPU cores (as determined by the Python function
-``multiprocessing.cpu_count()``) with a minimum of 2 and a maximum of 8.
+:func:`multiprocessing.cpu_count`) with a minimum of 2 and a maximum of 8.
+(When this runs under the control of the `GNU make jobserver
+<https://www.gnu.org/software/make/manual/make.html#Parallel>`_, then Sage
+will request as most this number of job slots.)
 
 In any case, this will test the Sage library with multiple threads::
 
-    [jdemeyer@sage sage-6.0]$ make ptestlong
+    [jdemeyer@localhost sage]$ make ptestlong
 
 Any of the following commands would also doctest the Sage library or
 one of its clones:
@@ -535,22 +538,22 @@ The differences are:
   set of tests. First the Sage standard documentation is tested,
   i.e. the documentation that resides in
 
-  * ``SAGE_ROOT/src/doc/common``
-  * ``SAGE_ROOT/src/doc/en``
-  * ``SAGE_ROOT/src/doc/fr``
+  * :sage_root:`src/doc/common`
+  * :sage_root:`src/doc/en`
+  * :sage_root:`src/doc/fr`
 
   Finally, the commands doctest the Sage library. For more details on
-  these command, see the file ``SAGE_ROOT/Makefile``.
+  these command, see the file :sage_root:`Makefile`.
 
 * ``make testlong`` --- This command doctests the standard
   documentation:
 
-  * ``SAGE_ROOT/src/doc/common``
-  * ``SAGE_ROOT/src/doc/en``
-  * ``SAGE_ROOT/src/doc/fr``
+  * :sage_root:`src/doc/common`
+  * :sage_root:`src/doc/en`
+  * :sage_root:`src/doc/fr`
 
   and then the Sage library. Doctesting is run with the optional
-  argument ``--long``. See the file ``SAGE_ROOT/Makefile`` for further
+  argument ``--long``. See the file :sage_root:`Makefile` for further
   details.
 
 * ``make ptest`` --- Similar to the commands ``make test`` and ``make
@@ -569,14 +572,15 @@ you can execute
 Some of the extra testing options are discussed here; run
 ``sage -t -h`` for a complete list.
 
-Beyond the Sage Library
+
+Beyond the Sage library
 =======================
 
 Doctesting also works fine for files not in the Sage library.  For
 example, suppose we have a Python script called
 ``my_python_script.py``::
 
-    [mvngu@sage build]$ cat my_python_script.py
+    [mvngu@localhost sage]$ cat my_python_script.py
     from sage.all_cmdline import *   # import sage library
 
     def square(n):
@@ -592,7 +596,7 @@ example, suppose we have a Python script called
 
 Then we can doctest it just as with Sage library files::
 
-    [mvngu@sage sage-6.0]$ ./sage -t my_python_script.py
+    [mvngu@localhost sage]$ ./sage -t my_python_script.py
     Running doctests with ID 2012-07-07-00-17-56-d056f7c0.
     Doctesting 1 file.
     sage -t my_python_script.py
@@ -607,7 +611,7 @@ Then we can doctest it just as with Sage library files::
 Doctesting can also be performed on Sage scripts. Say we have a Sage
 script called ``my_sage_script.sage`` with the following content::
 
-    [mvngu@sage sage-6.0]$ cat my_sage_script.sage
+    [mvngu@localhost sage]$ cat my_sage_script.sage
     def cube(n):
         r"""
         Return the cube of n.
@@ -621,7 +625,7 @@ script called ``my_sage_script.sage`` with the following content::
 
 Then we can doctest it just as for Python files::
 
-    [mvngu@sage build]$ sage-6.0/sage -t my_sage_script.sage
+    [mvngu@localhost sage]$ ./sage -t my_sage_script.sage
     Running doctests with ID 2012-07-07-00-20-06-82ee728c.
     Doctesting 1 file.
     sage -t my_sage_script.sage
@@ -636,8 +640,8 @@ Then we can doctest it just as for Python files::
 Alternatively, we can preparse it to convert it to a Python script,
 and then doctest that::
 
-    [mvngu@sage build]$ sage-6.0/sage --preparse my_sage_script.sage
-    [mvngu@sage build]$ cat my_sage_script.sage.py
+    [mvngu@localhost sage]$ ./sage --preparse my_sage_script.sage
+    [mvngu@localhost sage]$ cat my_sage_script.sage.py
     # This file was *autogenerated* from the file my_sage_script.sage.
     from sage.all_cmdline import *   # import sage library
     _sage_const_3 = Integer(3)
@@ -651,7 +655,7 @@ and then doctest that::
             8
         """
         return n**_sage_const_3
-    [mvngu@sage build]$ sage-6.0/sage -t my_sage_script.sage.py
+    [mvngu@localhost sage]$ ./sage -t my_sage_script.sage.py
     Running doctests with ID 2012-07-07-00-26-46-2bb00911.
     Doctesting 1 file.
     sage -t my_sage_script.sage.py
@@ -663,7 +667,8 @@ and then doctest that::
         cpu time: 0.0 seconds
         cumulative wall time: 0.0 seconds
 
-Doctesting from Within Sage
+
+Doctesting from within Sage
 ===========================
 
 You can run doctests from within Sage, which can be useful since you
@@ -675,7 +680,7 @@ function in the global namespace, passing it either a string or a module:
     sage: run_doctests(sage.combinat.affine_permutation)
     Running doctests with ID 2018-02-07-13-23-13-89fe17b1.
     Git branch: develop
-    Using --optional=dochtml,sage
+    Using --optional=sagemath_doc_html,sage
     Doctesting 1 file.
     sage -t /opt/sage/sage_stable/src/sage/combinat/affine_permutation.py
         [338 tests, 4.32 s]
@@ -686,12 +691,13 @@ function in the global namespace, passing it either a string or a module:
         cpu time: 3.6 seconds
         cumulative wall time: 4.3 seconds
 
+
 .. _section-options:
 
-Optional Arguments
+Optional arguments
 ==================
 
-Run Long Doctests
+Run long doctests
 -----------------
 
 Ideally, doctests should not take any noticeable amount of time. If
@@ -713,7 +719,7 @@ Use the ``--long`` flag to run doctests that have been marked with the
 comment ``# long time``. These tests are normally skipped in order to
 reduce the time spent running tests::
 
-    [roed@sage sage-6.0]$ sage -t src/sage/rings/tests.py
+    [roed@localhost sage]$ ./sage -t src/sage/rings/tests.py
     Running doctests with ID 2012-06-21-16-00-13-40835825.
     Doctesting 1 file.
     sage -t tests.py
@@ -727,7 +733,7 @@ reduce the time spent running tests::
 
 In order to run the long tests as well, do the following::
 
-    [roed@sage sage-6.0]$ sage -t --long src/sage/rings/tests.py
+    [roed@localhost sage]$ ./sage -t --long src/sage/rings/tests.py
     Running doctests with ID 2012-06-21-16-02-05-d13a9a24.
     Doctesting 1 file.
     sage -t tests.py
@@ -744,7 +750,7 @@ To find tests that take longer than the allowed time use the
 print a warning if they take longer than 1.0 second. Note that this is
 a warning, not an error::
 
-    [roed@sage sage-6.0]$ sage -t --warn-long src/sage/rings/factorint.pyx
+    [roed@localhost sage]$ ./sage -t --warn-long src/sage/rings/factorint.pyx
     Running doctests with ID 2012-07-14-03-27-03-2c952ac1.
     Doctesting 1 file.
     sage -t --warn-long src/sage/rings/factorint.pyx
@@ -778,7 +784,7 @@ a warning, not an error::
 
 You can also pass in an explicit amount of time::
 
-    [roed@sage sage-6.0]$ sage -t --long --warn-long 2.0 src/sage/rings/tests.py
+    [roed@localhost sage]$ ./sage -t --long --warn-long 2.0 src/sage/rings/tests.py
     Running doctests with ID 2012-07-14-03-30-13-c9164c9d.
     Doctesting 1 file.
     sage -t --long --warn-long 2.0 tests.py
@@ -803,9 +809,37 @@ You can also pass in an explicit amount of time::
 Finally, you can disable any warnings about long tests with
 ``--warn-long 0``.
 
-Doctests may start from a random seed::
+Doctests start from a random seed::
 
-    [kliem@sage sage-9.2]$ sage -t --warn-long 89.5 --random-seed=112986622569797306072457879734474628454 src/sage/doctest/tests/random_seed.rst
+    [kliem@localhost sage]$ ./sage -t src/sage/doctest/tests/random_seed.rst
+    Running doctests with ID 2020-06-23-23-22-59-49f37a55.
+    ...
+    Doctesting 1 file.
+    sage -t --warn-long 89.5 --random-seed=112986622569797306072457879734474628454 src/sage/doctest/tests/random_seed.rst
+    **********************************************************************
+    File "src/sage/doctest/tests/random_seed.rst", line 3, in sage.doctest.tests.random_seed
+    Failed example:
+        randint(5, 10)
+    Expected:
+        9
+    Got:
+        8
+    **********************************************************************
+    1 item had failures:
+       1 of   2 in sage.doctest.tests.random_seed
+        [1 test, 1 failure, 0.00 s]
+    ----------------------------------------------------------------------
+    sage -t --warn-long 89.5 --random-seed=112986622569797306072457879734474628454 src/sage/doctest/tests/random_seed.rst  # 1 doctest failed
+    ----------------------------------------------------------------------
+    Total time for all tests: 0.0 seconds
+        cpu time: 0.0 seconds
+        cumulative wall time: 0.0 seconds
+
+This seed can be set explicitly to reproduce possible failures::
+
+    [kliem@localhost sage]$ ./sage -t --warn-long 89.5                              \
+                              --random-seed=112986622569797306072457879734474628454 \
+                              src/sage/doctest/tests/random_seed.rst
     Running doctests with ID 2020-06-23-23-24-28-14a52269.
     ...
     Doctesting 1 file.
@@ -829,20 +863,23 @@ Doctests may start from a random seed::
         cpu time: 0.0 seconds
         cumulative wall time: 0.0 seconds
 
+It can also be set explicitly using the environment variable
+``SAGE_DOCTEST_RANDOM_SEED``.
+
+
 .. _section-optional-doctest-flag:
 
-Run Optional Doctests
+Run optional doctests
 ---------------------
 
 You can run tests that require optional packages by using the
 ``--optional`` flag.  Obviously, you need to have installed the
-necessary optional packages in order for these tests to succeed.  See
-http://www.sagemath.org/packages/optional/ in order to download
-optional packages.
+necessary optional packages in order for these tests to succeed.
 
 By default, Sage only runs doctests that are not marked with the ``optional`` tag.  This is equivalent to running ::
 
-    [roed@sage sage-6.0]$ sage -t --optional=dochtml,sage src/sage/rings/real_mpfr.pyx
+    [roed@localhost sage]$ ./sage -t --optional=sagemath_doc_html,sage \
+                                  src/sage/rings/real_mpfr.pyx
     Running doctests with ID 2012-06-21-16-18-30-a368a200.
     Doctesting 1 file.
     sage -t src/sage/rings/real_mpfr.pyx
@@ -856,7 +893,8 @@ By default, Sage only runs doctests that are not marked with the ``optional`` ta
 
 If you want to also run tests that require magma, you can do the following::
 
-    [roed@sage sage-6.0]$ sage -t --optional=dochtml,sage,magma src/sage/rings/real_mpfr.pyx
+    [roed@localhost sage]$ ./sage -t --optional=sagemath_doc_html,sage,magma \
+                                  src/sage/rings/real_mpfr.pyx
     Running doctests with ID 2012-06-21-16-18-30-a00a7319
     Doctesting 1 file.
     sage -t src/sage/rings/real_mpfr.pyx
@@ -868,9 +906,9 @@ If you want to also run tests that require magma, you can do the following::
         cpu time: 4.0 seconds
         cumulative wall time: 8.4 seconds
 
-In order to just run the tests that are marked as requiring magma, omit ``sage`` and ``dochtml``::
+In order to just run the tests that are marked as requiring magma, omit ``sage`` and ``sagemath_doc_html``::
 
-    [roed@sage sage-6.0]$ sage -t --optional=magma src/sage/rings/real_mpfr.pyx
+    [roed@localhost sage]$ ./sage -t --optional=magma src/sage/rings/real_mpfr.pyx
     Running doctests with ID 2012-06-21-16-18-33-a2bc1fdf
     Doctesting 1 file.
     sage -t src/sage/rings/real_mpfr.pyx
@@ -886,7 +924,7 @@ If you want Sage to detect external software or other capabilities
 (such as magma, latex, internet) automatically and run all of the
 relevant tests, then add ``external``::
 
-    $ sage -t --optional=external src/sage/rings/real_mpfr.pyx
+    [roed@localhost sage]$ ./sage -t --optional=external src/sage/rings/real_mpfr.pyx
     Running doctests with ID 2016-03-16-14-10-21-af2ebb67.
     Using --optional=external
     External software to be detected: cplex,gurobi,internet,latex,macaulay2,magma,maple,mathematica,matlab,octave,scilab
@@ -903,7 +941,7 @@ relevant tests, then add ``external``::
 
 To run all tests, regardless of whether they are marked optional, pass ``all`` as the ``optional`` tag::
 
-    [roed@sage sage-6.0]$ sage -t --optional=all src/sage/rings/real_mpfr.pyx
+    [roed@localhost sage]$ ./sage -t --optional=all src/sage/rings/real_mpfr.pyx
     Running doctests with ID 2012-06-21-16-31-18-8c097f55
     Doctesting 1 file.
     sage -t src/sage/rings/real_mpfr.pyx
@@ -915,7 +953,8 @@ To run all tests, regardless of whether they are marked optional, pass ``all`` a
         cpu time: 4.7 seconds
         cumulative wall time: 11.2 seconds
 
-Running Doctests in Parallel
+
+Running doctests in parallel
 ----------------------------
 
 If you're testing many files, you can get big speedups by using more
@@ -923,7 +962,7 @@ than one thread.  To run doctests in parallel use the ``--nthreads``
 flag (``-p`` is a shortened version).  Pass in the number of threads
 you would like to use (by default Sage just uses 1)::
 
-    [roed@sage sage-6.0]$ sage -tp 2 src/sage/doctest/
+    [roed@localhost sage]$ ./sage -tp 2 src/sage/doctest/
     Running doctests with ID 2012-06-22-19-09-25-a3afdb8c.
     Sorting sources by runtime so that slower doctests are run first....
     Doctesting 8 files using 2 threads.
@@ -950,7 +989,8 @@ you would like to use (by default Sage just uses 1)::
         cpu time: 4.2 seconds
         cumulative wall time: 21.5 seconds
 
-Doctesting All of Sage
+
+Doctesting all of Sage
 ----------------------
 
 To doctest the whole Sage library use the ``--all`` flag (``-a`` for
@@ -958,17 +998,17 @@ short).  In addition to testing the code in Sage's Python and Cython
 files, this command will run the tests defined in Sage's documentation
 as well as testing the Sage notebook::
 
-    [roed@sage sage-6.0]$ sage -t -a
+    [roed@localhost sage]$ ./sage -t -a
     Running doctests with ID 2012-06-22-19-10-27-e26fce6d.
     Doctesting entire Sage library.
     Sorting sources by runtime so that slower doctests are run first....
     Doctesting 2020 files.
-    sage -t /Users/roed/sage/sage-5.3/src/sage/plot/plot.py
+    sage -t /Users/roed/sage/src/sage/plot/plot.py
         [304 tests, 69.0 s]
     ...
 
 
-Debugging Tools
+Debugging tools
 ---------------
 
 Sometimes doctests fail (that's why we run them after all).  There are
@@ -979,7 +1019,8 @@ short) then you will drop into an interactive Python debugger whenever
 a Python exception occurs.  As an example, I modified
 :mod:`sage.schemes.elliptic_curves.constructor` to produce an error::
 
-    [roed@sage sage-6.0]$ sage -t --debug src/sage/schemes/elliptic_curves/constructor.py
+    [roed@localhost sage]$ ./sage -t --debug \
+                                 src/sage/schemes/elliptic_curves/constructor.py
     Running doctests with ID 2012-06-23-12-09-04-b6352629.
     Doctesting 1 file.
     **********************************************************************
@@ -988,30 +1029,30 @@ a Python exception occurs.  As an example, I modified
         EllipticCurve([0,0])
     Exception raised:
         Traceback (most recent call last):
-          File "/Users/roed/sage/sage-5.3/local/lib/python2.7/site-packages/sage/doctest/forker.py", line 573, in _run
+          File ".../site-packages/sage/doctest/forker.py", line 573, in _run
             self.execute(example, compiled, test.globs)
-          File "/Users/roed/sage/sage-5.3/local/lib/python2.7/site-packages/sage/doctest/forker.py", line 835, in execute
+          File ".../site-packages/sage/doctest/forker.py", line 835, in execute
             exec compiled in globs
           File "<doctest sage.schemes.elliptic_curves.constructor[0]>", line 1, in <module>
             EllipticCurve([Integer(0),Integer(0)])
-          File "/Users/roed/sage/sage-5.3/local/lib/python2.7/site-packages/sage/schemes/elliptic_curves/constructor.py", line 346, in EllipticCurve
+          File ".../site-packages/sage/schemes/elliptic_curves/constructor.py", line 346, in EllipticCurve
             return ell_rational_field.EllipticCurve_rational_field(x, y)
-          File "/Users/roed/sage/sage-5.3/local/lib/python2.7/site-packages/sage/schemes/elliptic_curves/ell_rational_field.py", line 216, in __init__
+          File ".../site-packages/sage/schemes/elliptic_curves/ell_rational_field.py", line 216, in __init__
             EllipticCurve_number_field.__init__(self, Q, ainvs)
-          File "/Users/roed/sage/sage-5.3/local/lib/python2.7/site-packages/sage/schemes/elliptic_curves/ell_number_field.py", line 159, in __init__
+          File ".../site-packages/sage/schemes/elliptic_curves/ell_number_field.py", line 159, in __init__
             EllipticCurve_field.__init__(self, [field(x) for x in ainvs])
-          File "/Users/roed/sage/sage-5.3/local/lib/python2.7/site-packages/sage/schemes/elliptic_curves/ell_generic.py", line 156, in __init__
+          File ".../site-packages/sage/schemes/elliptic_curves/ell_generic.py", line 156, in __init__
             "Invariants %s define a singular curve."%ainvs
         ArithmeticError: Invariants [0, 0, 0, 0, 0] define a singular curve.
-    > /Users/roed/sage/sage-5.3/local/lib/python2.7/site-packages/sage/schemes/elliptic_curves/ell_generic.py(156)__init__()
+    > .../site-packages/sage/schemes/elliptic_curves/ell_generic.py(156)__init__()
     -> "Invariants %s define a singular curve."%ainvs
     (Pdb) l
     151                 if len(ainvs) == 2:
     152                     ainvs = [K(0),K(0),K(0)] + ainvs
     153                 self.__ainvs = tuple(ainvs)
     154                 if self.discriminant() == 0:
-    155                     raise ArithmeticError, \
-    156  ->                       "Invariants %s define a singular curve."%ainvs
+    155                     raise ArithmeticError(
+    156  ->                     "Invariants %s define a singular curve."%ainvs)
     157                 PP = projective_space.ProjectiveSpace(2, K, names='xyz');
     158                 x, y, z = PP.coordinate_ring().gens()
     159                 a1, a2, a3, a4, a6 = ainvs
@@ -1040,8 +1081,9 @@ you know what test caused the problem (if you want this output to
 appear in real time use the ``--verbose`` flag).  To have doctests run
 under the control of gdb, use the ``--gdb`` flag::
 
-    [roed@sage sage-6.0]$ sage -t --gdb src/sage/schemes/elliptic_curves/constructor.py
-    gdb -x /home/roed/sage-6.0.b5/local/bin/sage-gdb-commands --args python /home/roed/sage-6.0.b5/local/bin/sage-runtests --serial --nthreads 1 --timeout 1048576 --optional dochtml,sage --stats_path /home/roed/.sage/timings2.json src/sage/schemes/elliptic_curves/constructor.py
+    [roed@localhost sage]$ ./sage -t --gdb \
+                                  src/sage/schemes/elliptic_curves/constructor.py
+    exec gdb --eval-commands="run" --args /home/roed/sage/local/var/lib/sage/venv-python3.9/bin/python3 sage-runtests --serial --timeout=0 --stats-path=/home/roed/.sage/timings2.json --optional=pip,sage,sage_spkg src/sage/schemes/elliptic_curves/constructor.py
     GNU gdb 6.8-debian
     Copyright (C) 2008 Free Software Foundation, Inc.
     License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
@@ -1075,14 +1117,14 @@ Once you're done fixing whatever problems where revealed by the
 doctests, you can rerun just those files that failed their most recent
 test by using the ``--failed`` flag (``-f`` for short)::
 
-    [roed@sage sage-6.0]$ sage -t -fa
+    [roed@localhost sage]$ ./sage -t -fa
     Running doctests with ID 2012-07-07-00-45-35-d8b5a408.
     Doctesting entire Sage library.
     Only doctesting files that failed last test.
     No files to doctest
 
 
-Miscellaneous Options
+Miscellaneous options
 ---------------------
 
 There are various other options that change the behavior of Sage's
@@ -1103,7 +1145,8 @@ Show skipped optional tests
 To print a summary at the end of each file with the number of optional
 tests skipped, use the ``--show-skipped`` flag::
 
-   [roed@sage sage-6.0]$ sage -t --show-skipped src/sage/rings/finite_rings/integer_mod.pyx
+   [roed@localhost sage]$ ./sage -t --show-skipped \
+                                 src/sage/rings/finite_rings/integer_mod.pyx
    Running doctests with ID 2013-03-14-15-32-05-8136f5e3.
    Doctesting 1 file.
    sage -t sage/rings/finite_rings/integer_mod.pyx
@@ -1128,7 +1171,7 @@ you to run tests repeatedly in an attempt to search for Heisenbugs.
 The flag ``--global-iterations`` takes an integer and runs the whole
 set of tests that many times serially::
 
-    [roed@sage sage-6.0]$ sage -t --global-iterations 2 src/sage/sandpiles
+    [roed@localhost sage]$ ./sage -t --global-iterations 2 src/sage/sandpiles
     Running doctests with ID 2012-07-07-00-59-28-e7048ad9.
     Doctesting 3 files (2 global iterations).
     sage -t src/sage/sandpiles/__init__.py
@@ -1159,7 +1202,7 @@ set of tests that many times serially::
 You can also iterate in a different order: the ``--file-iterations``
 flag runs the tests in each file ``N`` times before proceeding::
 
-    [roed@sage sage-6.0]$ sage -t --file-iterations 2 src/sage/sandpiles
+    [roed@localhost sage]$ ./sage -t --file-iterations 2 src/sage/sandpiles
     Running doctests with ID 2012-07-07-01-01-43-8f954206.
     Doctesting 3 files (2 file iterations).
     sage -t src/sage/sandpiles/__init__.py
@@ -1187,7 +1230,7 @@ On a slow machine the default timeout of 5 minutes may not be enough
 for the slowest files.  Use the ``--timeout`` flag (``-T`` for short)
 to set it to something else::
 
-    [roed@sage sage-6.0]$ sage -tp 2 --all --timeout 1
+    [roed@localhost sage]$ ./sage -tp 2 --all --timeout 1
     Running doctests with ID 2012-07-07-01-09-37-deb1ab83.
     Doctesting entire Sage library.
     Sorting sources by runtime so that slower doctests are run first....
@@ -1202,10 +1245,10 @@ Using absolute paths
 By default filenames are printed using relative paths.  To use
 absolute paths instead pass in the ``--abspath`` flag::
 
-    [roed@sage sage-6.0]$ sage -t --abspath src/sage/doctest/control.py
+    [roed@localhost sage]$ ./sage -t --abspath src/sage/doctest/control.py
     Running doctests with ID 2012-07-07-01-13-03-a023e212.
     Doctesting 1 file.
-    sage -t /home/roed/sage-6.0/src/sage/doctest/control.py
+    sage -t /home/roed/sage/src/sage/doctest/control.py
         [133 tests, 4.7 s]
     ------------------------------------------------------------------------
     All tests passed!
@@ -1223,7 +1266,7 @@ convenient to test only the files that have changed.  To do so use the
 ``--new`` flag, which tests files that have been modified or added
 since the last commit::
 
-    [roed@sage sage-6.0]$ sage -t --new
+    [roed@localhost sage]$ ./sage -t --new
     Running doctests with ID 2012-07-07-01-15-52-645620ee.
     Doctesting files changed since last git commit.
     Doctesting 1 file.
@@ -1244,7 +1287,7 @@ By default, tests are run in the order in which they appear in the
 file.  To run tests in a random order (which can reveal subtle bugs),
 use the ``--randorder`` flag and pass in a random seed::
 
-    [roed@sage sage-6.0]$ sage -t --new --randorder 127
+    [roed@localhost sage]$ ./sage -t --new --randorder 127
     Running doctests with ID 2012-07-07-01-19-06-97c8484e.
     Doctesting files changed since last git commit.
     Doctesting 1 file.
@@ -1268,13 +1311,15 @@ code loads the globals from that file into the namespace before
 running tests.  To disable this behaviour (and require imports to be
 explicitly specified), use the ``--force-lib`` option.
 
-Auxilliary files
-^^^^^^^^^^^^^^^^
+.. _section-doctest-auxiliary-files:
+
+Auxiliary files
+^^^^^^^^^^^^^^^
 
 To specify a logfile (rather than use the default which is created for
 ``sage -t --all``), use the ``--logfile`` flag::
 
-    [roed@sage sage-6.0]$ sage -t --logfile test1.log src/sage/doctest/control.py
+    [roed@localhost sage]$ ./sage -t --logfile test1.log src/sage/doctest/control.py
     Running doctests with ID 2012-07-07-01-25-49-e7c0e52d.
     Doctesting 1 file.
     sage -t src/sage/doctest/control.py
@@ -1285,7 +1330,7 @@ To specify a logfile (rather than use the default which is created for
     Total time for all tests: 6.7 seconds
         cpu time: 0.1 seconds
         cumulative wall time: 4.3 seconds
-    [roed@sage sage-6.0]$ cat test1.log
+    [roed@localhost sage]$ cat test1.log
     Running doctests with ID 2012-07-07-01-25-49-e7c0e52d.
     Doctesting 1 file.
     sage -t src/sage/doctest/control.py
@@ -1298,14 +1343,363 @@ To specify a logfile (rather than use the default which is created for
         cumulative wall time: 4.3 seconds
 
 
-To give a json file storing the timings for each file, use the
-``--stats_path`` flag.  These statistics are used in sorting files so
-that slower tests are run first (and thus multiple processes are
-utilized most efficiently)::
+To give a json file storing the timings and pass/fail status for each file, use the
+``--stats-path`` flag; the default location of this file is ``~/.sage/timings2.json``.
+The doctester reads it if it exists, for the purpose of sorting the files
+so that slower tests are run first (and thus multiple processes are utilized most
+efficiently)::
 
-    [roed@sage sage-6.0]$ sage -tp 2 --stats-path ~/.sage/timings2.json --all
+    [roed@localhost sage]$ ./sage -tp 2 --stats-path ~/.sage/timings2.json --all
     Running doctests with ID 2012-07-07-01-28-34-2df4251d.
     Doctesting entire Sage library.
     Sorting sources by runtime so that slower doctests are run first....
     Doctesting 2067 files using 2 threads.
     ...
+
+At the end of the doctest run, Sage updates the json file if it exists or creates
+a new one.
+
+The recorded pass/fail status of the files can be used for running only those files
+that failed their most recent test by using the ``--failed`` flag (``-f`` for short).
+
+Using the option ``--baseline-stats-path known-test-failures.json``,
+it is possible to distinguish files with known doctest failures
+from new failures. The file ``known-test-failures.json`` should be
+prepared in the same format as ``timings2.json``.
+
+Source files marked as failed there will be marked as "[failed in baseline]"
+failures in the doctest report; and if there are only baseline failures, no
+new failures, then ``sage -t`` will exit with status code 0 (success).
+
+
+.. _section-doctesting-venv:
+
+Options for testing in virtual environments
+-------------------------------------------
+
+The distribution packages of the modularized Sage library can be tested in virtual environments.
+Sage has infrastructure to create such virtual environments using ``tox``, which is explained
+in detail in :ref:`section-modularized-doctesting`.  Our examples in this section
+refer to this setting, but it applies the same to any user-created virtual environments.
+
+The virtual environments, set up in directories such as
+``pkgs/sagemath-standard/.tox/sagepython-sagewheels-nopypi-norequirements``
+contain installations of built (non-editable) wheels.
+
+To test all modules of Sage that are installed in a virtual environment,
+use the option ``--installed`` (instead of ``--all``)::
+
+    [mkoeppe@localhost sage]$ pkgs/sagemath-standard/.tox/sagepython-.../sage -t   \
+                                -p4 --installed
+
+This tests against the doctests as they appear in the installed copies of the files
+(in ``site-packages/sage/...``).
+Note that these installed copies should never be edited, as they can
+be overwritten without warning.
+
+When testing a modularized distribution package other than sagemath-standard,
+the top-level module :mod:`sage.all` is not available.  Use the option ``--environment``
+to select an appropriate top-level module::
+
+    [mkoeppe@localhost sage]$ pkgs/sagemath-categories/.tox/sagepython-.../sage -t \
+                                -p4 --environment sage.all__sagemath_categories    \
+                                --installed
+
+To test the installed modules against the doctests as they appear in the source
+tree (``src/sage/...``)::
+
+    [mkoeppe@localhost sage]$ pkgs/sagemath-categories/.tox/sagepython-.../sage -t \
+                                -p4 --environment sage.all__sagemath_categories    \
+                                src/sage/structure
+
+Note that testing all doctests as they appear in the source tree does not make sense
+because many of the source files may not be installed in the virtual environment.
+Use the option ``--if-installed`` to skip the source files of all Python/Cython modules
+that are not installed in the virtual environment::
+
+    [mkoeppe@localhost sage]$ pkgs/sagemath-categories/.tox/sagepython-.../sage -t \
+                                -p4 --environment sage.all__sagemath_categories    \
+                                --if-installed src/sage/schemes
+
+This option can also be combined with ``--all``::
+
+    [mkoeppe@localhost sage]$ pkgs/sagemath-categories/.tox/sagepython-.../sage -t \
+                                -p4 --environment sage.all__sagemath_categories    \
+                                --if-installed --all
+
+
+.. _section-fixdoctests:
+
+The doctest fixer
+=================
+
+Sage provides a development tool that assists with updating doctests.
+
+
+Updating doctest outputs
+------------------------
+
+By default, ``./sage --fixdoctests`` runs the doctester and replaces the expected outputs
+of all examples by the actual outputs from the current version of Sage::
+
+    [mkoeppe@localhost sage]$ ./sage --fixdoctests \
+                                --overwrite src/sage/arith/weird.py
+
+For example, when applied to this Python file::
+
+  | r"""
+  | ...
+  |
+  | EXAMPLES::
+  |
+  |     sage: 2 + 2
+  |     5
+  |     sage: factor("91")
+  |     "7" * "13"
+  | ...
+
+the doctest fixer edits the file as follows::
+
+  | r"""
+  | ...
+  |
+  | EXAMPLES::
+  |
+  |     sage: 2 + 2
+  |     4
+  |     sage: factor("91")
+  |     Traceback (most recent call last):
+  |     ...
+  |     TypeError: unable to factor '91'
+  | ...
+
+As this command edits the source file, it may be a good practice to first use ``git commit``
+to save any changes made in the file.
+
+After running the doctest fixer, it is a good idea to use ``git diff`` to check
+all edits that the automated tool made.
+
+An alternative to this workflow is to use the option ``--keep-both``. When expected and
+actual output of an example differ, it duplicates the example, marking the two copies
+``# optional - EXPECTED`` and ``# optional - GOT``. (Thus, when re-running the doctester,
+neither of the two copies is run; this makes ``./sage --fixdoctests`` idempotent.)
+
+When exceptions are expected by an example, it is standard practice to abbreviate
+the tracebacks using ``...``.  The doctest fixer uses this abbreviation automatically
+when formatting the actual output, as shown in the above example.
+To disable it so that the details of the exception
+can be inspected, use the option ``--full-tracebacks``. This is particularly useful
+in combination with ``--keep-both``::
+
+    [mkoeppe@localhost sage]$ ./sage --fixdoctests --keep-both --full-tracebacks \
+                                --overwrite src/sage/arith/weird.py
+
+This will give the following result on the above example::
+
+  | r"""
+  | ...
+  |
+  | EXAMPLES::
+  |
+  |     sage: 2 + 2                                 # optional - EXPECTED
+  |     5
+  |     sage: 2 + 2                                 # optional - GOT
+  |     4
+  |     sage: factor("91")                          # optional - EXPECTED
+  |     "7" * "13"
+  |     sage: factor("91")                          # optional - GOT
+  |     Traceback (most recent call last):
+  |     ...
+  |     File "<doctest...>", line 1, in <module>
+  |     factor("91")
+  |     File ".../src/sage/arith/misc.py", line 2680, in factor
+  |     raise TypeError("unable to factor {!r}".format(n))
+  |     TypeError: unable to factor '91'
+  | ...
+  | """
+
+To make sure that all doctests are updated, you may have to use the option ``--long``::
+
+    [mkoeppe@localhost sage]$ ./sage --fixdoctests --long \
+                                --overwrite src/sage/arith/weird.py
+
+If you are not comfortable with allowing this tool to edit your source files, you can use
+the option ``--no-overwrite``, which will create a new file with the extension ``.fixed``
+instead of overwriting the source file::
+
+    [mkoeppe@localhost sage]$ ./sage --fixdoctests \
+                                --no-overwrite src/sage/arith/weird.py
+
+
+.. _section-fixdoctests-optional-needs:
+
+Managing ``# optional`` and ``# needs`` tags
+--------------------------------------------
+
+When a file uses a ``# sage.doctest: optional/needs FEATURE`` directive, the
+doctest fixer automatically removes the redundant ``# optional/needs FEATURE``
+tags from all ``sage:`` lines. Likewise, when a block-scoped tag
+``sage: # optional/needs FEATURE`` is used, then the doctest fixer removes
+redundant tags from all doctests in this scope. For example::
+
+  | # sage.doctest: optional - sirocco, needs sage.rings.number_field
+  | r"""
+  | ...
+  |
+  | EXAMPLES::
+  |
+  |     sage: # needs sage.modules sage.rings.number_field
+  |     sage: Q5 = QuadraticField(5)
+  |     sage: V = Q5^42                                 # needs sage.modules
+  |     sage: T = transmogrify(V)           # optional - bliss sirocco
+
+is automatically transformed to::
+
+  | # sage.doctest: optional - sirocco, needs sage.rings.number_field
+  | r"""
+  | ...
+  |
+  | EXAMPLES::
+  |
+  |     sage: # needs sage.modules
+  |     sage: Q5 = QuadraticField(5)
+  |     sage: V = Q5^42
+  |     sage: T = transmogrify(V)               # optional - bliss
+
+The doctest fixer also aligns the ``# optional/needs FEATURE`` tags on
+individual doctests at a fixed set of tab stops.
+
+The doctester may issue style warnings when ``# optional/needs`` tags are
+repeated on a whole block of doctests, suggesting to use a block-scoped tag
+instead. The doctest fixer makes these changes automatically.
+
+There are situations in which the doctester and doctest fixer show too
+much restraint and a manual intervention would improve the formatting
+of the doctests. In the example below, the doctester does not issue a
+style warning because the first doctest line does not carry the ``# needs``
+tag::
+
+  | EXAMPLES::
+  |
+  |     sage: set_verbose(-1)
+  |     sage: P.<x,y,z> = ProjectiveSpace(QQbar, 2)     # needs sage.rings.number_field
+  |     sage: C = Curve([x^3*y + 2*x^2*y^2 + x*y^3      # needs sage.rings.number_field
+  |     ....:             + x^3*z + 7*x^2*y*z
+  |     ....:             + 14*x*y^2*z + 9*y^3*z], P)
+  |     sage: Q = P([0,0,1])                            # needs sage.rings.number_field
+  |     sage: C.tangents(Q)                             # needs sage.rings.number_field
+  |     [x + 4.147899035704788?*y,
+  |      x + (1.426050482147607? + 0.3689894074818041?*I)*y,
+  |      x + (1.426050482147607? - 0.3689894074818041?*I)*y]
+
+To change this example, there are two approaches:
+
+#. Just add the line ``sage: # needs sage.rings.number_field`` at
+   the beginning and run the doctest fixer, which will remove the tags on the individual
+   doctests that have now become redundant.
+
+#. Insert a blank line after the first doctest line, splitting the block into two.
+   Now the ``# needs`` tag is repeated on the whole second block, so running the doctest
+   fixer will add a block-scoped tag and remove the individual tags::
+
+     | EXAMPLES::
+     |
+     |     sage: set_verbose(-1)
+     |
+     |     sage: # needs sage.rings.number_field
+     |     sage: P.<x,y,z> = ProjectiveSpace(QQbar, 2)
+     |     sage: C = Curve([x^3*y + 2*x^2*y^2 + x*y^3
+     |     ....:             + x^3*z + 7*x^2*y*z
+     |     ....:             + 14*x*y^2*z + 9*y^3*z], P)
+     |     sage: Q = P([0,0,1])
+     |     sage: C.tangents(Q)
+     |     [x + 4.147899035704788?*y,
+     |      x + (1.426050482147607? + 0.3689894074818041?*I)*y,
+     |      x + (1.426050482147607? - 0.3689894074818041?*I)*y]
+
+In places where the doctester issues a doctest dataflow warning
+(``Variable ... referenced here was set only in doctest marked '# optional - FEATURE'``),
+the doctest fixer automatically adds the missing ``# optional/needs`` tags.
+
+Sometimes code changes can make existing ``# optional/needs FEATURE`` tags unnecessary.
+In an installation or virtual environment where ``FEATURE`` is not available,
+you can invoke the doctest fixer with the option ``--probe FEATURE``.
+Then it will run examples marked ``# optional/needs - FEATURE`` silently, and if the example
+turns out to work anyway, the tag is automatically removed.
+
+.. note::
+
+   Probing works best when the doctests within a docstring do not reuse the same variable
+   for different values.
+
+To have the doctest fixer take care of the ``# optional/needs`` tags,
+but not change the expected results of examples, use the option ``--only-tags``.
+This mode is suitable for mostly unattended runs on many files.
+
+With the option ``--verbose``, the doctest fixer shows the doctester's messages
+one by one and reports the changes made.
+
+.. warning::
+
+   While the doctest fixer guarantees to preserve any comments that
+   appear before ``# optional/needs`` and all parenthesized comments
+   of the form ``# optional - FEATURE (EXPLANATION)``, any free-form comments
+   that may be mixed with the doctest tags will be lost.
+
+If you don't want to update any doctests, you can use the
+option ``--no-test``. In this mode, the doctest fixer does not run
+the doctester and only normalizes the style of the ``# optional`` tags.
+
+
+Use in virtual environments
+---------------------------
+
+The doctest fixer can also run tests using the Sage doctester installed in
+a virtual environment::
+
+    [mkoeppe@localhost sage]$ ./sage --fixdoctests --overwrite                      \
+                                --distribution sagemath-categories                  \
+                                src/sage/geometry/schemes/generic/*.py
+
+This command, using ``--distribution``, is equivalent to a command
+that uses the more specific options ``--venv`` and ``--environment``::
+
+    [mkoeppe@localhost sage]$ ./sage --fixdoctests --overwrite                      \
+                                --venv pkgs/sagemath-categories/.tox/sagepython-... \
+                                --environment sage.all__sagemath_categories
+                                src/sage/geometry/schemes/generic/*.py
+
+Either way, the options ``--keep-both``, ``--full-tracebacks``, and
+``--if-installed`` are implied.
+
+In this mode of operation, when the doctester encounters a global name
+that is unknown in its virtual environment (:class:`NameError`),
+the doctest fixer will look up the name in its own environment (typically
+a full installation of the Sage library) and add a ``# needs ...`` tag
+to the doctest.
+
+Likewise, when the doctester runs into a :class:`ModuleNotFoundError`,
+the doctest fixer will automatically add a ``# needs ...`` tag.
+
+The switch ``--distribution`` can be repeated; the given distributions
+will be tested in sequence.  Using ``--distribution all`` is equivalent
+to a preset list of ``--distribution`` switches.  With the switch
+``--fixed-point``, the doctest fixer runs the given distributions until
+no more changes are made.
+
+
+Updating baseline files
+-----------------------
+
+The modularized distribution packages ``pkgs/sagemath-categories`` and
+``pkgs/sagemath-repl`` contain files ``known-test-failures*.json`` for use
+with the option ``--baseline-stats-path``, see section
+:ref:`section-doctest-auxiliary-files`.
+
+After running the doctesters of the distributions, for example, via
+``sage --fixdoctests``, you can use the test results stored in
+``timings2.json`` files to update the ``known-test-failures*.json`` files.
+This update can be done using the command::
+
+    [mkoeppe@localhost sage]$ ./sage --fixdoctests --no-test                        \
+                                --update-known-test-failures --distribution all

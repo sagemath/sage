@@ -21,7 +21,6 @@ AUTHORS:
 REFERENCES:
 
 - Chaps. 15, 24 of R. Godement: *Algebra* [God1968]_
-
 """
 # *****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
@@ -31,8 +30,8 @@ REFERENCES:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-from __future__ import absolute_import
 
+from sage.misc.lazy_attribute import lazy_attribute
 from sage.structure.element import MultiplicativeGroupElement
 from sage.tensor.modules.free_module_tensor import FreeModuleTensor
 
@@ -124,9 +123,9 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
     In particular, they can be displayed as such::
 
         sage: a.display(e)
-        a = e_1*e^1 + 2 e_1*e^2 + e_2*e^1 + 3 e_2*e^2
+        a = e_1⊗e^1 + 2 e_1⊗e^2 + e_2⊗e^1 + 3 e_2⊗e^2
         sage: a.display(f)
-        a = 2 f_1*f^1 + 3 f_1*f^2 + f_2*f^1 + 2 f_2*f^2
+        a = 2 f_1⊗f^1 + 3 f_1⊗f^2 + f_2⊗f^1 + 2 f_2⊗f^2
 
     The automorphism acting on a module element::
 
@@ -848,7 +847,7 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
             True
 
         """
-        # No need for consistency check since self and other are guaranted
+        # No need for consistency check since self and other are guaranteed
         # to have the same parent. In particular, they are defined on the same
         # free module.
         #
@@ -900,7 +899,7 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
             sage: s(e[1]) == a(b(e[1]))
             True
             sage: s.display()
-            13 e_0*e^0 + 18 e_0*e^1 + 18 e_1*e^0 + 25 e_1*e^1
+            13 e_0⊗e^0 + 18 e_0⊗e^1 + 18 e_1⊗e^0 + 25 e_1⊗e^1
 
         Tensor product::
 
@@ -912,12 +911,12 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
             sage: s = a*c ; s
             Type-(2,2) tensor on the Rank-2 free module M over the Integer Ring
             sage: s.display()
-            3 e_0*e_0*e^0*e^0 + 4 e_0*e_0*e^0*e^1 + 6 e_0*e_0*e^1*e^0
-             + 8 e_0*e_0*e^1*e^1 + 5 e_0*e_1*e^0*e^0 + 7 e_0*e_1*e^0*e^1
-             + 10 e_0*e_1*e^1*e^0 + 14 e_0*e_1*e^1*e^1 + 3 e_1*e_0*e^0*e^0
-             + 4 e_1*e_0*e^0*e^1 + 9 e_1*e_0*e^1*e^0 + 12 e_1*e_0*e^1*e^1
-             + 5 e_1*e_1*e^0*e^0 + 7 e_1*e_1*e^0*e^1 + 15 e_1*e_1*e^1*e^0
-             + 21 e_1*e_1*e^1*e^1
+            3 e_0⊗e_0⊗e^0⊗e^0 + 4 e_0⊗e_0⊗e^0⊗e^1 + 6 e_0⊗e_0⊗e^1⊗e^0
+             + 8 e_0⊗e_0⊗e^1⊗e^1 + 5 e_0⊗e_1⊗e^0⊗e^0 + 7 e_0⊗e_1⊗e^0⊗e^1
+             + 10 e_0⊗e_1⊗e^1⊗e^0 + 14 e_0⊗e_1⊗e^1⊗e^1 + 3 e_1⊗e_0⊗e^0⊗e^0
+             + 4 e_1⊗e_0⊗e^0⊗e^1 + 9 e_1⊗e_0⊗e^1⊗e^0 + 12 e_1⊗e_0⊗e^1⊗e^1
+             + 5 e_1⊗e_1⊗e^0⊗e^0 + 7 e_1⊗e_1⊗e^0⊗e^1 + 15 e_1⊗e_1⊗e^1⊗e^0
+             + 21 e_1⊗e_1⊗e^1⊗e^1
 
         TESTS::
 
@@ -1055,6 +1054,55 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
                 raise NotImplementedError("basis1 != basis2 not implemented yet")
         return self._matrices[(basis1, basis2)]
 
+    def _some_matrix(self):
+        r"""
+        Return the matrix of ``self`` w.r.t. some basis.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(QQ, 2, name='M')
+            sage: e = M.basis('e')
+            sage: a = M.automorphism([[1,1],[0,2]], name='a')
+            sage: a._some_matrix()
+            [1 1]
+            [0 2]
+        """
+        self.matrix()  # forces the update of the matrix in the module's default
+                       # basis, to make sure that the dictionary self._matrices
+                       # is not empty
+        return next(iter(self._matrices.values()))
+
+    @lazy_attribute
+    def characteristic_polynomial(self):
+        r"""
+        Return the characteristic polynomial of ``self``.
+
+        :meth:`characteristic_polynomial` and :meth:`charpoly` are the same method.
+
+        INPUT:
+
+        - ``var`` -- string (default: ``'x'``); a variable name
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(QQ, 2, name='M')
+            sage: e = M.basis('e')
+            sage: a = M.automorphism([[1,1],[0,2]], name='a')
+            sage: a.matrix(e)
+            [1 1]
+            [0 2]
+            sage: a.characteristic_polynomial()
+            x^2 - 3*x + 2
+            sage: a.charpoly()
+            x^2 - 3*x + 2
+            sage: a.charpoly('T')
+            T^2 - 3*T + 2
+        """
+        return self._some_matrix().characteristic_polynomial
+
+    charpoly = characteristic_polynomial
+
+    @lazy_attribute
     def det(self):
         r"""
         Return the determinant of ``self``.
@@ -1085,13 +1133,62 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
             1
 
         """
-        self.matrix() # forces the update of the matrix in the module's default
-                      # basis, to make sure that the dictionary self._matrices
-                      # is not empty
-        return next(iter(self._matrices.values())).det() # pick a random value in the
-                                                # dictionary self._matrices
-                                                # and compute the determinant
+        return self._some_matrix().det
 
+    determinant = det
+
+    @lazy_attribute
+    def fcp(self):
+        r"""
+        Return the factorization of the characteristic polynomial of ``self``.
+
+        INPUT:
+
+        - ``var`` -- string (default: ``'x'``); a variable name
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(QQ, 2, name='M')
+            sage: e = M.basis('e')
+            sage: a = M.automorphism([[1,1],[0,2]], name='a')
+            sage: a.matrix(e)
+            [1 1]
+            [0 2]
+            sage: a.fcp()                                                               # needs sage.libs.pari
+            (x - 2) * (x - 1)
+            sage: a.fcp('T')                                                            # needs sage.libs.pari
+            (T - 2) * (T - 1)
+        """
+        return self._some_matrix().fcp
+
+    @lazy_attribute
+    def minimal_polynomial(self):
+        r"""
+        Return the minimal polynomial of ``self``.
+
+        :meth:`minimal_polynomial` and :meth:`minpoly` are the same method.
+
+        INPUT:
+
+        - ``var`` -- string (default: ``'x'``); a variable name
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(GF(7), 3, name='M')
+            sage: e = M.basis('e')
+            sage: a = M.automorphism([[0,1,2], [-1,0,3], [2,4,1]], name='a')
+            sage: a.minpoly()                                                           # needs sage.libs.pari
+            x^3 + 6*x^2 + 6*x + 1
+            sage: a.minimal_polynomial()                                                # needs sage.libs.pari
+            x^3 + 6*x^2 + 6*x + 1
+            sage: a.minimal_polynomial('T')                                             # needs sage.libs.pari
+            T^3 + 6*T^2 + 6*T + 1
+        """
+        return self._some_matrix().minimal_polynomial
+
+    minpoly = minimal_polynomial
+
+    @lazy_attribute
     def trace(self):
         r"""
         Return the trace of ``self``.
@@ -1118,9 +1215,4 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
             2
 
         """
-        self.matrix() # forces the update of the matrix in the module's default
-                      # basis, to make sure that the dictionary self._matrices
-                      # is not empty
-        return next(iter(self._matrices.values())).trace() # pick a random value in the
-                                                  # dictionary self._matrices
-                                                  # and compute the trace
+        return self._some_matrix().trace

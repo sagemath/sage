@@ -18,8 +18,11 @@ AUTHORS:
 
 
 from sage.groups.group import Group
-from sage.matrix.all import MatrixSpace
-from sage.modules.all import FreeModule
+from sage.categories.groups import Groups
+from sage.groups.matrix_gps.linear import GL
+from sage.categories.rings import Rings
+from sage.matrix.matrix_space import MatrixSpace
+from sage.modules.free_module import FreeModule
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.cachefunc import cached_method
 
@@ -126,11 +129,11 @@ class AffineGroup(UniqueRepresentation, Group):
 
     Some additional ways to create affine groups::
 
-        sage: A = AffineSpace(2, GF(4,'a'));  A
+        sage: A = AffineSpace(2, GF(4,'a'));  A                                         # needs sage.rings.finite_rings
         Affine Space of dimension 2 over Finite Field in a of size 2^2
-        sage: G = AffineGroup(A); G
+        sage: G = AffineGroup(A); G                                                     # needs sage.rings.finite_rings
         Affine Group of degree 2 over Finite Field in a of size 2^2
-        sage: G is AffineGroup(2,4) # shorthand
+        sage: G is AffineGroup(2,4)  # shorthand                                        # needs sage.rings.finite_rings
         True
 
         sage: V = ZZ^3;  V
@@ -149,10 +152,10 @@ class AffineGroup(UniqueRepresentation, Group):
 
         EXAMPLES::
 
-            sage: A = AffineSpace(2, GF(4,'a'))
-            sage: AffineGroup(A) is AffineGroup(2,4)
+            sage: A = AffineSpace(2, GF(4,'a'))                                         # needs sage.rings.finite_rings
+            sage: AffineGroup(A) is AffineGroup(2,4)                                    # needs sage.rings.finite_rings
             True
-            sage: AffineGroup(A) is AffineGroup(2, GF(4,'a'))
+            sage: AffineGroup(A) is AffineGroup(2, GF(4,'a'))                           # needs sage.rings.finite_rings
             True
             sage: A = AffineGroup(2, QQ)
             sage: V = QQ^2
@@ -175,7 +178,7 @@ class AffineGroup(UniqueRepresentation, Group):
                 from sage.rings.finite_rings.finite_field_constructor import FiniteField
                 var = kwds.get('var', 'a')
                 ring = FiniteField(ring, var)
-        return super(AffineGroup, cls).__classcall__(cls, degree, ring)
+        return super().__classcall__(cls, degree, ring)
 
     def __init__(self, degree, ring):
         """
@@ -183,11 +186,11 @@ class AffineGroup(UniqueRepresentation, Group):
 
         INPUT:
 
-        - ``degree`` -- integer. The degree of the affine group, that
+        - ``degree`` -- integer; the degree of the affine group, that
           is, the dimension of the affine space the group is acting on
-          naturally.
+          naturally
 
-        - ``ring`` -- a ring. The base ring of the affine space.
+        - ``ring`` -- a ring; the base ring of the affine space
 
         EXAMPLES::
 
@@ -201,17 +204,34 @@ class AffineGroup(UniqueRepresentation, Group):
 
             sage: G = AffineGroup(2, GF(5)); G
             Affine Group of degree 2 over Finite Field of size 5
+
+            sage: # needs sage.libs.gap (for gens)
             sage: TestSuite(G).run()
+
+            sage: G.category()
+            Category of finite groups
+
+            sage: Aff6 = AffineGroup(6, QQ)
+            sage: Aff6.category()
+            Category of infinite groups
         """
         self._degree = degree
-        Group.__init__(self, base=ring)
+        cat = Groups()
+        if degree == 0 or ring in Rings().Finite():
+            cat = cat.Finite()
+        elif ring in Rings().Infinite():
+            cat = cat.Infinite()
+        self._GL = GL(degree, ring)
+        Group.__init__(self, base=ring, category=cat)
 
     Element = AffineGroupElement
 
     def _element_constructor_check(self, A, b):
         """
-        Verify that ``A``, ``b`` define an affine group element and raises a
-        ``TypeError`` if the input does not define a valid group element.
+        Verify that ``A``, ``b`` define an affine group element.
+
+        This raises a :class:`TypeError` if the input does not define
+        a valid group element.
 
         This is called from the group element constructor and can be
         overridden for subgroups of the affine group. It is guaranteed
@@ -253,7 +273,8 @@ class AffineGroup(UniqueRepresentation, Group):
             sage: latex(G)
             \mathrm{Aff}_{6}(\Bold{F}_{5})
         """
-        return "\\mathrm{Aff}_{%s}(%s)"%(self.degree(), self.base_ring()._latex_())
+        return "\\mathrm{Aff}_{%s}(%s)" % (self.degree(),
+                                           self.base_ring()._latex_())
 
     def _repr_(self):
         """
@@ -264,15 +285,30 @@ class AffineGroup(UniqueRepresentation, Group):
             sage: AffineGroup(6, GF(5))
             Affine Group of degree 6 over Finite Field of size 5
         """
-        return "Affine Group of degree %s over %s"%(self.degree(), self.base_ring())
+        return "Affine Group of degree %s over %s" % (self.degree(),
+                                                      self.base_ring())
+
+    def cardinality(self):
+        """
+        Return the cardinality of ``self``.
+
+        EXAMPLES::
+
+            sage: # needs sage.libs.gap
+            sage: AffineGroup(6, GF(5)).cardinality()
+            172882428468750000000000000000
+
+            sage: AffineGroup(6, ZZ).cardinality()
+            +Infinity
+        """
+        card_GL = self._GL.cardinality()
+        return card_GL * self.base_ring().cardinality()**self.degree()
 
     def degree(self):
         """
         Return the dimension of the affine space.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -291,10 +327,8 @@ class AffineGroup(UniqueRepresentation, Group):
         Return the space of matrices representing the general linear
         transformations.
 
-        OUTPUT:
-
-        The parent of the matrices `A` defining the affine group
-        element `Ax+b`.
+        OUTPUT: the parent of the matrices `A` defining the affine group
+        element `Ax+b`
 
         EXAMPLES::
 
@@ -357,9 +391,7 @@ class AffineGroup(UniqueRepresentation, Group):
 
         - ``A`` -- anything that determines a matrix
 
-        OUTPUT:
-
-        The affine group element `x \mapsto A x`.
+        OUTPUT: The affine group element `x \mapsto A x`
 
         EXAMPLES::
 
@@ -380,9 +412,7 @@ class AffineGroup(UniqueRepresentation, Group):
 
         - ``b`` -- anything that determines a vector
 
-        OUTPUT:
-
-        The affine group element `x \mapsto x + b`.
+        OUTPUT: The affine group element `x \mapsto x + b`
 
         EXAMPLES::
 
@@ -405,7 +435,7 @@ class AffineGroup(UniqueRepresentation, Group):
 
         INPUT:
 
-        - ``v`` -- a vector, or something that determines a vector.
+        - ``v`` -- a vector, or something that determines a vector
 
         OUTPUT:
 
@@ -439,6 +469,7 @@ class AffineGroup(UniqueRepresentation, Group):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.gap
             sage: G = AffineGroup(4, GF(3))
             sage: G.random_element()  # random
                   [2 0 1 2]     [1]
@@ -448,9 +479,7 @@ class AffineGroup(UniqueRepresentation, Group):
             sage: G.random_element() in G
             True
         """
-        A = self.matrix_space().random_element()
-        while not A.is_invertible():  # a generic matrix is invertible
-            A.randomize()
+        A = self._GL.random_element()
         b = self.vector_space().random_element()
         return self.element_class(self, A, b, check=False, convert=False)
 
@@ -465,9 +494,41 @@ class AffineGroup(UniqueRepresentation, Group):
             sage: G.an_element() in G
             True
         """
-        A = self.matrix_space().an_element()
-        while not A.is_invertible():  # a generic matrix is not always invertible
-            A.randomize()
+        A = self._GL.an_element()
         b = self.vector_space().an_element()
         return self.element_class(self, A, b, check=False, convert=False)
 
+    def some_elements(self):
+        """
+        Return some elements.
+
+        EXAMPLES::
+
+            sage: # needs sage.libs.gap
+            sage: G = AffineGroup(4,5)
+            sage: G.some_elements()
+            [      [2 0 0 0]     [1]
+                   [0 1 0 0]     [0]
+             x |-> [0 0 1 0] x + [0]
+                   [0 0 0 1]     [0],
+                   [2 0 0 0]     [0]
+                   [0 1 0 0]     [0]
+             x |-> [0 0 1 0] x + [0]
+                   [0 0 0 1]     [0],
+                   [2 0 0 0]     [...]
+                   [0 1 0 0]     [...]
+             x |-> [0 0 1 0] x + [...]
+                   [0 0 0 1]     [...]]
+            sage: all(v.parent() is G for v in G.some_elements())
+            True
+
+            sage: G = AffineGroup(2,QQ)
+            sage: G.some_elements()
+            [      [1 0]     [1]
+             x |-> [0 1] x + [0],
+             ...]
+        """
+        mats = self._GL.some_elements()
+        vecs = self.vector_space().some_elements()
+        return [self.element_class(self, A, b, check=False, convert=False)
+                for A in mats for b in vecs]

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 from cpython.object cimport PyObject, PyTypeObject
 
 cdef extern from *:
@@ -39,7 +40,9 @@ cdef inline wrapperbase* get_slotdef(wrapper_descriptor slotwrapper) except NULL
 
     TESTS::
 
-        sage: cython('''
+        sage: # needs sage.misc.cython
+        sage: cython(
+        ....: '''
         ....: from sage.cpython.wrapperdescr cimport get_slotdef
         ....: from cpython.long cimport PyLong_FromVoidPtr
         ....: def py_get_slotdef(slotwrapper):
@@ -53,7 +56,7 @@ cdef inline wrapperbase* get_slotdef(wrapper_descriptor slotwrapper) except NULL
         True
         sage: py_get_slotdef(bytes.__lt__) == py_get_slotdef(bytes.__gt__)
         False
-        sage: class X(object):
+        sage: class X():
         ....:     def __eq__(self, other):
         ....:         return False
         sage: py_get_slotdef(X.__eq__)

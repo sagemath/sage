@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Containers for storing coercion data
 
@@ -16,8 +17,8 @@ as an entry in a normal dictionary: Its existence in :class:`TripleDict`
 prevents it from being garbage collected.
 
 That container currently is used to store coercion and conversion maps between
-two parents (:trac:`715`) and to store homsets of pairs of objects of a
-category (:trac:`11521`). In both cases, it is essential that the parent
+two parents (:issue:`715`) and to store homsets of pairs of objects of a
+category (:issue:`11521`). In both cases, it is essential that the parent
 structures remain garbage collectable, it is essential that the data access is
 faster than with a usual :class:`~weakref.WeakKeyDictionary`, and we enforce
 the "unique parent condition" in Sage (parent structures should be identical
@@ -25,18 +26,19 @@ if they are equal).
 
 :class:`MonoDict` behaves similarly, but it takes a single item as a key. It
 is used for caching the parents which allow a coercion map into a fixed other
-parent (:trac:`12313`).
+parent (:issue:`12313`).
 
-By :trac:`14159`, :class:`MonoDict` and :class:`TripleDict` can be optionally
+By :issue:`14159`, :class:`MonoDict` and :class:`TripleDict` can be optionally
 used with weak references on the values.
 
 Note that this kind of dictionary is also used for caching actions and
 coerce maps. In previous versions of Sage, the cache was by strong
 references and resulted in a memory leak in the following example.
-However, this leak was fixed by :trac:`715`, using weak references::
+However, this leak was fixed by :issue:`715`, using weak references::
 
+    sage: # needs sage.combinat sage.modules sage.rings.finite_rings
     sage: K.<t> = GF(2^55)
-    sage: for i in range(50):
+    sage: for i in range(20):
     ....:     a = K.random_element()
     ....:     E = EllipticCurve(j=a)
     ....:     P = E.random_point()
@@ -72,13 +74,13 @@ from cysignals.memory cimport check_calloc, sig_free
 cdef extern from "Python.h":
     void PyTuple_SET_ITEM(object tuple, Py_ssize_t index, PyObject* item)
 
-cdef extern from "sage/cpython/pyx_visit.h":
+cdef extern from "../cpython/pyx_visit.h":
     void Py_VISIT3(PyObject*, visitproc, void*)
 
 cdef type KeyedRef, ref
 from weakref import KeyedRef, ref
 
-cdef inline bint is_dead_keyedref(x):
+cdef inline bint is_dead_keyedref(x) noexcept:
     """
     Check whether ``x`` is a ``KeyedRef`` which is dead.
     """
@@ -92,7 +94,7 @@ cdef object dummy = object()
 cdef PyObject* deleted_key = <PyObject*>dummy
 
 
-cdef inline bint valid(PyObject* obj):
+cdef inline bint valid(PyObject* obj) noexcept:
     """
     Check whether ``obj`` points to a valid object
     """
@@ -274,7 +276,7 @@ cdef class MonoDict:
     - ``data`` -- optional iterable defining initial data, as dict or
       iterable of (key, value) pairs.
 
-    - ``weak_values`` -- optional bool (default False). If it is true,
+    - ``weak_values`` -- optional bool (default: ``False``). If it is true,
       weak references to the values in this dictionary will be used,
       when possible.
 
@@ -288,7 +290,7 @@ cdef class MonoDict:
         sage: L[c] = 3
 
     The key is expected to be a unique object. Hence, the item stored for ``c``
-    can not be obtained by providing another equal string::
+    cannot be obtained by providing another equal string::
 
         sage: L[a]
         1
@@ -367,7 +369,7 @@ cdef class MonoDict:
 
     The following demonstrates that :class:`MonoDict` is safer than
     :class:`~weakref.WeakKeyDictionary` against recursions created by nested
-    callbacks; compare :trac:`15069` (the mechanism used now is different, though)::
+    callbacks; compare :issue:`15069` (the mechanism used now is different, though)::
 
         sage: M = MonoDict()
         sage: class A: pass
@@ -397,10 +399,6 @@ cdef class MonoDict:
         ....:     prev = newA
         sage: len(M)
         1000
-        sage: del a  # py2 -- does not appear to be an issue on Python 3
-        Exception RuntimeError: 'maximum recursion depth exceeded...' in <function remove at ...> ignored
-        sage: len(M) > 0  # py2
-        True
 
     Check that also in the presence of circular references, :class:`MonoDict`
     gets properly collected::
@@ -408,17 +406,18 @@ cdef class MonoDict:
         sage: import gc
         sage: def count_type(T):
         ....:     return len([c for c in gc.get_objects() if isinstance(c,T)])
-        sage: _ = gc.collect()
+        sage: gc.freeze()  # so that gc.collect() only deals with our trash
         sage: N = count_type(MonoDict)
         sage: for i in range(100):
         ....:     V = [MonoDict({"id":j+100*i}) for j in range(100)]
-        ....:     n= len(V)
-        ....:     for i in range(n): V[i][V[(i+1)%n]]=(i+1)%n
+        ....:     n = len(V)
+        ....:     for i in range(n): V[i][V[(i+1)%n]] = (i+1)%n
         ....:     del V
         ....:     _ = gc.collect()
         ....:     assert count_type(MonoDict) == N
         sage: count_type(MonoDict) == N
         True
+        sage: gc.unfreeze()
 
     AUTHORS:
 
@@ -427,7 +426,7 @@ cdef class MonoDict:
     - Simon King (2013-02)
     - Nils Bruin (2013-11)
     """
-    cdef mono_cell* lookup(self, PyObject* key):
+    cdef mono_cell* lookup(self, PyObject* key) noexcept:
         """
         Return a pointer to where ``key`` should be stored in this
         :class:`MonoDict`.
@@ -779,7 +778,7 @@ cdef class MonoDict:
             sage: L[1] = None
             sage: L[2] = True
             sage: L.items()
-            <generator object at ...>
+            <...generator object at ...>
             sage: sorted(L.items())
             [(1, None), (2, True)]
         """
@@ -846,7 +845,7 @@ cdef class MonoDict:
 # and we have to replicate here) is the "eraser" which in its closure
 # stores a reference back to the dictionary itself (meaning that
 # MonoDicts only disappear on cyclic GC).
-cdef int MonoDict_traverse(MonoDict self, visitproc visit, void* arg):
+cdef int MonoDict_traverse(MonoDict self, visitproc visit, void* arg) noexcept:
     if not self.mask:
         return 0
     Py_VISIT3(<PyObject*>self.eraser, visit, arg)
@@ -858,7 +857,7 @@ cdef int MonoDict_traverse(MonoDict self, visitproc visit, void* arg):
             Py_VISIT3(cursor.value, visit, arg)
 
 
-cdef int MonoDict_clear(MonoDict self):
+cdef int MonoDict_clear(MonoDict self) noexcept:
     """
     We clear a monodict by taking first taking away the table before
     dereffing its contents. That shortcuts callbacks, so we deref the
@@ -1010,7 +1009,7 @@ cdef class TripleDict:
     - ``data`` -- optional iterable defining initial data, as dict or
       iterable of (key, value) pairs.
 
-    - ``weak_values`` -- optional bool (default False). If it is true,
+    - ``weak_values`` -- optional bool (default: ``False``). If it is true,
       weak references to the values in this dictionary will be used,
       when possible.
 
@@ -1125,7 +1124,7 @@ cdef class TripleDict:
 
     - Nils Bruin, 2013-11
     """
-    cdef triple_cell* lookup(self, PyObject* key1, PyObject* key2, PyObject* key3):
+    cdef triple_cell* lookup(self, PyObject* key1, PyObject* key2, PyObject* key3) noexcept:
         """
         Return a pointer to where ``(key1, key2, key3)`` should be
         stored in this :class:`MonoDict`.
@@ -1454,7 +1453,7 @@ cdef class TripleDict:
             sage: L = TripleDict()
             sage: L[1,2,3] = None
             sage: L.items()
-            <generator object at ...>
+            <...generator object at ...>
             sage: list(L.items())
             [((1, 2, 3), None)]
         """
@@ -1526,7 +1525,7 @@ cdef class TripleDict:
 # and we have to replicate here) is the "eraser" which in its closure
 # stores a reference back to the dictionary itself (meaning that
 # TripleDicts only disappear on cyclic GC).
-cdef int TripleDict_traverse(TripleDict self, visitproc visit, void* arg):
+cdef int TripleDict_traverse(TripleDict self, visitproc visit, void* arg) noexcept:
     if not self.mask:
         return 0
     Py_VISIT3(<PyObject*>self.eraser, visit, arg)
@@ -1540,7 +1539,7 @@ cdef int TripleDict_traverse(TripleDict self, visitproc visit, void* arg):
             Py_VISIT3(cursor.value, visit, arg)
 
 
-cdef int TripleDict_clear(TripleDict self):
+cdef int TripleDict_clear(TripleDict self) noexcept:
     if not self.mask:
         return 0
     cdef size_t mask = self.mask

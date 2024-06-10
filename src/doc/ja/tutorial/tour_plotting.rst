@@ -1,3 +1,5 @@
+.. sage-doctest: needs sage.plot sage.symbolic
+
 .. _section-plot:
 
 プロットする
@@ -51,7 +53,6 @@ Sageの2次元プロット機能を使うと，円，直線，多辺形の描画
 ::
 
     sage: c.show(aspect_ratio=1)
-
 
 
 同じことはコマンド ``show(c, aspect_ratio=1)`` としても可能だし，画像ファイルとして保存したければ ``c.save('filename.png', aspect_ratio=1)`` と実行してもよい．
@@ -142,12 +143,11 @@ Sageでは、(対象となる関数は限られるが)極座標プロット、�
     Graphics object consisting of 1 graphics primitive
 
 
-
 3次元プロット
 -----------------------
 
 Sageでは3次元プロットも作成することができる．
-ノートブック上でもREPL(コマンドライン)上でも，3次元プロットの表示はデフォルトでオープンソースパッケージ [Jmol]_ によって行なわれる．
+ノートブック上でもREPL(コマンドライン)上でも，3次元プロットの表示はデフォルトでオープンソースパッケージ [ThreeJS]_ によって行なわれる．
 Jmolではマウスによる描画の回転と拡大縮小が可能だ．
 
 ``plot3d`` を使って `f(x, y) = z` 形式の関数をプロットしてみよう:
@@ -177,7 +177,7 @@ Sageで3次元曲面プロットを行うための第三の方法が ``implicit_
 
     sage: x, y, z = var('x, y, z')
     sage: implicit_plot3d(x^2 + y^2 + z^2 - 4, (x,-2, 2), (y,-2, 2), (z,-2, 2))
-    Graphics3d Object   
+    Graphics3d Object
 
 以下で，さらにいくつかの3次元プロットを示しておこう:
 

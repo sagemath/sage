@@ -3,7 +3,7 @@ Classical Invariant Theory
 ==========================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/rings/invariants/invariant_theory
    sage/rings/invariants/reconstruction

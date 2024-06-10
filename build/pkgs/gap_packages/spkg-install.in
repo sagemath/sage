@@ -1,5 +1,34 @@
-GAP_ROOT="$SAGE_LOCAL/share/gap"
-PKG_DIR="$GAP_ROOT/pkg"
+# Ask GAP for the directory where sysinfo.gap lives. This is to
+# support system GAP installations. This root-path gathering
+# command is borrowed from gap's spkg-configure.m4 and modified
+# to separate the paths with spaces.
+GAPRUN="gap -r -q --bare --nointeract -c"
+_cmd='Display(JoinStringsWithSeparator(GAPInfo.RootPaths," "));'
+GAP_ROOT_PATHS=$(${GAPRUN} "${_cmd}")
+
+# Loop though GAP_ROOT_PATHS looking for sysinfo.gap
+GAP_ROOT=""
+for grp in $GAP_ROOT_PATHS; do
+    if [ -f "${grp}/sysinfo.gap" ]; then
+        GAP_ROOT=$grp
+        echo "found GAP root $GAP_ROOT"
+        break
+    fi
+done
+
+# Try the old sage default if nothing else worked.
+if [ -z "$GAP_ROOT" ]; then
+    GAP_ROOT="$SAGE_LOCAL/lib/gap"
+    echo "falling back to GAP root $GAP_ROOT"
+fi
+
+# And finally, throw an error ASAP if the build is going to fail anyway.
+if [ ! -f "${GAP_ROOT}/sysinfo.gap" ]; then
+    sdh_die "no sysinfo.gap in your gap root"
+fi
+
+# Where to install these packages
+PKG_DIR="$SAGE_LOCAL/lib/gap/pkg"
 
 PKG_SRC_DIR="$(pwd)/src/pkg"
 cd "$PKG_SRC_DIR"
@@ -11,33 +40,34 @@ cd "$PKG_SRC_DIR"
 #    (GAP 4.8.6 still had it, but this is gone in 4.10)
 
 sdh_install \
-    aclib-* \
-    AutoDoc-* \
+    aclib \
+    autodoc \
     corelg \
-    crime-* \
+    crime \
     cryst \
     crystcat \
-    design-* \
+    design \
     gbnp \
-    genss-* \
-    Hap* \
-    HAPcryst \
-    hecke-* \
-    liealgdb-* \
-    liepring-* \
-    liering-* \
-    loops-* \
-    MapClass-* \
-    PackageManager-* \
-    polymaking-* \
-    qpa-* \
-    quagroup-* \
-    radiroot-* \
-    repsn-* \
-    sla-* \
-    sonata-* \
-    Toric-* \
-    utils-* \
+    genss \
+    hap \
+    hapcryst \
+    hecke \
+    images \
+    liealgdb \
+    liepring \
+    liering \
+    loops \
+    mapclass \
+    polymaking \
+    qpa \
+    quagroup \
+    radiroot \
+    repsn \
+    singular \
+    sla \
+    sonata \
+    toric \
+    utils \
     "$PKG_DIR"
 
 install_compiled_pkg()
@@ -45,29 +75,27 @@ install_compiled_pkg()
     local pkg="$1"
     # Install the bin/ dir (where compiled modules should end up)
     # under <prefix>/lib/gap; we then symlink to it later
-    sdh_install bin "$SAGE_LOCAL/lib/gap/pkg/$pkg"
+    sdh_install * "$SAGE_LOCAL/lib/gap/pkg/$pkg"
 
+    # TODO:
     # Clean up any build artificts before installing the rest of the package
     # Also remove configure/Makefiles
     # Note: None, if any of the packages really have a proper install target
-    make clean  # Works for some packages but not all
-    rm -rf bin/
-    rm -rf configure configure.* config.* autogen.sh *.m4 Makefile* m4/
+    #make clean  # Works for some packages but not all
+    #rm -rf bin/
+    #rm -rf configure configure.* config.* autogen.sh *.m4 Makefile* m4/
 
-    # Create the bin/ symlink
-    ln -s "$SAGE_LOCAL/lib/gap/pkg/$pkg/bin" bin
-
-    # Install the rest of the package files
-    sdh_install * "$PKG_DIR/$pkg"
 }
 
 # Build and install compiled packages:
 #
 # These packages have an old ./configure that take the GAP_ROOT as a positional
 # argument
-for pkg in cohomolo-* crypting-* grape-* guava-* orb-*
+for pkg in cohomolo crypting grape guava orb datastructures
 do
     echo "Building GAP package $pkg"
+    CFLAGS="$CFLAGS -Wno-implicit-function-declaration"
+    export CFLAGS
     cd "$PKG_SRC_DIR/$pkg"
     ./configure "$GAP_ROOT"
     sdh_make -j1
@@ -89,7 +117,7 @@ pararr=( " " " " "--with-external-planarity" "--with-external-libsemigroups" )
 ##############################################################################
 
 parind=0
-for pkg in nq-* io-* digraphs-* semigroups-*
+for pkg in nq io digraphs semigroups
 do
     echo "Building GAP package $pkg"
     cd "$PKG_SRC_DIR/$pkg"

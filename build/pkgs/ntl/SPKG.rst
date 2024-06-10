@@ -1,5 +1,5 @@
-NTL
-===
+ntl: A library for doing number theory
+======================================
 
 Description
 -----------
@@ -21,13 +21,6 @@ Upstream Contact
 ----------------
 
 -  Victor Shoup - for contact info see http://www.shoup.net/
-
-Dependencies
-------------
-
--  gmp
--  gf2x
-
 
 Special Update/Build Instructions
 ---------------------------------

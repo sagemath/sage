@@ -37,7 +37,7 @@ class QuiverRepHom(CallMorphism):
 
     - ``codomain`` -- :class:`QuiverRep`, the codomain of the homomorphism
 
-    - ``data`` - dict, list, or :class:`QuiverRepElement`
+    - ``data`` -- dict, list, or :class:`QuiverRepElement`
       (default: empty dict),
       with the following meaning:
 
@@ -202,7 +202,7 @@ class QuiverRepHom(CallMorphism):
         if data in self._base_ring**total_dim:
             self._vector = data
             self._assert_valid_hom()
-            super(QuiverRepHom, self).__init__(domain.Hom(codomain))
+            super().__init__(domain.Hom(codomain))
             return
 
         # If data is not a dict, create one
@@ -267,11 +267,11 @@ class QuiverRepHom(CallMorphism):
                 start_index += dim
 
         # Get the coordinates of the vector
-        from sage.categories.map import is_Map
+        from sage.categories.map import Map
         vector = []
         for v in self._quiver:
             if v in maps_dict:
-                if is_Map(maps_dict[v]):
+                if isinstance(maps_dict[v], Map):
                     try:
                         m = maps_dict[v].matrix()
                     except (AttributeError, ValueError):
@@ -288,7 +288,7 @@ class QuiverRepHom(CallMorphism):
         # Wrap as a vector, check it, and return
         self._vector = (self._base_ring**total_dim)(vector)
         self._assert_valid_hom()
-        super(QuiverRepHom, self).__init__(domain.Hom(codomain))
+        super().__init__(domain.Hom(codomain))
 
     def _repr_(self):
         """
@@ -325,7 +325,7 @@ class QuiverRepHom(CallMorphism):
             sage: h(S.gens()[1]) == y
             True
 
-        The following was an issue during work on :trac:`12630`::
+        The following was an issue during work on :issue:`12630`::
 
             sage: Q = DiGraph({1: {}}).path_semigroup()
             sage: M = Q.I(GF(3), 1)
@@ -562,7 +562,7 @@ class QuiverRepHom(CallMorphism):
         # If all that holds just check the vectors
         return self._vector != other._vector
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return whether ``self`` is the zero morphism.
 
@@ -585,8 +585,6 @@ class QuiverRepHom(CallMorphism):
             False
         """
         return any(self._vector)
-
-    __nonzero__ = __bool__
 
     def __mul__(self, other):
         """
@@ -618,7 +616,7 @@ class QuiverRepHom(CallMorphism):
 
     def _assert_valid_hom(self):
         """
-        Raise a ``ValueError`` if the homomorphism is not well defined.
+        Raise a :class:`ValueError` if the homomorphism is not well defined.
 
         Specifically it checks that the domain and codomains of the maps are
         correct and that the edge diagrams commute.
@@ -1110,7 +1108,7 @@ class QuiverRepHom(CallMorphism):
             Representation with dimension vector (5, 2, 1, 1, 4)
 
         The algebraic dual of an indecomposable projective is the indecomposable
-        projective of the same vertex in the opposite quiver.
+        projective of the same vertex in the opposite quiver. ::
 
             sage: Q.reverse().P(QQ, 4)
             Representation with dimension vector (5, 2, 1, 1, 4)
@@ -1198,13 +1196,13 @@ class QuiverRepHom(CallMorphism):
             if not isinstance(x, QuiverRepHom):
                 raise TypeError("maps must be a QuiverRepHom or list of QuiverRepHoms")
             if self._quiver is not x._quiver:
-                raise ValueError("Cannot direct sum maps from different quivers")
+                raise ValueError("cannot direct sum maps from different quivers")
             if self._base_ring is not x._base_ring:
-                raise ValueError("Base rings must be identical")
+                raise ValueError("base rings must be identical")
             if pinch == 'domain' and self._domain is not x._domain:
-                raise ValueError("Cannot pinch maps, domains do not agree")
+                raise ValueError("cannot pinch maps, domains do not agree")
             if pinch == 'codomain' and self._codomain is not x._codomain:
-                raise ValueError("Cannot pinch maps, codomains do not agree")
+                raise ValueError("cannot pinch maps, codomains do not agree")
 
         # Get the sums and their maps
         if pinch == 'domain':

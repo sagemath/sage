@@ -1,0 +1,3 @@
+sagemath
+sagemath-doc
+sagemath-jupyter

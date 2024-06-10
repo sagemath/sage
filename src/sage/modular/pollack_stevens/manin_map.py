@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.rings.padics
 r"""
 Manin map
 
@@ -34,15 +34,14 @@ EXAMPLES::
     1
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Robert Pollack <rpollack@math.bu.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function, absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.continued_fraction import convergents
 from .sigma0 import Sigma0
@@ -162,7 +161,7 @@ def unimod_matrices_from_infty(r, s):
         return []
 
 
-class ManinMap(object):
+class ManinMap():
     r"""
     Map from a set of right coset representatives of `\Gamma_0(N)` in
     `SL_2(\ZZ)` to a coefficient module that satisfies the Manin
@@ -368,7 +367,7 @@ class ManinMap(object):
             38
         """
         for B in self._manin.reps():
-            if not B in self._dict:
+            if B not in self._dict:
                 self._dict[B] = self._compute_image_from_gens(B)
 
     def __add__(self, right):
@@ -595,7 +594,7 @@ class ManinMap(object):
 
         - ``f`` -- anything that can be called with elements of the coefficient module
         - ``codomain`` -- (default: None) the codomain of the return map
-        - ``to_moments`` -- (default: False) if True, will apply ``f`` to each of the moments instead
+        - ``to_moments`` -- (default: ``False``) if True, will apply ``f`` to each of the moments instead
 
         EXAMPLES::
 
@@ -655,7 +654,7 @@ class ManinMap(object):
 
         INPUT:
 
-        - ``gamma`` - `2 \times 2` integer matrix of nonzero determinant, with a
+        - ``gamma`` -- `2 \times 2` integer matrix of nonzero determinant, with a
           well-defined action on the coefficient module
 
         OUTPUT:
@@ -763,7 +762,7 @@ class ManinMap(object):
         return self.__class__(self._codomain.specialize(*args), self._manin,
                               D, check=False)
 
-    def hecke(self, ell, algorithm = 'prep'):
+    def hecke(self, ell, algorithm='prep'):
         r"""
         Return the image of this Manin map under the Hecke operator `T_{\ell}`.
 
@@ -797,7 +796,7 @@ class ManinMap(object):
         M = self._manin
 
         if algorithm == 'prep':
-            ## psi will denote self | T_ell
+            # psi will denote self | T_ell
             psi = {}
             for g in M.gens():
                 psi_g = sum((self[h] * A for h, A in M.prep_hecke_on_gen_list(ell, g)), self._codomain(0))

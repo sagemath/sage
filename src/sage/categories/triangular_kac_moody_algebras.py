@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Kac-Moody Algebras With Triangular Decomposition Basis
 
@@ -37,7 +38,7 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
 
             sage: from sage.categories.triangular_kac_moody_algebras import TriangularKacMoodyAlgebras
             sage: TriangularKacMoodyAlgebras(QQ).super_categories()
-            [Join of Category of graded lie algebras with basis over Rational Field
+            [Join of Category of graded Lie algebras with basis over Rational Field
                  and Category of kac moody algebras over Rational Field]
 
         """
@@ -60,10 +61,10 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = lie_algebras.so(QQ, 5)
-                sage: L.f()
+                sage: L = lie_algebras.so(QQ, 5)                                        # needs sage.combinat sage.modules
+                sage: L.f()                                                             # needs sage.combinat sage.modules
                 Finite family {1: E[-alpha[1]], 2: E[-alpha[2]]}
-                sage: L.f(1)
+                sage: L.f(1)                                                            # needs sage.combinat sage.modules
                 E[-alpha[1]]
             """
             deg = self.degree_on_basis(m)
@@ -100,8 +101,8 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = LieAlgebra(QQ, cartan_type=['E',6])
-                sage: list(L._part_generators(False))
+                sage: L = LieAlgebra(QQ, cartan_type=['E', 6])                          # needs sage.combinat sage.modules
+                sage: list(L._part_generators(False))                                   # needs sage.combinat sage.modules
                 [E[-alpha[1]], E[-alpha[2]], E[-alpha[3]],
                  E[-alpha[4]], E[-alpha[5]], E[-alpha[6]]]
             """
@@ -128,10 +129,10 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = lie_algebras.so(QQ, 5)
-                sage: L.e()
+                sage: L = lie_algebras.so(QQ, 5)                                        # needs sage.combinat sage.modules
+                sage: L.e()                                                             # needs sage.combinat sage.modules
                 Finite family {1: E[alpha[1]], 2: E[alpha[2]]}
-                sage: L.e(1)
+                sage: L.e(1)                                                            # needs sage.combinat sage.modules
                 E[alpha[1]]
             """
             E = self._part_generators(True)
@@ -150,10 +151,10 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = lie_algebras.so(QQ, 5)
-                sage: L.f()
+                sage: L = lie_algebras.so(QQ, 5)                                        # needs sage.combinat sage.modules
+                sage: L.f()                                                             # needs sage.combinat sage.modules
                 Finite family {1: E[-alpha[1]], 2: E[-alpha[2]]}
-                sage: L.f(1)
+                sage: L.f(1)                                                            # needs sage.combinat sage.modules
                 E[-alpha[1]]
             """
             F = self._part_generators(False)
@@ -168,8 +169,8 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: L = lie_algebras.so(QQ, 5)
-                sage: L._negative_half_index_set()
+                sage: L = lie_algebras.so(QQ, 5)                                        # needs sage.combinat sage.modules
+                sage: L._negative_half_index_set()                                      # needs sage.combinat sage.modules
                 [-alpha[2], -alpha[1], -alpha[1] - alpha[2],
                  -alpha[1] - 2*alpha[2]]
             """
@@ -186,6 +187,7 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L = lie_algebras.sp(QQ, 6)
                 sage: La = L.cartan_type().root_system().weight_space().fundamental_weights()
                 sage: mu = La[1] - 3/5*La[2]
@@ -210,10 +212,11 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L = lie_algebras.sl(QQ, 3)
                 sage: P = L.cartan_type().root_system().weight_lattice()
                 sage: La = P.fundamental_weights()
-                sage: M = L.verma_module(La[1]+La[2])
+                sage: M = L.verma_module(La[1] + La[2])
                 sage: M
                 Verma module with highest weight Lambda[1] + Lambda[2]
                  of Lie algebra of ['A', 2] in the Chevalley basis
@@ -222,7 +225,7 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
             return VermaModule(self, la, basis_key=basis_key, **kwds)
 
     class ElementMethods:
-       def part(self):
+        def part(self):
             """
             Return whether the element ``v`` is in the lower,
             zero, or upper part of ``self``.
@@ -234,6 +237,7 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L = LieAlgebra(QQ, cartan_type="F4")
                 sage: L.inject_variables()
                 Defining e1, e2, e3, e4, f1, f2, f3, f4, h1, h2, h3, h4
@@ -259,4 +263,3 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
             if all(k == 0 for k in S):
                 return 0
             raise ValueError("element is not in one part")
-

@@ -1,4 +1,3 @@
-##      -*-   coding: utf-8   -*-     ##
 ##          Sage Doctest File         ##
 #**************************************#
 #*    Generated from PreTeXt source   *#
@@ -56,7 +55,6 @@ r"""
 
     sage: D = Poset([X, R])
     sage: D.plot()   # not tested
-    
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
@@ -73,7 +71,6 @@ r"""
 
     sage: Q = Posets.PentagonPoset()
     sage: Q.plot()   # not tested
-    
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
@@ -154,7 +151,7 @@ r"""
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
     sage: linear = P.linear_extension(); linear
-    [18, 9, 11, 6, 10, 0, 2, 1, 8, 3, 15, 
+    [18, 9, 11, 6, 10, 0, 2, 1, 8, 3, 15,
      7, 4, 14, 5, 19, 16, 13, 17, 12]
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
@@ -268,5 +265,4 @@ r"""
 
     sage: C.is_complemented()
     True
-
 """

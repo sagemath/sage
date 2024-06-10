@@ -15,11 +15,10 @@ Voronoi diagram of a finite list of points in `\RR^d`.
 
 from sage.structure.sage_object import SageObject
 from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.all import RDF, QQ, AA
-from sage.rings.real_mpfr import RealField_class
+from sage.rings.rational_field import QQ
+import sage.rings.abc
 from sage.geometry.triangulation.point_configuration import PointConfiguration
-from sage.modules.all import vector
-from sage.plot.all import line, point, rainbow, plot
+from sage.modules.free_module_element import vector
 
 
 class VoronoiDiagram(SageObject):
@@ -50,18 +49,19 @@ class VoronoiDiagram(SageObject):
     Get the Voronoi diagram of a regular pentagon in ``AA^2``.
     All cells meet at the origin::
 
-        sage: DV = VoronoiDiagram([[AA(c) for c in v] for v in polytopes.regular_polygon(5).vertices_list()]); DV
+        sage: DV = VoronoiDiagram([[AA(c) for c in v]                                   # needs sage.rings.number_field
+        ....:                      for v in polytopes.regular_polygon(5).vertices_list()]); DV
         The Voronoi diagram of 5 points of dimension 2 in the Algebraic Real Field
-        sage: all(P.contains([0, 0]) for P in DV.regions().values())
+        sage: all(P.contains([0, 0]) for P in DV.regions().values())                    # needs sage.rings.number_field
         True
-        sage: any(P.interior_contains([0, 0]) for P in DV.regions().values())
+        sage: any(P.interior_contains([0, 0]) for P in DV.regions().values())           # needs sage.rings.number_field
         False
 
     If the vertices are not converted to ``AA`` before, the method throws an error::
 
-        sage: polytopes.dodecahedron().vertices_list()[0][0].parent()
+        sage: polytopes.dodecahedron().vertices_list()[0][0].parent()                   # needs sage.groups sage.rings.number_field
         Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?
-        sage: VoronoiDiagram(polytopes.dodecahedron().vertices_list())
+        sage: VoronoiDiagram(polytopes.dodecahedron().vertices_list())                  # needs sage.groups sage.rings.number_field
         Traceback (most recent call last):
         ...
         NotImplementedError: Base ring of the Voronoi diagram must be
@@ -101,9 +101,10 @@ class VoronoiDiagram(SageObject):
         self._n = self._points.n_points()
         if not self._n or self._points.base_ring().is_subring(QQ):
             self._base_ring = QQ
-        elif self._points.base_ring() in [RDF, AA]:
+        elif isinstance(self._points.base_ring(), (sage.rings.abc.RealDoubleField, sage.rings.abc.AlgebraicRealField)):
             self._base_ring = self._points.base_ring()
-        elif isinstance(self._points.base_ring(), RealField_class):
+        elif isinstance(self._points.base_ring(), sage.rings.abc.RealField):
+            from sage.rings.real_double import RDF
             self._base_ring = RDF
             self._points = PointConfiguration([[RDF(cor) for cor in poi]
                                                for poi in self._points])
@@ -131,7 +132,6 @@ class VoronoiDiagram(SageObject):
                         enormalized.append(ineq)
                     else:
                         enormalized.append([i / ineq[0] for i in ineq[1:]])
-                # print enormalized
                 hlist = [list(ineq) for ineq in p.Hrepresentation()]
                 hlistnormalized = []
                 for ineq in hlist:
@@ -139,7 +139,6 @@ class VoronoiDiagram(SageObject):
                         hlistnormalized.append(ineq)
                     else:
                         hlistnormalized.append([i / ineq[0] for i in ineq[1:]])
-                # print hlistnormalized
 
         for i in range(self._n):
             # for base ring RDF and AA, Polyhedron keeps the order of the
@@ -230,7 +229,7 @@ class VoronoiDiagram(SageObject):
 
         EXAMPLES::
 
-            sage: V = VoronoiDiagram(polytopes.regular_polygon(3).vertices()); V
+            sage: V = VoronoiDiagram(polytopes.regular_polygon(3).vertices()); V        # needs sage.rings.number_field
             The Voronoi diagram of 3 points of dimension 2 in the Algebraic Real Field
             sage: VoronoiDiagram([])
             The empty Voronoi diagram.
@@ -260,18 +259,17 @@ class VoronoiDiagram(SageObject):
 
         EXAMPLES::
 
-            sage: P = [[0.671, 0.650], [0.258, 0.767], [0.562, 0.406], [0.254, 0.709], [0.493, 0.879]]
-
+            sage: # needs sage.plot
+            sage: P = [[0.671, 0.650], [0.258, 0.767], [0.562, 0.406],
+            ....:      [0.254, 0.709], [0.493, 0.879]]
             sage: V = VoronoiDiagram(P); S=V.plot()
             sage: show(S, xmin=0, xmax=1, ymin=0, ymax=1, aspect_ratio=1, axes=false)
-
-            sage: S=V.plot(cell_colors={0:'red', 1:'blue', 2:'green', 3:'white', 4:'yellow'})
+            sage: S = V.plot(cell_colors={0: 'red', 1: 'blue', 2: 'green',
+            ....:                         3: 'white', 4: 'yellow'})
             sage: show(S, xmin=0, xmax=1, ymin=0, ymax=1, aspect_ratio=1, axes=false)
-
-            sage: S=V.plot(cell_colors=['red','blue','red','white', 'white'])
+            sage: S = V.plot(cell_colors=['red', 'blue', 'red', 'white', 'white'])
             sage: show(S, xmin=0, xmax=1, ymin=0, ymax=1, aspect_ratio=1, axes=false)
-
-            sage: S=V.plot(cell_colors='something else')
+            sage: S = V.plot(cell_colors='something else')
             Traceback (most recent call last):
             ...
             AssertionError: 'cell_colors' must be a list or a dictionary
@@ -280,12 +278,13 @@ class VoronoiDiagram(SageObject):
         Trying to plot a Voronoi diagram of dimension other than 2 gives an
         error::
 
-            sage: VoronoiDiagram([[1, 2, 3], [6, 5, 4]]).plot()
+            sage: VoronoiDiagram([[1, 2, 3], [6, 5, 4]]).plot()                         # needs sage.plot
             Traceback (most recent call last):
             ...
             NotImplementedError: Plotting of 3-dimensional Voronoi diagrams not
             implemented
         """
+        from sage.plot.all import line, point, rainbow, plot
 
         if self.ambient_dim() == 2:
             S = line([])

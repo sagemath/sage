@@ -1,5 +1,5 @@
-zlib
-====
+zlib: Data compression library
+==============================
 
 Description
 -----------
@@ -17,17 +17,3 @@ Upstream Contact
 ----------------
 
 -  http://www.zlib.net/
-
-Dependencies
-------------
-
--  None
-
-
-Special Update/Build Instructions
----------------------------------
-
-Patches
-~~~~~~~
-
--  cygwin_symbols.patch: remove undefined symbols on Cygwin.

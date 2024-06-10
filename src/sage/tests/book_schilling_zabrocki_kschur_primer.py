@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.graphs sage.groups
 r"""
 This file contains doctests for the Chapter "k-Schur function primer"
 for the book "k-Schur functions and affine Schubert calculus"
@@ -10,7 +11,6 @@ NEEDS TO BE A ONE-YEAR DEPRECATION PERIOD. ALSO, PLEASE IN THIS CASE
 CONTACT Anne Schilling (anne@math.ucdavis.edu) AND Mike Zabrocki
 (zabrocki@mathstat.yorku.ca) REGARDING THE CHANGES!
 """
-
 """
 Sage example in ./kschurnotes/notes-mike-anne.tex, line 198::
 
@@ -83,16 +83,17 @@ Sage example in ./kschurnotes/notes-mike-anne.tex, line 398::
 
 Sage example in ./kschurnotes/notes-mike-anne.tex, line 406::
 
-    sage: w = W.an_element(); w         # long time
+    sage: # long time
+    sage: w = W.an_element(); w
     [ 2  0  0  1 -2]
     [ 2  0  0  0 -1]
     [ 1  1  0  0 -1]
     [ 1  0  1  0 -1]
     [ 1  0  0  1 -1]
-    sage: w.reduced_word()              # long time
+    sage: w.reduced_word()
     [0, 1, 2, 3, 4]
-    sage: w = W.from_reduced_word([2,1,0]) # long time
-    sage: w.is_affine_grassmannian()       # long time
+    sage: w = W.from_reduced_word([2,1,0])
+    sage: w.is_affine_grassmannian()
     True
 
 Sage example in ./kschurnotes/notes-mike-anne.tex, line 464::
@@ -363,7 +364,6 @@ Sage example in ./kschurnotes/notes-mike-anne.tex, line 2382::
     ....:     T = WeakTableaux(k, c, mu)
     ....:     print("weight {}".format(mu))
     ....:     print(T.list())
-    ....:
     weight [3, 3]
     []
     weight [3, 2, 1]
@@ -477,7 +477,6 @@ Sage example in ./kschurnotes/notes-mike-anne.tex, line 2810::
     sage: c = Partition([3,2,1]).to_core(3)
     sage: for p in sorted(f.support()):   # Sorted for consistant doctest ordering
     ....:   print("{} {}".format(p, SkewPartition([p.to_core(3).to_partition(),c.to_partition()])))
-    ....:
     [3, 1, 1, 1, 1] [[5, 2, 1, 1, 1], [5, 2, 1]]
     [3, 2, 1, 1] [[6, 3, 1, 1], [5, 2, 1]]
     [3, 2, 2] [[5, 2, 2], [5, 2, 1]]
@@ -544,7 +543,7 @@ Sage example in ./kschurnotes/notes-mike-anne.tex, line 3536::
 
     sage: la = Partition([3,2,1,1])
     sage: la.k_atom(4)
-    [[[1, 1, 1], [2, 2], [3], [4]], [[1, 1, 1, 4], [2, 2], [3]]]
+    [[[1, 1, 1, 4], [2, 2], [3]], [[1, 1, 1], [2, 2], [3], [4]]]
 
 Sage example in ./kschurnotes/notes-mike-anne.tex, line 3639::
 
@@ -578,8 +577,8 @@ Sage example in ./kschurnotes/notes-mike-anne.tex, line 3962::
 
 Sage example in ./kschurnotes/notes-mike-anne.tex, line 4055::
 
-    sage: t = var('t')
-    sage: for mu in Partitions(5):
+    sage: t = var('t')                                                                  # needs sage.symbolic
+    sage: for mu in Partitions(5):                                                      # needs sage.symbolic
     ....:     print("{} {}".format(mu, sum(t^T.spin() for T in StrongTableaux(3,[4,1,1],mu))))
     [5] 0
     [4, 1] t

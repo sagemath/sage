@@ -29,8 +29,8 @@ from libcpp.vector cimport vector as cppvector
 
 from sage.libs.gmp.mpz cimport mpz_set
 
-from .givaro cimport Modular_uint64, ZRing, Integer
-from .linbox cimport SparseMatrix_Modular_uint64, SparseMatrix_integer, DenseVector_integer
+from sage.libs.linbox.givaro cimport Modular_uint64, ZRing, Integer
+from sage.libs.linbox.linbox cimport SparseMatrix_Modular_uint64, SparseMatrix_integer, DenseVector_integer
 
 from sage.matrix.matrix_modn_sparse cimport Matrix_modn_sparse
 from sage.matrix.matrix_integer_sparse cimport Matrix_integer_sparse
@@ -77,7 +77,7 @@ cdef inline linbox_specifier get_method(str algo) except ERROR:
 # matrix_modn_sparse (sparse matrix over Z/nZ) #
 ################################################
 
-cdef inline void set_linbox_matrix_modn_sparse(SparseMatrix_Modular_uint64& A, Matrix_modn_sparse m):
+cdef inline void set_linbox_matrix_modn_sparse(SparseMatrix_Modular_uint64& A, Matrix_modn_sparse m) noexcept:
     r"""
     Set the entries of a LinBox matrix from a Sage matrix.
 
@@ -93,7 +93,7 @@ cdef inline void set_linbox_matrix_modn_sparse(SparseMatrix_Modular_uint64& A, M
         for j in range(<size_t> row.num_nonzero):
             A.setEntry(i, row.positions[j], row.entries[j])
 
-cdef inline SparseMatrix_Modular_uint64 * new_linbox_matrix_modn_sparse(Modular_uint64 &F, Matrix_modn_sparse m):
+cdef inline SparseMatrix_Modular_uint64 * new_linbox_matrix_modn_sparse(Modular_uint64 &F, Matrix_modn_sparse m) noexcept:
     r"""
     Return a new LinBox matrix from a Sage matrix.
 
@@ -112,7 +112,7 @@ cdef inline SparseMatrix_Modular_uint64 * new_linbox_matrix_modn_sparse(Modular_
 # matrix_integer_sparse #
 #########################
 
-cdef inline void set_linbox_matrix_integer_sparse(SparseMatrix_integer& A, Matrix_integer_sparse m):
+cdef inline void set_linbox_matrix_integer_sparse(SparseMatrix_integer& A, Matrix_integer_sparse m) noexcept:
     r"""
     Set the entries of a LinBox matrix from a Sage matrix.
 
@@ -131,7 +131,7 @@ cdef inline void set_linbox_matrix_integer_sparse(SparseMatrix_integer& A, Matri
             mpz_set(t.get_mpz(), v.entries[k])
             A.setEntry(i, j, t)
 
-cdef inline SparseMatrix_integer * new_linbox_matrix_integer_sparse(ZRing &ZZ, Matrix_integer_sparse m):
+cdef inline SparseMatrix_integer * new_linbox_matrix_integer_sparse(ZRing &ZZ, Matrix_integer_sparse m) noexcept:
     r"""
     Return a new LinBox matrix from a Sage matrix.
 
@@ -149,7 +149,7 @@ cdef inline SparseMatrix_integer * new_linbox_matrix_integer_sparse(ZRing &ZZ, M
 # vector integer dense #
 ########################
 
-cdef inline DenseVector_integer * new_linbox_vector_integer_dense(ZRing &ZZ, Vector_integer_dense v):
+cdef inline DenseVector_integer * new_linbox_vector_integer_dense(ZRing &ZZ, Vector_integer_dense v) noexcept:
     r"""
     Return a new linbox vector from a sage one.
 
@@ -177,9 +177,8 @@ cdef inline Vector_integer_dense new_sage_vector_integer_dense(P, DenseVector_in
     - v -- linbox vector
     """
     cdef Vector_integer_dense res = P()
-    cdef cppvector[Integer] * vec = &v.refRep()
     cdef size_t i
     for i in range(<size_t> res._degree):
-        mpz_set(res._entries[i], vec[0][i].get_mpz_const())
+        mpz_set(res._entries[i], v.getEntry(i).get_mpz_const())
 
     return res

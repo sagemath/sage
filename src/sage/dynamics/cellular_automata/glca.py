@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 """
 Graftal Lace Cellular Automata
 
@@ -67,7 +66,7 @@ class GraftalLaceCellularAutomata(SageObject):
 
         sage: G = cellular_automata.GraftalLace([2,0,3,3,6,0,2,7])
         sage: G.evolve(20)
-        sage: G.plot()
+        sage: G.plot()                                                                  # needs sage.plot
         Graphics object consisting of 842 graphics primitives
 
     .. PLOT::
@@ -196,14 +195,14 @@ class GraftalLaceCellularAutomata(SageObject):
              o o o o o o o
         """
         if number is not None:
-            for k in range(number):
+            for _ in range(number):
                 self.evolve()
             return
 
         prev_state = self._states[-1]
         next_state = [0] * (len(prev_state) + 2)
 
-        for i,val in enumerate(prev_state):
+        for i, val in enumerate(prev_state):
             next_state[i] += self._rule[val] & 0x1
             next_state[i+1] += self._rule[val] & 0x2
             next_state[i+2] += self._rule[val] & 0x4
@@ -398,7 +397,7 @@ class GraftalLaceCellularAutomata(SageObject):
 
             sage: G = cellular_automata.GraftalLace([5,1,2,5,4,5,5,0])
             sage: G.evolve(20)
-            sage: G.plot()
+            sage: G.plot()                                                              # needs sage.plot
             Graphics object consisting of 865 graphics primitives
         """
         if number is None:
@@ -475,4 +474,3 @@ class GraftalLaceCellularAutomata(SageObject):
             x -= 1
         ret += "\\end{tikzpicture}"
         return ret
-

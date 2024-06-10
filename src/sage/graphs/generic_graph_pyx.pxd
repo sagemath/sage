@@ -1,6 +1,6 @@
 from sage.structure.sage_object cimport SageObject
 from sage.graphs.base.dense_graph cimport DenseGraph
-from sage.ext.memory_allocator cimport MemoryAllocator
+from memory_allocator cimport MemoryAllocator
 
 ctypedef int * D_TWO
 ctypedef char * D_THREE
@@ -17,7 +17,7 @@ cdef class GenericGraph_pyx(SageObject):
 cdef class SubgraphSearch:
     cdef int ng
     cdef int nh
-    cdef (bint) (*is_admissible) (int, int *, int *)
+    cdef (bint) (*is_admissible) (int, int *, int *) noexcept
     cdef DenseGraph g
     cdef DenseGraph h
     cdef int *busy

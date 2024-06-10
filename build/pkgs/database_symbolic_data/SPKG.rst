@@ -1,5 +1,5 @@
-database_symbolic_data
-======================
+database_symbolic_data: Database from the SymbolicData project
+==============================================================
 
 Description
 -----------
@@ -35,12 +35,3 @@ Upstream Contact
 ----------------
 
 -  Andreas Nareike <nareike@informatik.uni-leipzig.de>
-
-Dependencies
-------------
-
-
-Special Update/Build Instructions
----------------------------------
-
-List patches that need to be applied and what they do

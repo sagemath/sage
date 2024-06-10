@@ -1,4 +1,5 @@
-"""
+# sage.doctest: optional - numpy
+r"""
 Distributions used in implementing Hidden Markov Models
 
 These distribution classes are designed specifically for HMM's and not
@@ -29,25 +30,24 @@ import math
 cdef double sqrt2pi = sqrt(2*math.pi)
 
 from sage.misc.randstate cimport current_randstate, randstate
-from sage.finance.time_series cimport TimeSeries
+from sage.stats.time_series cimport TimeSeries
 
 
-
-cdef double random_normal(double mean, double std, randstate rstate):
-    """
+cdef double random_normal(double mean, double std, randstate rstate) noexcept:
+    r"""
     Return a floating point number chosen from the normal distribution
     with given mean and standard deviation, using the given randstate.
     The computation uses the box muller algorithm.
 
     INPUT:
 
-        - mean -- float; the mean
-        - std -- float; the standard deviation
-        - rstate -- randstate; the random number generator state
+    - ``mean`` -- float; the mean
+    - ``std`` -- float; the standard deviation
+    - ``rstate`` -- randstate; the random number generator state
 
     OUTPUT:
 
-        - double
+    - double
     """
     # Ported from http://users.tkk.fi/~nbeijar/soft/terrain/source_o2/boxmuller.c
     # This the box muller algorithm.
@@ -66,21 +66,21 @@ cdef double random_normal(double mean, double std, randstate rstate):
 # Abstract base class for distributions used for hidden Markov models.
 
 cdef class Distribution:
-    """
+    r"""
     A distribution.
     """
     def sample(self, n=None):
-        """
-        Return either a single sample (the default) or n samples from
+        r"""
+        Return either a single sample (the default) or `n` samples from
         this probability distribution.
 
         INPUT:
 
-           - n -- None or a positive integer
+        - ``n`` -- ``None`` or a positive integer
 
         OUTPUT:
 
-           - a single sample if n is 1; otherwise many samples
+        - a single sample if `n` is 1; otherwise many samples
 
         EXAMPLES:
 
@@ -95,16 +95,16 @@ cdef class Distribution:
         raise NotImplementedError
 
     def prob(self, x):
-        """
-        The probability density function evaluated at x.
+        r"""
+        The probability density function evaluated at `x`.
 
         INPUT:
 
-           - x -- object
+        - ``x`` -- object
 
         OUTPUT:
 
-           - float
+        - float
 
         EXAMPLES:
 
@@ -119,28 +119,28 @@ cdef class Distribution:
         raise NotImplementedError
 
     def plot(self, *args, **kwds):
-        """
+        r"""
         Return a plot of the probability density function.
 
         INPUT:
 
-            - args and kwds, passed to the Sage plot function
+        - ``args`` and ``kwds``, passed to the Sage :func:`plot` function
 
         OUTPUT:
 
-            - a Graphics object
+        - a :class:`Graphics` object
 
         EXAMPLES::
 
             sage: P = hmm.GaussianMixtureDistribution([(.2,-10,.5),(.6,1,1),(.2,20,.5)])
-            sage: P.plot(-10,30)
+            sage: P.plot(-10,30)                                                        # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         from sage.plot.all import plot
         return plot(self.prob, *args, **kwds)
 
 cdef class GaussianMixtureDistribution(Distribution):
-    """
+    r"""
     A probability distribution defined by taking a weighted linear
     combination of Gaussian distributions.
 
@@ -162,17 +162,17 @@ cdef class GaussianMixtureDistribution(Distribution):
         False
     """
     def __init__(self, B, eps=1e-8, bint normalize=True):
-        """
+        r"""
         INPUT:
 
-            - `B` -- a list of triples `(c_i, mean_i, std_i)`, where
-              the `c_i` and `std_i` are positive and the sum of the
-              `c_i` is `1`.
+        - ``B`` -- a list of triples ``(c_i, mean_i, std_i)``, where
+          the ``c_i`` and ``std_i`` are positive and the sum of the
+          ``c_i`` is `1`.
 
-            - eps -- positive real number; any standard deviation in B
-              less than eps is replaced by eps.
+        - ``eps`` -- positive real number; any standard deviation in B
+          less than eps is replaced by eps.
 
-            - normalize -- if True, ensure that the c_i are nonnegative
+        - ``normalize`` -- if ``True``, ensure that the ``c_i`` are nonnegative
 
         EXAMPLES::
 
@@ -181,8 +181,9 @@ cdef class GaussianMixtureDistribution(Distribution):
             sage: hmm.GaussianMixtureDistribution([(1,-1,0)], eps=1e-3)
             1.0*N(-1.0,0.001)
         """
-        B = [[c if c>=0 else 0,  mu,  std if std>0 else eps] for c,mu,std in B]
-        if len(B) == 0:
+        B = [[(c if c >= 0 else 0), mu, (std if std > 0 else eps)]
+             for c, mu, std in B]
+        if not B:
             raise ValueError("must specify at least one component of the mixture model")
         cdef double s
         if normalize:
@@ -195,22 +196,22 @@ cdef class GaussianMixtureDistribution(Distribution):
                 else:
                     for a in B:
                         a[0] /= s
-        self.c0 = TimeSeries([c/(sqrt2pi*std) for c,_,std in B])
-        self.c1 = TimeSeries([-1.0/(2*std*std) for _,_,std in B])
-        self.param = TimeSeries(sum([list(x) for x in B],[]))
+        self.c0 = TimeSeries([c/(sqrt2pi*std) for c, _, std in B])
+        self.c1 = TimeSeries([-1.0/(2*std*std) for _, _, std in B])
+        self.param = TimeSeries(sum([list(x) for x in B], []))
         self.fixed = IntList(self.c0._length)
 
     def __getitem__(self, Py_ssize_t i):
-        """
-        Returns triple (coefficient, mu, std).
+        r"""
+        Return triple (coefficient, mu, std).
 
         INPUT:
 
-            - i -- integer
+        - ``i`` -- integer
 
         OUTPUT:
 
-            - triple of floats
+        - triple of floats
 
         EXAMPLES::
 
@@ -238,7 +239,7 @@ cdef class GaussianMixtureDistribution(Distribution):
         return self.param._values[3*i], self.param._values[3*i+1], self.param._values[3*i+2]
 
     def __reduce__(self):
-        """
+        r"""
         Used in pickling.
 
         EXAMPLES::
@@ -251,7 +252,7 @@ cdef class GaussianMixtureDistribution(Distribution):
             self.c0, self.c1, self.param, self.fixed)
 
     def __richcmp__(self, other, op):
-        """
+        r"""
         EXAMPLES::
 
             sage: G = hmm.GaussianMixtureDistribution([(.1,1,2), (.9,0,1)])
@@ -271,7 +272,7 @@ cdef class GaussianMixtureDistribution(Distribution):
                                     other.__reduce__()[1], op)
 
     def __len__(self):
-        """
+        r"""
         Return the number of components of this GaussianMixtureDistribution.
 
         EXAMPLES::
@@ -282,14 +283,14 @@ cdef class GaussianMixtureDistribution(Distribution):
         return self.c0._length
 
     cpdef is_fixed(self, i=None):
-        """
-        Return whether or not this GaussianMixtureDistribution is
+        r"""
+        Return whether or not this :class:`GaussianMixtureDistribution` is
         fixed when using Baum-Welch to update the corresponding HMM.
 
         INPUT:
 
-            - i -- None (default) or integer; if given, only return
-              whether the i-th component is fixed
+        - ``i`` -- ``None`` (default) or integer; if given, only return
+          whether the `i`-th component is fixed
 
         EXAMPLES::
 
@@ -311,15 +312,15 @@ cdef class GaussianMixtureDistribution(Distribution):
             return bool(self.fixed[i])
 
     def fix(self, i=None):
-        """
-        Set that this GaussianMixtureDistribution (or its ith
+        r"""
+        Set that this :class:`GaussianMixtureDistribution` (or its `i`-th
         component) is fixed when using Baum-Welch to update
         the corresponding HMM.
 
         INPUT:
 
-            - i -- None (default) or integer; if given, only fix the
-              i-th component
+        - ``i`` -- ``None`` (default) or integer; if given, only fix the
+          `i`-th component
 
         EXAMPLES::
 
@@ -339,15 +340,15 @@ cdef class GaussianMixtureDistribution(Distribution):
             self.fixed[i] = 1
 
     def unfix(self, i=None):
-        """
-        Set that this GaussianMixtureDistribution (or its ith
+        r"""
+        Set that this :class:`GaussianMixtureDistribution` (or its `i`-th
         component) is not fixed when using Baum-Welch to update the
         corresponding HMM.
 
         INPUT:
 
-            - i -- None (default) or integer; if given, only fix the
-              i-th component
+        - ``i`` -- ``None`` (default) or integer; if given, only fix the
+          `i`-th component
 
         EXAMPLES::
 
@@ -371,7 +372,7 @@ cdef class GaussianMixtureDistribution(Distribution):
 
 
     def __repr__(self):
-        """
+        r"""
         Return string representation of this mixed Gaussian distribution.
 
         EXAMPLES::
@@ -379,32 +380,41 @@ cdef class GaussianMixtureDistribution(Distribution):
             sage: hmm.GaussianMixtureDistribution([(.2,-10,.5),(.6,1,1),(.2,20,.5)]).__repr__()
             '0.2*N(-10.0,0.5) + 0.6*N(1.0,1.0) + 0.2*N(20.0,0.5)'
         """
-        return ' + '.join(["%s*N(%s,%s)"%x for x in self])
+        return ' + '.join("%s*N(%s,%s)" % x for x in self)
 
     def sample(self, n=None):
-        """
+        r"""
         Return a single sample from this distribution (by default), or
-        if n>1, return a TimeSeries of samples.
+        if `n>1`, return a :class:`TimeSeries` of samples.
 
         INPUT:
 
-            - n -- integer or None (default: None)
+        - ``n`` -- integer or ``None`` (default: ``None``)
 
         OUTPUT:
 
-            - float if n is None (default); otherwise a TimeSeries
+        - float if ``n`` is ``None`` (default); otherwise a :class:`TimeSeries`
 
         EXAMPLES::
 
             sage: P = hmm.GaussianMixtureDistribution([(.2,-10,.5),(.6,1,1),(.2,20,.5)])
-            sage: P.sample()
-            19.65824361087513
-            sage: P.sample(1)
-            [-10.4683]
-            sage: P.sample(5)
-            [-0.1688, -10.3479, 1.6812, 20.1083, -9.9801]
-            sage: P.sample(0)
-            []
+            sage: type(P.sample())
+            <class 'float'>
+            sage: l = P.sample(1)
+            sage: len(l)
+            1
+            sage: type(l)
+            <class 'sage.stats.time_series.TimeSeries'>
+            sage: l = P.sample(5)
+            sage: len(l)
+            5
+            sage: type(l)
+            <class 'sage.stats.time_series.TimeSeries'>
+            sage: l = P.sample(0)
+            sage: len(l)
+            0
+            sage: type(l)
+            <class 'sage.stats.time_series.TimeSeries'>
             sage: P.sample(-3)
             Traceback (most recent call last):
             ...
@@ -424,17 +434,17 @@ cdef class GaussianMixtureDistribution(Distribution):
                 T._values[i] = self._sample(rstate)
             return T
 
-    cdef double _sample(self, randstate rstate):
-        """
+    cdef double _sample(self, randstate rstate) noexcept:
+        r"""
         Used internally to compute a sample from this distribution quickly.
 
         INPUT:
 
-            - rstate -- a randstate object
+        - ``rstate`` -- a randstate object
 
         OUTPUT:
 
-            - double
+        - double
         """
         cdef double accum, r
         cdef int n
@@ -449,20 +459,20 @@ cdef class GaussianMixtureDistribution(Distribution):
                 return random_normal(self.param._values[3*n+1], self.param._values[3*n+2], rstate)
         raise RuntimeError("invalid probability distribution")
 
-    cpdef double prob(self, double x):
-        """
-        Return the probability of x.
+    cpdef double prob(self, double x) noexcept:
+        r"""
+        Return the probability of `x`.
 
         Since this is a continuous distribution, this is defined to be
         the limit of the p's such that the probability of [x,x+h] is p*h.
 
         INPUT:
 
-            - x -- float
+        - ``x`` -- float
 
         OUTPUT:
 
-            - float
+        - float
 
         EXAMPLES::
 
@@ -485,18 +495,18 @@ cdef class GaussianMixtureDistribution(Distribution):
             s += self.c0._values[n]*exp((x-mu)*(x-mu)*self.c1._values[n])
         return s
 
-    cpdef double prob_m(self, double x, int m):
-        """
-        Return the probability of x using just the m-th summand.
+    cpdef double prob_m(self, double x, int m) noexcept:
+        r"""
+        Return the probability of `x` using just the `m`-th summand.
 
         INPUT:
 
-            - x -- float
-            - m -- integer
+        - ``x`` -- float
+        - ``m`` -- integer
 
         OUTPUT:
 
-            - float
+        - float
 
         EXAMPLES::
 
@@ -516,8 +526,8 @@ cdef class GaussianMixtureDistribution(Distribution):
 
 def unpickle_gaussian_mixture_distribution_v1(TimeSeries c0, TimeSeries c1,
                                               TimeSeries param, IntList fixed):
-    """
-    Used in unpickling GaussianMixtureDistribution's.
+    r"""
+    Used in unpickling :class:`GaussianMixtureDistribution` objects.
 
     EXAMPLES::
 

@@ -8,12 +8,11 @@ Root system data for type Q
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
 
 
 from .cartan_type import CartanType_standard_finite
 from sage.combinat.root_system.root_system import RootSystem
+
 
 class CartanType(CartanType_standard_finite):
     """
@@ -21,6 +20,7 @@ class CartanType(CartanType_standard_finite):
 
     .. SEEALSO:: :func:`~sage.combinat.root_systems.cartan_type.CartanType`
     """
+
     def __init__(self, m):
         """
         EXAMPLES::
@@ -49,7 +49,7 @@ class CartanType(CartanType_standard_finite):
         assert m >= 2
         CartanType_standard_finite.__init__(self, "Q", m-1)
 
-    def _repr_(self, compact = False):
+    def _repr_(self, compact=False):
         """
         TESTS::
 
@@ -60,7 +60,7 @@ class CartanType(CartanType_standard_finite):
             'Q4'
         """
         format = '%s%s' if compact else "['%s', %s]"
-        return format%(self.letter, self.n+1)
+        return format % (self.letter, self.n+1)
 
     def __reduce__(self):
         """

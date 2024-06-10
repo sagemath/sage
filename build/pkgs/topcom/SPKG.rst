@@ -1,5 +1,5 @@
-TOPCOM
-======
+topcom: Compute triangulations of point configurations and oriented matroids
+============================================================================
 
 Description
 -----------

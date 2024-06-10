@@ -1,5 +1,6 @@
+# sage.doctest: needs sage.libs.flint
 r"""
-Modular symbols {alpha, beta}
+Modular symbols `\{\alpha`, `\beta\}`
 
 The ModularSymbol class represents a single modular symbol `X^i Y^{k-2-i} \{\alpha, \beta\}`.
 
@@ -14,9 +15,8 @@ TESTS::
     sage: loads(dumps(s)) == s
     True
 """
-
-#*****************************************************************************
-#       Sage: System for Algebra and Geometry Experimentation
+# ****************************************************************************
+#       Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005, 2009 William Stein <wstein@gmail.com>
 #
@@ -29,8 +29,8 @@ TESTS::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 import sage.modular.cusps as cusps
 from sage.modular.modsym.apply import apply_to_monomial
 from sage.modular.modsym.manin_symbol import ManinSymbol
@@ -96,7 +96,7 @@ class ModularSymbol(SageObject):
             polypart = ''
         else:
             polypart = str(self.polynomial_part()) + '*'
-        return "%s{%s, %s}"%(polypart, self.__alpha, self.__beta)
+        return "%s{%s, %s}" % (polypart, self.__alpha, self.__beta)
 
     def __getitem__(self, j):
         r"""
@@ -133,8 +133,9 @@ class ModularSymbol(SageObject):
             polypart = ''
         else:
             polypart = latex(self.polynomial_part())
-        return "%s\\left\\{%s, %s\\right\\}"%(polypart,
-                  latex(self.__alpha), latex(self.__beta))
+        return "%s\\left\\{%s, %s\\right\\}" % (polypart,
+                                                latex(self.__alpha),
+                                                latex(self.__beta))
 
     def __richcmp__(self, other, op):
         """
@@ -292,7 +293,7 @@ class ModularSymbol(SageObject):
 
             sage: s = ModularSymbols(11,2).1.modular_symbol_rep()[0][1]; s
             {-1/8, 0}
-            sage: a=1;b=2;c=3;d=4; s.apply([a,b,c,d])
+            sage: a = 1; b = 2; c = 3; d = 4; s.apply([a,b,c,d])
             {15/29, 1/2}
             sage: x = -1/8;  (a*x+b)/(c*x+d)
             15/29
@@ -303,12 +304,12 @@ class ModularSymbol(SageObject):
             sage: s.apply([a,b,c,d])
             16*X^2*{11/21, 1/2} - 16*X*Y*{11/21, 1/2} + 4*Y^2*{11/21, 1/2}
             sage: P = s.polynomial_part()
-            sage: X,Y = P.parent().gens()
+            sage: X, Y = P.parent().gens()
             sage: P(d*X-b*Y, -c*X+a*Y)
             16*X^2 - 16*X*Y + 4*Y^2
-            sage: x=-1/6; (a*x+b)/(c*x+d)
+            sage: x = -1/6; (a*x+b)/(c*x+d)
             11/21
-            sage: x=0; (a*x+b)/(c*x+d)
+            sage: x = 0; (a*x+b)/(c*x+d)
             1/2
             sage: type(s.apply([a,b,c,d]))
             <class 'sage.structure.formal_sum.FormalSum'>
@@ -316,11 +317,11 @@ class ModularSymbol(SageObject):
         space = self.__space
         i = self.__i
         k = space.weight()
-        a,b,c,d = tuple(g)
-        coeffs = apply_to_monomial(i, k-2, d, -b, -c, a)
+        a, b, c, d = tuple(g)
+        coeffs = apply_to_monomial(i, k - 2, d, -b, -c, a)
         g_alpha = self.__alpha.apply(g)
         g_beta = self.__beta.apply(g)
-        return formal_sum.FormalSum([(coeffs[j], ModularSymbol(space, j, g_alpha, g_beta)) \
+        return formal_sum.FormalSum([(coeffs[j], ModularSymbol(space, j, g_alpha, g_beta))
                                      for j in reversed(range(k-1)) if coeffs[j] != 0])
 
     def __manin_symbol_rep(self, alpha):
@@ -363,8 +364,9 @@ class ModularSymbol(SageObject):
 
     def manin_symbol_rep(self):
         """
-        Returns a representation of self as a formal sum of Manin symbols.
-        (The result is not cached.)
+        Return a representation of ``self`` as a formal sum of Manin symbols.
+
+        The result is not cached.
 
         EXAMPLES::
 
@@ -379,4 +381,3 @@ class ModularSymbol(SageObject):
         alpha = self.__alpha
         beta = self.__beta
         return -1*self.__manin_symbol_rep(alpha) + self.__manin_symbol_rep(beta)
-

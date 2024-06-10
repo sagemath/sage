@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 """
 Elementary Cellular Automata
 
@@ -22,7 +21,8 @@ from sage.typeset.ascii_art import AsciiArt
 from sage.typeset.unicode_art import UnicodeArt
 from sage.rings.integer_ring import ZZ
 from sage.matrix.constructor import matrix
-from sage.plot.matrix_plot import matrix_plot
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.matrix_plot", "matrix_plot")
 from sage.misc.constant_function import ConstantFunction
 
 class ElementaryCellularAutomata(SageObject):
@@ -194,20 +194,20 @@ class ElementaryCellularAutomata(SageObject):
           X
          XX
         #
-         X 
-        XX 
+         X
+        XX
         #
          XX
         XXX
         #
-        X  
-        X  
+        X
+        X
         #
         X X
         XXX
         #
-        XX 
-        XX 
+        XX
+        XX
         #
         XXX
         X X
@@ -224,7 +224,7 @@ class ElementaryCellularAutomata(SageObject):
 
         sage: ECA = cellular_automata.Elementary(60, width=200)
         sage: ECA.evolve(200)
-        sage: ECA.plot()
+        sage: ECA.plot()                                                                # needs sage.plot
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -238,7 +238,7 @@ class ElementaryCellularAutomata(SageObject):
 
         sage: ECA = cellular_automata.Elementary(90, initial_state=[1]+[0]*254+[1], boundary=None)
         sage: ECA.evolve(256)
-        sage: ECA.plot()
+        sage: ECA.plot()                                                                # needs sage.plot
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -387,12 +387,13 @@ class ElementaryCellularAutomata(SageObject):
             X X     XX
         """
         if number is not None:
-            for k in range(number):
+            for _ in range(number):
                 self.evolve()
             return
 
         prev_state = self._states[-1]
         next_state = [None] * self._width
+
         def to_int(triple):
             return ZZ(list(reversed(triple)), base=2)
         if self._bdry is None:
@@ -581,7 +582,7 @@ class ElementaryCellularAutomata(SageObject):
              █   █   █   █   █   █   █   █
             ███ ███ ███ ███ ███ ███ ███ ██
         """
-        return UnicodeArt([u''.join(u'█' if x else u' ' for x in state)
+        return UnicodeArt([''.join('█' if x else ' ' for x in state)
                            for state in self._states])
 
     def plot(self, number=None):
@@ -596,7 +597,7 @@ class ElementaryCellularAutomata(SageObject):
 
             sage: ECA = cellular_automata.Elementary(110, width=256)
             sage: ECA.evolve(256)
-            sage: ECA.plot()
+            sage: ECA.plot()                                                            # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         if number is None:
@@ -606,4 +607,3 @@ class ElementaryCellularAutomata(SageObject):
                 self.evolve()
         M = matrix(self._states[:number])
         return matrix_plot(M)
-

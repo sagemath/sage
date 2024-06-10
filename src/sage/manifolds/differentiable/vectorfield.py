@@ -45,7 +45,6 @@ REFERENCES:
 - [Lee2013]_
 - [ONe1983]_
 - [BG1988]_
-
 """
 
 # *****************************************************************************
@@ -146,9 +145,9 @@ class VectorField(MultivectorField):
     At this stage, the vector field is fully defined on the whole manifold::
 
         sage: v.display(eU)
-        v = -y d/dx + (x + 1) d/dy
+        v = -y ∂/∂x + (x + 1) ∂/∂y
         sage: v.display(eV)
-        v = (u + 1) d/dt + (-t - 1) d/du
+        v = (u + 1) ∂/∂t + (-t - 1) ∂/∂u
 
     The vector field acting on scalar fields::
 
@@ -156,9 +155,9 @@ class VectorField(MultivectorField):
         sage: s = v(f) ; s
         Scalar field v(f) on the 2-dimensional differentiable manifold M
         sage: s.display()
-        v(f): M --> R
-        on U: (x, y) |--> 2*x^2 - 2*y^2 + 2*x + 2*y
-        on V: (t, u) |--> 2*t*u + 2*t
+        v(f): M → ℝ
+        on U: (x, y) ↦ 2*x^2 - 2*y^2 + 2*x + 2*y
+        on V: (t, u) ↦ 2*t*u + 2*t
 
     Some checks::
 
@@ -179,23 +178,23 @@ class VectorField(MultivectorField):
         Scalar field v(f) on the Open subset W of the 2-dimensional
          differentiable manifold M
         sage: s.display()
-        v(f): W --> R
-           (x, y) |--> 2*x^2 - 2*y^2 + 2*x + 2*y
-           (t, u) |--> 2*t*u + 2*t
+        v(f): W → ℝ
+           (x, y) ↦ 2*x^2 - 2*y^2 + 2*x + 2*y
+           (t, u) ↦ 2*t*u + 2*t
         sage: s = v.restrict(U)(f) ; s
         Scalar field v(f) on the Open subset U of the 2-dimensional
          differentiable manifold M
         sage: s.display()
-        v(f): U --> R
-           (x, y) |--> 2*x^2 - 2*y^2 + 2*x + 2*y
-        on W: (t, u) |--> 2*t*u + 2*t
+        v(f): U → ℝ
+           (x, y) ↦ 2*x^2 - 2*y^2 + 2*x + 2*y
+        on W: (t, u) ↦ 2*t*u + 2*t
         sage: s = v.restrict(U)(f.restrict(V)) ; s
         Scalar field v(f) on the Open subset W of the 2-dimensional
          differentiable manifold M
         sage: s.display()
-        v(f): W --> R
-           (x, y) |--> 2*x^2 - 2*y^2 + 2*x + 2*y
-           (t, u) |--> 2*t*u + 2*t
+        v(f): W → ℝ
+           (x, y) ↦ 2*x^2 - 2*y^2 + 2*x + 2*y
+           (t, u) ↦ 2*t*u + 2*t
 
     """
     def __init__(self, vector_field_module, name=None, latex_name=None):
@@ -333,9 +332,9 @@ class VectorField(MultivectorField):
             sage: s = a.__call__(f); s
             Scalar field a(f) on the 2-dimensional differentiable manifold M
             sage: s.display()
-            a(f): M --> R
-            on U: (x, y) |--> 2*(x^2 + y^2)/(x^4 + 2*x^2*y^2 + y^4 + 1)
-            on V: (u, v) |--> 2*(u^2 + v^2)/(u^4 + 2*u^2*v^2 + v^4 + 1)
+            a(f): M → ℝ
+            on U: (x, y) ↦ 2*(x^2 + y^2)/(x^4 + 2*x^2*y^2 + y^4 + 1)
+            on V: (u, v) ↦ 2*(u^2 + v^2)/(u^4 + 2*u^2*v^2 + v^4 + 1)
             sage: s == f.differential()(a)
             True
 
@@ -346,31 +345,17 @@ class VectorField(MultivectorField):
             return scalar(self)
         if scalar._tensor_type != (0,0):
             raise TypeError("the argument must be a scalar field")
-        #!# Could it be simply
-        # return scalar.differential()(self)
-        # ?
-        dom_resu = self._domain.intersection(scalar._domain)
-        self_r = self.restrict(dom_resu)
-        scalar_r = scalar.restrict(dom_resu)
-        if scalar_r._is_zero:
-            return dom_resu._zero_scalar_field
-        if isinstance(self_r, VectorFieldParal):
-            return self_r(scalar_r)
-        # Creation of the result:
-        if self._name is not None and scalar._name is not None:
-            resu_name = "{}({})".format(self._name, scalar._name)
-        else:
-            resu_name = None
-        if self._latex_name is not None and scalar._latex_name is not None:
-            resu_latex = r"{}\left({}\right)".format(self._latex_name ,
-                                                     scalar._latex_name)
-        else:
-            resu_latex = None
-        resu = dom_resu.scalar_field(name=resu_name, latex_name=resu_latex)
-        for dom, rst in self_r._restrictions.items():
-            resu_rst = rst(scalar_r.restrict(dom))
-            for chart, funct in resu_rst._express.items():
-                resu._express[chart] = funct
+        resu = scalar.differential()(self)
+        if not resu.is_immutable():
+            if self._name is not None and scalar._name is not None:
+                name = f"{self._name}({scalar._name})"
+            else:
+                name = None
+            if self._latex_name is not None and scalar._latex_name is not None:
+                latex_name = fr"{self._latex_name}\left({scalar._latex_name}\right)"
+            else:
+                latex_name = None
+            resu.set_name(name=name, latex_name=latex_name)
         return resu
 
     @options(max_range=8, scale=1, color='blue')
@@ -478,8 +463,8 @@ class VectorField(MultivectorField):
             sage: X.<x,y> = M.chart()
             sage: v = M.vector_field(-y, x, name='v')
             sage: v.display()
-            v = -y d/dx + x d/dy
-            sage: v.plot()
+            v = -y ∂/∂x + x ∂/∂y
+            sage: v.plot()                                                              # needs sage.plot
             Graphics object consisting of 80 graphics primitives
 
         .. PLOT::
@@ -492,7 +477,7 @@ class VectorField(MultivectorField):
 
         Plot with various options::
 
-            sage: v.plot(scale=0.5, color='green', linestyle='--', width=1,
+            sage: v.plot(scale=0.5, color='green', linestyle='--', width=1,             # needs sage.plot
             ....:        arrowsize=6)
             Graphics object consisting of 80 graphics primitives
 
@@ -506,7 +491,7 @@ class VectorField(MultivectorField):
 
         ::
 
-            sage: v.plot(max_range=4, number_values=5, scale=0.5)
+            sage: v.plot(max_range=4, number_values=5, scale=0.5)                       # needs sage.plot
             Graphics object consisting of 24 graphics primitives
 
         .. PLOT::
@@ -520,7 +505,7 @@ class VectorField(MultivectorField):
         Plot using parallel computation::
 
             sage: Parallelism().set(nproc=2)
-            sage: v.plot(scale=0.5,  number_values=10, linestyle='--', width=1,
+            sage: v.plot(scale=0.5,  number_values=10, linestyle='--', width=1,         # needs sage.plot
             ....:        arrowsize=6)
             Graphics object consisting of 100 graphics primitives
 
@@ -538,7 +523,7 @@ class VectorField(MultivectorField):
 
         Plots along a line of fixed coordinate::
 
-            sage: v.plot(fixed_coords={x: -2})
+            sage: v.plot(fixed_coords={x: -2})                                          # needs sage.plot
             Graphics object consisting of 9 graphics primitives
 
         .. PLOT::
@@ -551,7 +536,7 @@ class VectorField(MultivectorField):
 
         ::
 
-            sage: v.plot(fixed_coords={y: 1})
+            sage: v.plot(fixed_coords={y: 1})                                           # needs sage.plot
             Graphics object consisting of 9 graphics primitives
 
         .. PLOT::
@@ -568,7 +553,7 @@ class VectorField(MultivectorField):
             sage: X.<t,x,y,z> = M.chart()
             sage: v = M.vector_field((t/8)^2, -t*y/4, t*x/4, t*z/4, name='v')
             sage: v.display()
-            v = 1/64*t^2 d/dt - 1/4*t*y d/dx + 1/4*t*x d/dy + 1/4*t*z d/dz
+            v = 1/64*t^2 ∂/∂t - 1/4*t*y ∂/∂x + 1/4*t*x ∂/∂y + 1/4*t*z ∂/∂z
 
         We cannot make a 4D plot directly::
 
@@ -580,7 +565,7 @@ class VectorField(MultivectorField):
         Rather, we have to select some coordinates for the plot, via
         the argument ``ambient_coords``. For instance, for a 3D plot::
 
-            sage: v.plot(ambient_coords=(x, y, z), fixed_coords={t: 1},  # long time
+            sage: v.plot(ambient_coords=(x, y, z), fixed_coords={t: 1},         # long time, needs sage.plot
             ....:        number_values=4)
             Graphics3d Object
 
@@ -594,7 +579,7 @@ class VectorField(MultivectorField):
 
         ::
 
-            sage: v.plot(ambient_coords=(x, y, t), fixed_coords={z: 0},  # long time
+            sage: v.plot(ambient_coords=(x, y, t), fixed_coords={z: 0},         # long time, needs sage.plot
             ....:        ranges={x: (-2,2), y: (-2,2), t: (-1, 4)},
             ....:        number_values=4)
             Graphics3d Object
@@ -610,7 +595,7 @@ class VectorField(MultivectorField):
 
         or, for a 2D plot::
 
-            sage: v.plot(ambient_coords=(x, y), fixed_coords={t: 1, z: 0})  # long time
+            sage: v.plot(ambient_coords=(x, y), fixed_coords={t: 1, z: 0})      # long time, needs sage.plot
             Graphics object consisting of 80 graphics primitives
 
         .. PLOT::
@@ -623,7 +608,7 @@ class VectorField(MultivectorField):
 
         ::
 
-            sage: v.plot(ambient_coords=(x, t), fixed_coords={y: 1, z: 0})  # long time
+            sage: v.plot(ambient_coords=(x, t), fixed_coords={y: 1, z: 0})      # long time, needs sage.plot
             Graphics object consisting of 72 graphics primitives
 
         .. PLOT::
@@ -645,14 +630,14 @@ class VectorField(MultivectorField):
             sage: F = S2.diff_map(R3, {(XS, X3): [sin(th)*cos(ph),
             ....:                       sin(th)*sin(ph), cos(th)]}, name='F')
             sage: F.display() # the standard embedding of S^2 into R^3
-            F: S^2 --> R^3
-            on U: (th, ph) |--> (x, y, z) = (cos(ph)*sin(th), sin(ph)*sin(th), cos(th))
-            sage: v = XS.frame()[1] ; v  # the coordinate vector d/dphi
-            Vector field d/dph on the Open subset U of the 2-dimensional
+            F: S^2 → R^3
+            on U: (th, ph) ↦ (x, y, z) = (cos(ph)*sin(th), sin(ph)*sin(th), cos(th))
+            sage: v = XS.frame()[1] ; v  # the coordinate vector ∂/∂phi
+            Vector field ∂/∂ph on the Open subset U of the 2-dimensional
              differentiable manifold S^2
-            sage: graph_v = v.plot(chart=X3, mapping=F, label_axes=False)
-            sage: graph_S2 = XS.plot(chart=X3, mapping=F, number_values=9)
-            sage: graph_v + graph_S2
+            sage: graph_v = v.plot(chart=X3, mapping=F, label_axes=False)               # needs sage.plot
+            sage: graph_S2 = XS.plot(chart=X3, mapping=F, number_values=9)              # needs sage.plot
+            sage: graph_v + graph_S2                                                    # needs sage.plot
             Graphics3d Object
 
         .. PLOT::
@@ -729,7 +714,7 @@ class VectorField(MultivectorField):
         elif not isinstance(ambient_coords, tuple):
             ambient_coords = tuple(ambient_coords)
         nca = len(ambient_coords)
-        if nca != 2 and nca !=3:
+        if nca != 2 and nca != 3:
             raise ValueError("the number of ambient coordinates must be " +
                              "either 2 or 3, not {}".format(nca))
         if ranges is None:
@@ -771,11 +756,11 @@ class VectorField(MultivectorField):
             steps = {}
         for coord in coords:
             if coord not in steps:
-                steps[coord] = (ranges[coord][1] - ranges[coord][0])/ \
+                steps[coord] = (ranges[coord][1] - ranges[coord][0]) / \
                                (number_values[coord]-1)
             else:
                 number_values[coord] = 1 + int(
-                           (ranges[coord][1] - ranges[coord][0])/ steps[coord])
+                           (ranges[coord][1] - ranges[coord][0]) / steps[coord])
         #
         # 2/ Plots
         #    -----
@@ -812,8 +797,8 @@ class VectorField(MultivectorField):
             list_xx = []
 
             while ind != ind_max:
-                for i in  range(ncp):
-                    xx[ind_coord[i]] = xmin[i] + ind[i]*step_tab[i]
+                for i in range(ncp):
+                    xx[ind_coord[i]] = xmin[i] + ind[i] * step_tab[i]
 
                 if chart_domain.valid_coordinates(*xx, tolerance=1e-13,
                                                   parameters=parameters):
@@ -846,7 +831,6 @@ class VectorField(MultivectorField):
                                scale, color, parameters,
                                extra_options)
                               for ind_part in local_list]
-
 
             # definition of the parallel function
             @parallel(p_iter='multiprocessing', ncpus=nproc)
@@ -935,7 +919,7 @@ class VectorField(MultivectorField):
             sage: vw = v.bracket(w); vw
             Vector field on the 3-dimensional differentiable manifold M
             sage: vw.display()
-            (-x^2 + y + 2) d/dy + (-y - z) d/dz
+            (-x^2 + y + 2) ∂/∂y + (-y - z) ∂/∂z
 
         Some checks::
 
@@ -1104,8 +1088,8 @@ class VectorField(MultivectorField):
             sage: s = u.dot_product(v); s
             Scalar field u.v on the Euclidean plane E^2
             sage: s.display()
-            u.v: E^2 --> R
-               (x, y) |--> 2*x*y
+            u.v: E^2 → ℝ
+               (x, y) ↦ 2*x*y
 
         A shortcut alias of ``dot_product`` is ``dot``::
 
@@ -1125,13 +1109,13 @@ class VectorField(MultivectorField):
             sage: s = u.dot_product(v, metric=h); s
             Scalar field h(u,v) on the Euclidean plane E^2
             sage: s.display()
-            h(u,v): E^2 --> R
-               (x, y) |--> -(x^3*y - x*y^3)/((x^2 + 1)*y^2 + x^2 + 1)
+            h(u,v): E^2 → ℝ
+               (x, y) ↦ -(x^3*y - x*y^3)/((x^2 + 1)*y^2 + x^2 + 1)
 
         Scalar product of two vector fields along a curve (a lemniscate of
         Gerono)::
 
-            sage: R.<t> = RealLine()
+            sage: R.<t> = manifolds.RealLine()
             sage: C = M.curve([sin(t), sin(2*t)/2], (t, 0, 2*pi), name='C')
             sage: u = C.tangent_vector_field(name='u')
             sage: u.display()
@@ -1144,8 +1128,8 @@ class VectorField(MultivectorField):
             sage: s = u.dot_product(v); s
             Scalar field u.v on the Real interval (0, 2*pi)
             sage: s.display()
-            u.v: (0, 2*pi) --> R
-               t |--> sin(t)^2
+            u.v: (0, 2*pi) → ℝ
+               t ↦ sin(t)^2
 
         Scalar product between a vector field along the curve and a vector
         field on the ambient Euclidean plane::
@@ -1154,8 +1138,8 @@ class VectorField(MultivectorField):
             sage: s = u.dot_product(e_x); s
             Scalar field u.e_x on the Real interval (0, 2*pi)
             sage: s.display()
-            u.e_x: (0, 2*pi) --> R
-               t |--> cos(t)
+            u.e_x: (0, 2*pi) → ℝ
+               t ↦ cos(t)
 
         """
         default_metric = metric is None
@@ -1223,8 +1207,8 @@ class VectorField(MultivectorField):
             sage: s = v.norm(); s
             Scalar field |v| on the Euclidean plane E^2
             sage: s.display()
-            |v|: E^2 --> R
-               (x, y) |--> sqrt(x^2 + y^2)
+            |v|: E^2 → ℝ
+               (x, y) ↦ sqrt(x^2 + y^2)
 
         The global function :func:`~sage.misc.functional.norm` can be used
         instead of the method ``norm()``::
@@ -1239,12 +1223,12 @@ class VectorField(MultivectorField):
             sage: s = v.norm(metric=h); s
             Scalar field |v|_h on the Euclidean plane E^2
             sage: s.display()
-            |v|_h: E^2 --> R
-               (x, y) |--> sqrt((2*x^2 + 1)*y^2 + x^2)/(sqrt(x^2 + 1)*sqrt(y^2 + 1))
+            |v|_h: E^2 → ℝ
+               (x, y) ↦ sqrt((2*x^2 + 1)*y^2 + x^2)/(sqrt(x^2 + 1)*sqrt(y^2 + 1))
 
         Norm of the tangent vector field to a curve (a lemniscate of Gerono)::
 
-            sage: R.<t> = RealLine()
+            sage: R.<t> = manifolds.RealLine()
             sage: C = M.curve([sin(t), sin(2*t)/2], (t, 0, 2*pi), name='C')
             sage: v = C.tangent_vector_field()
             sage: v.display()
@@ -1252,8 +1236,8 @@ class VectorField(MultivectorField):
             sage: s = v.norm(); s
             Scalar field |C'| on the Real interval (0, 2*pi)
             sage: s.display()
-            |C'|: (0, 2*pi) --> R
-               t |--> sqrt(4*cos(t)^4 - 3*cos(t)^2 + 1)
+            |C'|: (0, 2*pi) → ℝ
+               t ↦ sqrt(4*cos(t)^4 - 3*cos(t)^2 + 1)
 
         """
         default_metric = metric is None
@@ -1351,7 +1335,7 @@ class VectorField(MultivectorField):
 
         Cross product of two vector fields along a curve (arc of a helix)::
 
-            sage: R.<t> = RealLine()
+            sage: R.<t> = manifolds.RealLine()
             sage: C = M.curve((cos(t), sin(t), t), (t, 0, 2*pi), name='C')
             sage: u = C.tangent_vector_field()
             sage: u.display()
@@ -1574,7 +1558,7 @@ class VectorFieldParal(FiniteRankFreeModuleElement, MultivectorFieldParal,
         sage: f = M.scalar_field(x*y^2, name='f')
         sage: v = M.vector_field(-y, x, name='v')
         sage: v.display()
-        v = -y d/dx + x d/dy
+        v = -y ∂/∂x + x ∂/∂y
         sage: v(f)
         Scalar field v(f) on the 2-dimensional differentiable manifold M
         sage: v(f).expr()
@@ -1591,8 +1575,8 @@ class VectorFieldParal(FiniteRankFreeModuleElement, MultivectorFieldParal,
         Differentiable map Phi from the 1-dimensional differentiable manifold R
          to the 2-dimensional differentiable manifold M
         sage: Phi.display()
-        Phi: R --> M
-           t |--> (x, y) = (cos(t), sin(t))
+        Phi: R → M
+           t ↦ (x, y) = (cos(t), sin(t))
         sage: w = R.vector_field(-sin(t), cos(t), dest_map=Phi, name='w') ; w
         Vector field w along the 1-dimensional differentiable manifold R with
          values on the 2-dimensional differentiable manifold M
@@ -1601,7 +1585,7 @@ class VectorFieldParal(FiniteRankFreeModuleElement, MultivectorFieldParal,
          differentiable manifold R mapped into the 2-dimensional differentiable
          manifold M
         sage: w.display()
-        w = -sin(t) d/dx + cos(t) d/dy
+        w = -sin(t) ∂/∂x + cos(t) ∂/∂y
 
     Value at a given point::
 
@@ -1611,7 +1595,7 @@ class VectorFieldParal(FiniteRankFreeModuleElement, MultivectorFieldParal,
         Tangent vector w at Point Phi(p) on the 2-dimensional differentiable
          manifold M
         sage: w.at(p).display()
-        w = d/dy
+        w = ∂/∂y
         sage: w.at(p) == v.at(Phi(p))
         True
 
@@ -1632,7 +1616,7 @@ class VectorFieldParal(FiniteRankFreeModuleElement, MultivectorFieldParal,
             Vector field v on the 2-dimensional differentiable manifold M
             sage: v[:] = (-y, x)
             sage: v.display()
-            v = -y d/dx + x d/dy
+            v = -y ∂/∂x + x ∂/∂y
             sage: TestSuite(v).run()
 
         Construction via ``DifferentiableManifold.vector_field``::
@@ -1742,61 +1726,11 @@ class VectorFieldParal(FiniteRankFreeModuleElement, MultivectorFieldParal,
             sage: v(f)
             Scalar field on the 2-dimensional differentiable manifold M
             sage: v(f).display()
-            M --> R
-            (x, y) |--> 2*x^2*y - y^3
+            M → ℝ
+            (x, y) ↦ 2*x^2*y - y^3
 
         """
-        from sage.manifolds.differentiable.vectorframe import CoordFrame
-        if scalar._tensor_type == (0,1):
-            # This is actually the action of the vector field on a 1-form,
-            # as a tensor field of type (1,0):
-            return scalar(self)
-        if scalar._tensor_type != (0,0):
-            raise TypeError("the argument must be a scalar field")
-        #!# Could it be simply
-        # return scalar.differential()(self)
-        # ?
-        dom_resu = self._domain.intersection(scalar._domain)
-        self_r = self.restrict(dom_resu)
-        scalar_r = scalar.restrict(dom_resu)
-        if scalar_r._is_zero:
-            return dom_resu._zero_scalar_field
-        # Creation of the result:
-        if self._name is not None and scalar._name is not None:
-            resu_name = self._name + "(" + scalar._name + ")"
-        else:
-            resu_name = None
-        if self._latex_name is not None and scalar._latex_name is not None:
-            resu_latex = (self._latex_name + r"\left(" + scalar._latex_name
-                          + r"\right)")
-        else:
-            resu_latex = None
-        resu = dom_resu.scalar_field(name=resu_name, latex_name=resu_latex)
-        # Search for common charts for the computation:
-        common_charts = set()
-        for chart in scalar_r._express:
-            try:
-                self_r.comp(chart._frame)
-                common_charts.add(chart)
-            except ValueError:
-                pass
-        for frame in self_r._components:
-            if isinstance(frame, CoordFrame):
-                chart = frame._chart
-                try:
-                    scalar_r.coord_function(chart)
-                    common_charts.add(chart)
-                except ValueError:
-                    pass
-        if not common_charts:
-            raise ValueError("no common chart found")
-        # The computation:
-        manif = scalar._manifold
-        for chart in common_charts:
-            v = self_r.comp(chart._frame)
-            f = scalar_r.coord_function(chart)
-            res = 0
-            for i in manif.irange():
-                res += v[i, chart] * f.diff(i)
-            resu._express[chart] = res
-        return resu
+        # This method enforces VectorField.__call__
+        # instead of FiniteRankFreeModuleElement.__call__, which would have
+        # been inheritated otherwise
+        return VectorField.__call__(self, scalar)

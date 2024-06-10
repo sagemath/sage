@@ -10,15 +10,16 @@ AUTHOR:
 - Simon King (2011-11): initial version.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Simon King <simon.king@uni-jena.de>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
 
 cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
     """
@@ -28,14 +29,14 @@ cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
     resolution order for new style classes involving multiple
     inheritance.
 
-    After :trac:`11943` this implementation was used to compute the
+    After :issue:`11943` this implementation was used to compute the
     list of super categories of a category; see
     :meth:`~sage.categories.category.Category.all_super_categories`.
     The purpose is to ensure that list of super categories matches
     with the method resolution order of the parent or element classes
     of a category.
 
-    Since :trac:`13589`, this implementation is superseded by that in
+    Since :issue:`13589`, this implementation is superseded by that in
     :mod:`sage.misc.c3_controlled`, that puts the ``C3`` algorithm
     under control of some total order on categories.  This guarantees
     that ``C3`` always finds a consistent Method Resolution Order. For
@@ -107,7 +108,7 @@ cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
         sage: Foo._all_bases
         Traceback (most recent call last):
         ...
-        ValueError: Can not merge the items X, Y.
+        ValueError: Cannot merge the items X, Y.
 
     The ``C3`` algorithm is not able to create a consistent linear
     extension. Indeed, its specifications impose that, if ``X`` and
@@ -120,11 +121,11 @@ cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
 
     TESTS:
 
-    Regression test for bug #1 of :trac:`13501`::
+    Regression test for bug #1 of :issue:`13501`::
 
-        sage: class C(object): pass
-        sage: class F(object): pass
-        sage: class G(object): pass
+        sage: class C(): pass
+        sage: class F(): pass
+        sage: class G(): pass
         sage: class B(C,F):    pass
         sage: class D(F,G):    pass
         sage: class E(F):      pass
@@ -142,11 +143,11 @@ cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
         sage: A._all_bases
         [A, B, C, D, E, F, G]
 
-    Regression test for bug #2 of :trac:`13501`. The following should
+    Regression test for bug #2 of :issue:`13501`. The following should
     fail since ``A`` asks for ``B`` to come before ``C``, where as
     ``B`` is a super class of ``C``::
 
-        sage: class B(object): pass
+        sage: class B(): pass
         sage: class C(B): pass
         sage: class A(B, C): pass
         Traceback (most recent call last):
@@ -160,9 +161,9 @@ cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
         sage: A._all_bases
         Traceback (most recent call last):
         ...
-        ValueError: Can not merge the items B, C, B.
+        ValueError: Cannot merge the items B, C, B.
 
-    Since :trac:`11943`, the following consistency tests are part
+    Since :issue:`11943`, the following consistency tests are part
     of the test suites of categories (except for hom categories)::
 
         sage: C = Category.join([HopfAlgebrasWithBasis(QQ), FiniteEnumeratedSets()])
@@ -231,5 +232,5 @@ cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
                 break
         if not next_item_found:
             # No head is available
-            raise ValueError("Can not merge the items {}.".format(', '.join([repr(head) for head in heads])))
+            raise ValueError("Cannot merge the items {}.".format(', '.join([repr(head) for head in heads])))
     return out

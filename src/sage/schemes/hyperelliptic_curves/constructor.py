@@ -6,16 +6,13 @@ AUTHORS:
 - David Kohel (2006): initial version
 
 - Anna Somoza (2019-04): dynamic class creation
-
 """
-from __future__ import absolute_import
-
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
 #                2019 Anna Somoza <anna.somoza.henares@gmail.com>
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.schemes.projective.projective_space import ProjectiveSpace
 
@@ -25,12 +22,13 @@ from .hyperelliptic_rational_field import HyperellipticCurve_rational_field
 from .hyperelliptic_padic_field import HyperellipticCurve_padic_field
 from .hyperelliptic_g2 import HyperellipticCurve_g2
 
-from sage.rings.padics.all import is_pAdicField
-from sage.rings.rational_field import is_RationalField
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
-from sage.rings.polynomial.polynomial_element import is_Polynomial
+import sage.rings.abc
 
+from sage.rings.finite_rings.finite_field_base import FiniteField
+from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.rational_field import is_RationalField
 from sage.structure.dynamic_class import dynamic_class
+
 
 def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
     r"""
@@ -40,14 +38,14 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
 
     INPUT:
 
-    -  ``f`` - univariate polynomial
+    -  ``f`` -- univariate polynomial
 
-    -  ``h`` - optional univariate polynomial
+    -  ``h`` -- optional univariate polynomial
 
-    -  ``names``  (default: ``["x","y"]``) - names for the
+    -  ``names``  (default: ``["x","y"]``) -- names for the
        coordinate functions
 
-    -  ``check_squarefree`` (default: ``True``) - test if
+    -  ``check_squarefree`` (default: ``True``) -- test if
        the input defines a hyperelliptic curve when f is
        homogenized to degree `2g+2` and h to degree
        `g+1` for some g.
@@ -73,51 +71,55 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
         sage: R.<x> = QQ[]
         sage: HyperellipticCurve(x^5 + x + 1)
         Hyperelliptic Curve over Rational Field defined by y^2 = x^5 + x + 1
-        sage: HyperellipticCurve(x^19 + x + 1, x-2)
+        sage: HyperellipticCurve(x^19 + x + 1, x - 2)
         Hyperelliptic Curve over Rational Field defined by y^2 + (x - 2)*y = x^19 + x + 1
 
-        sage: k.<a> = GF(9); R.<x> = k[]
-        sage: HyperellipticCurve(x^3 + x - 1, x+a)
-        Hyperelliptic Curve over Finite Field in a of size 3^2 defined by y^2 + (x + a)*y = x^3 + x + 2
+        sage: k.<a> = GF(9); R.<x> = k[]                                                # needs sage.rings.finite_rings
+        sage: HyperellipticCurve(x^3 + x - 1, x+a)                                      # needs sage.rings.finite_rings
+        Hyperelliptic Curve over Finite Field in a of size 3^2
+         defined by y^2 + (x + a)*y = x^3 + x + 2
 
     Characteristic two::
 
-        sage: P.<x> = GF(8,'a')[]
-        sage: HyperellipticCurve(x^7+1, x)
-        Hyperelliptic Curve over Finite Field in a of size 2^3 defined by y^2 + x*y = x^7 + 1
-        sage: HyperellipticCurve(x^8+x^7+1, x^4+1)
-        Hyperelliptic Curve over Finite Field in a of size 2^3 defined by y^2 + (x^4 + 1)*y = x^8 + x^7 + 1
-
-        sage: HyperellipticCurve(x^8+1, x)
+        sage: # needs sage.rings.finite_rings
+        sage: P.<x> = GF(8, 'a')[]
+        sage: HyperellipticCurve(x^7 + 1, x)
+        Hyperelliptic Curve over Finite Field in a of size 2^3
+         defined by y^2 + x*y = x^7 + 1
+        sage: HyperellipticCurve(x^8 + x^7 + 1, x^4 + 1)
+        Hyperelliptic Curve over Finite Field in a of size 2^3
+         defined by y^2 + (x^4 + 1)*y = x^8 + x^7 + 1
+        sage: HyperellipticCurve(x^8 + 1, x)
         Traceback (most recent call last):
         ...
-        ValueError: Not a hyperelliptic curve: highly singular at infinity.
-
-        sage: HyperellipticCurve(x^8+x^7+1, x^4)
+        ValueError: not a hyperelliptic curve: highly singular at infinity
+        sage: HyperellipticCurve(x^8 + x^7 + 1, x^4)
         Traceback (most recent call last):
         ...
-        ValueError: Not a hyperelliptic curve: singularity in the provided affine patch.
+        ValueError: not a hyperelliptic curve: singularity in the provided affine patch
 
         sage: F.<t> = PowerSeriesRing(FiniteField(2))
         sage: P.<x> = PolynomialRing(FractionField(F))
-        sage: HyperellipticCurve(x^5+t, x)
-        Hyperelliptic Curve over Laurent Series Ring in t over Finite Field of size 2 defined by y^2 + x*y = x^5 + t
+        sage: HyperellipticCurve(x^5 + t, x)
+        Hyperelliptic Curve over Laurent Series Ring in t over Finite Field of size 2
+         defined by y^2 + x*y = x^5 + t
 
     We can change the names of the variables in the output::
 
-        sage: k.<a> = GF(9); R.<x> = k[]
-        sage: HyperellipticCurve(x^3 + x - 1, x+a, names=['X','Y'])
-        Hyperelliptic Curve over Finite Field in a of size 3^2 defined by Y^2 + (X + a)*Y = X^3 + X + 2
+        sage: k.<a> = GF(9); R.<x> = k[]                                                # needs sage.rings.finite_rings
+        sage: HyperellipticCurve(x^3 + x - 1, x + a, names=['X','Y'])                   # needs sage.rings.finite_rings
+        Hyperelliptic Curve over Finite Field in a of size 3^2
+         defined by Y^2 + (X + a)*Y = X^3 + X + 2
 
     This class also allows curves of genus zero or one, which are strictly
     speaking not hyperelliptic::
 
         sage: P.<x> = QQ[]
-        sage: HyperellipticCurve(x^2+1)
+        sage: HyperellipticCurve(x^2 + 1)
         Hyperelliptic Curve over Rational Field defined by y^2 = x^2 + 1
-        sage: HyperellipticCurve(x^4-1)
+        sage: HyperellipticCurve(x^4 - 1)
         Hyperelliptic Curve over Rational Field defined by y^2 = x^4 - 1
-        sage: HyperellipticCurve(x^3+2*x+2)
+        sage: HyperellipticCurve(x^3 + 2*x + 2)
         Hyperelliptic Curve over Rational Field defined by y^2 = x^3 + 2*x + 2
 
     Double roots::
@@ -126,10 +128,11 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
         sage: HyperellipticCurve((x^3-x+2)^2*(x^6-1))
         Traceback (most recent call last):
         ...
-        ValueError: Not a hyperelliptic curve: singularity in the provided affine patch.
+        ValueError: not a hyperelliptic curve: singularity in the provided affine patch
 
         sage: HyperellipticCurve((x^3-x+2)^2*(x^6-1), check_squarefree=False)
-        Hyperelliptic Curve over Finite Field of size 7 defined by y^2 = x^12 + 5*x^10 + 4*x^9 + x^8 + 3*x^7 + 3*x^6 + 2*x^4 + 3*x^3 + 6*x^2 + 4*x + 3
+        Hyperelliptic Curve over Finite Field of size 7 defined by
+         y^2 = x^12 + 5*x^10 + 4*x^9 + x^8 + 3*x^7 + 3*x^6 + 2*x^4 + 3*x^3 + 6*x^2 + 4*x + 3
 
     The input for a (smooth) hyperelliptic curve of genus `g` should not
     contain polynomials of degree greater than `2g+2`. In the following
@@ -139,12 +142,12 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
 
         sage: P.<x> = QQ[]
         sage: h = x^100
-        sage: F = x^6+1
-        sage: f = F-h^2/4
+        sage: F = x^6 + 1
+        sage: f = F - h^2/4
         sage: HyperellipticCurve(f, h)
         Traceback (most recent call last):
         ...
-        ValueError: Not a hyperelliptic curve: highly singular at infinity.
+        ValueError: not a hyperelliptic curve: highly singular at infinity
 
         sage: HyperellipticCurve(F)
         Hyperelliptic Curve over Rational Field defined by y^2 = x^6 + 1
@@ -154,10 +157,10 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
 
         sage: F.<t> = GF(5)[]
         sage: P.<x> = F[]
-        sage: HyperellipticCurve(x^5+t)
+        sage: HyperellipticCurve(x^5 + t)
         Traceback (most recent call last):
         ...
-        ValueError: Not a hyperelliptic curve: singularity in the provided affine patch.
+        ValueError: not a hyperelliptic curve: singularity in the provided affine patch
 
     Input with integer coefficients creates objects with the integers
     as base ring, but only checks smoothness over `\QQ`, not over Spec(`\ZZ`).
@@ -165,12 +168,12 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
     not checked whether the discriminant is a unit in `\ZZ^*`.::
 
         sage: P.<x> = ZZ[]
-        sage: HyperellipticCurve(3*x^7+6*x+6)
+        sage: HyperellipticCurve(3*x^7 + 6*x + 6)
         Hyperelliptic Curve over Integer Ring defined by y^2 = 3*x^7 + 6*x + 6
 
     TESTS:
 
-    Check that `f` can be a constant (see :trac:`15516`)::
+    Check that `f` can be a constant (see :issue:`15516`)::
 
         sage: R.<u> = PolynomialRing(Rationals())
         sage: HyperellipticCurve(-12, u^4 + 7)
@@ -178,6 +181,7 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
 
     Check that two curves with the same class name have the same class type::
 
+        sage: # needs sage.rings.finite_rings
         sage: R.<t> = PolynomialRing(GF(next_prime(10^9)))
         sage: C = HyperellipticCurve(t^5 + t + 1)
         sage: C2 = HyperellipticCurve(t^5 + 3*t + 1)
@@ -186,6 +190,7 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
 
     Check that the inheritance is correct::
 
+        sage: # needs sage.rings.finite_rings
         sage: R.<t> = PolynomialRing(GF(next_prime(10^9)))
         sage: C = HyperellipticCurve(t^5 + t + 1)
         sage: type(C).mro()
@@ -198,18 +203,18 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
     """
     # F is the discriminant; use this for the type check
     # rather than f and h, one of which might be constant.
-    F = h**2 + 4*f
-    if not is_Polynomial(F):
-        raise TypeError("Arguments f (= %s) and h (= %s) must be polynomials" % (f, h))
+    F = h**2 + 4 * f
+    if not isinstance(F, Polynomial):
+        raise TypeError(f"arguments {f = } and {h = } must be polynomials")
     P = F.parent()
     f = P(f)
     h = P(h)
     df = f.degree()
-    dh_2 = 2*h.degree()
+    dh_2 = 2 * h.degree()
     if dh_2 < df:
-        g = (df-1)//2
+        g = (df - 1) // 2
     else:
-        g = (dh_2-1)//2
+        g = (dh_2 - 1) // 2
     if check_squarefree:
         # Assuming we are working over a field, this checks that after
         # resolving the singularity at infinity, we get a smooth double cover
@@ -217,56 +222,78 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
         if P(2) == 0:
             # characteristic 2
             if h == 0:
-                raise ValueError("In characteristic 2, argument h (= %s) must be non-zero."%h)
-            if h[g+1] == 0 and f[2*g+1]**2 == f[2*g+2]*h[g]**2:
-                raise ValueError("Not a hyperelliptic curve: " \
-                                  "highly singular at infinity.")
-            should_be_coprime = [h, f*h.derivative()**2+f.derivative()**2]
+                raise ValueError(
+                    f"for characteristic 2, argument {h = } must be non-zero"
+                )
+            if h[g + 1] == 0 and f[2 * g + 1] ** 2 == f[2 * g + 2] * h[g] ** 2:
+                raise ValueError(
+                    "not a hyperelliptic curve: highly singular at infinity"
+                )
+            should_be_coprime = [h, f * h.derivative() ** 2 + f.derivative() ** 2]
         else:
             # characteristic not 2
-            if not F.degree() in [2*g+1, 2*g+2]:
-                raise ValueError("Not a hyperelliptic curve: " \
-                                  "highly singular at infinity.")
+            if F.degree() not in [2 * g + 1, 2 * g + 2]:
+                raise ValueError(
+                    "not a hyperelliptic curve: highly singular at infinity"
+                )
             should_be_coprime = [F, F.derivative()]
         try:
-            smooth = should_be_coprime[0].gcd(should_be_coprime[1]).degree()==0
+            smooth = should_be_coprime[0].gcd(should_be_coprime[1]).degree() == 0
         except (AttributeError, NotImplementedError, TypeError):
             try:
-                smooth = should_be_coprime[0].resultant(should_be_coprime[1])!=0
+                smooth = should_be_coprime[0].resultant(should_be_coprime[1]) != 0
             except (AttributeError, NotImplementedError, TypeError):
-                raise NotImplementedError("Cannot determine whether " \
-                      "polynomials %s have a common root. Use " \
-                      "check_squarefree=False to skip this check." % \
-                      should_be_coprime)
+                raise NotImplementedError(
+                    "cannot determine whether "
+                    f"polynomials {should_be_coprime} have a common root, use "
+                    "check_squarefree=False to skip this check"
+                )
         if not smooth:
-            raise ValueError("Not a hyperelliptic curve: " \
-                              "singularity in the provided affine patch.")
+            raise ValueError(
+                "not a hyperelliptic curve: singularity in the provided affine patch"
+            )
     R = P.base_ring()
     PP = ProjectiveSpace(2, R)
     if names is None:
-        names = ["x","y"]
+        names = ["x", "y"]
 
-    superclass = []
+    bases = []
     cls_name = ["HyperellipticCurve"]
 
-    genus_classes = {
-        2 :  HyperellipticCurve_g2}
+    # For certain genus we specialise to subclasses with
+    # optimised methods
+    genus_classes = {2: HyperellipticCurve_g2}
+    if g in genus_classes:
+        bases.append(genus_classes[g])
+        cls_name.append(f"g{g}")
+
+    # For certain base fields, we specialise to subclasses
+    # with special case methods
+    def is_FiniteField(x):
+        return isinstance(x, FiniteField)
+
+    def is_pAdicField(x):
+        return isinstance(x, sage.rings.abc.pAdicField)
 
     fields = [
         ("FiniteField", is_FiniteField, HyperellipticCurve_finite_field),
         ("RationalField", is_RationalField, HyperellipticCurve_rational_field),
-        ("pAdicField", is_pAdicField, HyperellipticCurve_padic_field)]
+        ("pAdicField", is_pAdicField, HyperellipticCurve_padic_field),
+    ]
 
-    if g in genus_classes:
-        superclass.append(genus_classes[g])
-        cls_name.append("g%s"%g)
-
-    for name,test,cls in fields:
+    for name, test, cls in fields:
         if test(R):
-            superclass.append(cls)
+            bases.append(cls)
             cls_name.append(name)
             break
 
+    # If no specialised subclasses are identified, we simply use the
+    # generic class in the class construction
+    if not bases:
+        bases = [HyperellipticCurve_generic]
+
+    # Dynamically build a class from multiple inheritance. Note that
+    # all classes we select from are subclasses of HyperellipticCurve_generic
     class_name = "_".join(cls_name)
-    cls = dynamic_class(class_name, tuple(superclass), HyperellipticCurve_generic, doccls = HyperellipticCurve)
+    cls = dynamic_class(class_name, tuple(bases), doccls=HyperellipticCurve)
     return cls(PP, f, h, names=names, genus=g)

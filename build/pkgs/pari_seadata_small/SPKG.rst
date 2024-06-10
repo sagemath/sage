@@ -1,5 +1,5 @@
-pari_seadata_small
-==================
+pari_seadata_small: PARI data package needed by ellap for large primes (small version)
+======================================================================================
 
 Description
 -----------
@@ -20,7 +20,3 @@ Upstream Contact
 
 http://pari.math.u-bordeaux.fr/
 
-Dependencies
-------------
-
-None (package contains data files only)

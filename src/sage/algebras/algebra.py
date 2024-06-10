@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Abstract base class for algebras
 """
@@ -17,8 +18,8 @@ Abstract base class for algebras
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.ring import Algebra
 from sage.categories.algebras import Algebras
+
 
 def is_Algebra(x):
     r"""
@@ -29,10 +30,11 @@ def is_Algebra(x):
         sage: from sage.algebras.algebra import is_Algebra
         sage: R.<x,y> = FreeAlgebra(QQ,2)
         sage: is_Algebra(R)
+        doctest:warning...
+        DeprecationWarning: the function is_Algebra is deprecated; use '... in Algebras(base_ring)' instead
+        See https://github.com/sagemath/sage/issues/35253 for details.
         True
     """
-    try:
-        return isinstance(x, Algebra) or x in Algebras(x.base_ring())
-    except Exception:
-        return False
-
+    from sage.misc.superseded import deprecation
+    deprecation(35253, "the function is_Algebra is deprecated; use '... in Algebras(base_ring)' instead")
+    return x in Algebras(x.base_ring())

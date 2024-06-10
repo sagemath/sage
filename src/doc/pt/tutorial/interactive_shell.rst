@@ -16,8 +16,8 @@ obtém o seguinte:
 ::
 
     ┌────────────────────────────────────────────────────────────────────┐
-    │ SageMath version 9.0, Release Date: 2020-01-01                     │
-    │ Using Python 3.7.3. Type "help()" for help.                        │
+    │ SageMath version 9.7, Release Date: 2022-01-10                     │
+    │ Using Python 3.10.4. Type "help()" for help.                       │
     └────────────────────────────────────────────────────────────────────┘
     sage:
 
@@ -28,7 +28,7 @@ Para sair do Sage pressione Ctrl-D ou digite ``quit`` ou ``exit``.
 ::
 
     sage: quit
-    Exiting SAGE (CPU time 0m0.00s, Wall time 0m0.89s)
+    Exiting Sage (CPU time 0m0.00s, Wall time 0m0.89s)
 
 O wall time é o tempo que passou no relógio "pendurado na sua parede".
 Isso é relevante, pois o tempo CPU não conta o tempo usado por
@@ -36,7 +36,7 @@ subprocessos como GAP ou Singular.
 
 (Evite terminar um processo do Sage usando ``kill -9`` a partir de um
 terminal, pois o Sage pode não terminal seus subprocessos, por
-exemplo, subprocessos do Maple, ou limpeza de arquivos temporários em 
+exemplo, subprocessos do Maple, ou limpeza de arquivos temporários em
 ``$HOME/.sage/tmp``.)
 
 A Sua Sessão no Sage
@@ -113,14 +113,14 @@ Você também pode salvar uma lista de comandos em uma macro.
 ::
 
     sage: E
-    Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over 
+    Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over
     Rational Field
     sage: E = 5
     sage: M = None
     sage: em
     Executing Macro...
     sage: E
-    Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over 
+    Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over
     Rational Field
 
 Quando se usa a linha de comando, qualquer comando UNIX pode ser
@@ -146,7 +146,7 @@ executa a versão incluída no Sage.
 
     sage: !gp
     Reading GPRC: /etc/gprc ...Done.
-    
+
                                GP/PARI CALCULATOR Version 2.2.11 (alpha)
                       i686 running linux (ix86/GMP-4.1.4 kernel) 32-bit version
     ...
@@ -174,10 +174,10 @@ arquivo log).
 
     was@form:~$ sage
     ┌────────────────────────────────────────────────────────────────────┐
-    │ SageMath version 9.0, Release Date: 2020-01-01                     │
-    │ Using Python 3.7.3. Type "help()" for help.                        │
+    │ SageMath version 9.7, Release Date: 2022-01-10                     │
+    │ Using Python 3.10.4. Type "help()" for help.                       │
     └────────────────────────────────────────────────────────────────────┘
-    
+
     sage: logstart setup
     Activating auto-logging. Current session state plus future input saved.
     Filename       : setup
@@ -190,18 +190,18 @@ arquivo log).
     sage: x,y = QQ['x,y'].gens()
     sage: G = E.gens()
     sage:
-    Exiting SAGE (CPU time 0m0.61s, Wall time 0m50.39s).
+    Exiting Sage (CPU time 0m0.61s, Wall time 0m50.39s).
     was@form:~$ sage
     ┌────────────────────────────────────────────────────────────────────┐
-    │ SageMath version 9.0, Release Date: 2020-01-01                     │
-    │ Using Python 3.7.3. Type "help()" for help.                        │
+    │ SageMath version 9.7, Release Date: 2022-01-10                     │
+    │ Using Python 3.10.4. Type "help()" for help.                       │
     └────────────────────────────────────────────────────────────────────┘
-    
+
     sage: load "setup"
     Loading log file <setup> one line at a time...
     Finished replaying log file <setup>
     sage: E
-    Elliptic Curve defined by y^2 + x*y  = x^3 - x^2 + 4*x + 3 over Rational 
+    Elliptic Curve defined by y^2 + x*y  = x^3 - x^2 + 4*x + 3 over Rational
     Field
     sage: x*y
     x*y
@@ -296,7 +296,7 @@ comando ``cputime``, como ilustrado abaixo:
     sage: b = 1938^99484
     sage: c = pari(1938)^pari(99484)
     sage: cputime(t)                       # somewhat random output
-    0.64                                     
+    0.64
 
 .. skip
 
@@ -304,7 +304,7 @@ comando ``cputime``, como ilustrado abaixo:
 
     sage: cputime?
     ...
-        Return the time in CPU second since SAGE started, or with optional
+        Return the time in CPU second since Sage started, or with optional
         argument t, return the time since time t.
         INPUT:
             t -- (optional) float, time in CPU seconds
@@ -372,34 +372,6 @@ pode usar quaisquer comandos e recursos do IPython. Você pode ler a
 `Documentação completa do IPython
 <http://ipython.scipy.org/moin/Documentation>`_ (em inglês).
 
-- Você pode usar ``%bg`` para executar um comando no background, e
-  então usar ``jobs`` para acessar os resultados, da seguinte forma.
-  (Os comentários ``not tested`` estão aqui porque a sintaxe ``%bg``
-  não funciona bem com o sistema de testes automáticos do Sage. Se
-  você digitar esses comandos, eles devem funcionar. Isso é obviamente
-  mais útil com comandos que demoram para serem completados.)
-
-  ::
-
-    sage: def quick(m): return 2*m
-    sage: %bg quick(20)  # not tested
-    Starting job # 0 in a separate thread.
-    sage: jobs.status()  # not tested
-    Completed jobs:
-    0 : quick(20)
-    sage: jobs[0].result  # the actual answer, not tested
-    40
-
-  Note que os comandos executados no background não usam o
-  pre-processador (preparser) do Sage -- veja :ref:`section-mathannoy`
-  para mais informações. Uma forma (estranha talvez) de contornar esse
-  problema seria executar ::
-
-    sage: %bg eval(preparse('quick(20)')) # not tested
-
-  É mais seguro e simples, todavia, usar ``%bg`` apenas em comandos
-  que não requerem o pre-processador (preparser).
-
 - Você pode usar ``%edit`` (ou ``%ed`` ou ``ed``) para abrir um
   editor, se você desejar digitar algum código mais complexo. Antes de
   iniciar o Sage, certifique-se de que a variável de ambiente
@@ -439,8 +411,8 @@ Erros e Exceções
 
 Quando algo errado ocorre, você usualmente verá uma "exceção" do
 Python. O Python até mesmo tenta sugerir o que ocasionou a exceção,
-por exemplo, ``NameError`` ou ``ValueError`` (veja o Manual de
-Referência do Python [Py]_ para uma lista completa de exceções). Por
+por exemplo, :class:`NameError` ou :class:`ValueError` (veja o Referência da
+Biblioteca Python [PyLR]_ para uma lista completa de exceções). Por
 exemplo,
 
 .. skip
@@ -452,8 +424,8 @@ exemplo,
        File "<console>", line 1
          ZZ(3)_2
                ^
-    SyntaxError: invalid syntax
-    
+    SyntaxError: invalid ...
+
     sage: EllipticCurve([0,infinity])
     ------------------------------------------------------------
     Traceback (most recent call last):
@@ -475,10 +447,10 @@ cima e para baixo. Por exemplo,
     Automatic pdb calling has been turned ON
     sage: EllipticCurve([1,infinity])
     ---------------------------------------------------------------------------
-    <type 'exceptions.TypeError'>             Traceback (most recent call last)
+    <class 'exceptions.TypeError'>             Traceback (most recent call last)
     ...
-    
-    ipdb> 
+
+    ipdb>
 
 Para uma lista de comandos do debugador, digite ``?`` no prompt
 ``ipbd>``:
@@ -486,20 +458,20 @@ Para uma lista de comandos do debugador, digite ``?`` no prompt
 ::
 
     ipdb> ?
-    
+
     Documented commands (type help <topic>):
     ========================================
-    EOF    break  commands   debug    h       l     pdef   quit    tbreak   
-    a      bt     condition  disable  help    list  pdoc   r       u      
+    EOF    break  commands   debug    h       l     pdef   quit    tbreak
+    a      bt     condition  disable  help    list  pdoc   r       u
     alias  c      cont       down     ignore  n     pinfo  return  unalias
     args   cl     continue   enable   j       next  pp     s       up
     b      clear  d          exit     jump    p     q      step    w
     whatis where
-    
+
     Miscellaneous help topics:
     ==========================
     exec  pdb
-    
+
     Undocumented commands:
     ======================
     retval  rv
@@ -524,7 +496,7 @@ tri-dimensional :math:`V=\QQ^3` da seguinte forma:
 ::
 
     sage: V = VectorSpace(QQ,3)
-    sage: V              
+    sage: V
     Vector space of dimension 3 over Rational Field
 
 Você pode usar a seguinte notação mais compacta:
@@ -568,7 +540,6 @@ coordinates, digite ``V.coordinates?`` para ajuda ou
 sessão.
 
 
-
 Sistema de Ajuda Integrado
 ==========================
 
@@ -582,8 +553,8 @@ seguido de ? para ver informações sobre a função.
     sage: V = QQ^3
     sage: V.coordinates?
     Type:           instancemethod
-    Base Class:     <type 'instancemethod'>
-    String Form:    <bound method FreeModule_ambient_field.coordinates of Vector 
+    Base Class:     <class 'instancemethod'>
+    String Form:    <bound method FreeModule_ambient_field.coordinates of Vector
     space of dimension 3 over Rational Field>
     Namespace:      Interactive
     File:           /home/was/s/local/lib/python2.4/site-packages/sage/modules/f
@@ -591,13 +562,13 @@ seguido de ? para ver informações sobre a função.
     Definition:     V.coordinates(self, v)
     Docstring:
         Write v in terms of the basis for self.
-    
+
         Returns a list c such that if B is the basis for self, then
-    
+
                 sum c_i B_i = v.
-    
+
         If v is not in self, raises an ArithmeticError exception.
-    
+
         EXAMPLES:
             sage: M = FreeModule(IntegerRing(), 2); M0,M1=M.gens()
             sage: W = M.submodule([M0 + M1, M0 - 2*M1])
@@ -681,15 +652,25 @@ para ler um arquivo de ajuda sobre determinada classe.
 ::
 
     sage: help(VectorSpace)
-    Help on class VectorSpace ...
-    
-    class VectorSpace(__builtin__.object)
-     |  Create a Vector Space.
-     |
-     |  To create an ambient space over a field with given dimension
-     |  using the calling syntax ...
-     :
-     : 
+    Help on function VectorSpace in module sage.modules.free_module:
+
+    VectorSpace(K, dimension_or_basis_keys=None, sparse=False, inner_product_matrix=None, *,
+                with_basis='standard', dimension=None, basis_keys=None, **args)
+    EXAMPLES:
+
+    The base can be complicated, as long as it is a field.
+
+    ::
+
+        sage: V = VectorSpace(FractionField(PolynomialRing(ZZ,'x')),3)
+        sage: V
+        Vector space of dimension 3 over Fraction Field of Univariate Polynomial Ring in x
+         over Integer Ring
+        sage: V.basis()
+        [
+        (1, 0, 0),
+        (0, 1, 0),
+    --More--
 
 Quando você digita ``q`` para sair do sistema de ajuda, a sua sessão
 aparece na tela da mesma forma que anteriormente. O texto de ajuda não
@@ -717,7 +698,6 @@ computacionais de álgebra adotam para salvar objetos individuais.
 
 #. **Eval:** Torna fácil processar um código arbitrário no
    interpretador (por exemplo, Singular, PARI).
-
 
 
 Como o Sage usa o Python, ele adota uma estratégia diferente, que se
@@ -806,7 +786,7 @@ representações impressas não é permitido.
     sage: load('a')
     Traceback (most recent call last):
     ...
-    ValueError: The session in which this object was defined is no longer 
+    ValueError: The session in which this object was defined is no longer
     running.
 
 Objetos do GP/PARI também podem ser salvos e carregados pois suas
@@ -816,7 +796,7 @@ representações em forma impressa são suficientes para reconstruí-los.
 
 ::
 
-    sage: a = gp(2)      
+    sage: a = gp(2)
     sage: a.save('a')
     sage: load('a')
     2
@@ -926,10 +906,10 @@ variável ``b`` não foi redefinida.
 ::
 
     sage: M
-    Full Modular Symbols space for Gamma_0(37) of weight 2 with sign 0 
+    Full Modular Symbols space for Gamma_0(37) of weight 2 with sign 0
     and dimension 5 over Rational Field
     sage: E
-    Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational 
+    Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational
     Field
     sage: b
     19

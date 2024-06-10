@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-repl
 """
 IPython Backend for the Sage Rich Output System
 
@@ -6,17 +6,18 @@ This module defines the IPython backends for
 :mod:`sage.repl.rich_output`.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 import sys
+import html
 from IPython.display import publish_display_data
 from sage.repl.rich_output.backend_base import BackendBase
 from sage.repl.rich_output.output_catalog import *
@@ -142,6 +143,7 @@ class BackendIPythonCommandline(BackendIPython):
             sage: backend = BackendIPythonCommandline()
             sage: backend.default_preferences()
             Display preferences:
+            * align_latex is not specified
             * graphics is not specified
             * supplemental_plot = never
             * text is not specified
@@ -226,7 +228,7 @@ class BackendIPythonCommandline(BackendIPython):
             sage: from sage.repl.rich_output.backend_ipython import BackendIPythonCommandline
             sage: backend = BackendIPythonCommandline()
             sage: backend.displayhook(plain_text, plain_text)
-            ({u'text/plain': u'Example plain text output'}, {})
+            ({'text/plain': 'Example plain text output'}, {})
 
         TESTS:
 
@@ -234,46 +236,46 @@ class BackendIPythonCommandline(BackendIPython):
 
             sage: class Foo(sage.structure.sage_object.SageObject):
             ....:     def _rich_repr_(self, dm):
-            ....:         return dm.types.OutputPlainText(u'Motörhead')
+            ....:         return dm.types.OutputPlainText('Motörhead')
             sage: from sage.repl.rich_output import get_display_manager
             sage: dm = get_display_manager()
             sage: dm.displayhook(Foo())
-            ({u'text/plain': u'Mot\xf6rhead'}, {})
+            ({'text/plain': 'Mot\xf6rhead'}, {})
         """
         if isinstance(rich_output, OutputPlainText):
-            return ({u'text/plain': rich_output.text.get_unicode()}, {})
+            return ({'text/plain': rich_output.text.get_str()}, {})
         elif isinstance(rich_output, OutputAsciiArt):
-            return ({u'text/plain': rich_output.ascii_art.get_unicode()}, {})
+            return ({'text/plain': rich_output.ascii_art.get_str()}, {})
         elif isinstance(rich_output, OutputUnicodeArt):
-            return ({u'text/plain': rich_output.unicode_art.get_unicode()}, {})
+            return ({'text/plain': rich_output.unicode_art.get_str()}, {})
         elif isinstance(rich_output, OutputLatex):
-            return ({u'text/plain': rich_output.latex.get_unicode()}, {})
+            return ({'text/plain': rich_output.latex.get_str()}, {})
         elif isinstance(rich_output, OutputImagePng):
             msg = self.launch_viewer(
-                rich_output.png.filename(ext='png'), plain_text.text.get_unicode())
-            return ({u'text/plain': msg}, {})
+                rich_output.png.filename(ext='png'), plain_text.text.get_str())
+            return ({'text/plain': msg}, {})
         elif isinstance(rich_output, OutputImageGif):
             msg = self.launch_viewer(
-                rich_output.gif.filename(ext='gif'), plain_text.text.get_unicode())
-            return ({u'text/plain': msg}, {})
+                rich_output.gif.filename(ext='gif'), plain_text.text.get_str())
+            return ({'text/plain': msg}, {})
         elif isinstance(rich_output, OutputImagePdf):
             msg = self.launch_viewer(
-                rich_output.pdf.filename(ext='pdf'), plain_text.text.get_unicode())
-            return ({u'text/plain': msg}, {})
+                rich_output.pdf.filename(ext='pdf'), plain_text.text.get_str())
+            return ({'text/plain': msg}, {})
         elif isinstance(rich_output, OutputImageDvi):
             msg = self.launch_viewer(
-                rich_output.dvi.filename(ext='dvi'), plain_text.text.get_unicode())
-            return ({u'text/plain': msg}, {})
+                rich_output.dvi.filename(ext='dvi'), plain_text.text.get_str())
+            return ({'text/plain': msg}, {})
         elif isinstance(rich_output, OutputSceneJmol):
-            msg = self.launch_jmol(rich_output, plain_text.text.get_unicode())
-            return ({u'text/plain': msg}, {})
+            msg = self.launch_jmol(rich_output, plain_text.text.get_str())
+            return ({'text/plain': msg}, {})
         elif isinstance(rich_output, OutputSceneWavefront):
-            msg = self.launch_sage3d(rich_output, plain_text.text.get_unicode())
-            return ({u'text/plain': msg}, {})
+            msg = self.launch_sage3d(rich_output, plain_text.text.get_str())
+            return ({'text/plain': msg}, {})
         elif isinstance(rich_output, OutputSceneThreejs):
             msg = self.launch_viewer(
-                rich_output.html.filename(ext='html'), plain_text.text.get_unicode())
-            return ({u'text/plain': msg}, {})
+                rich_output.html.filename(ext='html'), plain_text.text.get_str())
+            return ({'text/plain': msg}, {})
         else:
             raise TypeError('rich_output type not supported')
 
@@ -303,7 +305,7 @@ class BackendIPythonCommandline(BackendIPython):
             Example plain text output
         """
         formatdata, metadata = self.displayhook(plain_text, rich_output)
-        print(formatdata[u'text/plain'])
+        print(formatdata['text/plain'])
 
     def launch_viewer(self, image_file, plain_text):
         """
@@ -361,13 +363,13 @@ class BackendIPythonCommandline(BackendIPython):
             sage: from sage.repl.rich_output.backend_ipython import BackendIPythonCommandline
             sage: backend = BackendIPythonCommandline()
             sage: from sage.repl.rich_output.output_graphics3d import OutputSceneJmol
-            sage: backend.launch_jmol(OutputSceneJmol.example(), 'Graphics3d object')
+            sage: backend.launch_jmol(OutputSceneJmol.example(), 'Graphics3d object')   # needs sage.plot
             'Launched jmol viewer for Graphics3d object'
         """
         from sage.doctest import DOCTEST_MODE
         from sage.interfaces.jmoldata import JmolData
         jdata = JmolData()
-        if not jdata.is_jvm_available() and not DOCTEST_MODE:
+        if not jdata.is_jmol_available() and not DOCTEST_MODE:
             raise RuntimeError('jmol cannot run, no suitable java version found')
         launch_script = output_jmol.launch_script_filename()
         jmol_cmd = 'jmol'
@@ -399,41 +401,31 @@ class BackendIPythonCommandline(BackendIPython):
 
     def threejs_offline_scripts(self):
         """
-        Three.js scripts for the IPython command line
+        Three.js script for the IPython command line
 
         OUTPUT:
 
-        String containing script tags
+        String containing script tag
 
         EXAMPLES::
 
+            sage: # needs threejs
             sage: from sage.repl.rich_output.backend_ipython import BackendIPythonCommandline
             sage: backend = BackendIPythonCommandline()
             sage: backend.threejs_offline_scripts()
             '...<script ...</script>...'
         """
-        from sage.env import THREEJS_DIR
+        from sage.features.threejs import Threejs
 
-        scripts = [
-            os.path.join(THREEJS_DIR, script)
-            for script in [
-                'build/three.min.js',
-                'examples/js/controls/OrbitControls.js',
-            ]
-        ]
+        if not Threejs().is_present():
+            return ''
 
-        if sys.platform == 'cygwin':
-            import cygwin
-            def normpath(p):
-                return 'file:///' + cygwin.cygpath(p, 'w').replace('\\', '/')
-            scripts = [normpath(script) for script in scripts]
+        script = Threejs().absolute_filename()
 
-        return '\n'.join('<script src="{0}"></script>'.format(script)
-                         for script in scripts)
+        return '\n<script src="{0}"></script>'.format(script)
 
 
-IFRAME_TEMPLATE = \
-"""
+IFRAME_TEMPLATE = """
 <iframe srcdoc="{escaped_html}"
         width="{width}"
         height="{height}"
@@ -534,83 +526,85 @@ class BackendIPythonNotebook(BackendIPython):
             sage: from sage.repl.rich_output.backend_ipython import BackendIPythonNotebook
             sage: backend = BackendIPythonNotebook()
             sage: backend.displayhook(plain_text, plain_text)
-            ({u'text/plain': u'Example plain text output'}, {})
+            ({'text/plain': 'Example plain text output'}, {})
         """
         if isinstance(rich_output, OutputPlainText):
-            return ({u'text/plain': rich_output.text.get_unicode()}, {})
+            return ({'text/plain': rich_output.text.get_str()}, {})
         elif isinstance(rich_output, OutputAsciiArt):
-            return ({u'text/plain': rich_output.ascii_art.get_unicode()}, {})
+            return ({'text/plain': rich_output.ascii_art.get_str()}, {})
         elif isinstance(rich_output, OutputUnicodeArt):
-            return ({u'text/plain': rich_output.unicode_art.get_unicode()}, {})
+            return ({'text/plain': rich_output.unicode_art.get_str()}, {})
         elif isinstance(rich_output, OutputLatex):
-            return ({u'text/html':  rich_output.mathjax(),
-                     u'text/latex': rich_output.inline_equation(),
-                     u'text/plain': plain_text.text.get_unicode(),
+            return ({'text/latex': rich_output.latex.get_str(),
+                     'text/plain': plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputHtml):
-            return ({u'text/html':  rich_output.html.get_unicode(),
-                     u'text/plain': plain_text.text.get_unicode(),
-            }, {})
+            data = {'text/html': rich_output.html.get_str(),
+                    'text/plain': plain_text.text.get_str()}
+            if rich_output.latex:
+                data['text/latex'] = rich_output.latex.get_str()
+            return (data, {})
         elif isinstance(rich_output, OutputImagePng):
-            return ({u'image/png':  rich_output.png.get(),
-                     u'text/plain': plain_text.text.get_unicode(),
+            return ({'image/png': rich_output.png.get(),
+                     'text/plain': plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputImageGif):
-            return ({u'text/html':  rich_output.html_fragment(),
-                     u'text/plain': plain_text.text.get_unicode(),
+            return ({'text/html': rich_output.html_fragment(),
+                     'text/plain': plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputImageJpg):
-            return ({u'image/jpeg':  rich_output.jpg.get(),
-                     u'text/plain':  plain_text.text.get_unicode(),
+            return ({'image/jpeg': rich_output.jpg.get(),
+                     'text/plain': plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputImageSvg):
-            return ({u'image/svg+xml': rich_output.svg.get(),
-                     u'text/plain':    plain_text.text.get_unicode(),
+            return ({'image/svg+xml': rich_output.svg.get(),
+                     'text/plain': plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputImagePdf):
-            return ({u'image/png':  rich_output.png.get(),
-                     u'text/plain': plain_text.text.get_unicode(),
+            return ({'image/png': rich_output.png.get(),
+                     'text/plain': plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputSceneJmol):
             from sage.repl.display.jsmol_iframe import JSMolHtml
             jsmol = JSMolHtml(rich_output, height=500)
-            return ({u'text/html':  jsmol.iframe(),
-                     u'text/plain': plain_text.text.get_unicode(),
+            return ({'text/html': jsmol.iframe(),
+                     'text/plain': plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputSceneThreejs):
-            escaped_html = rich_output.html.get_unicode().replace('"', '&quot;')
+            escaped_html = html.escape(rich_output.html.get_str())
             iframe = IFRAME_TEMPLATE.format(
                 escaped_html=escaped_html,
                 width='100%',
                 height=400,
             )
-            return ({u'text/html':  iframe,
-                     u'text/plain': plain_text.text.get_unicode(),
+            return ({'text/html': iframe,
+                     'text/plain': plain_text.text.get_str(),
             }, {})
         else:
             raise TypeError('rich_output type not supported')
 
     def threejs_offline_scripts(self):
         """
-        Three.js scripts for the IPython notebook
+        Three.js script for the IPython notebook
 
         OUTPUT:
 
-        String containing script tags
+        String containing script tag
 
         EXAMPLES::
 
             sage: from sage.repl.rich_output.backend_ipython import BackendIPythonNotebook
             sage: backend = BackendIPythonNotebook()
-            sage: backend.threejs_offline_scripts()
-            '...<script src="/nbextensions/threejs/build/three.min...<\\/script>...'
+            sage: backend.threejs_offline_scripts()                                     # needs sage.plot
+            '...<script src="/nbextensions/threejs-sage/r.../three.min.js...<\\/script>...'
         """
         from sage.repl.rich_output import get_display_manager
-        CDN_scripts = get_display_manager().threejs_scripts(online=True)
+        from sage.features.threejs import Threejs
+        CDN_script = get_display_manager().threejs_scripts(online=True)
+        CDN_script = CDN_script.replace('</script>', r'<\/script>').replace('\n', ' \\\n')
         return """
-<script src="/nbextensions/threejs/build/three.min.js"></script>
-<script src="/nbextensions/threejs/examples/js/controls/OrbitControls.js"></script>
+<script src="/nbextensions/threejs-sage/{}/three.min.js"></script>
 <script>
   if ( !window.THREE ) document.write('{}');
 </script>
-        """.format(CDN_scripts.replace('</script>', r'<\/script>').replace('\n', ' \\\n'))
+        """.format(Threejs().required_version(), CDN_script)

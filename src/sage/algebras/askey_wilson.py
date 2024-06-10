@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Askey-Wilson Algebras
 
@@ -237,7 +238,7 @@ class AskeyWilsonAlgebra(CombinatorialFreeModule):
             raise ValueError("q={} is not invertible in {}".format(q, R))
         if R not in Rings().Commutative():
             raise ValueError("{} is not a commutative ring".format(R))
-        return super(AskeyWilsonAlgebra, cls).__classcall__(cls, R, q)
+        return super().__classcall__(cls, R, q)
 
     def __init__(self, R, q):
         r"""
@@ -300,6 +301,7 @@ class AskeyWilsonAlgebra(CombinatorialFreeModule):
         """
         if sum(t) == 0:
             return '1'
+
         def exp(l, e):
             if e == 0:
                 return ''
@@ -338,6 +340,7 @@ class AskeyWilsonAlgebra(CombinatorialFreeModule):
             [A, B, C, a, b, g]
         """
         A = self.variable_names()
+
         def build_monomial(g):
             exp = [0] * 6
             exp[A.index(g)] = 1
@@ -766,6 +769,7 @@ class AskeyWilsonAlgebra(CombinatorialFreeModule):
 
     pi = loop_representation
 
+
 def _basis_key(t):
     """
     Return a key for the basis element of the Askey-Wilson algebra
@@ -779,6 +783,7 @@ def _basis_key(t):
         (13, (0, 2, 3, 1, 2, 5))
     """
     return (sum(t), t.value)
+
 
 class AlgebraMorphism(ModuleMorphismByLinearity):
     """
@@ -930,5 +935,4 @@ class AlgebraMorphism(ModuleMorphismByLinearity):
             return AlgebraMorphism(homset.domain(),
                                    [right(g) for g in self._on_generators],
                                    codomain=homset.codomain(), category=cat)
-        return super(self, AlgebraMorphism)._composition_(right, homset)
-
+        return super()._composition_(right, homset)

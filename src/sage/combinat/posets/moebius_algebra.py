@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.modules
 r"""
 Möbius Algebras
 """
@@ -26,7 +26,7 @@ from sage.categories.realizations import Realizations, Category_realization_of_p
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 
 class BasisAbstract(CombinatorialFreeModule, BindableClass):
@@ -53,6 +53,7 @@ class BasisAbstract(CombinatorialFreeModule, BindableClass):
         """
         L = self.realization_of()._lattice
         return self.monomial(L(x))
+
 
 class MoebiusAlgebra(Parent, UniqueRepresentation):
     r"""
@@ -95,13 +96,13 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
        European Journal of Combinatorics, **19**, 1998.
        :doi:`10.1006/eujc.1998.0227`.
     """
-    def __init__(self, R, L):
+    def __init__(self, R, L) -> None:
         """
         Initialize ``self``.
 
         TESTS::
 
-            sage: L = posets.BooleanLattice(4)
+            sage: L = posets.BooleanLattice(3)
             sage: M = L.moebius_algebra(QQ)
             sage: TestSuite(M).run()
         """
@@ -122,7 +123,7 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
             sage: L.moebius_algebra(QQ)
             Moebius algebra of Finite lattice containing 16 elements over Rational Field
         """
-        return "Moebius algebra of {} over {}".format(self._lattice, self.base_ring())
+        return f"Moebius algebra of {self._lattice} over {self.base_ring()}"
 
     def a_realization(self):
         r"""
@@ -160,7 +161,7 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
         Let `E_x` and `E_y` be basis elements of `M_L` for some lattice `L`.
         Multiplication is given by `E_x E_y = E_{x \vee y}`.
         """
-        def __init__(self, M, prefix='E'):
+        def __init__(self, M, prefix='E') -> None:
             """
             Initialize ``self``.
 
@@ -241,7 +242,7 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
         Multiplication is given by `I_x I_y = \delta_{xy} I_x` where
         `\delta_{xy}` is the Kronecker delta.
         """
-        def __init__(self, M, prefix='I'):
+        def __init__(self, M, prefix='I') -> None:
             """
             Initialize ``self``.
 
@@ -268,7 +269,7 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
                                              prefix=prefix,
                                              category=MoebiusAlgebraBases(M))
 
-            ## Change of basis:
+            # Change of basis:
             E = M.E()
             self.module_morphism(self._to_natural_basis,
                                  codomain=E, category=self.category(),
@@ -281,7 +282,6 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
                               triangular='lower', unitriangular=True,
                               key=M._lattice._element_to_vertex
                               ).register_as_coercion()
-
 
         @cached_method
         def _to_natural_basis(self, x):
@@ -299,7 +299,8 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
             M = self.realization_of()
             N = M.natural()
             moebius = M._lattice.moebius_function
-            return N.sum_of_terms((y, moebius(x,y)) for y in M._lattice.order_filter([x]))
+            return N.sum_of_terms((y, moebius(x, y))
+                                  for y in M._lattice.order_filter([x]))
 
         def product_on_basis(self, x, y):
             """
@@ -380,7 +381,7 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
     \operatorname{rank} L - \operatorname{rank}` a). At `q = 1`, this
     reduces to the multiplication formula originally given by Solomon.
     """
-    def __init__(self, L, q=None):
+    def __init__(self, L, q=None) -> None:
         """
         Initialize ``self``.
 
@@ -421,8 +422,8 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
             Quantum Moebius algebra of Finite lattice containing 16 elements
              with q=q over Univariate Laurent Polynomial Ring in q over Integer Ring
         """
-        return "Quantum Moebius algebra of {} with q={} over {}".format(
-                            self._lattice, self._q, self.base_ring())
+        txt = "Quantum Moebius algebra of {} with q={} over {}"
+        return txt.format(self._lattice, self._q, self.base_ring())
 
     def a_realization(self):
         r"""
@@ -470,7 +471,7 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
         is the corank function (i.e., `\operatorname{crk} a =
         \operatorname{rank} L - \operatorname{rank}` a).
         """
-        def __init__(self, M, prefix='E'):
+        def __init__(self, M, prefix='E') -> None:
             """
             Initialize ``self``.
 
@@ -504,8 +505,8 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
             moebius = L.moebius_function
             rank = L.rank_function()
             R = L.rank()
-            j = L.join(x,y)
-            return self.sum_of_terms(( z, moebius(a,z) * q**(R - rank(a)) )
+            j = L.join(x, y)
+            return self.sum_of_terms((z, moebius(a, z) * q**(R - rank(a)))
                                      for z in L.order_filter([j])
                                      for a in L.closed_interval(j, z))
 
@@ -526,7 +527,7 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
             moebius = L.moebius_function
             rank = L.rank_function()
             R = L.rank()
-            return self.sum_of_terms((x, moebius(y,x) * q**(rank(y) - R))
+            return self.sum_of_terms((x, moebius(y, x) * q**(rank(y) - R))
                                      for x in L for y in L.order_ideal([x]))
 
     natural = E
@@ -546,7 +547,7 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
         filter of `x` and `P(F^x; q)` is the characteristic polynomial
         of the (sub)poset `F^x`.
         """
-        def __init__(self, M, prefix='C'):
+        def __init__(self, M, prefix='C') -> None:
             """
             Initialize ``self``.
 
@@ -562,7 +563,7 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
                                              prefix=prefix,
                                              category=MoebiusAlgebraBases(M))
 
-            ## Change of basis:
+            # Change of basis:
             E = M.E()
             phi = self.module_morphism(self._to_natural_basis,
                                        codomain=E, category=self.category(),
@@ -588,13 +589,11 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
             M = self.realization_of()
             N = M.natural()
             q = M._q
-            R = M.base_ring()
             L = M._lattice
-            poly = lambda x,y: L.subposet(L.closed_interval(x, y)).characteristic_polynomial()
-            # This is a workaround until #17554 is fixed...
-            subs = lambda p,q: R.sum( c * q**e for e,c in enumerate(p.list()) )
-            # ...at which point, we can do poly(x,y)(q=q)
-            return N.sum_of_terms((y, subs(poly(x,y), q))
+
+            def poly(x, y):
+                return L.subposet(L.closed_interval(x, y)).characteristic_polynomial()
+            return N.sum_of_terms((y, poly(x, y)(q=q))
                                   for y in L.order_filter([x]))
 
     characteristic_basis = C
@@ -627,13 +626,13 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
             sage: KL[4] * KL[10]
             (q+3*q^2+3*q^3+q^4)*KL[14] + (1+4*q+6*q^2+4*q^3+q^4)*KL[15]
         """
-        def __init__(self, M, prefix='KL'):
+        def __init__(self, M, prefix='KL') -> None:
             """
             Initialize ``self``.
 
             TESTS::
 
-                sage: L = posets.BooleanLattice(4)
+                sage: L = posets.BooleanLattice(3)
                 sage: M = L.quantum_moebius_algebra()
                 sage: TestSuite(M.KL()).run() # long time
             """
@@ -643,7 +642,7 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
                                              prefix=prefix,
                                              category=MoebiusAlgebraBases(M))
 
-            ## Change of basis:
+            # Change of basis:
             E = M.E()
             phi = self.module_morphism(self._to_natural_basis,
                                        codomain=E, category=self.category(),
@@ -670,15 +669,13 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
             L = M._lattice
             E = M.E()
             q = M._q
-            R = M.base_ring()
             rank = L.rank_function()
-            # This is a workaround until #17554 is fixed...
-            subs = lambda p,q: R.sum( c * q**e for e,c in enumerate(p.list()) )
             return E.sum_of_terms((y, q**(rank(y) - rank(x)) *
-                                      subs(L.kazhdan_lusztig_polynomial(x, y), q**-2))
+                                   L.kazhdan_lusztig_polynomial(x, y)(q=q**-2))
                                   for y in L.order_filter([x]))
 
     kazhdan_lusztig = KL
+
 
 class MoebiusAlgebraBases(Category_realization_of_parent):
     r"""
@@ -708,7 +705,7 @@ class MoebiusAlgebraBases(Category_realization_of_parent):
             Category of bases of Moebius algebra of Finite lattice
              containing 16 elements over Rational Field
         """
-        return "Category of bases of {}".format(self.base())
+        return f"Category of bases of {self.base()}"
 
     def super_categories(self):
         r"""
@@ -741,7 +738,7 @@ class MoebiusAlgebraBases(Category_realization_of_parent):
                 Moebius algebra of Finite lattice containing 16 elements
                  over Rational Field in the idempotent basis
             """
-            return "{} in the {} basis".format(self.realization_of(), self._basis_name)
+            return f"{self.realization_of()} in the {self._basis_name} basis"
 
         def product_on_basis(self, x, y):
             """

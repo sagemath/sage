@@ -1,0 +1,198 @@
+#!/usr/bin/env sage-python
+# -*- coding: utf-8 -*-
+r"""
+sage-sws2rst
+============
+
+Translate a Sage worksheet file (.sws) into an rst file. The result is
+saved in the current working directory.
+
+Usage::
+
+    sage --sws2rst [-h] <source sws file>
+
+Print the help message::
+
+    sage --sws2rst -h
+
+EXAMPLES::
+
+    sage --sws2rst file.sws
+
+AUTHORS:
+
+- Pablo Angulo (January 2011): Initial version
+- Karl-Dieter Crisman (June 2012): Documentation
+  and minor refinements
+- Karl-Dieter Crisman (November 2014): Correct use of temporary files,
+  see :trac:`17308`.
+"""
+
+#*****************************************************************************
+#       Copyright (C) 2011 Pablo Angulo
+#       Copyright (C) 2012-2014 Karl-Dieter Crisman
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+#*****************************************************************************
+
+import sys
+import tarfile
+import os
+import shutil
+import codecs
+import tempfile
+from sage_sws2rst.worksheet2rst import worksheet2rst
+
+from optparse import OptionParser
+
+
+def process_sws(sws_file):
+    """
+    Process the ``.sws`` file ``sws_file`` and create an ``.rst`` file
+    (and possible media files) in the current working directory.
+    """
+    base_name = os.path.basename(os.path.splitext(sws_file)[0])
+    base_name = base_name.replace(' ','_')
+
+    tempdir = tempfile.mkdtemp()
+    try:
+        with tarfile.open(sws_file, mode='r:bz2') as sws_file:
+            sws_file.extractall(tempdir)
+        worksheet_dir = os.path.join(tempdir, 'sage_worksheet')
+        if not os.path.isdir(worksheet_dir):
+            raise RuntimeError("Worksheeet file %r does not contain a 'sage_worksheet' directory" % sws_file)
+        process_worksheet(worksheet_dir, base_name)
+    finally:
+        shutil.rmtree(tempdir)
+
+def process_worksheet(worksheet_dir, base_name):
+    """
+    Process the extracted worksheet directory ``worksheet_dir`` and
+    create the ``.rst`` and media files with base name ``base_name``.
+
+    Files are moved from ``worksheet_dir``, so make sure these are
+    temporary files!
+    """
+    #Images
+    images_dir = base_name + '_media'
+    try:
+        os.mkdir(images_dir)
+    except OSError:
+        if not os.path.isdir(images_dir):
+            raise
+
+    #"data" dir
+    data_path = os.path.join(worksheet_dir, 'data')
+    if os.path.isdir(data_path):
+        for image in os.listdir(data_path):
+            shutil.move(os.path.join(data_path, image), os.path.join(images_dir, image.replace(' ','_')))
+
+    #cells
+    cells_path = os.path.join(worksheet_dir, 'cells')
+    if os.path.isdir(cells_path):
+        for cell in os.listdir(cells_path):
+            cell_path = os.path.join(cells_path, cell)
+            for image in os.listdir(cell_path):
+                if os.path.isfile(os.path.join(cell_path, image)):
+                    shutil.move(os.path.join(cell_path, image),
+                                 os.path.join(images_dir, 'cell_%s_%s'%(cell,image)))
+                # could be Jmol image directory - code for future
+                #elif os.path.isdir(os.path.join(cell_path, image)):
+                #    if image == '.jmol_images':
+                #        for jmolimg in os.listdir(os.path.join(cell_path, image)):
+                #            shutil.move(os.path.join(cell_path, image, jmolimg),
+                #                     os.path.join(images_dir, 'cell_%s_%s'%(cell,jmolimg)))
+
+    #read html file, parse it, write rst file
+    html_file = os.path.join(worksheet_dir, 'worksheet.html')
+    with codecs.open(html_file, mode='r', encoding='utf-8') as f:
+        html_text = f.read()
+
+    rst_text = worksheet2rst(html_text, images_dir=images_dir)
+    rst_file = base_name + '.rst'
+
+    with codecs.open(rst_file, mode='w', encoding='utf-8') as out_file:
+        out_file.write(rst_text)
+
+    print("File at", rst_file)
+    print("Image directory at", images_dir)
+
+
+# Set the parser
+usage = r"""
+
+    sage --sws2rst [options]  <source sws file> ...
+
+Translate a Sage worksheet file (.sws) into an reStructuredText
+(.rst) file.  At least one sws file argument is required; all sws
+files will be parsed and translated.  Spaces in the names of the
+worksheet will be converted to underscores. The resulting files will
+be stored in the current working directory.
+
+Examples:
+
+    sage --sws2rst file.sws
+    sage --sws2rst file1.sws file2.sws file3.sws
+    sage --sws2rst -h # this help message prints
+    sage --sws2rst --sphinxify # information about how to use
+                               # Sphinx to compile your rst file
+"""
+
+sphinxify_text = r"""
+
+Once you have made your rst file, what can you do with it?
+
+If this is a file which is likely to become part of the Sage
+standard documentation, you will want to edit the appropriate
+file in $SAGE_ROOT/src/doc to include your file, or
+simply include your file as appropriate.
+
+However, you may simply want to make great-looking documentation
+for some other purpose out of your worksheet.  The following
+steps are one way to do so.
+
+ - Assume that the generated .rst file is ``My_Project.rst``.
+ - Make a folder somewhere convenient to compile in, say, ``MyProject``.
+ - Then move your .rst file into that folder, and cd into it.
+ - Now the key is to use Sage's shell to run Sphinx on it! Run ``sage --sh``.
+ - Then type ``sphinx-quickstart`` and follow the instructions in the
+   Sphinx tutorial [1]_. You will probably want to choose to render math
+   with MathJax [2]_, but you can accept the defaults for the other options.
+ - Finally, edit ``index.rst`` by adding ``My_Project`` in the table of
+   contents, as detailed in the Sphinx tutorial [3]_.
+ - If you now type ``make html`` you should get a beautiful-looking web page
+   in ``_build/html``. If you did not have a header at the top of your worksheet,
+   you may get an error, but you can ignore this.
+
+REFERENCES:
+
+.. [1] Getting Started,
+   https://www.sphinx-doc.org/en/master/usage/quickstart.html
+.. [2] MathJax,
+   http://www.mathjax.org/
+.. [3] Defining Document Structure, Getting Started,
+   https://www.sphinx-doc.org/en/master/usage/quickstart.html#defining-document-structure"""
+
+parser = OptionParser(usage=usage)
+parser.add_option("--sphinxify",
+                  action="store_true", dest="sphinxify",
+                  help="Print information about how to use Sphinx to compile your rst file, then exit.")
+(options, args) = parser.parse_args()
+
+# Parse option
+if options.sphinxify:
+    print(sphinxify_text)
+    sys.exit(0)
+
+# Parse arguments
+if len(args) < 1:
+    parser.print_usage()
+    sys.exit(1)
+
+for file_name in args:
+    print("Processing", file_name)
+    process_sws(file_name)

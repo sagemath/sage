@@ -1,5 +1,5 @@
 SAGE_SPKG_CONFIGURE([ppl], [
-  SAGE_SPKG_DEPCHECK([glpk gmp mpir], [
+  SAGE_SPKG_DEPCHECK([gcc glpk gmp], [
     # If our dependencies come from the system, then we can use the
     # system ppl, too. This macro works sort-of like the
     # PKG_CHECK_MODULES macro, defining e.g. PPL_CFLAGS when a
@@ -11,7 +11,7 @@ SAGE_SPKG_CONFIGURE([ppl], [
     AM_PATH_PPL([1.2], [
                   LIBS="$LIBS $PPL_LIBS"
                   sage_spkg_install_ppl=no
-		],
-		[sage_spkg_install_ppl=yes])
+                ],
+                [sage_spkg_install_ppl=yes])
   ])
 ])

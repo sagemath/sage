@@ -20,10 +20,10 @@ cdef class GenericSDPBackend:
     cpdef get_variable_value(self, int variable)
     cpdef dual_variable(self, int variable, sparse=*)
     cpdef slack(self, int variable, sparse=*)
-    cpdef bint is_maximization(self)
+    cpdef bint is_maximization(self) noexcept
     cpdef row(self, int i)
-    cpdef int ncols(self)
-    cpdef int nrows(self)
+    cpdef int ncols(self) noexcept
+    cpdef int nrows(self) noexcept
     cpdef problem_name(self, name=*)
     cpdef row_name(self, int index)
     cpdef col_name(self, int index)
@@ -31,7 +31,7 @@ cdef class GenericSDPBackend:
     cpdef zero(self)
     cpdef base_ring(self)
 
-    cpdef obj_constant_term
+    cdef obj_constant_term
     cdef dict matrices_dim
 
 cpdef GenericSDPBackend get_solver(solver=?, base_ring=?)

@@ -1,6 +1,5 @@
-
-Mutation class database
-=======================
+database_mutation_class: Database of exceptional mutation classes of quivers
+============================================================================
 
 Description
 -----------
@@ -26,8 +25,3 @@ SPKG Maintainers
 ----------------
 
 -  C. Stump <christian.stump@gmail.com>
-
-Dependencies
-------------
-
--  None

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Lyndon words
 """
@@ -11,18 +10,16 @@ Lyndon words
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
-
-from sage.combinat.composition import Composition, Compositions
-from sage.rings.all import Integer
-from sage.arith.all import divisors, gcd, moebius, multinomial
-
-from sage.combinat.necklace import _sfc
-from sage.combinat.words.words import FiniteWords
+from sage.arith.misc import divisors, gcd, moebius, multinomial
 from sage.combinat.combinat_cython import lyndon_word_iterator
+from sage.combinat.composition import Composition, Compositions
+from sage.combinat.necklace import _sfc
+from sage.combinat.words.finite_word import FiniteWord_class
+from sage.combinat.words.words import FiniteWords
+from sage.rings.integer import Integer
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 def LyndonWords(e=None, k=None):
@@ -66,9 +63,9 @@ def LyndonWords(e=None, k=None):
         word: 1112
         sage: LW.last()
         word: 2333
-        sage: LW.random_element() # random
+        sage: LW.random_element()  # random                                             # needs sage.libs.pari
         word: 1232
-        sage: LW.cardinality()
+        sage: LW.cardinality()                                                          # needs sage.libs.pari
         18
 
     If e is a (weak) composition, then it returns the class of Lyndon
@@ -103,7 +100,7 @@ def LyndonWord(data, check=True):
     INPUT:
 
     - ``data`` -- list
-    - ``check`` -- bool (optional, default: ``True``) if ``True``,
+    - ``check`` -- bool (default: ``True``) if ``True``,
       check that the input data represents a Lyndon word.
 
     OUTPUT:
@@ -185,8 +182,8 @@ class LyndonWords_class(UniqueRepresentation, Parent):
             True
         """
         if isinstance(w, list):
-            w = self._words(w)
-        return w.is_lyndon()
+            w = self._words(w, check=False)
+        return isinstance(w, FiniteWord_class) and w.is_lyndon()
 
 
 class LyndonWords_evaluation(UniqueRepresentation, Parent):
@@ -251,7 +248,7 @@ class LyndonWords_evaluation(UniqueRepresentation, Parent):
             raise ValueError("evaluation is not {}".format(self._e))
         return w
 
-    def __contains__(self, x):
+    def __contains__(self, w):
         """
         EXAMPLES::
 
@@ -262,9 +259,14 @@ class LyndonWords_evaluation(UniqueRepresentation, Parent):
             sage: all(lw in LyndonWords([2,1,3,1]) for lw in LyndonWords([2,1,3,1]))
             True
         """
-        if isinstance(x, list):
-            x = self._words(x)
-        return x in self._words and x.is_lyndon() and x.evaluation() == self._e
+        if isinstance(w, list):
+            w = self._words(w, check=False)
+        if isinstance(w, FiniteWord_class) and all(x in self._words.alphabet() for x in w):
+            ev_dict = w.evaluation_dict()
+            evaluation = [ev_dict.get(x, 0) for x in self._words.alphabet()]
+            return evaluation == self._e and w.is_lyndon()
+        else:
+            return False
 
     def cardinality(self):
         """
@@ -274,9 +276,9 @@ class LyndonWords_evaluation(UniqueRepresentation, Parent):
 
             sage: LyndonWords([]).cardinality()
             0
-            sage: LyndonWords([2,2]).cardinality()
+            sage: LyndonWords([2,2]).cardinality()                                      # needs sage.libs.pari
             1
-            sage: LyndonWords([2,3,2]).cardinality()
+            sage: LyndonWords([2,3,2]).cardinality()                                    # needs sage.libs.pari
             30
 
         Check to make sure that the count matches up with the number of
@@ -284,7 +286,7 @@ class LyndonWords_evaluation(UniqueRepresentation, Parent):
 
             sage: comps = [[],[2,2],[3,2,7],[4,2]] + Compositions(4).list()
             sage: lws = [LyndonWords(comp) for comp in comps]
-            sage: all(lw.cardinality() == len(lw.list()) for lw in lws)
+            sage: all(lw.cardinality() == len(lw.list()) for lw in lws)                 # needs sage.libs.pari
             True
         """
         evaluation = self._e
@@ -320,7 +322,7 @@ class LyndonWords_evaluation(UniqueRepresentation, Parent):
 
         TESTS:
 
-        Check that :trac:`12997` is fixed::
+        Check that :issue:`12997` is fixed::
 
             sage: LyndonWords([0,1]).list()
             [word: 2]
@@ -401,7 +403,7 @@ class LyndonWords_nk(UniqueRepresentation, Parent):
             sage: L([2,3,4])
             Traceback (most recent call last):
             ...
-            ValueError: 4 not in alphabet!
+            ValueError: 4 not in alphabet
             sage: L([2,1,3])
             Traceback (most recent call last):
             ...
@@ -409,13 +411,18 @@ class LyndonWords_nk(UniqueRepresentation, Parent):
             sage: L([1,2,2,3,3])
             Traceback (most recent call last):
             ...
-            ValueError: length is not n=3
+            ValueError: length is not k=3
+
+        Make sure that the correct length is checked (:issue:`30186`)::
+
+            sage: L = LyndonWords(2, 4)
+            sage: _ = L(L.random_element())                                             # needs sage.libs.pari
         """
         w = self._words(*args, **kwds)
         if kwds.get('check', True) and not w.is_lyndon():
             raise ValueError("not a Lyndon word")
-        if w.length() != self._n:
-            raise ValueError("length is not n={}".format(self._n))
+        if kwds.get('check', True) and w.length() != self._k:
+            raise ValueError("length is not k={}".format(self._k))
         return w
 
     def __contains__(self, w):
@@ -427,14 +434,15 @@ class LyndonWords_nk(UniqueRepresentation, Parent):
             True
         """
         if isinstance(w, list):
-            w = self._words(w)
-        return w in self._words and w.length() == self._k and len(set(w)) <= self._n
+            w = self._words(w, check=False)
+        return isinstance(w, FiniteWord_class) and w.length() == self._k \
+            and all(x in self._words.alphabet() for x in w) and w.is_lyndon()
 
     def cardinality(self):
         """
         TESTS::
 
-            sage: [ LyndonWords(3,i).cardinality() for i in range(1, 11) ]
+            sage: [ LyndonWords(3,i).cardinality() for i in range(1, 11) ]              # needs sage.libs.pari
             [3, 3, 8, 18, 48, 116, 312, 810, 2184, 5880]
         """
         if self._k == 0:
@@ -461,7 +469,7 @@ class LyndonWords_nk(UniqueRepresentation, Parent):
             sage: sum(1 for lw in LyndonWords(1, 1000))
             0
 
-            sage: list(LyndonWords(1, 1))
+            sage: list(LyndonWords(1, 1))                                               # needs sage.libs.pari
             [word: 1]
         """
         W = self._words._element_classes['list']
@@ -488,7 +496,7 @@ def StandardBracketedLyndonWords(n, k):
         [[2, 3], 3]
         sage: SBLW33.cardinality()
         8
-        sage: SBLW33.random_element() in SBLW33  # known bug
+        sage: SBLW33.random_element() in SBLW33
         True
     """
     return StandardBracketedLyndonWords_nk(n, k)
@@ -540,6 +548,26 @@ class StandardBracketedLyndonWords_nk(UniqueRepresentation, Parent):
         """
         return standard_bracketing(self._lyndon(*args, **kwds))
 
+    def __contains__(self, sblw):
+        """
+        EXAMPLES::
+
+            sage: S = StandardBracketedLyndonWords(2, 3)
+            sage: [[1, 2], 2] in S
+            True
+            sage: [1, [2, 2]] in S
+            False
+            sage: [1, [2, 3]] in S
+            False
+            sage: [1, 2] in S
+            False
+        """
+        try:
+            lw = standard_unbracketing(sblw)
+        except ValueError:
+            return False
+        return len(lw) == self._k and all(a in self._lyndon._words.alphabet() for a in lw.parent().alphabet())
+
     def __iter__(self):
         """
         EXAMPLES::
@@ -581,3 +609,47 @@ def standard_bracketing(lw):
     for i in range(1, len(lw)):
         if lw[i:] in LyndonWords():
             return [standard_bracketing(lw[:i]), standard_bracketing(lw[i:])]
+
+
+def standard_unbracketing(sblw):
+    """
+    Return flattened ``sblw`` if it is a standard bracketing of a Lyndon word,
+    otherwise raise an error.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.words.lyndon_word import standard_unbracketing
+        sage: standard_unbracketing([1, [2, 3]])
+        word: 123
+        sage: standard_unbracketing([[1, 2], 3])
+        Traceback (most recent call last):
+        ...
+        ValueError: not a standard bracketing of a Lyndon word
+
+    TESTS::
+
+        sage: standard_unbracketing(1) # Letters don't use brackets.
+        word: 1
+        sage: standard_unbracketing([1])
+        Traceback (most recent call last):
+        ...
+        ValueError: not a standard bracketing of a Lyndon word
+    """
+    # Nested helper function that not only returns (flattened) w, but also its
+    # right factor in the standard Lyndon factorization.
+    def standard_unbracketing_rec(w):
+        if not isinstance(w, list):
+            return [w], []
+        if len(w) != 2:
+            raise ValueError("not a standard bracketing of a Lyndon word")
+        x, t = standard_unbracketing_rec(w[0])
+        y, _ = standard_unbracketing_rec(w[1])
+        # If x = st is a standard Lyndon factorization, and y is a Lyndon word
+        # such that y <= t, then xy is standard (but not necessarily Lyndon).
+        if x < y and (len(t) == 0 or y <= t):
+            x += y
+            return x, y
+        else:
+            raise ValueError("not a standard bracketing of a Lyndon word")
+    lw, _ = standard_unbracketing_rec(sblw)
+    return FiniteWords(list(set(lw)))(lw, datatype='list', check=False)

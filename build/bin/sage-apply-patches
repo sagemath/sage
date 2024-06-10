@@ -10,8 +10,8 @@
 # the root of the package source.
 #
 # An optional patch subdirectory may be specified with the -d flag.
-# For example `sage-apply-patches -d cygwin` applies only those
-# patches under <patch-dir>/cygwin.
+# For example `sage-apply-patches -d macos` applies only those
+# patches under <patch-dir>/macos.
 #
 # The -p<num> arg is the argument accepted by the `patch` command,
 # and overrides the default -p1

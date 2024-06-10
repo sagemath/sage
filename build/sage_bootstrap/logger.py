@@ -31,16 +31,17 @@ plain_formatter = logging.Formatter('%(message)s')
 
 
 class ExcludeInfoFilter(logging.Filter):
-    
+
     def filter(self, record):
         return record.levelno != logging.INFO
-        
+
+
 class OnlyInfoFilter(logging.Filter):
-    
+
     def filter(self, record):
         return record.levelno == logging.INFO
 
-        
+
 def init_logger(config):
     level = getattr(logging, config.log.upper())
     logger.setLevel(level)
@@ -57,4 +58,3 @@ def init_logger(config):
     ch_info.setFormatter(plain_formatter)
     ch_info.addFilter(OnlyInfoFilter())
     logger.addHandler(ch_info)
-

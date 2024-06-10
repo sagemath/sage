@@ -1,0 +1,18 @@
+# This file, build/pkgs/_prereq/distros/freebsd.txt, contains names of
+# FreeBSD packages needed for installation of Sage from source.
+#
+# In addition, the files build/pkgs/SPKG/distros/freebsd.txt contain the
+# names of packages that provide the equivalent of SPKG.
+#
+# An easier way, if the ports tree has been installed on your machine is:
+# $ cd /usr/ports/math/sage
+# $ sudo make install-missing-packages
+#
+# One package per line. No need to escape special characters.
+# Everything on a line after a # character is ignored.
+#
+gmake
+automake
+bash
+dash
+python # python metaport for bootstrapping the build

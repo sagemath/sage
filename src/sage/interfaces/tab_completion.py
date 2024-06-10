@@ -27,7 +27,7 @@ EXAMPLES::
 import builtins
 
 
-class ExtraTabCompletion(object):
+class ExtraTabCompletion():
 
     def __dir__(self):
         """
@@ -93,10 +93,6 @@ def completions(s, globs):
         try:
             O = eval(obj, globs)
             D = dir(O)
-            try:
-                D += O.trait_names()
-            except (AttributeError, TypeError):
-                pass
             if not method:
                 v = [obj + '.' + x for x in D if x and x[0] != '_']
             else:

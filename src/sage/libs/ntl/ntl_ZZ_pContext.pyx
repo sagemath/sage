@@ -1,4 +1,8 @@
-# distutils: libraries = ntl gmp m
+# distutils: libraries = NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 
 #*****************************************************************************
@@ -24,7 +28,7 @@ from sage.ext.cplusplus cimport ccrepr
 from sage.rings.integer cimport Integer
 
 
-cdef class ntl_ZZ_pContext_class(object):
+cdef class ntl_ZZ_pContext_class():
     def __init__(self, ntl_ZZ v):
         """
         EXAMPLES::
@@ -44,7 +48,7 @@ cdef class ntl_ZZ_pContext_class(object):
             sage: n2+n1  # Mismatched moduli:  It will go BOOM!
             Traceback (most recent call last):
             ...
-            ValueError: You can not perform arithmetic with elements of different moduli.
+            ValueError: You cannot perform arithmetic with elements of different moduli.
         """
         pass
 
@@ -91,7 +95,7 @@ cdef class ntl_ZZ_pContext_class(object):
 
             sage: c = ntl.ZZ_pContext(10^30)
             sage: type(c.modulus())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
             sage: c.modulus() == 10^30
             True
         """
@@ -110,7 +114,7 @@ cdef class ntl_ZZ_pContext_class(object):
         """
         self.restore_c()
 
-    cdef void restore_c(self):
+    cdef void restore_c(self) noexcept:
         self.x.restore()
 
     cpdef void _assert_is_current_modulus(self) except *:
@@ -153,7 +157,7 @@ cdef class ntl_ZZ_pContext_class(object):
             ccrepr(ntl_ZZ_p_current_modulus())))
 
 
-cdef class ntl_ZZ_pContext_factory(object):
+cdef class ntl_ZZ_pContext_factory():
 
     def __init__(self):
         self.context_dict = {}

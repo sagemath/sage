@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Alternating Sign Matrices
 
@@ -30,13 +30,12 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import division
 
 import copy
 from sage.misc.classcall_metaclass import ClasscallMetaclass
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.flatten import flatten
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.structure.element import Element
@@ -45,16 +44,18 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import zero_vector
-from sage.misc.all import cached_method
-from sage.rings.all import ZZ
-from sage.arith.all import factorial
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
+from sage.rings.integer_ring import ZZ
+from sage.arith.misc import factorial
 from sage.rings.integer import Integer
-from sage.combinat.posets.lattices import LatticePoset
 from sage.combinat.gelfand_tsetlin_patterns import GelfandTsetlinPatternsTopRow
 from sage.combinat.combinatorial_map import combinatorial_map
 from sage.combinat.non_decreasing_parking_function import NonDecreasingParkingFunction
 from sage.combinat.permutation import Permutation
 from sage.combinat.six_vertex_model import SquareIceModel
+
+lazy_import('sage.combinat.posets.lattices', 'LatticePoset')
 
 
 def _inplace_height_function_gyration(hf):
@@ -107,7 +108,7 @@ class AlternatingSignMatrix(Element,
 
         TESTS:
 
-        Check that :trac:`22032` is fixed::
+        Check that :issue:`22032` is fixed::
 
             sage: AlternatingSignMatrix([])
             []
@@ -124,7 +125,7 @@ class AlternatingSignMatrix(Element,
         """
         asm = matrix(ZZ, asm)
         if not asm.is_square():
-            raise ValueError("The alternating sign matrices must be square")
+            raise ValueError("the alternating sign matrices must be square")
         return AlternatingSignMatrices(asm.nrows())(asm, check=check)
 
     def __init__(self, parent, asm):
@@ -314,7 +315,7 @@ class AlternatingSignMatrix(Element,
             sage: asm = A([[0, 1, 0],[1, -1, 1],[0, 1, 0]])
             sage: asm.inversion_number()
             2
-            sage: P=Permutations(5)
+            sage: P = Permutations(5)
             sage: all(p.number_of_inversions()==AlternatingSignMatrix(p.to_matrix()).inversion_number() for p in P)
             True
         """
@@ -605,7 +606,7 @@ class AlternatingSignMatrix(Element,
             [0 0 1 0]
 
             sage: a0 = a = AlternatingSignMatrices(5).random_element()
-            sage: for i in range(10):
+            sage: for i in range(20):
             ....:     a = a.gyration()
             sage: a == a0
             True
@@ -824,7 +825,7 @@ class AlternatingSignMatrix(Element,
 
         INPUT:
 
-        - ``algorithm`` - either ``'last_diagonal'`` or ``'link_pattern'``
+        - ``algorithm`` -- either ``'last_diagonal'`` or ``'link_pattern'``
 
         EXAMPLES::
 
@@ -849,7 +850,7 @@ class AlternatingSignMatrix(Element,
             sage: asm.to_dyck_word()
             Traceback (most recent call last):
             ...
-            TypeError: to_dyck_word() ...argument...
+            TypeError: ...to_dyck_word() ...argument...
             sage: asm.to_dyck_word(algorithm = 'notamethod')
             Traceback (most recent call last):
             ...
@@ -923,10 +924,10 @@ class AlternatingSignMatrix(Element,
             sage: asm.to_permutation()
             Traceback (most recent call last):
             ...
-            ValueError: Not a permutation matrix
+            ValueError: not a permutation matrix
         """
         if not self.is_permutation():
-            raise ValueError('Not a permutation matrix')
+            raise ValueError('not a permutation matrix')
         asm_matrix = self.to_matrix()
         return Permutation([j + 1 for (i, j) in asm_matrix.nonzero_positions()])
 
@@ -945,7 +946,7 @@ class AlternatingSignMatrix(Element,
             [[1, 1, 2], [2, 3], [3]]
             sage: parent(t)
             Semistandard tableaux
-            """
+        """
         from sage.combinat.tableau import SemistandardTableau
         mt = self.to_monotone_triangle()
         ssyt = [[0]*(len(mt) - j) for j in range(len(mt))]
@@ -1047,6 +1048,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         sage: L.category()
         Category of facade finite enumerated lattice posets
     """
+
     def __init__(self, n):
         r"""
         Initialize ``self``.
@@ -1197,7 +1199,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         if isinstance(asm, AlternatingSignMatrix):
             if asm.parent() is self:
                 return asm
-            raise ValueError("Cannot convert between alternating sign matrices of different sizes")
+            raise ValueError("cannot convert between alternating sign matrices of different sizes")
         try:
             m = self._matrix_space(asm)
         except (TypeError, ValueError):
@@ -1282,7 +1284,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         """
         n = len(triangle)
         if n != self._n:
-            raise ValueError("Incorrect size")
+            raise ValueError("incorrect size")
 
         asm = self._matrix_space()
         for i in range(n - 1):
@@ -1365,7 +1367,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         n = len(comps)
         M = [[0 for _ in range(n)] for _ in range(n)]
 
-        previous_set = set([])
+        previous_set = set()
         for col in range(n-1, -1, -1):
             s = set(comps[col])
             for x in s.difference(previous_set):
@@ -1658,6 +1660,7 @@ class MonotoneTriangles(GelfandTsetlinPatternsTopRow):
         sage: all(A.from_monotone_triangle(m).to_monotone_triangle() == m for m in M)
         True
     """
+
     def __init__(self, n):
         r"""
         Initialize ``self``.
@@ -1724,10 +1727,9 @@ class MonotoneTriangles(GelfandTsetlinPatternsTopRow):
             sage: P.is_lattice()
             True
         """
-        # get a list of the elements and switch to a tuple
-        # representation
-        set_ = [tuple(tuple(_) for _ in x) for x in list(self)]
-        return (set_, [(a,b) for a in set_ for b in set_ if _is_a_cover(a,b)])
+        # get a list of the elements and switch to a tuple representation
+        set_ = [tuple(tuple(t) for t in x) for x in list(self)]
+        return (set_, [(a, b) for a in set_ for b in set_ if _is_a_cover(a, b)])
 
     def cover_relations(self):
         r"""
@@ -1821,9 +1823,8 @@ class ContreTableaux(Parent, metaclass=ClasscallMetaclass):
             sage: C = ContreTableaux(4)
             sage: type(C)
             <class 'sage.combinat.alternating_sign_matrix.ContreTableaux_n'>
-
         """
-        assert(isinstance(n, (int, Integer)))
+        assert isinstance(n, (int, Integer))
         return ContreTableaux_n(n, **kwds)
 
 
@@ -1909,8 +1910,7 @@ class ContreTableaux_n(ContreTableaux):
              [[1, 2, 3], [2, 3], [2]],
              [[1, 2, 3], [2, 3], [3]]]
         """
-        for z in self._iterator_rec(self.n):
-            yield z
+        yield from self._iterator_rec(self.n)
 
 
 def _next_column_iterator(previous_column, height, i=None):
@@ -1983,9 +1983,8 @@ class TruncatedStaircases(Parent, metaclass=ClasscallMetaclass):
             sage: T = TruncatedStaircases(4, [2,3])
             sage: type(T)
             <class 'sage.combinat.alternating_sign_matrix.TruncatedStaircases_nlastcolumn'>
-
         """
-        assert(isinstance(n, (int, Integer)))
+        assert isinstance(n, (int, Integer))
         return TruncatedStaircases_nlastcolumn(n, last_column, **kwds)
 
 

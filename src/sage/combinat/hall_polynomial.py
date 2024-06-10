@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Hall Polynomials
 """
@@ -16,8 +17,8 @@ Hall Polynomials
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.all import prod
-from sage.rings.all import ZZ
+from sage.misc.misc_c import prod
+from sage.rings.integer_ring import ZZ
 from sage.combinat.partition import Partition
 from sage.combinat.q_analogues import q_binomial
 
@@ -184,4 +185,3 @@ def hall_polynomial(nu, mu, la, q=None):
     from sage.algebras.hall_algebra import HallAlgebra
     H = HallAlgebra(R, q)
     return (H[mu]*H[la]).coefficient(nu)
-

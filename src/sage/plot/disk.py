@@ -1,10 +1,11 @@
 """
 Disks
 """
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2006 Alex Clemesha <clemesha@gmail.com>,
 #                          William Stein <wstein@gmail.com>,
 #                     2008 Mike Hansen <mhansen@gmail.com>,
+#                     2021 Javier Honrubia <jhonrubia6@alumno.uned.es>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -16,14 +17,13 @@ Disks
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+# *****************************************************************************
 
 from sage.plot.primitive import GraphicPrimitive
 from sage.misc.decorators import options, rename_keyword
 from sage.plot.colors import to_mpl_color
 from math import sin, cos, pi
+
 
 class Disk(GraphicPrimitive):
     """
@@ -33,23 +33,25 @@ class Disk(GraphicPrimitive):
 
     INPUT:
 
-    - ``point`` - coordinates of center of disk
+    - ``point`` -- coordinates of center of disk
 
-    - ``r`` - radius of disk
+    - ``r`` -- radius of disk
 
-    - ``angle`` - beginning and ending angles of disk (i.e.
+    - ``angle`` -- beginning and ending angles of disk (i.e.
       angle extent of sector/wedge)
 
-    - ``options`` - dict of valid plot options to pass to constructor
+    - ``options`` -- dict of valid plot options to pass to constructor
 
     EXAMPLES:
 
     Note this should normally be used indirectly via ``disk``::
 
+        sage: from math import pi
         sage: from sage.plot.disk import Disk
         sage: D = Disk((1,2), 2, (pi/2,pi), {'zorder':3})
         sage: D
-        Disk defined by (1.0,2.0) with r=2.0 spanning (1.5707963267..., 3.1415926535...) radians
+        Disk defined by (1.0,2.0) with r=2.0
+         spanning (1.5707963267..., 3.1415926535...) radians
         sage: D.options()['zorder']
         3
         sage: D.x
@@ -68,6 +70,7 @@ class Disk(GraphicPrimitive):
 
         EXAMPLES::
 
+            sage: from math import pi
             sage: D = disk((2,3), 1, (pi/2, pi), fill=False, color='red', thickness=1, alpha=.5)
             sage: D[0].x
             2.0
@@ -95,6 +98,7 @@ class Disk(GraphicPrimitive):
 
         EXAMPLES::
 
+            sage: from math import pi
             sage: D = disk((5,4), 1, (pi/2, pi))
             sage: d = D.get_minmax_data()
             sage: d['xmin']
@@ -118,20 +122,21 @@ class Disk(GraphicPrimitive):
 
         EXAMPLES::
 
+            sage: from math import pi
             sage: p = disk((3, 3), 1, (0, pi/2))
             sage: p[0]._allowed_options()['alpha']
             'How transparent the figure is.'
             sage: p[0]._allowed_options()['zorder']
             'The layer level in which to draw'
         """
-        return {'alpha':'How transparent the figure is.',
-                'fill':'Whether or not to fill the disk.',
-                'legend_label':'The label for this item in the legend.',
-                'legend_color':'The color of the legend text.',
-                'thickness':'How thick the border of the disk is.',
-                'rgbcolor':'The color as an RGB tuple.',
-                'hue':'The color given as a hue.',
-                'zorder':'The layer level in which to draw'}
+        return {'alpha': 'How transparent the figure is.',
+                'fill': 'Whether or not to fill the disk.',
+                'legend_label': 'The label for this item in the legend.',
+                'legend_color': 'The color of the legend text.',
+                'thickness': 'How thick the border of the disk is.',
+                'rgbcolor': 'The color as an RGB tuple.',
+                'hue': 'The color given as a hue.',
+                'zorder': 'The layer level in which to draw'}
 
     def _repr_(self):
         """
@@ -139,21 +144,22 @@ class Disk(GraphicPrimitive):
 
         EXAMPLES::
 
+            sage: from math import pi
             sage: P = disk((3, 3), 1, (0, pi/2))
             sage: p = P[0]; p
             Disk defined by (3.0,3.0) with r=1.0 spanning (0.0, 1.5707963267...) radians
         """
-        return "Disk defined by (%s,%s) with r=%s spanning (%s, %s) radians" % (self.x,
-        self.y, self.r, self.rad1, self.rad2)
+        return "Disk defined by ({},{}) with r={} spanning ({}, {}) radians".format(self.x, self.y, self.r, self.rad1, self.rad2)
 
     def _render_on_subplot(self, subplot):
         """
         TESTS::
 
+            sage: from math import pi
             sage: D = disk((2,-1), 2, (0, pi), color='black', thickness=3, fill=False); D
             Graphics object consisting of 1 graphics primitive
 
-        Save alpha information in pdf (see :trac:`13732`)::
+        Save alpha information in pdf (see :issue:`13732`)::
 
             sage: f = tmp_filename(ext='.pdf')
             sage: p = disk((0,0), 5, (0, pi/4), alpha=0.5)
@@ -162,11 +168,11 @@ class Disk(GraphicPrimitive):
         """
         import matplotlib.patches as patches
         options = self.options()
-        deg1 = self.rad1*(180./pi) #convert radians to degrees
+        deg1 = self.rad1*(180./pi)  # convert radians to degrees
         deg2 = self.rad2*(180./pi)
         z = int(options.pop('zorder', 0))
         p = patches.Wedge((float(self.x), float(self.y)), float(self.r), float(deg1),
-                            float(deg2), zorder=z)
+                          float(deg2), zorder=z)
         a = float(options['alpha'])
         p.set_alpha(a)
         p.set_linewidth(float(options['thickness']))
@@ -185,7 +191,7 @@ class Disk(GraphicPrimitive):
         INPUT:
 
 
-        -  ``z`` - optional 3D height above `xy`-plane.
+        -  ``z`` -- optional 3D height above `xy`-plane.
 
         AUTHORS:
 
@@ -193,12 +199,14 @@ class Disk(GraphicPrimitive):
 
         EXAMPLES::
 
+            sage: from math import pi
             sage: disk((0,0), 1, (0, pi/2)).plot3d()
             Graphics3d Object
             sage: disk((0,0), 1, (0, pi/2)).plot3d(z=2)
             Graphics3d Object
             sage: disk((0,0), 1, (pi/2, 0), fill=False).plot3d(3)
             Graphics3d Object
+
 
         These examples show that the appropriate options are passed::
 
@@ -234,11 +242,12 @@ class Disk(GraphicPrimitive):
             return Polygon(xdata, ydata, options).plot3d(z)
         else:
             from .line import Line
-            return Line(xdata, ydata, options).plot3d().translate((0,0,z))
+            return Line(xdata, ydata, options).plot3d().translate((0, 0, z))
+
 
 @rename_keyword(color='rgbcolor')
-@options(alpha=1, fill=True, rgbcolor=(0,0,1), thickness=0, legend_label=None,
-         aspect_ratio=1.0)
+@options(alpha=1, fill=True, rgbcolor=(0, 0, 1), thickness=0, legend_label=None,
+         legend_color=None, aspect_ratio=1.0)
 def disk(point, radius, angle, **options):
     r"""
     A disk (that is, a sector or wedge of a circle) with center
@@ -252,12 +261,23 @@ def disk(point, radius, angle, **options):
 
     Make some dangerous disks::
 
+        sage: from math import pi
         sage: bl = disk((0.0,0.0), 1, (pi, 3*pi/2), color='yellow')
         sage: tr = disk((0.0,0.0), 1, (0, pi/2), color='yellow')
         sage: tl = disk((0.0,0.0), 1, (pi/2, pi), color='black')
         sage: br = disk((0.0,0.0), 1, (3*pi/2, 2*pi), color='black')
-        sage: P  = tl+tr+bl+br
-        sage: P.show(xmin=-2,xmax=2,ymin=-2,ymax=2)
+        sage: P  = tl + tr + bl + br
+        sage: P.show(xmin=-2, xmax=2, ymin=-2, ymax=2)
+
+    .. PLOT::
+
+        from sage.plot.disk import Disk
+        bl = disk((0.0,0.0), 1, (pi, 3*pi/2), color='yellow')
+        tr = disk((0.0,0.0), 1, (0, pi/2), color='yellow')
+        tl = disk((0.0,0.0), 1, (pi/2, pi), color='black')
+        br = disk((0.0,0.0), 1, (3*pi/2, 2*pi), color='black')
+        P  = tl+tr+bl+br
+        sphinx_plot(P)
 
     The default aspect ratio is 1.0::
 
@@ -269,11 +289,23 @@ def disk(point, radius, angle, **options):
         sage: bl = disk((0.0,0.0), 1, (pi, 3*pi/2), rgbcolor=(1,1,0))
         sage: bl.show(figsize=[5,5])
 
+    .. PLOT::
+
+        from sage.plot.disk import Disk
+        bl = disk((0.0,0.0), 1, (pi, 3*pi/2), rgbcolor=(1,1,0))
+        sphinx_plot(bl)
+
     Note that since ``thickness`` defaults to zero, it is best to change
     that option when using ``fill=False``::
 
         sage: disk((2,3), 1, (pi/4,pi/3), hue=.8, alpha=.3, fill=False, thickness=2)
         Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        from sage.plot.disk import Disk
+        D = disk((2,3), 1, (pi/4,pi/3), hue=.8, alpha=.3, fill=False, thickness=2)
+        sphinx_plot(D)
 
     The previous two examples also illustrate using ``hue`` and ``rgbcolor``
     as ways of specifying the color of the graphic.
@@ -287,11 +319,19 @@ def disk(point, radius, angle, **options):
         sage: type(d)
         <... 'sage.plot.plot3d.index_face_set.IndexFaceSet'>
 
+    .. PLOT::
+
+        from sage.plot.disk import Disk
+        d = disk((1,1,3), 1, (pi,3*pi/2), rgbcolor=(1,0,0))
+        sphinx_plot(d)
+
     Extra options will get passed on to ``show()``, as long as they are valid::
 
-        sage: disk((0, 0), 5, (0, pi/2), xmin=0, xmax=5, ymin=0, ymax=5, figsize=(2,2), rgbcolor=(1, 0, 1))
+        sage: disk((0, 0), 5, (0, pi/2), rgbcolor=(1, 0, 1),
+        ....:      xmin=0, xmax=5, ymin=0, ymax=5, figsize=(2,2))
         Graphics object consisting of 1 graphics primitive
-        sage: disk((0, 0), 5, (0, pi/2), rgbcolor=(1, 0, 1)).show(xmin=0, xmax=5, ymin=0, ymax=5, figsize=(2,2)) # These are equivalent
+        sage: disk((0, 0), 5, (0, pi/2), rgbcolor=(1, 0, 1)).show(  # These are equivalent
+        ....:     xmin=0, xmax=5, ymin=0, ymax=5, figsize=(2,2))
 
     TESTS:
 
@@ -305,7 +345,11 @@ def disk(point, radius, angle, **options):
         sage: d = disk((1,1,1,1), 1, (0,pi))
         Traceback (most recent call last):
         ...
-        ValueError: The center point of a plotted disk should have two or three coordinates.
+        ValueError: the center point of a plotted disk should have two or three coordinates
+
+    Verify that :issue:`36153` is fixed::
+
+        sage: D = disk((0, 0), 5, (0, pi/2), legend_label="test")
     """
     from sage.plot.all import Graphics
     g = Graphics()
@@ -323,9 +367,9 @@ def disk(point, radius, angle, **options):
     if options['legend_label']:
         g.legend(True)
         g._legend_colors = [options['legend_color']]
-    if len(point)==2:
+    if len(point) == 2:
         return g
-    elif len(point)==3:
+    elif len(point) == 3:
         return g[0].plot3d(z=point[2])
-    else:
-        raise ValueError('The center point of a plotted disk should have two or three coordinates.')
+    raise ValueError('the center point of a plotted disk should have '
+                     'two or three coordinates')

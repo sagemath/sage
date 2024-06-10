@@ -1,5 +1,5 @@
-SymPy
-=====
+sympy: Python library for symbolic mathematics
+==============================================
 
 Description
 -----------
@@ -13,7 +13,7 @@ libraries, except optionally for plotting support.
 Website
 -------
 
-http://sympy.org/
+https://sympy.org/
 
 License
 -------

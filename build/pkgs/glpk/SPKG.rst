@@ -1,5 +1,5 @@
-GLPK
-====
+glpk: GNU Linear Programming Kit
+================================
 
 Description
 -----------
@@ -36,13 +36,6 @@ GLPK is currently being maintained by:
 
 http://www.gnu.org/software/glpk/#maintainer
 
-Dependencies
-------------
-
--  GMP/MPIR
--  zlib
-
-
 Special Update/Build Instructions
 ---------------------------------
 
@@ -58,15 +51,3 @@ Special Update/Build Instructions
    (Instead, we should perhaps use ``--enable-static --enable-shared``
    to
    go safe.)
-
-Patches
-~~~~~~~
-
--  All patches below are currently used by spkg-src
--  src/01-zlib.patch: don't build the included zlib library.
--  src/02-cygwin_sharedlib.patch: Let a shared library be built on
-   Cygwin by
-   passing the -no-undefined flag to libtool.
-
-   The numbering reflect the order in which they have been created from
-   glpk pristine's sources

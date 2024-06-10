@@ -1,0 +1,50 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Sage: Pytest Doctests",
+            "type": "python",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "-c",
+                "src/tox.ini",
+                "--doctest",
+                "${file}"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
+            "name": "Sage: Pytest",
+            "type": "python",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "${file}"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
+            "name": "Sage: Test",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/bin/sage-runtests",
+            "args": [
+                "--verbose",
+                "${file}"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": false
+        }
+    ],
+}

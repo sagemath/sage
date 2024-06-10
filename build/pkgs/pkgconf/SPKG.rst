@@ -1,5 +1,5 @@
-pkgconf
-=======
+pkgconf: An implementation of the pkg-config spec
+=================================================
 
 Description
 -----------
@@ -17,12 +17,6 @@ Upstream Contact
 ----------------
 
 https://github.com/pkgconf/pkgconf
-
-Dependencies
-------------
-
--  C compiler + toolchain
-
 
 Special Update/Build Instructions
 ---------------------------------

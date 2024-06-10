@@ -1,7 +1,7 @@
+# sage.doctest: needs sage.groups sage.libs.flint
 """
 Permutation species
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
@@ -19,11 +19,10 @@ from __future__ import absolute_import
 
 from .species import GenericCombinatorialSpecies
 from .structure import GenericSpeciesStructure
-from .generating_series import _integers_from
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.rings.all import ZZ
 from sage.combinat.permutation import Permutation, Permutations
 from sage.combinat.species.misc import accept_size
+
 
 class PermutationSpeciesStructure(GenericSpeciesStructure):
     def canonical_label(self):
@@ -99,7 +98,8 @@ class PermutationSpeciesStructure(GenericSpeciesStructure):
              ['a', 'c', 'b', 'd'],
              ['a', 'c', 'b', 'd']]
         """
-        from sage.groups.all import SymmetricGroup, PermutationGroup
+        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+        from sage.groups.perm_gps.permgroup import PermutationGroup
         S = SymmetricGroup(len(self._labels))
         p = self.permutation_group_element()
         return PermutationGroup(S.centralizer(p).gens())
@@ -114,8 +114,8 @@ class PermutationSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: P = species.PermutationSpecies(); P
             Permutation species
-      """
-        return super(PermutationSpecies, cls).__classcall__(cls, *args, **kwds)
+        """
+        return super().__classcall__(cls, *args, **kwds)
 
     def __init__(self, min=None, max=None, weight=None):
         """
@@ -124,13 +124,13 @@ class PermutationSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         EXAMPLES::
 
             sage: P = species.PermutationSpecies()
-            sage: P.generating_series().coefficients(5)
+            sage: P.generating_series()[0:5]
             [1, 1, 1, 1, 1]
-            sage: P.isotype_generating_series().coefficients(5)
+            sage: P.isotype_generating_series()[0:5]
             [1, 1, 2, 3, 5]
 
             sage: P = species.PermutationSpecies()
-            sage: c = P.generating_series().coefficients(3)
+            sage: c = P.generating_series()[0:3]
             sage: P._check()
             True
             sage: P == loads(dumps(P))
@@ -171,7 +171,6 @@ class PermutationSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         for p in Partitions(len(labels)):
             yield self._canonical_rep_from_partition(structure_class, labels, p)
 
-
     def _canonical_rep_from_partition(self, structure_class, labels, p):
         """
         EXAMPLES::
@@ -186,8 +185,7 @@ class PermutationSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         perm = list(Permutation(cycles))
         return structure_class(self, labels, perm)
 
-
-    def _gs_list(self, base_ring):
+    def _gs_list(self, base_ring, n):
         r"""
         The generating series for the species of linear orders is
         `\frac{1}{1-x}`.
@@ -196,13 +194,12 @@ class PermutationSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: P = species.PermutationSpecies()
             sage: g = P.generating_series()
-            sage: g.coefficients(10)
+            sage: g[0:10]
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         """
-        return [base_ring(1)]
+        return base_ring.one()
 
-
-    def _itgs_iterator(self, base_ring):
+    def _itgs_callable(self, base_ring, n):
         r"""
         The isomorphism type generating series is given by
         `\frac{1}{1-x}`.
@@ -211,13 +208,11 @@ class PermutationSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
             sage: P = species.PermutationSpecies()
             sage: g = P.isotype_generating_series()
-            sage: g.coefficients(10)
+            sage: [g.coefficient(i) for i in range(10)]
             [1, 1, 2, 3, 5, 7, 11, 15, 22, 30]
         """
         from sage.combinat.partition import number_of_partitions
-        for n in _integers_from(0):
-            yield base_ring(number_of_partitions(n))
-
+        return base_ring(number_of_partitions(n))
 
     def _cis(self, series_ring, base_ring):
         r"""
@@ -227,43 +222,46 @@ class PermutationSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
              \prod{n=1}^\infty \frac{1}{1-x_n}.
 
-
-
         EXAMPLES::
 
             sage: P = species.PermutationSpecies()
-            sage: g = P.cycle_index_series()
-            sage: g.coefficients(5)
+            sage: g = P.cycle_index_series()                                            # needs sage.modules
+            sage: g[0:5]                                                                # needs sage.modules
             [p[],
              p[1],
              p[1, 1] + p[2],
              p[1, 1, 1] + p[2, 1] + p[3],
              p[1, 1, 1, 1] + p[2, 1, 1] + p[2, 2] + p[3, 1] + p[4]]
         """
+        from sage.combinat.sf.sf import SymmetricFunctions
+        from sage.combinat.partition import Partitions
+        p = SymmetricFunctions(base_ring).p()
         CIS = series_ring
-        return CIS.product_generator( CIS(self._cis_gen(base_ring, i)) for i in _integers_from(ZZ(1)) )
+        return CIS(lambda n: sum(p(la) for la in Partitions(n)))
 
-    def _cis_gen(self, base_ring, n):
+    def _cis_gen(self, base_ring, m, n):
         """
         EXAMPLES::
 
             sage: P = species.PermutationSpecies()
-            sage: g = P._cis_gen(QQ, 2)
-            sage: [next(g) for i in range(10)]
+            sage: [P._cis_gen(QQ, 2, i) for i in range(10)]                             # needs sage.modules
             [p[], 0, p[2], 0, p[2, 2], 0, p[2, 2, 2], 0, p[2, 2, 2, 2], 0]
         """
         from sage.combinat.sf.sf import SymmetricFunctions
         p = SymmetricFunctions(base_ring).power()
 
-        pn = p([n])
+        pn = p([m])
 
-        n = n - 1
-        yield p(1)
+        if not n:
+            return p(1)
+        if m == 1:
+            if n % 2:
+                return base_ring.zero()
+            return pn**(n//2)
+        elif n % m:
+            return base_ring.zero()
+        return pn**(n//m)
 
-        for k in _integers_from(1):
-            for i in range(n):
-                yield base_ring(0)
-            yield pn**k
 
 #Backward compatibility
 PermutationSpecies_class = PermutationSpecies

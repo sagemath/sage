@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Yangians
 
@@ -19,10 +20,9 @@ AUTHORS:
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
 
-from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
 from sage.categories.graded_hopf_algebras_with_basis import GradedHopfAlgebrasWithBasis
-from sage.rings.all import ZZ
+from sage.categories.cartesian_product import cartesian_product
 from sage.rings.infinity import infinity
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.sets.family import Family
@@ -30,157 +30,6 @@ from sage.sets.positive_integers import PositiveIntegers
 from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.algebras.associated_graded import AssociatedGradedAlgebra
-
-import itertools
-
-
-class GeneratorIndexingSet(UniqueRepresentation):
-    """
-    Helper class for the indexing set of the generators.
-    """
-    def __init__(self, index_set, level=None):
-        """
-        Initialize ``self``.
-
-        TESTS::
-
-            sage: from sage.algebras.yangian import GeneratorIndexingSet
-            sage: I = GeneratorIndexingSet((1,2))
-        """
-        self._index_set = index_set
-        self._level = level
-
-    def __repr__(self):
-        """
-        Return a string representation of ``self``.
-
-        TESTS::
-
-            sage: from sage.algebras.yangian import GeneratorIndexingSet
-            sage: GeneratorIndexingSet((1,2))
-            Cartesian product of Positive integers, (1, 2), (1, 2)
-            sage: GeneratorIndexingSet((1,2), 4)
-            Cartesian product of (1, 2, 3, 4), (1, 2), (1, 2)
-        """
-        if self._level is None:
-            L = PositiveIntegers()
-        else:
-            L = tuple(range(1, self._level + 1))
-        return "Cartesian product of {L}, {I}, {I}".format(L=L, I=self._index_set)
-
-    def an_element(self):
-        """
-        Initialize ``self``.
-
-        TESTS::
-
-            sage: from sage.algebras.yangian import GeneratorIndexingSet
-            sage: I = GeneratorIndexingSet((1,2))
-            sage: I.an_element()
-            (3, 1, 1)
-            sage: I = GeneratorIndexingSet((1,2), 5)
-            sage: I.an_element()
-            (3, 1, 1)
-            sage: I = GeneratorIndexingSet((1,2), 1)
-            sage: I.an_element()
-            (1, 1, 1)
-        """
-        if self._level is not None and self._level < 3:
-            return (1, self._index_set[0], self._index_set[0])
-        return (3, self._index_set[0], self._index_set[0])
-
-    def cardinality(self):
-        """
-        Return the cardinality of ``self``.
-
-        TESTS::
-
-            sage: from sage.algebras.yangian import GeneratorIndexingSet
-            sage: I = GeneratorIndexingSet((1,2))
-            sage: I.cardinality()
-            +Infinity
-            sage: I = GeneratorIndexingSet((1,2), level=3)
-            sage: I.cardinality() == 3 * 2 * 2
-            True
-        """
-        if self._level is not None:
-            return self._level * len(self._index_set)**2
-        return infinity
-
-    __len__ = cardinality
-
-    def __call__(self, x):
-        """
-        Call ``self``.
-
-        TESTS::
-
-            sage: from sage.algebras.yangian import GeneratorIndexingSet
-            sage: I = GeneratorIndexingSet((1,2))
-            sage: I([1, 2])
-            (1, 2)
-        """
-        return tuple(x)
-
-    def __contains__(self, x):
-        """
-        Check containment of ``x`` in ``self``.
-
-        TESTS::
-
-            sage: from sage.algebras.yangian import GeneratorIndexingSet
-            sage: I = GeneratorIndexingSet((1,2))
-            sage: (4, 1, 2) in I
-            True
-            sage: [4, 2, 1] in I
-            True
-            sage: (-1, 1, 1) in I
-            False
-            sage: (1, 3, 1) in I
-            False
-
-        ::
-
-            sage: I3 = GeneratorIndexingSet((1,2), 3)
-            sage: (1, 1, 2) in I3
-            True
-            sage: (3, 1, 1) in I3
-            True
-            sage: (4, 1, 1) in I3
-            False
-        """
-        return (isinstance(x, (tuple, list)) and len(x) == 3
-                and x[0] in ZZ and x[0] > 0
-                and (self._level is None or x[0] <= self._level)
-                and x[1] in self._index_set
-                and x[2] in self._index_set)
-
-    def __iter__(self):
-        """
-        Iterate over ``self``.
-
-        TESTS::
-
-            sage: from sage.algebras.yangian import GeneratorIndexingSet
-            sage: I = GeneratorIndexingSet((1,2))
-            sage: it = iter(I)
-            sage: [next(it) for dummy in range(5)]
-            [(1, 1, 1), (1, 1, 2), (1, 2, 1), (1, 2, 2), (2, 1, 1)]
-
-            sage: I = GeneratorIndexingSet((1,2), 3)
-            sage: list(I)
-            [(1, 1, 1), (1, 1, 2), (1, 2, 1), (1, 2, 2),
-             (2, 1, 1), (2, 1, 2), (2, 2, 1), (2, 2, 2),
-             (3, 1, 1), (3, 1, 2), (3, 2, 1), (3, 2, 2)]
-        """
-        I = self._index_set
-        if self._level is not None:
-            for x in itertools.product(range(1, self._level + 1), I, I):
-                yield x
-            return
-        for i in PositiveIntegers():
-            for x in itertools.product(I, I):
-                yield (i, x[0], x[1])
 
 
 class Yangian(CombinatorialFreeModule):
@@ -368,9 +217,9 @@ class Yangian(CombinatorialFreeModule):
             return YangianLevel(base_ring, n, level, variable_name, filtration)
         # We need to specify the parameter name for pickling, so it doesn't pass
         #   ``variable_name`` as ``level``
-        return super(Yangian, cls).__classcall__(cls, base_ring, n,
-                                                 variable_name=variable_name,
-                                                 filtration=filtration)
+        return super().__classcall__(cls, base_ring, n,
+                                     variable_name=variable_name,
+                                     filtration=filtration)
 
     def __init__(self, base_ring, n, variable_name, filtration):
         r"""
@@ -390,9 +239,9 @@ class Yangian(CombinatorialFreeModule):
         category = HopfAlgebrasWithBasis(base_ring).Filtered()
         if filtration == 'natural':
             category = category.Connected()
-        self._index_set = tuple(range(1,n+1))
+        self._index_set = tuple(range(1, n + 1))
         # The keys for the basis are tuples (l, i, j)
-        indices = GeneratorIndexingSet(self._index_set)
+        indices = cartesian_product([PositiveIntegers(), self._index_set, self._index_set])
         # We note that the generators are non-commutative, but we always sort
         #   them, so they are, in effect, indexed by the free abelian monoid
         basis_keys = IndexedFreeAbelianMonoid(indices, bracket=False,
@@ -478,6 +327,7 @@ class Yangian(CombinatorialFreeModule):
             return '1'
 
         prefix = self.prefix()
+
         def term(r, i, j, exp):
             s = prefix + '^{{({})}}_{{{},{}}}'.format(r, i, j)
             if exp == 1:
@@ -500,13 +350,13 @@ class Yangian(CombinatorialFreeModule):
             True
             sage: Y6 = Yangian(QQ, 4, level=6, filtration='natural')
             sage: Y(Y6.an_element())
-            t(1)[1,1]*t(1)[1,2]^2*t(1)[1,3]^3*t(3)[1,1]
+            t(1)[1,1]^2*t(1)[1,2]^2*t(1)[1,3]^3 + 2*t(1)[1,1] + 3*t(1)[1,2] + 1
         """
         if isinstance(x, CombinatorialFreeModule.Element):
             if isinstance(x.parent(), Yangian) and x.parent()._n <= self._n:
                 R = self.base_ring()
                 return self._from_dict({i: R(c) for i, c in x}, coerce=False)
-        return super(Yangian, self)._element_constructor_(x)
+        return super()._element_constructor_(x)
 
     def gen(self, r, i=None, j=None):
         """
@@ -542,8 +392,8 @@ class Yangian(CombinatorialFreeModule):
 
             sage: Y = Yangian(QQ, 4)
             sage: Y.algebra_generators()
-            Lazy family (generator(i))_{i in Cartesian product of
-             Positive integers, (1, 2, 3, 4), (1, 2, 3, 4)}
+            Lazy family (generator(i))_{i in The Cartesian product of
+             (Positive integers, {1, 2, 3, 4}, {1, 2, 3, 4})}
         """
         return Family(self._indices._indices, self.gen, name="generator")
 
@@ -653,12 +503,12 @@ class Yangian(CombinatorialFreeModule):
             return self.monomial(x * y)
 
         # The computation is done on generators, so apply generators one at
-        #   a time until all have been applied
+        # a time until all have been applied
         if len(x) != 1:
             I = self._indices
             cur = self.monomial(y)
-            for gen,exp in reversed(x._sorted_items()):
-                for i in range(exp):
+            for gen, exp in reversed(x._sorted_items()):
+                for _ in range(exp):
                     cur = self.monomial(I.gen(gen)) * cur
             return cur
 
@@ -669,8 +519,8 @@ class Yangian(CombinatorialFreeModule):
         # Otherwise we need to commute it along
         I = self._indices
         cur = self.monomial(x)
-        for gen,exp in y._sorted_items():
-            for i in range(exp):
+        for gen, exp in y._sorted_items():
+            for _ in range(exp):
                 cur = cur * self.monomial(I.gen(gen))
         return cur
 
@@ -783,6 +633,7 @@ class Yangian(CombinatorialFreeModule):
             return self.base_ring().one()
         return self.base_ring().zero()
 
+
 class YangianLevel(Yangian):
     r"""
     The Yangian `Y_{\ell}(\mathfrak{gl_n})` of level `\ell`.
@@ -811,10 +662,11 @@ class YangianLevel(Yangian):
         self._level = level
         self._n = n
         self._filtration = filtration
-        category = HopfAlgebrasWithBasis(base_ring)#.Filtered() # TODO - once implemented
+        category = HopfAlgebrasWithBasis(base_ring).Filtered()
         self._index_set = tuple(range(1,n+1))
         # The keys for the basis are tuples (l, i, j)
-        indices = GeneratorIndexingSet(self._index_set, level)
+        L = range(1, self._level + 1)
+        indices = cartesian_product([L, self._index_set, self._index_set])
         # We note that the generators are non-commutative, but we always sort
         #   them, so they are, in effect, indexed by the free abelian monoid
         basis_keys = IndexedFreeAbelianMonoid(indices, bracket=False, prefix=variable_name)
@@ -892,7 +744,7 @@ class YangianLevel(Yangian):
                 return False
             on_gens = lambda m: self.prod(self.gen(*a)**exp for a,exp in m._sorted_items())
             return R.module_morphism(on_gens, codomain=self)
-        return super(YangianLevel, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
     def level(self):
         """
@@ -1039,7 +891,7 @@ class YangianLevel(Yangian):
                 for x in range(2, b[0]+1) if a[0]+b[0]-x <= self._level)
 
 #####################################################################
-## Graded algebras
+# Graded algebras
 
 
 class GradedYangianBase(AssociatedGradedAlgebra):
@@ -1079,12 +931,14 @@ class GradedYangianBase(AssociatedGradedAlgebra):
             return '1'
 
         prefix = "\\overline{{{}}}".format(self._A.prefix())
+
         def term(r, i, j, exp):
             s = prefix + '^{{({})}}_{{{},{}}}'.format(r,i,j)
             if exp == 1:
                 return s
             return '\\left({}\\right)^{{{}}}'.format(s, exp)
         return ' '.join(term(r, i, j, exp) for (r,i,j), exp in m._sorted_items())
+
 
 class GradedYangianNatural(GradedYangianBase):
     r"""
@@ -1124,7 +978,8 @@ class GradedYangianNatural(GradedYangianBase):
             sage: x == grY.gen(2, 1, 1) * grY.gen(12, 2, 1)
             True
         """
-        return self.monomial(x*y)
+        return self.monomial(x * y)
+
 
 class GradedYangianLoop(GradedYangianBase):
     r"""
@@ -1147,7 +1002,10 @@ class GradedYangianLoop(GradedYangianBase):
         EXAMPLES::
 
             sage: grY = Yangian(QQ, 4).graded_algebra()
-            sage: TestSuite(grY).run()
+            sage: g = grY.indices().gens()
+            sage: x = grY(g[1,1,1] * g[1,1,2]^2 * g[1,1,3]^3 * g[3,1,1])
+            sage: elts = [grY(g[1,1,1]), grY(g[2,1,1]), x]
+            sage: TestSuite(grY).run(elements=elts)  # long time
         """
         if Y._filtration != 'loop':
             raise ValueError("the Yangian must have the loop filtration")
@@ -1165,6 +1023,17 @@ class GradedYangianLoop(GradedYangianBase):
             -tbar(2)[1,1]
 
             sage: x = grY.an_element(); x
+            tbar(1)[1,1]*tbar(1)[1,2]^2*tbar(1)[1,3]^3*tbar(42)[1,1]
+            sage: grY.antipode_on_basis(x.leading_support())
+            -tbar(1)[1,1]*tbar(1)[1,2]^2*tbar(1)[1,3]^3*tbar(42)[1,1]
+             - 2*tbar(1)[1,1]*tbar(1)[1,2]*tbar(1)[1,3]^3*tbar(42)[1,2]
+             - 3*tbar(1)[1,1]*tbar(1)[1,2]^2*tbar(1)[1,3]^2*tbar(42)[1,3]
+             + 5*tbar(1)[1,2]^2*tbar(1)[1,3]^3*tbar(42)[1,1]
+             + 10*tbar(1)[1,2]*tbar(1)[1,3]^3*tbar(42)[1,2]
+             + 15*tbar(1)[1,2]^2*tbar(1)[1,3]^2*tbar(42)[1,3]
+
+            sage: g = grY.indices().gens()
+            sage: x = grY(g[1,1,1] * g[1,1,2]^2 * g[1,1,3]^3 * g[3,1,1]); x
             tbar(1)[1,1]*tbar(1)[1,2]^2*tbar(1)[1,3]^3*tbar(3)[1,1]
             sage: grY.antipode_on_basis(x.leading_support())
             -tbar(1)[1,1]*tbar(1)[1,2]^2*tbar(1)[1,3]^3*tbar(3)[1,1]

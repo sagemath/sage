@@ -122,7 +122,6 @@ Alternatives::
     [{1: 2, 2: 1, 3: 1}, {1: 2, 2: 2, 3: 3}]
 
 
-
 Since vertex 3 has become unstable after firing vertex 1, it can be fired,
 which causes vertex 2 to become unstable, etc.  Repeated firings eventually
 lead to a stable configuration.  The last line of the Sage code, above, is a
@@ -161,7 +160,7 @@ Laplacian.
 
 **Example.** (Continued.) ::
 
-    sage: S.vertices()  # the ordering of the vertices
+    sage: S.vertices(sort=True)  # the ordering of the vertices
     [0, 1, 2, 3]
     sage: S.laplacian()
     [ 0  0  0  0]
@@ -324,9 +323,9 @@ sink.
     [1, 1, 3]
     sage: S.reduced_laplacian().dense_matrix().smith_form()
     (
-    [1 0 0]  [ 0  0  1]  [3 1 4]
-    [0 1 0]  [ 1  0  0]  [4 1 6]
-    [0 0 3], [ 0  1 -1], [4 1 5]
+    [1 0 0]  [ 1  0  0]  [1 3 5]
+    [0 1 0]  [ 0  1  0]  [1 4 6]
+    [0 0 3], [ 0 -1  1], [1 4 7]
     )
 
 Adding the identity to any recurrent configuration and stabilizing yields
@@ -478,13 +477,13 @@ attained from `E` by firing a single unstable vertex. ::
 
 The ``is_alive`` method checks whether the divisor `D` is alive, i.e.,
 whether every divisor linearly equivalent to `D` is unstable.
-   
+
 The second graph has the same set of vertices but with an edge from `E` to `F`
 if `F` is obtained from `E` by firing all unstable vertices of `E`. ::
 
     sage: S = Sandpile(graphs.CycleGraph(6),0)
     sage: D = SandpileDivisor(S, [1,1,1,1,2,0])
-    sage: eff = D.effective_div() 
+    sage: eff = D.effective_div()
     sage: parallel_firing_graph(S,eff).show3d(edge_size=.005,vertex_size=0.01,iterations=500)
 
 .. figure:: media/sandpile/C_6-parallel.png
@@ -687,7 +686,7 @@ Approximation to the zero set (setting ``x_0 = 1``)::
 The zeros are generated as a group by a single vector::
 
     sage: S.points()
-    [[(1/2*I + 1/2)*sqrt(2), -(1/2*I + 1/2)*sqrt(2)]]
+    [[-(1/2*I + 1/2)*sqrt(2), (1/2*I + 1/2)*sqrt(2)]]
 
 
 Resolutions
@@ -883,9 +882,9 @@ first presented.  This internal format is returned by ``dict()``::
 Code for checking whether a given vertex is a sink::
 
     sage: S = Sandpile({0:[], 1:[0, 3, 4], 2:[0, 3, 5], 3: [2, 5], 4: [1, 3], 5: [2, 3]},0)
-    sage: [S.distance(v,0) for v in S.vertices()] # 0 is a sink
+    sage: [S.distance(v,0) for v in S.vertices(sort=True)] # 0 is a sink
     [0, 1, 1, 2, 2, 2]
-    sage: [S.distance(v,1) for v in S.vertices()] # 1 is not a sink
+    sage: [S.distance(v,1) for v in S.vertices(sort=True)] # 1 is not a sink
     [+Infinity, 0, +Infinity, +Infinity, 1, +Infinity]
 
 Methods
@@ -1023,7 +1022,7 @@ The constant configuration with all values set to `k`.
 
 INPUT:
 
-``k`` -- integer
+- ``k`` -- integer
 
 OUTPUT:
 
@@ -1045,7 +1044,7 @@ The divisor with all values set to `k`.
 
 INPUT:
 
-``k`` -- integer
+- ``k`` -- integer
 
 OUTPUT:
 
@@ -1067,7 +1066,7 @@ The avalanche polynomial.  See NOTE for details.
 
 INPUT:
 
-``multivariable`` -- (default: ``True``) boolean
+- ``multivariable`` -- (default: ``True``) boolean
 
 OUTPUT:
 
@@ -1107,7 +1106,7 @@ it returns a less formatted table.
 
 INPUT:
 
-``verbose`` -- (default: ``True``) boolean
+- ``verbose`` -- (default: ``True``) boolean
 
 OUTPUT:
 
@@ -1374,7 +1373,7 @@ then the generators are represented as lists of integers.
 
 INPUT:
 
-``verbose`` -- (default: ``True``) boolean
+- ``verbose`` -- (default: ``True``) boolean
 
 OUTPUT:
 
@@ -1384,12 +1383,12 @@ EXAMPLES::
 
     sage: s = sandpiles.Cycle(5)
     sage: s.group_gens()
-    [{1: 1, 2: 1, 3: 1, 4: 0}]
+    [{1: 0, 2: 1, 3: 1, 4: 1}]
     sage: s.group_gens()[0].order()
     5
     sage: s = sandpiles.Complete(5)
     sage: s.group_gens(False)
-    [[2, 2, 3, 2], [2, 3, 2, 2], [3, 2, 2, 2]]
+    [[2, 3, 2, 2], [2, 2, 3, 2], [2, 2, 2, 3]]
     sage: [i.order() for i in s.group_gens()]
     [5, 5, 5]
     sage: s.invariant_factors()
@@ -1446,7 +1445,7 @@ List of Sandpile-specific methods (not inherited from Graph).  If ``verbose``, i
 
 INPUT:
 
-``verbose`` -- (default: ``True``) boolean
+- ``verbose`` -- (default: ``True``) boolean
 
 OUTPUT:
 
@@ -1463,50 +1462,7 @@ EXAMPLES::
     avalanche_polynomial     -- The avalanche polynomial.
     betti                    -- The Betti table for the homogeneous toppling ideal.
     betti_complexes          -- The support-complexes with non-trivial homology.
-    burning_config           -- The minimal burning configuration.
-    burning_script           -- A script for the minimal burning configuration.
-    canonical_divisor        -- The canonical divisor.
-    dict                     -- A dictionary of dictionaries representing a directed graph.
-    genus                    -- The genus: (# non-loop edges) - (# vertices) + 1.
-    groebner                 -- A Groebner basis for the homogeneous toppling ideal.
-    group_gens               -- A minimal list of generators for the sandpile group.
-    group_order              -- The size of the sandpile group.
-    h_vector                 -- The number of superstable configurations in each degree.
-    help                     -- List of Sandpile-specific methods (not inherited from "Graph").
-    hilbert_function         -- The Hilbert function of the homogeneous toppling ideal.
-    ideal                    -- The saturated homogeneous toppling ideal.
-    identity                 -- The identity configuration.
-    in_degree                -- The in-degree of a vertex or a list of all in-degrees.
-    invariant_factors        -- The invariant factors of the sandpile group.
-    is_undirected            -- Is the underlying graph undirected?
-    jacobian_representatives -- Representatives for the elements of the Jacobian group.
-    laplacian                -- The Laplacian matrix of the graph.
-    markov_chain             -- The sandpile Markov chain for configurations or divisors.
-    max_stable               -- The maximal stable configuration.
-    max_stable_div           -- The maximal stable divisor.
-    max_superstables         -- The maximal superstable configurations.
-    min_recurrents           -- The minimal recurrent elements.
-    nonsink_vertices         -- The nonsink vertices.
-    nonspecial_divisors      -- The nonspecial divisors.
-    out_degree               -- The out-degree of a vertex or a list of all out-degrees.
-    picard_representatives   -- Representatives of the divisor classes of degree d in the Picard group.
-    points                   -- Generators for the multiplicative group of zeros of the sandpile ideal.
-    postulation              -- The postulation number of the toppling ideal.
-    recurrents               -- The recurrent configurations.
-    reduced_laplacian        -- The reduced Laplacian matrix of the graph.
-    reorder_vertices         -- A copy of the sandpile with vertex names permuted.
-    resolution               -- A minimal free resolution of the homogeneous toppling ideal.
-    ring                     -- The ring containing the homogeneous toppling ideal.
-    show                     -- Draw the underlying graph.
-    show3d                   -- Draw the underlying graph.
-    sink                     -- The sink vertex.
-    smith_form               -- The Smith normal form for the Laplacian.
-    solve                    -- Approximations of the complex affine zeros of the sandpile ideal.
-    stable_configs           -- Generator for all stable configurations.
-    stationary_density       -- The stationary density of the sandpile.
-    superstables             -- The superstable configurations.
-    symmetric_recurrents     -- The symmetric recurrent configurations.
-    tutte_polynomial         -- The Tutte polynomial of the underlying graph.
+    ...
     unsaturated_ideal        -- The unsaturated, homogeneous toppling ideal.
     version                  -- The version number of Sage Sandpiles.
     zero_config              -- The all-zero configuration.
@@ -1543,7 +1499,7 @@ generators for the ideal are returned instead.
 
 INPUT:
 
-``gens`` -- (default: ``False``) boolean
+- ``gens`` -- (default: ``False``) boolean
 
 OUTPUT:
 
@@ -1570,7 +1526,7 @@ configuration are converted to a list of integers.
 
 INPUT:
 
-``verbose`` -- (default: ``True``) boolean
+- ``verbose`` -- (default: ``True``) boolean
 
 OUTPUT:
 
@@ -1597,7 +1553,7 @@ The in-degree of a vertex or a list of all in-degrees.
 
 INPUT:
 
-``v`` -- (optional) vertex name
+- ``v`` -- (optional) vertex name
 
 OUTPUT:
 
@@ -1661,7 +1617,7 @@ is ``False``, then lists representing the divisors are returned.
 
 INPUT:
 
-``verbose`` -- (default: ``True``) boolean
+- ``verbose`` -- (default: ``True``) boolean
 
 OUTPUT:
 
@@ -1866,7 +1822,7 @@ integers.
 
 INPUT:
 
-``verbose`` -- (default: ``True``) boolean
+- ``verbose`` -- (default: ``True``) boolean
 
 OUTPUT:
 
@@ -1897,12 +1853,12 @@ EXAMPLES::
 
 The minimal recurrent elements.  If the underlying graph is
 undirected, these are the recurrent elements of least degree.
-If ``verbose`` is ``False``, the configurations are converted 
+If ``verbose`` is ``False``, the configurations are converted
 to lists of integers.
 
 INPUT:
 
-``verbose`` -- (default: ``True``) boolean
+- ``verbose`` -- (default: ``True``) boolean
 
 OUTPUT:
 
@@ -1953,7 +1909,7 @@ The nonspecial divisors. Only for undirected graphs.  (See NOTE.)
 
 INPUT:
 
-``verbose`` -- (default: ``True``) boolean
+- ``verbose`` -- (default: ``True``) boolean
 
 OUTPUT:
 
@@ -1993,7 +1949,7 @@ The out-degree of a vertex or a list of all out-degrees.
 
 INPUT:
 
-``v`` - (optional) vertex name
+- ``v`` - (optional) vertex name
 
 OUTPUT:
 
@@ -2058,7 +2014,7 @@ single generator for the group of solutions.
 
     sage: S = sandpiles.Complete(4)
     sage: S.points()
-    [[1, I, -I], [I, 1, -I]]
+    [[-I, I, 1], [-I, 1, I]]
 
 ---
 
@@ -2090,7 +2046,7 @@ configurations are converted to lists of integers.
 
 INPUT:
 
-``verbose`` -- (default: ``True``) boolean
+- ``verbose`` -- (default: ``True``) boolean
 
 OUTPUT:
 
@@ -2176,7 +2132,7 @@ EXAMPLES::
 
 The vertices 1 and 2 have been swapped::
 
-    sage: T.dict() 
+    sage: T.dict()
     {0: {1: 1}, 1: {0: 1, 2: 1}, 2: {0: 1}}
 
 ---
@@ -2191,7 +2147,7 @@ Otherwise, the resolution is summarized.
 
 INPUT:
 
-``verbose`` -- (default: ``False``) boolean
+- ``verbose`` -- (default: ``False``) boolean
 
 OUTPUT:
 
@@ -2259,7 +2215,7 @@ Draw the underlying graph.
 
 INPUT:
 
-``kwds`` -- (optional) arguments passed to the show method for Graph or DiGraph
+- ``kwds`` -- (optional) arguments passed to the show method for Graph or DiGraph
 
 EXAMPLES::
 
@@ -2277,7 +2233,7 @@ Draw the underlying graph.
 
 INPUT:
 
-``kwds`` -- (optional) arguments passed to the show method for Graph or DiGraph
+- ``kwds`` -- (optional) arguments passed to the show method for Graph or DiGraph
 
 EXAMPLES::
 
@@ -2387,7 +2343,7 @@ maximal stable configuration.
 
 INPUT:
 
-``smax`` -- (optional) SandpileConfig or list representing a SandpileConfig
+- ``smax`` -- (optional) SandpileConfig or list representing a SandpileConfig
 
 
 OUTPUT:
@@ -2449,7 +2405,7 @@ undirected graphs are also known as ``G-parking functions``.
 
 INPUT:
 
-``verbose`` -- (default: ``True``) boolean
+- ``verbose`` -- (default: ``True``) boolean
 
 OUTPUT:
 
@@ -2491,7 +2447,7 @@ The symmetric recurrent configurations.
 
 INPUT:
 
-``orbits`` - list of lists partitioning the vertices
+- ``orbits`` - list of lists partitioning the vertices
 
 OUTPUT:
 
@@ -2705,7 +2661,7 @@ SandpileConfig
 
    INPUT:
 
-   ``other`` -- SandpileConfig
+   - ``other`` -- SandpileConfig
 
    OUTPUT:
 
@@ -2729,7 +2685,7 @@ SandpileConfig
 
    INPUT:
 
-   ``other`` -- SandpileConfig
+   - ``other`` -- SandpileConfig
 
    OUTPUT:
 
@@ -2759,7 +2715,7 @@ SandpileConfig
 
    INPUT:
 
-   ``other`` -- SandpileConfig
+   - ``other`` -- SandpileConfig
 
    OUTPUT:
 
@@ -2793,7 +2749,7 @@ SandpileConfig
 
    INPUT:
 
-   ``other`` -- SandpileConfig
+   - ``other`` -- SandpileConfig
 
    OUTPUT:
 
@@ -2841,7 +2797,7 @@ SandpileConfig
 
    INPUT:
 
-   ``other`` -- SandpileConfig
+   - ``other`` -- SandpileConfig
 
    OUTPUT:
 
@@ -2875,7 +2831,7 @@ SandpileConfig
 
    INPUT:
 
-   ``other`` -- SandpileConfig
+   - ``other`` -- SandpileConfig
 
    OUTPUT:
 
@@ -2908,13 +2864,13 @@ SandpileConfig
 
 **\***
 
-   If ``other`` is an configuration, the recurrent element equivalent
+   If ``other`` is a configuration, the recurrent element equivalent
    to the sum.  If ``other`` is an integer, the sum of configuration with
    itself ``other`` times.
 
    INPUT:
 
-   ``other`` -- SandpileConfig or Integer
+   - ``other`` -- SandpileConfig or Integer
 
    OUTPUT:
 
@@ -2952,7 +2908,7 @@ SandpileConfig
 
    INPUT:
 
-   ``k`` -- SandpileConfig
+   - ``k`` -- SandpileConfig
 
    OUTPUT:
 
@@ -3002,7 +2958,7 @@ SandpileConfig
 
    INPUT:
 
-   ``other`` -- SandpileConfig
+   - ``other`` -- SandpileConfig
 
    OUTPUT:
 
@@ -3028,7 +2984,7 @@ See NOTE for details.
 
 INPUT:
 
-``distrib`` -- (optional) list of nonnegative numbers summing to 1 (representing a prob. dist.)
+- ``distrib`` -- (optional) list of nonnegative numbers summing to 1 (representing a prob. dist.)
 
 OUTPUT:
 
@@ -3092,7 +3048,7 @@ The burst size of the configuration with respect to the given vertex.
 
 INPUT:
 
-``v`` -- vertex
+- ``v`` -- vertex
 
 OUTPUT:
 
@@ -3170,7 +3126,7 @@ Optionally, return the corresponding firing vector.
 
 INPUT:
 
-``with_firing_vector`` -- (default: ``False``)  boolean
+- ``with_firing_vector`` -- (default: ``False``)  boolean
 
 OUTPUT:
 
@@ -3207,7 +3163,7 @@ corresponding firing vector.
 
 INPUT:
 
-``with_firing_vector`` -- (default: ``False``) boolean
+- ``with_firing_vector`` -- (default: ``False``) boolean
 
 OUTPUT:
 
@@ -3244,7 +3200,7 @@ times indicated by ``sigma``.
 
 INPUT:
 
-``sigma`` -- SandpileConfig or (list or dict representing a SandpileConfig)
+- ``sigma`` -- SandpileConfig or (list or dict representing a SandpileConfig)
 
 OUTPUT:
 
@@ -3290,7 +3246,7 @@ Fire the given vertex.
 
 INPUT:
 
-``v`` -- vertex
+- ``v`` -- vertex
 
 OUTPUT:
 
@@ -3313,7 +3269,7 @@ List of SandpileConfig methods.  If ``verbose``, include short descriptions.
 
 INPUT:
 
-``verbose`` -- (default: ``True``) boolean
+- ``verbose`` -- (default: ``True``) boolean
 
 OUTPUT:
 
@@ -3426,7 +3382,7 @@ configuration are constant over the vertices in each sublist of
 
 INPUT:
 
- ``orbits`` -- list of lists of vertices
+- ``orbits`` -- list of lists of vertices
 
 OUTPUT:
 
@@ -3531,7 +3487,7 @@ corresponding firing vector.
 
 INPUT:
 
-``with_firing_vector`` -- (default: ``False``)  boolean
+- ``with_firing_vector`` -- (default: ``False``)  boolean
 
 OUTPUT:
 
@@ -3714,7 +3670,7 @@ SandpileDivisor
 
    INPUT:
 
-   ``other`` -- SandpileDivisor
+   - ``other`` -- SandpileDivisor
 
    OUTPUT:
 
@@ -3739,7 +3695,7 @@ SandpileDivisor
 
    INPUT:
 
-   ``other`` -- SandpileDivisor
+   - ``other`` -- SandpileDivisor
 
    OUTPUT:
 
@@ -3773,7 +3729,7 @@ SandpileDivisor
 
    INPUT:
 
-   ``other`` -- SandpileDivisor
+   - ``other`` -- SandpileDivisor
 
    OUTPUT:
 
@@ -3802,7 +3758,7 @@ SandpileDivisor
 
    INPUT:
 
-   ``other`` -- SandpileDivisor
+   - ``other`` -- SandpileDivisor
 
    OUTPUT:
 
@@ -3836,7 +3792,7 @@ SandpileDivisor
 
    INPUT:
 
-   ``other`` -- SandpileDivisor
+   - ``other`` -- SandpileDivisor
 
    OUTPUT:
 
@@ -3883,7 +3839,7 @@ SandpileDivisor
 
    INPUT:
 
-   ``other`` -- SandpileDivisor
+   - ``other`` -- SandpileDivisor
 
    OUTPUT:
 
@@ -3935,7 +3891,7 @@ Add one grain of sand to a random vertex.
 
 INPUT:
 
-``distrib`` -- (optional) list of nonnegative numbers representing a probability distribution on the vertices
+- ``distrib`` -- (optional) list of nonnegative numbers representing a probability distribution on the vertices
 
 OUTPUT:
 
@@ -4092,7 +4048,7 @@ times indicated by ``sigma``.
 
 INPUT:
 
-``sigma`` -- SandpileDivisor or (list or dict representing a SandpileDivisor)
+- ``sigma`` -- SandpileDivisor or (list or dict representing a SandpileDivisor)
 
 OUTPUT:
 
@@ -4138,7 +4094,7 @@ Fire the given vertex.
 
 INPUT:
 
-``v`` -- vertex
+- ``v`` -- vertex
 
 OUTPUT:
 
@@ -4161,7 +4117,7 @@ List of SandpileDivisor methods.  If ``verbose``, include short descriptions.
 
 INPUT:
 
-``verbose`` -- (default: ``True``) boolean
+- ``verbose`` -- (default: ``True``) boolean
 
 OUTPUT:
 
@@ -4216,7 +4172,7 @@ resulting cycle.
 
 INPUT:
 
-``cycle`` -- (default: ``False``) boolean
+- ``cycle`` -- (default: ``False``) boolean
 
 OUTPUT:
 
@@ -4257,7 +4213,7 @@ EXAMPLES::
     sage: D.is_linearly_equivalent([0,1,1])
     True
     sage: D.is_linearly_equivalent([0,1,1],True)
-    (1, 0, 0)
+    (0, -1, -1)
     sage: v = vector(D.is_linearly_equivalent([0,1,1],True))
     sage: vector(D.values()) - s.laplacian()*v
     (0, 1, 1)
@@ -4326,7 +4282,7 @@ configuration are constant over the vertices in each sublist of
 
 INPUT:
 
-``orbits`` -- list of lists of vertices
+- ``orbits`` -- list of lists of vertices
 
 OUTPUT:
 
@@ -4355,7 +4311,7 @@ Is the given vertex a Weierstrass point?
 
 INPUT:
 
-``v`` -- (default: ``sink``) vertex
+- ``v`` -- (default: ``sink``) vertex
 
 OUTPUT:
 
@@ -4454,7 +4410,7 @@ The linearly equivalent `q`-reduced divisor.
 
 INPUT:
 
-``verbose`` -- (default: ``True``) boolean
+- ``verbose`` -- (default: ``True``) boolean
 
 OUTPUT:
 
@@ -4485,7 +4441,7 @@ that `D - E` is not winnable (has an empty complete linear system).
 
 INPUT:
 
-``with_witness`` -- (default: ``False``) boolean
+- ``with_witness`` -- (default: ``False``) boolean
 
 OUTPUT:
 
@@ -4589,7 +4545,7 @@ The first unstabilizable divisor in the closed Markov chain.
 
 INPUT:
 
-``distrib`` -- (optional)  list of nonnegative numbers representing a probability distribution on the vertices
+- ``distrib`` -- (optional)  list of nonnegative numbers representing a probability distribution on the vertices
 
 OUTPUT:
 
@@ -4623,7 +4579,7 @@ The stabilization of the divisor.  If not stabilizable, return an error.
 
 INPUT:
 
-``with_firing_vector`` -- (default: ``False``) boolean
+- ``with_firing_vector`` -- (default: ``False``) boolean
 
 EXAMPLES::
 
@@ -4652,7 +4608,7 @@ EXAMPLES::
     sage: D = SandpileDivisor(S, [0,0,1,1])
     sage: D.support()
     [2, 3]
-    sage: S.vertices()
+    sage: S.vertices(sort=True)
     [0, 1, 2, 3]
 
 ---
@@ -4697,7 +4653,7 @@ EXAMPLES::
     {'a': 0, 'b': 1, 'c': 2}
     sage: D.values()
     [0, 1, 2]
-    sage: S.vertices()
+    sage: S.vertices(sort=True)
     ['a', 'b', 'c']
 
 
@@ -4713,7 +4669,7 @@ vertex as a Weierstrass point.  (See
 
 INPUT:
 
-``verbose`` -- (default: ``True``) boolean
+- ``verbose`` -- (default: ``True``) boolean
 
 OUTPUT:
 
@@ -4758,9 +4714,9 @@ EXAMPLES::
 
     sage: s = sandpiles.Cycle(4)
     sage: D = SandpileDivisor(s,[2,0,0,0])
-    sage: [D.weierstrass_gap_seq(v,False) for v in s.vertices()]
+    sage: [D.weierstrass_gap_seq(v,False) for v in s.vertices(sort=True)]
     [(1, 3), (1, 2), (1, 3), (1, 2)]
-    sage: [D.weierstrass_gap_seq(v) for v in s.vertices()]
+    sage: [D.weierstrass_gap_seq(v) for v in s.vertices(sort=True)]
     [((1, 3), 1), ((1, 2), 0), ((1, 3), 1), ((1, 2), 0)]
     sage: D.weierstrass_gap_seq()  # gap sequence at sink vertex, 0
     ((1, 3), 1)
@@ -4786,7 +4742,7 @@ The Weierstrass points (vertices). Optionally, return the corresponding rank seq
 
 INPUT:
 
-``with_rank_seq`` -- (default: ``False``) boolean
+- ``with_rank_seq`` -- (default: ``False``) boolean
 
 OUTPUT:
 
@@ -4819,7 +4775,7 @@ the divisor `D - nv` starting with `n=0` and ending when the rank is
 
 INPUT:
 
-``v`` -- (default: ``sink``) vertex
+- ``v`` -- (default: ``sink``) vertex
 
 OUTPUT:
 
@@ -4829,7 +4785,7 @@ EXAMPLES::
 
     sage: s = sandpiles.House()
     sage: K = s.canonical_divisor()
-    sage: [K.weierstrass_rank_seq(v) for v in s.vertices()]
+    sage: [K.weierstrass_rank_seq(v) for v in s.vertices(sort=True)]
     [(1, 0, -1), (1, 0, -1), (1, 0, -1), (1, 0, -1), (1, 0, 0, -1)]
 
 ---
@@ -4840,8 +4796,6 @@ Other
 - :ref:`firing_graph <firing_graph>` --- The firing graph.
 
 - :ref:`parallel_firing_graph <parallel_firing_graph>` --- The parallel-firing graph.
-
-- :ref:`random_DAG <random_DAG>` --- A random directed acyclic graph.
 
 - :ref:`sandpiles <sandpiles>` --- Some examples of sandpiles.
 
@@ -4861,8 +4815,8 @@ Other
 
     INPUT:
 
-    ``S`` -- Sandpile
-    ``eff`` -- list of divisors
+    - ``S`` -- Sandpi
+    - ``eff`` -- list of divisors
 
     OUTPUT:
 
@@ -4887,8 +4841,8 @@ Other
 
     INPUT:
 
-    ``S`` - Sandpile
-    ``eff`` - list of divisors
+    - ``S`` - Sandpi
+    - ``eff`` - list of divisors
 
     OUTPUT:
 
@@ -4900,35 +4854,6 @@ Other
         sage: D = SandpileDivisor(S, [1,1,1,1,2,0])
         sage: eff = D.effective_div()
         sage: parallel_firing_graph(S,eff).show3d(edge_size=.005,vertex_size=0.01)
-
----
-
-.. _random_DAG:
-
-**random_DAG(num_verts,p=1/2,weight_max=1)**
-
-    Returns a random directed acyclic graph with ``num_verts`` vertices.
-    The method starts with the sink vertex and adds vertices one at a time.
-    Each vertex is connected only to only previously defined vertices, and the
-    probability of each possible connection is given by the argument ``p``.
-    The weight of an edge is a random integer between ``1`` and
-    ``weight_max``.
-
-    INPUT:
-
-     - ``num_verts`` - positive integer
-     - ``p`` - number between `0` and `1`
-     - ``weight_max`` -- integer greater than `0`
-
-    OUTPUT:
-
-    directed acyclic graph with sink `0`
-
-    EXAMPLES::
-
-        sage: S = random_DAG(5, 0.3)
-        doctest:...: DeprecationWarning: method random_DAG is deprecated. Please use digraphs.RandomDirectedAcyclicGraph instead.
-        See https://trac.sagemath.org/30479 for details.
 
 ---
 
@@ -4973,7 +4898,7 @@ Other
 
     INPUT:
 
-    ``M`` - square integer matrix of full rank
+    - ``M`` - square integer matrix of full rank
 
     OUTPUT:
 
@@ -4983,12 +4908,12 @@ Other
 
         sage: P = matrix([[2,3,-7,-3],[5,2,-5,5],[8,2,5,4],[-5,-9,6,6]])
         sage: wilmes_algorithm(P)
-        [ 1642   -13 -1627    -1]
-        [   -1  1980 -1582  -397]
+        [ 3279   -79 -1599 -1600]
+        [   -1  1539  -136 -1402]
         [    0    -1  1650 -1649]
         [    0     0 -1658  1658]
 
-    NOTES:
+    NOTE:
 
     The algorithm is due to John Wilmes.
 
@@ -5002,7 +4927,7 @@ Documentation for each method is available through the Sage online help system:
 ::
 
     sage: SandpileConfig.fire_vertex?
-    Base Class:     <type 'instancemethod'>
+    Base Class:     <class 'instancemethod'>
     String Form:    <unbound method SandpileConfig.fire_vertex>
     Namespace:      Interactive
     File:           /usr/local/sage-4.7/local/lib/python2.6/site-packages/sage/sandpiles/sandpile.py
@@ -5012,7 +4937,7 @@ Documentation for each method is available through the Sage online help system:
 
            INPUT:
 
-           ``v`` - vertex
+           - ``v`` - vertex
 
            OUTPUT:
 
@@ -5030,7 +4955,7 @@ Documentation for each method is available through the Sage online help system:
     An alternative to ``SandpileConfig.fire_vertex?`` in the preceding code example
     would be ``c.fire_vertex?``, if ``c`` is any SandpileConfig.
 
-Enter ``Sandpile.help()``, ``SandpileConfig.help()``, and ``SandpileDivisor.help()`` for lists of available Sandpile-specific methods. 
+Enter ``Sandpile.help()``, ``SandpileConfig.help()``, and ``SandpileDivisor.help()`` for lists of available Sandpile-specific methods.
 
 General Sage documentation can be found at http://doc.sagemath.org/html/en/.
 

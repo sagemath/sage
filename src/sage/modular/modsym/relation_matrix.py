@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint
 """
 Relation matrices for ambient modular symbols spaces
 
@@ -6,7 +7,7 @@ symbols classes to compute presentations of spaces in terms of generators and
 relations, using the standard methods based on Manin symbols.
 """
 # ****************************************************************************
-#       Sage: System for Algebra and Geometry Experimentation
+#       Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -21,15 +22,14 @@ relations, using the standard methods based on Manin symbols.
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
-import sage.matrix.matrix_space as matrix_space
-from sage.rings.all import Ring
+from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.search import search
-from sage.rings.rational_field import is_RationalField
 from sage.misc.verbose import verbose
-
 from sage.modular.modsym.manin_symbol_list import ManinSymbolList
+from sage.rings.rational_field import is_RationalField
+from sage.categories.rings import Rings
+
 
 SPARSE = True
 
@@ -70,7 +70,7 @@ def modS_relations(syms):
     OUTPUT:
 
 
-    -  ``rels`` - set of pairs of pairs (j, s), where if
+    -  ``rels`` -- set of pairs of pairs (j, s), where if
        mod[i] = (j,s), then x_i = s\*x_j (mod S relations)
 
 
@@ -138,11 +138,11 @@ def modI_relations(syms, sign):
 
     - ``syms`` -- :class:`ManinSymbolList`
 
-    -  ``sign`` - int (either -1, 0, or 1)
+    -  ``sign`` -- int (either -1, 0, or 1)
 
     OUTPUT:
 
-    -  ``rels`` - set of pairs of pairs (j, s), where if
+    -  ``rels`` -- set of pairs of pairs (j, s), where if
        mod[i] = (j,s), then x_i = s\*x_j (mod S relations)
 
     EXAMPLES::
@@ -204,12 +204,12 @@ def T_relation_matrix_wtk_g0(syms, mod, field, sparse):
 
     - ``syms`` -- :class:`ManinSymbolList`
 
-    -  ``mod`` - list that gives quotient modulo some two-term relations, i.e.,
+    -  ``mod`` -- list that gives quotient modulo some two-term relations, i.e.,
        the S relations, and if sign is nonzero, the I relations.
 
-    -  ``field`` - base_ring
+    -  ``field`` -- base_ring
 
-    -  ``sparse`` - (True or False) whether to use sparse rather than dense
+    -  ``sparse`` -- (True or False) whether to use sparse rather than dense
        linear algebra
 
     OUTPUT: A sparse matrix whose rows correspond to the reduction of
@@ -249,8 +249,7 @@ def T_relation_matrix_wtk_g0(syms, mod, field, sparse):
             entries[(row, j0)] = v[j0]
         row += 1
 
-    MAT = matrix_space.MatrixSpace(field, row,
-                                   len(syms), sparse=True)
+    MAT = MatrixSpace(field, row, len(syms), sparse=True)
     R = MAT(entries)
     if not sparse:
         R = R.dense_matrix()
@@ -267,25 +266,25 @@ def gens_to_basis_matrix(syms, relation_matrix, mod, field, sparse):
 
     - ``syms`` -- :class:`ManinSymbolList`
 
-    -  ``relation_matrix`` - as output by
+    -  ``relation_matrix`` -- as output by
        ``__compute_T_relation_matrix(self, mod)``
 
-    -  ``mod`` - quotient of modular symbols modulo the
+    -  ``mod`` -- quotient of modular symbols modulo the
        2-term S (and possibly I) relations
 
-    -  ``field`` - base field
+    -  ``field`` -- base field
 
-    -  ``sparse`` - (bool): whether or not matrix should be
+    -  ``sparse`` -- (bool): whether or not matrix should be
        sparse
 
     OUTPUT:
 
-    -  ``matrix`` - a matrix whose ith row expresses the
+    -  ``matrix`` -- a matrix whose ith row expresses the
        Manin symbol generators in terms of a basis of Manin symbols
        (modulo the S, (possibly I,) and T rels) Note that the entries of
        the matrix need not be integers.
 
-    -  ``list`` - integers i, such that the Manin symbols `x_i` are a basis.
+    -  ``list`` -- integers i, such that the Manin symbols `x_i` are a basis.
 
     EXAMPLES::
 
@@ -295,8 +294,8 @@ def gens_to_basis_matrix(syms, relation_matrix, mod, field, sparse):
         sage: gens_to_basis_matrix(L, T_relation_matrix_wtk_g0(L, modS, GF(3), 24), modS, GF(3), True)
         (24 x 2 sparse matrix over Finite Field of size 3, [13, 23])
     """
-    from sage.structure.element import is_Matrix
-    if not is_Matrix(relation_matrix):
+    from sage.structure.element import Matrix
+    if not isinstance(relation_matrix, Matrix):
         raise TypeError("relation_matrix must be a matrix")
     if not isinstance(mod, list):
         raise TypeError("mod must be a list")
@@ -321,7 +320,7 @@ def gens_to_basis_matrix(syms, relation_matrix, mod, field, sparse):
     basis_set = set(A.nonpivots())
     pivots = A.pivots()
 
-    basis_mod2 = set([j for j, c in mod if c != 0])
+    basis_mod2 = {j for j, c in mod if c != 0}
 
     basis_set = basis_set.intersection(basis_mod2)
     basis = sorted(basis_set)
@@ -331,10 +330,10 @@ def gens_to_basis_matrix(syms, relation_matrix, mod, field, sparse):
     verbose("done doing setup", tm)
 
     tm = verbose("now forming quotient matrix")
-    M = matrix_space.MatrixSpace(field, len(syms), len(basis), sparse=sparse)
+    M = MatrixSpace(field, len(syms), len(basis), sparse=sparse)
 
     B = M(0)
-    cols_index = dict([(basis[i], i) for i in range(len(basis))])
+    cols_index = {basis[i]: i for i in range(len(basis))}
 
     for i in basis_mod2:
         t, l = search(basis, i)
@@ -371,9 +370,9 @@ def compute_presentation(syms, sign, field, sparse=None):
 
     - ``syms`` -- :class:`ManinSymbolList`
 
-    -  ``sign`` - integer (-1, 0, 1)
+    -  ``sign`` -- integer (-1, 0, 1)
 
-    -  ``field`` - a field
+    -  ``field`` -- a field
 
 
     OUTPUT:
@@ -552,8 +551,8 @@ def sparse_2term_quotient(rels, n, F):
         [(3, -1/3), (3, -1), (3, -1), (3, 1), (5, 1), (5, 1)]
     """
     n = int(n)
-    if not isinstance(F, Ring):
-        raise TypeError("F must be a ring.")
+    if F not in Rings():
+        raise TypeError("F must be a ring")
 
     tm = verbose("Starting sparse 2-term quotient...")
     free = list(range(n))

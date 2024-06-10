@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Fock Space
 
@@ -25,7 +25,7 @@ from sage.structure.global_options import GlobalOptions
 from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.categories.realizations import Realizations, Category_realization_of_parent
 
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.fraction_field import FractionField
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
@@ -37,7 +37,7 @@ from sage.algebras.quantum_groups.q_numbers import q_factorial
 
 
 #############################
-## Fock space options
+#  Fock space options
 
 class FockSpaceOptions(GlobalOptions):
     r"""
@@ -84,15 +84,15 @@ class FockSpaceOptions(GlobalOptions):
     NAME = 'FockSpace'
     module = 'sage.algebras.quantum_groups.fock_space'
 
-    display = dict(default="ket",
-                   description='Specifies how terms of the natural basis of Fock space should be printed',
-                   values=dict(ket='displayed as a ket in bra-ket notation',
-                               list='displayed as a list'),
-                   case_sensitive=False)
+    display = {'default': "ket",
+               'description': 'Specifies how terms of the natural basis of Fock space should be printed',
+               'values': {'ket': 'displayed as a ket in bra-ket notation',
+                          'list': 'displayed as a list'},
+               'case_sensitive': False}
 
 
 ###############################################################################
-## Fock space
+#  Fock space
 
 class FockSpace(Parent, UniqueRepresentation):
     r"""
@@ -166,7 +166,7 @@ class FockSpace(Parent, UniqueRepresentation):
 
     To go between the canonical basis and the natural basis, for level 1
     Fock space, we follow the LLT algorithm [LLT1996]_. Indeed, we first
-    construct an basis `\{ A(\nu) \}` that is an approximation to the
+    construct a basis `\{ A(\nu) \}` that is an approximation to the
     lower global crystal basis, in the sense that it is bar-invariant,
     and then use Gaussian elimination to construct the lower global
     crystal basis. For higher level Fock space, we follow [Fayers2010]_,
@@ -336,7 +336,7 @@ class FockSpace(Parent, UniqueRepresentation):
         multicharge = tuple(M(e) for e in multicharge)
         if truncated is not None:
             return FockSpaceTruncated(n, truncated, q, base_ring)
-        return super(FockSpace, cls).__classcall__(cls, n, multicharge, q, base_ring)
+        return super().__classcall__(cls, n, multicharge, q, base_ring)
 
     def __init__(self, n, multicharge, q, base_ring):
         r"""
@@ -371,7 +371,7 @@ class FockSpace(Parent, UniqueRepresentation):
              of Univariate Polynomial Ring in q over Integer Ring
         """
         return "Fock space of rank {} of multicharge {} over {}".format(
-                        self._n, self._multicharge, self.base_ring())
+            self._n, self._multicharge, self.base_ring())
 
     def _latex_(self):
         r"""
@@ -568,9 +568,9 @@ class FockSpace(Parent, UniqueRepresentation):
             """
             self._basis_name = "natural"
             # If the cell x is above the cell y
-            if len(F._multicharge) == 1: # For partitions
-                self._above = lambda x,y: x[0] < y[0]
-            else: # For partition tuples
+            if len(F._multicharge) == 1:  # For partitions
+                self._above = lambda x, y: x[0] < y[0]
+            else:  # For partition tuples
                 self._above = lambda x,y: x[0] < y[0] or (x[0] == y[0] and x[1] < y[1])
             self._addable = lambda la,i: [x for x in la.outside_corners()
                                           if la.content(*x, multicharge=F._multicharge) == i]
@@ -666,11 +666,11 @@ class FockSpace(Parent, UniqueRepresentation):
             from sage.typeset.unicode_art import UnicodeArt, unicode_art
             a = unicode_art(m)
             h = a.height()
-            l = UnicodeArt([u'│']*h, baseline=0)
-            r = UnicodeArt([u" "*i + u'╲' for i in range(h//2)], baseline=0)
+            l = UnicodeArt(['│']*h, baseline=0)
+            r = UnicodeArt([" "*i + '╲' for i in range(h//2)], baseline=0)
             if h % 2:
-                r *= UnicodeArt([u" "*(h//2) + u'〉'], baseline=0)
-            r *= UnicodeArt([u" "*i + u'╱' for i in reversed(range(h//2))], baseline=0)
+                r *= UnicodeArt([" "*(h//2) + '〉'], baseline=0)
+            r *= UnicodeArt([" "*i + '╱' for i in reversed(range(h//2))], baseline=0)
             ret = l + a + r
             ret._baseline = h - 1
             return ret
@@ -744,6 +744,7 @@ class FockSpace(Parent, UniqueRepresentation):
                     |[2, 1], [1], [1]>
                 """
                 P = self.parent()
+
                 def N_left(la, x, i):
                     return (sum(1 for y in P._addable(la, i) if P._above(x, y))
                             - sum(1 for y in P._removable(la, i) if P._above(x, y)))
@@ -753,8 +754,8 @@ class FockSpace(Parent, UniqueRepresentation):
 
             def e(self, *data):
                 r"""
-                Apply the action of the divided difference operator
-                `e_i^{(p)}` on ``self``.
+                Apply the action of the divided power operator
+                `e_i^{(p)} = e_i^{p} / [p]_q` on ``self``.
 
                 INPUT:
 
@@ -839,6 +840,7 @@ class FockSpace(Parent, UniqueRepresentation):
                      + q^2*|[3, 1], [1, 1, 1], [5, 2, 2]>
                 """
                 P = self.parent()
+
                 def N_right(la, x, i):
                     return (sum(1 for y in P._addable(la, i) if P._above(y, x))
                             - sum(1 for y in P._removable(la, i) if P._above(y, x)))
@@ -848,8 +850,8 @@ class FockSpace(Parent, UniqueRepresentation):
 
             def f(self, *data):
                 r"""
-                Apply the action of the divided difference operator
-                `f_i^{(p)}` on ``self``.
+                Apply the action of the divided power operator
+                `f_i^{(p)} = f_i^{p} / [p]_q` on ``self``.
 
                 INPUT:
 
@@ -1146,7 +1148,7 @@ class FockSpace(Parent, UniqueRepresentation):
             while any(c[1]*k + c[0] >= b for c in corners):
                 power = 0
                 i = -b + r # This will be converted to a mod n number
-                for x in range(0, b // k + 1):
+                for x in range(b // k + 1):
                     if (b-x*k, x) in cells:
                         power += 1
                         cur = cur.f(i)
@@ -1352,9 +1354,8 @@ class FockSpace(Parent, UniqueRepresentation):
                 return fock.sum_of_terms((fock._indices([[]]*k + list(pt)), c) for pt,c in cur)
 
             cur = R.A()._A_to_fock_basis(la)
-            s = cur.support()
-            s.sort() # Sort lex, which respects dominance order
-            s.pop() # Remove the largest
+            s = sorted(cur.support())  # Sort lex, which respects dominance order
+            s.pop()  # Remove the largest
 
             q = R._q
             while s:
@@ -1606,6 +1607,7 @@ class FockSpaceBases(Category_realization_of_parent):
 ###############################################################################
 ## Truncated Fock space
 
+
 class FockSpaceTruncated(FockSpace):
     r"""
     This is the Fock space given by partitions of length no more than `k`.
@@ -1674,7 +1676,7 @@ class FockSpaceTruncated(FockSpace):
             base_ring = q.parent()
         base_ring = FractionField(base_ring)
         q = base_ring(q)
-        return super(FockSpace, cls).__classcall__(cls, n, k, q, base_ring)
+        return super().__classcall__(cls, n, k, q, base_ring)
 
     def __init__(self, n, k, q, base_ring):
         r"""
@@ -1798,6 +1800,7 @@ class FockSpaceTruncated(FockSpace):
                     |5> + |3, 2> + 2*q*|3, 1, 1> + q^2*|2, 2, 1>
                 """
                 P = self.parent()
+
                 def N_right(la, x, i):
                     return (sum(1 for y in P._addable(la, i) if P._above(y, x))
                             - sum(1 for y in P._removable(la, i) if P._above(y, x)))
@@ -1907,7 +1910,7 @@ class FockSpaceTruncated(FockSpace):
             while any(c[1]*k + c[0] >= b for c in corners): # While there is some cell left to count
                 power = 0
                 i = -b + r # This will be converted to a mod n number
-                for x in range(0, b // k + 1):
+                for x in range(b // k + 1):
                     if (b-x*k, x) in cells:
                         power += 1
                         cur = cur.f(i)
@@ -2173,6 +2176,7 @@ class FockSpaceTruncated(FockSpace):
                 if len(la) == k:
                     x = la[-1]
                     mu = _Partitions([p - x for p in la])
+
                     def add_cols(nu):
                         return _Partitions([ v + x for v in list(nu) + [0]*(k - len(nu)) ])
                     return fock.sum_of_terms((add_cols(nu), c) for nu,c in self._G_to_fock_basis(mu))
@@ -2185,9 +2189,8 @@ class FockSpaceTruncated(FockSpace):
 
             # Perform the triangular reduction
             cur = self.realization_of().A(algorithm)._A_to_fock_basis(la)
-            s = cur.support()
-            s.sort() # Sort lex, which respects dominance order
-            s.pop() # Remove the largest
+            s = sorted(cur.support())  # Sort lex, which respects dominance order
+            s.pop()  # Remove the largest
 
             q = self.realization_of()._q
             while s:

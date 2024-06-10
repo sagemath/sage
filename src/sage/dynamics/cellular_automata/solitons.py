@@ -73,7 +73,7 @@ class SolitonCellularAutomata(SageObject):
           current state:
           34......224....2223
 
-    We then apply an standard evolution::
+    We then apply a standard evolution::
 
         sage: B.evolve()
         sage: B
@@ -515,7 +515,7 @@ class SolitonCellularAutomata(SageObject):
             carrier_index = self._vacuum
 
         if number is not None:
-            for k in range(number):
+            for _ in range(number):
                 self.evolve(carrier_capacity, carrier_index)
             return
 
@@ -951,7 +951,7 @@ class SolitonCellularAutomata(SageObject):
             state = [vacuum]*(num_factors - len(state)) + list(state)
             output = [self._column_repr(b, vacuum_letter) for b in state]
             max_width = max(b.width() for b in output)
-            start = ascii_art("t: %s \n"%i)
+            start = ascii_art("t: %s \n" % i)
             start._baseline = -1
             print(start
                   + sum((ascii_art(' '*(max_width-b.width())) + b for b in output),
@@ -1024,7 +1024,7 @@ class SolitonCellularAutomata(SageObject):
 
         def compact_repr(b):
             if as_array and b == vacuum:
-                return "\\makebox[%s]{.}"%box_width
+                return "\\makebox[%s]{.}" % box_width
 
             if b.parent()._tableau_height == 1:
                 temp = latex(b[0])
@@ -1034,22 +1034,22 @@ class SolitonCellularAutomata(SageObject):
                 temp += "\\end{array}"
 
             if b == vacuum:
-                return "{\\color{gray} %s}"%temp
+                return "{\\color{gray} %s}" % temp
             return temp # "\\makebox[%s]{$%s$}"%(box_width, temp)
 
         num_factors = len(self._states[num-1])
         if as_array:
             ret = "{\\arraycolsep=0.5pt \\begin{array}"
-            ret += "{c|c%s}\n"%('c'*num_factors)
+            ret += "{c|c%s}\n" % ('c'*num_factors)
         else:
             ret = "{\\begin{array}"
             ret += "{c|c}\n"
         for i,state in enumerate(self._states[:num]):
             state = [vacuum]*(num_factors-len(state)) + list(state)
             if as_array:
-                ret += "t = %s & \\cdots & %s \\\\\n"%(i, r" & ".join(compact_repr(b) for b in state))
+                ret += "t = %s & \\cdots & %s \\\\\n" % (i, r" & ".join(compact_repr(b) for b in state))
             else:
-                ret += "t = %s & \\cdots %s \\\\\n"%(i, r" ".join(compact_repr(b) for b in state))
+                ret += "t = %s & \\cdots %s \\\\\n" % (i, r" ".join(compact_repr(b) for b in state))
         ret += "\\end{array}}\n"
         return LatexExpr(ret)
 
@@ -1398,7 +1398,7 @@ class PeriodicSolitonCellularAutomata(SolitonCellularAutomata):
             carrier_index = self._vacuum
 
         if number is not None:
-            for k in range(number):
+            for _ in range(number):
                 self.evolve(carrier_capacity, carrier_index)
             return
         if carrier_capacity is None:

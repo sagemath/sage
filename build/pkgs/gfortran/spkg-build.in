@@ -8,4 +8,4 @@ case $(uname -m),"$ARCH" in
         ;;
 esac
 
-./build-gcc --disable-bootstrap --enable-languages=fortran $EXTRA_GCC_CONFIGURE
+./build-gcc --disable-bootstrap --enable-languages=fortran --disable-darwin-at-rpath $EXTRA_GCC_CONFIGURE

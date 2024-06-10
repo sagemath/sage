@@ -1,6 +1,11 @@
---- a/plot2d/plot.cc.orig	2018-08-29 20:10:06.396075816 -0600
-+++ b/plot2d/plot.cc	2018-08-29 20:11:48.982924732 -0600
-@@ -276,7 +276,7 @@ bool SNoverSR::read(istream &in)
+Description: Adapt to GCC 6
+Origin: https://src.fedoraproject.org/rpms/qepcad-B/blob/91dd25b/f/qepcad-B-gcc6.patch
+Forwarded: https://github.com/chriswestbrown/qepcad/pull/2
+Last-Update: 2021-06-23
+
+--- a/plot2d/plot.cc
++++ b/plot2d/plot.cc
+@@ -276,7 +276,7 @@
    V.resize(N);
    for(int i = 0; i < N; i++)
      in >> V[i];
@@ -9,7 +14,7 @@
  }
    
  void SNoverSR::glRend(const CADColors &C)
-@@ -333,7 +333,7 @@ bool SRoverSR::read(istream &in)
+@@ -333,7 +333,7 @@
      }
    }
  
@@ -18,7 +23,7 @@
  }
    
  void SRoverSR::glRend(const CADColors &C)
-@@ -351,7 +351,7 @@ bool SRoverSN::read(istream &in)
+@@ -351,7 +351,7 @@
  {
    in >> colorType >> a >> b.y;
    b.x = a.x;
@@ -27,7 +32,7 @@
  }
  
  void SRoverSN::glRend(const CADColors &C)
-@@ -365,7 +365,8 @@ void SRoverSN::glRend(const CADColors &C
+@@ -365,7 +365,8 @@
  
  bool SNoverSN::read(istream &in)
  {
@@ -37,7 +42,7 @@
  }
    
  void SNoverSN::glRend(const CADColors &C)
-@@ -380,7 +381,8 @@ void SNoverSN::glRend(const CADColors &C
+@@ -380,7 +381,8 @@
  
  bool SN::read(istream &in)
  {
@@ -47,7 +52,7 @@
  }
    
  void SN::glRend(const CADColors &C)
-@@ -394,7 +396,8 @@ void SN::glRend(const CADColors &C)
+@@ -394,7 +396,8 @@
  
  bool SR::read(istream &in)
  {

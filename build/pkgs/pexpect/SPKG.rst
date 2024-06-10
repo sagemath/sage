@@ -1,5 +1,5 @@
-pexpect
-=======
+pexpect: Python module for controlling and automating other programs
+====================================================================
 
 Description
 -----------
@@ -20,8 +20,3 @@ Upstream Contact
 - http://pexpect.readthedocs.org/en/stable/
 - https://github.com/pexpect/pexpect
 
-Dependencies
-------------
-
--  GNU patch
--  Python

@@ -6,6 +6,7 @@ SAGE_SPKG_CONFIGURE(
             AS_IF([test -n "$gfan_version"], [
                 AX_COMPARE_VERSION([$gfan_version], [ge], [0.6.2], [
                     ac_cv_path_GFAN_VERSION="$ac_path_GFAN_VERSION"
+                    ac_path_GFAN_VERSION_found=:
                 ])
             ])
         ])

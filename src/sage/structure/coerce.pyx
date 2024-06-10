@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 The coercion model
 
@@ -21,23 +22,23 @@ there. For example::
     Rational Field
     sage: b = ZZ['x'].gen(); b.parent()
     Univariate Polynomial Ring in x over Integer Ring
-    sage: a+b
+    sage: a + b
     x + 1/2
-    sage: (a+b).parent()
+    sage: (a + b).parent()
     Univariate Polynomial Ring in x over Rational Field
 
 If there is a coercion (see below) from one of the parents to the other,
 the operation is always performed in the codomain of that coercion. Otherwise
 a reasonable attempt to create a new parent with coercion maps from both
 original parents is made. The results of these discoveries are cached.
-On failure, a TypeError is always raised.
+On failure, a :class:`TypeError` is always raised.
 
 Some arithmetic operations (such as multiplication) can indicate an action
 rather than arithmetic in a common parent. For example::
 
-    sage: E = EllipticCurve('37a')
-    sage: P = E(0,0)
-    sage: 5*P
+    sage: E = EllipticCurve('37a')                                                      # needs sage.schemes
+    sage: P = E(0,0)                                                                    # needs sage.schemes
+    sage: 5*P                                                                           # needs sage.schemes
     (1/4 : -5/8 : 1)
 
 where there is action of `\ZZ` on the points of `E` given by the additive
@@ -64,36 +65,35 @@ For more information on how to specify coercions, conversions, and actions,
 see the documentation for :class:`Parent`.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from cpython.object cimport (PyObject, PyTypeObject,
-        PyObject_CallObject, PyObject_RichCompare, Py_TYPE,
-        Py_EQ, Py_NE, Py_LT, Py_LE, Py_GT, Py_GE)
+from cpython.object cimport (PyTypeObject, PyObject_CallObject,
+                             PyObject_RichCompare, Py_TYPE,
+                             Py_EQ, Py_NE, Py_LT, Py_LE, Py_GT)
 from cpython.weakref cimport PyWeakref_GET_OBJECT, PyWeakref_NewRef
 from libc.string cimport strncmp
 cimport gmpy2
 
-cdef add, mul, truediv
-from operator import add, mul, truediv
+cdef mul, truediv
+from operator import mul, truediv
 
-from .richcmp cimport rich_to_bool, revop
-from .sage_object cimport SageObject
-from .parent cimport Parent_richcmp_element_without_coercion
-from .element cimport bin_op_exception, parent, Element
-from .coerce_actions import LeftModuleAction, RightModuleAction
-from .coerce_exceptions import CoercionException
+from sage.structure.richcmp cimport rich_to_bool, revop
+from sage.structure.sage_object cimport SageObject
+from sage.structure.parent cimport Parent_richcmp_element_without_coercion
+from sage.structure.element cimport bin_op_exception, parent, Element
+from sage.structure.coerce_exceptions import CoercionException
 from sage.rings.integer_fake cimport is_Integer
 from sage.categories.map cimport Map
 from sage.categories.morphism import IdentityMorphism
-from sage.categories.action cimport Action, InverseAction, PrecomposedAction
+from sage.categories.action cimport Action, PrecomposedAction
 from sage.sets.pythonclass cimport Set_PythonType
 
 import traceback
@@ -113,7 +113,7 @@ cpdef py_scalar_parent(py_type):
         Integer Ring
         sage: py_scalar_parent(float)
         Real Double Field
-        sage: py_scalar_parent(complex)
+        sage: py_scalar_parent(complex)                                                 # needs sage.rings.complex_double
         Complex Double Field
         sage: py_scalar_parent(bool)
         Integer Ring
@@ -124,6 +124,7 @@ cpdef py_scalar_parent(py_type):
         sage: py_scalar_parent(fractions.Fraction)
         Rational Field
 
+        sage: # needs numpy
         sage: import numpy
         sage: py_scalar_parent(numpy.int16)
         Integer Ring
@@ -131,14 +132,8 @@ cpdef py_scalar_parent(py_type):
         Integer Ring
         sage: py_scalar_parent(numpy.uint64)
         Integer Ring
-
-        sage: py_scalar_parent(numpy.float)
-        Real Double Field
         sage: py_scalar_parent(numpy.double)
         Real Double Field
-
-        sage: py_scalar_parent(numpy.complex)
-        Complex Double Field
 
         sage: import gmpy2
         sage: py_scalar_parent(gmpy2.mpz)
@@ -147,10 +142,10 @@ cpdef py_scalar_parent(py_type):
         Rational Field
         sage: py_scalar_parent(gmpy2.mpfr)
         Real Double Field
-        sage: py_scalar_parent(gmpy2.mpc)
+        sage: py_scalar_parent(gmpy2.mpc)                                               # needs sage.rings.complex_double
         Complex Double Field
     """
-    if issubclass(py_type, int) or issubclass(py_type, long):
+    if issubclass(py_type, int):
         import sage.rings.integer_ring
         return sage.rings.integer_ring.ZZ
     if py_type is FractionType:
@@ -209,8 +204,8 @@ cpdef py_scalar_to_element(x):
         sage: x = py_scalar_to_element(float(42))
         sage: x, parent(x)
         (42.0, Real Double Field)
-        sage: x = py_scalar_to_element(complex(42))
-        sage: x, parent(x)
+        sage: x = py_scalar_to_element(complex(42))                                     # needs sage.rings.complex_double
+        sage: x, parent(x)                                                              # needs sage.rings.complex_double
         (42.0, Complex Double Field)
         sage: py_scalar_to_element('hello')
         'hello'
@@ -237,36 +232,36 @@ cpdef py_scalar_to_element(x):
         sage: x = py_scalar_to_element(gmpy2.mpfr(42.57))
         sage: x, parent(x)
         (42.57, Real Double Field)
-        sage: x = py_scalar_to_element(gmpy2.mpc(int(42), int(42)))
-        sage: x, parent(x)
+        sage: x = py_scalar_to_element(gmpy2.mpc(int(42), int(42)))                     # needs sage.rings.complex_double
+        sage: x, parent(x)                                                              # needs sage.rings.complex_double
         (42.0 + 42.0*I, Complex Double Field)
 
     Test compatibility with :func:`py_scalar_parent`::
 
         sage: from sage.structure.coerce import py_scalar_parent
         sage: elt = [True, int(42), float(42), complex(42)]
-        sage: for x in elt:
+        sage: for x in elt:                                                             # needs sage.rings.complex_double
         ....:     assert py_scalar_parent(type(x)) == py_scalar_to_element(x).parent()
 
-        sage: import numpy
-        sage: elt = [numpy.int8('-12'),  numpy.uint8('143'),
+        sage: import numpy                                                              # needs numpy
+        sage: elt = [numpy.int8('-12'),  numpy.uint8('143'),                            # needs numpy
         ....:        numpy.int16('-33'), numpy.uint16('122'),
         ....:        numpy.int32('-19'), numpy.uint32('44'),
         ....:        numpy.int64('-3'),  numpy.uint64('552'),
         ....:        numpy.float16('-1.23'), numpy.float32('-2.22'),
         ....:        numpy.float64('-3.412'), numpy.complex64(1.2+I),
-        ....:         numpy.complex128(-2+I)]
-        sage: for x in elt:
+        ....:        numpy.complex128(-2+I)]
+        sage: for x in elt:                                                             # needs numpy
         ....:     assert py_scalar_parent(type(x)) == py_scalar_to_element(x).parent()
 
         sage: elt = [gmpy2.mpz(42), gmpy2.mpq('3/4'),
         ....:        gmpy2.mpfr(42.57), gmpy2.mpc(int(42), int(42))]
-        sage: for x in elt:
+        sage: for x in elt:                                                             # needs sage.rings.complex_double
         ....:     assert py_scalar_parent(type(x)) == py_scalar_to_element(x).parent()
     """
     if isinstance(x, Element):
         return x
-    elif isinstance(x, (int, long)):
+    elif isinstance(x, int):
         from sage.rings.integer import Integer
         return Integer(x)
     elif type(x) is FractionType:
@@ -323,12 +318,12 @@ cpdef bint parent_is_integers(P) except -1:
         sage: parent_is_integers(dict)
         False
 
-        sage: import numpy
-        sage: parent_is_integers(numpy.int16)
+        sage: import numpy                                                              # needs numpy
+        sage: parent_is_integers(numpy.int16)                                           # needs numpy
         True
-        sage: parent_is_integers(numpy.uint64)
+        sage: parent_is_integers(numpy.uint64)                                          # needs numpy
         True
-        sage: parent_is_integers(numpy.float)
+        sage: parent_is_integers(float)
         False
 
         sage: import gmpy2
@@ -337,14 +332,14 @@ cpdef bint parent_is_integers(P) except -1:
         sage: parent_is_integers(gmpy2.mpq)
         False
 
-    Ensure (:trac:`27893`) is fixed::
+    Ensure (:issue:`27893`) is fixed::
 
         sage: K.<f> = QQ[]
         sage: gmpy2.mpz(2) * f
         2*f
     """
     if isinstance(P, type):
-        if issubclass(P, int) or issubclass(P, long):
+        if issubclass(P, int):
             return True
         elif is_numpy_type(P):
             from numpy import integer
@@ -357,6 +352,7 @@ cpdef bint parent_is_integers(P) except -1:
         from sage.rings.integer_ring import ZZ
         return P is ZZ
 
+
 def parent_is_numerical(P):
     r"""
     Test if elements of the parent or type ``P`` can be numerically evaluated
@@ -365,13 +361,20 @@ def parent_is_numerical(P):
     EXAMPLES::
 
         sage: from sage.structure.coerce import parent_is_numerical
-        sage: import gmpy2, numpy
-        sage: [parent_is_numerical(R) for R in [RR, CC, QQ, QuadraticField(-1),
-        ....:         int, complex, gmpy2.mpc, numpy.complexfloating]]
-        [True, True, True, True, True, True, True, True]
-        sage: [parent_is_numerical(R) for R in [SR, QQ['x'], QQ[['x']], str]]
-        [False, False, False, False]
-        sage: [parent_is_numerical(R) for R in [RIF, RBF, CIF, CBF]]
+        sage: import gmpy2
+        sage: [parent_is_numerical(R) for R in [QQ, int, complex, gmpy2.mpc]]           # needs sage.rings.complex_double
+        [True, True, True, True]
+        sage: [parent_is_numerical(R) for R in [RR, CC]]                                # needs sage.rings.real_mpfr
+        [True, True]
+        sage: parent_is_numerical(QuadraticField(-1))                                   # needs sage.rings.number_field
+        True
+        sage: import numpy; parent_is_numerical(numpy.complexfloating)                  # needs numpy
+        True
+        sage: parent_is_numerical(SR)                                                   # needs sage.symbolic
+        False
+        sage: [parent_is_numerical(R) for R in [QQ['x'], QQ[['x']], str]]
+        [False, False, False]
+        sage: [parent_is_numerical(R) for R in [RIF, RBF, CIF, CBF]]                    # needs sage.libs.flint
         [False, False, False, False]
     """
     if not isinstance(P, Parent):
@@ -379,6 +382,7 @@ def parent_is_numerical(P):
         if P is None:
             return False
     return P._is_numerical()
+
 
 def parent_is_real_numerical(P):
     r"""
@@ -388,16 +392,23 @@ def parent_is_real_numerical(P):
     EXAMPLES::
 
         sage: from sage.structure.coerce import parent_is_real_numerical
-        sage: import gmpy2, numpy
-        sage: [parent_is_real_numerical(R) for R in [RR, QQ, ZZ, RLF,
-        ....:         QuadraticField(2), int, float, gmpy2.mpq, numpy.integer]]
-        [True, True, True, True, True, True, True, True, True]
-        sage: [parent_is_real_numerical(R) for R in [CC, QuadraticField(-1),
-        ....:         complex, gmpy2.mpc, numpy.complexfloating]]
-        [False, False, False, False, False]
-        sage: [parent_is_real_numerical(R) for R in [SR, QQ['x'], QQ[['x']], str]]
+        sage: import gmpy2
+        sage: [parent_is_real_numerical(R) for R in [RR, QQ, ZZ, RLF, int, float, gmpy2.mpq]]
+        [True, True, True, True, True, True, True]
+        sage: parent_is_real_numerical(QuadraticField(2))                               # needs sage.rings.number_field
+        True
+        sage: import numpy; parent_is_real_numerical(numpy.integer)                     # needs numpy
+        True
+        sage: parent_is_real_numerical(QuadraticField(-1))                              # needs sage.rings.number_field
+        False
+        sage: [parent_is_real_numerical(R)                                              # needs numpy
+        ....:  for R in [CC, complex, gmpy2.mpc, numpy.complexfloating]]
         [False, False, False, False]
-        sage: [parent_is_real_numerical(R) for R in [RIF, RBF, CIF, CBF]]
+        sage: [parent_is_real_numerical(R) for R in [QQ['x'], QQ[['x']], str]]
+        [False, False, False]
+        sage: parent_is_real_numerical(SR)                                              # needs sage.symbolic
+        False
+        sage: [parent_is_real_numerical(R) for R in [RIF, RBF, CIF, CBF]]               # needs sage.libs.flint
         [False, False, False, False]
     """
     if not isinstance(P, Parent):
@@ -407,7 +418,7 @@ def parent_is_real_numerical(P):
     return P._is_real_numerical()
 
 
-cpdef bint is_numpy_type(t):
+cpdef bint is_numpy_type(t) noexcept:
     """
     Return ``True`` if and only if `t` is a type whose name starts
     with ``numpy.``
@@ -415,29 +426,30 @@ cpdef bint is_numpy_type(t):
     EXAMPLES::
 
         sage: from sage.structure.coerce import is_numpy_type
+
+        sage: # needs numpy
         sage: import numpy
         sage: is_numpy_type(numpy.int16)
         True
         sage: is_numpy_type(numpy.floating)
         True
-        sage: is_numpy_type(numpy.float)  # Alias for Python float
-        False
         sage: is_numpy_type(numpy.ndarray)
         True
         sage: is_numpy_type(numpy.matrix)
         True
+
         sage: is_numpy_type(int)
         False
         sage: is_numpy_type(Integer)
         False
-        sage: is_numpy_type(Sudoku)
+        sage: is_numpy_type(Sudoku)                                                     # needs sage.combinat
         False
         sage: is_numpy_type(None)
         False
 
     TESTS:
 
-    This used to crash Sage (:trac:`20715`)::
+    This used to crash Sage (:issue:`20715`)::
 
         sage: is_numpy_type(object)
         False
@@ -445,7 +457,7 @@ cpdef bint is_numpy_type(t):
         Traceback (most recent call last):
         ...
         TypeError: unsupported operand parent(s) for +: 'Integer Ring' and
-        '<type 'object'>'
+        '<class 'object'>'
     """
     if not isinstance(t, type):
         return False
@@ -457,13 +469,14 @@ cpdef bint is_numpy_type(t):
         return True
     return False
 
-cpdef bint is_mpmath_type(t):
+cpdef bint is_mpmath_type(t) noexcept:
     r"""
     Check whether the type ``t`` is a type whose name starts with either
     ``mpmath.`` or ``sage.libs.mpmath.``.
 
     EXAMPLES::
 
+        sage: # needs mpmath
         sage: from sage.structure.coerce import is_mpmath_type
         sage: is_mpmath_type(int)
         False
@@ -481,17 +494,18 @@ cpdef bint is_mpmath_type(t):
 
 cdef class CoercionModel:
     """
-    See also sage.categories.pushout
+    See also :mod:`sage.categories.pushout`
 
     EXAMPLES::
 
-        sage: f = ZZ['t','x'].0 + QQ['x'].0 + CyclotomicField(13).gen(); f
-        t + x + (zeta13)
-        sage: f.parent()
-        Multivariate Polynomial Ring in t, x over Cyclotomic Field of order 13 and degree 12
+        sage: f = ZZ['t', 'x'].0 + QQ['x'].0 + CyclotomicField(13).gen(); f             # needs sage.rings.number_field
+        t + x + zeta13
+        sage: f.parent()                                                                # needs sage.rings.number_field
+        Multivariate Polynomial Ring in t, x
+         over Cyclotomic Field of order 13 and degree 12
         sage: ZZ['x','y'].0 + ~Frac(QQ['y']).0
         (x*y + 1)/y
-        sage: MatrixSpace(ZZ['x'], 2, 2)(2) + ~Frac(QQ['x']).0
+        sage: MatrixSpace(ZZ['x'], 2, 2)(2) + ~Frac(QQ['x']).0                          # needs sage.modules
         [(2*x + 1)/x           0]
         [          0 (2*x + 1)/x]
         sage: f = ZZ['x,y,z'].0 + QQ['w,x,z,a'].0; f
@@ -503,43 +517,45 @@ cdef class CoercionModel:
 
     TESTS:
 
-    Check that :trac:`8426` is fixed (see also :trac:`18076`)::
+    Check that :issue:`8426` is fixed (see also :issue:`18076`)::
 
-        sage: import numpy
+        sage: import numpy                                                              # needs numpy
+
+        sage: # needs sage.rings.real_mpfr
         sage: x = polygen(RR)
-        sage: numpy.float32('1.5') * x
+        sage: numpy.float32('1.5') * x                                                  # needs numpy
         1.50000000000000*x
-        sage: x * numpy.float32('1.5')
+        sage: x * numpy.float32('1.5')                                                  # needs numpy
         1.50000000000000*x
         sage: p = x**3 + 2*x - 1
-        sage: p(numpy.float('1.2'))
+        sage: p(float('1.2'))
         3.12800000000000
-        sage: p(numpy.int('2'))
+        sage: p(int('2'))
         11.0000000000000
 
-    This used to fail (see :trac:`18076`)::
+    This used to fail (see :issue:`18076`)::
 
-        sage: 1/3 + numpy.int8('12')
+        sage: 1/3 + numpy.int8('12')                                                    # needs numpy
         37/3
-        sage: -2/3 + numpy.int16('-2')
+        sage: -2/3 + numpy.int16('-2')                                                  # needs numpy
         -8/3
-        sage: 2/5 + numpy.uint8('2')
+        sage: 2/5 + numpy.uint8('2')                                                    # needs numpy
         12/5
 
     The numpy types do not interact well with the Sage coercion framework. More
     precisely, if a numpy type is the first operand in a binary operation then
     this operation is done in numpy. The result is hence a numpy type::
 
-        sage: numpy.uint8('2') + 3
+        sage: numpy.uint8('2') + 3                                                      # needs numpy
         5
-        sage: type(_)
-        <type 'numpy.int32'>  # 32-bit
-        <type 'numpy.int64'>  # 64-bit
+        sage: type(_)                                                                   # needs numpy
+        <class 'numpy.int32'>  # 32-bit
+        <class 'numpy.int64'>  # 64-bit
 
-        sage: numpy.int8('12') + 1/3
+        sage: numpy.int8('12') + 1/3                                                    # needs numpy
         12.333333333333334
-        sage: type(_)
-        <type 'numpy.float64'>
+        sage: type(_)                                                                   # needs numpy
+        <class 'numpy.float64'>
 
     AUTHOR:
 
@@ -551,8 +567,9 @@ cdef class CoercionModel:
 
             sage: from sage.structure.coerce import CoercionModel
             sage: cm = CoercionModel()
-            sage: K = NumberField(x^2-2, 'a')
-            sage: A = cm.get_action(ZZ, K, operator.mul)
+            sage: x = polygen(ZZ, 'x')
+            sage: K = NumberField(x^2 - 2, 'a')                                         # needs sage.rings.number_field
+            sage: A = cm.get_action(ZZ, K, operator.mul)                                # needs sage.rings.number_field
             sage: f, g = cm.coercion_maps(QQ, int)
             sage: f, g = cm.coercion_maps(ZZ, int)
         """
@@ -593,7 +610,7 @@ cdef class CoercionModel:
         EXAMPLES::
 
             sage: cm = sage.structure.element.get_coercion_model()
-            sage: cm.canonical_coercion(1,2/3)
+            sage: cm.canonical_coercion(1, 2/3)
             (1, 2/3)
             sage: maps, actions = cm.get_cache()
 
@@ -602,7 +619,7 @@ cdef class CoercionModel:
 
             sage: left_morphism_ref, right_morphism_ref = maps[ZZ, QQ]
 
-        Note that by :trac:`14058` the coercion model only stores a weak
+        Note that by :issue:`14058` the coercion model only stores a weak
         reference to the coercion maps in this case::
 
             sage: left_morphism_ref
@@ -637,7 +654,8 @@ cdef class CoercionModel:
             1/2*x
             sage: maps, actions = cm.get_cache()
             sage: act = actions[QQ, R, operator.mul]; act
-            Left scalar multiplication by Rational Field on Univariate Polynomial Ring in x over Integer Ring
+            Left scalar multiplication by Rational Field
+             on Univariate Polynomial Ring in x over Integer Ring
             sage: act.actor()
             Rational Field
             sage: act.domain()
@@ -687,7 +705,7 @@ cdef class CoercionModel:
 
             sage: cm = sage.structure.element.get_coercion_model()
             sage: cm.record_exceptions()
-            sage: 1+1/2+2 # make sure there aren't any errors hanging around
+            sage: 1 + 1/2 + 2  # make sure there aren't any errors hanging around
             7/2
             sage: cm.exception_stack()
             []
@@ -752,7 +770,8 @@ cdef class CoercionModel:
             sage: 1/2 + GF(3)(2)
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for +: 'Rational Field' and 'Finite Field of size 3'
+            TypeError: unsupported operand parent(s) for +:
+            'Rational Field' and 'Finite Field of size 3'
 
         Now see what the actual problem was::
 
@@ -762,7 +781,8 @@ cdef class CoercionModel:
             sage: print(cm.exception_stack()[-1])
             Traceback (most recent call last):
             ...
-            TypeError: no common canonical parent for objects with parents: 'Rational Field' and 'Finite Field of size 3'
+            TypeError: no common canonical parent for objects with parents:
+            'Rational Field' and 'Finite Field of size 3'
 
         This is typically accessed via the :func:`coercion_traceback` function.
 
@@ -771,13 +791,13 @@ cdef class CoercionModel:
             sage: coercion_traceback()
             Traceback (most recent call last):
             ...
-            TypeError: no common canonical parent for objects with parents: 'Rational Field' and 'Finite Field of size 3'
+            TypeError: no common canonical parent for objects with parents:
+            'Rational Field' and 'Finite Field of size 3'
         """
         if not self._exceptions_cleared:
             self._exception_stack = []
             self._exceptions_cleared = True
         return self._exception_stack
-
 
     def explain(self, xp, yp, op=mul, int verbosity=2):
         """
@@ -807,7 +827,8 @@ cdef class CoercionModel:
             sage: R = ZZ['x']
             sage: cm.explain(R, QQ)
             Action discovered.
-                Right scalar multiplication by Rational Field on Univariate Polynomial Ring in x over Integer Ring
+                Right scalar multiplication by Rational Field
+                 on Univariate Polynomial Ring in x over Integer Ring
             Result lives in Univariate Polynomial Ring in x over Rational Field
             Univariate Polynomial Ring in x over Rational Field
 
@@ -831,17 +852,17 @@ cdef class CoercionModel:
         Sometimes with non-sage types there is not enough information to deduce
         what will actually happen::
 
-            sage: R100 = RealField(100)
-            sage: cm.explain(R100, float, operator.add)
+            sage: R100 = RealField(100)                                                 # needs sage.rings.real_mpfr
+            sage: cm.explain(R100, float, operator.add)                                 # needs sage.rings.real_mpfr
             Right operand is numeric, will attempt coercion in both directions.
             Unknown result parent.
-            sage: parent(R100(1) + float(1))
-            <type 'float'>
+            sage: parent(R100(1) + float(1))                                            # needs sage.rings.real_mpfr
+            <class 'float'>
             sage: cm.explain(QQ, float, operator.add)
             Right operand is numeric, will attempt coercion in both directions.
             Unknown result parent.
             sage: parent(QQ(1) + float(1))
-            <type 'float'>
+            <class 'float'>
 
         Special care is taken to deal with division::
 
@@ -876,7 +897,8 @@ cdef class CoercionModel:
 
             sage: cm.explain(ZZx, ZZ, operator.truediv)
             Action discovered.
-                Right inverse action by Rational Field on Univariate Polynomial Ring in x over Integer Ring
+                Right inverse action by Rational Field
+                 on Univariate Polynomial Ring in x over Integer Ring
                 with precomposition on right by Natural morphism:
                   From: Integer Ring
                   To:   Rational Field
@@ -891,11 +913,13 @@ cdef class CoercionModel:
            maximal efficiency.
         """
         all, res = self.analyse(xp, yp, op)
-        indent = " "*4
+        indent = " " * 4
         if verbosity >= 2:
-            print("\n".join([s if isinstance(s, str) else indent+(repr(s).replace("\n", "\n"+indent)) for s in all]))
+            print("\n".join(s if isinstance(s, str)
+                            else (indent + repr(s).replace("\n", "\n" + indent))
+                            for s in all))
         elif verbosity >= 1:
-            print("\n".join([s for s in all if isinstance(s, str)]))
+            print("\n".join(s for s in all if isinstance(s, str)))
         if verbosity >= 1:
             if res is None:
                 print("Unknown result parent.")
@@ -906,10 +930,11 @@ cdef class CoercionModel:
     cpdef analyse(self, xp, yp, op=mul):
         """
         Emulate the process of doing arithmetic between xp and yp, returning
-        a list of steps and the parent that the result will live in. The
-        ``explain`` function is easier to use, but if one wants access to
+        a list of steps and the parent that the result will live in.
+
+        The :meth:`explain` method is easier to use, but if one wants access to
         the actual morphism and action objects (rather than their string
-        representations) then this is the function to use.
+        representations), then this is the function to use.
 
         EXAMPLES::
 
@@ -917,13 +942,15 @@ cdef class CoercionModel:
             sage: GF7 = GF(7)
             sage: steps, res = cm.analyse(GF7, ZZ)
             sage: steps
-            ['Coercion on right operand via', Natural morphism:
+            ['Coercion on right operand via',
+             Natural morphism:
               From: Integer Ring
-              To:   Finite Field of size 7, 'Arithmetic performed after coercions.']
+              To:   Finite Field of size 7,
+             'Arithmetic performed after coercions.']
             sage: res
             Finite Field of size 7
             sage: f = steps[1]; type(f)
-            <type 'sage.rings.finite_rings.integer_mod.Integer_to_IntegerMod'>
+            <class 'sage.rings.finite_rings.integer_mod.Integer_to_IntegerMod'>
             sage: f(100)
             2
         """
@@ -962,14 +989,14 @@ cdef class CoercionModel:
                 all.append("Coercion on right operand via")
                 all.append(y_mor)
                 if res is not None and res is not y_mor.codomain():
-                    raise RuntimeError("BUG in coercion model: codomains not equal!", x_mor, y_mor)
+                    raise RuntimeError("BUG in coercion model: codomains not equal", x_mor, y_mor)
                 res = y_mor.codomain()
             all.append("Arithmetic performed after coercions.")
             if op is truediv and isinstance(res, Parent):
                 res = self.division_parent(res)
             return all, res
 
-        if isinstance(yp, Parent) and xp in [int, long, float, complex, bool]:
+        if isinstance(yp, Parent) and xp in [int, float, complex, bool]:
             mor = yp._internal_coerce_map_from(xp)
             if mor is not None:
                 mor = mor.__copy__()
@@ -982,7 +1009,7 @@ cdef class CoercionModel:
         elif type(xp) is type:
             all.append("Left operand is not Sage element, will try _sage_.")
 
-        if isinstance(xp, Parent) and yp in [int, long, float, complex, bool]:
+        if isinstance(xp, Parent) and yp in [int, float, complex, bool]:
             mor = xp._internal_coerce_map_from(yp)
             if mor is not None:
                 mor = mor.__copy__()
@@ -999,9 +1026,10 @@ cdef class CoercionModel:
 
     def common_parent(self, *args):
         """
-        Computes a common parent for all the inputs. It's essentially
-        an `n`-ary canonical coercion except it can operate on parents
-        rather than just elements.
+        Compute a common parent for all the inputs.
+
+        It's essentially an `n`-ary canonical coercion except it can
+        operate on parents rather than just elements.
 
         INPUT:
 
@@ -1010,25 +1038,25 @@ cdef class CoercionModel:
         OUTPUT:
 
         A :class:`Parent` into which each input should coerce, or raises a
-        ``TypeError`` if no such :class:`Parent` can be found.
+        :class:`TypeError` if no such :class:`Parent` can be found.
 
         EXAMPLES::
 
             sage: cm = sage.structure.element.get_coercion_model()
             sage: cm.common_parent(ZZ, QQ)
             Rational Field
-            sage: cm.common_parent(ZZ, QQ, RR)
+            sage: cm.common_parent(ZZ, QQ, RR)                                          # needs sage.rings.real_mpfr
             Real Field with 53 bits of precision
             sage: ZZT = ZZ[['T']]
             sage: QQT = QQ['T']
             sage: cm.common_parent(ZZT, QQT, RDF)
             Power Series Ring in T over Real Double Field
             sage: cm.common_parent(4r, 5r)
-            <type 'int'>
+            <class 'int'>
             sage: cm.common_parent(int, float, ZZ)
-            <type 'float'>
-            sage: real_fields = [RealField(prec) for prec in [10,20..100]]
-            sage: cm.common_parent(*real_fields)
+            <class 'float'>
+            sage: real_fields = [RealField(prec) for prec in [10,20..100]]              # needs sage.rings.real_mpfr
+            sage: cm.common_parent(*real_fields)                                        # needs sage.rings.real_mpfr
             Real Field with 10 bits of precision
 
         There are some cases where the ordering does matter, but if a parent
@@ -1044,12 +1072,14 @@ cdef class CoercionModel:
             sage: cm.common_parent(QQxy, QQzt, QQyz)
             Traceback (most recent call last):
             ...
-            TypeError: no common canonical parent for objects with parents: 'Multivariate Polynomial Ring in x, y over Rational Field' and 'Multivariate Polynomial Ring in z, t over Rational Field'
+            TypeError: no common canonical parent for objects with parents:
+            'Multivariate Polynomial Ring in x, y over Rational Field' and
+            'Multivariate Polynomial Ring in z, t over Rational Field'
         """
         base = None
         for x in args:
             if not isinstance(x, Parent) and not isinstance(x, type):
-               x = parent(x)
+                x = parent(x)
             if base is None:
                 base = x
             if isinstance(base, Parent) and (<Parent>base).has_coerce_map_from(x):
@@ -1085,8 +1115,8 @@ cdef class CoercionModel:
             sage: Zmod100 = Integers(100)
             sage: cm.division_parent(Zmod100)
             Ring of integers modulo 100
-            sage: S5 = SymmetricGroup(5)
-            sage: cm.division_parent(S5)
+            sage: S5 = SymmetricGroup(5)                                                # needs sage.groups
+            sage: cm.division_parent(S5)                                                # needs sage.groups
             Symmetric group of order 5! as a permutation group
         """
         try:
@@ -1103,23 +1133,25 @@ cdef class CoercionModel:
 
     cpdef bin_op(self, x, y, op):
         """
-        Execute the operation op on x and y. It first looks for an action
-        corresponding to op, and failing that, it tries to coerces x and y
-        into a common parent and calls op on them.
+        Execute the operation ``op`` on `x` and `y`.
 
-        If it cannot make sense of the operation, a TypeError is raised.
+        It first looks for an action
+        corresponding to ``op``, and failing that, it tries to coerce `x` and `y`
+        into a common parent and calls ``op`` on them.
+
+        If it cannot make sense of the operation, a :class:`TypeError` is raised.
 
         INPUT:
 
-        - ``x``  - the left operand
+        - ``x`` -- the left operand
 
-        - ``y``  - the right operand
+        - ``y`` -- the right operand
 
-        - ``op`` - a python function taking 2 arguments
+        - ``op`` -- a python function taking 2 arguments
 
           .. NOTE::
 
-             op is often an arithmetic operation, but need not be so.
+             ``op`` is often an arithmetic operation, but need not be so.
 
         EXAMPLES::
 
@@ -1130,19 +1162,19 @@ cdef class CoercionModel:
         The operator can be any callable::
 
             sage: R.<x> = ZZ['x']
-            sage: cm.bin_op(x^2-1, x+1, gcd)
+            sage: cm.bin_op(x^2 - 1, x + 1, gcd)
             x + 1
 
         Actions are detected and performed::
 
-            sage: M = matrix(ZZ, 2, 2, range(4))
-            sage: V = vector(ZZ, [5,7])
-            sage: cm.bin_op(M, V, operator.mul)
+            sage: M = matrix(ZZ, 2, 2, range(4))                                        # needs sage.modules
+            sage: V = vector(ZZ, [5,7])                                                 # needs sage.modules
+            sage: cm.bin_op(M, V, operator.mul)                                         # needs sage.modules
             (7, 31)
 
         TESTS::
 
-            sage: class Foo(object):
+            sage: class Foo():
             ....:     def __rmul__(self, left):
             ....:         return 'hello'
             sage: H = Foo()
@@ -1155,7 +1187,7 @@ cdef class CoercionModel:
             ...
             TypeError: unsupported operand parent(s) for *: '<class '__main__.Foo'>' and 'Integer Ring'
 
-            sage: class Nonsense(object):
+            sage: class Nonsense():
             ....:     def __init__(self, s):
             ....:         self.s = s
             ....:     def __repr__(self):
@@ -1249,18 +1281,20 @@ cdef class CoercionModel:
 
     cpdef canonical_coercion(self, x, y):
         r"""
-        Given two elements x and y, with parents S and R respectively,
-        find a common parent Z such that there are coercions
-        `f: S \mapsto Z` and `g: R \mapsto Z` and return `f(x), g(y)`
+        Given two elements `x` and `y`, with parents `S` and `R` respectively,
+        find a common parent `Z` such that there are coercions
+        `f: S \to Z` and `g: R \to Z` and return `f(x), g(y)`,
         which will have the same parent.
 
-        Raises a type error if no such Z can be found.
+        Raises a type error if no such `Z` can be found.
 
         EXAMPLES::
 
             sage: cm = sage.structure.element.get_coercion_model()
             sage: cm.canonical_coercion(mod(2, 10), 17)
             (2, 7)
+
+            sage: # needs sage.modules
             sage: x, y = cm.canonical_coercion(1/2, matrix(ZZ, 2, 2, range(4)))
             sage: x
             [1/2   0]
@@ -1275,12 +1309,11 @@ cdef class CoercionModel:
 
             sage: x, y = cm.canonical_coercion(int(5), 10)
             sage: type(x), type(y)
-            (<type 'sage.rings.integer.Integer'>, <type 'sage.rings.integer.Integer'>)
-
+            (<class 'sage.rings.integer.Integer'>, <class 'sage.rings.integer.Integer'>)
 
             sage: x, y = cm.canonical_coercion(int(5), complex(3))
             sage: type(x), type(y)
-            (<type 'complex'>, <type 'complex'>)
+            (<class 'complex'>, <class 'complex'>)
 
             sage: class MyClass:
             ....:     def _sage_(self):
@@ -1289,11 +1322,11 @@ cdef class CoercionModel:
             sage: a, b
             (13, 1/3)
             sage: type(a)
-            <type 'sage.rings.rational.Rational'>
+            <class 'sage.rings.rational.Rational'>
 
-        We also make an exception for 0, even if $\ZZ$ does not map in::
+        We also make an exception for 0, even if `\ZZ` does not map in::
 
-            sage: canonical_coercion(vector([1, 2, 3]), 0)
+            sage: canonical_coercion(vector([1, 2, 3]), 0)                              # needs sage.modules
             ((1, 2, 3), (0, 0, 0))
             sage: canonical_coercion(GF(5)(0), float(0))
             (0, 0)
@@ -1331,8 +1364,8 @@ cdef class CoercionModel:
                     return x_elt,y_elt
             self._coercion_error(x, x_map, x_elt, y, y_map, y_elt)
 
-        cdef bint x_numeric = isinstance(x, (int, long, float, complex))
-        cdef bint y_numeric = isinstance(y, (int, long, float, complex))
+        cdef bint x_numeric = isinstance(x, (int, float, complex))
+        cdef bint y_numeric = isinstance(y, (int, float, complex))
 
         if not x_numeric and is_numpy_type(type(x)):
             import numpy
@@ -1392,7 +1425,6 @@ cdef class CoercionModel:
 
         raise TypeError("no common canonical parent for objects with parents: '%s' and '%s'"%(xp, yp))
 
-
     cpdef coercion_maps(self, R, S):
         r"""
         Give two parents `R` and `S`, return a pair of coercion maps
@@ -1408,7 +1440,7 @@ cdef class CoercionModel:
 
         .. NOTE::
 
-            By :trac:`14711`, coerce maps should be copied when using them
+            By :issue:`14711`, coerce maps should be copied when using them
             outside of the coercion system, because they may become defunct
             by garbage collection.
 
@@ -1443,6 +1475,7 @@ cdef class CoercionModel:
         Note that to break symmetry, if there is a coercion map in both
         directions, the parent on the left is used::
 
+            sage: # needs sage.modules
             sage: V = QQ^3
             sage: W = V.__class__(QQ, 3)
             sage: V == W
@@ -1451,41 +1484,44 @@ cdef class CoercionModel:
             False
             sage: cm = sage.structure.element.get_coercion_model()
             sage: cm.coercion_maps(V, W)
-            (None, (map internal to coercion system -- copy before use)
+            (None,
+             (map internal to coercion system -- copy before use)
              Coercion map:
                From: Vector space of dimension 3 over Rational Field
                To:   Vector space of dimension 3 over Rational Field)
             sage: cm.coercion_maps(W, V)
-            (None, (map internal to coercion system -- copy before use)
+            (None,
+             (map internal to coercion system -- copy before use)
              Coercion map:
                From: Vector space of dimension 3 over Rational Field
                To:   Vector space of dimension 3 over Rational Field)
             sage: v = V([1,2,3])
             sage: w = W([1,2,3])
-            sage: parent(v+w) is V
+            sage: parent(v + w) is V
             True
-            sage: parent(w+v) is W
+            sage: parent(w + v) is W
             True
 
         TESTS:
 
-        We check that with :trac:`14058`, parents are still eligible for
+        We check that with :issue:`14058`, parents are still eligible for
         garbage collection after being involved in binary operations::
 
+            sage: # needs sage.libs.pari
             sage: import gc
-            sage: T=type(GF(2))
-            sage: gc.collect() #random
+            sage: T = type(GF(2))
+            sage: gc.collect()  # random
             852
-            sage: N0=len(list(o for o in gc.get_objects() if type(o) is T))
-            sage: L=[ZZ(1)+GF(p)(1) for p in prime_range(2,50)]
-            sage: N1=len(list(o for o in gc.get_objects() if type(o) is T))
+            sage: N0 = len(list(o for o in gc.get_objects() if type(o) is T))
+            sage: L = [ZZ(1) + GF(p)(1) for p in prime_range(2, 50)]
+            sage: N1 = len(list(o for o in gc.get_objects() if type(o) is T))
             sage: N1 > N0
             True
             sage: del L
-            sage: gc.collect() #random
+            sage: gc.collect()  # random
             3939
-            sage: N2=len(list(o for o in gc.get_objects() if type(o) is T))
-            sage: N2-N0
+            sage: N2 = len(list(o for o in gc.get_objects() if type(o) is T))
+            sage: N2 - N0
             0
 
         """
@@ -1540,7 +1576,7 @@ cdef class CoercionModel:
 
     cpdef verify_coercion_maps(self, R, S, homs, bint fix=False):
         """
-        Make sure this is a valid pair of homomorphisms from R and S to a common parent.
+        Make sure this is a valid pair of homomorphisms from `R` and `S` to a common parent.
         This function is used to protect the user against buggy parents.
 
         EXAMPLES::
@@ -1553,9 +1589,11 @@ cdef class CoercionModel:
             sage: cm.verify_coercion_maps(ZZ, QQ, homs) == homs
             Traceback (most recent call last):
             ...
-            RuntimeError: ('BUG in coercion model, codomains must be identical', Natural morphism:
+            RuntimeError: ('BUG in coercion model, codomains must be identical',
+            Natural morphism:
               From: Integer Ring
-              To:   Rational Field, Generic map:
+              To:   Rational Field,
+            Generic map:
               From: Rational Field
               To:   Real Field with 53 bits of precision)
         """
@@ -1604,11 +1642,10 @@ cdef class CoercionModel:
             S_map = None
         return R_map, S_map
 
-
     cpdef discover_coercion(self, R, S):
         """
         This actually implements the finding of coercion maps as described in
-        the ``coercion_maps`` method.
+        the :meth:`coercion_maps` method.
 
         EXAMPLES::
 
@@ -1616,7 +1653,7 @@ cdef class CoercionModel:
 
         If R is S, then two identity morphisms suffice::
 
-            sage: cm.discover_coercion(SR, SR)
+            sage: cm.discover_coercion(SR, SR)                                          # needs sage.symbolic
             (None, None)
 
         If there is a coercion map either direction, use that::
@@ -1626,7 +1663,7 @@ cdef class CoercionModel:
             Natural morphism:
               From: Integer Ring
               To:   Rational Field, None)
-            sage: cm.discover_coercion(RR, QQ)
+            sage: cm.discover_coercion(RR, QQ)                                          # needs sage.rings.real_mpfr
             (None, (map internal to coercion system -- copy before use)
              Generic map:
               From: Rational Field
@@ -1647,12 +1684,11 @@ cdef class CoercionModel:
 
         Sometimes there is a reasonable "cover," but no canonical coercion::
 
-            sage: sage.categories.pushout.pushout(QQ, QQ^3)
+            sage: sage.categories.pushout.pushout(QQ, QQ^3)                             # needs sage.modules
             Vector space of dimension 3 over Rational Field
-            sage: print(cm.discover_coercion(QQ, QQ^3))
+            sage: print(cm.discover_coercion(QQ, QQ^3))                                 # needs sage.modules
             None
         """
-        from sage.categories.homset import Hom
         if R is S:
             return None, None
 
@@ -1694,18 +1730,22 @@ cdef class CoercionModel:
             sage: cm = sage.structure.element.get_coercion_model()
             sage: ZZx = ZZ['x']
             sage: cm.get_action(ZZx, ZZ, operator.mul)
-            Right scalar multiplication by Integer Ring on Univariate Polynomial Ring in x over Integer Ring
+            Right scalar multiplication by Integer Ring
+             on Univariate Polynomial Ring in x over Integer Ring
             sage: cm.get_action(ZZx, QQ, operator.mul)
-            Right scalar multiplication by Rational Field on Univariate Polynomial Ring in x over Integer Ring
+            Right scalar multiplication by Rational Field
+             on Univariate Polynomial Ring in x over Integer Ring
             sage: QQx = QQ['x']
             sage: cm.get_action(QQx, int, operator.mul)
-            Right scalar multiplication by Integer Ring on Univariate Polynomial Ring in x over Rational Field
+            Right scalar multiplication by Integer Ring
+             on Univariate Polynomial Ring in x over Rational Field
             with precomposition on right by Native morphism:
               From: Set of Python objects of class 'int'
               To:   Integer Ring
 
             sage: A = cm.get_action(QQx, ZZ, operator.truediv); A
-            Right inverse action by Rational Field on Univariate Polynomial Ring in x over Rational Field
+            Right inverse action by Rational Field
+             on Univariate Polynomial Ring in x over Rational Field
             with precomposition on right by Natural morphism:
               From: Integer Ring
               To:   Rational Field
@@ -1734,7 +1774,8 @@ cdef class CoercionModel:
             sage: R.<x> = ZZ['x']
             sage: cm = sage.structure.element.get_coercion_model()
             sage: cm.verify_action(R.get_action(QQ), R, QQ, operator.mul)
-            Right scalar multiplication by Rational Field on Univariate Polynomial Ring in x over Integer Ring
+            Right scalar multiplication by Rational Field
+             on Univariate Polynomial Ring in x over Integer Ring
             sage: cm.verify_action(R.get_action(QQ), RDF, R, operator.mul)
             Traceback (most recent call last):
             ...
@@ -1743,8 +1784,9 @@ cdef class CoercionModel:
                 R = Real Double Field
                 S = Univariate Polynomial Ring in x over Integer Ring
                 (should be Univariate Polynomial Ring in x over Integer Ring, Rational Field)
-                action = Right scalar multiplication by Rational Field on
-                Univariate Polynomial Ring in x over Integer Ring (<type 'sage.structure.coerce_actions.RightModuleAction'>)
+                action = Right scalar multiplication by Rational Field
+                         on Univariate Polynomial Ring in x over Integer Ring
+                (<class 'sage.structure.coerce_actions.RightModuleAction'>)
         """
         if action is None:
             return action
@@ -1783,15 +1825,15 @@ cdef class CoercionModel:
         """
         INPUT:
 
-        - ``R`` - the left Parent (or type)
-        - ``S`` - the right Parent (or type)
-        - ``op`` - the operand, typically an element of the operator module
-        - ``r`` - (optional) element of R
-        - ``s`` - (optional) element of S.
+        - ``R`` -- the left :class:`Parent` (or type)
+        - ``S`` -- the right :class:`Parent` (or type)
+        - ``op`` -- the operand, typically an element of the :mod:`operator` module
+        - ``r`` -- (optional) element of `R`
+        - ``s`` -- (optional) element of `S`.
 
         OUTPUT:
 
-        - An action A such that s op r is given by A(s,r).
+        - An action `A` such that `s` ``op`` `r` is given by `A(s,r)`.
 
         The steps taken are illustrated below.
 
@@ -1799,51 +1841,59 @@ cdef class CoercionModel:
 
             sage: P.<x> = ZZ['x']
             sage: P.get_action(ZZ)
-            Right scalar multiplication by Integer Ring on Univariate Polynomial Ring in x over Integer Ring
+            Right scalar multiplication by Integer Ring on
+             Univariate Polynomial Ring in x over Integer Ring
             sage: ZZ.get_action(P) is None
             True
             sage: cm = sage.structure.element.get_coercion_model()
 
-        If R or S is a Parent, ask it for an action by/on R::
+        If `R` or `S` is a :class:`Parent`, ask it for an action by/on `R`::
 
             sage: cm.discover_action(ZZ, P, operator.mul)
-            Left scalar multiplication by Integer Ring on Univariate Polynomial Ring in x over Integer Ring
+            Left scalar multiplication by Integer Ring on
+             Univariate Polynomial Ring in x over Integer Ring
 
-        If R or S a type, recursively call get_action with the Sage versions of R and/or S::
+        If `R` or `S` a type, recursively call :meth:`get_action`
+        with the Sage versions of `R` and/or `S`::
 
             sage: cm.discover_action(P, int, operator.mul)
-            Right scalar multiplication by Integer Ring on Univariate Polynomial Ring in x over Integer Ring
-            with precomposition on right by Native morphism:
+            Right scalar multiplication by Integer Ring on
+             Univariate Polynomial Ring in x over Integer Ring
+             with precomposition on right by Native morphism:
               From: Set of Python objects of class 'int'
               To:   Integer Ring
 
-        If op is division, look for action on right by inverse::
+        If ``op`` is division, look for action on ``right`` by inverse::
 
             sage: cm.discover_action(P, ZZ, operator.truediv)
-            Right inverse action by Rational Field on Univariate Polynomial Ring in x over Integer Ring
+            Right inverse action by Rational Field on
+             Univariate Polynomial Ring in x over Integer Ring
             with precomposition on right by Natural morphism:
               From: Integer Ring
               To:   Rational Field
 
-        Check that :trac:`17740` is fixed::
+        Check that :issue:`17740` is fixed::
 
             sage: R = GF(5)['x']
             sage: cm.discover_action(R, ZZ, operator.truediv)
-            Right inverse action by Finite Field of size 5 on Univariate Polynomial Ring in x over Finite Field of size 5
+            Right inverse action by Finite Field of size 5
+             on Univariate Polynomial Ring in x over Finite Field of size 5
             with precomposition on right by Natural morphism:
               From: Integer Ring
               To:   Finite Field of size 5
             sage: cm.bin_op(R.gen(), 7, operator.truediv).parent()
             Univariate Polynomial Ring in x over Finite Field of size 5
 
-        Check that :trac:`18221` is fixed::
+        Check that :issue:`18221` is fixed::
 
+            sage: # needs sage.combinat sage.modules
             sage: F.<x> = FreeAlgebra(QQ)
             sage: x / 2
             1/2*x
             sage: cm.discover_action(F, ZZ, operator.truediv)
-            Right inverse action by Rational Field on Free Algebra on 1 generators (x,) over Rational Field
-            with precomposition on right by Natural morphism:
+            Right inverse action by Rational Field on
+             Free Algebra on 1 generators (x,) over Rational Field
+             with precomposition on right by Natural morphism:
               From: Integer Ring
               To:   Rational Field
         """
@@ -1941,11 +1991,12 @@ cdef class CoercionModel:
             sage: richcmp(x, y, op_GT)
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for >: 'Rational Field' and 'Finite Field of size 2'
+            TypeError: unsupported operand parent(s) for >:
+            'Rational Field' and 'Finite Field of size 2'
 
         We support non-Sage types with the usual Python convention::
 
-            sage: class AlwaysEqual(object):
+            sage: class AlwaysEqual():
             ....:     def __eq__(self, other):
             ....:         return True
             sage: x = AlwaysEqual()
@@ -2022,11 +2073,11 @@ cdef class CoercionModel:
             ...
             RuntimeError: There is a bug in the coercion code in Sage.
             Both x (='f(a)') and y (='g(b)') are supposed to have identical parents but they don't.
-            In fact, x has parent '<type 'str'>'
-            whereas y has parent '<type 'str'>'
-            Original elements 'a' (parent <type 'str'>) and 'b' (parent <type 'str'>) and maps
-            <type 'str'> 'f'
-            <type 'str'> 'g'
+            In fact, x has parent '<class 'str'>'
+            whereas y has parent '<class 'str'>'
+            Original elements 'a' (parent <class 'str'>) and 'b' (parent <class 'str'>) and maps
+            <class 'str'> 'f'
+            <class 'str'> 'g'
         """
         raise RuntimeError("""There is a bug in the coercion code in Sage.
 Both x (=%r) and y (=%r) are supposed to have identical parents but they don't.

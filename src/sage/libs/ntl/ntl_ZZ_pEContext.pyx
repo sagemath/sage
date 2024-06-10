@@ -1,4 +1,8 @@
-# distutils: libraries = ntl gmp m
+# distutils: libraries = NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 
 #*****************************************************************************
@@ -13,7 +17,7 @@
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 include 'misc.pxi'
@@ -21,32 +25,32 @@ include 'decl.pxi'
 
 from sage.ext.cplusplus cimport ccrepr
 from sage.libs.ntl.ntl_ZZ_pX cimport ntl_ZZ_pX
-from sage.libs.ntl.ntl_ZZ_pContext import ntl_ZZ_pContext
-from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 
 
 ZZ_pEContextDict = {}
 
 
-cdef class ntl_ZZ_pEContext_class(object):
+cdef class ntl_ZZ_pEContext_class():
     def __init__(self, ntl_ZZ_pX f):
         """
         EXAMPLES:
 
-            # You can construct contexts manually.
+        You can construct contexts manually::
+
             sage: c=ntl.ZZ_pEContext(ntl.ZZ_pX([4,1,6],25))
             sage: n1=c.ZZ_pE([10,17,12])
             sage: n1
             [2 15]
 
-            # or You can construct contexts implicitly.
+        Or you can construct contexts implicitly::
+
             sage: n2=ntl.ZZ_pE(12, ntl.ZZ_pX([1,1,1],7))
             sage: n2
             [5]
             sage: n2+n1  # Mismatched moduli:  It will go BOOM!
             Traceback (most recent call last):
             ...
-            ValueError: You can not perform arithmetic with elements of different moduli.
+            ValueError: You cannot perform arithmetic with elements of different moduli.
         """
         pass
 
@@ -54,16 +58,18 @@ cdef class ntl_ZZ_pEContext_class(object):
         self.pc = f.c
         self.pc.restore_c()
         self.x = ZZ_pEContext_c(f.x)
-        ZZ_pEContextDict[(repr(f),repr(f.c.p))] = self
+        ZZ_pEContextDict[(repr(f), repr(f.c.p))] = self
         self.f = f
         self.ptrs.zzpc = &(self.pc.x)
         self.ptrs.zzpec = &(self.x)
 
     def __reduce__(self):
         """
-        sage: c=ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1],7))
-        sage: loads(dumps(c)) is c
-        True
+        EXAMPLES::
+
+           sage: c=ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1],7))
+           sage: loads(dumps(c)) is c
+           True
         """
         return ntl_ZZ_pEContext, (self.f,)
 
@@ -116,7 +122,7 @@ cdef class ntl_ZZ_pEContext_class(object):
         """
         self.restore_c()
 
-    cdef void restore_c(self):
+    cdef void restore_c(self) noexcept:
         """
         Sets the global NTL modulus to be self.
 
@@ -142,7 +148,7 @@ cdef class ntl_ZZ_pEContext_class(object):
             sage: c.ZZ_pE([4,3])
             [4 3]
         """
-        from .ntl_ZZ_pE import ntl_ZZ_pE
+        from sage.libs.ntl.ntl_ZZ_pE import ntl_ZZ_pE
         return ntl_ZZ_pE(v,modulus=self)
 
     def ZZ_pEX(self, v = None):
@@ -155,7 +161,7 @@ cdef class ntl_ZZ_pEContext_class(object):
             sage: c.ZZ_pEX([4,3])
             [[4] [3]]
         """
-        from .ntl_ZZ_pEX import ntl_ZZ_pEX
+        from sage.libs.ntl.ntl_ZZ_pEX import ntl_ZZ_pEX
         return ntl_ZZ_pEX(v, modulus=self)
 
     cpdef void _assert_is_current_modulus(self) except *:

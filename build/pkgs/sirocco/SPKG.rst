@@ -1,5 +1,5 @@
-SIROCCO
-=======
+sirocco: Compute topologically certified root continuation of bivariate polynomials
+===================================================================================
 
 Description
 -----------

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-objects
 """
 Element Wrapper
 
@@ -84,7 +84,7 @@ cdef class ElementWrapper(Element):
 
     .. WARNING::
 
-        Versions before :trac:`14519` had parent as the second argument and
+        Versions before :issue:`14519` had parent as the second argument and
         the value as the first.
     """
     def __init__(self, parent, value):
@@ -112,7 +112,7 @@ cdef class ElementWrapper(Element):
 
         This emulates :meth:`Element.__getstate__`, playing as if
         ``self.value`` was in the dictionary of ``self`` as it used to
-        be before :trac:`14519`.
+        be before :issue:`14519`.
 
         EXAMPLES::
 
@@ -143,7 +143,7 @@ cdef class ElementWrapper(Element):
 
         This emulates :meth:`Element.__setstate__`, playing as if
         ``self.value`` was to be put in the dictionary of ``self`` as
-        it used to be before :trac:`14519`.
+        it used to be before :issue:`14519`.
 
         EXAMPLES::
 
@@ -209,8 +209,8 @@ cdef class ElementWrapper(Element):
             sage: from sage.structure.element_wrapper import DummyParent
             sage: ElementWrapper(DummyParent("A parent"), 1)._ascii_art_()
             1
-            sage: x = var('x')
-            sage: ElementWrapper(DummyParent("A parent"), x^2 + x)._ascii_art_()
+            sage: x = var('x')                                                          # needs sage.symbolic
+            sage: ElementWrapper(DummyParent("A parent"), x^2 + x)._ascii_art_()        # needs sage.symbolic
              2
             x  + x
         """
@@ -226,8 +226,8 @@ cdef class ElementWrapper(Element):
             sage: from sage.structure.element_wrapper import DummyParent
             sage: ElementWrapper(DummyParent("A parent"), 1)._ascii_art_()
             1
-            sage: x = var('x')
-            sage: ElementWrapper(DummyParent("A parent"), x^2 + x)._unicode_art_()
+            sage: x = var('x')                                                          # needs sage.symbolic
+            sage: ElementWrapper(DummyParent("A parent"), x^2 + x)._unicode_art_()      # needs sage.symbolic
              2
             x  + x
         """
@@ -273,9 +273,9 @@ cdef class ElementWrapper(Element):
         TESTS:
 
         Check that elements of equal-but-not-identical parents compare
-        properly (see :trac:`19488`)::
+        properly (see :issue:`19488`)::
 
-            sage: from sage.misc.nested_class_test import TestParent4
+            sage: from sage.misc.test_nested_class import TestParent4
             sage: P = TestParent4()
             sage: Q = TestParent4()
             sage: P == Q
@@ -357,7 +357,7 @@ cdef class ElementWrapper(Element):
             return self.value != (<ElementWrapper>right).value
         return False
 
-    cpdef bint _lt_by_value(self, other):
+    cpdef bint _lt_by_value(self, other) noexcept:
         """
         Return whether ``self`` is strictly smaller than ``other``.
 
@@ -418,8 +418,8 @@ cdef class ElementWrapper(Element):
             sage: o4.__class__
             <class '__main__.bla'>
         """
-        # Note : copy(super(ElementWrapper, self)) does not work.
-        res = super(ElementWrapper, self).__copy__()
+        # Note : copy(super()) does not work.
+        res = super().__copy__()
         res.value = copy(self.value)
         return res
 
@@ -485,7 +485,7 @@ class ElementWrapperTester(ElementWrapper):
             [n=0, value=[]]
         """
         from sage.categories.sets_cat import Sets
-        super(ElementWrapperTester, self).__init__(Sets().example("facade"), [])
+        super().__init__(Sets().example("facade"), [])
         self.n = 0
 
     def append(self, x):

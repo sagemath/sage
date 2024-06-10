@@ -39,7 +39,7 @@ Functions
 ---------
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Michele Borassi michele.borassi@imtlucca.it
 #
 # This program is free software: you can redistribute it and/or modify
@@ -47,12 +47,13 @@ Functions
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 cimport cython
 from cysignals.signals cimport sig_check, sig_on, sig_off
 from libcpp.set cimport set as cset
 from libcpp.pair cimport pair
+
 
 cdef boost_graph_from_sage_graph(BoostGenGraph *g, g_sage, vertex_to_int, reverse=False):
     r"""
@@ -86,10 +87,10 @@ cdef boost_graph_from_sage_graph(BoostGenGraph *g, g_sage, vertex_to_int, revers
         g.add_vertex()
 
     if reverse:
-        for u,v in g_sage.edge_iterator(labels=None):
+        for u, v in g_sage.edge_iterator(labels=None):
             g.add_edge(vertex_to_int[v], vertex_to_int[u])
     else:
-        for u,v in g_sage.edge_iterator(labels=None):
+        for u, v in g_sage.edge_iterator(labels=None):
             g.add_edge(vertex_to_int[u], vertex_to_int[v])
 
 
@@ -145,26 +146,26 @@ cdef boost_weighted_graph_from_sage_graph(BoostWeightedGraph *g,
         if reverse:
             for e in g_sage.edge_iterator():
                 g.add_edge(vertex_to_int[e[1]],
-                        vertex_to_int[e[0]],
-                        float(weight_function(e)))
+                           vertex_to_int[e[0]],
+                           float(weight_function(e)))
         else:
             for e in g_sage.edge_iterator():
                 g.add_edge(vertex_to_int[e[0]],
-                        vertex_to_int[e[1]],
-                        float(weight_function(e)))
+                           vertex_to_int[e[1]],
+                           float(weight_function(e)))
     elif g_sage.weighted():
         if reverse:
-            for u,v,w in g_sage.edge_iterator():
+            for u, v, w in g_sage.edge_iterator():
                 g.add_edge(vertex_to_int[v], vertex_to_int[u], float(w))
         else:
-            for u,v,w in g_sage.edge_iterator():
+            for u, v, w in g_sage.edge_iterator():
                 g.add_edge(vertex_to_int[u], vertex_to_int[v], float(w))
     else:
         if reverse:
-            for u,v in g_sage.edge_iterator(labels=False):
+            for u, v in g_sage.edge_iterator(labels=False):
                 g.add_edge(vertex_to_int[v], vertex_to_int[u], 1)
         else:
-            for u,v in g_sage.edge_iterator(labels=False):
+            for u, v in g_sage.edge_iterator(labels=False):
                 g.add_edge(vertex_to_int[u], vertex_to_int[v], 1)
 
 
@@ -231,8 +232,8 @@ cpdef edge_connectivity(g):
 
     elif isinstance(g, DiGraph):
         from sage.misc.stopgap import stopgap
-        stopgap("The edge connectivity of directed graphs is not implemented " +
-                "in Boost. The result may be mathematically unreliable.",18753)
+        stopgap("The edge connectivity of directed graphs is not implemented "
+                "in Boost. The result may be mathematically unreliable.", 18753)
 
         boost_graph_from_sage_graph(&g_boost_dir, g, vertex_to_int)
         ec, edges = boost_edge_connectivity(&g_boost_dir)
@@ -514,7 +515,8 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee'):
     Unfortunately, exactly computing the bandwidth is NP-hard (and an
     exponential algorithm is implemented in Sagemath in routine
     :func:`~sage.graphs.graph_decompositions.bandwidth.bandwidth`). Here, we
-    implement two heuristics to find good orderings: Cuthill-McKee, and King.
+    implement two heuristics to find good orderings: Cuthill-McKee, reverse
+    Cuthill-McKee (also known as ``RCM``) and King.
 
     This function works only in undirected graphs, and its running time is
     `O(md_{max}\log d_{max})` for the Cuthill-McKee ordering, and
@@ -526,7 +528,8 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee'):
     - ``g`` -- the input Sage graph
 
     - ``algorithm`` -- string (default: ``'cuthill_mckee'``); the heuristic used
-      to compute the ordering among ``'cuthill_mckee'`` and ``'king'``
+      to compute the ordering among ``'cuthill_mckee'``,
+      ``'reverse_cuthill_mckee'`` and ``'king'``
 
     OUTPUT:
 
@@ -541,6 +544,8 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee'):
         (1, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         sage: bandwidth_heuristics(graphs.GridGraph([3,3]))
         (3, [(0, 0), (1, 0), (0, 1), (2, 0), (1, 1), (0, 2), (2, 1), (1, 2), (2, 2)])
+        sage: bandwidth_heuristics(graphs.GridGraph([3,3]), algorithm='reverse_cuthill_mckee')
+        (3, [(2, 2), (1, 2), (2, 1), (0, 2), (1, 1), (2, 0), (0, 1), (1, 0), (0, 0)])
         sage: bandwidth_heuristics(graphs.GridGraph([3,3]), algorithm='king')
         (3, [(0, 0), (1, 0), (0, 1), (2, 0), (1, 1), (0, 2), (2, 1), (1, 2), (2, 2)])
 
@@ -560,7 +565,7 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee'):
 
     Given a wrong algorithm::
 
-        from sage.graphs.base.boost_graph import bandwidth_heuristics
+        sage: from sage.graphs.base.boost_graph import bandwidth_heuristics
         sage: bandwidth_heuristics(graphs.PathGraph(3), algorithm='tip top')
         Traceback (most recent call last):
         ...
@@ -568,10 +573,10 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee'):
 
     Given a graph with no edges::
 
-        from sage.graphs.base.boost_graph import bandwidth_heuristics
+        sage: from sage.graphs.base.boost_graph import bandwidth_heuristics
         sage: bandwidth_heuristics(Graph())
         (0, [])
-        sage: bandwidth_heuristics(graphs.RandomGNM(10,0))
+        sage: bandwidth_heuristics(graphs.RandomGNM(10,0))                              # needs networkx
         (0, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 
     """
@@ -580,10 +585,15 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee'):
     # Tests for errors and trivial cases
     if not isinstance(g, Graph):
         raise TypeError("the input must be a Sage Graph")
-    if not algorithm in ['cuthill_mckee', 'king']:
+    if algorithm not in ['cuthill_mckee', 'reverse_cuthill_mckee', 'king']:
         raise ValueError(f"unknown algorithm {algorithm!r}")
     if not g.num_edges():
         return (0, list(g))
+
+    cdef bint reverse = False
+    if algorithm == 'reverse_cuthill_mckee':
+        reverse = True
+        algorithm = 'cuthill_mckee'
 
     # These variables are automatically deleted when the function terminates.
     cdef BoostVecGraph g_boost
@@ -600,8 +610,12 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee'):
 
     cdef int n = g.num_verts()
     cdef dict pos = {int_to_vertex[<int> result[i]]: i for i in range(n)}
-    cdef int bandwidth = max([abs(pos[u] - pos[v]) for u, v in g.edge_iterator(labels=False)])
+    cdef int bandwidth = max([abs(pos[u] - pos[v])
+                              for u, v in g.edge_iterator(labels=False)])
 
+    if reverse:
+        return (bandwidth, [int_to_vertex[<int> result[i]]
+                            for i in range(n - 1, -1, -1)])
     return (bandwidth, [int_to_vertex[<int> result[i]] for i in range(n)])
 
 
@@ -684,14 +698,24 @@ cpdef min_spanning_tree(g,
         sage: min_spanning_tree(g)
         Traceback (most recent call last):
         ...
-        TypeError: float() argument must be a string or a number...
+        TypeError: float() argument must be a string or a... number...
+
+    Check that the method is robust to incomparable vertices::
+
+        sage: G = Graph([(1, 2, 10), (1, 'a', 1), ('a', 'b', 1), ('b', 2, 1)], weighted=True)
+        sage: E = min_spanning_tree(G, algorithm='Kruskal')
+        sage: sum(w for _, _, w in E)
+        3
+        sage: F = min_spanning_tree(G, algorithm='Prim')
+        sage: sum(w for _, _, w in F)
+        3
     """
     from sage.graphs.graph import Graph
 
     if not isinstance(g, Graph):
         raise TypeError("the input must be a Sage Graph")
-    if not algorithm in ['Kruskal', 'Prim']:
-        raise ValueError("algorithm '%s' not yet implemented, please contribute" %(algorithm))
+    if algorithm not in ['Kruskal', 'Prim']:
+        raise ValueError("algorithm '%s' not yet implemented, please contribute" % (algorithm))
 
     if g.allows_loops() or g.allows_multiple_edges():
         g = g.to_simple()
@@ -718,9 +742,8 @@ cpdef min_spanning_tree(g,
 
     if <v_index> result.size() != 2 * (n - 1):
         return []
-    else:
-        edges = [(int_to_vertex[<int> result[2*i]], int_to_vertex[<int> result[2*i+1]]) for i in range(n-1)]
-        return [(min(e[0],e[1]), max(e[0],e[1]), g.edge_label(e[0], e[1])) for e in edges]
+    edges = [(int_to_vertex[<int> result[2*i]], int_to_vertex[<int> result[2*i + 1]]) for i in range(n - 1)]
+    return [(u, v, g.edge_label(u, v)) for u, v in edges]
 
 
 cpdef blocks_and_cut_vertices(g):
@@ -800,7 +823,7 @@ cpdef blocks_and_cut_vertices(g):
             elif vertex_status[v] < i:
                 result_cut.add(int_to_vertex[<int> v])
                 result_temp.append(int_to_vertex[<int> v])
-                # Change the block number to avoid adding the vertex twice 
+                # Change the block number to avoid adding the vertex twice
                 # as a cut vertex if it is repeated in block i
                 vertex_status[v] = i
             # elif vertex_status[v] == i:
@@ -929,7 +952,7 @@ cpdef shortest_paths(g, start, weight_function=None, algorithm=None):
                          "the graph")
 
     if not g.num_edges():
-        return ({start:0}, {start:None})
+        return ({start: 0}, {start: None})
 
     # These variables are automatically deleted when the function terminates.
     cdef v_index vi
@@ -947,7 +970,7 @@ cpdef shortest_paths(g, start, weight_function=None, algorithm=None):
                     algorithm = 'Bellman-Ford'
                     break
         elif g.weighted():
-            for _,_,w in g.edge_iterator():
+            for _, _, w in g.edge_iterator():
                 if float(w) < 0:
                     algorithm = 'Bellman-Ford'
                     break
@@ -1019,23 +1042,23 @@ cpdef shortest_paths(g, start, weight_function=None, algorithm=None):
 cdef get_predecessors(BoostWeightedGraph g, result, int_to_v, directed, weight_type):
     r"""
     Return the predecessor matrix from the distance matrix of the graph.
-    
+
     INPUT:
-    
+
     - ``g`` -- the input boost graph
-    
+
     - ``result`` -- the matrix of shortest distances
-    
+
     - ``int_to_v`` -- a list; it is a mapping from `(0, \ldots, n-1)`
       to the vertex set of the original sage graph.
-    
+
     - ``directed`` -- boolean; whether the input graph is directed
-    
+
     - ``weight_type`` -- correct data type for edge weights
-    
+
     OUTPUT:
-    
-    A dictionary of dictionaries ``pred`` such that ``pred[u][v]`` indicates 
+
+    A dictionary of dictionaries ``pred`` such that ``pred[u][v]`` indicates
     the predecessor  of `v` in the shortest path from `u` to `v`.
 
     TESTS::
@@ -1072,11 +1095,12 @@ cdef get_predecessors(BoostWeightedGraph g, result, int_to_v, directed, weight_t
                 pred[int_to_v[k]][int_to_v[u]] = int_to_v[v]
     return pred
 
+
 cpdef johnson_shortest_paths(g, weight_function=None, distances=True, predecessors=False):
     r"""
     Use Johnson algorithm to solve the all-pairs-shortest-paths.
 
-    This routine outputs the distance between each pair of vertices and the 
+    This routine outputs the distance between each pair of vertices and the
     predecessors matrix (depending on the values of boolean ``distances`` and
     ``predecessors``) using a dictionary of dictionaries. It works on all kinds
     of graphs, but it is designed specifically for graphs with negative weights
@@ -1093,12 +1117,12 @@ cpdef johnson_shortest_paths(g, weight_function=None, distances=True, predecesso
       associates a weight to each edge. If ``None`` (default), the weights of
       ``g`` are used, if ``g.weighted()==True``, otherwise all edges have
       weight 1.
-      
+
     - ``distances`` -- boolean (default: ``True``); whether to return the
       dictionary of shortest distances
-      
+
     - ``predecessors`` -- boolean (default: ``False``); whether to return the
-      predecessors matrix 
+      predecessors matrix
 
     OUTPUT:
 
@@ -1181,7 +1205,6 @@ cpdef johnson_shortest_paths(g, weight_function=None, distances=True, predecesso
     cdef BoostVecWeightedGraph g_boost_und
     cdef int N = g.num_verts()
     cdef vector[vector[double]] result
-    cdef int u_int, v_int
 
     if g.is_directed():
         boost_weighted_graph_from_sage_graph(&g_boost_dir, g, v_to_int, weight_function)
@@ -1227,20 +1250,21 @@ cpdef johnson_shortest_paths(g, weight_function=None, distances=True, predecesso
     if predecessors:
         return pred
 
+
 cpdef floyd_warshall_shortest_paths(g, weight_function=None, distances=True, predecessors=False):
     r"""
     Use Floyd-Warshall algorithm to solve the all-pairs-shortest-paths.
 
-    This routine outputs the distance between each pair of vertices and the 
+    This routine outputs the distance between each pair of vertices and the
     predecessors matrix (depending on the values of boolean ``distances`` and
     ``predecessors``) using a dictionary of dictionaries. This method should be
     preferred only if the graph is dense. If the graph is sparse the much
     faster johnson_shortest_paths should be used.
-    
+
     The time-complexity is `O(n^3 + nm)`, where `n` is the number of nodes and
     `m` the number of edges. The factor `nm` in the complexity is added only
     when ``predecessors`` is set to ``True``.
-    
+
     INPUT:
 
     - ``g`` -- the input Sage graph
@@ -1249,12 +1273,12 @@ cpdef floyd_warshall_shortest_paths(g, weight_function=None, distances=True, pre
       associates a weight to each edge. If ``None`` (default), the weights of
       ``g`` are used, if ``g.weighted()==True``, otherwise all edges have
       weight 1.
-      
+
     - ``distances`` -- boolean (default: ``True``); whether to return
       the dictionary of shortest distances
-      
+
     - ``predecessors`` -- boolean (default: ``False``); whether to return the
-      predecessors matrix 
+      predecessors matrix
 
     OUTPUT:
 
@@ -1337,7 +1361,6 @@ cpdef floyd_warshall_shortest_paths(g, weight_function=None, distances=True, pre
     cdef BoostVecWeightedGraph g_boost_und
     cdef int N = g.num_verts()
     cdef vector[vector[double]] result
-    cdef int u_int, v_int
 
     if g.is_directed():
         boost_weighted_graph_from_sage_graph(&g_boost_dir, g, v_to_int, weight_function)
@@ -1388,7 +1411,7 @@ cpdef johnson_closeness_centrality(g, weight_function=None):
     r"""
     Use Johnson algorithm to compute the closeness centrality of all vertices.
 
-    This routine is preferrable to :func:`~johnson_shortest_paths` because it
+    This routine is preferable to :func:`~johnson_shortest_paths` because it
     does not create a doubly indexed dictionary of distances, saving memory.
 
     The time-complexity is `O(mn\log n)`, where `n` is the number of nodes and
@@ -1482,11 +1505,12 @@ cpdef johnson_closeness_centrality(g, weight_function=None):
                 farness += result[i][j]
                 reach += 1
         if reach > 1:
-            closeness.push_back((<double>reach-1) * (reach-1) / ((N-1) * farness))
+            closeness.push_back((<double>reach - 1) * (reach - 1) / ((N - 1) * farness))
         else:
             closeness.push_back(sys.float_info.max)
         sig_check()
-    return {v: closeness[i] for i,v in enumerate(int_to_v) if closeness[i] != sys.float_info.max}
+    return {v: closeness[i] for i, v in enumerate(int_to_v) if closeness[i] != sys.float_info.max}
+
 
 cpdef min_cycle_basis(g_sage, weight_function=None, by_weight=False):
     r"""
@@ -1534,16 +1558,16 @@ cpdef min_cycle_basis(g_sage, weight_function=None, by_weight=False):
     cdef list edgelist
     if by_weight and weight_function is not None:
         edgelist = [(vertex_to_int[e[0]], vertex_to_int[e[1]], float(weight_function(e)))
-                        for e in g_sage.edge_iterator()]
+                    for e in g_sage.edge_iterator()]
     if by_weight:
         edgelist = [(vertex_to_int[e[0]], vertex_to_int[e[1]], float(e[2]))
-                        for e in g_sage.edge_iterator()]
+                    for e in g_sage.edge_iterator()]
     else:
         edgelist = [(vertex_to_int[u], vertex_to_int[v], 1) for u, v in g_sage.edge_iterator(labels=False)]
 
     # We just need the edges of any spanning tree here not necessarily a
     # minimum spanning tree.
-    
+
     cdef list sp_edges = min_spanning_tree(g_sage)
     cdef cset[pair[int, int]] edges_s
     for a, b, c in sp_edges:
@@ -1551,7 +1575,7 @@ cpdef min_cycle_basis(g_sage, weight_function=None, by_weight=False):
     # Edges of self that are not in the spanning tree
     cdef list edges_c = [e for e in g_sage.edge_iterator(labels=False) if not edges_s.count(e)]
     cdef list edges_complement = [frozenset((vertex_to_int[u], vertex_to_int[v])) for u, v in edges_c]
-    cdef Py_ssize_t l = len(edges_complement)
+    cdef Py_ssize_t lec = len(edges_complement)
     cdef list orth_set = [set([e]) for e in edges_complement]
     cdef list cycle_basis = []
     cdef set base
@@ -1562,7 +1586,7 @@ cpdef min_cycle_basis(g_sage, weight_function=None, by_weight=False):
     cdef dict cross_paths_lens
     cdef float edge_w
 
-    for i in range(l):
+    for i in range(lec):
         base = orth_set[i]
         # For each edge in g, add 2 edges to g_boost_und: "cross" edges if edge
         # is in base, otherwise "in-plane" edges
@@ -1593,7 +1617,7 @@ cpdef min_cycle_basis(g_sage, weight_function=None, by_weight=False):
             v_int = min_path.predecessors[v_int]
             min_path_nodes.append(v_int if v_int < n else v_int - n)
 
-        # removal of edges occuring even number of times
+        # removal of edges occurring even number of times
         edges = set()
         for edge in zip(min_path_nodes[:-1], min_path_nodes[1:]):
             edges ^= {edge}
@@ -1601,7 +1625,7 @@ cpdef min_cycle_basis(g_sage, weight_function=None, by_weight=False):
         cycle_basis.append([int_to_vertex[u_int] for u_int in set().union(*new_cycle)])
         # updating orth_set so that i+1, i+2, ...th elements are orthogonal
         # to the newly found cycle
-        for j in range(i + 1, l):
+        for j in range(i + 1, lec):
             if len(orth_set[j] & new_cycle) % 2:
                 orth_set[j] = orth_set[j] ^ base
     return cycle_basis
@@ -1612,7 +1636,7 @@ cpdef eccentricity_DHV(g, vertex_list=None, weight_function=None, check_weight=T
     Return the vector of eccentricities using the algorithm of [Dragan2018]_.
 
     The array returned is of length `n`, and by default its `i`-th component is
-    the eccentricity of the `i`-th vertex in ``g.vertices()``,
+    the eccentricity of the `i`-th vertex in ``g.vertices(sort=True)``,
     if ``vertex_list is None``, otherwise ``ecc[i]`` is the eccentricity of
     vertex ``vertex_list[i]``.
 
@@ -1630,7 +1654,7 @@ cpdef eccentricity_DHV(g, vertex_list=None, weight_function=None, check_weight=T
       specifying a mapping from `(0, \ldots, n-1)` to vertex labels in `g`. When
       set, ``ecc[i]`` is the eccentricity of vertex ``vertex_list[i]``. When
       ``vertex_list`` is ``None``, ``ecc[i]`` is the eccentricity of vertex
-      ``g.vertices()[i]``.
+      ``g.vertices(sort=True)[i]``.
 
     - ``weight_function`` -- function (default: ``None``); a function that
       associates a weight to each edge. If ``None`` (default), the weights of
@@ -1678,12 +1702,12 @@ cpdef eccentricity_DHV(g, vertex_list=None, weight_function=None, check_weight=T
             if float(weight_function(e)) < 0:
                 raise ValueError("graph contains negative edge weights, use Johnson_Boost instead")
     elif g.weighted():
-        for _,_,w in g.edge_iterator():
+        for _, _, w in g.edge_iterator():
             if w and float(w) < 0:
                 raise ValueError("graph contains negative edge weights, use Johnson_Boost instead")
 
     if vertex_list is None:
-        vertex_list = g.vertices()
+        vertex_list = g.vertices(sort=True)
     elif not len(vertex_list) == n or not set(vertex_list) == set(g):
         raise ValueError("parameter vertex_list is incorrect for this graph")
 
@@ -1794,6 +1818,7 @@ cpdef eccentricity_DHV(g, vertex_list=None, weight_function=None, check_weight=T
 
     return eccentricity
 
+
 cpdef radius_DHV(g, weight_function=None, check_weight=True):
     r"""
     Return the radius of weighted graph `g`.
@@ -1861,7 +1886,7 @@ cpdef radius_DHV(g, weight_function=None, check_weight=True):
             if float(weight_function(e)) < 0:
                 raise ValueError("graphs contains negative weights, use Johnson_Boost instead")
     elif g.weighted():
-        for _,_,w in g.edge_iterator():
+        for _, _, w in g.edge_iterator():
             if w and float(w) < 0:
                 raise ValueError("graphs contains negative weights, use Johnson_Boost instead")
 
@@ -1930,6 +1955,7 @@ cpdef radius_DHV(g, weight_function=None, check_weight=True):
 
     return UB
 
+
 cpdef diameter_DHV(g, weight_function=None, check_weight=True):
     r"""
     Return the diameter of weighted graph `g`.
@@ -1960,8 +1986,8 @@ cpdef diameter_DHV(g, weight_function=None, check_weight=True):
 
     TESTS::
 
-        sage: G = graphs.RandomBarabasiAlbert(17,6)
-        sage: diameter_DHV(G) == G.diameter(algorithm = 'Dijkstra_Boost')
+        sage: G = graphs.RandomBarabasiAlbert(17,6)                                     # needs networkx
+        sage: diameter_DHV(G) == G.diameter(algorithm = 'Dijkstra_Boost')               # needs networkx
         True
         sage: G = Graph([(0,1,-1)], weighted=True)
         sage: diameter_DHV(G)
@@ -1984,7 +2010,7 @@ cpdef diameter_DHV(g, weight_function=None, check_weight=True):
             if float(weight_function(e)) < 0:
                 raise ValueError("graph contains negative edge weights, use Johnson_Boost instead")
     elif g.weighted():
-        for _,_,w in g.edges(sort=False):
+        for _, _, w in g.edges(sort=False):
             if w and float(w) < 0:
                 raise ValueError("graph contains negative edge weights, use Johnson_Boost instead")
 
@@ -2061,7 +2087,7 @@ cpdef diameter_DHV(g, weight_function=None, check_weight=True):
                 if distances[v] > ecc_x:
                     ecc_x = distances[v]
                     antipode = v
-            LB = max(LB,ecc_x)
+            LB = max(LB, ecc_x)
 
             if ecc_x == ecc_lower_bound[x]:
                 # We found the good vertex x
@@ -2101,7 +2127,7 @@ cpdef diameter_DHV(g, weight_function=None, check_weight=True):
     return LB
 
 cdef tuple diameter_lower_bound_2Dsweep(BoostVecWeightedDiGraphU g_boost,
-                                        BoostVecWeightedDiGraphU rev_g_boost, 
+                                        BoostVecWeightedDiGraphU rev_g_boost,
                                         v_index source,
                                         str algorithm):
     r"""
@@ -2191,7 +2217,6 @@ cdef tuple diameter_lower_bound_2Dsweep(BoostVecWeightedDiGraphU g_boost,
     if LB_1 == sys.float_info.max:
         return (LB_1, 0, 0, 0)
 
-
     # 2) Compute backward distances from antipode_1.
     source_1, antipode_1 = antipode_1, source_1
     if algorithm == 'Bellman-Ford':
@@ -2212,7 +2237,6 @@ cdef tuple diameter_lower_bound_2Dsweep(BoostVecWeightedDiGraphU g_boost,
 
     if LB_1 == sys.float_info.max:
         return (LB_1, 0, 0, 0)
-
 
     # 3) Compute backward distances from source_2.
     # Get backward eccentricity and antipode.
@@ -2257,7 +2281,6 @@ cdef tuple diameter_lower_bound_2Dsweep(BoostVecWeightedDiGraphU g_boost,
     if LB_2 == sys.float_info.max:
         return (LB_2, 0, 0, 0)
 
-
     # 5) Select the best found lower bound as LB with corresponding source s and
     # antipode d. Then find a vertex m at a distance LB/2 from/to both s and d.
     if LB_1 < LB_2:
@@ -2279,6 +2302,7 @@ cdef tuple diameter_lower_bound_2Dsweep(BoostVecWeightedDiGraphU g_boost,
 
     return (LB, s, m, d)
 
+
 cdef double diameter_DiFUB(BoostVecWeightedDiGraphU g_boost,
                            BoostVecWeightedDiGraphU rev_g_boost,
                            v_index source,
@@ -2287,7 +2311,7 @@ cdef double diameter_DiFUB(BoostVecWeightedDiGraphU g_boost,
     Return the diameter of a weighted directed graph.
 
     The ``DiFUB`` (Directed iterative Fringe Upper Bound) algorithm calculates
-    the exact value of the diameter of an weighted directed graph [CGLM2012]_.
+    the exact value of the diameter of a weighted directed graph [CGLM2012]_.
 
     This algorithm starts from a vertex found through a 2Dsweep call (a directed
     version of the 2sweep method). The worst case time complexity of the DiFUB
@@ -2326,13 +2350,13 @@ cdef double diameter_DiFUB(BoostVecWeightedDiGraphU g_boost,
     import sys
     # These variables are automatically deleted when the function terminates.
     cdef double LB, LB_1, LB_2, UB
-    cdef v_index s, m, d, v, tmp
+    cdef v_index m, v, tmp
     cdef v_index i
     cdef vector[double] distances
     cdef vector[pair[double, v_index]] order_1, order_2
 
     # We select a vertex with low eccentricity using 2Dsweep
-    LB, s, m, d = diameter_lower_bound_2Dsweep(g_boost, rev_g_boost,
+    LB, _, m, _ = diameter_lower_bound_2Dsweep(g_boost, rev_g_boost,
                                                source, algorithm)
 
     # If the lower bound is a very large number, it means that the digraph is
@@ -2357,7 +2381,7 @@ cdef double diameter_DiFUB(BoostVecWeightedDiGraphU g_boost,
     LB_1 = sys.float_info.min
     for v in range(n):
         LB_1 = max(LB_1, distances[v])
-        order_1.push_back(pair[double,v_index](distances[v], v))
+        order_1.push_back(pair[double, v_index](distances[v], v))
     # Compute Backward distances from `m`.
     if algorithm == 'Bellman-Ford':
         sig_on()
@@ -2375,14 +2399,14 @@ cdef double diameter_DiFUB(BoostVecWeightedDiGraphU g_boost,
     LB_2 = sys.float_info.min
     for v in range(n):
         LB_2 = max(LB_2, distances[v])
-        order_2.push_back(pair[double,v_index](distances[v], v))
+        order_2.push_back(pair[double, v_index](distances[v], v))
 
     # Now sort order_1 / order_2 in decreasing order of forward / backward
     # distances respectively.
     # Now order_1 and order_2 will contain order of vertices in which
     # further distance computations will be done.
-    sorted(order_1, reverse=True)
-    sorted(order_2, reverse=True)
+    order_1 = sorted(order_1, reverse=True)
+    order_2 = sorted(order_2, reverse=True)
 
     LB = max(LB, LB_1, LB_2)
     if LB == sys.float_info.max:
@@ -2460,7 +2484,7 @@ cdef double diameter_DiFUB(BoostVecWeightedDiGraphU g_boost,
             break
 
         # next maximum forward / backward distance
-        UB = max( 2 * order_1[i].first, 2 * order_2[i].first)
+        UB = max(2 * order_1[i].first, 2 * order_2[i].first)
 
     # Finally return the computed diameter
     return LB
@@ -2481,11 +2505,11 @@ cpdef diameter(G, algorithm=None, source=None,
     - ``algorithm`` -- string (default: ``None``); specifies the algorithm to
       use among:
 
-      - ``'2Dsweep'`` -- Computes lower bound on the diameter of an weighted
+      - ``'2Dsweep'`` -- Computes lower bound on the diameter of a weighted
         directed graph using the weighted version of the algorithm proposed in
         [Broder2000]_. See the code's documentation for more details.
 
-      - ``'DiFUB'`` -- Computes the diameter of an weighted directed graph
+      - ``'DiFUB'`` -- Computes the diameter of a weighted directed graph
         using the weighted version of the algorithm proposed in [CGLM2012]_.
         See the code's documentation for more details.
 
@@ -2559,7 +2583,7 @@ cpdef diameter(G, algorithm=None, source=None,
                 algo = 'Bellman-Ford'
                 break
     elif G.weighted():
-        for _,_,w in G.edges(sort=False):
+        for _, _, w in G.edges(sort=False):
             if w and float(w) < 0:
                 algo = 'Bellman-Ford'
                 break
@@ -2567,7 +2591,7 @@ cpdef diameter(G, algorithm=None, source=None,
     if algorithm is None:  # default algorithm for diameter computation
         algorithm = 'DiFUB'
 
-    if not algorithm in ['2Dsweep', 'DiFUB']:
+    if algorithm not in ['2Dsweep', 'DiFUB']:
         raise ValueError("unknown algorithm for computing the diameter of directed graph")
 
     if source is None:
@@ -2637,10 +2661,10 @@ cpdef shortest_paths_from_vertices(g, vertex_list=None, order=None,
     - ``algorithm`` -- string (default: ``None``); one of the following
       algorithms:
 
-      - ``'Dijkstra'``, ``'Dijkstra_Boost'`` - the Dijkstra algorithm
+      - ``'Dijkstra'``, ``'Dijkstra_Boost'`` -- the Dijkstra algorithm
         implemented in Boost (works only with positive weights)
 
-      - ``'Bellman-Ford'``, ``'Bellman-Ford_Boost'`` - the Bellman-Ford
+      - ``'Bellman-Ford'``, ``'Bellman-Ford_Boost'`` -- the Bellman-Ford
         algorithm implemented in Boost (works also with negative weights,
         if there is no negative cycle)
 
@@ -2753,8 +2777,8 @@ cpdef shortest_paths_from_vertices(g, vertex_list=None, order=None,
                     use_Bellman_Ford = True
                     break
         elif g.weighted():
-            for _,_,wt in g.edges(sort=False):
-               if float(wt) < 0:
+            for _, _, wt in g.edges(sort=False):
+                if float(wt) < 0:
                     use_Bellman_Ford = True
                     break
 
@@ -2951,7 +2975,7 @@ cpdef wiener_index(g, algorithm=None, weight_function=None, check_weight=True):
                     use_Bellman_Ford = True
                     break
         elif g.weighted():
-            for _,_,w in g.edges(sort=False):
+            for _, _, w in g.edges(sort=False):
                 if float(w) < 0:
                     use_Bellman_Ford = True
                     break
@@ -2965,7 +2989,6 @@ cpdef wiener_index(g, algorithm=None, weight_function=None, check_weight=True):
 
     # These variables are automatically deleted when the function terminates.
     cdef v_index vi, u, v
-    cdef dict int_to_v = dict(enumerate(g))
     cdef dict v_to_int = {vv: vi for vi, vv in enumerate(g)}
     cdef BoostVecWeightedDiGraphU g_boost_dir
     cdef BoostVecWeightedGraph g_boost_und

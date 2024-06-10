@@ -1,3 +1,4 @@
+# sage.doctest: optional - numpy
 """
 C Int Lists
 
@@ -12,18 +13,18 @@ slices is also much faster.
 
 AUTHOR:
 
-   - William Stein, 2010-03
+- William Stein, 2010-03
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 # Global parameter that sets the maximum number of entries of an IntList to print.
 max_print = 10
@@ -34,7 +35,7 @@ from cysignals.memory cimport sig_malloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.rings.integer import Integer
-from sage.finance.time_series cimport TimeSeries
+from sage.stats.time_series cimport TimeSeries
 from cpython.bytes cimport PyBytes_FromStringAndSize, PyBytes_AsString
 from sage.structure.richcmp cimport rich_to_bool
 
@@ -95,7 +96,7 @@ cdef class IntList:
             [1, -2]
         """
         cdef TimeSeries T
-        if isinstance(values, (int,long,Integer)):
+        if isinstance(values, (int, Integer)):
             self._length = values
             values = None
         elif isinstance(values, TimeSeries):
@@ -150,7 +151,7 @@ cdef class IntList:
             return rich_to_bool(op, -1 if c < 0 else 1)
         return rich_to_bool(op, 0)
 
-    def  __dealloc__(self):
+    def __dealloc__(self):
         """
         Deallocate memory used by the IntList, if it was allocated.
         """
@@ -174,8 +175,8 @@ cdef class IntList:
         if len(self) > max_print:
             v0 = self[:max_print//2]
             v1 = self[-max_print//2:]
-            return '[' + ', '.join([str(x) for x in v0]) + ' ... ' + \
-                         ', '.join([str(x) for x in v1]) + ']'
+            return '[' + ', '.join(str(x) for x in v0) + ' ... ' + \
+                         ', '.join(str(x) for x in v1) + ']'
         else:
             return str(self.list())
 
@@ -187,7 +188,7 @@ cdef class IntList:
 
         INPUT:
 
-            - i -- integer or slice
+        - i -- integer or slice
 
         EXAMPLES::
 
@@ -306,7 +307,7 @@ cdef class IntList:
 
     def list(self):
         """
-        Return Python list version of self with Python ints as entries.
+        Return Python list version of ``self`` with Python ints as entries.
 
         EXAMPLES::
 
@@ -322,9 +323,9 @@ cdef class IntList:
         cdef Py_ssize_t i
         return [self._values[i] for i in range(self._length)]
 
-    cpdef int sum(self):
+    cpdef int sum(self) noexcept:
         """
-        Return the sum of the entries of self.
+        Return the sum of the entries of ``self``.
 
         EXAMPLES::
 
@@ -346,9 +347,9 @@ cdef class IntList:
         sig_off()
         return s
 
-    cpdef int prod(self):
+    cpdef int prod(self) noexcept:
         """
-        Return the product of the entries of self.
+        Return the product of the entries of ``self``.
 
         EXAMPLES::
 
@@ -416,18 +417,18 @@ cdef class IntList:
     def min(self, bint index=False):
         """
         Return the smallest value in this integer list.  If this
-        series has length 0 we raise a ValueError.
+        series has length 0 we raise a :class:`ValueError`.
 
         INPUT:
 
-            - index -- bool (default: False); if True, also return
-              index of minimal entry.
+        - ``index`` -- bool (default: ``False``); if ``True``, also return
+          index of minimal entry.
 
         OUTPUT:
 
-            - float -- smallest value
-            - integer -- index of smallest value; only returned if
-              index=True
+        - float -- smallest value
+        - integer -- index of smallest value; only returned if
+          ``index=True``
 
         EXAMPLES::
 
@@ -454,17 +455,17 @@ cdef class IntList:
     def max(self, bint index=False):
         """
         Return the largest value in this time series. If this series
-        has length 0 we raise a ValueError
+        has length 0 we raise a :class:`ValueError`
 
         INPUT:
 
-            - index -- bool (default: False); if True, also return
-              index of maximum entry.
+        - ``index`` -- bool (default: ``False``); if ``True``, also return
+          index of maximum entry.
 
         OUTPUT:
 
-            - int -- largest value
-            - int -- index of largest value; only returned if index=True
+        - int -- largest value
+        - int -- index of largest value; only returned if ``index=True``
 
         EXAMPLES::
 
@@ -489,7 +490,7 @@ cdef class IntList:
 
     def time_series(self):
         """
-        Return TimeSeries version of self, which involves changing
+        Return :class:`TimeSeries` version of ``self``, which involves changing
         each entry to a double.
 
         EXAMPLES::
@@ -497,7 +498,7 @@ cdef class IntList:
             sage: T = stats.IntList([-2,3,5]).time_series(); T
             [-2.0000, 3.0000, 5.0000]
             sage: type(T)
-            <... 'sage.finance.time_series.TimeSeries'>
+            <... 'sage.stats.time_series.TimeSeries'>
         """
         cdef TimeSeries T = TimeSeries.__new__(TimeSeries)
         # We just reach into the data structure underlying T, since we
@@ -511,28 +512,33 @@ cdef class IntList:
 
     def plot(self, *args, **kwds):
         """
-        Return a plot of this IntList.  This just constructs the
-        corresponding double-precision floating point TimeSeries
+        Return a plot of this :class:`IntList`.
+
+        This just constructs the
+        corresponding double-precision floating point :class:`TimeSeries`
         object, passing on all arguments.
 
         EXAMPLES::
 
-            sage: stats.IntList([3,7,19,-2]).plot()
+            sage: stats.IntList([3,7,19,-2]).plot()                                     # needs sage.plot
             Graphics object consisting of 1 graphics primitive
-            sage: stats.IntList([3,7,19,-2]).plot(color='red',pointsize=50,points=True)
+            sage: stats.IntList([3,7,19,-2]).plot(color='red',                          # needs sage.plot
+            ....:                                 pointsize=50, points=True)
             Graphics object consisting of 1 graphics primitive
         """
         return self.time_series().plot(*args, **kwds)
 
     def plot_histogram(self, *args, **kwds):
         """
-        Return a histogram plot of this IntList.  This just constructs
-        the corresponding double-precision floating point TimeSeries object,
+        Return a histogram plot of this :class:`IntList`.
+
+        This just constructs
+        the corresponding double-precision floating point :class:`TimeSeries` object,
         and plots it, passing on all arguments.
 
         EXAMPLES::
 
-            sage: stats.IntList([1..15]).plot_histogram()
+            sage: stats.IntList([1..15]).plot_histogram()                               # needs sage.plot
             Graphics object consisting of 50 graphics primitives
         """
         return self.time_series().plot_histogram(*args, **kwds)

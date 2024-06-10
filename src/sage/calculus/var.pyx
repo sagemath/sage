@@ -36,7 +36,7 @@ def var(*args, **kwds):
     If a single symbolic variable was created, the variable
     itself. Otherwise, a tuple of symbolic variables. The variable
     names are checked to be valid Python identifiers and a
-    ``ValueError`` is raised otherwise.
+    :class:`ValueError` is raised otherwise.
 
     EXAMPLES:
 
@@ -112,7 +112,7 @@ def var(*args, **kwds):
     to the symbolic expression ring::
 
         sage: type(theta)
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
         sage: parent(theta)
         Symbolic Ring
     """
@@ -136,32 +136,32 @@ def function(s, **kwds):
 
     INPUT:
 
-    - ``nargs=0`` - number of arguments the function accepts, defaults to
+    - ``nargs=0`` -- number of arguments the function accepts, defaults to
       variable number of arguments, or 0
-    - ``latex_name`` - name used when printing in latex mode
-    - ``conversions`` - a dictionary specifying names of this function in
+    - ``latex_name`` -- name used when printing in latex mode
+    - ``conversions`` -- a dictionary specifying names of this function in
       other systems, this is used by the interfaces internally during conversion
-    - ``eval_func`` - method used for automatic evaluation
-    - ``evalf_func`` - method used for numeric evaluation
-    - ``evalf_params_first`` - bool to indicate if parameters should be
+    - ``eval_func`` -- method used for automatic evaluation
+    - ``evalf_func`` -- method used for numeric evaluation
+    - ``evalf_params_first`` -- bool to indicate if parameters should be
       evaluated numerically before calling the custom evalf function
-    - ``conjugate_func`` - method used for complex conjugation
-    - ``real_part_func`` - method used when taking real parts
-    - ``imag_part_func`` - method used when taking imaginary parts
-    - ``derivative_func`` - method to be used for (partial) derivation
+    - ``conjugate_func`` -- method used for complex conjugation
+    - ``real_part_func`` -- method used when taking real parts
+    - ``imag_part_func`` -- method used when taking imaginary parts
+    - ``derivative_func`` -- method to be used for (partial) derivation
       This method should take a keyword argument deriv_param specifying
       the index of the argument to differentiate w.r.t
-    - ``tderivative_func`` - method to be used for derivatives
-    - ``power_func`` - method used when taking powers
+    - ``tderivative_func`` -- method to be used for derivatives
+    - ``power_func`` -- method used when taking powers
       This method should take a keyword argument power_param specifying
       the exponent
-    - ``series_func`` - method used for series expansion
+    - ``series_func`` -- method used for series expansion
       This method should expect keyword arguments
-      - ``order`` - order for the expansion to be computed
-      - ``var`` - variable to expand w.r.t.
-      - ``at`` - expand at this value
-    - ``print_func`` - method for custom printing
-    - ``print_latex_func`` - method for custom printing in latex mode
+      - ``order`` -- order for the expansion to be computed
+      - ``var`` -- variable to expand w.r.t.
+      - ``at`` -- expand at this value
+    - ``print_func`` -- method for custom printing
+    - ``print_latex_func`` -- method for custom printing in latex mode
 
     Note that custom methods must be instance methods, i.e., expect the instance
     of the symbolic function as the first argument.
@@ -342,12 +342,12 @@ def function(s, **kwds):
 
     TESTS:
 
-    Make sure that :trac:`15860` is fixed and whitespaces are removed::
-    
+    Make sure that :issue:`15860` is fixed and whitespaces are removed::
+
         sage: function('A, B')
         (A, B)
         sage: B
-        B   
+        B
     """
     G = globals()  # this is the reason the code must be in Cython.
     v = new_function(s, **kwds)
@@ -384,10 +384,12 @@ def clear_vars():
         sage: k
         15
     """
+    from sage.structure.element import Expression
+
     G = globals()
-    from sage.symbolic.ring import is_SymbolicVariable
     for i in list(range(65, 65 + 26)) + list(range(97, 97 + 26)):
-        if chr(i) in G and is_SymbolicVariable(G[chr(i)]):
+        chr_i = chr(i)
+        if chr_i in G and isinstance(G[chr_i], Expression) and G[chr_i].is_symbol():
             # We check to see if there is a corresponding pyobject
             # associated with the expression.  This will work for
             # constants which we want to keep, but will fail for

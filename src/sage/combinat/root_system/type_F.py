@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Root system data for type F
 """
@@ -10,19 +9,20 @@ Root system data for type F
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
 from . import ambient_space
-from sage.rings.all import ZZ
-from sage.combinat.family import Family
+from sage.rings.integer_ring import ZZ
+from sage.sets.family import Family
 
 # TODO: double check that this can't be defined over ZZ
+
 
 class AmbientSpace(ambient_space.AmbientSpace):
     """
     The lattice behind `F_4`.  The computations are based on Bourbaki,
     Groupes et Algèbres de Lie, Ch. 4,5,6 (planche VIII).
     """
+
     def __init__(self, root_system, base_ring):
         r"""
         Initialize the ambient lattice for the root system of type `F_4`.
@@ -36,7 +36,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
         TESTS::
 
-            sage: TestSuite(e).run()
+            sage: TestSuite(e).run()                                                    # needs sage.graphs
         """
         ambient_space.AmbientSpace.__init__(self, root_system, base_ring)
         v = ZZ(1)/ZZ(2)
@@ -44,7 +44,6 @@ class AmbientSpace(ambient_space.AmbientSpace):
                      self.root(2,3,p2=1),
                      self.root(3),
                      v*(self.root(0)-self.root(1)-self.root(2)-self.root(3))]
-
 
     def dimension(self):
         """
@@ -57,7 +56,6 @@ class AmbientSpace(ambient_space.AmbientSpace):
             4
         """
         return self.root_system.cartan_type().rank()
-
 
     def root(self, i, j=None, k=None, l=None, p1=0, p2=0, p3=0, p4=0):
         """
@@ -199,7 +197,10 @@ class AmbientSpace(ambient_space.AmbientSpace):
                         3: v*(3*self.monomial(0)+self.monomial(1)+self.monomial(2)+self.monomial(3)),
                         4: self.monomial(0)})
 
+
 from .cartan_type import CartanType_standard_finite, CartanType_simple, CartanType_crystallographic
+
+
 class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_crystallographic):
     def __init__(self):
         """
@@ -273,12 +274,11 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
 
         EXAMPLES::
 
-            sage: f = CartanType(['F',4]).dynkin_diagram()
-            sage: f
+            sage: f = CartanType(['F',4]).dynkin_diagram(); f                           # needs sage.graphs
             O---O=>=O---O
             1   2   3   4
             F4
-            sage: sorted(f.edges())
+            sage: f.edges(sort=True)                                                    # needs sage.graphs
             [(1, 2, 1), (2, 1, 1), (2, 3, 2), (3, 2, 1), (3, 4, 1), (4, 3, 1)]
 
         """
@@ -289,7 +289,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
         g.set_edge_label(2,3,2)
         return g
 
-    def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2, dual=False):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2, dual=False):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -307,12 +307,14 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             \draw[fill=white] (6 cm, 0 cm) circle (.25cm) node[below=4pt]{$4$};
             <BLANKLINE>
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._latex_draw_node
-        ret = "\\draw (0 cm,0) -- (%s cm,0);\n"%node_dist
-        ret += "\\draw (%s cm, 0.1 cm) -- +(%s cm,0);\n"%(node_dist, node_dist)
-        ret += "\\draw (%s cm, -0.1 cm) -- +(%s cm,0);\n"%(node_dist, node_dist)
-        ret += "\\draw (%s cm,0) -- +(%s cm,0);\n"%(node_dist*2.0, node_dist)
+        ret = "\\draw (0 cm,0) -- (%s cm,0);\n" % node_dist
+        ret += "\\draw (%s cm, 0.1 cm) -- +(%s cm,0);\n" % (node_dist, node_dist)
+        ret += "\\draw (%s cm, -0.1 cm) -- +(%s cm,0);\n" % (node_dist, node_dist)
+        ret += "\\draw (%s cm,0) -- +(%s cm,0);\n" % (node_dist*2.0, node_dist)
         if dual:
             ret += self._latex_draw_arrow_tip(1.5*node_dist-0.2, 0, 180)
         else:
@@ -321,7 +323,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             ret += node(i*node_dist, 0, label(i+1))
         return ret
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Return an ascii art representation of the extended Dynkin diagram.
 
@@ -334,6 +336,8 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             O---O=>=O---O
             -1  0   1   2
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._ascii_art_node
         ret = "{}---{}=>={}---{}\n".format(node(label(1)), node(label(2)),
@@ -353,11 +357,11 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             sage: F4.dual()
             ['F', 4] relabelled by {1: 4, 2: 3, 3: 2, 4: 1}
 
-            sage: F4.dynkin_diagram()
+            sage: F4.dynkin_diagram()                                                   # needs sage.graphs
             O---O=>=O---O
             1   2   3   4
             F4
-            sage: F4.dual().dynkin_diagram()
+            sage: F4.dual().dynkin_diagram()                                            # needs sage.graphs
             O---O=>=O---O
             4   3   2   1
             F4 relabelled by {1: 4, 2: 3, 3: 2, 4: 1}
@@ -375,6 +379,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
         """
         from sage.combinat.root_system.type_folded import CartanTypeFolded
         return CartanTypeFolded(self, ['E', 6], [[2], [4], [3, 5], [1, 6]])
+
 
 # For unpickling backward compatibility (Sage <= 4.1)
 from sage.misc.persist import register_unpickle_override

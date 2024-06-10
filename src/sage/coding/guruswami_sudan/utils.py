@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Guruswami-Sudan utility methods
 
@@ -19,7 +20,9 @@ AUTHORS:
 #*****************************************************************************
 
 
-from sage.functions.other import floor, sqrt
+from sage.arith.misc import integer_floor as floor
+from sage.misc.lazy_import import lazy_import
+from sage.misc.functional import sqrt
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 
@@ -59,7 +62,7 @@ def johnson_radius(n, d):
 
     EXAMPLES::
 
-        sage: sage.coding.guruswami_sudan.utils.johnson_radius(250, 181)
+        sage: sage.coding.guruswami_sudan.utils.johnson_radius(250, 181)                # needs sage.symbolic
         -5*sqrt(690) + 250
     """
     return n - sqrt(n*(n-d))
@@ -120,7 +123,7 @@ def solve_degree2_to_integer_range(a, b, c):
     EXAMPLES::
 
         sage: from sage.coding.guruswami_sudan.utils import solve_degree2_to_integer_range
-        sage: solve_degree2_to_integer_range(1, -5, 1)
+        sage: solve_degree2_to_integer_range(1, -5, 1)                                  # needs sage.symbolic
         (1, 4)
 
     If there is no real solution::

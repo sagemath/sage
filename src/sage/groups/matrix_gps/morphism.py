@@ -28,7 +28,7 @@ def to_libgap(x):
         sage: to_libgap(GL(2,3).gen(0))
         doctest:...: DeprecationWarning: this function is deprecated.
          Use x.gap() or libgap(x) instead.
-        See https://trac.sagemath.org/25444 for details.
+        See https://github.com/sagemath/sage/issues/25444 for details.
         [ [ Z(3), 0*Z(3) ], [ 0*Z(3), Z(3)^0 ] ]
         sage: to_libgap(matrix(QQ, [[1,2],[3,4]]))
         [ [ 1, 2 ], [ 3, 4 ] ]
@@ -42,6 +42,7 @@ def to_libgap(x):
         from sage.libs.gap.libgap import libgap
         return libgap(x)
 
+
 lazy_import('sage.groups.libgap_morphism', 'GroupMorphism_libgap',
             'MatrixGroupMorphism_im_gens', deprecation=25444)
 
@@ -50,4 +51,3 @@ lazy_import('sage.categories.morphism', 'Morphism',
 
 lazy_import('sage.categories.morphism', 'Morphism',
             'MatrixGroupMorphism', deprecation=25444)
-

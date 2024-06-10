@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Ideals in Univariate Polynomial Rings
 
@@ -26,7 +25,7 @@ class Ideal_1poly_field(Ideal_pid):
     """
     def residue_class_degree(self):
         """
-        Returns the degree of the generator of this ideal.
+        Return the degree of the generator of this ideal.
 
         This function is included for compatibility with ideals in rings of integers of number fields.
 
@@ -41,19 +40,20 @@ class Ideal_1poly_field(Ideal_pid):
 
     def residue_field(self, names=None, check=True):
         r"""
-        If this ideal is `P \subset F_p[t]`, returns the quotient `F_p[t]/P`.
+        If this ideal is `P \subset F_p[t]`, return the quotient `F_p[t]/P`.
 
         EXAMPLES::
 
             sage: R.<t> = GF(17)[]; P = R.ideal(t^3 + 2*t + 9)
-            sage: k.<a> = P.residue_field(); k
-            Residue field in a of Principal ideal (t^3 + 2*t + 9) of Univariate Polynomial Ring in t over Finite Field of size 17
+            sage: k.<a> = P.residue_field(); k                                          # needs sage.rings.finite_rings
+            Residue field in a of Principal ideal (t^3 + 2*t + 9) of
+             Univariate Polynomial Ring in t over Finite Field of size 17
         """
         if check:
             if not self.ring().base_ring().is_finite():
                 raise TypeError("residue fields only supported for polynomial rings over finite fields.")
             if not self.is_prime():
-                raise ValueError("%s is not a prime ideal"%self)
+                raise ValueError("%s is not a prime ideal" % self)
 
         from sage.rings.finite_rings.residue_field import ResidueField
         return ResidueField(self, names, check=False)
@@ -84,3 +84,16 @@ class Ideal_1poly_field(Ideal_pid):
         gb = self.gens_reduced()
         from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence_generic
         return PolynomialSequence_generic([gb], self.ring(), immutable=True)
+
+    def change_ring(self, R):
+        """
+        Coerce an ideal into a new ring.
+
+        EXAMPLES::
+
+            sage: R.<q> = QQ[]
+            sage: I = R.ideal([q^2+q-1])
+            sage: I.change_ring(RR['q'])
+            Principal ideal (q^2 + q - 1.00000000000000) of Univariate Polynomial Ring in q over Real Field with 53 bits of precision
+        """
+        return R.ideal(self.gens())

@@ -1,4 +1,5 @@
-"""
+# sage.doctest: needs numpy
+r"""
 Continuous Emission Hidden Markov Models
 
 AUTHOR:
@@ -22,14 +23,14 @@ cdef double sqrt2pi = sqrt(2*M_PI)
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.misc.flatten  import flatten
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 
-from sage.finance.time_series cimport TimeSeries
+from sage.stats.time_series cimport TimeSeries
 from sage.stats.intlist cimport IntList
 
-from .hmm cimport HiddenMarkovModel
-from .util cimport HMM_Util
-from .distributions cimport GaussianMixtureDistribution
+from sage.stats.hmm.hmm cimport HiddenMarkovModel
+from sage.stats.hmm.util cimport HMM_Util
+from sage.stats.hmm.distributions cimport GaussianMixtureDistribution
 
 cdef HMM_Util util = HMM_Util()
 
@@ -37,19 +38,19 @@ from sage.misc.randstate cimport current_randstate, randstate
 
 
 # TODO: DELETE THIS FUNCTION WHEN MOVE Gaussian stuff to distributions.pyx!!! (next version)
-cdef double random_normal(double mean, double std, randstate rstate):
-    """
+cdef double random_normal(double mean, double std, randstate rstate) noexcept:
+    r"""
     Return a number chosen randomly with given mean and standard deviation.
 
     INPUT:
 
-        - ``mean`` -- double
-        - ``std`` -- double, standard deviation
-        - ``rstate`` -- a randstate object
+    - ``mean`` -- double
+    - ``std`` -- double, standard deviation
+    - ``rstate`` -- a randstate object
 
     OUTPUT:
 
-        - a double
+    a double
     """
     # Ported from http://users.tkk.fi/~nbeijar/soft/terrain/source_o2/boxmuller.c
     # This the box muller algorithm.
@@ -67,23 +68,23 @@ cdef double random_normal(double mean, double std, randstate rstate):
     return mean + y1*std
 
 cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
-    """
-    GaussianHiddenMarkovModel(A, B, pi)
-
+    r"""
     Gaussian emissions Hidden Markov Model.
 
     INPUT:
 
-        - ``A`` -- matrix; the N x N transition matrix
-        - ``B`` -- list of pairs (mu,sigma) that define the distributions
-        - ``pi`` -- initial state probabilities
-        - ``normalize`` --bool (default: True)
+    - ``A`` -- matrix; the `N \times N` transition matrix
+    - ``B`` -- list of pairs ``(mu, sigma)`` that define the distributions
+    - ``pi`` -- initial state probabilities
+    - ``normalize`` -- bool (default: ``True``)
 
     EXAMPLES:
 
     We illustrate the primary functions with an example 2-state Gaussian HMM::
 
-        sage: m = hmm.GaussianHiddenMarkovModel([[.1,.9],[.5,.5]], [(1,1), (-1,1)], [.5,.5]); m
+        sage: m = hmm.GaussianHiddenMarkovModel([[.1,.9],[.5,.5]],
+        ....:                                   [(1,1), (-1,1)],
+        ....:                                   [.5,.5]); m
         Gaussian Hidden Markov Model with 2 States
         Transition matrix:
         [0.1 0.9]
@@ -104,69 +105,83 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
         [0.5000, 0.5000]
 
     We obtain a sample sequence with 10 entries in it, and compute the
-    logarithm of the probability of obtaining his sequence, given the
+    logarithm of the probability of obtaining this sequence, given the
     model::
 
-        sage: obs = m.sample(10); obs
-        [-1.6835, 0.0635, -2.1688, 0.3043, -0.3188, -0.7835, 1.0398, -1.3558, 1.0882, 0.4050]
-        sage: m.log_likelihood(obs)
-        -15.2262338077988...
+        sage: obs = m.sample(5); obs  # random
+        [-1.6835, 0.0635, -2.1688, 0.3043, -0.3188]
+        sage: log_likelihood = m.log_likelihood(obs)
+        sage: counter = 0
+        sage: n = 0
+        sage: def add_samples(i):
+        ....:     global counter, n
+        ....:     for _ in range(i):
+        ....:         n += 1
+        ....:         obs2 = m.sample(5)
+        ....:         if all(abs(obs2[i] - obs[i]) < 0.25 for i in range(5)):
+        ....:             counter += 1
+
+        sage: add_samples(10000)
+        sage: while abs(log_likelihood - log(counter*1.0/n/0.5^5)) < 0.1:
+        ....:     add_samples(10000)
 
     We compute the Viterbi path, and probability that the given path
     of states produced obs::
 
-        sage: m.viterbi(obs)
-        ([1, 0, 1, 0, 1, 1, 0, 1, 0, 1], -16.67738270170788)
+        sage: m.viterbi(obs)  # random
+        ([1, 0, 1, 0, 1], -8.714092684611794)
 
     We use the Baum-Welch iterative algorithm to find another model
     for which our observation sequence is more likely::
 
-        sage: m.baum_welch(obs)
-        (-10.6103334957397..., 14)
-        sage: m.log_likelihood(obs)
-        -10.6103334957397...
+        sage: try:
+        ....:     p, s = m.baum_welch(obs)
+        ....:     assert p > log_likelihood
+        ....:     assert (1 <= s <= 500)
+        ....: except RuntimeError:
+        ....:     pass
 
     Notice that running Baum-Welch changed our model::
 
-        sage: m  # rel tol 3e-14
+        sage: m  # random
         Gaussian Hidden Markov Model with 2 States
         Transition matrix:
         [   0.4154981366185841     0.584501863381416]
         [   0.9999993174253741 6.825746258991804e-07]
         Emission parameters:
-        [(0.4178882427119503, 0.5173109664360919), (-1.5025208631331122, 0.5085512836055119)]
+        [(0.4178882427119503, 0.5173109664360919),
+         (-1.5025208631331122, 0.5085512836055119)]
         Initial probabilities: [0.0000, 1.0000]
     """
     cdef TimeSeries B, prob
     cdef int n_out
 
     def __init__(self, A, B, pi, bint normalize=True):
-        """
+        r"""
         Create a Gaussian emissions HMM with transition probability
-        matrix A, normal emissions given by B, and initial state
-        probability distribution pi.
+        matrix `A`, normal emissions given by `B`, and initial state
+        probability distribution ``pi``.
 
         INPUT:
 
-           - A -- a list of lists or a square N x N matrix, whose
-             (i,j) entry gives the probability of transitioning from
-             state i to state j.
+        - ``A`` -- a list of lists or a square `N \times N` matrix, whose
+          `(i,j)` entry gives the probability of transitioning from
+          state `i` to state `j`.
 
-           - B -- a list of N pairs (mu,std), where if B[i]=(mu,std),
-             then the probability distribution associated with state i
-             normal with mean mu and standard deviation std.
+        - ``B`` -- a list of `N` pairs ``(mu, std)``, where if ``B[i]=(mu,std)``,
+          then the probability distribution associated with state `i`
+          normal with mean ``mu`` and standard deviation ``std``.
 
-           - pi -- the probabilities of starting in each initial
-             state, i.e,. pi[i] is the probability of starting in
-             state i.
+        - ``pi`` -- the probabilities of starting in each initial
+          state, i.e., ``pi[i]`` is the probability of starting in
+          state `i`.
 
-           - normalize --bool (default: True); if given, input is
-             normalized to define valid probability distributions,
-             e.g., the entries of A are made nonnegative and the rows
-             sum to 1.
+        - ``normalize`` -- bool (default: ``True``); if given, input is
+          normalized to define valid probability distributions,
+          e.g., the entries of `A` are made nonnegative and the rows
+          sum to 1.
 
         EXAMPLES::
-
 
             sage: hmm.GaussianHiddenMarkovModel([[.1,.9],[.5,.5]], [(1,1), (-1,1)], [.5,.5])
             Gaussian Hidden Markov Model with 2 States
@@ -177,7 +192,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
             [(1.0, 1.0), (-1.0, 1.0)]
             Initial probabilities: [0.5000, 0.5000]
 
-        We input a model in which both A and pi have to be
+        We input a model in which both `A` and ``pi`` have to be
         renormalized to define valid probability distributions::
 
             sage: hmm.GaussianHiddenMarkovModel([[-1,.7],[.3,.4]], [(1,1), (-1,1)], [-1,.3])  # rel tol 3e-14
@@ -191,7 +206,8 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
         Bad things can happen::
 
-            sage: hmm.GaussianHiddenMarkovModel([[-1,.7],[.3,.4]], [(1,1), (-1,1)], [-1,.3], normalize=False)
+            sage: hmm.GaussianHiddenMarkovModel([[-1,.7],[.3,.4]], [(1,1), (-1,1)], [-1,.3],
+            ....:                               normalize=False)
             Gaussian Hidden Markov Model with 2 States
             Transition matrix:
             [-1.0  0.7]
@@ -204,7 +220,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
         # B should be a matrix of N rows, with column 0 the mean and 1
         # the standard deviation.
-        if is_Matrix(B):
+        if isinstance(B, Matrix):
             B = B.list()
         else:
             B = flatten(B)
@@ -212,8 +228,8 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
         self.probability_init()
 
     def __richcmp__(self, other, op):
-        """
-        Compare self and other, which must both be GaussianHiddenMarkovModel's.
+        r"""
+        Compare ``self`` and ``other``, which must both be GaussianHiddenMarkovModel's.
 
         EXAMPLES::
 
@@ -234,16 +250,14 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
                                     other.__reduce__()[1], op)
 
     def __getitem__(self, Py_ssize_t i):
-        """
-        Return the mean and standard distribution for the i-th state.
+        r"""
+        Return the mean and standard distribution for the `i`-th state.
 
         INPUT:
 
-            - i -- integer
+        - ``i`` -- integer
 
-        OUTPUT:
-
-            - 2 floats
+        OUTPUT: 2 floats
 
         EXAMPLES::
 
@@ -272,7 +286,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
         return self.B[2*i], self.B[2*i+1]
 
     def __reduce__(self):
-        """
+        r"""
         Used in pickling.
 
         EXAMPLES::
@@ -285,23 +299,26 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
                (self.A, self.B, self.pi, self.prob, self.n_out)
 
     def emission_parameters(self):
-        """
+        r"""
         Return the parameters that define the normal distributions
         associated to all of the states.
 
         OUTPUT:
 
-            - a list B of pairs B[i] = (mu, std), such that the
-              distribution associated to state i is normal with mean
-              mu and standard deviation std.
+        a list ``B`` of pairs ``B[i] = (mu, std)``, such that the
+        distribution associated to state `i` is normal with mean
+        ``mu`` and standard deviation ``std``.
 
         EXAMPLES::
 
-            sage: hmm.GaussianHiddenMarkovModel([[.1,.9],[.5,.5]], [(1,.5), (-1,3)], [.1,.9]).emission_parameters()
+            sage: M = hmm.GaussianHiddenMarkovModel([[.1,.9],[.5,.5]],
+            ....:                                   [(1,.5), (-1,3)],
+            ....:                                   [.1,.9])
+            sage: M.emission_parameters()
             [(1.0, 0.5), (-1.0, 3.0)]
         """
         cdef Py_ssize_t i
-        from sage.rings.all import RDF
+        from sage.rings.real_double import RDF
         return [(RDF(self.B[2*i]),RDF(self.B[2*i+1])) for i in range(self.N)]
 
     def __repr__(self):
@@ -321,26 +338,28 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
 
     def generate_sequence(self, Py_ssize_t length, starting_state=None):
-        """
+        r"""
         Return a sample of the given length from this HMM.
 
         INPUT:
 
-            - length -- positive integer
-            - starting_state -- int (or None); if specified then generate
-              a sequence using this model starting with the given state
-              instead of the initial probabilities to determine the
-              starting state.
+        - ``length`` -- positive integer
+        - ``starting_state`` -- int (or ``None``); if specified then generate
+          a sequence using this model starting with the given state
+          instead of the initial probabilities to determine the
+          starting state.
 
         OUTPUT:
 
-            - an IntList or list of emission symbols
-            - TimeSeries of emissions
+        - an :class:`IntList` or list of emission symbols
+        - :class:`TimeSeries` of emissions
 
         EXAMPLES::
 
-            sage: m = hmm.GaussianHiddenMarkovModel([[.1,.9],[.5,.5]], [(1,.5), (-1,3)], [.1,.9])
-            sage: m.generate_sequence(5)
+            sage: m = hmm.GaussianHiddenMarkovModel([[.1,.9],[.5,.5]],
+            ....:                                   [(1,.5), (-1,3)],
+            ....:                                   [.1,.9])
+            sage: m.generate_sequence(5)  # random
             ([-3.0505, 0.5317, -4.5065, 0.6521, 1.0435], [1, 0, 1, 0, 1])
             sage: m.generate_sequence(0)
             ([], [])
@@ -349,7 +368,21 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
             ...
             ValueError: length must be nonnegative
 
-        Example in which the starting state is 0 (see :trac:`11452`)::
+        Verify numerically that the starting state is 0 with probability about 0.1::
+
+            sage: counter = 0
+            sage: n = 0
+            sage: def add_samples(i):
+            ....:     global counter, n
+            ....:     for i in range(i):
+            ....:         n += 1
+            ....:         if m.generate_sequence(1)[1][0] == 0:
+            ....:             counter += 1
+
+            sage: add_samples(10^5)
+            sage: while abs(counter*1.0 / n - 0.1) > 0.01: add_samples(10^5)
+
+        Example in which the starting state is 0 (see :issue:`11452`)::
 
             sage: set_random_seed(23);  m.generate_sequence(2)
             ([0.6501, -2.0151], [0, 1])
@@ -358,13 +391,6 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
             sage: set_random_seed(23);  m.generate_sequence(2, starting_state=1)
             ([-3.1491, -1.0244], [1, 1])
-
-        Verify numerically that the starting state is 0 with probability about 0.1::
-
-            sage: set_random_seed(0)
-            sage: v = [m.generate_sequence(1)[1][0] for i in range(10^5)]
-            sage: 1.0 * v.count(int(0)) / len(v)
-            0.0998200000000000
         """
         if length < 0:
             raise ValueError("length must be nonnegative")
@@ -421,7 +447,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
         return obs, states
 
     cdef probability_init(self):
-        """
+        r"""
         Used internally to compute caching information that makes
         certain computations in the Baum-Welch algorithm faster.  This
         function has no input or output.
@@ -432,8 +458,8 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
             self.prob[2*i] = 1.0/(sqrt2pi*self.B[2*i+1])
             self.prob[2*i+1] = -1.0/(2*self.B[2*i+1]*self.B[2*i+1])
 
-    cdef double random_sample(self, int state, randstate rstate):
-        """
+    cdef double random_sample(self, int state, randstate rstate) noexcept:
+        r"""
         Return a random sample from the normal distribution associated
         to the given state.
 
@@ -443,17 +469,17 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
         INPUT:
 
-            - state -- integer
-            - rstate -- randstate instance
+        - ``state`` -- integer
+        - ``rstate`` -- randstate instance
 
         OUTPUT:
 
-            - double
+        double
         """
         return random_normal(self.B._values[state*2], self.B._values[state*2+1], rstate)
 
-    cdef double probability_of(self, int state, double observation):
-        """
+    cdef double probability_of(self, int state, double observation) noexcept:
+        r"""
         Return a useful continuous analogue of "the probability b_j(o)"
         of seeing the given observation given that we're in the given
         state j (=state).
@@ -469,12 +495,12 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
         INPUT:
 
-            - state -- integer
-            - observation -- double
+        - ``state`` -- integer
+        - ``observation`` -- double
 
         OUTPUT:
 
-            - double
+        double
         """
         # The code below is an optimized version of the following code:
         #     cdef double mean = self.B._values[2*state], \
@@ -497,7 +523,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
         return self.prob._values[2*state] * exp(x*x*self.prob._values[2*state+1])
 
     def log_likelihood(self, obs):
-        """
+        r"""
         Return the logarithm of a continuous analogue of the
         probability that this model produced the given observation
         sequence.
@@ -507,20 +533,22 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
         INPUT:
 
-            - obs -- sequence of observations
+        - ``obs`` -- sequence of observations
 
         OUTPUT:
 
-            - float
+        float
 
         EXAMPLES::
 
-            sage: m = hmm.GaussianHiddenMarkovModel([[.1,.9],[.5,.5]], [(1,.5), (-1,3)], [.1,.9])
+            sage: m = hmm.GaussianHiddenMarkovModel([[.1,.9],[.5,.5]],
+            ....:                                   [(1,.5), (-1,3)],
+            ....:                                   [.1,.9])
             sage: m.log_likelihood([1,1,1])
             -4.297880766072486
-            sage: set_random_seed(0); s = m.sample(20)
-            sage: m.log_likelihood(s)
-            -40.115714129484...
+            sage: s = m.sample(20)
+            sage: -80 < m.log_likelihood(s) < -20
+            True
         """
         if len(obs) == 0:
             return 1.0
@@ -529,17 +557,17 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
         return self._forward_scale(obs)
 
     def _forward_scale(self, TimeSeries obs):
-        """
+        r"""
         Memory-efficient implementation of the forward algorithm (with scaling).
 
         INPUT:
 
-            - obs -- an integer list of observation states.
+        - ``obs`` -- an integer list of observation states.
 
         OUTPUT:
 
-            - float -- the log of the probability that the model
-              produced this sequence
+        float -- the log of the probability that the model
+        produced this sequence
 
         EXAMPLES::
 
@@ -585,36 +613,40 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
         return log_probability
 
     def viterbi(self, obs):
-        """
+        r"""
         Determine "the" hidden sequence of states that is most likely
-        to produce the given sequence seq of observations, along with
+        to produce the given sequence ``obs`` of observations, along with
         the probability that this hidden sequence actually produced
         the observation.
 
         INPUT:
 
-            - seq -- sequence of emitted ints or symbols
+        - ``obs`` -- sequence of emitted ints or symbols
 
         OUTPUT:
 
-            - list -- "the" most probable sequence of hidden states, i.e.,
-              the Viterbi path.
+        - list -- "the" most probable sequence of hidden states, i.e.,
+          the Viterbi path.
 
-            - float -- log of probability that the observed sequence
-              was produced by the Viterbi sequence of states.
+        - float -- log of probability that the observed sequence
+          was produced by the Viterbi sequence of states.
 
         EXAMPLES:
 
         We find the optimal state sequence for a given model::
 
-            sage: m = hmm.GaussianHiddenMarkovModel([[0.5,0.5],[0.5,0.5]], [(0,1),(10,1)], [0.5,0.5])
+            sage: m = hmm.GaussianHiddenMarkovModel([[0.5,0.5],[0.5,0.5]],
+            ....:                                   [(0,1),(10,1)],
+            ....:                                   [0.5,0.5])
             sage: m.viterbi([0,1,10,10,1])
             ([0, 0, 1, 1, 0], -9.0604285688230...)
 
         Another example in which the most likely states change based
         on the last observation::
 
-            sage: m = hmm.GaussianHiddenMarkovModel([[.1,.9],[.5,.5]], [(1,.5), (-1,3)], [.1,.9])
+            sage: m = hmm.GaussianHiddenMarkovModel([[.1,.9],[.5,.5]],
+            ....:                                   [(1,.5), (-1,3)],
+            ....:                                   [.1,.9])
             sage: m.viterbi([-2,-1,.1,0.1])
             ([1, 1, 0, 1], -9.61823698847639...)
             sage: m.viterbi([-2,-1,.1,0.3])
@@ -685,7 +717,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
         return state_sequence, mx
 
     cdef TimeSeries _backward_scale_all(self, TimeSeries obs, TimeSeries scale):
-        """
+        r"""
         This function returns the matrix beta_t(i), and is used
         internally as part of the Baum-Welch algorithm.
 
@@ -695,13 +727,13 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
         INPUT:
 
-            - obs -- TimeSeries
-            - scale -- TimeSeries
+        - ``obs`` -- TimeSeries
+        - ``scale`` -- TimeSeries
 
         OUTPUT:
 
-            - TimeSeries beta such that beta_t(i) = beta[t*N + i]
-            - scale is also changed by this function
+        - TimeSeries beta such that beta_t(i) = beta[t*N + i]
+        - scale is also changed by this function
         """
         cdef Py_ssize_t t, T = obs._length
         cdef int N = self.N, i, j
@@ -725,7 +757,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
         return beta
 
     cdef _forward_scale_all(self, TimeSeries obs):
-        """
+        r"""
         Return scaled values alpha_t(i), the sequence of scalings, and
         the log probability.
 
@@ -735,14 +767,14 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
         INPUT:
 
-            - obs -- TimeSeries
+        - ``obs`` -- TimeSeries
 
         OUTPUT:
 
-            - TimeSeries alpha with alpha_t(i) = alpha[t*N + i]
-            - TimeSeries scale with scale[t] the scaling at step t
-            - float -- log_probability of the observation sequence
-              being produced by the model.
+        - TimeSeries alpha with alpha_t(i) = alpha[t*N + i]
+        - TimeSeries scale with scale[t] the scaling at step t
+        - float -- log_probability of the observation sequence
+          being produced by the model.
         """
         cdef Py_ssize_t i, j, t, T = len(obs)
         cdef int N = self.N
@@ -790,19 +822,19 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
         return alpha, scale, log_probability
 
     cdef TimeSeries _baum_welch_xi(self, TimeSeries alpha, TimeSeries beta, TimeSeries obs):
-        """
+        r"""
         Used internally to compute the scaled quantity xi_t(i,j)
         appearing in the Baum-Welch reestimation algorithm.
 
         INPUT:
 
-            - alpha -- TimeSeries as output by the scaled forward algorithm
-            - beta -- TimeSeries as output by the scaled backward algorithm
-            - obs -- TimeSeries of observations
+        - ``alpha`` -- TimeSeries as output by the scaled forward algorithm
+        - ``beta`` -- TimeSeries as output by the scaled backward algorithm
+        - ``obs`` -- TimeSeries of observations
 
         OUTPUT:
 
-            - TimeSeries xi such that xi[t*N*N + i*N + j] = xi_t(i,j).
+        TimeSeries xi such that xi[t*N*N + i*N + j] = xi_t(i,j).
         """
         cdef int i, j, N = self.N
         cdef double sum
@@ -822,37 +854,39 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
     def baum_welch(self, obs, int max_iter=500, double log_likelihood_cutoff=1e-4,
                    double min_sd=0.01, bint fix_emissions=False, bint v=False):
-        """
-        Given an observation sequence obs, improve this HMM using the
-        Baum-Welch algorithm to increase the probability of observing obs.
+        r"""
+        Given an observation sequence ``obs``, improve this HMM using the
+        Baum-Welch algorithm to increase the probability of observing ``obs``.
 
         INPUT:
 
-            - obs -- a time series of emissions
+        - ``obs`` -- a time series of emissions
 
-            - max_iter -- integer (default: 500) maximum number
-              of Baum-Welch steps to take
+        - ``max_iter`` -- integer (default: 500) maximum number
+          of Baum-Welch steps to take
 
-            - log_likelihood_cutoff -- positive float (default: 1e-4);
-              the minimal improvement in likelihood with respect to
-              the last iteration required to continue. Relative value
-              to log likelihood.
+        - ``log_likelihood_cutoff`` -- positive float (default: 1e-4);
+          the minimal improvement in likelihood with respect to
+          the last iteration required to continue. Relative value
+          to log likelihood.
 
-            - min_sd -- positive float (default: 0.01); when
-              reestimating, the standard deviation of emissions is not
-              allowed to be less than min_sd.
+        - ``min_sd`` -- positive float (default: 0.01); when
+          reestimating, the standard deviation of emissions is not
+          allowed to be less than ``min_sd``.
 
-            - fix_emissions -- bool (default: False); if True, do not
-              change emissions when updating
+        - ``fix_emissions`` -- bool (default: ``False``); if ``True``, do not
+          change emissions when updating
 
         OUTPUT:
 
-            - changes the model in places, and returns the log
-              likelihood and number of iterations.
+        changes the model in place, and returns the log
+        likelihood and number of iterations.
 
         EXAMPLES::
 
-            sage: m = hmm.GaussianHiddenMarkovModel([[.1,.9],[.5,.5]], [(1,.5), (-1,3)], [.1,.9])
+            sage: m = hmm.GaussianHiddenMarkovModel([[.1,.9],[.5,.5]],
+            ....:                                   [(1,.5), (-1,3)],
+            ....:                                   [.1,.9])
             sage: m.log_likelihood([-2,-1,.1,0.1])
             -8.858282215986275
             sage: m.baum_welch([-2,-1,.1,0.1])
@@ -869,9 +903,11 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
             Initial probabilities: [0.0000, 1.0000]
 
         We illustrate bounding the standard deviation below.  Note that above we had
-        different emission parameters when the min_sd was the default of 0.01::
+        different emission parameters when the ``min_sd`` was the default of 0.01::
 
-            sage: m = hmm.GaussianHiddenMarkovModel([[.1,.9],[.5,.5]], [(1,.5), (-1,3)], [.1,.9])
+            sage: m = hmm.GaussianHiddenMarkovModel([[.1,.9],[.5,.5]],
+            ....:                                   [(1,.5), (-1,3)],
+            ....:                                   [.1,.9])
             sage: m.baum_welch([-2,-1,.1,0.1], min_sd=1)
             (-4.07939572755..., 32)
             sage: m.emission_parameters()
@@ -879,24 +915,36 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
         We watch the log likelihoods of the model converge, step by step::
 
-            sage: m = hmm.GaussianHiddenMarkovModel([[.1,.9],[.5,.5]], [(1,.5), (-1,3)], [.1,.9])
+            sage: m = hmm.GaussianHiddenMarkovModel([[.1,.9],[.5,.5]],
+            ....:                                   [(1,.5), (-1,3)],
+            ....:                                   [.1,.9])
             sage: v = m.sample(10)
-            sage: stats.TimeSeries([m.baum_welch(v,max_iter=1)[0] for _ in range(len(v))])
-            [-20.1167, -17.7611, -16.9814, -16.9364, -16.9314, -16.9309, -16.9309, -16.9309, -16.9309, -16.9309]
+            sage: l = stats.TimeSeries([m.baum_welch(v, max_iter=1)[0]
+            ....:                       for _ in range(len(v))])
+            sage: all(l[i] <= l[i+1] + 0.0001 for i in range(9))
+            True
+            sage: l  # random
+            [-20.1167, -17.7611, -16.9814, -16.9364, -16.9314,
+             -16.9309, -16.9309, -16.9309, -16.9309, -16.9309]
 
         We illustrate fixing emissions::
 
-            sage: m = hmm.GaussianHiddenMarkovModel([[.1,.9],[.9,.1]], [(1,2),(-1,.5)], [.3,.7])
+            sage: m = hmm.GaussianHiddenMarkovModel([[.1,.9],[.9,.1]],
+            ....:                                   [(1,2),(-1,.5)],
+            ....:                                   [.3,.7])
             sage: set_random_seed(0); v = m.sample(100)
             sage: m.baum_welch(v,fix_emissions=True)
             (-164.72944548204..., 23)
             sage: m.emission_parameters()
             [(1.0, 2.0), (-1.0, 0.5)]
-            sage: m = hmm.GaussianHiddenMarkovModel([[.1,.9],[.9,.1]], [(1,2),(-1,.5)], [.3,.7])
+            sage: m = hmm.GaussianHiddenMarkovModel([[.1,.9],[.9,.1]],
+            ....:                                   [(1,2),(-1,.5)],
+            ....:                                   [.3,.7])
             sage: m.baum_welch(v)
             (-162.854370397998..., 49)
             sage: m.emission_parameters()  # rel tol 3e-14
-            [(1.2722419172602375, 2.371368751761901), (-0.9486174675179113, 0.5762360385123765)]
+            [(1.2722419172602375, 2.371368751761901),
+             (-0.9486174675179113, 0.5762360385123765)]
         """
         if not isinstance(obs, TimeSeries):
             obs = TimeSeries(obs)
@@ -997,30 +1045,28 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
 
 cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
-    """
-    GaussianMixtureHiddenMarkovModel(A, B, pi)
-
+    r"""
     Gaussian mixture Hidden Markov Model.
 
     INPUT:
 
-        - ``A``  -- matrix; the N x N transition matrix
+    - ``A``  -- matrix; the `N \times N` transition matrix
 
-        - ``B`` -- list of mixture definitions for each state.  Each
-          state may have a varying number of gaussians with selection
-          probabilities that sum to 1 and encoded as (p,(mu,sigma))
+    - ``B`` -- list of mixture definitions for each state.  Each
+      state may have a varying number of gaussians with selection
+      probabilities that sum to 1 and encoded as ``(p, (mu,sigma))``
 
-        - ``pi`` -- initial state probabilities
+    - ``pi`` -- initial state probabilities
 
-        - ``normalize`` --bool (default: True); if given, input is
-          normalized to define valid probability distributions,
-          e.g., the entries of A are made nonnegative and the rows
-          sum to 1, and the probabilities in pi are normalized.
+    - ``normalize`` -- bool (default: ``True``); if given, input is
+      normalized to define valid probability distributions,
+      e.g., the entries of `A` are made nonnegative and the rows
+      sum to 1, and the probabilities in ``pi`` are normalized.
 
     EXAMPLES::
 
-        sage: A  = [[0.5,0.5],[0.5,0.5]]
-        sage: B  = [[(0.9,(0.0,1.0)), (0.1,(1,10000))],[(1,(1,1)), (0,(0,0.1))]]
+        sage: A = [[0.5,0.5],[0.5,0.5]]
+        sage: B = [[(0.9,(0.0,1.0)), (0.1,(1,10000))],[(1,(1,1)), (0,(0,0.1))]]
         sage: hmm.GaussianMixtureHiddenMarkovModel(A, B, [1,0])
         Gaussian Mixture Hidden Markov Model with 2 States
         Transition matrix:
@@ -1065,7 +1111,7 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
     cdef object mixture # mixture
 
     def __init__(self, A, B, pi=None, bint normalize=True):
-        """
+        r"""
         Initialize a Gaussian mixture hidden Markov model.
 
         EXAMPLES::
@@ -1085,8 +1131,9 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
         if self.N*self.N != len(self.A):
             raise ValueError("number of entries of transition matrix A must be the square of the number of entries of pi")
 
-        self.mixture = [b if isinstance(b, GaussianMixtureDistribution) else \
-                            GaussianMixtureDistribution([flatten(x) for x in b]) for b in B]
+        self.mixture = [b if isinstance(b, GaussianMixtureDistribution) else
+                        GaussianMixtureDistribution([flatten(x) for x in b])
+                        for b in B]
         if len(self.mixture) != self.N:
             raise ValueError("number of GaussianMixtures must be the same as number of entries of pi")
 
@@ -1106,7 +1153,7 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
         return s
 
     def __reduce__(self):
-        """
+        r"""
         Used in pickling.
 
         EXAMPLES::
@@ -1120,7 +1167,7 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
 
 
     def __richcmp__(self, other, op):
-        """
+        r"""
         Compare self and other, which must both be GaussianMixtureHiddenMarkovModel's.
 
         EXAMPLES::
@@ -1142,17 +1189,17 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
                                     other.__reduce__()[1], op)
 
     def __getitem__(self, Py_ssize_t i):
-        """
+        r"""
         Return the Gaussian mixture distribution associated to the
         i-th state.
 
         INPUT:
 
-            - i -- integer
+        - ``i`` -- integer
 
         OUTPUT:
 
-            - a Gaussian mixture distribution object
+        a Gaussian mixture distribution object
 
         EXAMPLES::
 
@@ -1185,23 +1232,25 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
         return self.mixture[i]
 
     def emission_parameters(self):
-        """
+        r"""
         Returns a list of all the emission distributions.
 
         OUTPUT:
 
-            - list of Gaussian mixtures
+        list of Gaussian mixtures
 
         EXAMPLES::
 
-            sage: m = hmm.GaussianMixtureHiddenMarkovModel([[.9,.1],[.4,.6]], [[(.4,(0,1)), (.6,(1,0.1))],[(1,(0,1))]], [.7,.3])
+            sage: m = hmm.GaussianMixtureHiddenMarkovModel([[.9,.1],[.4,.6]],
+            ....:                                          [[(.4,(0,1)), (.6,(1,0.1))], [(1,(0,1))]],
+            ....:                                          [.7,.3])
             sage: m.emission_parameters()
             [0.4*N(0.0,1.0) + 0.6*N(1.0,0.1), 1.0*N(0.0,1.0)]
         """
         return list(self.mixture)
 
-    cdef double random_sample(self, int state, randstate rstate):
-        """
+    cdef double random_sample(self, int state, randstate rstate) noexcept:
+        r"""
         Return a random sample from the normal distribution associated
         to the given state.
 
@@ -1211,18 +1260,18 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
 
         INPUT:
 
-            - state -- integer
-            - rstate -- randstate instance
+        - ``state`` -- integer
+        - ``rstate`` -- randstate instance
 
         OUTPUT:
 
-            - double
+        double
         """
         cdef GaussianMixtureDistribution G = self.mixture[state]
         return G._sample(rstate)
 
-    cdef double probability_of(self, int state, double observation):
-        """
+    cdef double probability_of(self, int state, double observation) noexcept:
+        r"""
         Return the probability b_j(o) of see the given observation o
         (=observation) given that we're in the given state j (=state).
 
@@ -1232,19 +1281,19 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
 
         INPUT:
 
-            - state -- integer
-            - observation -- double
+        - ``state`` -- integer
+        - ``observation`` -- double
 
         OUTPUT:
 
-            - double
+        double
         """
         cdef GaussianMixtureDistribution G = self.mixture[state]
         return G.prob(observation)
 
     cdef TimeSeries _baum_welch_mixed_gamma(self, TimeSeries alpha, TimeSeries beta,
                                             TimeSeries obs, int j):
-        """
+        r"""
         Let gamma_t(j,m) be the m-component (in the mixture) of the
         probability of being in state j at time t, given the
         observation sequence.  This function outputs a TimeSeries v
@@ -1253,14 +1302,14 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
 
         INPUT:
 
-            - alpha -- TimeSeries
-            - beta -- TimeSeries
-            - obs -- TimeSeries
-            - j -- int
+        - ``alpha`` -- TimeSeries
+        - ``beta`` -- TimeSeries
+        - ``obs`` -- TimeSeries
+        - ``j`` -- int
 
         OUTPUT:
 
-            - TimeSeries
+        TimeSeries
         """
         cdef int i, k, m, N = self.N
         cdef Py_ssize_t t, T = alpha._length//N
@@ -1297,35 +1346,39 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
 
     def baum_welch(self, obs, int max_iter=1000, double log_likelihood_cutoff=1e-12,
                    double min_sd=0.01, bint fix_emissions=False):
-        """
-        Given an observation sequence obs, improve this HMM using the
-        Baum-Welch algorithm to increase the probability of observing obs.
+        r"""
+        Given an observation sequence ``obs``, improve this HMM using the
+        Baum-Welch algorithm to increase the probability of observing ``obs``.
 
         INPUT:
 
-            - obs -- a time series of emissions
-            - max_iter -- integer (default: 1000) maximum number
-              of Baum-Welch steps to take
-            - log_likelihood_cutoff -- positive float (default: 1e-12);
-              the minimal improvement in likelihood with respect to
-              the last iteration required to continue. Relative value
-              to log likelihood.
-            - min_sd -- positive float (default: 0.01); when
-              reestimating, the standard deviation of emissions is not
-              allowed to be less than min_sd.
-            - fix_emissions -- bool (default: False); if True, do not
-              change emissions when updating
+        - ``obs`` -- a time series of emissions
+        - ``max_iter`` -- integer (default: 1000) maximum number
+          of Baum-Welch steps to take
+        - ``log_likelihood_cutoff`` -- positive float (default: 1e-12);
+          the minimal improvement in likelihood with respect to
+          the last iteration required to continue. Relative value
+          to log likelihood.
+        - ``min_sd`` -- positive float (default: 0.01); when
+          reestimating, the standard deviation of emissions is not
+          allowed to be less than ``min_sd``.
+        - ``fix_emissions`` -- bool (default: ``False``); if ``True``, do not
+          change emissions when updating
 
         OUTPUT:
 
-            - changes the model in places, and returns the log
-              likelihood and number of iterations.
+        changes the model in place, and returns the log
+        likelihood and number of iterations.
 
         EXAMPLES::
 
-            sage: m = hmm.GaussianMixtureHiddenMarkovModel([[.9,.1],[.4,.6]], [[(.4,(0,1)), (.6,(1,0.1))],[(1,(0,1))]], [.7,.3])
+            sage: m = hmm.GaussianMixtureHiddenMarkovModel(
+            ....:         [[.9,.1],[.4,.6]],
+            ....:         [[(.4,(0,1)), (.6,(1,0.1))], [(1,(0,1))]],
+            ....:         [.7,.3])
             sage: set_random_seed(0); v = m.sample(10); v
-            [0.3576, -0.9365, 0.9449, -0.6957, 1.0217, 0.9644, 0.9987, -0.5950, -1.0219, 0.6477]
+            [0.3576, -0.9365, 0.9449, -0.6957, 1.0217,
+             0.9644, 0.9987, -0.5950, -1.0219, 0.6477]
             sage: m.log_likelihood(v)
             -8.31408655939536...
             sage: m.baum_welch(v)
@@ -1338,26 +1391,36 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
             [   0.8746363339773399   0.12536366602266016]
             [                  1.0 1.451685202290174e-40]
             Emission parameters:
-            [0.500161629343*N(-0.812298726239,0.173329026744) + 0.499838370657*N(0.982433690378,0.029719932009), 1.0*N(0.503260056832,0.145881515324)]
+            [0.500161629343*N(-0.812298726239,0.173329026744)
+              + 0.499838370657*N(0.982433690378,0.029719932009),
+             1.0*N(0.503260056832,0.145881515324)]
             Initial probabilities: [0.0000, 1.0000]
 
         We illustrate bounding the standard deviation below.  Note that above we had
         different emission parameters when the min_sd was the default of 0.01::
 
-            sage: m = hmm.GaussianMixtureHiddenMarkovModel([[.9,.1],[.4,.6]], [[(.4,(0,1)), (.6,(1,0.1))],[(1,(0,1))]], [.7,.3])
+            sage: m = hmm.GaussianMixtureHiddenMarkovModel(
+            ....:         [[.9,.1],[.4,.6]],
+            ....:         [[(.4,(0,1)), (.6,(1,0.1))], [(1,(0,1))]],
+            ....:         [.7,.3])
             sage: m.baum_welch(v, min_sd=1)
             (-12.617885761692..., 1000)
             sage: m.emission_parameters()  # rel tol 6e-12
-            [0.503545634447*N(0.200166509595,1.0) + 0.496454365553*N(0.200166509595,1.0), 1.0*N(0.0543433426535,1.0)]
+            [0.503545634447*N(0.200166509595,1.0) + 0.496454365553*N(0.200166509595,1.0),
+             1.0*N(0.0543433426535,1.0)]
 
         We illustrate fixing all emissions::
 
-            sage: m = hmm.GaussianMixtureHiddenMarkovModel([[.9,.1],[.4,.6]], [[(.4,(0,1)), (.6,(1,0.1))],[(1,(0,1))]], [.7,.3])
+            sage: m = hmm.GaussianMixtureHiddenMarkovModel(
+            ....:         [[.9,.1],[.4,.6]],
+            ....:         [[(.4,(0,1)), (.6,(1,0.1))], [(1,(0,1))]],
+            ....:         [.7,.3])
             sage: set_random_seed(0); v = m.sample(10)
             sage: m.baum_welch(v, fix_emissions=True)
             (-7.58656858997..., 36)
             sage: m.emission_parameters()
-            [0.4*N(0.0,1.0) + 0.6*N(1.0,0.1), 1.0*N(0.0,1.0)]
+            [0.4*N(0.0,1.0) + 0.6*N(1.0,0.1),
+             1.0*N(0.0,1.0)]
         """
         if not isinstance(obs, TimeSeries):
             obs = TimeSeries(obs)
@@ -1490,7 +1553,7 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
 
 # We keep the _v0 function for backwards compatible.
 def unpickle_gaussian_hmm_v0(A, B, pi, name):
-    """
+    r"""
     EXAMPLES::
 
         sage: m = hmm.GaussianHiddenMarkovModel([[1]], [(0,1)], [1])
@@ -1506,7 +1569,7 @@ def unpickle_gaussian_hmm_v0(A, B, pi, name):
 
 
 def unpickle_gaussian_hmm_v1(A, B, pi, prob, n_out):
-    """
+    r"""
     EXAMPLES::
 
         sage: m = hmm.GaussianHiddenMarkovModel([[1]], [(0,1)], [1])
@@ -1522,7 +1585,7 @@ def unpickle_gaussian_hmm_v1(A, B, pi, prob, n_out):
     return m
 
 def unpickle_gaussian_mixture_hmm_v1(A, B, pi, mixture):
-    """
+    r"""
     EXAMPLES::
 
         sage: m = hmm.GaussianMixtureHiddenMarkovModel([[1]], [[(.4,(0,1)), (.6,(1,0.1))]], [1])
@@ -1535,4 +1598,3 @@ def unpickle_gaussian_mixture_hmm_v1(A, B, pi, mixture):
     m.pi = pi
     m.mixture = mixture
     return m
-

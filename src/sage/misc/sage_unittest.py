@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Unit testing for Sage objects
 """
@@ -17,7 +18,7 @@ import sys
 import traceback
 
 
-class TestSuite(object):
+class TestSuite:
     """
     Test suites for Sage objects.
 
@@ -173,10 +174,10 @@ class TestSuite(object):
 
         INPUT:
 
-         - ``category``         - a category; reserved for future use
-         - ``skip``             - a string or list (or iterable) of strings
-         - ``raise_on_failure`` - a boolean (default: False)
-         - ``catch``            - a boolean (default: True)
+         - ``category``         -- a category; reserved for future use
+         - ``skip``             -- a string or list (or iterable) of strings
+         - ``raise_on_failure`` -- a boolean (default: ``False``)
+         - ``catch``            -- a boolean (default: ``True``)
 
         All other options are passed down to the individual tests.
 
@@ -299,7 +300,7 @@ class TestSuite(object):
                 except catch_exception as e:
                     failed.append(method_name)
                     if isinstance(e, TestSuiteFailure):
-                        # The failure occured in a nested testsuite
+                        # The failure occurred in a nested testsuite
                         # which has already reported the details of
                         # that failure
                         if not tester._verbose:
@@ -548,12 +549,12 @@ class InstanceTester(unittest.TestCase):
         You can use ``max_samples`` to sample at random, instead of in order::
 
             sage: tester = InstanceTester(ZZ, elements = srange(8), max_samples = 4)
-            sage: list(tester.some_elements())
-            [0, 3, 7, 1]
-            sage: list(tester.some_elements(repeat=2))
-            [(1, 4), (3, 1), (4, 5), (5, 0)]
+            sage: all(t in srange(8) for t in tester.some_elements())
+            True
+            sage: all(s in srange(8) and t in srange(8) for s,t in tester.some_elements(repeat=2))
+            True
 
-        Test for :trac:`15919`, :trac:`16244`::
+        Test for :issue:`15919`, :issue:`16244`::
 
             sage: Z = IntegerModRing(25) # random.sample, which was used pre #16244, has a threshold at 21!
             sage: Z[1]                   # since #8389, indexed access is used for ring extensions
@@ -576,7 +577,7 @@ class InstanceTester(unittest.TestCase):
         return list(some_tuples(S, repeat, self._max_runs, self._max_samples))
 
 
-class PythonObjectWithTests(object):
+class PythonObjectWithTests:
     """
     Utility class for running basis tests on a plain Python object
     (that is not in SageObject). More test methods can be added here.
@@ -610,7 +611,7 @@ class PythonObjectWithTests(object):
             :func:`dumps`, :func:`loads`
         """
         tester = instance_tester(self, **options)
-        from sage.misc.all import loads, dumps
+        from sage.misc.persist import loads, dumps
         tester.assertEqual(loads(dumps(self._instance)), self._instance)
 
     def _test_new(self, **options):

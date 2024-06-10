@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
+# sage.doctest: needs sage.libs.flint
+r"""
 Manin symbols
 
 This module defines the class ManinSymbol.  A Manin symbol of
@@ -19,14 +19,14 @@ monomial Manin symbols to monomial Manin symbols, up to a scalar
 factor.  For general matrices (such as `T=[0,1,-1,-1]` and
 `T^2=[-1,-1;0,1]`) the image of a monomial Manin symbol is expressed
 as a formal sum of monomial Manin symbols, with integer coefficients.
-
 """
 
-from sage.modular.cusps import Cusp
-from sage.rings.all import Infinity, ZZ
-from sage.rings.integer cimport Integer
-from sage.structure.element cimport Element
 from sage.misc.persist import register_unpickle_override
+from sage.modular.cusps import Cusp
+from sage.rings.infinity import Infinity
+from sage.rings.integer cimport Integer
+from sage.rings.integer_ring import ZZ
+from sage.structure.element cimport Element
 from sage.structure.richcmp cimport richcmp_not_equal, richcmp
 
 
@@ -181,9 +181,8 @@ cdef class ManinSymbol(Element):
         """
         if self.weight() > 2:
             polypart = _print_polypart(self.i, self.weight()-2-self.i)
-            return "[%s,(%s,%s)]"%\
-                   (polypart, self.u, self.v)
-        return "(%s,%s)"%(self.u, self.v)
+            return "[%s,(%s,%s)]" % (polypart, self.u, self.v)
+        return "(%s,%s)" % (self.u, self.v)
 
     def _latex_(self):
         """
@@ -274,8 +273,8 @@ cdef class ManinSymbol(Element):
         if self.weight() > 2:
             raise NotImplementedError("ModSym * Matrix only implemented "
                                       "in weight 2")
-        from sage.structure.element import is_Matrix
-        if is_Matrix(matrix):
+        from sage.structure.element import Matrix
+        if isinstance(matrix, Matrix):
             if (not matrix.nrows() == 2) or (not matrix.ncols() == 2):
                 raise ValueError("matrix(=%s) must be 2x2" % matrix)
             matrix = matrix.list()
@@ -343,6 +342,14 @@ cdef class ManinSymbol(Element):
             return [ZZ.one(), ZZ.zero(), ZZ.zero(), ZZ.one()]
         c = Integer(self.u)
         d = Integer(self.v)
+
+        if c == 0:
+            if d == 1:
+                return [ZZ.one(), ZZ.zero(), ZZ.zero(), ZZ.one()]
+            if d == N - 1:
+                return [Integer(-1), ZZ.zero(), ZZ.zero(), Integer(-1)]
+            c = Integer(N)
+
         g, z1, z2 = c.xgcd(d)
 
         # We're lucky: z1*c + z2*d = 1.
@@ -350,10 +357,6 @@ cdef class ManinSymbol(Element):
             return [z2, -z1, c, d]
 
         # Have to try harder.
-        if c == 0:
-            c += N
-        if d == 0:
-            d += N
         m = c
 
         # compute prime-to-d part of m.

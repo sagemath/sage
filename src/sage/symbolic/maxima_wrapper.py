@@ -5,12 +5,12 @@
 #       Copyright (C) 2010 Burcin Erocal <burcin@erocal.org>
 #  Distributed under the terms of the GNU General Public License (GPL),
 #  version 2 or any later version.  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ###############################################################################
 
 from sage.structure.sage_object import SageObject
 from sage.interfaces.maxima import MaximaFunctionElement
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 
 
 @instancedoc
@@ -28,8 +28,8 @@ class MaximaFunctionElementWrapper(MaximaFunctionElement):
             sage: parent(res)
             Symbolic Ring
         """
-        return super(MaximaFunctionElementWrapper, self).__call__(*args,
-                **kwds).sage()
+        return super().__call__(*args, **kwds).sage()
+
 
 class MaximaWrapper(SageObject):
     def __init__(self, exp):
@@ -89,12 +89,22 @@ class MaximaWrapper(SageObject):
             self._maxima_exp = self._exp._maxima_()
         if s[0] == '_':
             return getattr(self._maxima_exp, s)
-        if s == 'trait_names':  # SageNB backward compatibility
-            return self._maxima_()._tab_completion
-        else:
-            # add a wrapper function which converts the result back to
-            # a Sage expression
-            return MaximaFunctionElementWrapper(self._maxima_exp, s)
+        # add a wrapper function which converts the result back to
+        # a Sage expression
+        return MaximaFunctionElementWrapper(self._maxima_exp, s)
+
+    def __dir__(self):
+        """
+        Enable the tab completions.
+
+        EXAMPLES::
+
+            sage: t = sin(x) + cos(x)
+            sage: u = t.maxima_methods()
+            sage: 'zeta' in u.__dir__()
+            True
+        """
+        return self._maxima_()._tab_completion()
 
     def sage(self):
         """
@@ -148,4 +158,4 @@ class MaximaWrapper(SageObject):
             sage: u._repr_()
             'MaximaWrapper(log(sqrt(2) + 1) + log(sqrt(2) - 1))'
         """
-        return "MaximaWrapper(%s)"%(self._exp)
+        return "MaximaWrapper(%s)" % (self._exp)

@@ -1,38 +1,29 @@
 SAGE_SPKG_CONFIGURE([flint], [
-    AC_REQUIRE([SAGE_SPKG_CONFIGURE_MPFR])
-    AC_REQUIRE([SAGE_SPKG_CONFIGURE_NTL])
-    AC_MSG_CHECKING([installing mpfr or ntl? ])
-    if test x$sage_spkg_install_mpfr = xyes -o x$sage_spkg_install_ntl = xyes; then
-        AC_MSG_RESULT([yes; install flint as well])
-        sage_spkg_install_flint=yes
-    else
-        AC_CHECK_HEADER(flint/flint.h, [
-          dnl fmpz_mat_is_hadamard appears in Flint 2.5.0
-          AC_SEARCH_LIBS([fmpz_mat_is_hadamard], [flint], [
-            dnl check that NTL is linked in
-            AC_SEARCH_LIBS([fmpz_poly_get_ZZX], [flint], [
-
-              AC_MSG_CHECKING([that GC is not enabled in Flint... ])
-              AC_RUN_IFELSE([
-                 AC_LANG_PROGRAM([[#include <flint/flint.h>]], [
-                                  [#ifdef HAVE_GC]
-                                     [return HAVE_GC;]
-                                  [#else]
-                                     [return 0;]
-                                  [#endif]])],
-                 [AC_MSG_RESULT([GC not enabled. Good.])],
-		        [AC_MSG_RESULT([GC enabled. Incompatible with Sage.])
-		         sage_spkg_install_flint=yes])
-            ], [sage_spkg_install_flint=yes])
+    SAGE_SPKG_DEPCHECK([mpfr], [
+        AC_CHECK_HEADERS([flint/flint.h flint/padic.h], [dnl
+          dnl gr_get_fexpr appears in Flint 3.0
+          AC_SEARCH_LIBS([gr_get_fexpr], [flint], [dnl
+            dnl Assume Flint 3.2 is too new
+            AC_MSG_CHECKING([whether FLINT version is >= 3.2.0])
+            AC_COMPILE_IFELSE([dnl
+              AC_LANG_PROGRAM([[#include <flint/flint.h>
+                                #if __FLINT_RELEASE >= 30200
+                                # error "FLINT 3.2 is too new"
+                                #endif
+                              ]])
+            ], [dnl
+              AC_MSG_RESULT([no])
+            ], [dnl
+              AC_MSG_RESULT([yes; too new])
+              sage_spkg_install_flint=yes
+            ])
           ], [sage_spkg_install_flint=yes])
         ], [sage_spkg_install_flint=yes])
-    fi
-], [], [], [
+    ])
+], [], [], [dnl
      if test x$sage_spkg_install_flint = xyes; then
         AC_SUBST(SAGE_FLINT_PREFIX, ['$SAGE_LOCAL'])
-        AC_MSG_RESULT([using Sage's flint SPKG])
      else
         AC_SUBST(SAGE_FLINT_PREFIX, [''])
-        AC_MSG_RESULT([using flint library from the system])
      fi
 ])

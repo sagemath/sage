@@ -4,8 +4,9 @@
 
 .. _constructions:
 
-Welcome to the Sage Constructions documentation!
-================================================
+=============================
+Welcome to Sage Constructions
+=============================
 
 This document collects the answers to some questions along the line
 "How do I construct ... in Sage?" Though much of this material can
@@ -51,6 +52,5 @@ Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
 

@@ -108,7 +108,7 @@ class AffineSubspace(SageObject):
             (0, 0, 0, 0)
         """
         R = V.base_ring()
-        from sage.categories.all import Fields
+        from sage.categories.fields import Fields
         if R not in Fields():
             R = R.fraction_field()
             V = V.change_ring(R)
@@ -131,7 +131,7 @@ class AffineSubspace(SageObject):
         """
         # note that the point is not canonically chosen, but the linear part is
         return hash(self._linear_part)
-    
+
     def _repr_(self):
         r"""
         String representation for an :class:`AffineSubspace`.
@@ -407,4 +407,3 @@ class AffineSubspace(SageObject):
         new_p = p + t[:m.nrows()]*m
         new_V = self.linear_part().intersection(other._linear_part)
         return AffineSubspace(new_p, new_V)
-

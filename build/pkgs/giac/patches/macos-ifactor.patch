@@ -1,12 +1,11 @@
 --- a/src/ifactor.cc	2014-10-11 16:29:01.000000000 +0200
 +++ b/src/ifactor.cc	2014-10-11 16:29:28.000000000 +0200
-@@ -4007,7 +4007,7 @@
+@@ -4034,7 +4034,4 @@
  #endif
  #ifdef HAVE_LIBPARI
- #ifdef __APPLE__
--    return vecteur(1,gensizeerr(gettext("(Mac OS) Large number, you can try pari(); pari_factor(")+n0.print(contextptr)+")"));
-+    //    return vecteur(1,gensizeerr(gettext("(Mac OS) Large number, you can try pari(); pari_factor(")+n0.print(contextptr)+")"));
- #endif
-     gen g(pari_ifactor(n0),contextptr); 
-     if (g.type==_VECT){
-
+     if (ifactor_pari){
+-#ifdef __APPLE__
+-      return vecteur(1,gensizeerr(gettext("(Mac OS) Large number, you can try pari(); pari_factor(")+n0.print(contextptr)+")"));
+-#endif
+       gen g(pari_ifactor(n0),contextptr); 
+       if (g.type==_VECT){

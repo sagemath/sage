@@ -1,7 +1,6 @@
 r"""
 Six Vertex Model
 """
-from __future__ import print_function
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -9,10 +8,12 @@ from sage.structure.list_clone import ClonableArray
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.combinat.combinatorial_map import combinatorial_map
 
+
 class SixVertexConfiguration(ClonableArray):
     """
     A configuration in the six vertex model.
     """
+
     def check(self):
         """
         Check if ``self`` is a valid 6 vertex configuration.
@@ -110,7 +111,7 @@ class SixVertexConfiguration(ClonableArray):
         EXAMPLES::
 
             sage: M = SixVertexModel(3, boundary_conditions='ice')
-            sage: [x.to_signed_matrix() for x in M]
+            sage: [x.to_signed_matrix() for x in M]                                     # needs sage.modules
             [
             [1 0 0]  [1 0 0]  [ 0  1  0]  [0 1 0]  [0 1 0]  [0 0 1]  [0 0 1]
             [0 1 0]  [0 0 1]  [ 1 -1  1]  [1 0 0]  [0 0 1]  [1 0 0]  [0 1 0]
@@ -119,13 +120,14 @@ class SixVertexConfiguration(ClonableArray):
         """
         from sage.matrix.constructor import matrix
         # verts = ['LR', 'LU', 'LD', 'UD', 'UR', 'RD']
+
         def matrix_sign(x):
             if x == 0:
                 return -1
             if x == 3:
                 return 1
             return 0
-        return matrix([[matrix_sign(_) for _ in row] for row in self])
+        return matrix([[matrix_sign(r) for r in row] for row in self])
 
     def plot(self, color='sign'):
         """
@@ -135,10 +137,10 @@ class SixVertexConfiguration(ClonableArray):
 
         - ``color`` -- can be any of the following:
 
-          * ``4`` - use 4 colors: black, red, blue, and green with each
+          * ``4`` -- use 4 colors: black, red, blue, and green with each
             corresponding to up, right, down, and left respectively
-          * ``2`` - use 2 colors: red for horizontal, blue for vertical arrows
-          * ``'sign'`` - use red for right and down arrows, blue for left
+          * ``2`` -- use 2 colors: red for horizontal, blue for vertical arrows
+          * ``'sign'`` -- use red for right and down arrows, blue for left
             and up arrows
           * a list of 4 colors for each direction
           * a function which takes a direction and a boolean corresponding
@@ -147,7 +149,7 @@ class SixVertexConfiguration(ClonableArray):
         EXAMPLES::
 
             sage: M = SixVertexModel(2, boundary_conditions='ice')
-            sage: print(M[0].plot().description())
+            sage: print(M[0].plot().description())                                      # needs sage.plot
             Arrow from (-1.0,0.0) to (0.0,0.0)
             Arrow from (-1.0,1.0) to (0.0,1.0)
             Arrow from (0.0,0.0) to (0.0,-1.0)
@@ -289,6 +291,7 @@ class SixVertexConfiguration(ClonableArray):
             raise ValueError("there must be 6 energy constants")
         return sum(epsilon[entry] for row in self for entry in row)
 
+
 class SixVertexModel(UniqueRepresentation, Parent):
     """
     The six vertex model.
@@ -358,13 +361,13 @@ class SixVertexModel(UniqueRepresentation, Parent):
 
       There are also the following predefined boundary conditions:
 
-      * ``'ice'`` - The top and bottom boundary conditions are outward and the
+      * ``'ice'`` -- The top and bottom boundary conditions are outward and the
         left and right boundary conditions are inward; this gives the square
         ice model. Also called domain wall boundary conditions.
-      * ``'domain wall'`` - Same as ``'ice'``.
-      * ``'alternating'`` - The boundary conditions alternate between inward
+      * ``'domain wall'`` -- Same as ``'ice'``.
+      * ``'alternating'`` -- The boundary conditions alternate between inward
         and outward.
-      * ``'free'`` - There are no boundary conditions.
+      * ``'free'`` -- There are no boundary conditions.
 
     EXAMPLES:
 
@@ -389,7 +392,7 @@ class SixVertexModel(UniqueRepresentation, Parent):
         sage: M = SixVertexModel(4, boundary_conditions='ice')
         sage: len(M)
         42
-        sage: all(len(SixVertexModel(n, boundary_conditions='ice'))
+        sage: all(len(SixVertexModel(n, boundary_conditions='ice'))                     # needs sage.modules
         ....:     == AlternatingSignMatrices(n).cardinality() for n in range(1, 7))
         True
 
@@ -435,7 +438,7 @@ class SixVertexModel(UniqueRepresentation, Parent):
             cond = []
             for dummy in range(2):
                 val = []
-                for k in range(m):
+                for _ in range(m):
                     val.append(bdry)
                     bdry = not bdry
                 cond.append(tuple(val))
@@ -451,7 +454,7 @@ class SixVertexModel(UniqueRepresentation, Parent):
             boundary_conditions = ((False,)*m, (True,)*n)*2
         else:
             boundary_conditions = tuple(tuple(x) for x in boundary_conditions)
-        return super(SixVertexModel, cls).__classcall__(cls, n, m, boundary_conditions)
+        return super().__classcall__(cls, n, m, boundary_conditions)
 
     def __init__(self, n, m, boundary_conditions):
         """
@@ -647,7 +650,7 @@ class SixVertexModel(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: M = SixVertexModel(3, boundary_conditions='ice')
-            sage: M.partition_function(2, [1,2,1,2,1,2])
+            sage: M.partition_function(2, [1,2,1,2,1,2])                                # needs sage.symbolic
             e^(-24) + 2*e^(-28) + e^(-30) + 2*e^(-32) + e^(-36)
 
         REFERENCES:
@@ -656,6 +659,7 @@ class SixVertexModel(UniqueRepresentation, Parent):
         """
         from sage.functions.log import exp
         return sum(exp(-beta * nu.energy(epsilon)) for nu in self)
+
 
 class SquareIceModel(SixVertexModel):
     r"""
@@ -669,6 +673,7 @@ class SquareIceModel(SixVertexModel):
     Configurations of the 6 vertex model with domain wall boundary conditions
     are in bijection with alternating sign matrices.
     """
+
     def __init__(self, n):
         """
         Initialize ``self``.
@@ -688,8 +693,8 @@ class SquareIceModel(SixVertexModel):
         EXAMPLES::
 
             sage: M = SixVertexModel(3, boundary_conditions='ice')
-            sage: asm = AlternatingSignMatrix([[0,1,0],[1,-1,1],[0,1,0]])
-            sage: M.from_alternating_sign_matrix(asm)
+            sage: asm = AlternatingSignMatrix([[0,1,0],[1,-1,1],[0,1,0]])               # needs sage.modules
+            sage: M.from_alternating_sign_matrix(asm)                                   # needs sage.modules
                 ^    ^    ^
                 |    |    |
             --> # -> # <- # <--
@@ -705,11 +710,11 @@ class SquareIceModel(SixVertexModel):
         TESTS::
 
             sage: M = SixVertexModel(5, boundary_conditions='ice')
-            sage: ASM = AlternatingSignMatrices(5)
-            sage: all(M.from_alternating_sign_matrix(x.to_alternating_sign_matrix()) == x
+            sage: ASM = AlternatingSignMatrices(5)                                      # needs sage.modules
+            sage: all(M.from_alternating_sign_matrix(x.to_alternating_sign_matrix()) == x           # needs sage.modules
             ....:     for x in M)
             True
-            sage: all(M.from_alternating_sign_matrix(x).to_alternating_sign_matrix() == x
+            sage: all(M.from_alternating_sign_matrix(x).to_alternating_sign_matrix() == x           # needs sage.modules
             ....:     for x in ASM)
             True
         """
@@ -761,12 +766,12 @@ class SquareIceModel(SixVertexModel):
             EXAMPLES::
 
                 sage: M = SixVertexModel(4, boundary_conditions='ice')
-                sage: M[6].to_alternating_sign_matrix()
+                sage: M[6].to_alternating_sign_matrix()                                 # needs sage.modules
                 [1 0 0 0]
                 [0 0 0 1]
                 [0 0 1 0]
                 [0 1 0 0]
-                sage: M[7].to_alternating_sign_matrix()
+                sage: M[7].to_alternating_sign_matrix()                                 # needs sage.modules
                 [ 0  1  0  0]
                 [ 1 -1  1  0]
                 [ 0  1 -1  1]
@@ -776,4 +781,3 @@ class SquareIceModel(SixVertexModel):
             #ASM = AlternatingSignMatrices(self.parent()._nrows)
             #return ASM(self.to_signed_matrix())
             return AlternatingSignMatrix(self.to_signed_matrix())
-

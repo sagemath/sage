@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 r"""
 Interface to the GP calculator of PARI/GP
 
@@ -135,18 +136,23 @@ AUTHORS:
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
 ##########################################################################
-from __future__ import print_function
-from __future__ import absolute_import
+import os
 
-from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
-from sage.misc.verbose import verbose
+import sage.interfaces.abc
+
+from sage.env import DOT_SAGE
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.libs.pari.all import pari
-import sage.rings.complex_field
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
+from sage.misc.lazy_import import lazy_import
+from sage.misc.verbose import verbose
+
+lazy_import('sage.rings.cc', 'CC')
+
+from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
 
 
 class Gp(ExtraTabCompletion, Expect):
@@ -202,16 +208,16 @@ class Gp(ExtraTabCompletion, Expect):
             True
         """
         Expect.__init__(self,
-                        name = 'pari',
-                        prompt = '\\? ',
+                        name='pari',
+                        prompt='\\? ',
                         # --fast so the system gprc isn't read (we configure below)
-                        command = "gp --fast --emacs --quiet --stacksize %s"%stacksize,
-                        maxread = maxread,
+                        command=f"gp --fast --emacs --quiet --stacksize {stacksize}",
+                        maxread=maxread,
                         server=server,
                         server_tmpdir=server_tmpdir,
-                        script_subdirectory = script_subdirectory,
-                        restart_on_ctrlc = False,
-                        verbose_start = False,
+                        script_subdirectory=script_subdirectory,
+                        restart_on_ctrlc=False,
+                        verbose_start=False,
                         logfile=logfile,
                         eval_using_file_cutoff=1024)
         self.__seq = 0
@@ -334,7 +340,7 @@ class Gp(ExtraTabCompletion, Expect):
             sage: gp.get('x').strip()
             '22'
         """
-        return 'read("%s")'%filename
+        return 'read("%s")' % filename
 
     def _tab_completion(self):
         """
@@ -432,7 +438,7 @@ class Gp(ExtraTabCompletion, Expect):
 
         TESTS:
 
-        We verify that :trac:`11617` is fixed::
+        We verify that :issue:`11617` is fixed::
 
             sage: gp._eval_line('a='+str(list(range(2*10^5))))[:70]
             '[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,'
@@ -460,7 +466,7 @@ class Gp(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``t`` - (default: None); if not None, then returns
+        -  ``t`` -- (default: None); if not None, then returns
            time since t
 
 
@@ -510,7 +516,7 @@ class Gp(ExtraTabCompletion, Expect):
             38              # 64-bit
         """
         old = self.get_default(var)
-        self._eval_line('default(%s,%s)'%(var,value))
+        self._eval_line('default(%s,%s)' % (var, value))
         return old
 
     def get_default(self, var):
@@ -538,7 +544,7 @@ class Gp(ExtraTabCompletion, Expect):
             28              # 32-bit
             38              # 64-bit
         """
-        return eval(self._eval_line('default(%s)'%var))
+        return eval(self._eval_line('default(%s)' % var))
 
     def set(self, var, value):
         """
@@ -555,11 +561,10 @@ class Gp(ExtraTabCompletion, Expect):
             sage: gp.get('x')
             '2'
         """
-        cmd = '%s=%s;'%(var,value)
+        cmd = '%s=%s;' % (var, value)
         out = self.eval(cmd)
         if out.find('***') != -1:
-            raise TypeError("Error executing code in GP:\nCODE:\n\t%s\nPARI/GP ERROR:\n%s"%(cmd, out))
-
+            raise TypeError("Error executing code in GP:\nCODE:\n\t%s\nPARI/GP ERROR:\n%s" % (cmd, out))
 
     def get(self, var):
         """
@@ -575,7 +580,7 @@ class Gp(ExtraTabCompletion, Expect):
             sage: gp.get('x')
             '2'
         """
-        return self.eval('print(%s)'%var)
+        return self.eval('print(%s)' % var)
 
     def kill(self, var):
         """
@@ -594,20 +599,7 @@ class Gp(ExtraTabCompletion, Expect):
             sage: gp.get('xx')
             'xx'
         """
-        self.eval('kill(%s)'%var)
-
-    #def xclear(self, var):
-        #"""
-        #Clear the variable named var.
-        #"""
-        #for varname based memory -- only 65000 variables and then dead.
-        #self.eval('kill(%s)'%var)
-        # for array-based memory this is best:
-        #self.eval('%s=0'%var)
-        # However, I've commented it out, since PARI doesn't seem
-        # to ever free any memory on its stack anyways.
-        # Killing variables as above takes a lot of time in some
-        # cases, also.
+        self.eval('kill(%s)' % var)
 
     def _next_var_name(self):
         """
@@ -628,25 +620,24 @@ class Gp(ExtraTabCompletion, Expect):
         The vector of results is correctly resized when the stack has
         to be enlarged during this operation::
 
-            sage: g = Gp(stacksize=10^4,init_list_length=12000)  # long time
+            sage: g = Gp(stacksize=3*10^6,init_list_length=12000)  # long time
             sage: for n in [1..13000]:  # long time
-            ....:     a = g(n)          # long time
+            ....:     a = g(n)
             sage: g('length(sage)')     # long time
             24000
-
         """
         self.__seq += 1
         if self.__seq >= self.__var_store_len:
             if self.__var_store_len == 0:
-                self.eval('sage=vector(%s,k,0);'%self.__init_list_length)
+                self.eval('sage=vector(%s,k,0);' % self.__init_list_length)
                 self.__var_store_len = self.__init_list_length
             else:
-                self.eval('sage0=concat(sage, vector(%s,k,0));'%self.__var_store_len)
+                self.eval('sage0=concat(sage, vector(%s,k,0));' % self.__var_store_len)
                 self.eval('sage=sage0;')
                 self.eval('kill(sage0);')
                 self.__var_store_len *= 2
-                verbose("doubling PARI/sage object vector: %s"%self.__var_store_len)
-        return 'sage[%s]'%self.__seq
+                verbose("doubling PARI/sage object vector: %s" % self.__var_store_len)
+        return 'sage[%s]' % self.__seq
 
     def _reset_expect(self):
         """
@@ -790,9 +781,9 @@ class Gp(ExtraTabCompletion, Expect):
             sage: gp.help('gcd')
             'gcd(x,{y}): greatest common divisor of x and y.'
         """
-        return self.eval('?%s'%command).strip()
+        return self.eval('?%s' % command).strip()
 
-    def new_with_bits_prec(self, s, precision = 0):
+    def new_with_bits_prec(self, s, precision=0):
         r"""
         Creates a GP object from s with ``precision`` bits of
         precision. GP actually automatically increases this precision to
@@ -801,6 +792,7 @@ class Gp(ExtraTabCompletion, Expect):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: pi_def = gp(pi); pi_def
             3.141592653589793238462643383                  # 32-bit
             3.1415926535897932384626433832795028842        # 64-bit
@@ -826,7 +818,7 @@ class Gp(ExtraTabCompletion, Expect):
         """
         if precision:
             old_prec = self.get_real_precision()
-            prec = int(precision/3.321928095)
+            prec = int(precision / 3.321928095)
             self.set_real_precision(prec)
             x = self(s)
             self.set_real_precision(old_prec)
@@ -836,7 +828,7 @@ class Gp(ExtraTabCompletion, Expect):
 
 
 @instancedoc
-class GpElement(ExpectElement):
+class GpElement(ExpectElement, sage.interfaces.abc.GpElement):
     """
     EXAMPLES: This example illustrates dumping and loading GP elements
     to compressed strings.
@@ -891,13 +883,14 @@ class GpElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: gp(I).sage()
+            sage: gp(SR(I)).sage()                                                      # needs sage.symbolic
             i
-            sage: gp(I).sage().parent()
+            sage: gp(SR(I)).sage().parent()                                             # needs sage.symbolic
             Number Field in i with defining polynomial x^2 + 1 with i = 1*I
 
         ::
 
+            sage: # needs sage.modules
             sage: M = Matrix(ZZ,2,2,[1,2,3,4]); M
             [1 2]
             [3 4]
@@ -915,7 +908,7 @@ class GpElement(ExpectElement):
            sage: s.sage()
            'foo'
            sage: type(s.sage())
-           <type 'str'>
+           <class 'str'>
         """
         if self.is_string():
             return str(self)
@@ -957,9 +950,7 @@ class GpElement(ExpectElement):
             False
         """
         P = self._check_valid()
-        return P.eval('%s != 0'%(self.name())) == '1'
-
-    __nonzero__ = __bool__
+        return P.eval('%s != 0' % (self.name())) == '1'
 
     def _complex_mpfr_field_(self, CC):
         """
@@ -971,7 +962,8 @@ class GpElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: z = gp(1+15*I); z
+            sage: # needs sage.symbolic
+            sage: z = gp(SR(1+15*I)); z
             1 + 15*I
             sage: z._complex_mpfr_field_(CC)
             1.00000000000000 + 15.0000000000000*I
@@ -985,7 +977,7 @@ class GpElement(ExpectElement):
         # Multiplying by CC(1) is necessary here since
         # sage: pari(gp(1+I)).sage().parent()
         # Maximal Order in Number Field in i with defining polynomial x^2 + 1
-        return CC((CC(1)*pari(self)).sage())
+        return CC((CC.one() * pari(self)).sage())
 
     def _complex_double_(self, CDF):
         """
@@ -993,12 +985,12 @@ class GpElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: CDF(gp(pi+I*e))
+            sage: CDF(gp(pi+I*e))                                                       # needs sage.symbolic
             3.141592653589793 + 2.718281828459045*I
         """
         # Retrieving values from another computer algebra system is
         # slow anyway, right?
-        cc_val = self._complex_mpfr_field_(sage.rings.complex_field.ComplexField())
+        cc_val = self._complex_mpfr_field_(CC)
         return CDF(cc_val)
 
     def __len__(self):
@@ -1033,9 +1025,9 @@ class GpElement(ExpectElement):
     # out of date, e.g., for matrices it uses \pmatrix (which
     # causes an error if amsmath is loaded) and for rationals
     # it does nothing, etc.
-    #def _latex_(self):
-    #    P = self._check_valid()
-    #    return P.eval('printtex(%s)'%self.name())
+    # def _latex_(self):
+    #     P = self._check_valid()
+    #     return P.eval('printtex(%s)'%self.name())
 
     def _tab_completion(self):
         """
@@ -1053,23 +1045,31 @@ GpFunction = ExpectFunction
 
 def is_GpElement(x):
     """
-    Returns True of x is a GpElement.
+    Return True if ``x`` is of type :class:`GpElement`
+
+    This function is deprecated; use :func:`isinstance`
+    (of :class:`sage.interfaces.abc.GpElement`) instead.
 
     EXAMPLES::
 
         sage: from sage.interfaces.gp import is_GpElement
         sage: is_GpElement(gp(2))
+        doctest:...: DeprecationWarning: the function is_GpElement is deprecated; use isinstance(x, sage.interfaces.abc.GpElement) instead
+        See https://github.com/sagemath/sage/issues/34804 for details.
         True
         sage: is_GpElement(2)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34804, "the function is_GpElement is deprecated; use isinstance(x, sage.interfaces.abc.GpElement) instead")
+
     return isinstance(x, GpElement)
 
-from sage.env import DOT_SAGE
-import os
 
 # An instance
-gp = Gp(logfile=os.path.join(DOT_SAGE,'gp-expect.log')) # useful for debugging!
+gp = Gp(logfile=os.path.join(DOT_SAGE, 'gp-expect.log'))
+# useful for debugging!
+
 
 def reduce_load_GP():
     """
@@ -1082,6 +1082,7 @@ def reduce_load_GP():
         PARI/GP interpreter
     """
     return gp
+
 
 def gp_console():
     """
@@ -1110,7 +1111,7 @@ def gp_version():
     """
     v = gp.eval(r'\v')
     i = v.find("Version ")
-    w = v[i+len("Version "):]
+    w = v[i + len("Version "):]
     i = w.find(' ')
     w = w[:i]
     t = tuple([int(n) for n in w.split('.')])

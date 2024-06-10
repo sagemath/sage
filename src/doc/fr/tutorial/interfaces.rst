@@ -31,9 +31,9 @@ PARI est un programme C compact, mature, fortement optimisé et
 spécialisé en théorie des nombres. Il possède deux
 interfaces très différentes utilisables depuis Sage :
 
--  ``gp`` - l'interpréteur "**G** o **P** ARI", et
+-  ``gp`` -- l'interpréteur "**G** o **P** ARI", et
 
--  ``pari`` - la bibliothèque C PARI.
+-  ``pari`` -- la bibliothèque C PARI.
 
 
 Ainsi, les deux commandes suivantes font le même calcul de deux façons
@@ -64,7 +64,7 @@ commandes sont de types différents :
     sage: type(gp('znprimroot(10007)'))
     <class 'sage.interfaces.gp.GpElement'>
     sage: type(pari('znprimroot(10007)'))
-    <type 'cypari2.gen.Gen'>
+    <class 'cypari2.gen.Gen'>
 
 Alors, laquelle des interfaces utiliser ? Tout dépend de ce que vous
 cherchez à faire. L'interface GP permet de faire absolument tout ce que
@@ -102,7 +102,7 @@ Commençons par créer une liste PARI à partir d'une liste Python.
     sage: v
     [1, 2, 3, 4, 5]
     sage: type(v)
-    <type 'cypari2.gen.Gen'>
+    <class 'cypari2.gen.Gen'>
 
 En Sage, les objets PARI sont de type ``Gen``. Le type PARI de
 l'objet sous-jacent est donné par la méthode ``type``.
@@ -273,8 +273,8 @@ pour :math:`i,j=1,\ldots,4`.
     matrix([1,1/2,1/3,1/4],[0,0,0,0],[0,0,0,0],[0,0,0,0])
     sage: A.eigenvalues()
     [[0,4],[3,1]]
-    sage: A.eigenvectors()
-    [[[0,4],[3,1]],[[[1,0,0,-4],[0,1,0,-2],[0,0,1,-4/3]],[[1,2,3,4]]]]
+    sage: A.eigenvectors().sage()
+    [[[0, 4], [3, 1]], [[[1, 0, 0, -4], [0, 1, 0, -2], [0, 0, 1, -4/3]], [[1, 2, 3, 4]]]]
 
 Un deuxième exemple :
 
@@ -334,12 +334,9 @@ Et la fameuse bouteille de Klein (n'entrez pas les ``....:``):
 
 ::
 
-    sage: maxima("expr_1: 5*cos(x)*(cos(x/2)*cos(y) + sin(x/2)*sin(2*y)+ 3.0) - 10.0")
-    5*cos(x)*(sin(x/2)*sin(2*y)+cos(x/2)*cos(y)+3.0)-10.0
-    sage: maxima("expr_2: -5*sin(x)*(cos(x/2)*cos(y) + sin(x/2)*sin(2*y)+ 3.0)")
-    -5*sin(x)*(sin(x/2)*sin(2*y)+cos(x/2)*cos(y)+3.0)
-    sage: maxima("expr_3: 5*(-sin(x/2)*cos(y) + cos(x/2)*sin(2*y))")
-    5*(cos(x/2)*sin(2*y)-sin(x/2)*cos(y))
+    sage: _ = maxima("expr_1: 5*cos(x)*(cos(x/2)*cos(y) + sin(x/2)*sin(2*y)+ 3.0) - 10.0")
+    sage: _ = maxima("expr_2: -5*sin(x)*(cos(x/2)*cos(y) + sin(x/2)*sin(2*y)+ 3.0)")
+    sage: _ = maxima("expr_3: 5*(-sin(x/2)*cos(y) + cos(x/2)*sin(2*y))")
     sage: maxima.plot3d ("[expr_1, expr_2, expr_3]", "[x, -%pi, %pi]", # not tested
     ....:     "[y, -%pi, %pi]", "['grid, 40, 40]",
     ....:     '[plot_format, openmath]')

@@ -36,10 +36,18 @@
     border-radius: 28px;
     cursor: pointer;
 }
+.dark-theme #animation-ui button {
+    padding: 1px;
+    border: 1px dotted black;
+}
 
 #animation-ui button:focus {
     background: #b8b9ff;
     outline: none;
+}
+.dark-theme #animation-ui button:focus {
+    background: none;
+    border-color: white;
 }
 
 /* Setting the outline to none isn't enough for Firefox. */
@@ -49,6 +57,10 @@
 
 #animation-ui button:active {
     background: #efefff;
+}
+.dark-theme #animation-ui button:active {
+    background: #303030;
+    border-style: solid;
 }
 
 #animation-ui.playing .play,
@@ -155,4 +167,29 @@ input[type=range].slider:focus::-ms-fill-lower {
 }
 input[type=range].slider:focus::-ms-fill-upper {
     background: #b8b9f6;
+}
+
+.dark-theme input[type=range].slider {
+    background: black;
+}
+.dark-theme input[type=range].slider::-webkit-slider-runnable-track {
+    background: #303030;
+}
+.dark-theme input[type=range].slider:focus::-webkit-slider-thumb {
+    border: 1px dotted white;
+}
+.dark-theme input[type=range].slider::-moz-range-track {
+    background: #303030;
+}
+.dark-theme input[type=range].slider:focus::-moz-range-thumb {
+    border: 1px dotted white;
+}
+.dark-theme input[type=range].slider::-ms-fill-lower {
+    background: #303030;
+}
+.dark-theme input[type=range].slider::-ms-fill-upper {
+    background: #303030;
+}
+.dark-theme input[type=range].slider:focus::-ms-thumb {
+    border: 1px dotted white;
 }

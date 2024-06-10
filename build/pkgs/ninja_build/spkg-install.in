@@ -1,5 +1,5 @@
 cd src/
-sage-python23 ./configure.py --bootstrap --verbose
+python3 ./configure.py --bootstrap --verbose
 if [ $? -ne 0 ]; then
     echo >&2 "Error building ninja."
     exit 1

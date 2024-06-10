@@ -1,8 +1,8 @@
 """
-Local copy of Sloane On-Line Encyclopedia of Integer Sequences
+Local copy of the On-Line Encyclopedia of Integer Sequences
 
-The SloaneEncyclopedia object provides access to a local copy of the database
-containing only the sequences and their names. To use this you must download
+The ``SloaneEncyclopedia`` object provides access to a local copy of the database
+containing only the sequences and their names. To use this, you must download
 and install the database using ``SloaneEncyclopedia.install()``, or
 ``SloaneEncyclopedia.install_from_gz()`` if you have already downloaded the
 database manually.
@@ -11,14 +11,14 @@ To look up a sequence, type
 
 ::
 
-    sage: SloaneEncyclopedia[60843]               # optional - sloane_database
+    sage: SloaneEncyclopedia[60843]  # optional - sloane_database
     [1, 6, 21, 107]
 
 To get the name of a sequence, type
 
 ::
 
-    sage: SloaneEncyclopedia.sequence_name(1)     # optional - sloane_database
+    sage: SloaneEncyclopedia.sequence_name(1)  # optional - sloane_database
     'Number of groups of order n.'
 
 To search locally for a particular subsequence, type
@@ -33,7 +33,7 @@ The default maximum number of results is 30, but to return up to
 
 ::
 
-    sage: SloaneEncyclopedia.find([1,2,3,4,5], 100)    # optional - sloane_database
+    sage: SloaneEncyclopedia.find([1,2,3,4,5], 100)  # optional - sloane_database
     [(15, [1, 2, 3, 4, 5, 7, 7, 8, 9, 11, 11, ...
 
 Results in either case are of the form [ (number, list) ].
@@ -65,11 +65,8 @@ AUTHORS:
   sequence_name() to return the description of a sequence; and changed
   the data type for elements of each sequence from int to Integer.
 
-- Thierry Monteil (2012-02-10): deprecate dead code and update related doc and
+- Thierry Monteil (2012-02-10): deprecated dead code and update related doc and
   tests.
-
-Classes and methods
--------------------
 """
 
 # ****************************************************************************
@@ -87,6 +84,7 @@ import os
 import re
 
 from urllib.request import urlretrieve
+import ssl
 
 from sage.misc.verbose import verbose
 from sage.env import SAGE_SHARE
@@ -177,40 +175,41 @@ class SloaneEncyclopediaClass:
 
         return answer
 
-    def install(self, oeis_url="http://oeis.org/stripped.gz",
-                names_url="http://oeis.org/names.gz", overwrite=False):
+    def install(self, oeis_url="https://oeis.org/stripped.gz",
+                names_url="https://oeis.org/names.gz", overwrite=False):
         """
         Download and install the online encyclopedia, raising an IOError if
         either step fails.
 
         INPUT:
 
-        - ``oeis_url`` - string (default: "http://oeis.org...")
+        - ``oeis_url`` -- string (default: "https://oeis.org...")
           The URL of the stripped.gz encyclopedia file.
 
-        - ``names_url`` - string (default: "http://oeis.org...")
+        - ``names_url`` -- string (default: "https://oeis.org...")
           The URL of the names.gz encyclopedia file.  If you do not want to
           download this file, set names_url=None.
 
-        - ``overwrite`` - boolean (default: False) If the encyclopedia is
+        - ``overwrite`` -- boolean (default: ``False``) If the encyclopedia is
           already installed and overwrite=True, download and install the latest
           version over the installed one.
         """
         # See if the encyclopedia already exists
         if not overwrite and os.path.exists(self.__file__):
-            raise IOError("Sloane encyclopedia is already installed")
+            raise OSError("Sloane encyclopedia is already installed")
 
         tm = verbose("Downloading stripped version of Sloane encyclopedia")
+        ssl._create_default_https_context = ssl.create_default_context
         try:
             fname, _ = urlretrieve(oeis_url)
-        except IOError as msg:
-            raise IOError("%s\nError fetching the following website:\n    %s\nTry checking your internet connection." % (msg, oeis_url))
+        except OSError as msg:
+            raise OSError("%s\nError fetching the following website:\n    %s\nTry checking your internet connection." % (msg, oeis_url))
 
         if names_url is not None:
             try:
                 nname, _ = urlretrieve(names_url)
-            except IOError as msg:
-                raise IOError("%s\nError fetching the following website:\n    %s\nTry checking your internet connection." % (msg, names_url))
+            except OSError as msg:
+                raise OSError("%s\nError fetching the following website:\n    %s\nTry checking your internet connection." % (msg, names_url))
         else:
             nname = None
         verbose("Finished downloading", tm)
@@ -227,17 +226,17 @@ class SloaneEncyclopediaClass:
 
         INPUT:
 
-        - ``stripped_file`` - string. The name of the stripped.gz OEIS file.
+        - ``stripped_file`` -- string. The name of the stripped.gz OEIS file.
 
-        - ``names_file`` - string.  The name of the names.gz OEIS file, or
+        - ``names_file`` -- string.  The name of the names.gz OEIS file, or
           None if the user does not want it installed.
 
-        - ``overwrite`` - boolean (default: False) If the encyclopedia is
+        - ``overwrite`` -- boolean (default: ``False``) If the encyclopedia is
           already installed and overwrite=True, install 'filename' over the
           old encyclopedia.
         """
         if not overwrite and os.path.exists(self.__file__):
-            raise IOError("Sloane encyclopedia is already installed")
+            raise OSError("Sloane encyclopedia is already installed")
 
         copy_gz_file(stripped_file, self.__file__)
 
@@ -262,8 +261,9 @@ class SloaneEncyclopediaClass:
             return
         try:
             file_seq = bz2.BZ2File(self.__file__, 'r')
-        except IOError:
-            raise IOError("The Sloane Encyclopedia database must be installed.  Use e.g. 'SloaneEncyclopedia.install()' to download and install it.")
+        except OSError:
+            raise OSError("The Sloane Encyclopedia database must be installed."
+                          " Use e.g. 'SloaneEncyclopedia.install()' to download and install it.")
 
         self.__data__ = {}
 
@@ -293,8 +293,9 @@ class SloaneEncyclopediaClass:
             self.__loaded_names__ = True
         except KeyError:
             # Some sequence in the names file is not in the database
-            raise KeyError("Sloane OEIS sequence and name files do not match.  Try reinstalling, e.g. SloaneEncyclopedia.install(overwrite=True).")
-        except IOError:
+            raise KeyError("Sloane OEIS sequence and name files do not match."
+                           " Try reinstalling, e.g. SloaneEncyclopedia.install(overwrite=True).")
+        except OSError:
             # The names database is not installed
             self.__loaded_names__ = False
 
@@ -306,7 +307,7 @@ class SloaneEncyclopediaClass:
         Return the name of sequence ``N`` in the encyclopedia.
 
         If sequence ``N`` does not exist, return ``''``.  If the names
-        database is not installed, raise an ``IOError``.
+        database is not installed, raise an :class:`IOError`.
 
         INPUT:
 
@@ -321,7 +322,8 @@ class SloaneEncyclopediaClass:
         """
         self.load()
         if not self.__loaded_names__:
-            raise IOError("The Sloane OEIS names file is not installed.  Try reinstalling, e.g. SloaneEncyclopedia.install(overwrite=True).")
+            raise OSError("The Sloane OEIS names file is not installed."
+                          " Try reinstalling, e.g. SloaneEncyclopedia.install(overwrite=True).")
 
         if N not in self.__data__:  # sequence N does not exist
             return ''
@@ -355,21 +357,20 @@ def copy_gz_file(gz_source, bz_destination):
     - ``bz_destination`` -- string.  The name of the newly compressed file.
     """
     import gzip
-    from sage.misc.misc import sage_makedirs
 
     # Read the gzipped input
     try:
         gz_input = gzip.open(gz_source, 'r')
         db_text = gz_input.read()
         gz_input.close()
-    except IOError as msg:
-        raise IOError("Error reading gzipped input file:\n%s" % msg)
+    except OSError as msg:
+        raise OSError("Error reading gzipped input file:\n%s" % msg)
 
     # Write the bzipped output
     try:
-        sage_makedirs(os.path.dirname(bz_destination))
+        os.makedirs(os.path.dirname(bz_destination), exist_ok=True)
         bz2_output = bz2.BZ2File(bz_destination, 'w')
         bz2_output.write(db_text)
         bz2_output.close()
-    except IOError as msg:
-        raise IOError("Error writing bzipped output file:\n%s" % msg)
+    except OSError as msg:
+        raise OSError("Error writing bzipped output file:\n%s" % msg)

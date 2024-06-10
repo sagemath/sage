@@ -1,6 +1,5 @@
-
-Kohel database
-==============
+database_kohel: Database of modular and Hilbert polynomials
+===========================================================
 
 Description
 -----------

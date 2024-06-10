@@ -9,13 +9,15 @@ AUTHORS:
 
 - Peter Bruin
 """
-from __future__ import absolute_import
 
 from sage.misc.fast_methods import WithEqualityById
+from sage.misc.lazy_import import lazy_import
 from sage.structure.sage_object import SageObject
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from sage.rings.integer import Integer
-import sage.databases.conway
+
+lazy_import('sage.databases.conway', 'ConwayPolynomials')
+
 
 def conway_polynomial(p, n):
     """
@@ -46,11 +48,11 @@ def conway_polynomial(p, n):
 
     EXAMPLES::
 
-        sage: conway_polynomial(2,5)
+        sage: conway_polynomial(2,5)                                                    # needs conway_polynomials
         x^5 + x^2 + 1
-        sage: conway_polynomial(101,5)
+        sage: conway_polynomial(101,5)                                                  # needs conway_polynomials
         x^5 + 2*x + 99
-        sage: conway_polynomial(97,101)
+        sage: conway_polynomial(97,101)                                                 # needs conway_polynomials
         Traceback (most recent call last):
         ...
         RuntimeError: requested Conway polynomial not in database.
@@ -58,7 +60,7 @@ def conway_polynomial(p, n):
     (p, n) = (int(p), int(n))
     R = FiniteField(p)['x']
     try:
-        return R(sage.databases.conway.ConwayPolynomials()[p][n])
+        return R(ConwayPolynomials()[p][n])
     except KeyError:
         raise RuntimeError("requested Conway polynomial not in database.")
 
@@ -83,7 +85,7 @@ def exists_conway_polynomial(p, n):
 
     EXAMPLES::
 
-        sage: exists_conway_polynomial(2,3)
+        sage: exists_conway_polynomial(2,3)                                             # needs conway_polynomials
         True
         sage: exists_conway_polynomial(2,-1)
         False
@@ -92,7 +94,10 @@ def exists_conway_polynomial(p, n):
         sage: exists_conway_polynomial(6,6)
         False
     """
-    return sage.databases.conway.ConwayPolynomials().has_polynomial(p,n)
+    try:
+        return ConwayPolynomials().has_polynomial(p,n)
+    except ImportError:
+        return False
 
 class PseudoConwayLattice(WithEqualityById, SageObject):
     r"""
@@ -128,9 +133,10 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.finite_rings
         sage: from sage.rings.finite_rings.conway_polynomials import PseudoConwayLattice
         sage: PCL = PseudoConwayLattice(2, use_database=False)
-        sage: PCL.polynomial(3)
+        sage: PCL.polynomial(3)   # random
         x^3 + x + 1
 
     TESTS::
@@ -155,26 +161,32 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
         """
         TESTS::
 
+            sage: # needs sage.rings.finite_rings
             sage: from sage.rings.finite_rings.conway_polynomials import PseudoConwayLattice
             sage: PCL = PseudoConwayLattice(3)
-            sage: PCL.polynomial(3)
+            sage: PCL.polynomial(3)  # random
             x^3 + 2*x + 1
 
+            sage: # needs sage.rings.finite_rings
             sage: PCL = PseudoConwayLattice(5, use_database=False)
-            sage: PCL.polynomial(12)
+            sage: PCL.polynomial(12)  # random
             x^12 + 4*x^11 + 2*x^10 + 4*x^9 + 2*x^8 + 2*x^7 + 4*x^6 + x^5 + 2*x^4 + 2*x^2 + x + 2
-            sage: PCL.polynomial(6)
+            sage: PCL.polynomial(6)   # random
             x^6 + x^5 + 4*x^4 + 3*x^3 + 3*x^2 + 2*x + 2
-            sage: PCL.polynomial(11)
+            sage: PCL.polynomial(11)  # random
             x^11 + x^6 + 3*x^3 + 4*x + 3
         """
         self.p = p
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         self.ring = PolynomialRing(FiniteField(p), 'x')
         if use_database:
-            C = sage.databases.conway.ConwayPolynomials()
-            self.nodes = {n: self.ring(C.polynomial(p, n))
-                          for n in C.degrees(p)}
+            try:
+                C = ConwayPolynomials()
+            except ImportError:
+                self.nodes = {}
+            else:
+                self.nodes = {n: self.ring(C.polynomial(p, n))
+                              for n in C.degrees(p)}
         else:
             self.nodes = {}
 
@@ -200,13 +212,14 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: from sage.rings.finite_rings.conway_polynomials import PseudoConwayLattice
             sage: PCL = PseudoConwayLattice(2, use_database=False)
-            sage: PCL.polynomial(3)
+            sage: PCL.polynomial(3)   # random
             x^3 + x + 1
-            sage: PCL.polynomial(4)
+            sage: PCL.polynomial(4)   # random
             x^4 + x^3 + 1
-            sage: PCL.polynomial(60)
+            sage: PCL.polynomial(60)  # random
             x^60 + x^59 + x^58 + x^55 + x^54 + x^53 + x^52 + x^51 + x^48 + x^46 + x^45 + x^42 + x^41 + x^39 + x^38 + x^37 + x^35 + x^32 + x^31 + x^30 + x^28 + x^24 + x^22 + x^21 + x^18 + x^17 + x^16 + x^15 + x^14 + x^10 + x^8 + x^7 + x^5 + x^3 + x^2 + x + 1
         """
         if n in self.nodes:
@@ -226,7 +239,7 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
         # TODO: something like the following
         # gcds = [n.gcd(d) for d in self.nodes.keys()]
         # xi = { m: (...) for m in gcds }
-        xi = {q: self.polynomial(n//q).any_root(K, -n//q, assume_squarefree=True)
+        xi = {q: self.polynomial(n//q).any_root(K, n//q, assume_squarefree=True, assume_equal_deg=True)
               for q in n.prime_divisors()}
 
         # The following is needed to ensure that in the concrete instantiation
@@ -268,13 +281,14 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: from sage.rings.finite_rings.conway_polynomials import PseudoConwayLattice
             sage: PCL = PseudoConwayLattice(2, use_database=False)
             sage: PCL.check_consistency(6)
             sage: PCL.check_consistency(60)  # long time
         """
         p = self.p
-        K = FiniteField(p**n, modulus = self.polynomial(n), names='a')
+        K = FiniteField(p**n, modulus=self.polynomial(n), names='a')
         a = K.gen()
         for m in n.divisors():
             assert (a**((p**n-1)//(p**m-1))).minimal_polynomial() == self.polynomial(m)
@@ -302,6 +316,7 @@ def _find_pow_of_frobenius(p, n, x, y):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.finite_rings
         sage: from sage.rings.finite_rings.conway_polynomials import _find_pow_of_frobenius
         sage: K.<a> = GF(3^14)
         sage: x = K.multiplicative_generator()
@@ -312,7 +327,8 @@ def _find_pow_of_frobenius(p, n, x, y):
     """
     from .integer_mod import mod
     for i in range(n):
-        if x == y: break
+        if x == y:
+            break
         y = y**p
     else:
         raise RuntimeError("No appropriate power of Frobenius found")
@@ -380,14 +396,15 @@ def _frobenius_shift(K, generators, check_only=False):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.ntl sage.rings.finite_rings
         sage: R.<x> = GF(2)[]
         sage: f30 = x^30 + x^28 + x^27 + x^25 + x^24 + x^20 + x^19 + x^18 + x^16 + x^15 + x^12 + x^10 + x^7 + x^2 + 1
         sage: f20 = x^20 + x^19 + x^15 + x^13 + x^12 + x^11 + x^9 + x^8 + x^7 + x^4 + x^2 + x + 1
         sage: f12 = x^12 + x^10 + x^9 + x^8 + x^4 + x^2 + 1
         sage: K.<a> = GF(2^60, modulus='first_lexicographic')
-        sage: x30 = f30.any_root(K)
-        sage: x20 = f20.any_root(K)
-        sage: x12 = f12.any_root(K)
+        sage: x30 = f30.roots(K, multiplicities=False)[0]
+        sage: x20 = f20.roots(K, multiplicities=False)[0]
+        sage: x12 = f12.roots(K, multiplicities=False)[0]
         sage: generators = {2: x30, 3: x20, 5: x12}
         sage: from sage.rings.finite_rings.conway_polynomials import _frobenius_shift, _find_pow_of_frobenius
         sage: _frobenius_shift(K, generators)
@@ -454,7 +471,8 @@ def _frobenius_shift(K, generators, check_only=False):
         searched[i] = True
         crt_possibles = []
         for j in range(1,len(qlist)):
-            if i==j: continue
+            if i == j:
+                continue
             if crt[(i,j)][qindex][1] >= level:
                 if xleveled[j]:
                     return [j]
@@ -469,7 +487,8 @@ def _frobenius_shift(K, generators, check_only=False):
 
     def propagate_levelling(qindex, level, x, xleveled, i):
         for j in range(1, len(qlist)):
-            if i==j: continue
+            if i == j:
+                continue
             if not xleveled[j] and crt[(i,j)][qindex][1] >= level:
                 newxj = x[i][0] + crt[(i,j)][qindex][0]
                 x[j] = (newxj, min(x[i][1], crt[(i,j)][qindex][1]))

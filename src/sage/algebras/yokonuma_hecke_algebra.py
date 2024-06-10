@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules
 """
 Yokonuma-Hecke Algebras
 
@@ -18,12 +19,13 @@ AUTHORS:
 
 from sage.misc.cachefunc import cached_method
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 from sage.categories.algebras import Algebras
 from sage.categories.rings import Rings
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.permutation import Permutations
 from sage.sets.family import Family
+
 
 class YokonumaHeckeAlgebra(CombinatorialFreeModule):
     r"""
@@ -136,7 +138,7 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
         q = R(q)
         if R not in Rings().Commutative():
             raise TypeError("base ring must be a commutative ring")
-        return super(YokonumaHeckeAlgebra, cls).__classcall__(cls, d, n, q, R)
+        return super().__classcall__(cls, d, n, q, R)
 
     def __init__(self, d, n, q, R):
         """
@@ -154,14 +156,14 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
         self._Pn = Permutations(n)
         import itertools
         C = itertools.product(*([range(d)]*n))
-        indices = list( itertools.product(C, self._Pn))
+        indices = list(itertools.product(C, self._Pn))
         cat = Algebras(R).WithBasis()
         CombinatorialFreeModule.__init__(self, R, indices, prefix='Y',
                                          category=cat)
         self._assign_names(self.algebra_generators().keys())
 
     def _repr_(self):
-        """ 
+        """
         Return a string representation of ``self``.
 
         EXAMPLES::
@@ -183,7 +185,7 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
             sage: latex(Y)
             \mathcal{Y}_{5,2}(q)
         """
-        return "\\mathcal{Y}_{%s,%s}(%s)"%(self._d, self._n, self._q)
+        return "\\mathcal{Y}_{%s,%s}(%s)" % (self._d, self._n, self._q)
 
     def _repr_term(self, m):
         """
@@ -195,8 +197,8 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
             sage: Y._repr_term( ((1, 0, 2), Permutation([3,2,1])) )
             't1*t3^2*g[2,1,2]'
         """
-        gen_str = lambda e: '' if e == 1 else '^%s'%e
-        lhs = '*'.join('t%s'%(j+1) + gen_str(i) for j,i in enumerate(m[0]) if i > 0)
+        gen_str = lambda e: '' if e == 1 else '^%s' % e
+        lhs = '*'.join('t%s' % (j+1) + gen_str(i) for j,i in enumerate(m[0]) if i > 0)
         redword = m[1].reduced_word()
         if not redword:
             if not lhs:
@@ -217,14 +219,14 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
             sage: Y._latex_term( ((1, 0, 2), Permutation([3,2,1])) )
             't_{1} t_{3}^2 g_{2} g_{1} g_{2}'
         """
-        gen_str = lambda e: '' if e == 1 else '^%s'%e
-        lhs = ' '.join('t_{%s}'%(j+1) + gen_str(i) for j,i in enumerate(m[0]) if i > 0)
+        gen_str = lambda e: '' if e == 1 else '^%s' % e
+        lhs = ' '.join('t_{%s}' % (j+1) + gen_str(i) for j,i in enumerate(m[0]) if i > 0)
         redword = m[1].reduced_word()
         if not redword:
             if not lhs:
                 return '1'
             return lhs
-        return lhs + ' ' + ' '.join("g_{%d}"%i for i in redword)
+        return lhs + ' ' + ' '.join("g_{%d}" % i for i in redword)
 
     @cached_method
     def algebra_generators(self):
@@ -243,10 +245,10 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
         for i in range(self._n):
             r = list(zero) # Make a copy
             r[i] = 1
-            d['t%s'%(i+1)] = self.monomial( (tuple(r), one) )
+            d['t%s' % (i+1)] = self.monomial( (tuple(r), one) )
         G = self._Pn.group_generators()
         for i in range(1, self._n):
-            d['g%s'%i] = self.monomial( (tuple(zero), G[i]) )
+            d['g%s' % i] = self.monomial( (tuple(zero), G[i]) )
         return Family(sorted(d), lambda i: d[i])
 
     @cached_method
@@ -323,8 +325,8 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
         """
         G = self.algebra_generators()
         if i is None:
-            return [G['g%s'%i] for i in range(1, self._n)]
-        return G['g%s'%i]
+            return [G['g%s' % i] for i in range(1, self._n)]
+        return G['g%s' % i]
 
     def t(self, i=None):
         """
@@ -345,8 +347,8 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
         """
         G = self.algebra_generators()
         if i is None:
-            return [G['t%s'%i] for i in range(1, self._n+1)]
-        return G['t%s'%i]
+            return [G['t%s' % i] for i in range(1, self._n+1)]
+        return G['t%s' % i]
 
     def product_on_basis(self, m1, m2):
         """
@@ -454,7 +456,7 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
         return self.g(i) + (~self._q + self._q) * self.e(i)
 
     class Element(CombinatorialFreeModule.Element):
-        def inverse(self):
+        def __invert__(self):
             r"""
             Return the inverse if ``self`` is a basis element.
 
@@ -463,7 +465,7 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
                 sage: Y = algebras.YokonumaHecke(3, 3)
                 sage: t = prod(Y.t()); t
                 t1*t2*t3
-                sage: ~t
+                sage: t.inverse()   # indirect doctest
                 t1^2*t2^2*t3^2
                 sage: [3*~(t*g) for g in Y.g()]
                 [(q^-1+q)*t2*t3^2 + (q^-1+q)*t1*t3^2
@@ -473,7 +475,7 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
 
             TESTS:
 
-            Check that :trac:`26424` is fixed::
+            Check that :issue:`26424` is fixed::
 
                 sage: Y = algebras.YokonumaHecke(3, 3)
                 sage: t = 3 * prod(Y.t())
@@ -488,12 +490,9 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
             if not self:
                 raise ZeroDivisionError
             if len(self) != 1:
-                raise NotImplementedError("inverse only implemented for basis elements (monomials in the generators)"%self)
+                raise NotImplementedError("inverse only implemented for basis elements (monomials in the generators)" % self)
             H = self.parent()
             t,w = self.support_of_term()
             c = ~self.coefficients()[0]
             telt = H.monomial( (tuple((H._d - e) % H._d for e in t), H._Pn.one()) )
             return c * telt * H.prod(H.inverse_g(i) for i in reversed(w.reduced_word()))
-
-        __invert__ = inverse
-

@@ -106,7 +106,7 @@ dnl (Also sanity checks the results of ppl-config to some extent.)
     AC_LANG_PUSH(C++)
 
     rm -f conf.ppltest
-    AC_TRY_RUN([
+    AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <ppl.hh>
 #include <iostream>
 #include <cstdio>
@@ -180,7 +180,7 @@ main() {
          << "\n*** was found!  If ppl-config was correct, then it is best"
             "\n*** to remove the old version of PPL."
             "  You may also be able to fix the error"
-            "\n*** by modifying your LD_LIBRARY_PATH enviroment variable,"
+            "\n*** by modifying your LD_LIBRARY_PATH environment variable,"
             " or by editing"
             "\n*** /etc/ld.so.conf."
             "  Make sure you have run ldconfig if that is"
@@ -224,7 +224,7 @@ main() {
               " variable to point"
               "\n*** to the correct copy of ppl-config.  (In this case,"
               " you will have to"
-              "\n*** modify your LD_LIBRARY_PATH enviroment"
+              "\n*** modify your LD_LIBRARY_PATH environment"
               " variable or edit /etc/ld.so.conf"
               "\n*** so that the correct libraries are found at run-time.)"
            << endl;
@@ -232,7 +232,7 @@ main() {
   }
   return 0;
 }
-],, no_ppl=yes,[echo $ac_n "cross compiling; assumed OK... $ac_c"])
+]])],[],[no_ppl=yes],[echo $ac_n "cross compiling; assumed OK... $ac_c"])
 
     AC_LANG_POP
 
@@ -261,15 +261,13 @@ else
       echo "*** Could not run PPL test program, checking why..."
       CPPFLAGS="$CPPFLAGS $PPL_CPPFLAGS"
       LIBS="$LIBS $PPL_LIBS"
-      AC_TRY_LINK([
+      AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <ppl.hh>
 using namespace Parma_Polyhedra_Library;
-],
-[
+]], [[
   return version_major() || version_minor()
   || version_revision() || version_beta();
-],
-[
+]])],[
   echo "*** The test program compiled, but did not run.  This usually means"
   echo "*** that the run-time linker is not finding the PPL or finding the"
   echo "*** wrong version of the PPL.  If it is not finding the PPL, you will"
@@ -280,8 +278,7 @@ using namespace Parma_Polyhedra_Library;
   echo "*** If you have an old version installed, it is best to remove it,"
   echo "*** although you may also be able to get things to work by modifying"
   echo "*** LD_LIBRARY_PATH."
-],
-[
+],[
   echo "*** The test program failed to compile or link. See the file"
   echo "*** config.log for the exact error that occured.  This usually means"
   echo "*** the PPL was incorrectly installed or that someone moved the PPL"

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Lattice posets
 """
@@ -13,6 +14,7 @@ from sage.misc.abstract_method import abstract_method
 from sage.misc.lazy_import import LazyImport
 from sage.categories.category import Category
 from sage.categories.posets import Posets
+
 
 class LatticePosets(Category):
     r"""
@@ -66,8 +68,8 @@ class LatticePosets(Category):
 
             EXAMPLES::
 
-                sage: D = LatticePoset((divisors(30), attrcall("divides")))
-                sage: D.meet( D(6), D(15) )
+                sage: D = LatticePoset((divisors(30), attrcall("divides")))             # needs sage.graphs sage.modules
+                sage: D.meet( D(6), D(15) )                                             # needs sage.graphs sage.modules
                 3
             """
 
@@ -82,7 +84,7 @@ class LatticePosets(Category):
 
             EXAMPLES::
 
-                sage: D = LatticePoset((divisors(60), attrcall("divides")))
-                sage: D.join( D(6), D(10) )
+                sage: D = LatticePoset((divisors(60), attrcall("divides")))             # needs sage.graphs sage.modules
+                sage: D.join( D(6), D(10) )                                             # needs sage.graphs sage.modules
                 30
             """

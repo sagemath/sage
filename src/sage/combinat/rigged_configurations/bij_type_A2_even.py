@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Bijection classes for type `A_{2n}^{(2)}`
 
@@ -20,7 +21,7 @@ TESTS::
     sage: TestSuite(bijection).run()
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Travis Scrimshaw <tscrim@ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -32,12 +33,13 @@ TESTS::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.combinat.rigged_configurations.bij_type_A import KRTToRCBijectionTypeA
 from sage.combinat.rigged_configurations.bij_type_C import KRTToRCBijectionTypeC
 from sage.combinat.rigged_configurations.bij_type_C import RCToKRTBijectionTypeC
+
 
 class KRTToRCBijectionTypeA2Even(KRTToRCBijectionTypeC):
     r"""
@@ -90,7 +92,7 @@ class KRTToRCBijectionTypeA2Even(KRTToRCBijectionTypeC):
             for a in range(pos_val - 1, n):
                 max_width = self.ret_rig_con[a].insert_cell(max_width)
                 case_S[a] = max_width
-    
+
             # Special case for n
             self._insert_cell_case_S(self.ret_rig_con[n-1])
 
@@ -119,6 +121,7 @@ class KRTToRCBijectionTypeA2Even(KRTToRCBijectionTypeC):
             self._update_vacancy_nums(tableau_height - 1)
             self._update_partition_values(tableau_height - 1)
 
+
 class RCToKRTBijectionTypeA2Even(RCToKRTBijectionTypeC):
     r"""
     Specific implementation of the bijection from rigged configurations to
@@ -137,7 +140,7 @@ class RCToKRTBijectionTypeA2Even(RCToKRTBijectionTypeC):
             sage: bijection.next_state(2)
             -1
         """
-        height -= 1 # indexing
+        height -= 1  # indexing
         n = self.n
         ell = [None] * (2*n)
         case_S = [False] * n
@@ -211,4 +214,4 @@ class RCToKRTBijectionTypeA2Even(RCToKRTBijectionTypeC):
         if row_num_bar is not None:
             self.cur_partitions[n-1].rigging[row_num_bar] = self.cur_partitions[n-1].vacancy_numbers[row_num_bar]
 
-        return(b)
+        return b

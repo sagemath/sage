@@ -5,7 +5,7 @@
 #                  http://www.gnu.org/licenses/
 #############################################################################
 
-from sage.finance.time_series cimport TimeSeries
+from sage.stats.time_series cimport TimeSeries
 from sage.stats.intlist cimport IntList
 from sage.misc.randstate cimport randstate
 
@@ -22,10 +22,7 @@ cdef class GaussianMixtureDistribution(Distribution):
     cdef TimeSeries c0, c1, param
     cdef IntList fixed
 
-    cdef double _sample(self, randstate rstate)
-    cpdef double prob(self, double x)
-    cpdef double prob_m(self, double x, int m)
+    cdef double _sample(self, randstate rstate) noexcept
+    cpdef double prob(self, double x) noexcept
+    cpdef double prob_m(self, double x, int m) noexcept
     cpdef is_fixed(self, i=?)
-
-
-

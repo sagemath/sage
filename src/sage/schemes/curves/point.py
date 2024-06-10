@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.singular
 """
 Rational points of curves
 
@@ -7,8 +8,8 @@ We can create points on projective curves::
     sage: C = Curve([x^3 - 2*x*z^2 - y^3, z^3 - w^3 - x*y*z], P)
     sage: Q = C([1,1,0,0])
     sage: Q.parent()
-    Set of rational points of Projective Curve over Rational Field defined
-    by x^3 - y^3 - 2*x*z^2, -x*y*z + z^3 - w^3
+    Set of rational points of Projective Curve over Rational Field
+     defined by x^3 - y^3 - 2*x*z^2, -x*y*z + z^3 - w^3
 
 or on affine curves::
 
@@ -16,26 +17,26 @@ or on affine curves::
     sage: C = Curve([y - y^4 + 17*x^2 - 2*x + 22], A)
     sage: Q = C([22,21])
     sage: Q.parent()
-    Set of rational points of Affine Plane Curve over Finite Field of size
-    23 defined by -y^4 - 6*x^2 - 2*x + y - 1
+    Set of rational points of Affine Plane Curve over Finite Field of size 23
+     defined by -y^4 - 6*x^2 - 2*x + y - 1
 
 AUTHORS:
 
 - Grayson Jorgenson (2016-6): initial version
-
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.schemes.affine.affine_point import (SchemeMorphism_point_affine_field,
                                               SchemeMorphism_point_affine_finite_field)
 from sage.schemes.projective.projective_point import (SchemeMorphism_point_projective_field,
                                                       SchemeMorphism_point_projective_finite_field)
+
 
 class ProjectiveCurvePoint_field(SchemeMorphism_point_projective_field):
     """
@@ -112,6 +113,7 @@ class ProjectivePlaneCurvePoint_field(ProjectiveCurvePoint_field):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<a> = QQ[]
             sage: K.<b> = NumberField(a^2 - 3)
             sage: P.<x,y,z> = ProjectiveSpace(K, 2)
@@ -188,7 +190,8 @@ class IntegralProjectiveCurvePoint(ProjectiveCurvePoint_field):
                 break
         ai = hcoords[i]
         xi = S.gen(i)
-        hgens = [ai*S.gen(j) - hcoords[j]*xi for j in range(S.ngens()) if j != i]
+        hgens = [ai * S.gen(j) - hcoords[j] * xi
+                 for j in range(S.ngens()) if j != i]
         return curve._closed_point(curve, S.ideal(hgens), degree=1)
 
     def places(self):
@@ -253,6 +256,7 @@ class AffineCurvePoint_field(SchemeMorphism_point_affine_field):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: K = QuadraticField(-1)
             sage: A.<x,y,z> = AffineSpace(K, 3)
             sage: C = Curve([(x^4 + 2*z + 2)*y, z - y + 1])
@@ -352,12 +356,13 @@ class AffinePlaneCurvePoint_field(AffineCurvePoint_field):
 
         ::
 
+            sage: # needs sage.rings.number_field
             sage: R.<a> = QQ[]
             sage: K.<b> = NumberField(a^2 - 2)
             sage: A.<x,y> = AffineSpace(K, 2)
             sage: C = Curve([y^2 + x^2 - 1], A)
             sage: D = Curve([y - x], A)
-            sage: Q = C([-1/2*b,-1/2*b])
+            sage: Q = C([-1/2*b, -1/2*b])
             sage: Q.is_transverse(D)
             True
         """
@@ -381,6 +386,7 @@ class IntegralAffineCurvePoint(AffineCurvePoint_field):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: A.<x,y> = AffineSpace(GF(8), 2)
             sage: C = Curve(x^5 + y^5 + x*y + 1)
             sage: p = C([1,1])
@@ -409,9 +415,9 @@ class IntegralAffineCurvePoint(AffineCurvePoint_field):
             Point (x + 1, y + 1)
             sage: _.places()
             [Place (x + 1, (1/(x^5 + 1))*y^4 + ((x^5 + x^4 + 1)/(x^5 + 1))*y^3
-            + ((x^5 + x^3 + 1)/(x^5 + 1))*y^2 + (x^2/(x^5 + 1))*y), Place (x +
-            1, (1/(x^5 + 1))*y^4 + ((x^5 + x^4 + 1)/(x^5 + 1))*y^3 + (x^3/(x^5
-            + 1))*y^2 + (x^2/(x^5 + 1))*y + x + 1)]
+                           + ((x^5 + x^3 + 1)/(x^5 + 1))*y^2 + (x^2/(x^5 + 1))*y),
+             Place (x + 1, (1/(x^5 + 1))*y^4 + ((x^5 + x^4 + 1)/(x^5 + 1))*y^3
+                           + (x^3/(x^5 + 1))*y^2 + (x^2/(x^5 + 1))*y + x + 1)]
         """
         return self.closed_point().places()
 
@@ -429,8 +435,8 @@ class IntegralAffineCurvePoint(AffineCurvePoint_field):
             sage: p.closed_point()
             Point (x + 1, y + 1)
             sage: _.place()
-            Place (x + 1, (1/(x^5 + 1))*y^4 + ((x^5 + x^4 + 1)/(x^5 + 1))*y^3 +
-            ((x^5 + x^3 + 1)/(x^5 + 1))*y^2 + (x^2/(x^5 + 1))*y)
+            Place (x + 1, (1/(x^5 + 1))*y^4 + ((x^5 + x^4 + 1)/(x^5 + 1))*y^3
+                          + ((x^5 + x^3 + 1)/(x^5 + 1))*y^2 + (x^2/(x^5 + 1))*y)
         """
         return self.closed_point().place()
 
@@ -444,9 +450,10 @@ class IntegralAffineCurvePoint_finite_field(IntegralAffineCurvePoint):
 
 class IntegralAffinePlaneCurvePoint(IntegralAffineCurvePoint, AffinePlaneCurvePoint_field):
     """
-    Point of an integral affine plane curve over a finite field.
+    Point of an integral affine plane curve.
     """
     pass
+
 
 class IntegralAffinePlaneCurvePoint_finite_field(AffinePlaneCurvePoint_finite_field, IntegralAffineCurvePoint_finite_field):
     """

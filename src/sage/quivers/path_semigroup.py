@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 """
 Path Semigroups
 """
@@ -18,7 +17,6 @@ Path Semigroups
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -115,7 +113,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         # If self is immutable and weighted, then the copy is really cheap:
         # __copy__ just returns self.
         Q = Q.copy(immutable=True, weighted=True)
-        return super(PathSemigroup, cls).__classcall__(cls, Q)
+        return super().__classcall__(cls, Q)
 
     def __init__(self, Q):
         """
@@ -180,7 +178,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
             cat = FiniteEnumeratedSets()
         else:
             cat = InfiniteEnumeratedSets()
-        self._sorted_edges = tuple(sorted(Q.edges(), key=lambda x: x[2]))
+        self._sorted_edges = tuple(sorted(Q.edges(sort=True), key=lambda x: x[2]))
         self._labels = tuple([x[2] for x in self._sorted_edges])
         self._label_index = {s[2]: i for i, s in enumerate(self._sorted_edges)}
         self._nb_arrows = max(len(self._sorted_edges), 1)
@@ -296,8 +294,8 @@ class PathSemigroup(UniqueRepresentation, Parent):
             sage: Q(P(['c','d']))
             c*d
 
-        A ``TypeError`` or a ``ValueError`` is raised appropriately if the input
-        is wrong::
+        A :class:`TypeError` or a :class:`ValueError` is raised appropriately
+        if the input is wrong::
 
             sage: G = DiGraph([(0,0,'a'), (0,1,'b'), (1,0,'c')], loops=True)
             sage: P = G.path_semigroup()
@@ -307,7 +305,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
             sage: P([(2,2)])
             Traceback (most recent call last):
             ...
-            ValueError: Startpoint 2 should belong to [0, 1]
+            ValueError: startpoint 2 should belong to [0, 1]
             sage: P([(0,1,'a'),(1,0,'b')])
             Traceback (most recent call last):
             ...
@@ -336,7 +334,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
             edge_index = {e: i for i, e in enumerate(E)}
             path = [edge_index.get(e) for e in data]
         elif not data:
-            raise ValueError("No data given to define this path")
+            raise ValueError("no data given to define this path")
         elif data == 1:
             start = end = next(self._quiver.vertex_iterator())
             path = []
@@ -374,12 +372,12 @@ class PathSemigroup(UniqueRepresentation, Parent):
         if check:
             Q = self._quiver
             if start is None or start not in Q:
-                raise ValueError("Startpoint {} should belong to {}".format(start, Q.vertices()))
+                raise ValueError("startpoint {} should belong to {}".format(start, Q.vertices(sort=False)))
             if end is None or end not in Q:
-                raise ValueError("Endpoint {} should belong to {}".format(end, Q.vertices()))
+                raise ValueError("endpoint {} should belong to {}".format(end, Q.vertices(sort=False)))
             if not path:
                 if start != end:
-                    raise ValueError("Start and endpoint of a path of length 0 must coincide")
+                    raise ValueError("start and endpoint of a path of length 0 must coincide")
             else:
                 if any(x is None for x in path):
                     i = next((i for i, x in enumerate(path) if x is None))
@@ -388,12 +386,12 @@ class PathSemigroup(UniqueRepresentation, Parent):
                     e0 = E[path[n - 1]][1]
                     e1 = E[path[n]][0]
                     if e0 != e1:
-                        raise ValueError("Edge {} ends at {}, but edge {} starts at {}".format(
+                        raise ValueError("edge {} ends at {}, but edge {} starts at {}".format(
                             E[path[n - 1]][2], e0, E[path[n]][2], e1))
                 if E[path[0]][0] != start:
-                    raise ValueError("First edge should start at vertex {}".format(start))
+                    raise ValueError("first edge should start at vertex {}".format(start))
                 if E[path[-1]][1] != end:
-                    raise ValueError("Last edge should end at vertex {}".format(end))
+                    raise ValueError("last edge should end at vertex {}".format(end))
 
         return self.element_class(self, start, end, path)
 
@@ -469,7 +467,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         return self.gens()[i]
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the tuple of generators.
 
@@ -488,7 +486,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         """
         return self.idempotents() + self.arrows()
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         This partial semigroup is finite if and only if the underlying
         quiver is acyclic.
@@ -544,7 +542,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
             ...
             ValueError: the underlying quiver has cycles, thus, there may be an infinity of directed paths
         """
-        from sage.all import ZZ
+        from sage.rings.integer_ring import ZZ
         if self._quiver.is_directed_acyclic() and not self._quiver.has_loops():
             return ZZ(len(self))
         from sage.rings.infinity import Infinity
@@ -1080,7 +1078,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
             ...
             ValueError: the end vertex 4 is not a vertex of the quiver
 
-        If the underlying quiver is cyclic, a ``ValueError``
+        If the underlying quiver is cyclic, a :class:`ValueError`
         is raised::
 
             sage: Q = DiGraph({1:{2:['a','b'], 3:['c']}, 3:{1:['d']}})

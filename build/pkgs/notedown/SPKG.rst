@@ -1,5 +1,5 @@
-notedown
-========
+notedown: Create IPython notebooks from markdown
+================================================
 
 Description
 -----------
@@ -17,12 +17,3 @@ Upstream Contact
 
 Author: Aaron O'Leary Home page: https://github.com/aaren/notedown
 
-Dependencies
-------------
-
--  Python
--  setuptools
--  nbformat
--  nbconvert
--  six
--  pandoc_attributes

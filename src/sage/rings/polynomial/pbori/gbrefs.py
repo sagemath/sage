@@ -1,7 +1,6 @@
-from re import sub
 import gzip
 from io import StringIO
-import uu
+import base64 as uu
 import re
 from types import ModuleType
 from .PyPolyBoRi import Polynomial
@@ -28,15 +27,14 @@ def parse_blocks(block_str, data):
 
 
 def load_ref_raw(s):
-    s = sub("data/", "", s)
-    s = sub(r"data\.", "", s)
-    s = sub(r"\.py", "", s)
-    s = sub(r"\.", "/", s)
+    s = re.sub("data/", "", s)
+    s = re.sub(r"data\.", "", s)
+    s = re.sub(r"\.py", "", s)
+    s = re.sub(r"\.", "/", s)
 
     ref_file = "ref/" + s + ".ref"
-    res_f = open(ref_file)
-    res = res_f.read()
-    res_f.close()
+    with open(ref_file) as res_f:
+        res = res_f.read()
     return res
 
 
@@ -47,11 +45,9 @@ def load_ref(s, ordering="lp", blocks=SINGLE):
 def ordering_suffix(o, blocks=None):
     if o == "lp":
         return ""
-    else:
-        if re.match("block", o):
-            return "." + o + "_" + reencode_blocks(blocks)
-        else:
-            return "." + o
+    if re.match("block", o):
+        return "." + o + "_" + reencode_blocks(blocks)
+    return "." + o
 
 
 def number_of_declared_vars(data):
@@ -62,10 +58,10 @@ def number_of_declared_vars(data):
 
 
 def load_ref_gz_uu(s, o, b):
-    s = sub("data/", "", s)
-    s = sub(r"data\.", "", s)
-    s = sub(r"\.py", "", s)
-    s = sub(r"\.", "/", s)
+    s = re.sub("data/", "", s)
+    s = re.sub(r"data\.", "", s)
+    s = re.sub(r"\.py", "", s)
+    s = re.sub(r"\.", "/", s)
 
     ref_file = "ref/" + s + ordering_suffix(o, b) + ".ref.gz.uu"
     res = StringIO()
@@ -78,27 +74,15 @@ def load_ref_gz_uu(s, o, b):
 
 
 def convert_refs(ref_file_orig):
-    content = open(ref_file_orig).read()
+    with open(ref_file_orig) as file:
+        content = file.read()
     buf_out = StringIO()
     zipped = gzip.GzipFile(filename=ref_file_orig, mode="w", fileobj=buf_out)
     zipped.write(content)
     zipped.close()
     val = buf_out.getvalue()
-    out = open(ref_file_orig + ".gz.uu", "w")
-    uu.encode(out_file=out, in_file=StringIO(val))
-    out.close()
-
-
-def my_import(name, globals=None, locals=None):
-    if globals is None:
-        globals = {}
-    if locals is None:
-        locals = {}
-    mod = __import__(name)
-    components = name.split('.')
-    for comp in components[1:]:
-        mod = getattr(mod, comp)
-    return mod
+    with open(ref_file_orig + ".gz.uu", "w") as out:
+        uu.encode(out_file=out, in_file=StringIO(val))
 
 
 def dyn_generate(content, name):
@@ -127,17 +111,15 @@ def load_data(file_name, base_dir="./"):
     in_file = file_name
     if not re.match("^data", in_file):
         in_file = "data/" + in_file
-    in_file = sub(r".py$", "", in_file)
-    in_file = sub(r"\.", "/", in_file)
+    in_file = re.sub(r".py$", "", in_file)
+    in_file = re.sub(r"\.", "/", in_file)
     in_file = in_file + ".py"
-    in_file = open(base_dir + in_file).read()
+    with open(base_dir + in_file) as f:
+        in_file = f.read()
     return dyn_generate(in_file, "pb_data")
 
 
 def load_file(file_name):
-
-    in_file = file_name
-
-    in_file = open(in_file).read()
-
+    with open(file_name) as f:
+        in_file = f.read()
     return dyn_generate(in_file, "pb_data")

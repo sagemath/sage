@@ -1,6 +1,8 @@
-# distutils: libraries = gmp ntl
-# distutils: extra_compile_args = M4RI_CFLAGS
-# distutils: include_dirs = M4RI_INCDIR
+# distutils: libraries = gmp NTL_LIBRARIES
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
+# distutils: extra_compile_args = NTL_CFLAGS M4RI_CFLAGS
+# distutils: include_dirs = NTL_INCDIR M4RI_INCDIR
 # distutils: language = c++
 """
 Univariate Polynomials over GF(2) via NTL's GF2X
@@ -14,7 +16,7 @@ AUTHOR:
 # to make sure the function get_cparent is found since it is used in
 # 'polynomial_template.pxi'.
 
-cdef inline cparent get_cparent(parent):
+cdef inline cparent get_cparent(parent) noexcept:
     return 0
 
 # first we include the definitions
@@ -24,7 +26,7 @@ include "sage/libs/ntl/ntl_GF2X_linkage.pxi"
 # and then the interface
 include "polynomial_template.pxi"
 
-from sage.libs.all import pari
+from sage.libs.pari.all import pari
 
 from sage.libs.m4ri cimport mzd_write_bit, mzd_read_bit
 from sage.matrix.matrix_mod2_dense cimport Matrix_mod2_dense
@@ -32,8 +34,8 @@ from sage.matrix.matrix_mod2_dense cimport Matrix_mod2_dense
 from sage.misc.cachefunc import cached_method
 
 cdef class Polynomial_GF2X(Polynomial_template):
-    """
-    Univariate Polynomials over GF(2) via NTL's GF2X.
+    r"""
+    Univariate Polynomials over `\GF{2}` via NTL's GF2X.
 
     EXAMPLES::
 
@@ -42,8 +44,8 @@ cdef class Polynomial_GF2X(Polynomial_template):
         x^3 + x^2 + 1
     """
     def __init__(self, parent, x=None, check=True, is_gen=False, construct=False):
-        """
-        Create a new univariate polynomials over GF(2).
+        r"""
+        Create a new univariate polynomials over `\GF{2}`.
 
         EXAMPLES::
 
@@ -51,7 +53,7 @@ cdef class Polynomial_GF2X(Polynomial_template):
             sage: x^3 + x^2 + 1
             x^3 + x^2 + 1
 
-        We check that the bug noted at :trac:`12724` is fixed::
+        We check that the bug noted at :issue:`12724` is fixed::
 
             sage: R.<x> = Zmod(2)[]
             sage: R([2^80])
@@ -98,14 +100,14 @@ cdef class Polynomial_GF2X(Polynomial_template):
             sage: pari(f)
             Mod(1, 2)*x^3 + Mod(1, 2)*x^2 + Mod(1, 2)
         """
-        #TODO: put this in a superclass
+        # TODO: put this in a superclass
         parent = self._parent
         if variable is None:
             variable = parent.variable_name()
         return pari(self.list()).Polrev(variable) * pari(1).Mod(2)
 
     def modular_composition(Polynomial_GF2X self, Polynomial_GF2X g, Polynomial_GF2X h, algorithm=None):
-        """
+        r"""
         Compute `f(g) \pmod h`.
 
         Both implementations use Brent-Kung's Algorithm 2.1 (*Fast Algorithms
@@ -115,7 +117,7 @@ cdef class Polynomial_GF2X(Polynomial_template):
 
         - ``g`` -- a polynomial
         - ``h`` -- a polynomial
-        - ``algorithm`` -- either 'native' or 'ntl' (default: 'native')
+        - ``algorithm`` -- either ``'native'`` or ``'ntl'`` (default: ``'native'``)
 
         EXAMPLES::
 
@@ -130,7 +132,7 @@ cdef class Polynomial_GF2X(Polynomial_template):
             sage: f = x^29 + x^24 + x^22 + x^21 + x^20 + x^16 + x^15 + x^14 + x^10 + x^9 + x^8 + x^7 + x^6 + x^5 + x^2
             sage: g = x^31 + x^30 + x^28 + x^26 + x^24 + x^21 + x^19 + x^18 + x^11 + x^10 + x^9 + x^8 + x^5 + x^2 + 1
             sage: h = x^30 + x^28 + x^26 + x^25 + x^24 + x^22 + x^21 + x^18 + x^17 + x^15 + x^13 + x^12 + x^11 + x^10 + x^9 + x^4
-            sage: f.modular_composition(g,h) == f(g) % h
+            sage: f.modular_composition(g, h) == f(g) % h
             True
 
         AUTHORS:
@@ -141,11 +143,11 @@ cdef class Polynomial_GF2X(Polynomial_template):
         if g.parent() is not self.parent() or h.parent() is not self.parent():
             raise TypeError("Parents of the first three parameters must match.")
 
-        from sage.misc.misc import cputime
+        from sage.misc.timing import cputime
         from sage.misc.verbose import verbose
-        from sage.functions.all import ceil
+        from sage.arith.misc import integer_ceil as ceil
         from sage.matrix.constructor import Matrix
-        from sage.rings.all import FiniteField as GF
+        from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 
         cdef Polynomial_GF2X res
         cdef GF2XModulus_c modulus
@@ -203,10 +205,10 @@ cdef class Polynomial_GF2X(Polynomial_template):
                 tt = gpow
                 jj = j
                 while 2*jj < k:
-                   GF2X_SqrMod_pre(tt, tt, modulus)
-                   jj = 2*jj
-                   for i from 0 <= i < GF2X_NumBits(tt):
-                       mzd_write_bit(G._entries, jj, i, GF2_conv_to_long(GF2X_coeff(tt, i)))
+                    GF2X_SqrMod_pre(tt, tt, modulus)
+                    jj = 2*jj
+                    for i from 0 <= i < GF2X_NumBits(tt):
+                        mzd_write_bit(G._entries, jj, i, GF2_conv_to_long(GF2X_coeff(tt, i)))
         # we need that gpow = g^k at the end
         if k % 2 == 1: # k is odd, last j is k-2
             GF2X_MulMod_pre(gpow, gpow, g2, modulus)
@@ -257,7 +259,7 @@ cdef class Polynomial_GF2X(Polynomial_template):
     @cached_method
     def is_irreducible(self):
         r"""
-        Return whether this polynomial is irreducible over `\GF{2}`.`
+        Return whether this polynomial is irreducible over `\GF{2}`.
 
         EXAMPLES::
 
@@ -306,7 +308,7 @@ def GF2X_BuildIrred_list(n):
     cdef GF2X_c f
     GF2 = FiniteField(2)
     GF2X_BuildIrred(f, int(n))
-    return [GF2(not GF2_IsZero(GF2X_coeff(f, i))) for i in xrange(n + 1)]
+    return [GF2(not GF2_IsZero(GF2X_coeff(f, i))) for i in range(n + 1)]
 
 def GF2X_BuildSparseIrred_list(n):
     """
@@ -326,7 +328,7 @@ def GF2X_BuildSparseIrred_list(n):
     cdef GF2X_c f
     GF2 = FiniteField(2)
     GF2X_BuildSparseIrred(f, int(n))
-    return [GF2(not GF2_IsZero(GF2X_coeff(f, i))) for i in xrange(n + 1)]
+    return [GF2(not GF2_IsZero(GF2X_coeff(f, i))) for i in range(n + 1)]
 
 def GF2X_BuildRandomIrred_list(n):
     """
@@ -348,4 +350,4 @@ def GF2X_BuildRandomIrred_list(n):
     current_randstate().set_seed_ntl(False)
     GF2X_BuildSparseIrred(tmp, int(n))
     GF2X_BuildRandomIrred(f, tmp)
-    return [GF2(not GF2_IsZero(GF2X_coeff(f, i))) for i in xrange(n + 1)]
+    return [GF2(not GF2_IsZero(GF2X_coeff(f, i))) for i in range(n + 1)]

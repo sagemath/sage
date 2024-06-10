@@ -8,18 +8,30 @@ Big O for various types (power series, p-adics, etc.)
     - `power series <../../../power_series/index.html>`_
     - `polynomials <../../../polynomial_rings/index.html>`_
 """
-from __future__ import absolute_import
 
-import sage.arith.all as arith
-from . import laurent_series_ring_element
-from sage.rings.puiseux_series_ring_element import PuiseuxSeries
-import sage.rings.padics.factory as padics_factory
-import sage.rings.padics.padic_generic_element as padic_generic_element
-from . import power_series_ring_element
-from . import integer
-from . import rational
+from sage.arith.misc import factor
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.rings.padics.factory', ['Qp', 'Zp'])
+lazy_import('sage.rings.padics.padic_generic_element', 'pAdicGenericElement')
 from sage.rings.polynomial.polynomial_element import Polynomial
-from . import multi_power_series_ring_element
+
+try:
+    from .laurent_series_ring_element import LaurentSeries
+except ImportError:
+    LaurentSeries = ()
+
+try:
+    from .puiseux_series_ring_element import PuiseuxSeries
+except ImportError:
+    PuiseuxSeries = ()
+
+from sage.rings import (
+    integer,
+    multi_power_series_ring_element,
+    power_series_ring_element,
+    rational,
+)
 
 
 def O(*x, **kwds):
@@ -48,43 +60,45 @@ def O(*x, **kwds):
 
     This is also useful to create `p`-adic numbers::
 
-        sage: O(7^6)
+        sage: O(7^6)                                                                    # needs sage.rings.padics
         O(7^6)
-        sage: 1/3 + O(7^6)
+        sage: 1/3 + O(7^6)                                                              # needs sage.rings.padics
         5 + 4*7 + 4*7^2 + 4*7^3 + 4*7^4 + 4*7^5 + O(7^6)
 
     It behaves well with respect to adding negative powers of `p`::
 
-        sage: a = O(11^-32); a
+        sage: a = O(11^-32); a                                                          # needs sage.rings.padics
         O(11^-32)
-        sage: a.parent()
+        sage: a.parent()                                                                # needs sage.rings.padics
         11-adic Field with capped relative precision 20
 
     There are problems if you add a rational with very negative
     valuation to an `O`-Term::
 
-        sage: 11^-12 + O(11^15)
+        sage: 11^-12 + O(11^15)                                                         # needs sage.rings.padics
         11^-12 + O(11^8)
 
     The reason that this fails is that the constructor doesn't know
     the right precision cap to use. If you cast explicitly or use
     other means of element creation, you can get around this issue::
 
+        sage: # needs sage.rings.padics
         sage: K = Qp(11, 30)
         sage: K(11^-12) + O(11^15)
         11^-12 + O(11^15)
         sage: 11^-12 + K(O(11^15))
         11^-12 + O(11^15)
-        sage: K(11^-12, absprec = 15)
+        sage: K(11^-12, absprec=15)
         11^-12 + O(11^15)
         sage: K(11^-12, 15)
         11^-12 + O(11^15)
 
     We can also work with `asymptotic expansions`_::
 
-        sage: A.<n> = AsymptoticRing(growth_group='QQ^n * n^QQ * log(n)^QQ', coefficient_ring=QQ); A
+        sage: A.<n> = AsymptoticRing(growth_group='QQ^n * n^QQ * log(n)^QQ',            # needs sage.symbolic
+        ....:                        coefficient_ring=QQ); A
         Asymptotic Ring <QQ^n * n^QQ * log(n)^QQ * Signs^n> over Rational Field
-        sage: O(n)
+        sage: O(n)                                                                      # needs sage.symbolic
         O(n)
 
     Application with Puiseux series::
@@ -98,13 +112,13 @@ def O(*x, **kwds):
 
     TESTS::
 
-        sage: var('x, y')
+        sage: var('x, y')                                                               # needs sage.symbolic
         (x, y)
-        sage: O(x)
+        sage: O(x)                                                                      # needs sage.symbolic
         Traceback (most recent call last):
         ...
         ArithmeticError: O(x) not defined
-        sage: O(y)
+        sage: O(y)                                                                      # needs sage.symbolic
         Traceback (most recent call last):
         ...
         ArithmeticError: O(y) not defined
@@ -138,9 +152,8 @@ def O(*x, **kwds):
                                       "for the maximal ideal (x)")
         return x.parent().completion(x.parent().gen())(0, x.degree(), **kwds)
 
-    elif isinstance(x, laurent_series_ring_element.LaurentSeries):
-        return laurent_series_ring_element.LaurentSeries(x.parent(), 0).\
-            add_bigoh(x.valuation(), **kwds)
+    elif isinstance(x, LaurentSeries):
+        return LaurentSeries(x.parent(), 0).add_bigoh(x.valuation(), **kwds)
 
     elif isinstance(x, PuiseuxSeries):
         return x.add_bigoh(x.valuation(), **kwds)
@@ -149,19 +162,19 @@ def O(*x, **kwds):
         # p-adic number
         if x <= 0:
             raise ArithmeticError("x must be a prime power >= 2")
-        F = arith.factor(x)
+        F = factor(x)
         if len(F) != 1:
             raise ArithmeticError("x must be prime power")
         p, r = F[0]
         if r >= 0:
-            return padics_factory.Zp(p, prec=max(r, 20),
-                                     type='capped-rel')(0, absprec=r, **kwds)
+            return Zp(p, prec=max(r, 20),
+                      type='capped-rel')(0, absprec=r, **kwds)
         else:
-            return padics_factory.Qp(p, prec=max(r, 20),
-                                     type='capped-rel')(0, absprec=r, **kwds)
+            return Qp(p, prec=max(r, 20),
+                      type='capped-rel')(0, absprec=r, **kwds)
 
-    elif isinstance(x, padic_generic_element.pAdicGenericElement):
-         return x.parent()(0, absprec=x.valuation(), **kwds)
+    elif isinstance(x, pAdicGenericElement):
+        return x.parent()(0, absprec=x.valuation(), **kwds)
     elif hasattr(x, 'O'):
         return x.O(**kwds)
     raise ArithmeticError("O(%s) not defined" % (x,))

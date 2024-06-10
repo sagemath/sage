@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Metaclasses for Cython extension types
 
@@ -19,19 +20,19 @@ file if you are using one).
 
 In the extension type (a.k.a. ``cdef class``) for which you want to
 define a metaclass, define a method ``__getmetaclass__`` with a single
-unused argument. This method should return a type to be used as
+unused argument, and turn off the Cython directive
+``always_allow_keywords``. This method should return a type to be used as
 metaclass:
 
 .. code-block:: cython
 
+    cimport cython
     cimport sage.cpython.cython_metaclass
-    cdef class MyCustomType(object):
+    cdef class MyCustomType():
+        @cython.always_allow_keywords(False)
         def __getmetaclass__(_):
             from foo import MyMetaclass
             return MyMetaclass
-
-The above ``__getmetaclass__`` method is analogous to
-``__metaclass__ = MyMetaclass`` in Python 2.
 
 .. WARNING::
 
@@ -64,9 +65,12 @@ In Python, this would be ``meta.__init__(cls, name, bases, dict)``.
 
 EXAMPLES::
 
-    sage: cython('''
+    sage: cython(                                                                       # needs sage.misc.cython
+    ....: '''
+    ....: cimport cython
     ....: cimport sage.cpython.cython_metaclass
-    ....: cdef class MyCustomType(object):
+    ....: cdef class MyCustomType():
+    ....:     @cython.always_allow_keywords(False)
     ....:     def __getmetaclass__(_):
     ....:         class MyMetaclass(type):
     ....:             def __init__(*args):
@@ -76,13 +80,13 @@ EXAMPLES::
     ....: cdef class MyDerivedType(MyCustomType):
     ....:     pass
     ....: ''')
-    Calling MyMetaclass.__init__(<type '...MyCustomType'>, None, None, None)
-    Calling MyMetaclass.__init__(<type '...MyDerivedType'>, None, None, None)
-    sage: MyCustomType.__class__
+    Calling MyMetaclass.__init__(<class '...MyCustomType'>, None, None, None)
+    Calling MyMetaclass.__init__(<class '...MyDerivedType'>, None, None, None)
+    sage: MyCustomType.__class__                                                        # needs sage.misc.cython
     <class '...MyMetaclass'>
-    sage: class MyPythonType(MyDerivedType):
+    sage: class MyPythonType(MyDerivedType):                                            # needs sage.misc.cython
     ....:     pass
-    Calling MyMetaclass.__init__(<class '...MyPythonType'>, 'MyPythonType', (<type '...MyDerivedType'>,), {...})
+    Calling MyMetaclass.__init__(<class '...MyPythonType'>, 'MyPythonType', (<class '...MyDerivedType'>,), {...})
 
 Implementation
 ==============
@@ -101,9 +105,12 @@ TESTS:
 Check that a proper exception is raised if ``__getmetaclass__``
 returns a non-type::
 
-    sage: cython('''
+    sage: cython(                                                                       # needs sage.misc.cython
+    ....: '''
+    ....: cimport cython
     ....: cimport sage.cpython.cython_metaclass
-    ....: cdef class MyCustomType(object):
+    ....: cdef class MyCustomType():
+    ....:     @cython.always_allow_keywords(False)
     ....:     def __getmetaclass__(_):
     ....:         return 2
     ....: ''')
@@ -112,12 +119,12 @@ returns a non-type::
     TypeError: __getmetaclass__ did not return a type
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************

@@ -117,7 +117,7 @@ Point sets
   ::
 
         sage: R.<x> = ZZ[]
-        sage: S.<t> = R.quo(x^2+5)
+        sage: S.<t> = R.quo(x^2 + 5)
         sage: P.<X,Y,Z> = ProjectiveSpace(2, S)
         sage: P(S)
         Set of rational points of Projective Space of dimension 2 over
@@ -157,6 +157,4 @@ AUTHORS:
 - David Kohel, William Stein (2006-01-03): initial version
 
 - Andrey Novoseltsev (2010-09-24): updated due to addition of toric varieties
-
 """
-

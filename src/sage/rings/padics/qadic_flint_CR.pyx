@@ -14,7 +14,7 @@ cdef class PowComputer_(PowComputer_flint_unram):
 
             sage: R.<a> = ZqCR(125)
             sage: type(R.prime_pow)
-            <type 'sage.rings.padics.qadic_flint_CR.PowComputer_'>
+            <class 'sage.rings.padics.qadic_flint_CR.PowComputer_'>
             sage: R.prime_pow._prec_type
             'capped-rel'
         """
@@ -27,8 +27,8 @@ cdef class qAdicCappedRelativeElement(CRElement):
     norm = norm_unram
 
     def matrix_mod_pn(self):
-        """
-        Returns the matrix of right multiplication by the element on
+        r"""
+        Return the matrix of right multiplication by the element on
         the power basis `1, x, x^2, \ldots, x^{d-1}` for this
         extension field.  Thus the *rows* of this matrix give the
         images of each of the `x^i`.  The entries of the matrices are
@@ -52,7 +52,7 @@ cdef class qAdicCappedRelativeElement(CRElement):
             sage: M.base_ring()
             Ring of integers modulo 125
 
-        Check that :trac:`13617` has been fixed::
+        Check that :issue:`13617` has been fixed::
 
             sage: R(0).matrix_mod_pn()
             [0 0 0 0 0]
@@ -64,7 +64,7 @@ cdef class qAdicCappedRelativeElement(CRElement):
         if self.ordp < 0:
             raise ValueError("self must be integral")
         if exactzero(self.ordp):
-            from sage.matrix.all import matrix
+            from sage.matrix.constructor import matrix
             return matrix(ZZ, self.prime_pow.deg, self.prime_pow.deg)
         else:
             return cmatrix_mod_pn(self.unit, self.ordp + self.relprec, self.ordp, self.prime_pow)
@@ -153,7 +153,7 @@ cdef class qAdicCappedRelativeElement(CRElement):
     def __hash__(self):
         r"""
         Raise a ``TypeError`` since this element is not hashable
-        (:trac:`11895`.)
+        (:issue:`11895`.)
 
         TESTS::
 

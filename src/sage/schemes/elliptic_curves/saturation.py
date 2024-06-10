@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.rings.finite_rings sage.rings.number_field
 r"""
 Saturation of Mordell-Weil groups of elliptic curves over number fields
 
@@ -24,7 +24,7 @@ coefficients `a_i` of any nontrivial relation.  When the points are
 already `p`-saturated this sieving technique can prove their
 saturation quickly.
 
-The method :meth:`saturation` of the class EllipticCurve_number_field
+The method :meth:`saturation` of the class :class:`EllipticCurve_number_field`
 applies full `p`-saturation at any given set of primes, or can compute
 a bound on the primes `p` at which the given points may not be
 `p`-saturated.  This involves computing a lower bound for the
@@ -36,7 +36,6 @@ AUTHORS:
 - Robert Bradshaw
 
 - John Cremona
-
 """
 #*****************************************************************************
 #       Copyright (C) 2017 Robert Bradshaw <robertwb@math.washington.edu>
@@ -50,12 +49,12 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.finite_rings.all import GF
-from sage.rings.all import ZZ
-from sage.arith.all import kronecker_symbol as kro
+from sage.rings.finite_rings.finite_field_constructor import GF
+from sage.rings.integer_ring import ZZ
+from sage.arith.misc import kronecker as kro
 from sage.structure.sage_object import SageObject
 
-def reduce_mod_q(x,amodq):
+def reduce_mod_q(x, amodq):
     r"""The reduction of ``x`` modulo the prime ideal defined by ``amodq``.
 
     INPUT:
@@ -64,7 +63,7 @@ def reduce_mod_q(x,amodq):
 
     - ``amodq`` -- an element of `GF(q)` which is a root mod `q` of
       the defining polynomial of `K`.  This defines a degree 1 prime
-      ideal `Q=(q,\alpha-a)` of `K=\QQ(\alpha)`, where `a \mod q = `
+      ideal `Q=(q,\alpha-a)` of `K=\QQ(\alpha)`, where `a \bmod q` =
       ``amodq``.
 
     OUTPUT:
@@ -75,16 +74,15 @@ def reduce_mod_q(x,amodq):
 
         sage: from sage.schemes.elliptic_curves.saturation import reduce_mod_q
         sage: x = polygen(QQ)
-        sage: pol = x^3 -x^2 -3*x + 1
+        sage: pol = x^3 - x^2 - 3*x + 1
         sage: K.<a> = NumberField(pol)
-        sage: [(q,[(amodq,reduce_mod_q(1-a+a^4,amodq))
-        ....:  for amodq in sorted(pol.roots(GF(q), multiplicities=False))])
-        ....: for q in primes(50,70)]
+        sage: [(q, [(amodq, reduce_mod_q(1 - a + a^4, amodq))
+        ....:       for amodq in sorted(pol.roots(GF(q), multiplicities=False))])
+        ....:  for q in primes(50, 70)]
         [(53, []),
-        (59, [(36, 28)]),
-        (61, [(40, 35)]),
-        (67, [(10, 8), (62, 28), (63, 60)])]
-
+         (59, [(36, 28)]),
+         (61, [(40, 35)]),
+         (67, [(10, 8), (62, 28), (63, 60)])]
     """
     Fq = amodq.parent()
     try:
@@ -123,28 +121,29 @@ class EllipticCurveSaturator(SageObject):
         self._N = E.discriminant().norm()
         self._field = K = E.base_field()
         if K.absolute_degree() == 1:
-            from sage.rings.all import QQ
-            from sage.rings.polynomial.all import polygen
+            from sage.rings.rational_field import QQ
+            from sage.rings.polynomial.polynomial_ring import polygen
             self._Kpol = polygen(QQ)
         else:
             self._Kpol = K.defining_polynomial()
         self._D = self._Kpol.discriminant()
-        self._reductions = dict()
-        self._lincombs = dict()
+        self._reductions = {}
+        self._lincombs = {}
         self._torsion_gens = [t.element() for t in E.torsion_subgroup().gens()]
-        self._reductions = dict()
+        self._reductions = {}
         # This will hold a dictionary with keys (q,aq) with q prime
         # and aq a root of K's defining polynomial mod q, and values
         # (n,gens) where n is the cardinality of the reduction of E
         # and gens are generators of that reduction.
 
     def add_reductions(self, q):
-        r"""Add reduction data at primes above q if not already there.
+        r"""
+        Add reduction data at primes above ``q`` if not already there.
 
         INPUT:
 
         - ``q`` -- a prime number not dividing the defining polynomial
-          of self.__field.
+          of ``self.__field``.
 
         OUTPUT:
 
@@ -166,8 +165,8 @@ class EllipticCurveSaturator(SageObject):
             {}
             sage: saturator.add_reductions(19)
             sage: saturator._reductions
-            {19: {0: (20,
-            Elliptic Curve defined by y^2 + y = x^3 + 18*x^2 + 9*x + 18 over Finite Field of size 19)}}
+            {19: {0: (20, Elliptic Curve defined by y^2 + y = x^3 + 18*x^2 + 9*x + 18
+                           over Finite Field of size 19)}}
 
         Over a number field::
 
@@ -177,32 +176,31 @@ class EllipticCurveSaturator(SageObject):
             sage: saturator = EllipticCurveSaturator(E)
             sage: for q in primes(20):
             ....:     saturator.add_reductions(q)
-            ....:
             sage: saturator._reductions
-            {2: {},
-            3: {},
-            5: {},
-            7: {},
-            11: {3: (16,
-            Elliptic Curve defined by y^2 = x^3 + x^2 + 3*x + 3 over Finite Field of size 11),
-            8: (8,
-            Elliptic Curve defined by y^2 = x^3 + x^2 + 8*x + 8 over Finite Field of size 11)},
-            13: {},
-            17: {7: (20,
-            Elliptic Curve defined by y^2 = x^3 + x^2 + 7*x + 7 over Finite Field of size 17),
-            10: (18,
-            Elliptic Curve defined by y^2 = x^3 + x^2 + 10*x + 10 over Finite Field of size 17)},
-            19: {6: (16,
-            Elliptic Curve defined by y^2 = x^3 + x^2 + 6*x + 6 over Finite Field of size 19),
-            13: (12,
-            Elliptic Curve defined by y^2 = x^3 + x^2 + 13*x + 13 over Finite Field of size 19)}}
+            {2:  {},
+             3:  {},
+             5:  {},
+             7:  {},
+             11: {3:  (16, Elliptic Curve defined by y^2 = x^3 + x^2 + 3*x + 3
+                            over Finite Field of size 11),
+                  8:  (8,  Elliptic Curve defined by y^2 = x^3 + x^2 + 8*x + 8
+                            over Finite Field of size 11)},
+             13: {},
+             17: {7:  (20, Elliptic Curve defined by y^2 = x^3 + x^2 + 7*x + 7
+                            over Finite Field of size 17),
+                  10: (18, Elliptic Curve defined by y^2 = x^3 + x^2 + 10*x + 10
+                            over Finite Field of size 17)},
+             19: {6:  (16, Elliptic Curve defined by y^2 = x^3 + x^2 + 6*x + 6
+                            over Finite Field of size 19),
+                  13: (12, Elliptic Curve defined by y^2 = x^3 + x^2 + 13*x + 13
+                            over Finite Field of size 19)}}
         """
         if q in self._reductions:
             return
-        self._reductions[q] = redmodq = dict()
+        self._reductions[q] = redmodq = {}
         if q.divides(self._N) or q.divides(self._D):
             return
-        from sage.schemes.elliptic_curves.all import EllipticCurve
+        from sage.schemes.elliptic_curves.constructor import EllipticCurve
         for amodq in sorted(self._Kpol.roots(GF(q), multiplicities=False)):
             Eq = EllipticCurve([reduce_mod_q(ai, amodq) for ai in self._curve.ainvs()])
             nq = Eq.cardinality()
@@ -213,9 +211,9 @@ class EllipticCurveSaturator(SageObject):
 
         INPUT:
 
-        - ``Plist`` (list) - a list of independent points on one elliptic curve.
+        - ``Plist`` (list) -- a list of independent points on one elliptic curve.
 
-        - ``p`` (integer) - a prime number.
+        - ``p`` (integer) -- a prime number.
 
         OUTPUT:
 
@@ -230,17 +228,17 @@ class EllipticCurveSaturator(SageObject):
             sage: E = EllipticCurve('389a')
             sage: K.<i> = QuadraticField(-1)
             sage: EK = E.change_ring(K)
-            sage: P = EK(1+i,-1-2*i)
+            sage: P = EK(1 + i, -1 - 2*i)
             sage: saturator = EllipticCurveSaturator(EK, verbose=True)
-            sage: saturator.full_p_saturation([8*P],2)
+            sage: saturator.full_p_saturation([8*P], 2)
              --starting full 2-saturation
             Points were not 2-saturated, exponent was 3
             ([(i + 1 : -2*i - 1 : 1)], 3)
 
-            sage: Q = EK(0,0)
-            sage: R = EK(-1,1)
+            sage: Q = EK(0, 0)
+            sage: R = EK(-1, 1)
             sage: saturator = EllipticCurveSaturator(EK, verbose=False)
-            sage: saturator.full_p_saturation([P,Q,R],3)
+            sage: saturator.full_p_saturation([P, Q, R], 3)
             ([(i + 1 : -2*i - 1 : 1), (0 : 0 : 1), (-1 : 1 : 1)], 0)
 
         An example where the points are not 7-saturated and we gain
@@ -249,12 +247,10 @@ class EllipticCurveSaturator(SageObject):
         `p`-rank 2 (which occurs for the reduction modulo `(16-5i)`),
         which uses the Weil pairing::
 
-            sage: saturator.full_p_saturation([P,Q+3*R,Q-4*R],7)
+            sage: saturator.full_p_saturation([P, Q + 3*R, Q - 4*R], 7)
             ([(i + 1 : -2*i - 1 : 1),
-            (2869/676 : 154413/17576 : 1),
-            (-7095/502681 : -366258864/356400829 : 1)],
-            1)
-
+              (2869/676 : 154413/17576 : 1),
+              (-7095/502681 : -366258864/356400829 : 1)], 1)
         """
         if not Plist:
             return Plist, ZZ.zero()
@@ -271,7 +267,7 @@ class EllipticCurveSaturator(SageObject):
 
         verbose = self._verbose
         if verbose:
-            print(" --starting full %s-saturation"  % p)
+            print(" --starting full %s-saturation" % p)
 
         n = len(Plist)  # number of points supplied & to be returned
         Plist = Plist + [T for T in self._torsion_gens if p.divides(T.order())]
@@ -306,14 +302,14 @@ class EllipticCurveSaturator(SageObject):
 
         INPUT:
 
-        - ``Plist`` (list) - a list of independent points on one elliptic curve.
+        - ``Plist`` (list) -- a list of independent points on one elliptic curve.
 
-        - ``p`` (integer) - a prime number.
+        - ``p`` (integer) -- a prime number.
 
-        - ``sieve`` (boolean) - if True, use a sieve (when there are at
+        - ``sieve`` (boolean) -- if True, use a sieve (when there are at
           least 2 points); otherwise test all combinations.
 
-        .. note::
+        .. NOTE::
 
             The sieve is much more efficient when the points are
             saturated and the number of points or the prime are large.
@@ -331,23 +327,23 @@ class EllipticCurveSaturator(SageObject):
             sage: E = EllipticCurve('389a')
             sage: K.<i> = QuadraticField(-1)
             sage: EK = E.change_ring(K)
-            sage: P = EK(1+i,-1-2*i)
+            sage: P = EK(1 + i, -1 - 2*i)
             sage: saturator = EllipticCurveSaturator(EK)
-            sage: saturator.p_saturation([P],2)
+            sage: saturator.p_saturation([P], 2)
             False
-            sage: saturator.p_saturation([2*P],2)
+            sage: saturator.p_saturation([2*P], 2)
             (0, (i + 1 : -2*i - 1 : 1))
 
-            sage: Q = EK(0,0)
-            sage: R = EK(-1,1)
-            sage: saturator.p_saturation([P,Q,R],3)
+            sage: Q = EK(0, 0)
+            sage: R = EK(-1, 1)
+            sage: saturator.p_saturation([P, Q, R], 3)
             False
 
         Here we see an example where 19-saturation is proved, with the
         verbose flag set to True so that we can see what is going on::
 
             sage: saturator = EllipticCurveSaturator(EK, verbose=True)
-            sage: saturator.p_saturation([P,Q,R],19)
+            sage: saturator.p_saturation([P, Q, R], 19)
             Using sieve method to saturate...
             E has 19-torsion over Finite Field of size 197, projecting points
             --> [(15 : 168 : 1), (0 : 0 : 1), (196 : 1 : 1)]
@@ -364,36 +360,36 @@ class EllipticCurveSaturator(SageObject):
         An example where the points are not 11-saturated::
 
             sage: saturator = EllipticCurveSaturator(EK, verbose=False)
-            sage: res = saturator.p_saturation([P+5*Q,P-6*Q,R],11); res
-            (0,
-            (-5783311/14600041*i + 1396143/14600041 : 37679338314/55786756661*i + 3813624227/55786756661 : 1))
+            sage: res = saturator.p_saturation([P + 5*Q, P - 6*Q, R], 11); res
+            (0, (-5783311/14600041*i + 1396143/14600041
+                 : 37679338314/55786756661*i + 3813624227/55786756661 : 1))
 
         That means that the 0'th point may be replaced by the displayed
         point to achieve an index gain of 11::
 
-            sage: saturator.p_saturation([res[1],P-6*Q,R],11)
+            sage: saturator.p_saturation([res[1], P - 6*Q, R], 11)
             False
 
         TESTS:
 
-        See :trac:`27387`::
+        See :issue:`27387`::
 
-            sage: K.<a> = NumberField(x^2-x-26)
-            sage: E = EllipticCurve([a,1-a,0,93-16*a, 3150-560*a])
-            sage: P = E([65-35*a/3, (959*a-5377)/9])
+            sage: K.<a> = NumberField(x^2 - x - 26)
+            sage: E = EllipticCurve([a, 1 - a, 0, 93 - 16*a, 3150 - 560*a])
+            sage: P = E([65 - 35*a/3, (959*a-5377)/9])
             sage: T = E.torsion_points()[0]
             sage: from sage.schemes.elliptic_curves.saturation import EllipticCurveSaturator
             sage: saturator = EllipticCurveSaturator(E, True)
-            sage: saturator.p_saturation([P,T], 2)
+            sage: saturator.p_saturation([P, T], 2)
             Using sieve method to saturate...
             ...
             -- points were not 2-saturated, gaining index 2
-            (0, (-1/4*a + 3/4 : 59/8*a - 317/8 : 1))
+            (1, (0 : 1 : 0))
 
         A CM example where large siecing primes are needed (LMFDB
         label 2.0.3.1-50625.1-CMb2)::
 
-            sage: K.<a> = NumberField(x^2-x+1)
+            sage: K.<a> = NumberField(x^2 - x + 1)
             sage: E = EllipticCurve(K, [0, 0, 1, -750, 7906])
             sage: E.has_rational_cm()
             True
@@ -418,7 +414,6 @@ class EllipticCurveSaturator(SageObject):
             ([(10 : -38 : 1), (15/49*a + 760/49 : 675/343*a - 884/343 : 1)],
             1,
             0.123378097374749)
-
         """
         verbose = self._verbose
         # This code does a lot of elliptic curve group structure
@@ -463,7 +458,7 @@ class EllipticCurveSaturator(SageObject):
 
         if verbose:
             print("Using sieve method to saturate...")
-        from sage.matrix.all import matrix
+        from sage.matrix.constructor import matrix
         from sage.sets.primes import Primes
 
         A = matrix(GF(p), 0, n)
@@ -496,7 +491,7 @@ class EllipticCurveSaturator(SageObject):
         # and there is no simple test.)
 
         avoid = [self._N, self._D] + [P[0].denominator_ideal().norm() for P in Plist]
-        cm_test = E.has_rational_cm() and kro(E.cm_discriminant(), p)==-1
+        cm_test = E.has_rational_cm() and kro(E.cm_discriminant(), p) == -1
         for q in Primes():
             if any(q.divides(m) for m in avoid):
                 continue
@@ -547,7 +542,7 @@ class EllipticCurveSaturator(SageObject):
                             # point which is certainly a p-multiple
                             # modulo 15 primes Q, and we test if it
                             # actually is a p-multiple:
-                            if len(Rlist)==1:
+                            if len(Rlist) == 1:
                                 R = Rlist[0]
                                 pts = R.division_points(p)
                                 if pts:
@@ -597,24 +592,24 @@ def p_projections(Eq, Plist, p, debug=False):
 
     INPUT:
 
-    - `Eq` -  An elliptic curve over a finite field.
+    - ``Eq`` -- An elliptic curve over a finite field.
 
-    - `Plist` - a list of points on `Eq`.
+    - ``Plist`` -- a list of points on `Eq`.
 
-    - `p` - a prime number.
+    - ``p`` -- a prime number.
 
     OUTPUT:
 
-    A list of $r\le2$ vectors in $\GF{p^n}$, the images of the points in
-    $G \otimes \GF{p}$, where $r$ is the number of vectors is the
-    $p$-rank of `Eq`.
+    A list of `r\le2` vectors in `\GF{p^n}`, the images of the points in
+    `G \otimes \GF{p}`, where `r` is the number of vectors is the
+    `p`-rank of `Eq`.
 
     ALGORITHM:
 
-    First project onto the $p$-primary part of `Eq`.  If that has
-    $p$-rank 1 (i.e. is cyclic), use discrete logs there to define a
-    map to $\GF{p}$, otherwise use the Weil pairing to define two
-    independent maps to $\GF{p}$.
+    First project onto the `p`-primary part of `Eq`.  If that has
+    `p`-rank 1 (i.e. is cyclic), use discrete logs there to define a
+    map to `\GF{p}`, otherwise use the Weil pairing to define two
+    independent maps to `\GF{p}`.
 
     EXAMPLES:
 
@@ -622,28 +617,30 @@ def p_projections(Eq, Plist, p, debug=False):
 
         sage: E = EllipticCurve([0,0,1,-7,6])
 
-    We reduce modulo $409$ where its order is $3^2\cdot7^2$; the
-    $3$-primary part is non-cyclic while the $7$-primary part is
-    cyclic of order $49$::
+    We reduce modulo `409` where its order is `3^2\cdot7^2`; the
+    `3`-primary part is non-cyclic while the `7`-primary part is
+    cyclic of order `49`::
 
         sage: F = GF(409)
         sage: EF = E.change_ring(F)
         sage: G = EF.abelian_group()
         sage: G
-        Additive abelian group isomorphic to Z/147 + Z/3 embedded in Abelian group of points on Elliptic Curve defined by y^2 + y = x^3 + 402*x + 6 over Finite Field of size 409
+        Additive abelian group isomorphic to Z/147 + Z/3
+         embedded in Abelian group of points on Elliptic Curve
+          defined by y^2 + y = x^3 + 402*x + 6 over Finite Field of size 409
         sage: G.order().factor()
         3^2 * 7^2
 
-    We construct three points and project them to the $p$-primary
-    parts for $p=2,3,5,7$, yielding 0,2,0,1 vectors of length 3 modulo
-    $p$ respectively.  The exact vectors output depend on the computed
+    We construct three points and project them to the `p`-primary
+    parts for `p=2,3,5,7`, yielding 0,2,0,1 vectors of length 3 modulo
+    `p` respectively.  The exact vectors output depend on the computed
     generators of `G`::
 
         sage: Plist = [EF([-2,3]), EF([0,2]), EF([1,0])]
         sage: from sage.schemes.elliptic_curves.saturation import p_projections
-        sage: [(p,p_projections(EF,Plist,p)) for p in primes(11)]  # random
+        sage: [(p, p_projections(EF, Plist, p)) for p in primes(11)]  # random
         [(2, []), (3, [(0, 2, 2), (2, 2, 1)]), (5, []), (7, [(5, 1, 1)])]
-        sage: [(p,len(p_projections(EF,Plist,p))) for p in primes(11)]
+        sage: [(p, len(p_projections(EF, Plist, p))) for p in primes(11)]
         [(2, 0), (3, 2), (5, 0), (7, 1)]
     """
     if debug:
@@ -652,7 +649,7 @@ def p_projections(Eq, Plist, p, debug=False):
     m = n.prime_to_m_part(p)      # prime-to-p part of order
     if debug:
         print("m={}, n={}".format(m,n))
-    if m==n: # p-primary part trivial, nothing to do
+    if m == n: # p-primary part trivial, nothing to do
         return []
     G = Eq.abelian_group()
     if debug:
@@ -660,14 +657,14 @@ def p_projections(Eq, Plist, p, debug=False):
 
     # project onto p-primary part
 
-    pts  = [m*pt for pt in Plist]
+    pts = [m*pt for pt in Plist]
     gens = [m*g.element() for g in G.gens()]
     gens = [g for g in gens if g]
     if debug:
         print("gens for {}-primary part of G: {}".format(p, gens))
         print("{}*points: {}".format(m,pts))
     from sage.groups.generic import discrete_log as dlog
-    from sage.modules.all import vector
+    from sage.modules.free_module_element import vector
     Fp = GF(p)
 
     # If the p-primary part is cyclic we use elliptic discrete logs directly:
@@ -678,10 +675,10 @@ def p_projections(Eq, Plist, p, debug=False):
         if debug:
             print("Cyclic case, taking dlogs to base {} of order {}".format(g,pp))
         # logs are well-defined mod pp, hence mod p
-        v = [dlog(pt, g, ord = pp, operation = '+') for pt in pts]
+        v = [dlog(pt, g, ord=pp, operation='+') for pt in pts]
         if debug:
             print("dlogs: {}".format(v))
-        return [vector(Fp,v)]
+        return [vector(Fp, v)]
 
     # We make no assumption about which generator order divides the
     # other, since conventions differ!
@@ -697,13 +694,14 @@ def p_projections(Eq, Plist, p, debug=False):
     # roots of unity with p1|p2, together with discrete log in the
     # multiplicative group.
 
-    zeta = g1.weil_pairing(g2,p2) # a primitive p1'th root of unity
+    zeta = g1.weil_pairing(g2, p2)  # a primitive p1'th root of unity
     if debug:
         print("wp of gens = {} with order {}".format(zeta, zeta.multiplicative_order()))
-        assert zeta.multiplicative_order() == p1, "Weil pairing error during saturation: p={}, G={}, Plist={}".format(p,G,Plist)
+        assert zeta.multiplicative_order() == p1, "Weil pairing error during saturation: p={}, G={}, Plist={}".format(p, G, Plist)
 
     # logs are well-defined mod p1, hence mod p
 
-    return [vector(Fp, [dlog(pt.weil_pairing(g1,p2), zeta, ord = p1, operation = '*') for pt in pts]),
-        vector(Fp, [dlog(pt.weil_pairing(g2,p2), zeta, ord = p1, operation = '*') for pt in pts])]
-
+    return [vector(Fp, [dlog(pt.weil_pairing(g1, p2), zeta,
+                             ord=p1, operation='*') for pt in pts]),
+            vector(Fp, [dlog(pt.weil_pairing(g2, p2), zeta,
+                             ord=p1, operation='*') for pt in pts])]

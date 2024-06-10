@@ -1,0 +1,4 @@
+ cython pkgconfig jinja2 $(SAGE_ROOT)/pkgs/sage-setup/sage_setup/*.py $(SAGE_ROOT)/pkgs/sage-setup/sage_setup/autogen/interpreters/specs/*.py $(SAGE_ROOT)/pkgs/sage-setup/sage_setup/command/*.py | $(PYTHON_TOOLCHAIN) $(PYTHON)
+
+----------
+All lines of this file are ignored except the first.

@@ -1,5 +1,5 @@
-ipython_genutils
-================
+ipython_genutils: Vestigial utilities from IPython
+==================================================
 
 Description
 -----------

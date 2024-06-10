@@ -1,34 +1,36 @@
+# sage.doctest: needs sage.combinat sage.graphs
 r"""
 Functor construction for all spaces
 
 AUTHORS:
 
 - Jonas Jermann (2013): initial version
-
 """
-from __future__ import absolute_import
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from sage.rings.all import ZZ, QQ, infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.infinity import infinity
 
-from sage.categories.functor                     import Functor
-from sage.categories.pushout                     import ConstructionFunctor
-from sage.categories.sets_cat                    import Sets
-from sage.structure.parent                       import Parent
+from sage.categories.functor import Functor
+from sage.categories.pushout import ConstructionFunctor
+from sage.categories.sets_cat import Sets
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
-from sage.categories.rings                       import Rings
+from sage.categories.rings import Rings
 
-from .constructor                                 import FormsSpace, FormsRing
-from .abstract_space                              import FormsSpace_abstract
-from .subspace                                    import SubSpaceForms
+from .constructor import FormsSpace, FormsRing
+from .abstract_space import FormsSpace_abstract
+from .subspace import SubSpaceForms
 
 
 def _get_base_ring(ring, var_name="d"):
@@ -76,16 +78,16 @@ def _get_base_ring(ring, var_name="d"):
         True
     """
 
-    #from sage.rings.fraction_field import is_FractionField
+    # from sage.rings.fraction_field import is_FractionField
     from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
     from sage.categories.pushout import FractionField as FractionFieldFunctor
 
     base_ring = ring
-    #if (is_FractionField(base_ring)):
+    # if (is_FractionField(base_ring)):
     #    base_ring = base_ring.base()
     if (base_ring.construction() and base_ring.construction()[0] == FractionFieldFunctor()):
         base_ring = base_ring.construction()[1]
-    if (is_PolynomialRing(base_ring) and base_ring.ngens()==1 and base_ring.variable_name()==var_name):
+    if (is_PolynomialRing(base_ring) and base_ring.ngens() == 1 and base_ring.variable_name() == var_name):
         base_ring = base_ring.base()
     if (base_ring.construction() and base_ring.construction()[0] == FractionFieldFunctor()):
         base_ring = base_ring.construction()[1]
@@ -324,13 +326,9 @@ class FormsSubSpaceFunctor(ConstructionFunctor):
             sage: ss_functor1 == ss_functor2
             False
         """
-
-        if (type(self) is type(other) and
-            self._ambient_space_functor == other._ambient_space_functor and
-            self._generators == other._generators):
-                return True
-        else:
-            return False
+        return (type(self) is type(other) and
+                self._ambient_space_functor == other._ambient_space_functor and
+                self._generators == other._generators)
 
 
 class FormsSpaceFunctor(ConstructionFunctor):
@@ -513,15 +511,11 @@ class FormsSpaceFunctor(ConstructionFunctor):
             sage: functor1 == functor2
             False
         """
-
-        if (type(self) is type(other) and
-            self._group == other._group and
-            self._analytic_type == other._analytic_type and
-            self._k == other._k and
-            self._ep == other._ep):
-                return True
-        else:
-            return False
+        return (type(self) is type(other) and
+                self._group == other._group and
+                self._analytic_type == other._analytic_type and
+                self._k == other._k and
+                self._ep == other._ep)
 
 
 class FormsRingFunctor(ConstructionFunctor):
@@ -702,17 +696,12 @@ class FormsRingFunctor(ConstructionFunctor):
             sage: functor1 == functor2
             False
         """
-
-        if (type(self) is type(other) and
-            self._group == other._group and
-            self._analytic_type == other._analytic_type and
-            self._red_hom == other._red_hom):
-                return True
-        else:
-            return False
+        return (type(self) is type(other) and
+                self._group == other._group and
+                self._analytic_type == other._analytic_type and
+                self._red_hom == other._red_hom)
 
 
-from sage.structure.unique_representation import UniqueRepresentation
 class BaseFacade(Parent, UniqueRepresentation):
     r"""
     BaseFacade of a ring.
@@ -733,7 +722,7 @@ class BaseFacade(Parent, UniqueRepresentation):
     ring element. Hence we use the ``BaseFacade`` to
     distinguish the two cases.
 
-    Since the ``BaseFacade`` of a ring embedds into that ring,
+    Since the ``BaseFacade`` of a ring embeds into that ring,
     a common base (resp. a coercion) between the two (or even a
     more general ring) can be found, namely the ring
     (not the ``BaseFacade`` of it).
@@ -753,11 +742,10 @@ class BaseFacade(Parent, UniqueRepresentation):
             sage: CC.has_coerce_map_from(BaseFacade(ZZ))
             True
         """
-
         Parent.__init__(self, facade=ring, category=Rings())
         self._ring = _get_base_ring(ring)
         # The BaseFacade(R) coerces/embeds into R, used in pushout
-        self.register_embedding(self.Hom(self._ring,Sets())(lambda x: x))
+        self.register_embedding(self.Hom(self._ring, Sets())(lambda x: x))
 
     def __repr__(self):
         r"""
@@ -769,5 +757,4 @@ class BaseFacade(Parent, UniqueRepresentation):
             sage: BaseFacade(ZZ)
             BaseFacade(Integer Ring)
         """
-
         return "BaseFacade({})".format(self._ring)

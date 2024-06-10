@@ -1,5 +1,5 @@
-lrslib
-======
+lrslib: Reverse search algorithm for vertex enumeration and convex hull problems
+================================================================================
 
 Description
 -----------

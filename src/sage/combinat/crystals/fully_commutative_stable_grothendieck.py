@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Fully commutative stable Grothendieck crystal
 
@@ -31,10 +32,13 @@ from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat import permutation
-from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.rings.integer import Integer
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.groups.perm_gps.permgroup_named', 'SymmetricGroup')
+
 
 class DecreasingHeckeFactorization(Element, metaclass=InheritComparisonClasscallMetaclass):
     """
@@ -76,20 +80,25 @@ class DecreasingHeckeFactorization(Element, metaclass=InheritComparisonClasscall
 
         EXAMPLES::
 
-        sage: from sage.combinat.crystals.fully_commutative_stable_grothendieck import DecreasingHeckeFactorization
-        sage: h1 = DecreasingHeckeFactorization([[3, 1], [], [3, 2]])
-        sage: h1.parent()
-        Fully commutative stable Grothendieck crystal of type A_2 associated to [1, 3, 2] with excess 1
-        sage: h2 = DecreasingHeckeFactorization(h1)
-        sage: h1 == h2
-        True
+            sage: from sage.combinat.crystals.fully_commutative_stable_grothendieck import DecreasingHeckeFactorization
+            sage: h1 = DecreasingHeckeFactorization([[3, 1], [], [3, 2]])
+            sage: h1.parent()
+            Fully commutative stable Grothendieck crystal of type A_2 associated to [1, 3, 2] with excess 1
+            sage: h2 = DecreasingHeckeFactorization(h1)
+            sage: h1 == h2
+            True
 
-        sage: h1 = DecreasingHeckeFactorization([[3, 1], [2, 1], [2, 1]])
-        sage: F = h1.parent(); F
-        Decreasing Hecke factorizations with 3 factors associated to [1, 3, 2, 1] with excess 2
-        sage: h2 = F(h1)
-        sage: h1 == h2
-        True
+            sage: h1 = DecreasingHeckeFactorization([[3, 1], [2, 1], [2, 1]])
+            sage: F = h1.parent(); F
+            Decreasing Hecke factorizations with 3 factors associated to [1, 3, 2, 1] with excess 2
+            sage: h2 = F(h1)
+            sage: h1 == h2
+            True
+
+        TESTS::
+
+            sage: DecreasingHeckeFactorization([[]])
+            ()
         """
         _check_decreasing_hecke_factorization(t)
         if isinstance(t, DecreasingHeckeFactorization):
@@ -100,7 +109,8 @@ class DecreasingHeckeFactorization(Element, metaclass=InheritComparisonClasscall
             u = t
             if parent is None:
                 if max_value is None:
-                    max_value = max(x for factor in t for x in factor)
+                    letters = [x for factor in t for x in factor]
+                    max_value = max(letters) if letters else 1
                 from sage.monoids.hecke_monoid import HeckeMonoid
                 S = SymmetricGroup(max_value+1)
                 H = HeckeMonoid(S)
@@ -303,6 +313,7 @@ class DecreasingHeckeFactorization(Element, metaclass=InheritComparisonClasscall
             L[0] += [j+1]*len(self.value[-j-1])
         return L
 
+
 class DecreasingHeckeFactorizations(UniqueRepresentation, Parent):
     """
     Set of decreasing factorizations in the 0-Hecke monoid.
@@ -350,9 +361,9 @@ class DecreasingHeckeFactorizations(UniqueRepresentation, Parent):
         if isinstance(w.parent(), SymmetricGroup):
             H = HeckeMonoid(w.parent())
             w = H.from_reduced_word(w.reduced_word())
-        if (not w.reduced_word()) and excess!=0:
+        if (not w.reduced_word()) and excess != 0:
             raise ValueError("excess must be 0 for the empty word")
-        return super(DecreasingHeckeFactorizations, cls).__classcall__(cls, w, factors, excess)
+        return super().__classcall__(cls, w, factors, excess)
 
     def __init__(self, w, factors, excess):
         """
@@ -382,7 +393,7 @@ class DecreasingHeckeFactorizations(UniqueRepresentation, Parent):
             sage: F = DecreasingHeckeFactorizations(w, 3, 1)
             sage: TestSuite(F).run()
         """
-        Parent.__init__(self, category = FiniteEnumeratedSets())
+        Parent.__init__(self, category=FiniteEnumeratedSets())
         self.w = tuple(w.reduced_word())
         self.factors = factors
         self.H = w.parent()
@@ -418,10 +429,11 @@ class DecreasingHeckeFactorizations(UniqueRepresentation, Parent):
         """
         return _generate_decreasing_hecke_factorizations(self.w, self.factors, self.excess, parent=self)
 
-    # temporary workaround while an_element is overriden by Parent
+    # temporary workaround while an_element is overridden by Parent
     _an_element_ = EnumeratedSets.ParentMethods._an_element_
 
     Element = DecreasingHeckeFactorization
+
 
 class FullyCommutativeStableGrothendieckCrystal(UniqueRepresentation, Parent):
     """
@@ -495,7 +507,7 @@ class FullyCommutativeStableGrothendieckCrystal(UniqueRepresentation, Parent):
         if shape:
             from sage.combinat.partition import _Partitions
             from sage.combinat.skew_partition import SkewPartition
-            cond1 = isinstance(w, (tuple, list)) and len(w)==2 and w[0] in _Partitions and w[1] in _Partitions
+            cond1 = isinstance(w, (tuple, list)) and len(w) == 2 and w[0] in _Partitions and w[1] in _Partitions
             cond2 = isinstance(w, SkewPartition)
             if cond1 or cond2:
                 sh = SkewPartition([w[0], w[1]])
@@ -511,9 +523,9 @@ class FullyCommutativeStableGrothendieckCrystal(UniqueRepresentation, Parent):
             if isinstance(w.parent(), SymmetricGroup):
                 H = HeckeMonoid(w.parent())
                 w = H.from_reduced_word(w.reduced_word())
-        if (not w.reduced_word()) and excess!=0:
+        if (not w.reduced_word()) and excess != 0:
             raise ValueError("excess must be 0 for the empty word")
-        return super(FullyCommutativeStableGrothendieckCrystal, cls).__classcall__(cls, w, factors, excess)
+        return super().__classcall__(cls, w, factors, excess)
 
     def __init__(self, w, factors, excess):
         """
@@ -557,7 +569,7 @@ class FullyCommutativeStableGrothendieckCrystal(UniqueRepresentation, Parent):
         if p.has_pattern([3,2,1]):
             raise ValueError("w should be fully commutative")
 
-        Parent.__init__(self, category = ClassicalCrystals())
+        Parent.__init__(self, category=ClassicalCrystals())
         self.w = tuple(word)
         self.factors = factors
         self.H = w.parent()
@@ -718,18 +730,18 @@ class FullyCommutativeStableGrothendieckCrystal(UniqueRepresentation, Parent):
             m = P.factors
             L = list(self.value[m-i-1])
             R = list(self.value[m-i])
-            right_n = [j for j in R]
-            left_n = [j for j in L]
+            right_n = list(R)
+            left_n = list(L)
             left_unbracketed = []
             while left_n:
                 m = max(left_n)
                 left_n.remove(m)
-                l = [j for j in right_n if j>=m]
+                l = [j for j in right_n if j >= m]
                 if l:
                     right_n.remove(min(l))
                 else:
                     left_unbracketed += [m]
-            return [[j for j in left_unbracketed], [j for j in right_n]]
+            return [list(left_unbracketed), list(right_n)]
 
 
 ####################
@@ -759,7 +771,7 @@ def _check_decreasing_hecke_factorization(t):
     """
     if not isinstance(t, DecreasingHeckeFactorization):
         if not isinstance(t, (tuple, list)):
-            raise ValueError("t should be an list or tuple")
+            raise ValueError("t should be a list or tuple")
         for factor in t:
             if not isinstance(factor, (tuple, list)):
                 raise ValueError("each factor in t should be a list or tuple")
@@ -768,6 +780,7 @@ def _check_decreasing_hecke_factorization(t):
             for i in range(len(factor)-1):
                 if factor[i] <= factor[i+1]:
                     raise ValueError("each nonempty factor should be a strictly decreasing sequence")
+
 
 def _check_containment(t, parent):
     """
@@ -820,6 +833,7 @@ def _check_containment(t, parent):
     if excess != parent.excess:
         raise ValueError("number of excess letters do not match")
 
+
 def _generate_decreasing_hecke_factorizations(w, factors, ex, weight=None, parent=None):
     """
     Generate all decreasing factorizations of word ``w`` in a 0-Hecke monoid
@@ -871,10 +885,11 @@ def _generate_decreasing_hecke_factorizations(w, factors, ex, weight=None, paren
     for word in L:
         F = _list_all_decreasing_runs(word, factors)
         for f in F:
-            t = [[word[j] for j in range(len(word)) if f[j]==i] for i in range(factors, 0, -1)]
+            t = [[word[j] for j in range(len(word)) if f[j] == i] for i in range(factors, 0, -1)]
             if weight is None or weight == wt(t):
                 Factors.append(parent.element_class(parent, t))
     return sorted(Factors, reverse=True)
+
 
 def _list_all_decreasing_runs(word, m):
     """
@@ -894,6 +909,7 @@ def _list_all_decreasing_runs(word, m):
     P = [[elt[i]+jump_vector[i] for i in range(len(word))] for elt in I]
     V = [[m+1-sum(elt[:i+1]) for i in range(len(elt))] for elt in P]
     return V
+
 
 def _to_reduced_word(P):
     """
@@ -928,6 +944,7 @@ def _to_reduced_word(P):
             if (i, j) in cells:
                 L += [j-i+m]
     return L
+
 
 def _lowest_weights(w, factors, ex, parent=None):
     """
@@ -994,6 +1011,7 @@ def _lowest_weights(w, factors, ex, parent=None):
             M.append(parent.element_class(parent, t))
     return sorted(M)
 
+
 def _jumps(w):
     """
     Detect all positions where letters weakly increase in ``w``.
@@ -1005,7 +1023,8 @@ def _jumps(w):
         sage: _jumps(w)
         [2, 4, 8, 10]
     """
-    return [i+1 for i in range(len(w)-1) if w[i]<=w[i+1]]
+    return [i+1 for i in range(len(w)-1) if w[i] <= w[i+1]]
+
 
 def _is_valid_column_word(w, m=None):
     """
@@ -1044,6 +1063,7 @@ def _is_valid_column_word(w, m=None):
             return all(L[i+1][j] >= L[i][j] for i in range(len(L)-1)
                        for j in range(len(L[i+1])))
     return False
+
 
 def _list_equivalent_words(w):
     """
@@ -1096,7 +1116,7 @@ def _list_equivalent_words(w):
                 L += [[i,"ppq=pqq"]]
             if q == r and r != p:
                 L += [[i,"pqq=ppq"]]
-        if abs(word[-2]-word[-1]) > 1:
+        if len(word) > 1 and abs(word[-2]-word[-1]) > 1:
             L += [[len(word)-2,"pq=qp"]]
         return L
 
@@ -1112,6 +1132,7 @@ def _list_equivalent_words(w):
                 t = _apply_relations(v, position, move)
                 queue += [tuple(t)]
     return sorted(v for v in list(V))
+
 
 def _apply_relations(word, position, move):
     """

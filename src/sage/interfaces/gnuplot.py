@@ -2,7 +2,7 @@ r"""
 Interface to the Gnuplot interpreter
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -14,13 +14,13 @@ Interface to the Gnuplot interpreter
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 import time
 from sage.structure.sage_object import SageObject
+
 
 class Gnuplot(SageObject):
     """
@@ -64,15 +64,15 @@ class Gnuplot(SageObject):
         INPUT:
 
 
-        -  ``cmd`` - string
+        -  ``cmd`` -- string
 
-        -  ``file`` - string (default: None), if specified save
+        -  ``file`` -- string (default: None), if specified save
            plot to given file, which may be either an eps (default) or png
            file.
 
-        -  ``verbose`` - print some info
+        -  ``verbose`` -- print some info
 
-        -  ``reset`` - True: reset gnuplot before making
+        -  ``reset`` -- True: reset gnuplot before making
            graph
 
 
@@ -85,7 +85,7 @@ class Gnuplot(SageObject):
         if reset:
             self('reset')
         self('set terminal x11')
-        cmd = cmd.replace('^','**')
+        cmd = cmd.replace('^', '**')
         self(cmd)
         if file is not None:
             if file[-4:] == '.png':
@@ -94,13 +94,13 @@ class Gnuplot(SageObject):
                 if file[-4:] != '.eps':
                     file += '.eps'
                 self('set terminal postscript eps enhanced')
-            #self("set output '%s'"%file)
+            # self("set output '%s'"%file)
             tmp = 'gnuplot_tmp%s' % file[-4:]
             self("set output '%s'" % tmp)
             print("Saving plot to %s" % file)
             self(cmd)
             time.sleep(0.1)
-            os.system('mv %s %s 2>/dev/null'%(tmp, file))
+            os.system('mv %s %s 2>/dev/null' % (tmp, file))
             time.sleep(0.1)
         self('set terminal x11')
 
@@ -110,8 +110,8 @@ class Gnuplot(SageObject):
                interact=True):
         if title is None:
             title = str(f)
-        f = f.replace('^','**')
-        cmd="""
+        f = f.replace('^', '**')
+        cmd = """
         set xlabel "%s"
         set ylabel "%s"
         set key top
@@ -126,8 +126,8 @@ class Gnuplot(SageObject):
         #show pm3d
         #show palette
         splot %s
-        """%(xlabel, ylabel,
-             xmin, xmax, ymin, ymax, #zmin, zmax,
+        """ % (xlabel, ylabel,
+             xmin, xmax, ymin, ymax,  # zmin, zmax,
              samples, isosamples,
              title, f)
         if interact:
@@ -144,27 +144,27 @@ class Gnuplot(SageObject):
 
         INPUT:
 
-        -  ``f`` - (string) a function of two variables, e.g.,
+        -  ``f`` -- (string) a function of two variables, e.g.,
            'cos(u)\*(3 + v\*cos(u/2)), sin(u)\*(3 + v\*cos(u/2)),
            v\*sin(u/2)'
 
-        -  ``range1`` - (string) range of values for one
+        -  ``range1`` -- (string) range of values for one
            variable, e.g., '[u=-pi:pi]'
 
-        -  ``range2`` - (string) range of values for another
+        -  ``range2`` -- (string) range of values for another
            variable, e.g., '[v=-0.2:0.2]'
 
-        -  ``samples`` - (int) number of sample points to use
+        -  ``samples`` -- (int) number of sample points to use
 
-        -  ``title`` - (string) title of the graph.
+        -  ``title`` -- (string) title of the graph.
 
         EXAMPLES::
 
-            sage: gnuplot.plot3d_parametric('v^2*sin(u), v*cos(u), v*(1-v)')   # optional - gnuplot  (not tested, since something pops up).
+            sage: gnuplot.plot3d_parametric('v^2*sin(u), v*cos(u), v*(1-v)')   # optional - gnuplot, not tested (since something pops up)
         """
         if title is None:
             title = str(f)
-        cmd="""
+        cmd = """
         set key top
         set border 4095
         set samples %s
@@ -173,21 +173,21 @@ class Gnuplot(SageObject):
         set pm3d; set palette; set parametric
         splot %s %s %s
         """ % (samples, title, range1, range2, f)
-        cmd = cmd.replace('^','**')
+        cmd = cmd.replace('^', '**')
         if interact:
             self.interact(cmd)
         else:
             self(cmd)
 
     def interact(self, cmd):
-        from sage.misc.all import SAGE_TMP
-        file = os.path.join(SAGE_TMP, 'gnuplot')
-        with open(file, 'w') as f:
+        import tempfile
+        with tempfile.NamedTemporaryFile(mode="w+t") as f:
             f.write(cmd + '\n pause -1 "Press return to continue (no further rotation possible)"')
-        os.system('sage-native-execute gnuplot -persist %s'%file)
+            os.system(f'gnuplot -persist {f.name}')
 
     def console(self):
         gnuplot_console()
+
 
 # An instance
 gnuplot = Gnuplot()
@@ -197,8 +197,4 @@ def gnuplot_console():
     from sage.repl.rich_output.display_manager import get_display_manager
     if not get_display_manager().is_in_terminal():
         raise RuntimeError('Can use the console only in the terminal. Try %%gnuplot magics instead.')
-    os.system('sage-native-execute gnuplot')
-
-
-
-
+    os.system('gnuplot')

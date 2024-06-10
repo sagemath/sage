@@ -1,0 +1,3 @@
+#! /usr/bin/env bash
+# Actual installation is done by the xz spkg
+# via a tricky dependency in liblzma/dependencies.

@@ -1,12 +1,8 @@
 cd src/
 
-sdh_cmake -DCMAKE_VERBOSE_MAKEFILE=ON
+sdh_cmake -DCMAKE_VERBOSE_MAKEFILE=ON \
+          -DLIB_INSTALL_DIR="${SAGE_LOCAL}"/lib
 
 sdh_make
-
-# clean old install
-rm -rf "${SAGE_LOCAL}"/include/libqhull
-rm -rf "${SAGE_LOCAL}"/include/qhull
-rm -rf "${SAGE_LOCAL}"/lib/libqhull*
 
 sdh_make_install

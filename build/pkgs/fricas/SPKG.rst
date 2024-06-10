@@ -1,5 +1,5 @@
-fricas
-======
+fricas: A general purpose computer algebra system
+=================================================
 
 Description
 -----------
@@ -16,8 +16,3 @@ Upstream Contact
 ----------------
 
 http://fricas.sourceforge.net/
-
-Dependencies
-------------
-
--  ecl

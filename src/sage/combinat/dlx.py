@@ -126,7 +126,7 @@ class DLXMatrix:
         INPUT:
 
 
-        -  ``other`` - a DLX matrix
+        -  ``other`` -- a DLX matrix
 
 
         EXAMPLES::
@@ -217,7 +217,7 @@ class DLXMatrix:
             ....:         bad|= DLX._nodes[DLX._nodes[d][LEFT]][RIGHT] != d
             ....:         bad|= DLX._nodes[DLX._nodes[d][RIGHT]][LEFT] != d
             ....:         if bad:
-            ....:             raise RuntimeError("Linked list inconsistent.")
+            ....:             raise RuntimeError("linked list inconsistent")
             ....:         d = DLX._nodes[d][DOWN]
             ....:     c = DLX._nodes[c][RIGHT]
             sage: fullcount
@@ -237,7 +237,7 @@ class DLXMatrix:
         for r in ones:
             curRow = r[0]  # row index
             columns = r[1]  # column indexes
-            if not(columns):
+            if not (columns):
                 continue
             columns.sort()
 
@@ -474,10 +474,11 @@ def AllExactCovers(M):
 
     EXAMPLES::
 
-        sage: M = Matrix([[1,1,0],[1,0,1],[0,1,1]])  #no exact covers
+        sage: # needs sage.modules
+        sage: M = Matrix([[1,1,0],[1,0,1],[0,1,1]])  # no exact covers
         sage: for cover in AllExactCovers(M):
         ....:     print(cover)
-        sage: M = Matrix([[1,1,0],[1,0,1],[0,0,1],[0,1,0]]) #two exact covers
+        sage: M = Matrix([[1,1,0],[1,0,1],[0,0,1],[0,1,0]]) # two exact covers
         sage: for cover in AllExactCovers(M):
         ....:     print(cover)
         [(1, 1, 0), (0, 0, 1)]
@@ -503,11 +504,11 @@ def OneExactCover(M):
 
     EXAMPLES::
 
-        sage: M = Matrix([[1,1,0],[1,0,1],[0,1,1]])  # no exact covers
-        sage: OneExactCover(M)
+        sage: M = Matrix([[1,1,0],[1,0,1],[0,1,1]])  # no exact covers                  # needs sage.modules
+        sage: OneExactCover(M)                                                          # needs sage.modules
 
-        sage: M = Matrix([[1,1,0],[1,0,1],[0,0,1],[0,1,0]]) # two exact covers
-        sage: OneExactCover(M)
+        sage: M = Matrix([[1,1,0],[1,0,1],[0,0,1],[0,1,0]])  # two exact covers         # needs sage.modules
+        sage: OneExactCover(M)                                                          # needs sage.modules
         [(1, 1, 0), (0, 0, 1)]
     """
     for s in AllExactCovers(M):

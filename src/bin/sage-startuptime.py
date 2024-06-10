@@ -15,9 +15,6 @@
 #
 #                  https://www.gnu.org/licenses/
 ########################################################################
-
-from __future__ import print_function
-
 import sys
 import os
 import time
@@ -38,10 +35,7 @@ parent = None
 index_to_parent = dict()
 all_modules = dict()
 
-if sys.version_info[0] == 2:
-    DEFAULT_LEVEL = -1
-else:
-    DEFAULT_LEVEL = 0
+DEFAULT_LEVEL = 0
 
 
 def new_import(name, globals={}, locals={}, fromlist=[], level=DEFAULT_LEVEL):
@@ -116,18 +110,19 @@ def print_table(module_list, limit):
         print(fmt_number.format(1000 * t, 1000 * data['cumulative_time'],
                                 len(data['parents']), module.__name__))
 
+
 def guess_module_name(src):
     module = []
     src, ext = os.path.splitext(src)
-    while src:
+    while src and src != '/':
         head, tail = os.path.split(os.path.abspath(src))
-        if (tail == 'src'
-            or any(os.path.exists(os.path.join(head, tail, f))
-                   for f in ('setup.py', 'pyproject.toml'))):
+        if (tail == 'src' or any(os.path.exists(os.path.join(head, tail, f))
+                                 for f in ('setup.py', 'pyproject.toml'))):
             return '.'.join(module)
         module.insert(0, tail)
         src = head
-    raise ValueError('"' + file_name + '" does not appear to be a Python module source file or package directory.')
+    return None
+
 
 if not have_cmdline_args:
     print('== Slowest module imports (excluding / including children) ==')
@@ -135,13 +130,17 @@ if not have_cmdline_args:
     print('Total time (sum over exclusive time): {:.3f}ms'.format(1000 * sum(data[0] for data in module_by_speed)))
     print('Use sage -startuptime <module_name|file_name>... to get more details about specific modules.')
 else:
-    from sage.env import SAGE_SRC
     for module_arg in cmdline_args:
         matching_modules = [m for m in all_modules if m.__name__ == module_arg]
         if not matching_modules:
             if '/' in module_arg or any(module_arg.endswith(ext) for ext in ('.py', '.pyx')) or os.path.isdir(module_arg):
-                module_arg = guess_module_name(module_arg)
-                matching_modules = [m for m in all_modules if m.__name__.startswith(module_arg)]
+                file_name = module_arg
+                module_arg = guess_module_name(file_name)
+                if not module_arg:
+                    print('Warning: "' + file_name + '" does not appear to be a Python module source file or package directory.')
+                    continue
+                else:
+                    matching_modules = [m for m in all_modules if m.__name__.startswith(module_arg)]
             else:
                 matching_modules = [m for m in all_modules if m.__name__.endswith(module_arg)]
         if not matching_modules:

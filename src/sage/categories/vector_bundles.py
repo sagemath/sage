@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-categories
+# sage.doctest: needs sage.symbolic
 r"""
 Vector Bundles
 """
@@ -13,6 +15,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.misc.cachefunc import cached_method
 from sage.categories.sets_cat import Sets
 from sage.categories.fields import Fields
+
 
 class VectorBundles(Category_over_base_ring):
     r"""
@@ -96,7 +99,7 @@ class VectorBundles(Category_over_base_ring):
         """
         base_space = self._base_space
         return Category_over_base_ring._repr_object_names(self) + \
-               " with base space %s"%base_space
+               " with base space %s" % base_space
 
     class SubcategoryMethods:
         @cached_method
@@ -142,7 +145,6 @@ class VectorBundles(Category_over_base_ring):
                 sage: TestSuite(VectorBundles(M, RR).Smooth()).run()
                 sage: VectorBundles(M, RR).Smooth.__module__
                 'sage.categories.vector_bundles'
-
             """
             return self._with_axiom('Smooth')
 
@@ -152,7 +154,6 @@ class VectorBundles(Category_over_base_ring):
 
         A differentiable vector bundle is a differentiable manifold with
         differentiable surjective projection on a differentiable base space.
-
         """
 
     class Smooth(CategoryWithAxiom_over_base_ring):
@@ -161,5 +162,4 @@ class VectorBundles(Category_over_base_ring):
 
         A smooth vector bundle is a smooth manifold with
         smooth surjective projection on a smooth base space.
-
         """

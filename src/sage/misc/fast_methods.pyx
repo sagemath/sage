@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Fast methods via Cython
 
@@ -15,7 +16,6 @@ AUTHOR:
 
 - Simon King (2013-02): Original version
 - Simon King (2013-10): Add :class:`Singleton`
-
 """
 
 #*****************************************************************************
@@ -105,7 +105,7 @@ cdef class WithEqualityById:
     """
     def __hash__(self):
         """
-        The hash provided by this class coincides with that of ``<type 'object'>``.
+        The hash provided by this class coincides with that of ``<class 'object'>``.
 
         TESTS::
 
@@ -166,10 +166,10 @@ cdef class WithEqualityById:
             sage: a == AlwaysEqual()
             True
 
-        Check that :trac:`19628` is fixed::
+        Check that :issue:`19628` is fixed::
 
             sage: from sage.misc.lazy_import import LazyImport
-            sage: lazyQQ = LazyImport('sage.all', 'QQ')
+            sage: lazyQQ = LazyImport('sage.rings.rational_field', 'QQ')
             sage: PolynomialRing(lazyQQ, 'ijk') is PolynomialRing(QQ, 'ijk')
             True
             sage: PolynomialRing(QQ, 'ijkl') is PolynomialRing(lazyQQ, 'ijkl')
@@ -311,7 +311,7 @@ class Singleton(WithEqualityById, metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: from sage.misc.fast_methods import Singleton
-            sage: class C(Singleton, Parent):                  
+            sage: class C(Singleton, Parent):
             ....:     def __init__(self):
             ....:         print("creating singleton")
             ....:         Parent.__init__(self, base=ZZ, category=Rings())
@@ -321,7 +321,7 @@ class Singleton(WithEqualityById, metaclass=ClasscallMetaclass):
             sage: __main__.C = C       # ... in doctests
             sage: loads(dumps(c)) is copy(c) is C()  # indirect doctest
             True
-        """ 
+        """
         return self
 
     def __reduce__(self):
@@ -332,7 +332,7 @@ class Singleton(WithEqualityById, metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: from sage.misc.fast_methods import Singleton
-            sage: class C(Singleton, Parent):                  
+            sage: class C(Singleton, Parent):
             ....:     def __init__(self):
             ....:         print("creating singleton")
             ....:         Parent.__init__(self, base=ZZ, category=Rings())
@@ -343,11 +343,11 @@ class Singleton(WithEqualityById, metaclass=ClasscallMetaclass):
             sage: __main__.C = C       # ... in doctests
             sage: loads(dumps(c)) is copy(c) is C()  # indirect doctest
             True
- 
+
         The pickle data mainly consist of the class of the unique instance,
         which may be a subclass of the original class used to create the
         instance.If the class is replaced by a sub-sub-class after creation
         of the instance, pickling fails. See the doctest
         in :class:`Singleton`.
-        """ 
+        """
         return self.__class__, ()

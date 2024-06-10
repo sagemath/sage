@@ -1,0 +1,1 @@
+pynormaliz ==2.18

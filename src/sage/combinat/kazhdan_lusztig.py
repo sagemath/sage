@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Kazhdan-Lusztig Polynomials
 
@@ -6,7 +7,6 @@ AUTHORS:
 - Daniel Bump (2008): initial version
 
 - Alan J.X. Guo (2014-03-18): ``R_tilde()`` method.
-
 """
 
 #*****************************************************************************
@@ -19,9 +19,8 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function, division
 
-from sage.rings.polynomial.polynomial_element import is_Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.misc.cachefunc import cached_method
 from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial
 from sage.structure.sage_object import SageObject
@@ -60,6 +59,7 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
         sage: W.kazhdan_lusztig_polynomial([2], [3,2,3,1,2])        # optional - coxeter3
         q + 1
     """
+
     def __init__(self, W, q, trace=False):
         """
         Initialize ``self``.
@@ -76,7 +76,7 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
         self._trace = trace
         self._one = W.one()
         self._base_ring = q.parent()
-        if is_Polynomial(q):
+        if isinstance(q, Polynomial):
             self._base_ring_type = "polynomial"
         elif isinstance(q, LaurentPolynomial):
             self._base_ring_type = "laurent"

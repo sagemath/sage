@@ -13,7 +13,8 @@ to reformulate an optimization (or existence) problem through linear
 constraints.
 
 This is a translation of a chapter from the book
-`Calcul mathematique avec Sage <http://sagebook.gforge.inria.fr>`_.
+`Calcul mathematique avec Sage <https://www.sagemath.org/sagebook/french.html>`_.
+This book now exists in `English, too <https://www.sagemath.org/sagebook/english.html>`_.
 
 Definition
 ----------
@@ -114,7 +115,7 @@ the objective function
     sage: round(p.solve(), 2)
     8.8
 
-We can read the optimal assignation found by the solver for `x`, `y` and
+We can read the optimal assignment found by the solver for `x`, `y` and
 `z` through the ``get_values`` method
 
 .. link
@@ -331,7 +332,7 @@ Let us write the Sage code of this MILP::
 
 ::
 
-    sage: p.set_objective(p.sum(matching[e] for e in g.edges(labels=False)))
+    sage: p.set_objective(p.sum(matching[e] for e in g.edges(sort=False, labels=False)))
 
 .. link
 
@@ -352,10 +353,11 @@ Let us write the Sage code of this MILP::
 
 ::
 
-    sage: matching = p.get_values(matching)
-    sage: [e for e, b in matching.items() if b == 1]  # not tested
-    [(0, 1), (6, 9), (2, 7), (3, 4), (5, 8)]
-
+    sage: matching = p.get_values(matching, convert=bool, tolerance=1e-3)
+    sage: sorted(e for e, b in matching.items() if b)   # random
+    [(0, 4), (1, 6), (2, 3), (5, 8), (7, 9)]
+    sage: len(_)
+    5
 
 Flows
 -----
@@ -416,7 +418,7 @@ graph, in which all the edges have a capacity of 1::
 
 ::
 
-    sage: for e in g.edges(labels=False):
+    sage: for e in g.edges(sort=False, labels=False):
     ....:     p.add_constraint(f[e] <= 1)
 
 .. link
@@ -453,7 +455,7 @@ following libraries are currently supported:
 * `CPLEX
   <https://www.ibm.com/products/ilog-cplex-optimization-studio/>`_:
   Proprietary, but available for free for researchers and students through
-  IBM's Academic Initiative.  Since :trac:`27790`, only versions 12.8 and
+  IBM's Academic Initiative.  Since :issue:`27790`, only versions 12.8 and
   above are supported.
 
   Install CPLEX according to the instructions on the

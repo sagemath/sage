@@ -1,7 +1,7 @@
 r"""
 Datatypes for finite words
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Franco Saliola <saliola@gmail.com>
 #                          Vincent Delecroix <20100.delecroix@gmail.com>
 #
@@ -9,21 +9,21 @@ Datatypes for finite words
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cpython.object cimport Py_EQ, Py_NE
 from itertools import islice
 
 
-cdef class WordDatatype(object):
+cdef class WordDatatype():
     r"""
     The generic WordDatatype class.
 
-    Any word datatype must contain two attributes (at least)::
+    Any word datatype must contain two attributes (at least):
 
-      - _parent
-      - _hash
+    - ``_parent``
+    - ``_hash``
 
     They are automatically defined here and it's not necessary (and forbidden)
     to define them anywhere else.
@@ -64,7 +64,7 @@ cdef class WordDatatype(object):
         cdef int res
         if self._hash is None:
             res = 5381
-            for s in islice(self,1024):
+            for s in islice(self, 1024):
                 res = ((res << 5) + res) + hash(s)
             self._hash = res
         return self._hash
@@ -86,18 +86,17 @@ cdef class WordDatatype_list(WordDatatype):
 
         INPUT:
 
-        - ``parent`` - an instance of :class:`Words_all`
-        - ``data`` - an iterable
+        - ``parent`` -- an instance of :class:`Words_all`
+        - ``data`` -- an iterable
 
         EXAMPLES::
 
             sage: w = Word([0,1,1,0])
             sage: isinstance(w, sage.combinat.words.word_datatypes.WordDatatype_list)
             True
-
         """
         self._parent = parent
-        if isinstance(data,list):
+        if isinstance(data, list):
             self._data = data
         else:
             self._data = list(data)
@@ -111,7 +110,7 @@ cdef class WordDatatype_list(WordDatatype):
 
         INPUT:
 
-        - ``a`` - anything
+        - ``a`` -- anything
 
         OUTPUT:
 
@@ -148,8 +147,8 @@ cdef class WordDatatype_list(WordDatatype):
 
         INPUT:
 
-        - ``other`` - a word
-        - ``op`` - integer: 0, 1, 2, 3, 4 or 5
+        - ``other`` -- a word
+        - ``op`` -- integer: 0, 1, 2, 3, 4 or 5
 
         OUTPUT:
 
@@ -222,7 +221,7 @@ cdef class WordDatatype_list(WordDatatype):
 
         INPUT:
 
-        - ``key`` - integer
+        - ``key`` -- integer
 
         EXAMPLES::
 
@@ -247,7 +246,7 @@ cdef class WordDatatype_list(WordDatatype):
 
         INPUT:
 
-        - ``other`` - word represented by a list
+        - ``other`` -- word represented by a list
 
         OUTPUT:
 
@@ -269,7 +268,7 @@ cdef class WordDatatype_list(WordDatatype):
         if isinstance(other, WordDatatype_list):
             return self._parent(self._data + other._data)
         else:
-            return super(WordDatatype_list, self).__mul__(other)
+            return super().__mul__(other)
 
     __add__ = __mul__
 
@@ -280,7 +279,7 @@ cdef class WordDatatype_list(WordDatatype):
 
         INPUT:
 
-        -  ``a`` - a letter
+        -  ``a`` -- a letter
 
         OUTPUT:
 
@@ -316,8 +315,8 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``parent`` - instance of :class:`Words_all`
-        - ``data`` - string
+        - ``parent`` -- instance of :class:`Words_all`
+        - ``data`` -- string
 
         EXAMPLES::
 
@@ -355,8 +354,8 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``other`` - a word
-        - ``op`` - integer: 0, 1, 2, 3, 4 or 5
+        - ``other`` -- a word
+        - ``op`` -- integer: 0, 1, 2, 3, 4 or 5
 
         OUTPUT:
 
@@ -400,7 +399,7 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``a`` - anything
+        - ``a`` -- anything
 
         EXAMPLES::
 
@@ -430,7 +429,7 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``w`` - a word, or something that behaves like one (list, tuple, str, ...)
+        - ``w`` -- a word, or something that behaves like one (list, tuple, str, ...)
 
         OUTPUT:
 
@@ -443,7 +442,6 @@ cdef class WordDatatype_str(WordDatatype):
             True
             sage: w._has_factor_naive('bab')
             False
-
         """
         if isinstance(w, WordDatatype_str):
             return w._data in self._data
@@ -459,10 +457,10 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        -  ``sub`` - string or word to search for.
-        -  ``start`` - non negative integer (default: 0) specifying
+        -  ``sub`` -- string or word to search for.
+        -  ``start`` -- non negative integer (default: 0) specifying
            the position from which to start the search.
-        -  ``end`` - non negative integer (default: None) specifying
+        -  ``end`` -- non negative integer (default: None) specifying
            the position at which the search must stop. If None, then
            the search is performed up to the end of the string.
 
@@ -487,7 +485,7 @@ cdef class WordDatatype_str(WordDatatype):
         elif isinstance(sub, str):
             return self._data.find(sub, start, end)
         else:
-            return super(WordDatatype_str, self).find(sub, start, end)
+            return super().find(sub, start, end)
 
     def rfind(self, sub, start=0, end=None):
         r"""
@@ -497,10 +495,10 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        -  ``sub`` - string or word to search for.
-        -  ``start`` - non negative integer (default: 0) specifying
+        -  ``sub`` -- string or word to search for.
+        -  ``start`` -- non negative integer (default: 0) specifying
            the position at which the search must stop.
-        -  ``end`` - non negative integer (default: None) specifying
+        -  ``end`` -- non negative integer (default: None) specifying
            the position from which to start the search. If None, then
            the search is performed up to the end of the string.
 
@@ -525,7 +523,7 @@ cdef class WordDatatype_str(WordDatatype):
         elif isinstance(sub, str):
             return self._data.rfind(sub, start, end)
         else:
-            return super(WordDatatype_str, self).rfind(sub, start, end)
+            return super().rfind(sub, start, end)
 
     def __len__(self):
         r"""
@@ -585,7 +583,7 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``other`` - word represented by an str
+        - ``other`` -- word represented by a str
 
         OUTPUT:
 
@@ -607,7 +605,7 @@ cdef class WordDatatype_str(WordDatatype):
         if isinstance(other, WordDatatype_str):
             return self._parent(self._data + other._data)
         else:
-            return super(WordDatatype_str, self).__mul__(other)
+            return super().__mul__(other)
 
     __add__ = __mul__
 
@@ -617,7 +615,7 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``letter`` - a letter
+        - ``letter`` -- a letter
 
         OUTPUT:
 
@@ -662,9 +660,9 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``sep`` - string or word (optional, default: None)
+        - ``sep`` -- string or word (default: None)
 
-        - ``maxsplit`` - positive integer (optional, default: None)
+        - ``maxsplit`` -- positive integer (default: None)
 
         OUTPUT:
 
@@ -698,25 +696,24 @@ cdef class WordDatatype_str(WordDatatype):
             sage: w.split("32")
             [word: , word: 30301030, word: , word: 12, word: 30, word: , word: 1]
 
-        If the separator is not a string a ValueError is raised::
+        If the separator is not a string a :class:`ValueError` is raised::
 
             sage: w = Word("le papa du papa du papa etait un petit pioupiou")
             sage: w.split(Word(['p','a','p','a']))
             Traceback (most recent call last):
             ...
-            ValueError: the separator must be a string.
+            ValueError: the separator must be a string
         """
         if sep is None or isinstance(sep, str):
             pass
         elif isinstance(sep, WordDatatype_str):
             sep = sep._data
         else:
-            raise ValueError("the separator must be a string.")
-
+            raise ValueError("the separator must be a string")
         if maxsplit is None:
-            return [self._parent(z) for z in self._data.split(sep)]
-        else:
-            return [self._parent(z) for z in self._data.split(sep, maxsplit)]
+            maxsplit = -1
+        return [self._parent(z) for z in self._data.split(sep=sep,
+                                                          maxsplit=maxsplit)]
 
     def partition(self, sep):
         r"""
@@ -733,7 +730,7 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``sep`` - string or word
+        - ``sep`` -- string or word
 
         EXAMPLES::
 
@@ -756,13 +753,13 @@ cdef class WordDatatype_str(WordDatatype):
             sage: w.partition(Word(['p','a','p','a']))
             Traceback (most recent call last):
             ...
-            ValueError: the separator must be a string.
+            ValueError: the separator must be a string
         """
         if isinstance(sep, str):
             return [self._parent(z) for z in self._data.partition(sep)]
         elif isinstance(sep, WordDatatype_str):
             return [self._parent(z) for z in self._data.partition(sep._data)]
-        raise ValueError("the separator must be a string.")
+        raise ValueError("the separator must be a string")
 
     def is_suffix(self, other):
         r"""
@@ -770,7 +767,7 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``other`` - a word (an instance of :class:`Word_class`) or a
+        - ``other`` -- a word (an instance of :class:`Word_class`) or a
           :class:`str`.
 
         OUTPUT:
@@ -803,7 +800,7 @@ cdef class WordDatatype_str(WordDatatype):
         elif isinstance(other, str):
             return other.endswith(self._data)
         else:
-            return super(WordDatatype_str, self).is_suffix(other)
+            return super().is_suffix(other)
 
     def has_suffix(self, other):
         """
@@ -811,7 +808,7 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``other`` - a word (an instance of :class:`Word_class`) or a
+        - ``other`` -- a word (an instance of :class:`Word_class`) or a
           :class:`str`.
 
         OUTPUT:
@@ -835,7 +832,7 @@ cdef class WordDatatype_str(WordDatatype):
         elif isinstance(other, str):
             return self._data.endswith(other)
         else:
-            return super(WordDatatype_str, self).has_suffix(other)
+            return super().has_suffix(other)
 
     def is_prefix(self, other):
         r"""
@@ -843,7 +840,7 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``other`` - a word (an instance of :class:`Word_class`) or a
+        - ``other`` -- a word (an instance of :class:`Word_class`) or a
           :class:`str`.
 
         OUTPUT:
@@ -869,14 +866,12 @@ cdef class WordDatatype_str(WordDatatype):
             True
             sage: abba.is_prefix(ab)
             False
-
         """
         if isinstance(other, WordDatatype_str):
             return other._data.startswith(self._data)
-        if isinstance(other ,str):
+        if isinstance(other, str):
             return other.startswith(self._data)
-        else:
-            return super(WordDatatype_str, self).is_prefix(other)
+        return super().is_prefix(other)
 
     def has_prefix(self, other):
         r"""
@@ -884,7 +879,7 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``other`` - a word (an instance of :class:`Word_class`) or a
+        - ``other`` -- a word (an instance of :class:`Word_class`) or a
           :class:`str`.
 
         OUTPUT:
@@ -917,7 +912,7 @@ cdef class WordDatatype_str(WordDatatype):
         if isinstance(other, str):
             return self._data.startswith(other)
         else:
-            return super(WordDatatype_str, self).has_prefix(other)
+            return super().has_prefix(other)
 
 cdef class WordDatatype_tuple(WordDatatype):
     r"""
@@ -931,8 +926,8 @@ cdef class WordDatatype_tuple(WordDatatype):
 
         INPUT:
 
-        - ``parent`` - instance of :class:`Words_all`
-        - ``data`` - iterable
+        - ``parent`` -- instance of :class:`Words_all`
+        - ``data`` -- iterable
 
         EXAMPLES::
 
@@ -942,10 +937,9 @@ cdef class WordDatatype_tuple(WordDatatype):
             sage: u = Word([0,1,1,0], datatype='tuple')
             sage: isinstance(u, sage.combinat.words.word_datatypes.WordDatatype_tuple)
             True
-
         """
         self._parent = parent
-        if isinstance(data,tuple):
+        if isinstance(data, tuple):
             self._data = data
         else:
             self._data = tuple(data)
@@ -973,8 +967,8 @@ cdef class WordDatatype_tuple(WordDatatype):
 
         INPUT:
 
-        - ``other`` - a word
-        - ``op`` - integer: 0, 1, 2, 3, 4 or 5
+        - ``other`` -- a word
+        - ``op`` -- integer: 0, 1, 2, 3, 4 or 5
 
         OUTPUT:
 
@@ -1049,7 +1043,7 @@ cdef class WordDatatype_tuple(WordDatatype):
 
         INPUT:
 
-        - ``a`` - anything
+        - ``a`` -- anything
 
         EXAMPLES::
 
@@ -1068,7 +1062,7 @@ cdef class WordDatatype_tuple(WordDatatype):
 
         INPUT:
 
-        - ``key`` - an integer
+        - ``key`` -- an integer
 
         OUTPUT:
 
@@ -1097,7 +1091,7 @@ cdef class WordDatatype_tuple(WordDatatype):
 
         INPUT:
 
-        - ``other`` - word represented by a tuple
+        - ``other`` -- word represented by a tuple
 
         OUTPUT:
 
@@ -1121,7 +1115,6 @@ cdef class WordDatatype_tuple(WordDatatype):
         if isinstance(other, WordDatatype_tuple):
             return self._parent(self._data + other._data)
         else:
-            return super(WordDatatype_tuple, self).__mul__(other)
+            return super().__mul__(other)
 
     __add__ = __mul__
-

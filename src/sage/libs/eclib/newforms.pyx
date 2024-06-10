@@ -13,7 +13,7 @@ Modular symbols using eclib newforms
 
 from cysignals.signals cimport sig_on, sig_off
 
-from ..eclib cimport *
+from sage.libs.eclib cimport *
 from sage.libs.gmp.mpq cimport mpq_numref
 from sage.libs.ntl.convert cimport mpz_to_ZZ
 from sage.rings.rational_field import QQ
@@ -22,7 +22,7 @@ from sage.modular.all import Cusp
 
 
 cdef class ECModularSymbol:
-    """
+    r"""
     Modular symbol associated with an elliptic curve,  using John Cremona's newforms class.
 
     EXAMPLES::
@@ -32,18 +32,18 @@ cdef class ECModularSymbol:
         sage: M = ECModularSymbol(E,1); M
         Modular symbol with sign 1 over Rational Field attached to Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
 
-    By default, symbols are based at the cusp $\infty$, i.e. we evaluate $\{\infty,r\}$::
+    By default, symbols are based at the cusp `\infty`, i.e. we evaluate `\{\infty,r\}`::
 
         sage: [M(1/i) for i in range(1,11)]
         [2/5, -8/5, -3/5, 7/5, 12/5, 12/5, 7/5, -3/5, -8/5, 2/5]
 
-    We can also switch the base point to the cusp $0$::
+    We can also switch the base point to the cusp `0`::
 
         sage: [M(1/i, base_at_infinity=False) for i in range(1,11)]
         [0, -2, -1, 1, 2, 2, 1, -1, -2, 0]
 
     For the minus symbols this makes no difference since
-    $\{0,\infty\}$ is in the plus space.  Note that to evaluate minus
+    `\{0,\infty\}` is in the plus space.  Note that to evaluate minus
     symbols the space must be defined with sign 0, which makes both
     signs available::
 
@@ -126,16 +126,21 @@ cdef class ECModularSymbol:
         sage: ECModularSymbol.__new__(ECModularSymbol)
         Modular symbol with sign 0 over Rational Field attached to None
     """
-    def __init__(self, E, sign=1):
+    def __init__(self, E, sign=1, nap=1000):
         """
         Construct the modular symbol object from an elliptic curve.
 
         INPUT:
 
-        - ``E``- an elliptic curve defined over Q
+        - ``E``- an elliptic curve defined over Q.
+
         - ``sign`` (int) -- 0 or +1.  If +1, only plus modular symbols
-           of this sign are available.  If 0, modular symbols of both
-           signs are available but the construction is more expensive.
+         of this sign are available.  If 0, modular symbols of both
+         signs are available but the construction is more expensive.
+
+        - ``nap`` -- (int, default 1000): the number of ap of E to use
+         in determining the normalisation of the modular symbols.
+         Note that eclib will increase this to 100*sqrt(N) if necessary.
 
         EXAMPLES::
 
@@ -156,7 +161,7 @@ cdef class ECModularSymbol:
 
         TESTS:
 
-        This one is from :trac:`8042`::
+        This one is from :issue:`8042`::
 
             sage: from sage.libs.eclib.newforms import ECModularSymbol
             sage: E = EllipticCurve('858k2')
@@ -164,7 +169,7 @@ cdef class ECModularSymbol:
             Modular symbol with sign 1 over Rational Field attached to Elliptic Curve defined by y^2 + x*y = x^3 + 16353089*x - 335543012233 over Rational Field
 
         We allow a-invariants which are larger than 64 bits
-        (:trac:`16977`)::
+        (:issue:`16977`)::
 
             sage: E = EllipticCurve([-25194941007454971, -1539281792450963687794218])  # non-minimal model of 21758k3
             sage: ECModularSymbol(E)  # long time
@@ -206,12 +211,12 @@ cdef class ECModularSymbol:
         n = I2int(N)
         self.n = n
         if not (sign == 0 or sign == 1):
-           sig_off()
-           raise ValueError("ECModularSymbol can only be created with signs +1 or 0, not {}".format(sign))
+            sig_off()
+            raise ValueError("ECModularSymbol can only be created with signs +1 or 0, not {}".format(sign))
         self.sign = sign
 
         self.nfs = new newforms(n, 0)
-        self.nfs.createfromcurve(sign,CR)
+        self.nfs.createfromcurve(sign, CR, nap)
         sig_off()
 
     def __dealloc__(self):
@@ -240,14 +245,12 @@ cdef class ECModularSymbol:
 
         INPUT:
 
-        - ``r`` (rational) - a rational number
+        - ``r`` (rational) -- a rational number
 
-        - ``sign`` (int) - either +1, -1 or 0.  If the sign of the
+        - ``sign`` (int) -- either +1, -1 or 0.  If the sign of the
           space is +1, only sign +1 is allowed.  Default: self.sign, or +1 when self.sign=0.
 
-
-
-           - ``base_at_infinity`` (bool) - if True, evaluates
+        - ``base_at_infinity`` (bool) -- if True, evaluates
           {oo,r}. otherwise (default) evaluates {0,r}.
 
         OUTPUT:
@@ -314,7 +317,7 @@ cdef class ECModularSymbol:
             ...
             ValueError: impossible to evaluate both symbols on a plus space
 
-        TESTS (see :trac:`11211`)::
+        TESTS (see :issue:`11211`)::
 
             sage: from sage.libs.eclib.newforms import ECModularSymbol
             sage: E = EllipticCurve('11a')
@@ -344,8 +347,8 @@ cdef class ECModularSymbol:
             n = n % d
         sig_on()
         _r = rational(n, d)
-        if sign is None or not sign in [-1, 0, 1]:
-           sign = self.sign
+        if sign is None or sign not in [-1, 0, 1]:
+            sign = self.sign
         if sign == +1:
             _sp = self.nfs.plus_modular_symbol(_r, 0, int(base_at_infinity))
         elif sign == -1:
@@ -381,7 +384,7 @@ cdef class ECModularSymbol:
             sage: E = EllipticCurve('11a')
             sage: M = ECModularSymbol(E)
             sage: M.__reduce__()
-            (<type 'sage.libs.eclib.newforms.ECModularSymbol'>,
+            (<class 'sage.libs.eclib.newforms.ECModularSymbol'>,
              (Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field,
               1))
         """

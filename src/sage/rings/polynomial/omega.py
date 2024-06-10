@@ -36,27 +36,20 @@ ACKNOWLEDGEMENT:
 
 - Daniel Krenn is supported by the Austrian Science Fund (FWF): P 24644-N26.
 
-
 Functions
 =========
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Daniel Krenn <dev@danielkrenn.at>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-from __future__ import print_function
-from __future__ import absolute_import
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 import operator
 from sage.misc.cachefunc import cached_function
-from sage.misc.superseded import deprecated_function_alias
 
 
 def MacMahonOmega(var, expression, denominator=None, op=operator.ge,
@@ -365,8 +358,7 @@ def _simplify_(numerator, terms):
     OUTPUT:
 
     A pair of a Laurent polynomial and a tuple of Laurent polynomials
-    representing numerator and denominator as described in the
-    INPUT-section.
+    representing numerator and denominator as described in the INPUT-section.
 
     EXAMPLES::
 
@@ -564,7 +556,8 @@ def Omega_ge(a, exponents):
     logger = logging.getLogger(__name__)
     logger.info('Omega_ge: a=%s, exponents=%s', a, exponents)
 
-    from sage.arith.all import lcm, srange
+    from sage.arith.functions import lcm
+    from sage.arith.srange import srange
     from sage.rings.integer_ring import ZZ
     from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
     from sage.rings.number_field.number_field import CyclotomicField
@@ -597,6 +590,7 @@ def Omega_ge(a, exponents):
         divisible by ``exponent``.
         """
         p = tuple(var.dict().popitem()[0]).index(1)  # var is the p-th generator
+
         def subs_e(e):
             e = list(e)
             assert e[p] % exponent == 0
@@ -883,6 +877,7 @@ def _Omega_factors_denominator_(x, y):
 
     ::
 
+        sage: # needs sage.rings.number_field
         sage: B.<zeta> = ZZ.extension(cyclotomic_polynomial(3))
         sage: L.<x, y> = LaurentPolynomialRing(B)
         sage: _Omega_factors_denominator_(((x, -x),), ((y,),))
@@ -986,5 +981,3 @@ def homogeneous_symmetric_function(j, x):
 
     return sum(prod(xx**pp for xx, pp in zip(x, p))
                for p in IntegerVectors(j, length=len(x)))
-
-homogenous_symmetric_function = deprecated_function_alias(30585, homogeneous_symmetric_function)

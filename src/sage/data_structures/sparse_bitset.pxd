@@ -1,12 +1,12 @@
 """
 Sparse bitset.
 
-This is a regular bitset to which we we will add additional structure.
+This is a regular bitset to which we will add additional structure.
 
 In particular some representation of which limbs even contain data.
 """
 # ****************************************************************************
-#       Copyright (C) 2020 Jonathan Kliem <jonathan.kliem@fu-berlin.de>
+#       Copyright (C) 2020 Jonathan Kliem <jonathan.kliem@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,6 +40,22 @@ cdef struct sparse_bitset_s:
     mp_size_t limbs
 
     # The individual bits of a bitset.
+    # NOTE: ``sparse_bitset_t`` is assumed to be allocated over-aligned.
     mp_limb_t* bits
+
+    # Pointer to the memory of ``bits``.
+    void* mem
+
+    # Storing the non zero positions can safe time, when performing
+    # multiple comparisons.
+    # E.g. one can set them while computing the intersection
+    # and then use those to ``bitset_issubset`` many times in a row.
+
+    # Any modification, will invalidate the already computed positions.
+    # It is stored, whether the non zero chunks are correctly initialized
+    # or not. Computations will work correctly either way.
+    bint non_zero_chunks_are_initialized
+    mp_bitcnt_t* non_zero_chunks
+    mp_bitcnt_t n_non_zero_chunks
 
 ctypedef sparse_bitset_s sparse_bitset_t[1]

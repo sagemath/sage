@@ -1,5 +1,5 @@
-markupsafe
-==========
+markupsafe: Safely add untrusted strings to HTML/XML markup
+===========================================================
 
 Description
 -----------
@@ -9,15 +9,10 @@ Implements a XML/HTML/XHTML Markup safe string for Python
 License
 -------
 
-Simplified BSD
-
+BSD-3-Clause
 
 Upstream Contact
 ----------------
 
-Home page: http://github.com/mitsuhiko/markupsafe
+https://pypi.org/project/MarkupSafe/
 
-Dependencies
-------------
-
-Python, setuptools

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Family Games America's Quantumino solver
 
@@ -166,22 +165,21 @@ REFERENCES:
   <http://familygamesamerica.com/mainsite/consumers/productview.php?pro_id=274&search=quantumino>`_
 - [2] `Quantumino - How to Play <http://www.youtube.com/watch?v=jX_VKzakZi8>`_ on Youtube
 - [3] Knuth, Donald (2000). *Dancing links*. :arxiv:`cs/0011047`.
-
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Sebastien Labbe <slabqc@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import division
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.sage_object import SageObject
-from sage.plot.all import Graphics
-from sage.plot.plot3d.platonic import cube
-from sage.plot.plot3d.shapes2 import text3d
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.all", "Graphics")
+lazy_import("sage.plot.plot3d.platonic", "cube")
+lazy_import("sage.plot.plot3d.shapes2", "text3d")
 from sage.modules.free_module_element import vector
 from sage.combinat.tiling import Polyomino, TilingSolver
 
@@ -214,7 +212,7 @@ def show_pentaminos(box=(5,8,2)):
 
     INPUT:
 
-    - ``box`` -- tuple of size three (optional, default: ``(5,8,2)``),
+    - ``box`` -- tuple of size three (default: ``(5,8,2)``),
       size of the box
 
     OUTPUT:
@@ -253,15 +251,15 @@ class QuantuminoState(SageObject):
     r"""
     A state of the Quantumino puzzle.
 
-    Used to represent an solution or a partial solution of the Quantumino
+    Used to represent a solution or a partial solution of the Quantumino
     puzzle.
 
     INPUT:
 
-    - ``pentos`` - list of 16 3d pentamino representing the (partial)
+    - ``pentos`` -- list of 16 3d pentamino representing the (partial)
       solution
-    - ``aside`` - 3d polyomino, the unused 3D pentamino
-    - ``box`` - tuple of size three (optional, default: ``(5,8,2)``),
+    - ``aside`` -- 3d polyomino, the unused 3D pentamino
+    - ``box`` -- tuple of size three (default: ``(5,8,2)``),
       size of the box
 
     EXAMPLES::
@@ -399,8 +397,8 @@ class QuantuminoSolver(SageObject):
 
     INPUT:
 
-    - ``aside`` - integer, from 0 to 16, the aside pentamino
-    - ``box`` - tuple of size three (optional, default: ``(5,8,2)``),
+    - ``aside`` -- integer, from 0 to 16, the aside pentamino
+    - ``box`` -- tuple of size three (default: ``(5,8,2)``),
       size of the box
 
     EXAMPLES::
@@ -413,7 +411,7 @@ class QuantuminoSolver(SageObject):
         Quantumino solver for the box (5, 4, 4)
         Aside pentamino number: 12
     """
-    def __init__(self, aside, box=(5,8,2)):
+    def __init__(self, aside, box=(5, 8, 2)):
         r"""
         Constructor.
 
@@ -424,8 +422,8 @@ class QuantuminoSolver(SageObject):
             Quantumino solver for the box (5, 8, 2)
             Aside pentamino number: 9
         """
-        if not  0 <= aside < 17:
-            raise ValueError("aside (=%s) must be between 0 and 16" % aside)
+        if not (0 <= aside < 17):
+            raise ValueError(f"aside (={aside}) must be between 0 and 16")
         self._aside = aside
         self._box = box
 
@@ -478,13 +476,13 @@ class QuantuminoSolver(SageObject):
 
         INPUT:
 
-        - ``partial`` - string (optional, default: ``None``), whether to
+        - ``partial`` -- string (default: ``None``), whether to
           include partial (incomplete) solutions. It can be one of the
           following:
 
-          - ``None`` - include only complete solution
-          - ``'common'`` - common part between two consecutive solutions
-          - ``'incremental'`` - one piece change at a time
+          - ``None`` -- include only complete solution
+          - ``'common'`` -- common part between two consecutive solutions
+          - ``'incremental'`` -- one piece change at a time
 
         OUTPUT:
 
@@ -592,4 +590,3 @@ class QuantuminoSolver(SageObject):
             ??? hundreds of millions ???
         """
         return self.tiling_solver().number_of_solutions()
-

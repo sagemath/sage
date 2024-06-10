@@ -1,11 +1,13 @@
-OpenBLAS
-========
+openblas: An optimized implementation of BLAS (Basic Linear Algebra Subprograms)
+================================================================================
 
 Description
 -----------
 
-OpenBLAS is an optimized BLAS library based on GotoBLAS2 1.13 BSD
-version.
+OpenBLAS is an optimized open library implementing the Basic Linear Algebra Subprograms
+(BLAS) specification.
+
+It is based on GotoBLAS2 1.13 BSD version.
 
 License
 -------
@@ -15,6 +17,8 @@ License
 
 SPKG Repository
 ---------------
+
+https://www.openblas.net
 
 GitHub page: https://github.com/xianyi/OpenBLAS
 

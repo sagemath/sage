@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Algebraic closures of finite fields
 
@@ -51,17 +52,14 @@ AUTHORS:
 - Peter Bruin (August 2013): initial version
 
 - Vincent Delecroix (November 2013): additional methods
-
 """
-from __future__ import print_function
 
 from sage.misc.abstract_method import abstract_method
 from sage.misc.fast_methods import WithEqualityById
 
-from sage.rings.finite_rings.element_base import is_FiniteFieldElement
-from sage.rings.finite_rings.finite_field_base import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.ring import Field
-from sage.structure.element import FieldElement
+from sage.structure.element import Element, FieldElement
 from sage.structure.richcmp import richcmp
 
 
@@ -92,7 +90,7 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             and ``loads(dumps(x))``.
 
         """
-        if is_FiniteFieldElement(value):
+        if isinstance(value, Element) and isinstance(value.parent(), FiniteField):
             n = value.parent().degree()
         else:
             from sage.rings.integer import Integer
@@ -139,7 +137,7 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             sage: X.extend([z3, z3**2, z3*z4])
             sage: assert len(X) == len(set(hash(x) for x in X))
 
-        Check that :trac:`19956` is fixed::
+        Check that :issue:`19956` is fixed::
 
             sage: R.<x,y> = GF(2).algebraic_closure()[]
             sage: x.resultant(y)
@@ -341,25 +339,34 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
         """
         return True
 
-    def sqrt(self):
+    def sqrt(self, all=False):
         """
         Return a square root of ``self``.
+
+        If the optional keyword argument ``all`` is set to ``True``,
+        return a list of all square roots of ``self`` instead.
 
         EXAMPLES::
 
             sage: F = GF(3).algebraic_closure()
             sage: F.gen(2).sqrt()
             z4^3 + z4 + 1
-
+            sage: F.gen(2).sqrt(all=True)
+            [z4^3 + z4 + 1, 2*z4^3 + 2*z4 + 2]
+            sage: (F.gen(2)^2).sqrt()
+            z2
+            sage: (F.gen(2)^2).sqrt(all=True)
+            [z2, 2*z2]
         """
         F = self.parent()
         x = self._value
-        if x.is_square():
-            return self.__class__(F, x.sqrt(extend=False))
-        else:
+        if not x.is_square():
             l = self._level
             x = F.inclusion(l, 2*l)(x)
-            return self.__class__(F, x.sqrt(extend=False))
+        sqrt = x.sqrt(extend=False, all=all)
+        if all:
+            return [self.__class__(F, y) for y in sqrt]
+        return self.__class__(F, sqrt)
 
     def nth_root(self, n):
         """
@@ -493,7 +500,7 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             Finite Field of size 3
 
         This also works when the element has to be converted between
-        two non-trivial finite subfields (see :trac:`16509`)::
+        two non-trivial finite subfields (see :issue:`16509`)::
 
             sage: K = GF(5).algebraic_closure()
             sage: z = K.gen(5) - K.gen(5) + K.gen(2)
@@ -503,19 +510,20 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
                To:   Algebraic closure of Finite Field of size 5
                Defn: z2 |--> z2)
 
-        There is currently no automatic conversion between the various
+        There are automatic coercions between the various
         subfields::
 
             sage: a = K.gen(2) + 1
             sage: _,b,_ = a.as_finite_field_element()
             sage: K4 = K.subfield(4)[0]
             sage: K4(b)
-            Traceback (most recent call last):
-            ...
-            TypeError: unable to coerce from a finite field other than the prime
-            subfield
+            z4^3 + z4^2 + z4 + 4
+            sage: b.minimal_polynomial() == K4(b).minimal_polynomial()
+            True
+            sage: K(K4(b)) == K(b)
+            True
 
-        Nevertheless it is possible to use the inclusions that are implemented at
+        You can also use the inclusions that are implemented at
         the level of the algebraic closure::
 
             sage: f = K.inclusion(2,4); f
@@ -582,7 +590,7 @@ class AlgebraicClosureFiniteField_generic(Field):
         """
         if self is other:
             return True
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return False
         return ((self.base_ring(), self.variable_name(), self.category()) ==
                 (other.base_ring(), other.variable_name(), other.category()))
@@ -659,7 +667,7 @@ class AlgebraicClosureFiniteField_generic(Field):
         """
         if other is self:
             return True
-        elif is_FiniteField(other) and self._subfield(other.degree()) is other:
+        elif isinstance(other, FiniteField) and self._subfield(other.degree()) is other:
             return True
         elif self._subfield(1).has_coerce_map_from(other):
             return True
@@ -765,6 +773,7 @@ class AlgebraicClosureFiniteField_generic(Field):
             from sage.rings.finite_rings.finite_field_constructor import FiniteField
             return FiniteField(self.base_ring().cardinality() ** n,
                                name=self.variable_name() + str(n),
+                               prefix=self.variable_name(),
                                modulus=self._get_polynomial(n),
                                check_irreducible=False)
 
@@ -864,17 +873,14 @@ class AlgebraicClosureFiniteField_generic(Field):
 
             sage: from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField
             sage: F = AlgebraicClosureFiniteField(GF(5), 'z')
-            sage: g = F.gens()
-            sage: g
-            Lazy family (<lambda>(i))_{i in Positive integers}
+            sage: g = F.gens(); g
+            Lazy family (...(i))_{i in Positive integers}
             sage: g[3]
             z3
-
         """
         from sage.sets.family import Family
         from sage.sets.positive_integers import PositiveIntegers
-
-        return Family(PositiveIntegers(), lambda n: self.gen(n))
+        return Family(PositiveIntegers(), self.gen)
 
     def _first_ngens(self, n):
         """
@@ -958,7 +964,7 @@ class AlgebraicClosureFiniteField_generic(Field):
             ....:         assert p(r).is_zero(), "r={} is not a root of p={}".format(r,p)
 
         """
-        from sage.arith.all import lcm
+        from sage.arith.functions import lcm
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
         # first build a polynomial over some finite field
@@ -1094,7 +1100,7 @@ class AlgebraicClosureFiniteField_pseudo_conway(WithEqualityById, AlgebraicClosu
             :meth:`AlgebraicClosureFiniteFieldElement.__init__`.
 
         """
-        if not (is_FiniteField(base_ring) and base_ring.is_prime_field()):
+        if not (isinstance(base_ring, FiniteField) and base_ring.is_prime_field()):
             raise NotImplementedError('algebraic closures of finite fields are only implemented for prime fields')
         from sage.rings.finite_rings.conway_polynomials import PseudoConwayLattice
         p = base_ring.characteristic()

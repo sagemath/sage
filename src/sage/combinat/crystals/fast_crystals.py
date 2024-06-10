@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Fast Rank Two Crystals
 """
@@ -87,9 +88,20 @@ class FastCrystal(UniqueRepresentation, Parent):
         sage: C.cardinality()
         35
         sage: TestSuite(C).run()
+
+        sage: C = crystals.FastRankTwo(['A',2],shape=[2,1])
+        sage: C.list()
+        [[0, 0, 0],
+         [1, 0, 0],
+         [0, 1, 1],
+         [0, 2, 1],
+         [1, 2, 1],
+         [0, 1, 0],
+         [1, 1, 0],
+         [2, 1, 0]]
     """
     @staticmethod
-    def __classcall__(cls, cartan_type, shape, format = "string"):
+    def __classcall__(cls, cartan_type, shape, format="string"):
         """
         Normalize the input arguments to ensure unique representation
 
@@ -105,7 +117,7 @@ class FastCrystal(UniqueRepresentation, Parent):
         if len(shape) > 2:
             raise ValueError("The shape must have length <=2")
         shape = shape + (0,)*(2-len(shape))
-        return super(FastCrystal, cls).__classcall__(cls, cartan_type, shape, format)
+        return super().__classcall__(cls, cartan_type, shape, format)
 
     def __init__(self, ct, shape, format):
         """
@@ -115,8 +127,8 @@ class FastCrystal(UniqueRepresentation, Parent):
             The fast crystal for A2 with shape [4,1]
             sage: TestSuite(C).run()
         """
-        Parent.__init__(self, category = ClassicalCrystals())
-#        super(FastCrystal, self).__init__(category = FiniteEnumeratedSets())
+        Parent.__init__(self, category=ClassicalCrystals())
+#        super().__init__(category = FiniteEnumeratedSets())
         self._cartan_type = ct
         if ct[1] != 2:
             raise NotImplementedError
@@ -142,14 +154,14 @@ class FastCrystal(UniqueRepresentation, Parent):
         self.shape = shape
 
         for i in range(self.size):
-            target = [x for x in self.delpat[i]]
+            target = list(self.delpat[i])
 
             target[0] = target[0]-1
             e1 = None if target not in self.delpat else self.delpat.index(target)
             target[0] = target[0]+1+1
             f1 = None if target not in self.delpat else self.delpat.index(target)
 
-            target = [x for x in self.gampat[i]]
+            target = list(self.gampat[i])
             target[0] = target[0]-1
             e2 = None if target not in self.gampat else self.gampat.index(target)
             target[0] = target[0]+1+1
@@ -157,19 +169,17 @@ class FastCrystal(UniqueRepresentation, Parent):
 
             self._rootoperators.append([e1,f1,e2,f2])
 
-        if int(2*l1)%2 == 0:
-            l1_str = "%d"%l1
-            l2_str = "%d"%l2
+        if int(2*l1) % 2 == 0:
+            l1_str = "%d" % l1
+            l2_str = "%d" % l2
         else:
-            assert self._cartan_type[0] == 'B' and int(2*l2)%2 == 1
-            l1_str = "%d/2"%int(2*l1)
-            l2_str = "%d/2"%int(2*l2)
-        self.rename("The fast crystal for %s2 with shape [%s,%s]"%(ct[0],l1_str,l2_str))
+            assert self._cartan_type[0] == 'B' and int(2*l2) % 2 == 1
+            l1_str = "%d/2" % int(2*l1)
+            l2_str = "%d/2" % int(2*l2)
+        self.rename("The fast crystal for %s2 with shape [%s,%s]" % (ct[0],l1_str,l2_str))
         self.module_generators = [self(0)]
-#        self._list = ClassicalCrystal.list(self)
-        self._list = super(FastCrystal, self).list()
-#        self._digraph = ClassicalCrystal.digraph(self)
-        self._digraph = super(FastCrystal, self).digraph()
+        # self._digraph = ClassicalCrystal.digraph(self)
+        self._digraph = super().digraph()
         self._digraph_closure = self.digraph().transitive_closure()
 
     def _type_a_init(self, l1, l2):
@@ -248,25 +258,6 @@ class FastCrystal(UniqueRepresentation, Parent):
         if parent(value) is self:
             return value
         return self.element_class(self, value, self.format)
-
-    def list(self):
-        """
-        Return a list of the elements of self.
-
-        EXAMPLES::
-
-            sage: C = crystals.FastRankTwo(['A',2],shape=[2,1])
-            sage: C.list()
-            [[0, 0, 0],
-             [1, 0, 0],
-             [0, 1, 1],
-             [0, 2, 1],
-             [1, 2, 1],
-             [0, 1, 0],
-             [1, 1, 0],
-             [2, 1, 0]]
-        """
-        return self._list
 
     def digraph(self):
         """

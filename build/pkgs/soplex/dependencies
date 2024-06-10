@@ -1,0 +1,1 @@
+$(MP_LIBRARY) mpfr boost_cropped zlib papilo | cmake

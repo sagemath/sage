@@ -1,7 +1,18 @@
-widgetsnbextension
-==================
+widgetsnbextension: Jupyter interactive widgets for Jupyter Notebook
+====================================================================
 
 Description
 -----------
 
-Interactive HTML widgets for Jupyter notebooks.
+Jupyter interactive widgets for Jupyter Notebook
+
+License
+-------
+
+BSD 3-Clause License
+
+Upstream Contact
+----------------
+
+https://pypi.org/project/widgetsnbextension/
+

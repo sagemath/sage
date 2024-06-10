@@ -1,4 +1,4 @@
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Carl Witty <Carl.Witty@gmail.com>
 #       Copyright (C) 2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
@@ -6,11 +6,8 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-from __future__ import print_function, absolute_import
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from .base import StackInterpreter
 from .python import MemoryChunkPyConstant
 from ..instructions import (params_gen, instr_funcall_1arg_mpfr,
@@ -34,6 +31,7 @@ class MemoryChunkRRRetval(MemoryChunk):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.rr import *
             sage: mc = MemoryChunkRRRetval('retval', ty_mpfr)
             sage: mc.declare_class_members()
             ''
@@ -48,9 +46,10 @@ class MemoryChunkRRRetval(MemoryChunk):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.rr import *
             sage: mc = MemoryChunkRRRetval('retval', ty_mpfr)
             sage: mc.declare_call_locals()
-            u'        cdef RealNumber retval = (self.domain)()\n'
+            '        cdef RealNumber retval = (self.domain)()\n'
         """
         return je(ri(8,
             """
@@ -65,6 +64,7 @@ class MemoryChunkRRRetval(MemoryChunk):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.rr import *
             sage: mc = MemoryChunkRRRetval('retval', ty_mpfr)
             sage: mc.declare_parameter()
             'mpfr_t retval'
@@ -79,9 +79,10 @@ class MemoryChunkRRRetval(MemoryChunk):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.rr import *
             sage: mc = MemoryChunkRRRetval('retval', ty_mpfr)
             sage: mc.pass_argument()
-            u'retval.value'
+            'retval.value'
         """
         return je("""{{ myself.name }}.value""", myself=self)
 
@@ -93,6 +94,7 @@ class MemoryChunkRRRetval(MemoryChunk):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.rr import *
             sage: mc = MemoryChunkRRRetval('retval', ty_mpfr)
             sage: mc.pass_call_c_argument()
             'result'
@@ -115,6 +117,7 @@ class RRInterpreter(StackInterpreter):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.rr import *
             sage: interp = RRInterpreter()
             sage: interp.name
             'rr'
@@ -145,7 +148,7 @@ class RRInterpreter(StackInterpreter):
             sage: print(interp.c_header)
             <BLANKLINE>
             #include <mpfr.h>
-            #include "sage/ext/interpreters/wrapper_rr.h"
+            #include "wrapper_rr.h"
             <BLANKLINE>
 
         The function ``rr_py_call_helper`` is implemented in Cython::
@@ -185,7 +188,7 @@ class RRInterpreter(StackInterpreter):
         self.c_header = ri(0,
             '''
             #include <mpfr.h>
-            #include "sage/ext/interpreters/wrapper_rr.h"
+            #include "wrapper_rr.h"
             ''')
 
         self.pxd_header = ri(0,

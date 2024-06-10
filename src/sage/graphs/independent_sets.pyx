@@ -12,21 +12,21 @@ sets. See the documentation of :class:`IndependentSets` for actual examples.
 
 Classes and methods
 -------------------
-
 """
 
-include "sage/data_structures/binary_matrix.pxi"
+from sage.data_structures.binary_matrix cimport *
 from sage.misc.cachefunc import cached_method
 from sage.graphs.base.static_dense_graph cimport dense_graph_init
 
 
-cdef inline int ismaximal(binary_matrix_t g, int n, bitset_t s):
+cdef inline int ismaximal(binary_matrix_t g, int n, bitset_t s) noexcept:
     cdef int i
     for i in range(n):
         if (not bitset_in(s, i)) and bitset_are_disjoint(g.rows[i], s):
             return False
 
     return True
+
 
 cdef class IndependentSets:
     r"""
@@ -59,7 +59,7 @@ cdef class IndependentSets:
         This implementation of the enumeration of *maximal* independent sets is
         not much faster than NetworkX', which is surprising as it is written in
         Cython. This being said, the algorithm from NetworkX appears to be
-        sligthly different from this one, and that would be a good thing to
+        slightly different from this one, and that would be a good thing to
         explore if one wants to improve the implementation.
 
         A simple generalization can also be done without too much modifications:
@@ -140,12 +140,12 @@ cdef class IndependentSets:
         Compute the number of matchings, and check with Sage's implementation::
 
             sage: from sage.graphs.independent_sets import IndependentSets
-            sage: from sage.graphs.matchpoly import matching_polynomial
+            sage: from sage.graphs.matchpoly import matching_polynomial                 # needs sage.libs.flint
             sage: def check_matching(G):
             ....:     number_of_matchings = sum(map(abs, matching_polynomial(G).coefficients(sparse=False)))
             ....:     if number_of_matchings != IndependentSets(G.line_graph()).cardinality():
             ....:         raise ValueError("something goes wrong")
-            sage: for i in range(30):
+            sage: for i in range(30):                                                   # needs sage.libs.flint
             ....:     check_matching(graphs.RandomGNP(11, .3))
 
         Compare the result with the output of :meth:`subgraph_search`::
@@ -158,10 +158,10 @@ cdef class IndependentSets:
             ....:     alpha = max(map(len, IS))
             ....:     IS2 = [Set([x]) for x in range(G.order())] + [Set()]
             ....:     for n in range(2, alpha + 1):
-            ....:         IS2.extend(map(Set, list(G.subgraph_search_iterator(Graph(n), induced=True))))
+            ....:         IS2.extend(map(Set, list(G.subgraph_search_iterator(Graph(n), induced=True, return_graphs=False))))
             ....:     if len(IS) != len(set(IS2)):
             ....:        raise ValueError("something goes wrong")
-            sage: for i in range(5):
+            sage: for i in range(5):                                                    # needs sage.modules
             ....:     check_with_subgraph_search(graphs.RandomGNP(11, .3))
 
         Empty graph::
@@ -222,7 +222,6 @@ cdef class IndependentSets:
         bitset_init(tmp, self.n)
 
         cdef uint64_t count = 0
-        cdef list ans
         cdef int j
 
         try:
@@ -256,7 +255,7 @@ cdef class IndependentSets:
                         count += 1
 
                         if not self.count_only:
-                            yield [self.vertices[j] for j in range(i + 1) if bitset_in(tmp,j)]
+                            yield [self.vertices[j] for j in range(i + 1) if bitset_in(tmp, j)]
                             continue
 
                     else:
@@ -380,11 +379,11 @@ cdef class IndependentSets:
         try:
             bitset_set_first_n(s, 0)
 
-            for I in S:
+            for v in S:
                 try:
-                    i = self.vertex_to_int[I]
+                    i = self.vertex_to_int[v]
                 except KeyError:
-                    raise ValueError(str(I) + " is not a vertex of the graph")
+                    raise ValueError(str(v) + " is not a vertex of the graph")
 
                 # Adding the new vertex to s
                 bitset_add(s, i)

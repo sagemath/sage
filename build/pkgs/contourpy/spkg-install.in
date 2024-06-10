@@ -1,0 +1,6 @@
+# https://github.com/scipy/scipy/issues/16536 - meson breaks when CXX="g++ -std=gnu++11"
+export CXX=$(echo "$CXX" | sed 's/-std=[a-z0-9+]*//g')
+
+cd src
+# --no-build-isolation because it has build dep on 'meson', which we don't have as a Python package
+sdh_pip_install --no-build-isolation .

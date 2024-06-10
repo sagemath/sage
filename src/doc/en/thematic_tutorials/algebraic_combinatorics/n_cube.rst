@@ -19,8 +19,8 @@ The vertices of the `n`-cube can be described by vectors in
 The distance function measures in how many slots two vectors in
 `\mathbb{Z}_2^n` differ::
 
-    sage: u=(1,0,1,1,1,0)
-    sage: v=(0,0,1,1,0,0)
+    sage: u = (1,0,1,1,1,0)
+    sage: v = (0,0,1,1,0,0)
     sage: dist(u,v)
     2
 

@@ -1,4 +1,9 @@
-# distutils: libraries = ntl gmp
+# sage.doctest: needs sage.libs.ntl sage.rings.finite_rings
+# distutils: libraries = NTL_LIBRARIES gmp
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 """
 Univariate Polynomials over GF(p^e) via NTL's ZZ_pEX
@@ -6,18 +11,18 @@ Univariate Polynomials over GF(p^e) via NTL's ZZ_pEX
 AUTHOR:
 
 - Yann Laigle-Chapuy (2010-01) initial implementation
+- Lorenz Panny (2023-01): :meth:`minpoly_mod`
+- Giacomo Pope (2023-08): :meth:`reverse`, :meth:`inverse_series_trunc`
 """
-
-from sage.rings.integer_ring import ZZ
-from sage.rings.integer_ring cimport IntegerRing_class
+from cysignals.signals cimport sig_on, sig_off
 
 from sage.libs.ntl.ntl_ZZ_pEContext cimport ntl_ZZ_pEContext_class
 from sage.libs.ntl.ZZ_pE cimport ZZ_pE_to_ZZ_pX
 from sage.libs.ntl.ZZ_pX cimport ZZ_pX_deg, ZZ_pX_coeff
-from sage.libs.ntl.ntl_ZZ_pX cimport ntl_ZZ_pX
 from sage.libs.ntl.ZZ_p cimport ZZ_p_rep
-from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
-from sage.libs.ntl.convert cimport ZZ_to_mpz
+from sage.libs.ntl.convert cimport ZZ_to_mpz, mpz_to_ZZ
+
+from sage.structure.element import have_same_parent, canonical_coercion
 
 # We need to define this stuff before including the templating stuff
 # to make sure the function get_cparent is found since it is used in
@@ -39,7 +44,6 @@ include "sage/libs/ntl/ntl_ZZ_pEX_linkage.pxi"
 # and then the interface
 include "polynomial_template.pxi"
 
-from sage.libs.all import pari
 from sage.libs.ntl.ntl_ZZ_pE cimport ntl_ZZ_pE
 
 cdef inline ZZ_pE_c_to_list(ZZ_pE_c x):
@@ -62,30 +66,30 @@ cdef inline ZZ_pE_c_to_list(ZZ_pE_c x):
 
 
 cdef class Polynomial_ZZ_pEX(Polynomial_template):
-    """
-    Univariate Polynomials over GF(p^n) via NTL's ZZ_pEX.
+    r"""
+    Univariate Polynomials over `\GF{p^n}` via NTL's ``ZZ_pEX``.
 
     EXAMPLES::
 
-        sage: K.<a>=GF(next_prime(2**60)**3)
-        sage: R.<x> = PolynomialRing(K,implementation='NTL')
+        sage: K.<a> = GF(next_prime(2**60)**3)
+        sage: R.<x> = PolynomialRing(K, implementation='NTL')
         sage: (x^3 + a*x^2 + 1) * (x + a)
         x^4 + 2*a*x^3 + a^2*x^2 + x + a
     """
     def __init__(self, parent, x=None, check=True, is_gen=False, construct=False):
-        """
-        Create a new univariate polynomials over GF(p^n).
+        r"""
+        Create a new univariate polynomials over `\GF{p^n}`.
 
         EXAMPLES::
 
-            sage: K.<a>=GF(next_prime(2**60)**3)
-            sage: R.<x> = PolynomialRing(K,implementation='NTL')
+            sage: K.<a> = GF(next_prime(2**60)**3)
+            sage: R.<x> = PolynomialRing(K, implementation='NTL')
             sage: x^2+a
             x^2 + a
 
         TESTS:
 
-        The following tests against a bug that was fixed in :trac:`9944`.
+        The following tests against a bug that was fixed in :issue:`9944`.
         With the ring definition above, we now have::
 
             sage: R([3,'1234'])
@@ -97,10 +101,10 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             sage: R([3,x])
             Traceback (most recent call last):
             ...
-            TypeError: not a constant polynomial
+            TypeError: x is not a constant polynomial
 
         Check that NTL contexts are correctly restored and that
-        :trac:`9524` has been fixed::
+        :issue:`9524` has been fixed::
 
             sage: x = polygen(GF(9, 'a'))
             sage: x = polygen(GF(49, 'a'))
@@ -109,7 +113,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             sage: 5*x
             5*x
 
-        Check that :trac:`11239` is fixed::
+        Check that :issue:`11239` is fixed::
 
             sage: Fq.<a> = GF(2^4); Fqq.<b> = GF(3^7)
             sage: PFq.<x> = Fq[]; PFqq.<y> = Fqq[]
@@ -134,7 +138,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         if isinstance(x, Polynomial):
             x = x.list()
 
-        if isinstance(x, list) or isinstance(x, tuple):
+        if isinstance(x, (list, tuple)):
             Polynomial.__init__(self, parent, is_gen=is_gen)
             (<Polynomial_template>self)._cparent = get_cparent(parent)
             celement_construct(&self.x, (<Polynomial_template>self)._cparent)
@@ -151,14 +155,14 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         Polynomial_template.__init__(self, parent, x, check, is_gen, construct)
 
     cdef get_unsafe(self, Py_ssize_t i):
-        """
+        r"""
         Return the `i`-th coefficient of ``self``.
 
         EXAMPLES::
 
-            sage: K.<a>=GF(next_prime(2**60)**3)
-            sage: R.<x> = PolynomialRing(K,implementation='NTL')
-            sage: f = x^3+(2*a+1)*x+a
+            sage: K.<a> = GF(next_prime(2**60)**3)
+            sage: R.<x> = PolynomialRing(K, implementation='NTL')
+            sage: f = x^3 + (2*a+1)*x + a
             sage: f[0]
             a
             sage: f[1]
@@ -175,19 +179,18 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         return self._parent._base(ZZ_pE_c_to_list(c_pE))
 
     cpdef list list(self, bint copy=True):
-        """
-        Returs the list of coefficients.
+        r"""
+        Return the list of coefficients.
 
         EXAMPLES::
 
             sage: K.<a> = GF(5^3)
             sage: P = PolynomialRing(K, 'x')
             sage: f = P.random_element(100)
-            sage: f.list() == [f[i] for i in  range(f.degree()+1)]
+            sage: f.list() == [f[i] for i in range(f.degree()+1)]
             True
             sage: P.0.list()
             [0, 1]
-
         """
         cdef Py_ssize_t i
 
@@ -198,11 +201,11 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
                 for i in range(celement_len(&self.x, (<Polynomial_template>self)._cparent))]
 
     cpdef _lmul_(self, Element left):
-        """
+        r"""
         EXAMPLES::
 
-            sage: K.<a>=GF(next_prime(2**60)**3)
-            sage: R.<x> = PolynomialRing(K,implementation='NTL')
+            sage: K.<a> = GF(next_prime(2**60)**3)
+            sage: R.<x> = PolynomialRing(K, implementation='NTL')
             sage: (2*a+1)*x # indirect doctest
             (2*a + 1)*x
             sage: x*(2*a+1) # indirect doctest
@@ -219,13 +222,13 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         return r
 
     def __call__(self, *x, **kwds):
-        """
+        r"""
         Evaluate polynomial at `a`.
 
         EXAMPLES::
 
-            sage: K.<u>=GF(next_prime(2**60)**3)
-            sage: R.<x> = PolynomialRing(K,implementation='NTL')
+            sage: K.<u> = GF(next_prime(2**60)**3)
+            sage: R.<x> = PolynomialRing(K, implementation='NTL')
             sage: P = (x-u)*(x+u+1)
             sage: P(u)
             0
@@ -234,18 +237,18 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
 
         TESTS:
 
-        The work around provided in :trac:`10475` is superseded by :trac:`24072`::
+        The work around provided in :issue:`10475` is superseded by :issue:`24072`::
 
             sage: F.<x> = GF(4)
             sage: P.<y> = F[]
             sage: p = y^4 + x*y^3 + y^2 + (x + 1)*y + x + 1
-            sage: SR(p)
+            sage: SR(p)                                                                 # needs sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: positive characteristic not allowed in symbolic computations
 
         Check that polynomial evaluation works when using logarithmic
-        representation of finite field elements (:trac:`16383`)::
+        representation of finite field elements (:issue:`16383`)::
 
             sage: for i in range(10):
             ....:     F = FiniteField(random_prime(15) ** ZZ.random_element(2, 5), 'a', repr='log')
@@ -284,24 +287,24 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         return K(ZZ_pE_c_to_list(c_b))
 
     def resultant(self, other):
-        """
-        Returns the resultant of self and other, which must lie in the same
+        r"""
+        Return the resultant of ``self`` and ``other``, which must lie in the same
         polynomial ring.
 
         INPUT:
 
-        :argument other: a polynomial
+        - ``other`` -- a polynomial
 
         OUTPUT: an element of the base ring of the polynomial ring
 
         EXAMPLES::
 
-            sage: K.<a>=GF(next_prime(2**60)**3)
-            sage: R.<x> = PolynomialRing(K,implementation='NTL')
-            sage: f=(x-a)*(x-a**2)*(x+1)
-            sage: g=(x-a**3)*(x-a**4)*(x+a)
+            sage: K.<a> = GF(next_prime(2**60)**3)
+            sage: R.<x> = PolynomialRing(K, implementation='NTL')
+            sage: f = (x-a)*(x-a**2)*(x+1)
+            sage: g = (x-a**3)*(x-a**4)*(x+a)
             sage: r = f.resultant(g)
-            sage: r == prod(u-v for (u,eu) in f.roots() for (v,ev) in g.roots())
+            sage: r == prod(u - v for (u,eu) in f.roots() for (v,ev) in g.roots())
             True
         """
         cdef ZZ_pE_c r
@@ -316,23 +319,24 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         return K(K.polynomial_ring()(ZZ_pE_c_to_list(r)))
 
     def is_irreducible(self, algorithm="fast_when_false", iter=1):
-        """
-        Returns `True` precisely when self is irreducible over its base ring.
+        r"""
+        Return ``True`` precisely when ``self`` is irreducible over its base ring.
 
         INPUT:
 
-        :argument algorithm: a string (default "fast_when_false"),
-            there are 3 available algorithms:
-            "fast_when_true", "fast_when_false" and "probabilistic".
-        :argument iter: (default: 1) if the algorithm is "probabilistic"
-            defines the number of iterations. The error probability is bounded
-            by `q**-iter` for polynomials in `GF(q)[x]`.
+        - ``algorithm`` -- a string (default ``"fast_when_false"``),
+          there are 3 available algorithms:
+          ``"fast_when_true"``, ``"fast_when_false"``, and ``"probabilistic".``
+
+        - ``iter`` -- (default: 1) if the algorithm is ``"probabilistic"``,
+          defines the number of iterations. The error probability is bounded
+          by `q^{\text{-iter}}` for polynomials in `\GF{q}[x]`.
 
         EXAMPLES::
 
-            sage: K.<a>=GF(next_prime(2**60)**3)
-            sage: R.<x> = PolynomialRing(K,implementation='NTL')
-            sage: P = x^3+(2-a)*x+1
+            sage: K.<a> = GF(next_prime(2**60)**3)
+            sage: R.<x> = PolynomialRing(K, implementation='NTL')
+            sage: P = x^3 + (2-a)*x + 1
             sage: P.is_irreducible(algorithm="fast_when_false")
             True
             sage: P.is_irreducible(algorithm="fast_when_true")
@@ -346,7 +350,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             False
             sage: Q.is_irreducible(algorithm="probabilistic")
             False
-            """
+        """
         self._parent._modulus.restore()
         if algorithm=="fast_when_false":
             sig_on()
@@ -364,21 +368,65 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             raise ValueError("unknown algorithm")
         return res != 0
 
-    cpdef _richcmp_(self, other, int op):
-        """
+    def minpoly_mod(self, other):
+        r"""
+        Compute the minimal polynomial of this polynomial modulo another
+        polynomial in the same ring.
+
+        ALGORITHM:
+
+        NTL's ``MinPolyMod()``, which uses Shoup's algorithm [Sho1999]_.
+
         EXAMPLES::
 
-            sage: K.<a>=GF(next_prime(2**60)**3)
-            sage: R.<x> = PolynomialRing(K,implementation='NTL')
-            sage: P1 = (a**2+a+1)*x^2+a*x+1
-            sage: P2 = (     a+1)*x^2+a*x+1
+            sage: R.<x> = GF(101^2)[]
+            sage: f = x^17 + x^2 - 1
+            sage: (x^2).minpoly_mod(f)
+            x^17 + 100*x^2 + 2*x + 100
+
+        TESTS:
+
+        Random testing::
+
+            sage: p = random_prime(50)
+            sage: e = randrange(2,10)
+            sage: R.<x> = GF((p,e),'a')[]
+            sage: d = randrange(1,50)
+            sage: f = R.random_element(d)
+            sage: g = R.random_element((-1,5*d))
+            sage: poly = g.minpoly_mod(f)
+            sage: poly(R.quotient(f)(g))
+            0
+        """
+        self._parent._modulus.restore()
+
+        if other.parent() is not self._parent:
+            other = self._parent.coerce(other)
+
+        cdef Polynomial_ZZ_pEX r
+        r = Polynomial_ZZ_pEX.__new__(Polynomial_ZZ_pEX)
+        celement_construct(&r.x, (<Polynomial_template>self)._cparent)
+        r._parent = (<Polynomial_template>self)._parent
+        r._cparent = (<Polynomial_template>self)._cparent
+
+        ZZ_pEX_MinPolyMod(r.x, (<Polynomial_ZZ_pEX>(self % other)).x, (<Polynomial_ZZ_pEX>other).x)
+        return r
+
+    cpdef _richcmp_(self, other, int op):
+        r"""
+        EXAMPLES::
+
+            sage: K.<a> = GF(next_prime(2**60)**3)
+            sage: R.<x> = PolynomialRing(K, implementation='NTL')
+            sage: P1 = (a**2+a+1)*x^2 + a*x + 1
+            sage: P2 = (     a+1)*x^2 + a*x + 1
             sage: P1 < P2 # indirect doctests
             False
 
         TESTS::
 
-            sage: P3 = (a**2+a+1)*x^2+  x+1
-            sage: P4 =                  x+1
+            sage: P3 = (a**2+a+1)*x^2 + x + 1
+            sage: P4 =                  x + 1
             sage: P1 < P3
             False
             sage: P1 < P4
@@ -393,11 +441,11 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         return Polynomial._richcmp_(self, other, op)
 
     def shift(self, int n):
-        """
+        r"""
         EXAMPLES::
 
-            sage: K.<a>=GF(next_prime(2**60)**3)
-            sage: R.<x> = PolynomialRing(K,implementation='NTL')
+            sage: K.<a> = GF(next_prime(2**60)**3)
+            sage: R.<x> = PolynomialRing(K, implementation='NTL')
             sage: f = x^3 + x^2 + 1
             sage: f.shift(1)
             x^4 + x^3 + x
@@ -414,11 +462,11 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         return r
 
     def __lshift__(self, int n):
-        """
+        r"""
         EXAMPLES::
 
-            sage: K.<a>=GF(next_prime(2**60)**3)
-            sage: R.<x> = PolynomialRing(K,implementation='NTL')
+            sage: K.<a> = GF(next_prime(2**60)**3)
+            sage: R.<x> = PolynomialRing(K, implementation='NTL')
             sage: f = x^3 + x^2 + 1
             sage: f << 1
             x^4 + x^3 + x
@@ -428,11 +476,11 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         return self.shift(n)
 
     def __rshift__(self, int n):
-        """
+        r"""
         EXAMPLES::
 
-            sage: K.<a>=GF(next_prime(2**60)**3)
-            sage: R.<x> = PolynomialRing(K,implementation='NTL')
+            sage: K.<a> = GF(next_prime(2**60)**3)
+            sage: R.<x> = PolynomialRing(K, implementation='NTL')
             sage: f = x^3 + x^2 + 1
             sage: f >> 1
             x^2 + x
@@ -441,3 +489,226 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         """
         return self.shift(-n)
 
+    def reverse(self, degree=None):
+        r"""
+        Return the polynomial obtained by reversing the coefficients
+        of this polynomial.  If degree is set then this function behaves
+        as if this polynomial has degree ``degree``.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(101^2)[]
+            sage: f = x^13 + 11*x^10 + 32*x^6 + 4
+            sage: f.reverse()
+            4*x^13 + 32*x^7 + 11*x^3 + 1
+            sage: f.reverse(degree=15)
+            4*x^15 + 32*x^9 + 11*x^5 + x^2
+            sage: f.reverse(degree=2)
+            4*x^2
+
+        TESTS::
+
+            sage: R.<x> = GF(163^2)[]
+            sage: f = R([p for p in primes(20)])
+            sage: f.reverse()
+            2*x^7 + 3*x^6 + 5*x^5 + 7*x^4 + 11*x^3 + 13*x^2 + 17*x + 19
+            sage: f.reverse(degree=200)
+            2*x^200 + 3*x^199 + 5*x^198 + 7*x^197 + 11*x^196 + 13*x^195 + 17*x^194 + 19*x^193
+            sage: f.reverse(degree=0)
+            2
+            sage: f.reverse(degree=-5)
+            Traceback (most recent call last):
+            ...
+            ValueError: degree argument must be a non-negative integer, got -5
+
+        Check that this implementation is compatible with the generic one::
+
+            sage: p = R([0,1,0,2])
+            sage: all(p.reverse(d) == Polynomial.reverse(p, d)
+            ....:     for d in [None, 0, 1, 2, 3, 4])
+            True
+        """
+        self._parent._modulus.restore()
+
+        # Construct output polynomial
+        cdef Polynomial_ZZ_pEX r
+        r = Polynomial_ZZ_pEX.__new__(Polynomial_ZZ_pEX)
+        celement_construct(&r.x, (<Polynomial_template>self)._cparent)
+        r._parent = (<Polynomial_template>self)._parent
+        r._cparent = (<Polynomial_template>self)._cparent
+
+        # When a degree has been supplied, ensure it is a valid input
+        cdef unsigned long d
+        if degree is not None:
+            if degree < 0:
+                raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
+            d = degree
+            if d != degree:
+                raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
+            ZZ_pEX_reverse_hi(r.x, (<Polynomial_ZZ_pEX> self).x, d)
+        else:
+            ZZ_pEX_reverse(r.x, (<Polynomial_ZZ_pEX> self).x)
+        return r
+
+    def inverse_series_trunc(self, prec):
+        r"""
+        Compute and return the inverse of ``self`` modulo `x^{prec}`.
+
+        The constant term of ``self`` must be invertible.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(101^2)[]
+            sage: z2 =  R.base_ring().gen()
+            sage: f = (3*z2 + 57)*x^3 + (13*z2 + 94)*x^2 + (7*z2 + 2)*x + 66*z2 + 15
+            sage: f.inverse_series_trunc(1)
+            51*z2 + 92
+            sage: f.inverse_series_trunc(2)
+            (30*z2 + 30)*x + 51*z2 + 92
+            sage: f.inverse_series_trunc(3)
+            (42*z2 + 94)*x^2 + (30*z2 + 30)*x + 51*z2 + 92
+            sage: f.inverse_series_trunc(4)
+            (99*z2 + 96)*x^3 + (42*z2 + 94)*x^2 + (30*z2 + 30)*x + 51*z2 + 92
+
+        TESTS::
+
+            sage: R.<x> = GF(163^2)[]
+            sage: f = R([p for p in primes(20)])
+            sage: f.inverse_series_trunc(1)
+            82
+            sage: f.inverse_series_trunc(2)
+            40*x + 82
+            sage: f.inverse_series_trunc(3)
+            61*x^2 + 40*x + 82
+            sage: f.inverse_series_trunc(0)
+            Traceback (most recent call last):
+            ...
+            ValueError: the precision must be positive, got 0
+            sage: f.inverse_series_trunc(-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: the precision must be positive, got -1
+            sage: f = x + x^2 + x^3
+            sage: f.inverse_series_trunc(5)
+            Traceback (most recent call last):
+            ...
+            ValueError: constant term 0 is not a unit
+        """
+        self._parent._modulus.restore()
+
+        # Ensure precision is non-negative
+        if prec <= 0:
+            raise ValueError("the precision must be positive, got {}".format(prec))
+
+        # Ensure we can invert the constant term
+        const_term = self.get_coeff_c(0)
+        if not const_term.is_unit():
+            raise ValueError("constant term {} is not a unit".format(const_term))
+
+        # Construct output polynomial
+        cdef Polynomial_ZZ_pEX r
+        r = Polynomial_ZZ_pEX.__new__(Polynomial_ZZ_pEX)
+        celement_construct(&r.x, (<Polynomial_template>self)._cparent)
+        r._parent = (<Polynomial_template>self)._parent
+        r._cparent = (<Polynomial_template>self)._cparent
+
+        # Call to NTL for the inverse truncation
+        if prec > 0:
+            sig_on()
+            ZZ_pEX_InvTrunc(r.x, self.x, prec)
+            sig_off()
+        return r
+
+    def __pow__(self, exp, modulus):
+        r"""
+        Exponentiation of ``self``.
+
+        If ``modulus`` is not ``None``, the exponentiation is performed
+        modulo the polynomial ``modulus``.
+
+        EXAMPLES::
+
+            sage: K.<a> = GF(101^2, 'a', modulus=[1,1,1])
+            sage: R.<x> = PolynomialRing(K, implementation="NTL")
+            sage: pow(x, 100)
+            x^100
+            sage: pow(x + 3, 5)
+            x^5 + 15*x^4 + 90*x^3 + 68*x^2 + x + 41
+
+        If modulus is not ``None``, performs modular exponentiation::
+
+            sage: K.<a> = GF(101^2, 'a', modulus=[1,1,1])
+            sage: R.<x> = PolynomialRing(K, implementation="NTL")
+            sage: pow(x, 100, x^2 + x + a)
+            (19*a + 64)*x + 30*a + 2
+            sage: pow(x, 100 * 101**200, x^2 + x + a)
+            (19*a + 64)*x + 30*a + 2
+
+        The modulus can have smaller degree than ``self``::
+
+            sage: K.<a> = GF(101^2, 'a', modulus=[1,1,1])
+            sage: R.<x> = PolynomialRing(K, implementation="NTL")
+            sage: pow(x^4, 25, x^2 + x + a)
+            (19*a + 64)*x + 30*a + 2
+
+        TESTS:
+
+        Canonical coercion should apply::
+
+            sage: xx = GF(101)["x"].gen()
+            sage: pow(x+1, 25, 2)
+            0
+            sage: pow(x + a, 101**2, xx^3 + xx + 1)
+            4*x^2 + 44*x + a + 70
+            sage: pow(x + a, int(101**2), xx^3 + xx + 1)
+            4*x^2 + 44*x + a + 70
+            sage: xx = polygen(GF(97))
+            sage: _ = pow(x + a, 101**2, xx^3 + xx + 1)
+            Traceback (most recent call last):
+            ...
+            TypeError: no common canonical parent for objects with parents: ...
+         """
+        exp = Integer(exp)
+        if modulus is not None:
+            # Handle when modulus is zero
+            if modulus.is_zero():
+                raise ZeroDivisionError("modulus must be nonzero")
+
+            # Similar to coerce_binop
+            if not have_same_parent(self, modulus):
+                a, m = canonical_coercion(self, modulus)
+                if a is not self:
+                    return pow(a, exp, m)
+                modulus = m
+            self = self % modulus
+            if exp > 0 and exp.bit_length() >= 32:
+                return (<Polynomial_ZZ_pEX>self)._powmod_bigexp(Integer(exp), modulus)
+        return Polynomial_template.__pow__(self, exp, modulus)
+
+    cdef _powmod_bigexp(Polynomial_ZZ_pEX self, Integer exp, Polynomial_ZZ_pEX modulus):
+        """
+        Modular exponentiation for large exponents.
+        """
+        self._parent._modulus.restore()
+        cdef Polynomial_ZZ_pEX r
+        cdef ZZ_c e_ZZ
+        cdef ZZ_pEX_c y
+        cdef ZZ_pEX_Modulus_c mod
+
+        mpz_to_ZZ(&e_ZZ, exp.value)
+        r = Polynomial_ZZ_pEX.__new__(Polynomial_ZZ_pEX)
+        celement_construct(&r.x, (<Polynomial_template>self)._cparent)
+        r._parent = (<Polynomial_template>self)._parent
+        r._cparent = (<Polynomial_template>self)._cparent
+        ZZ_pEX_Modulus_build(mod, modulus.x)
+
+        sig_on()
+        if ZZ_pEX_IsX(self.x):
+            ZZ_pEX_PowerXMod_ZZ_pre(r.x, e_ZZ, mod)
+        elif ZZ_pEX_deg(self.x) < ZZ_pEX_deg(modulus.x):
+            ZZ_pEX_PowerMod_ZZ_pre(r.x, self.x, e_ZZ, mod)
+        else:
+            ZZ_pEX_rem_pre(y, self.x, mod)
+            ZZ_pEX_PowerMod_ZZ_pre(r.x, y, e_ZZ, mod)
+        sig_off()
+        return r

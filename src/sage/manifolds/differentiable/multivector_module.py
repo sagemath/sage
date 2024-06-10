@@ -22,7 +22,6 @@ REFERENCES:
 
 - \R. L. Bishop and S. L. Goldberg (1980) [BG1980]_
 - \C.-M. Marle (1997) [Mar1997]_
-
 """
 #******************************************************************************
 #       Copyright (C) 2017 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
@@ -40,6 +39,7 @@ from sage.categories.modules import Modules
 from sage.tensor.modules.ext_pow_free_module import ExtPowerFreeModule
 from sage.manifolds.differentiable.multivectorfield import (
                                        MultivectorField, MultivectorFieldParal)
+
 
 class MultivectorModule(UniqueRepresentation, Parent):
     r"""
@@ -98,7 +98,7 @@ class MultivectorModule(UniqueRepresentation, Parent):
         sage: latex(A)
         A^{2}\left(M\right)
 
-    ``A`` is nothing but the second exterior power of of ``XM``, i.e.
+    ``A`` is nothing but the second exterior power of ``XM``, i.e.
     we have `A^{2}(M) = \Lambda^2(\mathfrak{X}(M))`::
 
         sage: A is XM.exterior_power(2)
@@ -148,9 +148,9 @@ class MultivectorModule(UniqueRepresentation, Parent):
         2-vector field a on the 2-dimensional differentiable manifold M
         sage: a.add_comp_by_continuation(eV, W, c_uv) # finishes initializ. of a
         sage: a.display(eU)
-        a = 3*x d/dx/\d/dy
+        a = 3*x ∂/∂x∧∂/∂y
         sage: a.display(eV)
-        a = (-3*u - 3*v) d/du/\d/dv
+        a = (-3*u - 3*v) ∂/∂u∧∂/∂v
 
     An alternative is to construct the 2-vector field from an empty list
     of components and to set the nonzero nonredundant components
@@ -160,9 +160,9 @@ class MultivectorModule(UniqueRepresentation, Parent):
         sage: a[eU,0,1] = 3*x
         sage: a.add_comp_by_continuation(eV, W, c_uv)
         sage: a.display(eU)
-        a = 3*x d/dx/\d/dy
+        a = 3*x ∂/∂x∧∂/∂y
         sage: a.display(eV)
-        a = (-3*u - 3*v) d/du/\d/dv
+        a = (-3*u - 3*v) ∂/∂u∧∂/∂v
 
     The module `A^1(M)` is nothing but the dual of `\mathfrak{X}(M)`
     (the module of vector fields on `M`)::
@@ -193,13 +193,13 @@ class MultivectorModule(UniqueRepresentation, Parent):
         Tensor field a of type (2,0) on the 2-dimensional differentiable
          manifold M
         sage: ta.display(eU)
-        a = 3*x d/dx*d/dy - 3*x d/dy*d/dx
+        a = 3*x ∂/∂x⊗∂/∂y - 3*x ∂/∂y⊗∂/∂x
         sage: a.display(eU)
-        a = 3*x d/dx/\d/dy
+        a = 3*x ∂/∂x∧∂/∂y
         sage: ta.display(eV)
-        a = (-3*u - 3*v) d/du*d/dv + (3*u + 3*v) d/dv*d/du
+        a = (-3*u - 3*v) ∂/∂u⊗∂/∂v + (3*u + 3*v) ∂/∂v⊗∂/∂u
         sage: a.display(eV)
-        a = (-3*u - 3*v) d/du/\d/dv
+        a = (-3*u - 3*v) ∂/∂u∧∂/∂v
 
     There is also coercion to subdomains, which is nothing but the
     restriction of the multivector field to some subset of its domain::
@@ -213,7 +213,7 @@ class MultivectorModule(UniqueRepresentation, Parent):
         2-vector field a on the Open subset U of the 2-dimensional
          differentiable manifold M
         sage: a_U.display(eU)
-        a = 3*x d/dx/\d/dy
+        a = 3*x ∂/∂x∧∂/∂y
 
     """
     Element = MultivectorField
@@ -295,7 +295,7 @@ class MultivectorModule(UniqueRepresentation, Parent):
             2-vector field a on the 2-dimensional differentiable
              manifold M
             sage: a.display(c_xy.frame())
-            a = x*y d/dx/\d/dy
+            a = x*y ∂/∂x∧∂/∂y
             sage: A(0) is A.zero()
             True
 
@@ -343,17 +343,14 @@ class MultivectorModule(UniqueRepresentation, Parent):
 
         """
         resu = self.element_class(self._vmodule, self._degree)
-        # Non-trivial open covers of the domain:
-        open_covers = self._domain.open_covers()[1:]  # the open cover 0
-                                                      # is trivial
-        if open_covers != []:
-            oc = open_covers[0]  # the first non-trivial open cover is
-                                 # selected
+        for oc in self._domain.open_covers(trivial=False):
+            # the first non-trivial open cover is selected
             for dom in oc:
                 vmodule_dom = dom.vector_field_module(
                                   dest_map=self._dest_map.restrict(dom))
                 dmodule_dom = vmodule_dom.exterior_power(self._degree)
                 resu.set_restriction(dmodule_dom._an_element_())
+            return resu
         return resu
 
     def _coerce_map_from_(self, other):
@@ -446,9 +443,9 @@ class MultivectorModule(UniqueRepresentation, Parent):
 
         """
         if self._latex_name is None:
-            return r'\mbox{' + str(self) + r'}'
+            return r'\text{' + str(self) + r'}'
         else:
-           return self._latex_name
+            return self._latex_name
 
     def base_module(self):
         r"""
@@ -599,7 +596,7 @@ class MultivectorFreeModule(ExtPowerFreeModule):
         sage: a = A(comp, frame=X.frame(), name='a') ; a
         2-vector field a on the 3-dimensional differentiable manifold M
         sage: a.display()
-        a = 3*x d/dx/\d/dy - z d/dx/\d/dz + 4 d/dy/\d/dz
+        a = 3*x ∂/∂x∧∂/∂y - z ∂/∂x∧∂/∂z + 4 ∂/∂y∧∂/∂z
 
     An alternative is to construct the 2-vector field from an empty list
     of components and to set the nonzero nonredundant components
@@ -610,7 +607,7 @@ class MultivectorFreeModule(ExtPowerFreeModule):
         sage: a[0,2] = -z
         sage: a[1,2] = 4
         sage: a.display()
-        a = 3*x d/dx/\d/dy - z d/dx/\d/dz + 4 d/dy/\d/dz
+        a = 3*x ∂/∂x∧∂/∂y - z ∂/∂x∧∂/∂z + 4 ∂/∂y∧∂/∂z
 
     The module `A^1(M)` is nothing but `\mathfrak{X}(M)` (the free module
     of vector fields on `M`)::
@@ -644,10 +641,10 @@ class MultivectorFreeModule(ExtPowerFreeModule):
         Tensor field a of type (2,0) on the 3-dimensional differentiable
          manifold M
         sage: ta.display()
-        a = 3*x d/dx*d/dy - z d/dx*d/dz - 3*x d/dy*d/dx + 4 d/dy*d/dz
-         + z d/dz*d/dx - 4 d/dz*d/dy
+        a = 3*x ∂/∂x⊗∂/∂y - z ∂/∂x⊗∂/∂z - 3*x ∂/∂y⊗∂/∂x + 4 ∂/∂y⊗∂/∂z
+         + z ∂/∂z⊗∂/∂x - 4 ∂/∂z⊗∂/∂y
         sage: a.display()
-        a = 3*x d/dx/\d/dy - z d/dx/\d/dz + 4 d/dy/\d/dz
+        a = 3*x ∂/∂x∧∂/∂y - z ∂/∂x∧∂/∂z + 4 ∂/∂y∧∂/∂z
         sage: ta.symmetries()  # the antisymmetry is preserved
         no symmetry;  antisymmetry: (0, 1)
 
@@ -664,7 +661,7 @@ class MultivectorFreeModule(ExtPowerFreeModule):
         2-vector field a on the Open subset U of the 3-dimensional
          differentiable manifold M
         sage: a_U.display()
-        a = 3*x d/dx/\d/dy - z d/dx/\d/dz + 4 d/dy/\d/dz
+        a = 3*x ∂/∂x∧∂/∂y - z ∂/∂x∧∂/∂z + 4 ∂/∂y∧∂/∂z
 
     """
 
@@ -725,7 +722,7 @@ class MultivectorFreeModule(ExtPowerFreeModule):
             2-vector field a on the 2-dimensional differentiable
              manifold M
             sage: a.display()
-            a = x d/dx/\d/dy
+            a = x ∂/∂x∧∂/∂y
             sage: A(0) is A.zero()
             True
 

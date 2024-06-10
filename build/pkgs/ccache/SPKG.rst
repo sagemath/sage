@@ -1,5 +1,5 @@
-ccache
-======
+ccache: A compiler cache
+========================
 
 Description
 -----------

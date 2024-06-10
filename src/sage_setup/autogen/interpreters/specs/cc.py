@@ -1,4 +1,4 @@
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Carl Witty <Carl.Witty@gmail.com>
 #       Copyright (C) 2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
@@ -6,11 +6,8 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-from __future__ import print_function, absolute_import
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from .base import StackInterpreter
 from .python import MemoryChunkPyConstant
 from ..instructions import (params_gen, instr_funcall_1arg_mpc,
@@ -18,6 +15,7 @@ from ..instructions import (params_gen, instr_funcall_1arg_mpc,
 from ..memory import MemoryChunk, MemoryChunkConstants
 from ..storage import ty_mpc, ty_python
 from ..utils import je, reindent_lines as ri
+
 
 class MemoryChunkCCRetval(MemoryChunk):
     r"""
@@ -33,6 +31,7 @@ class MemoryChunkCCRetval(MemoryChunk):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.cc import *
             sage: mc = MemoryChunkCCRetval('retval', ty_mpc)
             sage: mc.declare_class_members()
             ''
@@ -47,9 +46,10 @@ class MemoryChunkCCRetval(MemoryChunk):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.cc import *
             sage: mc = MemoryChunkCCRetval('retval', ty_mpc)
             sage: mc.declare_call_locals()
-            u'        cdef ComplexNumber retval = (self.domain_element._new())\n'
+            '        cdef ComplexNumber retval = (self.domain_element._new())\n'
         """
         return je(ri(8,
             """
@@ -64,6 +64,7 @@ class MemoryChunkCCRetval(MemoryChunk):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.cc import *
             sage: mc = MemoryChunkCCRetval('retval', ty_mpc)
             sage: mc.declare_parameter()
             'mpc_t retval'
@@ -78,9 +79,10 @@ class MemoryChunkCCRetval(MemoryChunk):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.cc import *
             sage: mc = MemoryChunkCCRetval('retval', ty_mpc)
             sage: mc.pass_argument()
-            u'(<mpc_t>(retval.__re))'
+            '(<mpc_t>(retval.__re))'
         """
         return je("""(<mpc_t>({{ myself.name }}.__re))""", myself=self)
 
@@ -92,6 +94,7 @@ class MemoryChunkCCRetval(MemoryChunk):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.cc import *
             sage: mc = MemoryChunkCCRetval('retval', ty_mpc)
             sage: mc.pass_call_c_argument()
             'result'
@@ -113,6 +116,7 @@ class CCInterpreter(StackInterpreter):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.cc import *
             sage: interp = CCInterpreter()
             sage: interp.name
             'cc'
@@ -145,7 +149,7 @@ class CCInterpreter(StackInterpreter):
             sage: print(interp.c_header)
             <BLANKLINE>
             #include <mpc.h>
-            #include "sage/ext/interpreters/wrapper_cc.h"
+            #include "wrapper_cc.h"
             <BLANKLINE>
 
         So instructions where you need to interact with Python can
@@ -167,15 +171,14 @@ class CCInterpreter(StackInterpreter):
         self.c_header = ri(0,
             '''
             #include <mpc.h>
-            #include "sage/ext/interpreters/wrapper_cc.h"
+            #include "wrapper_cc.h"
             ''')
 
         self.pxd_header = ri(0,
             """
-            from sage.rings.real_mpfr cimport RealField_class, RealNumber
+            from sage.rings.real_mpfr cimport RealNumber
             from sage.libs.mpfr cimport *
-            from sage.rings.complex_field import ComplexField
-            from sage.rings.complex_number cimport ComplexNumber
+            from sage.rings.complex_mpfr cimport ComplexNumber
             from sage.libs.mpc cimport *
             """)
 

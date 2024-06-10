@@ -1,4 +1,4 @@
-Comprehensive Module list
+Comprehensive Module List
 =========================
 
 .. NOTE::
@@ -10,12 +10,11 @@ Comprehensive Module list
 
     and copy pasting the result back there.
 
-.. TODO:: See :trac:`17421` for desirable improvements.
+.. TODO:: See :issue:`17421` for desirable improvements.
 
 .. toctree::
     :maxdepth: 1
 
-    sage/combinat/__init__
     sage/combinat/abstract_tree
     sage/combinat/affine_permutation
     sage/combinat/algebraic_combinatorics
@@ -23,15 +22,15 @@ Comprehensive Module list
     sage/combinat/alternating_sign_matrix
     sage/combinat/backtrack
     sage/combinat/baxter_permutations
+    sage/combinat/bijectionist
     sage/combinat/binary_recurrence_sequences
     sage/combinat/binary_tree
     sage/combinat/blob_algebra
     sage/combinat/cartesian_product
     sage/combinat/catalog_partitions
-    sage/combinat/chas/__init__
+    sage/combinat/chas/all
     sage/combinat/chas/fsym
     sage/combinat/chas/wqsym
-    sage/combinat/cluster_algebra_quiver/__init__
     sage/combinat/cluster_algebra_quiver/all
     sage/combinat/cluster_algebra_quiver/cluster_seed
     sage/combinat/cluster_algebra_quiver/mutation_class
@@ -43,7 +42,6 @@ Comprehensive Module list
     sage/combinat/combinat
     sage/combinat/combinat_cython
     sage/combinat/combination
-    sage/combinat/combinatorial_algebra
     sage/combinat/combinatorial_map
     sage/combinat/composition
     sage/combinat/composition_signed
@@ -51,7 +49,6 @@ Comprehensive Module list
     sage/combinat/constellation
     sage/combinat/core
     sage/combinat/counting
-    sage/combinat/crystals/__init__
     sage/combinat/crystals/affine
     sage/combinat/crystals/affine_factorization
     sage/combinat/crystals/affinization
@@ -91,12 +88,12 @@ Comprehensive Module list
     sage/combinat/degree_sequences
     sage/combinat/derangements
     sage/combinat/descent_algebra
-    sage/combinat/designs/__init__
     sage/combinat/designs/all
     sage/combinat/designs/bibd
     sage/combinat/designs/resolvable_bibd
     sage/combinat/designs/group_divisible_designs
     sage/combinat/designs/block_design
+    sage/combinat/designs/covering_array
     sage/combinat/designs/covering_design
     sage/combinat/designs/database
     sage/combinat/designs/design_catalog
@@ -114,6 +111,7 @@ Comprehensive Module list
     sage/combinat/designs/steiner_quadruple_systems
     sage/combinat/designs/subhypergraph_search
     sage/combinat/designs/twographs
+    sage/combinat/diagram
     sage/combinat/diagram_algebras
     sage/combinat/dlx
     sage/combinat/dyck_word
@@ -148,8 +146,8 @@ Comprehensive Module list
     sage/combinat/interval_posets
     sage/combinat/k_tableau
     sage/combinat/kazhdan_lusztig
+    sage/combinat/key_polynomial
     sage/combinat/knutson_tao_puzzles
-    sage/combinat/matrices/__init__
     sage/combinat/matrices/all
     sage/combinat/matrices/dancing_links
     sage/combinat/matrices/dlxcpp
@@ -157,27 +155,29 @@ Comprehensive Module list
     sage/combinat/matrices/latin
     sage/combinat/misc
     sage/combinat/multiset_partition_into_sets_ordered
-    sage/combinat/ncsf_qsym/__init__
     sage/combinat/ncsf_qsym/all
     sage/combinat/ncsf_qsym/combinatorics
     sage/combinat/ncsf_qsym/generic_basis_code
     sage/combinat/ncsf_qsym/ncsf
     sage/combinat/ncsf_qsym/qsym
     sage/combinat/ncsf_qsym/tutorial
-    sage/combinat/ncsym/__init__
     sage/combinat/ncsym/all
     sage/combinat/ncsym/bases
     sage/combinat/ncsym/dual
     sage/combinat/ncsym/ncsym
     sage/combinat/necklace
     sage/combinat/non_decreasing_parking_function
+    sage/combinat/nu_dyck_word
+    sage/combinat/nu_tamari_lattice
     sage/combinat/ordered_tree
     sage/combinat/output
     sage/combinat/parallelogram_polyomino
     sage/combinat/parking_functions
     sage/combinat/path_tableaux/catalog
     sage/combinat/path_tableaux/dyck_path
+    sage/combinat/path_tableaux/frieze
     sage/combinat/path_tableaux/path_tableau
+    sage/combinat/path_tableaux/semistandard
     sage/combinat/plane_partition
     sage/combinat/partition
     sage/combinat/partition_algebra
@@ -188,7 +188,6 @@ Comprehensive Module list
     sage/combinat/perfect_matching
     sage/combinat/permutation
     sage/combinat/permutation_cython
-    sage/combinat/posets/__init__
     sage/combinat/posets/all
     sage/combinat/posets/cartesian_product
     sage/combinat/posets/d_complete
@@ -206,11 +205,12 @@ Comprehensive Module list
     sage/combinat/q_bernoulli
     sage/combinat/quickref
     sage/combinat/ranker
+    sage/combinat/recognizable_series
+    sage/combinat/regular_sequence
     sage/combinat/restricted_growth
     sage/combinat/ribbon
     sage/combinat/ribbon_shaped_tableau
     sage/combinat/ribbon_tableau
-    sage/combinat/rigged_configurations/__init__
     sage/combinat/rigged_configurations/all
     sage/combinat/rigged_configurations/bij_abstract_class
     sage/combinat/rigged_configurations/bij_infinity
@@ -233,7 +233,6 @@ Comprehensive Module list
     sage/combinat/rigged_configurations/rigged_partition
     sage/combinat/rigged_configurations/tensor_product_kr_tableaux
     sage/combinat/rigged_configurations/tensor_product_kr_tableaux_element
-    sage/combinat/root_system/__init__
     sage/combinat/root_system/all
     sage/combinat/root_system/ambient_space
     sage/combinat/root_system/associahedron
@@ -288,14 +287,13 @@ Comprehensive Module list
     sage/combinat/root_system/weight_lattice_realizations
     sage/combinat/root_system/weight_space
     sage/combinat/root_system/weyl_characters
-    sage/combinat/root_system/fusion_ring
     sage/combinat/root_system/weyl_group
     sage/combinat/rooted_tree
     sage/combinat/rsk
     sage/combinat/schubert_polynomial
     sage/combinat/set_partition
+    sage/combinat/set_partition_iterator
     sage/combinat/set_partition_ordered
-    sage/combinat/sf/__init__
     sage/combinat/sf/all
     sage/combinat/sf/character
     sage/combinat/sf/classical
@@ -331,7 +329,6 @@ Comprehensive Module list
     sage/combinat/skew_partition
     sage/combinat/skew_tableau
     sage/combinat/sloane_functions
-    sage/combinat/species/__init__
     sage/combinat/species/all
     sage/combinat/species/characteristic_species
     sage/combinat/species/composition_species
@@ -348,14 +345,12 @@ Comprehensive Module list
     sage/combinat/species/permutation_species
     sage/combinat/species/product_species
     sage/combinat/species/recursive_species
-    sage/combinat/species/series
-    sage/combinat/species/series_order
     sage/combinat/species/set_species
     sage/combinat/species/species
-    sage/combinat/species/stream
     sage/combinat/species/structure
     sage/combinat/species/subset_species
     sage/combinat/species/sum_species
+    sage/combinat/specht_module
     sage/combinat/subset
     sage/combinat/subsets_hereditary
     sage/combinat/subsets_pairwise
@@ -365,17 +360,17 @@ Comprehensive Module list
     sage/combinat/superpartition
     sage/combinat/symmetric_group_algebra
     sage/combinat/symmetric_group_representations
-    sage/combinat/super_tableau
+    sage/combinat/t_sequences
     sage/combinat/tableau
     sage/combinat/tableau_residues
     sage/combinat/tableau_tuple
     sage/combinat/tamari_lattices
     sage/combinat/tiling
     sage/combinat/tools
+    sage/combinat/triangles_FHM
     sage/combinat/tuple
     sage/combinat/tutorial
     sage/combinat/vector_partition
-    sage/combinat/words/__init__
     sage/combinat/words/abstract_word
     sage/combinat/words/all
     sage/combinat/words/alphabet

@@ -1,5 +1,5 @@
-Sphinx
-======
+sphinx: Python documentation generator
+======================================
 
 Description
 -----------
@@ -20,28 +20,5 @@ Modified BSD; see e.g. its egg-info file for other options
 Upstream Contact
 ----------------
 
-- Author: Georg Brandl
-- Home Page: http://sphinx.pocoo.org,
-  see also http://pypi.python.org/pypi/Sphinx
+https://pypi.org/project/Sphinx/
 
-Dependencies
-------------
-
--  six >= 1.4
--  Jinja2 >= 2.3
--  Pygments >= 2.0
--  docutils >= 0.11
--  snowballstemmer >= 1.1
--  babel >= 1.3
--  setuptools / distribute
--  Python
--  GNU patch (shipped with Sage)
-
-
-Special Update/Build Instructions
----------------------------------
-
--  The script create_grammar_pickle.py creates the file
-   Grammar2.7.pickle in site-packages/Sphinx-.../sphinx/pycode/. This
-   helps to avoid race conditions when building the documentation in
-   parallel.

@@ -1,14 +1,19 @@
-# distutils: libraries = ntl gmp m
+# distutils: libraries = NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 
-"""
-Wrapper for NTL's polynomials over finite ring extensions of $\Z / p\Z.$
+r"""
+Wrapper for NTL's polynomials over finite ring extensions of `\Z / p\Z.`
 
 AUTHORS:
-  -- David Roe (2007-10-10)
+
+- David Roe (2007-10-10)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #                          David Roe     <roed@math.harvard.edu>
 #
@@ -21,8 +26,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 from sage.ext.cplusplus cimport ccrepr
@@ -31,14 +36,10 @@ include 'misc.pxi'
 include 'decl.pxi'
 
 from cpython.object cimport Py_EQ, Py_NE
-from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
-from sage.libs.ntl.ntl_ZZ_p cimport ntl_ZZ_p
 from sage.libs.ntl.ntl_ZZ_pE cimport ntl_ZZ_pE
-from sage.libs.ntl.ntl_ZZ_pX cimport ntl_ZZ_pX
 from sage.libs.ntl.ntl_ZZ_pEContext cimport ntl_ZZ_pEContext_class
 from sage.libs.ntl.ntl_ZZ_pEContext import ntl_ZZ_pEContext
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
-from sage.libs.ntl.ntl_ZZ import unpickle_class_args
 from sage.arith.power cimport generic_power_pos
 
 ##############################################################################
@@ -47,11 +48,11 @@ from sage.arith.power cimport generic_power_pos
 #
 ##############################################################################
 
-cdef class ntl_ZZ_pEX(object):
+cdef class ntl_ZZ_pEX():
     r"""
-    The class \class{ZZ_pEX} implements polynomials over finite ring extensions of $\Z / p\Z$.
+    The class \class{ZZ_pEX} implements polynomials over finite ring extensions of `\Z / p\Z`.
 
-    It can be used, for example, for arithmetic in $GF(p^n)[X]$.
+    It can be used, for example, for arithmetic in `GF(p^n)[X]`.
     However, except where mathematically necessary (e.g., GCD computations),
     ZZ_pE need not be a field.
     """
@@ -83,7 +84,7 @@ cdef class ntl_ZZ_pEX(object):
 
         if v is None:
             return
-        elif isinstance(v, list) or isinstance(v, tuple):
+        elif isinstance(v, (list, tuple)):
             for i from 0 <= i < len(v):
                 x = v[i]
                 if not isinstance(x, ntl_ZZ_pE):
@@ -291,7 +292,7 @@ cdef class ntl_ZZ_pEX(object):
             [[2] [4 4] [1 2]]
         """
         if self.c is not other.c:
-            raise ValueError("You can not perform arithmetic with elements of different moduli.")
+            raise ValueError("You cannot perform arithmetic with elements of different moduli.")
         cdef ntl_ZZ_pEX r = self._new()
         sig_on()
         # self.c.restore_c() # _new restores the context
@@ -314,7 +315,7 @@ cdef class ntl_ZZ_pEX(object):
             [[4 4] [5] [1 2]]
         """
         if self.c is not other.c:
-            raise ValueError("You can not perform arithmetic with elements of different moduli.")
+            raise ValueError("You cannot perform arithmetic with elements of different moduli.")
         cdef ntl_ZZ_pEX r = self._new()
         sig_on()
         # self.c.restore_c() # _new restores the context
@@ -343,7 +344,7 @@ cdef class ntl_ZZ_pEX(object):
             [[1 3] [1 1] [2 4] [6 4]]
         """
         if self.c is not other.c:
-            raise ValueError("You can not perform arithmetic with elements of different moduli.")
+            raise ValueError("You cannot perform arithmetic with elements of different moduli.")
         cdef ntl_ZZ_pEX r = self._new()
         sig_on()
         # self.c.restore_c() # _new() restores the context
@@ -371,7 +372,7 @@ cdef class ntl_ZZ_pEX(object):
             ArithmeticError: self (=[[4 5] [1 2]]) is not divisible by other (=[[5 1] [2 6] [4]])
         """
         if self.c is not other.c:
-            raise ValueError("You can not perform arithmetic with elements of different moduli.")
+            raise ValueError("You cannot perform arithmetic with elements of different moduli.")
         cdef int divisible
         cdef ntl_ZZ_pEX r = self._new()
         sig_on()
@@ -388,8 +389,9 @@ cdef class ntl_ZZ_pEX(object):
         there exist polynomials q, r in ZZ_pE[X] such that a = b*q + r, deg(r) < deg(b).  This
         function returns r.
 
-        If p is not prime or the modulus is not irreducible, this function may raise a
-        RuntimeError due to division by a noninvertible element of ZZ_p.
+        If p is not prime or the modulus is not irreducible, this
+        function may raise a :class:`RuntimeError` due to division by
+        a noninvertible element of ZZ_p.
 
         EXAMPLES::
 
@@ -404,7 +406,7 @@ cdef class ntl_ZZ_pEX(object):
             [[5 1] [4 99]]
         """
         if self.c is not other.c:
-            raise ValueError("You can not perform arithmetic with elements of different moduli.")
+            raise ValueError("You cannot perform arithmetic with elements of different moduli.")
         cdef ntl_ZZ_pEX r = self._new()
         sig_on()
         # self.c.restore_c() # _new() restores the context
@@ -434,7 +436,7 @@ cdef class ntl_ZZ_pEX(object):
             ([], [[5 1] [4 99]])
         """
         if self.c is not other.c:
-            raise ValueError("You can not perform arithmetic with elements of different moduli.")
+            raise ValueError("You cannot perform arithmetic with elements of different moduli.")
         cdef ntl_ZZ_pEX r = self._new()
         cdef ntl_ZZ_pEX q = self._new()
         sig_on()
@@ -445,7 +447,7 @@ cdef class ntl_ZZ_pEX(object):
 
     def square(self):
         """
-        Return $f^2$.
+        Return `f^2`.
 
         EXAMPLES::
 
@@ -584,7 +586,7 @@ cdef class ntl_ZZ_pEX(object):
         #return bool(ZZ_pEX_is_monic(self.x))
 
         if ZZ_pEX_IsZero(self.x):
-             return False
+            return False
         cdef ZZ_pE_c x = ZZ_pEX_LeadCoeff(self.x)
         return bool(ZZ_pE_IsOne(x))
 
@@ -993,7 +995,7 @@ cdef class ntl_ZZ_pEX(object):
 
     def invert_and_truncate(self, long m):
         """
-        Compute and return the inverse of self modulo $x^m$.
+        Compute and return the inverse of self modulo `x^m`.
         The constant term of self must be invertible.
 
         EXAMPLES::
@@ -1044,7 +1046,7 @@ cdef class ntl_ZZ_pEX(object):
     def trace_mod(self, ntl_ZZ_pEX modulus):
         """
         Return the trace of this polynomial modulo the modulus.
-        The modulus must be monic, and of positive degree degree bigger
+        The modulus must be monic, and of positive degree bigger
         than the degree of self.
 
         EXAMPLES::
@@ -1077,7 +1079,7 @@ cdef class ntl_ZZ_pEX(object):
     #        sage: f.trace_list()
     #        [5, 0, 14, 0, 10]
     #
-    #    The input polynomial must be monic or a ValueError is raised::
+    #    The input polynomial must be monic or a :class:`ValueError` is raised::
     #
     #        sage: c=ntl.ZZ_pContext(ntl.ZZ(20))
     #        sage: f = c.ZZ_pX([1,2,0,3,0,2]
@@ -1247,6 +1249,6 @@ def make_ZZ_pEX(v, modulus):
         sage: sage.libs.ntl.ntl_ZZ_pEX.make_ZZ_pEX([a,b,b], c)
         [[3 2] [1 2] [1 2]]
         sage: type(sage.libs.ntl.ntl_ZZ_pEX.make_ZZ_pEX([a,b,b], c))
-        <type 'sage.libs.ntl.ntl_ZZ_pEX.ntl_ZZ_pEX'>
+        <class 'sage.libs.ntl.ntl_ZZ_pEX.ntl_ZZ_pEX'>
     """
     return ntl_ZZ_pEX(v, modulus)

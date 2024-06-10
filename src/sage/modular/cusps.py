@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 The set `\mathbb{P}^1(\QQ)` of cusps
 
@@ -27,18 +26,23 @@ EXAMPLES::
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
-from sage.rings.all import Rational, Integer, ZZ, QQ
-from sage.rings.infinity import Infinity, InfinityRing
-
-from sage.structure.parent import Parent
 from sage.misc.fast_methods import Singleton
-from sage.structure.element import Element, is_InfinityElement
+from sage.modular.modsym.p1list import lift_to_sl2z_llong
+from sage.rings.infinity import Infinity, InfinityRing
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational import Rational
+from sage.rings.rational_field import QQ
+from sage.structure.element import Element, InfinityElement
+from sage.structure.element import Matrix
+from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
 
-from sage.modular.modsym.p1list import lift_to_sl2z_llong
-from sage.structure.element import is_Matrix
+try:
+    from sage.libs.pari.all import pari, pari_gen
+except ImportError:
+    pari_gen = ()
 
 
 class Cusp(Element):
@@ -145,6 +149,13 @@ class Cusp(Element):
             Traceback (most recent call last):
             ...
             TypeError: unable to convert (Infinity, +Infinity) to a cusp
+
+        Conversion from PARI is supported (see :issue:`32091`)::
+
+            sage: Cusp(pari.oo())
+            Infinity
+            sage: Cusp(pari(2/3))
+            2/3
         """
         if parent is None:
             parent = Cusps
@@ -162,7 +173,8 @@ class Cusp(Element):
             elif isinstance(a, Rational):
                 self.__a = a.numer()
                 self.__b = a.denom()
-            elif is_InfinityElement(a):
+            elif (isinstance(a, InfinityElement) or
+                  (isinstance(a, pari_gen) and a.type() == 't_INFINITY')):
                 self.__a = ZZ.one()
                 self.__b = ZZ.zero()
             elif isinstance(a, Cusp):
@@ -193,8 +205,8 @@ class Cusp(Element):
                     raise TypeError("unable to convert %r to a cusp" % a)
             return
 
-        if is_InfinityElement(b):
-            if is_InfinityElement(a) or (isinstance(a, Cusp) and a.is_infinity()):
+        if isinstance(b, InfinityElement):
+            if isinstance(a, InfinityElement) or (isinstance(a, Cusp) and a.is_infinity()):
                 raise TypeError("unable to convert (%r, %r) to a cusp" % (a, b))
             self.__a = ZZ.zero()
             self.__b = ZZ.one()
@@ -206,9 +218,9 @@ class Cusp(Element):
             self.__b = ZZ.zero()
             return
 
-        if isinstance(a, Integer) or isinstance(a, Rational):
+        if isinstance(a, (Integer, Rational)):
             r = a / ZZ(b)
-        elif is_InfinityElement(a):
+        elif isinstance(a, InfinityElement):
             self.__a = ZZ.one()
             self.__b = ZZ.zero()
             return
@@ -324,7 +336,7 @@ class Cusp(Element):
 
         EXAMPLES::
 
-            sage: x=Cusp(6,9); x
+            sage: x = Cusp(6,9); x
             2/3
             sage: x.numerator()
             2
@@ -341,7 +353,7 @@ class Cusp(Element):
 
         EXAMPLES::
 
-            sage: x=Cusp(6,9); x
+            sage: x = Cusp(6,9); x
             2/3
             sage: x.denominator()
             3
@@ -464,19 +476,19 @@ class Cusp(Element):
         INPUT:
 
 
-        -  ``other`` - Cusp
+        -  ``other`` -- Cusp
 
-        -  ``N`` - an integer (specifies the group
+        -  ``N`` -- an integer (specifies the group
            Gamma_0(N))
 
-        -  ``transformation`` - None (default) or either the string 'matrix' or 'corner'. If 'matrix',
+        -  ``transformation`` -- None (default) or either the string 'matrix' or 'corner'. If 'matrix',
            it also returns a matrix in Gamma_0(N) that sends self to other. The matrix is chosen such that the lower left entry is as small as possible in absolute value. If 'corner' (or True for backwards compatibility), it returns only the upper left entry of such a matrix.
 
 
         OUTPUT:
 
 
-        -  a boolean - True if self and other are equivalent
+        -  a boolean -- True if self and other are equivalent
 
         -  a matrix or an integer- returned only if transformation is 'matrix' or 'corner', respectively.
 
@@ -612,7 +624,7 @@ class Cusp(Element):
             if C % (M * v1 * v2) == 0:
                 k = - C // (M * v1 * v2)
             else:
-                k = - (C / (M * v1 * v2)).round()
+                k = - (C / (M * v1 * v2)).round("away")
 
             s1pp = s1p + k * M * v1
             # C += k*M*v1*v2  # is now the smallest in absolute value
@@ -645,18 +657,18 @@ class Cusp(Element):
         INPUT:
 
 
-        -  ``other`` - Cusp
+        -  ``other`` -- Cusp
 
-        -  ``N`` - an integer (specifies the group
+        -  ``N`` -- an integer (specifies the group
            Gamma_1(N))
 
 
         OUTPUT:
 
 
-        -  ``bool`` - True if self and other are equivalent
+        -  ``bool`` -- True if self and other are equivalent
 
-        -  ``int`` - 0, 1 or -1, gives further information
+        -  ``int`` -- 0, 1 or -1, gives further information
            about the equivalence: If the two cusps are u1/v1 and u2/v2, then
            they are equivalent if and only if v1 = v2 (mod N) and u1 = u2 (mod
            gcd(v1,N)) or v1 = -v2 (mod N) and u1 = -u2 (mod gcd(v1,N)) The
@@ -714,21 +726,22 @@ class Cusp(Element):
         INPUT:
 
 
-        -  ``other`` - Cusp
+        -  ``other`` -- Cusp
 
-        -  ``G`` - a congruence subgroup Gamma_H(N)
+        -  ``G`` -- a congruence subgroup Gamma_H(N)
 
 
         OUTPUT:
 
 
-        -  ``bool`` - True if self and other are equivalent
+        -  ``bool`` -- True if self and other are equivalent
 
-        -  ``int`` - -1, 0, 1; extra info
+        -  ``int`` -- -1, 0, 1; extra info
 
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari
             sage: x = Cusp(2,3)
             sage: y = Cusp(4,5)
             sage: x.is_gamma_h_equiv(y,GammaH(13,[2]))
@@ -745,10 +758,12 @@ class Cusp(Element):
 
         ::
 
-            sage: G = GammaH(25,[6]) ; M = G.modular_symbols() ; M
-            Modular Symbols space of dimension 11 for Congruence Subgroup Gamma_H(25) with H generated by [6] of weight 2 with sign 0 and over Rational Field
+            sage: # needs sage.libs.pari
+            sage: G = GammaH(25,[6]); M = G.modular_symbols(); M
+            Modular Symbols space of dimension 11 for Congruence Subgroup Gamma_H(25)
+             with H generated by [6] of weight 2 with sign 0 over Rational Field
             sage: M.cusps()
-            [33/100, 1/3, 31/125, 1/4, 1/15, -7/15, 7/15, 4/15, 1/20, 3/20, 7/20, 9/20]
+            [8/25, 1/3, 6/25, 1/4, 1/15, -7/15, 7/15, 4/15, 1/20, 3/20, 7/20, 9/20]
             sage: len(M.cusps())
             12
 
@@ -757,17 +772,20 @@ class Cusp(Element):
 
         ::
 
+            sage: # needs sage.libs.pari
             sage: G.dimension_eis(2)
             11
             sage: M.cuspidal_subspace()
-            Modular Symbols subspace of dimension 0 of Modular Symbols space of dimension 11 for Congruence Subgroup Gamma_H(25) with H generated by [6] of weight 2 with sign 0 and over Rational Field
+            Modular Symbols subspace of dimension 0 of
+             Modular Symbols space of dimension 11 for Congruence Subgroup Gamma_H(25)
+              with H generated by [6] of weight 2 with sign 0 over Rational Field
             sage: G.dimension_cusp_forms(2)
             0
         """
-        from sage.modular.arithgroup.all import is_GammaH
+        from sage.modular.arithgroup.all import GammaH_class
         if not isinstance(other, Cusp):
             other = Cusp(other)
-        if not is_GammaH(G):
+        if not isinstance(G, GammaH_class):
             raise TypeError("G must be a group GammaH(N).")
 
         H = G._list_of_elements_in_H()
@@ -818,7 +836,7 @@ class Cusp(Element):
             Set P^1(QQ) of all cusps
         """
         if not self_on_left:
-            if (is_Matrix(g) and g.base_ring() is ZZ
+            if (isinstance(g, Matrix) and g.base_ring() is ZZ
                     and g.ncols() == 2 == g.nrows()):
                 a, b, c, d = g.list()
                 return Cusp(a * self.__a + b * self.__b,
@@ -892,8 +910,8 @@ class Cusp(Element):
             1/170
             sage: Cusp(oo).galois_action(3, 50)
             Infinity
-            sage: c=Cusp(0).galois_action(3, 50); c
-            50/67
+            sage: c = Cusp(0).galois_action(3, 50); c
+            50/17
             sage: Gamma0(50).reduce_cusp(c)
             0
 
@@ -919,17 +937,19 @@ class Cusp(Element):
         TESTS:
 
         Here we check that the Galois action is indeed a permutation on the
-        cusps of Gamma1(48) and check that :trac:`13253` is fixed. ::
+        cusps of Gamma1(48) and check that :issue:`13253` is fixed. ::
 
+            sage: # needs sage.libs.pari
             sage: G = Gamma1(48)
             sage: C = G.cusps()
             sage: for i in Integers(48).unit_gens():
             ....:   C_permuted = [G.reduce_cusp(c.galois_action(i,48)) for c in C]
             ....:   assert len(set(C_permuted))==len(C)
 
-        We test that Gamma1(19) has 9 rational cusps and check that :trac:`8998`
+        We test that Gamma1(19) has 9 rational cusps and check that :issue:`8998`
         is fixed. ::
 
+            sage: # needs sage.libs.pari
             sage: G = Gamma1(19)
             sage: [c for c in G.cusps() if c.galois_action(2,19).is_gamma1_equiv(c,19)[0]]
             [2/19, 3/19, 4/19, 5/19, 6/19, 7/19, 8/19, 9/19, Infinity]
@@ -983,6 +1003,20 @@ class Cusp(Element):
         # Now that we've computed the Galois action, we efficiently
         # construct the corresponding cusp as a Cusp object.
         return Cusp(a, b, check=False)
+
+    def __pari__(self):
+        """
+        Return a PARI representation of ``self``.
+
+        EXAMPLES::
+
+            sage: Cusp(1, 0).__pari__()                                                 # needs sage.libs.pari
+            +oo
+            sage: pari(Cusp(3, 2))                                                      # needs sage.libs.pari
+            3/2
+        """
+        b = self.__b
+        return pari(self.__a / b) if b else pari.oo()
 
 
 class Cusps_class(Singleton, Parent):

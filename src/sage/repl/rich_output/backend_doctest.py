@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# sage_setup: distribution = sagemath-repl
 """
 The backend used for doctests
 
@@ -26,7 +26,6 @@ import sys
 
 from sage.repl.rich_output.backend_base import BackendBase
 from sage.repl.rich_output.output_catalog import *
-
 
 
 class BackendDoctest(BackendBase):
@@ -66,6 +65,7 @@ class BackendDoctest(BackendBase):
             sage: backend = BackendIPythonCommandline()
             sage: backend.default_preferences()
             Display preferences:
+            * align_latex is not specified
             * graphics is not specified
             * supplemental_plot = never
             * text is not specified
@@ -134,7 +134,7 @@ class BackendDoctest(BackendBase):
             True
         """
         return set([
-            OutputPlainText, OutputAsciiArt, OutputUnicodeArt, OutputLatex,
+            OutputPlainText, OutputAsciiArt, OutputUnicodeArt,
             OutputImagePng, OutputImageGif, OutputImageJpg,
             OutputImageSvg, OutputImagePdf, OutputImageDvi,
             OutputSceneJmol, OutputSceneCanvas3d, OutputSceneWavefront,
@@ -164,19 +164,19 @@ class BackendDoctest(BackendBase):
 
         This ends up calling the displayhook::
 
-            sage: plt = plot(sin)
-            sage: plt
+            sage: plt = plot(sin)                                                       # needs sage.plot sage.symbolic
+            sage: plt                                                                   # needs sage.plot sage.symbolic
             Graphics object consisting of 1 graphics primitive
-            sage: plt.show()
+            sage: plt.show()                                                            # needs sage.plot sage.symbolic
 
             sage: from sage.repl.rich_output import get_display_manager
             sage: dm = get_display_manager()
-            sage: dm.displayhook(plt)       # indirect doctest
+            sage: dm.displayhook(plt)       # indirect doctest                          # needs sage.plot sage.symbolic
             Graphics object consisting of 1 graphics primitive
         """
         self.validate(rich_output)
         if any(isinstance(rich_output, cls)
-               for cls in [OutputPlainText, OutputAsciiArt, OutputLatex]):
+               for cls in [OutputPlainText, OutputAsciiArt, OutputLatex, OutputHtml]):
             rich_output.print_to_stdout()
         else:
             plain_text.print_to_stdout()
@@ -198,20 +198,18 @@ class BackendDoctest(BackendBase):
         displayhook, the plot is still shown. Nothing is shown during
         doctests::
 
-            sage: plt = plot(sin)
-            sage: plt
+            sage: plt = plot(sin)                                                       # needs sage.plot sage.symbolic
+            sage: plt                                                                   # needs sage.plot sage.symbolic
             Graphics object consisting of 1 graphics primitive
-            sage: plt.show()
+            sage: plt.show()                                                            # needs sage.plot sage.symbolic
 
             sage: from sage.repl.rich_output import get_display_manager
             sage: dm = get_display_manager()
-            sage: dm.display_immediately(plt)   # indirect doctest
+            sage: dm.display_immediately(plt)   # indirect doctest                      # needs sage.plot sage.symbolic
         """
         self.validate(rich_output)
         types_to_print = [OutputPlainText, OutputAsciiArt, OutputUnicodeArt, OutputHtml]
-        if isinstance(rich_output, OutputLatex):
-            print(rich_output.mathjax(display=False))
-        elif any(isinstance(rich_output, cls) for cls in types_to_print):
+        if any(isinstance(rich_output, cls) for cls in types_to_print):
             rich_output.print_to_stdout()
 
     def validate(self, rich_output):
@@ -266,7 +264,9 @@ class BackendDoctest(BackendBase):
         elif isinstance(rich_output, OutputUnicodeArt):
             pass
         elif isinstance(rich_output, OutputLatex):
-            assert rich_output.mathjax().startswith('<html>')
+            pass
+        elif isinstance(rich_output, OutputHtml):
+            pass
         elif isinstance(rich_output, OutputImagePng):
             assert rich_output.png.get().startswith(b'\x89PNG')
         elif isinstance(rich_output, OutputImageGif):

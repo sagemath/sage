@@ -28,7 +28,7 @@ from sage.categories.poor_man_map import PoorManMap
 from sage.categories.sets_cat import Sets
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.sets.family import Family
 
 
@@ -111,7 +111,7 @@ class IndexedMonoidElement(MonoidElement):
 
         scalar_mult = P._print_options['scalar_mult']
 
-        exp = lambda v: '^{}'.format(v) if v != 1 else ''
+        exp = lambda v: f'^{v}' if v != 1 else ''
         return scalar_mult.join(P._repr_generator(g) + exp(v) for g,v in monomial)
 
     def _ascii_art_(self):
@@ -143,6 +143,7 @@ class IndexedMonoidElement(MonoidElement):
             ascii_art_gen = lambda m: P._ascii_art_generator(m[0])
         else:
             pref = AsciiArt([P.prefix()])
+
             def ascii_art_gen(m):
                 if m[1] != 1:
                     r = (AsciiArt([" " * len(pref)]) + ascii_art(m[1]))
@@ -179,7 +180,7 @@ class IndexedMonoidElement(MonoidElement):
             if scalar_mult == "*":
                 scalar_mult = " "
 
-        exp = lambda v: '^{{{}}}'.format(v) if v != 1 else ''
+        exp = lambda v: f'^{{{v}}}' if v != 1 else ''
         return scalar_mult.join(P._latex_generator(g) + exp(v) for g,v in monomial)
 
     def __iter__(self):
@@ -286,7 +287,7 @@ class IndexedMonoidElement(MonoidElement):
             sage: (a*c^3).support()
             [0, 2]
         """
-        supp = set(key for key, exp in self._sorted_items() if exp != 0)
+        supp = {key for key, exp in self._sorted_items() if exp != 0}
         return sorted(supp)
 
     def leading_support(self):
@@ -353,6 +354,31 @@ class IndexedMonoidElement(MonoidElement):
             [0, 1, 2, 2, 2]
         """
         return [k for k,e in self._sorted_items() for dummy in range(e)]
+
+    def is_one(self) -> bool:
+        """
+        Return if ``self`` is the identity element.
+
+        EXAMPLES::
+
+            sage: F = FreeMonoid(index_set=ZZ)
+            sage: a,b,c,d,e = [F.gen(i) for i in range(5)]
+            sage: (b*a*c^3*a).is_one()
+            False
+            sage: F.one().is_one()
+            True
+
+        ::
+
+            sage: F = FreeAbelianMonoid(index_set=ZZ)
+            sage: a,b,c,d,e = [F.gen(i) for i in range(5)]
+            sage: (b*c^3*a).is_one()
+            False
+            sage: F.one().is_one()
+            True
+        """
+        return not self._monomial
+
 
 class IndexedFreeMonoidElement(IndexedMonoidElement):
     """
@@ -543,9 +569,9 @@ class IndexedFreeAbelianMonoidElement(IndexedMonoidElement):
             1
         """
         if not isinstance(n, (int, Integer)):
-            raise TypeError("Argument n (= {}) must be an integer".format(n))
+            raise TypeError(f"Argument n (= {n}) must be an integer")
         if n < 0:
-            raise ValueError("Argument n (= {}) must be positive".format(n))
+            raise ValueError(f"Argument n (= {n}) must be positive")
         if n == 1:
             return self
         if n == 0:
@@ -590,6 +616,29 @@ class IndexedFreeAbelianMonoidElement(IndexedMonoidElement):
                 d[k] = diff
         return self.__class__(self.parent(), d)
 
+    def divides(self, m) -> bool:
+        r"""
+        Return whether ``self`` divides ``m``.
+
+        EXAMPLES::
+
+            sage: F = FreeAbelianMonoid(index_set=ZZ)
+            sage: a,b,c,d,e = [F.gen(i) for i in range(5)]
+            sage: elt = a*b*c^3*d^2
+            sage: a.divides(elt)
+            True
+            sage: c.divides(elt)
+            True
+            sage: (a*b*d^2).divides(elt)
+            True
+            sage: (a^4).divides(elt)
+            False
+            sage: e.divides(elt)
+            False
+        """
+        other = m._monomial
+        return all(k in other and v <= other[k] for k, v in self._monomial.items())
+
     def __len__(self):
         """
         Return the length of ``self``.
@@ -604,8 +653,7 @@ class IndexedFreeAbelianMonoidElement(IndexedMonoidElement):
             sage: len(elt)
             7
         """
-        m = self._monomial
-        return sum(m[gen] for gen in m)
+        return sum(self._monomial.values())
 
     length = __len__
 
@@ -667,8 +715,8 @@ class IndexedMonoid(Parent, IndexedGenerators, UniqueRepresentation):
         if isinstance(latex_bracket, list):
             kwds['latex_bracket'] = tuple(latex_bracket)
 
-        return super(IndexedMonoid, cls).__classcall__(cls, indices, prefix,
-                                                       names=names, **kwds)
+        return super().__classcall__(cls, indices, prefix,
+                                     names=names, **kwds)
 
     def __init__(self, indices, prefix, category=None, names=None, **kwds):
         """
@@ -732,7 +780,7 @@ class IndexedMonoid(Parent, IndexedGenerators, UniqueRepresentation):
         if x is None:
             return self.one()
         if x in self._indices:
-            raise TypeError("unable to convert {!r}, use gen() instead".format(x))
+            raise TypeError(f"unable to convert {x!r}, use gen() instead")
         return self.element_class(self, x)
 
     def _an_element_(self):
@@ -843,7 +891,7 @@ class IndexedFreeMonoid(IndexedMonoid):
             sage: FreeMonoid(index_set=ZZ)
             Free monoid indexed by Integer Ring
         """
-        return "Free monoid indexed by {}".format(self._indices)
+        return f"Free monoid indexed by {self._indices}"
 
     Element = IndexedFreeMonoidElement
 
@@ -883,7 +931,7 @@ class IndexedFreeMonoid(IndexedMonoid):
             IndexError: 0 is not in the index set
         """
         if x not in self._indices:
-            raise IndexError("{} is not in the index set".format(x))
+            raise IndexError(f"{x} is not in the index set")
         try:
             return self.element_class(self, ((self._indices(x),1),))
         except (TypeError, NotImplementedError): # Backup (e.g., if it is a string)
@@ -923,7 +971,7 @@ class IndexedFreeAbelianMonoid(IndexedMonoid):
             sage: FreeAbelianMonoid(index_set=ZZ)
             Free abelian monoid indexed by Integer Ring
         """
-        return "Free abelian monoid indexed by {}".format(self._indices)
+        return f"Free abelian monoid indexed by {self._indices}"
 
     def _element_constructor_(self, x=None):
         """
@@ -950,7 +998,7 @@ class IndexedFreeAbelianMonoid(IndexedMonoid):
             1
         """
         if isinstance(x, (list, tuple)):
-            d = dict()
+            d = {}
             for k, v in x:
                 if k in d:
                     d[k] += v
@@ -999,9 +1047,8 @@ class IndexedFreeAbelianMonoid(IndexedMonoid):
             IndexError: 0 is not in the index set
         """
         if x not in self._indices:
-            raise IndexError("{} is not in the index set".format(x))
+            raise IndexError(f"{x} is not in the index set")
         try:
-            return self.element_class(self, {self._indices(x):1})
-        except (TypeError, NotImplementedError): # Backup (e.g., if it is a string)
-            return self.element_class(self, {x:1})
-
+            return self.element_class(self, {self._indices(x): 1})
+        except (TypeError, NotImplementedError):  # Backup (e.g., if it is a string)
+            return self.element_class(self, {x: 1})

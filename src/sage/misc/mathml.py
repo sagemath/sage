@@ -5,9 +5,9 @@ In order to support MathML formatting, an object should define a special
 method _mathml_(self) that returns its MathML representation.
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #
-#   Sage: System for Algebra and Geometry Experimentation
+#   Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -21,8 +21,7 @@ method _mathml_(self) that returns its MathML representation.
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
+# *****************************************************************************
 
 
 def list_function(x):
@@ -39,6 +38,7 @@ def bool_function(x):
 
 def str_function(x):
     return 'MATHML version of the string %s' % (x,)
+
 
 # One can add to the latex_table in order to install latexing
 # functionality for other types.
@@ -73,4 +73,3 @@ def mathml(x):
             return MathML("MATHML version of 'None'")
 
         return MathML(str_function(str(x)))
-

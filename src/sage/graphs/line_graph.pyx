@@ -22,7 +22,7 @@ Author:
 
 - David Coudert (10-2018), use maximal cliques iterator in :meth:`root_graph`,
   and use :meth:`root_graph` instead of forbidden subgraph search in
-  :meth:`is_line_graph` (:trac:`26444`).
+  :meth:`is_line_graph` (:issue:`26444`).
 
 Definition
 -----------
@@ -176,8 +176,8 @@ def is_line_graph(g, certificate=False):
 
     This is indeed the subgraph returned::
 
-        sage: C = graphs.PetersenGraph().is_line_graph(certificate=True)[1]
-        sage: C.is_isomorphic(graphs.ClawGraph())
+        sage: C = graphs.PetersenGraph().is_line_graph(certificate=True)[1]             # needs sage.modules
+        sage: C.is_isomorphic(graphs.ClawGraph())                                       # needs sage.modules
         True
 
     The house graph is a line graph::
@@ -188,10 +188,11 @@ def is_line_graph(g, certificate=False):
 
     But what is the graph whose line graph is the house ?::
 
+        sage: # needs sage.modules
         sage: is_line, R, isom = g.is_line_graph(certificate=True)
         sage: R.sparse6_string()
         ':DaHI~'
-        sage: R.show()
+        sage: R.show()                                                                  # needs sage.plot
         sage: isom
         {0: (0, 1), 1: (0, 2), 2: (1, 3), 3: (2, 3), 4: (3, 4)}
 
@@ -201,11 +202,11 @@ def is_line_graph(g, certificate=False):
 
         sage: g = 2 * graphs.CycleGraph(3)
         sage: gl = g.line_graph().relabel(inplace=False)
-        sage: new_g = gl.is_line_graph(certificate=True)[1]
-        sage: g.line_graph().is_isomorphic(gl)
+        sage: new_g = gl.is_line_graph(certificate=True)[1]                             # needs sage.modules
+        sage: g.line_graph().is_isomorphic(gl)                                          # needs sage.modules
         True
 
-    Verify that :trac:`29740` is fixed::
+    Verify that :issue:`29740` is fixed::
 
         sage: g = Graph('O{e[{}^~z`MDZBZBkXzE^')
         sage: g.is_line_graph()
@@ -231,15 +232,13 @@ def is_line_graph(g, certificate=False):
             R, isom = root_graph(g)
             if certificate:
                 return True, R, isom
-            else:
-                return True
+            return True
         except ValueError as VE:
             if str(VE) == "this graph is not a line graph !":
                 # g is not a line graph
                 if certificate:
                     return False, get_certificate(g)
-                else:
-                    return False
+                return False
             raise VE
 
     # g is not connected, so we apply the above procedure to each connected
@@ -255,15 +254,13 @@ def is_line_graph(g, certificate=False):
                 # gg is not a line graph
                 if certificate:
                     return False, get_certificate(gg)
-                else:
-                    return False
+                return False
             raise VE
 
     if certificate:
         _, isom = g.is_isomorphic(R.line_graph(labels=False), certificate=True)
         return True, R, isom
-    else:
-        return True
+    return True
 
 
 def line_graph(g, labels=True):
@@ -307,14 +304,14 @@ def line_graph(g, labels=True):
 
         sage: g = graphs.CompleteGraph(4)
         sage: h = g.line_graph()
-        sage: h.vertices()
+        sage: h.vertices(sort=True)
         [(0, 1, None),
-        (0, 2, None),
-        (0, 3, None),
-        (1, 2, None),
-        (1, 3, None),
-        (2, 3, None)]
-        sage: h.am()
+         (0, 2, None),
+         (0, 3, None),
+         (1, 2, None),
+         (1, 3, None),
+         (2, 3, None)]
+        sage: h.am()                                                                    # needs sage.modules
         [0 1 1 1 1 0]
         [1 0 1 1 0 1]
         [1 1 0 0 1 1]
@@ -322,20 +319,20 @@ def line_graph(g, labels=True):
         [1 0 1 1 0 1]
         [0 1 1 1 1 0]
         sage: h2 = g.line_graph(labels=False)
-        sage: h2.vertices()
+        sage: h2.vertices(sort=True)
         [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]
-        sage: h2.am() == h.am()
+        sage: h2.am() == h.am()                                                         # needs sage.modules
         True
         sage: g = DiGraph([[1..4], lambda i,j: i < j])
         sage: h = g.line_graph()
-        sage: h.vertices()
+        sage: h.vertices(sort=True)
         [(1, 2, None),
-        (1, 3, None),
-        (1, 4, None),
-        (2, 3, None),
-        (2, 4, None),
-        (3, 4, None)]
-        sage: h.edges()
+         (1, 3, None),
+         (1, 4, None),
+         (2, 3, None),
+         (2, 4, None),
+         (3, 4, None)]
+        sage: h.edges(sort=True)
         [((1, 2, None), (2, 3, None), None),
          ((1, 2, None), (2, 4, None), None),
          ((1, 3, None), (3, 4, None), None),
@@ -343,7 +340,7 @@ def line_graph(g, labels=True):
 
     TESTS:
 
-    :trac:`13787`::
+    :issue:`13787`::
 
         sage: g = graphs.KneserGraph(7,1)
         sage: C = graphs.CompleteGraph(7)
@@ -363,60 +360,59 @@ def line_graph(g, labels=True):
         for v in g:
             # Connect appropriate incident edges of the vertex v
             G.add_edges((e, f) for e in g.incoming_edge_iterator(v, labels=labels)
-                         for f in g.outgoing_edge_iterator(v, labels=labels))
+                        for f in g.outgoing_edge_iterator(v, labels=labels))
         return G
-    else:
-        from sage.graphs.all import Graph
-        G = Graph()
 
-        # We must sort the edges' endpoints so that (1,2,None) is seen as the
-        # same edge as (2,1,None).
-        #
-        # We do so by comparing hashes, just in case all the natural order (<)
-        # on vertices would not be a total order (for instance when vertices are
-        # sets). If two adjacent vertices have the same hash, then we store the
-        # pair in the dictionary of conflicts
+    from sage.graphs.graph import Graph
+    G = Graph()
 
-        # 1) List of vertices in the line graph
+    # We must sort the edges' endpoints so that (1,2,None) is seen as the
+    # same edge as (2,1,None).
+    #
+    # We do so by comparing hashes, just in case all the natural order (<)
+    # on vertices would not be a total order (for instance when vertices are
+    # sets). If two adjacent vertices have the same hash, then we store the
+    # pair in the dictionary of conflicts
 
-        for e in g.edge_iterator(labels=labels):
+    # 1) List of vertices in the line graph
+    for e in g.edge_iterator(labels=labels):
+        if hash(e[0]) < hash(e[1]):
+            elist.append(e)
+        elif hash(e[0]) > hash(e[1]):
+            elist.append((e[1], e[0]) + e[2:])
+        else:
+            # Settle the conflict arbitrarily
+            conflicts[e] = e
+            conflicts[(e[1], e[0]) + e[2:]] = e
+            elist.append(e)
+
+    G.add_vertices(elist)
+
+    # 2) adjacencies in the line graph
+    for v in g:
+        elist = []
+
+        # Add the edge to the list, according to hashes, as previously
+        for e in g.edge_iterator(v, labels=labels):
             if hash(e[0]) < hash(e[1]):
                 elist.append(e)
             elif hash(e[0]) > hash(e[1]):
                 elist.append((e[1], e[0]) + e[2:])
             else:
-                # Settle the conflict arbitrarily
-                conflicts[e] = e
-                conflicts[(e[1], e[0]) + e[2:]] = e
-                elist.append(e)
+                elist.append(conflicts[e])
 
-        G.add_vertices(elist)
+        # All pairs of elements in elist are edges of the line graph
+        while elist:
+            x = elist.pop()
+            for y in elist:
+                G.add_edge(x, y)
 
-        # 2) adjacencies in the line graph
-        for v in g:
-            elist = []
+    return G
 
-            # Add the edge to the list, according to hashes, as previously
-            for e in g.edge_iterator(v, labels=labels):
-                if hash(e[0]) < hash(e[1]):
-                    elist.append(e)
-                elif hash(e[0]) > hash(e[1]):
-                    elist.append((e[1], e[0]) + e[2:])
-                else:
-                    elist.append(conflicts[e])
-
-            # Alls pairs of elements in elist are edges of the
-            # line graph
-            while elist:
-                x = elist.pop()
-                for y in elist:
-                    G.add_edge(x, y)
-
-        return G
 
 def root_graph(g, verbose=False):
     r"""
-    Return the root graph corresponding to the given graph ``g``
+    Return the root graph corresponding to the given graph ``g``.
 
     See the documentation of :mod:`sage.graphs.line_graph` to know how it works.
 
@@ -441,9 +437,9 @@ def root_graph(g, verbose=False):
         ....:    gl = g.line_graph(labels=False)
         ....:    d = root_graph(gl)
         sage: for i,g in enumerate(graphs(6)): # long time
-        ....:   if not g.is_connected():       # long time
-        ....:     continue                     # long time
-        ....:   test(g)                        # long time
+        ....:   if not g.is_connected():
+        ....:     continue
+        ....:   test(g)
 
     Non line-graphs::
 
@@ -490,7 +486,7 @@ def root_graph(g, verbose=False):
     # Diamond Graph ?
     elif g.order() == 4 and g.size() == 5:
         from sage.graphs.graph import Graph
-        root = Graph([(0,1),(1,2),(2,0),(0,3)])
+        root = Graph([(0, 1), (1, 2), (2, 0), (0, 3)])
         return (root,
                 g.is_isomorphic(root.line_graph(labels=False), certificate=True)[1])
 
@@ -573,7 +569,7 @@ def root_graph(g, verbose=False):
         # together in any clique we have found so far, we add xy to the list of
         # cliques describing our covering.
 
-        for x,y in [(u, v), (v, w), (w, u)]:
+        for x, y in [(u, v), (v, w), (w, u)]:
 
             # If edge xy does not appear in any of the cliques associated with y
             if all(x not in C for C in v_cliques[y]):
@@ -627,9 +623,4 @@ def root_graph(g, verbose=False):
     is_isom, isom = g.is_isomorphic(R.line_graph(labels=False), certificate=True)
     if is_isom:
         return R, isom
-    else:
-        raise ValueError(not_line_graph)
-
-
-
-
+    raise ValueError(not_line_graph)

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Linear feedback shift register (LFSR) sequence commands
 
@@ -10,13 +11,13 @@ considered "random". Define the autocorrelation of `{\bf a}` to be
 
 .. MATH::
 
-     C(k)=C(k,{\bf a})=\lim_{N\rightarrow \infty} {1\over N}\sum_{n=1}^N (-1)^{a_n+a_{n+k}}.
+     C(k)=C(k,{\bf a})=\lim_{N\rightarrow \infty} \frac{1}{N}\sum_{n=1}^N (-1)^{a_n+a_{n+k}}.
 
 In the case where `{\bf a}` is periodic with period `P`, then this reduces to
 
 .. MATH::
 
-     C(k)={1\over P}\sum_{n=1}^P (-1)^{a_n+a_{n+k}}.
+     C(k)=\frac{1}{P}\sum_{n=1}^P (-1)^{a_n+a_{n+k}}.
 
 Assume `{\bf a}` is periodic with period `P`.
 
@@ -67,14 +68,14 @@ be given polynomials in `{\bf F}_2[x]` and let
 
 .. MATH::
 
-     h(x)={f(x)\over g(x)}=c_0+c_1x+...+c_nx^n+... \ .
+     h(x)=\frac{f(x)}{g(x)}=c_0+c_1x+...+c_nx^n+... \ .
 
 We can compute a recursion formula which allows us to rapidly compute the
 coefficients of `h(x)` (take `f(x)=1`):
 
 .. MATH::
 
-     c_{n}=\sum_{i=1}^n {{-b_i\over b_0}c_{n-i}}.
+     c_{n}=\sum_{i=1}^n {\frac{-b_i}{b_0}c_{n-i}}.
 
 The coefficients of `h(x)` can, under certain conditions on `f(x)` and `g(x)`,
 be considered "random" from certain statistical points of view.
@@ -113,7 +114,6 @@ AUTHORS:
 
 - Timothy Brock (2006-04-17): added ``lfsr_autocorrelation`` and
   ``lfsr_connection_polynomial``.
-
 """
 
 ###########################################################################
@@ -128,8 +128,9 @@ AUTHORS:
 import copy
 
 from sage.structure.all import Sequence
-from sage.rings.all import Integer, PolynomialRing
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
+from sage.rings.finite_rings.finite_field_base import FiniteField
+from sage.rings.integer import Integer
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
 def lfsr_sequence(key, fill, n):
@@ -179,7 +180,7 @@ def lfsr_sequence(key, fill, n):
         raise TypeError("key must be a list")
     key = Sequence(key)
     F = key.universe()
-    if not is_FiniteField(F):
+    if not isinstance(F, FiniteField):
         raise TypeError("universe of sequence must be a finite field")
 
     s = fill
@@ -224,7 +225,7 @@ def lfsr_autocorrelation(L, p, k):
     k = int(k)
     L0 = L[:_p]     # slices makes a copy
     L0 = L0 + L0[:k]
-    return sum([int(L0[i]) * int(L0[i + k])/p for i in range(_p)])
+    return sum([int(L0[i]) * int(L0[i + k]) / p for i in range(_p)])
 
 
 def lfsr_connection_polynomial(s):
@@ -271,15 +272,15 @@ def lfsr_connection_polynomial(s):
 
     while N < len(s):
         if L > 0:
-            r = min(L+1, C.degree()+1)
-            d = s[N] + sum([(C.list())[i]*s[N-i] for i in range(1, r)])
+            r = min(L + 1, C.degree() + 1)
+            d = s[N] + sum([(C.list())[i] * s[N - i] for i in range(1, r)])
         if L == 0:
             d = s[N]
         if d == 0:
             m += 1
             N += 1
         if d > 0:
-            if 2*L > N:
+            if 2 * L > N:
                 C = C - d*b**(-1)*x**m*B
                 m += 1
                 N += 1

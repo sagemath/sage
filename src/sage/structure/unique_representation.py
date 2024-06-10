@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Unique Representation
 
@@ -21,13 +22,13 @@ Instances of a class have a *cached representation behavior* when several
 instances constructed with the same arguments share the same memory
 representation. For example, calling twice::
 
-    sage: G = SymmetricGroup(6)
-    sage: H = SymmetricGroup(6)
+    sage: G = SymmetricGroup(6)                                                         # needs sage.groups
+    sage: H = SymmetricGroup(6)                                                         # needs sage.groups
 
 to create the symmetric group on six elements gives back the same
 object::
 
-    sage: G is H
+    sage: G is H                                                                        # needs sage.groups
     True
 
 This is a standard design pattern. Besides saving memory, it allows for
@@ -179,7 +180,7 @@ preprocessing::
     sage: class WrongUsage(CachedRepresentation):
     ....:     @staticmethod
     ....:     def __classcall__(cls, n):
-    ....:         return super(WrongUsage,cls).__classcall__(cls, n^2)
+    ....:         return super().__classcall__(cls, n^2)
     ....:     def __init__(self, n):
     ....:         self.n = n
     ....:     def __repr__(self):
@@ -205,7 +206,7 @@ where it won't mess with the cache::
     sage: class BetterUsage(CachedRepresentation):
     ....:     @staticmethod
     ....:     def __classcall__(cls, n):
-    ....:         return super(BetterUsage, cls).__classcall__(cls, abs(n))
+    ....:         return super().__classcall__(cls, abs(n))
     ....:     def __init__(self, n):
     ....:         self.n = n^2
     ....:     def __repr__(self):
@@ -249,8 +250,8 @@ sub-class (in contrast to a ``__classcall_private__`` method!).  ::
     ....:     @staticmethod
     ....:     def __classcall__(cls, n, implementation=0):
     ....:         if implementation:
-    ....:             return super(C2, cls).__classcall__(cls, (n,)*implementation)
-    ....:         return super(C2, cls).__classcall__(cls, n)
+    ....:             return super().__classcall__(cls, (n,)*implementation)
+    ....:         return super().__classcall__(cls, n)
     ....:     def __init__(self, t):
     ....:         self.t = t
     ....:     def __repr__(self):
@@ -326,7 +327,7 @@ For creating a cached representation using a factory, one has to
 
 An example::
 
-    sage: class C(object):
+    sage: class C():
     ....:     def __init__(self, t):
     ....:         self.t = t
     ....:     def __repr__(self):
@@ -424,10 +425,10 @@ Class inheritance
 Using :class:`CachedRepresentation` has the advantage that one has a class and
 creates cached instances of this class by the usual Python syntax::
 
-    sage: G = SymmetricGroup(6)
-    sage: issubclass(SymmetricGroup, sage.structure.unique_representation.CachedRepresentation)
+    sage: G = SymmetricGroup(6)                                                                     # needs sage.groups
+    sage: issubclass(SymmetricGroup, sage.structure.unique_representation.CachedRepresentation)     # needs sage.groups
     True
-    sage: isinstance(G, SymmetricGroup)
+    sage: isinstance(G, SymmetricGroup)                                                             # needs sage.groups
     True
 
 In contrast, a factory is just a callable object that returns something that
@@ -439,8 +440,10 @@ instances of quite different classes::
     sage: K5 = GF(5)
     sage: type(K5)
     <class 'sage.rings.finite_rings.finite_field_prime_modn.FiniteField_prime_modn_with_category'>
+
+    sage: # needs sage.rings.finite_rings
     sage: K25 = GF(25, 'x')
-    sage: type(K25)
+    sage: type(K25)                                                                     # needs sage.libs.linbox
     <class 'sage.rings.finite_rings.finite_field_givaro.FiniteField_givaro_with_category'>
     sage: Kp = GF(next_prime_power(1000000)^2, 'x')
     sage: type(Kp)
@@ -498,8 +501,9 @@ behaviour. However, they do not show the *unique* representation behaviour,
 since they are equal to groups created in a totally different way, namely to
 subgroups::
 
+    sage: # needs sage.groups
     sage: G = SymmetricGroup(6)
-    sage: G3 = G.subgroup([G((1,2,3,4,5,6)),G((1,2))])
+    sage: G3 = G.subgroup([G((1,2,3,4,5,6)), G((1,2))])
     sage: G is G3
     False
     sage: type(G) == type(G3)
@@ -517,9 +521,9 @@ For example, a symmetric function algebra is uniquely determined by the base
 ring. Thus, it is reasonable to use :class:`UniqueRepresentation` in this
 case::
 
-    sage: isinstance(SymmetricFunctions(CC), SymmetricFunctions)
+    sage: isinstance(SymmetricFunctions(CC), SymmetricFunctions)                        # needs sage.combinat
     True
-    sage: issubclass(SymmetricFunctions, UniqueRepresentation)
+    sage: issubclass(SymmetricFunctions, UniqueRepresentation)                          # needs sage.combinat
     True
 
 :class:`UniqueRepresentation` differs from :class:`CachedRepresentation` only
@@ -533,7 +537,6 @@ provide unique representation behaviour, in spite of its name! Hence, for
 unique representation behaviour, one has to implement hash and equality test
 accordingly, for example by inheriting from
 :class:`~sage.misc.fast_methods.WithEqualityById`.
-
 """
 # ****************************************************************************
 #  Copyright (C) 2008 Nicolas M. Thiery <nthiery at users.sf.net>
@@ -550,7 +553,6 @@ accordingly, for example by inheriting from
 #
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-from __future__ import print_function
 
 from sage.misc.cachefunc import weak_cached_function
 from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall
@@ -599,7 +601,7 @@ class CachedRepresentation(metaclass=ClasscallMetaclass):
         ....:         return self.value == other.value
 
     Two coexisting instances of ``MyClass`` created with the same argument data
-    are guaranteed to share the same identity. Since :trac:`12215`, this is
+    are guaranteed to share the same identity. Since :issue:`12215`, this is
     only the case if there is some strong reference to the returned instance,
     since otherwise it may be garbage collected::
 
@@ -641,7 +643,7 @@ class CachedRepresentation(metaclass=ClasscallMetaclass):
         ....:     @staticmethod
         ....:     def __classcall__(cls, iterable):
         ....:         t = tuple(iterable)
-        ....:         return super(MyClass2, cls).__classcall__(cls, t)
+        ....:         return super().__classcall__(cls, t)
         ....:
         ....:     def __init__(self, value):
         ....:         self.value = value
@@ -668,7 +670,7 @@ class CachedRepresentation(metaclass=ClasscallMetaclass):
         sage: class MyClass3(UniqueRepresentation):
         ....:     @staticmethod
         ....:     def __classcall__(cls, value = 3):
-        ....:         return super(MyClass3, cls).__classcall__(cls, value)
+        ....:         return super().__classcall__(cls, value)
         ....:
         ....:     def __init__(self, value):
         ....:         self.value = value
@@ -717,7 +719,7 @@ class CachedRepresentation(metaclass=ClasscallMetaclass):
         sage: class WrongUsage(CachedRepresentation):
         ....:     @staticmethod
         ....:     def __classcall__(cls, n):
-        ....:         return super(WrongUsage,cls).__classcall__(cls, n^2)
+        ....:         return super().__classcall__(cls, n^2)
         ....:     def __init__(self, n):
         ....:         self.n = n
         ....:     def __repr__(self):
@@ -743,7 +745,7 @@ class CachedRepresentation(metaclass=ClasscallMetaclass):
         sage: class BetterUsage(CachedRepresentation):
         ....:     @staticmethod
         ....:     def __classcall__(cls, n):
-        ....:         return super(BetterUsage, cls).__classcall__(cls, abs(n))
+        ....:         return super().__classcall__(cls, abs(n))
         ....:     def __init__(self, n):
         ....:         self.n = n^2
         ....:     def __repr__(self):
@@ -884,7 +886,7 @@ class CachedRepresentation(metaclass=ClasscallMetaclass):
     older pickles can still be reasonably unpickled. Let us create a
     (new style) class, and pickle one of its instances::
 
-        sage: class MyClass4(object):
+        sage: class MyClass4():
         ....:     def __init__(self, value):
         ....:         self.value = value
         sage: import __main__; __main__.MyClass4 = MyClass4  # Fake MyClass4 being defined in a python module
@@ -1006,7 +1008,7 @@ class CachedRepresentation(metaclass=ClasscallMetaclass):
             True
         """
         instance = typecall(cls, *args, **options)
-        assert isinstance( instance, cls )
+        assert isinstance(instance, cls)
         if instance.__class__.__reduce__ == CachedRepresentation.__reduce__:
             instance._reduction = (cls, args, options)
         return instance
@@ -1029,7 +1031,7 @@ class CachedRepresentation(metaclass=ClasscallMetaclass):
             sage: class B(A):
             ....:     @staticmethod
             ....:     def __classcall__(cls, *args, **kwds):
-            ....:          return super(B,cls).__classcall__(cls,*args,**kwds)
+            ....:          return super().__classcall__(cls,*args,**kwds)
             sage: class C(B): pass
             sage: a = A(1)
             sage: b = B(2)
@@ -1062,7 +1064,7 @@ class CachedRepresentation(metaclass=ClasscallMetaclass):
             ....:     @staticmethod
             ....:     def __classcall_private__(cls, *args, **kwds):
             ....:         print("Private B")
-            ....:         return super(B,cls).__classcall__(cls,*args,**kwds)
+            ....:         return super().__classcall__(cls,*args,**kwds)
             sage: class C(B): pass
             sage: a = A(1)
             sage: b = B(2)
@@ -1088,16 +1090,14 @@ class CachedRepresentation(metaclass=ClasscallMetaclass):
             sage: c is C(3)
             False
         """
-        del_list = []
         cache = None
+        # not clear why the loop below is taking the last C
         for C in cls.mro():
             try:
                 cache = C.__classcall__.cache
             except AttributeError:
                 pass
-        for k in cache:
-            if issubclass(k[0][0],cls):
-                del_list.append(k)
+        del_list = [k for k in cache if issubclass(k[0][0], cls)]
         for k in del_list:
             del cache[k]
 
@@ -1147,6 +1147,7 @@ class CachedRepresentation(metaclass=ClasscallMetaclass):
         """
         return self
 
+
 def unreduce(cls, args, keywords):
     """
     Calls a class on the given arguments::
@@ -1164,7 +1165,7 @@ def unreduce(cls, args, keywords):
 
 class UniqueRepresentation(CachedRepresentation, WithEqualityById):
     r"""
-    Classes derived from UniqueRepresentation inherit a unique
+    Classes derived from ``UniqueRepresentation`` inherit a unique
     representation behavior for their instances.
 
     .. SEEALSO::
@@ -1189,15 +1190,15 @@ class UniqueRepresentation(CachedRepresentation, WithEqualityById):
     the same memory representation), if and only if they were created using
     equal arguments. For example, calling twice::
 
-        sage: f = SymmetricFunctions(QQ)
-        sage: g = SymmetricFunctions(QQ)
+        sage: f = SymmetricFunctions(QQ)                                                # needs sage.combinat sage.modules
+        sage: g = SymmetricFunctions(QQ)                                                # needs sage.combinat sage.modules
 
     to create the symmetric function algebra over `\QQ` actually gives back the
     same object::
 
-        sage: f == g
+        sage: f == g                                                                    # needs sage.combinat sage.modules
         True
-        sage: f is g
+        sage: f is g                                                                    # needs sage.combinat sage.modules
         True
 
     This is a standard design pattern. It allows for sharing cached data (say
@@ -1212,21 +1213,17 @@ class UniqueRepresentation(CachedRepresentation, WithEqualityById):
     derive from it, or make sure some of its super classes does. Also, it
     groups together the class and the factory in a single gadget::
 
-        sage: isinstance(SymmetricFunctions(CC), SymmetricFunctions)
+        sage: isinstance(SymmetricFunctions(CC), SymmetricFunctions)                    # needs sage.combinat sage.modules
         True
-        sage: issubclass(SymmetricFunctions, UniqueRepresentation)
+        sage: issubclass(SymmetricFunctions, UniqueRepresentation)                      # needs sage.combinat sage.modules
         True
 
     This nice behaviour is not available when one just uses a factory::
 
-        sage: isinstance(GF(7), GF)  # py2
+        sage: isinstance(GF(7), GF)
         Traceback (most recent call last):
         ...
-        TypeError: isinstance() arg 2 must be a class, type, or tuple of classes and types
-        sage: isinstance(GF(7), GF)  # py3
-        Traceback (most recent call last):
-        ...
-        TypeError: isinstance() arg 2 must be a type or tuple of types
+        TypeError: isinstance() arg 2 must be a type...
 
         sage: isinstance(GF, sage.structure.factory.UniqueFactory)
         True
@@ -1254,7 +1251,7 @@ class UniqueRepresentation(CachedRepresentation, WithEqualityById):
         ....:         self.value = value
 
     Two coexisting instances of ``MyClass`` created with the same argument
-    data are guaranteed to share the same identity. Since :trac:`12215`, this
+    data are guaranteed to share the same identity. Since :issue:`12215`, this
     is only the case if there is some strong reference to the returned
     instance, since otherwise it may be garbage collected::
 

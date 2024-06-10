@@ -1,12 +1,11 @@
+# sage.doctest: needs sage.combinat sage.graphs
 r"""
 Elements of Hecke modular forms spaces
 
 AUTHORS:
 
 - Jonas Jermann (2013): initial version
-
 """
-from __future__ import absolute_import
 
 # ****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
@@ -31,10 +30,10 @@ class FormsElement(FormsRingElement):
 
         INPUT:
 
-        - ``parent``     -- a modular form space
+        - ``parent`` -- a modular form space
 
-        - ``rat``        -- a rational function which corresponds to a
-                            modular form in the modular form space
+        - ``rat`` -- a rational function which corresponds to a
+          modular form in the modular form space
 
         OUTPUT:
 
@@ -64,14 +63,14 @@ class FormsElement(FormsRingElement):
             sage: ss_el.parent()
             Subspace of dimension 1 of ModularForms(n=5, k=20/3, ep=1) over Integer Ring
         """
-        super(FormsElement, self).__init__(parent, rat)
+        super().__init__(parent, rat)
 
         if self.AT(["quasi"]) >= self._analytic_type:
             pass
         elif not (self.is_homogeneous() and
                   self._weight == parent.weight() and
                   self._ep == parent.ep()):
-                raise ValueError("{} does not correspond to an element of {}.".format(rat, parent))
+            raise ValueError("{} does not correspond to an element of {}.".format(rat, parent))
 
         from .subspace import SubSpaceForms
         if isinstance(parent, SubSpaceForms) and (parent._module is not None):
@@ -111,7 +110,7 @@ class FormsElement(FormsRingElement):
             sage: latex(QuasiModularForms(n=infinity, k=8, ep=1)(x*(x-y^2)))
             -E_{4} f_{i}^{2} + E_{4}^{2}
         """
-        return super(FormsElement, self)._latex_()
+        return super()._latex_()
 
     def coordinate_vector(self):
         r"""
@@ -189,14 +188,14 @@ class FormsElement(FormsRingElement):
 
         INPUT:
 
-        - ``num_prec``           -- An integer denoting the to-be-used numerical precision.
-                                    If integer ``num_prec=None`` (default) the default
-                                    numerical precision of the parent of ``self`` is used.
+        - ``num_prec`` -- An integer denoting the to-be-used numerical precision.
+          If integer ``num_prec=None`` (default) the default
+          numerical precision of the parent of ``self`` is used.
 
         - ``max_imaginary_part`` -- A real number (default: 0), indicating up to which
-                                    imaginary part the L-series is going to be studied.
+          imaginary part the L-series is going to be studied.
 
-        - ``max_asymp_coeffs``   -- An integer (default: 40).
+        - ``max_asymp_coeffs`` -- An integer (default: 40).
 
         OUTPUT:
 
@@ -261,16 +260,17 @@ class FormsElement(FormsRingElement):
             sage: L(10).n(53)
             -13.0290184579...
 
-            sage: f = (ModularForms(n=17, k=24).Delta()^2)    # long time
-            sage: L = f.lseries()    # long time
-            sage: L.check_functional_equation() < 2^(-50)    # long time
+            sage: # long time
+            sage: f = (ModularForms(n=17, k=24).Delta()^2)
+            sage: L = f.lseries()
+            sage: L.check_functional_equation() < 2^(-50)
             True
-            sage: L.taylor_series(12, 3)    # long time
+            sage: L.taylor_series(12, 3)
             0.000683924755280... - 0.000875942285963...*z + 0.000647618966023...*z^2 + O(z^3)
-            sage: coeffs = f.q_expansion_vector(min_exp=0, max_exp=20, fix_d=True)    # long time
-            sage: sum([coeffs[k]*k^(-30) for k in range(1,len(coeffs))]).n(53)    # long time
+            sage: coeffs = f.q_expansion_vector(min_exp=0, max_exp=20, fix_d=True)
+            sage: sum([coeffs[k]*k^(-30) for k in range(1,len(coeffs))]).n(53)
             9.31562890589...e-10
-            sage: L(30).n(53)    # long time
+            sage: L(30).n(53)
             9.31562890589...e-10
 
             sage: f = ModularForms(n=infinity, k=2, ep=-1).f_i()
@@ -285,9 +285,9 @@ class FormsElement(FormsRingElement):
             sage: L(10).n(53)
             -23.9781792831...
         """
-        from sage.rings.all import ZZ
-        from sage.symbolic.all import pi
-        from sage.functions.other import sqrt
+        from sage.rings.integer_ring import ZZ
+        from sage.symbolic.constants import pi
+        from sage.misc.functional import sqrt
         from sage.lfunctions.dokchitser import Dokchitser
 
         if (not (self.is_modular() and self.is_holomorphic()) or self.weight() == 0):
@@ -336,7 +336,7 @@ class FormsElement(FormsRingElement):
 
         # num_coeffs = L.num_coeffs()
         num_coeffs = L.num_coeffs(1.2)
-        coeff_vector = [coeff for coeff in self.q_expansion_vector(min_exp=0, max_exp=num_coeffs + 1, fix_d=True)]
+        coeff_vector = list(self.q_expansion_vector(min_exp=0, max_exp=num_coeffs + 1, fix_d=True))
         pari_precode = "coeff = {};".format(coeff_vector)
 
         L.init_coeffs(v="coeff[k+1]", pari_precode=pari_precode,

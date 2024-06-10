@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Super Lie Conformal Algebras
 
@@ -21,22 +22,23 @@ from sage.categories.super_modules import SuperModulesCategory
 from sage.misc.abstract_method import abstract_method
 from sage.categories.lambda_bracket_algebras import LambdaBracketAlgebras
 
+
 class SuperLieConformalAlgebras(SuperModulesCategory):
     r"""
     The category of super Lie conformal algebras.
 
     EXAMPLES::
 
-        sage: LieConformalAlgebras(AA).Super()
+        sage: LieConformalAlgebras(AA).Super()                                          # needs sage.rings.number_field
         Category of super Lie conformal algebras over Algebraic Real Field
 
     Notice that we can force to have a *purely even* super Lie
     conformal algebra::
 
-        sage: bosondict = {('a','a'):{1:{('K',0):1}}}
-        sage: R = LieConformalAlgebra(QQ,bosondict,names=('a',),
+        sage: bosondict = {('a','a'): {1:{('K',0):1}}}
+        sage: R = LieConformalAlgebra(QQ, bosondict, names=('a',),                      # needs sage.combinat sage.modules
         ....:                         central_elements=('K',), super=True)
-        sage: [g.is_even_odd() for g in R.gens()]
+        sage: [g.is_even_odd() for g in R.gens()]                                       # needs sage.combinat sage.modules
         [0, 0]
     """
     def extra_super_categories(self):
@@ -47,7 +49,7 @@ class SuperLieConformalAlgebras(SuperModulesCategory):
 
             sage: LieConformalAlgebras(QQ).Super().super_categories()
             [Category of super modules over Rational Field,
-             Category of Lambda bracket algebras over Rational Field]     
+             Category of Lambda bracket algebras over Rational Field]
         """
         return [LambdaBracketAlgebras(self.base_ring())]
 
@@ -57,7 +59,7 @@ class SuperLieConformalAlgebras(SuperModulesCategory):
 
         EXAMPLES::
 
-            sage: LieConformalAlgebras(QQ).Super().example()
+            sage: LieConformalAlgebras(QQ).Super().example()                            # needs sage.combinat sage.modules
             The Neveu-Schwarz super Lie conformal algebra over Rational Field
         """
         from sage.algebras.lie_conformal_algebras.neveu_schwarz_lie_conformal_algebra\
@@ -79,32 +81,33 @@ class SuperLieConformalAlgebras(SuperModulesCategory):
             By default, this method tests only the elements returned by
             ``self.some_elements()``::
 
-                sage: V = lie_conformal_algebras.Affine(QQ, 'B2')
-                sage: V._test_jacobi()      # long time (6 seconds)
+                sage: V = lie_conformal_algebras.Affine(QQ, 'B2')                       # needs sage.combinat sage.modules
+                sage: V._test_jacobi()          # long time (6 seconds)                 # needs sage.combinat sage.modules
 
             It works for super Lie conformal algebras too::
 
-                sage: V = lie_conformal_algebras.NeveuSchwarz(QQ)
-                sage: V._test_jacobi()
+                sage: V = lie_conformal_algebras.NeveuSchwarz(QQ)                       # needs sage.combinat sage.modules
+                sage: V._test_jacobi()                                                  # needs sage.combinat sage.modules
 
             We can use specific elements by passing the ``elements``
             keyword argument::
 
-                sage: V = lie_conformal_algebras.Affine(QQ, 'A1', names=('e', 'h', 'f'))
-                sage: V.inject_variables()
+                sage: V = lie_conformal_algebras.Affine(QQ, 'A1',                       # needs sage.combinat sage.modules
+                ....:                                   names=('e', 'h', 'f'))
+                sage: V.inject_variables()                                              # needs sage.combinat sage.modules
                 Defining e, h, f, K
-                sage: V._test_jacobi(elements=(e, 2*f+h, 3*h))
+                sage: V._test_jacobi(elements=(e, 2*f + h, 3*h))                        # needs sage.combinat sage.modules
 
             TESTS::
 
-                sage: wrongdict = {('a', 'a'): {0: {('b', 0): 1}}, ('b', 'a'): {0: {('a', 0): 1}}}
-                sage: V = LieConformalAlgebra(QQ, wrongdict, names=('a', 'b'), parity=(1, 0))
-                sage: V._test_jacobi()
+                sage: wrongdict = {('a', 'a'): {0: {('b', 0): 1}},
+                ....:              ('b', 'a'): {0: {('a', 0): 1}}}
+                sage: V = LieConformalAlgebra(QQ, wrongdict,                            # needs sage.combinat sage.modules
+                ....:                         names=('a', 'b'), parity=(1, 0))
+                sage: V._test_jacobi()                                                  # needs sage.combinat sage.modules
                 Traceback (most recent call last):
                 ...
-                AssertionError: {(0, 0): -3*a} != {}
-                - {(0, 0): -3*a}
-                + {}
+                AssertionError: {(0, 0): -3*a} != {} - {(0, 0): -3*a} + {}
             """
             tester = self._tester(**options)
             S = tester.some_elements()
@@ -122,7 +125,7 @@ class SuperLieConformalAlgebras(SuperModulesCategory):
                 elements.append(s)
             S = elements
             from sage.misc.misc import some_tuples
-            from sage.functions.other import binomial
+            from sage.arith.misc import binomial
             pz = tester._instance.zero()
             for x,y,z in some_tuples(S, 3, tester._max_runs):
                 if x.is_zero() or y.is_zero():
@@ -162,10 +165,10 @@ class SuperLieConformalAlgebras(SuperModulesCategory):
 
             EXAMPLES::
 
-                sage: R = lie_conformal_algebras.NeveuSchwarz(QQ);
-                sage: R.inject_variables()
+                sage: R = lie_conformal_algebras.NeveuSchwarz(QQ)                       # needs sage.combinat sage.modules
+                sage: R.inject_variables()                                              # needs sage.combinat sage.modules
                 Defining L, G, C
-                sage: G.is_even_odd()
+                sage: G.is_even_odd()                                                   # needs sage.combinat sage.modules
                 1
             """
 
@@ -175,7 +178,7 @@ class SuperLieConformalAlgebras(SuperModulesCategory):
 
         EXAMPLES::
 
-            sage: LieConformalAlgebras(AA).Super().Graded()
+            sage: LieConformalAlgebras(AA).Super().Graded()                             # needs sage.rings.number_field
             Category of H-graded super Lie conformal algebras over Algebraic Real Field
         """
         def _repr_object_names(self):
@@ -184,7 +187,7 @@ class SuperLieConformalAlgebras(SuperModulesCategory):
 
             EXAMPLES::
 
-                sage: LieConformalAlgebras(QQbar).Graded()
+                sage: LieConformalAlgebras(QQbar).Graded()                              # needs sage.rings.number_field
                 Category of H-graded Lie conformal algebras over Algebraic Field
             """
             return "H-graded {}".format(self.base_category()._repr_object_names())

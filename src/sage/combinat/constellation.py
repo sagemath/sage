@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.groups
 r"""
 Constellations
 
@@ -48,6 +48,7 @@ EXAMPLES::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from itertools import repeat, product
 
 from sage.structure.element import parent
 from sage.structure.parent import Parent
@@ -56,13 +57,15 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.richcmp import (op_NE, op_EQ, richcmp_not_equal,
                                     rich_to_bool)
 
-from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.rings.integer import Integer
 from sage.combinat.partition import Partition
-from sage.graphs.graph import Graph
 from sage.misc.misc_c import prod
+from sage.misc.lazy_import import lazy_import
 from sage.categories.groups import Groups
 
+lazy_import('sage.graphs.graph', 'Graph')
+lazy_import('sage.graphs.digraph', 'DiGraph')
+lazy_import('sage.groups.perm_gps.permgroup_named', 'SymmetricGroup')
 
 # constructors
 
@@ -183,6 +186,7 @@ class Constellation_class(Element):
     A constellation or a tuple of permutations `(g_0,g_1,...,g_k)`
     such that the product `g_0 g_1 ... g_k` is the identity.
     """
+
     def __init__(self, parent, g, connected, mutable, check):
         r"""
         TESTS::
@@ -222,7 +226,7 @@ class Constellation_class(Element):
             True
         """
         if self._mutable:
-            raise ValueError("can not hash mutable constellation")
+            raise ValueError("cannot hash mutable constellation")
         return hash(tuple(self._g))
 
     def set_immutable(self):
@@ -398,7 +402,7 @@ class Constellation_class(Element):
             sage: c is copy(c)
             False
         """
-        return self.parent()([gg for gg in self._g],
+        return self.parent()(list(self._g),
                              check=False,
                              mutable=self._mutable)
 
@@ -415,7 +419,7 @@ class Constellation_class(Element):
             sage: d.is_mutable()
             True
         """
-        return self.parent()([gg for gg in self._g],
+        return self.parent()(list(self._g),
                              check=False,
                              mutable=True)
 
@@ -474,13 +478,13 @@ class Constellation_class(Element):
         G.add_vertices(list(range(self.degree())))
         for p in self._g:
             G.add_edges(enumerate(p.domain()), loops=False)
-        m = G.connected_components()
+        m = G.connected_components(sort=False)
         if len(m) == 1:
             return [self]
         for mm in m:
             mm.sort()
         m.sort()
-        g = [[] for _ in range(len(m))]
+        g = [[] for _ in repeat(None, len(m))]
         m_inv = [None] * self.degree()
         for t, mt in enumerate(m):
             for i, mti in enumerate(mt):
@@ -563,7 +567,7 @@ class Constellation_class(Element):
             True
         """
         if return_map:
-            if not(self.degree() == other.degree() and
+            if not (self.degree() == other.degree() and
                    self.length() == other.length()):
                 return False, None
             sn, sn_map = self.relabel(return_map=True)
@@ -775,7 +779,7 @@ class Constellation_class(Element):
 
         # compute canonical labels
         if not self.is_connected():
-            raise ValueError("No canonical labels implemented for"
+            raise ValueError("no canonical labels implemented for"
                              " non connected constellation")
 
         # get the permutations on {0, 1, ..., d-1}
@@ -884,8 +888,6 @@ class Constellation_class(Element):
             sage: G.num_edges()
             12
         """
-        from sage.graphs.digraph import DiGraph
-
         G = DiGraph(multiedges=True, loops=True)
         waiting = [self.relabel()]
 
@@ -1112,7 +1114,7 @@ class Constellations_ld(UniqueRepresentation, Parent):
         else:
             raise ValueError("at most one permutation can be None")
 
-        g = [self._sym(_) for _ in g]
+        g = [self._sym(w) for w in g]
 
         if i is not None:
             h = self._sym.one()
@@ -1222,7 +1224,7 @@ class Constellations_ld(UniqueRepresentation, Parent):
             sage: [x.profile() for x in O[2]]
             [([2, 1], [2, 1], [3]), ([2, 1], [3], [2, 1]), ([3], [2, 1], [2, 1])]
         """
-        return [g.vertices() for g in self.braid_group_action()]
+        return [g.vertices(sort=True) for g in self.braid_group_action()]
 
 
 class Constellations_p(UniqueRepresentation, Parent):
@@ -1271,6 +1273,7 @@ class Constellations_p(UniqueRepresentation, Parent):
         sage: len(C.isomorphism_representatives())
         1
     """
+
     def __init__(self, profile, domain=None, connected=True):
         r"""
         OPTIONS:
@@ -1406,8 +1409,6 @@ class Constellations_p(UniqueRepresentation, Parent):
             g1 ('a','d','b')('c')
             g2 ('a','b')('c','d')
         """
-        from sage.misc.mrange import cartesian_product_iterator
-
         if self._cd._length == 1:
             if self._cd._degree == 1:
                 yield self([[0]])
@@ -1415,8 +1416,7 @@ class Constellations_p(UniqueRepresentation, Parent):
 
         S = self._cd._sym
         profile = list(self._profile)[:-1]
-        for p in cartesian_product_iterator([S.conjugacy_class(pi)
-                                             for pi in profile]):
+        for p in product(*[S.conjugacy_class(pi) for pi in profile]):
             if self._cd._connected and not perms_are_connected(p, self._cd._degree):
                 continue
             c = self._cd(list(p) + [None], check=False)
@@ -1537,7 +1537,6 @@ def perms_are_connected(g, n):
         sage: perms_are_connected([S([0,1,2]),S([1,2,0])],3)
         True
     """
-    from sage.graphs.graph import Graph
     G = Graph()
     if g:
         G.add_vertices(g[0].domain())
@@ -1557,7 +1556,7 @@ def perms_canonical_labels_from(x, y, j0, verbose=False):
 
     INPUT:
 
-    - ``x`` -- list - a permutation of `[0, ..., n]` as a list
+    - ``x`` -- list; a permutation of `[0, ..., n]` as a list
 
     - ``y`` -- list of permutations of `[0, ..., n]` as a list of lists
 
@@ -1583,7 +1582,7 @@ def perms_canonical_labels_from(x, y, j0, verbose=False):
 
     k = 0
     mapping = [None] * n
-    waiting = [[] for i in range(len(y))]
+    waiting = [[] for _ in repeat(None, len(y))]
 
     while k < n:
         if verbose:

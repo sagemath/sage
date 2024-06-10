@@ -17,7 +17,6 @@ EXAMPLES::
     ...
     ValueError: As the characteristic divides the order of the cover, this model is not smooth.
 
-
     sage: GF7x.<x> = GF(7)[]
     sage: C = CyclicCover(3, x^9 + x + 1)
     sage: C
@@ -28,11 +27,7 @@ EXAMPLES::
     Traceback (most recent call last):
     ...
     NotImplementedError: Weighted Projective Space is not implemented
-
-
-
 """
-from __future__ import absolute_import
 
 # *****************************************************************************
 #  Copyright (C) 2018 Edgar Costa <edgarc@mit.edu>
@@ -40,11 +35,10 @@ from __future__ import absolute_import
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.rings.polynomial.all import PolynomialRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.category_object import normalize_names
 from sage.arith.misc import GCD
 from sage.schemes.curves.affine_curve import AffinePlaneCurve
-
 
 
 class CyclicCover_generic(AffinePlaneCurve):
@@ -54,13 +48,13 @@ class CyclicCover_generic(AffinePlaneCurve):
 
         INPUT:
 
-        - ``A`` - ambient affine space
+        - ``A`` -- ambient affine space
 
-        - ``r`` - degree of the cover
+        - ``r`` -- degree of the cover
 
-        -  ``f`` - univariate polynomial
+        -  ``f`` -- univariate polynomial
 
-        -  ``names``  (default: ``["x","y"]``) - names for the
+        -  ``names``  (default: ``["x","y"]``) -- names for the
            coordinate functions
 
         TESTS::
@@ -77,7 +71,8 @@ class CyclicCover_generic(AffinePlaneCurve):
             sage: C.change_ring(GF(5))
             Traceback (most recent call last):
             ...
-            ValueError: As the characteristic divides the order of the cover, this model is not smooth.
+            ValueError: As the characteristic divides the order of the cover,
+            this model is not smooth.
 
 
             sage: GF7x.<x> = GF(7)[]
@@ -90,9 +85,6 @@ class CyclicCover_generic(AffinePlaneCurve):
             Traceback (most recent call last):
             ...
             NotImplementedError: Weighted Projective Space is not implemented
-
-
-
         """
         x, y = AA.gens()
         self._r = r
@@ -120,11 +112,13 @@ class CyclicCover_generic(AffinePlaneCurve):
             sage: C.change_ring(GF(5))
             Traceback (most recent call last):
             ...
-            ValueError: As the characteristic divides the order of the cover, this model is not smooth.
+            ValueError: As the characteristic divides the order of the cover,
+            this model is not smooth.
             sage: C.change_ring(GF(3))
             Traceback (most recent call last):
             ...
-            ValueError: Not a smooth Cyclic Cover of P^1: singularity in the provided affine patch.
+            ValueError: Not a smooth Cyclic Cover of P^1: singularity in the
+            provided affine patch.
             sage: C.change_ring(GF(17))
             Cyclic Cover of P^1 over Finite Field of size 17 defined by y^5 = x^5 + x + 1
         """

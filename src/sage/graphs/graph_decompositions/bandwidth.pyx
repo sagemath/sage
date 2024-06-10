@@ -1,3 +1,4 @@
+# cython: binding=True
 r"""
 Bandwidth of undirected graphs
 
@@ -25,8 +26,8 @@ ordered as `v_1,...,v_n` in such a way that `k \times d_G(v_i,v_j) \geq |i-j|` t
 
     .. MATH::
 
-        k \times d_G(v_i,v_j) &=    k\times d_G(v_i,v_{s_0}) + k\times d_G(v_{s_0},v_{s_1}) + ... + k\times d_G(v_{s_{i-1}},v_{s_i}) + k\times d_G(v_{s_i},v_j)\\
-                              &\geq |v_i-v_{s_0}| + |v_{s_0}-v_{s_1}| + ... + |v_{s_{i-1}}-v_{s_i}| + |v_{s_i}-v_j|\\
+        k \times d_G(v_i,v_j) &= k\times d_G(v_i,v_{s_0}) + k\times d_G(v_{s_0},v_{s_1}) + \cdots + k\times d_G(v_{s_{i-1}},v_{s_i}) + k\times d_G(v_{s_i},v_j)\\
+                              &\geq |v_i-v_{s_0}| + |v_{s_0}-v_{s_1}| + \cdots + |v_{s_{i-1}}-v_{s_i}| + |v_{s_i}-v_j|\\
                               &\geq |v_i-v_j|\\
 
 Satisfiability of a partial assignment
@@ -108,21 +109,21 @@ Functions
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from libc.stdint cimport uint16_t
 from cysignals.signals cimport sig_check
+from memory_allocator cimport MemoryAllocator
 
 from sage.graphs.distances_all_pairs cimport all_pairs_shortest_path_BFS
-from sage.graphs.base.boost_graph import bandwidth_heuristics
-from sage.ext.memory_allocator cimport MemoryAllocator
 
 ctypedef uint16_t index_t
 
 ctypedef struct range_t:
     index_t m
     index_t M
+
 
 def bandwidth(G, k=None):
     r"""
@@ -159,7 +160,7 @@ def bandwidth(G, k=None):
         False
         sage: bandwidth(G)
         (5, [0, 4, 5, 8, 1, 9, 3, 7, 6, 2])
-        sage: G.adjacency_matrix(vertices=[0, 4, 5, 8, 1, 9, 3, 7, 6, 2])
+        sage: G.adjacency_matrix(vertices=[0, 4, 5, 8, 1, 9, 3, 7, 6, 2])               # needs sage.modules
         [0 1 1 0 1 0 0 0 0 0]
         [1 0 0 0 0 1 1 0 0 0]
         [1 0 0 1 0 0 0 1 0 0]
@@ -173,7 +174,7 @@ def bandwidth(G, k=None):
         sage: G = graphs.ChvatalGraph()
         sage: bandwidth(G)
         (6, [0, 5, 9, 4, 10, 1, 6, 11, 3, 8, 7, 2])
-        sage: G.adjacency_matrix(vertices=[0, 5, 9, 4, 10, 1, 6, 11, 3, 8, 7, 2])
+        sage: G.adjacency_matrix(vertices=[0, 5, 9, 4, 10, 1, 6, 11, 3, 8, 7, 2])       # needs sage.modules
         [0 0 1 1 0 1 1 0 0 0 0 0]
         [0 0 0 1 1 1 0 1 0 0 0 0]
         [1 0 0 0 1 0 0 1 1 0 0 0]
@@ -190,7 +191,7 @@ def bandwidth(G, k=None):
     TESTS::
 
         sage: bandwidth(2*graphs.PetersenGraph())
-        (5, [0, 4, 5, 8, 1, 9, 3, 7, 6, 2, 10, 14, 15, 18, 11, 19, 13, 17, 16, 12])
+        (5, [0, 4, 5, 8, 1, 9, 3, 7, 6, 2, 10, 14, 11, 19, 15, 16, 13, 12, 17, 18])
         sage: bandwidth(Graph())
         (0, [])
         sage: bandwidth(Graph(1))
@@ -248,12 +249,12 @@ def bandwidth(G, k=None):
     cdef index_t * current = <index_t *> mem.allocarray(n, sizeof(index_t))
     cdef index_t * ordering = <index_t *> mem.allocarray(n, sizeof(index_t))
     cdef index_t * left_to_order = <index_t *> mem.allocarray(n, sizeof(index_t))
-    cdef index_t * index_array_tmp  = <index_t *> mem.allocarray(n, sizeof(index_t))
+    cdef index_t * index_array_tmp = <index_t *> mem.allocarray(n, sizeof(index_t))
     cdef range_t * range_arrays = <range_t *> mem.allocarray(n*n, sizeof(range_t))
-    cdef range_t ** ith_range_array  = <range_t **> mem.allocarray(n, sizeof(range_t *))
-    cdef range_t * range_array_tmp  = <range_t *> mem.allocarray(n, sizeof(range_t))
+    cdef range_t ** ith_range_array = <range_t **> mem.allocarray(n, sizeof(range_t *))
+    cdef range_t * range_array_tmp = <range_t *> mem.allocarray(n, sizeof(range_t))
 
-    cdef int i, j, kk
+    cdef int i, kk
     # compute the distance matrix
     all_pairs_shortest_path_BFS(G, NULL, distances, NULL, vertex_list=int_to_vertex)
 
@@ -287,13 +288,13 @@ def bandwidth(G, k=None):
 
 
 cdef bint bandwidth_C(int n, int k,
-                     unsigned short ** d,
-                     index_t * current,           # choice of vertex for the current position
-                     index_t * ordering,          # the actual ordering of vertices
-                     index_t * left_to_order,     # begins with the assigned vertices, ends with the others
-                     index_t * index_array_tmp,   # tmp space
-                     range_t ** ith_range_array,  # array of ranges, for every step of the algorithm
-                     range_t * range_array_tmp):  # tmp space
+                      unsigned short ** d,
+                      index_t * current,           # choice of vertex for the current position
+                      index_t * ordering,          # the actual ordering of vertices
+                      index_t * left_to_order,     # begins with the assigned vertices, ends with the others
+                      index_t * index_array_tmp,   # tmp space
+                      range_t ** ith_range_array,  # array of ranges, for every step of the algorithm
+                      range_t * range_array_tmp) noexcept:  # tmp space
 
     cdef int i, v
     cdef int pi  # the position for which a vertex is being chosen
@@ -330,8 +331,7 @@ cdef bint bandwidth_C(int n, int k,
         vi = left_to_order[current[i]]
 
         # If pi is not an admissible position for pi:
-        if (ith_range_array[i][vi].m > pi or
-            ith_range_array[i][vi].M < pi):
+        if ith_range_array[i][vi].m > pi or ith_range_array[i][vi].M < pi:
             continue
 
         # As the choice is admissible, we update left_to_order so that
@@ -366,7 +366,7 @@ cdef bint bandwidth_C(int n, int k,
             # swap back
             left_to_order[i], left_to_order[current[i]] = left_to_order[current[i]], left_to_order[i]
 
-cdef bint is_matching_feasible(int n, range_t * range_array, range_t * range_array_tmp, index_t * index_array_tmp):
+cdef bint is_matching_feasible(int n, range_t * range_array, range_t * range_array_tmp, index_t * index_array_tmp) noexcept:
     r"""
     Test if the matching is feasible
 
@@ -392,12 +392,11 @@ cdef bint is_matching_feasible(int n, range_t * range_array, range_t * range_arr
     cdef int v, M, m, j
     for v in range(n):
         if range_array[v].M < range_array[v].m:
-            # print range_array[v].m, range_array[v].M
             return 0
         index_array_tmp[v] = 0
 
     # Sort the guys according to increasing value of M in O(n).
-    #
+
     # Step 1: count the occurrences of each M
     for v in range(n):
         index_array_tmp[range_array[v].M] += 1

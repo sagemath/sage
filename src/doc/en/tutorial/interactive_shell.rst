@@ -13,8 +13,8 @@ Sage, you get output similar to the following:
 .. CODE-BLOCK:: text
 
     ┌────────────────────────────────────────────────────────────────────┐
-    │ SageMath version 9.0, Release Date: 2020-01-01                     │
-    │ Using Python 3.7.3. Type "help()" for help.                        │
+    │ SageMath version 9.7, Release Date: 2022-01-10                     │
+    │ Using Python 3.10.4. Type "help()" for help.                       │
     └────────────────────────────────────────────────────────────────────┘
 
 
@@ -28,7 +28,7 @@ To quit Sage either press Ctrl-D or type
 ::
 
     sage: quit
-    Exiting SAGE (CPU time 0m0.00s, Wall time 0m0.89s)
+    Exiting Sage (CPU time 0m0.00s, Wall time 0m0.89s)
 
 The wall time is the time that elapsed on the clock hanging from
 your wall. This is relevant, since CPU time does not track time
@@ -173,8 +173,8 @@ file).
 
     was@form:~$ sage
     ┌────────────────────────────────────────────────────────────────────┐
-    │ SageMath version 9.0, Release Date: 2020-01-01                     │
-    │ Using Python 3.7.3. Type "help()" for help.                        │
+    │ SageMath version 9.7, Release Date: 2022-01-10                     │
+    │ Using Python 3.10.4. Type "help()" for help.                       │
     └────────────────────────────────────────────────────────────────────┘
 
     sage: logstart setup
@@ -189,11 +189,11 @@ file).
     sage: x,y = QQ['x,y'].gens()
     sage: G = E.gens()
     sage:
-    Exiting SAGE (CPU time 0m0.61s, Wall time 0m50.39s).
+    Exiting Sage (CPU time 0m0.61s, Wall time 0m50.39s).
     was@form:~$ sage
     ┌────────────────────────────────────────────────────────────────────┐
-    │ SageMath version 9.0, Release Date: 2020-01-01                     │
-    │ Using Python 3.7.3. Type "help()" for help.                        │
+    │ SageMath version 9.7, Release Date: 2022-01-10                     │
+    │ Using Python 3.10.4. Type "help()" for help.                       │
     └────────────────────────────────────────────────────────────────────┘
 
     sage: load("setup")
@@ -314,7 +314,7 @@ the ``cputime`` command, as illustrated below:
 
     sage: cputime?
     ...
-        Return the time in CPU second since SAGE started, or with optional
+        Return the time in CPU second since Sage started, or with optional
         argument t, return the time since time t.
         INPUT:
             t -- (optional) float, time in CPU seconds
@@ -383,33 +383,6 @@ IPython documentation <http://ipython.scipy.org/moin/Documentation>`_.
 Meanwhile, here are some fun tricks -- these are called "Magic
 commands" in IPython:
 
-- You can use ``%bg`` to run a command in the background, and then use
-  ``jobs`` to access the results, as follows.  (The comments ``not
-  tested`` are here because the ``%bg`` syntax doesn't work well with
-  Sage's automatic testing facility.  If you type this in yourself, it
-  should work as written.  This is of course most useful with commands
-  which take a while to complete.)
-
-  ::
-
-    sage: def quick(m): return 2*m
-    sage: %bg quick(20)  # not tested
-    Starting job # 0 in a separate thread.
-    sage: jobs.status()  # not tested
-    Completed jobs:
-    0 : quick(20)
-    sage: jobs[0].result  # the actual answer, not tested
-    40
-
-  Note that jobs run in the background don't use the Sage preparser --
-  see :ref:`section-mathannoy` for more information.  One
-  (perhaps awkward) way to get around this would be to run ::
-
-    sage: %bg eval(preparse('quick(20)')) # not tested
-
-  It is safer and easier, though, to just use ``%bg`` on commands
-  which don't require the preparser.
-
 - You can use ``%edit`` (or ``%ed`` or ``ed``) to open an editor, if
   you want to type in some complex code.  Before you start Sage, make
   sure that the :envvar:`EDITOR` environment variable is set to your
@@ -453,7 +426,7 @@ Errors and Exceptions
 When something goes wrong, you will usually see a Python
 "exception". Python even tries to suggest what raised the
 exception. Often you see the name of the exception, e.g.,
-``NameError`` or ``ValueError`` (see the Python Reference Manual [Py]_
+:class:`NameError` or :class:`ValueError` (see the Python Library Reference [PyLR]_
 for a complete list of exceptions). For example,
 
 .. skip
@@ -465,7 +438,7 @@ for a complete list of exceptions). For example,
        File "<console>", line 1
          ZZ(3)_2
                ^
-    SyntaxError: invalid syntax
+    SyntaxError: invalid ...
 
     sage: EllipticCurve([0,infinity])
     ------------------------------------------------------------
@@ -488,7 +461,7 @@ execution stack. For example,
     Automatic pdb calling has been turned ON
     sage: EllipticCurve([1,infinity])
     ---------------------------------------------------------------------------
-    <type 'exceptions.TypeError'>             Traceback (most recent call last)
+    <class 'exceptions.TypeError'>             Traceback (most recent call last)
     ...
 
     ipdb>
@@ -549,7 +522,7 @@ You can also use the following more concise notation:
     sage: V = QQ^3
 
 Then it is easy to list all member functions for :math:`V` using tab
-completion. Just type ``V.``, then type the ``[tab key]`` key on your
+completion. Just type ``V.``, then type the :kbd:`Tab` key on your
 keyboard:
 
 .. skip
@@ -567,7 +540,7 @@ keyboard:
     ...
     V.zero_vector
 
-If you type the first few letters of a function, then ``[tab key]``,
+If you type the first few letters of a function, then the :kbd:`Tab` key,
 you get only functions that begin as indicated.
 
 .. skip
@@ -583,7 +556,6 @@ coordinates function, type ``V.coordinates?`` for help or
 section.
 
 
-
 Integrated Help System
 ======================
 
@@ -597,7 +569,7 @@ followed by ? for the documentation for that function.
     sage: V = QQ^3
     sage: V.coordinates?
     Type:           instancemethod
-    Base Class:     <type 'instancemethod'>
+    Base Class:     <class 'instancemethod'>
     String Form:    <bound method FreeModule_ambient_field.coordinates of Vector
     space of dimension 3 over Rational Field>
     Namespace:      Interactive
@@ -696,15 +668,25 @@ manpage-like help file about a given class.
 ::
 
     sage: help(VectorSpace)
-    Help on class VectorSpace ...
+    Help on function VectorSpace in module sage.modules.free_module:
 
-    class VectorSpace(__builtin__.object)
-     |  Create a Vector Space.
-     |
-     |  To create an ambient space over a field with given dimension
-     |  using the calling syntax ...
-     :
-     :
+    VectorSpace(K, dimension_or_basis_keys=None, sparse=False, inner_product_matrix=None, *,
+                with_basis='standard', dimension=None, basis_keys=None, **args)
+    EXAMPLES:
+
+    The base can be complicated, as long as it is a field.
+
+    ::
+
+        sage: V = VectorSpace(FractionField(PolynomialRing(ZZ,'x')),3)
+        sage: V
+        Vector space of dimension 3 over Fraction Field of Univariate Polynomial Ring in x
+         over Integer Ring
+        sage: V.basis()
+        [
+        (1, 0, 0),
+        (0, 1, 0),
+    --More--
 
 When you type ``q`` to exit the help system, your session appears
 just as it was. The help listing does not clutter up your session,

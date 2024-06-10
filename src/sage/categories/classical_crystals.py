@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-categories
+# sage.doctest: needs sage.graphs sage.combinat
 r"""
 Classical Crystals
 """
@@ -107,10 +109,9 @@ class ClassicalCrystals(Category_singleton):
         """
         return None
 
-
     class ParentMethods:
 
-        def demazure_character(self, w, f = None):
+        def demazure_character(self, w, f=None):
             r"""
             Return the Demazure character associated to ``w``.
 
@@ -181,7 +182,7 @@ class ClassicalCrystals(Category_singleton):
             u = self.algebra(ZZ).sum_of_monomials(self.module_generators)
             u = self.demazure_operator(u, word)
             if f is None:
-                from sage.symbolic.all import SR as P
+                from sage.symbolic.ring import SR as P
                 x = [P.var('x%s' % (i+1)) for i in range(n)]
                 # TODO: use P.linear_combination when PolynomialRing will be a ModulesWithBasis
                 return sum((coeff*prod((x[i]**(c.weight()[i]) for i in range(n)), P.one()) for c, coeff in u), P.zero())
@@ -478,4 +479,3 @@ class ClassicalCrystals(Category_singleton):
                 [Category of classical crystals]
             """
             return [self.base_category()]
-

@@ -32,9 +32,9 @@ primary focus is number theory. There are two very distinct
 interfaces that you can use in Sage:
 
 
--  ``gp`` - the "**G** o **P** ARI" interpreter, and
+-  ``gp`` -- the "**G** o **P** ARI" interpreter, and
 
--  ``pari`` - the PARI C library.
+-  ``pari`` -- the PARI C library.
 
 
 For example, the following are two ways of doing the same thing.
@@ -64,7 +64,7 @@ objects have different types:
     sage: type(gp('znprimroot(10007)'))
     <class 'sage.interfaces.gp.GpElement'>
     sage: type(pari('znprimroot(10007)'))
-    <type 'cypari2.gen.Gen'>
+    <class 'cypari2.gen.Gen'>
 
 So which should you use? It depends on what you're doing. The GP
 interface can do absolutely anything you could do in the usual
@@ -100,7 +100,7 @@ First we create a PARI list from a Python list.
     sage: v
     [1, 2, 3, 4, 5]
     sage: type(v)
-    <type 'cypari2.gen.Gen'>
+    <class 'cypari2.gen.Gen'>
 
 Every PARI object is of type ``Gen``. The PARI type of the
 underlying object can be obtained using the ``type`` member
@@ -267,8 +267,8 @@ whose :math:`i,j` entry is :math:`i/j`, for
     matrix([1,1/2,1/3,1/4],[0,0,0,0],[0,0,0,0],[0,0,0,0])
     sage: A.eigenvalues()
     [[0,4],[3,1]]
-    sage: A.eigenvectors()
-    [[[0,4],[3,1]],[[[1,0,0,-4],[0,1,0,-2],[0,0,1,-4/3]],[[1,2,3,4]]]]
+    sage: A.eigenvectors().sage()
+    [[[0, 4], [3, 1]], [[[1, 0, 0, -4], [0, 1, 0, -2], [0, 0, 1, -4/3]], [[1, 2, 3, 4]]]]
 
 Here's another example:
 
@@ -320,8 +320,8 @@ The next plot is the famous Klein bottle (do not type the ``....:``)::
 
     sage: maxima("expr_1: 5*cos(x)*(cos(x/2)*cos(y) + sin(x/2)*sin(2*y)+ 3.0) - 10.0")
     5*cos(x)*(sin(x/2)*sin(2*y)+cos(x/2)*cos(y)+3.0)-10.0
-    sage: maxima("expr_2: -5*sin(x)*(cos(x/2)*cos(y) + sin(x/2)*sin(2*y)+ 3.0)")
-    -5*sin(x)*(sin(x/2)*sin(2*y)+cos(x/2)*cos(y)+3.0)
+    sage: maxima("expr_2: -5*sin(x)*(cos(x/2)*cos(y) + sin(x/2)*sin(2*y)+ 3.0)").sage()
+    -5*(cos(1/2*x)*cos(y) + sin(1/2*x)*sin(2*y) + 3.0)*sin(x)
     sage: maxima("expr_3: 5*(-sin(x/2)*cos(y) + cos(x/2)*sin(2*y))")
     5*(cos(x/2)*sin(2*y)-sin(x/2)*cos(y))
     sage: maxima.plot3d ("[expr_1, expr_2, expr_3]", "[x, -%pi, %pi]",  # not tested

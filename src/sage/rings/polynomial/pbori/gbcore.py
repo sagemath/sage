@@ -1,40 +1,39 @@
-
-from .nf import *
-from .PyPolyBoRi import *
-from .ll import eliminate, ll_encode
+import contextlib
 from copy import copy
 from itertools import chain
+from inspect import getfullargspec as getargspec
+
+from .nf import GeneratorLimitExceeded, symmGB_F2_C, symmGB_F2_python
+from .pbori import GroebnerStrategy, ll_red_nf_redsb
+from .PyPolyBoRi import (Monomial, Polynomial,
+                         OrderCode)
+from .ll import eliminate, ll_encode
 from .statistics import used_vars_set
 from .heuristics import dense_system, gauss_on_linear
 from .easy_polynomials import easy_linear_polynomials
 from .interpolate import lex_groebner_basis_for_polynomial_via_variety
 from .fglm import _fglm
 
-from inspect import getfullargspec as getargspec
-
 
 def get_options_from_function(f):
     (argnames, varargs, varopts, defaults) = getargspec(f)[:4]
-    return dict(
-        zip(
-            argnames[-len(defaults):], defaults))
+    return dict(zip(argnames[-len(defaults):], defaults))
 
 
 def filter_oldstyle_options(**options):
-    filtered = dict()
-    for key in options.keys():
+    filtered = {}
+    for key in options:
         newkey = key
-        for prefix in ['', 'use_', 'opt_allow_', 'opt_']:
+        for prefix in ['use_', 'opt_allow_', 'opt_']:
             newkey = newkey.replace(prefix, '')
         filtered[newkey] = options[key]
-
     return filtered
 
 
 def filter_newstyle_options(func, **options):
     allowed = get_options_from_function(func).keys()
-    filtered = dict()
-    for key in options.keys():
+    filtered = {}
+    for key in options:
         for prefix in ['', 'use_', 'opt_', 'opt_allow_']:
             if prefix + key in allowed:
                 filtered[prefix + key] = options[key]
@@ -42,27 +41,11 @@ def filter_newstyle_options(func, **options):
     return filtered
 
 
-def owns_one_constant(I):
-    """Determines whether I contains the constant one polynomial."""
-    for p in I:
-        if p.is_one():
-            return True
-    return False
-
-
 def want_interpolation_gb(G):
-    if not G:
-        return False
-    if G[0].ring().get_order_code() != OrderCode.lp:
-        return False
-    if len(G) != 1:
+    if not G or G[0].ring().get_order_code() != OrderCode.lp or len(G) != 1:
         return False
     p = Polynomial(G[0])
-    if p.lead_deg() <= 1:
-        return False
-    if p.set().n_nodes() > 1000:
-        return False
-    return True
+    return not (p.lead_deg() <= 1 or p.set().n_nodes() > 1000)
 
 
 def ll_is_good(I):
@@ -77,8 +60,7 @@ def ll_is_good(I):
         if len(lex_lead) > 0.9 * uv:
             if uv - len(lex_lead) > 16:
                 return "llfirstonthefly"
-            else:
-                return "llfirst"
+            return "llfirst"
     return False
 
 
@@ -99,7 +81,7 @@ def change_order_heuristic(d):
     if not I:
         return d
     switch_table = {OrderCode.lp: OrderCode.dp_asc, OrderCode.dlex: OrderCode.
-        dp_asc}
+                    dp_asc}
     if "other_ordering_first" not in d:
         # TODO after ll situation might look much different, so heuristic is on
         # wrong place
@@ -171,14 +153,12 @@ def trivial_heuristic(d):
     return d
 
 
-class HeuristicalFunction(object):
+class HeuristicalFunction:
     def __call__(self, *args, **kwds):
         complete_dict = copy(kwds)
         heuristic = True
-        try:
+        with contextlib.suppress(KeyError):
             heuristic = complete_dict["heuristic"]
-        except KeyError:
-            pass
         for (k, v) in zip(self.argnames, args):
             complete_dict[k] = v
         if heuristic:
@@ -191,7 +171,7 @@ class HeuristicalFunction(object):
             self.options = f.options
         else:
             self.options = dict(zip(self.argnames[-len(self.defaults):], self.
-                defaults))
+                                    defaults))
         self.heuristicFunction = heuristic_function
         self.f = f
         self.__doc__ = f.__doc__
@@ -205,52 +185,42 @@ def with_heuristic(heuristic_function):
     return make_wrapper
 
 
-def clean_polys(I):
-    I = list(set((Polynomial(p) for p in I if not Polynomial(p).is_zero())))
-    return I
-
-
 def clean_polys_pre(I):
-    return (clean_polys(I), None)
+    wrap = (Polynomial(p) for p in I)
+    return (list({p for p in wrap if not p.is_zero()}), None)
 
 
 def gb_with_pre_post_option(option, pre=None,
-                            post=None, if_not_option=tuple(),
+                            post=None, if_not_option=(),
                             default=False):
     def make_wrapper(f):
         def wrapper(I, **kwds):
             prot = kwds.get("prot", False)
             for o in if_not_option:
                 if (o in kwds and kwds[o]) or (o not in kwds and
-                        groebner_basis.options[o]):
+                                               groebner_basis.options[o]):
                     option_set = False
             if "option_set" not in locals():
-                if option in kwds:
-
-                    option_set = kwds[option]
-                else:
-                    option_set = default
-            kwds = dict(((o, kwds[o]) for o in kwds if o != option))
+                option_set = kwds.get(option, default)
+            kwds = {o: kwds[o] for o in kwds if o != option}
             state = None
 
-            if option_set:
-                if pre:
-                    pre_args = getargspec(pre)[0]
-                    if prot:
-                        print("preprocessing for option:", option)
+            if option_set and pre:
+                pre_args = getargspec(pre)[0]
+                if prot:
+                    print("preprocessing for option:", option)
 
-                    local_symbols = copy(locals())
-                    (I, state) = pre(**dict([(k, v) for (k, v) in
-                        local_symbols.items() if k in pre_args]))
+                local_symbols = copy(locals())
+                (I, state) = pre(**{k: v for (k, v) in local_symbols.items()
+                                    if k in pre_args})
             I = f(I, **kwds)
-            if option_set:
-                if post:
-                    post_args = getargspec(post)[0]
-                    if prot:
-                        print("postprocessing for option:", option)
-                    local_symbols = copy(locals())
-                    I = post(**{k: v for (k, v) in local_symbols.items()
-                                if k in post_args})
+            if option_set and post:
+                post_args = getargspec(post)[0]
+                if prot:
+                    print("postprocessing for option:", option)
+                local_symbols = copy(locals())
+                I = post(**{k: v for (k, v) in local_symbols.items()
+                            if k in post_args})
 
             return I
         wrapper.__name__ = f.__name__
@@ -267,17 +237,15 @@ def gb_with_pre_post_option(option, pre=None,
 
 
 def redsb_post(I, state):
-    if I == []:
+    if not I:
         return []
-    else:
-        return I.minimalize_and_tail_reduce()
+    return I.minimalize_and_tail_reduce()
 
 
 def minsb_post(I, state):
-    if I == []:
+    if not I:
         return []
-    else:
-        return I.minimalize()
+    return I.minimalize()
 
 
 def invert_all(I):
@@ -300,15 +268,15 @@ def llfirst_pre(I, prot):
 def ll_constants_pre(I):
     ll_res = []
 
-    while len([p for p in I if p.lex_lead_deg() == 1 and
-    (p + p.lex_lead()).constant()]) > 0:
+    while any(p.lex_lead_deg() == 1 and (p + p.lex_lead()).constant()
+              for p in I):
         I_new = []
         ll = []
         leads = set()
         for p in I:
             if p.lex_lead_deg() == 1:
                 l = p.lead()
-                if not (l in leads) and p.is_singleton_or_pair():
+                if l not in leads and p.is_singleton_or_pair():
                     tail = p + l
                     if tail.deg() <= 0:
                         ll.append(p)
@@ -318,9 +286,9 @@ def ll_constants_pre(I):
         encoded = ll_encode(ll)
         reduced = []
         for p in I_new:
-            p = ll_red_nf_redsb(p, encoded)
-            if not p.is_zero():
-                reduced.append(p)
+            rp = ll_red_nf_redsb(p, encoded)
+            if not rp.is_zero():
+                reduced.append(rp)
         I = reduced
         ll_res.extend(ll)
     return (I, ll_res)
@@ -330,9 +298,9 @@ def variety_size_from_gb(I):
     """
     TESTS::
 
-        sage: from sage.rings.polynomial.pbori.frontend import *
+        sage: from sage.rings.polynomial.pbori import Ring, Monomial, Polynomial
         sage: from sage.rings.polynomial.pbori.gbcore import variety_size_from_gb
-        sage: r=Ring(100)
+        sage: r = Ring(100)
         sage: x = r.variable
         sage: variety_size_from_gb([])
         1
@@ -355,9 +323,9 @@ def variety_size_from_gb(I):
         sage: variety_size_from_gb(mons)
         1.2676506002282294e+30
     """
-    I = [Polynomial(p) for p in I]
+    I = (Polynomial(p) for p in I)
     I = [p for p in I if not p.is_zero()]
-    if len(I) == 0:
+    if not I:
         return 1
 #     # TODO Here's something wrong! See the example with 5 solutions.
 #     # (reverting for now)
@@ -441,21 +409,19 @@ def llfirst_post(I, state, prot, kwds):
     for p in I:
         if p.is_one():
             return [p]
-    else:
-        if len(eliminated) > 0:
-            I = list(chain(I, eliminated))
-            # redsb just for safety, as don't know how option is set
-            kwds = copy(kwds)
-            kwds.update(
-                dict(llfirst=False,
-                llfirstonthefly=False,
-                ll_constants=False,
-                deg_bound=False,
-                other_ordering_first=False,
-                eliminate_identical_variables=False, redsb=True))
-            I = groebner_basis(
-                I, **kwds
-            )
+
+    if eliminated:
+        I = list(chain(I, eliminated))
+        # redsb just for safety, as don't know how option is set
+        kwds = copy(kwds)
+        kwds.update(
+            {'llfirst': False,
+             'llfirstonthefly': False,
+             'll_constants': False,
+             'deg_bound': False,
+             'other_ordering_first': False,
+             'eliminate_identical_variables': False, 'redsb': True})
+        I = groebner_basis(I, **kwds)
     return I
 
 
@@ -464,11 +430,10 @@ def ll_constants_post(I, state):
     for p in I:
         if p.is_one():
             return [p]
-    else:
-        if len(eliminated) > 0:
-            I = list(chain(I, eliminated))
-            # redsb just for safety, as don't know how option is set
-        return I
+    if eliminated:
+        I = list(chain(I, eliminated))
+        # redsb just for safety, as don't know how option is set
+    return I
 
 
 def result_to_list_post(I, state):
@@ -478,8 +443,7 @@ def result_to_list_post(I, state):
 def fix_deg_bound_post(I, state):
     if isinstance(I, GroebnerStrategy):
         return I.all_generators()
-    else:
-        return I
+    return I
 
 
 def incremental_pre(I, prot, kwds):
@@ -506,15 +470,14 @@ def eliminate_identical_variables_pre(I, prot):
     treated_linears = set()
     while changed:
         changed = False
-        rules = dict()
+        rules = {}
         for p in I:
             t = p + p.lead()
             if p.lead_deg() == 1:
                 l = p.lead()
                 if l in treated_linears:
                     continue
-                else:
-                    treated_linears.add(l)
+                treated_linears.add(l)
                 if t.deg() > 0:
                     rules.setdefault(t, [])
                     leads = rules[t]
@@ -522,57 +485,64 @@ def eliminate_identical_variables_pre(I, prot):
 
         def my_sort_key(l):
             return l.navigation().value()
-        for (t, leads) in rules.items():
+
+        for t, leads in rules.items():
             if len(leads) > 1:
                 changed = True
-                leads = sorted(leads, key=my_sort_key, reverse=True)
-                chosen = leads[0]
-                for v in leads[1:]:
-                    ll_system.append(chosen + v)
-    if len(ll_system) > 0:
+                sleads = sorted(leads, key=my_sort_key, reverse=True)
+                chosen = sleads[0]
+                ll_system.extend(chosen + v for v in sleads[1:])
+    if ll_system:
         ll_encoded = ll_encode(ll_system, reduce=True)
-        I = set([ll_red_nf_redsb(p, ll_encoded) for p in I])
+        I = {ll_red_nf_redsb(p, ll_encoded) for p in I}
     return (I, ll_system)
 
 
 @gb_with_pre_post_option("clean_arguments", pre=clean_polys_pre, default=True)
 @gb_with_pre_post_option("easy_linear_polynomials",
-    pre=easy_linear_polynomials_pre, default=True)
+                         pre=easy_linear_polynomials_pre, default=True)
 @gb_with_pre_post_option("result_to_list", post=result_to_list_post,
-    default=True)
+                         default=True)
 @with_heuristic(interpolation_gb_heuristic)
 @gb_with_pre_post_option("invert", pre=invert_all_pre,
-    post=invert_all_post, default=False)
+                         post=invert_all_post, default=False)
 @gb_with_pre_post_option("gauss_on_linear", pre=gauss_on_linear_pre,
-    default=True)
+                         default=True)
 @gb_with_pre_post_option("ll_constants", pre=ll_constants_pre,
-    post=ll_constants_post, default=True)
+                         post=ll_constants_post, default=True)
 @gb_with_pre_post_option("eliminate_identical_variables",
-    pre=eliminate_identical_variables_pre, post=llfirst_post, default=True)
+                         pre=eliminate_identical_variables_pre,
+                         post=llfirst_post, default=True)
 @with_heuristic(ll_heuristic)
 @gb_with_pre_post_option("llfirst", if_not_option=["llfirstonthefly"],
-    pre=llfirst_pre, post=llfirst_post, default=False)
+                         pre=llfirst_pre, post=llfirst_post, default=False)
 @gb_with_pre_post_option("llfirstonthefly", pre=llfirstonthefly_pre,
-    post=llfirst_post, default=False)
+                         post=llfirst_post, default=False)
 @gb_with_pre_post_option("incremental", pre=incremental_pre)
 @with_heuristic(change_order_heuristic)
 @gb_with_pre_post_option("other_ordering_first", if_not_option=[
     "interpolation_gb"], pre=other_ordering_pre, default=False)
 @with_heuristic(linear_algebra_heuristic)
 @gb_with_pre_post_option("fix_deg_bound", if_not_option=["interpolation_gb"],
-    post=fix_deg_bound_post, default=True)
-@gb_with_pre_post_option("minsb", post=minsb_post, if_not_option=["redsb",
-    "deg_bound", "interpolation_gb", "convert_with_fglm_from_ring"],
-    default=True)
-@gb_with_pre_post_option("redsb", post=redsb_post, if_not_option=["deg_bound",
-    "interpolation_gb", "convert_with_fglm_from_ring"], default=True)
+                         post=fix_deg_bound_post, default=True)
+@gb_with_pre_post_option("minsb", post=minsb_post,
+                         if_not_option=["redsb", "deg_bound",
+                                        "interpolation_gb",
+                                        "convert_with_fglm_from_ring"],
+                         default=True)
+@gb_with_pre_post_option("redsb", post=redsb_post,
+                         if_not_option=["deg_bound", "interpolation_gb",
+                                        "convert_with_fglm_from_ring"],
+                         default=True)
 def groebner_basis(I, heuristic=True, unique_ideal_generator=False,
-        interpolation_gb=False, clean_and_restart_algorithm=False,
-        convert_with_fglm_from_ring=None, convert_with_fglm_to_ring=None,
-        fglm_bound=40000,
-        modified_linear_algebra=True, preprocessor=None, deg_bound=False,
-        implementation="Python", full_prot=False, prot=False,
-        draw_matrices=False, preprocess_only=False, **impl_options):
+                   interpolation_gb=False, clean_and_restart_algorithm=False,
+                   convert_with_fglm_from_ring=None,
+                   convert_with_fglm_to_ring=None,
+                   fglm_bound=40000,
+                   modified_linear_algebra=True, preprocessor=None,
+                   deg_bound=False,
+                   implementation="Python", full_prot=False, prot=False,
+                   draw_matrices=False, preprocess_only=False, **impl_options):
     """Computes a Groebner basis of a given ideal I, w.r.t options."""
 
     if not I:
@@ -601,10 +571,7 @@ def groebner_basis(I, heuristic=True, unique_ideal_generator=False,
             prod = (p + 1) * prod
         I = [prod + 1]
 
-    if implementation == "Python":
-        implementation = symmGB_F2_python
-    else:
-        implementation = symmGB_F2_C
+    implementation = symmGB_F2_python if implementation == 'Python' else symmGB_F2_C
 
     # custom preprocessing
     if preprocessor:
@@ -618,15 +585,17 @@ def groebner_basis(I, heuristic=True, unique_ideal_generator=False,
 
     def call_algorithm(I, max_generators=None):
         return implementation(I,
-            deg_bound=deg_bound,
-            full_prot=full_prot,
-            prot=prot,
-            max_generators=max_generators, draw_matrices=draw_matrices,
-            **filter_newstyle_options(implementation, **impl_options))
+                              deg_bound=deg_bound,
+                              full_prot=full_prot,
+                              prot=prot,
+                              max_generators=max_generators,
+                              draw_matrices=draw_matrices,
+                              **filter_newstyle_options(implementation,
+                                                        **impl_options))
 
     if clean_and_restart_algorithm:
         for max_generators in [1000, 10000, 50000, 100000, 200000, 300000,
-                400000, None]:
+                               400000, None]:
             try:
                 return call_algorithm(I, max_generators=max_generators)
             except GeneratorLimitExceeded as e:
@@ -634,37 +603,31 @@ def groebner_basis(I, heuristic=True, unique_ideal_generator=False,
                 del e.strat
                 if prot:
                     print("generator limit exceeded:", max_generators,
-                        "restarting algorithm")
+                          "restarting algorithm")
     else:
         return call_algorithm(I)
 
 
 def build_groebner_basis_doc_string():
-    additional_options_from_buchberger = filter_oldstyle_options(**
-        get_options_from_function(symmGB_F2_python))
+    additional_options_from_buchberger = filter_oldstyle_options(
+        **get_options_from_function(symmGB_F2_python))
     for k in list(additional_options_from_buchberger):
         if k in groebner_basis.options:
             del additional_options_from_buchberger[k]
 
-    groebner_basis.__doc__ = (groebner_basis.__doc__ + "\nOptions are:\n" +
-        "\n".join((k + "  :  " + repr(groebner_basis.options[k]) for k in
-        groebner_basis.options)) + """
+    gdoc = groebner_basis.__doc__
+    gdoc += "\nOptions are:\n"
+    gdoc += "\n".join(k + "  :  " + repr(groebner_basis.options[k])
+                      for k in groebner_basis.options)
+    gdoc += """
 
 Turn off heuristic by setting heuristic=False
   Additional options come from the actual buchberger implementation.
   In case of our standard Python implementation these are the following:
-
-""" + "\n".join((k + "  :  " + repr(additional_options_from_buchberger[k])
-                 for k in additional_options_from_buchberger)))
+"""
+    gdoc += "\n".join(k + "  :  " + repr(additional_options_from_buchberger[k])
+                      for k in additional_options_from_buchberger)
+    groebner_basis.__doc__ = gdoc
 
 
 build_groebner_basis_doc_string()
-
-
-def _test():
-    import doctest
-    doctest.testmod()
-
-
-if __name__ == "__main__":
-    _test()

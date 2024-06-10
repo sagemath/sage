@@ -1,24 +1,24 @@
 diff --git a/Makefile b/Makefile
-index 74941a6..70e7b68 100644
+index abd00d0f..10c31390 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -12,7 +12,6 @@ include SuiteSparse_config/SuiteSparse_config.mk
- # Compile the default rules for each package
+@@ -16,7 +16,6 @@ include SuiteSparse_config/SuiteSparse_config.mk
+ # installs all libraries SuiteSparse/lib.
  go: metis
  	( cd SuiteSparse_config && $(MAKE) )
--	( cd Mongoose  && $(MAKE) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' )
+-	( cd Mongoose && $(MAKE) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' )
  	( cd AMD && $(MAKE) )
  	( cd BTF && $(MAKE) )
  	( cd CAMD && $(MAKE) )
-@@ -30,7 +29,6 @@ ifneq ($(GPU_CONFIG),)
+@@ -34,7 +33,6 @@ ifneq ($(GPU_CONFIG),)
  	( cd GPUQREngine && $(MAKE) )
  endif
  	( cd SPQR && $(MAKE) )
 -	( cd GraphBLAS && $(MAKE) JOBS=$(JOBS) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' )
+ 	( cd SLIP_LU && $(MAKE) )
  #	( cd PIRO_BAND && $(MAKE) )
  #	( cd SKYLINE_SVD && $(MAKE) )
- 
-@@ -38,7 +36,6 @@ endif
+@@ -46,7 +44,6 @@ endif
  # (note that CSparse is not installed; CXSparse is installed instead)
  install: metisinstall
  	( cd SuiteSparse_config && $(MAKE) install )
@@ -26,15 +26,15 @@ index 74941a6..70e7b68 100644
  	( cd AMD && $(MAKE) install )
  	( cd BTF && $(MAKE) install )
  	( cd CAMD && $(MAKE) install )
-@@ -55,7 +52,6 @@ ifneq (,$(GPU_CONFIG))
+@@ -63,7 +60,6 @@ ifneq (,$(GPU_CONFIG))
  	( cd GPUQREngine && $(MAKE) install )
  endif
  	( cd SPQR && $(MAKE) install )
 -	( cd GraphBLAS && $(MAKE) JOBS=$(JOBS) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' install )
  #	( cd PIRO_BAND && $(MAKE) install )
  #	( cd SKYLINE_SVD && $(MAKE) install )
- 	$(CP) README.txt $(INSTALL_DOC)/SuiteSparse_README.txt
-@@ -116,7 +112,6 @@ endif
+ 	( cd SLIP_LU && $(MAKE) install )
+@@ -126,7 +122,6 @@ endif
  # the static library
  library: metis
  	( cd SuiteSparse_config && $(MAKE) )
@@ -42,15 +42,15 @@ index 74941a6..70e7b68 100644
  	( cd AMD && $(MAKE) library )
  	( cd BTF && $(MAKE) library )
  	( cd CAMD && $(MAKE) library )
-@@ -134,7 +129,6 @@ ifneq (,$(GPU_CONFIG))
+@@ -144,7 +139,6 @@ ifneq (,$(GPU_CONFIG))
  	( cd GPUQREngine && $(MAKE) library )
  endif
  	( cd SPQR && $(MAKE) library )
 -	( cd GraphBLAS && $(MAKE) JOBS=$(JOBS) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' library )
+ 	( cd SLIP_LU && $(MAKE) library )
  #	( cd PIRO_BAND && $(MAKE) library )
  #	( cd SKYLINE_SVD && $(MAKE) library )
- 
-@@ -143,7 +137,6 @@ endif
+@@ -154,7 +148,6 @@ endif
  # both the dynamic and static libraries.
  static: metis
  	( cd SuiteSparse_config && $(MAKE) static )
@@ -58,11 +58,33 @@ index 74941a6..70e7b68 100644
  	( cd AMD && $(MAKE) static )
  	( cd BTF && $(MAKE) static )
  	( cd CAMD && $(MAKE) static )
-@@ -161,7 +154,6 @@ ifneq (,$(GPU_CONFIG))
+@@ -172,7 +165,6 @@ ifneq (,$(GPU_CONFIG))
  	( cd GPUQREngine && $(MAKE) static )
  endif
  	( cd SPQR && $(MAKE) static )
 -	( cd GraphBLAS && $(MAKE) JOBS=$(JOBS) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' static )
+ 	( cd SLIP_LU && $(MAKE) static )
  #	( cd PIRO_BAND && $(MAKE) static )
  #	( cd SKYLINE_SVD && $(MAKE) static )
+@@ -291,21 +283,3 @@ else
+ 	@echo 'Using pre-installed METIS 5.1.0 library at ' '[$(MY_METIS_LIB)]'
+ endif
  
+-# just compile GraphBLAS
+-gb:
+-	echo $(CMAKE_OPTIONS)
+-	( cd GraphBLAS && $(MAKE) JOBS=$(JOBS) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' )
+-
+-# just install GraphBLAS
+-gbinstall:
+-	echo $(CMAKE_OPTIONS)
+-	( cd GraphBLAS && $(MAKE) JOBS=$(JOBS) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' install )
+-
+-# just compile Mongoose
+-mon:
+-	( cd Mongoose && $(MAKE) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' )
+-
+-# just install Mongoose
+-moninstall:
+-	( cd Mongoose  && $(MAKE) CMAKE_OPTIONS='$(CMAKE_OPTIONS)' install )
+-

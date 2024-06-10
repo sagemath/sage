@@ -19,18 +19,15 @@ cdef class GLPKExactBackend(GLPKBackend):
     """
     MIP Backend that runs the GLPK solver in exact rational simplex mode.
 
-    The only access to data is via double-precision floats, however. It
-    reconstructs rationals from doubles and also provides results
-    as doubles.
+    The only access to data is via double-precision floats, which
+    means that rationals in the input data may be rounded before
+    the exact solver sees them. Thus, it is unreasonable to expect
+    that arbitrary LPs with rational coefficients are solved exactly.
+    Once the LP has been read into the backend, it reconstructs
+    rationals from doubles and does solve exactly over the rationals,
+    but results are returned as as doubles.
 
     There is no support for integer variables.
-
-    TESTS:
-
-    General backend testsuite::
-
-        sage: p = MixedIntegerLinearProgram(solver="GLPK/exact")
-        sage: TestSuite(p.get_backend()).run(skip="_test_pickling")
     """
     def __cinit__(self, maximization = True):
         """
@@ -57,19 +54,19 @@ cdef class GLPKExactBackend(GLPKBackend):
 
         INPUT:
 
-        - ``lower_bound`` - the lower bound of the variable (default: 0)
+        - ``lower_bound`` -- the lower bound of the variable (default: 0)
 
-        - ``upper_bound`` - the upper bound of the variable (default: ``None``)
+        - ``upper_bound`` -- the upper bound of the variable (default: ``None``)
 
-        - ``binary`` - ``True`` if the variable is binary (default: ``False``).
+        - ``binary`` -- ``True`` if the variable is binary (default: ``False``).
 
-        - ``continuous`` - ``True`` if the variable is continuous (default: ``True``).
+        - ``continuous`` -- ``True`` if the variable is continuous (default: ``True``).
 
-        - ``integer`` - ``True`` if the variable is integer (default: ``False``).
+        - ``integer`` -- ``True`` if the variable is integer (default: ``False``).
 
-        - ``obj`` - (optional) coefficient of this variable in the objective function (default: 0.0)
+        - ``obj`` -- (optional) coefficient of this variable in the objective function (default: 0.0)
 
-        - ``name`` - an optional name for the newly added variable (default: ``None``).
+        - ``name`` -- an optional name for the newly added variable (default: ``None``).
 
         OUTPUT: The index of the newly created variable
 
@@ -123,21 +120,21 @@ cdef class GLPKExactBackend(GLPKBackend):
 
         INPUT:
 
-        - ``n`` - the number of new variables (must be > 0)
+        - ``n`` -- the number of new variables (must be > 0)
 
-        - ``lower_bound`` - the lower bound of the variable (default: 0)
+        - ``lower_bound`` -- the lower bound of the variable (default: 0)
 
-        - ``upper_bound`` - the upper bound of the variable (default: ``None``)
+        - ``upper_bound`` -- the upper bound of the variable (default: ``None``)
 
-        - ``binary`` - ``True`` if the variable is binary (default: ``False``).
+        - ``binary`` -- ``True`` if the variable is binary (default: ``False``).
 
-        - ``continuous`` - ``True`` if the variable is binary (default: ``True``).
+        - ``continuous`` -- ``True`` if the variable is binary (default: ``True``).
 
-        - ``integer`` - ``True`` if the variable is binary (default: ``False``).
+        - ``integer`` -- ``True`` if the variable is binary (default: ``False``).
 
-        - ``obj`` - (optional) coefficient of all variables in the objective function (default: 0.0)
+        - ``obj`` -- (optional) coefficient of all variables in the objective function (default: 0.0)
 
-        - ``names`` - optional list of names (default: ``None``)
+        - ``names`` -- optional list of names (default: ``None``)
 
         OUTPUT: The index of the variable created last.
 

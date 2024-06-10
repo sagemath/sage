@@ -258,20 +258,8 @@ et des cubes en trois colonnes, chacune d'une largeur de six caractères.
          4     16     64
 
 La structure de données de base de Sage est la liste, qui est — comme
-son nom l'indique — une liste d'objets arbitraires. Par exemple, la
-commande ``range`` que nous avons utilisée plus haut crée en fait une
-liste (en python 2):
-
-::
-
-    sage: range(2,10)   # py2
-    [2, 3, 4, 5, 6, 7, 8, 9]
-    sage: list(range(2,10))   # py3
-    [2, 3, 4, 5, 6, 7, 8, 9]
-
-Voici un exemple plus compliqué de liste :
-
-::
+son nom l'indique — une liste d'objets arbitraires. Voici un exemple
+de liste::
 
     sage: v = [1, "hello", 2/3, sin(x^3)]
     sage: v

@@ -1,23 +1,33 @@
-
-from .matroid cimport Matroid
-
+from sage.matroids.matroid cimport Matroid
 
 cdef class MatroidUnion(Matroid):
     r"""
     Matroid Union.
 
-    The matroid union of a set of matroids `\{(E_1,I_1),\ldots,(E_n,I_n)\}` is 
-    a matroid `(E,I)` where `E= \bigcup_{i=1}^n E_i` and 
+    The matroid union of a set of matroids `\{(E_1,I_1),\ldots,(E_n,I_n)\}` is
+    a matroid `(E,I)` where `E= \bigcup_{i=1}^n E_i` and
 
         `I= \{\bigcup_{i=1}^n J_i | J_i \in I_i \}`.
 
+    EXAMPLES::
+
+        sage: M1 = matroids.Uniform(3,3)
+        sage: M2 = Matroid(bases = [frozenset({3}), frozenset({4})])
+        sage: M = M1.union(M2); M
+        Matroid of rank 4 on 5 elements as matroid union of
+        Matroid of rank 3 on 3 elements with circuit-closures
+        {}
+        Matroid of rank 1 on 2 elements with 2 bases
+        sage: M.bases()
+        SetSystem of 2 sets over 5 elements
+        sage: list(M.circuits())
+        [frozenset({3, 4})]
+
     INPUT:
 
-    - ``matroids`` -- a iterator of matroids.
+    - ``matroids`` -- iterator
 
-    OUTPUT:
-
-    A ``MatroidUnion`` instance, it's a matroid union of all matroids in ``matroids``.
+    OUTPUT: a ``MatroidUnion`` instance; a matroid union of all matroids in ``matroids``
     """
     def __init__(self, matroids):
         """
@@ -26,7 +36,7 @@ cdef class MatroidUnion(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.union_matroid import *
-            sage: MatroidUnion([matroids.Uniform(2,4),matroids.Uniform(5,8)])
+            sage: MatroidUnion([matroids.Uniform(2, 4), matroids.Uniform(5, 8)])
             Matroid of rank 7 on 8 elements as matroid union of
             Matroid of rank 2 on 4 elements with circuit-closures
             {2: {{0, 1, 2, 3}}}
@@ -39,7 +49,7 @@ cdef class MatroidUnion(Matroid):
             E.update(M.groundset())
         self._groundset = frozenset(E)
 
-    cpdef groundset(self):
+    cpdef frozenset groundset(self):
         """
         Return the groundset of the matroid.
 
@@ -58,7 +68,7 @@ cdef class MatroidUnion(Matroid):
         """
         return self._groundset
 
-    cpdef _rank(self, X):
+    cpdef int _rank(self, frozenset X):
         r"""
         Return the rank of a set ``X``.
 
@@ -67,25 +77,22 @@ cdef class MatroidUnion(Matroid):
 
         INPUT:
 
-        - ``X`` -- an object with Python's ``frozenset`` interface.
+        - ``X`` -- an object with Python's ``frozenset`` interface
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
             sage: from sage.matroids.union_matroid import *
             sage: M = MatroidSum([matroids.Uniform(2,4),matroids.Uniform(2,4)])
-            sage: M._rank([(0,0),(1,0)])
+            sage: M._rank(frozenset([(0,0),(1,0)]))
             2
-            sage: M._rank([(0,0),(0,1),(0,2),(1,0),(1,1)])
+            sage: M._rank(frozenset([(0,0),(0,1),(0,2),(1,0),(1,1)]))
             4
 
         ALGORITHM:
 
             Matroid intersection of a matroid sum and partition matroid.
-
         """
         summands = []
         for e in self.matroids:
@@ -93,7 +100,7 @@ cdef class MatroidUnion(Matroid):
         sum_matroid = MatroidSum(summands)
         d = {}
         for (i,x) in sum_matroid.groundset():
-            if not x in d:
+            if x not in d:
                 d[x]=set()
             d[x].add(i)
         part_matroid = PartitionMatroid([[(i,x) for i in d[x]] for x in d])
@@ -173,7 +180,7 @@ cdef class MatroidSum(Matroid):
             S = S + M._repr_() +"\n"
         return S[:-1]
 
-    cpdef groundset(self):
+    cpdef frozenset groundset(self):
         """
         Return the groundset of the matroid.
 
@@ -192,7 +199,7 @@ cdef class MatroidSum(Matroid):
         """
         return self._groundset
 
-    cpdef _rank(self, X):
+    cpdef int _rank(self, frozenset X):
         r"""
         Return the rank of a set ``X``.
 
@@ -201,37 +208,35 @@ cdef class MatroidSum(Matroid):
 
         INPUT:
 
-        - ``X`` -- an object with Python's ``frozenset`` interface.
+        - ``X`` -- an object with Python's ``frozenset`` interface
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
             sage: from sage.matroids.union_matroid import *
             sage: M = MatroidSum([matroids.Uniform(2,4),matroids.Uniform(2,4)])
-            sage: M._rank([(0,0),(1,0)])
+            sage: M._rank(frozenset([(0, 0), (1, 0)]))
             2
-            sage: M._rank([(0,0),(0,1),(0,2),(1,0),(1,1)])
+            sage: M._rank(frozenset([(0, 0), (0, 1), (0, 2), (1, 0), (1, 1)]))
             4
         """
         partition = {}
-        for (i,x) in X:
-            if not i in partition:
+        for (i, x) in X:
+            if i not in partition:
                 partition[i] = set()
             partition[i].add(x)
-        rk = 0
-        for i, Xi in partition.iteritems():
-            rk+= self.summands[i]._rank(Xi)
-        return rk
+        r = 0
+        for (i, Xi) in partition.iteritems():
+            r += self.summands[i]._rank(frozenset(Xi))
+        return r
 
 cdef class PartitionMatroid(Matroid):
     r"""
     Partition Matroid.
 
     Given a set of disjoint sets `S=\{S_1,\ldots,S_n\}`, the partition matroid
-    on `S` is `(E,I)` where `E=\bigcup_{i=1}^n S_i` and 
+    on `S` is `(E,I)` where `E=\bigcup_{i=1}^n S_i` and
 
         `I= \{X| |X\cap S_i|\leq 1,X\subset E \}`.
 
@@ -272,7 +277,7 @@ cdef class PartitionMatroid(Matroid):
             E.update(P)
         self._groundset = frozenset(E)
 
-    cpdef groundset(self):
+    cpdef frozenset groundset(self):
         """
         Return the groundset of the matroid.
 
@@ -291,7 +296,7 @@ cdef class PartitionMatroid(Matroid):
         """
         return self._groundset
 
-    cpdef _rank(self, X):
+    cpdef int _rank(self, frozenset X):
         r"""
         Return the rank of a set ``X``.
 
@@ -300,22 +305,20 @@ cdef class PartitionMatroid(Matroid):
 
         INPUT:
 
-        - ``X`` -- an object with Python's ``frozenset`` interface.
+        - ``X`` -- an object with Python's ``frozenset`` interface
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
             sage: from sage.matroids.union_matroid import *
-            sage: M = PartitionMatroid([[1,2,3],[4,5,6]])
-            sage: M._rank([1,5])
+            sage: M = PartitionMatroid([[1, 2, 3], [4, 5, 6]])
+            sage: M._rank(frozenset([1, 5]))
             2
-            sage: M._rank([1,2])
+            sage: M._rank(frozenset([1, 2]))
             1
         """
-        return len(set(map(self.p.get,X)))
+        return len(set(map(self.p.get, X)))
 
     def _repr_(self):
         """
@@ -324,8 +327,7 @@ cdef class PartitionMatroid(Matroid):
         EXAMPLES::
 
             sage: from sage.matroids.union_matroid import *
-            sage: PartitionMatroid([[1,2,3],[4,5,6]])
+            sage: PartitionMatroid([[1, 2, 3], [4, 5, 6]])
             Partition Matroid of rank 2 on 6 elements
         """
-        S = "Partition "+Matroid._repr_(self)
-        return S
+        return "Partition " + Matroid._repr_(self)

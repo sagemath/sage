@@ -5,7 +5,7 @@ The Elliptic Curve Method for Integer Factorization (ECM)
 
 Sage includes GMP-ECM, which is a highly optimized implementation of
 Lenstra's elliptic curve factorization method.
-See http://ecm.gforge.inria.fr/ for more about GMP-ECM.
+See https://gitlab.inria.fr/zimmerma/ecm for more about GMP-ECM.
 This file provides a Cython interface to the GMP-ECM library.
 
 AUTHORS:
@@ -61,6 +61,7 @@ cdef extern from "ecm.h":
     void ecm_clear (ecm_params)
     int ECM_NO_FACTOR_FOUND
 
+
 def ecmfactor(number, double B1, verbose=False, sigma=0):
     """
     Try to find a factor of a positive integer using ECM (Elliptic Curve Method).
@@ -72,7 +73,7 @@ def ecmfactor(number, double B1, verbose=False, sigma=0):
 
     - ``B1`` -- bound for step 1 of ECM
 
-    - ``verbose`` (default: False) -- print some debugging information
+    - ``verbose`` (default: ``False``) -- print some debugging information
 
     OUTPUT:
 

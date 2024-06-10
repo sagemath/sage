@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 r"""
 Canonical forms and automorphism group computation for linear codes over finite fields
 
@@ -89,15 +90,13 @@ is returned by generators::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*******************************************************************************
-
+from itertools import repeat
 from copy import copy
 from cysignals.memory cimport check_allocarray, sig_free
 
 from sage.rings.integer cimport Integer
-from sage.matrix.matrix cimport Matrix
-from sage.groups.perm_gps.permgroup import PermutationGroup
 cimport sage.groups.perm_gps.partn_ref2.refinement_generic
 from sage.modules.finite_submodule_iter cimport FiniteFieldsubspace_projPoint_iterator as FFSS_projPoint
 from sage.groups.perm_gps.partn_ref.data_structures cimport *
@@ -112,10 +111,10 @@ cdef class InnerGroup:
 
     Those stabilizers can be stored as triples:
 
-    - ``rank`` - an integer in `\{0, \ldots, k\}`
-    - ``row_partition`` - a partition of `\{0, \ldots, k-1\}` with
-        discrete cells for all integers `i \geq rank`.
-    - ``frob_pow`` an integer in `\{0, \ldots, r-1\}` if `q = p^r`
+    - ``rank`` -- an integer in `\{0, \ldots, k\}`
+    - ``row_partition`` -- a partition of `\{0, \ldots, k-1\}` with
+      discrete cells for all integers `i` `\geq` ``rank``.
+    - ``frob_pow`` -- an integer `s` in `\{0, \ldots, r-1\}` if `q = p^r`
 
     The group `G_{\Pi^{(I)}(x)}` contains all elements `(A, \varphi, \alpha) \in G`,
     where
@@ -128,8 +127,8 @@ cdef class InnerGroup:
     - The support of the columns given by `i \in I` intersect exactly one
       cell of the partition. The entry `\varphi_i` is equal to the entries
       of the corresponding diagonal entry of `A`.
-    - `\alpha` is a power of `\tau^{frob_pow}`, where `\tau` denotes the
-       Frobenius automorphism of the finite field `\GF{q}`.
+    - `\alpha` is a power of `\tau^s`, where `\tau` denotes the
+      Frobenius automorphism of the finite field `\GF{q}` and `s` = ``frob_pow``.
 
     See [Feu2009]_ for more details.
     """
@@ -145,8 +144,8 @@ cdef class InnerGroup:
             * "semilinear" --  full group
             * "linear" -- no field automorphisms, i.e. `G = (GL(k,q) \times \GF{q}^n )`
             * "permutational -- no field automorphisms and no column multiplications
-
               i.e. `G = GL(k,q)`
+
         - ``transporter`` (optional) -- set to an element of the group
           :class:`sage.groups.semimonomial_transformations.semimonomial_transformation_group.SemimonomialTransformationGroup`
           if you would like to modify this element simultaneously
@@ -180,7 +179,6 @@ cdef class InnerGroup:
             elif algorithm == "linear":
                 self.frob_pow = 0
 
-
         self.compute_transporter = False
         if "transporter" in kwds:
             self.transporter = kwds["transporter"]
@@ -192,20 +190,20 @@ cdef class InnerGroup:
         """
         OP_dealloc(self.row_partition)
 
-    cdef int get_rep(self, int pos):
+    cdef int get_rep(self, int pos) noexcept:
         """
         Get the index of the cell of ``self.row_partition`` containing ``pos``.
         """
         return OP_find(self.row_partition, pos)
 
-    cdef bint has_semilinear_action(self):
+    cdef bint has_semilinear_action(self) noexcept:
         """
         Returns ``True`` iff the field automorphism group component of ``self``
         is non-trivial.
         """
         return (self.frob_pow > 0)
 
-    cdef int join_rows(self, int rep1, int rep2):
+    cdef int join_rows(self, int rep1, int rep2) noexcept:
         """
         Join the cells with unique representatives
         ``rep1`` and ``rep2`` of ``self.row_partition``.
@@ -214,7 +212,7 @@ cdef class InnerGroup:
         OP_join(self.row_partition, rep1, rep2)
         return self.get_rep(rep1)
 
-    cdef void copy_from(self, InnerGroup other):
+    cdef void copy_from(self, InnerGroup other) noexcept:
         """
         Copy the group ``other`` to ``self``.
         """
@@ -332,7 +330,7 @@ cdef class InnerGroup:
             self.rank += 1
         return m
 
-    cdef void gaussian_elimination(self, object m, int pos, int pivot, list nz_pos):
+    cdef void gaussian_elimination(self, object m, int pos, int pivot, list nz_pos) noexcept:
         r"""
         Minimize the column at position ``pos`` of the matrix ``m`` by the
         action of ``self``. We know that there is some nonzero entry of this
@@ -369,7 +367,7 @@ cdef class InnerGroup:
         return self.transporter
 
     def __repr__(self):
-        """
+        r"""
         EXAMPLES::
 
             sage: from sage.coding.codecan.codecan import InnerGroup
@@ -378,11 +376,11 @@ cdef class InnerGroup:
             frobenius power = 1 and partition = 0 -> 0 1 -> 1 2 -> 2 3 -> 3 4 -> 4 5 -> 5
             6 -> 6 7 -> 7 8 -> 8 9 -> 9
         """
-        return "Subgroup of (GL(k,q) times \GF{q}^n ) rtimes Aut(\GF{q}) " + \
+        return r"Subgroup of (GL(k,q) times \GF{q}^n ) rtimes Aut(\GF{q}) " + \
             "with rank = %s, frobenius power = %s and partition =%s" % (self.rank,
             self.frob_pow, OP_string(self.row_partition))
 
-    cdef void minimize_by_frobenius(self, object v, int *applied_frob, int *stab_pow):
+    cdef void minimize_by_frobenius(self, object v, int *applied_frob, int *stab_pow) noexcept:
         r"""
         Minimize the vector ``v \in \GF{q}^k`` by the
         action of the field automorphism component of ``self``.
@@ -419,7 +417,7 @@ cdef class InnerGroup:
                 stab_pow[0] = 0
                 break  # for
 
-    cpdef int get_frob_pow(self):
+    cpdef int get_frob_pow(self) noexcept:
         r"""
         Return the power of the Frobenius automorphism which generates
         the corresponding component of ``self``.
@@ -454,7 +452,7 @@ cdef class InnerGroup:
         if self.row_partition.num_cells == 1:
             return [list(range(mat.ncols()))]
 
-        r = [[] for i in range(mat.ncols())]
+        r = [[] for _ in repeat(None, mat.ncols())]
         cols = iter(mat.columns())
         for i in range(mat.ncols()):
             # there should be no zero columns by assumption!
@@ -524,8 +522,8 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
           part of the group to the stabilizer of this partition
         - algorithm_type (optional) -- use one of the following options
 
-          * "semilinear" -  full group
-          * "linear" - no field automorphisms, i.e. `G = (GL(k,q) \times \GF{q}^n )`
+          * "semilinear" --  full group
+          * "linear" -- no field automorphisms, i.e. `G = (GL(k,q) \times \GF{q}^n )`
           * "permutational - no field automorphisms and no column multiplications
             i.e. `G = GL(k,q)`
 
@@ -642,7 +640,6 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
                 self._autom_group_generators.append(transp_inv * x * self._transporter)
             self._inner_group_stabilizer_order = (len(F) - 1) ** len(P)
 
-
         if remaining_inner_group.get_frob_pow() > 0:
             x = S(autom=F.hom([F.primitive_element() ** (remaining_inner_group.get_frob_pow() * F.characteristic())]))
             self._autom_group_generators.append(transp_inv * x * self._transporter)
@@ -741,7 +738,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         return self._inner_group_stabilizer_order
 
     cdef _init_point_hyperplane_incidence(self):
-        """
+        r"""
         Compute a set of codewords `W` of `C` (generated by self) which is compatible
         with the group action, i.e. if we start with some other code `(g,\pi)C`
         the result should be `(g,\pi)W`.
@@ -757,13 +754,12 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
 
         This graph will be later used in the refinement procedures.
         """
-        from sage.matrix.constructor import matrix
         cdef FFSS_projPoint iter = FFSS_projPoint(self._matrix)
         cdef mp_bitcnt_t i,j
 
         ambient_space = (self._matrix.base_ring()) ** (self._n)
         weights2size = [0] * (self.len() + 1)
-        W = [[] for xx in range(self.len() + 1)]
+        W = [[] for _ in repeat(None, self.len() + 1)]
         span = [ambient_space.zero_subspace()] * (self.len() + 1)
         min_weight = self.len()
         max_weight = self.len()
@@ -814,7 +810,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
 
         self._hyp_refine_vals = _BestValStore(self._hyp_part.degree)
 
-    cdef bint _minimization_allowed_on_col(self, int pos):
+    cdef bint _minimization_allowed_on_col(self, int pos) noexcept:
         r"""
         Decide if we are allowed to perform the inner minimization on position
         ``pos`` which is supposed to be a singleton. For linear codes over finite
@@ -822,7 +818,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         """
         return True
 
-    cdef bint _inner_min_(self, int pos, bint *inner_group_changed):
+    cdef bint _inner_min_(self, int pos, bint *inner_group_changed) noexcept:
         r"""
         Minimize the node by the action of the inner group on the ``pos``-th position.
         Sets ``inner_group_changed`` to ``True`` if and only if the inner group
@@ -853,7 +849,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         return True
 
     cdef bint _refine(self, bint *part_changed,
-                      bint inner_group_changed, bint first_step):
+                      bint inner_group_changed, bint first_step) noexcept:
         """
         Refine the partition ``self.part``. Set  ``part_changed`` to ``True``
         if and only if ``self.part`` was refined.
@@ -872,7 +868,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
             inner_group_changed = False
             res = self._inner_min_refine(&inner_group_changed, &n_partition_changed)
             if not res:
-                 return False
+                return False
 
             part_changed[0] |= n_partition_changed
             n_partition_changed = n_partition_changed_copy
@@ -902,8 +898,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
                         return True
         return True
 
-
-    cdef bint _inner_min_refine(self, bint *inner_stab_changed, bint *changed_partition):
+    cdef bint _inner_min_refine(self, bint *inner_stab_changed, bint *changed_partition) noexcept:
         """
         Refine the partition ``self.part`` by computing the orbit (respectively
         the hash of a canonical form) of each column vector under the inner group.
@@ -923,14 +918,14 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         if self._inner_group.rank < 2:
             return True
 
-        lower = iter(self._matrix[ : self._inner_group.rank  ].columns())
-        upper = iter(self._matrix[ self._inner_group.rank :  ].columns())
+        lower = iter(self._matrix[ : self._inner_group.rank].columns())
+        upper = iter(self._matrix[self._inner_group.rank : ].columns())
 
         for i in range(self._n):
             l = next(lower)
             u = next(upper)
 
-            if u.is_zero() and not i in self._fixed_minimized:
+            if u.is_zero() and i not in self._fixed_minimized:
                 # minimize by self._inner_group as in _inner_min:
                 _, l = self._inner_group.minimize_by_row_mult(l)
 
@@ -956,7 +951,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         return self._one_refinement(best_vals, 0, self._n, inner_stab_changed,
                                     changed_partition, "supp_refine")
 
-    cdef bint _point_refine(self, bint *inner_stab_changed, bint *changed_partition):
+    cdef bint _point_refine(self, bint *inner_stab_changed, bint *changed_partition) noexcept:
         """
         Refine the partition ``self.part`` by counting
         (colored) neighbours in the point-hyperplane graph.
@@ -1002,7 +997,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
             self._part.depth -= 1
         return ret_val
 
-    cdef bint _hyp_refine(self, bint *changed_partition):
+    cdef bint _hyp_refine(self, bint *changed_partition) noexcept:
         """
         Refine the partition of the hyperplanes by counting
         (colored) neighbours in the point-hyperplane graph.
@@ -1015,8 +1010,6 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         - ``False`` only if the image under this homomorphism of group actions
           compares larger than the image of the candidate for the canonical form.
         """
-
-
         self._hyp_part.depth += 1
         PS_clear(self._hyp_part)
         cdef bitset_t *nonsingletons = NULL
@@ -1057,7 +1050,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
                 self._nr_of_point_refine_calls, self._nr_of_hyp_refine_calls,
                 self._hyp_part.depth)
 
-    cdef void _restore_state_(self, tuple act_state):
+    cdef void _restore_state_(self, tuple act_state) noexcept:
         r"""
         The inverse of :meth:`_store_state_`.
         """
@@ -1067,13 +1060,13 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         self._nr_of_hyp_refine_calls = act_state[3]
         self._hyp_part.depth = act_state[4]
 
-    cdef void _store_best_(self):
+    cdef void _store_best_(self) noexcept:
         """
         Store this node as the actual best candidate for the canonical form.
         """
         self._best_candidate = copy(self._matrix)
 
-    cdef void _latex_act_node(self, str comment="", int printlvl=0):
+    cdef void _latex_act_node(self, str comment="", int printlvl=0) noexcept:
         """
         Print the actual status as latex (tikz) commands to
         ``self._latex_debug_string``. Only needed if one wants to visualize

@@ -1,4 +1,3 @@
-from __future__ import absolute_import
-from .logic import SymbolicLogic
+from sage.logic.logic import SymbolicLogic
 
-from . import propcalc
+from sage.logic import propcalc

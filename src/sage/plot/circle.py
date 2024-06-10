@@ -1,7 +1,6 @@
 """
 Circles
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2006 Alex Clemesha <clemesha@gmail.com>,
 #                          William Stein <wstein@gmail.com>,
@@ -26,18 +25,18 @@ from math import sin, cos, pi
 
 class Circle(GraphicPrimitive):
     """
-    Primitive class for the Circle graphics type.  See circle? for information
+    Primitive class for the :class:`Circle` graphics type.  See ``circle?`` for information
     about actually plotting circles.
 
     INPUT:
 
-    - x -- `x`-coordinate of center of Circle
+    - ``x`` -- `x`-coordinate of center of Circle
 
-    - y -- `y`-coordinate of center of Circle
+    - ``y`` -- `y`-coordinate of center of Circle
 
-    - r -- radius of Circle object
+    - ``r`` -- radius of Circle object
 
-    - options -- dict of valid plot options to pass to constructor
+    - ``options`` -- dict of valid plot options to pass to constructor
 
     EXAMPLES:
 
@@ -81,7 +80,7 @@ class Circle(GraphicPrimitive):
 
     def get_minmax_data(self):
         """
-        Returns a dictionary with the bounding box data.
+        Return a dictionary with the bounding box data.
 
         EXAMPLES::
 
@@ -134,12 +133,13 @@ class Circle(GraphicPrimitive):
             sage: c = C[0]; c
             Circle defined by (2.0,3.0) with r=5.0
         """
-        return "Circle defined by (%s,%s) with r=%s"%(self.x, self.y, self.r)
+        return f"Circle defined by ({self.x},{self.y}) with r={self.r}"
 
     def _render_on_subplot(self, subplot):
         """
         TESTS::
 
+            sage: from math import pi
             sage: C = circle((2,pi), 2, edgecolor='black', facecolor='green', fill=True)
         """
         import matplotlib.patches as patches
@@ -148,7 +148,7 @@ class Circle(GraphicPrimitive):
         options = self.options()
         p = patches.Circle((float(self.x), float(self.y)), float(self.r), clip_on=options['clip'])
         if not options['clip']:
-            self._bbox_extra_artists=[p]
+            self._bbox_extra_artists = [p]
         p.set_linewidth(float(options['thickness']))
         p.set_fill(options['fill'])
         a = float(options['alpha'])
@@ -173,7 +173,7 @@ class Circle(GraphicPrimitive):
         INPUT:
 
 
-        -  ``z`` - optional 3D height above `xy`-plane.
+        -  ``z`` -- optional 3D height above `xy`-plane.
 
         EXAMPLES::
 
@@ -183,7 +183,8 @@ class Circle(GraphicPrimitive):
         This example uses this method implicitly, but does not pass
         the optional parameter z to this method::
 
-            sage: sum([circle((random(),random()), random()).plot3d(z=random()) for _ in range(20)])
+            sage: sum(circle((random(),random()), random()).plot3d(z=random())
+            ....:     for _ in range(20))
             Graphics3d Object
 
         .. PLOT::
@@ -193,6 +194,7 @@ class Circle(GraphicPrimitive):
 
         These examples are explicit, and pass z to this method::
 
+            sage: from math import pi
             sage: C = circle((2,pi), 2, hue=.8, alpha=.3, fill=True)
             sage: c = C[0]
             sage: d = c.plot3d(z=2)
@@ -238,27 +240,27 @@ def circle(center, radius, **options):
 
     OPTIONS:
 
-    - ``alpha`` - default: 1
+    - ``alpha`` -- default: 1
 
-    - ``fill`` - default: False
+    - ``fill`` -- default: ``False``
 
-    - ``thickness`` - default: 1
+    - ``thickness`` -- default: 1
 
-    - ``linestyle`` - default: ``'solid'`` (2D plotting only) The style of the
+    - ``linestyle`` -- default: ``'solid'`` (2D plotting only) The style of the
       line, which is one of ``'dashed'``, ``'dotted'``, ``'solid'``, ``'dashdot'``,
       or ``'--'``, ``':'``, ``'-'``, ``'-.'``, respectively.
 
-    - ``edgecolor`` - default: 'blue' (2D plotting only)
+    - ``edgecolor`` -- default: 'blue' (2D plotting only)
 
-    - ``facecolor`` - default: 'blue' (2D plotting only, useful only
+    - ``facecolor`` -- default: 'blue' (2D plotting only, useful only
       if ``fill=True``)
 
-    - ``rgbcolor`` - 2D or 3D plotting.  This option overrides
+    - ``rgbcolor`` -- 2D or 3D plotting.  This option overrides
       ``edgecolor`` and ``facecolor`` for 2D plotting.
 
-    - ``legend_label`` - the label for this item in the legend
+    - ``legend_label`` -- the label for this item in the legend
 
-    - ``legend_color`` - the color for the legend label
+    - ``legend_color`` -- the color for the legend label
 
     EXAMPLES:
 
@@ -305,14 +307,16 @@ def circle(center, radius, **options):
     Here we make a more complicated plot, with many circles of different colors::
 
         sage: g = Graphics()
-        sage: step=6; ocur=1/5; paths=16
+        sage: step = 6; ocur = 1/5; paths = 16
         sage: PI = math.pi    # numerical for speed -- fine for graphics
         sage: for r in range(1,paths+1):
-        ....:     for x,y in [((r+ocur)*math.cos(n), (r+ocur)*math.sin(n)) for n in srange(0, 2*PI+PI/step, PI/step)]:
+        ....:     for x,y in [((r+ocur)*math.cos(n), (r+ocur)*math.sin(n))
+        ....:                 for n in srange(0, 2*PI+PI/step, PI/step)]:
         ....:         g += circle((x,y), ocur, rgbcolor=hue(r/paths))
         ....:     rnext = (r+1)^2
         ....:     ocur = (rnext-r)-ocur
-        sage: g.show(xmin=-(paths+1)^2, xmax=(paths+1)^2, ymin=-(paths+1)^2, ymax=(paths+1)^2, figsize=[6,6])
+        sage: g.show(xmin=-(paths+1)^2, xmax=(paths+1)^2,
+        ....:        ymin=-(paths+1)^2, ymax=(paths+1)^2, figsize=[6,6])
 
     .. PLOT::
 
@@ -359,7 +363,8 @@ def circle(center, radius, **options):
 
     And circles with legends::
 
-        sage: circle((4,5), 1, rgbcolor='yellow', fill=True, legend_label='the sun').show(xmin=0, ymin=0)
+        sage: circle((4,5), 1, rgbcolor='yellow', fill=True,
+        ....:        legend_label='the sun').show(xmin=0, ymin=0)
 
     .. PLOT::
 
@@ -369,7 +374,8 @@ def circle(center, radius, **options):
 
     ::
 
-        sage: circle((4,5), 1, legend_label='the sun', legend_color='yellow').show(xmin=0, ymin=0)
+        sage: circle((4,5), 1,
+        ....:        legend_label='the sun', legend_color='yellow').show(xmin=0, ymin=0)
 
     .. PLOT::
 
@@ -379,12 +385,12 @@ def circle(center, radius, **options):
 
     Extra options will get passed on to show(), as long as they are valid::
 
-        sage: circle((0, 0), 2, figsize=[10,10]) # That circle is huge!
+        sage: circle((0, 0), 2, figsize=[10,10])  # That circle is huge!
         Graphics object consisting of 1 graphics primitive
 
     ::
 
-        sage: circle((0, 0), 2).show(figsize=[10,10]) # These are equivalent
+        sage: circle((0, 0), 2).show(figsize=[10,10])  # These are equivalent
 
     TESTS:
 
@@ -393,13 +399,17 @@ def circle(center, radius, **options):
         sage: circle((1,1,1,1), 1, rgbcolor=(1,0,0))
         Traceback (most recent call last):
         ...
-        ValueError: The center of a plotted circle should have two or three coordinates.
+        ValueError: the center of a plotted circle should have two or three coordinates
 
     The default aspect ratio for a circle is 1.0::
 
         sage: P = circle((1,1), 1)
         sage: P.aspect_ratio()
         1.0
+
+    Verify that :issue:`36153` does not arise::
+
+        sage: C = circle((1,1), 1, legend_label="test")
     """
     from sage.plot.all import Graphics
 
@@ -421,5 +431,5 @@ def circle(center, radius, **options):
         return g
     elif len(center) == 3:
         return g[0].plot3d(z=center[2])
-    else:
-        raise ValueError('The center of a plotted circle should have two or three coordinates.')
+    raise ValueError('the center of a plotted circle should have '
+                     'two or three coordinates')

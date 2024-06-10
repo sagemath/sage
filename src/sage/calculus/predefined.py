@@ -48,4 +48,3 @@ W = _var('W')
 X = _var('X')
 Y = _var('Y')
 Z = _var('Z')
-

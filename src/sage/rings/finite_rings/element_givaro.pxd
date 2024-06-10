@@ -1,4 +1,4 @@
-# distutils: extra_compile_args = GIVARO_CFLAGS
+# distutils: extra_compile_args = GIVARO_CFLAGS -std=c++11
 # distutils: include_dirs = GIVARO_INCDIR
 
 from libcpp.vector cimport vector
@@ -6,9 +6,8 @@ ctypedef vector[int] intvec
 
 from libc.stdint cimport int64_t
 
-from sage.rings.finite_rings.element_base cimport FinitePolyExtElement
+from sage.rings.finite_rings.element_base cimport FinitePolyExtElement, Cache_base
 from sage.structure.parent cimport Parent
-from sage.structure.sage_object cimport SageObject
 
 
 cdef extern from "givaro/givconfig.h":
@@ -65,7 +64,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
     cdef object _multiplicative_order
     cdef FiniteField_givaroElement _new_c(self, int value)
 
-cdef class Cache_givaro(SageObject):
+cdef class Cache_givaro(Cache_base):
     cdef GivaroGfq *objectptr # C++ object
     cdef public object _array
     cdef FiniteField_givaroElement _zero_element
@@ -75,9 +74,9 @@ cdef class Cache_givaro(SageObject):
     cdef bint _is_conway
     cdef Parent parent
     cdef gen_array(self)
-    cpdef int exponent(self)
-    cpdef int order_c(self)
-    cpdef int characteristic(self)
+    cpdef int exponent(self) noexcept
+    cpdef int order_c(self) noexcept
+    cpdef int characteristic(self) noexcept
     cpdef FiniteField_givaroElement gen(self)
     cpdef FiniteField_givaroElement element_from_data(self, e)
     cdef FiniteField_givaroElement _new_c(self, int value)

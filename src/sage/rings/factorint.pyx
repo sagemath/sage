@@ -1,29 +1,28 @@
-# -*- coding: utf-8 -*-*
 r"""
 Integer factorization functions
 
 AUTHORS:
 
 - Andre Apitzsch (2011-01-13): initial version
-
 """
 
-#*****************************************************************************
-#       Copyright (C) 2010 André Apitzsch <andre.apitzsch@st.ovgu.de>
+# ****************************************************************************
+#       Copyright (C) 2010-2011 André Apitzsch <andre.apitzsch@st.ovgu.de>
+#                     2012      Nils Bruin
+#                     2014      David Roe
+#                     2014      Travis Scrimshaw
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.ext.stdsage cimport PY_NEW
 from sage.libs.gmp.mpz cimport *
 
 from sage.rings.integer cimport Integer
-from sage.rings.fast_arith import prime_range
 from sage.structure.factorization_integer import IntegerFactorization
-from math import floor
 from sage.misc.misc_c import prod
 
 cdef extern from "limits.h":
@@ -49,23 +48,27 @@ cpdef aurifeuillian(n, m, F=None, bint check=True):
     EXAMPLES::
 
         sage: from sage.rings.factorint import aurifeuillian
-        sage: aurifeuillian(2,2)
+
+        sage: # needs sage.libs.pari sage.rings.real_interval_field
+        sage: aurifeuillian(2, 2)
         [5, 13]
-        sage: aurifeuillian(2,2^5)
+        sage: aurifeuillian(2, 2^5)
         [1985, 2113]
-        sage: aurifeuillian(5,3)
+        sage: aurifeuillian(5, 3)
         [1471, 2851]
-        sage: aurifeuillian(15,1)
+        sage: aurifeuillian(15, 1)
         [19231, 142111]
-        sage: aurifeuillian(12,3)
+
+        sage: # needs sage.libs.pari
+        sage: aurifeuillian(12, 3)
         Traceback (most recent call last):
         ...
         ValueError: n has to be square-free
-        sage: aurifeuillian(1,2)
+        sage: aurifeuillian(1, 2)
         Traceback (most recent call last):
         ...
         ValueError: n has to be greater than 1
-        sage: aurifeuillian(2,0)
+        sage: aurifeuillian(2, 0)
         Traceback (most recent call last):
         ...
         ValueError: m has to be positive
@@ -75,8 +78,6 @@ cpdef aurifeuillian(n, m, F=None, bint check=True):
         There is no need to set `F`. It's only for increasing speed
         of :meth:`factor_aurifeuillian()`.
     """
-    from sage.arith.all import euler_phi
-    from sage.rings.real_mpfi import RealIntervalField
     if check:
         if not n.is_squarefree():
             raise ValueError("n has to be square-free")
@@ -84,6 +85,10 @@ cpdef aurifeuillian(n, m, F=None, bint check=True):
             raise ValueError("n has to be greater than 1")
         if m < 1:
             raise ValueError("m has to be positive")
+
+    from sage.arith.misc import euler_phi
+    from sage.rings.real_mpfi import RealIntervalField
+
     x = m**2*n
     cdef Py_ssize_t y = euler_phi(2*n)//2
     if F is None:
@@ -128,24 +133,26 @@ cpdef factor_aurifeuillian(n, check=True):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.pari sage.rings.real_interval_field
         sage: from sage.rings.factorint import factor_aurifeuillian as fa
-        sage: fa(2^6+1)
+        sage: fa(2^6 + 1)
         [5, 13]
-        sage: fa(2^58+1)
+        sage: fa(2^58 + 1)
         [536838145, 536903681]
-        sage: fa(3^3+1)
+        sage: fa(3^3 + 1)
         [4, 1, 7]
-        sage: fa(5^5-1)
+        sage: fa(5^5 - 1)
         [4, 11, 71]
-        sage: prod(_) == 5^5-1
+        sage: prod(_) == 5^5 - 1
         True
-        sage: fa(2^4+1)
+        sage: fa(2^4 + 1)
         [17]
-        sage: fa((6^2*3)^3+1)
+        sage: fa((6^2*3)^3 + 1)
         [109, 91, 127]
 
     TESTS::
 
+        sage: # needs sage.libs.pari sage.rings.real_interval_field
         sage: for n in [2,3,5,6,30,31,33]:
         ....:     for m in [8,96,109201283]:
         ....:         s = -1 if n % 4 == 1 else 1
@@ -200,11 +207,12 @@ cpdef factor_aurifeuillian(n, check=True):
             return F
     return [n]
 
+
 def factor_cunningham(m, proof=None):
     r"""
-    Return factorization of self obtained using trial division
+    Return factorization of ``self`` obtained using trial division
     for all primes in the so called Cunningham table. This is
-    efficient if self has some factors of type `b^n+1` or `b^n-1`,
+    efficient if ``self`` has some factors of type `b^n+1` or `b^n-1`,
     with `b` in `\{2,3,5,6,7,10,11,12\}`.
 
     You need to install an optional package to use this method,
@@ -222,7 +230,7 @@ def factor_cunningham(m, proof=None):
         sage: from sage.rings.factorint import factor_cunningham
         sage: factor_cunningham(2^257-1) # optional - cunningham_tables
         535006138814359 * 1155685395246619182673033 * 374550598501810936581776630096313181393
-        sage: factor_cunningham((3^101+1)*(2^60).next_prime(),proof=False) # optional - cunningham_tables
+        sage: factor_cunningham((3^101+1)*(2^60).next_prime(), proof=False) # optional - cunningham_tables
         2^2 * 379963 * 1152921504606847009 * 1017291527198723292208309354658785077827527
 
     """
@@ -243,14 +251,15 @@ def factor_cunningham(m, proof=None):
     else:
         return IntegerFactorization(L)*n.factor(proof=proof)
 
+
 cpdef factor_trial_division(m, long limit=LONG_MAX):
     r"""
-    Return partial factorization of self obtained using trial division
-    for all primes up to limit, where limit must fit in a C signed long.
+    Return partial factorization of ``self`` obtained using trial division
+    for all primes up to ``limit``, where ``limit`` must fit in a C ``signed long``.
 
     INPUT:
 
-    - ``limit`` -- integer (default: ``LONG_MAX``) that fits in a C signed long
+    - ``limit`` -- integer (default: ``LONG_MAX``) that fits in a C ``signed long``
 
     EXAMPLES::
 
@@ -263,7 +272,7 @@ cpdef factor_trial_division(m, long limit=LONG_MAX):
 
     TESTS:
 
-    Test that :trac:`13692` is solved::
+    Test that :issue:`13692` is solved::
 
         sage: from sage.rings.factorint import factor_trial_division
         sage: list(factor_trial_division(8))
@@ -288,65 +297,3 @@ cpdef factor_trial_division(m, long limit=LONG_MAX):
 
     return IntegerFactorization(F, unit=unit, unsafe=True,
                                    sort=False, simplify=False)
-
-
-def factor_using_pari(n, int_=False, debug_level=0, proof=None):
-    r"""
-    Factor this integer using PARI.
-
-    This function returns a list of pairs, not a ``Factorization``
-    object. The first element of each pair is the factor, of type
-    ``Integer`` if ``int_`` is ``False`` or ``int`` otherwise,
-    the second element is the positive exponent, of type ``int``.
-
-    INPUT:
-
-    - ``int_`` -- (default: ``False``), whether the factors are
-      of type ``int`` instead of ``Integer``
-
-    - ``debug_level`` -- (default: 0), debug level of the call
-      to PARI
-
-    - ``proof`` -- (default: ``None``), whether the factors are
-      required to be proven prime;  if ``None``, the global default
-      is used
-
-    OUTPUT:
-
-    A list of pairs.
-
-    EXAMPLES::
-
-        sage: factor(-2**72 + 3, algorithm='pari')  # indirect doctest
-        -1 * 83 * 131 * 294971519 * 1472414939
-
-    Check that PARI's debug level is properly reset (:trac:`18792`)::
-
-        sage: alarm(0.5); factor(2^1000 - 1, verbose=5)
-        Traceback (most recent call last):
-        ...
-        AlarmInterrupt
-        sage: pari.get_debug_level()
-        0
-    """
-    from sage.libs.pari.all import pari
-
-    if proof is None:
-        from sage.structure.proof.proof import get_flag
-        proof = get_flag(proof, "arithmetic")
-
-    prev = pari.get_debug_level()
-
-    cdef Py_ssize_t i
-    try:
-        if prev != debug_level:
-            pari.set_debug_level(debug_level)
-
-        p, e = n.__pari__().factor(proof=proof)
-        if int_:
-            return [(int(p[i]), int(e[i])) for i in range(len(p))]
-        else:
-            return [(Integer(p[i]), int(e[i])) for i in range(len(p))]
-    finally:
-        if prev != debug_level:
-            pari.set_debug_level(prev)

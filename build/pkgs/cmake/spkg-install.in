@@ -1,6 +1,8 @@
 if [ "$UNAME" = Darwin ]; then
     CC=clang
     CXX=clang++
+    export CFLAGS="$CFLAGS_NON_NATIVE"
+    export CXXFLAGS="$CXXFLAGS_NON_NATIVE"
 fi
 
 cd src

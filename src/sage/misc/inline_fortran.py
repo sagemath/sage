@@ -1,7 +1,6 @@
 """
 Fortran compiler
 """
-from __future__ import absolute_import
 
 import importlib
 import os
@@ -48,7 +47,7 @@ def _import_module_from_path(name, path=None):
 
 
 def _import_module_from_path_impl(name, path):
-    """Implement ``_import_module_from_path for Python 3.4+."""
+    """Implement ``_import_module_from_path`` for Python 3.4+."""
 
     # This is remarkably tricky to do right, considering that the new
     # importlib is supposed to make direct interaction with the import
@@ -66,8 +65,8 @@ class InlineFortran:
     def __init__(self, globals=None):
         # globals=None means: use user globals from REPL
         self.globs = globals
-        self.library_paths=[]
-        self.libraries=[]
+        self.library_paths = []
+        self.libraries = []
         self.verbose = False
 
     def __repr__(self):
@@ -92,6 +91,7 @@ class InlineFortran:
 
         EXAMPLES::
 
+            sage: # needs numpy
             sage: code = '''
             ....: C FILE: FIB1.F
             ....:       SUBROUTINE FIB(A,N)
@@ -191,25 +191,22 @@ class InlineFortran:
         finally:
             os.chdir(old_cwd)
 
-            if sys.platform != 'cygwin':
-                # Do not delete temporary DLLs on Cygwin; this will cause
-                # future forks of this process to fail.  Instead temporary DLLs
-                # will be cleaned up upon process exit
-                try:
-                    shutil.rmtree(mytmpdir)
-                except OSError:
-                    # This can fail for example over NFS
-                    pass
+            try:
+                shutil.rmtree(mytmpdir)
+            except OSError:
+                # This can fail for example over NFS
+                pass
 
         for k, x in mod.__dict__.items():
             if k[0] != '_':
                 globals[k] = x
 
-    def add_library(self,s):
-       self.libraries.append(s)
+    def add_library(self, s):
+        self.libraries.append(s)
 
-    def add_library_path(self,s):
-       self.library_paths.append(s)
+    def add_library_path(self, s):
+        self.library_paths.append(s)
+
 
 # An instance
 fortran = InlineFortran()

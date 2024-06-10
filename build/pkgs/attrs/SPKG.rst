@@ -1,5 +1,5 @@
-attrs
-=====
+attrs: Decorator for Python classes with attributes
+===================================================
 
 Description
 -----------
@@ -18,8 +18,3 @@ Upstream Contact
 ----------------
 
 Home page: https://www.attrs.org
-
-Dependencies
-------------
-
-Python

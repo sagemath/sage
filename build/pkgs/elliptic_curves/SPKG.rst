@@ -1,5 +1,5 @@
-elliptic_curves
-===============
+elliptic_curves: Databases of elliptic curves
+=============================================
 
 Description
 -----------
@@ -28,8 +28,3 @@ ellcurves
 -  Author: William Stein
 -  Email: wstein@gmail.com
 
-Dependencies
-------------
-
--  sqlite
--  python

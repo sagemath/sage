@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 D-Complete Posets
 
@@ -22,6 +23,7 @@ from .lattices import FiniteJoinSemilattice
 from collections import deque
 from sage.rings.integer_ring import ZZ
 from sage.misc.misc_c import prod
+
 
 class DCompletePoset(FiniteJoinSemilattice):
     r"""
@@ -64,14 +66,14 @@ class DCompletePoset(FiniteJoinSemilattice):
         """
         hooks = {}
 
-        min_diamond = {} # Maps max of double-tailed diamond to min of double-tailed diamond
-        max_diamond = {} # Maps min of double-tailed diamond to max of double-tailed diamond
+        min_diamond = {}  # Maps max of double-tailed diamond to min of double-tailed diamond
+        max_diamond = {}  # Maps min of double-tailed diamond to max of double-tailed diamond
 
         H = self._hasse_diagram
 
-        diamonds, _ = H.diamonds() # Tuples of four elements that are diamonds
+        diamonds, _ = H.diamonds()  # Tuples of four elements that are diamonds
 
-        diamond_index = {} # Map max elmt of double tailed diamond to index of diamond
+        diamond_index = {}  # Map max elmt of double tailed diamond to index of diamond
 
         # Find all the double-tailed diamonds and map the mins and maxes
         for index, d in enumerate(diamonds):
@@ -88,18 +90,20 @@ class DCompletePoset(FiniteJoinSemilattice):
 
                 # Check if any of these make a longer double tailed diamond
                 found_diamond = False
-                for (mn, mx) in [(i,j) for i in potential_min for j in potential_max]:
-                    if len(H.neighbors_in(mx)) != 1:
+                for mx in potential_max:
+                    if H.in_degree(mx) != 1:
                         continue
-                    if len(H.all_paths(mn, mx)) == 2:
-                        # Success
-                        min_elmt = mn
-                        max_elmt = mx
-
-                        min_diamond[mx] = mn
-                        max_diamond[mn] = mx
-                        diamond_index[mx] = index
-                        found_diamond = True
+                    for mn in potential_min:
+                        if len(H.all_paths(mn, mx)) == 2:
+                            # Success
+                            min_elmt = mn
+                            max_elmt = mx
+                            min_diamond[mx] = mn
+                            max_diamond[mn] = mx
+                            diamond_index[mx] = index
+                            found_diamond = True
+                            break
+                    if found_diamond:
                         break
                 if not found_diamond:
                     break
@@ -149,7 +153,8 @@ class DCompletePoset(FiniteJoinSemilattice):
             sage: P.get_hooks()
             {0: 1, 1: 2, 2: 2, 3: 3}
             sage: from sage.combinat.posets.poset_examples import Posets
-            sage: P = DCompletePoset(Posets.YoungDiagramPoset(Partition([3,2,1]))._hasse_diagram.reverse())
+            sage: YDP321 = Posets.YoungDiagramPoset(Partition([3,2,1]))
+            sage: P = DCompletePoset(YDP321._hasse_diagram.reverse())
             sage: P.get_hooks()
             {0: 5, 1: 3, 2: 1, 3: 3, 4: 1, 5: 1}
         """
@@ -165,7 +170,8 @@ class DCompletePoset(FiniteJoinSemilattice):
             sage: P = DCompletePoset(DiGraph({0: [1, 2], 1: [3], 2: [3], 3: []}))
             sage: P.hook_product()
             12
-            sage: P = DCompletePoset(posets.YoungDiagramPoset(Partition([3,2,1]), dual=True))
+            sage: P = DCompletePoset(posets.YoungDiagramPoset(Partition([3,2,1]),
+            ....:                    dual=True))
             sage: P.hook_product()
             45
         """

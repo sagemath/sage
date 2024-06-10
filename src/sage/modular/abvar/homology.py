@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint sage.libs.pari
 r"""
 Homology of modular abelian varieties
 
@@ -37,9 +38,9 @@ EXAMPLES::
     [-4  0]
     [ 0 -4]
     sage: a.T(7)
-    Hecke operator T_7 on Submodule of rank 2 of Integral Homology of Abelian variety J0(43) of dimension 3
+    Hecke operator T_7 on
+     Submodule of rank 2 of Integral Homology of Abelian variety J0(43) of dimension 3
 """
-from __future__ import absolute_import
 
 # ****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
@@ -51,13 +52,15 @@ from __future__ import absolute_import
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.categories.commutative_rings import CommutativeRings
+from sage.modular.hecke.module import HeckeModule_free_module
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.structure.richcmp import richcmp_method, richcmp, richcmp_not_equal
-from sage.modular.hecke.all import HeckeModule_free_module
-from sage.rings.all import Integer, ZZ, QQ, CommutativeRing
-
-from .abvar import sqrt_poly
 
 # TODO: we will probably also need homology that is *not* a Hecke module.
+
 
 @richcmp_method
 class Homology(HeckeModule_free_module):
@@ -71,11 +74,9 @@ class Homology(HeckeModule_free_module):
 
         INPUT:
 
+        -  ``n`` -- positive integer
 
-        -  ``n`` - positive integer
-
-        -  ``var`` - string (default: 'x') the variable name
-
+        -  ``var`` -- string (default: 'x') the variable name
 
         OUTPUT: a polynomial over ZZ in the given variable
 
@@ -114,7 +115,7 @@ class Homology_abvar(Homology):
             sage: loads(dumps(H)) == H
             True
         """
-        if not isinstance(base, CommutativeRing):
+        if base not in CommutativeRings():
             raise TypeError("base ring must be a commutative ring")
         HeckeModule_free_module.__init__(
             self, base, abvar.level(), weight=2)
@@ -253,7 +254,7 @@ class Homology_abvar(Homology):
         INPUT:
 
 
-        -  ``n`` - a positive integer
+        -  ``n`` -- a positive integer
 
 
         OUTPUT: a matrix over the coefficient ring of this homology group
@@ -271,7 +272,8 @@ class Homology_abvar(Homology):
 
             sage: J = J0(23)
             sage: J.homology(QQ[I]).hecke_matrix(3).parent()
-            Full MatrixSpace of 4 by 4 dense matrices over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
+            Full MatrixSpace of 4 by 4 dense matrices over
+             Number Field in I with defining polynomial x^2 + 1 with I = 1*I
         """
         raise NotImplementedError
 
@@ -298,10 +300,10 @@ class Homology_abvar(Homology):
         INPUT:
 
 
-        -  ``U`` - submodule of ambient free module (or
+        -  ``U`` -- submodule of ambient free module (or
            something that defines one)
 
-        -  ``check`` - currently ignored.
+        -  ``check`` -- currently ignored.
 
 
         .. note::
@@ -346,7 +348,7 @@ class IntegralHomology(Homology_abvar):
         INPUT:
 
 
-        -  ``abvar`` - a modular abelian variety
+        -  ``abvar`` -- a modular abelian variety
 
 
         EXAMPLES::
@@ -372,7 +374,7 @@ class IntegralHomology(Homology_abvar):
             sage: J0(23).integral_homology()._repr_()
             'Integral Homology of Abelian variety J0(23) of dimension 2'
         """
-        return "Integral Homology of %s"%self.abelian_variety()
+        return "Integral Homology of %s" % self.abelian_variety()
 
     def hecke_matrix(self, n):
         """
@@ -411,6 +413,7 @@ class IntegralHomology(Homology_abvar):
         f = (M.hecke_polynomial(n, var)**2).change_ring(ZZ)
         return f
 
+
 class RationalHomology(Homology_abvar):
     r"""
     The rational homology `H_1(A,\QQ)` of a modular
@@ -423,7 +426,7 @@ class RationalHomology(Homology_abvar):
         INPUT:
 
 
-        -  ``abvar`` - a modular abelian variety
+        -  ``abvar`` -- a modular abelian variety
 
 
         EXAMPLES::
@@ -447,7 +450,7 @@ class RationalHomology(Homology_abvar):
             sage: J0(23).rational_homology()._repr_()
             'Rational Homology of Abelian variety J0(23) of dimension 2'
         """
-        return "Rational Homology of %s"%self.abelian_variety()
+        return "Rational Homology of %s" % self.abelian_variety()
 
     def hecke_matrix(self, n):
         """
@@ -487,19 +490,14 @@ class RationalHomology(Homology_abvar):
             (x + 2) * (x^2 - 2)
         """
         f = self.hecke_operator(n).matrix().characteristic_polynomial(var)
-        return sqrt_poly(f)
-
-        #n = Integer(n)
-        #M = self.abelian_variety().modular_symbols(sign=1)
-        #f = M.hecke_polynomial(n, var)**2
-        #return f
+        _, poly = f.is_square(True)
+        return poly
 
 
 class Homology_over_base(Homology_abvar):
     r"""
     The homology over a modular abelian variety over an arbitrary base
-    commutative ring (not `\ZZ` or
-    `\QQ`).
+    commutative ring (not `\ZZ` or `\QQ`).
     """
     def __init__(self, abvar, base_ring):
         r"""
@@ -509,9 +507,9 @@ class Homology_over_base(Homology_abvar):
         INPUT:
 
 
-        -  ``abvar`` - a modular abelian variety
+        -  ``abvar`` -- a modular abelian variety
 
-        -  ``base_ring`` - a commutative ring
+        -  ``base_ring`` -- a commutative ring
 
 
         EXAMPLES::
@@ -538,7 +536,7 @@ class Homology_over_base(Homology_abvar):
             sage: H._repr_()
             'Homology with coefficients in Finite Field of size 5 of Abelian variety J0(23) of dimension 2'
         """
-        return "Homology with coefficients in %s of %s"%(self.base_ring(), self.abelian_variety())
+        return "Homology with coefficients in %s of %s" % (self.base_ring(), self.abelian_variety())
 
     def hecke_matrix(self, n):
         """
@@ -570,10 +568,10 @@ class Homology_submodule(Homology):
         INPUT:
 
 
-        -  ``ambient`` - the homology of some modular abelian
+        -  ``ambient`` -- the homology of some modular abelian
            variety with ring coefficients
 
-        -  ``submodule`` - a submodule of the free module
+        -  ``submodule`` -- a submodule of the free module
            underlying ambient
 
 
@@ -591,10 +589,6 @@ class Homology_submodule(Homology):
         if not isinstance(ambient, Homology_abvar):
             raise TypeError("ambient must be the homology of a modular abelian variety")
         self.__ambient = ambient
-        #try:
-        #    if not submodule.is_submodule(ambient):
-        #        raise ValueError, "submodule must be a submodule of the ambient homology group"
-        #except AttributeError:
         submodule = ambient.free_module().submodule(submodule)
         self.__submodule = submodule
         HeckeModule_free_module.__init__(
@@ -701,16 +695,19 @@ class Homology_submodule(Homology):
 
     def hecke_matrix(self, n):
         """
-        Return the matrix of the n-th Hecke operator acting on this
+        Return the matrix of the `n`-th Hecke operator acting on this
         homology group.
 
         EXAMPLES::
 
             sage: d = J0(125).homology(GF(17)).decomposition(2); d
             [
-            Submodule of rank 4 of Homology with coefficients in Finite Field of size 17 of Abelian variety J0(125) of dimension 8,
-            Submodule of rank 4 of Homology with coefficients in Finite Field of size 17 of Abelian variety J0(125) of dimension 8,
-            Submodule of rank 8 of Homology with coefficients in Finite Field of size 17 of Abelian variety J0(125) of dimension 8
+            Submodule of rank 4 of Homology with coefficients in Finite Field of size 17
+             of Abelian variety J0(125) of dimension 8,
+            Submodule of rank 4 of Homology with coefficients in Finite Field of size 17
+             of Abelian variety J0(125) of dimension 8,
+            Submodule of rank 8 of Homology with coefficients in Finite Field of size 17
+             of Abelian variety J0(125) of dimension 8
             ]
             sage: t = d[0].hecke_matrix(17); t
             [16 15 15  0]
@@ -745,5 +742,3 @@ class Homology_submodule(Homology):
             [2, 4]
         """
         return self.__submodule.rank()
-
-

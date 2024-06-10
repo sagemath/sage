@@ -1,5 +1,5 @@
-libffi
-======
+libsemigroups: Library for semigroups and monoids
+=================================================
 
 Description
 -----------

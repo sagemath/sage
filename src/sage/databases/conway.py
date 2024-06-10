@@ -1,12 +1,11 @@
-# -*- coding: utf-8 -*-
 r"""
-Frank Luebeck's tables of Conway polynomials over finite fields
+Frank Lübeck's tables of Conway polynomials over finite fields
 """
-
 # ****************************************************************************
 #
-#       Sage: Copyright (C) 2005 William Stein <wstein@gmail.com>
-#             Copyright (C) 2013 R. Andrew Ohana <andrew.ohana@gmail.com>
+#       Copyright (C) 2005-2006 William Stein <wstein@gmail.com>
+#       Copyright (C) 2010      Alexandru Ghitza
+#       Copyright (C) 2013      R. Andrew Ohana <andrew.ohana@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,15 +13,7 @@ Frank Luebeck's tables of Conway polynomials over finite fields
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
 from collections.abc import Mapping
-import os
-import pickle
-
-from sage.env import CONWAY_POLYNOMIALS_DATA_DIR
-
-_CONWAYDATA = os.path.join(CONWAY_POLYNOMIALS_DATA_DIR, 'conway_polynomials.p')
-_conwaydict = None
 
 class DictInMapping(Mapping):
     def __init__(self, dict):
@@ -97,16 +88,10 @@ class ConwayPolynomials(Mapping):
 
             sage: c = ConwayPolynomials()
             sage: c
-            Frank Luebeck's database of Conway polynomials
+            Frank Lübeck's database of Conway polynomials
         """
-        global _conwaydict
-        if _conwaydict is None:
-            if not os.path.exists(_CONWAYDATA):
-                raise RuntimeError('In order to initialize the database, '
-                        + '%s must exist.' % _CONWAYDATA)
-            with open(_CONWAYDATA, 'rb') as f:
-                _conwaydict = pickle.load(f)
-        self._store = _conwaydict
+        import conway_polynomials
+        self._store = conway_polynomials.database()
 
     def __repr__(self):
         """
@@ -116,9 +101,9 @@ class ConwayPolynomials(Mapping):
 
             sage: c = ConwayPolynomials()
             sage: c.__repr__()
-            "Frank Luebeck's database of Conway polynomials"
+            "Frank Lübeck's database of Conway polynomials"
         """
-        return "Frank Luebeck's database of Conway polynomials"
+        return "Frank Lübeck's database of Conway polynomials"
 
     def __getitem__(self, key):
         """
@@ -152,11 +137,16 @@ class ConwayPolynomials(Mapping):
         """
         Return the number of polynomials in this database.
 
-        TESTS::
+        TESTS:
+
+        The database currently contains `35357` polynomials, but due to
+        :issue:`35357` it will be extended by Conway polynomials of
+        degrees `1`, `2` and `3` for primes between `65537` and `110000`,
+        thus leading to a new total of `47090` entries::
 
             sage: c = ConwayPolynomials()
-            sage: len(c)
-            35352
+            sage: len(c) in [35357, 47090]
+            True
         """
         try:
             return self._len
@@ -183,7 +173,7 @@ class ConwayPolynomials(Mapping):
     def polynomial(self, p, n):
         """
         Return the Conway polynomial of degree ``n`` over ``GF(p)``,
-        or raise a RuntimeError if this polynomial is not in the
+        or raise a :class:`RuntimeError` if this polynomial is not in the
         database.
 
         .. NOTE::

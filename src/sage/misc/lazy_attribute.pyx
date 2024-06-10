@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Lazy attributes
 
@@ -22,7 +23,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-cdef class _lazy_attribute(object):
+cdef class _lazy_attribute():
     """
     Cython base class for lazy attributes.
 
@@ -62,7 +63,7 @@ cdef class _lazy_attribute(object):
 
         TESTS:
 
-        We check that :trac:`9251` is solved::
+        We check that :issue:`9251` is solved::
 
             sage: Parent.element_class
             <sage.misc.lazy_attribute.lazy_attribute object at 0x...>
@@ -77,25 +78,24 @@ cdef class _lazy_attribute(object):
 
     def _sage_src_lines_(self):
         r"""
-        Returns the source code location for the wrapped function.
+        Return the source code location for the wrapped function.
 
         EXAMPLES::
 
             sage: from sage.misc.sageinspect import sage_getsourcelines
-            sage: g = lazy_attribute(banner)
+            sage: g = lazy_attribute(sage.misc.banner.banner)
             sage: (src, lines) = sage_getsourcelines(g)
             sage: src[0]
             'def banner():\n'
             sage: lines
-            82
+            89
         """
         from sage.misc.sageinspect import sage_getsourcelines
         return sage_getsourcelines(self.f)
 
-
     def __get__(self, a, cls):
         """
-        Implements the attribute access protocol.
+        Implement the attribute access protocol.
 
         EXAMPLES::
 
@@ -111,12 +111,12 @@ cdef class _lazy_attribute(object):
         if a is None: # when doing cls.x for cls a class and x a lazy attribute
             return self
         try:
-            # __cached_methods is supposed to be a public Cython attribute.
+            # _cached_methods is supposed to be a public Cython attribute.
             # Apparently, these are *not* subject to name mangling.
-            CM = getattr(a, '__cached_methods')
+            CM = getattr(a, '_cached_methods')
             if CM is None:
                 CM = {}
-                setattr(a, '__cached_methods', CM)
+                setattr(a, '_cached_methods', CM)
         except AttributeError as msg:
             CM = None
         if CM is not None:
@@ -143,6 +143,7 @@ cdef class _lazy_attribute(object):
             raise
         return result
 
+
 class lazy_attribute(_lazy_attribute):
     r"""
     A lazy attribute for an object is like a usual attribute, except
@@ -163,7 +164,7 @@ class lazy_attribute(_lazy_attribute):
 
     We create a class whose instances have a lazy attribute ``x``::
 
-        sage: class A(object):
+        sage: class A():
         ....:     def __init__(self):
         ....:         self.a=2 # just to have some data to calculate from
         ....:
@@ -262,7 +263,7 @@ class lazy_attribute(_lazy_attribute):
     all possible without a special implementation of hasattr, so as to
     allow for something like::
 
-        sage: class A (object):
+        sage: class A ():
         ....:     @lazy_attribute
         ....:     def x(self, existence_only=False):
         ....:         if existence_only:
@@ -332,103 +333,6 @@ class lazy_attribute(_lazy_attribute):
 
     TESTS:
 
-    .. rubric:: Partial support for old style classes
-
-    Old style and new style classes play a bit differently with
-    @property and attribute setting::
-
-        sage: class A:  # py2 - no old-style classes on python 3
-        ....:     @property
-        ....:     def x(self):
-        ....:         print("calculating x")
-        ....:         return 3
-        ....:
-        sage: a = A()  # py2
-        sage: a.x = 4  # py2
-        sage: a.__dict__  # py2
-        {'x': 4}
-        sage: a.x  # py2
-        4
-        sage: a.__dict__['x']=5  # py2
-        sage: a.x  # py2
-        5
-
-        sage: class A (object):
-        ....:     @property
-        ....:     def x(self):
-        ....:         print("calculating x")
-        ....:         return 3
-        ....:
-        sage: a = A()
-        sage: a.x = 4
-        Traceback (most recent call last):
-        ...
-        AttributeError: can...t set attribute
-        sage: a.__dict__
-        {}
-        sage: a.x
-        calculating x
-        3
-        sage: a.__dict__['x']=5
-        sage: a.x
-        calculating x
-        3
-
-    In particular, lazy_attributes need to be implemented as non-data
-    descriptors for new style classes, so as to leave access to
-    setattr. We now check that this implementation also works for old
-    style classes (conditional definition does not work yet)::
-
-        sage: class A:
-        ....:     def __init__(self):
-        ....:         self.a=2 # just to have some data to calculate from
-        ....:
-        ....:     @lazy_attribute
-        ....:     def x(self):
-        ....:         print("calculating x")
-        ....:         return self.a + 1
-        ....:
-        sage: a = A()
-        sage: a.__dict__
-        {'a': 2}
-        sage: a.x
-        calculating x
-        3
-        sage: a.__dict__
-        {'a': 2, 'x': 3}
-        sage: a.x
-        3
-        sage: timeit('a.x') # random
-        625 loops, best of 3: 115 ns per loop
-
-        sage: a = A()
-        sage: a.x = 4
-        sage: a.x
-        4
-        sage: a.__dict__
-        {'a': 2, 'x': 4}
-
-        sage: class B(A):
-        ....:     @lazy_attribute
-        ....:     def x(self):
-        ....:         if hasattr(self, "y"):
-        ....:             print("calculating x from y in B")
-        ....:             return self.y
-        ....:         else:
-        ....:             print("y not there; B does not define x")
-        ....:             return NotImplemented
-        ....:
-        sage: b = B()
-        sage: b.x                         # todo: not implemented
-        y not there; B does not define x
-        calculating x in A
-        3
-        sage: b = B()
-        sage: b.y = 1
-        sage: b.x
-        calculating x from y in B
-        1
-
     .. rubric:: Lazy attributes and Cython
 
     This attempts to check that lazy attributes work with built-in
@@ -442,7 +346,7 @@ class lazy_attribute(_lazy_attribute):
         sage: A().len
         5
 
-    Since :trac:`11115`, extension classes derived from
+    Since :issue:`11115`, extension classes derived from
     :class:`~sage.structure.parent.Parent` can inherit a lazy attribute,
     such as ``element_class``::
 
@@ -451,10 +355,10 @@ class lazy_attribute(_lazy_attribute):
         ....: "cdef class MyElement(Element): pass",
         ....: "cdef class MyParent(Parent):",
         ....: "    Element = MyElement"]
-        sage: cython('\n'.join(cython_code))
-        sage: P = MyParent(category=Rings())
-        sage: P.element_class    # indirect doctest
-        <type '...MyElement'>
+        sage: cython('\n'.join(cython_code))                                            # needs sage.misc.cython
+        sage: P = MyParent(category=Rings())                                            # needs sage.misc.cython
+        sage: P.element_class    # indirect doctest                                     # needs sage.misc.cython
+        <class '...MyElement'>
 
     .. rubric:: About descriptor specifications
 
@@ -463,11 +367,11 @@ class lazy_attribute(_lazy_attribute):
     w.r.t. inheritance, and maybe even ill-implemented. We illustrate
     this on a simple class hierarchy, with an instrumented descriptor::
 
-        sage: class descriptor(object):
+        sage: class descriptor():
         ....:     def __get__(self, obj, cls):
         ....:         print(cls)
         ....:         return 1
-        sage: class A(object):
+        sage: class A():
         ....:     x = descriptor()
         sage: class B(A):
         ....:     pass
@@ -499,7 +403,7 @@ class lazy_attribute(_lazy_attribute):
     Due to this, the natural implementation runs into an infinite loop
     in the following example::
 
-        sage: class A(object):
+        sage: class A():
         ....:     @lazy_attribute
         ....:     def unimplemented_A(self):
         ....:         return NotImplemented
@@ -538,37 +442,37 @@ class lazy_attribute(_lazy_attribute):
             sage: B().unimplemented_A # todo: not implemented
             Traceback (most recent call last):
             ...
-            AttributeError: 'super' object has no attribute 'unimplemented_A'
+            AttributeError: 'super' object has no attribute 'unimplemented_A'...
 
     We now make some systematic checks::
 
         sage: B().unimplemented_A
         Traceback (most recent call last):
         ...
-        AttributeError: '...' object has no attribute 'unimplemented_A'
+        AttributeError: '...' object has no attribute 'unimplemented_A'...
         sage: B().unimplemented_B
         Traceback (most recent call last):
         ...
-        AttributeError: '...' object has no attribute 'unimplemented_B'
+        AttributeError: '...' object has no attribute 'unimplemented_B'...
         sage: B().unimplemented_AB
         Traceback (most recent call last):
         ...
-        AttributeError: '...' object has no attribute 'unimplemented_AB'
+        AttributeError: '...' object has no attribute 'unimplemented_AB'...
         sage: B().unimplemented_B_implemented_A
         1
 
         sage: C().unimplemented_A()
         Traceback (most recent call last):
         ...
-        AttributeError: '...' object has no attribute 'unimplemented_A'
+        AttributeError: '...' object has no attribute 'unimplemented_A'...
         sage: C().unimplemented_B()
         Traceback (most recent call last):
         ...
-        AttributeError: '...' object has no attribute 'unimplemented_B'
+        AttributeError: '...' object has no attribute 'unimplemented_B'...
         sage: C().unimplemented_AB()
         Traceback (most recent call last):
         ...
-        AttributeError: '...' object has no attribute 'unimplemented_AB'
+        AttributeError: '...' object has no attribute 'unimplemented_AB'...
         sage: C().unimplemented_B_implemented_A # todo: not implemented
         1
     """
@@ -603,9 +507,10 @@ class lazy_attribute(_lazy_attribute):
         if hasattr(f, "__module__"):
             self.__module__ = f.__module__
 
+
 class lazy_class_attribute(lazy_attribute):
     """
-    A lazy class attribute for an class is like a usual class attribute,
+    A lazy class attribute for a class is like a usual class attribute,
     except that, instead of being computed when the class is constructed, it
     is computed on the fly the first time it is accessed, either through the
     class itself or trough on of its objects.
@@ -615,7 +520,7 @@ class lazy_class_attribute(lazy_attribute):
     attribute is stored in the class rather than in the object. The lazy class
     attribute is only computed once for all the objects::
 
-        sage: class Cl(object):
+        sage: class Cl():
         ....:     @lazy_class_attribute
         ....:     def x(cls):
         ....:          print("computing x")
@@ -635,7 +540,7 @@ class lazy_class_attribute(lazy_attribute):
 
     First access from an object also properly triggers the computation::
 
-        sage: class Cl1(object):
+        sage: class Cl1():
         ....:     @lazy_class_attribute
         ....:     def x(cls):
         ....:          print("computing x")
@@ -651,7 +556,7 @@ class lazy_class_attribute(lazy_attribute):
         The behavior of lazy class attributes with respect to inheritance is
         not specified. It currently depends on the evaluation order::
 
-            sage: class A(object):
+            sage: class A():
             ....:     @lazy_class_attribute
             ....:     def x(cls):
             ....:          print("computing x")
@@ -698,7 +603,6 @@ class lazy_class_attribute(lazy_attribute):
         """
         result = self.f(cls)
         if result is NotImplemented:
-            return getattr(super(cls, cls),self.__name__)
+            return getattr(super(cls, cls), self.__name__)
         setattr(cls, self.__name__, result)
         return result
-

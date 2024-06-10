@@ -1,0 +1,3 @@
+readline-devel
+# not available on Leap 15.2:
+pkgconfig(readline)

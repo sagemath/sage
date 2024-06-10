@@ -1,5 +1,5 @@
-lidia
-=====
+lidia: A library for computational number theory
+================================================
 
 Description
 -----------
@@ -26,7 +26,3 @@ Upstream Contact
 
 Matthias Köppe, UC Davis, CA, USA
 
-Dependencies
-------------
-
-GMP.

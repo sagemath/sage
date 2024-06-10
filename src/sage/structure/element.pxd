@@ -1,5 +1,6 @@
-from .sage_object cimport SageObject
-from .parent cimport Parent
+# sage_setup: distribution = sagemath-objects
+from sage.structure.sage_object cimport SageObject
+from sage.structure.parent cimport Parent
 from sage.misc.inherit_comparison cimport InheritComparisonMetaclass
 
 
@@ -34,16 +35,16 @@ cpdef inline parent(x):
         sage: parent(b)
         Rational Field
         sage: c = 42.0
-        sage: parent(c)
+        sage: parent(c)                                                                 # needs sage.rings.real_mpfr
         Real Field with 53 bits of precision
 
     Some more complicated examples::
 
-        sage: x = Partition([3,2,1,1,1])
-        sage: parent(x)
+        sage: x = Partition([3,2,1,1,1])                                                # needs sage.combinat
+        sage: parent(x)                                                                 # needs sage.combinat
         Partitions
-        sage: v = vector(RDF, [1,2,3])
-        sage: parent(v)
+        sage: v = vector(RDF, [1,2,3])                                                  # needs sage.modules
+        sage: parent(v)                                                                 # needs sage.modules
         Vector space of dimension 3 over Real Double Field
 
     The following are not considered to be elements, so the type is
@@ -61,7 +62,7 @@ cpdef inline parent(x):
     return type(x)
 
 
-cdef inline int classify_elements(left, right):
+cdef inline int classify_elements(left, right) noexcept:
     """
     Given two objects, at least one which is an :class:`Element`,
     classify their type and parent. This is a finer version of
@@ -102,13 +103,13 @@ cdef inline int classify_elements(left, right):
         return 0o07
 
 # Functions to help understand the result of classify_elements()
-cdef inline bint BOTH_ARE_ELEMENT(int cl):
+cdef inline bint BOTH_ARE_ELEMENT(int cl) noexcept:
     return cl & 0o04
-cdef inline bint HAVE_SAME_PARENT(int cl):
+cdef inline bint HAVE_SAME_PARENT(int cl) noexcept:
     return cl & 0o20
 
 
-cpdef inline bint have_same_parent(left, right):
+cpdef inline bint have_same_parent(left, right) noexcept:
     """
     Return ``True`` if and only if ``left`` and ``right`` have the
     same parent.
@@ -126,7 +127,7 @@ cpdef inline bint have_same_parent(left, right):
         True
         sage: have_same_parent(1, 1/2)
         False
-        sage: have_same_parent(gap(1), gap(1/2))
+        sage: have_same_parent(gap(1), gap(1/2))                                        # needs sage.libs.gap
         True
 
     These have different types but the same parent::
@@ -176,7 +177,7 @@ cdef class Element(SageObject):
 
 
 cdef class ElementWithCachedMethod(Element):
-    cdef public dict __cached_methods
+    cdef public dict _cached_methods
 
 cdef class ModuleElement(Element)       # forward declaration
 
@@ -193,9 +194,9 @@ cdef class ModuleElement(Element):
     cpdef _rmul_(self, Element left)
 
 cdef class ModuleElementWithMutability(ModuleElement):
-    cdef bint _is_mutable
-    cpdef bint is_immutable(self)
-    cpdef bint is_mutable(self)
+    cdef bint _is_immutable
+    cpdef bint is_immutable(self) noexcept
+    cpdef bint is_mutable(self) noexcept
 
 cdef class MonoidElement(Element):
     cpdef _pow_int(self, n)
@@ -236,9 +237,11 @@ cdef class AlgebraElement(RingElement):
 cdef class CommutativeAlgebraElement(CommutativeRingElement):
     pass
 
-cdef class InfinityElement(RingElement):
+cdef class Expression(CommutativeRingElement):
     pass
 
+cdef class InfinityElement(RingElement):
+    pass
 
 cdef class Vector(ModuleElementWithMutability):
     cdef Py_ssize_t _degree
@@ -251,8 +254,8 @@ cdef class Vector(ModuleElementWithMutability):
 
     cpdef _pairwise_product_(Vector left, Vector right) # override, call if parents the same
 
-    cdef bint is_sparse_c(self)
-    cdef bint is_dense_c(self)
+    cdef bint is_sparse_c(self) noexcept
+    cdef bint is_dense_c(self) noexcept
 
 
 cdef class Matrix(ModuleElement):
@@ -264,5 +267,5 @@ cdef class Matrix(ModuleElement):
     cdef _matrix_times_vector_(matrix_left, Vector vector_right)    # OK to override, AND call directly
     cdef _matrix_times_matrix_(left, Matrix right)                  # OK to override, AND call directly
 
-    cdef bint is_sparse_c(self)
-    cdef bint is_dense_c(self)
+    cdef bint is_sparse_c(self) noexcept
+    cdef bint is_dense_c(self) noexcept

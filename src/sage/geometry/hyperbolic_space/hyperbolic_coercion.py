@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Coercion Maps Between Hyperbolic Plane Models
 
@@ -20,12 +19,13 @@ AUTHORS:
 #***********************************************************************
 
 from sage.categories.morphism import Morphism
-from sage.symbolic.all import I
+from sage.symbolic.constants import I
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
-from sage.functions.other import real, imag, sqrt
+from sage.functions.other import real, imag
+from sage.misc.functional import sqrt
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.misc.call', 'attrcall')
 
@@ -81,7 +81,7 @@ class HyperbolicModelCoercion(Morphism):
         """
         C = self.codomain()
         if not C.is_bounded() and self.domain().is_bounded() and x.is_boundary():
-            msg = u"boundary points are not implemented for the {}"
+            msg = "boundary points are not implemented for the {}"
             raise NotImplementedError(msg.format(C.name()))
 
         y = self.image_coordinates(x.coordinates())

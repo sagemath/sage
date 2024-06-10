@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 #*****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
@@ -13,7 +14,7 @@ from sage.structure.sage_object cimport SageObject
 cpdef check_default_category(default_category, category)
 
 cdef class CategoryObject(SageObject):
-    cdef public dict __cached_methods
+    cdef public dict _cached_methods
     cdef _category
     cdef public _base
     cdef public _names

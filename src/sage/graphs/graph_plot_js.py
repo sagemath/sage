@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.plot
 r"""
 Graph plotting in Javascript with d3.js
 
@@ -73,18 +74,19 @@ Functions
 ---------
 """
 from sage.misc.temporary_file import tmp_filename
-from sage.plot.colors import rainbow
+from sage.misc.lazy_import import lazy_import
 import os
+lazy_import("sage.plot.colors", "rainbow")
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Nathann Cohen <nathann.cohen@gmail.com>
 #                          Brice Onfroy  <onfroy.brice@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 def gen_html_code(G,
@@ -163,15 +165,17 @@ def gen_html_code(G,
 
     EXAMPLES::
 
-        sage: graphs.RandomTree(50).show(method="js") # optional -- internet
+        sage: graphs.RandomTree(50).show(method="js")                           # optional - internet
 
         sage: g = graphs.PetersenGraph()
-        sage: g.show(method="js", vertex_partition=g.coloring()) # optional -- internet
+        sage: g.show(method="js", vertex_partition=g.coloring())                # optional - internet
 
-        sage: graphs.DodecahedralGraph().show(method="js", force_spring_layout=True) # optional -- internet
+        sage: graphs.DodecahedralGraph().show(method="js",                      # optional - internet
+        ....:                                 force_spring_layout=True)
 
-        sage: graphs.DodecahedralGraph().show(method="js") # optional -- internet
+        sage: graphs.DodecahedralGraph().show(method="js")                      # optional - internet
 
+        sage: # needs sage.combinat
         sage: g = digraphs.DeBruijn(2, 2)
         sage: g.allow_multiple_edges(True)
         sage: g.add_edge("10", "10", "a")
@@ -179,23 +183,23 @@ def gen_html_code(G,
         sage: g.add_edge("10", "10", "c")
         sage: g.add_edge("10", "10", "d")
         sage: g.add_edge("01", "11", "1")
-        sage: g.show(method="js", vertex_labels=True,edge_labels=True,
+        sage: g.show(method="js", vertex_labels=True, edge_labels=True,         # optional - internet
         ....:        link_distance=200, gravity=.05, charge=-500,
         ....:        edge_partition=[[("11", "12", "2"), ("21", "21", "a")]],
-        ....:        edge_thickness=4) # optional -- internet
+        ....:        edge_thickness=4)
 
     TESTS::
 
         sage: from sage.graphs.graph_plot_js import gen_html_code
         sage: filename = gen_html_code(graphs.PetersenGraph())
 
-    :trac:`17370`::
+    :issue:`17370`::
 
         sage: filename = gen_html_code(graphs.CompleteBipartiteGraph(4, 5))
 
     In the generated html code, the source (resp. target) of a link is the index
     of the node in the list defining the names of the nodes. We check that the
-    order is correct (:trac:`27460`)::
+    order is correct (:issue:`27460`)::
 
         sage: filename = gen_html_code(DiGraph({1: [10]}))
         sage: with open(filename, 'r') as f:

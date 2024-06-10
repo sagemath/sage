@@ -13,8 +13,8 @@ cdef class SemidefiniteProgram(SageObject):
     cdef dict _variables
     cdef object _linear_functions_parent
     cdef object _linear_constraints_parent
-    cpdef int number_of_constraints(self)
-    cpdef int number_of_variables(self)
+    cpdef int number_of_constraints(self) noexcept
+    cpdef int number_of_variables(self) noexcept
     cdef list _constraints
     cpdef sum(self, L)
     cpdef dual_variable(self, int i, sparse=*)
@@ -34,5 +34,5 @@ cdef class SDPVariable(Element):
 cdef class SDPVariableParent(Parent):
     pass
 
-cdef SDPVariableParent sdp_variable_parent
 
+cdef SDPVariableParent sdp_variable_parent

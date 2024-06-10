@@ -1,5 +1,5 @@
-Plantri
-=======
+plantri: Generate non-isomorphic sphere-embdedded graphs
+========================================================
 
 Description
 -----------
@@ -36,7 +36,3 @@ Brendan McKay
 
 See http://cs.anu.edu.au/~bdm/plantri
 
-Dependencies
-------------
-
--  None

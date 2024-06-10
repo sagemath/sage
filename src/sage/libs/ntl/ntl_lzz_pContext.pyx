@@ -1,4 +1,8 @@
-# distutils: libraries = ntl gmp m
+# distutils: libraries = NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 
 #*****************************************************************************
@@ -19,7 +23,7 @@ from sage.rings.integer cimport Integer
 
 zz_pContextDict = {}
 
-cdef class ntl_zz_pContext_class(object):
+cdef class ntl_zz_pContext_class():
     def __init__(self, long v):
         """
         EXAMPLES::
@@ -47,7 +51,7 @@ cdef class ntl_zz_pContext_class(object):
         if v > NTL_SP_BOUND:
             raise ValueError("Modulus (=%s) is too big" % v)
         elif v < 2:
-            # Trac 13940: only moduli greater than one are supported.
+            # Issue 13940: only moduli greater than one are supported.
             raise ValueError("Modulus (=%s) is too small" % v)
 
         self.x = zz_pContext_c(v)
@@ -56,9 +60,11 @@ cdef class ntl_zz_pContext_class(object):
 
     def __reduce__(self):
         """
-        sage: c=ntl.zz_pContext(13)
-        sage: loads(dumps(c)) is c
-        True
+        EXAMPLES::
+
+            sage: c=ntl.zz_pContext(13)
+            sage: loads(dumps(c)) is c
+            True
         """
         return ntl_zz_pContext, (self.p,)
 
@@ -86,7 +92,7 @@ cdef class ntl_zz_pContext_class(object):
         """
         self.restore_c()
 
-    cdef void restore_c(self):
+    cdef void restore_c(self) noexcept:
         """
         Actual code for the above.
 

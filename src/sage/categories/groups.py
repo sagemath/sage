@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Groups
 """
@@ -42,7 +43,7 @@ class Groups(CategoryWithAxiom):
         """
         EXAMPLES::
 
-            sage: Groups().example()
+            sage: Groups().example()                                                    # needs sage.modules
             General Linear Group of degree 4 over Rational Field
         """
         from sage.rings.rational_field import QQ
@@ -69,6 +70,7 @@ class Groups(CategoryWithAxiom):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: Groups.free(index_set=ZZ)
             Free group indexed by Integer Ring
             sage: Groups().free(ZZ)
@@ -99,9 +101,9 @@ class Groups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: A = AlternatingGroup(4)
-                sage: A.group_generators()
-                Family ((2,3,4), (1,2,3))
+                sage: A = AlternatingGroup(4)                                           # needs sage.groups
+                sage: A.group_generators()                                              # needs sage.groups
+                Family ((1,2,3), (2,3,4))
             """
             from sage.sets.family import Family
             try:
@@ -120,9 +122,10 @@ class Groups(CategoryWithAxiom):
 
             EXAMPLES::
 
+                sage: # needs sage.groups
                 sage: A = AlternatingGroup(4)
                 sage: A.monoid_generators()
-                Family ((2,3,4), (1,2,3))
+                Family ((1,2,3), (2,3,4))
                 sage: F.<x,y> = FreeGroup()
                 sage: F.monoid_generators()
                 Family (x, y, x^-1, y^-1)
@@ -142,27 +145,29 @@ class Groups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: G = SymmetricGroup(3)
-                sage: G._test_inverse()
+                sage: G = SymmetricGroup(3)                                             # needs sage.groups
+                sage: G._test_inverse()                                                 # needs sage.groups
             """
             tester = self._tester(**options)
             for x in tester.some_elements():
                 tester.assertEqual(x * ~x, self.one())
                 tester.assertEqual(~x * x, self.one())
 
-        def semidirect_product(self, N, mapping, check = True):
+        def semidirect_product(self, N, mapping, check=True):
             r"""
             The semi-direct product of two groups
 
             EXAMPLES::
 
-                sage: G = Groups().example()
-                sage: G.semidirect_product(G,Morphism(G,G))
+                sage: G = Groups().example()                                            # needs sage.modules
+                sage: G.semidirect_product(G, Morphism(G, G))                           # needs sage.modules
                 Traceback (most recent call last):
                 ...
-                NotImplementedError: semidirect product of General Linear Group of degree 4 over Rational Field and General Linear Group of degree 4 over Rational Field not yet implemented
+                NotImplementedError: semidirect product of General Linear Group of degree 4
+                over Rational Field and General Linear Group of degree 4 over Rational Field
+                not yet implemented
             """
-            raise NotImplementedError("semidirect product of %s and %s not yet implemented"%(self, N))
+            raise NotImplementedError("semidirect product of %s and %s not yet implemented" % (self, N))
 
         def holomorph(self):
             r"""
@@ -176,17 +181,18 @@ class Groups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: G = Groups().example()
-                sage: G.holomorph()
+                sage: G = Groups().example()                                            # needs sage.modules
+                sage: G.holomorph()                                                     # needs sage.modules
                 Traceback (most recent call last):
                 ...
-                NotImplementedError: holomorph of General Linear Group of degree 4 over Rational Field not yet implemented
+                NotImplementedError: holomorph of General Linear Group of degree 4
+                over Rational Field not yet implemented
             """
-            raise NotImplementedError("holomorph of %s not yet implemented"%self)
+            raise NotImplementedError("holomorph of %s not yet implemented" % self)
 
         def cayley_table(self, names='letters', elements=None):
             r"""
-            Returns the "multiplication" table of this multiplicative group,
+            Return the "multiplication" table of this multiplicative group,
             which is also known as the "Cayley table".
 
             .. note:: The order of the elements in the row and column
@@ -204,22 +210,22 @@ class Groups(CategoryWithAxiom):
 
             INPUT:
 
-            - ``names`` - the type of names used, values are:
+            - ``names`` -- the type of names used, values are:
 
-              * ``'letters'`` - lowercase ASCII letters are used
+              * ``'letters'`` -- lowercase ASCII letters are used
                 for a base 26 representation of the elements'
                 positions in the list given by :meth:`list`,
                 padded to a common width with leading 'a's.
-              * ``'digits'`` - base 10 representation of the
+              * ``'digits'`` -- base 10 representation of the
                 elements' positions in the list given by
                 :meth:`~sage.matrix.operation_table.OperationTable.column_keys`,
                 padded to a common width with leading zeros.
-              * ``'elements'`` - the string representations
+              * ``'elements'`` -- the string representations
                 of the elements themselves.
               * a list - a list of strings, where the length
                 of the list equals the number of elements.
 
-            - ``elements`` - default = ``None``.  A list of
+            - ``elements`` -- (default = ``None``);  A list of
               elements of the group, in forms that can be
               coerced into the structure, eg. their string
               representations. This may be used to impose an
@@ -233,16 +239,17 @@ class Groups(CategoryWithAxiom):
               this can be used when the base set is infinite.
 
             OUTPUT:
+
             An object representing the multiplication table.  This is
             an :class:`~sage.matrix.operation_table.OperationTable` object
             and even more documentation can be found there.
-
 
             EXAMPLES:
 
             Permutation groups, matrix groups and abelian groups
             can all compute their multiplication tables.  ::
 
+                sage: # needs sage.groups
                 sage: G = DiCyclicGroup(3)
                 sage: T = G.cayley_table()
                 sage: T.column_keys()
@@ -265,8 +272,8 @@ class Groups(CategoryWithAxiom):
 
             ::
 
-                sage: M = SL(2, 2)
-                sage: M.cayley_table()
+                sage: M = SL(2, 2)                                                      # needs sage.modules
+                sage: M.cayley_table()                                                  # needs sage.modules
                 *  a b c d e f
                  +------------
                 a| a b c d e f
@@ -279,8 +286,8 @@ class Groups(CategoryWithAxiom):
 
             ::
 
-                sage: A = AbelianGroup([2, 3])
-                sage: A.cayley_table()
+                sage: A = AbelianGroup([2, 3])                                          # needs sage.groups
+                sage: A.cayley_table()                                                  # needs sage.groups
                 *  a b c d e f
                  +------------
                 a| a b c d e f
@@ -298,8 +305,8 @@ class Groups(CategoryWithAxiom):
             you can choose to just use the string representations
             of the elements themselves.  ::
 
-                sage: C=CyclicPermutationGroup(11)
-                sage: C.cayley_table(names='digits')
+                sage: C = CyclicPermutationGroup(11)                                    # needs sage.groups
+                sage: C.cayley_table(names='digits')                                    # needs sage.groups
                  *  00 01 02 03 04 05 06 07 08 09 10
                   +---------------------------------
                 00| 00 01 02 03 04 05 06 07 08 09 10
@@ -316,9 +323,9 @@ class Groups(CategoryWithAxiom):
 
             ::
 
-                sage: G=QuaternionGroup()
-                sage: names=['1', 'I', '-1', '-I', 'J', '-K', '-J', 'K']
-                sage: G.cayley_table(names=names)
+                sage: G = QuaternionGroup()                                             # needs sage.groups
+                sage: names = ['1', 'I', '-1', '-I', 'J', '-K', '-J', 'K']
+                sage: G.cayley_table(names=names)                                       # needs sage.groups
                  *   1  I -1 -I  J -K -J  K
                   +------------------------
                  1|  1  I -1 -I  J -K -J  K
@@ -332,8 +339,8 @@ class Groups(CategoryWithAxiom):
 
             ::
 
-                sage: A=AbelianGroup([2,2])
-                sage: A.cayley_table(names='elements')
+                sage: A = AbelianGroup([2, 2])                                          # needs sage.groups
+                sage: A.cayley_table(names='elements')                                  # needs sage.groups
                     *      1    f1    f0 f0*f1
                      +------------------------
                     1|     1    f1    f0 f0*f1
@@ -345,8 +352,9 @@ class Groups(CategoryWithAxiom):
             routine behaves similarly, but changes an existing table "in-place."
             ::
 
-                sage: G=AlternatingGroup(3)
-                sage: T=G.cayley_table()
+                sage: # needs sage.groups
+                sage: G = AlternatingGroup(3)
+                sage: T = G.cayley_table()
                 sage: T.change_names('digits')
                 sage: T
                 *  0 1 2
@@ -360,8 +368,8 @@ class Groups(CategoryWithAxiom):
             Elements will be coerced into the group as part of setting
             up the table.  ::
 
-                sage: G=SL(2,ZZ)
-                sage: G
+                sage: # needs sage.modules
+                sage: G = SL(2,ZZ); G
                 Special Linear Group of degree 2 over Integer Ring
                 sage: identity = matrix(ZZ, [[1,0], [0,1]])
                 sage: G.cayley_table(elements=[identity, -identity])
@@ -381,11 +389,11 @@ class Groups(CategoryWithAxiom):
             confirms that they form a closed subset in the group.
             ::
 
+                sage: # needs sage.groups sage.modules
                 sage: from sage.matrix.operation_table import OperationTable
                 sage: G = DiCyclicGroup(3)
                 sage: commutator = lambda x, y: x*y*x^-1*y^-1
-                sage: T = OperationTable(G, commutator)
-                sage: T
+                sage: T = OperationTable(G, commutator); T
                 .  a b c d e f g h i j k l
                  +------------------------
                 a| a a a a a a a a a a a a
@@ -400,7 +408,6 @@ class Groups(CategoryWithAxiom):
                 j| a b c a b c a c b a c b
                 k| a b c a b c b a c b a c
                 l| a b c a b c c b a c b a
-
                 sage: trans = T.translation()
                 sage: comm = [trans['a'], trans['b'], trans['c']]
                 sage: comm
@@ -418,7 +425,7 @@ class Groups(CategoryWithAxiom):
                 Arrange an ordering of elements into cosets of a normal
                 subgroup close to size `\sqrt{n}`.  Then the quotient
                 group structure is often apparent in the table.  See
-                comments on :trac:`7555`.
+                comments on :issue:`7555`.
 
             AUTHOR:
 
@@ -437,9 +444,9 @@ class Groups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: A = AbelianGroup([2,2])
-                sage: c = A.conjugacy_class(A.an_element())
-                sage: type(c)
+                sage: A = AbelianGroup([2, 2])                                          # needs sage.groups
+                sage: c = A.conjugacy_class(A.an_element())                             # needs sage.groups
+                sage: type(c)                                                           # needs sage.groups
                 <class 'sage.groups.conjugacy_classes.ConjugacyClass_with_category'>
             """
             from sage.groups.conjugacy_classes import ConjugacyClass
@@ -452,29 +459,32 @@ class Groups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: D = DihedralGroup(5)
-                sage: g = D((1,3,5,2,4))
-                sage: g.conjugacy_class()
-                Conjugacy class of (1,3,5,2,4) in Dihedral group of order 10 as a permutation group
+                sage: D = DihedralGroup(5)                                              # needs sage.groups
+                sage: g = D((1,3,5,2,4))                                                # needs sage.groups
+                sage: g.conjugacy_class()                                               # needs sage.groups
+                Conjugacy class of (1,3,5,2,4)
+                 in Dihedral group of order 10 as a permutation group
 
-                sage: H = MatrixGroup([matrix(GF(5),2,[1,2, -1, 1]), matrix(GF(5),2, [1,1, 0,1])])
-                sage: h = H(matrix(GF(5),2,[1,2, -1, 1]))
-                sage: h.conjugacy_class()
+                sage: H = MatrixGroup([matrix(GF(5), 2, [1,2, -1,1]),                   # needs sage.modules
+                ....:                  matrix(GF(5), 2, [1,1, 0,1])])
+                sage: h = H(matrix(GF(5), 2, [1,2, -1,1]))                              # needs sage.modules
+                sage: h.conjugacy_class()                                               # needs sage.groups sage.modules
                 Conjugacy class of [1 2]
-                [4 1] in Matrix group over Finite Field of size 5 with 2 generators (
+                                   [4 1]
+                in Matrix group over Finite Field of size 5 with 2 generators (
                 [1 2]  [1 1]
                 [4 1], [0 1]
                 )
 
-                sage: G = SL(2, GF(2))
-                sage: g = G.gens()[0]
-                sage: g.conjugacy_class()
+                sage: G = SL(2, GF(2))                                                  # needs sage.modules
+                sage: g = G.gens()[0]                                                   # needs sage.modules
+                sage: g.conjugacy_class()                                               # needs sage.modules
                 Conjugacy class of [1 1]
                 [0 1] in Special Linear Group of degree 2 over Finite Field of size 2
 
-                sage: G = SL(2, QQ)
-                sage: g = G([[1,1],[0,1]])
-                sage: g.conjugacy_class()
+                sage: G = SL(2, QQ)                                                     # needs sage.modules
+                sage: g = G([[1,1], [0,1]])                                             # needs sage.modules
+                sage: g.conjugacy_class()                                               # needs sage.groups sage.modules
                 Conjugacy class of [1 1]
                 [0 1] in Special Linear Group of degree 2 over Rational Field
             """
@@ -505,6 +515,7 @@ class Groups(CategoryWithAxiom):
 
             EXAMPLES::
 
+                sage: # needs sage.groups
                 sage: Groups.Commutative.free(index_set=ZZ)
                 Free abelian group indexed by Integer Ring
                 sage: Groups().Commutative().free(ZZ)
@@ -514,7 +525,7 @@ class Groups(CategoryWithAxiom):
                 sage: F.<x,y,z> = Groups().Commutative().free(); F
                 Multiplicative Abelian group isomorphic to Z x Z x Z
             """
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             if names is not None:
                 if isinstance(names, str):
                     if ',' not in names and index_set in ZZ:
@@ -568,6 +579,7 @@ class Groups(CategoryWithAxiom):
 
                 EXAMPLES::
 
+                    sage: # needs sage.groups
                     sage: C5 = CyclicPermutationGroup(5)
                     sage: C4 = CyclicPermutationGroup(4)
                     sage: S4 = SymmetricGroup(3)
@@ -578,14 +590,15 @@ class Groups(CategoryWithAxiom):
                             ((), (), (1,2)),
                             ((), (), (2,3)))
 
-                We check the other portion of :trac:`16718` is fixed::
+                We check the other portion of :issue:`16718` is fixed::
 
-                    sage: len(C.j_classes())
+                    sage: len(C.j_classes())                                            # needs sage.groups
                     1
 
                 An example with an infinitely generated group (a better output
                 is needed)::
 
+                    sage: # needs sage.groups
                     sage: G = Groups.free([1,2])
                     sage: H = Groups.free(ZZ)
                     sage: C = cartesian_product([G, H])
@@ -594,6 +607,7 @@ class Groups(CategoryWithAxiom):
                 """
                 F = self.cartesian_factors()
                 ids = tuple(G.one() for G in F)
+
                 def lift(i, gen):
                     cur = list(ids)
                     cur[i] = gen
@@ -604,7 +618,7 @@ class Groups(CategoryWithAxiom):
                 cat = FiniteEnumeratedSets()
                 if all(G.group_generators() in cat
                        or isinstance(G.group_generators(), (tuple, list)) for G in F):
-                    ret = [lift(i, gen) for i,G in enumerate(F) for gen in G.group_generators()]
+                    ret = [lift(i, gen) for i, G in enumerate(F) for gen in G.group_generators()]
                     return Family(ret)
 
                 # Infinitely generated
@@ -612,7 +626,7 @@ class Groups(CategoryWithAxiom):
                 # TODO: Figure out a better way to do things
                 gens_prod = cartesian_product([Family(G.group_generators(),
                                                       lambda g: (i, g))
-                                               for i,G in enumerate(F)])
+                                               for i, G in enumerate(F)])
                 return Family(gens_prod, lift, name="gen")
 
             def order(self):
@@ -621,13 +635,13 @@ class Groups(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: C = cartesian_product([SymmetricGroup(10), SL(2,GF(3))])
-                    sage: C.order()
+                    sage: C = cartesian_product([SymmetricGroup(10), SL(2, GF(3))])     # needs sage.groups sage.rings.finite_rings
+                    sage: C.order()                                                     # needs sage.groups sage.rings.finite_rings
                     87091200
 
                 TESTS::
 
-                    sage: C.order.__module__
+                    sage: C.order.__module__                                            # needs sage.groups sage.rings.finite_rings
                     'sage.categories.groups'
 
                 .. TODO::
@@ -638,27 +652,6 @@ class Groups(CategoryWithAxiom):
                 """
                 from sage.misc.misc_c import prod
                 return prod(c.cardinality() for c in self.cartesian_factors())
-
-        class ElementMethods:
-            def multiplicative_order(self):
-                r"""
-                Return the multiplicative order of this element.
-
-                EXAMPLES::
-
-                    sage: G1 = SymmetricGroup(3)
-                    sage: G2 = SL(2,3)
-                    sage: G = cartesian_product([G1,G2])
-                    sage: G((G1.gen(0), G2.gen(1))).multiplicative_order()
-                    12
-                """
-                from sage.rings.infinity import Infinity
-                orders = [x.multiplicative_order() for x in self.cartesian_factors()]
-                if any(o is Infinity for o in orders):
-                    return Infinity
-                else:
-                    from sage.arith.functions import LCM_list
-                    return LCM_list(orders)
 
     class Topological(TopologicalSpacesCategory):
         """

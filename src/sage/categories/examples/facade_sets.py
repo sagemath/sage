@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Example of facade set
 """
@@ -15,6 +16,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import infinity
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
+
 
 class PositiveIntegerMonoid(UniqueRepresentation, Parent):
     r"""
@@ -70,9 +72,8 @@ class PositiveIntegerMonoid(UniqueRepresentation, Parent):
         TESTS::
 
             sage: TestSuite(S).run()
-
         """
-        Parent.__init__(self, facade = ZZ, category = Monoids())
+        Parent.__init__(self, facade=ZZ, category=Monoids())
 
     def _repr_(self):
         r"""
@@ -119,6 +120,7 @@ class PositiveIntegerMonoid(UniqueRepresentation, Parent):
             return object
         else:
             raise ValueError("%s should be positive")
+
 
 class IntegersCompletion(UniqueRepresentation, Parent):
     r"""
@@ -170,12 +172,11 @@ class IntegersCompletion(UniqueRepresentation, Parent):
         TESTS::
 
             sage: TestSuite(S).run()
-
         """
         # We can't use InfinityRing, because this ring contains 3
-        # elements besides +-infinity. We can't use Set either for the
+        # elements besides +-infinity. We can not use Set either for the
         # moment, because Set([1,2])(1) raises an error
-        Parent.__init__(self, facade = (ZZ, FiniteEnumeratedSet([-infinity, +infinity])), category = Sets())
+        Parent.__init__(self, facade=(ZZ, FiniteEnumeratedSet([-infinity, +infinity])), category=Sets())
 
     def _repr_(self):
         r"""
@@ -183,7 +184,5 @@ class IntegersCompletion(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: S = Sets().Facade().example()   # indirect doctest
-
         """
         return "An example of a facade set: the integers completed by +-infinity"
-

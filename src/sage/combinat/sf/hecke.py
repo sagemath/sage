@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Hecke Character Basis
 
@@ -22,7 +23,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from sage.combinat.partition import _Partitions, Partitions
 from sage.combinat.sf.multiplicative import SymmetricFunctionAlgebra_multiplicative
@@ -121,7 +121,25 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
     - [Ram1991]_
     - [RR1997]_
     """
-    def __init__(self, sym, q='q'):
+    @staticmethod
+    def __classcall__(cls, Sym, q='q'):
+        """
+        Normalize the arguments.
+
+        TESTS::
+
+            sage: R.<q, t> = QQ[]
+            sage: B1 = SymmetricFunctions(R).qbar()
+            sage: B2 = SymmetricFunctions(R).qbar(q)
+            sage: B3 = SymmetricFunctions(R).qbar(t)
+            sage: B1 is B2
+            True
+            sage: B1 == B3
+            False
+        """
+        return super().__classcall__(cls, Sym, Sym.base_ring()(q))
+
+    def __init__(self, sym, q):
         r"""
         Initialize ``self``.
 
@@ -155,7 +173,7 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
             ....:     for mu in Partitions(n))
             True
         """
-        self.q = sym.base_ring()(q)
+        self.q = q
         SymmetricFunctionAlgebra_multiplicative.__init__(self, sym,
             basis_name="Hecke character with q={}".format(self.q),
             prefix="qbar")
@@ -167,6 +185,24 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
                                                            codomain=self))
         self._p.register_coercion(self._module_morphism(self._qbar_to_p_on_basis,
                                                         codomain=self._p))
+
+    def construction(self):
+        """
+        Return a pair ``(F, R)``, where ``F`` is a
+        :class:`SymmetricFunctionsFunctor` and `R` is a ring, such
+        that ``F(R)`` returns ``self``.
+
+        EXAMPLES::
+
+            sage: qbar = SymmetricFunctions(QQ['q']).qbar('q')
+            sage: qbar.construction()
+            (SymmetricFunctionsFunctor[Hecke character with q=q],
+             Univariate Polynomial Ring in q over Rational Field)
+        """
+
+        from sage.combinat.sf.sfa import SymmetricFunctionsFunctor
+        return (SymmetricFunctionsFunctor(self, self.basis_name(), self.q),
+                self.base_ring())
 
     def _p_to_qbar_on_generator(self, n):
         r"""
@@ -191,7 +227,7 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
             return self([1])
         q = self.q
         if q**n == self.base_ring().one():
-            raise ValueError("the parameter q=%s must not be a %s root of unity"%(q,n))
+            raise ValueError("the parameter q=%s must not be a %s root of unity" % (q,n))
         out = n * self([n]) - sum((q**i-1) * self._p_to_qbar_on_generator(i)
                                   * self([n-i]) for i in range(1,n) if q**i != 1)
         return out*(q-1) / (q**n-1)
@@ -290,10 +326,10 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
             sage: qbar[2].coproduct()
             qbar[] # qbar[2] + (q-1)*qbar[1] # qbar[1] + qbar[2] # qbar[]
         """
-        def P(i): return _Partitions([i]) if i else _Partitions([])
+        def P(i):
+            return _Partitions([i]) if i else _Partitions([])
         T = self.tensor_square()
         one = self.base_ring().one()
         q = self.q
         return T.sum_of_terms(((P(j), P(r-j)), one if j in [0,r] else q-one)
                               for j in range(r+1))
-

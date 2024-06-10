@@ -1,24 +1,18 @@
-from __future__ import absolute_import
 from sage.misc.lazy_import import lazy_import
 
-from .pari_group import PariGroup
+from sage.groups.pari_group import PariGroup
 
-from .matrix_gps.all import *
-from .abelian_gps.all import *
+from sage.groups.matrix_gps.all import *
+from sage.groups.abelian_gps.all import *
 
-from .perm_gps.all import *
+from sage.groups.perm_gps.all import *
 
-from .generic import (discrete_log, discrete_log_rho, discrete_log_lambda,
-                      linear_relation, multiple, multiples)
-lazy_import('sage.groups.generic',
-            ['bsgs', 'discrete_log_generic', 'multiplication_names',
-             'addition_names', 'order_from_multiple', 'order_from_bounds',
-             'merge_points', 'structure_description'],
-            deprecation=(25785, "this is being removed from the global namespace"))
+from sage.groups.generic import (discrete_log, discrete_log_rho, discrete_log_lambda,
+                      linear_relation, multiple, multiples, order_from_multiple)
 
 lazy_import('sage.groups.class_function', 'ClassFunction')
 
-from .additive_abelian.all import *
+from sage.groups.additive_abelian.all import *
 
 lazy_import('sage.groups.conjugacy_classes', ['ConjugacyClass', 'ConjugacyClassGAP'])
 

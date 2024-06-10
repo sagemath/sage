@@ -7,10 +7,9 @@ def output_signal(p):
 
 
 def rank(data):
-    parents = dict()
-    res = dict()
+    parents = {}
+    res = {}
     for p in data:
-    #        print p, output_signal(p)
         out = output_signal(p)
         parents.setdefault(out, [])
         for v in input_signals(p):
@@ -19,8 +18,8 @@ def rank(data):
     def do_rank(v):
         if v in res:
             return res[v]
-        my_res = res[v] = max([do_rank(p) + 1 for p in parents[v]] + [0])
+        my_res = res[v] = max((do_rank(p) + 1 for p in parents[v]), default=0)
         return my_res
-    for v in parents.keys():
+    for v in parents:
         do_rank(v)
     return res

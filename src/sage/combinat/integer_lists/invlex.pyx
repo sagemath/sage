@@ -99,7 +99,7 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
       value is `\infty`.
 
     - ``min_slope`` -- an integer or `-\infty` (default: `-\infty`):
-      an lower bound on the slope between consecutive parts:
+      a lower bound on the slope between consecutive parts:
       ``min_slope <= l[i+1]-l[i]`` for ``0 <= i < len(l)-1``
 
     - ``max_slope`` -- an integer or `+\infty` (defaults: `+\infty`)
@@ -516,7 +516,7 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
 
     A variant is to specify a class for the elements. With the default
     element constructor, this class should take as input the parent
-    ``self`` and a list. 
+    ``self`` and a list.
 
     .. WARNING::
 
@@ -538,7 +538,7 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
     controlled by `l`, which is to say negligible in practice.
 
     Still, there remains much room for efficiency improvements; see
-    :trac:`18055`, :trac:`18056`.
+    :issue:`18055`, :issue:`18056`.
 
     .. NOTE::
 
@@ -549,7 +549,7 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
     TESTS:
 
     This example from the combinatorics tutorial used to fail before
-    :trac:`17979` because the floor conditions did not satisfy the
+    :issue:`17979` because the floor conditions did not satisfy the
     slope conditions::
 
         sage: I = IntegerListsLex(16, min_length=2, max_slope=-1, floor=[5,3,3])
@@ -560,7 +560,7 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
 
     ::
 
-        sage: Partitions(2, max_slope=-1, length=2).list()
+        sage: Partitions(2, max_slope=-1, length=2).list()                              # needs sage.combinat
         []
         sage: list(IntegerListsLex(0, floor=ConstantFunction(1), min_slope=0))
         [[]]
@@ -644,7 +644,7 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
         sage: L.list()
         [[10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000]]
 
-    Noted on :trac:`17898`::
+    Noted on :issue:`17898`::
 
         sage: list(IntegerListsLex(4, min_part=1, length=3, min_slope=1))
         []
@@ -653,7 +653,7 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
         sage: IntegerListsLex(6, min_part=1, max_part=3, max_slope=-4).list()
         []
 
-    Noted in :trac:`17548`, which are now fixed::
+    Noted in :issue:`17548`, which are now fixed::
 
         sage: IntegerListsLex(10, min_part=2, max_slope=-1).list()
         [[10], [8, 2], [7, 3], [6, 4], [5, 3, 2]]
@@ -670,7 +670,7 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
         [[3], [2, 1], [1, 2]]
         sage: [1,1,1] in I
         False
-        sage: I=IntegerListsLex(10, ceiling=[4], max_length=1, min_part=1)
+        sage: I = IntegerListsLex(10, ceiling=[4], max_length=1, min_part=1)
         sage: I.list()
         []
         sage: [4,6] in I
@@ -690,7 +690,7 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
          [5, 3, 2], [4, 3, 2, 1]]
 
 
-    .. RUBRIC:: TESTS from comments on :trac:`17979`
+    .. RUBRIC:: TESTS from comments on :issue:`17979`
 
     Comment 191::
 
@@ -788,7 +788,7 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
     def __classcall_private__(cls, n=None, **kwargs):
         r"""
         Specifying a list or iterable as argument was deprecated in
-        :trac:`17979`. Please use ``DisjointUnionEnumeratedSets`` or
+        :issue:`17979`. Please use ``DisjointUnionEnumeratedSets`` or
         the ``min_sum`` and ``max_sum`` arguments instead.
         """
         return typecall(cls, n=n, **kwargs)
@@ -796,7 +796,7 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
 
 cdef class IntegerListsBackend_invlex(IntegerListsBackend):
     """
-    Cython back-end of an set of lists of integers with specified
+    Cython back-end of a set of lists of integers with specified
     constraints enumerated in inverse lexicographic order.
     """
     def __init__(self, *args, check=True, **kwds):
@@ -862,7 +862,7 @@ If you know what you are doing, you can set check=False to skip this warning."""
 
         ``None`` if this method finds a proof that there
         exists an upper bound on the length. Otherwise a
-        ``ValueError`` is raised.
+        :class:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -1105,7 +1105,7 @@ class IntegerListsLexIter(builtins.object):
       ``_current_list``: the range for each part.
 
     Furthermore, we assume that there is no obvious contradiction
-    in the contraints:
+    in the constraints:
 
     - ``self.backend.min_length <= self.backend.max_length``;
     - ``self.backend.min_slope <= self.backend.max_slope``
@@ -1215,9 +1215,9 @@ class IntegerListsLexIter(builtins.object):
         max_sum = self.backend.max_sum
         min_length = self.backend.min_length
         max_length = self.backend.max_length
-        if  self._j+1 >= max_length:
+        if self._j + 1 >= max_length:
             return False
-        if self._j+1 >= min_length and self._current_sum == max_sum:
+        if self._j + 1 >= min_length and self._current_sum == max_sum:
             # Cannot add trailing zeroes
             return False
 
@@ -1419,7 +1419,7 @@ class IntegerListsLexIter(builtins.object):
             sage: I._m_interval(1,2)
             (0, 2)
 
-        The second part is not bounded above, hence we can not
+        The second part is not bounded above, hence we cannot
         iterate lexicographically through all the elements::
 
             sage: IntegerListsLex(ceiling=[2,infinity,3], max_length=3).first()
@@ -1643,4 +1643,3 @@ class IntegerListsLexIter(builtins.object):
             k += 1
 
         return False
-

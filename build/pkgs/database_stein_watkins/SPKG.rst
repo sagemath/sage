@@ -1,5 +1,5 @@
-database_stein_watkins
-======================
+database_stein_watkins: Database of elliptic curves (full version)
+==================================================================
 
 Description
 -----------
@@ -14,13 +14,3 @@ License
 -------
 
 Public Domain
-
-Dependencies
-------------
-
-None
-
-Patches
-~~~~~~~
-
-None

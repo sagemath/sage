@@ -3,15 +3,17 @@
 Third-Party Tarballs
 """
 
-#*****************************************************************************
-#       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
+# ****************************************************************************
+#       Copyright (C) 2014-2015 Volker Braun <vbraun.name@gmail.com>
+#                     2017      Jeroen Demeyer
+#                     2020      Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 import logging
@@ -37,7 +39,7 @@ class FileNotMirroredError(Exception):
 
 
 class Tarball(object):
-    
+
     def __init__(self, tarball_name, package=None):
         """
         A (third-party downloadable) tarball
@@ -70,7 +72,7 @@ class Tarball(object):
 
     def __repr__(self):
         return 'Tarball {0}'.format(self.filename)
-            
+
     @property
     def filename(self):
         """
@@ -82,7 +84,7 @@ class Tarball(object):
         tarball.
         """
         return self.__filename
-        
+
     @property
     def package(self):
         """
@@ -93,7 +95,7 @@ class Tarball(object):
         Instance of :class:`sage_bootstrap.package.Package`
         """
         return self.__package
-        
+
     @property
     def upstream_fqn(self):
         """
@@ -103,7 +105,7 @@ class Tarball(object):
 
     def __eq__(self, other):
         return self.filename == other.filename
-        
+
     def _compute_hash(self, algorithm):
         with open(self.upstream_fqn, 'rb') as f:
             while True:
@@ -117,20 +119,28 @@ class Tarball(object):
         import hashlib
         return self._compute_hash(hashlib.sha1())
 
-    def _compute_md5(self):
+    def _compute_sha256(self):
         import hashlib
-        return self._compute_hash(hashlib.md5())
-    
-    def _compute_cksum(self):
-        from sage_bootstrap.cksum import CksumAlgorithm
-        return self._compute_hash(CksumAlgorithm())
-    
-    def checksum_verifies(self):
+        return self._compute_hash(hashlib.sha256())
+
+    def checksum_verifies(self, force_sha256=False):
         """
         Test whether the checksum of the downloaded file is correct.
         """
+        if self.package.sha256:
+            sha256 = self._compute_sha256()
+            if sha256 != self.package.sha256:
+                return False
+        elif force_sha256:
+            log.warning('sha256 not available for {0}'.format(self.package.name))
+            return False
+        else:
+            log.warning('sha256 not available for {0}, using sha1'.format(self.package.name))
         sha1 = self._compute_sha1()
         return sha1 == self.package.sha1
+
+    def is_distributable(self):
+        return 'do-not-distribute' not in self.filename
 
     def download(self, allow_upstream=False):
         """
@@ -140,6 +150,8 @@ class Tarball(object):
         on the sage mirrors, fall back to downloading it from
         the upstream URL if the package has one.
         """
+        if not self.filename:
+            raise ValueError('non-normal package does define a tarball, so cannot download')
         destination = self.upstream_fqn
         if os.path.isfile(destination):
             if self.checksum_verifies():
@@ -148,13 +160,16 @@ class Tarball(object):
             else:
                 # Garbage in the upstream directory? Ignore it.
                 # Don't delete it because maybe somebody just forgot to
-                # update the checksum (Trac #23972).
+                # update the checksum (Issue #23972).
                 log.warning('Invalid checksum; ignoring cached file {destination}'
                             .format(destination=destination))
         successful_download = False
         log.info('Attempting to download package {0} from mirrors'.format(self.filename))
         for mirror in MirrorList():
-            url = mirror + '/'.join(['spkg', 'upstream', self.package.name, self.filename])
+            url = mirror.replace('${SPKG}', self.package.name)
+            if not url.endswith('/'):
+                url += '/'
+            url += self.filename
             log.info(url)
             try:
                 Download(url, destination).run()
@@ -168,7 +183,6 @@ class Tarball(object):
                 log.info('Attempting to download from {}'.format(url))
                 try:
                     Download(url, destination).run()
-                    successful_download = True
                 except IOError:
                     raise FileNotMirroredError('tarball does not exist on mirror network and neither at the upstream URL')
             else:
@@ -182,4 +196,3 @@ class Tarball(object):
         """
         import shutil
         shutil.copy(self.upstream_fqn, destination)
-

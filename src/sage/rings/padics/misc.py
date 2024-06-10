@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Miscellaneous Functions
 
@@ -25,7 +24,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from sage.rings.infinity import infinity
 
@@ -72,9 +70,9 @@ def gauss_sum(a, p, f, prec=20, factored=False, algorithm='pari', parent=None):
 
     - ``prec`` -- positive integer (optional, 20 by default)
 
-    - ``factored`` - boolean (optional, False by default)
+    - ``factored`` -- boolean (optional, ``False`` by default)
 
-    - ``algorithm`` - flag passed to p-adic Gamma function (optional, "pari" by default)
+    - ``algorithm`` -- flag passed to p-adic Gamma function (optional, ``"pari"`` by default)
 
     OUTPUT:
 
@@ -92,25 +90,25 @@ def gauss_sum(a, p, f, prec=20, factored=False, algorithm='pari', parent=None):
     In this example, we verify that `g_3(0) = -1`::
 
         sage: from sage.rings.padics.misc import gauss_sum
-        sage: -gauss_sum(0,3,1)
+        sage: -gauss_sum(0, 3, 1)                                                       # needs sage.libs.ntl sage.rings.padics
         1 + O(pi^40)
 
     Next, we verify that `g_5(a) g_5(-a) = 5 (-1)^a`::
 
         sage: from sage.rings.padics.misc import gauss_sum
-        sage: gauss_sum(2,5,1)^2-5
+        sage: gauss_sum(2,5,1)^2 - 5                                                    # needs sage.libs.ntl
         O(pi^84)
-        sage: gauss_sum(1,5,1)*gauss_sum(3,5,1)+5
+        sage: gauss_sum(1,5,1)*gauss_sum(3,5,1) + 5                                     # needs sage.libs.ntl
         O(pi^84)
 
     Finally, we compute a non-trivial value::
 
         sage: from sage.rings.padics.misc import gauss_sum
-        sage: gauss_sum(2,13,2)
+        sage: gauss_sum(2,13,2)                                                         # needs sage.libs.ntl
         6*pi^2 + 7*pi^14 + 11*pi^26 + 3*pi^62 + 6*pi^74 + 3*pi^86 + 5*pi^98 +
         pi^110 + 7*pi^134 + 9*pi^146 + 4*pi^158 + 6*pi^170 + 4*pi^194 +
         pi^206 + 6*pi^218 + 9*pi^230 + O(pi^242)
-        sage: gauss_sum(2,13,2,prec=5,factored=True)
+        sage: gauss_sum(2,13,2, prec=5, factored=True)                                  # needs sage.rings.padics
         (2, 6 + 6*13 + 10*13^2 + O(13^5))
 
     .. SEEALSO::
@@ -122,7 +120,7 @@ def gauss_sum(a, p, f, prec=20, factored=False, algorithm='pari', parent=None):
           for prime finite fields
     """
     from sage.rings.padics.factory import Zp
-    from sage.rings.all import PolynomialRing
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
     q = p**f
     a = a % (q-1)
@@ -202,12 +200,13 @@ def precprint(prec_type, prec_cap, p):
         sage: precprint('fixed-mod', 1, 17)
         'of fixed modulus 17^1'
     """
-    precD = {'capped-rel':'with capped relative precision %s'%prec_cap,
-             'capped-abs':'with capped absolute precision %s'%prec_cap,
-             'floating-point':'with floating precision %s'%prec_cap,
-             'fixed-mod':'of fixed modulus %s^%s'%(p, prec_cap),
+    precD = {'capped-rel':'with capped relative precision %s' % prec_cap,
+             'capped-abs':'with capped absolute precision %s' % prec_cap,
+             'floating-point':'with floating precision %s' % prec_cap,
+             'fixed-mod':'of fixed modulus %s^%s' % (p, prec_cap),
              'lattice-cap':'with lattice-cap precision',
-             'lattice-float':'with lattice-float precision'}
+             'lattice-float':'with lattice-float precision',
+             'relaxed':'handled with relaxed arithmetics'}
     return precD[prec_type]
 
 def trim_zeros(L):

@@ -1,0 +1,3 @@
+pkgconfig(fplll)
+fplll-devel
+fplll

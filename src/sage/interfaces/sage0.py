@@ -1,20 +1,20 @@
+# sage.doctest: needs sage.all
 r"""
 Interface to Sage
 
 This is an expect interface to *another* copy of the Sage
 interpreter.
 """
-from __future__ import absolute_import
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 import pickle
@@ -26,7 +26,7 @@ import sage.repl.preparse
 
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.persist import dumps, load
-from sage.docs.instancedoc import instancedoc
+from sage.misc.instancedoc import instancedoc
 
 
 class Sage(ExtraTabCompletion, Expect):
@@ -36,7 +36,7 @@ class Sage(ExtraTabCompletion, Expect):
     INPUT:
 
 
-    -  ``server`` - (optional); if specified runs Sage on a
+    -  ``server`` -- (optional); if specified runs Sage on a
        remote machine with address. You must have ssh keys setup so you
        can login to the remote machine by typing "ssh remote_machine" and
        no password, call _install_hints_ssh() for hints on how to do
@@ -160,7 +160,8 @@ class Sage(ExtraTabCompletion, Expect):
         if python:
             command = 'python -u'
             prompt = re.compile(b'>>> ')
-            init_code.append('from sage.all import *')
+            environment = 'sage.all'
+            init_code.append(f'from {environment} import *')
         else:
             command = ' '.join([
                 'sage-ipython',
@@ -308,9 +309,9 @@ class Sage(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``line`` - input line of code
+        -  ``line`` -- input line of code
 
-        -  ``strip`` - ignored
+        -  ``strip`` -- ignored
 
 
         EXAMPLES::
@@ -355,7 +356,7 @@ class Sage(ExtraTabCompletion, Expect):
         Clear the variable named var.
 
         Note that the exact format of the NameError for a cleared variable
-        is slightly platform dependent, see :trac:`10539`.
+        is slightly platform dependent, see :issue:`10539`.
 
         EXAMPLES::
 
@@ -506,9 +507,9 @@ class SageElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: sr = mq.SR(allow_zero_inversions=True)
-            sage: F,s = sr.polynomial_system()
-            sage: F == sage0(F)._sage_()
+            sage: sr = mq.SR(allow_zero_inversions=True)                                # needs sage.modules sage.rings.finite_rings
+            sage: F,s = sr.polynomial_system()                                          # needs sage.modules sage.rings.finite_rings
+            sage: F == sage0(F)._sage_()                                                # needs sage.modules sage.rings.finite_rings
             True
         """
         P = self.parent()

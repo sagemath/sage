@@ -1,5 +1,5 @@
-iconv
-=====
+iconv: Library for language/country-dependent character encodings
+=================================================================
 
 Description
 -----------
@@ -18,16 +18,3 @@ Upstream Contact
 
 -  http://www.gnu.org/software/libiconv/
 -  Bug reports to bug-gnu-libiconv@gnu.org
-
-Dependencies
-------------
-
--  None for the purposes of Sage, but in general gettext.
-
-
-Special Update/Build Instructions
----------------------------------
-
--  None, other than anyone updating this package should be familiar with
-   how
-   to write shell scripts.

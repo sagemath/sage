@@ -1,5 +1,5 @@
-NetworkX
-========
+networkx: Python package for complex networks
+=============================================
 
 Description
 -----------

@@ -1,10 +1,13 @@
 # Copyright (c) 2005-2007 by The PolyBoRi Team
-
-from .PyPolyBoRi import *
-from .randompoly import gen_random_poly
+from time import process_time as clock
 from random import Random
 
-from time import process_time as clock
+from .PyPolyBoRi import (Polynomial, Variable, Monomial,
+                         BoolePolynomialVector)
+from .randompoly import gen_random_poly
+from .pbori import (BooleSet, add_up_polynomials, interpolate_smallest_lex,
+                    interpolate)
+from .blocks import Block, declare_ring
 
 
 generator = Random()
@@ -58,9 +61,9 @@ def gen_random_o_z(points, points_p):
 
 
 def variety_lex_leading_terms(points, variables):
+    assert isinstance(points, BooleSet), "Points needs to be a BooleSet"
     ring = variables.ring()
     standards = BooleSet(ring.zero())
-    assert type(points) == BooleSet, "Points needs to be a BooleSet"
     points_tuple = tuple(points)
     myvars_div = variables.divisors()
     if points != myvars_div:
@@ -75,8 +78,7 @@ def variety_lex_leading_terms(points, variables):
             len_standards = len(standards)
             standards_old = standards
 
-    leading_terms = BooleSet(myvars_div.diff(standards)).minimal_elements()
-    return leading_terms
+    return BooleSet(myvars_div.diff(standards)).minimal_elements()
 
 
 def lex_groebner_basis_points(points, variables):
@@ -87,23 +89,25 @@ def lex_groebner_basis_points(points, variables):
 def lex_groebner_basis_for_polynomial_via_variety(p):
     variables = p.vars_as_monomial()
     return lex_groebner_basis_points(p.zeros_in(variables.divisors()),
-        variables)
+                                     variables)
 
 
 if __name__ == '__main__':
     nvariables = 100
     r = declare_ring([Block("x", nvariables)])
-    for number_of_points in (100, 500, 1000, 2000, 3000, 4000, 5000, 10000,
+    for number_of_points in (100, 500, 1000, 2000, 3000,
+                             4000, 5000, 10000,
                              20000, 50000, 100000):
         print("----------")
         print("number_of_points:", number_of_points)
         print("generate points")
-        points = gen_random_poly(number_of_points, nvariables, [Variable(i)
-            for i in range(nvariables)])
+        points = gen_random_poly(r, number_of_points,
+                                 nvariables,
+                                 [Variable(i, r) for i in range(nvariables)])
         print("points generated")
         bench_interpolate(nvariables, nvariables, points)
         vars_mon = Monomial(r)
         for i in reversed(range(nvariables)):
             vars_mon = vars_mon * Variable(i, r)
         print(len(variety_lex_leading_terms(points, vars_mon)),
-            "elements in groebner basis")
+              "elements in groebner basis")

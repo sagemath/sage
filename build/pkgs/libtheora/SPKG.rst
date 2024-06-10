@@ -1,5 +1,5 @@
-libtheora
-=========
+libtheora: Library for the Theora video codec
+=============================================
 
 Description
 -----------
@@ -47,19 +47,6 @@ Upstream Contact
 ----------------
 
 The Xiph.org mailing lists - see http://lists.xiph.org/mailman/listinfo
-
-Dependencies
-------------
-
-This spkg depends on
-
--  libogg
--  libpng
-
-This spkg provides dependencies for
-
--  the Sage library
-
 
 Special Update/Build Instructions
 ---------------------------------

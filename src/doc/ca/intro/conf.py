@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-#
+# nodoctest
 # Sage documentation build configuration file, created by
 # sphinx-quickstart on Thu Aug 21 20:15:55 2008.
 #
@@ -11,11 +10,23 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-from sage.docs.conf import release
-from sage.docs.conf import *  # NOQA
+from sage_docbuild.conf import release
+from sage_docbuild.conf import *  # NOQA
+
+# Add any paths that contain custom static files (such as style sheets),
+# relative to this directory to html_static_path. They are copied after the
+# builtin static files, so a file named "default.css" will overwrite the
+# builtin "default.css". html_common_static_path imported from sage_docbuild.conf
+# contains common paths.
+html_static_path = [] + html_common_static_path
+
+# Add a small edit button.
+html_theme_options.update({
+  'source_edit_link': os.path.join(source_repository, 'blob/develop/src/doc/ca/intro', '{filename}'),
+})
 
 # General information about the project.
-project = u"Introducció de Sage"
+project = "Introducció de Sage"
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -27,6 +38,6 @@ htmlhelp_basename = 'TutorialdeSage'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class [howto/manual]).
 latex_documents = [
-  ('index', 'TutorialdeSage.tex', u'Introducció de Sage',
-   u'The Sage Development Team', 'manual'),
+  ('index', 'TutorialdeSage.tex', 'Introducció de Sage',
+   'The Sage Development Team', 'manual'),
 ]

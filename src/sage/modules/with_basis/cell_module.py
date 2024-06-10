@@ -1,18 +1,19 @@
+# sage.doctest: needs sage.combinat
 r"""
-Cell Modules
+Cell modules
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015-2018 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.categories.all import ModulesWithBasis
+from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.structure.element import Element
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.data_structures.blas_dict import linear_combination
@@ -72,7 +73,7 @@ class CellModule(CombinatorialFreeModule):
         """
         mu = A.cell_poset()(mu)
         kwds['prefix'] = kwds.get('prefix', 'W')
-        return super(CellModule, cls).__classcall__(cls, A, mu, **kwds)
+        return super().__classcall__(cls, A, mu, **kwds)
 
     def __init__(self, A, mu, **kwds):
         r"""
@@ -246,7 +247,7 @@ class CellModule(CombinatorialFreeModule):
         # Since the bilinear form is symmetric, it is sufficient
         #   to check on the upper triangular part
         return any(self._bilinear_form_on_basis(s, t)
-                   for i,s in enumerate(C) for t in C[i:])
+                   for i, s in enumerate(C) for t in C[i:])
 
     @cached_method
     def radical_basis(self):
@@ -288,8 +289,8 @@ class CellModule(CombinatorialFreeModule):
             Finite family {}
         """
         radical = self.submodule(self.radical_basis(),
-                                category=self.category().Subobjects(),
-                                already_echelonized=True)
+                                 category=self.category().Subobjects(),
+                                 already_echelonized=True)
         radical.rename("Radical of {}".format(self))
         return radical
 
@@ -333,9 +334,9 @@ class CellModule(CombinatorialFreeModule):
                 sage: elt = W.an_element(); elt
                 2*W[[1, 2], [3]] + 2*W[[1, 3], [2]]
                 sage: sc = C.an_element(); sc
-                3*C([2, 1], [[1, 3], [2]], [[1, 2], [3]])
+                2*C([1, 1, 1], [[1], [2], [3]], [[1], [2], [3]])
+                 + 3*C([2, 1], [[1, 3], [2]], [[1, 2], [3]])
                  + 2*C([2, 1], [[1, 3], [2]], [[1, 3], [2]])
-                 + 2*C([3], [[1, 2, 3]], [[1, 2, 3]])
                 sage: sc * elt
                 10*W[[1, 3], [2]]
 
@@ -357,11 +358,11 @@ class CellModule(CombinatorialFreeModule):
                 # Temporary needed by coercion (see Polynomial/FractionField tests).
                 if not P._algebra.has_coerce_map_from(scalar.parent()):
                     return None
-                scalar = P._algebra( scalar )
+                scalar = P._algebra(scalar)
 
             if self_on_left:
                 raise NotImplementedError
-                #scalar = scalar.cellular_involution()
+                # scalar = scalar.cellular_involution()
             mc = self._monomial_coefficients
             scalar_mc = scalar.monomial_coefficients(copy=False)
             D = linear_combination([(P._action_basis(x, k)._monomial_coefficients,
@@ -432,7 +433,7 @@ class SimpleModule(QuotientModuleWithBasis):
         """
         if A == self._ambient:
             return A.module_morphism(self.retract, codomain=self)
-        return super(SimpleModule, self)._coerce_map_from_(A)
+        return super()._coerce_map_from_(A)
 
     class Element(QuotientModuleWithBasis.Element):
         def _acted_upon_(self, scalar, self_on_left=False):
@@ -447,9 +448,9 @@ class SimpleModule(QuotientModuleWithBasis):
                 sage: elt = L.an_element(); elt
                 2*L[[1, 2], [3]] + 2*L[[1, 3], [2]]
                 sage: sc = C.an_element(); sc
-                3*C([2, 1], [[1, 3], [2]], [[1, 2], [3]])
+                2*C([1, 1, 1], [[1], [2], [3]], [[1], [2], [3]])
+                 + 3*C([2, 1], [[1, 3], [2]], [[1, 2], [3]])
                  + 2*C([2, 1], [[1, 3], [2]], [[1, 3], [2]])
-                 + 2*C([3], [[1, 2, 3]], [[1, 2, 3]])
                 sage: sc * elt
                 10*L[[1, 3], [2]]
 
@@ -473,4 +474,3 @@ class SimpleModule(QuotientModuleWithBasis):
         # For backward compatibility
         _lmul_ = _acted_upon_
         _rmul_ = _acted_upon_
-

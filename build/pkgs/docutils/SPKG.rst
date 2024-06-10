@@ -1,5 +1,5 @@
-docutils
-========
+docutils: Processing plaintext documentation into useful formats, such as HTML or LaTeX
+=======================================================================================
 
 Description
 -----------
@@ -12,21 +12,11 @@ plaintext markup syntax.
 License
 -------
 
-Modified BSD
-
+public domain, Python, 2-Clause BSD, GPL 3 (see COPYING.txt)
 
 Upstream Contact
 ----------------
 
-Author: David Goodger Home Page: http://docutils.sourceforge.net/
+https://pypi.org/project/docutils/
 
-Dependencies
-------------
-
-None
-
-
-Special Update/Build Instructions
----------------------------------
-
-None
+Home Page: http://docutils.sourceforge.net/

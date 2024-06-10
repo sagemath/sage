@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Rigged Configurations of `\mathcal{B}(\infty)`
 
@@ -20,7 +21,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import division
 
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.structure.unique_representation import UniqueRepresentation
@@ -147,7 +147,7 @@ class InfinityCrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
             return InfinityCrystalOfNonSimplyLacedRC(cartan_type)
 
         cartan_type = CartanType(cartan_type)
-        return super(InfinityCrystalOfRiggedConfigurations, cls).__classcall__(cls, cartan_type)
+        return super().__classcall__(cls, cartan_type)
 
     def __init__(self, cartan_type):
         r"""
@@ -204,7 +204,7 @@ class InfinityCrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
 
         TESTS:
 
-        Check that :trac:`17054` is fixed::
+        Check that :issue:`17054` is fixed::
 
             sage: RC = RiggedConfigurations(['A',2,1], [[1,1]]*4 + [[2,1]]*4)
             sage: B = crystals.infinity.RiggedConfigurations(['A',2])
@@ -241,7 +241,7 @@ class InfinityCrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
                 and self.cartan_type().is_simply_laced()):
                 from sage.combinat.rigged_configurations.bij_infinity import FromTableauIsomorphism
                 return FromTableauIsomorphism(Hom(P, self))
-        return super(InfinityCrystalOfRiggedConfigurations, self)._coerce_map_from_(P)
+        return super()._coerce_map_from_(P)
 
     def _calc_vacancy_number(self, partitions, a, i, **options):
         r"""
@@ -301,6 +301,7 @@ class InfinityCrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
             sage: elt = RC(partition_list=[[1,1]]*4, rigging_list=[[1,1], [0,0], [0,0], [-1,-1]])
             sage: TestSuite(elt).run()
         """
+
         def weight(self):
             """
             Return the weight of ``self``.
@@ -316,10 +317,12 @@ class InfinityCrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
             alpha = list(P.simple_roots())
             return -sum(sum(x) * alpha[i] for i, x in enumerate(self))
 
+
 class InfinityCrystalOfNonSimplyLacedRC(InfinityCrystalOfRiggedConfigurations):
     r"""
     Rigged configurations for `\mathcal{B}(\infty)` in non-simply-laced types.
     """
+
     def __init__(self, vct):
         """
         Initialize ``self``.
@@ -332,7 +335,7 @@ class InfinityCrystalOfNonSimplyLacedRC(InfinityCrystalOfRiggedConfigurations):
             sage: vct = CartanType(['C', 2, 1]).as_folding()
             sage: RC = crystals.infinity.RiggedConfigurations(vct)
             sage: TestSuite(RC).run() # long time
-         """
+        """
         self._folded_ct = vct
         InfinityCrystalOfRiggedConfigurations.__init__(self, vct._cartan_type)
 
@@ -355,7 +358,7 @@ class InfinityCrystalOfNonSimplyLacedRC(InfinityCrystalOfRiggedConfigurations):
             if isinstance(P, InfinityCrystalOfTableaux):
                 from sage.combinat.rigged_configurations.bij_infinity import FromTableauIsomorphism
                 return FromTableauIsomorphism(Hom(P, self))
-        return super(InfinityCrystalOfNonSimplyLacedRC, self)._coerce_map_from_(P)
+        return super()._coerce_map_from_(P)
 
     def _calc_vacancy_number(self, partitions, a, i):
         r"""
@@ -443,7 +446,7 @@ class InfinityCrystalOfNonSimplyLacedRC(InfinityCrystalOfRiggedConfigurations):
             sage: velt.parent()
             The infinity crystal of rigged configurations of type ['A', 3]
         """
-        gamma = [int(_) for _ in self._folded_ct.scaling_factors()]
+        gamma = [int(f) for f in self._folded_ct.scaling_factors()]
         sigma = self._folded_ct._orbit
         n = self._folded_ct._folding.rank()
         vindex = self._folded_ct._folding.index_set()
@@ -507,6 +510,7 @@ class InfinityCrystalOfNonSimplyLacedRC(InfinityCrystalOfRiggedConfigurations):
             sage: elt = RC(partition_list=[[1],[1,1],[1]])
             sage: TestSuite(elt).run()
         """
+
         def weight(self):
             """
             Return the weight of ``self``.

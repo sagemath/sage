@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Hopf algebras with basis
 """
@@ -25,30 +26,32 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
         sage: C = HopfAlgebrasWithBasis(QQ)
         sage: C
-        Category of hopf algebras with basis over Rational Field
+        Category of Hopf algebras with basis over Rational Field
         sage: C.super_categories()
-        [Category of hopf algebras over Rational Field,
+        [Category of Hopf algebras over Rational Field,
          Category of bialgebras with basis over Rational Field]
 
     We now show how to use a simple Hopf algebra, namely the group algebra of the dihedral group
     (see also AlgebrasWithBasis)::
 
-        sage: A = C.example(); A
-        An example of Hopf algebra with basis: the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
-        sage: A.__custom_name = "A"
-        sage: A.category()
-        Category of finite dimensional hopf algebras with basis over Rational Field
+        sage: A = C.example(); A                                                        # needs sage.groups
+        An example of Hopf algebra with basis: the group algebra of the
+         Dihedral group of order 6 as a permutation group over Rational Field
+        sage: A.rename("A")                                                             # needs sage.groups
+        sage: A.category()                                                              # needs sage.groups
+        Category of finite dimensional Hopf algebras with basis over Rational Field
 
-        sage: A.one_basis()
+        sage: A.one_basis()                                                             # needs sage.groups
         ()
-        sage: A.one()
+        sage: A.one()                                                                   # needs sage.groups
         B[()]
 
-        sage: A.base_ring()
+        sage: A.base_ring()                                                             # needs sage.groups
         Rational Field
-        sage: A.basis().keys()
+        sage: A.basis().keys()                                                          # needs sage.groups
         Dihedral group of order 6 as a permutation group
 
+        sage: # needs sage.groups
         sage: [a,b] = A.algebra_generators()
         sage: a, b
         (B[(1,2,3)], B[(1,3)])
@@ -57,19 +60,19 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         sage: a*b
         B[(1,2)]
 
-        sage: A.product           # todo: not quite ...
-        <bound method MyGroupAlgebra_with_category._product_from_product_on_basis_multiply of A>
-        sage: A.product(b,b)
+        sage: A.product           # todo: not quite ...                                 # needs sage.groups
+        <bound method MagmaticAlgebras.WithBasis.ParentMethods._product_from_product_on_basis_multiply of A>
+        sage: A.product(b, b)                                                           # needs sage.groups
         B[()]
 
-        sage: A.zero().coproduct()
+        sage: A.zero().coproduct()                                                      # needs sage.groups
         0
-        sage: A.zero().coproduct().parent()
+        sage: A.zero().coproduct().parent()                                             # needs sage.groups
         A # A
-        sage: a.coproduct()
+        sage: a.coproduct()                                                             # needs sage.groups
         B[(1,2,3)] # B[(1,2,3)]
 
-        sage: TestSuite(A).run(verbose=True)
+        sage: TestSuite(A).run(verbose=True)                                            # needs sage.groups
         running ._test_additive_associativity() . . . pass
         running ._test_an_element() . . . pass
         running ._test_antipode() . . . pass
@@ -83,6 +86,7 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
           running ._test_eq() . . . pass
+          running ._test_monomial_coefficients() . . . pass
           running ._test_new() . . . pass
           running ._test_nonzero_equal() . . . pass
           running ._test_not_implemented_methods() . . . pass
@@ -100,32 +104,35 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         running ._test_prod() . . . pass
         running ._test_some_elements() . . . pass
         running ._test_zero() . . . pass
-        sage: A.__class__
+        sage: A.__class__                                                               # needs sage.groups
         <class 'sage.categories.examples.hopf_algebras_with_basis.MyGroupAlgebra_with_category'>
-        sage: A.element_class
+        sage: A.element_class                                                           # needs sage.groups
         <class 'sage.categories.examples.hopf_algebras_with_basis.MyGroupAlgebra_with_category.element_class'>
 
     Let us look at the code for implementing A::
 
-        sage: A??                       # todo: not implemented
+        sage: A??                               # not implemented                       # needs sage.groups
 
     TESTS::
 
-        sage: TestSuite(A).run()
+        sage: TestSuite(A).run()                                                        # needs sage.groups
         sage: TestSuite(C).run()
     """
 
-    def example(self, G = None):
+    def example(self, G=None):
         """
         Returns an example of algebra with basis::
 
-            sage: HopfAlgebrasWithBasis(QQ['x']).example()
-            An example of Hopf algebra with basis: the group algebra of the Dihedral group of order 6 as a permutation group over Univariate Polynomial Ring in x over Rational Field
+            sage: HopfAlgebrasWithBasis(QQ['x']).example()                              # needs sage.groups
+            An example of Hopf algebra with basis: the group algebra of the
+            Dihedral group of order 6 as a permutation group
+            over Univariate Polynomial Ring in x over Rational Field
 
         An other group can be specified as optional argument::
 
-            sage: HopfAlgebrasWithBasis(QQ).example(SymmetricGroup(4))
-            An example of Hopf algebra with basis: the group algebra of the Symmetric group of order 4! as a permutation group over Rational Field
+            sage: HopfAlgebrasWithBasis(QQ).example(SymmetricGroup(4))                  # needs sage.groups
+            An example of Hopf algebra with basis: the group algebra of the
+            Symmetric group of order 4! as a permutation group over Rational Field
         """
         from sage.categories.examples.hopf_algebras_with_basis import MyGroupAlgebra
         from sage.groups.perm_gps.permgroup_named import DihedralGroup
@@ -144,7 +151,7 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
 #             sage: C = HopfAlgebrasWithBasis(QQ)
 #             sage: C.dual()
-#             Category of hopf algebras with basis over Rational Field
+#             Category of Hopf algebras with basis over Rational Field
 #         """
 #         return self
 
@@ -175,6 +182,7 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.groups
                 sage: A = HopfAlgebrasWithBasis(QQ).example()
                 sage: W = A.basis().keys(); W
                 Dihedral group of order 6 as a permutation group
@@ -196,8 +204,10 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.groups
                 sage: A = HopfAlgebrasWithBasis(ZZ).example(); A
-                An example of Hopf algebra with basis: the group algebra of the Dihedral group of order 6 as a permutation group over Integer Ring
+                An example of Hopf algebra with basis: the group algebra of the
+                 Dihedral group of order 6 as a permutation group over Integer Ring
                 sage: A = HopfAlgebrasWithBasis(QQ).example()
                 sage: [a,b] = A.algebra_generators()
                 sage: a, A.antipode(a)
@@ -207,12 +217,13 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             TESTS::
 
-                sage: all(A.antipode(x) * x == A.one() for x in A.basis())
+                sage: all(A.antipode(x) * x == A.one() for x in A.basis())              # needs sage.groups
                 True
             """
             if self.antipode_on_basis is not NotImplemented:
                 # Should give the information that this is an anti-morphism of algebra
-                return self._module_morphism(self.antipode_on_basis, codomain = self)
+                return self._module_morphism(self.antipode_on_basis,
+                                             codomain=self)
             elif hasattr(self, "antipode_by_coercion"):
                 return self.antipode_by_coercion
 
@@ -238,13 +249,13 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             TESTS::
 
-                sage: R = NonCommutativeSymmetricFunctions(QQ).ribbon()
-                sage: R._test_antipode()
+                sage: R = NonCommutativeSymmetricFunctions(QQ).ribbon()                 # needs sage.combinat sage.modules
+                sage: R._test_antipode()                                                # needs sage.combinat sage.modules
 
             ::
 
-                sage: s = SymmetricFunctions(QQ).schur()
-                sage: s._test_antipode()
+                sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.combinat sage.modules
+                sage: s._test_antipode()                                                # needs lrcalc_python sage.combinat sage.modules
 
             """
             tester = self._tester(**options)
@@ -274,7 +285,7 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
     class TensorProducts(TensorProductsCategory):
         """
-        The category of hopf algebras with basis constructed by tensor product of hopf algebras with basis
+        The category of Hopf algebras with basis constructed by tensor product of Hopf algebras with basis
         """
 
         @cached_method
@@ -284,11 +295,11 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: C = HopfAlgebrasWithBasis(QQ).TensorProducts()
                 sage: C.extra_super_categories()
-                [Category of hopf algebras with basis over Rational Field]
+                [Category of Hopf algebras with basis over Rational Field]
                 sage: sorted(C.super_categories(), key=str)
-                [Category of hopf algebras with basis over Rational Field,
-                 Category of tensor products of algebras with basis over Rational Field,
-                 Category of tensor products of hopf algebras over Rational Field]
+                [Category of Hopf algebras with basis over Rational Field,
+                 Category of tensor products of Hopf algebras over Rational Field,
+                 Category of tensor products of algebras with basis over Rational Field]
             """
             return [self.base_category()]
 
@@ -298,4 +309,3 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
         class ElementMethods:
             pass
-

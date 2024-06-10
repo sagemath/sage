@@ -1,7 +1,6 @@
 r"""
-Congruence Subgroup `\Gamma(N)`
+Congruence subgroup `\Gamma(N)`
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 # This program is free software: you can redistribute it and/or modify
@@ -11,17 +10,20 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .congroup_generic import CongruenceSubgroup
-from sage.misc.all import prod
-from sage.rings.all import ZZ, Zmod, QQ
-from sage.rings.integer import GCD_list
+from sage.arith.misc import gcd
 from sage.groups.matrix_gps.finitely_generated import MatrixGroup
 from sage.matrix.constructor import matrix
+from sage.misc.misc_c import prod
 from sage.modular.cusps import Cusp
-from sage.arith.all import gcd
+from sage.rings.finite_rings.integer_mod_ring import Zmod
+from sage.rings.integer import GCD_list
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.structure.richcmp import richcmp_method, richcmp
 
+from .congroup_generic import CongruenceSubgroup
 from .congroup_sl2z import SL2Z
+
 
 _gamma_cache = {}
 def Gamma_constructor(N):
@@ -48,7 +50,8 @@ def Gamma_constructor(N):
         sage: G is G2
         False
     """
-    if N == 1: return SL2Z
+    if N == 1:
+        return SL2Z
     try:
         return _gamma_cache[N]
     except KeyError:
@@ -70,7 +73,7 @@ class Gamma_class(CongruenceSubgroup):
             sage: Gamma(133)._repr_()
             'Congruence Subgroup Gamma(133)'
         """
-        return "Congruence Subgroup Gamma(%s)"%self.level()
+        return "Congruence Subgroup Gamma(%s)" % self.level()
 
     def _latex_(self):
         r"""
@@ -83,7 +86,7 @@ class Gamma_class(CongruenceSubgroup):
             sage: latex(Gamma(20))
             \Gamma(20)
         """
-        return "\\Gamma(%s)"%self.level()
+        return "\\Gamma(%s)" % self.level()
 
     def __reduce__(self):
         """
@@ -102,7 +105,7 @@ class Gamma_class(CongruenceSubgroup):
 
         EXAMPLES::
 
-            sage: Gamma(3) == SymmetricGroup(8)
+            sage: Gamma(3) == SymmetricGroup(8)                                         # needs sage.groups
             False
             sage: Gamma(3) == Gamma1(3)
             False
@@ -110,10 +113,10 @@ class Gamma_class(CongruenceSubgroup):
             True
             sage: Gamma(5) == Gamma(5)
             True
-            sage: Gamma(3) == Gamma(3).as_permutation_group()
+            sage: Gamma(3) == Gamma(3).as_permutation_group()                           # needs sage.groups
             True
         """
-        if is_Gamma(other):
+        if isinstance(other, Gamma_class):
             return richcmp(self.level(), other.level(), op)
         else:
             return NotImplemented
@@ -151,7 +154,7 @@ class Gamma_class(CongruenceSubgroup):
         """
         N = self.level()
         # don't need to check d == 1 as this is automatic from det
-        return ((a%N == 1) and (b%N == 0) and (c%N == 0))
+        return ((a % N == 1) and (b % N == 0) and (c % N == 0))
 
     def ncusps(self):
         r"""
@@ -167,9 +170,9 @@ class Gamma_class(CongruenceSubgroup):
             432345564227567616
         """
         n = self.level()
-        if n==1:
+        if n == 1:
             return ZZ(1)
-        if n==2:
+        if n == 2:
             return ZZ(3)
         return prod([p**(2*e) - p**(2*e-2) for (p,e) in n.factor()])//2
 
@@ -197,18 +200,18 @@ class Gamma_class(CongruenceSubgroup):
         n = self.level()
         C = [QQ(x) for x in range(n)]
 
-        n0=n//2
-        n1=(n+1)//2
+        n0 = n//2
+        n1 = (n+1)//2
 
         for r in range(1, n1):
-            if r > 1 and gcd(r,n)==1:
+            if r > 1 and gcd(r,n) == 1:
                 C.append(ZZ(r)/ZZ(n))
-            if n0==n/2 and gcd(r,n0)==1:
+            if n0 == n/2 and gcd(r,n0) == 1:
                 C.append(ZZ(r)/ZZ(n0))
 
         for s in range(2,n1):
             for r in range(1, 1+n):
-                if GCD_list([s,r,n])==1:
+                if GCD_list([s,r,n]) == 1:
                     # GCD_list is ~40x faster than gcd, since gcd wastes loads
                     # of time initialising a Sequence type.
                     u,v = _lift_pair(r,s,n)
@@ -237,6 +240,12 @@ class Gamma_class(CongruenceSubgroup):
             sage: G = Gamma(50)
             sage: all(c == G.reduce_cusp(c) for c in G.cusps())
             True
+
+        We test that :issue:`36163` is fixed::
+
+            sage: Gamma(7).reduce_cusp(Cusp(6,7))
+            Infinity
+
         """
         N = self.level()
         c = Cusp(c)
@@ -304,14 +313,16 @@ def is_Gamma(x):
 
     EXAMPLES::
 
-        sage: from sage.modular.arithgroup.all import is_Gamma
-        sage: is_Gamma(Gamma0(13))
+        sage: from sage.modular.arithgroup.all import Gamma_class
+        sage: isinstance(Gamma0(13), Gamma_class)
         False
-        sage: is_Gamma(Gamma(4))
+        sage: isinstance(Gamma(4), Gamma_class)
         True
     """
-
+    from sage.misc.superseded import deprecation
+    deprecation(38035, "The function is_Gamma is deprecated; use 'isinstance(..., Gamma_class)' instead.")
     return isinstance(x, Gamma_class)
+
 
 def _lift_pair(U,V,N):
     r"""
@@ -338,11 +349,12 @@ def _lift_pair(U,V,N):
     u = U % N
     v = V % N
     if v == 0:
-        if u == 1:
+        if u == 1 or u == N-1:
             return (1,0)
         else:
             v = N
     while gcd(u, v) > 1:
         u = u+N
-        if u > N*v: raise ValueError("(U, V, N) must be coprime")
+        if u > N*v:
+            raise ValueError("(U, V, N) must be coprime")
     return (u, v)

@@ -9,7 +9,8 @@ AUTHORS:
 - Michal Bejger (2015) : class :class:`ExpressionNice`
 - Eric Gourgoulhon (2015, 2017) : simplification functions
 - Travis Scrimshaw (2016): review tweaks
-
+- Marius Gerbershagen (2022) : skip simplification of expressions with a single
+  number or symbolic variable
 """
 
 # *****************************************************************************
@@ -30,9 +31,11 @@ from sage.symbolic.expression import Expression
 from sage.symbolic.expression_conversions import ExpressionTreeWalker
 from sage.symbolic.ring import SR
 from sage.symbolic.constants import pi
-from sage.functions.other import sqrt, abs_symbolic
+from sage.functions.other import abs_symbolic
+from sage.misc.functional import sqrt
 from sage.functions.trig import cos, sin
-from sage.rings.all import Rational
+from sage.rings.rational import Rational
+
 
 class SimplifySqrtReal(ExpressionTreeWalker):
     r"""
@@ -200,7 +203,8 @@ class SimplifySqrtReal(ExpressionTreeWalker):
                     simpl = SR(1)/simpl
                 return simpl
         # If operator is not a square root, we default to ExpressionTreeWalker:
-        return super(SimplifySqrtReal, self).arithmetic(ex, operator)
+        return super().arithmetic(ex, operator)
+
 
 class SimplifyAbsTrig(ExpressionTreeWalker):
     r"""
@@ -318,9 +322,9 @@ class SimplifyAbsTrig(ExpressionTreeWalker):
                 if x.has(abs_symbolic(sin(w0))) or x.has(abs_symbolic(cos(w0))):
                     x = self(x)  # treatment of nested abs(sin_or_cos(...))
                 # Simplifications for values of x in the range [-pi, 2*pi]:
-                if x>=0 and x<=pi:
+                if x >= 0 and x <= pi:
                     ex = sin(x)
-                elif (x>pi and x<=2*pi) or (x>=-pi and x<0):
+                elif (x > pi and x <= 2*pi) or (x >= -pi and x < 0):
                     ex = -sin(x)
                 return ex
             if argum.operator() is cos:
@@ -330,13 +334,13 @@ class SimplifyAbsTrig(ExpressionTreeWalker):
                 if x.has(abs_symbolic(sin(w0))) or x.has(abs_symbolic(cos(w0))):
                     x = self(x)  # treatment of nested abs(sin_or_cos(...))
                 # Simplifications for values of x in the range [-pi, 2*pi]:
-                if (x>=-pi/2 and x<=pi/2) or (x>=3*pi/2 and x<=2*pi):
+                if (x >= -pi/2 and x <= pi/2) or (x >= 3*pi/2 and x <= 2*pi):
                     ex = cos(x)
-                elif (x>pi/2 and x<=3*pi/2) or (x>=-pi and x<-pi/2):
+                elif (x > pi/2 and x <= 3*pi/2) or (x >= -pi and x < -pi/2):
                     ex = -cos(x)
                 return ex
         # If no pattern is found, we default to ExpressionTreeWalker:
-        return super(SimplifyAbsTrig, self).composition(ex, operator)
+        return super().composition(ex, operator)
 
 
 def simplify_sqrt_real(expr):
@@ -592,6 +596,8 @@ def simplify_chain_real(expr):
         sage: forget()  # for doctests below
 
     """
+    if expr.number_of_operands() == 0:
+        return expr
     expr = expr.simplify_factorial()
     expr = expr.simplify_trig()
     expr = expr.simplify_rational()
@@ -665,6 +671,8 @@ def simplify_chain_generic(expr):
         sage: forget()  # for doctests below
 
     """
+    if expr.number_of_operands() == 0:
+        return expr
     expr = expr.simplify_factorial()
     expr = expr.simplify_rectform()
     expr = expr.simplify_trig()
@@ -940,10 +948,13 @@ class ExpressionNice(Expression):
             sage: ExpressionNice(fun)
             y*(z - d(h)/dz)^2 + x*d^2(f)/dxdy
 
+        Check that :issue:`33399` is fixed::
+
+            sage: ExpressionNice(function('f')(x+y, x-y).diff(y))
+            d(f)/d(x + y) - d(f)/d(x - y)
+
         """
         d = self._parent._repr_element_(self)
-
-        import re
 
         # find all occurrences of diff
         list_d = []
@@ -961,20 +972,21 @@ class ExpressionNice(Expression):
                 numargs = ""
 
             variables = m[4]
-            strv = list(str(v) for v in variables)
+            strv = [str(v) for v in variables]
 
             # checking if the variable is composite
-            for i in range(len(strv)):
-                if bool(re.search(r'[+|-|/|*|^|(|)]', strv[i])):
-                    strv[i] = "(" + strv[i] + ")"
+            comp_chars = ['+', '-', '*', '/', '^', '(']
+            for i, sv in enumerate(strv):
+                if any(c in sv for c in comp_chars):
+                    strv[i] = "(" + sv + ")"
 
             # dictionary to group multiple occurrences of differentiation: d/dxdx -> d/dx^2 etc.
             occ = dict((i, strv[i] + "^" + str(diffargs.count(i))
-                       if (diffargs.count(i)>1) else strv[i])
+                       if (diffargs.count(i) > 1) else strv[i])
                        for i in diffargs)
 
             res = "d" + str(numargs) + "(" + str(funcname) + ")/d" + "d".join(
-                               [i for i in occ.values()])
+                occ.values())
 
             # str representation of the operator
             s = self._parent._repr_element_(m[0])
@@ -988,13 +1000,14 @@ class ExpressionNice(Expression):
 
             d = d.replace(o, res)
 
+        import re
         from sage.manifolds.manifold import TopologicalManifold
         if TopologicalManifold.options.omit_function_arguments:
             list_f = []
             _list_functions(self, list_f)
 
             for m in list_f:
-                d = d.replace(m[1] + m[2], m[1])
+                d = re.sub(m[1] + r'\([^)]+\)', m[1], d)
 
         return d
 
@@ -1026,17 +1039,23 @@ class ExpressionNice(Expression):
             sage: latex(ExpressionNice(fun))
             \frac{\partial\,f_{x}}{\partial y}
 
-        If latex_name, it should be used in LaTeX output:
+        If latex_name, it should be used in LaTeX output::
 
             sage: f = function('f_x', latex_name=r"{\cal F}")(x,y)
             sage: fun = f.diff(y)
             sage: latex(ExpressionNice(fun))
             \frac{\partial\,{\cal F}}{\partial y}
 
-        """
-        d = self._parent._latex_element_(self)
+        Check that :issue:`33399` is fixed::
 
-        import re
+            sage: latex(ExpressionNice(function('f')(x+y, x-y).diff(y)))
+            \frac{\partial\,f}{\partial \left( x + y \right)}
+             - \frac{\partial\,f}{\partial \left( x - y \right)}
+
+        """
+        from sage.misc.latex import latex
+
+        d = self._parent._latex_element_(self)
 
         # find all occurrences of diff
         list_d = []
@@ -1058,13 +1077,13 @@ class ExpressionNice(Expression):
 
             variables = m[4]
 
-            from sage.misc.latex import latex
             strv = [str(v) for v in variables]
             latv = [latex(v) for v in variables]
 
             # checking if the variable is composite
-            for i, val in enumerate(strv):
-                if bool(re.search(r'[+|-|/|*|^|(|)]', val)):
+            comp_chars = ['+', '-', '*', '/', '^', '(']
+            for i, sv in enumerate(strv):
+                if any(c in sv for c in comp_chars):
                     latv[i] = r"\left(" + latv[i] + r"\right)"
 
             # dictionary to group multiple occurrences of differentiation: d/dxdx -> d/dx^2 etc.
@@ -1250,6 +1269,7 @@ def set_axes_labels(graph, xlabel, ylabel, zlabel, **kwds):
 
     EXAMPLES::
 
+        sage: # needs sage.plot
         sage: g = sphere()
         sage: g.all
         [Graphics3d Object]
@@ -1270,11 +1290,10 @@ def set_axes_labels(graph, xlabel, ylabel, zlabel, **kwds):
     y1 = ymin + dy / 2
     z1 = zmin + dz / 2
     xmin1 = xmin - dx / 20
-    xmax1 = xmax + dx / 20
     ymin1 = ymin - dy / 20
     zmin1 = zmin - dz / 20
     graph += text3d('  ' + xlabel, (x1, ymin1, zmin1), **kwds)
-    graph += text3d('  ' + ylabel, (xmax1, y1, zmin1), **kwds)
+    graph += text3d('  ' + ylabel, (xmin1, y1, zmin1), **kwds)
     graph += text3d('  ' + zlabel, (xmin1, ymin1, z1), **kwds)
     return graph
 
@@ -1323,7 +1342,7 @@ def exterior_derivative(form):
         sage: da = xder(a); da
         2-form da on the 3-dimensional differentiable manifold M
         sage: da.display()
-        da = (-z + 1) dx/\dy + (y*z - y) dx/\dz + (x*z + y) dy/\dz
+        da = (-z + 1) dx∧dy + (y*z - y) dx∧dz + (x*z + y) dy∧dz
         sage: dda = xder(da); dda
         3-form dda on the 3-dimensional differentiable manifold M
         sage: dda.display()
@@ -1337,5 +1356,6 @@ def exterior_derivative(form):
 
     """
     return form.exterior_derivative()
+
 
 xder = exterior_derivative

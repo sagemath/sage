@@ -1,3 +1,4 @@
+# sage.doctest: optional - pycryptosat, needs sage.modules sage.rings.polynomial.pbori
 """
 SAT Functions for Boolean Polynomials
 
@@ -32,24 +33,24 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
 
     INPUT:
 
-    - ``F`` - a sequence of Boolean polynomials
+    - ``F`` -- a sequence of Boolean polynomials
 
-    - ``n`` - number of solutions to return. If ``n`` is +infinity
+    - ``n`` -- number of solutions to return. If ``n`` is +infinity
       then all solutions are returned. If ``n <infinity`` then ``n``
       solutions are returned if ``F`` has at least ``n``
       solutions. Otherwise, all solutions of ``F`` are
       returned. (default: ``1``)
 
-    - ``converter`` - an ANF to CNF converter class or object.  If
+    - ``converter`` -- an ANF to CNF converter class or object.  If
       ``converter`` is ``None`` then
       :class:`sage.sat.converters.polybori.CNFEncoder` is used to
       construct a new converter. (default: ``None``)
 
-    - ``solver`` - a SAT-solver class or object. If ``solver`` is
+    - ``solver`` -- a SAT-solver class or object. If ``solver`` is
       ``None`` then :class:`sage.sat.solvers.cryptominisat.CryptoMiniSat`
       is used to construct a new converter.  (default: ``None``)
 
-    - ``target_variables`` - a list of variables. The elements of the list are
+    - ``target_variables`` -- a list of variables. The elements of the list are
       used to exclude a particular combination of variable assignments of a
       solution from any further solution. Furthermore ``target_variables``
       denotes which variable-value pairs appear in the solutions. If
@@ -57,7 +58,7 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
       polynomials of ``F`` are used to construct exclusion clauses.
       (default: ``None``)
 
-    - ``**kwds`` - parameters can be passed to the converter and the
+    - ``**kwds`` -- parameters can be passed to the converter and the
        solver by prefixing them with ``c_`` and ``s_`` respectively. For
        example, to increase CryptoMiniSat's verbosity level, pass
        ``s_verbosity=1``.
@@ -71,81 +72,88 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
 
     We construct a very small-scale AES system of equations::
 
-        sage: sr = mq.SR(1,1,1,4,gf2=True,polybori=True)
-        sage: F,s = sr.polynomial_system()
+        sage: sr = mq.SR(1, 1, 1, 4, gf2=True, polybori=True)
+        sage: while True:  # workaround (see :issue:`31891`)
+        ....:     try:
+        ....:         F, s = sr.polynomial_system()
+        ....:         break
+        ....:     except ZeroDivisionError:
+        ....:         pass
 
     and pass it to a SAT solver::
 
-        sage: from sage.sat.boolean_polynomials import solve as solve_sat # optional - cryptominisat
-        sage: s = solve_sat(F)                                            # optional - cryptominisat
-        sage: F.subs(s[0])                                                # optional - cryptominisat
+        sage: from sage.sat.boolean_polynomials import solve as solve_sat
+        sage: s = solve_sat(F)
+        sage: F.subs(s[0])
         Polynomial Sequence with 36 Polynomials in 0 Variables
 
     This time we pass a few options through to the converter and the solver::
 
-        sage: s = solve_sat(F, s_verbosity=1, c_max_vars_sparse=4, c_cutting_number=8) # optional - cryptominisat
-        c ...
-        ...
-        sage: F.subs(s[0])                                                             # optional - cryptominisat
+        sage: s = solve_sat(F, c_max_vars_sparse=4, c_cutting_number=8)
+        sage: F.subs(s[0])
         Polynomial Sequence with 36 Polynomials in 0 Variables
 
-    We construct a very simple system with three solutions and ask for a specific number of solutions::
+    We construct a very simple system with three solutions
+    and ask for a specific number of solutions::
 
-        sage: B.<a,b> = BooleanPolynomialRing() # optional - cryptominisat
-        sage: f = a*b                           # optional - cryptominisat
-        sage: l = solve_sat([f],n=1)            # optional - cryptominisat
-        sage: len(l) == 1, f.subs(l[0])         # optional - cryptominisat
+        sage: B.<a,b> = BooleanPolynomialRing()
+        sage: f = a*b
+        sage: l = solve_sat([f],n=1)
+        sage: len(l) == 1, f.subs(l[0])
         (True, 0)
 
-        sage: l = solve_sat([a*b],n=2)        # optional - cryptominisat
-        sage: len(l) == 2, f.subs(l[0]), f.subs(l[1]) # optional - cryptominisat
+        sage: l = solve_sat([a*b],n=2)
+        sage: len(l) == 2, f.subs(l[0]), f.subs(l[1])
         (True, 0, 0)
 
-        sage: sorted((d[a], d[b]) for d in solve_sat([a*b],n=3))  # optional - cryptominisat
+        sage: sorted((d[a], d[b]) for d in solve_sat([a*b], n=3))
         [(0, 0), (0, 1), (1, 0)]
-        sage: sorted((d[a], d[b]) for d in solve_sat([a*b],n=4))   # optional - cryptominisat
+        sage: sorted((d[a], d[b]) for d in solve_sat([a*b], n=4))
         [(0, 0), (0, 1), (1, 0)]
-        sage: sorted((d[a], d[b]) for d in solve_sat([a*b],n=infinity))  # optional - cryptominisat
+        sage: sorted((d[a], d[b]) for d in solve_sat([a*b], n=infinity))
         [(0, 0), (0, 1), (1, 0)]
 
     In the next example we see how the ``target_variables`` parameter works::
 
-        sage: from sage.sat.boolean_polynomials import solve as solve_sat # optional - cryptominisat
-        sage: R.<a,b,c,d> = BooleanPolynomialRing()                       # optional - cryptominisat
-        sage: F = [a+b,a+c+d]                                             # optional - cryptominisat
+        sage: from sage.sat.boolean_polynomials import solve as solve_sat
+        sage: R.<a,b,c,d> = BooleanPolynomialRing()
+        sage: F = [a + b, a + c + d]
 
     First the normal use case::
 
-        sage: sorted((D[a], D[b], D[c], D[d]) for D in solve_sat(F,n=infinity))      # optional - cryptominisat
+        sage: sorted((D[a], D[b], D[c], D[d])
+        ....:        for D in solve_sat(F, n=infinity))
         [(0, 0, 0, 0), (0, 0, 1, 1), (1, 1, 0, 1), (1, 1, 1, 0)]
 
     Now we are only interested in the solutions of the variables a and b::
 
-        sage: solve_sat(F,n=infinity,target_variables=[a,b])              # optional - cryptominisat
+        sage: solve_sat(F, n=infinity, target_variables=[a,b])
         [{b: 0, a: 0}, {b: 1, a: 1}]
 
-    Here, we generate and solve the cubic equations of the AES SBox (see :trac:`26676`)::
+    Here, we generate and solve the cubic equations of the AES SBox (see :issue:`26676`)::
 
-        sage: from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence    # optional - cryptominisat, long time
-        sage: from sage.sat.boolean_polynomials import solve as solve_sat                       # optional - cryptominisat, long time
-        sage: sr = sage.crypto.mq.SR(1, 4, 4, 8, allow_zero_inversions = True)                  # optional - cryptominisat, long time
-        sage: sb = sr.sbox()                                                                    # optional - cryptominisat, long time
-        sage: eqs = sb.polynomials(degree = 3)                                                  # optional - cryptominisat, long time
-        sage: eqs = PolynomialSequence(eqs)                                                     # optional - cryptominisat, long time
-        sage: variables = map(str, eqs.variables())                                             # optional - cryptominisat, long time
-        sage: variables = ",".join(variables)                                                   # optional - cryptominisat, long time
-        sage: R = BooleanPolynomialRing(16, variables)                                          # optional - cryptominisat, long time
-        sage: eqs = [R(eq) for eq in eqs]                                                                 # optional - cryptominisat, long time
-        sage: sls_aes = solve_sat(eqs, n = infinity)                                            # optional - cryptominisat, long time
-        sage: len(sls_aes)                                                                      # optional - cryptominisat, long time
+        sage: # long time
+        sage: from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
+        sage: from sage.sat.boolean_polynomials import solve as solve_sat
+        sage: sr = sage.crypto.mq.SR(1, 4, 4, 8,
+        ....:                        allow_zero_inversions=True)
+        sage: sb = sr.sbox()
+        sage: eqs = sb.polynomials(degree=3)
+        sage: eqs = PolynomialSequence(eqs)
+        sage: variables = map(str, eqs.variables())
+        sage: variables = ",".join(variables)
+        sage: R = BooleanPolynomialRing(16, variables)
+        sage: eqs = [R(eq) for eq in eqs]
+        sage: sls_aes = solve_sat(eqs, n=infinity)
+        sage: len(sls_aes)
         256
 
     TESTS:
 
-    Test that :trac:`26676` is fixed::
+    Test that :issue:`26676` is fixed::
 
         sage: varl = ['k{0}'.format(p) for p in range(29)]
-        sage: B = BooleanPolynomialRing(names = varl)
+        sage: B = BooleanPolynomialRing(names=varl)
         sage: B.inject_variables(verbose=False)
         sage: keqs = [
         ....:     k0 + k6 + 1,
@@ -159,7 +167,7 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
         ....:     k9 + k28,
         ....:     k11 + k20]
         sage: from sage.sat.boolean_polynomials import solve as solve_sat
-        sage: solve_sat(keqs, n=1, solver=SAT('cryptominisat'))     # optional - cryptominisat
+        sage: solve_sat(keqs, n=1, solver=SAT('cryptominisat'))
         [{k28: 0,
           k26: 1,
           k24: 0,
@@ -184,7 +192,7 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
           k2: 0,
           k1: 0,
           k0: 0}]
-        sage: solve_sat(keqs, n=1, solver=SAT('picosat'))           # optional - pycosat
+        sage: solve_sat(keqs, n=1, solver=SAT('picosat'))                   # optional - pycosat
         [{k28: 0,
           k26: 1,
           k24: 0,
@@ -216,7 +224,7 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
        instead of classes is discouraged because these objects are
        stateful.
     """
-    assert(n>0)
+    assert n > 0
 
     try:
         len(F)
@@ -231,7 +239,7 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
         target_variables = PolynomialSequence(F).variables()
     else:
         target_variables = PolynomialSequence(target_variables).variables()
-        assert(set(target_variables).issubset(set(P.gens())))
+        assert set(target_variables).issubset(set(P.gens()))
 
     # instantiate the SAT solver
 
@@ -280,7 +288,7 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
             try:
                 learnt = solver.learnt_clauses(unitary_only=True)
                 if learnt:
-                    S.append(dict((phi[abs(i)-1], K(i<0)) for i in learnt))
+                    S.append(dict((phi[abs(i) - 1], K(i < 0)) for i in learnt))
                 else:
                     S.append(s)
                     break
@@ -306,20 +314,20 @@ def learn(F, converter=None, solver=None, max_learnt_length=3, interreduction=Fa
 
     INPUT:
 
-    - ``F`` - a sequence of Boolean polynomials
+    - ``F`` -- a sequence of Boolean polynomials
 
-    - ``converter`` - an ANF to CNF converter class or object.  If ``converter`` is ``None`` then
+    - ``converter`` -- an ANF to CNF converter class or object.  If ``converter`` is ``None`` then
       :class:`sage.sat.converters.polybori.CNFEncoder` is used to construct a new
       converter. (default: ``None``)
 
-    - ``solver`` - a SAT-solver class or object. If ``solver`` is ``None`` then
+    - ``solver`` -- a SAT-solver class or object. If ``solver`` is ``None`` then
       :class:`sage.sat.solvers.cryptominisat.CryptoMiniSat` is used to construct a new converter.
       (default: ``None``)
 
-    - ``max_learnt_length`` - only clauses of length <= ``max_length_learnt`` are considered and
+    - ``max_learnt_length`` -- only clauses of length <= ``max_length_learnt`` are considered and
       converted to polynomials. (default: ``3``)
 
-    - ``interreduction`` - inter-reduce the resulting polynomials (default: ``False``)
+    - ``interreduction`` -- inter-reduce the resulting polynomials (default: ``False``)
 
     .. NOTE::
 
@@ -333,16 +341,16 @@ def learn(F, converter=None, solver=None, max_learnt_length=3, interreduction=Fa
 
     EXAMPLES::
 
-       sage: from sage.sat.boolean_polynomials import learn as learn_sat # optional - cryptominisat
+        sage: from sage.sat.boolean_polynomials import learn as learn_sat
 
     We construct a simple system and solve it::
 
-       sage: set_random_seed(2300)                      # optional - cryptominisat
-       sage: sr = mq.SR(1,2,2,4,gf2=True,polybori=True) # optional - cryptominisat
-       sage: F,s = sr.polynomial_system()               # optional - cryptominisat
-       sage: H = learn_sat(F)                           # optional - cryptominisat
-       sage: H[-1]                                      # optional - cryptominisat
-       k033 + 1
+        sage: set_random_seed(2300)
+        sage: sr = mq.SR(1, 2, 2, 4, gf2=True, polybori=True)
+        sage: F,s = sr.polynomial_system()
+        sage: H = learn_sat(F)
+        sage: H[-1]
+        k033 + 1
     """
     try:
         len(F)

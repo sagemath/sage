@@ -1,7 +1,7 @@
 r"""
 Datatypes for words defined by iterators and callables
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Franco Saliola <saliola@gmail.com>
 #                          Vincent Delecroix <20100.delecroix@gmail.com>
 #
@@ -9,13 +9,14 @@ Datatypes for words defined by iterators and callables
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.combinat.words.word_datatypes import WordDatatype
-from sage.rings.all import Infinity
+from sage.rings.infinity import Infinity
 from math import ceil
 import itertools
+
 
 class WordDatatype_callable(WordDatatype):
     r"""
@@ -25,9 +26,9 @@ class WordDatatype_callable(WordDatatype):
         r"""
         INPUT:
 
-        - ``parent`` - a parent
-        -  ``callable`` - a callable defined on ``range(stop=length)``
-        -  ``length`` - (default: ``None``) nonnegative integer or ``None``
+        - ``parent`` -- a parent
+        -  ``callable`` -- a callable defined on ``range(stop=length)``
+        -  ``length`` -- (default: ``None``) nonnegative integer or ``None``
 
         EXAMPLES::
 
@@ -225,7 +226,7 @@ class WordDatatype_callable(WordDatatype):
             ...
             ValueError: for infinite words, start and stop values cannot be negative
 
-        Out of range index (:trac:`8673`)::
+        Out of range index (:issue:`8673`)::
 
             sage: w = Word(lambda n:n^2, length=23)
             sage: w[100]
@@ -236,20 +237,20 @@ class WordDatatype_callable(WordDatatype):
         if isinstance(key, slice):
             # Infinite words
             if self._len is Infinity or self._len is None:
-                if not(key.start is None) and key.start < 0 or \
-                        not(key.stop is None) and key.stop < 0:
+                if key.start is not None and key.start < 0 or \
+                        key.stop is not None and key.stop < 0:
                     raise ValueError("for infinite words, start and stop values cannot be negative")
                 step = 1 if key.step is None else key.step
                 if step > 0:
                     start = 0 if key.start is None else key.start
                     length = self._len if key.stop is None else \
-                                int(max(0,ceil((key.stop-start)/float(step))))
+                                int(max(0, ceil((key.stop-start)/float(step))))
                 else:
                     if key.start is None or key.start < 0:
                         raise ValueError("start value must be nonnegative for negative step values")
                     start = key.start
                     stop = 0 if key.stop is None else key.stop
-                    length = int(max(0,ceil((key.stop-start)/float(step))))
+                    length = int(max(0, ceil((key.stop-start)/float(step))))
                 fcn = lambda x: self._func(start + x*step)
                 if length is None:
                     return self._parent(fcn, length=length)
@@ -269,7 +270,7 @@ class WordDatatype_callable(WordDatatype):
                 else:
                     start, stop, step = slice(key.start, key.stop,
                             step).indices(self._len)
-                    length = int(max(0,ceil((stop-start)/float(step))))
+                    length = int(max(0, ceil((stop-start)/float(step))))
                 fcn = lambda x: self._func(start + x*step)
                 return self._parent(fcn, length=length)
         else:
@@ -312,6 +313,7 @@ class WordDatatype_callable(WordDatatype):
             else:
                 return self._parent, (s, 'pickled_function', False)
 
+
 class WordDatatype_callable_with_caching(WordDatatype_callable):
     r"""
     Datatype for a word defined by a callable.
@@ -320,9 +322,9 @@ class WordDatatype_callable_with_caching(WordDatatype_callable):
         r"""
         INPUT:
 
-        - ``parent`` - a parent
-        -  ``callable`` - a callable defined on ``range(stop=length)``
-        -  ``length`` - (default: ``None``) nonnegative integer or ``None``
+        - ``parent`` -- a parent
+        -  ``callable`` -- a callable defined on ``range(stop=length)``
+        -  ``length`` -- (default: ``None``) nonnegative integer or ``None``
 
         EXAMPLES::
 
@@ -345,7 +347,7 @@ class WordDatatype_callable_with_caching(WordDatatype_callable):
             sage: w.length()
             +Infinity
         """
-        super(WordDatatype_callable_with_caching,self).__init__(parent,callable,length)
+        super().__init__(parent, callable, length)
         # for caching
         self._letter_cache = {}
 
@@ -514,11 +516,11 @@ class WordDatatype_callable_with_caching(WordDatatype_callable):
             ValueError: for infinite words, start and stop values cannot be negative
         """
         if isinstance(key, slice):
-            return super(WordDatatype_callable_with_caching, self).__getitem__(key)
+            return super().__getitem__(key)
         else:
             if key not in self._letter_cache:
                 self._letter_cache[key] = \
-                    super(WordDatatype_callable_with_caching, self).__getitem__(key)
+                    super().__getitem__(key)
             return self._letter_cache[key]
 
     def __reduce__(self):
@@ -580,15 +582,16 @@ class WordDatatype_callable_with_caching(WordDatatype_callable):
         """
         self._letter_cache = {}
 
+
 class WordDatatype_iter(WordDatatype):
     # NOTE: The constructor callable should do all the slicing (see islice)
     def __init__(self, parent, iter, length=None):
         r"""
         INPUT:
 
-        - ``parent`` - a parent
-        -  ``iter`` - an iterator
-        -  ``length`` - (default: ``None``) the length of the word
+        - ``parent`` -- a parent
+        -  ``iter`` -- an iterator
+        -  ``length`` -- (default: ``None``) the length of the word
 
         EXAMPLES::
 
@@ -828,8 +831,8 @@ class WordDatatype_iter(WordDatatype):
         """
         if isinstance(key, slice):
             if self._len is Infinity or self._len is None:
-                if not(key.start is None) and key.start < 0 or \
-                        not(key.stop is None) and key.stop < 0:
+                if key.start is not None and key.start < 0 or \
+                        key.stop is not None and key.stop < 0:
                     raise ValueError("for infinite words, start and stop values cannot be negative")
                 step = 1 if key.step is None else int(key.step)
                 if step >= 0:
@@ -837,8 +840,8 @@ class WordDatatype_iter(WordDatatype):
                     if key.stop is None:
                         length = Infinity
                         stop = None
-                    else: # key.stop > 0
-                        length = int(max(0,ceil((key.stop-start)/float(step))))
+                    else:  # key.stop > 0
+                        length = int(max(0, ceil((key.stop-start)/float(step))))
                         stop = int(key.stop)
                     data = itertools.islice(self, start, stop, step)
                 else:
@@ -846,7 +849,7 @@ class WordDatatype_iter(WordDatatype):
                         raise ValueError("start value must be nonnegative for negative step values")
                     start = int(key.start)
                     stop = 0 if key.stop is None else int(key.stop)
-                    length = int(max(0,ceil((stop-start)/float(step))))
+                    length = int(max(0, ceil((stop-start)/float(step))))
                     data = list(itertools.islice(self, start+1))[key]
 
                 if length is None or length is Infinity:
@@ -859,7 +862,7 @@ class WordDatatype_iter(WordDatatype):
                 step = 1 if key.step is None else int(key.step)
                 # If either key.start or key.stop is negative,
                 # then we need to expand the word.
-                if start < 0 or (not(stop is None) and stop < 0):
+                if start < 0 or (stop is not None and stop < 0):
                     data = list(self)[key]
                     length = None
                 # If key.step is negative, then we need to expand a prefix.
@@ -871,7 +874,7 @@ class WordDatatype_iter(WordDatatype):
                     length = None
                 else: # start >= 0, step >= 1, stop >= 0 or None
                     data = itertools.islice(self, start, stop, step)
-                    length = "unknown" if stop is None else int(max(0,((stop-start)/float(step))))
+                    length = "unknown" if stop is None else int(max(0, ((stop-start)/float(step))))
 
                 return self._parent.factors()(data, length=length)
         else:
@@ -911,17 +914,17 @@ class WordDatatype_iter(WordDatatype):
         """
         if self.is_finite():
             return self._parent, (list(self),)
-        else:
-            return self._parent, (iter(self), 'iter', False)
+        return self._parent, (iter(self), 'iter', False)
+
 
 class WordDatatype_iter_with_caching(WordDatatype_iter):
     def __init__(self, parent, iter, length=None):
         r"""
         INPUT:
 
-        - ``parent`` - a parent
-        -  ``iter`` - an iterator
-        -  ``length`` - (default: ``None``) the length of the word
+        - ``parent`` -- a parent
+        -  ``iter`` -- an iterator
+        -  ``length`` -- (default: ``None``) the length of the word
 
         EXAMPLES::
 
@@ -944,7 +947,7 @@ class WordDatatype_iter_with_caching(WordDatatype_iter):
             sage: w._len
             8
         """
-        super(WordDatatype_iter_with_caching,self).__init__(parent,iter,length)
+        super().__init__(parent, iter, length)
         # we use self._data for returning an iterator through __iter__;
         # we use self._gen for caching
         self._data, self._gen = itertools.tee(self._data)
@@ -1157,10 +1160,10 @@ class WordDatatype_iter_with_caching(WordDatatype_iter):
             ValueError: Step for islice() must be a positive integer or None.
         """
         if isinstance(key, slice):
-            return super(WordDatatype_iter_with_caching,self).__getitem__(key)
+            return super().__getitem__(key)
         else:
             if key < 0:
-                return super(WordDatatype_iter_with_caching,self).__getitem__(key)
+                return super().__getitem__(key)
             else:
                 while self._last_index < key:
                     try:
@@ -1213,4 +1216,3 @@ class WordDatatype_iter_with_caching(WordDatatype_iter):
         self._gen = iter(self)
         self._list = []
         self._last_index = -1
-

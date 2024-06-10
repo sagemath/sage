@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.symbolic
 r"""
 Graphics arrays and insets
 
@@ -13,9 +13,7 @@ AUTHORS:
 
 - Eric Gourgoulhon (2019-05-24): initial version, refactoring the class
   ``GraphicsArray`` that was defined in the module :mod:`~sage.plot.graphics`.
-
 """
-from __future__ import print_function, absolute_import
 import os
 from sage.misc.fast_methods import WithEqualityById
 from sage.structure.sage_object import SageObject
@@ -152,7 +150,7 @@ class MultiGraphics(WithEqualityById, SageObject):
             else:
                 if not isinstance(ins, (list, tuple)) or len(ins) != 2:
                     raise TypeError("a pair (Graphics, position) is "
-                                    "expected, not {}".format(ins))
+                                    f"expected, not {ins}")
                 self.append(ins[0], pos=ins[1])
 
     def _repr_(self):
@@ -454,10 +452,14 @@ class MultiGraphics(WithEqualityById, SageObject):
             # depending on the file extension.
             # PGF is handled by a different backend
             if ext == '.pgf':
-                from sage.misc.sage_ostools import have_program
-                latex_implementations = [i for i in ["xelatex", "pdflatex",
-                                                     "lualatex"]
-                                         if have_program(i)]
+                from sage.features.latex import xelatex,pdflatex,lualatex
+                latex_implementations = []
+                if xelatex().is_present():
+                    latex_implementations.append('xelatex')
+                if pdflatex().is_present():
+                    latex_implementations.append('pdflatex')
+                if lualatex().is_present():
+                    latex_implementations.append('lualatex')
                 if not latex_implementations:
                     raise ValueError("Matplotlib requires either xelatex, "
                                      "lualatex, or pdflatex.")
@@ -487,7 +489,7 @@ class MultiGraphics(WithEqualityById, SageObject):
                 # tight_layout adjusts the *subplot* parameters so ticks aren't
                 # cut off, etc.
                 figure.tight_layout()
-            opts = dict(dpi=dpi, transparent=transparent)
+            opts = {"dpi": dpi, "transparent": transparent}
             if fig_tight is True:
                 opts['bbox_inches'] = 'tight'
             figure.savefig(filename, **opts)
@@ -542,7 +544,7 @@ class MultiGraphics(WithEqualityById, SageObject):
         """
         tmpfilename = tmp_filename(ext='.pgf')
         self.save(filename=tmpfilename, **kwds)
-        with open(tmpfilename, "r") as tmpfile:
+        with open(tmpfilename) as tmpfile:
             latex_list = tmpfile.readlines()
         return ''.join(latex_list)
 
@@ -738,8 +740,8 @@ class MultiGraphics(WithEqualityById, SageObject):
         """
         n = len(self._glist)
         if n <= 1:
-            return "Multigraphics with {} element".format(n)
-        return "Multigraphics with {} elements".format(n)
+            return f"Multigraphics with {n} element"
+        return f"Multigraphics with {n} elements"
 
     def _add_subplot(self, figure, index, **options):
         r"""
@@ -907,7 +909,7 @@ class MultiGraphics(WithEqualityById, SageObject):
         from matplotlib import rcParams
         if not isinstance(graphics, Graphics):
             raise TypeError("a Graphics object is expected, "
-                            "not {}".format(graphics))
+                            f"not {graphics}")
         if pos is None:
             # Default position:
             left = rcParams['figure.subplot.left']
@@ -916,7 +918,7 @@ class MultiGraphics(WithEqualityById, SageObject):
             height = rcParams['figure.subplot.top'] - bottom
             pos = (left, bottom, width, height)
         elif not isinstance(pos, (list, tuple)) or len(pos) != 4:
-            raise TypeError("pos must be a 4-tuple, not {}".format(pos))
+            raise TypeError(f"pos must be a 4-tuple, not {pos}")
         pos = tuple(float(p) for p in pos)
         self._glist.append(graphics)
         self._positions.append(pos)
@@ -1039,7 +1041,7 @@ class GraphicsArray(MultiGraphics):
     as a flattened list of graphics objects, not as an array. For instance,
     ``G[0, 1]`` throws an error::
 
-        sage: G[0, 1]  # py3 (error message is slightly different with Python 2)
+        sage: G[0, 1]
         Traceback (most recent call last):
         ...
         TypeError: list indices must be integers or slices, not tuple
@@ -1139,7 +1141,7 @@ class GraphicsArray(MultiGraphics):
         MultiGraphics.__init__(self, [])
         if not isinstance(array, (list, tuple)):
             raise TypeError("array must be a list of lists of Graphics "
-                            "objects, not {}".format(array))
+                            f"objects, not {array}")
         array = list(array)
         self._rows = len(array)
         if self._rows > 0:
@@ -1152,7 +1154,7 @@ class GraphicsArray(MultiGraphics):
         for row in array:  # basically flatten the list
             if not isinstance(row, (list, tuple)) or len(row) != self._cols:
                 raise TypeError("array must be a list of equal-size lists of "
-                                "Graphics objects, not {}".format(array))
+                                f"Graphics objects, not {array}")
             for g in row:
                 if not isinstance(g, Graphics):
                     raise TypeError("every element of array must be a "
@@ -1176,7 +1178,7 @@ class GraphicsArray(MultiGraphics):
             'Graphics Array of size 2 x 3'
 
         """
-        return "Graphics Array of size {} x {}".format(self._rows, self._cols)
+        return f"Graphics Array of size {self._rows} x {self._cols}"
 
     def _add_subplot(self, figure, index, **options):
         r"""
@@ -1204,7 +1206,7 @@ class GraphicsArray(MultiGraphics):
             sage: fig = Figure()
             sage: ax1 = G._add_subplot(fig, 0)
             sage: type(ax1)
-            <class 'matplotlib.axes._subplots.AxesSubplot'>
+            <class 'matplotlib.axes...'>
             sage: ax2 = G._add_subplot(fig, 1)
             sage: fig.get_axes() == [ax1, ax2]
             True

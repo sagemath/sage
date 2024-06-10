@@ -1,5 +1,5 @@
-gp2c
-====
+gp2c: A compiler for translating GP routines to C
+=================================================
 
 Description
 -----------

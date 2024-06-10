@@ -1,16 +1,12 @@
 """
 Root system data for type A infinity
 """
-
-#*****************************************************************************
+# ***************************************************************************
 # Copyright (C) 2016 Andrew Mathas <Andrew dot Mathas at Sydney dot edu dot au>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-from __future__ import print_function, absolute_import
-
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 from .cartan_type import CartanType_standard, CartanType_simple
 from sage.rings.integer_ring import ZZ
 
@@ -26,6 +22,7 @@ class CartanType(CartanType_standard, CartanType_simple):
     """
     # We do not inherit from CartanType_crystallographic because it provides
     # methods that are not implemented for A_oo.
+
     def __init__(self, index_set):
         """
         EXAMPLES::
@@ -58,7 +55,7 @@ class CartanType(CartanType_standard, CartanType_simple):
 
             sage: TestSuite(ct).run()
         """
-        super(CartanType, self).__init__()
+        super().__init__()
         self.letter = 'A'
         self.n = index_set
 
@@ -89,7 +86,7 @@ class CartanType(CartanType_standard, CartanType_simple):
         """
         return 'A_{{{}}}'.format(self.n._latex_())
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Return an ascii art representation of the extended Dynkin diagram.
 
@@ -103,15 +100,17 @@ class CartanType(CartanType_standard, CartanType_simple):
             0   1   2   3   4   5   6
 
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._ascii_art_node
 
         if self.n == ZZ:
-            ret  = '..---'+'---'.join(node(label(i)) for i in range(7))+'---..\n'
-            ret += '  '+''.join("{:4}".format(label(i)) for i in range(-3,4))
+            ret = '..---' + '---'.join(node(label(i)) for i in range(7)) + '---..\n'
+            ret += '  ' + ''.join("{:4}".format(label(i)) for i in range(-3, 4))
         else:
-            ret  = '---'.join(node(label(i)) for i in range(7))+'---..\n'
-            ret += '0'+''.join("{:4}".format(label(i)) for i in range(1,7))
+            ret = '---'.join(node(label(i)) for i in range(7)) + '---..\n'
+            ret += '0' + ''.join("{:4}".format(label(i)) for i in range(1, 7))
 
         return ret
 

@@ -42,8 +42,6 @@ Sageで「関数」と呼ばれるべきものを定義する方法は何通り�
 こうすると ``f(z)`` はシンボリック表現になる．シンボリック表現については，次の項目で解説する．
 
 
-
-
 2. 「呼び出し可能シンボリック表現」(callable symbolic expression)を定義する．
 これはプロットおよび微分積分演算が可能である．
 
@@ -59,7 +57,7 @@ Sageで「関数」と呼ばれるべきものを定義する方法は何通り�
        sage: Dg(3)
        6
        sage: type(g)
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
        sage: plot(g, 0, 2)
        Graphics object consisting of 1 graphics primitive
 
@@ -74,14 +72,14 @@ Sageで「関数」と呼ばれるべきものを定義する方法は何通り�
        sage: g(x)
        x^2
        sage: type(g(x))
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
        sage: g(x).derivative()
        2*x
        sage: plot(g(x), 0, 2)
        Graphics object consisting of 1 graphics primitive
 
 
-3. Sageで定義済みの「初等関数」(calculus function)を使う. 
+3. Sageで定義済みの「初等関数」(calculus function)を使う.
 これらはプロット可能で，ちょっと工夫すると微分積分もできるようになる．
 
 
@@ -92,7 +90,7 @@ Sageで「関数」と呼ばれるべきものを定義する方法は何通り�
        sage: plot(sin, 0, 2)
        Graphics object consisting of 1 graphics primitive
        sage: type(sin(x))
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
        sage: plot(sin(x), 0, 2)
        Graphics object consisting of 1 graphics primitive
 
@@ -119,7 +117,6 @@ Sageで「関数」と呼ばれるべきものを定義する方法は何通り�
        x |--> cos(x)
 
 
-
 まだ注意を要する点が残っているので，説明しておこう:
 
 4. 意図しない評価が起きることがある．
@@ -142,7 +139,7 @@ Sageで「関数」と呼ばれるべきものを定義する方法は何通り�
 ::
 
        sage: type(x<2)
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
 
 
 シンボリック式が評価される際， ``h`` の定義の場合と同じように，その式が明らかに真でないかぎり戻り値は偽になる．
@@ -155,14 +152,12 @@ Sageで「関数」と呼ばれるべきものを定義する方法は何通り�
 .. link
 
 
-
 ::
 
        sage: plot(h, 0, 4)
        Graphics object consisting of 1 graphics primitive
 
 を実行せよ，ということになる．
-
 
 
 5. 意図せず関数が定数になってしまう．
@@ -181,9 +176,9 @@ Sageで「関数」と呼ばれるべきものを定義する方法は何通り�
 ::
 
        sage: type(f)
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
        sage: type(g)
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
 
 
 ``g`` は関数ではなく定数になっているので，変数を持たないから何も値を受けつけない．
@@ -202,7 +197,7 @@ Sageで「関数」と呼ばれるべきものを定義する方法は何通り�
          sage: g(3)
          1
          sage: type(g)
-         <type 'sage.symbolic.expression.Expression'>
+         <class 'sage.symbolic.expression.Expression'>
 
 
 - または ``f`` の定義は元のまま ``g`` をシンボリック表式として定義する．
@@ -216,7 +211,7 @@ Sageで「関数」と呼ばれるべきものを定義する方法は何通り�
          sage: g(3)
          1
          sage: type(g)
-         <type 'sage.symbolic.expression.Expression'>
+         <class 'sage.symbolic.expression.Expression'>
 
 
 - または ``f`` と ``g`` の定義は元のまま，代入すべき変数を特定する．

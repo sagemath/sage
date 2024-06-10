@@ -1,5 +1,5 @@
 """
-Finite Fields of Characteristic 2
+Finite fields of characteristic 2
 """
 
 #*****************************************************************************
@@ -18,6 +18,7 @@ Finite Fields of Characteristic 2
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.libs.pari.all import pari
 from sage.rings.integer import Integer
+from sage.misc.superseded import deprecated_function_alias
 
 
 def late_import():
@@ -32,14 +33,7 @@ def late_import():
     """
     if "GF2" in globals():
         return
-    global is_FiniteField, exists_conway_polynomial, conway_polynomial, Cache_ntl_gf2e, GF, GF2, is_Polynomial
-
-    import sage.rings.finite_rings.finite_field_base
-    is_FiniteField = sage.rings.finite_rings.finite_field_base.is_FiniteField
-
-    import sage.rings.finite_rings.conway_polynomials
-    exists_conway_polynomial = sage.rings.finite_rings.conway_polynomials.exists_conway_polynomial
-    conway_polynomial = sage.rings.finite_rings.conway_polynomials.conway_polynomial
+    global Cache_ntl_gf2e, GF, GF2
 
     import sage.rings.finite_rings.element_ntl_gf2e
     Cache_ntl_gf2e = sage.rings.finite_rings.element_ntl_gf2e.Cache_ntl_gf2e
@@ -48,8 +42,6 @@ def late_import():
     GF = sage.rings.finite_rings.finite_field_constructor.GF
     GF2 = GF(2)
 
-    import sage.rings.polynomial.polynomial_element
-    is_Polynomial = sage.rings.polynomial.polynomial_element.is_Polynomial
 
 class FiniteField_ntl_gf2e(FiniteField):
     """
@@ -137,8 +129,8 @@ class FiniteField_ntl_gf2e(FiniteField):
             raise ValueError("q must be a 2-power")
         FiniteField.__init__(self, GF2, names, normalize=True)
 
-        from sage.rings.polynomial.polynomial_element import is_Polynomial
-        if not is_Polynomial(modulus):
+        from sage.rings.polynomial.polynomial_element import Polynomial
+        if not isinstance(modulus, Polynomial):
             raise TypeError("modulus must be a polynomial")
 
         self._cache = Cache_ntl_gf2e(self, k, modulus)
@@ -208,10 +200,9 @@ class FiniteField_ntl_gf2e(FiniteField):
             a^19 + a^17 + a^16 + a^15 + a^12 + a^11 + a^8 + a^6 + a^4 + a^2 + 1
 
             sage: V = k.vector_space(map=False)
-            sage: v = V.random_element(); v
-            (1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1)
-            sage: k(v)
-            a^19 + a^15 + a^14 + a^13 + a^11 + a^10 + a^9 + a^6 + a^5 + a^4 + 1
+            sage: v = V.random_element()
+            sage: k(v) == sum(a^i if v[i] else 0 for i in range(len(v)))
+            True
             sage: vector(k(v)) == v
             True
 
@@ -277,7 +268,7 @@ class FiniteField_ntl_gf2e(FiniteField):
         """
         return GF2
 
-    def fetch_int(self, number):
+    def from_integer(self, number):
         r"""
         Given an integer `n` less than :meth:`cardinality` with base `2`
         representation `a_0 + 2 \cdot a_1 + \cdots + 2^k a_k`, returns
@@ -291,14 +282,16 @@ class FiniteField_ntl_gf2e(FiniteField):
         EXAMPLES::
 
             sage: k.<a> = GF(2^48)
-            sage: k.fetch_int(2^43 + 2^15 + 1)
+            sage: k.from_integer(2^43 + 2^15 + 1)
             a^43 + a^15 + 1
-            sage: k.fetch_int(33793)
+            sage: k.from_integer(33793)
             a^15 + a^10 + 1
             sage: 33793.digits(2) # little endian
             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
         """
         return self._cache.fetch_int(number)
+
+    fetch_int = deprecated_function_alias(33941, from_integer)
 
     def _pari_modulus(self):
         """
@@ -312,4 +305,4 @@ class FiniteField_ntl_gf2e(FiniteField):
             Mod(1, 2)*a^16 + Mod(1, 2)*a^5 + Mod(1, 2)*a^3 + Mod(1, 2)*a^2 + Mod(1, 2)
         """
         f = pari(str(self.modulus()))
-        return f.subst('x', 'a') * pari("Mod(1,%s)"%self.characteristic())
+        return f.subst('x', 'a') * pari("Mod(1,%s)" % self.characteristic())

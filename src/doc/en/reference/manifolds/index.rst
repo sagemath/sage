@@ -19,6 +19,8 @@ More documentation (in particular example worksheets) can be found
 
    riem_manifold
 
+   poisson_manifold
+
    sage/manifolds/utilities
 
    sage/manifolds/catalog

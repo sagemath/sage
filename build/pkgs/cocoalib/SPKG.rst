@@ -1,5 +1,5 @@
-cocoalib
-========
+cocoalib: Computations in commutative algebra
+=============================================
 
 Description
 -----------
@@ -19,14 +19,3 @@ Upstream Contact
 -  Email: cocoa@dima.unige.it
 -  Website: http://cocoa.dima.unige.it/
 -  Releases: http://cocoa.dima.unige.it/cocoalib/
-
-Dependencies
-------------
-
--  GMP/MPIR
-
-
-Special Update/Build Instructions
----------------------------------
-
-None.

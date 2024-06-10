@@ -76,7 +76,7 @@ def execute_list_of_commands_in_parallel(command_list, nthreads):
     from multiprocessing import Pool
     # map_async handles KeyboardInterrupt correctly if an argument is
     # given to get().  Plain map() and apply_async() do not work
-    # correctly, see Trac #16113.
+    # correctly, see Issue #16113.
     pool = Pool(nthreads)
     result = pool.map_async(apply_func_progress, command_list, 1).get(99999)
     pool.close()
@@ -87,7 +87,7 @@ def process_command_results(result_values):
     error = None
     for r in result_values:
         if r:
-            print("Error running command, failed with status %s."%r)
+            print("Error running command, failed with status %s." % r)
             if not keep_going:
                 sys.exit(1)
             error = r
@@ -126,9 +126,9 @@ def execute_list_of_commands(command_list):
 
     def plural(n,noun):
         if n == 1:
-            return "1 %s"%noun
-        return "%i %ss"%(n,noun)
+            return "1 %s" % noun
+        return "%i %ss" % (n,noun)
 
-    print("Executing %s (using %s)"%(plural(len(command_list),"command"), plural(nthreads,"thread")))
+    print("Executing %s (using %s)" % (plural(len(command_list),"command"), plural(nthreads,"thread")))
     execute_list_of_commands_in_parallel(command_list, nthreads)
-    print("Time to execute %s: %.2f seconds."%(plural(len(command_list),"command"), time.time() - t))
+    print("Time to execute %s: %.2f seconds." % (plural(len(command_list),"command"), time.time() - t))

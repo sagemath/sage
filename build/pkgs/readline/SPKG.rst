@@ -1,5 +1,5 @@
-readline
-========
+readline: Command line editing library
+======================================
 
 Description
 -----------
@@ -23,12 +23,6 @@ Upstream Contact
 ----------------
 
 -  Chet Ramey at http://cnswww.cns.cwru.edu/~chet
-
-Dependencies
-------------
-
--  ncurses
-
 
 Special Update/Build Instructions
 ---------------------------------

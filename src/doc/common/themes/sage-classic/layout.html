@@ -1,0 +1,181 @@
+{% extends "classic/layout.html" %}
+
+{% block rootrellink %}
+  <li class="nav-item nav-item-0">
+    <a href="http://www.sagemath.org"><img src="{{ pathto('_static/logo_sagemath_black.svg', 1) }}" class="sage-logo" title="Sage Logo"></a>
+    {% if website %}
+      <a href="index.html">{{ documentation_title|e }}</a>{{ reldelim1 }}
+    {% else %}
+      <a href="{{ documentation_root }}">{{ documentation_title|e }}</a>{{ reldelim1 }}
+      {% if refsub %}
+      <a href="{{ reference_root }}">{{ reference_title|e }}</a>{{ reldelim1 }}
+      {% endif %}
+      <a href="{{ pathto(root_doc)|e }}">{{ shorttitle|e }}</a>{{ reldelim1 }}
+    {% endif %}
+  </li>
+{% endblock %}
+
+{% block extrahead %}
+  <link rel="icon" href="{{ pathto('_static/sageicon.png', 1) }}" type="image/x-icon" />
+{% endblock %}
+
+{%- block footer %}
+  {{ super() }}
+  <script type="text/javascript">
+/*global jQuery, window */
+/* Sphinx sidebar toggle.  Putting this code at the end of the body
+ * enables the toggle for the live, static, and offline docs.  Note:
+ * sage.misc.html.math_parse() eats jQuery's dollar-sign shortcut. */
+var jq = jQuery;
+jq(document).ready(function () {
+    var bar, bod, bg, fg, key, tog, wid_old, wid_new, get_state, set_state;
+    bod = jq('div.bodywrapper');
+    bar = jq('div.sphinxsidebar');
+    tog = jq('<div class="sphinxsidebartoggle"></div>');
+
+    /* The sidebar toggle adapts its height to the bodywrapper height. */
+    const resizeObserver = new ResizeObserver(entries => {
+        tog.height(bod.height());
+    });
+    resizeObserver.observe(bod[0]);
+
+    /* Setup and add the toggle. See Sphinx v0.5.1 default.css. */
+    fg = jq('div.sphinxsidebar p a').css('color') || 'rgb(152, 219, 204)';
+    bg = jq('div.document').css('background-color') || 'rgb(28, 78, 99)';
+    wid_old = '230px';
+    wid_new = '5px';
+    tog.css('background-color', bg)
+        .css('border-width', '0px')
+        .css('border-right', wid_new + ' ridge ' + bg)
+        .css('cursor', 'pointer')
+        .css('position', 'absolute')
+        .css('left', '-' + wid_new)
+        .css('top', '0px')
+        .css('width', wid_new);
+    bod.css('position', 'relative');
+    bod.prepend(tog);
+
+    /* Cookie helpers. */
+    key = 'sphinxsidebar=';
+    set_state = function (s) {
+        var date = new Date();
+        /* Expiry in 7 days. */
+        date.setTime(date.getTime() + (7 * 24 * 3600 * 1000));
+        document.cookie = key + encodeURIComponent(s) + '; expires=' +
+            date.toUTCString() + '; path=/';
+    };
+    get_state = function () {
+        var i, c, crumbs = document.cookie.split(';');
+        for (i = 0; i < crumbs.length; i += 1) {
+            c = crumbs[i].replace(/^\s+/, '');
+            if (c.indexOf(key) === 0) {
+                return decodeURIComponent(c.substring(key.length, c.length));
+            }
+        }
+        return null;
+    };
+
+    /* Event handlers. */
+    tog.mouseover(function (ev) {
+        tog.css('border-right-color', fg);
+    }).mouseout(function (ev) {
+        tog.css('border-right-color', bg);
+    }).click(function (ev) {
+        if (bod.hasClass('wide')) {
+            bod.removeClass('wide');
+            bod.css('margin-left', wid_old);
+            bar.css('width', wid_old);
+            bar.show();
+            set_state('visible');
+        } else {
+            set_state('hidden');
+            bar.hide();
+            bar.css('width', '0px');
+            bod.css('margin-left', wid_new);
+            bod.addClass('wide');
+        }
+    });
+
+    /* Hide the normally visible sidebar? */
+    if (get_state() === 'hidden') {
+        tog.trigger('click');
+    } else {
+        set_state('visible');
+    }
+});
+  </script>
+  <script type="text/javascript">
+/* detex the document title by removing "\(", "\)", "\", "$" */
+document.title = document.title.replace(/\\\(/g, '').replace(/\\\)/g, '').replace(/\\/g, '').replace(/\$/g, '');
+  </script>
+{%- endblock %}
+
+<!-- This macro block for the sidebar is heavily borrowed from the basic -->
+<!-- theme of Sphinx. In particular, we borrowed from the file -->
+<!-- themes/basic/layout.html distributed with Sphinx. -->
+{%- macro sidebar() %}
+  {%- if not embedded %}{% if not theme_nosidebar|tobool %}
+  <div class="sphinxsidebar">
+    <div class="sphinxsidebarwrapper">
+      {%- block sidebarlogo %}
+      {%- if logo %}
+        <p class="logo"><a href="{{ pathto(master_doc) }}">
+          <img class="logo" src="{{ pathto('_static/' + logo, 1) }}" alt="Logo"/>
+        </a></p>
+      {%- endif %}
+      {%- endblock %}
+      {%- block sidebartoc %}
+      {%- if display_toc %}
+        <h3><a href="{{ pathto(master_doc) }}">{{ _('Table Of Contents') }}</a></h3>
+        {{ toc }}
+      {%- endif %}
+      {%- endblock %}
+      {%- block sidebarrel %}
+      {%- if prev %}
+        <h4>{{ _('Previous topic') }}</h4>
+        <p class="topless"><a href="{{ prev.link|e }}"
+                              title="{{ _('previous chapter') }}">{{ prev.title }}</a></p>
+      {%- endif %}
+      {%- if next %}
+        <h4>{{ _('Next topic') }}</h4>
+        <p class="topless"><a href="{{ next.link|e }}"
+                              title="{{ _('next chapter') }}">{{ next.title }}</a></p>
+      {%- endif %}
+      {%- endblock %}
+      {%- block sidebarsourcelink %}
+      {%- if show_source and has_source and sourcename %}
+        <h3>{{ _('This Page') }}</h3>
+        <ul class="this-page-menu">
+          <li><a href="{{ pathto('_sources/' + sourcename, true)|e }}"
+                 rel="nofollow">{{ _('Show Source') }}</a></li>
+        </ul>
+      {%- endif %}
+      {%- endblock %}
+      {%- if customsidebar %}
+      {% include customsidebar %}
+      {%- endif %}
+      {%- block sidebarsearch %}
+      {%- if pagename != "search" and builder != "singlehtml" %}
+        <div id="searchbox" style="display: none" role="search">
+          <h3 id="searchlabel">{{ _('Quick search') }}</h3>
+          <div class="searchformwrapper">
+            <form class="search" action="{{ pathto('search') }}" method="get">
+              <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+              <!-- The shading of the "Go" button should be consistent -->
+              <!-- with the colour of the header and footer. See the file -->
+              <!-- doc/common/themes/sage/theme.conf for colours used by -->
+              <!-- the Sage theme. -->
+              <input type="submit" style="background-color: #B8B9F6" value="{{ _('Go') }}" />
+            </form>
+            <p class="searchtip" style="font-size: 90%">
+              {{ _('Enter search terms or a module, class or function name.') }}
+            </p>
+          </div>
+        </div>
+        <script>$('#searchbox').show(0);</script>
+      {%- endif %}
+      {%- endblock %}
+    </div>
+  </div>
+  {%- endif %}{% endif %}
+{%- endmacro %}

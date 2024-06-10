@@ -1,11 +1,10 @@
 """
 all.py -- export of abelian groups to Sage
 """
-from __future__ import absolute_import
 
-#*****************************************************************************
+# *****************************************************************************
 #
-#   Sage: System for Algebra and Geometry Experimentation
+#   Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
@@ -22,9 +21,9 @@ from __future__ import absolute_import
 #*****************************************************************************
 
 #from dual_abelian_group import DualAbelianGroup
-from .abelian_group import AbelianGroup, word_problem
-from .values import AbelianGroupWithValues
+from sage.groups.abelian_gps.abelian_group import AbelianGroup, word_problem
+from sage.groups.abelian_gps.values import AbelianGroupWithValues
 
 # TODO:
 # Implement group homset, conversion of generator images to morphism
-from .abelian_group_morphism import AbelianGroupMorphism
+from sage.groups.abelian_gps.abelian_group_morphism import AbelianGroupMorphism

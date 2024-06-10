@@ -43,10 +43,13 @@ from sage.graphs.base.static_sparse_graph cimport (init_short_digraph,
                                                    has_edge,
                                                    free_short_digraph,
                                                    edge_label)
-from .c_graph cimport CGraphBackend
+from sage.graphs.base.c_graph cimport CGraphBackend
 from sage.data_structures.bitset cimport FrozenBitset
 from libc.stdint cimport uint32_t
 from sage.data_structures.bitset_base cimport *
+
+cdef extern from "Python.h":
+    int unlikely(int) nogil  # Defined by Cython
 
 cdef class StaticSparseCGraph(CGraph):
     """
@@ -69,18 +72,19 @@ cdef class StaticSparseCGraph(CGraph):
         vertices of the graph ``G`` in some order.
         **Beware that no serious checks are made that this input is correct**.
 
-        If ``vertex_list`` is given, it will be used to map vertices of the
-        graph to consecutive integers. Otherwise, the result of ``G.vertices()``
-        will be used instead. Because ``G.vertices()`` only works if the
-        vertices can be sorted, using ``vertex_list`` is useful when working
-        with possibly non-sortable objects in Python 3.
+        If ``vertex_list`` is given, it will be used to map vertices
+        of the graph to consecutive integers. Otherwise, the result of
+        ``G.vertices(sort=True)`` will be used instead. Because this
+        only works if the vertices can be sorted, using
+        ``vertex_list`` is useful when working with possibly
+        non-sortable objects in Python 3.
 
         TESTS::
 
             sage: from sage.graphs.base.static_sparse_backend import StaticSparseCGraph
             sage: g = StaticSparseCGraph(graphs.PetersenGraph())
 
-        Check that the digraph methods are working (see :trac:`20253`)::
+        Check that the digraph methods are working (see :issue:`20253`)::
 
             sage: G = DiGraph([(0, 1), (1, 0)])
             sage: G2 = G.copy(immutable=True)
@@ -220,7 +224,10 @@ cdef class StaticSparseCGraph(CGraph):
         """
         return list(range(self.g.n))
 
-    cdef int has_arc_unsafe(self, int u, int v) except -1:
+    cdef int has_arc_label_unsafe(self, int u, int v, int l) except -1:
+        """
+        Label is ignored.
+        """
         return ((0 <= u) and
                 (0 <= v) and
                 (u < self.g.n) and
@@ -233,7 +240,7 @@ cdef class StaticSparseCGraph(CGraph):
 
         INPUT:
 
-        - ``u,v`` -- integers
+        - ``u``, ``v`` -- integers
 
         TESTS::
 
@@ -246,10 +253,58 @@ cdef class StaticSparseCGraph(CGraph):
         """
         return self.has_arc_unsafe(u, v)
 
+    cdef inline int next_out_neighbor_unsafe(self, int u, int v, int* l) except -2:
+        """
+        Return the next out-neighbor of ``u`` after ``v``.
+
+        If ``v`` is ``-1`` return the first neighbor of ``u``.
+
+        Return ``-1`` in case there does not exist such an out-neighbor.
+
+        .. NOTE::
+
+            A caller may not alter ``l``.
+            It is used to keep track of the current position.
+        """
+        cdef int degree = out_degree(self.g, u)
+        if v == -1:
+            l[0] = -1
+        for i in range(l[0] + 1, degree):
+            if self.g.neighbors[u][i] != v:
+                l[0] = i
+                return self.g.neighbors[u][i]
+        else:
+            return -1
+
+    cdef inline int next_in_neighbor_unsafe(self, int u, int v, int* l) except -2:
+        """
+        Return the next in-neighbor of ``u`` after ``v``.
+
+        If ``v`` is ``-1`` return the first neighbor of ``u``.
+
+        Return ``-1`` in case there does not exist such an in-neighbor.
+
+        .. NOTE::
+
+            A caller may not alter ``l``.
+            It is used to keep track of the current position.
+        """
+        if not self._directed:
+            return self.next_out_neighbor_unsafe(u, v, l)
+        cdef int degree = out_degree(self.g_rev, u)
+        if v == -1:
+            l[0] = -1
+        for i in range(l[0] + 1, degree):
+            if self.g_rev.neighbors[u][i] != v:
+                l[0] = i
+                return self.g_rev.neighbors[u][i]
+        else:
+            return -1
+
     cdef int out_neighbors_unsafe(self, int u, int *neighbors, int size) except -2:
         cdef int degree = self.g.neighbors[u+1] - self.g.neighbors[u]
         cdef int i
-        for i in range(min(degree,size)):
+        for i in range(min(degree, size)):
             neighbors[i] = self.g.neighbors[u][i]
         return -1 if size < degree else degree
 
@@ -367,6 +422,7 @@ cdef class StaticSparseCGraph(CGraph):
         else:
             return self.g_rev.neighbors[u+1] - self.g_rev.neighbors[u]
 
+
 cdef class StaticSparseBackend(CGraphBackend):
 
     def __init__(self, G, loops=False, multiedges=False):
@@ -390,9 +446,10 @@ cdef class StaticSparseBackend(CGraphBackend):
 
         ::
 
+            sage: # needs sage.combinat
             sage: g = DiGraph(digraphs.DeBruijn(4, 3), data_structure="static_sparse")
             sage: gi = DiGraph(g, data_structure="static_sparse")
-            sage: gi.edges()[0]
+            sage: gi.edges(sort=True)[0]
             ('000', '000', '0')
             sage: sorted(gi.edges_incident('111'))
             [('111', '110', '0'),
@@ -400,7 +457,7 @@ cdef class StaticSparseBackend(CGraphBackend):
             ('111', '112', '2'),
             ('111', '113', '3')]
 
-            sage: set(g.edges()) == set(gi.edges())
+            sage: set(g.edges(sort=False)) == set(gi.edges(sort=False))                 # needs sage.combinat
             True
 
         ::
@@ -409,13 +466,13 @@ cdef class StaticSparseBackend(CGraphBackend):
             sage: gi = Graph(g, data_structure="static_sparse")
             sage: g == gi
             True
-            sage: set(g.edges()) == set(gi.edges())
+            sage: set(g.edges(sort=False)) == set(gi.edges(sort=False))
             True
 
         ::
 
             sage: gi = Graph({ 0: {1: 1}, 1: {2: 1}, 2: {3: 1}, 3: {4: 2}, 4: {0: 2}}, data_structure="static_sparse")
-            sage: (0, 4, 2) in gi.edges()
+            sage: (0, 4, 2) in gi.edges(sort=False)
             True
             sage: gi.has_edge(0, 4)
             True
@@ -433,7 +490,7 @@ cdef class StaticSparseBackend(CGraphBackend):
             sage: d = G.diameter()
             sage: H = G.distance_graph(list(range(d + 1)))
             sage: HI = Graph(H, data_structure="static_sparse")
-            sage: HI.size() == len(HI.edges())
+            sage: HI.size() == len(HI.edges(sort=False))
             True
 
         ::
@@ -443,12 +500,12 @@ cdef class StaticSparseBackend(CGraphBackend):
             3
             sage: g.order()
             1
-            sage: g.vertices()
+            sage: g.vertices(sort=False)
             [1]
-            sage: g.edges()
+            sage: g.edges(sort=True)
             [(1, 1, 1), (1, 1, 2), (1, 1, 3)]
 
-        :trac:`15810` is fixed::
+        :issue:`15810` is fixed::
 
             sage: DiGraph({1: {2: ['a', 'b'], 3: ['c']}, 2: {3: ['d']}}, immutable=True).is_directed_acyclic()
             True
@@ -462,7 +519,6 @@ cdef class StaticSparseBackend(CGraphBackend):
         self._cg = cg
 
         self._directed = cg._directed
-
 
         self._order = G.order()
 
@@ -500,7 +556,7 @@ cdef class StaticSparseBackend(CGraphBackend):
         """
         return v in self._vertex_to_int
 
-    def add_edge(self, u, v, l, directed):
+    cpdef add_edge(self, object u, object v, object l, bint directed):
         r"""
         Set edge label. No way.
 
@@ -545,7 +601,7 @@ cdef class StaticSparseBackend(CGraphBackend):
         """
         raise ValueError("graph is immutable; please change a copy instead (use function copy())")
 
-    def del_edge(self, u, v, l, directed):
+    cpdef del_edge(self, object u, object v, object l, bint directed):
         r"""
         Set edge label. No way.
 
@@ -596,7 +652,7 @@ cdef class StaticSparseBackend(CGraphBackend):
 
         INPUT:
 
-        - ``u,v`` -- two vertices
+        - ``u``, ``v`` -- two vertices
 
         TESTS::
 
@@ -616,10 +672,10 @@ cdef class StaticSparseBackend(CGraphBackend):
         ::
 
             sage: from sage.graphs.base.static_sparse_backend import StaticSparseBackend
-            sage: g = StaticSparseBackend(digraphs.DeBruijn(3, 2))
-            sage: g.has_edge('00', '01', '1')
+            sage: g = StaticSparseBackend(digraphs.DeBruijn(3, 2))                      # needs sage.combinat
+            sage: g.has_edge('00', '01', '1')                                           # needs sage.combinat
             True
-            sage: g.has_edge('00', '01', '0')
+            sage: g.has_edge('00', '01', '0')                                           # needs sage.combinat
             False
         """
         try:
@@ -629,7 +685,6 @@ cdef class StaticSparseBackend(CGraphBackend):
             raise LookupError("one of the two vertices does not belong to the graph")
 
         cdef StaticSparseCGraph cg = self._cg
-        cdef list l
 
         cdef uint32_t * edge = has_edge(cg.g, u, v)
         if not edge:
@@ -640,16 +695,28 @@ cdef class StaticSparseBackend(CGraphBackend):
         # make it point toward the leftmost such edge, then build the list of
         # all labels.
         if self.multiple_edges(None):
-            while edge > cg.g.neighbors[u] and (edge - 1)[0] == v:
-                edge -= 1
-            l = []
-            while edge < cg.g.neighbors[u+1] and edge[0] == v:
-                l.append(edge_label(cg.g, edge))
-                edge += 1
-            return l
+            return self._all_edge_labels(u, v, edge)
+        return edge_label(cg.g, edge)
 
-        else:
-            return edge_label(cg.g, edge)
+    cdef inline list _all_edge_labels(self, int u, int v, uint32_t* edge=NULL):
+        """
+        Gives the labels of all arcs from ``u`` to ``v``.
+
+        ``u`` and ``v`` are the integers corresponding to vertices.
+
+        ``edge`` may point to an edge from ``u`` to ``v``.
+        """
+        cdef StaticSparseCGraph cg = self._cg
+        if edge is NULL:
+            edge = has_edge(cg.g, u, v)
+
+        while edge > cg.g.neighbors[u] and (edge - 1)[0] == v:
+            edge -= 1
+        cdef list l = []
+        while edge < cg.g.neighbors[u+1] and edge[0] == v:
+            l.append(edge_label(cg.g, edge))
+            edge += 1
+        return l
 
     def has_edge(self, object u, object v, object l):
         """
@@ -660,7 +727,7 @@ cdef class StaticSparseBackend(CGraphBackend):
 
         INPUT:
 
-        - ``u,v`` -- two vertices
+        - ``u``, ``v`` -- two vertices
 
         - ``l`` -- a label
 
@@ -673,14 +740,21 @@ cdef class StaticSparseBackend(CGraphBackend):
             sage: g.has_edge(0, 4, None)
             True
         """
-        cdef uint32_t * edge = NULL
-        cdef StaticSparseCGraph cg = <StaticSparseCGraph> (self._cg)
         try:
             u = self._vertex_to_int[u]
             v = self._vertex_to_int[v]
         except KeyError:
             raise LookupError("one of the two vertices does not belong to the graph")
 
+        return self._has_labeled_edge_unsafe(u, v, l)
+
+    cdef inline bint _has_labeled_edge_unsafe(self, int u, int v, object l) except -1:
+        """
+        Return whether ``self`` has an arc specified by indices of the vertices
+        and an arc label.
+        """
+        cdef uint32_t * edge = NULL
+        cdef StaticSparseCGraph cg = <StaticSparseCGraph> (self._cg)
         edge = has_edge(cg.g, u, v)
         if not edge:
             return False
@@ -691,11 +765,11 @@ cdef class StaticSparseBackend(CGraphBackend):
         # not necessarily toward the right label. As there may be many uv edges
         # with different labels, we first make edge point toward the leftmost uv
         # edge, then scan them all to find the right label.
-        while edge > cg.g.neighbors[u] and (edge - 1)[0] == v :
+        while edge > cg.g.neighbors[u] and (edge - 1)[0] == v:
             edge -= 1
 
         while edge[0] == v and edge < cg.g.neighbors[u+1]:
-            if edge_label(cg.g,edge) == l:
+            if edge_label(cg.g, edge) == l:
                 return True
             edge += 1
 
@@ -788,7 +862,7 @@ cdef class StaticSparseBackend(CGraphBackend):
 
     def iterator_verts(self, vertices):
         r"""
-        Return an iterator over the vertices
+        Iterate over the vertices
 
         INPUT:
 
@@ -807,9 +881,15 @@ cdef class StaticSparseBackend(CGraphBackend):
             [1]
         """
         if vertices is None:
-            return iter(self._vertex_to_labels)
-        else:
-            return (x for x in self._vertex_to_labels if x in vertices)
+            for x in self._vertex_to_labels:
+                yield x
+            return
+
+        cdef set V = set(vertices)
+        for x in self._vertex_to_labels:
+            if x in V:
+                yield x
+        return
 
     def num_verts(self):
         r"""
@@ -898,11 +978,11 @@ cdef class StaticSparseBackend(CGraphBackend):
             ...
             NotImplementedError: Sorry, I have no idea what is expected in this situation. I don't think that it is well-defined either, especially for multigraphs.
 
-        :trac:`15491`::
+        :issue:`15491`::
 
             sage: g = digraphs.RandomDirectedGNP(10, .3)
             sage: gi = DiGraph(g, data_structure="static_sparse")
-            sage: gi.size() == len(gi.edges())
+            sage: gi.size() == len(gi.edges(sort=False))
             True
         """
         cdef StaticSparseCGraph cg = <StaticSparseCGraph> self._cg
@@ -928,7 +1008,7 @@ cdef class StaticSparseBackend(CGraphBackend):
 
     def iterator_edges(self, vertices, bint labels):
         r"""
-        Return an iterator over the graph's edges.
+        Iterate over the graph's edges.
 
         INPUT:
 
@@ -945,9 +1025,9 @@ cdef class StaticSparseBackend(CGraphBackend):
             [(0, 1), (0, 4), (0, 5), (1, 2), (1, 6), (2, 3), (2, 7),
             (3, 4), (3, 8), (4, 9), (5, 7), (5, 8), (6, 8), (6, 9), (7, 9)]
 
-        :trac:`15665`::
+        :issue:`15665`::
 
-            sage: Graph(immutable=True).edges()
+            sage: Graph(immutable=True).edges(sort=False)
             []
         """
         cdef FrozenBitset b_vertices
@@ -980,6 +1060,144 @@ cdef class StaticSparseBackend(CGraphBackend):
                 else:
                     yield vi, self._vertex_to_labels[j]
 
+    iterator_unsorted_edges = iterator_edges
+
+    cdef int _use_edge_iterator_on_subgraph(self, CGraphBackend other, object vertices, const int modus) except -1:
+        """
+        Use an edge iterator on the subgraph induced by ``vertices`` and do something according to ``modus``.
+
+        INPUT:
+
+        - ``other`` -- a (mutable) subclass of :class:`CGraphBackend`
+        - ``vertices`` -- a list of vertex labels
+        - ``modus`` -- integer representing the modus:
+          - ``0`` -- initialize ``other`` to be the subgraph induced by the vertices;
+            see :meth:`subgraph_given_vertices``
+          - ``1`` -- test whether subgraph of ``self`` induced by the vertices is a subgraph of ``other``
+          - ``2`` -- as ``1`` but ignore the labels
+        """
+        cdef object v, l
+        cdef int u_int, prev_u_int, v_int, l_int_other, tmp
+        cdef StaticSparseCGraph cg = self._cg
+        cdef CGraph cg_other = other.cg()
+        cdef list b_vertices_2
+        cdef FrozenBitset b_vertices
+        cdef int n_vertices = len(vertices)
+        cdef bint loops = other.loops()
+        cdef bint ignore_multiple_edges = modus == 0 and self.multiple_edges(None) and not other.multiple_edges(None)
+
+        if self._directed and not other._directed and modus == 0:
+            raise ValueError("cannot obtain an undirected subgraph of a directed graph")
+
+        if self._directed != other._directed and 1 <= modus <= 2:
+            if self._directed:
+                raise ValueError("cannot check if directed graph is a subgraph of an undirected")
+            else:
+                raise ValueError("cannot check if undirected graph is a subgraph of a directed")
+
+        try:
+            b_vertices_2 = [self._vertex_to_int[x] for x in vertices]
+            b_vertices = FrozenBitset(b_vertices_2)
+        except KeyError:
+            raise LookupError("one of the vertices does not belong to the graph")
+        except ValueError:
+            # Avoiding "Bitset must not be empty"
+            # in this case there is nothing to do
+            return 1
+
+        cdef int length = len(b_vertices)
+        cdef int i
+        cdef int* vertices_translation = <int *> sig_malloc(b_vertices.capacity() * sizeof(int))
+
+        try:
+            # Iterate through the vertices.
+            if cg_other.active_vertices.size < length:
+                cg_other.realloc(length)
+            for j in range(n_vertices):
+                i = b_vertices_2[j]
+                if i >= 0:
+                    v = self.vertex_label(i)
+                    if modus == 0:
+                        # Add the vertex and obtain the corresponding index.
+                        vertices_translation[i] = other.check_labelled_vertex(v, False)
+                    elif 1 <= modus <= 2:
+                        # Obtain the corresponding index if the vertex is contained in ``other``.
+                        foo = other.get_vertex_checked(v)
+                        if foo >= 0:
+                            vertices_translation[i] = foo
+                        else:
+                            # Not a subgraph.
+                            return 0
+
+            # Iterate through the edges.
+            for v_int in b_vertices:
+                prev_u_int = -1
+                for tmp in range(out_degree(cg.g, v_int)):
+                    u_int = cg.g.neighbors[v_int][tmp]
+                    if (u_int < b_vertices.capacity() and bitset_in(b_vertices._bitset, u_int)
+                            and (u_int >= v_int or other._directed)):
+
+                        if unlikely(ignore_multiple_edges and u_int == prev_u_int):
+                            # Delete multiple edges, if ``other`` does not allow them.
+                            continue
+
+                        if modus == 0:
+                            prev_u_int = u_int
+
+                            if unlikely(not loops and u_int == v_int):
+                                # Ignore loops, if ``other`` does not allow them.
+                                continue
+
+                            l = edge_label(cg.g, cg.g.neighbors[v_int] + tmp)
+
+                            # Will return ``0``, if ``other`` does not support edge labels.
+                            l_int_other = other.new_edge_label(l)
+
+                            cg_other.add_arc_label_unsafe(vertices_translation[v_int], vertices_translation[u_int], l_int_other)
+
+                        else:
+                            # Modus is 1 or 2.
+
+                            # Check if the arc is contained in ``other``.
+
+                            if unlikely(u_int == prev_u_int):
+                                # Check if all of the multiple edges are contained.
+                                if not other.multiple_edges(None):
+                                    # ``other`` does not allow multiple edges.
+                                    # As ``self`` has a multiple edges (not only allows), it cannot be a subgraph.
+                                    return 0
+
+                                all_arc_labels = self._all_edge_labels(v_int, u_int)
+                                all_arc_labels_other = other._all_edge_labels(vertices_translation[v_int], vertices_translation[u_int])
+                                if modus == 2:
+                                    # Ignore the labels.
+                                    if len(all_arc_labels) > len(all_arc_labels_other):
+                                        return 0
+                                else:
+                                    for l in all_arc_labels:
+                                        try:
+                                            all_arc_labels_other.remove(l)
+                                        except ValueError:
+                                            return 0
+
+                                continue
+                            prev_u_int = u_int
+
+                            l = edge_label(cg.g, cg.g.neighbors[v_int] + tmp)
+
+                            if modus == 1:
+                                if not other._has_labeled_edge_unsafe(vertices_translation[v_int], vertices_translation[u_int], l):
+                                    return 0
+                            else:
+                                # Ignore the label.
+                                if not cg_other.has_arc_unsafe(vertices_translation[v_int], vertices_translation[u_int]):
+                                    return 0
+
+        finally:
+            sig_free(vertices_translation)
+
+        return 1
+
     def degree(self, v, directed):
         r"""
         Return the degree of a vertex
@@ -997,7 +1215,7 @@ cdef class StaticSparseBackend(CGraphBackend):
             sage: g.degree(0)
             3
 
-        :trac:`17225` about the degree of a vertex with a loop::
+        :issue:`17225` about the degree of a vertex with a loop::
 
             sage: Graph({0: [0]}, immutable=True).degree(0)
             2
@@ -1076,7 +1294,7 @@ cdef class StaticSparseBackend(CGraphBackend):
 
     def iterator_nbrs(self, v):
         r"""
-        Return an iterator over the neighbors of a vertex
+        Iterate over the neighbors of a vertex
 
         INPUT:
 
@@ -1090,7 +1308,7 @@ cdef class StaticSparseBackend(CGraphBackend):
 
         TESTS:
 
-        Ticket :trac:`25550` is fixed::
+        Issue :issue:`25550` is fixed::
 
             sage: g = DiGraph({0: [1]}, immutable=True)
             sage: g.neighbors(1)
@@ -1116,24 +1334,24 @@ cdef class StaticSparseBackend(CGraphBackend):
         if cg._directed:
             for i in range(out_degree(cg.g, v)):
                 u = cg.g.neighbors[v][i]
-                if not u in seen:
+                if u not in seen:
                     yield self._vertex_to_labels[u]
                     seen.add(u)
             for i in range(out_degree(cg.g_rev, v)):
                 u = cg.g_rev.neighbors[v][i]
-                if not u in seen:
+                if u not in seen:
                     yield self._vertex_to_labels[u]
                     seen.add(u)
         else:
             for i in range(out_degree(cg.g, v)):
                 u = cg.g.neighbors[v][i]
-                if not u in seen:
+                if u not in seen:
                     yield self._vertex_to_labels[cg.g.neighbors[v][i]]
                     seen.add(u)
 
     def iterator_out_nbrs(self, v):
         r"""
-        Return an iterator over the out-neighbors of a vertex
+        Iterate over the out-neighbors of a vertex
 
         INPUT:
 
@@ -1156,13 +1374,13 @@ cdef class StaticSparseBackend(CGraphBackend):
 
         for i in range(out_degree(cg.g, v)):
             u = cg.g.neighbors[v][i]
-            if not u in seen:
+            if u not in seen:
                 yield self._vertex_to_labels[u]
                 seen.add(u)
 
     def iterator_in_nbrs(self, v):
         r"""
-        Return an iterator over the in-neighbors of a vertex
+        Iterate over the in-neighbors of a vertex
 
         INPUT:
 
@@ -1192,17 +1410,17 @@ cdef class StaticSparseBackend(CGraphBackend):
         if cg._directed:
             for i in range(out_degree(cg.g_rev, v)):
                 u = cg.g_rev.neighbors[v][i]
-                if not u in seen:
+                if u not in seen:
                     yield self._vertex_to_labels[u]
                     seen.add(u)
         else:
             for i in range(out_degree(cg.g, v)):
                 u = cg.g.neighbors[v][i]
-                if not u in seen:
+                if u not in seen:
                     yield self._vertex_to_labels[u]
                     seen.add(u)
 
-    def add_vertex(self,v):
+    def add_vertex(self, v):
         r"""
         Addition of vertices is not available on an immutable graph.
 
@@ -1220,7 +1438,7 @@ cdef class StaticSparseBackend(CGraphBackend):
         """
         (<StaticSparseCGraph> self._cg).add_vertex(v)
 
-    def del_vertex(self,v):
+    def del_vertex(self, v):
         r"""
         Removal of vertices is not available on an immutable graph.
 
@@ -1237,6 +1455,7 @@ cdef class StaticSparseBackend(CGraphBackend):
             ValueError: graph is immutable; please change a copy instead (use function copy())
         """
         (<StaticSparseCGraph> self._cg).del_vertex(v)
+
 
 def _run_it_on_static_instead(f):
     r"""
@@ -1259,9 +1478,9 @@ def _run_it_on_static_instead(f):
         sage: Graph.new_graph_method = new_graph_method
         sage: g = Graph(5)
         sage: print("My backend is of type {}".format(type(g._backend)))
-        My backend is of type <type 'sage.graphs.base.sparse_graph.SparseGraphBackend'>
+        My backend is of type <class 'sage.graphs.base.sparse_graph.SparseGraphBackend'>
         sage: g.new_graph_method()
-        My backend is of type <type 'sage.graphs.base.static_sparse_backend.StaticSparseBackend'>
+        My backend is of type <class 'sage.graphs.base.static_sparse_backend.StaticSparseBackend'>
     """
     def same_function_on_static_version(*kwd, **kwds):
         if not isinstance(kwd[0]._backend, StaticSparseBackend):
@@ -1271,4 +1490,3 @@ def _run_it_on_static_instead(f):
             return f(*kwd, **kwds)
 
     return same_function_on_static_version
-

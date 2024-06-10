@@ -6,7 +6,7 @@ cellular automata currently implemented in Sage. Using tab-completion on
 this object is an easy way to discover and quickly create the cellular
 automata that are available (as listed here).
 
-Let ``<tab>`` indicate pressing the tab key.  So begin by typing
+Let ``<tab>`` indicate pressing the :kbd:`Tab` key.  So begin by typing
 ``cellular_automata.<tab>`` to the see the currently implemented
 named cellular automata.
 

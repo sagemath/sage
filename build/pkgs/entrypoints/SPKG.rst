@@ -1,5 +1,5 @@
-entrypoints
-===========
+entrypoints: Discover and load entry points from installed Python packages
+==========================================================================
 
 Description
 -----------

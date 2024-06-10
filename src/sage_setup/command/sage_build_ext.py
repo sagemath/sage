@@ -1,9 +1,18 @@
 import os
 import errno
+
+# Import setuptools before importing distutils, so that setuptools
+# can replace distutils by its own vendored copy.
+import setuptools
+
 from distutils import log
-from distutils.command.build_ext import build_ext
+from setuptools.command.build_ext import build_ext
 from distutils.dep_util import newer_group
-from distutils.errors import DistutilsSetupError
+try:
+    # Available since https://setuptools.pypa.io/en/latest/history.html#v59-0-0
+    from setuptools.errors import DistutilsSetupError
+except ImportError:
+    from distutils.errors import DistutilsSetupError
 from sage_setup.run_parallel import execute_list_of_commands
 
 class sage_build_ext(build_ext):
@@ -60,7 +69,6 @@ class sage_build_ext(build_ext):
         if DEBUG:
             print("self.compiler.linker_so (after fixing library dirs):")
             print(self.compiler.linker_so)
-
 
         # First, sanity-check the 'extensions' list
         self.check_extensions_list(self.extensions)
@@ -120,7 +128,7 @@ class sage_build_ext(build_ext):
             try:
                 os.makedirs(path)
             except OSError as e:
-                assert e.errno==errno.EEXIST, 'Cannot create %s.' % path
+                assert e.errno == errno.EEXIST, 'Cannot create %s.' % path
         depends = sources + ext.depends
         if not (self.force or newer_group(depends, ext_filename, 'newer')):
             log.debug("skipping '%s' extension (up-to-date)", ext.name)

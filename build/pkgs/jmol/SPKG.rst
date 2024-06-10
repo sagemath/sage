@@ -1,14 +1,15 @@
-
-Jmol for Sage
-=============
+jmol: Java viewer for chemical structures in 3D
+===============================================
 
 Description
 -----------
 
-This provides files necessary for Jmol(java) and JSmol (javascript) to
-operate from the command line and the Notebook. It does not contain the
-Notebook javascript library jmol_lib.js or changes to Notebook or Sage
-code.
+Java viewer for chemical structures in 3D.
+
+This provides files necessary for Jmol (java).
+
+This package does not install JSmol (javascript), which upstream bundles with Jmol.
+
 
 License
 -------
@@ -19,6 +20,7 @@ GPLv2+
 Upstream Contact
 ----------------
 
+-  http://jmol.sourceforge.net
 -  Bob Hanson
 -  e-mail: hansonr@stolaf.edu
 -  Homepage: https://www.stolaf.edu/people/hansonr/

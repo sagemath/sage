@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Substitutions over unit cube faces (Rauzy fractals)
 
@@ -7,11 +8,11 @@ that acts on unit faces of dimension `(d-1)` in `\RR^d`.
 
 This module defines the following classes and functions:
 
-- ``Face`` - a class to model a face
+- ``Face`` -- a class to model a face
 
-- ``Patch`` - a class to model a finite set of faces
+- ``Patch`` -- a class to model a finite set of faces
 
-- ``E1Star`` - a class to model the `E_1^*(\sigma)` application
+- ``E1Star`` -- a class to model the `E_1^*(\sigma)` application
   defined by the substitution sigma
 
 See the documentation of these objects for more information.
@@ -159,9 +160,9 @@ Plotting patches made of unit segments instead of unit faces::
     sage: P = Patch([Face([0,0], 1), Face([0,0], 2)])
     sage: E = E1Star(WordMorphism({1:[1,2],2:[1]}))
     sage: F = E1Star(WordMorphism({1:[1,1,2],2:[2,1]}))
-    sage: E(P,5).plot()
+    sage: E(P,5).plot()                                                                 # needs sage.plot
     Graphics object consisting of 21 graphics primitives
-    sage: F(P,3).plot()
+    sage: F(P,3).plot()                                                                 # needs sage.plot
     Graphics object consisting of 34 graphics primitives
 
 Everything works in any dimension (except for the plotting features
@@ -201,27 +202,31 @@ which only work in dimension two or three)::
 #                          Vincent Delecroix <20100.delecroix@gmail.com>
 #                          Timo Jolivet <timo.jolivet@gmail.com>
 #                          Stepan Starosta <stepan.starosta@gmail.com>
-#                          Sebastien Labbe <slabqc at gmail.com>
+#                          Sébastien Labbé <slabqc at gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
 
 from sage.misc.functional import det
 from sage.structure.sage_object import SageObject
 from sage.combinat.words.morphism import WordMorphism
-from sage.matrix.constructor import matrix
-from sage.modules.free_module_element import vector
-from sage.plot.all import Graphics
-from sage.plot.colors import Color
-from sage.plot.polygon import polygon
-from sage.plot.line import line
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.all", "Graphics")
+lazy_import("sage.plot.colors", "Color")
+lazy_import("sage.plot.polygon", "polygon")
+lazy_import("sage.plot.line", "line")
 from sage.rings.integer_ring import ZZ
 from sage.misc.latex import LatexExpr
 from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp import richcmp_by_eq_and_lt, richcmp_method
+
+lazy_import('sage.matrix.constructor', 'matrix')
+lazy_import('sage.modules.free_module_element', 'vector')
+
 
 # matplotlib color maps, loaded on-demand
 cm = None
@@ -240,10 +245,10 @@ class Face(SageObject):
 
     INPUT:
 
-    - ``v`` - tuple of integers
-    - ``t`` - integer in ``[1, ..., len(v)]``, type of the face. The face of type `i`
+    - ``v`` -- tuple of integers
+    - ``t`` -- integer in ``[1, ..., len(v)]``, type of the face. The face of type `i`
       is orthogonal to the canonical vector `e_i`.
-    - ``color`` - color (optional, default: ``None``) color of the face,
+    - ``color`` -- color (default: ``None``) color of the face,
       used for plotting only. If ``None``, its value is guessed from the
       face type.
 
@@ -262,6 +267,7 @@ class Face(SageObject):
         sage: f.color()
         RGB color (0.5, 0.5, 0.5)
     """
+
     def __init__(self, v, t, color=None):
         r"""
         Face constructor. See class doc for more information.
@@ -277,15 +283,15 @@ class Face(SageObject):
 
         TESTS:
 
-        We test that types can be given by an int (see :trac:`10699`)::
+        We test that types can be given by an int (see :issue:`10699`)::
 
             sage: f = Face((0,2,0), int(1))
         """
         self._vector = (ZZ**len(v))(v)
         self._vector.set_immutable()
 
-        if not((t in ZZ) and 1 <= t <= len(v)):
-            raise ValueError('The type must be an integer between 1 and len(v)')
+        if not ((t in ZZ) and 1 <= t <= len(v)):
+            raise ValueError('the type must be an integer between 1 and len(v)')
         self._type = t
 
         if color is None:
@@ -299,7 +305,7 @@ class Face(SageObject):
                 color = Color()
         self._color = Color(color)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         String representation of a face.
 
@@ -320,7 +326,7 @@ class Face(SageObject):
 
     __richcmp__ = richcmp_by_eq_and_lt('_eq', '_lt')
 
-    def _eq(self, other):
+    def _eq(self, other) -> bool:
         r"""
         Equality of faces.
 
@@ -336,7 +342,7 @@ class Face(SageObject):
                 self.vector() == other.vector() and
                 self.type() == other.type())
 
-    def _lt(self, other):
+    def _lt(self, other) -> bool:
         r"""
         Compare ``self`` and ``other``.
 
@@ -357,8 +363,9 @@ class Face(SageObject):
             return True
         if self.vector() == other.vector():
             return self.type() < other.type()
+        return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         EXAMPLES::
 
@@ -376,7 +383,7 @@ class Face(SageObject):
 
         INPUT:
 
-        - ``other`` - a Patch or a Face or a finite iterable of faces
+        - ``other`` -- a Patch or a Face or a finite iterable of faces
 
         EXAMPLES::
 
@@ -439,13 +446,13 @@ class Face(SageObject):
 
         INPUT:
 
-        - ``color`` - string, rgb tuple, color (optional, default: ``None``)
+        - ``color`` -- string, rgb tuple, color (default: ``None``)
           the new color to assign to the face. If ``None``, it returns the
           color of the face.
 
         OUTPUT:
 
-            color
+        color or None
 
         EXAMPLES::
 
@@ -456,27 +463,26 @@ class Face(SageObject):
             sage: f.color('red')
             sage: f.color()
             RGB color (1.0, 0.0, 0.0)
-
         """
-        if color is None:
-            return self._color
-        else:
+        if color is not None:
             self._color = Color(color)
+        else:
+            return self._color
 
-    def _plot(self, projmat, face_contour, opacity):
+    def _plot(self, projmat, face_contour, opacity) -> Graphics:
         r"""
         Return a 2D graphic object representing the face.
 
         INPUT:
 
-        - ``projmat`` - 2*3 projection matrix (used only for faces in three dimensions)
-        - ``face_contour`` - dict, maps the face type to vectors describing
+        - ``projmat`` -- 2*3 projection matrix (used only for faces in three dimensions)
+        - ``face_contour`` -- dict, maps the face type to vectors describing
           the contour of unit faces (used only for faces in three dimensions)
-        - ``opacity`` - the alpha value for the color of the face
+        - ``opacity`` -- the alpha value for the color of the face
 
         OUTPUT:
 
-            2D graphic object
+        2D graphic object
 
         EXAMPLES::
 
@@ -487,12 +493,12 @@ class Face(SageObject):
             sage: face_contour[1] = map(vector, [(0,0,0),(0,1,0),(0,1,1),(0,0,1)])
             sage: face_contour[2] = map(vector, [(0,0,0),(0,0,1),(1,0,1),(1,0,0)])
             sage: face_contour[3] = map(vector, [(0,0,0),(1,0,0),(1,1,0),(0,1,0)])
-            sage: G = f._plot(projmat, face_contour, 0.75)
+            sage: G = f._plot(projmat, face_contour, 0.75)                              # needs sage.plot
 
         ::
 
             sage: f = Face((0,0), 2)
-            sage: f._plot(None, None, 1)
+            sage: f._plot(None, None, 1)                                                # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         v = self.vector()
@@ -511,7 +517,7 @@ class Face(SageObject):
                          thickness=1, rgbcolor=self.color())
 
         else:
-            raise NotImplementedError("Plotting is implemented only for patches in two or three dimensions.")
+            raise NotImplementedError("plotting is implemented only for patches in two or three dimensions.")
 
         return G
 
@@ -521,7 +527,7 @@ class Face(SageObject):
 
         INPUT:
 
-        - ``face_contour`` - dict, maps the face type to vectors describing
+        - ``face_contour`` -- dict, maps the face type to vectors describing
           the contour of unit faces
 
         EXAMPLES::
@@ -554,8 +560,8 @@ class Patch(SageObject):
 
     INPUT:
 
-    - ``faces`` - finite iterable of faces
-    - ``face_contour`` - dict (optional, default:``None``) maps the face
+    - ``faces`` -- finite iterable of faces
+    - ``face_contour`` -- dict (default:``None``) maps the face
       type to vectors describing the contour of unit faces. If None,
       defaults contour are assumed for faces of type 1, 2, 3 or 1, 2, 3.
       Used in plotting methods only.
@@ -576,9 +582,12 @@ class Patch(SageObject):
         sage: Patch([Face((0,0,0),t) for t in [1,2,3]], face_contour=face_contour)
         Patch: [[(0, 0, 0), 1]*, [(0, 0, 0), 2]*, [(0, 0, 0), 3]*]
     """
+
     def __init__(self, faces, face_contour=None):
         r"""
-        Constructor of a patch (set of faces). See class doc for more information.
+        Constructor of a patch (set of faces).
+
+        See class doc for more information.
 
         EXAMPLES::
 
@@ -590,7 +599,7 @@ class Patch(SageObject):
         TESTS:
 
         We test that colors are not anymore mixed up between
-        Patches (see :trac:`11255`)::
+        Patches (see :issue:`11255`)::
 
             sage: P = Patch([Face([0,0,0],2)])
             sage: Q = Patch(P)
@@ -599,7 +608,6 @@ class Patch(SageObject):
             sage: next(iter(Q)).color('yellow')
             sage: next(iter(P)).color()
             RGB color (0.0, 1.0, 0.0)
-
         """
         self._faces = frozenset(Face(f.vector(), f.type(), f.color()) for f in faces)
 
@@ -615,21 +623,21 @@ class Patch(SageObject):
 
         else:
             self._face_contour = {
-                1: [vector(_) for _ in [(0, 0, 0), (0, 1, 0),
+                1: [vector(t) for t in [(0, 0, 0), (0, 1, 0),
                                         (0, 1, 1), (0, 0, 1)]],
-                2: [vector(_) for _ in [(0, 0, 0), (0, 0, 1),
+                2: [vector(t) for t in [(0, 0, 0), (0, 0, 1),
                                         (1, 0, 1), (1, 0, 0)]],
-                3: [vector(_) for _ in [(0, 0, 0), (1, 0, 0),
+                3: [vector(t) for t in [(0, 0, 0), (1, 0, 0),
                                         (1, 1, 0), (0, 1, 0)]]
             }
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Equality test for Patch.
 
         INPUT:
 
-        - ``other`` - an object
+        - ``other`` -- an object
 
         EXAMPLES::
 
@@ -655,7 +663,7 @@ class Patch(SageObject):
         """
         return (isinstance(other, Patch) and self._faces == other._faces)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Hash function of Patch.
 
@@ -669,7 +677,7 @@ class Patch(SageObject):
 
         TESTS:
 
-        We test that two equal patches have the same hash (see :trac:`11255`)::
+        We test that two equal patches have the same hash (see :issue:`11255`)::
 
             sage: P = Patch([Face([0,0,0],1), Face([0,0,0],2)])
             sage: Q = Patch([Face([0,0,0],2), Face([0,0,0],1)])
@@ -689,13 +697,13 @@ class Patch(SageObject):
         """
         return hash(self._faces)
 
-    def __len__(self):
+    def __len__(self) -> int:
         r"""
         Return the number of faces contained in the patch.
 
         OUTPUT:
 
-            integer
+        integer
 
         EXAMPLES::
 
@@ -713,7 +721,7 @@ class Patch(SageObject):
 
         OUTPUT:
 
-            iterator
+        iterator
 
         EXAMPLES::
 
@@ -740,7 +748,7 @@ class Patch(SageObject):
 
         INPUT:
 
-        - ``other`` - a Patch or a Face or a finite iterable of faces
+        - ``other`` -- a Patch or a Face or a finite iterable of faces
 
         EXAMPLES::
 
@@ -762,7 +770,7 @@ class Patch(SageObject):
 
         INPUT:
 
-        - ``other`` - a Patch or a Face or a finite iterable of faces
+        - ``other`` -- a Patch or a Face or a finite iterable of faces
 
         EXAMPLES::
 
@@ -775,7 +783,7 @@ class Patch(SageObject):
         """
         return self.difference(other)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         String representation of a patch.
 
@@ -804,13 +812,13 @@ class Patch(SageObject):
         else:
             return "Patch of %s faces" % len(self)
 
-    def union(self, other):
+    def union(self, other) -> Patch:
         r"""
         Return a Patch consisting of the union of self and other.
 
         INPUT:
 
-        - ``other`` - a Patch or a Face or a finite iterable of faces
+        - ``other`` -- a Patch or a Face or a finite iterable of faces
 
         EXAMPLES::
 
@@ -826,13 +834,13 @@ class Patch(SageObject):
         else:
             return Patch(self._faces.union(other))
 
-    def difference(self, other):
+    def difference(self, other) -> Patch:
         r"""
         Return the difference of self and other.
 
         INPUT:
 
-        - ``other`` - a finite iterable of faces or a single face
+        - ``other`` -- a finite iterable of faces or a single face
 
         EXAMPLES::
 
@@ -848,7 +856,7 @@ class Patch(SageObject):
         else:
             return Patch(self._faces.difference(other))
 
-    def dimension(self):
+    def dimension(self) -> None | int:
         r"""
         Return the dimension of the vectors of the faces of self
 
@@ -879,13 +887,13 @@ class Patch(SageObject):
         """
         return self._dimension
 
-    def faces_of_vector(self, v):
+    def faces_of_vector(self, v) -> list[Face]:
         r"""
         Return a list of the faces whose vector is ``v``.
 
         INPUT:
 
-        - ``v`` - a vector
+        - ``v`` -- a vector
 
         EXAMPLES::
 
@@ -897,13 +905,13 @@ class Patch(SageObject):
         v = vector(v)
         return [f for f in self if f.vector() == v]
 
-    def faces_of_type(self, t):
+    def faces_of_type(self, t) -> list[Face]:
         r"""
         Return a list of the faces that have type ``t``.
 
         INPUT:
 
-        - ``t`` - integer or any other type
+        - ``t`` -- integer or any other type
 
         EXAMPLES::
 
@@ -914,13 +922,13 @@ class Patch(SageObject):
         """
         return [f for f in self if f.type() == t]
 
-    def faces_of_color(self, color):
+    def faces_of_color(self, color) -> list[Face]:
         r"""
         Return a list of the faces that have the given color.
 
         INPUT:
 
-        - ``color`` - color
+        - ``color`` -- color
 
         EXAMPLES::
 
@@ -932,13 +940,13 @@ class Patch(SageObject):
         color = tuple(Color(color))
         return [f for f in self if tuple(f.color()) == color]
 
-    def translate(self, v):
+    def translate(self, v) -> Patch:
         r"""
         Return a translated copy of self by vector ``v``.
 
         INPUT:
 
-        - ``v`` - vector or tuple
+        - ``v`` -- vector or tuple
 
         EXAMPLES::
 
@@ -950,18 +958,18 @@ class Patch(SageObject):
         v = vector(v)
         return Patch(Face(f.vector() + v, f.type(), f.color()) for f in self)
 
-    def occurrences_of(self, other):
+    def occurrences_of(self, other) -> list:
         r"""
         Return all positions at which other appears in self, that is,
         all vectors v such that ``set(other.translate(v)) <= set(self)``.
 
         INPUT:
 
-        - ``other`` - a Patch
+        - ``other`` -- a Patch
 
         OUTPUT:
 
-            a list of vectors
+        a list of vectors
 
         EXAMPLES::
 
@@ -995,15 +1003,15 @@ class Patch(SageObject):
                 positions.append(y - x)
         return positions
 
-    def repaint(self, cmap='Set1'):
+    def repaint(self, cmap='Set1') -> None:
         r"""
-        Repaints all the faces of self from the given color map.
+        Repaint all the faces of self from the given color map.
 
         This only changes the colors of the faces of self.
 
         INPUT:
 
-        -  ``cmap`` - color map (default: ``'Set1'``). It can be one of the
+        -  ``cmap`` -- color map (default: ``'Set1'``). It can be one of the
            following:
 
            - string -- A coloring map. For available coloring map names type:
@@ -1012,7 +1020,7 @@ class Patch(SageObject):
              A list of a single color colors all the faces with the same color.
            - dict -- a dict of face types mapped to colors, to color the
              faces according to their type.
-           - ``{}``, the empty dict - shortcut for
+           - ``{}``, the empty dict -- shortcut for
              ``{1:'red', 2:'green', 3:'blue'}``.
 
         EXAMPLES:
@@ -1062,31 +1070,31 @@ class Patch(SageObject):
         elif isinstance(cmap, str):
             # matplotlib color maps
             global cm
-            if not cm:
+            if cm is None:
                 from matplotlib import cm
-
+            assert cm is not None
             if cmap not in cm.datad:
-                raise RuntimeError("Color map %s not known (type sorted(colors) for valid names)" % cmap)
+                raise RuntimeError("color map %s not known (type sorted(colors) for valid names)" % cmap)
             cmap = cm.__dict__[cmap]
             dim = float(len(self))
             for i, f in enumerate(self):
                 f.color(cmap(i / dim)[:3])
 
         else:
-            raise TypeError("Type of cmap (=%s) must be dict, list or str" % cmap)
+            raise TypeError("type of cmap (=%s) must be dict, list or str" % cmap)
 
-    def plot(self, projmat=None, opacity=0.75):
+    def plot(self, projmat=None, opacity=0.75) -> Graphics:
         r"""
         Return a 2D graphic object depicting the patch.
 
         INPUT:
 
-        - ``projmat`` - matrix (optional, default: ``None``) the projection
+        - ``projmat`` -- matrix (default: ``None``) the projection
           matrix. Its number of lines must be two. Its number of columns
           must equal the dimension of the ambient space of the faces. If
           ``None``, the isometric projection is used by default.
 
-        - ``opacity`` - float between ``0`` and ``1`` (optional, default: ``0.75``)
+        - ``opacity`` -- float between ``0`` and ``1`` (default: ``0.75``)
           opacity of the face
 
         .. WARNING::
@@ -1097,7 +1105,7 @@ class Patch(SageObject):
 
             sage: from sage.combinat.e_one_star import E1Star, Face, Patch
             sage: P = Patch([Face((0,0,0),t) for t in [1,2,3]])
-            sage: P.plot()
+            sage: P.plot()                                                              # needs sage.plot
             Graphics object consisting of 3 graphics primitives
 
         ::
@@ -1106,7 +1114,7 @@ class Patch(SageObject):
             sage: E = E1Star(sigma)
             sage: P = Patch([Face((0,0,0),t) for t in [1,2,3]])
             sage: P = E(P, 5)
-            sage: P.plot()
+            sage: P.plot()                                                              # needs sage.plot
             Graphics object consisting of 57 graphics primitives
 
         Plot with a different projection matrix::
@@ -1116,7 +1124,7 @@ class Patch(SageObject):
             sage: P = Patch([Face((0,0,0),t) for t in [1,2,3]])
             sage: M = matrix(2, 3, [1,0,-1,0.3,1,-3])
             sage: P = E(P, 3)
-            sage: P.plot(projmat=M)
+            sage: P.plot(projmat=M)                                                     # needs sage.plot
             Graphics object consisting of 17 graphics primitives
 
         Plot patches made of unit segments::
@@ -1124,9 +1132,9 @@ class Patch(SageObject):
             sage: P = Patch([Face([0,0], 1), Face([0,0], 2)])
             sage: E = E1Star(WordMorphism({1:[1,2],2:[1]}))
             sage: F = E1Star(WordMorphism({1:[1,1,2],2:[2,1]}))
-            sage: E(P,5).plot()
+            sage: E(P,5).plot()                                                         # needs sage.plot
             Graphics object consisting of 21 graphics primitives
-            sage: F(P,3).plot()
+            sage: F(P,3).plot()                                                         # needs sage.plot
             Graphics object consisting of 34 graphics primitives
         """
         if self.dimension() == 2:
@@ -1149,7 +1157,7 @@ class Patch(SageObject):
             return G
 
         else:
-            raise NotImplementedError("Plotting is implemented only for patches in two or three dimensions.")
+            raise NotImplementedError("plotting is implemented only for patches in two or three dimensions.")
 
     def plot3d(self):
         r"""
@@ -1175,14 +1183,14 @@ class Patch(SageObject):
             sage: P.plot3d()                #not tested
         """
         if self.dimension() != 3:
-            raise NotImplementedError("3D plotting is implemented only for patches in three dimensions.")
+            raise NotImplementedError("3D plotting is implemented only for patches in three dimensions")
 
         face_list = [face._plot3d(self._face_contour) for face in self]
         G = sum(face_list)
         return G
 
     def plot_tikz(self, projmat=None, print_tikz_env=True, edgecolor='black',
-            scale=0.25, drawzero=False, extra_code_before='', extra_code_after=''):
+            scale=0.25, drawzero=False, extra_code_before='', extra_code_after='') -> str:
         r"""
         Return a string containing some TikZ code to be included into
         a LaTeX document, depicting the patch.
@@ -1193,21 +1201,21 @@ class Patch(SageObject):
 
         INPUT:
 
-        - ``projmat`` - matrix (optional, default: ``None``) the projection
+        - ``projmat`` -- matrix (default: ``None``) the projection
           matrix. Its number of lines must be two. Its number of columns
           must equal the dimension of the ambient space of the faces. If
           ``None``, the isometric projection is used by default.
-        - ``print_tikz_env`` - bool (optional, default: ``True``) if ``True``,
+        - ``print_tikz_env`` -- bool (default: ``True``) if ``True``,
           the tikzpicture environment are printed
-        - ``edgecolor`` - string (optional, default: ``'black'``) either
+        - ``edgecolor`` -- string (default: ``'black'``) either
           ``'black'`` or ``'facecolor'`` (color of unit face edges)
-        - ``scale`` - real number (optional, default: ``0.25``) scaling
+        - ``scale`` -- real number (default: ``0.25``) scaling
           constant for the whole figure
-        - ``drawzero`` - bool (optional, default: ``False``) if ``True``,
+        - ``drawzero`` -- bool (default: ``False``) if ``True``,
           mark the origin by a black dot
-        - ``extra_code_before`` - string (optional, default: ``''``) extra code to
+        - ``extra_code_before`` -- string (default: ``''``) extra code to
           include in the tikz picture
-        - ``extra_code_after`` - string (optional, default: ``''``) extra code to
+        - ``extra_code_after`` -- string (default: ``''``) extra code to
           include in the tikz picture
 
         EXAMPLES::
@@ -1297,7 +1305,7 @@ class Patch(SageObject):
             \end{tikzpicture}
         """
         if self.dimension() != 3:
-            raise NotImplementedError("Tikz Plotting is implemented only for patches in three dimensions.")
+            raise NotImplementedError("Tikz plotting is implemented only for patches in three dimensions")
 
         if projmat is None:
             projmat = matrix(2, [-1.7320508075688772 * 0.5,
@@ -1308,7 +1316,7 @@ class Patch(SageObject):
         e2 = projmat * vector([0, 1, 0])
         e3 = projmat * vector([0, 0, 1])
         face_contour = self._face_contour
-        color = ()
+        color = None
 
         # string s contains the TiKZ code of the patch
         s = ''
@@ -1323,7 +1331,7 @@ class Patch(SageObject):
             t = f.type()
             x, y, z = f.vector()
 
-            if tuple(color) != tuple(f.color()):  # tuple is needed, comparison for RGB fails
+            if color is None or color != f.color():
                 color = f.color()
                 s += '\\definecolor{facecolor}{rgb}{%.3f,%.3f,%.3f}\n' % (color[0], color[1], color[2])
 
@@ -1350,10 +1358,10 @@ class E1Star(SageObject):
 
     INPUT:
 
-    - ``sigma`` - unimodular ``WordMorphism``, i.e. such that its incidence
+    - ``sigma`` -- unimodular ``WordMorphism``, i.e. such that its incidence
       matrix has determinant `\pm 1`.
 
-    - ``method`` - 'prefix' or 'suffix' (optional, default: 'suffix')
+    - ``method`` -- 'prefix' or 'suffix' (default: 'suffix')
       Enables to use an alternative definition `E_1^*(\sigma)` substitutions,
       where the abelianized of the prefix` is used instead of the suffix.
 
@@ -1390,6 +1398,7 @@ class E1Star(SageObject):
         sage: E(P)
         Patch: [[(0, 0, 0, 0), 3]*, [(0, 0, 0, 0), 4]*, [(0, 0, 1, -1), 3]*, [(0, 1, 0, -1), 2]*, [(1, 0, 0, -1), 1]*]
     """
+
     def __init__(self, sigma, method='suffix'):
         r"""
         E1Star constructor. See class doc for more information.
@@ -1406,14 +1415,14 @@ class E1Star(SageObject):
             raise TypeError("sigma (=%s) must be an instance of WordMorphism" % sigma)
 
         if sigma.domain().alphabet() != sigma.codomain().alphabet():
-            raise ValueError("The domain and codomain of (%s) must be the same." % sigma)
+            raise ValueError("the domain and codomain of (%s) must be the same" % sigma)
 
         if abs(det(matrix(sigma))) != 1:
-            raise ValueError("The substitution (%s) must be unimodular." % sigma)
+            raise ValueError("the substitution (%s) must be unimodular" % sigma)
 
         first_letter = sigma.codomain().alphabet()[0]
-        if not (first_letter in ZZ) or (first_letter < 1):
-            raise ValueError("The substitution (%s) must be defined on positive integers." % sigma)
+        if first_letter not in ZZ or first_letter < 1:
+            raise ValueError(f"the substitution ({sigma}) must be defined on positive integers")
 
         self._sigma = WordMorphism(sigma)
         self._d = self._sigma.domain().alphabet().cardinality()
@@ -1430,20 +1439,20 @@ class E1Star(SageObject):
                 elif method == 'prefix':
                     image_word = subst_im[:n]
                 else:
-                    raise ValueError("Option 'method' can only be 'prefix' or 'suffix'.")
+                    raise ValueError("option 'method' can only be 'prefix' or 'suffix'")
                 if letter not in X:
                     X[letter] = []
                 v = self.inverse_matrix() * vector(image_word.abelian_vector())
                 X[letter].append((v, k))
         self._base_iter = X
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Equality test for E1Star morphisms.
 
         INPUT:
 
-        - ``other`` - an object
+        - ``other`` -- an object
 
         EXAMPLES::
 
@@ -1460,7 +1469,7 @@ class E1Star(SageObject):
         """
         return (isinstance(other, E1Star) and self._base_iter == other._base_iter)
 
-    def __call__(self, patch, iterations=1):
+    def __call__(self, patch, iterations=1) -> Patch:
         r"""
         Applies a generalized substitution to a Patch; this returns a new object.
 
@@ -1468,12 +1477,12 @@ class E1Star(SageObject):
 
         INPUT:
 
-        - ``patch`` - a patch
-        - ``iterations`` - integer (optional, default: 1) number of iterations
+        - ``patch`` -- a patch
+        - ``iterations`` -- integer (default: 1) number of iterations
 
         OUTPUT:
 
-            a patch
+        a patch
 
         EXAMPLES::
 
@@ -1488,7 +1497,7 @@ class E1Star(SageObject):
 
         TESTS:
 
-        We test that iterations=0 works (see :trac:`10699`)::
+        We test that iterations=0 works (see :issue:`10699`)::
 
             sage: P = Patch([Face((0,0,0),t) for t in [1,2,3]])
             sage: sigma = WordMorphism({1:[1,2], 2:[1,3], 3:[1]})
@@ -1499,17 +1508,17 @@ class E1Star(SageObject):
         if iterations == 0:
             return Patch(patch)
         elif iterations < 0:
-            raise ValueError("iterations (=%s) must be >= 0." % iterations)
+            raise ValueError("iterations (=%s) must be >= 0" % iterations)
         else:
             old_faces = patch
-            for i in range(iterations):
+            for _ in range(iterations):
                 new_faces = []
                 for f in old_faces:
                     new_faces.extend(self._call_on_face(f, color=f.color()))
                 old_faces = new_faces
             return Patch(new_faces)
 
-    def __mul__(self, other):
+    def __mul__(self, other) -> E1Star:
         r"""
         Return the product of ``self`` and ``other``.
 
@@ -1518,7 +1527,7 @@ class E1Star(SageObject):
 
         INPUT:
 
-        - ``other`` - an instance of E1Star
+        - ``other`` -- an instance of E1Star
 
         OUTPUT:
 
@@ -1538,7 +1547,7 @@ class E1Star(SageObject):
             raise TypeError("other (=%s) must be an instance of E1Star" % other)
         return E1Star(other.sigma() * self.sigma())
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         String representation of a patch.
 
@@ -1554,17 +1563,17 @@ class E1Star(SageObject):
 
     def _call_on_face(self, face, color=None):
         r"""
-        Return an iterator of faces obtained by applying self on the face.
+        Return an iterator of faces obtained by applying ``self`` on the face.
 
         INPUT:
 
-        - ``face`` - a face
-        - ``color`` - string, RGB tuple or color, (optional, default: None)
+        - ``face`` -- a face
+        - ``color`` -- string, RGB tuple or color, (default: None)
           RGB color
 
         OUTPUT:
 
-            iterator of faces
+        iterator of faces
 
         EXAMPLES::
 
@@ -1576,7 +1585,7 @@ class E1Star(SageObject):
             [[(3, 0, -3), 1]*, [(2, 1, -3), 2]*, [(2, 0, -2), 3]*]
         """
         if len(face.vector()) != self._d:
-            raise ValueError("The dimension of the faces must be equal to the size of the alphabet of the substitution.")
+            raise ValueError("the dimension of the faces must be equal to the size of the alphabet of the substitution")
         x_new = self.inverse_matrix() * face.vector()
         t = face.type()
         return (Face(x_new + v, k, color=color) for v, k in self._base_iter[t])
@@ -1584,7 +1593,7 @@ class E1Star(SageObject):
     @cached_method
     def matrix(self):
         r"""
-        Return the matrix associated with self.
+        Return the matrix associated with ``self``.
 
         EXAMPLES::
 
@@ -1601,7 +1610,7 @@ class E1Star(SageObject):
     @cached_method
     def inverse_matrix(self):
         r"""
-        Return the inverse of the matrix associated with self.
+        Return the inverse of the matrix associated with ``self``.
 
         EXAMPLES::
 
@@ -1616,9 +1625,9 @@ class E1Star(SageObject):
         """
         return self.matrix().inverse()
 
-    def sigma(self):
+    def sigma(self) -> WordMorphism:
         r"""
-        Return the ``WordMorphism`` associated with self.
+        Return the ``WordMorphism`` associated with ``self``.
 
         EXAMPLES::
 

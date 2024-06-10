@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-#
+# nodoctest
 # Numerical Sage documentation build configuration file, created by
 # sphinx-quickstart on Sat Dec 6 11:08:04 2008.
 #
@@ -13,11 +12,23 @@
 # All configuration values have a default; values that are commented
 # out serve to show the default.
 
-from sage.docs.conf import release
-from sage.docs.conf import *  # NOQA
+from sage_docbuild.conf import release
+from sage_docbuild.conf import *  # NOQA
+
+# Add any paths that contain custom static files (such as style sheets),
+# relative to this directory to html_static_path. They are copied after the
+# builtin static files, so a file named "default.css" will overwrite the
+# builtin "default.css". html_common_static_path imported from sage_docbuild.conf
+# contains common paths.
+html_static_path = [] + html_common_static_path
+
+# Add a small edit button.
+html_theme_options.update({
+  'source_edit_link': os.path.join(source_repository, 'blob/develop/src/doc/hu/a_tour_of_sage', '{filename}'),
+})
 
 # General information about the project.
-project = u'A Sage bemutatása'
+project = 'A Sage bemutatása'
 name = 'a_tour_of_sage'
 language = 'hu'
 
@@ -33,6 +44,6 @@ htmlhelp_basename = name
 # start file, target name, title, author, document class
 # [howto/manual]).
 latex_documents = [
-  ('index', name+'.tex', u'A Tour Of Sage',
-   u'The Sage Development Team', 'manual'),
+  ('index', name + '.tex', 'A Tour Of Sage',
+   'The Sage Development Team', 'manual'),
 ]

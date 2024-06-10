@@ -3,7 +3,7 @@
 #       Copyright (C) 2011 Simon King <simon.king@uni-jena.de>
 #  Distributed under the terms of the GNU General Public License (GPL),
 #  version 2 or any later version.  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
 ###############################################################################
 
@@ -12,12 +12,12 @@ Free associative unital algebras, implemented via Singular's letterplace rings
 
 AUTHOR:
 
-- Simon King (2011-03-21): :trac:`7797`
+- Simon King (2011-03-21): :issue:`7797`
 
 With this implementation, Groebner bases out to a degree bound and
 normal forms can be computed for twosided weighted homogeneous ideals
 of free algebras. For now, all computations are restricted to weighted
-homogeneous elements, i.e., other elements can not be created by
+homogeneous elements, i.e., other elements cannot be created by
 arithmetic operations.
 
 EXAMPLES::
@@ -37,7 +37,15 @@ The preceding containment test is based on the computation of Groebner
 bases with degree bound::
 
     sage: I.groebner_basis(degbound=4)
-    Twosided Ideal (y*z*y*y - y*z*y*z + y*z*z*y - y*z*z*z, y*z*y*x + y*z*y*z + y*z*z*x + y*z*z*z, y*y*z*y - y*y*z*z + y*z*z*y - y*z*z*z, y*y*z*x + y*y*z*z + y*z*z*x + y*z*z*z, y*y*y - y*y*z + y*z*y - y*z*z, y*y*x + y*y*z + y*z*x + y*z*z, x*y + y*z, x*x - y*x - y*y - y*z) of Free Associative Unital Algebra on 3 generators (x, y, z) over Rational Field
+    Twosided Ideal (x*y + y*z,
+        x*x - y*x - y*y - y*z,
+        y*y*y - y*y*z + y*z*y - y*z*z,
+        y*y*x + y*y*z + y*z*x + y*z*z,
+        y*y*z*y - y*y*z*z + y*z*z*y - y*z*z*z,
+        y*z*y*y - y*z*y*z + y*z*z*y - y*z*z*z,
+        y*y*z*x + y*y*z*z + y*z*z*x + y*z*z*z,
+        y*z*y*x + y*z*y*z + y*z*z*x + y*z*z*z) of Free Associative Unital
+        Algebra on 3 generators (x, y, z) over Rational Field
 
 When reducing an element by `I`, the original generators are chosen::
 
@@ -67,7 +75,13 @@ different normal form::
     Lexicographic term order
     sage: J = L*[a*b+b*c,a^2+a*b-b*c-c^2]*L
     sage: J.groebner_basis(4)
-    Twosided Ideal (2*b*c*b - b*c*c + c*c*b, a*c*c - 2*b*c*a - 2*b*c*c - c*c*a, a*b + b*c, a*a - 2*b*c - c*c) of Free Associative Unital Algebra on 3 generators (a, b, c) over Rational Field
+    Twosided Ideal (2*b*c*b - b*c*c + c*c*b,
+        a*b + b*c,
+        -a*c*c + 2*b*c*a + 2*b*c*c + c*c*a,
+        a*c*c*b - 2*b*c*c*b + b*c*c*c,
+        a*a - 2*b*c - c*c,
+        a*c*c*a - 2*b*c*c*a - 4*b*c*c*c - c*c*c*c) of Free Associative Unital
+        Algebra on 3 generators (a, b, c) over Rational Field
     sage: (b*c*b*b).normal_form(J)
     1/2*b*c*c*b - 1/2*c*c*b*b
 
@@ -82,6 +96,12 @@ TESTS::
     sage: TestSuite(F).run()
     sage: TestSuite(L).run()
     sage: loads(dumps(F)) is F
+    True
+
+    sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
+    sage: F.is_commutative()
+    False
+    sage: FreeAlgebra(QQ, implementation='letterplace', names=['x']).is_commutative()
     True
 
 .. TODO::
@@ -99,32 +119,31 @@ TESTS::
 
     We also do not support coercion from a subalgebra, or between free
     algebras with different term orderings, yet.
-
 """
-
-from sage.misc.misc_c import prod
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.libs.singular.function import lib, singular_function
-from sage.rings.polynomial.term_order import TermOrder
+from sage.libs.singular.function cimport RingWrap
+from sage.libs.singular.ring cimport singular_ring_delete, singular_ring_reference
 from sage.categories.algebras import Algebras
 from sage.rings.noncommutative_ideals import IdealMonoid_nc
+from sage.rings.polynomial.plural cimport new_CRing
+from sage.misc.cachefunc import cached_method
 
 #####################
 # Define some singular functions
 lib("freegb.lib")
-poly_reduce = singular_function("NF")
-singular_system=singular_function("system")
+freeAlgebra = singular_function("freeAlgebra")
 
-# unfortunately we can not set Singular attributes for MPolynomialRing_libsingular
+# unfortunately we cannot set Singular attributes for MPolynomialRing_libsingular
 # Hence, we must constantly work around Letterplace's sanity checks,
-# and can not use the following library functions:
-#set_letterplace_attributes = singular_function("setLetterplaceAttributes")
-#lpMult = singular_function("lpMult")
+# and cannot use the following library functions:
+# set_letterplace_attributes = singular_function("setLetterplaceAttributes")
+# lpMult = singular_function("lpMult")
 
 #####################
-# Auxiliar functions
+# Auxiliary functions
 
-cdef MPolynomialRing_libsingular make_letterplace_ring(base_ring,blocks):
+cdef MPolynomialRing_libsingular make_letterplace_ring(base_ring, blocks):
     """
     Create a polynomial ring in block order.
 
@@ -162,33 +181,31 @@ cdef MPolynomialRing_libsingular make_letterplace_ring(base_ring,blocks):
         Block term order with blocks:
         (Lexicographic term order of length 3,
          Lexicographic term order of length 3)
-
     """
-    n = base_ring.ngens()
     T0 = base_ring.term_order()
     T = T0
     cdef i
     cdef tuple names0 = base_ring.variable_names()
     cdef list names = list(names0)
-    for i from 1<=i<blocks:
+    for i in range(1, blocks):
         T += T0
-        names.extend([x+'_'+str(i) for x in names0])
+        names.extend([x + '_' + str(i) for x in names0])
     return PolynomialRing(base_ring.base_ring(), names, order=T,
-            implementation="singular")
+                          implementation="singular")
 
 
 #####################
 # The free algebra
 
-cdef class FreeAlgebra_letterplace(Algebra):
+cdef class FreeAlgebra_letterplace(Parent):
     """
     Finitely generated free algebra, with arithmetic restricted to weighted homogeneous elements.
 
-    NOTE:
+    .. NOTE::
 
-    The restriction to weighted homogeneous elements should be lifted
-    as soon as the restriction to homogeneous elements is lifted in
-    Singular's "Letterplace algebras".
+        The restriction to weighted homogeneous elements should be lifted
+        as soon as the restriction to homogeneous elements is lifted in
+        Singular's "Letterplace algebras".
 
     EXAMPLES::
 
@@ -207,8 +224,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
         sage: a+1
         Traceback (most recent call last):
         ...
-        ArithmeticError: Can only add elements of the same weighted degree
-
+        ArithmeticError: can only add elements of the same weighted degree
     """
     # It is not really a free algebra over the given generators. Rather,
     # it is a free algebra over the commutative monoid generated by the given generators.
@@ -222,9 +238,10 @@ cdef class FreeAlgebra_letterplace(Algebra):
 
         The free associative version of the given commutative ring.
 
-        NOTE:
+        .. NOTE::
 
-        One is supposed to use the `FreeAlgebra` constructor, in order to use the cache.
+            One is supposed to use the :class:`FreeAlgebra` constructor,
+            in order to use the cache.
 
         TESTS::
 
@@ -234,7 +251,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
             sage: FreeAlgebra_letterplace(QQ['x'])
             Traceback (most recent call last):
             ...
-            TypeError: A letterplace algebra must be provided by a polynomial ring of type <... 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
+            TypeError: a letterplace algebra must be provided by a polynomial ring of type <... 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
 
         ::
 
@@ -242,26 +259,36 @@ cdef class FreeAlgebra_letterplace(Algebra):
             sage: F.<a,b,c> = FreeAlgebra(K, implementation='letterplace')
             sage: TestSuite(F).run()
         """
-        if not isinstance(R,MPolynomialRing_libsingular):
-            raise TypeError("A letterplace algebra must be provided by a polynomial ring of type %s" % MPolynomialRing_libsingular)
-        self.__ngens = R.ngens()
+        if not isinstance(R, MPolynomialRing_libsingular):
+            raise TypeError("a letterplace algebra must be provided by a polynomial ring of type %s" % MPolynomialRing_libsingular)
+
+        self._ngens = R.ngens()
         if degrees is None:
             varnames = R.variable_names()
             self._nb_slackvars = 0
         else:
             varnames = R.variable_names()[:-1]
             self._nb_slackvars = 1
+        number_of_vars = self._ngens - self._nb_slackvars
+
         base_ring = R.base_ring()
-        Algebra.__init__(self, base_ring, varnames,
-                         normalize=False, category=Algebras(base_ring))
+        if number_of_vars <= 1:
+            cat = Algebras(base_ring).Commutative()
+        else:
+            cat = Algebras(base_ring)
+        Parent.__init__(self, base=base_ring, names=varnames,
+                        normalize=False, category=cat)
+
         self._commutative_ring = R
-        self._current_ring = make_letterplace_ring(R,1)
+        self._current_ring = make_letterplace_ring(R, 1)
         self._degbound = 1
         if degrees is None:
-            self._degrees = tuple([int(1)]*self.__ngens)
+            self._degrees = tuple([int(1)] * self._ngens)
         else:
-            if (not isinstance(degrees,(tuple,list))) or len(degrees)!=self.__ngens-1 or any(i <= 0 for i in degrees):
-                raise TypeError("The generator degrees must be given by a list or tuple of %d positive integers" % (self.__ngens-1))
+            if (not isinstance(degrees, (tuple, list))) \
+                    or len(degrees) != number_of_vars \
+                    or any(i <= 0 for i in degrees):
+                raise TypeError("the generator degrees must be given by a list or tuple of %d positive integers" % (self._ngens - 1))
             self._degrees = tuple([int(i) for i in degrees])
             self.set_degbound(max(self._degrees))
         self._populate_coercion_lists_(coerce_list=[base_ring])
@@ -274,12 +301,13 @@ cdef class FreeAlgebra_letterplace(Algebra):
             sage: F.<a,b,c> = FreeAlgebra(K, implementation='letterplace')
             sage: loads(dumps(F)) is F    # indirect doctest
             True
-
         """
         from sage.algebras.free_algebra import FreeAlgebra
-        if self._nb_slackvars==0:
-            return FreeAlgebra,(self._commutative_ring,)
-        return FreeAlgebra,(self._commutative_ring,None,None,None,None,None,None,None,self._degrees)
+        if self._nb_slackvars == 0:
+            return FreeAlgebra, (self._commutative_ring,)
+        return FreeAlgebra, (self._commutative_ring, None, None, None,
+                             None, None, None, None, self._degrees)
+
     # Small methods
     def ngens(self):
         """
@@ -290,20 +318,21 @@ cdef class FreeAlgebra_letterplace(Algebra):
             sage: F.<a,b,c> = FreeAlgebra(QQ, implementation='letterplace')
             sage: F.ngens()
             3
-
         """
-        return self.__ngens-self._nb_slackvars
-    def gen(self,i):
+        return self._ngens - self._nb_slackvars
+
+    @cached_method
+    def gen(self, i):
         """
         Return the `i`-th generator.
 
         INPUT:
 
-        `i` -- an integer.
+        - `i` -- an integer
 
         OUTPUT:
 
-        Generator number `i`.
+        The generator with index `i`
 
         EXAMPLES::
 
@@ -312,21 +341,30 @@ cdef class FreeAlgebra_letterplace(Algebra):
             True
             sage: F.gen(2)
             c
-
         """
-        if i>=self.__ngens-self._nb_slackvars:
-            raise ValueError("This free algebra only has %d generators" % (self.__ngens-self._nb_slackvars))
-        if self._gens is not None:
-            return self._gens[i]
+        if i >= self._ngens - self._nb_slackvars:
+            raise ValueError("this free algebra only has %d generators" % (self._ngens - self._nb_slackvars))
         deg = self._degrees[i]
-        #self.set_degbound(deg)
         p = self._current_ring.gen(i)
         cdef int n
-        cdef int j = self.__ngens-1
-        for n from 1<=n<deg:
-            j += self.__ngens
+        cdef int j = self._ngens - 1
+        for n in range(1, deg):
+            j += self._ngens
             p *= self._current_ring.gen(j)
         return FreeAlgebraElement_letterplace(self, p)
+
+    def gens(self):
+        """
+        Return the tuple of generators.
+
+        EXAMPLES::
+
+            sage: F.<a,b,c> = FreeAlgebra(QQ, implementation='letterplace')
+            sage: F.gens()
+            (a, b, c)
+        """
+        return tuple(self.gen(i) for i in range(self.ngens()))
+
     def current_ring(self):
         """
         Return the commutative ring that is used to emulate
@@ -344,16 +382,16 @@ cdef class FreeAlgebra_letterplace(Algebra):
             sage: F.set_degbound(3)
             sage: F.current_ring()
             Multivariate Polynomial Ring in a, b, c, a_1, b_1, c_1, a_2, b_2, c_2 over Rational Field
-
         """
         return self._current_ring
+
     def commutative_ring(self):
         """
         Return the commutative version of this free algebra.
 
-        NOTE:
+        .. NOTE::
 
-        This commutative ring is used as a unique key of the free algebra.
+            This commutative ring is used as a unique key of the free algebra.
 
         EXAMPLES::
 
@@ -365,9 +403,9 @@ cdef class FreeAlgebra_letterplace(Algebra):
             Multivariate Polynomial Ring in a, b, c over Finite Field in z of size 5^2
             sage: FreeAlgebra(F.commutative_ring()) is F
             True
-
         """
         return self._commutative_ring
+
     def term_order_of_block(self):
         """
         Return the term order that is used for the commutative version of this free algebra.
@@ -380,7 +418,6 @@ cdef class FreeAlgebra_letterplace(Algebra):
             sage: L.<a,b,c> = FreeAlgebra(QQ, implementation='letterplace',order='lex')
             sage: L.term_order_of_block()
             Lexicographic term order
-
         """
         return self._commutative_ring.term_order()
 
@@ -388,38 +425,22 @@ cdef class FreeAlgebra_letterplace(Algebra):
         return self._degrees
 
     # Some basic properties of this ring
-    def is_commutative(self):
-        """
-        Tell whether this algebra is commutative, i.e., whether the generator number is one.
-
-        EXAMPLES::
-
-            sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
-            sage: F.is_commutative()
-            False
-            sage: FreeAlgebra(QQ, implementation='letterplace', names=['x']).is_commutative()
-            True
-
-        """
-        return self.__ngens-self._nb_slackvars <= 1
-
     def is_field(self, proof=True):
         """
         Tell whether this free algebra is a field.
 
-        NOTE:
+        .. NOTE::
 
-        This would only be the case in the degenerate case of no generators.
-        But such an example can not be constructed in this implementation.
+            This would only be the case in the degenerate case of no generators.
+            But such an example cannot be constructed in this implementation.
 
         TESTS::
 
             sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
             sage: F.is_field()
             False
-
         """
-        return (not (self.__ngens-self._nb_slackvars)) and self._base.is_field(proof=proof)
+        return (not (self._ngens - self._nb_slackvars)) and self._base.is_field(proof=proof)
 
     def _repr_(self):
         """
@@ -434,10 +455,8 @@ cdef class FreeAlgebra_letterplace(Algebra):
             sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace', degrees=[2,1,3])
             sage: F
             Free Associative Unital Algebra on 3 generators (x, y, z) over Rational Field
-
-
         """
-        return "Free Associative Unital Algebra on %d generators %s over %s"%(self.__ngens-self._nb_slackvars,self.gens(),self._base)
+        return "Free Associative Unital Algebra on %d generators %s over %s" % (self._ngens - self._nb_slackvars, self.gens(), self._base)
 
     def _latex_(self):
         r"""
@@ -450,17 +469,17 @@ cdef class FreeAlgebra_letterplace(Algebra):
             \Bold{Q}\langle \mathit{bla}, \alpha, z\rangle
         """
         from sage.misc.latex import latex
-        return "%s\\langle %s\\rangle"%(latex(self.base_ring()),', '.join(self.latex_variable_names()))
+        return "%s\\langle %s\\rangle" % (latex(self.base_ring()), ', '.join(self.latex_variable_names()))
 
     def degbound(self):
         """
         Return the degree bound that is currently used.
 
-        NOTE:
+        .. NOTE::
 
-        When multiplying two elements of this free algebra, the degree
-        bound will be dynamically adapted. It can also be set by
-        :meth:`set_degbound`.
+            When multiplying two elements of this free algebra, the degree
+            bound will be dynamically adapted. It can also be set by
+            :meth:`set_degbound`.
 
         EXAMPLES:
 
@@ -478,16 +497,16 @@ cdef class FreeAlgebra_letterplace(Algebra):
             sage: F.set_degbound(4)
             sage: F.degbound()
             4
-
         """
         return self._degbound
-    def set_degbound(self,d):
+
+    def set_degbound(self, d):
         """
         Increase the degree bound that is currently in place.
 
-        NOTE:
+        .. NOTE::
 
-        The degree bound can not be decreased.
+            The degree bound cannot be decreased.
 
         EXAMPLES:
 
@@ -508,19 +527,18 @@ cdef class FreeAlgebra_letterplace(Algebra):
             sage: F.set_degbound(2)
             sage: F.degbound()
             4
-
         """
-        if d<=self._degbound:
+        if d <= self._degbound:
             return
         self._degbound = d
-        self._current_ring = make_letterplace_ring(self._commutative_ring,d)
+        self._current_ring = make_letterplace_ring(self._commutative_ring, d)
 
 #    def base_extend(self, R):
 #        if self._base.has_coerce_map_from(R):
 #            return self
 
     ################################################
-    ## Ideals
+    # Ideals
 
     def _ideal_class_(self, n=0):
         """
@@ -534,7 +552,6 @@ cdef class FreeAlgebra_letterplace(Algebra):
             Right Ideal (x*y + y*z, x*x + x*y - y*x - y*y) of Free Associative Unital Algebra on 3 generators (x, y, z) over Rational Field
             sage: type(I) is F._ideal_class_()
             True
-
         """
         from sage.algebras.letterplace.letterplace_ideal import LetterplaceIdeal
         return LetterplaceIdeal
@@ -550,13 +567,12 @@ cdef class FreeAlgebra_letterplace(Algebra):
             Monoid of ideals of Free Associative Unital Algebra on 2 generators (x, y) over Finite Field of size 2
             sage: F.ideal_monoid() is F.ideal_monoid()
             True
-
         """
         if self.__monoid is None:
             self.__monoid = IdealMonoid_nc(self)
         return self.__monoid
 
-    # Auxiliar methods
+    # Auxiliary methods
     cdef str exponents_to_string(self, E):
         """
         This auxiliary method is used for the string representation of elements of this free algebra.
@@ -569,43 +585,38 @@ cdef class FreeAlgebra_letterplace(Algebra):
 
         It should be possible to use the letterplace algebra to implement the
         free algebra generated by the elements of a finitely generated free abelian
-        monoid. However, we can not use it, yet. So, for now, we raise an error::
+        monoid. However, we cannot use it, yet. So, for now, we raise an error::
 
             sage: from sage.algebras.letterplace.free_algebra_element_letterplace import FreeAlgebraElement_letterplace
             sage: P = F.commutative_ring()
             sage: FreeAlgebraElement_letterplace(F, P.0*P.1^2+P.1^3) # indirect doctest
-            <repr(<sage.algebras.letterplace.free_algebra_element_letterplace.FreeAlgebraElement_letterplace at 0x...>) failed: NotImplementedError: 
+            <repr(<sage.algebras.letterplace.free_algebra_element_letterplace.FreeAlgebraElement_letterplace at 0x...>) failed: NotImplementedError:
               Apparently you tried to view the letterplace algebra with
               shift-multiplication as the free algebra over a finitely
               generated free abelian monoid.
               In principle, this is correct, but it is not implemented, yet.>
-
         """
-        cdef int ngens = self.__ngens
-        cdef int nblocks = len(E)/ngens
-        cdef int i,j,base, exp, var_ind
+        cdef int ngens = self._ngens
+        cdef int nblocks = len(E) // ngens
+        cdef int i, j, base, exp, var_ind
         cdef list out = []
         cdef list tmp
         for i from 0<=i<nblocks:
+            # warning : the loop index is changed during the loop
             base = i*ngens
-            tmp = [(j,E[base+j]) for j in xrange(ngens) if E[base+j]]
+            tmp = [(j, E[base + j]) for j in range(ngens) if E[base + j]]
             if not tmp:
                 continue
             var_ind, exp = tmp[0]
-            if len(tmp)>1 or exp>1:
+            if len(tmp) > 1 or exp > 1:
                 raise NotImplementedError("\n  Apparently you tried to view the letterplace algebra with\n  shift-multiplication as the free algebra over a finitely\n  generated free abelian monoid.\n  In principle, this is correct, but it is not implemented, yet.")
-
             out.append(self._names[var_ind])
-            i += (self._degrees[var_ind]-1)
-            ### This was the original implementation, with "monoid hack" but without generator degrees
-            #s = '.'.join([('%s^%d'%(x,e) if e>1 else x) for x,e in zip(self._names,E[i*ngens:(i+1)*ngens]) if e])
-            #if s:
-            #    out.append(s)
+            i += self._degrees[var_ind] - 1
         return '*'.join(out)
 
-    # Auxiliar methods
+    # Auxiliary methods
     cdef str exponents_to_latex(self, E):
-        """
+        r"""
         This auxiliary method is used for the representation of elements of this free algebra as a latex string.
 
         EXAMPLES::
@@ -616,25 +627,24 @@ cdef class FreeAlgebra_letterplace(Algebra):
             (2*z + 1)*a*b*a*b + (z + 1)*a*b*c + (z + 1)*c*a*b - c*c
             sage: latex(-(a*b*(z+1)-c)^2)     # indirect doctest
             \left(2 z + 1\right) a b a b + \left(z + 1\right) a b c + \left(z + 1\right) c a b - c c
-
         """
-        cdef int ngens = self.__ngens
-        cdef int nblocks = len(E)/ngens
-        cdef int i,j,base, exp, var_ind
+        cdef int ngens = self._ngens
+        cdef int nblocks = len(E) // ngens
+        cdef int i, j, base, exp, var_ind
         cdef list out = []
         cdef list tmp
         cdef list names = self.latex_variable_names()
         for i from 0<=i<nblocks:
+            # warning : the loop index is changed during the loop
             base = i*ngens
-            tmp = [(j,E[base+j]) for j in xrange(ngens) if E[base+j]]
+            tmp = [(j, E[base+j]) for j in range(ngens) if E[base+j]]
             if not tmp:
                 continue
             var_ind, exp = tmp[0]
-            if len(tmp)>1 or exp>1:
+            if len(tmp) > 1 or exp > 1:
                 raise NotImplementedError("\n  Apparently you tried to view the letterplace algebra with\n  shift-multiplication as the free algebra over a finitely\n  generated free abelian monoid.\n  In principle, this is correct, but it is not implemented, yet.")
-
             out.append(names[var_ind])
-            i += (self._degrees[var_ind]-1)
+            i += (self._degrees[var_ind] - 1)
         return ' '.join(out)
 
     def _reductor_(self, g, d):
@@ -644,8 +654,8 @@ cdef class FreeAlgebra_letterplace(Algebra):
 
         INPUT:
 
-        ``g`` - a list of elements of this free algebra.
-        ``d`` - an integer.
+        - ``g`` -- a list of elements of this free algebra.
+        - ``d`` -- an integer.
 
         OUTPUT:
 
@@ -666,7 +676,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
         Sage, since it does the reductions in a different order
         compared to Singular. Therefore, we call the original Singular
         reduction method, and prevent a warning message by asserting
-        that `G` is a Groebner basis.
+        that `G` is a Groebner basis. ::
 
             sage: from sage.libs.singular.function import singular_function
             sage: poly_reduce = singular_function("NF")
@@ -674,21 +684,22 @@ cdef class FreeAlgebra_letterplace(Algebra):
             y*y_1*y_2 - y*y_1*z_2 + y*z_1*y_2 - y*z_1*z_2
             sage: p.reduce(I).letterplace_polynomial() == q
             True
-
         """
         cdef list out = []
         C = self.current_ring()
         cdef FreeAlgebraElement_letterplace x
-        ngens = self.__ngens
-        degbound = self._degbound
+        ngens = self._ngens
         cdef list G = [C(x._poly) for x in g]
+        from sage.groups.perm_gps.permgroup_named import CyclicPermutationGroup
+        CG = CyclicPermutationGroup(C.ngens())
         for y in G:
-            out.extend([y]+[singular_system("stest",y,n+1,degbound,ngens,ring=C) for n in xrange(d-y.degree())])
+            out.extend([y] + [y * CG[ngens * (n + 1)]
+                              for n in range(d - y.degree())])
         return C.ideal(out)
 
     ###########################
-    ## Coercion
-    cpdef _coerce_map_from_(self,S):
+    # Coercion
+    cpdef _coerce_map_from_(self, S):
         """
         A ring ``R`` coerces into self, if
 
@@ -713,9 +724,8 @@ cdef class FreeAlgebra_letterplace(Algebra):
             sage: G = FreeAlgebra(GF(5), implementation='letterplace', names=['x','y','z','t'], degrees=[1,2,3,4])
             sage: t*G.0       # indirect doctest
             t*x
-
         """
-        if self==S or self._current_ring.has_coerce_map_from(S):
+        if self == S or self._current_ring.has_coerce_map_from(S):
             return True
         cdef int i
         # Do we have another letterplace algebra?
@@ -733,7 +743,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
         # Do the degrees match
         degs = self._degrees
         Sdegs = (<FreeAlgebra_letterplace>S)._degrees
-        for i from 0<=i<S.ngens():
+        for i in range(S.ngens()):
             if degs[names.index(Snames[i])] != Sdegs[i]:
                 return False
         return True
@@ -747,7 +757,6 @@ cdef class FreeAlgebra_letterplace(Algebra):
             sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
             sage: F.an_element()   # indirect doctest
             x
-
         """
         return FreeAlgebraElement_letterplace(self, self._current_ring.an_element(), check=False)
 
@@ -811,11 +820,11 @@ cdef class FreeAlgebra_letterplace(Algebra):
             l = len(e)
             break
         cdef dict out = {}
-        self.set_degbound(l/self.__ngens)
+        self.set_degbound(l // self._ngens)
         cdef Py_ssize_t n = self._current_ring.ngens()
         for e, c in D.iteritems():
-            out[tuple(e) + (0,)*(n-l)] = c
-        return FreeAlgebraElement_letterplace(self,self._current_ring(out),
+            out[tuple(e) + (0,) * (n - l)] = c
+        return FreeAlgebraElement_letterplace(self, self._current_ring(out),
                                               check=check)
 
     def _element_constructor_(self, x):
@@ -857,11 +866,10 @@ cdef class FreeAlgebra_letterplace(Algebra):
             sage: G = FreeAlgebra(GF(5), implementation='letterplace', names=['x','y','z','t'], degrees=[1,2,3,4])
             sage: G(t*y + 2*y^3 - 4*z^2)   # indirect doctest
             (2)*y*y*y + z*z + t*y
-
         """
-        if isinstance(x, basestring):
+        if isinstance(x, str):
             from sage.misc.sage_eval import sage_eval
-            return sage_eval(x,locals=self.gens_dict())
+            return sage_eval(x, locals=self.gens_dict())
         try:
             P = x.parent()
         except AttributeError:
@@ -876,6 +884,32 @@ cdef class FreeAlgebra_letterplace(Algebra):
             Names = self._current_ring.variable_names()
             PNames = list(Ppoly.variable_names())
             # translate the slack variables
-            PNames[P.ngens(): len(PNames): P.ngens()+1] = list(Names[self.ngens(): len(Names): self.ngens()+1])[:P.degbound()]
+            PNames[P.ngens(): len(PNames): P.ngens() + 1] = list(Names[self.ngens(): len(Names): self.ngens() + 1])[:P.degbound()]
             x = Ppoly.hom([Gens[Names.index(asdf)] for asdf in PNames])(x.letterplace_polynomial())
-        return FreeAlgebraElement_letterplace(self,self._current_ring(x))
+        return FreeAlgebraElement_letterplace(self, self._current_ring(x))
+
+
+cdef class FreeAlgebra_letterplace_libsingular():
+    """
+    Internally used wrapper around a Singular Letterplace polynomial ring.
+    """
+
+    def __cinit__(self, MPolynomialRing_libsingular commutative_ring,
+                  int degbound):
+        cdef RingWrap rw = freeAlgebra(commutative_ring, degbound)
+        self._lp_ring = singular_ring_reference(rw._ring)
+        # `_lp_ring` viewed as `MPolynomialRing_libsingular` with additional
+        # letterplace attributes set (for internal use only)
+        self._lp_ring_internal = new_CRing(rw, commutative_ring.base_ring())
+        self._commutative_ring = commutative_ring
+
+    def __init__(self, commutative_ring, degbound):
+        self._ngens = commutative_ring.ngens() * degbound
+
+    def __dealloc__(self):
+        r"""
+        Carefully deallocate the ring, without changing ``currRing``
+        (since this method can be at unpredictable times due to garbage
+        collection).
+        """
+        singular_ring_delete(self._lp_ring)

@@ -1,5 +1,5 @@
-lcalc
-=====
+lcalc: L-function calculator
+============================
 
 Description
 -----------

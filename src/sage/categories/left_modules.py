@@ -1,7 +1,7 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Left modules
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #
@@ -9,8 +9,9 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from .category_types import Category_over_base_ring
+from sage.categories.category_types import Category_over_base_ring
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
+
 
 #?class LeftModules(Category_over_base_rng):
 class LeftModules(Category_over_base_ring):

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.geometry.polyhedron
 """
 Diamond cutting implementation
 
@@ -13,7 +14,6 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.matrix.constructor import matrix, identity_matrix
@@ -259,7 +259,10 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
     artificial_length = None
     if dim[0] < dim[1]:
         # introduce "artificial" basis points (representing infinity)
-        artificial_length = max(abs(v) for v in basis).ceil() * 2
+        def approx_norm(v):
+            r, r1 = (v.inner_product(v)).sqrtrem()
+            return r + (r1 > 0)
+        artificial_length = max(approx_norm(v) for v in basis) * 2
         additional_vectors = identity_matrix(dim[1]) * artificial_length
         basis = basis.stack(additional_vectors)
         # LLL-reduce to get quadratic matrix
@@ -278,7 +281,7 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
 
     # twice the length of longest vertex in Q is a safe choice
     if radius is None:
-        radius = 2 * max(abs(v) ** 2 for v in basis)
+        radius = 2 * max(v.inner_product(v) for v in basis)
 
     V = diamond_cut(Q, basis, radius, verbose=verbose)
 

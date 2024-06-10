@@ -1,5 +1,5 @@
-MPFI
-====
+mpfi: Multiple precision interval arithmetic library based on MPFR
+==================================================================
 
 Description
 -----------
@@ -31,13 +31,9 @@ a modified MPFI is provided.
 Upstream Contact
 ----------------
 
-The MPFI website is located at http://mpfi.gforge.inria.fr/
+http://perso.ens-lyon.fr/nathalie.revol/software.html
 
-The MPFI team can be contacted via the MPFI mailing list:
-mpfi-users@lists.gforge.inria.fr
+The MPFI website is located at https://gitlab.inria.fr/mpfi/mpfi
 
-Dependencies
-------------
+The MPFI team can be contacted via the MPFI mailing list: mpfi-users@inria.fr
 
--  GMP
--  MPFR

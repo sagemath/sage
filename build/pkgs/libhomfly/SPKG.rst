@@ -1,5 +1,5 @@
-LIBHOMFLY
-=========
+libhomfly: Compute the homfly polynomial of knots and links
+===========================================================
 
 Description
 -----------
@@ -24,7 +24,3 @@ Upstream Contact
 
 Miguel Marco (mmarco@unizar.es)
 
-Dependencies
-------------
-
--  gc

@@ -1,0 +1,12 @@
+cd src
+cp "$SAGE_ROOT"/config/config.* build-aux/
+sdh_configure
+
+# Don't run "make" at the top-level because the documentation build
+# requires the "makeinfo" program. This is a bug that should be fixed
+# in gengetopt-2.24. First build gnulib, then build gengetopt.
+cd gl
+sdh_make
+cd ../src
+sdh_make
+cd ..

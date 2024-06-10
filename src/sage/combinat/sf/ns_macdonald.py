@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Non-symmetric Macdonald Polynomials
 """
@@ -7,8 +8,9 @@ from sage.combinat.combinat import CombinatorialObject
 from sage.combinat.words.word import Word
 from sage.combinat.combination import Combinations
 from sage.combinat.permutation import Permutation
-from sage.rings.all import QQ, PolynomialRing
-from sage.misc.all import prod
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
+from sage.misc.misc_c import prod
 from sage.combinat.backtrack import GenericBacktracker
 from sage.structure.parent import Parent
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -157,7 +159,7 @@ class LatticeDiagram(CombinatorialObject):
 
     def boxes_same_and_lower_right(self, ii, jj):
         """
-        Return a list of the boxes of ``self`` that are in row ``jj``
+        Return an iterator of the boxes of ``self`` that are in row ``jj``
         but not identical with ``(ii, jj)``, or lie in the row
         ``jj - 1`` (the row directly below ``jj``; this might be the
         basement) and strictly to the right of ``(ii, jj)``.
@@ -166,26 +168,23 @@ class LatticeDiagram(CombinatorialObject):
 
             sage: a = AugmentedLatticeDiagramFilling([[1,6],[2],[3,4,2],[],[],[5,5]])
             sage: a = a.shape()
-            sage: a.boxes_same_and_lower_right(1,1)
+            sage: list(a.boxes_same_and_lower_right(1,1))
             [(2, 1), (3, 1), (6, 1), (2, 0), (3, 0), (4, 0), (5, 0), (6, 0)]
-            sage: a.boxes_same_and_lower_right(1,2)
+            sage: list(a.boxes_same_and_lower_right(1,2))
             [(3, 2), (6, 2), (2, 1), (3, 1), (6, 1)]
-            sage: a.boxes_same_and_lower_right(3,3)
+            sage: list(a.boxes_same_and_lower_right(3,3))
             [(6, 2)]
-            sage: a.boxes_same_and_lower_right(2,3)
+            sage: list(a.boxes_same_and_lower_right(2,3))
             [(3, 3), (3, 2), (6, 2)]
         """
-        res = []
         # Add all of the boxes in the same row
         for i in range(1, len(self) + 1):
             if self[i] >= jj and i != ii:
-                res.append((i, jj))
+                yield (i, jj)
 
         for i in range(ii + 1, len(self) + 1):
             if self[i] >= jj - 1:
-                res.append((i, jj - 1))
-
-        return res
+                yield (i, jj - 1)
 
 
 class AugmentedLatticeDiagramFilling(CombinatorialObject):
@@ -532,8 +531,8 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
         EXAMPLES::
 
             sage: a = AugmentedLatticeDiagramFilling([[1,6],[2],[3,4,2],[],[],[5,5]])
-            sage: q,t = var('q,t')
-            sage: a.coeff(q,t)
+            sage: q,t = var('q,t')                                                      # needs sage.symbolic
+            sage: a.coeff(q,t)                                                          # needs sage.symbolic
             (t - 1)^4/((q^2*t^3 - 1)^2*(q*t^2 - 1)^2)
         """
         res = 1
@@ -553,8 +552,8 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
         EXAMPLES::
 
             sage: a = AugmentedLatticeDiagramFilling([[1,6],[2],[3,4,2],[],[],[5,5]])
-            sage: q,t = var('q,t')
-            sage: a.coeff_integral(q,t)
+            sage: q,t = var('q,t')                                                      # needs sage.symbolic
+            sage: a.coeff_integral(q,t)                                                 # needs sage.symbolic
             (q^2*t^3 - 1)^2*(q*t^2 - 1)^2*(t - 1)^4
         """
         res = 1
@@ -678,7 +677,7 @@ class NonattackingFillings_shape(Parent, UniqueRepresentation):
             24
         """
         if sum(self._shape) == 0:
-            yield AugmentedLatticeDiagramFilling([[] for s in self._shape],
+            yield AugmentedLatticeDiagramFilling([[] for _ in self._shape],
                                                  self.pi)
             return
 
@@ -737,7 +736,7 @@ class NonattackingBacktracker(GenericBacktracker):
 
         # Get the next state
         new_state = self.get_next_pos(i, j)
-        yld = True if new_state is None else False
+        yld = bool(new_state is None)
 
         for k in range(1, len(self._shape) + 1):
             # We check to make sure that k does not
@@ -805,15 +804,15 @@ def _check_muqt(mu, q, t, pi=None):
 
     ::
 
-        sage: q,t = var('q,t')
-        sage: P, q, t, n, R, x = _check_muqt([0,0,1],q,None)
+        sage: q,t = var('q,t')                                                          # needs sage.symbolic
+        sage: P, q, t, n, R, x = _check_muqt([0,0,1],q,None)                            # needs sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: you must specify either both q and t or neither of them
 
     ::
 
-        sage: P, q, t, n, R, x = _check_muqt([0,0,1],q,2)
+        sage: P, q, t, n, R, x = _check_muqt([0,0,1],q,2)                               # needs sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: the parents of q and t must be the same
@@ -863,19 +862,19 @@ def E(mu, q=None, t=None, pi=None):
         sage: E([1,0,0])
         x0
         sage: E([0,1,0])
-        ((-t + 1)/(-q*t^2 + 1))*x0 + x1
+        (t - 1)/(q*t^2 - 1)*x0 + x1
         sage: E([0,0,1])
-        ((-t + 1)/(-q*t + 1))*x0 + ((-t + 1)/(-q*t + 1))*x1 + x2
+        (t - 1)/(q*t - 1)*x0 + (t - 1)/(q*t - 1)*x1 + x2
         sage: E([1,1,0])
         x0*x1
         sage: E([1,0,1])
-        ((-t + 1)/(-q*t^2 + 1))*x0*x1 + x0*x2
+        (t - 1)/(q*t^2 - 1)*x0*x1 + x0*x2
         sage: E([0,1,1])
-        ((-t + 1)/(-q*t + 1))*x0*x1 + ((-t + 1)/(-q*t + 1))*x0*x2 + x1*x2
+        (t - 1)/(q*t - 1)*x0*x1 + (t - 1)/(q*t - 1)*x0*x2 + x1*x2
         sage: E([2,0,0])
-        x0^2 + ((-q*t + q)/(-q*t + 1))*x0*x1 + ((-q*t + q)/(-q*t + 1))*x0*x2
+        x0^2 + (q*t - q)/(q*t - 1)*x0*x1 + (q*t - q)/(q*t - 1)*x0*x2
         sage: E([0,2,0])
-        ((-t + 1)/(-q^2*t^2 + 1))*x0^2 + ((-q^2*t^3 + q^2*t^2 - q*t^2 + 2*q*t - q + t - 1)/(-q^3*t^3 + q^2*t^2 + q*t - 1))*x0*x1 + x1^2 + ((q*t^2 - 2*q*t + q)/(q^3*t^3 - q^2*t^2 - q*t + 1))*x0*x2 + ((-q*t + q)/(-q*t + 1))*x1*x2
+        (t - 1)/(q^2*t^2 - 1)*x0^2 + (q^2*t^3 - q^2*t^2 + q*t^2 - 2*q*t + q - t + 1)/(q^3*t^3 - q^2*t^2 - q*t + 1)*x0*x1 + x1^2 + (q*t^2 - 2*q*t + q)/(q^3*t^3 - q^2*t^2 - q*t + 1)*x0*x2 + (q*t - q)/(q*t - 1)*x1*x2
     """
     P, q, t, n, R, x = _check_muqt(mu, q, t, pi)
     res = 0

@@ -3,7 +3,7 @@ Message delivery
 
 Various interfaces to messaging services. Currently:
 
-- ``pushover`` - a platform for sending and receiving push notifications
+- ``pushover`` -- a platform for sending and receiving push notifications
 
 is supported.
 
@@ -11,10 +11,10 @@ AUTHORS:
 
 - Martin Albrecht (2012) - initial implementation
 """
-from __future__ import absolute_import
 
 import http.client as httplib
 from urllib.parse import urlencode
+from ssl import create_default_context as default_context
 
 pushover_defaults = {"token": "Eql67F14ohOZJ0AtEBJJU7FiLAk8wK"}
 
@@ -33,30 +33,30 @@ def pushover(message, **kwds):
 
     INPUT:
 
-      - ``message`` - your message
+      - ``message`` -- your message
 
-      - ``user`` - the user key (not e-mail address) of your user (or you), viewable when logged
+      - ``user`` -- the user key (not e-mail address) of your user (or you), viewable when logged
         into the Pushover dashboard. (default: ``None``)
 
-      - ``device`` - your user's device identifier to send the message directly to that device,
+      - ``device`` -- your user's device identifier to send the message directly to that device,
         rather than all of the user's devices (default: ``None``)
 
-      - ``title`` - your message's title, otherwise uses your app's name (default: ``None``)
+      - ``title`` -- your message's title, otherwise uses your app's name (default: ``None``)
 
-      - ``url`` - a supplementary URL to show with your message (default: ``None``)
+      - ``url`` -- a supplementary URL to show with your message (default: ``None``)
 
-      - ``url_title`` - a title for your supplementary URL (default: ``None``)
+      - ``url_title`` -- a title for your supplementary URL (default: ``None``)
 
-      - ``priority`` - set to 1 to display as high-priority and bypass quiet hours, or -1 to always
+      - ``priority`` -- set to 1 to display as high-priority and bypass quiet hours, or -1 to always
         send as a quiet notification (default: ``0``)
 
-      - ``timestamp`` - set to a unix timestamp to have your message show with a particular time,
+      - ``timestamp`` -- set to a unix timestamp to have your message show with a particular time,
         rather than now (default: ``None``)
 
-      - ``sound`` - set to the name of one of the sounds supported by device clients to override the
+      - ``sound`` -- set to the name of one of the sounds supported by device clients to override the
         user's default sound choice (default: ``None``)
 
-      - ``token`` - your application's API token (default: Sage's default App token)
+      - ``token`` -- your application's API token (default: Sage's default App token)
 
     EXAMPLES::
 
@@ -77,7 +77,8 @@ def pushover(message, **kwds):
     request.update(pushover_defaults)
     request.update(kwds)
 
-    conn = httplib.HTTPSConnection("api.pushover.net:443")
+    conn = httplib.HTTPSConnection("api.pushover.net:443",
+                                   context=default_context())
     conn.request("POST", "/1/messages.json",
                  urlencode(request),
                  {"Content-type": "application/x-www-form-urlencoded"})

@@ -89,7 +89,6 @@ Sageはspyxファイルに対しては前処理をしない．
         return sage.all.factorial(n)
 
 
-
 他ファイル中のC関数を使う
 -------------------------
 
@@ -140,10 +139,9 @@ Cythonソースファイルから生成されたC言語コードをコンパイ�
 
 ::
 
-    #!/usr/bin/env sage -python
+    #!/usr/bin/env sage
 
     import sys
-    from sage.all import *
 
     if len(sys.argv) != 2:
         print("Usage: %s <n>" % sys.argv[0])
@@ -289,7 +287,7 @@ SageのIntegerクラスが使えるのは言うまでもない(Rationalクラス
 
 ::
 
-    sage: range(1, 15)  # py2
+    sage: list(range(1, 15))
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
 
 この ``range`` が便利なのは，リスト内包表記を使ってリストを生成する場合だ:
@@ -357,7 +355,7 @@ Sageで使われる第三のリスト類似データ型が，シーケンスで�
     sage: type(v)
     <class 'sage.structure.sequence.Sequence_generic'>
     sage: type(v[1])
-    <type 'sage.rings.rational.Rational'>
+    <class 'sage.rings.rational.Rational'>
     sage: v.universe()
     Rational Field
     sage: v.is_immutable()
@@ -449,7 +447,6 @@ Sageで使われる第三のリスト類似データ型が，シーケンスで�
 最後の出力を見ると判るように，ディクショナリ内は整列されていない．
 
 
-
 集合
 =====
 
@@ -493,7 +490,6 @@ Pythonには集合(set)型が組込まれている．
     Set of elements of Integer Ring
 
 
-
 イテレータ
 ===========
 
@@ -503,8 +499,7 @@ Pythonには集合(set)型が組込まれている．
 
 ::
 
-    sage: v = (n^2 for n in xrange(10000000))  # py2
-    sage: v = (n^2 for n in range(10000000))  # py3
+    sage: v = (n^2 for n in range(10000000))
     sage: next(v)
     0
     sage: next(v)
@@ -540,7 +535,6 @@ Pythonには集合(set)型が組込まれている．
     (0, 1)
     sage: next(W)
     (0, -1)
-
 
 
 ループ，関数，制御文，比較
@@ -648,8 +642,6 @@ Sageにおける異種オブジェクト間の比較演算では，まず対象�
 
     sage: 1 is 2/2
     False
-    sage: int(1) is int(2)/int(2)  # py2
-    True
     sage: 1 is 1
     False
     sage: 1 == 2/2

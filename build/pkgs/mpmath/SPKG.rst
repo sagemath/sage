@@ -1,5 +1,5 @@
-mpmath
-======
+mpmath: Pure Python library for multiprecision floating-point arithmetic
+========================================================================
 
 Description
 -----------
@@ -20,9 +20,6 @@ Upstream Contact
 
 -  Author: Fredrik Johansson
 -  Email: fredrik.johansson@gmail.com
--  Website: https://github.com/fredrik-johansson/mpmath/
+-  https://mpmath.org
+-  Website: https://github.com/mpmath/mpmath
 
-Dependencies
-------------
-
--  Python

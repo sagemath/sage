@@ -6,7 +6,9 @@ This module handles the main "sage-download-file" commandline utility.
 """
 
 # ****************************************************************************
-#       Copyright (C) 2016 Volker Braun <vbraun.name@gmail.com>
+#       Copyright (C) 2015-2016 Volker Braun <vbraun.name@gmail.com>
+#                     2015      Jeroen Demeyer
+#                     2020      Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,11 +21,7 @@ import sys
 import logging
 log = logging.getLogger()
 
-# Note that argparse is not part of Python 2.6, so we bundle it
-try:
-    import argparse
-except ImportError:
-    from sage_bootstrap.compat import argparse
+import argparse
 
 from sage_bootstrap.download.app import Application
 from sage_bootstrap.env import SAGE_DISTFILES
@@ -34,7 +32,6 @@ description = \
 """
 Download files from a given URL or from the Sage mirror network.
 """
-
 
 
 def make_parser():
@@ -48,7 +45,7 @@ def make_parser():
                         help='one of [DEBUG, INFO, ERROR, WARNING, CRITICAL]')
 
     parser.add_argument(
-        '--print-fastest-mirror', action='store_true', 
+        '--print-fastest-mirror', action='store_true',
         help='Print out the fastest mirror. All other arguments are ignored in that case.')
 
     parser.add_argument(
@@ -74,7 +71,7 @@ def make_parser():
         help="""Where to write the file. If the destination is not specified, a url
         will be downloaded and the content written to stdout and a
         tarball will be saved under {SAGE_DISTFILES}""".format(SAGE_DISTFILES=SAGE_DISTFILES))
-    
+
     parser.add_argument(
         '--no-check-certificate', action='store_true',
         help='Do not check SSL certificates for https connections')
@@ -124,7 +121,7 @@ def format_error(message):
     sys.stderr.write(message)
     sys.stderr.write(stars)
 
-                
+
 def run_safe():
     try:
         run()
@@ -134,6 +131,6 @@ def run_safe():
         finally:
             sys.exit(1)
 
-        
+
 if __name__ == '__main__':
     run_safe()

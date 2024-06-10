@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Dual Symmetric Functions in Non-Commuting Variables
 
@@ -5,12 +6,12 @@ AUTHORS:
 
 - Travis Scrimshaw (08-04-2013): Initial version
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
@@ -26,8 +27,9 @@ from sage.combinat.set_partition import SetPartitions
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.sf.sf import SymmetricFunctions
 from sage.combinat.subset import Subsets
-from sage.functions.other import factorial
+from sage.arith.misc import factorial
 from sage.sets.set import Set
+
 
 class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
     r"""
@@ -35,6 +37,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
 
     See Section 2.3 of [BZ05]_ for a study.
     """
+
     def __init__(self, R):
         """
         Initialize ``self``.
@@ -45,10 +48,10 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
             sage: NCSymD2 = SymmetricFunctionsNonCommutingVariablesDual(Integers(23))
             sage: TestSuite(SymmetricFunctionsNonCommutingVariables(QQ).dual()).run()
         """
-        # change the line below to assert(R in Rings()) once MRO issues from #15536, #15475 are resolved
-        assert(R in Fields() or R in Rings()) # side effect of this statement assures MRO exists for R
-        self._base = R # Won't be needed once CategoryObject won't override base_ring
-        category = GradedHopfAlgebras(R)  # TODO: .Commutative()
+        # change the line below to assert R in Rings() once MRO issues from #15536, #15475 are resolved
+        assert R in Fields() or R in Rings()  # side effect of this statement assures MRO exists for R
+        self._base = R  # Won't be needed once CategoryObject won't override base_ring
+        category = GradedHopfAlgebras(R).Commutative()
         Parent.__init__(self, category=category.WithRealizations())
 
         # Bases
@@ -70,7 +73,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
             sage: SymmetricFunctionsNonCommutingVariables(ZZ).dual()
             Dual symmetric functions in non-commuting variables over the Integer Ring
         """
-        return "Dual symmetric functions in non-commuting variables over the %s"%self.base_ring()
+        return "Dual symmetric functions in non-commuting variables over the %s" % self.base_ring()
 
     def a_realization(self):
         r"""
@@ -101,7 +104,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
 
     class w(NCSymBasis_abstract):
         r"""
-        The Hopf algebra of symmetric functions in non-commuting variables
+        The dual Hopf algebra of symmetric functions in non-commuting variables
         in the `\mathbf{w}` basis.
 
         EXAMPLES::
@@ -122,6 +125,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
             sage: h(elt)
             3*h[2, 1]
         """
+
         def __init__(self, NCSymD):
             """
             EXAMPLES::
@@ -131,10 +135,14 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
             """
             def key_func_set_part(A):
                 return sorted(map(sorted, A))
-            CombinatorialFreeModule.__init__(self, NCSymD.base_ring(), SetPartitions(),
+
+            R = NCSymD.base_ring()
+            category = GradedHopfAlgebras(R).Commutative()
+            category &= NCSymDualBases(NCSymD)
+            CombinatorialFreeModule.__init__(self, R, SetPartitions(),
                                              prefix='w', bracket=False,
                                              sorting_key=key_func_set_part,
-                                             category=NCSymDualBases(NCSymD))
+                                             category=category)
 
         @lazy_attribute
         def to_symmetric_function(self):
@@ -228,6 +236,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
             P = SetPartitions()
             n = A.size()
             k = B.size()
+
             def unions(s):
                 a = sorted(s)
                 b = sorted(Set(range(1, n+k+1)).difference(s))
@@ -366,7 +375,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
                  + 2*w{{1, 2}, {3}, {4}} + 2*w{{1, 3}, {2}, {4}} + 2*w{{1, 4}, {2}, {3}}
             """
             la = Partition(la)
-            c = prod([factorial(_) for _ in la.to_exp()])
+            c = prod([factorial(i) for i in la.to_exp()])
             P = SetPartitions()
             return self.sum_of_terms([(P(m), c) for m in SetPartitions(sum(la), la)], distinct=True)
 
@@ -423,6 +432,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
             r"""
             An element in the `\mathbf{w}` basis.
             """
+
             def expand(self, n, letter='x'):
                 r"""
                 Expand ``self`` written in the `\mathbf{w}` basis in `n^2`
@@ -534,7 +544,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
                 R = self.base_ring()
                 for A, coeff in self:
                     la = A.shape()
-                    exp = prod([factorial(_) for _ in la.to_exp()])
+                    exp = prod([factorial(i) for i in la.to_exp()])
                     if la not in d:
                         if coeff / exp not in R:
                             return False
@@ -581,6 +591,6 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
                 if not self.is_symmetric():
                     raise ValueError("not a symmetric function")
                 h = SymmetricFunctions(self.parent().base_ring()).homogeneous()
-                d = {A.shape(): c for A,c in self}
-                return h.sum_of_terms([( AA, cc / prod([factorial(_) for _ in AA.to_exp()]) )
-                                        for AA,cc in d.items()], distinct=True)
+                d = {A.shape(): c for A, c in self}
+                return h.sum_of_terms([( AA, cc / prod([factorial(i) for i in AA.to_exp()]) )
+                                        for AA, cc in d.items()], distinct=True)

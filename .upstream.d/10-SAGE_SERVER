@@ -1,0 +1,2 @@
+# When SAGE_SERVER is set, it should be an https/https server in the format of Sage mirrors.
+${SAGE_SERVER}/spkg/upstream/${SPKG}/

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Function fields
 """
@@ -14,6 +15,7 @@ Function fields
 from sage.categories.category import Category
 from sage.misc.cachefunc import cached_method
 from sage.categories.basic import Fields
+
 
 class FunctionFields(Category):
     r"""
@@ -42,7 +44,7 @@ class FunctionFields(Category):
             sage: FunctionFields().super_categories()
             [Category of fields]
         """
-        return[Fields()]
+        return [Fields()]
 
     def _call_(self, x):
         r"""
@@ -52,20 +54,20 @@ class FunctionFields(Category):
         EXAMPLES::
 
             sage: C = FunctionFields()
-            sage: K.<x>=FunctionField(QQ)
+            sage: K.<x> = FunctionField(QQ)
             sage: C(K)
             Rational function field in x over Rational Field
             sage: Ky.<y> = K[]
-            sage: L = K.extension(y^2-x)
-            sage: C(L)
+            sage: L = K.extension(y^2 - x)                                              # needs sage.rings.function_field
+            sage: C(L)                                                                  # needs sage.rings.function_field
             Function field in y defined by y^2 - x
-            sage: C(L.equation_order())
+            sage: C(L.equation_order())                                                 # needs sage.rings.function_field
             Function field in y defined by y^2 - x
         """
         try:
             return x.function_field()
         except AttributeError:
-            raise  TypeError("unable to canonically associate a function field to %s"%x)
+            raise TypeError("unable to canonically associate a function field to %s" % x)
 
     class ParentMethods:
         pass

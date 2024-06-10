@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Discrete Gaussian Samplers for `\ZZ[x]`
 
@@ -14,14 +13,15 @@ AUTHORS:
 EXAMPLES::
 
     sage: from sage.stats.distributions.discrete_gaussian_polynomial import DiscreteGaussianDistributionPolynomialSampler
-    sage: sigma = 3.0; n=1000
-    sage: l = [DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], 64, sigma)() for _ in range(n)]
-    sage: l = [vector(f).norm().n() for f in l]
-    sage: mean(l), sqrt(64)*sigma
-    (23.83..., 24.0...)
-
+    sage: sigma = 3.0; n = 1000
+    sage: l = [DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], 64, sigma)()
+    ....:      for _ in range(n)]
+    sage: l = [vector(f).norm().n() for f in l]                                         # needs sage.symbolic
+    sage: from numpy import mean                                                        # needs numpy
+    sage: mean(l), sqrt(64)*sigma  # abs tol 5e-1                                       # needs numpy sage.symbolic
+    (24.0, 24.0)
 """
-#******************************************************************************
+# ******************************************************************************
 #
 #                        DGS - Discrete Gaussian Samplers
 #
@@ -51,10 +51,10 @@ EXAMPLES::
 # The views and conclusions contained in the software and documentation are
 # those of the authors and should not be interpreted as representing official
 # policies, either expressed or implied, of the FreeBSD Project.
-#*****************************************************************************/
-from __future__ import absolute_import
+# *****************************************************************************/
 
-from sage.rings.all import RR, ZZ
+from sage.rings.real_mpfr import RR
+from sage.rings.integer_ring import ZZ
 from .discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
 from sage.structure.sage_object import SageObject
 
@@ -66,10 +66,13 @@ class DiscreteGaussianDistributionPolynomialSampler(SageObject):
     EXAMPLES::
 
         sage: from sage.stats.distributions.discrete_gaussian_polynomial import DiscreteGaussianDistributionPolynomialSampler
-        sage: DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], 8, 3.0)()
-        3*x^7 + 3*x^6 - 3*x^5 - x^4 - 5*x^2 + 3
+        sage: p = DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], 8, 3.0)()
+        sage: p.parent()
+        Univariate Polynomial Ring in x over Integer Ring
+        sage: p.degree() < 8
+        True
         sage: gs = DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], 8, 3.0)
-        sage: [gs() for _ in range(3)]
+        sage: [gs() for _ in range(3)]  # random
         [4*x^7 + 4*x^6 - 4*x^5 + 2*x^4 + x^3 - 4*x + 7, -5*x^6 + 4*x^5 - 3*x^3 + 4*x^2 + x, 2*x^7 + 2*x^6 + 2*x^5 - x^4 - 2*x^2 + 3*x + 1]
 
     .. automethod:: __init__
@@ -83,9 +86,9 @@ class DiscreteGaussianDistributionPolynomialSampler(SageObject):
 
         INPUT:
 
-        - ``P`` - a univariate polynomial ring over the Integers
-        - ``n`` - number of coefficients to be sampled
-        - ``sigma`` - coefficients `x` are accepted with probability
+        - ``P`` -- a univariate polynomial ring over the Integers
+        - ``n`` -- number of coefficients to be sampled
+        - ``sigma`` -- coefficients `x` are accepted with probability
           proportional to `\exp(-x²/(2σ²))`. If an object of type
           :class:`sage.stats.distributions.discrete_gaussian_integer.DiscreteGaussianDistributionIntegerSampler`
           is passed, then this sampler is used to sample coefficients.
@@ -93,10 +96,13 @@ class DiscreteGaussianDistributionPolynomialSampler(SageObject):
         EXAMPLES::
 
             sage: from sage.stats.distributions.discrete_gaussian_polynomial import DiscreteGaussianDistributionPolynomialSampler
-            sage: DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], 8, 3.0)()
-            3*x^7 + 3*x^6 - 3*x^5 - x^4 - 5*x^2 + 3
+            sage: p = DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], 8, 3.0)()
+            sage: p.parent()
+            Univariate Polynomial Ring in x over Integer Ring
+            sage: p.degree() < 8
+            True
             sage: gs = DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], 8, 3.0)
-            sage: [gs() for _ in range(3)]
+            sage: [gs() for _ in range(3)]  # random
             [4*x^7 + 4*x^6 - 4*x^5 + 2*x^4 + x^3 - 4*x + 7, -5*x^6 + 4*x^5 - 3*x^3 + 4*x^2 + x, 2*x^7 + 2*x^6 + 2*x^5 - x^4 - 2*x^2 + 3*x + 1]
         """
         if isinstance(sigma, DiscreteGaussianDistributionIntegerSampler):
@@ -114,8 +120,10 @@ class DiscreteGaussianDistributionPolynomialSampler(SageObject):
 
             sage: from sage.stats.distributions.discrete_gaussian_polynomial import DiscreteGaussianDistributionPolynomialSampler
             sage: sampler = DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], 8, 12.0)
-            sage: sampler()
-            8*x^7 - 11*x^5 - 19*x^4 + 6*x^3 - 34*x^2 - 21*x + 9
+            sage: sampler().parent()
+            Univariate Polynomial Ring in x over Integer Ring
+            sage: sampler().degree() <= 7
+            True
         """
         coeffs = [self.D() for _ in range(self.n)]
         return self.P(coeffs)

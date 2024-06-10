@@ -34,13 +34,11 @@ class QmodnZ_Element(AdditiveGroupElement):
 
     INPUT:
 
-    - ``q`` -- a rational number.
+    - ``q`` -- a rational number
 
-    - ``parent`` -- the parent abelian group `\Q/n\Z`.
+    - ``parent`` -- the parent abelian group `\Q/n\Z`
 
-    OUTPUT:
-
-    The element `q` of abelian group `\Q/n\Z`, in standard form.
+    OUTPUT: the element `q` of abelian group `\Q/n\Z`, in standard form
 
     EXAMPLES::
 
@@ -55,8 +53,8 @@ class QmodnZ_Element(AdditiveGroupElement):
         EXAMPLES::
 
             sage: G = QQ/(3*ZZ)
-            sage: G.random_element()
-            47/16
+            sage: G.random_element().parent() is G
+            True
         """
 
         AdditiveGroupElement.__init__(self, parent)
@@ -112,7 +110,7 @@ class QmodnZ_Element(AdditiveGroupElement):
         Lift to `\Z`.
 
         This is the smallest non-negative integer reducing to this element,
-        or a ``ValueError`` if none exists.
+        or a :class:`ValueError` if none exists.
 
         TESTS::
 
@@ -330,7 +328,7 @@ class QmodnZ_Element(AdditiveGroupElement):
 
     def additive_order(self):
         r"""
-        Returns the order of this element in the abelian group `\Q/n\Z`.
+        Return the order of this element in the abelian group `\Q/n\Z`.
 
         EXAMPLES::
 

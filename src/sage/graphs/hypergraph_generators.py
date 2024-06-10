@@ -30,10 +30,9 @@ method :meth:`~nauty`, which calls Brendan McKay's Nauty
 Functions and methods
 ---------------------
 """
-from __future__ import print_function
-from sage.env import SAGE_NAUTY_BINS_PREFIX as nautyprefix
 
-class HypergraphGenerators():
+
+class HypergraphGenerators:
     r"""
     A class consisting of constructors for common hypergraphs.
     """
@@ -74,7 +73,7 @@ class HypergraphGenerators():
           a shortcut for the corresponding min/max values.
 
         - ``max_intersection`` -- integers (default: ``None``); constraints the
-          maximum cardinality of the intersection of two sets fro the
+          maximum cardinality of the intersection of two sets from the
           hypergraphs.
 
         - ``connected`` -- boolean (default: ``False``); whether to require the
@@ -150,6 +149,9 @@ class HypergraphGenerators():
             raise ValueError("cannot have more than 64 sets+vertices")
 
         import subprocess
+        import shlex
+        from sage.features.nauty import NautyExecutable
+        genbgL_path = NautyExecutable("genbgL").absolute_filename()
 
         nauty_input = options
 
@@ -180,9 +182,9 @@ class HypergraphGenerators():
         nauty_input += " -d" + str(vertex_min_degree) + ":" + str(set_min_size)
         nauty_input += " -D" + str(vertex_max_degree) + ":" + str(set_max_size)
 
-        nauty_input +=  " " + str(number_of_vertices) + " " + str(number_of_sets) + " "
+        nauty_input += " " + str(number_of_vertices) + " " + str(number_of_sets) + " "
 
-        sp = subprocess.Popen(nautyprefix + "genbgL {0}".format(nauty_input), shell=True,
+        sp = subprocess.Popen(shlex.quote(genbgL_path) + " {0}".format(nauty_input), shell=True,
                               stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE, close_fds=True)
 
@@ -209,13 +211,13 @@ class HypergraphGenerators():
 
         INPUT:
 
-        - ``k,n`` -- nonnegative integers with `k\leq n`
+        - ``k``, ``n`` -- nonnegative integers with `k\leq n`
 
         EXAMPLES::
 
             sage: h = hypergraphs.CompleteUniform(5, 2); h
             Incidence structure with 5 points and 10 blocks
-            sage: len(h.packing())
+            sage: len(h.packing())                                                      # needs sage.numerical.mip
             2
         """
         from sage.combinat.designs.incidence_structures import IncidenceStructure
@@ -255,7 +257,7 @@ class HypergraphGenerators():
             Traceback (most recent call last):
             ...
             ValueError: the uniformity should be non-negative
-            sage: hypergraphs.UniformRandomUniform(52, I, 17)
+            sage: hypergraphs.UniformRandomUniform(52, I, 17)                           # needs sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: the uniformity should be an integer
@@ -304,13 +306,14 @@ class HypergraphGenerators():
 
         EXAMPLES::
 
-            sage: hypergraphs.BinomialRandomUniform(50, 3, 1).num_blocks()
+            sage: hypergraphs.BinomialRandomUniform(50, 3, 1).num_blocks()              # needs numpy
             19600
-            sage: hypergraphs.BinomialRandomUniform(50, 3, 0).num_blocks()
+            sage: hypergraphs.BinomialRandomUniform(50, 3, 0).num_blocks()              # needs numpy
             0
 
         TESTS::
 
+            sage: # needs numpy
             sage: hypergraphs.BinomialRandomUniform(50, 3, -0.1)
             Traceback (most recent call last):
             ...
@@ -353,7 +356,7 @@ class HypergraphGenerators():
             raise ValueError("edge probability should be in [0,1]")
 
         import numpy.random as nrn
-        from sage.functions.other import binomial
+        from sage.arith.misc import binomial
         m = nrn.binomial(binomial(nverts, uniformity), p)
         return hypergraphs.UniformRandomUniform(n, k, m)
 

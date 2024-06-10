@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Classical symmetric functions
 """
@@ -16,10 +17,9 @@ Classical symmetric functions
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 from sage.rings.integer import Integer
-from sage.rings.integer_ring import IntegerRing
-from sage.rings.rational_field import RationalField
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.combinat.partition import _Partitions
 
 
@@ -30,12 +30,10 @@ from . import macdonald
 from . import jack
 from . import orthotriang
 
-ZZ = IntegerRing()
-QQ = RationalField()
-
 translate = {'monomial':'MONOMIAL', 'homogeneous':'HOMSYM', 'powersum':'POWSYM', 'elementary':'ELMSYM', 'Schur':'SCHUR'}
 
 conversion_functions = {}
+
 
 def init():
     """
@@ -49,7 +47,7 @@ def init():
         sage: sage.combinat.sf.classical.conversion_functions[('Schur', 'powersum')]
         <built-in function t_SCHUR_POWSYM_symmetrica>
 
-    The following checks if the bug described in :trac:`15312` is fixed. ::
+    The following checks if the bug described in :issue:`15312` is fixed. ::
 
         sage: change = sage.combinat.sf.classical.conversion_functions[('powersum', 'Schur')]
         sage: hideme = change({Partition([1]*47):ZZ(1)}) # long time
@@ -113,20 +111,37 @@ class SymmetricFunctionAlgebra_classical(sfa.SymmetricFunctionAlgebra_generic):
         TESTS:
 
         Check that non-Schur bases raise an error when given skew partitions
-        (:trac:`19218`)::
+        (:issue:`19218`)::
 
             sage: e = SymmetricFunctions(QQ).e()
             sage: e([[2,1],[1]])
             Traceback (most recent call last):
             ...
             TypeError: do not know how to make x (= [[2, 1], [1]]) an element of self
+
+        Check that :issue:`34576` is fixed::
+
+            sage: s = SymmetricFunctions(ZZ).s()
+            sage: f = s(0/2); f
+            0
+            sage: f == 0
+            True
+            sage: f._monomial_coefficients
+            {}
+
+            sage: s2 = SymmetricFunctions(GF(2)).s()
+            sage: f = s2(2*s[2,1]); f
+            0
+            sage: f == 0
+            True
+            sage: f._monomial_coefficients
+            {}
         """
         R = self.base_ring()
 
         eclass = self.element_class
         if isinstance(x, int):
             x = Integer(x)
-
 
         ##############
         # Partitions #
@@ -141,9 +156,9 @@ class SymmetricFunctionAlgebra_classical(sfa.SymmetricFunctionAlgebra_generic):
         # Dual bases #
         ##############
         elif sfa.is_SymmetricFunction(x) and hasattr(x, 'dual'):
-            #Check to see if it is the dual of some other basis
-            #If it is, try to coerce its corresponding element
-            #in the other basis
+            # Check to see if it is the dual of some other basis
+            # If it is, try to coerce its corresponding element
+            # in the other basis
             return self(x.dual())
 
         ##################################################################
@@ -162,105 +177,97 @@ class SymmetricFunctionAlgebra_classical(sfa.SymmetricFunctionAlgebra_generic):
 
         elif isinstance(x, self.Element):
             P = x.parent()
-            #same base ring
+            # same base ring
             if P is self:
                 return x
-            #different base ring
+            # different base ring
             else:
-                return eclass(self, dict([ (e1,R(e2)) for e1,e2 in x._monomial_coefficients.items()]))
+                return eclass(self, {la: rc for la, c in x._monomial_coefficients.items()
+                                     if (rc := R(c))})
 
         ##################################################
         # Classical Symmetric Functions, different basis #
         ##################################################
         elif isinstance(x, SymmetricFunctionAlgebra_classical.Element):
 
+            P = x.parent()
+            m = x.monomial_coefficients()
 
-            R = self.base_ring()
-            xP = x.parent()
-            xm = x.monomial_coefficients()
-
-            #determine the conversion function.
+            # determine the conversion function.
             try:
-                t = conversion_functions[(xP.basis_name(),self.basis_name())]
+                t = conversion_functions[(P.basis_name(), self.basis_name())]
             except AttributeError:
-                raise TypeError("do not know how to convert from %s to %s"%(xP.basis_name(), self.basis_name()))
+                raise TypeError("do not know how to convert from %s to %s"
+                                % (P.basis_name(), self.basis_name()))
 
-            if R == QQ and xP.base_ring() == QQ:
-                if xm:
-                    return self._from_dict(t(xm)._monomial_coefficients, coerce=True)
-                else:
-                    return self.zero()
+            if R == QQ and P.base_ring() == QQ:
+                if m:
+                    return self._from_dict(t(m)._monomial_coefficients,
+                                           coerce=True)
+                return self.zero()
             else:
-                f = lambda part: self._from_dict(t( {part: ZZ.one()} )._monomial_coefficients)
+                f = lambda part: self._from_dict(t({part: ZZ.one()})._monomial_coefficients)
                 return self._apply_module_endomorphism(x, f)
-
 
         ###############################
         # Hall-Littlewood Polynomials #
         ###############################
         elif isinstance(x, hall_littlewood.HallLittlewood_generic.Element):
             #
-            #Qp: Convert to Schur basis and then convert to self
+            # Qp: Convert to Schur basis and then convert to self
             #
-            if isinstance(x, hall_littlewood.HallLittlewood_qp.Element):
-                Qp = x.parent()
-                sx = Qp._s._from_cache(x, Qp._s_cache, Qp._self_to_s_cache, t=Qp.t)
-                return self(sx)
-            #
-            #P: Convert to Schur basis and then convert to self
-            #
-            elif isinstance(x, hall_littlewood.HallLittlewood_p.Element):
+            if isinstance(x, (hall_littlewood.HallLittlewood_qp.Element,
+                              hall_littlewood.HallLittlewood_p.Element)):
                 P = x.parent()
                 sx = P._s._from_cache(x, P._s_cache, P._self_to_s_cache, t=P.t)
                 return self(sx)
             #
-            #Q: Convert to P basis and then convert to self
+            # Q: Convert to P basis and then convert to self
             #
             elif isinstance(x, hall_littlewood.HallLittlewood_q.Element):
-                return self( x.parent()._P( x ) )
+                return self(x.parent()._P(x))
 
         #######
         # LLT #
         #######
-        #Convert to m and then to self.
+        # Convert to m and then to self.
         elif isinstance(x, llt.LLT_generic.Element):
             P = x.parent()
-            BR = self.base_ring()
-            zero = BR.zero()
-            PBR = P.base_ring()
-            if not BR.has_coerce_map_from(PBR):
-                raise TypeError("no coerce map from x's parent's base ring (= %s) to self's base ring (= %s)"%(PBR, self.base_ring()))
+            Rx = P.base_ring()
+            zero = R.zero()
+            if not R.has_coerce_map_from(Rx):
+                raise TypeError("no coerce map from x's parent's base ring (= %s) to self's base ring (= %s)"
+                                % (Rx, R))
 
             z_elt = {}
             for m, c in x._monomial_coefficients.items():
                 n = sum(m)
                 P._m_cache(n)
                 for part in P._self_to_m_cache[n][m]:
-                    z_elt[part] = z_elt.get(part, zero) + BR(c*P._self_to_m_cache[n][m][part].subs(t=P.t))
+                    z_elt[part] = z_elt.get(part, zero) + R(c*P._self_to_m_cache[n][m][part].subs(t=P.t))
 
             m = P._sym.monomial()
-            return self( m._from_dict(z_elt) )
+            return self(m._from_dict(z_elt))
 
         #########################
         # Macdonald Polynomials #
         #########################
         elif isinstance(x, macdonald.MacdonaldPolynomials_generic.Element):
-            if isinstance(x, macdonald.MacdonaldPolynomials_j.Element):
-                J = x.parent()
-                sx = J._s._from_cache(x, J._s_cache, J._self_to_s_cache, q=J.q, t=J.t)
+            if isinstance(x, (macdonald.MacdonaldPolynomials_j.Element,
+                              macdonald.MacdonaldPolynomials_s.Element)):
+                P = x.parent()
+                sx = P._s._from_cache(x, P._s_cache, P._self_to_s_cache, q=P.q, t=P.t)
                 return self(sx)
-            elif isinstance(x, (macdonald.MacdonaldPolynomials_q.Element, macdonald.MacdonaldPolynomials_p.Element)):
+            elif isinstance(x, (macdonald.MacdonaldPolynomials_q.Element,
+                                macdonald.MacdonaldPolynomials_p.Element)):
                 J = x.parent()._J
                 jx = J(x)
                 sx = J._s._from_cache(jx, J._s_cache, J._self_to_s_cache, q=J.q, t=J.t)
                 return self(sx)
-            elif isinstance(x, (macdonald.MacdonaldPolynomials_h.Element,macdonald.MacdonaldPolynomials_ht.Element)):
-                H = x.parent()
-                sx = H._self_to_s(x)
-                return self(sx)
-            elif isinstance(x, macdonald.MacdonaldPolynomials_s.Element):
-                S = x.parent()
-                sx = S._s._from_cache(x, S._s_cache, S._self_to_s_cache, q=S.q, t=S.t)
+            elif isinstance(x, (macdonald.MacdonaldPolynomials_h.Element,
+                                macdonald.MacdonaldPolynomials_ht.Element)):
+                P = x.parent()
+                sx = P._self_to_s(x)
                 return self(sx)
             else:
                 raise TypeError
@@ -273,8 +280,9 @@ class SymmetricFunctionAlgebra_classical(sfa.SymmetricFunctionAlgebra_generic):
                 P = x.parent()
                 mx = P._m._from_cache(x, P._m_cache, P._self_to_m_cache, t=P.t)
                 return self(mx)
-            if isinstance(x, (jack.JackPolynomials_j.Element, jack.JackPolynomials_q.Element)):
-                return self( x.parent()._P(x) )
+            if isinstance(x, (jack.JackPolynomials_j.Element,
+                              jack.JackPolynomials_q.Element)):
+                return self(x.parent()._P(x))
             else:
                 raise TypeError
 
@@ -282,21 +290,25 @@ class SymmetricFunctionAlgebra_classical(sfa.SymmetricFunctionAlgebra_generic):
         # Bases defined by orthogonality and triangularity #
         ####################################################
         elif isinstance(x, orthotriang.SymmetricFunctionAlgebra_orthotriang.Element):
-            #Convert to its base and then to self
-            xp = x.parent()
-            if self is xp._sf_base:
-                return xp._sf_base._from_cache(x, xp._base_cache, xp._self_to_base_cache)
+            # Convert to its base and then to self
+            P = x.parent()
+            if self is P._sf_base:
+                return P._sf_base._from_cache(x, P._base_cache, P._self_to_base_cache)
             else:
-                return self( xp._sf_base(x) )
+                return self( P._sf_base(x) )
 
         #################################
         # Last shot -- try calling R(x) #
         #################################
         else:
             try:
-                return eclass(self, {_Partitions([]): R(x)})
-            except Exception:
+                c = R(x)
+            except (TypeError, ValueError):
                 raise TypeError("do not know how to make x (= {}) an element of self".format(x))
+            else:
+                if not c:
+                    return self.zero()
+                return eclass(self, {_Partitions([]): c})
 
     # This subclass is currently needed for the test above:
     #    isinstance(x, SymmetricFunctionAlgebra_classical.Element):

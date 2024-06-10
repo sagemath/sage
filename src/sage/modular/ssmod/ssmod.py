@@ -1,15 +1,8 @@
+# sage.doctest: needs sage.libs.pari
 """
-Module of Supersingular Points
+Module of supersingular points
 
 The module of divisors on the modular curve `X_0(N)` over `F_p` supported at supersingular points.
-
-AUTHORS:
-
-- William Stein
-
-- David Kohel
-
-- Iftikhar Burhanuddin
 
 EXAMPLES::
 
@@ -52,6 +45,14 @@ TESTS::
     True
     sage: loads(dumps(d)) == d
     True
+
+AUTHORS:
+
+- William Stein
+
+- David Kohel
+
+- Iftikhar Burhanuddin
 """
 
 # ****************************************************************************
@@ -66,16 +67,20 @@ TESTS::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import sage.modular.hecke.all as hecke
+from sage.arith.misc import kronecker, next_prime
+from sage.categories.fields import Fields
+from sage.matrix.matrix_space import MatrixSpace
+from sage.misc.lazy_import import lazy_import
+from sage.modular.arithgroup.all import Gamma0
+from sage.modular.hecke.module import HeckeModule_free_module
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.arith.all import kronecker, next_prime
-from sage.matrix.matrix_space import MatrixSpace
-from sage.modular.arithgroup.all import Gamma0
-from sage.libs.pari.all import pari
 from sage.structure.richcmp import richcmp_method, richcmp
+
+lazy_import('sage.libs.pari.all', 'pari')
+
 
 ZZy = PolynomialRing(ZZ, 'y')
 
@@ -231,8 +236,8 @@ def dimension_supersingular_module(prime, level=1):
 
     - Iftikhar Burhanuddin - burhanud@usc.edu
     """
-    if not(Integer(prime).is_prime()):
-        raise ValueError("%s is not a prime" % prime)
+    if not Integer(prime).is_prime():
+        raise ValueError(f"{prime} is not a prime")
 
     if level == 1:
         return Gamma0(prime).dimension_modular_forms(2)
@@ -241,8 +246,7 @@ def dimension_supersingular_module(prime, level=1):
     # elif (level in [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 16, 18, 25]):
     # compute basis
 
-    else:
-        raise NotImplementedError
+    raise NotImplementedError
 
 
 def supersingular_D(prime):
@@ -329,12 +333,12 @@ def supersingular_j(FF):
 
     - Iftikhar Burhanuddin -- burhanud@usc.edu
     """
-    if not(FF.is_field()) or not(FF.is_finite()):
+    if FF not in Fields().Finite():
         raise ValueError("%s is not a finite field" % FF)
     prime = FF.characteristic()
-    if not(Integer(prime).is_prime()):
+    if not Integer(prime).is_prime():
         raise ValueError("%s is not a prime" % prime)
-    if not(Integer(FF.cardinality())) == Integer(prime**2):
+    if FF.cardinality() != Integer(prime**2):
         raise ValueError("%s is not a quadratic extension" % FF)
     if kronecker(-1, prime) != 1:
         j_invss = 1728                 # (2^2 * 3)^3
@@ -364,7 +368,7 @@ def supersingular_j(FF):
 
 
 @richcmp_method
-class SupersingularModule(hecke.HeckeModule_free_module):
+class SupersingularModule(HeckeModule_free_module):
     r"""
     The module of supersingular points in a given characteristic, with
     given level structure.
@@ -410,10 +414,10 @@ class SupersingularModule(hecke.HeckeModule_free_module):
         self.__finite_field = FiniteField(prime**2, 'a')
         self.__level = level
         self.__hecke_matrices = {}
-        hecke.HeckeModule_free_module.__init__(self, base_ring,
-                                               prime * level, weight=2)
+        HeckeModule_free_module.__init__(self, base_ring,
+                                         prime * level, weight=2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of self.
 
@@ -425,7 +429,7 @@ class SupersingularModule(hecke.HeckeModule_free_module):
         return "Module of supersingular points on X_0(%s)/F_%s over %s" % (
             self.__level, self.__prime, self.base_ring())
 
-    def __richcmp__(self, other, op):
+    def __richcmp__(self, other, op) -> bool:
         r"""
         Compare ``self`` to ``other``.
 
@@ -451,7 +455,7 @@ class SupersingularModule(hecke.HeckeModule_free_module):
             sage: X.free_module()
             Ambient free module of rank 3 over the principal ideal domain Integer Ring
 
-        This illustrates the fix at :trac:`4306`::
+        This illustrates the fix at :issue:`4306`::
 
             sage: X = SupersingularModule(389)
             sage: X.basis()
@@ -671,7 +675,7 @@ class SupersingularModule(hecke.HeckeModule_free_module):
 
         dim = dimension_supersingular_module(prime, level)
 
-        pos = int(0)
+        pos = 0
         # using list to keep track of explored nodes using pos
         ss_points = [jinv]
 
@@ -693,7 +697,7 @@ class SupersingularModule(hecke.HeckeModule_free_module):
                 # root finding (??)
                 neighbors = Phi2_quad(X, ss_points[j_prev], ss_points[pos]).roots()
 
-            for (xj, ej) in neighbors:
+            for xj, ej in neighbors:
                 if xj not in ss_points_dic:
                     j = len(ss_points)
                     ss_points += [xj]
@@ -706,7 +710,7 @@ class SupersingularModule(hecke.HeckeModule_free_module):
             if pos != 0:
                 # also record the root from j_prev
                 T2_matrix[pos, j_prev] += 1
-            pos += int(1)
+            pos += 1
 
         self.__hecke_matrices[2] = T2_matrix
         return (ss_points, ss_points_dic)
@@ -832,7 +836,7 @@ class SupersingularModule(hecke.HeckeModule_free_module):
         Fp2 = self.__finite_field
         h = len(SS)
         R = self.base_ring()
-        T_L = MatrixSpace(R, h)(0)
+        T_L = MatrixSpace(R, h)(0)  # mutable
         S, X = Fp2['x'].objgen()
 
         for i in range(len(SS)):

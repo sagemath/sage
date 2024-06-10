@@ -1,7 +1,7 @@
 Just always use std::isnan and std::isinf so there is no risk of
 conflicting with the libc math.h equivalents thereof.
 
-See https://trac.sagemath.org/ticket/27263
+See https://github.com/sagemath/sage/issues/27263
 --- a/src/global.cc	2019-02-12 15:49:03.082594000 +0000
 +++ b/src/global.cc	2019-02-12 15:49:43.438594000 +0000
 @@ -4139,11 +4139,7 @@

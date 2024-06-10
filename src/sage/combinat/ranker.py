@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Rankers
 """
@@ -20,17 +19,18 @@ from sage.misc.callable_dict import CallableDict
 from sage.structure.parent import Parent
 from sage.categories.enumerated_sets import EnumeratedSets
 
+
 def from_list(l):
     """
     Returns a ranker from the list l.
 
     INPUT:
 
-    -  ``l`` - a list
+    -  ``l`` -- a list
 
     OUTPUT:
 
-    - ``[rank, unrank]`` - functions
+    - ``[rank, unrank]`` -- functions
 
     EXAMPLES::
 
@@ -71,7 +71,7 @@ def rank_from_list(l):
         sage: r('c')
         2
 
-    For non elements a ``ValueError`` is raised, as with the usual
+    For non elements a :class:`ValueError` is raised, as with the usual
     ``index`` method of lists::
 
         sage: r('blah')
@@ -84,7 +84,7 @@ def rank_from_list(l):
     implementation detail::
 
         sage: type(r)
-        <... 'sage.misc.callable_dict.CallableDict'>
+        <class 'sage.misc.callable_dict.CallableDict'>
         sage: r
         {'a': 0, 'b': 1, 'c': 2}
 
@@ -106,6 +106,7 @@ def rank_from_list(l):
     """
     return CallableDict((x,i) for i,x in enumerate(l))
 
+
 def unrank_from_list(l):
     """
     Returns an unrank function from a list.
@@ -122,6 +123,7 @@ def unrank_from_list(l):
     """
     unrank = lambda j: l[j]
     return unrank
+
 
 def on_fly():
     """
@@ -151,13 +153,13 @@ def on_fly():
         sage: unrank(3)
         'd'
 
-    .. todo:: add tests as in combinat::rankers
+    .. TODO:: add tests as in combinat::rankers
     """
     def count():
         i = 0
         while True:
             yield i
-            i+=1
+            i += 1
 
     counter = count()
 
@@ -173,6 +175,7 @@ def on_fly():
 
     return [rank, unrank]
 
+
 def unrank(L, i):
     r"""
     Return the `i`-th element of `L`.
@@ -187,7 +190,7 @@ def unrank(L, i):
     tuple (or more generally a :class:`collections.abc.Sequence`), an
     enumerated set, some old parent of Sage still implementing
     unranking in the method ``__getitem__``, or an iterable (see
-    :class:`collections.abc.Iterable`). See :trac:`15919`.
+    :class:`collections.abc.Iterable`). See :issue:`15919`.
 
     EXAMPLES:
 
@@ -245,7 +248,7 @@ def unrank(L, i):
         ...
         IndexError: index out of range
     """
-    if L in EnumeratedSets:
+    if L in EnumeratedSets():
         return L.unrank(i)
     if isinstance(L, Sequence):
         return L[i]
@@ -263,4 +266,4 @@ def unrank(L, i):
             return next(it)
         except StopIteration:
             raise IndexError("index out of range")
-    raise ValueError("Don't know how to unrank on {}".format(L))
+    raise ValueError("do not know how to unrank on {}".format(L))

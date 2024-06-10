@@ -5,7 +5,6 @@ The actual computation of homology groups ends up being linear algebra
 with the differentials thought of as matrices. This module contains
 some utility functions for this purpose.
 """
-
 ########################################################################
 #       Copyright (C) 2013 John H. Palmieri <palmieri@math.washington.edu>
 #
@@ -13,9 +12,8 @@ some utility functions for this purpose.
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ########################################################################
-from __future__ import print_function
 
 # TODO: this module is a clear candidate for cythonizing. Need to
 # evaluate speed benefits.
@@ -98,11 +96,11 @@ def dhsw_snf(mat, verbose=False):
             check_leading = True
             while check_leading:
                 i = new_col.nonzero_positions_in_column(0)[0]
-                entry = new_col[i,0]
+                entry = new_col[i, 0]
                 check_leading = False
                 if i in leading_positions:
                     for c in leading_positions[i]:
-                        earlier = new_mat[i,c]
+                        earlier = new_mat[i, c]
                         # right now we don't check to see if entry divides
                         # earlier, because we don't want to modify the
                         # earlier columns of the matrix.  Deal with this
@@ -139,7 +137,7 @@ def dhsw_snf(mat, verbose=False):
                 j = leading_positions[i][0]
                 jth = new_mat[i, j]
                 for n in leading_positions[i][1:]:
-                    nth = new_mat[i,n]
+                    nth = new_mat[i, n]
                     if jth.divides(nth):
                         quo = nth.divide_knowing_divisible_by(jth)
                         new_mat.add_multiple_of_column(n, j, -quo)
@@ -149,8 +147,8 @@ def dhsw_snf(mat, verbose=False):
                         new_mat.swap_columns(n, j)
                         new_mat.add_multiple_of_column(n, j, -quo)
                     else:
-                        (g,r,s) = jth.xgcd(nth)
-                        (unit,A,B) = r.xgcd(-s)  # unit ought to be 1 here
+                        g, r, s = jth.xgcd(nth)
+                        unit, A, B = r.xgcd(-s)  # unit ought to be 1 here
                         jth_col = new_mat.column(j)
                         nth_col = new_mat.column(n)
                         new_mat.set_column(j, r*jth_col + s*nth_col)
@@ -178,15 +176,15 @@ def dhsw_snf(mat, verbose=False):
     max_leading = 1
     for i in leading_positions:
         j = leading_positions[i][0]
-        entry = new_mat[i,j]
+        entry = new_mat[i, j]
         if entry.abs() == 1:
             add_to_rank += 1
             keep_columns.remove(j)
             for c in new_mat.nonzero_positions_in_row(i):
                 if c in keep_columns:
-                    new_mat.add_multiple_of_column(c, j, -entry * new_mat[i,c])
+                    new_mat.add_multiple_of_column(c, j, -entry * new_mat[i, c])
         else:
-            max_leading = max(max_leading, new_mat[i,j].abs())
+            max_leading = max(max_leading, new_mat[i, j].abs())
     # form the new matrix
     if max_leading != 1:
         new_mat = new_mat.matrix_from_columns(keep_columns)
@@ -204,4 +202,3 @@ def dhsw_snf(mat, verbose=False):
     if len(ed) < rows:
         return ed + [0]*(rows - len(ed))
     return ed[:rows]
-

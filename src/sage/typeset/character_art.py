@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-categories
 r"""
 Base Class for Character-Based Art
 
@@ -24,11 +24,7 @@ using monospace fonts. The difference is that one is restricted to
 #
 #                  https://www.gnu.org/licenses/
 # ******************************************************************************
-from __future__ import print_function
-
-import os
 import sys
-import six
 from sage.structure.sage_object import SageObject
 
 
@@ -62,8 +58,8 @@ class CharacterArt(SageObject):
 
         EXAMPLES::
 
-            sage: i = var('i')
-            sage: ascii_art(sum(pi^i/factorial(i)*x^i, i, 0, oo))
+            sage: i = var('i')                                                          # needs sage.symbolic
+            sage: ascii_art(sum(pi^i/factorial(i)*x^i, i, 0, oo))                       # needs sage.symbolic
              pi*x
             e
 
@@ -79,7 +75,7 @@ class CharacterArt(SageObject):
             *****
 
         If there are nested breakpoints, line breaks are avoided inside the
-        nested elements (:trac:`29204`)::
+        nested elements (:issue:`29204`)::
 
             sage: s = ascii_art([[1..5], [1..17], [1..25]])
             sage: s._breakpoints
@@ -137,8 +133,7 @@ class CharacterArt(SageObject):
              * *
             *****
         """
-        for elem in self._matrix:
-            yield elem
+        yield from self._matrix
 
     def _repr_(self):
         r"""
@@ -166,12 +161,10 @@ class CharacterArt(SageObject):
 
         EXAMPLES::
 
-            sage: M = matrix([[1,2],[3,4]])
-            sage: format(ascii_art(M))
+            sage: M = matrix([[1,2],[3,4]])                                             # needs sage.modules
+            sage: format(ascii_art(M))                                                  # needs sage.modules
             '[1 2]\n[3 4]'
-            sage: format(unicode_art(M))  # py2
-            u'\u239b1 2\u239e\n\u239d3 4\u23a0'
-            sage: format(unicode_art(M))  # py3
+            sage: format(unicode_art(M))                                                # needs sage.modules
             '\u239b1 2\u239e\n\u239d3 4\u23a0'
         """
         return format(self._string_type(self), fmt)
@@ -217,7 +210,7 @@ class CharacterArt(SageObject):
         This method is deprecated, as its output is an implementation detail.
         The mere breakpoints of a character art element do not reflect the best
         way to split it if nested structures are involved. For details, see
-        :trac:`29204`.
+        :issue:`29204`.
 
         For example the expression::
 
@@ -234,7 +227,7 @@ class CharacterArt(SageObject):
             sage: aa = ascii_art([p3, p5])
             sage: aa.get_breakpoints()
             doctest:...: DeprecationWarning: get_breakpoints() is deprecated
-            See https://trac.sagemath.org/29204 for details.
+            See https://github.com/sagemath/sage/issues/29204 for details.
             [6]
         """
         from sage.misc.superseded import deprecation
@@ -263,10 +256,9 @@ class CharacterArt(SageObject):
         if DOCTEST_MODE:
             return False
         try:
-            return os.isatty(sys.stdout.fileno())
+            return sys.stdout.isatty()
         except Exception:
-            # The IPython zeromq kernel uses a fake stdout that does
-            # not support fileno()
+            # for fake ttys that might lead to an error
             return False
 
     def _terminal_width(self):
@@ -311,16 +303,19 @@ class CharacterArt(SageObject):
         # We implement a custom iterator instead of repeatedly using
         # itertools.chain to prepend elements in order to avoid quadratic time
         # complexity
-        class PrependIterator(six.Iterator):
+        class PrependIterator():
             """
             Iterator with support for prepending of elements.
             """
             def __init__(self, stack):
                 self._stack = [iter(elems) for elems in stack]
+
             def prepend(self, elems):
                 self._stack.append(iter(elems))
+
             def __iter__(self):
                 return self
+
             def __next__(self):
                 while self._stack:
                     try:
@@ -388,7 +383,7 @@ class CharacterArt(SageObject):
             sage: ascii_art(['a' * k for k in (1..10)])._split_repr_(20)
             '[ a, aa, aaa, aaaa,\n\n aaaaa, aaaaaa,\n\n aaaaaaa, aaaaaaaa,\n\n aaaaaaaaa,\n\n aaaaaaaaaa ]'
 
-        Check that wrapping happens exactly at the given size (:trac:`28527`)::
+        Check that wrapping happens exactly at the given size (:issue:`28527`)::
 
             sage: len(ascii_art(*(['']*90), sep=',')._split_repr_(80).split('\n')[0])
             80
@@ -637,7 +632,7 @@ class CharacterArt(SageObject):
              / \ [7 8 9]
             o   o
 
-        Since :trac:`28527`, the baseline must always be a number.
+        Since :issue:`28527`, the baseline must always be a number.
 
         TESTS::
 

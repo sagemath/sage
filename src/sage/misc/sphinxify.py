@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*
+# sage.doctest: optional - sphinx
 r"""
 Process docstrings with Sphinx
 
@@ -20,7 +20,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import, print_function
 
 import builtins
 import os
@@ -38,9 +37,9 @@ def sphinxify(docstring, format='html'):
 
     INPUT:
 
-    - ``docstring`` -- string -- a ReST-formatted docstring
+    - ``docstring`` -- string; a ReST-formatted docstring
 
-    - ``format`` -- string (optional, default 'html') -- either 'html' or
+    - ``format`` -- string (default: 'html'); either 'html' or
       'text'
 
     OUTPUT:
@@ -83,11 +82,11 @@ def sphinxify(docstring, format='html'):
     with open(rst_name, 'w') as filed:
         filed.write(docstring)
 
-    confdir = os.path.join(srcdir, 'en' , 'introspect')
+    confdir = os.path.join(srcdir, 'en', 'introspect')
     os.makedirs(confdir)
     with open(os.path.join(confdir, 'conf.py'), 'w') as filed:
         filed.write(r"""
-from sage.docs.conf import *
+from sage.misc.sagedoc_conf import *
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.mathjax', 'sphinx.ext.todo', 'sphinx.ext.extlinks']
 
 templates_path = ['templates']
@@ -128,7 +127,7 @@ smart_quotes = no""")
     builtins.__dict__.pop('_', None)
 
     if os.path.exists(output_name):
-        with open(output_name, 'r') as f:
+        with open(output_name) as f:
             output = f.read()
         output = output.replace('<pre>', '<pre class="literal-block">')
 

@@ -18,15 +18,17 @@ AUTHORS:
 #
 #                    https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
-from sage.interfaces.gap import gap
+from sage.libs.gap.libgap import libgap
 from sage.categories.morphism import Morphism
-
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 
 
 def is_AbelianGroupMorphism(f):
+    from sage.misc.superseded import deprecation
+    deprecation(38103,
+                "The function is_AbelianGroupMorphism is deprecated; "
+                "use 'isinstance(..., AbelianGroupMorphism)' instead.")
     return isinstance(f, AbelianGroupMorphism)
 
 
@@ -46,10 +48,10 @@ class AbelianGroupMap(Morphism):
 
 class AbelianGroupMorphism(Morphism):
     """
-    Some python code for wrapping GAP's GroupHomomorphismByImages
-    function for abelian groups. Returns "fail" if gens does not
-    generate self or if the map does not extend to a group
-    homomorphism, self - other.
+    Some python code for wrapping GAP's ``GroupHomomorphismByImages``
+    function for abelian groups. Returns "fail" if ``gens`` does not
+    generate ``self`` or if the map does not extend to a group
+    homomorphism, ``self`` - ``other``.
 
     EXAMPLES::
 
@@ -61,14 +63,14 @@ class AbelianGroupMorphism(Morphism):
         sage: x,y = H.gens()
 
         sage: from sage.groups.abelian_gps.abelian_group_morphism import AbelianGroupMorphism
-        sage: phi = AbelianGroupMorphism(H,G,[x,y],[a,b])
+        sage: phi = AbelianGroupMorphism(H,G,[x,y],[a,b])  # optional - gap_package_polycyclic
 
     TESTS::
 
         sage: G.<x,y> = AbelianGroup(2,[2,3])
         sage: H.<a,b,c> = AbelianGroup(3,[2,3,4])
-        sage: phi = AbelianGroupMorphism(G,H,[x,y],[a,b])
-        sage: Hom(G,H) == phi.parent()
+        sage: phi = AbelianGroupMorphism(G,H,[x,y],[a,b])  # optional - gap_package_polycyclic
+        sage: Hom(G,H) == phi.parent()                     # optional - gap_package_polycyclic
         True
 
     AUTHORS:
@@ -83,40 +85,40 @@ class AbelianGroupMorphism(Morphism):
 #Traceback (most recent call last):
 #  File "<ipython console>", line 1, in ?
 #  File ".abeliangp_hom.sage.py", line 737, in __init__
-#    raise TypeError, "Sorry, the orders of the corresponding elements in %s, %s must be equal."%(genss,imgss)
-#TypeError: Sorry, the orders of the corresponding elements in [a*b, a*c], [x, y] must be equal.
+#    raise TypeError("the orders of the corresponding elements in %s, %s must be equal" % (genss,imgss))
+#TypeError: the orders of the corresponding elements in [a*b, a*c], [x, y] must be equal
 #
 #        sage: phi = AbelianGroupMorphism_im_gens(G,H,[a*b,(a*c)^2],[x*y,y])
 #------------------------------------------------------------
 #Traceback (most recent call last):
 #  File "<ipython console>", line 1, in ?
 #  File ".abeliangp_hom.sage.py", line 730, in __init__
-#    raise TypeError, "Sorry, the list %s must generate G."%genss
-#TypeError: Sorry, the list [a*b, c^2] must generate G.
+#    raise TypeError("the list %s must generate G" % genss)
+#TypeError: the list [a*b, c^2] must generate G
 
     def __init__(self, G, H, genss, imgss):
         from sage.categories.homset import Hom
         Morphism.__init__(self, Hom(G, H))
         if len(genss) != len(imgss):
-            raise TypeError("Sorry, the lengths of %s, %s must be equal." % (genss, imgss))
+            raise TypeError("the lengths of %s, %s must be equal" % (genss, imgss))
         self._domain = G
         self._codomain = H
-        if not(G.is_abelian()):
-            raise TypeError("Sorry, the groups must be abelian groups.")
-        if not(H.is_abelian()):
-            raise TypeError("Sorry, the groups must be abelian groups.")
+        if not G.is_abelian():
+            raise TypeError("the groups must be abelian groups")
+        if not H.is_abelian():
+            raise TypeError("the groups must be abelian groups")
         G_domain = G.subgroup(genss)
         if G_domain.order() != G.order():
-            raise TypeError("Sorry, the list %s must generate G." % genss)
+            raise TypeError("the list %s must generate G" % genss)
         # self.domain_invs = G.gens_orders()
         # self.codomaininvs = H.gens_orders()
         self.domaingens = genss
         self.codomaingens = imgss
         for i in range(len(self.domaingens)):
             if (self.domaingens[i]).order() != (self.codomaingens[i]).order():
-                raise TypeError("Sorry, the orders of the corresponding elements in %s, %s must be equal." % (genss, imgss))
+                raise TypeError("the orders of the corresponding elements in %s, %s must be equal" % (genss, imgss))
 
-    def _gap_init_(self):
+    def _libgap_(self):
         """
         Only works for finite groups.
 
@@ -128,32 +130,18 @@ class AbelianGroupMorphism(Morphism):
             sage: H = AbelianGroup(2,[2,3],names="xy"); H
             Multiplicative Abelian group isomorphic to C2 x C3
             sage: x,y = H.gens()
-            sage: phi = AbelianGroupMorphism(H,G,[x,y],[a,b])
-            sage: phi._gap_init_()
-            'phi := GroupHomomorphismByImages(G,H,[x, y],[a, b])'
+            sage: phi = AbelianGroupMorphism(H,G,[x,y],[a,b])  # optional - gap_package_polycyclic
+            sage: libgap(phi)                                  # optional - gap_package_polycyclic
+            [ f1, f2 ] -> [ f1, f2 ]
+            sage: phi = AbelianGroupMorphism(H,G,[x,y],[a*c**2,b])  # optional - gap_package_polycyclic
+            sage: libgap(phi)                                       # optional - gap_package_polycyclic
+            [ f1, f2 ] -> [ f1*f4, f2 ]
         """
-        G  = (self.domain())._gap_init_()
-        H  = (self.codomain())._gap_init_()
-        s3 = 'G:=%s; H:=%s' % (G, H)
-        gap.eval(s3)
-        gensG = self.domain().variable_names()  # the Sage group generators
-        gensH = self.codomain().variable_names()
-        s1 = "gensG := GeneratorsOfGroup(G)"    # the GAP group generators
-        gap.eval(s1)
-        s2 = "gensH := GeneratorsOfGroup(H)"
-        gap.eval(s2)
-        for i in range(len(gensG)):             # making the Sage group gens
-           # correspond to the Sage group gens
-           cmd = "%s := gensG[%d]" % (gensG[i], i + 1)
-           gap.eval(cmd)
-        for i in range(len(gensH)):
-           cmd = "%s := gensH[%d]" % (gensH[i], i + 1)
-           gap.eval(cmd)
-        args = str(self.domaingens) + "," + str(self.codomaingens)
-        cmd = "phi := GroupHomomorphismByImages(G,H,%s)" % args
-        gap.eval(cmd)
-        self.gap_hom_string = cmd
-        return self.gap_hom_string
+        G = libgap(self.domain())
+        H = libgap(self.codomain())
+        in_G = [libgap(g) for g in self.domaingens]
+        in_H = [libgap(h) for h in self.codomaingens]
+        return G.GroupHomomorphismByImages(H, in_G, in_H)
 
     def _repr_type(self):
         return "AbelianGroup"
@@ -174,21 +162,19 @@ class AbelianGroupMorphism(Morphism):
             sage: G = AbelianGroup(2,[2,3],names="xy"); G
             Multiplicative Abelian group isomorphic to C2 x C3
             sage: x,y = G.gens()
-            sage: phi = AbelianGroupMorphism(G,H,[x,y],[a,b])
-            sage: phi.kernel()
-            'Group([  ])'
+            sage: phi = AbelianGroupMorphism(G,H,[x,y],[a,b])  # optional - gap_package_polycyclic
+            sage: phi.kernel()                                 # optional - gap_package_polycyclic
+            Group([  ])
 
             sage: H = AbelianGroup(3,[2,2,2],names="abc")
             sage: a,b,c = H.gens()
             sage: G = AbelianGroup(2,[2,2],names="x")
             sage: x,y = G.gens()
-            sage: phi = AbelianGroupMorphism(G,H,[x,y],[a,a])
-            sage: phi.kernel()
-            'Group([ f1*f2 ])'
+            sage: phi = AbelianGroupMorphism(G,H,[x,y],[a,a])  # optional - gap_package_polycyclic
+            sage: phi.kernel()                                 # optional - gap_package_polycyclic
+            Group([ f1*f2 ])
         """
-        cmd = self._gap_init_()
-        gap.eval(cmd)
-        return gap.eval("Kernel(phi)")
+        return libgap(self).Kernel()
 
     def image(self, S):
         """
@@ -204,11 +190,11 @@ class AbelianGroupMorphism(Morphism):
 
             sage: G = AbelianGroup(2,[2,3],names="xy")
             sage: x,y = G.gens()
-            sage: subG = G.subgroup([x])
+            sage: subG = G.subgroup([x])                       # optional - gap_package_polycyclic
             sage: H = AbelianGroup(3,[2,3,4],names="abc")
             sage: a,b,c = H.gens()
-            sage: phi = AbelianGroupMorphism(G,H,[x,y],[a,b])
-            sage: phi.image(subG)
+            sage: phi = AbelianGroupMorphism(G,H,[x,y],[a,b])  # optional - gap_package_polycyclic
+            sage: phi.image(subG)                              # optional - gap_package_polycyclic
             Multiplicative Abelian subgroup isomorphic to C2 generated by {a}
         """
         return self.codomain().subgroup([self(g) for g in S.gens()])
@@ -224,10 +210,10 @@ class AbelianGroupMorphism(Morphism):
             sage: a,b,c = H.gens()
             sage: G = AbelianGroup(2, [2,3], names="xy")
             sage: x,y = G.gens()
-            sage: phi = AbelianGroupMorphism(G,H,[x,y],[a,b])
-            sage: phi(y*x)
+            sage: phi = AbelianGroupMorphism(G,H,[x,y],[a,b])  # optional - gap_package_polycyclic
+            sage: phi(y*x)                                     # optional - gap_package_polycyclic
             a*b
-            sage: phi(y^2)
+            sage: phi(y^2)                                     # optional - gap_package_polycyclic
             b^2
         """
         # g.word_problem is faster in general than word_problem(g)

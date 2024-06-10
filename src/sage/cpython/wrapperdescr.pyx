@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Slot wrappers
 
@@ -13,16 +14,14 @@ EXAMPLES::
 
 Pure Python classes have normal methods, not slot wrappers::
 
-    sage: class X(object):
+    sage: class X():
     ....:     def __add__(self, other):
     ....:         return NotImplemented
-    sage: X.__add__    # py2
-    <unbound method X.__add__>
-    sage: X.__add__    # py3
+    sage: X.__add__
     <function X.__add__ at ...>
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Jeroen Demeyer <J.Demeyer@UGent.be>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,9 +29,9 @@ Pure Python classes have normal methods, not slot wrappers::
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
-from .string import bytes_to_str
+from sage.cpython.string import bytes_to_str
 
 
 def wrapperdescr_call(slotwrapper, self, *args, **kwds):
@@ -70,8 +69,9 @@ def wrapperdescr_call(slotwrapper, self, *args, **kwds):
         54
         sage: wrapperdescr_call(Element.__mul__, 7/5, 9)
         63/5
-        sage: from sage.numerical.mip import MixedIntegerLinearProgram
-        sage: wrapperdescr_call(type.__call__, MixedIntegerLinearProgram, maximization=False)
+        sage: from sage.numerical.mip import MixedIntegerLinearProgram                  # needs sage.numerical.mip
+        sage: wrapperdescr_call(type.__call__,                                          # needs sage.numerical.mip
+        ....:                   MixedIntegerLinearProgram, maximization=False)
         Mixed Integer Program (no objective, 0 variables, 0 constraints)
 
     TESTS::
@@ -99,6 +99,6 @@ cdef wrapperdescr_fastcall(wrapper_descriptor slotwrapper, self, args, kwds):
 
     if <PyObject*>kwds is not NULL and kwds:
         raise TypeError(f"wrapper {bytes_to_str(slotdef.name)} slotdef "
-                         "doesn't take keyword arguments")
+                        "doesn't take keyword arguments")
 
     return slotdef.wrapper(self, args, slotwrapper.d_wrapped)

@@ -4,8 +4,9 @@ Sparse Matrices over a general ring
 EXAMPLES::
 
     sage: R.<x> = PolynomialRing(QQ)
-    sage: M = MatrixSpace(QQ['x'],2,3,sparse=True); M
-    Full MatrixSpace of 2 by 3 sparse matrices over Univariate Polynomial Ring in x over Rational Field
+    sage: M = MatrixSpace(QQ['x'], 2, 3, sparse=True); M
+    Full MatrixSpace of 2 by 3 sparse matrices over
+     Univariate Polynomial Ring in x over Rational Field
     sage: a = M(range(6)); a
     [0 1 2]
     [3 4 5]
@@ -15,7 +16,7 @@ EXAMPLES::
     sage: a * b.transpose()
     [            2*x^2 + x           2*x^5 + x^4]
     [      5*x^2 + 4*x + 3 5*x^5 + 4*x^4 + 3*x^3]
-    sage: pari(a)*pari(b.transpose())
+    sage: pari(a)*pari(b.transpose())                                                   # needs sage.libs.pari
     [2*x^2 + x, 2*x^5 + x^4; 5*x^2 + 4*x + 3, 5*x^5 + 4*x^4 + 3*x^3]
     sage: c = copy(b); c
     [  1   x x^2]
@@ -46,20 +47,17 @@ EXAMPLES::
     [  5   x x^2]
     [x^3 x^4 x^5]
     sage: parent(d)
-    Full MatrixSpace of 2 by 3 dense matrices over Univariate Polynomial Ring in x over Rational Field
+    Full MatrixSpace of 2 by 3 dense matrices
+     over Univariate Polynomial Ring in x over Rational Field
     sage: c.sparse_matrix() is c
     True
     sage: c.is_sparse()
     True
 """
-
-cimport sage.matrix.matrix as matrix
 cimport sage.matrix.matrix_sparse as matrix_sparse
 cimport sage.structure.element
-from sage.structure.element cimport ModuleElement
-from .args cimport MatrixArgs_init
+from sage.matrix.args cimport MatrixArgs_init
 
-import sage.misc.misc as misc
 
 cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
     r"""
@@ -99,7 +97,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
     .. NOTE::
 
         The datastructure can potentially be optimized. Firstly, as noticed in
-        :trac:`17663`, we lose time in using 2-tuples to store indices.
+        :issue:`17663`, we lose time in using 2-tuples to store indices.
         Secondly, there is no fast way to access non-zero elements in a given
         row/column.
     """
@@ -169,9 +167,9 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
         ma = MatrixArgs_init(parent, entries)
         self._entries = ma.dict(coerce)
 
-    def __nonzero__(self):
+    def __bool__(self):
         r"""
-        Test wether this matrix is non-zero.
+        Test whether this matrix is non-zero.
 
         TESTS::
 
@@ -202,7 +200,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
     cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         return self._entries.get((i,j), self._zero)
 
-    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         """
         Return 1 if the entry ``(i, j)`` is zero, otherwise 0.
 
@@ -270,6 +268,27 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
             sage: a+a
             [    2    20 -10/3]
             [  1/2     6     8]
+
+        TESTS:
+
+        Adding two subclasses should produce an instance of the subclass; not
+        a generic matrix::
+
+            sage: A = matrix(RDF, [[1]], sparse=True)
+            sage: B = matrix(RDF, [[2]], sparse=True)
+            sage: C = matrix(ZZ,  [[3]], sparse=True)
+            sage: D = matrix(CDF, [[4]], sparse=True)
+            sage: (A+B).__class__ == A.__class__
+            True
+            sage: (B+A).__class__ == A.__class__
+            True
+            sage: (A+C).__class__ == A.__class__
+            True
+            sage: (C+A).__class__ == A.__class__
+            True
+            sage: (A+D).__class__ == D.__class__
+            True
+
         """
         # Compute the sum of two sparse matrices.
         # This is complicated because of how we represent sparse matrices.
@@ -308,12 +327,15 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
             s[w[j][0]] = w[j][1]
             j += 1
 
-        cdef Matrix_generic_sparse A
-        A = Matrix_generic_sparse.__new__(Matrix_generic_sparse, self._parent, 0,0,0)
-        matrix.Matrix.__init__(A, self._parent)
+        # Use the parent of the left-hand summand as the parent of the
+        # result. This allows you to (for example) add two sparse RDF
+        # matrices together and get another one back, rather than
+        # getting a generic sparse matrix back.
+        MS = self._parent
+        cdef type t = <type>type(self)
+        A = <Matrix_generic_sparse>t.__new__(t, MS)
         A._entries = s
         A._zero = self._zero
-        A._base_ring = self._base_ring
         return A
 
     def __copy__(self):
@@ -321,7 +343,6 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
         if self._subdivisions is not None:
             A.subdivide(*self.subdivisions())
         return A
-
 
     def _list(self):
         """
@@ -404,7 +425,7 @@ def Matrix_sparse_from_rows(X):
     """
     INPUT:
 
-    -  ``X`` - nonempty list of SparseVector rows
+    -  ``X`` -- nonempty list of SparseVector rows
 
 
     OUTPUT: Sparse_matrix with those rows.
@@ -430,7 +451,7 @@ def Matrix_sparse_from_rows(X):
     if not X:
         raise ArithmeticError("X must be nonempty")
 
-    from . import matrix_space
+    from sage.matrix import matrix_space
     entries = {}
     R = X[0].base_ring()
     ncols = X[0].degree()

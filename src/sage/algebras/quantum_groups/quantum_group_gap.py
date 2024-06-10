@@ -1,3 +1,4 @@
+# sage.doctest: optional - gap_package_quagroup sage.combinat sage.libs.gap sage.modules
 """
 Quantum Groups Using GAP's QuaGroup Package
 
@@ -5,9 +6,8 @@ AUTHORS:
 
 - Travis Scrimshaw (03-2017): initial version
 
-The documentation for GAP's QuaGroup package, originally authored by
-Willem Adriaan de Graaf, can be found at
-https://www.gap-system.org/Packages/quagroup.html.
+See the :gap_package:`documentation for GAP's QuaGroup package <quagroup/doc/chap0_mj.html>`,
+originally authored by Willem Adriaan de Graaf.
 """
 
 # ****************************************************************************
@@ -20,7 +20,12 @@ https://www.gap-system.org/Packages/quagroup.html.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import re
+
+from copy import copy
+
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
 from sage.structure.element import Element
@@ -32,7 +37,6 @@ from sage.sets.family import Family
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.libs.gap.libgap import libgap
 from sage.features.gap import GapPackage
-from sage.graphs.digraph import DiGraph
 from sage.rings.rational_field import QQ
 from sage.categories.algebras import Algebras
 from sage.categories.cartesian_product import cartesian_product
@@ -43,8 +47,7 @@ from sage.categories.modules import Modules
 from sage.categories.morphism import Morphism
 from sage.categories.rings import Rings
 
-from copy import copy
-import re
+lazy_import('sage.graphs.digraph', 'DiGraph')
 
 
 class QuaGroupModuleElement(Element):
@@ -57,8 +60,8 @@ class QuaGroupModuleElement(Element):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['G',2])  # optional - gap_packages
-            sage: TestSuite(Q.an_element()).run()  # optional - gap_packages
+            sage: Q = QuantumGroup(['G',2])
+            sage: TestSuite(Q.an_element()).run()
         """
         self._libgap = libgap(libgap_elt)
         Element.__init__(self, parent)
@@ -69,13 +72,13 @@ class QuaGroupModuleElement(Element):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['G',2])  # optional - gap_packages
-            sage: Q.an_element()  # optional - gap_packages
+            sage: Q = QuantumGroup(['G',2])
+            sage: Q.an_element()
             1 + (q)*F[a1] + E[a1] + (q^2-1-q^-2 + q^-4)*[ K1 ; 2 ] + K1
              + (-q^-1 + q^-3)*K1[ K1 ; 1 ]
 
-            sage: Q = QuantumGroup(['D',4])  # optional - gap_packages
-            sage: Q.F_simple()  # optional - gap_packages
+            sage: Q = QuantumGroup(['D',4])
+            sage: Q.F_simple()
             Finite family {1: F[a1], 2: F[a2], 3: F[a3], 4: F[a4]}
         """
         # We add some space between the terms
@@ -85,11 +88,12 @@ class QuaGroupModuleElement(Element):
         # Replace Ei and Fi with the corresponding root in short form.
         # Do the largest index first so, e.g., F12 gets replaced as 12
         #   instead of as 1.
-        for i,al in reversed(list(enumerate(self.parent()._pos_roots))):
-            short = '+'.join('%s*a%s'%(coeff,index) if coeff != 1 else 'a%s'%index
-                             for index,coeff in al)
-            ret = ret.replace('F%s'%(i+1), 'F[%s]'%short)
-            ret = ret.replace('E%s'%(i+1), 'E[%s]'%short)
+        for i, al in reversed(list(enumerate(self.parent()._pos_roots))):
+            short = '+'.join('%s*a%s' % (coeff, index)
+                             if coeff != 1 else 'a%s' % index
+                             for index, coeff in al)
+            ret = ret.replace('F%s' % (i + 1), 'F[%s]' % short)
+            ret = ret.replace('E%s' % (i + 1), 'E[%s]' % short)
         return ret
 
     def _latex_(self):
@@ -98,13 +102,13 @@ class QuaGroupModuleElement(Element):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['G',2])  # optional - gap_packages
-            sage: latex(Q.an_element())      # optional - gap_packages
+            sage: Q = QuantumGroup(['G',2])
+            sage: latex(Q.an_element())
             1+{(q)} F_{\alpha_{1}}+E_{\alpha_{1}}+{(q^{2}-1-q^{-2}+q^{-4})}
              [ K_{1} ; 2 ]+K_{1}+{(-q^{-1}+q^{-3})} K_{1}[ K_{1} ; 1 ]
 
-            sage: Q = QuantumGroup(['D',4])  # optional - gap_packages
-            sage: latex(list(Q.F_simple()))  # optional - gap_packages
+            sage: Q = QuantumGroup(['D',4])
+            sage: latex(list(Q.F_simple()))
             \left[F_{\alpha_{1}}, F_{\alpha_{2}},
              F_{\alpha_{3}}, F_{\alpha_{4}}\right]
         """
@@ -112,11 +116,11 @@ class QuaGroupModuleElement(Element):
         ret = repr(self._libgap)
         # Do the largest index first so, e.g., F12 gets replaced as 12
         #   instead of as 1.
-        for i,al in reversed(list(enumerate(self.parent()._pos_roots))):
-            ret = ret.replace('F%s'%(i+1), 'F_{%s}'%latex(al))
-            ret = ret.replace('E%s'%(i+1), 'E_{%s}'%latex(al))
-        for i,ii in reversed(list(enumerate(self.parent()._cartan_type.index_set()))):
-            ret = ret.replace('K%s'%(i+1), 'K_{%s}'%ii)
+        for i, al in reversed(list(enumerate(self.parent()._pos_roots))):
+            ret = ret.replace('F%s' % (i + 1), 'F_{%s}' % latex(al))
+            ret = ret.replace('E%s' % (i + 1), 'E_{%s}' % latex(al))
+        for i, ii in reversed(list(enumerate(self.parent()._cartan_type.index_set()))):
+            ret = ret.replace('K%s' % (i + 1), 'K_{%s}' % ii)
         # Fugly string parsing to get good looking latex
         # TODO: Find a better way
         ret = ret.replace('(', '{(')
@@ -125,7 +129,7 @@ class QuaGroupModuleElement(Element):
         ret = ret.replace('*', ' ')
         c = re.compile(r"q\^-?[0-9]*")
         for m in reversed(list(c.finditer(ret))):
-            ret = ret[:m.start()+2] + '{' + ret[m.start()+2:m.end()] + '}' + ret[m.end():]
+            ret = ret[:m.start() + 2] + '{' + ret[m.start() + 2:m.end()] + '}' + ret[m.end():]
         return ret
 
     def __reduce__(self):
@@ -134,17 +138,17 @@ class QuaGroupModuleElement(Element):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['G',2])  # optional - gap_packages
-            sage: x = Q.an_element()  # optional - gap_packages
-            sage: loads(dumps(x)) == x  # optional - gap_packages
+            sage: Q = QuantumGroup(['G',2])
+            sage: x = Q.an_element()
+            sage: loads(dumps(x)) == x
             True
         """
         data = self._libgap.ExtRepOfObj()
         R = self.base_ring()
         ret = []
-        for i in range(len(data)//2):
-            ret.append(data[2*i].sage())
-            ret.append( R(str(data[2*i+1])) )
+        for i in range(len(data) // 2):
+            ret.append(data[2 * i].sage())
+            ret.append(R(str(data[2 * i + 1])))
         return (_unpickle_generic_element, (self.parent(), ret))
 
     def __hash__(self):
@@ -153,9 +157,9 @@ class QuaGroupModuleElement(Element):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['B',3])  # optional - gap_packages
-            sage: x = Q.an_element()  # optional - gap_packages
-            sage: hash(x) == hash(x.gap())  # optional - gap_packages
+            sage: Q = QuantumGroup(['B',3])
+            sage: x = Q.an_element()
+            sage: hash(x) == hash(x.gap())
             True
         """
         return hash(self._libgap)
@@ -166,17 +170,17 @@ class QuaGroupModuleElement(Element):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: x = Q.an_element()  # optional - gap_packages
-            sage: F1, F12, F2 = Q.F()  # optional - gap_packages
-            sage: q = Q.q()  # optional - gap_packages
-            sage: x == F1  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: x = Q.an_element()
+            sage: F1, F12, F2 = Q.F()
+            sage: q = Q.q()
+            sage: x == F1
             False
-            sage: x != F1  # optional - gap_packages
+            sage: x != F1
             True
-            sage: F2 * F1  # optional - gap_packages
+            sage: F2 * F1
             (q)*F[a1]*F[a2] + F[a1+a2]
-            sage: F2 * F1 == q * F1 * F2 + F12  # optional - gap_packages
+            sage: F2 * F1 == q * F1 * F2 + F12
             True
         """
         return richcmp(self._libgap, other._libgap, op)
@@ -187,9 +191,9 @@ class QuaGroupModuleElement(Element):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['B',3])  # optional - gap_packages
-            sage: x = Q.an_element()         # optional - gap_packages
-            sage: x.gap()                    # optional - gap_packages
+            sage: Q = QuantumGroup(['B',3])
+            sage: x = Q.an_element()
+            sage: x.gap()
             1+(q)*F1+E1+(q^4-1-q^-4+q^-8)*[ K1 ; 2 ]+K1+(-q^-2+q^-6)*K1[ K1 ; 1 ]
         """
         return self._libgap
@@ -202,9 +206,9 @@ class QuaGroupModuleElement(Element):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['G',2])  # optional - gap_packages
-            sage: F1, F2 = Q.F_simple()      # optional - gap_packages
-            sage: F1 * F2 + F2 * F1          # optional - gap_packages
+            sage: Q = QuantumGroup(['G',2])
+            sage: F1, F2 = Q.F_simple()
+            sage: F1 * F2 + F2 * F1
             (q^3 + 1)*F[a1]*F[a2] + F[a1+a2]
         """
         return self.__class__(self.parent(), self._libgap + other._libgap)
@@ -215,9 +219,9 @@ class QuaGroupModuleElement(Element):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['G',2])  # optional - gap_packages
-            sage: F1, F2 = Q.F_simple()      # optional - gap_packages
-            sage: F1 * F2 - F2 * F1          # optional - gap_packages
+            sage: Q = QuantumGroup(['G',2])
+            sage: F1, F2 = Q.F_simple()
+            sage: F1 * F2 - F2 * F1
             (-q^3 + 1)*F[a1]*F[a2] + (-1)*F[a1+a2]
         """
         return self.__class__(self.parent(), self._libgap - other._libgap)
@@ -228,17 +232,17 @@ class QuaGroupModuleElement(Element):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['B',2])  # optional - gap_packages
-            sage: q = Q.q()  # optional - gap_packages
-            sage: x = Q.one().f_tilde([1,2,1,1,2,2]); x  # optional - gap_packages
+            sage: Q = QuantumGroup(['B',2])
+            sage: q = Q.q()
+            sage: x = Q.one().f_tilde([1,2,1,1,2,2]); x
             F[a1+a2]^(3)
-            sage: 3 * x  # optional - gap_packages
+            sage: 3 * x
             (3)*F[a1+a2]^(3)
-            sage: x * (5/3)  # optional - gap_packages
+            sage: x * (5/3)
             (5/3)*F[a1+a2]^(3)
-            sage: q^-10 * x  # optional - gap_packages
+            sage: q^-10 * x
             (q^-10)*F[a1+a2]^(3)
-            sage: (1 + q^2 - q^-1) * x  # optional - gap_packages
+            sage: (1 + q^2 - q^-1) * x
             (q^2 + 1-q^-1)*F[a1+a2]^(3)
         """
         try:
@@ -260,16 +264,16 @@ class QuaGroupModuleElement(Element):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['B',2])           # optional - gap_packages
-            sage: x = Q.one().f_tilde([1,2,1,1,2,2])  # optional - gap_packages
-            sage: x.e_tilde([2,2,1,2])                # optional - gap_packages
+            sage: Q = QuantumGroup(['B',2])
+            sage: x = Q.one().f_tilde([1,2,1,1,2,2])
+            sage: x.e_tilde([2,2,1,2])
             F[a1]^(2)
         """
         # Do not override this method, instead implement _et
         if isinstance(i, (list, tuple)):
             ret = self
             for j in i:
-                if not ret: # ret == 0
+                if not ret:  # ret == 0
                     return ret
                 ret = ret._et(j)
             return ret
@@ -287,23 +291,24 @@ class QuaGroupModuleElement(Element):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['B',2])     # optional - gap_packages
-            sage: Q.one().f_tilde(1)            # optional - gap_packages
+            sage: Q = QuantumGroup(['B',2])
+            sage: Q.one().f_tilde(1)
             F[a1]
-            sage: Q.one().f_tilde(2)            # optional - gap_packages
+            sage: Q.one().f_tilde(2)
             F[a2]
-            sage: Q.one().f_tilde([1,2,1,1,2])  # optional - gap_packages
+            sage: Q.one().f_tilde([1,2,1,1,2])
             F[a1]*F[a1+a2]^(2)
         """
         # Do not override this method, instead implement _ft
         if isinstance(i, (list, tuple)):
             ret = self
             for j in i:
-                if not ret: # ret == 0
+                if not ret:  # ret == 0
                     return ret
                 ret = ret._ft(j)
             return ret
         return self._ft(i)
+
 
 class QuantumGroup(UniqueRepresentation, Parent):
     r"""
@@ -319,19 +324,19 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
     We verify the Serre relations for type `A_2`::
 
-        sage: Q = algebras.QuantumGroup(['A',2])      # optional - gap_packages
-        sage: F1,F12,F2 = Q.F()                       # optional - gap_packages
-        sage: q = Q.q()                               # optional - gap_packages
-        sage: F1^2*F2 - q_binomial(2,1,q) * F1*F2*F1 + F2*F1^2  # optional - gap_packages
+        sage: Q = algebras.QuantumGroup(['A',2])
+        sage: F1,F12,F2 = Q.F()
+        sage: q = Q.q()
+        sage: F1^2*F2 - q_binomial(2,1,q) * F1*F2*F1 + F2*F1^2
         0
 
     We verify the Serre relations for type `B_2`::
 
-        sage: Q = algebras.QuantumGroup(['B',2])      # optional - gap_packages
-        sage: F1, F12, F122, F2 = Q.F()               # optional - gap_packages
-        sage: F1^2*F2 - q_binomial(2,1,q^2) * F1*F2*F1 + F2*F1^2  # optional - gap_packages
+        sage: Q = algebras.QuantumGroup(['B',2])
+        sage: F1, F12, F122, F2 = Q.F()
+        sage: F1^2*F2 - q_binomial(2,1,q^2) * F1*F2*F1 + F2*F1^2
         0
-        sage: (F2^3*F1 - q_binomial(3,1,q) * F2^2*F1*F2  # optional - gap_packages
+        sage: (F2^3*F1 - q_binomial(3,1,q) * F2^2*F1*F2
         ....:  + q_binomial(3,2,q) * F2*F1*F2^2 - F1*F2^3)
         0
 
@@ -346,12 +351,12 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: Q = QuantumGroup(['A',2])      # optional - gap_packages
-            sage: Q is QuantumGroup('A2', None)  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: Q is QuantumGroup('A2', None)
             True
         """
         cartan_type = CartanType(cartan_type)
-        return super(QuantumGroup, cls).__classcall__(cls, cartan_type, q)
+        return super().__classcall__(cls, cartan_type, q)
 
     def __init__(self, cartan_type, q):
         """
@@ -359,19 +364,20 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
         TESTS::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: TestSuite(Q).run()  # long time  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: TestSuite(Q).run()            # long time
 
-            sage: Q = QuantumGroup(['G',2])  # optional - gap_packages
-            sage: TestSuite(Q).run()  # long time  # optional - gap_packages
+            sage: Q = QuantumGroup(['G',2])
+            sage: TestSuite(Q).run()            # long time
         """
         self._cartan_type = cartan_type
-        GapPackage("QuaGroup", spkg="gap_packages").require()
+        GapPackage("QuaGroup", spkg="gap_package_quagroup").require()
         libgap.LoadPackage('QuaGroup')
-        R = libgap.eval('RootSystem("%s",%s)'%(cartan_type.type(), cartan_type.rank()))
+        R = libgap.eval('RootSystem("%s",%s)' % (cartan_type.type(), cartan_type.rank()))
         Q = self._cartan_type.root_system().root_lattice()
         I = cartan_type.index_set()
-        self._pos_roots = [Q.sum_of_terms([(ii, root[i]) for i,ii in enumerate(I)
+        self._pos_roots = [Q.sum_of_terms([(ii, root[i])
+                                           for i, ii in enumerate(I)
                                            if root[i] != 0])
                            for root in R.PositiveRootsInConvexOrder().sage()]
         if q is None:
@@ -394,7 +400,7 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: QuantumGroup(['A',2])  # optional - gap_packages
+            sage: QuantumGroup(['A',2])
             Quantum Group of type ['A', 2] with q=q
         """
         return "Quantum Group of type {} with q={}".format(self._cartan_type, self._q)
@@ -405,14 +411,14 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: latex(QuantumGroup(['A',3]))  # optional - gap_packages
+            sage: latex(QuantumGroup(['A',3]))
             U_{q}(A_{3})
-            sage: zeta3 = CyclotomicField(3).gen()  # optional - gap_packages
-            sage: latex(QuantumGroup(['G',2], q=zeta3))  # optional - gap_packages
+            sage: zeta3 = CyclotomicField(3).gen()
+            sage: latex(QuantumGroup(['G',2], q=zeta3))
             U_{\zeta_{3}}(G_2)
         """
         from sage.misc.latex import latex
-        return "U_{%s}(%s)"%(latex(self._q), latex(self._cartan_type))
+        return "U_{%s}(%s)" % (latex(self._q), latex(self._cartan_type))
 
     def gap(self):
         """
@@ -420,8 +426,8 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])         # optional - gap_packages
-            sage: Q.gap()                           # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: Q.gap()
             QuantumUEA( <root system of type A2>, Qpar = q )
         """
         return self._libgap
@@ -434,8 +440,8 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])     # optional - gap_packages
-            sage: Q.cartan_type()               # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: Q.cartan_type()
             ['A', 2]
         """
         return self._cartan_type
@@ -446,16 +452,16 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: Q(0)  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: Q(0)
             0
-            sage: Q(4)  # optional - gap_packages
+            sage: Q(4)
             (4)*1
-            sage: Q(4).parent() is Q  # optional - gap_packages
+            sage: Q(4).parent() is Q
             True
-            sage: Q(Q.q()).parent() is Q  # optional - gap_packages
+            sage: Q(Q.q()).parent() is Q
             True
-            sage: Q(Q.an_element()) == Q.an_element()  # optional - gap_packages
+            sage: Q(Q.an_element()) == Q.an_element()
             True
         """
         if not elt:
@@ -474,8 +480,8 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])         # optional - gap_packages
-            sage: Q.one()                           # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: Q.one()
             1
         """
         return self.element_class(self, self._libgap.One())
@@ -487,8 +493,8 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])         # optional - gap_packages
-            sage: Q.zero()                          # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: Q.zero()
             0
         """
         return self.element_class(self, self._libgap.ZeroImmutable())
@@ -500,8 +506,8 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])         # optional - gap_packages
-            sage: Q.gens()                          # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: Q.gens()
             (F[a1], F[a1+a2], F[a2],
              K1, (-q + q^-1)*[ K1 ; 1 ] + K1,
              K2, (-q + q^-1)*[ K2 ; 1 ] + K2,
@@ -517,12 +523,12 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['B',2])         # optional - gap_packages
-            sage: list(Q.E())                       # optional - gap_packages
+            sage: Q = QuantumGroup(['B',2])
+            sage: list(Q.E())
             [E[a1], E[a1+a2], E[a1+2*a2], E[a2]]
         """
-        N = len(self._pos_roots) + len(self._cartan_type.index_set())*2
-        d = {al: self.gens()[N+i] for i,al in enumerate(self._pos_roots)}
+        N = len(self._pos_roots) + len(self._cartan_type.index_set()) * 2
+        d = {al: self.gens()[N + i] for i, al in enumerate(self._pos_roots)}
         return Family(self._pos_roots, d.__getitem__)
 
     def E_simple(self):
@@ -531,13 +537,13 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['B',2])         # optional - gap_packages
-            sage: Q.E_simple()                      # optional - gap_packages
+            sage: Q = QuantumGroup(['B',2])
+            sage: Q.E_simple()
             Finite family {1: E[a1], 2: E[a2]}
         """
         I = self._cartan_type.index_set()
         gens = self.algebra_generators()
-        d = {i: gens['E%s'%i] for i in I}
+        d = {i: gens['E%s' % i] for i in I}
         return Family(I, d.__getitem__)
 
     def F(self):
@@ -547,11 +553,11 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['G',2])         # optional - gap_packages
-            sage: list(Q.F())                       # optional - gap_packages
+            sage: Q = QuantumGroup(['G',2])
+            sage: list(Q.F())
             [F[a1], F[3*a1+a2], F[2*a1+a2], F[3*a1+2*a2], F[a1+a2], F[a2]]
         """
-        d = {al: self.gens()[i] for i,al in enumerate(self._pos_roots)}
+        d = {al: self.gens()[i] for i, al in enumerate(self._pos_roots)}
         return Family(self._pos_roots, d.__getitem__)
 
     def F_simple(self):
@@ -560,13 +566,13 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['G',2])         # optional - gap_packages
-            sage: Q.F_simple()                      # optional - gap_packages
+            sage: Q = QuantumGroup(['G',2])
+            sage: Q.F_simple()
             Finite family {1: F[a1], 2: F[a2]}
         """
         I = self._cartan_type.index_set()
         gens = self.algebra_generators()
-        d = {i: gens['F%s'%i] for i in I}
+        d = {i: gens['F%s' % i] for i in I}
         return Family(I, d.__getitem__)
 
     def K(self):
@@ -575,17 +581,17 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',3])         # optional - gap_packages
-            sage: Q.K()                             # optional - gap_packages
+            sage: Q = QuantumGroup(['A',3])
+            sage: Q.K()
             Finite family {1: K1, 2: K2, 3: K3}
-            sage: Q.K_inverse()                     # optional - gap_packages
+            sage: Q.K_inverse()
             Finite family {1: (-q + q^-1)*[ K1 ; 1 ] + K1,
                            2: (-q + q^-1)*[ K2 ; 1 ] + K2,
                            3: (-q + q^-1)*[ K3 ; 1 ] + K3}
         """
         N = len(self._pos_roots)
         I = self._cartan_type.index_set()
-        d = {ii: self.gens()[N+2*i] for i,ii in enumerate(I)}
+        d = {ii: self.gens()[N + 2 * i] for i, ii in enumerate(I)}
         return Family(I, d.__getitem__)
 
     def K_inverse(self):
@@ -594,15 +600,15 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',3])         # optional - gap_packages
-            sage: Q.K_inverse()                     # optional - gap_packages
+            sage: Q = QuantumGroup(['A',3])
+            sage: Q.K_inverse()
             Finite family {1: (-q + q^-1)*[ K1 ; 1 ] + K1,
                            2: (-q + q^-1)*[ K2 ; 1 ] + K2,
                            3: (-q + q^-1)*[ K3 ; 1 ] + K3}
         """
         N = len(self._pos_roots)
         I = self._cartan_type.index_set()
-        d = {ii: self.gens()[N+2*i+1] for i,ii in enumerate(I)}
+        d = {ii: self.gens()[N + 2 * i + 1] for i, ii in enumerate(I)}
         return Family(I, d.__getitem__)
 
     @cached_method
@@ -612,8 +618,8 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])         # optional - gap_packages
-            sage: list(Q.algebra_generators())      # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: list(Q.algebra_generators())
             [F[a1], F[a2],
              K1, K2,
              (-q + q^-1)*[ K1 ; 1 ] + K1, (-q + q^-1)*[ K2 ; 1 ] + K2,
@@ -622,14 +628,14 @@ class QuantumGroup(UniqueRepresentation, Parent):
         I = self._cartan_type.index_set()
         simples = self._cartan_type.root_system().root_lattice().simple_roots()
         ret = {}
-        for i,al in enumerate(simples):
+        for i, al in enumerate(simples):
             ii = I[i]
-            ret['F%s'%ii] = self.F()[al]
-            ret['K%s'%ii] = self.K()[ii]
-            ret['Ki%s'%ii] = self.K_inverse()[ii]
-            ret['E%s'%ii] = self.E()[al]
-        keys = (['F%s'%i for i in I] + ['K%s'%i for i in I]
-                + ['Ki%s'%i for i in I] + ['E%s'%i for i in I])
+            ret['F%s' % ii] = self.F()[al]
+            ret['K%s' % ii] = self.K()[ii]
+            ret['Ki%s' % ii] = self.K_inverse()[ii]
+            ret['E%s' % ii] = self.E()[al]
+        keys = (['F%s' % i for i in I] + ['K%s' % i for i in I]
+                + ['Ki%s' % i for i in I] + ['E%s' % i for i in I])
         return Family(keys, ret.__getitem__)
 
     def _an_element_(self):
@@ -638,8 +644,8 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: Q.an_element()             # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: Q.an_element()
             1 + (q)*F[a1] + E[a1] + (q^2-1-q^-2 + q^-4)*[ K1 ; 2 ]
              + K1 + (-q^-1 + q^-3)*K1[ K1 ; 1 ]
         """
@@ -653,8 +659,8 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',1])  # optional - gap_packages
-            sage: Q.some_elements()          # optional - gap_packages
+            sage: Q = QuantumGroup(['A',1])
+            sage: Q.some_elements()
             [1 + (q)*F[a1] + E[a1] + (q^2-1-q^-2 + q^-4)*[ K1 ; 2 ]
               + K1 + (-q^-1 + q^-3)*K1[ K1 ; 1 ],
              K1, F[a1], E[a1]]
@@ -668,12 +674,12 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',3])           # optional - gap_packages
-            sage: Q.q()                               # optional - gap_packages
+            sage: Q = QuantumGroup(['A',3])
+            sage: Q.q()
             q
-            sage: zeta3 = CyclotomicField(3).gen()    # optional - gap_packages
-            sage: Q = QuantumGroup(['B',2], q=zeta3)  # optional - gap_packages
-            sage: Q.q()                               # optional - gap_packages
+            sage: zeta3 = CyclotomicField(3).gen()
+            sage: Q = QuantumGroup(['B',2], q=zeta3)
+            sage: Q.q()
             zeta3
         """
         return self._q
@@ -687,18 +693,18 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: B = Q.lower_half()  # optional - gap_packages
-            sage: H = Hom(Q, B); H  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: B = Q.lower_half()
+            sage: H = Hom(Q, B); H
             Set of Morphisms from Quantum Group of type ['A', 2] with q=q to
              Lower Half of Quantum Group of type ['A', 2] with q=q in Category of rings
-            sage: type(H)  # optional - gap_packages
+            sage: type(H)
             <class '...QuantumGroupHomset_with_category_with_equality_by_id'>
         """
         if category is not None and not category.is_subcategory(Rings()):
-            raise TypeError("%s is not a subcategory of Rings()"%category)
+            raise TypeError("%s is not a subcategory of Rings()" % category)
         if Y not in Rings():
-            raise TypeError("%s is not a ring"%Y)
+            raise TypeError("%s is not a ring" % Y)
         return QuantumGroupHomset(self, Y, category=category)
 
     def highest_weight_module(self, weight):
@@ -707,8 +713,8 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])         # optional - gap_packages
-            sage: Q.highest_weight_module([1,3])    # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: Q.highest_weight_module([1,3])
             Highest weight module of weight Lambda[1] + 3*Lambda[2] of
              Quantum Group of type ['A', 2] with q=q
         """
@@ -720,8 +726,8 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])         # optional - gap_packages
-            sage: Q.lower_half()                    # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: Q.lower_half()
             Lower Half of Quantum Group of type ['A', 2] with q=q
         """
         return LowerHalfQuantumGroup(self)
@@ -746,8 +752,8 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['B',2])         # optional - gap_packages
-            sage: [Q.coproduct(e) for e in Q.E()]   # optional - gap_packages
+            sage: Q = QuantumGroup(['B',2])
+            sage: [Q.coproduct(e) for e in Q.E()]
             [1*(E[a1]<x>1) + 1*(K1<x>E[a1]),
              1*(E[a1+a2]<x>1) + 1*(K1*K2<x>E[a1+a2]) + q^2-q^-2*(K2*E[a1]<x>E[a2]),
              q^4-q^2-1 + q^-2*(E[a1]<x>E[a2]^(2)) + 1*(E[a1+2*a2]<x>1)
@@ -755,7 +761,7 @@ class QuantumGroup(UniqueRepresentation, Parent):
               + q-q^-1*(K2*E[a1+a2]<x>E[a2]) + q^5-2*q^3
               + 2*q^-1-q^-3*(K2[ K2 ; 1 ]*E[a1]<x>E[a2]^(2)),
              1*(E[a2]<x>1) + 1*(K2<x>E[a2])]
-            sage: [Q.coproduct(f, 2) for f in Q.F_simple()]  # optional - gap_packages
+            sage: [Q.coproduct(f, 2) for f in Q.F_simple()]
             [1*(1<x>1<x>F[a1]) + -q^2 + q^-2*(1<x>F[a1]<x>[ K1 ; 1 ])
               + 1*(1<x>F[a1]<x>K1) + q^4-2 + q^-4*(F[a1]<x>[ K1 ; 1 ]<x>[ K1 ; 1 ])
               + -q^2 + q^-2*(F[a1]<x>[ K1 ; 1 ]<x>K1) + -q^2
@@ -784,8 +790,8 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['B',2])         # optional - gap_packages
-            sage: [Q.antipode(f) for f in Q.F()]    # optional - gap_packages
+            sage: Q = QuantumGroup(['B',2])
+            sage: [Q.antipode(f) for f in Q.F()]
             [(-1)*F[a1]*K1,
              (-q^6 + q^2)*F[a1]*F[a2]*K1*K2 + (-q^4)*F[a1+a2]*K1*K2,
              (-q^8 + q^6 + q^4-q^2)*F[a1]*F[a2]^(2)*K1
@@ -812,13 +818,13 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['B',2])         # optional - gap_packages
-            sage: x = Q.an_element()^2              # optional - gap_packages
-            sage: Q.counit(x)                       # optional - gap_packages
+            sage: Q = QuantumGroup(['B',2])
+            sage: x = Q.an_element()^2
+            sage: Q.counit(x)
             4
-            sage: Q.counit(Q.one())                 # optional - gap_packages
+            sage: Q.counit(Q.one())
             1
-            sage: Q.counit(Q.zero())                # optional - gap_packages
+            sage: Q.counit(Q.zero())
             0
         """
         # We need to extract the constant coefficient because the
@@ -826,32 +832,32 @@ class QuantumGroup(UniqueRepresentation, Parent):
         R = self.base_ring()
         ext_rep = list(elt._libgap.ExtRepOfObj())
         constant = R.zero()
-        for i in range(len(ext_rep)//2):
-            if ext_rep[2*i].Length() == 0:
-                ext_rep.pop(2*i) # Pop the key
-                constant = R(str(ext_rep.pop(2*i))) # Pop the coefficient
+        for i in range(len(ext_rep) // 2):
+            if ext_rep[2 * i].Length() == 0:
+                ext_rep.pop(2 * i)  # Pop the key
+                constant = R(str(ext_rep.pop(2 * i)))  # Pop the coefficient
                 break
         # To reconstruct, we need the following
         F = libgap.eval('ElementsFamily')(libgap.eval('FamilyObj')(self._libgap))
         elt = F.ObjByExtRep(ext_rep)
         co = self._libgap.CounitMap()
-        return R( str(co(elt)) ) + constant
+        return R(str(co(elt))) + constant
 
     class Element(QuaGroupModuleElement):
         def _mul_(self, other):
             r"""
-            Subtract ``self`` and ``other``.
+            Multiply ``self`` and ``other``.
 
             EXAMPLES::
 
-                sage: Q = QuantumGroup(['G',2])  # optional - gap_packages
-                sage: F1, F2 = Q.F_simple()      # optional - gap_packages
-                sage: F1 * F2 * F1 * F2          # optional - gap_packages
+                sage: Q = QuantumGroup(['G',2])
+                sage: F1, F2 = Q.F_simple()
+                sage: F1 * F2 * F1 * F2
                 F[a1]*F[a1+a2]*F[a2] + (q^7 + q^5 + q + q^-1)*F[a1]^(2)*F[a2]^(2)
-                sage: E1, E2 = Q.E_simple()      # optional - gap_packages
-                sage: F1 * E1                    # optional - gap_packages
+                sage: E1, E2 = Q.E_simple()
+                sage: F1 * E1
                 F[a1]*E[a1]
-                sage: E1 * F1                    # optional - gap_packages
+                sage: E1 * F1
                 F[a1]*E[a1] + [ K1 ; 1 ]
             """
             return self.__class__(self.parent(), self._libgap * other._libgap)
@@ -870,8 +876,8 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: Q = QuantumGroup(['A',2])        # optional - gap_packages
-                sage: [gen.bar() for gen in Q.gens()]  # optional - gap_packages
+                sage: Q = QuantumGroup(['A',2])
+                sage: [gen.bar() for gen in Q.gens()]
                 [F[a1],
                  (q-q^-1)*F[a1]*F[a2] + F[a1+a2],
                  F[a2],
@@ -898,8 +904,8 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: Q = QuantumGroup(['A',2])          # optional - gap_packages
-                sage: [gen.omega() for gen in Q.gens()]  # optional - gap_packages
+                sage: Q = QuantumGroup(['A',2])
+                sage: [gen.omega() for gen in Q.gens()]
                 [E[a1],
                  (-q)*E[a1+a2],
                  E[a2],
@@ -928,8 +934,8 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: Q = QuantumGroup(['A',2])        # optional - gap_packages
-                sage: [gen.tau() for gen in Q.gens()]  # optional - gap_packages
+                sage: Q = QuantumGroup(['A',2])
+                sage: [gen.tau() for gen in Q.gens()]
                 [F[a1],
                  (-q^2 + 1)*F[a1]*F[a2] + (-q)*F[a1+a2],
                  F[a2],
@@ -970,13 +976,13 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: Q = QuantumGroup(['A',2])     # optional - gap_packages
-                sage: F1 = Q.F_simple()[1]          # optional - gap_packages
-                sage: F1.braid_group_action([1])    # optional - gap_packages
+                sage: Q = QuantumGroup(['A',2])
+                sage: F1 = Q.F_simple()[1]
+                sage: F1.braid_group_action([1])
                 (q-q^-1)*[ K1 ; 1 ]*E[a1] + (-1)*K1*E[a1]
-                sage: F1.braid_group_action([1,2])  # optional - gap_packages
+                sage: F1.braid_group_action([1,2])
                 F[a2]
-                sage: F1.braid_group_action([2,1])  # optional - gap_packages
+                sage: F1.braid_group_action([2,1])
                 (-q^3 + 3*q-3*q^-1 + q^-3)*[ K1 ; 1 ]*[ K2 ; 1 ]*E[a1]*E[a2]
                  + (q^3-2*q + q^-1)*[ K1 ; 1 ]*[ K2 ; 1 ]*E[a1+a2]
                  + (q^2-2 + q^-2)*[ K1 ; 1 ]*K2*E[a1]*E[a2]
@@ -984,9 +990,9 @@ class QuantumGroup(UniqueRepresentation, Parent):
                  + (q^2-2 + q^-2)*K1*[ K2 ; 1 ]*E[a1]*E[a2]
                  + (-q^2 + 1)*K1*[ K2 ; 1 ]*E[a1+a2]
                  + (-q + q^-1)*K1*K2*E[a1]*E[a2] + (q)*K1*K2*E[a1+a2]
-                sage: F1.braid_group_action([1,2,1]) == F1.braid_group_action([2,1,2])  # optional - gap_packages
+                sage: F1.braid_group_action([1,2,1]) == F1.braid_group_action([2,1,2])
                 True
-                sage: F1.braid_group_action([]) == F1  # optional - gap_packages
+                sage: F1.braid_group_action([]) == F1
                 True
             """
             if not braid:
@@ -1010,20 +1016,20 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: Q = QuantumGroup(['G',2])  # optional - gap_packages
-                sage: [(g.e_tilde(1), g.e_tilde(2)) for g in Q.F()]  # optional - gap_packages
+                sage: Q = QuantumGroup(['G',2])
+                sage: [(g.e_tilde(1), g.e_tilde(2)) for g in Q.F()]
                 [(1, 0), (0, F[a1]^(3)), (0, F[a1]^(2)),
                  (0, F[3*a1+a2]), (0, F[a1]), (0, 1)]
 
             TESTS::
 
-                sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-                sage: Q.one()._et(1)  # optional - gap_packages
+                sage: Q = QuantumGroup(['A',2])
+                sage: Q.one()._et(1)
                 0
-                sage: Q.zero().e_tilde(1)  # optional - gap_packages
+                sage: Q.zero().e_tilde(1)
                 0
             """
-            if not self: # self == 0
+            if not self:  # self == 0
                 return self
             ret = self._libgap.Ealpha(i)
             if not ret:
@@ -1037,32 +1043,33 @@ class QuantumGroup(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: Q = QuantumGroup(['G',2])  # optional - gap_packages
-                sage: [(g._ft(1), g._ft(2)) for g in Q.F()]  # optional - gap_packages
+                sage: Q = QuantumGroup(['G',2])
+                sage: [(g._ft(1), g._ft(2)) for g in Q.F()]
                 [(F[a1]^(2), F[a1+a2]),
                  (F[a1]*F[3*a1+a2], F[3*a1+2*a2]),
                  (F[a1]*F[2*a1+a2], F[a1+a2]^(2)),
                  (F[a1]*F[3*a1+2*a2], F[a1+a2]^(3)),
                  (F[a1]*F[a1+a2], F[a1+a2]*F[a2]),
                  (F[a1]*F[a2], F[a2]^(2))]
-                sage: Q.one().f_tilde([1,2,1,1,2,2])  # optional - gap_packages
+                sage: Q.one().f_tilde([1,2,1,1,2,2])
                 F[2*a1+a2]*F[a1+a2]*F[a2]
 
             TESTS::
 
-                sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-                sage: Q.zero().f_tilde(1)  # optional - gap_packages
+                sage: Q = QuantumGroup(['A',2])
+                sage: Q.zero().f_tilde(1)
                 0
             """
-            if not self: # self == 0
+            if not self:  # self == 0
                 return self
             ret = self._libgap.Falpha(i)
             if not ret:
                 return self.parent().zero()
             return self.__class__(self.parent(), ret)
 
+
 #####################################################################
-## Morphisms
+# Morphisms
 
 class QuantumGroupMorphism(Morphism):
     r"""
@@ -1074,10 +1081,10 @@ class QuantumGroupMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',1])   # optional - gap_packages
-            sage: F, K, Ki, E = Q.gens()      # optional - gap_packages
-            sage: phi = Q.hom([E, Ki, K, F])  # optional - gap_packages
-            sage: TestSuite(phi).run(skip="_test_category")  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',1])
+            sage: F, K, Ki, E = Q.gens()
+            sage: phi = Q.hom([E, Ki, K, F])
+            sage: TestSuite(phi).run(skip="_test_category")
         """
         self._repr_type_str = "Quantum group homomorphism"
         Morphism.__init__(self, parent)
@@ -1093,10 +1100,10 @@ class QuantumGroupMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',1])  # optional - gap_packages
-            sage: F, K, Ki, E = Q.gens()  # optional - gap_packages
-            sage: phi = Q.hom([E, Ki, K, F])  # optional - gap_packages
-            sage: loads(dumps(phi)) == phi  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',1])
+            sage: F, K, Ki, E = Q.gens()
+            sage: phi = Q.hom([E, Ki, K, F])
+            sage: loads(dumps(phi)) == phi
             True
         """
         return (self.parent(), (self._im_gens,))
@@ -1107,18 +1114,18 @@ class QuantumGroupMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',1])  # optional - gap_packages
-            sage: F, K, Ki, E = Q.gens()  # optional - gap_packages
-            sage: phi = Q.hom([E, Ki, K, F])  # optional - gap_packages
-            sage: phi(F)  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',1])
+            sage: F, K, Ki, E = Q.gens()
+            sage: phi = Q.hom([E, Ki, K, F])
+            sage: phi(F)
             E[a1]
-            sage: phi(E*F)  # optional - gap_packages
+            sage: phi(E*F)
             F[a1]*E[a1]
-            sage: phi(F*E)  # optional - gap_packages
+            sage: phi(F*E)
             F[a1]*E[a1] + [ K1 ; 1 ]
-            sage: phi(E*K)  # optional - gap_packages
+            sage: phi(E*K)
             (-q + q^-1)*F[a1]*[ K1 ; 1 ] + F[a1]*K1
-            sage: phi(F*E) == phi(F) * phi(E)  # optional - gap_packages
+            sage: phi(F*E) == phi(F) * phi(E)
             True
         """
         try:
@@ -1132,31 +1139,31 @@ class QuantumGroupMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',1])  # optional - gap_packages
-            sage: F, K, Ki, E = Q.gens()  # optional - gap_packages
-            sage: phi = Q.hom([E, Ki, K, F])  # optional - gap_packages
-            sage: psi = Q.hom([F, K, Ki, E])  # optional - gap_packages
-            sage: phi == Q.hom([E, Ki, K, F])  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',1])
+            sage: F, K, Ki, E = Q.gens()
+            sage: phi = Q.hom([E, Ki, K, F])
+            sage: psi = Q.hom([F, K, Ki, E])
+            sage: phi == Q.hom([E, Ki, K, F])
             True
-            sage: phi == psi  # optional - gap_packages
+            sage: phi == psi
             False
-            sage: psi != Q.hom([F, K, Ki, E])  # optional - gap_packages
+            sage: psi != Q.hom([F, K, Ki, E])
             False
-            sage: phi != psi  # optional - gap_packages
+            sage: phi != psi
             True
 
-            sage: QB = QuantumGroup(['B',3])  # optional - gap_packages
-            sage: QC = QuantumGroup(['C',3])  # optional - gap_packages
-            sage: x = ZZ.one()  # optional - gap_packages
-            sage: phi = QB.hom([x]*len(QB.algebra_generators()))  # optional - gap_packages
-            sage: psi = QC.hom([x]*len(QC.algebra_generators()))  # optional - gap_packages
-            sage: phi.im_gens() == psi.im_gens()  # optional - gap_packages
+            sage: QB = QuantumGroup(['B',3])
+            sage: QC = QuantumGroup(['C',3])
+            sage: x = ZZ.one()
+            sage: phi = QB.hom([x]*len(QB.algebra_generators()))
+            sage: psi = QC.hom([x]*len(QC.algebra_generators()))
+            sage: phi.im_gens() == psi.im_gens()
             True
-            sage: phi == psi  # optional - gap_packages
+            sage: phi == psi
             False
         """
         if op == op_EQ:
-            return (type(self) == type(other)
+            return (type(self) is type(other)
                     and self.domain() is other.domain()
                     and self._im_gens == other._im_gens)
         if op == op_NE:
@@ -1169,10 +1176,10 @@ class QuantumGroupMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',1])   # optional - gap_packages
-            sage: F, K, Ki, E = Q.gens()      # optional - gap_packages
-            sage: phi = Q.hom([E, Ki, K, F])  # optional - gap_packages
-            sage: phi.im_gens()               # optional - gap_packages
+            sage: Q = QuantumGroup(['A',1])
+            sage: F, K, Ki, E = Q.gens()
+            sage: phi = Q.hom([E, Ki, K, F])
+            sage: phi.im_gens()
             (E[a1], (-q + q^-1)*[ K1 ; 1 ] + K1, K1, F[a1])
         """
         return self._im_gens
@@ -1183,17 +1190,18 @@ class QuantumGroupMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',1])  # optional - gap_packages
-            sage: F, K, Ki, E = Q.gens()  # optional - gap_packages
-            sage: phi = Q.hom([E, Ki, K, F])  # optional - gap_packages
-            sage: print(phi._repr_defn())  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',1])
+            sage: F, K, Ki, E = Q.gens()
+            sage: phi = Q.hom([E, Ki, K, F])
+            sage: print(phi._repr_defn())
             F[a1] |--> E[a1]
             K1 |--> (-q + q^-1)*[ K1 ; 1 ] + K1
             (-q + q^-1)*[ K1 ; 1 ] + K1 |--> K1
             E[a1] |--> F[a1]
         """
-        return '\n'.join('%s |--> %s'%(gen, self._im_gens[i])
+        return '\n'.join('%s |--> %s' % (gen, self._im_gens[i])
                          for i, gen in enumerate(self.domain().algebra_generators()))
+
 
 class QuantumGroupHomset(HomsetWithBase):
     r"""
@@ -1205,21 +1213,21 @@ class QuantumGroupHomset(HomsetWithBase):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',1])  # optional - gap_packages
-            sage: H = Hom(Q, Q)  # optional - gap_packages
-            sage: F, K, Ki, E = Q.gens()  # optional - gap_packages
-            sage: phi = H([E, Ki, K, F]); phi  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',1])
+            sage: H = Hom(Q, Q)
+            sage: F, K, Ki, E = Q.gens()
+            sage: phi = H([E, Ki, K, F]); phi
             Quantum group homomorphism endomorphism of Quantum Group of type ['A', 1] with q=q
               Defn: F[a1] |--> E[a1]
                     K1 |--> (-q + q^-1)*[ K1 ; 1 ] + K1
                     (-q + q^-1)*[ K1 ; 1 ] + K1 |--> K1
                     E[a1] |--> F[a1]
-            sage: H(phi) == phi  # optional - gap_packages
+            sage: H(phi) == phi
             True
-            sage: H2 = Hom(Q, Q, Modules(Fields()))  # optional - gap_packages
-            sage: H == H2  # optional - gap_packages
+            sage: H2 = Hom(Q, Q, Modules(Fields()))
+            sage: H == H2
             False
-            sage: H2(phi)  # optional - gap_packages
+            sage: H2(phi)
             Quantum group homomorphism endomorphism of Quantum Group of type ['A', 1] with q=q
               Defn: F[a1] |--> E[a1]
                     K1 |--> (-q + q^-1)*[ K1 ; 1 ] + K1
@@ -1234,6 +1242,7 @@ class QuantumGroupHomset(HomsetWithBase):
             raise TypeError("unable to coerce {}".format(im_gens))
         return QuantumGroupMorphism(self, im_gens)
 
+
 def projection_lower_half(Q):
     r"""
     Return the projection onto the lower half of the quantum group.
@@ -1241,8 +1250,8 @@ def projection_lower_half(Q):
     EXAMPLES::
 
         sage: from sage.algebras.quantum_groups.quantum_group_gap import projection_lower_half
-        sage: Q = QuantumGroup(['G',2])               # optional - gap_packages
-        sage: phi = projection_lower_half(Q); phi     # optional - gap_packages
+        sage: Q = QuantumGroup(['G',2])
+        sage: phi = projection_lower_half(Q); phi
         Quantum group homomorphism endomorphism of Quantum Group of type ['G', 2] with q=q
           Defn: F[a1] |--> F[a1]
                 F[a2] |--> F[a2]
@@ -1252,18 +1261,19 @@ def projection_lower_half(Q):
                 (-q^3 + q^-3)*[ K2 ; 1 ] + K2 |--> 0
                 E[a1] |--> 0
                 E[a2] |--> 0
-        sage: all(phi(f) == f for f in Q.F())         # optional - gap_packages
+        sage: all(phi(f) == f for f in Q.F())
         True
-        sage: all(phi(e) == Q.zero() for e in Q.E())  # optional - gap_packages
+        sage: all(phi(e) == Q.zero() for e in Q.E())
         True
-        sage: all(phi(K) == Q.zero() for K in Q.K())  # optional - gap_packages
+        sage: all(phi(K) == Q.zero() for K in Q.K())
         True
     """
     I = Q._cartan_type.index_set()
-    return Hom(Q,Q)(list(Q.F_simple()) + [Q.zero()]*(len(I)*3))
+    return Hom(Q, Q)(list(Q.F_simple()) + [Q.zero()] * (len(I) * 3))
+
 
 #####################################################################
-## Representations
+# Representations
 
 class QuaGroupRepresentationElement(QuaGroupModuleElement):
     """
@@ -1275,13 +1285,13 @@ class QuaGroupRepresentationElement(QuaGroupModuleElement):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['B',2])  # optional - gap_packages
-            sage: F1, F2 = Q.F_simple()  # optional - gap_packages
-            sage: q = Q.q()  # optional - gap_packages
-            sage: V = Q.highest_weight_module([2,1])  # optional - gap_packages
-            sage: v = V.highest_weight_vector()  # optional - gap_packages
-            sage: x = (2 - q) * v + F1*v + q*F2*F1*v  # optional - gap_packages
-            sage: loads(dumps(x)) == x  # optional - gap_packages
+            sage: Q = QuantumGroup(['B',2])
+            sage: F1, F2 = Q.F_simple()
+            sage: q = Q.q()
+            sage: V = Q.highest_weight_module([2,1])
+            sage: v = V.highest_weight_vector()
+            sage: x = (2 - q) * v + F1*v + q*F2*F1*v
+            sage: loads(dumps(x)) == x
             True
         """
         return (self.parent(), (self.monomial_coefficients(),))
@@ -1292,29 +1302,29 @@ class QuaGroupRepresentationElement(QuaGroupModuleElement):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['B',2])           # optional - gap_packages
-            sage: F1, F2 = Q.F_simple()               # optional - gap_packages
-            sage: q = Q.q()                           # optional - gap_packages
-            sage: V = Q.highest_weight_module([2,1])  # optional - gap_packages
-            sage: v = V.highest_weight_vector()       # optional - gap_packages
-            sage: F1 * v                              # optional - gap_packages
+            sage: Q = QuantumGroup(['B',2])
+            sage: F1, F2 = Q.F_simple()
+            sage: q = Q.q()
+            sage: V = Q.highest_weight_module([2,1])
+            sage: v = V.highest_weight_vector()
+            sage: F1 * v
             F[a1]*v0
-            sage: F2 * v                              # optional - gap_packages
+            sage: F2 * v
             F[a2]*v0
-            sage: F1^2 * v                            # optional - gap_packages
+            sage: F1^2 * v
             (q^2 + q^-2)*F[a1]^(2)*v0
-            sage: F2^2 * v                            # optional - gap_packages
+            sage: F2^2 * v
             0*v0
-            sage: (F1 * F2) * v                       # optional - gap_packages
+            sage: (F1 * F2) * v
             F[a1]*F[a2]*v0
-            sage: F1 * (F2 * v)                       # optional - gap_packages
+            sage: F1 * (F2 * v)
             F[a1]*F[a2]*v0
-            sage: (2 - q) * v + F1*v + q*F2*F1*v      # optional - gap_packages
+            sage: (2 - q) * v + F1*v + q*F2*F1*v
             (-q + 2)*1*v0 + F[a1]*v0 + (q^3)*F[a1]*F[a2]*v0 + (q)*F[a1+a2]*v0
         """
         try:
             if scalar.parent() is self.parent()._Q:
-                if self_on_left: # Only act: scalar * v
+                if self_on_left:  # Only act: scalar * v
                     return None
                 return self.__class__(self.parent(), scalar._libgap ** self._libgap)
         except AttributeError:
@@ -1329,15 +1339,15 @@ class QuaGroupRepresentationElement(QuaGroupModuleElement):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,1])  # optional - gap_packages
-            sage: v = V.highest_weight_vector()  # optional - gap_packages
-            sage: v._et(1)  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,1])
+            sage: v = V.highest_weight_vector()
+            sage: v._et(1)
             0*v0
-            sage: V.zero().e_tilde(1)  # optional - gap_packages
+            sage: V.zero().e_tilde(1)
             0*v0
         """
-        if not self: # self == 0
+        if not self:  # self == 0
             return self
         V = self.parent()
         ret = V._libgap.Ealpha(self._libgap, i)
@@ -1349,25 +1359,25 @@ class QuaGroupRepresentationElement(QuaGroupModuleElement):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['C',2])  # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,1])  # optional - gap_packages
-            sage: v = V.highest_weight_vector()  # optional - gap_packages
-            sage: v._ft(1)  # optional - gap_packages
+            sage: Q = QuantumGroup(['C',2])
+            sage: V = Q.highest_weight_module([1,1])
+            sage: v = V.highest_weight_vector()
+            sage: v._ft(1)
             F[a1]*v0
-            sage: v._ft(2)  # optional - gap_packages
+            sage: v._ft(2)
             F[a2]*v0
-            sage: v.f_tilde([1,1])  # optional - gap_packages
+            sage: v.f_tilde([1,1])
             0*v0
-            sage: v.f_tilde([2,2])  # optional - gap_packages
+            sage: v.f_tilde([2,2])
             0*v0
-            sage: v.f_tilde([2,1,1])  # optional - gap_packages
+            sage: v.f_tilde([2,1,1])
             (-q^-3)*F[a1]*F[a1+a2]*v0 + (-q^-4)*F[2*a1+a2]*v0
-            sage: v.f_tilde([1,2,2])  # optional - gap_packages
+            sage: v.f_tilde([1,2,2])
             F[a1+a2]*F[a2]*v0
-            sage: V.zero().f_tilde(1)  # optional - gap_packages
+            sage: V.zero().f_tilde(1)
             0*v0
         """
-        if not self: # self == 0
+        if not self:  # self == 0
             return self
         V = self.parent()
         ret = V._libgap.Falpha(self._libgap, i)
@@ -1380,44 +1390,63 @@ class QuaGroupRepresentationElement(QuaGroupModuleElement):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])           # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,1])  # optional - gap_packages
-            sage: v = V.highest_weight_vector()       # optional - gap_packages
-            sage: F1, F2 = Q.F_simple()               # optional - gap_packages
-            sage: q = Q.q()                           # optional - gap_packages
-            sage: x = v + F1*v + q*F2*F1*v; x         # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,1])
+            sage: v = V.highest_weight_vector()
+            sage: F1, F2 = Q.F_simple()
+            sage: q = Q.q()
+            sage: x = v + F1*v + q*F2*F1*v; x
             1*v0 + F[a1]*v0 + (q^2)*F[a1]*F[a2]*v0 + (q)*F[a1+a2]*v0
-            sage: sorted(x.monomial_coefficients().items(), key=str)  # optional - gap_packages
+            sage: sorted(x.monomial_coefficients().items(), key=str)
             [(0, 1), (1, 1), (3, q^2), (4, q)]
         """
         R = self.parent()._Q.base_ring()
         B = self.parent()._libgap.Basis()
         data = [R(str(c)) for c in libgap.Coefficients(B, self._libgap)]
-        return {i: c for i,c in enumerate(data) if c != 0}
+        return {i: c for i, c in enumerate(data) if c != 0}
 
-    def _vector_(self, R=None):
+    def _vector_(self, R=None, order=None, sparse=False):
         """
         Return ``self`` as a vector.
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])           # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,1])  # optional - gap_packages
-            sage: v = V.highest_weight_vector()       # optional - gap_packages
-            sage: vector(v)                           # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,1])
+            sage: v = V.highest_weight_vector()
+            sage: vector(v)
             (1, 0, 0, 0, 0, 0, 0, 0)
-            sage: F1, F2 = Q.F_simple()               # optional - gap_packages
-            sage: q = Q.q()                           # optional - gap_packages
-            sage: x = v + F1*v + q*F2*F1*v; x         # optional - gap_packages
+            sage: F1, F2 = Q.F_simple()
+            sage: q = Q.q()
+            sage: x = v + F1*v + q*F2*F1*v; x
             1*v0 + F[a1]*v0 + (q^2)*F[a1]*F[a2]*v0 + (q)*F[a1+a2]*v0
-            sage: vector(x)                           # optional - gap_packages
+            sage: vector(x)
             (1, 1, 0, q^2, q, 0, 0, 0)
+
+            sage: v._vector_(sparse=True)
+            (1, 0, 0, 0, 0, 0, 0, 0)
+            sage: x._vector_(sparse=True)
+            (1, 1, 0, q^2, q, 0, 0, 0)
+
+            sage: M = V.submodule([V.an_element()])
+            sage: M
+            Free module generated by {0} over Fraction Field of Univariate Polynomial Ring in q over Rational Field
         """
         V = self.parent()._dense_free_module(R)
+        if sparse:
+            V = V.sparse_module()
+            if order is None:
+                return V(self.monomial_coefficients())
+
         v = copy(V.zero())
-        for i,c in self.monomial_coefficients().items():
-            v[i] = c
+        if order is None:
+            for i, c in self.monomial_coefficients().items():
+                v[i] = c
+        else:
+            for i, c in self.monomial_coefficients().items():
+                v[order[i]] = c
         return v
+
 
 class CrystalGraphVertex(SageObject):
     r"""
@@ -1430,10 +1459,10 @@ class CrystalGraphVertex(SageObject):
         EXAMPLES::
 
             sage: from sage.algebras.quantum_groups.quantum_group_gap import CrystalGraphVertex
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,0])  # optional - gap_packages
-            sage: v = CrystalGraphVertex(V, '<F2*v0>')  # optional - gap_packages
-            sage: TestSuite(v).run()  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,0])
+            sage: v = CrystalGraphVertex(V, '<F2*v0>')
+            sage: TestSuite(v).run()
         """
         self.V = V
         self.s = s
@@ -1445,10 +1474,10 @@ class CrystalGraphVertex(SageObject):
         EXAMPLES::
 
             sage: from sage.algebras.quantum_groups.quantum_group_gap import CrystalGraphVertex
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,0])  # optional - gap_packages
-            sage: v = CrystalGraphVertex(V, '<F2*v0>')  # optional - gap_packages
-            sage: hash(v) == hash('<F2*v0>')  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,0])
+            sage: v = CrystalGraphVertex(V, '<F2*v0>')
+            sage: hash(v) == hash('<F2*v0>')
             True
         """
         return hash(self.s)
@@ -1460,14 +1489,14 @@ class CrystalGraphVertex(SageObject):
         EXAMPLES::
 
             sage: from sage.algebras.quantum_groups.quantum_group_gap import CrystalGraphVertex
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,0])  # optional - gap_packages
-            sage: v = CrystalGraphVertex(V, '<F2*v0>')  # optional - gap_packages
-            sage: vp = CrystalGraphVertex(V, '<F2*v0>')  # optional - gap_packages
-            sage: v == vp  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,0])
+            sage: v = CrystalGraphVertex(V, '<F2*v0>')
+            sage: vp = CrystalGraphVertex(V, '<F2*v0>')
+            sage: v == vp
             True
-            sage: vpp = CrystalGraphVertex(V, '<1*v0>')  # optional - gap_packages
-            sage: v == vpp  # optional - gap_packages
+            sage: vpp = CrystalGraphVertex(V, '<1*v0>')
+            sage: v == vpp
             False
         """
         return isinstance(other, CrystalGraphVertex) and self.s == other.s
@@ -1479,9 +1508,9 @@ class CrystalGraphVertex(SageObject):
         EXAMPLES::
 
             sage: from sage.algebras.quantum_groups.quantum_group_gap import CrystalGraphVertex
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,0])  # optional - gap_packages
-            sage: CrystalGraphVertex(V, '<F2*v0>')  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,0])
+            sage: CrystalGraphVertex(V, '<F2*v0>')
             <F2*v0>
         """
         return self.s
@@ -1493,20 +1522,20 @@ class CrystalGraphVertex(SageObject):
         EXAMPLES::
 
             sage: from sage.algebras.quantum_groups.quantum_group_gap import CrystalGraphVertex
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,0])  # optional - gap_packages
-            sage: v = CrystalGraphVertex(V, '<F2*v0>')  # optional - gap_packages
-            sage: latex(v)  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,0])
+            sage: v = CrystalGraphVertex(V, '<F2*v0>')
+            sage: latex(v)
             \langle F_{\alpha_{1} + \alpha_{2}} v_0 \rangle
         """
         # Essentially same as QuaGroupModuleElement._latex_
         from sage.misc.latex import latex
-        ret = self.s[1:-1] # Strip leading '<' and trailing '>'
-        for i,al in enumerate(self.V._pos_roots):
-            ret = ret.replace('F%s'%(i+1), 'F_{%s}'%latex(al))
-            ret = ret.replace('E%s'%(i+1), 'E_{%s}'%latex(al))
-        for i,ii in enumerate(self.V._cartan_type.index_set()):
-            ret = ret.replace('K%s'%(i+1), 'K_{%s}'%ii)
+        ret = self.s[1:-1]  # Strip leading '<' and trailing '>'
+        for i, al in enumerate(self.V._pos_roots):
+            ret = ret.replace('F%s' % (i + 1), 'F_{%s}' % latex(al))
+            ret = ret.replace('E%s' % (i + 1), 'E_{%s}' % latex(al))
+        for i, ii in enumerate(self.V._cartan_type.index_set()):
+            ret = ret.replace('K%s' % (i + 1), 'K_{%s}' % ii)
         # Fugly string parsing to get good looking latex
         # TODO: Find a better way
         ret = ret.replace('(', '{(')
@@ -1519,6 +1548,7 @@ class CrystalGraphVertex(SageObject):
             ret = ret[:m.start()+2]+'{'+ret[m.start()+2:m.end()]+'}'+ret[m.end():]
         return '\\langle {} \\rangle'.format(ret)
 
+
 class QuantumGroupModule(Parent, UniqueRepresentation):
     r"""
     Abstract base class for quantum group representations.
@@ -1529,9 +1559,9 @@ class QuantumGroupModule(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['G',2])  # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,0])  # optional - gap_packages
-            sage: TestSuite(V).run()  # optional - gap_packages
+            sage: Q = QuantumGroup(['G',2])
+            sage: V = Q.highest_weight_module([1,0])
+            sage: TestSuite(V).run()
         """
         self._Q = Q
         self._libgap_q = Q._libgap_q
@@ -1546,12 +1576,12 @@ class QuantumGroupModule(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,0])  # optional - gap_packages
-            sage: T = tensor([V,V])  # optional - gap_packages
-            sage: S = T.highest_weight_decomposition()[0]  # optional - gap_packages
-            sage: latex(S)  # optional - gap_packages  # random (depends on dot2tex)
-            \begin{tikzpicture}
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,0])
+            sage: T = tensor([V,V])
+            sage: S = T.highest_weight_decomposition()[0]
+            sage: latex(S)
+            \begin{tikzpicture}...
             ...
             \end{tikzpicture}
         """
@@ -1564,9 +1594,9 @@ class QuantumGroupModule(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])           # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,1])  # optional - gap_packages
-            sage: V.gap()                             # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,1])
+            sage: V.gap()
             <8-dimensional left-module over QuantumUEA( <root system of type A2>,
              Qpar = q )>
         """
@@ -1580,12 +1610,12 @@ class QuantumGroupModule(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,1])  # optional - gap_packages
-            sage: q = Q.q()  # optional - gap_packages
-            sage: V(0)  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,1])
+            sage: q = Q.q()
+            sage: V(0)
             0*v0
-            sage: V({1: q^2 - q^-2, 3: 2})  # optional - gap_packages
+            sage: V({1: q^2 - q^-2, 3: 2})
             (q^2-q^-2)*F[a1]*v0 + (2)*F[a1]*F[a2]*v0
         """
         if not elt:
@@ -1601,9 +1631,9 @@ class QuantumGroupModule(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])           # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,1])  # optional - gap_packages
-            sage: V.basis()                           # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,1])
+            sage: V.basis()
             Family (1*v0, F[a1]*v0, F[a2]*v0, F[a1]*F[a2]*v0, F[a1+a2]*v0,
                     F[a1]*F[a1+a2]*v0, F[a1+a2]*F[a2]*v0, F[a1+a2]^(2)*v0)
         """
@@ -1616,9 +1646,9 @@ class QuantumGroupModule(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])           # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,1])  # optional - gap_packages
-            sage: V.crystal_basis()                   # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,1])
+            sage: V.crystal_basis()
             Family (1*v0, F[a1]*v0, F[a2]*v0, F[a1]*F[a2]*v0,
                     (q)*F[a1]*F[a2]*v0 + F[a1+a2]*v0, F[a1+a2]*F[a2]*v0,
                     (-q^-2)*F[a1]*F[a1+a2]*v0, (-q^-1)*F[a1+a2]^(2)*v0)
@@ -1632,9 +1662,9 @@ class QuantumGroupModule(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',1])         # optional - gap_packages
-            sage: V = Q.highest_weight_module([1])  # optional - gap_packages
-            sage: V.R_matrix()                      # optional - gap_packages
+            sage: Q = QuantumGroup(['A',1])
+            sage: V = Q.highest_weight_module([1])
+            sage: V.R_matrix()
             [       1        0        0        0]
             [       0        q -q^2 + 1        0]
             [       0        0        q        0]
@@ -1653,13 +1683,13 @@ class QuantumGroupModule(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])           # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,1])  # optional - gap_packages
-            sage: G = V.crystal_graph(); G            # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,1])
+            sage: G = V.crystal_graph(); G
             Digraph on 8 vertices
 
-            sage: B = crystals.Tableaux(['A',2], shape=[2,1])     # optional - gap_packages
-            sage: G.is_isomorphic(B.digraph(), edge_labels=True)  # optional - gap_packages
+            sage: B = crystals.Tableaux(['A',2], shape=[2,1])
+            sage: G.is_isomorphic(B.digraph(), edge_labels=True)
             True
         """
         G = self._libgap.CrystalGraph()
@@ -1681,12 +1711,13 @@ class QuantumGroupModule(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])           # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,1])  # optional - gap_packages
-            sage: V.zero()                            # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,1])
+            sage: V.zero()
             0*v0
         """
         return self.element_class(self, self._libgap.ZeroImmutable())
+
 
 class HighestWeightModule(QuantumGroupModule):
     """
@@ -1699,19 +1730,19 @@ class HighestWeightModule(QuantumGroupModule):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: La = Q.cartan_type().root_system().weight_lattice().fundamental_weights()  # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,3])  # optional - gap_packages
-            sage: V is Q.highest_weight_module(La[1]+3*La[2])  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: La = Q.cartan_type().root_system().weight_lattice().fundamental_weights()
+            sage: V = Q.highest_weight_module([1,3])
+            sage: V is Q.highest_weight_module(La[1]+3*La[2])
             True
         """
         P = Q._cartan_type.root_system().weight_lattice()
         if isinstance(weight, (list, tuple)):
             La = P.fundamental_weights()
-            weight = P.sum(la*weight[i] for i,la in enumerate(La))
+            weight = P.sum(la * weight[i] for i, la in enumerate(La))
         else:
             weight = P(weight)
-        return super(HighestWeightModule, cls).__classcall__(cls, Q, weight)
+        return super().__classcall__(cls, Q, weight)
 
     def __init__(self, Q, weight):
         """
@@ -1719,9 +1750,9 @@ class HighestWeightModule(QuantumGroupModule):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,1])  # optional - gap_packages
-            sage: TestSuite(V).run()  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,1])
+            sage: TestSuite(V).run()
         """
         self._libgap = Q._libgap.HighestWeightModule(list(weight.to_vector()))
         self._weight = weight
@@ -1734,8 +1765,8 @@ class HighestWeightModule(QuantumGroupModule):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: Q.highest_weight_module([1,1])  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: Q.highest_weight_module([1,1])
             Highest weight module of weight Lambda[1] + Lambda[2] of
              Quantum Group of type ['A', 2] with q=q
         """
@@ -1747,10 +1778,10 @@ class HighestWeightModule(QuantumGroupModule):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,2])  # optional - gap_packages
-            sage: latex(V)  # optional - gap_packages
-            V(\Lambda_{1} + 2\Lambda_{2})
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,2])
+            sage: latex(V)
+            V(\Lambda_{1} + 2 \Lambda_{2})
         """
         from sage.misc.latex import latex
         return "V({})".format(latex(self._weight))
@@ -1762,9 +1793,9 @@ class HighestWeightModule(QuantumGroupModule):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])           # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,1])  # optional - gap_packages
-            sage: V.highest_weight_vector()           # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,1])
+            sage: V.highest_weight_vector()
             1*v0
         """
         return self.element_class(self, self._libgap.HighestWeightsAndVectors()[1][0][0])
@@ -1777,16 +1808,17 @@ class HighestWeightModule(QuantumGroupModule):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])            # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,1])   # optional - gap_packages
-            sage: Vp = Q.highest_weight_module([1,0])  # optional - gap_packages
-            sage: Vp.tensor(V)                         # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,1])
+            sage: Vp = Q.highest_weight_module([1,0])
+            sage: Vp.tensor(V)
             Highest weight module of weight Lambda[1] of Quantum Group of type ['A', 2] with q=q
              # Highest weight module of weight Lambda[1] + Lambda[2] of Quantum Group of type ['A', 2] with q=q
         """
         return TensorProductOfHighestWeightModules(self, *V, **options)
 
     Element = QuaGroupRepresentationElement
+
 
 class TensorProductOfHighestWeightModules(QuantumGroupModule):
     def __init__(self, *modules, **options):
@@ -1795,10 +1827,10 @@ class TensorProductOfHighestWeightModules(QuantumGroupModule):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,1])  # optional - gap_packages
-            sage: T = tensor([V,V])  # optional - gap_packages
-            sage: TestSuite(T).run()  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,1])
+            sage: T = tensor([V,V])
+            sage: TestSuite(T).run()
         """
         Q = modules[0]._Q
         self._modules = tuple(modules)
@@ -1812,10 +1844,10 @@ class TensorProductOfHighestWeightModules(QuantumGroupModule):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,0])  # optional - gap_packages
-            sage: T = tensor([V,V])  # optional - gap_packages
-            sage: T  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,0])
+            sage: T = tensor([V,V])
+            sage: T
             Highest weight module of weight Lambda[1] of Quantum Group of type ['A', 2] with q=q
              # Highest weight module of weight Lambda[1] of Quantum Group of type ['A', 2] with q=q
         """
@@ -1827,10 +1859,10 @@ class TensorProductOfHighestWeightModules(QuantumGroupModule):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,0])  # optional - gap_packages
-            sage: T = tensor([V,V])  # optional - gap_packages
-            sage: latex(T)  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,0])
+            sage: T = tensor([V,V])
+            sage: latex(T)
             V(\Lambda_{1}) \otimes V(\Lambda_{1})
         """
         from sage.misc.latex import latex
@@ -1847,10 +1879,10 @@ class TensorProductOfHighestWeightModules(QuantumGroupModule):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: V = Q.highest_weight_module([0,1])  # optional - gap_packages
-            sage: T = tensor([V,V])  # optional - gap_packages
-            sage: T._highest_weights_and_vectors  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([0,1])
+            sage: T = tensor([V,V])
+            sage: T._highest_weights_and_vectors
             [ [ [ 0, 2 ], [ 1, 0 ] ],
              [ [ 1*(1*v0<x>1*v0) ], [ -q^-1*(1*v0<x>F3*v0)+1*(F3*v0<x>1*v0) ] ] ]
         """
@@ -1862,10 +1894,10 @@ class TensorProductOfHighestWeightModules(QuantumGroupModule):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])           # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,0])  # optional - gap_packages
-            sage: T = tensor([V,V])                   # optional - gap_packages
-            sage: T.highest_weight_vectors()          # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,0])
+            sage: T = tensor([V,V])
+            sage: T.highest_weight_vectors()
             [1*(1*v0<x>1*v0), -q^-1*(1*v0<x>F[a1]*v0) + 1*(F[a1]*v0<x>1*v0)]
         """
         return [self.element_class(self, v)
@@ -1880,10 +1912,10 @@ class TensorProductOfHighestWeightModules(QuantumGroupModule):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,0])  # optional - gap_packages
-            sage: T = tensor([V,V])  # optional - gap_packages
-            sage: T.an_element()  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,0])
+            sage: T = tensor([V,V])
+            sage: T.an_element()
             1*(1*v0<x>1*v0)
         """
         return self.highest_weight_vectors()[0]
@@ -1895,18 +1927,34 @@ class TensorProductOfHighestWeightModules(QuantumGroupModule):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])           # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,0])  # optional - gap_packages
-            sage: T = tensor([V,V])                   # optional - gap_packages
-            sage: T.highest_weight_decomposition()    # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,0])
+            sage: T = tensor([V,V])
+            sage: T.highest_weight_decomposition()
             [Highest weight submodule with weight 2*Lambda[1] generated by 1*(1*v0<x>1*v0),
              Highest weight submodule with weight Lambda[2] generated by -q^-1*(1*v0<x>F[a1]*v0) + 1*(F[a1]*v0<x>1*v0)]
         """
         return [HighestWeightSubmodule(self, self.element_class(self, v), tuple(wt.sage()))
-                for wt,vecs in zip(*self._highest_weights_and_vectors)
+                for wt, vecs in zip(*self._highest_weights_and_vectors)
                 for v in vecs]
 
+    def tensor_factors(self):
+        r"""
+        Return the factors of ``self``.
+
+        EXAMPLES::
+
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,0])
+            sage: T = tensor([V,V])
+            sage: T.tensor_factors()
+            (Highest weight module of weight Lambda[1] of Quantum Group of type ['A', 2] with q=q,
+             Highest weight module of weight Lambda[1] of Quantum Group of type ['A', 2] with q=q)
+        """
+        return self._modules
+
     Element = QuaGroupRepresentationElement
+
 
 class HighestWeightSubmodule(QuantumGroupModule):
     def __init__(self, ambient, gen, weight):
@@ -1915,14 +1963,18 @@ class HighestWeightSubmodule(QuantumGroupModule):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,0])  # optional - gap_packages
-            sage: T = tensor([V,V])  # optional - gap_packages
-            sage: S = T.highest_weight_decomposition()[0]  # optional - gap_packages
-            sage: TestSuite(S).run()  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,0])
+            sage: T = tensor([V,V])
+            sage: S = T.highest_weight_decomposition()[0]
+            sage: TestSuite(S).run()
         """
         self._ambient = ambient
-        cat = ambient.category()
+        # We do not use the generic ambient category since submodules of tensor
+        #   products are considered to be tensor products.
+        # This should be reverted after this has changed.
+        #cat = ambient.category()
+        cat = Modules(ambient.base_ring()).FiniteDimensional().WithBasis()
         QuantumGroupModule.__init__(self, ambient._Q, cat.Subobjects())
 
         self._gen = gen
@@ -1932,7 +1984,7 @@ class HighestWeightSubmodule(QuantumGroupModule):
         # Convert the weight to an element of the weight lattice
         P = self._Q._cartan_type.root_system().weight_lattice()
         La = P.fundamental_weights()
-        self._weight = P.sum(la*weight[i] for i,la in enumerate(La))
+        self._weight = P.sum(la * weight[i] for i, la in enumerate(La))
 
     def _repr_(self):
         """
@@ -1940,10 +1992,10 @@ class HighestWeightSubmodule(QuantumGroupModule):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,0])  # optional - gap_packages
-            sage: T = tensor([V,V])  # optional - gap_packages
-            sage: T.highest_weight_decomposition()  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,0])
+            sage: T = tensor([V,V])
+            sage: T.highest_weight_decomposition()
             [Highest weight submodule with weight 2*Lambda[1]
                 generated by 1*(1*v0<x>1*v0),
              Highest weight submodule with weight Lambda[2]
@@ -1958,11 +2010,11 @@ class HighestWeightSubmodule(QuantumGroupModule):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,0])  # optional - gap_packages
-            sage: T = tensor([V,V])  # optional - gap_packages
-            sage: S = T.highest_weight_decomposition()[0]  # optional - gap_packages
-            sage: S._ambient_basis_map  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,0])
+            sage: T = tensor([V,V])
+            sage: S = T.highest_weight_decomposition()[0]
+            sage: S._ambient_basis_map
             {0: 1*(1*v0<x>1*v0),
              1: 1*(1*v0<x>F[a1]*v0) + q^-1*(F[a1]*v0<x>1*v0),
              2: 1*(F[a1]*v0<x>F[a1]*v0),
@@ -1972,7 +2024,7 @@ class HighestWeightSubmodule(QuantumGroupModule):
         """
         B = list(self.basis())
         d = {self.highest_weight_vector(): self._gen}
-        todo = set([self.highest_weight_vector()])
+        todo = {self.highest_weight_vector()}
         I = self._cartan_type.index_set()
         while todo:
             x = todo.pop()
@@ -1989,11 +2041,11 @@ class HighestWeightSubmodule(QuantumGroupModule):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])                # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,0])       # optional - gap_packages
-            sage: T = tensor([V,V])                        # optional - gap_packages
-            sage: S = T.highest_weight_decomposition()[0]  # optional - gap_packages
-            sage: S.ambient() is T                         # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,0])
+            sage: T = tensor([V,V])
+            sage: S = T.highest_weight_decomposition()[0]
+            sage: S.ambient() is T
             True
         """
         return self._ambient
@@ -2005,16 +2057,16 @@ class HighestWeightSubmodule(QuantumGroupModule):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])                # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,0])       # optional - gap_packages
-            sage: T = tensor([V,V])                        # optional - gap_packages
-            sage: S = T.highest_weight_decomposition()[0]  # optional - gap_packages
-            sage: S.lift                                   # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,0])
+            sage: T = tensor([V,V])
+            sage: S = T.highest_weight_decomposition()[0]
+            sage: S.lift
             Generic morphism:
               From: Highest weight submodule with weight 2*Lambda[1] generated by 1*(1*v0<x>1*v0)
               To:   Highest weight module ... # Highest weight module ...
-            sage: x = sum(S.basis())                       # optional - gap_packages
-            sage: x.lift()                                 # optional - gap_packages
+            sage: x = sum(S.basis())
+            sage: x.lift()
             1*(1*v0<x>1*v0) + 1*(1*v0<x>F[a1]*v0) + 1*(1*v0<x>F[a1+a2]*v0)
              + q^-1*(F[a1]*v0<x>1*v0) + 1*(F[a1]*v0<x>F[a1]*v0)
              + 1*(F[a1]*v0<x>F[a1+a2]*v0) + q^-1*(F[a1+a2]*v0<x>1*v0)
@@ -2029,10 +2081,10 @@ class HighestWeightSubmodule(QuantumGroupModule):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])           # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,0])  # optional - gap_packages
-            sage: T = tensor([V,V])                   # optional - gap_packages
-            sage: all(S.retract(S.lift(x)) == x       # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,0])
+            sage: T = tensor([V,V])
+            sage: all(S.retract(S.lift(x)) == x
             ....:     for S in T.highest_weight_decomposition()
             ....:     for x in S.basis())
             True
@@ -2046,13 +2098,13 @@ class HighestWeightSubmodule(QuantumGroupModule):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])                # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,0])       # optional - gap_packages
-            sage: T = tensor([V,V])                        # optional - gap_packages
-            sage: S = T.highest_weight_decomposition()[1]  # optional - gap_packages
-            sage: u = S.highest_weight_vector(); u         # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,0])
+            sage: T = tensor([V,V])
+            sage: S = T.highest_weight_decomposition()[1]
+            sage: u = S.highest_weight_vector(); u
             (1)*e.1
-            sage: u.lift()                                 # optional - gap_packages
+            sage: u.lift()
             -q^-1*(1*v0<x>F[a1]*v0) + 1*(F[a1]*v0<x>1*v0)
         """
         I = self._cartan_type.index_set()
@@ -2075,16 +2127,16 @@ class HighestWeightSubmodule(QuantumGroupModule):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])                # optional - gap_packages
-            sage: V = Q.highest_weight_module([1,0])       # optional - gap_packages
-            sage: T = tensor([V,V])                        # optional - gap_packages
-            sage: S = T.highest_weight_decomposition()[1]  # optional - gap_packages
-            sage: G = S.crystal_graph()                    # optional - gap_packages
-            sage: sorted(G.vertices(sort=False), key=str)            # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: V = Q.highest_weight_module([1,0])
+            sage: T = tensor([V,V])
+            sage: S = T.highest_weight_decomposition()[1]
+            sage: G = S.crystal_graph()
+            sage: sorted(G.vertices(sort=False), key=str)
             [<-q^-1*(1*v0<x>F[a1+a2]*v0) + 1*(F[a1+a2]*v0<x>1*v0)>,
              <-q^-1*(1*v0<x>F[a1]*v0) + 1*(F[a1]*v0<x>1*v0)>,
              <-q^-1*(F[a1]*v0<x>F[a1+a2]*v0) + 1*(F[a1+a2]*v0<x>F[a1]*v0)>]
-            sage: sorted(S.crystal_graph(False).vertices(sort=False), key=str)  # optional - gap_packages
+            sage: sorted(S.crystal_graph(False).vertices(sort=False), key=str)
             [<(1)*e.1>, <(1)*e.2>, <(1)*e.3>]
         """
         G = self._libgap.CrystalGraph()
@@ -2108,6 +2160,7 @@ class HighestWeightSubmodule(QuantumGroupModule):
 
     Element = QuaGroupRepresentationElement
 
+
 # TODO: Generalized this to Verma modules
 class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
     """
@@ -2121,14 +2174,14 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: from sage.algebras.quantum_groups.quantum_group_gap import LowerHalfQuantumGroup
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: Q.lower_half() is LowerHalfQuantumGroup(Q)  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: Q.lower_half() is LowerHalfQuantumGroup(Q)
             True
         """
         from sage.combinat.root_system.cartan_type import CartanType_abstract
         if isinstance(Q, CartanType_abstract):
             Q = QuantumGroup(Q)
-        return super(LowerHalfQuantumGroup, cls).__classcall__(cls, Q)
+        return super().__classcall__(cls, Q)
 
     def __init__(self, Q):
         """
@@ -2136,9 +2189,9 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: B = Q.lower_half()  # optional - gap_packages
-            sage: TestSuite(B).run()  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: B = Q.lower_half()
+            sage: TestSuite(B).run()
         """
         self._Q = Q
         self._libgap = Q._libgap
@@ -2156,8 +2209,8 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: Q.lower_half()  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: Q.lower_half()
             Lower Half of Quantum Group of type ['A', 2] with q=q
         """
         return "Lower Half of {}".format(self._Q)
@@ -2168,12 +2221,12 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: latex(Q.lower_half())  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: latex(Q.lower_half())
             U^-_{q}(A_{2})
         """
         from sage.misc.latex import latex
-        return "U^-_{%s}(%s)"%(latex(self._Q._q), latex(self._cartan_type))
+        return "U^-_{%s}(%s)" % (latex(self._Q._q), latex(self._cartan_type))
 
     def _element_constructor_(self, elt):
         r"""
@@ -2181,14 +2234,14 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: B = Q.lower_half()  # optional - gap_packages
-            sage: q = Q.q()  # optional - gap_packages
-            sage: B(0)  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: B = Q.lower_half()
+            sage: q = Q.q()
+            sage: B(0)
             0
-            sage: B(1 + q^2)  # optional - gap_packages
+            sage: B(1 + q^2)
             (q^2 + 1)*1
-            sage: B({(1,2,0): q, (0,0,2): q^2 - 2})  # optional - gap_packages
+            sage: B({(1,2,0): q, (0,0,2): q^2 - 2})
             (q)*F[a1]*F[a1+a2]^(2) + (q^2-2)*F[a2]^(2)
         """
         if not elt:
@@ -2207,9 +2260,9 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: B = Q.lower_half()         # optional - gap_packages
-            sage: B.ambient() is Q           # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: B = Q.lower_half()
+            sage: B.ambient() is Q
             True
         """
         return self._Q
@@ -2221,9 +2274,9 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: B = Q.lower_half()         # optional - gap_packages
-            sage: B.highest_weight_vector()  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: B = Q.lower_half()
+            sage: B.highest_weight_vector()
             1
         """
         return self.element_class(self, self._Q.one()._libgap)
@@ -2238,9 +2291,9 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: B = Q.lower_half()         # optional - gap_packages
-            sage: B.zero()                   # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: B = Q.lower_half()
+            sage: B.zero()
             0
         """
         return self.element_class(self, self._Q._libgap.ZeroImmutable())
@@ -2252,9 +2305,9 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: B = Q.lower_half()         # optional - gap_packages
-            sage: B.algebra_generators()     # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: B = Q.lower_half()
+            sage: B.algebra_generators()
             Finite family {1: F[a1], 2: F[a2]}
         """
         F = self._Q.F_simple()
@@ -2270,20 +2323,20 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: B = Q.lower_half()  # optional - gap_packages
-            sage: B._construct_monomial((1,2,1))  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: B = Q.lower_half()
+            sage: B._construct_monomial((1,2,1))
             F[a1]*F[a1+a2]^(2)*F[a2]
-            sage: B._construct_monomial((3,0,1))  # optional - gap_packages
+            sage: B._construct_monomial((3,0,1))
             F[a1]^(3)*F[a2]
         """
         F = libgap.eval('ElementsFamily')(libgap.eval('FamilyObj')(self._libgap))
         one = self._libgap_base.One()
         data = []
-        for i,val in enumerate(k):
+        for i, val in enumerate(k):
             if val == 0:
                 continue
-            data.append(i+1)
+            data.append(i + 1)
             data.append(val)
         return self.element_class(self, F.ObjByExtRep([data, one]))
 
@@ -2298,16 +2351,16 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: B = Q.lower_half()         # optional - gap_packages
-            sage: basis = B.basis(); basis   # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: B = Q.lower_half()
+            sage: basis = B.basis(); basis
             Lazy family (monomial(i))_{i in The Cartesian product of
              (Non negative integers, Non negative integers, Non negative integers)}
-            sage: basis[1,2,1]               # optional - gap_packages
+            sage: basis[1,2,1]
             F[a1]*F[a1+a2]^(2)*F[a2]
-            sage: basis[1,2,4]               # optional - gap_packages
+            sage: basis[1,2,4]
             F[a1]*F[a1+a2]^(2)*F[a2]^(4)
-            sage: basis[1,0,4]               # optional - gap_packages
+            sage: basis[1,0,4]
             F[a1]*F[a2]^(4)
         """
         I = cartesian_product([NonNegativeIntegers()]*len(self._pos_roots))
@@ -2319,9 +2372,9 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: B = Q.lower_half()         # optional - gap_packages
-            sage: B._construct_canonical_basis_elts((1,2))  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: B = Q.lower_half()
+            sage: B._construct_canonical_basis_elts((1,2))
             [F[a1]*F[a2]^(2), (q^2)*F[a1]*F[a2]^(2) + F[a1+a2]*F[a2]]
         """
         B = self._libgap.CanonicalBasis()
@@ -2334,14 +2387,14 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])            # optional - gap_packages
-            sage: B = Q.lower_half()                   # optional - gap_packages
-            sage: C = B.canonical_basis_elements(); C  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: B = Q.lower_half()
+            sage: C = B.canonical_basis_elements(); C
             Lazy family (Canonical basis(i))_{i in The Cartesian product of
              (Non negative integers, Non negative integers)}
-            sage: C[2,1]                               # optional - gap_packages
+            sage: C[2,1]
             [F[a1]^(2)*F[a2], F[a1]*F[a1+a2] + (q^2)*F[a1]^(2)*F[a2]]
-            sage: C[1,2]                               # optional - gap_packages
+            sage: C[1,2]
             [F[a1]*F[a2]^(2), (q^2)*F[a1]*F[a2]^(2) + F[a1+a2]*F[a2]]
         """
         I = cartesian_product([NonNegativeIntegers()]*len(self._cartan_type.index_set()))
@@ -2353,11 +2406,11 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])      # optional - gap_packages
-            sage: B = Q.lower_half()             # optional - gap_packages
-            sage: x = B.lift(B.an_element()); x  # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: B = Q.lower_half()
+            sage: x = B.lift(B.an_element()); x
             1
-            sage: x.parent() is Q                # optional - gap_packages
+            sage: x.parent() is Q
             True
         """
         return self._Q.element_class(self._Q, elt._libgap)
@@ -2368,12 +2421,12 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-            sage: B = Q.lower_half()         # optional - gap_packages
-            sage: x = Q.an_element(); x      # optional - gap_packages
+            sage: Q = QuantumGroup(['A',2])
+            sage: B = Q.lower_half()
+            sage: x = Q.an_element(); x
             1 + (q)*F[a1] + E[a1] + (q^2-1-q^-2 + q^-4)*[ K1 ; 2 ]
              + K1 + (-q^-1 + q^-3)*K1[ K1 ; 1 ]
-            sage: B.retract(x)               # optional - gap_packages
+            sage: B.retract(x)
             1 + (q)*F[a1]
         """
         return self.element_class(self, self._proj(elt)._libgap)
@@ -2388,20 +2441,20 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
 
             EXAMPLES::
 
-                sage: Q = QuantumGroup(['A',2])         # optional - gap_packages
-                sage: B = Q.lower_half()                # optional - gap_packages
-                sage: F1, F2 = Q.F_simple()             # optional - gap_packages
-                sage: v = B.highest_weight_vector(); v  # optional - gap_packages
+                sage: Q = QuantumGroup(['A',2])
+                sage: B = Q.lower_half()
+                sage: F1, F2 = Q.F_simple()
+                sage: v = B.highest_weight_vector(); v
                 1
-                sage: 2 * v                             # optional - gap_packages
+                sage: 2 * v
                 (2)*1
-                sage: v * (3/2)                         # optional - gap_packages
+                sage: v * (3/2)
                 (3/2)*1
-                sage: F1 * v                            # optional - gap_packages
+                sage: F1 * v
                 F[a1]
-                sage: F2 * (F1 * v)                     # optional - gap_packages
+                sage: F2 * (F1 * v)
                 (q)*F[a1]*F[a2] + F[a1+a2]
-                sage: (F1 * v) * F2                     # optional - gap_packages
+                sage: (F1 * v) * F2
                 F[a1]*F[a2]
             """
             try:
@@ -2419,20 +2472,20 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
 
         def _mul_(self, other):
             r"""
-            Multiply ``self`` and ``other.
+            Multiply ``self`` and ``other``.
 
             EXAMPLES::
 
-                sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-                sage: B = Q.lower_half()  # optional - gap_packages
-                sage: F1, F2 = Q.F_simple()  # optional - gap_packages
-                sage: v = B.highest_weight_vector()  # optional - gap_packages
-                sage: f1, f2 = F1 * v, F2 * v  # optional - gap_packages
-                sage: f1 * f2  # optional - gap_packages
+                sage: Q = QuantumGroup(['A',2])
+                sage: B = Q.lower_half()
+                sage: F1, F2 = Q.F_simple()
+                sage: v = B.highest_weight_vector()
+                sage: f1, f2 = F1 * v, F2 * v
+                sage: f1 * f2
                 F[a1]*F[a2]
-                sage: f1^2 * f2  # optional - gap_packages
+                sage: f1^2 * f2
                 (q + q^-1)*F[a1]^(2)*F[a2]
-                sage: f2 * f1^2 * f2  # optional - gap_packages
+                sage: f2 * f1^2 * f2
                 (q + q^-1)*F[a1]*F[a1+a2]*F[a2]
                  + (q^4 + 2*q^2 + 1)*F[a1]^(2)*F[a2]^(2)
             """
@@ -2446,11 +2499,11 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
 
             EXAMPLES::
 
-                sage: Q = QuantumGroup(['A',2])         # optional - gap_packages
-                sage: B = Q.lower_half()                # optional - gap_packages
-                sage: x = B.retract(Q.an_element()); x  # optional - gap_packages
+                sage: Q = QuantumGroup(['A',2])
+                sage: B = Q.lower_half()
+                sage: x = B.retract(Q.an_element()); x
                 1 + (q)*F[a1]
-                sage: sorted(x.monomial_coefficients().items(), key=str)  # optional - gap_packages
+                sage: sorted(x.monomial_coefficients().items(), key=str)
                 [((0, 0, 0), 1), ((1, 0, 0), q)]
             """
             ext_rep = self._libgap.ExtRepOfObj()
@@ -2471,27 +2524,27 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
 
             EXAMPLES::
 
-                sage: Q = QuantumGroup(['A',2])     # optional - gap_packages
-                sage: F1, F2 = Q.F_simple()         # optional - gap_packages
-                sage: B = Q.lower_half()            # optional - gap_packages
-                sage: x = B(Q.an_element()); x      # optional - gap_packages
+                sage: Q = QuantumGroup(['A',2])
+                sage: F1, F2 = Q.F_simple()
+                sage: B = Q.lower_half()
+                sage: x = B(Q.an_element()); x
                 1 + (q)*F[a1]
-                sage: x.bar()                       # optional - gap_packages
+                sage: x.bar()
                 1 + (q^-1)*F[a1]
-                sage: (F1*x).bar() == F1 * x.bar()  # optional - gap_packages
+                sage: (F1*x).bar() == F1 * x.bar()
                 True
-                sage: (F2*x).bar() == F2 * x.bar()  # optional - gap_packages
+                sage: (F2*x).bar() == F2 * x.bar()
                 True
 
-                sage: Q = QuantumGroup(['G',2])     # optional - gap_packages
-                sage: F1, F2 = Q.F_simple()         # optional - gap_packages
-                sage: q = Q.q()                     # optional - gap_packages
-                sage: B = Q.lower_half()            # optional - gap_packages
-                sage: x = B(q^-2*F1*F2^2*F1)        # optional - gap_packages
-                sage: x                             # optional - gap_packages
+                sage: Q = QuantumGroup(['G',2])
+                sage: F1, F2 = Q.F_simple()
+                sage: q = Q.q()
+                sage: B = Q.lower_half()
+                sage: x = B(q^-2*F1*F2^2*F1)
+                sage: x
                 (q + q^-5)*F[a1]*F[a1+a2]*F[a2]
                  + (q^8 + q^6 + q^2 + 1)*F[a1]^(2)*F[a2]^(2)
-                sage: x.bar()                       # optional - gap_packages
+                sage: x.bar()
                 (q^5 + q^-1)*F[a1]*F[a1+a2]*F[a2]
                  + (q^12 + q^10 + q^6 + q^4)*F[a1]^(2)*F[a2]^(2)
             """
@@ -2505,27 +2558,27 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
 
             EXAMPLES::
 
-                sage: Q = QuantumGroup(['A',2])           # optional - gap_packages
-                sage: F1, F2 = Q.F_simple()               # optional - gap_packages
-                sage: B = Q.lower_half()                  # optional - gap_packages
-                sage: x = B(Q.an_element()); x            # optional - gap_packages
+                sage: Q = QuantumGroup(['A',2])
+                sage: F1, F2 = Q.F_simple()
+                sage: B = Q.lower_half()
+                sage: x = B(Q.an_element()); x
                 1 + (q)*F[a1]
-                sage: x.tau()                             # optional - gap_packages
+                sage: x.tau()
                 1 + (q)*F[a1]
-                sage: (F1*x).tau() == x.tau() * F1.tau()  # optional - gap_packages
+                sage: (F1*x).tau() == x.tau() * F1.tau()
                 True
-                sage: (F2*x).tau() == x.tau() * F2.tau()  # optional - gap_packages
+                sage: (F2*x).tau() == x.tau() * F2.tau()
                 True
 
-                sage: Q = QuantumGroup(['G',2])           # optional - gap_packages
-                sage: F1, F2 = Q.F_simple()               # optional - gap_packages
-                sage: q = Q.q()                           # optional - gap_packages
-                sage: B = Q.lower_half()                  # optional - gap_packages
-                sage: x = B(q^-2*F1*F2^2*F1)              # optional - gap_packages
-                sage: x                                   # optional - gap_packages
+                sage: Q = QuantumGroup(['G',2])
+                sage: F1, F2 = Q.F_simple()
+                sage: q = Q.q()
+                sage: B = Q.lower_half()
+                sage: x = B(q^-2*F1*F2^2*F1)
+                sage: x
                 (q + q^-5)*F[a1]*F[a1+a2]*F[a2]
                  + (q^8 + q^6 + q^2 + 1)*F[a1]^(2)*F[a2]^(2)
-                sage: x.tau()                             # optional - gap_packages
+                sage: x.tau()
                 (q + q^-5)*F[a1]*F[a1+a2]*F[a2]
                  + (q^8 + q^6 + q^2 + 1)*F[a1]^(2)*F[a2]^(2)
             """
@@ -2544,13 +2597,13 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
 
             EXAMPLES::
 
-                sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-                sage: L = Q.lower_half()         # optional - gap_packages
-                sage: v = L.highest_weight_vector().f_tilde([1,2,2,1]); v  # optional - gap_packages
+                sage: Q = QuantumGroup(['A',2])
+                sage: L = Q.lower_half()
+                sage: v = L.highest_weight_vector().f_tilde([1,2,2,1]); v
                 F[a1]*F[a1+a2]*F[a2]
-                sage: v.braid_group_action([1])  # optional - gap_packages
+                sage: v.braid_group_action([1])
                 (-q^3-q)*F[a2]^(2)
-                sage: v.braid_group_action([]) == v  # optional - gap_packages
+                sage: v.braid_group_action([]) == v
                 True
             """
             if not braid:
@@ -2575,21 +2628,21 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
 
             EXAMPLES::
 
-                sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-                sage: L = Q.lower_half()  # optional - gap_packages
-                sage: v = L.highest_weight_vector()  # optional - gap_packages
-                sage: v._et(1)  # optional - gap_packages
+                sage: Q = QuantumGroup(['A',2])
+                sage: L = Q.lower_half()
+                sage: v = L.highest_weight_vector()
+                sage: v._et(1)
                 0
-                sage: w = v.f_tilde([1,2,1]); w  # optional - gap_packages
+                sage: w = v.f_tilde([1,2,1]); w
                 F[a1]*F[a1+a2]
-                sage: w._et(1)  # optional - gap_packages
+                sage: w._et(1)
                 F[a1+a2]
-                sage: w._et(2)  # optional - gap_packages
+                sage: w._et(2)
                 F[a1]^(2)
-                sage: L.zero().e_tilde(1)  # optional - gap_packages
+                sage: L.zero().e_tilde(1)
                 0
             """
-            if not self: # self == 0
+            if not self:  # self == 0
                 return self
             Q = self.parent()
             ret = self._libgap.Ealpha(i)
@@ -2603,15 +2656,15 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
 
             EXAMPLES::
 
-                sage: Q = QuantumGroup(['A',2])  # optional - gap_packages
-                sage: L = Q.lower_half()  # optional - gap_packages
-                sage: v = L.highest_weight_vector()  # optional - gap_packages
-                sage: v._ft(1)  # optional - gap_packages
+                sage: Q = QuantumGroup(['A',2])
+                sage: L = Q.lower_half()
+                sage: v = L.highest_weight_vector()
+                sage: v._ft(1)
                 F[a1]
-                sage: L.zero().f_tilde(1)  # optional - gap_packages
+                sage: L.zero().f_tilde(1)
                 0
             """
-            if not self: # self == 0
+            if not self:  # self == 0
                 return self
             Q = self.parent()
             ret = self._libgap.Falpha(i)
@@ -2619,23 +2672,23 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
                 return self.parent().zero()
             return self.__class__(Q, Q._proj(ret)._libgap)
 
+
 def _unpickle_generic_element(parent, data):
     """
     Used to unpickle an element of ``parent`` using ``data``.
 
     EXAMPLES::
 
-        sage: Q = QuantumGroup(['D',4])  # optional - gap_packages
-        sage: x = Q.an_element()  # optional - gap_packages
-        sage: loads(dumps(x)) == x  # indirect doctest  # optional - gap_packages
+        sage: Q = QuantumGroup(['D',4])
+        sage: x = Q.an_element()
+        sage: loads(dumps(x)) == x  # indirect doctest
         True
     """
     F = libgap.eval('ElementsFamily')(libgap.eval('FamilyObj')(parent._libgap))
     ret = []
     # We need to multiply by this to get the right type in GAP
     one = parent._libgap_base.One()
-    for i in range(len(data)//2):
-        ret.append( libgap(data[2*i]) )
-        ret.append( one * libgap(data[2*i+1].subs(q=parent._libgap_q)) )
+    for i in range(len(data) // 2):
+        ret.append(libgap(data[2 * i]))
+        ret.append(one * libgap(data[2 * i + 1].subs(q=parent._libgap_q)))
     return parent.element_class(parent, F.ObjByExtRep(ret))
-

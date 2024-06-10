@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from sage.rings.integer import Integer
 from sage.structure.sage_object import SageObject
 from sage.lfunctions.dokchitser import Dokchitser
@@ -49,7 +48,7 @@ class GrossZagierLseries(SageObject):
         ideal = A.ideal()
         K = A.gens()[0].parent()
         D = K.disc()
-        if not(K.degree() == 2 and D < 0):
+        if not (K.degree() == 2 and D < 0):
             raise ValueError("A is not an ideal class in an"
                              " imaginary quadratic field")
         Q = ideal.quadratic_form().reduced_form()

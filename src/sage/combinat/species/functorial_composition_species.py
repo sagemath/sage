@@ -1,8 +1,7 @@
 """
 Functorial composition species
 """
-from __future__ import absolute_import
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -14,13 +13,15 @@ from __future__ import absolute_import
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from .species import GenericCombinatorialSpecies
 from .structure import GenericSpeciesStructure
 
+
 class FunctorialCompositionStructure(GenericSpeciesStructure):
     pass
+
 
 class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
     def __init__(self, F, G, min=None, max=None, weight=None):
@@ -34,22 +35,22 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
             sage: WP = species.SubsetSpecies()
             sage: P2 = E2*E
             sage: G = WP.functorial_composition(P2)
-            sage: G.isotype_generating_series().coefficients(5)
+            sage: G.isotype_generating_series()[0:5]                                    # needs sage.modules
             [1, 1, 2, 4, 11]
 
             sage: G = species.SimpleGraphSpecies()
-            sage: c = G.generating_series().coefficients(2)
+            sage: c = G.generating_series()[0:2]
             sage: type(G)
             <class 'sage.combinat.species.functorial_composition_species.FunctorialCompositionSpecies'>
             sage: G == loads(dumps(G))
             True
-            sage: G._check() #False due to isomorphism types not being implemented
+            sage: G._check()  # False due to isomorphism types not being implemented    # needs sage.modules
             False
         """
         self._F = F
         self._G = G
         self._state_info = [F, G]
-        self._name = "Functorial composition of (%s) and (%s)"%(F, G)
+        self._name = f"Functorial composition of ({F}) and ({G})"
         GenericCombinatorialSpecies.__init__(self, min=None, max=None, weight=None)
 
     _default_structure_class = FunctorialCompositionStructure
@@ -70,8 +71,7 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
              {{1, 2}*{3}, {1, 3}*{2}, {2, 3}*{1}}]
         """
         gs = self._G.structures(s).list()
-        for f in self._F.structures(gs):
-            yield f
+        yield from self._F.structures(gs)
 
     def _isotypes(self, structure_class, s):
         """
@@ -81,20 +81,19 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
         EXAMPLES::
 
             sage: G = species.SimpleGraphSpecies()
-            sage: G.isotypes([1,2,3]).list()
+            sage: G.isotypes([1,2,3]).list()                                            # needs sage.modules
             Traceback (most recent call last):
             ...
             NotImplementedError
         """
         raise NotImplementedError
 
-
     def _gs(self, series_ring, base_ring):
         """
         EXAMPLES::
 
             sage: G = species.SimpleGraphSpecies()
-            sage: G.generating_series().coefficients(5)
+            sage: G.generating_series()[0:5]
             [1, 1, 1, 4/3, 8/3]
         """
         return self._F.generating_series(base_ring).functorial_composition(self._G.generating_series(base_ring))
@@ -104,7 +103,7 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
         EXAMPLES::
 
             sage: G = species.SimpleGraphSpecies()
-            sage: G.isotype_generating_series().coefficients(5)
+            sage: G.isotype_generating_series()[0:5]                                    # needs sage.modules
             [1, 1, 2, 4, 11]
         """
         return self.cycle_index_series(base_ring).isotype_generating_series()
@@ -114,14 +113,14 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
         EXAMPLES::
 
             sage: G = species.SimpleGraphSpecies()
-            sage: G.cycle_index_series().coefficients(5)
+            sage: G.cycle_index_series()[0:5]                                           # needs sage.modules
             [p[],
              p[1],
              p[1, 1] + p[2],
              4/3*p[1, 1, 1] + 2*p[2, 1] + 2/3*p[3],
              8/3*p[1, 1, 1, 1] + 4*p[2, 1, 1] + 2*p[2, 2] + 4/3*p[3, 1] + p[4]]
         """
-        return  self._F.cycle_index_series(base_ring).functorial_composition(self._G.cycle_index_series(base_ring))
+        return self._F.cycle_index_series(base_ring).functorial_composition(self._G.cycle_index_series(base_ring))
 
     def weight_ring(self):
         """
@@ -143,5 +142,6 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
 
         return cm.explain(f_weights, g_weights, verbosity=0)
 
-#Backward compatibility
+
+# Backward compatibility
 FunctorialCompositionSpecies_class = FunctorialCompositionSpecies

@@ -1,5 +1,5 @@
-normaliz
-========
+normaliz: Computations in affine monoids, vector configurations, lattice polytopes, and rational cones
+======================================================================================================
 
 Description
 -----------
@@ -24,13 +24,6 @@ Upstream Contact
 -  see also https://www.normaliz.uni-osnabrueck.de/home/contact/
 
    and https://github.com/Normaliz
-
-Dependencies
-------------
-
--  GMP/MPIR
--  boost
-
 
 Special Update/Build Instructions
 ---------------------------------

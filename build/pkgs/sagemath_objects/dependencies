@@ -1,0 +1,3 @@
+FORCE  cysignals gmpy2 | $(PYTHON_TOOLCHAIN) sagemath_environment sage_setup cython pkgconfig python_build $(PYTHON)
+
+# FORCE: Always run the spkg-install script

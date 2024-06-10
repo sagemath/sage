@@ -1,0 +1,10 @@
+ meson pyproject_metadata tomli ninja_build patchelf | $(PYTHON_TOOLCHAIN) $(PYTHON)
+
+----------
+All lines of this file are ignored except the first.
+
+meson_python actually declares a dependency on ninja, the Python distribution package.
+But it only needs the ninja executable.
+
+buildelf is needed by projects that use meson_python as their build system
+for wheel building.

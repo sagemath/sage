@@ -1,5 +1,5 @@
-SQLite
-======
+sqlite: An SQL database engine
+==============================
 
 Description
 -----------
@@ -16,7 +16,7 @@ Public Domain
 Upstream contact
 ----------------
 
--  http://www.sqlite.org
+-  https://www.sqlite.org
 
 Dependencies
 ------------

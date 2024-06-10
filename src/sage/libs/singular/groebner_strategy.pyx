@@ -53,7 +53,7 @@ cdef class GroebnerStrategy(SageObject):
 
         INPUT:
 
-        - ``L`` - a multivariate polynomial ideal
+        - ``L`` -- a multivariate polynomial ideal
 
         EXAMPLES::
 
@@ -93,7 +93,7 @@ cdef class GroebnerStrategy(SageObject):
             ...
             NotImplementedError: Only coefficient fields are implemented so far.
 
-        Check that :trac:`27508` is fixed::
+        Check that :issue:`27508` is fixed::
 
             sage: R2.<x,y> = PolynomialRing(QQ, 2, order="lex")
             sage: I2 = R2.ideal(["x^2 - x", "y^2 - y"])
@@ -157,7 +157,7 @@ cdef class GroebnerStrategy(SageObject):
             sage: del strat
         """
         # WARNING: the Cython class self._parent is no longer accessible!
-        # see http://trac.sagemath.org/sage_trac/ticket/11339
+        # see https://github.com/sagemath/sage/issues/11339
         cdef ring *oldRing = NULL
         if self._strat:
             omfree(self._strat.sevS)
@@ -316,7 +316,7 @@ cdef class NCGroebnerStrategy(SageObject):
 
         INPUT:
 
-        - ``L`` - an ideal in a g-algebra
+        - ``L`` -- an ideal in a g-algebra
 
         EXAMPLES::
 
@@ -340,6 +340,17 @@ cdef class NCGroebnerStrategy(SageObject):
             Traceback (most recent call last):
             ...
             TypeError:  First parameter must be an ideal in a g-algebra.
+
+        Check that tail reduction is applied too::
+
+            sage: F = PolynomialRing(QQ,'t').fraction_field()
+            sage: FA = FreeAlgebra(F, 6, 'x1,x2,x3,x4,x5,x6')
+            sage: N = FA.g_algebra({FA.gen(j)*FA.gen(i):-FA.gen(i)*FA.gen(j) for i in range(5) for j in range(i+1,6)})
+            sage: I = N.ideal([g^2 for g in N.gens()],side='twosided')
+            sage: N.inject_variables()
+            Defining x1, x2, x3, x4, x5, x6
+            sage: I.reduce(x1*x2*x3 + x2^2*x4)
+            x1*x2*x3
 
         """
         if not isinstance(L, NCPolynomialIdeal):
@@ -372,6 +383,7 @@ cdef class NCGroebnerStrategy(SageObject):
         self._strat.enterS = enterSBba
         #- set S
         self._strat.sl = -1
+        self._strat.noTailReduction = False
         #- init local data struct
         initS(i, NULL, self._strat)
 
@@ -524,11 +536,12 @@ cdef class NCGroebnerStrategy(SageObject):
         if unlikely(self._parent._ring != currRing):
             rChangeCurrRing(self._parent._ring)
 
-        cdef int max_ind
+        cdef int max_ind = 0
         cdef poly *_p = redNF(p_Copy(p._poly, self._parent._ring), max_ind, 0, self._strat)
         if likely(_p!=NULL):
             _p = redtailBba(_p, max_ind, self._strat)
         return new_NCP(self._parent, _p)
+
 
 def unpickle_NCGroebnerStrategy0(I):
     """
@@ -543,6 +556,7 @@ def unpickle_NCGroebnerStrategy0(I):
         True
     """
     return NCGroebnerStrategy(I)
+
 
 def unpickle_GroebnerStrategy0(I):
     """

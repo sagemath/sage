@@ -1,6 +1,5 @@
-
-Parma Polyhedra Library
-=======================
+ppl: Parma Polyhedra Library
+============================
 
 Description
 -----------
@@ -35,28 +34,10 @@ GPL v3+
 Upstream Contact
 ----------------
 
-- http://www.cs.unipr.it/ppl/ 
-- BUGSENG srl (http://bugseng.com)
+- https://www.bugseng.com/ppl
 
 Core Development Team
 
 - Roberto Bagnara (University of Parma)
 - Patricia M. Hill (University of Parma)
 - Enea Zaffanella (University of Parma)
-
-Dependencies
-------------
-
--  gmp (or mpir)
-
-
-Special Update/Build Instructions
----------------------------------
-
-Patches
-~~~~~~~
-
--  ptrdiff_t-ppl-1.1.patch: Fixes to compile with gcc 4.9; C++ name
-   lookup issue.
-
--  weak.patch: disable use of weak symbols on Cygwin64.

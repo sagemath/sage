@@ -1,7 +1,7 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Elementary symmetric functions
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2012 Mike Zabrocki <mike.zabrocki@gmail.com>
@@ -18,17 +18,20 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from . import multiplicative, classical
+from sage.arith.misc import binomial, factorial
 from sage.combinat.partition import Partition
-from sage.misc.all import prod
-from sage.functions.other import factorial, binomial
-from sage.rings.all import infinity
+from sage.combinat.sf import multiplicative, classical
+from sage.misc.misc_c import prod
+from sage.rings.infinity import infinity
+
 
 ###################################
 #                                 #
 # Elementary Symmetric Functions  #
 #                                 #
 ###################################
+
+
 class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebra_multiplicative):
     def __init__(self, Sym):
         """
@@ -68,7 +71,7 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
             sage: e._dual_basis_default() is e.dual_basis()
             True
         """
-        return self.dual_basis(scalar = None, prefix="f", basis_name = "forgotten")
+        return self.dual_basis(scalar=None, prefix="f", basis_name="forgotten")
 
     def coproduct_on_generators(self, i):
         r"""
@@ -92,7 +95,8 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
             sage: e.coproduct_on_generators(0)
             e[] # e[]
         """
-        def P(i): return Partition([i]) if i else Partition([])
+        def P(i):
+            return Partition([i]) if i else Partition([])
         T = self.tensor_square()
         return T.sum_of_monomials( (P(j), P(i-j)) for j in range(i+1) )
 
@@ -307,7 +311,6 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
             condition = lambda part: max(part) > n
             return self._expand(condition, n, alphabet)
 
-
         def principal_specialization(self, n=infinity, q=None):
             r"""
             Return the principal specialization of a symmetric function.
@@ -368,7 +371,7 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
             By default, we return a rational functions in `q`.  Sometimes
             it is better to obtain an element of the symbolic ring::
 
-                sage: x.principal_specialization(q=var("q"))
+                sage: x.principal_specialization(q=var("q"))                            # needs sage.symbolic
                 -3*q/((q^2 - 1)*(q - 1)^2) - 5/(q - 1)^3 + 1
 
             TESTS::
@@ -404,7 +407,6 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
                                            for part in partition)
 
             return self.parent()._apply_module_morphism(self, f, q.parent())
-
 
         def exponential_specialization(self, t=None, q=1):
             r"""
@@ -467,7 +469,7 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
                 sage: x.exponential_specialization()
                 1/12*t^5
                 sage: x = 5*e[2] + 3*e[1] + 1
-                sage: x.exponential_specialization(t=var("t"), q=var("q"))
+                sage: x.exponential_specialization(t=var("t"), q=var("q"))              # needs sage.symbolic
                 5*q*t^2/(q + 1) + 3*t + 1
 
             TESTS::

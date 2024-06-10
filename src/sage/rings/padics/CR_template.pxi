@@ -2,14 +2,14 @@
 Capped relative template for complete discrete valuation rings and their fraction fields
 
 In order to use this template you need to write a linkage file and gluing file.
-For an example see mpz_linkage.pxi (linkage file) and padic_capped_relative_element.pyx (gluing file).
+For an example see ``mpz_linkage.pxi`` (linkage file) and ``padic_capped_relative_element.pyx`` (gluing file).
 
-The linkage file implements a common API that is then used in the class CRElement defined here.
-See the documentation of mpz_linkage.pxi for the functions needed.
+The linkage file implements a common API that is then used in the class :class:`CRElement` defined here.
+See the documentation of ``mpz_linkage.pxi`` for the functions needed.
 
 The gluing file does the following:
 
-- ctypedef's celement to be the appropriate type (e.g. mpz_t)
+- ``ctypedef``'s ``celement`` to be the appropriate type (e.g. ``mpz_t``)
 - includes the linkage file
 - includes this template
 - defines a concrete class inheriting from ``CRElement``, and implements
@@ -42,7 +42,7 @@ from sage.categories.sets_cat import Sets
 from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
 from sage.categories.homset import Hom
 
-cdef inline bint exactzero(long ordp):
+cdef inline bint exactzero(long ordp) noexcept:
     """
     Whether a given valuation represents an exact zero.
     """
@@ -68,7 +68,7 @@ cdef inline int assert_nonzero(CRElement x) except -1:
     if exactzero(x.ordp):
         raise ZeroDivisionError("cannot divide by zero")
     if x.relprec == 0:
-        raise PrecisionError("cannot divide by something indistinguishable from zero.")
+        raise PrecisionError("cannot divide by something indistinguishable from zero")
 
 cdef class CRElement(pAdicTemplateElement):
     cdef int _set(self, x, long val, long xprec, absprec, relprec) except -1:
@@ -80,7 +80,7 @@ cdef class CRElement(pAdicTemplateElement):
 
         INPUT:
 
-        - ``x`` -- data defining a `p`-adic element: int, long,
+        - ``x`` -- data defining a `p`-adic element: int,
           Integer, Rational, other `p`-adic element...
 
         - ``val`` -- the valuation of the resulting element
@@ -94,21 +94,21 @@ cdef class CRElement(pAdicTemplateElement):
         TESTS::
 
             sage: R = Zp(5)
-            sage: R(15) #indirect doctest
+            sage: R(15)  # indirect doctest
             3*5 + O(5^21)
             sage: R(15, absprec=5)
             3*5 + O(5^5)
             sage: R(15, relprec=5)
             3*5 + O(5^6)
-            sage: R(75, absprec = 10, relprec = 9) #indirect doctest
+            sage: R(75, absprec = 10, relprec = 9)  # indirect doctest
             3*5^2 + O(5^10)
-            sage: R(25/9, relprec = 5) #indirect doctest
+            sage: R(25/9, relprec = 5)  # indirect doctest
             4*5^2 + 2*5^3 + 5^5 + 2*5^6 + O(5^7)
-            sage: R(25/9, relprec = 4, absprec = 5) #indirect doctest
+            sage: R(25/9, relprec = 4, absprec = 5)  # indirect doctest
             4*5^2 + 2*5^3 + O(5^5)
 
             sage: R = Zp(5,5)
-            sage: R(25/9) #indirect doctest
+            sage: R(25/9)  # indirect doctest
             4*5^2 + 2*5^3 + 5^5 + 2*5^6 + O(5^7)
             sage: R(25/9, absprec = 5)
             4*5^2 + 2*5^3 + O(5^5)
@@ -116,9 +116,9 @@ cdef class CRElement(pAdicTemplateElement):
             4*5^2 + 2*5^3 + 5^5 + O(5^6)
 
             sage: R = Zp(5); S = Zp(5, 6)
-            sage: S(R(17)) # indirect doctest
+            sage: S(R(17))  # indirect doctest
             2 + 3*5 + O(5^6)
-            sage: S(R(17),4) # indirect doctest
+            sage: S(R(17),4)  # indirect doctest
             2 + 3*5 + O(5^4)
             sage: T = Qp(5); a = T(1/5) - T(1/5)
             sage: R(a)
@@ -129,7 +129,7 @@ cdef class CRElement(pAdicTemplateElement):
             O(5^17)
 
             sage: R = Zp(5); S = ZpCA(5)
-            sage: R(S(17, 5)) #indirect doctest
+            sage: R(S(17, 5))  # indirect doctest
             2 + 3*5 + O(5^5)
         """
         IF CELEMENT_IS_PY_OBJECT:
@@ -145,7 +145,7 @@ cdef class CRElement(pAdicTemplateElement):
         else:
             self.relprec = min(rprec, aprec - val)
             self.ordp = val
-            if isinstance(x,CRElement) and x.parent() is self.parent():
+            if isinstance(x, CRElement) and x.parent() is self.parent():
                 cshift_notrunc(self.unit, (<CRElement>x).unit, 0, self.relprec, self.prime_pow, True)
             else:
                 cconv(self.unit, x, self.relprec, val, self.prime_pow)
@@ -156,7 +156,7 @@ cdef class CRElement(pAdicTemplateElement):
 
         TESTS::
 
-            sage: R = Zp(5); R(0) #indirect doctest
+            sage: R = Zp(5); R(0)  # indirect doctest
             0
         """
         csetzero(self.unit, self.prime_pow)
@@ -169,7 +169,7 @@ cdef class CRElement(pAdicTemplateElement):
 
         TESTS::
 
-            sage: R = Zp(5); R(0, 5) #indirect doctest
+            sage: R = Zp(5); R(0, 5)  # indirect doctest
             O(5^5)
         """
         csetzero(self.unit, self.prime_pow)
@@ -183,13 +183,14 @@ cdef class CRElement(pAdicTemplateElement):
         TESTS::
 
             sage: R = Zp(5)
-            sage: R(6,5) * R(7,8) #indirect doctest
+            sage: R(6,5) * R(7,8)  # indirect doctest
             2 + 3*5 + 5^2 + O(5^5)
 
+            sage: # needs sage.libs.ntl
             sage: R.<a> = ZqCR(25)
             sage: S.<x> = ZZ[]
             sage: W.<w> = R.ext(x^2 - 5)
-            sage: w * (w+1) #indirect doctest
+            sage: w * (w+1)  # indirect doctest
             w + w^2 + O(w^41)
         """
         cdef type t = type(self)
@@ -232,10 +233,10 @@ cdef class CRElement(pAdicTemplateElement):
             sage: Zp(5)(1).lift_to_precision(30)
             Traceback (most recent call last):
             ...
-            PrecisionError: Precision higher than allowed by the precision cap.
+            PrecisionError: precision higher than allowed by the precision cap
         """
         if self.relprec > self.prime_pow.ram_prec_cap:
-            raise PrecisionError("Precision higher than allowed by the precision cap.")
+            raise PrecisionError("precision higher than allowed by the precision cap")
 
     def __copy__(self):
         """
@@ -262,7 +263,7 @@ cdef class CRElement(pAdicTemplateElement):
         TESTS::
 
             sage: R = Zp(5)
-            sage: R(6) + R(4) #indirect doctest
+            sage: R(6) + R(4)  # indirect doctest
             2*5 + O(5^20)
         """
         cdef long diff
@@ -299,7 +300,7 @@ cdef class CRElement(pAdicTemplateElement):
 
             sage: a = ZpCR(5)(-3)
             sage: type(a)
-            <type 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
+            <class 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
             sage: loads(dumps(a)) == a  # indirect doctest
             True
         """
@@ -312,7 +313,7 @@ cdef class CRElement(pAdicTemplateElement):
         EXAMPLES::
 
             sage: R = Zp(5, 20, 'capped-rel', 'val-unit')
-            sage: R(5) + (-R(5)) # indirect doctest
+            sage: R(5) + (-R(5))  # indirect doctest
             O(5^21)
             sage: -R(1)
             95367431640624 + O(5^20)
@@ -340,7 +341,7 @@ cdef class CRElement(pAdicTemplateElement):
             18 + 18*19 + 18*19^2 + 18*19^3 + 18*19^4 + O(19^5)
             sage: b=R(-5/2); b
             7 + 9*19 + 9*19^2 + 9*19^3 + 9*19^4 + O(19^5)
-            sage: a+b #indirect doctest
+            sage: a+b  # indirect doctest
             6 + 9*19 + 9*19^2 + 9*19^3 + 9*19^4 + O(19^5)
         """
         cdef CRElement ans
@@ -358,7 +359,9 @@ cdef class CRElement(pAdicTemplateElement):
         else:
             if self.ordp > right.ordp:
                 # Addition is commutative, swap so self.ordp < right.ordp
-                ans = right; right = self; self = ans
+                ans = right
+                right = self
+                self = ans
             tmpL = right.ordp - self.ordp
             if tmpL > self.relprec:
                 return self
@@ -378,7 +381,7 @@ cdef class CRElement(pAdicTemplateElement):
         EXAMPLES::
 
             sage: R = Zp(13, 4)
-            sage: R(10) - R(10) #indirect doctest
+            sage: R(10) - R(10)  # indirect doctest
             O(13^4)
             sage: R(10) - R(11)
             12 + 12*13 + 12*13^2 + 12*13^3 + O(13^4)
@@ -421,7 +424,7 @@ cdef class CRElement(pAdicTemplateElement):
 
     def __invert__(self):
         r"""
-        Returns the multiplicative inverse of this element.
+        Return the multiplicative inverse of this element.
 
         .. NOTE::
 
@@ -456,7 +459,7 @@ cdef class CRElement(pAdicTemplateElement):
             2*5 + 4*5^3 + 3*5^4 + O(5^11)
             sage: b = R(2387625, 16); b
             5^3 + 4*5^5 + 2*5^6 + 5^8 + 5^9 + O(5^16)
-            sage: a * b # indirect doctest
+            sage: a * b  # indirect doctest
             2*5^4 + 2*5^6 + 4*5^7 + 2*5^8 + 3*5^10 + 5^11 + 3*5^12 + 4*5^13 + O(5^14)
         """
         cdef CRElement ans
@@ -488,7 +491,7 @@ cdef class CRElement(pAdicTemplateElement):
         EXAMPLES::
 
             sage: R = Zp(5,6)
-            sage: R(17) / R(21) #indirect doctest
+            sage: R(17) / R(21)  # indirect doctest
             2 + 4*5^2 + 3*5^3 + 4*5^4 + O(5^6)
             sage: a = R(50) / R(5); a
             2*5 + O(5^7)
@@ -641,7 +644,7 @@ cdef class CRElement(pAdicTemplateElement):
             18 + 18*19 + 18*19^2 + 18*19^3 + 18*19^4 + O(19^5)
             sage: K(5)^30
             11 + 14*19 + 19^2 + 7*19^3 + O(19^5)
-            sage: K(5, 3)^19 #indirect doctest
+            sage: K(5, 3)^19  # indirect doctest
             5 + 3*19 + 11*19^3 + O(19^4)
 
         `p`-adic exponents are also supported::
@@ -654,21 +657,33 @@ cdef class CRElement(pAdicTemplateElement):
             1 + 14*19^2 + 11*19^3 + 13*19^4 + O(19^5)
             sage: (a.log() * 19/7).exp()
             1 + 14*19^2 + 11*19^3 + 13*19^4 + O(19^5)
+
+        TESTS:
+
+        Check that :issue:`31875` is fixed::
+
+            sage: R(1)^R(0)
+            1 + O(19^5)
+
+            sage: # needs sage.libs.ntl
+            sage: S.<a> = ZqCR(4)
+            sage: S(1)^S(0)
+            1 + O(2^20)
         """
         cdef long base_level, exp_prec
         cdef mpz_t tmp
         cdef Integer right
         cdef CRElement base, pright, ans
         cdef bint exact_exp
-        if (isinstance(_right, Integer) or isinstance(_right, (int, long)) or isinstance(_right, Rational)):
+        if isinstance(_right, (Integer, int, Rational)):
             if _right < 0:
                 base = ~self
                 return base.__pow__(-_right, dummy)
             exact_exp = True
         elif self.parent() is _right.parent():
-            ## For extension elements, we need to switch to the
-            ## fraction field sometimes in highly ramified extensions.
-            exact_exp = False
+            # For extension elements, we need to switch to the
+            # fraction field sometimes in highly ramified extensions.
+            exact_exp = (<CRElement>_right)._is_exact_zero()
             pright = _right
         else:
             self, _right = canonical_coercion(self, _right)
@@ -690,7 +705,7 @@ cdef class CRElement(pAdicTemplateElement):
         ans = self._new_c()
         if self.relprec == 0:
             # If a positive integer exponent, return an inexact zero of valuation right * self.ordp.  Otherwise raise an error.
-            if isinstance(_right, (int, long)):
+            if isinstance(_right, int):
                 _right = Integer(_right)
             if isinstance(_right, Integer):
                 right = <Integer>_right
@@ -720,7 +735,7 @@ cdef class CRElement(pAdicTemplateElement):
         return ans
 
     cdef pAdicTemplateElement _lshift_c(self, long shift):
-        """
+        r"""
         Multiplies by `\pi^{\mbox{shift}}`.
 
         Negative shifts may truncate the result if the parent is not a
@@ -730,7 +745,7 @@ cdef class CRElement(pAdicTemplateElement):
 
             sage: a = Zp(5)(17); a
             2 + 3*5 + O(5^20)
-            sage: a << 2 #indirect doctest
+            sage: a << 2  # indirect doctest
             2*5^2 + 3*5^3 + O(5^22)
             sage: a << -2
             O(5^18)
@@ -751,7 +766,7 @@ cdef class CRElement(pAdicTemplateElement):
         return ans
 
     cdef pAdicTemplateElement _rshift_c(self, long shift):
-        """
+        r"""
         Divides by ``\pi^{\mbox{shift}}``.
 
         Positive shifts may truncate the result if the parent is not a
@@ -799,7 +814,7 @@ cdef class CRElement(pAdicTemplateElement):
         EXAMPLES::
 
             sage: R = Zp(3, 5)
-            sage: R(12).quo_rem(R(2)) # indirect doctest
+            sage: R(12).quo_rem(R(2))  # indirect doctest
             (2*3 + O(3^6), 0)
             sage: R(2).quo_rem(R(12))
             (O(3^4), 2 + O(3^5))
@@ -867,10 +882,9 @@ cdef class CRElement(pAdicTemplateElement):
         q._normalize()
         return q, r
 
-
     def add_bigoh(self, absprec):
         """
-        Returns a new element with absolute precision decreased to
+        Return a new element with absolute precision decreased to
         ``absprec``.
 
         INPUT:
@@ -879,7 +893,7 @@ cdef class CRElement(pAdicTemplateElement):
 
         OUTPUT:
 
-        an equal element with precision set to the minimum of ``self's``
+        an equal element with precision set to the minimum of ``self``'s
         precision and ``absprec``
 
         EXAMPLES::
@@ -893,13 +907,13 @@ cdef class CRElement(pAdicTemplateElement):
             sage: b = R(0); b.add_bigoh(3)
             O(7^3)
 
-            The precision never increases::
+        The precision never increases::
 
             sage: R(4).add_bigoh(2).add_bigoh(4)
             4 + O(7^2)
 
-            Another example that illustrates that the precision does
-            not increase::
+        Another example that illustrates that the precision does
+        not increase::
 
             sage: k = Qp(3,5)
             sage: a = k(1234123412/3^70); a
@@ -947,7 +961,7 @@ cdef class CRElement(pAdicTemplateElement):
 
     cpdef bint _is_exact_zero(self) except -1:
         """
-        Returns true if this element is exactly zero.
+        Return ``True`` if this element is exactly zero.
 
         EXAMPLES::
 
@@ -963,7 +977,7 @@ cdef class CRElement(pAdicTemplateElement):
 
     cpdef bint _is_inexact_zero(self) except -1:
         """
-        Returns True if this element is indistinguishable from zero
+        Return ``True`` if this element is indistinguishable from zero
         but has finite precision.
 
         EXAMPLES::
@@ -980,10 +994,10 @@ cdef class CRElement(pAdicTemplateElement):
 
     def is_zero(self, absprec = None):
         r"""
-        Determines whether this element is zero modulo
+        Determine whether this element is zero modulo
         `\pi^{\mbox{absprec}}`.
 
-        If ``absprec is None``, returns ``True`` if this element is
+        If ``absprec`` is ``None``, returns ``True`` if this element is
         indistinguishable from zero.
 
         INPUT:
@@ -1002,7 +1016,7 @@ cdef class CRElement(pAdicTemplateElement):
             sage: b.is_zero(6)
             Traceback (most recent call last):
             ...
-            PrecisionError: Not enough precision to determine if element is zero
+            PrecisionError: not enough precision to determine if element is zero
         """
         if absprec is None:
             return self.relprec == 0
@@ -1012,20 +1026,20 @@ cdef class CRElement(pAdicTemplateElement):
             return False
         if isinstance(absprec, int):
             if self.relprec == 0 and absprec > self.ordp:
-                raise PrecisionError("Not enough precision to determine if element is zero")
+                raise PrecisionError("not enough precision to determine if element is zero")
             return self.ordp >= absprec
         if not isinstance(absprec, Integer):
             absprec = Integer(absprec)
         if self.relprec == 0:
             if mpz_cmp_si((<Integer>absprec).value, self.ordp) > 0:
-                raise PrecisionError("Not enough precision to determine if element is zero")
+                raise PrecisionError("not enough precision to determine if element is zero")
             else:
                 return True
         return mpz_cmp_si((<Integer>absprec).value, self.ordp) <= 0
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
-        Returns True if self is distinguishable from zero.
+        Return ``True`` if ``self`` is distinguishable from zero.
 
         For most applications, explicitly specifying the power of p
         modulo which the element is supposed to be nonzero is
@@ -1041,10 +1055,10 @@ cdef class CRElement(pAdicTemplateElement):
 
     def is_equal_to(self, _right, absprec=None):
         r"""
-        Returns whether self is equal to right modulo
+        Return whether ``self`` is equal to ``right`` modulo
         `\pi^{\mbox{absprec}}`.
 
-        If ``absprec is None``, returns True if self and right are
+        If ``absprec`` is ``None``, returns ``True`` if ``self`` and ``right`` are
         equal to the minimum of their precisions.
 
         INPUT:
@@ -1061,7 +1075,7 @@ cdef class CRElement(pAdicTemplateElement):
             sage: a.is_equal_to(aa, 15)
             Traceback (most recent call last):
             ...
-            PrecisionError: Elements not known to enough precision
+            PrecisionError: elements not known to enough precision
 
             sage: a.is_equal_to(a, 50000)
             True
@@ -1071,26 +1085,26 @@ cdef class CRElement(pAdicTemplateElement):
             sage: a.is_equal_to(b, 5)
             Traceback (most recent call last):
             ...
-            PrecisionError: Elements not known to enough precision
+            PrecisionError: elements not known to enough precision
 
             sage: b.is_equal_to(b, 5)
             Traceback (most recent call last):
             ...
-            PrecisionError: Elements not known to enough precision
+            PrecisionError: elements not known to enough precision
 
             sage: b.is_equal_to(bb, 3)
             True
             sage: b.is_equal_to(bb, 4)
             Traceback (most recent call last):
             ...
-            PrecisionError: Elements not known to enough precision
+            PrecisionError: elements not known to enough precision
 
             sage: c.is_equal_to(b, 2), c.is_equal_to(b, 3)
             (True, False)
             sage: c.is_equal_to(b, 4)
             Traceback (most recent call last):
             ...
-            PrecisionError: Elements not known to enough precision
+            PrecisionError: elements not known to enough precision
 
             sage: c.is_equal_to(cc, 2), c.is_equal_to(cc, 4), c.is_equal_to(cc, 5)
             (True, True, False)
@@ -1102,28 +1116,28 @@ cdef class CRElement(pAdicTemplateElement):
             sage: aa.is_equal_to(a, 15)
             Traceback (most recent call last):
             ...
-            PrecisionError: Elements not known to enough precision
+            PrecisionError: elements not known to enough precision
 
             sage: b.is_equal_to(a), b.is_equal_to(a, 2)
             (True, True)
             sage: b.is_equal_to(a, 5)
             Traceback (most recent call last):
             ...
-            PrecisionError: Elements not known to enough precision
+            PrecisionError: elements not known to enough precision
 
             sage: bb.is_equal_to(b, 3)
             True
             sage: bb.is_equal_to(b, 4)
             Traceback (most recent call last):
             ...
-            PrecisionError: Elements not known to enough precision
+            PrecisionError: elements not known to enough precision
 
             sage: b.is_equal_to(c, 2), b.is_equal_to(c, 3)
             (True, False)
             sage: b.is_equal_to(c, 4)
             Traceback (most recent call last):
             ...
-            PrecisionError: Elements not known to enough precision
+            PrecisionError: elements not known to enough precision
 
             sage: cc.is_equal_to(c, 2), cc.is_equal_to(c, 4), cc.is_equal_to(c, 5)
             (True, True, False)
@@ -1137,7 +1151,7 @@ cdef class CRElement(pAdicTemplateElement):
         if exactzero(self.ordp) and exactzero(right.ordp):
             return True
         elif absprec is infinity:
-            raise PrecisionError("Elements not known to enough precision")
+            raise PrecisionError("elements not known to enough precision")
         if absprec is None:
             aprec = min(self.ordp + self.relprec, right.ordp + right.relprec)
         else:
@@ -1148,10 +1162,10 @@ cdef class CRElement(pAdicTemplateElement):
                    exactzero(self.ordp) and exactzero(right.ordp):
                     return True
                 else:
-                    raise PrecisionError("Elements not known to enough precision")
+                    raise PrecisionError("elements not known to enough precision")
             aprec = mpz_get_si((<Integer>absprec).value)
             if aprec > self.ordp + self.relprec or aprec > right.ordp + right.relprec:
-                raise PrecisionError("Elements not known to enough precision")
+                raise PrecisionError("elements not known to enough precision")
         if self.ordp >= aprec and right.ordp >= aprec:
             return True
         elif self.ordp != right.ordp:
@@ -1203,9 +1217,9 @@ cdef class CRElement(pAdicTemplateElement):
             sage: c.lift_to_precision(40)
             Traceback (most recent call last):
             ...
-            PrecisionError: Precision higher than allowed by the precision cap.
+            PrecisionError: precision higher than allowed by the precision cap
         """
-        cpdef CRElement ans
+        cdef CRElement ans
         if absprec == maxordp:
             if self.relprec == 0:
                 ans = self._new_c()
@@ -1231,6 +1245,7 @@ cdef class CRElement(pAdicTemplateElement):
 
         TESTS::
 
+            sage: # needs sage.libs.ntl
             sage: K.<a> = Qq(9)
             sage: (9*a)._cache_key()
             (..., ((0, 1),), 2, 20)
@@ -1239,7 +1254,9 @@ cdef class CRElement(pAdicTemplateElement):
 
             :meth:`sage.misc.cachefunc._cache_key`
         """
-        tuple_recursive = lambda l: tuple(tuple_recursive(x) for x in l) if isinstance(l, list) else l
+        def tuple_recursive(l):
+            return tuple(tuple_recursive(x) for x in l) if isinstance(l, list) else l
+
         return (self.parent(), tuple_recursive(trim_zeros(list(self.expansion()))), self.valuation(), self.precision_relative())
 
     def _teichmuller_set_unsafe(self):
@@ -1275,7 +1292,7 @@ cdef class CRElement(pAdicTemplateElement):
         if self.ordp > 0:
             self._set_exact_zero()
         elif self.ordp < 0:
-            raise ValueError("cannot set negative valuation element to Teichmuller representative.")
+            raise ValueError("cannot set negative valuation element to Teichmuller representative")
         elif self.relprec == 0:
             raise ValueError("not enough precision")
         else:
@@ -1292,9 +1309,10 @@ cdef class CRElement(pAdicTemplateElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R.<x> = ZZ[]
             sage: K.<a> = Qq(25)
-            sage: W.<w> = K.extension(x^3-5)
+            sage: W.<w> = K.extension(x^3 - 5)
             sage: (1 + w + O(w^11))._polynomial_list()
             [1 + O(5^4), 1 + O(5^4)]
             sage: (1 + w + O(w^11))._polynomial_list(pad=True)
@@ -1336,6 +1354,7 @@ cdef class CRElement(pAdicTemplateElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: K.<a> = Qq(5^3)
             sage: a.polynomial()
             (1 + O(5^20))*x + O(5^20)
@@ -1377,10 +1396,10 @@ cdef class CRElement(pAdicTemplateElement):
 
     def precision_relative(self):
         """
-        Returns the relative precision of this element.
+        Return the relative precision of this element.
 
         This is the power of the maximal ideal modulo which the unit
-        part of self is defined.
+        part of ``self`` is defined.
 
         EXAMPLES::
 
@@ -1404,7 +1423,7 @@ cdef class CRElement(pAdicTemplateElement):
 
     cpdef pAdicTemplateElement unit_part(self):
         r"""
-        Returns `u`, where this element is `\pi^v u`.
+        Return `u`, where this element is `\pi^v u`.
 
         EXAMPLES::
 
@@ -1413,13 +1432,13 @@ cdef class CRElement(pAdicTemplateElement):
             sage: a.unit_part()
             1 + 17 + O(17^4)
             sage: type(a)
-            <type 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
+            <class 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
             sage: R = Qp(17,4,'capped-rel')
             sage: a = R(18*17)
             sage: a.unit_part()
             1 + 17 + O(17^4)
             sage: type(a)
-            <type 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
+            <class 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
             sage: a = R(2*17^2); a
             2*17^2 + O(17^6)
             sage: a.unit_part()
@@ -1446,9 +1465,9 @@ cdef class CRElement(pAdicTemplateElement):
         ccopy(ans.unit, (<CRElement>self).unit, ans.prime_pow)
         return ans
 
-    cdef long valuation_c(self):
+    cdef long valuation_c(self) noexcept:
         """
-        Returns the valuation of this element.
+        Return the valuation of this element.
 
         If self is an exact zero, returns ``maxordp``, which is defined as
         ``(1L << (sizeof(long) * 8 - 2))-1``.
@@ -1456,7 +1475,7 @@ cdef class CRElement(pAdicTemplateElement):
         EXAMPLES::
 
             sage: R = Qp(5); a = R(1)
-            sage: a.valuation() #indirect doctest
+            sage: a.valuation()  # indirect doctest
             0
             sage: b = (a << 4); b.valuation()
             4
@@ -1467,16 +1486,16 @@ cdef class CRElement(pAdicTemplateElement):
 
     cpdef val_unit(self, p=None):
         """
-        Returns a pair ``(self.valuation(), self.unit_part())``.
+        Return a pair ``(self.valuation(), self.unit_part())``.
 
         INPUT:
 
-        - ``p`` -- a prime (default: ``None``). If specified, will make sure that p==self.parent().prime()
+        - ``p`` -- a prime (default: ``None``). If specified, will make sure that ``p == self.parent().prime()``
 
         .. NOTE::
 
             The optional argument ``p`` is used for consistency with the
-            valuation methods on integer and rational.
+            valuation methods on integers and rationals.
 
         EXAMPLES::
 
@@ -1493,7 +1512,7 @@ cdef class CRElement(pAdicTemplateElement):
         """
         # Since we keep this element normalized there's not much to do here.
         if p is not None and p != self.parent().prime():
-            raise ValueError('Ring (%s) residue field of the wrong characteristic.'%self.parent())
+            raise ValueError('ring (%s) residue field of the wrong characteristic' % self.parent())
         if exactzero((<CRElement>self).ordp):
             raise ValueError("unit part of 0 not defined")
         cdef Integer val = Integer.__new__(Integer)
@@ -1510,19 +1529,16 @@ cdef class CRElement(pAdicTemplateElement):
 
         .. WARNING::
 
-            Hashing of `p`-adic elements will likely be deprecated soon.  See :trac:`11895`.
+            Hashing of `p`-adic elements will likely be deprecated soon.  See :issue:`11895`.
 
         EXAMPLES::
 
             sage: R = Zp(5)
-            sage: hash(R(17)) #indirect doctest
+            sage: hash(R(17))  # indirect doctest
             17
 
-            sage: hash(R(-1))     # py3
+            sage: hash(R(-1))
             1977844648            # 32-bit
-            95367431640624        # 64-bit
-            sage: hash(R(-1))     # py2
-            1977822444            # 32-bit
             95367431640624        # 64-bit
         """
         if exactzero(self.ordp):
@@ -1552,7 +1568,7 @@ cdef class pAdicCoercion_ZZ_CR(RingHomomorphism):
         EXAMPLES::
 
             sage: f = Zp(5).coerce_map_from(ZZ); type(f)
-            <type 'sage.rings.padics.padic_capped_relative_element.pAdicCoercion_ZZ_CR'>
+            <class 'sage.rings.padics.padic_capped_relative_element.pAdicCoercion_ZZ_CR'>
         """
         RingHomomorphism.__init__(self, ZZ.Hom(R))
         self._zero = R.element_class(R, 0)
@@ -1642,8 +1658,8 @@ cdef class pAdicCoercion_ZZ_CR(RingHomomorphism):
 
             sage: R = Zp(5,4)
             sage: type(R(10,2))
-            <type 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
-            sage: R(10,2) # indirect doctest
+            <class 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
+            sage: R(10,2)  # indirect doctest
             2*5 + O(5^2)
             sage: R(10,3,1)
             2*5 + O(5^2)
@@ -1697,7 +1713,7 @@ cdef class pAdicConvert_CR_ZZ(RingMap):
     returns the smallest non-negative integer approximation to its input
     which is accurate up to the precision.
 
-    Raises a ``ValueError``, if the input is not in the closure of the image of
+    Raises a :class:`ValueError`, if the input is not in the closure of the image of
     the integers.
 
     EXAMPLES::
@@ -1714,7 +1730,7 @@ cdef class pAdicConvert_CR_ZZ(RingMap):
         EXAMPLES::
 
             sage: f = Qp(5).coerce_map_from(ZZ).section(); type(f)
-            <type 'sage.rings.padics.padic_capped_relative_element.pAdicConvert_CR_ZZ'>
+            <class 'sage.rings.padics.padic_capped_relative_element.pAdicConvert_CR_ZZ'>
             sage: f.category()
             Category of homsets of sets with partial maps
             sage: Zp(5).coerce_map_from(ZZ).section().category()
@@ -1770,7 +1786,7 @@ cdef class pAdicCoercion_QQ_CR(RingHomomorphism):
         EXAMPLES::
 
             sage: f = Qp(5).coerce_map_from(QQ); type(f)
-            <type 'sage.rings.padics.padic_capped_relative_element.pAdicCoercion_QQ_CR'>
+            <class 'sage.rings.padics.padic_capped_relative_element.pAdicCoercion_QQ_CR'>
         """
         RingHomomorphism.__init__(self, QQ.Hom(R))
         self._zero = R.element_class(R, 0)
@@ -1862,8 +1878,8 @@ cdef class pAdicCoercion_QQ_CR(RingHomomorphism):
 
             sage: R = Qp(5,4)
             sage: type(R(10/3,2))
-            <type 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
-            sage: R(10/3,2) # indirect doctest
+            <class 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
+            sage: R(10/3,2)  # indirect doctest
             4*5 + O(5^2)
             sage: R(10/3,3,1)
             4*5 + O(5^2)
@@ -1934,7 +1950,7 @@ cdef class pAdicConvert_CR_QQ(RingMap):
         EXAMPLES::
 
             sage: f = Qp(5).coerce_map_from(QQ).section(); type(f)
-            <type 'sage.rings.padics.padic_capped_relative_element.pAdicConvert_CR_QQ'>
+            <class 'sage.rings.padics.padic_capped_relative_element.pAdicConvert_CR_QQ'>
             sage: f.category()
             Category of homsets of sets
         """
@@ -1958,7 +1974,7 @@ cdef class pAdicConvert_CR_QQ(RingMap):
             1/5
         """
         cdef Rational ans = Rational.__new__(Rational)
-        cdef CRElement x =  _x
+        cdef CRElement x = _x
         if x.relprec == 0:
             mpq_set_ui(ans.value, 0, 1)
         else:
@@ -1984,7 +2000,7 @@ cdef class pAdicConvert_QQ_CR(Morphism):
         EXAMPLES::
 
             sage: f = Zp(5).convert_map_from(QQ); type(f)
-            <type 'sage.rings.padics.padic_capped_relative_element.pAdicConvert_QQ_CR'>
+            <class 'sage.rings.padics.padic_capped_relative_element.pAdicConvert_QQ_CR'>
         """
         Morphism.__init__(self, Hom(QQ, R, SetsWithPartialMaps()))
         self._zero = R.element_class(R, 0)
@@ -2063,8 +2079,8 @@ cdef class pAdicConvert_QQ_CR(Morphism):
 
             sage: R = Zp(5,4)
             sage: type(R(10/3,2))
-            <type 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
-            sage: R(10/3,2) # indirect doctest
+            <class 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
+            sage: R(10/3,2)  # indirect doctest
             4*5 + O(5^2)
             sage: R(10/3,3,1)
             4*5 + O(5^2)
@@ -2103,7 +2119,7 @@ cdef class pAdicConvert_QQ_CR(Morphism):
 
     def section(self):
         """
-        Returns the map back to the rationals that returns the smallest
+        Return the map back to the rationals that returns the smallest
         non-negative integer approximation to its input which is accurate up to
         the precision.
 
@@ -2120,11 +2136,12 @@ cdef class pAdicConvert_QQ_CR(Morphism):
         return self._section
 
 cdef class pAdicCoercion_CR_frac_field(RingHomomorphism):
-    """
-    The canonical inclusion of Zq into its fraction field.
+    r"""
+    The canonical inclusion of `\ZZ_q` into its fraction field.
 
     EXAMPLES::
 
+        sage: # needs sage.libs.flint
         sage: R.<a> = ZqCR(27, implementation='FLINT')
         sage: K = R.fraction_field()
         sage: f = K.coerce_map_from(R); f
@@ -2134,7 +2151,7 @@ cdef class pAdicCoercion_CR_frac_field(RingHomomorphism):
 
     TESTS::
 
-        sage: TestSuite(f).run()
+        sage: TestSuite(f).run()                                                        # needs sage.libs.flint
 
     """
     def __init__(self, R, K):
@@ -2143,10 +2160,11 @@ cdef class pAdicCoercion_CR_frac_field(RingHomomorphism):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCR(27, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = K.coerce_map_from(R); type(f)
-            <type 'sage.rings.padics.qadic_flint_CR.pAdicCoercion_CR_frac_field'>
+            <class 'sage.rings.padics.qadic_flint_CR.pAdicCoercion_CR_frac_field'>
         """
         RingHomomorphism.__init__(self, R.Hom(K))
         self._zero = K(0)
@@ -2158,6 +2176,7 @@ cdef class pAdicCoercion_CR_frac_field(RingHomomorphism):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCR(27, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = K.coerce_map_from(R)
@@ -2174,7 +2193,7 @@ cdef class pAdicCoercion_CR_frac_field(RingHomomorphism):
         IF CELEMENT_IS_PY_OBJECT:
             # The base ring is wrong, so we fix it.
             K = ans.unit.base_ring()
-            ans.unit.__coeffs = [K(c) for c in ans.unit.__coeffs]
+            ans.unit._coeffs = [K(c) for c in ans.unit._coeffs]
         return ans
 
     cpdef Element _call_with_args(self, _x, args=(), kwds={}):
@@ -2187,13 +2206,14 @@ cdef class pAdicCoercion_CR_frac_field(RingHomomorphism):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCR(27, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = K.coerce_map_from(R)
             sage: f(a, 3)
             a + O(3^3)
             sage: b = 9*a
-            sage: f(b, 3) # indirect doctest
+            sage: f(b, 3)  # indirect doctest
             a*3^2 + O(3^3)
             sage: f(b, 4, 1)
             a*3^2 + O(3^3)
@@ -2231,16 +2251,17 @@ cdef class pAdicCoercion_CR_frac_field(RingHomomorphism):
             IF CELEMENT_IS_PY_OBJECT:
                 # The base ring is wrong, so we fix it.
                 K = ans.unit.base_ring()
-                ans.unit.__coeffs = [K(c) for c in ans.unit.__coeffs]
+                ans.unit._coeffs = [K(c) for c in ans.unit._coeffs]
         return ans
 
     def section(self):
         """
-        Returns a map back to the ring that converts elements of
+        Return a map back to the ring that converts elements of
         non-negative valuation.
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCR(27, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = K.coerce_map_from(R)
@@ -2263,6 +2284,7 @@ cdef class pAdicCoercion_CR_frac_field(RingHomomorphism):
 
         TESTS::
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCR(27, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = K.coerce_map_from(R)
@@ -2292,6 +2314,7 @@ cdef class pAdicCoercion_CR_frac_field(RingHomomorphism):
 
         TESTS::
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCR(9, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = K.coerce_map_from(R)
@@ -2320,6 +2343,7 @@ cdef class pAdicCoercion_CR_frac_field(RingHomomorphism):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCR(9, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = K.coerce_map_from(R)
@@ -2335,6 +2359,7 @@ cdef class pAdicCoercion_CR_frac_field(RingHomomorphism):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCR(9, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = K.coerce_map_from(R)
@@ -2346,11 +2371,12 @@ cdef class pAdicCoercion_CR_frac_field(RingHomomorphism):
 
 
 cdef class pAdicConvert_CR_frac_field(Morphism):
-    """
-    The section of the inclusion from `\ZZ_q`` to its fraction field.
+    r"""
+    The section of the inclusion from `\ZZ_q` to its fraction field.
 
     EXAMPLES::
 
+        sage: # needs sage.libs.flint
         sage: R.<a> = ZqCR(27, implementation='FLINT')
         sage: K = R.fraction_field()
         sage: f = R.convert_map_from(K); f
@@ -2364,10 +2390,11 @@ cdef class pAdicConvert_CR_frac_field(Morphism):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCR(27, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = R.convert_map_from(K); type(f)
-            <type 'sage.rings.padics.qadic_flint_CR.pAdicConvert_CR_frac_field'>
+            <class 'sage.rings.padics.qadic_flint_CR.pAdicConvert_CR_frac_field'>
         """
         Morphism.__init__(self, Hom(K, R, SetsWithPartialMaps()))
         self._zero = R(0)
@@ -2378,6 +2405,7 @@ cdef class pAdicConvert_CR_frac_field(Morphism):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCR(27, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = R.convert_map_from(K)
@@ -2385,7 +2413,8 @@ cdef class pAdicConvert_CR_frac_field(Morphism):
             a + O(3^20)
         """
         cdef CRElement x = _x
-        if x.ordp < 0: raise ValueError("negative valuation")
+        if x.ordp < 0:
+            raise ValueError("negative valuation")
         cdef CRElement ans = self._zero._new_c()
         ans.relprec = x.relprec
         ans.ordp = x.ordp
@@ -2393,7 +2422,7 @@ cdef class pAdicConvert_CR_frac_field(Morphism):
         IF CELEMENT_IS_PY_OBJECT:
             # The base ring is wrong, so we fix it.
             K = ans.unit.base_ring()
-            ans.unit.__coeffs = [K(c) for c in ans.unit.__coeffs]
+            ans.unit._coeffs = [K(c) for c in ans.unit._coeffs]
         return ans
 
     cpdef Element _call_with_args(self, _x, args=(), kwds={}):
@@ -2406,13 +2435,14 @@ cdef class pAdicConvert_CR_frac_field(Morphism):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCR(27, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = R.convert_map_from(K); a = K(a)
             sage: f(a, 3)
             a + O(3^3)
             sage: b = 9*a
-            sage: f(b, 3) # indirect doctest
+            sage: f(b, 3)  # indirect doctest
             a*3^2 + O(3^3)
             sage: f(b, 4, 1)
             a*3^2 + O(3^3)
@@ -2429,7 +2459,8 @@ cdef class pAdicConvert_CR_frac_field(Morphism):
         """
         cdef long aprec, rprec
         cdef CRElement x = _x
-        if x.ordp < 0: raise ValueError("negative valuation")
+        if x.ordp < 0:
+            raise ValueError("negative valuation")
         cdef CRElement ans = self._zero._new_c()
         cdef bint reduce = False
         _process_args_and_kwds(&aprec, &rprec, args, kwds, False, ans.prime_pow)
@@ -2451,7 +2482,7 @@ cdef class pAdicConvert_CR_frac_field(Morphism):
             IF CELEMENT_IS_PY_OBJECT:
                 # The base ring is wrong, so we fix it.
                 K = ans.unit.base_ring()
-                ans.unit.__coeffs = [K(c) for c in ans.unit.__coeffs]
+                ans.unit._coeffs = [K(c) for c in ans.unit._coeffs]
         return ans
 
     cdef dict _extra_slots(self):
@@ -2460,6 +2491,7 @@ cdef class pAdicConvert_CR_frac_field(Morphism):
 
         TESTS::
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCR(27, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = R.convert_map_from(K)
@@ -2488,6 +2520,7 @@ cdef class pAdicConvert_CR_frac_field(Morphism):
 
         TESTS::
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqCR(9, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = R.convert_map_from(K)
@@ -2509,6 +2542,7 @@ cdef class pAdicConvert_CR_frac_field(Morphism):
         """
         self._zero = _slots['_zero']
         Morphism._update_slots(self, _slots)
+
 
 def unpickle_cre_v2(cls, parent, unit, ordp, relprec):
     """

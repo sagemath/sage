@@ -1,5 +1,5 @@
-isl
-===
+isl: Sets and relations of integer points bounded by affine constraints
+=======================================================================
 
 Description
 -----------

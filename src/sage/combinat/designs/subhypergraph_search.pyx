@@ -40,7 +40,7 @@ fields:
 
 * ``sets`` (``uint64_t **``) -- ``sets[i]`` points toward the ``limbs``
   blocks encoding set `i`. Note also that ``sets[i][limbs]`` is equal to the
-  cardinality of ``set[i]``, so that ``sets`` has lenth
+  cardinality of ``set[i]``, so that ``sets`` has length
   ``m*(limbs+1)*sizeof(uint64_t)``.
 
 * ``names`` (``int *``) -- associates an integer 'name' to each of the ``n``
@@ -108,18 +108,18 @@ AUTHORS:
 Methods
 -------
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Nathann Cohen <nathann.cohen@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from libc.stdlib cimport qsort
 from libc.stdint cimport uint64_t
-from cysignals.memory cimport sig_malloc, sig_calloc, sig_realloc, sig_free
+from cysignals.memory cimport sig_malloc, sig_calloc, sig_free
 
 ctypedef struct hypergraph:
     int n
@@ -129,13 +129,13 @@ ctypedef struct hypergraph:
     uint64_t * set_space
     int * names
 
-cdef inline int bs_get(uint64_t * bitset, int index):
+cdef inline int bs_get(uint64_t * bitset, int index) noexcept:
     r"""
-    Returs a bit of a bitset
+    Return a bit of a bitset
     """
     return (bitset[index/64]>>(index%64))&1
 
-cdef inline void bs_set(uint64_t * bitset, int index, int bit):
+cdef inline void bs_set(uint64_t * bitset, int index, int bit) noexcept:
     r"""
     Set a bit of a bitset.
 
@@ -145,9 +145,9 @@ cdef inline void bs_set(uint64_t * bitset, int index, int bit):
     bitset[index/64] &= ~((<uint64_t> 1)<<index%64)
     bitset[index/64] |= (<uint64_t> bit)<<index%64
 
-cdef inline int bs_issubset64(uint64_t * b1, uint64_t b2, int limbs):
+cdef inline int bs_issubset64(uint64_t * b1, uint64_t b2, int limbs) noexcept:
     r"""
-    Test whether bistet ``b1`` (on ``limbs`` blocks) is a subset of b2 (one block).
+    Test whether bitset ``b1`` (on ``limbs`` blocks) is a subset of b2 (one block).
 
     It implies in particular that all last `limbs-1` blocks of ``b1`` are equal
     to zero.
@@ -161,7 +161,7 @@ cdef inline int bs_issubset64(uint64_t * b1, uint64_t b2, int limbs):
             return 0
     return (b1[0]&(~b2)) == 0
 
-cdef void h_free(hypergraph h):
+cdef void h_free(hypergraph h) noexcept:
     r"""
     Free the hypergraph
     """
@@ -172,7 +172,7 @@ cdef void h_free(hypergraph h):
     h.set_space = NULL
     h.sets = NULL
 
-cdef hypergraph h_init(int n,list H):
+cdef hypergraph h_init(int n,list H) noexcept:
     r"""
     Build a C hypergraph from a list `H` of sets on `\{0,...,n-1\}`.
     """
@@ -210,7 +210,7 @@ cdef hypergraph h_init(int n,list H):
 
     return h
 
-cdef inline void permute(hypergraph * h,int n1,int n2):
+cdef inline void permute(hypergraph * h,int n1,int n2) noexcept:
     r"""
     Permutes two points of h inplace.
 
@@ -247,7 +247,7 @@ cdef induced_hypergraph(hypergraph * h, int n, hypergraph * tmp):
     tmp.limbs = 1
 
 
-cdef void trace_hypergraph64(hypergraph * h, int n, hypergraph * tmp):
+cdef void trace_hypergraph64(hypergraph * h, int n, hypergraph * tmp) noexcept:
     r"""
     Stores in `tmp` the trace of the sets on {0,...,n-1} in h1.
 
@@ -265,7 +265,7 @@ cdef void trace_hypergraph64(hypergraph * h, int n, hypergraph * tmp):
 
     tmp.limbs = 1
 
-cdef int is_subhypergraph_admissible(hypergraph h1,hypergraph * h2_trace,int n,hypergraph tmp1):
+cdef int is_subhypergraph_admissible(hypergraph h1,hypergraph * h2_trace,int n,hypergraph tmp1) noexcept:
     r"""
     If there are `c` sets of size `k` containing `S\subseteq \{0,...,n-1\}` in
     `h2`, then there must be `>=c` sets of size `k` containing `S` in h1. This
@@ -295,7 +295,7 @@ cdef int is_subhypergraph_admissible(hypergraph h1,hypergraph * h2_trace,int n,h
 
     return 1
 
-cdef int cmp_128_bits(void * a, void * b) nogil:
+cdef int cmp_128_bits(const void * a, const void * b) noexcept nogil:
     r"""
     Lexicographic order on 128-bits words
     """
@@ -308,7 +308,7 @@ cdef int cmp_128_bits(void * a, void * b) nogil:
     else:
         return -1
 
-cdef int is_induced_admissible64(hypergraph h1,hypergraph * h2_induced,int n,hypergraph tmp1):
+cdef int is_induced_admissible64(hypergraph h1,hypergraph * h2_induced,int n,hypergraph tmp1) noexcept:
     r"""
     Test if the hypergraph induced in h1 by 0,...,n-1 is equal to the hypergraph
     induced in h2 by 0,...,n-1.
@@ -351,8 +351,8 @@ cdef class SubHypergraphSearch:
         EXAMPLES::
 
             sage: from sage.combinat.designs.subhypergraph_search import SubHypergraphSearch
-            sage: g1 = IncidenceStructure(graphs.PetersenGraph().edges(labels=False))
-            sage: g2 = IncidenceStructure(graphs.CycleGraph(5).edges(labels=False))
+            sage: g1 = IncidenceStructure(graphs.PetersenGraph().edges(sort=True, labels=False))
+            sage: g2 = IncidenceStructure(graphs.CycleGraph(5).edges(sort=True, labels=False))
             sage: S = SubHypergraphSearch(g1,g2,0)
             sage: sum(1 for _ in S)
             120
@@ -444,8 +444,8 @@ cdef class SubHypergraphSearch:
 
         EXAMPLES::
 
-            sage: d = designs.projective_plane(3)
-            sage: d.isomorphic_substructures_iterator(d).relabel_heuristic()
+            sage: d = designs.projective_plane(3)                                       # needs sage.schemes
+            sage: d.isomorphic_substructures_iterator(d).relabel_heuristic()            # needs sage.schemes
         """
         cdef hypergraph h2 = self.h2
         cdef int x,y,i
@@ -482,15 +482,14 @@ cdef class SubHypergraphSearch:
 
             sage: P = graphs.PetersenGraph()
             sage: C = graphs.CycleGraph(5)
-            sage: IP = IncidenceStructure(P.edges(labels=False))
-            sage: IC = IncidenceStructure(C.edges(labels=False))
+            sage: IP = IncidenceStructure(P.edges(sort=True, labels=False))
+            sage: IC = IncidenceStructure(C.edges(sort=True, labels=False))
             sage: sum(1 for _ in IP.isomorphic_substructures_iterator(IC))
             120
         """
         cdef hypergraph h1 = self.h1
         cdef hypergraph h2 = self.h2
         cdef hypergraph tmp1 = self.tmp1
-        cdef hypergraph tmp2 = self.tmp2
         cdef int * step = self.step
 
         if h1.n<h2.n or h1.m<h2.m:

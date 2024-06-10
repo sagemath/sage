@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-#
+# nodoctest
 # Sage documentation build configuration file, created by
 # sphinx-quickstart on Thu Aug 21 20:15:55 2008.
 #
@@ -13,8 +12,15 @@
 
 import os
 from sage.env import SAGE_DOC_SRC, SAGE_DOC
-from sage.docs.conf import release, exclude_patterns
-from sage.docs.conf import *
+from sage_docbuild.conf import release, exclude_patterns
+from sage_docbuild.conf import *
+
+# Add any paths that contain custom static files (such as style sheets),
+# relative to this directory to html_static_path. They are copied after the
+# builtin static files, so a file named "default.css" will overwrite the
+# builtin "default.css". html_common_static_path imported from sage_docbuild.conf
+# contains common paths.
+html_static_path = [] + html_common_static_path
 
 ref_src = os.path.join(SAGE_DOC_SRC, 'en', 'reference')
 ref_out = os.path.join(SAGE_DOC, 'html', 'en', 'reference')
@@ -24,7 +30,7 @@ rst_file = open('index.rst', 'r')
 rst_lines = rst_file.read().splitlines()
 rst_file.close()
 
-title = u''
+title = ''
 for i in range(len(rst_lines)):
     if rst_lines[i].startswith('==') and i > 0:
         title = rst_lines[i-1].strip()
@@ -34,22 +40,19 @@ for i in range(len(rst_lines)):
 name = os.path.basename(os.path.abspath('.'))
 if not title:
     title = name.capitalize()
-title = title.replace(u'`', u'$')
+title = title.replace('`', '$')
+
+# We use the directory's name to add a small edit button.
+html_theme_options.update({
+  'source_edit_link': os.path.join(source_repository, f'blob/develop/src/doc/en/reference/{name}', '{filename}'),
+})
 
 # General information about the project.
-project = u'Sage {} Reference Manual: '.format(release) + title
+project = title
 
-# The name for this set of Sphinx documents.  If None, it defaults to
-# "<project> v<release> documentation".
-html_title = project
-
-# A shorter title for the navigation bar.  Default is the same as html_title.
-html_short_title = project
-
-# HTML theme (e.g., 'default', 'sphinxdoc').  The pages for the
-# reference manual use a custom theme, a slight variant on the 'sage'
-# theme, to set the links in the top line.
-html_theme = 'sageref'
+# The name for this set of Sphinx documents.
+html_title = title
+html_short_title = title
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = name
@@ -58,14 +61,13 @@ htmlhelp_basename = name
 # start file, target name, title, author, document class
 # [howto/manual]).
 latex_documents = [
-('index', name + '.tex', project, u'The Sage Development Team', 'manual')
+  ('index', name + '.tex', title,
+   'The Sage Development Team', 'manual')
 ]
 
 latex_elements['hyperref'] = r"""
-\usepackage{xcite}
-\usepackage{xr-hyper}
+\usepackage{xr}
 \externaldocument[../references/]{../references/references}
-\externalcitedocument[../references/]{../references/references}
 % Include hyperref last.
 \usepackage{hyperref}
 % Fix anchor placement for figures with captions.

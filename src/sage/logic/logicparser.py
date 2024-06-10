@@ -75,22 +75,22 @@ Find the full syntax parse tree of a boolean formula from a list of tokens::
     sage: logicparser.tree_parse(r, polish = True)
     ['|', ['~', ['~', 'a']], 'b']
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Chris Gorecki <chris.k.gorecki@gmail.com>
 #       Copyright (C) 2013 Paul Scurek <scurek86@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import string
 
 
 __symbols = '()&|~<->^'
 __op_list = ['~', '&', '|', '^', '->', '<->']
+
 
 def parse(s):
     r"""
@@ -102,10 +102,10 @@ def parse(s):
 
     OUTPUT:
 
-    A list containing the prase tree and a list containing the
+    A list containing the parse tree and a list containing the
     variables in a boolean formula in this order:
 
-    1. the list containing the pase tree
+    1. the list containing the parse tree
     2. the list containing the variables
 
     EXAMPLES:
@@ -125,6 +125,7 @@ def parse(s):
     if isinstance(tree, str):
         return ['&', tree, tree], vars_order
     return tree, vars_order
+
 
 def polish_parse(s):
     r"""
@@ -157,11 +158,12 @@ def polish_parse(s):
         raise SyntaxError("malformed statement")
 
     toks, vars_order = tokenize(s)
-    tree = tree_parse(toks, polish = True)
+    tree = tree_parse(toks, polish=True)
     # special case where the formula s is a single variable
     if isinstance(tree, str):
         return vars_order
     return tree
+
 
 def get_trees(*statements):
     r"""
@@ -275,6 +277,7 @@ def recover_formula(prefix_tree):
         return formula
     return formula[1:-1]
 
+
 def recover_formula_internal(prefix_tree):
     r"""
     Recover the formula from a parse tree in prefix form.
@@ -384,6 +387,7 @@ def prefix_to_infix(prefix_tree):
         raise TypeError("the input must be a parse tree as a list")
     return apply_func(prefix_tree, to_infix_internal)
 
+
 def to_infix_internal(prefix_tree):
     r"""
     Convert a simple parse tree from prefix form to infix form.
@@ -432,6 +436,7 @@ def to_infix_internal(prefix_tree):
     if prefix_tree[0] != '~' and len(prefix_tree) == 3:
         return [prefix_tree[1], prefix_tree[0], prefix_tree[2]]
     return prefix_tree
+
 
 def tokenize(s):
     r"""
@@ -515,6 +520,7 @@ def tokenize(s):
     toks.append(')')
     return toks, vars_order
 
+
 def tree_parse(toks, polish=False):
     r"""
     Return a parse tree from the tokens in ``toks``.
@@ -567,9 +573,10 @@ def tree_parse(toks, polish=False):
             while tok != '(':
                 tok = stack.pop()
                 lrtoks.insert(0, tok)
-            branch = parse_ltor(lrtoks[1:-1], polish = polish)
+            branch = parse_ltor(lrtoks[1:-1], polish=polish)
             stack.append(branch)
     return stack[0]
+
 
 def parse_ltor(toks, n=0, polish=False):
     r"""
@@ -642,7 +649,7 @@ def parse_ltor(toks, n=0, polish=False):
                         toks[j - 1] = args
                         del toks[j]
                         j -= 1
-                    return parse_ltor(toks, n = n, polish = polish)
+                    return parse_ltor(toks, n=n, polish=polish)
             else:
                 args = [toks[i - 1], toks[i], toks[i + 1]]
                 toks[i - 1] = [args[1], args[0], args[2]]
@@ -655,6 +662,7 @@ def parse_ltor(toks, n=0, polish=False):
     if len(toks) > 1:
         raise SyntaxError
     return toks[0]
+
 
 def apply_func(tree, func):
     r"""
@@ -702,5 +710,3 @@ def apply_func(tree, func):
         lval = tree[1]
         rval = tree[2]
     return func([tree[0], lval, rval])
-
-

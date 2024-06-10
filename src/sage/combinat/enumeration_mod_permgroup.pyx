@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat
 r"""
 Tools for enumeration modulo the action of a permutation group
 """
@@ -56,7 +57,7 @@ cpdef list all_children(ClonableIntArray v, int max_part):
             all_children.append(child)
     return all_children
 
-cpdef int lex_cmp_partial(ClonableIntArray v1, ClonableIntArray v2, int step):
+cpdef int lex_cmp_partial(ClonableIntArray v1, ClonableIntArray v2, int step) noexcept:
     r"""
     Partial comparison of the two lists according the lexicographic
     order. It compares the ``step``-th first entries.
@@ -85,7 +86,7 @@ cpdef int lex_cmp_partial(ClonableIntArray v1, ClonableIntArray v2, int step):
             return -1
     return 0
 
-cpdef int lex_cmp(ClonableIntArray v1, ClonableIntArray v2):
+cpdef int lex_cmp(ClonableIntArray v1, ClonableIntArray v2) noexcept:
     """
     Lexicographic comparison of :class:`~sage.structure.list_clone.ClonableIntArray`.
 
@@ -169,7 +170,7 @@ cpdef bint is_canonical(list sgs, ClonableIntArray v) except -1:
     l = len(v)
     to_analyse = set([v])
     for i in range(l-1):
-        new_to_analyse = set([])
+        new_to_analyse = set()
         transversal = sgs[i]
         for list_test in to_analyse:
             for x in transversal:
@@ -218,7 +219,7 @@ cpdef ClonableIntArray canonical_representative_of_orbit_of(list sgs, ClonableIn
     l = len(v)
     to_analyse = set([v])
     for i in range(l-1):
-        new_to_analyse = set([])
+        new_to_analyse = set()
         for list_test in to_analyse:
             for x in sgs[i]:
                 child = x._act_on_array_on_position(list_test)
@@ -274,11 +275,10 @@ cpdef set orbit(list sgs, ClonableIntArray v):
     cdef set to_analyse, new_to_analyse
     cdef ClonableIntArray list_test, child
     cdef PermutationGroupElement x
-    cdef list out
     l = len(v)
     to_analyse = set([v])
     for i in range(l-1):
-        new_to_analyse = set([])
+        new_to_analyse = set()
         for list_test in to_analyse:
             for x in sgs[i]:
                 child = x._act_on_array_on_position(list_test)

@@ -1,6 +1,6 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.symbolic
 r"""
-Parametric Surface
+Parametric surface
 
 Graphics 3D object for triangulating surfaces, and a base class for many other
 objects that can be represented by a 2D parametrization.
@@ -21,16 +21,37 @@ EXAMPLES::
     sage: def f(x,y): return x+y, sin(x)*sin(y), x*y
     sage: P = ParametricSurface(f, (srange(0,10,0.1), srange(-5,5.0,0.1)))
     sage: show(P)
+
+.. PLOT::
+
+    from sage.plot.plot3d.parametric_surface import ParametricSurface
+    def f(x,y): return x+y, sin(x)*sin(y), x*y
+    sphinx_plot(ParametricSurface(f, (srange(0,10,0.1), srange(-5,5.0,0.1))))
+
+::
+
     sage: S = MoebiusStrip(1,.2)
     sage: S.is_enclosed()
     False
-    sage: S.show()
+    sage: show(S)
+
+.. PLOT::
+
+    from sage.plot.plot3d.parametric_surface import MoebiusStrip
+    sphinx_plot(MoebiusStrip(1,.2))
+
 
 By default, the surface is colored with one single color. ::
 
     sage: P = ParametricSurface(f, (srange(0,10,0.1), srange(-5,5.0,0.1)),
     ....:  color="red")
     sage: P.show()
+
+.. PLOT::
+
+    from sage.plot.plot3d.parametric_surface import ParametricSurface
+    def f(x,y): return x+y, sin(x)*sin(y), x*y
+    sphinx_plot(ParametricSurface(f, (srange(0,10,0.1), srange(-5,5.0,0.1)), color="red"))
 
 One can instead provide a coloring function and a colormap::
 
@@ -39,6 +60,14 @@ One can instead provide a coloring function and a colormap::
     sage: cm = colormaps.RdYlGn
     sage: P = ParametricSurface(f, (srange(-5,5,0.1), srange(-5,5.0,0.1)), color=(c,cm))
     sage: P.show(viewer='tachyon')
+
+.. PLOT::
+
+    from sage.plot.plot3d.parametric_surface import ParametricSurface
+    def f(x,y): return x+y, x-y, x*y
+    def c(x,y): return sin((x+y)/2)**2
+    cm = colormaps.RdYlGn
+    sphinx_plot(ParametricSurface(f, (srange(-5,5,0.1), srange(-5,5.0,0.1)), color=(c,cm)))
 
 Note that the coloring function should rather have values between 0 and 1.
 This value is passed to the chosen colormap.
@@ -50,11 +79,13 @@ Another colored example::
     sage: P = ParametricSurface(g, (srange(-10,10,0.1), srange(-5,5.0,0.1)), color=(c,colm))
     sage: P.show(viewer='tachyon')
 
-.. WARNING::
+.. PLOT::
 
-    This kind of coloring using a colormap can be visualized using
-    Jmol, Tachyon (option ``viewer='tachyon'``) and Canvas3D
-    (option ``viewer='canvas3d'`` in the notebook).
+    from sage.plot.plot3d.parametric_surface import ParametricSurface
+    colm = colormaps.autumn
+    def g(x,y): return x, y, x**2 + y**2
+    def c(x,y): return sin((x+y)/2)**2
+    sphinx_plot(ParametricSurface(g, (srange(-10,10,0.1), srange(-5,5.0,0.1)), color=(c,colm)))
 
 .. NOTE::
 
@@ -87,18 +118,17 @@ from cysignals.memory cimport sig_malloc, sig_free
 from cysignals.signals cimport sig_check
 
 from math import cos, sin
-from sage.rings.all import RDF
+from sage.rings.real_double import RDF
 
 from sage.plot.colors import check_color_data
-from .base import RenderParams
-from .transform cimport point_c, face_c
-from sage.ext.fast_eval cimport FastDoubleFunc
+from sage.plot.plot3d.base import RenderParams
+from sage.plot.plot3d.transform cimport point_c, face_c
 from sage.ext.interpreters.wrapper_rdf cimport Wrapper_rdf
 
 include "point_c.pxi"
 
 
-cdef inline bint smash_edge(point_c* vs, face_c* f, int a, int b):
+cdef inline bint smash_edge(point_c* vs, face_c* f, int a, int b) noexcept:
     if point_c_eq(vs[f.vertices[a]], vs[f.vertices[b]]):
         f.vertices[b] = f.vertices[a]
         f.n -= 1
@@ -115,15 +145,15 @@ cdef class ParametricSurface(IndexFaceSet):
 
     INPUT:
 
-    - ``f`` - (default: ``None``) The defining function. Either a tuple of
+    - ``f`` -- (default: ``None``) The defining function. Either a tuple of
       three functions, or a single function which returns a tuple, taking
       two python floats as input. To subclass, pass ``None`` for ``f`` and
       override ``eval_c`` or ``eval`` instead.
 
-    - ``domain`` - (default: ``None``) A tuple of two lists, defining the
+    - ``domain`` -- (default: ``None``) A tuple of two lists, defining the
       grid of `u,v` values. If ``None``, this will be calculated automatically.
 
-    - ``color`` - (default: ``None``) A pair `(h,c)` where `h` is
+    - ``color`` -- (default: ``None``) A pair `(h,c)` where `h` is
       a function with values in `[0,1]` and `c` is a colormap. The
       color of a point `p` is then defined as the composition
       `c(h(p))`
@@ -137,6 +167,12 @@ cdef class ParametricSurface(IndexFaceSet):
 
         sage: len(S.face_list())
         2214
+
+    .. PLOT::
+
+        from sage.plot.plot3d.parametric_surface import ParametricSurface
+        def f(x,y): return cos(x)*sin(y), sin(x)*sin(y), cos(y)+log(tan(y/2))+0.2*x
+        sphinx_plot(ParametricSurface(f, (srange(0,12.4,0.1), srange(0.1,2,0.1))))
 
     The Hessenberg surface:
 
@@ -156,6 +192,19 @@ cdef class ParametricSurface(IndexFaceSet):
         ....:                srange(float(-1),float(1),float(0.1))), color="blue")
         sage: show(S)
 
+    .. PLOT::
+
+        def f(u,v):
+            a = 1
+            from math import cos, sin, sinh, cosh
+            x = cos(a)*(cos(u)*sinh(v)-cos(3*u)*sinh(3*v)/3) + sin(a)*(sin(u)*cosh(v)-sin(3*u)*cosh(3*v)/3)
+            y = cos(a)*(sin(u)*sinh(v)+sin(3*u)*sinh(3*v)/3) + sin(a)*(-cos(u)*cosh(v)-cos(3*u)*cosh(3*v)/3)
+            z = cos(a)*cos(2*u)*cosh(2*v)+sin(a)*sin(2*u)*sinh(2*v)
+            return (x,y,z)
+        from sage.plot.plot3d.parametric_surface import ParametricSurface
+        v = srange(float(0),float((3/2)*pi),float(0.1))
+        sphinx_plot(ParametricSurface(f, (srange(float(0),float(pi),float(0.1)),srange(float(-1),float(1),float(0.1))), color="blue"))
+
     A colored example using the ``color`` keyword::
 
         sage: def g(x,y): return x, y, - x**2 + y**2
@@ -164,6 +213,14 @@ cdef class ParametricSurface(IndexFaceSet):
         sage: P = ParametricSurface(g, (srange(-10,10,0.1),
         ....:   srange(-5,5.0,0.1)),color=(c,cm))
         sage: P.show(viewer='tachyon')
+
+    .. PLOT::
+
+        from sage.plot.plot3d.parametric_surface import ParametricSurface
+        def g(x,y): return x, y, - x**2 + y**2
+        def c(x,y): return sin((x-y/2)*y/4)**2
+        cm = colormaps.gist_rainbow
+        sphinx_plot(ParametricSurface(g, (srange(-10,10,0.1), srange(-5,5.0,0.1)),color=(c,cm)))
     """
 
     def __init__(self, f=None, domain=None, **kwds):
@@ -299,7 +356,7 @@ cdef class ParametricSurface(IndexFaceSet):
             sage: print(s[0][:100])
             {"vertices":[{"x":-2,"y":-2,"z":0},{"x":-2,"y":-1.89744,"z":0.399737},{"x":-1.89744,"y":-1.89744,"z"
 
-        One test for :trac:`22688`::
+        One test for :issue:`22688`::
 
             sage: P = spherical_plot3d(sqrt(x-pi/2),(x,0,pi),(y,0,2*pi))
             sage: s = P.json_repr(P.default_render_params())
@@ -311,7 +368,7 @@ cdef class ParametricSurface(IndexFaceSet):
 
     def threejs_repr(self, render_params):
         r"""
-        Return a represention of the surface suitable for plotting with three.js.
+        Return a representation of the surface suitable for plotting with three.js.
 
         EXAMPLES::
 
@@ -385,13 +442,13 @@ cdef class ParametricSurface(IndexFaceSet):
             sage: M.dual()
             Traceback (most recent call last):
             ...
-            NotImplementedError: This is only implemented for enclosed surfaces
+            NotImplementedError: this is only implemented for enclosed surfaces
         """
         # This doesn't completely make sense...
         if self.fcount == 0:
             self.triangulate()
         if not self.is_enclosed():
-            raise NotImplementedError("This is only implemented for enclosed surfaces")
+            raise NotImplementedError("this is only implemented for enclosed surfaces")
         return IndexFaceSet.dual(self)
 
     def bounding_box(self):
@@ -410,7 +467,8 @@ cdef class ParametricSurface(IndexFaceSet):
             sage: from sage.plot.plot3d.parametric_surface import MoebiusStrip
             sage: M = MoebiusStrip(7,3,2)
             sage: M.bounding_box()
-            ((-10.0, -7.53907349250478..., -2.9940801852848145), (10.0, 7.53907349250478..., 2.9940801852848145))
+            ((-10.0, -7.53907349250478..., -2.9940801852848145),
+             (10.0, 7.53907349250478..., 2.9940801852848145))
         """
         # We must triangulate before computing the bounding box; otherwise
         # we'll get an empty bounding box, as the bounding box is computed
@@ -435,7 +493,7 @@ cdef class ParametricSurface(IndexFaceSet):
             sage: def f(x,y): return x+y, sin(x)*sin(y), x*y                        # indirect doctests
             sage: P = ParametricSurface(f, (srange(0,10,0.1), srange(-5,5.0,0.1)))  # indirect doctests
             sage: P.show()                                                          # indirect doctests
-            sage: S = MoebiusStrip(1,.2)                                             # indirect doctests
+            sage: S = MoebiusStrip(1, .2)                                           # indirect doctests
             sage: S.show()                                                          # indirect doctests
         """
         cdef double u, v
@@ -586,10 +644,10 @@ cdef class ParametricSurface(IndexFaceSet):
             sage: P.get_grid(.1)
             Traceback (most recent call last):
             ...
-            NotImplementedError: You must override the get_grid method.
+            NotImplementedError: you must override the get_grid method
         """
         if self.render_grid is None:
-            raise NotImplementedError("You must override the get_grid method.")
+            raise NotImplementedError("you must override the get_grid method")
         return self.render_grid
 
     cdef int eval_grid(self, urange, vrange) except -1:
@@ -605,8 +663,7 @@ cdef class ParametricSurface(IndexFaceSet):
         - tuple -- split into fx, fy, fz and call each separately
         - callable -- call f(u,v)
 
-        In addition, branches are taken for efficient calling of FastDoubleFunc
-        (including whether to iterate over python or c doubles).
+        In addition, branches are taken for efficient calling of fast callables
         """
         cdef Py_ssize_t i, j
         cdef Py_ssize_t m = len(urange)
@@ -634,23 +691,15 @@ cdef class ParametricSurface(IndexFaceSet):
             fx, fy, fz = self.f
 
             # First, deal with the fast functions (if any)
-            fast_x = isinstance(fx, (FastDoubleFunc, Wrapper_rdf))
-            fast_y = isinstance(fy, (FastDoubleFunc, Wrapper_rdf))
-            fast_z = isinstance(fz, (FastDoubleFunc, Wrapper_rdf))
+            fast_x = isinstance(fx, Wrapper_rdf)
+            fast_y = isinstance(fy, Wrapper_rdf)
+            fast_z = isinstance(fz, Wrapper_rdf)
             if fast_x or fast_y or fast_z:
                 ulist = to_double_array(urange)
                 vlist = to_double_array(vrange)
 
                 res = self.vs
-                if isinstance(fx, FastDoubleFunc):
-                    for i in range(m):
-                        uv[0] = ulist[i]
-                        for j in range(n):
-                            sig_check()
-                            uv[1] = vlist[j]
-                            res.x = (<FastDoubleFunc>fx)._call_c(uv)
-                            res += 1
-                elif fast_x: # must be Wrapper_rdf
+                if fast_x:  # must be Wrapper_rdf
                     for i in range(m):
                         uv[0] = ulist[i]
                         for j in range(n):
@@ -660,33 +709,17 @@ cdef class ParametricSurface(IndexFaceSet):
                             res += 1
 
                 res = self.vs
-                if isinstance(fy, FastDoubleFunc):
+                if fast_y:  # must be Wrapper_rdf
                     for i in range(m):
                         uv[0] = ulist[i]
                         for j in range(n):
-                            sig_check()
-                            uv[1] = vlist[j]
-                            res.y = (<FastDoubleFunc>fy)._call_c(uv)
-                            res += 1
-                elif fast_y: # must be Wrapper_rdf
-                    for i from 0 <= i < m:
-                        uv[0] = ulist[i]
-                        for j from 0 <= j < n:
                             sig_check()
                             uv[1] = vlist[j]
                             (<Wrapper_rdf>fy).call_c(uv, &res.y)
                             res += 1
 
                 res = self.vs
-                if isinstance(fz, FastDoubleFunc):
-                    for i in range(m):
-                        uv[0] = ulist[i]
-                        for j in range(n):
-                            sig_check()
-                            uv[1] = vlist[j]
-                            res.z = (<FastDoubleFunc>fz)._call_c(uv)
-                            res += 1
-                elif fast_z: # must be Wrapper_rdf
+                if fast_z:  # must be Wrapper_rdf
                     for i in range(m):
                         uv[0] = ulist[i]
                         for j in range(n):
@@ -744,7 +777,7 @@ cdef class ParametricSurface(IndexFaceSet):
         """
         Draw a 3D plot of this graphics object, which just returns this
         object since this is already a 3D graphics object.
-        Needed to support PLOT in doctrings, see :trac:`17498`
+        Needed to support PLOT in doctrings, see :issue:`17498`
 
         EXAMPLES::
 
@@ -777,6 +810,11 @@ class MoebiusStrip(ParametricSurface):
         sage: from sage.plot.plot3d.parametric_surface import MoebiusStrip
         sage: M = MoebiusStrip(3,3)
         sage: M.show()
+
+    .. PLOT::
+
+        from sage.plot.plot3d.parametric_surface import MoebiusStrip
+        sphinx_plot(MoebiusStrip(3,3))
     """
 
     def __init__(self, r, width, twists=1, **kwds):

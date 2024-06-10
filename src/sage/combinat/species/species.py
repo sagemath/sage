@@ -22,22 +22,21 @@ leaves and of `q` to internal nodes::
     sage: leaf = species.SingletonSpecies()
     sage: internal_node = species.SingletonSpecies(weight=q)
     sage: L = species.LinearOrderSpecies(min=1)
-    sage: T = species.CombinatorialSpecies()
+    sage: T = species.CombinatorialSpecies(min=1)
     sage: T.define(leaf + internal_node*L(T))
-    sage: T.isotype_generating_series().coefficients(6)
+    sage: T.isotype_generating_series()[0:6]                                            # needs sage.modules
     [0, 1, q, q^2 + q, q^3 + 3*q^2 + q, q^4 + 6*q^3 + 6*q^2 + q]
 
 Consider the following::
 
-    sage: T.isotype_generating_series().coefficient(4)
+    sage: T.isotype_generating_series().coefficient(4)                                  # needs sage.modules
     q^3 + 3*q^2 + q
 
 This means that, among the trees on `4` nodes, one has a
 single internal node, three have two internal nodes, and one has
 three internal nodes.
 """
-from __future__ import absolute_import
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -49,15 +48,16 @@ from __future__ import absolute_import
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from .generating_series import OrdinaryGeneratingSeriesRing, ExponentialGeneratingSeriesRing, CycleIndexSeriesRing
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 from sage.structure.sage_object import SageObject
 from sage.misc.cachefunc import cached_method
 from sage.combinat.species.misc import accept_size
 from sage.combinat.species.structure import StructuresWrapper, IsotypesWrapper
 from functools import reduce
+
 
 class GenericCombinatorialSpecies(SageObject):
     def __init__(self, min=None, max=None, weight=None):
@@ -78,7 +78,7 @@ class GenericCombinatorialSpecies(SageObject):
 
     def __hash__(self):
         """
-        Returns a hash of the unique info tuple.
+        Return a hash of the unique info tuple.
 
         EXAMPLES::
 
@@ -87,10 +87,9 @@ class GenericCombinatorialSpecies(SageObject):
         """
         return hash(self._unique_info())
 
-
     def _unique_info(self):
         """
-        Returns a tuple which should uniquely identify the species.
+        Return a tuple which should uniquely identify the species.
 
         EXAMPLES::
 
@@ -176,7 +175,7 @@ class GenericCombinatorialSpecies(SageObject):
             False
         """
         return not (self == other)
-    
+
     def __getstate__(self):
         r"""
         This is used during the pickling process and returns a dictionary
@@ -204,7 +203,7 @@ class GenericCombinatorialSpecies(SageObject):
     def __setstate__(self, state):
         """
         This is used during unpickling to recreate this object from the
-        data provided by the __getstate__ method.
+        data provided by the ``__getstate__`` method.
 
         TESTS::
 
@@ -220,7 +219,7 @@ class GenericCombinatorialSpecies(SageObject):
 
     def weighted(self, weight):
         """
-        Returns a version of this species with the specified weight.
+        Return a version of this species with the specified weight.
 
         EXAMPLES::
 
@@ -236,7 +235,7 @@ class GenericCombinatorialSpecies(SageObject):
 
     def __repr__(self):
         """
-        Returns a string representation of this species.
+        Return a string representation of this species.
 
         EXAMPLES::
 
@@ -260,7 +259,7 @@ class GenericCombinatorialSpecies(SageObject):
         else:
             name = "Combinatorial species"
 
-        options  = []
+        options = []
 
         if self._min is not None:
             options.append('min=%s' % self._min)
@@ -276,7 +275,7 @@ class GenericCombinatorialSpecies(SageObject):
 
     def __add__(self, g):
         """
-        Returns the sum of self and g.
+        Return the sum of ``self`` and ``g``.
 
         EXAMPLES::
 
@@ -295,7 +294,7 @@ class GenericCombinatorialSpecies(SageObject):
 
     def __mul__(self, g):
         """
-        Returns the product of self and g.
+        Return the product of ``self`` and ``g``.
 
         EXAMPLES::
 
@@ -327,7 +326,7 @@ class GenericCombinatorialSpecies(SageObject):
 
     def functorial_composition(self, g):
         """
-        Returns the functorial composition of self with g.
+        Return the functorial composition of ``self`` with ``g``.
 
         EXAMPLES::
 
@@ -336,7 +335,7 @@ class GenericCombinatorialSpecies(SageObject):
             sage: WP = species.SubsetSpecies()
             sage: P2 = E2*E
             sage: G = WP.functorial_composition(P2)
-            sage: G.isotype_generating_series().coefficients(5)
+            sage: G.isotype_generating_series()[0:5]                                    # needs sage.modules
             [1, 1, 2, 4, 11]
         """
         from .functorial_composition_species import FunctorialCompositionSpecies
@@ -344,17 +343,24 @@ class GenericCombinatorialSpecies(SageObject):
             raise TypeError("g must be a combinatorial species")
         return FunctorialCompositionSpecies(self, g)
 
-
     @accept_size
     def restricted(self, min=None, max=None):
         """
+        Return the restriction of the species.
+
+        INPUT:
+
+        - ``min`` -- optional integer
+
+        - ``max`` -- optional integer
+
         EXAMPLES::
 
             sage: S = species.SetSpecies().restricted(min=3); S
             Set species with min=3
             sage: S.structures([1,2]).list()
             []
-            sage: S.generating_series().coefficients(5)
+            sage: S.generating_series()[0:5]
             [0, 0, 0, 1/6, 1/24]
         """
         kwargs = {'min': self._min if min is None else min,
@@ -388,14 +394,14 @@ class GenericCombinatorialSpecies(SageObject):
 
     def _check(self, n=5):
         """
-        Returns True if the number of structures and isomorphism types
+        Return ``True`` if the number of structures and isomorphism types
         generated is the same as the number found from the generating
         series.
 
         EXAMPLES::
 
             sage: P = species.PartitionSpecies()
-            sage: P._check()
+            sage: P._check()                                                            # needs sage.libs.flint
             True
         """
         st = self.structures(range(n))
@@ -409,7 +415,7 @@ class GenericCombinatorialSpecies(SageObject):
 
     def __pow__(self, n):
         r"""
-        Returns this species to the power `n`.
+        Return this species to the power `n`.
 
         This uses a binary exponentiation algorithm to perform the
         powering.
@@ -425,24 +431,24 @@ class GenericCombinatorialSpecies(SageObject):
             (Singleton species) and (Singleton species)) and (Product
             of (Singleton species) and (Singleton species)))
 
-            sage: (X^2).generating_series().coefficients(4)
+            sage: (X^2).generating_series()[0:4]
             [0, 0, 1, 0]
-            sage: (X^3).generating_series().coefficients(4)
+            sage: (X^3).generating_series()[0:4]
             [0, 0, 0, 1]
-            sage: ((One+X)^3).generating_series().coefficients(4)
+            sage: ((One+X)^3).generating_series()[0:4]
             [1, 3, 3, 1]
-            sage: ((One+X)^7).generating_series().coefficients(8)
+            sage: ((One+X)^7).generating_series()[0:8]
             [1, 7, 21, 35, 35, 21, 7, 1]
 
             sage: x = QQ[['x']].gen()
             sage: coeffs = ((1+x+x+x**2)**25+O(x**10)).padded_list()
             sage: T = ((One+X+X+X^2)^25)
-            sage: T.generating_series().coefficients(10) == coeffs
+            sage: T.generating_series()[0:10] == coeffs
             True
             sage: X^1 is X
             True
             sage: A = X^32
-            sage: A.digraph()
+            sage: A.digraph()                                                           # needs sage.graphs
             Multi-digraph on 6 vertices
 
         TESTS::
@@ -452,7 +458,7 @@ class GenericCombinatorialSpecies(SageObject):
             ...
             ValueError: only positive exponents are currently supported
         """
-        from sage.rings.all import Integer
+        from sage.rings.integer import Integer
         import operator
         n = Integer(n)
         if n <= 0:
@@ -466,69 +472,69 @@ class GenericCombinatorialSpecies(SageObject):
 
     def _get_series(self, series_ring_class, prefix, base_ring=None):
         """
-        Returns the generating / isotype generating / cycle index series
+        Return the generating / isotype generating / cycle index series
         ring. The purpose of this method is to restrict the result of
-        _series_helper to self._min and self._max.
+        _series_helper to ``self._min`` and ``self._max``.
 
         EXAMPLES::
 
             sage: P = species.PermutationSpecies(min=2, max=4)
-            sage: P.generating_series().coefficients(8) #indirect doctest
+            sage: P.generating_series()[0:8] #indirect doctest
             [0, 0, 1, 1, 0, 0, 0, 0]
         """
         series = self._series_helper(series_ring_class, prefix, base_ring=base_ring)
-
-        #We need to restrict the series based on the min
-        #and max of this species.  Note that if min and max
-        #are both None (as in the default case), then the restrict
-        #method will just return series.
-        return series.restricted(min=self._min, max=self._max)
+        # We need to restrict the series based on the min
+        # and max of this species.  Note that if min and max
+        # are both None (as in the default case), then the restrict
+        # method will just return series.
+        if self._min is None and self._max is None:
+            return series
+        return series.parent()(lambda n: series[n],
+                               valuation=self._min, degree=self._max)
 
     def _series_helper(self, series_ring_class, prefix, base_ring=None):
         """
         This code handles much of the common work involved in getting the
-        generating series for this species (such has determining the
+        generating series for this species (such as determining the
         correct base ring to pass down to the subclass, determining which
         method on the subclass to call to get the series object, etc.)
 
         INPUT:
 
-
-        -  ``series_ring_class`` - A class for the series
+        -  ``series_ring_class`` -- A class for the series
            ring such as ExponentialGeneratingSeriesRing, etc.
 
-        -  ``prefix`` - The string prefix associated with the
+        -  ``prefix`` -- The string prefix associated with the
            generating series such as "cis" for the cycle index series. This
            prefix appears in the methods that are implemented in the
            subclass.
 
-        -  ``base_ring`` - The ring in which the coefficients
+        -  ``base_ring`` -- The ring in which the coefficients
            of the generating series live. If it is not specified, then it is
            determined by the weight of the species.
-
 
         EXAMPLES::
 
             sage: from sage.combinat.species.generating_series import OrdinaryGeneratingSeriesRing
             sage: S = species.SetSpecies()
             sage: itgs = S._series_helper(OrdinaryGeneratingSeriesRing, "itgs")
-            sage: itgs.coefficients(3)
+            sage: itgs[:3]
             [1, 1, 1]
 
         ::
 
             sage: itgs = S._series_helper(OrdinaryGeneratingSeriesRing, "itgs", base_ring=RDF)
-            sage: itgs.coefficients(3)
+            sage: itgs[:3]
             [1.0, 1.0, 1.0]
         """
-        prefix = "_"+prefix
+        prefix = "_" + prefix
 
-        #Get the base ring
+        # Get the base ring
         if base_ring is None:
             base_ring = self.weight_ring()
         else:
-            #The specified base ring must have maps from both
-            #the rational numbers and the weight ring
+            # The specified base ring must have maps from both
+            # the rational numbers and the weight ring
             if not base_ring.has_coerce_map_from(QQ):
                 raise ValueError("specified base ring does not contain the rationals")
             if not base_ring.has_coerce_map_from(self.weight_ring()):
@@ -536,64 +542,64 @@ class GenericCombinatorialSpecies(SageObject):
 
         series_ring = series_ring_class(base_ring)
 
-        #Try to return things like self._gs(base_ring)
-        #This is used when the subclass wants to just
-        #handle creating the generating series itself;
-        #for example, returning the exponential of a
-        #generating series.
+        # Try to return things like self._gs(base_ring)
+        # This is used when the subclass wants to just
+        # handle creating the generating series itself;
+        # for example, returning the exponential of a
+        # generating series.
         try:
             return getattr(self, prefix)(series_ring, base_ring)
         except AttributeError:
             pass
 
-        #Try to return things like self._gs_iterator(base_ring).
-        #This is used when the subclass just provides an iterator
-        #for the coefficients of the generating series.  Optionally,
-        #the subclass can specify the order of the series.
+        # Try to return things like self._gs_callable(base_ring).
+        # This is used when the subclass just provides a callable
+        # for the coefficients of the generating series.  Optionally,
+        # the subclass can specify the order of the series.
         try:
-            iterator = getattr(self, prefix+"_iterator")(base_ring)
+            callable = getattr(self, prefix + "_callable")
             try:
-                return series_ring(iterator, order=self._order())
+                return series_ring(lambda n: callable(base_ring, n), valuation=self._order())
             except AttributeError:
-                return series_ring(iterator)
+                return series_ring(lambda n: callable(base_ring, n))
         except AttributeError:
             pass
 
-        #Try to use things like self._gs_term(base_ring).
-        #This is used when the generating series is just a single
-        #term.
+        # Try to use things like self._gs_term(base_ring).
+        # This is used when the generating series is just a single
+        # term.
         try:
-            return series_ring.term( getattr(self, prefix+"_term")(base_ring),
-                                     self._order())
+            return series_ring(getattr(self, prefix + "_term")(base_ring),
+                                    self._order())
         except AttributeError:
             pass
 
-        #Try to use things like self._gs_list(base_ring).
-        #This is used when the coefficients of the generating series
-        #can be given by a finite list with the last coefficient repeating.
-        #The generating series with all ones coefficients is generated this
-        #way.
+        # Try to use things like self._gs_list(base_ring).
+        # This is used when the coefficients of the generating series
+        # can be given by a finite list with the last coefficient repeating.
+        # The generating series with all ones coefficients is generated this
+        # way.
         try:
-            return series_ring(getattr(self, prefix+"_list")(base_ring))
+            return series_ring(lambda n: getattr(self, prefix + "_list")(base_ring, n))
         except AttributeError:
             pass
 
         raise NotImplementedError
 
-
     @cached_method
     def generating_series(self, base_ring=None):
         r"""
-        Returns the generating series for this species. This is an
-        exponential generating series so the nth coefficient of the series
-        corresponds to the number of labeled structures with n labels
-        divided by n!.
+        Return the generating series for this species.
+
+        This is an exponential generating series so the `n`-th
+        coefficient of the series corresponds to the number of labeled
+        structures with `n` labels divided by `n!`.
 
         EXAMPLES::
 
             sage: P = species.PermutationSpecies()
             sage: g = P.generating_series()
-            sage: g.coefficients(4)
+            sage: g[:4]
             [1, 1, 1, 1]
             sage: g.counts(4)
             [1, 1, 2, 6]
@@ -607,44 +613,45 @@ class GenericCombinatorialSpecies(SageObject):
     @cached_method
     def isotype_generating_series(self, base_ring=None):
         r"""
-        Returns the isotype generating series for this species. The nth
-        coefficient of this series corresponds to the number of isomorphism
-        types for the structures on n labels.
+        Return the isotype generating series for this species.
+
+        The `n`-th coefficient of this series corresponds to the number
+        of isomorphism types for the structures on `n` labels.
 
         EXAMPLES::
 
             sage: P = species.PermutationSpecies()
             sage: g = P.isotype_generating_series()
-            sage: g.coefficients(4)
+            sage: g[0:4]                                                                # needs sage.libs.flint
             [1, 1, 2, 3]
-            sage: g.counts(4)
+            sage: g.counts(4)                                                           # needs sage.libs.flint
             [1, 1, 2, 3]
-            sage: P.isotypes([1,2,3]).list()
+            sage: P.isotypes([1,2,3]).list()                                            # needs sage.libs.flint
             [[2, 3, 1], [2, 1, 3], [1, 2, 3]]
-            sage: len(_)
+            sage: len(_)                                                                # needs sage.libs.flint
             3
         """
         return self._get_series(OrdinaryGeneratingSeriesRing, "itgs", base_ring)
 
-
     @cached_method
     def cycle_index_series(self, base_ring=None):
         r"""
-        Returns the cycle index series for this species.
+        Return the cycle index series for this species.
+
+        The cycle index series is a sequence of symmetric functions.
 
         EXAMPLES::
 
             sage: P = species.PermutationSpecies()
-            sage: g = P.cycle_index_series()
-            sage: g.coefficients(4)
+            sage: g = P.cycle_index_series()                                            # needs sage.modules
+            sage: g[0:4]                                                                # needs sage.modules
             [p[], p[1], p[1, 1] + p[2], p[1, 1, 1] + p[2, 1] + p[3]]
         """
         return self._get_series(CycleIndexSeriesRing, "cis", base_ring)
 
-
     def is_weighted(self):
         """
-        Returns True if this species has a nontrivial weighting associated
+        Return ``True`` if this species has a nontrivial weighting associated
         with it.
 
         EXAMPLES::
@@ -657,7 +664,7 @@ class GenericCombinatorialSpecies(SageObject):
 
     def weight_ring(self):
         """
-        Returns the ring in which the weights of this species occur.
+        Return the ring in which the weights of this species occur.
 
         By default, this is just the field of rational numbers.
 
@@ -673,8 +680,8 @@ class GenericCombinatorialSpecies(SageObject):
 
     def _common_parent(self, parents):
         """
-        Returns a parent that all of the parents in the given list of
-        parents
+        Return a parent that contains all the parents
+        in the given list of parents.
 
         EXAMPLES::
 
@@ -682,7 +689,7 @@ class GenericCombinatorialSpecies(SageObject):
             sage: C._common_parent([QQ, ZZ['t']])
             Univariate Polynomial Ring in t over Rational Field
         """
-        assert len(parents) > 0
+        assert parents
         from sage.structure.element import get_coercion_model
         cm = get_coercion_model()
 
@@ -703,19 +710,19 @@ class GenericCombinatorialSpecies(SageObject):
             sage: X = species.SingletonSpecies()
             sage: B = species.CombinatorialSpecies()
             sage: B.define(X+B*B)
-            sage: g = B.digraph(); g
+            sage: g = B.digraph(); g                                                    # needs sage.graphs
             Multi-digraph on 4 vertices
 
-            sage: sorted(g, key=str)
+            sage: sorted(g, key=str)                                                    # needs sage.graphs
             [Combinatorial species,
              Product of (Combinatorial species) and (Combinatorial species),
              Singleton species,
              Sum of (Singleton species) and
               (Product of (Combinatorial species) and (Combinatorial species))]
 
-            sage: d = {sp: i for i, sp in enumerate(g)}
-            sage: g.relabel(d)
-            sage: g.canonical_label().edges()
+            sage: d = {sp: i for i, sp in enumerate(g)}                                 # needs sage.graphs
+            sage: g.relabel(d)                                                          # needs sage.graphs
+            sage: g.canonical_label().edges(sort=True)                                  # needs sage.graphs
             [(0, 3, None), (2, 0, None), (2, 0, None), (3, 1, None), (3, 2, None)]
         """
         from sage.graphs.digraph import DiGraph
@@ -725,20 +732,21 @@ class GenericCombinatorialSpecies(SageObject):
 
     def _add_to_digraph(self, d):
         """
-        Add this species as a vertex to the digraph d along with any
+        Add this species as a vertex to the digraph ``d`` along with any
         'children' of this species. For example, sum species would add
         itself as a vertex and an edge between itself and each of its
         summands.
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: d = DiGraph(multiedges=True)
             sage: X = species.SingletonSpecies()
             sage: X._add_to_digraph(d); d
             Multi-digraph on 1 vertex
             sage: (X+X)._add_to_digraph(d); d
             Multi-digraph on 2 vertices
-            sage: d.edges()
+            sage: d.edges(sort=True)
             [(Sum of (Singleton species) and (Singleton species), Singleton species, None),
              (Sum of (Singleton species) and (Singleton species), Singleton species, None)]
         """
@@ -753,7 +761,6 @@ class GenericCombinatorialSpecies(SageObject):
             d.add_edge(self, child)
             child._add_to_digraph(d)
 
-
     def algebraic_equation_system(self):
         """
         Return a system of algebraic equations satisfied by this species.
@@ -764,21 +771,25 @@ class GenericCombinatorialSpecies(SageObject):
         EXAMPLES::
 
             sage: B = species.BinaryTreeSpecies()
-            sage: B.algebraic_equation_system()
-            [-node3^2 + node1, -node1 + node3 - z]
+            sage: B.algebraic_equation_system()                                         # needs sage.graphs
+            [-node3^2 + node1, -node1 + node3 + (-z)]
 
         ::
 
-            sage: sorted(B.digraph().vertex_iterator(), key=str)
-            [Combinatorial species,
-             Product of (Combinatorial species) and (Combinatorial species),
+            sage: sorted(B.digraph().vertex_iterator(), key=str)                        # needs sage.graphs
+            [Combinatorial species with min=1,
+             Product of (Combinatorial species with min=1)
+                    and (Combinatorial species with min=1),
              Singleton species,
-             Sum of (Singleton species) and (Product of (Combinatorial species) and (Combinatorial species))]
+             Sum of (Singleton species)
+                and (Product of (Combinatorial species with min=1)
+                and (Combinatorial species with min=1))]
 
         ::
 
-            sage: B.algebraic_equation_system()[0].parent()
-            Multivariate Polynomial Ring in node0, node1, node2, node3 over Fraction Field of Univariate Polynomial Ring in z over Rational Field
+            sage: B.algebraic_equation_system()[0].parent()                             # needs sage.graphs
+            Multivariate Polynomial Ring in node0, node1, node2, node3 over
+             Fraction Field of Univariate Polynomial Ring in z over Rational Field
         """
         d = self.digraph()
 

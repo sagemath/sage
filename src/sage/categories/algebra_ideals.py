@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Algebra ideals
 """
@@ -9,10 +10,11 @@ Algebra ideals
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-from __future__ import absolute_import
 
-from .category_types import Category_ideal
-from .algebra_modules import AlgebraModules
+from sage.categories.algebra_modules import AlgebraModules
+from sage.categories.algebras import Algebras
+from sage.categories.category_types import Category_ideal
+from sage.categories.rings import Rings
 
 
 class AlgebraIdeals(Category_ideal):
@@ -49,9 +51,14 @@ class AlgebraIdeals(Category_ideal):
 
             sage: TestSuite(AlgebraIdeals(QQ['a'])).run()
         """
-        from sage.algebras.algebra import is_Algebra
-        if not is_Algebra(A): # A not in Algebras() ?
-            raise TypeError("A (=%s) must be an algebra"%A)
+        try:
+            base_ring = A.base_ring()
+        except AttributeError:
+            raise TypeError(f"A (={A}) must be an algebra")
+        else:
+            if base_ring not in Rings() or A not in Algebras(base_ring.category()):
+                raise TypeError(f"A (={A}) must be an algebra")
+
         Category_ideal.__init__(self, A)
 
     def algebra(self):
@@ -73,9 +80,10 @@ class AlgebraIdeals(Category_ideal):
         EXAMPLES::
 
             sage: AlgebraIdeals(QQ['x']).super_categories()
-            [Category of algebra modules over Univariate Polynomial Ring in x over Rational Field]
-            sage: C = AlgebraIdeals(FreeAlgebra(QQ,2,'a,b'))
-            sage: C.super_categories()
+            [Category of algebra modules
+              over Univariate Polynomial Ring in x over Rational Field]
+            sage: C = AlgebraIdeals(FreeAlgebra(QQ, 2, 'a,b'))                          # needs sage.combinat sage.modules
+            sage: C.super_categories()                                                  # needs sage.combinat sage.modules
             []
 
         """
@@ -83,6 +91,6 @@ class AlgebraIdeals(Category_ideal):
         try:
             if R.is_commutative():
                 return [AlgebraModules(R)]
-        except (AttributeError,NotImplementedError):
+        except (AttributeError, NotImplementedError):
             pass
         return []

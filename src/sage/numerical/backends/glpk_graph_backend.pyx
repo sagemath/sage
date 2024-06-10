@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs
 """
 GLPK Backend for access to GLPK graph functions
 
@@ -76,7 +77,7 @@ from sage.libs.glpk.constants cimport *
 from sage.libs.glpk.graph cimport *
 from sage.numerical.mip import MIPSolverException
 
-cdef class GLPKGraphBackend(object):
+cdef class GLPKGraphBackend():
     """
     GLPK Backend for access to GLPK graph functions
 
@@ -160,11 +161,12 @@ cdef class GLPKGraphBackend(object):
         sage: gbe.add_vertices([None, None])
         ['0', '1']
         sage: a = gbe.add_edge('0', '1')
-        sage: gbe.write_graph(SAGE_TMP+"/graph.txt")
+        sage: import tempfile
+        sage: with tempfile.NamedTemporaryFile() as f:
+        ....:     _ = gbe.write_graph(f.name)
+        ....:     gbe1 = GLPKGraphBackend(f.name, "plain")
         Writing graph to ...
         4 lines were written
-        0
-        sage: gbe1 = GLPKGraphBackend(SAGE_TMP+"/graph.txt", "plain")
         Reading graph from ...
         Graph has 2 vertices and 1 edge
         3 lines were read
@@ -174,7 +176,7 @@ cdef class GLPKGraphBackend(object):
 
         sage: from sage.numerical.backends.glpk_graph_backend import GLPKGraphBackend
         sage: g = graphs.PappusGraph()
-        sage: for ed in g.edges():
+        sage: for ed in g.edges(sort=False):
         ....:     g.set_edge_label(ed[0], ed[1], {"cap":1})
         sage: gbe = GLPKGraphBackend(g)
         sage: gbe.maxflow_ffalg('1', '2')
@@ -294,7 +296,7 @@ cdef class GLPKGraphBackend(object):
 
             sage: from sage.numerical.backends.glpk_graph_backend import GLPKGraphBackend
             sage: g = graphs.PappusGraph()
-            sage: for ed in g.edges():
+            sage: for ed in g.edges(sort=False):
             ....:     g.set_edge_label(ed[0], ed[1], {"cap":1})
             sage: gbe = GLPKGraphBackend(g)
             sage: gbe.maxflow_ffalg('1', '2')
@@ -305,7 +307,7 @@ cdef class GLPKGraphBackend(object):
         cdef double rhs
         cdef glp_vertex* vert
 
-        verts = g.vertices()
+        verts = g.vertices(sort=True)
         n = len(verts)
         if n < 1:
             raise ValueError("Graph must contain vertices")
@@ -662,7 +664,7 @@ cdef class GLPKGraphBackend(object):
 
             sage: from sage.numerical.backends.glpk_graph_backend import GLPKGraphBackend
             sage: g = graphs.PappusGraph()
-            sage: for ed in g.edges():
+            sage: for ed in g.edges(sort=False):
             ....:     g.set_edge_label(ed[0], ed[1], {"cap":1})
             sage: gbe = GLPKGraphBackend(g)
             sage: gbe.maxflow_ffalg('1', '2')
@@ -676,7 +678,7 @@ cdef class GLPKGraphBackend(object):
         cdef double low
         cdef int isdirected = g.is_directed()
 
-        for eu, ev, label in g.edges():
+        for eu, ev, label in g.edges(sort=False):
             u_name = str(eu)
             v_name = str(ev)
             u = glp_find_vertex(self.graph, str_to_bytes(u_name))
@@ -1004,7 +1006,7 @@ cdef class GLPKGraphBackend(object):
         for edge in edges:
             self.delete_edge(*edge)
 
-    cpdef int _find_vertex(self, name):
+    cpdef int _find_vertex(self, name) noexcept:
         """
         Returns the index of a vertex specified by a name
 
@@ -1031,7 +1033,7 @@ cdef class GLPKGraphBackend(object):
         glp_create_v_index(self.graph)
         return glp_find_vertex(self.graph, str_to_bytes(name)) - 1
 
-    cpdef int write_graph(self, fname):
+    cpdef int write_graph(self, fname) noexcept:
         r"""
         Writes the graph to a plain text file
 
@@ -1048,7 +1050,9 @@ cdef class GLPKGraphBackend(object):
             sage: from sage.numerical.backends.glpk_graph_backend import GLPKGraphBackend
             sage: gbe = GLPKGraphBackend()
             sage: a = gbe.add_edge("0", "1")
-            sage: gbe.write_graph(SAGE_TMP+"/graph.txt")
+            sage: import tempfile
+            sage: with tempfile.NamedTemporaryFile() as f:
+            ....:     gbe.write_graph(f.name)
             Writing graph to ...
             4 lines were written
             0
@@ -1057,7 +1061,7 @@ cdef class GLPKGraphBackend(object):
         fname = str_to_bytes(fname, FS_ENCODING, 'surrogateescape')
         return glp_write_graph(self.graph, fname)
 
-    cpdef int write_ccdata(self, fname):
+    cpdef int write_ccdata(self, fname) noexcept:
         r"""
         Writes the graph to a text file in DIMACS format.
 
@@ -1078,7 +1082,9 @@ cdef class GLPKGraphBackend(object):
             sage: from sage.numerical.backends.glpk_graph_backend import GLPKGraphBackend
             sage: gbe = GLPKGraphBackend()
             sage: a = gbe.add_edge("0", "1")
-            sage: gbe.write_ccdata(SAGE_TMP+"/graph.dat")
+            sage: import tempfile
+            sage: with tempfile.NamedTemporaryFile() as f:
+            ....:     gbe.write_ccdata(f.name)
             Writing graph to ...
             6 lines were written
             0
@@ -1087,7 +1093,7 @@ cdef class GLPKGraphBackend(object):
         fname = str_to_bytes(fname, FS_ENCODING, 'surrogateescape')
         return glp_write_ccdata(self.graph, 0, fname)
 
-    cpdef int write_mincost(self, fname):
+    cpdef int write_mincost(self, fname) noexcept:
         """
         Writes the mincost flow problem data to a text file in DIMACS format
 
@@ -1104,7 +1110,9 @@ cdef class GLPKGraphBackend(object):
             sage: from sage.numerical.backends.glpk_graph_backend import GLPKGraphBackend
             sage: gbe = GLPKGraphBackend()
             sage: a = gbe.add_edge("0", "1")
-            sage: gbe.write_mincost(SAGE_TMP+"/graph.min")
+            sage: import tempfile
+            sage: with tempfile.NamedTemporaryFile() as f:
+            ....:     gbe.write_mincost(f.name)
             Writing min-cost flow problem data to ...
             4 lines were written
             0
@@ -1129,7 +1137,7 @@ cdef class GLPKGraphBackend(object):
         .. NOTE::
 
            This method raises ``MIPSolverException`` exceptions when
-           the solution can not be computed for any reason (none
+           the solution cannot be computed for any reason (none
            exists, or the LP solver was not able to find it, etc...)
 
         EXAMPLES::
@@ -1200,20 +1208,23 @@ cdef class GLPKGraphBackend(object):
 
             sage: from sage.numerical.backends.glpk_graph_backend import GLPKGraphBackend
             sage: gbe = GLPKGraphBackend()
+            sage: import tempfile
+            sage: with tempfile.NamedTemporaryFile() as f:
+            ....:     gbe.write_maxflow(f.name)
+            Traceback (most recent call last):
+            ...
+            OSError: Cannot write empty graph
             sage: gbe.add_vertices([None for i in range(2)])
             ['0', '1']
             sage: a = gbe.add_edge('0', '1')
             sage: gbe.maxflow_ffalg('0', '1')
             0.0
-            sage: gbe.write_maxflow(SAGE_TMP+"/graph.max")
+            sage: with tempfile.NamedTemporaryFile() as f:
+            ....:     gbe.write_maxflow(f.name)
             Writing maximum flow problem data to ...
             6 lines were written
             0
-            sage: gbe = GLPKGraphBackend()
-            sage: gbe.write_maxflow(SAGE_TMP+"/graph.max")
-            Traceback (most recent call last):
-            ...
-            IOError: Cannot write empty graph
+
         """
 
         if self.graph.nv <= 0:
@@ -1250,7 +1261,7 @@ cdef class GLPKGraphBackend(object):
             * If the source and sink are identical, a ``ValueError`` is raised.
 
             * This method raises ``MIPSolverException`` exceptions when the
-              solution can not be computed for any reason (none exists, or the
+              solution cannot be computed for any reason (none exists, or the
               LP solver was not able to find it, etc...)
 
         EXAMPLES::
@@ -1283,7 +1294,7 @@ cdef class GLPKGraphBackend(object):
         if s < 0 or t < 0:
             raise IndexError("Source or sink vertex does not exist")
         if s == t:
-            raise ValueError ("Source and sink are identical")
+            raise ValueError("Source and sink are identical")
 
         self.s = s
         self.t = t
@@ -1311,7 +1322,7 @@ cdef class GLPKGraphBackend(object):
 
         return graph_sol
 
-    cpdef double cpp(self):
+    cpdef double cpp(self) noexcept:
         r"""
         Solves the critical path problem of a project network.
 

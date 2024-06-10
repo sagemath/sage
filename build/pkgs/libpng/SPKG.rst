@@ -1,5 +1,5 @@
-libpng
-======
+libpng: Bitmap image support
+============================
 
 Description
 -----------
@@ -23,16 +23,10 @@ http://www.libpng.org/pub/png/src/libpng-LICENSE.txt
 Upstream Contact
 ----------------
 
+https://libpng.sourceforge.io
+
 The png mailing lists - see
 http://www.libpng.org/pub/png/pngmisc.html#lists
-
-Dependencies
-------------
-
-This spkg depends on:
-
--  libz
-
 
 Special Update/Build Instructions
 ---------------------------------

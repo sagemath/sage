@@ -1,7 +1,3 @@
-# distutils: depends = sage/geometry/polyhedron/combinatorial_polyhedron/bit_vector_operations.cc
-# distutils: language = c++
-# distutils: extra_compile_args = -std=c++11
-
 r"""
 List of faces
 
@@ -27,7 +23,9 @@ Provide enough space to store `20` faces as incidences to `60` vertices::
 
     sage: from sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces \
     ....: import ListOfFaces
-    sage: face_list = ListOfFaces(20, 60)
+    sage: face_list = ListOfFaces(20, 60, 20)
+    sage: face_list.matrix().is_zero()
+    True
 
 Obtain the facets of a polyhedron::
 
@@ -41,6 +39,7 @@ Obtain the facets of a polyhedron::
 
 Obtain the Vrepresentation of a polyhedron as facet-incidences::
 
+    sage: # needs sage.combinat
     sage: from sage.geometry.polyhedron.combinatorial_polyhedron.conversions \
     ....:         import incidence_matrix_to_bit_rep_of_Vrep
     sage: P = polytopes.associahedron(['A',3])
@@ -81,72 +80,23 @@ AUTHOR:
 
 - Jonathan Kliem (2019-04)
 """
-
-#*****************************************************************************
-#       Copyright (C) 2019 Jonathan Kliem <jonathan.kliem@fu-berlin.de>
+# ****************************************************************************
+#       Copyright (C) 2019 Jonathan Kliem <jonathan.kliem@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from sage.structure.element import is_Matrix
+from sage.matrix.matrix_dense  cimport Matrix_dense
 
-from cysignals.signals      cimport sig_on, sig_off
-from libc.string            cimport memcpy
-from .conversions           cimport vertex_to_bit_dictionary
-from sage.matrix.matrix_integer_dense  cimport Matrix_integer_dense
-
-cdef extern from "bit_vector_operations.cc":
-    # Any Bit-representation is assumed to be `chunksize`-Bit aligned.
-    cdef const size_t chunksize
-
-    cdef size_t get_next_level(
-        uint64_t **faces, const size_t n_faces, uint64_t **nextfaces,
-        uint64_t **nextfaces2, uint64_t **visited_all,
-        size_t n_visited_all, size_t face_length)
-#        Set ``newfaces`` to be the facets of ``faces[n_faces -1]``
-#        that are not contained in a face of ``visited_all``.
-
-#        INPUT:
-
-#        - ``maybe_newfaces`` -- quasi of type ``uint64_t[n_faces -1][face_length]``,
-#          needs to be ``chunksize``-Bit aligned
-#        - ``newfaces`` -- quasi of type ``*uint64_t[n_faces -1]
-#        - ``visited_all`` -- quasi of type ``*uint64_t[n_visited_all]
-#        - ``face_length`` -- length of the faces
-
-#        OUTPUT:
-
-#        - return number of ``newfaces``
-#        - set ``newfaces`` to point to the new faces
-
-#        ALGORITHM:
-
-#        To get all facets of ``faces[n_faces-1]``, we would have to:
-#        - Intersect the first ``n_faces-1`` faces of ``faces`` with the last face.
-#        - Add all the intersection of ``visited_all`` with the last face
-#        - Out of both the inclusion-maximal ones are of codimension 1, i.e. facets.
-
-#        As we have visited all faces of ``visited_all``, we alter the algorithm
-#        to not revisit:
-#        Step 1: Intersect the first ``n_faces-1`` faces of ``faces`` with the last face.
-#        Step 2: Out of thosse the inclusion-maximal ones are some of the facets.
-#                At least we obtain all of those, that we have not already visited.
-#                Maybe, we get some more.
-#        Step 3: Only keep those that we have not already visited.
-#                We obtain exactly the facets of ``faces[n_faces-1]`` that we have
-#                not visited yet.
-
-    cdef size_t count_atoms(uint64_t *A, size_t face_length)
-#        Return the number of atoms/vertices in A.
-#        This is the number of set bits in A.
-#        ``face_length`` is the length of A in terms of uint64_t.
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_list_data_structure cimport *
 
 cdef extern from "Python.h":
     int unlikely(int) nogil  # Defined by Cython
+
 
 cdef class ListOfFaces:
     r"""
@@ -158,6 +108,7 @@ cdef class ListOfFaces:
 
     - ``n_faces`` -- the number of faces to be stored
     - ``n_atoms`` -- the total number of atoms the faces contain
+    - ``n_coatoms`` -- the total number of coatoms of the polyhedron
 
     .. SEEALSO::
 
@@ -172,15 +123,11 @@ cdef class ListOfFaces:
 
         sage: from sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces \
         ....:     import ListOfFaces
-        sage: facets = ListOfFaces(5, 13)
-        sage: facets.face_length in (1, 2, 4)
-        True
-        sage: facets.n_atoms
-        13
-        sage: facets.n_faces
-        5
+        sage: facets = ListOfFaces(5, 13, 5)
+        sage: facets.matrix().dimensions()
+        (5, 13)
     """
-    def __init__(self, size_t n_faces, size_t n_atoms):
+    def __cinit__(self, size_t n_faces, size_t n_atoms, size_t n_coatoms):
         r"""
         Initialize :class:`ListOfFaces`.
 
@@ -190,27 +137,33 @@ cdef class ListOfFaces:
 
             sage: TestSuite(sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces).run()
         """
-        self.n_faces = n_faces
-        self.n_atoms = n_atoms
-        self._mem = MemoryAllocator()
+        # Note that all values are set to zero at the time ``__cinit__`` is called:
+        # https://cython.readthedocs.io/en/latest/src/userguide/special_methods.html#initialisation-methods
+        # In particular, ``__dealloc__`` will not do harm in this case.
 
-        # ``data`` will point to the faces as ``*uint64_t``.
-        self.data = <uint64_t **> self._mem.allocarray(n_faces, sizeof(uint64_t *))
+        face_list_init(self.data, n_faces, n_atoms, n_coatoms)
 
-        # ``face_length`` is the length in terms of ``uint64_t``
-        # NOTE: This needs to be divisible by 2, if chunksize is 128
-        #       and divisible by 4, if chunksize is 256.
-        self.face_length = ((n_atoms - 1)//chunksize + 1)*chunksize//64
+    def __dealloc__(self):
+        r"""
+        TESTS:
 
+        Check that failed ``cinit`` does not give segmentation fault or similar::
 
-        cdef size_t i
-        for i in range(n_faces):
-            # Allocate the memory for the i-th face.
-            # We must allocate the memory for ListOfFaces overaligned:
-            # - must be 16-byte aligned if chunksize = 128
-            # - must be 32-byte aligned if chunksize = 256
-            self.data[i] = <uint64_t *> \
-                self._mem.aligned_malloc(chunksize//8, self.face_length*8)
+            sage: from sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces import ListOfFaces
+            sage: ListOfFaces(-1, -1, -1)  # indirect doctest
+            Traceback (most recent call last):
+            ...
+            OverflowError: can't convert negative value to size_t
+
+            sage: from memory_allocator.test import TestMemoryAllocator
+            sage: t = TestMemoryAllocator()
+            sage: m = t.size_t_max()
+            sage: ListOfFaces(10, m, 10)
+            Traceback (most recent call last):
+            ...
+            MemoryError: failed to allocate ...
+        """
+        face_list_free(self.data)
 
     def _test_alignment(self):
         r"""
@@ -220,19 +173,12 @@ cdef class ListOfFaces:
 
             sage: from sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces \
             ....:         import ListOfFaces
-            sage: facets = ListOfFaces(10, 13)
+            sage: facets = ListOfFaces(10, 13, 10)
             sage: facets._test_alignment()
         """
-        cdef size_t address
-        cdef size_t required_alignment
-        cdef size_t i
+        assert face_list_check_alignment(self.data)
 
-        required_alignment = chunksize/8
-        for i in range(self.n_faces):
-            address = <size_t> self.data[i]
-            assert address == address & ~(required_alignment - 1)
-
-    def __copy__(self):
+    cpdef ListOfFaces __copy__(self):
         r"""
         Return a copy of self.
 
@@ -240,11 +186,9 @@ cdef class ListOfFaces:
 
             sage: from sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces \
             ....:     import ListOfFaces
-            sage: facets = ListOfFaces(5, 13)
-            sage: copy(facets).n_atoms
-            13
-            sage: copy(facets).n_faces
-            5
+            sage: facets = ListOfFaces(5, 13, 5)
+            sage: copy(facets).matrix().dimensions()
+            (5, 13)
 
         TESTS::
 
@@ -262,10 +206,8 @@ cdef class ListOfFaces:
             sage: copy(facets) is facets
             False
         """
-        cdef ListOfFaces copy = ListOfFaces(self.n_faces, self.n_atoms)
-        cdef size_t i
-        for i in range(self.n_faces):
-            memcpy(copy.data[i], self.data[i], self.face_length*8)
+        cdef ListOfFaces copy = ListOfFaces(self.n_faces(), self.n_atoms(), self.n_coatoms())
+        face_list_copy(copy.data, self.data)
         return copy
 
     cpdef int compute_dimension(self) except -2:
@@ -331,60 +273,35 @@ cdef class ListOfFaces:
             ....:     if not d1 == d2 == d3:
             ....:         print('calculation_dimension() seems to be incorrect')
         """
-        if self.n_faces == 0:
+        if self.n_faces() == 0:
             raise TypeError("at least one face needed")
-        return self.compute_dimension_loop(self.data, self.n_faces, self.face_length)
 
-    cdef int compute_dimension_loop(self, uint64_t **faces, size_t n_faces,
-                                      size_t face_length) except -2:
-        r"""
-        Compute the dimension of a polyhedron by its facets.
+        cdef size_t n_faces = self.n_faces()
 
-        INPUT:
-
-        - ``faces`` -- facets in Bit-representation
-        - ``n_faces`` -- length of facesdata
-        - ``face_length`` -- the length of each face in terms of ``uint64_t``
-
-        OUTPUT:
-
-        - dimension of the polyhedron
-
-        .. SEEALSO::
-
-            :meth:`compute_dimension`
-        """
-        if n_faces == 0:
-            raise TypeError("wrong usage of ``compute_dimension_loop``,\n" +
-                            "at least one face needed.")
+        cdef face_list_t empty_forbidden
+        empty_forbidden.n_faces = 0
 
         if n_faces == 1:
             # We expect the face to be the empty polyhedron.
             # Possibly it contains more than one vertex/rays/lines.
             # The dimension of a polyhedron with this face as only facet is
             # the number of atoms it contains.
-            return count_atoms(faces[0], face_length)
+            return face_len_atoms(self.data.faces[0])
 
-        # ``maybe_newfaces`` are all intersection of ``faces[n_faces -1]`` with previous faces.
+        # ``newfaces`` are all intersection of ``faces[n_faces -1]`` with previous faces.
         # It needs to be allocated to store those faces.
-        cdef ListOfFaces maybe_newfaces_mem = ListOfFaces(n_faces, face_length*64)
-        cdef uint64_t **maybe_newfaces = maybe_newfaces_mem.data
+        cdef ListOfFaces new_faces = ListOfFaces(self.n_faces(), self.n_atoms(), self.n_coatoms())
 
-        # ``newfaces`` point to the actual facets of ``faces[n_faces -1]``.
-        cdef MemoryAllocator newfaces_mem = MemoryAllocator()
-        cdef uint64_t **newfaces = <uint64_t **> newfaces_mem.allocarray(n_faces, sizeof(uint64_t *))
-
-        # Calculating ``maybe_newfaces`` and ``newfaces``
+        # Calculating ``newfaces``
         # such that ``newfaces`` points to all facets of ``faces[n_faces -1]``.
-        cdef size_t new_n_faces
-        sig_on()
-        new_n_faces = get_next_level(faces, n_faces, maybe_newfaces,
-                                      newfaces, NULL, 0, face_length)
-        sig_off()
+        get_next_level(self.data, new_faces.data, empty_forbidden)
+
+        # Undo what ``get_next_level`` does.
+        self.data.n_faces += 1
 
         # compute the dimension of the polyhedron,
         # by calculating dimension of one of its faces.
-        return self.compute_dimension_loop(newfaces, new_n_faces, face_length) + 1
+        return new_faces.compute_dimension() + 1
 
     cpdef ListOfFaces pyramid(self):
         r"""
@@ -441,27 +358,123 @@ cdef class ListOfFaces:
             [1 1 1 1 0]
         """
         cdef ListOfFaces copy
-        cdef size_t i, j
+        cdef size_t i
+        cdef size_t n_faces = self.n_faces()
+        cdef size_t n_atoms = self.n_atoms()
 
         # ``copy`` has a new atom and a new coatom.
-        copy = ListOfFaces(self.n_faces + 1, self.n_atoms + 1)
+        copy = ListOfFaces(n_faces + 1, n_atoms + 1, n_faces + 1)
 
-        for i in range(self.n_faces):
-            for j in range(self.face_length, copy.face_length):
-                copy.data[i][j] = 0
+        # Note that a pyramid is simple if and only if the base is simple.
 
-            # All old coatoms contain their respective old atoms.
-            # Also all of them contain the new atom.
-            memcpy(copy.data[i], self.data[i], self.face_length*8)
-            copy.data[i][self.n_atoms//64] |= vertex_to_bit_dictionary(self.n_atoms % 64)
+        face_list_copy(copy.data, self.data)
+
+        for i in range(n_faces):
+            face_add_atom(copy.data.faces[i], n_atoms)
+            facet_set_coatom(copy.data.faces[i], i)
+
+        copy.data.n_faces += 1
 
         # The new coatom contains all atoms, but the new atom.
-        for i in range(copy.face_length):
-            copy.data[self.n_faces][i] = 0
-        for i in range(self.n_atoms):
-            copy.data[self.n_faces][i//64] |= vertex_to_bit_dictionary(i % 64)
+        face_set_first_n_atoms(copy.data.faces[n_faces], n_atoms)
+        facet_set_coatom(copy.data.faces[n_faces], n_faces)
 
         return copy
+
+    cdef ListOfFaces delete_atoms_unsafe(self, bint *delete, face_t face):
+        r"""
+        Return a copy of ``self`` where bits in ``delete`` have been
+        removed/contracted.
+
+        The the remaining bits will be shifted to the left.
+
+        If ``delete`` is ``NULL``, keep exactly the bits set in ``face``.
+
+        .. WARNING::
+
+            ``delete`` is assumed to be of length ``self.n_atoms`` or NULL.
+            ``face`` is assumed to be of length ``self.face_length`` if ``delete`` is not ``NULL``.
+        """
+
+        cdef output_n_atoms
+        cdef size_t i, j
+        if delete is NULL:
+            output_n_atoms = face_len_atoms(face)
+        else:
+            output_n_atoms = self.n_atoms()
+            for i in range(self.n_atoms()):
+                if delete[i]:
+                    output_n_atoms -= 1
+
+        cdef ListOfFaces output = ListOfFaces(self.n_faces(), output_n_atoms, self.n_coatoms())
+        cdef size_t counter = 0
+        cdef size_t n_atoms = self.n_atoms()
+        cdef size_t n_faces = self.n_faces()
+        for i in range(n_atoms):
+            if ((delete is NULL and face_atom_in(face, i)) or
+                    (delete is not NULL and not delete[i])):
+                # The atom will be kept.
+                for j in range(n_faces):
+                    if face_atom_in(self.data.faces[j], i):
+                        face_add_atom(output.data.faces[j], counter)
+                counter += 1
+
+        return output
+
+    cdef void delete_faces_unsafe(self, bint *delete, face_t face) noexcept:
+        r"""
+        Deletes face ``i`` if and only if ``delete[i]``.
+
+        Alternatively, deletes all faces such that the ``i``-th bit in ``face`` is not set.
+
+        This will modify ``self``.
+
+        .. WARNING::
+
+            ``delete`` is assumed to be of length ``self.n_faces()`` or NULL.
+            ``face`` is assumed to contain ``self.n_faces()`` atoms if ``delete`` is not ``NULL``.
+        """
+        if delete is not NULL:
+            face_list_delete_faces_by_array(self.data, delete)
+        else:
+            face_list_delete_faces_by_face(self.data, face)
+
+    cdef void get_not_inclusion_maximal_unsafe(self, bint *not_inclusion_maximal) noexcept:
+        r"""
+        Get all faces that are not inclusion maximal.
+
+        Set ``not_inclusion_maximal[i]`` to one if ``self.data[i]`` is not
+        an inclusion-maximal face, otherwise to zero.
+
+        If there are duplicates, all but the last duplicate will be marked as
+        not inclusion maximal.
+
+        .. WARNING::
+
+            ``not_inclusion_maximal`` is assumed to be at least of length ``self.n_atoms`` or NULL.
+        """
+        cdef size_t i
+        memset(not_inclusion_maximal, 0, sizeof(bint)*self.n_faces())
+        for i in range(self.n_faces()):
+            not_inclusion_maximal[i] = is_not_maximal_fused(self.data, i, <standard> 0, not_inclusion_maximal)
+
+    cdef void get_faces_all_set_unsafe(self, bint *all_set) noexcept:
+        r"""
+        Get the faces that have all ``bits`` set.
+
+        Set ``all_set[i]`` to one if ``self.data[i]``
+        has all bits set, otherwise to zero.
+
+        .. WARNING::
+
+            ``all_set`` is assumed to be at least of length ``self.n_atoms`` or NULL.
+        """
+        cdef size_t i
+        for i in range(self.n_faces()):
+            if face_first_missing_atom(self.data.faces[i]) == -1:
+                all_set[i] = 1
+            else:
+                all_set[i] = 0
 
     def matrix(self):
         r"""
@@ -489,16 +502,77 @@ cdef class ListOfFaces:
             sage: facets.matrix().transpose() == Vrep.matrix()
             True
         """
-        from sage.rings.all import ZZ
+        from sage.rings.integer_ring import ZZ
         from sage.matrix.constructor import matrix
-        cdef Matrix_integer_dense M = matrix(
-                ZZ, self.n_faces, self.n_atoms, 0)
+        cdef Matrix_dense M = matrix(
+                ZZ, self.n_faces(), self.n_atoms(), 0)
 
-        cdef size_t i,j
-        for i in range(self.n_faces):
-            for j in range(self.n_atoms):
-                if self.data[i][j//64] & vertex_to_bit_dictionary(j % 64):
-                    M.set_unsafe_si(i, j, 1)
+        cdef size_t i
+        cdef long j
+        for i in range(self.n_faces()):
+            j = face_next_atom(self.data.faces[i], 0)
+            while j != -1:
+                M.set_unsafe_int(i, j, 1)
+                j = face_next_atom(self.data.faces[i], j+1)
 
         M.set_immutable()
         return M
+
+cdef tuple face_as_combinatorial_polyhedron(ListOfFaces facets, ListOfFaces Vrep, face_t face, bint dual):
+    r"""
+    Obtain facets and Vrepresentation of ``face`` as new combinatorial polyhedron.
+
+    INPUT:
+
+    - ``facets`` -- facets of the polyhedron
+    - ``Vrep`` -- Vrepresentation of the polyhedron
+    - ``face`` -- face in Vrepresentation or ``NULL``
+    - ``dual`` -- boolean
+
+    OUTPUT: A tuple of new facets and new Vrepresentation as :class:`ListOfFaces`.
+    """
+    cdef ListOfFaces new_facets, new_Vrep
+    cdef bint* delete
+    cdef MemoryAllocator mem = MemoryAllocator()
+    cdef size_t i
+    cdef face_t null_face
+
+    # Delete all atoms not in the face.
+    if not dual:
+        new_facets = facets.delete_atoms_unsafe(NULL, face)
+        new_Vrep = Vrep.__copy__()
+        new_Vrep.delete_faces_unsafe(NULL, face)
+
+        delete = <bint*> mem.allocarray(new_facets.n_faces(), sizeof(bint))
+    else:
+        delete = <bint*> mem.allocarray(max(facets.n_faces(), facets.n_atoms()), sizeof(bint))
+
+        # Set ``delete[i]`` to one if ``i`` is not a vertex of ``face``.
+        for i in range(Vrep.n_faces()):
+            if face_issubset(face, Vrep.data.faces[i]):
+                delete[i] = 0
+            else:
+                delete[i] = 1
+
+        new_facets = facets.delete_atoms_unsafe(delete, null_face)
+        new_Vrep = Vrep.__copy__()
+        new_Vrep.delete_faces_unsafe(delete, null_face)
+
+    # Delete all facets that define the face.
+    new_facets.get_faces_all_set_unsafe(delete)
+    new_facets.delete_faces_unsafe(delete, null_face)
+    new_Vrep = new_Vrep.delete_atoms_unsafe(delete, null_face)
+
+    # Now delete all facets that are not inclusion maximal.
+    # the last copy of each duplicate will remain.
+    new_facets.get_not_inclusion_maximal_unsafe(delete)
+    new_facets.delete_faces_unsafe(delete, null_face)
+    new_Vrep = new_Vrep.delete_atoms_unsafe(delete, null_face)
+
+    # Finally set coatoms of the output.
+    for i in range(new_facets.n_faces()):
+        facet_set_coatom(new_facets.data.faces[i], i)
+    for i in range(new_Vrep.n_faces()):
+        facet_set_coatom(new_Vrep.data.faces[i], i)
+
+    return (new_facets, new_Vrep)

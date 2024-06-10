@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Star-Crystal Structure On `B(\infty)`
 
@@ -85,6 +86,7 @@ class StarCrystal(UniqueRepresentation, Parent):
         sage: mg.f_string([1,2,1,2,2])
         [[1, 1, 1, 1, 1, 2, 2], [2, 3, 3, 3]]
     """
+
     def __init__(self, Binf):
         r"""
         Initialize ``self``.
@@ -286,4 +288,3 @@ class StarCrystal(UniqueRepresentation, Parent):
             P = self.parent().weight_lattice_realization()
             ac = P.simple_coroot(i)
             return P(self.value.weight()).scalar(ac) + self.epsilon(i) + self.value.epsilon(i)
-

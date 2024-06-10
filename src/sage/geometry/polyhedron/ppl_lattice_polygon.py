@@ -19,8 +19,8 @@ is in general not possible in higher dimensions.
 ########################################################################
 
 from sage.rings.integer_ring import ZZ
-from sage.misc.all import cached_method, cached_function
-from sage.modules.all import (vector, zero_vector)
+from sage.misc.cachefunc import cached_method, cached_function
+from sage.modules.free_module_element import vector, zero_vector
 from sage.matrix.constructor import (matrix, zero_matrix, block_matrix)
 from ppl import C_Polyhedron, Poly_Con_Relation
 from sage.geometry.polyhedron.lattice_euclidean_group_element import (
@@ -185,10 +185,10 @@ class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
 
         - ``polytope_origin`` -- `\ZZ`-vector. a vertex of ``polytope``
 
-        - ``p_ray_left`` - vector. the vector from ``polytope_origin``
+        - ``p_ray_left`` -- vector. the vector from ``polytope_origin``
           to one of its neighboring vertices.
 
-        - ``p_ray_right`` - vector. the vector from
+        - ``p_ray_right`` -- vector. the vector from
           ``polytope_origin`` to the other neighboring vertices.
 
         OUTPUT:
@@ -407,11 +407,11 @@ class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
 
             sage: from sage.geometry.polyhedron.ppl_lattice_polytope import LatticePolytope_PPL
             sage: P = LatticePolytope_PPL((1,0), (0,1), (0,0), (2,2))
-            sage: P.plot()
+            sage: P.plot()                                                              # needs sage.plot
             Graphics object consisting of 6 graphics primitives
-            sage: LatticePolytope_PPL([0], [1]).plot()
+            sage: LatticePolytope_PPL([0], [1]).plot()                                  # needs sage.plot
             Graphics object consisting of 3 graphics primitives
-            sage: LatticePolytope_PPL([0]).plot()
+            sage: LatticePolytope_PPL([0]).plot()                                       # needs sage.plot
             Graphics object consisting of 2 graphics primitives
         """
         from sage.plot.point import point2d

@@ -1,5 +1,5 @@
-Qhull
-=====
+qhull: Compute convex hulls, Delaunay triangulations, Voronoi diagrams
+======================================================================
 
 Description
 -----------
@@ -32,6 +32,8 @@ http://pythonhosted.org/pyhull/).
 
 Upstream Contact
 ----------------
+
+http://www.qhull.org/html
 
 C. Bradford Barber bradb@shore.net or qhull@qhull.org
 

@@ -1,4 +1,5 @@
-# distutils: extra_compile_args = -std=c99
+# distutils: extra_compile_args = -std=c++11
+# distutils: language = c++
 
 cdef extern from "m4ri/m4ri.h":
     ctypedef int rci_t
@@ -10,8 +11,6 @@ cdef extern from "m4ri/m4ri.h":
         rci_t nrows
         rci_t ncols
         wi_t width
-        int offset
-        m4ri_word **rows
 
     ctypedef struct mzp_t:
         rci_t *values
@@ -86,6 +85,8 @@ cdef extern from "m4ri/m4ri.h":
     #####################
     # Row/Column Based IO
     #####################
+
+    cdef m4ri_word *mzd_row(mzd_t *, rci_t)
 
     cdef void mzd_row_swap(mzd_t *, rci_t, rci_t)
 

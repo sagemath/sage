@@ -1,1 +1,0 @@
-# padic initialization file

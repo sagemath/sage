@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Similarity class types of matrices with entries in a finite field
 
@@ -105,9 +106,13 @@ similarity classes of `k`-tuples of `n\times n` matrices with entries in
     sage: simultaneous_similarity_classes(3, 2)
     q^10 + q^8 + 2*q^7 + 2*q^6 + 2*q^5 + q^4
 
-Similarity class types can be used to calculate the coefficients of generating
+Similarity class types can be used to compute the coefficients of generating
 functions coming from the cycle index type techniques of Kung and Stong (see
 Morrison [Morrison06]_).
+
+They can also be used to compute the number of invariant subspaces for a matrix
+over a finite field of any given dimension. For this we use the elegant recursive
+formula of Ramaré [R17]_ (see also [PR22]_).
 
 Along with the results of [PSS13]_, similarity class types can be used to
 calculate the number of similarity classes of matrices of order `n` with entries
@@ -152,6 +157,13 @@ REFERENCES:
 .. [PSS13] Prasad, A., Singla, P., and Spallone, S., *Similarity of matrices
    over local rings of length two*. :arxiv:`1212.6157`
 
+.. [PR22] Prasad, A., Ram, S., *Splitting subspaces and a finite field
+   interpretation of the Touchard-Riordan formula*. :arxiv:`2205.11076`
+
+.. [R17] Ramaré, O., *Rationality of the zeta function of the subgroups of
+   abelian p-groups*. Publ. Math. Debrecen 90.1-2.
+   :doi:`10.5486/PMD.2017.7466`
+
 AUTHOR:
 
 - Amritanshu Prasad (2013-07-18): initial implementation
@@ -159,6 +171,8 @@ AUTHOR:
 - Amritanshu Prasad (2013-09-09): added functions for similarity classes over
   rings of length two
 
+- Amritanshu Prasad (2022-07-31): added computation of similarity class type of
+  a given matrix and invariant subspace generating function
 """
 # ****************************************************************************
 #       Copyright (C) 2013 Amritanshu Prasad <amri@imsc.res.in>
@@ -174,34 +188,34 @@ AUTHOR:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
-from operator import mul
 from itertools import chain, product
-from sage.misc.all import prod
-from sage.functions.all import factorial
-from sage.arith.all import moebius, divisors
-from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
-from sage.structure.element import Element
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
+
+from sage.arith.misc import divisors, factorial, moebius
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.combinat.combinat import CombinatorialElement
-from sage.combinat.partition import Partitions, Partition
-from sage.rings.all import ZZ, QQ, FractionField
-from sage.misc.cachefunc import cached_in_parent_method, cached_function
 from sage.combinat.misc import IterableFunctionCall
-from functools import reduce
+from sage.combinat.partition import Partitions, Partition
+from sage.misc.cachefunc import cached_in_parent_method, cached_function
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.misc.misc_c import prod
+from sage.rings.fraction_field import FractionField
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
+from sage.structure.element import Element, Matrix
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 @cached_function
-def fq(n, q = None):
+def fq(n, q=None):
     r"""
     Return `(1-q^{-1}) (1-q^{-2}) \cdots (1-q^{-n})`.
 
     INPUT:
 
-    - ``n`` -- A non-negative integer
+    - ``n`` -- a non-negative integer
 
     - ``q`` -- an integer or an indeterminate
 
@@ -219,10 +233,11 @@ def fq(n, q = None):
     """
     if q is None:
         q = ZZ['q'].gen()
-    return reduce(mul, [1-q**(-i-1) for i in range(n)], 1)
+    return prod(1 - q**(-i - 1) for i in range(n))
+
 
 @cached_function
-def primitives(n, invertible = False, q = None):
+def primitives(n, invertible=False, q=None):
     """
     Return the number of similarity classes of simple matrices
     of order ``n`` with entries in a finite field of order ``q``.
@@ -262,14 +277,15 @@ def primitives(n, invertible = False, q = None):
     """
     if q is None:
         q = QQ['q'].gen()
-    p = sum([moebius(n/d)*q**d for d in divisors(n)])/n
-    if invertible and n==1:
-        return p-1
+    p = sum(moebius(n // d) * q**d for d in divisors(n)) / n
+    if invertible and n == 1:
+        return p - 1
     else:
         return p
 
+
 @cached_function
-def order_of_general_linear_group(n, q = None):
+def order_of_general_linear_group(n, q=None):
     r"""
     Return the cardinality of the group of `n \times n` invertible matrices
     with entries in a field of order ``q``.
@@ -292,6 +308,7 @@ def order_of_general_linear_group(n, q = None):
         q = ZZ['q'].gen()
     return prod([q**n - q**i for i in range(n)])
 
+
 @cached_function
 def centralizer_algebra_dim(la):
     r"""
@@ -308,10 +325,11 @@ def centralizer_algebra_dim(la):
 
         If it is a list, ``la`` is expected to be sorted in decreasing order.
     """
-    return sum([(2*i + 1)*la[i] for i in range(0, len(la))])
+    return sum([(2 * i + 1) * la[i] for i in range(len(la))])
+
 
 @cached_function
-def centralizer_group_cardinality(la, q = None):
+def centralizer_group_cardinality(la, q=None):
     r"""
     Return the cardinality of the centralizer group in `GL_n(\GF{q})`
     of a nilpotent matrix whose Jordan blocks are given by ``la``.
@@ -335,11 +353,45 @@ def centralizer_group_cardinality(la, q = None):
     """
     if q is None:
         q = ZZ['q'].gen()
-    return q**centralizer_algebra_dim(la)*prod([fq(m, q = q) for m in la.to_exp()])
+    return q**centralizer_algebra_dim(la)*prod([fq(m, q=q) for m in la.to_exp()])
+
+
+def invariant_subspace_generating_function(la, q=None, t=None):
+    """
+    Return the invariant subspace generating function of a nilpotent matrix with
+    Jordan block sizes given by ``la``.
+
+    INPUT:
+
+    - ``la`` -- a partition
+    - ``q`` -- (optional) an integer or an inderminate
+    - ``t`` -- (optional) an indeterminate
+
+    OUTPUT:
+
+    A polynomial in ``t`` whose coefficients are polynomials in ``q``.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.similarity_class_type import invariant_subspace_generating_function
+        sage: invariant_subspace_generating_function([2,2])
+        t^4 + (q + 1)*t^3 + (q^2 + q + 1)*t^2 + (q + 1)*t + 1
+    """
+    if q is None:
+        q = PolynomialRing(QQ,'q').gen()
+    S = q.parent()
+    if t is None:
+        t = PolynomialRing(S,'t').gen()
+    R = t.parent()
+    Rff = R.fraction_field()
+    if not la:
+        return Rff(1)
+    u = invariant_subspace_generating_function(la[1:], q=q, t=t)
+    return R((t**(la[0]+1) * q**(sum(la[1:])) * u.substitute(t=t/q) - u.substitute(t=t*q)) / (t - 1))
 
 
 class PrimarySimilarityClassType(Element,
-        metaclass=InheritComparisonClasscallMetaclass):
+                                 metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A primary similarity class type is a pair consisting of a partition and a positive
     integer.
@@ -399,7 +451,7 @@ class PrimarySimilarityClassType(Element,
             sage: PrimarySimilarityClassType(2, [3, 2, 1])
             [2, [3, 2, 1]]
         """
-        return "%s"%([self._deg, self._par])
+        return "%s" % ([self._deg, self._par],)
 
     def __hash__(self):
         r"""
@@ -440,8 +492,8 @@ class PrimarySimilarityClassType(Element,
             False
         """
         return isinstance(other, PrimarySimilarityClassType) and \
-               self.degree() == other.degree() and \
-               self.partition() == other.partition()
+            self.degree() == other.degree() and \
+            self.partition() == other.partition()
 
     def __ne__(self, other):
         r"""
@@ -456,8 +508,8 @@ class PrimarySimilarityClassType(Element,
             True
         """
         return not isinstance(other, PrimarySimilarityClassType) or \
-               self.degree() != other.degree() or \
-               self.partition() != other.partition()
+            self.degree() != other.degree() or \
+            self.partition() != other.partition()
 
     def size(self):
         """
@@ -512,7 +564,7 @@ class PrimarySimilarityClassType(Element,
         return self.degree()*centralizer_algebra_dim(self.partition())
 
     @cached_in_parent_method
-    def statistic(self, func, q = None):
+    def statistic(self, func, q=None):
         r"""
         Return `n_{\lambda}(q^d)` where `n_{\lambda}` is the value returned by
         ``func`` upon input `\lambda`, if ``self`` is `(d, \lambda)`.
@@ -526,10 +578,10 @@ class PrimarySimilarityClassType(Element,
         """
         if q is None:
             q = ZZ['q'].gen()
-        return q.parent()(func(self.partition()).substitute(q = q**self.degree()))
+        return q.parent()(func(self.partition()).substitute(q=q**self.degree()))
 
     @cached_in_parent_method
-    def centralizer_group_card(self, q = None):
+    def centralizer_group_card(self, q=None):
         """
         Return the cardinality of the centralizer group of a matrix of type
         ``self`` in a field of order ``q``.
@@ -550,6 +602,27 @@ class PrimarySimilarityClassType(Element,
         if q is None:
             q = FractionField(ZZ['q']).gen()
         return self.statistic(centralizer_group_cardinality, q=q)
+
+    def invariant_subspace_generating_function(self, q=None, t=None):
+        """
+        Return the invariant subspace generating function of ``self``.
+
+        INPUT:
+
+        - ``q`` -- (optional) an integer or an inderminate
+        - ``t`` -- (optional) an indeterminate
+
+        EXAMPLES::
+
+            sage: PrimarySimilarityClassType(1, [2, 2]).invariant_subspace_generating_function()
+            t^4 + (q + 1)*t^3 + (q^2 + q + 1)*t^2 + (q + 1)*t + 1
+        """
+        if q is None:
+            q = PolynomialRing(QQ, 'q').gen()
+        S = q.parent()
+        if t is None:
+            t = PolynomialRing(S, 't').gen()
+        return invariant_subspace_generating_function(self.partition()).substitute(q=q**self.degree(), t=t**self.degree())
 
 
 class PrimarySimilarityClassTypes(UniqueRepresentation, Parent):
@@ -591,7 +664,7 @@ class PrimarySimilarityClassTypes(UniqueRepresentation, Parent):
         [2, [1]]
     """
     @staticmethod
-    def __classcall_private__(cls, n, min = None):
+    def __classcall_private__(cls, n, min=None):
         r"""
         Create the class of vector partitions of ``vec`` where all parts
         are greater than or equal to the vector ``min``.
@@ -611,7 +684,7 @@ class PrimarySimilarityClassTypes(UniqueRepresentation, Parent):
             min = (min[0], Partition(min[1]))
         else:
             raise ValueError("min must be a PrimarySimilarityClassType")
-        return super(PrimarySimilarityClassTypes, cls).__classcall__(cls, n, min)
+        return super().__classcall__(cls, n, min)
 
     def __init__(self, n, min):
         r"""
@@ -622,7 +695,7 @@ class PrimarySimilarityClassTypes(UniqueRepresentation, Parent):
             sage: PTC = PrimarySimilarityClassTypes(2)
             sage: TestSuite(PTC).run()
         """
-        Parent.__init__(self, category = FiniteEnumeratedSets())
+        Parent.__init__(self, category=FiniteEnumeratedSets())
         self._n = n
         self._min = min
 
@@ -660,10 +733,10 @@ class PrimarySimilarityClassTypes(UniqueRepresentation, Parent):
         """
         n = self._n
         if self._min[0].divides(n):
-            for par in Partitions(ZZ(n/self._min[0]), starting = self._min[1]):
+            for par in Partitions(n // self._min[0], starting=self._min[1]):
                 yield self.element_class(self, self._min[0], par)
         for d in (d for d in divisors(n) if d > self._min[0]):
-            for par in Partitions(ZZ(n/d)):
+            for par in Partitions(n // d):
                 yield self.element_class(self, d, par)
 
     def size(self):
@@ -685,6 +758,7 @@ class PrimarySimilarityClassTypes(UniqueRepresentation, Parent):
 
 ###############################################################################
 
+
 class SimilarityClassType(CombinatorialElement):
     r"""
     A similarity class type.
@@ -693,12 +767,16 @@ class SimilarityClassType(CombinatorialElement):
 
     INPUT:
 
-    - ``tau`` -- A list of primary similarity class types
+    - ``tau`` -- a list of primary similarity class types or a square matrix
+      over a finite field
 
     EXAMPLES::
 
         sage: tau1 = SimilarityClassType([[3, [3, 2, 1]], [2, [2, 1]]]); tau1
         [[2, [2, 1]], [3, [3, 2, 1]]]
+
+        sage: SimilarityClassType(Matrix(GF(2), [[1,1],[0,1]]))
+        [[1, [2]]]
     """
     @staticmethod
     def __classcall_private__(cls, tau):
@@ -717,6 +795,11 @@ class SimilarityClassType(CombinatorialElement):
             sage: tau1 == tau2
             True
 
+        The input can also be a matrix with entries in a finite field::
+
+            sage: SimilarityClassType(Matrix(GF(2), [[1,1],[0,1]]))
+            [[1, [2]]]
+
         The parent class is the class of similarity class types of the sum of
         the sizes of the primary matrix types in ``tau``::
 
@@ -724,15 +807,26 @@ class SimilarityClassType(CombinatorialElement):
             sage: tau.parent().size()
             24
         """
-        ret = []
-        for l in tau:
-            if isinstance(l, PrimarySimilarityClassType):
-                ret.append(l)
-            else:
-                ret.append(PrimarySimilarityClassType(*l))
-        n = sum([PT.size() for PT in ret])
-        T = SimilarityClassTypes(n)
-        return T(tau)
+        if isinstance(tau, Matrix):
+            n = tau.nrows()
+            F = tau.base_ring()
+            R = PolynomialRing(F, 't')
+            t = R.gen()
+            S = (t - tau).smith_form(transformation=False)
+            L = [S[i,i] for i in range(n-1, -1, -1) if S[i,i]]
+            f = [dict(list(p.factor())) for p in L]
+            d = {p: Partition([h[p] for h in f if p in h]) for p in f[0]}
+            return SimilarityClassType([[p.degree(), d[p]] for p in d])
+        else:
+            ret = []
+            for l in tau:
+                if isinstance(l, PrimarySimilarityClassType):
+                    ret.append(l)
+                else:
+                    ret.append(PrimarySimilarityClassType(*l))
+            n = sum([PT.size() for PT in ret])
+            T = SimilarityClassTypes(n)
+            return T(tau)
 
     def __init__(self, parent, tau):
         """
@@ -771,7 +865,7 @@ class SimilarityClassType(CombinatorialElement):
         """
         return sum([PT.centralizer_algebra_dim() for PT in self])
 
-    def centralizer_group_card(self, q = None):
+    def centralizer_group_card(self, q=None):
         r"""
         Return the cardinality of the group of matrices in `GL_n(\GF{q})`
         which commute with a matrix of type ``self``.
@@ -786,11 +880,11 @@ class SimilarityClassType(CombinatorialElement):
             sage: tau.centralizer_group_card()
             q^2 - 2*q + 1
         """
-        return prod([PT.centralizer_group_card(q = q) for PT in self])
+        return prod([PT.centralizer_group_card(q=q) for PT in self])
 
     def as_partition_dictionary(self):
         r"""
-        Return a dictionary whose keys are the partitions of types occuring in
+        Return a dictionary whose keys are the partitions of types occurring in
         ``self`` and the value at the key `\lambda` is the partition formed by
         sorting the degrees of primary types with partition `\lambda`.
 
@@ -808,7 +902,7 @@ class SimilarityClassType(CombinatorialElement):
                 D[PT.partition()] = Partition([PT.degree()])
         return D
 
-    def number_of_classes(self, invertible = False, q = None):
+    def number_of_classes(self, invertible=False, q=None):
         """
         Return the number of similarity classes of matrices of type ``self``.
 
@@ -831,10 +925,10 @@ class SimilarityClassType(CombinatorialElement):
             return q.parent().one()
         list_of_degrees = [PT.degree() for PT in self]
         maximum_degree = max(list_of_degrees)
-        numerator = prod([prod([primitives(d+1, invertible=invertible, q = q)-i for i in range(list_of_degrees.count(d+1))]) for d in range(maximum_degree)])
+        numerator = prod([prod([primitives(d+1, invertible=invertible, q=q)-i for i in range(list_of_degrees.count(d+1))]) for d in range(maximum_degree)])
         tau_list = list(self)
         D = dict((i, tau_list.count(i)) for i in tau_list)
-        denominator = reduce(mul, [factorial(D[primary_type]) for primary_type in D])
+        denominator = prod(factorial(D[primary_type]) for primary_type in D)
         return numerator / denominator
 
     def is_semisimple(self):
@@ -881,7 +975,7 @@ class SimilarityClassType(CombinatorialElement):
             [5, 4, 2]
         """
         out_list = list()
-        i=0
+        i = 0
         while True:
             new_part = sum([PT.partition().get_part(i)*PT.degree() for PT in self])
             if new_part:
@@ -890,7 +984,7 @@ class SimilarityClassType(CombinatorialElement):
                 return Partition(out_list)
             i = i+1
 
-    def class_card(self, q = None):
+    def class_card(self, q=None):
         """
         Return the number of matrices in each similarity class of type ``self``.
 
@@ -909,9 +1003,9 @@ class SimilarityClassType(CombinatorialElement):
         """
         if q is None:
             q = ZZ['q'].gen()
-        return order_of_general_linear_group(self.size(), q = q) / self.centralizer_group_card(q = q)
+        return order_of_general_linear_group(self.size(), q=q) / self.centralizer_group_card(q=q)
 
-    def number_of_matrices(self, invertible = False, q = None):
+    def number_of_matrices(self, invertible=False, q=None):
         """
         Return the number of matrices of type ``self``.
 
@@ -933,9 +1027,9 @@ class SimilarityClassType(CombinatorialElement):
         """
         if q is None:
             q = ZZ['q'].gen()
-        return self.class_card(q = q)*self.number_of_classes(invertible = invertible, q = q)
+        return self.class_card(q=q)*self.number_of_classes(invertible=invertible, q=q)
 
-    def statistic(self, func, q = None):
+    def statistic(self, func, q=None):
         r"""
         Return
 
@@ -964,7 +1058,38 @@ class SimilarityClassType(CombinatorialElement):
         """
         if q is None:
             q = FractionField(ZZ['q']).gen()
-        return prod([PT.statistic(func, q = q) for PT in self])
+        return prod([PT.statistic(func, q=q) for PT in self])
+
+    def invariant_subspace_generating_function(self, q=None, t=None):
+        r"""
+        Return the invariant subspace generating function of ``self``.
+
+        The invariant subspace generating function is the function is the
+        polynomial
+
+        .. MATH::
+
+            \sum_{j\geq 0} a_j(q) t^j,
+
+        where `a_j(q)` denotes the number of `j`-dimensional invariant subspaces
+        of dimensiona `j` for any matrix with the similarity class type ``self``
+        with entries in a field of order `q`.
+
+        EXAMPLES::
+
+            sage: SimilarityClassType([[1, [2, 2]]]).invariant_subspace_generating_function()
+            t^4 + (q + 1)*t^3 + (q^2 + q + 1)*t^2 + (q + 1)*t + 1
+            sage: A = Matrix(GF(2),[(0, 1, 0, 0), (0, 1, 1, 1), (1, 0, 1, 0), (1, 1, 0, 0)])
+            sage: SimilarityClassType(A).invariant_subspace_generating_function()
+            t^4 + 1
+        """
+        if q is None:
+            q = PolynomialRing(QQ, 'q').gen()
+        S = q.parent()
+        if t is None:
+            t = PolynomialRing(S, 't').gen()
+        return prod(p.invariant_subspace_generating_function(q=q, t=t) for p in self)
+
 
 class SimilarityClassTypes(UniqueRepresentation, Parent):
     r"""
@@ -1004,7 +1129,7 @@ class SimilarityClassTypes(UniqueRepresentation, Parent):
         [[2, [1]]]
     """
     @staticmethod
-    def __classcall_private__(cls, n, min = None):
+    def __classcall_private__(cls, n, min=None):
         r"""
         Create the class of similarity class types of size ``n`` consisting of
         primary similarity class types greater than or equal to ``min``.
@@ -1022,7 +1147,7 @@ class SimilarityClassTypes(UniqueRepresentation, Parent):
             min = PrimarySimilarityClassType(min[0], min[1])
         if not isinstance(min, PrimarySimilarityClassType):
             raise ValueError("min must be a PrimarySimilarityClassType")
-        return super(SimilarityClassTypes, cls).__classcall__(cls, n, min)
+        return super().__classcall__(cls, n, min)
 
     def __init__(self, n, min):
         r"""
@@ -1033,7 +1158,7 @@ class SimilarityClassTypes(UniqueRepresentation, Parent):
             sage: M = SimilarityClassTypes(2)
             sage: TestSuite(M).run()
         """
-        Parent.__init__(self, category = FiniteEnumeratedSets())
+        Parent.__init__(self, category=FiniteEnumeratedSets())
         self._n = n
         self._min = min
 
@@ -1083,21 +1208,22 @@ class SimilarityClassTypes(UniqueRepresentation, Parent):
             ....:     return M.sum(lambda la:1) == q**(n**2) and M.sum(lambda la:1, invertible = True)== order_of_general_linear_group(n)
             sage: all(test(n) for n in range(5))
             True
-            sage: all(test(n) for n in range(5, 15)) # long time
+            sage: all(test(n) for n in range(5, 10)) # long time
             True
         """
         n = self._n
         min = self._min
         if n == 0:
-            yield self.element_class(self, []) # dimension zero has only empty type
+            yield self.element_class(self, [])  # dimension zero has only empty type
         if min.size() > n:
             return
         else:
-            for PT in chain(PrimarySimilarityClassTypes(min.size(), min = min), *[PrimarySimilarityClassTypes(k) for k in range(min.size() + 1, n + 1)]): #choose first part
+            # choose first part
+            for PT in chain(PrimarySimilarityClassTypes(min.size(), min=min), *[PrimarySimilarityClassTypes(k) for k in range(min.size() + 1, n + 1)]):
                 if PT.size() == n:
                     yield self.element_class(self, [PT])
-                else:# recursively find all possibilities for what remains of n
-                    for smaller_type in SimilarityClassTypes(n - PT.size(), min = PT):
+                else:  # recursively find all possibilities for what remains of n
+                    for smaller_type in SimilarityClassTypes(n - PT.size(), min=PT):
                         yield self.element_class(self, [PT] + list(smaller_type))
 
     def size(self):
@@ -1112,7 +1238,7 @@ class SimilarityClassTypes(UniqueRepresentation, Parent):
         """
         return self._n
 
-    def sum(self, stat, sumover = "matrices", invertible = False, q = None):
+    def sum(self, stat, sumover="matrices", invertible=False, q=None):
         r"""
         Return the sum of a local statistic over all types.
 
@@ -1173,17 +1299,18 @@ class SimilarityClassTypes(UniqueRepresentation, Parent):
             q^2 + q
         """
         if sumover == "matrices":
-            return sum([tau.statistic(stat, q = q)*tau.number_of_matrices(invertible = invertible, q = q) for tau in self])
+            return sum([tau.statistic(stat, q=q)*tau.number_of_matrices(invertible=invertible, q=q) for tau in self])
         elif sumover == "classes":
-            return sum([tau.statistic(stat, q = q)*tau.number_of_classes(invertible = invertible, q = q) for tau in self])
+            return sum([tau.statistic(stat, q=q)*tau.number_of_classes(invertible=invertible, q=q) for tau in self])
         elif sumover == "types":
-            return sum([tau.statistic(stat, invertible = invertible, q = q) for tau in self])
+            return sum([tau.statistic(stat, invertible=invertible, q=q) for tau in self])
         else:
-            raise ValueError("invalid parameter %s"%(sumover))
+            raise ValueError("invalid parameter %s" % (sumover))
 
 ################################################################################
 #                 Similarity over rings of length two                          #
 ################################################################################
+
 
 def dictionary_from_generator(gen):
     r"""
@@ -1194,12 +1321,12 @@ def dictionary_from_generator(gen):
     EXAMPLES::
 
         sage: from sage.combinat.similarity_class_type import dictionary_from_generator
-        sage: dictionary_from_generator(((floor(x/2), x) for x in range(10)))
+        sage: dictionary_from_generator(((x // 2, x) for x in range(10)))
         {0: 1, 1: 5, 2: 9, 3: 13, 4: 17}
 
     It also works with lists::
 
-        sage: dictionary_from_generator([(floor(x/2),x) for x in range(10)])
+        sage: dictionary_from_generator([(x // 2, x) for x in range(10)])
         {0: 1, 1: 5, 2: 9, 3: 13, 4: 17}
 
     .. NOTE::
@@ -1240,7 +1367,7 @@ def matrix_similarity_classes(n, q=None, invertible=False):
     return sum(q**max(la) for la in Partitions(n))
 
 
-def matrix_centralizer_cardinalities(n, q = None, invertible = False):
+def matrix_centralizer_cardinalities(n, q=None, invertible=False):
     """
     Generate pairs consisting of centralizer cardinalities of matrices over a
     finite field and their frequencies.
@@ -1262,7 +1389,8 @@ def matrix_centralizer_cardinalities(n, q = None, invertible = False):
         (q^2 - 1, 1/2*q^2 - 1/2*q)]
     """
     for tau in SimilarityClassTypes(n):
-        yield (tau.centralizer_group_card(q = q), tau.number_of_classes(invertible = invertible, q = q))
+        yield (tau.centralizer_group_card(q=q), tau.number_of_classes(invertible=invertible, q=q))
+
 
 def input_parsing(data):
     """
@@ -1294,20 +1422,20 @@ def input_parsing(data):
         try:
             data = Partition(data)
             case = 'par'
-        except(TypeError, ValueError):
+        except (TypeError, ValueError):
             try:
                 data = SimilarityClassType(data)
                 case = 'sim'
-            except(TypeError, ValueError):
+            except (TypeError, ValueError):
                 try:
                     data = PrimarySimilarityClassType(*data)
                     case = 'pri'
-                except(TypeError, ValueError):
-                    raise ValueError("Expected a Partition, a SimilarityClassType or a PrimarySimilarityClassType, got a %s" % type(data))
+                except (TypeError, ValueError):
+                    raise ValueError("expected a Partition, a SimilarityClassType or a PrimarySimilarityClassType, got a %s" % type(data))
     return case, data
 
 
-def ext_orbits(input_data, q = None, selftranspose = False):
+def ext_orbits(input_data, q=None, selftranspose=False):
     r"""
     Return the number of orbits in `\mathrm{Ext}^1(M, M)` for the action of
     `\mathrm{Aut}(M, M)`, where `M` is the `\GF{q[t]}`-module constructed
@@ -1358,33 +1486,34 @@ def ext_orbits(input_data, q = None, selftranspose = False):
         if la.size() == 0:
             return q.parent()(1)
         if max(la) == 1:
-            return matrix_similarity_classes(len(la), q = q)
+            return matrix_similarity_classes(len(la), q=q)
         elif len(la) == 1:
             return q**la.size()
-        elif len(la) == 2 and list(la).count(1) == 1: # see Table 3
+        elif len(la) == 2 and list(la).count(1) == 1:  # see Table 3
             m = max(la) - 1
             if selftranspose:
                 return q**(m + 2) + q**(m + 1) - q**m
             else:
                 return q**(m + 2) + q**(m + 1) + q**m
-        elif len(la) == 3 and list(la).count(1) == 2: # see Table 4
+        elif len(la) == 3 and list(la).count(1) == 2:  # see Table 4
             m = max(la) - 1
             if not selftranspose:
                 return q**m*(q**3 + 2*q**2 + 2*q + 2)
             else:
                 return q**m*(q**3 + 2*q**2)
         elif min(la) == 2 and max(la) == 2:
-            return matrix_similarity_classes_length_two(len(la), q = q, selftranspose = selftranspose)
+            return matrix_similarity_classes_length_two(len(la), q=q, selftranspose=selftranspose)
         else:
-            raise ValueError('partition %s not implemented for ExtOrbitClasses.orbits'%(la))
+            raise ValueError('partition %s not implemented for ExtOrbitClasses.orbits' % (la))
     elif case == 'pri':
         tau = data
-        return ext_orbits(tau.partition(), q = q, selftranspose = selftranspose).substitute(q = q**tau.degree())
+        return ext_orbits(tau.partition(), q=q, selftranspose=selftranspose).substitute(q=q**tau.degree())
     elif case == 'sim':
         tau = data
-        return prod([ext_orbits(PT, q = q, selftranspose = selftranspose) for PT in tau])
+        return prod([ext_orbits(PT, q=q, selftranspose=selftranspose) for PT in tau])
 
-def matrix_similarity_classes_length_two(n, q = None, selftranspose = False, invertible = False):
+
+def matrix_similarity_classes_length_two(n, q=None, selftranspose=False, invertible=False):
     """
     Return the number of similarity classes of matrices of order ``n`` with
     entries in a principal ideal local ring of length two.
@@ -1433,9 +1562,10 @@ def matrix_similarity_classes_length_two(n, q = None, selftranspose = False, inv
     """
     if q is None:
         q = FractionField(QQ['q']).gen()
-    return sum([tau.number_of_classes(invertible = invertible, q = q)*ext_orbits(tau, q = q, selftranspose = selftranspose) for tau in SimilarityClassTypes(n)])
+    return sum([tau.number_of_classes(invertible=invertible, q=q)*ext_orbits(tau, q=q, selftranspose=selftranspose) for tau in SimilarityClassTypes(n)])
 
-def ext_orbit_centralizers(input_data, q = None, selftranspose = False):
+
+def ext_orbit_centralizers(input_data, q=None, selftranspose=False):
     r"""
     Generate pairs consisting of centralizer cardinalities of orbits in
     `\mathrm{Ext}^1(M, M)` for the action of `\mathrm{Aut}(M, M)`, where `M` is
@@ -1516,51 +1646,51 @@ def ext_orbit_centralizers(input_data, q = None, selftranspose = False):
             yield (1, 1)
             return
         elif max(la) == 1:
-            for item in matrix_centralizer_cardinalities(len(la), q = q):
+            for item in matrix_centralizer_cardinalities(len(la), q=q):
                 yield item
             return
         elif len(la) == 1:
             yield (q**la[0] - q**(la[0]-1), q**la[0])
             return
-        elif len(la) == 2 and list(la).count(1) == 1: # see Table 3
+        elif len(la) == 2 and list(la).count(1) == 1:  # see Table 3
             m = max(la) - 1
-            yield (q**(m + 4) - 2*q**(m + 3) + q**(m + 2), q**(m + 1)) # (8.5.1)
-            yield (q**(m + 2) - 2*q**(m + 1) + q**m, q**(m + 2) - q**(m + 1)) # (8.5.2)
+            yield (q**(m + 4) - 2*q**(m + 3) + q**(m + 2), q**(m + 1))  # (8.5.1)
+            yield (q**(m + 2) - 2*q**(m + 1) + q**m, q**(m + 2) - q**(m + 1))  # (8.5.2)
             if selftranspose:
-                yield (q**(m + 2) - q**(m + 1), q**(m+1) - q**m) # (8.5.3) and (8.5.4)
+                yield (q**(m + 2) - q**(m + 1), q**(m+1) - q**m)  # (8.5.3) and (8.5.4)
             else:
-                yield (q**(m + 2) - q**(m + 1), q**(m + 1) + q**m) # (8.5.3) and (8.5.4)
+                yield (q**(m + 2) - q**(m + 1), q**(m + 1) + q**m)  # (8.5.3) and (8.5.4)
             return
-        elif len(la) == 3 and list(la).count(1) == 2: # see Table 4
+        elif len(la) == 3 and list(la).count(1) == 2:  # see Table 4
             m = max(la) - 1
-            for item in matrix_centralizer_cardinalities(2, q = q):
-                yield (item[0]*(q**(m + 5) - q**(m + 4)), item[1]*q**m) # (8.6.1)
-                yield (item[0]*(q**(m + 1) - q**m), item[1]*(q**(m + 1) - q**m)) # (8.6.2)
-            yield (q**(m + 3) - 2*q**(m + 2) + q**(m+1), q**(m + 2) - q**(m + 1)) # (8.6.3)
+            for item in matrix_centralizer_cardinalities(2, q=q):
+                yield (item[0]*(q**(m + 5) - q**(m + 4)), item[1]*q**m)  # (8.6.1)
+                yield (item[0]*(q**(m + 1) - q**m), item[1]*(q**(m + 1) - q**m))  # (8.6.2)
+            yield (q**(m + 3) - 2*q**(m + 2) + q**(m+1), q**(m + 2) - q**(m + 1))  # (8.6.3)
             if selftranspose:
-                yield (q**(m + 3) - q**(m+2), q**(m+1)) #(8.6.4), (8.6.5) and (8.6.7)
+                yield (q**(m + 3) - q**(m+2), q**(m+1))  # (8.6.4), (8.6.5) and (8.6.7)
             else:
-                yield (q**(m + 3) - q**(m+2), q**(m + 1) + 2*q**m) # (8.6.4), (8.6.5) and (8.6.7)
-                yield (q**(m + 5) - 2*q**(m + 4) + q**(m + 3), 2*q**(m + 1)) # (8.6.6) and (8.6.8)
+                yield (q**(m + 3) - q**(m+2), q**(m + 1) + 2*q**m)  # (8.6.4), (8.6.5) and (8.6.7)
+                yield (q**(m + 5) - 2*q**(m + 4) + q**(m + 3), 2*q**(m + 1))  # (8.6.6) and (8.6.8)
             return
         elif max(la) == 2 and min(la) == 2:
-            for item in matrix_centralizer_cardinalities_length_two(len(la), q = q, selftranspose = selftranspose):
+            for item in matrix_centralizer_cardinalities_length_two(len(la), q=q, selftranspose=selftranspose):
                 yield item
         else:
-            raise ValueError('partition %s not implemented for ExtOrbitClasses.orbit_centralizers'%(la))
+            raise ValueError('partition %s not implemented for ExtOrbitClasses.orbit_centralizers' % (la))
     elif case == 'pri':
         tau = data
-        for item in ext_orbit_centralizers(tau.partition(), selftranspose = selftranspose):
-            yield (item[0].substitute(q = q**tau.degree()), item[1].substitute(q = q**tau.degree()))
+        for item in ext_orbit_centralizers(tau.partition(), selftranspose=selftranspose):
+            yield (item[0].substitute(q=q**tau.degree()), item[1].substitute(q=q**tau.degree()))
     elif case == 'sim':
         tau = data
-        for item in product(*[IterableFunctionCall(lambda x: ext_orbit_centralizers(x, q = q, selftranspose = selftranspose), PT) for PT in tau]):
-                size = prod([list(entry)[0] for entry in item])
-                freq = prod([list(entry)[1] for entry in item])
-                yield(size, freq)
+        for item in product(*[IterableFunctionCall(lambda x: ext_orbit_centralizers(x, q=q, selftranspose=selftranspose), PT) for PT in tau]):
+            size = prod([list(entry)[0] for entry in item])
+            freq = prod([list(entry)[1] for entry in item])
+            yield (size, freq)
 
 
-def matrix_centralizer_cardinalities_length_two(n, q = None, selftranspose = False, invertible = False):
+def matrix_centralizer_cardinalities_length_two(n, q=None, selftranspose=False, invertible=False):
     r"""
     Generate pairs consisting of centralizer cardinalities of matrices over a
     principal ideal local ring of length two with residue field of order ``q``
@@ -1595,6 +1725,5 @@ def matrix_centralizer_cardinalities_length_two(n, q = None, selftranspose = Fal
     if q is None:
         q = FractionField(QQ['q']).gen()
     for tau in SimilarityClassTypes(n):
-        for pair in ext_orbit_centralizers(tau, q = q, selftranspose = selftranspose):
-            yield (q**tau.centralizer_algebra_dim()*pair[0], tau.number_of_classes(invertible = invertible, q = q)*pair[1])
-
+        for pair in ext_orbit_centralizers(tau, q=q, selftranspose=selftranspose):
+            yield (q**tau.centralizer_algebra_dim()*pair[0], tau.number_of_classes(invertible=invertible, q=q)*pair[1])

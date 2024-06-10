@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Word Quasi-symmetric functions
 
@@ -69,9 +69,12 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
             sage: M = algebras.WQSym(QQ).M()
             sage: TestSuite(M).run()  # long time
         """
+        def sorting_key(X):
+            return (sum(map(len, X)), X)
         CombinatorialFreeModule.__init__(self, alg.base_ring(),
                                          OrderedSetPartitions(),
                                          category=WQSymBases(alg, graded),
+                                         sorting_key=sorting_key,
                                          bracket="", prefix=self._prefix)
 
     def _repr_term(self, osp):
@@ -233,7 +236,7 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
             # Otherwise lift that basis up and then coerce over
             target = getattr(self.realization_of(), R._basis_name)()
             return self._coerce_map_via([target], R)
-        return super(WQSymBasis_abstract, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
     @cached_method
     def an_element(self):
@@ -571,8 +574,10 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: WQSym = algebras.WQSym(QQ)
-            sage: WQSym.M()
+            sage: M = WQSym.M(); M
             Word Quasi-symmetric functions over Rational Field in the Monomial basis
+            sage: sorted(M.basis(2))
+            [M[{1}, {2}], M[{2}, {1}], M[{1, 2}]]
         """
         _prefix = "M"
         _basis_name = "Monomial"
@@ -623,6 +628,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
 
             def union(X, Y):
                 return X.union(Y)
+
             return self.sum_of_monomials(ShuffleProduct_overlapping(x, yshift,
                                                                     K, union))
 
@@ -644,7 +650,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 sage: M.coproduct( M([[1], [2]]) )
                 M[] # M[{1}, {2}] + M[{1}] # M[{1}] + M[{1}, {2}] # M[]
             """
-            if not len(x):
+            if not x:
                 return self.one().tensor(self.one())
             K = self.indices()
 
@@ -942,7 +948,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             u = self.one()
             o = self([[1]])
             s = self.base_ring().an_element()
-            return [u, o, self([[1,2]]), u + s*o]
+            return [u, o, self([[1, 2]]), u + s * o]
 
         def _C_to_X(self, P):
             """
@@ -967,18 +973,21 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             data = []
             while temp:
                 i = min(min(X) for X in temp)
-                for j,A in enumerate(temp):
+                for j, A in enumerate(temp):
                     if i in A:
                         data.append(OSP(temp[j:]))
                         temp = temp[:j]
                         break
+
+            def union(X, Y):
+                return X.union(Y)
 
             # Perform the quasi-shuffle product
             cur = {data[0]: 1}
             for B in data[1:]:
                 ret = {}
                 for A in cur:
-                    for C in ShuffleProduct_overlapping(A, B, element_constructor=OSP):
+                    for C in ShuffleProduct_overlapping(A, B, element_constructor=OSP, add=union):
                         if C in ret:
                             ret[C] += cur[A]
                         else:
@@ -1077,7 +1086,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             u = self.one()
             o = self([[1]])
             s = self.base_ring().an_element()
-            return [u, o, self([[1,2]]), u + s*o]
+            return [u, o, self([[1, 2]]), u + s * o]
 
         def _Q_to_M(self, P):
             """
@@ -1210,7 +1219,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             # The coproduct on the Q basis satisfies the same formula
             # as on the M basis. This is easily derived from the
             # formula on the M basis.
-            if not len(x):
+            if not x:
                 return self.one().tensor(self.one())
             K = self.indices()
 
@@ -1459,7 +1468,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             u = self.one()
             o = self([[1]])
             s = self.base_ring().an_element()
-            return [u, o, self([[1,2]]), u + s*o]
+            return [u, o, self([[1, 2]]), u + s * o]
 
         def _Phi_to_M(self, P):
             """
@@ -1647,15 +1656,15 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 s1 = [p[1] for p in s]
                 N = len(s)
                 bars = [False] * N
-                for i in range(N-1):
+                for i in range(N - 1):
                     s0i = s0[i]
-                    s0i1 = s0[i+1]
+                    s0i1 = s0[i + 1]
                     if s0i <= m and s0i1 <= m:
-                        bars[i+1] = s1[i+1]
+                        bars[i + 1] = s1[i + 1]
                     elif s0i > m and s0i1 > m:
-                        bars[i+1] = s1[i+1]
+                        bars[i + 1] = s1[i + 1]
                     elif s0i > m and s0i1 <= m:
-                        bars[i+1] = True
+                        bars[i + 1] = True
                 blocks = []
                 block = []
                 for i in range(N):
@@ -1721,14 +1730,14 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 sage: AA(M(x).coproduct()) == x.coproduct()
                 True
             """
-            if not len(x):
+            if not x:
                 return self.one().tensor(self.one())
             K = self.indices()
 
             def standardize(P):  # standardize an ordered set partition
                 base = sorted(sum((list(part) for part in P), []))
                 # base is the ground set of P, as a sorted list.
-                d = {val: i+1 for i,val in enumerate(base)}
+                d = {val: i + 1 for i, val in enumerate(base)}
                 # d is the unique order isomorphism from base to
                 # {1, 2, ..., |base|} (encoded as dict).
                 return K([[d[x] for x in part] for part in P])
@@ -1737,7 +1746,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 xi = sorted(x[i])
                 for j in range(1, len(xi)):
                     left = K(list(x[:i]) + [xi[:j]])
-                    right = K([xi[j:]] + list(x[i+1:]))
+                    right = K([xi[j:]] + list(x[i + 1:]))
                     deconcatenates.append((left, right))
             T = self.tensor_square()
             return T.sum_of_monomials((standardize(left), standardize(right))
@@ -1936,18 +1945,18 @@ class WQSymBases(Category_realization_of_parent):
             sage: bases = WQSymBases(WQSym, True)
             sage: bases.super_categories()
             [Category of realizations of Word Quasi-symmetric functions over Integer Ring,
-             Join of Category of realizations of hopf algebras over Integer Ring
+             Join of Category of realizations of Hopf algebras over Integer Ring
                  and Category of graded algebras over Integer Ring
                  and Category of graded coalgebras over Integer Ring,
-             Category of graded connected hopf algebras with basis over Integer Ring]
+             Category of graded connected Hopf algebras with basis over Integer Ring]
 
             sage: bases = WQSymBases(WQSym, False)
             sage: bases.super_categories()
             [Category of realizations of Word Quasi-symmetric functions over Integer Ring,
-             Join of Category of realizations of hopf algebras over Integer Ring
+             Join of Category of realizations of Hopf algebras over Integer Ring
                  and Category of graded algebras over Integer Ring
                  and Category of graded coalgebras over Integer Ring,
-             Join of Category of filtered connected hopf algebras with basis over Integer Ring
+             Join of Category of filtered connected Hopf algebras with basis over Integer Ring
                  and Category of graded algebras over Integer Ring
                  and Category of graded coalgebras over Integer Ring]
         """

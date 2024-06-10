@@ -1,5 +1,5 @@
-pynormaliz
-==========
+pynormaliz: Python bindings for the normaliz library
+====================================================
 
 Description
 -----------
@@ -16,13 +16,6 @@ Upstream Contact
 ----------------
 
    https://github.com/sebasguts/PyNormaliz
-
-Dependencies
-------------
-
--  pip
--  normaliz
-
 
 Special Update/Build Instructions
 ---------------------------------

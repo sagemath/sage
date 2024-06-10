@@ -1,4 +1,3 @@
-##      -*-   coding: utf-8   -*-     ##
 ##          Sage Doctest File         ##
 #**************************************#
 #*    Generated from PreTeXt source   *#
@@ -104,13 +103,13 @@ r"""
     sage: G = DihedralGroup(5)
     sage: H = DihedralGroup(20)
     sage: G.gens()
-    [(1,2,3,4,5), (1,5)(2,4)]
+    ((1,2,3,4,5), (1,5)(2,4))
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
     sage: H.gens()
-    [(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20),
-     (1,20)(2,19)(3,18)(4,17)(5,16)(6,15)(7,14)(8,13)(9,12)(10,11)]
+    ((1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20),
+     (1,20)(2,19)(3,18)(4,17)(5,16)(6,15)(7,14)(8,13)(9,12)(10,11))
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
@@ -155,8 +154,8 @@ r"""
     sage: tau.kernel()
     Traceback (most recent call last):
     ...
-    RuntimeError: Gap produced error output
-    ...
+    sage.libs.gap.util.GAPError: Error, no method found! Error, no 1st choice method found for `Kernel' on 1 arguments
+    The 1st argument is 'fail' which might point to an earlier problem
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
@@ -164,15 +163,14 @@ r"""
     sage: H = DihedralGroup(4)
     sage: results = G.direct_product(H)
     sage: results[0]
-    Permutation Group with generators [(4,5,6,7), (4,7)(5,6), (1,2,3)]
+    Permutation Group with generators [(1,2,3), (4,5,6,7), (4,7)(5,6)]
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
     sage: results[1]
     Permutation group morphism:
       From: Cyclic group of order 3 as a permutation group
-      To:   Permutation Group with generators
-            [(4,5,6,7), (4,7)(5,6), (1,2,3)]
+      To:   Permutation Group with generators [(1,2,3), (4,5,6,7), (4,7)(5,6)]
       Defn: Embedding( Group( [ (1,2,3), (4,5,6,7), (4,7)(5,6) ] ), 1 )
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
@@ -180,16 +178,14 @@ r"""
     sage: results[2]
     Permutation group morphism:
       From: Dihedral group of order 8 as a permutation group
-      To:   Permutation Group with generators
-            [(4,5,6,7), (4,7)(5,6), (1,2,3)]
+      To:   Permutation Group with generators [(1,2,3), (4,5,6,7), (4,7)(5,6)]
       Defn: Embedding( Group( [ (1,2,3), (4,5,6,7), (4,7)(5,6) ] ), 2 )
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
     sage: results[3]
     Permutation group morphism:
-      From: Permutation Group with generators
-            [(4,5,6,7), (4,7)(5,6), (1,2,3)]
+      From: Permutation Group with generators [(1,2,3), (4,5,6,7), (4,7)(5,6)]
       To:   Cyclic group of order 3 as a permutation group
       Defn: Projection( Group( [ (1,2,3), (4,5,6,7), (4,7)(5,6) ] ), 1 )
 
@@ -197,9 +193,7 @@ r"""
 
     sage: results[4]
     Permutation group morphism:
-      From: Permutation Group with generators
-            [(4,5,6,7), (4,7)(5,6), (1,2,3)]
+      From: Permutation Group with generators [(1,2,3), (4,5,6,7), (4,7)(5,6)]
       To:   Dihedral group of order 8 as a permutation group
       Defn: Projection( Group( [ (1,2,3), (4,5,6,7), (4,7)(5,6) ] ), 2 )
-
 """

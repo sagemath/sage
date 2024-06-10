@@ -150,7 +150,7 @@ def LinearTensorParent(free_module_parent, linear_functions_parent):
     for a given base ring.
 
     INPUT:
-    
+
     - ``free_module_parent`` -- module. A free module, like vector or
       matrix space.
 
@@ -181,12 +181,11 @@ def LinearTensorParent(free_module_parent, linear_functions_parent):
     return LinearTensorParent_class(free_module_parent, linear_functions_parent)
 
 
-
-#*****************************************************************************
+# ****************************************************************************
 #
 # Parent of linear functions tensored with a free module
 #
-#*****************************************************************************
+# ****************************************************************************
 
 class LinearTensorParent_class(Parent):
     r"""
@@ -267,11 +266,11 @@ class LinearTensorParent_class(Parent):
             sage: LF = mip.linear_functions_parent()
             sage: LF.tensor(RDF^2).is_vector_space()
             True
-            sage: LF.tensor(RDF^(2,2)).is_vector_space()       
+            sage: LF.tensor(RDF^(2,2)).is_vector_space()
             False
         """
-        from sage.modules.free_module import is_FreeModule
-        return is_FreeModule(self.free_module())
+        from sage.modules.free_module import FreeModule_generic
+        return isinstance(self.free_module(), FreeModule_generic)
 
     def is_matrix_space(self):
         """
@@ -291,8 +290,8 @@ class LinearTensorParent_class(Parent):
             sage: LF.tensor(RDF^(2,2)).is_matrix_space()
             True
         """
-        from sage.matrix.matrix_space import is_MatrixSpace
-        return is_MatrixSpace(self.free_module())
+        from sage.matrix.matrix_space import MatrixSpace
+        return isinstance(self.free_module(), MatrixSpace)
 
     def linear_functions(self):
         """
@@ -319,7 +318,7 @@ class LinearTensorParent_class(Parent):
     def _repr_(self):
         """
         Return a string representation
-        
+
         OUTPUT:
 
         String.
@@ -364,7 +363,7 @@ class LinearTensorParent_class(Parent):
             return m_vector
         else:
             return M(m)
-        
+
     def _element_constructor_(self, x):
         """
         Construct a :class:`LinearTensor` from ``x``.
@@ -387,13 +386,13 @@ class LinearTensorParent_class(Parent):
             sage: LT({1:[1, 2]})    # indirect doctest
             (1.0, 2.0)*x_1
             sage: type(_)
-            <type 'sage.numerical.linear_tensor_element.LinearTensor'>
+            <class 'sage.numerical.linear_tensor_element.LinearTensor'>
 
-        Construct from scalar:
+        Construct from scalar::
 
             sage: LT(123)    # indirect doctest
             (123.0, 123.0)
-        
+
         Similar, over ``QQ`` and with matrices instead of vectors::
 
             sage: p_QQ = MixedIntegerLinearProgram(solver='ppl')
@@ -478,7 +477,4 @@ class LinearTensorParent_class(Parent):
             (1.0, 0.0) + (5.0, 0.0)*x_2 + (7.0, 0.0)*x_5
         """
         m = self.free_module().an_element()
-        return self._element_constructor_({-1:m, 2:5*m, 5:7*m})
-
-
-
+        return self._element_constructor_({-1: m, 2: 5 * m, 5: 7 * m})

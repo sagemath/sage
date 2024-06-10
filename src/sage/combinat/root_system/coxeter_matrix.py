@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs
 """
 Coxeter Matrices
 """
@@ -22,12 +23,16 @@ from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall
+from sage.misc.lazy_import import lazy_import
 from sage.matrix.matrix_generic_dense import Matrix_generic_dense
-from sage.graphs.graph import Graph
-from sage.rings.all import ZZ, QQ, RR
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RR
 from sage.rings.infinity import infinity
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.coxeter_type import CoxeterType
+
+lazy_import('sage.graphs.graph', 'Graph')
 
 
 class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
@@ -203,7 +208,7 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
         else:
             index_set = tuple(range(1, n + 1))
         if len(set(index_set)) != n:
-                raise ValueError("the given index set is not valid")
+            raise ValueError("the given index set is not valid")
 
         return cls._from_matrix(data, coxeter_type, index_set, coxeter_type_check)
 
@@ -337,7 +342,7 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
             [ 1.00000000000000 -1.50000000000000]
             [-1.50000000000000  1.00000000000000]
         """
-        verts = sorted(graph.vertices())
+        verts = graph.vertices(sort=True)
         index_set = tuple(verts)
         n = len(index_set)
 
@@ -351,7 +356,7 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
                 else:
                     data[-1] += [2]
 
-        for e in graph.edges():
+        for e in graph.edges(sort=True):
             label = e[2]
             if label is None:
                 label = 3
@@ -651,7 +656,7 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
         """
         if key == 'ascii_art' or key == 'element_ascii_art':
             return self._matrix.nrows() > 1
-        return super(CoxeterMatrix, self)._repr_option(key)
+        return super()._repr_option(key)
 
     def _latex_(self):
         r"""
@@ -845,6 +850,7 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.gap
             sage: CoxeterType(['A', 2, 1]).bilinear_form()
             [   1 -1/2 -1/2]
             [-1/2    1 -1/2]
@@ -1072,7 +1078,7 @@ def recognize_coxeter_type_from_matrix(coxeter_matrix, index_set):
         ....:     if C.is_finite() or C.is_affine():
         ....:         assert recognized_type == C.coxeter_type()
 
-    We check the rank 2 cases (:trac:`20419`)::
+    We check the rank 2 cases (:issue:`20419`)::
 
         sage: for i in range(2, 10):
         ....:     M = matrix([[1,i],[i,1]])
@@ -1089,7 +1095,7 @@ def recognize_coxeter_type_from_matrix(coxeter_matrix, index_set):
         Coxeter type of ['A', 1, 1]
 
     Check that this works for reducible types with relabellings
-    (:trac:`24892`)::
+    (:issue:`24892`)::
 
         sage: CM = CoxeterMatrix([[1,2,5],[2,1,2],[5,2,1]]); CM
         [1 2 5]
@@ -1111,7 +1117,7 @@ def recognize_coxeter_type_from_matrix(coxeter_matrix, index_set):
         r = S.num_verts()
         # Handle the special cases first
         if r == 1:
-            types.append(CoxeterType(['A', 1]).relabel({1: S.vertices()[0]}))
+            types.append(CoxeterType(['A', 1]).relabel({1: S.vertices(sort=True)[0]}))
             continue
         if r == 2:  # Type B2, G2, or I_2(p)
             e = S.edge_labels()[0]
@@ -1125,12 +1131,13 @@ def recognize_coxeter_type_from_matrix(coxeter_matrix, index_set):
                 ct = CoxeterType(['I', e])
             else:  # Otherwise it is infinite dihedral group Z_2 \ast Z_2
                 ct = CoxeterType(['A', 1, 1])
+            SV = S.vertices(sort=True)
             if not ct.is_affine():
-                types.append(ct.relabel({1: S.vertices()[0],
-                                         2: S.vertices()[1]}))
+                types.append(ct.relabel({1: SV[0],
+                                         2: SV[1]}))
             else:
-                types.append(ct.relabel({0: S.vertices()[0],
-                                         1: S.vertices()[1]}))
+                types.append(ct.relabel({0: SV[0],
+                                         1: SV[1]}))
             continue
 
         test = [['A', r], ['B', r], ['A', r - 1, 1]]

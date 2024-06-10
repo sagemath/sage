@@ -2,9 +2,8 @@ Constants
 =========
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/symbolic/constants
-   sage/symbolic/constants_c
 
 .. include:: ../footer.txt

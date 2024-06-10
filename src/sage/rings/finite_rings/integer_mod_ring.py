@@ -49,34 +49,41 @@ AUTHORS:
 - Simon King (2013-09): Only allow to prescribe the category of fields
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from __future__ import absolute_import, print_function
 
 import sage.misc.prandom as random
 
-from sage.arith.all import factor, primitive_root, CRT_basis
-import sage.rings.ring as ring
-from . import integer_mod
+from sage.arith.misc import factor
+from sage.arith.misc import primitive_root
+from sage.arith.misc import CRT_basis
+from sage.rings.ring import Field, CommutativeRing
+import sage.rings.abc
+from sage.rings.finite_rings import integer_mod
 import sage.rings.integer as integer
 import sage.rings.integer_ring as integer_ring
 import sage.rings.quotient_ring as quotient_ring
 
-from sage.libs.pari.all import pari, PariError
+try:
+    from sage.libs.pari.all import pari, PariError
+except ImportError:
+    class PariError(Exception):
+        pass
 
-import sage.interfaces.all
 from sage.misc.cachefunc import cached_method
 
 from sage.structure.factory import UniqueFactory
 from sage.structure.richcmp import richcmp, richcmp_method
+
+from sage.interfaces.abc import GapElement
 
 
 class IntegerModFactory(UniqueFactory):
@@ -89,7 +96,7 @@ class IntegerModFactory(UniqueFactory):
     - ``is_field`` -- bool (default: ``False``); assert that
       the order is prime and hence the quotient ring belongs to
       the category of fields
-    - ``category`` (optional) - the category that the quotient ring belongs to.
+    - ``category`` (optional) -- the category that the quotient ring belongs to.
 
     .. NOTE::
 
@@ -195,7 +202,7 @@ class IntegerModFactory(UniqueFactory):
 
     """
     def get_object(self, version, key, extra_args):
-        out = super(IntegerModFactory,self).get_object(version, key, extra_args)
+        out = super().get_object(version, key, extra_args)
         category = extra_args.get('category', None)
         if category is not None:
             out._refine_category_(category)
@@ -215,7 +222,7 @@ class IntegerModFactory(UniqueFactory):
         """
         if is_field:
             from sage.categories.fields import Fields
-            return order, {'category':Fields()}
+            return order, {'category': Fields()}
         return order, {}
 
     def create_object(self, version, order, **kwds):
@@ -236,29 +243,9 @@ class IntegerModFactory(UniqueFactory):
         else:
             return IntegerModRing_generic(order, **kwds)
 
+
 Zmod = Integers = IntegerModRing = IntegerModFactory("IntegerModRing")
 
-
-def is_IntegerModRing(x):
-    """
-    Return ``True`` if ``x`` is an integer modulo ring.
-
-    EXAMPLES::
-
-        sage: from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
-        sage: R = IntegerModRing(17)
-        sage: is_IntegerModRing(R)
-        True
-        sage: is_IntegerModRing(GF(13))
-        True
-        sage: is_IntegerModRing(GF(4, 'a'))
-        False
-        sage: is_IntegerModRing(10)
-        False
-        sage: is_IntegerModRing(ZZ)
-        False
-    """
-    return isinstance(x, IntegerModRing_generic)
 
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -276,9 +263,9 @@ def _unit_gens_primepowercase(p, r):
         sage: from sage.rings.finite_rings.integer_mod_ring import _unit_gens_primepowercase
         sage: _unit_gens_primepowercase(2, 3)
         [(7, 2), (5, 2)]
-        sage: _unit_gens_primepowercase(17, 1)
+        sage: _unit_gens_primepowercase(17, 1)                                          # needs sage.libs.pari
         [(3, 16)]
-        sage: _unit_gens_primepowercase(3, 3)
+        sage: _unit_gens_primepowercase(3, 3)                                           # needs sage.libs.pari
         [(2, 18)]
     """
     pr = p**r
@@ -296,7 +283,7 @@ def _unit_gens_primepowercase(p, r):
 
 
 @richcmp_method
-class IntegerModRing_generic(quotient_ring.QuotientRing_generic):
+class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.IntegerModRing):
     """
     The ring of integers modulo `N`.
 
@@ -330,6 +317,8 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic):
         29
         sage: FF.order()
         29
+
+        sage: # needs sage.groups
         sage: gens = FF.unit_gens()
         sage: a = gens[0]
         sage: a
@@ -359,7 +348,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic):
         sage: TestSuite(F19).run()
         sage: TestSuite(F23).run()
 
-    By :trac:`15229`, there is a unique instance of the
+    By :issue:`15229`, there is a unique instance of the
     integral quotient ring of a given order. Using the
     :func:`IntegerModRing` factory twice, and using
     ``is_field=True`` the second time, will update the
@@ -390,6 +379,8 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic):
         16
         sage: Z16.characteristic()
         16
+
+        sage: # needs sage.groups
         sage: gens = Z16.unit_gens()
         sage: gens
         (15, 5)
@@ -408,6 +399,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic):
         2
         sage: b.multiplicative_order()
         4
+
         sage: TestSuite(Z16).run()
 
     Saving and loading::
@@ -469,7 +461,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic):
             # If the category is given, e.g., as Fields(), then we still
             # know that the result will also live in default_category.
             # Hence, we use the join of the default and the given category.
-            category = category.join([category,default_category])
+            category = category.join([category, default_category])
         # Give the generator a 'name' to make quotients work.  The
         # name 'x' is used because it's also used for the ring of
         # integers: see the __init__ method for IntegerRing_class in
@@ -502,7 +494,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic):
             ...
             TypeError: Error evaluating Macaulay2 code.
             IN:...
-            OUT:...error: ZZ/n not implemented yet for composite n
+            OUT:...error: ZZ/n not implemented yet for composite n...
         """
         return "ZZ/{}".format(self.order())
 
@@ -558,7 +550,8 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic):
 
             sage: R.<t> = QQ[]
             sage: Integers(8).extension(t^2 - 3)
-            Univariate Quotient Polynomial Ring in t over Ring of integers modulo 8 with modulus t^2 + 5
+            Univariate Quotient Polynomial Ring in t
+             over Ring of integers modulo 8 with modulus t^2 + 5
         """
         if self.modulus() == 1:
             return self
@@ -624,10 +617,11 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic):
 
         EXAMPLES::
 
+            sage: # optional - gap_package_polycyclic, needs sage.groups
             sage: Integers(5).multiplicative_subgroups()
             ((2,), (4,), ())
             sage: Integers(15).multiplicative_subgroups()
-            ((11, 7), (4, 11), (8,), (11,), (14,), (7,), (4,), ())
+            ((11, 7), (11, 4), (2,), (11,), (14,), (7,), (4,), ())
             sage: Integers(2).multiplicative_subgroups()
             ((),)
             sage: len(Integers(341).multiplicative_subgroups())
@@ -635,11 +629,11 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic):
 
         TESTS::
 
-            sage: IntegerModRing(1).multiplicative_subgroups()
+            sage: IntegerModRing(1).multiplicative_subgroups()                          # needs sage.groups
             ((),)
-            sage: IntegerModRing(2).multiplicative_subgroups()
+            sage: IntegerModRing(2).multiplicative_subgroups()                          # needs sage.groups
             ((),)
-            sage: IntegerModRing(3).multiplicative_subgroups()
+            sage: IntegerModRing(3).multiplicative_subgroups()  # optional - gap_package_polycyclic, needs sage.groups
             ((2,), ())
         """
         return tuple(tuple(g.value() for g in H.gens())
@@ -653,12 +647,12 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic):
 
             sage: Integers(389).is_integral_domain()
             True
-            sage: Integers(389^2).is_integral_domain()
+            sage: Integers(389^2).is_integral_domain()                                  # needs sage.libs.pari
             False
 
         TESTS:
 
-        Check that :trac:`17453` is fixed::
+        Check that :issue:`17453` is fixed::
 
             sage: R = Zmod(5)
             sage: R in IntegralDomains()
@@ -674,7 +668,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic):
 
             sage: Integers(389).is_unique_factorization_domain()
             True
-            sage: Integers(389^2).is_unique_factorization_domain()
+            sage: Integers(389^2).is_unique_factorization_domain()                      # needs sage.libs.pari
             False
         """
         return self.is_field(proof)
@@ -682,7 +676,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic):
     @cached_method
     def is_field(self, proof=None):
         r"""
-        Return True precisely if the order is prime.
+        Return ``True`` precisely if the order is prime.
 
         INPUT:
 
@@ -706,7 +700,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic):
             sage: FF.is_field()
             True
 
-        By :trac:`15229`, the category of the ring is refined,
+        By :issue:`15229`, the category of the ring is refined,
         if it is found that the ring is in fact a field::
 
             sage: R = IntegerModRing(127)
@@ -813,8 +807,8 @@ In the latter case, please inform the developers.""".format(self.order()))
 
         This should be very fast::
 
-            sage: R.<x> = Integers(next_prime(10^101)*next_prime(10^100))[]
-            sage: x / R.base_ring()(2)
+            sage: R.<x> = Integers(next_prime(10^101)*next_prime(10^100))[]             # needs sage.libs.pari
+            sage: x / R.base_ring()(2)                                                  # needs sage.libs.pari
             500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000013365000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000401*x
         """
         return self
@@ -833,18 +827,18 @@ In the latter case, please inform the developers.""".format(self.order()))
             sage: R.multiplicative_group_is_cyclic()
             True
             sage: R = Integers(9)
-            sage: R.multiplicative_group_is_cyclic()
+            sage: R.multiplicative_group_is_cyclic()                                    # needs sage.libs.pari
             True
             sage: Integers(8).multiplicative_group_is_cyclic()
             False
             sage: Integers(4).multiplicative_group_is_cyclic()
             True
-            sage: Integers(25*3).multiplicative_group_is_cyclic()
+            sage: Integers(25*3).multiplicative_group_is_cyclic()                       # needs sage.libs.pari
             False
 
-        We test that :trac:`5250` is fixed::
+        We test that :issue:`5250` is fixed::
 
-            sage: Integers(162).multiplicative_group_is_cyclic()
+            sage: Integers(162).multiplicative_group_is_cyclic()                        # needs sage.libs.pari
             True
         """
         n = self.order()
@@ -852,7 +846,7 @@ In the latter case, please inform the developers.""".format(self.order()))
             return True
 
         if n % 4 == 0:
-            return False # know n > 7, so n=4 case not a problem
+            return False  # know n > 7, so n=4 case not a problem
         if n % 4 == 2:
             n = n // 2
 
@@ -869,6 +863,7 @@ In the latter case, please inform the developers.""".format(self.order()))
 
         EXAMPLES::
 
+            sage: # needs sage.groups sage.libs.pari
             sage: R = Integers(7); R
             Ring of integers modulo 7
             sage: R.multiplicative_generator()
@@ -913,7 +908,7 @@ In the latter case, please inform the developers.""".format(self.order()))
         EXAMPLES::
 
             sage: R = Integers(17)
-            sage: R.quadratic_nonresidue()
+            sage: R.quadratic_nonresidue()                                              # needs sage.libs.pari
             3
             sage: R(3).is_square()
             False
@@ -945,6 +940,7 @@ In the latter case, please inform the developers.""".format(self.order()))
 
         ::
 
+            sage: # needs sage.libs.pari
             sage: v = Integers(9*5).square_roots_of_one(); v
             (1, 19, 26, 44)
             sage: [x^2 for x in v]
@@ -966,9 +962,10 @@ In the latter case, please inform the developers.""".format(self.order()))
                     v = [self(1)]
                 elif n == 4:
                     v = [self(1), self(3)]
-                else: # n >= 8
-                    half_ord = n//2
-                    v = [self(1), self(-1), self(half_ord-1), self(half_ord+1)]
+                else:  # n >= 8
+                    half_ord = n // 2
+                    v = [self(1), self(-1),
+                         self(half_ord - 1), self(half_ord + 1)]
             else:
                 v = [self(1), self(-1)]
         else:
@@ -988,10 +985,8 @@ In the latter case, please inform the developers.""".format(self.order()))
             v = []
             for x in cartesian_product_iterator(vmod):
                 # x is a specific choice of roots modulo each prime power divisor
-                a = sum([basis[i]*x[i] for i in range(len(x))])
+                a = sum([basis[i] * x[i] for i in range(len(x))])
                 v.append(a)
-            #end for
-        #end if
 
         v.sort()
         v = tuple(v)
@@ -1027,7 +1022,8 @@ In the latter case, please inform the developers.""".format(self.order()))
         ans = []
         from sage.structure.factorization import Factorization
         for p, e in self.factored_order():
-            ans.append(Factorization([(p,e-1)]) * factor(p-1, int_=(self.__order < 2**31)))
+            ans.append(Factorization([(p, e - 1)]) *
+                       factor(p - 1, int_=(self.__order < 2**31)))
         return ans
 
     def characteristic(self):
@@ -1118,7 +1114,7 @@ In the latter case, please inform the developers.""".format(self.order()))
 
         EXAMPLES::
 
-            sage: Zmod(87)._pari_order()
+            sage: Zmod(87)._pari_order()                                                # needs sage.libs.pari
             87
         """
         try:
@@ -1131,17 +1127,18 @@ In the latter case, please inform the developers.""".format(self.order()))
         """
         TESTS::
 
+            sage: # needs sage.rings.finite_rings
             sage: K2 = GF(2)
             sage: K3 = GF(3)
-            sage: K8 = GF(8,'a')
-            sage: K8(5) # indirect doctest
+            sage: K8 = GF(8, 'a')
+            sage: K8(5)  # indirect doctest
             1
             sage: K8('a+1')
             a + 1
             sage: K8(K2(1))
             1
 
-        The following test refers to :trac:`6468`::
+        The following test refers to :issue:`6468`::
 
             sage: class foo_parent(Parent):
             ....:     pass
@@ -1155,18 +1152,24 @@ In the latter case, please inform the developers.""".format(self.order()))
             ...
             TypeError: error coercing to finite field
 
-        The following test refers to :trac:`8970`::
+        The following test refers to :issue:`8970`::
 
             sage: R = Zmod(13); a = R(2)
-            sage: a == R(gap(a))
+            sage: a == R(gap(a))                                                        # needs sage.libs.gap
             True
 
-        libgap interface (:trac:`23714`)::
+        libgap interface (:issue:`23714`)::
 
-            sage: a = libgap.eval("Z(13)^2")
-            sage: a.sage()
+            sage: a = libgap.eval("Z(13)^2")                                            # needs sage.libs.gap
+            sage: a.sage()                                                              # needs sage.libs.gap
             4
-            sage: libgap(a.sage()) == a
+            sage: libgap(a.sage()) == a                                                 # needs sage.libs.gap
+            True
+
+        better syntax for libgap interface::
+
+            sage: a = libgap.Z(13)^2                                                    # needs sage.libs.gap
+            sage: libgap(a.sage()) == a                                                 # needs sage.libs.gap
             True
         """
         try:
@@ -1174,11 +1177,10 @@ In the latter case, please inform the developers.""".format(self.order()))
         except (NotImplementedError, PariError):
             raise TypeError("error coercing to finite field")
         except TypeError:
-            if sage.interfaces.gap.is_GapElement(x):
-                from sage.interfaces.gap import intmod_gap_to_sage
-                y = intmod_gap_to_sage(x)
-                return integer_mod.IntegerMod(self, y)
-            raise # Continue up with the original TypeError
+            if isinstance(x, GapElement):
+                from sage.libs.gap.libgap import libgap
+                return libgap(x).sage()
+            raise  # Continue up with the original TypeError
 
     def __iter__(self):
         """
@@ -1205,7 +1207,7 @@ In the latter case, please inform the developers.""".format(self.order()))
         EXAMPLES::
 
             sage: R = Integers(15)
-            sage: f = R.coerce_map_from(Integers(450)); f # indirect doctest
+            sage: f = R.coerce_map_from(Integers(450)); f  # indirect doctest
             Natural morphism:
               From: Ring of integers modulo 450
               To:   Ring of integers modulo 15
@@ -1230,7 +1232,7 @@ In the latter case, please inform the developers.""".format(self.order()))
 
             sage: R = IntegerModRing(17)
             sage: a = R(3)
-            sage: b = R._coerce_(3)
+            sage: b = R.coerce(3)
             sage: b
             3
             sage: a==b
@@ -1246,7 +1248,7 @@ In the latter case, please inform the developers.""".format(self.order()))
 
         ::
 
-            sage: R._coerce_(2/3)
+            sage: R.coerce(2/3)
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Rational Field to Ring of integers modulo 17
@@ -1260,7 +1262,7 @@ In the latter case, please inform the developers.""".format(self.order()))
         elif S is integer_ring.ZZ:
             return integer_mod.Integer_to_IntegerMod(self)
         elif isinstance(S, IntegerModRing_generic):
-            if isinstance(S, ring.Field):
+            if isinstance(S, Field):
                 return None
             try:
                 return integer_mod.IntegerMod_to_IntegerMod(S, self)
@@ -1276,7 +1278,7 @@ In the latter case, please inform the developers.""".format(self.order()))
 
         EXAMPLES::
 
-            sage: Zmod(81).convert_map_from(Qp(3))
+            sage: Zmod(81).convert_map_from(Qp(3))                                      # needs sage.rings.padics
             Reduction morphism:
               From: 3-adic Field with capped relative precision 20
               To:   Ring of integers modulo 81
@@ -1299,12 +1301,14 @@ In the latter case, please inform the developers.""".format(self.order()))
             Ring of integers modulo 12
             sage: Z13 = IntegerModRing(13); Z13
             Ring of integers modulo 13
+            sage: Z11 == Z11, Z11 == Z12, Z11 == Z13
+            (True, False, False)
             sage: F = GF(11); F
             Finite Field of size 11
-            sage: Z11 == Z11, Z11 == Z12, Z11 == Z13, Z11 == F
-            (True, False, False, False)
+            sage: Z11 == F
+            False
 
-        In :trac:`15229`, the following was implemented::
+        In :issue:`15229`, the following was implemented::
 
             sage: R1 = IntegerModRing(5)
             sage: R2 = IntegerModRing(5, is_field=True)
@@ -1315,14 +1319,14 @@ In the latter case, please inform the developers.""".format(self.order()))
 
         """
         # We want that GF(p) and IntegerModRing(p) evaluate unequal.
-        # However, we can not just compare the types, since the
+        # However, we cannot just compare the types, since the
         # choice of a different category also changes the type.
         # But if we go to the base class, we avoid the influence
         # of the category.
         try:
             c = bool(other.__class__.__base__ != self.__class__.__base__)
-        except AttributeError: # __base__ does not always exists
-            c = bool(type(other) != type(self))
+        except AttributeError:  # __base__ does not always exists
+            c = bool(type(other) is not type(self))
         if c:
             return NotImplemented
         return richcmp(self.__order, other.__order, op)
@@ -1344,31 +1348,31 @@ In the latter case, please inform the developers.""".format(self.order()))
         EXAMPLES::
 
             sage: R = IntegerModRing(18)
-            sage: R.unit_gens()
+            sage: R.unit_gens()                                                         # needs sage.groups
             (11,)
             sage: R = IntegerModRing(17)
-            sage: R.unit_gens()
+            sage: R.unit_gens()                                                         # needs sage.groups
             (3,)
-            sage: IntegerModRing(next_prime(10^30)).unit_gens()
+            sage: IntegerModRing(next_prime(10^30)).unit_gens()                         # needs sage.groups
             (5,)
 
         The choice of generators is affected by the optional keyword
         ``algorithm``; this can be ``'sage'`` (default) or ``'pari'``.
-        See :meth:`unit_group` for details.
+        See :meth:`unit_group` for details. ::
 
             sage: A = Zmod(55)
-            sage: A.unit_gens(algorithm='sage')
+            sage: A.unit_gens(algorithm='sage')                                         # needs sage.groups
             (12, 46)
-            sage: A.unit_gens(algorithm='pari')
+            sage: A.unit_gens(algorithm='pari')                                         # needs sage.groups sage.libs.pari
             (2, 21)
 
         TESTS::
 
-            sage: IntegerModRing(2).unit_gens()
+            sage: IntegerModRing(2).unit_gens()                                         # needs sage.groups
             ()
-            sage: IntegerModRing(4).unit_gens()
+            sage: IntegerModRing(4).unit_gens()                                         # needs sage.groups
             (3,)
-            sage: IntegerModRing(8).unit_gens()
+            sage: IntegerModRing(8).unit_gens()                                         # needs sage.groups
             (7, 5)
 
         """
@@ -1379,10 +1383,10 @@ In the latter case, please inform the developers.""".format(self.order()))
         EXAMPLES::
 
             sage: R = IntegerModRing(17)
-            sage: R.unit_group_exponent()
+            sage: R.unit_group_exponent()                                               # needs sage.groups
             16
             sage: R = IntegerModRing(18)
-            sage: R.unit_group_exponent()
+            sage: R.unit_group_exponent()                                               # needs sage.groups
             6
         """
         return self.unit_group().exponent()
@@ -1394,7 +1398,7 @@ In the latter case, please inform the developers.""".format(self.order()))
         EXAMPLES::
 
             sage: R = Integers(500)
-            sage: R.unit_group_order()
+            sage: R.unit_group_order()                                                  # needs sage.groups
             200
         """
         return self.unit_group().order()
@@ -1432,70 +1436,76 @@ In the latter case, please inform the developers.""".format(self.order()))
         differ in various ways.  In the following example, the same
         cyclic factors are computed, but in a different order::
 
+            sage: # needs sage.groups
             sage: A = Zmod(15)
             sage: G = A.unit_group(); G
             Multiplicative Abelian group isomorphic to C2 x C4
             sage: G.gens_values()
             (11, 7)
-            sage: H = A.unit_group(algorithm='pari'); H
+            sage: H = A.unit_group(algorithm='pari'); H                                 # needs sage.libs.pari
             Multiplicative Abelian group isomorphic to C4 x C2
-            sage: H.gens_values()
+            sage: H.gens_values()                                                       # needs sage.libs.pari
             (7, 11)
 
         Here are two examples where the cyclic factors are isomorphic,
         but are ordered differently and have different generators::
 
+            sage: # needs sage.groups
             sage: A = Zmod(40)
             sage: G = A.unit_group(); G
             Multiplicative Abelian group isomorphic to C2 x C2 x C4
             sage: G.gens_values()
             (31, 21, 17)
-            sage: H = A.unit_group(algorithm='pari'); H
+            sage: H = A.unit_group(algorithm='pari'); H                                 # needs sage.libs.pari
             Multiplicative Abelian group isomorphic to C4 x C2 x C2
-            sage: H.gens_values()
+            sage: H.gens_values()                                                       # needs sage.libs.pari
             (17, 31, 21)
 
+            sage: # needs sage.groups
             sage: A = Zmod(192)
             sage: G = A.unit_group(); G
             Multiplicative Abelian group isomorphic to C2 x C16 x C2
             sage: G.gens_values()
             (127, 133, 65)
-            sage: H = A.unit_group(algorithm='pari'); H
+            sage: H = A.unit_group(algorithm='pari'); H                                 # needs sage.libs.pari
             Multiplicative Abelian group isomorphic to C16 x C2 x C2
-            sage: H.gens_values()
+            sage: H.gens_values()                                                       # needs sage.libs.pari
             (133, 127, 65)
 
         In the following examples, the cyclic factors are not even
         isomorphic::
 
             sage: A = Zmod(319)
-            sage: A.unit_group()
+            sage: A.unit_group()                                                        # needs sage.groups
             Multiplicative Abelian group isomorphic to C10 x C28
-            sage: A.unit_group(algorithm='pari')
+            sage: A.unit_group(algorithm='pari')                                        # needs sage.groups sage.libs.pari
             Multiplicative Abelian group isomorphic to C140 x C2
 
             sage: A = Zmod(30.factorial())
-            sage: A.unit_group()
-            Multiplicative Abelian group isomorphic to C2 x C16777216 x C3188646 x C62500 x C2058 x C110 x C156 x C16 x C18 x C22 x C28
-            sage: A.unit_group(algorithm='pari')
-            Multiplicative Abelian group isomorphic to C20499647385305088000000 x C55440 x C12 x C12 x C4 x C2 x C2 x C2 x C2 x C2 x C2
+            sage: A.unit_group()                                                        # needs sage.groups
+            Multiplicative Abelian group isomorphic to
+             C2 x C16777216 x C3188646 x C62500 x C2058 x C110 x C156 x C16 x C18 x C22 x C28
+            sage: A.unit_group(algorithm='pari')                                        # needs sage.groups sage.libs.pari
+            Multiplicative Abelian group isomorphic to
+             C20499647385305088000000 x C55440 x C12 x C12 x C4 x C2 x C2 x C2 x C2 x C2 x C2
 
         TESTS:
 
         We test the cases where the unit group is trivial::
 
+            sage: # needs sage.groups
             sage: A = Zmod(1)
             sage: A.unit_group()
             Trivial Abelian group
-            sage: A.unit_group(algorithm='pari')
+            sage: A.unit_group(algorithm='pari')                                        # needs sage.libs.pari
             Trivial Abelian group
             sage: A = Zmod(2)
             sage: A.unit_group()
             Trivial Abelian group
-            sage: A.unit_group(algorithm='pari')
+            sage: A.unit_group(algorithm='pari')                                        # needs sage.libs.pari
             Trivial Abelian group
 
-            sage: Zmod(3).unit_group(algorithm='bogus')
+            sage: Zmod(3).unit_group(algorithm='bogus')                                 # needs sage.groups
             Traceback (most recent call last):
             ...
             ValueError: unknown algorithm 'bogus' for computing the unit group
@@ -1507,7 +1517,7 @@ In the latter case, please inform the developers.""".format(self.order()))
             gens = []
             orders = []
             for p, r in self.factored_order():
-                m = n/(p**r)
+                m = n // (p**r)
                 for g, o in _unit_gens_primepowercase(p, r):
                     x = g.crt(integer_mod.Mod(1, m))
                     gens.append(x)
@@ -1533,8 +1543,11 @@ In the latter case, please inform the developers.""".format(self.order()))
         EXAMPLES::
 
             sage: R = IntegerModRing(18)
-            sage: R.random_element()
-            2
+            sage: R.random_element().parent() is R
+            True
+            sage: found = [False]*18
+            sage: while not all(found):
+            ....:     found[R.random_element()] = True
 
         We test ``bound``-option::
 
@@ -1542,8 +1555,8 @@ In the latter case, please inform the developers.""".format(self.order()))
             True
         """
         if bound is not None:
-            return ring.CommutativeRing.random_element(self, bound)
-        a = random.randint(0,self.order()-1)
+            return CommutativeRing.random_element(self, bound)
+        a = random.randint(0, self.order() - 1)
         return self(a)
 
     #######################################################
@@ -1556,7 +1569,7 @@ In the latter case, please inform the developers.""".format(self.order()))
             sage: R = Integers(12345678900)
             sage: R
             Ring of integers modulo 12345678900
-            sage: gap(R) # indirect doctest
+            sage: gap(R)  # indirect doctest                                            # needs sage.libs.gap
             (Integers mod 12345678900)
         """
         return 'ZmodnZ({})'.format(self.order())
@@ -1568,7 +1581,7 @@ In the latter case, please inform the developers.""".format(self.order()))
             sage: R = Integers(12345678900)
             sage: R
             Ring of integers modulo 12345678900
-            sage: magma(R) # indirect doctest, optional - magma
+            sage: magma(R)  # indirect doctest, optional - magma
             Residue class ring of integers modulo 12345678900
         """
         return 'Integers({})'.format(self.order())
@@ -1585,13 +1598,12 @@ In the latter case, please inform the developers.""".format(self.order()))
         """
         return integer.Integer(1)
 
-Zmod = IntegerModRing
-Integers = IntegerModRing
 
 # Register unpickling methods for backward compatibility.
 
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.rings.integer_mod_ring', 'IntegerModRing_generic', IntegerModRing_generic)
+
 
 def crt(v):
     """
@@ -1603,13 +1615,12 @@ def crt(v):
     EXAMPLES::
 
         sage: from sage.rings.finite_rings.integer_mod_ring import crt
-        sage: crt([mod(3, 8),mod(1,19),mod(7, 15)])
+        sage: crt([mod(3, 8), mod(1,19), mod(7, 15)])
         1027
     """
     if len(v) == 0:
         return IntegerModRing(1)(1)
     x = v[0]
-    for i in range(1,len(v)):
+    for i in range(1, len(v)):
         x = x.crt(v[i])
     return x
-

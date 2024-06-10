@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-repl
 """
 Representations of objects
 """
-
 # ****************************************************************************
 #       Copyright (C) 2014 Volker Braun <vbraun.name@gmail.com>
 #
@@ -20,12 +19,12 @@ from IPython.lib.pretty import (
     _type_pprinters,
 )
 
-_baseclass_reprs = (object.__repr__,)
-
 from sage.repl.display.util import format_list
 
+_baseclass_reprs = (object.__repr__,)
 
-class ObjectReprABC(object):
+
+class ObjectReprABC():
     """
     The abstract base class of an object representer.
 
@@ -182,39 +181,36 @@ class LargeMatrixHelpRepr(ObjectReprABC):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: from sage.repl.display.fancy_repr import LargeMatrixHelpRepr
             sage: M = identity_matrix(40)
             sage: pp = LargeMatrixHelpRepr()
             sage: pp.format_string(M)
-            "40 x 40 dense matrix over Integer Ring (use the '.str()' method to see the entries)"
+            "40 x 40 dense matrix over Integer Ring (use the '.str()' method...)"
             sage: pp.format_string([M, M])
             '--- object not handled by representer ---'
 
         Leads to::
 
-            sage: M
-            40 x 40 dense matrix over Integer Ring (use the '.str()' method to see the entries)
-            sage: [M, M]
+            sage: M                                                                     # needs sage.modules
+            40 x 40 dense matrix over Integer Ring (use the '.str()' method...)
+            sage: [M, M]                                                                # needs sage.modules
             [40 x 40 dense matrix over Integer Ring,
              40 x 40 dense matrix over Integer Ring]
         """
         if not p.toplevel():
             # Do not print the help for matrices inside containers
             return False
-        try:
-            from sage.matrix.matrix1 import Matrix
-        except ModuleNotFoundError:
-            return False
+        from sage.structure.element import Matrix
         if not isinstance(obj, Matrix):
             return False
-        from sage.matrix.matrix0 import max_rows, max_cols
-        if obj.nrows() < max_rows and obj.ncols() < max_cols:
+        from sage.matrix.constructor import options
+        if obj.nrows() <= options.max_rows() and obj.ncols() <= options.max_cols():
             return False
         p.text(
             repr(obj) + " (use the '.str()' method to see the entries)"
         )
         return True
-
 
 
 class PlainPythonRepr(ObjectReprABC):
@@ -246,14 +242,14 @@ class PlainPythonRepr(ObjectReprABC):
             sage: from sage.repl.display.fancy_repr import PlainPythonRepr
             sage: pp = PlainPythonRepr()
             sage: pp.format_string(type(1))
-            "<type 'sage.rings.integer.Integer'>"
+            "<class 'sage.rings.integer.Integer'>"
 
         Do not swallow a trailing newline at the end of the output of
         a custom representer. Note that it is undesirable to have a
         trailing newline, and if we don't display it you can't fix
         it::
 
-            sage: class Newline(object):
+            sage: class Newline():
             ....:     def __repr__(self):
             ....:         return 'newline\n'
             sage: n = Newline()
@@ -317,12 +313,12 @@ class TallListRepr(ObjectReprABC):
 
             sage: from sage.repl.display.fancy_repr import TallListRepr
             sage: format_list = TallListRepr().format_string
-            sage: format_list([1, 2, identity_matrix(2)])
+            sage: format_list([1, 2, identity_matrix(2)])                               # needs sage.modules
             '[\n      [1 0]\n1, 2, [0 1]\n]'
 
-        Check that :trac:`18743` is fixed::
+        Check that :issue:`18743` is fixed::
 
-            sage: class Foo(object):
+            sage: class Foo():
             ....:     def __repr__(self):
             ....:         return '''BBB    AA   RRR
             ....: B  B  A  A  R  R
@@ -360,5 +356,3 @@ class TallListRepr(ObjectReprABC):
             return False
         p.text(output)
         return True
-
-

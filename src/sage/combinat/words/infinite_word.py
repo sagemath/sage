@@ -75,7 +75,7 @@ Infinite words in a specific combinatorial class::
 # ****************************************************************************
 from sage.combinat.words.abstract_word import Word_class
 from sage.combinat.words.word_options import word_options
-from sage.rings.all import Infinity
+from sage.rings.infinity import Infinity
 
 
 class InfiniteWord_class(Word_class):
@@ -110,4 +110,3 @@ class InfiniteWord_class(Word_class):
             +Infinity
         """
         return Infinity
-

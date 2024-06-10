@@ -9,5 +9,5 @@ cdef class IntList:
     cdef int* _values
     cdef Py_ssize_t _length
 
-    cpdef int prod(self)
-    cpdef int sum(self)
+    cpdef int prod(self) noexcept
+    cpdef int sum(self) noexcept

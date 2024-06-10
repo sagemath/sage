@@ -1,5 +1,5 @@
 r"""
-Platonic Solids
+Platonic solids
 
 EXAMPLES: The five platonic solids in a row:
 
@@ -48,7 +48,6 @@ AUTHORS:
 
 - William Stein
 """
-from __future__ import absolute_import
 
 
 # ****************************************************************************
@@ -66,7 +65,7 @@ from __future__ import absolute_import
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.all import RDF
+from sage.rings.real_double import RDF
 from sage.matrix.constructor import matrix
 from sage.misc.decorators import rename_keyword
 from .shapes import Box, ColorCube
@@ -140,18 +139,19 @@ def prep(G, center, size, kwds):
     TESTS:
 
     Verify that scaling and moving the center work together properly,
-    and that keywords are passed (see :trac:`10796`)::
+    and that keywords are passed (see :issue:`10796`)::
 
         sage: octahedron(center=(2,0,0),size=2,color='red')
         Graphics3d Object
     """
+    kwds['threejs_flat_shading'] = True
+    G._set_extra_kwds(kwds)
     if size != 1:
         G = G.scale(size)
     if center != (0, 0, 0):
         G = G.translate(center)
-    kwds['threejs_flat_shading'] = True
-    G._set_extra_kwds(kwds)
     return G
+
 
 @rename_keyword(alpha='opacity')
 def tetrahedron(center=(0, 0, 0), size=1, **kwds):
@@ -227,13 +227,14 @@ def tetrahedron(center=(0, 0, 0), size=1, **kwds):
     A Dodecahedral complex of 5 tetrahedra (a more elaborate example
     from Peter Jipsen)::
 
-        sage: v=(sqrt(5.)/2-5/6, 5/6*sqrt(3.)-sqrt(15.)/2, sqrt(5.)/3)
-        sage: t=acos(sqrt(5.)/3)/2
-        sage: t1=tetrahedron(aspect_ratio=(1,1,1), opacity=0.5).rotateZ(t)
-        sage: t2=tetrahedron(color='red', opacity=0.5).rotateZ(t).rotate(v,2*pi/5)
-        sage: t3=tetrahedron(color='green', opacity=0.5).rotateZ(t).rotate(v,4*pi/5)
-        sage: t4=tetrahedron(color='yellow', opacity=0.5).rotateZ(t).rotate(v,6*pi/5)
-        sage: t5=tetrahedron(color='orange', opacity=0.5).rotateZ(t).rotate(v,8*pi/5)
+        sage: from math import pi
+        sage: v = (sqrt(5.)/2-5/6, 5/6*sqrt(3.)-sqrt(15.)/2, sqrt(5.)/3)
+        sage: t = acos(sqrt(5.)/3)/2
+        sage: t1 = tetrahedron(aspect_ratio=(1,1,1), opacity=0.5).rotateZ(t)
+        sage: t2 = tetrahedron(color='red', opacity=0.5).rotateZ(t).rotate(v,2*pi/5)
+        sage: t3 = tetrahedron(color='green', opacity=0.5).rotateZ(t).rotate(v,4*pi/5)
+        sage: t4 = tetrahedron(color='yellow', opacity=0.5).rotateZ(t).rotate(v,6*pi/5)
+        sage: t5 = tetrahedron(color='orange', opacity=0.5).rotateZ(t).rotate(v,8*pi/5)
         sage: show(t1+t2+t3+t4+t5, frame=False, zoom=1.3)
 
     .. PLOT::
@@ -255,14 +256,15 @@ def tetrahedron(center=(0, 0, 0), size=1, **kwds):
     one = RR.one()
     sqrt2 = RR(2).sqrt()
     sqrt6 = RR(6).sqrt()
-    point_list = [(0,0,1),
-                  (2*sqrt2/3,        0, -one/3),
-                  ( -sqrt2/3,  sqrt6/3, -one/3),
-                  ( -sqrt2/3, -sqrt6/3, -one/3)]
+    point_list = [(0, 0, 1),
+                  (2*sqrt2/3, 0, -one/3),
+                  (-sqrt2/3, sqrt6/3, -one/3),
+                  (-sqrt2/3, -sqrt6/3, -one/3)]
     face_list = [[0,1,2],[1,3,2],[0,2,3],[0,3,1]]
     if 'aspect_ratio' not in kwds:
         kwds['aspect_ratio'] = [1, 1, 1]
     return index_face_set(face_list, point_list, enclosed=True, center=center, size=size, **kwds)
+
 
 @rename_keyword(alpha='opacity')
 def cube(center=(0, 0, 0), size=1, color=None, frame_thickness=0,
@@ -383,16 +385,16 @@ def cube(center=(0, 0, 0), size=1, color=None, frame_thickness=0,
 
         sage: c.show(viewer='tachyon')
 
-    This shows :trac:`11272` has been fixed::
+    This shows :issue:`11272` has been fixed::
 
         sage: cube(center=(10, 10, 10), size=0.5).bounding_box()
         ((9.75, 9.75, 9.75), (10.25, 10.25, 10.25))
-        
+
     AUTHORS:
 
     - William Stein
     """
-    if isinstance(color, (list, tuple)) and len(color) > 0 and isinstance(color[0], (list,tuple,str)):
+    if isinstance(color, (list, tuple)) and len(color) > 0 and isinstance(color[0], (list, tuple, str)):
         B = ColorCube(size=[0.5,0.5,0.5], colors=color, **kwds)
     else:
         if color is not None:
@@ -404,6 +406,7 @@ def cube(center=(0, 0, 0), size=1, color=None, frame_thickness=0,
         else:
             B += frame3d((-0.5,-0.5,-0.5),(0.5,0.5,0.5), thickness=frame_thickness, color=frame_color)
     return prep(B, center, size, kwds)
+
 
 @rename_keyword(alpha='opacity')
 def octahedron(center=(0, 0, 0), size=1, **kwds):
@@ -440,7 +443,8 @@ def octahedron(center=(0, 0, 0), size=1, **kwds):
     kwds['enclosed'] = True
     if 'aspect_ratio' not in kwds:
         kwds['aspect_ratio'] = [1, 1, 1]
-    return prep(Box(1,1,1).dual(**kwds), center, size, kwds)
+    return prep(Box(1, 1, 1).dual(**kwds), center, size, kwds)
+
 
 @rename_keyword(alpha='opacity')
 def dodecahedron(center=(0, 0, 0), size=1, **kwds):
@@ -514,21 +518,21 @@ def dodecahedron(center=(0, 0, 0), size=1, **kwds):
     - Robert Bradshaw, William Stein
     """
     RR = RDF
-    one = RR(1)
+    one = RR.one()
     sqrt3 = RR(3).sqrt()
     sqrt5 = RR(5).sqrt()
     R3 = RR**3
-    rot = matrix(RR, [[  -one/2,-sqrt3/2, 0],
-                      [ sqrt3/2,  -one/2, 0],
-                      [       0,       0, 1]])
-    rot2 = rot*rot
+    rot = matrix(RR, [[-one / 2, -sqrt3 / 2, 0],
+                      [sqrt3 / 2, -one / 2, 0],
+                      [0, 0, 1]])
+    rot2 = rot * rot
 
     # The top
-    Q = R3([0,0,1])
+    Q = R3([0, 0, 1])
     # The first ring
     P1 = R3([2*one/3, 0, sqrt5/3])
     # The second ring
-    R1 = R3([sqrt5/3,  1/sqrt3, one/3])
+    R1 = R3([sqrt5/3, 1/sqrt3, one/3])
     R2 = R3([sqrt5/3, -1/sqrt3, one/3])
 
     top = [Q, P1, rot*P1, rot2*P1, R1, rot*R2, rot*R1, rot2*R2, rot2*R1, R2]
@@ -554,6 +558,7 @@ def dodecahedron(center=(0, 0, 0), size=1, **kwds):
 #        faces = IndexFaceSet([[tuple(vs[i]) for i in f] for f in face_list])
 #        vertex_spheres += [faces.stickers(['red','yellow','blue','purple','black','orange'], .1, .1)] # [faces]
 #        return Graphics3dGroup(vertex_spheres)
+
 
 @rename_keyword(alpha='opacity')
 def icosahedron(center=(0, 0, 0), size=1, **kwds):

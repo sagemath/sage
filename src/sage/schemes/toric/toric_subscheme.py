@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.geometry.polyhedron sage.graphs
 r"""
 Subschemes of toric space
 
@@ -8,21 +9,21 @@ AUTHORS:
 - William Stein (2005): initial version.
 
 - Andrey Novoseltsev (2010-05-17): subschemes of toric varieties.
-
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 # Distributed under the terms of the GNU General Public License (GPL)
 # as published by the Free Software Foundation; either version 2 of
 # the License, or (at your option) any later version.
-# http://www.gnu.org/licenses/
-#*****************************************************************************
+# https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.calculus.functions import jacobian
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
+
 
 class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
     r"""
@@ -43,10 +44,8 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
     - ``polynomials`` -- single polynomial, list, or ideal of defining
       polynomials in the coordinate ring of ``toric_variety``.
 
-    OUTPUT:
-
-    - :class:`algebraic subscheme of a toric variety
-      <AlgebraicScheme_subscheme_toric>`.
+    OUTPUT: An :class:`algebraic subscheme of a toric variety
+    <AlgebraicScheme_subscheme_toric>`.
 
     TESTS::
 
@@ -55,7 +54,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         Defining s, t, x, y
         sage: import sage.schemes.toric.toric_subscheme as SCM
         sage: X = SCM.AlgebraicScheme_subscheme_toric(
-        ....:       P1xP1, [x*s + y*t, x^3+y^3])
+        ....:       P1xP1, [x*s + y*t, x^3 + y^3])
         sage: X
         Closed subscheme of 2-d CPR-Fano toric variety
         covered by 4 affine patches defined by:
@@ -64,7 +63,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
 
     A better way to construct the same scheme as above::
 
-        sage: P1xP1.subscheme([x*s + y*t, x^3+y^3])
+        sage: P1xP1.subscheme([x*s + y*t, x^3 + y^3])
         Closed subscheme of 2-d CPR-Fano toric variety
         covered by 4 affine patches defined by:
           s*x + t*y,
@@ -86,7 +85,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
             Defining s, t, x, y
             sage: import sage.schemes.toric.toric_subscheme as SCM
             sage: X = SCM.AlgebraicScheme_subscheme_toric(
-            ....:       P1xP1, [x*s + y*t, x^3+y^3])
+            ....:       P1xP1, [x*s + y*t, x^3 + y^3])
             sage: X
             Closed subscheme of 2-d CPR-Fano toric variety
             covered by 4 affine patches defined by:
@@ -94,8 +93,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
               x^3 + y^3
         """
         # Just to make sure that keyword arguments will be passed correctly
-        super(AlgebraicScheme_subscheme_toric, self).__init__(toric_variety,
-                                                              polynomials)
+        super().__init__(toric_variety, polynomials)
 
     def _morphism(self, *args, **kwds):
         r"""
@@ -106,9 +104,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         - same as for
           :class:`~sage.schemes.toric.morphism.SchemeMorphism_polynomial_toric_variety`.
 
-        OUTPUT:
-
-        - :class:`~sage.schemes.toric.morphism.SchemeMorphism_polynomial_toric_variety`.
+        OUTPUT: A :class:`~sage.schemes.toric.morphism.SchemeMorphism_polynomial_toric_variety`.
 
         TESTS::
 
@@ -126,8 +122,8 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
               Defn: Defined on coordinates by sending [s : t : x : y] to
                     [s : s : x : y]
 
-            sage: sbar, tbar, xbar, ybar = P1.coordinate_ring().gens()
-            sage: P1._morphism(H, [sbar, sbar, xbar, ybar])
+            sage: sbar, tbar, xbar, ybar = P1.coordinate_ring().gens()                  # needs sage.libs.singular
+            sage: P1._morphism(H, [sbar, sbar, xbar, ybar])                             # needs sage.libs.singular
             Scheme morphism:
               From: Closed subscheme of 2-d CPR-Fano toric variety
               covered by 4 affine patches defined by:
@@ -148,9 +144,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         - same as for
           :class:`~sage.schemes.toric.homset.SchemeHomset_points_toric_field`.
 
-        OUTPUT:
-
-        :class:`~sage.schemes.toric.homset.SchemeHomset_points_subscheme_toric_field`.
+        OUTPUT: A :class:`~sage.schemes.toric.homset.SchemeHomset_points_subscheme_toric_field`.
 
         TESTS::
 
@@ -170,14 +164,12 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         """
         Return the fan of the ambient space.
 
-        OUTPUT:
-
-        A fan.
+        OUTPUT: A fan.
 
         EXAMPLES::
 
             sage: P2.<x,y,z> = toric_varieties.P(2)
-            sage: E = P2.subscheme([x^2+y^2+z^2])
+            sage: E = P2.subscheme([x^2 + y^2 + z^2])
             sage: E.fan()
             Rational polyhedral fan in 2-d lattice N
         """
@@ -214,11 +206,10 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
             Scheme morphism:
               From: 2-d affine toric variety
               To:   2-d CPR-Fano toric variety covered by 4 affine patches
-              Defn: Defined on coordinates by sending [t : x] to
-                    [1 : t : x : 1]
+              Defn: Defined on coordinates by sending [t : x] to [1 : t : x : 1]
             sage: P1xP1.inject_variables()
             Defining s, t, x, y
-            sage: P1 = P1xP1.subscheme(x-y)
+            sage: P1 = P1xP1.subscheme(x - y)
             sage: subpatch = P1.affine_patch(1)
             sage: subpatch
             Closed subscheme of 2-d affine toric variety defined by:
@@ -228,7 +219,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         try:
             return self._affine_patches[i]
         except AttributeError:
-            self._affine_patches = dict()
+            self._affine_patches = {}
         except KeyError:
             pass
         ambient_patch = self.ambient_space().affine_patch(i)
@@ -273,17 +264,18 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
 
             sage: P2.<x,y,z> = toric_varieties.P2()
             sage: cone = P2.fan().generating_cone(0)
-            sage: V = P2.subscheme(x^3+y^3+z^3)
+            sage: V = P2.subscheme(x^3 + y^3 + z^3)
             sage: V.affine_algebraic_patch(cone)
             Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
               z0^3 + z1^3 + 1
 
-            sage: cone = Cone([(0,1),(2,1)])
+            sage: # needs fpylll sage.libs.singular
+            sage: cone = Cone([(0,1), (2,1)])
             sage: A2Z2.<x,y> = AffineToricVariety(cone)
             sage: A2Z2.affine_algebraic_patch()
             Closed subscheme of Affine Space of dimension 3 over Rational Field defined by:
               -z0*z1 + z2^2
-            sage: V = A2Z2.subscheme(x^2+y^2-1)
+            sage: V = A2Z2.subscheme(x^2 + y^2 - 1)
             sage: patch = V.affine_algebraic_patch();  patch
             Closed subscheme of Affine Space of dimension 3 over Rational Field defined by:
               -z0*z1 + z2^2,
@@ -299,18 +291,18 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         the singularity of the ambient space and the second is the
         pull-back of `x^2+y^2-1` ::
 
-            sage: lp = LatticePolytope([(1,0,0),(1,1,0),(1,1,1),(1,0,1),(-2,-1,-1)],
+            sage: lp = LatticePolytope([(1,0,0), (1,1,0), (1,1,1), (1,0,1), (-2,-1,-1)],
             ....:                      lattice=ToricLattice(3))
             sage: X.<x,y,u,v,t> = CPRFanoToricVariety(Delta_polar=lp)
-            sage: Y = X.subscheme(x*v+y*u+t)
-            sage: cone = Cone([(1,0,0),(1,1,0),(1,1,1),(1,0,1)])
+            sage: Y = X.subscheme(x*v + y*u + t)
+            sage: cone = Cone([(1,0,0), (1,1,0), (1,1,1), (1,0,1)])
             sage: Y.affine_algebraic_patch(cone)
             Closed subscheme of Affine Space of dimension 4 over Rational Field defined by:
               z0*z2 - z1*z3,
               z1 + z3 + 1
         """
-        from sage.modules.all import vector
-        from sage.misc.all import prod
+        from sage.modules.free_module_element import vector
+        from sage.misc.misc_c import prod
         ambient = self.ambient_space()
         fan = ambient.fan()
         if cone is None:
@@ -322,13 +314,14 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         R, I, dualcone = ambient._semigroup_ring(cone, names)
 
         # inhomogenize the Cox homogeneous polynomial with respect to the given cone
-        inhomogenize = dict( (ambient.coordinate_ring().gen(i), 1)
-                             for i in range(0,fan.nrays())
-                             if not i in cone.ambient_ray_indices() )
-        polynomials = [ p.subs(inhomogenize) for p in self.defining_polynomials() ]
+        inhomogenize = {ambient.coordinate_ring().gen(i): 1
+                        for i in range(fan.nrays())
+                        if i not in cone.ambient_ray_indices()}
+        polynomials = [p.subs(inhomogenize) for p in self.defining_polynomials()]
 
         # map the monomial x^{D_m} to m, see reference.
         n_rho_matrix = cone.rays().matrix()
+
         def pullback_polynomial(p):
             result = R.zero()
             for coefficient, monomial in p:
@@ -397,8 +390,8 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
 
         EXAMPLES::
 
-            sage: P.<x,y,z>= toric_varieties.P2()
-            sage: S = P.subscheme(x+2*y+3*z)
+            sage: P.<x,y,z> = toric_varieties.P2()
+            sage: S = P.subscheme(x + 2*y + 3*z)
             sage: S._best_affine_patch(P.point([2,-3,0]))
             1
             sage: S._best_affine_patch([2,-3,0])
@@ -408,7 +401,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         # that it is numerically stable to dehomogenize, see the
         # corresponding method for projective varieties.
         point = list(point)
-        zeros = set(i for i, coord in enumerate(point) if coord == 0)
+        zeros = {i for i, coord in enumerate(point) if coord == 0}
         for cone_idx, cone in enumerate(self.ambient_space().fan().generating_cones()):
             if zeros.issubset(cone.ambient_ray_indices()):
                 return cone_idx
@@ -416,7 +409,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
 
     def neighborhood(self, point):
         r"""
-        Return an toric algebraic scheme isomorphic to neighborhood of
+        Return a toric algebraic scheme isomorphic to neighborhood of
         the ``point``.
 
         INPUT:
@@ -432,8 +425,9 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
 
         EXAMPLES::
 
-            sage: P.<x,y,z>= toric_varieties.P2()
-            sage: S = P.subscheme(x+2*y+3*z)
+            sage: # needs sage.libs.singular
+            sage: P.<x,y,z> = toric_varieties.P2()
+            sage: S = P.subscheme(x + 2*y + 3*z)
             sage: s = S.point([0,-3,2]); s
             [0 : -3 : 2]
             sage: patch = S.neighborhood(s); patch
@@ -441,12 +435,10 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
               x + 2*y + 6
             sage: patch.embedding_morphism()
             Scheme morphism:
-              From: Closed subscheme of 2-d affine toric variety defined by:
-              x + 2*y + 6
-              To:   Closed subscheme of 2-d CPR-Fano toric variety covered by 3 affine patches defined by:
-              x + 2*y + 3*z
-              Defn: Defined on coordinates by sending [x : y] to
-                    [-2*y - 6 : y : 2]
+              From: Closed subscheme of 2-d affine toric variety defined by: x + 2*y + 6
+              To:   Closed subscheme of 2-d CPR-Fano toric variety
+                    covered by 3 affine patches defined by: x + 2*y + 3*z
+              Defn: Defined on coordinates by sending [x : y] to [-2*y - 6 : y : 2]
             sage: patch.embedding_center()
             [0 : -3]
             sage: patch.embedding_morphism()(patch.embedding_center())
@@ -454,6 +446,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
 
         A more complicated example::
 
+            sage: # needs sage.libs.singular
             sage: dP6.<x0,x1,x2,x3,x4,x5> = toric_varieties.dP6()
             sage: twoP1 = dP6.subscheme(x0*x3)
             sage: patch = twoP1.neighborhood([0,1,2, 3,4,5]); patch
@@ -461,12 +454,10 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
               3*x0
             sage: patch.embedding_morphism()
             Scheme morphism:
-              From: Closed subscheme of 2-d affine toric variety defined by:
-              3*x0
-              To:   Closed subscheme of 2-d CPR-Fano toric variety covered by 6 affine patches defined by:
-              x0*x3
-              Defn: Defined on coordinates by sending [x0 : x1] to
-                    [0 : x1 : 2 : 3 : 4 : 5]
+              From: Closed subscheme of 2-d affine toric variety defined by: 3*x0
+              To:   Closed subscheme of 2-d CPR-Fano toric variety
+                    covered by 6 affine patches defined by: x0*x3
+              Defn: Defined on coordinates by sending [x0 : x1] to [0 : x1 : 2 : 3 : 4 : 5]
             sage: patch.embedding_center()
             [0 : 1]
             sage: patch.embedding_morphism()(patch.embedding_center())
@@ -503,19 +494,18 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         """
         Return the dimension of ``self``.
 
-        OUTPUT:
-
-        Integer. If ``self`` is empty, `-1` is returned.
+        OUTPUT: An integer. If ``self`` is empty, `-1` is returned.
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: P1xP1 = toric_varieties.P1xP1()
             sage: P1xP1.inject_variables()
             Defining s, t, x, y
-            sage: P1 = P1xP1.subscheme(s-t)
+            sage: P1 = P1xP1.subscheme(s - t)
             sage: P1.dimension()
             1
-            sage: P1xP1.subscheme([s-t, (s-t)^2]).dimension()
+            sage: P1xP1.subscheme([s - t, (s-t)^2]).dimension()
             1
             sage: P1xP1.subscheme([s, t]).dimension()
             -1
@@ -544,8 +534,9 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: P2.<x,y,z> = toric_varieties.P2()
-            sage: cuspidal_curve = P2.subscheme([y^2*z-x^3])
+            sage: cuspidal_curve = P2.subscheme([y^2*z - x^3])
             sage: cuspidal_curve
             Closed subscheme of 2-d CPR-Fano toric variety covered by 3 affine patches defined by:
               -x^3 + y^2*z
@@ -558,11 +549,12 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
 
         Any sufficiently generic cubic hypersurface is smooth::
 
-            sage: P2.subscheme([y^2*z-x^3+z^3+1/10*x*y*z]).is_smooth()
+            sage: P2.subscheme([y^2*z-x^3+z^3+1/10*x*y*z]).is_smooth()                  # needs sage.libs.singular
             True
 
         A more complicated example::
 
+            sage: # needs sage.libs.singular
             sage: dP6.<x0,x1,x2,x3,x4,x5> = toric_varieties.dP6()
             sage: disjointP1s = dP6.subscheme(x0*x3)
             sage: disjointP1s.is_smooth()
@@ -573,15 +565,16 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
 
         A smooth hypersurface in a compact singular toric variety::
 
-            sage: lp = LatticePolytope([(1,0,0),(1,1,0),(1,1,1),(1,0,1),(-2,-1,-1)],
+            sage: # needs sage.libs.singular
+            sage: lp = LatticePolytope([(1,0,0), (1,1,0), (1,1,1), (1,0,1), (-2,-1,-1)],
             ....:                      lattice=ToricLattice(3))
             sage: X.<x,y,u,v,t> = CPRFanoToricVariety(Delta_polar=lp)
-            sage: Y = X.subscheme(x*v+y*u+t)
-            sage: cone = Cone([(1,0,0),(1,1,0),(1,1,1),(1,0,1)])
+            sage: Y = X.subscheme(x*v + y*u + t)
+            sage: cone = Cone([(1,0,0), (1,1,0), (1,1,1), (1,0,1)])
             sage: Y.is_smooth()
             True
         """
-        if not point is None:
+        if point is not None:
             toric_patch = self.neighborhood(point)
             return toric_patch.is_smooth(toric_patch.embedding_center())
 
@@ -620,7 +613,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
             sage: fan = FaceFan(diamond)
             sage: P1xP1xP1 = ToricVariety(fan)
             sage: z0, z1, z2, z3, z4, z5 = P1xP1xP1.gens()
-            sage: t = 5;
+            sage: t = 5
             sage: F = z0^2*z1^2*z2^2 + z1^2*z2^2*z3^2 + z0^2*z2^2*z4^2\
             ....: + z2^2*z3^2*z4^2 + t*z0*z1*z2*z3*z4*z5 + z0^2*z1^2*z5^2\
             ....: + z1^2*z3^2*z5^2 + z0^2*z4^2*z5^2 + z3^2*z4^2*z5^2
@@ -633,23 +626,23 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         Taking a random change of variables breaks the symmetry, but
         makes the surface nondegenerate::
 
-            sage: F1 = F.subs(z0 = 1*z0 + 1*z3, z3 = 1*z0 + 2*z3,\
-            ....: z1 = -2*z1 + -1*z4, z4 = 1*z1 + 2*z4,\
-            ....: z2 = -3*z2 + -1*z5, z5 = -3*z2 + 2*z5 )
+            sage: F1 = F.subs(z0=1*z0 + 1*z3, z3=1*z0 + 2*z3,
+            ....:             z1=-2*z1 + -1*z4, z4=1*z1 + 2*z4,
+            ....:             z2=-3*z2 + -1*z5, z5=-3*z2 + 2*z5)
             sage: Y = P1xP1xP1.subscheme([F1])
             sage: Y.is_smooth()
             True
             sage: Y.is_nondegenerate()
             True
 
-         This example is from Hamm, :arxiv:`1106.1826v1`. It addresses
-         an issue raised at :trac:`15239`::
+        This example is from Hamm, :arxiv:`1106.1826v1`. It addresses
+        an issue raised at :issue:`15239`::
 
             sage: X = toric_varieties.WP([1,4,2,3], names='z0 z1 z2 z3')
             sage: X.inject_variables()
             Defining z0, z1, z2, z3
-            sage: g0 = z1^3 + z2^6 +z3^4
-            sage: g = g0-2*z3^2*z0^6+z2*z0^10+z0^12
+            sage: g0 = z1^3 + z2^6 + z3^4
+            sage: g = g0 - 2*z3^2*z0^6 + z2*z0^10 + z0^12
             sage: Y = X.subscheme([g])
             sage: Y.is_nondegenerate()
             False
@@ -665,7 +658,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
 
         TESTS:
 
-        Some corner cases discussed at :trac:`15239`::
+        Some corner cases discussed at :issue:`15239`::
 
             sage: P2.<x,y,z> = toric_varieties.P2()
             sage: P2.subscheme([]).is_nondegenerate()
@@ -683,8 +676,8 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         SR = SR.change_ring(R)
 
         def restrict(cone):
-            patch = dict()
-            divide = dict()
+            patch = {}
+            divide = {}
             for i in cone.ambient_ray_indices():
                 patch[R.gen(i)] = R.zero()   # restrict to torus orbit
                 # divide out highest power of R.gen(i)
@@ -712,10 +705,11 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         r"""
         Check if ``self`` is schon (nondegenerate).
 
-        See `is_nondegenerate` for further documentation.
+        See :meth:`is_nondegenerate` for further documentation.
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: P2.<x,y,z> = toric_varieties.P2()
             sage: X = P2.subscheme([(x-y)^2*(x+y) + x*y*z + z^3])
             sage: X.is_smooth()
@@ -725,6 +719,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
 
         """
         return self.is_nondegenerate()
+
 
 class AlgebraicScheme_subscheme_affine_toric(AlgebraicScheme_subscheme_toric):
     r"""
@@ -757,7 +752,7 @@ class AlgebraicScheme_subscheme_affine_toric(AlgebraicScheme_subscheme_toric):
         Defining s, t, x, y
         sage: import sage.schemes.toric.toric_subscheme as SCM
         sage: X = SCM.AlgebraicScheme_subscheme_toric(
-        ....:       P1xP1, [x*s + y*t, x^3+y^3])
+        ....:       P1xP1, [x*s + y*t, x^3 + y^3])
         sage: X
         Closed subscheme of 2-d CPR-Fano toric variety
         covered by 4 affine patches defined by:
@@ -766,7 +761,7 @@ class AlgebraicScheme_subscheme_affine_toric(AlgebraicScheme_subscheme_toric):
 
     A better way to construct the same scheme as above::
 
-        sage: P1xP1.subscheme([x*s + y*t, x^3+y^3])
+        sage: P1xP1.subscheme([x*s + y*t, x^3 + y^3])
         Closed subscheme of 2-d CPR-Fano toric variety
         covered by 4 affine patches defined by:
           s*x + t*y,
@@ -784,7 +779,7 @@ class AlgebraicScheme_subscheme_affine_toric(AlgebraicScheme_subscheme_toric):
             Defining s, t, x, y
             sage: import sage.schemes.toric.toric_subscheme as SCM
             sage: X = SCM.AlgebraicScheme_subscheme_toric(
-            ....:       P1xP1, [x*s + y*t, x^3+y^3])
+            ....:       P1xP1, [x*s + y*t, x^3 + y^3])
             sage: X
             Closed subscheme of 2-d CPR-Fano toric variety
             covered by 4 affine patches defined by:
@@ -793,32 +788,30 @@ class AlgebraicScheme_subscheme_affine_toric(AlgebraicScheme_subscheme_toric):
         """
         assert toric_variety.is_affine(), 'The toric variety must be affine!'
         # Just to make sure that keyword arguments will be passed correctly
-        super(AlgebraicScheme_subscheme_affine_toric, self).__init__(toric_variety,
-                                                                     polynomials)
+        super().__init__(toric_variety, polynomials)
 
     def dimension(self):
         """
         Return the dimension of ``self``.
 
-        OUTPUT:
-
-        - integer.
+        OUTPUT: An integer.
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: P1xP1.<s0,s1,t0,t1> = toric_varieties.P1xP1()
-            sage: P1 = P1xP1.subscheme(s0-s1)
+            sage: P1 = P1xP1.subscheme(s0 - s1)
             sage: P1.dimension()
             1
 
         A more complicated example where the ambient toric variety is
         not smooth::
 
+            sage: # needs sage.libs.singular
             sage: X.<x,y> = toric_varieties.A2_Z2()
             sage: X.is_smooth()
             False
-            sage: Y = X.subscheme([x*y, x^2])
-            sage: Y
+            sage: Y = X.subscheme([x*y, x^2]); Y
             Closed subscheme of 2-d affine toric variety defined by:
               x*y,
               x^2
@@ -851,8 +844,9 @@ class AlgebraicScheme_subscheme_affine_toric(AlgebraicScheme_subscheme_toric):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: A2.<x,y> = toric_varieties.A2()
-            sage: cuspidal_curve = A2.subscheme([y^2-x^3])
+            sage: cuspidal_curve = A2.subscheme([y^2 - x^3])
             sage: cuspidal_curve
             Closed subscheme of 2-d affine toric variety defined by:
               -x^3 + y^2
@@ -862,7 +856,7 @@ class AlgebraicScheme_subscheme_affine_toric(AlgebraicScheme_subscheme_toric):
             False
             sage: cuspidal_curve.is_smooth()
             False
-            sage: circle = A2.subscheme(x^2+y^2-1)
+            sage: circle = A2.subscheme(x^2 + y^2 - 1)
             sage: circle.is_smooth([1,0])
             True
             sage: circle.is_smooth()
@@ -871,6 +865,7 @@ class AlgebraicScheme_subscheme_affine_toric(AlgebraicScheme_subscheme_toric):
         A more complicated example where the ambient toric variety is
         not smooth::
 
+            sage: # needs sage.libs.singular
             sage: X.<x,y> = toric_varieties.A2_Z2()    # 2-d affine space mod Z/2
             sage: X.is_smooth()
             False
@@ -886,7 +881,7 @@ class AlgebraicScheme_subscheme_affine_toric(AlgebraicScheme_subscheme_toric):
             sage: Y.is_smooth([0,0])
             True
         """
-        if not point is None:
+        if point is not None:
             self._check_satisfies_equations(point)
             if self.ambient_space().is_smooth():
                 R = self.ambient_space().coordinate_ring()

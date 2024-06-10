@@ -1,5 +1,5 @@
-database_stein_watkins_mini
-===========================
+database_stein_watkins_mini: Database of elliptic curves (small version)
+========================================================================
 
 Description
 -----------
@@ -14,13 +14,3 @@ License
 -------
 
 Public Domain
-
-Dependencies
-------------
-
-None
-
-Patches
-~~~~~~~
-
-None

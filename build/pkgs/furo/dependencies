@@ -1,0 +1,9 @@
+ beautifulsoup4 sphinx pygments sphinx_basic_ng | $(PYTHON_TOOLCHAIN) $(PYTHON)
+
+----------
+All lines of this file are ignored except the first.
+
+From https://github.com/pradyunsg/furo/blob/b4c8010cff5e494a93d617069897964c60b820e9/pyproject.toml#L18-L22
+  "beautifulsoup4",
+  "sphinx ~= 4.0",
+  "pygments ~= 2.7",

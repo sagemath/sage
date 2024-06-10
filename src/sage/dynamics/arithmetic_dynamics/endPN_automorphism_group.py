@@ -8,53 +8,60 @@ AUTHORS:
   Xander Faber, Michelle Manes, and Bianca Viray [FMV]_.
 
 - Joao de Faria, Ben Hutz, Bianca Thompson (11-2013): adaptation for inclusion in Sage
-"""
 
-#*****************************************************************************
+- Alexander Galarraga (7-2021): Added helper functions for conjugating set
+"""
+# ****************************************************************************
 #       Copyright (C) 2012
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from copy import copy, deepcopy
+from itertools import permutations, combinations, product
 
-from copy import copy
+from sage.arith.functions import lcm
+from sage.arith.misc import CRT, divisors, gcd, is_square
+from sage.combinat.permutation import Arrangements
 from sage.combinat.subset import Subsets
-from sage.functions.all import sqrt
-from itertools import permutations, combinations
 from sage.matrix.constructor import matrix
-from sage.structure.element import is_Matrix
+from sage.misc.functional import sqrt
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
+from sage.parallel.use_fork import p_iter_fork
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.finite_rings.integer_mod_ring import Integers
 from sage.rings.integer_ring import ZZ
-from sage.rings.number_field.number_field import NumberField
-from sage.arith.all import gcd, lcm, CRT, is_square, divisors
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 from sage.sets.primes import Primes
+from sage.sets.set import Set
+from sage.structure.element import Matrix
+
+lazy_import('sage.rings.number_field.number_field', 'NumberField')
+
 
 def automorphism_group_QQ_fixedpoints(rational_function, return_functions=False, iso_type=False):
     r"""
-
-    This function will compute the automorphism group for ``rational_function`` via the method of fixed points
+    Compute the automorphism group for ``rational_function`` via the method of fixed points
 
     ALGORITHM:
 
-        See Algorithm 3 in Faber-Manes-Viray [FMV]_.
+    See Algorithm 3 in Faber-Manes-Viray [FMV]_.
 
     INPUT:
 
-    - ``rational_function`` - Rational Function defined over `\ZZ` or `\QQ`
+    - ``rational_function`` -- Rational Function defined over `\ZZ` or `\QQ`
 
-    - ``return_functions`` - Boolean Value, True will return elements in the automorphism group
-        as linear fractional transformations. False will return elements as `PGL2` matrices
+    - ``return_functions`` -- Boolean value; ``True`` will return elements in the automorphism group
+        as linear fractional transformations. ``False`` will return elements as `PGL_2` matrices
 
-    - ``iso_type`` - Boolean - True will cause the classification of the finite automorphism
+    - ``iso_type`` -- Boolean; ``True`` will cause the classification of the finite automorphism
         group to also be returned
 
-    OUTPUT: a list of automorphisms that make up the Automorphism Group
+    OUTPUT: a list of automorphisms that make up the automorphism group
     of ``rational_function``
 
     EXAMPLES::
@@ -63,7 +70,7 @@ def automorphism_group_QQ_fixedpoints(rational_function, return_functions=False,
         sage: rational_function = (z^2 - 2*z - 2)/(-2*z^2 - 2*z + 1)
         sage: from sage.dynamics.arithmetic_dynamics.endPN_automorphism_group import automorphism_group_QQ_fixedpoints
         sage: automorphism_group_QQ_fixedpoints(rational_function, True)
-          [z, 1/z, -z - 1, -z/(z + 1), (-z - 1)/z, -1/(z + 1)]
+        [z, 1/z, -z - 1, -z/(z + 1), (-z - 1)/z, -1/(z + 1)]
 
     ::
 
@@ -71,18 +78,18 @@ def automorphism_group_QQ_fixedpoints(rational_function, return_functions=False,
         sage: rational_function = (z^2 + 2*z)/(-2*z - 1)
         sage: from sage.dynamics.arithmetic_dynamics.endPN_automorphism_group import automorphism_group_QQ_fixedpoints
         sage: automorphism_group_QQ_fixedpoints(rational_function)
-          [
+        [
           [1 0]  [-1 -1]  [-2  0]  [0 2]  [-1 -1]  [ 0 -1]
           [0 1], [ 0  1], [ 2  2], [2 0], [ 1  0], [ 1  1]
-          ]
+        ]
 
     ::
 
         sage: F.<z> = PolynomialRing(QQ)
-        sage: rational_function = (z^2 - 4*z -3)/(-3*z^2 - 2*z + 2)
+        sage: rational_function = (z^2 - 4*z - 3)/(-3*z^2 - 2*z + 2)
         sage: from sage.dynamics.arithmetic_dynamics.endPN_automorphism_group import automorphism_group_QQ_fixedpoints
         sage: automorphism_group_QQ_fixedpoints(rational_function, True, True)
-          ([z, (-z - 1)/z, -1/(z + 1)], 'Cyclic of order 3')
+        ([z, (-z - 1)/z, -1/(z + 1)], 'Cyclic of order 3')
     """
 
     if rational_function.parent().is_field():
@@ -94,7 +101,7 @@ def automorphism_group_QQ_fixedpoints(rational_function, return_functions=False,
 
     F = R.base_ring()
 
-    if F != QQ and F!= ZZ:
+    if F != QQ and F != ZZ:
         raise TypeError("coefficient ring is not the rational numbers or the integers")
 
     z = R.gen(0)
@@ -120,7 +127,7 @@ def automorphism_group_QQ_fixedpoints(rational_function, return_functions=False,
     else:
         elements = [matrix(F, 2, [1,0,0,1])]
 
-    rational_roots = h.roots(multiplicities = False)
+    rational_roots = h.roots(multiplicities=False)
 
     min_poly = 1
 
@@ -192,12 +199,12 @@ def automorphism_group_QQ_fixedpoints(rational_function, return_functions=False,
                     [(alpha - zeta*beta), - (alpha*beta)*(1 - zeta),
                      (1 - zeta), (alpha*zeta - beta)]))
 
-
-    #now consider 2-periodic points
+    # now consider 2-periodic points
     psi = phi(phi(z))
     f2 = psi.numerator()
     g2 = psi.denominator()
-    period2_points = [x for x in (f2 - z*g2).roots(multiplicities=False) if not x in rational_roots]
+    period2_points = [x for x in (f2 - z*g2).roots(multiplicities=False)
+                      if x not in rational_roots]
     for S in Subsets(period2_points, 2):
         zeta = -1
         alpha = S[0]
@@ -221,7 +228,7 @@ def automorphism_group_QQ_fixedpoints(rational_function, return_functions=False,
                     elements.append(matrix(F, 2, [zeta, alpha*(1-zeta), 0, 1]))
     factors = (f2 - z*g2).factor()
     L1 = NumberField(z**2 + 1,'i')
-    i=L1.gen(0)
+    i = L1.gen(0)
     L2 = NumberField(z**2 + 3,'isqrt3')
     isqrt3 = L2.gen(0)
     for psi in factors:
@@ -246,7 +253,7 @@ def automorphism_group_QQ_fixedpoints(rational_function, return_functions=False,
                         a = F(a)
                         d = F(d)
                         b = F(-alpha*beta)
-                        s = ( a*z  + b)/(z + d)
+                        s = (a * z + b) / (z + d)
                         if s(phi(z)) == phi(s(z)):
                             if return_functions:
                                 elements.append(K(s))
@@ -262,7 +269,7 @@ def automorphism_group_QQ_fixedpoints(rational_function, return_functions=False,
                         a = F(a)
                         d = F(d)
                         b = F(-alpha*beta)
-                        s = ( a*z  + b)/(z + d)
+                        s = (a * z + b) / (z + d)
                         if s(phi(z)) == phi(s(z)):
                             if return_functions:
                                 elements.append(K(s))
@@ -270,8 +277,9 @@ def automorphism_group_QQ_fixedpoints(rational_function, return_functions=False,
                                 elements.append(matrix(F, 2, [a,b, 1, d]))
 
     if iso_type:
-        return(elements, which_group(elements))
-    return(elements)
+        return elements, which_group(elements)
+    return elements
+
 
 def height_bound(polynomial):
     r"""
@@ -297,13 +305,13 @@ def height_bound(polynomial):
     EXAMPLES::
 
         sage: R.<z> = PolynomialRing(QQ)
-        sage: f = (z^3+2*z+6)
+        sage: f = z^3 + 2*z + 6
         sage: from sage.dynamics.arithmetic_dynamics.endPN_automorphism_group import height_bound
         sage: height_bound(f)
         413526
     """
     # first check that polynomial is over QQ or ZZ
-    K=polynomial.parent()
+    K = polynomial.parent()
 
     if K.is_field():
         R = K.ring()
@@ -311,7 +319,7 @@ def height_bound(polynomial):
         R = K
     F = R.base_ring()
 
-    if F != QQ and F!= ZZ:
+    if F != QQ and F != ZZ:
         raise TypeError("coefficient ring is not the rational numbers or the integers")
 
     # scale polynomial so that it has integer coefficients with gcd 1
@@ -338,13 +346,13 @@ def PGL_repn(rational_function):
     EXAMPLES::
 
         sage: R.<z> = PolynomialRing(QQ)
-        sage: f = ((2*z-1)/(3-z))
+        sage: f = (2*z-1)/(3-z)
         sage: from sage.dynamics.arithmetic_dynamics.endPN_automorphism_group import PGL_repn
         sage: PGL_repn(f)
         [-2  1]
         [ 1 -3]
     """
-    if is_Matrix(rational_function):
+    if isinstance(rational_function, Matrix):
         return rational_function
     K = rational_function.parent()
     F = K.base_ring()
@@ -370,7 +378,7 @@ def PGL_order(A):
 
     EXAMPLES::
 
-        sage: M = matrix([[0,2],[2,0]])
+        sage: M = matrix([[0,2], [2,0]])
         sage: from sage.dynamics.arithmetic_dynamics.endPN_automorphism_group import PGL_order
         sage: PGL_order(M)
         2
@@ -411,7 +419,7 @@ def CRT_helper(automorphisms, moduli):
     EXAMPLES::
 
         sage: from sage.dynamics.arithmetic_dynamics.endPN_automorphism_group import CRT_helper
-        sage: CRT_helper([[matrix([[4,0],[0,1]]), matrix([[0,1],[1,0]])]],[5])
+        sage: CRT_helper([[matrix([[4,0], [0,1]]), matrix([[0,1], [1,0]])]], [5])
         ([
         [4 0]  [0 1]
         [0 1], [1 0]
@@ -445,7 +453,7 @@ def CRT_automorphisms(automorphisms, order_elts, degree, moduli):
 
     Given a list of automorphisms over various `Zmod(p^k)`, a list of the
     elements orders, an integer degree, and a list of the `p^k` values compute
-    a maximal list of automorphisms over `Zmod(M)`, such that for every `j` in `len(moduli)`,
+    a maximal list of automorphisms over `Zmod(M)`, such that for every `j` in ``len(moduli)``,
     each element reduces mod ``moduli[j]`` to one of the elements in ``automorphisms[j]`` that
     has order = ``degree``
 
@@ -455,7 +463,7 @@ def CRT_automorphisms(automorphisms, order_elts, degree, moduli):
 
     - ``order_elts`` -- a list of lists of the orders of the elements of ``automorphisms``
 
-    - ``degree`` - a positive integer
+    - ``degree`` -- a positive integer
 
     - ``moduli`` -- list of prime powers, i.e., `p^k`
 
@@ -463,7 +471,7 @@ def CRT_automorphisms(automorphisms, order_elts, degree, moduli):
 
     EXAMPLES::
 
-        sage: aut = [[matrix([[1,0],[0,1]]), matrix([[0,1],[1,0]])]]
+        sage: aut = [[matrix([[1,0], [0,1]]), matrix([[0,1], [1,0]])]]
         sage: ords = [[1,2]]
         sage: degree = 2
         sage: mods = [5]
@@ -499,11 +507,11 @@ def valid_automorphisms(automorphisms_CRT, rational_function, ht_bound, M,
 
     - ``rational_function`` -- A one variable rational function
 
-    - ``ht_bound`` - a positive integer
+    - ``ht_bound`` -- a positive integer
 
     - ``M`` -- a positive integer, a product of prime powers
 
-    - ``return_functions`` -- (default: False) boolean
+    - ``return_functions`` -- (default: ``False``) boolean
 
     OUTPUT: a list of automorphisms over `\ZZ`
 
@@ -512,7 +520,7 @@ def valid_automorphisms(automorphisms_CRT, rational_function, ht_bound, M,
         sage: R.<z> = PolynomialRing(QQ)
         sage: F = z^2
         sage: from sage.dynamics.arithmetic_dynamics.endPN_automorphism_group import valid_automorphisms
-        sage: valid_automorphisms([matrix(GF(5),[[0,1],[1,0]])], F, 48, 5, True)
+        sage: valid_automorphisms([matrix(GF(5), [[0,1],[1,0]])], F, 48, 5, True)
         [1/z]
     """
     z = rational_function.parent().gen(0)
@@ -528,7 +536,7 @@ def valid_automorphisms(automorphisms_CRT, rational_function, ht_bound, M,
                         for x in init_lift]
             g = gcd(new_lift)
             new_lift = [x // g for x in new_lift]
-            if  all(abs(x) <= ht_bound for x in new_lift):
+            if all(abs(x) <= ht_bound for x in new_lift):
                 a, b, c, d = new_lift
                 f = (a*z + b) / (c*z + d)
                 if rational_function(f(z)) == f(rational_function(z)):
@@ -563,8 +571,8 @@ def remove_redundant_automorphisms(automorphisms, order_elts, moduli, integral_a
     EXAMPLES::
 
         sage: auts = [[matrix([[1,0],[0,1]]), matrix([[6,0],[0,1]]), matrix([[0,1],[1,0]]),
-        ....: matrix([[6,1],[1,1]]), matrix([[1,1],[1,6]]), matrix([[0,6],[1,0]]),
-        ....: matrix([[1,6],[1,1]]), matrix([[6,6],[1,6]])]]
+        ....:          matrix([[6,1],[1,1]]), matrix([[1,1],[1,6]]), matrix([[0,6],[1,0]]),
+        ....:          matrix([[1,6],[1,1]]), matrix([[6,6],[1,6]])]]
         sage: ord_elts = [[1, 2, 2, 2, 2, 2, 4, 4]]
         sage: mods = [7]
         sage: R.<x> = PolynomialRing(QQ)
@@ -584,7 +592,7 @@ def remove_redundant_automorphisms(automorphisms, order_elts, moduli, integral_a
         for psi in integral_autos:
             #The return_functions boolean determines if the automorphisms
             #are matrices or linear fractional transformations
-            if is_Matrix(psi):
+            if isinstance(psi, Matrix):
                 ppsi = psi.change_ring(GF(p))
                 B = [ppsi[0,0], ppsi[0,1], ppsi[1,0], psi[1,1]]
             else:
@@ -606,7 +614,8 @@ def remove_redundant_automorphisms(automorphisms, order_elts, moduli, integral_a
             del automorphisms[i][j]
             del order_elts[i][j]
 
-    return(automorphisms)
+    return automorphisms
+
 
 def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_functions=True, iso_type=False):
     r"""
@@ -617,15 +626,15 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
 
     INPUT:
 
-    - ``rational_function`` - a rational function of a univariate polynomial ring over `\QQ`
+    - ``rational_function`` -- a rational function of a univariate polynomial ring over `\QQ`
 
-    - ``prime_lower_bound`` -- (default: 4) a positive integer - a lower bound for the primes to use for
+    - ``prime_lower_bound`` -- (default: 4) a positive integer; a lower bound for the primes to use for
       the Chinese Remainder Theorem step
 
-    - ``return_functions`` -- (default: True) boolean - True returns linear fractional transformations
+    - ``return_functions`` -- (default: ``True``) boolean; ``True`` returns linear fractional transformations
       False returns elements of `PGL(2,\QQ)`
 
-    - ``iso_type`` -- (default: False) boolean - True returns the isomorphism type of the automorphism group
+    - ``iso_type`` -- (default: ``False``) boolean; ``True`` returns the isomorphism type of the automorphism group
 
     OUTPUT: a complete list of automorphisms of ``rational_function``
 
@@ -664,7 +673,7 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
 
     F = R.base_ring()
 
-    if F != QQ and F!= ZZ:
+    if F != QQ and F != ZZ:
         raise TypeError("coefficient ring is not the rational numbers or the integers")
 
     z = R.gen(0)
@@ -712,7 +721,7 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
 
     MaxH = height_bound(h)
     congruence = 1
-    primes = Primes();
+    primes = Primes()
     p = primes.next(ZZ(prime_lower_bound))
     primepowers = []
     automorphisms = []
@@ -731,11 +740,11 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
     # the only possible groups are C_n, D_2n for n|6 or n|4
     # all of these groups have order dividing 24
     while (congruence < (2*MaxH**2)) and len(elements) < gcd(orderaut + [24]):
-        if badprimes%p != 0:  #prime of good reduction
+        if badprimes % p != 0:  #prime of good reduction
             # compute automorphisms mod p
             phi_p = f.change_ring(GF(p))/g.change_ring(GF(p))
             sorted_automorphisms = automorphism_group_FF(phi_p)
-            sorted_automorphisms.sort(key = PGL_order)
+            sorted_automorphisms.sort(key=PGL_order)
             orders = [PGL_order(A) for A in sorted_automorphisms]
 
             automorphisms.append(sorted_automorphisms)
@@ -747,15 +756,17 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
             # and the gcd of orders over Fp and 24 is 24
             # or if the gcd is equal to the number of automorphisms we have
             if (len(elements) == gcd(orderaut + [24])) or \
-                (gcd(orderaut + [24]) == 24 and \
+                (gcd(orderaut + [24]) == 24 and
                 (len(elements) == 12 or len(elements) == 8)):
                     if iso_type:
-                        return(elements, which_group(elements))
+                        return elements, which_group(elements)
                     return elements
             else:
-                N = gcd(orderaut + [12]) #all orders of elements divide N
-                for order in [O for O in divisors(N) \
-                                if not O in badorders]: #range over all orders
+                N = gcd(orderaut + [12])  # all orders of elements divide N
+                for order in divisors(N):
+                    if order in badorders:
+                        continue
+                    # range over all orders
                     # that are possible over QQ such that we haven't already
                     # found all elements of that order
 
@@ -766,7 +777,7 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
                     numelts = min(numeltsoffixedorder)
                     # Have some elts of fixed order mod p for each p
                     if numelts != 0:
-                        #CRT order d elements together and check if
+                        # CRT order d elements together and check if
                         # they are an automorphism
                         autos, M = CRT_automorphisms(automorphisms,
                                 orderelts, order, primepowers)
@@ -777,7 +788,7 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
                         if (len(elements) == gcd(orderaut + [24])):
                             #found enough automorphisms
                                 if iso_type:
-                                    return(elements, which_group(elements))
+                                    return elements, which_group(elements)
                                 return elements
                         elif numelts <= (len(temp)):
                             badorders.append(order)
@@ -787,7 +798,7 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
                             # if an element of Aut_{F_p} has been lifted to QQ
                             # remove that element from Aut_{F_p} so we don't
                             # attempt to lift that element again unnecessarily
-                            automorphisms=remove_redundant_automorphisms(automorphisms,
+                            automorphisms = remove_redundant_automorphisms(automorphisms,
                                 orderelts, primepowers, temp)
                             if order == 4: #have some elements of order 4
                                 # so possible aut group is Z/4 or D_4
@@ -798,23 +809,23 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
                                 badorders.append(4)
                     else: #no elements of order d in some F_v
                         for m in divisors(N):
-                            if m%order == 0:
+                            if m % order == 0:
                                 badorders.append(m)
                                 #no elements of that order or any order that
                                 # is a multiple of it
-                if len([order for order in divisors(N) \
-                        if not order in badorders]) == 0:
+                if all(order in badorders for order in divisors(N)):
                     #found all elements of every possible order
                         if iso_type:
-                            return(elements, which_group(elements))
+                            return (elements, which_group(elements))
                         return elements
-            congruence = congruence*p
+            congruence = congruence * p
 
         p = primes.next(p)
 
     if iso_type:
-        return(elements, which_group(elements))
-    return(elements)
+        return elements, which_group(elements)
+    return elements
+
 
 def automorphism_group_FF(rational_function, absolute=False, iso_type=False, return_functions=False):
     r"""
@@ -829,11 +840,11 @@ def automorphism_group_FF(rational_function, absolute=False, iso_type=False, ret
     - ``rational_function`` -- a rational function defined over the fraction field
         of a polynomial ring in one variable with finite field coefficients
 
-    - ``absolute``-- (default: False) boolean - True returns the absolute automorphism group and a field of definition
+    - ``absolute`` -- (default: ``False``) boolean; ``True`` returns the absolute automorphism group and a field of definition
 
-    - ``iso_type`` -- (default: False) boolean - True returns the isomorphism type of the automorphism group
+    - ``iso_type`` -- (default: ``False``) boolean; ``True`` returns the isomorphism type of the automorphism group
 
-    - ``return_functions`` -- (default: False) boolean, True returns linear fractional transformations
+    - ``return_functions`` -- (default: ``False``) boolean; ``True`` returns linear fractional transformations
       False returns elements of `PGL(2)`
 
     OUTPUT: a list of automorphisms of ``rational_function``
@@ -870,12 +881,12 @@ def automorphism_group_FF(rational_function, absolute=False, iso_type=False, ret
 
     if not return_functions:
         if absolute:
-            R=G[1][0].parent()
+            R = G[1][0].parent()
             if R.is_field():
                 R = R.ring()
             G[1] = [matrix(R.base_ring(),[[R(g.numerator())[1],R(g.numerator())[0]],[R(g.denominator())[1],R(g.denominator())[0]]]) for g in G[1]]
         else:
-            R=G[0].parent()
+            R = G[0].parent()
             if R.is_field():
                 R = R.ring()
             G = [matrix(R.base_ring(),[[R(g.numerator())[1],R(g.numerator())[0]],[R(g.denominator())[1],R(g.denominator())[0]]]) for g in G]
@@ -889,16 +900,16 @@ def automorphism_group_FF(rational_function, absolute=False, iso_type=False, ret
 
 def field_descent(sigma, y):
     r"""
-    Function for descending an element in a field E to a subfield F.
+    Function for descending an element in a field `E` to a subfield `F`.
 
-    Here F, E must be finite fields or number fields. This function determines
+    Here `F`, `E` must be finite fields or number fields. This function determines
     the unique image of subfield which is ``y`` by the embedding ``sigma`` if it exists.
     Otherwise returns ``None``.
     This functionality is necessary because Sage does not keep track of subfields.
 
     INPUT:
 
-    - ``sigma``-- an embedding sigma: `F` -> `E` of fields
+    - ``sigma`` -- an embedding sigma: `F` -> `E` of fields
 
     - ``y`` --an element of the field `E`
 
@@ -931,7 +942,7 @@ def field_descent(sigma, y):
     if not remainder.is_constant():
         return
     else:
-        x = x+ F(remainder)
+        x = x + F(remainder)
 
     steps = 1
     while not quotient.is_constant():
@@ -939,7 +950,7 @@ def field_descent(sigma, y):
         if not remainder.is_constant():
             return
         else:
-            x = x+ F(remainder)*a**(steps)
+            x = x + F(remainder)*a**(steps)
             steps += 1
 
     return x + F(quotient)*a**(steps)
@@ -951,16 +962,16 @@ def rational_function_coefficient_descent(rational_function, sigma, poly_ring):
 
     Here `F`, `E` must be finite fields or number fields.
     It determines the unique rational function in fraction field of
-    ``poly_ring`` which is the image of ``rational_function`` by ``ssigma``,
+    ``poly_ring`` which is the image of ``rational_function`` by ``sigma``,
     if it exists, and otherwise returns ``None``.
 
     INPUT:
 
     - ``rational_function``--a rational function with coefficients in a field `E`
 
-    - ``sigma``-- a field embedding sigma: `F` -> `E`
+    - ``sigma`` -- a field embedding sigma: `F` -> `E`
 
-    - ``poly_ring``-- a polynomial ring `R` with coefficients in `F`
+    - ``poly_ring`` -- a polynomial ring `R` with coefficients in `F`
 
     OUTPUT: a rational function with coefficients in the fraction field of ``poly_ring``
     if it exists, and otherwise ``None``
@@ -997,9 +1008,10 @@ def rational_function_coefficient_descent(rational_function, sigma, poly_ring):
         return
 
     z = poly_ring.gen(0)
-    numer = sum( poly_ring(ff[i])*z**fe[i] for i in range(len(ff)) )
-    denom = sum( poly_ring(gg[i])*z**ge[i] for i in range(len(gg)) )
-    return    numer / denom
+    numer = sum(poly_ring(ff[i]) * z**fe[i] for i in range(len(ff)))
+    denom = sum(poly_ring(gg[i]) * z**ge[i] for i in range(len(gg)))
+    return numer / denom
+
 
 def rational_function_coerce(rational_function, sigma, S_polys):
     r"""
@@ -1010,7 +1022,7 @@ def rational_function_coerce(rational_function, sigma, S_polys):
 
     INPUT:
 
-    - ``rational_function``-- rational function with coefficients in `R`
+    - ``rational_function`` -- rational function with coefficients in `R`
 
     - ``sigma`` -- a ring homomorphism sigma: `R` -> ``S_polys``
 
@@ -1050,7 +1062,7 @@ def rational_function_reduce(rational_function):
 
     - ``rational_function`` -- rational function `= F/G` in univariate polynomial ring
 
-    OUTPUT: rational function -- `(F/gcd(F,G) ) / (G/gcd(F,G))`
+    OUTPUT: rational function -- `(F/\gcd(F,G)) / (G/\gcd(F,G))`
 
     EXAMPLES::
 
@@ -1114,12 +1126,12 @@ def three_stable_points(rational_function, invariant_list):
 
         b = (T[0][0]*T[1][0]*T[2][1]*T[t[0]][0]*T[t[1]][1]*T[t[2]][0] -
             T[0][0]*T[1][0]*T[2][1]*T[t[0]][1]*T[t[1]][0]*T[t[2]][0] -
-            T[0][0]*T[1][1]*T[2][0]*T[t[0]][0]*T[t[1]][0] *T[t[2]][1] +
+            T[0][0]*T[1][1]*T[2][0]*T[t[0]][0]*T[t[1]][0] * T[t[2]][1] +
             T[0][0]*T[1][1]*T[2][0]*T[t[0]][1]*T[t[1]][0]*T[t[2]][0] +
             T[0][1]*T[1][0]*T[2][0]*T[t[0]][0]*T[t[1]][0]*T[t[2]][1] -
             T[0][1]*T[1][0]*T[2][0]*T[t[0]][0]*T[t[1]][1]*T[t[2]][0])
 
-        c = (T[0][0]*T[1][1]*T[2][1]*T[t[0]][1]*T[t[1]][0] *T[t[2]][1]-
+        c = (T[0][0]*T[1][1]*T[2][1]*T[t[0]][1]*T[t[1]][0] * T[t[2]][1] -
             T[0][0]*T[1][1]*T[2][1]*T[t[0]][1]*T[t[1]][1]*T[t[2]][0] -
             T[0][1]*T[1][0]*T[2][1]*T[t[0]][0]*T[t[1]][1]*T[t[2]][1] +
             T[0][1]*T[1][0]*T[2][1]*T[t[0]][1]*T[t[1]][1]*T[t[2]][0] +
@@ -1127,10 +1139,10 @@ def three_stable_points(rational_function, invariant_list):
             T[0][1]*T[1][1]*T[2][0]*T[t[0]][1]*T[t[1]][0]*T[t[2]][1])
 
         d = (T[0][0]*T[1][0]*T[2][1]*T[t[0]][0]*T[t[1]][1]*T[t[2]][1] -
-            T[0][0]*T[1][0]*T[2][1]*T[t[0]][1]*T[t[1]][0] *T[t[2]][1]-
+            T[0][0]*T[1][0]*T[2][1]*T[t[0]][1]*T[t[1]][0] * T[t[2]][1] -
             T[0][0]*T[1][1]*T[2][0]*T[t[0]][0]*T[t[1]][1]*T[t[2]][1] +
             T[0][0]*T[1][1]*T[2][0]*T[t[0]][1]*T[t[1]][1]*T[t[2]][0] +
-            T[0][1]*T[1][0]*T[2][0]*T[t[0]][1]*T[t[1]][0] *T[t[2]][1]-
+            T[0][1]*T[1][0]*T[2][0]*T[t[0]][1]*T[t[1]][0] * T[t[2]][1] -
             T[0][1]*T[1][0]*T[2][0]*T[t[0]][1]*T[t[1]][1]*T[t[2]][0])
 
         if a*d - b*c != 0:
@@ -1146,7 +1158,7 @@ def automorphism_group_FF_alg2(rational_function):
 
     INPUT:
 
-    - ``rational_function``--a rational function defined over a finite field
+    - ``rational_function`` -- a rational function defined over a finite field
 
     OUTPUT: absolute automorphism group of ``rational_function`` and a ring of definition
 
@@ -1229,19 +1241,19 @@ def automorphism_group_FF_alg2(rational_function):
             y = fix.roots(multiplicities=False)[0]
             preimage = R(f(z) - y*g(z))
             minimal_preimage = R(prod(x[0] for x in preimage.factor()))
-            if minimal_preimage.degree() + bool(preimage.degree()<D) >= 3:
+            if minimal_preimage.degree() + bool(preimage.degree() < D) >= 3:
                 T_poly = minimal_preimage
-                infinity_check = bool(preimage.degree()<D)
+                infinity_check = bool(preimage.degree() < D)
             else:
                 preimage2 = R(phi(phi(z)).numerator() - y*phi(phi(z)).denominator())
                 T_poly = R(prod(x[0] for x in preimage2.factor() ) )
-                infinity_check = infinity_check = bool(preimage2.degree() < D**2)
+                infinity_check = bool(preimage2.degree() < D**2)
 
     # Define a field of definition for the absolute automorphism group
     r = lcm([x[0].degree() for x in T_poly.factor()])*F.degree()
     E = GF(p**r,'b')
     sigma = F.Hom(E)[0]
-    S = PolynomialRing(E,'w')
+    S = PolynomialRing(E, 'w')
     E_poly = rational_function_coerce(T_poly, sigma, S)
 
     T = [ [alpha, E(1)] for alpha in E_poly.roots(ring=E, multiplicities=False)]
@@ -1252,6 +1264,7 @@ def automorphism_group_FF_alg2(rational_function):
     Phi = rational_function_coerce(phi, sigma, S)
     return [S, three_stable_points(Phi, T)]
 
+
 def order_p_automorphisms(rational_function, pre_image):
     r"""
     Determine the order-p automorphisms given the input data.
@@ -1260,9 +1273,9 @@ def order_p_automorphisms(rational_function, pre_image):
 
     INPUT:
 
-    - ``rational_function``--rational function defined over finite field `F`
+    - ``rational_function`` -- rational function defined over finite field `F`
 
-    - ``pre_image``--set of triples `[x, L, f]`, where `x` is an `F`-rational
+    - ``pre_image`` -- set of triples `[x, L, f]`, where `x` is an `F`-rational
         fixed point of ``rational_function``, `L` is the list of `F`-rational
         pre-images of `x` (excluding `x`), and `f` is the polynomial defining
         the full set of pre-images of `x` (again excluding `x` itself)
@@ -1365,7 +1378,7 @@ def order_p_automorphisms(rational_function, pre_image):
 
     elif r2 < r:
 
-        if case=='fix':
+        if case == 'fix':
             T = [x[0] for x in pre_image]
         elif case == 'F-pre_images':
             T = [x for x in pre_image[0][1]]
@@ -1443,11 +1456,11 @@ def automorphisms_fixing_pair(rational_function, pair, quad):
 
     INPUT:
 
-    - ``rational_function``-- rational function defined over finite field `E`
+    - ``rational_function`` -- rational function defined over finite field `E`
 
-    - ``pair``-- a pair of points of `\mathbb{P}^1(E)`
+    - ``pair`` -- a pair of points of `\mathbb{P}^1(E)`
 
-    - ``quad``-- Boolean: an indicator if this is a quadratic pair of points
+    - ``quad`` -- Boolean: an indicator if this is a quadratic pair of points
 
     OUTPUT: set of automorphisms with order prime to characteristic defined over `E` that fix
     the pair, excluding the identity
@@ -1523,14 +1536,14 @@ def automorphism_group_FF_alg3(rational_function):
 
     INPUT:
 
-    - ``rational_function``--a rational function defined over a finite field `F`
+    - ``rational_function`` -- a rational function defined over a finite field `F`
 
     OUTPUT: list of `F`-rational automorphisms of ``rational_function``
 
     EXAMPLES::
 
         sage: R.<z> = PolynomialRing(GF(5^3,'t'))
-        sage: f = (3456*z^4)
+        sage: f = 3456*z^4
         sage: from sage.dynamics.arithmetic_dynamics.endPN_automorphism_group import automorphism_group_FF_alg3
         sage: automorphism_group_FF_alg3(f)
         [z, 1/z]
@@ -1563,7 +1576,7 @@ def automorphism_group_FF_alg3(rational_function):
     # Compute the set of distinct F-rational and F-quadratic
     # factors of the fixed point polynomial
     fix = R(f(z) - z*g(z))
-    linear_fix = gcd(fix, z**q - z);
+    linear_fix = gcd(fix, z**q - z)
     quad_temp = fix.quo_rem(linear_fix)[0]
     residual = gcd(quad_temp, z**q - z)
     while residual.degree() > 0:
@@ -1611,14 +1624,14 @@ def automorphism_group_FF_alg3(rational_function):
     # An F-rational fixed point has orbit length 1 or p under the action of an element of
     # order p. An F-quadratic fixed point has orbit length p. The set of F-rational
     # pre-images of fixed points decomposes as a union of orbits of length p.
-    if n1%p == 1 and n2%p == 0 and sum(len(x[1]) for x in pre_images)%p == 0:
+    if n1 % p == 1 and n2 % p == 0 and sum(len(x[1]) for x in pre_images) % p == 0:
         # Compute total number of distinct fixed points as a final check for order p auts
         factor_list = fix.factor()
         n = sum(x[0].degree() for x in factor_list) + bool(fix.degree() < D+1)
-        if n%p == 1:
+        if n % p == 1:
             automorphisms = automorphisms + order_p_automorphisms(phi, pre_images)
 
-    ## nontrivial elements with order prime to p ##
+    # nontrivial elements with order prime to p #
     # case of 2 F-rational fixed points
     for pt_pair in combinations(linear_fix_pts, 2):
         x = pt_pair[0]
@@ -1682,14 +1695,14 @@ def automorphism_group_FF_alg3(rational_function):
 
 def which_group(list_of_elements):
     r"""
-    Given a finite subgroup of `PGL2` determine its isomorphism class.
+    Given a finite subgroup of `PGL_2` determine its isomorphism class.
 
     This function makes heavy use of the classification of finite subgroups of `PGL(2,K)`.
 
     INPUT:
 
-    - ``list_of_elements``-- a finite list of elements of `PGL(2,K)`
-        that we know a priori form a group
+    - ``list_of_elements`` -- a finite list of elements of `PGL(2,K)`
+      that we know a priori form a group
 
     OUTPUT: a string -- the isomorphism type of the group
 
@@ -1701,10 +1714,10 @@ def which_group(list_of_elements):
         sage: which_group(G)
         'Dihedral of order 6'
     """
-    if is_Matrix(list_of_elements[-1]):
+    if isinstance(list_of_elements[-1], Matrix):
         R = PolynomialRing(list_of_elements[-1].base_ring(),'z')
         z = R.gen(0)
-        G=[(t[0,0]*z+t[0,1])/(t[1,0]*z+t[1,1]) for t in list_of_elements]
+        G = [(t[0,0]*z+t[0,1])/(t[1,0]*z+t[1,1]) for t in list_of_elements]
     else:
         G = list_of_elements
 
@@ -1748,12 +1761,12 @@ def which_group(list_of_elements):
             for i in range(n-1):
                 h = g(H[-1])
                 H.append(h)
-            H    = list(set(H))
+            H = list(set(H))
             if len(H) == n:
                 return 'Cyclic of order {0}'.format(n)
             if len(H) > max_reg_cyclic[0] and gcd(len(H), p) != p:
                 max_reg_cyclic = [len(H), g, H]
-            discard = list(set(discard +H)) # adjoin all new elements to discard
+            discard = list(set(discard + H)) # adjoin all new elements to discard
 
     n_reg = max_reg_cyclic[0]
     # Test for dihedral subgroup. A subgroup of index 2 is always normal, so the
@@ -1783,3 +1796,610 @@ def which_group(list_of_elements):
         return ['S_4']
     else:
         return ['A_5']
+
+
+def conjugating_set_initializer(f, g):
+    r"""
+    Return a conjugation invariant set together with information
+    to reduce the combinatorics of checking all possible conjugations.
+
+    This function constructs the invariant pair (``source``, ``possible_targets``)
+    necessary for the conjugating set algorithm described in [FMV2014]_.
+    Let `f` and `g` be dynamical systems on `\mathbb{P}^n`.
+    An invariant pair is a pair of two sets `U`, `V` such that
+    `|U| = |V|` and for all `\phi \in PGL` such that `f^\phi = g`,
+    `\phi(u) \in V` for all `u \in U`. Invariant pairs can be used
+    to determine all conjugations from `f` to `g`. For details
+    in the `\mathbb{P}^1` case, see [FMV2014]_.
+
+    Additionally, this function keeps track of multipliers to reduce the combinatorics.
+    This information is then passed to ``conjugating_set_helper`` or
+    ``is_conjugate_helper``, which check all possible conjugations determined
+    by the invariant pair.
+
+    Do not call this function directly, instead use ``f.conjugating_set(g)``.
+
+    INPUT:
+
+    - ``f`` -- a rational function of degree at least 2, and the same
+      degree as ``g``
+
+    - ``g`` -- a nonconstant rational function of the same
+      degree as ``f``
+
+    OUTPUT:
+
+    A tuple of the form (``source``, ``possible_targets``).
+
+    - ``source`` -- a conjugation invariant set of `n+2` points of the domain of `f`,
+      of which no `n+1` are linearly dependent. Used to specify a possible conjugation
+      from `f` to `g`.
+
+    - ``possible_targets`` -- a list of tuples of the form (``points``, ``repeated``). ``points``
+      is a list of ``points`` which are possible targets for point(s) in ``source``. ``repeated``
+      specifies how many points in ``source`` have points in ``points`` as their possible target.
+
+    EXAMPLES:
+
+    We check that ``source`` has no `n+1` linearly dependent points, and that
+    ``possible_targets`` tracks multiplier information::
+
+        sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
+        sage: f = DynamicalSystem([
+        ....:         8*x^7 - 35*x^4*y^3 - 35*x^4*z^3 - 7*x*y^6 - 140*x*y^3*z^3 - 7*x*z^6,
+        ....:         -7*x^6*y - 35*x^3*y^4 - 140*x^3*y*z^3 + 8*y^7 - 35*y^4*z^3 - 7*y*z^6,
+        ....:         -7*x^6*z - 140*x^3*y^3*z - 35*x^3*z^4 - 7*y^6*z - 35*y^3*z^4 + 8*z^7])
+        sage: from sage.dynamics.arithmetic_dynamics.endPN_automorphism_group import conjugating_set_initializer
+        sage: source, possible_targets = conjugating_set_initializer(f, f)
+        sage: P.is_linearly_independent(source, 3)
+        True
+        sage: f.multiplier(possible_targets[0][0][0], 1) == f.multiplier(source[0], 1)
+        True
+    """
+    n = f.domain().dimension_relative()
+
+    L = Set(f.periodic_points(1))
+    K = Set(g.periodic_points(1))
+    P = f.codomain().ambient_space()
+    if len(L) != len(K):  # checks maps have the same number of fixed points
+        return []
+
+    # we store fixed points an multipliers in dictionaries
+    # to avoid recalculating them
+    mult_to_point_L = {}
+    mult_to_point_K = {}
+    point_to_mult_L = {}
+    point_to_mult_K = {}
+
+    # as we will calculate preimages, we differentiate points by their 'level'
+    # which is how many preimages of a fixed point they are, i.e. a fixed point
+    # has level 0, a preimage of a fixed point level 1, etc.
+    level = 0
+
+    # initializing the dictionaries
+    for i in range(len(L)):
+        mult_L = f.multiplier(L[i], 1).charpoly()
+        mult_K = g.multiplier(K[i], 1).charpoly()
+        tup_L = (mult_L, level)
+        tup_K = (mult_K, level)
+        if tup_L not in mult_to_point_L:
+            mult_to_point_L[tup_L] = [L[i]]
+        else:
+            mult_to_point_L[tup_L] += [L[i]]
+        if tup_K not in mult_to_point_K:
+            mult_to_point_K[tup_K] = [K[i]]
+        else:
+            mult_to_point_K[tup_K] += [K[i]]
+        point_to_mult_L[L[i]] = (mult_L, level)
+        point_to_mult_K[K[i]] = (mult_K, level)
+
+    # we keep a dictionary which tracks how often a (multiplier, level) pair
+    # is repeated. As points can only be sent to points with the same (multiplier, level)
+    # pair, the less times a (multiplier, level) pair are repeated the better the
+    # combinatorics
+    repeated_mult_L = {}
+    for mult_L in mult_to_point_L:
+        repeated = len(mult_to_point_L[mult_L])
+        if mult_L not in mult_to_point_K:
+            return []
+        elif len(mult_to_point_K[mult_L]) != repeated:
+            return []
+        if repeated not in repeated_mult_L:
+            repeated_mult_L[repeated] = [mult_to_point_L[mult_L]]
+        else:
+            repeated_mult_L[repeated] += [mult_to_point_L[mult_L]]
+    more = True
+
+    # the n+2 points to be used to specify PGL conjugations
+    source = []
+
+    # a list of tuples of the form ((multiplier, level), repeat) where the
+    # (multiplier, level) pair specifies the possible targets of a point in source and repeat
+    # specifies how many points in source have that (multiplier, level) pair
+    corresponding = []
+
+    # we now greedily look for a set of n+2 points, of which no n+1 are linearly dependent,
+    # and we make sure to add the points with the best combinatorics first.
+    # this check sometimes fails, i.e. sometimes there is a subset with the
+    # desired property which is not found. however, this check is very fast and if it
+    # does find a subset, then the subset will most likely minimize the combinatorics
+    # of checking conjugations
+    tup = greedy_independence_check(P, repeated_mult_L, point_to_mult_L)
+    if tup is not None:
+        more = False
+        source, corresponding = tup
+
+    else:
+        # loop_repeated_mult stores the points to find preimages of
+        loop_repeated_mult = deepcopy(repeated_mult_L)
+        # next_repeated_mult stores the points to find preimages of on the next loop
+        next_repeated_mult = {}
+        found_no_more = True
+
+    # if we don't find enough points, we go to preimages
+    while more:
+        level += 1
+        # we calculate preimages, starting with preimages with the best
+        # expected combinatorics
+        for r in sorted(loop_repeated_mult.keys()):
+            for point_lst_L in loop_repeated_mult[r]:
+                old_tup_L = point_to_mult_L[point_lst_L[0]]
+                point_lst_K = mult_to_point_K[old_tup_L]
+                mult_L = old_tup_L[0]
+                Tl = []
+                Tk = []
+                # first we calculate preimages
+                for pnt in point_lst_L:
+                    for preimage in f.rational_preimages(pnt):
+                        if preimage != pnt:
+                            Tl.append(preimage)
+                for pnt in point_lst_K:
+                    for preimage in g.rational_preimages(pnt):
+                        if preimage != pnt:
+                            Tk.append(preimage)
+                if len(Tl) != len(Tk):
+                    return []
+                if Tl:
+                    found_no_more = False
+                    new_tup_L = (mult_L, level)
+                    new_tup_K = (mult_L, level)
+                    # we update dictionaries with the new preimages
+                    mult_to_point_L[new_tup_L] = Tl
+                    mult_to_point_K[new_tup_K] = Tk
+                    for i in range(len(Tl)):
+                        point_to_mult_L[Tl[i]] = new_tup_L
+                        point_to_mult_K[Tk[i]] = new_tup_K
+                    repeated = len(Tl)
+                    if repeated not in repeated_mult_L:
+                        repeated_mult_L[repeated] = [Tl]
+                    else:
+                        repeated_mult_L[repeated] += [Tl]
+                    if repeated not in next_repeated_mult:
+                        next_repeated_mult[repeated] = [Tl]
+                    else:
+                        next_repeated_mult[repeated] += [Tl]
+                    # we again do a greedy check for a subset of n+2 points, of which no n+1
+                    # are linearly dependent
+                    tup = greedy_independence_check(P, repeated_mult_L, point_to_mult_L)
+                    if tup is not None:
+                        more = False
+                        source, corresponding = tup
+                if not more:
+                    break
+            if not more:
+                break
+
+        # if no more preimages can be found, we must check all subsets
+        # of size n+2 to see if there is a subset in which no n+1 points
+        # are linearly dependent
+        if found_no_more:
+            # we construct a list of all the possible sources points
+            all_points = []
+            # we order the list by how many repeated multipliers each point has
+            # in an attempt to reduce the combinatorics of checking conjugations
+            for r in sorted(repeated_mult_L.keys()):
+                for point_lst in repeated_mult_L[r]:
+                    all_points += point_lst
+            # this loop is quite long, so we break after finding the
+            # first subset with the desired property. There is,
+            # however, no guarantee that the subset we found minimizes
+            # the combinatorics when checking conjugations
+            for subset in Subsets(range(len(all_points)), n+2):
+                source = []
+                for i in subset:
+                    source.append(all_points[i])
+                if P.is_linearly_independent(source, n+1):
+                    more = False
+                    corresponding = []
+                    mult_only = []
+                    for i in subset:
+                        mult = point_to_mult_L[all_points[i]]
+                        if mult in mult_only:
+                            corresponding[mult_only.index(mult)][1] += 1
+                        else:
+                            corresponding.append([mult, 1])
+                            mult_only.append(mult)
+                    break
+            # if we iterated over all subsets of size n+2, and did not find one
+            # in which all subsets of size n+1 are linearly independent,
+            # then we fail as we cannot specify conjugations
+            if more:
+                raise ValueError('no more rational preimages; try extending the base field and trying again')
+
+        # if we need to add more preimages, we update loop dictionaries
+        if more:
+            loop_repeated_mult = deepcopy(next_repeated_mult)
+            next_repeated_mult = {}
+            found_no_more = True
+
+    # we build a list of iterators in order to loop over the product of those iterators
+    possible_targets = []
+    for tup in corresponding:
+        possible_targets.append([mult_to_point_K[tup[0]], tup[1]])
+    return source, possible_targets
+
+
+def greedy_independence_check(P, repeated_mult, point_to_mult):
+    r"""
+    Return an invariant pair together with information
+    to reduce the combinatorics of checking all possible conjugations.
+
+    Let `f` and `g` be dynamical systems on `\mathbb{P}^n`.
+    An invariant pair is a pair of two sets `U`, `V` such that
+    `|U| = |V|` and for all `\phi \in PGL` such that `f^\phi = g`,
+    `\phi(u) \in V` for all `u \in U`. Invariant pairs can be used
+    to determine all conjugations from `f` to `g`. For details
+    in the `\mathbb{P}^1` case, see [FMV2014]_.
+
+    This function may sometimes fail to find the invariant pair
+    set even though one exists. It is useful, however, as it is fast
+    and returns a set which usually minimizes the combinatorics of
+    checking all conjugations.
+
+    INPUT:
+
+    - ``P`` -- a projective space
+
+    - ``repeated_mult`` -- a dictionary of integers to lists of points of
+      the projective space ``P``. The list of points should be conjugation
+      invariant. The keys are considered as weights, and this function attempts
+      to minimize the total weight
+
+    - ``point_to_mult`` -- a dictionary of points of ``P`` to tuples of the form
+      (multiplier, level), where multiplier is the characteristic polynomial
+      of the multiplier of the point, and level is the number of preimages
+      taken to find the point
+
+    OUTPUT:
+
+    If no set of `n+2` points of which all subsets of size `n+1` are linearly
+    independent can be found, then ``None`` is returned.
+
+    Otherwise, a tuple of the form (``source``, ``corresponding``) is returned.
+
+    - ``source`` -- the set `U` of the conjugation invariant pair. A set of `n+2` points
+      of the domain of `f`, of which no `n+1` are linearly dependent.
+
+    - ``corresponding`` -- a list of tuples of the form ((multiplier, level), repeat) where the
+      (multiplier, level) pair is the multiplier of a point in ``source`` and repeat
+      specifies how many points in source have that (multiplier, level) pair. This
+      information specifies the set `V` of the invariant pair.
+
+    EXAMPLES::
+
+        sage: from sage.dynamics.arithmetic_dynamics.endPN_automorphism_group import greedy_independence_check
+        sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+        sage: repeated_mult = {2: [[P((0, 1)), P((1, 0))]], 1: [[P((1, 1))]]}
+        sage: point_to_mult = {P((0, 1)): (x, 0), P((1, 0)): (x, 0), P((1, 1)): (x - 2, 0)}
+        sage: greedy_independence_check(P, repeated_mult, point_to_mult)
+        ([(1 : 1), (0 : 1), (1 : 0)], [[(x - 2, 0), 1], [(x, 0), 2]])
+    """
+    n = P.dimension_relative()
+    source = []
+    corresponding = []
+    for r in sorted(repeated_mult.keys()):
+        for point_lst in repeated_mult[r]:
+            for point in point_lst:
+                if len(source) == n+1:
+                    independent = P.is_linearly_independent(source + [point], n+1)
+                else:
+                    independent = P.is_linearly_independent(source + [point])
+                if independent:
+                    source.append(point)
+                    mult = point_to_mult[point]
+                    # if another point with this multiplier and level pair is in S
+                    # then the multiplier level pair will be the last element of corresponding
+                    if len(corresponding) != 0:
+                        if corresponding[-1][0] == mult:
+                            corresponding[-1][1] += 1
+                        else:
+                            corresponding.append([mult, 1])
+                    else:
+                        corresponding.append([mult, 1])
+                if len(source) == n+2:
+                    return source, corresponding
+
+def conjugating_set_helper(f, g, num_cpus, source, possible_targets):
+    r"""
+    Return the set of elements in PGL over the base ring
+    that conjugates ``f`` to ``g``.
+
+    This function takes as input the invariant pair
+    and multiplier data from ``conjugating_set_initializer``.
+
+    Do not call this function directly, instead use ``f.conjugate_set(g)``.
+
+    INPUT:
+
+    - ``f`` -- a rational function of degree at least 2, and the same
+      degree as ``g``
+
+    - ``g`` -- a rational function of the same degree as ``f``
+
+    - ``num_cpus`` -- the number of threads to run in parallel
+
+    - ``source`` -- a list of `n+2` conjugation invariant points, of which
+      no `n+1` are linearly dependent.
+
+    - ``possible_targets`` -- a list of tuples of the form (``points``, ``repeated``). ``points``
+      is a list of ``points`` which are possible targets for point(s) in ``source``. ``repeated``
+      specifies how many points in ``source`` have points in ``points`` as their possible target.
+
+    OUTPUT: a list of elements of PGL which conjugate ``f`` to ``g``.
+
+    EXAMPLES::
+
+        sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+        sage: f = DynamicalSystem([x^2, y^2])
+        sage: source = [P((1, 1)), P((0, 1)), P((1, 0))]
+        sage: possible_targets = [[[P((1, 1))], 1], [[P((0, 1)), P((1, 0))], 2]]
+        sage: from sage.dynamics.arithmetic_dynamics.endPN_automorphism_group import conjugating_set_helper
+        sage: sorted(conjugating_set_helper(f, f, 2, source, possible_targets))
+        [
+        [0 1]  [1 0]
+        [1 0], [0 1]
+        ]
+    """
+    Conj = []
+    P = f.domain().ambient_space()
+    n = f.domain().dimension_relative()
+
+    subset_iterators = []
+
+    for lst in possible_targets:
+        subset_iterators.append(Subsets(range(len(lst[0])), lst[1]))
+
+    # helper function for parallelization
+    # given a list of tuples which specify indices of possible target
+    # points in possible_targets, check all arrangements of those
+    # possible target points and if any of them define a conjugation
+    # which sends f to g, return those conjugations as a list
+    def find_conjugations_subset(tuples):
+        conj = []
+        for tup in tuples:
+            target_set = []
+            for i in range(len(tup)):
+                for j in tup[i]:
+                    target_set.append(possible_targets[i][0][j])
+
+            # if there is a subset of n+1 points which is linearly dependent,
+            # we don't need to check any of these arrangements
+            if P.is_linearly_independent(target_set, n+1):
+                subset_arrangements = []
+                for subset in tup:
+                    subset_arrangements.append(Arrangements(subset, len(subset)))
+                for tup in product(*subset_arrangements):
+                    current_target = []
+                    for i in range(len(tup)):
+                        for j in tup[i]:
+                            current_target.append(possible_targets[i][0][j])
+                    phi = P.point_transformation_matrix(current_target, source)
+                    if f.conjugate(phi) == g:
+                        conj.append(phi)
+        return conj
+
+    # helper function for parallelization
+    # given a list of tuples which specify indices of possible target
+    # points in possible_targets, check all possible target points and
+    # if any of them define a conjugation which sends f to g, return
+    # those conjugations as a list
+    def find_conjugations_arrangement(tuples):
+        conj = []
+        for tup in tuples:
+            current_target = []
+            for i in range(len(tup)):
+                for j in tup[i]:
+                    current_target.append(possible_targets[i][0][j])
+            phi = P.point_transformation_matrix(current_target, source)
+            if f.conjugate(phi) == g:
+                conj.append(phi)
+        return conj
+
+    if num_cpus > 1:
+        all_subsets = list(product(*subset_iterators))
+        parallel_data = []
+
+        # if there are enough subsets, we can divide up the work based on subsets
+        # and check linear independence in parallel
+        if len(all_subsets) > num_cpus:
+            for i in range(num_cpus):
+                start = (len(all_subsets) * i) // num_cpus
+                end = (len(all_subsets) * (i+1)) // num_cpus
+                tuples = all_subsets[start:end]
+                parallel_data.append(([tuples], {}))
+
+            X = p_iter_fork(num_cpus)
+            for ret in X(find_conjugations_subset, parallel_data):
+                if ret[1]:
+                    Conj += ret[1]
+        # otherwise, we need to first check linear independence of the subsets
+        # and then build a big list of all the arrangements to split among
+        # the threads
+        else:
+            good_targets = []
+            for tup in product(*subset_iterators):
+                target_set = []
+                for i in range(len(tup)):
+                    for j in tup[i]:
+                        target_set.append(possible_targets[i][0][j])
+                if P.is_linearly_independent(target_set, n+1):
+                    good_targets.append(tup)
+            all_arrangements = []
+            for tup in good_targets:
+                subset_arrangements = []
+                for subset in tup:
+                    subset_arrangements.append(Arrangements(subset, len(subset)))
+                all_arrangements += list(product(*subset_arrangements))
+            parallel_data = []
+            for i in range(num_cpus):
+                start = (len(all_arrangements) * i) // num_cpus
+                end = (len(all_arrangements) * (i+1)) // num_cpus
+                tuples = all_arrangements[start:end]
+                parallel_data.append(([tuples], {}))
+            X = p_iter_fork(num_cpus)
+            for ret in X(find_conjugations_arrangement, parallel_data):
+                if ret[1]:
+                    Conj += ret[1]
+    else:
+        Conj = find_conjugations_subset(product(*subset_iterators))
+    return Conj
+
+def is_conjugate_helper(f, g, num_cpus, source, possible_targets):
+    r"""
+    Return if ``f`` is conjugate to ``g``.
+
+    This function takes as input the invariant pair
+    and multiplier data from ``conjugating_set_initializer``.
+
+    Do not call this function directly, instead use ``f.is_conjugate(g)``.
+
+    INPUT:
+
+    - ``f`` -- a rational function of degree at least 2, and the same
+      degree as ``g``
+
+    - ``g`` -- a rational function of the same degree as ``f``
+
+    - ``num_cpus`` -- the number of threads to run in parallel
+
+    - ``source`` -- a list of `n+2` conjugation invariant points, of which
+      no `n+1` are linearly dependent.
+
+    - ``possible_targets`` -- a list of tuples of the form (``points``, ``repeated``). ``points``
+      is a list of ``points`` which are possible targets for point(s) in ``source``. ``repeated``
+      specifies how many points in ``source`` have points in ``points`` as their possible target.
+
+    OUTPUT: ``True`` if ``f`` is conjugate to ``g``, ``False`` otherwise.
+
+    EXAMPLES::
+
+        sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+        sage: f = DynamicalSystem([x^2, y^2])
+        sage: source = [P((1, 1)), P((0, 1)), P((1, 0))]
+        sage: possible_targets = [[[P((1, 1))], 1], [[P((0, 1)), P((1, 0))], 2]]
+        sage: from sage.dynamics.arithmetic_dynamics.endPN_automorphism_group import is_conjugate_helper
+        sage: is_conjugate_helper(f, f, 2, source, possible_targets)
+        True
+    """
+    is_conj = False
+    P = f.domain().ambient_space()
+    n = f.domain().dimension_relative()
+
+    subset_iterators = []
+
+    for lst in possible_targets:
+        subset_iterators.append(Subsets(range(len(lst[0])), lst[1]))
+
+    # helper function for parallelization
+    # given a list of tuples which specify indices of possible target
+    # points in possible_targets, check all arrangements of those
+    # possible target points and if any of them define a conjugation
+    # which sends f to g, return True
+    def find_conjugations_subset(tuples):
+        for tup in tuples:
+            target_set = []
+            for i in range(len(tup)):
+                for j in tup[i]:
+                    target_set.append(possible_targets[i][0][j])
+
+            # if there is a subset of n+1 points which is linearly dependent,
+            # we don't need to check any of these arrangements
+            if P.is_linearly_independent(target_set, n+1):
+                subset_arrangements = []
+                for subset in tup:
+                    subset_arrangements.append(Arrangements(subset, len(subset)))
+                for tup in product(*subset_arrangements):
+                    current_target = []
+                    for i in range(len(tup)):
+                        for j in tup[i]:
+                            current_target.append(possible_targets[i][0][j])
+                    phi = P.point_transformation_matrix(current_target, source)
+                    if f.conjugate(phi) == g:
+                        return True
+        return False
+
+    # helper function for parallelization
+    # given a list of tuples which specify indices of possible target points
+    # in possible_targets, check all possible target points
+    # and if any of them define a conjugation which sends f to g, return True
+    def find_conjugations_arrangement(tuples):
+        for tup in tuples:
+            current_target = []
+            for i in range(len(tup)):
+                for j in tup[i]:
+                    current_target.append(possible_targets[i][0][j])
+            phi = P.point_transformation_matrix(current_target, source)
+            if f.conjugate(phi) == g:
+                return True
+        return False
+
+    if num_cpus > 1:
+        all_subsets = list(product(*subset_iterators))
+        parallel_data = []
+
+        # if there are enough subsets, we can divide up the work based on subsets
+        # and check linear independence in parallel
+        if len(all_subsets) > num_cpus:
+            for i in range(num_cpus):
+                start = (len(all_subsets) * i) // num_cpus
+                end = (len(all_subsets) * (i+1)) // num_cpus
+                tuples = all_subsets[start:end]
+                parallel_data.append(([tuples], {}))
+
+            X = p_iter_fork(num_cpus)
+            for ret in X(find_conjugations_subset, parallel_data):
+                if ret[1]:
+                    is_conj = True
+                    break
+        # otherwise, we need to first check linear independence of the subsets
+        # and then build a big list of all the arrangements to split among
+        # the threads
+        else:
+            good_targets = []
+            for tup in product(*subset_iterators):
+                target_set = []
+                for i in range(len(tup)):
+                    for j in tup[i]:
+                        target_set.append(possible_targets[i][0][j])
+                if P.is_linearly_independent(target_set, n+1):
+                    good_targets.append(tup)
+            all_arrangements = []
+            for tup in good_targets:
+                subset_arrangements = []
+                for subset in tup:
+                    subset_arrangements.append(Arrangements(subset, len(subset)))
+                all_arrangements += list(product(*subset_arrangements))
+            parallel_data = []
+            for i in range(num_cpus):
+                start = (len(all_arrangements) * i) // num_cpus
+                end = (len(all_arrangements) * (i+1)) // num_cpus
+                tuples = all_arrangements[start:end]
+                parallel_data.append(([tuples], {}))
+            X = p_iter_fork(num_cpus)
+            for ret in X(find_conjugations_arrangement, parallel_data):
+                if ret[1]:
+                    is_conj = True
+                    break
+    else:
+        is_conj = find_conjugations_subset(product(*subset_iterators))
+    return is_conj

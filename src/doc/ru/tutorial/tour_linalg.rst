@@ -37,16 +37,6 @@ Sage поддерживает стандартные конструкции из
     sage: A * X   # проверка...
     (0, -4, -1)
 
-``\`` может быть использован вместо ``solve_right``; используйте
-``A \ Y`` вместо ``A.solve_right(Y)``.
-
-.. link
-
-::
-
-    sage: A \ Y
-    (-2, 1, 0)
-
 Если решения не существует, то Sage вернет ошибку:
 
 .. skip
@@ -224,4 +214,4 @@ Sage поддерживает разреженную линейную алгеб
     sage: M = MatrixSpace(QQ, 10,10, Sparse=True)
     Traceback (most recent call last):
     ...
-    TypeError: __init__() got an unexpected keyword argument 'Sparse'
+    TypeError: ...__init__() got an unexpected keyword argument 'Sparse'

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Finite fields
 """
@@ -67,7 +68,7 @@ class FiniteFields(CategoryWithAxiom):
         """
         EXAMPLES::
 
-            sage: GF(4, "a") in FiniteFields()
+            sage: GF(4, "a") in FiniteFields()                                          # needs sage.rings.finite_rings
             True
             sage: QQ in FiniteFields()
             False
@@ -82,14 +83,14 @@ class FiniteFields(CategoryWithAxiom):
         """
         EXAMPLES::
 
-            sage: FiniteFields()(GF(4, "a"))
+            sage: FiniteFields()(GF(4, "a"))                                            # needs sage.rings.finite_rings
             Finite Field in a of size 2^2
             sage: FiniteFields()(RationalField())   # indirect doctest
             Traceback (most recent call last):
             ...
             TypeError: unable to canonically associate a finite field to Rational Field
         """
-        raise TypeError("unable to canonically associate a finite field to %s"%x)
+        raise TypeError("unable to canonically associate a finite field to %s" % x)
         # TODO: local dvr ring?
 
     class ParentMethods:

@@ -1,0 +1,185 @@
+# -*- shell-script -*-
+
+###########################################################################
+#
+#  Determine environment variables according to configuration.
+#
+#  NOTES:
+#  - You must *source* this script instead of executing.
+#  - Use "return" instead of "exit" to signal a failure.  Since this
+#    file is sourced, an "exit" here will actually exit src/bin/sage,
+#    which is probably not intended.
+#  - All environment variables set here should be *exported*, otherwise
+#    they won't be available in child programs.
+#
+#  If you want to set all environment variables for your shell like
+#  they are during the build of Sage packages, type
+#
+#             sage --buildsh
+#
+##########################################################################
+
+if [ "x$SAGE_BUILD_ENV_SOURCED" = "x" ]; then
+    export SAGE_BUILD_ENV_SOURCED=1
+
+    # Export SAGE_DEBUG if this was enabled during configure,
+    # but be respectful of the current settings.
+    if [ "x$SAGE_DEBUG" = "x" ]; then
+        export SAGE_DEBUG="$CONFIGURED_SAGE_DEBUG"
+    fi
+    # Likewise for SAGE_EDITABLE
+    if [ "x$SAGE_EDITABLE" = "x" ]; then
+        export SAGE_EDITABLE="$CONFIGURED_SAGE_EDITABLE"
+    fi
+    # Likewise for SAGE_WHEELS
+    if [ "x$SAGE_WHEELS" = "x" ]; then
+        export SAGE_WHEELS="$CONFIGURED_SAGE_WHEELS"
+    fi
+
+    # This is usually blank if the system GMP is used, or $SAGE_LOCAL otherwise
+    if [ -n "$SAGE_GMP_PREFIX" ]; then
+        # Many packages that depend on GMP accept a --with-gmp=<prefix> flag to
+        # their ./configure scripts.  When using the system's GMP this is not
+        # generally necessary, but when using the GMP package installed in
+        # SAGE_LOCAL it is useful to pass it.  We define this variable to
+        # pass to these packages' ./configure scripts.  When using the system
+        # GMP its value is just blank (for many of these packages passing
+        # --with-gmp without an argument is actually a bug)
+        export SAGE_CONFIGURE_GMP="--with-gmp=$SAGE_GMP_PREFIX"
+    fi
+
+    # The MPFR case is very close to the GMP case above
+    # This is usually blank if the system MPFR is used, or $SAGE_LOCAL otherwise
+    if [ -n "$SAGE_MPFR_PREFIX" ]; then
+        # Some packages that depend on MPFR accept a --with-mpfr=<prefix> flag to
+        # their ./configure scripts. Thus we deal with this just as with GMP above.
+        export SAGE_CONFIGURE_MPFR="--with-mpfr=$SAGE_MPFR_PREFIX"
+    fi
+
+    # The MPC case is very close to the MPFR case above
+    # This is usually blank if the system MPC is used, or $SAGE_LOCAL otherwise
+    if [ -n "$SAGE_MPC_PREFIX" ]; then
+        # Some packages that depend on MPC accept a --with-mpc=<prefix> flag to
+        # their ./configure scripts. Thus we deal with this just as with GMP above.
+        export SAGE_CONFIGURE_MPC="--with-mpc=$SAGE_MPC_PREFIX"
+    fi
+
+    # This is usually blank if the system NTL is used, or $SAGE_LOCAL otherwise
+    if [ -n "$SAGE_NTL_PREFIX" ]; then
+        # Many packages that depend on NTL accept a --with-ntl=<prefix> flag to
+        # their ./configure scripts.  When using the system's NTL this is not
+        # generally necessary, but when using the NTL package installed in
+        # SAGE_LOCAL it is useful to pass it.
+        export SAGE_CONFIGURE_NTL="--with-ntl=$SAGE_NTL_PREFIX"
+    fi
+
+    # The FLINT case is very close to the MPFR case above
+    # This is usually blank if the system FLINT is used, or $SAGE_LOCAL otherwise
+    if [ -n "$SAGE_FLINT_PREFIX" ]; then
+        # Some packages that depend on FLINT accept a --with-flint=<prefix> flag to
+        # their ./configure scripts. Thus we deal with this just as with GMP above.
+        export SAGE_CONFIGURE_FLINT="--with-flint=$SAGE_FLINT_PREFIX"
+    fi
+
+    # This is usually blank if the system PARI is used, or $SAGE_LOCAL otherwise
+    if [ -n "$SAGE_PARI_PREFIX" ]; then
+        # Some packages that depend on PARI accept a --with-pari=<prefix> flag to
+        # their ./configure scripts. Thus we deal with this just as with GMP above.
+        export SAGE_CONFIGURE_PARI="--with-pari=$SAGE_PARI_PREFIX"
+    fi
+
+    # Optimization flags.
+    #
+    # The compiler flags are set in order of priority by
+    # 1) environment variables
+    # 2) flags set at configuration time
+    if [ "x$CFLAGS" = "x" ]; then
+        export ORIGINAL_CFLAGS="$CONFIGURED_CFLAGS"
+    else
+        export ORIGINAL_CFLAGS="$CFLAGS"
+    fi
+    if [ "x$CXXFLAGS" = "x" ]; then
+        export ORIGINAL_CXXFLAGS="$CONFIGURED_CXXFLAGS"
+    else
+        export ORIGINAL_CXXFLAGS="$CXXFLAGS"
+    fi
+    if [ "x$FCFLAGS" = "x" ]; then
+        export ORIGINAL_FCFLAGS="$CONFIGURED_FCFLAGS"
+    else
+        export ORIGINAL_FCFLAGS="$FCFLAGS"
+    fi
+    if [ "x$F77FLAGS" = "x" ]; then
+        export ORIGINAL_F77FLAGS="$CONFIGURED_F77FLAGS"
+    else
+        export ORIGINAL_F77FLAGS="$F77FLAGS"
+    fi
+
+    # We optimize according to $SAGE_DEBUG.
+    if [ "x$ORIGINAL_CFLAGS" = "x" ]; then
+        # Evaluate SAGE_DEBUG:
+        if [ "x$SAGE_DEBUG" = "xyes" ]; then
+            export CFLAGS_NON_NATIVE="-Og -g"
+            export CFLAGS_O3_NON_NATIVE="-Og -g"
+        elif [ "x$SAGE_DEBUG" = "xno" ]; then
+            export CFLAGS_NON_NATIVE="-O2"
+            export CFLAGS_O3_NON_NATIVE="-O3"
+        else
+            export CFLAGS_NON_NATIVE="-O2 -g"
+            export CFLAGS_O3_NON_NATIVE="-O3 -g"
+        fi
+        export CFLAGS="$CFLAGS_NON_NATIVE $CFLAGS_MARCH"
+        export CFLAGS_O3="$CFLAGS_O3_NON_NATIVE $CFLAGS_MARCH"
+    else
+        # Respect user environment variable.
+        export CFLAGS="$ORIGINAL_CFLAGS"
+        export CFLAGS_O3="$ORIGINAL_CFLAGS"
+        export CFLAGS_NON_NATIVE="$ORIGINAL_CFLAGS"
+        export CFLAGS_O3_NON_NATIVE="$ORIGINAL_CFLAGS"
+    fi
+
+    # Copy to CXXFLAGS if this is not set.
+    if [ "x$ORIGINAL_CXXFLAGS" = "x" ]; then
+        export CXXFLAGS="$CFLAGS"
+        export CXXFLAGS_O3="$CFLAGS_O3"
+        export CXXFLAGS_NON_NATIVE="$CFLAGS_NON_NATIVE"
+        export CXXFLAGS_O3_NON_NATIVE="$CFLAGS_O3_NON_NATIVE"
+    else
+        export CXXFLAGS="$ORIGINAL_CXXFLAGS"
+        export CXXFLAGS_O3="$ORIGINAL_CXXFLAGS"
+        export CXXFLAGS_NON_NATIVE="$ORIGINAL_CXXFLAGS"
+        export CXXFLAGS_O3_NON_NATIVE="$ORIGINAL_CXXFLAGS"
+    fi
+
+    # Copy CFLAGS to FCFLAGS if this is not set.
+    if [ "x$ORIGINAL_FCFLAGS" = "x" ]; then
+        export FCFLAGS="$CFLAGS"
+        export FCFLAGS_O3="$CFLAGS_O3"
+        export FCFLAGS_NON_NATIVE="$CFLAGS_NON_NATIVE"
+        export FCFLAGS_O3_NON_NATIVE="$CFLAGS_O3_NON_NATIVE"
+    else
+        export FCFLAGS="$ORIGINAL_FCFLAGS"
+        export FCFLAGS_O3="$ORIGINAL_FCFLAGS"
+        export FCFLAGS_NON_NATIVE="$ORIGINAL_FCFLAGS"
+        export FCFLAGS_O3_NON_NATIVE="$ORIGINAL_FCFLAGS"
+    fi
+
+    # Copy FCFLAGS to F77FLAGS if this is not set.
+    if [ "x$ORIGINAL_F77FLAGS" = "x" ]; then
+        export F77FLAGS="$FCFLAGS"
+        export F77FLAGS_O3="$FCFLAGS_O3"
+        export F77FLAGS_NON_NATIVE="$FCFLAGS_NON_NATIVE"
+        export F77FLAGS_O3_NON_NATIVE="$FCFLAGS_O3_NON_NATIVE"
+    else
+        export F77FLAGS="$ORIGINAL_F77FLAGS"
+        export F77FLAGS_O3="$ORIGINAL_F77FLAGS"
+        export F77FLAGS_NON_NATIVE="$ORIGINAL_F77FLAGS"
+        export F77FLAGS_O3_NON_NATIVE="$ORIGINAL_F77FLAGS"
+    fi
+fi
+
+# Issue #31335: Avoid include paths leaking in from homebrew python3's distutils.cfg
+# by using setuptools' own copy of distutils instead of relying on stdlib distutils
+# Issue #32944: Only do this on homebrew.
+if [ -n "$HOMEBREW" ]; then
+    export SETUPTOOLS_USE_DISTUTILS=local
+fi

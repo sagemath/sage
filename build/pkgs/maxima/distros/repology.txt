@@ -1,0 +1,3 @@
+maxima
+maxima-ecl
+maxima-sage

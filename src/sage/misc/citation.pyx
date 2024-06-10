@@ -3,8 +3,8 @@
 Dependency usage tracking for citations
 """
 
-from sage.misc.all import tmp_filename
-from sage.env import SAGE_LOCAL
+from sage.misc.temporary_file import tmp_filename
+from sage.env import SAGE_LOCAL, SAGE_VENV
 
 systems = {}
 systems['PARI'] = ['cypari2', 'sage.interfaces.gp']
@@ -23,7 +23,6 @@ systems['Mathematica'] = ['sage.interfaces.mathematica']
 systems['MuPAD'] = ['sage.interfaces.mupad']
 systems['Octave'] = ['sage.interfaces.octave']
 systems['povray'] = ['sage.interfaces.povray']
-systems['qsieve'] = ['sage.interfaces.qsieve']
 systems['Macaulay2'] = ['sage.interfaces.macaulay2']
 systems['mwrank'] = ['sage.interfaces.mwrank', 'sage.libs.eclib']
 systems['matlab'] = ['sage.interfaces.matlab']
@@ -40,7 +39,7 @@ systems['NTL'] = ['sage.libs.ntl',
 systems['FLINT'] = ['_flint']
 systems['GMP'] = ['sage.rings.integer.Integer']
 systems['MPFR'] = ['sage.rings.real_mpfr',
-                   'sage.rings.complex_number']
+                   'sage.rings.complex_mpfr']
 systems['MPFI'] = ['sage.rings.real_mpfi',
                    'sage.rings.complex_interval']
 systems['M4RI'] = ['sage.matrix.matrix_mod2_dense']
@@ -72,25 +71,18 @@ def get_systems(cmd):
         sage: from sage.misc.citation import get_systems
         sage: get_systems('print("hello")')  # random (may print warning)
         []
-        sage: integrate(x^2, x)  # Priming coercion model
+        sage: integrate(x^2, x)  # Priming coercion model                               # needs sage.symbolic
         1/3*x^3
-        sage: get_systems('integrate(x^2, x)')
+        sage: get_systems('integrate(x^2, x)')                                          # needs sage.symbolic
         ['Maxima', 'ginac']
         sage: R.<x,y,z> = QQ[]
         sage: I = R.ideal(x^2+y^2, z^2+y)
         sage: get_systems('I.primary_decomposition()')
         ['Singular']
-
-    Here we get a spurious ``MPFR`` because some coercions need to be
-    initialized. The second time it is gone::
-
-        sage: a = var('a')
-        sage: get_systems('((a+1)^2).expand()')
-        ['MPFR', 'ginac']
-        sage: get_systems('((a+1)^2).expand()')
-        ['ginac']
     """
-    import cProfile, pstats, re
+    import cProfile
+    import pstats
+    import re
 
     if not cython_profile_enabled():
         from warnings import warn
@@ -99,7 +91,7 @@ def get_systems(cmd):
              "Rebuild Sage with the environment variable 'SAGE_PROFILE=yes' "
              "to enable profiling.")
 
-    if not isinstance(cmd, basestring):
+    if not isinstance(cmd, str):
         raise TypeError("command must be a string")
 
     from sage.repl.preparse import preparse
@@ -111,7 +103,15 @@ def get_systems(cmd):
     stats = pstats.Stats(filename)
 
     #Strings is a list of method names and modules which get run
-    strings = [a[0].replace(SAGE_LOCAL, "") + " " + a[2]
+    def string_from_stat(a):
+        s = a[0]
+        if SAGE_LOCAL:
+            s = s.replace(SAGE_LOCAL, "")
+        if SAGE_VENV:
+            s = s.replace(SAGE_VENV, "")
+        return s + " " + a[2]
+
+    strings = [string_from_stat(a)
                for a in stats.stats]
 
     #Remove trivial functions
@@ -143,7 +143,7 @@ cdef extern from *:
         """
 
 
-cpdef inline bint cython_profile_enabled():
+cpdef inline bint cython_profile_enabled() noexcept:
     """
     Return whether Cython profiling is enabled.
 

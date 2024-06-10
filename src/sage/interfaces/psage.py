@@ -39,8 +39,6 @@ finished::
      23^2 * 47 * 89 * 178481 * 4103188409 * 199957736328435366769577 * 44667711762797798403039426178361,
      9623 * 68492481833 * 23579543011798993222850893929565870383844167873851502677311057483194673]
 """
-from __future__ import print_function
-from __future__ import absolute_import
 
 import os
 import time
@@ -52,7 +50,7 @@ number = 0
 
 
 class PSage(Sage):
-    def __init__(self,  **kwds):
+    def __init__(self, **kwds):
         if 'server' in kwds:
             raise NotImplementedError("PSage doesn't work on remote server yet.")
         Sage.__init__(self, **kwds)
@@ -76,7 +74,7 @@ class PSage(Sage):
             A running non-blocking (parallel) instance of Sage (number ...)
 
         """
-        return 'A running non-blocking (parallel) instance of Sage (number %s)'%(self._number)
+        return 'A running non-blocking (parallel) instance of Sage (number %s)' % (self._number)
 
     def _unlock(self):
         self._locked = False
@@ -93,55 +91,54 @@ class PSage(Sage):
         self.expect().timeout = 0.25
         self.expect().delaybeforesend = 0.01
 
-    def is_locked(self):
-        with open(self.__tmp) as fobj:
-            if fobj.read() == '__locked__':
-                try:
-                    self.expect().expect(self._prompt)
-                    self.expect().expect(self._prompt)
-                except ExceptionPexpect:
-                    pass
-
-        with open(self.__tmp) as fobj:
-            return fobj.read() == '__locked__'
+    def is_locked(self) -> bool:
+        try:
+            with open(self.__tmp) as fobj:
+                if fobj.read() != '__locked__':
+                    return False
+        except FileNotFoundError:
+            # Directory may have already been deleted :issue:`30730`
+            return False
+        # looks like we are locked, but check health first
+        try:
+            self.expect().expect(self._prompt)
+            self.expect().expect(self._prompt)
+        except ExceptionPexpect:
+            return False
+        return True
 
     def __del__(self):
         """
         TESTS:
 
-        Check that :trac:`29989` is fixed::
+        Check that :issue:`29989` is fixed::
 
             sage: PSage().__del__()
         """
         try:
             files = os.listdir(self.__tmp_dir)
-        except OSError:
-            pass
-        else:
             for x in files:
-                try:
-                    os.remove(os.path.join(self.__tmp_dir, x))
-                except OSError:
-                    pass
-        try:
+                os.remove(os.path.join(self.__tmp_dir, x))
             os.removedirs(self.__tmp_dir)
         except OSError:
             pass
 
         if not (self._expect is None):
-            cmd = 'kill -9 %s'%self._expect.pid
+            cmd = 'kill -9 %s' % self._expect.pid
             os.system(cmd)
 
     def eval(self, x, strip=True, **kwds):
         """
-            x -- code
-            strip --ignored
+        INPUT:
+
+        - ``x`` -- code
+        - ``strip`` --ignored
         """
         if self.is_locked():
             return "<<currently executing code>>"
         if self._locked:
             self._locked = False
-            #self._expect.expect('__unlocked__')
+            # self._expect.expect('__unlocked__')
             self.expect().send('\n')
             self.expect().expect(self._prompt)
             self.expect().expect(self._prompt)
@@ -149,7 +146,6 @@ class PSage(Sage):
             return Sage.eval(self, x, **kwds)
         except ExceptionPexpect:
             return "<<currently executing code>>"
-
 
     def get(self, var):
         """
@@ -164,7 +160,7 @@ class PSage(Sage):
         """
         Set the variable var to the given value.
         """
-        cmd = '%s=%s'%(var,value)
+        cmd = '%s=%s' % (var, value)
         self._send_nowait(cmd)
         time.sleep(0.02)
 
@@ -187,6 +183,7 @@ class PSage(Sage):
 
     def _object_class(self):
         return PSageElement
+
 
 class PSageElement(SageElement):
     def is_locked(self):

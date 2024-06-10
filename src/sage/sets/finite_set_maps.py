@@ -10,13 +10,12 @@ AUTHORS:
 
 - Florent Hivert
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Florent Hivert <Florent.Hivert@univ-rouen.fr>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import itertools
 
@@ -30,7 +29,7 @@ from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from sage.sets.integer_range import IntegerRange
 from sage.sets.finite_set_map_cy import (
     FiniteSetMap_MN, FiniteSetMap_Set,
-    FiniteSetEndoMap_N, FiniteSetEndoMap_Set )
+    FiniteSetEndoMap_N, FiniteSetEndoMap_Set)
 from sage.misc.cachefunc import cached_method
 
 # TODO: finite set maps should be morphisms in the category of finite sets
@@ -157,7 +156,7 @@ class FiniteSetMaps(UniqueRepresentation, Parent):
         sage: TestSuite(FiniteSetMaps([], [1, 2])).run()
     """
     @staticmethod
-    def __classcall_private__(cls, domain, codomain = None, action = "left", category = None):
+    def __classcall_private__(cls, domain, codomain=None, action="left", category=None):
         """
         TESTS::
 
@@ -267,7 +266,7 @@ class FiniteSetMaps_MN(FiniteSetMaps):
             sage: FiniteSetMaps(2,3)
             Maps from {0, 1} to {0, 1, 2}
         """
-        return "Maps from %s to %s"%(self.domain(), self.codomain())
+        return "Maps from %s to %s" % (self.domain(), self.codomain())
 
     def __contains__(self, x):
         """
@@ -306,7 +305,7 @@ class FiniteSetMaps_MN(FiniteSetMaps):
 
         An exception :class:`~sage.categories.sets_cat.EmptySetError`
         is raised if this set is empty, that is if the codomain is
-        empty and the domain is not.
+        empty and the domain is not. ::
 
             sage: M = FiniteSetMaps(4, 0)
             sage: M.cardinality()
@@ -318,7 +317,7 @@ class FiniteSetMaps_MN(FiniteSetMaps):
         """
         if self._m > 0 and self._n == 0:
             raise EmptySetError
-        return self._from_list_([0]*self._m)
+        return self._from_list_([0] * self._m)
 
     def __iter__(self):
         """
@@ -412,8 +411,9 @@ class FiniteSetMaps_Set(FiniteSetMaps_MN):
             Category of finite enumerated sets
             sage: TestSuite(M).run()
         """
-        FiniteSetMaps_MN.__init__(self, domain.cardinality(), codomain.cardinality(),
-                                 category=category)
+        FiniteSetMaps_MN.__init__(self, domain.cardinality(),
+                                  codomain.cardinality(),
+                                  category=category)
 
         self._domain = domain
         self._codomain = codomain
@@ -531,7 +531,7 @@ class FiniteSetEndoMaps_N(FiniteSetMaps_MN):
             sage: M.an_element()
             [3, 2, 1, 0]
         """
-        return self._from_list_(range(self._n-1, -1, -1))
+        return self._from_list_(range(self._n - 1, -1, -1))
 
     def _repr_(self):
         """
@@ -540,9 +540,10 @@ class FiniteSetEndoMaps_N(FiniteSetMaps_MN):
             sage: FiniteSetMaps(2)
             Maps from {0, 1} to itself
         """
-        return "Maps from %s to itself"%(self.domain())
+        return "Maps from %s to itself" % (self.domain())
 
     Element = FiniteSetEndoMap_N
+
 
 class FiniteSetEndoMaps_Set(FiniteSetMaps_Set, FiniteSetEndoMaps_N):
     """
@@ -558,7 +559,7 @@ class FiniteSetEndoMaps_Set(FiniteSetMaps_Set, FiniteSetEndoMaps_N):
     - ``category`` -- the category in which the sets of maps is
       constructed. It must be a sub-category of ``Monoids().Finite()``
       and ``EnumeratedSets().Finite()`` which is the default value.
-     """
+    """
     def __init__(self, domain, action, category=None):
         """
         TESTS::
@@ -571,8 +572,9 @@ class FiniteSetEndoMaps_Set(FiniteSetMaps_Set, FiniteSetEndoMaps_N):
             sage: TestSuite(M).run()
         """
         category = (EnumeratedSets() & Monoids().Finite()).or_subcategory(category)
-        FiniteSetMaps_MN.__init__(self, domain.cardinality(), domain.cardinality(),
-                                 category=category)
+        FiniteSetMaps_MN.__init__(self, domain.cardinality(),
+                                  domain.cardinality(),
+                                  category=category)
 
         self._domain = domain
         self._codomain = domain
@@ -586,4 +588,3 @@ class FiniteSetEndoMaps_Set(FiniteSetMaps_Set, FiniteSetEndoMaps_N):
         self._action = action
 
     Element = FiniteSetEndoMap_Set
-

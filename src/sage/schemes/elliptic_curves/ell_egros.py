@@ -71,7 +71,6 @@ required have conductors 13068 and 52272 so are in the database)::
 AUTHORS:
 
 - John Cremona (6 April 2009): initial version (over `\QQ` only).
-
 """
 
 # ****************************************************************************
@@ -88,10 +87,9 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
-from sage.misc.all import xmrange
-from sage.rings.all import QQ
+from sage.misc.mrange import xmrange
+from sage.rings.rational_field import QQ
 from .constructor import EllipticCurve, EllipticCurve_from_j
 
 
@@ -100,7 +98,7 @@ def is_possible_j(j, S=[]):
     Tests if the rational `j` is a possible `j`-invariant of an
     elliptic curve with good reduction outside `S`.
 
-    .. note::
+    .. NOTE::
 
         The condition used is necessary but not sufficient unless S
         contains both 2 and 3.
@@ -116,11 +114,9 @@ def is_possible_j(j, S=[]):
         True
     """
     j = QQ(j)
-    return (j.is_zero() and 3 in S) \
-        or (j == 1728)              \
-        or (j.is_S_integral(S)      \
-            and j.prime_to_S_part(S).is_nth_power(3) \
-            and (j-1728).prime_to_S_part(S).abs().is_square())
+    return (j.is_zero() and 3 in S) or (j == 1728) \
+        or (j.is_S_integral(S) and j.prime_to_S_part(S).is_nth_power(3)
+            and (j - 1728).prime_to_S_part(S).abs().is_square())
 
 
 def curve_key(E1):
@@ -161,7 +157,7 @@ def egros_from_j_1728(S=[]):
 
     - S -- list of primes (default: empty list).
 
-    .. note::
+    .. NOTE::
 
         Primality of elements of S is not checked, and the output
         is undefined if S is not a list or contains non-primes.
@@ -181,7 +177,6 @@ def egros_from_j_1728(S=[]):
         []
         sage: [e.cremona_label() for e in egros_from_j_1728([2])]
         ['32a1', '32a2', '64a1', '64a4', '256b1', '256b2', '256c1', '256c2']
-
     """
     Elist = []
     no2 = 2 not in S
@@ -206,7 +201,7 @@ def egros_from_j_0(S=[]):
 
     - S -- list of primes (default: empty list).
 
-    .. note::
+    .. NOTE::
 
         Primality of elements of S is not checked, and the output
         is undefined if S is not a list or contains non-primes.
@@ -256,7 +251,7 @@ def egros_from_j(j, S=[]):
 
     - S -- list of primes (default: empty list).
 
-    .. note::
+    .. NOTE::
 
         Primality of elements of S is not checked, and the output
         is undefined if S is not a list or contains non-primes.
@@ -277,7 +272,6 @@ def egros_from_j(j, S=[]):
         sage: elist=egros_from_j(-4096/11,[11])
         sage: [e.label() for e in elist]
         ['11a3', '121d1']
-
     """
     if j == 1728:
         return egros_from_j_1728(S)
@@ -312,7 +306,7 @@ def egros_from_jlist(jlist, S=[]):
 
     - S -- list of primes (default: empty list).
 
-    .. note::
+    .. NOTE::
 
         Primality of elements of S is not checked, and the output
         is undefined if S is not a list or contains non-primes.
@@ -361,7 +355,7 @@ def egros_get_j(S=[], proof=None, verbose=False):
     - ``verbose`` -- ``True``/``False`` (default ``False````): if ``True``, some
       details of the computation will be output.
 
-    .. note::
+    .. NOTE::
 
         Proof flag: The algorithm used requires determining all
         S-integral points on several auxiliary curves, which in turn
@@ -386,7 +380,6 @@ def egros_get_j(S=[], proof=None, verbose=False):
         [0, -576, 1536, 1728, -5184, -13824, 21952/9, -41472, 140608/3, -12288000]
         sage: jlist=egros_get_j([2,3]); len(jlist) # long time (30s)
         83
-
     """
     if not all(p.is_prime() for p in S):
         raise ValueError("Elements of S must be prime.")
@@ -448,10 +441,10 @@ def egros_get_j(S=[], proof=None, verbose=False):
             P = urst(P)
             x = P[0]
             y = P[1]
-            j = x**3 /w
-            assert j-1728 == y**2 /w
+            j = x**3 / w
+            assert j - 1728 == y**2 / w
             if is_possible_j(j, S):
-                if not j in jlist:
+                if j not in jlist:
                     if verbose:
                         print("Adding possible j = ", j)
                         sys.stdout.flush()

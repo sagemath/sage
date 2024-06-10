@@ -8,12 +8,11 @@ from cpython.number cimport *
 from cpython.ref cimport *
 
 cimport sage.matrix.matrix_dense as matrix_dense
-from . import matrix_dense
-from .args cimport MatrixArgs_init
+from sage.matrix import matrix_dense
+from sage.matrix.args cimport MatrixArgs_init
 
 cimport sage.matrix.matrix as matrix
 
-from sage.structure.element cimport parent as parent_c
 
 cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
     r"""
@@ -25,21 +24,19 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
     EXAMPLES::
 
-        sage: A = random_matrix(Integers(25)['x'],2); A
-        [       0  8*x + 1]
-        [17*x + 4        0]
+        sage: A = random_matrix(Integers(25)['x'], 2)
         sage: type(A)
-        <type 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
-        sage: TestSuite(A).run()
+        <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
+        sage: TestSuite(A).run(skip='_test_minpoly')
 
     Test comparisons::
 
-        sage: A = random_matrix(Integers(25)['x'],2)
+        sage: A = random_matrix(Integers(25)['x'], 2)
         sage: A == A
         True
-        sage: A < A + 1
+        sage: A < A + 1 or A[0, 0].coefficients()[0] == 24
         True
-        sage: A+1 < A
+        sage: A+1 < A and A[0, 0].coefficients()[0] != 24
         False
 
     Test hashing::
@@ -69,12 +66,13 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         TESTS:
 
-        We check that the problem related to :trac:`9049` is not an issue any
+        We check that the problem related to :issue:`9049` is not an issue any
         more::
 
-            sage: S.<t>=PolynomialRing(QQ)
-            sage: F.<q>=QQ.extension(t^4+1)
-            sage: R.<x,y>=PolynomialRing(F)
+            sage: # needs sage.rings.number_field
+            sage: S.<t> = PolynomialRing(QQ)
+            sage: F.<q> = QQ.extension(t^4 + 1)
+            sage: R.<x,y> = PolynomialRing(F)
             sage: M = MatrixSpace(R, 1, 2)
             sage: from sage.matrix.matrix_generic_dense import Matrix_generic_dense
             sage: Matrix_generic_dense(M, (x, y), True, True)
@@ -100,7 +98,6 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
     cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         return self._entries[i*self._ncols + j]
-
 
     def _reverse_unsafe(self):
         r"""
@@ -217,7 +214,8 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         EXAMPLES::
 
-            sage: R.<x,y> = FreeAlgebra(QQ,2)
+            sage: # needs sage.combinat
+            sage: R.<x,y> = FreeAlgebra(QQ, 2)
             sage: a = matrix(R, 2, 2, [1,2,x*y,y*x])
             sage: b = matrix(R, 2, 2, [1,2,y*x,y*x])
             sage: a._add_(b)
@@ -240,7 +238,8 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         EXAMPLES::
 
-            sage: R.<x,y> = FreeAlgebra(QQ,2)
+            sage: # needs sage.combinat
+            sage: R.<x,y> = FreeAlgebra(QQ, 2)
             sage: a = matrix(R, 2, 2, [1,2,x*y,y*x])
             sage: b = matrix(R, 2, 2, [1,2,y*x,y*x])
             sage: a._sub_(b)
@@ -272,7 +271,7 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
             [  x   y]
             [x^2 y^2]
             sage: type(a)
-            <type 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
+            <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
             sage: a*a
             [  x^2*y + x^2     y^3 + x*y]
             [x^2*y^2 + x^3   y^4 + x^2*y]

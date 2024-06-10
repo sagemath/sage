@@ -1,0 +1,3 @@
+pip3
+python:pip
+python3x-pip

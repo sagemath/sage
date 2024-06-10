@@ -1,0 +1,7 @@
+# From https://wiki.sagemath.org/prerequisitesUbuntu
+# - see also separate script packages texlive, pandoc, ffmpeg
+
+# to run the Jmol 3D viewer from the console and generate images for 3D plots in the documentation
+default-jdk
+# to produce animations
+libavdevice-dev

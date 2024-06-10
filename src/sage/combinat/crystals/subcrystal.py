@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Subcrystals
 
@@ -22,6 +23,8 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #****************************************************************************
+
+import collections.abc
 
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.structure.unique_representation import UniqueRepresentation
@@ -104,7 +107,7 @@ class Subcrystal(UniqueRepresentation, Parent):
     TESTS:
 
     Check that the subcrystal respects being in the category
-    of supercrystals (:trac:`27368`)::
+    of supercrystals (:issue:`27368`)::
 
         sage: T = crystals.Tableaux(['A',[1,1]], [2,1])
         sage: S = T.subcrystal(max_depth=3)
@@ -126,7 +129,7 @@ class Subcrystal(UniqueRepresentation, Parent):
             sage: S1 is S2
             True
         """
-        if isinstance(contained, (list, tuple, set, frozenset)):
+        if isinstance(contained, (collections.abc.Sequence, collections.abc.Set)):
             contained = frozenset(contained)
         #elif contained in Sets():
 
@@ -159,11 +162,11 @@ class Subcrystal(UniqueRepresentation, Parent):
                                   generators, cartan_type, index_set, category)
 
         # We need to give these as optional arguments so it unpickles correctly
-        return super(Subcrystal, cls).__classcall__(cls, ambient, contained,
-                                                    tuple(generators),
-                                                    cartan_type=cartan_type,
-                                                    index_set=tuple(index_set),
-                                                    category=category)
+        return super().__classcall__(cls, ambient, contained,
+                                     tuple(generators),
+                                     cartan_type=cartan_type,
+                                     index_set=tuple(index_set),
+                                     category=category)
 
     def __init__(self, ambient, contained, generators, cartan_type, index_set, category):
         """
@@ -270,7 +273,7 @@ class Subcrystal(UniqueRepresentation, Parent):
 
         TESTS:
 
-        Check that :trac:`19481` is fixed::
+        Check that :issue:`19481` is fixed::
 
             sage: from sage.combinat.crystals.virtual_crystal import VirtualCrystal
             sage: A = crystals.infinity.Tableaux(['A',3])
@@ -291,7 +294,7 @@ class Subcrystal(UniqueRepresentation, Parent):
             if self in FiniteCrystals():
                 return Integer(len(self.list()))
             try:
-                card = super(Subcrystal, self).cardinality()
+                card = super().cardinality()
             except AttributeError:
                 raise NotImplementedError("unknown cardinality")
             if card == infinity:
@@ -317,6 +320,7 @@ class Subcrystal(UniqueRepresentation, Parent):
         """
         An element of a subcrystal. Wraps an element in the ambient crystal.
         """
+
         def _richcmp_(self, other, op):
             """
             EXAMPLES:
@@ -457,4 +461,3 @@ class Subcrystal(UniqueRepresentation, Parent):
                 (0, 1, 0, 1, 1)
             """
             return self.value.weight()
-

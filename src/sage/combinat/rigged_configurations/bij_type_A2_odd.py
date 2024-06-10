@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Bijection classes for type `A_{2n-1}^{(2)}`.
 
@@ -20,7 +21,7 @@ TESTS::
     sage: TestSuite(bijection).run()
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Travis Scrimshaw <tscrim@ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -32,11 +33,12 @@ TESTS::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.combinat.rigged_configurations.bij_type_A import KRTToRCBijectionTypeA
 from sage.combinat.rigged_configurations.bij_type_A import RCToKRTBijectionTypeA
+
 
 class KRTToRCBijectionTypeA2Odd(KRTToRCBijectionTypeA):
     r"""
@@ -106,6 +108,7 @@ class KRTToRCBijectionTypeA2Odd(KRTToRCBijectionTypeA):
             self._update_vacancy_nums(tableau_height - 1)
             self._update_partition_values(tableau_height - 1)
 
+
 class RCToKRTBijectionTypeA2Odd(RCToKRTBijectionTypeA):
     r"""
     Specific implementation of the bijection from rigged configurations to
@@ -124,7 +127,7 @@ class RCToKRTBijectionTypeA2Odd(RCToKRTBijectionTypeA):
             sage: bijection.next_state(1)
             -2
         """
-        height -= 1 # indexing
+        height -= 1  # indexing
         n = self.n
         ell = [None] * (2*n)
         b = None
@@ -192,5 +195,4 @@ class RCToKRTBijectionTypeA2Odd(RCToKRTBijectionTypeA):
         if ret_row_next is not None:
             self.cur_partitions[n-1].rigging[ret_row_next] = self.cur_partitions[n-1].vacancy_numbers[ret_row_next]
 
-        return(b)
-
+        return b

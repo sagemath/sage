@@ -21,7 +21,7 @@ void padiclog(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, con
               1/a = (1 - a_0*p^v) (1 - a_1*p^(2*v) (1 - a_2*p^(4*v) ...
             with 0 <= a_i < p^(v*2^i).
          3. we compute each log(1 - a_i*p^(v*2^i)) using Taylor expansion
-            and a binary spliting strategy.                                */
+            and a binary splitting strategy.                                */
 
     unsigned long i, v, e, N, saveN, Np, tmp, trunc, step;
     double den = log(p);
@@ -169,7 +169,7 @@ void padicexp(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, con
               a = a_0*p + a_1*p^2 + a_2*p^4 + ...
             with 0 <= a_i < p^(2^i).
          2. we compute each exp(a_i*p^(2^i)) using Taylor expansion
-            and a binary spliting strategy.                           */
+            and a binary splitting strategy.                           */
 
     unsigned long i, N, saveN, Np, tmp, trunc, step;
     mpz_t f, arg, trunc_mod, h, hpow, mpz_tmp, d, inv;

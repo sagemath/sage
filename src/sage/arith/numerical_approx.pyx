@@ -1,21 +1,25 @@
+# sage_setup: distribution = sagemath-objects
+# sage.doctest: needs sage.rings.real_mpfr
 r"""
 Generic numerical approximation function
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.parent cimport Parent
 from sage.structure.element cimport parent
 cdef Parent CDF
-from sage.rings.all import RealField, ComplexField, CDF
+from sage.rings.real_mpfr import RealField
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.complex_double import CDF
 
 
 def numerical_approx_generic(x, prec):
@@ -26,7 +30,7 @@ def numerical_approx_generic(x, prec):
     EXAMPLES::
 
         sage: from sage.arith.numerical_approx import numerical_approx_generic
-        sage: numerical_approx_generic(pi, 20)
+        sage: numerical_approx_generic(pi, 20)                                          # needs sage.symbolic
         3.1416
         sage: numerical_approx_generic(int(42), 20)
         42.000

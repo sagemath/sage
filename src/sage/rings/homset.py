@@ -9,14 +9,14 @@ Space of homomorphisms between two rings
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from sage.categories.homset import HomsetWithBase
 from sage.categories.rings import Rings
+
 _Rings = Rings()
 
-from . import morphism
-from . import quotient_ring
+from sage.rings import morphism, quotient_ring
+
 
 def is_RingHomset(H):
     """
@@ -26,18 +26,24 @@ def is_RingHomset(H):
 
         sage: from sage.rings.homset import is_RingHomset as is_RH
         sage: is_RH(Hom(ZZ, QQ))
+        doctest:warning...
+        DeprecationWarning: the function is_RingHomset is deprecated;
+        use 'isinstance(..., RingHomset_generic)' instead
+        See https://github.com/sagemath/sage/issues/37922 for details.
         True
         sage: is_RH(ZZ)
         False
-        sage: is_RH(Hom(RR, CC))
+        sage: is_RH(Hom(RR, CC))                                                        # needs sage.rings.real_mpfr
         True
-        sage: is_RH(Hom(FreeModule(ZZ,1), FreeModule(QQ,1)))
+        sage: is_RH(Hom(FreeModule(ZZ,1), FreeModule(QQ,1)))                            # needs sage.modules
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37922, "the function is_RingHomset is deprecated; use 'isinstance(..., RingHomset_generic)' instead")
     return isinstance(H, RingHomset_generic)
 
 
-def RingHomset(R, S, category = None):
+def RingHomset(R, S, category=None):
     """
     Construct a space of homomorphisms between the rings ``R`` and ``S``.
 
@@ -50,8 +56,10 @@ def RingHomset(R, S, category = None):
 
     """
     if quotient_ring.is_QuotientRing(R):
-        return RingHomset_quo_ring(R, S, category = category)
-    return RingHomset_generic(R, S, category = category)
+        from .polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
+        if not is_PolynomialQuotientRing(R):  # backwards compatibility
+            return RingHomset_quo_ring(R, S, category=category)
+    return RingHomset_generic(R, S, category=category)
 
 
 class RingHomset_generic(HomsetWithBase):
@@ -68,7 +76,7 @@ class RingHomset_generic(HomsetWithBase):
 
     Element = morphism.RingHomomorphism
 
-    def __init__(self, R, S, category = None):
+    def __init__(self, R, S, category=None):
         """
         Initialize ``self``.
 
@@ -90,7 +98,7 @@ class RingHomset_generic(HomsetWithBase):
             sage: Hom(ZZ, QQ) # indirect doctest
             Set of Homomorphisms from Integer Ring to Rational Field
         """
-        return "Set of Homomorphisms from %s to %s"%(self.domain(), self.codomain())
+        return "Set of Homomorphisms from %s to %s" % (self.domain(), self.codomain())
 
     def has_coerce_map_from(self, x):
         """
@@ -132,25 +140,27 @@ class RingHomset_generic(HomsetWithBase):
 
         You can provide a morphism on the base::
 
+            sage: # needs sage.rings.finite_rings
             sage: k = GF(9)
             sage: z2 = k.gen()
             sage: cc = k.frobenius_endomorphism()
             sage: R.<x> = k[]
             sage: H = Hom(R, R)
             sage: phi = H([x^2], base_map=cc); phi
-            Ring endomorphism of Univariate Polynomial Ring in x over Finite Field in z2 of size 3^2
+            Ring endomorphism of Univariate Polynomial Ring in x
+             over Finite Field in z2 of size 3^2
               Defn: x |--> x^2
                     with map of base ring
-            sage: phi(z2*x) == z2^3 * x^2
+            sage: phi(z2 * x) == z2^3 * x^2
             True
 
             sage: R.<x> = ZZ[]
-            sage: K.<a> = GF(7^2)
-            sage: L.<u> = K.extension(x^3 - 3)
-            sage: phi = L.hom([u^7], base_map=K.frobenius_endomorphism())
-            sage: phi(u) == u^7
+            sage: K.<a> = GF(7^2)                                                       # needs sage.rings.finite_rings
+            sage: L.<u> = K.extension(x^3 - 3)                                          # needs sage.rings.finite_rings
+            sage: phi = L.hom([u^7], base_map=K.frobenius_endomorphism())               # needs sage.rings.finite_rings
+            sage: phi(u) == u^7                                                         # needs sage.rings.finite_rings
             True
-            sage: phi(a) == a^7
+            sage: phi(a) == a^7                                                         # needs sage.rings.finite_rings
             True
 
         TESTS::
@@ -209,7 +219,7 @@ class RingHomset_generic(HomsetWithBase):
         """
         f = self.codomain().coerce_map_from(self.domain())
         if f is None:
-            raise TypeError("natural coercion morphism from %s to %s not defined"%(self.domain(), self.codomain()))
+            raise TypeError("natural coercion morphism from %s to %s not defined" % (self.domain(), self.codomain()))
         return f
 
     def zero(self):
@@ -246,14 +256,15 @@ class RingHomset_quo_ring(RingHomset_generic):
     EXAMPLES::
 
         sage: R.<x,y> = PolynomialRing(QQ, 2)
-        sage: S.<a,b> = R.quotient(x^2 + y^2)
-        sage: phi = S.hom([b,a]); phi
-        Ring endomorphism of Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x^2 + y^2)
+        sage: S.<a,b> = R.quotient(x^2 + y^2)                                           # needs sage.libs.singular
+        sage: phi = S.hom([b,a]); phi                                                   # needs sage.libs.singular
+        Ring endomorphism of Quotient of Multivariate Polynomial Ring in x, y
+         over Rational Field by the ideal (x^2 + y^2)
           Defn: a |--> b
                 b |--> a
-        sage: phi(a)
+        sage: phi(a)                                                                    # needs sage.libs.singular
         b
-        sage: phi(b)
+        sage: phi(b)                                                                    # needs sage.libs.singular
         a
 
     TESTS:
@@ -262,6 +273,7 @@ class RingHomset_quo_ring(RingHomset_generic):
 
     ::
 
+        sage: # needs sage.libs.singular
         sage: R.<x,y> = PolynomialRing(QQ, 2)
         sage: S.<a,b> = R.quotient(x^2 + y^2)
         sage: H = S.Hom(R)
@@ -270,8 +282,8 @@ class RingHomset_quo_ring(RingHomset_generic):
 
     We test pickling of actual homomorphisms in a quotient::
 
-        sage: phi = S.hom([b,a])
-        sage: phi == loads(dumps(phi))
+        sage: phi = S.hom([b,a])                                                        # needs sage.libs.singular
+        sage: phi == loads(dumps(phi))                                                  # needs sage.libs.singular
         True
     """
 
@@ -283,6 +295,7 @@ class RingHomset_quo_ring(RingHomset_generic):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(QQ, 2)
             sage: S.<a,b> = R.quotient(x^2 + y^2)
             sage: H = S.Hom(R)

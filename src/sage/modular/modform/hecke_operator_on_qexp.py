@@ -1,28 +1,32 @@
+# sage.doctest: needs sage.libs.flint
 """
-Hecke Operators on `q`-expansions
+Hecke operators on `q`-expansions
 """
-from __future__ import absolute_import
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2004-2006 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from sage.modular.dirichlet import DirichletGroup, is_DirichletCharacter
-from sage.rings.all import ZZ, Integer, Infinity, CyclotomicField
-from sage.arith.all import divisors, gcd
-
+from sage.arith.misc import divisors, gcd
+from sage.matrix.constructor import matrix
+from sage.matrix.matrix_space import MatrixSpace
+from sage.misc.lazy_import import lazy_import
+from sage.rings.infinity import Infinity
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 from sage.rings.power_series_ring_element import is_PowerSeries
 
-from sage.matrix.all import matrix, MatrixSpace
+lazy_import('sage.rings.number_field.number_field', 'CyclotomicField')
+
+from sage.modular.dirichlet import DirichletGroup, is_DirichletCharacter
 from .element import is_ModularFormElement
 
-def hecke_operator_on_qexp(f, n, k, eps = None,
+def hecke_operator_on_qexp(f, n, k, eps=None,
                            prec=None, check=True, _return_list=False):
     r"""
     Given the `q`-expansion `f` of a modular form with character
@@ -37,14 +41,18 @@ def hecke_operator_on_qexp(f, n, k, eps = None,
         sage: hecke_operator_on_qexp(M.basis()[0], 1, 12, prec=7)
         q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 - 6048*q^6 + O(q^7)
         sage: hecke_operator_on_qexp(M.basis()[0], 1, 12)
-        q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 - 6048*q^6 - 16744*q^7 + 84480*q^8 - 113643*q^9 - 115920*q^10 + 534612*q^11 - 370944*q^12 - 577738*q^13 + O(q^14)
+        q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 - 6048*q^6 - 16744*q^7 + 84480*q^8
+          - 113643*q^9 - 115920*q^10 + 534612*q^11 - 370944*q^12 - 577738*q^13 + O(q^14)
 
         sage: M.prec(20)
         20
         sage: hecke_operator_on_qexp(M.basis()[0], 3, 12)
         252*q - 6048*q^2 + 63504*q^3 - 370944*q^4 + 1217160*q^5 - 1524096*q^6 + O(q^7)
         sage: hecke_operator_on_qexp(M.basis()[0], 1, 12)
-        q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 - 6048*q^6 - 16744*q^7 + 84480*q^8 - 113643*q^9 - 115920*q^10 + 534612*q^11 - 370944*q^12 - 577738*q^13 + 401856*q^14 + 1217160*q^15 + 987136*q^16 - 6905934*q^17 + 2727432*q^18 + 10661420*q^19 - 7109760*q^20 + O(q^21)
+        q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 - 6048*q^6 - 16744*q^7 + 84480*q^8
+          - 113643*q^9 - 115920*q^10 + 534612*q^11 - 370944*q^12 - 577738*q^13
+          + 401856*q^14 + 1217160*q^15 + 987136*q^16 - 6905934*q^17 + 2727432*q^18
+          + 10661420*q^19 - 7109760*q^20 + O(q^21)
 
         sage: (hecke_operator_on_qexp(M.basis()[0], 1, 12)*252).add_bigoh(7)
         252*q - 6048*q^2 + 63504*q^3 - 370944*q^4 + 1217160*q^5 - 1524096*q^6 + O(q^7)
@@ -80,9 +88,9 @@ def hecke_operator_on_qexp(f, n, k, eps = None,
         eps = DirichletGroup(1, base_ring=ZZ)[0]
     if check:
         if not (is_PowerSeries(f) or is_ModularFormElement(f)):
-            raise TypeError("f (=%s) must be a power series or modular form"%f)
+            raise TypeError("f (=%s) must be a power series or modular form" % f)
         if not is_DirichletCharacter(eps):
-            raise TypeError("eps (=%s) must be a Dirichlet character"%eps)
+            raise TypeError("eps (=%s) must be a Dirichlet character" % eps)
         k = Integer(k)
         n = Integer(n)
     v = []
@@ -96,7 +104,8 @@ def hecke_operator_on_qexp(f, n, k, eps = None,
             prec = pr // n + 1
         else:
             prec = (f.prec() / ZZ(n)).ceil()
-            if prec == Infinity: prec = f.parent().default_prec() // n + 1
+            if prec == Infinity:
+                prec = f.parent().default_prec() // n + 1
 
     if f.prec() < prec:
         f._compute_q_expansion(prec)
@@ -107,10 +116,10 @@ def hecke_operator_on_qexp(f, n, k, eps = None,
         # formula
         v = [f[m*n] for m in range(prec)]
     else:
-        l = k-1
+        l = k - 1
         for m in range(prec):
-            am = sum([eps(d) * d**l * f[m*n//(d*d)] for \
-                      d in divisors(gcd(n, m)) if (m*n) % (d*d) == 0])
+            am = sum([eps(d) * d**l * f[m*n//(d*d)]
+                      for d in divisors(gcd(n, m)) if (m*n) % (d*d) == 0])
             v.append(am)
     if _return_list:
         return v
@@ -119,6 +128,7 @@ def hecke_operator_on_qexp(f, n, k, eps = None,
     else:
         R = f.parent()
     return R(v, prec)
+
 
 def _hecke_operator_on_basis(B, V, n, k, eps):
     """
@@ -132,7 +142,7 @@ def _hecke_operator_on_basis(B, V, n, k, eps):
         [       0 14348908]
 
     The following used to cause a segfault due to accidentally
-    transposed second and third argument (:trac:`2107`)::
+    transposed second and third argument (:issue:`2107`)::
 
         sage: B = victor_miller_basis(100,30)
         sage: t2 = hecke_operator_on_basis(B, 100, 2)
@@ -146,8 +156,8 @@ def _hecke_operator_on_basis(B, V, n, k, eps):
     TB = [V.coordinate_vector(w) for w in TB]
     return matrix(V.base_ring(), len(B), len(B), TB, sparse=False)
 
-def hecke_operator_on_basis(B, n, k, eps=None,
-                            already_echelonized = False):
+
+def hecke_operator_on_basis(B, n, k, eps=None, already_echelonized=False):
     r"""
     Given a basis `B` of `q`-expansions for a space of modular forms
     with character `\varepsilon` to precision at least `\#B\cdot n+1`,
@@ -161,15 +171,15 @@ def hecke_operator_on_basis(B, n, k, eps=None,
 
     INPUT:
 
-    - ``B`` - list of q-expansions
+    - ``B`` -- list of q-expansions
 
-    - ``n`` - an integer >= 1
+    - ``n`` -- an integer >= 1
 
-    - ``k`` - an integer
+    - ``k`` -- an integer
 
-    - ``eps`` - Dirichlet character
+    - ``eps`` -- Dirichlet character
 
-    - ``already_echelonized`` -- bool (default: False); if True, use that the
+    - ``already_echelonized`` -- bool (default: ``False``); if True, use that the
       basis is already in Echelon form, which saves a lot of time.
 
     EXAMPLES::
@@ -178,7 +188,8 @@ def hecke_operator_on_basis(B, n, k, eps=None,
         sage: ModularForms(1,12).q_expansion_basis()
         [
         q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6),
-        1 + 65520/691*q + 134250480/691*q^2 + 11606736960/691*q^3 + 274945048560/691*q^4 + 3199218815520/691*q^5 + O(q^6)
+        1 + 65520/691*q + 134250480/691*q^2 + 11606736960/691*q^3
+          + 274945048560/691*q^4 + 3199218815520/691*q^5 + O(q^6)
         ]
         sage: hecke_operator_on_basis(ModularForms(1,12).q_expansion_basis(), 3, 12)
         Traceback (most recent call last):
@@ -191,15 +202,16 @@ def hecke_operator_on_basis(B, n, k, eps=None,
 
     TESTS:
 
-    This shows that the problem with finite fields reported at :trac:`8281` is solved::
+    This shows that the problem with finite fields reported at :issue:`8281` is solved::
 
         sage: bas_mod5 = [f.change_ring(GF(5)) for f in victor_miller_basis(12, 20)]
         sage: hecke_operator_on_basis(bas_mod5, 2, 12)
         [4 0]
         [0 1]
 
-    This shows that empty input is handled sensibly (:trac:`12202`)::
+    This shows that empty input is handled sensibly (:issue:`12202`)::
 
+        sage: # needs sage.rings.number_field
         sage: x = hecke_operator_on_basis([], 3, 12); x
         []
         sage: x.parent()
@@ -210,7 +222,7 @@ def hecke_operator_on_basis(B, n, k, eps=None,
         Full MatrixSpace of 0 by 0 dense matrices over Cyclotomic Field of order 12 and degree 4
     """
     if not isinstance(B, (list, tuple)):
-        raise TypeError("B (=%s) must be a list or tuple"%B)
+        raise TypeError("B (=%s) must be a list or tuple" % B)
     if len(B) == 0:
         if eps is None:
             R = CyclotomicField(1)
@@ -229,10 +241,8 @@ def hecke_operator_on_basis(B, n, k, eps=None,
         raise TypeError("each element of B must be a power series")
     n = Integer(n)
     k = Integer(k)
-    prec = (f.prec()-1)//n
+    prec = (f.prec() - 1) // n
     A = R**prec
     V = A.span_of_basis([g.padded_list(prec) for g in B],
-                        already_echelonized = already_echelonized)
+                        already_echelonized=already_echelonized)
     return _hecke_operator_on_basis(B, V, n, k, eps)
-
-

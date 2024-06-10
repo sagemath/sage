@@ -12,7 +12,8 @@ Obwohl große Teile von Sage mithilfe von Python implementiert sind,
 ist kein tieferes Verständnis von Python notwendig um dieses Tutorial
 lesen zu können. Sie werden Python zu einem gewissen Zeitpunkt lernen
 wollen (Python kann sehr viel Spass bereiten) und es gibt viele
-ausgezeichnete freie Quellen, wozu auch [PyT]_ und [Dive]_ gehören.
+ausgezeichnete freie Quellen: das Python-Anfängerhandbuch [PyB]_
+listet viele Optionen auf.
 Wenn Sie nur kurz etwas in Sage ausprobieren möchten, ist dieses
 Tutorial der richtige Ort um damit anzufangen. Zum Beispiel:
 
@@ -70,7 +71,6 @@ zur Installation von Sage auf Ihrem Computer zu erhalten.
 Hier geben wir nur ein paar Kommentare ab.
 
 
-
 #. Die herunterladbare Sage-Datei wurde nach der *batteries included*
    Philosophie zusammengestellt. In anderen Worten, obwohl Sage
    Python, IPython, PARI, GAP, Singular, Maxima, NTL, GMP und so
@@ -97,16 +97,16 @@ Hier geben wir nur ein paar Kommentare ab.
    einzige Datei in ein Verzeichnis kopieren, welches TeX durchsucht.
 
    Die Dokumentation für SageTeX befindet sich in
-   ``$SAGE_ROOT/local/share/texmf/tex/latex/sagetex/``, wobei
+   ``$SAGE_ROOT/venv/share/texmf/tex/latex/sagetex/``, wobei
    "``$SAGE_ROOT``" auf das Verzeichnis zeigt, in welches Sie Sage
-   installiert haben, zum Beispiel ``/opt/sage-4.2.1``.
+   installiert haben, zum Beispiel ``/opt/sage-9.6``.
 
 Wie man Sage benutzen kann
 ==========================
 
 Sie können Sage auf verschiedene Weise benutzen.
 
--  **graphisches Notebook-Interface:** rufen Sie `sage -n jupyter` auf; lesen Sie
+-  **graphisches Notebook-Interface:** rufen Sie ``sage -n jupyter`` auf; lesen Sie
    `Jupyter documentation on-line <https://jupyter-notebook.readthedocs.io/en/latest/notebook.html>`_,
 
 -  **interaktive Kommandozeile:** lesen Sie :ref:`chapter-interactive_shell`,

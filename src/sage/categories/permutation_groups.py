@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Permutation groups
 """
@@ -13,6 +14,7 @@ from sage.categories.category import Category
 from sage.categories.groups import Groups
 from sage.misc.lazy_import import LazyImport
 
+
 class PermutationGroups(Category):
     r"""
     The category of permutation groups.
@@ -23,7 +25,7 @@ class PermutationGroups(Category):
 
     This distinguished action should be preserved by permutation group
     morphisms. For details, see
-    :Wikipedia:`Permutation_group#Permutation_isomorphic_groups`.
+    :wikipedia:`Permutation_group#Permutation_isomorphic_groups`.
 
     .. TODO:: shall we accept only permutations with finite support or not?
 

@@ -16,8 +16,8 @@ Sage вы увидите вывод, похожий на следующий:
 ::
 
     ┌────────────────────────────────────────────────────────────────────┐
-    │ SageMath version 9.0, Release Date: 2020-01-01                     │
-    │ Using Python 3.7.3. Type "help()" for help.                        │
+    │ SageMath version 9.7, Release Date: 2022-01-10                     │
+    │ Using Python 3.10.4. Type "help()" for help.                       │
     └────────────────────────────────────────────────────────────────────┘
 
     sage:
@@ -29,7 +29,7 @@ Sage вы увидите вывод, похожий на следующий:
 ::
 
     sage: quit
-    Exiting SAGE (CPU time 0m0.00s, Wall time 0m0.89s)
+    Exiting Sage (CPU time 0m0.00s, Wall time 0m0.89s)
 
 Wall time — это прошедшее время. Это значение верно, потому как в "CPU time"
 не входит время, использованное субпроцессами вроде GAP или Singular.
@@ -166,8 +166,8 @@ Notebook), то вы можете ввести ``%hist``, чтобы вывес�
 
     was@form:~$ sage
     ┌────────────────────────────────────────────────────────────────────┐
-    │ SageMath version 9.0, Release Date: 2020-01-01                     │
-    │ Using Python 3.7.3. Type "help()" for help.                        │
+    │ SageMath version 9.7, Release Date: 2022-01-10                     │
+    │ Using Python 3.10.4. Type "help()" for help.                       │
     └────────────────────────────────────────────────────────────────────┘
 
     sage: logstart setup
@@ -182,11 +182,11 @@ Notebook), то вы можете ввести ``%hist``, чтобы вывес�
     sage: x,y = QQ['x,y'].gens()
     sage: G = E.gens()
     sage:
-    Exiting SAGE (CPU time 0m0.61s, Wall time 0m50.39s).
+    Exiting Sage (CPU time 0m0.61s, Wall time 0m50.39s).
     was@form:~$ sage
     ┌────────────────────────────────────────────────────────────────────┐
-    │ SageMath version 9.0, Release Date: 2020-01-01                     │
-    │ Using Python 3.7.3. Type "help()" for help.                        │
+    │ SageMath version 9.7, Release Date: 2022-01-10                     │
+    │ Using Python 3.10.4. Type "help()" for help.                       │
     └────────────────────────────────────────────────────────────────────┘
 
     sage: load("setup")
@@ -292,7 +292,7 @@ GMP ведет себя лучше, но только немного (как и 
 
     sage: cputime?
     ...
-        Return the time in CPU second since SAGE started, or with optional
+        Return the time in CPU second since Sage started, or with optional
         argument t, return the time since time t.
         INPUT:
             t -- (optional) float, time in CPU seconds
@@ -357,8 +357,9 @@ Wall time. Однако, если существует существенная 
 
 Когда что-то идет не так, обычно можно увидеть исключение Python (Python
 "exception"). Python даже попытается предположить, что вызвало ошибку. Часто
-вы можете видеть имя исключения, например, ``NameError`` или ``ValueError``
-(см. Python Reference Manual [Py]_ для полного списка исключений). Например,
+вы можете видеть имя исключения, например, :class:`NameError` или
+:class:`ValueError` (см. Python Library Reference [PyLR]_ для полного списка
+исключений). Например,
 
 .. skip
 
@@ -369,7 +370,7 @@ Wall time. Однако, если существует существенная 
        File "<console>", line 1
          ZZ(3)_2
                ^
-    SyntaxError: invalid syntax
+    SyntaxError: invalid ...
 
     sage: EllipticCurve([0,infinity])
     ------------------------------------------------------------
@@ -392,7 +393,7 @@ Wall time. Однако, если существует существенная 
     Automatic pdb calling has been turned ON
     sage: EllipticCurve([1,infinity])
     ---------------------------------------------------------------------------
-    <type 'exceptions.TypeError'>             Traceback (most recent call last)
+    <class 'exceptions.TypeError'>             Traceback (most recent call last)
     ...
 
     ipdb>
@@ -484,7 +485,6 @@ GNU/Linux.
 получения исходного кода (объясняется в следующем разделе).
 
 
-
 Встроенная справочная система
 =============================
 
@@ -498,7 +498,7 @@ Sage обладает встроенной справочной системой
     sage: V = QQ^3
     sage: V.coordinates?
     Type:           instancemethod
-    Base Class:     <type 'instancemethod'>
+    Base Class:     <class 'instancemethod'>
     String Form:    <bound method FreeModule_ambient_field.coordinates of Vector
     space of dimension 3 over Rational Field>
     Namespace:      Interactive
@@ -597,15 +597,25 @@ Sage обладает встроенной справочной системой
 ::
 
     sage: help(VectorSpace)
-    Help on class VectorSpace ...
+    Help on function VectorSpace in module sage.modules.free_module:
 
-    class VectorSpace(__builtin__.object)
-     |  Create a Vector Space.
-     |
-     |  To create an ambient space over a field with given dimension
-     |  using the calling syntax ...
-     :
-     :
+    VectorSpace(K, dimension_or_basis_keys=None, sparse=False, inner_product_matrix=None, *,
+                with_basis='standard', dimension=None, basis_keys=None, **args)
+    EXAMPLES:
+
+    The base can be complicated, as long as it is a field.
+
+    ::
+
+        sage: V = VectorSpace(FractionField(PolynomialRing(ZZ,'x')),3)
+        sage: V
+        Vector space of dimension 3 over Fraction Field of Univariate Polynomial Ring in x
+         over Integer Ring
+        sage: V.basis()
+        [
+        (1, 0, 0),
+        (0, 1, 0),
+    --More--
 
 Когда вы вводите ``q`` для выхода из справочной системы, ваша сессия
 находится в том же состоянии, что и до этого. Справка не захламляет ваш

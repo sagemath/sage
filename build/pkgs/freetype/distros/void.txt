@@ -1,3 +1,1 @@
-freetype
-harfbuzz
-glib
+freetype-devel

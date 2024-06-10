@@ -1,0 +1,5 @@
+cd src
+# Remove numpy version pin in pyproject.toml
+sed -E -i.bak -e "s/numpy[ <>=]+[0-9,.<>= ]+/numpy/;" pyproject.toml
+cat pyproject.toml
+sdh_pip_install .

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 This linkage file implements the padics API for ramified extensions using Sage
 Polynomials.
@@ -8,7 +7,7 @@ is independent of ramification is in Polynomial_shared.pxi.
 
 .. NOTE::
 
-    There are no doctests in this file since the functions here can not be
+    There are no doctests in this file since the functions here cannot be
     called directly from Python. Testing of this function is necessarily
     indirect and mostly done through arithmetic black-box tests that are part
     of the test suites of the `p`-adic parents.
@@ -16,9 +15,8 @@ is independent of ramification is in Polynomial_shared.pxi.
 AUTHORS:
 
 - David Roe, Julian Rüth (2017-06-11): initial version
-
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 David Roe <roed.math@gmail.com>
 #                     2017 Julian Rüth <julian.rueth@fsfe.org>
 #
@@ -26,8 +24,8 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.rings.integer cimport Integer
 from sage.ext.stdsage cimport PY_NEW
 from sage.libs.gmp.mpz cimport *
@@ -55,16 +53,16 @@ cdef inline bint creduce(celement out, celement a, long prec, PowComputer_ prime
     """
     cdef celement ared = a % prime_pow.modulus
     if ared is a and out is not a:
-        out.__coeffs = ared.__coeffs[:]
+        out._coeffs = ared._coeffs[:]
     else:
-        out.__coeffs = ared.__coeffs
+        out._coeffs = ared._coeffs
     cdef long coeff_prec = prec / prime_pow.e + 1
     cdef long break_pt = prec % prime_pow.e
-    for i in range(len(out.__coeffs)):
+    for i in range(len(out._coeffs)):
         if i == break_pt:
             coeff_prec -= 1
-        out.__coeffs[i] = out.__coeffs[i].add_bigoh(coeff_prec)
-    out.__normalize()
+        out._coeffs[i] = out._coeffs[i].add_bigoh(coeff_prec)
+    out._normalize()
     return out == 0
 
 cdef inline bint creduce_small(celement out, celement a, long prec, PowComputer_ prime_pow) except -1:
@@ -116,7 +114,7 @@ cdef inline long cvaluation(celement a, long prec, PowComputer_ prime_pow) excep
     higher.
 
     """
-    C = a.__coeffs
+    C = a._coeffs
     if not C:
         return prec
     cdef long ret = maxordp
@@ -161,7 +159,7 @@ cdef inline int cshift(celement shifted, celement rem, celement a, long n, long 
         v = cvaluation(a, prec, prime_pow)
         notrunc = (v >= -n)
     if notrunc:
-        rem.__coeffs = []
+        rem._coeffs = []
         return cshift_notrunc(shifted, a, n, prec, prime_pow, reduce_afterward)
     if v > 0:
         b = prime_pow.poly_ring(0)
@@ -185,7 +183,7 @@ cdef inline int cshift(celement shifted, celement rem, celement a, long n, long 
     if reduce_afterward:
         creduce(shifted, a, prec, prime_pow)
     else:
-        shifted.__coeffs = a.__coeffs[:]
+        shifted._coeffs = a._coeffs[:]
 
 cdef inline int cshift_notrunc(celement out, celement a, long n, long prec, PowComputer_ prime_pow, bint reduce_afterward) except -1:
     r"""
@@ -236,7 +234,7 @@ cdef inline int cshift_notrunc(celement out, celement a, long n, long prec, PowC
     if reduce_afterward:
         creduce(out, a, prec, prime_pow)
     else:
-        out.__coeffs = a.__coeffs[:]
+        out._coeffs = a._coeffs[:]
 
 cdef inline int cinvert(celement out, celement a, long prec, PowComputer_ prime_pow) except -1:
     r"""
@@ -253,7 +251,7 @@ cdef inline int cinvert(celement out, celement a, long prec, PowComputer_ prime_
     - ``prime_pow`` -- the ``PowComputer`` for the ring
 
     """
-    out.__coeffs = prime_pow.invert(a, prec).__coeffs
+    out._coeffs = prime_pow.invert(a, prec)._coeffs
     creduce(out, out, prec, prime_pow)
 
 cdef inline int cdivunit(celement out, celement a, celement b, long prec, PowComputer_ prime_pow) except -1:
@@ -319,7 +317,8 @@ _expansion_zero = []
 
 # the expansion_mode enum is defined in padic_template_element_header.pxi
 cdef inline cexpansion_next(celement value, expansion_mode mode, long curpower, PowComputer_ prime_pow):
-    if mode == teichmuller_mode: raise NotImplementedError
+    if mode == teichmuller_mode:
+        raise NotImplementedError
     # This is not very efficient, but there's no clear better way.
     # We assume this is only called on two-step extensions (for more general
     # extensions, convert to the absolute field).
@@ -334,7 +333,7 @@ cdef inline cexpansion_next(celement value, expansion_mode mode, long curpower, 
     # the following is specific to the ramified over unramified case.
     modp_rep, term = value[0]._modp_rep(mode == smallest_mode)
     if term:
-        value.__coeffs[0] -= modp_rep
+        value._coeffs[0] -= modp_rep
     cshift_notrunc(value, value, -1, curpower, prime_pow, False)
     return term
 
@@ -353,10 +352,10 @@ cdef inline cexpansion_getitem(celement value, long m, PowComputer_ prime_pow):
     while m >= 0:
         modp_rep, term = value[0]._modp_rep()
         if m:
-            if len(value.__coeffs):
-                value.__coeffs[0] -= modp_rep
+            if len(value._coeffs):
+                value._coeffs[0] -= modp_rep
             else:
-                value.__coeffs.append(-modp_rep)
+                value._coeffs.append(-modp_rep)
             cshift_notrunc(value, value, -1, 1, prime_pow, False)
         m -= 1
     return term
@@ -378,9 +377,9 @@ cdef int cteichmuller(celement out, celement value, long prec, PowComputer_ prim
 
     """
     if value[0].valuation() > 0:
-        out.__coeffs = []
+        out._coeffs = []
     else:
-        out.__coeffs = [value[0].parent().teichmuller(value[0])]
+        out._coeffs = [value[0].parent().teichmuller(value[0])]
 
 cdef list ccoefficients(celement x, long valshift, long prec, PowComputer_ prime_pow):
     """

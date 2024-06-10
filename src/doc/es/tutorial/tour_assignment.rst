@@ -88,10 +88,10 @@ contener valores de cualquier tipo Python dentro de un ámbito dado:
 
     sage: a = 5   # a es un entero
     sage: type(a)
-    <type 'sage.rings.integer.Integer'>
+    <class 'sage.rings.integer.Integer'>
     sage: a = 5/3  # ahora es un número racional
     sage: type(a)
-    <type 'sage.rings.rational.Rational'>
+    <class 'sage.rings.rational.Rational'>
     sage: a = 'hello'  # ahora es una cadena
     sage: type(a)
     <... 'str'>

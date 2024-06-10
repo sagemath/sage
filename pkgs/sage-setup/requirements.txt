@@ -1,0 +1,3 @@
+Cython
+pkgconfig
+jinja2

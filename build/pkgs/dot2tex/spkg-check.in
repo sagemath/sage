@@ -8,7 +8,7 @@ for file in test_*.py; do
     echo "############################################################"
     echo "spkg-check: Running $file..."
     echo "############################################################"
-    sage-python23 $file || passed=false
+    python3 $file || passed=false
 done
 echo
 if ! $passed; then

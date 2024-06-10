@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Channels
 
@@ -44,8 +45,9 @@ This file contains the following elements:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from copy import copy
 
 from sage.structure.sage_object import SageObject
 from sage.rings.integer import Integer
@@ -55,8 +57,7 @@ from sage.modules.free_module_element import vector
 from sage.misc.abstract_method import abstract_method
 from sage.categories.cartesian_product import cartesian_product
 from sage.modules.free_module import VectorSpace
-from sage.functions.other import binomial
-from copy import copy
+from sage.arith.misc import binomial
 
 
 def random_error_vector(n, F, error_positions):
@@ -147,9 +148,9 @@ class Channel(SageObject):
 
     This abstract class provides the following parameters:
 
-        - ``input_space`` -- the space of the words to transmit
+    - ``input_space`` -- the space of the words to transmit
 
-        - ``output_space`` -- the space of the transmitted words
+    - ``output_space`` -- the space of the transmitted words
     """
 
     def __init__(self, input_space, output_space):
@@ -173,7 +174,7 @@ class Channel(SageObject):
             sage: from sage.coding.channel import Channel
             sage: class ChannelExample(Channel):
             ....:   def __init__(self, input_space, output_space):
-            ....:       super(ChannelExample, self).__init__(input_space, output_space)
+            ....:       super().__init__(input_space, output_space)
 
         We now create a member of our newly made class::
 
@@ -277,7 +278,7 @@ class Channel(SageObject):
         Return ``message``, modified accordingly with the algorithm of the channel it was
         transmitted through.
 
-        This method does not check if ``message`` belongs to the input space of``self``.
+        This method does not check if ``message`` belongs to the input space of ``self``.
 
         This is an abstract method which should be reimplemented in all the subclasses of
         Channel.
@@ -309,7 +310,7 @@ class StaticErrorRateChannel(Channel):
 
     EXAMPLES:
 
-    We construct a StaticErrorRateChannel which adds 2 errors
+    We construct a :class:`StaticErrorRateChannel` which adds 2 errors
     to any transmitted message::
 
         sage: n_err = 2
@@ -344,7 +345,7 @@ class StaticErrorRateChannel(Channel):
             number_errors = (number_errors, number_errors)
         if not isinstance(number_errors, (tuple, list)):
             raise ValueError("number_errors must be a tuple, a list, an Integer or a Python int")
-        super(StaticErrorRateChannel, self).__init__(space, space)
+        super().__init__(space, space)
         if number_errors[1] > space.dimension():
             raise ValueError("There might be more errors than the dimension of the input space")
         self._number_errors = number_errors
@@ -367,7 +368,7 @@ class StaticErrorRateChannel(Channel):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -383,12 +384,12 @@ class StaticErrorRateChannel(Channel):
 
     def transmit_unsafe(self, message):
         r"""
-        Returns ``message`` with as many errors as ``self._number_errors`` in it.
+        Return ``message`` with as many errors as ``self._number_errors`` in it.
 
         If ``self._number_errors`` was passed as a tuple for the number of errors, it will
         pick a random integer between the bounds of the tuple and use it as the number of errors.
 
-        This method does not check if ``message`` belongs to the input space of``self``.
+        This method does not check if ``message`` belongs to the input space of ``self``.
 
         INPUT:
 
@@ -408,7 +409,7 @@ class StaticErrorRateChannel(Channel):
             sage: Chan.transmit_unsafe(msg)
             (4, 8, 4, 16, 23, 53)
 
-        This checks that :trac:`19863` is fixed::
+        This checks that :issue:`19863` is fixed::
 
             sage: V = VectorSpace(GF(2), 1000)
             sage: Chan = channels.StaticErrorRateChannel(V, 367)
@@ -429,7 +430,7 @@ class StaticErrorRateChannel(Channel):
 
     def number_errors(self):
         r"""
-        Returns the number of errors created by ``self``.
+        Return the number of errors created by ``self``.
 
         EXAMPLES::
 
@@ -445,20 +446,20 @@ class ErrorErasureChannel(Channel):
     r"""
     Channel which adds errors and erases several positions in any message it transmits.
 
-    The output space of this channel is a Cartesian product
-    between its input space and a VectorSpace of the same dimension over GF(2)
+    The output space of this channel is a Cartesian product between its input
+    space and a VectorSpace of the same dimension over `\GF{2}`.
 
     INPUT:
 
     - ``space`` -- the input and output space
 
     - ``number_errors`` -- the number of errors created in each transmitted
-      message. It can be either an integer of a tuple. If an tuple is passed as
+      message. It can be either an integer of a tuple. If a tuple is passed as
       an argument, the number of errors will be a random integer between the
       two bounds of this tuple.
 
     - ``number_erasures`` -- the number of erasures created in each transmitted
-      message. It can be either an integer of a tuple. If an tuple is passed as an
+      message. It can be either an integer of a tuple. If a tuple is passed as an
       argument, the number of erasures will be a random integer between the
       two bounds of this tuple.
 
@@ -501,7 +502,7 @@ class ErrorErasureChannel(Channel):
             sage: Chan = channels.ErrorErasureChannel(GF(59)^40, n_err, n_era)
             Traceback (most recent call last):
             ...
-            ValueError: The total number of errors and erasures can not exceed the dimension of the input space
+            ValueError: The total number of errors and erasures cannot exceed the dimension of the input space
         """
         if isinstance(number_errors, (Integer, int)):
             number_errors = (number_errors, number_errors)
@@ -514,15 +515,15 @@ class ErrorErasureChannel(Channel):
             raise ValueError("number_erasures must be a tuple, a list, an Integer or a Python int")
 
         output_space = cartesian_product([space, VectorSpace(GF(2), space.dimension())])
-        super(ErrorErasureChannel, self).__init__(space, output_space)
+        super().__init__(space, output_space)
         if number_errors[1] + number_erasures[1] > space.dimension():
-            raise ValueError("The total number of errors and erasures can not exceed the dimension of the input space")
+            raise ValueError("The total number of errors and erasures cannot exceed the dimension of the input space")
         self._number_errors = number_errors
         self._number_erasures = number_erasures
 
     def _repr_(self):
         r"""
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -541,7 +542,7 @@ class ErrorErasureChannel(Channel):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -560,10 +561,10 @@ class ErrorErasureChannel(Channel):
 
     def transmit_unsafe(self, message):
         r"""
-        Returns ``message`` with as many errors as ``self._number_errors`` in it, and as many erasures
-        as ``self._number_erasures`` in it.
+        Return ``message`` with as many errors as ``self._number_errors`` in it,
+        and as many erasures as ``self._number_erasures`` in it.
 
-        If ``self._number_errors`` was passed as an tuple for the number of errors, it will
+        If ``self._number_errors`` was passed as a tuple for the number of errors, it will
         pick a random integer between the bounds of the tuple and use it as the number of errors.
         It does the same with ``self._number_erasures``.
 
@@ -572,7 +573,7 @@ class ErrorErasureChannel(Channel):
         the received message will always contains exactly as many errors and erasures
         as expected.
 
-        This method does not check if ``message`` belongs to the input space of``self``.
+        This method does not check if ``message`` belongs to the input space of ``self``.
 
         INPUT:
 
@@ -582,9 +583,10 @@ class ErrorErasureChannel(Channel):
 
         - a couple of vectors, namely:
 
-            - the transmitted message, which is ``message`` with erroneous and erased positions
-            - the erasure vector, which contains ``1`` at the erased positions of the transmitted message
-              , 0 elsewhere.
+          - the transmitted message, which is ``message`` with erroneous and
+            erased positions
+          - the erasure vector, which contains ``1`` at the erased positions of
+            the transmitted message and ``0`` elsewhere.
 
         EXAMPLES::
 
@@ -603,7 +605,7 @@ class ErrorErasureChannel(Channel):
         zero = V.base_ring().zero()
 
         errors = sample(range(n), number_errors + number_erasures)
-        error_positions   = errors[:number_errors]
+        error_positions = errors[:number_errors]
         erasure_positions = errors[number_errors:]
 
         error_vector = random_error_vector(n, V.base_ring(), error_positions)
@@ -617,7 +619,7 @@ class ErrorErasureChannel(Channel):
 
     def number_errors(self):
         r"""
-        Returns the number of errors created by ``self``.
+        Return the number of errors created by ``self``.
 
         EXAMPLES::
 
@@ -630,7 +632,7 @@ class ErrorErasureChannel(Channel):
 
     def number_erasures(self):
         r"""
-        Returns the number of erasures created by ``self``.
+        Return the number of erasures created by ``self``.
 
         EXAMPLES::
 
@@ -644,10 +646,10 @@ class ErrorErasureChannel(Channel):
 
 class QarySymmetricChannel(Channel):
     r"""
-    The q-ary symmetric, memoryless communication channel.
+    The `q`-ary symmetric, memoryless communication channel.
 
     Given an alphabet `\Sigma` with `|\Sigma| = q` and an error probability
-    `\epsilon`, a q-ary symmetric channel sends an element of `\Sigma` into the
+    `\epsilon`, a `q`-ary symmetric channel sends an element of `\Sigma` into the
     same element with probability `1 - \epsilon`, and any one of the other `q -
     1` elements with probability `\frac{\epsilon}{q - 1}`. This implementation
     operates over vectors in `\Sigma^n`, and "transmits" each element of the
@@ -665,20 +667,21 @@ class QarySymmetricChannel(Channel):
     INPUT:
 
     - ``space`` -- the input and output space of the channel. It has to be
-      `GF(q)^n` for some finite field `GF(q)`.
+      `\GF{q}^n` for some finite field `\GF{q}`.
 
     - ``epsilon`` -- the transmission error probability of the individual elements.
 
     EXAMPLES:
 
-    We construct a QarySymmetricChannel which corrupts 30% of all transmitted
-    symbols::
+    We construct a :class:`QarySymmetricChannel` which corrupts 30% of all
+    transmitted symbols::
 
         sage: epsilon = 0.3
         sage: Chan = channels.QarySymmetricChannel(GF(59)^50, epsilon)
         sage: Chan
         q-ary symmetric channel with error probability 0.300000000000000,
-        of input and output space Vector space of dimension 50 over Finite Field of size 59
+         of input and output space
+          Vector space of dimension 50 over Finite Field of size 59
     """
 
     def __init__(self, space, epsilon):
@@ -704,7 +707,7 @@ class QarySymmetricChannel(Channel):
         if epsilon >= 1 or epsilon <= 0:
             raise ValueError("Error probability must be between 0 and 1")
 
-        super(QarySymmetricChannel, self).__init__(space, space)
+        super().__init__(space, space)
         self._epsilon = epsilon
         try:
             self.transmit_unsafe(space.random_element())
@@ -713,7 +716,7 @@ class QarySymmetricChannel(Channel):
 
     def __repr__(self):
         r"""
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -728,7 +731,7 @@ class QarySymmetricChannel(Channel):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -743,10 +746,10 @@ class QarySymmetricChannel(Channel):
 
     def transmit_unsafe(self, message):
         r"""
-        Returns ``message`` where each of the symbols has been changed to another from the alphabet with
+        Return ``message`` where each of the symbols has been changed to another from the alphabet with
         probability :meth:`error_probability`.
 
-        This method does not check if ``message`` belongs to the input space of``self``.
+        This method does not check if ``message`` belongs to the input space of ``self``.
 
         INPUT:
 
@@ -776,7 +779,7 @@ class QarySymmetricChannel(Channel):
 
     def error_probability(self):
         r"""
-        Returns the error probability of a single symbol transmission of
+        Return the error probability of a single symbol transmission of
         ``self``.
 
         EXAMPLES::
@@ -790,7 +793,7 @@ class QarySymmetricChannel(Channel):
 
     def probability_of_exactly_t_errors(self, t):
         r"""
-        Returns the probability ``self`` has to return
+        Return the probability ``self`` has to return
         exactly ``t`` errors.
 
         INPUT:
@@ -810,7 +813,7 @@ class QarySymmetricChannel(Channel):
 
     def probability_of_at_most_t_errors(self, t):
         r"""
-        Returns the probability ``self`` has to return
+        Return the probability ``self`` has to return
         at most ``t`` errors.
 
         INPUT:

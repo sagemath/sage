@@ -1,5 +1,5 @@
 r"""
-Generalized Functions
+Generalized functions
 
 Sage implements several generalized functions (also known as
 distributions) such as Dirac delta, Heaviside step functions. These
@@ -16,30 +16,29 @@ EXAMPLES:
 
 Dirac delta function::
 
-    sage: dirac_delta(x)
+    sage: dirac_delta(x)                                                                # needs sage.symbolic
     dirac_delta(x)
 
 Heaviside step function::
 
-    sage: heaviside(x)
+    sage: heaviside(x)                                                                  # needs sage.symbolic
     heaviside(x)
 
 Unit step function::
 
-    sage: unit_step(x)
+    sage: unit_step(x)                                                                  # needs sage.symbolic
     unit_step(x)
 
 Signum (sgn) function::
 
-    sage: sgn(x)
+    sage: sgn(x)                                                                        # needs sage.symbolic
     sgn(x)
 
 Kronecker delta function::
 
-    sage: m,n=var('m,n')
-    sage: kronecker_delta(m,n)
+    sage: m, n = var('m,n')                                                             # needs sage.symbolic
+    sage: kronecker_delta(m, n)                                                         # needs sage.symbolic
     kronecker_delta(m, n)
-
 """
 
 ##############################################################################
@@ -51,8 +50,13 @@ Kronecker delta function::
 #
 ##############################################################################
 
-from sage.symbolic.function import (BuiltinFunction, GinacFunction)
-from sage.rings.all import ComplexIntervalField, ZZ
+from sage.misc.lazy_import import lazy_import
+from sage.rings.integer_ring import ZZ
+from sage.symbolic.function import BuiltinFunction, GinacFunction
+
+lazy_import('sage.misc.latex', 'latex')
+lazy_import('sage.rings.complex_interval_field', 'ComplexIntervalField')
+
 
 class FunctionDiracDelta(BuiltinFunction):
     r"""
@@ -60,7 +64,7 @@ class FunctionDiracDelta(BuiltinFunction):
 
     INPUT:
 
-    -  ``x`` - a real number or a symbolic expression
+    -  ``x`` -- a real number or a symbolic expression
 
     DEFINITION:
 
@@ -76,13 +80,14 @@ class FunctionDiracDelta(BuiltinFunction):
 
     EXAMPLES::
 
+        sage: # needs sage.symbolic
         sage: dirac_delta(1)
         0
         sage: dirac_delta(0)
         dirac_delta(0)
         sage: dirac_delta(x)
         dirac_delta(x)
-        sage: integrate(dirac_delta(x), x, -1, 1, algorithm='sympy')
+        sage: integrate(dirac_delta(x), x, -1, 1, algorithm='sympy')                    # needs sympy
         1
 
     REFERENCES:
@@ -96,10 +101,11 @@ class FunctionDiracDelta(BuiltinFunction):
 
         INPUT:
 
-        -  ``x`` - a real number or a symbolic expression
+        -  ``x`` -- a real number or a symbolic expression
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: dirac_delta(1)
             0
             sage: dirac_delta(0)
@@ -109,13 +115,13 @@ class FunctionDiracDelta(BuiltinFunction):
             sage: latex(dirac_delta(x))
             \delta\left(x\right)
 
-            sage: loads(dumps(dirac_delta(x)))
+            sage: loads(dumps(dirac_delta(x)))                                          # needs sage.symbolic
             dirac_delta(x)
-            sage: dirac_delta(x)._sympy_()
+            sage: dirac_delta(x)._sympy_()                                              # needs sympy sage.symbolic
             DiracDelta(x)
         """
         BuiltinFunction.__init__(self, "dirac_delta", latex_name=r"\delta",
-                                   conversions=dict(maxima='delta',
+                                 conversions=dict(maxima='delta',
                                                   mathematica='DiracDelta',
                                                   sympy='DiracDelta',
                                                   giac='Dirac'))
@@ -124,10 +130,11 @@ class FunctionDiracDelta(BuiltinFunction):
         """
         INPUT:
 
-        -  ``x`` - a real number or a symbolic expression
+        -  ``x`` -- a real number or a symbolic expression
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: dirac_delta(1)
             0
             sage: dirac_delta(0)
@@ -139,12 +146,12 @@ class FunctionDiracDelta(BuiltinFunction):
 
         Evaluation test::
 
-            sage: dirac_delta(x).subs(x=1)
+            sage: dirac_delta(x).subs(x=1)                                              # needs sage.symbolic
             0
         """
         try:
             return self._evalf_(x)
-        except (TypeError,ValueError):      # x is symbolic
+        except (TypeError, ValueError):      # x is symbolic
             pass
         return None
 
@@ -152,8 +159,8 @@ class FunctionDiracDelta(BuiltinFunction):
         """
         TESTS::
 
-            sage: h(x) = dirac_delta(x)
-            sage: h(pi).numerical_approx()
+            sage: h(x) = dirac_delta(x)                                                 # needs sage.symbolic
+            sage: h(pi).numerical_approx()                                              # needs sage.symbolic
             0.000000000000000
         """
         approx_x = ComplexIntervalField()(x)
@@ -164,7 +171,9 @@ class FunctionDiracDelta(BuiltinFunction):
                 return 0
         raise ValueError("Numeric evaluation of symbolic expression")
 
+
 dirac_delta = FunctionDiracDelta()
+
 
 class FunctionHeaviside(GinacFunction):
     r"""
@@ -172,7 +181,7 @@ class FunctionHeaviside(GinacFunction):
 
     INPUT:
 
-    -  ``x`` - a real number or a symbolic expression
+    -  ``x`` -- a real number or a symbolic expression
 
     DEFINITION:
 
@@ -184,6 +193,7 @@ class FunctionHeaviside(GinacFunction):
 
     EXAMPLES::
 
+        sage: # needs sage.symbolic
         sage: heaviside(-1)
         0
         sage: heaviside(1)
@@ -193,23 +203,24 @@ class FunctionHeaviside(GinacFunction):
         sage: heaviside(x)
         heaviside(x)
 
-        sage: heaviside(-1/2)
+        sage: heaviside(-1/2)                                                           # needs sage.symbolic
         0
-        sage: heaviside(exp(-1000000000000000000000))
+        sage: heaviside(exp(-1000000000000000000000))                                   # needs sage.symbolic
         1
 
     TESTS::
 
-        sage: heaviside(x)._sympy_()
+        sage: heaviside(x)._sympy_()                                                    # needs sympy sage.symbolic
         Heaviside(x)
-        sage: heaviside(x).subs(x=1)
+        sage: heaviside(x).subs(x=1)                                                    # needs sage.symbolic
         1
-        sage: heaviside(x).subs(x=-1)
+        sage: heaviside(x).subs(x=-1)                                                   # needs sage.symbolic
         0
 
     ::
 
-        sage: ex = heaviside(x)+1
+        sage: # needs sage.symbolic
+        sage: ex = heaviside(x) + 1
         sage: t = loads(dumps(ex)); t
         heaviside(x) + 1
         sage: bool(t == ex)
@@ -228,10 +239,11 @@ class FunctionHeaviside(GinacFunction):
 
         INPUT:
 
-        -  ``x`` - a real number or a symbolic expression
+        -  ``x`` -- a real number or a symbolic expression
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: heaviside(-1)
             0
             sage: heaviside(1)
@@ -242,19 +254,19 @@ class FunctionHeaviside(GinacFunction):
             heaviside(x)
             sage: latex(heaviside(x))
             H\left(x\right)
-            sage: heaviside(x)._sympy_()
+            sage: heaviside(x)._sympy_()                                                # needs sympy
             Heaviside(x)
-            sage: heaviside(x)._giac_()
-            Heaviside(x)
+            sage: heaviside(x)._giac_()                                                 # needs sage.libs.giac
+            Heaviside(sageVARx)
             sage: h(x) = heaviside(x)
             sage: h(pi).numerical_approx()
             1.00000000000000
         """
         GinacFunction.__init__(self, "heaviside", latex_name="H",
-                                 conversions=dict(maxima='hstep',
-                                                  mathematica='HeavisideTheta',
-                                                  sympy='Heaviside',
-                                                  giac='Heaviside'))
+                               conversions=dict(maxima='hstep',
+                                                mathematica='HeavisideTheta',
+                                                sympy='Heaviside',
+                                                giac='Heaviside'))
 
     def _derivative_(self, x, diff_param=None):
         """
@@ -262,12 +274,14 @@ class FunctionHeaviside(GinacFunction):
 
         EXAMPLES::
 
-            sage: heaviside(x).diff(x)
+            sage: heaviside(x).diff(x)                                                  # needs sage.symbolic
             dirac_delta(x)
         """
         return dirac_delta(x)
 
+
 heaviside = FunctionHeaviside()
+
 
 class FunctionUnitStep(GinacFunction):
     r"""
@@ -275,7 +289,7 @@ class FunctionUnitStep(GinacFunction):
 
     INPUT:
 
-    -  ``x`` - a real number or a symbolic expression
+    -  ``x`` -- a real number or a symbolic expression
 
     DEFINITION:
 
@@ -287,6 +301,7 @@ class FunctionUnitStep(GinacFunction):
 
     EXAMPLES::
 
+        sage: # needs sage.symbolic
         sage: unit_step(-1)
         0
         sage: unit_step(1)
@@ -300,6 +315,7 @@ class FunctionUnitStep(GinacFunction):
 
     TESTS::
 
+        sage: # needs sage.symbolic
         sage: unit_step(x).subs(x=1)
         1
         sage: unit_step(x).subs(x=0)
@@ -314,10 +330,11 @@ class FunctionUnitStep(GinacFunction):
 
         INPUT:
 
-        -  ``x`` - a real number or a symbolic expression
+        -  ``x`` -- a real number or a symbolic expression
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: unit_step(-1)
             0
             sage: unit_step(1)
@@ -331,13 +348,13 @@ class FunctionUnitStep(GinacFunction):
 
         TESTS::
 
-            sage: t = loads(dumps(unit_step(x)+1)); t
+            sage: t = loads(dumps(unit_step(x) + 1)); t                                 # needs sage.symbolic
             unit_step(x) + 1
-            sage: t.subs(x=0)
+            sage: t.subs(x=0)                                                           # needs sage.symbolic
             2
         """
         GinacFunction.__init__(self, "unit_step", latex_name=r"\mathrm{u}",
-                                   conversions=dict(mathematica='UnitStep'))
+                               conversions=dict(mathematica='UnitStep'))
 
     def _derivative_(self, x, diff_param=None):
         """
@@ -345,12 +362,14 @@ class FunctionUnitStep(GinacFunction):
 
         EXAMPLES::
 
-            sage: unit_step(x).diff(x)
+            sage: unit_step(x).diff(x)                                                  # needs sage.symbolic
             dirac_delta(x)
         """
         return dirac_delta(x)
 
+
 unit_step = FunctionUnitStep()
+
 
 class FunctionSignum(BuiltinFunction):
     r"""
@@ -358,7 +377,7 @@ class FunctionSignum(BuiltinFunction):
 
     INPUT:
 
-    -  ``x`` - a real number or a symbolic expression
+    -  ``x`` -- a real number or a symbolic expression
 
     DEFINITION:
 
@@ -376,7 +395,7 @@ class FunctionSignum(BuiltinFunction):
         1
         sage: sgn(0)
         0
-        sage: sgn(x)
+        sage: sgn(x)                                                                    # needs sage.symbolic
         sgn(x)
 
     We can also use ``sign``::
@@ -385,20 +404,25 @@ class FunctionSignum(BuiltinFunction):
         1
         sage: sign(0)
         0
-        sage: a = AA(-5).nth_root(7)
-        sage: sign(a)
+        sage: a = AA(-5).nth_root(7)                                                    # needs sage.rings.number_field
+        sage: sign(a)                                                                   # needs sage.rings.number_field
         -1
 
     TESTS:
 
-    Check if conversions to sympy and others work (:trac:`11921`)::
+    Check if conversions to sympy and others work (:issue:`11921`)::
 
-        sage: sgn(x)._sympy_()
+        sage: sgn(x)._sympy_()                                                          # needs sympy sage.symbolic
         sign(x)
-        sage: sgn(x)._fricas_init_()
-        'sign(x)'
-        sage: sgn(x)._giac_()
-        sign(x)
+        sage: sgn(x)._fricas_init_()                                                    # needs sage.symbolic
+        '(x+->abs(x)/x)(x)'
+        sage: sgn(x)._giac_()                                                           # needs sage.libs.giac sage.symbolic
+        sign(sageVARx)
+
+    Test for :issue:`31085`::
+
+        sage: fricas(sign(x)).eval(x=-3)        # optional - fricas                     # needs sage.symbolic
+        - 1
 
     REFERENCES:
 
@@ -417,14 +441,15 @@ class FunctionSignum(BuiltinFunction):
             1
             sage: sgn(0)
             0
-            sage: sgn(x)
+            sage: sgn(x)                                                                # needs sage.symbolic
             sgn(x)
-            sage: sgn(x)._sympy_()
+            sage: sgn(x)._sympy_()                                                      # needs sympy sage.symbolic
             sign(x)
         """
         BuiltinFunction.__init__(self, "sgn", latex_name=r"\mathrm{sgn}",
                 conversions=dict(maxima='signum', mathematica='Sign',
-                                 sympy='sign', giac='sign', fricas='sign'),
+                                 sympy='sign', giac='sign',
+                                 fricas='(x+->abs(x)/x)'),
                 alt_name="sign")
 
     def _eval_(self, x):
@@ -438,18 +463,18 @@ class FunctionSignum(BuiltinFunction):
             1
             sage: sgn(0)
             0
-            sage: sgn(x)
+            sage: sgn(x)                                                                # needs sage.symbolic
             sgn(x)
-            sage: sgn(-exp(-10000000000000000000))
+            sage: sgn(-exp(-10000000000000000000))                                      # needs sage.symbolic
             -1
 
         Evaluation test::
 
-            sage: sgn(x).subs(x=1)
+            sage: sgn(x).subs(x=1)                                                      # needs sage.symbolic
             1
-            sage: sgn(x).subs(x=0)
+            sage: sgn(x).subs(x=0)                                                      # needs sage.symbolic
             0
-            sage: sgn(x).subs(x=-1)
+            sage: sgn(x).subs(x=-1)                                                     # needs sage.symbolic
             -1
 
         More tests::
@@ -458,14 +483,14 @@ class FunctionSignum(BuiltinFunction):
             1
             sage: sign(RDF(2))
             1
-            sage: sign(AA(-2))
+            sage: sign(AA(-2))                                                          # needs sage.rings.number_field
             -1
-            sage: sign(AA(0))
+            sage: sign(AA(0))                                                           # needs sage.rings.number_field
             0
         """
         try:
             return self._evalf_(x)
-        except (TypeError,ValueError):      # x is symbolic
+        except (TypeError, ValueError):      # x is symbolic
             pass
         return None
 
@@ -473,8 +498,9 @@ class FunctionSignum(BuiltinFunction):
         """
         TESTS:
 
-        Check that :trac:`16587` is fixed::
+        Check that :issue:`16587` is fixed::
 
+            sage: # needs sage.symbolic
             sage: M = sgn(3/2, hold=True); M
             sgn(3/2)
             sage: M.n()
@@ -483,16 +509,16 @@ class FunctionSignum(BuiltinFunction):
             sage: h(pi).numerical_approx()
             1.00000000000000
         """
-        if hasattr(x,'sign'): # First check if x has a sign method
+        if hasattr(x, 'sign'):  # First check if x has a sign method
             return x.sign()
-        if hasattr(x,'sgn'): # or a sgn method
+        if hasattr(x, 'sgn'):  # or a sgn method
             return x.sgn()
         approx_x = ComplexIntervalField()(x)
         if bool(approx_x.imag() == 0):      # x is real
             if bool(approx_x.real() == 0):  # x is zero
                 return ZZ(0)
             # Now we have a non-zero real
-            if bool((approx_x**(0.5)).imag() == 0): # Check: x > 0
+            if bool((approx_x**(0.5)).imag() == 0):  # Check: x > 0
                 return ZZ(1)
             else:
                 return ZZ(-1)
@@ -504,14 +530,16 @@ class FunctionSignum(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: sgn(x).diff(x)
+            sage: sgn(x).diff(x)                                                        # needs sage.symbolic
             2*dirac_delta(x)
         """
         assert diff_param == 0
-        return 2*dirac_delta(x)
+        return 2 * dirac_delta(x)
+
 
 sgn = FunctionSignum()
 sign = sgn
+
 
 class FunctionKroneckerDelta(BuiltinFunction):
     r"""
@@ -519,8 +547,8 @@ class FunctionKroneckerDelta(BuiltinFunction):
 
     INPUT:
 
-    -  ``m`` - a number or a symbolic expression
-    -  ``n`` - a number or a symbolic expression
+    -  ``m`` -- a number or a symbolic expression
+    -  ``n`` -- a number or a symbolic expression
 
     DEFINITION:
 
@@ -531,12 +559,12 @@ class FunctionKroneckerDelta(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: kronecker_delta(1,2)
+        sage: kronecker_delta(1, 2)                                                     # needs sage.rings.complex_interval_field
         0
-        sage: kronecker_delta(1,1)
+        sage: kronecker_delta(1, 1)                                                     # needs sage.rings.complex_interval_field
         1
-        sage: m,n=var('m,n')
-        sage: kronecker_delta(m,n)
+        sage: m, n = var('m,n')                                                         # needs sage.symbolic
+        sage: kronecker_delta(m, n)                                                     # needs sage.symbolic
         kronecker_delta(m, n)
 
     REFERENCES:
@@ -550,18 +578,18 @@ class FunctionKroneckerDelta(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: kronecker_delta(1,2)
+            sage: kronecker_delta(1, 2)                                                 # needs sage.rings.complex_interval_field
             0
-            sage: kronecker_delta(1,1)
+            sage: kronecker_delta(1, 1)                                                 # needs sage.rings.complex_interval_field
             1
-            sage: y = var('y')
-            sage: kronecker_delta(x, y)._sympy_()
+            sage: y = var('y')                                                          # needs sage.symbolic
+            sage: kronecker_delta(x, y)._sympy_()                                       # needs sympy sage.symbolic
             KroneckerDelta(x, y)
         """
         BuiltinFunction.__init__(self, "kronecker_delta", nargs=2,
-                                        conversions=dict(maxima='kron_delta',
-                                        mathematica='KroneckerDelta',
-                                        sympy='KroneckerDelta'))
+                                 conversions=dict(maxima='kron_delta',
+                                                  mathematica='KroneckerDelta',
+                                                  sympy='KroneckerDelta'))
 
     def _eval_(self, m, n):
         """
@@ -569,30 +597,31 @@ class FunctionKroneckerDelta(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: kronecker_delta(1,2)
+            sage: kronecker_delta(1, 2)                                                 # needs sage.rings.complex_interval_field
             0
-            sage: kronecker_delta(1,1)
+            sage: kronecker_delta(1, 1)                                                 # needs sage.rings.complex_interval_field
             1
 
         Kronecker delta is a symmetric function. We keep arguments sorted to
         ensure that k_d(m, n) - k_d(n, m) cancels automatically::
 
-            sage: x,y=var('x,y')
+            sage: # needs sage.symbolic
+            sage: x, y = var('x,y')
             sage: kronecker_delta(x, y)
             kronecker_delta(x, y)
             sage: kronecker_delta(y, x)
             kronecker_delta(x, y)
-            sage: kronecker_delta(x,2*x)
+            sage: kronecker_delta(x, 2*x)
             kronecker_delta(2*x, x)
 
         Evaluation test::
 
-            sage: kronecker_delta(1,x).subs(x=1)
+            sage: kronecker_delta(1, x).subs(x=1)                                       # needs sage.symbolic
             1
         """
         try:
-            return self._evalf_(m,n)
-        except (TypeError,ValueError):      # x is symbolic
+            return self._evalf_(m, n)
+        except (TypeError, ValueError):      # x is symbolic
             pass
         return None
 
@@ -600,23 +629,20 @@ class FunctionKroneckerDelta(BuiltinFunction):
         """
         TESTS::
 
-            sage: h(x) = kronecker_delta(3,x)
-            sage: h(pi).numerical_approx()
+            sage: h(x) = kronecker_delta(3, x)                                          # needs sage.symbolic
+            sage: h(pi).numerical_approx()                                              # needs sage.symbolic
             0.000000000000000
         """
         if bool(repr(m) > repr(n)):
             return kronecker_delta(n, m)
-
         x = m - n
         approx_x = ComplexIntervalField()(x)
-        if bool(approx_x.imag() == 0):      # x is real
-            if bool(approx_x.real() == 0):  # x is zero
+        if approx_x.imag() == 0:      # x is real
+            if approx_x.real() == 0:  # x is zero
                 return 1
             else:
                 return 0
-        else:
-            return 0            # x is complex
-        raise ValueError("Numeric evaluation of symbolic expression")
+        return 0            # x is complex
 
     def _derivative_(self, *args, **kwds):
         """
@@ -624,7 +650,7 @@ class FunctionKroneckerDelta(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: kronecker_delta(x,1).diff(x)
+            sage: kronecker_delta(x, 1).diff(x)                                         # needs sage.symbolic
             0
         """
         # Kronecker delta is non-zero (but finite) only in the set of
@@ -640,11 +666,11 @@ class FunctionKroneckerDelta(BuiltinFunction):
         EXAMPLES::
 
             sage: from sage.misc.latex import latex
-            sage: m,n=var('m,n')
-            sage: latex(kronecker_delta(m,n))
+            sage: m, n = var('m,n')                                                     # needs sage.symbolic
+            sage: latex(kronecker_delta(m, n))                                          # needs sage.symbolic
             \delta_{m,n}
         """
-        from sage.misc.latex import latex
         return r"\delta_{%s,%s}" % (latex(m), latex(n))
+
 
 kronecker_delta = FunctionKroneckerDelta()

@@ -1,5 +1,4 @@
 # distutils: language = c++
-
 """
 Example of a class wrapping an STL vector
 

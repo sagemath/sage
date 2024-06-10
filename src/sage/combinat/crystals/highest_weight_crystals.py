@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Highest weight crystals
 """
@@ -19,7 +20,6 @@ Highest weight crystals
 
 from sage.categories.classical_crystals import ClassicalCrystals
 from sage.structure.parent import Parent
-from sage.combinat.partition import Partition
 from sage.combinat.crystals.letters import CrystalOfLetters
 from sage.combinat.crystals.tensor_product import TensorProductOfCrystals, \
     TensorProductOfRegularCrystalsElement
@@ -30,6 +30,8 @@ from sage.combinat.crystals.littelmann_path import CrystalOfLSPaths
 from sage.combinat.crystals.generalized_young_walls import CrystalOfGeneralizedYoungWalls
 from sage.combinat.crystals.monomial_crystals import CrystalOfNakajimaMonomials
 from sage.combinat.rigged_configurations.rc_crystal import CrystalOfRiggedConfigurations
+from sage.rings.integer_ring import ZZ
+
 
 def HighestWeightCrystal(dominant_weight, model=None):
     r"""
@@ -77,6 +79,11 @@ def HighestWeightCrystal(dominant_weight, model=None):
         sage: wt = 5*La[1] + La[2]
         sage: crystals.HighestWeight(wt)
         The crystal of tableaux of type ['C', 2] and shape(s) [[6, 1]]
+
+        sage: La = RootSystem(['B',2]).weight_lattice().fundamental_weights()
+        sage: wt = La[1] + La[2]
+        sage: crystals.HighestWeight(wt)
+        The crystal of tableaux of type ['B', 2] and shape(s) [[3/2, 1/2]]
 
     Some type `E` examples::
 
@@ -157,6 +164,35 @@ def HighestWeightCrystal(dominant_weight, model=None):
         sage: crystals.HighestWeight(wt, model='GeneralizedYoungWalls')
         Highest weight crystal of generalized Young walls of
          Cartan type ['A', 3, 1] and highest weight Lambda[0] + Lambda[2]
+
+    TESTS:
+
+    Check that the correct crystal is constructed for the fundamental weights::
+
+        sage: for ct in CartanType.samples(finite=True, crystallographic=True):  # long time
+        ....:     L = ct.root_system().weight_lattice()
+        ....:     La = L.fundamental_weights()
+        ....:     for model in ['Tableaux', 'NakajimaMonomials', 'AlcovePaths', 'RiggedConfigurations']:
+        ....:         if model == 'Tableaux' and ct.type() in ["E", "F"]:
+        ....:             continue
+        ....:         for wt in La:
+        ....:             C = crystals.HighestWeight(wt, model=model)
+        ....:             assert L.weyl_dimension(wt) == C.cardinality(), "wrong cardinality in %s, weight %s" % (ct, wt)
+        ....:             assert C.highest_weight_vector().weight() == wt, "wrong weight in %s, weight %s" % (ct, wt)
+
+    Same thing for weights constructed from the simple roots::
+
+        sage: for ct in CartanType.samples(finite=True, crystallographic=True):
+        ....:     L = ct.root_system().root_space()
+        ....:     La = L.fundamental_weights_from_simple_roots()
+        ....:     for model in ['Tableaux', 'NakajimaMonomials', 'AlcovePaths', 'RiggedConfigurations']:
+        ....:         if model == 'Tableaux' and ct.type() in ["E", "F"]:
+        ....:             continue
+        ....:         for wt in La:
+        ....:             C1 = crystals.HighestWeight(wt.to_ambient().to_weight_space(ZZ), model=model)
+        ....:             C2 = crystals.HighestWeight(wt, model=model)
+        ....:             assert C1 == C2
+
     """
     cartan_type = dominant_weight.parent().cartan_type()
     if model is None:
@@ -170,10 +206,19 @@ def HighestWeightCrystal(dominant_weight, model=None):
         else:
             model = 'LSPaths'
 
+    # Make sure dominant_weight in the weight space
+    if cartan_type.is_finite():
+        dominant_weight = dominant_weight.to_ambient().to_weight_space(ZZ)
+
     if model == 'Tableaux':
-        sh = sum([[i]*c for i,c in dominant_weight], [])
-        sh = Partition(reversed(sh))
-        return CrystalOfTableaux(cartan_type, shape=sh.conjugate())
+        # we rely on the specific choice of positive roots here
+        # except in type G_2, the fundamental weights are realized by
+        # vectors with weakly decreasing nonnegative integer (or in
+        # type B_n and D_n, half-integer) entries
+        sh = dominant_weight.to_ambient().to_vector()
+        if cartan_type.type() == "G":
+            sh = (-sh)[2:0:-1]
+        return CrystalOfTableaux(cartan_type, shape=sh)
 
     if model == 'TypeE':
         if not cartan_type.is_finite() or cartan_type.type() != 'E':
@@ -185,10 +230,7 @@ def HighestWeightCrystal(dominant_weight, model=None):
         raise NotImplementedError
 
     if model == 'NakajimaMonomials':
-        # Make sure it's in the weight lattice
-        P = dominant_weight.parent().root_system.weight_lattice()
-        wt = P.sum_of_terms((i, c) for i,c in dominant_weight)
-        return CrystalOfNakajimaMonomials(cartan_type, wt)
+        return CrystalOfNakajimaMonomials(cartan_type, dominant_weight)
 
     if model == 'LSPaths':
         # Make sure it's in the (extended) weight space
@@ -200,10 +242,7 @@ def HighestWeightCrystal(dominant_weight, model=None):
         return CrystalOfLSPaths(wt)
 
     if model == 'AlcovePaths':
-        # Make sure it's in the weight space
-        P = dominant_weight.parent().root_system.weight_space()
-        wt = P.sum_of_terms((i, c) for i,c in dominant_weight)
-        return CrystalOfAlcovePaths(wt, highest_weight_crystal=True)
+        return CrystalOfAlcovePaths(dominant_weight, highest_weight_crystal=True)
 
     if model == 'GeneralizedYoungWalls':
         if not cartan_type.is_affine():
@@ -216,12 +255,10 @@ def HighestWeightCrystal(dominant_weight, model=None):
         return CrystalOfGeneralizedYoungWalls(cartan_type.rank()-1, wt)
 
     if model == 'RiggedConfigurations':
-        # Make sure it's in the weight lattice
-        P = dominant_weight.parent().root_system.weight_lattice()
-        wt = P.sum_of_terms((i, c) for i,c in dominant_weight)
-        return CrystalOfRiggedConfigurations(cartan_type, wt)
+        return CrystalOfRiggedConfigurations(cartan_type, dominant_weight)
 
     raise ValueError("invalid model")
+
 
 class FiniteDimensionalHighestWeightCrystal_TypeE(TensorProductOfCrystals):
     """
@@ -230,6 +267,7 @@ class FiniteDimensionalHighestWeightCrystal_TypeE(TensorProductOfCrystals):
     Subclasses should setup an attribute column_crystal in their
     ``__init__`` method before calling the ``__init__`` method of this class.
     """
+
     def __init__(self, dominant_weight):
         """
         EXAMPLES::
@@ -251,7 +289,7 @@ class FiniteDimensionalHighestWeightCrystal_TypeE(TensorProductOfCrystals):
         self._highest_weight = dominant_weight
         assert dominant_weight.is_dominant()
         self.rename()
-        Parent.__init__(self, category = ClassicalCrystals())
+        Parent.__init__(self, category=ClassicalCrystals())
         self.module_generators = [self.module_generator()]
 
     def _repr_(self):
@@ -296,6 +334,7 @@ class FiniteDimensionalHighestWeightCrystal_TypeE(TensorProductOfCrystals):
         tensor = sum(( [self.column_crystal[i]]*dominant_weight.coefficient(i) for i in dominant_weight.support()), [])
         return self._element_constructor_(*[B.module_generators[0] for B in tensor])
 
+
 class FiniteDimensionalHighestWeightCrystal_TypeE6(FiniteDimensionalHighestWeightCrystal_TypeE):
     r"""
     Class of finite dimensional highest weight crystals of type `E_6`.
@@ -339,7 +378,7 @@ class FiniteDimensionalHighestWeightCrystal_TypeE6(FiniteDimensionalHighestWeigh
             2430
         """
         B1 = CrystalOfLetters(['E',6])
-        B6 = CrystalOfLetters(['E',6], dual = True)
+        B6 = CrystalOfLetters(['E',6], dual=True)
         self.column_crystal = {1 : B1, 6 : B6,
                                4 : TensorProductOfCrystals(B1,B1,B1,generators=[[B1([-3,4]),B1([-1,3]),B1([1])]]),
                                3 : TensorProductOfCrystals(B1,B1,generators=[[B1([-1,3]),B1([1])]]),

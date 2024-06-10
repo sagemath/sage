@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Finite dimensional bialgebras with basis
 """
@@ -8,6 +9,7 @@ Finite dimensional bialgebras with basis
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
+
 
 def FiniteDimensionalBialgebrasWithBasis(base_ring):
     """
@@ -27,5 +29,5 @@ def FiniteDimensionalBialgebrasWithBasis(base_ring):
 
         sage: TestSuite(C).run()
     """
-    from sage.categories.all import BialgebrasWithBasis
+    from sage.categories.bialgebras_with_basis import BialgebrasWithBasis
     return BialgebrasWithBasis(base_ring).FiniteDimensional()

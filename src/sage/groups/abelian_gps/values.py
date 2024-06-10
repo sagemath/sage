@@ -16,7 +16,7 @@ as abstract Abelian group elements or as particular numbers in the
 number field. The :func:`AbelianGroupWithValues` keeps track of these
 associated values.
 
-.. warning::
+.. WARNING::
 
     Really, this requires a group homomorphism from the abstract
     Abelian group to the set of values. This is only checked if you
@@ -48,6 +48,7 @@ The elements come with a coercion embedding into the
 :meth:`~AbelianGroupWithValues_class.values_group`, so you can use the
 group elements instead of the values::
 
+    sage: # needs sage.rings.number_field
     sage: CF3.<zeta> = CyclotomicField(3)
     sage: Z3.<g> = AbelianGroupWithValues([zeta], [3])
     sage: Z3.values_group()
@@ -69,9 +70,8 @@ group elements instead of the values::
 #
 #                  http://www.gnu.org/licenses/
 ##########################################################################
-from __future__ import print_function
 
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.rings.integer import Integer
 from sage.categories.morphism import Morphism
 from sage.groups.abelian_gps.abelian_group import AbelianGroup_class, _normalize
@@ -85,10 +85,10 @@ def AbelianGroupWithValues(values, n, gens_orders=None, names='f', check=False, 
     INPUT:
 
     - ``values`` -- a list/tuple/iterable of values that you want to
-      associate to the generators.
+      associate to the generators
 
     - ``n`` -- integer (optional). If not specified, will be derived
-       from ``gens_orders``.
+       from ``gens_orders``
 
     - ``gens_orders`` -- a list of non-negative integers in the form
        `[a_0, a_1, \dots, a_{n-1}]`, typically written in increasing
@@ -156,15 +156,16 @@ class AbelianGroupWithValuesEmbedding(Morphism):
     - ``domain`` -- a :class:`AbelianGroupWithValues_class`
 
     - ``codomain`` -- the values group (need not be in the category of
-      groups, e.g. symbolic ring).
+      groups, e.g. symbolic ring)
 
     EXAMPLES::
 
+        sage: # needs sage.symbolic
         sage: Z4.<g> = AbelianGroupWithValues([I], [4])
         sage: embedding = Z4.values_embedding();  embedding
         Generic morphism:
           From: Multiplicative Abelian group isomorphic to C4
-          To:   Symbolic Ring
+          To:   Number Field in I with defining polynomial x^2 + 1 with I = 1*I
         sage: embedding(1)
         1
         sage: embedding(g)
@@ -175,16 +176,16 @@ class AbelianGroupWithValuesEmbedding(Morphism):
 
     def __init__(self, domain, codomain):
         """
-        Construct the morphism
+        Construct the morphism.
 
         TESTS::
 
-            sage: Z4 = AbelianGroupWithValues([I], [4])
+            sage: Z4 = AbelianGroupWithValues([I], [4])                                 # needs sage.symbolic
             sage: from sage.groups.abelian_gps.values import AbelianGroupWithValuesEmbedding
-            sage: AbelianGroupWithValuesEmbedding(Z4, Z4.values_group())
+            sage: AbelianGroupWithValuesEmbedding(Z4, Z4.values_group())                # needs sage.symbolic
             Generic morphism:
               From: Multiplicative Abelian group isomorphic to C4
-              To:   Symbolic Ring
+              To:   Number Field in I with defining polynomial x^2 + 1 with I = 1*I
         """
         assert domain.values_group() is codomain
         from sage.categories.homset import Hom
@@ -192,18 +193,15 @@ class AbelianGroupWithValuesEmbedding(Morphism):
 
     def _call_(self, x):
         """
-        Return the value associated to ``x``
+        Return the value associated to ``x``.
 
         INPUT:
 
         - ``x`` -- a group element
 
-        OUTPUT:
-
-        Its value.
-
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: Z4.<g> = AbelianGroupWithValues([I], [4])
             sage: embedding = Z4.values_embedding()
             sage: embedding(g)
@@ -220,13 +218,13 @@ class AbelianGroupWithValuesElement(AbelianGroupElement):
 
     INPUT:
 
-    - ``exponents`` -- tuple of integers. The exponent vector defining
-      the group element.
+    - ``exponents`` -- tuple of integers; the exponent vector defining
+      the group element
 
-    - ``parent`` -- the parent.
+    - ``parent`` -- the parent
 
     - ``value`` -- the value assigned to the group element or ``None``
-      (default). In the latter case, the value is computed as needed.
+      (default); in the latter case, the value is computed as needed
 
     EXAMPLES::
 
@@ -237,7 +235,7 @@ class AbelianGroupWithValuesElement(AbelianGroupElement):
 
     def __init__(self, parent, exponents, value=None):
         """
-        Create an element
+        Create an element.
 
         EXAMPLES::
 
@@ -255,10 +253,8 @@ class AbelianGroupWithValuesElement(AbelianGroupElement):
         """
         Return the value of the group element.
 
-        OUTPUT:
-
-        The value according to the values for generators, see
-        :meth:`~AbelianGroupWithValues.gens_values`.
+        OUTPUT: the value according to the values for generators; see
+        :meth:`~AbelianGroupWithValues.gens_values`
 
         EXAMPLES::
 
@@ -273,7 +269,7 @@ class AbelianGroupWithValuesElement(AbelianGroupElement):
 
     def _div_(left, right):
         """
-        Divide ``left`` by ``right``
+        Divide ``left`` by ``right``.
 
         TESTS::
 
@@ -291,7 +287,7 @@ class AbelianGroupWithValuesElement(AbelianGroupElement):
 
     def _mul_(left, right):
         """
-        Multiply ``left`` and ``right``
+        Multiply ``left`` and ``right``.
 
         TESTS::
 
@@ -309,11 +305,11 @@ class AbelianGroupWithValuesElement(AbelianGroupElement):
 
     def __pow__(self, n):
         """
-        Exponentiate ``self``
+        Exponentiate ``self``.
 
         INPUT:
 
-        - ``n`` -- integer. The exponent.
+        - ``n`` -- integer; the exponent
 
         TESTS::
 
@@ -330,14 +326,14 @@ class AbelianGroupWithValuesElement(AbelianGroupElement):
         pow_self._value = pow(self.value(), m)
         return pow_self
 
-    def inverse(self):
+    def __invert__(self):
         """
         Return the inverse element.
 
         EXAMPLES::
 
             sage: G.<a,b> = AbelianGroupWithValues([2,-1], [0,4])
-            sage: a.inverse()
+            sage: a.inverse()   # indirect doctest
             a^-1
             sage: a.inverse().value()
             1/2
@@ -350,12 +346,9 @@ class AbelianGroupWithValuesElement(AbelianGroupElement):
             sage: (a*b).inverse().value()
             -1/2
         """
-        m = AbelianGroupElement.inverse(self)
+        m = AbelianGroupElement.__invert__(self)
         m._value = ~self.value()
         return m
-
-    __invert__ = inverse
-
 
 
 class AbelianGroupWithValues_class(AbelianGroup_class):
@@ -364,15 +357,15 @@ class AbelianGroupWithValues_class(AbelianGroup_class):
 
     INPUT:
 
-    - ``generator_orders`` -- tuple of integers. The orders of the
+    - ``generator_orders`` -- tuple of integers; the orders of the
       generators.
 
-    - ``names`` -- string or list of strings. The names for the generators.
+    - ``names`` -- string or list of strings; the names for the generators
 
-    - ``values`` -- Tuple the same length as the number of
-      generators. The values assigned to the generators.
+    - ``values`` -- tuple the same length as the number of
+      generators; the values assigned to the generators.
 
-    - ``values_group`` -- the common parent of the values.
+    - ``values_group`` -- the common parent of the values
 
     EXAMPLES::
 
@@ -383,7 +376,7 @@ class AbelianGroupWithValues_class(AbelianGroup_class):
 
     def __init__(self, generator_orders, names, values, values_group):
         """
-        The Python constructor
+        The Python constructor.
 
         TESTS::
 
@@ -413,15 +406,13 @@ class AbelianGroupWithValues_class(AbelianGroup_class):
 
         INPUT:
 
-        - ``i`` -- integer (default: 0). The index of the generator.
+        - ``i`` -- integer (default: 0); the index of the generator
 
-        OUTPUT:
-
-        A group element.
+        OUTPUT: a group element
 
         EXAMPLES::
 
-            sage: F = AbelianGroupWithValues([1,2,3,4,5], 5,[],names='a')
+            sage: F = AbelianGroupWithValues([1,2,3,4,5], 5, [], names='a')
             sage: F.0
             a0
             sage: F.0.value()
@@ -443,9 +434,7 @@ class AbelianGroupWithValues_class(AbelianGroup_class):
         """
         Return the values associated to the generators.
 
-        OUTPUT:
-
-        A tuple.
+        OUTPUT: tuple
 
         EXAMPLES::
 
@@ -466,10 +455,8 @@ class AbelianGroupWithValues_class(AbelianGroup_class):
         units in a ring then the :meth:`values_group` would be the
         whole ring.
 
-        OUTPUT:
-
-        The common parent of the values, containing the group
-        generated by all values.
+        OUTPUT: the common parent of the values, containing the group
+        generated by all values
 
         EXAMPLES::
 
@@ -477,9 +464,9 @@ class AbelianGroupWithValues_class(AbelianGroup_class):
             sage: G.values_group()
             Integer Ring
 
-            sage: Z4 = AbelianGroupWithValues([I], [4])
-            sage: Z4.values_group()
-            Symbolic Ring
+            sage: Z4 = AbelianGroupWithValues([I], [4])                                 # needs sage.symbolic
+            sage: Z4.values_group()                                                     # needs sage.symbolic
+            Number Field in I with defining polynomial x^2 + 1 with I = 1*I
         """
         return self._values_group
 
@@ -487,16 +474,14 @@ class AbelianGroupWithValues_class(AbelianGroup_class):
         """
         Return the embedding of ``self`` in :meth:`values_group`.
 
-        OUTPUT:
-
-        A morphism.
+        OUTPUT: a morphism
 
         EXAMPLES::
 
-            sage: Z4 = AbelianGroupWithValues([I], [4])
-            sage: Z4.values_embedding()
+            sage: Z4 = AbelianGroupWithValues([I], [4])                                 # needs sage.symbolic
+            sage: Z4.values_embedding()                                                 # needs sage.symbolic
             Generic morphism:
               From: Multiplicative Abelian group isomorphic to C4
-              To:   Symbolic Ring
+              To:   Number Field in I with defining polynomial x^2 + 1 with I = 1*I
         """
         return AbelianGroupWithValuesEmbedding(self, self.values_group())

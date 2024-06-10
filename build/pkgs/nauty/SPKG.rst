@@ -1,5 +1,5 @@
-Nauty
-=====
+nauty: Find automorphism groups of graphs, generate non-isomorphic graphs
+=========================================================================
 
 Description
 -----------
@@ -28,10 +28,10 @@ any changes.
 Upstream Contact
 ----------------
 
-Brendan D. McKay Computer Science Department Australian National
+Brendan D. McKay, Computer Science Department Australian National
 University bdm@cs.anu.edu.au
 
-Adolfo Piperno Dipartimento di Informatica Sapienza - Università di Roma
+Adolfo Piperno, Dipartimento di Informatica Sapienza - Università di Roma
 piperno@di.uniroma1.it
 
 See http://cs.anu.edu.au/~bdm/nauty/ Or http://pallini.di.uniroma1.it/

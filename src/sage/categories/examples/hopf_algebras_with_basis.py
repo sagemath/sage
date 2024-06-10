@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-categories
+# sage.doctest: needs sage.groups sage.modules
 r"""
 Examples of Hopf algebras with basis
 """
@@ -10,9 +12,10 @@ Examples of Hopf algebras with basis
 
 from sage.misc.cachefunc import cached_method
 from sage.sets.family import Family
-from sage.categories.all import HopfAlgebrasWithBasis
+from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.categories.all import tensor
+from sage.categories.tensor import tensor
+
 
 class MyGroupAlgebra(CombinatorialFreeModule):
     r"""
@@ -28,11 +31,12 @@ class MyGroupAlgebra(CombinatorialFreeModule):
             sage: from sage.categories.examples.hopf_algebras_with_basis import MyGroupAlgebra
             sage: A = MyGroupAlgebra(QQ, DihedralGroup(6))
             sage: A.category()
-            Category of finite dimensional hopf algebras with basis over Rational Field
+            Category of finite dimensional Hopf algebras with basis over Rational Field
             sage: TestSuite(A).run()
         """
         self._group = G
-        CombinatorialFreeModule.__init__(self, R, G, category = HopfAlgebrasWithBasis(R))
+        CombinatorialFreeModule.__init__(self, R, G,
+                                         category=HopfAlgebrasWithBasis(R))
 
     def _repr_(self):
         """
@@ -41,7 +45,7 @@ class MyGroupAlgebra(CombinatorialFreeModule):
             sage: HopfAlgebrasWithBasis(QQ).example() # indirect doctest
             An example of Hopf algebra with basis: the group algebra of the Dihedral group of order 6 as a permutation group over Rational Field
         """
-        return "An example of Hopf algebra with basis: the group algebra of the %s over %s"%(self._group, self.base_ring())
+        return "An example of Hopf algebra with basis: the group algebra of the %s over %s" % (self._group, self.base_ring())
 
     @cached_method
     def one_basis(self):

@@ -1,0 +1,13 @@
+latexmk
+texlive
+texlive-collection-latexextra
+# language support for the pdf documentation
+texlive-collection-langcyrillic
+texlive-collection-langeuropean
+texlive-collection-langfrench
+texlive-collection-langgerman
+texlive-collection-langitalian
+texlive-collection-langjapanese
+texlive-collection-langpolish
+texlive-collection-langportuguese
+texlive-collection-langspanish

@@ -1,0 +1,2 @@
+texinfo
+info

@@ -1,2 +1,1 @@
-from __future__ import absolute_import
-from .huffman import Huffman
+from sage.coding.source_coding.huffman import Huffman

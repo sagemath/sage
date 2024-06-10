@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.graphs sage.rings.number_field
 r"""
 Right-Angled Artin Groups
 
@@ -13,19 +13,15 @@ AUTHORS:
 - Travis Scrimshaw (2018-02-05): Made compatible with
   :class:`~sage.groups.artin.ArtinGroup`
 """
-
-#****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2013,2018 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-from __future__ import division, absolute_import, print_function
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.libs.gap.element import GapElement
 
 from sage.misc.cachefunc import cached_method
@@ -39,10 +35,12 @@ from sage.combinat.root_system.coxeter_group import CoxeterGroup
 
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.categories.fields import Fields
+from sage.categories.groups import Groups
 from sage.categories.algebras_with_basis import AlgebrasWithBasis
-from sage.algebras.clifford_algebra import CliffordAlgebraElement
+from sage.algebras.clifford_algebra_element import CohomologyRAAGElement
 from sage.typeset.ascii_art import ascii_art
 from sage.typeset.unicode_art import unicode_art
+
 
 class RightAngledArtinGroup(ArtinGroup):
     r"""
@@ -172,12 +170,12 @@ class RightAngledArtinGroup(ArtinGroup):
             if ',' in names:
                 names = [x.strip() for x in names.split(',')]
             else:
-                names = [names + str(v) for v in G.vertices()]
+                names = [names + str(v) for v in G.vertices(sort=False)]
         names = tuple(names)
         if len(names) != G.num_verts():
             raise ValueError("the number of generators must match the"
                              " number of vertices of the defining graph")
-        return super(RightAngledArtinGroup, cls).__classcall__(cls, G, names)
+        return super().__classcall__(cls, G, names)
 
     def __init__(self, G, names):
         """
@@ -187,23 +185,26 @@ class RightAngledArtinGroup(ArtinGroup):
 
             sage: G = RightAngledArtinGroup(graphs.CycleGraph(5))
             sage: TestSuite(G).run()
+            sage: G.category()
+            Category of infinite groups
         """
         self._graph = G
         F = FreeGroup(names=names)
         CG = Graph(G).complement()  # Make sure it's mutable
         CG.relabel()  # Standardize the labels
-        cm = [[-1]*CG.num_verts() for _ in range(CG.num_verts())]
+        cm = [[-1] * CG.num_verts() for _ in range(CG.num_verts())]
         for i in range(CG.num_verts()):
             cm[i][i] = 1
-        for u,v in CG.edge_iterator(labels=False):
+        for u, v in CG.edge_iterator(labels=False):
             cm[u][v] = 2
             cm[v][u] = 2
-        self._coxeter_group = CoxeterGroup(CoxeterMatrix(cm, index_set=G.vertices()))
+        self._coxeter_group = CoxeterGroup(CoxeterMatrix(cm, index_set=G.vertices(sort=True)))
         rels = tuple(F([i + 1, j + 1, -i - 1, -j - 1])
                      for i, j in CG.edge_iterator(labels=False))  # +/- 1 for indexing
-        FinitelyPresentedGroup.__init__(self, F, rels)
+        FinitelyPresentedGroup.__init__(self, F, rels,
+                                        category=Groups().Infinite())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -227,7 +228,7 @@ class RightAngledArtinGroup(ArtinGroup):
         """
         return self.element_class(self, ([i, 1],))
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 
@@ -305,14 +306,15 @@ class RightAngledArtinGroup(ArtinGroup):
             raise ValueError("there is no coercion from {} into {}".format(x.parent(), self))
         if x == 1:
             return self.one()
-        verts = self._graph.vertices()
+        verts = self._graph.vertices(sort=True)
         x = [[verts.index(s[0]), s[1]] for s in x]
         return self.element_class(self, self._normal_form(x))
 
     def _normal_form(self, word):
         """
-        Return the normal form of the word ``word``. Helper function for
-        creating elements.
+        Return the normal form of the word ``word``.
+
+        Helper function for creating elements.
 
         EXAMPLES::
 
@@ -332,7 +334,7 @@ class RightAngledArtinGroup(ArtinGroup):
         """
         pos = 0
         G = self._graph
-        v = G.vertices()
+        v = G.vertices(sort=True)
         w = [list(x) for x in word]  # Make a (2 level) deep copy
         while pos < len(w):
             comm_set = [w[pos][0]]
@@ -436,16 +438,16 @@ class RightAngledArtinGroup(ArtinGroup):
                         mult += 1
                     else:
                         if j < 0:
-                            data.append([-j-1, -mult])
+                            data.append([-j - 1, -mult])
                         else:
-                            data.append([j-1, mult])
+                            data.append([j - 1, mult])
                         j = i
                         mult = 1
                 if j is not None:
                     if j < 0:
-                        data.append([-j-1, -mult])
+                        data.append([-j - 1, -mult])
                     else:
-                        data.append([j-1, mult])
+                        data.append([j - 1, mult])
                 self._data = tuple(data)
             else:
                 self._data = lst
@@ -470,10 +472,10 @@ class RightAngledArtinGroup(ArtinGroup):
                 True
             """
             P = self.parent()
-            V = P._graph.vertices()
+            V = P._graph.vertices(sort=True)
             return (P, ([[V[i], p] for i, p in self._data],))
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             Return a string representation of ``self``.
 
@@ -500,12 +502,11 @@ class RightAngledArtinGroup(ArtinGroup):
             def to_str(name, p):
                 if p == 1:
                     return "{}".format(name)
-                else:
-                    return "{}^{}".format(name, p)
+                return "{}^{}".format(name, p)
 
             return '*'.join(to_str(v[i], p) for i, p in self._data)
 
-        def _latex_(self):
+        def _latex_(self) -> str:
             r"""
             Return a LaTeX representation of ``self``.
 
@@ -529,7 +530,7 @@ class RightAngledArtinGroup(ArtinGroup):
 
             from sage.misc.latex import latex
             latexrepr = ''
-            v = self.parent()._graph.vertices()
+            v = self.parent()._graph.vertices(sort=True)
             for i, p in self._data:
                 latexrepr += "\\sigma_{{{}}}".format(latex(v[i]))
                 if p != 1:
@@ -604,7 +605,7 @@ class RightAngledArtinGroup(ArtinGroup):
             lst = [[x[0], -x[1]] for x in reversed(self._data)]
             return self.__class__(P, P._normal_form(lst))
 
-        def _richcmp_(self, other, op):
+        def _richcmp_(self, other, op) -> bool:
             """
             Compare ``self`` and ``other``.
 
@@ -627,6 +628,7 @@ class RightAngledArtinGroup(ArtinGroup):
                 True
             """
             return richcmp(self._data, other._data, op)
+
 
 class CohomologyRAAG(CombinatorialFreeModule):
     r"""
@@ -653,11 +655,16 @@ class CohomologyRAAG(CombinatorialFreeModule):
             sage: A = groups.misc.RightAngledArtin(C4)
             sage: H = A.cohomology()
             sage: TestSuite(H).run()
+
+            sage: A.cohomology(ZZ)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: only implemented with coefficients in a field
         """
         if R not in Fields():
             raise NotImplementedError("only implemented with coefficients in a field")
         self._group = A
-        
+
         names = tuple(['e' + name[1:] for name in A.variable_names()])
         from sage.graphs.independent_sets import IndependentSets
         from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
@@ -667,7 +674,7 @@ class CohomologyRAAG(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, R, indices, category=cat, prefix='H')
         self._assign_names(names)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -681,10 +688,9 @@ class CohomologyRAAG(CombinatorialFreeModule):
         """
         return "Cohomology ring of {} with coefficients in {}".format(self._group, self.base_ring())
 
-    def _repr_term(self, m):
+    def _repr_term(self, m) -> str:
         """
-        Return a string representation of the basis element indexed by
-        ``m``.
+        Return a string representation of the basis element indexed by ``m``.
 
         EXAMPLES::
 
@@ -744,8 +750,7 @@ class CohomologyRAAG(CombinatorialFreeModule):
 
     def _latex_term(self, m):
         r"""
-        Return a `\LaTeX` representation of the basis element indexed
-        by ``m``.
+        Return a `\LaTeX` representation of the basis element indexed by ``m``.
 
         EXAMPLES::
 
@@ -807,12 +812,12 @@ class CohomologyRAAG(CombinatorialFreeModule):
             sage: H.algebra_generators()
             Finite family {0: e0, 1: e1, 2: e2, 3: e3}
         """
-        V = self._group._graph.vertices()
-        d = {x: self.gen(i) for i,x in enumerate(V)}
+        V = self._group._graph.vertices(True)
+        d = {x: self.gen(i) for i, x in enumerate(V)}
         from sage.sets.family import Family
         return Family(V, lambda x: d[x])
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of ``self`` (as an algebra).
 
@@ -854,55 +859,7 @@ class CohomologyRAAG(CombinatorialFreeModule):
         """
         return len(I)
 
-    class Element(CliffordAlgebraElement):
+    class Element(CohomologyRAAGElement):
         """
         An element in the cohomology ring of a right-angled Artin group.
         """
-        def _mul_(self, other):
-            """
-            Return ``self`` multiplied by ``other``.
-
-            EXAMPLES::
-
-                sage: C4 = graphs.CycleGraph(4)
-                sage: A = groups.misc.RightAngledArtin(C4)
-                sage: H = A.cohomology()
-                sage: b = sum(H.basis())
-                sage: b * b
-                2*e0*e2 + 2*e1*e3 + 2*e0 + 2*e1 + 2*e2 + 2*e3 + 1
-            """
-            zero = self.parent().base_ring().zero()
-            I = self.parent()._indices
-            d = {}
-
-            for ml,cl in self:
-                for mr,cr in other:
-                    # Create the next term
-                    t = list(mr)
-                    for i in reversed(ml):
-                        pos = 0
-                        for j in t:
-                            if i == j:
-                                pos = None
-                                break
-                            if i < j:
-                                break
-                            pos += 1
-                            cr = -cr
-                        if pos is None:
-                            t = None
-                            break
-                        t.insert(pos, i)
-
-                    if t is None: # The next term is 0, move along
-                        continue
-
-                    t = tuple(t)
-                    if t not in I: # not an independent set, so this term is also 0
-                        continue
-                    d[t] = d.get(t, zero) + cl * cr
-                    if d[t] == zero:
-                        del d[t]
-
-            return self.__class__(self.parent(), d)
-

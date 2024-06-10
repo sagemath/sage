@@ -1,7 +1,7 @@
 """
-p-Adic Fixed-Mod Element
+`p`-adic Fixed-Mod Element
 
-Elements of p-Adic Rings with Fixed Modulus
+Elements of p-adic Rings with Fixed Modulus
 
 AUTHORS:
 
@@ -27,7 +27,7 @@ include "FM_template.pxi"
 from sage.libs.pari.convert_gmp cimport new_gen_from_padic
 from sage.rings.finite_rings.integer_mod import Mod
 
-cdef extern from "sage/rings/padics/transcendantal.c":
+cdef extern from "transcendantal.c":
     cdef void padiclog(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, const mpz_t modulo)
     cdef void padicexp(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, const mpz_t modulo)
     cdef void padicexp_Newton(mpz_t ans, const mpz_t a, unsigned long p, unsigned long prec, unsigned long precinit, const mpz_t modulo)
@@ -44,7 +44,7 @@ cdef class PowComputer_(PowComputer_base):
 
             sage: R = ZpFM(5)
             sage: type(R.prime_pow)
-            <type 'sage.rings.padics.padic_fixed_mod_element.PowComputer_'>
+            <class 'sage.rings.padics.padic_fixed_mod_element.PowComputer_'>
             sage: R.prime_pow._prec_type
             'fixed-mod'
         """
@@ -152,12 +152,12 @@ cdef class pAdicFixedModElement(FMElement):
             sage: R = Zp(7,4,'fixed-mod'); a = R(8); a.lift()
             8
             sage: type(a.lift())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         return self.lift_c()
 
     cdef lift_c(self):
-        """
+        r"""
         Returns an integer congruent to this element modulo the precision.
 
         .. WARNING::
@@ -169,7 +169,7 @@ cdef class pAdicFixedModElement(FMElement):
 
         EXAMPLES::
 
-            sage: R = ZpFM(7,4); a = R(8); a.lift() # indirect doctest
+            sage: R = ZpFM(7,4); a = R(8); a.lift()  # indirect doctest
             8
         """
         cdef Integer ans = PY_NEW(Integer)
@@ -183,7 +183,7 @@ cdef class pAdicFixedModElement(FMElement):
         EXAMPLES::
 
             sage: R = ZpCA(5)
-            sage: pari(R(1777)) #indirect doctest
+            sage: pari(R(1777))  # indirect doctest                                     # needs sage.libs.pari
             2 + 5^2 + 4*5^3 + 2*5^4 + O(5^20)
         """
         return self._to_gen()
@@ -194,19 +194,19 @@ cdef class pAdicFixedModElement(FMElement):
 
         EXAMPLES::
 
-            sage: R = ZpFM(5, 10); a = R(17); pari(a) # indirect doctest
+            sage: R = ZpFM(5, 10); a = R(17); pari(a)  # indirect doctest
             2 + 3*5 + O(5^10)
-            sage: pari(R(0))
+            sage: pari(R(0))                                                            # needs sage.libs.pari
             O(5^10)
-            sage: pari(R(0,5))
+            sage: pari(R(0,5))                                                          # needs sage.libs.pari
             O(5^10)
-            sage: pari(R(0)).debug()
+            sage: pari(R(0)).debug()                                                    # needs sage.libs.pari
             [&=...] PADIC(lg=5):... (precp=0,valp=10):... ... ... ...
-                p : [&=...] INT(lg=3):... (+,lgefint=3):... ... 
-              p^l : [&=...] INT(lg=3):... (+,lgefint=3):... ... 
+                p : [&=...] INT(lg=3):... (+,lgefint=3):... ...
+              p^l : [&=...] INT(lg=3):... (+,lgefint=3):... ...
                 I : gen_0
 
-        This checks that :trac:`15653` is fixed::
+        This checks that :issue:`15653` is fixed::
 
             sage: x = polygen(ZpFM(3,10))
             sage: (x^3 + x + 1).__pari__().poldisc()
@@ -227,7 +227,7 @@ cdef class pAdicFixedModElement(FMElement):
                                   holder.value)
 
     def _integer_(self, Z=None):
-        """
+        r"""
         Return an integer congruent to ``self`` modulo the precision.
 
         .. WARNING::
@@ -289,7 +289,7 @@ cdef class pAdicFixedModElement(FMElement):
             sage: a.residue(-1)
             Traceback (most recent call last):
             ...
-            ValueError: Cannot reduce modulo a negative power of p.
+            ValueError: cannot reduce modulo a negative power of p
             sage: a.residue(5)
             8
 
@@ -306,7 +306,7 @@ cdef class pAdicFixedModElement(FMElement):
         if not isinstance(absprec, Integer):
             absprec = Integer(absprec)
         if absprec < 0:
-            raise ValueError("Cannot reduce modulo a negative power of p.")
+            raise ValueError("cannot reduce modulo a negative power of p")
         if field is None:
             field = (absprec == 1)
         elif field and absprec != 1:
@@ -319,7 +319,7 @@ cdef class pAdicFixedModElement(FMElement):
         selfvalue = PY_NEW(Integer)
         mpz_set(selfvalue.value, self.value)
         if field:
-            from sage.rings.finite_rings.all import GF
+            from sage.rings.finite_rings.finite_field_constructor import GF
             return GF(self.parent().prime())(selfvalue)
         else:
             return Mod(selfvalue, modulus)
@@ -389,7 +389,7 @@ cdef class pAdicFixedModElement(FMElement):
           this valuation (and beyond) to see if they can contribute to the
           series.
 
-        NOTE::
+        .. NOTE::
 
             The function does not check that its argument ``self`` is
             1 in the residue field. If this assumption is not fulfilled
@@ -439,7 +439,7 @@ cdef class pAdicFixedModElement(FMElement):
         cdef pAdicFixedModElement ans
 
         if mpz_fits_slong_p(self.prime_pow.prime.value) == 0:
-            raise NotImplementedError("The prime %s does not fit in a long" % self.prime_pow.prime)
+            raise NotImplementedError("the prime %s does not fit in a long" % self.prime_pow.prime)
         p = self.prime_pow.prime
 
         ans = self._new_c()
@@ -449,7 +449,7 @@ cdef class pAdicFixedModElement(FMElement):
         return ans
 
     def _exp_binary_splitting(self, aprec):
-        """
+        r"""
         Compute the exponential power series of this element
 
         This is a helper method for :meth:`exp`.
@@ -459,7 +459,7 @@ cdef class pAdicFixedModElement(FMElement):
         - ``aprec`` -- an integer, the precision to which to compute the
           exponential
 
-        NOTE::
+        .. NOTE::
 
             The function does not check that its argument ``self`` is
             the disk of convergence of ``exp``. If this assumption is not
@@ -497,7 +497,7 @@ cdef class pAdicFixedModElement(FMElement):
         cdef pAdicFixedModElement ans
 
         if mpz_fits_slong_p(self.prime_pow.prime.value) == 0:
-            raise NotImplementedError("The prime %s does not fit in a long" % self.prime_pow.prime)
+            raise NotImplementedError("the prime %s does not fit in a long" % self.prime_pow.prime)
         p = self.prime_pow.prime
 
         ans = self._new_c()
@@ -508,7 +508,7 @@ cdef class pAdicFixedModElement(FMElement):
         return ans
 
     def _exp_newton(self, aprec, log_algorithm=None):
-        """
+        r"""
         Compute the exponential power series of this element
 
         This is a helper method for :meth:`exp`.
@@ -523,7 +523,7 @@ cdef class pAdicFixedModElement(FMElement):
           method. See :meth:`log` for more details about the possible
           algorithms.
 
-        NOTE::
+        .. NOTE::
 
             The function does not check that its argument ``self`` is
             the disk of convergence of ``exp``. If this assumption is not
@@ -542,6 +542,7 @@ cdef class pAdicFixedModElement(FMElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: R.<w> = Zq(7^2,5)
             sage: x = R(7*w)
             sage: x.exp(algorithm="newton")   # indirect doctest
@@ -552,7 +553,7 @@ cdef class pAdicFixedModElement(FMElement):
         cdef pAdicFixedModElement ans
 
         if mpz_fits_slong_p(self.prime_pow.prime.value) == 0:
-            raise NotImplementedError("The prime %s does not fit in a long" % self.prime_pow.prime)
+            raise NotImplementedError("the prime %s does not fit in a long" % self.prime_pow.prime)
         p = self.prime_pow.prime
 
         ans = self._new_c()
@@ -567,7 +568,6 @@ cdef class pAdicFixedModElement(FMElement):
         return ans
 
 
-
 def make_pAdicFixedModElement(parent, value):
     """
     Unpickles a fixed modulus element.
@@ -580,4 +580,3 @@ def make_pAdicFixedModElement(parent, value):
         2*5^2 + 3*5^3
     """
     return unpickle_fme_v2(pAdicFixedModElement, parent, value)
-

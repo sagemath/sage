@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# sage_setup: distribution = sagemath-objects
 r"""
 Abstract base class for Sage objects
 """
@@ -69,6 +69,8 @@ cdef class SageObject:
         r"""
         Change self so it prints as x, where x is a string.
 
+        If x is ``None``, the existing custom name is removed.
+
         .. NOTE::
 
            This is *only* supported for Python classes that derive
@@ -91,13 +93,16 @@ cdef class SageObject:
             sage: h.rename('x^300 + ...')
             sage: h
             x^300 + ...
+            sage: g.rename(None)
+            sage: g
+            x^3 + x - 5
 
         Real numbers are not Python classes, so rename is not supported::
 
             sage: a = 3.14
-            sage: type(a)
+            sage: type(a)                                                               # needs sage.rings.real_mpfr
             <... 'sage.rings.real_mpfr.RealLiteral'>
-            sage: a.rename('pi')
+            sage: a.rename('pi')                                                        # needs sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             NotImplementedError: object does not support renaming: 3.14000000000000
@@ -110,15 +115,16 @@ cdef class SageObject:
            a lot of memory.
 
            To support them for a specific class, add a
-           ``cdef public __custom_name`` attribute.
+           ``cdef public _SageObject__custom_name`` attribute.
         """
         if x is None:
-            #if hasattr(self, '__custom_name'):
-            # that's tested in reset_name anyway...
             self.reset_name()
         else:
             try:
-                self.__custom_name = str(x)
+                # TODO: after dropping support for Cython < 3.0.0, all
+                # the self._SageObject__custom_name in this class can be
+                # changed to self.__custom_name
+                self._SageObject__custom_name = str(x)
             except AttributeError:
                 raise NotImplementedError("object does not support renaming: %s" % self)
 
@@ -138,9 +144,30 @@ cdef class SageObject:
             sage: P
             Univariate Polynomial Ring in x over Rational Field
         """
-        if hasattr(self, '__custom_name'):
-            del self.__custom_name
+        if hasattr(self, '_SageObject__custom_name'):
+            del self._SageObject__custom_name
 
+    def get_custom_name(self):
+        """
+        Return the custom name of this object, or ``None`` if it is not
+        renamed.
+
+        EXAMPLES::
+
+            sage: P.<x> = QQ[]
+            sage: P.get_custom_name() is None
+            True
+            sage: P.rename('A polynomial ring')
+            sage: P.get_custom_name()
+            'A polynomial ring'
+            sage: P.reset_name()
+            sage: P.get_custom_name() is None
+            True
+        """
+        try:
+            return self._SageObject__custom_name
+        except AttributeError:
+            return None
 
     def __repr__(self):
         """
@@ -182,7 +209,7 @@ cdef class SageObject:
             <sage.structure.sage_object.SageObject object at ...>
         """
         try:
-            name = self.__custom_name
+            name = self._SageObject__custom_name
             if name is not None:
                 return name
         except AttributeError:
@@ -191,11 +218,7 @@ cdef class SageObject:
             reprfunc = self._repr_
         except AttributeError:
             return super().__repr__()
-        result = reprfunc()
-        if isinstance(result, str):
-            return result
-        # Allow _repr_ to return unicode on Python 2
-        return result.encode('utf-8')
+        return reprfunc()
 
     def _ascii_art_(self):
         r"""
@@ -217,7 +240,9 @@ cdef class SageObject:
         You can use the :func:`~sage.typeset.ascii_art.ascii_art` function
         to get the ASCII art representation of any object in Sage::
 
-            sage: ascii_art(integral(exp(x+x^2)/(x+1), x))
+            sage: result = ascii_art(integral(exp(x+x^2)/(x+1), x))                     # needs sage.symbolic
+            ...
+            sage: result                                                                # needs sage.symbolic
               /
              |
              |   2
@@ -231,6 +256,7 @@ cdef class SageObject:
         Alternatively, you can use the ``%display ascii_art/simple`` magic to
         switch all output to ASCII art and back::
 
+            sage: # needs sage.combinat
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
             sage: shell.run_cell('tab = StandardTableaux(3)[2]; tab')
@@ -280,7 +306,7 @@ cdef class SageObject:
         You can use the :func:`~sage.typeset.unicode_art.unicode_art` function
         to get the ASCII art representation of any object in Sage::
 
-            sage: unicode_art(integral(exp(x+x^2)/(x+1), x))
+            sage: unicode_art(integral(exp(x+x^2)/(x+1), x))                            # needs sage.symbolic
             ⌠
             ⎮   2
             ⎮  x  + x
@@ -293,6 +319,7 @@ cdef class SageObject:
         Alternatively, you can use the ``%display ascii_art/simple`` magic to
         switch all output to ASCII art and back::
 
+            sage: # needs sage.combinat
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
             sage: shell.run_cell('tab = StandardTableaux(3)[2]; tab')
@@ -319,8 +346,9 @@ cdef class SageObject:
             sage: type(_)
             <class 'sage.typeset.unicode_art.UnicodeArt'>
 
-        Check that breakpoints and baseline are preserved (:trac:`29202`)::
+        Check that breakpoints and baseline are preserved (:issue:`29202`)::
 
+            sage: # needs sage.groups
             sage: F = FreeAbelianMonoid(index_set=ZZ)
             sage: f = prod(F.gen(i) for i in range(5))
             sage: s, t = ascii_art(f), unicode_art(f)
@@ -358,6 +386,7 @@ cdef class SageObject:
         modified to return ``True`` for objects which might behave differently
         in some computations::
 
+            sage: # needs sage.rings.padics
             sage: K.<a> = Qq(9)
             sage: b = a + O(3)
             sage: c = a + 3
@@ -377,6 +406,7 @@ cdef class SageObject:
         caches. This can be achieved by defining an appropriate
         ``_cache_key``::
 
+            sage: # needs sage.rings.padics
             sage: hash(b)
             Traceback (most recent call last):
             ...
@@ -385,9 +415,8 @@ cdef class SageObject:
             ....: def f(x): return x==a
             sage: f(b)
             True
-            sage: f(c) # if b and c were hashable, this would return True
+            sage: f(c)  # if b and c were hashable, this would return True
             False
-
             sage: b._cache_key()
             (..., ((0, 1),), 0, 1)
             sage: c._cache_key()
@@ -398,9 +427,9 @@ cdef class SageObject:
         In practice this means that the ``_cache_key`` should always include
         the parent as its first argument::
 
-            sage: S.<a> = Qq(4)
-            sage: d = a + O(2)
-            sage: b._cache_key() == d._cache_key() # this would be True if the parents were not included
+            sage: S.<a> = Qq(4)                                                         # needs sage.rings.padics
+            sage: d = a + O(2)                                                          # needs sage.rings.padics
+            sage: b._cache_key() == d._cache_key()  # this would be True if the parents were not included               # needs sage.rings.padics
             False
 
         """
@@ -421,9 +450,13 @@ cdef class SageObject:
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
+            sage: x = SR.var("x")
             sage: f = x^3 + 5
-            sage: f.save(os.path.join(SAGE_TMP, 'file'))
-            sage: load(os.path.join(SAGE_TMP, 'file.sobj'))
+            sage: from tempfile import NamedTemporaryFile
+            sage: with NamedTemporaryFile(suffix=".sobj") as t:
+            ....:     f.save(t.name)
+            ....:     load(t.name)
             x^3 + 5
         """
         if filename is None:
@@ -503,15 +536,16 @@ cdef class SageObject:
             sage: CC._test_category()
             Traceback (most recent call last):
             ...
-            AssertionError: False is not true
+            AssertionError: 3 is not an instance of
+            <class 'sage.categories.category.Category'>
         """
         from sage.categories.category import Category
         from sage.categories.objects import Objects
         tester = self._tester(**options)
         category = self.category()
-        tester.assertTrue(isinstance(category, Category))
+        tester.assertIsInstance(category, Category)
         tester.assertTrue(category.is_subcategory(Objects()))
-        tester.assertTrue(self in category)
+        tester.assertIn(self, category)
 
     def parent(self):
         """
@@ -519,22 +553,21 @@ cdef class SageObject:
 
         EXAMPLES::
 
-            sage: t = log(sqrt(2) - 1) + log(sqrt(2) + 1); t
+            sage: t = log(sqrt(2) - 1) + log(sqrt(2) + 1); t                            # needs sage.symbolic
             log(sqrt(2) + 1) + log(sqrt(2) - 1)
-            sage: u = t.maxima_methods()
-            sage: u.parent()
+            sage: u = t.maxima_methods()                                                # needs sage.symbolic
+            sage: u.parent()                                                            # needs sage.symbolic
             <class 'sage.symbolic.maxima_wrapper.MaximaWrapper'>
         """
         return type(self)
 
-
-    #############################################################################
+    ##########################################################################
     # Test framework
-    #############################################################################
+    ##########################################################################
 
     def _tester(self, **options):
         """
-        Returns a gadget attached to ``self`` providing testing utilities.
+        Return a gadget attached to ``self`` providing testing utilities.
 
         This is used by :class:`sage.misc.sage_unittest.TestSuite` and the
         ``_test_*`` methods.
@@ -593,7 +626,7 @@ cdef class SageObject:
             AssertionError: Not implemented method: bla
 
         Check that only errors triggered by ``AbstractMethod`` are caught
-        (:trac:`29694`)::
+        (:issue:`29694`)::
 
             sage: class NotAbstract(SageObject):
             ....:     @lazy_attribute
@@ -643,7 +676,7 @@ cdef class SageObject:
         remote Sage session, and get it back.
         """
         tester = self._tester(**options)
-        from sage.misc.all import loads, dumps
+        from sage.misc.persist import loads, dumps
         tester.assertEqual(loads(dumps(self)), self)
 
     #############################################################################
@@ -722,14 +755,7 @@ cdef class SageObject:
 
     def _libgap_(self):
         from sage.libs.gap.libgap import libgap
-        return libgap.eval(self._libgap_init_())
-
-    def _libgap_init_(self):
-        """
-        For consistency's sake we provide a ``_libgap_init_`` but in most cases
-        we can use the same as ``_gap_init_`` here.
-        """
-        return self._gap_init_()
+        return libgap.eval(self)
 
     def _gp_(self, G=None):
         if G is None:
@@ -825,25 +851,28 @@ cdef class SageObject:
         Some other examples that illustrate conversion to Magma.
         ::
 
+            sage: # optional - magma, needs sage.symbolic
             sage: n = -3/7
             sage: m2 = Magma()
-            sage: magma(n)                        # optional - magma
+            sage: magma(n)
             -3/7
-            sage: magma(n).parent()               # optional - magma
+            sage: magma(n).parent()
             Magma
-            sage: magma(n).parent() is m2         # optional - magma
+            sage: magma(n).parent() is m2
             False
-            sage: magma(n).parent() is magma      # optional - magma
+            sage: magma(n).parent() is magma
             True
 
         This example illustrates caching, which happens automatically
         since K is a Python object::
 
-            sage: K.<a> = NumberField(x^3 + 2)
-            sage: magma(K) is magma(K)        # optional - magma
+            sage: # optional - magma, needs sage.symbolic
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^3 + 2)                                          # needs sage.rings.number_field
+            sage: magma(K) is magma(K)
             True
             sage: magma2 = Magma()
-            sage: magma(K) is magma2(K)       # optional - magma
+            sage: magma(K) is magma2(K)
             False
         """
         return repr(self)  # default
@@ -882,6 +911,14 @@ cdef class SageObject:
         I = sage.interfaces.mathematica.mathematica
         return self._interface_init_(I)
 
+    def _mathics_(self, G=None):
+        if G is None:
+            import sage.interfaces.mathics
+            G = sage.interfaces.mathics.mathics
+        return self._interface_(G)
+
+    _mathics_init_ = _mathematica_init_
+
     def _octave_(self, G=None):
         if G is None:
             import sage.interfaces.octave
@@ -916,20 +953,20 @@ cdef class SageObject:
         EXAMPLES::
 
             sage: a = 2/3
-            sage: a._r_init_()
+            sage: a._r_init_()                               # optional - rpy2
             '2/3'
         """
         import sage.interfaces.r
         I = sage.interfaces.r.r
         return self._interface_init_(I)
 
-    def _singular_(self, G=None, have_ring=False):
+    def _singular_(self, G=None):
         if G is None:
             import sage.interfaces.singular
             G = sage.interfaces.singular.singular
         return self._interface_(G)
 
-    def _singular_init_(self, have_ring=False):
+    def _singular_init_(self):
         import sage.interfaces.singular
         I = sage.interfaces.singular.singular
         return self._interface_init_(I)

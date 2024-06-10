@@ -1,6 +1,3 @@
 cd src
 
 sdh_pip_install .
-
-echo "Removing old SageTex version(s)"
-rm -rf $SAGE_LOCAL/share/texmf/tex/generic/sagetex

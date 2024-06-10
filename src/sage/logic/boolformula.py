@@ -121,9 +121,7 @@ AUTHORS:
 
 - Paul Scurek (2013-08-08): added
   :meth:`~sage.logic.boolformula.BooleanFormula.implies()`
-
 """
-from __future__ import absolute_import, division
 # *****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein.gmail.com>
 #       Copyright (C) 2006 Chris Gorecki <chris.k.gorecki@gmail.com>
@@ -149,7 +147,7 @@ latex_operators = [('&', '\\wedge '),
                    ('->', '\\rightarrow ')]
 
 
-class BooleanFormula(object):
+class BooleanFormula:
     """
     Boolean formulas.
 
@@ -674,10 +672,7 @@ class BooleanFormula(object):
             False
         """
         table = self.truthtable().get_table_list()
-        for row in table[1:]:
-            if row[-1] is True:
-                return True
-        return False
+        return any(row[-1] is True for row in table[1:])
 
     def is_tautology(self):
         r"""
@@ -757,10 +752,10 @@ class BooleanFormula(object):
 
         A boolean value to be determined as follows:
 
-        - ``True`` - if ``self`` (the desired conclusion) is a logical consequence
+        - ``True`` -- if ``self`` (the desired conclusion) is a logical consequence
           of the set of hypotheses
 
-        - ``False`` - if ``self`` (the desired conclusion) is not a logical consequence
+        - ``False`` -- if ``self`` (the desired conclusion) is not a logical consequence
           of the set of hypotheses
 
         EXAMPLES::
@@ -841,9 +836,9 @@ class BooleanFormula(object):
 
         A boolean value to be determined as follows:
 
-        - ``True`` - if ``self`` implies ``other``
+        - ``True`` -- if ``self`` implies ``other``
 
-        - ``False`` - if ``self does not imply ``other``
+        - ``False`` -- if ``self does not imply ``other``
 
         EXAMPLES:
 
@@ -1168,7 +1163,7 @@ class BooleanFormula(object):
             lval = ('prop', tree[1])
         else:
             lval = tree[1]
-        if not isinstance(tree[2], tuple) and not(tree[2] is None):
+        if not isinstance(tree[2], tuple) and tree[2] is not None:
             rval = ('prop', tree[2])
         else:
             rval = tree[2]
@@ -1310,11 +1305,11 @@ class BooleanFormula(object):
         if tree[0] == '<->':
             # parse tree for (~tree[1]|tree[2])&(~tree[2]|tree[1])
             new_tree = ['&', ['|', ['~', tree[1], None], tree[2]],
-                       ['|', ['~', tree[2], None], tree[1]]]
+                        ['|', ['~', tree[2], None], tree[1]]]
         elif tree[0] == '^':
             # parse tree for (tree[1]|tree[2])&~(tree[1]&tree[2])
             new_tree = ['&', ['|', tree[1], tree[2]],
-                       ['~', ['&', tree[1], tree[2]], None]]
+                        ['~', ['&', tree[1], tree[2]], None]]
         elif tree[0] == '->':
             # parse tree for ~tree[1]|tree[2]
             new_tree = ['|', ['~', tree[1], None], tree[2]]
@@ -1355,10 +1350,7 @@ class BooleanFormula(object):
         if tree[0] == '~' and isinstance(tree[1], list):
             op = tree[1][0]
             if op != '~':
-                if op == '&':
-                    op = '|'
-                else:
-                    op = '&'
+                op = '|' if op == '&' else '&'
                 new_tree = [op, ['~', tree[1][1], None], ['~', tree[1][2], None]]
                 return logicparser.apply_func(new_tree, self.dist_not)
             else:
@@ -1509,9 +1501,9 @@ class BooleanFormula(object):
             i += 1
         return str[i]
 
-    def __len__(self):
+    def length(self):
         r"""
-        Return the length of a Boolean formula.
+        Return the length of ``self``.
 
         OUTPUT:
 
@@ -1522,37 +1514,42 @@ class BooleanFormula(object):
 
             sage: import sage.logic.propcalc as propcalc
             sage: s = propcalc.formula("a")
-            sage: len(s)
+            sage: s.length()
             1
             sage: s = propcalc.formula("(a)")
-            sage: len(s)
+            sage: s.length()
             1
             sage: s = propcalc.formula("~a")
-            sage: len(s)
+            sage: s.length()
             2
             sage: s = propcalc.formula("a -> b")
-            sage: len(s)
+            sage: s.length()
             3
             sage: s = propcalc.formula("alpha -> beta")
-            sage: len(s)
+            sage: s.length()
             3
             sage: s = propcalc.formula("a -> a")
-            sage: len(s)
+            sage: s.length()
             3
             sage: s = propcalc.formula("~(a -> b)")
-            sage: len(s)
+            sage: s.length()
             4
             sage: s = propcalc.formula("((a&b)|(a&c))->~d")
-            sage: len(s)
+            sage: s.length()
             10
 
         TESTS::
 
             sage: s = propcalc.formula("(((alpha) -> ((beta))))")
-            sage: len(s)
+            sage: s.length()
             3
         """
         return len(flatten(self.full_tree()))
+
+    # For backward compatibility, we allow `self.length()` to be called as
+    # `len(self)`, but this may be deprecated in the future (see :issue:`32148`):
+    __len__ = length
+
 
 # allow is_consequence to be called as a function (not only as a method of BooleanFormula)
 is_consequence = BooleanFormula.is_consequence

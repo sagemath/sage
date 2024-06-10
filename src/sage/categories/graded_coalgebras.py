@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Graded Coalgebras
 """
@@ -12,6 +13,7 @@ Graded Coalgebras
 from sage.categories.graded_modules import GradedModulesCategory
 from sage.categories.signed_tensor import SignedTensorProductsCategory
 from sage.misc.cachefunc import cached_method
+
 
 class GradedCoalgebras(GradedModulesCategory):
     """
@@ -61,4 +63,3 @@ class GradedCoalgebras(GradedModulesCategory):
             Meaning: a signed tensor product of coalgebras is a coalgebra
             """
             return [self.base_category()]
-

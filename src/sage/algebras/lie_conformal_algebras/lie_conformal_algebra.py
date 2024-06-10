@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Lie Conformal Algebra
 
@@ -178,6 +179,7 @@ from sage.sets.family import Family
 from sage.categories.commutative_rings import CommutativeRings
 from sage.structure.parent import Parent
 
+
 class LieConformalAlgebra(UniqueRepresentation, Parent):
     r"""
     Lie Conformal Algebras base class and factory.
@@ -320,18 +322,18 @@ class LieConformalAlgebra(UniqueRepresentation, Parent):
             sage: type(V)
             <class 'sage.algebras.lie_conformal_algebras.graded_lie_conformal_algebra.GradedLieConformalAlgebra_with_category'>
         """
-        if not R in CommutativeRings():
-            raise ValueError("arg0 must be a commutative ring got {}".format(R))
+        if R not in CommutativeRings():
+            raise ValueError(f"arg0 must be a commutative ring got {R}")
 
-        #This is the only exposed class so we clean keywords here
+        # This is the only exposed class so we clean keywords here
         known_keywords = ['category', 'prefix', 'bracket', 'latex_bracket',
                           'string_quotes', 'sorting_key', 'graded', 'super']
         for key in kwds:
             if key not in known_keywords:
-                raise ValueError("got an unexpected keyword argument '%s'"%key)
+                raise ValueError("got an unexpected keyword argument '%s'" % key)
 
         if isinstance(arg0,dict) and arg0:
-            graded=kwds.pop("graded", False)
+            graded = kwds.pop("graded", False)
             if weights is not None or graded:
                 from .graded_lie_conformal_algebra import \
                                                     GradedLieConformalAlgebra

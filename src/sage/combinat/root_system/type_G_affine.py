@@ -9,10 +9,10 @@ Root system data for (untwisted) type G affine
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
 
 from .cartan_type import CartanType_standard_untwisted_affine
+
+
 class CartanType(CartanType_standard_untwisted_affine):
     def __init__(self):
         """
@@ -55,13 +55,12 @@ class CartanType(CartanType_standard_untwisted_affine):
 
         EXAMPLES::
 
-            sage: g = CartanType(['G',2,1]).dynkin_diagram()
-            sage: g
+            sage: g = CartanType(['G',2,1]).dynkin_diagram(); g                         # needs sage.graphs
               3
             O=<=O---O
             1   2   0
             G2~
-            sage: sorted(g.edges())
+            sage: g.edges(sort=True)                                                    # needs sage.graphs
             [(0, 2, 1), (1, 2, 1), (2, 0, 1), (2, 1, 3)]
         """
         from .dynkin_diagram import DynkinDiagram_class
@@ -71,7 +70,7 @@ class CartanType(CartanType_standard_untwisted_affine):
         g.add_edge(0, 2)
         return g
 
-    def _latex_dynkin_diagram(self, label=lambda x: x, node=None, node_dist=2, dual=False):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2, dual=False):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -90,16 +89,18 @@ class CartanType(CartanType_standard_untwisted_affine):
             \draw[fill=white] (4 cm, 0 cm) circle (.25cm) node[below=4pt]{$0$};
             <BLANKLINE>
         """
+        if label is None:
+            label = lambda x: x
         if node is None:
             node = self._latex_draw_node
-        ret = "\\draw (%s cm,0) -- (%s cm,0);\n"%(node_dist, node_dist*2.0)
-        ret += "\\draw (0, 0.15 cm) -- +(%s cm,0);\n"%node_dist
-        ret += "\\draw (0, -0.15 cm) -- +(%s cm,0);\n"%node_dist
+        ret = "\\draw (%s cm,0) -- (%s cm,0);\n" % (node_dist, node_dist*2.0)
+        ret += "\\draw (0, 0.15 cm) -- +(%s cm,0);\n" % node_dist
+        ret += "\\draw (0, -0.15 cm) -- +(%s cm,0);\n" % node_dist
         ret += self.classical()._latex_dynkin_diagram(label, node, node_dist, dual)
         ret += node(2*node_dist, 0, label(0))
         return ret
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Returns an ascii art representation of the Dynkin diagram
 
@@ -110,6 +111,8 @@ class CartanType(CartanType_standard_untwisted_affine):
             O=<=O---O
             3   4   2
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._ascii_art_node
         ret = "  3\n{}=<={}---{}".format(node(label(1)), node(label(2)), node(label(0)))
@@ -126,4 +129,3 @@ class CartanType(CartanType_standard_untwisted_affine):
         """
         from sage.combinat.root_system.type_folded import CartanTypeFolded
         return CartanTypeFolded(self, ['D', 4, 1], [[0], [1, 3, 4], [2]])
-

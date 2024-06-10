@@ -1,15 +1,14 @@
 """
-Some Extras
+Constructions of quadratic forms
 """
 ##
-## Some extra routines to make the QuadraticForm class more useful.
+# Some extra routines to make the QuadraticForm class more useful.
 ##
 
-from sage.rings.all import ZZ
-from sage.rings.polynomial.polynomial_element import is_Polynomial
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.quadratic_forms.quadratic_form import QuadraticForm
-
 
 
 def BezoutianQuadraticForm(f, g):
@@ -24,18 +23,16 @@ def BezoutianQuadraticForm(f, g):
 
     INPUT:
 
-    - `f`, `g` -- polynomials in `R[x]`, for some ring `R`
+    - ``f``, ``g`` -- polynomials in `R[x]`, for some ring `R`
 
-    OUTPUT:
-
-    a quadratic form over `R`
+    OUTPUT: a quadratic form over `R`
 
     EXAMPLES::
 
         sage: R = PolynomialRing(ZZ, 'x')
         sage: f = R([1,2,3])
         sage: g = R([2,5])
-        sage: Q = BezoutianQuadraticForm(f, g) ; Q
+        sage: Q = BezoutianQuadraticForm(f, g); Q                                       # needs sage.libs.singular
         Quadratic form in 2 variables over Integer Ring with coefficients:
         [ 1 -12 ]
         [ * -15 ]
@@ -45,27 +42,27 @@ def BezoutianQuadraticForm(f, g):
     - Fernando Rodriguez-Villegas, Jonathan Hanke -- added on 11/9/2008
 
     """
-    ## Check that f and g are polynomials with a common base ring
-    if not is_Polynomial(f) or not is_Polynomial(g):
-        raise TypeError("Oops!  One of your inputs is not a polynomial. =(")
-    if f.base_ring() != g.base_ring():                   ## TO DO:  Change this to allow coercion!
-        raise TypeError("Oops!  These polynomials are not defined over the same coefficient ring.")
+    # Check that f and g are polynomials with a common base ring
+    if not isinstance(f, Polynomial) or not isinstance(g, Polynomial):
+        raise TypeError("one of your inputs is not a polynomial")
+    if f.base_ring() != g.base_ring():   # TO DO:  Change this to allow coercion!
+        raise TypeError("these polynomials are not defined over the same coefficient ring")
 
-    ## Initialize the quadratic form
+    # Initialize the quadratic form
     R = f.base_ring()
-    P = PolynomialRing(R, ['x','y'])
+    P = PolynomialRing(R, ['x', 'y'])
     a, b = P.gens()
     n = max(f.degree(), g.degree())
     Q = QuadraticForm(R, n)
 
-    ## Set the coefficients of Bezoutian
-    bez_poly = (f(a) * g(b) - f(b) * g(a)) // (b - a)    ## Truncated (exact) division here
+    # Set the coefficients of Bezoutian
+    bez_poly = (f(a) * g(b) - f(b) * g(a)) // (b - a)    # Truncated (exact) division here
     for i in range(n):
         for j in range(i, n):
             if i == j:
-                Q[i,j] = bez_poly.coefficient({a:i,b:j})
+                Q[i, j] = bez_poly.coefficient({a: i, b: j})
             else:
-                Q[i,j] = bez_poly.coefficient({a:i,b:j}) * 2
+                Q[i, j] = bez_poly.coefficient({a: i, b: j}) * 2
 
     return Q
 
@@ -77,8 +74,8 @@ def HyperbolicPlane_quadratic_form(R, r=1):
 
     INPUT:
 
-    - `R`: a ring
-    - `n` (integer, default 1) number of copies
+    - ``R``: a ring
+    - ``n`` (integer, default 1) number of copies
 
     EXAMPLES::
 
@@ -86,12 +83,11 @@ def HyperbolicPlane_quadratic_form(R, r=1):
         Quadratic form in 2 variables over Integer Ring with coefficients:
         [ 0 1 ]
         [ * 0 ]
-
     """
     r = ZZ(r)
-    ## Check that the multiplicity is a natural number
+    # Check that the multiplicity is a natural number
     if r < 1:
-        raise TypeError("The multiplicity r must be a natural number.")
+        raise TypeError("the multiplicity r must be a natural number")
 
     H = QuadraticForm(R, 2, [0, 1, 0])
-    return sum([H  for i in range(r-1)], H)
+    return sum([H for i in range(r - 1)], H)

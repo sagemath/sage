@@ -176,7 +176,6 @@ entiers, des polynômes, etc. :
     #!/usr/bin/env sage
 
     import sys
-    from sage.all import *
 
     if len(sys.argv) != 2:
         print("Usage: %s <n>" % sys.argv[0])
@@ -325,7 +324,7 @@ Sage) :
 
 ::
 
-    sage: range(1, 15)  # py2
+    sage: list(range(1, 15))
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
 
 Cela est utile pour construire des listes par compréhension :
@@ -391,7 +390,7 @@ l'univers de la séquence.
     sage: type(v)
     <class 'sage.structure.sequence.Sequence_generic'>
     sage: type(v[1])
-    <type 'sage.rings.rational.Rational'>
+    <class 'sage.rings.rational.Rational'>
     sage: v.universe()
     Rational Field
     sage: v.is_immutable()
@@ -540,8 +539,7 @@ d'entiers positifs jusqu'à :math:`10000000`.
 
 ::
 
-    sage: v = (n^2 for n in xrange(10000000))  # py2
-    sage: v = (n^2 for n in range(10000000))  # py3
+    sage: v = (n^2 for n in range(10000000))
     sage: next(v)
     0
     sage: next(v)

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs sage.groups
 r"""
 Fundamental Group of an Extended Affine Weyl Group
 
@@ -249,7 +250,7 @@ class FundamentalGroupElement(MultiplicativeGroupElement):
         """
         return self.parent()._prefix + "[" + repr(self.value()) + "]"
 
-    def inverse(self):
+    def __invert__(self):
         r"""
         Return the inverse element of ``self``.
 
@@ -257,7 +258,7 @@ class FundamentalGroupElement(MultiplicativeGroupElement):
 
             sage: from sage.combinat.root_system.fundamental_group import FundamentalGroupOfExtendedAffineWeylGroup
             sage: F = FundamentalGroupOfExtendedAffineWeylGroup(['A',3,1])
-            sage: F(1).inverse()
+            sage: F(1).inverse()   # indirect doctest
             pi[3]
             sage: F = FundamentalGroupOfExtendedAffineWeylGroup(['E',6,1], prefix="f")
             sage: F(1).inverse()
@@ -265,8 +266,6 @@ class FundamentalGroupElement(MultiplicativeGroupElement):
         """
         par = self.parent()
         return self.__class__(par, par.dual_node(self.value()))
-
-    __invert__ = inverse
 
     def _richcmp_(self, x, op):
         r"""
@@ -326,6 +325,21 @@ class FundamentalGroupElement(MultiplicativeGroupElement):
         """
         return wt.map_support(self.parent().action(self.value()))
 
+    def __hash__(self):
+        r"""
+        Return the hash of ``self``.
+
+        TESTS:
+
+        Check that :issue:`36121` is fixed::
+
+            sage: W = ExtendedAffineWeylGroup('A4')
+            sage: fun = W.fundamental_group().an_element()
+            sage: hash(fun) == hash(fun.value())
+            True
+        """
+        return hash(self.value())
+
 
 class FundamentalGroupOfExtendedAffineWeylGroup_Class(UniqueRepresentation,
                                                       Parent):
@@ -371,7 +385,7 @@ class FundamentalGroupOfExtendedAffineWeylGroup_Class(UniqueRepresentation,
             auto_dict[special_node,i] = i
         # dictionary for the finite Weyl component of the special automorphisms
         reduced_words_dict = {}
-        reduced_words_dict[0] = tuple([])
+        reduced_words_dict[0] = tuple()
 
         if cartan_type.dual().is_untwisted_affine():
             # this combines the computations for an untwisted affine
@@ -379,7 +393,7 @@ class FundamentalGroupOfExtendedAffineWeylGroup_Class(UniqueRepresentation,
             cartan_type = cartan_type.dual()
         if cartan_type.is_untwisted_affine():
             cartan_type_classical = cartan_type.classical()
-            I = [i for i in cartan_type_classical.index_set()]
+            I = list(cartan_type_classical.index_set())
             Q = RootSystem(cartan_type_classical).root_lattice()
             alpha = Q.simple_roots()
             omega = RootSystem(cartan_type_classical).weight_lattice().fundamental_weights()
@@ -408,7 +422,7 @@ class FundamentalGroupOfExtendedAffineWeylGroup_Class(UniqueRepresentation,
                                  EnumeratedSets()))
         else:
             cat = Groups().Commutative().Infinite()
-        Parent.__init__(self, category = cat)
+        Parent.__init__(self, category=cat)
 
     @cached_method
     def one(self):
@@ -503,7 +517,7 @@ class FundamentalGroupOfExtendedAffineWeylGroup_Class(UniqueRepresentation,
             sage: FundamentalGroupOfExtendedAffineWeylGroup(['E',6,1],prefix="f").group_generators()
             Finite family {0: f[0], 1: f[1], 6: f[6]}
         """
-        return Family(self.special_nodes(), lambda i: self(i))
+        return Family(self.special_nodes(), self)
 
     def __iter__(self):
         r"""
@@ -779,7 +793,6 @@ class FundamentalGroupGL(FundamentalGroupOfExtendedAffineWeylGroup_Class):
         """
         i = i % self._n
         if i == 0:
-            return tuple([])
+            return tuple()
         om = self.cartan_type().classical().root_system().weight_lattice().fundamental_weight(i)
         return tuple((-om).reduced_word())
-

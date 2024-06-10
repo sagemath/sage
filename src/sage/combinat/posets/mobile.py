@@ -1,3 +1,6 @@
+"""
+Mobile posets
+"""
 # ****************************************************************************
 #       Copyright (C) 2020 Stefan Grosser <stefan.grosser1@gmail.com>
 #
@@ -9,9 +12,9 @@
 # ****************************************************************************
 
 from sage.combinat.posets.posets import Poset, FinitePoset
-from sage.combinat.posets.d_complete import DCompletePoset
 from sage.misc.lazy_attribute import lazy_attribute
 from .linear_extensions import LinearExtensionsOfMobile
+
 
 class MobilePoset(FinitePoset):
     r"""
@@ -25,13 +28,13 @@ class MobilePoset(FinitePoset):
 
     EXAMPLES::
 
-        sage: P = posets.MobilePoset(posets.RibbonPoset(7, [1,3]),
+        sage: P = posets.MobilePoset(posets.RibbonPoset(7, [1,3]),                      # needs sage.combinat sage.modules
         ....:                        {1: [posets.YoungDiagramPoset([3, 2], dual=True)],
         ....:                         3: [posets.DoubleTailedDiamond(6)]},
         ....:                        anchor=(4, 2, posets.ChainPoset(6)))
-        sage: len(P._ribbon)
+        sage: len(P._ribbon)                                                            # needs sage.combinat sage.modules
         8
-        sage: P._anchor
+        sage: P._anchor                                                                 # needs sage.combinat sage.modules
         (4, 5)
 
     This example is Example 5.9 in [GGMM2020]_::
@@ -50,7 +53,7 @@ class MobilePoset(FinitePoset):
         [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
         sage: P2._anchor
         (8, (8, 0))
-        sage: P2.linear_extensions().cardinality()
+        sage: P2.linear_extensions().cardinality()                                      # needs sage.modules
         21399440939
 
         sage: EP = posets.MobilePoset(posets.ChainPoset(0), {})
@@ -61,7 +64,7 @@ class MobilePoset(FinitePoset):
     _lin_ext_type = LinearExtensionsOfMobile
     _desc = 'Finite mobile poset'
 
-    def __init__(self, hasse_diagram, elements, category, facade, key, ribbon=None, check=True):
+    def __init__(self, hasse_diagram, elements, category, facade, key, ribbon=None, check=True) -> None:
         r"""
         Initialize ``self``.
 
@@ -109,18 +112,18 @@ class MobilePoset(FinitePoset):
         num_anchors = 0
 
         for r in ribbon:
-            anchor_neighbors = set(G.neighbors_out(r)).difference(set(R.neighbors_out(r)))
+            anchor_neighbors = set(G.neighbor_out_iterator(r)).difference(set(R.neighbor_out_iterator(r)))
             if len(anchor_neighbors) == 1:
                 num_anchors += 1
             elif len(anchor_neighbors) > 1:
                 return False
 
-            for lc in G.neighbors_in(r):
+            for lc in G.neighbor_in_iterator(r):
                 if lc in ribbon:
                     continue
 
                 G_un.delete_edge(lc, r)
-                P = Poset(G.subgraph(G_un.connected_component_containing_vertex(lc)))
+                P = Poset(G.subgraph(G_un.connected_component_containing_vertex(lc, sort=False)))
                 if P.top() != lc or not P.is_d_complete():
                     return False
                 G_un.add_edge(lc, r)
@@ -140,7 +143,7 @@ class MobilePoset(FinitePoset):
             sage: M._anchor
             (4, 3)
         """
-        ribbon = list(map(lambda x: self._element_to_vertex(x), self._ribbon))
+        ribbon = [self._element_to_vertex(x) for x in self._ribbon]
         H = self._hasse_diagram
         R = H.subgraph(ribbon)
 
@@ -148,11 +151,11 @@ class MobilePoset(FinitePoset):
 
         # Find the anchor vertex, if it exists, and return the edge
         for r in ribbon:
-            anchor_neighbors = set(H.neighbors_out(r)).difference(set(R.neighbors_out(r)))
+            anchor_neighbors = set(H.neighbor_out_iterator(r)).difference(set(R.neighbor_out_iterator(r)))
             if len(anchor_neighbors) == 1:
                 anchor = (r, anchor_neighbors.pop())
                 break
-        return (self._vertex_to_element(anchor[0]), self._vertex_to_element(anchor[1])) if not anchor is None else None
+        return (self._vertex_to_element(anchor[0]), self._vertex_to_element(anchor[1])) if anchor is not None else None
 
     @lazy_attribute
     def _ribbon(self):
@@ -179,7 +182,7 @@ class MobilePoset(FinitePoset):
         H_un = H.to_undirected()
         max_elmts = H.sinks()
         # Compute anchor, ribbon
-        ribbon = [] # In order list of elements on zigzag
+        ribbon = []  # In order list of elements on zigzag
 
         if len(max_elmts) == 1:
             return [self._vertex_to_element(max_elmts[0])]
@@ -195,25 +198,25 @@ class MobilePoset(FinitePoset):
 
         if G.is_path():
             # Check if there is a anchor by seeing if there is more than one acyclic path to the next max
-            ends = max_elmt_graph.vertices(degree=1)
+            ends = max_elmt_graph.vertices(sort=True, degree=1)
             # Form ribbon
             ribbon = G.shortest_path(ends[0], ends[1])
             for end_count, end in enumerate(ends):
                 if not (H_un.is_cut_vertex(end) or H_un.degree(end) == 1):
                     traverse_ribbon = ribbon if end_count == 0 else ribbon[::-1]
                     for ind, p in enumerate(traverse_ribbon):
-                        if H_un.is_cut_edge(p, traverse_ribbon[ind+1]):
+                        if H_un.is_cut_edge(p, traverse_ribbon[ind + 1]):
                             return [self._vertex_to_element(r)
-                                    for r in G.shortest_path(ends[(end_count + 1) % 2], traverse_ribbon[ind+1])]
+                                    for r in G.shortest_path(ends[(end_count + 1) % 2], traverse_ribbon[ind + 1])]
             return [self._vertex_to_element(r) for r in ribbon]
 
         # First check path counts between ends and deg3 vertex
         # Then check if more than one max elmt on way to degree 3 vertex.
-        # Then check if the edge going to a max element is down fron the degree 3 vertex
+        # Then check if the edge going to a max element is down from the degree 3 vertex
         # Arbitrarily choose between ones with just 1
 
-        ends = max_elmt_graph.vertices(degree=1)
-        deg3 = max_elmt_graph.vertices(degree=3)[0]
+        ends = max_elmt_graph.vertices(sort=True, degree=1)
+        deg3 = max_elmt_graph.vertices(sort=True, degree=3)[0]
 
         anchoredEnd = None
         for end in ends:
@@ -269,4 +272,3 @@ class MobilePoset(FinitePoset):
             True
         """
         return self._anchor
-

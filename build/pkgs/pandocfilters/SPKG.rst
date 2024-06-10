@@ -1,5 +1,5 @@
-pandocfilters
-=============
+pandocfilters: A Python module for writing pandoc filters
+=========================================================
 
 Description
 -----------
@@ -16,12 +16,6 @@ Upstream Contact
 ----------------
 
 Author: John MacFarlane Home page: https://github.com/jgm/pandocfilters
-
-Dependencies
-------------
-
--  Python
-
 
 Special Update/Build Instructions
 ---------------------------------

@@ -1,5 +1,4 @@
 # distutils: extra_compile_args = -D_XPG6
-
 """
 Heilbronn matrix computation
 """
@@ -34,22 +33,21 @@ cdef extern from "<math.h>":
     float roundf(float x)
 
 cimport sage.modular.modsym.p1list as p1list
-from . import  p1list
+from sage.modular.modsym import p1list
 cdef p1list.export export
 export = p1list.export()
 
-from .apply cimport Apply
+from sage.modular.modsym.apply cimport Apply
 cdef Apply PolyApply= Apply()
 
-from sage.rings.integer cimport Integer
 from sage.matrix.matrix_rational_dense cimport Matrix_rational_dense
 from sage.matrix.matrix_cyclo_dense cimport Matrix_cyclo_dense
 
 ctypedef long long llong
 
-cdef int llong_prod_mod(int a, int b, int N):
+cdef int llong_prod_mod(int a, int b, int N) noexcept:
     cdef int c
-    c = <int> ( ((<llong> a) * (<llong> b)) % (<llong> N) )
+    c = <int> (((<llong> a) * (<llong> b)) % (<llong> N))
     if c < 0:
         c = c + N
     return c
@@ -84,10 +82,10 @@ cdef int list_append4(list* L, int a, int b, int c, int d) except -1:
     list_append(L, c)
     list_append(L, d)
 
-cdef void list_clear(list L):
+cdef void list_clear(list L) noexcept:
     sig_free(L.v)
 
-cdef void list_init(list* L):
+cdef void list_init(list* L) noexcept:
     L.n = 16
     L.i = 0
     L.v = expand(<int*>0, 0, L.n)
@@ -112,7 +110,8 @@ cdef class Heilbronn:
 
         EXAMPLES::
 
-            sage: H = sage.modular.modsym.heilbronn.Heilbronn()
+            sage: from sage.modular.modsym.heilbronn import Heilbronn
+            sage: H = Heilbronn()
             sage: H._initialize_list()
             Traceback (most recent call last):
             ...
@@ -121,8 +120,8 @@ cdef class Heilbronn:
         raise NotImplementedError
 
     def __getitem__(self, int n):
-        """
-        Return the n-th matrix in ``self``.
+        r"""
+        Return the `n`-th matrix in ``self``.
 
         EXAMPLES::
 
@@ -154,7 +153,7 @@ cdef class Heilbronn:
         """
         Return the list of Heilbronn matrices corresponding to ``self``.
 
-        Each matrix is given as a list of four ints.
+        Each matrix is given as a list of four integers.
 
         EXAMPLES::
 
@@ -171,17 +170,14 @@ cdef class Heilbronn:
         return L
 
     cdef apply_only(self, int u, int v, int N, int* a, int* b):
-        """
+        r"""
         INPUT:
 
+        -  ``u``, ``v``, ``N`` -- integers
 
-        -  ``u, v, N`` - integers
+        -  ``a``, ``b`` -- preallocated int arrays of the length of ``self``
 
-        -  ``a, b`` - preallocated int arrays of the length
-           self.
-
-
-        OUTPUT: sets the entries of a,b
+        OUTPUT: sets the entries of `a`, `b`
 
         EXAMPLES::
 
@@ -198,12 +194,12 @@ cdef class Heilbronn:
                 a[i] = b[i] = 0
         if N < 32768:   # use ints with no reduction modulo N
             for i in range(self.length):
-                a[i] = u*self.list.v[4*i] + v*self.list.v[4*i+2]
-                b[i] = u*self.list.v[4*i+1] + v*self.list.v[4*i+3]
+                a[i] = u * self.list.v[4*i] + v * self.list.v[4*i+2]
+                b[i] = u * self.list.v[4*i+1] + v * self.list.v[4*i+3]
         elif N < 46340:    # use ints but reduce mod N so can add two
             for i in range(self.length):
-                a[i] = (u * self.list.v[4*i])%N + (v * self.list.v[4*i+2])%N
-                b[i] = (u * self.list.v[4*i+1])%N + (v * self.list.v[4*i+3])%N
+                a[i] = (u * self.list.v[4*i]) % N + (v * self.list.v[4*i+2]) % N
+                b[i] = (u * self.list.v[4*i+1]) % N + (v * self.list.v[4*i+3]) % N
         else:
             for i in range(self.length):
                 a[i] = llong_prod_mod(u,self.list.v[4*i],N) + llong_prod_mod(v,self.list.v[4*i+2], N)
@@ -211,41 +207,43 @@ cdef class Heilbronn:
         sig_off()
 
     cdef apply_to_polypart(self, fmpz_poly_t* ans, int i, int k):
-        """
+        r"""
         INPUT:
 
-        -  ``ans`` - fmpz_poly_t\*; pre-allocated an
-           initialized array of self.length fmpz_poly_t's
-        -  ``i`` - integer
-        -  ``k`` - integer
+        -  ``ans`` -- ``fmpz_poly_t*``; pre-allocated an
+           initialized array of ``self.length`` ``fmpz_poly_t``s
+        -  ``i`` -- integer
+        -  ``k`` -- integer
 
-        OUTPUT: sets entries of ans
+        OUTPUT: sets entries of ``ans``
         """
-        cdef int j, m = k-2
+        cdef int j, m = k - 2
         for j in range(self.length):
             PolyApply.apply_to_monomial_flint(ans[j], i, m,
-                   self.list.v[4*j], self.list.v[4*j+1],
-                   self.list.v[4*j+2], self.list.v[4*j+3])
+                                              self.list.v[4 * j],
+                                              self.list.v[4 * j + 1],
+                                              self.list.v[4 * j + 2],
+                                              self.list.v[4 * j + 3])
 
     def apply(self, int u, int v, int N):
-        """
-        Return a list of pairs ((c,d),m), which is obtained as follows:
+        r"""
+        Return a list of pairs `((c,d),m)`, which is obtained as follows:
 
-        1) Compute the images (a,b) of the vector (u,v) (mod N) acted on by
+        1) Compute the images `(a,b)` of the vector `(u,v) \pmod N` acted on by
         each of the HeilbronnCremona matrices in self.
 
-        2) Reduce each (a,b) to canonical form (c,d) using p1normalize.
+        2) Reduce each `(a,b)` to canonical form `(c,d)` using ``p1normalize``.
 
         3) Sort.
 
-        4) Create the list ((c,d),m), where m is the number of times
-        that (c,d) appears in the list created in steps 1-3
-        above. Note that the pairs ((c,d),m) are sorted
-        lexicographically by (c,d).
+        4) Create the list `((c,d),m)`, where `m` is the number of times
+        that `(c,d)` appears in the list created in steps 1-3
+        above. Note that the pairs `((c,d),m)` are sorted
+        lexicographically by `(c,d)`.
 
         INPUT:
 
-        - ``u, v, N`` -- integers
+        - ``u``, ``v``, ``N`` -- integers
 
         OUTPUT: list
 
@@ -303,8 +301,8 @@ cdef class HeilbronnCremona(Heilbronn):
     cdef public int p
 
     def __init__(self, int p):
-        """
-        Create the list of Heilbronn-Cremona matrices of determinant p.
+        r"""
+        Create the list of Heilbronn-Cremona matrices of determinant `p`.
 
         EXAMPLES::
 
@@ -332,7 +330,7 @@ cdef class HeilbronnCremona(Heilbronn):
             sage: HeilbronnCremona(691).__repr__()
             'The Cremona-Heilbronn matrices of determinant 691'
         """
-        return "The Cremona-Heilbronn matrices of determinant %s"%self.p
+        return f"The Cremona-Heilbronn matrices of determinant {self.p}"
 
     def _initialize_list(self):
         """
@@ -342,6 +340,7 @@ cdef class HeilbronnCremona(Heilbronn):
 
         EXAMPLES::
 
+            sage: from sage.modular.modsym.heilbronn import HeilbronnCremona
             sage: H = HeilbronnCremona.__new__(HeilbronnCremona)
             sage: H.p = 5
             sage: H
@@ -363,7 +362,7 @@ cdef class HeilbronnCremona(Heilbronn):
             [-2, 1, 1, -3],
             [1, 0, -3, 5]]
         """
-        cdef int r, x1, x2, y1, y2, a, b, c, x3, y3, q, n, p
+        cdef int r, x1, x2, y1, y2, a, b, c, x3, y3, q, p
         cdef list *L
         list_init(&self.list)
         L = &self.list
@@ -402,7 +401,11 @@ cdef class HeilbronnCremona(Heilbronn):
                 a = -b
                 b = c
                 x3 = q*x2 - x1
-                x1 = x2; x2 = x3; y3 = q*y2 - y1; y1 = y2; y2 = y3
+                x1 = x2
+                x2 = x3
+                y3 = q*y2 - y1
+                y1 = y2
+                y2 = y3
                 list_append4(L, x1,x2, y1,y2)
         self.length = L.i/4
         sig_off()
@@ -452,6 +455,7 @@ cdef class HeilbronnMerel(Heilbronn):
 
         EXAMPLES::
 
+            sage: from sage.modular.modsym.heilbronn import HeilbronnMerel
             sage: H = HeilbronnMerel.__new__(HeilbronnMerel)
             sage: H.n = 5
             sage: H
@@ -514,17 +518,18 @@ cdef class HeilbronnMerel(Heilbronn):
 
 
 def hecke_images_gamma0_weight2(int u, int v, int N, indices, R):
-    """
+    r"""
     INPUT:
 
-    - ``u, v, N`` - integers so that gcd(u,v,N) = 1
-    - ``indices`` - a list of positive integers
-    - ``R`` - matrix over QQ that writes each elements of
-      P1 = P1List(N) in terms of a subset of P1.
+    - ``u``, ``v``, ``N`` -- integers so that `\gcd(u,v,N) = 1`
+    - ``indices`` -- a list of positive integers
+    - ``R`` -- matrix over `\QQ` that writes each elements of
+      `\textnormal{P1} = \textnormal{P1List}(N)` in terms of a
+      subset of `\textnormal{P1}`.
 
 
-    OUTPUT: a dense matrix whose columns are the images T_n(x)
-    for n in indices and x the Manin symbol (u,v), expressed
+    OUTPUT: a dense matrix whose columns are the images `T_n(x)`
+    for `n` in indices and `x` the Manin symbol `(u,v)`, expressed
     in terms of the basis.
 
     EXAMPLES::
@@ -548,11 +553,11 @@ def hecke_images_gamma0_weight2(int u, int v, int N, indices, R):
     """
     cdef p1list.P1List P1 = p1list.P1List(N)
 
-    # Create a zero dense matrix over QQ with len(indices) rows
+    # Create a zero dense matrix over `\QQ` with len(indices) rows
     # and #P^1(N) columns.
     cdef Matrix_rational_dense T
-    from sage.matrix.all import matrix
-    from sage.rings.all import QQ
+    from sage.matrix.constructor import matrix
+    from sage.rings.rational_field import QQ
     T = matrix(QQ, len(indices), len(P1), sparse=False)
     original_base_ring = R.base_ring()
     if original_base_ring != QQ:
@@ -573,9 +578,11 @@ def hecke_images_gamma0_weight2(int u, int v, int N, indices, R):
 
         # Allocate memory to hold images of (u,v) under all Heilbronn matrices
         a = <int*> sig_malloc(sizeof(int)*H.length)
-        if not a: raise MemoryError
+        if not a:
+            raise MemoryError
         b = <int*> sig_malloc(sizeof(int)*H.length)
-        if not b: raise MemoryError
+        if not b:
+            raise MemoryError
 
         # Compute images of (u,v) under all Heilbronn matrices
         H.apply_only(u, v, N, a, b)
@@ -588,8 +595,8 @@ def hecke_images_gamma0_weight2(int u, int v, int N, indices, R):
 
             # Now fill in row i of the matrix T.
             if k != -1:
-                 # The following line is just a dangerous direct way to do: T[i,k] += 1
-                 T._add_ui_unsafe_assuming_int(i,k,1)
+                # The following line is just a dangerous direct way to do: T[i,k] += 1
+                T._add_ui_unsafe_assuming_int(i, k, 1)
 
         # Free a and b
         sig_free(a)
@@ -630,27 +637,28 @@ def hecke_images_gamma0_weight2(int u, int v, int N, indices, R):
 
 
 def hecke_images_nonquad_character_weight2(int u, int v, int N, indices, chi, R):
-    """
+    r"""
     Return images of the Hecke operators `T_n` for `n`
-    in the list indices, where chi must be a quadratic Dirichlet
-    character with values in QQ.
+    in the list indices, where `\chi` must be a quadratic Dirichlet
+    character with values in `\QQ`.
 
-    R is assumed to be the relation matrix of a weight modular symbols
-    space over QQ with character chi.
+    `R` is assumed to be the relation matrix of a weight modular symbols
+    space over `\QQ` with character `\chi`.
 
     INPUT:
 
-    - ``u, v, N`` - integers so that gcd(u,v,N) = 1
-    - ``indices`` - a list of positive integers
-    - ``chi`` - a Dirichlet character that takes values
-      in a nontrivial extension of QQ.
-    - ``R`` - matrix over QQ that writes each elements of
-      P1 = P1List(N) in terms of a subset of P1.
+    - ``u``, ``v``, ``N`` -- integers so that `\gcd(u,v,N) = 1`
+    - ``indices`` -- a list of positive integers
+    - ``chi`` -- a Dirichlet character that takes values
+      in a nontrivial extension of `\QQ`.
+    - ``R`` -- matrix over `\QQ` that writes each elements of
+      `\textnormal{P1} = \textnormal{P1List}(N)` in terms of a
+      subset of `\textnormal{P1}`.
 
 
-    OUTPUT: a dense matrix with entries in the field QQ(chi) (the
-    values of chi) whose columns are the images T_n(x) for n in
-    indices and x the Manin symbol (u,v), expressed in terms of the
+    OUTPUT: a dense matrix with entries in the field `\QQ(\chi)` (the
+    values of `\chi`) whose columns are the images `T_n(x)` for `n` in
+    indices and `x` the Manin symbol `(u,v)`, expressed in terms of the
     basis.
 
     EXAMPLES::
@@ -672,7 +680,7 @@ def hecke_images_nonquad_character_weight2(int u, int v, int N, indices, chi, R)
     """
     cdef p1list.P1List P1 = p1list.P1List(N)
 
-    from sage.rings.all import QQ
+    from sage.rings.rational_field import QQ
     K = chi.base_ring()
 
     if K == QQ:
@@ -684,7 +692,7 @@ def hecke_images_nonquad_character_weight2(int u, int v, int N, indices, chi, R)
     # Create a zero dense matrix over K with len(indices) rows
     # and #P^1(N) columns.
     cdef Matrix_cyclo_dense T
-    from sage.matrix.all import matrix
+    from sage.matrix.constructor import matrix
     T = matrix(K, len(indices), len(P1), sparse=False)
 
     cdef Py_ssize_t i, j
@@ -708,9 +716,11 @@ def hecke_images_nonquad_character_weight2(int u, int v, int N, indices, chi, R)
 
         # Allocate memory to hold images of (u,v) under all Heilbronn matrices
         a = <int*> sig_malloc(sizeof(int)*H.length)
-        if not a: raise MemoryError
+        if not a:
+            raise MemoryError
         b = <int*> sig_malloc(sizeof(int)*H.length)
-        if not b: raise MemoryError
+        if not b:
+            raise MemoryError
 
         # Compute images of (u,v) under all Heilbronn matrices
         H.apply_only(u, v, N, a, b)
@@ -720,16 +730,17 @@ def hecke_images_nonquad_character_weight2(int u, int v, int N, indices, chi, R)
             P1.index_and_scalar(a[j], b[j], &k, &scalar)
             # Now fill in row i of the matrix T.
             if k != -1:
-                 # The following line is just a dangerous direct way to do: T[i,k] += chi(scalar)
-                 # T[i,k] += chi(scalar)
-                 # This code makes assumptions about the internal structure
-                 # of matrices over cyclotomic fields.  It's nasty, but it
-                 # is exactly what is needed to get a solid 100 or more
-                 # times speedup.
-                 scalar %= N
-                 if scalar < 0: scalar += N
-                 # Note that the next line totally dominates the runtime of this whole function.
-                 T._matrix._add_col_j_of_A_to_col_i_of_self(i * T._ncols + k, chi_vals, scalar)
+                # The following line is just a dangerous direct way to do: T[i,k] += chi(scalar)
+                # T[i,k] += chi(scalar)
+                # This code makes assumptions about the internal structure
+                # of matrices over cyclotomic fields.  It's nasty, but it
+                # is exactly what is needed to get a solid 100 or more
+                # times speedup.
+                scalar %= N
+                if scalar < 0:
+                    scalar += N
+                # Note that the next line totally dominates the runtime of this whole function.
+                T._matrix._add_col_j_of_A_to_col_i_of_self(i * T._ncols + k, chi_vals, scalar)
 
         # Free a and b
         sig_free(a)
@@ -739,19 +750,20 @@ def hecke_images_nonquad_character_weight2(int u, int v, int N, indices, chi, R)
 
 
 def hecke_images_quad_character_weight2(int u, int v, int N, indices, chi, R):
-    """
+    r"""
     INPUT:
 
-    - ``u, v, N`` - integers so that gcd(u,v,N) = 1
-    - ``indices`` - a list of positive integers
-    - ``chi`` - a Dirichlet character that takes values in QQ
-    - ``R`` - matrix over QQ(chi) that writes each elements of P1 =
-       P1List(N) in terms of a subset of P1.
+    - ``u``, ``v``, ``N`` -- integers so that `\gcd(u,v,N) = 1`
+    - ``indices`` -- a list of positive integers
+    - ``chi`` -- a Dirichlet character that takes values in `\QQ`
+    - ``R`` -- matrix over `\QQ(\chi)` that writes each elements of
+      `\textnormal{P1} = \textnormal{P1List}(N)` in terms of a subset
+      of `\textnormal{P1}`.
 
 
-    OUTPUT: a dense matrix with entries in the rational field QQ (the
-    values of chi) whose columns are the images T_n(x) for n in
-    indices and x the Manin symbol (u,v), expressed in terms of the
+    OUTPUT: a dense matrix with entries in the rational field `\QQ` (the
+    values of `\chi`) whose columns are the images `T_n(x)` for `n` in
+    indices and `x` the Manin symbol `(u,v)`, expressed in terms of the
     basis.
 
     EXAMPLES::
@@ -771,14 +783,14 @@ def hecke_images_quad_character_weight2(int u, int v, int N, indices, chi, R):
         (0, -2, 0, 2, -2, -1)
     """
     cdef p1list.P1List P1 = p1list.P1List(N)
-    from sage.rings.all import QQ
+    from sage.rings.rational_field import QQ
     if chi.base_ring() != QQ:
         raise TypeError("character must takes values in QQ")
 
-    # Create a zero dense matrix over QQ with len(indices) rows
+    # Create a zero dense matrix over `\QQ` with len(indices) rows
     # and #P^1(N) columns.
     cdef Matrix_rational_dense T
-    from sage.matrix.all import matrix
+    from sage.matrix.constructor import matrix
     T = matrix(QQ, len(indices), len(P1), sparse=False)
 
     if R.base_ring() != QQ:
@@ -790,63 +802,67 @@ def hecke_images_quad_character_weight2(int u, int v, int N, indices, chi, R):
     cdef int k, scalar
     cdef Heilbronn H
 
-    t = verbose("computing non-reduced images of symbol under Hecke operators",
-                               level=1, caller_name='hecke_images_quad_character_weight2')
+    _ = verbose("computing non-reduced images of symbol under Hecke operators",
+                level=1, caller_name='hecke_images_quad_character_weight2')
 
     # Make a matrix over the rational numbers each of whose columns
     # are the values of the character chi.
     _chivals = chi.values()
     cdef int *chi_vals = <int*>sig_malloc(sizeof(int)*len(_chivals))
-    if not chi_vals: raise MemoryError
+    if not chi_vals:
+        raise MemoryError
     for i in range(len(_chivals)):
         chi_vals[i] = _chivals[i]
 
     for i, n in enumerate(indices):
         H = HeilbronnCremona(n) if is_prime(n) else HeilbronnMerel(n)
         a = <int*> sig_malloc(sizeof(int)*H.length)
-        if not a: raise MemoryError
+        if not a:
+            raise MemoryError
         b = <int*> sig_malloc(sizeof(int)*H.length)
-        if not b: raise MemoryError
+        if not b:
+            raise MemoryError
 
         H.apply_only(u, v, N, a, b)
         for j in range(H.length):
             P1.index_and_scalar(a[j], b[j], &k, &scalar)
             if k != -1:
-                 # This is just T[i,k] += chi(scalar)
-                 scalar %= N
-                 if scalar < 0: scalar += N
-                 if chi_vals[scalar] > 0:
-                     T._add_ui_unsafe_assuming_int(i, k, 1)
-                 elif chi_vals[scalar] < 0:
-                     T._sub_ui_unsafe_assuming_int(i, k, 1)
-        sig_free(a); sig_free(b)
+                # This is just T[i,k] += chi(scalar)
+                scalar %= N
+                if scalar < 0:
+                    scalar += N
+                if chi_vals[scalar] > 0:
+                    T._add_ui_unsafe_assuming_int(i, k, 1)
+                elif chi_vals[scalar] < 0:
+                    T._sub_ui_unsafe_assuming_int(i, k, 1)
+        sig_free(a)
+        sig_free(b)
 
     sig_free(chi_vals)
     return T * R
 
 
-
-
-############################################################################
+# ##########################################################################
 # Fast application of Heilbronn operators to computation of
 # systems of Hecke eigenvalues.
 #   Trivial character and weight > 2.
-############################################################################
+# ##########################################################################
 
 def hecke_images_gamma0_weight_k(int u, int v, int i, int N, int k, indices, R):
-    """
+    r"""
     INPUT:
 
-    -  ``u, v, N`` - integers so that gcd(u,v,N) = 1
-    -  ``i`` - integer with 0 <= i <= k-2
-    -  ``k`` - weight
-    -  ``indices`` - a list of positive integers
-    -  ``R`` - matrix over QQ that writes each elements of
-       P1 = P1List(N) in terms of a subset of P1.
+    -  ``u``, ``v``, ``N`` -- integers so that `\gcd(u,v,N) = 1`
+    -  ``i`` -- integer with `0 \le i \le k-2`
+    -  ``k`` -- weight
+    -  ``indices`` -- a list of positive integers
+    -  ``R`` -- matrix over `\QQ` that writes each elements of
+       `\textnormal{P1} = \textnormal{P1List}(N)` in terms of a
+       subset of `\textnormal{P1}`.
 
     OUTPUT: a dense matrix with rational entries whose columns are the
-    images T_n(x) for n in indices and x the Manin symbol
-    [`X^i*Y^(k-2-i), (u,v)`], expressed in terms of the basis.
+    images `T_n(x)` for `n` in indices and `x` the Manin symbol
+    [`X^i*Y^{(k-2-i)}`, `(u,v)`], expressed in terms of the basis.
 
     EXAMPLES::
 
@@ -865,11 +881,11 @@ def hecke_images_gamma0_weight_k(int u, int v, int i, int N, int k, indices, R):
     # The Manin symbols are enumerated as
     #   all [0, (u,v)] for (u,v) in P^1(N) then
     #   all [1, (u,v)] for (u,v) in P^1(N) etc.
-    # So we create a zero dense matrix over QQ with len(indices) rows
+    # So we create a zero dense matrix over `\QQ` with len(indices) rows
     # and #P^1(N) * (k-1) columns.
     cdef Matrix_rational_dense T
-    from sage.matrix.all import matrix
-    from sage.rings.all import QQ
+    from sage.matrix.constructor import matrix
+    from sage.rings.rational_field import QQ
     T = matrix(QQ, len(indices), len(P1)*(k-1), sparse=False)
 
     if R.base_ring() != QQ:
@@ -883,16 +899,17 @@ def hecke_images_gamma0_weight_k(int u, int v, int i, int N, int k, indices, R):
 
     cdef Heilbronn H
     cdef fmpz_poly_t* poly
-    cdef Integer coeff = Integer()
 
     for z, m in enumerate(indices):
         H = HeilbronnCremona(m) if is_prime(m) else HeilbronnMerel(m)
 
         # Allocate memory to hold images of (u,v) under all Heilbronn matrices
         a = <int*> sig_malloc(sizeof(int)*H.length)
-        if not a: raise MemoryError
+        if not a:
+            raise MemoryError
         b = <int*> sig_malloc(sizeof(int)*H.length)
-        if not b: raise MemoryError
+        if not b:
+            raise MemoryError
 
         # Compute images of (u,v) under all Heilbronn matrices
         H.apply_only(u, v, N, a, b)

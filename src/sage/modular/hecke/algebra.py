@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint sage.libs.pari
 """
 Hecke algebras
 
@@ -11,7 +12,7 @@ Hecke algebras", which include Hecke operators coprime to the level. Morphisms
 in the category of Hecke modules are not required to commute with the action of
 the full Hecke algebra, only with the anemic algebra.
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2004 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -23,36 +24,46 @@ the full Hecke algebra, only with the anemic algebra.
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from typing import Iterator
 
-import sage.arith.all as arith
-import sage.rings.infinity
-import sage.rings.commutative_algebra
+from sage.rings.infinity import infinity
+from sage.categories.algebras import Algebras
 from sage.matrix.constructor import matrix
-from sage.arith.all import lcm
+from sage.arith.functions import lcm
+from sage.arith.misc import gcd
 from sage.misc.latex import latex
 from sage.matrix.matrix_space import MatrixSpace
-from sage.rings.all import ZZ, QQ
+from sage.rings.ring import CommutativeRing
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.structure.element import Element
 from sage.structure.unique_representation import CachedRepresentation
 from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp import richcmp_method, richcmp
 
-def is_HeckeAlgebra(x):
+
+def is_HeckeAlgebra(x) -> bool:
     r"""
-    Return True if x is of type HeckeAlgebra.
+    Return ``True`` if x is of type HeckeAlgebra.
 
     EXAMPLES::
 
         sage: from sage.modular.hecke.algebra import is_HeckeAlgebra
         sage: is_HeckeAlgebra(CuspForms(1, 12).anemic_hecke_algebra())
+        doctest:warning...
+        DeprecationWarning: the function is_HeckeAlgebra is deprecated;
+        use 'isinstance(..., HeckeAlgebra_base)' instead
+        See https://github.com/sagemath/sage/issues/37895 for details.
         True
         sage: is_HeckeAlgebra(ZZ)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37895, "the function is_HeckeAlgebra is deprecated; use 'isinstance(..., HeckeAlgebra_base)' instead")
     return isinstance(x, HeckeAlgebra_base)
+
 
 def _heckebasis(M):
     r"""
@@ -79,8 +90,11 @@ def _heckebasis(M):
     """
     d = M.rank()
     WW = ZZ**(d**2)
-    MM = MatrixSpace(QQ,d)
-    S = []; Denom = []; B = []; B1 = []
+    MM = MatrixSpace(QQ, d)
+    S = []
+    Denom = []
+    B = []
+    B1 = []
     for i in range(1, M.hecke_bound() + 1):
         v = M.hecke_operator(i).matrix()
         den = v.denominator()
@@ -88,25 +102,24 @@ def _heckebasis(M):
         S.append(v)
     den = lcm(Denom)
     for m in S:
-        B.append(WW((den*m).list()))
+        B.append(WW((den * m).list()))
     UU = WW.submodule(B)
     B = UU.basis()
     for u in B:
         u1 = u.list()
         m1 = M.hecke_algebra()(MM(u1), check=False)
-        #m1 = MM(u1)
-        B1.append((1/den)*m1)
+        B1.append((1 / den) * m1)
     return B1
 
 
 @richcmp_method
-class HeckeAlgebra_base(CachedRepresentation, sage.rings.commutative_algebra.CommutativeAlgebra):
+class HeckeAlgebra_base(CachedRepresentation, CommutativeRing):
     """
     Base class for algebras of Hecke operators on a fixed Hecke module.
 
     INPUT:
 
-    -  ``M`` - a Hecke module
+    -  ``M`` -- a Hecke module
 
     EXAMPLES::
 
@@ -148,7 +161,6 @@ class HeckeAlgebra_base(CachedRepresentation, sage.rings.commutative_algebra.Com
             Hecke operator on Modular Forms subspace of dimension 2 of ... defined by:
             [-3  0]
             [ 0  1]
-
         """
         if isinstance(M, tuple):
             M = M[0]
@@ -157,9 +169,9 @@ class HeckeAlgebra_base(CachedRepresentation, sage.rings.commutative_algebra.Com
         except AttributeError:
             # The AttributeError occurs if M is not a free module; then it might not have a basis_matrix method
             pass
-        return super(HeckeAlgebra_base, cls).__classcall__(cls, M)
+        return super().__classcall__(cls, M)
 
-    def __init__(self, M):
+    def __init__(self, M) -> None:
         """
         Initialization.
 
@@ -168,19 +180,23 @@ class HeckeAlgebra_base(CachedRepresentation, sage.rings.commutative_algebra.Com
             sage: from sage.modular.hecke.algebra import HeckeAlgebra_base
             sage: type(HeckeAlgebra_base(CuspForms(1, 12)))
             <class 'sage.modular.hecke.algebra.HeckeAlgebra_base_with_category'>
-
         """
         if isinstance(M, tuple):
             M = M[0]
-        from . import module
-        if not module.is_HeckeModule(M):
-            raise TypeError("M (=%s) must be a HeckeModule"%M)
+        from .module import HeckeModule_generic
+        if not isinstance(M, HeckeModule_generic):
+            msg = f"M (={M}) must be a HeckeModule"
+            raise TypeError(msg)
         self.__M = M
-        sage.rings.commutative_algebra.CommutativeAlgebra.__init__(self, M.base_ring())
+        cat = Algebras(M.base_ring()).Commutative()
+        CommutativeRing.__init__(self, base_ring=M.base_ring(),
+                                 category=cat)
 
-    def _an_element_impl(self):
+    def _an_element_(self):
         r"""
-        Return an element of this algebra. Used by the coercion machinery.
+        Return an element of this algebra.
+
+        Used by the coercion machinery.
 
         EXAMPLES::
 
@@ -189,7 +205,7 @@ class HeckeAlgebra_base(CachedRepresentation, sage.rings.commutative_algebra.Com
         """
         return self.hecke_operator(self.level() + 1)
 
-    def __call__(self, x, check=True):
+    def _element_constructor_(self, x, check=True):
         r"""
         Convert x into an element of this Hecke algebra. Here x is either:
 
@@ -205,10 +221,10 @@ class HeckeAlgebra_base(CachedRepresentation, sage.rings.commutative_algebra.Com
         - something that can be converted into an element of the
           underlying matrix space.
 
-        In the last case, the parameter ``check'' controls whether or
+        In the last case, the parameter ``check`` controls whether or
         not to check that this element really does lie in the
-        appropriate algebra. At present, setting ``check=True'' raises
-        a NotImplementedError unless x is a scalar (or a diagonal
+        appropriate algebra. At present, setting ``check=True`` raises
+        a :class:`NotImplementedError` unless x is a scalar (or a diagonal
         matrix).
 
         EXAMPLES::
@@ -221,7 +237,7 @@ class HeckeAlgebra_base(CachedRepresentation, sage.rings.commutative_algebra.Com
             sage: T.gen(2).matrix() in T
             Traceback (most recent call last):
             ...
-            NotImplementedError: Membership testing for '...' not implemented
+            NotImplementedError: membership testing for '...' not implemented
             sage: T(T.gen(2).matrix(), check=False)
             Hecke operator on Modular Symbols space of dimension 3 for Gamma_0(11) of weight 2 with sign 0 over Rational Field defined by:
             [ 3  0 -1]
@@ -236,49 +252,52 @@ class HeckeAlgebra_base(CachedRepresentation, sage.rings.commutative_algebra.Com
             TypeError: Don't know how to construct an element of Anemic Hecke algebra acting on Modular Symbols space of dimension 3 for Gamma_0(11) of weight 2 with sign 0 over Rational Field from Hecke operator T_11 on Modular Symbols space of dimension 3 for Gamma_0(11) of weight 2 with sign 0 over Rational Field
 
         """
-        from . import hecke_operator
+        from .hecke_operator import HeckeAlgebraElement_matrix, HeckeOperator, HeckeAlgebraElement
+
+        if not isinstance(x, Element):
+            x = self.base_ring()(x)
+
+        parent = x.parent()
+
+        if parent is self.base_ring():
+            return HeckeAlgebraElement_matrix(self, x * self.matrix_space().one())
+
+        if parent is self:
+            return x
+
+        if isinstance(x, HeckeOperator):
+            if x.parent() == self \
+                    or (not self.is_anemic() and x.parent() == self.anemic_subalgebra()) \
+                    or (self.is_anemic() and x.parent().anemic_subalgebra() == self and gcd(x.index(), self.level()) == 1):
+                return HeckeOperator(self, x.index())
+
+        if isinstance(x, HeckeAlgebraElement):
+            if x.parent() == self or (not self.is_anemic() and x.parent() == self.anemic_subalgebra()):
+                if x.parent().module().basis_matrix() == self.module().basis_matrix():
+                    return HeckeAlgebraElement_matrix(self, x.matrix())
+                else:
+                    A = matrix([self.module().coordinate_vector(x.parent().module().gen(i))
+                                for i in range(x.parent().module().rank())])
+                    return HeckeAlgebraElement_matrix(self, ~A * x.matrix() * A)
+
         try:
-            if not isinstance(x, Element):
-                x = self.base_ring()(x)
-            if x.parent() is self:
-                return x
-            elif hecke_operator.is_HeckeOperator(x):
-                if x.parent() == self \
-                        or (not self.is_anemic() and x.parent() == self.anemic_subalgebra()) \
-                        or (self.is_anemic() and x.parent().anemic_subalgebra() == self and arith.gcd(x.index(), self.level()) == 1):
-                    return hecke_operator.HeckeOperator(self, x.index())
-                else:
-                    raise TypeError
-            elif hecke_operator.is_HeckeAlgebraElement(x):
-                if x.parent() == self or (not self.is_anemic() and x.parent() == self.anemic_subalgebra()):
-                    if x.parent().module().basis_matrix() == self.module().basis_matrix():
-                        return hecke_operator.HeckeAlgebraElement_matrix(self, x.matrix())
-                    else:
-                        A = matrix([self.module().coordinate_vector(x.parent().module().gen(i)) \
-                            for i in range(x.parent().module().rank())])
-                        return hecke_operator.HeckeAlgebraElement_matrix(self, ~A * x.matrix() * A)
-                elif x.parent() == self.anemic_subalgebra():
-                    pass
-
-                else:
-                    raise TypeError
-            else:
-                A = self.matrix_space()(x)
-                if check:
-                    if not A.is_scalar():
-                        raise NotImplementedError("Membership testing for '%s' not implemented" % self)
-                return hecke_operator.HeckeAlgebraElement_matrix(self, A)
-
+            A = self.matrix_space()(x)
+            if check:
+                if not A.is_scalar():
+                    msg = f"membership testing for '{self}' not implemented"
+                    raise NotImplementedError(msg)
+            return HeckeAlgebraElement_matrix(self, A)
         except TypeError:
             raise TypeError("Don't know how to construct an element of %s from %s" % (self, x))
 
-    def _coerce_impl(self, x):
-        r"""
-        Implicit coercion of x into this Hecke algebra. The only things that
-        coerce implicitly into self are: elements of Hecke algebras which are
-        equal to self, or to the anemic subalgebra of self if self is not
-        anemic; and elements that coerce into the base ring of self.  Bare
-        matrices do *not* coerce implicitly into self.
+    def _coerce_map_from_(self, R):
+        """
+        Coercion of a parent ``R`` into this Hecke algebra.
+
+        The parents that coerce into ``self`` are: Hecke
+        algebras which are equal to ``self``, or to the anemic subalgebra
+        of ``self`` if ``self`` is not anemic; and parents that coerce into
+        the base ring of ``self``.
 
         EXAMPLES::
 
@@ -288,11 +307,11 @@ class HeckeAlgebra_base(CachedRepresentation, sage.rings.commutative_algebra.Com
             sage: F.coerce(A.2) # indirect doctest
             Hecke operator T_2 on Cuspidal subspace of dimension 3 of Modular Forms space of dimension 5 for Congruence Subgroup Gamma0(3) of weight 12 over Rational Field
         """
-        if x.parent() == self or (not self.is_anemic() and x.parent() == self.anemic_subalgebra()):
-            return self(x)
-        else:
-            return self(self.matrix_space()(1) * self.base_ring().coerce(x))
-        #return self._coerce_try(x, self.matrix_space())
+        if R == self:
+            return True
+        if not self.is_anemic() and R == self.anemic_subalgebra():
+            return True
+        return self.base_ring().has_coerce_map_from(R)
 
     def gen(self, n):
         """
@@ -309,19 +328,39 @@ class HeckeAlgebra_base(CachedRepresentation, sage.rings.commutative_algebra.Com
     def ngens(self):
         r"""
         The size of the set of generators returned by gens(), which is clearly
-        infinity. (This is not necessarily a minimal set of generators.)
+        infinity.
+
+        (This is not necessarily a minimal set of generators.)
 
         EXAMPLES::
 
             sage: CuspForms(1, 12).anemic_hecke_algebra().ngens()
             +Infinity
         """
-        return sage.rings.infinity.infinity
+        return infinity
 
-    def is_noetherian(self):
+    def one(self):
         """
-        Return True if this Hecke algebra is Noetherian as a ring. This is true
-        if and only if the base ring is Noetherian.
+        Return the unit of the Hecke algebra.
+
+        EXAMPLES::
+
+            sage: M = ModularSymbols(11,2,1)
+            sage: H = M.hecke_algebra()
+            sage: H.one()
+            Hecke operator on Modular Symbols space of dimension 2 for Gamma_0(11) of weight 2 with sign 1 over Rational Field defined by:
+            [1 0]
+            [0 1]
+        """
+        from .hecke_operator import HeckeAlgebraElement_matrix
+        A = self.matrix_space()
+        return HeckeAlgebraElement_matrix(self, A.one())
+
+    def is_noetherian(self) -> bool:
+        """
+        Return ``True`` if this Hecke algebra is Noetherian as a ring.
+
+        This is true if and only if the base ring is Noetherian.
 
         EXAMPLES::
 
@@ -340,9 +379,9 @@ class HeckeAlgebra_base(CachedRepresentation, sage.rings.commutative_algebra.Com
             sage: CuspForms(3, 24, base_ring=Qp(5)).anemic_hecke_algebra().matrix_space()
             Full MatrixSpace of 7 by 7 dense matrices over 5-adic Field with capped relative precision 20
         """
-        return sage.matrix.matrix_space.MatrixSpace(self.base_ring(), self.module().rank())
+        return MatrixSpace(self.base_ring(), self.module().rank())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         LaTeX representation of self.
 
@@ -400,16 +439,20 @@ class HeckeAlgebra_base(CachedRepresentation, sage.rings.commutative_algebra.Com
         EXAMPLES::
 
             sage: ModularSymbols(Gamma1(3), 3).hecke_algebra().basis()
-            (Hecke operator on Modular Symbols space of dimension 2 for Gamma_1(3) of weight 3 with sign 0 and over Rational Field defined by:
+            (Hecke operator on Modular Symbols space of dimension 2 for Gamma_1(3) of weight 3 with sign 0 over Rational Field defined by:
             [1 0]
             [0 1],
-            Hecke operator on Modular Symbols space of dimension 2 for Gamma_1(3) of weight 3 with sign 0 and over Rational Field defined by:
+            Hecke operator on Modular Symbols space of dimension 2 for Gamma_1(3) of weight 3 with sign 0 over Rational Field defined by:
             [0 0]
             [0 2])
 
             sage: M = ModularSymbols(Gamma0(22), sign=1)
-            sage: [B[0,0] for B in M.hecke_algebra().basis()]
-            [-955, -994, -706, -490, -1070]
+            sage: H = M.hecke_algebra()
+            sage: B = H.basis()
+            sage: len(B)
+            5
+            sage: all(b in H for b in B)
+            True
             sage: [B[0, 0] for B in M.anemic_hecke_algebra().basis()]
             Traceback (most recent call last):
             ...
@@ -427,20 +470,21 @@ class HeckeAlgebra_base(CachedRepresentation, sage.rings.commutative_algebra.Com
         elif dim == 1:
             basis = [self.hecke_operator(1)]
         else:
-            span = [self.hecke_operator(n) for n in range(1, bound+1)]
+            span = [self.hecke_operator(n) for n in range(1, bound + 1)]
             rand_max = 5
             while True:
                 # Project the full Hecke module to a random submodule to ease the HNF reduction.
                 v = (ZZ**dim).random_element(x=rand_max)
-                proj_span = matrix([T.matrix()*v for T in span])._clear_denom()[0]
+                proj_span = matrix([T.matrix() * v for T in span])._clear_denom()[0]
                 proj_basis = proj_span.hermite_form()
-                if proj_basis[dim-1] == 0:
+                if proj_basis[dim - 1] == 0:
                     # We got unlucky, choose another projection.
                     rand_max *= 2
                     continue
                 # Lift the projected basis to a basis in the Hecke algebra.
                 trans = proj_span.solve_left(proj_basis)
-                basis = [sum(c*T for c,T in zip(row,span) if c != 0) for row in trans[:dim]]
+                basis = [sum(c * T for c, T in zip(row, span) if c != 0)
+                         for row in trans[:dim]]
                 break
 
         return tuple(basis)
@@ -448,7 +492,9 @@ class HeckeAlgebra_base(CachedRepresentation, sage.rings.commutative_algebra.Com
     @cached_method
     def discriminant(self):
         r"""
-        Return the discriminant of this Hecke algebra, i.e. the
+        Return the discriminant of this Hecke algebra.
+
+        This is the
         determinant of the matrix `{\rm Tr}(x_i x_j)` where `x_1,
         \dots,x_d` is a basis for self, and `{\rm Tr}(x)` signifies
         the trace (in the sense of linear algebra) of left
@@ -473,11 +519,11 @@ class HeckeAlgebra_base(CachedRepresentation, sage.rings.commutative_algebra.Com
         basis = self.basis()
         d = len(basis)
         if d <= 1:
-            return ZZ(1)
+            return ZZ.one()
         trace_matrix = matrix(ZZ, d)
         for i in range(d):
-            for j in range(i+1):
-                trace_matrix[i,j] = trace_matrix[j,i] = basis[i].matrix().trace_of_product(basis[j].matrix())
+            for j in range(i + 1):
+                trace_matrix[i, j] = trace_matrix[j, i] = basis[i].matrix().trace_of_product(basis[j].matrix())
         return trace_matrix.det()
 
     def gens(self):
@@ -499,7 +545,7 @@ class HeckeAlgebra_base(CachedRepresentation, sage.rings.commutative_algebra.Com
             yield self.hecke_operator(n)
             n += 1
 
-    @cached_method(key=lambda self,n: int(n))
+    @cached_method(key=lambda self, n: int(n))
     def hecke_operator(self, n):
         """
         Return the `n`-th Hecke operator `T_n`.
@@ -540,7 +586,7 @@ class HeckeAlgebra_base(CachedRepresentation, sage.rings.commutative_algebra.Com
         """
         return self.__M.diamond_bracket_matrix(d)
 
-    @cached_method(key=lambda self,d: int(d)%self.__M.level())
+    @cached_method(key=lambda self, d: int(d) % self.__M.level())
     def diamond_bracket_operator(self, d):
         r"""
         Return the diamond bracket operator `\langle d \rangle`.
@@ -549,7 +595,7 @@ class HeckeAlgebra_base(CachedRepresentation, sage.rings.commutative_algebra.Com
 
             sage: T = ModularSymbols(Gamma1(7), 4).hecke_algebra()
             sage: T.diamond_bracket_operator(3)
-            Diamond bracket operator <3> on Modular Symbols space of dimension 12 for Gamma_1(7) of weight 4 with sign 0 and over Rational Field
+            Diamond bracket operator <3> on Modular Symbols space of dimension 12 for Gamma_1(7) of weight 4 with sign 0 over Rational Field
         """
         return self.__M._diamond_operator_class()(self, d)
 
@@ -559,7 +605,7 @@ class HeckeAlgebra_full(HeckeAlgebra_base):
     A full Hecke algebra (including the operators `T_n` where `n` is not
     assumed to be coprime to the level).
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of self.
 
@@ -568,9 +614,9 @@ class HeckeAlgebra_full(HeckeAlgebra_base):
             sage: ModularForms(37).hecke_algebra()._repr_()
             'Full Hecke algebra acting on Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(37) of weight 2 over Rational Field'
         """
-        return "Full Hecke algebra acting on %s"%self.module()
+        return "Full Hecke algebra acting on %s" % self.module()
 
-    def __richcmp__(self, other, op):
+    def __richcmp__(self, other, op) -> bool:
         r"""
         Compare self to other.
 
@@ -613,21 +659,23 @@ class HeckeAlgebra_full(HeckeAlgebra_base):
         """
         return self.module().anemic_hecke_algebra()
 
+
 HeckeAlgebra = HeckeAlgebra_full
+
 
 class HeckeAlgebra_anemic(HeckeAlgebra_base):
     r"""
     An anemic Hecke algebra, generated by Hecke operators with index coprime to the level.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
             sage: H = CuspForms(3, 12).anemic_hecke_algebra()._repr_()
         """
-        return "Anemic Hecke algebra acting on %s"%self.module()
+        return "Anemic Hecke algebra acting on %s" % self.module()
 
-    def __richcmp__(self, other, op):
+    def __richcmp__(self, other, op) -> bool:
         r"""
         Compare self to other.
 
@@ -640,7 +688,6 @@ class HeckeAlgebra_anemic(HeckeAlgebra_base):
             False
             sage: A == A
             True
-
         """
         if not isinstance(other, HeckeAlgebra_anemic):
             return NotImplemented
@@ -655,20 +702,20 @@ class HeckeAlgebra_anemic(HeckeAlgebra_base):
 
             sage: T = ModularSymbols(Gamma1(5),3).anemic_hecke_algebra()
             sage: T.hecke_operator(2)
-            Hecke operator T_2 on Modular Symbols space of dimension 4 for Gamma_1(5) of weight 3 with sign 0 and over Rational Field
+            Hecke operator T_2 on Modular Symbols space of dimension 4 for Gamma_1(5) of weight 3 with sign 0 over Rational Field
             sage: T.hecke_operator(5)
             Traceback (most recent call last):
             ...
             IndexError: Hecke operator T_5 not defined in the anemic Hecke algebra
         """
         n = int(n)
-        if arith.gcd(self.module().level(), n) != 1:
-            raise IndexError("Hecke operator T_%s not defined in the anemic Hecke algebra"%n)
+        if gcd(self.module().level(), n) != 1:
+            raise IndexError("Hecke operator T_%s not defined in the anemic Hecke algebra" % n)
         return self.module()._hecke_operator_class()(self, n)
 
-    def is_anemic(self):
+    def is_anemic(self) -> bool:
         """
-        Return True, since this the anemic Hecke algebra.
+        Return ``True``, since this is the anemic Hecke algebra.
 
         EXAMPLES::
 
@@ -678,7 +725,7 @@ class HeckeAlgebra_anemic(HeckeAlgebra_base):
         """
         return True
 
-    def gens(self):
+    def gens(self) -> Iterator:
         r"""
         Return a generator over all Hecke operator `T_n` for
         `n = 1, 2, 3, \ldots`, with `n` coprime to the
@@ -696,8 +743,9 @@ class HeckeAlgebra_anemic(HeckeAlgebra_base):
         level = self.level()
         n = 1
         while True:
-            if arith.gcd(n, level) == 1:
+            if gcd(n, level) == 1:
                 yield self.hecke_operator(n)
             n += 1
+
 
 AnemicHeckeAlgebra = HeckeAlgebra_anemic

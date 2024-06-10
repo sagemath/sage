@@ -1,6 +1,5 @@
-
-Combinatorial Designs
-=====================
+combinatorial_designs: Data from the Handbook of Combinatorial Designs
+======================================================================
 
 Description
 -----------
@@ -20,8 +19,3 @@ Upstream Contact
 ----------------
 
    None
-
-Dependencies
-------------
-
-N/A

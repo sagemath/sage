@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
 # cython: binding=True
 # distutils: language = c++
 r"""
-Graph traversals.
+Graph traversals
 
 **This module implements the following graph traversals**
 
@@ -38,16 +37,16 @@ Methods
 from collections import deque
 
 from libc.string cimport memset
-from sage.ext.memory_allocator cimport MemoryAllocator
-from sage.graphs.base.static_sparse_graph cimport init_short_digraph
-from sage.graphs.base.static_sparse_graph cimport free_short_digraph
-from sage.graphs.base.static_sparse_graph cimport out_degree, has_edge
 from libc.stdint cimport uint32_t
-from cysignals.signals cimport sig_on, sig_off, sig_check
-
 from libcpp.queue cimport priority_queue
 from libcpp.pair cimport pair
 from libcpp.vector cimport vector
+from cysignals.signals cimport sig_on, sig_off
+from memory_allocator cimport MemoryAllocator
+
+from sage.graphs.base.static_sparse_graph cimport init_short_digraph
+from sage.graphs.base.static_sparse_graph cimport free_short_digraph
+from sage.graphs.base.static_sparse_graph cimport out_degree
 
 
 def _is_valid_lex_BFS_order(G, L):
@@ -105,6 +104,7 @@ def _is_valid_lex_BFS_order(G, L):
                     continue
                 return False
     return True
+
 
 cdef lex_BFS_fast_short_digraph(short_digraph sd, uint32_t *sigma, uint32_t *pred):
     r"""
@@ -337,6 +337,7 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
 
     Different orderings for different traversals::
 
+        sage: # needs sage.combinat
         sage: G = digraphs.DeBruijn(2,3)
         sage: G.lex_BFS(initial_vertex='000', algorithm="fast")
         ['000', '001', '100', '010', '011', '110', '101', '111']
@@ -354,7 +355,6 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
     Computed orderings are valid::
 
         sage: from sage.graphs.traversals import _is_valid_lex_BFS_order
-        sage: set_random_seed()
         sage: G = graphs.RandomChordalGraph(15)
         sage: v0 = ZZ.random_element(G.order())
         sage: L = G.lex_BFS(initial_vertex=v0, algorithm="fast")
@@ -428,7 +428,8 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
     # calling out_neighbors. This data structure is well documented in the
     # module sage.graphs.base.static_sparse_graph
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v,
+                       sort_neighbors=False)
 
     # Initialize the predecessors array
     cdef MemoryAllocator mem = MemoryAllocator()
@@ -474,8 +475,8 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
         edges = [(int_to_v[i], int_to_v[pred[i]]) for i in range(n) if pred[i] != i]
         g = DiGraph([G, edges], format='vertices_and_edges', sparse=True)
         return sigma, g
-    else:
-        return sigma
+    return sigma
+
 
 def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
     r"""
@@ -540,6 +541,7 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
 
     Different orderings for different traversals::
 
+        sage: # needs sage.combinat
         sage: G = digraphs.DeBruijn(2,3)
         sage: G.lex_BFS(initial_vertex='000')
         ['000', '001', '100', '010', '011', '110', '101', '111']
@@ -594,14 +596,14 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
             from sage.graphs.digraph import DiGraph
             g = DiGraph(sparse=True)
             return [], g
-        else:
-            return []
+        return []
 
     # Build adjacency list of G
     cdef list int_to_v = list(G)
 
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v,
+                       sort_neighbors=False)
 
     # Perform Lex UP
 
@@ -646,9 +648,8 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
         edges = [(int_to_v[i], int_to_v[pred[i]]) for i in range(nV) if pred[i] != -1]
         g.add_edges(edges)
         return value, g
+    return value
 
-    else:
-        return value
 
 def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
     r"""
@@ -712,6 +713,7 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
 
     Different orderings for different traversals::
 
+        sage: # needs sage.combinat
         sage: G = digraphs.DeBruijn(2,3)
         sage: G.lex_BFS(initial_vertex='000')
         ['000', '001', '100', '010', '011', '110', '101', '111']
@@ -766,14 +768,14 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
             from sage.graphs.digraph import DiGraph
             g = DiGraph(sparse=True)
             return [], g
-        else:
-            return []
+        return []
 
     # Build adjacency list of G
     cdef list int_to_v = list(G)
 
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v,
+                       sort_neighbors=False)
 
     # Perform Lex DFS
 
@@ -819,9 +821,8 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
         edges = [(int_to_v[i], int_to_v[pred[i]]) for i in range(nV) if pred[i] != -1]
         g.add_edges(edges)
         return value, g
+    return value
 
-    else:
-        return value
 
 def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
     r"""
@@ -886,6 +887,7 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
 
     Different orderings for different traversals::
 
+        sage: # needs sage.combinat
         sage: G = digraphs.DeBruijn(2,3)
         sage: G.lex_BFS(initial_vertex='000')
         ['000', '001', '100', '010', '011', '110', '101', '111']
@@ -940,14 +942,14 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
             from sage.graphs.digraph import DiGraph
             g = DiGraph(sparse=True)
             return [], g
-        else:
-            return []
+        return []
 
     # Build adjacency list of G
     cdef list int_to_v = list(G)
 
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v,
+                       sort_neighbors=False)
 
     # Perform Lex DOWN
 
@@ -993,9 +995,8 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
         edges = [(int_to_v[i], int_to_v[pred[i]]) for i in range(nV) if pred[i] != -1]
         g.add_edges(edges)
         return value, g
+    return value
 
-    else:
-        return value
 
 def lex_M(self, triangulation=False, labels=False, initial_vertex=None, algorithm=None):
     r"""
@@ -1052,12 +1053,12 @@ def lex_M(self, triangulation=False, labels=False, initial_vertex=None, algorith
         sage: ord = g.lex_M(algorithm='lex_M_fast')
         sage: len(ord) == g.order()
         True
-        sage: set(ord) == set(g.vertices())
+        sage: set(ord) == set(g.vertices(sort=False))
         True
         sage: ord = g.lex_M(algorithm='lex_M_slow')
         sage: len(ord) == g.order()
         True
-        sage: set(ord) == set(g.vertices())
+        sage: set(ord) == set(g.vertices(sort=False))
         True
 
     Both algorithms produce a valid LexM ordering `\alpha` (i.e the neighbors of
@@ -1143,10 +1144,10 @@ def lex_M(self, triangulation=False, labels=False, initial_vertex=None, algorith
 
     if algorithm == "lex_M_slow":
         return lex_M_slow(self, triangulation=triangulation, labels=labels, initial_vertex=initial_vertex)
-    else:
-        if labels:
-            raise ValueError("'{}' cannot return labels assigned to vertices".format(algorithm))
-        return lex_M_fast(self, triangulation=triangulation, initial_vertex=initial_vertex)
+    if labels:
+        raise ValueError("'{}' cannot return labels assigned to vertices".format(algorithm))
+    return lex_M_fast(self, triangulation=triangulation, initial_vertex=initial_vertex)
+
 
 def lex_M_slow(G, triangulation=False, labels=False, initial_vertex=None):
     r"""
@@ -1308,8 +1309,7 @@ def lex_M_slow(G, triangulation=False, labels=False, initial_vertex=None):
         return alpha, F
     elif labels:
         return alpha, label
-    else:
-        return alpha
+    return alpha
 
 
 def lex_M_fast(G, triangulation=False, initial_vertex=None):
@@ -1415,7 +1415,8 @@ def lex_M_fast(G, triangulation=False, initial_vertex=None):
         int_to_v[0], int_to_v[i] = int_to_v[i], int_to_v[0]
 
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v,
+                       sort_neighbors=False)
     cdef uint32_t* p_tmp
     cdef uint32_t* p_end
 
@@ -1439,7 +1440,7 @@ def lex_M_fast(G, triangulation=False, initial_vertex=None):
     cdef dict reach
 
     k = 2
-    for i in range(n-1, -1, -1):
+    for i in range(n - 1, -1, -1):
 
         # Select: pick an unnumbered vertex v with label(v)==k and assign it
         # number i
@@ -1496,12 +1497,12 @@ def lex_M_fast(G, triangulation=False, initial_vertex=None):
 
         if unnumbered_vertices:
             # Sort: sort unnumbered vertices by label(w) value
-            order = sorted( (label[w], w) for w in unnumbered_vertices )
+            order = sorted((label[w], w) for w in unnumbered_vertices)
 
             # Reassign labels as integers from 2 to k, redefining k appropriately
             k = 2
-            l,_ = order[0]
-            for ll,w in order:
+            l, _ = order[0]
+            for ll, w in order:
                 if l != ll:
                     l = ll
                     k += 2
@@ -1513,8 +1514,7 @@ def lex_M_fast(G, triangulation=False, initial_vertex=None):
 
     if triangulation:
         return ordering, F
-    else:
-        return ordering
+    return ordering
 
 
 def is_valid_lex_M_order(G, alpha, F):
@@ -1675,7 +1675,8 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
         raise ValueError("vertex ({0}) is not a vertex of the graph".format(initial_vertex))
 
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex,
+                       sort_neighbors=False)
     cdef uint32_t** p_vertices = sd.neighbors
     cdef uint32_t* p_tmp
     cdef uint32_t* p_end
@@ -1732,14 +1733,14 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
 
     if tree:
         D = DiGraph([int_to_vertex, [(int_to_vertex[i], int_to_vertex[pred[i]])
-                                         for i in range(N) if pred[i] != i]],
+                                     for i in range(N) if pred[i] != i]],
                     format="vertices_and_edges")
         return alpha, D
 
     return alpha
 
 
-cdef inline int swap(int* alpha, int* alpha_inv, int u, int new_pos_u):
+cdef inline int swap(int* alpha, int* alpha_inv, int u, int new_pos_u) noexcept:
     """
     Swap positions of u and v in alpha, where v is be the vertex occupying cell
     new_pos_u in alpha.
@@ -1748,6 +1749,7 @@ cdef inline int swap(int* alpha, int* alpha_inv, int u, int new_pos_u):
     alpha[new_pos_u], alpha[alpha_inv[u]] = u, v
     alpha_inv[u], alpha_inv[v] = alpha_inv[v], alpha_inv[u]
     return v
+
 
 cdef maximum_cardinality_search_M_short_digraph(short_digraph sd, int initial_vertex,
                                                 int* alpha, int* alpha_inv, list F, bint* X):
@@ -1809,7 +1811,7 @@ cdef maximum_cardinality_search_M_short_digraph(short_digraph sd, int initial_ve
     cdef MemoryAllocator mem = MemoryAllocator()
     # number of times a vertex is reached, initially 0
     cdef int* weight = <int*>mem.calloc(N, sizeof(int))
-    # has a vertex been reached, initally False
+    # has a vertex been reached, initially False
     cdef bint* reached = <bint*>mem.calloc(N, sizeof(bint))
 
     cdef int i, u, v, xi
@@ -1901,6 +1903,7 @@ cdef maximum_cardinality_search_M_short_digraph(short_digraph sd, int initial_ve
 
     reach.clear()
 
+
 def maximum_cardinality_search_M(G, initial_vertex=None):
     r"""
     Return the ordering and the edges of the triangulation produced by MCS-M.
@@ -1937,7 +1940,7 @@ def maximum_cardinality_search_M(G, initial_vertex=None):
     - `F` is the list of edges of a minimal triangulation of `G` according
       `\alpha`
 
-    - `X` is is a list of vertices such that for each `x \in X`, the
+    - `X` is a list of vertices such that for each `x \in X`, the
       neighborhood of `x` in `G` is a separator (i.e., `G \setminus N(x)` is not
       connected). Note that we may have `N(x) = \emptyset` if `G` is not
       connected and `x` has degree 0.
@@ -2002,7 +2005,7 @@ def maximum_cardinality_search_M(G, initial_vertex=None):
         ....:     if len(X) < k - 1:
         ....:         raise ValueError("something goes wrong")
         sage: G = graphs.RandomGNP(10, .2)
-        sage: cc = G.connected_components()
+        sage: cc = G.connected_components(sort=False)
         sage: _, _, X = G.maximum_cardinality_search_M()
         sage: len(X) >= len(cc) - 1
         True
@@ -2047,7 +2050,8 @@ def maximum_cardinality_search_M(G, initial_vertex=None):
     # calling out_neighbors. This data structure is well documented in the
     # module sage.graphs.base.static_sparse_graph
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex,
+                       sort_neighbors=False)
 
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef int* alpha = <int*>mem.calloc(N, sizeof(int))

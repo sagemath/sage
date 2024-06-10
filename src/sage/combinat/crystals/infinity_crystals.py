@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 `\mathcal{B}(\infty)` Crystals of Tableaux in Nonexceptional Types and `G_2`
 
@@ -206,7 +207,7 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
             return InfinityCrystalOfTableauxTypeD(cartan_type)
         if cartan_type.type() == 'Q':
             return DualInfinityQueerCrystalOfTableaux(cartan_type)
-        return super(InfinityCrystalOfTableaux, cls).__classcall__(cls, cartan_type)
+        return super().__classcall__(cls, cartan_type)
 
     def __init__(self, cartan_type):
         """
@@ -249,7 +250,7 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
             [[1, 1, 1], [2, 2], [3]]
         """
         n = self._cartan_type.rank()
-        p = Partition([x for x in reversed(range(1, n+1))])
+        p = Partition(list(reversed(range(1, n + 1))))
         # The column canonical tableau, read by columns
         module_generator = flatten([[p[j]-i for i in range(p[j])] for j in range(n)])
         return self(list=[self.letters(x) for x in module_generator])
@@ -288,12 +289,13 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
                  or isinstance(P, InfinityCrystalOfNonSimplyLacedRC))):
             from sage.combinat.rigged_configurations.bij_infinity import FromRCIsomorphism
             return FromRCIsomorphism(Hom(P, self))
-        return super(InfinityCrystalOfTableaux, self)._coerce_map_from_(P)
+        return super()._coerce_map_from_(P)
 
     class Element(InfinityCrystalOfTableauxElement):
         r"""
         Elements in `\mathcal{B}(\infty)` crystal of tableaux.
         """
+
         def phi(self,i):
             r"""
             Return `\varphi_i` of ``self``.
@@ -605,7 +607,7 @@ class InfinityCrystalOfTableauxTypeD(InfinityCrystalOfTableaux):
             sage: B is B2
             True
         """
-        return super(InfinityCrystalOfTableauxTypeD, cls).__classcall__(cls, CartanType(cartan_type))
+        return super().__classcall__(cls, CartanType(cartan_type))
 
     @cached_method
     def module_generator(self):
@@ -622,7 +624,7 @@ class InfinityCrystalOfTableauxTypeD(InfinityCrystalOfTableaux):
             [[1, 1, 1], [2, 2], [3]]
         """
         n = self._cartan_type.rank()
-        p = Partition([x for x in reversed(range(1, n))])
+        p = Partition(list(reversed(range(1, n))))
         # The column canonical tableau, read by columns
         module_generator = flatten([[p[j]-i for i in range(p[j])] for j in range(n-1)])
         return self(list=[self.letters(x) for x in module_generator])
@@ -632,6 +634,7 @@ class InfinityCrystalOfTableauxTypeD(InfinityCrystalOfTableaux):
         Elements in `\mathcal{B}(\infty)` crystal of tableaux for type `D_n`.
         """
         pass
+
 
 #########################################################
 ## Queer superalgebra
@@ -650,7 +653,7 @@ class DualInfinityQueerCrystalOfTableaux(CrystalOfWords):
             True
         """
         cartan_type = CartanType(cartan_type)
-        return super(DualInfinityQueerCrystalOfTableaux, cls).__classcall__(cls, cartan_type)
+        return super().__classcall__(cls, cartan_type)
 
     def __init__(self, cartan_type):
         """
@@ -682,7 +685,7 @@ class DualInfinityQueerCrystalOfTableaux(CrystalOfWords):
         r"""
         Return the module generator (or highest weight element) of ``self``.
 
-        The module generator is the unique semistandard hoook tableau of shape
+        The module generator is the unique semistandard hook tableau of shape
         `(n, n-1, \ldots,2, 1)` with weight `0`.
 
         EXAMPLES::
@@ -725,4 +728,3 @@ class DualInfinityQueerCrystalOfTableaux(CrystalOfWords):
 
     class Element(InfinityQueerCrystalOfTableauxElement):
         pass
-

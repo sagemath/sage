@@ -1,5 +1,5 @@
-M4RI
-====
+m4ri: fast arithmetic with dense matrices over GF(2)
+====================================================
 
 Description
 -----------
@@ -19,12 +19,6 @@ Upstream Contact
 -  Authors: Martin Albrecht et al.
 -  Email: <m4ri-devel@googlegroups.com>
 -  Website: https://bitbucket.org/malb/m4ri
-
-Dependencies
-------------
-
--  libPNG
-
 
 Special Update/Build Instructions
 ---------------------------------

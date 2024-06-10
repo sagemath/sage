@@ -76,7 +76,6 @@ Sageでは，3次元射影空間における捻れ3次曲線のトーリック�
     Polyhedral fan in 4 dimensions of dimension 4
 
 
-
 楕円曲線
 ---------------
 
@@ -96,7 +95,6 @@ Sageの楕円曲線部門にはPARIの楕円曲線機能の大部分が取り込
    を生成する．
    ただし :math:`a_i` は :math:`a_1` のペアレントクラスに合わせて型強制される．
    全ての :math:`a_i` がペアレント :math:`\ZZ` を持つ場合， :math:`a_i` は :math:`\QQ` に型強制される．
-
 
 
 -  EllipticCurve([:math:`a_4`, :math:`a_6` ]): :math:`a_1=a_2=a_3=0` となる以外は上と同じ．
@@ -255,7 +253,6 @@ Cremonaのデータベースへ直接にアクセスすることも可能だ．
 さらに、Sage用の大規模版データベースパッケージ(2GB)では，Stein-Watkinsデータベース上の数千万種の楕円曲線を利用することができる．
 
 
-
 ディリクレ指標
 --------------------
 
@@ -370,8 +367,6 @@ Cremonaのデータベースへ直接にアクセスすることも可能だ．
 その時点で記号名 `a` はいったん未定義になるが、 ``a = K.0`` (``a = K.gen()`` としても同じ)が実行されると記号 `a` は多項式 :math:`x^4+1` の根を表すようになる．
 
 
-
-
 モジュラー形式
 -----------------
 
@@ -383,6 +378,7 @@ Sageを使ってモジュラー空間の次元，モジュラー・シンポル�
 
 ::
 
+    sage: from sage.modular.dims import dimension_cusp_forms
     sage: dimension_cusp_forms(Gamma0(11),2)
     1
     sage: dimension_cusp_forms(Gamma0(1),12)
@@ -423,7 +419,7 @@ Sageを使ってモジュラー空間の次元，モジュラー・シンポル�
      0 over Rational Field
     sage: ModularSymbols(Gamma1(11),2)
     Modular Symbols space of dimension 11 for Gamma_1(11) of weight 2 with
-    sign 0 and over Rational Field
+    sign 0 over Rational Field
 
 特性多項式と :math:`q` -展開を計算してみよう．
 

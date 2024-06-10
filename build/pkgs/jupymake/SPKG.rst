@@ -1,5 +1,5 @@
-jupymake
-========
+jupymake: A Python wrapper for the polymake shell
+=================================================
 
 Description
 -----------
@@ -16,13 +16,6 @@ Upstream Contact
 ----------------
 
    https://github.com/polymake/JuPyMake
-
-Dependencies
-------------
-
--  pip
--  polymake
-
 
 Special Update/Build Instructions
 ---------------------------------

@@ -41,7 +41,7 @@ def binary_quadratic_coefficients_from_invariants(discriminant, invariant_choice
     EXAMPLES::
 
         sage: from sage.rings.invariants.reconstruction import binary_quadratic_coefficients_from_invariants
-        sage: quadratic = invariant_theory.binary_form_from_invariants(2, [24]) # indirect doctest
+        sage: quadratic = invariant_theory.binary_form_from_invariants(2, [24])  # indirect doctest
         sage: quadratic
         Binary quadratic with coefficients (1, -6, 0)
         sage: quadratic.discriminant()
@@ -86,7 +86,7 @@ def binary_cubic_coefficients_from_invariants(discriminant, invariant_choice='de
         sage: coeffs
         (0, 1, -1, 0)
         sage: R.<x> = QQ[]
-        sage: R(coeffs).discriminant()
+        sage: R(coeffs).discriminant()                                                  # needs sage.libs.pari
         1
 
     The two non-equivalent cubics `x^3` and `x^2*z` with discriminant 0 can't
@@ -142,7 +142,8 @@ def binary_quintic_coefficients_from_invariants(invariants, K=None, invariant_ch
         sage: p = 3*x1^5 + 6*x1^4*x0 + 3*x1^3*x0^2 + 4*x1^2*x0^3 - 5*x1*x0^4 + 4*x0^5
         sage: quintic = invariant_theory.binary_quintic(p, x0, x1)
         sage: invs = quintic.clebsch_invariants(as_tuple=True)
-        sage: reconstructed = invariant_theory.binary_form_from_invariants(5, invs, variables=quintic.variables()) # indirect doctest
+        sage: reconstructed = invariant_theory.binary_form_from_invariants(  # indirect doctest
+        ....:     5, invs, variables=quintic.variables())
         sage: reconstructed
         Binary quintic with coefficients (9592267437341790539005557/244140625000000,
         2149296928207625556323004064707/610351562500000000,
@@ -167,8 +168,10 @@ def binary_quintic_coefficients_from_invariants(invariants, K=None, invariant_ch
 
         sage: alpha = quintic.alpha_covariant()
         sage: beta = quintic.beta_covariant()
-        sage: g = matrix([[alpha(x0=1,x1=0),alpha(x0=0,x1=1)],[beta(x0=1,x1=0),beta(x0=0,x1=1)]])^-1
-        sage: transformed = tuple([g.determinant()^-5*x for x in quintic.transformed(g).coeffs()])
+        sage: g = matrix([[alpha(x0=1,x1=0), alpha(x0=0,x1=1)],
+        ....:             [beta(x0=1,x1=0), beta(x0=0,x1=1)]])^-1
+        sage: transformed = tuple([g.determinant()^-5*x
+        ....:                      for x in quintic.transformed(g).coeffs()])
         sage: transformed == reconstructed.coeffs()
         True
 
@@ -226,12 +229,13 @@ def binary_quintic_coefficients_from_invariants(invariants, K=None, invariant_ch
         (1, 0, 0, 0, 1, 0)
 
     For fields of characteristic 2, 3 or 5, there is no reconstruction
-    implemented. This is part of :trac:`26786`.::
+    implemented. This is part of :issue:`26786`.::
 
         sage: binary_quintic_coefficients_from_invariants([3,1,2], K=GF(5))
         Traceback (most recent call last):
         ...
-        NotImplementedError: no reconstruction of binary quintics implemented for fields of characteristic 2, 3 or 5
+        NotImplementedError: no reconstruction of binary quintics implemented
+        for fields of characteristic 2, 3 or 5
 
     TESTS::
 
@@ -262,7 +266,8 @@ def binary_quintic_coefficients_from_invariants(invariants, K=None, invariant_ch
     N = K(2)**-1 * (A*C-B**2)
     R2 = -K(2)**-1 * (A*N**2-2*B*M*N+C*M**2)
     scale = [1,1,1,1,1,1]
-    from sage.functions.all import binomial, sqrt
+    from sage.arith.misc import binomial
+    from sage.misc.functional import sqrt
     if len(invariants) == 3:
         if R2.is_square():
             R = sqrt(R2)
@@ -327,8 +332,8 @@ def binary_quintic_coefficients_from_invariants(invariants, K=None, invariant_ch
         D = -M
         Delta = A
         a = [0]
-        a.append((2*K(3)**-1*A**2-B)*(N*A-M*B)*K(2)**-1 \
-                    - M*(N*K(2)**-1-M*A*K(3)**-1))
+        a.append((2*K(3)**-1*A**2-B)*(N*A-M*B)*K(2)**-1
+                 - M*(N*K(2)**-1-M*A*K(3)**-1))
         B0 = R
         B1 = K(2)**-1*(N*A-M*B)
         C0 = 0
@@ -375,7 +380,7 @@ def _reduce_invariants(invariants, weights):
         sage: _reduce_invariants(invariants, weights)
         [3, 75, 250]
     """
-    from sage.rings.all import ZZ
+    from sage.rings.integer_ring import ZZ
     factors = [dict(I.factor()) for I in invariants]
     scalar = ZZ(1)
     n = len(weights)
@@ -383,8 +388,7 @@ def _reduce_invariants(invariants, weights):
     for prime in gcd(invariants).factor():
         p = prime[0]
         for D in factors:
-            if not p in D:
+            if p not in D:
                 D[p] = 0
         scalar = scalar*p**min([factors[i][p]//weights[i] for i in range(n)])
     return [invariants[i]*scalar**-weights[i] for i in range(n)]
-

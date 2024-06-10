@@ -5,8 +5,9 @@
 
 .. _faq:
 
-Welcome to the Sage FAQ!
-========================
+===================
+Welcome to Sage FAQ
+===================
 
 This work is licensed under a `Creative Commons Attribution-Share Alike
 3.0 License`__.  With grateful thanks, we acknowledge it as being
@@ -25,5 +26,4 @@ Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`

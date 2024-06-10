@@ -1,6 +1,5 @@
-
-Jean Michel's GAP 3 distribution
-================================
+gap3: A minimal distribution of GAP 3 containing packages that have no equivalent in GAP 4
+==========================================================================================
 
 Description
 -----------
@@ -80,7 +79,3 @@ Patches
 
 None
 
-Dependencies
-------------
-
-None

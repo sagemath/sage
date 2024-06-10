@@ -2,7 +2,7 @@ Tensor Fields
 =============
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/manifolds/differentiable/tensorfield_module
 

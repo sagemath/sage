@@ -1,29 +1,34 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Jordan Algebras
 
 AUTHORS:
 
 - Travis Scrimshaw (2014-04-02): initial version
+- Travis Scrimshaw (2023-05-09): added the 27 dimensional exceptional
+  Jordan algebra
 """
 
 #*****************************************************************************
-#  Copyright (C) 2014 Travis Scrimshaw <tscrim at ucdavis.edu>
+#  Copyright (C) 2014, 2023 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element import AlgebraElement
+from sage.structure.richcmp import richcmp
 from sage.categories.magmatic_algebras import MagmaticAlgebras
 from sage.misc.cachefunc import cached_method
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.modules.free_module import FreeModule
+from sage.matrix.constructor import matrix
 from sage.sets.family import Family
 
 
-class JordanAlgebra(Parent, UniqueRepresentation):
+class JordanAlgebra(UniqueRepresentation, Parent):
     r"""
     A Jordan algebra.
 
@@ -63,7 +68,7 @@ class JordanAlgebra(Parent, UniqueRepresentation):
 
         (\alpha + x) \circ (\beta + y) =
         \underbrace{\alpha \beta + (x,y)}_{\in R}
-        + \underbrace{\beta x + \alpha y}_{\in M}
+        + \underbrace{\beta x + \alpha y}_{\in M},
 
     where `\alpha, \beta \in R` and `x,y \in M`.
 
@@ -71,7 +76,7 @@ class JordanAlgebra(Parent, UniqueRepresentation):
 
     Can be either an associative algebra `A` or a symmetric bilinear
     form given as a matrix (possibly followed by, or preceded by, a base
-    ring argument)
+    ring argument).
 
     EXAMPLES:
 
@@ -144,13 +149,9 @@ class JordanAlgebra(Parent, UniqueRepresentation):
     REFERENCES:
 
     - :wikipedia:`Jordan_algebra`
-
     - [Ja1971]_
-
     - [Ch2012]_
-
     - [McC1978]_
-
     - [Al1947]_
     """
     @staticmethod
@@ -193,12 +194,15 @@ class JordanAlgebra(Parent, UniqueRepresentation):
             names = tuple(names)
 
         if arg1 is None:
-            if not is_Matrix(arg0):
+            if not isinstance(arg0, Matrix):
+                from sage.algebras.octonion_algebra import OctonionAlgebra
+                if isinstance(arg0, OctonionAlgebra):
+                    return ExceptionalJordanAlgebra(arg0)
                 if arg0.base_ring().characteristic() == 2:
                     raise ValueError("the base ring cannot have characteristic 2")
                 return SpecialJordanAlgebra(arg0, names)
             arg0, arg1 = arg0.base_ring(), arg0
-        elif is_Matrix(arg0):
+        elif isinstance(arg0, Matrix):
             arg0, arg1 = arg1, arg0
 
         # arg0 is the base ring and arg1 is a matrix
@@ -208,6 +212,29 @@ class JordanAlgebra(Parent, UniqueRepresentation):
         arg1 = arg1.change_ring(arg0) # This makes a copy
         arg1.set_immutable()
         return JordanAlgebraSymmetricBilinear(arg0, arg1, names=names)
+
+    def _test_jordan_relations(self, **options):
+        r"""
+        Test the Jordan algebra relations.
+
+        The Jordan algebra relations are
+
+        - `xy = yx`, and
+        - `(xy)(xx) = x(y(xx))` (the Jordan identity).
+
+        EXAMPLES::
+
+            sage: O = OctonionAlgebra(GF(7), 1, 3, 4)
+            sage: J = JordanAlgebra(O)
+            sage: J._test_jordan_relations()
+        """
+        tester = self._tester(**options)
+        S = tester.some_elements()
+        from sage.misc.misc import some_tuples
+        for x, y in some_tuples(S, 2, tester._max_runs):
+            tester.assertEqual(x * y, y * x)
+            tester.assertEqual((x * y) * (x * x), x * (y * (x * x)))
+
 
 class SpecialJordanAlgebra(JordanAlgebra):
     r"""
@@ -392,12 +419,12 @@ class SpecialJordanAlgebra(JordanAlgebra):
                 sage: J = JordanAlgebra(F)
                 sage: a,b,c = map(J, F.gens())
                 sage: latex(a + 2*b - c)
-                x_{0} + 2x_{1} - x_{2}
+                x_{0} + 2 x_{1} - x_{2}
             """
             from sage.misc.latex import latex
             return latex(self._x)
 
-        def __bool__(self):
+        def __bool__(self) -> bool:
             """
             Return if ``self`` is non-zero.
 
@@ -410,8 +437,6 @@ class SpecialJordanAlgebra(JordanAlgebra):
                 True
             """
             return bool(self._x)
-
-        __nonzero__ = __bool__
 
         def __eq__(self, other):
             """
@@ -574,6 +599,7 @@ class SpecialJordanAlgebra(JordanAlgebra):
             """
             return self._x.monomial_coefficients(copy)
 
+
 class JordanAlgebraSymmetricBilinear(JordanAlgebra):
     r"""
     A Jordan algebra given by a symmetric bilinear form `m`.
@@ -696,6 +722,12 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
         TESTS::
 
             sage: J = JordanAlgebra(Matrix([[0, 1], [1, 1]]))
+            sage: J._coerce_map_from_base_ring()
+            Conversion map:
+              From: Integer Ring
+              To:   Jordan algebra over Integer Ring given by the symmetric bilinear form:
+            [0 1]
+            [1 1]
             sage: J.coerce_map_from(ZZ)
             Coercion map:
               From: Integer Ring
@@ -739,8 +771,8 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
 
             sage: m = matrix([[0,1],[1,1]])
             sage: J = JordanAlgebra(m)
-            sage: J.basis()
-            Family (1 + (0, 0), 0 + (1, 0), 0 + (0, 1))
+            sage: J.gens()
+            (1 + (0, 0), 0 + (1, 0), 0 + (0, 1))
         """
         return tuple(self.algebra_generators())
 
@@ -817,7 +849,7 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
             from sage.misc.latex import latex
             return "{} + {}".format(latex(self._s), latex(self._v))
 
-        def __bool__(self):
+        def __bool__(self) -> bool:
             """
             Return if ``self`` is non-zero.
 
@@ -833,8 +865,6 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
                 True
             """
             return bool(self._s) or bool(self._v)
-
-        __nonzero__ = __bool__
 
         def __eq__(self, other):
             """
@@ -1057,3 +1087,687 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
             """
             return self.__class__(self.parent(), self._s, -self._v)
 
+
+class ExceptionalJordanAlgebra(JordanAlgebra):
+    r"""
+    The exceptional `27` dimensional Jordan algebra as self-adjoint
+    `3 \times 3` matrix over an octonion algebra.
+
+    Let `\mathbf{O}` be the :class:`OctonionAlgebra` over a commutative
+    ring `R` of characteristic not equal to `2`. The *exceptional Jordan
+    algebra* `\mathfrak{h}_3(\mathbf{O})` is a `27` dimensional free
+    `R`-module spanned by the matrices
+
+    .. MATH::
+
+        \begin{bmatrix}
+        \alpha & x & y \\
+        x^* & \beta & z \\
+        y^* & z^* & \gamma
+        \end{bmatrix}
+
+    for `\alpha, \beta, \gamma \in R` and `x, y, z \in \mathbf{O}`,
+    with multiplication given by the usual symmetrizer operation
+    `X \circ Y = \frac{1}{2}(XY + YX)`.
+
+    These are also known as *Albert algebras* due to the work of
+    Abraham Adrian Albert on these algebras over `\RR`.
+
+    EXAMPLES:
+
+    We construct an exceptional Jordan algebra over `\QQ` and perform
+    some basic computations::
+
+        sage: O = OctonionAlgebra(QQ)
+        sage: J = JordanAlgebra(O)
+        sage: gens = J.gens()
+        sage: gens[1]
+        [0 0 0]
+        [0 1 0]
+        [0 0 0]
+        sage: gens[3]
+        [0 1 0]
+        [1 0 0]
+        [0 0 0]
+        sage: gens[1] * gens[3]
+        [  0 1/2   0]
+        [1/2   0   0]
+        [  0   0   0]
+
+    The Lie algebra of derivations of the exceptional Jordan algebra
+    is isomorphic to the simple Lie algebra of type `F_4`. We verify
+    that we the derivation module has the correct dimension::
+
+        sage: len(J.derivations_basis())  # long time
+        52
+        sage: LieAlgebra(QQ, cartan_type='F4').dimension()
+        52
+
+    REFERENCES:
+
+    - :wikipedia:`Albert_algebra`
+    - :wikipedia:`Jordan_algebra#Examples`
+    - :wikipedia:`Hurwitz's_theorem_(composition_algebras)#Applications_to_Jordan_algebras`
+    - `<https://math.ucr.edu/home/baez/octonions/octonions.pdf>`_
+    """
+    def __init__(self, O):
+        r"""
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: O = OctonionAlgebra(QQ)
+            sage: J = JordanAlgebra(O)
+            sage: TestSuite(J).run()  # long time
+
+            sage: O = OctonionAlgebra(QQ, 1, -2, 9)
+            sage: J = JordanAlgebra(O)
+            sage: TestSuite(J).run()  # long time
+
+            sage: R.<x, y> = GF(11)[]
+            sage: O = OctonionAlgebra(R, 1, x + y, 9)
+            sage: J = JordanAlgebra(O)
+            sage: TestSuite(J).run()  # long time
+
+            sage: O = OctonionAlgebra(ZZ)
+            sage: J = JordanAlgebra(O)
+            Traceback (most recent call last):
+            ...
+            ValueError: 2 must be invertible
+        """
+        self._O = O
+        R = O.base_ring()
+
+        if not R(2).is_unit():
+            raise ValueError("2 must be invertible")
+        self._half = R(2).inverse_of_unit()
+
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        Onames = list(O.variable_names())
+        Onames.extend(Onames[3] + Onames[i] for i in range(3))
+        self._repr_poly_ring = PolynomialRing(R, Onames)
+
+        cat = MagmaticAlgebras(R).Unital().FiniteDimensional().WithBasis()
+        Parent.__init__(self, base=R, category=cat)
+
+    def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: O = OctonionAlgebra(QQ)
+            sage: JordanAlgebra(O)
+            Exceptional Jordan algebra constructed from Octonion algebra
+             over Rational Field
+        """
+        return "Exceptional Jordan algebra constructed from {}".format(self._O)
+
+    def _element_constructor_(self, x):
+        r"""
+        Construct an element of ``self`` from ``s``.
+
+        EXAMPLES::
+
+            sage: O = OctonionAlgebra(QQ)
+            sage: J = JordanAlgebra(O)
+            sage: J(2)
+            [2 0 0]
+            [0 2 0]
+            [0 0 2]
+            sage: J([2, 3, 0, -1, O.basis()[3], 2])
+            [ 2 -1  k]
+            [-1  3  2]
+            [-k  2  0]
+        """
+        R = self.base_ring()
+        try:
+            x = R(x)
+            zero = self._O.zero()
+            return self.element_class(self, [x, x, x, zero, zero, zero])
+        except (ValueError, TypeError):
+            pass
+        x = list(x)
+        if len(x) != 6:
+            raise ValueError("invalid data to construct an element")
+        R = self.base_ring()
+        for i in range(3):
+            x[i] = R(x[i])
+            x[3+i] = self._O(x[3+i])
+        return self.element_class(self, x)
+
+    def _test_multiplication_self_adjoint(self, **options):
+        r"""
+        Test that `(XY + YX) / 2` is self-adjoint.
+
+        EXAMPLES::
+
+            sage: O = OctonionAlgebra(GF(7), 1, 3, 4)
+            sage: J = JordanAlgebra(O)
+            sage: J._test_multiplication_self_adjoint()
+        """
+        tester = self._tester(**options)
+        S = tester.some_elements()
+        data_pairs = [(0, 0), (1, 1), (2, 2), (0, 1), (0, 2), (1, 2)]
+        zerO = self._O.zero()
+        from sage.misc.misc import some_tuples
+        for x, y in some_tuples(S, 2, tester._max_runs):
+            SD = x._data
+            OD = y._data
+            X = [[SD[0], SD[3], SD[4]],
+                 [SD[3].conjugate(), SD[1], SD[5]],
+                 [SD[4].conjugate(), SD[5].conjugate(), SD[2]]]
+            Y = [[OD[0], OD[3], OD[4]],
+                  [OD[3].conjugate(), OD[1], OD[5]],
+                  [OD[4].conjugate(), OD[5].conjugate(), OD[2]]]
+            for r, c in data_pairs:
+                if r != c:
+                    val = sum(X[r][i] * Y[i][c] + Y[r][i] * X[i][c] for i in range(3)) * self._half
+                    val_opp = sum(X[c][i] * Y[i][r] + Y[c][i] * X[i][r] for i in range(3)) * self._half
+                    tester.assertEqual(val, val_opp.conjugate())
+                else:
+                    val = sum(X[r][i] * Y[i][c] + Y[r][i] * X[i][c] for i in range(3)) * self._half
+                    tester.assertEqual(val.imag_part(), zerO)
+
+    @cached_method
+    def basis(self):
+        r"""
+        Return a basis of ``self``.
+
+        EXAMPLES::
+
+            sage: O = OctonionAlgebra(QQ)
+            sage: J = JordanAlgebra(O)
+            sage: B = J.basis()
+            sage: B[::6]
+            ([1 0 0]
+             [0 0 0]
+             [0 0 0],
+             [ 0  k  0]
+             [-k  0  0]
+             [ 0  0  0],
+             [ 0  0  i]
+             [ 0  0  0]
+             [-i  0  0],
+             [  0   0  lk]
+             [  0   0   0]
+             [-lk   0   0],
+             [  0   0   0]
+             [  0   0  li]
+             [  0 -li   0])
+            sage: len(B)
+            27
+        """
+        import itertools
+        R = self.base_ring()
+        OB = self._O.basis()
+        base = [R.zero()] * 3 + [self._O.zero()] * 3
+        ret = []
+        for i in range(3):
+            temp = list(base)
+            temp[i] = R.one()
+            ret.append(self.element_class(self, temp))
+        for i in range(3):
+            for b in OB:
+                temp = list(base)
+                temp[3+i] = b
+                ret.append(self.element_class(self, temp))
+        return Family(ret)
+
+    algebra_generators = basis
+
+    def gens(self):
+        """
+        Return the generators of ``self``.
+
+        EXAMPLES::
+
+            sage: O = OctonionAlgebra(QQ)
+            sage: J = JordanAlgebra(O)
+            sage: G = J.gens()
+            sage: G[0]
+            [1 0 0]
+            [0 0 0]
+            [0 0 0]
+            sage: G[5]
+            [ 0  j  0]
+            [-j  0  0]
+            [ 0  0  0]
+            sage: G[22]
+            [ 0  0  0]
+            [ 0  0  k]
+            [ 0 -k  0]
+        """
+        return tuple(self.algebra_generators())
+
+    @cached_method
+    def zero(self):
+        r"""
+        Return the additive identity.
+
+        EXAMPLES::
+
+            sage: O = OctonionAlgebra(QQ)
+            sage: J = JordanAlgebra(O)
+            sage: J.zero()
+            [0 0 0]
+            [0 0 0]
+            [0 0 0]
+        """
+        Rz = self.base_ring().zero()
+        Oz = self._O.zero()
+        return self.element_class(self, (Rz, Rz, Rz, Oz, Oz, Oz))
+
+    @cached_method
+    def one(self):
+        r"""
+        Return multiplicative identity.
+
+        EXAMPLES::
+
+            sage: O = OctonionAlgebra(QQ)
+            sage: J = JordanAlgebra(O)
+            sage: J.one()
+            [1 0 0]
+            [0 1 0]
+            [0 0 1]
+            sage: all(J.one() * b == b for b in J.basis())
+            True
+        """
+        one = self.base_ring().one()
+        zero = self._O.zero()
+        return self.element_class(self, (one, one, one, zero, zero, zero))
+
+    def some_elements(self):
+        r"""
+        Return some elements of ``self``.
+
+        EXAMPLES::
+
+            sage: O = OctonionAlgebra(QQ)
+            sage: J = JordanAlgebra(O)
+            sage: J.some_elements()
+            [[6/5   0   0]
+             [  0 6/5   0]
+             [  0   0 6/5],
+             [1 0 0]
+             [0 1 0]
+             [0 0 1],
+             [0 0 0]
+             [0 0 0]
+             [0 0 0],
+             [0 0 0]
+             [0 1 0]
+             [0 0 0],
+             [ 0  j  0]
+             [-j  0  0]
+             [ 0  0  0],
+             [  0   0  lj]
+             [  0   0   0]
+             [-lj   0   0],
+             [      0       0       0]
+             [      0       1  1/2*lj]
+             [      0 -1/2*lj       0],
+             [        1         0  j + 2*li]
+             [        0         1         0]
+             [-j - 2*li         0         1],
+             [      1  j + lk       l]
+             [-j - lk       0  i + lj]
+             [     -l -i - lj       0],
+             [     1  3/2*l    2*k]
+             [-3/2*l      0  5/2*j]
+             [  -2*k -5/2*j      0]]
+
+            sage: O = OctonionAlgebra(GF(3))
+            sage: J = JordanAlgebra(O)
+            sage: J.some_elements()
+            [[-1  0  0]
+             [ 0 -1  0]
+             [ 0  0 -1],
+             [1 0 0]
+             [0 1 0]
+             [0 0 1],
+             [0 0 0]
+             [0 0 0]
+             [0 0 0],
+             [0 0 0]
+             [0 1 0]
+             [0 0 0],
+             [ 0  j  0]
+             [-j  0  0]
+             [ 0  0  0],
+             [  0   0  lj]
+             [  0   0   0]
+             [-lj   0   0],
+             [  0   0   0]
+             [  0   1 -lj]
+             [  0  lj   0],
+             [      1       0  j - li]
+             [      0       1       0]
+             [-j + li       0       1],
+             [      1  j + lk       l]
+             [-j - lk       0  i + lj]
+             [     -l -i - lj       0],
+             [ 1  0 -k]
+             [ 0  0  j]
+             [ k -j  0]]
+        """
+        B = self.basis()
+        S = [self.an_element(), self.one(), self.zero(),
+             B[1], B[5], B[17], B[1] + self._half*B[25],
+             self.one() + B[13] + 2*B[16]]
+        S.append(sum(B[::5]))
+        S.append(sum(self._half * ind * b for ind, b in enumerate(B[::7], start=2)))
+        return S
+
+    class Element(AlgebraElement):
+        r"""
+        An element of an exceptional Jordan algebra.
+        """
+        def __init__(self, parent, data):
+            """
+            Initialize ``self``.
+
+            TESTS::
+
+                sage: O = OctonionAlgebra(QQ)
+                sage: J = JordanAlgebra(O)
+                sage: elt = sum(J.basis())
+                sage: TestSuite(elt).run()
+            """
+            self._data = tuple(data)
+            AlgebraElement.__init__(self, parent)
+
+        def _to_print_matrix(self):
+            r"""
+            Return ``self`` as a matrix for printing.
+
+            EXAMPLES::
+
+                sage: O = OctonionAlgebra(QQ)
+                sage: J = JordanAlgebra(O)
+                sage: elt = J([2, 3, 0, -1 + O.basis()[2], O.basis()[3], -O.basis()[5] + 5*O.basis()[7]])
+                sage: elt._to_print_matrix()
+                [         2      j - 1          k]
+                [    -j - 1          3 -li + 5*lk]
+                [        -k  li - 5*lk          0]
+            """
+            PR = self.parent()._repr_poly_ring
+            gens = [PR.one()] + list(PR.gens())
+            data = [PR(self._data[i]) for i in range(3)]
+            data.extend(PR.sum(c * g for c, g in zip(self._data[3+i].vector(), gens))
+                        for i in range(3))
+            # add the conjugates
+            for i in range(1, 8):
+                gens[i] = -gens[i]
+            data.extend(PR.sum(c * g for c, g in zip(self._data[3+i].vector(), gens))
+                        for i in range(3))
+            return matrix(PR, [[data[0], data[3], data[4]], [data[6], data[1], data[5]], [data[7], data[8], data[2]]])
+
+        def _repr_(self):
+            r"""
+            Return a string representation of ``self``.
+
+            EXAMPLES::
+
+                sage: O = OctonionAlgebra(QQ)
+                sage: J = JordanAlgebra(O)
+                sage: J.an_element()
+                [6/5   0   0]
+                [  0 6/5   0]
+                [  0   0 6/5]
+            """
+            return repr(self._to_print_matrix())
+
+        def _latex_(self):
+            r"""
+            Return a latex representation of ``self``.
+
+            EXAMPLES::
+
+                sage: O = OctonionAlgebra(QQ)
+                sage: J = JordanAlgebra(O)
+                sage: latex(J.an_element())
+                \left(\begin{array}{rrr}
+                \frac{6}{5} & 0 & 0 \\
+                0 & \frac{6}{5} & 0 \\
+                0 & 0 & \frac{6}{5}
+                \end{array}\right)
+            """
+            from sage.misc.latex import latex
+            return latex(self._to_print_matrix())
+
+        def _ascii_art_(self):
+            r"""
+            Return an ascii art representation of ``self``.
+
+            EXAMPLES::
+
+                sage: O = OctonionAlgebra(QQ)
+                sage: J = JordanAlgebra(O)
+                sage: ascii_art(J.an_element())
+                [6/5   0   0]
+                [  0 6/5   0]
+                [  0   0 6/5]
+            """
+            from sage.typeset.ascii_art import ascii_art
+            return ascii_art(self._to_print_matrix())
+
+        def _unicode_art_(self):
+            r"""
+            Return a unicode art representation of ``self``.
+
+            EXAMPLES::
+
+                sage: O = OctonionAlgebra(QQ)
+                sage: J = JordanAlgebra(O)
+                sage: unicode_art(J.an_element())
+                ⎛6/5   0   0⎞
+                ⎜  0 6/5   0⎟
+                ⎝  0   0 6/5⎠
+            """
+            from sage.typeset.unicode_art import unicode_art
+            return unicode_art(self._to_print_matrix())
+
+        def __bool__(self) -> bool:
+            """
+            Return if ``self`` is non-zero.
+
+            TESTS::
+
+                sage: O = OctonionAlgebra(QQ)
+                sage: J = JordanAlgebra(O)
+                sage: all(bool(b) for b in J.basis())
+                True
+                sage: bool(J.zero())
+                False
+            """
+            return any(d for d in self._data)
+
+        def _richcmp_(self, other, op):
+            r"""
+            Rich comparison of ``self`` with ``other`` by ``op``.
+
+            EXAMPLES::
+
+                sage: O = OctonionAlgebra(QQ)
+                sage: J = JordanAlgebra(O)
+                sage: x = sum(J.basis()[::6])
+                sage: y = sum(J.basis()[::5])
+                sage: x == x
+                True
+                sage: x == y
+                False
+                sage: x < y
+                True
+                sage: x != J.zero()
+                True
+            """
+            return richcmp(self._data, other._data, op)
+
+        def _add_(self, other):
+            """
+            Add ``self`` and ``other``.
+
+            EXAMPLES::
+
+                sage: O = OctonionAlgebra(QQ)
+                sage: J = JordanAlgebra(O)
+                sage: x = sum(J.basis()[::6])
+                sage: y = sum(J.basis()[::5])
+                sage: x + x
+                [          2         2*k  2*i + 2*lk]
+                [       -2*k           0        2*li]
+                [-2*i - 2*lk       -2*li           0]
+                sage: x + y
+                [           2   j + k + lk   i + l + lk]
+                [ -j - k - lk            0  i + li + lj]
+                [ -i - l - lk -i - li - lj            0]
+            """
+            return self.__class__(self.parent(), [a + b for a, b in zip(self._data, other._data)])
+
+        def _neg_(self):
+            """
+            Negate ``self``.
+
+            EXAMPLES::
+
+                sage: O = OctonionAlgebra(QQ)
+                sage: J = JordanAlgebra(O)
+                sage: x = sum(J.basis()[::6])
+                sage: -x
+                [     -1      -k -i - lk]
+                [      k       0     -li]
+                [ i + lk      li       0]
+            """
+            return self.__class__(self.parent(), [-c for c in self._data])
+
+        def _sub_(self, other):
+            r"""
+            Subtract ``other`` from ``self``.
+
+            EXAMPLES::
+
+                sage: O = OctonionAlgebra(QQ)
+                sage: J = JordanAlgebra(O)
+                sage: x = sum(J.basis()[::6])
+                sage: y = sum(J.basis()[::5])
+                sage: x - x
+                [0 0 0]
+                [0 0 0]
+                [0 0 0]
+                sage: x - y
+                [           0  -j + k - lk   i - l + lk]
+                [  j - k + lk            0 -i + li - lj]
+                [ -i + l - lk  i - li + lj            0]
+            """
+            return self.__class__(self.parent(), [a - b for a, b in zip(self._data, other._data)])
+
+        def _mul_(self, other):
+            """
+            Multiply ``self`` and ``other``.
+
+            EXAMPLES::
+
+                sage: O = OctonionAlgebra(QQ)
+                sage: J = JordanAlgebra(O)
+                sage: x = sum(J.basis()[::7])
+                sage: y = sum(J.basis()[::11])
+                sage: x * y
+                [                    1  -1/2*j + 1/2*l + 1/2  1/2*k + 1/2*lk + 1/2]
+                [  1/2*j - 1/2*l + 1/2                     0                -1/2*l]
+                [-1/2*k - 1/2*lk + 1/2                 1/2*l                     0]
+            """
+            P = self.parent()
+            SD = self._data
+            OD = other._data
+            X = [[SD[0], SD[3], SD[4]],
+                 [SD[3].conjugate(), SD[1], SD[5]],
+                 [SD[4].conjugate(), SD[5].conjugate(), SD[2]]]
+            Y = [[OD[0], OD[3], OD[4]],
+                  [OD[3].conjugate(), OD[1], OD[5]],
+                  [OD[4].conjugate(), OD[5].conjugate(), OD[2]]]
+            # we do a simplified multiplication for the diagonal entries since
+            # we have, e.g., \alpha * \alpha' + (x (x')^* + x' x^* + y (y')^* + y' y^*) / 2
+            ret = [X[0][0] * Y[0][0] + (X[0][1] * Y[1][0]).real_part() + (X[0][2] * Y[2][0]).real_part(),
+                   X[1][1] * Y[1][1] + (X[1][0] * Y[0][1]).real_part() + (X[1][2] * Y[2][1]).real_part(),
+                   X[2][2] * Y[2][2] + (X[2][0] * Y[0][2]).real_part() + (X[2][1] * Y[1][2]).real_part()]
+            ret += [sum(X[r][i] * Y[i][c] + Y[r][i] * X[i][c] for i in range(3)) * P._half
+                    for r, c in [(0, 1), (0, 2), (1, 2)]]
+            return self.__class__(P, ret)
+
+        def _lmul_(self, other):
+            r"""
+            Multiply ``self`` by the scalar ``other`` on the left.
+
+            EXAMPLES::
+
+                sage: O = OctonionAlgebra(QQ)
+                sage: J = JordanAlgebra(O)
+                sage: elt = sum(2 * b for b in J.basis()[::6]); elt
+                [          2         2*k  2*i + 2*lk]
+                [       -2*k           0        2*li]
+                [-2*i - 2*lk       -2*li           0]
+                sage: elt * 2
+                [          4         4*k  4*i + 4*lk]
+                [       -4*k           0        4*li]
+                [-4*i - 4*lk       -4*li           0]
+            """
+            return self.__class__(self.parent(), [c * other for c in self._data])
+
+        def _rmul_(self, other):
+            r"""
+            Multiply ``self`` with the scalar ``other`` by the right
+            action.
+
+            EXAMPLES::
+
+                sage: O = OctonionAlgebra(QQ)
+                sage: J = JordanAlgebra(O)
+                sage: elt = sum(b * 2 for b in J.basis()[::6]); elt
+                [          2         2*k  2*i + 2*lk]
+                [       -2*k           0        2*li]
+                [-2*i - 2*lk       -2*li           0]
+                sage: (1/2) * elt
+                [      1       k  i + lk]
+                [     -k       0      li]
+                [-i - lk     -li       0]
+            """
+            return self.__class__(self.parent(), [other * c for c in self._data])
+
+        def monomial_coefficients(self, copy=True):
+            r"""
+            Return a dictionary whose keys are indices of basis elements in
+            the support of ``self`` and whose values are the corresponding
+            coefficients.
+
+            INPUT:
+
+            - ``copy`` -- ignored
+
+            EXAMPLES::
+
+                sage: O = OctonionAlgebra(QQ)
+                sage: J = JordanAlgebra(O)
+                sage: elt = sum(~QQ(ind) * b for ind, b in enumerate(J.basis()[::6], start=1)); elt
+                [              1           1/2*k  1/3*i + 1/4*lk]
+                [         -1/2*k               0          1/5*li]
+                [-1/3*i - 1/4*lk         -1/5*li               0]
+                sage: elt.monomial_coefficients()
+                {0: 1, 6: 1/2, 12: 1/3, 18: 1/4, 24: 1/5}
+
+            TESTS::
+
+                sage: O = OctonionAlgebra(QQ)
+                sage: J = JordanAlgebra(O)
+                sage: all(b.monomial_coefficients() == {i: 1} for i,b in enumerate(J.basis()))
+                True
+            """
+            ret = {}
+            for i in range(3):
+                if self._data[i]:
+                    ret[i] = self._data[i]
+                mc = self._data[3+i].monomial_coefficients()
+                for k, coeff in mc.items():
+                    ret[3+i*8+k] = coeff
+            return ret

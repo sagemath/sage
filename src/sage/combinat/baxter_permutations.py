@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Baxter permutations
 """
@@ -70,6 +69,7 @@ class BaxterPermutations_size(BaxterPermutations):
         sage: BaxterPermutations_size(5)
         Baxter permutations of size 5
     """
+
     def __init__(self, n):
         """
         EXAMPLES::
@@ -81,7 +81,7 @@ class BaxterPermutations_size(BaxterPermutations):
         self.element_class = Permutations(n).element_class
         self._n = ZZ(n)
         from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-        super(BaxterPermutations, self).__init__(category=FiniteEnumeratedSets())
+        super().__init__(category=FiniteEnumeratedSets())
 
     def _repr_(self):
         """
@@ -117,7 +117,7 @@ class BaxterPermutations_size(BaxterPermutations):
             sage: sorted([p for p in Permutations(6) if p in BaxterPermutations(6)]) == sorted(BaxterPermutations(6).list())
             True
         """
-        if not x in Permutations(self._n):
+        if x not in Permutations(self._n):
             return False
         for i in range(1, len(x) - 1):
             a = x[i]
@@ -128,7 +128,7 @@ class BaxterPermutations_size(BaxterPermutations):
                     if x_j > a and x_j < b and x_j > max_l:
                         max_l = x_j
                 min_r = len(x) + 1
-                for x_j in x[i+2:]:
+                for x_j in x[i + 2:]:
                     if x_j > a and x_j < b and x_j < min_r:
                         min_r = x_j
                 if max_l > min_r:
@@ -139,7 +139,7 @@ class BaxterPermutations_size(BaxterPermutations):
                     if x_j < a and x_j > b and x_j < min_l:
                         min_l = x_j
                 max_r = 0
-                for x_j in x[i+2:]:
+                for x_j in x[i + 2:]:
                     if x_j < a and x_j > b and x_j > max_r:
                         max_r = x_j
                 if min_l < max_r:
@@ -186,7 +186,8 @@ class BaxterPermutations_size(BaxterPermutations):
         else:
             for b in BaxterPermutations(self._n - 1):
                 # Left to right maxima.
-                for i in [self._n - 2 - i for i in b.reverse().saliances()]:
+                for j in b.reverse().saliances():
+                    i = self._n - 2 - j
                     yield Permutations(self._n)(b[:i] + [self._n] + b[i:])
                 # Right to left maxima.
                 for i in b.saliances():
@@ -230,7 +231,7 @@ class BaxterPermutations_size(BaxterPermutations):
         """
         if self._n == 0:
             return 1
-        from sage.arith.all import binomial
+        from sage.arith.misc import binomial
         return sum((binomial(self._n + 1, k) *
                     binomial(self._n + 1, k + 1) *
                     binomial(self._n + 1, k + 2)) //
@@ -251,6 +252,7 @@ class BaxterPermutations_all(DisjointUnionEnumeratedSets, BaxterPermutations):
         sage: BaxterPermutations_all()
         Baxter permutations
     """
+
     def __init__(self, n=None):
         r"""
         EXAMPLES::
@@ -299,7 +301,7 @@ class BaxterPermutations_all(DisjointUnionEnumeratedSets, BaxterPermutations):
             sage: 42 in BaxterPermutations()
             False
         """
-        if not x in Permutations():
+        if x not in Permutations():
             return False
         return x in BaxterPermutations(len(x))
 
@@ -329,11 +331,12 @@ class BaxterPermutations_all(DisjointUnionEnumeratedSets, BaxterPermutations):
 
         EXAMPLES::
 
-            sage: BaxterPermutations().to_pair_of_twin_binary_trees(Permutation([]))
+            sage: BP = BaxterPermutations()
+            sage: BP.to_pair_of_twin_binary_trees(Permutation([]))                      # needs sage.graphs
             (., .)
-            sage: BaxterPermutations().to_pair_of_twin_binary_trees(Permutation([1, 2, 3]))
+            sage: BP.to_pair_of_twin_binary_trees(Permutation([1, 2, 3]))               # needs sage.graphs
             (1[., 2[., 3[., .]]], 3[2[1[., .], .], .])
-            sage: BaxterPermutations().to_pair_of_twin_binary_trees(Permutation([3, 4, 1, 2]))
+            sage: BP.to_pair_of_twin_binary_trees(Permutation([3, 4, 1, 2]))            # needs sage.graphs
             (3[1[., 2[., .]], 4[., .]], 2[1[., .], 4[3[., .], .]])
         """
         from sage.combinat.binary_tree import LabelledBinaryTree

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Cartesian Product Functorial Construction
 
@@ -16,7 +17,8 @@ from sage.misc.lazy_import import lazy_import
 from sage.categories.covariant_functorial_construction import CovariantFunctorialConstruction, CovariantConstructionCategory
 from sage.categories.pushout import MultivariateConstructionFunctor
 
-native_python_containers   = set([tuple, list, set, frozenset, range])
+native_python_containers = {tuple, list, set, frozenset, range}
+
 
 class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConstructionFunctor):
     """
@@ -153,9 +155,9 @@ class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConst
             sage: cartesian_product([set([0,1,2]), [0,1]])
             The Cartesian product of ({0, 1, 2}, {0, 1})
             sage: _.category()
-            Category of Cartesian products of sets
+            Category of Cartesian products of finite enumerated sets
 
-        Check that the empty product is handled correctly:
+        Check that the empty product is handled correctly::
 
             sage: C = cartesian_product([])
             sage: C
@@ -188,9 +190,9 @@ class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConst
             from sage.sets.cartesian_product import CartesianProduct
             return CartesianProduct((), cat)
         elif self._forced_category is not None:
-            return super(CartesianProductFunctor, self).__call__(args, category=self._forced_category, **kwds)
+            return super().__call__(args, category=self._forced_category, **kwds)
 
-        return super(CartesianProductFunctor, self).__call__(args, **kwds)
+        return super().__call__(args, **kwds)
 
     def __eq__(self, other):
         r"""
@@ -215,6 +217,7 @@ class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConst
             False
         """
         return not (self == other)
+
 
 class CartesianProductsCategory(CovariantConstructionCategory):
     r"""
@@ -242,7 +245,7 @@ class CartesianProductsCategory(CovariantConstructionCategory):
 
         """
         # This method is only required for the capital `C`
-        return "Cartesian products of %s"%(self.base_category()._repr_object_names())
+        return "Cartesian products of %s" % (self.base_category()._repr_object_names())
 
     def CartesianProducts(self):
         """
@@ -271,6 +274,7 @@ class CartesianProductsCategory(CovariantConstructionCategory):
         """
         return self.base_category().base_ring()
 
+
 # Moved to avoid circular imports
 lazy_import('sage.categories.sets_cat', 'cartesian_product')
 """
@@ -283,4 +287,3 @@ EXAMPLES::
     sage: cartesian_product
     The cartesian_product functorial construction
 """
-

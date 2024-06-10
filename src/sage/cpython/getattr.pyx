@@ -1,10 +1,11 @@
+# sage_setup: distribution = sagemath-objects
 """
 Variants of getattr()
 """
 
 from cpython.object cimport PyObject, PyTypeObject, Py_TYPE, descrgetfunc
 
-from .string cimport bytes_to_str
+from sage.cpython.string cimport bytes_to_str
 
 cdef extern from "Python.h":
     r"""
@@ -37,7 +38,7 @@ cdef extern from "Python.h":
 
 cdef class AttributeErrorMessage:
     """
-    Tries to emulate the standard Python ``AttributeError`` message.
+    Tries to emulate the standard Python :class:`AttributeError` message.
 
     .. NOTE::
 
@@ -53,11 +54,12 @@ cdef class AttributeErrorMessage:
         sage: 1.bla  #indirect doctest
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.integer.Integer' object has no attribute 'bla'
-        sage: QQ[x].gen().bla
+        AttributeError: 'sage.rings.integer.Integer' object has no attribute 'bla'...
+        sage: x = polygen(ZZ, 'x')
+        sage: QQ[x].gen().bla                                                           # needs sage.libs.flint
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.polynomial.polynomial_rational_flint.Polynomial_rational_flint' object has no attribute 'bla'
+        AttributeError: 'sage.rings.polynomial.polynomial_rational_flint.Polynomial_rational_flint' object has no attribute 'bla'...
 
     ::
 
@@ -67,7 +69,7 @@ cdef class AttributeErrorMessage:
 
     TESTS:
 
-    The error message used for the ``AttributeError`` is a unique object
+    The error message used for the :class:`AttributeError` is a unique object
     and is changed inplace. This is for reasons of efficiency.
     Hence, if one really needs the error message as a string, then one should
     make a copy of its string representation before it changes. ::
@@ -83,7 +85,7 @@ cdef class AttributeErrorMessage:
         ....: except AttributeError as exc:
         ....:     ElementError2 = exc
         sage: ElementError
-        AttributeError('sage.symbolic.expression.Expression' object has no attribute '__bla'...)
+        AttributeError('sage.rings.polynomial...' object has no attribute '__bla'...)
         sage: ElementError2.args[0] is ElementError.args[0]
         True
         sage: isinstance(ElementError.args[0], sage.cpython.getattr.AttributeErrorMessage)
@@ -143,7 +145,7 @@ cpdef raw_getattr(obj, name):
         sage: raw_getattr(X, "attr")
         Traceback (most recent call last):
         ...
-        AttributeError: '...' object has no attribute 'attr'
+        AttributeError: '...' object has no attribute 'attr'...
         sage: x = X()
         sage: raw_getattr(x, "prop")
         <property object at ...>
@@ -172,7 +174,7 @@ cpdef raw_getattr(obj, name):
         sage: raw_getattr(Y, "attr")
         Traceback (most recent call last):
         ...
-        AttributeError: '...' object has no attribute 'attr'
+        AttributeError: '...' object has no attribute 'attr'...
         sage: y = Y()
         sage: raw_getattr(y, "prop")
         <property object at ...>
@@ -239,7 +241,7 @@ cpdef getattr_from_other_class(self, cls, name):
 
     - ``name`` -- a string
 
-    If self is an instance of cls, raises an ``AttributeError``, to
+    If self is an instance of cls, raises an :class:`AttributeError`, to
     avoid a double lookup. This function is intended to be called from
     __getattr__, and so should not be called if name is an attribute
     of self.
@@ -247,7 +249,7 @@ cpdef getattr_from_other_class(self, cls, name):
     EXAMPLES::
 
         sage: from sage.cpython.getattr import getattr_from_other_class
-        sage: class A(object):
+        sage: class A():
         ....:      def inc(self):
         ....:          return self + 1
         ....:
@@ -270,14 +272,14 @@ cpdef getattr_from_other_class(self, cls, name):
 
     Caveat: lazy attributes work with extension types only
     if they allow attribute assignment or have a public attribute
-    ``__cached_methods`` of type ``<dict>``. This condition
+    ``_cached_methods`` of type ``<dict>``. This condition
     is satisfied, e.g., by any class that is derived from
     :class:`Parent`::
 
         sage: getattr_from_other_class(1, A, "lazy_attribute")
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.integer.Integer' object has no attribute 'lazy_attribute'
+        AttributeError: 'sage.rings.integer.Integer' object has no attribute 'lazy_attribute'...
 
     The integer ring is a parent, so, lazy attributes work::
 
@@ -288,7 +290,7 @@ cpdef getattr_from_other_class(self, cls, name):
         sage: getattr_from_other_class(17, A, "lazy_attribute")
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.integer.Integer' object has no attribute 'lazy_attribute'
+        AttributeError: 'sage.rings.integer.Integer' object has no attribute 'lazy_attribute'...
 
     In general, descriptors are not yet well supported, because they
     often do not accept to be cheated with the type of their instance::
@@ -299,23 +301,21 @@ cpdef getattr_from_other_class(self, cls, name):
         TypeError: descriptor '__weakref__' for 'A' objects doesn't apply
         to ...'sage.rings.integer.Integer' object
 
-    When this occurs, an ``AttributeError`` is raised::
+    When this occurs, an :class:`AttributeError` is raised::
 
         sage: getattr_from_other_class(1, A, "__weakref__")
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.integer.Integer' object has no attribute '__weakref__'
+        AttributeError: 'sage.rings.integer.Integer' object has no attribute '__weakref__'...
 
-    This was caught by :trac:`8296` for which we do a couple more tests::
+    This was caught by :issue:`8296` for which we do a couple more tests::
 
         sage: "__weakref__" in dir(A)
         True
-        sage: "__weakref__" in dir(1)  # py2
-        False
         sage: 1.__weakref__
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.integer.Integer' object has no attribute '__weakref__'
+        AttributeError: 'sage.rings.integer.Integer' object has no attribute '__weakref__'...
 
         sage: n = 1
         sage: ip = get_ipython()                 # not tested: only works in interactive shell
@@ -330,33 +330,24 @@ cpdef getattr_from_other_class(self, cls, name):
         sage: getattr_from_other_class(1, A, "__call__")
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.integer.Integer' object has no attribute '__call__'
+        AttributeError: 'sage.rings.integer.Integer' object has no attribute '__call__'...
 
     TESTS:
 
     Check that we do not pick up special attributes from the ``type``
-    class, see :trac:`20686`::
+    class, see :issue:`20686`::
 
         sage: getattr_from_other_class(1, type, "__name__")
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.integer.Integer' object has no attribute '__name__'
-
-    This does not work with an old-style class::
-
-        sage: class OldStyle:  # py2 -- no 'old-style' classes in Python 3
-        ....:     pass
-        sage: getattr_from_other_class(1, OldStyle, "foo")  # py2
-        Traceback (most recent call last):
-        ...
-        TypeError: <class __main__.OldStyle at ...> is not a type
+        AttributeError: 'sage.rings.integer.Integer' object has no attribute '__name__'...
 
     Non-strings as "name" are handled gracefully::
 
         sage: getattr_from_other_class(1, type, None)
         Traceback (most recent call last):
         ...
-        AttributeError: 'sage.rings.integer.Integer' object has no attribute None
+        AttributeError: 'sage.rings.integer.Integer' object has no attribute None...
     """
     if not isinstance(cls, type):
         raise TypeError(f"{cls!r} is not a type")
@@ -377,7 +368,7 @@ cpdef getattr_from_other_class(self, cls, name):
         # Not a descriptor
         return attribute
     # Conditionally defined lazy_attributes don't work well with fake subclasses
-    # (a TypeError is raised if the lazy attribute is not defined).
+    # (a :class:`TypeError` is raised if the lazy attribute is not defined).
     # For the moment, we ignore that when this occurs.
     # Other descriptors (including __weakref__) also break.
     try:
@@ -397,11 +388,11 @@ def dir_with_other_class(self, *cls):
 
     EXAMPLES::
 
-        sage: class A(object):
+        sage: class A():
         ....:    a = 1
         ....:    b = 2
         ....:    c = 3
-        sage: class B(object):
+        sage: class B():
         ....:    b = 2
         ....:    c = 3
         ....:    d = 4
@@ -410,13 +401,14 @@ def dir_with_other_class(self, *cls):
         sage: from sage.cpython.getattr import dir_with_other_class
         sage: dir_with_other_class(x, B)
         [..., 'a', 'b', 'c', 'd', 'e']
-        sage: class C(object):
+        sage: class C():
         ....:    f = 6
         sage: dir_with_other_class(x, B, C)
         [..., 'a', 'b', 'c', 'd', 'e', 'f']
 
     Check that objects without dicts are well handled::
 
+        sage: # needs sage.misc.cython
         sage: cython("cdef class A:\n    cdef public int a")
         sage: cython("cdef class B:\n    cdef public int b")
         sage: x = A()
@@ -428,9 +420,9 @@ def dir_with_other_class(self, *cls):
 
     TESTS:
 
-    Check that :trac:`13043` is fixed::
+    Check that :issue:`13043` is fixed::
 
-        sage: len(dir(RIF))==len(set(dir(RIF)))
+        sage: len(dir(RIF))==len(set(dir(RIF)))                                         # needs sage.rings.real_interval_field
         True
     """
     ret = set()

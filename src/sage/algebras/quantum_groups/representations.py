@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.graphs sage.modules
 r"""
 Quantum Group Representations
 
@@ -22,6 +23,7 @@ from sage.misc.cachefunc import cached_method
 from sage.algebras.quantum_groups.q_numbers import q_int
 from sage.categories.crystals import Crystals
 from sage.categories.quantum_group_representations import QuantumGroupRepresentations
+
 
 class QuantumGroupRepresentation(CombinatorialFreeModule):
     """
@@ -52,7 +54,7 @@ class QuantumGroupRepresentation(CombinatorialFreeModule):
         """
         if q is None:
             q = R.gen()
-        return super(QuantumGroupRepresentation, cls).__classcall__(cls, R, C, q)
+        return super().__classcall__(cls, R, C, q)
 
     def __init__(self, R, C, q):
         """
@@ -124,6 +126,7 @@ class QuantumGroupRepresentation(CombinatorialFreeModule):
         alc = WLR.simple_coroots()
         return self.term( b, self._q**(b.weight().scalar(alc[i]) * self._d[i] * power) )
 
+
 class CyclicRepresentation(QuantumGroupRepresentation):
     """
     A cyclic quantum group representation that is indexed by either a
@@ -172,7 +175,7 @@ class CyclicRepresentation(QuantumGroupRepresentation):
             sage: K = crystals.ProjectedLevelZeroLSPaths(La[1])
             sage: A = AdjointRepresentation(R, K)
             sage: latex(A)
-            V\left( -2\Lambda_{0} + \Lambda_{1} \right)
+            V\left( -2 \Lambda_{0} + \Lambda_{1} \right)
         """
         try:
             mg = self.basis().keys().module_generator()
@@ -205,6 +208,7 @@ class CyclicRepresentation(QuantumGroupRepresentation):
         except (TypeError, AttributeError):
             mg = self.basis().keys().module_generators[0]
         return self.monomial(mg)
+
 
 class AdjointRepresentation(CyclicRepresentation):
     r"""
@@ -460,6 +464,7 @@ class AdjointRepresentation(CyclicRepresentation):
                                           if A[I[i],I[j]] < 0 and j in self._zero_elts)
         return self.term(x, q_int(x.epsilon(i), self._q**self._d[i]))
 
+
 class MinusculeRepresentation(CyclicRepresentation):
     r"""
     A minuscule representation of a quantum group.
@@ -583,4 +588,3 @@ class MinusculeRepresentation(CyclicRepresentation):
         if x is None:
             return self.zero()
         return self.monomial(x)
-

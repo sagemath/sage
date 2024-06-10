@@ -1,14 +1,18 @@
-jupyter_client
-==============
+jupyter_client: Jupyter protocol implementation and client libraries
+====================================================================
 
 Description
 -----------
 
 Jupyter protocol implementation and client libraries
 
-jupyter_client contains the reference implementation of the Jupyter
-protocol. It also provides client and kernel management APIs for working
-with kernels.
+License
+-------
 
-It also provides the jupyter kernelspec entrypoint for installing
-kernelspecs for use with Jupyter frontends.
+BSD 3-Clause License
+
+Upstream Contact
+----------------
+
+https://pypi.org/project/jupyter-client/
+

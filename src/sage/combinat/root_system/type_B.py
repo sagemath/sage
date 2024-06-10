@@ -1,20 +1,18 @@
 """
 Root system data for type B
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008-2009 Daniel Bump
 #       Copyright (C) 2008-2009 Justin Walker
 #       Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from . import ambient_space
 
-class  AmbientSpace(ambient_space.AmbientSpace):
+
+class AmbientSpace(ambient_space.AmbientSpace):
     def dimension(self):
         """
         EXAMPLES::
@@ -67,7 +65,7 @@ class  AmbientSpace(ambient_space.AmbientSpace):
         """
         if i not in self.index_set():
             raise ValueError("{} is not in the index set".format(i))
-        return self.root(i-1,i) if i < self.n else self.monomial(self.n-1)
+        return self.root(i-1, i) if i < self.n else self.monomial(self.n-1)
 
     def negative_roots(self):
         """
@@ -83,10 +81,8 @@ class  AmbientSpace(ambient_space.AmbientSpace):
              (-1, 0, 0),
              (0, -1, 0),
              (0, 0, -1)]
-
         """
-        return [ -a for a in self.positive_roots()]
-
+        return [-a for a in self.positive_roots()]
 
     def positive_roots(self):
         """
@@ -106,7 +102,7 @@ class  AmbientSpace(ambient_space.AmbientSpace):
         """
         res = []
         for i in range(self.n-1):
-            for j in range(i+1,self.n):
+            for j in range(i + 1, self.n):
                 res.append(self.monomial(i) - self.monomial(j))
                 res.append(self.monomial(i) + self.monomial(j))
         for i in range(self.n):
@@ -124,11 +120,14 @@ class  AmbientSpace(ambient_space.AmbientSpace):
             raise ValueError("{} is not in the index set".format(i))
         n = self.dimension()
         if i == n:
-            return self.sum( self.monomial(j) for j in range(n) ) / 2
+            return self.sum(self.monomial(j) for j in range(n)) / 2
         else:
             return self.sum(self.monomial(j) for j in range(i))
 
+
 from .cartan_type import CartanType_standard_finite, CartanType_simple, CartanType_crystallographic, CartanType_simply_laced
+
+
 class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_crystallographic):
     def __init__(self, n):
         """
@@ -179,7 +178,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             sage: latex(CartanType(['B',4]))
             B_{4}
         """
-        return "B_{%s}"%self.n
+        return "B_{%s}" % self.n
 
     AmbientSpace = AmbientSpace
 
@@ -223,20 +222,18 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
 
         EXAMPLES::
 
-             sage: b = CartanType(['B',3]).dynkin_diagram()
-             sage: b
+             sage: b = CartanType(['B',3]).dynkin_diagram(); b                          # needs sage.graphs
              O---O=>=O
              1   2   3
              B3
-             sage: sorted(b.edges())
+             sage: b.edges(sort=True)                                                   # needs sage.graphs
              [(1, 2, 1), (2, 1, 1), (2, 3, 2), (3, 2, 1)]
 
-             sage: b = CartanType(['B',1]).dynkin_diagram()
-             sage: b
+             sage: b = CartanType(['B',1]).dynkin_diagram(); b                          # needs sage.graphs
              O
              1
              B1
-             sage: sorted(b.edges())
+             sage: b.edges(sort=True)                                                   # needs sage.graphs
              []
         """
         from .dynkin_diagram import DynkinDiagram_class
@@ -248,7 +245,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             g.set_edge_label(n-1, n, 2)
         return g
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Return an ascii art representation of the Dynkin diagram.
 
@@ -264,17 +261,19 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             O---O---O---O=>=O
             3   4   5   6   7
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._ascii_art_node
         n = self.n
         if n == 1:
             ret = node(label(1)) + "\n"
         else:
-            ret  = "---".join(node(label(i)) for i in range(1,n)) + "=>=" + node(label(n)) + '\n'
-        ret += "".join("{!s:4}".format(label(i)) for i in range(1,n+1))
+            ret = "---".join(node(label(i)) for i in range(1, n)) + "=>=" + node(label(n)) + '\n'
+        ret += "".join("{!s:4}".format(label(i)) for i in range(1, n + 1))
         return ret
 
-    def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2, dual=False):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2, dual=False):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -310,14 +309,16 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             - :meth:`sage.combinat.root_system.type_C.CartanType._latex_dynkin_diagram`
             - :meth:`sage.combinat.root_system.type_BC_affine.CartanType._latex_dynkin_diagram`
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._latex_draw_node
         if self.n == 1:
             return node(0, 0, label(1))
         n = self.n
-        ret = "\\draw (0 cm,0) -- (%s cm,0);\n"%((n-2)*node_dist)
-        ret += "\\draw (%s cm, 0.1 cm) -- +(%s cm,0);\n"%((n-2)*node_dist, node_dist)
-        ret += "\\draw (%s cm, -0.1 cm) -- +(%s cm,0);\n"%((n-2)*node_dist, node_dist)
+        ret = "\\draw (0 cm,0) -- (%s cm,0);\n" % ((n-2)*node_dist)
+        ret += "\\draw (%s cm, 0.1 cm) -- +(%s cm,0);\n" % ((n-2)*node_dist, node_dist)
+        ret += "\\draw (%s cm, -0.1 cm) -- +(%s cm,0);\n" % ((n-2)*node_dist, node_dist)
         if dual:
             ret += self._latex_draw_arrow_tip((n-1.5)*node_dist-0.2, 0, 180)
         else:
@@ -337,10 +338,11 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
         """
         from sage.combinat.root_system.type_folded import CartanTypeFolded
         n = self.n
-        return CartanTypeFolded(self, ['D', n+1],
-            [[i] for i in range(1, n)] + [[n, n+1]])
+        return CartanTypeFolded(self, ['D', n + 1],
+                                [[i] for i in range(1, n)] + [[n, n + 1]])
+
 
 # For unpickling backward compatibility (Sage <= 4.1)
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.root_system.type_B', 'ambient_space',  AmbientSpace)
-
+register_unpickle_override('sage.combinat.root_system.type_B',
+                           'ambient_space', AmbientSpace)

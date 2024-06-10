@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Rational Cherednik Algebras
 """
@@ -19,7 +20,7 @@ from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
 from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 
 
 class RationalCherednikAlgebra(CombinatorialFreeModule):
@@ -114,7 +115,7 @@ class RationalCherednikAlgebra(CombinatorialFreeModule):
             else:
                 c = (c, c)
 
-        return super(RationalCherednikAlgebra, cls).__classcall__(cls, ct, c, t, base_ring, tuple(prefix))
+        return super().__classcall__(cls, ct, c, t, base_ring, tuple(prefix))
 
     def __init__(self, ct, c, t, base_ring, prefix):
         r"""
@@ -184,11 +185,11 @@ class RationalCherednikAlgebra(CombinatorialFreeModule):
             d[s] = (r, r.associated_coroot(), c)
         return d
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
-        EXAMPLES ::
+        EXAMPLES::
 
             sage: RationalCherednikAlgebra(['A',4], 2, 1, QQ)
             Rational Cherednik Algebra of type ['A', 4] with c=2 and t=1
@@ -237,9 +238,10 @@ class RationalCherednikAlgebra(CombinatorialFreeModule):
             sage: list(R.algebra_generators())
             [a1, a2, s1, s2, ac1, ac2]
         """
-        keys  = ['a'+str(i) for i in self._cartan_type.index_set()]
+        keys = ['a'+str(i) for i in self._cartan_type.index_set()]
         keys += ['s'+str(i) for i in self._cartan_type.index_set()]
         keys += ['ac'+str(i) for i in self._cartan_type.index_set()]
+
         def gen_map(k):
             if k[0] == 's':
                 i = int(k[1:])
@@ -518,4 +520,3 @@ class RationalCherednikAlgebra(CombinatorialFreeModule):
         ret = [self.zero(), self.one(), self.an_element()]
         ret += list(self.algebra_generators())
         return ret
-

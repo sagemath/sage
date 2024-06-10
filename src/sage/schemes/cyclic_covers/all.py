@@ -1,2 +1,1 @@
-from __future__ import absolute_import
-from .constructor import CyclicCover
+from sage.schemes.cyclic_covers.constructor import CyclicCover

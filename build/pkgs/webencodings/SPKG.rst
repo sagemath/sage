@@ -1,5 +1,5 @@
-webencodings
-============
+webencodings: Character encoding aliases for legacy web content
+===============================================================
 
 Description
 -----------

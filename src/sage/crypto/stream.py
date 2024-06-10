@@ -1,7 +1,7 @@
+# sage.doctest: needs sage.combinat sage.rings.finite_rings
 """
 Stream Cryptosystems
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2007 David Kohel <kohel@maths.usyd.edu.au>
@@ -13,15 +13,14 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .cryptosystem import SymmetricKeyCryptosystem
-from .stream_cipher import LFSRCipher, ShrinkingGeneratorCipher
-
+from sage.arith.misc import gcd, power_mod
+from sage.crypto.cryptosystem import SymmetricKeyCryptosystem
+from sage.crypto.stream_cipher import LFSRCipher, ShrinkingGeneratorCipher
 from sage.crypto.util import random_blum_prime
 from sage.monoids.string_monoid import BinaryStrings
-from sage.arith.all import gcd, power_mod
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from sage.rings.finite_rings.integer_mod_ring import IntegerModFactory
-from sage.rings.polynomial.polynomial_element import is_Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 
 
 IntegerModRing = IntegerModFactory("IntegerModRing")
@@ -30,7 +29,7 @@ class LFSRCryptosystem(SymmetricKeyCryptosystem):
     """
     Linear feedback shift register cryptosystem class
     """
-    def __init__(self, field = None):
+    def __init__(self, field=None):
         """
         Create a linear feedback shift cryptosystem.
 
@@ -55,14 +54,14 @@ class LFSRCryptosystem(SymmetricKeyCryptosystem):
         because of the dependence on binary strings.
         """
         if field is None:
-           field = FiniteField(2)
+            field = FiniteField(2)
         if field.cardinality() != 2:
             raise NotImplementedError("Not yet implemented.")
         S = BinaryStrings()
         SymmetricKeyCryptosystem.__init__(self, S, S, None)
         self._field = field
 
-    def __eq__(self,right):
+    def __eq__(self, right):
         return type(self) is type(right) and self._field == right._field
 
     def __call__(self, key):
@@ -74,7 +73,7 @@ class LFSRCryptosystem(SymmetricKeyCryptosystem):
         if not isinstance(key, (list, tuple)) and len(key) == 2:
             raise TypeError("Argument key (= %s) must be a list of tuple of length 2" % key)
         poly, IS = key
-        if not is_Polynomial(poly):
+        if not isinstance(poly, Polynomial):
             raise TypeError("poly (= %s) must be a polynomial." % poly)
         if not isinstance(IS, (list, tuple)):
             raise TypeError("IS (= %s) must be an initial in the key space." % IS)
@@ -104,7 +103,7 @@ class ShrinkingGeneratorCryptosystem(SymmetricKeyCryptosystem):
     """
     Shrinking generator cryptosystem class
     """
-    def __init__(self, field = None):
+    def __init__(self, field=None):
         """
         Create a shrinking generator cryptosystem.
 
@@ -119,7 +118,7 @@ class ShrinkingGeneratorCryptosystem(SymmetricKeyCryptosystem):
             Shrinking generator cryptosystem over Finite Field of size 2
         """
         if field is None:
-           field = FiniteField(2)
+            field = FiniteField(2)
         if field.cardinality() != 2:
             raise NotImplementedError("Not yet implemented.")
         S = BinaryStrings()
@@ -135,9 +134,10 @@ class ShrinkingGeneratorCryptosystem(SymmetricKeyCryptosystem):
         OUTPUT: The shrinking generator cipher with key stream generator e1
         and decimating cipher e2.
         """
-        if not isinstance(key, (list,tuple)) and len(key) == 2:
+        if not isinstance(key, (list, tuple)) and len(key) == 2:
             raise TypeError("Argument key (= %s) must be a list of tuple of length 2" % key)
-        e1 = key[0]; e2 = key[1]
+        e1 = key[0]
+        e2 = key[1]
         if not isinstance(e1, LFSRCipher) or not isinstance(e2, LFSRCipher):
             raise TypeError("The key (= (%s,%s)) must be a tuple of two LFSR ciphers." % key)
         return ShrinkingGeneratorCipher(self, e1, e2)
@@ -288,7 +288,7 @@ def blum_blum_shub(length, seed=None, p=None, q=None,
     is the period. ::
 
         sage: from sage.crypto.stream import blum_blum_shub
-        sage: from sage.crypto.util import carmichael_lambda
+        sage: from sage.arith.misc import carmichael_lambda
         sage: carmichael_lambda(carmichael_lambda(7*11))
         4
         sage: s = [GF(2)(int(str(x))) for x in blum_blum_shub(60, p=7, q=11, seed=13)]

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.groups
 r"""
 Affine Permutations
 """
@@ -10,27 +11,30 @@ Affine Permutations
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.misc.cachefunc import cached_method
-from sage.misc.misc_c import prod
-from sage.misc.constant_function import ConstantFunction
-from sage.misc.prandom import randint
+from itertools import repeat
 
+from sage.arith.misc import binomial
 from sage.categories.affine_weyl_groups import AffineWeylGroups
-from sage.structure.list_clone import ClonableArray
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
-from sage.rings.integer_ring import ZZ
-
-from sage.groups.perm_gps.permgroup_named import SymmetricGroup
-from sage.arith.all import binomial
-from sage.combinat.root_system.cartan_type import CartanType
-from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.combinat.composition import Composition
 from sage.combinat.partition import Partition
+from sage.combinat.root_system.cartan_type import CartanType
+from sage.misc.cachefunc import cached_method
+from sage.misc.constant_function import ConstantFunction
+from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod
+from sage.misc.prandom import randint
+from sage.rings.integer_ring import ZZ
+from sage.structure.list_clone import ClonableArray
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import('sage.combinat.root_system.weyl_group', 'WeylGroup')
+lazy_import('sage.groups.perm_gps.permgroup_named', 'SymmetricGroup')
+
 
 class AffinePermutation(ClonableArray):
     r"""
-    An affine permutation, representated in the window notation, and
+    An affine permutation, represented in the window notation, and
     considered as a bijection from `\ZZ` to `\ZZ`.
 
     EXAMPLES::
@@ -40,6 +44,7 @@ class AffinePermutation(ClonableArray):
         sage: p
         Type A affine permutation with window [3, -1, 0, 6, 5, 4, 10, 9]
     """
+
     def __init__(self, parent, lst, check=True):
         r"""
         Initialize ``self``
@@ -50,7 +55,7 @@ class AffinePermutation(ClonableArray):
 
         - ``lst`` -- list giving the base window of the affine permutation
 
-        - ``check``-- whether to test if the affine permutation is valid
+        - ``check`` -- whether to test if the affine permutation is valid
 
         EXAMPLES::
 
@@ -62,7 +67,7 @@ class AffinePermutation(ClonableArray):
 
         TESTS:
 
-        Check that :trac:`26436` is fixed::
+        Check that :issue:`26436` is fixed::
 
             sage: A = AffinePermutationGroup(['A',3,1])
             sage: p = A([-3/1,2/1,3/1,8/1])
@@ -159,20 +164,18 @@ class AffinePermutation(ClonableArray):
         return self.__rmul__(q)
 
     @cached_method
-    def inverse(self):
+    def __invert__(self):
         r"""
         Return the inverse affine permutation.
 
         EXAMPLES::
 
             sage: p = AffinePermutationGroup(['A',7,1])([3, -1, 0, 6, 5, 4, 10, 9])
-            sage: p.inverse()
+            sage: p.inverse()  # indirect doctest
             Type A affine permutation with window [0, -1, 1, 6, 5, 4, 10, 11]
         """
-        inv = [self.position(i) for i in range(1,len(self)+1)]
+        inv = [self.position(i) for i in range(1, len(self) + 1)]
         return type(self)(self.parent(), inv, check=False)
-
-    __invert__=inverse
 
     def apply_simple_reflection(self, i, side='right'):
         r"""
@@ -186,7 +189,7 @@ class AffinePermutation(ClonableArray):
 
         EXAMPLES::
 
-            sage: p=AffinePermutationGroup(['A',7,1])([3, -1, 0, 6, 5, 4, 10, 9])
+            sage: p = AffinePermutationGroup(['A',7,1])([3, -1, 0, 6, 5, 4, 10, 9])
             sage: p.apply_simple_reflection(3)
             Type A affine permutation with window [3, -1, 6, 0, 5, 4, 10, 9]
             sage: p.apply_simple_reflection(11)
@@ -207,7 +210,7 @@ class AffinePermutation(ClonableArray):
 
         EXAMPLES::
 
-            sage: A=AffinePermutationGroup(['A',7,1])
+            sage: A = AffinePermutationGroup(['A',7,1])
             sage: p=A([3, -1, 0, 6, 5, 4, 10, 9])
             sage: p.value(1) #indirect doctest
             3
@@ -216,7 +219,7 @@ class AffinePermutation(ClonableArray):
         """
         return self.value(i)
 
-    def is_i_grassmannian(self, i=0, side="right"):
+    def is_i_grassmannian(self, i=0, side="right") -> bool:
         r"""
         Test whether ``self`` is `i`-grassmannian, i.e., either is the
         identity or has ``i`` as the sole descent.
@@ -228,7 +231,7 @@ class AffinePermutation(ClonableArray):
 
         EXAMPLES::
 
-            sage: A=AffinePermutationGroup(['A',7,1])
+            sage: A = AffinePermutationGroup(['A',7,1])
             sage: p=A([3, -1, 0, 6, 5, 4, 10, 9])
             sage: p.is_i_grassmannian()
             False
@@ -249,7 +252,7 @@ class AffinePermutation(ClonableArray):
 
         EXAMPLES::
 
-            sage: A=AffinePermutationGroup(['A',7,1])
+            sage: A = AffinePermutationGroup(['A',7,1])
             sage: A.index_set()
             (0, 1, 2, 3, 4, 5, 6, 7)
         """
@@ -265,7 +268,7 @@ class AffinePermutation(ClonableArray):
 
         EXAMPLES::
 
-            sage: A=AffinePermutationGroup(['A',7,1])
+            sage: A = AffinePermutationGroup(['A',7,1])
             sage: p=A([3, -1, 0, 6, 5, 4, 10, 9])
             sage: p.lower_covers()
             [Type A affine permutation with window [-1, 3, 0, 6, 5, 4, 10, 9],
@@ -276,13 +279,13 @@ class AffinePermutation(ClonableArray):
         S = self.descents(side)
         return [self.apply_simple_reflection(i, side) for i in S]
 
-    def is_one(self):
+    def is_one(self) -> bool:
         r"""
         Tests whether the affine permutation is the identity.
 
         EXAMPLES::
 
-            sage: A=AffinePermutationGroup(['A',7,1])
+            sage: A = AffinePermutationGroup(['A',7,1])
             sage: p=A([3, -1, 0, 6, 5, 4, 10, 9])
             sage: p.is_one()
             False
@@ -298,7 +301,7 @@ class AffinePermutation(ClonableArray):
 
         EXAMPLES::
 
-            sage: A=AffinePermutationGroup(['A',7,1])
+            sage: A = AffinePermutationGroup(['A',7,1])
             sage: p=A([3, -1, 0, 6, 5, 4, 10, 9])
             sage: p.reduced_word()
             [0, 7, 4, 1, 0, 7, 5, 4, 2, 1]
@@ -322,7 +325,7 @@ class AffinePermutation(ClonableArray):
 
         EXAMPLES::
 
-            sage: A=AffinePermutationGroup(['A',7,1])
+            sage: A = AffinePermutationGroup(['A',7,1])
             sage: p=A([3, -1, 0, 6, 5, 4, 10, 9])
             sage: p.signature()
             1
@@ -336,7 +339,7 @@ class AffinePermutation(ClonableArray):
 
         EXAMPLES::
 
-            sage: A=AffinePermutationGroup(['A',7,1])
+            sage: A = AffinePermutationGroup(['A',7,1])
             sage: p=A([3, -1, 0, 6, 5, 4, 10, 9])
             sage: p.to_weyl_group_element()
             [ 0 -1  0  1  0  0  1  0]
@@ -366,7 +369,7 @@ class AffinePermutation(ClonableArray):
 
         EXAMPLES::
 
-            sage: A=AffinePermutationGroup(['A',7,1])
+            sage: A = AffinePermutationGroup(['A',7,1])
             sage: p=A([3, -1, 0, 6, 5, 4, 10, 9])
             sage: gq=p.grassmannian_quotient()
             sage: gq
@@ -393,7 +396,7 @@ class AffinePermutation(ClonableArray):
         while not (D == [i] or D == []):
             m = D[0]
             if m == i:
-                m=D[1]
+                m = D[1]
             if side == 'right':
                 fin = fin.apply_simple_reflection(m, side='left')
                 gr = gr.apply_simple_reflection(m, side='right')
@@ -405,7 +408,6 @@ class AffinePermutation(ClonableArray):
             return (gr, fin)
         else:
             return (fin, gr)
-
 
 
 class AffinePermutationTypeA(AffinePermutation):
@@ -448,7 +450,6 @@ class AffinePermutationTypeA(AffinePermutation):
         if l != list(range(k+1)):
             raise ValueError("entries must have distinct residues")
 
-
     def value(self, i, base_window=False):
         r"""
         Return the image of the integer ``i`` under this permutation.
@@ -471,7 +472,7 @@ class AffinePermutationTypeA(AffinePermutation):
         if base_window:
             self[i-1]
         window = (i-1) // (self.k+1)
-        return self[(i-1)%(self.k+1)] + window*(self.k+1)
+        return self[(i-1) % (self.k+1)] + window*(self.k+1)
 
     def position(self, i):
         r"""
@@ -503,7 +504,7 @@ class AffinePermutationTypeA(AffinePermutation):
 
         EXAMPLES::
 
-            sage: p=AffinePermutationGroup(['A',7,1])([3, -1, 0, 6, 5, 4, 10, 9])
+            sage: p = AffinePermutationGroup(['A',7,1])([3, -1, 0, 6, 5, 4, 10, 9])
             sage: p.apply_simple_reflection_right(3)
             Type A affine permutation with window [3, -1, 6, 0, 5, 4, 10, 9]
             sage: p.apply_simple_reflection_right(11)
@@ -519,7 +520,7 @@ class AffinePermutationTypeA(AffinePermutation):
         if j == 0:
             a = l[0]
             l[0] = l[-1] - (self.k+1)
-            l[-1] = a +(self.k+1)
+            l[-1] = a + (self.k+1)
         else:
             a = l[j-1]
             l[j-1] = l[j]
@@ -533,7 +534,7 @@ class AffinePermutationTypeA(AffinePermutation):
 
         EXAMPLES::
 
-            sage: p=AffinePermutationGroup(['A',7,1])([3, -1, 0, 6, 5, 4, 10, 9])
+            sage: p = AffinePermutationGroup(['A',7,1])([3, -1, 0, 6, 5, 4, 10, 9])
             sage: p.apply_simple_reflection_left(3)
             Type A affine permutation with window [4, -1, 0, 6, 5, 3, 10, 9]
             sage: p.apply_simple_reflection_left(11)
@@ -572,7 +573,7 @@ class AffinePermutationTypeA(AffinePermutation):
                     l.append(self[m])
         return type(self)(self.parent(), l, check=False)
 
-    def has_right_descent(self, i):
+    def has_right_descent(self, i) -> bool:
         r"""
         Determine whether there is a descent at ``i``.
 
@@ -582,7 +583,7 @@ class AffinePermutationTypeA(AffinePermutation):
 
         EXAMPLES::
 
-            sage: p=AffinePermutationGroup(['A',7,1])([3, -1, 0, 6, 5, 4, 10, 9])
+            sage: p = AffinePermutationGroup(['A',7,1])([3, -1, 0, 6, 5, 4, 10, 9])
             sage: p.has_right_descent(1)
             True
             sage: p.has_right_descent(9)
@@ -590,9 +591,9 @@ class AffinePermutationTypeA(AffinePermutation):
             sage: p.has_right_descent(0)
             False
         """
-        return self.value(i)>self.value(i+1)
+        return self.value(i) > self.value(i+1)
 
-    def has_left_descent(self, i):
+    def has_left_descent(self, i) -> bool:
         r"""
         Determine whether there is a descent at ``i``.
 
@@ -602,7 +603,7 @@ class AffinePermutationTypeA(AffinePermutation):
 
         EXAMPLES::
 
-            sage: p=AffinePermutationGroup(['A',7,1])([3, -1, 0, 6, 5, 4, 10, 9])
+            sage: p = AffinePermutationGroup(['A',7,1])([3, -1, 0, 6, 5, 4, 10, 9])
             sage: p.has_left_descent(1)
             True
             sage: p.has_left_descent(9)
@@ -639,7 +640,7 @@ class AffinePermutationTypeA(AffinePermutation):
 
         EXAMPLES::
 
-            sage: A=AffinePermutationGroup(['A',7,1])
+            sage: A = AffinePermutationGroup(['A',7,1])
             sage: p=A([3, -1, 0, 6, 5, 4, 10, 9])
             sage: p.flip_automorphism()
             Type A affine permutation with window [0, -1, 5, 4, 3, 9, 10, 6]
@@ -654,15 +655,13 @@ class AffinePermutationTypeA(AffinePermutation):
 
         EXAMPLES::
 
-            sage: A=AffinePermutationGroup(['A',7,1])
-            sage: p=A([3, -1, 0, 6, 5, 4, 10, 9])
+            sage: A = AffinePermutationGroup(['A',7,1])
+            sage: p = A([3, -1, 0, 6, 5, 4, 10, 9])
             sage: p.promotion()
             Type A affine permutation with window [2, 4, 0, 1, 7, 6, 5, 11]
         """
-        l = []
-        l.append(self[-1]-self.k)
-        for i in range(1,self.k+1):
-            l.append(self[i-1]+1)
+        l = [self[-1] - self.k]
+        l.extend(self[i] + 1 for i in range(self.k))
         return type(self)(self.parent(), l)
 
     def maximal_cyclic_factor(self, typ='decreasing', side='right', verbose=False):
@@ -684,7 +683,7 @@ class AffinePermutationTypeA(AffinePermutation):
 
         EXAMPLES::
 
-            sage: p=AffinePermutationGroup(['A',7,1])([3, -1, 0, 6, 5, 4, 10, 9])
+            sage: p = AffinePermutationGroup(['A',7,1])([3, -1, 0, 6, 5, 4, 10, 9])
             sage: p.maximal_cyclic_factor()
             [7, 5, 4, 2, 1]
             sage: p.maximal_cyclic_factor(side='left')
@@ -707,29 +706,28 @@ class AffinePermutationTypeA(AffinePermutation):
             y = self.clone().apply_simple_reflection(i,side)
             T = [i]
             j = i
-            for count in range(1, self.k):
+            for _ in range(1, self.k):
                 if (typ[0],side[0]) == ('d', 'r'):
-                    j=(j+1)%(k+1)
+                    j = (j+1) % (k+1)
                 if (typ[0],side[0]) == ('i', 'r'):
-                    j=(j-1)%(k+1)
+                    j = (j-1) % (k+1)
                 if (typ[0],side[0]) == ('d', 'l'):
-                    j=(j-1)%(k+1)
+                    j = (j-1) % (k+1)
                 if (typ[0],side[0]) == ('i', 'l'):
-                    j=(j+1)%(k+1)
+                    j = (j+1) % (k+1)
                 if y.has_descent(j, side):
-                    y=y.apply_simple_reflection(j,side)
-                    T.append(j%(k+1))
+                    y = y.apply_simple_reflection(j,side)
+                    T.append(j % (k+1))
             if verbose:
                 print(i, T)
             if len(T) > len(best_T):
-                best_T=T
+                best_T = T
         #if (typ[0],side[0])==('i','r'): best_T.reverse()
         #if (typ[0],side[0])==('d','l'): best_T.reverse()
         #if typ[0]=='d': best_T.reverse()
         if side[0] == 'r':
             best_T.reverse()
         return best_T
-
 
     def maximal_cyclic_decomposition(self, typ='decreasing', side='right', verbose=False):
         r"""
@@ -750,7 +748,7 @@ class AffinePermutationTypeA(AffinePermutation):
 
         EXAMPLES::
 
-            sage: p=AffinePermutationGroup(['A',7,1])([3, -1, 0, 6, 5, 4, 10, 9])
+            sage: p = AffinePermutationGroup(['A',7,1])([3, -1, 0, 6, 5, 4, 10, 9])
             sage: p.maximal_cyclic_decomposition()
             [[0, 7], [4, 1, 0], [7, 5, 4, 2, 1]]
             sage: p.maximal_cyclic_decomposition(side='left')
@@ -762,7 +760,7 @@ class AffinePermutationTypeA(AffinePermutation):
 
         TESTS::
 
-            sage: A=AffinePermutationGroup(['A',7,1])
+            sage: A = AffinePermutationGroup(['A',7,1])
             sage: p=A([3, -1, 0, 6, 5, 4, 10, 9])
             sage: S=p.maximal_cyclic_decomposition()
             sage: p==prod(A.from_word(l) for l in S)
@@ -793,7 +791,7 @@ class AffinePermutationTypeA(AffinePermutation):
                     y = y.apply_simple_reflection_left(i)
             if verbose:
                 print(S, y.length())
-        if side[0]=='r':
+        if side[0] == 'r':
             listy.reverse()
         return listy
 
@@ -818,7 +816,7 @@ class AffinePermutationTypeA(AffinePermutation):
         EXAMPLES::
 
             sage: import itertools
-            sage: A=AffinePermutationGroup(['A',7,1])
+            sage: A = AffinePermutationGroup(['A',7,1])
             sage: p=A([3, -1, 0, 6, 5, 4, 10, 9])
             sage: orders = ('increasing','decreasing')
             sage: sides = ('left','right')
@@ -850,13 +848,13 @@ class AffinePermutationTypeA(AffinePermutation):
             #value than the number in position i.  Then cyclically shift
             #the resulting vector.
             for i in range(self.k+1):
-                a=self(i)
+                a = self(i)
                 for j in range(i-self.k, i):
-                    b=self(j)
-                    #A small rotation is necessary for the reduced word from
-                    #the lehmer code to match the element.
+                    b = self(j)
+                    # A small rotation is necessary for the reduced word from
+                    # the Lehmer code to match the element.
                     if a < b:
-                        code[i-1]+=((b-a)//(self.k+1)+1)
+                        code[i-1] += ((b-a)//(self.k+1)+1)
         elif typ[0] == 'i' and side[0] == 'l':
             #Find number of positions to the right of i smaller than i, then
             #cyclically shift the resulting vector.
@@ -868,7 +866,7 @@ class AffinePermutationTypeA(AffinePermutation):
                     #the lehmer code to match the element.
                     if b < i:
                         code[i-1] += (i-b) // (self.k+1) + 1
-        elif typ[0] == 'd' and side[0]=='l':
+        elif typ[0] == 'd' and side[0] == 'l':
             #Find number of positions to the left of i larger than i.
             for i in range(self.k+1):
                 pos = self.position(i)
@@ -878,18 +876,21 @@ class AffinePermutationTypeA(AffinePermutation):
                         code[i] += (b-i) // (self.k+1) + 1
         return Composition(code)
 
-    def is_fully_commutative(self):
+    def is_fully_commutative(self) -> bool:
         r"""
-        Determine whether ``self`` is fully commutative, i.e., has no
-        reduced words with a braid.
+        Determine whether ``self`` is fully commutative.
+
+        This means that it has no reduced word with a braid.
+
+        This uses a specific algorithm.
 
         EXAMPLES::
 
-            sage: A=AffinePermutationGroup(['A',7,1])
-            sage: p=A([3, -1, 0, 6, 5, 4, 10, 9])
+            sage: A = AffinePermutationGroup(['A',7,1])
+            sage: p = A([3, -1, 0, 6, 5, 4, 10, 9])
             sage: p.is_fully_commutative()
             False
-            sage: q=A([-3, -2, 0, 7, 9, 2, 11, 12])
+            sage: q = A([-3, -2, 0, 7, 9, 2, 11, 12])
             sage: q.is_fully_commutative()
             True
         """
@@ -902,14 +903,12 @@ class AffinePermutationTypeA(AffinePermutation):
             if c[i] > 0:
                 if firstnonzero is None:
                     firstnonzero = i
-                if m != -1 and c[i] - (i-m) >= c[m]:
+                if m != -1 and c[i] - (i - m) >= c[m]:
                     return False
                 m = i
-        #now check m (the last non-zero) against firstnonzero.
-        d = self.n-(m-firstnonzero)
-        if c[firstnonzero]-d >= c[m]:
-            return False
-        return True
+        # now check m (the last non-zero) against first non-zero.
+        d = self.n - (m - firstnonzero)
+        return not c[firstnonzero] - d >= c[m]
 
     def to_bounded_partition(self, typ='decreasing', side='right'):
         r"""
@@ -918,15 +917,15 @@ class AffinePermutationTypeA(AffinePermutation):
 
         INPUT:
 
-        - ``typ`` -- 'increasing' or 'decreasing' (default: 'decreasing'.)
+        - ``typ`` -- ``'increasing'`` or ``'decreasing'`` (default: ``'decreasing'``.)
           Chooses whether to find increasing or decreasing sets.
 
-        - ``side`` -- 'right' or 'left' (default: 'right'.)  Chooses whether to
+        - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``.)  Chooses whether to
           find maximal sets starting from the left or the right.
 
         EXAMPLES::
 
-            sage: A=AffinePermutationGroup(['A',2,1])
+            sage: A = AffinePermutationGroup(['A',2,1])
             sage: p=A.from_lehmer_code([4,1,0])
             sage: p.to_bounded_partition()
             [2, 1, 1, 1]
@@ -942,14 +941,14 @@ class AffinePermutationTypeA(AffinePermutation):
 
         INPUT:
 
-        - ``typ`` -- 'increasing' or 'decreasing' (default: 'decreasing'.)
+        - ``typ`` -- ``'increasing'`` or ``'decreasing'`` (default: ``'decreasing'``.)
 
-        - ``side`` -- 'right' or 'left' (default: 'right'.)  Chooses whether to
+        - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``.)  Chooses whether to
           find maximal sets starting from the left or the right.
 
         EXAMPLES::
 
-            sage: A=AffinePermutationGroup(['A',2,1])
+            sage: A = AffinePermutationGroup(['A',2,1])
             sage: p=A.from_lehmer_code([4,1,0])
             sage: p.to_bounded_partition()
             [2, 1, 1, 1]
@@ -974,7 +973,7 @@ class AffinePermutationTypeA(AffinePermutation):
 
         EXAMPLES::
 
-            sage: A=AffinePermutationGroup(['A',7,1])
+            sage: A = AffinePermutationGroup(['A',7,1])
             sage: p=A([3, -1, 0, 6, 5, 4, 10, 9])
             sage: p.to_dominant()
             Type A affine permutation with window [-2, -1, 1, 3, 4, 8, 10, 13]
@@ -1005,11 +1004,11 @@ class AffinePermutationTypeA(AffinePermutation):
 
         EXAMPLES::
 
-            sage: A=AffinePermutationGroup(['A',7,1])
+            sage: A = AffinePermutationGroup(['A',7,1])
             sage: p=A([3, -1, 0, 6, 5, 4, 10, 9])
             sage: p.tableau_of_word(p.reduced_word())
             [[], [1, 6, 9], [2, 7, 10], [], [3], [4, 8], [], [5]]
-            sage: A=AffinePermutationGroup(['A',7,1])
+            sage: A = AffinePermutationGroup(['A',7,1])
             sage: p=A([3, -1, 0, 6, 5, 4, 10, 9])
             sage: w=p.reduced_word()
             sage: w
@@ -1030,14 +1029,14 @@ class AffinePermutationTypeA(AffinePermutation):
         if x0.length() != len(w):
             raise ValueError("word was not reduced")
         if alpha is None:
-            alpha=Composition([1 for i in w])
+            alpha = Composition([1 for i in w])
         else:
             if sum(alpha) != len(w):
                 raise ValueError("size of alpha must match length of w")
             alpha = Composition(alpha)
         # TODO: We should probably check that w is of type alpha! probably a different function.
         # Now we actually build the recording tableau.
-        tab = [[] for i in range(self.k+1)]
+        tab = [[] for _ in repeat(None, self.k + 1)]
         label = 1
         al_index = 0
         j = 0
@@ -1065,6 +1064,8 @@ class AffinePermutationTypeA(AffinePermutation):
         return tab
 
 #-------------------------------------------------------------------------------
+
+
 class AffinePermutationTypeC(AffinePermutation):
     #----------------------
     #Type-specific methods.
@@ -1148,7 +1149,7 @@ class AffinePermutationTypeC(AffinePermutation):
 
         EXAMPLES::
 
-            sage: C=AffinePermutationGroup(['C',4,1])
+            sage: C = AffinePermutationGroup(['C',4,1])
             sage: x=C([-1,5,3,7])
             sage: for i in C.index_set(): x.apply_simple_reflection_right(i)
             Type C affine permutation with window [1, 5, 3, 7]
@@ -1206,7 +1207,7 @@ class AffinePermutationTypeC(AffinePermutation):
                     l.append(self[m])
         elif i == 0:
             for m in range(self.k):
-                res = self[m]%self.N
+                res = self[m] % self.N
                 if res == 1:
                     l.append(self[m] - 2)
                 elif res == self.N - 1:
@@ -1224,7 +1225,7 @@ class AffinePermutationTypeC(AffinePermutation):
                     l.append(self[m])
         return type(self)(self.parent(), l, check=False)
 
-    def has_right_descent(self, i):
+    def has_right_descent(self, i) -> bool:
         r"""
         Determine whether there is a descent at index ``i``.
 
@@ -1245,7 +1246,7 @@ class AffinePermutationTypeC(AffinePermutation):
         """
         return self.value(i) > self.value(i+1)
 
-    def has_left_descent(self, i):
+    def has_left_descent(self, i) -> bool:
         r"""
         Determine whether there is a descent at ``i``.
 
@@ -1321,14 +1322,13 @@ class AffinePermutationTypeB(AffinePermutationTypeC):
             raise ValueError("type B affine permutations have an even number of "
                              "entries less than 0 to the right of the 0th position")
 
-
     def apply_simple_reflection_right(self, i):
         r"""
         Apply the simple reflection indexed by ``i`` on positions.
 
         EXAMPLES::
 
-            sage: B=AffinePermutationGroup(['B',4,1])
+            sage: B = AffinePermutationGroup(['B',4,1])
             sage: p=B([-5,1,6,-2])
             sage: p.apply_simple_reflection_right(1)
             Type B affine permutation with window [1, -5, 6, -2]
@@ -1358,7 +1358,7 @@ class AffinePermutationTypeB(AffinePermutationTypeC):
 
         EXAMPLES::
 
-            sage: B=AffinePermutationGroup(['B',4,1])
+            sage: B = AffinePermutationGroup(['B',4,1])
             sage: p=B([-5,1,6,-2])
             sage: p.apply_simple_reflection_left(0)
             Type B affine permutation with window [-5, -2, 6, 1]
@@ -1399,7 +1399,7 @@ class AffinePermutationTypeB(AffinePermutationTypeC):
                     l.append(self[m])
         elif i == self.k:
             for m in range(self.k):
-                res = self[m]%self.N
+                res = self[m] % self.N
                 if res == i:
                     l.append(self[m] + 1)
                 elif res == j:
@@ -1408,7 +1408,7 @@ class AffinePermutationTypeB(AffinePermutationTypeC):
                     l.append(self[m])
         return type(self)(self.parent(), l, check=False)
 
-    def has_right_descent(self, i):
+    def has_right_descent(self, i) -> bool:
         r"""
         Determines whether there is a descent at index ``i``.
 
@@ -1427,7 +1427,7 @@ class AffinePermutationTypeB(AffinePermutationTypeC):
             return self.value(-2) > self.value(1)
         return self.value(i) > self.value(i+1)
 
-    def has_left_descent(self, i):
+    def has_left_descent(self, i) -> bool:
         r"""
         Determines whether there is a descent at ``i``.
 
@@ -1437,7 +1437,7 @@ class AffinePermutationTypeB(AffinePermutationTypeC):
 
         EXAMPLES::
 
-            sage: B=AffinePermutationGroup(['B',4,1])
+            sage: B = AffinePermutationGroup(['B',4,1])
             sage: p=B([-5,1,6,-2])
             sage: [p.has_left_descent(i) for i in B.index_set()]
             [True, True, False, False, True]
@@ -1496,7 +1496,7 @@ class AffinePermutationTypeD(AffinePermutationTypeC):
 
         EXAMPLES::
 
-            sage: D=AffinePermutationGroup(['D',4,1])
+            sage: D = AffinePermutationGroup(['D',4,1])
             sage: p=D([1,-6,5,-2])
             sage: p.apply_simple_reflection_right(0)
             Type D affine permutation with window [6, -1, 5, -2]
@@ -1529,7 +1529,7 @@ class AffinePermutationTypeD(AffinePermutationTypeC):
 
         EXAMPLES::
 
-            sage: D=AffinePermutationGroup(['D',4,1])
+            sage: D = AffinePermutationGroup(['D',4,1])
             sage: p=D([1,-6,5,-2])
             sage: p.apply_simple_reflection_left(0)
             Type D affine permutation with window [-2, -6, 5, 1]
@@ -1583,7 +1583,7 @@ class AffinePermutationTypeD(AffinePermutationTypeC):
                     l.append(self[m])
         return type(self)(self.parent(), l, check=False)
 
-    def has_right_descent(self, i):
+    def has_right_descent(self, i) -> bool:
         r"""
         Determine whether there is a descent at index ``i``.
 
@@ -1593,7 +1593,7 @@ class AffinePermutationTypeD(AffinePermutationTypeC):
 
         EXAMPLES::
 
-            sage: D=AffinePermutationGroup(['D',4,1])
+            sage: D = AffinePermutationGroup(['D',4,1])
             sage: p=D([1,-6,5,-2])
             sage: [p.has_right_descent(i) for i in D.index_set()]
             [True, True, False, True, False]
@@ -1604,7 +1604,7 @@ class AffinePermutationTypeD(AffinePermutationTypeC):
             return self.value(i) > self.value(i+2)
         return self.value(i) > self.value(i+1)
 
-    def has_left_descent(self, i):
+    def has_left_descent(self, i) -> bool:
         r"""
         Determine whether there is a descent at ``i``.
 
@@ -1614,7 +1614,7 @@ class AffinePermutationTypeD(AffinePermutationTypeC):
 
         EXAMPLES::
 
-            sage: D=AffinePermutationGroup(['D',4,1])
+            sage: D = AffinePermutationGroup(['D',4,1])
             sage: p=D([1,-6,5,-2])
             sage: [p.has_left_descent(i) for i in D.index_set()]
             [True, True, False, True, True]
@@ -1647,7 +1647,7 @@ class AffinePermutationTypeG(AffinePermutation):
         if not len(self) == 6:
             raise ValueError("length of list must be 6")
         #Check that we have an even number of 'big' elements left of the 7th entry.
-        s = sum(i//6 - (i%6 == 0) for i in self if i > 6)
+        s = sum(i//6 - (i % 6 == 0) for i in self if i > 6)
         if s % 2:
             raise ValueError("type G affine permutations have an even number of"
                              " entries greater than 6 to the left of the 7th position")
@@ -1669,7 +1669,7 @@ class AffinePermutationTypeG(AffinePermutation):
 
         EXAMPLES::
 
-            sage: G=AffinePermutationGroup(['G',2,1])
+            sage: G = AffinePermutationGroup(['G',2,1])
             sage: p=G([2, 10, -5, 12, -3, 5])
             sage: [p.value(i) for i in [1..12]]
             [2, 10, -5, 12, -3, 5, 8, 16, 1, 18, 3, 11]
@@ -1678,7 +1678,7 @@ class AffinePermutationTypeG(AffinePermutation):
         if base_window:
             self[i-1]
         window = (i-1) // N
-        return self[(i-1)%N] + window*(N)
+        return self[(i-1) % N] + window*(N)
 
     def position(self, i):
         r"""
@@ -1705,8 +1705,8 @@ class AffinePermutationTypeG(AffinePermutation):
 
         EXAMPLES::
 
-            sage: G=AffinePermutationGroup(['G',2,1])
-            sage: p=G([2, 10, -5, 12, -3, 5])
+            sage: G = AffinePermutationGroup(['G',2,1])
+            sage: p = G([2, 10, -5, 12, -3, 5])
             sage: p.apply_simple_reflection_right(0)
             Type G affine permutation with window [-9, -1, -5, 12, 8, 16]
             sage: p.apply_simple_reflection_right(1)
@@ -1714,7 +1714,7 @@ class AffinePermutationTypeG(AffinePermutation):
             sage: p.apply_simple_reflection_right(2)
             Type G affine permutation with window [2, -5, 10, -3, 12, 5]
         """
-        if not i in self.parent().index_set():
+        if i not in self.parent().index_set():
             raise ValueError('index not in index set')
         j = i
         l = self[:]
@@ -1744,7 +1744,7 @@ class AffinePermutationTypeG(AffinePermutation):
 
         EXAMPLES::
 
-            sage: G=AffinePermutationGroup(['G',2,1])
+            sage: G = AffinePermutationGroup(['G',2,1])
             sage: p=G([2, 10, -5, 12, -3, 5])
             sage: p.apply_simple_reflection_left(0)
             Type G affine permutation with window [0, 10, -7, 14, -3, 7]
@@ -1758,34 +1758,34 @@ class AffinePermutationTypeG(AffinePermutation):
         l = []
         if i == 1:
             for m in range(6):
-                res=self[m]%6
-                if res==1 or res==3 or res==5:
+                res = self[m] % 6
+                if res == 1 or res == 3 or res == 5:
                     l.append(self[m]+1)
-                elif res==2 or res==4 or res==0:
+                elif res == 2 or res == 4 or res == 0:
                     l.append(self[m]-1)
                 else:
                     l.append(self[m])
         elif i == 2:
             for m in range(6):
-                res=self[m]%6
-                if res==2 or res==4:
+                res = self[m] % 6
+                if res == 2 or res == 4:
                     l.append(self[m]+1)
-                elif res==3 or res==5:
+                elif res == 3 or res == 5:
                     l.append(self[m]-1)
                 else:
                     l.append(self[m])
         elif i == 0:
             for m in range(6):
-                res=self[m]%6
-                if res==1 or res==2:
+                res = self[m] % 6
+                if res == 1 or res == 2:
                     l.append(self[m]-2)
-                elif res==5 or res==0:
+                elif res == 5 or res == 0:
                     l.append(self[m]+2)
                 else:
                     l.append(self[m])
         return type(self)(self.parent(), l, check=False)
 
-    def has_right_descent(self, i):
+    def has_right_descent(self, i) -> bool:
         r"""
         Determines whether there is a descent at index `i`.
 
@@ -1806,7 +1806,7 @@ class AffinePermutationTypeG(AffinePermutation):
             return self.value(0) > self.value(2)
         return self.value(i) > self.value(i+1)
 
-    def has_left_descent(self, i):
+    def has_left_descent(self, i) -> bool:
         r"""
         Determines whether there is a descent at ``i``.
 
@@ -1841,8 +1841,6 @@ class AffinePermutationTypeG(AffinePermutation):
         """
         A = AffinePermutationGroup(['A', 5, 1])
         return A(self)
-
-
 
 
 #-------------------------------------------------------------------------
@@ -1968,26 +1966,26 @@ def AffinePermutationGroup(cartan_type):
     We can also form affine permutation groups in types `B`, `C`, `D`,
     and `G`::
 
-        sage: B=AffinePermutationGroup(['B',4,1])
+        sage: B = AffinePermutationGroup(['B',4,1])
         sage: B.an_element()
         Type B affine permutation with window [-1, 3, 4, 11]
 
-        sage: C=AffinePermutationGroup(['C',4,1])
+        sage: C = AffinePermutationGroup(['C',4,1])
         sage: C.an_element()
         Type C affine permutation with window [2, 3, 4, 10]
 
-        sage: D=AffinePermutationGroup(['D',4,1])
+        sage: D = AffinePermutationGroup(['D',4,1])
         sage: D.an_element()
         Type D affine permutation with window [-1, 3, 11, 5]
 
-        sage: G=AffinePermutationGroup(['G',2,1])
+        sage: G = AffinePermutationGroup(['G',2,1])
         sage: G.an_element()
         Type G affine permutation with window [0, 4, -1, 8, 3, 7]
     """
     ct = CartanType(cartan_type)
-    if ct.letter=='A':
+    if ct.letter == 'A':
         return AffinePermutationGroupTypeA(ct)
-    if ct.letter=='B':
+    if ct.letter == 'B':
         return AffinePermutationGroupTypeB(ct)
     if ct.letter == 'C':
         return AffinePermutationGroupTypeC(ct)
@@ -2046,26 +2044,6 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
         """
         return "The group of affine permutations of type "+str(self.cartan_type())
 
-    def _test_coxeter_relations(self, **options):
-        r"""
-        Tests whether the Coxeter relations hold for ``self``.
-        This should probably be implemented at the Coxeter groups level.
-
-        TESTS::
-
-            sage: A=AffinePermutationGroup(['A',7,1])
-            sage: A._test_coxeter_relations()
-        """
-        tester = self._tester(**options)
-        ct = self.cartan_type()
-        D = ct.coxeter_diagram()
-        s = self.simple_reflections()
-        for e in D.edges():
-            l = s[e[0]] * s[e[1]]
-            tester.assertEqual(l**e[2], self.one(), "Coxeter relation fails")
-            for p in range(1, e[2]):
-                tester.assertNotEqual(l**p, self.one(), "smaller relation found")
-
     def _test_enumeration(self, n=4, **options):
         r"""
         Test that ``self`` has same number of elements of length ``n`` as the
@@ -2093,7 +2071,7 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: A=AffinePermutationGroup(['A',7,1])
+            sage: A = AffinePermutationGroup(['A',7,1])
             sage: A.weyl_group()
             Weyl Group of type ['A', 7, 1] (as a matrix group acting on the root space)
         """
@@ -2105,7 +2083,7 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: A=AffinePermutationGroup(['A',7,1])
+            sage: A = AffinePermutationGroup(['A',7,1])
             sage: A.classical()
             Symmetric group of order 8! as a permutation group
         """
@@ -2162,7 +2140,7 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
         """
         return self.cartan_type().index_set()
 
-    _index_set=index_set
+    _index_set = index_set
 
     def reflection_index_set(self):
         r"""
@@ -2220,7 +2198,7 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: A=AffinePermutationGroup(['A',7,1])
+            sage: A = AffinePermutationGroup(['A',7,1])
             sage: p=A([3, -1, 0, 6, 5, 4, 10, 9])
             sage: A.from_word([0, 7, 4, 1, 0, 7, 5, 4, 2, 1])
             Type A affine permutation with window [3, -1, 0, 6, 5, 4, 10, 9]
@@ -2234,7 +2212,7 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: A=AffinePermutationGroup(['A',7,1])
+            sage: A = AffinePermutationGroup(['A',7,1])
             sage: p=A([3, -1, 0, 6, 5, 4, 10, 9])
             sage: A.from_word([0, 7, 4, 1, 0, 7, 5, 4, 2, 1])
             Type A affine permutation with window [3, -1, 0, 6, 5, 4, 10, 9]
@@ -2260,12 +2238,12 @@ class AffinePermutationGroupTypeA(AffinePermutationGroupGeneric):
 
         TESTS::
 
-            sage: A=AffinePermutationGroup(['A',5,1])
+            sage: A = AffinePermutationGroup(['A',5,1])
             sage: A==loads(dumps(A))
             True
             sage: TestSuite(A).run()
         """
-        return self([i for i in range(1,self.k+2)])
+        return self(list(range(1, self.k + 2)))
 
     #------------------------
     #Type-unique methods.
@@ -2348,6 +2326,7 @@ class AffinePermutationGroupTypeA(AffinePermutationGroupGeneric):
 
     Element = AffinePermutationTypeA
 
+
 class AffinePermutationGroupTypeC(AffinePermutationGroupGeneric):
     #------------------------
     #Type-specific methods.
@@ -2362,7 +2341,7 @@ class AffinePermutationGroupTypeC(AffinePermutationGroupGeneric):
         EXAMPLES::
 
             sage: ct=CartanType(['C',4,1])
-            sage: C=AffinePermutationGroup(ct)
+            sage: C = AffinePermutationGroup(ct)
             sage: C.one()
             Type C affine permutation with window [1, 2, 3, 4]
             sage: C.one()*C.one()==C.one()
@@ -2370,7 +2349,7 @@ class AffinePermutationGroupTypeC(AffinePermutationGroupGeneric):
 
         TESTS::
 
-            sage: C=AffinePermutationGroup(['C',4,1])
+            sage: C = AffinePermutationGroup(['C',4,1])
             sage: C==loads(dumps(C))
             True
             sage: TestSuite(C).run()
@@ -2387,12 +2366,6 @@ class AffinePermutationGroupTypeB(AffinePermutationGroupTypeC):
     #------------------------
     Element = AffinePermutationTypeB
 
-class AffinePermutationGroupTypeC(AffinePermutationGroupTypeC):
-    #------------------------
-    #Type-specific methods.
-    #(Methods in all types, but with specific definition.)
-    #------------------------
-    Element = AffinePermutationTypeC
 
 class AffinePermutationGroupTypeD(AffinePermutationGroupTypeC):
     #------------------------
@@ -2400,6 +2373,7 @@ class AffinePermutationGroupTypeD(AffinePermutationGroupTypeC):
     #(Methods in all types, but with specific definition.)
     #------------------------
     Element = AffinePermutationTypeD
+
 
 class AffinePermutationGroupTypeG(AffinePermutationGroupGeneric):
     #------------------------
@@ -2418,7 +2392,7 @@ class AffinePermutationGroupTypeG(AffinePermutationGroupGeneric):
 
         TESTS::
 
-            sage: G=AffinePermutationGroup(['G',2,1])
+            sage: G = AffinePermutationGroup(['G',2,1])
             sage: G==loads(dumps(G))
             True
             sage: TestSuite(G).run()
@@ -2426,4 +2400,3 @@ class AffinePermutationGroupTypeG(AffinePermutationGroupGeneric):
         return self([1,2,3,4,5,6])
 
     Element = AffinePermutationTypeG
-

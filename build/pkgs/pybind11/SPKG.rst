@@ -1,5 +1,5 @@
-pybind11
-========
+pybind11: Create Python bindings to C++ code
+============================================
 
 Description
 -----------

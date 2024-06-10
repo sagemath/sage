@@ -1,0 +1,37 @@
+span.sidebar-brand-text {
+  font-size: small;
+  text-align: center;
+}
+
+div.highlight {
+  background: #F4F4F4;
+}
+
+body[data-theme="dark"] div.highlight {
+  background: #383838;
+}
+
+/* Copied the style for a.pdf from website/templates/index_furo.html */
+
+a.pdf {
+  margin-right: 0.5em;
+}
+
+a.pdf:hover {
+  text-decoration: none;
+}
+
+/* Style for announcement banner */
+
+.announcement {
+    background: orange;
+}
+
+.announcement-content {
+    color: black;
+}
+
+.announcement-content a {
+    color: white;
+    text-decoration: none;
+}

@@ -8,17 +8,17 @@ import os
 import sys
 import time
 import json
-from distutils import log
-from distutils.cmd import Command
-from distutils.errors import (DistutilsModuleError,
-                              DistutilsOptionError)
 
-from Cython.Build.Dependencies import default_create_extension
+# Import setuptools before importing distutils, so that setuptools
+# can replace distutils by its own vendored copy.
+import setuptools
+
+from distutils import log
+from setuptools import Command
+
 from sage_setup.util import stable_uniq
 from sage_setup.find import find_extra_files
-from sage_setup.library_order import library_order
-
-from sage.env import (cython_aliases, sage_include_directories)
+from sage_setup.cython_options import compiler_directives, compile_time_env_variables
 
 # Do not put all, but only the most common libraries and their headers
 # (that are likely to change on an upgrade) here:
@@ -49,21 +49,6 @@ DEVEL = False
 if DEVEL:
     extra_compile_args.append('-ggdb')
 
-import subprocess
-# Work around GCC-4.8 bug which miscompiles some sig_on() statements:
-# * http://trac.sagemath.org/sage_trac/ticket/14460
-# * http://trac.sagemath.org/sage_trac/ticket/20226
-# * http://gcc.gnu.org/bugzilla/show_bug.cgi?id=56982
-if subprocess.call("""$CC --version | grep -i 'gcc.* 4[.]8' >/dev/null """, shell=True) == 0:
-    extra_compile_args.append('-fno-tree-copyrename')
-
-# Search for dependencies in the source tree and add to the list of include directories
-include_dirs = sage_include_directories(use_sources=True)
-
-# Look for libraries only in what is configured already through distutils
-# and environment variables
-library_dirs = []
-
 class sage_build_cython(Command):
     name = 'build_cython'
     description = "compile Cython extensions into C/C++ extensions"
@@ -82,6 +67,8 @@ class sage_build_cython(Command):
     ]
 
     boolean_options = ['debug', 'profile', 'force']
+
+    built_distributions = None
 
     def initialize_options(self):
         self.extensions = None
@@ -140,32 +127,17 @@ class sage_build_cython(Command):
         try:
             self.parallel = int(self.parallel)
         except ValueError:
-            raise DistutilsOptionError("parallel should be an integer")
+            raise ValueError("parallel should be an integer")
 
         try:
             import Cython
         except ImportError:
-            raise DistutilsModuleError(
+            raise ImportError(
                 "Cython must be installed and importable in order to run "
                 "the cythonize command")
 
-        # Cython compiler directives
-        self.cython_directives = dict(
-            auto_pickle=False,
-            autotestdict=False,
-            cdivision=True,
-            embedsignature=True,
-            fast_getattr=True,
-            language_level="3str",
-            preliminary_late_includes_cy28=True,
-            profile=self.profile,
-        )
-        self.compile_time_env = dict(
-            PY_PLATFORM=sys.platform,
-            # The following two constants are here only for backwards compatibility of user packages
-            PY_VERSION_HEX=sys.hexversion,
-            PY_MAJOR_VERSION=sys.version_info[0]
-        )
+        self.cython_directives = compiler_directives(self.profile)
+        self.compile_time_env = compile_time_env_variables()
 
         # We check the Cython version and some relevant configuration
         # options from the earlier build to see if we need to force a
@@ -195,7 +167,7 @@ class sage_build_cython(Command):
                 # we remove the version_file now to force a
                 # recythonization the next time we build Sage.
                 os.unlink(self._version_file)
-        except IOError:
+        except OSError:
             # Most likely, the version_file does not exist
             # => (re)cythonize all Cython code.
             force = True
@@ -216,7 +188,9 @@ class sage_build_cython(Command):
             return self.cythonized_files
 
         self.cythonized_files = list(find_extra_files(
-            ".", ["sage"], self.build_dir, []).items())
+            ".", ["sage"], self.build_dir, [],
+            distributions=self.built_distributions).items())
+        log.debug(f"cythonized_files = {self.cythonized_files}")
 
         return self.cythonized_files
 
@@ -225,6 +199,13 @@ class sage_build_cython(Command):
         Call ``cythonize()`` to replace the ``ext_modules`` with the
         extensions containing Cython-generated C code.
         """
+        from sage.env import (cython_aliases, sage_include_directories)
+        # Set variables used in self.create_extension
+        from ..library_order import library_order
+        self.library_order = library_order
+        # Search for dependencies in the source tree and add to the list of include directories
+        self.sage_include_dirs = sage_include_directories(use_sources=True)
+
         from Cython.Build import cythonize
         import Cython.Compiler.Options
 
@@ -232,25 +213,26 @@ class sage_build_cython(Command):
 
         log.info("Updating Cython code....")
         t = time.time()
-        extensions = cythonize(
-            self.extensions,
-            nthreads=self.parallel,
-            build_dir=self.build_dir,
-            force=self.force,
-            aliases=cython_aliases(),
-            compiler_directives=self.cython_directives,
-            compile_time_env=self.compile_time_env,
-            create_extension=self.create_extension,
-            # Debugging
-            gdb_debug=self.debug,
-            output_dir=os.path.join(self.build_lib, "sage"),
-            # Disable Cython caching, which is currently too broken to
-            # use reliably: http://trac.sagemath.org/ticket/17851
-            cache=False,
-            )
 
-        # Filter out extensions with skip_build=True
-        extensions = [ext for ext in extensions if not getattr(ext, "skip_build", False)]
+        from sage.misc.package_dir import cython_namespace_package_support
+
+        with cython_namespace_package_support():
+            extensions = cythonize(
+                self.extensions,
+                nthreads=self.parallel,
+                build_dir=self.build_dir,
+                force=self.force,
+                aliases=cython_aliases(),
+                compiler_directives=self.cython_directives,
+                compile_time_env=self.compile_time_env,
+                create_extension=self.create_extension,
+                # Debugging
+                gdb_debug=self.debug,
+                output_dir=os.path.join(self.build_lib, "sage"),
+                # Disable Cython caching, which is currently too broken to
+                # use reliably: https://github.com/sagemath/sage/issues/17851
+                cache=False,
+                )
 
         # We use [:] to change the list in-place because the same list
         # object is pointed to from different places.
@@ -295,7 +277,7 @@ class sage_build_cython(Command):
         # Libraries: sort them
         libs = kwds.get('libraries', [])
         kwds['libraries'] = sorted(set(libs),
-                key=lambda lib: library_order.get(lib, 0))
+                key=lambda lib: self.library_order.get(lib, 0))
 
         # Dependencies: add setup.py and lib_headers
         depends = kwds.get('depends', []) + [self.distribution.script_name]
@@ -306,28 +288,11 @@ class sage_build_cython(Command):
 
         # Process extra_compile_args
         cflags = []
-        have_std_flag = False
         for flag in kwds.get('extra_compile_args', []):
             if flag.startswith("-std="):
                 if cplusplus and "++" not in flag:
                     continue  # Skip -std=c99 and similar for C++
-                have_std_flag = True
             cflags.append(flag)
-        if not have_std_flag:  # See Trac #23919
-            if sys.platform == 'cygwin':
-                # Cygwin (particularly newlib, Cygwin's libc) has some bugs
-                # with strict ANSI C/C++ in some headers; using the GNU
-                # extensions typically fares better:
-                # https://trac.sagemath.org/ticket/24192
-                if cplusplus:
-                    cflags.append("-std=gnu++11")
-                else:
-                    cflags.append("-std=gnu99")
-            else:
-                if cplusplus:
-                    cflags.append("-std=c++11")
-                else:
-                    cflags.append("-std=c99")
         cflags = extra_compile_args + cflags
         kwds['extra_compile_args'] = stable_uniq(cflags)
 
@@ -336,11 +301,13 @@ class sage_build_cython(Command):
         kwds['extra_link_args'] = stable_uniq(ldflags)
 
         # Process library_dirs
-        lib_dirs = kwds.get('library_dirs', []) + library_dirs
+        lib_dirs = kwds.get('library_dirs', [])
         kwds['library_dirs'] = stable_uniq(lib_dirs)
 
         # Process include_dirs
-        inc_dirs = kwds.get('include_dirs', []) + include_dirs + [self.build_dir]
+        inc_dirs = kwds.get('include_dirs', []) + self.sage_include_dirs + [self.build_dir]
         kwds['include_dirs'] = stable_uniq(inc_dirs)
+
+        from Cython.Build.Dependencies import default_create_extension
 
         return default_create_extension(template, kwds)

@@ -8,7 +8,6 @@
 
 # The default precision for computation and display of q-expansions of
 # modular forms.
-from sage.rings.all import Integer
+from sage.rings.integer import Integer
 DEFAULT_PRECISION = Integer(6)
 DEFAULT_VARIABLE = 'q'
-

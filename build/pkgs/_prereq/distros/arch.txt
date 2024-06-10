@@ -1,0 +1,19 @@
+# This file, build/pkgs/_prereq/distros/arch.txt, contains names of
+# Arch Linux packages needed for installation of Sage from source.
+#
+# In addition, the files build/pkgs/SPKG/distros/arch.txt contain
+# the names of packages that provide the equivalent of SPKG.
+#
+# One package per line. No need to escape special characters.
+# Everything on a line after a # character is ignored.
+#
+binutils
+make
+m4
+perl
+python # system python for bootstrapping the build
+tar
+bc
+gcc
+# Needed for 4ti2:
+which

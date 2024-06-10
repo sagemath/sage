@@ -1,5 +1,5 @@
-polylib
-=======
+polylib: Operations on unions of polyhedra
+==========================================
 
 Description
 -----------
@@ -18,7 +18,3 @@ Upstream Contact
 
 -  https://groups.google.com/forum/#!forum/isl-development
 
-Dependencies
-------------
-
--  GMP

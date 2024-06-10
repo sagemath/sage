@@ -87,10 +87,10 @@ Python имеет динамический контроль типов, так �
 
     sage: a = 5   # a - целое число
     sage: type(a)
-    <type 'sage.rings.integer.Integer'>
+    <class 'sage.rings.integer.Integer'>
     sage: a = 5/3  # теперь a - рациональное число
     sage: type(a)
-    <type 'sage.rings.rational.Rational'>
+    <class 'sage.rings.rational.Rational'>
     sage: a = 'hello'  # теперь a - строка
     sage: type(a)
     <... 'str'>

@@ -1,9 +1,6 @@
+# sage.doctest: needs sage.rings.number_field
 r"""
 Helper classes for structural embeddings and isomorphisms of number fields
-
-AUTHORS:
-
-- Julian Rueth (2014-04-03): initial version
 
 Consider the following fields `L` and `M`::
 
@@ -14,8 +11,10 @@ Both produce the same extension of `\QQ`. However, they should not be
 identical because `M` carries additional information::
 
     sage: L.structure()
-    (Identity endomorphism of Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?,
-     Identity endomorphism of Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?)
+    (Identity endomorphism of
+      Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?,
+     Identity endomorphism of
+      Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?)
     sage: M.structure()
     (Isomorphism given by variable name change map:
        From: Number Field in a with defining polynomial x^2 - 2
@@ -26,7 +25,7 @@ identical because `M` carries additional information::
 
 This used to cause trouble with caching and made (absolute) number fields not
 unique when they should have been. The underlying technical problem is that the
-morphisms returned by ``structure()`` can only be defined once the fields in
+morphisms returned by :meth:`structure` can only be defined once the fields in
 question have been created. Therefore, these morphisms cannot be part of a key
 which uniquely identifies a number field.
 
@@ -41,8 +40,10 @@ structure morphisms::
     sage: M is N
     True
 
+AUTHORS:
+
+- Julian Rueth (2014-04-03): initial version
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2014 Julian Rueth <julian.rueth@fsfe.org>
 #
@@ -73,7 +74,8 @@ class NumberFieldStructure(UniqueRepresentation):
         True
 
         sage: R.<x> = QQ[]
-        sage: K.<i> = NumberField(x^2+1)
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<i> = NumberField(x^2 + 1)
         sage: L = K.change_names('j').change_names('i')
         sage: K is L  # K and L differ in "structure", one is the "name-change" of the other
         False
@@ -82,8 +84,8 @@ class NumberFieldStructure(UniqueRepresentation):
         sage: NumberFieldStructure(K) is NumberFieldStructure(L)
         False
         sage: from sage.rings.number_field.structure import NameChange
-        sage: KK.<j> = NumberField(x^2+1, structure=NameChange(K))
-        sage: LL.<j> = NumberField(x^2+1, structure=NameChange(L))
+        sage: KK.<j> = NumberField(x^2 + 1, structure=NameChange(K))
+        sage: LL.<j> = NumberField(x^2 + 1, structure=NameChange(L))
         sage: KK is LL
         False
 
@@ -152,9 +154,10 @@ class NameChange(NumberFieldStructure):
         sage: NameChange(K)
         <sage.rings.number_field.structure.NameChange object at 0x...>
 
-    Check for memory leaks:
+    Check for memory leaks::
 
-        sage: u=id(NumberField(x^2-5,'a').absolute_field('b'))
+        sage: x = polygen(ZZ, 'x')
+        sage: u = id(NumberField(x^2 - 5,'a').absolute_field('b'))
         sage: import gc
         sage: gc.collect() #random
         10

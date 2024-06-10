@@ -4,10 +4,11 @@ The Poincare-Birkhoff-Witt Basis For A Universal Enveloping Algebra
 AUTHORS:
 
 - Travis Scrimshaw (2013-11-03): Initial version
+- Travis Scrimshaw (2024-01-02): Adding the center
 """
 
 #*****************************************************************************
-#       Copyright (C) 2013-2017 Travis Scrimshaw <tcscrims at gmail.com>
+#       Copyright (C) 2013-2024 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -96,6 +97,14 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
         PBW[2]*PBW[3] + PBW[5]
         sage: G[-2] * G[3] * G[2]
         PBW[-2]*PBW[2]*PBW[3] + PBW[-2]*PBW[5]
+
+    .. TODO::
+
+        When the Lie algebra is finite dimensional, set the ordering of the
+        basis elements, translate the structure coefficients, and work with
+        fixed-length lists as the exponent vectors. This way we only will
+        run any nontrivial sorting only once and avoid other potentially
+        expensive comparisons between keys.
     """
     @staticmethod
     def __classcall_private__(cls, g, basis_key=None, prefix='PBW', **kwds):
@@ -111,8 +120,8 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
             sage: P1 is P2
             True
         """
-        return super(PoincareBirkhoffWittBasis, cls).__classcall__(cls,
-                            g, basis_key, prefix, **kwds)
+        return super().__classcall__(cls,
+                                     g, basis_key, prefix, **kwds)
 
     def __init__(self, g, basis_key, prefix, **kwds):
         """
@@ -163,7 +172,7 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
              + PBW[alphacheck[1]]^2
              - 2*PBW[alphacheck[1]]
 
-        Check that :trac:`23266` is fixed::
+        Check that :issue:`23266` is fixed::
 
             sage: sl2 = lie_algebras.sl(QQ, 2, 'matrix')
             sage: sl2.indices()
@@ -247,6 +256,20 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
         """
         return "Universal enveloping algebra of {} in the Poincare-Birkhoff-Witt basis".format(self._g)
 
+    def _latex_(self):
+        r"""
+        Return a latex representation of ``self``.
+
+        EXAMPLES::
+
+            sage: g = lie_algebras.pwitt(GF(3), 6)
+            sage: U = g.pbw_basis()
+            sage: latex(U)
+            PBW\left( \mathcal{W}(6)_{\Bold{F}_{3}} \right)
+        """
+        from sage.misc.latex import latex
+        return r"PBW\left( {} \right)".format(latex(self._g))
+
     def _coerce_map_from_(self, R):
         """
         Return ``True`` if there is a coercion map from ``R`` to ``self``.
@@ -305,7 +328,7 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
 
         TESTS:
 
-        Check that we can take the preimage (:trac:`23375`)::
+        Check that we can take the preimage (:issue:`23375`)::
 
             sage: L = lie_algebras.cross_product(QQ)
             sage: pbw = L.pbw_basis()
@@ -325,8 +348,12 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
         if R == self._g:
             # Make this into the lift map
             I = self._indices
-            def basis_function(x): return self.monomial(I.gen(x))
-            def inv_supp(m): return None if m.length() != 1 else m.leading_support()
+
+            def basis_function(x):
+                return self.monomial(I.gen(x))
+
+            def inv_supp(m):
+                return None if m.length() != 1 else m.leading_support()
             # TODO: this diagonal, but with a smaller indexing set...
             return self._g.module_morphism(basis_function, codomain=self,
                                            triangular='upper', unitriangular=True,
@@ -339,20 +366,24 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
         if isinstance(R, PoincareBirkhoffWittBasis):
             if self._g == R._g:
                 I = self._indices
+
                 def basis_function(x):
-                    return self.prod(self.monomial(I.gen(g)**e) for g,e in x._sorted_items())
+                    return self.prod(self.monomial(I.gen(g)**e)
+                                     for g, e in x._sorted_items())
                 # TODO: this diagonal, but with a smaller indexing set...
                 return R.module_morphism(basis_function, codomain=self)
             coerce_map = self._g.coerce_map_from(R._g)
             if coerce_map:
                 I = self._indices
                 lift = self.coerce_map_from(self._g)
+
                 def basis_function(x):
-                    return self.prod(lift(coerce_map(g))**e for g,e in x._sorted_items())
+                    return self.prod(lift(coerce_map(g))**e
+                                     for g, e in x._sorted_items())
                 # TODO: this diagonal, but with a smaller indexing set...
                 return R.module_morphism(basis_function, codomain=self)
 
-        return super(PoincareBirkhoffWittBasis, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
     def lie_algebra(self):
         """
@@ -436,7 +467,7 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
 
         TESTS:
 
-        Check that :trac:`23268` is fixed::
+        Check that :issue:`23268` is fixed::
 
             sage: MS = MatrixSpace(QQ, 2,2)
             sage: gl = LieAlgebra(associative=MS)
@@ -488,6 +519,71 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
         """
         return m.length()
 
+    def casimir_element(self, order=2, *args, **kwds):
+        r"""
+        Return the Casimir element of ``self``.
+
+        .. SEEALSO::
+
+            :meth:`~sage.categories.finite_dimensional_lie_algebras_with_basis.FiniteDimensionalLieAlgebrasWithBasis.ParentMethods.casimir_element`
+
+        INPUT:
+
+        - ``order`` -- (default: ``2``) the order of the Casimir element
+
+        EXAMPLES::
+
+            sage: L = LieAlgebra(QQ, cartan_type=['G', 2])
+            sage: U = L.pbw_basis()
+            sage: C = U.casimir_element(); C
+            1/4*PBW[alpha[2]]*PBW[-alpha[2]] + 1/12*PBW[alpha[1]]*PBW[-alpha[1]]
+             + 1/12*PBW[alpha[1] + alpha[2]]*PBW[-alpha[1] - alpha[2]] + 1/12*PBW[2*alpha[1] + alpha[2]]*PBW[-2*alpha[1] - alpha[2]]
+             + 1/4*PBW[3*alpha[1] + alpha[2]]*PBW[-3*alpha[1] - alpha[2]]
+             + 1/4*PBW[3*alpha[1] + 2*alpha[2]]*PBW[-3*alpha[1] - 2*alpha[2]]
+             + 1/12*PBW[alphacheck[1]]^2 + 1/4*PBW[alphacheck[1]]*PBW[alphacheck[2]]
+             + 1/4*PBW[alphacheck[2]]^2 - 5/12*PBW[alphacheck[1]] - 3/4*PBW[alphacheck[2]]
+            sage: all(g * C == C * g for g in U.algebra_generators())
+            True
+
+        TESTS::
+
+            sage: H = lie_algebras.Heisenberg(QQ, oo)
+            sage: U = H.pbw_basis()
+            sage: U.casimir_element()
+            Traceback (most recent call last):
+            ...
+            ValueError: the Lie algebra must be finite dimensional
+        """
+        from sage.rings.infinity import Infinity
+        if self._g.dimension() == Infinity:
+            raise ValueError("the Lie algebra must be finite dimensional")
+        return self._g.casimir_element(order=order, UEA=self, *args, **kwds)
+
+    def center(self):
+        r"""
+        Return the center of ``self``.
+
+        .. SEEALSO::
+
+            :class:`~sage.algebras.lie_algebras.center_uea.CenterUEA`
+
+        EXAMPLES::
+
+            sage: g = LieAlgebra(QQ, cartan_type=['A', 2])
+            sage: U = g.pbw_basis()
+            sage: U.center()
+            Center of Universal enveloping algebra of Lie algebra of ['A', 2]
+             in the Chevalley basis in the Poincare-Birkhoff-Witt basis
+
+            sage: g = lie_algebras.Heisenberg(GF(3), 4)
+            sage: U = g.pbw_basis()
+            sage: U.center()
+            Center of Universal enveloping algebra of Heisenberg algebra of rank 4
+             over Finite Field of size 3 in the Poincare-Birkhoff-Witt basis
+        """
+        from sage.algebras.lie_algebras.center_uea import CenterUEA
+        return CenterUEA(self._g, self)
+
     class Element(CombinatorialFreeModule.Element):
         def _act_on_(self, x, self_on_left):
             """
@@ -534,4 +630,3 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
                         ret += term
                     return ret
             return None
-

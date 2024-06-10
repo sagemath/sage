@@ -1,4 +1,3 @@
-##      -*-   coding: utf-8   -*-     ##
 ##          Sage Doctest File         ##
 #**************************************#
 #*    Generated from PreTeXt source   *#
@@ -90,7 +89,6 @@ r"""
     sage: F.<a> = FiniteField(3^2)
     sage: P.<x> = Z7[]
     sage: S.<f,g,h> = QuaternionAlgebra(-7, 3)
-    
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
@@ -411,5 +409,4 @@ r"""
 
     sage: b.parent()
     Rational Field
-
 """

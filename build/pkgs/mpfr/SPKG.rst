@@ -1,5 +1,5 @@
-MPFR
-====
+mpfr: Multiple-precision floating-point computations with correct rounding
+==========================================================================
 
 Description
 -----------
@@ -38,13 +38,6 @@ Upstream Contact
 The MPFR website is located at http://mpfr.org/
 
 The MPFR team can be contacted via the MPFR mailing list: mpfr@loria.fr
-
-Dependencies
-------------
-
--  GMP/MPIR
--  GNU patch
-
 
 Special Update/Build Instructions
 ---------------------------------

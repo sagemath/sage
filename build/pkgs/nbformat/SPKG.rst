@@ -1,10 +1,18 @@
-nbformat
-========
+nbformat: The Jupyter Notebook format
+=====================================
 
 Description
 -----------
 
 The Jupyter Notebook format
 
-This package contains the base implementation of the Jupyter Notebook
-format, and Python APIs for working with notebooks.
+License
+-------
+
+BSD 3-Clause License
+
+Upstream Contact
+----------------
+
+https://pypi.org/project/nbformat/
+

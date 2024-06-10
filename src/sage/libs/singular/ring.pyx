@@ -6,32 +6,34 @@ AUTHORS:
 - Martin Albrecht (2009-07): initial implementation
 
 - Kwankyu Lee (2010-06): added matrix term order support
+
+- Miguel Marco (2021): added transcendental extensions over Q
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Martin Albrecht <malb@informatik.uni-bremen.de>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from sage.cpython.string cimport str_to_bytes
+from sage.cpython.string cimport str_to_bytes, bytes_to_str
 
 from sage.libs.gmp.types cimport __mpz_struct
-from sage.libs.gmp.mpz cimport mpz_init_set_ui, mpz_init_set
+from sage.libs.gmp.mpz cimport mpz_init_set_ui
 
-from sage.libs.singular.decl cimport number, poly, ring, currRing
-from sage.libs.singular.decl cimport rChangeCurrRing, rCopy0, rComplete, rDelete, idInit
-from sage.libs.singular.decl cimport omAlloc0, omStrDup, omAlloc, omAlloc0Bin,  sip_sring_bin, rnumber_bin
-from sage.libs.singular.decl cimport ringorder_dp, ringorder_Dp, ringorder_lp, ringorder_rp, ringorder_ds, ringorder_Ds, ringorder_ls, ringorder_M, ringorder_c, ringorder_C, ringorder_wp, ringorder_Wp, ringorder_ws, ringorder_Ws, ringorder_a, rRingOrder_t
-from sage.libs.singular.decl cimport p_Copy, prCopyR
-from sage.libs.singular.decl cimport n_unknown,  n_Zp,  n_Q,   n_R,   n_GF,  n_long_R,  n_algExt,n_transExt,n_long_C,   n_Z,   n_Zn,  n_Znm,  n_Z2m,  n_CF
-from sage.libs.singular.decl cimport n_coeffType, cfInitCharProc
-from sage.libs.singular.decl cimport rDefault, GFInfo, ZnmInfo, nInitChar, AlgExtInfo, nRegister, naInitChar
+from sage.libs.singular.decl cimport ring, currRing
+from sage.libs.singular.decl cimport rChangeCurrRing, rComplete, rDelete, idInit
+from sage.libs.singular.decl cimport omAlloc0, omStrDup, omAlloc
+from sage.libs.singular.decl cimport ringorder_dp, ringorder_Dp, ringorder_lp, ringorder_ip, ringorder_ds, ringorder_Ds, ringorder_ls, ringorder_M, ringorder_c, ringorder_C, ringorder_wp, ringorder_Wp, ringorder_ws, ringorder_Ws, ringorder_a, rRingOrder_t
+from sage.libs.singular.decl cimport prCopyR
+from sage.libs.singular.decl cimport n_unknown, n_algExt, n_transExt, n_Z, n_Zn,  n_Znm, n_Z2m
+from sage.libs.singular.decl cimport n_coeffType
+from sage.libs.singular.decl cimport rDefault, GFInfo, ZnmInfo, nInitChar, AlgExtInfo, TransExtInfo
 
-from sage.rings.integer cimport Integer
+
 from sage.rings.integer_ring cimport IntegerRing_class
 from sage.rings.integer_ring import ZZ
-from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
+import sage.rings.abc
 from sage.rings.number_field.number_field_base cimport NumberField
 from sage.rings.rational_field import RationalField
 from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
@@ -39,6 +41,10 @@ from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField
 from sage.rings.polynomial.term_order import TermOrder
 from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomial_libsingular, MPolynomialRing_libsingular
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_field
+
+from sage.rings.fraction_field import FractionField_generic
 
 from cpython.object cimport Py_EQ, Py_NE
 
@@ -50,7 +56,7 @@ order_dict = {
     "dp": ringorder_dp,
     "Dp": ringorder_Dp,
     "lp": ringorder_lp,
-    "rp": ringorder_rp,
+    "ip": ringorder_ip,
     "ds": ringorder_ds,
     "Ds": ringorder_Ds,
     "ls": ringorder_ls,
@@ -61,6 +67,16 @@ order_dict = {
     "a":  ringorder_a,
 }
 
+cdef extern from "singular/Singular/libsingular.h":
+    cdef char * rSimpleOrdStr(rRingOrder_t)
+
+if bytes_to_str(rSimpleOrdStr(ringorder_ip)) == "rp":
+    # compatibility for singular 4.3.2p10 and before
+    order_dict["rp"] = ringorder_ip
+    # also patch term_order mappings
+    from sage.rings.polynomial import term_order
+    term_order.singular_name_mapping['invlex'] = 'rp'
+    term_order.inv_singular_name_mapping['rp'] = 'invlex'
 
 #############################################################################
 cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
@@ -71,13 +87,13 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
     INPUT:
 
-    - ``base_ring`` - a Sage ring
+    - ``base_ring`` -- a Sage ring
 
-    - ``n`` - the number of variables (> 0)
+    - ``n`` -- the number of variables (> 0)
 
-    - ``names`` - a list of names of length ``n``
+    - ``names`` -- a list of names of length ``n``
 
-    - ``term_order`` - a term ordering
+    - ``term_order`` -- a term ordering
 
     EXAMPLES::
 
@@ -117,16 +133,44 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         sage: P.<x,y,z> = Zmod(25213521351515232)[]; P
         Multivariate Polynomial Ring in x, y, z over Ring of integers modulo 25213521351515232
 
+        sage: K = PolynomialRing(QQ, 's,t').fraction_field()
+        sage: P.<x,y> = K[]; P
+        Multivariate Polynomial Ring in x, y over Fraction Field of Multivariate Polynomial Ring in s, t over Rational Field
+
+        sage: F = PolynomialRing(FiniteField(7),'a,b').fraction_field()
+        sage: R.<x,y,z> = F[]
+        sage: R
+        Multivariate Polynomial Ring in x, y, z over Fraction Field of Multivariate Polynomial Ring in a, b over Finite Field of size 7
+
     TESTS:
 
     Check that ``degneglex`` and ``degrevlex`` are the same up to reversal of
-    variables (:trac:`29635`)::
+    variables (:issue:`29635`)::
 
         sage: R = PolynomialRing(QQ, 'x', 4, order='degrevlex')
         sage: S = PolynomialRing(QQ, tuple(reversed(R.gens())), order='degneglex')
         sage: L = [v for d in (0..4) for v in IntegerVectors(d, 4)]
         sage: sorted([R.monomial(*e) for e in L]) == sorted([S.monomial(*e) for e in L])
         True
+
+    Check that we are using the libsingular backend instead of the pexpect one::
+
+        sage: F = PolynomialRing(FiniteField(7),'a,b').fraction_field()
+        sage: R.<x,y,z> = F[]
+        sage: from sage.libs.singular.function import singular_function
+        sage: sing_print = singular_function('print')
+        sage: sing_print(R)
+        'polynomial ring, over a field, global ordering\n// coefficients: ZZ/7(a, b)\n// number of vars : 3\n//        block   1 : ordering dp\n//                  : names    x y z\n//        block   2 : ordering C'
+
+    ::
+
+        sage: F = PolynomialRing(QQ, 's,t').fraction_field()
+        sage: R.<x,y,z> = F[]
+        sage: from sage.libs.singular.function import singular_function
+        sage: sing_print = singular_function('print')
+        sage: sing_print(R)
+        'polynomial ring, over a field, global ordering\n// coefficients: QQ(s, t)\n// number of vars : 3\n//        block   1 : ordering dp\n//                  : names    x y z\n//        block   2 : ordering C'
+
     """
     cdef long cexponent
     cdef GFInfo* _param
@@ -143,10 +187,13 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
     cdef int ringorder_column_pos
     cdef int ringorder_column_asc
 
+    cdef int ngens
+
     cdef n_coeffType ringtype = n_unknown
     cdef MPolynomialRing_libsingular k
     cdef MPolynomial_libsingular minpoly
     cdef AlgExtInfo extParam
+    cdef TransExtInfo trextParam
     cdef n_coeffType _type = n_unknown
 
     #cdef cfInitCharProc myfunctionptr;
@@ -228,7 +275,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
             _block0[idx] = offset + 1     # same like subsequent ls block
             _block1[idx] = offset + nlen
 
-            idx += 1;                   # we need one more block here
+            idx += 1                      # we need one more block here
             _order[idx] = ringorder_ls
 
         else: # ordinary orders
@@ -248,6 +295,56 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
     if isinstance(base_ring, RationalField):
         characteristic = 0
         _ring = rDefault( characteristic ,nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
+
+    elif isinstance(base_ring, FractionField_generic) and isinstance(base_ring.base(), (MPolynomialRing_libsingular, PolynomialRing_field)) and isinstance(base_ring.base().base_ring(), RationalField):
+        characteristic = 1
+        k = PolynomialRing(RationalField(),
+            names=base_ring.variable_names(), order="lex", implementation="singular")
+
+        ngens = len(k.gens())
+
+        _ext_names = <char**>omAlloc0(ngens*sizeof(char*))
+        for i in range(ngens):
+            _name = str_to_bytes(k._names[i])
+            _ext_names[i] = omStrDup(_name)
+
+        _cfr = rDefault( 0, ngens, _ext_names )
+        rComplete(_cfr, 1)
+
+        trextParam.r =  _cfr
+
+        _cf = nInitChar(n_transExt, <void *>&trextParam)
+
+        if (_cf is NULL):
+            raise RuntimeError("Failed to allocate _cf ring.")
+
+        _ring = rDefault (_cf ,nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
+
+    elif isinstance(base_ring, FractionField_generic) and isinstance(base_ring.base(), (MPolynomialRing_libsingular, PolynomialRing_field)) and isinstance(base_ring.base().base_ring(), FiniteField_generic):
+        if not base_ring.base_ring().is_prime_field():
+            raise NotImplementedError("Transcental extension are not implemented for non-prime finite fields")
+        characteristic = int(base_ring.characteristic())
+        k = PolynomialRing(base_ring.base_ring(),
+            names=base_ring.variable_names(), order="lex", implementation="singular")
+
+        ngens = len(k.gens())
+
+        _ext_names = <char**>omAlloc0(ngens*sizeof(char*))
+        for i in range(ngens):
+            _name = str_to_bytes(k._names[i])
+            _ext_names[i] = omStrDup(_name)
+
+        _cfr = rDefault( characteristic, ngens, _ext_names )
+        rComplete(_cfr, 1)
+
+        trextParam.r =  _cfr
+
+        _cf = nInitChar(n_transExt, <void *>&trextParam)
+
+        if (_cf is NULL):
+            raise RuntimeError("Failed to allocate _cf ring.")
+
+        _ring = rDefault (_cf ,nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
 
     elif isinstance(base_ring, NumberField) and base_ring.is_absolute():
         characteristic = 1
@@ -324,7 +421,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
         _ring = rDefault (_cf ,nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
 
-    elif is_IntegerModRing(base_ring):
+    elif isinstance(base_ring, sage.rings.abc.IntegerModRing):
 
         ch = base_ring.characteristic()
         if ch < 2:
@@ -400,7 +497,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
     if order.is_local():
         assert(_ring.OrdSgn == -1)
     if order.is_global():
-         assert(_ring.OrdSgn == 1)
+        assert(_ring.OrdSgn == 1)
 
     return _ring
 
@@ -409,7 +506,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 ring_refcount_dict = defaultdict(int)
 
 
-cdef class ring_wrapper_Py(object):
+cdef class ring_wrapper_Py():
     r"""
     Python object wrapping the ring pointer.
 
@@ -422,7 +519,7 @@ cdef class ring_wrapper_Py(object):
 
         sage: from sage.libs.singular.ring import ring_wrapper_Py
         sage: ring_wrapper_Py
-        <type 'sage.libs.singular.ring.ring_wrapper_Py'>
+        <class 'sage.libs.singular.ring.ring_wrapper_Py'>
     """
 
     cdef ring* _ring
@@ -596,7 +693,7 @@ cdef ring *singular_ring_reference(ring *existing_ring) except NULL:
 
 
 #############################################################################
-cdef void singular_ring_delete(ring *doomed):
+cdef void singular_ring_delete(ring *doomed) noexcept:
     """
     Carefully deallocate the ring, without changing "currRing" (since
     this method can be called at unpredictable times due to garbage

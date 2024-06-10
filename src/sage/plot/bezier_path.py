@@ -1,5 +1,5 @@
 r"""
-Bezier Paths
+Bezier paths
 """
 #*****************************************************************************
 #       Copyright (C) 2006 Alex Clemesha <clemesha@gmail.com>,
@@ -18,7 +18,6 @@ Bezier Paths
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from copy import deepcopy
 from sage.plot.primitive import GraphicPrimitive_xydata
 from sage.misc.decorators import options, rename_keyword
 from sage.plot.colors import to_mpl_color
@@ -35,7 +34,7 @@ class BezierPath(GraphicPrimitive_xydata):
 
         sage: from sage.plot.bezier_path import BezierPath
         sage: BezierPath([[(0,0), (.5,.5),(1,0)],[(.5,1),(0,0)]], {'linestyle':'dashed'})
-        Bezier path from (0, 0) to (0, 0)
+        Bezier path from (0.0, 0.0) to (0.0, 0.0)
 
     We use :func:`bezier_path` to actually plot Bezier curves::
 
@@ -56,17 +55,44 @@ class BezierPath(GraphicPrimitive_xydata):
 
             sage: from sage.plot.bezier_path import BezierPath
             sage: BezierPath([[(0,0),(.5,.5),(1,0)],[(.5,1),(0,0)]], {'linestyle':'dashed'})
-            Bezier path from (0, 0) to (0, 0)
+            Bezier path from (0.0, 0.0) to (0.0, 0.0)
+
+            sage: BezierPath([[(0,0), (1,2), (3,6), (2,-1), (3,3)]], {})
+            Traceback (most recent call last):
+            ...
+            ValueError: invalid input for BezierPath
+
+        TESTS:
+
+        Check :issue:`31646`::
+
+            sage: from sage.plot.bezier_path import BezierPath
+            sage: p2d = [[(3,0),(4,1),(2,1),(3,0)], [(2,2),(3,1),(2,1)]]
+            sage: P = BezierPath(p2d, {})
+            sage: P.path
+            [array([[3., 0.], [4., 1.], [2., 1.], [3., 0.]]),
+             array([[2., 2.], [3., 1.], [2., 1.]])]
         """
         import numpy as np
-        self.path = deepcopy(path)
-        codes = [1] + (len(self.path[0])-1)*[len(self.path[0])]
-        vertices = self.path[0]
-        for curve in self.path[1:]:
-            vertices += curve
-            codes += (len(curve)) * [len(curve)+1]
+
+        self.path = [np.array(l, float) for l in path]
+
+        # In oder to feed later to matplotlib.path.Path we convert in the following form
+        # - vertices: an Nx2 float array of vertices
+        # - codes: an N-length uint8 array of vertex types, or None
+        #   where each code could be MOVETO (=1), LINETO (=2), CURVE3 (=3), CURVE4 (=4)
+        self.vertices = np.concatenate(self.path)
+        N, _ = self.vertices.shape
+        codes = np.zeros((N,), np.uint8)
+        k = 0
+        for i, curve in enumerate(self.path):
+            code = len(curve) + (i > 0)
+            if code < 2 or code > 4:
+                raise ValueError('invalid input for BezierPath')
+            codes[k:k+len(curve)] = code
+            k += len(curve)
+        codes[0] = 1 # MOVETO
         self.codes = codes
-        self.vertices = np.array(vertices, np.float)
         GraphicPrimitive_xydata.__init__(self, options)
 
     def _allowed_options(self):
@@ -107,7 +133,7 @@ class BezierPath(GraphicPrimitive_xydata):
             sage: B._plot3d_options()
             Traceback (most recent call last):
             ...
-            NotImplementedError: Invalid 3d line style: 'dashed'
+            NotImplementedError: invalid 3d line style: 'dashed'
             sage: B = BezierPath([[(0,0),(.5,.5),(1,0)],[(.5,1),(0,0)]], {'fill':False, 'thickness':2})
             sage: B._plot3d_options()
             {'thickness': 2}
@@ -120,11 +146,11 @@ class BezierPath(GraphicPrimitive_xydata):
             del options['thickness']
         if 'fill' in options:
             if options['fill']:
-                raise NotImplementedError("Invalid 3d fill style. Must set fill to False.")
+                raise NotImplementedError("invalid 3d fill style; must set fill to False")
             del options['fill']
         if 'linestyle' in options:
             if options['linestyle'] not in ('solid', '-'):
-                raise NotImplementedError("Invalid 3d line style: '%s'" %
+                raise NotImplementedError("invalid 3d line style: '%s'" %
                                           (options['linestyle']))
             del options['linestyle']
         options_3d.update(GraphicPrimitive_xydata._plot3d_options(self, options))
@@ -142,9 +168,9 @@ class BezierPath(GraphicPrimitive_xydata):
         EXAMPLES::
 
             sage: b = bezier_path([[(0,0),(0,1),(1,0)]])
-            sage: A = b.plot3d()
-            sage: B = b.plot3d(z=2)
-            sage: A + B
+            sage: A = b.plot3d()                                                        # needs sage.symbolic
+            sage: B = b.plot3d(z=2)                                                     # needs sage.symbolic
+            sage: A + B                                                                 # needs sage.symbolic
             Graphics3d Object
 
         .. PLOT::
@@ -156,7 +182,7 @@ class BezierPath(GraphicPrimitive_xydata):
 
         ::
 
-            sage: bezier3d([[(0,0,0),(1,0,0),(0,1,0),(0,1,1)]])
+            sage: bezier3d([[(0,0,0),(1,0,0),(0,1,0),(0,1,1)]])                         # needs sage.symbolic
             Graphics3d Object
 
         .. PLOT::
@@ -178,9 +204,11 @@ class BezierPath(GraphicPrimitive_xydata):
             sage: from sage.plot.bezier_path import BezierPath
             sage: B = BezierPath([[(0,0),(.5,.5),(1,0)],[(.5,1),(0,0)]], {'linestyle':'dashed'})
             sage: B._repr_()
-            'Bezier path from (0, 0) to (0, 0)'
+            'Bezier path from (0.0, 0.0) to (0.0, 0.0)'
         """
-        return "Bezier path from %s to %s" % (self.path[0][0], self.path[-1][-1])
+        x0, y0 = self.vertices[0]
+        x1, y1 = self.vertices[-1]
+        return f"Bezier path from ({x0}, {y0}) to ({x1}, {y1})"
 
     def _render_on_subplot(self, subplot):
         """
@@ -313,7 +341,7 @@ def bezier_path(path, **options):
 
     - ``path`` -- a list of lists of tuples (see above)
     - ``alpha`` -- default: 1
-    - ``fill`` -- default: False
+    - ``fill`` -- default: ``False``
     - ``thickness`` -- default: 1
     - ``linestyle`` -- default: ``'solid'``, The style of the line, which is one
        of ``'dashed'``, ``'dotted'``, ``'solid'``, ``'dashdot'``, or ``'--'``,
@@ -359,13 +387,12 @@ def bezier_path(path, **options):
 
     TESTS:
 
-    We shouldn't modify our argument, :trac:`13822`::
+    We shouldn't modify our argument, :issue:`13822`::
 
         sage: bp = [[(1,1),(2,3),(3,3)], [(4,4),(5,5)]]
         sage: foo = bezier_path(bp)
         sage: bp
         [[(1, 1), (2, 3), (3, 3)], [(4, 4), (5, 5)]]
-
     """
     from sage.plot.all import Graphics
     g = Graphics()

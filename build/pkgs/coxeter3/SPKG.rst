@@ -1,5 +1,5 @@
-coxeter3
-========
+coxeter3: Library for Coxeter groups, Bruhat ordering, Kazhdan-Lusztig polynomials
+==================================================================================
 
 Description
 -----------
@@ -36,12 +36,6 @@ github: https://github.com/tscrim/coxeter
 Alas, Fokko Ducloux passed away in 2006.
 
 http://math.univ-lyon1.fr/~ducloux/du_Cloux.html
-
-Dependencies
-------------
-
-None
-
 
 Special Update/Build Instructions
 ---------------------------------

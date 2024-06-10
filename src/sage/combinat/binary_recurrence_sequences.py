@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Binary Recurrence Sequences
 
@@ -19,12 +20,12 @@ EXAMPLES::
     sage: R.pthpowers(2, 10**10)        # long time (7 seconds) -- in fact these are all squares, c.f. [BMS06]
     [0, 1, 2, 12]
 
-    sage: S = BinaryRecurrenceSequence(8,1) #a Lucas sequence
+    sage: S = BinaryRecurrenceSequence(8,1)  #a Lucas sequence
     sage: S.period(73)
     148
     sage: S(5) % 73 == S(5 +148) %73
     True
-    sage: S.pthpowers(3,10**10)    # long time (3 seconds) -- provably finds the indices of all 3rd powers less than 10^10
+    sage: S.pthpowers(3, 10**10)    # long time (3 seconds) -- provably finds the indices of all 3rd powers less than 10^10
     [0, 1, 2]
 
     sage: T = BinaryRecurrenceSequence(2,0,1,2)
@@ -34,10 +35,11 @@ EXAMPLES::
     True
     sage: T.is_geometric()
     True
-    sage: T.pthpowers(7,10**30)
+    sage: T.pthpowers(7, 10**30)                                                        # needs sage.symbolic
     Traceback (most recent call last):
     ...
-    ValueError: The degenerate binary recurrence sequence is geometric or quasigeometric and has many pth powers.
+    ValueError: the degenerate binary recurrence sequence is geometric or quasigeometric
+    and has many pth powers
 
 
 AUTHORS:
@@ -57,18 +59,20 @@ See [SV2013]_, [BMS2006]_, and [SS1983]_.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import division
 
 from sage.structure.sage_object import SageObject
-from sage.matrix.constructor import matrix
-from sage.modules.free_module_element import vector
-from sage.rings.number_field.number_field import QuadraticField
 from sage.rings.finite_rings.integer_mod_ring import Integers
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.integer import Integer
-from sage.arith.all import lcm, next_prime, is_prime, next_prime_power, legendre_symbol
-from sage.functions.log import log
-from sage.functions.other import sqrt
+from sage.arith.functions import lcm
+from sage.arith.misc import is_prime, next_prime, next_prime_power, legendre_symbol
+from sage.misc.lazy_import import lazy_import
+from sage.misc.functional import sqrt
+
+lazy_import("sage.functions.log", "log")
+lazy_import("sage.rings.number_field.number_field", "QuadraticField")
+lazy_import("sage.matrix.constructor", "matrix")
+lazy_import("sage.modules.free_module_element", "vector")
 
 
 class BinaryRecurrenceSequence(SageObject):
@@ -106,7 +110,6 @@ class BinaryRecurrenceSequence(SageObject):
     """
 
     def __init__(self, b, c, u0=0, u1=1):
-
         """
         See :class:`BinaryRecurrenceSequence` for full documentation.
 
@@ -126,9 +129,9 @@ class BinaryRecurrenceSequence(SageObject):
         self.c = c
         self.u0 = u0
         self.u1 = u1
-        self._period_dict = {}    #dictionary to cache the period of a sequence for future lookup
-        self._PGoodness = {} #dictionary to cache primes that are "good" by some prime power
-        self._ell = 1 #variable that keeps track of the last prime power to be used as a goodness
+        self._period_dict = {}  # dictionary to cache the period of a sequence for future lookup
+        self._PGoodness = {}  # dictionary to cache primes that are "good" by some prime power
+        self._ell = 1  # variable that keeps track of the last prime power to be used as a goodness
 
     def __repr__(self):
         """
@@ -416,9 +419,7 @@ class BinaryRecurrenceSequence(SageObject):
             #the identity mod p is of order (p^{e-1})^4.  So we compute the period mod p^e by successively
             #multiplying the period mod p by powers of p.
 
-            for i in Fac:
-                p = i[0]
-                e = i[1]
+            for p, e in Fac:
                 #first compute the period mod p
                 if p in self._period_dict:
                     perp = self._period_dict[p]
@@ -470,7 +471,7 @@ class BinaryRecurrenceSequence(SageObject):
                     #expand the list of prime factors so every factor is with multiplicity 1
 
                     for i0, i1 in Mfac:
-                        for j in range(i1):
+                        for _ in range(i1):
                             C.append(i0)
 
                     Mfac = C
@@ -515,13 +516,15 @@ class BinaryRecurrenceSequence(SageObject):
 
         INPUT:
 
-        - ``p`` - a rational prime integer (the fixed p in `u_n = y^p`)
+        - ``p`` -- a rational prime integer (the fixed p in `u_n = y^p`)
 
-        - ``Bound`` - a natural number (the maximum index `n` in `u_n = y^p` that is checked).
+        - ``Bound`` -- a natural number (the maximum index `n` in `u_n = y^p` that is checked).
 
         OUTPUT:
 
-        - A list of the indices of all ``p`` th powers less bounded by ``Bound``.  If the sequence is degenerate and there are many ``p`` th powers, raises ``ValueError``.
+        - A list of the indices of all ``p`` th powers less bounded by
+          ``Bound``. If the sequence is degenerate and there are many
+          ``p`` th powers, raises :class:`ValueError`.
 
         EXAMPLES::
 
@@ -538,7 +541,7 @@ class BinaryRecurrenceSequence(SageObject):
             [1]
 
         If the sequence is degenerate, and there are no ``p`` th powers, returns `[]`.  Otherwise, if
-        there are many ``p`` th powers, raises ``ValueError``.
+        there are many ``p`` th powers, raises :class:`ValueError`.
 
         ::
 
@@ -547,17 +550,18 @@ class BinaryRecurrenceSequence(SageObject):
             True
             sage: T.is_geometric()
             True
-            sage: T.pthpowers(7,10**30)
+            sage: T.pthpowers(7, 10**30)                                                # needs sage.symbolic
             Traceback (most recent call last):
             ...
-            ValueError: The degenerate binary recurrence sequence is geometric or quasigeometric and has many pth powers.
+            ValueError: the degenerate binary recurrence sequence is geometric or
+            quasigeometric and has many pth powers
 
             sage: L = BinaryRecurrenceSequence(4,0,2,2)
             sage: [L(i).factor() for i in range(10)]
             [2, 2, 2^3, 2^5, 2^7, 2^9, 2^11, 2^13, 2^15, 2^17]
             sage: L.is_quasigeometric()
             True
-            sage: L.pthpowers(2,10**30)
+            sage: L.pthpowers(2, 10**30)                                                # needs sage.symbolic
             []
 
         .. NOTE::
@@ -588,7 +592,7 @@ class BinaryRecurrenceSequence(SageObject):
                     return [0]
                 return []
             else:
-                raise ValueError("The degenerate binary recurrence sequence is geometric or quasigeometric and has many pth powers.")
+                raise ValueError("the degenerate binary recurrence sequence is geometric or quasigeometric and has many pth powers")
 
         #If the sequence is degenerate without being geometric or quasigeometric, there
         #may be many ``p`` th powers or no ``p`` th powers.
@@ -615,7 +619,7 @@ class BinaryRecurrenceSequence(SageObject):
                 #This linear equation represents a pth power iff A is a pth power mod B.
 
                 if _is_p_power_mod(A, p, B):
-                    raise ValueError("The degenerate binary recurrence sequence has many pth powers.")
+                    raise ValueError("the degenerate binary recurrence sequence has many pth powers")
             return []
 
         #We find ``p`` th powers using an elementary sieve.  Term `u_n` is a ``p`` th
@@ -647,10 +651,10 @@ class BinaryRecurrenceSequence(SageObject):
 
                 F = GF(ell)
                 a0 = F(self.u0)
-                a1 = F(self.u1) #a0 and a1 are variables for terms in sequence
+                a1 = F(self.u1)  # a0 and a1 are variables for terms in sequence
                 bf, cf = F(self.b), F(self.c)
 
-                for n in range(Bound): # n is the index of the a0
+                for n in range(Bound):  # n is the index of the a0
 
                     #Check whether a0 is a perfect power mod ell
                     if _is_p_power_mod(a0, p, ell):
@@ -691,7 +695,7 @@ class BinaryRecurrenceSequence(SageObject):
                             #gather congruence data for the sequence mod ell, which will be mod period(ell) = modu
                             cong1, modu = _find_cong1(p, self, ell)
 
-                            CongNew = []        #makes a new list from cong that is now mod M = lcm(M1, modu) instead of M1
+                            CongNew = []        # makes a new list from cong that is now mod M = lcm(M1, modu) instead of M1
                             M = lcm(M1, modu)
                             for k in range(M // M1):
                                 for i in cong:
@@ -700,18 +704,18 @@ class BinaryRecurrenceSequence(SageObject):
 
                             M1 = M
 
-                            killed_something = False        #keeps track of when cong1 can rule out a congruence in cong
+                            killed_something = False        # keeps track of when cong1 can rule out a congruence in cong
 
-                            #CRT by hand to gain speed
+                            # CRT by hand to gain speed
                             for i in list(cong):
-                                if not (i % modu in cong1):        #congruence in cong is inconsistent with any in cong1
-                                    cong.remove(i)            #remove that congruence
+                                if i % modu not in cong1:     # congruence in cong is inconsistent with any in cong1
+                                    cong.remove(i)            # remove that congruence
                                     killed_something = True
 
                             if M1 == M2:
                                 if not killed_something:
                                     tries += 1
-                                    if tries == 2:            #try twice to rule out congruences
+                                    if tries == 2:            # try twice to rule out congruences
                                         cong = list(cong)
                                         qqold = qq
                                         qq = next_prime_power(qq)
@@ -833,7 +837,6 @@ def _goodness(n, R, p):
 
 
 def _next_good_prime(p, R, qq, patience, qqold):
-
     """
     Find the next prime `\\ell` which is good by ``qq`` but not by ``qqold``, 1 mod ``p``, and for which
     ``b^2+4*c`` is a square mod `\\ell`, for the sequence ``R`` if it is possible in runtime patience.
@@ -1036,7 +1039,6 @@ def _is_p_power_mod(a, p, N):
 
 
 def _estimated_time(M2, M1, length, p):
-
     """
     Find the estimated time to extend congruences mod M1 to consistent congruences mod M2.
 
@@ -1056,7 +1058,8 @@ def _estimated_time(M2, M1, length, p):
 
     EXAMPLES::
 
-        sage: sage.combinat.binary_recurrence_sequences._estimated_time(2**4*3**2*5*7*11*13*17, 2**4*3**2*5*7*11*13, 20, 7)
+        sage: from sage.combinat.binary_recurrence_sequences import _estimated_time
+        sage: _estimated_time(2**4*3**2*5*7*11*13*17, 2**4*3**2*5*7*11*13, 20, 7)       # needs sage.symbolic
         106.211159309421
 
     """
@@ -1092,7 +1095,7 @@ def _find_cong1(p, R, ell):
     EXAMPLES::
 
         sage: R = BinaryRecurrenceSequence(1,1)
-        sage: sage.combinat.binary_recurrence_sequences._find_cong1(7, R, 29)
+        sage: sage.combinat.binary_recurrence_sequences._find_cong1(7, R, 29)           # needs sage.rings.finite_rings
         ([0, 1, 2, 12, 13], 14)
     """
     F = GF(ell)
@@ -1142,9 +1145,9 @@ def _is_p_power(a, p):
 
     EXAMPLES::
 
-        sage: sage.combinat.binary_recurrence_sequences._is_p_power(2**7,7)
+        sage: sage.combinat.binary_recurrence_sequences._is_p_power(2**7, 7)            # needs sage.symbolic
         True
-        sage: sage.combinat.binary_recurrence_sequences._is_p_power(2**7*3**2,7)
+        sage: sage.combinat.binary_recurrence_sequences._is_p_power(2**7*3**2, 7)       # needs sage.symbolic
         False
     """
     return int(a**(1/p))**p == a

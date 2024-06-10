@@ -1,11 +1,8 @@
-
-jupyter-kernel-singular
-=======================
+singular_jupyter: Jupyter kernel for Singular
+=============================================
 
 Description
 -----------
-
-A Jupyter kernel for singular
 
 This is a beta version of a jupyter kernel for Singular.
 

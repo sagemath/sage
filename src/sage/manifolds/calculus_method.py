@@ -9,7 +9,6 @@ AUTHORS:
 - Marco Mancini (2017): initial version
 - Eric Gourgoulhon (2019): add :meth:`~CalculusMethod.set_simplify_function`
   and various accessors
-
 """
 
 # *****************************************************************************
@@ -27,7 +26,12 @@ from sage.manifolds.utilities import (simplify_chain_real,
                                       simplify_chain_real_sympy,
                                       simplify_chain_generic_sympy,)
 from sage.misc.latex import latex
-import sympy
+
+try:
+    import sympy
+    from sympy import latex as sympy_latex
+except ImportError:
+    sympy_latex = None
 
 
 # Conversion functions
@@ -52,7 +56,7 @@ def _SR_to_Sympy(expression):
         sage: a = x^2 + sin(x)^2; a
         x^2 + sin(x)^2
         sage: type(a)
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
         sage: b = _SR_to_Sympy(a); b
         x**2 + sin(x)**2
         sage: type(b)
@@ -89,7 +93,7 @@ def _Sympy_to_SR(expression):
         sage: from sage.manifolds.calculus_method import _Sympy_to_SR, _SR_to_Sympy
         sage: a = x^2 + sin(x)^2
         sage: type(a)
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
         sage: b = _SR_to_Sympy(a); b
         x**2 + sin(x)**2
         sage: type(b)
@@ -107,7 +111,7 @@ def _Sympy_to_SR(expression):
         # sympy abstract function
         a = expression._sage_()
         # As all sage objects have a ._sage_ operator, they have to be
-        # catched
+        # caught
         if type(a) is type(expression):
             raise TypeError
         return a
@@ -202,7 +206,7 @@ class CalculusMethod(SageObject):
             self._simplify_dict['SR'] = simplify_chain_generic
         # The default simplifying functions are saved:
         self._simplify_dict_default = self._simplify_dict.copy()
-        self._latex_dict = {'sympy': sympy.latex, 'SR': latex}
+        self._latex_dict = {'sympy': sympy_latex, 'SR': latex}
 
     def simplify(self, expression, method=None):
         r"""
@@ -257,7 +261,7 @@ class CalculusMethod(SageObject):
             sage: cm.simplify(f)
             Traceback (most recent call last):
             ...
-            AttributeError: 'sage.symbolic.expression.Expression' object has no attribute 'combsimp'
+            AttributeError: 'sage.symbolic.expression.Expression' object has no attribute 'combsimp'...
 
         In the present case, one should either transform ``f`` to a SymPy
         object::

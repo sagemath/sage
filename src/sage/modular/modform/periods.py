@@ -11,5 +11,3 @@ Periods of modular forms
 # this must give all pairings.   However, it requires computing
 # only $2d$ pairings instead of $2d^2$ pairings, which is potentially
 # a huge savings when $d$ is large.
-
-

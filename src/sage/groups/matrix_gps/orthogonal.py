@@ -21,7 +21,7 @@ must be specified to disambiguate these two possibilities. The index
 of `SO(e,d,q)` in `GO(e,d,q)` is `2` if `q` is odd, but `SO(e,d,q) =
 GO(e,d,q)` if `q` is even.)
 
-.. warning::
+.. WARNING::
 
    GAP and Sage use different notations:
 
@@ -36,8 +36,11 @@ EXAMPLES::
     sage: GO(3,7)
     General Orthogonal Group of degree 3 over Finite Field of size 7
 
-    sage: G = SO( 4, GF(7), 1); G
-    Special Orthogonal Group of degree 4 and form parameter 1 over Finite Field of size 7
+    sage: G = SO(4, GF(7), 1); G
+    Special Orthogonal Group of degree 4 and form parameter 1
+     over Finite Field of size 7
+
+    sage: # needs sage.libs.gap
     sage: G.random_element()   # random
     [4 3 5 2]
     [6 6 4 0]
@@ -70,12 +73,16 @@ AUTHORS:
 - Sebastian Oehms (2018-8) add
   :meth:`~sage.groups.matrix_gps.orthogonal.OrthogonalMatrixGroup_generic.invariant_form`
   (as alias), ``_OG``, option for user defined invariant bilinear form,
-  and bug-fix in cmd-string for calling GAP (see :trac:`26028`)
+  and bug-fix in cmd-string for calling GAP (see :issue:`26028`)
 """
 
 # ****************************************************************************
 #       Copyright (C) 2006 David Joyner and William Stein
-#       Copyright (C) 2013 Volker Braun <vbraun.name@gmail.com>
+#                     2009 Mike Hansen
+#                     2013 Volker Braun <vbraun.name@gmail.com>
+#                     2018 Sebastian Oehms
+#                     2018 Travis Scrimshaw
+#                     2023 Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -84,14 +91,14 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.all import ZZ
-from sage.rings.finite_rings.finite_field_base import is_FiniteField
+from sage.rings.integer_ring import ZZ
+from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.misc.latex import latex
 from sage.misc.cachefunc import cached_method
 from sage.groups.matrix_gps.named_group import (
     normalize_args_vectorspace, normalize_args_invariant_form,
-    NamedMatrixGroup_generic, NamedMatrixGroup_gap)
-from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_gap
+    NamedMatrixGroup_generic)
+
 
 def normalize_args_e(degree, ring, e):
     """
@@ -100,18 +107,16 @@ def normalize_args_e(degree, ring, e):
 
     INPUT:
 
-    - ``degree`` -- integer. The degree of the affine group, that is,
-      the dimension of the affine space the group is acting on.
+    - ``degree`` -- integer; the degree of the affine group, that is,
+      the dimension of the affine space the group is acting on
 
-    - ``ring`` -- a ring. The base ring of the affine space.
+    - ``ring`` -- a ring; the base ring of the affine space
 
     - ``e`` -- integer, one of `+1`, `0`, `-1`.  Only relevant for
       finite fields and if the degree is even. A parameter that
       distinguishes inequivalent invariant forms.
 
-    OUTPUT:
-
-    The integer ``e`` with values required by GAP.
+    OUTPUT: the integer ``e`` with values required by GAP
 
     TESTS::
 
@@ -127,14 +132,12 @@ def normalize_args_e(degree, ring, e):
         ...
         ValueError: must have e=-1 or e=1 for even degree
     """
-    if is_FiniteField(ring) and degree%2 == 0:
+    if isinstance(ring, FiniteField) and degree % 2 == 0:
         if e not in (-1, +1):
             raise ValueError('must have e=-1 or e=1 for even degree')
     else:
         e = 0
     return ZZ(e)
-
-
 
 
 ###############################################################################
@@ -143,17 +146,18 @@ def normalize_args_e(degree, ring, e):
 
 def _OG(n, R, special, e=0, var='a', invariant_form=None):
     r"""
-    This function is commonly used by the functions GO and SO to avoid uneccessarily
-    duplicated code. For documentation and examples see the individual functions.
+    This function is commonly used by the functions GO and SO to avoid
+    unnecessarily duplicated code. For documentation and examples see
+    the individual functions.
 
     TESTS:
 
-    Check that :trac:`26028` is fixed::
+    Check that :issue:`26028` is fixed::
 
-        sage: GO(3,25).order()  # indirect doctest
+        sage: GO(3,25).order()  # indirect doctest                                      # needs sage.libs.gap sage.rings.finite_rings
         31200
 
-    Check that :trac:`28054` is fixed::
+    Check that :issue:`28054` is fixed::
 
         sage: G = SO(2, GF(3), -1)
         sage: m = G.invariant_form()
@@ -163,16 +167,16 @@ def _OG(n, R, special, e=0, var='a', invariant_form=None):
         NotImplementedError: invariant_form for finite groups is fixed by GAP
     """
     prefix = 'General'
-    ltx_prefix ='G'
+    ltx_prefix = 'G'
     if special:
         prefix = 'Special'
-        ltx_prefix ='S'
+        ltx_prefix = 'S'
 
     degree, ring = normalize_args_vectorspace(n, R, var=var)
     e = normalize_args_e(degree, ring, e)
 
     if invariant_form is not None:
-        if is_FiniteField(ring):
+        if isinstance(ring, FiniteField):
             raise NotImplementedError("invariant_form for finite groups is fixed by GAP")
 
     if e == 0:
@@ -183,32 +187,36 @@ def _OG(n, R, special, e=0, var='a', invariant_form=None):
 
             try:
                 if invariant_form.is_positive_definite():
-                   inserted_text = "with respect to positive definite symmetric form"
+                    inserted_text = "with respect to positive definite symmetric form"
                 else:
-                   inserted_text = "with respect to non positive definite symmetric form"
+                    inserted_text = "with respect to non positive definite symmetric form"
             except ValueError:
                 inserted_text = "with respect to symmetric form"
 
             name = '{0} Orthogonal Group of degree {1} over {2} {3}\n{4}'.format(
-                            prefix, degree, ring, inserted_text,invariant_form)
-            ltx  = r'\text{{{0}O}}_{{{1}}}({2})\text{{ {3} }}{4}'.format(
-                            ltx_prefix, degree, latex(ring), inserted_text,
-                            latex(invariant_form))
+                prefix, degree, ring, inserted_text, invariant_form)
+            ltx = r'\text{{{0}O}}_{{{1}}}({2})\text{{ {3} }}{4}'.format(
+                ltx_prefix, degree, latex(ring), inserted_text,
+                latex(invariant_form))
         else:
             name = '{0} Orthogonal Group of degree {1} over {2}'.format(prefix, degree, ring)
-            ltx  = r'\text{{{0}O}}_{{{1}}}({2})'.format(ltx_prefix, degree, latex(ring))
+            ltx = r'\text{{{0}O}}_{{{1}}}({2})'.format(ltx_prefix, degree, latex(ring))
     else:
         name = '{0} Orthogonal Group of degree {1} and form parameter {2} over {3}'.format(prefix, degree, e, ring)
-        ltx  = r'\text{{{0}O}}_{{{1}}}({2}, {3})'.format(ltx_prefix, degree,
-                                                         latex(ring),
-                                                         '+' if e == 1 else '-')
+        ltx = r'\text{{{0}O}}_{{{1}}}({2}, {3})'.format(ltx_prefix, degree,
+                                                        latex(ring),
+                                                        '+' if e == 1 else '-')
 
-    if is_FiniteField(ring):
-        cmd  = '{0}O({1}, {2}, {3})'.format(ltx_prefix, e, degree, ring.order())
-        return OrthogonalMatrixGroup_gap(degree, ring, False, name, ltx, cmd)
-    else:
-        return OrthogonalMatrixGroup_generic(degree, ring, False, name, ltx, invariant_form=invariant_form)
+    if isinstance(ring, FiniteField):
+        try:
+            from .orthogonal_gap import OrthogonalMatrixGroup_gap
+        except ImportError:
+            pass
+        else:
+            cmd = '{0}O({1}, {2}, {3})'.format(ltx_prefix, e, degree, ring.order())
+            return OrthogonalMatrixGroup_gap(degree, ring, False, name, ltx, cmd)
 
+    return OrthogonalMatrixGroup_generic(degree, ring, False, name, ltx, invariant_form=invariant_form)
 
 
 ########################################################################
@@ -244,7 +252,7 @@ def GO(n, R, e=0, var='a', invariant_form=None):
       for finite fields and if the degree is even: a parameter that
       distinguishes inequivalent invariant forms
 
-    - ``var`` -- (optional, default: ``'a'``) variable used to
+    - ``var`` -- (default: ``'a'``) variable used to
       represent generator of the finite field, if needed
 
     - ``invariant_form`` -- (optional) instances being accepted by
@@ -253,18 +261,18 @@ def GO(n, R, e=0, var='a', invariant_form=None):
       by the orthogonal group; the form is checked to be
       non-degenerate and symmetric but not to be positive definite
 
-    OUTPUT:
-
-    The general orthogonal group of given degree, base ring, and
-    choice of invariant form.
+    OUTPUT: the general orthogonal group of given degree, base ring, and
+    choice of invariant form
 
     EXAMPLES::
 
-        sage: GO( 3, GF(7))
+        sage: GO(3, GF(7))
         General Orthogonal Group of degree 3 over Finite Field of size 7
-        sage: GO( 3, GF(7)).order()
+
+        sage: # needs sage.libs.gap
+        sage: GO(3, GF(7)).order()
         672
-        sage: GO( 3, GF(7)).gens()
+        sage: GO(3, GF(7)).gens()
         (
         [3 0 0]  [0 1 0]
         [0 5 0]  [1 6 6]
@@ -273,9 +281,9 @@ def GO(n, R, e=0, var='a', invariant_form=None):
 
     Using the ``invariant_form`` option::
 
-        sage: m = matrix(QQ, 3,3, [[0, 1, 0], [1, 0, 0], [0, 0, 3]])
-        sage: GO3  = GO(3,QQ)
-        sage: GO3m = GO(3,QQ, invariant_form=m)
+        sage: m = matrix(QQ, 3, 3, [[0, 1, 0], [1, 0, 0], [0, 0, 3]])
+        sage: GO3  = GO(3, QQ)
+        sage: GO3m = GO(3, QQ, invariant_form=m)
         sage: GO3 == GO3m
         False
         sage: GO3.invariant_form()
@@ -300,26 +308,27 @@ def GO(n, R, e=0, var='a', invariant_form=None):
         [1 0 0]
         [0 0 3]
 
-        sage: GO(3,3, invariant_form=[[1,0,0],[0,2,0],[0,0,1]])
+        sage: GO(3,3, invariant_form=[[1,0,0], [0,2,0], [0,0,1]])
         Traceback (most recent call last):
         ...
         NotImplementedError: invariant_form for finite groups is fixed by GAP
-        sage: 5+5
+        sage: 5 + 5
         10
         sage: R.<x> = ZZ[]
-        sage: GO(2, R, invariant_form=[[x,0],[0,1]])
-        General Orthogonal Group of degree 2 over Univariate Polynomial Ring in x over Integer Ring with respect to symmetric form
+        sage: GO(2, R, invariant_form=[[x,0], [0,1]])
+        General Orthogonal Group of degree 2 over
+         Univariate Polynomial Ring in x over Integer Ring with respect to symmetric form
         [x 0]
         [0 1]
 
     TESTS::
 
+        sage: # needs sage.libs.gap
         sage: TestSuite(GO3).run()
         sage: groups.matrix.GO(2, 3, e=-1)
         General Orthogonal Group of degree 2 and form parameter -1 over Finite Field of size 3
     """
     return _OG(n, R, False, e=e, var=var, invariant_form=invariant_form)
-
 
 
 ########################################################################
@@ -351,7 +360,7 @@ def SO(n, R, e=None, var='a', invariant_form=None):
       for finite fields and if the degree is even: a parameter that
       distinguishes inequivalent invariant forms
 
-    - ``var`` -- (optional, default: ``'a'``) variable used to
+    - ``var`` -- (default: ``'a'``) variable used to
       represent generator of the finite field, if needed
 
     - ``invariant_form`` -- (optional) instances being accepted by
@@ -360,17 +369,15 @@ def SO(n, R, e=None, var='a', invariant_form=None):
       by the orthogonal group; the form is checked to be
       non-degenerate and symmetric but not to be positive definite
 
-    OUTPUT:
-
-    The special orthogonal group of given degree, base ring, and choice of
-    invariant form.
+    OUTPUT: the special orthogonal group of given degree, base ring, and choice
+    of invariant form
 
     EXAMPLES::
 
-        sage: G = SO(3,GF(5))
-        sage: G
+        sage: G = SO(3,GF(5)); G
         Special Orthogonal Group of degree 3 over Finite Field of size 5
 
+        sage: # needs sage.libs.gap
         sage: G = SO(3,GF(5))
         sage: G.gens()
         (
@@ -378,7 +385,6 @@ def SO(n, R, e=None, var='a', invariant_form=None):
         [0 3 0]  [0 2 0]  [4 0 0]
         [0 0 1], [0 3 1], [2 0 4]
         )
-        sage: G = SO(3,GF(5))
         sage: G.as_matrix_group()
         Matrix group over Finite Field of size 5 with 3 generators (
         [2 0 0]  [3 2 3]  [1 4 4]
@@ -388,8 +394,9 @@ def SO(n, R, e=None, var='a', invariant_form=None):
 
     Using the ``invariant_form`` option::
 
+        sage: # needs sage.rings.number_field
         sage: CF3 = CyclotomicField(3); e3 = CF3.gen()
-        sage: m=matrix(CF3, 3,3, [[1,e3,0],[e3,2,0],[0,0,1]])
+        sage: m = matrix(CF3, 3, 3, [[1,e3,0], [e3,2,0], [0,0,1]])
         sage: SO3  = SO(3, CF3)
         sage: SO3m = SO(3, CF3, invariant_form=m)
         sage: SO3 == SO3m
@@ -416,7 +423,7 @@ def SO(n, R, e=None, var='a', invariant_form=None):
         [zeta3     2     0]
         [    0     0     1]
 
-        sage: SO(3,5, invariant_form=[[1,0,0],[0,2,0],[0,0,3]])
+        sage: SO(3, 5, invariant_form=[[1,0,0], [0,2,0], [0,0,3]])
         Traceback (most recent call last):
         ...
         NotImplementedError: invariant_form for finite groups is fixed by GAP
@@ -425,12 +432,11 @@ def SO(n, R, e=None, var='a', invariant_form=None):
 
     TESTS::
 
-        sage: TestSuite(SO3m).run()
+        sage: TestSuite(SO3m).run()                                                     # needs sage.rings.number_field
         sage: groups.matrix.SO(2, 3, e=1)
         Special Orthogonal Group of degree 2 and form parameter 1 over Finite Field of size 3
     """
     return _OG(n, R, True, e=e, var=var, invariant_form=invariant_form)
-
 
 
 ########################################################################
@@ -453,8 +459,9 @@ class OrthogonalMatrixGroup_generic(NamedMatrixGroup_generic):
         sage: latex(G)
         \text{SO}_{3}(\Bold{F}_{5})
 
+        sage: # needs sage.rings.number_field
         sage: CF3 = CyclotomicField(3); e3 = CF3.gen()
-        sage: m=matrix(CF3, 3,3, [[1,e3,0],[e3,2,0],[0,0,1]])
+        sage: m = matrix(CF3, 3,3, [[1,e3,0],[e3,2,0],[0,0,1]])
         sage: G = SO(3, CF3, invariant_form=m)
         sage: latex(G)
         \text{SO}_{3}(\Bold{Q}(\zeta_{3}))\text{ with respect to non positive definite symmetric form }\left(\begin{array}{rrr}
@@ -469,12 +476,11 @@ class OrthogonalMatrixGroup_generic(NamedMatrixGroup_generic):
         """
         Return the symmetric bilinear form preserved by ``self``.
 
-        OUTPUT:
-
-        A matrix.
+        OUTPUT: a matrix
 
         EXAMPLES::
 
+            sage: # needs sage.libs.gap
             sage: GO(2,3,+1).invariant_bilinear_form()
             [0 1]
             [1 0]
@@ -487,7 +493,7 @@ class OrthogonalMatrixGroup_generic(NamedMatrixGroup_generic):
             [0 1 0 0]
             [0 0 1 0]
             [0 0 0 1]
-            sage: GO3m = GO(3,QQ, invariant_form=(1,0,0,0,2,0,0,0,3))
+            sage: GO3m = GO(3, QQ, invariant_form=(1,0,0, 0,2,0, 0,0,3))
             sage: GO3m.invariant_bilinear_form()
             [1 0 0]
             [0 2 0]
@@ -495,7 +501,7 @@ class OrthogonalMatrixGroup_generic(NamedMatrixGroup_generic):
 
         TESTS::
 
-            sage: GO3m.invariant_form()
+            sage: GO3m.invariant_form()                                                 # needs sage.libs.gap
             [1 0 0]
             [0 2 0]
             [0 0 3]
@@ -508,11 +514,14 @@ class OrthogonalMatrixGroup_generic(NamedMatrixGroup_generic):
         m.set_immutable()
         return m
 
-    invariant_quadratic_form = invariant_bilinear_form # this is identical in the generic case
-    invariant_form           = invariant_bilinear_form # alias (analogues to symplectic and unitary cases)
+    invariant_quadratic_form = invariant_bilinear_form
+    # this is identical in the generic case
+
+    invariant_form = invariant_bilinear_form
+    # alias (analogues to symplectic and unitary cases)
 
     def _check_matrix(self, x, *args):
-        """a
+        """
         Check whether the matrix ``x`` is orthogonal.
 
         See :meth:`~sage.groups.matrix_gps.matrix_group._check_matrix`
@@ -530,123 +539,5 @@ class OrthogonalMatrixGroup_generic(NamedMatrixGroup_generic):
             if F == self.one().matrix():
                 raise TypeError('matrix must be orthogonal')
             else:
-                raise TypeError('matrix must be orthogonal with respect to the symmetric form\n%s' %(F))
+                raise TypeError('matrix must be orthogonal with respect to the symmetric form\n%s' % (F))
         # TODO: check that quadratic form is preserved in characteristic two
-
-class OrthogonalMatrixGroup_gap(OrthogonalMatrixGroup_generic, NamedMatrixGroup_gap, FinitelyGeneratedMatrixGroup_gap):
-    r"""
-    The general or special orthogonal group in GAP.
-
-    TESTS:
-
-    Check that :trac:`20867` is fixed::
-
-        sage: from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_gap
-        sage: G = GO(3,3)
-        sage: isinstance(G, FinitelyGeneratedMatrixGroup_gap)
-        True
-    """
-    @cached_method
-    def invariant_bilinear_form(self):
-        """
-        Return the symmetric bilinear form preserved by the orthogonal
-        group.
-
-        OUTPUT:
-
-        A matrix `M` such that, for every group element g, the
-        identity `g m g^T = m` holds. In characteristic different from
-        two, this uniquely determines the orthogonal group.
-
-        EXAMPLES::
-
-            sage: G = GO(4, GF(7), -1)
-            sage: G.invariant_bilinear_form()
-            [0 1 0 0]
-            [1 0 0 0]
-            [0 0 2 0]
-            [0 0 0 2]
-
-            sage: G = GO(4, GF(7), +1)
-            sage: G.invariant_bilinear_form()
-            [0 1 0 0]
-            [1 0 0 0]
-            [0 0 6 0]
-            [0 0 0 2]
-
-            sage: G = SO(4, GF(7), -1)
-            sage: G.invariant_bilinear_form()
-            [0 1 0 0]
-            [1 0 0 0]
-            [0 0 2 0]
-            [0 0 0 2]
-
-        TESTS::
-
-            sage: G.invariant_form()
-            [0 1 0 0]
-            [1 0 0 0]
-            [0 0 2 0]
-            [0 0 0 2]
-        """
-        m = self.gap().InvariantBilinearForm()['matrix'].matrix()
-        m.set_immutable()
-        return m
-
-    invariant_form = invariant_bilinear_form # alias (analogues to symplectic and unitary cases)
-
-    @cached_method
-    def invariant_quadratic_form(self):
-        r"""
-        Return the quadratic form preserved by the orthogonal group.
-
-        OUTPUT:
-
-        The matrix `Q` defining "orthogonal" as follows. The matrix
-        determines a quadratic form `q` on the natural vector space
-        `V`, on which `G` acts, by `q(v) = v Q v^t`. A matrix `M` is
-        an element of the orthogonal group if `q(v) = q(v M)` for all
-        `v \in V`.
-
-        EXAMPLES::
-
-            sage: G = GO(4, GF(7), -1)
-            sage: G.invariant_quadratic_form()
-            [0 1 0 0]
-            [0 0 0 0]
-            [0 0 1 0]
-            [0 0 0 1]
-
-            sage: G = GO(4, GF(7), +1)
-            sage: G.invariant_quadratic_form()
-            [0 1 0 0]
-            [0 0 0 0]
-            [0 0 3 0]
-            [0 0 0 1]
-
-            sage: G = GO(4, QQ)
-            sage: G.invariant_quadratic_form()
-            [1 0 0 0]
-            [0 1 0 0]
-            [0 0 1 0]
-            [0 0 0 1]
-
-            sage: G = SO(4, GF(7), -1)
-            sage: G.invariant_quadratic_form()
-            [0 1 0 0]
-            [0 0 0 0]
-            [0 0 1 0]
-            [0 0 0 1]
-
-        TESTS::
-
-            sage: GO(4, GF(7), -1).invariant_form()
-            [0 1 0 0]
-            [1 0 0 0]
-            [0 0 2 0]
-            [0 0 0 2]
-        """
-        m = self.gap().InvariantQuadraticForm()['matrix'].matrix()
-        m.set_immutable()
-        return m
-

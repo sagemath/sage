@@ -1,5 +1,5 @@
 r"""
-`p`-Adic Base Generic
+`p`-adic Base Generic
 
 A superclass for implementations of `\ZZ_p` and `\QQ_p`.
 
@@ -7,7 +7,6 @@ AUTHORS:
 
 - David Roe
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2007-2013 David Roe <roed.math@gmail.com>
@@ -31,17 +30,23 @@ from sage.rings.padics.padic_capped_absolute_element import pAdicCoercion_ZZ_CA,
 from sage.rings.padics.padic_fixed_mod_element import pAdicCoercion_ZZ_FM, pAdicConvert_QQ_FM
 from sage.rings.padics.padic_floating_point_element import pAdicCoercion_ZZ_FP, pAdicCoercion_QQ_FP, pAdicConvert_QQ_FP
 
+
 class pAdicBaseGeneric(pAdicGeneric):
     _implementation = 'GMP'
+
     def __init__(self, p, prec, print_mode, names, element_class):
         """
         Initialization
 
         TESTS::
 
-            sage: R = Zp(5) #indirect doctest
+            sage: R = Zp(5)  # indirect doctest
         """
-        self.prime_pow = PowComputer(p, max(min(prec - 1, 30), 1), prec, self.is_field(), self._prec_type())
+        if self.is_relaxed():
+            from sage.rings.padics.pow_computer_flint import PowComputer_flint
+            self.prime_pow = PowComputer_flint(p, 1, 1, 1, self.is_field())
+        else:
+            self.prime_pow = PowComputer(p, max(min(prec - 1, 30), 1), prec, self.is_field(), self._prec_type())
         pAdicGeneric.__init__(self, self, p, prec, print_mode, names, element_class)
         if self.is_field():
             if self.is_capped_relative():
@@ -51,6 +56,9 @@ class pAdicBaseGeneric(pAdicGeneric):
                 coerce_list = [pAdicCoercion_ZZ_FP(self), pAdicCoercion_QQ_FP(self)]
                 convert_list = []
             elif self.is_lattice_prec():
+                coerce_list = [QQ]
+                convert_list = []
+            elif self.is_relaxed():
                 coerce_list = [QQ]
                 convert_list = []
             else:
@@ -70,6 +78,9 @@ class pAdicBaseGeneric(pAdicGeneric):
         elif self.is_lattice_prec():
             coerce_list = [ZZ]
             convert_list = [QQ]
+        elif self.is_relaxed():
+            coerce_list = [ZZ]
+            convert_list = [QQ]
         else:
             raise RuntimeError
         self.Element = element_class
@@ -81,33 +92,33 @@ class pAdicBaseGeneric(pAdicGeneric):
 
         EXAMPLES::
 
-            sage: K = Zp(17); K #indirect doctest
+            sage: K = Zp(17); K  # indirect doctest
             17-adic Ring with capped relative precision 20
             sage: latex(K)
             \Bold{Z}_{17}
-            sage: K = ZpCA(17); K #indirect doctest
+            sage: K = ZpCA(17); K  # indirect doctest
             17-adic Ring with capped absolute precision 20
             sage: latex(K)
             \Bold{Z}_{17}
-            sage: K = ZpFP(17); K #indirect doctest
+            sage: K = ZpFP(17); K  # indirect doctest
             17-adic Ring with floating precision 20
             sage: latex(K)
             \Bold{Z}_{17}
             sage: K = ZpFM(7); K
             7-adic Ring of fixed modulus 7^20
-            sage: latex(K) #indirect doctest
+            sage: latex(K)  # indirect doctest
             \Bold{Z}_{7}
             sage: K = ZpLF(2); K   # indirect doctest
             doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
-            See http://trac.sagemath.org/23505 for details.
+            See https://github.com/sagemath/sage/issues/23505 for details.
             2-adic Ring with lattice-float precision
             sage: latex(K)
             \Bold{Z}_{2}
-            sage: K = Qp(17); K #indirect doctest
+            sage: K = Qp(17); K  # indirect doctest
             17-adic Field with capped relative precision 20
             sage: latex(K)
             \Bold{Q}_{17}
-            sage: K = QpFP(17); K #indirect doctest
+            sage: K = QpFP(17); K  # indirect doctest
             17-adic Field with floating precision 20
             sage: latex(K)
             \Bold{Q}_{17}
@@ -122,12 +133,12 @@ class pAdicBaseGeneric(pAdicGeneric):
             else:
                 s = r"\Bold{Z}_{%s}" % self.prime()
             if hasattr(self, '_label') and self._label:
-                s = r"\verb'%s' (\simeq %s)"%(self._label, s)
+                s = r"\verb'%s' (\simeq %s)" % (self._label, s)
         else:
             s = "Field " if self.is_field() else "Ring "
-            s = "%s-adic "%self.prime() + s + precprint(self._prec_type(), self.precision_cap(), self.prime())
+            s = "%s-adic " % self.prime() + s + precprint(self._prec_type(), self.precision_cap(), self.prime())
             if hasattr(self, '_label') and self._label:
-                s+= " (label: %s)"%self._label
+                s += " (label: %s)" % self._label
         return s
 
     def exact_field(self):
@@ -376,7 +387,7 @@ class pAdicBaseGeneric(pAdicGeneric):
             if n == 1:
                 return self(1)
             else:
-                raise ValueError("No, %sth root of unity in self"%n)
+                raise ValueError("No, %sth root of unity in self" % n)
         else:
             from sage.rings.finite_rings.finite_field_constructor import GF
             return self.teichmuller(GF(self.prime()).zeta(n).lift())
@@ -422,11 +433,11 @@ class pAdicBaseGeneric(pAdicGeneric):
 
         EXAMPLES::
 
-            sage: Zp(3).plot()
+            sage: Zp(3).plot()                                                          # needs sage.plot
             Graphics object consisting of 1 graphics primitive
-            sage: Zp(5).plot(max_points=625)
+            sage: Zp(5).plot(max_points=625)                                            # needs sage.plot
             Graphics object consisting of 1 graphics primitive
-            sage: Zp(23).plot(rgbcolor=(1,0,0))
+            sage: Zp(23).plot(rgbcolor=(1,0,0))                                         # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         if 'pointsize' not in args:

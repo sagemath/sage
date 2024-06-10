@@ -9,10 +9,9 @@ Root system data for type C
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
 
 from . import ambient_space
+
 
 class AmbientSpace(ambient_space.AmbientSpace):
     """
@@ -32,9 +31,8 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
     TESTS::
 
-        sage: TestSuite(e).run()
+        sage: TestSuite(e).run()                                                        # needs sage.graphs
     """
-
 
     def dimension(self):
         """
@@ -113,7 +111,6 @@ class AmbientSpace(ambient_space.AmbientSpace):
         res.extend( [ self.root(i,i,1,1) for i in range(self.n) ] )
         return res
 
-
     def fundamental_weight(self, i):
         """
         EXAMPLES::
@@ -123,7 +120,10 @@ class AmbientSpace(ambient_space.AmbientSpace):
         """
         return self.sum(self.monomial(j) for j in range(i))
 
+
 from .cartan_type import CartanType_standard_finite, CartanType_simple, CartanType_crystallographic, CartanType_simply_laced
+
+
 class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_crystallographic):
     def __init__(self, n):
         """
@@ -172,7 +172,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             sage: latex(CartanType(['C',4]))
             C_{4}
         """
-        return "C_{%s}"%self.n
+        return "C_{%s}" % self.n
 
     AmbientSpace = AmbientSpace
 
@@ -216,25 +216,23 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
 
         EXAMPLES::
 
-            sage: c = CartanType(['C',3]).dynkin_diagram()
-            sage: c
+            sage: c = CartanType(['C',3]).dynkin_diagram(); c                           # needs sage.graphs
             O---O=<=O
             1   2   3
             C3
-            sage: c.edges(sort=True)
+            sage: c.edges(sort=True)                                                    # needs sage.graphs
             [(1, 2, 1), (2, 1, 1), (2, 3, 1), (3, 2, 2)]
 
-             sage: b = CartanType(['C',1]).dynkin_diagram()
-             sage: b
+             sage: b = CartanType(['C',1]).dynkin_diagram(); b                          # needs sage.graphs
              O
              1
              C1
-             sage: sorted(b.edges())
+             sage: b.edges(sort=True)                                                   # needs sage.graphs
              []
         """
         return self.dual().dynkin_diagram().dual()
 
-    def _latex_dynkin_diagram(self, label=lambda x: x, node=None, node_dist=2, dual=False):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2, dual=False):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -270,9 +268,11 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             - :meth:`sage.combinat.root_system.type_C.CartanType._latex_dynkin_diagram`
             - :meth:`sage.combinat.root_system.type_BC_affine.CartanType._latex_dynkin_diagram`
         """
+        if label is None:
+            label = lambda i: i
         return self.dual()._latex_dynkin_diagram(label=label, node=node, node_dist=node_dist, dual=not dual)
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Return a ascii art representation of the extended Dynkin diagram.
 
@@ -291,6 +291,8 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             O---O---O---O=<=O
             3   4   5   6   7
         """
+        if label is None:
+            label = lambda i: i
         return self.dual().ascii_art(label=label, node=node).replace("=>=", "=<=")
 
     def _default_folded_cartan_type(self):
@@ -306,6 +308,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
         n = self.n
         return CartanTypeFolded(self, ['A', 2*n-1],
             [[i, 2*n-i] for i in range(1, n)] + [[n]])
+
 
 # For unpickling backward compatibility (Sage <= 4.1)
 from sage.misc.persist import register_unpickle_override

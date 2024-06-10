@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-categories
+# sage.doctest: needs sage.combinat sage.groups
 r"""
 Finite Coxeter Groups
 """
@@ -9,10 +11,13 @@ Finite Coxeter Groups
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
+import sage.rings.abc
+
 from sage.misc.cachefunc import cached_method, cached_in_parent_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.coxeter_groups import CoxeterGroups
+
 
 class FiniteCoxeterGroups(CategoryWithAxiom):
     r"""
@@ -21,10 +26,10 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
     EXAMPLES::
 
         sage: CoxeterGroups.Finite()
-        Category of finite coxeter groups
+        Category of finite Coxeter groups
         sage: FiniteCoxeterGroups().super_categories()
-        [Category of finite generalized coxeter groups,
-         Category of coxeter groups]
+        [Category of finite generalized Coxeter groups,
+         Category of Coxeter groups]
 
         sage: G = CoxeterGroups().Finite().example()
         sage: G.cayley_graph(side = "right").plot()
@@ -50,8 +55,8 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
         EXAMPLES::
 
             sage: CoxeterGroups().Finite().super_categories()
-            [Category of finite generalized coxeter groups,
-             Category of coxeter groups]
+            [Category of finite generalized Coxeter groups,
+             Category of Coxeter groups]
         """
         from sage.categories.complex_reflection_groups import ComplexReflectionGroups
         return [ComplexReflectionGroups().Finite().WellGenerated()]
@@ -62,7 +67,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
         is preferable to that of :class:`FiniteGroups`. The same holds
         for ``__iter__``, although a breadth first search would be more
         natural; at least this maintains backward compatibility after
-        :trac:`13589`.
+        :issue:`13589`.
 
         TESTS::
 
@@ -202,7 +207,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: [len(WeylGroup(["A", n]).bruhat_poset().cover_relations()) for n in [1,2,3]]
                 [1, 8, 58]
 
-            .. todo::
+            .. TODO::
 
                 - Use the symmetric group in the examples (for nicer
                   output), and print the edges for a stronger test.
@@ -210,7 +215,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                   handle large / infinite Coxeter groups.
             """
             from sage.combinat.posets.posets import Poset
-            covers = tuple([u, v] for v in self for u in v.bruhat_lower_covers() )
+            covers = tuple([u, v] for v in self for u in v.bruhat_lower_covers())
             return Poset((self, covers), cover_relations=True, facade=facade)
 
         def shard_poset(self, side='right'):
@@ -345,14 +350,15 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             """
             from sage.rings.qqbar import QQbar
             from sage.rings.integer_ring import ZZ
+
             def degrees_of_irreducible_component(I):
                 """Return the degrees for the irreducible component indexed by I"""
                 # A Coxeter element
                 s = self.simple_reflections()
                 c = self.prod(s[i] for i in I)
                 roots = c.matrix().change_ring(QQbar).charpoly().roots()
-                args = [(z.rational_argument(), m) for z, m in roots]
-                args = [(z if z >=0 else 1 + z, m) for z, m in args]
+                args = ((z.rational_argument(), m) for z, m in roots)
+                args = [(z if z >= 0 else 1 + z, m) for z, m in args]
                 h = max(z.denominator() for z, m in args)
                 return tuple(sorted(ZZ(z * h + 1)
                                     for z, m in args if z
@@ -430,7 +436,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: W = WeylGroup(["A",2])
                 sage: P = W.weak_poset(side = "twosided")
                 sage: P.show()
-                sage: len(P.hasse_diagram().edges())
+                sage: len(P.hasse_diagram().edges(sort=False))
                 8
 
             This is the transitive closure of the union of left and
@@ -463,7 +469,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: [len(WeylGroup(["A", n]).weak_poset(side = "left" ).cover_relations()) for n in [1,2,3]]
                 [1, 6, 36]
 
-            .. todo::
+            .. TODO::
 
                 - Use the symmetric group in the examples (for nicer
                   output), and print the edges for a stronger test.
@@ -473,11 +479,12 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             from sage.combinat.posets.posets import Poset
             from sage.combinat.posets.lattices import LatticePoset
             if side == "twosided":
-                covers = tuple([u, v] for u in self for v in u.upper_covers(side="left")+u.upper_covers(side="right") )
-                return Poset((self, covers), cover_relations = True, facade = facade)
-            else:
-                covers = tuple([u, v] for u in self for v in u.upper_covers(side=side) )
-                return LatticePoset((self, covers), cover_relations = True, facade = facade)
+                covers = tuple([u, v] for u in self for v in u.upper_covers(side="left") + u.upper_covers(side="right"))
+                return Poset((self, covers), cover_relations=True,
+                             facade=facade)
+            covers = tuple([u, v] for u in self for v in u.upper_covers(side=side))
+            return LatticePoset((self, covers), cover_relations=True,
+                                facade=facade)
 
         weak_lattice = weak_poset
 
@@ -548,9 +555,9 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             - `c` -- a Coxeter element of ``self`` (as a tuple, or
               as an element of ``self``)
 
-            - `m` -- a positive integer (optional, default 1)
+            - `m` -- a positive integer (default: 1)
 
-            - ``on_roots`` (optional, default ``False``) -- if
+            - ``on_roots`` (default: ``False``) -- if
               ``on_roots`` is ``True``, the lattice is realized on
               roots rather than on reflections. In order for this to
               work, the ElementMethod ``reflection_to_root`` must be
@@ -566,11 +573,11 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             """
             from sage.combinat.posets.lattices import LatticePoset
             if hasattr(c, "reduced_word"):
-               c = c.reduced_word()
+                c = c.reduced_word()
             c = list(c)
 
             sorting_word = self.long_element().coxeter_sorting_word(c)
-            
+
             if on_roots:
                 if not hasattr(self.long_element(), "reflection_to_root"):
                     raise ValueError("The parameter 'on_root=True' needs "
@@ -584,13 +591,13 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 inv_woc = self.inversion_sequence(sorting_word)
                 S = self.simple_reflections()
                 T = self.reflections_from_w0()
-                Twords = {t : t.reduced_word() for t in T}
+                Twords = {t: t.reduced_word() for t in T}
 
             elements = set()
             covers = []
 
             bottom_elt = frozenset((s, 0) for s in S)
-            new = set([bottom_elt])
+            new = {bottom_elt}
             while new:
                 new_element = new.pop()
                 elements.add(new_element)
@@ -637,7 +644,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             - ``c`` -- a standard Coxeter element in ``self``
               (as a tuple, or as an element of ``self``)
 
-            - ``on_roots`` (optional, default ``False``) -- if
+            - ``on_roots`` (default: ``False``) -- if
               ``on_roots`` is ``True``, the lattice is realized on
               roots rather than on reflections. In order for this to
               work, the ElementMethod ``reflection_to_root`` must be
@@ -742,16 +749,196 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 from sage.rings.integer_ring import ZZ
                 point = [ZZ.one()] * n
             v = sum(point[i-1] * weights[i] for i in weights.keys())
-            from sage.geometry.polyhedron.constructor import Polyhedron
-            from sage.rings.qqbar import AA, QQbar
-            from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
             vertices = [v*w for w in self]
-            if base_ring is None and v.base_ring() in [UniversalCyclotomicField(), QQbar]:
-                vertices = [v.change_ring(AA) for v in vertices]
-                base_ring = AA
+            if base_ring is None:
+                if isinstance(v.base_ring(), (sage.rings.abc.UniversalCyclotomicField,
+                                              sage.rings.abc.AlgebraicField_common)):
+                    from sage.rings.qqbar import AA
+                    vertices = [v.change_ring(AA) for v in vertices]
+                    base_ring = AA
+            from sage.geometry.polyhedron.constructor import Polyhedron
             return Polyhedron(vertices=vertices, base_ring=base_ring)
 
+        def coxeter_poset(self):
+            r"""
+            Return the Coxeter poset of ``self``.
+
+            Let `W` be a Coxeter group. The *Coxeter poset* is defined as
+            the set of (right) standard cosets `gW_J`, where `J` is a
+            subset of the index set `I` of `W`, ordered by reverse inclusion.
+
+            This is equal to the face poset of the :meth:`Coxeter complex
+            <coxeter_complex()>`.
+
+            EXAMPLES::
+
+                sage: W = CoxeterGroup(['A', 3])
+                sage: P = W.coxeter_poset()
+                sage: P
+                Finite meet-semilattice containing 75 elements
+                sage: P.rank()
+                3
+
+                sage: W = WeylGroup(['B', 3])
+                sage: P = W.coxeter_poset()
+                sage: P
+                Finite meet-semilattice containing 147 elements
+                sage: P.rank()
+                3
+
+                sage: W = CoxeterGroup(['I', 7])
+                sage: P = W.coxeter_poset()
+                sage: P
+                Finite meet-semilattice containing 29 elements
+                sage: P.rank()
+                2
+
+                sage: W = CoxeterGroup(['H', 3])
+                sage: P = W.coxeter_poset()
+                sage: P
+                Finite meet-semilattice containing 363 elements
+                sage: P.rank()
+                3
+
+                sage: # optional - gap3
+                sage: W = CoxeterGroup(['H', 3], implementation="permutation")
+                sage: P = W.coxeter_poset()
+                sage: P
+                Finite meet-semilattice containing 363 elements
+                sage: P.rank()
+                3
+            """
+            I = self.index_set()
+            data = {}
+            next_level = {(g, ()) for g in self}
+            while next_level:
+                cur = next_level
+                next_level = set()
+                for Y in cur:
+                    g, J = Y
+                    for i in I:
+                        if i in J:
+                            continue
+                        Jp = tuple(sorted(J + (i,)))
+                        gp = g.coset_representative(Jp, side='right')
+                        X = (gp, Jp)
+                        if X in data:
+                            data[X].append(Y)
+                        else:
+                            data[X] = [Y]
+                        next_level.add(X)
+            from sage.combinat.posets.lattices import MeetSemilattice
+            return MeetSemilattice(data)
+
+        def coxeter_complex(self):
+            r"""
+            Return the Coxeter complex of ``self``.
+
+            Let `W` be a Coxeter group, and let `X` be the corresponding Tits
+            cone, which is constructed as the `W` orbit of the fundamental
+            chamber in the reflection representation. The *Coxeter complex*
+            of `W` is the simplicial complex `(X \setminus \{0\}) / \RR_{>0}`.
+            The face poset of this simplicial complex is given by the
+            :meth:`coxeter_poset()`. When `W` is a finite group, then the
+            Coxeter complex is homeomorphic to an `(n-1)`-dimensional sphere,
+            where `n` is the rank of `W`.
+
+            EXAMPLES::
+
+                sage: W = CoxeterGroup(['A', 3])
+                sage: C = W.coxeter_complex()
+                sage: C
+                Simplicial complex with 14 vertices and 24 facets
+                sage: C.homology()
+                {0: 0, 1: 0, 2: Z}
+
+                sage: W = WeylGroup(['B', 3])
+                sage: C = W.coxeter_complex()
+                sage: C
+                Simplicial complex with 26 vertices and 48 facets
+                sage: C.homology()
+                {0: 0, 1: 0, 2: Z}
+
+                sage: W = CoxeterGroup(['I', 7])
+                sage: C = W.coxeter_complex()
+                sage: C
+                Simplicial complex with 14 vertices and 14 facets
+                sage: C.homology()
+                {0: 0, 1: Z}
+
+                sage: W = CoxeterGroup(['H', 3])
+                sage: C = W.coxeter_complex()
+                sage: C
+                Simplicial complex with 62 vertices and 120 facets
+                sage: C.homology()
+                {0: 0, 1: 0, 2: Z}
+
+                sage: # optional - gap3
+                sage: W = CoxeterGroup(['H', 3], implementation="permutation")
+                sage: C = W.coxeter_complex()
+                sage: C
+                Simplicial complex with 62 vertices and 120 facets
+                sage: C.homology()
+                {0: 0, 1: 0, 2: Z}
+            """
+            I = self.index_set()
+            facets = {}
+            Ip = {i: tuple([j for j in I if j != i]) for i in I}
+            for g in self:
+                V = []
+                for i in I:
+                    gp = g
+                    D = gp.descents(side='right')
+                    if D and D[0] == i:
+                        D.pop(0)
+                    while D:
+                        gp = gp.apply_simple_reflection(D[0])
+                        D = gp.descents(side='right')
+                        if D and D[0] == i:
+                            D.pop(0)
+                    V.append((gp, Ip[i]))
+                facets[g] = V
+            verts = set()
+            for F in facets.values():
+                verts.update(F)
+            labels = {x: i for i, x in enumerate(verts)}
+            result = [[labels[v] for v in F] for F in facets.values()]
+            from sage.topology.simplicial_complex import SimplicialComplex
+            return SimplicialComplex(result)
+
     class ElementMethods:
+
+        def absolute_length(self):
+            """
+            Return the absolute length of ``self``.
+
+            The absolute length is the length of the shortest expression
+            of the element as a product of reflections. For finite Coxeter
+            groups, the absolute length is the codimension of the
+            1-eigenspace of the element (Lemmas 1-3 in [Car1972a]_).
+
+            For permutations in the symmetric groups, the absolute
+            length is the size minus the number of its disjoint
+            cycles.
+
+            .. SEEALSO::
+
+                :meth:`~sage.categories.coxeter_groups.absolute_le`
+
+            EXAMPLES::
+
+                sage: W = WeylGroup(["A", 3])                                           # needs sage.combinat sage.groups
+                sage: s = W.simple_reflections()                                        # needs sage.combinat sage.groups
+                sage: (s[1]*s[2]*s[3]).absolute_length()                                # needs sage.combinat sage.groups
+                3
+
+                sage: W = SymmetricGroup(4)                                             # needs sage.groups
+                sage: s = W.simple_reflections()                                        # needs sage.groups
+                sage: (s[3]*s[2]*s[1]).absolute_length()                                # needs sage.combinat sage.groups
+                3
+            """
+            M = self.canonical_matrix()
+            return (M - 1).image().dimension()
 
         @cached_in_parent_method
         def bruhat_upper_covers(self):
@@ -786,12 +973,13 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             are those covers of `ws_i` that have a descent at `i`.
             """
 
-            i = self.first_descent(positive=True,side='right')
+            i = self.first_descent(positive=True, side='right')
             if i is not None:
-                wsi = self.apply_simple_reflection(i,side='right')
-                return [u.apply_simple_reflection(i,side='right') for u in wsi.bruhat_upper_covers() if u.has_descent(i,side='right')] + [wsi]
-            else:
-                return []
+                wsi = self.apply_simple_reflection(i, side='right')
+                return [u.apply_simple_reflection(i, side='right')
+                        for u in wsi.bruhat_upper_covers()
+                        if u.has_descent(i, side='right')] + [wsi]
+            return []
 
         def coxeter_knuth_neighbor(self, w):
             r"""
@@ -826,25 +1014,25 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: w.coxeter_knuth_neighbor(word)
                 Traceback (most recent call last):
                 ...
-                NotImplementedError: This has only been implemented in finite type A so far!
+                NotImplementedError: this has only been implemented in finite type A so far
             """
             C = self.parent().cartan_type()
             if not C[0] == 'A':
-                raise NotImplementedError("This has only been implemented in finite type A so far!")
+                raise NotImplementedError("this has only been implemented in finite type A so far")
             d = []
-            for i in range(2,len(w)):
-                v = [j for j in w]
+            for i in range(2, len(w)):
+                v = list(w)
                 if w[i-2] == w[i]:
                     if w[i] == w[i-1] - 1:
                         v[i-2] = w[i-1]
                         v[i] = w[i-1]
                         v[i-1] = w[i]
                         d += [tuple(v)]
-                elif w[i-1]<w[i-2] and w[i-2]<w[i]:
+                elif w[i-1] < w[i-2] and w[i-2] < w[i]:
                     v[i] = w[i-1]
                     v[i-1] = w[i]
                     d += [tuple(v)]
-                elif w[i-2]<w[i] and w[i]<w[i-1]:
+                elif w[i-2] < w[i] and w[i] < w[i-1]:
                     v[i-2] = w[i-1]
                     v[i-1] = w[i-2]
                     d += [tuple(v)]
@@ -862,13 +1050,13 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: W = WeylGroup(['A',4], prefix='s')
                 sage: w = W.from_reduced_word([1,2,1,3,2])
                 sage: D = w.coxeter_knuth_graph()
-                sage: D.vertices()
+                sage: D.vertices(sort=True)
                 [(1, 2, 1, 3, 2),
                 (1, 2, 3, 1, 2),
                 (2, 1, 2, 3, 2),
                 (2, 1, 3, 2, 3),
                 (2, 3, 1, 2, 3)]
-                sage: D.edges()
+                sage: D.edges(sort=True)
                 [((1, 2, 1, 3, 2), (1, 2, 3, 1, 2), None),
                 ((1, 2, 1, 3, 2), (2, 1, 2, 3, 2), None),
                 ((2, 1, 2, 3, 2), (2, 1, 3, 2, 3), None),
@@ -876,9 +1064,9 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
 
                 sage: w = W.from_reduced_word([1,3])
                 sage: D = w.coxeter_knuth_graph()
-                sage: D.vertices()
+                sage: D.vertices(sort=True)
                 [(1, 3), (3, 1)]
-                sage: D.edges()
+                sage: D.edges(sort=False)
                 []
 
             TESTS::
@@ -888,13 +1076,13 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 sage: w.coxeter_knuth_graph()
                 Traceback (most recent call last):
                 ...
-                NotImplementedError: This has only been implemented in finite type A so far!
+                NotImplementedError: this has only been implemented in finite type A so far
             """
-            from sage.graphs.all import Graph
+            from sage.graphs.graph import Graph
             R = [tuple(v) for v in self.reduced_words()]
             G = Graph()
             G.add_vertices(R)
-            G.add_edges([v,vp] for v in R for vp in self.coxeter_knuth_neighbor(v))
+            G.add_edges([v, vp] for v in R for vp in self.coxeter_knuth_neighbor(v))
             return G
 
         def is_coxeter_element(self):

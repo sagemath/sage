@@ -1,31 +1,30 @@
-from __future__ import absolute_import
+# sage_setup: distribution = sagemath-objects
+from sage.structure.factorization import Factorization
 
-from .factorization import Factorization
+from sage.structure.sequence import Sequence, seq
 
-from .sequence      import Sequence, seq
+from sage.structure.unique_representation import UniqueRepresentation
 
-from .unique_representation import UniqueRepresentation
+from sage.structure.sage_object import SageObject
 
-from .sage_object   import SageObject
-
-from .element import (
+from sage.structure.element import (
     canonical_coercion,
     coercion_model,
     get_coercion_model,
     coercion_traceback,
     parent
-    )
+)
 
-from .parent      import Parent
+from sage.structure.parent import Parent
 
-from .parent_base import ParentWithBase
+from sage.structure.parent_gens import localvars
 
-from .parent_gens import ParentWithGens, localvars
+from sage.structure.proof import all as proof
 
-from .proof import all as proof
+from sage.misc.lazy_import import lazy_import
+lazy_import('sage.structure.formal_sum', ['FormalSums', 'FormalSum'])
+del lazy_import
 
-from .formal_sum  import FormalSums, FormalSum
+from sage.structure.mutability import Mutability
 
-from .mutability  import Mutability
-
-from .element_wrapper import ElementWrapper
+from sage.structure.element_wrapper import ElementWrapper

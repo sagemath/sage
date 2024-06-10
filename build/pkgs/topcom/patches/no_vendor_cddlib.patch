@@ -1,0 +1,2189 @@
+diff --git a/INSTALL b/INSTALL
+index 9d4fccc..8865734 100644
+--- a/INSTALL
++++ b/INSTALL
+@@ -1,284 +1,368 @@
+-Remark concerning consistent 32 resp. 64 bit compilation
+-========================================================
++Installation Instructions
++*************************
+ 
+-The easiest way to guarantee consistent compilation is
+-to configure with explicit setting of CFLAGS and CXXFLAGS
+-to "-m32" or "-m64".  This can be achieved by calling
++   Copyright (C) 1994-1996, 1999-2002, 2004-2016 Free Software
++Foundation, Inc.
+ 
+-  ./configure [other-configure-options-see-below] CFLAGS="-m64" CXXFLAGS="-m64"
++   Copying and distribution of this file, with or without modification,
++are permitted in any medium without royalty provided the copyright
++notice and this notice are preserved.  This file is offered as-is,
++without warranty of any kind.
+ 
+-This way, all C/C++-Compilations are carried out with
+-the corresponding compiler flag.
+-
+-
+-Remark concerning external packages gmp, cdd, and qsopt_ex
+-==========================================================
+-
+-If gmp, cddlib, or qsopt_ex are missing on your system then configure will
+-build the version coming with TOPCOM in the `external' subdirectory
+-of the TOPCOM root directory.
+-
+-If $(TOPCOM_DIRECTORY) is the root directory of the TOPCOM package, then
+-the necessary files are installed into
+-  
+-  $(TOPCOM_DIRECTORY)/external/include
+-  $(TOPCOM_DIRECTORY)/external/lib
++Basic Installation
++==================
+ 
++   Briefly, the shell command './configure && make && make install'
++should configure, build, and install this package.  The following
++more-detailed instructions are generic; see the 'README' file for
++instructions specific to this package.  Some packages provide this
++'INSTALL' file but do not implement all of the features documented
++below.  The lack of an optional feature in a given package is not
++necessarily a bug.  More recommendations for GNU packages can be found
++in *note Makefile Conventions: (standards)Makefile Conventions.
+ 
+-Remark concerning the pacakged cddlib LP solver library
+-=======================================================
++   The 'configure' shell script attempts to guess correct values for
++various system-dependent variables used during compilation.  It uses
++those values to create a 'Makefile' in each directory of the package.
++It may also create one or more '.h' files containing system-dependent
++definitions.  Finally, it creates a shell script 'config.status' that
++you can run in the future to recreate the current configuration, and a
++file 'config.log' containing compiler output (useful mainly for
++debugging 'configure').
++
++   It can also use an optional file (typically called 'config.cache' and
++enabled with '--cache-file=config.cache' or simply '-C') that saves the
++results of its tests to speed up reconfiguring.  Caching is disabled by
++default to prevent problems with accidental use of stale cache files.
+ 
+-The packaaged LP solver in cddlib is not thread-safe out of the box.
+-Therefore, the version packaged with TOPCOM has been patched to version
+-0.94j-TOPCOM.  This patched version will be compiled with C++ and
+-has thread_local global variables.  This is enough to make cddlib
+-threadsafe, thus, parallel enumeration can be used.
++   If you need to do unusual things to compile the package, please try
++to figure out how 'configure' could check whether to do them, and mail
++diffs or instructions to the address given in the 'README' so they can
++be considered for the next release.  If you are using the cache, and at
++some point 'config.cache' contains results you don't want to keep, you
++may remove or edit it.
++
++   The file 'configure.ac' (or 'configure.in') is used to create
++'configure' by a program called 'autoconf'.  You need 'configure.ac' if
++you want to change it or regenerate 'configure' using a newer version of
++'autoconf'.
++
++   The simplest way to compile this package is:
++
++  1. 'cd' to the directory containing the package's source code and type
++     './configure' to configure the package for your system.
++
++     Running 'configure' might take a while.  While running, it prints
++     some messages telling which features it is checking for.
++
++  2. Type 'make' to compile the package.
++
++  3. Optionally, type 'make check' to run any self-tests that come with
++     the package, generally using the just-built uninstalled binaries.
++
++  4. Type 'make install' to install the programs and any data files and
++     documentation.  When installing into a prefix owned by root, it is
++     recommended that the package be configured and built as a regular
++     user, and only the 'make install' phase executed with root
++     privileges.
++
++  5. Optionally, type 'make installcheck' to repeat any self-tests, but
++     this time using the binaries in their final installed location.
++     This target does not install anything.  Running this target as a
++     regular user, particularly if the prior 'make install' required
++     root privileges, verifies that the installation completed
++     correctly.
++
++  6. You can remove the program binaries and object files from the
++     source code directory by typing 'make clean'.  To also remove the
++     files that 'configure' created (so you can compile the package for
++     a different kind of computer), type 'make distclean'.  There is
++     also a 'make maintainer-clean' target, but that is intended mainly
++     for the package's developers.  If you use it, you may have to get
++     all sorts of other programs in order to regenerate files that came
++     with the distribution.
+ 
++  7. Often, you can also type 'make uninstall' to remove the installed
++     files again.  In practice, not all packages have tested that
++     uninstallation works correctly, even though it is required by the
++     GNU Coding Standards.
+ 
+-Remark concerning the pacakged qsopt_ex LP solver library
+-=========================================================
++  8. Some packages, particularly those that use Automake, provide 'make
++     distcheck', which can by used by developers to test that all other
++     targets like 'make install' and 'make uninstall' work correctly.
++     This target is generally not run by end users.
+ 
+-Configuring with option
++Compilers and Options
++=====================
+ 
+-  ./configure --enable-qsoptex
++   Some systems require unusual options for compilation or linking that
++the 'configure' script does not know about.  Run './configure --help'
++for details on some of the pertinent environment variables.
+ 
+-compiles a binary with QSOpt_ex support.
++   You can give 'configure' initial values for configuration parameters
++by setting variables in the command line or in the environment.  Here is
++an example:
+ 
+-The packaaged LP solver QSOpt_ex is very fast but not threadsafe.
+-Therefore, if you use it (option --qsoptex), then no parallel enumeration
+-will be carried out.  Still, the internal memory managament
+-of qsopt_ex may core-dump at the very end of the run.
+-I have no idea why.  This all happens after the TOPCOM computations
+-have finished.  So, the results should be ok anyway.
++     ./configure CC=c99 CFLAGS=-g LIBS=-lposix
+ 
++   *Note Defining Variables::, for more details.
+ 
+-Remark concerning the soplex LP solver library (versions >= 6.0.0)
+-==================================================================
++Compiling For Multiple Architectures
++====================================
+ 
+-The academic licence of soplex does not allow a common delivery within
+-the TOPCOM package.  Therefore, if you want to use soplex you must 
+-install it in a place where it can be found by the compiler and
+-the linker.  This is slightly tedious but rewarding, since
+-soplex is faster than cddlib.
++   You can compile the package for more than one kind of computer at the
++same time, by placing the object files for each architecture in their
++own directory.  To do this, you can use GNU 'make'.  'cd' to the
++directory where you want the object files and executables to go and run
++the 'configure' script.  'configure' automatically checks for the source
++code in the directory that 'configure' is in and in '..'.  This is known
++as a "VPATH" build.
++
++   With a non-GNU 'make', it is safer to compile the package for one
++architecture at a time in the source code directory.  After you have
++installed the package for one architecture, use 'make distclean' before
++reconfiguring for another architecture.
++
++   On MacOS X 10.5 and later systems, you can create libraries and
++executables that work on multiple system types--known as "fat" or
++"universal" binaries--by specifying multiple '-arch' options to the
++compiler but only a single '-arch' option to the preprocessor.  Like
++this:
+ 
+-Using soplex requires libsoplex.a in ${TOPCOM_DIRECTORY}/external/lib and
+-all the soplex includes in ${TOPCOM_DIRECTORY}/external/include.
+-As  6.0.0 of soplex, the boost includes are required in the same place.
+-This changed, e.g., the access to the underlying gmp rationals.
+-Therefore, versions of soplex prior to 6.0.0 are not supported out
+-of the box.
++     ./configure CC="gcc -arch i386 -arch x86_64 -arch ppc -arch ppc64" \
++                 CXX="g++ -arch i386 -arch x86_64 -arch ppc -arch ppc64" \
++                 CPP="gcc -E" CXXCPP="g++ -E"
+ 
+-In order to use soplex, I recommend to place symbolic links in
+-${TOPCOM_DIRECTORY}/external/lib to the libraries and all the soplex includes
+-in ${TOPCOM_DIRECTORY}/external/include.
+-(This method supports that non-superusers can install TOPCOM locally
+-without the help of a system-administrator.)
++   This is not guaranteed to produce working output in all cases, you
++may have to build one architecture at a time and combine the results
++using the 'lipo' tool if you have problems.
+ 
+-Summarized, if you have the includes and the libs of soplex 6.0.0
+-or later below ${SOPLEX_INCLUDES_DIR} and ${SOPLEX_LIBS_DIR}, resp.,
+-and boost below ${BOOST_INCLUDES_DIR}, then you can start with
++Installation Names
++==================
+ 
+-  ./configure --enable-soplex
++   By default, 'make install' installs the package's commands under
++'/usr/local/bin', include files under '/usr/local/include', etc.  You
++can specify an installation prefix other than '/usr/local' by giving
++'configure' the option '--prefix=PREFIX', where PREFIX must be an
++absolute file name.
+ 
+-to activate the soplex support in TOPCOM.  Then you can place
+-the symbolic links by
++   You can specify separate installation prefixes for
++architecture-specific files and architecture-independent files.  If you
++pass the option '--exec-prefix=PREFIX' to 'configure', the package uses
++PREFIX as the prefix for installing programs and libraries.
++Documentation and other data files still use the regular prefix.
+ 
+-  cd ${TOPCOM_DIRECTORY}/external/
+-  cd include
+-  ln -s ${SOPLEX_INCLUDES_DIR}/soplex* .
+-  ln -s ${BOOST_INCLUDES_DIR}/boost .
+-  cd ../lib
+-  ln -s ${SOPLEX_LIBS_DIR}/libsoplex*.a .
+-  cd ../..
++   In addition, if you use an unusual directory layout you can give
++options like '--bindir=DIR' to specify different values for particular
++kinds of files.  Run 'configure --help' for a list of the directories
++you can set and what kinds of files go in them.  In general, the default
++for these options is expressed in terms of '${prefix}', so that
++specifying just '--prefix' will affect all of the other directory
++specifications that were not explicitly provided.
++
++   The most portable way to affect installation locations is to pass the
++correct locations to 'configure'; however, many packages provide one or
++both of the following shortcuts of passing variable assignments to the
++'make install' command line to change installation locations without
++having to reconfigure or recompile.
++
++   The first method involves providing an override variable for each
++affected directory.  For example, 'make install
++prefix=/alternate/directory' will choose an alternate location for all
++directory configuration variables that were expressed in terms of
++'${prefix}'.  Any directories that were specified during 'configure',
++but not in terms of '${prefix}', must each be overridden at install time
++for the entire installation to be relocated.  The approach of makefile
++variable overrides for each directory variable is required by the GNU
++Coding Standards, and ideally causes no recompilation.  However, some
++platforms have known limitations with the semantics of shared libraries
++that end up requiring recompilation when using this method, particularly
++noticeable in packages that use GNU Libtool.
++
++   The second method involves providing the 'DESTDIR' variable.  For
++example, 'make install DESTDIR=/alternate/directory' will prepend
++'/alternate/directory' before all installation names.  The approach of
++'DESTDIR' overrides is not required by the GNU Coding Standards, and
++does not work on platforms that have drive letters.  On the other hand,
++it does better at avoiding recompilation issues, and works well even
++when some directory options were not specified in terms of '${prefix}'
++at 'configure' time.
+ 
+-to link the includes and libraries to the right place where TOPCOM can
+-find them.  Finally, just
++Optional Features
++=================
+ 
+-  make
+-  make install
++   If the package supports it, you can cause programs to be installed
++with an extra prefix or suffix on their names by giving 'configure' the
++option '--program-prefix=PREFIX' or '--program-suffix=SUFFIX'.
++
++   Some packages pay attention to '--enable-FEATURE' options to
++'configure', where FEATURE indicates an optional part of the package.
++They may also pay attention to '--with-PACKAGE' options, where PACKAGE
++is something like 'gnu-as' or 'x' (for the X Window System).  The
++'README' should mention any '--enable-' and '--with-' options that the
++package recognizes.
+ 
+-and you are set.
++   For packages that use the X Window System, 'configure' can usually
++find the X include and library files automatically, but if it doesn't,
++you can use the 'configure' options '--x-includes=DIR' and
++'--x-libraries=DIR' to specify their locations.
+ 
++   Some packages offer the ability to configure how verbose the
++execution of 'make' will be.  For these packages, running './configure
++--enable-silent-rules' sets the default to minimal output, which can be
++overridden with 'make V=1'; while running './configure
++--disable-silent-rules' sets the default to verbose, which can be
++overridden with 'make V=0'.
+ 
+-Basic Installation
++Particular systems
+ ==================
+ 
+-   These are generic installation instructions.
++   On HP-UX, the default C compiler is not ANSI C compatible.  If GNU CC
++is not installed, it is recommended to use the following options in
++order to use an ANSI C compiler:
+ 
+-   The `configure' shell script attempts to guess correct values for
+-various system-dependent variables used during compilation.  It uses
+-those values to create a `Makefile' in each directory of the package.
+-It may also create one or more `.h' files containing system-dependent
+-definitions.  Finally, it creates a shell script `config.status' that
+-you can run in the future to recreate the current configuration, a file
+-`config.cache' that saves the results of its tests to speed up
+-reconfiguring, and a file `config.log' containing compiler output
+-(useful mainly for debugging `configure').
++     ./configure CC="cc -Ae -D_XOPEN_SOURCE=500"
+ 
+-   If you need to do unusual things to compile the package, please try
+-to figure out how `configure' could check whether to do them, and mail
+-diffs or instructions to the address given in the `README' so they can
+-be considered for the next release.  If at some point `config.cache'
+-contains results you don't want to keep, you may remove or edit it.
++and if that doesn't work, install pre-built binaries of GCC for HP-UX.
+ 
+-   The file `configure.in' is used to create `configure' by a program
+-called `autoconf'.  You only need `configure.in' if you want to change
+-it or regenerate `configure' using a newer version of `autoconf'.
++   HP-UX 'make' updates targets which have the same time stamps as their
++prerequisites, which makes it generally unusable when shipped generated
++files such as 'configure' are involved.  Use GNU 'make' instead.
+ 
+-The simplest way to compile this package is:
++   On OSF/1 a.k.a. Tru64, some versions of the default C compiler cannot
++parse its '<wchar.h>' header file.  The option '-nodtk' can be used as a
++workaround.  If GNU CC is not installed, it is therefore recommended to
++try
+ 
+-  1. `cd' to the directory containing the package's source code and type
+-     `./configure' to configure the package for your system.  If you're
+-     using `csh' on an old version of System V, you might need to type
+-     `sh ./configure' instead to prevent `csh' from trying to execute
+-     `configure' itself.
++     ./configure CC="cc"
+ 
+-     Running `configure' takes awhile.  While running, it prints some
+-     messages telling which features it is checking for.
++and if that doesn't work, try
+ 
+-  2. Type `make' to compile the package.
++     ./configure CC="cc -nodtk"
+ 
+-  3. Optionally, type `make check' to run any self-tests that come with
+-     the package.
++   On Solaris, don't put '/usr/ucb' early in your 'PATH'.  This
++directory contains several dysfunctional programs; working variants of
++these programs are available in '/usr/bin'.  So, if you need '/usr/ucb'
++in your 'PATH', put it _after_ '/usr/bin'.
+ 
+-  4. Type `make install' to install the programs and any data files and
+-     documentation.
++   On Haiku, software installed for all users goes in '/boot/common',
++not '/usr/local'.  It is recommended to use the following options:
+ 
+-  5. You can remove the program binaries and object files from the
+-     source code directory by typing `make clean'.  To also remove the
+-     files that `configure' created (so you can compile the package for
+-     a different kind of computer), type `make distclean'.  There is
+-     also a `make maintainer-clean' target, but that is intended mainly
+-     for the package's developers.  If you use it, you may have to get
+-     all sorts of other programs in order to regenerate files that came
+-     with the distribution.
++     ./configure --prefix=/boot/common
+ 
+-Compilers and Options
+-=====================
+-
+-   Some systems require unusual options for compilation or linking that
+-the `configure' script does not know about.  You can give `configure'
+-initial values for variables by setting them in the environment.  Using
+-a Bourne-compatible shell, you can do that on the command line like
+-this:
+-     CC=c89 CFLAGS=-O2 LIBS=-lposix ./configure
++Specifying the System Type
++==========================
+ 
+-Or on systems that have the `env' program, you can do it like this:
+-     env CPPFLAGS=-I/usr/local/include LDFLAGS=-s ./configure
++   There may be some features 'configure' cannot figure out
++automatically, but needs to determine by the type of machine the package
++will run on.  Usually, assuming the package is built to be run on the
++_same_ architectures, 'configure' can figure that out, but if it prints
++a message saying it cannot guess the machine type, give it the
++'--build=TYPE' option.  TYPE can either be a short name for the system
++type, such as 'sun4', or a canonical name which has the form:
+ 
+-Compiling For Multiple Architectures
+-====================================
++     CPU-COMPANY-SYSTEM
+ 
+-   You can compile the package for more than one kind of computer at the
+-same time, by placing the object files for each architecture in their
+-own directory.  To do this, you must use a version of `make' that
+-supports the `VPATH' variable, such as GNU `make'.  `cd' to the
+-directory where you want the object files and executables to go and run
+-the `configure' script.  `configure' automatically checks for the
+-source code in the directory that `configure' is in and in `..'.
++where SYSTEM can have one of these forms:
+ 
+-   If you have to use a `make' that does not supports the `VPATH'
+-variable, you have to compile the package for one architecture at a time
+-in the source code directory.  After you have installed the package for
+-one architecture, use `make distclean' before reconfiguring for another
+-architecture.
++     OS
++     KERNEL-OS
+ 
+-Installation Names
+-==================
++   See the file 'config.sub' for the possible values of each field.  If
++'config.sub' isn't included in this package, then this package doesn't
++need to know the machine type.
+ 
+-   By default, `make install' will install the package's files in
+-`/usr/local/bin', `/usr/local/man', etc.  You can specify an
+-installation prefix other than `/usr/local' by giving `configure' the
+-option `--prefix=PATH'.
++   If you are _building_ compiler tools for cross-compiling, you should
++use the option '--target=TYPE' to select the type of system they will
++produce code for.
+ 
+-   You can specify separate installation prefixes for
+-architecture-specific files and architecture-independent files.  If you
+-give `configure' the option `--exec-prefix=PATH', the package will use
+-PATH as the prefix for installing programs and libraries.
+-Documentation and other data files will still use the regular prefix.
++   If you want to _use_ a cross compiler, that generates code for a
++platform different from the build platform, you should specify the
++"host" platform (i.e., that on which the generated programs will
++eventually be run) with '--host=TYPE'.
+ 
+-   In addition, if you use an unusual directory layout you can give
+-options like `--bindir=PATH' to specify different values for particular
+-kinds of files.  Run `configure --help' for a list of the directories
+-you can set and what kinds of files go in them.
++Sharing Defaults
++================
+ 
+-   If the package supports it, you can cause programs to be installed
+-with an extra prefix or suffix on their names by giving `configure' the
+-option `--program-prefix=PREFIX' or `--program-suffix=SUFFIX'.
++   If you want to set default values for 'configure' scripts to share,
++you can create a site shell script called 'config.site' that gives
++default values for variables like 'CC', 'cache_file', and 'prefix'.
++'configure' looks for 'PREFIX/share/config.site' if it exists, then
++'PREFIX/etc/config.site' if it exists.  Or, you can set the
++'CONFIG_SITE' environment variable to the location of the site script.
++A warning: not all 'configure' scripts look for a site script.
+ 
+-Optional Features
+-=================
++Defining Variables
++==================
+ 
+-   Some packages pay attention to `--enable-FEATURE' options to
+-`configure', where FEATURE indicates an optional part of the package.
+-They may also pay attention to `--with-PACKAGE' options, where PACKAGE
+-is something like `gnu-as' or `x' (for the X Window System).  The
+-`README' should mention any `--enable-' and `--with-' options that the
+-package recognizes.
++   Variables not defined in a site shell script can be set in the
++environment passed to 'configure'.  However, some packages may run
++configure again during the build, and the customized values of these
++variables may be lost.  In order to avoid this problem, you should set
++them in the 'configure' command line, using 'VAR=value'.  For example:
+ 
+-   For packages that use the X Window System, `configure' can usually
+-find the X include and library files automatically, but if it doesn't,
+-you can use the `configure' options `--x-includes=DIR' and
+-`--x-libraries=DIR' to specify their locations.
++     ./configure CC=/usr/local2/bin/gcc
+ 
+-Specifying the System Type
+-==========================
++causes the specified 'gcc' to be used as the C compiler (unless it is
++overridden in the site shell script).
+ 
+-   There may be some features `configure' can not figure out
+-automatically, but needs to determine by the type of host the package
+-will run on.  Usually `configure' can figure that out, but if it prints
+-a message saying it can not guess the host type, give it the
+-`--host=TYPE' option.  TYPE can either be a short name for the system
+-type, such as `sun4', or a canonical name with three fields:
+-     CPU-COMPANY-SYSTEM
++Unfortunately, this technique does not work for 'CONFIG_SHELL' due to an
++Autoconf limitation.  Until the limitation is lifted, you can use this
++workaround:
+ 
+-See the file `config.sub' for the possible values of each field.  If
+-`config.sub' isn't included in this package, then this package doesn't
+-need to know the host type.
++     CONFIG_SHELL=/bin/bash ./configure CONFIG_SHELL=/bin/bash
+ 
+-   If you are building compiler tools for cross-compiling, you can also
+-use the `--target=TYPE' option to select the type of system they will
+-produce code for and the `--build=TYPE' option to select the type of
+-system on which you are compiling the package.
++'configure' Invocation
++======================
+ 
+-Sharing Defaults
+-================
++   'configure' recognizes the following options to control how it
++operates.
+ 
+-   If you want to set default values for `configure' scripts to share,
+-you can create a site shell script called `config.site' that gives
+-default values for variables like `CC', `cache_file', and `prefix'.
+-`configure' looks for `PREFIX/share/config.site' if it exists, then
+-`PREFIX/etc/config.site' if it exists.  Or, you can set the
+-`CONFIG_SITE' environment variable to the location of the site script.
+-A warning: not all `configure' scripts look for a site script.
++'--help'
++'-h'
++     Print a summary of all of the options to 'configure', and exit.
+ 
+-Operation Controls
+-==================
++'--help=short'
++'--help=recursive'
++     Print a summary of the options unique to this package's
++     'configure', and exit.  The 'short' variant lists options used only
++     in the top level, while the 'recursive' variant lists options also
++     present in any nested packages.
+ 
+-   `configure' recognizes the following options to control how it
+-operates.
++'--version'
++'-V'
++     Print the version of Autoconf used to generate the 'configure'
++     script, and exit.
+ 
+-`--cache-file=FILE'
+-     Use and save the results of the tests in FILE instead of
+-     `./config.cache'.  Set FILE to `/dev/null' to disable caching, for
+-     debugging `configure'.
++'--cache-file=FILE'
++     Enable the cache: use and save the results of the tests in FILE,
++     traditionally 'config.cache'.  FILE defaults to '/dev/null' to
++     disable caching.
+ 
+-`--help'
+-     Print a summary of the options to `configure', and exit.
++'--config-cache'
++'-C'
++     Alias for '--cache-file=config.cache'.
+ 
+-`--quiet'
+-`--silent'
+-`-q'
++'--quiet'
++'--silent'
++'-q'
+      Do not print messages saying which checks are being made.  To
+-     suppress all normal output, redirect it to `/dev/null' (any error
++     suppress all normal output, redirect it to '/dev/null' (any error
+      messages will still be shown).
+ 
+-`--srcdir=DIR'
++'--srcdir=DIR'
+      Look for the package's source code in directory DIR.  Usually
+-     `configure' can determine that directory automatically.
++     'configure' can determine that directory automatically.
+ 
+-`--version'
+-     Print the version of Autoconf used to generate the `configure'
+-     script, and exit.
++'--prefix=DIR'
++     Use DIR as the installation prefix.  *note Installation Names:: for
++     more details, including other options available for fine-tuning the
++     installation locations.
++
++'--no-create'
++'-n'
++     Run the configure checks, but stop before creating any output
++     files.
+ 
+-`configure' also accepts some other, not widely useful, options.
++'configure' also accepts some other, not widely useful, options.  Run
++'configure --help' for more details.
+diff --git a/Makefile.am b/Makefile.am
+index 17f6960..992689e 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -1,7 +1,5 @@
+ SUBDIRS      = wrap-gmp-gmpxx lib-src-reg lib-src src-reg src examples share
+ EXTRA_DIST   = external/Makefile
+-EXTRA_DIST  += external/gmp-6.2.1.tar.bz2
+-EXTRA_DIST  += external/cddlib-0.94j-TOPCOMb.tar.gz
+ EXTRA_DIST  += external/qsopt_ex-2.5.10.3.tar.gz
+ EXTRA_DIST  += external/gmpxx-patch
+ 
+diff --git a/Makefile.in b/Makefile.in
+index b9902f5..93002b8 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -1,7 +1,7 @@
+-# Makefile.in generated by automake 1.16.1 from Makefile.am.
++# Makefile.in generated by automake 1.16.2 from Makefile.am.
+ # @configure_input@
+ 
+-# Copyright (C) 1994-2018 Free Software Foundation, Inc.
++# Copyright (C) 1994-2020 Free Software Foundation, Inc.
+ 
+ # This Makefile.in is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+@@ -211,6 +211,7 @@ AWK = @AWK@
+ CC = @CC@
+ CCDEPMODE = @CCDEPMODE@
+ CFLAGS = @CFLAGS@
++CPP = @CPP@
+ CPPFLAGS = @CPPFLAGS@
+ CXX = @CXX@
+ CXXCPP = @CXXCPP@
+@@ -286,6 +287,7 @@ pdfdir = @pdfdir@
+ prefix = @prefix@
+ program_transform_name = @program_transform_name@
+ psdir = @psdir@
++runstatedir = @runstatedir@
+ sbindir = @sbindir@
+ sharedstatedir = @sharedstatedir@
+ srcdir = @srcdir@
+@@ -295,9 +297,8 @@ top_build_prefix = @top_build_prefix@
+ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+ SUBDIRS = wrap-gmp-gmpxx lib-src-reg lib-src src-reg src examples share
+-EXTRA_DIST = external/Makefile external/gmp-6.2.1.tar.bz2 \
+-	external/cddlib-0.94j-TOPCOMb.tar.gz \
+-	external/qsopt_ex-2.5.10.3.tar.gz external/gmpxx-patch
++EXTRA_DIST = external/Makefile external/qsopt_ex-2.5.10.3.tar.gz \
++	external/gmpxx-patch
+ all: all-recursive
+ 
+ .SUFFIXES:
+@@ -524,6 +525,10 @@ dist-xz: distdir
+ 	tardir=$(distdir) && $(am__tar) | XZ_OPT=$${XZ_OPT--e} xz -c >$(distdir).tar.xz
+ 	$(am__post_remove_distdir)
+ 
++dist-zstd: distdir
++	tardir=$(distdir) && $(am__tar) | zstd -c $${ZSTD_CLEVEL-$${ZSTD_OPT--19}} >$(distdir).tar.zst
++	$(am__post_remove_distdir)
++
+ dist-tarZ: distdir
+ 	@echo WARNING: "Support for distribution archives compressed with" \
+ 		       "legacy program 'compress' is deprecated." >&2
+@@ -566,6 +571,8 @@ distcheck: dist
+ 	  eval GZIP= gzip $(GZIP_ENV) -dc $(distdir).shar.gz | unshar ;;\
+ 	*.zip*) \
+ 	  unzip $(distdir).zip ;;\
++	*.tar.zst*) \
++	  zstd -dc $(distdir).tar.zst | $(am__untar) ;;\
+ 	esac
+ 	chmod -R a-w $(distdir)
+ 	chmod u+w $(distdir)
+@@ -742,7 +749,7 @@ uninstall-am:
+ 	am--refresh check check-am clean clean-cscope clean-generic \
+ 	cscope cscopelist-am ctags ctags-am dist dist-all dist-bzip2 \
+ 	dist-gzip dist-lzip dist-shar dist-tarZ dist-xz dist-zip \
+-	distcheck distclean distclean-generic distclean-tags \
++	dist-zstd distcheck distclean distclean-generic distclean-tags \
+ 	distcleancheck distdir distuninstallcheck dvi dvi-am html \
+ 	html-am info info-am install install-am install-data \
+ 	install-data-am install-dvi install-dvi-am install-exec \
+diff --git a/aclocal.m4 b/aclocal.m4
+index 8c6b78f..e4b15fc 100644
+--- a/aclocal.m4
++++ b/aclocal.m4
+@@ -1,6 +1,6 @@
+-# generated automatically by aclocal 1.16.1 -*- Autoconf -*-
++# generated automatically by aclocal 1.16.2 -*- Autoconf -*-
+ 
+-# Copyright (C) 1996-2018 Free Software Foundation, Inc.
++# Copyright (C) 1996-2020 Free Software Foundation, Inc.
+ 
+ # This file is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+@@ -20,7 +20,7 @@ You have another version of autoconf.  It may work, but is not guaranteed to.
+ If you have problems, you may need to regenerate the build system entirely.
+ To do so, use the procedure documented by the package, typically 'autoreconf'.])])
+ 
+-# Copyright (C) 2002-2018 Free Software Foundation, Inc.
++# Copyright (C) 2002-2020 Free Software Foundation, Inc.
+ #
+ # This file is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+@@ -35,7 +35,7 @@ AC_DEFUN([AM_AUTOMAKE_VERSION],
+ [am__api_version='1.16'
+ dnl Some users find AM_AUTOMAKE_VERSION and mistake it for a way to
+ dnl require some minimum version.  Point them to the right macro.
+-m4_if([$1], [1.16.1], [],
++m4_if([$1], [1.16.2], [],
+       [AC_FATAL([Do not call $0, use AM_INIT_AUTOMAKE([$1]).])])dnl
+ ])
+ 
+@@ -51,14 +51,14 @@ m4_define([_AM_AUTOCONF_VERSION], [])
+ # Call AM_AUTOMAKE_VERSION and AM_AUTOMAKE_VERSION so they can be traced.
+ # This function is AC_REQUIREd by AM_INIT_AUTOMAKE.
+ AC_DEFUN([AM_SET_CURRENT_AUTOMAKE_VERSION],
+-[AM_AUTOMAKE_VERSION([1.16.1])dnl
++[AM_AUTOMAKE_VERSION([1.16.2])dnl
+ m4_ifndef([AC_AUTOCONF_VERSION],
+   [m4_copy([m4_PACKAGE_VERSION], [AC_AUTOCONF_VERSION])])dnl
+ _AM_AUTOCONF_VERSION(m4_defn([AC_AUTOCONF_VERSION]))])
+ 
+ # AM_AUX_DIR_EXPAND                                         -*- Autoconf -*-
+ 
+-# Copyright (C) 2001-2018 Free Software Foundation, Inc.
++# Copyright (C) 2001-2020 Free Software Foundation, Inc.
+ #
+ # This file is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+@@ -110,7 +110,7 @@ am_aux_dir=`cd "$ac_aux_dir" && pwd`
+ 
+ # AM_CONDITIONAL                                            -*- Autoconf -*-
+ 
+-# Copyright (C) 1997-2018 Free Software Foundation, Inc.
++# Copyright (C) 1997-2020 Free Software Foundation, Inc.
+ #
+ # This file is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+@@ -141,7 +141,7 @@ AC_CONFIG_COMMANDS_PRE(
+ Usually this means the macro was only invoked conditionally.]])
+ fi])])
+ 
+-# Copyright (C) 1999-2018 Free Software Foundation, Inc.
++# Copyright (C) 1999-2020 Free Software Foundation, Inc.
+ #
+ # This file is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+@@ -332,7 +332,7 @@ _AM_SUBST_NOTMAKE([am__nodep])dnl
+ 
+ # Generate code to set up dependency tracking.              -*- Autoconf -*-
+ 
+-# Copyright (C) 1999-2018 Free Software Foundation, Inc.
++# Copyright (C) 1999-2020 Free Software Foundation, Inc.
+ #
+ # This file is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+@@ -371,7 +371,9 @@ AC_DEFUN([_AM_OUTPUT_DEPENDENCY_COMMANDS],
+   done
+   if test $am_rc -ne 0; then
+     AC_MSG_FAILURE([Something went wrong bootstrapping makefile fragments
+-    for automatic dependency tracking.  Try re-running configure with the
++    for automatic dependency tracking.  If GNU make was not used, consider
++    re-running the configure script with MAKE="gmake" (or whatever is
++    necessary).  You can also try re-running configure with the
+     '--disable-dependency-tracking' option to at least be able to build
+     the package (albeit without support for automatic dependency tracking).])
+   fi
+@@ -398,7 +400,7 @@ AC_DEFUN([AM_OUTPUT_DEPENDENCY_COMMANDS],
+ 
+ # Do all the work for Automake.                             -*- Autoconf -*-
+ 
+-# Copyright (C) 1996-2018 Free Software Foundation, Inc.
++# Copyright (C) 1996-2020 Free Software Foundation, Inc.
+ #
+ # This file is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+@@ -595,7 +597,7 @@ for _am_header in $config_headers :; do
+ done
+ echo "timestamp for $_am_arg" >`AS_DIRNAME(["$_am_arg"])`/stamp-h[]$_am_stamp_count])
+ 
+-# Copyright (C) 2001-2018 Free Software Foundation, Inc.
++# Copyright (C) 2001-2020 Free Software Foundation, Inc.
+ #
+ # This file is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+@@ -616,7 +618,7 @@ if test x"${install_sh+set}" != xset; then
+ fi
+ AC_SUBST([install_sh])])
+ 
+-# Copyright (C) 2003-2018 Free Software Foundation, Inc.
++# Copyright (C) 2003-2020 Free Software Foundation, Inc.
+ #
+ # This file is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+@@ -637,7 +639,7 @@ AC_SUBST([am__leading_dot])])
+ 
+ # Check to see how 'make' treats includes.	            -*- Autoconf -*-
+ 
+-# Copyright (C) 2001-2018 Free Software Foundation, Inc.
++# Copyright (C) 2001-2020 Free Software Foundation, Inc.
+ #
+ # This file is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+@@ -680,7 +682,7 @@ AC_SUBST([am__quote])])
+ 
+ # Fake the existence of programs that GNU maintainers use.  -*- Autoconf -*-
+ 
+-# Copyright (C) 1997-2018 Free Software Foundation, Inc.
++# Copyright (C) 1997-2020 Free Software Foundation, Inc.
+ #
+ # This file is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+@@ -719,7 +721,7 @@ fi
+ 
+ # Helper functions for option handling.                     -*- Autoconf -*-
+ 
+-# Copyright (C) 2001-2018 Free Software Foundation, Inc.
++# Copyright (C) 2001-2020 Free Software Foundation, Inc.
+ #
+ # This file is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+@@ -748,7 +750,7 @@ AC_DEFUN([_AM_SET_OPTIONS],
+ AC_DEFUN([_AM_IF_OPTION],
+ [m4_ifset(_AM_MANGLE_OPTION([$1]), [$2], [$3])])
+ 
+-# Copyright (C) 1999-2018 Free Software Foundation, Inc.
++# Copyright (C) 1999-2020 Free Software Foundation, Inc.
+ #
+ # This file is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+@@ -795,7 +797,7 @@ AC_LANG_POP([C])])
+ # For backward compatibility.
+ AC_DEFUN_ONCE([AM_PROG_CC_C_O], [AC_REQUIRE([AC_PROG_CC])])
+ 
+-# Copyright (C) 2001-2018 Free Software Foundation, Inc.
++# Copyright (C) 2001-2020 Free Software Foundation, Inc.
+ #
+ # This file is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+@@ -814,7 +816,7 @@ AC_DEFUN([AM_RUN_LOG],
+ 
+ # Check to make sure that the build environment is sane.    -*- Autoconf -*-
+ 
+-# Copyright (C) 1996-2018 Free Software Foundation, Inc.
++# Copyright (C) 1996-2020 Free Software Foundation, Inc.
+ #
+ # This file is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+@@ -895,7 +897,7 @@ AC_CONFIG_COMMANDS_PRE(
+ rm -f conftest.file
+ ])
+ 
+-# Copyright (C) 2009-2018 Free Software Foundation, Inc.
++# Copyright (C) 2009-2020 Free Software Foundation, Inc.
+ #
+ # This file is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+@@ -955,7 +957,7 @@ AC_SUBST([AM_BACKSLASH])dnl
+ _AM_SUBST_NOTMAKE([AM_BACKSLASH])dnl
+ ])
+ 
+-# Copyright (C) 2001-2018 Free Software Foundation, Inc.
++# Copyright (C) 2001-2020 Free Software Foundation, Inc.
+ #
+ # This file is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+@@ -983,7 +985,7 @@ fi
+ INSTALL_STRIP_PROGRAM="\$(install_sh) -c -s"
+ AC_SUBST([INSTALL_STRIP_PROGRAM])])
+ 
+-# Copyright (C) 2006-2018 Free Software Foundation, Inc.
++# Copyright (C) 2006-2020 Free Software Foundation, Inc.
+ #
+ # This file is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+@@ -1002,7 +1004,7 @@ AC_DEFUN([AM_SUBST_NOTMAKE], [_AM_SUBST_NOTMAKE($@)])
+ 
+ # Check how to create a tarball.                            -*- Autoconf -*-
+ 
+-# Copyright (C) 2004-2018 Free Software Foundation, Inc.
++# Copyright (C) 2004-2020 Free Software Foundation, Inc.
+ #
+ # This file is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+diff --git a/compile b/compile
+index 99e5052..23fcba0 100755
+--- a/compile
++++ b/compile
+@@ -3,7 +3,7 @@
+ 
+ scriptversion=2018-03-07.03; # UTC
+ 
+-# Copyright (C) 1999-2018 Free Software Foundation, Inc.
++# Copyright (C) 1999-2020 Free Software Foundation, Inc.
+ # Written by Tom Tromey <tromey@cygnus.com>.
+ #
+ # This program is free software; you can redistribute it and/or modify
+@@ -53,7 +53,7 @@ func_file_conv ()
+ 	  MINGW*)
+ 	    file_conv=mingw
+ 	    ;;
+-	  CYGWIN*)
++	  CYGWIN* | MSYS*)
+ 	    file_conv=cygwin
+ 	    ;;
+ 	  *)
+@@ -67,7 +67,7 @@ func_file_conv ()
+ 	mingw/*)
+ 	  file=`cmd //C echo "$file " | sed -e 's/"\(.*\) " *$/\1/'`
+ 	  ;;
+-	cygwin/*)
++	cygwin/* | msys/*)
+ 	  file=`cygpath -m "$file" || echo "$file"`
+ 	  ;;
+ 	wine/*)
+diff --git a/configure b/configure
+index 7aebaca..6afa3b8 100755
+--- a/configure
++++ b/configure
+@@ -627,6 +627,7 @@ USE_SOPLEX_FALSE
+ USE_SOPLEX_TRUE
+ USE_QSOPTEX_FALSE
+ USE_QSOPTEX_TRUE
++CPP
+ USE_LOCAL_GMP_FALSE
+ USE_LOCAL_GMP_TRUE
+ EGREP
+@@ -705,6 +706,7 @@ infodir
+ docdir
+ oldincludedir
+ includedir
++runstatedir
+ localstatedir
+ sharedstatedir
+ sysconfdir
+@@ -744,7 +746,8 @@ CPPFLAGS
+ CXX
+ CXXFLAGS
+ CCC
+-CXXCPP'
++CXXCPP
++CPP'
+ 
+ 
+ # Initialize some variables set by options.
+@@ -783,6 +786,7 @@ datadir='${datarootdir}'
+ sysconfdir='${prefix}/etc'
+ sharedstatedir='${prefix}/com'
+ localstatedir='${prefix}/var'
++runstatedir='${localstatedir}/run'
+ includedir='${prefix}/include'
+ oldincludedir='/usr/include'
+ docdir='${datarootdir}/doc/${PACKAGE_TARNAME}'
+@@ -1035,6 +1039,15 @@ do
+   | -silent | --silent | --silen | --sile | --sil)
+     silent=yes ;;
+ 
++  -runstatedir | --runstatedir | --runstatedi | --runstated \
++  | --runstate | --runstat | --runsta | --runst | --runs \
++  | --run | --ru | --r)
++    ac_prev=runstatedir ;;
++  -runstatedir=* | --runstatedir=* | --runstatedi=* | --runstated=* \
++  | --runstate=* | --runstat=* | --runsta=* | --runst=* | --runs=* \
++  | --run=* | --ru=* | --r=*)
++    runstatedir=$ac_optarg ;;
++
+   -sbindir | --sbindir | --sbindi | --sbind | --sbin | --sbi | --sb)
+     ac_prev=sbindir ;;
+   -sbindir=* | --sbindir=* | --sbindi=* | --sbind=* | --sbin=* \
+@@ -1172,7 +1185,7 @@ fi
+ for ac_var in	exec_prefix prefix bindir sbindir libexecdir datarootdir \
+ 		datadir sysconfdir sharedstatedir localstatedir includedir \
+ 		oldincludedir docdir infodir htmldir dvidir pdfdir psdir \
+-		libdir localedir mandir
++		libdir localedir mandir runstatedir
+ do
+   eval ac_val=\$$ac_var
+   # Remove trailing slashes.
+@@ -1325,6 +1338,7 @@ Fine tuning of the installation directories:
+   --sysconfdir=DIR        read-only single-machine data [PREFIX/etc]
+   --sharedstatedir=DIR    modifiable architecture-independent data [PREFIX/com]
+   --localstatedir=DIR     modifiable single-machine data [PREFIX/var]
++  --runstatedir=DIR       modifiable per-process data [LOCALSTATEDIR/run]
+   --libdir=DIR            object code libraries [EPREFIX/lib]
+   --includedir=DIR        C header files [PREFIX/include]
+   --oldincludedir=DIR     C header files for non-gcc [/usr/include]
+@@ -1388,6 +1402,7 @@ Some influential environment variables:
+   CXX         C++ compiler command
+   CXXFLAGS    C++ compiler flags
+   CXXCPP      C++ preprocessor
++  CPP         C preprocessor
+ 
+ Use these variables to override the choices made by `configure' or to help
+ it to find libraries and programs with nonstandard names/locations.
+@@ -1742,6 +1757,130 @@ $as_echo "$ac_res" >&6; }
+ 
+ } # ac_fn_cxx_check_header_compile
+ 
++# ac_fn_c_try_cpp LINENO
++# ----------------------
++# Try to preprocess conftest.$ac_ext, and return whether this succeeded.
++ac_fn_c_try_cpp ()
++{
++  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
++  if { { ac_try="$ac_cpp conftest.$ac_ext"
++case "(($ac_try" in
++  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
++  *) ac_try_echo=$ac_try;;
++esac
++eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
++$as_echo "$ac_try_echo"; } >&5
++  (eval "$ac_cpp conftest.$ac_ext") 2>conftest.err
++  ac_status=$?
++  if test -s conftest.err; then
++    grep -v '^ *+' conftest.err >conftest.er1
++    cat conftest.er1 >&5
++    mv -f conftest.er1 conftest.err
++  fi
++  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
++  test $ac_status = 0; } > conftest.i && {
++	 test -z "$ac_c_preproc_warn_flag$ac_c_werror_flag" ||
++	 test ! -s conftest.err
++       }; then :
++  ac_retval=0
++else
++  $as_echo "$as_me: failed program was:" >&5
++sed 's/^/| /' conftest.$ac_ext >&5
++
++    ac_retval=1
++fi
++  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
++  as_fn_set_status $ac_retval
++
++} # ac_fn_c_try_cpp
++
++# ac_fn_c_check_header_mongrel LINENO HEADER VAR INCLUDES
++# -------------------------------------------------------
++# Tests whether HEADER exists, giving a warning if it cannot be compiled using
++# the include files in INCLUDES and setting the cache variable VAR
++# accordingly.
++ac_fn_c_check_header_mongrel ()
++{
++  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
++  if eval \${$3+:} false; then :
++  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $2" >&5
++$as_echo_n "checking for $2... " >&6; }
++if eval \${$3+:} false; then :
++  $as_echo_n "(cached) " >&6
++fi
++eval ac_res=\$$3
++	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
++$as_echo "$ac_res" >&6; }
++else
++  # Is the header compilable?
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking $2 usability" >&5
++$as_echo_n "checking $2 usability... " >&6; }
++cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++$4
++#include <$2>
++_ACEOF
++if ac_fn_c_try_compile "$LINENO"; then :
++  ac_header_compiler=yes
++else
++  ac_header_compiler=no
++fi
++rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_header_compiler" >&5
++$as_echo "$ac_header_compiler" >&6; }
++
++# Is the header present?
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking $2 presence" >&5
++$as_echo_n "checking $2 presence... " >&6; }
++cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++#include <$2>
++_ACEOF
++if ac_fn_c_try_cpp "$LINENO"; then :
++  ac_header_preproc=yes
++else
++  ac_header_preproc=no
++fi
++rm -f conftest.err conftest.i conftest.$ac_ext
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_header_preproc" >&5
++$as_echo "$ac_header_preproc" >&6; }
++
++# So?  What about this header?
++case $ac_header_compiler:$ac_header_preproc:$ac_c_preproc_warn_flag in #((
++  yes:no: )
++    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $2: accepted by the compiler, rejected by the preprocessor!" >&5
++$as_echo "$as_me: WARNING: $2: accepted by the compiler, rejected by the preprocessor!" >&2;}
++    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $2: proceeding with the compiler's result" >&5
++$as_echo "$as_me: WARNING: $2: proceeding with the compiler's result" >&2;}
++    ;;
++  no:yes:* )
++    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $2: present but cannot be compiled" >&5
++$as_echo "$as_me: WARNING: $2: present but cannot be compiled" >&2;}
++    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $2:     check for missing prerequisite headers?" >&5
++$as_echo "$as_me: WARNING: $2:     check for missing prerequisite headers?" >&2;}
++    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $2: see the Autoconf documentation" >&5
++$as_echo "$as_me: WARNING: $2: see the Autoconf documentation" >&2;}
++    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $2:     section \"Present But Cannot Be Compiled\"" >&5
++$as_echo "$as_me: WARNING: $2:     section \"Present But Cannot Be Compiled\"" >&2;}
++    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $2: proceeding with the compiler's result" >&5
++$as_echo "$as_me: WARNING: $2: proceeding with the compiler's result" >&2;}
++    ;;
++esac
++  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $2" >&5
++$as_echo_n "checking for $2... " >&6; }
++if eval \${$3+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++  eval "$3=\$ac_header_compiler"
++fi
++eval ac_res=\$$3
++	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
++$as_echo "$ac_res" >&6; }
++fi
++  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
++
++} # ac_fn_c_check_header_mongrel
++
+ # ac_fn_c_try_link LINENO
+ # -----------------------
+ # Try to link conftest.$ac_ext, and return whether this succeeded.
+@@ -4801,7 +4940,218 @@ $as_echo "$as_me: gmpxx.h not found on system - building gmp locally ..." >&6;}
+ $as_echo "$as_me: ... done" >&6;}
+ fi
+ 
+-make -C external cdd
++
++ac_ext=c
++ac_cpp='$CPP $CPPFLAGS'
++ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
++ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
++ac_compiler_gnu=$ac_cv_c_compiler_gnu
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking how to run the C preprocessor" >&5
++$as_echo_n "checking how to run the C preprocessor... " >&6; }
++# On Suns, sometimes $CPP names a directory.
++if test -n "$CPP" && test -d "$CPP"; then
++  CPP=
++fi
++if test -z "$CPP"; then
++  if ${ac_cv_prog_CPP+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++      # Double quotes because CPP needs to be expanded
++    for CPP in "$CC -E" "$CC -E -traditional-cpp" "/lib/cpp"
++    do
++      ac_preproc_ok=false
++for ac_c_preproc_warn_flag in '' yes
++do
++  # Use a header file that comes with gcc, so configuring glibc
++  # with a fresh cross-compiler works.
++  # Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
++  # <limits.h> exists even on freestanding compilers.
++  # On the NeXT, cc -E runs the code through the compiler's parser,
++  # not just through cpp. "Syntax error" is here to catch this case.
++  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++#ifdef __STDC__
++# include <limits.h>
++#else
++# include <assert.h>
++#endif
++		     Syntax error
++_ACEOF
++if ac_fn_c_try_cpp "$LINENO"; then :
++
++else
++  # Broken: fails on valid input.
++continue
++fi
++rm -f conftest.err conftest.i conftest.$ac_ext
++
++  # OK, works on sane cases.  Now check whether nonexistent headers
++  # can be detected and how.
++  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++#include <ac_nonexistent.h>
++_ACEOF
++if ac_fn_c_try_cpp "$LINENO"; then :
++  # Broken: success on invalid input.
++continue
++else
++  # Passes both tests.
++ac_preproc_ok=:
++break
++fi
++rm -f conftest.err conftest.i conftest.$ac_ext
++
++done
++# Because of `break', _AC_PREPROC_IFELSE's cleaning code was skipped.
++rm -f conftest.i conftest.err conftest.$ac_ext
++if $ac_preproc_ok; then :
++  break
++fi
++
++    done
++    ac_cv_prog_CPP=$CPP
++
++fi
++  CPP=$ac_cv_prog_CPP
++else
++  ac_cv_prog_CPP=$CPP
++fi
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $CPP" >&5
++$as_echo "$CPP" >&6; }
++ac_preproc_ok=false
++for ac_c_preproc_warn_flag in '' yes
++do
++  # Use a header file that comes with gcc, so configuring glibc
++  # with a fresh cross-compiler works.
++  # Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
++  # <limits.h> exists even on freestanding compilers.
++  # On the NeXT, cc -E runs the code through the compiler's parser,
++  # not just through cpp. "Syntax error" is here to catch this case.
++  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++#ifdef __STDC__
++# include <limits.h>
++#else
++# include <assert.h>
++#endif
++		     Syntax error
++_ACEOF
++if ac_fn_c_try_cpp "$LINENO"; then :
++
++else
++  # Broken: fails on valid input.
++continue
++fi
++rm -f conftest.err conftest.i conftest.$ac_ext
++
++  # OK, works on sane cases.  Now check whether nonexistent headers
++  # can be detected and how.
++  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++#include <ac_nonexistent.h>
++_ACEOF
++if ac_fn_c_try_cpp "$LINENO"; then :
++  # Broken: success on invalid input.
++continue
++else
++  # Passes both tests.
++ac_preproc_ok=:
++break
++fi
++rm -f conftest.err conftest.i conftest.$ac_ext
++
++done
++# Because of `break', _AC_PREPROC_IFELSE's cleaning code was skipped.
++rm -f conftest.i conftest.err conftest.$ac_ext
++if $ac_preproc_ok; then :
++
++else
++  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
++$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
++as_fn_error $? "C preprocessor \"$CPP\" fails sanity check
++See \`config.log' for more details" "$LINENO" 5; }
++fi
++
++ac_ext=c
++ac_cpp='$CPP $CPPFLAGS'
++ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
++ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
++ac_compiler_gnu=$ac_cv_c_compiler_gnu
++
++
++for ac_header in cddlib/setoper.h
++do :
++  ac_fn_c_check_header_mongrel "$LINENO" "cddlib/setoper.h" "ac_cv_header_cddlib_setoper_h" "$ac_includes_default"
++if test "x$ac_cv_header_cddlib_setoper_h" = xyes; then :
++  cat >>confdefs.h <<_ACEOF
++#define HAVE_CDDLIB_SETOPER_H 1
++_ACEOF
++
++    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing dd_free_global_constants" >&5
++$as_echo_n "checking for library containing dd_free_global_constants... " >&6; }
++if ${ac_cv_search_dd_free_global_constants+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++  ac_func_search_save_LIBS=$LIBS
++cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++
++/* Override any GCC internal prototype to avoid an error.
++   Use char because int might match the return type of a GCC
++   builtin and then its argument prototype would still apply.  */
++#ifdef __cplusplus
++extern "C"
++#endif
++char dd_free_global_constants ();
++int
++main ()
++{
++return dd_free_global_constants ();
++  ;
++  return 0;
++}
++_ACEOF
++for ac_lib in '' cddgmp; do
++  if test -z "$ac_lib"; then
++    ac_res="none required"
++  else
++    ac_res=-l$ac_lib
++    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
++  fi
++  if ac_fn_c_try_link "$LINENO"; then :
++  ac_cv_search_dd_free_global_constants=$ac_res
++fi
++rm -f core conftest.err conftest.$ac_objext \
++    conftest$ac_exeext
++  if ${ac_cv_search_dd_free_global_constants+:} false; then :
++  break
++fi
++done
++if ${ac_cv_search_dd_free_global_constants+:} false; then :
++
++else
++  ac_cv_search_dd_free_global_constants=no
++fi
++rm conftest.$ac_ext
++LIBS=$ac_func_search_save_LIBS
++fi
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_dd_free_global_constants" >&5
++$as_echo "$ac_cv_search_dd_free_global_constants" >&6; }
++ac_res=$ac_cv_search_dd_free_global_constants
++if test "$ac_res" != no; then :
++  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
++
++else
++  as_fn_error $? "Can't use cddgmp library" "$LINENO" 5
++fi
++
++
++else
++  as_fn_error $? "Can't find cdd library headers" "$LINENO" 5
++fi
++
++done
++
+ 
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether QSOpt_ex support was enabled" >&5
+ $as_echo_n "checking whether QSOpt_ex support was enabled... " >&6; }
+@@ -6276,7 +6626,9 @@ $as_echo X/"$am_mf" |
+     { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+ $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+ as_fn_error $? "Something went wrong bootstrapping makefile fragments
+-    for automatic dependency tracking.  Try re-running configure with the
++    for automatic dependency tracking.  If GNU make was not used, consider
++    re-running the configure script with MAKE=\"gmake\" (or whatever is
++    necessary).  You can also try re-running configure with the
+     '--disable-dependency-tracking' option to at least be able to build
+     the package (albeit without support for automatic dependency tracking).
+ See \`config.log' for more details" "$LINENO" 5; }
+diff --git a/configure.ac b/configure.ac
+index 2372711..430f01b 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -43,8 +43,10 @@ else
+   AC_MSG_NOTICE([... done])
+ fi
+ 
+-dnl Make libcddgmp:
+-make -C external cdd
++
++AC_CHECK_HEADERS([cddlib/setoper.h],[
++    AC_SEARCH_LIBS([dd_free_global_constants],[cddgmp], [], [AC_MSG_ERROR([Can't use cddgmp library])])
++    ], [AC_MSG_ERROR([Can't find cdd library headers])])
+ 
+ dnl Check for requests for third-party packages:
+ dnl Check for qsopt_ex:
+diff --git a/depcomp b/depcomp
+index 65cbf70..6b39162 100755
+--- a/depcomp
++++ b/depcomp
+@@ -3,7 +3,7 @@
+ 
+ scriptversion=2018-03-07.03; # UTC
+ 
+-# Copyright (C) 1999-2018 Free Software Foundation, Inc.
++# Copyright (C) 1999-2020 Free Software Foundation, Inc.
+ 
+ # This program is free software; you can redistribute it and/or modify
+ # it under the terms of the GNU General Public License as published by
+diff --git a/examples/Makefile.in b/examples/Makefile.in
+index 92a0212..30ac680 100644
+--- a/examples/Makefile.in
++++ b/examples/Makefile.in
+@@ -1,7 +1,7 @@
+-# Makefile.in generated by automake 1.16.1 from Makefile.am.
++# Makefile.in generated by automake 1.16.2 from Makefile.am.
+ # @configure_input@
+ 
+-# Copyright (C) 1994-2018 Free Software Foundation, Inc.
++# Copyright (C) 1994-2020 Free Software Foundation, Inc.
+ 
+ # This Makefile.in is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+@@ -129,6 +129,7 @@ AWK = @AWK@
+ CC = @CC@
+ CCDEPMODE = @CCDEPMODE@
+ CFLAGS = @CFLAGS@
++CPP = @CPP@
+ CPPFLAGS = @CPPFLAGS@
+ CXX = @CXX@
+ CXXCPP = @CXXCPP@
+@@ -204,6 +205,7 @@ pdfdir = @pdfdir@
+ prefix = @prefix@
+ program_transform_name = @program_transform_name@
+ psdir = @psdir@
++runstatedir = @runstatedir@
+ sbindir = @sbindir@
+ sharedstatedir = @sharedstatedir@
+ srcdir = @srcdir@
+diff --git a/install-sh b/install-sh
+index 8175c64..20d8b2e 100755
+--- a/install-sh
++++ b/install-sh
+@@ -451,7 +451,18 @@ do
+     trap 'ret=$?; rm -f "$dsttmp" "$rmtmp" && exit $ret' 0
+ 
+     # Copy the file name to the temp name.
+-    (umask $cp_umask && $doit_exec $cpprog "$src" "$dsttmp") &&
++    (umask $cp_umask &&
++     { test -z "$stripcmd" || {
++	 # Create $dsttmp read-write so that cp doesn't create it read-only,
++	 # which would cause strip to fail.
++	 if test -z "$doit"; then
++	   : >"$dsttmp" # No need to fork-exec 'touch'.
++	 else
++	   $doit touch "$dsttmp"
++	 fi
++       }
++     } &&
++     $doit_exec $cpprog "$src" "$dsttmp") &&
+ 
+     # and set any options; do chmod last to preserve setuid bits.
+     #
+diff --git a/lib-src-reg/LPinterface.hh b/lib-src-reg/LPinterface.hh
+index 6522dbe..622a224 100644
+--- a/lib-src-reg/LPinterface.hh
++++ b/lib-src-reg/LPinterface.hh
+@@ -21,8 +21,8 @@
+ #include "LabelSet.hh"
+ #include "Rational.h"
+ 
+-#include "setoper.h"
+-#include "cdd.h"
++#include <cddlib/setoper.h>
++#include <cddlib/cdd.h>
+ 
+ namespace topcom {
+ 
+diff --git a/lib-src-reg/Makefile.in b/lib-src-reg/Makefile.in
+index 977f8f8..368b2a5 100644
+--- a/lib-src-reg/Makefile.in
++++ b/lib-src-reg/Makefile.in
+@@ -1,7 +1,7 @@
+-# Makefile.in generated by automake 1.16.1 from Makefile.am.
++# Makefile.in generated by automake 1.16.2 from Makefile.am.
+ # @configure_input@
+ 
+-# Copyright (C) 1994-2018 Free Software Foundation, Inc.
++# Copyright (C) 1994-2020 Free Software Foundation, Inc.
+ 
+ # This Makefile.in is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+@@ -214,6 +214,7 @@ AWK = @AWK@
+ CC = @CC@
+ CCDEPMODE = @CCDEPMODE@
+ CFLAGS = @CFLAGS@
++CPP = @CPP@
+ CPPFLAGS = @CPPFLAGS@
+ CXX = @CXX@
+ CXXCPP = @CXXCPP@
+@@ -289,6 +290,7 @@ pdfdir = @pdfdir@
+ prefix = @prefix@
+ program_transform_name = @program_transform_name@
+ psdir = @psdir@
++runstatedir = @runstatedir@
+ sbindir = @sbindir@
+ sharedstatedir = @sharedstatedir@
+ srcdir = @srcdir@
+diff --git a/lib-src/Makefile.in b/lib-src/Makefile.in
+index 4407b62..a3d3316 100644
+--- a/lib-src/Makefile.in
++++ b/lib-src/Makefile.in
+@@ -1,7 +1,7 @@
+-# Makefile.in generated by automake 1.16.1 from Makefile.am.
++# Makefile.in generated by automake 1.16.2 from Makefile.am.
+ # @configure_input@
+ 
+-# Copyright (C) 1994-2018 Free Software Foundation, Inc.
++# Copyright (C) 1994-2020 Free Software Foundation, Inc.
+ 
+ # This Makefile.in is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+@@ -267,6 +267,7 @@ AWK = @AWK@
+ CC = @CC@
+ CCDEPMODE = @CCDEPMODE@
+ CFLAGS = @CFLAGS@
++CPP = @CPP@
+ CPPFLAGS = @CPPFLAGS@
+ CXX = @CXX@
+ CXXCPP = @CXXCPP@
+@@ -342,6 +343,7 @@ pdfdir = @pdfdir@
+ prefix = @prefix@
+ program_transform_name = @program_transform_name@
+ psdir = @psdir@
++runstatedir = @runstatedir@
+ sbindir = @sbindir@
+ sharedstatedir = @sharedstatedir@
+ srcdir = @srcdir@
+diff --git a/missing b/missing
+index 625aeb1..8d0eaad 100755
+--- a/missing
++++ b/missing
+@@ -3,7 +3,7 @@
+ 
+ scriptversion=2018-03-07.03; # UTC
+ 
+-# Copyright (C) 1996-2018 Free Software Foundation, Inc.
++# Copyright (C) 1996-2020 Free Software Foundation, Inc.
+ # Originally written by Fran,cois Pinard <pinard@iro.umontreal.ca>, 1996.
+ 
+ # This program is free software; you can redistribute it and/or modify
+diff --git a/share/Makefile.in b/share/Makefile.in
+index 23488b7..2326a9e 100644
+--- a/share/Makefile.in
++++ b/share/Makefile.in
+@@ -1,7 +1,7 @@
+-# Makefile.in generated by automake 1.16.1 from Makefile.am.
++# Makefile.in generated by automake 1.16.2 from Makefile.am.
+ # @configure_input@
+ 
+-# Copyright (C) 1994-2018 Free Software Foundation, Inc.
++# Copyright (C) 1994-2020 Free Software Foundation, Inc.
+ 
+ # This Makefile.in is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+@@ -129,6 +129,7 @@ AWK = @AWK@
+ CC = @CC@
+ CCDEPMODE = @CCDEPMODE@
+ CFLAGS = @CFLAGS@
++CPP = @CPP@
+ CPPFLAGS = @CPPFLAGS@
+ CXX = @CXX@
+ CXXCPP = @CXXCPP@
+@@ -204,6 +205,7 @@ pdfdir = @pdfdir@
+ prefix = @prefix@
+ program_transform_name = @program_transform_name@
+ psdir = @psdir@
++runstatedir = @runstatedir@
+ sbindir = @sbindir@
+ sharedstatedir = @sharedstatedir@
+ srcdir = @srcdir@
+diff --git a/src-reg/Makefile.am b/src-reg/Makefile.am
+index ed4a016..2ad9026 100644
+--- a/src-reg/Makefile.am
++++ b/src-reg/Makefile.am
+@@ -4,7 +4,9 @@ checkregularity_SOURCES = checkregularity.cc
+ 
+ LDADD           = ../lib-src/libTOPCOM.a \
+                   ../lib-src-reg/libCHECKREG.a \
+-                  ../external/lib/libcddgmp.a
++                  -lgmpxx -lgmp
++
++
+ if USE_QSOPTEX
+ LDADD          += ../external/lib/libqsopt_ex.a
+ endif
+@@ -12,12 +14,6 @@ endif
+ if USE_SOPLEX
+ LDADD          += ../external/lib/libsoplex.a
+ endif
+-if USE_LOCAL_GMP
+-LDADD          += ../external/lib/libgmpxx.a \
+-                  ../external/lib/libgmp.a
+-else
+-LIBS           += -lgmpxx -lgmp
+-endif
+ 
+ AM_CPPFLAGS    += -I../lib-src
+ AM_CPPFLAGS    += -I../lib-src-reg
+diff --git a/src-reg/Makefile.in b/src-reg/Makefile.in
+index f4b7c08..7ccd2f7 100644
+--- a/src-reg/Makefile.in
++++ b/src-reg/Makefile.in
+@@ -1,7 +1,7 @@
+-# Makefile.in generated by automake 1.16.1 from Makefile.am.
++# Makefile.in generated by automake 1.16.2 from Makefile.am.
+ # @configure_input@
+ 
+-# Copyright (C) 1994-2018 Free Software Foundation, Inc.
++# Copyright (C) 1994-2020 Free Software Foundation, Inc.
+ 
+ # This Makefile.in is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+@@ -89,10 +89,6 @@ POST_UNINSTALL = :
+ bin_PROGRAMS = checkregularity$(EXEEXT)
+ @USE_QSOPTEX_TRUE@am__append_1 = ../external/lib/libqsopt_ex.a
+ @USE_SOPLEX_TRUE@am__append_2 = ../external/lib/libsoplex.a
+-@USE_LOCAL_GMP_TRUE@am__append_3 = ../external/lib/libgmpxx.a \
+-@USE_LOCAL_GMP_TRUE@                  ../external/lib/libgmp.a
+-
+-@USE_LOCAL_GMP_FALSE@am__append_4 = -lgmpxx -lgmp
+ subdir = src-reg
+ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
+ am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+@@ -108,8 +104,7 @@ am_checkregularity_OBJECTS = checkregularity.$(OBJEXT)
+ checkregularity_OBJECTS = $(am_checkregularity_OBJECTS)
+ checkregularity_LDADD = $(LDADD)
+ checkregularity_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ AM_V_P = $(am__v_P_@AM_V@)
+ am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
+ am__v_P_0 = false
+@@ -184,6 +179,7 @@ AWK = @AWK@
+ CC = @CC@
+ CCDEPMODE = @CCDEPMODE@
+ CFLAGS = @CFLAGS@
++CPP = @CPP@
+ CPPFLAGS = @CPPFLAGS@
+ CXX = @CXX@
+ CXXCPP = @CXXCPP@
+@@ -205,7 +201,7 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
+ INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
+ LDFLAGS = @LDFLAGS@
+ LIBOBJS = @LIBOBJS@
+-LIBS = @LIBS@ $(am__append_4)
++LIBS = @LIBS@
+ LTLIBOBJS = @LTLIBOBJS@
+ MAKEINFO = @MAKEINFO@
+ MKDIR_P = @MKDIR_P@
+@@ -259,6 +255,7 @@ pdfdir = @pdfdir@
+ prefix = @prefix@
+ program_transform_name = @program_transform_name@
+ psdir = @psdir@
++runstatedir = @runstatedir@
+ sbindir = @sbindir@
+ sharedstatedir = @sharedstatedir@
+ srcdir = @srcdir@
+@@ -268,9 +265,8 @@ top_build_prefix = @top_build_prefix@
+ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+ checkregularity_SOURCES = checkregularity.cc
+-LDADD = ../lib-src/libTOPCOM.a ../lib-src-reg/libCHECKREG.a \
+-	../external/lib/libcddgmp.a $(am__append_1) $(am__append_2) \
+-	$(am__append_3)
++LDADD = ../lib-src/libTOPCOM.a ../lib-src-reg/libCHECKREG.a -lgmpxx \
++	-lgmp $(am__append_1) $(am__append_2)
+ all: all-am
+ 
+ .SUFFIXES:
+diff --git a/src/Makefile.am b/src/Makefile.am
+index c97ecc5..e20e1c3 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -122,20 +122,15 @@ santos_dim4_triang_SOURCES         = santos_dim4_triang.cc
+ santos_22_triang_SOURCES           = santos_22_triang.cc
+ 
+ LDADD           = ../lib-src/libTOPCOM.a \
+-                  ../lib-src-reg/libCHECKREG.a \
+-                  ../external/lib/libcddgmp.a
++                  ../lib-src-reg/libCHECKREG.a
++
+ if USE_QSOPTEX
+ LDADD          += ../external/lib/libqsopt_ex.a
+ endif
+ if USE_SOPLEX
+ LDADD          += ../external/lib/libsoplex.a
+ endif
+-if USE_LOCAL_GMP
+-LDADD          += ../external/lib/libgmpxx.a \
+-                  ../external/lib/libgmp.a
+-else
+ LIBS           += -lgmpxx -lgmp
+-endif
+ 
+ 
+ AM_CPPFLAGS    += -I../lib-src
+diff --git a/src/Makefile.in b/src/Makefile.in
+index 47a6ac0..bcca997 100644
+--- a/src/Makefile.in
++++ b/src/Makefile.in
+@@ -1,7 +1,7 @@
+-# Makefile.in generated by automake 1.16.1 from Makefile.am.
++# Makefile.in generated by automake 1.16.2 from Makefile.am.
+ # @configure_input@
+ 
+-# Copyright (C) 1994-2018 Free Software Foundation, Inc.
++# Copyright (C) 1994-2020 Free Software Foundation, Inc.
+ 
+ # This Makefile.in is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+@@ -115,10 +115,6 @@ bin_PROGRAMS = B_A$(EXEEXT) B_A_center$(EXEEXT) B_D$(EXEEXT) \
+ 	santos_dim4_triang$(EXEEXT) santos_22_triang$(EXEEXT)
+ @USE_QSOPTEX_TRUE@am__append_1 = ../external/lib/libqsopt_ex.a
+ @USE_SOPLEX_TRUE@am__append_2 = ../external/lib/libsoplex.a
+-@USE_LOCAL_GMP_TRUE@am__append_3 = ../external/lib/libgmpxx.a \
+-@USE_LOCAL_GMP_TRUE@                  ../external/lib/libgmp.a
+-
+-@USE_LOCAL_GMP_FALSE@am__append_4 = -lgmpxx -lgmp
+ subdir = src
+ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
+ am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+@@ -134,362 +130,302 @@ am_B_A_OBJECTS = B_A.$(OBJEXT)
+ B_A_OBJECTS = $(am_B_A_OBJECTS)
+ B_A_LDADD = $(LDADD)
+ B_A_DEPENDENCIES = ../lib-src/libTOPCOM.a ../lib-src-reg/libCHECKREG.a \
+-	../external/lib/libcddgmp.a $(am__append_1) $(am__append_2) \
+-	$(am__append_3)
++	$(am__append_1) $(am__append_2)
+ am_B_A_center_OBJECTS = B_A_center.$(OBJEXT)
+ B_A_center_OBJECTS = $(am_B_A_center_OBJECTS)
+ B_A_center_LDADD = $(LDADD)
+ B_A_center_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_B_D_OBJECTS = B_D.$(OBJEXT)
+ B_D_OBJECTS = $(am_B_D_OBJECTS)
+ B_D_LDADD = $(LDADD)
+ B_D_DEPENDENCIES = ../lib-src/libTOPCOM.a ../lib-src-reg/libCHECKREG.a \
+-	../external/lib/libcddgmp.a $(am__append_1) $(am__append_2) \
+-	$(am__append_3)
++	$(am__append_1) $(am__append_2)
+ am_B_D_center_OBJECTS = B_D_center.$(OBJEXT)
+ B_D_center_OBJECTS = $(am_B_D_center_OBJECTS)
+ B_D_center_LDADD = $(LDADD)
+ B_D_center_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_B_S_OBJECTS = B_S.$(OBJEXT)
+ B_S_OBJECTS = $(am_B_S_OBJECTS)
+ B_S_LDADD = $(LDADD)
+ B_S_DEPENDENCIES = ../lib-src/libTOPCOM.a ../lib-src-reg/libCHECKREG.a \
+-	../external/lib/libcddgmp.a $(am__append_1) $(am__append_2) \
+-	$(am__append_3)
++	$(am__append_1) $(am__append_2)
+ am_B_S_center_OBJECTS = B_S_center.$(OBJEXT)
+ B_S_center_OBJECTS = $(am_B_S_center_OBJECTS)
+ B_S_center_LDADD = $(LDADD)
+ B_S_center_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_Dnxk_OBJECTS = Dnxk.$(OBJEXT)
+ Dnxk_OBJECTS = $(am_Dnxk_OBJECTS)
+ Dnxk_LDADD = $(LDADD)
+ Dnxk_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_binomial_OBJECTS = binomial.$(OBJEXT)
+ binomial_OBJECTS = $(am_binomial_OBJECTS)
+ binomial_LDADD = $(LDADD)
+ binomial_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_check_OBJECTS = check.$(OBJEXT)
+ check_OBJECTS = $(am_check_OBJECTS)
+ check_LDADD = $(LDADD)
+ check_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_chiro2allfinetriangs_OBJECTS = chiro2allfinetriangs.$(OBJEXT)
+ chiro2allfinetriangs_OBJECTS = $(am_chiro2allfinetriangs_OBJECTS)
+ chiro2allfinetriangs_LDADD = $(LDADD)
+ chiro2allfinetriangs_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_chiro2alltriangs_OBJECTS = chiro2alltriangs.$(OBJEXT)
+ chiro2alltriangs_OBJECTS = $(am_chiro2alltriangs_OBJECTS)
+ chiro2alltriangs_LDADD = $(LDADD)
+ chiro2alltriangs_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_chiro2circuits_OBJECTS = chiro2circuits.$(OBJEXT)
+ chiro2circuits_OBJECTS = $(am_chiro2circuits_OBJECTS)
+ chiro2circuits_LDADD = $(LDADD)
+ chiro2circuits_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_chiro2cocircuits_OBJECTS = chiro2cocircuits.$(OBJEXT)
+ chiro2cocircuits_OBJECTS = $(am_chiro2cocircuits_OBJECTS)
+ chiro2cocircuits_LDADD = $(LDADD)
+ chiro2cocircuits_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_chiro2dual_OBJECTS = chiro2dual.$(OBJEXT)
+ chiro2dual_OBJECTS = $(am_chiro2dual_OBJECTS)
+ chiro2dual_LDADD = $(LDADD)
+ chiro2dual_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_chiro2finetriang_OBJECTS = chiro2finetriang.$(OBJEXT)
+ chiro2finetriang_OBJECTS = $(am_chiro2finetriang_OBJECTS)
+ chiro2finetriang_LDADD = $(LDADD)
+ chiro2finetriang_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_chiro2finetriangs_OBJECTS = chiro2finetriangs.$(OBJEXT)
+ chiro2finetriangs_OBJECTS = $(am_chiro2finetriangs_OBJECTS)
+ chiro2finetriangs_LDADD = $(LDADD)
+ chiro2finetriangs_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_chiro2mintriang_OBJECTS = chiro2mintriang.$(OBJEXT)
+ chiro2mintriang_OBJECTS = $(am_chiro2mintriang_OBJECTS)
+ chiro2mintriang_LDADD = $(LDADD)
+ chiro2mintriang_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_chiro2nallfinetriangs_OBJECTS = chiro2nallfinetriangs.$(OBJEXT)
+ chiro2nallfinetriangs_OBJECTS = $(am_chiro2nallfinetriangs_OBJECTS)
+ chiro2nallfinetriangs_LDADD = $(LDADD)
+ chiro2nallfinetriangs_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_chiro2nalltriangs_OBJECTS = chiro2nalltriangs.$(OBJEXT)
+ chiro2nalltriangs_OBJECTS = $(am_chiro2nalltriangs_OBJECTS)
+ chiro2nalltriangs_LDADD = $(LDADD)
+ chiro2nalltriangs_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_chiro2ncircuits_OBJECTS = chiro2ncircuits.$(OBJEXT)
+ chiro2ncircuits_OBJECTS = $(am_chiro2ncircuits_OBJECTS)
+ chiro2ncircuits_LDADD = $(LDADD)
+ chiro2ncircuits_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_chiro2ncocircuits_OBJECTS = chiro2ncocircuits.$(OBJEXT)
+ chiro2ncocircuits_OBJECTS = $(am_chiro2ncocircuits_OBJECTS)
+ chiro2ncocircuits_LDADD = $(LDADD)
+ chiro2ncocircuits_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_chiro2nfinetriangs_OBJECTS = chiro2nfinetriangs.$(OBJEXT)
+ chiro2nfinetriangs_OBJECTS = $(am_chiro2nfinetriangs_OBJECTS)
+ chiro2nfinetriangs_LDADD = $(LDADD)
+ chiro2nfinetriangs_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_chiro2ntriangs_OBJECTS = chiro2ntriangs.$(OBJEXT)
+ chiro2ntriangs_OBJECTS = $(am_chiro2ntriangs_OBJECTS)
+ chiro2ntriangs_LDADD = $(LDADD)
+ chiro2ntriangs_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_chiro2placingtriang_OBJECTS = chiro2placingtriang.$(OBJEXT)
+ chiro2placingtriang_OBJECTS = $(am_chiro2placingtriang_OBJECTS)
+ chiro2placingtriang_LDADD = $(LDADD)
+ chiro2placingtriang_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_chiro2triangs_OBJECTS = chiro2triangs.$(OBJEXT)
+ chiro2triangs_OBJECTS = $(am_chiro2triangs_OBJECTS)
+ chiro2triangs_LDADD = $(LDADD)
+ chiro2triangs_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_cocircuits2facets_OBJECTS = cocircuits2facets.$(OBJEXT)
+ cocircuits2facets_OBJECTS = $(am_cocircuits2facets_OBJECTS)
+ cocircuits2facets_LDADD = $(LDADD)
+ cocircuits2facets_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_cross_OBJECTS = cross.$(OBJEXT)
+ cross_OBJECTS = $(am_cross_OBJECTS)
+ cross_LDADD = $(LDADD)
+ cross_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_cube_OBJECTS = cube.$(OBJEXT)
+ cube_OBJECTS = $(am_cube_OBJECTS)
+ cube_LDADD = $(LDADD)
+ cube_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_cyclic_OBJECTS = cyclic.$(OBJEXT)
+ cyclic_OBJECTS = $(am_cyclic_OBJECTS)
+ cyclic_LDADD = $(LDADD)
+ cyclic_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_hypersimplex_OBJECTS = hypersimplex.$(OBJEXT)
+ hypersimplex_OBJECTS = $(am_hypersimplex_OBJECTS)
+ hypersimplex_LDADD = $(LDADD)
+ hypersimplex_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_kDn_OBJECTS = kDn.$(OBJEXT)
+ kDn_OBJECTS = $(am_kDn_OBJECTS)
+ kDn_LDADD = $(LDADD)
+ kDn_DEPENDENCIES = ../lib-src/libTOPCOM.a ../lib-src-reg/libCHECKREG.a \
+-	../external/lib/libcddgmp.a $(am__append_1) $(am__append_2) \
+-	$(am__append_3)
++	$(am__append_1) $(am__append_2)
+ am_lattice_OBJECTS = lattice.$(OBJEXT)
+ lattice_OBJECTS = $(am_lattice_OBJECTS)
+ lattice_LDADD = $(LDADD)
+ lattice_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_permutahedron_OBJECTS = permutahedron.$(OBJEXT)
+ permutahedron_OBJECTS = $(am_permutahedron_OBJECTS)
+ permutahedron_LDADD = $(LDADD)
+ permutahedron_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_points2allfinetriangs_OBJECTS = points2allfinetriangs.$(OBJEXT)
+ points2allfinetriangs_OBJECTS = $(am_points2allfinetriangs_OBJECTS)
+ points2allfinetriangs_LDADD = $(LDADD)
+ points2allfinetriangs_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_points2alltriangs_OBJECTS = points2alltriangs.$(OBJEXT)
+ points2alltriangs_OBJECTS = $(am_points2alltriangs_OBJECTS)
+ points2alltriangs_LDADD = $(LDADD)
+ points2alltriangs_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_points2chiro_OBJECTS = points2chiro.$(OBJEXT)
+ points2chiro_OBJECTS = $(am_points2chiro_OBJECTS)
+ points2chiro_LDADD = $(LDADD)
+ points2chiro_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_points2circuits_OBJECTS = points2circuits.$(OBJEXT)
+ points2circuits_OBJECTS = $(am_points2circuits_OBJECTS)
+ points2circuits_LDADD = $(LDADD)
+ points2circuits_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_points2cocircuits_OBJECTS = points2cocircuits.$(OBJEXT)
+ points2cocircuits_OBJECTS = $(am_points2cocircuits_OBJECTS)
+ points2cocircuits_LDADD = $(LDADD)
+ points2cocircuits_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_points2facets_OBJECTS = points2facets.$(OBJEXT)
+ points2facets_OBJECTS = $(am_points2facets_OBJECTS)
+ points2facets_LDADD = $(LDADD)
+ points2facets_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_points2finetriang_OBJECTS = points2finetriang.$(OBJEXT)
+ points2finetriang_OBJECTS = $(am_points2finetriang_OBJECTS)
+ points2finetriang_LDADD = $(LDADD)
+ points2finetriang_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_points2finetriangs_OBJECTS = points2finetriangs.$(OBJEXT)
+ points2finetriangs_OBJECTS = $(am_points2finetriangs_OBJECTS)
+ points2finetriangs_LDADD = $(LDADD)
+ points2finetriangs_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_points2flips_OBJECTS = points2flips.$(OBJEXT)
+ points2flips_OBJECTS = $(am_points2flips_OBJECTS)
+ points2flips_LDADD = $(LDADD)
+ points2flips_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_points2gale_OBJECTS = points2gale.$(OBJEXT)
+ points2gale_OBJECTS = $(am_points2gale_OBJECTS)
+ points2gale_LDADD = $(LDADD)
+ points2gale_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_points2mintriang_OBJECTS = points2mintriang.$(OBJEXT)
+ points2mintriang_OBJECTS = $(am_points2mintriang_OBJECTS)
+ points2mintriang_LDADD = $(LDADD)
+ points2mintriang_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_points2nallfinetriangs_OBJECTS = points2nallfinetriangs.$(OBJEXT)
+ points2nallfinetriangs_OBJECTS = $(am_points2nallfinetriangs_OBJECTS)
+ points2nallfinetriangs_LDADD = $(LDADD)
+ points2nallfinetriangs_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_points2nalltriangs_OBJECTS = points2nalltriangs.$(OBJEXT)
+ points2nalltriangs_OBJECTS = $(am_points2nalltriangs_OBJECTS)
+ points2nalltriangs_LDADD = $(LDADD)
+ points2nalltriangs_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_points2ncircuits_OBJECTS = points2ncircuits.$(OBJEXT)
+ points2ncircuits_OBJECTS = $(am_points2ncircuits_OBJECTS)
+ points2ncircuits_LDADD = $(LDADD)
+ points2ncircuits_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_points2ncocircuits_OBJECTS = points2ncocircuits.$(OBJEXT)
+ points2ncocircuits_OBJECTS = $(am_points2ncocircuits_OBJECTS)
+ points2ncocircuits_LDADD = $(LDADD)
+ points2ncocircuits_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_points2nfinetriangs_OBJECTS = points2nfinetriangs.$(OBJEXT)
+ points2nfinetriangs_OBJECTS = $(am_points2nfinetriangs_OBJECTS)
+ points2nfinetriangs_LDADD = $(LDADD)
+ points2nfinetriangs_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_points2nflips_OBJECTS = points2nflips.$(OBJEXT)
+ points2nflips_OBJECTS = $(am_points2nflips_OBJECTS)
+ points2nflips_LDADD = $(LDADD)
+ points2nflips_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_points2ntriangs_OBJECTS = points2ntriangs.$(OBJEXT)
+ points2ntriangs_OBJECTS = $(am_points2ntriangs_OBJECTS)
+ points2ntriangs_LDADD = $(LDADD)
+ points2ntriangs_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_points2placingtriang_OBJECTS = points2placingtriang.$(OBJEXT)
+ points2placingtriang_OBJECTS = $(am_points2placingtriang_OBJECTS)
+ points2placingtriang_LDADD = $(LDADD)
+ points2placingtriang_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_points2prettyprint_OBJECTS = points2prettyprint.$(OBJEXT)
+ points2prettyprint_OBJECTS = $(am_points2prettyprint_OBJECTS)
+ points2prettyprint_LDADD = $(LDADD)
+ points2prettyprint_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_points2symmetries_OBJECTS = points2symmetries.$(OBJEXT)
+ points2symmetries_OBJECTS = $(am_points2symmetries_OBJECTS)
+ points2symmetries_LDADD = $(LDADD)
+ points2symmetries_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_points2triangs_OBJECTS = points2triangs.$(OBJEXT)
+ points2triangs_OBJECTS = $(am_points2triangs_OBJECTS)
+ points2triangs_LDADD = $(LDADD)
+ points2triangs_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_points2vertices_OBJECTS = points2vertices.$(OBJEXT)
+ points2vertices_OBJECTS = $(am_points2vertices_OBJECTS)
+ points2vertices_LDADD = $(LDADD)
+ points2vertices_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_points2volume_OBJECTS = points2volume.$(OBJEXT)
+ points2volume_OBJECTS = $(am_points2volume_OBJECTS)
+ points2volume_LDADD = $(LDADD)
+ points2volume_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_santos_22_triang_OBJECTS = santos_22_triang.$(OBJEXT)
+ santos_22_triang_OBJECTS = $(am_santos_22_triang_OBJECTS)
+ santos_22_triang_LDADD = $(LDADD)
+ santos_22_triang_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_santos_dim4_triang_OBJECTS = santos_dim4_triang.$(OBJEXT)
+ santos_dim4_triang_OBJECTS = $(am_santos_dim4_triang_OBJECTS)
+ santos_dim4_triang_LDADD = $(LDADD)
+ santos_dim4_triang_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ am_santos_triang_OBJECTS = santos_triang.$(OBJEXT)
+ santos_triang_OBJECTS = $(am_santos_triang_OBJECTS)
+ santos_triang_LDADD = $(LDADD)
+ santos_triang_DEPENDENCIES = ../lib-src/libTOPCOM.a \
+-	../lib-src-reg/libCHECKREG.a ../external/lib/libcddgmp.a \
+-	$(am__append_1) $(am__append_2) $(am__append_3)
++	../lib-src-reg/libCHECKREG.a $(am__append_1) $(am__append_2)
+ AM_V_P = $(am__v_P_@AM_V@)
+ am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
+ am__v_P_0 = false
+@@ -657,6 +593,7 @@ AWK = @AWK@
+ CC = @CC@
+ CCDEPMODE = @CCDEPMODE@
+ CFLAGS = @CFLAGS@
++CPP = @CPP@
+ CPPFLAGS = @CPPFLAGS@
+ CXX = @CXX@
+ CXXCPP = @CXXCPP@
+@@ -678,7 +615,7 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
+ INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
+ LDFLAGS = @LDFLAGS@
+ LIBOBJS = @LIBOBJS@
+-LIBS = @LIBS@ $(am__append_4)
++LIBS = @LIBS@ -lgmpxx -lgmp
+ LTLIBOBJS = @LTLIBOBJS@
+ MAKEINFO = @MAKEINFO@
+ MKDIR_P = @MKDIR_P@
+@@ -732,6 +669,7 @@ pdfdir = @pdfdir@
+ prefix = @prefix@
+ program_transform_name = @program_transform_name@
+ psdir = @psdir@
++runstatedir = @runstatedir@
+ sbindir = @sbindir@
+ sharedstatedir = @sharedstatedir@
+ srcdir = @srcdir@
+@@ -801,8 +739,7 @@ santos_triang_SOURCES = santos_triang.cc
+ santos_dim4_triang_SOURCES = santos_dim4_triang.cc
+ santos_22_triang_SOURCES = santos_22_triang.cc
+ LDADD = ../lib-src/libTOPCOM.a ../lib-src-reg/libCHECKREG.a \
+-	../external/lib/libcddgmp.a $(am__append_1) $(am__append_2) \
+-	$(am__append_3)
++	$(am__append_1) $(am__append_2)
+ all: all-am
+ 
+ .SUFFIXES:
+diff --git a/wrap-gmp-gmpxx/Makefile.in b/wrap-gmp-gmpxx/Makefile.in
+index 86f0be0..bd4c95f 100644
+--- a/wrap-gmp-gmpxx/Makefile.in
++++ b/wrap-gmp-gmpxx/Makefile.in
+@@ -1,7 +1,7 @@
+-# Makefile.in generated by automake 1.16.1 from Makefile.am.
++# Makefile.in generated by automake 1.16.2 from Makefile.am.
+ # @configure_input@
+ 
+-# Copyright (C) 1994-2018 Free Software Foundation, Inc.
++# Copyright (C) 1994-2020 Free Software Foundation, Inc.
+ 
+ # This Makefile.in is free software; the Free Software Foundation
+ # gives unlimited permission to copy and/or distribute it,
+@@ -178,6 +178,7 @@ AWK = @AWK@
+ CC = @CC@
+ CCDEPMODE = @CCDEPMODE@
+ CFLAGS = @CFLAGS@
++CPP = @CPP@
+ CPPFLAGS = @CPPFLAGS@
+ CXX = @CXX@
+ CXXCPP = @CXXCPP@
+@@ -253,6 +254,7 @@ pdfdir = @pdfdir@
+ prefix = @prefix@
+ program_transform_name = @program_transform_name@
+ psdir = @psdir@
++runstatedir = @runstatedir@
+ sbindir = @sbindir@
+ sharedstatedir = @sharedstatedir@
+ srcdir = @srcdir@

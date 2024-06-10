@@ -1,5 +1,5 @@
-FreeType
-========
+freetype: A free, high-quality, and portable font engine
+========================================================
 
 Description
 -----------
@@ -45,8 +45,3 @@ Upstream Contact
 
    -  official: http://git.savannah.gnu.org/cgit/freetype
    -  mirror: https://github.com/aseprite/freetype2/
-
-Dependencies
-------------
-
-See the ``dependencies`` file.

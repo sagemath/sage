@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Brent Yorgey's fast algorithm for integer vector (multiset) partitions.
 
@@ -43,7 +42,7 @@ cdef list vector_halve(list v):
     OUTPUT:
 
     A list, understood as the integer vector halfway down the list of
-    lexicographically ordered vectors between between ``v`` and zero.
+    lexicographically ordered vectors between ``v`` and zero.
 
     EXAMPLES::
 
@@ -126,18 +125,19 @@ def recursive_within_from_to(list m, list s, list e, bint useS, bint useE):
     if len(m) == 1:
         # We use this style of Cython code for now in order to get this to convert
         #   to an optimized pure C for loop. See Cython github issue #532.
-        #for x in range(start, end - 1, -1):
+        # for x in range(start, end - 1, -1):
         for x from start >= x >= end by 1:
             yield [x]  # we know the answer for singletons
     else:
         # We use this style of Cython code for now in order to get this to convert
         #   to an optimized pure C for loop. See Cython github issue #532.
-        #for x in range(start, end - 1, -1):
+        # for x in range(start, end - 1, -1):
         for x from start >= x >= end by 1:
             useSS = useS and x == <Py_ssize_t> s[0]
             useEE = useE and x == <Py_ssize_t> e[0]
             for o in recursive_within_from_to(m[1:], s[1:], e[1:], useSS, useEE):
                 yield [x] + o
+
 
 def within_from_to(list m, list s, list e):
     r"""
@@ -229,6 +229,7 @@ def within_from_to(list m, list s, list e):
         return
     yield from recursive_within_from_to(m, ss, e, True, True)
 
+
 cdef inline list vector_sub(list a, list b):
     """
     Return ``a - b`` considered as vectors.
@@ -240,6 +241,7 @@ cdef inline list vector_sub(list a, list b):
     for i in range(len(a)):
         ret.append((<Py_ssize_t> a[i]) - (<Py_ssize_t> b[i]))
     return ret
+
 
 def recursive_vector_partitions(list v, list vL):
     r"""
@@ -343,4 +345,3 @@ def fast_vector_partitions(v, min_vals=None):
     if len(v) != len(min_vals):
         raise ValueError("the length of v and min_vals must be equal")
     return recursive_vector_partitions(list(v), list(min_vals))
-

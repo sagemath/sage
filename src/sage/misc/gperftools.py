@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.symbolic
 """
 C Function Profiler Using Google Perftools
 
@@ -45,7 +46,6 @@ from sage.cpython.string import bytes_to_str
 
 libc = None
 libprofiler = None
-
 
 
 class Profiler(SageObject):
@@ -307,10 +307,10 @@ class Profiler(SageObject):
           with one of ``.dot``, ``.ps``, ``.pdf``, ``.svg``, ``.gif``,
           or ``.txt`` to specify the output file format.
 
-        - ``cumulative`` -- boolean (optional, default:
+        - ``cumulative`` -- boolean (default:
           ``True``). Whether to return cumulative timings.
 
-        - ``verbose`` -- boolean (optional, default:
+        - ``verbose`` -- boolean (default:
           ``True``). Whether to print informational messages.
 
         EXAMPLES::

@@ -1,5 +1,8 @@
 from sage.rings.polynomial.pbori.pbori import mod_mon_set
-from .PyPolyBoRi import *
+from .pbori import (BooleSet, GroebnerStrategy, ReductionStrategy,
+                    parallel_reduce, easy_linear_factors)
+from .PyPolyBoRi import (Monomial, Polynomial, Variable,
+                         BoolePolynomialVector)
 from .easy_polynomials import (easy_linear_polynomials as
                                easy_linear_polynomials_func)
 from .statistics import used_vars_set
@@ -30,26 +33,26 @@ def build_and_print_matrices(v, strat):
     """
     treated = BooleSet()
     v = list(v)
-    rows = 0
-    polys_in_mat = []
     if not v:
         return
+    rows = 0
+    polys_in_mat = []
     while v:
         rows = rows + 1
         p = v[0]
         v = v[1:]
         for m in list(p.terms()):
-            m = Monomial(m)
-            if m not in BooleSet(treated):
-                i = strat.select(m)
+            mom = Monomial(m)
+            if mom not in BooleSet(treated):
+                i = strat.select(mom)
                 if i >= 0:
                     p2 = strat[i]
-                    p2 = p2 * (m // p2.lead())
+                    p2 = p2 * (mom // p2.lead())
                     v.append(p2)
         polys_in_mat.append(p)
         treated = treated.union(p.set())
-    m2i = dict([(v, k) for (k, v) in enumerate(list(Polynomial(BooleSet(
-        treated)).terms()))])
+    m2i = {v: k
+           for k, v in enumerate(list(Polynomial(BooleSet(treated)).terms()))}
     polys_in_mat.sort(key=Polynomial.lead, reverse=True)
     polys_in_mat = [[m2i[t] for t in p.terms()] for p in polys_in_mat]
 
@@ -60,15 +63,13 @@ def build_and_print_matrices(v, strat):
     rows = len(polys_in_mat)
     cols = len(m2i)
     im = Image.new("1", (cols, rows), "white")
-    for i in range(len(polys_in_mat)):
-        p = polys_in_mat[i]
-        for j in p:
+    for i, pi in enumerate(polys_in_mat):
+        for j in pi:
             assert i < rows
             assert j < cols
-
             im.putpixel((j, i), 0)
 
-    file_name = matrix_prefix + str(mat_counter) + ".png"
+    file_name = strat.matrix_prefix + str(mat_counter) + ".png"
     if os.path.exists(file_name):
         os.remove(file_name)
     im.save(file_name)
@@ -117,20 +118,20 @@ def build_and_print_matrices_deg_colored(v, strat):
         p = v[0]
         v = v[1:]
         for m in list(p.terms()):
-            m = Monomial(m)
+            mom = Monomial(m)
             if m not in BooleSet(treated):
-                i = strat.select(m)
+                i = strat.select(mom)
                 if i >= 0:
                     p2 = strat[i]
-                    p2 = p2 * (m // p2.lead())
+                    p2 = p2 * (mom // p2.lead())
                     v.append(p2)
         polys_in_mat.append(p)
         treated = treated.union(p.set())
-    m2i = dict([(v, k) for (k, v) in enumerate(BooleSet(treated))])
-    max_deg = max([m.deg() for m in BooleSet(treated)])
+    m2i = {v: k for k, v in enumerate(BooleSet(treated))}
+    max_deg = max(m.deg() for m in BooleSet(treated))
     if max_deg == 0:
         max_deg = 1
-    i2deg = dict([(m2i[m], m.deg()) for m in BooleSet(treated)])
+    i2deg = {m2i[m]: m.deg() for m in BooleSet(treated)}
     polys_in_mat = [[m2i[t] for t in p.terms()] for p in polys_in_mat]
     polys_in_mat.sort(key=pkey)
     global mat_counter
@@ -146,9 +147,9 @@ def build_and_print_matrices_deg_colored(v, strat):
         for j in p:
             assert i < rows
             assert j < cols
-            im.putpixel((j, i), ImageColor.getrgb("hsl(" + str(270 - (270 *
-                i2deg[j]) / max_deg) + ",100%,50%)"))
-    file_name = matrix_prefix + str(mat_counter) + ".png"
+            hsl = str(270 - (270 * i2deg[j]) / max_deg)
+            im.putpixel((j, i), ImageColor.getrgb("hsl(" + hsl + ",100%,50%)"))
+    file_name = strat.matrix_prefix + str(mat_counter) + ".png"
     if os.path.exists(file_name):
         os.remove(file_name)
     im.save(file_name)
@@ -188,13 +189,13 @@ def high_probability_polynomials_trick(p, strat):
     lead = p.lead()
     for v in lead.variables():
         variable_selection = lead // v
-        vars_reversed = reversed(list(variable_selection.variables()))
+        vars_reversed = list(reversed(variable_selection.variables()))
         # it's just a way to loop over the cartesian product
         for assignment in variable_selection.divisors():
             c_p = assignment
-            for v in vars_reversed:
-                if not assignment.reducible_by(v):
-                    c_p = (v + 1) * c_p
+            for var in vars_reversed:
+                if not assignment.reducible_by(var):
+                    c_p = (var + 1) * c_p
 
             points = (c_p + 1).zeros_in(space)
             if p.zeros_in(points).empty():
@@ -205,14 +206,17 @@ def high_probability_polynomials_trick(p, strat):
 
 
 def symmGB_F2_python(G, deg_bound=1000000000000, over_deg_bound=0,
-        use_faugere=False, use_noro=False, opt_lazy=True, opt_red_tail=True,
-        max_growth=2.0, step_factor=1.0, implications=False, prot=False,
-        full_prot=False, selection_size=1000, opt_exchange=True,
-        opt_allow_recursion=False, ll=False,
-        opt_linear_algebra_in_last_block=True, max_generators=None,
-        red_tail_deg_growth=True, matrix_prefix='mat',
-        modified_linear_algebra=True, draw_matrices=False,
-        easy_linear_polynomials=True):
+                     use_faugere=False, use_noro=False,
+                     opt_lazy=True, opt_red_tail=True,
+                     max_growth=2.0, step_factor=1.0,
+                     implications=False, prot=False,
+                     full_prot=False, selection_size=1000, opt_exchange=True,
+                     opt_allow_recursion=False, ll=False,
+                     opt_linear_algebra_in_last_block=True,
+                     max_generators=None,
+                     red_tail_deg_growth=True, matrix_prefix='mat',
+                     modified_linear_algebra=True, draw_matrices=False,
+                     easy_linear_polynomials=True):
     if use_noro and use_faugere:
         raise ValueError('both use_noro and use_faugere specified')
 
@@ -224,8 +228,8 @@ def symmGB_F2_python(G, deg_bound=1000000000000, over_deg_bound=0,
             if prot:
                 if full_prot:
                     print(p)
-                print("Result: ", "deg:", p.deg(), "lm: ", p.lead(), "el: ", p
-                    .elength())
+                print("Result: ", "deg:", p.deg(), "lm: ",
+                      p.lead(), "el: ", p.elength())
             if easy_linear_polynomials and p.lead_deg() > 2:
                 lin = easy_linear_polynomials_func(p)
                 for q in lin:
@@ -288,7 +292,7 @@ def symmGB_F2_python(G, deg_bound=1000000000000, over_deg_bound=0,
                 ps = [strat.reduction_strategy.cheap_reductions(p) for p in ps]
                 ps = [p for p in ps if not p.is_zero()]
                 if ps:
-                    min_deg = min((p.deg() for p in ps))
+                    min_deg = min(p.deg() for p in ps)
                 new_ps = []
                 for p in ps:
                     if p.deg() <= min_deg:
@@ -302,9 +306,9 @@ def symmGB_F2_python(G, deg_bound=1000000000000, over_deg_bound=0,
             if prot:
                 print("start reducing")
                 print("Chain Crit. : ", strat.chain_criterions, "VC:", strat.
-                    variable_chain_criterions, "EASYP", strat.
-                    easy_product_criterions, "EXTP", strat.
-                    extended_product_criterions)
+                      variable_chain_criterions, "EASYP", strat.
+                      easy_product_criterions, "EXTP", strat.
+                      extended_product_criterions)
                 print(len(ps), "spolys added")
 
             if use_noro or use_faugere:
@@ -313,18 +317,16 @@ def symmGB_F2_python(G, deg_bound=1000000000000, over_deg_bound=0,
                 for p in ps:
                     if not p.is_zero():
                         v.append(p)
-                if use_noro:
-                    res = strat.noro_step(v)
-                else:
-                    res = strat.faugere_step_dense(v)
+                res = strat.noro_step(v) if use_noro else strat.faugere_step_dense(v)
 
             else:
                 v = BoolePolynomialVector()
                 for p in ps:
-                    p = Polynomial(mod_mon_set(BooleSet(p.set()),
-                                        strat.reduction_strategy.monomials))
-                    if not p.is_zero():
-                        v.append(p)
+                    rp = Polynomial(mod_mon_set(
+                        BooleSet(p.set()),
+                        strat.reduction_strategy.monomials))
+                    if not rp.is_zero():
+                        v.append(rp)
                 if len(v) > 100:
                     res = parallel_reduce(v, strat, int(step_factor * 10),
                                           max_growth)
@@ -379,10 +381,10 @@ def GPS(G, vars_start, vars_end):
         strat.add_generator_delayed(Polynomial(
             Monomial(Variable(var, strat.r)) + val))
         strat = symmGB_F2_python(strat, prot=True, deg_bound=2,
-            over_deg_bound=10)
+                                 over_deg_bound=10)
         if var <= vars_start:
             strat = symmGB_F2_python(strat, prot=True, opt_lazy=False,
-                redTail=False)
+                                     opt_red_tail=False)
         if strat.containsOne():
             pass
         else:
@@ -391,8 +393,7 @@ def GPS(G, vars_start, vars_end):
                 print("!!!!!!! SOLUTION", trace)
                 raise Exception
                 # yield trace
-            else:
-                branch(strat, trace + [(var, val)], var - 1)
+            branch(strat, trace + [(var, val)], var - 1)
 
     def branch(strat, trace, var):
         while strat.variableHasValue(var):
@@ -426,7 +427,7 @@ def GPS_with_proof_path(G, proof_path, deg_bound, over_deg_bound):
         print("npairs", strat.npairs())
         print("pos:", pos)
         strat = symmGB_F2_python(strat, deg_bound=deg_bound, opt_lazy=False,
-            over_deg_bound=over_deg_bound, prot=True)
+                                 over_deg_bound=over_deg_bound, prot=True)
         print("npairs", strat.npairs())
         pos = pos + 1
         if pos >= len(proof_path):
@@ -444,8 +445,7 @@ def GPS_with_proof_path(G, proof_path, deg_bound, over_deg_bound):
                 print("!!!!!!! SOLUTION", trace)
                 raise Exception
                 # yield trace
-            else:
-                branch(strat, trace + [(pos, val)], proof_path, pos)
+            branch(strat, trace + [(pos, val)], proof_path, pos)
 
     def branch(strat, trace, proof_path, pos):
 
@@ -471,7 +471,8 @@ def GPS_with_suggestions(G, deg_bound, over_deg_bound, opt_lazy=True,
         print("npairs", strat.npairs())
 
         strat = symmGB_F2_python(strat, deg_bound=deg_bound,
-            opt_lazy=opt_lazy, over_deg_bound=over_deg_bound, prot=True)
+                                 opt_lazy=opt_lazy,
+                                 over_deg_bound=over_deg_bound, prot=True)
 
         if not strat.containsOne():
             branch(strat, trace)
@@ -482,8 +483,8 @@ def GPS_with_suggestions(G, deg_bound, over_deg_bound, opt_lazy=True,
 
         if index < 0:
             uv = set(used_vars_set(strat))
-            lv = set([next(iter(p.lead())).index() for p in strat if p.
-                lead_deg() == 1])
+            lv = {next(iter(p.lead())).index()
+                  for p in strat if p.lead_deg() == 1}
             candidates = uv.difference(lv)
             if candidates:
                 index = next(iter(candidates)).index()
@@ -527,7 +528,9 @@ def GPS_with_suggestions(G, deg_bound, over_deg_bound, opt_lazy=True,
             strat.add_as_you_wish(g)
     if initial_bb:
         strat = symmGB_F2_python(strat, deg_bound=max(deg_bound,
-            first_deg_bound), opt_lazy=opt_lazy, over_deg_bound=0, prot=True)
+                                                      first_deg_bound),
+                                 opt_lazy=opt_lazy, over_deg_bound=0,
+                                 prot=True)
     strat.opt_lazy = opt_lazy
     print("INITIALIZED")
     branch(strat, [])
@@ -548,7 +551,7 @@ def GPS_with_non_binary_proof_path(G, proof_path, deg_bound, over_deg_bound):
         print("npairs", strat.npairs())
         print("pos:", pos)
         strat = symmGB_F2_python(strat, deg_bound=deg_bound,
-            over_deg_bound=over_deg_bound, prot=True)
+                                 over_deg_bound=over_deg_bound, prot=True)
         print("npairs", strat.npairs())
         pos = pos + 1
         if pos >= len(proof_path):
@@ -563,11 +566,10 @@ def GPS_with_non_binary_proof_path(G, proof_path, deg_bound, over_deg_bound):
                 print("!!!!!!! SOLUTION", trace)
                 raise Exception
                 # yield trace
-            else:
-                branch(strat, trace + [(pos, choice)], proof_path, pos)
-                # workaround because of stack depth
-                # step(strat,trace+[(var,val)],var-1, 0)
-                # step(strat,trace+[(var,val)],var-1, 1)
+            branch(strat, trace + [(pos, choice)], proof_path, pos)
+            # workaround because of stack depth
+            # step(strat,trace+[(var,val)],var-1, 0)
+            # step(strat,trace+[(var,val)],var-1, 1)
 
     def branch(strat, trace, proof_path, pos):
         for i in range(len(proof_path[pos])):
@@ -581,16 +583,16 @@ def GPS_with_non_binary_proof_path(G, proof_path, deg_bound, over_deg_bound):
 
 
 def symmGB_F2_C(G, opt_exchange=True,
-        deg_bound=1000000000000, opt_lazy=False,
-        over_deg_bound=0, opt_red_tail=True,
-        max_growth=2.0, step_factor=1.0,
-        implications=False, prot=False,
-        full_prot=False, selection_size=1000,
-        opt_allow_recursion=False, use_noro=False, use_faugere=False,
-        ll=False, opt_linear_algebra_in_last_block=True,
-        max_generators=None, red_tail_deg_growth=True,
-        modified_linear_algebra=True, matrix_prefix="",
-        draw_matrices=False):
+                deg_bound=1000000000000, opt_lazy=False,
+                over_deg_bound=0, opt_red_tail=True,
+                max_growth=2.0, step_factor=1.0,
+                implications=False, prot=False,
+                full_prot=False, selection_size=1000,
+                opt_allow_recursion=False, use_noro=False, use_faugere=False,
+                ll=False, opt_linear_algebra_in_last_block=True,
+                max_generators=None, red_tail_deg_growth=True,
+                modified_linear_algebra=True, matrix_prefix="",
+                draw_matrices=False):
     if use_noro:
         raise NotImplementedError("noro not implemented for symmgb")
     if isinstance(G, list):

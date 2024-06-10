@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Miscellaneous functions
 
@@ -12,7 +13,7 @@ AUTHORS:
 
 TESTS:
 
-The following test, verifying that :trac:`16181` has been resolved, needs
+The following test, verifying that :issue:`16181` has been resolved, needs
 to stay at the beginning of this file so that its context is not
 poisoned by other tests::
 
@@ -20,7 +21,7 @@ poisoned by other tests::
     sage: a
     0
 
-Check the fix from :trac:`8323`::
+Check the fix from :issue:`8323`::
 
     sage: 'name' in globals()
     False
@@ -37,30 +38,23 @@ Check the fix from :trac:`8323`::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
+import contextlib
+import functools
 import os
-import time
-import resource
 import pdb
+import sys
 import warnings
-import sage.misc.prandom as random
-from .lazy_string import lazy_string
-import sage.server.support
 
+from sage.misc.lazy_string import lazy_string
+from sage.env import DOT_SAGE, HOSTNAME
 from sage.misc.lazy_import import lazy_import
 
-lazy_import("sage.misc.call", ["AttrCallObject", "attrcall", "call_method"],
-            deprecation=29869)
+lazy_import("sage.combinat.subset", ["powerset", "subsets", "uniq"],
+            deprecation=35564)
 
-lazy_import("sage.misc.verbose", ["verbose", "set_verbose", "set_verbose_files",
-                                  "get_verbose_files", "unset_verbose_files", "get_verbose"],
-            deprecation=17815)
-
-lazy_import("sage.misc.repr", ["coeff_repr", "repr_lincomb"],
-            deprecation=29892)
-
-from sage.env import DOT_SAGE, HOSTNAME
+lazy_import("sage.misc.timing", ["cputime", "GlobalCputime", "walltime"],
+            deprecation=35816)
 
 LOCAL_IDENTIFIER = '%s.%s' % (HOSTNAME, os.getpid())
 
@@ -68,41 +62,13 @@ LOCAL_IDENTIFIER = '%s.%s' % (HOSTNAME, os.getpid())
 # File and directory utilities
 #################################################################
 
-
-def sage_makedirs(dirname, mode=0o777):
-    """
-    Python version of ``mkdir -p``: try to create a directory, and also
-    create all intermediate directories as necessary.  Succeed silently
-    if the directory already exists (unlike ``os.makedirs()``).
-    Raise other errors (like permission errors) normally.
-
-    EXAMPLES::
-
-        sage: from sage.misc.misc import sage_makedirs
-        sage: sage_makedirs(DOT_SAGE) # no output
-
-    The following fails because we are trying to create a directory in
-    place of an ordinary file::
-
-        sage: filename = tmp_filename()
-        sage: sage_makedirs(filename)
-        Traceback (most recent call last):
-        ...
-        OSError: [Errno ...] File exists: ...
-    """
-    try:
-        os.makedirs(dirname)
-    except OSError:
-        if not os.path.isdir(dirname):
-            raise
-
-
-# We create the DOT_SAGE directory (if it doesn't exist yet; note in particular
+# We create the DOT_SAGE directory (if it does not exist yet; note in particular
 # that it may already have been created by the bin/sage script) with
 # restrictive permissions, since otherwise possibly just anybody can easily see
 # every command you type.
 
-sage_makedirs(DOT_SAGE, mode=0o700)
+os.makedirs(DOT_SAGE, mode=0o700, exist_ok=True)
+
 
 def try_read(obj, splitlines=False):
     r"""
@@ -153,13 +119,13 @@ def try_read(obj, splitlines=False):
 
     I/O buffers::
 
-        sage: buf = io.StringIO(u'a\nb\nc')
+        sage: buf = io.StringIO('a\nb\nc')
         sage: print(try_read(buf))
         a
         b
         c
         sage: _ = buf.seek(0); try_read(buf, splitlines=True)
-        [u'a\n', u'b\n', u'c']
+        ['a\n', 'b\n', 'c']
         sage: buf = io.BytesIO(b'a\nb\nc')
         sage: try_read(buf) == b'a\nb\nc'
         True
@@ -169,7 +135,7 @@ def try_read(obj, splitlines=False):
 
     Custom readable::
 
-        sage: class MyFile(object):
+        sage: class MyFile():
         ....:     def read(self): return 'Hello world!'
         sage: try_read(MyFile())
         'Hello world!'
@@ -203,380 +169,14 @@ def try_read(obj, splitlines=False):
     return data
 
 
-#################################################
-# Next we create the Sage temporary directory.
-#################################################
-
-
-@lazy_string
-def SAGE_TMP():
-    """
-    EXAMPLES::
-
-        sage: from sage.misc.misc import SAGE_TMP
-        sage: SAGE_TMP
-        l'.../temp/...'
-    """
-    d = os.path.join(DOT_SAGE, 'temp', HOSTNAME, str(os.getpid()))
-    sage_makedirs(d)
-    return d
-
-
-@lazy_string
-def ECL_TMP():
-    """
-    Temporary directory that should be used by ECL interfaces launched from
-    Sage.
-
-    EXAMPLES::
-
-        sage: from sage.misc.misc import ECL_TMP
-        sage: ECL_TMP
-        l'.../temp/.../ecl'
-    """
-    d = os.path.join(str(SAGE_TMP), 'ecl')
-    sage_makedirs(d)
-    return d
-
-
-@lazy_string
-def SPYX_TMP():
-    """
-    EXAMPLES::
-
-        sage: from sage.misc.misc import SPYX_TMP
-        sage: SPYX_TMP
-        l'.../temp/.../spyx'
-    """
-    return os.path.join(str(SAGE_TMP), 'spyx')
-
-
-@lazy_string
-def SAGE_TMP_INTERFACE():
-    """
-    EXAMPLES::
-
-        sage: from sage.misc.misc import SAGE_TMP_INTERFACE
-        sage: SAGE_TMP_INTERFACE
-        l'.../temp/.../interface'
-    """
-    d = os.path.join(str(SAGE_TMP), 'interface')
-    sage_makedirs(d)
-    return d
-
-
 SAGE_DB = os.path.join(DOT_SAGE, 'db')
-sage_makedirs(SAGE_DB)
+os.makedirs(SAGE_DB, exist_ok=True)
 
 try:
     # Create the matplotlib config directory.
-    sage_makedirs(os.environ["MPLCONFIGDIR"])
+    os.makedirs(os.environ["MPLCONFIGDIR"], exist_ok=True)
 except KeyError:
     pass
-
-#################################################################
-# timing
-#################################################################
-
-
-def cputime(t=0, subprocesses=False):
-    """
-    Return the time in CPU seconds since Sage started, or with
-    optional argument ``t``, return the time since ``t``. This is how
-    much time Sage has spent using the CPU.  If ``subprocesses=False``
-    this does not count time spent in subprocesses spawned by Sage
-    (e.g., Gap, Singular, etc.). If ``subprocesses=True`` this
-    function tries to take all subprocesses with a working
-    ``cputime()`` implementation into account.
-
-    The measurement for the main Sage process is done via a call to
-    :func:`resource.getrusage()`, so it avoids the wraparound problems in
-    :func:`time.clock()` on Cygwin.
-
-    INPUT:
-
-    - ``t`` - (optional) time in CPU seconds, if ``t`` is a result
-      from an earlier call with ``subprocesses=True``, then
-      ``subprocesses=True`` is assumed.
-
-    - subprocesses -- (optional), include subprocesses (default:
-      ``False``)
-
-    OUTPUT:
-
-    - ``float`` - time in CPU seconds if ``subprocesses=False``
-
-    - :class:`GlobalCputime` - object which holds CPU times of
-      subprocesses otherwise
-
-    EXAMPLES::
-
-        sage: t = cputime()
-        sage: F = gp.factor(2^199-1)
-        sage: cputime(t)          # somewhat random
-        0.010999000000000092
-
-        sage: t = cputime(subprocesses=True)
-        sage: F = gp.factor(2^199-1)
-        sage: cputime(t) # somewhat random
-        0.091999
-
-        sage: w = walltime()
-        sage: F = gp.factor(2^199-1)
-        sage: walltime(w)         # somewhat random
-        0.58425593376159668
-
-    .. NOTE::
-
-        Even with ``subprocesses=True`` there is no guarantee that the
-        CPU time is reported correctly because subprocesses can be
-        started and terminated at any given time.
-    """
-    if isinstance(t, GlobalCputime):
-        subprocesses = True
-
-    if not subprocesses:
-        try:
-            t = float(t)
-        except TypeError:
-            t = 0.0
-        u, s = resource.getrusage(resource.RUSAGE_SELF)[:2]
-        return u + s - t
-    else:
-        if t == 0:
-            ret = GlobalCputime(cputime())
-            for s in sage.interfaces.quit.expect_objects:
-                S = s()
-                if S and S.is_running():
-                    try:
-                        ct = S.cputime()
-                        ret.total += ct
-                        ret.interfaces[s] = ct
-                    except NotImplementedError:
-                        pass
-            return ret
-        else:
-            if not isinstance(t, GlobalCputime):
-                t = GlobalCputime(t)
-            ret = GlobalCputime(cputime() - t.local)
-            for s in sage.interfaces.quit.expect_objects:
-                S = s()
-                if S and S.is_running():
-                    try:
-                        ct = S.cputime() - t.interfaces.get(s, 0.0)
-                        ret.total += ct
-                        ret.interfaces[s] = ct
-                    except NotImplementedError:
-                        pass
-            return ret
-
-
-class GlobalCputime:
-    """
-    Container for CPU times of subprocesses.
-
-    AUTHOR:
-
-    - Martin Albrecht - (2008-12): initial version
-
-    EXAMPLES:
-
-    Objects of this type are returned if ``subprocesses=True`` is
-    passed to :func:`cputime`::
-
-        sage: cputime(subprocesses=True) # indirect doctest, output random
-        0.2347431
-
-    We can use it to keep track of the CPU time spent in Singular for
-    example::
-
-        sage: t = cputime(subprocesses=True)
-        sage: P = PolynomialRing(QQ,7,'x')
-        sage: I = sage.rings.ideal.Katsura(P)
-        sage: gb = I.groebner_basis() # calls Singular
-        sage: cputime(subprocesses=True) - t # output random
-        0.462987
-
-    For further processing we can then convert this container to a
-    float::
-
-        sage: t = cputime(subprocesses=True)
-        sage: float(t) #output somewhat random
-        2.1088339999999999
-
-    .. SEEALSO::
-
-      :func:`cputime`
-    """
-    def __init__(self, t):
-        """
-        Create a new CPU time object which also keeps track of
-        subprocesses.
-
-        EXAMPLES::
-
-            sage: from sage.misc.misc import GlobalCputime
-            sage: ct = GlobalCputime(0.0); ct
-            0.0...
-        """
-        self.total = t
-        self.local = t
-        self.interfaces = {}
-
-    def __repr__(self):
-        """
-        EXAMPLES::
-
-            sage: cputime(subprocesses=True) # indirect doctest, output random
-            0.2347431
-        """
-        return str(self.total)
-
-    def __add__(self, other):
-        """
-        EXAMPLES::
-
-            sage: t = cputime(subprocesses=True)
-            sage: P = PolynomialRing(QQ,7,'x')
-            sage: I = sage.rings.ideal.Katsura(P)
-            sage: gb = I.groebner_basis() # calls Singular
-            sage: cputime(subprocesses=True) + t # output random
-            2.798708
-        """
-        if not isinstance(other, GlobalCputime):
-            other = GlobalCputime(other)
-        ret = GlobalCputime(self.total + other.total)
-        return ret
-
-    def __sub__(self, other):
-        """
-        EXAMPLES::
-
-            sage: t = cputime(subprocesses=True)
-            sage: P = PolynomialRing(QQ,7,'x')
-            sage: I = sage.rings.ideal.Katsura(P)
-            sage: gb = I.groebner_basis() # calls Singular
-            sage: cputime(subprocesses=True) - t # output random
-            0.462987
-        """
-        if not isinstance(other, GlobalCputime):
-            other = GlobalCputime(other)
-        ret = GlobalCputime(self.total - other.total)
-        return ret
-
-    def __float__(self):
-        """
-        EXAMPLES::
-
-            sage: t = cputime(subprocesses=True)
-            sage: float(t) #output somewhat random
-            2.1088339999999999
-        """
-        return float(self.total)
-
-
-def walltime(t=0):
-    """
-    Return the wall time in second, or with optional argument t, return
-    the wall time since time t. "Wall time" means the time on a wall
-    clock, i.e., the actual time.
-
-    INPUT:
-
-
-    -  ``t`` - (optional) float, time in CPU seconds
-
-    OUTPUT:
-
-    -  ``float`` - time in seconds
-
-
-    EXAMPLES::
-
-        sage: w = walltime()
-        sage: F = factor(2^199-1)
-        sage: walltime(w)   # somewhat random
-        0.8823847770690918
-    """
-    return time.time() - t
-
-
-def union(x, y=None):
-    """
-    Return the union of x and y, as a list. The resulting list need not
-    be sorted and can change from call to call.
-
-    INPUT:
-
-
-    -  ``x`` - iterable
-
-    -  ``y`` - iterable (may optionally omitted)
-
-
-    OUTPUT: list
-
-    EXAMPLES::
-
-        sage: answer = union([1,2,3,4], [5,6]); answer
-        [1, 2, 3, 4, 5, 6]
-        sage: union([1,2,3,4,5,6], [5,6]) == answer
-        True
-        sage: union((1,2,3,4,5,6), [5,6]) == answer
-        True
-        sage: union((1,2,3,4,5,6), set([5,6])) == answer
-        True
-    """
-    if y is None:
-        return list(set(x))
-    return list(set(x).union(y))
-
-
-def uniq(x):
-    """
-    Return the sublist of all elements in the list x that is sorted and
-    is such that the entries in the sublist are unique.
-
-    EXAMPLES::
-
-        sage: uniq([1, 1, 8, -5, 3, -5, -13, 13, -13])
-        doctest:...: DeprecationWarning: the output of uniq(X) being sorted is deprecated; use sorted(set(X)) instead if you want sorted output
-        See https://trac.sagemath.org/27014 for details.
-        [-13, -5, 1, 3, 8, 13]
-    """
-    # After deprecation period, rename _stable_uniq -> uniq
-    from sage.misc.superseded import deprecation
-    deprecation(27014, "the output of uniq(X) being sorted is deprecated; use sorted(set(X)) instead if you want sorted output")
-    return sorted(set(x))
-
-
-def _stable_uniq(L):
-    """
-    Iterate over the elements of ``L``, yielding every element at most
-    once: keep only the first occurance of any item.
-
-    The items must be hashable.
-
-    INPUT:
-
-    - ``L`` -- iterable
-
-    EXAMPLES::
-
-        sage: from sage.misc.misc import _stable_uniq
-        sage: L = [1, 1, 8, -5, 3, -5, 'a', 'x', 'a']
-        sage: it = _stable_uniq(L)
-        sage: it
-        <generator object _stable_uniq at ...>
-        sage: list(it)
-        [1, 8, -5, 3, 'a', 'x']
-    """
-    seen = set()
-    for x in L:
-        if x in seen:
-            continue
-        yield x
-        seen.add(x)
 
 
 def exactly_one_is_true(iterable):
@@ -635,7 +235,7 @@ def strunc(s, n=60):
 
 def newton_method_sizes(N):
     r"""
-    Returns a sequence of integers
+    Return a sequence of integers
     `1 = a_1 \leq a_2 \leq \cdots \leq a_n = N` such that
     `a_j = \lceil a_{j+1} / 2 \rceil` for all `j`.
 
@@ -648,7 +248,7 @@ def newton_method_sizes(N):
     INPUT:
 
 
-    -  ``N`` - positive integer
+    -  ``N`` -- positive integer
 
 
     EXAMPLES::
@@ -701,19 +301,19 @@ def compose(f, g):
 
         sage: def g(x): return 3*x
         sage: def f(x): return x + 1
-        sage: h1 = compose(f,g)
-        sage: h2 = compose(g,f)
-        sage: _ = var ('x')
-        sage: h1(x)
+        sage: h1 = compose(f, g)
+        sage: h2 = compose(g, f)
+        sage: _ = var('x')                                                              # needs sage.symbolic
+        sage: h1(x)                                                                     # needs sage.symbolic
         3*x + 1
-        sage: h2(x)
+        sage: h2(x)                                                                     # needs sage.symbolic
         3*x + 3
 
     ::
 
-        sage: _ = function('f g')
-        sage: _ = var ('x')
-        sage: compose(f,g)(x)
+        sage: _ = function('f g')                                                       # needs sage.symbolic
+        sage: _ = var('x')                                                              # needs sage.symbolic
+        sage: compose(f, g)(x)                                                          # needs sage.symbolic
         f(g(x))
 
     """
@@ -737,26 +337,26 @@ def nest(f, n, x):
     EXAMPLES::
 
         sage: def f(x): return x^2 + 1
-        sage: x = var('x')
-        sage: nest(f, 3, x)
+        sage: x = var('x')                                                              # needs sage.symbolic
+        sage: nest(f, 3, x)                                                             # needs sage.symbolic
         ((x^2 + 1)^2 + 1)^2 + 1
 
     ::
 
-        sage: _ = function('f')
-        sage: _ = var('x')
-        sage: nest(f, 10, x)
+        sage: _ = function('f')                                                         # needs sage.symbolic
+        sage: _ = var('x')                                                              # needs sage.symbolic
+        sage: nest(f, 10, x)                                                            # needs sage.symbolic
         f(f(f(f(f(f(f(f(f(f(x))))))))))
 
     ::
 
-        sage: _ = function('f')
-        sage: _ = var('x')
-        sage: nest(f, 0, x)
+        sage: _ = function('f')                                                         # needs sage.symbolic
+        sage: _ = var('x')                                                              # needs sage.symbolic
+        sage: nest(f, 0, x)                                                             # needs sage.symbolic
         x
 
     """
-    from sage.rings.all import Integer
+    from sage.rings.integer import Integer
     n = Integer(n)
 
     if n < 0:
@@ -799,15 +399,26 @@ class BackslashOperator:
         """
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: A = random_matrix(ZZ, 4)
+            sage: while A.rank() != 4:
+            ....:     A = random_matrix(ZZ, 4)
             sage: B = random_matrix(ZZ, 4)
             sage: temp = A * BackslashOperator()
+            doctest:...:
+            DeprecationWarning: the backslash operator has been deprecated
+            See https://github.com/sagemath/sage/issues/36394 for details.
             sage: temp.left is A
             True
             sage: X = temp * B
+            doctest:...:
+            DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
+            See https://github.com/sagemath/sage/issues/36394 for details.
             sage: A * X == B
             True
         """
+        from sage.misc.superseded import deprecation
+        deprecation(36394, 'the backslash operator has been deprecated')
         self.left = left
         return self
 
@@ -815,25 +426,37 @@ class BackslashOperator:
         r"""
         EXAMPLES::
 
+            sage: # needs scipy sage.modules
             sage: A = matrix(RDF, 5, 5, 2)
             sage: b = vector(RDF, 5, range(5))
             sage: v = A \ b
+            doctest:...:
+            DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
+            See https://github.com/sagemath/sage/issues/36394 for details.
             sage: v.zero_at(1e-19)  # On at least one platform, we get a "negative zero"
             (0.0, 0.5, 1.0, 1.5, 2.0)
             sage: v = A._backslash_(b)
+            doctest:...:
+            DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
+            See https://github.com/sagemath/sage/issues/36394 for details.
             sage: v.zero_at(1e-19)
             (0.0, 0.5, 1.0, 1.5, 2.0)
             sage: v = A * BackslashOperator() * b
+            doctest:...:
+            DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
+            See https://github.com/sagemath/sage/issues/36394 for details.
             sage: v.zero_at(1e-19)
             (0.0, 0.5, 1.0, 1.5, 2.0)
         """
+        from sage.misc.superseded import deprecation
+        deprecation(36394, 'the backslash operator has been deprecated')
         return self.left._backslash_(right)
 
 
 #################################################################
 # is_iterator function
 #################################################################
-def is_iterator(it):
+def is_iterator(it) -> bool:
     """
     Tests if it is an iterator.
 
@@ -847,13 +470,7 @@ def is_iterator(it):
         sage: is_iterator(it)
         True
 
-        sage: class wrong():  # py2
-        ....:    def __init__(self): self.n = 5
-        ....:    def next(self):
-        ....:        self.n -= 1
-        ....:        if self.n == 0: raise StopIteration
-        ....:        return self.n
-        sage: class wrong():  # py3
+        sage: class wrong():
         ....:    def __init__(self): self.n = 5
         ....:    def __next__(self):
         ....:        self.n -= 1
@@ -862,11 +479,7 @@ def is_iterator(it):
         sage: x = wrong()
         sage: is_iterator(x)
         False
-        sage: list(x)  # py2
-        Traceback (most recent call last):
-        ...
-        TypeError: iteration over non-sequence
-        sage: list(x)  # py3
+        sage: list(x)
         Traceback (most recent call last):
         ...
         TypeError: 'wrong' object is not iterable
@@ -879,10 +492,10 @@ def is_iterator(it):
         sage: list(x)
         [4, 3, 2, 1]
 
-        sage: P = Partitions(3)
-        sage: is_iterator(P)
+        sage: P = Partitions(3)                                                         # needs sage.combinat
+        sage: is_iterator(P)                                                            # needs sage.combinat
         False
-        sage: is_iterator(iter(P))
+        sage: is_iterator(iter(P))                                                      # needs sage.combinat
         True
     """
     # see trac #7398 for a discussion
@@ -905,22 +518,54 @@ def random_sublist(X, s):
     INPUT:
 
 
-    -  ``X`` - list
+    -  ``X`` -- list
 
-    -  ``s`` - floating point number between 0 and 1
+    -  ``s`` -- floating point number between 0 and 1
 
 
     OUTPUT: list
 
     EXAMPLES::
 
+        sage: from sage.misc.misc import is_sublist
         sage: S = [1,7,3,4,18]
-        sage: random_sublist(S, 0.5)
+        sage: sublist = random_sublist(S, 0.5); sublist  # random
         [1, 3, 4]
-        sage: random_sublist(S, 0.5)
+        sage: is_sublist(sublist, S)
+        True
+        sage: sublist = random_sublist(S, 0.5); sublist  # random
         [1, 3]
+        sage: is_sublist(sublist, S)
+        True
     """
+    import sage.misc.prandom as random
     return [a for a in X if random.random() <= s]
+
+
+def is_sublist(X, Y):
+    """
+    Test whether ``X`` is a sublist of ``Y``.
+
+    EXAMPLES::
+
+        sage: from sage.misc.misc import is_sublist
+        sage: S = [1, 7, 3, 4, 18]
+        sage: is_sublist([1, 7], S)
+        True
+        sage: is_sublist([1, 3, 4], S)
+        True
+        sage: is_sublist([1, 4, 3], S)
+        False
+        sage: is_sublist(S, S)
+        True
+    """
+    X_i = 0
+    for Y_i, y in enumerate(Y):
+        if X_i == len(X):
+            return True
+        if y == X[X_i]:
+            X_i += 1
+    return X_i == len(X)
 
 
 def some_tuples(elements, repeat, bound, max_samples=None):
@@ -986,12 +631,21 @@ def _some_tuples_sampling(elements, repeat, max_samples, n):
     TESTS::
 
         sage: from sage.misc.misc import _some_tuples_sampling
-        sage: list(_some_tuples_sampling(range(3), 3, 2, 3))
-        [(0, 1, 0), (1, 1, 1)]
-        sage: list(_some_tuples_sampling(range(20), None, 4, 20))
-        [0, 6, 9, 3]
+        sage: l = list(_some_tuples_sampling(range(3), 3, 2, 3))
+        sage: len(l)
+        2
+        sage: all(len(tup) == 3 for tup in l)
+        True
+        sage: all(el in range(3) for tup in l for el in tup)
+        True
+        sage: l = list(_some_tuples_sampling(range(20), None, 4, 20))
+        sage: len(l)
+        4
+        sage: all(el in range(20) for el in l)
+        True
     """
     from sage.rings.integer import Integer
+    import sage.misc.prandom as random
     N = n if repeat is None else n**repeat
     # We sample on range(N) and create tuples manually since we don't want to create the list of all possible tuples in memory
     for a in random.sample(range(N), max_samples):
@@ -999,68 +653,6 @@ def _some_tuples_sampling(elements, repeat, max_samples, n):
             yield elements[a]
         else:
             yield tuple(elements[j] for j in Integer(a).digits(n, padto=repeat))
-
-
-def powerset(X):
-    r"""
-    Iterator over the *list* of all subsets of the iterable X, in no
-    particular order. Each list appears exactly once, up to order.
-
-    INPUT:
-
-
-    -  ``X`` - an iterable
-
-
-    OUTPUT: iterator of lists
-
-    EXAMPLES::
-
-        sage: list(powerset([1,2,3]))
-        [[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]
-        sage: [z for z in powerset([0,[1,2]])]
-        [[], [0], [[1, 2]], [0, [1, 2]]]
-
-    Iterating over the power set of an infinite set is also allowed::
-
-        sage: i = 0
-        sage: L = []
-        sage: for x in powerset(ZZ):
-        ....:     if i > 10:
-        ....:         break
-        ....:     else:
-        ....:         i += 1
-        ....:     L.append(x)
-        sage: print(" ".join(str(x) for x in L))
-        [] [0] [1] [0, 1] [-1] [0, -1] [1, -1] [0, 1, -1] [2] [0, 2] [1, 2]
-
-    You may also use subsets as an alias for powerset::
-
-        sage: subsets([1,2,3])
-        <generator object ...powerset at 0x...>
-        sage: list(subsets([1,2,3]))
-        [[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]
-
-        The reason we return lists instead of sets is that the elements of
-        sets must be hashable and many structures on which one wants the
-        powerset consist of non-hashable objects.
-
-    AUTHORS:
-
-    - William Stein
-
-    - Nils Bruin (2006-12-19): rewrite to work for not-necessarily
-      finite objects X.
-    """
-    yield []
-    pairs = []
-    for x in X:
-        pairs.append((2**len(pairs), x))
-        for w in range(2**(len(pairs) - 1), 2**(len(pairs))):
-            yield [x for m, x in pairs if m & w]
-
-
-subsets = powerset
 
 
 #################################################################
@@ -1082,18 +674,18 @@ def exists(S, P):
     INPUT:
 
 
-    -  ``S`` - object (that supports enumeration)
+    -  ``S`` -- object (that supports enumeration)
 
-    -  ``P`` - function that returns True or False
+    -  ``P`` -- function that returns True or False
 
 
     OUTPUT:
 
 
-    -  ``bool`` - whether or not P is True for some element
+    -  ``bool`` -- whether or not P is True for some element
        x of S
 
-    -  ``object`` - x
+    -  ``object`` -- x
 
 
     EXAMPLES: lambda functions are very useful when using the exists
@@ -1132,19 +724,17 @@ def forall(S, P):
 
     INPUT:
 
+    -  ``S`` -- object (that supports enumeration)
 
-    -  ``S`` - object (that supports enumeration)
-
-    -  ``P`` - function that returns True or False
-
+    -  ``P`` -- function that returns True or False
 
     OUTPUT:
 
 
-    -  ``bool`` - whether or not P is True for all elements
+    -  ``bool`` -- whether or not P is True for all elements
        of S
 
-    -  ``object`` - x
+    -  ``object`` -- x
 
 
     EXAMPLES: lambda functions are very useful when using the forall
@@ -1192,7 +782,7 @@ def word_wrap(s, ncols=85):
     if ncols == 0:
         return s
     for x in s.split('\n'):
-        if len(x) == 0 or x.lstrip()[:5] == 'sage:':
+        if not x or x.lstrip()[:5] == 'sage:':
             t.append(x)
             continue
         while len(x) > ncols:
@@ -1232,21 +822,9 @@ def pad_zeros(s, size=3):
     return "0" * (size - len(str(s))) + str(s)
 
 
-def embedded():
-    """
-    Return True if this copy of Sage is running embedded in the Sage
-    notebook.
-
-    EXAMPLES::
-
-        sage: sage.misc.misc.embedded()    # output True if in the notebook
-        False
-    """
-    return sage.server.support.EMBEDDED_MODE
-
 def is_in_string(line, pos):
     r"""
-    Returns True if the character at position pos in line occurs
+    Return ``True`` if the character at position ``pos`` in ``line`` occurs
     within a string.
 
     EXAMPLES::
@@ -1371,7 +949,7 @@ def inject_variable(name, value, warn=True):
         sage: a
         272
 
-    That's because warn seem to not reissue twice the same warning:
+    That's because warn seem to not reissue twice the same warning::
 
         sage: from warnings import warn
         sage: warn("blah")
@@ -1402,7 +980,7 @@ def inject_variable_test(name, value, depth):
     """
     A function for testing deep calls to inject_variable
 
-    TESTS::
+    EXAMPLES::
 
         sage: from sage.misc.misc import inject_variable_test
         sage: inject_variable_test("a0", 314, 0)
@@ -1418,9 +996,73 @@ def inject_variable_test(name, value, depth):
         doctest:...: RuntimeWarning: redefining global value `a2`
         sage: a2
         271
-
     """
     if depth == 0:
         inject_variable(name, value)
     else:
         inject_variable_test(name, value, depth - 1)
+
+
+# from https://stackoverflow.com/questions/4103773/efficient-way-of-having-a-function-only-execute-once-in-a-loop
+def run_once(func):
+    """
+    Runs a function (successfully) only once.
+
+    The running can be reset by setting the ``has_run`` attribute to False
+
+    TESTS::
+
+        sage: from sage.repl.ipython_extension import run_once
+        sage: @run_once
+        ....: def foo(work):
+        ....:     if work:
+        ....:         return 'foo worked'
+        ....:     raise RuntimeError("foo didn't work")
+        sage: foo(False)
+        Traceback (most recent call last):
+        ...
+        RuntimeError: foo didn't work
+        sage: foo(True)
+        'foo worked'
+        sage: foo(False)
+        sage: foo(True)
+    """
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        if not wrapper.has_run:
+            result = func(*args, **kwargs)
+            wrapper.has_run = True
+            return result
+    wrapper.has_run = False
+    return wrapper
+
+
+@contextlib.contextmanager
+def increase_recursion_limit(increment):
+    r"""
+    Context manager to temporarily change the Python maximum recursion depth.
+
+    INPUT:
+
+    - `increment`: increment to add to the current limit
+
+    EXAMPLES::
+
+        sage: from sage.misc.misc import increase_recursion_limit
+        sage: def rec(n): None if n == 0 else rec(n-1)
+        sage: rec(10000)
+        Traceback (most recent call last):
+        ...
+        RecursionError: maximum recursion depth exceeded...
+        sage: with increase_recursion_limit(10000): rec(10000)
+        sage: rec(10000)
+        Traceback (most recent call last):
+        ...
+        RecursionError: maximum recursion depth exceeded...
+    """
+    old_limit = sys.getrecursionlimit()
+    sys.setrecursionlimit(old_limit + increment)
+    try:
+        yield
+    finally:
+        sys.setrecursionlimit(old_limit)

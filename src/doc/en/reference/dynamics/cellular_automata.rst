@@ -2,7 +2,7 @@ Cellular Automata
 =================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    ../sage/dynamics/cellular_automata/catalog
 

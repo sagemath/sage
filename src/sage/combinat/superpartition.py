@@ -64,18 +64,18 @@ REFERENCES:
 - [JL2016]_
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2018 Mike Zabrocki <zabrocki at mathstat.yorku.ca>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function, absolute_import, division
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from __future__ import annotations
 from functools import reduce
+from itertools import chain
 
 from sage.structure.list_clone import ClonableArray
 from sage.structure.unique_representation import UniqueRepresentation
@@ -86,13 +86,13 @@ from sage.combinat.composition import Composition
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.rings.integer import Integer
 from sage.structure.global_options import GlobalOptions
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 
 
 @richcmp_method
 class SuperPartition(ClonableArray,
-        metaclass=InheritComparisonClasscallMetaclass):
+                     metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A super partition.
 
@@ -148,7 +148,7 @@ class SuperPartition(ClonableArray,
             return lst
         SPs = SuperPartitions()
         if not lst:
-            return SPs([[],[]])
+            return SPs([[], []])
         elif isinstance(lst[0], (list, tuple)):
             return SPs([[Integer(a) for a in lst[0]],
                         [Integer(a) for a in lst[1]]])
@@ -180,9 +180,9 @@ class SuperPartition(ClonableArray,
             sage: SP.check()
         """
         if self not in self.parent():
-            raise ValueError("%s not in %s"%(self, self.parent()))
+            raise ValueError("%s not in %s" % (self, self.parent()))
 
-    def __richcmp__(self, other, op):
+    def __richcmp__(self, other, op) -> bool:
         r"""
         Check whether ``self`` is equal to ``other``.
 
@@ -200,19 +200,7 @@ class SuperPartition(ClonableArray,
         else:
             return richcmp(list(self), other, op)
 
-    def _hash_(self):
-        """
-        Return the hash of ``self``.
-
-        EXAMPLES::
-
-            sage: SP = SuperPartition([[1],[1]])
-            sage: hash(tuple(SP)) == hash(SP)
-            True
-        """
-        return hash(tuple(self))
-
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -245,16 +233,17 @@ class SuperPartition(ClonableArray,
         """
         display = self.parent().options.display
         if display == "default":
-            return '['+', '.join(str(a) for a in self.antisymmetric_part())+\
-                '; '+', '.join(str(a) for a in self.symmetric_part())+']'
+            asp = ', '.join(str(a) for a in self.antisymmetric_part())
+            sp = ', '.join(str(a) for a in self.symmetric_part())
+            return '[' + asp + '; ' + sp + ']'
         elif display == "pair":
             return self._repr_pair()
-        elif display == "list":
+        else:  # "list"
             return self._repr_list()
 
-    def _repr_pair(self):
+    def _repr_pair(self) -> str:
         r"""
-        Represention of a super partition as a pair.
+        Representation of a super partition as a pair.
 
         A super partition is represented by a list consisting of the
         antisymmetric and symmetric parts.
@@ -270,9 +259,9 @@ class SuperPartition(ClonableArray,
         """
         return repr(self.to_list())
 
-    def _repr_list(self):
+    def _repr_list(self) -> str:
         r"""
-        Represention of a super partition as a list.
+        Representation of a super partition as a list.
 
         A super partition is represented by a list consisting of the
         negative values for the antisymmetric part listed first followed
@@ -289,7 +278,7 @@ class SuperPartition(ClonableArray,
         """
         return repr([-a for a in self[0]] + list(self[1]))
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Latex a super partition.
 
@@ -306,7 +295,7 @@ class SuperPartition(ClonableArray,
         return ('(' + ','.join(str(a) for a in self.antisymmetric_part())
                 + '; ' + ', '.join(str(a) for a in self.symmetric_part()) + ')')
 
-    def to_list(self):
+    def to_list(self) -> list:
         r"""
         The list of two lists with the antisymmetric and symmetric parts.
 
@@ -319,7 +308,7 @@ class SuperPartition(ClonableArray,
         """
         return [list(self[0]), list(self[1])]
 
-    def to_composition(self):
+    def to_composition(self) -> Composition:
         r"""
         Concatenate the antisymmetric and symmetric parts to a composition.
 
@@ -338,7 +327,7 @@ class SuperPartition(ClonableArray,
         """
         return Composition(self[0] + self[1])
 
-    def to_partition(self):
+    def to_partition(self) -> Partition:
         r"""
         Concatenate and sort the antisymmetric and symmetric parts
         to a partition.
@@ -356,9 +345,9 @@ class SuperPartition(ClonableArray,
             sage: SuperPartition([[2,1,0],[3,3]]).to_partition().parent()
             Partitions
         """
-        return Partition(sorted(self[0] + self[1], reverse=True))
+        return Partition(sorted(self[0] + self[1], reverse=True))  # type:ignore
 
-    def antisymmetric_part(self):
+    def antisymmetric_part(self) -> list:
         r"""
         The antisymmetric part as a list of strictly decreasing integers.
 
@@ -377,7 +366,7 @@ class SuperPartition(ClonableArray,
 
     a_part = antisymmetric_part
 
-    def symmetric_part(self):
+    def symmetric_part(self) -> list:
         r"""
         The symmetric part as a list of weakly decreasing integers.
 
@@ -396,7 +385,7 @@ class SuperPartition(ClonableArray,
 
     s_part = symmetric_part
 
-    def bosonic_degree(self):
+    def bosonic_degree(self) -> int:
         r"""
         Return the bosonic degree of ``self``.
 
@@ -418,7 +407,7 @@ class SuperPartition(ClonableArray,
 
     degree = bosonic_degree
 
-    def fermionic_degree(self):
+    def fermionic_degree(self) -> int:
         r"""
         Return the fermionic degree of ``self``.
 
@@ -439,7 +428,7 @@ class SuperPartition(ClonableArray,
 
     fermionic_sector = fermionic_degree
 
-    def bi_degree(self):
+    def bi_degree(self) -> tuple:
         r"""
         Return the bidegree of ``self``, which is a pair consisting
         of the bosonic and fermionic degree.
@@ -457,7 +446,7 @@ class SuperPartition(ClonableArray,
         """
         return (self.bosonic_degree(), self.fermionic_degree())
 
-    def length(self):
+    def length(self) -> int:
         r"""
         Return the length of ``self``, which is the sum of the
         lengths of the antisymmetric and symmetric part.
@@ -473,9 +462,9 @@ class SuperPartition(ClonableArray,
             sage: SuperPartition([[2,1,0],[3,3]]).length()
             5
         """
-        return self.fermionic_degree()+len(self.symmetric_part())
+        return self.fermionic_degree() + len(self.symmetric_part())
 
-    def bosonic_length(self):
+    def bosonic_length(self) -> int:
         r"""
         Return the length of the partition of the symmetric part.
 
@@ -492,7 +481,7 @@ class SuperPartition(ClonableArray,
         """
         return len(self.symmetric_part())
 
-    def shape_circled_diagram(self):
+    def shape_circled_diagram(self) -> Partition:
         r"""
         A concatenated partition with an extra cell for each antisymmetric part
 
@@ -507,11 +496,12 @@ class SuperPartition(ClonableArray,
             sage: SuperPartition([[2,1,0],[3,3]]).shape_circled_diagram()
             [3, 3, 3, 2, 1]
         """
-        return Partition(sorted([a+1 for a in self.antisymmetric_part()]
-                                + self.symmetric_part(), reverse=True))
+        pi = sorted([a + 1 for a in self.antisymmetric_part()] +
+                    self.symmetric_part(), reverse=True)
+        return Partition(pi)  # type:ignore
 
     @staticmethod
-    def from_circled_diagram(shape, corners):
+    def from_circled_diagram(shape, corners) -> SuperPartition:
         r"""
         Construct a super partition from a circled diagram.
 
@@ -538,11 +528,12 @@ class SuperPartition(ClonableArray,
             sage: all(sp == from_cd(*sp.to_circled_diagram()) for sp in SuperPartitions(4))
             True
         """
-        return SuperPartition([sorted([c[1] for c in corners], reverse=True),
-                               [shape[i] for i in range(len(shape))
-                                if i not in [c[0] for c in corners]]])
+        data = [sorted([c[1] for c in corners], reverse=True),
+                [shape[i] for i in range(len(shape))
+                 if i not in [c[0] for c in corners]]]
+        return SuperPartition(data)  # type:ignore
 
-    def to_circled_diagram(self):
+    def to_circled_diagram(self) -> list:
         r"""
         The shape of the circled diagram and a list of addable cells
 
@@ -568,7 +559,7 @@ class SuperPartition(ClonableArray,
         corners = [c for c in shape.addable_cells() if c[1] in self.antisymmetric_part()]
         return [shape, corners]
 
-    def conjugate(self):
+    def conjugate(self) -> SuperPartition:
         r"""
         Conjugate of a super partition.
 
@@ -590,9 +581,9 @@ class SuperPartition(ClonableArray,
         """
         sd = self.to_circled_diagram()
         return SuperPartition.from_circled_diagram(sd[0].conjugate(),
-                                                   [(j,i) for (i,j) in sd[1]])
+                                                   [(j, i) for (i, j) in sd[1]])
 
-    def zee(self):
+    def zee(self) -> Integer:
         r"""
         Return the centralizer size of a permutation of cycle
         type symmetric part of ``self``.
@@ -610,9 +601,9 @@ class SuperPartition(ClonableArray,
             sage: sum(1/sp.zee() for sp in SuperPartitions(6,0))
             1
         """
-        return Partition(self.symmetric_part()).centralizer_size()
+        return Partition(self.symmetric_part()).centralizer_size()  # type:ignore
 
-    def sign(self):
+    def sign(self) -> int:
         r"""
         Return the sign of a permutation of cycle type the
         symmetric part of ``self``.
@@ -630,9 +621,9 @@ class SuperPartition(ClonableArray,
             sage: sum(sp.sign()/sp.zee() for sp in SuperPartitions(6,0))
             0
         """
-        return (-1)**(self.degree()-len(self.symmetric_part()))
+        return (-1)**(self.degree() - len(self.symmetric_part()))
 
-    def dominates(self, other):
+    def dominates(self, other) -> bool:
         r"""
         Return ``True`` if and only if ``self`` dominates ``other``.
 
@@ -655,7 +646,7 @@ class SuperPartition(ClonableArray,
                 Partition(self.antisymmetric_part()).dominates(other[0]) and
                 Partition(self.symmetric_part()).dominates(other[1]))
 
-    def add_horizontal_border_strip_star(self, h):
+    def add_horizontal_border_strip_star(self, h) -> list:
         r"""
         Return a list of super partitions that differ from ``self``
         by a horizontal strip.
@@ -675,36 +666,36 @@ class SuperPartition(ClonableArray,
         EXAMPLES::
 
             sage: SuperPartition([[4,1],[3]]).add_horizontal_border_strip_star(3)
-            [[4, 1; 3, 3],
-             [4, 1; 4, 2],
-             [3, 1; 5, 2],
-             [4, 1; 5, 1],
-             [3, 1; 6, 1],
-             [4, 0; 4, 3],
-             [3, 0; 5, 3],
-             [4, 0; 5, 2],
-             [3, 0; 6, 2],
+            [[3, 1; 7],
              [4, 1; 6],
-             [3, 1; 7]]
+             [3, 0; 6, 2],
+             [3, 1; 6, 1],
+             [4, 0; 5, 2],
+             [4, 1; 5, 1],
+             [3, 0; 5, 3],
+             [3, 1; 5, 2],
+             [4, 0; 4, 3],
+             [4, 1; 4, 2],
+             [4, 1; 3, 3]]
             sage: SuperPartition([[2,1],[3]]).add_horizontal_border_strip_star(2)
-            [[2, 1; 3, 2], [2, 1; 4, 1], [2, 0; 3, 3], [2, 0; 4, 2], [2, 1; 5]]
+            [[2, 1; 5], [2, 0; 4, 2], [2, 1; 4, 1], [2, 0; 3, 3], [2, 1; 3, 2]]
         """
         sp1, circ_list = self.to_circled_diagram()
         nsp = [list(la) + [0] for la in sp1.add_horizontal_border_strip(h)]
         sp1 = sp1 + [0]
         out = []
         for elt in nsp:
-            row_changed = [row1-row2 for row1,row2 in zip(elt,sp1)]
-            new_sp = [elt, [(i[0]+1, elt[i[0]+1]) for i in circ_list
+            row_changed = [row1 - row2 for row1, row2 in zip(elt, sp1)]
+            new_sp = [elt, [(i[0] + 1, elt[i[0] + 1]) for i in circ_list
                             if row_changed[i[0]] != 0]
-                            # TODO: Check that this is not suppose to be
-                            #   a tuple of size 1
-                           + [(i) for i in circ_list if row_changed[i[0]] == 0]]
-            if len(set([k for (j,k) in new_sp[1]])) == len(new_sp[1]):
+                      # TODO: Check that this is not supposed to be
+                      #   a tuple of size 1
+                      + [(i) for i in circ_list if row_changed[i[0]] == 0]]
+            if len({k for j, k in new_sp[1]}) == len(new_sp[1]):
                 out += [SuperPartition.from_circled_diagram(*new_sp)]
         return out
 
-    def add_horizontal_border_strip_star_bar(self, h):
+    def add_horizontal_border_strip_star_bar(self, h) -> list:
         r"""
         List super partitions that differ from ``self`` by a horizontal strip.
 
@@ -723,29 +714,29 @@ class SuperPartition(ClonableArray,
         EXAMPLES::
 
             sage: SuperPartition([[4,1],[5,4]]).add_horizontal_border_strip_star_bar(3)
-            [[4, 3; 5, 4, 1],
-             [4, 1; 5, 4, 3],
-             [4, 2; 5, 5, 1],
-             [4, 1; 5, 5, 2],
+            [[4, 1; 8, 4],
+             [4, 1; 7, 5],
+             [4, 2; 7, 4],
+             [4, 1; 7, 4, 1],
+             [4, 2; 6, 5],
+             [4, 1; 6, 5, 1],
+             [4, 3; 6, 4],
              [4, 2; 6, 4, 1],
              [4, 1; 6, 4, 2],
-             [4, 1; 6, 5, 1],
-             [4, 1; 7, 4, 1],
              [4, 3; 5, 5],
-             [4, 3; 6, 4],
-             [4, 2; 6, 5],
-             [4, 2; 7, 4],
-             [4, 1; 7, 5],
-             [4, 1; 8, 4]]
+             [4, 2; 5, 5, 1],
+             [4, 1; 5, 5, 2],
+             [4, 3; 5, 4, 1],
+             [4, 1; 5, 4, 3]]
             sage: SuperPartition([[3,1],[5]]).add_horizontal_border_strip_star_bar(2)
-            [[3, 2; 5, 1],
-             [3, 1; 5, 2],
-             [4, 1; 5, 1],
+            [[3, 1; 7],
+             [4, 1; 6],
+             [3, 2; 6],
              [3, 1; 6, 1],
              [4, 2; 5],
-             [3, 2; 6],
-             [4, 1; 6],
-             [3, 1; 7]]
+             [4, 1; 5, 1],
+             [3, 2; 5, 1],
+             [3, 1; 5, 2]]
         """
         sp1, circ_list = self.to_circled_diagram()
         nsp = [list(la) + [0] for la in sp1.add_horizontal_border_strip(h)]
@@ -754,31 +745,32 @@ class SuperPartition(ClonableArray,
         for asp in nsp:
             asp = asp + [0]
             change_in_rows = [asp[i] - sp1[i] for i in range(len(sp1))]
-            moved_circ_list = [[] for i in range(len(circ_list))]
-            for i,pos in enumerate(circ_list):
+            moved_circ_list: list[list[tuple]] = [[] for _ in range(len(circ_list))]
+            for i, pos in enumerate(circ_list):
                 if change_in_rows[pos[0]] == 0:
                     moved_circ_list[i].append(pos)
                 else:
                     if pos[0] == 0:
-                        moved_circ_list[i].append((0, pos[1]+change_in_rows[0]))
+                        moved_circ_list[i].append((0, pos[1] + change_in_rows[0]))
                         if pos[1] == asp[1]:
                             moved_circ_list[i].append((1, asp[1]))
                     else:
-                        if pos[1] + change_in_rows[pos[0]] < sp1[pos[0]-1]:
-                            moved_circ_list[i].append((pos[0], pos[1]+change_in_rows[pos[0]]))
-                        if asp[pos[0]+1] == sp1[pos[0]]:
-                            moved_circ_list[i].append((pos[0]+1, pos[1]))
+                        if pos[1] + change_in_rows[pos[0]] < sp1[pos[0] - 1]:
+                            moved_circ_list[i].append((pos[0], pos[1] + change_in_rows[pos[0]]))
+                        if asp[pos[0] + 1] == sp1[pos[0]]:
+                            moved_circ_list[i].append((pos[0] + 1, pos[1]))
             out += [[moved_circ_list, asp]]
         result = []
-        for i in out:
-            if not i[0]:
-                result += [[i[1],i[0]]]
+        for ti in out:
+            if not ti[0]:
+                result += [[ti[1], ti[0]]]
             else:
-                x = reduce(lambda a,b: [item_a + item_b for item_a in a for item_b in b], i[0])
+                x = reduce(lambda a, b: [item_a + item_b for item_a in a for item_b in b], ti[0])
                 for j in x:
-                    result += [[i[1], list(zip(j,j[1:]))[::2]]]
-        return [SuperPartition.from_circled_diagram(*i)
-                for i in result if len(i[1]) == len(self[0])]
+                    result += [[ti[1], list(zip(j, j[1:]))[::2]]]
+        return [SuperPartition.from_circled_diagram(*ti)
+                for ti in result if len(ti[1]) == len(self[0])]
+
 
 class SuperPartitions(UniqueRepresentation, Parent):
     r"""
@@ -954,7 +946,7 @@ class SuperPartitions(UniqueRepresentation, Parent):
                                              [a for a in lst if a > 0]],
                                       check=check)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -979,23 +971,26 @@ class SuperPartitions(UniqueRepresentation, Parent):
         """
         if isinstance(x, SuperPartition):
             return True
-        if isinstance(x, (list, tuple)) and all(isinstance(i, (int, Integer))
-            or i in ZZ for i in x):
+        if not isinstance(x, (list, tuple)):
+            return False
+        if all(isinstance(i, (int, Integer)) or i in ZZ for i in x):
             sp = [a for a in x if a <= 0]
-            return (all(sp[i] > sp[i-1] for i in range(1,len(sp)))
+            return (all(sp[i] > sp[i - 1] for i in range(1, len(sp)))
                     and [a for a in x if a > 0] in _Partitions)
-        elif (isinstance(x, (list, tuple)) and len(x) == 2
-              and isinstance(x[0], (list, tuple)) and isinstance(x[1], (list, tuple))):
-            for i in x[0] + x[1]:
+        elif (len(x) == 2 and
+              isinstance(x[0], (list, tuple)) and
+              isinstance(x[1], (list, tuple))):
+            for i in chain(x[0], x[1]):
                 if i not in ZZ:
                     return False
                 if i < 0:
                     return False
-            return (all(x[0][i] > x[0][i+1] for i in range(len(x[0])-1))
-                    and all(x[1][i] >= x[1][i+1] for i in range(len(x[1])-1))
+            return (all(x[0][i] > x[0][i + 1] for i in range(len(x[0]) - 1))
+                    and all(x[1][i] >= x[1][i + 1] for i in range(len(x[1]) - 1))
                     and ((not x[0]) or x[0][-1] >= 0) and ((not x[1]) or x[1][-1] >= 0))
         else:
             return False
+
 
 class SuperPartitions_n_m(SuperPartitions):
     def __init__(self, n, m):
@@ -1011,7 +1006,7 @@ class SuperPartitions_n_m(SuperPartitions):
         self.m = m
         SuperPartitions.__init__(self, False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -1020,9 +1015,9 @@ class SuperPartitions_n_m(SuperPartitions):
             sage: repr(SuperPartitions(3,2))
             'Super Partitions of 3 and of fermionic sector 2'
         """
-        return "Super Partitions of %s and of fermionic sector %s"%(self.n, self.m)
+        return "Super Partitions of %s and of fermionic sector %s" % (self.n, self.m)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -1069,12 +1064,13 @@ class SuperPartitions_n_m(SuperPartitions):
             sage: SuperPartitions(6,4).first()
             [3, 2, 1, 0; ]
         """
-        for r in range(self.n+1):
+        for r in range(self.n + 1):
             for p1 in Partitions(r):
-                for p0 in Partitions(self.n-r, max_slope=-1, length=self.m):
+                for p0 in Partitions(self.n - r, max_slope=-1, length=self.m):
                     yield self.element_class(self, [list(p0), list(p1)])
-                for p0 in Partitions(self.n-r, max_slope=-1, length=self.m-1):
-                    yield self.element_class(self, [list(p0)+[0], list(p1)])
+                for p0 in Partitions(self.n - r, max_slope=-1, length=self.m - 1):
+                    yield self.element_class(self, [list(p0) + [0], list(p1)])
+
 
 class SuperPartitions_n(SuperPartitions):
     def __init__(self, n):
@@ -1089,7 +1085,7 @@ class SuperPartitions_n(SuperPartitions):
         self.n = n
         SuperPartitions.__init__(self, False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -1098,9 +1094,9 @@ class SuperPartitions_n(SuperPartitions):
             sage: repr(SuperPartitions(3))
             'Super Partitions of 3'
         """
-        return "Super Partitions of %s"%self.n
+        return "Super Partitions of %s" % self.n
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -1142,10 +1138,11 @@ class SuperPartitions_n(SuperPartitions):
             80
         """
         m = 0
-        while self.n >= m * (m-1) // 2:
+        while self.n >= m * (m - 1) // 2:
             for LA in SuperPartitions(self.n, m):
                 yield self.element_class(self, LA)
             m += 1
+
 
 class SuperPartitions_all(SuperPartitions):
     def __init__(self):
@@ -1159,7 +1156,7 @@ class SuperPartitions_all(SuperPartitions):
         """
         SuperPartitions.__init__(self, True)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -1186,4 +1183,3 @@ class SuperPartitions_all(SuperPartitions):
             for sp in SuperPartitions(n):
                 yield self.element_class(self, list(sp))
             n += 1
-

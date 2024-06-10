@@ -9,11 +9,11 @@
 #                   http://www.gnu.org/licenses/
 ###############################################################################
 
-from libc.stdint cimport uintptr_t, uint8_t, uint16_t, uint32_t, uint64_t
+from libc.stdint cimport intptr_t, uintptr_t, uint8_t, uint16_t, uint32_t, uint64_t
 
 cdef extern from "gap/system.h" nogil:
     ctypedef char Char
-    ctypedef int Int
+    ctypedef intptr_t Int
     ctypedef uintptr_t UInt
     ctypedef uint8_t  UInt1
     ctypedef uint16_t UInt2
@@ -22,62 +22,8 @@ cdef extern from "gap/system.h" nogil:
     ctypedef void* Obj
 
 
-cdef extern from "gap/ariths.h" nogil:
-    Obj SUM(Obj, Obj)
-    Obj DIFF(Obj, Obj)
-    Obj PROD(Obj, Obj)
-    Obj QUO(Obj, Obj)
-    Obj POW(Obj, Obj)
-    Obj MOD(Obj, Obj)
-    bint EQ(Obj opL, Obj opR)
-    bint LT(Obj opL, Obj opR)
-
-
-cdef extern from "gap/bool.h" nogil:
-    cdef Obj GAP_True "True"
-    cdef Obj GAP_False "False"
-
-
 cdef extern from "gap/calls.h" nogil:
     bint IS_FUNC(Obj)
-    Obj CALL_0ARGS(Obj f)              # 0 arguments
-    Obj CALL_1ARGS(Obj f, Obj a1)      # 1 argument
-    Obj CALL_2ARGS(Obj f, Obj a1, Obj a2)
-    Obj CALL_3ARGS(Obj f, Obj a1, Obj a2, Obj a3)
-    Obj CALL_4ARGS(Obj f, Obj a1, Obj a2, Obj a3, Obj a4)
-    Obj CALL_5ARGS(Obj f, Obj a1, Obj a2, Obj a3, Obj a4, Obj a5)
-    Obj CALL_6ARGS(Obj f, Obj a1, Obj a2, Obj a3, Obj a4, Obj a5, Obj a6)
-    Obj CALL_XARGS(Obj f, Obj args)   # more than 6 arguments
-
-
-cdef extern from "gap/gasman.h" nogil:
-    Obj NewBag "NewBag"(UInt type, UInt size)
-    void MarkBag(Obj bag)
-    UInt CollectBags(UInt size, UInt full)
-
-
-cdef extern from "gap/gasman_intern.h" nogil:
-    void CallbackForAllBags(void (*func)(Obj))
-
-
-cdef extern from "gap/gvars.h" nogil:
-    UInt GVarName "GVarName"(char* name)
-    void AssGVar "AssGVar"(UInt gvar, Obj val)
-
-
-cdef extern from "gap/integer.h" nogil:
-    Int IS_INT(Obj)
-
-
-cdef extern from "gap/intobj.h" nogil:
-    bint IS_INTOBJ(Obj obj)
-    Obj INTOBJ_INT(Int)
-    Int INT_INTOBJ(Obj)
-
-
-cdef extern from "gap/io.h" nogil:
-    UInt OpenOutputStream(Obj stream)
-    UInt CloseOutput()
 
 
 cdef extern from "gap/libgap-api.h" nogil:
@@ -98,21 +44,56 @@ cdef extern from "gap/libgap-api.h" nogil:
     cdef void GAP_Leave()
     cdef int GAP_Error_Setjmp() except 0
 
+    void GAP_MarkBag(Obj bag)
+    void GAP_CollectBags(UInt full)
+
+    Obj GAP_SUM(Obj, Obj)
+    Obj GAP_DIFF(Obj, Obj)
+    Obj GAP_PROD(Obj, Obj)
+    Obj GAP_QUO(Obj, Obj)
+    Obj GAP_POW(Obj, Obj)
+    Obj GAP_MOD(Obj, Obj)
+    bint GAP_EQ(Obj opL, Obj opR)
+    bint GAP_LT(Obj opL, Obj opR)
+    bint GAP_IN(Obj opL, Obj opR)
+
+    cdef Obj GAP_True
+    cdef Obj GAP_False
+
+    Obj GAP_CallFuncList(Obj func, Obj args);
+    Obj GAP_CallFuncArray(Obj func, UInt narg, Obj * args);
+    Obj GAP_CallFunc0Args(Obj func);
+    Obj GAP_CallFunc1Args(Obj func, Obj a1);
+    Obj GAP_CallFunc2Args(Obj func, Obj a1, Obj a2);
+    Obj GAP_CallFunc3Args(Obj func, Obj a1, Obj a2, Obj a3);
+
+    bint GAP_IsMacFloat(Obj obj)
+    double GAP_ValueMacFloat(Obj obj)
+
+    bint GAP_IsInt(Obj)
+    bint GAP_IsSmallInt(Obj)
+    Obj GAP_NewObjIntFromInt(Int val)
+    Int GAP_ValueInt(Obj)
+
+    bint GAP_IsList(Obj lst)
+    UInt GAP_LenList(Obj lst)
+    void GAP_AssList(Obj lst, UInt pos, Obj val)
+    Obj GAP_ElmList(Obj lst, UInt pos)
+    Obj GAP_NewPlist(Int capacity)
+
+    bint GAP_IsRecord(Obj obj)
+    Obj GAP_NewPrecord(Int capacity)
+
+    bint GAP_IsString(Obj obj)
+    UInt GAP_LenString(Obj string)
+    char* GAP_CSTR_STRING(Obj list)
+    Obj GAP_MakeStringWithLen(const char* buf, UInt len)
+
+    Int GAP_ValueOfChar(Obj obj)
+
 
 cdef extern from "gap/lists.h" nogil:
-    bint IS_LIST(Obj lst)
-    int LEN_LIST(Obj lst)
     Obj ELM_LIST(Obj lst, int pos)
-    Obj ELM0_LIST(Obj lst, int pos)
-    void ASS_LIST(Obj lst, int pos, Obj elt)
-
-
-cdef extern from "gap/listfunc.h" nogil:
-    void AddList(Obj list, Obj obj)
-
-
-cdef extern from "gap/macfloat.h" nogil:
-    double VAL_MACFLOAT(Obj obj)
 
 
 cdef extern from "gap/objects.h" nogil:
@@ -120,35 +101,19 @@ cdef extern from "gap/objects.h" nogil:
     Obj SHALLOW_COPY_OBJ(Obj obj)
     Obj CopyObj(Obj obj, int mut)
 
-    UInt SIZE_OBJ(Obj obj)
     UInt TNUM_OBJ(Obj obj)
     char* TNAM_OBJ(Obj obj)
 
     cdef enum TNUM:
-        T_INT
-        T_INTPOS
-        T_INTNEG
         T_RAT
         T_CYC
         T_FFE
-        T_MACFLOAT
         T_PERM2
         T_PERM4
-        T_TRANS2
-        T_TRANS4
-        T_PPERM2
-        T_PPERM4
         T_BOOL
-        T_CHAR
         T_FUNCTION
-        T_PLIST
-        T_PLIST_CYC
-        T_BLIST
-        T_STRING
         T_COMOBJ
         T_POSOBJ
-        T_DATOBJ
-        T_WPOBJ
 
 
 cdef extern from "gap/permutat.h" nogil:
@@ -163,7 +128,6 @@ cdef extern from "gap/permutat.h" nogil:
 
 
 cdef extern from "gap/precord.h" nogil:
-    Obj NEW_PREC(int len)
     int LEN_PREC(Obj rec)
     int GET_RNAM_PREC(Obj rec, int i)
     Obj GET_ELM_PREC(Obj rec, int i)
@@ -172,14 +136,26 @@ cdef extern from "gap/precord.h" nogil:
 
 cdef extern from "gap/records.h" nogil:
     char* NAME_RNAM(UInt rnam)
-    bint IS_REC(Obj obj)
     Obj ELM_REC(Obj rec, UInt rnam)
     UInt RNamName(Char* name)
 
 
 cdef extern from "gap/stringobj.h" nogil:
-    char* CSTR_STRING(Obj list)
     bint IS_STRING(Obj obj)
     bint IsStringConv(Obj obj)
     Obj NEW_STRING(Int)
-    void C_NEW_STRING(Obj new_gap_string, int length, char* c_string)
+
+
+cdef extern from "<structmember.h>" nogil:
+    """
+    /* Hack: Cython 3.0 automatically includes <structmember.h>, which
+     * defines several macros that collides with enum definitions in
+     * gap/objects.h. We need to include the header explicitly and
+     * undefine these macros.
+     */
+    #undef T_INT
+    #undef T_STRING
+    #undef T_CHAR
+    #undef T_BOOL
+    """
+    pass

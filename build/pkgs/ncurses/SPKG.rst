@@ -1,5 +1,5 @@
-Ncurses
-=======
+ncurses: Classic terminal output library
+========================================
 
 Description
 -----------
@@ -36,12 +36,6 @@ Upstream Contact
 ----------------
 
 -  bug-ncurses@gnu.org
-
-Dependencies
-------------
-
-None
-
 
 Special Update/Build Instructions
 ---------------------------------

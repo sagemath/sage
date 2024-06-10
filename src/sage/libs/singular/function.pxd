@@ -19,6 +19,7 @@ from sage.libs.singular.decl cimport leftv, idhdl, syStrategy, matrix, poly, ide
 from sage.libs.singular.decl cimport ring as singular_ring
 from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomialRing_libsingular, MPolynomial_libsingular
 
+cdef new_sage_polynomial(ring,  poly *p)
 cdef poly* access_singular_poly(p) except <poly*> -1
 cdef singular_ring* access_singular_ring(r) except <singular_ring*> -1
 
@@ -34,8 +35,8 @@ cdef class Converter(SageObject):
     cdef object _sage_ring
     cdef singular_ring* _singular_ring
     cdef leftv* pop_front(self) except NULL
-    cdef leftv * _append_leftv(self, leftv *v)
-    cdef leftv * _append(self, void* data, int res_type)
+    cdef leftv * _append_leftv(self, leftv *v) noexcept
+    cdef leftv * _append(self, void* data, int res_type) noexcept
     cdef leftv * append_polynomial(self, p) except NULL
     cdef leftv * append_ideal(self,  i) except NULL
     cdef leftv * append_number(self, n) except NULL
@@ -56,8 +57,8 @@ cdef class Converter(SageObject):
     cdef to_python(self, leftv* to_convert)
 
 cdef class BaseCallHandler:
-    cdef leftv* handle_call(self, Converter argument_list, singular_ring *_ring=?)
-    cdef bint free_res(self)
+    cdef leftv* handle_call(self, Converter argument_list, singular_ring *_ring=?) noexcept
+    cdef bint free_res(self) noexcept
 
 cdef class LibraryCallHandler(BaseCallHandler):
     cdef idhdl * proc_idhdl
@@ -72,7 +73,7 @@ cdef class SingularFunction(SageObject):
     cdef BaseCallHandler call_handler
 
     cdef BaseCallHandler get_call_handler(self)
-    cdef bint function_exists(self)
+    cdef bint function_exists(self) noexcept
     cdef common_ring(self, tuple args, ring=?)
 
 cdef class SingularLibraryFunction(SingularFunction):

@@ -1,15 +1,13 @@
 r"""
 Index of bounds on the parameters of codes
 
-The ``codes.bounds`` object may be used to access the bounds that Sage can compute.
+The :obj:`codes.bounds` object may be used to access the bounds that Sage can compute.
 
 {INDEX_OF_FUNCTIONS}
 
-.. NOTE::
+To import these names into the global namespace, use::
 
-    To import these names into the global namespace, use:
-
-        sage: from sage.coding.bounds_catalog import *
+    sage: from sage.coding.bounds_catalog import *
 """
 from sage.misc.lazy_import import lazy_import as _lazy_import
 _lazy_import("sage.coding.code_bounds", ["codesize_upper_bound",
@@ -32,8 +30,11 @@ _lazy_import("sage.coding.code_bounds", ["codesize_upper_bound",
 
 _lazy_import("sage.coding.delsarte_bounds",
             ["krawtchouk",
+             "eberlein",
+             "delsarte_bound_constant_weight_code",
              "delsarte_bound_hamming_space",
-             "delsarte_bound_additive_hamming_space"])
+             "delsarte_bound_additive_hamming_space",
+             "delsarte_bound_Q_matrix"])
 
 
 from sage.misc.rest_index_of_methods import gen_rest_table_index as _gen_rest_table_index

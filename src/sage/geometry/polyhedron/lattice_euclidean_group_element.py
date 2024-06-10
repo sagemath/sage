@@ -15,7 +15,7 @@ polytopes<sage.geometry.polyhedron.ppl_lattice_polytope.LatticePolytope_PPL_clas
 
 from sage.structure.sage_object import SageObject
 from sage.rings.integer_ring import ZZ
-from sage.modules.all import vector
+from sage.modules.free_module_element import vector
 from sage.matrix.constructor import matrix
 
 

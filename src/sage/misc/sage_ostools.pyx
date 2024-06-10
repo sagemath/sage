@@ -1,4 +1,3 @@
-# distutils: libraries = sqlite3
 """
 Miscellaneous operating system functions
 """
@@ -17,9 +16,9 @@ def have_program(program, path=None):
 
     INPUT:
 
-    - ``program`` - a string, the name of the program to check.
+    - ``program`` -- a string, the name of the program to check.
 
-    - ``path`` - string or None. Paths to search for ``program``,
+    - ``path`` -- string or None. Paths to search for ``program``,
       separated by ``os.pathsep``. If ``None``, use the :envvar:`PATH`
       environment variable.
 
@@ -32,11 +31,11 @@ def have_program(program, path=None):
         True
         sage: have_program('there_is_not_a_program_with_this_name')
         False
-        sage: have_program('sage', os.path.join(SAGE_LOCAL, 'bin'))
+        sage: have_program('sh', '/bin')
         True
         sage: have_program('sage', '/there_is_not_a_path_with_this_name')
         False
-        sage: have_program('there_is_not_a_program_with_this_name', os.path.join(SAGE_LOCAL, 'bin'))
+        sage: have_program('there_is_not_a_program_with_this_name', "/bin")
         False
     """
     if path is None:
@@ -62,14 +61,14 @@ def restore_cwd(chdir=None):
 
     EXAMPLES::
 
-        sage: import os
         sage: from sage.misc.sage_ostools import restore_cwd
-        sage: from sage.misc.misc import SAGE_TMP
-        sage: cwd = os.getcwd()
-        sage: with restore_cwd(str(SAGE_TMP)):
-        ....:     print(os.getcwd() == os.path.realpath(SAGE_TMP))
-        True
-        sage: cwd == os.getcwd()
+        sage: import tempfile
+        sage: orig_cwd = os.getcwd()
+        sage: with tempfile.TemporaryDirectory() as d:
+        ....:     with restore_cwd(d):
+        ....:         print(os.getcwd() == orig_cwd)
+        False
+        sage: os.getcwd() == orig_cwd
         True
     """
     orig_cwd = os.getcwd()
@@ -304,43 +303,3 @@ cdef class redirection:
             if self.close_dest:
                 self.dest_file.close()
                 self.dest_fd = -1
-
-
-IF PY_PLATFORM == 'cygwin':
-    from libc.stddef cimport wchar_t
-
-    cdef extern from "Windows.h":
-        int SetDllDirectoryW(wchar_t* lpPathName)
-
-    cdef extern from "sqlite3.h":
-        int sqlite3_initialize()
-
-    def fix_for_ticket_30157():
-        """
-        Cygwin-only workaround for an issue caused by the sqlite3 library.  See
-        trac:`30157`.
-
-        The issue here is that when the sqlite3 library is first initialized
-        it modifies Windows' default DLL search path order, which can possibly
-        break the correct search path for subsequent DLL loads.
-
-        This workaround ensures that the sqlite3 library is initialized very
-        early on (this does not add any significant overhead) and then
-        immediately undoes its deleterious effects.  In particular, calling
-        SetDllDirectoryW(NULL) restores the default DLL search path.
-
-        To be clear, there's no reason sqlite3 needs this to function
-        correctly; it's just a poorly-considered hack that attempted to work
-        around a problem that doesn't affect us.
-
-        Returns 0 if it succeeeds or a non-zero value if not.
-        """
-
-        ret = sqlite3_initialize()
-
-        if ret != 0:
-            # Library initialization failed for some reason
-            return ret
-
-        # SetDllDirectory returns 1 if it succeeds.
-        return not SetDllDirectoryW(NULL)

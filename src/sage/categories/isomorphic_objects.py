@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Isomorphic Objects Functorial Construction
 
@@ -14,6 +15,7 @@ AUTHORS:
 
 from sage.categories.category import Category
 from sage.categories.covariant_functorial_construction import RegressiveCovariantConstructionCategory
+
 
 class IsomorphicObjectsCategory(RegressiveCovariantConstructionCategory):
 
@@ -68,5 +70,4 @@ class IsomorphicObjectsCategory(RegressiveCovariantConstructionCategory):
             Category of isomorphic objects of sets
         """
         return Category.join([category.Subobjects(), category.Quotients(),
-                              super(IsomorphicObjectsCategory, cls).default_super_categories(category)])
-
+                              super().default_super_categories(category)])

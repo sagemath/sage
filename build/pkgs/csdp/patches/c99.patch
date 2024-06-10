@@ -1,0 +1,52 @@
+diff --git a/lib/easysdp.c b/lib/easysdp.c
+index af22a8d..7a4d137 100644
+--- a/lib/easysdp.c
++++ b/lib/easysdp.c
+@@ -12,6 +12,9 @@
+ #include <math.h>
+ #include <csdp/declarations.h>
+ 
++int checkc(int, struct blockmatrix, int);
++int checkconstraints(int, int, struct blockmatrix, struct constraintmatrix *, int);
++
+ int easy_sdp(n,k,C,a,constraints,constant_offset,pX,py,pZ,ppobj,pdobj)
+      int n;
+      int k;
+@@ -65,7 +68,7 @@ int easy_sdp(n,k,C,a,constraints,constant_offset,pX,py,pZ,ppobj,pdobj)
+   struct sparseblock *q;
+   struct sparseblock *prev=NULL;
+   double gap;
+-  int nnz;
++  int nnz, res;
+ 
+    /*
+     *  Initialize the parameters.
+@@ -433,13 +436,13 @@ int easy_sdp(n,k,C,a,constraints,constant_offset,pX,py,pZ,ppobj,pdobj)
+     * Check the symmetry of C.
+     */
+ 
+-   checkc(n,C,printlevel);
++   res=checkc(n,C,printlevel);
+ 
+    /*
+     * Check constraints.
+     */
+ 
+-   checkconstraints(n,k,C,constraints,printlevel);
++   res=checkconstraints(n,k,C,constraints,printlevel);
+ 
+    /*
+     *  Now, call sdp().
+@@ -737,11 +740,7 @@ int checkc(int n,struct blockmatrix C,int printlevel)
+  * Sanity tests on the constraints data structure.
+  */
+ 
+-int checkconstraints(n,k,C,constraints,printlevel)
+-     int n;
+-     int k;
+-     struct blockmatrix C;
+-     struct constraintmatrix *constraints;
++int checkconstraints(int n, int k, struct blockmatrix C, struct constraintmatrix *constraints, int printlevel)
+ {
+   int i,j;
+   struct sparseblock *p;

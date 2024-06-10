@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# sage_setup: distribution = sagemath-repl
 r"""
 Display Manager
 
@@ -30,7 +30,7 @@ EXAMPLES::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 
@@ -39,6 +39,9 @@ import warnings
 from sage.structure.sage_object import SageObject
 from sage.repl.rich_output.output_basic import (
     OutputPlainText, OutputAsciiArt, OutputUnicodeArt, OutputLatex,
+)
+from sage.repl.rich_output.output_browser import (
+    OutputHtml,
 )
 from sage.repl.rich_output.preferences import DisplayPreferences
 
@@ -101,7 +104,7 @@ class RichReprWarning(UserWarning):
     pass
 
 
-class restricted_output(object):
+class restricted_output():
 
     def __init__(self, display_manager, output_classes):
         """
@@ -149,6 +152,7 @@ class restricted_output(object):
             sage: with restricted_output(dm, [dm.types.OutputPlainText]):
             ....:    dm.preferences
             Display preferences:
+            * align_latex is not specified
             * graphics = disable
             * supplemental_plot = never
             * text is not specified
@@ -339,6 +343,7 @@ class DisplayManager(SageObject):
             sage: dm = get_display_manager()
             sage: dm.preferences
             Display preferences:
+            * align_latex is not specified
             * graphics is not specified
             * supplemental_plot = never
             * text is not specified
@@ -517,8 +522,8 @@ class DisplayManager(SageObject):
             OutputUnicodeArt container
 
             sage: dm.preferences.text = 'latex'
-            sage: dm._preferred_text_formatter([1/42])
-            \newcommand{\Bold}[1]{\mathbf{#1}}\verb|OutputLatex|\phantom{\verb!x!}\verb|container|
+            sage: dm._preferred_text_formatter([1/42])  # doctest backend does not support html
+            OutputPlainText container
 
             sage: del dm.preferences.text   # reset to default
         """
@@ -534,10 +539,10 @@ class DisplayManager(SageObject):
             if type(out) is not OutputUnicodeArt:
                 raise OutputTypeException('backend returned wrong output type, require UnicodeArt')
             return out
-        if want == 'latex' and OutputLatex in supported:
+        if want == 'latex' and OutputHtml in supported:
             out = self._backend.latex_formatter(obj, **kwds)
-            if type(out) is not OutputLatex:
-                raise OutputTypeException('backend returned wrong output type, require Latex')
+            if type(out) is not OutputHtml:
+                raise OutputTypeException('backend returned wrong output type, require Html')
             return out
         if plain_text is not None:
             if type(plain_text) is not OutputPlainText:
@@ -584,7 +589,7 @@ class DisplayManager(SageObject):
             return obj._rich_repr_(self, **rich_repr_kwds)
         try:
             return obj._rich_repr_(self)
-        except NotImplementedError as e:
+        except NotImplementedError:
             # don't warn on NotImplementedErrors
             return None
         except Exception as e:
@@ -687,10 +692,12 @@ class DisplayManager(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.plot sage.symbolic
             sage: from sage.repl.rich_output import get_display_manager
             sage: dm = get_display_manager()
             sage: plt = plot(sin)
-            sage: out = dm.graphics_from_save(plt.save, dict(), '.png', dm.types.OutputImagePng)
+            sage: out = dm.graphics_from_save(plt.save, dict(), '.png',
+            ....:                             dm.types.OutputImagePng)
             sage: out
             OutputImagePng container
             sage: out.png.get().startswith(b'\x89PNG')
@@ -718,7 +725,7 @@ class DisplayManager(SageObject):
 
     def threejs_scripts(self, online):
         """
-        Return Three.js script tags for the current backend.
+        Return Three.js script tag for the current backend.
 
         INPUT:
 
@@ -726,35 +733,30 @@ class DisplayManager(SageObject):
 
         OUTPUT:
 
-        String containing script tags
+        String containing script tag
 
         .. NOTE::
 
             This base method handles ``online=True`` case only, serving CDN
-            script tags. Location of scripts for offline usage is
+            script tag. Location of script for offline usage is
             backend-specific.
 
         EXAMPLES::
 
             sage: from sage.repl.rich_output import get_display_manager
-            sage: get_display_manager().threejs_scripts(online=True)
-            '...<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@...'
-            sage: get_display_manager().threejs_scripts(online=False)
+            sage: get_display_manager().threejs_scripts(online=True)                    # needs sage.plot
+            '...<script src="https://cdn.jsdelivr.net/gh/sagemath/threejs-sage@...'
+            sage: get_display_manager().threejs_scripts(online=False)                   # needs sage.plot
             Traceback (most recent call last):
             ...
             ValueError: current backend does not support
             offline threejs graphics
         """
+        from sage.features.threejs import Threejs
         if online:
-            import sage.env
-            import re
-            import os
-            with open(os.path.join(sage.env.THREEJS_DIR, 'build', 'three.min.js')) as f:
-                text = f.read().replace('\n','')
-            version = re.search(r'REVISION="(\d+)"', text).group(1)
+            version = Threejs().required_version()
             return """
-<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r{0}/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r{0}/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/sagemath/threejs-sage@{0}/build/three.min.js"></script>
             """.format(version)
         try:
             return self._backend.threejs_offline_scripts()

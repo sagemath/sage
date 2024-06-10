@@ -1,5 +1,5 @@
-sagenb_export
-=============
+sagenb_export: Convert legacy SageNB notebooks to Jupyter notebooks and other formats
+=====================================================================================
 
 Description
 -----------
@@ -9,5 +9,8 @@ particular IPython/Jupyter notebooks.
 
 It includes a Jupyter notebook extension to provide a UI for the import
 of SageNB notebooks.
+
+Upstream Contact
+----------------
 
 https://github.com/vbraun/ExportSageNB

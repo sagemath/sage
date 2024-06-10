@@ -1,5 +1,5 @@
-pari
-====
+pari: Computer algebra system for fast computations in number theory
+====================================================================
 
 Description
 -----------

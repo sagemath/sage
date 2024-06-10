@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Difference Matrices
 
@@ -9,14 +10,12 @@ objects (or know if they can be built) with :func:`difference_matrix`::
 Functions
 ---------
 """
-from __future__ import print_function
-from __future__ import absolute_import
 
+from sage.arith.misc import divisors, is_prime_power
 from sage.misc.unknown import Unknown
 from sage.misc.cachefunc import cached_function
 from sage.categories.sets_cat import EmptySetError
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
-from sage.arith.all import is_prime_power, divisors
 from .designs_pyx import is_difference_matrix
 from .database import DM as DM_constructions
 
@@ -27,7 +26,7 @@ def find_product_decomposition(g, k, lmbda=1):
 
     INPUT:
 
-    - ``g,k,lmbda`` -- integers, parameters of the difference matrix
+    - ``g``, ``k``, ``lmbda`` -- integers, parameters of the difference matrix
 
     OUTPUT:
 
@@ -74,22 +73,22 @@ def find_product_decomposition(g, k, lmbda=1):
 
 def difference_matrix_product(k, M1, G1, lmbda1, M2, G2, lmbda2, check=True):
     r"""
-    Return the product of the ``(G1,k,lmbda1)`` and ``(G2,k,lmbda2)`` difference
-    matrices ``M1`` and ``M2``.
+    Return the product of the ``(G1, k, lmbda1)`` and ``(G2, k, lmbda2)``
+    difference matrices ``M1`` and ``M2``.
 
     The result is a `(G1 \times G2, k, \lambda_1 \lambda_2)`-difference matrix.
 
     INPUT:
 
-    - ``k,lmbda1,lmbda2`` -- positive integer
+    - ``k``, ``lmbda1``, ``lmbda2`` -- positive integers
 
-    - ``G1, G2`` -- groups
+    - ``G1``, ``G2`` -- groups
 
-    - ``M1, M2`` -- ``(G1,k,lmbda1)`` and ``(G,k,lmbda2)`` difference
+    - ``M1``, ``M2`` -- ``(G1, k, lmbda1)`` and ``(G, k, lmbda2)`` difference
       matrices
 
-    - ``check`` (boolean) -- if ``True`` (default), the output is checked before
-      being returned.
+    - ``check`` -- boolean (default: ``True``); whether to check the output
+      before it is returned
 
     EXAMPLES::
 
@@ -148,12 +147,12 @@ def difference_matrix(g,k,lmbda=1,existence=False,check=True):
 
     - ``existence`` (boolean) -- instead of building the design, return:
 
-        - ``True`` -- meaning that Sage knows how to build the design
+      - ``True`` -- meaning that Sage knows how to build the design
 
-        - ``Unknown`` -- meaning that Sage does not know how to build the
-          design, but that the design may exist (see :mod:`sage.misc.unknown`).
+      - ``Unknown`` -- meaning that Sage does not know how to build the
+        design, but that the design may exist (see :mod:`sage.misc.unknown`).
 
-        - ``False`` -- meaning that the design does not exist.
+      - ``False`` -- meaning that the design does not exist.
 
       .. NOTE::
 
@@ -220,7 +219,7 @@ def difference_matrix(g,k,lmbda=1,existence=False,check=True):
         NotImplementedError: I don't know how to build a (10,9,1)-Difference Matrix!
     """
 
-    if lmbda == 1 and k is not None and k>g:
+    if lmbda == 1 and k is not None and k > g:
         if existence:
             return False
         raise EmptySetError("No ({},{},{})-Difference Matrix exists as k(={})>g(={})".format(g,k,lmbda,k,g))
@@ -234,8 +233,8 @@ def difference_matrix(g,k,lmbda=1,existence=False,check=True):
                 k = g
         elif existence:
             return True
-        F       = FiniteField(g,'x')
-        F_set   = list(F)
+        F = FiniteField(g,'x')
+        F_set = list(F)
         F_k_set = F_set[:k]
 
         G = F
@@ -250,7 +249,7 @@ def difference_matrix(g,k,lmbda=1,existence=False,check=True):
         return i-1
 
     # From the database
-    elif (g,lmbda) in DM_constructions and DM_constructions[g,lmbda][0]>=k:
+    elif (g,lmbda) in DM_constructions and DM_constructions[g,lmbda][0] >= k:
         if existence:
             return True
         _,f = DM_constructions[g,lmbda]

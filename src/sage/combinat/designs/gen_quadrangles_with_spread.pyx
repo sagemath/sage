@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.gap
 r"""
 Database of generalised quadrangles with spread
 
@@ -25,11 +26,10 @@ REFERENCES:
 - [TP1994]_
 
 - :wikipedia:`Generalized_quadrangle`
-    
+
 AUTHORS:
 
 - Ivo Maffei (2020-07-26): initial version
-
 """
 
 # ****************************************************************************
@@ -50,7 +50,7 @@ def generalised_quadrangle_with_spread(const int s, const int t,
 
     INPUT:
 
-    - ``s, t`` -- integers; order of the generalised quadrangle
+    - ``s``, ``t`` -- integers; order of the generalised quadrangle
 
     - ``existence`` -- boolean;
 
@@ -96,14 +96,15 @@ def generalised_quadrangle_with_spread(const int s, const int t,
     from sage.combinat.designs.incidence_structures import IncidenceStructure
     from sage.misc.unknown import Unknown
     from sage.arith.misc import is_prime_power
-    
+
     if s < 1 or t < 1:
         if existence:
             return False
         raise RuntimeError(f"No GQ of order ({s}, {t}) exists")
 
     if s == 1 and t == 1:  # we have a square
-        if existence: return True
+        if existence:
+            return True
         D = IncidenceStructure([[0, 1], [1, 2], [2, 3], [3, 0]])
         return (D, [[0, 1], [2, 3]])
 
@@ -121,20 +122,21 @@ def generalised_quadrangle_with_spread(const int s, const int t,
     raise RuntimeError(
         f"Sage can't build a GQ of order ({s}, {t}) with a spread")
 
+
 def is_GQ_with_spread(GQ, S, s=None, t=None):
     r"""
     Check if GQ is a generalised quadrangle of order `(s,t)` and
     check that S is a spread of GQ
 
     INPUT:
-    
-    - ``GQ`` -- IncidenceStructure; the incidence structure that is supposed to 
+
+    - ``GQ`` -- IncidenceStructure; the incidence structure that is supposed to
       be a generalised quadrangle
 
-    - ``S`` -- iterable; the spread of ``GQ`` as an 
+    - ``S`` -- iterable; the spread of ``GQ`` as an
       iterable of the blocks of ``GQ``
 
-    - ``s, t`` -- integers (optional); if `(s,t)` are given, then we check that
+    - ``s``, ``t`` -- integers (optional); if `(s,t)` are given, then we check that
       ``GQ`` has order `(s,t)`
 
     EXAMPLES::
@@ -162,36 +164,36 @@ def is_GQ_with_spread(GQ, S, s=None, t=None):
        True
        sage: is_GQ_with_spread(*t, s=3)
        False
-
     """
     res = GQ.is_generalized_quadrangle(parameters=True)
     if res is False \
-       or (s != None and s != res[0]) \
-       or (t != None and t != res[1]):
+       or (s is not None and s != res[0]) \
+       or (t is not None and t != res[1]):
         return False
 
     # check spread
     return GQ.is_spread(S)
 
+
 def dual_GQ_ovoid(GQ, O):
     r"""
-    Compute the dual incidence structure of GQ 
+    Compute the dual incidence structure of GQ
     and return the image of `O` under the dual map
 
     INPUT:
 
-    - ``GQ`` -- IncidenceStructure; the generalised quadrangle we want 
+    - ``GQ`` -- IncidenceStructure; the generalised quadrangle we want
       the dual of
 
     - ``O`` -- iterable; the iterable of blocks we want to compute the dual
 
     OUTPUT:
 
-    A pair ``(D, S)`` where ``D`` is the dual of ``GQ`` and 
+    A pair ``(D, S)`` where ``D`` is the dual of ``GQ`` and
     ``S`` is the dual of ``O``
 
     EXAMPLES::
-    
+
         sage: from sage.combinat.designs.gen_quadrangles_with_spread import \
         ....: dual_GQ_ovoid
         sage: t = designs.generalised_quadrangle_hermitian_with_ovoid(3)
@@ -213,10 +215,10 @@ def dual_GQ_ovoid(GQ, O):
         (2, 4)
         sage: is_GQ_with_spread(*t)
         True
-    
+
     """
     from sage.combinat.designs.incidence_structures import IncidenceStructure
-    
+
     # GQ.ground_set()[i] becomes newBlocks[i]
     # GQ.blocks()[i] becomes i
     newBlocks = [[] for _ in range(GQ.num_points())]
@@ -230,6 +232,7 @@ def dual_GQ_ovoid(GQ, O):
 
     D = IncidenceStructure(newBlocks)
     return (D, S)
+
 
 def generalised_quadrangle_hermitian_with_ovoid(const int q):
     r"""
@@ -283,9 +286,8 @@ def generalised_quadrangle_hermitian_with_ovoid(const int q):
     from sage.libs.gap.libgap import libgap
     from sage.combinat.designs.incidence_structures import IncidenceStructure
     from sage.arith.misc import is_prime_power
-    
+
     GU = libgap.GU(4, q)
-    H = libgap.InvariantSesquilinearForm(GU)["matrix"]
     Fq = libgap.GF(q * q)
     zero = libgap.Zero(Fq)
     one = libgap.One(Fq)
@@ -309,14 +311,13 @@ def generalised_quadrangle_hermitian_with_ovoid(const int q):
     lines = [list(map(lambda x: int(x - 1), b)) for b in lines]  # convert to int
     # lines defines the GQ H(3, q^2)
 
-
     # to find an ovoid, we embed H(3,q^2) in H(4,q^2)
     # the embedding is (a,b,c,d) -> (a,b,0,c,d)
     # then we find a point in the latter and not in the former
     # this point will be collinear (in H(3,q^2)) to all points in an ovoid
     if q % 2 == 1:
-        (p, k) = is_prime_power(q, get_data=True)
-        a = (p-1) // 2
+        p, _ = is_prime_power(q, get_data=True)
+        a = (p - 1) // 2
         aGap = zero
         for i in range(a):
             aGap += one
@@ -328,7 +329,7 @@ def generalised_quadrangle_hermitian_with_ovoid(const int q):
     J = [[0, 0, 0, 0, 1], [0, 0, 0, 1, 0], [0, 0, 1, 0, 0],
          [0, 1, 0, 0, 0], [1, 0, 0, 0, 0]]
     J = libgap(J)  # matrix of the invariant form of GU(5,q)
-    
+
     # p' is collinear to p iff p'Jp^q = 0
     # note that p'Jp^q = bx^q + c where p' = (a,b,0,c,d) and p = (0,1,y,x,0)
     ovoid = []

@@ -8,12 +8,12 @@ This is a construction of the Henriques-Kamnitzer construction of
 the action of the cactus group on tensor powers of a crystal. This is
 also a generalisation of the Fomin growth rules, which are a version of
 the operations on standard tableaux which were previously constructed
-using jeu-de-taquin.
+using jeu de taquin.
 
 The basic operations are rectification, evacuation and promotion.
 Rectification of standard skew tableaux agrees with the rectification
-by jeu-de-taquin as does evacuation. Promotion agrees with promotion
-by jeu-de-taquin on rectangular tableaux but in general they are different.
+by jeu de taquin as does evacuation. Promotion agrees with promotion
+by jeu de taquin on rectangular tableaux but in general they are different.
 
 REFERENCES:
 
@@ -119,7 +119,7 @@ class PathTableau(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
             [0, 1, 2, 1, 0, 1, 0]
         """
         with self.clone() as result:
-            for i in range(1,len(result)-1):
+            for i in range(1,self.size()-1):
                 result = result.local_rule(i)
 
         return result
@@ -140,7 +140,7 @@ class PathTableau(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
         L = list(self)
         result = []
         P = self.parent()
-        for i in range(len(self)):
+        for i in range(self.size()):
             L = list(P(L).promotion())
             result.append( L.pop() )
         result.reverse()
@@ -223,8 +223,8 @@ class PathTableau(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
 
         INPUT:
 
-        ``i`` -- a positive integer
-        ``j`` -- a positive integer weakly greater than ``i``
+        - ``i`` -- a positive integer
+        - ``j`` -- a positive integer weakly greater than ``i``
 
         EXAMPLES::
 
@@ -305,7 +305,7 @@ class PathTableau(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
             sage: t._test_promotion()
         """
         tester = self._tester(**options)
-        n = self.size() - 1
+        n = self.size()
         tester.assertEqual(self.cactus(1,n-1).cactus(1,n).promotion(), self)
 
     def _test_commutation(self, **options):
@@ -362,10 +362,10 @@ class PathTableau(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
              [0, 1, 2, 1, 2, 1, 0],
              [0, 1, 2, 3, 2, 1, 0]}
         """
-        orb = set([])
+        orb = set()
         rec = set([self])
         while rec:
-            new = set([])
+            new = set()
             for a in rec:
                 for i in range(2, self.size()):
                     b = a.cactus(1, i)
@@ -389,7 +389,7 @@ class PathTableau(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
         EXAMPLES::
 
             sage: s = path_tableaux.DyckPath([0,1,2,3,2,3,2,1,0])
-            sage: s.dual_equivalence_graph().adjacency_matrix()
+            sage: s.dual_equivalence_graph().adjacency_matrix()                         # needs sage.graphs sage.modules
             [0 1 1 1 0 1 0 1 1 0 0 0 0 0]
             [1 0 1 1 1 1 1 0 1 0 0 1 1 0]
             [1 1 0 1 1 1 0 1 0 1 1 1 0 0]
@@ -405,7 +405,7 @@ class PathTableau(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
             [0 1 0 1 1 1 0 1 1 1 1 1 0 1]
             [0 0 0 0 1 0 1 0 0 1 1 1 1 0]
             sage: s = path_tableaux.DyckPath([0,1,2,3,2,1,0])
-            sage: sorted(s.dual_equivalence_graph().edges())
+            sage: s.dual_equivalence_graph().edges(sort=True)                           # needs sage.graphs
             [([0, 1, 0, 1, 0, 1, 0], [0, 1, 0, 1, 2, 1, 0], '4,7'),
              ([0, 1, 0, 1, 0, 1, 0], [0, 1, 2, 1, 0, 1, 0], '2,5'),
              ([0, 1, 0, 1, 0, 1, 0], [0, 1, 2, 1, 2, 1, 0], '2,7'),
@@ -429,10 +429,12 @@ class PathTableau(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
                     G.add_edge(a,b,"%d,%d" % (i,j))
         return G
 
+
 class PathTableaux(UniqueRepresentation,Parent):
     """
     The abstract parent class for PathTableau.
     """
+
     def __init__(self):
         """
         Initialize ``self``.
@@ -458,6 +460,7 @@ class PathTableaux(UniqueRepresentation,Parent):
         """
         return self.element_class(self, *args, **kwds)
 
+
 class CylindricalDiagram(SageObject):
     r"""
     Cylindrical growth diagrams.
@@ -474,6 +477,7 @@ class CylindricalDiagram(SageObject):
         [ ,  ,  ,  ,  , 0, 1, 0, 1, 2, 1, 0]
         [ ,  ,  ,  ,  ,  , 0, 1, 2, 3, 2, 1, 0]
     """
+
     def __init__(self, T):
         """
         Initialize ``self`` from the
@@ -722,4 +726,3 @@ class CylindricalDiagram(SageObject):
         max_width = max(max(len(x) for x in row) for row in data if row)
         print('\n'.join(' '.join(' '*(max_width-len(x)) + x for x in row)
                         for row in data))
-

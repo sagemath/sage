@@ -12,69 +12,75 @@ verify that it is listed as a newly defined variable::
     sage: show_identifiers()
     ['w']
 
-We next save this session. We are using a file in ``SAGE_TMP``. We do this
-*for testing* only --- please do not do this, when you want to save your
-session permanently, since ``SAGE_TMP`` will be removed when leaving Sage!
+We next save this session. We are using a temporary directory to hold
+the session file but we do this *for testing only.* Please do not do
+this if you want to save your session permanently. Also note that
+the ``tempfile`` module weasels its way into the session::
 
 ::
 
-    sage: save_session(os.path.join(SAGE_TMP, 'session'))
+    sage: from tempfile import TemporaryDirectory
+    sage: d = TemporaryDirectory()
+    sage: save_session(os.path.join(d.name, 'session'))
 
 This saves a dictionary with ``w`` as one of the keys::
 
-    sage: z = load(os.path.join(SAGE_TMP, 'session'))
+    sage: z = load(os.path.join(d.name, 'session'))
     sage: list(z)
-    ['w']
+    ['w', 'd']
     sage: z['w']
     2/3
 
-Next we reset the session, verify this, and load the session back.::
+Next we reset all variables in the session except for the temporary
+directory name. We verify that the session is reset, and then load
+it back.::
 
+    sage: sage.misc.reset.EXCLUDE.add('d')
     sage: reset()
     sage: show_identifiers()
-    []
-    sage: load_session(os.path.join(SAGE_TMP, 'session'))
+    ['d']
+    sage: load_session(os.path.join(d.name, 'session'))
 
 Indeed ``w`` is now defined again.::
 
     sage: show_identifiers()
-    ['w']
+    ['d', 'w']
     sage: w
     2/3
 
-It is not needed to clean up the file created in the above code, since it
-resides in the directory ``SAGE_TMP``.
+Finally, we clean up the temporary directory::
+
+    sage: d.cleanup()
 
 AUTHOR:
 
 - William Stein
-
 """
 
 #############################################################################
 #       Copyright (C) 2007,2010 William Stein <wstein@gmail.com>
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #############################################################################
 
 # Standard python imports
 import builtins
-import os
 import types
+
+# Sage imports
+from sage.misc.persist import load, save, loads, dumps
+from sage.misc.lazy_import import LazyImport
 
 # We want the caller's locals, but locals() is emulated in Cython
 cdef caller_locals = builtins.locals
-
-# Sage imports
-from .misc import embedded
-from sage.misc.persist import load, save, loads, dumps
 
 # This module-scope variables is used to save the
 # global state of the sage environment at the moment
 # before the user starts typing or running code.
 
 state_at_init = None
+
 
 def init(state=None):
     """
@@ -100,10 +106,12 @@ def init(state=None):
         sage: show_identifiers()
         []
     """
-    if state is None: state = caller_locals()  # use locals() by default
+    if state is None:
+        state = caller_locals()  # use locals() by default
     global state_at_init
     # Make a *copy* of the state dict, since it is mutable
     state_at_init = dict(state)
+
 
 def _is_new_var(x, v, hidden):
     """
@@ -155,9 +163,13 @@ def _is_new_var(x, v, hidden):
     # definitely new.
     if x not in state_at_init:
         return True
+    # A lazy import that was there at init time is not new
+    if isinstance(v, LazyImport):
+        return False
     # A variable could also be new even if it was there at init, say if
     # its value changed.
-    return x not in state_at_init or state_at_init[x] is not v
+    return state_at_init[x] is not v
+
 
 def show_identifiers(hidden=False):
     r"""
@@ -188,7 +200,7 @@ def show_identifiers(hidden=False):
         sage: a = 10
         sage: factor = 20
         sage: show_identifiers()
-        ['a', 'factor']
+        ['factor', 'a']
 
     To get the actual value of a variable from the list, use the
     :func:`globals()` function.::
@@ -202,7 +214,7 @@ def show_identifiers(hidden=False):
 
         sage: _hello = 10
         sage: show_identifiers()
-        ['a', 'factor']
+        ['factor', 'a']
         sage: '_hello' in show_identifiers(hidden=True)
         True
 
@@ -210,18 +222,13 @@ def show_identifiers(hidden=False):
     least in command line mode.::
 
         sage: show_identifiers(hidden=True)        # random output
-        ['__', '_i', '_6', '_4', '_3', '_1', '_ii', '__doc__', '__builtins__', '___', '_9', '__name__', '_', 'a', '_i12', '_i14', 'factor', '__file__', '_hello', '_i13', '_i11', '_i10', '_i15', '_i5', '_13', '_10', '_iii', '_i9', '_i8', '_i7', '_i6', '_i4', '_i3', '_i2', '_i1', '_init_cmdline', '_14']
+        ['__builtin__', '_ih', '_oh', '_dh', 'exit', 'quit', '_', '__', '___',
+        '_i', '_ii', '_iii', '_i1', 'factor', '_i2', '_2', '_i3', 'a', '_i4',
+        '_i5', '_5', '_i6', '_6', '_i7', '_hello', '_i8', '_8', '_i9', '_9',
+        '_i10']
     """
-    from sage.doctest.forker import DocTestTask
     state = caller_locals()
-    # Ignore extra variables injected into the global namespace by the doctest
-    # runner
-    _none = object()
-    def _in_extra_globals(name, val):
-        return val == DocTestTask.extra_globals.get(name, _none)
-
-    return sorted([x for x, v in state.items() if _is_new_var(x, v, hidden)
-                   and not _in_extra_globals(x, v)])
+    return [x for x, v in state.items() if _is_new_var(x, v, hidden)]
 
 
 def save_session(name='sage_session', verbose=False):
@@ -236,10 +243,7 @@ def save_session(name='sage_session', verbose=False):
            saved. This failure is silent unless you set
            ``verbose=True``.
 
-        2. In the Sage notebook the session is saved both to the current
-           working cell and to the ``DATA`` directory.
-
-        3. One can still make sessions that can't be reloaded.  E.g., define
+        2. One can still make sessions that can't be reloaded.  E.g., define
            a class with::
 
                class Foo: pass
@@ -287,28 +291,44 @@ def save_session(name='sage_session', verbose=False):
         sage: f = lambda x : x^2
         sage: save_session(tmp_f)
         sage: save_session(tmp_f, verbose=True)
-        Saving...
-        Not saving f: f is a function, method, class or type
         ...
+        Not saving f: f is a function or method
 
     Something similar happens for cython-defined functions::
 
         sage: g = cython_lambda('double x', 'x*x + 1.5')
         sage: save_session(tmp_f, verbose=True)
-        Saving...
-        Not saving g: g is a function, method, class or type
         ...
+        Not saving g: g is a cython function or method
+
+    And the same for a lazy import::
+
+        sage: from sage.misc.lazy_import import LazyImport
+        sage: lazy_ZZ = LazyImport('sage.rings.integer_ring', 'ZZ')
+        sage: save_session(tmp_f, verbose=True)
+        ...
+        Not saving lazy_ZZ: lazy_ZZ is a lazy import
     """
     state = caller_locals()
     # This dict D will contain the session -- as a dict -- that we will save to disk.
     D = {}
     # We iterate only over the new variables that were defined in this
     # session, since those are the only ones we will save.
-    for k in show_identifiers(hidden = True):
+    for k in show_identifiers(hidden=True):
         try:
             x = state[k]
-            if isinstance(x, (types.FunctionType, types.BuiltinFunctionType, types.BuiltinMethodType, type)):
-                raise TypeError('{} is a function, method, class or type'.format(k))
+
+            if isinstance(x, type):
+                raise TypeError('{} is a class or type'.format(k))
+
+            if isinstance(x, (types.FunctionType, types.BuiltinFunctionType, types.BuiltinMethodType)):
+                raise TypeError('{} is a function or method'.format(k))
+
+            if getattr(type(x), '__name__', None) == 'cython_function_or_method':
+                raise TypeError('{} is a cython function or method'.format(k))
+
+            if isinstance(x, LazyImport):
+                raise TypeError('{} is a lazy import'.format(k))
 
             # We attempt to pickle *and* unpickle every variable to
             # make *certain* that we can pickled D at the end below.
@@ -326,17 +346,6 @@ def save_session(name='sage_session', verbose=False):
                 print("Not saving {}: {}".format(k, msg))
             pass
     save(D, name)
-    if embedded():
-        # Also save D to the data directory if we're using the notebook.
-        # This is broken for now. Simply print some information to the user
-        # if the user does not save it in the DATA directory.
-        # save(D, '../../data/' + name)
-        if name.find('.sagenb/') <= 0 or name.find('/data/') <= 0:
-            print("To store the session in a common directory that the "
-                  "entire worksheet can access, save it using the command:\n"
-                  "save_session(DATA + '{0}')\n"
-                  "You can later load it by running in any cell:\n"
-                  "load_session(DATA + '{0}')".format(name.rsplit('/', 1)[-1]))
 
 
 def load_session(name='sage_session', verbose=False):
@@ -382,13 +391,6 @@ def load_session(name='sage_session', verbose=False):
     """
     state = caller_locals()
 
-    if embedded():
-        if not os.path.exists(name):
-            nm = '../../data/' + name
-            if not nm.endswith('.sobj'): nm += '.sobj'
-            if os.path.exists(nm):
-                name = nm
     D = load(name)
     for k, x in D.items():
         state[k] = x
-

@@ -1,5 +1,5 @@
-MPFRCX
-======
+mpfrcx: Arithmetic of univariate polynomials over arbitrary precision real or complex numbers
+=============================================================================================
 
 Description
 -----------

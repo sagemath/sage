@@ -41,13 +41,42 @@
 # local branch for this to work.                                               #
 ################################################################################
 
+################################################################################
+# HOWTO use this file to manually create new images for Docker Hub             #
+################################################################################
+# Make sure you have the tag checked out that you are trying to build. Then    #
+# from the root directory of the sage repository run:                          #
+#                                                                              #
+# bash  # open a subshell so 'set -e' does not close your shell on error       #
+# export ARTIFACT_BASE=source-clean                                            #
+# export DOCKER_TAG=9.6  # replace with the version you are building for       #
+# export CI_COMMIT_SHA=`git rev-parse --short HEAD`                            #
+# export CPUTHREADS=8                                                          #
+# export RAMTHREADS=8                                                          #
+# export RAMTHREADS_DOCBUILD=8                                                 #
+# . .ci/update-env.sh                                                          #
+# . .ci/setup-make-parallelity.sh                                              #
+# .ci/build-docker.sh                                                          #
+#                                                                              #
+# Now you can push the relevant images to the Docker Hub:                      #
+#                                                                              #
+# docker push sagemath/sagemath:$DOCKER_TAG                                    #
+# docker tag sagemath/sagemath:$DOCKER_TAG sagemath/sagemath:latest            #
+# docker push sagemath/sagemath:latest                                         #
+# docker push sagemath/sagemath-dev:$DOCKER_TAG                                #
+# docker tag sagemath/sagemath-dev:$DOCKER_TAG sagemath/sagemath-dev:latest    #
+# docker push sagemath/sagemath-dev:latest                                     #
+################################################################################
+
+
 ARG ARTIFACT_BASE=source-clean
+ARG MAKE_BUILD=make-build
 
 ################################################################################
 # Image containing the run-time dependencies for Sage                          #
 ################################################################################
-FROM ubuntu:xenial as run-time-dependencies
-LABEL maintainer="Erik M. Bray <erik.bray@lri.fr>, Julian Rüth <julian.rueth@fsfe.org>"
+FROM ubuntu:jammy as run-time-dependencies
+LABEL maintainer="Erik M. Bray <erik.bray@lri.fr>, Julian Rüth <julian.rueth@fsfe.org>, Sebastian Oehms <seb.oehms@gmail.com>"
 # Set sane defaults for common environment variables.
 ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
@@ -58,10 +87,10 @@ RUN ln -s "$SAGE_ROOT/sage" /usr/bin/sage
 RUN ln -s /usr/bin/sage /usr/bin/sagemath
 # Sage needs the fortran libraries at run-time because we do not build gfortran
 # with Sage but use the system's.
-# We need gcc/g++ and libstdc++-5-dev to allow compilation of cython at run-time from the notebook.
+# We need gcc/g++ and libstdc++-10-dev to allow compilation of cython at run-time from the notebook.
 # We also install sudo for the sage user, see below.
 RUN apt-get -qq update \
-    && apt-get -qq install -y --no-install-recommends gfortran gcc g++ libstdc++-5-dev sudo openssl \
+    && apt-get -qq install -y --no-install-recommends gfortran gcc g++ libstdc++-10-dev sudo openssl \
     && apt-get -qq clean \
     && rm -r /var/lib/apt/lists/*
 # Sage refuses to build as root, so we add a "sage" user that can sudo without a password.
@@ -82,7 +111,7 @@ WORKDIR $HOME
 FROM run-time-dependencies as build-time-dependencies
 # Install the build time dependencies & git & rdfind
 RUN sudo apt-get -qq update \
-    && sudo apt-get -qq install -y wget build-essential automake m4 dpkg-dev python libssl-dev git rdfind \
+    && sudo apt-get -qq install -y wget build-essential automake m4 dpkg-dev python3 libssl-dev git rdfind \
     && sudo apt-get -qq clean \
     && sudo rm -r /var/lib/apt/lists/*
 
@@ -94,7 +123,7 @@ ARG SAGE_ROOT=/home/sage/sage
 RUN mkdir -p "$SAGE_ROOT"
 WORKDIR $SAGE_ROOT
 RUN git init
-RUN git remote add trac git://trac.sagemath.org/sage.git
+RUN git remote add upstream https://github.com/sagemath/sage.git
 
 ################################################################################
 # Image with the build context added, i.e., the directory from which `docker   #
@@ -109,7 +138,7 @@ RUN git remote add trac git://trac.sagemath.org/sage.git
 FROM $ARTIFACT_BASE as source-from-context
 WORKDIR $HOME
 COPY --chown=sage:sage . sage-context
-# Checkout the commit that checked out in $HOME/sage-context
+# Checkout the commit that is checked out in $HOME/sage-context
 # This is a bit complicated because our local .git/ is empty and we want to
 # make sure that we only change the mtimes of a minimal number of files.
 # 1) Restore the git checkout ARTIFACT_BASE was built from, recorded in
@@ -127,10 +156,10 @@ WORKDIR $SAGE_ROOT
 # We create a list of all files present in the artifact-base (with a timestamp
 # of now) so we can find out later which files were added/changed/removed.
 RUN find . \( -type f -or -type l \) > $HOME/artifact-base.manifest
-RUN git fetch "$HOME/sage-context" HEAD \
+RUN git fetch --update-shallow "$HOME/sage-context" HEAD \
     && if [ -e docker/.commit ]; then \
           git reset `cat docker/.commit` \
-          || ( echo "Could not find commit `cat docker/.commit` in your local Git history. Please merge in the latest built develop branch to fix this: git fetch trac && git merge `cat docker/.commit`." && exit 1 ) \
+          || ( echo "Could not find commit `cat docker/.commit` in your local Git history. Please merge in the latest built develop branch to fix this: git fetch upstream && git merge `cat docker/.commit`." && exit 1 ) \
        else \
           echo "You are building from $ARTIFACT_BASE which has no docker/.commit file. That's a bug unless you are building from source-clean or something similar." \
           && git reset FETCH_HEAD \
@@ -168,13 +197,14 @@ ENV MAKEFLAGS $MAKEFLAGS
 ARG SAGE_NUM_THREADS="2"
 ENV SAGE_NUM_THREADS $SAGE_NUM_THREADS
 RUN make configure
-RUN ./configure
+# Old default before https://github.com/sagemath/sage/issues/32406
+RUN ./configure --disable-editable
 RUN make build
 
 ################################################################################
 # Image with a full build of sage and its documentation.                       #
 ################################################################################
-FROM make-build as make-all
+FROM $MAKE_BUILD as make-all
 # The docbuild needs quite some RAM (as of May 2018). It sometimes calls
 # os.fork() to spawn an external program which then exceeds easily the
 # overcommit limit of the system (no RAM is actually used, but this limit is
@@ -186,12 +216,9 @@ ENV SAGE_NUM_THREADS $SAGE_NUM_THREADS_DOCBUILD
 RUN make
 
 ################################################################################
-# Image with a full build of sage, ready to release, i.e., with stripped       #
-# binaries and some extras to run the jupyter notebook.                        #
+# Image with a full build of sage, ready to release.                           #
 ################################################################################
 FROM make-all as make-release
-RUN sage -pip install terminado "notebook>=5" "ipykernel>=4.6"
-RUN sage -i gap_jupyter singular_jupyter pari_jupyter
 RUN make micro_release
 
 ################################################################################
@@ -203,8 +230,10 @@ FROM run-time-dependencies as sagemath
 ARG HOME=/home/sage
 ARG SAGE_ROOT=/home/sage/sage
 COPY --chown=sage:sage --from=make-release $SAGE_ROOT/ $SAGE_ROOT/
-# Put scripts to start gap, gp, maxima, ... in /usr/bin
-RUN sudo $SAGE_ROOT/sage --nodotsage -c "install_scripts('/usr/bin')"
+# set path in bashrc to start gap, gp, maxima, ... this does not
+# affect Sage (see https://github.com/sagemath/sage/pull/38049)
+RUN echo "export PATH=$SAGE_ROOT/local/bin:$PATH" >> ~/.bashrc
+
 COPY ./docker/entrypoint.sh /usr/local/bin/sage-entrypoint
 WORKDIR $HOME
 ENTRYPOINT ["/usr/local/bin/sage-entrypoint"]
@@ -216,7 +245,10 @@ CMD ["sage"]
 # stripped that can be quickly rebuild by make.                                #
 ################################################################################
 FROM make-all as make-fast-rebuild-clean
-RUN make fast-rebuild-clean
+# Of course, without site-packages/sage, sage does not start but copying/compiling
+# them from build/pkgs/sagelib/src/build is very fast.
+RUN make fast-rebuild-clean; \
+    rm -rf local/lib/python*/site-packages/sage
 
 ################################################################################
 # Depending on whether we built from source-clean or not, this image is either #

@@ -1,5 +1,5 @@
-pickleshare
-===========
+pickleshare: A 'shelve' like datastore with concurrency support
+===============================================================
 
 Description
 -----------

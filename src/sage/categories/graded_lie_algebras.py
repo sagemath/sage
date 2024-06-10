@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Graded Lie Algebras
 
@@ -18,6 +19,7 @@ AUTHORS:
 
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.graded_modules import GradedModulesCategory
+
 
 class GradedLieAlgebras(GradedModulesCategory):
     r"""
@@ -87,4 +89,3 @@ class GradedLieAlgebras(GradedModulesCategory):
                 """
                 from sage.categories.lie_algebras import LieAlgebras
                 return [LieAlgebras(self.base_ring()).Nilpotent()]
-

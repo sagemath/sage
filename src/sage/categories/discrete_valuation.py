@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Discrete Valuation Rings (DVR) and Fields (DVF)
 """
@@ -13,6 +14,7 @@ from sage.misc.abstract_method import abstract_method
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.euclidean_domains import EuclideanDomains
 from sage.categories.fields import Fields
+
 
 class DiscreteValuationRings(Category_singleton):
     """
@@ -41,7 +43,7 @@ class DiscreteValuationRings(Category_singleton):
 
             EXAMPLES::
 
-                sage: Zp(5).uniformizer()
+                sage: Zp(5).uniformizer()                                               # needs sage.rings.padics
                 5 + O(5^21)
 
                 sage: K.<u> = QQ[[]]
@@ -56,13 +58,58 @@ class DiscreteValuationRings(Category_singleton):
 
             EXAMPLES::
 
-                sage: Zp(5).residue_field()
+                sage: Zp(5).residue_field()                                             # needs sage.rings.padics
                 Finite Field of size 5
 
                 sage: K.<u> = QQ[[]]
                 sage: K.residue_field()
                 Rational Field
             """
+
+        def _matrix_charpoly(self, M, var):
+            r"""
+            Return the characteristic polynomial of `M`.
+
+            EXAMPLES::
+
+                sage: # needs sage.modules
+                sage: R.<t> = PowerSeriesRing(GF(5))
+                sage: M = matrix(4, 4, [(t^(i+j)).add_bigoh(10)
+                ....:                   for i in range(4) for j in range(4)])
+                sage: M
+                [  1 + O(t^10)   t + O(t^10) t^2 + O(t^10) t^3 + O(t^10)]
+                [  t + O(t^10) t^2 + O(t^10) t^3 + O(t^10) t^4 + O(t^10)]
+                [t^2 + O(t^10) t^3 + O(t^10) t^4 + O(t^10) t^5 + O(t^10)]
+                [t^3 + O(t^10) t^4 + O(t^10) t^5 + O(t^10) t^6 + O(t^10)]
+                sage: M.charpoly()   # indirect doctest
+                x^4 + (4 + 4*t^2 + 4*t^4 + 4*t^6 + O(t^10))*x^3
+
+            Note that this function uses a Hessenberg-like algorithm
+            that performs divisions. Hence, truncations may show up
+            even if the input matrix is exact::
+
+                sage: # needs sage.modules
+                sage: M = matrix(3, 3, [ 1, t, t^2, 1+t, t^2, t^3, t^2, t^3, t^4 ])
+                sage: M
+                [    1     t   t^2]
+                [1 + t   t^2   t^3]
+                [  t^2   t^3   t^4]
+                sage: M.charpoly()
+                x^3 + (4 + 4*t^2 + 4*t^4 + O(t^25))*x^2 + (4*t + O(t^24))*x
+
+            Another example over the p-adics::
+
+                sage: # needs sage.modules sage.rings.padics
+                sage: R = Zp(5, print_mode="digits", prec=5)
+                sage: M = matrix(R, 3, 3, range(9))
+                sage: M
+                [        0  ...00001  ...00002]
+                [ ...00003  ...00004 ...000010]
+                [ ...00011  ...00012  ...00013]
+                sage: M.charpoly()
+                ...00001*x^3 + ...44423*x^2 + ...44412*x + ...00000
+            """
+            return M._charpoly_hessenberg(var)
 
     class ElementMethods:
         @abstract_method
@@ -72,6 +119,7 @@ class DiscreteValuationRings(Category_singleton):
 
             EXAMPLES::
 
+                sage: # needs sage.rings.padics
                 sage: x = Zp(5)(50)
                 sage: x.valuation()
                 2
@@ -101,22 +149,31 @@ class DiscreteValuationRings(Category_singleton):
             Return the quotient and remainder for Euclidean division
             of ``self`` by ``other``.
 
-            TESTS::
+            EXAMPLES::
 
                 sage: R.<q> = GF(5)[[]]
                 sage: (q^2 + q).quo_rem(q)
                 (1 + q, 0)
                 sage: (q + 1).quo_rem(q^2)
                 (0, 1 + q)
+
+            TESTS::
+
                 sage: q.quo_rem(0)
                 Traceback (most recent call last):
                 ...
                 ZeroDivisionError: Euclidean division by the zero element not defined
 
+                sage: L = PowerSeriesRing(QQ, 't')
+                sage: t = L.gen()
+                sage: F = algebras.Free(L, ['A', 'B'])
+                sage: A, B = F.gens()
+                sage: f = t*A+t**2*B/2
             """
             if not other:
                 raise ZeroDivisionError("Euclidean division by the zero element not defined")
             P = self.parent()
+            other = P(other)
             if self.valuation() >= other.valuation():
                 return P(self / other), P.zero()
             else:
@@ -124,14 +181,16 @@ class DiscreteValuationRings(Category_singleton):
 
         def is_unit(self):
             """
-            Return True if self is invertible.
+            Return ``True`` if ``self`` is invertible.
 
             EXAMPLES::
 
+                sage: # needs sage.rings.padics
                 sage: x = Zp(5)(50)
                 sage: x.is_unit()
                 False
 
+                sage: # needs sage.rings.padics
                 sage: x = Zp(7)(50)
                 sage: x.is_unit()
                 True
@@ -171,7 +230,7 @@ class DiscreteValuationFields(Category_singleton):
 
     EXAMPLES::
 
-        sage: Qp(7) in DiscreteValuationFields()
+        sage: Qp(7) in DiscreteValuationFields()                                        # needs sage.rings.padics
         True
         sage: TestSuite(DiscreteValuationFields()).run()
     """
@@ -193,25 +252,64 @@ class DiscreteValuationFields(Category_singleton):
 
             EXAMPLES::
 
-                sage: Qp(5).uniformizer()
+                sage: Qp(5).uniformizer()                                               # needs sage.rings.padics
                 5 + O(5^21)
             """
 
         @abstract_method
         def residue_field(self):
             """
-            Return the residue field of the ring of integers of 
+            Return the residue field of the ring of integers of
             this discrete valuation field.
 
             EXAMPLES::
 
-                sage: Qp(5).residue_field()
+                sage: Qp(5).residue_field()                                             # needs sage.rings.padics
                 Finite Field of size 5
 
                 sage: K.<u> = LaurentSeriesRing(QQ)
                 sage: K.residue_field()
                 Rational Field
             """
+
+        def _matrix_hessenbergize(self, H):
+            r"""
+            Replace `H` with a Hessenberg form of it.
+
+            EXAMPLES::
+
+                sage: # needs sage.modules
+                sage: R.<t> = PowerSeriesRing(GF(5))
+                sage: K = R.fraction_field()
+                sage: H = matrix(K, 4, 4, [(t^(i+j)).add_bigoh(10)
+                ....:                      for i in range(4) for j in range(4)])
+                sage: H
+                [  1 + O(t^10)   t + O(t^10) t^2 + O(t^10) t^3 + O(t^10)]
+                [  t + O(t^10) t^2 + O(t^10) t^3 + O(t^10) t^4 + O(t^10)]
+                [t^2 + O(t^10) t^3 + O(t^10) t^4 + O(t^10) t^5 + O(t^10)]
+                [t^3 + O(t^10) t^4 + O(t^10) t^5 + O(t^10) t^6 + O(t^10)]
+                sage: H.hessenbergize()
+                sage: H
+                [              1 + O(t^10)   t + t^3 + t^5 + O(t^10)             t^2 + O(t^10)             t^3 + O(t^10)]
+                [              t + O(t^10) t^2 + t^4 + t^6 + O(t^10)             t^3 + O(t^10)             t^4 + O(t^10)]
+                [                  O(t^10)                   O(t^10)                   O(t^10)                   O(t^10)]
+                [                  O(t^10)                   O(t^10)                   O(t^10)                   O(t^10)]
+
+            Another example over the p-adics::
+
+                sage: # needs sage.modules sage.rings.padics
+                sage: K = Qp(5, print_mode="digits", prec=5)
+                sage: H = matrix(K, 3, 3, range(9)); H
+                [        0  ...00001  ...00002]
+                [ ...00003  ...00004 ...000010]
+                [ ...00011  ...00012  ...00013]
+                sage: H.hessenbergize(); H
+                [        0  ...00010  ...00002]
+                [ ...00003  ...00024 ...000010]
+                [ ...00000  ...44440  ...44443]
+            """
+            from sage.matrix.matrix_cdv import hessenbergize_cdvf
+            hessenbergize_cdvf(H)
 
     class ElementMethods:
         @abstract_method
@@ -221,6 +319,7 @@ class DiscreteValuationFields(Category_singleton):
 
             EXAMPLES::
 
+                sage: # needs sage.rings.padics
                 sage: x = Qp(5)(50)
                 sage: x.valuation()
                 2

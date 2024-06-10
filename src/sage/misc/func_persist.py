@@ -43,7 +43,7 @@ with one file for each evaluation of the function.
 import inspect
 import os
 
-from . import persist
+from sage.misc import persist
 
 
 class func_persist:
@@ -52,19 +52,18 @@ class func_persist:
     definition to cache values it computes to disk.
     """
     def __init__(self, f, dir='func_persist'):
-        from sage.misc.misc import sage_makedirs
         self.__func = f
-        self.__dir  = dir
-        sage_makedirs(dir)
-        self.__doc__ = '%s%s%s'%(\
+        self.__dir = dir
+        os.makedirs(dir, exist_ok=True)
+        self.__doc__ = '%s%s%s' % (
             f.__name__,
-            inspect.formatargspec(*inspect.getargs(f.__code__)),
+            inspect.signature(f),
             f.__doc__)
 
     def __call__(self, *args, **kwds):
         key = (tuple(args), tuple(kwds.items()))
         h = hash(key)
-        name = '%s/%s_%s.sobj'%(self.__dir, self.__func.__name__, h)
+        name = '%s/%s_%s.sobj' % (self.__dir, self.__func.__name__, h)
 
         if os.path.exists(name):
             key2, val = persist.load(name)
@@ -77,7 +76,3 @@ class func_persist:
         val = self.__func(*args, **kwds)
         persist.save((key, val), name)
         return val
-
-
-
-

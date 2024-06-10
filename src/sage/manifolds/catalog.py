@@ -4,17 +4,22 @@ Manifolds Catalog
 A catalog of manifolds to rapidly create various simple manifolds.
 
 The current entries to the catalog are obtained by typing
-``manifolds.<tab>``, where ``<tab>`` indicates pressing the tab key.
+``manifolds.<tab>``, where ``<tab>`` indicates pressing the :kbd:`Tab` key.
 They are:
 
-- :func:`Sphere`: sphere embedded in Euclidean space
+- :class:`~sage.manifolds.differentiable.examples.euclidean.EuclideanSpace`: Euclidean space
+- :class:`~sage.manifolds.differentiable.examples.real_line.RealLine`: real line
+- :class:`~sage.manifolds.differentiable.examples.real_line.OpenInterval`: open interval on the real line
+- :class:`~sage.manifolds.differentiable.examples.sphere.Sphere`: sphere embedded in Euclidean space
 - :func:`Torus`: torus embedded in Euclidean space
 - :func:`Minkowski`: 4-dimensional Minkowski space
 - :func:`Kerr`: Kerr spacetime
+- :func:`RealProjectiveSpace`: `n`-dimensional real projective space
 
 AUTHORS:
 
 - Florentin Jaffredo (2018) : initial version
+- Trevor K. Karn (2022) : projective space
 """
 
 # *****************************************************************************
@@ -24,8 +29,19 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # *****************************************************************************
+
+# Lazy import from examples folders:
+from sage.misc.lazy_import import lazy_import as _lazy_import
+_lazy_import('sage.manifolds.differentiable.examples.real_line', 'OpenInterval')
+_lazy_import('sage.manifolds.differentiable.examples.real_line', 'RealLine')
+_lazy_import('sage.manifolds.differentiable.examples.euclidean', 'EuclideanSpace')
+_lazy_import('sage.manifolds.differentiable.examples.sphere', 'Sphere')
+_lazy_import(
+    "sage.manifolds.differentiable.examples.symplectic_space", "StandardSymplecticSpace"
+)
+
 
 def Minkowski(positive_spacelike=True, names=None):
     """
@@ -77,140 +93,6 @@ def Minkowski(positive_spacelike=True, names=None):
     g[1,1], g[2,2], g[3,3] = sgn, sgn, sgn
     return M
 
-def Sphere(dim=None, radius=1, names=None, stereo2d=False, stereo_lim=None):
-    """
-    Generate a sphere embedded in Euclidean space.
-
-    The shortcut operator ``.<,>`` can be used to specify the coordinates.
-
-    INPUT:
-
-    - ``dim`` -- (optional) the dimension of the sphere; if not specified,
-      equals to the number of coordinate names
-    - ``radius`` -- (default: ``1``) radius of the sphere
-    - ``names`` -- (default: ``None``) name of the coordinates,
-      automatically set by the shortcut operator
-    - ``stereo2d`` -- (default: ``False``) if ``True``, defines only the
-      stereographic charts, only implemented in 2d
-    - ``stereo_lim`` -- (default: ``None``) parameter used to restrict the
-      span of the stereographic charts, so that they don't cover the whole
-      sphere; valid domain will be ``x**2 + y**2 < stereo_lim**2``
-
-    OUTPUT:
-
-    - Riemannian manifold
-
-    EXAMPLES::
-
-        sage: S.<th, ph> = manifolds.Sphere()
-        sage: S
-        2-dimensional Riemannian submanifold S embedded in the Euclidean
-         space E^3
-        sage: S.atlas()
-        [Chart (S, (th, ph))]
-        sage: S.metric().display()
-        gamma = dth*dth + sin(th)^2 dph*dph
-
-        sage: S = manifolds.Sphere(2, stereo2d=True)  # long time
-        sage: S  # long time
-        2-dimensional Riemannian submanifold S embedded in the Euclidean
-         space E^3
-        sage: S.metric().display()  # long time
-        gamma = 4/(x^4 + y^4 + 2*(x^2 + 1)*y^2 + 2*x^2 + 1) dx*dx
-         + 4/(x^4 + y^4 + 2*(x^2 + 1)*y^2 + 2*x^2 + 1) dy*dy
-    """
-    from sage.functions.trig import cos, sin, atan, atan2
-    from sage.functions.other import sqrt
-    from sage.symbolic.constants import pi
-    from sage.misc.misc_c import prod
-    from sage.manifolds.manifold import Manifold
-    from sage.manifolds.differentiable.euclidean import EuclideanSpace
-
-    if dim is None:
-        if names is None:
-            raise ValueError("either the names or the dimension must be specified")
-        dim = len(names)
-    else:
-        if names is not None and dim != len(names):
-            raise ValueError("the number of coordinates does not match the dimension")
-
-    if stereo2d:
-        if dim != 2:
-            raise NotImplementedError("stereographic charts only "
-                                      "implemented for 2d spheres")
-        E = EuclideanSpace(3, names=("X", "Y", "Z"))
-        S2 = Manifold(dim, 'S', ambient=E, structure='Riemannian')
-        U = S2.open_subset('U')
-        V = S2.open_subset('V')
-        stereoN = U.chart(names=("x", "y"))
-        x, y = stereoN[:]
-        stereoS = V.chart(names=("xp", "yp"))
-        xp, yp = stereoS[:]
-        if stereo_lim is not None:
-            stereoN.add_restrictions(x**2+y**2 < stereo_lim**2)
-            stereoS.add_restrictions(xp**2+yp**2 < stereo_lim**2)
-
-        stereoN_to_S = stereoN.transition_map(stereoS,
-          (x / (x**2 + y**2), y / (x**2 + y**2)), intersection_name='W',
-          restrictions1=x**2 + y**2 != 0, restrictions2=xp**2+yp**2!=0)
-        stereoN_to_S.set_inverse(xp / (xp**2 + yp**2), yp / (xp**2 + yp**2),
-                                 check=False)
-        W = U.intersection(V)
-        stereoN_W = stereoN.restrict(W)
-        stereoS_W = stereoS.restrict(W)
-        A = W.open_subset('A', coord_def={stereoN_W: (y != 0, x < 0),
-                                          stereoS_W: (yp != 0, xp < 0)})
-        stereoN_A = stereoN_W.restrict(A)
-        if names is None:
-            names = tuple(["phi_{}:(0,pi)".format(i) for i in range(dim - 1)] +
-                          ["phi_{}:(-pi,pi):periodic".format(dim - 1)])
-        else:
-            names = tuple([names[i] + ":(0,pi)" for i in range(dim - 1)] +
-                          [names[dim - 1] + ":(-pi,pi):periodic"])
-        spher = A.chart(names=names)
-        th, ph = spher[:]
-        spher_to_stereoN = spher.transition_map(stereoN_A, (sin(th)*cos(ph) / (1-cos(th)),
-                                                            sin(th)*sin(ph) / (1-cos(th))))
-        spher_to_stereoN.set_inverse(2*atan(1/sqrt(x**2+y**2)), atan2(-y, -x)+pi,
-                                     check=False)
-        stereoN_to_S_A = stereoN_to_S.restrict(A)
-        stereoN_to_S_A * spher_to_stereoN # generates spher_to_stereoS
-        stereoS_to_N_A = stereoN_to_S.inverse().restrict(A)
-        spher_to_stereoN.inverse() * stereoS_to_N_A  # generates stereoS_to_spher
-
-        coordfunc1 = [sin(th)*cos(ph), sin(th)*sin(ph), cos(th)]
-        coordfunc2 = [2*x/(1+x**2+y**2), 2*y/(1+x**2+y**2), (x**2+y**2-1)/(1+x**2+y**2)]
-        coordfunc3 = [2*xp/(1+xp**2+yp**2), 2*yp/(1+xp**2+yp**2),(1-xp**2-yp**2)/(1+xp**2+yp**2)]
-        imm = S2.diff_map(E, {(spher, E.default_chart()): coordfunc1,
-                              (stereoN, E.default_chart()): coordfunc2,
-                              (stereoS, E.default_chart()): coordfunc3})
-        S2.set_embedding(imm)
-        S2.induced_metric()
-
-        return S2
-
-    if dim != 2:
-        raise NotImplementedError("only implemented for 2 dimensional spheres")
-
-    E = EuclideanSpace(3, symbols='X Y Z')
-    M = Manifold(dim, 'S', ambient=E, structure='Riemannian')
-    if names is None:
-        names = tuple(["phi_{}:(0,pi)".format(i) for i in range(dim-1)] +
-                      ["phi_{}:(-pi,pi):periodic".format(dim-1)])
-    else:
-        names = tuple([names[i]+":(0,pi)"for i in range(dim - 1)] +
-                      [names[dim-1]+":(-pi,pi):periodic"])
-    C = M.chart(names=names)
-    M._first_ngens = C._first_ngens
-    phi = M._first_ngens(dim)[:]
-    coordfunc = ([radius * prod(sin(phi[j]) for j in range(dim))] +
-                 [radius * cos(phi[i]) * prod(sin(phi[j]) for j in range(i))
-                  for i in range(dim)])
-    imm = M.diff_map(E, coordfunc)
-    M.set_embedding(imm)
-    M.induced_metric()
-    return M
-
 def Kerr(m=1, a=0, coordinates="BL", names=None):
     """
     Generate a Kerr spacetime.
@@ -245,22 +127,30 @@ def Kerr(m=1, a=0, coordinates="BL", names=None):
         4-dimensional Lorentzian manifold M
         sage: K.atlas()
         [Chart (M, (t, r, th, ph))]
+
+    The Kerr metric in Boyer-Lindquist coordinates (cf. :wikipedia:`Kerr_metric`)::
+
         sage: K.metric().display()
-        g = (2*m*r/(a^2*cos(th)^2 + r^2) - 1) dt*dt
-         + 2*a*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) dt*dph
-         + (a^2*cos(th)^2 + r^2)/(a^2 - 2*m*r + r^2) dr*dr
-         + (a^2*cos(th)^2 + r^2) dth*dth
-         + 2*a*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) dph*dt
-         + (2*a^2*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) + a^2 + r^2)*sin(th)^2 dph*dph
+        g = (2*m*r/(a^2*cos(th)^2 + r^2) - 1) dt⊗dt
+         - 2*a*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) dt⊗dph
+         + (a^2*cos(th)^2 + r^2)/(a^2 - 2*m*r + r^2) dr⊗dr
+         + (a^2*cos(th)^2 + r^2) dth⊗dth
+         - 2*a*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) dph⊗dt
+         + (2*a^2*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) + a^2 + r^2)*sin(th)^2 dph⊗dph
+
+    The Schwarzschild spacetime with the mass parameter set to 1::
 
         sage: K.<t, r, th, ph> = manifolds.Kerr()
         sage: K
         4-dimensional Lorentzian manifold M
         sage: K.metric().display()
-        g = (2/r - 1) dt*dt + r^2/(r^2 - 2*r) dr*dr
-         + r^2 dth*dth + r^2*sin(th)^2 dph*dph
+        g = (2/r - 1) dt⊗dt + r^2/(r^2 - 2*r) dr⊗dr
+         + r^2 dth⊗dth + r^2*sin(th)^2 dph⊗dph
         sage: K.default_chart().coord_range()
         t: (-oo, +oo); r: (0, +oo); th: (0, pi); ph: [-pi, pi] (periodic)
+
+
+    The Kerr spacetime in Kerr coordinates::
 
         sage: m, a = var('m, a')
         sage: K.<t, r, th, ph> = manifolds.Kerr(m, a, coordinates="Kerr")
@@ -269,21 +159,21 @@ def Kerr(m=1, a=0, coordinates="BL", names=None):
         sage: K.atlas()
         [Chart (M, (t, r, th, ph))]
         sage: K.metric().display()
-        g = (2*m*r/(a^2*cos(th)^2 + r^2) - 1) dt*dt
-         + 2*m*r/(a^2*cos(th)^2 + r^2) dt*dr
-         - 2*a*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) dt*dph
-         + 2*m*r/(a^2*cos(th)^2 + r^2) dr*dt
-         + (2*m*r/(a^2*cos(th)^2 + r^2) + 1) dr*dr
-         - a*(2*m*r/(a^2*cos(th)^2 + r^2) + 1)*sin(th)^2 dr*dph
-         + (a^2*cos(th)^2 + r^2) dth*dth
-         - 2*a*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) dph*dt
-         - a*(2*m*r/(a^2*cos(th)^2 + r^2) + 1)*sin(th)^2 dph*dr
+        g = (2*m*r/(a^2*cos(th)^2 + r^2) - 1) dt⊗dt
+         + 2*m*r/(a^2*cos(th)^2 + r^2) dt⊗dr
+         - 2*a*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) dt⊗dph
+         + 2*m*r/(a^2*cos(th)^2 + r^2) dr⊗dt
+         + (2*m*r/(a^2*cos(th)^2 + r^2) + 1) dr⊗dr
+         - a*(2*m*r/(a^2*cos(th)^2 + r^2) + 1)*sin(th)^2 dr⊗dph
+         + (a^2*cos(th)^2 + r^2) dth⊗dth
+         - 2*a*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) dph⊗dt
+         - a*(2*m*r/(a^2*cos(th)^2 + r^2) + 1)*sin(th)^2 dph⊗dr
          + (2*a^2*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2)
-         + a^2 + r^2)*sin(th)^2 dph*dph
+         + a^2 + r^2)*sin(th)^2 dph⊗dph
         sage: K.default_chart().coord_range()
         t: (-oo, +oo); r: (0, +oo); th: (0, pi); ph: [-pi, pi] (periodic)
     """
-    from sage.functions.other import sqrt
+    from sage.misc.functional import sqrt
     from sage.functions.trig import cos, sin
     from sage.manifolds.manifold import Manifold
     M = Manifold(4, 'M', structure="Lorentzian")
@@ -323,7 +213,7 @@ def Kerr(m=1, a=0, coordinates="BL", names=None):
         g[0, 0], g[1, 1], g[2, 2], g[3, 3] = -(1-2*m*r/rho**2), \
             rho**2/(r**2-2*m*r+a**2), rho**2, \
             (r**2+a**2+2*m*r*a**2/rho**2*sin(th)**2)*sin(th)**2
-        g[0, 3] = 2*m*r*a*sin(th)**2/rho**2
+        g[0, 3] = -2*m*r*a*sin(th)**2/rho**2
         return M
 
     raise NotImplementedError("coordinates system not implemented, see help"
@@ -356,16 +246,16 @@ def Torus(R=2, r=1, names=None):
         sage: T.atlas()
         [Chart (T, (theta, phi))]
         sage: T.embedding().display()
-        T --> E^3
-           (theta, phi) |--> (X, Y, Z) = ((cos(theta) + 3)*cos(phi),
+        T → E^3
+           (theta, phi) ↦ (X, Y, Z) = ((cos(theta) + 3)*cos(phi),
                                           (cos(theta) + 3)*sin(phi),
                                           sin(theta))
         sage: T.metric().display()
-        gamma = dtheta*dtheta + (cos(theta)^2 + 6*cos(theta) + 9) dphi*dphi
+        gamma = dtheta⊗dtheta + (cos(theta)^2 + 6*cos(theta) + 9) dphi⊗dphi
     """
     from sage.functions.trig import cos, sin
     from sage.manifolds.manifold import Manifold
-    from sage.manifolds.differentiable.euclidean import EuclideanSpace
+    from sage.manifolds.differentiable.examples.euclidean import EuclideanSpace
     E = EuclideanSpace(3, symbols='X Y Z')
     M = Manifold(2, 'T', ambient=E, structure="Riemannian")
     if names is None:
@@ -380,3 +270,140 @@ def Torus(R=2, r=1, names=None):
     M.induced_metric()
     return M
 
+
+def RealProjectiveSpace(dim=2):
+    r"""
+    Generate projective space of dimension ``dim`` over the reals.
+
+    This is the topological space of lines through the origin in
+    `\RR^{d+1}`. The standard atlas consists of `d+2` charts, which sends
+    the set `U_i = \{[x_1, x_2, \ldots, x_{d+1}] : x_i \neq 0 \}` to
+    `k^{d}` by dividing by `x_i` and omitting the `i`th coordinate
+    `x_i/x_i = 1`.
+
+    INPUT:
+
+    - ``dim`` -- (default: ``2``) the dimension of projective space
+
+    OUTPUT:
+
+    - ``P`` -- the projective space `\Bold{RP}^d` where `d =` ``dim``.
+
+    EXAMPLES::
+
+        sage: RP2 = manifolds.RealProjectiveSpace(); RP2
+        2-dimensional topological manifold RP2
+        sage: latex(RP2)
+        \mathbb{RP}^{2}
+
+        sage: C0, C1, C2 = RP2.top_charts()
+        sage: p = RP2.point((2,0), chart = C0)
+        sage: q = RP2.point((0,3), chart = C0)
+        sage: p in C0.domain()
+        True
+        sage: p in C1.domain()
+        True
+        sage: C1(p)
+        (1/2, 0)
+        sage: p in C2.domain()
+        False
+        sage: q in C0.domain()
+        True
+        sage: q in C1.domain()
+        False
+        sage: q in C2.domain()
+        True
+        sage: C2(q)
+        (1/3, 0)
+
+        sage: r = RP2.point((2,3))
+        sage: r in C0.domain() and r in C1.domain() and r in C2.domain()
+        True
+        sage: C0(r)
+        (2, 3)
+        sage: C1(r)
+        (1/2, 3/2)
+        sage: C2(r)
+        (1/3, 2/3)
+
+        sage: p = RP2.point((2,3), chart = C1)
+        sage: p in C0.domain() and p in C1.domain() and p in C2.domain()
+        True
+        sage: C0(p)
+        (1/2, 3/2)
+        sage: C2(p)
+        (2/3, 1/3)
+
+        sage: RP1 = manifolds.RealProjectiveSpace(1); RP1
+        1-dimensional topological manifold RP1
+        sage: C0, C1 = RP1.top_charts()
+        sage: p, q = RP1.point((2,)), RP1.point((0,))
+        sage: p in C0.domain()
+        True
+        sage: p in C1.domain()
+        True
+        sage: q in C0.domain()
+        True
+        sage: q in C1.domain()
+        False
+        sage: C1(p)
+        (1/2,)
+
+        sage: p, q = RP1.point((3,), chart = C1), RP1.point((0,), chart = C1)
+        sage: p in C0.domain()
+        True
+        sage: q in C0.domain()
+        False
+        sage: C0(p)
+        (1/3,)
+
+    """
+
+    from sage.manifolds.manifold import Manifold
+
+    P = Manifold(dim, f"RP{dim}",
+                 structure='topological',
+                 latex_name=r"\mathbb{{RP}}^{{{}}}".format(dim))
+
+    # the trailing whitespace in the string is intentional for defining charts
+    names = [f'x_{i} ' for i in range(dim + 1)]
+
+    U0 = P.open_subset(name='U0', latex_name='U_0')
+
+    charts = {0: U0.chart(''.join(names[1:]))}
+
+    # create the charts
+    for j in range(1, dim + 1):
+        U = P.open_subset(name=f'U{j}', latex_name=f'U_{j}')
+
+        # The chart where we assert that x_i == 1
+        Cj = U.chart(''.join(names[:j] + names[j+1:]))
+        gj = Cj[:]
+
+        charts[j] = Cj
+
+        for i in range(j):
+
+            Ci = charts[i]
+            gi = Ci[:]
+
+            xi = gj[i]
+            xj = gi[j - 1]  # use index j - 1 because i < j and xi is omitted in gi
+
+            # the corresponding coordinates in R^{dim+1}
+            d_plus_one_coords = [g/xj for g in gi[:i]] + [1/xj] + [g/xj for g in gi[i:]]
+            cj_new_coords = d_plus_one_coords[:j] + d_plus_one_coords[j+1:]
+
+            Ci_to_Cj = Ci.transition_map(Cj, cj_new_coords,
+                                         restrictions1=xj != 0,
+                                         restrictions2=xi != 0)
+
+            d_plus_one_coords = [g/xi for g in gj[:j]] + [1/xi] + [g/xi for g in gj[j:]]
+            ci_new_coords = d_plus_one_coords[:i] + d_plus_one_coords[i+1:]
+
+            Cj_to_Ci = Ci_to_Cj.set_inverse(*ci_new_coords, check=False)
+
+    # this atlas is a global atlas
+    P.declare_union(P.subsets())
+
+    return P

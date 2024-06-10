@@ -1,4 +1,3 @@
-# cython: language_level=2
 """
 Ranges and the ``[1,2,..,n]`` notation
 
@@ -16,10 +15,9 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import division, print_function
 
 from libc.math cimport ceil
 from cysignals.signals cimport sig_check
@@ -41,11 +39,11 @@ def xsrange(start, end=None, step=1, universe=None, *, coerce=True, bint include
 
     INPUT:
 
-    - ``start`` - number (default: 0)
+    - ``start`` -- number (default: 0)
 
-    - ``end`` - number
+    - ``end`` -- number
 
-    - ``step`` - number (default: 1)
+    - ``step`` -- number (default: 1)
 
     - ``universe`` -- parent or type where all the elements should live
       (default: deduce from inputs)
@@ -55,7 +53,7 @@ def xsrange(start, end=None, step=1, universe=None, *, coerce=True, bint include
       automatically detected universe)
 
     - ``include_endpoint`` -- whether or not to include the endpoint
-      (default: False). This is only relevant if ``end`` is actually of
+      (default: ``False``). This is only relevant if ``end`` is actually of
       the form ``start + k*step`` for some integer `k`.
 
     ` ``endpoint_tolerance`` -- used to determine whether or not the
@@ -86,7 +84,7 @@ def xsrange(start, end=None, step=1, universe=None, *, coerce=True, bint include
     EXAMPLES::
 
         sage: xsrange(10)
-        <generator object at 0x...>
+        <...generator object at 0x...>
         sage: for i in xsrange(1,5):
         ....:     print(i)
         1
@@ -98,7 +96,7 @@ def xsrange(start, end=None, step=1, universe=None, *, coerce=True, bint include
 
     TESTS:
 
-    Ranges can be very large, see :trac:`20094`::
+    Ranges can be very large, see :issue:`20094`::
 
         sage: it = xsrange(10^30, 10^100)
         sage: for i in range(5):
@@ -186,11 +184,11 @@ def srange(*args, **kwds):
 
     INPUT:
 
-    - ``start`` - number (default: 0)
+    - ``start`` -- number (default: 0)
 
-    - ``end`` - number
+    - ``end`` -- number
 
-    - ``step`` - number (default: 1)
+    - ``step`` -- number (default: 1)
 
     - ``universe -- parent or type where all the elements should live
       (default: deduce from inputs). This is only used if ``coerce`` is
@@ -201,7 +199,7 @@ def srange(*args, **kwds):
       automatically detected universe)
 
     - ``include_endpoint`` -- whether or not to include the endpoint
-      (default: False). This is only relevant if ``end`` is actually of
+      (default: ``False``). This is only relevant if ``end`` is actually of
       the form ``start + k*step`` for some integer `k`.
 
     ` ``endpoint_tolerance`` -- used to determine whether or not the
@@ -224,7 +222,7 @@ def srange(*args, **kwds):
         sage: v = srange(5); v
         [0, 1, 2, 3, 4]
         sage: type(v[2])
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: srange(1, 10)
         [1, 2, 3, 4, 5, 6, 7, 8, 9]
         sage: srange(10, 1, -1)
@@ -246,8 +244,8 @@ def srange(*args, **kwds):
         [1.00000000000000]
         sage: srange(1.0, 1.0)
         []
-        sage: V = VectorSpace(QQ, 2)
-        sage: srange(V([0,0]), V([5,5]), step=V([2,2]))
+        sage: V = VectorSpace(QQ, 2)                                                    # needs sage.modules
+        sage: srange(V([0,0]), V([5,5]), step=V([2,2]))                                 # needs sage.modules
         [(0, 0), (2, 2), (4, 4)]
 
     Including the endpoint::
@@ -291,14 +289,14 @@ def srange(*args, **kwds):
 
     TESTS:
 
-    These are doctests from :trac:`6409`::
+    These are doctests from :issue:`6409`::
 
         sage: srange(1,QQ(0),include_endpoint=True)
         []
         sage: srange(1,QQ(0),-1,include_endpoint=True)
         [1, 0]
 
-    Test :trac:`11753`::
+    Test :issue:`11753`::
 
         sage: srange(1,1,0)
         Traceback (most recent call last):
@@ -397,10 +395,9 @@ def ellipsis_iter(*args, step=None):
         if len(args) > step_magic+1:
             i = step_magic
             more = xsrange(args[i-2], args[i+1], step, coerce=False, include_endpoint=True)
-            a = None
             for a in more:
+                last_end = a
                 yield a
-            last_end = a
             skip = True
             next_ = None
             step_magic += 1
@@ -429,8 +426,8 @@ def ellipsis_iter(*args, step=None):
                 if last_end != first:
                     yield first
                 for a in more:
+                    last_end = a
                     yield a
-                last_end = a
             except StopIteration:
                 last_end = None
             skip = True
@@ -544,7 +541,7 @@ def ellipsis_range(*args, step=None):
             skip = False
         elif args[i] is Ellipsis:
             if len(args) == i+1:
-                raise IndexError("Ellipsis range must have an endpoint, use (n..) for infinite sequence.")
+                raise IndexError("ellipsis range must have an endpoint, use (n..) for infinite sequence")
             start, end = args[i-1], args[i+1]
             if i < 2 or args[i-2] is not Ellipsis:
                 L.pop()

@@ -2,7 +2,7 @@ r"""
 Support for (lib)GAP workspace files
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Jeroen Demeyer <J.Demeyer@UGent.be>
 #                     2019 Vincent Delecroix <vincent.delecroix@u-bordeaux.fr>
 #
@@ -10,13 +10,14 @@ Support for (lib)GAP workspace files
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 import time
 import hashlib
-from sage.env import DOT_SAGE, SAGE_LOCAL
+import subprocess
+from sage.env import DOT_SAGE, HOSTNAME, GAP_ROOT_PATHS
 
 
 def gap_workspace_file(system="gap", name="workspace", dir=None):
@@ -59,8 +60,17 @@ def gap_workspace_file(system="gap", name="workspace", dir=None):
     if dir is None:
         dir = os.path.join(DOT_SAGE, 'gap')
 
-    h = hashlib.sha1(SAGE_LOCAL.encode('utf-8')).hexdigest()
-    return os.path.join(dir, '%s-%s-%s' % (system, name, h))
+    data = f'{GAP_ROOT_PATHS}'
+    for path in GAP_ROOT_PATHS.split(";"):
+        if not path:
+            # If GAP_ROOT_PATHS begins or ends with a semicolon,
+            # we'll get one empty path.
+            continue
+        sysinfo = os.path.join(path, "sysinfo.gap")
+        if os.path.exists(sysinfo):
+            data += subprocess.getoutput(f'. "{sysinfo}" && echo ":$GAP_VERSION:$GAParch"')
+    h = hashlib.sha1(data.encode('utf-8')).hexdigest()
+    return os.path.join(dir, f'{system}-{name}-{HOSTNAME}-{h}')
 
 
 def prepare_workspace_dir(dir=None):
@@ -82,7 +92,9 @@ def prepare_workspace_dir(dir=None):
 
     TESTS::
 
-        sage: prepare_workspace_dir(os.path.join(tmp_dir(), "new"))
+        sage: import tempfile
+        sage: with tempfile.TemporaryDirectory() as d:
+        ....:     prepare_workspace_dir(os.path.join(d, "new"))
         '.../new'
     """
     if dir is None:

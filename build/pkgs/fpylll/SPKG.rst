@@ -1,10 +1,10 @@
-fpylll
-======
+fpylll: Python interface for FPLLL
+==================================
 
 Description
 -----------
 
-A Python interface for https://github.com/fplll/fplll
+A Python interface for https://github.com/fplll/fplll (Lattice algorithms using floating-point arithmetic)
 
 License
 -------
@@ -16,11 +16,3 @@ Upstream Contact
 ----------------
 
 https://github.com/fplll/fpylll
-
-Dependencies
-------------
-
--  Cython
--  fplll
--  Sage (optional)
--  NumPy (optional)

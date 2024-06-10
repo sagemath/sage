@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-categories
+# sage.doctest: needs sage.combinat sage.graphs
 r"""
 Regular Supercrystals
 """
@@ -13,7 +15,6 @@ Regular Supercrystals
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_singleton import Category_singleton
@@ -108,7 +109,7 @@ class RegularSuperCrystals(Category_singleton):
 
             EXAMPLES::
 
-                sage: C = crystals.Tableaux(['A',[1,2]], shape = [2,1])
+                sage: C = crystals.Tableaux(['A',[1,2]], shape=[2,1])
                 sage: c = C.an_element(); c
                 [[-2, -2], [-1]]
                 sage: c.epsilon(2)
@@ -133,7 +134,7 @@ class RegularSuperCrystals(Category_singleton):
 
             EXAMPLES::
 
-                sage: C = crystals.Tableaux(['A',[1,2]], shape = [2,1])
+                sage: C = crystals.Tableaux(['A',[1,2]], shape=[2,1])
                 sage: c = C.an_element(); c
                 [[-2, -2], [-1]]
                 sage: c.phi(1)

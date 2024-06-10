@@ -1,20 +1,18 @@
-psutil
-======
+psutil: Cross-platform lib for process and system monitoring in Python.
+=======================================================================
 
 Description
 -----------
 
-psutil is a cross-platform library for retrieving information onrunning
-processes and system utilization (CPU, memory, disks, network) in
-Python.
+Cross-platform lib for process and system monitoring in Python.
 
 License
 -------
 
-3-clause BSD license
-
+BSD-3-Clause
 
 Upstream Contact
 ----------------
 
-https://github.com/giampaolo/psutil/
+https://pypi.org/project/psutil/
+

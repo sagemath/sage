@@ -1,0 +1,4 @@
+$(MP_LIBRARY) readline soplex papilo zlib bliss | cmake
+
+----------
+All lines of this file are ignored except the first.

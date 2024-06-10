@@ -1,5 +1,5 @@
-database_cremona_ellcurve
-=========================
+database_cremona_ellcurve: Database of elliptic curves
+======================================================
 
 Description
 -----------
@@ -14,17 +14,6 @@ License
 -------
 
 Public Domain
-
-Dependencies
-------------
-
-None
-
-Patches
-~~~~~~~
-
--  None
-
 
 Upstream Contact
 ----------------

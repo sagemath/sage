@@ -1,5 +1,5 @@
-planarity
-=========
+planarity: Planarity-related graph algorithms
+=============================================
 
 Description
 -----------
@@ -26,21 +26,9 @@ Upstream Contact
 
 -  John Boyer <John.Boyer.PhD@gmail.com>
 
-Dependencies
-------------
-
-None
-
-
 Special Update/Build Instructions
 ---------------------------------
 
 The tarballs can be found at,
 https://github.com/graph-algorithms/edge-addition-planarity-suite/releases
 sage tarball is repackaged after running autogen.sh
-
-One change was made to the upstream code:
-
--  extern.patch - declare variables declared in headers as extern.
-
-   https://github.com/graph-algorithms/edge-addition-planarity-suite/pull/3

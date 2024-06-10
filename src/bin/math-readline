@@ -8,7 +8,6 @@
 import sys
 import signal
 import subprocess
-from six.moves import input
 from sage.cpython.string import str_to_bytes
 
 def child_exited(*args):

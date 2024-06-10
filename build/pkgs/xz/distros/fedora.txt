@@ -1,1 +1,1 @@
-xz xz-devel
+xz

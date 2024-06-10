@@ -1,3 +1,5 @@
+.. sage-doctest: needs sage.plot sage.symbolic
+
 .. _section-plot:
 
 Gráficos
@@ -159,7 +161,7 @@ Gráficos Tridimensionais
 
 O Sage pode ser usado para criar gráficos tridimensionais. Tanto no
 Sage Notebook, como no console (linha de comando), esses gráficos serão
-exibidos usando o software de código aberto [Jmol]_, que permite girar
+exibidos usando o software de código aberto [ThreeJS]_, que permite girar
 e ampliar a figura usando o mouse.
 
 Use ``plot3d`` para criar o gráfico de uma função da forma `f(x, y) =

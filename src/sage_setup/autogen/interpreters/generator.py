@@ -43,6 +43,7 @@ class InterpreterGenerator(object):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.rdf import RDFInterpreter
             sage: interp = RDFInterpreter()
             sage: gen = InterpreterGenerator(interp)
             sage: gen._spec is interp
@@ -72,6 +73,7 @@ class InterpreterGenerator(object):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.rdf import RDFInterpreter
             sage: interp = RDFInterpreter()
             sage: gen = InterpreterGenerator(interp)
             sage: from io import StringIO
@@ -218,6 +220,7 @@ class InterpreterGenerator(object):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.element import ElementInterpreter
             sage: interp = ElementInterpreter()
             sage: gen = InterpreterGenerator(interp)
             sage: print(gen.func_header())
@@ -260,6 +263,7 @@ class InterpreterGenerator(object):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.rdf import RDFInterpreter
             sage: interp = RDFInterpreter()
             sage: gen = InterpreterGenerator(interp)
             sage: from io import StringIO
@@ -307,6 +311,7 @@ class InterpreterGenerator(object):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.rdf import RDFInterpreter
             sage: interp = RDFInterpreter()
             sage: gen = InterpreterGenerator(interp)
             sage: from io import StringIO
@@ -369,7 +374,7 @@ class InterpreterGenerator(object):
 
             from sage.ext.fast_callable cimport Wrapper
 
-            cdef extern from "sage/ext/interpreters/interp_{{ s.name }}.c":
+            cdef extern from "interp_{{ s.name }}.c":
                 {{ myself.func_header(cython=true) -}}
 
             {% if s.err_return != 'NULL' %}
@@ -476,6 +481,7 @@ class InterpreterGenerator(object):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.rdf import RDFInterpreter
             sage: interp = RDFInterpreter()
             sage: gen = InterpreterGenerator(interp)
             sage: from io import StringIO
@@ -527,6 +533,9 @@ class InterpreterGenerator(object):
         First we get the InterpreterSpec for several interpreters::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.rdf import RDFInterpreter
+            sage: from sage_setup.autogen.interpreters.specs.rr import RRInterpreter
+            sage: from sage_setup.autogen.interpreters.specs.element import ElementInterpreter
             sage: rdf_spec = RDFInterpreter()
             sage: rr_spec = RRInterpreter()
             sage: el_spec = ElementInterpreter()
@@ -649,6 +658,9 @@ class InterpreterGenerator(object):
         First we get the InterpreterSpec for several interpreters::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.rdf import RDFInterpreter
+            sage: from sage_setup.autogen.interpreters.specs.rr import RRInterpreter
+            sage: from sage_setup.autogen.interpreters.specs.element import ElementInterpreter
             sage: rdf_spec = RDFInterpreter()
             sage: rr_spec = RRInterpreter()
             sage: el_spec = ElementInterpreter()
@@ -972,6 +984,9 @@ class InterpreterGenerator(object):
         First we get the InterpreterSpec for several interpreters::
 
             sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.specs.rdf import RDFInterpreter
+            sage: from sage_setup.autogen.interpreters.specs.rr import RRInterpreter
+            sage: from sage_setup.autogen.interpreters.specs.element import ElementInterpreter
             sage: rdf_spec = RDFInterpreter()
             sage: rr_spec = RRInterpreter()
             sage: el_spec = ElementInterpreter()

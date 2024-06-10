@@ -1,5 +1,5 @@
-LattE_Integrale
-===============
+latte_int: Count lattice points, compute volumes, and integrate over convex polytopes
+=====================================================================================
 
 Description
 -----------
@@ -17,8 +17,3 @@ Upstream Contact
 ----------------
 
 Matthias Köppe, UC Davis, CA, USA
-
-Dependencies
-------------
-
-GMP (MPIR), 4ti2, NTL, cddlib.

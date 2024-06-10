@@ -1,4 +1,8 @@
-# distutils: libraries = ntl gmp m
+# distutils: libraries = NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 
 #*****************************************************************************
@@ -23,10 +27,10 @@ include 'misc.pxi'
 include 'decl.pxi'
 
 from cpython.object cimport Py_EQ, Py_NE
-from .ntl_ZZ import unpickle_class_args
-from .ntl_GF2EContext import ntl_GF2EContext
-from .ntl_GF2EContext cimport ntl_GF2EContext_class
-from .ntl_GF2E cimport ntl_GF2E
+from sage.libs.ntl.ntl_ZZ import unpickle_class_args
+from sage.libs.ntl.ntl_GF2EContext import ntl_GF2EContext
+from sage.libs.ntl.ntl_GF2EContext cimport ntl_GF2EContext_class
+from sage.libs.ntl.ntl_GF2E cimport ntl_GF2E
 
 ##############################################################################
 #
@@ -37,7 +41,7 @@ from .ntl_GF2E cimport ntl_GF2E
 #
 ##############################################################################
 
-cdef class ntl_GF2EX(object):
+cdef class ntl_GF2EX():
     r"""
     Minimal wrapper of NTL's GF2EX class.
     """
@@ -54,7 +58,7 @@ cdef class ntl_GF2EX(object):
         if modulus is None:
             raise ValueError("You must specify a modulus when creating a GF2E.")
 
-        str_x = str(x)  # can cause modulus to change  trac #25790
+        str_x = str(x)  # can cause modulus to change; Issue #25790
         self.c.restore_c()
         ccreadstr(self.x, str_x)
 

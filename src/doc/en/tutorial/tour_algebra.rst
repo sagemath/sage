@@ -16,7 +16,7 @@ functions are defined to be ``var(...)``. As an example:
     sage: diff(sin(u), u)
     cos(u)
 
-If you get a ``NameError``, check to see if you mispelled something,
+If you get a :class:`NameError`, check to see if you misspelled something,
 or forgot to define a variable with ``var(...)``.
 
 
@@ -201,7 +201,6 @@ is modeled by the system of 2nd order differential equations
     m_2 x_2''+ k_2 (x_2-x_1) = 0,
 
 
-
 where :math:`m_{i}` is the mass of object *i*, :math:`x_{i}` is
 the displacement from equilibrium of mass *i*, and :math:`k_{i}`
 is the spring constant for spring *i*.
@@ -216,9 +215,12 @@ the notation :math:`x=x_{1}`, :math:`y=x_{2}`):
 
 ::
 
-    sage: de1 = maxima("2*diff(x(t),t, 2) + 6*x(t) - 2*y(t)")
-    sage: lde1 = de1.laplace("t","s"); lde1
-    2*((-%at('diff(x(t),t,1),t=0))+s^2*'laplace(x(t),t,s)-x(0)*s)-2*'laplace(y(t),t,s)+6*'laplace(x(t),t,s)
+    sage: t,s = SR.var('t,s')
+    sage: x = function('x')
+    sage: y = function('y')
+    sage: f = 2*x(t).diff(t,2) + 6*x(t) - 2*y(t)
+    sage: f.laplace(t,s)
+    2*s^2*laplace(x(t), t, s) - 2*s*x(0) + 6*laplace(x(t), t, s) - 2*laplace(y(t), t, s) - 2*D[0](x)(0)
 
 This is hard to read, but it says that
 
@@ -232,8 +234,8 @@ Laplace transform of the second equation:
 ::
 
     sage: de2 = maxima("diff(y(t),t, 2) + 2*y(t) - 2*x(t)")
-    sage: lde2 = de2.laplace("t","s"); lde2
-    (-%at('diff(y(t),t,1),t=0))+s^2*'laplace(y(t),t,s)+2*'laplace(y(t),t,s)-2*'laplace(x(t),t,s)-y(0)*s
+    sage: lde2 = de2.laplace("t","s"); lde2.sage()
+    s^2*laplace(y(t), t, s) - s*y(0) - 2*laplace(x(t), t, s) + 2*laplace(y(t), t, s) - D[0](y)(0)
 
 This says
 

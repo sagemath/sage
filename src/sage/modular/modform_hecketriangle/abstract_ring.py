@@ -4,30 +4,32 @@ Graded rings of modular forms for Hecke triangle groups
 AUTHORS:
 
 - Jonas Jermann (2013): initial version
-
 """
-from __future__ import absolute_import
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from sage.rings.all import FractionField, PolynomialRing, PowerSeriesRing, ZZ, QQ, infinity
 from sage.algebras.free_algebra import FreeAlgebra
 
-from sage.structure.parent import Parent
 from sage.misc.cachefunc import cached_method
+from sage.rings.fraction_field import FractionField
+from sage.rings.infinity import infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.rational_field import QQ
+from sage.structure.parent import Parent
 
 from .constructor import FormsRing, FormsSpace
 from .series_constructor import MFSeriesConstructor
 
 
-# Maybe replace Parent by just SageObject?
 class FormsRing_abstract(Parent):
     r"""
     Abstract (Hecke) forms ring.
@@ -50,7 +52,7 @@ class FormsRing_abstract(Parent):
 
         - ``group``      -- The Hecke triangle group (default: ``HeckeTriangleGroup(3)``)
 
-        - ``base_ring``  -- The base_ring (default: `\Z).
+        - ``base_ring``  -- The base_ring (default: `\Z`).
 
         - ``red_hom``    -- If ``True`` then results of binary operations are considered
                             homogeneous whenever it makes sense (default: ``False``).
@@ -76,33 +78,31 @@ class FormsRing_abstract(Parent):
             False
         """
 
-        #from graded_ring import canonical_parameters
-        #(group, base_ring, red_hom, n) = canonical_parameters(group, base_ring, red_hom, n)
+        # from graded_ring import canonical_parameters
+        # group, base_ring, red_hom, n = canonical_parameters(group, base_ring, red_hom, n)
 
-        #if (not group.is_arithmetic() and base_ring.characteristic()>0):
+        # if not group.is_arithmetic() and base_ring.characteristic()>0:
         #    raise NotImplementedError
-        #if (base_ring.characteristic().divides(2*group.n()*(group.n()-2))):
+        # if base_ring.characteristic().divides(2*group.n()*(group.n()-2)):
         #    raise NotImplementedError
 
-        if (base_ring.characteristic() > 0):
+        if base_ring.characteristic() > 0:
             raise NotImplementedError("only characteristic 0 is supported")
-        self._group               = group
-        self._red_hom             = red_hom
-        self._base_ring           = base_ring
-        self._coeff_ring          = FractionField(PolynomialRing(base_ring,'d'))
-        self._pol_ring            = PolynomialRing(base_ring,'x,y,z,d')
-        self._rat_field           = FractionField(self._pol_ring)
+        self._group = group
+        self._red_hom = red_hom
+        self._base_ring = base_ring
+        self._coeff_ring = FractionField(PolynomialRing(base_ring, 'd'))
+        self._pol_ring = PolynomialRing(base_ring, 'x,y,z,d')
+        self._rat_field = FractionField(self._pol_ring)
 
         # default values
-        self._weight              = None
-        self._ep                  = None
-        self._analytic_type       = self.AT(["quasi", "mero"])
+        self._weight = None
+        self._ep = None
+        self._analytic_type = self.AT(["quasi", "mero"])
 
         self.default_prec(10)
         self.disp_prec(5)
         self.default_num_prec(53)
-
-        #super(FormsRing_abstract, self).__init__(self.coeff_ring())
 
     def _repr_(self):
         r"""
@@ -139,7 +139,7 @@ class FormsRing_abstract(Parent):
 
             sage: from sage.modular.modform_hecketriangle.graded_ring import ModularFormsRing
             sage: MR = ModularFormsRing()
-            sage: (x,y,z,d) = MR.pol_ring().gens()
+            sage: x,y,z,d = MR.pol_ring().gens()
 
             sage: MR(x^3)
             f_rho^3
@@ -164,14 +164,18 @@ class FormsRing_abstract(Parent):
 
         from .graded_ring_element import FormsRingElement
         if isinstance(el, FormsRingElement):
-            if (self.hecke_n() == infinity and el.hecke_n() == ZZ(3)):
+            if self.hecke_n() == infinity and el.hecke_n() == ZZ(3):
                 el_f = el._reduce_d()._rat
-                (x,y,z,d) = self.pol_ring().gens()
+                x, y, z, d = self.pol_ring().gens()
 
-                num_sub = el_f.numerator().subs(   x=(y**2 + 3*x)/ZZ(4), y=(9*x*y - y**3)/ZZ(8), z=(3*z - y)/ZZ(2))
-                denom_sub = el_f.denominator().subs( x=(y**2 + 3*x)/ZZ(4), y=(9*x*y - y**3)/ZZ(8), z=(3*z - y)/ZZ(2))
-                new_num = num_sub.numerator()*denom_sub.denominator()
-                new_denom = denom_sub.numerator()*num_sub.denominator()
+                num_sub = el_f.numerator().subs(x=(y**2 + 3*x)/ZZ(4),
+                                                y=(9*x*y - y**3)/ZZ(8),
+                                                z=(3*z - y)/ZZ(2))
+                denom_sub = el_f.denominator().subs(x=(y**2 + 3*x)/ZZ(4),
+                                                    y=(9*x*y - y**3)/ZZ(8),
+                                                    z=(3*z - y)/ZZ(2))
+                new_num = num_sub.numerator() * denom_sub.denominator()
+                new_denom = denom_sub.numerator() * num_sub.denominator()
 
                 el = self._rat_field(new_num) / self._rat_field(new_denom)
             elif self.group() == el.group():
@@ -219,23 +223,19 @@ class FormsRing_abstract(Parent):
             sage: MR4.has_coerce_map_from(MF2)
             True
         """
-
         from .space import FormsSpace_abstract
         from .functors import _common_subgroup
-        if (    isinstance(S, FormsRing_abstract)\
-            and self._group         == _common_subgroup(self._group, S._group)\
-            and self._analytic_type >= S._analytic_type\
-            and self.base_ring().has_coerce_map_from(S.base_ring()) ):
-                return True
-        elif isinstance(S, FormsRing_abstract):
-            return False
-        elif isinstance(S, FormsSpace_abstract):
-            raise RuntimeError( "This case should not occur." )
-            # return self._coerce_map_from_(S.graded_ring())
-        elif (self.AT("holo") <= self._analytic_type) and (self.coeff_ring().has_coerce_map_from(S)):
+        if (isinstance(S, FormsRing_abstract)
+                and self._group == _common_subgroup(self._group, S._group)
+                and self._analytic_type >= S._analytic_type
+                and self.base_ring().has_coerce_map_from(S.base_ring())):
             return True
-        else:
+        if isinstance(S, FormsRing_abstract):
             return False
+        if isinstance(S, FormsSpace_abstract):
+            raise RuntimeError("this case should not occur")
+            # return self._coerce_map_from_(S.graded_ring())
+        return self.AT("holo") <= self._analytic_type and self.coeff_ring().has_coerce_map_from(S)
 
     def _an_element_(self):
         r"""
@@ -257,7 +257,7 @@ class FormsRing_abstract(Parent):
 
         return self(self.Delta())
 
-    def default_prec(self, prec = None):
+    def default_prec(self, prec=None):
         r"""
         Set the default precision ``prec`` for the Fourier expansion.
         If ``prec=None`` (default) then the current default precision is returned instead.
@@ -288,13 +288,12 @@ class FormsRing_abstract(Parent):
             sage: MF.default_prec()
             2
         """
-
-        if (prec is not None):
+        if prec is not None:
             self._prec = ZZ(prec)
         else:
             return self._prec
 
-    def disp_prec(self, prec = None):
+    def disp_prec(self, prec=None):
         r"""
         Set the maximal display precision to ``prec``.
         If ``prec="max"`` the precision is set to the default precision.
@@ -341,10 +340,10 @@ class FormsRing_abstract(Parent):
             sage: MF.default_num_prec()
             10
             sage: E6 = MF.E6()
-            sage: E6(i + 1e-1000)
+            sage: E6(i + 10^(-1000))
             0.002... - 6.7...e-1000*I
             sage: MF.default_num_prec(100)
-            sage: E6(i + 1e-1000)
+            sage: E6(i + 10^(-1000))
             3.9946838...e-1999 - 6.6578064...e-1000*I
 
             sage: MF = ModularForms(n=5, k=4/3)
@@ -358,8 +357,7 @@ class FormsRing_abstract(Parent):
             sage: f_rho.q_expansion_fixed_d(prec=2)[1]
             9.92593243510795915276017782...
         """
-
-        if (prec is not None):
+        if prec is not None:
             self._num_prec = ZZ(prec)
         else:
             return self._num_prec
@@ -443,7 +441,7 @@ class FormsRing_abstract(Parent):
         else:
             analytic_type = self._analytic_type.extend_by(analytic_type)
 
-        if (ring or not self.is_homogeneous()):
+        if ring or not self.is_homogeneous():
             return FormsRing(analytic_type, group=self.group(), base_ring=self.base_ring(), red_hom=self.has_reduce_hom())
         else:
             return FormsSpace(analytic_type, group=self.group(), base_ring=self.base_ring(), k=self.weight(), ep=self.ep())
@@ -490,13 +488,13 @@ class FormsRing_abstract(Parent):
         else:
             analytic_type = self._analytic_type.reduce_to(analytic_type)
 
-        if (degree is None and not self.is_homogeneous()):
+        if degree is None and not self.is_homogeneous():
             return FormsRing(analytic_type, group=self.group(), base_ring=self.base_ring(), red_hom=self.has_reduce_hom())
-        elif (degree is None):
+        elif degree is None:
             return FormsSpace(analytic_type, group=self.group(), base_ring=self.base_ring(), k=self.weight(), ep=self.ep())
         else:
-            (weight, ep) = degree
-            if (self.is_homogeneous() and (weight != self.weight() or ep!=self.ep())):
+            weight, ep = degree
+            if self.is_homogeneous() and (weight != self.weight() or ep != self.ep()):
                 analytic_type = self._analytic_type.reduce_to([])
             return FormsSpace(analytic_type, group=self.group(), base_ring=self.base_ring(), k=weight, ep=ep)
 
@@ -645,7 +643,7 @@ class FormsRing_abstract(Parent):
 
         return self._rat_field
 
-    def get_d(self, fix_d = False, d_num_prec = None):
+    def get_d(self, fix_d=False, d_num_prec=None):
         r"""
         Return the parameter ``d`` of self either as a formal
         parameter or as a numerical approximation with the specified
@@ -695,26 +693,25 @@ class FormsRing_abstract(Parent):
             sage: ModularFormsRing(n=5).get_d(fix_d=1).parent()
             Integer Ring
         """
-
         if d_num_prec is None:
             d_num_prec = self.default_num_prec()
         else:
             d_num_prec = ZZ(d_num_prec)
 
-        if (fix_d is True):
+        if fix_d is True:
             d = self._group.dvalue()
-            if (self._group.is_arithmetic()):
-                d = 1 / self.base_ring()(1/d)
+            if self._group.is_arithmetic():
+                d = ~self.base_ring()(~d)
             else:
                 d = self.group().dvalue().n(d_num_prec)
-        elif (fix_d is False):
+        elif fix_d is False:
             d = FractionField(PolynomialRing(self.base_ring(), "d")).gen()
         else:
             d = fix_d
 
         return d
 
-    def get_q(self, prec = None, fix_d = False, d_num_prec = None):
+    def get_q(self, prec=None, fix_d=False, d_num_prec=None):
         r"""
         Return the generator of the power series of the Fourier expansion of ``self``.
 
@@ -759,13 +756,12 @@ class FormsRing_abstract(Parent):
             sage: ModularFormsRing(n=5).get_q(fix_d=1).parent()
             Power Series Ring in q over Rational Field
         """
-
         d = self.get_d(fix_d, d_num_prec)
-        if (prec is None):
+        if prec is None:
             prec = self.default_prec()
 
         base_ring = d.parent()
-        return PowerSeriesRing(FractionField(base_ring), 'q', default_prec = prec).gen()
+        return PowerSeriesRing(FractionField(base_ring), 'q', default_prec=prec).gen()
 
     @cached_method
     def diff_alg(self):
@@ -811,17 +807,15 @@ class FormsRing_abstract(Parent):
             sage: ModularFormsRing(n=infinity)._derivative_op()
             -X*Y*dX + X*Z*dX + 1/2*Y*Z*dY + 1/4*Z^2*dZ - 1/2*X*dY - 1/4*X*dZ
         """
+        X, Y, Z, dX, dY, dZ = self.diff_alg().gens()
 
-        (X,Y,Z,dX,dY,dZ) = self.diff_alg().gens()
+        if self.hecke_n() == infinity:
+            return (X*Z-X*Y) * dX + ZZ(1) / 2 * (Y*Z-X) * dY \
+                + ZZ(1) / 4 * (Z**2-X) * dZ
 
-        if (self.hecke_n() == infinity):
-            return   (X*Z-X*Y) * dX\
-                   + ZZ(1)/ZZ(2) * (Y*Z-X) * dY\
-                   + ZZ(1)/ZZ(4) * (Z**2-X) * dZ
-        else:
-            return   1/self._group.n() * (X*Z-Y) * dX\
-                   + ZZ(1)/ZZ(2) * (Y*Z-X**(self._group.n()-1)) * dY\
-                   + (self._group.n()-2) / (4*self._group.n()) * (Z**2-X**(self._group.n()-2)) * dZ
+        return 1/self._group.n() * (X*Z-Y) * dX \
+            + ZZ(1) / 2 * (Y*Z-X**(self._group.n()-1)) * dY \
+            + (self._group.n()-2) / (4*self._group.n()) * (Z**2-X**(self._group.n()-2)) * dZ
 
     @cached_method
     def _serre_derivative_op(self):
@@ -838,17 +832,15 @@ class FormsRing_abstract(Parent):
             sage: ModularFormsRing(n=infinity)._serre_derivative_op()
             -X*Y*dX - 1/4*Z^2*dZ - 1/2*X*dY - 1/4*X*dZ
         """
+        X, Y, Z, dX, dY, dZ = self.diff_alg().gens()
 
-        (X,Y,Z,dX,dY,dZ) = self.diff_alg().gens()
+        if self.hecke_n() == infinity:
+            return - X * Y * dX - ZZ(1) / 2 * X * dY \
+                - ZZ(1) / 4 * (Z**2+X) * dZ
 
-        if (self.hecke_n() == infinity):
-            return - X * Y * dX\
-                   - ZZ(1)/ZZ(2) * X * dY\
-                   - ZZ(1)/ZZ(4) * (Z**2+X) * dZ
-        else:
-            return - 1/self._group.n() * Y*dX\
-                   - ZZ(1)/ZZ(2) * X**(self._group.n()-1) * dY\
-                   - (self._group.n()-2) / (4*self._group.n()) * (Z**2+X**(self._group.n()-2)) * dZ
+        return - 1/self._group.n() * Y*dX \
+            - ZZ(1) / 2 * X**(self._group.n()-1) * dY \
+            - (self._group.n()-2) / (4*self._group.n()) * (Z**2+X**(self._group.n()-2)) * dZ
 
     @cached_method
     def has_reduce_hom(self):
@@ -1037,8 +1029,7 @@ class FormsRing_abstract(Parent):
             sage: QuasiMeromorphicModularFormsRing(n=7).homogeneous_part(k=2, ep=-1)
             QuasiMeromorphicModularForms(n=7, k=2, ep=-1) over Integer Ring
         """
-
-        return self.reduce_type(degree = (k,ep))
+        return self.reduce_type(degree=(k, ep))
 
     @cached_method
     def J_inv(self):
@@ -1097,10 +1088,9 @@ class FormsRing_abstract(Parent):
             sage: WeakModularForms().J_inv()
             1/1728*q^-1 + 31/72 + 1823/16*q + 335840/27*q^2 + 16005555/32*q^3 + 11716352*q^4 + O(q^5)
         """
+        x, y, z, d = self._pol_ring.gens()
 
-        (x,y,z,d) = self._pol_ring.gens()
-
-        if (self.hecke_n() == infinity):
+        if self.hecke_n() == infinity:
             return self.extend_type("weak", ring=True)(x/(x-y**2)).reduce()
         else:
             return self.extend_type("weak", ring=True)(x**self._group.n()/(x**self._group.n()-y**2)).reduce()
@@ -1149,13 +1139,11 @@ class FormsRing_abstract(Parent):
             sage: WeakModularForms().j_inv()
             q^-1 + 744 + 196884*q + 21493760*q^2 + 864299970*q^3 + 20245856256*q^4 + O(q^5)
         """
+        x, y, z, d = self._pol_ring.gens()
 
-        (x,y,z,d) = self._pol_ring.gens()
-
-        if (self.hecke_n() == infinity):
+        if self.hecke_n() == infinity:
             return self.extend_type("weak", ring=True)(1/d*x/(x-y**2)).reduce()
-        else:
-            return self.extend_type("weak", ring=True)(1/d*x**self._group.n()/(x**self._group.n()-y**2)).reduce()
+        return self.extend_type("weak", ring=True)(1/d*x**self._group.n()/(x**self._group.n()-y**2)).reduce()
 
     @cached_method
     def f_rho(self):
@@ -1226,13 +1214,11 @@ class FormsRing_abstract(Parent):
             sage: ModularForms(k=4).f_rho()
             1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + O(q^5)
         """
+        x, y, z, d = self._pol_ring.gens()
 
-        (x,y,z,d) = self._pol_ring.gens()
-
-        if (self.hecke_n() == infinity):
+        if self.hecke_n() == infinity:
             return self.extend_type("holo", ring=True)(1).reduce()
-        else:
-            return self.extend_type("holo", ring=True)(x).reduce()
+        return self.extend_type("holo", ring=True)(x).reduce()
 
     @cached_method
     def f_i(self):
@@ -1294,8 +1280,7 @@ class FormsRing_abstract(Parent):
             sage: ModularForms(k=6).f_i()
             1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 + O(q^5)
         """
-
-        (x,y,z,d) = self._pol_ring.gens()
+        x, y, z, d = self._pol_ring.gens()
 
         return self.extend_type("holo", ring=True)(y).reduce()
 
@@ -1364,13 +1349,11 @@ class FormsRing_abstract(Parent):
             sage: CuspForms(k=12).f_inf()
             q - 24*q^2 + 252*q^3 - 1472*q^4 + O(q^5)
         """
+        x, y, z, d = self._pol_ring.gens()
 
-        (x,y,z,d) = self._pol_ring.gens()
-
-        if (self.hecke_n() == infinity):
+        if self.hecke_n() == infinity:
             return self.extend_type("holo", ring=True)(d*(x-y**2)).reduce()
-        else:
-            return self.extend_type("cusp", ring=True)(d*(x**self._group.n()-y**2)).reduce()
+        return self.extend_type("cusp", ring=True)(d*(x**self._group.n()-y**2)).reduce()
 
     @cached_method
     def G_inv(self):
@@ -1442,12 +1425,11 @@ class FormsRing_abstract(Parent):
             ...
             ArithmeticError: G_inv doesn't exist for odd n(=9).
         """
+        x, y, z, d = self._pol_ring.gens()
 
-        (x,y,z,d) = self._pol_ring.gens()
-
-        if (self.hecke_n() == infinity):
+        if self.hecke_n() == infinity:
             raise ArithmeticError("G_inv doesn't exist for n={} (it is not meromorphic at -1).".format(self._group.n()))
-        elif (ZZ(2).divides(self._group.n())):
+        elif ZZ(2).divides(self._group.n()):
             return self.extend_type("weak", ring=True)(d*y*x**(self._group.n()/ZZ(2))/(x**self._group.n()-y**2)).reduce()
         else:
             raise ArithmeticError("G_inv doesn't exist for odd n(={}).".format(self._group.n()))
@@ -1515,14 +1497,13 @@ class FormsRing_abstract(Parent):
             ...
             ArithmeticError: g_inv doesn't exist for odd n(=9).
         """
-
-        if (self.hecke_n() == infinity):
+        if self.hecke_n() == infinity:
             raise ArithmeticError("g_inv doesn't exist for n={} (it is not meromorphic at -1).".format(self._group.n()))
-        if (ZZ(2).divides(self._group.n())):
-            (x,y,z,d) = self._pol_ring.gens()
+        if ZZ(2).divides(self._group.n()):
+            x, y, z, d = self._pol_ring.gens()
             return self.extend_type("weak", ring=True)(1/d*y*x**(self._group.n()/ZZ(2))/(x**self._group.n()-y**2)).reduce()
         else:
-           raise ArithmeticError("g_inv doesn't exist for odd n(={}).".format(self._group.n()))
+            raise ArithmeticError("g_inv doesn't exist for odd n(={}).".format(self._group.n()))
 
     @cached_method
     def E4(self):
@@ -1591,13 +1572,11 @@ class FormsRing_abstract(Parent):
             sage: ModularForms(k=4).E4()
             1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + O(q^5)
         """
+        x, y, z, d = self._pol_ring.gens()
 
-        (x,y,z,d) = self._pol_ring.gens()
-
-        if (self.hecke_n() == infinity):
+        if self.hecke_n() == infinity:
             return self.extend_type("holo", ring=True)(x).reduce()
-        else:
-            return self.extend_type("holo", ring=True)(x**(self._group.n()-2)).reduce()
+        return self.extend_type("holo", ring=True)(x**(self._group.n()-2)).reduce()
 
     @cached_method
     def E6(self):
@@ -1658,13 +1637,11 @@ class FormsRing_abstract(Parent):
             sage: ModularForms(k=6).E6()
             1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 + O(q^5)
         """
+        x, y, z, d = self._pol_ring.gens()
 
-        (x,y,z,d) = self._pol_ring.gens()
-
-        if (self.hecke_n() == infinity):
+        if self.hecke_n() == infinity:
             return self.extend_type("holo", ring=True)(x*y).reduce()
-        else:
-            return self.extend_type("holo", ring=True)(x**(self._group.n()-3)*y).reduce()
+        return self.extend_type("holo", ring=True)(x**(self._group.n()-3)*y).reduce()
 
     @cached_method
     def Delta(self):
@@ -1731,13 +1708,11 @@ class FormsRing_abstract(Parent):
             sage: CuspForms(k=12).Delta()
             q - 24*q^2 + 252*q^3 - 1472*q^4 + O(q^5)
         """
+        x, y, z, d = self._pol_ring.gens()
 
-        (x,y,z,d) = self._pol_ring.gens()
-
-        if (self.hecke_n() == infinity):
+        if self.hecke_n() == infinity:
             return self.extend_type("cusp", ring=True)(d*x**2*(x-y**2)).reduce()
-        else:
-            return self.extend_type("cusp", ring=True)(d*x**(2*self._group.n()-6)*(x**self._group.n()-y**2)).reduce()
+        return self.extend_type("cusp", ring=True)(d*x**(2*self._group.n()-6)*(x**self._group.n()-y**2)).reduce()
 
     @cached_method
     def E2(self):
@@ -1802,9 +1777,7 @@ class FormsRing_abstract(Parent):
             sage: QuasiModularForms(k=2).E2()
             1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 + O(q^5)
         """
-
-        (x,y,z,d) = self._pol_ring.gens()
-
+        x, y, z, d = self._pol_ring.gens()
         return self.extend_type(["holo", "quasi"], ring=True)(z).reduce()
 
     @cached_method
@@ -1902,7 +1875,7 @@ class FormsRing_abstract(Parent):
         if n == infinity:
             raise NotImplementedError("In the case n=infinity, the Eisenstein series is not unique and more parameters are required.")
 
-        if (k is None):
+        if k is None:
             try:
                 if not self.is_homogeneous():
                     raise TypeError(None)
@@ -1910,10 +1883,10 @@ class FormsRing_abstract(Parent):
                 if k < 0:
                     raise TypeError(None)
                 k = 2*ZZ(k/2)
-                #if self.ep() != ZZ(-1)**ZZ(k/2):
+                # if self.ep() != ZZ(-1)**ZZ(k/2):
                 #    raise TypeError
             except TypeError:
-                k = ZZ(0)
+                k = ZZ.zero()
 
         try:
             if k < 0:
@@ -1925,33 +1898,33 @@ class FormsRing_abstract(Parent):
         # The case n=infinity is special (there are 2 cusps)
         # Until we/I get confirmation what is what sort of Eisenstein series
         # this case is excluded...
-        if    n == infinity:
+        if n == infinity:
             # We set the weight zero Eisenstein series to 1
             pass
-        elif  k == 0:
+        elif k == 0:
             return self.one()
-        elif  k == 2:
+        elif k == 2:
             # This is a bit problematic, e.g. for n=infinity there is a
             # classical Eisenstein series of weight 2
             return self.E2()
-        elif  k == 4:
+        elif k == 4:
             return self.E4()
-        elif  k == 6:
+        elif k == 6:
             return self.E6()
 
         # Basic variables
         ep = (-ZZ(1))**(k/2)
         extended_self = self.extend_type(["holo"], ring=True)
         # reduced_self is a classical ModularForms space
-        reduced_self = extended_self.reduce_type(["holo"], degree = (QQ(k), ep))
+        reduced_self = extended_self.reduce_type(["holo"], degree=(QQ(k), ep))
 
-        if (n == infinity):
-            l2  = ZZ(0)
-            l1  = ZZ((k-(1-ep)) / ZZ(4))
+        if n == infinity:
+            l2 = ZZ.zero()
+            l1 = ZZ((k-(1-ep)) / ZZ(4))
         else:
             num = ZZ((k-(1-ep)*n/(n-2)) * (n-2) / ZZ(4))
-            l2  = num % n
-            l1  = ((num-l2)/n).numerator()
+            l2 = num % n
+            l1 = ((num-l2)/n).numerator()
 
         # If the space is one dimensional we return the normalized generator
         if l1 == 0:
@@ -1960,7 +1933,7 @@ class FormsRing_abstract(Parent):
         # The non-arithmetic remaining cases (incomplete, very hard in general)
         # TODO: the n = infinity case(s) (doable)
         # TODO: the n = 5 case (hard)
-        if (not self.group().is_arithmetic() or n == infinity):
+        if not self.group().is_arithmetic() or n == infinity:
             raise NotImplementedError("Eisenstein series are only supported in the finite arithmetic cases")
 
         # The arithmetic cases

@@ -4,8 +4,8 @@
 
 .. _thematic-tutorials:
 
-Welcome to the Sage Thematic Tutorials!
-=======================================
+Sage Thematic Tutorials
+=======================
 
 Here you will find Sage demonstrations, quick reference cards, primers, and
 thematic tutorials,
@@ -31,7 +31,7 @@ Introduction to Sage
 --------------------
 
 * `Introductory Sage Tutorial (PREP) <../prep/Intro-Tutorial.html>`_
-* `Sage's main tutorial <../tutorial/>`_
+* `Sage's main tutorial <../tutorial/index.html>`_
 
 .. _programming_design:
 
@@ -58,6 +58,7 @@ Algebra
 * :ref:`group_theory`
 * :ref:`lie`
 * :ref:`sage.modules.tutorial_free_modules`
+* :ref:`steenrod_algebra_modules`
 
 Number Theory
 -------------

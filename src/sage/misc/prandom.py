@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Random Numbers with Python API
 
@@ -57,6 +58,7 @@ Python Software Foundation License Version 2.
 
 from sage.misc.randstate import current_randstate
 
+
 def _pyrand():
     r"""
     A tiny private helper function to return an instance of
@@ -66,13 +68,15 @@ def _pyrand():
 
     EXAMPLES::
 
+        sage: set_random_seed(0)
         sage: from sage.misc.prandom import _pyrand
         sage: _pyrand()
         <...random.Random object at 0x...>
         sage: _pyrand().getrandbits(10)
-        114L
+        114
     """
     return current_randstate().python_random()
+
 
 def getrandbits(k):
     r"""
@@ -80,14 +84,15 @@ def getrandbits(k):
 
     EXAMPLES::
 
-        sage: getrandbits(10)
-        114L
-        sage: getrandbits(200)
-        1251230322675596703523231194384285105081402591058406420468435L
-        sage: getrandbits(10)
-        533L
+        sage: getrandbits(10) in range(2^10)
+        True
+        sage: getrandbits(200) in range(2^200)
+        True
+        sage: getrandbits(4) in range(2^4)
+        True
     """
     return _pyrand().getrandbits(k)
+
 
 def randrange(start, stop=None, step=1):
     r"""
@@ -98,18 +103,28 @@ def randrange(start, stop=None, step=1):
 
     EXAMPLES::
 
-        sage: randrange(0, 100, 11)
-        11
-        sage: randrange(5000, 5100)
-        5051
-        sage: [randrange(0, 2) for i in range(15)]
-        [0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1]
-        sage: randrange(0, 1000000, 1000)
-        486000
-        sage: randrange(-100, 10)
-        -56
+        sage: s = randrange(0, 100, 11)
+        sage: 0 <= s < 100
+        True
+        sage: s % 11
+        0
+
+        sage: 5000 <= randrange(5000, 5100) < 5100
+        True
+        sage: s = [randrange(0, 2) for i in range(15)]
+        sage: all(t in [0, 1] for t in s)
+        True
+
+        sage: s = randrange(0, 1000000, 1000)
+        sage: 0 <= s < 1000000
+        True
+        sage: s % 1000
+        0
+        sage: -100 <= randrange(-100, 10) < 10
+        True
     """
     return _pyrand().randrange(start, stop, step)
+
 
 def randint(a, b):
     r"""
@@ -117,12 +132,15 @@ def randint(a, b):
 
     EXAMPLES::
 
-        sage: [randint(0, 2) for i in range(15)]
+        sage: s = [randint(0, 2) for i in range(15)]; s  # random
         [0, 1, 0, 0, 1, 0, 2, 0, 2, 1, 2, 2, 0, 2, 2]
-        sage: randint(-100, 10)
-        -46
+        sage: all(t in [0, 1, 2] for t in s)
+        True
+        sage: -100 <= randint(-100, 10) <= 10
+        True
     """
     return _pyrand().randint(a, b)
+
 
 def choice(seq):
     r"""
@@ -130,12 +148,15 @@ def choice(seq):
 
     EXAMPLES::
 
-        sage: [choice(list(primes(10, 100))) for i in range(5)]
+        sage: s = [choice(list(primes(10, 100))) for i in range(5)]; s  # random        # needs sage.libs.pari
         [17, 47, 11, 31, 47]
+        sage: all(t in primes(10, 100) for t in s)                                      # needs sage.libs.pari
+        True
     """
     return _pyrand().choice(seq)
 
-def shuffle(x, random=None):
+
+def shuffle(x):
     r"""
     x, random=random.random -> shuffle list x in place; return None.
 
@@ -146,9 +167,8 @@ def shuffle(x, random=None):
 
         sage: shuffle([1 .. 10])
     """
-    if random is None:
-        random = _pyrand().random
-    return _pyrand().shuffle(x, random)
+    return _pyrand().shuffle(x)
+
 
 def sample(population, k):
     r"""
@@ -171,12 +191,24 @@ def sample(population, k):
 
     EXAMPLES::
 
-        sage: sample(["Here", "I", "come", "to", "save", "the", "day"], 3)
+        sage: from sage.misc.misc import is_sublist
+        sage: l = ["Here", "I", "come", "to", "save", "the", "day"]
+        sage: s = sample(l, 3); s  # random
         ['Here', 'to', 'day']
-        sage: sample(range(2^30), 7)
+        sage: is_sublist(sorted(s), sorted(l))
+        True
+        sage: len(s)
+        3
+
+        sage: s = sample(range(2^30), 7); s  # random
         [357009070, 558990255, 196187132, 752551188, 85926697, 954621491, 624802848]
+        sage: len(s)
+        7
+        sage: all(t in range(2^30) for t in s)
+        True
     """
     return _pyrand().sample(population, k)
+
 
 def random():
     r"""
@@ -184,10 +216,13 @@ def random():
 
     EXAMPLES::
 
-        sage: [random() for i in [1 .. 4]]
+        sage: sample = [random() for i in [1 .. 4]]; sample  # random
         [0.111439293741037, 0.5143475134191677, 0.04468968524815642, 0.332490606442413]
+        sage: all(0.0 <= s <= 1.0 for s in sample)
+        True
     """
     return _pyrand().random()
+
 
 def uniform(a, b):
     r"""
@@ -197,14 +232,18 @@ def uniform(a, b):
 
     EXAMPLES::
 
-        sage: uniform(0, 1)
+        sage: s = uniform(0, 1); s  # random
         0.111439293741037
-        sage: uniform(e, pi)
+        sage: 0.0 <= s <= 1.0
+        True
+
+        sage: s = uniform(e, pi); s  # random                                           # needs sage.symbolic
         0.5143475134191677*pi + 0.48565248658083227*e
-        sage: RR(_)
-        2.93601069876846
+        sage: bool(e <= s <= pi)                                                        # needs sage.symbolic
+        True
     """
     return _pyrand().uniform(a, b)
+
 
 def betavariate(alpha, beta):
     r"""
@@ -215,12 +254,18 @@ def betavariate(alpha, beta):
 
     EXAMPLES::
 
-        sage: betavariate(0.1, 0.9)
+        sage: s = betavariate(0.1, 0.9); s  # random
         9.75087916621299e-9
-        sage: betavariate(0.9, 0.1)
+        sage: 0.0 <= s <= 1.0
+        True
+
+        sage: s = betavariate(0.9, 0.1); s  # random
         0.941890400939253
+        sage: 0.0 <= s <= 1.0
+        True
     """
     return _pyrand().betavariate(alpha, beta)
+
 
 def expovariate(lambd):
     r"""
@@ -232,14 +277,23 @@ def expovariate(lambd):
 
     EXAMPLES::
 
-        sage: [expovariate(0.001) for i in range(3)]
+        sage: sample = [expovariate(0.001) for i in range(3)]; sample  # random
         [118.152309288166, 722.261959038118, 45.7190543690470]
-        sage: [expovariate(1.0) for i in range(3)]
+        sage: all(s >= 0.0 for s in sample)
+        True
+
+        sage: sample = [expovariate(1.0) for i in range(3)]; sample  # random
         [0.404201816061304, 0.735220464997051, 0.201765578600627]
-        sage: [expovariate(1000) for i in range(3)]
+        sage: all(s >= 0.0 for s in sample)
+        True
+
+        sage: sample = [expovariate(1000) for i in range(3)]; sample  # random
         [0.0012068700332283973, 8.340929747302108e-05, 0.00219877067980605]
+        sage: all(s >= 0.0 for s in sample)
+        True
     """
     return _pyrand().expovariate(lambd)
+
 
 def gammavariate(alpha, beta):
     r"""
@@ -249,12 +303,17 @@ def gammavariate(alpha, beta):
 
     EXAMPLES::
 
-        sage: gammavariate(1.0, 3.0)
+        sage: sample = gammavariate(1.0, 3.0); sample  # random
         6.58282586130638
-        sage: gammavariate(3.0, 1.0)
+        sage: sample > 0
+        True
+        sage: sample = gammavariate(3.0, 1.0); sample  # random
         3.07801512341612
+        sage: sample > 0
+        True
     """
     return _pyrand().gammavariate(alpha, beta)
+
 
 def gauss(mu, sigma):
     r"""
@@ -266,14 +325,15 @@ def gauss(mu, sigma):
 
     EXAMPLES::
 
-       sage: [gauss(0, 1) for i in range(3)]
+       sage: [gauss(0, 1) for i in range(3)]  # random
        [0.9191011757657915, 0.7744526756246484, 0.8638996866800877]
-       sage: [gauss(0, 100) for i in range(3)]
+       sage: [gauss(0, 100) for i in range(3)]  # random
        [24.916051749154448, -62.99272061579273, -8.1993122536718...]
-       sage: [gauss(1000, 10) for i in range(3)]
+       sage: [gauss(1000, 10) for i in range(3)]  # random
        [998.7590700045661, 996.1087338511692, 1010.1256817458031]
     """
     return _pyrand().gauss(mu, sigma)
+
 
 def lognormvariate(mu, sigma):
     r"""
@@ -285,10 +345,11 @@ def lognormvariate(mu, sigma):
 
     EXAMPLES::
 
-        sage: [lognormvariate(100, 10) for i in range(3)]
+        sage: [lognormvariate(100, 10) for i in range(3)]  # random
         [2.9410355688290246e+37, 2.2257548162070125e+38, 4.142299451717446e+43]
     """
     return _pyrand().lognormvariate(mu, sigma)
+
 
 def normalvariate(mu, sigma):
     r"""
@@ -298,14 +359,15 @@ def normalvariate(mu, sigma):
 
     EXAMPLES::
 
-       sage: [normalvariate(0, 1) for i in range(3)]
+       sage: [normalvariate(0, 1) for i in range(3)]  # random
        [-1.372558980559407, -1.1701670364898928, 0.04324100555110143]
-       sage: [normalvariate(0, 100) for i in range(3)]
+       sage: [normalvariate(0, 100) for i in range(3)]  # random
        [37.45695875041769, 159.6347743233298, 124.1029321124009]
-       sage: [normalvariate(1000, 10) for i in range(3)]
+       sage: [normalvariate(1000, 10) for i in range(3)]  # random
        [1008.5303090383741, 989.8624892644895, 985.7728921150242]
     """
     return _pyrand().normalvariate(mu, sigma)
+
 
 def vonmisesvariate(mu, kappa):
     r"""
@@ -318,10 +380,13 @@ def vonmisesvariate(mu, kappa):
 
     EXAMPLES::
 
-        sage: [vonmisesvariate(1.0r, 3.0r) for i in range(1, 5)]  # abs tol 1e-12
+        sage: sample = [vonmisesvariate(1.0r, 3.0r) for i in range(1, 5)]; sample  # random
         [0.898328639355427, 0.6718030007041281, 2.0308777524813393, 1.714325253725145]
+        sage: all(s >= 0.0 for s in sample)
+        True
     """
     return _pyrand().vonmisesvariate(mu, kappa)
+
 
 def paretovariate(alpha):
     r"""
@@ -329,10 +394,13 @@ def paretovariate(alpha):
 
     EXAMPLES::
 
-        sage: [paretovariate(3) for i in range(1, 5)]
+        sage: sample = [paretovariate(3) for i in range(1, 5)]; sample  # random
         [1.0401699394233033, 1.2722080162636495, 1.0153564009379579, 1.1442323078983077]
+        sage: all(s >= 1.0 for s in sample)
+        True
     """
     return _pyrand().paretovariate(alpha)
+
 
 def weibullvariate(alpha, beta):
     r"""
@@ -342,7 +410,9 @@ def weibullvariate(alpha, beta):
 
     EXAMPLES::
 
-        sage: [weibullvariate(1, 3) for i in range(1, 5)]
+        sage: sample = [weibullvariate(1, 3) for i in range(1, 5)]; sample  # random
         [0.49069775546342537, 0.8972185564611213, 0.357573846531942, 0.739377255516847]
+        sage: all(s >= 0.0 for s in sample)
+        True
     """
     return _pyrand().weibullvariate(alpha, beta)

@@ -1,13 +1,15 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Graded Hopf algebras
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2008      Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #                2008-2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
-#******************************************************************************
+# *****************************************************************************
+
 
 def GradedHopfAlgebras(base_ring):
     r"""
@@ -16,7 +18,7 @@ def GradedHopfAlgebras(base_ring):
     EXAMPLES::
 
         sage: C = GradedHopfAlgebras(QQ); C
-        Join of Category of hopf algebras over Rational Field
+        Join of Category of Hopf algebras over Rational Field
             and Category of graded algebras over Rational Field
             and Category of graded coalgebras over Rational Field
         sage: C is HopfAlgebras(QQ).Graded()
@@ -35,6 +37,5 @@ def GradedHopfAlgebras(base_ring):
         :class:`super Hopf algebras
         <sage.categories.hopf_algebras.HopfAlgebras.Super>`.
     """
-    from sage.categories.all import HopfAlgebras
+    from sage.categories.hopf_algebras import HopfAlgebras
     return HopfAlgebras(base_ring).Graded()
-

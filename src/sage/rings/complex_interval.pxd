@@ -2,13 +2,14 @@ from sage.libs.mpfr.types cimport mpfr_prec_t
 from sage.libs.mpfi.types cimport mpfi_t
 
 cimport sage.structure.element
-from .real_mpfi cimport RealIntervalFieldElement, RealIntervalField_class
+from sage.rings.real_mpfi cimport RealIntervalFieldElement, RealIntervalField_class
 
 
 cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
     cdef mpfi_t __re
     cdef mpfi_t __im
     cdef mpfr_prec_t _prec
+    cdef object _multiplicative_order
 
     cdef inline ComplexIntervalFieldElement _new(self):
         """
@@ -16,6 +17,7 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
         ``self``.
         """
         cdef type t = type(self)
+        cdef object _multiplicative_order = None
         return t.__new__(t, self._parent)
 
     cdef inline RealIntervalFieldElement _new_real(self):

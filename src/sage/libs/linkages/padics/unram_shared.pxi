@@ -3,7 +3,7 @@ cimport cython
 @cython.binding(True)
 def frobenius_unram(self, arithmetic=True):
     """
-    Returns the image of this element under the Frobenius automorphism
+    Return the image of this element under the Frobenius automorphism
     applied to its parent.
 
     INPUT:
@@ -28,6 +28,10 @@ def frobenius_unram(self, arithmetic=True):
         sage: a
         a + O(5^3)
 
+        sage: R.<a> = Zq(5^4,3)
+        sage: a.frobenius(arithmetic=False)
+        (3*a^3 + 3*a^2 + a) + (a^3 + 4*a^2 + a + 4)*5 + (3*a^2 + 2*a + 3)*5^2 + O(5^3)
+
         sage: K.<a> = Qq(7^3,4)
         sage: b = (a+1)/7
         sage: c = b.frobenius(); c
@@ -37,18 +41,28 @@ def frobenius_unram(self, arithmetic=True):
 
     An error will be raised if the parent of self is a ramified extension::
 
+        sage: x = polygen(ZZ, 'x')
         sage: K.<a> = Qp(5).extension(x^2 - 5)
         sage: a.frobenius()
         Traceback (most recent call last):
         ...
         NotImplementedError: Frobenius automorphism only implemented for unramified extensions
+
+    TESTS:
+
+    We check that :issue:`23575` is resolved::
+
+        sage: x = R.random_element()
+        sage: x.frobenius(arithmetic=false).frobenius() == x
+        True
+
     """
     if self == 0:
         return self
     R = self.parent()
     p = R.prime()
     a = R.gen()
-    frob_a = R._frob_gen()
+    frob_a = R._frob_gen(arithmetic)
     ppow = self.valuation()
     unit = self.unit_part()
     coefs = unit.expansion()
@@ -70,7 +84,7 @@ def frobenius_unram(self, arithmetic=True):
 
 @cython.binding(True)
 def norm_unram(self, base = None):
-    """
+    r"""
     Return the absolute or relative norm of this element.
 
     .. WARNING::
@@ -81,9 +95,9 @@ def norm_unram(self, base = None):
 
     INPUT:
 
-        ``base`` -- a subfield of the parent `L` of this element.
-                    The norm is the relative norm from ``L`` to ``base``.
-                    Defaults to the absolute norm down to `\QQ_p` or `\ZZ_p`.
+    - ``base`` -- a subfield of the parent `L` of this element.
+                  The norm is the relative norm from ``L`` to ``base``.
+                  Defaults to the absolute norm down to `\QQ_p` or `\ZZ_p`.
 
     EXAMPLES::
 
@@ -117,7 +131,7 @@ def norm_unram(self, base = None):
 
     TESTS:
 
-    Check that :trac:`11586` has been resolved::
+    Check that :issue:`11586` has been resolved::
 
         sage: R.<x> = QQ[]
         sage: f = x^2 + 3*x + 1
@@ -129,6 +143,12 @@ def norm_unram(self, base = None):
         4*7^2 + 7^3 + O(7^22)
         sage: b*b.frobenius()
         4*7^2 + 7^3 + O(7^22)
+
+    Check that :issue:`31845` is fixed::
+
+        sage: R.<a> = Zq(4)
+        sage: (a - a).norm()
+        O(2^20)
     """
     if base is not None:
         if base is self.parent():
@@ -138,7 +158,7 @@ def norm_unram(self, base = None):
     if self._is_exact_zero():
         return self.parent().ground_ring()(0)
     elif self._is_inexact_zero():
-        return self.ground_ring(0, self.valuation())
+        return self.parent().ground_ring()(0, self.valuation())
     if self.valuation() == 0:
         return self.parent().ground_ring()(self.matrix_mod_pn().det())
     else:
@@ -151,14 +171,14 @@ def norm_unram(self, base = None):
 
 @cython.binding(True)
 def trace_unram(self, base = None):
-    """
+    r"""
     Return the absolute or relative trace of this element.
 
     If ``base`` is given then ``base`` must be a subfield of the
-    parent `L` of ``self``, in which case the norm is the relative
-    norm from `L` to ``base``.
+    parent `L` of ``self``, in which case the trace is the relative
+    trace from `L` to ``base``.
 
-    In all other cases, the norm is the absolute norm down to
+    In all other cases, the trace is the absolute trace down to
     `\QQ_p` or `\ZZ_p`.
 
     EXAMPLES::
@@ -202,6 +222,12 @@ def trace_unram(self, base = None):
         4*5 + 5^2 + 5^3 + 2*5^4
         sage: (a+b).trace()
         4*5 + 5^2 + 5^3 + 2*5^4
+
+    Check that :issue:`31845` is fixed::
+
+        sage: R.<a> = Zq(4)
+        sage: (a - a).trace()
+        O(2^20)
     """
     if base is not None:
         if base is self.parent():
@@ -211,7 +237,7 @@ def trace_unram(self, base = None):
     if self._is_exact_zero():
         return self.parent().ground_ring()(0)
     elif self._is_inexact_zero():
-        return self.ground_ring(0, self.precision_absolute())
+        return self.parent().ground_ring()(0, self.precision_absolute())
     if self.valuation() >= 0:
         return self.parent().ground_ring()(self.matrix_mod_pn().trace())
     else:

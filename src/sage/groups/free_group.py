@@ -80,20 +80,18 @@ def is_FreeGroup(x):
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
-    OUTPUT:
-
-    Boolean.
+    OUTPUT: boolean
 
     EXAMPLES::
 
         sage: from sage.groups.free_group import is_FreeGroup
-        sage: is_FreeGroup('a string')
+        sage: is_FreeGroup('a string')                                                  # needs sage.combinat
         False
         sage: is_FreeGroup(FreeGroup(0))
         True
-        sage: is_FreeGroup(FreeGroup(index_set=ZZ))
+        sage: is_FreeGroup(FreeGroup(index_set=ZZ))                                     # needs sage.combinat
         True
     """
     if isinstance(x, FreeGroup_class):
@@ -109,9 +107,9 @@ def _lexi_gen(zeroes=False):
 
     INPUT:
 
-    - ``zeroes`` -- Boolean defaulting as ``False``. If ``True``, the
+    - ``zeroes`` -- boolean (default: ``False``); if ``True``, the
       integers appended to the output string begin at zero at the
-      first iteration through the alphabet.
+      first iteration through the alphabet
 
     OUTPUT:
 
@@ -148,14 +146,15 @@ def _lexi_gen(zeroes=False):
     """
     count = Integer(0)
     while True:
-        mwrap, ind  = count.quo_rem(26)
-        if mwrap == 0 and not(zeroes):
+        mwrap, ind = count.quo_rem(26)
+        if mwrap == 0 and not zeroes:
             name = ''
         else:
             name = str(mwrap)
         name = chr(ord('a') + ind) + name
         yield name
-        count = count + 1
+        count += 1
+
 
 class FreeGroupElement(ElementLibGAP):
     """
@@ -163,11 +162,11 @@ class FreeGroupElement(ElementLibGAP):
 
     INPUT:
 
-    - ``x`` -- something that determines the group element. Either a
+    - ``x`` -- something that determines the group element; either a
       :class:`~sage.libs.gap.element.GapElement` or the Tietze list
-      (see :meth:`Tietze`) of the group element.
+      (see :meth:`Tietze`) of the group element
 
-    - ``parent`` -- the parent :class:`FreeGroup`.
+    - ``parent`` -- the parent :class:`FreeGroup`
 
     EXAMPLES::
 
@@ -212,20 +211,20 @@ class FreeGroupElement(ElementLibGAP):
                 l = x.Tietze()
             except AttributeError:
                 l = list(x)
-            if len(l)>0:
+            if len(l) > 0:
                 if min(l) < -parent.ngens() or parent.ngens() < max(l):
                     raise ValueError('generators not in the group')
             if 0 in l:
                 raise ValueError('zero does not denote a generator')
-            i=0
-            while i<len(l)-1:
-                if l[i]==-l[i+1]:
+            i = 0
+            while i < len(l)-1:
+                if l[i] == -l[i+1]:
                     l.pop(i)
                     l.pop(i)
-                    if i>0:
-                        i=i-1
+                    if i > 0:
+                        i = i-1
                 else:
-                    i=i+1
+                    i = i+1
             AbstractWordTietzeWord = libgap.eval('AbstractWordTietzeWord')
             x = AbstractWordTietzeWord(l, parent.gap().GeneratorsOfGroup())
         ElementLibGAP.__init__(self, parent, x)
@@ -242,11 +241,9 @@ class FreeGroupElement(ElementLibGAP):
 
     def _latex_(self):
         r"""
-        Return a LaTeX representation
+        Return a LaTeX representation.
 
-        OUTPUT:
-
-        String. A valid LaTeX math command sequence.
+        OUTPUT: a string; a valid LaTeX math command sequence
 
         EXAMPLES::
 
@@ -304,9 +301,7 @@ class FreeGroupElement(ElementLibGAP):
         the letter corresponding to the `i`-th generator of the group.
         Negative integers represent the inverses of generators.
 
-        OUTPUT:
-
-        A tuple of integers.
+        OUTPUT: tuple of integers
 
         EXAMPLES::
 
@@ -322,7 +317,7 @@ class FreeGroupElement(ElementLibGAP):
             sage: type(a.Tietze())
             <... 'tuple'>
             sage: type(a.Tietze()[0])
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         tl = self.gap().TietzeWordAbstractWord()
         return tuple(tl.sage())
@@ -404,17 +399,17 @@ class FreeGroupElement(ElementLibGAP):
         If ``im_gens`` is given, the images of the generators are
         mapped to them::
 
-            sage: F=FreeGroup(3)
-            sage: a=F([2,1,3,-1,2])
+            sage: F = FreeGroup(3)
+            sage: a = F([2,1,3,-1,2])
             sage: a.fox_derivative(F([1]))
             x1 - x1*x0*x2*x0^-1
-            sage: R.<t>=LaurentPolynomialRing(ZZ)
+            sage: R.<t> = LaurentPolynomialRing(ZZ)
             sage: a.fox_derivative(F([1]),[t,t,t])
             t - t^2
-            sage: S.<t1,t2,t3>=LaurentPolynomialRing(ZZ)
+            sage: S.<t1,t2,t3> = LaurentPolynomialRing(ZZ)
             sage: a.fox_derivative(F([1]),[t1,t2,t3])
             -t2*t3 + t2
-            sage: R.<x,y,z>=QQ[]
+            sage: R.<x,y,z> = QQ[]
             sage: a.fox_derivative(F([1]),[x,y,z])
             -y*z + y
             sage: a.inverse().fox_derivative(F([1]),[x,y,z])
@@ -435,11 +430,11 @@ class FreeGroupElement(ElementLibGAP):
 
         TESTS::
 
-            sage: F=FreeGroup(3)
-            sage: a=F([])
+            sage: F = FreeGroup(3)
+            sage: a = F([])
             sage: a.fox_derivative(F([1]))
             0
-            sage: R.<t>=LaurentPolynomialRing(ZZ)
+            sage: R.<t> = LaurentPolynomialRing(ZZ)
             sage: a.fox_derivative(F([1]),[t,t,t])
             0
         """
@@ -504,12 +499,12 @@ class FreeGroupElement(ElementLibGAP):
         """
         g = self.gap().UnderlyingElement()
         k = g.NumberSyllables().sage()
-        exponent_syllable  = libgap.eval('ExponentSyllable')
+        exponent_syllable = libgap.eval('ExponentSyllable')
         generator_syllable = libgap.eval('GeneratorSyllable')
         result = []
         gen = self.parent().gen
         for i in range(k):
-            exponent  = exponent_syllable(g, i+1).sage()
+            exponent = exponent_syllable(g, i+1).sage()
             generator = gen(generator_syllable(g, i+1).sage() - 1)
             result.append( (generator, exponent) )
         return tuple(result)
@@ -524,12 +519,10 @@ class FreeGroupElement(ElementLibGAP):
 
         - ``*values`` -- a sequence of values, or a
           list/tuple/iterable of the same length as the number of
-          generators of the free group.
+          generators of the free group
 
-        OUTPUT:
-
-        The product of ``values`` in the order and with exponents
-        specified by ``self``.
+        OUTPUT: the product of ``values`` in the order and with exponents
+        specified by ``self``
 
         EXAMPLES::
 
@@ -551,7 +544,7 @@ class FreeGroupElement(ElementLibGAP):
             sage: w(i+1 for i in range(2))
             1/2
 
-        Check that :trac:`25017` is fixed::
+        Check that :issue:`25017` is fixed::
 
             sage: F = FreeGroup(2)
             sage: x0, x1 = F.gens()
@@ -604,11 +597,11 @@ def FreeGroup(n=None, names='x', index_set=None, abelian=False, **kwds):
 
     INPUT:
 
-    - ``n`` -- integer or ``None`` (default). The number of
-      generators. If not specified the ``names`` are counted.
+    - ``n`` -- integer (default: ``None``); the number of
+      generators (if not specified the ``names`` are counted)
 
     - ``names`` -- string or list/tuple/iterable of strings (default:
-      ``'x'``). The generator names or name prefix.
+      ``'x'``); the generator names or name prefix
 
     - ``index_set`` -- (optional) an index set for the generators; if
       specified then the optional keyword ``abelian`` can be used
@@ -644,9 +637,9 @@ def FreeGroup(n=None, names='x', index_set=None, abelian=False, **kwds):
 
     We give two examples using the ``index_set`` option::
 
-        sage: FreeGroup(index_set=ZZ)
+        sage: FreeGroup(index_set=ZZ)                                                   # needs sage.combinat
         Free group indexed by Integer Ring
-        sage: FreeGroup(index_set=ZZ, abelian=True)
+        sage: FreeGroup(index_set=ZZ, abelian=True)                                     # needs sage.combinat
         Free abelian group indexed by Integer Ring
 
     TESTS::
@@ -697,11 +690,9 @@ def wrap_FreeGroup(libgap_free_group):
 
     INPUT:
 
-    - ``libgap_free_group`` -- a LibGAP free group.
+    - ``libgap_free_group`` -- a LibGAP free group
 
-    OUTPUT:
-
-    A Sage :class:`FreeGroup_class`.
+    OUTPUT: a Sage :class:`FreeGroup_class`
 
     EXAMPLES:
 
@@ -709,7 +700,7 @@ def wrap_FreeGroup(libgap_free_group):
 
         sage: F = libgap.FreeGroup(['a', 'b'])
         sage: type(F)
-        <type 'sage.libs.gap.element.GapElement'>
+        <class 'sage.libs.gap.element.GapElement'>
 
     Now wrap it::
 
@@ -719,7 +710,7 @@ def wrap_FreeGroup(libgap_free_group):
 
     TESTS:
 
-    Check that we can do it twice (see :trac:`12339`) ::
+    Check that we can do it twice (see :issue:`12339`) ::
 
         sage: G = libgap.FreeGroup(['a', 'b'])
         sage: wrap_FreeGroup(G)
@@ -752,12 +743,12 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
 
         INPUT:
 
-        - ``generator_names`` -- a tuple of strings. The names of the
-          generators.
+        - ``generator_names`` -- a tuple of strings; the names of the
+          generators
 
-        - ``libgap_free_group`` -- a LibGAP free group or ``None``
-          (default). The LibGAP free group to wrap. If ``None``, a
-          suitable group will be constructed.
+        - ``libgap_free_group`` -- a LibGAP free group (default: ``None``);
+          the LibGAP free group to wrap (if ``None``, a suitable group will be
+          constructed)
 
         TESTS::
 
@@ -787,17 +778,15 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
             sage: G._repr_()
             'Free Group on generators {a, b}'
         """
-        return 'Free Group on generators {'+ ', '.join(self.variable_names()) + '}'
+        return 'Free Group on generators {' + ', '.join(self.variable_names()) + '}'
 
     def rank(self):
         """
-        Return the number of generators of self.
+        Return the number of generators of ``self``.
 
         Alias for :meth:`ngens`.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -855,7 +844,7 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
             sage: G(a^2*b^-3*a^-1)
             a^2*b^-3*a^-1
 
-        Check that :trac:`17246` is fixed::
+        Check that :issue:`17246` is fixed::
 
             sage: F = FreeGroup(0)
             sage: F([])
@@ -869,22 +858,22 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
             ...
             TypeError: 'sage.rings.integer.Integer' object is not iterable
         """
-        if len(args)!=1:
+        if len(args) != 1:
             return self.element_class(self, *args, **kwds)
         x = args[0]
-        if x==1 or x == [] or x == ():
+        if x == 1 or x == [] or x == ():
             return self.one()
         try:
             P = x.parent()
         except AttributeError:
             return self.element_class(self, x, **kwds)
         if isinstance(P, FreeGroup_class):
-            names = set(P._names[abs(i)-1] for i in x.Tietze())
+            names = {P._names[abs(i)-1] for i in x.Tietze()}
             if names.issubset(self._names):
                 return self([i.sign()*(self._names.index(P._names[abs(i)-1])+1)
                              for i in x.Tietze()])
             else:
-                raise ValueError('generators of %s not in the group'%x)
+                raise ValueError('generators of %s not in the group' % x)
         return self.element_class(self, x, **kwds)
 
     def abelian_invariants(self):
@@ -918,10 +907,10 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
 
         INPUT:
 
-        - ``relations`` -- A list/tuple/iterable with the elements of
-          the free group.
+        - ``relations`` -- a list/tuple/iterable with the elements of
+          the free group
         - further named arguments, that are passed to the constructor
-          of a finitely presented group.
+          of a finitely presented group
 
         OUTPUT:
 
@@ -943,14 +932,13 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
         Relations are converted to the free group, even if they are not
         elements of it (if possible) ::
 
-            sage: F1.<a,b,c,d>=FreeGroup()
-            sage: F2.<a,b>=FreeGroup()
-            sage: r=a*b/a
+            sage: F1.<a,b,c,d> = FreeGroup()
+            sage: F2.<a,b> = FreeGroup()
+            sage: r = a*b/a
             sage: r.parent()
             Free Group on generators {a, b}
             sage: F1/[r]
             Finitely presented group < a, b, c, d | a*b*a^-1 >
-
         """
         from sage.groups.finitely_presented import FinitelyPresentedGroup
         return FinitelyPresentedGroup(self, tuple(map(self, relations) ), **kwds)

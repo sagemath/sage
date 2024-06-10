@@ -1,3 +1,4 @@
+# sage.doctest: needs lrcalc_python
 r"""
 Littlewood-Richardson tableaux
 
@@ -97,7 +98,7 @@ class LittlewoodRichardsonTableau(SemistandardTableau):
         """
         self._shape = parent._shape
         self._weight = parent._weight
-        super(LittlewoodRichardsonTableau, self).__init__(parent, list(t))
+        super().__init__(parent, list(t))
 
     def check(self):
         r"""
@@ -116,24 +117,25 @@ class LittlewoodRichardsonTableau(SemistandardTableau):
             Traceback (most recent call last):
             ...
             ValueError: [[1, 1, 2], [3, 3], [4]] is not an element of
-             Littlewood-Richardson Tableaux of shape [3, 2, 1] and weight ([2, 1], [2, 1]).
+             Littlewood-Richardson Tableaux of shape [3, 2, 1] and weight ([2, 1], [2, 1])
             sage: LR([[1, 1, 2, 3], [3], [4]])
             Traceback (most recent call last):
             ...
             ValueError: [[1, 1, 2, 3], [3], [4]] is not an element of
-             Littlewood-Richardson Tableaux of shape [3, 2, 1] and weight ([2, 1], [2, 1]).
+             Littlewood-Richardson Tableaux of shape [3, 2, 1] and weight ([2, 1], [2, 1])
             sage: LR([[1, 1, 3], [3, 3], [4]])
             Traceback (most recent call last):
             ...
             ValueError: weight of the parent does not agree with the weight of the tableau
         """
-        super(LittlewoodRichardsonTableau, self).check()
+        super().check()
         if not [i for a in self.parent()._weight for i in a] == self.weight():
             raise ValueError("weight of the parent does not agree "
                              "with the weight of the tableau")
         if not self.shape() == self.parent()._shape:
             raise ValueError("shape of the parent does not agree "
                              "with the shape of the tableau")
+
 
 class LittlewoodRichardsonTableaux(SemistandardTableaux):
     r"""
@@ -173,7 +175,7 @@ class LittlewoodRichardsonTableaux(SemistandardTableaux):
         weight = tuple(Partition(a) for a in weight)
         if shape.size() != sum(a.size() for a in weight):
             raise ValueError("the sizes of shapes and sequence of weights do not match")
-        return super(LittlewoodRichardsonTableaux, cls).__classcall__(cls, shape, weight)
+        return super().__classcall__(cls, shape, weight)
 
     def __init__(self, shape, weight):
         r"""
@@ -192,7 +194,7 @@ class LittlewoodRichardsonTableaux(SemistandardTableaux):
         self._shape = shape
         self._weight = weight
         self._heights = [a.length() for a in self._weight]
-        super(LittlewoodRichardsonTableaux, self).__init__(category=FiniteEnumeratedSets())
+        super().__init__(category=FiniteEnumeratedSets())
 
     def _repr_(self):
         """
@@ -201,7 +203,7 @@ class LittlewoodRichardsonTableaux(SemistandardTableaux):
             sage: LittlewoodRichardsonTableaux([3,2,1],[[2,1],[2,1]])
             Littlewood-Richardson Tableaux of shape [3, 2, 1] and weight ([2, 1], [2, 1])
         """
-        return "Littlewood-Richardson Tableaux of shape %s and weight %s"%(self._shape, self._weight)
+        return "Littlewood-Richardson Tableaux of shape %s and weight %s" % (self._shape, self._weight)
 
     def __iter__(self):
         r"""
@@ -287,6 +289,7 @@ def is_littlewood_richardson(t, heights):
             return False
     return True
 
+
 def _tableau_join(t1, t2, shift=0):
     """
     Join semistandard tableau ``t1`` with semistandard tableau ``t2``
@@ -302,5 +305,5 @@ def _tableau_join(t1, t2, shift=0):
         sage: _tableau_join([[1,2]],[[None,None,2],[3]],shift=5)
         [[1, 2, 7], [8]]
     """
-    return [[e1 for e1 in row1] + [e2+shift for e2 in row2 if e2 is not None]
+    return [list(row1) + [e2+shift for e2 in row2 if e2 is not None]
             for (row1, row2) in zip_longest(t1, t2, fillvalue=[])]

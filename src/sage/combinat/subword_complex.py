@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.graphs sage.modules
 r"""
 Subword complex
 
@@ -10,8 +11,8 @@ expression for `w`.
 A subword complex is a shellable sphere if and only if the Demazure
 product of `Q` equals `w`, otherwise it is a shellable ball.
 
-The code is optimized to be used with ReflectionGroup, it works as well
-with CoxeterGroup, but many methods fail for WeylGroup.
+The code is optimized to be used with :class:`ReflectionGroup`, it works as well
+with :class:`CoxeterGroup`, but many methods fail for :class:`WeylGroup`.
 
 EXAMPLES::
 
@@ -83,14 +84,14 @@ real space::
     sage: W = CoxeterGroup(['A',3]); I = list(W.index_set())
     sage: Q = I + W.w0.coxeter_sorting_word(I)
     sage: S = SubwordComplex(Q,W.w0)
-    sage: S.brick_polytope()
+    sage: S.brick_polytope()                                                            # needs sage.geometry.polyhedron
     A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 14 vertices
 
     sage: W = CoxeterGroup(['H',3]); I = list(W.index_set())
     sage: Q = I + W.w0.coxeter_sorting_word(I)
     sage: S = SubwordComplex(Q,W.w0)
-    sage: S.brick_polytope()
-    doctest:...: RuntimeWarning: the polytope is build with rational vertices
+    sage: S.brick_polytope()                                                            # needs sage.geometry.polyhedron
+    doctest:...: RuntimeWarning: the polytope is built with rational vertices
     A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 32 vertices
 
 AUTHORS:
@@ -111,18 +112,18 @@ REFERENCES:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-# python3
-from __future__ import division, print_function
-
+from itertools import repeat
 from copy import copy
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.structure.element import Element
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.homology.simplicial_complex import SimplicialComplex, Simplex
+from sage.topology.simplicial_complex import SimplicialComplex, Simplex
 from sage.categories.simplicial_complexes import SimplicialComplexes
-from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.geometry.cone import Cone
 from sage.combinat.subword_complex_c import _flip_c, _construct_facets_c
+
+lazy_import('sage.geometry.polyhedron.constructor', 'Polyhedron')
+lazy_import('sage.geometry.cone', 'Cone')
 
 
 class SubwordComplexFacet(Simplex, Element):
@@ -134,10 +135,11 @@ class SubwordComplexFacet(Simplex, Element):
 
     EXAMPLES::
 
-        sage: W = ReflectionGroup(['A',2])                              # optional - gap3
-        sage: w = W.from_reduced_word([1,2,1])                          # optional - gap3
-        sage: SC = SubwordComplex([1,2,1,2,1], w)                       # optional - gap3
-        sage: F = SC[0]; F                                              # optional - gap3
+        sage: # optional - gap3
+        sage: W = ReflectionGroup(['A',2])
+        sage: w = W.from_reduced_word([1,2,1])
+        sage: SC = SubwordComplex([1,2,1,2,1], w)
+        sage: F = SC[0]; F
         (0, 1)
 
         sage: W = CoxeterGroup(['A',2])
@@ -211,12 +213,13 @@ class SubwordComplexFacet(Simplex, Element):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: w = W.from_reduced_word([1,2,1])                      # optional - gap3
-            sage: SC = SubwordComplex([1,2,1,2,1], w)                   # optional - gap3
-            sage: F = SC([1,2]); F                                      # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2])
+            sage: w = W.from_reduced_word([1,2,1])
+            sage: SC = SubwordComplex([1,2,1,2,1], w)
+            sage: F = SC([1,2]); F
             (1, 2)
-            sage: F._extended_root_configuration_indices()              # optional - gap3
+            sage: F._extended_root_configuration_indices()
             [0, 2, 3, 2, 1]
 
             sage: W = CoxeterGroup(['A',2])
@@ -251,12 +254,13 @@ class SubwordComplexFacet(Simplex, Element):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: w = W.from_reduced_word([1,2,1])                      # optional - gap3
-            sage: SC = SubwordComplex([1,2,1,2,1], w)                   # optional - gap3
-            sage: F = SC([1,2]); F                                      # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2])
+            sage: w = W.from_reduced_word([1,2,1])
+            sage: SC = SubwordComplex([1,2,1,2,1], w)
+            sage: F = SC([1,2]); F
             (1, 2)
-            sage: F._root_configuration_indices()                       # optional - gap3
+            sage: F._root_configuration_indices()
             [2, 3]
 
             sage: W = CoxeterGroup(['A',2])
@@ -290,12 +294,13 @@ class SubwordComplexFacet(Simplex, Element):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: w = W.from_reduced_word([1,2,1])                      # optional - gap3
-            sage: SC = SubwordComplex([1,2,1,2,1],w)                    # optional - gap3
-            sage: F = SC([1,2]); F                                      # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2])
+            sage: w = W.from_reduced_word([1,2,1])
+            sage: SC = SubwordComplex([1,2,1,2,1],w)
+            sage: F = SC([1,2]); F
             (1, 2)
-            sage: F.extended_root_configuration()                       # optional - gap3
+            sage: F.extended_root_configuration()
             [(1, 0), (1, 1), (-1, 0), (1, 1), (0, 1)]
 
             sage: W = CoxeterGroup(['A',2])
@@ -324,12 +329,13 @@ class SubwordComplexFacet(Simplex, Element):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: w = W.from_reduced_word([1,2,1])                      # optional - gap3
-            sage: SC = SubwordComplex([1,2,1,2,1],w)                    # optional - gap3
-            sage: F = SC([1,2]); F                                      # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2])
+            sage: w = W.from_reduced_word([1,2,1])
+            sage: SC = SubwordComplex([1,2,1,2,1],w)
+            sage: F = SC([1,2]); F
             (1, 2)
-            sage: F.root_configuration()                                # optional - gap3
+            sage: F.root_configuration()
             [(1, 1), (-1, 0)]
 
             sage: W = CoxeterGroup(['A',2])
@@ -412,20 +418,22 @@ class SubwordComplexFacet(Simplex, Element):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',1])                          # optional - gap3
-            sage: w = W.from_reduced_word([1])                          # optional - gap3
-            sage: SC = SubwordComplex([1,1,1],w)                        # optional - gap3
-            sage: F = SC([0,1]); F.is_vertex()                          # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',1])
+            sage: w = W.from_reduced_word([1])
+            sage: SC = SubwordComplex([1,1,1],w)
+            sage: F = SC([0,1]); F.is_vertex()
             True
-            sage: F = SC([0,2]); F.is_vertex()                          # optional - gap3
+            sage: F = SC([0,2]); F.is_vertex()
             False
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: w = W.from_reduced_word([1,2,1])                      # optional - gap3
-            sage: SC = SubwordComplex([1,2,1,2,1,2,1],w)                # optional - gap3
-            sage: F = SC([0,1,2,3]); F.is_vertex()                      # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2])
+            sage: w = W.from_reduced_word([1,2,1])
+            sage: SC = SubwordComplex([1,2,1,2,1,2,1],w)
+            sage: F = SC([0,1,2,3]); F.is_vertex()
             True
-            sage: F = SC([0,1,2,6]); F.is_vertex()                      # optional - gap3
+            sage: F = SC([0,1,2,6]); F.is_vertex()
             False
 
             sage: W = CoxeterGroup(['A',2])
@@ -453,10 +461,11 @@ class SubwordComplexFacet(Simplex, Element):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',1])                          # optional - gap3
-            sage: w = W.from_reduced_word([1])                          # optional - gap3
-            sage: SC = SubwordComplex([1,1,1],w)                        # optional - gap3
-            sage: F = SC([0,2]); F.root_cone()                          # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',1])
+            sage: w = W.from_reduced_word([1])
+            sage: SC = SubwordComplex([1,1,1],w)
+            sage: F = SC([0,2]); F.root_cone()
             1-d cone in 1-d lattice N
 
             sage: W = CoxeterGroup(['A',1])
@@ -473,14 +482,15 @@ class SubwordComplexFacet(Simplex, Element):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: w = W.from_reduced_word([1,2,1])                      # optional - gap3
-            sage: SC = SubwordComplex([1,2,1,2,1],w)                    # optional - gap3
-            sage: F = SC([1,2]); F                                      # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2])
+            sage: w = W.from_reduced_word([1,2,1])
+            sage: SC = SubwordComplex([1,2,1,2,1],w)
+            sage: F = SC([1,2]); F
             (1, 2)
-            sage: F.root_configuration()                                # optional - gap3
+            sage: F.root_configuration()
             [(1, 1), (-1, 0)]
-            sage: F.upper_root_configuration()                          # optional - gap3
+            sage: F.upper_root_configuration()
             [(1, 0)]
 
             sage: W = CoxeterGroup(['A',2])
@@ -524,13 +534,14 @@ class SubwordComplexFacet(Simplex, Element):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: w = W.from_reduced_word([1,2,1])                      # optional - gap3
-            sage: SC = SubwordComplex([1,2,1,2,1],w)                    # optional - gap3
-            sage: F = SC([1,2])                                         # optional - gap3
-            sage: F.extended_weight_configuration()                     # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2])
+            sage: w = W.from_reduced_word([1,2,1])
+            sage: SC = SubwordComplex([1,2,1,2,1],w)
+            sage: F = SC([1,2])
+            sage: F.extended_weight_configuration()
             [(2/3, 1/3), (1/3, 2/3), (-1/3, 1/3), (1/3, 2/3), (-1/3, 1/3)]
-            sage: F.extended_weight_configuration(coefficients=(1,2))   # optional - gap3
+            sage: F.extended_weight_configuration(coefficients=(1,2))
             [(2/3, 1/3), (2/3, 4/3), (-1/3, 1/3), (2/3, 4/3), (-1/3, 1/3)]
 
             sage: W = CoxeterGroup(['A',2])
@@ -579,12 +590,13 @@ class SubwordComplexFacet(Simplex, Element):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: w = W.from_reduced_word([1,2,1])                      # optional - gap3
-            sage: SC = SubwordComplex([1,2,1,2,1],w)                    # optional - gap3
-            sage: F = SC([1,2]); F                                      # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2])
+            sage: w = W.from_reduced_word([1,2,1])
+            sage: SC = SubwordComplex([1,2,1,2,1],w)
+            sage: F = SC([1,2]); F
             (1, 2)
-            sage: F.weight_configuration()                              # optional - gap3
+            sage: F.weight_configuration()
             [(1/3, 2/3), (-1/3, 1/3)]
 
             sage: W = CoxeterGroup(['A',2])
@@ -610,14 +622,15 @@ class SubwordComplexFacet(Simplex, Element):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: w = W.from_reduced_word([1,2,1])                      # optional - gap3
-            sage: SC = SubwordComplex([1,2,1,2,1],w)                    # optional - gap3
-            sage: F = SC([1,2]); F                                      # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2])
+            sage: w = W.from_reduced_word([1,2,1])
+            sage: SC = SubwordComplex([1,2,1,2,1],w)
+            sage: F = SC([1,2]); F
             (1, 2)
-            sage: WC = F.weight_cone(); WC                              # optional - gap3
+            sage: WC = F.weight_cone(); WC
             2-d cone in 2-d lattice N
-            sage: WC.rays()                                             # optional - gap3
+            sage: WC.rays()
             N( 1, 2),
             N(-1, 1)
             in 2-d lattice N
@@ -650,16 +663,17 @@ class SubwordComplexFacet(Simplex, Element):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: w = W.from_reduced_word([1,2,1])                      # optional - gap3
-            sage: SC = SubwordComplex([1,2,1,2,1],w)                    # optional - gap3
-            sage: F = SC([1,2]); F                                      # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2])
+            sage: w = W.from_reduced_word([1,2,1])
+            sage: SC = SubwordComplex([1,2,1,2,1],w)
+            sage: F = SC([1,2]); F
             (1, 2)
-            sage: F.extended_weight_configuration()                     # optional - gap3
+            sage: F.extended_weight_configuration()
             [(2/3, 1/3), (1/3, 2/3), (-1/3, 1/3), (1/3, 2/3), (-1/3, 1/3)]
-            sage: F.brick_vector()                                      # optional - gap3
+            sage: F.brick_vector()
             (2/3, 7/3)
-            sage: F.brick_vector(coefficients=[1,2])                    # optional - gap3
+            sage: F.brick_vector(coefficients=[1,2])
             (4/3, 11/3)
 
             sage: W = CoxeterGroup(['A',2])
@@ -692,14 +706,15 @@ class SubwordComplexFacet(Simplex, Element):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: w = W.from_reduced_word([1,2,1])                      # optional - gap3
-            sage: SC = SubwordComplex([1,2,1,2,1],w)                    # optional - gap3
-            sage: F = SC([1,2]); F                                      # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2])
+            sage: w = W.from_reduced_word([1,2,1])
+            sage: SC = SubwordComplex([1,2,1,2,1],w)
+            sage: F = SC([1,2]); F
             (1, 2)
-            sage: F.flip(1)                                             # optional - gap3
+            sage: F.flip(1)
             (2, 3)
-            sage: F.flip(1, return_position=True)                       # optional - gap3
+            sage: F.flip(1, return_position=True)
             ((2, 3), 3)
 
             sage: W = CoxeterGroup(['A',2])
@@ -753,32 +768,35 @@ class SubwordComplexFacet(Simplex, Element):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: w = W.from_reduced_word([1,2,1])                      # optional - gap3
-            sage: SC = SubwordComplex([1,2,1,2,1],w)                    # optional - gap3
-            sage: F = SC([1,2]); F.plot()                               # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2])
+            sage: w = W.from_reduced_word([1,2,1])
+            sage: SC = SubwordComplex([1,2,1,2,1],w)
+            sage: F = SC([1,2]); F.plot()                                               # needs sage.plot
             Graphics object consisting of 26 graphics primitives
 
             sage: W = CoxeterGroup(['A',2])
             sage: w = W.from_reduced_word([1,2,1])
             sage: SC = SubwordComplex([1,2,1,2,1],w)
-            sage: F = SC([1,2]); F.plot()
+            sage: F = SC([1,2]); F.plot()                                               # needs sage.plot
             Graphics object consisting of 26 graphics primitives
 
-            sage: W = ReflectionGroup(['B',3])                          # optional - gap3
-            sage: c = W.from_reduced_word([1,2,3])                      # optional - gap3
-            sage: Q = c.reduced_word()*2 + W.w0.coxeter_sorting_word(c) # optional - gap3
-            sage: SC = SubwordComplex(Q, W.w0)                          # optional - gap3
-            sage: F = SC[15]; F.plot()                                  # optional - gap3
-            Graphics object consisting of 52 graphics primitives
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['B',3])
+            sage: c = W.from_reduced_word([1,2,3])
+            sage: Q = c.reduced_word()*2 + W.w0.coxeter_sorting_word(c)
+            sage: SC = SubwordComplex(Q, W.w0)
+            sage: F = SC[15]; F.plot()                                                  # needs sage.plot
+            Graphics object consisting of 53 graphics primitives
 
         TESTS::
 
-            sage: W = ReflectionGroup(['D',4])                          # optional - gap3
-            sage: c = W.from_reduced_word([1,2,3,4])                    # optional - gap3
-            sage: Q = c.reduced_word() + W.w0.coxeter_sorting_word(c)   # optional - gap3
-            sage: SC = SubwordComplex(Q, W.w0)                          # optional - gap3
-            sage: F = SC[1]; F.plot()                                   # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['D',4])
+            sage: c = W.from_reduced_word([1,2,3,4])
+            sage: Q = c.reduced_word() + W.w0.coxeter_sorting_word(c)
+            sage: SC = SubwordComplex(Q, W.w0)
+            sage: F = SC[1]; F.plot()                                                   # needs sage.plot
             Traceback (most recent call last):
             ...
             ValueError: plotting is currently only implemented for irreducibles types A, B, and C.
@@ -787,7 +805,7 @@ class SubwordComplexFacet(Simplex, Element):
             sage: c = W.from_reduced_word([1,2,3,4])
             sage: Q = c.reduced_word() + W.w0.coxeter_sorting_word(c)
             sage: SC = SubwordComplex(Q, W.w0)
-            sage: F = SC[1]; F.plot()
+            sage: F = SC[1]; F.plot()                                                   # needs sage.plot
             Traceback (most recent call last):
             ...
             ValueError: plotting is currently only implemented for irreducibles types A, B, and C.
@@ -847,7 +865,7 @@ class SubwordComplexFacet(Simplex, Element):
 
         # list the pseudolines to be drawn
         pseudolines = [[(shift[0], shift[1] + i), .5] for i in range(last + 1)]
-        pseudolines_type_B = [[] for i in range(last + 1)]
+        pseudolines_type_B = [[] for _ in repeat(None, last + 1)]
         contact_points = []
         root_labels = []
         pseudoline_labels = []
@@ -972,10 +990,11 @@ class SubwordComplexFacet(Simplex, Element):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: w = W.from_reduced_word([1,2,1])                      # optional - gap3
-            sage: SC = SubwordComplex([1,2,1,2,1],w)                    # optional - gap3
-            sage: F = SC([1,2]); F.show()                               # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2])
+            sage: w = W.from_reduced_word([1,2,1])
+            sage: SC = SubwordComplex([1,2,1,2,1],w)
+            sage: F = SC([1,2]); F.show()
             <BLANKLINE>
         """
         return self.plot().show(*kwds, **args)
@@ -1006,11 +1025,12 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
     ::
 
-        sage: W = ReflectionGroup(['A',2])                              # optional - gap3
-        sage: w = W.from_reduced_word([1,2,1])                          # optional - gap3
-        sage: SC = SubwordComplex([1,2,1,2,1], w); SC                   # optional - gap3
+        sage: # optional - gap3
+        sage: W = ReflectionGroup(['A',2])
+        sage: w = W.from_reduced_word([1,2,1])
+        sage: SC = SubwordComplex([1,2,1,2,1], w); SC
         Subword complex of type ['A', 2] for Q = (1, 2, 1, 2, 1) and pi = [1, 2, 1]
-        sage: SC.facets()                                               # optional - gap3
+        sage: SC.facets()
         [(0, 1), (0, 4), (1, 2), (2, 3), (3, 4)]
 
         sage: W = CoxeterGroup(['A',2])
@@ -1024,11 +1044,12 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
     TESTS::
 
-        sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-        sage: w = W.from_reduced_word([1,2,1])                      # optional - gap3
-        sage: SC1 = SubwordComplex([1,2,1,2,1], w)                  # optional - gap3
-        sage: SC2 = SubwordComplex([1,2,1,2,1], w)                  # optional - gap3
-        sage: SC1 == SC2                                            # optional - gap3
+        sage: # optional - gap3
+        sage: W = ReflectionGroup(['A',2])
+        sage: w = W.from_reduced_word([1,2,1])
+        sage: SC1 = SubwordComplex([1,2,1,2,1], w)
+        sage: SC2 = SubwordComplex([1,2,1,2,1], w)
+        sage: SC1 == SC2
         True
 
         sage: W = CoxeterGroup(['A',2])
@@ -1048,10 +1069,11 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
         TESTS::
 
-            sage: W = ReflectionGroup(['B',2])                          # optional - gap3
-            sage: S = SubwordComplex((1,2)*3,W.w0)                      # optional - gap3
-            sage: T = SubwordComplex([1,2]*3,W.w0)                      # optional - gap3
-            sage: S is T                                                # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['B',2])
+            sage: S = SubwordComplex((1,2)*3,W.w0)
+            sage: T = SubwordComplex([1,2]*3,W.w0)
+            sage: S is T
             True
 
             sage: W = CoxeterGroup(['B',2])
@@ -1061,7 +1083,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
             True
         """
         Q = tuple(Q)
-        return super(SubwordComplex, cls).__classcall__(cls, Q, w, algorithm=algorithm)
+        return super().__classcall__(cls, Q, w, algorithm=algorithm)
 
     def __init__(self, Q, w, algorithm="inductive"):
         r"""
@@ -1078,11 +1100,12 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',3])                          # optional - gap3
-            sage: w = W.from_reduced_word([1,2,3,1,2,1])                # optional - gap3
-            sage: SC = SubwordComplex([1,2,3,1,2,3,1,2,1], w); SC       # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',3])
+            sage: w = W.from_reduced_word([1,2,3,1,2,1])
+            sage: SC = SubwordComplex([1,2,3,1,2,3,1,2,1], w); SC
             Subword complex of type ['A', 3] for Q = (1, 2, 3, 1, 2, 3, 1, 2, 1) and pi = [1, 2, 1, 3, 2, 1]
-            sage: len(SC)                                               # optional - gap3
+            sage: len(SC)
             14
 
             sage: W = CoxeterGroup(['A',3])
@@ -1096,10 +1119,11 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
         Check for methods from the enumerated sets category::
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: w = W.from_reduced_word([1,2,1])                      # optional - gap3
-            sage: SC = SubwordComplex([1,2,1,2,1], w)                   # optional - gap3
-            sage: list(SC)                                              # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2])
+            sage: w = W.from_reduced_word([1,2,1])
+            sage: SC = SubwordComplex([1,2,1,2,1], w)
+            sage: list(SC)
             [(0, 1), (0, 4), (1, 2), (2, 3), (3, 4)]
 
             sage: W = CoxeterGroup(['A',2])
@@ -1133,7 +1157,6 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         SimplicialComplex.__init__(self, maximal_faces=Fs,
                                    maximality_check=False,
                                    category=cat)
-        self.__custom_name = 'Subword complex'
         self._W = W
         try:
             T = W.coxeter_matrix().coxeter_type()
@@ -1210,20 +1233,21 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: w  = W.from_reduced_word([1,2,1])                     # optional - gap3
-            sage: SC = SubwordComplex([1,2,1,2,1], w)                   # optional - gap3
-            sage: SC.facets()                                           # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2])
+            sage: w  = W.from_reduced_word([1,2,1])
+            sage: SC = SubwordComplex([1,2,1,2,1], w)
+            sage: SC.facets()
             [(0, 1), (0, 4), (1, 2), (2, 3), (3, 4)]
-            sage: [0,1] in SC                                           # optional - gap3
+            sage: [0,1] in SC
             True
-            sage: [0,2] in SC                                           # optional - gap3
+            sage: [0,2] in SC
             False
-            sage: [0,1,5] in SC                                         # optional - gap3
+            sage: [0,1,5] in SC
             False
-            sage: [0] in SC                                             # optional - gap3
+            sage: [0] in SC
             False
-            sage: ['a','b'] in SC                                       # optional - gap3
+            sage: ['a','b'] in SC
             False
 
             sage: W = CoxeterGroup(['A',2])
@@ -1244,7 +1268,8 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         """
         W = self.group()
         Q = self.word()
-        if not all(i in list(range(len(Q))) for i in F):
+        r = range(len(Q))
+        if not all(i in r for i in F):
             return False
         return W.from_reduced_word(Qi for i, Qi in enumerate(Q) if i not in F) == self.pi()
 
@@ -1256,10 +1281,11 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: w = W.from_reduced_word([1,2,1])                      # optional - gap3
-            sage: SC = SubwordComplex([1,2,1,2,1], w)                   # optional - gap3
-            sage: SC.group()                                            # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2])
+            sage: w = W.from_reduced_word([1,2,1])
+            sage: SC = SubwordComplex([1,2,1,2,1], w)
+            sage: SC.group()
             Irreducible real reflection group of rank 2 and type A2
 
             sage: W = CoxeterGroup(['A',2])
@@ -1278,10 +1304,11 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: w = W.from_reduced_word([1,2,1])                      # optional - gap3
-            sage: SC = SubwordComplex([1,2,1,2,1], w)                   # optional - gap3
-            sage: SC.cartan_type()                                      # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2])
+            sage: w = W.from_reduced_word([1,2,1])
+            sage: SC = SubwordComplex([1,2,1,2,1], w)
+            sage: SC.cartan_type()
             ['A', 2]
 
             sage: W = CoxeterGroup(['A',2])
@@ -1301,10 +1328,11 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: w = W.from_reduced_word([1,2,1])                      # optional - gap3
-            sage: SC = SubwordComplex([1,2,1,2,1], w)                   # optional - gap3
-            sage: SC.word()                                             # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2])
+            sage: w = W.from_reduced_word([1,2,1])
+            sage: SC = SubwordComplex([1,2,1,2,1], w)
+            sage: SC.word()
             (1, 2, 1, 2, 1)
 
             sage: W = CoxeterGroup(['A',2])
@@ -1321,10 +1349,11 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: w = W.from_reduced_word([1,2,1])                      # optional - gap3
-            sage: SC = SubwordComplex([1,2,1,2,1], w)                   # optional - gap3
-            sage: SC.pi().reduced_word()                                # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2])
+            sage: w = W.from_reduced_word([1,2,1])
+            sage: SC = SubwordComplex([1,2,1,2,1], w)
+            sage: SC.pi().reduced_word()
             [1, 2, 1]
 
             sage: W = CoxeterGroup(['A',2])
@@ -1341,10 +1370,11 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: w = W.from_reduced_word([1,2,1])                      # optional - gap3
-            sage: SC = SubwordComplex([1,2,1,2,1], w)                   # optional - gap3
-            sage: SC.facets()                                           # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2])
+            sage: w = W.from_reduced_word([1,2,1])
+            sage: SC = SubwordComplex([1,2,1,2,1], w)
+            sage: SC.facets()
             [(0, 1), (0, 4), (1, 2), (2, 3), (3, 4)]
 
             sage: W = CoxeterGroup(['A',2])
@@ -1364,10 +1394,11 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: w = W.from_reduced_word([1,2,1])                      # optional - gap3
-            sage: SC = SubwordComplex([1,2,1,2,1], w)                   # optional - gap3
-            sage: for I in SC: print(I)                                 # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2])
+            sage: w = W.from_reduced_word([1,2,1])
+            sage: SC = SubwordComplex([1,2,1,2,1], w)
+            sage: for I in SC: print(I)
             (0, 1)
             (0, 4)
             (1, 2)
@@ -1394,12 +1425,13 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: w = W.from_reduced_word([1,2,1])                      # optional - gap3
-            sage: SC = SubwordComplex([1,2,1,2,1], w)                   # optional - gap3
-            sage: SC.greedy_facet(side="positive")                      # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2])
+            sage: w = W.from_reduced_word([1,2,1])
+            sage: SC = SubwordComplex([1,2,1,2,1], w)
+            sage: SC.greedy_facet(side="positive")
             (0, 1)
-            sage: SC.greedy_facet(side="negative")                      # optional - gap3
+            sage: SC.greedy_facet(side="negative")
             (3, 4)
 
             sage: W = CoxeterGroup(['A',2])
@@ -1421,10 +1453,11 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',3])                          # optional - gap3
-            sage: w = W.from_reduced_word([2,3,2])                      # optional - gap3
-            sage: SC = SubwordComplex([3,2,3,2,3], w)                   # optional - gap3
-            sage: SC.is_sphere()                                        # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',3])
+            sage: w = W.from_reduced_word([2,3,2])
+            sage: SC = SubwordComplex([3,2,3,2,3], w)
+            sage: SC.is_sphere()
             True
 
             sage: SC = SubwordComplex([3,2,1,3,2,3], w)                 # optional - gap3
@@ -1449,10 +1482,11 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',3])                          # optional - gap3
-            sage: w = W.from_reduced_word([2,3,2])                      # optional - gap3
-            sage: SC = SubwordComplex([3,2,3,2,3], w)                   # optional - gap3
-            sage: SC.is_ball()                                          # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',3])
+            sage: w = W.from_reduced_word([2,3,2])
+            sage: SC = SubwordComplex([3,2,3,2,3], w)
+            sage: SC.is_ball()
             False
 
             sage: SC = SubwordComplex([3,2,1,3,2,3], w)                 # optional - gap3
@@ -1473,10 +1507,11 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',3])                          # optional - gap3
-            sage: w = W.from_reduced_word([2,3,2])                      # optional - gap3
-            sage: SC = SubwordComplex([3,2,3,2,3], w)                   # optional - gap3
-            sage: SC.is_pure()                                          # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',3])
+            sage: w = W.from_reduced_word([2,3,2])
+            sage: SC = SubwordComplex([3,2,3,2,3], w)
+            sage: SC.is_pure()
             True
 
             sage: W = CoxeterGroup(['A',3])
@@ -1531,7 +1566,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
             sage: SC.is_root_independent()
             True
         """
-        from sage.matrix.all import matrix
+        from sage.matrix.constructor import matrix
         M = matrix(self.greedy_facet(side="negative").root_configuration())
         return M.rank() == max(M.ncols(), M.nrows())
 
@@ -1545,10 +1580,11 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: w = W.from_reduced_word([1,2,1])                      # optional - gap3
-            sage: SC = SubwordComplex([1,2,1,2,1], w)                   # optional - gap3
-            sage: SC.is_double_root_free()                              # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2])
+            sage: w = W.from_reduced_word([1,2,1])
+            sage: SC = SubwordComplex([1,2,1,2,1], w)
+            sage: SC.is_double_root_free()
             True
 
             sage: SC = SubwordComplex([1,1,2,2,1,1], w)                 # optional - gap3
@@ -1584,11 +1620,12 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: w = W.from_reduced_word([1,2,1])                      # optional - gap3
-            sage: SC = SubwordComplex([1,2,1,2,1], w)                   # optional - gap3
-            sage: kappa = SC.kappa_preimages()                          # optional - gap3
-            sage: for F in SC: print("{} {}".format(F, [w.reduced_word() for w in kappa[F]]))    # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2])
+            sage: w = W.from_reduced_word([1,2,1])
+            sage: SC = SubwordComplex([1,2,1,2,1], w)
+            sage: kappa = SC.kappa_preimages()
+            sage: for F in SC: print("{} {}".format(F, [w.reduced_word() for w in kappa[F]]))
             (0, 1) [[]]
             (0, 4) [[2], [2, 1]]
             (1, 2) [[1]]
@@ -1622,10 +1659,11 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: w = W.from_reduced_word([1,2,1])                      # optional - gap3
-            sage: SC = SubwordComplex([1,2,1,2,1], w)                   # optional - gap3
-            sage: SC.brick_fan()                                        # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2])
+            sage: w = W.from_reduced_word([1,2,1])
+            sage: SC = SubwordComplex([1,2,1,2,1], w)
+            sage: SC.brick_fan()
             Rational polyhedral fan in 2-d lattice N
 
             sage: W = CoxeterGroup(['A',2])
@@ -1654,11 +1692,12 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: SC = SubwordComplex([1,2,1,2,1], W.w0)                # optional - gap3
-            sage: SC.brick_vectors()                                    # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2])
+            sage: SC = SubwordComplex([1,2,1,2,1], W.w0)
+            sage: SC.brick_vectors()
             [(5/3, 7/3), (5/3, 1/3), (2/3, 7/3), (-1/3, 4/3), (-1/3, 1/3)]
-            sage: SC.brick_vectors(coefficients=(1,2))                  # optional - gap3
+            sage: SC.brick_vectors(coefficients=(1,2))
             [(7/3, 11/3), (7/3, 2/3), (4/3, 11/3), (-2/3, 5/3), (-2/3, 2/3)]
 
             sage: W = CoxeterGroup(['A',2])
@@ -1691,13 +1730,13 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
             A 0-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex
         """
         G = self.group()
-        from sage.rings.all import QQ
+        from sage.rings.rational_field import QQ
         if G.coxeter_matrix().is_crystallographic():
             min_sum = [[QQ(v) for v in F.extended_weight_configuration()[i]] for F in self]
         else:
-            from sage.rings.all import CC
+            from sage.rings.cc import CC
             from warnings import warn
-            warn("the polytope is build with rational vertices", RuntimeWarning)
+            warn("the polytope is built with rational vertices", RuntimeWarning)
             min_sum = [[QQ(CC(v)) for v in F.extended_weight_configuration()[i]] for F in self]
         return Polyhedron(min_sum)
 
@@ -1734,21 +1773,24 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
             sage: X = SC.brick_polytope(); X
             A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 5 vertices
 
-            sage: W = ReflectionGroup(['H',3])                          # optional - gap3
-            sage: c = W.index_set(); Q = c + tuple(W.w0.coxeter_sorting_word(c))    # optional - gap3
-            sage: SC = SubwordComplex(Q,W.w0)                           # optional - gap3
-            sage: SC.brick_polytope()                                   # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['H',3])
+            sage: c = W.index_set(); Q = c + tuple(W.w0.coxeter_sorting_word(c))
+            sage: SC = SubwordComplex(Q,W.w0)
+            sage: SC.brick_polytope()
+            doctest:...:
+            RuntimeWarning: the polytope is built with rational vertices
             A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 32 vertices
         """
         BV = self.brick_vectors(coefficients=coefficients)
         G = self.group()
-        from sage.rings.all import QQ
+        from sage.rings.rational_field import QQ
         if G.coxeter_matrix().is_crystallographic():
             BV = [[QQ(v) for v in V] for V in BV]
         else:
-            from sage.rings.all import CC
+            from sage.rings.cc import CC
             from warnings import warn
-            warn("the polytope is build with rational vertices", RuntimeWarning)
+            warn("the polytope is built with rational vertices", RuntimeWarning)
             BV = [[QQ(CC(v).real()) for v in V] for V in BV]
         return Polyhedron(BV)
 
@@ -1814,8 +1856,8 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         """
         N = len(self.group().long_element(as_word=True))
         F = self.greedy_facet(side="positive")
-        Fs = set([F])
-        seen = set([F])
+        Fs = {F}
+        seen = {F}
         covers = []
         while Fs:
             F = Fs.pop()
@@ -1855,7 +1897,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         from sage.graphs.digraph import DiGraph
         return DiGraph(self.cover_relations(label=label))
 
-    def interval(self, I, J):
+    def interval(self, I, J) -> set:
         """
         Return the interval [I,J] in the increasing flip graph subword complex.
 
@@ -1869,10 +1911,11 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
         EXAMPLES::
 
-            sage: W = ReflectionGroup(['A',2])                          # optional - gap3
-            sage: SC = SubwordComplex([1,2,1,2,1], W.w0)                # optional - gap3
-            sage: F = SC([1,2])                                         # optional - gap3
-            sage: SC.interval(F, F)                                     # optional - gap3
+            sage: # optional - gap3
+            sage: W = ReflectionGroup(['A',2])
+            sage: SC = SubwordComplex([1,2,1,2,1], W.w0)
+            sage: F = SC([1,2])
+            sage: SC.interval(F, F)
             {(1, 2)}
 
             sage: W = CoxeterGroup(['A',2])
@@ -1883,7 +1926,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         """
         G = self.increasing_flip_graph()
         paths = G.all_paths(I, J)
-        return set(K for path in paths for K in path)
+        return {K for path in paths for K in path}
 
     def increasing_flip_poset(self):
         """
@@ -1920,13 +1963,13 @@ def _greedy_facet(Q, w, side="negative", n=None, pos=0, l=None, elems=[]):
 
     INPUT:
 
-    - `Q` -- a word
-    - `w` -- an element in the Coxeter group
-    - side -- optional, either 'negative' (default) or 'positive'
-    - n -- an integer (optional, defaults to the length of Q)
-    - pos -- an integer (optional, default 0)
-    - l -- an integer (optional, defaults to the length of w)
-    - elems -- a list (optional)
+    - ``Q`` -- a word
+    - ``w`` -- an element in the Coxeter group
+    - ``side`` -- optional, either ``'negative'`` (default) or ``'positive'``
+    - ``n`` -- an integer (default: the length of `Q`)
+    - ``pos`` -- an integer (default: 0)
+    - ``l`` -- an integer (default: the length of `w`)
+    - ``elems`` -- a list (optional)
 
     OUTPUT:
 
@@ -1935,10 +1978,12 @@ def _greedy_facet(Q, w, side="negative", n=None, pos=0, l=None, elems=[]):
     EXAMPLES::
 
         sage: from sage.combinat.subword_complex import _greedy_facet
-        sage: W = ReflectionGroup(['A',2])                              # optional - gap3
-        sage: Q = [1,2,1,2,1]                                           # optional - gap3
-        sage: w = W.from_reduced_word([1, 2, 1])                        # optional - gap3
-        sage: _greedy_facet(Q, w)                                       # optional - gap3
+
+        sage: # optional - gap3
+        sage: W = ReflectionGroup(['A',2])
+        sage: Q = [1,2,1,2,1]
+        sage: w = W.from_reduced_word([1, 2, 1])
+        sage: _greedy_facet(Q, w)
         {3, 4}
 
         sage: W = CoxeterGroup(['A',2])
@@ -1989,9 +2034,9 @@ def _extended_root_configuration_indices(W, Q, F):
 
     INPUT:
 
-    - `W` -- a Coxeter group
-    - `Q` -- a word representing an element of `W`
-    - `F` -- a facet of the subword complex
+    - ``W`` -- a Coxeter group
+    - ``Q`` -- a word representing an element of `W`
+    - ``F`` -- a facet of the subword complex
 
     OUTPUT:
 
@@ -2000,12 +2045,14 @@ def _extended_root_configuration_indices(W, Q, F):
     EXAMPLES::
 
         sage: from sage.combinat.subword_complex import _extended_root_configuration_indices
-        sage: W = ReflectionGroup(['A',2])                              # optional - gap3
-        sage: w = W.from_reduced_word([1,2,1])                          # optional - gap3
-        sage: Q = [1,2,1,2,1]                                           # optional - gap3
-        sage: SC = SubwordComplex(Q, w)                                 # optional - gap3
-        sage: F = SC([1,2])                                             # optional - gap3
-        sage: _extended_root_configuration_indices(W, Q, F)             # optional - gap3
+
+        sage: # optional - gap3
+        sage: W = ReflectionGroup(['A',2])
+        sage: w = W.from_reduced_word([1,2,1])
+        sage: Q = [1,2,1,2,1]
+        sage: SC = SubwordComplex(Q, w)
+        sage: F = SC([1,2])
+        sage: _extended_root_configuration_indices(W, Q, F)
         [0, 2, 3, 2, 1]
 
         sage: W = CoxeterGroup(['A',2])
@@ -2030,8 +2077,8 @@ def _greedy_flip_algorithm(Q, w):
     """
     INPUT:
 
-    - Q -- a word in a Coxeter group W
-    - w -- an element of W
+    - ``Q`` -- a word in a Coxeter group `W`
+    - ``w`` -- an element of `W`
 
     OUTPUT:
 
@@ -2040,10 +2087,12 @@ def _greedy_flip_algorithm(Q, w):
     EXAMPLES::
 
         sage: from sage.combinat.subword_complex import _greedy_flip_algorithm
-        sage: W = ReflectionGroup(['A',2])                              # optional - gap3
-        sage: Q = [1,2,1,2,1]                                           # optional - gap3
-        sage: w = W.from_reduced_word([1,2,1])                          # optional - gap3
-        sage: _greedy_flip_algorithm(Q, w)                              # optional - gap3
+
+        sage: # optional - gap3
+        sage: W = ReflectionGroup(['A',2])
+        sage: Q = [1,2,1,2,1]
+        sage: w = W.from_reduced_word([1,2,1])
+        sage: _greedy_flip_algorithm(Q, w)
         ([{0, 1}, [1, 2], [2, 3], [3, 4], [0, 4]],
          [[0, 1, 0, 2, 1],
           [0, 2, 3, 2, 1],
@@ -2078,8 +2127,8 @@ def _greedy_flip_algorithm(Q, w):
                     flip_to_ancestors.append(j)
                     next_index = i + 1
                     has_new_child = True
-                    facet_list.append([x for x in F])
-                    extended_root_conf_indices_list.append([x for x in R])
+                    facet_list.append(list(F))
+                    extended_root_conf_indices_list.append(list(R))
         if not has_new_child:
             i = flip_to_ancestors.pop()
             if i != -1:

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # cython: binding=True
 # distutils: language = c++
 r"""
@@ -21,21 +20,19 @@ Methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from libcpp.pair cimport pair
 from libcpp.vector cimport vector
+from libc.stdint cimport uint32_t
+from cysignals.signals cimport sig_on, sig_off, sig_check
+from memory_allocator cimport MemoryAllocator
 
-from sage.ext.memory_allocator cimport MemoryAllocator
 from sage.graphs.base.static_sparse_graph cimport short_digraph
 from sage.graphs.base.static_sparse_graph cimport init_short_digraph
 from sage.graphs.base.static_sparse_graph cimport free_short_digraph
 from sage.graphs.base.static_sparse_graph cimport has_edge
-from libc.stdint cimport uint32_t
-
-from cysignals.signals cimport sig_on, sig_off, sig_check
 
 from sage.sets.set import Set
-
 from sage.graphs.traversals cimport maximum_cardinality_search_M_short_digraph
+
 
 def make_tree(atoms, cliques):
     r"""
@@ -90,13 +87,14 @@ def make_tree(atoms, cliques):
         j = len(cliques)
         T.add_edges((s, (i + j, a)) for s, (i, a) in zip(enumerate(cliques), enumerate(atoms)))
         # We have |atoms| = |cliques| + 1. So |atoms| + |cliques| = 2 * j + 1
-        T.add_edge((j - 1, cliques[-1]), ( 2 * j, atoms[-1]))
+        T.add_edge((j - 1, cliques[-1]), (2 * j, atoms[-1]))
 
     elif atoms:
         # The graph has no clique separator
         T.add_vertex(atoms[0])
 
     return T
+
 
 def make_labelled_rooted_tree(atoms, cliques):
     r"""
@@ -135,13 +133,13 @@ def make_labelled_rooted_tree(atoms, cliques):
     def to_tree(i, n):
         if i < n:
             return LabelledRootedTree([LabelledRootedTree([], label=atoms[i]), to_tree(i + 1, n)],
-                                          label=cliques[i])
+                                      label=cliques[i])
         return LabelledRootedTree([], label=atoms[i])
 
     return to_tree(0, len(cliques))
 
 
-cdef inline bint is_clique(short_digraph sd, vector[int] Hx):
+cdef inline bint is_clique(short_digraph sd, vector[int] Hx) noexcept:
     """
     Check if the subgraph sd[Hx] is a clique.
 
@@ -150,7 +148,7 @@ cdef inline bint is_clique(short_digraph sd, vector[int] Hx):
     cdef size_t Hx_size = Hx.size()
     cdef size_t i, j
     cdef int u
-    for i in range(Hx_size -1):
+    for i in range(Hx_size - 1):
         u = Hx[i]
         for j in range(i + 1, Hx_size):
             if not has_edge(sd, u, Hx[j]):
@@ -210,7 +208,7 @@ def atoms_and_clique_separators(G, tree=False, rooted_tree=False, separators=Fal
     - When ``tree`` is ``True``, format the result as a directed tree
 
     - When ``rooted_tree`` is ``True`` and ``tree`` is ``False``, format the
-      ouput as a :class:`~sage.combinat.rooted_tree.LabelledRootedTree`
+      output as a :class:`~sage.combinat.rooted_tree.LabelledRootedTree`
 
     EXAMPLES:
 
@@ -287,7 +285,7 @@ def atoms_and_clique_separators(G, tree=False, rooted_tree=False, separators=Fal
                                       {0, 1, 5} {0, 1, 6}
 
         sage: G = graphs.StarGraph(3)
-        sage: G.subdivide_edges(G.edges(), 2)
+        sage: G.subdivide_edges(G.edges(sort=False), 2)
         sage: ascii_art(G.atoms_and_clique_separators(rooted_tree=True))
           ______{5}______
          /              /
@@ -359,7 +357,7 @@ def atoms_and_clique_separators(G, tree=False, rooted_tree=False, separators=Fal
         sage: G.allow_loops(True)
         sage: G.add_edges([(u, u) for u in G])
         sage: G.allow_multiple_edges(True)
-        sage: G.add_edges(G.edges())
+        sage: G.add_edges(G.edges(sort=False))
         sage: ascii_art(G.atoms_and_clique_separators(rooted_tree=True))
           ______{1}______
          /              /
@@ -424,10 +422,10 @@ def atoms_and_clique_separators(G, tree=False, rooted_tree=False, separators=Fal
     if not G.is_connected():
         from sage.graphs.graph import Graph
 
-        for cc in G.connected_components():
+        for cc in G.connected_components(sort=False):
             g = Graph([cc, G.edge_boundary(cc, cc, False, False)],
-                          format='vertices_and_edges',
-                          loops=True, multiedges=True)
+                      format='vertices_and_edges',
+                      loops=True, multiedges=True)
             res = g.atoms_and_clique_separators(tree=False, rooted_tree=False, separators=separators)
 
             # Update lists of atoms, separators and clique separators
@@ -441,7 +439,7 @@ def atoms_and_clique_separators(G, tree=False, rooted_tree=False, separators=Fal
             if separators:
                 Sc.extend(res[2])
             else:
-               Sc.extend(res[1])
+                Sc.extend(res[1])
             first = False
 
         # Format and return the result
@@ -460,7 +458,8 @@ def atoms_and_clique_separators(G, tree=False, rooted_tree=False, separators=Fal
     # calling out_neighbors. This data structure is well documented in the
     # module sage.graphs.base.static_sparse_graph
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex,
+                       sort_neighbors=True)
 
     # variables for the manipulation of the short digraph
     cdef uint32_t** p_vertices = sd.neighbors
@@ -523,8 +522,6 @@ def atoms_and_clique_separators(G, tree=False, rooted_tree=False, separators=Fal
     cdef vector[int] Sint_min
     cdef vector[int] Cint
     cdef vector[int] Hx
-    cdef size_t ui, vi
-    cdef bint stop
 
     for i in range(N):
         sig_check()

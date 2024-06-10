@@ -1,10 +1,13 @@
-# distutils: libraries = ntl gmp m
+# distutils: libraries = NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
-
 """
 ntl_lzz_p.pyx
 
-Wraps NTL's zz_p type for SAGE
+Wraps NTL's zz_p type for Sage
 
 NOTE: This file is essentially useless. While we provide
 this wrapper for consistency, this should never be used in
@@ -15,18 +18,19 @@ gains you get from working with longs will be TOTALLY
 destroyed by the overhead of having a wrapper.
 
 AUTHORS:
-   - Craig Citro
+
+- Craig Citro
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 
@@ -38,7 +42,6 @@ from cpython.object cimport Py_EQ, Py_NE
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
 from sage.rings.integer cimport Integer
-from sage.rings.integer_ring cimport IntegerRing_class
 
 from sage.rings.finite_rings.integer_mod cimport IntegerMod_gmp, IntegerMod_int, IntegerMod_int64
 
@@ -54,9 +57,9 @@ ZZ_sage = IntegerRing()
 #
 ##############################################################################
 
-cdef class ntl_zz_p(object):
+cdef class ntl_zz_p():
     r"""
-    The class \class{zz_p} implements arithmetic modulo $p$,
+    The class \class{zz_p} implements arithmetic modulo `p`,
     for p smaller than a machine word.
 
     NOTE: This type is provided mostly for completeness, and
@@ -85,19 +88,19 @@ cdef class ntl_zz_p(object):
         #self.c.restore_c()   ## This was done in __new__
 
         if isinstance(a, IntegerMod_int):
-            if (self.c.p == (<IntegerMod_int>a).__modulus.int32): ## this is slow
+            if (self.c.p == (<IntegerMod_int>a)._modulus.int32): ## this is slow
                 self.x = (<IntegerMod_int>a).ivalue
             else:
                 raise ValueError("Mismatched modulus for converting to zz_p.")
 
         elif isinstance(a, IntegerMod_int64):
-            if (self.c.p == (<IntegerMod_int64>a).__modulus.int64): ## this is slow
+            if (self.c.p == (<IntegerMod_int64>a)._modulus.int64): ## this is slow
                 self.x = (<IntegerMod_int64>a).ivalue
             else:
                 raise ValueError("Mismatched modulus for converting to zz_p.")
 
         elif isinstance(a, IntegerMod_gmp):
-            if (p_sage == (<IntegerMod_gmp>a).__modulus.sageInteger): ## this is slow
+            if (p_sage == (<IntegerMod_gmp>a)._modulus.sageInteger): ## this is slow
                 self.x = mpz_get_si((<IntegerMod_gmp>a).value)
             else:
                 raise ValueError("Mismatched modulus for converting to zz_p.")
@@ -134,7 +137,7 @@ cdef class ntl_zz_p(object):
             self.c = <ntl_zz_pContext_class>modulus
         elif isinstance(modulus, Integer):
             self.c = <ntl_zz_pContext_class>ntl_zz_pContext(modulus)
-        elif isinstance(modulus, long):
+        elif isinstance(modulus, int):
             self.c = <ntl_zz_pContext_class>ntl_zz_pContext(modulus)
         else:
             try:

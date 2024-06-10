@@ -2,7 +2,7 @@ Alternating tensors
 ===================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/tensor/modules/ext_pow_free_module
 

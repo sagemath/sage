@@ -27,7 +27,8 @@ Preparation of this document was supported in part by the OpenDreamKit project a
 during the SageDays 84 in Olot (Spain).
 
 .. contents:: Lectures Menu
-    :depth: 2
+   :depth: 2
+   :class: this-will-duplicate-information-and-it-is-still-useful-here
 
 Lecture 0: Basic definitions and constructions
 ==============================================
@@ -90,7 +91,7 @@ and some rays.
 
 ::
 
-    sage: P1 = Polyhedron(vertices = [[1, 0], [0, 1]], rays = [[1, 1]])
+    sage: P1 = Polyhedron(vertices=[[1, 0], [0, 1]], rays=[[1, 1]])
     sage: P1
     A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 2 vertices and 1 ray
 
@@ -117,9 +118,9 @@ We can also add a lineality space.
 
 ::
 
-    sage: P2 = Polyhedron(vertices = [[1/2, 0, 0], [0, 1/2, 0]],
-    ....:                 rays = [[1, 1, 0]],
-    ....:                 lines = [[0, 0, 1]])
+    sage: P2 = Polyhedron(vertices=[[1/2, 0, 0], [0, 1/2, 0]],
+    ....:                 rays=[[1, 1, 0]],
+    ....:                 lines=[[0, 0, 1]])
     sage: P2
     A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 2 vertices, 1 ray, 1 line
     sage: P2.plot()
@@ -143,7 +144,7 @@ The chosen ring depends on the input format.
 
 ::
 
-    sage: P3 = Polyhedron(vertices = [[0.5, 0], [0, 0.5]])
+    sage: P3 = Polyhedron(vertices=[[0.5, 0], [0, 0.5]])
     sage: P3
     A 1-dimensional polyhedron in RDF^2 defined as the convex hull of 2 vertices
     sage: P3.parent()
@@ -162,17 +163,22 @@ The following example demonstrates the limitations of :code:`RDF`.
 
 ::
 
-    sage: D = polytopes.dodecahedron()
-    sage: D
-    A 3-dimensional polyhedron in (Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?)^3 defined as the convex hull of 20 vertices
-    sage: D_RDF = Polyhedron(vertices = [n(v.vector(),digits=6) for v in D.vertices()], base_ring=RDF)
+    sage: D = polytopes.dodecahedron()                                                  # needs sage.rings.number_field
+    sage: D                                                                             # needs sage.rings.number_field
+    A 3-dimensional polyhedron
+     in (Number Field in sqrt5 with defining polynomial x^2 - 5
+         with sqrt5 = 2.236067977499790?)^3
+     defined as the convex hull of 20 vertices
+
+    sage: vertices_RDF = [n(v.vector(),digits=6) for v in D.vertices()]                 # needs sage.rings.number_field
+    sage: D_RDF = Polyhedron(vertices=vertices_RDF, base_ring=RDF)                      # needs sage.rings.number_field
     doctest:warning
     ...
     UserWarning: This polyhedron data is numerically complicated; cdd
     could not convert between the inexact V and H representation
     without loss of data. The resulting object might show
     inconsistencies.
-    sage: D_RDF = Polyhedron(vertices = sorted([n(v.vector(),digits=6) for v in D.vertices()]), base_ring=RDF)
+    sage: D_RDF = Polyhedron(vertices=sorted(vertices_RDF), base_ring=RDF)              # needs sage.rings.number_field
     Traceback (most recent call last):
     ...
     ValueError: *Error: Numerical inconsistency is found.  Use the GMP exact arithmetic.
@@ -189,15 +195,16 @@ automatically converts the data to :code:`RDF`:
 
 .. end of output
 
-It is also possible to define polyhedron over algebraic numbers.
+It is also possible to define a polyhedron over algebraic numbers.
 
 ::
 
+    sage: # needs sage.rings.number_field
     sage: sqrt_2 = AA(2)^(1/2)
     sage: cbrt_2 = AA(2)^(1/3)
-    sage: timeit('Polyhedron(vertices = [[sqrt_2, 0], [0, cbrt_2]])')  # random
+    sage: timeit('Polyhedron(vertices=[[sqrt_2, 0], [0, cbrt_2]])')     # random
     5 loops, best of 3: 43.2 ms per loop
-    sage: P4 = Polyhedron(vertices = [[sqrt_2, 0], [0, cbrt_2]]); P4
+    sage: P4 = Polyhedron(vertices=[[sqrt_2, 0], [0, cbrt_2]]); P4
     A 1-dimensional polyhedron in AA^2 defined as the convex hull of 2 vertices
 
 .. end of output
@@ -206,11 +213,12 @@ There is another way to create a polyhedron over algebraic numbers:
 
 ::
 
+    sage: # needs sage.rings.number_field
     sage: K.<a> = NumberField(x^2 - 2, embedding=AA(2)**(1/2))
     sage: L.<b> = NumberField(x^3 - 2, embedding=AA(2)**(1/3))
-    sage: timeit('Polyhedron(vertices = [[a, 0], [0, b]])')  # random
+    sage: timeit('Polyhedron(vertices=[[a, 0], [0, b]])')               # random
     5 loops, best of 3: 39.9 ms per loop
-    sage: P5 = Polyhedron(vertices = [[a, 0], [0, b]]); P5
+    sage: P5 = Polyhedron(vertices=[[a, 0], [0, b]]); P5
     A 1-dimensional polyhedron in AA^2 defined as the convex hull of 2 vertices
 
 .. end of output
@@ -219,11 +227,16 @@ If the base ring is known it may be a good option to use the proper :meth:`sage.
 
 ::
 
+    sage: # needs sage.rings.number_field
     sage: J = K.composite_fields(L)[0]
-    sage: timeit('Polyhedron(vertices = [[J(a), 0], [0, J(b)]])')  # random
+    sage: timeit('Polyhedron(vertices=[[J(a), 0], [0, J(b)]])')         # random
     25 loops, best of 3: 9.8 ms per loop
-    sage: P5_comp = Polyhedron(vertices = [[J(a), 0], [0, J(b)]]); P5_comp
-    A 1-dimensional polyhedron in (Number Field in ab with defining polynomial x^6 - 6*x^4 - 4*x^3 + 12*x^2 - 24*x - 4 with ab = -0.1542925124782219?)^2 defined as the convex hull of 2 vertices
+    sage: P5_comp = Polyhedron(vertices=[[J(a), 0], [0, J(b)]]); P5_comp
+    A 1-dimensional polyhedron
+     in (Number Field in ab with defining polynomial
+         x^6 - 6*x^4 - 4*x^3 + 12*x^2 - 24*x - 4
+         with ab = -0.1542925124782219?)^2
+     defined as the convex hull of 2 vertices
 
 .. end of output
 
@@ -232,9 +245,9 @@ It is not possible to define a polyhedron over it:
 
 ::
 
-    sage: sqrt_2s = sqrt(2)
-    sage: cbrt_2s = 2^(1/3)
-    sage: Polyhedron(vertices = [[sqrt_2s, 0], [0, cbrt_2s]])
+    sage: sqrt_2s = sqrt(2)                                                             # needs sage.symbolic
+    sage: cbrt_2s = 2^(1/3)                                                             # needs sage.symbolic
+    sage: Polyhedron(vertices=[[sqrt_2s, 0], [0, cbrt_2s]])                             # needs sage.symbolic
     Traceback (most recent call last):
     ...
     ValueError: no default backend for computations with Symbolic Ring
@@ -379,7 +392,7 @@ inequalities and equalities as objects.
 
 ::
 
-    sage: P3_QQ = Polyhedron(vertices = [[0.5, 0], [0, 0.5]], base_ring=QQ)
+    sage: P3_QQ = Polyhedron(vertices=[[0.5, 0], [0, 0.5]], base_ring=QQ)
     sage: HRep = P3_QQ.Hrepresentation()
     sage: H1 = HRep[0]; H1
     An equation (2, 2) x - 1 == 0
@@ -517,7 +530,7 @@ In order to use a specific backend, we specify the :code:`backend` parameter.
 
 ::
 
-    sage: P1_cdd = Polyhedron(vertices = [[1, 0], [0, 1]], rays = [[1, 1]], backend='cdd')
+    sage: P1_cdd = Polyhedron(vertices=[[1, 0], [0, 1]], rays=[[1, 1]], backend='cdd')
     sage: P1_cdd
     A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 2 vertices and 1 ray
 
@@ -557,7 +570,7 @@ The :code:`cdd` backend accepts also entries in :code:`RDF`:
 
 ::
 
-    sage: P3_cdd = Polyhedron(vertices = [[0.5, 0], [0, 0.5]], backend='cdd')
+    sage: P3_cdd = Polyhedron(vertices=[[0.5, 0], [0, 0.5]], backend='cdd')
     sage: P3_cdd
     A 1-dimensional polyhedron in RDF^2 defined as the convex hull of 2 vertices
 
@@ -567,12 +580,12 @@ but not algebraic or symbolic values:
 
 ::
 
-    sage: P4_cdd = Polyhedron(vertices = [[sqrt_2, 0], [0, cbrt_2]], backend='cdd')
+    sage: P4_cdd = Polyhedron(vertices=[[sqrt_2, 0], [0, cbrt_2]], backend='cdd')       # needs sage.rings.number_field
     Traceback (most recent call last):
     ...
     ValueError: No such backend (=cdd) implemented for given basering (=Algebraic Real Field).
 
-    sage: P5_cdd = Polyhedron(vertices = [[sqrt_2s, 0], [0, cbrt_2s]], backend='cdd')
+    sage: P5_cdd = Polyhedron(vertices=[[sqrt_2s, 0], [0, cbrt_2s]], backend='cdd')     # needs sage.symbolic
     Traceback (most recent call last):
     ...
     ValueError: No such backend (=cdd) implemented for given basering (=Symbolic Ring).
@@ -636,7 +649,7 @@ for sage is installed.
 
 ::
 
-    sage: p = Polyhedron(vertices=[(0,0),(1,0),(0,1)],             # optional - polymake
+    sage: p = Polyhedron(vertices=[(0,0),(1,0),(0,1)],             # optional - jupymake
     ....:                rays=[(1,1)], lines=[],
     ....:                backend='polymake', base_ring=QQ)
 
@@ -646,9 +659,12 @@ An example with quadratic field:
 
 ::
 
-    sage: V = polytopes.dodecahedron().vertices_list()
-    sage: Polyhedron(vertices=V, backend='polymake')               # optional - polymake
-    A 3-dimensional polyhedron in (Number Field in sqrt5 with defining polynomial x^2 - 5)^3 defined as the convex hull of 20 vertices
+    sage: V = polytopes.dodecahedron().vertices_list()                                  # needs sage.rings.number_field
+    sage: Polyhedron(vertices=V, backend='polymake')    # optional - jupymake           # needs sage.rings.number_field
+    A 3-dimensional polyhedron
+     in (Number Field in sqrt5 with defining polynomial x^2 - 5
+     with sqrt5 = 2.236067977499790?)^3
+     defined as the convex hull of 20 vertices
 
 .. end of output
 
@@ -668,7 +684,7 @@ examples.
 
 ::
 
-    sage: type(D)
+    sage: type(D)                                                                       # needs sage.rings.number_field
     <class 'sage.geometry.polyhedron.parent.Polyhedra_field_with_category.element_class'>
 
 .. end of output
@@ -678,6 +694,7 @@ backend :code:`field` is called.
 
 ::
 
+    sage: # needs sage.rings.number_field
     sage: P4.parent()
     Polyhedra in AA^2
     sage: P5.parent()
@@ -696,13 +713,15 @@ The fourth backend is :code:`normaliz` and is an optional Sage package.
 
 ::
 
-    sage: P1_normaliz = Polyhedron(vertices = [[1, 0], [0, 1]], rays = [[1, 1]], backend='normaliz')  # optional - pynormaliz
-    sage: type(P1_normaliz)                                                                           # optional - pynormaliz
+    sage: # optional - pynormaliz
+    sage: P1_normaliz = Polyhedron(vertices=[[1, 0], [0, 1]], rays=[[1, 1]],
+    ....:                          backend='normaliz')
+    sage: type(P1_normaliz)
     <class 'sage.geometry.polyhedron.parent.Polyhedra_QQ_normaliz_with_category.element_class'>
-    sage: P2_normaliz = Polyhedron(vertices = [[1/2, 0, 0], [0, 1/2, 0]],                             # optional - pynormaliz
-    ....:                 rays = [[1, 1, 0]],
-    ....:                 lines = [[0, 0, 1]], backend='normaliz')
-    sage: type(P2_normaliz)                                                                           # optional - pynormaliz
+    sage: P2_normaliz = Polyhedron(vertices=[[1/2, 0, 0], [0, 1/2, 0]],
+    ....:                          rays=[[1, 1, 0]],
+    ....:                          lines=[[0, 0, 1]], backend='normaliz')
+    sage: type(P2_normaliz)
     <class 'sage.geometry.polyhedron.parent.Polyhedra_QQ_normaliz_with_category.element_class'>
 
 .. end of output
@@ -711,7 +730,7 @@ This backend does not work with :code:`RDF` or other inexact fields.
 
 ::
 
-    sage: P3_normaliz = Polyhedron(vertices = [[0.5, 0], [0, 0.5]], backend='normaliz')             # optional - pynormaliz
+    sage: P3_normaliz = Polyhedron(vertices=[[0.5, 0], [0, 0.5]], backend='normaliz')   # optional - pynormaliz
     Traceback (most recent call last):
     ...
     ValueError: No such backend (=normaliz) implemented for given basering (=Real Double Field).
@@ -725,12 +744,14 @@ the computation is done using an embedded number field.
 
 ::
 
-    sage: P4_normaliz = Polyhedron(vertices = [[sqrt_2, 0], [0, cbrt_2]], backend='normaliz')       # optional - pynormaliz
-    sage: P4_normaliz                                                                               # optional - pynormaliz
+    sage: # optional - pynormaliz
+    sage: P4_normaliz = Polyhedron(vertices=[[sqrt_2, 0], [0, cbrt_2]],
+    ....:                          backend='normaliz')
+    sage: P4_normaliz
     A 1-dimensional polyhedron in AA^2 defined as the convex hull of 2 vertices
-
-    sage: P5_normaliz = Polyhedron(vertices = [[sqrt_2s, 0], [0, cbrt_2s]], backend='normaliz')     # optional - pynormaliz
-    sage: P5_normaliz                                                                               # optional - pynormaliz
+    sage: P5_normaliz = Polyhedron(vertices=[[sqrt_2s, 0], [0, cbrt_2s]],
+    ....:                          backend='normaliz')
+    sage: P5_normaliz
     A 1-dimensional polyhedron in (Symbolic Ring)^2 defined as the convex hull of 2 vertices
 
 .. end of output
@@ -740,12 +761,14 @@ The backend :code:`normaliz` provides other methods such as
 
 ::
 
-    sage: P6 = Polyhedron(vertices = [[0, 0], [3/2, 0], [3/2, 3/2], [0, 3]], backend='normaliz')  # optional - pynormaliz
-    sage: IH = P6.integral_hull(); IH                                                             # optional - pynormaliz
+    sage: # optional - pynormaliz
+    sage: P6 = Polyhedron(vertices=[[0, 0], [3/2, 0], [3/2, 3/2], [0, 3]],
+    ....:                 backend='normaliz')
+    sage: IH = P6.integral_hull(); IH
     A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 4 vertices
-    sage: P6.plot(color='blue')+IH.plot(color='red')                                              # optional - pynormaliz
+    sage: P6.plot(color='blue') + IH.plot(color='red')
     Graphics object consisting of 12 graphics primitives
-    sage: P1_normaliz.integral_hull()                                                             # optional - pynormaliz
+    sage: P1_normaliz.integral_hull()
     A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 2 vertices and 1 ray
 
 .. end of output
@@ -775,8 +798,11 @@ polytope is already defined!
 
 ::
 
-    sage: A = polytopes.buckyball(); A  # can take long
-    A 3-dimensional polyhedron in (Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?)^3 defined as the convex hull of 60 vertices
+    sage: A = polytopes.buckyball(); A  # can take long                                 # needs sage.rings.number_field
+    A 3-dimensional polyhedron
+     in (Number Field in sqrt5 with defining polynomial x^2 - 5
+         with sqrt5 = 2.236067977499790?)^3
+     defined as the convex hull of 60 vertices
     sage: B = polytopes.cross_polytope(4); B
     A 4-dimensional polyhedron in ZZ^4 defined as the convex hull of 8 vertices
     sage: C = polytopes.cyclic_polytope(3,10); C
@@ -791,17 +817,17 @@ polytope is already defined!
 Bibliography
 =============
 
-.. [Bro1983] Brondsted, A., An Introduction to Convex Polytopes, volume 90
-             of Graduate Texts in Mathematics. Springer-Verlag, New York, 1983. ISBN
-             978-1-4612-7023-2
+.. [Bro1983] \A. Brondsted, An Introduction to Convex Polytopes, volume 90
+             of Graduate Texts in Mathematics. Springer-Verlag, New York, 1983.
+             ISBN 978-1-4612-7023-2
 
-.. [Goo2004] J.E. Goodman and J. O'Rourke, editors, CRC Press LLC, Boca Raton, FL, 2004.
+.. [Goo2004] \J. E. Goodman and J. O'Rourke, editors, CRC Press LLC, Boca Raton, FL, 2004.
              ISBN 978-1584883012 (65 chapters, xvii + 1539 pages).
 
-.. [Gru1967] Grünbaum, B., Convex polytopes, volume 221 of Graduate Texts in
-             Mathematics. Springer-Verlag, New York, 2003. ISBN
-             978-1-4613-0019-9
+.. [Gru1967] \B. Grünbaum, Convex polytopes, volume 221 of Graduate Texts in
+             Mathematics. Springer-Verlag, New York, 2003.
+             ISBN 978-1-4613-0019-9
 
-.. [Zie2007] Ziegler, G. M., Lectures on polytopes, volume 152 of Graduate
+.. [Zie2007] \G. M. Ziegler, Lectures on polytopes, volume 152 of Graduate
              Texts in Mathematics. Springer-Verlag, New York, 2007.
              ISBN 978-0-387-94365-7

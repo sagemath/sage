@@ -28,10 +28,10 @@ The implementation works over any exact field that is embedded in
 `\RR`, for example::
 
     sage: from sage.geometry.polyhedron.double_description import StandardAlgorithm
-    sage: A = matrix(AA, [(1,0,1), (0,1,1), (-AA(2).sqrt(),-AA(3).sqrt(),1),
+    sage: A = matrix(AA, [(1,0,1), (0,1,1), (-AA(2).sqrt(),-AA(3).sqrt(),1),            # needs sage.rings.number_field
     ....:                 (-AA(3).sqrt(),-AA(2).sqrt(),1)])
     sage: alg = StandardAlgorithm(A)
-    sage: alg.run().R
+    sage: alg.run().R                                                                   # needs sage.rings.number_field
     [(-0.4177376677004119?, 0.5822623322995881?, 0.4177376677004119?),
      (-0.2411809548974793?, -0.2411809548974793?, 0.2411809548974793?),
      (0.07665629029830300?, 0.07665629029830300?, 0.2411809548974793?),
@@ -68,14 +68,13 @@ The implementation works over any exact field that is embedded in
 # Compare with PPL if the base ring is QQ. Can be left enabled since
 # we don't use the Python fallback for polyhedra over QQ unless you
 # construct one by hand.
-from __future__ import division, absolute_import
 
 VERIFY_RESULT = True
 
 import itertools
 
 from sage.misc.cachefunc import cached_method
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 from sage.modules.free_module_element import vector
 from sage.matrix.matrix_space import MatrixSpace
 
@@ -148,7 +147,7 @@ class DoubleDescriptionPair:
         self.problem = problem
         self.A = list(A_rows)
         self.R = list(R_cols)
-        self.one  = problem._field.one()
+        self.one = problem._field.one()
         self.zero = problem._field.zero()
 
         # a cache for scalar products (see the method zero_set)
@@ -412,11 +411,13 @@ class DoubleDescriptionPair:
             sage: DD.matrix_space(3,2)
             Full MatrixSpace of 3 by 2 dense matrices over Rational Field
 
+            sage: # needs sage.rings.number_field
             sage: K.<sqrt2> = QuadraticField(2)
             sage: A = matrix([[1,sqrt2],[2,0]])
             sage: DD, _  = Problem(A).initial_pair()
             sage: DD.matrix_space(1,2)
-            Full MatrixSpace of 1 by 2 dense matrices over Number Field in sqrt2 with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?
+            Full MatrixSpace of 1 by 2 dense matrices
+             over Number Field in sqrt2 with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?
         """
         return MatrixSpace(self.problem.base_ring(), nrows, ncols)
 
@@ -565,7 +566,8 @@ class Problem:
             ((1, 1), (-1, 1))
         """
         rows = [a.change_ring(self._field) for a in self._A.rows()]
-        for a in rows: a.set_immutable()
+        for a in rows:
+            a.set_immutable()
         return tuple(rows)
 
     def A_matrix(self):
@@ -596,9 +598,9 @@ class Problem:
 
         EXAMPLES::
 
-            sage: A = matrix(AA, [(1, 1), (-1, 1)])
+            sage: A = matrix(AA, [(1, 1), (-1, 1)])                                     # needs sage.rings.number_field
             sage: from sage.geometry.polyhedron.double_description import Problem
-            sage: Problem(A).base_ring()
+            sage: Problem(A).base_ring()                                                # needs sage.rings.number_field
             Algebraic Real Field
         """
         return self._field

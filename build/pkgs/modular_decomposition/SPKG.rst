@@ -1,6 +1,5 @@
-
-modular decomposition
-=====================
+modular_decomposition: A modular decomposition algorithm
+========================================================
 
 Description
 -----------
@@ -22,12 +21,3 @@ Fabien de Montgolfier
 
 http://www.liafa.jussieu.fr/~fm/
 
-Dependencies
-------------
-
-None
-
-Patches
--------
-
-None

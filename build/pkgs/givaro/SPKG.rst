@@ -1,5 +1,5 @@
-Givaro
-======
+givaro: C++ library for arithmetic and algebraic computations
+=============================================================
 
 Description
 -----------
@@ -14,7 +14,7 @@ algebraic objects, such as vectors, matrices (dense, sparse,
 structured), univariate polynomials (and therefore recursive
 multivariate).
 
-Website: http://www-lmc.imag.fr/CASYS/LOGICIELS/givaro/
+Website: https://casys.gricad-pages.univ-grenoble-alpes.fr/givaro/
 
 SPKG Repository: https://bitbucket.org/malb/givaro-spkg
 
@@ -28,9 +28,3 @@ Upstream Contact
 ----------------
 
 -  Clement Pernet
-
-Dependencies
-------------
-
--  GNU patch
--  GMP/MPIR

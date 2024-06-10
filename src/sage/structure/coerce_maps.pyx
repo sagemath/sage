@@ -1,8 +1,7 @@
+# sage_setup: distribution = sagemath-objects
 """
 Coerce maps
 """
-
-import re
 import types
 
 from sage.structure.parent cimport Parent
@@ -32,18 +31,21 @@ cdef class DefaultConvertMap(Map):
         TESTS:
 
         Maps of this type are morphisms in the category of sets with
-        partial maps (see :trac:`15618`)::
+        partial maps (see :issue:`15618`)::
 
-            sage: f = GF(11).convert_map_from(GF(7)); f
+            sage: f = GF(11).convert_map_from(GF(7)); f                                 # needs sage.rings.finite_rings
             Conversion map:
               From: Finite Field of size 7
               To:   Finite Field of size 11
-            sage: f.parent()
-            Set of Morphisms from Finite Field of size 7 to Finite Field of size 11 in Category of sets with partial maps
+            sage: f.parent()                                                            # needs sage.rings.finite_rings
+            Set of Morphisms
+             from Finite Field of size 7
+             to Finite Field of size 11
+             in Category of sets with partial maps
 
-        Test that :trac:`23211` is resolved::
+        Test that :issue:`23211` is resolved::
 
-            sage: f._is_coercion
+            sage: f._is_coercion                                                        # needs sage.rings.finite_rings
             False
             sage: QQ[['x']].coerce_map_from(QQ)._is_coercion
             True
@@ -52,8 +54,9 @@ cdef class DefaultConvertMap(Map):
 
             sage: from sage.structure.coerce_maps import DefaultConvertMap
             sage: DefaultConvertMap(ZZ, ZZ)
-            doctest:...: DeprecationWarning: DefaultConvertMap is deprecated, use DefaultConvertMap_unique instead. This probably means that _element_constructor_ should be a method and not some other kind of callable
-            See https://trac.sagemath.org/26879 for details.
+            doctest:...: DeprecationWarning: DefaultConvertMap is deprecated, use DefaultConvertMap_unique instead.
+            This probably means that _element_constructor_ should be a method and not some other kind of callable
+            See https://github.com/sagemath/sage/issues/26879 for details.
             Conversion map:
               From: Integer Ring
               To:   Integer Ring
@@ -63,7 +66,7 @@ cdef class DefaultConvertMap(Map):
         # When removing this deprecation, this class should be merged
         # into DefaultConvertMap_unique.
         if not isinstance(self, DefaultConvertMap_unique):
-            from sage.misc.superseded import deprecation
+            from sage.misc.superseded import deprecation_cython as deprecation
             deprecation(26879, "DefaultConvertMap is deprecated, use DefaultConvertMap_unique instead. This probably means that _element_constructor_ should be a method and not some other kind of callable")
 
         if not isinstance(domain, Parent):
@@ -83,8 +86,8 @@ cdef class DefaultConvertMap(Map):
 
         EXAMPLES::
 
-            sage: f = GF(11).convert_map_from(GF(7))
-            sage: f._repr_type()
+            sage: f = GF(11).convert_map_from(GF(7))                                    # needs sage.rings.finite_rings
+            sage: f._repr_type()                                                        # needs sage.rings.finite_rings
             'Conversion'
         """
         return self._repr_type_str or ("Coercion" if self._is_coercion else "Conversion")
@@ -192,14 +195,15 @@ cdef class NamedConvertMap(Map):
         """
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: from sage.structure.coerce_maps import NamedConvertMap
             sage: var('t')
             t
             sage: mor = NamedConvertMap(SR, QQ['t'], '_polynomial_')
-            sage: mor(t^2/4+1)
+            sage: mor(t^2/4 + 1)
             1/4*t^2 + 1
             sage: mor = NamedConvertMap(SR, GF(7)[['t']], '_polynomial_')
-            sage: mor(t^2/4+1)
+            sage: mor(t^2/4 + 1)
             1 + 2*t^2
         """
         if isinstance(domain, type):
@@ -215,6 +219,7 @@ cdef class NamedConvertMap(Map):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: from sage.structure.coerce_maps import NamedConvertMap
             sage: var('t')
             t
@@ -224,11 +229,11 @@ cdef class NamedConvertMap(Map):
             Conversion via _polynomial_ method map:
               From: Symbolic Ring
               To:   Univariate Polynomial Ring in t over Rational Field
-            sage: phi == psi         # todo: comparison not implemented
+            sage: phi == psi                    # not implemented
             True
-            sage: psi(t^2/4+1)
+            sage: psi(t^2/4 + 1)
             1/4*t^2 + 1
-            sage: psi(t^2/4+1) == phi(t^2/4+1)
+            sage: psi(t^2/4 + 1) == phi(t^2/4 + 1)
             True
         """
         slots = Map._extra_slots(self)
@@ -241,6 +246,7 @@ cdef class NamedConvertMap(Map):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: from sage.structure.coerce_maps import NamedConvertMap
             sage: var('t')
             t
@@ -250,11 +256,11 @@ cdef class NamedConvertMap(Map):
             Conversion via _polynomial_ method map:
               From: Symbolic Ring
               To:   Univariate Polynomial Ring in t over Rational Field
-            sage: phi == psi         # todo: comparison not implemented
+            sage: phi == psi                    # not implemented
             True
-            sage: psi(t^2/4+1)
+            sage: psi(t^2/4 + 1)
             1/4*t^2 + 1
-            sage: psi(t^2/4+1) == phi(t^2/4+1)
+            sage: psi(t^2/4 + 1) == phi(t^2/4 + 1)
             True
         """
         self.method_name = _slots['method_name']
@@ -282,7 +288,7 @@ cdef class NamedConvertMap(Map):
                 print(type(x), x)
                 print(type(C), C)
                 print(self.method_name)
-            raise TypeError("Cannot coerce {} to {}".format(x, C))
+            raise TypeError(f"cannot coerce {x} to {C}")
         cdef Map m
         cdef Element e = method(C)
         if e is None:
@@ -299,8 +305,8 @@ cdef class NamedConvertMap(Map):
         EXAMPLES::
 
             sage: from sage.structure.coerce_maps import NamedConvertMap
-            sage: f = NamedConvertMap(SR, ZZ['x'], '_polynomial_')
-            sage: f(x^2+1, check=True)
+            sage: f = NamedConvertMap(SR, ZZ['x'], '_polynomial_')                      # needs sage.symbolic
+            sage: f(x^2 + 1, check=True)                                                # needs sage.symbolic
             x^2 + 1
         """
         cdef Parent C = self._codomain
@@ -312,7 +318,7 @@ cdef class NamedConvertMap(Map):
 
 cdef class CallableConvertMap(Map):
     def __init__(self, domain, codomain, func, parent_as_first_arg=None):
-        """
+        r"""
         This lets one easily create maps from any callable object.
 
         This is especially useful to create maps from bound methods.
@@ -329,10 +335,11 @@ cdef class CallableConvertMap(Map):
               From: Integer Ring
               To:   Rational Field
 
-        Create a homomorphism from $\RR$ to $\RR^+$ viewed as additive groups.
+        Create a homomorphism from `\RR` to `\RR^+` viewed as additive groups.
 
         ::
 
+            sage: # needs sage.symbolic
             sage: f = CallableConvertMap(RR, RR, exp, parent_as_first_arg=False)
             sage: f(0)
             1.00000000000000
@@ -370,7 +377,7 @@ cdef class CallableConvertMap(Map):
             sage: def foo(P, x): return x^2
             sage: f = CallableConvertMap(ZZ, ZZ, foo)
             sage: g = copy(f)     # indirect doctest
-            sage: f == g          # todo: comparison not implemented
+            sage: f == g          # not implemented (todo: implement comparison)
             True
             sage: f(3) == g(3)
             True
@@ -390,7 +397,7 @@ cdef class CallableConvertMap(Map):
             sage: def foo(P, x): return x^2
             sage: f = CallableConvertMap(ZZ, ZZ, foo)
             sage: g = copy(f)     # indirect doctest
-            sage: f == g          # todo: comparison not implemented
+            sage: f == g          # not implemented (todo: implement comparison)
             True
             sage: f(3) == g(3)
             True
@@ -550,6 +557,7 @@ cpdef Element _ccall_test_function(codomain, x):
     """
     return codomain(x*x*x-x)
 
+
 def test_CCallableConvertMap(domain, name=None):
     """
     For testing CCallableConvertMap_class.
@@ -636,7 +644,7 @@ cdef class TryMap(Map):
             sage: map2 = QQ.coerce_map_from(ZZ)
             sage: map = sage.structure.coerce_maps.TryMap(map1, map2, error_types=(ZeroDivisionError,))
             sage: cmap = copy(map)     # indirect doctest
-            sage: cmap == map          # todo: comparison not implemented
+            sage: cmap == map          # not implemented (todo: implement comparison)
             True
             sage: map(3) == cmap(3)
             True
@@ -659,7 +667,7 @@ cdef class TryMap(Map):
             sage: map2 = QQ.coerce_map_from(ZZ)
             sage: map = sage.structure.coerce_maps.TryMap(map1, map2, error_types=(ZeroDivisionError,))
             sage: cmap = copy(map)     # indirect doctest
-            sage: cmap == map          # todo: comparison not implemented
+            sage: cmap == map          # not implemented (todo: implement comparison)
             True
             sage: map(3) == cmap(3)
             True

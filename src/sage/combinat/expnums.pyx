@@ -11,7 +11,7 @@ from cysignals.memory cimport check_allocarray, sig_free
 from sage.libs.gmp.mpz cimport *
 
 from sage.rings.integer cimport Integer
-from sage.rings.integer_ring import ZZ
+
 
 def expnums(int n, int aa):
     r"""
@@ -21,9 +21,9 @@ def expnums(int n, int aa):
     INPUT:
 
 
-    -  ``n`` - C machine int
+    -  ``n`` -- C machine int
 
-    -  ``aa`` - C machine int
+    -  ``aa`` -- C machine int
 
 
     OUTPUT: A list of length `n`.
@@ -87,17 +87,17 @@ def expnums(int n, int aa):
     mpz_init_set_si(bell[1], aa)
     cdef int i
     cdef int k
-    for i from 1 <= i < n:
+    for i in range(1, n):
         mpz_init(bell[i+1])
         mpz_mul(bell[i+1], a, bell[1])
-        for k from 0 <= k < i:
+        for k in range(i):
             mpz_add(bell[i-k], bell[i-k], bell[i-k+1])
 
         z = Integer.__new__(Integer)
         mpz_set(z.value, bell[1])
         r.append(z)
 
-    for i from 1 <= i <= n:
+    for i in range(1, n + 1):
         mpz_clear(bell[i])
     sig_free(bell)
 
@@ -116,6 +116,7 @@ def expnums(int n, int aa):
 #     od;
 #     return bell[1];
 # end);
+
 
 def expnums2(n, aa):
     r"""

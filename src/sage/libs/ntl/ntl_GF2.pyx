@@ -1,7 +1,11 @@
-# distutils: libraries = ntl gmp
+# distutils: libraries = NTL_LIBRARIES gmp
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Martin Albrecht <malb@informatik.uni-bremen.de>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -13,10 +17,9 @@
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from cysignals.signals cimport sig_on, sig_off
 from sage.ext.cplusplus cimport ccrepr, ccreadstr
 
 include 'misc.pxi'
@@ -24,13 +27,12 @@ include 'decl.pxi'
 
 from cpython.object cimport Py_EQ, Py_NE
 from sage.rings.integer cimport Integer
-from sage.rings.integer_ring cimport IntegerRing_class
 
 ##############################################################################
 # GF2: Bits
 ##############################################################################
 
-cdef class ntl_GF2(object):
+cdef class ntl_GF2():
     r"""
     The \class{GF2} represents the field GF(2). Computationally
     speaking, it is not a particularly useful class.  Its main use is
@@ -52,7 +54,7 @@ cdef class ntl_GF2(object):
         """
         if isinstance(v, ntl_GF2):
             self.x = (<ntl_GF2>v).x
-        elif isinstance(v, int) or isinstance(v, long) or isinstance(v, Integer):
+        elif isinstance(v, (int, Integer)):
             GF2_conv_long(self.x, int(v) % 2)
         elif v is not None:
             ccreadstr(self.x, str(v))
@@ -112,6 +114,8 @@ cdef class ntl_GF2(object):
 
     def __mul__(self, other):
         """
+        EXAMPLES::
+
             sage: o = ntl.GF2(1)
             sage: z = ntl.GF2(0)
             sage: o*o
@@ -133,6 +137,8 @@ cdef class ntl_GF2(object):
 
     def __truediv__(self, other):
         """
+        EXAMPLES::
+
             sage: o = ntl.GF2(1)
             sage: z = ntl.GF2(0)
             sage: o/o
@@ -155,6 +161,8 @@ cdef class ntl_GF2(object):
 
     def __sub__(self, other):
         """
+        EXAMPLES::
+
             sage: o = ntl.GF2(1)
             sage: z = ntl.GF2(0)
             sage: o-o
@@ -176,6 +184,8 @@ cdef class ntl_GF2(object):
 
     def __add__(self, other):
         """
+        EXAMPLES::
+
             sage: o = ntl.GF2(1)
             sage: z = ntl.GF2(0)
             sage: o+o
@@ -197,6 +207,8 @@ cdef class ntl_GF2(object):
 
     def __neg__(ntl_GF2 self):
         """
+        EXAMPLES::
+
             sage: o = ntl.GF2(1)
             sage: z = ntl.GF2(0)
             sage: -z
@@ -210,6 +222,8 @@ cdef class ntl_GF2(object):
 
     def __pow__(ntl_GF2 self, long e, ignored):
         """
+        EXAMPLES::
+
             sage: o = ntl.GF2(1)
             sage: z = ntl.GF2(0)
             sage: z^2
@@ -237,6 +251,7 @@ cdef class ntl_GF2(object):
         cdef long l = GF2_conv_to_long(self.x)
         return int(l)
 
+
 def unpickle_class_value(cls, x):
     """
     Here for unpickling.
@@ -246,9 +261,10 @@ def unpickle_class_value(cls, x):
         sage: sage.libs.ntl.ntl_GF2.unpickle_class_value(ntl.GF2,1)
         1
         sage: type(sage.libs.ntl.ntl_GF2.unpickle_class_value(ntl.GF2,1))
-        <type 'sage.libs.ntl.ntl_GF2.ntl_GF2'>
+        <class 'sage.libs.ntl.ntl_GF2.ntl_GF2'>
     """
     return cls(x)
+
 
 def unpickle_class_args(cls, x):
     """
@@ -259,7 +275,6 @@ def unpickle_class_args(cls, x):
         sage: sage.libs.ntl.ntl_GF2.unpickle_class_args(ntl.GF2,[1])
         1
         sage: type(sage.libs.ntl.ntl_GF2.unpickle_class_args(ntl.GF2,[1]))
-        <type 'sage.libs.ntl.ntl_GF2.ntl_GF2'>
+        <class 'sage.libs.ntl.ntl_GF2.ntl_GF2'>
     """
     return cls(*x)
-

@@ -1,0 +1,29 @@
+# This file, build/pkgs/_prereq/distros/gentoo.txt, contains names of
+# Gentoo packages needed for installation of Sage from source.
+#
+# In addition, the files build/pkgs/SPKG/distros/gentoo.txt contain
+# the names of packages that provide the equivalent of SPKG.
+#
+# One package per line. No need to escape special characters.
+# Everything on a line after a # character is ignored.
+#
+sys-devel/binutils
+sys-libs/binutils-libs
+dev-build/make
+dev-scheme/guile
+dev-libs/libffi
+app-arch/tar
+sys-devel/gcc
+dev-libs/mpc
+sys-libs/glibc
+sys-kernel/linux-headers
+dev-lang/perl
+sys-devel/m4
+sys-devel/bc
+dev-lang/python
+sys-devel/flex
+app-misc/ca-certificates
+dev-libs/libxml2
+sys-apps/findutils
+sys-apps/which
+sys-apps/diffutils

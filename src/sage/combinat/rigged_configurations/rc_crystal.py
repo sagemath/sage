@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Crystal of Rigged Configurations
 
@@ -9,7 +10,7 @@ We only consider the highest weight crystal structure, not the
 Kirillov-Reshetikhin structure, and we extend this to symmetrizable types.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -21,9 +22,9 @@ Kirillov-Reshetikhin structure, and we extend this to symmetrizable types.
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from itertools import repeat
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
@@ -38,6 +39,8 @@ from sage.combinat.rigged_configurations.rigged_configuration_element import (
 from sage.combinat.rigged_configurations.rigged_partition import RiggedPartition
 
 # Note on implementation, this class is used for simply-laced types only
+
+
 class CrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
     r"""
     A highest weight crystal of rigged configurations.
@@ -150,7 +153,7 @@ class CrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
         if isinstance(cartan_type, CartanTypeFolded):
             return CrystalOfNonSimplyLacedRC(cartan_type, wt, WLR)
 
-        return super(CrystalOfRiggedConfigurations, cls).__classcall__(cls, wt, WLR=WLR)
+        return super().__classcall__(cls, wt, WLR=WLR)
 
     def __init__(self, wt, WLR):
         r"""
@@ -177,8 +180,8 @@ class CrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
         else:
             category = (RegularCrystals(), HighestWeightCrystals(), InfiniteEnumeratedSets())
         Parent.__init__(self, category=category)
-        n = self._cartan_type.rank() #== len(self._cartan_type.index_set())
-        self.module_generators = (self.element_class( self, partition_list=[[] for i in range(n)] ),)
+        n = self._cartan_type.rank()  # == len(self._cartan_type.index_set())
+        self.module_generators = (self.element_class(self, partition_list=[[] for _ in repeat(None, n)]),)
 
     options = RiggedConfigurations.options
 
@@ -222,7 +225,7 @@ class CrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
 
         TESTS:
 
-        Check that :trac:`17054` is fixed::
+        Check that :issue:`17054` is fixed::
 
             sage: La = RootSystem(['A', 2]).weight_lattice().fundamental_weights()
             sage: RC = crystals.RiggedConfigurations(4*La[1] + 4*La[2])
@@ -296,10 +299,12 @@ class CrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
 
     Element = RCHighestWeightElement
 
+
 class CrystalOfNonSimplyLacedRC(CrystalOfRiggedConfigurations):
     """
     Highest weight crystal of rigged configurations in non-simply-laced type.
     """
+
     def __init__(self, vct, wt, WLR):
         """
         Initialize ``self``.
@@ -309,7 +314,7 @@ class CrystalOfNonSimplyLacedRC(CrystalOfRiggedConfigurations):
             sage: La = RootSystem(['C', 3]).weight_lattice().fundamental_weights()
             sage: RC = crystals.RiggedConfigurations(La[1])
             sage: TestSuite(RC).run()
-         """
+        """
         self._folded_ct = vct
         CrystalOfRiggedConfigurations.__init__(self, wt, WLR)
 
@@ -408,7 +413,7 @@ class CrystalOfNonSimplyLacedRC(CrystalOfRiggedConfigurations):
             (/)
             <BLANKLINE>
         """
-        gamma = [int(_) for _ in self._folded_ct.scaling_factors()]
+        gamma = [int(f) for f in self._folded_ct.scaling_factors()]
         sigma = self._folded_ct._orbit
         n = self._folded_ct._folding.rank()
         vindex = self._folded_ct._folding.index_set()
@@ -440,7 +445,7 @@ class CrystalOfNonSimplyLacedRC(CrystalOfRiggedConfigurations):
             sage: elt == RC.from_virtual(RC.to_virtual(elt))
             True
         """
-        gamma = list(self._folded_ct.scaling_factors()) #map(int, self._folded_ct.scaling_factors())
+        gamma = list(self._folded_ct.scaling_factors())  # map(int, self._folded_ct.scaling_factors())
         sigma = self._folded_ct._orbit
         n = self._cartan_type.rank()
         partitions = [None] * n

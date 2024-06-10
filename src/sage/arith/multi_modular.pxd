@@ -1,23 +1,23 @@
 from sage.ext.mod_int cimport *
 from sage.libs.gmp.types cimport mpz_t
 
-cdef class MultiModularBasis_base(object):
-    cdef int      n
+cdef class MultiModularBasis_base():
+    cdef int n
     cdef mod_int* moduli
-    cdef mpz_t*   partial_products
-    cdef mod_int* C # precomputed values for CRT
-    cdef mpz_t    product
-    cdef mpz_t    half_product
+    cdef mpz_t* partial_products
+    cdef mod_int* C  # precomputed values for CRT
+    cdef mpz_t product
+    cdef mpz_t half_product
     cdef unsigned long _l_bound
     cdef unsigned long _u_bound
     cdef unsigned long _num_primes
 
     cdef mod_int _new_random_prime(self, set known_primes) except 1
-    cdef mod_int last_prime(self)
+    cdef mod_int last_prime(self) noexcept
     cdef _realloc_to_new_count(self, new_count)
     cdef int _extend_moduli_to_height_c(self, mpz_t height) except -1
-    cdef void _refresh_products(self, int start)
-    cdef void _refresh_prod(self)
+    cdef void _refresh_products(self, int start) noexcept
+    cdef void _refresh_prod(self) noexcept
     cdef void _refresh_precomputations(self, int start) except *
     cdef int min_moduli_count(self, mpz_t height) except -1
 

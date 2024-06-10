@@ -102,7 +102,7 @@ Edges can be labeled.
 ::
 
     sage: L=graphs.CycleGraph(5)
-    sage: for edge in L.edges():
+    sage: for edge in L.edges(sort=True):
     ....:     u = edge[0]
     ....:     v = edge[1]
     ....:     L.set_edge_label(u, v, u*v)

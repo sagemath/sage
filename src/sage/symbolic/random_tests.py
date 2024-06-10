@@ -8,25 +8,24 @@ Randomized tests of GiNaC / PyNaC
 #       Copyright (C) 2008 Burcin Erocal <burcin@erocal.org>
 #  Distributed under the terms of the GNU General Public License (GPL),
 #  version 2 or any later version.  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ###############################################################################
-from __future__ import print_function
 
 
 from sage.misc.prandom import randint, random
 import operator
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 from sage.symbolic.ring import SR
-from sage.libs.pynac.pynac import symbol_table
+from sage.symbolic.expression import symbol_table, mixed_order
 from sage.symbolic.constants import (pi, e, golden_ratio, log2, euler_gamma,
                                      catalan, khinchin, twinprime, mertens)
 from sage.functions.hypergeometric import hypergeometric
-from sage.functions.other import cases
-from sage.symbolic.comparison import mixed_order
+from sage.functions.other import (cases, element_of)
 
-###################################################################
-### Generate random expressions for doctests ######################
-###################################################################
+
+##############################################################
+#        Generate random expressions for doctests            #
+##############################################################
 
 def _mk_full_functions():
     r"""
@@ -49,13 +48,14 @@ def _mk_full_functions():
     Note that this doctest will produce different output whenever a
     symbolic function is added or removed.
     """
+    excluded = [hypergeometric, cases, element_of]
     items = sorted(symbol_table['functions'].items())
     return [(1.0, f, f.number_of_arguments())
             for (name, f) in items
             if hasattr(f, 'number_of_arguments') and
-               f.number_of_arguments() > 0 and
-               f != hypergeometric and
-               f != cases]
+            f.number_of_arguments() > 0 and
+            f not in excluded]
+
 
 # For creating simple expressions
 
@@ -75,15 +75,16 @@ full_nullary = [(1.0, c) for c in [pi, e]] + [(0.05, c) for c in
 full_internal = [(0.6, full_binary, 2), (0.2, full_unary, 1),
         (0.2, full_functions)]
 
+
 def normalize_prob_list(pl, extra=()):
     r"""
     INPUT:
 
-    - ``pl`` - A list of tuples, where the first element of each tuple is
+    - ``pl`` -- A list of tuples, where the first element of each tuple is
       a floating-point number (representing a relative probability).  The
       second element of each tuple may be a list or any other kind of object.
 
-    - ``extra`` - A tuple which is to be appended to every tuple in ``pl``.
+    - ``extra`` -- A tuple which is to be appended to every tuple in ``pl``.
 
     This function takes such a list of tuples (a "probability list") and
     normalizes the probabilities so that they sum to one.  If any of the
@@ -109,7 +110,7 @@ def normalize_prob_list(pl, extra=()):
     if len(pl) == 0:
         return pl
     result = []
-    total = sum([float(p[0]) for p in pl])
+    total = sum(float(p[0]) for p in pl)
     for p in pl:
         prob = p[0]
         val = p[1]
@@ -119,17 +120,18 @@ def normalize_prob_list(pl, extra=()):
             p_extra = extra
         if isinstance(val, list):
             norm_val = normalize_prob_list(val, extra=p_extra)
-            for np in norm_val:
-                result.append(((prob/total)*np[0], np[1]) + np[2:])
+            result.extend(((prob / total) * np[0], np[1]) + np[2:]
+                          for np in norm_val)
         else:
-            result.append(((prob/total), val) + p_extra)
+            result.append(((prob / total), val) + p_extra)
     return result
+
 
 def choose_from_prob_list(lst):
     r"""
     INPUT:
 
-    - ``lst`` - A list of tuples, where the first element of each tuple
+    - ``lst`` -- A list of tuples, where the first element of each tuple
       is a nonnegative float (a probability), and the probabilities sum
       to one.
 
@@ -142,23 +144,27 @@ def choose_from_prob_list(lst):
 
         sage: from sage.symbolic.random_tests import *
         sage: v = [(0.1, False), (0.9, True)]
-        sage: choose_from_prob_list(v)
+        sage: choose_from_prob_list(v)  # random
         (0.900000000000000, True)
         sage: true_count = 0
-        sage: for _ in range(10000):
-        ....:     if choose_from_prob_list(v)[1]:
-        ....:         true_count += 1
-        sage: true_count
-        9033
-        sage: true_count - (10000 * 9/10)
-        33
+        sage: total_count = 0
+        sage: def more_samples():
+        ....:     global true_count, total_count
+        ....:     for _ in range(10000):
+        ....:         total_count += 1.0
+        ....:         if choose_from_prob_list(v)[1]:
+        ....:             true_count += 1.0
+        sage: more_samples()
+        sage: while abs(true_count/total_count - 0.9) > 0.01:
+        ....:     more_samples()
     """
     r = random()
-    for i in range(len(lst)-1):
+    for i in range(len(lst) - 1):
         if r < lst[i][0]:
             return lst[i]
         r -= lst[i][0]
     return lst[-1]
+
 
 def random_integer_vector(n, length):
     r"""
@@ -169,22 +175,39 @@ def random_integer_vector(n, length):
     That gives values uniformly at random, but might be slow; this
     routine is not uniform, but should always be fast.
 
-    (This routine is uniform if *length* is 1 or 2; for longer vectors,
+    (This routine is uniform if ``length`` is 1 or 2; for longer vectors,
     we prefer approximately balanced vectors, where all the values
     are around `n/{length}`.)
 
     EXAMPLES::
 
         sage: from sage.symbolic.random_tests import *
-        sage: random_integer_vector(100, 2)
+        sage: a = random_integer_vector(100, 2); a  # random
         [11, 89]
-        sage: random_integer_vector(100, 2)
-        [51, 49]
-        sage: random_integer_vector(100, 2)
-        [4, 96]
-        sage: random_integer_vector(10000, 20)
-        [332, 529, 185, 738, 82, 964, 596, 892, 732, 134,
-         834, 765, 398, 608, 358, 300, 652, 249, 586, 66]
+        sage: len(a)
+        2
+        sage: sum(a)
+        100
+
+        sage: b = random_integer_vector(10000, 20)
+        sage: len(b)
+        20
+        sage: sum(b)
+        10000
+
+    The routine is uniform if ``length`` is 2::
+
+        sage: true_count = 0
+        sage: total_count = 0
+        sage: def more_samples():
+        ....:     global true_count, total_count
+        ....:     for _ in range(1000):
+        ....:         total_count += 1.0
+        ....:         if a == random_integer_vector(100, 2):
+        ....:             true_count += 1.0
+        sage: more_samples()
+        sage: while abs(true_count/total_count - 0.01) > 0.01:
+        ....:     more_samples()
     """
     if length == 0:
         return []
@@ -192,10 +215,11 @@ def random_integer_vector(n, length):
         return [n]
     elif length == 2:
         v = randint(0, n)
-        return [v, n-v]
+        return [v, n - v]
     else:
-        v = randint(0, 2*n//length)
-        return [v] + random_integer_vector(n-v, length-1)
+        v = randint(0, 2 * n // length)
+        return [v] + random_integer_vector(n - v, length - 1)
+
 
 def random_expr_helper(n_nodes, internal, leaves, verbose):
     r"""
@@ -207,15 +231,26 @@ def random_expr_helper(n_nodes, internal, leaves, verbose):
     EXAMPLES::
 
         sage: from sage.symbolic.random_tests import *
-        sage: random_expr_helper(9, [(0.5, operator.add, 2),
+        sage: a = random_expr_helper(9, [(0.5, operator.add, 2),
         ....:     (0.5, operator.neg, 1)], [(0.5, 1), (0.5, x)], True)
-        About to apply <built-in function add> to [1, x]
-        About to apply <built-in function add> to [x, x + 1]
-        About to apply <built-in function neg> to [1]
-        About to apply <built-in function neg> to [-1]
-        About to apply <built-in function neg> to [1]
-        About to apply <built-in function add> to [2*x + 1, -1]
-        2*x
+        About to apply <built-in function ...
+
+    In small cases we will see all cases quickly::
+
+        sage: def next_expr():
+        ....:     return random_expr_helper(
+        ....:         6, [(0.5, operator.add, 2), (0.5, operator.neg, 1)],
+        ....:         [(0.5, 1), (0.5, x)], False)
+        sage: all_exprs = set()
+        sage: for a in range(-4, 5):
+        ....:     for b in range(-4+abs(a), 5-abs(a)):
+        ....:         if a % 2 and abs(a) + abs(b) == 4 and sign(a) != sign(b):
+        ....:             continue
+        ....:         all_exprs.add(a*x + b)
+        sage: our_exprs = set()
+        sage: while our_exprs != all_exprs:
+        ....:    our_exprs.add(next_expr())
+
     """
     if n_nodes == 1:
         return choose_from_prob_list(leaves)[1]
@@ -227,10 +262,12 @@ def random_expr_helper(n_nodes, internal, leaves, verbose):
         if n_spare_nodes <= 0:
             n_spare_nodes = 0
         nodes_per_child = random_integer_vector(n_spare_nodes, n_children)
-        children = [random_expr_helper(n+1, internal, leaves, verbose) for n in nodes_per_child]
+        children = [random_expr_helper(n + 1, internal, leaves, verbose)
+                    for n in nodes_per_child]
         if verbose:
             print("About to apply %r to %r" % (r[1], children))
         return r[1](*children)
+
 
 def random_expr(size, nvars=1, ncoeffs=None, var_frac=0.5,
                 internal=full_internal,
@@ -266,17 +303,17 @@ def random_expr(size, nvars=1, ncoeffs=None, var_frac=0.5,
         sage: my_internal = [(0.6, full_binary, 2), (0.2, full_unary, 1),
         ....: (0.2, [(1.0,f,f.number_of_arguments()) for f in some_functions])]
         sage: set_random_seed(1)
-        sage: random_expr(50, nvars=3, internal=my_internal,
-        ....:   coeff_generator=CDF.random_element)
+        sage: random_expr(50, nvars=3, internal=my_internal,  # not tested  # known bug
+        ....:             coeff_generator=CDF.random_element)
         (v1^(0.9713408427702117 + 0.195868299334218*I)/cot(-pi + v1^2 + v3) + tan(arctan(v2 + arctan2(-0.35859061674557324 + 0.9407509502498164*I, v3) - 0.8419115504372718 + 0.30375717982404615*I) + arctan2((0.2275357305882964 - 0.8258002386106038*I)/factorial(v2), -v3 - 0.7604559947718565 - 0.5543672548552057*I) + ceil(1/arctan2(v1, v1))))/v2
-        sage: random_expr(5, verbose=True) # random
+        sage: random_expr(5, verbose=True)  # not tested  # known bug
         About to apply <built-in function inv> to [31]
         About to apply sgn to [v1]
         About to apply <built-in function add> to [1/31, sgn(v1)]
         sgn(v1) + 1/31
 
     """
-    vars = [(1.0, SR.var('v%d' % (n+1))) for n in range(nvars)]
+    vars = [(1.0, SR.var('v%d' % (n + 1))) for n in range(nvars)]
     if ncoeffs is None:
         ncoeffs = size
     coeffs = [(1.0, coeff_generator()) for _ in range(ncoeffs)]
@@ -288,9 +325,9 @@ def random_expr(size, nvars=1, ncoeffs=None, var_frac=0.5,
     return random_expr_helper(size, internal, leaves, verbose)
 
 
-###################################################################
-### Test the ordering of operands #################################
-###################################################################
+#####################################
+#   Test the ordering of operands   #
+#####################################
 
 def assert_strict_weak_order(a, b, c, cmp_func):
     r"""
@@ -391,7 +428,7 @@ def test_symbolic_expression_order(repetitions=100):
 
     This is important because the C++ extension class uses
     ``std::sort()`` which requires a strict weak order. See also
-    :trac:`9880`.
+    :issue:`9880`.
 
     EXAMPLES::
 
@@ -406,7 +443,7 @@ def test_symbolic_expression_order(repetitions=100):
     nullary_frac = 0.05
 
     def coeff_generator():
-        return randint(-100,100)/randint(1,100)
+        return randint(-100, 100) / randint(1, 100)
 
     def make_random_expr():
         while True:
@@ -423,5 +460,5 @@ def test_symbolic_expression_order(repetitions=100):
         b = make_random_expr()
         c = make_random_expr()
         assert_strict_weak_order(a, b, c, mixed_order)
-        assert_strict_weak_order(a, b, c, lambda x,y: x._cmp_add(y))
-        assert_strict_weak_order(a, b, c, lambda x,y: x._cmp_mul(y))
+        assert_strict_weak_order(a, b, c, lambda x, y: x._cmp_add(y))
+        assert_strict_weak_order(a, b, c, lambda x, y: x._cmp_mul(y))

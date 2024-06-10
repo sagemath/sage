@@ -1,5 +1,5 @@
-barvinok
-========
+barvinok: Projections of integer point sets of parametric polytopes
+===================================================================
 
 Description
 -----------
@@ -17,4 +17,5 @@ GPL v2
 Upstream Contact
 ----------------
 
--  http://groups.google.com/group/isl-development
+-  https://sourceforge.net/projects/barvinok/
+-  https://groups.google.com/group/isl-development

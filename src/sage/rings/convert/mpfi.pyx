@@ -16,24 +16,26 @@ from cpython.complex cimport PyComplex_RealAsDouble, PyComplex_ImagAsDouble
 
 from sage.libs.mpfr cimport *
 from sage.libs.mpfi cimport *
+from sage.libs.gsl.complex cimport *
 
 from sage.arith.long cimport integer_check_long
 from sage.cpython.string cimport bytes_to_str
-from sage.structure.element cimport Element, parent
-from ..integer cimport Integer
-from ..rational cimport Rational
-from ..real_mpfi cimport RealIntervalFieldElement, RealIntervalField_class
-from ..complex_interval_field import ComplexIntervalField_class
-from ..real_mpfr cimport RealNumber
-from ..real_double cimport RealDoubleElement
-from ..complex_number cimport ComplexNumber
-from ..complex_interval cimport ComplexIntervalFieldElement
-from ..complex_double cimport ComplexDoubleElement
+from sage.structure.element cimport Element
+
+import sage.rings.abc
+from sage.rings.integer cimport Integer
+from sage.rings.rational cimport Rational
+from sage.rings.real_mpfi cimport RealIntervalFieldElement, RealIntervalField_class
+from sage.rings.real_mpfr cimport RealNumber
+from sage.rings.real_double cimport RealDoubleElement
+from sage.rings.complex_mpfr cimport ComplexNumber
+from sage.rings.complex_interval cimport ComplexIntervalFieldElement
+from sage.rings.complex_double cimport ComplexDoubleElement
 
 from cypari2.gen cimport Gen
 
 
-cdef inline int return_real(mpfi_ptr im):
+cdef inline int return_real(mpfi_ptr im) noexcept:
     """
     Called by ``mpfi_set_sage`` on the imaginary part when converting
     a real number.
@@ -84,7 +86,7 @@ cdef int mpfi_set_sage(mpfi_ptr re, mpfi_ptr im, x, field, int base) except -1:
         mpfi_set_sage(re, NULL, x[0], field, base)
         mpfi_set_sage(im, NULL, x[1], field, base)
         return 0
-    if isinstance(x, list) or isinstance(x, tuple):
+    if isinstance(x, (list, tuple)):
         # Interpret entries in x as endpoints of interval
         if len(x) != 2:
             raise TypeError("list defining an interval must have length 2")
@@ -135,11 +137,11 @@ cdef int mpfi_set_sage(mpfi_ptr re, mpfi_ptr im, x, field, int base) except -1:
         if isinstance(x, ComplexDoubleElement):
             zd = <ComplexDoubleElement>x
             if im is NULL:
-                if zd._complex.imag:
+                if GSL_IMAG(zd._complex):
                     raise TypeError(f"unable to convert complex number {x!r} to real interval")
             else:
-                mpfi_set_d(im, zd._complex.imag)
-            mpfi_set_d(re, zd._complex.real)
+                mpfi_set_d(im, GSL_IMAG(zd._complex))
+            mpfi_set_d(re, GSL_REAL(zd._complex))
             return 0
     else:  # not a Sage Element
         # Real
@@ -188,7 +190,7 @@ cdef int mpfi_set_sage(mpfi_ptr re, mpfi_ptr im, x, field, int base) except -1:
         except AttributeError:
             pass
         else:
-            if not isinstance(field, ComplexIntervalField_class):
+            if not isinstance(field, sage.rings.abc.ComplexIntervalField):
                 field = field.complex_field()
             e = <ComplexIntervalFieldElement?>m(field)
             mpfi_swap(re, e.__re)

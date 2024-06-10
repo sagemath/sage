@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-repl
 """
 The Sage pretty printer
 
@@ -14,21 +14,21 @@ AUTHORS:
 - Volker Braun (2013): refactored into DisplayHookBase
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 from IPython.lib.pretty import PrettyPrinter
 
-from sage.repl.display.fancy_repr import *
-
-
+from sage.repl.display.fancy_repr import (TallListRepr, PlainPythonRepr,
+                                          LargeMatrixHelpRepr,
+                                          SomeIPythonRepr)
 
 
 class SagePrettyPrinter(PrettyPrinter):
@@ -87,26 +87,26 @@ class SagePrettyPrinter(PrettyPrinter):
 
         These are overridden in IPython in a way that we feel is somewhat
         confusing, and we prefer to print them like plain Python which is
-        more informative. See :trac:`14466` ::
+        more informative. See :issue:`14466` ::
 
             sage: 'this is a string'
             'this is a string'
             sage: type(123)
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
             sage: type
             <... 'type'>
             sage: import types
             sage: type('name', (), {})
             <class '__main__.name'>
             sage: types.BuiltinFunctionType
-            <type 'builtin_function_or_method'>
+            <class 'builtin_function_or_method'>
 
             sage: def foo(): pass
             sage: foo
             <function foo at 0x...>
         """
-        super(SagePrettyPrinter, self).__init__(
-            output, max_width, newline, max_seq_length=max_seq_length)
+        super().__init__(output, max_width, newline,
+                         max_seq_length=max_seq_length)
         self.stack = []
 
     def pretty(self, obj):
@@ -139,9 +139,11 @@ class SagePrettyPrinter(PrettyPrinter):
         try:
             ok = False
             for representation in self.pretty_repr:
-                if self.DEBUG: print('Trying {0}'.format(representation))
+                if self.DEBUG:
+                    print('Trying {0}'.format(representation))
                 ok = representation(obj, self, cycle)
-                if self.DEBUG: print('ok = {0}'.format(ok))
+                if self.DEBUG:
+                    print('ok = {0}'.format(ok))
                 if ok not in [True, False]:
                     raise RuntimeError('printer failed to return boolean')
                 if ok:
@@ -151,4 +153,3 @@ class SagePrettyPrinter(PrettyPrinter):
         finally:
             self.end_group()
             self.stack.pop()
-

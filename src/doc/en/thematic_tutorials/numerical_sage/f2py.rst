@@ -204,7 +204,7 @@ you only care about its value before the function is called not
 afterwards. So in the above n tells us how many fiboncci numbers to
 compute we need to specify this as an input, however we don't need
 to get n back as it doesn't contain anything new. Similarly A is
-intent(out) so we don't need A to have an specific value
+intent(out) so we don't need A to have a specific value
 beforehand, we just care about the contents afterwards. F2py
 generates a Python function so you only pass those declared
 intent(in) and supplies empty workspaces for the remaining
@@ -352,7 +352,7 @@ There is one final version which combines the previous two.
             end do
             end
 
-The (in,out,overwite) intent says that if :math:`a` is in FORTRAN
+The (in,out,overwrite) intent says that if :math:`a` is in FORTRAN
 ordering we work in place, however if its not we copy it and return
 the contents afterwards. This is sort of the best of both worlds.
 Note that if you are repeatedly passing large numpy arrays to

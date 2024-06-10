@@ -9,7 +9,6 @@ Root system data for reducible Cartan types
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
 from sage.misc.cachefunc import cached_method
 from sage.combinat.root_system.cartan_type import CartanType_abstract, CartanType_simple, CartanType_finite, CartanType_simply_laced, CartanType_crystallographic
@@ -57,7 +56,7 @@ class CartanType(SageObject, CartanType_abstract):
     super classes (see :meth:`~sage.combinat.root_system.cartan_type.CartanType_abstract._add_abstract_superclass`)::
 
         sage: t.__class__.mro()
-        [<class 'sage.combinat.root_system.type_reducible.CartanType_with_superclass'>, <class 'sage.combinat.root_system.type_reducible.CartanType'>, <... 'sage.structure.sage_object.SageObject'>, <class 'sage.combinat.root_system.cartan_type.CartanType_finite'>, <class 'sage.combinat.root_system.cartan_type.CartanType_crystallographic'>, <class 'sage.combinat.root_system.cartan_type.CartanType_abstract'>, <... 'object'>]
+        [<class 'sage.combinat.root_system.type_reducible.CartanType_with_superclass'>, <class 'sage.combinat.root_system.type_reducible.CartanType'>, <class 'sage.structure.sage_object.SageObject'>, <class 'sage.combinat.root_system.cartan_type.CartanType_finite'>, <class 'sage.combinat.root_system.cartan_type.CartanType_crystallographic'>, <class 'sage.combinat.root_system.cartan_type.CartanType_abstract'>, <class 'object'>]
 
     The index set of the reducible Cartan type is obtained by
     relabelling successively the nodes of the Dynkin diagrams of
@@ -67,7 +66,7 @@ class CartanType(SageObject, CartanType_abstract):
         sage: t.index_set()
         (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13)
 
-        sage: t.dynkin_diagram()
+        sage: t.dynkin_diagram()                                                        # needs sage.graphs
         O---O---O---O
         1   2   3   4
         O=<=O---O---O---O=<=O
@@ -76,6 +75,7 @@ class CartanType(SageObject, CartanType_abstract):
         11   12   13
         A4xBC5~xC3
     """
+
     def __init__(self, types):
         """
         Initialize ``self``.
@@ -135,7 +135,7 @@ class CartanType(SageObject, CartanType_abstract):
                                if all(isinstance(t, cls) for t in types) )
         self._add_abstract_superclass(super_classes)
 
-    def _repr_(self, compact = True): # We should make a consistent choice here
+    def _repr_(self, compact=True):  # We should make a consistent choice here
         """
         EXAMPLES::
 
@@ -145,7 +145,7 @@ class CartanType(SageObject, CartanType_abstract):
            sage: CartanType("A2",CartanType("F4~").dual())
            A2xF4~*
         """
-        return  "x".join(t._repr_(compact = True) for t in self._types)
+        return "x".join(t._repr_(compact=True) for t in self._types)
 
     def _latex_(self):
         r"""
@@ -187,7 +187,7 @@ class CartanType(SageObject, CartanType_abstract):
 
         TESTS:
 
-        Check that :trac:`20418` is fixed::
+        Check that :issue:`20418` is fixed::
 
             sage: ct = CartanType(["A2", "B2"])
             sage: ct == (1, 2, 1)
@@ -256,21 +256,23 @@ class CartanType(SageObject, CartanType_abstract):
         EXAMPLES::
 
             sage: ct = CartanType("A2","B2")
-            sage: ct.cartan_matrix()
+            sage: ct.cartan_matrix()                                                    # needs sage.graphs
             [ 2 -1| 0  0]
             [-1  2| 0  0]
             [-----+-----]
             [ 0  0| 2 -1]
             [ 0  0|-2  2]
-            sage: ct.cartan_matrix(subdivide=False)
+            sage: ct.cartan_matrix(subdivide=False)                                     # needs sage.graphs
             [ 2 -1  0  0]
             [-1  2  0  0]
             [ 0  0  2 -1]
             [ 0  0 -2  2]
+            sage: ct.index_set() == ct.cartan_matrix().index_set()                      # needs sage.graphs
+            True
         """
         from sage.combinat.root_system.cartan_matrix import CartanMatrix
         return CartanMatrix(block_diagonal_matrix([t.cartan_matrix() for t in self._types], subdivide=subdivide),
-                            cartan_type=self)
+                            cartan_type=self, index_set=self.index_set())
 
     def dynkin_diagram(self):
         """
@@ -278,8 +280,7 @@ class CartanType(SageObject, CartanType_abstract):
 
         EXAMPLES::
 
-            sage: dd = CartanType("A2xB2xF4").dynkin_diagram()
-            sage: dd
+            sage: dd = CartanType("A2xB2xF4").dynkin_diagram(); dd                      # needs sage.graphs
             O---O
             1   2
             O=>=O
@@ -287,10 +288,11 @@ class CartanType(SageObject, CartanType_abstract):
             O---O=>=O---O
             5   6   7   8
             A2xB2xF4
-            sage: dd.edges()
-            [(1, 2, 1), (2, 1, 1), (3, 4, 2), (4, 3, 1), (5, 6, 1), (6, 5, 1), (6, 7, 2), (7, 6, 1), (7, 8, 1), (8, 7, 1)]
+            sage: dd.edges(sort=True)                                                   # needs sage.graphs
+            [(1, 2, 1), (2, 1, 1), (3, 4, 2), (4, 3, 1), (5, 6, 1),
+             (6, 5, 1), (6, 7, 2), (7, 6, 1), (7, 8, 1), (8, 7, 1)]
 
-            sage: CartanType("F4xA2").dynkin_diagram()
+            sage: CartanType("F4xA2").dynkin_diagram()                                  # needs sage.graphs
             O---O=>=O---O
             1   2   3   4
             O---O
@@ -302,11 +304,11 @@ class CartanType(SageObject, CartanType_abstract):
         relabelling = self._index_relabelling
         g = DynkinDiagram_class(self)
         for i in range(len(self._types)):
-            for [e1, e2, l] in self._types[i].dynkin_diagram().edges():
+            for [e1, e2, l] in self._types[i].dynkin_diagram().edges(sort=True):
                 g.add_edge(relabelling[i,e1], relabelling[i,e2], label=l)
         return g
 
-    def _latex_dynkin_diagram(self, label=lambda x: x, node=None, node_dist=2):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -330,6 +332,8 @@ class CartanType(SageObject, CartanType_abstract):
             \draw[fill=white] (2 cm, 0 cm) circle (.25cm) node[below=4pt]{$4$};
             }
         """
+        if label is None:
+            label = lambda x: x
         types = self.component_types()
         relabelling = self._index_relabelling
         ret = "{\n"
@@ -339,7 +343,7 @@ class CartanType(SageObject, CartanType_abstract):
         ret += "}"
         return ret
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Return an ascii art representation of this reducible Cartan type.
 
@@ -365,6 +369,8 @@ class CartanType(SageObject, CartanType_abstract):
             O---O=<=O
             11   12   13
         """
+        if label is None:
+            label = lambda i: i
         types = self.component_types()
         relabelling = self._index_relabelling
         return "\n".join(types[i].ascii_art(lambda x: label(relabelling[i,x]), node)
@@ -430,18 +436,17 @@ class CartanType(SageObject, CartanType_abstract):
 
         EXAMPLES::
 
-            sage: cd = CartanType("A2xB2xF4").coxeter_diagram()
-            sage: cd
+            sage: cd = CartanType("A2xB2xF4").coxeter_diagram(); cd                     # needs sage.graphs
             Graph on 8 vertices
-            sage: cd.edges()
+            sage: cd.edges(sort=True)                                                   # needs sage.graphs
             [(1, 2, 3), (3, 4, 4), (5, 6, 3), (6, 7, 4), (7, 8, 3)]
 
-            sage: CartanType("F4xA2").coxeter_diagram().edges()
+            sage: CartanType("F4xA2").coxeter_diagram().edges(sort=True)                # needs sage.graphs
             [(1, 2, 3), (2, 3, 4), (3, 4, 3), (5, 6, 3)]
 
-            sage: cd = CartanType("A1xH3").coxeter_diagram(); cd
+            sage: cd = CartanType("A1xH3").coxeter_diagram(); cd                        # needs sage.graphs
             Graph on 4 vertices
-            sage: cd.edges()
+            sage: cd.edges(sort=True)                                                   # needs sage.graphs
             [(2, 3, 3), (3, 4, 5)]
         """
         from sage.graphs.graph import Graph
@@ -449,9 +454,10 @@ class CartanType(SageObject, CartanType_abstract):
         g = Graph(multiedges=False)
         g.add_vertices(self.index_set())
         for i,t in enumerate(self._types):
-            for [e1, e2, l] in t.coxeter_diagram().edges():
+            for [e1, e2, l] in t.coxeter_diagram().edges(sort=True):
                 g.add_edge(relabelling[i,e1], relabelling[i,e2], label=l)
         return g
+
 
 class AmbientSpace(ambient_space.AmbientSpace):
     """
@@ -461,6 +467,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
         Ambient space of the Root system of type A2xB2
 
     """
+
     def cartan_type(self):
         """
         EXAMPLES::
@@ -507,9 +514,9 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
         INPUT:
 
-        - ``i`` - an integer in range(self.components)
+        - ``i`` -- an integer in range(self.components)
 
-        - ``v`` - a vector in the i-th component weight lattice
+        - ``v`` -- a vector in the i-th component weight lattice
 
         EXAMPLES::
 

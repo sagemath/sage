@@ -1,12 +1,11 @@
 "get_remote_file"
-
-from __future__ import absolute_import
-
 import os
+from pathlib import Path
 from urllib.request import Request, urlopen
+from ssl import create_default_context as default_context
 
 
-def get_remote_file(filename, verbose=True):
+def get_remote_file(filename, verbose=True) -> Path:
     """
     INPUT:
 
@@ -17,12 +16,12 @@ def get_remote_file(filename, verbose=True):
 
     OUTPUT:
 
-    creates a file in the temp directory and returns the absolute path
-    to that file.
+    This creates a file in the temp directory and returns the absolute path
+    to that file as a :class:`Path` object.
 
     EXAMPLES::
 
-        sage: url = 'http://www.sagemath.org/files/loadtest.py'
+        sage: url = 'https://www.sagemath.org/files/loadtest.py'
         sage: g = get_remote_file(url, verbose=False)      # optional - internet
         sage: with open(g) as f: print(f.read())           # optional - internet
         print("hi from the net")
@@ -34,18 +33,18 @@ def get_remote_file(filename, verbose=True):
         print("Attempting to load remote file: " + filename)
 
     from sage.misc.temporary_file import tmp_filename
-    temp_name = tmp_filename() + '.' + os.path.splitext(filename)[1][1:]
+    ext = os.path.splitext(filename)[1]
+    temp_name = Path(tmp_filename(ext=ext))
     # IMPORTANT -- urllib takes a long time to load,
     # so do not import it in the module scope.
 
-    # import compatible with py2 and py3
-    req = Request(filename, headers={"User-Agent":"sage-doctest"})
+    req = Request(filename, headers={"User-Agent": "sage-doctest"})
 
     if verbose:
         print("Loading started")
 
-    content = urlopen(req, timeout=1)
-    with open(temp_name, 'wb') as f:
+    content = urlopen(req, timeout=1, context=default_context())
+    with temp_name.open('wb') as f:
         f.write(content.read())
 
     if verbose:

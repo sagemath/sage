@@ -1,0 +1,1472 @@
+--- a/dik/cube.c	2020-10-29 14:06:39.068036061 -0600
++++ b/dik/cube.c	2020-10-29 14:48:18.777740587 -0600
+@@ -9,9 +9,8 @@ static void read_position();
+ 
+ static int do_repeat = 0;
+ 
+-main(argc, argv)
+-int argc;
+-char *argv[];
++int
++main(int argc, char *argv[])
+ {
+ int do_phase1, do_phase2, i, error = 0, readturns, readpos;
+ 
+--- a/dik/permcube.c	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/permcube.c	2020-10-29 14:18:01.914089059 -0600
+@@ -1,6 +1,7 @@
+ #include "globals.h"
+ 
+-perm_cube()
++void
++perm_cube(void)
+ {
+ int i, j, k, tmp;
+ 
+--- a/dik/phase1.c	2020-10-29 14:05:25.003138776 -0600
++++ b/dik/phase1.c	2020-10-29 14:53:31.248360716 -0600
+@@ -178,8 +178,7 @@ int e[12], c[8];
+     }
+ }
+ 
+-static void do_phase1(twist, flip, choice, dont1, dont2)
+-int twist, flip, choice, dont1, dont2;
++static void do_phase1(int twist, int flip, int choice, int dont1, int dont2)
+ {
+ int i, j, tw, fl, ch, move, do_phase2;
+ 
+@@ -256,8 +255,7 @@ int i, j, tw, fl, ch, move, do_phase2;
+     }
+ }
+ 
+-int phase1(max_todo)
+-int max_todo;
++int phase1(int max_todo)
+ {
+     sol_found = max_todo;
+     phase1_todo = max_todo;
+--- a/dik/phase2.c	2020-10-29 14:06:56.700011614 -0600
++++ b/dik/phase2.c	2020-10-29 14:54:15.704312111 -0600
+@@ -100,8 +100,7 @@ int s0, s1, s2, s3;
+     }
+ }
+ 
+-static void do_phase2(cperm, eperm, sperm, dont1, dont2)
+-int cperm, eperm, sperm, dont1, dont2;
++static void do_phase2(int cperm, int eperm, int sperm, int dont1, int dont2)
+ {
+ int i, j, cp, ep, sp, move;
+ 
+@@ -179,8 +178,7 @@ int i, j, cp, ep, sp, move;
+     }
+ }
+ 
+-int phase2(max_todo, dont1, dont2)
+-int max_todo, dont1, dont2;
++int phase2(int max_todo, int dont1, int dont2)
+ {
+     sol_found = max_todo;
+     do_phase2(cube_cperm, cube_eperm, cube_sperm, dont1, dont2);
+--- a/dik/prntsol.c	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/prntsol.c	2020-10-29 14:55:16.024246197 -0600
+@@ -2,6 +2,7 @@
+ 
+ static char m[] = "FRUBLD";
+ 
++void
+ prnt_sol()
+ {
+ int i, j, k;
+--- a/dik/rancube.c	2020-10-29 13:38:13.420290757 -0600
++++ b/dik/rancube.c	2020-10-29 14:55:38.176221993 -0600
+@@ -2,7 +2,8 @@
+ #include <sys/types.h>
+ #include <sys/time.h>
+ 
+-main()
++int
++main(void)
+ {
+ int i, j, k;
+ 
+--- a/dik/setcube.c	2020-10-29 14:02:57.859342978 -0600
++++ b/dik/setcube.c	2020-10-29 14:56:29.904165482 -0600
+@@ -26,10 +26,9 @@ static char edges[12][2][2] = {
+     {"FR", "RF"},
+     {"FL", "LF"}};
+ 
+-static cube_found, orient_found;
++static int cube_found, orient_found;
+ 
+-static void find_corner(c)
+-char *c;
++static void find_corner(const char *c)
+ {
+ int i, j;
+ 
+@@ -46,8 +45,7 @@ int i, j;
+     exit(1);
+ }
+ 
+-static void find_edge(c)
+-char *c;
++static void find_edge(const char *c)
+ {
+ int i, j;
+ 
+--- a/dik/size222.c	2020-10-29 14:04:17.795232090 -0600
++++ b/dik/size222.c	2020-10-29 14:47:18.896815119 -0600
+@@ -19,8 +19,8 @@ int maximal;
+ int gcount;
+ int givemax;
+ 
+-do_pr(turns, count)
+-int turns, count;
++static void
++do_pr(int turns, int count)
+ {
+     if(maximal != 0 && turns != 1) {
+ 	printf(", %10d maximal", maximal);
+@@ -31,8 +31,8 @@ int turns, count;
+     fflush(stdout);
+ }
+ 
+-try_one(num, count)
+-int num, count;
++static int
++try_one(int num, int count)
+ {
+ int perm, nperm;
+ int twist, ntwist;
+@@ -66,8 +66,8 @@ int i, j, nnum, counted = 0, k, l, max =
+     return counted;
+ }
+ 
+-try(count)
+-int count;
++static void
++try(int count)
+ {
+ int i, counted = 0, k;
+ TYPE j;
+@@ -95,9 +95,8 @@ TYPE j;
+     do_pr(count + 1, counted);
+ }
+ 
+-main(argc, argv)
+-int argc;
+-char *argv[];
++int
++main(int argc, char *argv[])
+ {
+ int i, k, error = 0;
+ TYPE j;
+--- a/dik/size333c.c	2020-10-29 14:08:00.179923599 -0600
++++ b/dik/size333c.c	2020-10-29 14:58:40.497022705 -0600
+@@ -40,8 +40,8 @@ int maximal;
+ int gcount;
+ int givemax;
+ 
+-do_pr(turns, count)
+-int turns, count;
++static void
++do_pr(int turns, int count)
+ {
+     if(maximal != 0 && turns != 1) {
+ 	printf(", %10d maximal", maximal);
+@@ -52,8 +52,8 @@ int turns, count;
+     fflush(stdout);
+ }
+ 
+-try_one(num, count)
+-int num, count;
++static int
++try_one(int num, int count)
+ {
+ #ifdef CTWIST
+ int twist, ntwist, ntwist1, twist0;
+@@ -124,8 +124,8 @@ int i, j, nnum, counted = 0, k, l, max,
+     return wcounted;
+ }
+ 
+-try(count)
+-int count;
++static void
++try(int count)
+ {
+ int i, counted = 0, k;
+ TYPE j;
+@@ -153,9 +153,8 @@ TYPE j;
+     do_pr(count + 1, counted);
+ }
+ 
+-main(argc, argv)
+-int argc;
+-char *argv[];
++int
++main(int argc, char *argv[])
+ {
+ int i, k, error = 0;
+ TYPE j;
+--- a/dik/sizedom.c	2020-10-29 14:09:01.083839153 -0600
++++ b/dik/sizedom.c	2020-10-29 15:00:32.352900400 -0600
+@@ -41,8 +41,8 @@ int maximal;
+ int gcount;
+ int givemax;
+ 
+-do_pr(turns, count)
+-int turns, count;
++static void
++do_pr(int turns, int count)
+ {
+     if(maximal != 0 && turns != 1) {
+ 	printf(", %10d maximal", maximal);
+@@ -53,8 +53,8 @@ int turns, count;
+     fflush(stdout);
+ }
+ 
+-try_one(num, count)
+-int num, count;
++static int
++try_one(int num, int count)
+ {
+ #ifdef CCPERM
+ int cperm, ncperm, ncperm1, cperm0;
+@@ -177,8 +177,8 @@ int i, j, nnum, counted = 0, k, l, max,
+     return wcounted;
+ }
+ 
+-try(count)
+-int count;
++static void
++try(int count)
+ {
+ int i, counted = 0, k;
+ TYPE j;
+@@ -206,8 +206,7 @@ TYPE j;
+     do_pr(count + 1, counted);
+ }
+ 
+-static void init_turn(cperm, eperm)
+-int cperm, eperm;
++static void init_turn(int cperm, int eperm)
+ {
+ int num, k, l, cperm1, eperm1, m;
+ 
+@@ -240,8 +239,7 @@ int num, k, l, cperm1, eperm1, m;
+     }
+ }
+ 
+-static void init_turns(min)
+-int min;
++static void init_turns(int min)
+ {
+ int cperm, eperm;
+ 
+@@ -275,9 +273,8 @@ int cperm, eperm;
+     init_turn(cperm, eperm);
+ }
+ 
+-main(argc, argv)
+-int argc;
+-char *argv[];
++int
++main(int argc, char *argv[])
+ {
+ int i, k, error = 0, mininit;
+ TYPE j;
+--- a/dik/sizekoc1.c	2020-10-29 14:08:30.875881036 -0600
++++ b/dik/sizekoc1.c	2020-10-29 15:01:24.096843822 -0600
+@@ -30,8 +30,8 @@ int maximal;
+ int gcount;
+ int givemax;
+ 
+-do_pr(turns, count)
+-int turns, count;
++static void
++do_pr(int turns, int count)
+ {
+     if(maximal != 0 && turns != 1) {
+ 	printf(", %10d maximal", maximal);
+@@ -42,8 +42,8 @@ int turns, count;
+     fflush(stdout);
+ }
+ 
+-try_one(num, count)
+-int num, count;
++static int
++try_one(int num, int count)
+ {
+ int twist, ntwist, ntwist1, twist0;
+ int choice, nchoice, nchoice1;
+@@ -93,8 +93,8 @@ int i, j, nnum, counted = 0, k, l, max,
+     return wcounted;
+ }
+ 
+-try(count)
+-int count;
++static void
++try(int count)
+ {
+ int i, counted = 0, k;
+ TYPE j;
+@@ -122,9 +122,8 @@ TYPE j;
+     do_pr(count + 1, counted);
+ }
+ 
+-main(argc, argv)
+-int argc;
+-char *argv[];
++int
++main(int argc, char *argv[])
+ {
+ int i, k, error = 0;
+ TYPE j;
+--- a/dik/sizekoc2.c	2020-10-29 14:09:36.163790512 -0600
++++ b/dik/sizekoc2.c	2020-10-29 15:02:15.279787854 -0600
+@@ -30,8 +30,8 @@ int maximal;
+ int gcount;
+ int givemax;
+ 
+-do_pr(turns, count)
+-int turns, count;
++static void
++do_pr(int turns, int count)
+ {
+     if(maximal != 0 && turns != 1) {
+ 	printf(", %10d maximal", maximal);
+@@ -42,8 +42,8 @@ int turns, count;
+     fflush(stdout);
+ }
+ 
+-try_one(num, count)
+-int num, count;
++static int
++try_one(int num, int count)
+ {
+ int cperm, ncperm, ncperm1, cperm0;
+ int eperm, neperm, neperm1;
+@@ -130,8 +130,8 @@ int i, j, nnum, counted = 0, k, l, max,
+     return wcounted;
+ }
+ 
+-try(count)
+-int count;
++static void
++try(int count)
+ {
+ int i, counted = 0, k;
+ TYPE j;
+@@ -159,9 +159,8 @@ TYPE j;
+     do_pr(count + 1, counted);
+ }
+ 
+-main(argc, argv)
+-int argc;
+-char *argv[];
++int
++main(int argc, char *argv[])
+ {
+ int i, k, error = 0;
+ TYPE j;
+--- a/dik/sizesquare.c	2020-10-29 14:04:55.483179784 -0600
++++ b/dik/sizesquare.c	2020-10-29 15:03:28.727707545 -0600
+@@ -18,8 +18,8 @@ int maximal;
+ int gcount;
+ int givemax;
+ 
+-do_pr(turns, count)
+-int turns, count;
++static void
++do_pr(int turns, int count)
+ {
+     if(maximal != 0 && turns != 1) {
+ 	printf(", %10d maximal", maximal);
+@@ -30,8 +30,8 @@ int turns, count;
+     fflush(stdout);
+ }
+ 
+-try_one(num, count)
+-int num, count;
++static int
++try_one(int num, int count)
+ {
+ int eperm, neperm;
+ int cperm, ncperm;
+@@ -58,8 +58,8 @@ int i, j, nnum, counted = 0, k, l, max =
+     return counted;
+ }
+ 
+-try(count)
+-int count;
++static void
++try(int count)
+ {
+ int i, counted = 0, k;
+ TYPE j;
+@@ -87,9 +87,8 @@ TYPE j;
+     do_pr(count + 1, counted);
+ }
+ 
+-main(argc, argv)
+-int argc;
+-char *argv[];
++int
++main(int argc, char *argv[])
+ {
+ int i, k, error = 0;
+ TYPE j;
+--- a/dik/trans/choice.a	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/choice.a	2020-10-29 15:05:58.911543339 -0600
+@@ -39,8 +39,8 @@ static char mm_choices[MAX_CHOICES];
+ static unsigned short choice_to_perm[MAX_CHOICES];
+ static unsigned short perm_to_choice[MAX_PERMS];
+ 
+-static void val_perm(v,p0,p1,p2,p3,p4,p5,p6,p7,p8,p9,pa,pb)
+-int v,*p0,*p1,*p2,*p3,*p4,*p5,*p6,*p7,*p8,*p9,*pa,*pb;
++static void val_perm(int v, int *p0, int *p1, int *p2, int *p3, int *p4,
++    int *p5, int *p6, int *p7, int *p8, int *p9, int *pa, int *pb)
+ {
+     *pb = v & 1;
+     v >>= 1;
+@@ -67,8 +67,8 @@ int v,*p0,*p1,*p2,*p3,*p4,*p5,*p6,*p7,*p
+     *p0 = v & 1;
+ }
+ 
+-static int choice_val(p0,p1,p2,p3,p4,p5,p6,p7,p8,p9,pa,pb)
+-int p0,p1,p2,p3,p4,p5,p6,p7,p8,p9,pa,pb;
++static int choice_val(int p0, int p1, int p2, int p3, int p4, int p5, int p6,
++    int p7, int p8, int p9, int pa, int pb)
+ {
+    return perm_to_choice[((((((((((p0*2+
+ 				   p1)*2+
+@@ -84,14 +84,14 @@ int p0,p1,p2,p3,p4,p5,p6,p7,p8,p9,pa,pb;
+ 				   pb];
+ }
+ 
+-static void val_choice(v,p0,p1,p2,p3,p4,p5,p6,p7,p8,p9,pa,pb)
+-int v,*p0,*p1,*p2,*p3,*p4,*p5,*p6,*p7,*p8,*p9,*pa,*pb;
++static void val_choice(int v, int *p0, int *p1, int *p2, int *p3, int *p4,
++    int *p5, int *p6, int *p7, int *p8, int *p9, int *pa, int *pb)
+ {
+     v = choice_to_perm[v];
+     val_perm(v,p0,p1,p2,p3,p4,p5,p6,p7,p8,p9,pa,pb);
+ }
+ 
+-static void init_choices()
++static void init_choices(void)
+ {
+ int i, j, k, l, m;
+ int p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, pa, pb;
+--- a/dik/trans/choice.c	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/choice.c	2020-10-29 15:11:34.519182771 -0600
+@@ -12,7 +12,7 @@ static int choices_magic_counter;
+ static char choices_rotate[MAX_CHOICES][MI];
+ #endif /* EQUIV */
+ 
+-static void init_choices1()
++static void init_choices1(void)
+ {
+ int i, j, k;
+ int c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, ca, cb;
+--- a/dik/trans/choice.m	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/choice.m	2020-10-29 15:11:48.575168312 -0600
+@@ -1,6 +1,6 @@
+ static unsigned short choices_trans[MAX_CHOICES][MI];
+ 
+-static void init_choices2()
++static void init_choices2(void)
+ {
+ int i, k;
+ int c0,c1,c2,c3,c4,c5,c6,c7,c8,c9,ca,cb;
+--- a/dik/trans/choice.r	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/choice.r	2020-10-29 15:14:01.328031562 -0600
+@@ -1,5 +1,5 @@
+-void rotate_ud_choices(c0,c1,c2,c3,c4,c5,c6,c7,c8,c9,ca,cb)
+-int *c0,*c1,*c2,*c3,*c4,*c5,*c6,*c7,*c8,*c9,*ca,*cb;
++void rotate_ud_choices(int *c0, int *c1, int *c2, int *c3, int *c4, int *c5,
++    int *c6, int *c7, int *c8, int *c9, int *ca, int *cb)
+ {
+ int tmp;
+ 
+@@ -41,8 +41,8 @@ int tmp;
+ #endif /* ROT2 */
+ }
+ 
+-void rotate_rl_choices(c0,c1,c2,c3,c4,c5,c6,c7,c8,c9,ca,cb)
+-int *c0,*c1,*c2,*c3,*c4,*c5,*c6,*c7,*c8,*c9,*ca,*cb;
++void rotate_rl_choices(int *c0, int *c1, int *c2, int *c3, int *c4, int *c5,
++    int *c6, int *c7, int *c8, int *c9, int *ca, int *cb)
+ {
+ int tmp;
+ 
+@@ -66,8 +66,8 @@ int tmp;
+     *ca = tmp;
+ }
+ 
+-void flip_choices(c0,c1,c2,c3,c4,c5,c6,c7,c8,c9,ca,cb)
+-int *c0,*c1,*c2,*c3,*c4,*c5,*c6,*c7,*c8,*c9,*ca,*cb;
++void flip_choices(int *c0, int *c1, int *c2, int *c3, int *c4, int *c5, int *c6,
++    int *c7, int *c8, int *c9, int *ca, int *cb)
+ {
+ int tmp;
+ 
+--- a/dik/trans/cperm2.a	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/cperm2.a	2020-10-29 14:50:34.064572197 -0600
+@@ -18,8 +18,7 @@
+ 
+ static unsigned short cperms2[MAX_CPERMS2][6];
+ 
+-static int permcx_val(p0,p1,p2,p3,p4,p5,p6,p7,p8)
+-int p0,p1,p2,p3,p4,p5,p6,p7;
++static int permcx_val(int p0, int p1, int p2, int p3, int p4, int p5, int p6, int p7)
+ {
+ int i1, i2;
+ 
+@@ -28,8 +27,7 @@ int i1, i2;
+     return i2 * 24 + i1;
+ }
+ 
+-static void val_permcx(perm,p0,p1,p2,p3,p4,p5,p6,p7)
+-int perm,*p0,*p1,*p2,*p3,*p4,*p5,*p6,*p7;
++static void val_permcx(int perm, int *p0, int *p1, int *p2, int *p3, int *p4, int *p5, int *p6, int *p7)
+ {
+ int i1, i2;
+ 
+@@ -43,7 +41,7 @@ int i1, i2;
+     *p7 += 4;
+ }
+ 
+-static void init_cperms2()
++static void init_cperms2(void)
+ {
+ int i, j, k, l, m;
+ int p0, p1, p2, p3, p4, p5, p6, p7;
+--- a/dik/trans/cperm7.a	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/cperm7.a	2020-10-29 15:14:38.855992884 -0600
+@@ -18,7 +18,7 @@ Cubelet 4 is fixed
+ 
+ static unsigned short cperms[MAX_CPERMS][3];
+ 
+-static void init_cperms()
++static void init_cperms(void)
+ {
+ int i;
+ int p0, p1, p2, p3, p5, p6, p7;
+--- a/dik/trans/cperm.a	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/cperm.a	2020-10-29 15:14:55.703975524 -0600
+@@ -23,7 +23,7 @@ static char mm_cperms[MAX_CPERMS];
+ static unsigned short cperms_inv[MAX_CPERMS];
+ #endif /* IPERM */
+ 
+-static void init_cperms()
++static void init_cperms(void)
+ {
+ int i, j, k, l, m;
+ int p0, p1, p2, p3, p4, p5, p6, p7;
+--- a/dik/trans/cperm.c	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/cperm.c	2020-10-29 15:15:09.607961194 -0600
+@@ -12,7 +12,7 @@ static int cperms_magic_counter;
+ static char cperms_rotate[MAX_CPERMS][MI];
+ #endif /* EQUIV */
+ 
+-static void init_cperms1()
++static void init_cperms1(void)
+ {
+ int i, j, k;
+ int p[8];
+--- a/dik/trans/cperm.m	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/cperm.m	2020-10-29 16:03:03.773938763 -0600
+@@ -1,6 +1,6 @@
+ static unsigned short cperms_trans[MAX_CPERMS][MI];
+ 
+-static void init_cperms2()
++static void init_cperms2(void)
+ {
+ int i, k;
+ int p[8];
+--- a/dik/trans/cperm.r	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/cperm.r	2020-10-29 16:03:30.365913642 -0600
+@@ -1,5 +1,4 @@
+-static void rotate_ud_cperms(p)
+-int *p;
++static void rotate_ud_cperms(int *p)
+ {
+ int p1[8], p2[8], i;
+ 
+@@ -24,8 +23,7 @@ int p1[8], p2[8], i;
+     p[7] = p2[6];
+ }
+ 
+-static void rotate_rl_cperms(p)
+-int *p;
++static void rotate_rl_cperms(int *p)
+ {
+ int p1[8], p2[8], i;
+ 
+@@ -50,8 +48,7 @@ int p1[8], p2[8], i;
+     p[7] = p2[0];
+ }
+ 
+-static void flip_cperms(p)
+-int *p;
++static void flip_cperms(int *p)
+ {
+ int p1[8], p2[8], i;
+ 
+--- a/dik/trans/eperm2.a	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/eperm2.a	2020-10-29 16:04:45.213842939 -0600
+@@ -18,8 +18,8 @@
+ 
+ static unsigned short eperms2[MAX_EPERMS2][6];
+ 
+-static int permex_val(p0,p1,p2,p3,p4,p5,p6,p7,p8,p9,pa,pb)
+-int p0,p1,p2,p3,p4,p5,p6,p7,p8,p9,pa,pb;
++static int permex_val(int p0, int p1, int p2, int p3, int p4, int p5, int p6,
++    int p7, int p8, int p9, int pa, int pb)
+ {
+ int i1, i2, i3;
+ 
+@@ -29,8 +29,8 @@ int i1, i2, i3;
+     return (i3 * 24 + i2) * 24 + i1;
+ }
+ 
+-static void val_permex(perm,p0,p1,p2,p3,p4,p5,p6,p7,p8,p9,pa,pb)
+-int perm,*p0,*p1,*p2,*p3,*p4,*p5,*p6,*p7,*p8,*p9,*pa,*pb;
++static void val_permex(int perm, int *p0, int *p1, int *p2, int *p3, int *p4,
++    int *p5, int *p6, int *p7, int *p8, int *p9, int *pa, int *pb)
+ {
+ int i1, i2, i3;
+ 
+@@ -51,7 +51,7 @@ int i1, i2, i3;
+     *pb += 8;
+ }
+ 
+-static void init_eperms2()
++static void init_eperms2(void)
+ {
+ int i, j, k, l, m;
+ int p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, pa, pb;
+--- a/dik/trans/eperm.a	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/eperm.a	2020-10-29 16:05:09.484820010 -0600
+@@ -23,7 +23,7 @@ static char mm_eperms[MAX_EPERMS];
+ static unsigned short eperms_inv[MAX_EPERMS];
+ #endif /* IPERM */
+ 
+-static void init_eperms()
++static void init_eperms(void)
+ {
+ int i, j, k, l, m;
+ int p0, p1, p2, p3, p4, p5, p6, p7;
+--- a/dik/trans/eperm.c	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/eperm.c	2020-10-29 16:05:24.221806086 -0600
+@@ -12,7 +12,7 @@ static int eperms_magic_counter;
+ static char eperms_rotate[MAX_EPERMS][MI];
+ #endif /* EQUIV */
+ 
+-static void init_eperms1()
++static void init_eperms1(void)
+ {
+ int i, j, k;
+ int p[8];
+--- a/dik/trans/eperm.m	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/eperm.m	2020-10-29 16:06:11.725761212 -0600
+@@ -1,6 +1,6 @@
+ static unsigned short eperms_trans[MAX_EPERMS][MI];
+ 
+-static void init_eperms2()
++static void init_eperms2(void)
+ {
+ int i, k; int l;
+ int p[8];
+--- a/dik/trans/eperm.r	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/eperm.r	2020-10-29 16:06:33.885740275 -0600
+@@ -1,5 +1,4 @@
+-static void rotate_ud_eperms(p)
+-int *p;
++static void rotate_ud_eperms(int *p)
+ {
+ int p1[8], p2[8], i;
+ 
+@@ -24,8 +23,7 @@ int p1[8], p2[8], i;
+     p[7] = p2[6];
+ }
+ 
+-static void rotate_rl_eperms(p)
+-int *p;
++static void rotate_rl_eperms(int *p)
+ {
+ int p1[8], p2[8], i;
+ 
+@@ -50,8 +48,7 @@ int p1[8], p2[8], i;
+     p[7] = p2[3];
+ }
+ 
+-static void flip_eperms(p)
+-int *p;
++static void flip_eperms(int *p)
+ {
+ int p1[8], p2[8], i;
+ 
+--- a/dik/trans/flip.a	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/flip.a	2020-10-29 16:09:50.765554263 -0600
+@@ -20,8 +20,8 @@ static unsigned short flips[MAX_FLIPS][6
+ static char mm_flips[MAX_FLIPS];
+ #endif /* NOMAX */
+ 
+-static int flip_val(f0,f1,f2,f3,f4,f5,f6,f7,f8,f9,fa,fb)
+-int f0,f1,f2,f3,f4,f5,f6,f7,f8,f9,fa,fb;
++static int flip_val(int f0, int f1, int f2, int f3, int f4, int f5, int f6,
++    int f7, int f8, int f9, int fa, int fb)
+ {
+    return (((((((((fa*2+
+ 		   f9)*2+
+@@ -36,7 +36,7 @@ int f0,f1,f2,f3,f4,f5,f6,f7,f8,f9,fa,fb;
+ 		   f0;
+ }
+ 
+-static void init_flips()
++static void init_flips(void)
+ {
+ int i, j, k, l, m;
+ int f0, f1, f2, f3, f4, f5, f6, f7, f8, f9, fa, fb;
+--- a/dik/trans/flip.c	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/flip.c	2020-10-29 16:10:33.643513753 -0600
+@@ -12,7 +12,7 @@ static int flips_magic_counter;
+ static char flips_rotate[MAX_FLIPS][MI];
+ #endif /* EQUIV */
+ 
+-static void init_flips1()
++static void init_flips1(void)
+ {
+ int i, j, k;
+ int f0, f1, f2, f3, f4, f5, f6, f7, f8, f9, fa, fb;
+--- a/dik/trans/flip.m	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/flip.m	2020-10-29 16:10:51.100497258 -0600
+@@ -4,7 +4,7 @@ static unsigned short flips_trans[MAX_FL
+ ERROR: Collapsing with FLIP used requires ROT2
+ #endif /* ROT2 */
+ 
+-static void init_flips2()
++static void init_flips2(void)
+ {
+ int i, j, k;
+ int f0,f1,f2,f3,f4,f5,f6,f7,f8,f9,fa,fb;
+--- a/dik/trans/flip.r	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/flip.r	2020-10-29 16:12:38.100396160 -0600
+@@ -4,8 +4,8 @@
+ ERROR: Collapsing with FLIP used requires ROT2
+ #endif /* ROT2 */
+ 
+-void rotate_ud_flips(f0,f1,f2,f3,f4,f5,f6,f7,f8,f9,fa,fb)
+-int *f0,*f1,*f2,*f3,*f4,*f5,*f6,*f7,*f8,*f9,*fa,*fb;
++void rotate_ud_flips(int *f0, int *f1, int *f2, int *f3, int *f4, int *f5,
++    int *f6, int *f7, int *f8, int *f9, int *fa, int *fb)
+ {
+ int tmp;
+ 
+@@ -29,8 +29,8 @@ int tmp;
+     *fb = tmp;
+ }
+ 
+-void rotate_rl_flips(f0,f1,f2,f3,f4,f5,f6,f7,f8,f9,fa,fb)
+-int *f0,*f1,*f2,*f3,*f4,*f5,*f6,*f7,*f8,*f9,*fa,*fb;
++void rotate_rl_flips(int *f0, int *f1, int *f2, int *f3, int *f4, int *f5,
++    int *f6, int *f7, int *f8, int *f9, int *fa, int *fb)
+ {
+ int tmp;
+ 
+@@ -54,8 +54,8 @@ int tmp;
+     *fa = tmp;
+ }
+ 
+-void flip_flips(f0,f1,f2,f3,f4,f5,f6,f7,f8,f9,fa,fb)
+-int *f0,*f1,*f2,*f3,*f4,*f5,*f6,*f7,*f8,*f9,*fa,*fb;
++void flip_flips(int *f0, int *f1, int *f2, int *f3, int *f4, int *f5, int *f6,
++    int *f7, int *f8, int *f9, int *fa, int *fb)
+ {
+ int tmp;
+ 
+--- a/dik/trans/mixed1.a	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/mixed1.a	2020-10-29 16:13:16.644359736 -0600
+@@ -2,7 +2,7 @@ static char mm_tf[MAX_TWISTS][MAX_FLIPS]
+ static char mm_tc[MAX_TWISTS][MAX_CHOICES];
+ static char mm_fc[MAX_FLIPS][MAX_CHOICES];
+ 
+-static void init_mixed1()
++static void init_mixed1(void)
+ {
+ int i, j, k, l, m, n;
+ int t0, nt0, f0, nf0, c0, nc0;
+--- a/dik/trans/mixed2.a	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/mixed2.a	2020-10-29 16:13:34.420342935 -0600
+@@ -1,7 +1,7 @@
+ static char mm_cs[MAX_CPERMS][MAX_SPERMS];
+ static char mm_es[MAX_EPERMS][MAX_SPERMS];
+ 
+-static void init_mixed2()
++static void init_mixed2(void)
+ {
+ int i, j, k, l, m, n;
+ int c0, nc0, e0, ne0, s0, ns0;
+--- a/dik/trans/perm10.a	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/perm10.a	2020-10-29 16:27:37.012644462 -0600
+@@ -1,5 +1,5 @@
+-static int perm10_val(p0,p1,p2,p3,p4,p5,p6,p7,p8,p9)
+-int p0,p1,p2,p3,p4,p5,p6,p7,p8,p9;
++static int perm10_val(int p0, int p1, int p2, int p3, int p4, int p5, int p6,
++    int p7, int p8, int p9)
+ {
+ int p[10], i, res, k;
+ 
+@@ -75,8 +75,8 @@ int p[10], i, res, k;
+     return res;
+ }
+ 
+-static void val_perm10(perm,p0,p1,p2,p3,p4,p5,p6,p7,p8,p9)
+-int perm,*p0,*p1,*p2,*p3,*p4,*p5,*p6,*p7,*p8,*p9;
++static void val_perm10(int perm, int *p0, int *p1, int *p2, int *p3, int *p4,
++    int *p5, int *p6, int *p7, int *p8, int *p9)
+ {
+ int p[10], i, k, r;
+ 
+@@ -215,8 +215,7 @@ int p[10], i, k, r;
+ }
+ 
+ #ifdef IPERM
+-void inv_perm10(p)
+-int p[10];
++void inv_perm10(int p[10])
+ {
+ int p1[10], i;
+ 
+@@ -228,8 +227,7 @@ int p1[10], i;
+     }
+ }
+ 
+-int inv_perm10_val(i)
+-int i;
++int inv_perm10_val(int i)
+ {
+ int p[10];
+ 
+@@ -240,8 +238,7 @@ int p[10];
+ #endif /* IPERM */
+ 
+ #ifdef PARITY
+-int perm10_parity(p1)
+-int p1[10];
++int perm10_parity(int p1[10])
+ {
+ int p[10], i, j, par;
+     for(i = 0; i < 10; i++) {
+--- a/dik/trans/perm11.a	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/perm11.a	2020-10-29 16:30:26.716515056 -0600
+@@ -1,5 +1,5 @@
+-static int perm11_val(p0,p1,p2,p3,p4,p5,p6,p7,p8,p9,pa)
+-int p0,p1,p2,p3,p4,p5,p6,p7,p8,p9,pa;
++static int perm11_val(int p0, int p1, int p2, int p3, int p4, int p5, int p6,
++    int p7, int p8, int p9, int pa)
+ {
+ int p[11], i, res, k;
+ 
+@@ -83,8 +83,8 @@ int p[11], i, res, k;
+     return res;
+ }
+ 
+-static void val_perm11(perm,p0,p1,p2,p3,p4,p5,p6,p7,p8,p9,pa)
+-int perm,*p0,*p1,*p2,*p3,*p4,*p5,*p6,*p7,*p8,*p9,*pa;
++static void val_perm11(int perm, int *p0, int *p1, int *p2, int *p3, int *p4,
++    int *p5, int *p6, int *p7, int *p8, int *p9, int *pa)
+ {
+ int p[11], i, k, r;
+ 
+@@ -237,8 +237,7 @@ int p[11], i, k, r;
+ }
+ 
+ #ifdef IPERM
+-void inv_perm11(p)
+-int p[11];
++void inv_perm11(int p[11])
+ {
+ int p1[11], i;
+ 
+@@ -250,8 +249,7 @@ int p1[11], i;
+     }
+ }
+ 
+-int inv_perm11_val(i)
+-int i;
++int inv_perm11_val(int i)
+ {
+ int p[11];
+ 
+@@ -262,8 +260,7 @@ int p[11];
+ #endif /* IPERM */
+ 
+ #ifdef PARITY
+-int perm11_parity(p1)
+-int p1[11];
++int perm11_parity(int p1[11])
+ {
+ int p[11], i, j, par;
+     for(i = 0; i < 11; i++) {
+--- a/dik/trans/perm12.a	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/perm12.a	2020-10-29 16:32:11.036435500 -0600
+@@ -1,5 +1,5 @@
+-static int perm12_val(p0,p1,p2,p3,p4,p5,p6,p7,p8,p9,pa,pb)
+-int p0,p1,p2,p3,p4,p5,p6,p7,p8,p9,pa,pb;
++static int perm12_val(int p0, int p1, int p2, int p3, int p4, int p5, int p6,
++    int p7, int p8, int p9, int pa, int pb)
+ {
+ int p[12], i, res, k;
+ 
+@@ -91,8 +91,8 @@ int p[12], i, res, k;
+     return res;
+ }
+ 
+-static void val_perm12(perm,p0,p1,p2,p3,p4,p5,p6,p7,p8,p9,pa,pb)
+-int perm,*p0,*p1,*p2,*p3,*p4,*p5,*p6,*p7,*p8,*p9,*pa,*pb;
++static void val_perm12(int perm, int *p0, int *p1, int *p2, int *p3, int *p4,
++    int *p5, int *p6, int *p7, int *p8, int *p9, int *pa, int *pb)
+ {
+ int p[12], i, k, r;
+ 
+@@ -259,8 +259,7 @@ int p[12], i, k, r;
+ }
+ 
+ #ifdef IPERM
+-void inv_perm12(p)
+-int p[12];
++void inv_perm12(int p[12])
+ {
+ int p1[12], i;
+ 
+@@ -272,8 +271,7 @@ int p1[12], i;
+     }
+ }
+ 
+-int inv_perm12_val(i)
+-int i;
++int inv_perm12_val(int i)
+ {
+ int p[12];
+ 
+@@ -284,8 +282,7 @@ int p[12];
+ #endif /* IPERM */
+ 
+ #ifdef PARITY
+-int perm12_parity(p1)
+-int p1[12];
++int perm12_parity(int p1[12])
+ {
+ int p[12], i, j, par;
+     for(i = 0; i < 12; i++) {
+--- a/dik/trans/perm3.a	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/perm3.a	2020-10-29 16:33:15.172386589 -0600
+@@ -1,5 +1,4 @@
+-static int perm3_val(p0,p1,p2)
+-int p0,p1,p2;
++static int perm3_val(int p0, int p1, int p2)
+ {
+ int p[3], i, res, k;
+ 
+@@ -19,8 +18,7 @@ int p[3], i, res, k;
+     return res;
+ }
+ 
+-static void val_perm3(perm,p0,p1,p2)
+-int perm,*p0,*p1,*p2;
++static void val_perm3(int perm, int *p0, int *p1, int *p2)
+ {
+ int p[3], i, k, r;
+ 
+@@ -61,8 +59,7 @@ int p[3], i, k, r;
+ }
+ 
+ #ifdef IPERM
+-void inv_perm3(p)
+-int p[3];
++void inv_perm3(int p[3])
+ {
+ int p1[3], i;
+ 
+@@ -74,8 +71,7 @@ int p1[3], i;
+     }
+ }
+ 
+-int inv_perm3_val(i)
+-int i;
++int inv_perm3_val(int i)
+ {
+ int p[3];
+ 
+@@ -86,8 +82,7 @@ int p[3];
+ #endif /* IPERM */
+ 
+ #ifdef PARITY
+-int perm3_parity(p1)
+-int p1[3];
++int perm3_parity(int p1[3])
+ {
+ int p[3], i, j, par;
+     for(i = 0; i < 3; i++) {
+--- a/dik/trans/perm4.a	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/perm4.a	2020-10-29 16:34:08.508345912 -0600
+@@ -1,5 +1,4 @@
+-static int perm4_val(p0,p1,p2,p3)
+-int p0,p1,p2,p3;
++static int perm4_val(int p0, int p1, int p2, int p3)
+ {
+ int p[4], i, res, k;
+ 
+@@ -27,8 +26,7 @@ int p[4], i, res, k;
+     return res;
+ }
+ 
+-static void val_perm4(perm,p0,p1,p2,p3)
+-int perm,*p0,*p1,*p2,*p3;
++static void val_perm4(int perm, int *p0, int *p1, int *p2, int *p3)
+ {
+ int p[4], i, k, r;
+ 
+@@ -83,8 +81,7 @@ int p[4], i, k, r;
+ }
+ 
+ #ifdef IPERM
+-void inv_perm4(p)
+-int p[4];
++void inv_perm4(int p[4])
+ {
+ int p1[4], i;
+ 
+@@ -96,8 +93,7 @@ int p1[4], i;
+     }
+ }
+ 
+-int inv_perm4_val(i)
+-int i;
++int inv_perm4_val(int i)
+ {
+ int p[4];
+ 
+@@ -108,8 +104,7 @@ int p[4];
+ #endif /* IPERM */
+ 
+ #ifdef PARITY
+-int perm4_parity(p1)
+-int p1[4];
++int perm4_parity(int p1[4])
+ {
+ int p[4], i, j, par;
+     for(i = 0; i < 4; i++) {
+--- a/dik/trans/perm5.a	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/perm5.a	2020-10-29 16:35:07.476300929 -0600
+@@ -1,5 +1,4 @@
+-static int perm5_val(p0,p1,p2,p3,p4)
+-int p0,p1,p2,p3,p4;
++static int perm5_val(int p0, int p1, int p2, int p3, int p4)
+ {
+ int p[5], i, res, k;
+ 
+@@ -35,8 +34,7 @@ int p[5], i, res, k;
+     return res;
+ }
+ 
+-static void val_perm5(perm,p0,p1,p2,p3,p4)
+-int perm,*p0,*p1,*p2,*p3,*p4;
++static void val_perm5(int perm, int *p0, int *p1, int *p2, int *p3, int *p4)
+ {
+ int p[5], i, k, r;
+ 
+@@ -105,8 +103,7 @@ int p[5], i, k, r;
+ }
+ 
+ #ifdef IPERM
+-void inv_perm5(p)
+-int p[5];
++void inv_perm5(int p[5])
+ {
+ int p1[5], i;
+ 
+@@ -118,8 +115,7 @@ int p1[5], i;
+     }
+ }
+ 
+-int inv_perm5_val(i)
+-int i;
++int inv_perm5_val(int i)
+ {
+ int p[5];
+ 
+@@ -130,8 +126,7 @@ int p[5];
+ #endif /* IPERM */
+ 
+ #ifdef PARITY
+-int perm5_parity(p1)
+-int p1[5];
++int perm5_parity(int p1[5])
+ {
+ int p[5], i, j, par;
+     for(i = 0; i < 5; i++) {
+--- a/dik/trans/perm6.a	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/perm6.a	2020-10-29 16:36:11.795253735 -0600
+@@ -1,5 +1,4 @@
+-static int perm6_val(p0,p1,p2,p3,p4,p5)
+-int p0,p1,p2,p3,p4,p5;
++static int perm6_val(int p0, int p1, int p2, int p3, int p4, int p5)
+ {
+ int p[6], i, res, k;
+ 
+@@ -43,8 +42,8 @@ int p[6], i, res, k;
+     return res;
+ }
+ 
+-static void val_perm6(perm,p0,p1,p2,p3,p4,p5)
+-int perm,*p0,*p1,*p2,*p3,*p4,*p5;
++static void val_perm6(int perm, int *p0, int *p1, int *p2, int *p3, int *p4,
++    int *p5)
+ {
+ int p[6], i, k, r;
+ 
+@@ -127,8 +126,7 @@ int p[6], i, k, r;
+ }
+ 
+ #ifdef IPERM
+-void inv_perm6(p)
+-int p[6];
++void inv_perm6(int p[6])
+ {
+ int p1[6], i;
+ 
+@@ -140,8 +138,7 @@ int p1[6], i;
+     }
+ }
+ 
+-int inv_perm6_val(i)
+-int i;
++int inv_perm6_val(int i)
+ {
+ int p[6];
+ 
+@@ -152,8 +149,7 @@ int p[6];
+ #endif /* IPERM */
+ 
+ #ifdef PARITY
+-int perm6_parity(p1)
+-int p1[6];
++int perm6_parity(int p1[6])
+ {
+ int p[6], i, j, par;
+     for(i = 0; i < 6; i++) {
+--- a/dik/trans/perm7.a	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/perm7.a	2020-10-29 16:37:17.547215498 -0600
+@@ -1,5 +1,4 @@
+-static int perm7_val(p0,p1,p2,p3,p4,p5,p6)
+-int p0,p1,p2,p3,p4,p5,p6;
++static int perm7_val(int p0, int p1, int p2, int p3, int p4, int p5, int p6)
+ {
+ int p[7], i, res, k;
+ 
+@@ -51,8 +50,8 @@ int p[7], i, res, k;
+     return res;
+ }
+ 
+-static void val_perm7(perm,p0,p1,p2,p3,p4,p5,p6)
+-int perm,*p0,*p1,*p2,*p3,*p4,*p5,*p6;
++static void val_perm7(int perm, int *p0, int *p1, int *p2, int *p3, int *p4,
++    int *p5, int *p6)
+ {
+ int p[7], i, k, r;
+ 
+@@ -149,8 +148,7 @@ int p[7], i, k, r;
+ }
+ 
+ #ifdef IPERM
+-void inv_perm7(p)
+-int p[7];
++void inv_perm7(int p[7])
+ {
+ int p1[7], i;
+ 
+@@ -162,8 +160,7 @@ int p1[7], i;
+     }
+ }
+ 
+-int inv_perm7_val(i)
+-int i;
++int inv_perm7_val(int i)
+ {
+ int p[7];
+ 
+@@ -174,8 +171,7 @@ int p[7];
+ #endif /* IPERM */
+ 
+ #ifdef PARITY
+-int perm7_parity(p1)
+-int p1[7];
++int perm7_parity(int p1[7])
+ {
+ int p[7], i, j, par;
+     for(i = 0; i < 7; i++) {
+--- a/dik/trans/perm8.a	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/perm8.a	2020-10-29 16:38:33.427171351 -0600
+@@ -1,5 +1,5 @@
+-static int perm8_val(p0,p1,p2,p3,p4,p5,p6,p7)
+-int p0,p1,p2,p3,p4,p5,p6,p7;
++static int perm8_val(int p0, int p1, int p2, int p3, int p4, int p5, int p6,
++    int p7)
+ {
+ int p[8], i, res, k;
+ 
+@@ -59,8 +59,8 @@ int p[8], i, res, k;
+     return res;
+ }
+ 
+-static void val_perm8(perm,p0,p1,p2,p3,p4,p5,p6,p7)
+-int perm,*p0,*p1,*p2,*p3,*p4,*p5,*p6,*p7;
++static void val_perm8(int perm, int *p0, int *p1, int *p2, int *p3, int *p4,
++    int *p5, int *p6, int *p7)
+ {
+ int p[8], i, k, r;
+ 
+@@ -171,8 +171,7 @@ int p[8], i, k, r;
+ }
+ 
+ #ifdef IPERM
+-void inv_perm8(p)
+-int p[8];
++void inv_perm8(int p[8])
+ {
+ int p1[8], i;
+ 
+@@ -184,8 +183,7 @@ int p1[8], i;
+     }
+ }
+ 
+-int inv_perm8_val(i)
+-int i;
++int inv_perm8_val(int i)
+ {
+ int p[8];
+ 
+@@ -196,8 +194,7 @@ int p[8];
+ #endif /* IPERM */
+ 
+ #ifdef PARITY
+-int perm8_parity(p1)
+-int p1[8];
++int perm8_parity(int p1[8])
+ {
+ int p[8], i, j, par;
+     for(i = 0; i < 8; i++) {
+--- a/dik/trans/perm9.a	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/perm9.a	2020-10-29 16:39:48.267127801 -0600
+@@ -1,5 +1,5 @@
+-static int perm9_val(p0,p1,p2,p3,p4,p5,p6,p7,p8)
+-int p0,p1,p2,p3,p4,p5,p6,p7,p8;
++static int perm9_val(int p0, int p1, int p2, int p3, int p4, int p5, int p6,
++    int p7, int p8)
+ {
+ int p[9], i, res, k;
+ 
+@@ -67,8 +67,8 @@ int p[9], i, res, k;
+     return res;
+ }
+ 
+-static void val_perm9(perm,p0,p1,p2,p3,p4,p5,p6,p7,p8)
+-int perm,*p0,*p1,*p2,*p3,*p4,*p5,*p6,*p7,*p8;
++static void val_perm9(int perm, int *p0, int *p1, int *p2, int *p3, int *p4,
++    int *p5, int *p6, int *p7, int *p8)
+ {
+ int p[9], i, k, r;
+ 
+@@ -193,8 +193,7 @@ int p[9], i, k, r;
+ }
+ 
+ #ifdef IPERM
+-void inv_perm9(p)
+-int p[9];
++void inv_perm9(int p[9])
+ {
+ int p1[9], i;
+ 
+@@ -206,8 +205,7 @@ int p1[9], i;
+     }
+ }
+ 
+-int inv_perm9_val(i)
+-int i;
++int inv_perm9_val(int i)
+ {
+ int p[9];
+ 
+@@ -218,8 +216,7 @@ int p[9];
+ #endif /* IPERM */
+ 
+ #ifdef PARITY
+-int perm9_parity(p1)
+-int p1[9];
++int perm9_parity(int p1[9])
+ {
+ int p[9], i, j, par;
+     for(i = 0; i < 9; i++) {
+--- a/dik/trans/sperm.a	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/sperm.a	2020-10-29 16:40:06.972116924 -0600
+@@ -23,7 +23,7 @@ static char mm_sperms[MAX_SPERMS];
+ static unsigned short sperms_inv[MAX_SPERMS];
+ #endif /* IPERM */
+ 
+-static void init_sperms()
++static void init_sperms(void)
+ {
+ int i, j, k, l, m;
+ int p0, p1, p2, p3;
+--- a/dik/trans/sperm.c	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/sperm.c	2020-10-29 16:40:23.821107141 -0600
+@@ -12,7 +12,7 @@ static int sperms_magic_counter;
+ static char sperms_rotate[MAX_SPERMS][MI];
+ #endif /* EQUIV */
+ 
+-static void init_sperms1()
++static void init_sperms1(void)
+ {
+ int i, j, k;
+ int p[4];
+--- a/dik/trans/sperm.m	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/sperm.m	2020-10-29 16:40:41.925096624 -0600
+@@ -1,6 +1,6 @@
+ static unsigned short sperms_trans[MAX_SPERMS][MI];
+ 
+-static void init_sperms2()
++static void init_sperms2(void)
+ {
+ int i, k;
+ int p[4];
+--- a/dik/trans/sperm.r	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/sperm.r	2020-10-29 16:41:05.500082936 -0600
+@@ -1,5 +1,4 @@
+-static void rotate_ud_sperms(p)
+-int *p;
++static void rotate_ud_sperms(int *p)
+ {
+ int p1[4], p2[4], i;
+ 
+@@ -16,8 +15,7 @@ int p1[4], p2[4], i;
+     p[3] = p2[2];
+ }
+ 
+-static void rotate_rl_sperms(p)
+-int *p;
++static void rotate_rl_sperms(int *p)
+ {
+ int p1[4], p2[4], i;
+ 
+@@ -34,8 +32,7 @@ int p1[4], p2[4], i;
+     p[3] = p2[0];
+ }
+ 
+-static void flip_sperms(p)
+-int *p;
++static void flip_sperms(int *p)
+ {
+ int p1[4], p2[4], i;
+ 
+--- a/dik/trans/twist7.a	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/twist7.a	2020-10-29 16:41:42.341061544 -0600
+@@ -18,8 +18,7 @@ Cubelet 4 is fixed
+ 
+ static unsigned short twists[MAX_TWISTS][3];
+ 
+-static int twist_val(t0,t1,t2,t3,t5,t6,t7)
+-int t0,t1,t2,t3,t5,t6,t7;
++static int twist_val(int t0, int t1, int t2, int t3, int t5, int t6, int t7)
+ {
+     return ((((t6*3+
+ 	       t5)*3+
+@@ -29,7 +28,7 @@ int t0,t1,t2,t3,t5,t6,t7;
+ 	       t0;
+ }
+ 
+-static void init_twists()
++static void init_twists(void)
+ {
+ int i, j;
+ int t0, t1, t2, t3, t5, t6, t7;
+--- a/dik/trans/twist.a	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/twist.a	2020-10-29 16:42:14.173043066 -0600
+@@ -20,8 +20,8 @@ static unsigned short twists[MAX_TWISTS]
+ static char mm_twists[MAX_TWISTS];
+ #endif /* NOMAX */
+ 
+-static int twist_val(t0,t1,t2,t3,t4,t5,t6,t7)
+-int t0,t1,t2,t3,t4,t5,t6,t7;
++static int twist_val(int t0, int t1, int t2, int t3, int t4, int t5, int t6,
++    int t7)
+ {
+     return (((((t6*3+
+ 		t5)*3+
+@@ -32,7 +32,7 @@ int t0,t1,t2,t3,t4,t5,t6,t7;
+ 		t0;
+ }
+ 
+-static void init_twists()
++static void init_twists(void)
+ {
+ int i, j, k, l, m;
+ int t0, t1, t2, t3, t4, t5, t6, t7;
+--- a/dik/trans/twist.c	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/twist.c	2020-10-29 16:42:31.773032847 -0600
+@@ -12,7 +12,7 @@ static int twists_magic_counter;
+ static char twists_rotate[MAX_TWISTS][MI];
+ #endif /* EQUIV */
+ 
+-static void init_twists1()
++static void init_twists1(void)
+ {
+ int i, j, k;
+ int t0, t1, t2, t3, t4, t5, t6, t7;
+--- a/dik/trans/twist.m	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/twist.m	2020-10-29 16:42:47.541023693 -0600
+@@ -1,6 +1,6 @@
+ static unsigned short twists_trans[MAX_TWISTS][MI];
+ 
+-static void init_twists2()
++static void init_twists2(void)
+ {
+ int i, j, k;
+ int t0,t1,t2,t3,t4,t5,t6,t7;
+--- a/dik/trans/twist.r	2008-01-04 01:26:59.000000000 -0700
++++ b/dik/trans/twist.r	2020-10-29 16:44:00.298981452 -0600
+@@ -1,7 +1,7 @@
+ #define inv(i) ((3-(i)) % 3)
+ 
+-void rotate_ud_twists(t0,t1,t2,t3,t4,t5,t6,t7)
+-int *t0,*t1,*t2,*t3,*t4,*t5,*t6,*t7;
++void rotate_ud_twists(int *t0, int *t1, int *t2, int *t3, int *t4, int *t5,
++    int *t6, int *t7)
+ {
+ int tmp;
+ 
+@@ -32,8 +32,8 @@ int tmp;
+ #endif /* ROT2 */
+ }
+ 
+-void rotate_rl_twists(t0,t1,t2,t3,t4,t5,t6,t7)
+-int *t0,*t1,*t2,*t3,*t4,*t5,*t6,*t7;
++void rotate_rl_twists(int *t0, int *t1, int *t2, int *t3, int *t4, int *t5,
++    int *t6, int *t7)
+ {
+ int tmp;
+ 
+@@ -51,8 +51,8 @@ int tmp;
+     *t4 = tmp;
+ }
+ 
+-void flip_twists(t0,t1,t2,t3,t4,t5,t6,t7)
+-int *t0,*t1,*t2,*t3,*t4,*t5,*t6,*t7;
++void flip_twists(int *t0, int *t1, int *t2, int *t3, int *t4, int *t5, int *t6,
++    int *t7)
+ {
+ int tmp;
+ 

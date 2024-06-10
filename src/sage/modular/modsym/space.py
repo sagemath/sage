@@ -1,14 +1,13 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.flint sage.libs.pari
 """
-Space of modular symbols (base class)
+Base class of the space of modular symbols
 
 All the spaces of modular symbols derive from this class. This class is an
 abstract base class.
 """
-from __future__ import absolute_import
 
 # ****************************************************************************
-#       Sage: System for Algebra and Geometry Experimentation
+#       Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -23,27 +22,32 @@ from __future__ import absolute_import
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+
+from sage.arith.misc import divisors, next_prime
 from sage.categories.fields import Fields
-import sage.modules.free_module as free_module
-import sage.matrix.matrix_space as matrix_space
+from sage.matrix.matrix_space import MatrixSpace
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod
+from sage.modules.free_module import EchelonMatrixKey, FreeModule, VectorSpace
 from sage.modules.free_module_element import FreeModuleElement
-from sage.modules.free_module import EchelonMatrixKey
-from sage.misc.all import prod
-import sage.modular.hecke.all as hecke
-from sage.arith.all import divisors, next_prime
 from sage.rings.fast_arith import prime_range
-from sage.rings.all import PowerSeriesRing, Integer, QQ, ZZ, infinity, Zmod
-from sage.rings.number_field.number_field_base import is_NumberField
+from sage.rings.finite_rings.integer_mod_ring import Zmod
+from sage.rings.integer_ring import ZZ
+from sage.rings.integer import Integer
+from sage.rings.infinity import infinity
+from sage.rings.number_field.number_field_base import NumberField
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.rational_field import QQ
 from sage.structure.all import Sequence, SageObject
 from sage.structure.richcmp import (richcmp_method, richcmp,
                                     rich_to_bool, richcmp_not_equal)
 
-from sage.modular.arithgroup.all import Gamma0, is_Gamma0  # for Sturm bound given a character
+from sage.modular.arithgroup.all import Gamma0, Gamma0_class  # for Sturm bound given a character
+from sage.modular.hecke.module import HeckeModule_free_module
 from sage.modular.modsym.element import ModularSymbolsElement
 
-from . import hecke_operator
-
-from sage.misc.cachefunc import cached_method
+lazy_import('sage.modular.modsym', 'hecke_operator')
 
 
 def is_ModularSymbolsSpace(x):
@@ -54,15 +58,20 @@ def is_ModularSymbolsSpace(x):
 
         sage: M = ModularForms(3, 2)
         sage: sage.modular.modsym.space.is_ModularSymbolsSpace(M)
+        doctest:warning...
+        DeprecationWarning: The function is_ModularSymbolsSpace is deprecated; use 'isinstance(..., ModularForms)' instead.
+        See https://github.com/sagemath/sage/issues/38035 for details.
         False
         sage: sage.modular.modsym.space.is_ModularSymbolsSpace(M.modular_symbols(sign=1))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38035, "The function is_ModularSymbolsSpace is deprecated; use 'isinstance(..., ModularForms)' instead.")
     return isinstance(x, ModularSymbolsSpace)
 
 
 @richcmp_method
-class ModularSymbolsSpace(hecke.HeckeModule_free_module):
+class ModularSymbolsSpace(HeckeModule_free_module):
     r"""
     Base class for spaces of modular symbols.
     """
@@ -83,7 +92,7 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
         self.__group = group
         self.__character = character
         self.__sign = sign
-        hecke.HeckeModule_free_module.__init__(self, base_ring, group.level(), weight, category=category)
+        HeckeModule_free_module.__init__(self, base_ring, group.level(), weight, category=category)
 
     def __richcmp__(self, other, op):
         """
@@ -187,15 +196,15 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
 
         INPUT:
 
-        - ``v`` - a list of positive integers
-        - ``nz`` - (default: ``None``); if given specifies a column index
+        - ``v`` -- a list of positive integers
+        - ``nz`` -- (default: ``None``); if given specifies a column index
           such that the dual module has that column nonzero.
 
         OUTPUT:
 
-        - ``E`` - matrix such that E\*v is a vector with components
+        - ``E`` -- matrix such that E\*v is a vector with components
           the eigenvalues `a_n` for `n \in v`.
-        - ``v`` - a vector over a number field
+        - ``v`` -- a vector over a number field
 
         EXAMPLES::
 
@@ -214,7 +223,7 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
 
         TESTS:
 
-        Verify that :trac:`12772` is fixed::
+        Verify that :issue:`12772` is fixed::
 
             sage: M = ModularSymbols(1,12,sign=1).cuspidal_subspace().new_subspace()
             sage: A = M.decomposition()[0]
@@ -379,12 +388,12 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
 
         INPUT:
 
-        -  ``ModularSymbols self`` - an arbitrary space of
+        -  ``ModularSymbols self`` -- an arbitrary space of
            modular symbols
 
         OUTPUT:
 
-        -  ``CongruenceSubgroup`` - the congruence subgroup
+        -  ``CongruenceSubgroup`` -- the congruence subgroup
            that this is a space of modular symbols for.
 
         ALGORITHM: The group is recorded when this space is created.
@@ -446,8 +455,7 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
             Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 6 for Gamma_0(33) of weight 2 with sign 1 over Rational Field,
             Modular Symbols subspace of dimension 3 of Modular Symbols space of dimension 6 for Gamma_0(33) of weight 2 with sign 1 over Rational Field
             ]
-            sage: C=ModularSymbols(1,14,0,GF(5)).cuspidal_submodule()
-            sage: C
+            sage: C = ModularSymbols(1,14,0,GF(5)).cuspidal_submodule(); C
             Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 2 for Gamma_0(1) of weight 14 with sign 0 over Finite Field of size 5
             sage: C.is_simple()
             True
@@ -499,11 +507,11 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
 
         INPUT:
 
-        - ``ModularSymbols self`` - arbitrary space of modular symbols.
+        - ``ModularSymbols self`` -- arbitrary space of modular symbols.
 
         OUTPUT:
 
-        - ``int`` - the number of generators, which is the same as the
+        - ``int`` -- the number of generators, which is the same as the
           dimension of self.
 
         ALGORITHM: Call the dimension function.
@@ -612,22 +620,22 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
 
         INPUT:
 
-        -  ``self`` - a space of CUSPIDAL modular symbols
+        -  ``self`` -- a space of CUSPIDAL modular symbols
 
-        -  ``prec`` - an integer
+        -  ``prec`` -- an integer
 
-        -  ``algorithm`` - string:
+        -  ``algorithm`` -- string:
 
-        -  ``'default' (default)`` - decide which algorithm to
+        -  ``'default' (default)`` -- decide which algorithm to
            use based on heuristics
 
-        -  ``'hecke'`` - compute basis by computing
+        -  ``'hecke'`` -- compute basis by computing
            homomorphisms T - K, where T is the Hecke algebra
 
-        -  ``'eigen'`` - compute basis using eigenvectors for
+        -  ``'eigen'`` -- compute basis using eigenvectors for
            the Hecke action and Atkin-Lehner-Li theory to patch them together
 
-        -  ``'all'`` - compute using hecke_dual and eigen
+        -  ``'all'`` -- compute using hecke_dual and eigen
            algorithms and verify that the results are the same.
 
 
@@ -750,12 +758,12 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
 
         INPUT:
 
-        -  ``self`` - must be cuspidal
+        -  ``self`` -- must be cuspidal
 
-        -  ``prec`` - an integer (default:
+        -  ``prec`` -- an integer (default:
            self.default_prec())
 
-        -  ``R`` - either ZZ, QQ, or the base_ring of self
+        -  ``R`` -- either ZZ, QQ, or the base_ring of self
            (which is the default)
 
         OUTPUT: A free module over R.
@@ -932,12 +940,12 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
 
         INPUT:
 
-        -  ``self`` - space of modular symbols
+        -  ``self`` -- space of modular symbols
 
-        -  ``A`` - cuspidal simple space of level dividing the
+        -  ``A`` -- cuspidal simple space of level dividing the
            level of self and the same weight
 
-        -  ``prec`` - a positive integer
+        -  ``prec`` -- a positive integer
 
         EXAMPLES::
 
@@ -1031,7 +1039,7 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
 
         INPUT:
 
-        - ``prec`` (integer) - number of q-expansion terms to calculate.
+        - ``prec`` (integer) -- number of q-expansion terms to calculate.
 
         EXAMPLES::
 
@@ -1044,7 +1052,7 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
         if not self.is_cuspidal():
             raise ValueError("self must be cuspidal")
         K = self.base_ring()
-        if not is_NumberField(K):
+        if not isinstance(K, NumberField):
             raise TypeError("self must be over QQ or a number field.")
         n = K.degree()
         if n == 1:
@@ -1111,7 +1119,7 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
             []
         """
         V = self.q_expansion_module(prec, QQ)
-        return free_module.FreeModule(ZZ, V.degree()).span(V.basis()).saturation()
+        return FreeModule(ZZ, V.degree()).span(V.basis()).saturation()
 
     def congruence_number(self, other, prec=None):
         r"""
@@ -1380,8 +1388,8 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
             d = prec - 1
         K = self.base_ring()
 
-        A = free_module.VectorSpace(K, prec - 1)
-        M = matrix_space.MatrixSpace(K, prec - 1, self.dimension())
+        A = VectorSpace(K, prec - 1)
+        M = MatrixSpace(K, prec - 1, self.dimension())
 
         V = A.zero_submodule()
         i = self.dimension() - 1
@@ -1444,20 +1452,20 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
 
         INPUT:
 
-        -  ``ModularSymbols self`` - arbitrary space of modular
+        -  ``ModularSymbols self`` -- arbitrary space of modular
            symbols.
 
         OUTPUT:
 
-        -  ``int`` - the sign of ``self``, either -1, 0, or 1.
+        -  ``int`` -- the sign of ``self``, either -1, 0, or 1.
 
-        -  ``-1`` - if this is factor of quotient where \* acts
+        -  ``-1`` -- if this is factor of quotient where \* acts
            as -1,
 
-        -  ``+1`` - if this is factor of quotient where \* acts
+        -  ``+1`` -- if this is factor of quotient where \* acts
            as +1,
 
-        -  ``0`` - if this is full space of modular symbols (no
+        -  ``0`` -- if this is full space of modular symbols (no
            quotient).
 
         EXAMPLES::
@@ -1546,8 +1554,8 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
 
             sage: ModularSymbols(Gamma1(19), 2).cuspidal_submodule().star_decomposition()
             [
-            Modular Symbols subspace of dimension 7 of Modular Symbols space of dimension 31 for Gamma_1(19) of weight 2 with sign 0 and over Rational Field,
-            Modular Symbols subspace of dimension 7 of Modular Symbols space of dimension 31 for Gamma_1(19) of weight 2 with sign 0 and over Rational Field
+            Modular Symbols subspace of dimension 7 of Modular Symbols space of dimension 31 for Gamma_1(19) of weight 2 with sign 0 over Rational Field,
+            Modular Symbols subspace of dimension 7 of Modular Symbols space of dimension 31 for Gamma_1(19) of weight 2 with sign 0 over Rational Field
             ]
         """
         S = self.star_involution()
@@ -1763,7 +1771,7 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
 
         INPUT:
 
-        -  ``compute_dual`` - bool (default: ``True``) also
+        -  ``compute_dual`` -- bool (default: ``True``) also
            compute dual subspace. This are useful for many algorithms.
 
         OUTPUT: subspace of modular symbols
@@ -1783,7 +1791,7 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
 
         INPUT:
 
-        -  ``compute_dual`` - bool (default: True) also
+        -  ``compute_dual`` -- bool (default: ``True``) also
            compute dual subspace. This are useful for many algorithms.
 
         OUTPUT: subspace of modular symbols
@@ -1813,7 +1821,7 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
         EXAMPLES::
 
             sage: ModularSymbols(Gamma1(11), 3)._compute_sign_submodule(-1)
-            Modular Symbols subspace of dimension 10 of Modular Symbols space of dimension 20 for Gamma_1(11) of weight 3 with sign 0 and over Rational Field
+            Modular Symbols subspace of dimension 10 of Modular Symbols space of dimension 20 for Gamma_1(11) of weight 3 with sign 0 over Rational Field
         """
         A = self.ambient()
         S = A.sign_submodule(sign, compute_dual=compute_dual)
@@ -1862,9 +1870,9 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
 
         INPUT:
 
-        -  ``sign`` - int (either -1, 0 or +1)
+        -  ``sign`` -- int (either -1, 0 or +1)
 
-        -  ``compute_dual`` - bool (default: ``True``) also
+        -  ``compute_dual`` -- bool (default: ``True``) also
            compute dual subspace. This are useful for many algorithms.
 
         OUTPUT: subspace of modular symbols
@@ -1923,7 +1931,7 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
 
         INPUT:
 
-        -  ``self`` - modular symbols space of weight 2 for a
+        -  ``self`` -- modular symbols space of weight 2 for a
            congruence subgroup such as Gamma0, Gamma1 or GammaH.
 
         EXAMPLES::
@@ -2084,11 +2092,11 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
 
         INPUT:
 
-        -  ``self`` - a cuspidal space of modular symbols
+        -  ``self`` -- a cuspidal space of modular symbols
 
-        -  ``sign`` - an integer, one of -1, 0, or 1
+        -  ``sign`` -- an integer, one of -1, 0, or 1
 
-        -  ``bound`` - integer (default: None); if specified
+        -  ``bound`` -- integer (default: None); if specified
            only use Hecke operators up to the given bound.
 
         EXAMPLES::
@@ -2285,7 +2293,7 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
             raise ValueError("base ring must be QQ")
         if self.weight() != 2:
             raise NotImplementedError("only implemented when weight is 2")
-        if not is_Gamma0(self.group()):
+        if not isinstance(self.group(), Gamma0_class):
             # todo -- do Gamma1 and GammaH, which are easy
             raise NotImplementedError("only implemented when group is Gamma0")
         N = self.level()
@@ -2404,9 +2412,9 @@ class PeriodMapping(SageObject):
 
         INPUT:
 
-        - ``modsym`` - a space of modular symbols
+        - ``modsym`` -- a space of modular symbols
 
-        - ``A`` - matrix of the associated period map
+        - ``A`` -- matrix of the associated period map
 
         EXAMPLES::
 

@@ -1,5 +1,5 @@
-PALP
-====
+palp: A package for Analyzing Lattice Polytopes
+===============================================
 
 Description
 -----------

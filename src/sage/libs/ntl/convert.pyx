@@ -1,7 +1,10 @@
 # distutils: depends = NTL/ZZ.h
-# distutils: libraries = ntl gmp
+# distutils: libraries = NTL_LIBRARIES gmp
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
-
 """
 Conversion between NTL's ``ZZ`` and various other types
 """
@@ -19,11 +22,11 @@ Conversion between NTL's ``ZZ`` and various other types
 from sage.libs.gmp.mpz cimport mpz_init, mpz_clear
 from sage.libs.gmp.pylong cimport mpz_set_pylong
 
-cdef extern from "sage/libs/ntl/ntlwrap_impl.h":
+cdef extern from "ntlwrap_impl.h":
     void ZZ_to_mpz(mpz_t output, ZZ_c* x)
     void mpz_to_ZZ(ZZ_c *output, mpz_srcptr x)
 
-cdef void PyLong_to_ZZ(ZZ_c* z, value):
+cdef void PyLong_to_ZZ(ZZ_c* z, value) noexcept:
     """
     Convert ``value`` (which must be a Python ``long``) to NTL.
     """

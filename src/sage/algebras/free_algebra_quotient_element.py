@@ -1,10 +1,10 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Free algebra quotient elements
 
 AUTHORS:
     - William Stein (2011-11-19): improved doctest coverage to 100%
     - David Kohel (2005-09): initial version
-
 """
 
 #*****************************************************************************
@@ -97,12 +97,12 @@ class FreeAlgebraQuotientElement(AlgebraElement):
             if x in B:
                 self.__vector = M.gen(B.index(x))
             else:
-                raise AttributeError("Argument x (= %s) is not in monomial basis"%x)
+                raise AttributeError("argument x (= %s) is not in monomial basis" % x)
         elif isinstance(x, list) and len(x) == A.dimension():
             try:
                 self.__vector = M(x)
             except TypeError:
-                raise TypeError("Argument x (= %s) is of the wrong type."%x)
+                raise TypeError("argument x (= %s) is of the wrong type" % x)
         elif isinstance(x, FreeAlgebraElement) and x.parent() is A.free_algebra():
             # Need to do more work here to include monomials not
             # represented in the monomial basis.
@@ -116,7 +116,7 @@ class FreeAlgebraQuotientElement(AlgebraElement):
         elif isinstance(x, AlgebraElement) and x.parent().ambient_algebra() is A:
             self.__vector = x.ambient_algebra_element().vector()
         else:
-            raise TypeError("Argument x (= %s) is of the wrong type."%x)
+            raise TypeError("argument x (= %s) is of the wrong type" % x)
 
     def _repr_(self):
         """
@@ -139,7 +139,7 @@ class FreeAlgebraQuotientElement(AlgebraElement):
 
             sage: H, (i,j,k) = sage.algebras.free_algebra_quotient.hamilton_quatalg(QQ)
             sage: ((2/3)*i - j)._latex_()
-            '\\frac{2}{3}i - j'
+            '\\frac{2}{3} i - j'
         """
         Q = self.parent()
         M = Q.monoid()
@@ -240,11 +240,13 @@ class FreeAlgebraQuotientElement(AlgebraElement):
             -5459/25 + 40*i - 12*j + 340*k
         """
         A = self.parent()
-        def monomial_product(X,w,m):
+
+        def monomial_product(X, w, m):
             mats = X._FreeAlgebraQuotient__matrix_action
-            for (j,k) in m._element_list:
+            for j, k in m._element_list:
                 M = mats[int(j)]
-                for l in range(k): w *= M
+                for _ in range(k):
+                    w *= M
             return w
         u = self.__vector.__copy__()
         v = y.__vector
@@ -252,7 +254,8 @@ class FreeAlgebraQuotientElement(AlgebraElement):
         B = A.monomial_basis()
         for i in range(A.dimension()):
             c = v[i]
-            if c != 0: z.__vector += monomial_product(A,c*u,B[i])
+            if c != 0:
+                z.__vector += monomial_product(A,c*u,B[i])
         return z
 
     def _rmul_(self, c):
@@ -278,4 +281,3 @@ class FreeAlgebraQuotientElement(AlgebraElement):
             -3 + 3*i - 6*j + 3*k
         """
         return self.parent([a*c for a in self.__vector])
-

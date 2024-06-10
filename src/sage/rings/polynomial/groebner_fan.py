@@ -56,7 +56,6 @@ REFERENCES:
 - Anders N. Jensen; *Gfan, a software system for Groebner fans*;
   http://home.math.au.dk/jensen/software/gfan/gfan.html
 """
-from __future__ import print_function, absolute_import
 
 import string
 import pexpect
@@ -72,8 +71,9 @@ from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.modules.free_module_element import vector
-from sage.plot.all import line, Graphics, polygon
-from sage.plot.plot3d.shapes2 import line3d
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.all", ["line", "Graphics", "polygon"])
+lazy_import("sage.plot.plot3d.shapes2", "line3d")
 from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.geometry.fan import Fan
 from sage.matrix.constructor import matrix
@@ -124,7 +124,7 @@ def _cone_parse(fan_dict_cone):
 
     INPUT:
 
-    -  ``fan_dict_cone`` - the value of a fan_dict with
+    -  ``fan_dict_cone`` -- the value of a fan_dict with
        key 'CONES'
 
     EXAMPLES::
@@ -290,7 +290,7 @@ class PolyhedralFan(SageObject):
 
         INPUT:
 
-        -  ``gfan_polyhedral_fan`` - output from gfan of a
+        -  ``gfan_polyhedral_fan`` -- output from gfan of a
            polyhedral fan.
 
         EXAMPLES::
@@ -643,11 +643,7 @@ def verts_for_normal(normal, poly):
     expmat = matrix(exps)
     vals = expmat * vector(QQ, normal)
     maxval = max(vals)
-    outverts = []
-    for i in range(len(exps)):
-        if vals[i] == maxval:
-            outverts.append(exps[i])
-    return outverts
+    return [exps[i] for i in range(len(exps)) if vals[i] == maxval]
 
 
 class TropicalPrevariety(PolyhedralFan):
@@ -764,7 +760,7 @@ def ideal_to_gfan_format(input_ring, polys):
 
         TESTS:
 
-        Test that :trac:`20146` is fixed::
+        Test that :issue:`20146` is fixed::
 
             sage: P = PolynomialRing(QQ,"x11,x12,x13,x14,x15,x21,x22,x23,x24,x25,x31,x32,x33,x34,x35"); x = P.gens(); M = Matrix(3,x)
             sage: I = P.ideal(M.minors(2))
@@ -1109,12 +1105,18 @@ class GroebnerFan(SageObject):
             self.__gfan_mod = mod
             return self.__gfan_mod
 
-    def gfan(self, cmd='bases', I=None, format=True):
+    def gfan(self, cmd='bases', I=None, format=None):
         r"""
         Return the ``gfan`` output as a string given an input ``cmd``.
 
         The default is to produce the list of reduced Groebner bases
         in ``gfan`` format.
+
+        INPUT:
+
+        - ``cmd`` -- string (default:``'bases'``), GFan command
+        - ``I`` -- ideal (default:``None``)
+        - ``format`` -- bool (default:``None``), deprecated
 
         EXAMPLES::
 
@@ -1123,11 +1125,18 @@ class GroebnerFan(SageObject):
             sage: gf.gfan()
             'Q[x,y]\n{{\ny^9-1-y+3*y^3-3*y^6,\nx+1-y^3}\n,\n{\nx^3-y,\ny^3-1-x}\n,\n{\nx^9-1-x,\ny-x^3}\n}\n'
         """
+        if format is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(33468, 'argument `format` is ignored in the code: '
+                               'it is now deprecated. Please update your code '
+                               'without this argument as it will be removed in a later '
+                               'version of SageMath.')
+
         if I is None:
             I = self._gfan_ideal()
         # todo -- put something in here (?) when self.__symmetry isn't None...
         cmd += self._gfan_mod()
-        s = gfan(I, cmd, verbose=self.__verbose, format=format)
+        s = gfan(I, cmd, verbose=self.__verbose)
         if s.strip() == '{':
             raise RuntimeError("Error running gfan command %s on %s" % (cmd, self))
         return s
@@ -1144,8 +1153,7 @@ class GroebnerFan(SageObject):
             sage: next(a)
             [y^9 - 3*y^6 + 3*y^3 - y - 1, -y^3 + x + 1]
         """
-        for x in self.reduced_groebner_bases():
-            yield x
+        yield from self.reduced_groebner_bases()
 
     def __getitem__(self, i):
         """
@@ -1217,12 +1225,12 @@ class GroebnerFan(SageObject):
         try:
             return self.__homogeneity_space
         except AttributeError:
-            h = self.gfan(cmd='homogeneityspace', format=False)
+            h = self.gfan(cmd='homogeneityspace')
             self.__homogeneity_space = h
             return h
 
     def render(self, file=None, larger=False, shift=0, rgbcolor=(0, 0, 0),
-               polyfill=max_degree, scale_colors=True):
+               polyfill=True, scale_colors=True):
         """
         Render a Groebner fan as sage graphics or save as an xfig file.
 
@@ -1234,27 +1242,27 @@ class GroebnerFan(SageObject):
 
         INPUT:
 
-        -  ``file`` - a filename if you prefer the output
+        -  ``file`` -- a filename if you prefer the output
            saved to a file. This will be in xfig format.
 
-        -  ``shift`` - shift the positions of the variables in
+        -  ``shift`` -- shift the positions of the variables in
            the drawing. For example, with shift=1, the corners will be b
            (right), c (left), and d (top). The shifting is done modulo the
            number of variables in the polynomial ring. The default is 0.
 
-        -  ``larger`` - bool (default: ``False``); if ``True``, make
+        -  ``larger`` -- bool (default: ``False``); if ``True``, make
            the triangle larger so that the shape of the Groebner region
            appears. Affects the xfig file but probably not the sage graphics
            (?)
 
-        -  ``rgbcolor`` - This will not affect the saved xfig
+        -  ``rgbcolor`` -- This will not affect the saved xfig
            file, only the sage graphics produced.
 
-        -  ``polyfill`` - Whether or not to fill the cones with
+        -  ``polyfill`` -- Whether or not to fill the cones with
            a color determined by the highest degree in each reduced Groebner
            basis for that cone.
 
-        -  ``scale_colors`` - if True, this will normalize
+        -  ``scale_colors`` -- if True, this will normalize
            color values to try to maximize the range
 
 
@@ -1262,27 +1270,29 @@ class GroebnerFan(SageObject):
 
             sage: R.<x,y,z> = PolynomialRing(QQ,3)
             sage: G = R.ideal([y^3 - x^2, y^2 - 13*x,z]).groebner_fan()
-            sage: test_render = G.render()
+            sage: test_render = G.render()                                              # needs sage.plot
 
         ::
 
             sage: R.<x,y,z> = PolynomialRing(QQ,3)
             sage: G = R.ideal([x^2*y - z, y^2*z - x, z^2*x - y]).groebner_fan()
-            sage: test_render = G.render(larger=True)
+            sage: test_render = G.render(larger=True)                                   # needs sage.plot
 
         TESTS:
 
         Testing the case where the number of generators is < 3. Currently,
-        this should raise a ``NotImplementedError`` error.
+        this should raise a :class:`NotImplementedError`.
 
         ::
 
             sage: R.<x,y> = PolynomialRing(QQ, 2)
-            sage: R.ideal([y^3 - x^2, y^2 - 13*x]).groebner_fan().render()
+            sage: R.ideal([y^3 - x^2, y^2 - 13*x]).groebner_fan().render()              # needs sage.plot
             Traceback (most recent call last):
             ...
             NotImplementedError
         """
+        if polyfill is True:
+            polyfill = max_degree
         S = self.__ring
         if S.ngens() < 3:
             print("For 2-D fan rendering the polynomial ring must have 3 variables (or more, which are ignored).")
@@ -1292,7 +1302,7 @@ class GroebnerFan(SageObject):
             cmd += ' --shiftVariables %s' % shift
         if larger:
             cmd += ' -L'
-        s = self.gfan(cmd, I=self._gfan_reduced_groebner_bases().replace(' ', ','), format=False)
+        s = self.gfan(cmd, I=self._gfan_reduced_groebner_bases().replace(' ', ','))
         if file is not None:
             with open(file, 'w') as f:
                 f.write(s)
@@ -1302,23 +1312,20 @@ class GroebnerFan(SageObject):
             xs = x.split(' ')
             y = []
             if x[0:3] != '2 3' and len(xs) > 1:
-                for q in xs:
-                    if q != '':
-                        y.append(q)
+                y.extend(q for q in xs if q)
                 sp2.append(y)
         sp3 = []
         for j in range(len(sp2)):
-            temp = []
-            for i in range(0, len(sp2[j]) - 1, 2):
-                temp.append([float(sp2[j][i]) / 1200.0,
-                             float(sp2[j][i + 1]) / 1200.0])
+            temp = [[float(sp2[j][i]) / 1200.0,
+                     float(sp2[j][i + 1]) / 1200.0]
+                    for i in range(0, len(sp2[j]) - 1, 2)]
             sp3.append(temp)
         r_lines = Graphics()
         for x in sp3:
             r_lines = r_lines + line(x, rgbcolor=rgbcolor)
         if polyfill:
             vals = [polyfill(q) for q in self.reduced_groebner_bases()]
-            if isinstance(vals[0], list) or isinstance(vals[0], tuple):
+            if isinstance(vals[0], (list, tuple)):
                 if scale_colors:
                     vmins = [min([q[i] for q in vals]) for i in (0, 1, 2)]
                     vmaxs = [max([q[i] for q in vals]) for i in (0, 1, 2)]
@@ -1356,10 +1363,7 @@ class GroebnerFan(SageObject):
             sage: gf._cone_to_ieq([[1,2,3,4]])
             [[0, 1, 2, 3, 4]]
         """
-        ieq_list = []
-        for q in facet_list:
-            ieq_list.append([0] + q)
-        return ieq_list
+        return [[0] + q for q in facet_list]
 
     def _embed_tetra(self, fpoint):
         """
@@ -1369,7 +1373,7 @@ class GroebnerFan(SageObject):
 
         INPUT:
 
-        -  ``fpoint`` - a list of four numbers
+        -  ``fpoint`` -- a list of four numbers
 
         EXAMPLES::
 
@@ -1398,7 +1402,7 @@ class GroebnerFan(SageObject):
 
         OUTPUT:
 
-        - ``edges`` -- a list of edges in 3d - each list item is a pair of
+        - ``edges`` -- a list of edges in 3d; each list item is a pair of
           points
 
         EXAMPLES::
@@ -1448,17 +1452,17 @@ class GroebnerFan(SageObject):
 
             sage: R4.<w,x,y,z> = PolynomialRing(QQ,4)
             sage: gf = R4.ideal([w^2-x,x^2-y,y^2-z,z^2-x]).groebner_fan()
-            sage: three_d = gf.render3d()
+            sage: three_d = gf.render3d()                                               # needs sage.plot
 
         TESTS:
 
         Now test the case where the number of generators is not 4. Currently,
-        this should raise a ``NotImplementedError`` error.
+        this should raise a :class:`NotImplementedError` error.
 
         ::
 
             sage: P.<a,b,c> = PolynomialRing(QQ, 3, order="lex")
-            sage: sage.rings.ideal.Katsura(P, 3).groebner_fan().render3d()
+            sage: sage.rings.ideal.Katsura(P, 3).groebner_fan().render3d()              # needs sage.plot
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -1491,8 +1495,7 @@ class GroebnerFan(SageObject):
             except Exception:
                 print(cone_data._rays)
                 raise RuntimeError
-            for a_line in cone_lines:
-                all_lines.append(a_line)
+            all_lines.extend(a_line for a_line in cone_lines)
         return sum([line3d(a_line) for a_line in all_lines])
 
     def _gfan_stats(self):
@@ -1515,7 +1518,7 @@ class GroebnerFan(SageObject):
         try:
             return self.__stats
         except AttributeError:
-            s = self.gfan(cmd='stats', I=self._gfan_reduced_groebner_bases().replace(' ', ','), format=False)
+            s = self.gfan(cmd='stats', I=self._gfan_reduced_groebner_bases().replace(' ', ','))
             d = {}
             for v in s.split('\n'):
                 if v:
@@ -1605,7 +1608,7 @@ class GroebnerFan(SageObject):
 
         INPUT:
 
-        -  ``check`` - bool (default: True); if True raises a
+        -  ``check`` -- bool (default: ``True``); if True raises a
            ValueError exception if this ideal does not define a tropical curve
            (i.e., the condition that R/I has dimension equal to 1 + the
            dimension of the homogeneity space is not satisfied).
@@ -1669,9 +1672,9 @@ class GroebnerFan(SageObject):
 
         INPUT:
 
-        - ``parameters`` (optional) - a list of variables to be
+        - ``parameters`` (optional) -- a list of variables to be
           considered as parameters
-        - ``symmetry_generators`` (optional) - generators of the symmetry group
+        - ``symmetry_generators`` (optional) -- generators of the symmetry group
 
         OUTPUT: a TropicalPrevariety object
 
@@ -1773,12 +1776,12 @@ class ReducedGroebnerBasis(SageObject, list):
 
         INPUT:
 
-        -  ``groebner_fan`` - a GroebnerFan object from an
+        -  ``groebner_fan`` -- a GroebnerFan object from an
            ideal
 
-        -  ``gens`` - the generators of the ideal
+        -  ``gens`` -- the generators of the ideal
 
-        -  ``gfan_gens`` - the generators as a gfan string
+        -  ``gfan_gens`` -- the generators as a gfan string
 
         EXAMPLES::
 
@@ -1885,7 +1888,7 @@ class ReducedGroebnerBasis(SageObject, list):
 
         INPUT:
 
-        -  ``restrict`` - bool (default: False); if True, add
+        -  ``restrict`` -- bool (default: ``False``); if True, add
            an inequality for each coordinate, so that the cone is restricted
            to the positive orthant.
 

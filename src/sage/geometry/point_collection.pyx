@@ -80,8 +80,8 @@ from sage.structure.sage_object cimport SageObject
 from sage.structure.richcmp cimport richcmp_not_equal, richcmp
 
 from sage.geometry.toric_lattice import ToricLattice
-from sage.matrix.all import matrix
-from sage.misc.all import latex
+from sage.matrix.constructor import matrix
+from sage.misc.latex import latex
 
 
 def is_PointCollection(x):
@@ -98,13 +98,17 @@ def is_PointCollection(x):
 
     EXAMPLES::
 
-        sage: from sage.geometry.point_collection import is_PointCollection
-        sage: is_PointCollection(1)
+        sage: from sage.geometry.point_collection import PointCollection
+        sage: isinstance(1, PointCollection)
         False
         sage: c = Cone([(0,0,1), (1,0,1), (0,1,1), (1,1,1)])
-        sage: is_PointCollection(c.rays())
+        sage: isinstance(c.rays(), PointCollection)
         True
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38126,
+                       "The function is_PointCollection is deprecated; "
+                       "use 'isinstance(..., PointCollection)' instead.")
     return isinstance(x, PointCollection)
 
 
@@ -129,12 +133,10 @@ cdef class PointCollection(SageObject):
       if ``points`` are already accessible to you as a :class:`tuple`, it is
       preferable to use it for speed and memory consumption reasons;
 
-    - ``module`` -- an ambient module for ``points``. If ``None``, it will be
-      determined as :func:`parent` of the first point. Of course, this cannot
-      be done if there are no points, so in this case you must give an
-      appropriate ``module`` directly. Note that ``None`` is *not* the default
-      value - you always *must* give this argument explicitly, even if it is
-      ``None``.
+    - ``module`` -- an ambient module for ``points``. If ``None`` (the default),
+      it will be determined as :func:`parent` of the first point. Of course, this
+      cannot be done if there are no points, so in this case you must give an
+      appropriate ``module`` directly.
 
     OUTPUT:
 
@@ -168,9 +170,32 @@ cdef class PointCollection(SageObject):
             over the principal ideal domain Integer Ring
             sage: TestSuite(c).run()
         """
-        super(PointCollection, self).__init__()
+        super().__init__()
         self._points = tuple(points)
         self._module = self._points[0].parent() if module is None else module
+
+    def _sage_input_(self, sib, coerced):
+        r"""
+        Return Sage command to reconstruct ``self``.
+
+        See :mod:`sage.misc.sage_input` for details.
+
+        EXAMPLES::
+
+            sage: c = Cone([(0,0,1), (1,0,1), (0,1,1), (1,1,1)]).rays()
+            sage: sage_input(c, verify=True)
+            # Verified
+            sage.geometry.point_collection.PointCollection((vector(ZZ, [0, 0, 1]), vector(ZZ, [1, 0, 1]), vector(ZZ, [0, 1, 1]), vector(ZZ, [1, 1, 1])))
+
+            sage: c = sage.geometry.point_collection.PointCollection([], ToricLattice(2, 'U'))
+            sage: sage_input(c, verify=True)
+            # Verified
+            sage.geometry.point_collection.PointCollection((), ToricLattice(2, 'U', 'U*', 'U', 'U^*'))
+        """
+        args = [sib(self._points)]
+        if not self._points or self._module is not self._points[0].parent():
+            args.append(sib(self._module))
+        return sib.name('sage.geometry.point_collection.PointCollection')(*args)
 
     def __add__(left, right):
         r"""
@@ -205,7 +230,7 @@ cdef class PointCollection(SageObject):
             raise NotImplementedError
         cdef PointCollection left_pc = left
         cdef PointCollection right_pc = right
-        if not left_pc._module is right_pc._module:
+        if left_pc._module is not right_pc._module:
             raise NotImplementedError
         return PointCollection(left_pc._points + right_pc._points,
                                left_pc._module)
@@ -563,8 +588,8 @@ cdef class PointCollection(SageObject):
                     for i, coordinate in enumerate(point):
                         widths[i] = max(widths[i], len(coordinate))
                 format += ",".join("{{:>{}}}".format(width) for width in widths)
-                r = ",\n".join([format.format(head, *point)
-                                for head, point in zip(heads, r)])
+                r = ",\n".join(format.format(head, *point)
+                               for head, point in zip(heads, r))
         elif _output_format == "tuple":
             r = tuple(self)
         elif _output_format == "matrix":
@@ -644,7 +669,7 @@ cdef class PointCollection(SageObject):
             N+N(1, 1, 1, 1, 1, 1)
             in 6-d lattice N+N
         """
-        assert is_PointCollection(other)
+        assert isinstance(other, PointCollection)
         if module is None:
             module = self._module.direct_sum(other.module())
         P = [list(p) for p in self]
@@ -735,7 +760,7 @@ cdef class PointCollection(SageObject):
         OUTPUT:
 
         - an integer if ``point`` is in ``self[start:stop]``, otherwise a
-          ``ValueError`` exception is raised.
+          :class:`ValueError` exception is raised.
 
         EXAMPLES::
 
@@ -934,23 +959,23 @@ def read_palp_point_collection(f, lattice=None, permutation=False):
     Read and return a point collection from an opened file.
 
     Data must be in PALP format:
-   
+
         * the first input line starts with two integers `m` and `n`, the number
           of points and the number of components of each;
-    
+
         * the rest of the first line may contain a permutation;
-    
+
         * the next `m` lines contain `n` numbers each.
-        
+
     .. NOTE::
-    
+
         If `m` < `n`, it is assumed (for compatibility with PALP) that the
         matrix is transposed, i.e. that each column is a point.
 
     INPUT:
 
     - ``f`` -- an opened file with PALP output.
-    
+
     - ``lattice`` -- the lattice for points. If not given, the
       :class:`toric lattice <sage.geometry.toric_lattice.ToricLatticeFactory>`
       `M` of dimension `n` will be used.

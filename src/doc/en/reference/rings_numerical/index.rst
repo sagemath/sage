@@ -4,23 +4,23 @@ Fixed and Arbitrary Precision Numerical Fields
 Floating-Point Arithmetic
 -------------------------
 
-Sage supports arbitrary precision real (RealField) and complex fields
-(ComplexField). Sage also provides two optimized fixed precision fields for
-numerical computation, the real double (RealDoubleField) and complex double
-fields (ComplexDoubleField).
+Sage supports arbitrary precision real (:class:`RealField`) and complex fields
+(:class:`ComplexField`). Sage also provides two optimized fixed precision fields for
+numerical computation, the real double (:class:`RealDoubleField`) and complex double
+fields (:class:`ComplexDoubleField`).
 
 Real and complex double elements are optimized implementations that use the
-GNU Scientific Library for arithmetic and some special functions.  Arbitrary
-precision real and complex numbers are implemented using the MPFR library,
-which builds on GMP. In many cases the PARI C-library is used to compute
+:ref:`GNU Scientific Library <spkg_gsl>` for arithmetic and some special functions.
+Arbitrary precision real and complex numbers are implemented using the
+:ref:`MPFR <spkg_mpfr>` library, which builds on :ref:`GMP <spkg_gmp>`.
+In many cases, the :ref:`PARI <spkg_pari>` C-library is used to compute
 special functions when implementations aren't otherwise available.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/rings/real_mpfr
-   sage/rings/complex_field
-   sage/rings/complex_number
+   sage/rings/complex_mpfr
    sage/rings/complex_mpc
    sage/rings/real_double
    sage/rings/complex_double
@@ -28,12 +28,12 @@ special functions when implementations aren't otherwise available.
 Interval Arithmetic
 -------------------
 
-Sage implements real and complex interval arithmetic using MPFI
-(RealIntervalField, ComplexIntervalField) and arb (RealBallField,
-ComplexBallField).
+Sage implements real and complex interval arithmetic using
+:ref:`MPFI <spkg_mpfi>` (:class:`RealIntervalField`, :class:`ComplexIntervalField`)
+and :ref:`FLINT <spkg_flint>` (:class:`RealBallField`, :class:`ComplexBallField`).
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/rings/real_mpfi
    sage/rings/real_interval_absolute
@@ -47,7 +47,7 @@ Exact Real Arithmetic
 ---------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/rings/real_lazy
 

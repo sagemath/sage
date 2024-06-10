@@ -1,12 +1,12 @@
-TdLib
-=====
+tdlib: Algorithms for computing tree decompositions
+===================================================
 
 Description
 -----------
 
 Providing algorithms concerning treedecompositions
 
-website: http://www.tdi.informatik.uni-frankfurt.de/~lukas/tdlib.html
+website: https://github.com/freetdi/tdlib
 
 License
 -------
@@ -17,14 +17,14 @@ GNU General Public License v2
 SPKG Maintainers
 ----------------
 
-Lukas Larisch (larisch@informatik.uni-frankfurt.de)
+Lukas Larisch (lukas.larisch@kaust.edu.sa)
 
 
 Upstream Contact
 ----------------
 
-- Lukas Larisch (larisch@informatik.uni-frankfurt.de)
-- git-repo: git://pholia.tdi.cs.uni-frankfurt.de/git/tdlib
+- Lukas Larisch (lukas.larisch@kaust.edu.sa)
+- git-repo: https://github.com/freetdi/tdlib
 
 Dependencies
 ------------

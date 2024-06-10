@@ -24,6 +24,7 @@
 #include <sstream>
 #include <algorithm>
 #include <cassert>
+#include <functional>
 
 #include <gmpxx.h>
 #include <Python.h>
@@ -256,7 +257,7 @@ bool is_element_general::is_member(const SL2Z& m) const {
   PyObject* arg = convert_to_SL2Z(m);
   PyObject* tuple = PyTuple_New(1);
   PyTuple_SetItem(tuple, 0, arg);
-  PyObject *result = PyEval_CallObject(method, tuple);
+  PyObject *result = PyObject_CallObject(method, tuple);
   Py_DECREF(tuple);
   if( not PyBool_Check(result) ) {
     cerr << "__contains__ does not return bool." << endl;
@@ -737,7 +738,7 @@ size_t FareySymbol::nu3() const {
 size_t FareySymbol::rank_pi() const {
   if( index() == 2 ) return 1;
   return count_if(pairing.begin(), pairing.end(),
-                  bind2nd(greater<int>(), 0))/2;
+                  bind(greater<int>(), placeholders::_1, 0))/2;
 }
 
 size_t FareySymbol::number_of_cusps() const {
@@ -863,7 +864,7 @@ FareySymbol::LLT_algorithm(const SL2Z& M, vector<int>& p, SL2Z& beta) const {
         p.push_back((int)k + 1);
       } else {
         //Based on Lemma 4 of the article by Kurth/Long,
-        //this case can not occure.
+        //this case can not happen.
         throw string("Mathematical complications in ") +
               __FUNCTION__;
 	return;
@@ -891,7 +892,7 @@ bool FareySymbol::is_element(const SL2Z& M) const {
 
   // Case (3) of the article
   if( beta == SL2Z::S or beta == SL2Z::U ) {
-    // If 0 and infty are adjacent vertices, they only can occure
+    // If 0 and infty are adjacent vertices, they only can appear
     // at the beginning or the end.
     if( x[0] == 0 and pairing[0] == EVEN ) return true;
     if( x.back() == 0 and pairing.back() == EVEN ) return true;
@@ -1010,7 +1011,7 @@ PyObject* FareySymbol::word_problem(const mpz_t a, const mpz_t b,
   LLT_algorithm(M, p, beta1);
   wd = PyList_New(p.size());
   for(i=0; i<p.size(); i++) {
-    PyList_SetItem(wd, i, PyInt_FromLong(p[i]));
+    PyList_SetItem(wd, i, PyLong_FromLong(p[i]));
   }
   *beta = beta1;
   return wd;
@@ -1085,7 +1086,7 @@ PyObject* FareySymbol::get_fractions() const {
 PyObject* FareySymbol::get_pairings() const {
   PyObject* pairing_list = PyList_New(pairing.size());
   for(size_t i=0; i<pairing.size(); i++) {
-    PyObject* m = PyInt_FromLong(long(pairing[i]));
+    PyObject* m = PyLong_FromLong(long(pairing[i]));
     PyList_SetItem(pairing_list, i, m);
   }
   return pairing_list;
@@ -1104,8 +1105,8 @@ PyObject* FareySymbol::get_paired_sides() const {
   for(vector<int>::const_iterator i=p.begin(); i!=p.end(); i++) {
     vector<int>::const_iterator j = find(pairing.begin(), pairing.end(), *i);
     vector<int>::const_iterator k = find(j+1, pairing.end(), *i);
-    PyObject* J = PyInt_FromLong(long(j-pairing.begin()));
-    PyObject* K = PyInt_FromLong(long(k-pairing.begin()));
+    PyObject* J = PyLong_FromLong(long(j-pairing.begin()));
+    PyObject* K = PyLong_FromLong(long(k-pairing.begin()));
     PyObject* tuple = PyTuple_New(2);
     PyTuple_SetItem(tuple, 0, J);
     PyTuple_SetItem(tuple, 1, K);

@@ -1,16 +1,16 @@
 """
 Saturation over ZZ
 """
-from __future__ import absolute_import
 
-from sage.rings.integer_ring import ZZ
-from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-from sage.arith.all import binomial, gcd
-from sage.matrix.constructor import identity_matrix, random_matrix
-from sage.misc.verbose import verbose
-from sage.misc.randstate import current_randstate
-from . import matrix_integer_dense_hnf
 from copy import copy
+
+from sage.arith.misc import binomial, GCD as gcd
+from sage.matrix import matrix_integer_dense_hnf
+from sage.matrix.constructor import identity_matrix, random_matrix
+from sage.misc.randstate import current_randstate
+from sage.misc.verbose import verbose
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.rings.integer_ring import ZZ
 
 
 def p_saturation(A, p, proof=True):
@@ -19,7 +19,7 @@ def p_saturation(A, p, proof=True):
 
     - A -- a matrix over ZZ
     - p -- a prime
-    - proof -- bool (default: True)
+    - proof -- bool (default: ``True``)
 
     OUTPUT:
 
@@ -46,7 +46,7 @@ def p_saturation(A, p, proof=True):
         sage: C3.index_in_saturation()
         2
     """
-    tm = verbose("%s-saturating a %sx%s matrix"%(p, A.nrows(), A.ncols()))
+    tm = verbose("%s-saturating a %sx%s matrix" % (p, A.nrows(), A.ncols()))
     H = A.hermite_form(include_zero_rows=False, proof=proof)
     while True:
         if p == 2:
@@ -82,10 +82,18 @@ def random_sublist_of_size(k, n):
     EXAMPLES::
 
         sage: import sage.matrix.matrix_integer_dense_saturation as s
-        sage: s.random_sublist_of_size(10,3)
-        [0, 1, 5]
-        sage: s.random_sublist_of_size(10,7)
-        [0, 1, 3, 4, 5, 7, 8]
+        sage: l = s.random_sublist_of_size(10, 3)
+        sage: len(l)
+        3
+        sage: l_check = [-1] + l + [10]
+        sage: all(l_check[i] < l_check[i+1] for i in range(4))
+        True
+        sage: l = s.random_sublist_of_size(10, 7)
+        sage: len(l)
+        7
+        sage: l_check = [-1] + l + [10]
+        sage: all(l_check[i] < l_check[i+1] for i in range(8))
+        True
     """
     if n > k:
         raise ValueError("n must be <= len(v)")
@@ -96,22 +104,22 @@ def random_sublist_of_size(k, n):
         w = random_sublist_of_size(k, k - n)
         m = set(w)
         w = [z for z in range(k) if z not in m]
-        assert(len(w) == n)
+        assert len(w) == n
         return w
 
     randrange = current_randstate().python_random().randrange
 
-    w = set([])
+    w = set()
     while len(w) < n:
         z = randrange(k)
-        if not z in w:
+        if z not in w:
             w.add(z)
     return sorted(w)
 
 
 def solve_system_with_difficult_last_row(B, A):
     """
-    Solve the matrix equation B*Z = A when the last row of $B$
+    Solve the matrix equation B*Z = A when the last row of `B`
     contains huge entries.
 
     INPUT:
@@ -184,7 +192,7 @@ def saturation(A, proof=True, p=0, max_dets=5):
     INPUT:
 
     - A     -- a matrix over ZZ
-    - proof -- bool (default: True)
+    - proof -- bool (default: ``True``)
     - p     -- int (default: 0); if not 0 only guarantees that output is
       p-saturated
     - max_dets -- int (default: 4) max number of dets of submatrices to
@@ -239,7 +247,8 @@ def saturation(A, proof=True, p=0, max_dets=5):
 
     if max_dets > 0:
         # Take the GCD of at most num_dets randomly chosen determinants.
-        nr = A.nrows(); nc = A.ncols()
+        nr = A.nrows()
+        nc = A.ncols()
         d = 0
         trials = min(binomial(nc, nr), max_dets)
         already_tried = []
@@ -247,7 +256,7 @@ def saturation(A, proof=True, p=0, max_dets=5):
             v = random_sublist_of_size(nc, nr)
             tm = verbose('saturation -- checking det condition on submatrix')
             d = gcd(d, A.matrix_from_columns(v).determinant(proof=proof))
-            verbose('saturation -- got det down to %s'%d, tm)
+            verbose('saturation -- got det down to %s' % d, tm)
             if gcd(d, p) == 1:
                 return A._insert_zero_columns(zero_cols)
             already_tried.append(v)
@@ -307,7 +316,7 @@ def index_in_saturation(A, proof=True):
         sage: W.index_in(S)
         18
 
-    For any zero matrix the index in its saturation is 1 (see :trac:`13034`)::
+    For any zero matrix the index in its saturation is 1 (see :issue:`13034`)::
 
         sage: m = matrix(ZZ, 3)
         sage: m
@@ -331,13 +340,11 @@ def index_in_saturation(A, proof=True):
     """
     r = A.rank()
     if r == 0:
-        return ZZ(1)
+        return ZZ.one()
     if r < A.nrows():
         A = A.hermite_form(proof=proof, include_zero_rows=False)
     if A.is_square():
         return abs(A.determinant(proof=proof))
     A = A.transpose()
-    A = A.hermite_form(proof=proof,include_zero_rows=False)
+    A = A.hermite_form(proof=proof, include_zero_rows=False)
     return abs(A.determinant(proof=proof))
-
-

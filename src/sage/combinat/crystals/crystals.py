@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 An introduction to crystals
 ===========================
@@ -103,7 +104,7 @@ documentations)::
 
 One can get (currently) crude plotting via::
 
-    sage: Tab.plot()
+    sage: Tab.plot()                                                                    # needs sage.plot
     Graphics object consisting of 52 graphics primitives
 
 If dot2tex is installed, one can obtain nice latex pictures via::
@@ -121,7 +122,7 @@ or with colored edges::
 For rank two crystals, there is an alternative method of getting
 metapost pictures. For more information see ``C.metapost?``.
 
-.. SEEALSO:: :ref:`The overview of crystal features in Sage<sage.combinat.crystals>`
+.. SEEALSO:: :ref:`The overview of crystal features in Sage<sage.combinat.crystals.all>`
 
 .. TODO::
 
@@ -155,19 +156,13 @@ MuPAD-Combinat (see <MuPAD-Combinat>/lib/COMBINAT/crystals.mu).
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-#****************************************************************************
+# ***************************************************************************
 # Acknowledgment: most of the design and implementation of this
 # library is heavily inspired from MuPAD-Combinat.
-#****************************************************************************
+# ***************************************************************************
 
-#from sage.structure.unique_representation import UniqueRepresentation
-#from sage.structure.parent import Parent
-#from sage.structure.element import Element
-#from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-#from sage.graphs.all import DiGraph
-#from sage.combinat import ranker
-#from sage.combinat.root_system.weyl_characters import WeylCharacter
 from sage.combinat.backtrack import GenericBacktracker
+
 
 class CrystalBacktracker(GenericBacktracker):
     def __init__(self, crystal, index_set=None):
@@ -251,7 +246,7 @@ class CrystalBacktracker(GenericBacktracker):
             for j in self._index_set:
                 if j == i:
                     break
-                if not y.e(j) is None:
+                if y.e(j) is not None:
                     hasParent = True
                     break
             if hasParent:
@@ -259,4 +254,3 @@ class CrystalBacktracker(GenericBacktracker):
 
             # yield y and all elements further below
             yield y, "n/a", True
-

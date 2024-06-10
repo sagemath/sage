@@ -5,7 +5,6 @@ This module defines a :meth:`HomologyGroup` class which is an abelian
 group that prints itself in a way that is suitable for homology
 groups.
 """
-
 ########################################################################
 #       Copyright (C) 2013 John H. Palmieri <palmieri@math.washington.edu>
 #                          Volker Braun <vbraun.name@gmail.com>
@@ -14,7 +13,7 @@ groups.
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ########################################################################
 
 from sage.modules.free_module import VectorSpace
@@ -33,13 +32,13 @@ class HomologyGroup_class(AdditiveAbelianGroup_fixed_gens):
     EXAMPLES::
 
         sage: from sage.homology.homology_group import HomologyGroup
-        sage: G = AbelianGroup(5, [5,5,7,8,9]); G
+        sage: G = AbelianGroup(5, [5,5,7,8,9]); G                                       # needs sage.groups
         Multiplicative Abelian group isomorphic to C5 x C5 x C7 x C8 x C9
         sage: H = HomologyGroup(5, ZZ, [5,5,7,8,9]); H
         C5 x C5 x C7 x C8 x C9
-        sage: G == loads(dumps(G))
+        sage: G == loads(dumps(G))                                                      # needs sage.groups
         True
-        sage: AbelianGroup(4)
+        sage: AbelianGroup(4)                                                           # needs sage.groups
         Multiplicative Abelian group isomorphic to Z x Z x Z x Z
         sage: HomologyGroup(4, ZZ)
         Z x Z x Z x Z
@@ -121,7 +120,7 @@ class HomologyGroup_class(AdditiveAbelianGroup_fixed_gens):
             g = ["\\ZZ^{{{}}}".format(rank)]
         else:
             g = ["\\ZZ"] * rank
-        if len(torsion) != 0:
+        if torsion:
             printed = []
             for t in torsion:
                 numfac = torsion.count(t)
@@ -134,6 +133,7 @@ class HomologyGroup_class(AdditiveAbelianGroup_fixed_gens):
                     g.append("C_{{{}}}".format(t))
         times = " \\times "
         return times.join(g)
+
 
 def HomologyGroup(n, base_ring, invfac=None):
     """
@@ -157,14 +157,16 @@ def HomologyGroup(n, base_ring, invfac=None):
     EXAMPLES::
 
         sage: from sage.homology.homology_group import HomologyGroup
-        sage: G = AbelianGroup(5, [5,5,7,8,9]); G
+        sage: G = AbelianGroup(5, [5,5,7,8,9]); G                                       # needs sage.groups
         Multiplicative Abelian group isomorphic to C5 x C5 x C7 x C8 x C9
         sage: H = HomologyGroup(5, ZZ, [5,5,7,8,9]); H
         C5 x C5 x C7 x C8 x C9
-        sage: AbelianGroup(4)
+        sage: AbelianGroup(4)                                                           # needs sage.groups
         Multiplicative Abelian group isomorphic to Z x Z x Z x Z
         sage: HomologyGroup(4, ZZ)
         Z x Z x Z x Z
+
+        sage: # needs sage.libs.flint (otherwise timeout)
         sage: HomologyGroup(100, ZZ)
         Z^100
     """
@@ -182,6 +184,4 @@ def HomologyGroup(n, base_ring, invfac=None):
         invfac = [0] * (n - len(invfac)) + invfac
     elif len(invfac) > n:
         raise ValueError("invfac (={}) must have length n (={})".format(invfac, n))
-    M = HomologyGroup_class(n, invfac)
-    return M
-
+    return HomologyGroup_class(n, invfac)
