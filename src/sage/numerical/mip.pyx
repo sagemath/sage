@@ -2135,13 +2135,13 @@ cdef class MixedIntegerLinearProgram(SageObject):
             6.0
         """
         from sage.numerical.linear_functions import is_LinearFunction, is_LinearConstraint
-        from sage.numerical.linear_tensor import is_LinearTensor
-        from sage.numerical.linear_tensor_constraints import is_LinearTensorConstraint
-        if is_LinearFunction(linear_function) or is_LinearTensor(linear_function):
+        from sage.numerical.linear_tensor import LinearTensor
+        from sage.numerical.linear_tensor_constraints import LinearTensorConstraint
+        if is_LinearFunction(linear_function) or isinstance(linear_function, LinearTensor):
             # Find the parent for the coefficients
             if is_LinearFunction(linear_function):
                 M = linear_function.parent().base_ring()
-            elif is_LinearTensor(linear_function):
+            elif isinstance(linear_function, LinearTensor):
                 if not linear_function.parent().is_vector_space():
                     raise ValueError('the linear function must be vector-valued')
                 M = linear_function.parent().free_module()
@@ -2171,7 +2171,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
                     return
                 nrows_before = self._backend.nrows()
                 self._backend.add_linear_constraint(constraint.items(), min, max, name)
-            elif is_LinearTensor(linear_function):
+            elif isinstance(linear_function, LinearTensor):
                 nrows_before = self._backend.nrows()
                 self._backend.add_linear_constraint_vector(M.degree(), constraint.items(), min, max, name)
             else:
@@ -2179,7 +2179,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
             if return_indices:
                 return list(range(nrows_before, self._backend.nrows()))
             return
-        elif is_LinearConstraint(linear_function):
+        elif isinstance(linear_function, LinearConstraint):
             if not(min is None and max is None):
                 raise ValueError('min and max must not be specified for (in)equalities')
             relation = linear_function
@@ -2200,7 +2200,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
                 if new_indices is not None:
                     row_indices.extend(new_indices)
             return row_indices
-        elif is_LinearTensorConstraint(linear_function):
+        elif isinstance(linear_function, LinearTensorConstraint):
             if not(min is None and max is None):
                 raise ValueError('min and max must not be specified for (in)equalities')
             relation = linear_function

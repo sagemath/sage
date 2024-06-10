@@ -1319,7 +1319,7 @@ cdef class LinearConstraintsParent_class(Parent):
             sage: LC_QQ(inequality) is inequality
             False
         """
-        if right is None and is_LinearConstraint(left):
+        if right is None and isinstance(left, LinearConstraint):
             if (left.parent() is self) and (left.is_equation() == equality):
                 return left
             else:

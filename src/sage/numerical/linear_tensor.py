@@ -413,7 +413,7 @@ class LinearTensorParent_class(Parent):
             (3.0, 3.0) + (2.0, 2.0)*x_1 + (1.0, 1.0)*x_3
         """
         M = self.free_module()
-        if is_LinearTensor(x):
+        if isinstance(x, LinearTensor):
             x = x.dict()
         elif is_LinearFunction(x):
             x = dict([key, self._convert_constant(value)] for key, value in x.dict().items())

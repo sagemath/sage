@@ -49,7 +49,7 @@ class RandomVariable_generic(Parent):
     A random variable.
     """
     def __init__(self, X, RR):
-        if not is_ProbabilitySpace(X):
+        if not isinstance(X, ProbabilitySpace_generic):
             raise TypeError("Argument X (= %s) must be a probability space" % X)
         Parent.__init__(self, X)
         self._codomain = RR
@@ -81,7 +81,7 @@ class DiscreteRandomVariable(RandomVariable_generic):
         - f -- a dictionary such that X[x] = value for x in X
           is the discrete function on X
         """
-        if not is_DiscreteProbabilitySpace(X):
+        if not isinstance(X, DiscreteProbabilitySpace):
             raise TypeError("Argument X (= %s) must be a discrete probability space" % X)
         if check:
             raise NotImplementedError("Not implemented")

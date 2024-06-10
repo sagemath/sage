@@ -100,7 +100,7 @@ from sage.arith.numerical_approx cimport digits_to_bits
 
 import sage.modules.free_module
 from sage.matrix import berlekamp_massey
-from sage.modules.free_module_element import is_FreeModuleElement
+from sage.modules.free_module_element import FreeModuleElement
 from sage.matrix.matrix_misc import permanental_minor_polynomial
 
 from sage.misc.misc_c import prod
@@ -6017,7 +6017,7 @@ cdef class Matrix(Matrix1):
         """
         if v == 0:
             return []
-        if not is_FreeModuleElement(v):
+        if not isinstance(v, FreeModuleElement):
             raise TypeError("v must be a FreeModuleElement")
         VS = v.parent()
         V = VS.span([v])

@@ -2171,7 +2171,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
             sage: M.twisted_winding_element(0,eps)
             2*(1,23) - 2*(1,32) + 2*(1,34)
         """
-        if not is_DirichletCharacter(eps):
+        if not isinstance(eps, DirichletCharacter):
             raise TypeError("eps must be a Dirichlet character.")
         if (i < 0) or (i > self.weight() - 2):
             raise ValueError("i must be between 0 and k-2.")

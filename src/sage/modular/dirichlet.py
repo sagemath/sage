@@ -262,7 +262,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             orders = parent.integers_mod().unit_group().gens_orders()
             if len(x) != len(orders):
                 raise ValueError("wrong number of values (= {}) on generators (want {})".format(x, len(orders)))
-            if free_module_element.is_FreeModuleElement(x):
+            if free_module_element.isinstance(x, FreeModuleElement):
                 x = parent._module(x)
                 if any(u * v for u, v in zip(x, orders)):
                     raise ValueError("values (= {} modulo {}) must have additive orders dividing {}, respectively"
@@ -276,7 +276,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
                                      .format(x, orders))
                 self.values_on_gens.set_cache(x)
         else:
-            if free_module_element.is_FreeModuleElement(x):
+            if free_module_element.isinstance(x, FreeModuleElement):
                 self.element.set_cache(x)
             else:
                 self.values_on_gens.set_cache(x)

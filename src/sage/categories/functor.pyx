@@ -96,15 +96,15 @@ cdef class Functor(SageObject):
         Category of rings
         sage: F.codomain()
         Category of commutative additive groups
-        sage: from sage.categories.functor import is_Functor
-        sage: is_Functor(F)
+        sage: from sage.categories.functor import Functor
+        sage: isinstance(F, Functor)
         True
         sage: I = IdentityFunctor(abgrps)
         sage: I
         The identity functor on Category of commutative additive groups
         sage: I.domain()
         Category of commutative additive groups
-        sage: is_Functor(I)
+        sage: isinstance(I, Functor)
         True
 
     Note that by default, an instance of the class Functor is coercion
