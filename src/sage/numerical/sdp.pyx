@@ -233,7 +233,7 @@ AUTHORS:
 
 from sage.structure.parent cimport Parent
 from sage.structure.element cimport Element
-from sage.numerical.linear_functions import is_LinearFunction, is_LinearConstraint
+from sage.numerical.linear_functions import LinearFunction, LinearConstraint
 from sage.matrix.constructor import matrix
 from sage.structure.element import Matrix
 
@@ -906,7 +906,7 @@ cdef class SemidefiniteProgram(SageObject):
             else:
                 self.add_constraint(c.lhs()-c.rhs(), name=name)
 
-        elif is_LinearFunction(linear_function) or isinstance(linear_function, LinearTensor):
+        elif isinstance(linear_function, LinearFunction) or isinstance(linear_function, LinearTensor):
             l = sorted(linear_function.dict().items())
             self._backend.add_linear_constraint(l, name)
 

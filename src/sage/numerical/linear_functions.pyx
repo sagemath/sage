@@ -690,7 +690,7 @@ cdef class LinearFunctionsParent_class(Parent):
             sage: LF_QQ(f) is f
             False
         """
-        if is_LinearFunction(x):
+        if isinstance(x, LinearFunction):
             return LinearFunction(self, (<LinearFunction>x)._f)
         return LinearFunction(self, x)
 
@@ -891,7 +891,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
             ...
             ValueError: x is from a different linear functions module
         """
-        if is_LinearFunction(x):
+        if isinstance(x, LinearFunction):
             if self.parent() != x.parent():
                 raise ValueError('x is from a different linear functions module')
             if len((<LinearFunction>x)._f) != 1:

@@ -2134,12 +2134,12 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: p.solve()
             6.0
         """
-        from sage.numerical.linear_functions import is_LinearFunction, is_LinearConstraint
+        from sage.numerical.linear_functions import LinearFunction, LinearConstraint
         from sage.numerical.linear_tensor import LinearTensor
         from sage.numerical.linear_tensor_constraints import LinearTensorConstraint
-        if is_LinearFunction(linear_function) or isinstance(linear_function, LinearTensor):
+        if isinstance(linear_function, LinearFunction) or isinstance(linear_function, LinearTensor):
             # Find the parent for the coefficients
-            if is_LinearFunction(linear_function):
+            if isinstance(linear_function, LinearFunction):
                 M = linear_function.parent().base_ring()
             elif isinstance(linear_function, LinearTensor):
                 if not linear_function.parent().is_vector_space():
@@ -2164,7 +2164,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
             except KeyError:
                 pass
             # Send to backend
-            if is_LinearFunction(linear_function):
+            if isinstance(linear_function, LinearFunction):
                 if self._check_redundant and self._is_redundant_constraint(constraint, min, max):
                     if return_indices:
                         return []

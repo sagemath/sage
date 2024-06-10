@@ -99,7 +99,7 @@ from copy import copy
 
 from sage.structure.parent import Parent
 from sage.misc.cachefunc import cached_function
-from sage.numerical.linear_functions import is_LinearFunction, LinearFunctionsParent_class
+from sage.numerical.linear_functions import LinearFunction, LinearFunctionsParent_class
 from sage.numerical.linear_tensor_element import LinearTensor
 
 
@@ -415,7 +415,7 @@ class LinearTensorParent_class(Parent):
         M = self.free_module()
         if isinstance(x, LinearTensor):
             x = x.dict()
-        elif is_LinearFunction(x):
+        elif isinstance(x, LinearFunction):
             x = dict([key, self._convert_constant(value)] for key, value in x.dict().items())
         elif isinstance(x, dict):
             x = dict([int(key), M(value)] for key, value in x.items())
