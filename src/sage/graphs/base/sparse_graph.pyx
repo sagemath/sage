@@ -777,7 +777,7 @@ cdef class SparseGraph(CGraph):
         cdef int r
         cdef SparseGraphBTNode **nodes = <SparseGraphBTNode **>check_allocarray(size, sizeof(SparseGraphBTNode *))
 
-        r = self._neighbors_BTNode_unsafe (u, out, nodes, size)
+        r = self._neighbors_BTNode_unsafe(u, out, nodes, size)
         for i in range(r if r >= 0 else size):
             neighbors[i] = nodes[i].vertex
         sig_free(nodes)
@@ -1577,7 +1577,7 @@ cdef class SparseGraphBackend(CGraphBackend):
             # corresponding method in `generic_graph.py` in the method `edge_iterator`.
             # E.g. code assumes that you can use an iterator to relabel or delete arcs.
 
-            r = self._cg._neighbors_BTNode_unsafe (v_int, out, neighbors, maxdegree)
+            r = self._cg._neighbors_BTNode_unsafe(v_int, out, neighbors, maxdegree)
             for i in range(r):
                 u_int = neighbors[i].vertex
                 if (modus < 2 or                                            # Do not delete duplicates.
