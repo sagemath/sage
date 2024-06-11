@@ -1202,6 +1202,29 @@ class DiGraph(GenericGraph):
             ....:     print(a)
             1
             4
+
+        TESTS:
+
+        With multiple edges, check that the neighbors are listed only once::
+
+            sage: D = DiGraph([[0, 1, 2], [(0, 1), (0, 1), (1, 2) ]],multiedges=True)
+            sage: list(D.neighbor_in_iterator(0))
+            []
+            sage: list(D.neighbor_in_iterator(1))
+            [0]
+            sage: list(D.neighbor_in_iterator(2))
+            [1]
+
+        Check that the iterator lists ``vertex`` in the presence of loop(s):
+
+            sage: D = DiGraph([[0, 1, 2], [(0, 0), (0, 0), (1, 1)]],multiedges=True, loops=True)
+            sage: list(D.neighbor_in_iterator(0))
+            [0]
+            sage: list(D.neighbor_in_iterator(1))
+            [1]
+            sage: list(D.neighbor_in_iterator(2))
+            []
+
         """
         yield from self._backend.iterator_in_nbrs(vertex)
 
@@ -1233,6 +1256,29 @@ class DiGraph(GenericGraph):
             1
             2
             3
+
+        TESTS:
+
+        With multiple edges, check that the neighbors are listed only once::
+
+            sage: D = DiGraph([[0, 1, 2], [(0, 1), (0, 1), (1, 2) ]],multiedges=True)
+            sage: list(D.neighbor_out_iterator(0))
+            [1]
+            sage: list(D.neighbor_out_iterator(1))
+            [2]
+            sage: list(D.neighbor_out_iterator(2))
+            []
+
+        Check that the iterator lists ``vertex`` in the presence of loop(s):
+
+            sage: D = DiGraph([[0, 1, 2], [(0, 0), (0, 0), (1, 1)]],multiedges=True, loops=True)
+            sage: list(D.neighbor_out_iterator(0))
+            [0]
+            sage: list(D.neighbor_out_iterator(1))
+            [1]
+            sage: list(D.neighbor_out_iterator(2))
+            []
+
         """
         yield from self._backend.iterator_out_nbrs(vertex)
 
