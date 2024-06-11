@@ -59,9 +59,9 @@ def _monomial_list(maxdeg, l, wy):
 
     INPUT:
 
-    - ``maxdeg``, ``l``, ``wy`` -- integers.
+    - ``maxdeg``, ``l``, ``wy`` -- integers
 
-    OUTPUT: a list of pairs of integers
+    OUTPUT: list of pairs of integers
 
     EXAMPLES::
 

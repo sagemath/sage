@@ -353,7 +353,7 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology='O
 
 def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=False):
     r"""
-    Checks that input is a Group Divisible Design on `\{0,...,v-1\}`
+    Check that input is a Group Divisible Design on `\{0, \ldots, v-1\}`
 
     For more information on Group Divisible Designs, see
     :class:`~sage.combinat.designs.group_divisible_designs.GroupDivisibleDesign`.
@@ -537,7 +537,7 @@ def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=Fals
 
 def is_pairwise_balanced_design(blocks,v,K=None,lambd=1,verbose=False):
     r"""
-    Checks that input is a Pairwise Balanced Design (PBD) on `\{0,...,v-1\}`
+    Check that input is a Pairwise Balanced Design (PBD) on `\{0, \ldots, v-1\}`.
 
     For more information on Pairwise Balanced Designs (PBD), see
     :class:`~sage.combinat.designs.bibd.PairwiseBalancedDesign`.

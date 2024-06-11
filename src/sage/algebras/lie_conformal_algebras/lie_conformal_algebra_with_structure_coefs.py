@@ -35,11 +35,11 @@ class LieConformalAlgebraWithStructureCoefficients(
 
     INPUT:
 
-    - ``R`` -- a ring (Default: ``None``); The base ring of this Lie
+    - ``R`` -- a ring (default: ``None``); The base ring of this Lie
       conformal algebra. Behaviour is undefined if it is not a field
       of characteristic zero.
 
-    - ``s_coeff`` -- dictionary (Default: ``None``);
+    - ``s_coeff`` -- dictionary (default: ``None``);
       a dictionary containing the `\lambda` brackets of the
       generators of this Lie conformal algebra. The family encodes a
       dictionary whose keys
@@ -66,20 +66,20 @@ class LieConformalAlgebraWithStructureCoefficients(
       defined by skew-symmetry) is assumed to have vanishing
       `\lambda`-bracket.
 
-    - ``names`` -- tuple of ``str`` (Default: ``None``); The list of
+    - ``names`` -- tuple of ``str`` (default: ``None``); The list of
       names for generators of this Lie conformal algebra. Do not
       include central elements in this list.
 
-    - ``central_elements`` -- tuple of ``str`` (Default: ``None``);
+    - ``central_elements`` -- tuple of ``str`` (default: ``None``);
       A list of names for central
       elements of this Lie conformal algebra.
 
-    - ``index_set`` -- enumerated set (Default: ``None``);
+    - ``index_set`` -- enumerated set (default: ``None``);
       an indexing set for the generators of this Lie
       conformal algebra. Do not include central elements in this
       list.
 
-    - ``parity`` -- tuple of `0` or `1` (Default: tuple of `0`);
+    - ``parity`` -- tuple of `0` or `1` (default: tuple of `0`);
        a tuple specifying the parity of each non-central generator.
 
     EXAMPLES:
@@ -127,7 +127,7 @@ class LieConformalAlgebraWithStructureCoefficients(
           generators (not counting the central elements).
         - ``ce`` -- a tuple of ``str``; a list of names for the central
           generators of this Lie conformal algebra
-        - ``parity`` -- a tuple of `0` or `1` (Default: tuple of `0`);
+        - ``parity`` -- a tuple of `0` or `1` (default: tuple of `0`);
           this tuple specifies the parity of each non-central generator.
 
         OUTPUT:

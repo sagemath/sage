@@ -719,9 +719,9 @@ class ReedMullerPolynomialEncoder(Encoder):
 
     - ``code`` -- the associated code of this encoder
 
-    - ``polynomial_ring`` -- (default:``None``) The polynomial ring from which
-      the message is chosen.  If this is set to ``None``, a polynomial ring in
-      `x` will be built from the code parameters.
+    - ``polynomial_ring`` -- (default: ``None``) the polynomial ring from which
+      the message is chosen;  if this is set to ``None``, a polynomial ring in
+      `x` will be built from the code parameters
 
     EXAMPLES::
 
@@ -840,7 +840,7 @@ class ReedMullerPolynomialEncoder(Encoder):
 
     def encode(self, p):
         r"""
-        Transforms the polynomial ``p`` into a codeword of :meth:`code`.
+        Transform the polynomial ``p`` into a codeword of :meth:`code`.
 
         INPUT:
 

@@ -701,7 +701,7 @@ class Category(UniqueRepresentation, SageObject):
     @staticmethod
     def __classcontains__(cls, x):
         """
-        Membership testing, without arguments
+        Membership testing, without arguments.
 
         INPUT:
 
@@ -2940,7 +2940,7 @@ class JoinCategory(CategoryWithParameters):
 
     def __init__(self, super_categories, **kwds):
         """
-        Initializes this JoinCategory.
+        Initialize this JoinCategory.
 
         INPUT:
 

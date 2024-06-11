@@ -263,7 +263,7 @@ class PuncturedCode(AbstractLinearCode):
 
     def encode(self, m, original_encode=False, encoder_name=None, **kwargs):
         r"""
-        Transforms an element of the message space into an element of the code.
+        Transform an element of the message space into an element of the code.
 
         INPUT:
 

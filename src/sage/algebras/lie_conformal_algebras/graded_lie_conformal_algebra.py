@@ -84,7 +84,7 @@ class GradedLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
     - ``category`` The category that this Lie conformal algebra
       belongs to.
 
-    - ``parity`` -- tuple of ``0`` or ``1`` (Default: tuple of
+    - ``parity`` -- tuple of ``0`` or ``1`` (default: tuple of
       ``0``); a tuple specifying the parity of each non-central
       generator.
 

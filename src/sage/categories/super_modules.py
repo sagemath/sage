@@ -132,7 +132,7 @@ class SuperModules(SuperModulesCategory):
 
     def extra_super_categories(self):
         r"""
-        Adds :class:`VectorSpaces` to the super categories of ``self`` if
+        Add :class:`VectorSpaces` to the super categories of ``self`` if
         the base ring is a field.
 
         EXAMPLES::

@@ -78,7 +78,7 @@ class ClusterQuiver(SageObject):
     - ``frozen`` -- (default: ``None``) sets the list of frozen variables
       if the input type is a :class:`DiGraph`, it is ignored otherwise
 
-    - ``user_labels`` -- (default:``None``) sets the names of the labels for
+    - ``user_labels`` -- (default: ``None``) sets the names of the labels for
       the vertices of the quiver if the input type is not a :class:`DiGraph`;
       otherwise it is ignored
 
@@ -536,7 +536,7 @@ class ClusterQuiver(SageObject):
 
         - ``circular`` -- boolean (default: ``True``); if ``True``, the
           circular plot is chosen, otherwise >>spring<< is used
-        - ``center`` -- (default:(0,0)) sets the center of the circular plot,
+        - ``center`` -- (default: (0,0)) sets the center of the circular plot,
           otherwise it is ignored
         - ``directed`` -- boolean (default: ``True``); if ``True``, the
           directed version is shown, otherwise the undirected
@@ -1973,7 +1973,7 @@ class ClusterQuiver(SageObject):
         Note: This only works with non-valued quivers. If used on a
         non-valued quiver then the positive value is taken to be the number of edges added
 
-        OUTPUT: an integer of the number of edges
+        OUTPUT: integer of the number of edges
 
         EXAMPLES::
 

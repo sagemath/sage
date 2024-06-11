@@ -906,7 +906,7 @@ class CyclicCodePolynomialEncoder(Encoder):
 
     def encode(self, p):
         r"""
-        Transforms ``p`` into an element of the associated code of ``self``.
+        Transform `p` into an element of the associated code of ``self``.
 
         INPUT:
 
@@ -1076,7 +1076,7 @@ class CyclicCodeVectorEncoder(Encoder):
 
     def encode(self, m):
         r"""
-        Transforms ``m`` into an element of the associated code of ``self``.
+        Transform `m` into an element of the associated code of ``self``.
 
         INPUT:
 

@@ -134,7 +134,7 @@ class Decoder(SageObject):
 
     def __init__(self, code, input_space, connected_encoder_name):
         r"""
-        Initializes mandatory parameters for :class:`Decoder` objects.
+        Initialize mandatory parameters for :class:`Decoder` objects.
 
         This method only exists for inheritance purposes as it initializes
         parameters that need to be known by every decoder. An abstract

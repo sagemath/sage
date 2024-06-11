@@ -48,8 +48,8 @@ class FunctionFields(Category):
 
     def _call_(self, x):
         r"""
-        Constructs an object in this category from the data in ``x``,
-        or throws a TypeError.
+        Construct an object in this category from the data in ``x``,
+        or throw a ``TypeError``.
 
         EXAMPLES::
 

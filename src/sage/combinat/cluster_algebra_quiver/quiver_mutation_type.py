@@ -700,7 +700,7 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``circular`` -- (default:``False``) if ``True``, the
+        - ``circular`` -- (default: ``False``) if ``True``, the
           circular plot is chosen, otherwise >>spring<< is used.
 
         - ``directed`` -- boolean (default: ``True``); if ``True``, the
@@ -708,7 +708,7 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
 
         TESTS::
 
-            sage: QMT = QuiverMutationType(['A',5])
+            sage: QMT = QuiverMutationType(['A', 5])
             sage: QMT.show()                    # long time                             # needs sage.plot sage.symbolic
         """
         self.plot(circular=circular, directed=directed).show()
@@ -2297,14 +2297,14 @@ def save_quiver_data(n, up_to=True, types='ClassicalExceptional', verbose=True):
     - ``n`` -- the rank (or the upper limit on the rank) of the mutation
       classes that are being saved.
 
-    - ``up_to`` -- (default:``True``) if ``True``, saves data for
-      ranks smaller than or equal to ``n``. If ``False``, saves data
-      for rank exactly ``n``.
+    - ``up_to`` -- (default: ``True``) if ``True``, saves data for
+      ranks smaller than or equal to ``n``; if ``False``, saves data
+      for rank exactly ``n``
 
-    - ``types`` -- (default:'ClassicalExceptional') if all, saves data
+    - ``types`` -- (default: ``'ClassicalExceptional'``) if all, saves data
       for both exceptional mutation-finite quivers and for classical
-      quiver. The input 'Exceptional' or 'Classical' is also allowed
-      to save only part of this data.
+      quiver; the input 'Exceptional' or 'Classical' is also allowed
+      to save only part of this data
 
     TESTS::
 

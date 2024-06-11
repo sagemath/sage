@@ -310,7 +310,7 @@ def DesarguesianProjectivePlaneDesign(n, point_coordinates=True, check=True):
     - ``point_coordinates`` -- (boolean) whether to label the points with their
       homogeneous coordinates (default) or with integers.
 
-    - ``check`` -- (boolean) Whether to check that output is correct before
+    - ``check`` -- boolean; whether to check that output is correct before
       returning it. As this is expected to be useless (but we are cautious
       guys), you may want to disable it whenever you want speed. Set to
       ``True`` by default.
@@ -522,7 +522,7 @@ def HughesPlane(q2, check=True):
 
     - ``q2`` -- an even power of an odd prime number
 
-    - ``check`` -- (boolean) Whether to check that output is correct before
+    - ``check`` -- boolean; whether to check that output is correct before
       returning it. As this is expected to be useless (but we are cautious
       guys), you may want to disable it whenever you want speed. Set to
       ``True`` by default.

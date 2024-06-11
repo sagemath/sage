@@ -351,10 +351,10 @@ class Crystals(Category_singleton):
 
             INPUT:
 
-            - ``index_set`` -- (Default: ``None``) the index set; if ``None``
+            - ``index_set`` -- (default: ``None``) the index set; if ``None``
               then use the index set of the crystal
 
-            - ``max_depth`` -- (Default: infinity) the maximum depth to build
+            - ``max_depth`` -- (default: infinity) the maximum depth to build
 
             The iteration order is not specified except that, if
             ``max_depth`` is finite, then the iteration goes depth by

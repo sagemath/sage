@@ -74,7 +74,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                characteristic `p` in which we can compute `x^{1/p}`
                [FR1985]_, [Eb1989]_.
 
-            OUTPUT: a list of elements of ``self``
+            OUTPUT: list of elements of ``self``
 
             .. SEEALSO:: :meth:`radical`, :class:`Algebras.Semisimple`
 
@@ -346,7 +346,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             r"""
             Return a basis of the center of ``self``.
 
-            OUTPUT: a list of elements of ``self``
+            OUTPUT: list of elements of ``self``
 
             .. SEEALSO:: :meth:`center`
 
@@ -849,7 +849,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             - ``side`` -- 'left' or 'right' (default: ``'left'``)
 
-            OUTPUT: a list of subspaces of ``self``
+            OUTPUT: list of subspaces of ``self``
 
             EXAMPLES::
 

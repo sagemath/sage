@@ -351,7 +351,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
     def __init__(self, base_field, length, default_encoder_name, default_decoder_name):
         """
-        Initializes mandatory parameters that any linear code shares.
+        Initialize mandatory parameters that any linear code shares.
 
         This method only exists for inheritance purposes as it initializes
         parameters that need to be known by every linear code. The class
@@ -1316,7 +1316,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
     def is_galois_closed(self):
         r"""
-        Checks if ``self`` is equal to its Galois closure.
+        Check if ``self`` is equal to its Galois closure.
 
         EXAMPLES::
 
@@ -1812,7 +1812,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
           ``'binary'``, use an algorithm optimized for binary codes. The default
           is to use ``'binary'`` for binary codes and ``'gap'`` otherwise.
 
-        OUTPUT: a list of nonnegative integers; the weight distribution
+        OUTPUT: list of nonnegative integers; the weight distribution
 
         .. WARNING::
 
@@ -1929,7 +1929,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         INPUT:
 
-        - ``names`` -- (default: ``'xy'``) The names of the variables in the
+        - ``names`` -- (default: ``'xy'``) the names of the variables in the
           homogeneous polynomial. Can be given as a single string of length 2,
           or a single string with a comma, or as a tuple or list of two strings.
 
@@ -2517,7 +2517,7 @@ class LinearCodeGeneratorMatrixEncoder(Encoder):
 
 class LinearCodeSyndromeDecoder(Decoder):
     r"""
-    Constructs a decoder for Linear Codes based on syndrome lookup table.
+    Construct a decoder for Linear Codes based on syndrome lookup table.
 
     The decoding algorithm works as follows:
 
@@ -2744,7 +2744,7 @@ class LinearCodeSyndromeDecoder(Decoder):
     @cached_method
     def _build_lookup_table(self):
         r"""
-        Builds lookup table for all possible error patterns of weight up to :meth:`maximum_error_weight`.
+        Build lookup table for all possible error patterns of weight up to :meth:`maximum_error_weight`.
 
         EXAMPLES::
 

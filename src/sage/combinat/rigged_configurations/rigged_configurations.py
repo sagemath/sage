@@ -123,7 +123,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
     :class:`~sage.combinat.rigged_configurations.tensor_product_kr_tableaux.TensorProductOfKirillovReshetikhinTableaux`
     of non-exceptional affine types where the list `B` corresponds to the
     tensor factors `B^{r,s}`. The bijection has been proven in types `A_n^{(1)}`
-    and `D_n^{(1)}` and when the only non-zero entries of `L_i^{(a)}` are either
+    and `D_n^{(1)}` and when the only nonzero entries of `L_i^{(a)}` are either
     only `L_1^{(a)}` or only `L_i^{(1)}` (corresponding to single columns or
     rows respectively) [RigConBijection]_, [BijectionLRT]_, [BijectionDn]_.
 
@@ -146,7 +146,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
 
     - ``cartan_type`` -- a Cartan type
 
-    - ``B`` -- a list of positive integer tuples `(r,s)` corresponding to the
+    - ``B`` -- list of positive integer tuples `(r,s)` corresponding to the
       tensor factors in the bijection with tensor product of
       Kirillov-Reshetikhin tableaux or equivalently the sequence of width `s`
       and height `r` rectangles
@@ -414,7 +414,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
             <BLANKLINE>
             -1[ ]-1
             <BLANKLINE>
-            sage: RiggedConfigurations.options(display="horizontal", convention="french")
+            sage: RiggedConfigurations.options(display='horizontal', convention='french')
             sage: elt
             -1[ ]-1         1[ ][ ][ ]1   -1[ ]-1
             -3[ ][ ][ ]-3
@@ -612,7 +612,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``container`` -- a list of widths of the rows of the container
+        - ``container`` -- list of widths of the rows of the container
 
         TESTS::
 
@@ -1806,7 +1806,7 @@ class RCTypeA2Dual(RCTypeA2Even):
 
         INPUT:
 
-        - ``container`` -- a list the widths of the rows of the container
+        - ``container`` -- list the widths of the rows of the container
 
         TESTS::
 

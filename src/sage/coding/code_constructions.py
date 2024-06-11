@@ -327,7 +327,7 @@ def walsh_matrix(m0):
 
 def DuadicCodeEvenPair(F,S1,S2):
     r"""
-    Constructs the "even pair" of duadic codes associated to the
+    Construct the "even pair" of duadic codes associated to the
     "splitting" (see the docstring for ``_is_a_splitting``
     for the definition) S1, S2 of n.
 
@@ -376,7 +376,7 @@ def DuadicCodeEvenPair(F,S1,S2):
 
 def DuadicCodeOddPair(F,S1,S2):
     """
-    Constructs the "odd pair" of duadic codes associated to the
+    Construct the "odd pair" of duadic codes associated to the
     "splitting" S1, S2 of n.
 
     .. warning::

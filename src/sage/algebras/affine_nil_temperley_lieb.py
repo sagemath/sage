@@ -67,7 +67,7 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
 
     def _element_constructor_(self, w):
         """
-        Constructs a basis element from an element of the Weyl group.
+        Construct a basis element from an element of the Weyl group.
 
         If `w = w_1 ... w_k` is a reduced word for `w`, then `A(w)` returns
         zero if `w` contains braid relations.

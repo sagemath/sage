@@ -881,7 +881,7 @@ class LinearCodeInformationSetDecoder(Decoder):
         - ``dictionary`` -- optional; if set to ``True``, return a ``dict``
           mapping decoding algorithm name to its class
 
-        OUTPUT: a list of strings or a ``dict`` from string to ISD algorithm class
+        OUTPUT: list of strings or a ``dict`` from string to ISD algorithm class
 
         EXAMPLES::
 

@@ -71,7 +71,7 @@ def biplane(n, existence=False):
 
     INPUT:
 
-    - ``n`` -- (integer) order of the biplane
+    - ``n`` -- integer; order of the biplane
 
      - ``existence`` -- boolean; instead of building the design, return:
 

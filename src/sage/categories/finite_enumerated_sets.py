@@ -528,7 +528,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
         def _test_enumerated_set_iter_cardinality(self, **options):
             """
-            Checks that the methods :meth:`.cardinality` and
+            Check that the methods :meth:`.cardinality` and
             :meth:`.__iter__` are consistent. Also checks that
             :meth:`.cardinality` returns an ``Integer``.
 

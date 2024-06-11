@@ -109,7 +109,7 @@ def format_interval(t):
 
     - ``t`` -- list or a tuple
 
-    OUTPUT: a string
+    OUTPUT: string
 
     TESTS::
 
@@ -151,7 +151,7 @@ class Channel(SageObject):
 
     def __init__(self, input_space, output_space):
         r"""
-        Initializes parameters for a Channel object.
+        Initialize parameters for a Channel object.
 
         This is a private method, which should be called by the constructor
         of every encoder, as it automatically initializes the mandatory

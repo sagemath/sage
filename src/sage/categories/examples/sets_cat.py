@@ -200,7 +200,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
 
     def _element_constructor_(self, i):
         """
-        Constructs an element of self from an integer, testing that
+        Construct an element of self from an integer, testing that
         this integer is indeed prime.
 
         EXAMPLES::

@@ -33,8 +33,8 @@ class LCAWithGeneratorsElement(IndexedFreeModuleElement):
 
         INPUT:
 
-        - ``n`` -- nonnegative integer (default:``1``); how many
-          times to apply `T` to this element.
+        - ``n`` -- nonnegative integer (default: `1`); how many
+          times to apply `T` to this element
 
         We use the *divided powers* notation
         `T^{(j)} = \frac{T^j}{j!}`.

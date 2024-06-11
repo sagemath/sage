@@ -268,7 +268,7 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
 
     - ``code`` -- the associated code of this decoder
 
-    - ``original_decoder`` -- (default: ``None``) The decoder that will be used
+    - ``original_decoder`` -- (default: ``None``) the decoder that will be used
       over the original code. It has to be a decoder object over the original
       code. If it is set to ``None``, the default decoder over the original
       code will be used.

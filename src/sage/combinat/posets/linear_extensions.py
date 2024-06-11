@@ -131,7 +131,7 @@ class LinearExtensionOfPoset(ClonableArray,
 
     def check(self):
         r"""
-        Checks whether ``self`` is indeed a linear extension of the underlying poset.
+        Check whether ``self`` is indeed a linear extension of the underlying poset.
 
         TESTS::
 
@@ -711,7 +711,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
 
     def markov_chain_digraph(self, action='promotion', labeling='identity'):
         r"""
-        Return the digraph of the action of generalized promotion or tau on ``self``
+        Return the digraph of the action of generalized promotion or tau on ``self``.
 
         INPUT:
 
@@ -811,17 +811,20 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
 
     def markov_chain_transition_matrix(self, action='promotion', labeling='identity'):
         r"""
-        Return the transition matrix of the Markov chain for the action of generalized promotion or tau on ``self``
+        Return the transition matrix of the Markov chain for the action of
+        generalized promotion or tau on ``self``.
 
         INPUT:
 
         - ``action`` -- ``'promotion'`` or ``'tau'`` (default: ``'promotion'``)
         - ``labeling`` -- ``'identity'`` or ``'source'`` (default: ``'identity'``)
 
-        This method yields the transition matrix of the Markov chain defined by the action of the generalized
-        promotion operator `\partial_i` (resp. `\tau_i`) on the set of linear extensions of a finite poset.
-        Here the transition from the linear extension `\pi` to `\pi'`, where `\pi' = \pi \partial_i`
-        (resp. `\pi'= \pi \tau_i`) is counted with weight `x_i` (resp. `x_{\pi_i}` if ``labeling`` is set to ``source``).
+        This method yields the transition matrix of the Markov chain defined by
+        the action of the generalized promotion operator `\partial_i` (resp.
+        `\tau_i`) on the set of linear extensions of a finite poset. Here the
+        transition from the linear extension `\pi` to `\pi'`, where
+        `\pi' = \pi \partial_i` (resp. `\pi'= \pi \tau_i`) is counted with
+        weight `x_i` (resp. `x_{\pi_i}` if ``labeling`` is set to ``source``).
 
         EXAMPLES::
 

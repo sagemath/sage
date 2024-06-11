@@ -366,18 +366,18 @@ def Poset(data=None, element_labels=None, cover_relations=False, linear_extensio
     - ``element_labels`` -- (default: ``None``); an optional list or
       dictionary of objects that label the poset elements.
 
-    - ``cover_relations`` -- a boolean (default: ``False``); whether the
+    - ``cover_relations`` -- boolean (default: ``False``); whether the
       data can be assumed to describe a directed acyclic graph whose
-      arrows are cover relations; otherwise, the cover relations are
+      arrows are cover relations. Otherwise, the cover relations are
       first computed.
 
-    - ``linear_extension`` -- a boolean (default: ``False``); whether to
+    - ``linear_extension`` -- boolean (default: ``False``); whether to
       use the provided list of elements as default linear extension
-      for the poset; otherwise a linear extension is computed. If the data
+      for the poset. Otherwise a linear extension is computed. If the data
       is given as the pair ``(E, f)``, then ``E`` is taken to be the linear
       extension.
 
-    - ``facade`` -- a boolean or ``None`` (default); whether the
+    - ``facade`` -- boolean or ``None`` (default); whether the
       :meth:`Poset`'s elements should be wrapped to make them aware of the
       Poset they belong to.
 
@@ -713,7 +713,7 @@ def Poset(data=None, element_labels=None, cover_relations=False, linear_extensio
     elif isinstance(data, DiGraph):  # type 4
         D = data.copy(immutable=True)
     elif isinstance(data, dict):  # type 3: dictionary of upper covers
-        D = DiGraph(data, format="dict_of_lists")
+        D = DiGraph(data, format='dict_of_lists')
     elif isinstance(data, (list, tuple)):  # types 1, 2, 3 (list/tuple)
         if len(data) == 2:  # types 1 or 2
             if callable(data[1]):  # type 2
@@ -736,7 +736,7 @@ def Poset(data=None, element_labels=None, cover_relations=False, linear_extensio
                 vertices = range(len(data))
             D = DiGraph({v: [u for u in cov if u != v]
                          for v, cov in zip(vertices, data)},
-                        format="dict_of_lists")
+                        format='dict_of_lists')
         else:
             raise ValueError("not valid poset data")
 
@@ -796,9 +796,9 @@ class FinitePoset(UniqueRepresentation, Parent):
       then ``elements`` is considered as a specified linear extension of the poset
       and the `linear_extension` attribute is set.
 
-    - ``category`` -- :class:`FinitePosets`, or a subcategory thereof.
+    - ``category`` -- :class:`FinitePosets`, or a subcategory thereof
 
-    - ``facade`` -- a boolean or ``None`` (default); whether the
+    - ``facade`` -- boolean or ``None`` (default); whether the
       :class:`~sage.combinat.posets.posets.FinitePoset`'s elements should be
       wrapped to make them aware of the Poset they belong to.
 
@@ -998,7 +998,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             hasse_diagram = poset._hasse_diagram.relabel(relabel, inplace=False)
             hasse_diagram = hasse_diagram.copy(immutable=True)
         else:
-            hasse_diagram = HasseDiagram(hasse_diagram, data_structure="static_sparse")
+            hasse_diagram = HasseDiagram(hasse_diagram, data_structure='static_sparse')
             if facade is None:
                 facade = True
             if elements is not None:
@@ -1081,7 +1081,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         # So range(len(D)) becomes a linear extension of the poset.
         rdict = {element: i for i, element in enumerate(self._elements)}
         self._hasse_diagram = HasseDiagram(hasse_diagram.relabel(rdict, inplace=False),
-                                           data_structure="static_sparse")
+                                           data_structure='static_sparse')
         self._element_to_vertex_dict = rdict
         self._is_facade = facade
 
@@ -1279,7 +1279,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
     def _element_constructor_(self, element):
         """
-        Constructs an element of ``self``
+        Construct an element of ``self``.
 
         EXAMPLES::
 
@@ -1316,7 +1316,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
     def __call__(self, element):
         """
-        Creates elements of this poset
+        Create elements of this poset.
 
         This overrides the generic call method for all parents
         :meth:`Parent.__call__`, as a work around to allow for facade
@@ -1370,7 +1370,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             [1, 3, 5, 15]
             sage: H.edges(sort=True)
             [(1, 3, None), (1, 5, None), (3, 15, None), (5, 15, None)]
-            sage: H.set_latex_options(format="dot2tex")                                 # needs sage.plot
+            sage: H.set_latex_options(format='dot2tex')                                 # needs sage.plot
             sage: view(H)  # optional - dot2tex, not tested (opens external window)
         """
         G = DiGraph(self._hasse_diagram).relabel(self._list, inplace=False)
@@ -1427,7 +1427,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
     def _rich_repr_(self, display_manager, **kwds):
         """
-        Rich Output Magic Method
+        Rich Output Magic Method.
 
         See :mod:`sage.repl.rich_output` for details.
 
@@ -1488,12 +1488,12 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``l`` -- a list of elements of the poset
-        - ``allow_incomparable`` -- a Boolean. If ``True`` (the default),
-          return incomparable elements in some order; if ``False``, raise
+        - ``l`` -- list of elements of the poset
+        - ``allow_incomparable`` -- boolean (default: ``True``); if ``True``,
+          return incomparable elements in some order. If ``False``, raise
           an error if ``l`` is not a chain of the poset.
-        - ``remove_duplicates`` -- a Boolean. If ``True``, remove duplicates
-          from the output list.
+        - ``remove_duplicates`` -- boolean (default: ``False``); if ``True``,
+          remove duplicates from the output list
 
         EXAMPLES::
 
@@ -1553,9 +1553,8 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         - ``linear_extension`` -- (default: ``None``) a list of the
           elements of ``self``
-        - ``check`` -- a boolean (default: ``True``);
-          whether to check that ``linear_extension`` is indeed a
-          linear extension of ``self``.
+        - ``check`` -- boolean (default: ``True``); whether to check that
+          ``linear_extension`` is indeed a linear extension of ``self``
 
         EXAMPLES::
 
@@ -1610,10 +1609,10 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``facade`` -- a boolean (default: ``False``);
-          whether to return the linear extensions as plain lists
+        - ``facade`` -- boolean (default: ``False``); whether to return the
+          linear extensions as plain lists
 
-          .. warning::
+          .. WARNING::
 
             The ``facade`` option is not yet fully functional::
 
@@ -1830,7 +1829,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``l`` -- a list (or iterable) containing all of the elements of ``self`` exactly once
+        - ``l`` -- list (or iterable) containing all of the elements of ``self`` exactly once
 
         EXAMPLES::
 
@@ -1915,9 +1914,9 @@ class FinitePoset(UniqueRepresentation, Parent):
           * ``element_shape`` -- the shape of elements, like ``'s'`` for
             square; see https://matplotlib.org/api/markers_api.html for the list
           * ``element_size`` (default: 200) - the size of elements
-          * ``label_elements`` (default: ``True``) - whether to display
+          * ``label_elements`` boolean (default: ``True``); whether to display
             element labels
-          * ``element_labels`` (default: ``None``) - a dictionary where keys
+          * ``element_labels`` (default: ``None``); a dictionary where keys
             are elements and values are labels to show
 
         - Options to change cover relation look:
@@ -1937,11 +1936,11 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         - Options to change overall look:
 
-          * ``figsize`` (default: 8) - size of the whole plot
+          * ``figsize`` -- (default: 8) size of the whole plot
           * ``title`` -- a title for the plot
           * ``fontsize`` -- fontsize for the title
-          * ``border`` (default: ``False``) - whether to draw a border over the
-            plot
+          * ``border`` -- (default: ``False``) whether to draw a border over
+            the plot
 
         .. NOTE::
 
@@ -2111,15 +2110,15 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``label_elements`` (default: ``True``) -- whether to display
+        - ``label_elements`` -- boolean (default: ``True``); whether to display
           element labels
 
-        - ``element_labels`` (default: ``None``) -- a dictionary of
+        - ``element_labels`` -- (default: ``None``) a dictionary of
           element labels
 
         - ``cover_labels`` -- a dictionary, list or function representing labels
-          of the covers of ``self``. When set to ``None`` (default) no label is
-          displayed on the edges of the Hasse Diagram.
+          of the covers of ``self``; when set to ``None`` (default) no label is
+          displayed on the edges of the Hasse Diagram
 
         .. NOTE::
 
@@ -2202,7 +2201,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         return list(self.cover_relations_iterator())
 
-    @combinatorial_map(name="cover_relations_graph")
+    @combinatorial_map(name='cover_relations_graph')
     def cover_relations_graph(self):
         """
         Return the (undirected) graph of cover relations.
@@ -2595,7 +2594,7 @@ class FinitePoset(UniqueRepresentation, Parent):
                 covers.extend([[(a, b), (aa, b)] for aa in self.upper_covers(a)
                                if self.le(aa, b)])
 
-        dg = DiGraph([ints, covers], format="vertices_and_edges")
+        dg = DiGraph([ints, covers], format='vertices_and_edges')
         return constructor(dg, cover_relations=True)
 
     def relations_iterator(self, strict=False):
@@ -2607,9 +2606,8 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``strict`` -- a boolean (default ``False``) if ``True``, returns
-          an iterator over relations `x < y`, excluding all
-          relations `x \leq x`.
+        - ``strict`` -- boolean (default: ``False``); if ``True``, return
+          an iterator over relations `x < y`, excluding all relations `x \leq x`
 
         OUTPUT:
 
@@ -3149,7 +3147,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -3292,7 +3290,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``elms`` -- a list or other iterable containing some elements
+        - ``elms`` -- list or other iterable containing some elements
           of the poset
 
         - ``ordered`` -- a Boolean. If ``True``, then return ``True``
@@ -3527,9 +3525,9 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``certificate`` (boolean; default:``False``) -- whether to return an
+        - ``certificate`` -- boolean (default: ``False``); whether to return an
           integer (the dimension) or a certificate, i.e. a smallest set of
-          linear extensions.
+          linear extensions
 
         - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear Programming
           (MILP) solver to be used. If set to ``None``, the default one is used. For
@@ -3540,7 +3538,7 @@ class FinitePoset(UniqueRepresentation, Parent):
           :class:`MixedIntegerLinearProgram <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
         - ``integrality_tolerance`` -- parameter for use with MILP solvers over an
-          inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`.
+          inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`
 
         .. NOTE::
 
@@ -3771,7 +3769,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) Whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -3869,7 +3867,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -4371,7 +4369,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``algorithm`` -- optional (default ``'singular'``), possible
+        - ``algorithm`` -- (default: ``'singular'``), possible
           values are ``'singular'``, ``'sage'``, ``'gap'``,
           ``'pari'``, ``'maple'``, ``'magma'``, ``'fricas'``
 
@@ -4379,9 +4377,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         algorithm. Sage is rather slow, Singular is faster and Pari is
         fast at least for small sizes.
 
-        OUTPUT:
-
-        - list of polynomials in one variable, each one dividing the next one
+        OUTPUT: list of polynomials in one variable, each one dividing the next one
 
         The output list is a refinement of the characteristic polynomial of
         the Coxeter transformation, which is its product. This list
@@ -4474,7 +4470,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -4547,7 +4543,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -4813,7 +4809,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -5250,7 +5246,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         Cartesian products) is unique up to reordering and
         isomorphism.
 
-        OUTPUT: a list of posets
+        OUTPUT: list of posets
 
         EXAMPLES::
 
@@ -5636,9 +5632,9 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``other`` -- a poset.
+        - ``other`` -- a poset
 
-        - ``labels`` -- (defaults to 'pairs') If set to 'pairs', each
+        - ``labels`` -- string (default: 'pairs'); if set to 'pairs', each
           element ``v`` in this poset will be named ``(0, v)`` and each
           element ``u`` in ``other`` will be named ``(1, u)`` in the
           result. If set to 'integers', the elements of the result
@@ -5867,7 +5863,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``labels`` -- A pair of elements to use as a bottom and top
+        - ``labels`` -- a pair of elements to use as a bottom and top
           element of the poset. Default is strings ``'bottom'`` and
           ``'top'``. Either of them can be ``None``, and then a new
           bottom or top element will not be added.
@@ -6330,7 +6326,7 @@ class FinitePoset(UniqueRepresentation, Parent):
                            category=self.category(),
                            facade=self._is_facade)
 
-    def graphviz_string(self, graph_string="graph", edge_string="--"):
+    def graphviz_string(self, graph_string='graph', edge_string='--'):
         r"""
         Return a representation in the DOT language, ready to render in
         graphviz.
@@ -7095,7 +7091,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``on_ints`` -- a boolean (default: ``False``)
+        - ``on_ints`` -- boolean (default: ``False``)
 
         OUTPUT: an order complex of type :class:`SimplicialComplex`
 
@@ -7771,11 +7767,9 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``i`` -- an integer between `1` and `n` (default: `1`)
+        - ``i`` -- integer between `1` and `n` (default: `1`)
 
-        OUTPUT:
-
-        - an isomorphic poset, with the same default linear extension
+        OUTPUT: an isomorphic poset, with the same default linear extension
 
         The extended promotion is defined on a poset ``self`` of size
         `n` by applying the promotion operator `\tau_i \tau_{i+1}
@@ -7857,9 +7851,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         Compute evacuation on the linear extension associated
         to the poset ``self``.
 
-        OUTPUT:
-
-        - an isomorphic poset, with the same default linear extension
+        OUTPUT: an isomorphic poset, with the same default linear extension
 
         Evacuation is defined on a poset ``self`` of size `n` by
         applying the evacuation operator
@@ -7974,7 +7966,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -8089,9 +8081,9 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``k``, an integer -- only check if the poset is `k`-eulerian.
+        - ``k`` -- integer; only check if the poset is `k`-eulerian.
           If ``None`` (the default), check if the poset is Eulerian.
-        - ``certificate``, a Boolean -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -8201,7 +8193,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           a certificate
 
         OUTPUT:
@@ -8379,7 +8371,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         for i in self:
             pdict[(0, i)] = [(1, j) for j in self if self.ge(i, j)]
             pdict[(1, i)] = [(2, 0)]
-        G = DiGraph(pdict, format="dict_of_lists")
+        G = DiGraph(pdict, format='dict_of_lists')
         a = {e: 0 for e in G.edge_iterator(labels=False)}
         for i in self:
             a[((0, i), (1, i))] = 1
@@ -8593,7 +8585,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         from sage.graphs.graph import Graph
         from sage.graphs.independent_sets import IndependentSets
         auxg = Graph({(u, 0): [(v, 1) for v in self if not self.ge(u, v)]
-                      for u in self}, format="dict_of_lists")
+                      for u in self}, format='dict_of_lists')
         auxg.add_vertices([(v, 1) for v in self])
         return [frozenset([xa for xa, xb in c if xb == 0])
                 for c in IndependentSets(auxg, maximal=True)]
@@ -8607,9 +8599,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         See the :wikipedia:`Dedekind-MacNeille completion`.
 
-        OUTPUT:
-
-        - a finite lattice
+        OUTPUT: a finite lattice
 
         EXAMPLES::
 

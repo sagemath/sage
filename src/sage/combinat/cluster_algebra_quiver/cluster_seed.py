@@ -810,7 +810,7 @@ class ClusterSeed(SageObject):
         INPUT:
 
         - ``user_labels`` -- the labels that need sanitizing
-        - ``user_labels_prefix`` -- (default: ``'x'``) The prefix to use
+        - ``user_labels_prefix`` -- (default: ``'x'``) the prefix to use
           for labels if integers given for labels
 
         EXAMPLES::
@@ -2682,7 +2682,7 @@ class ClusterSeed(SageObject):
 
         - ``cluster_str`` -- the string to look for in the cluster
 
-        OUTPUT: an integer or ``None`` if the string is not a cluster variable
+        OUTPUT: integer or ``None`` if the string is not a cluster variable
 
         EXAMPLES::
 
@@ -2771,7 +2771,8 @@ class ClusterSeed(SageObject):
 
     def mutation_analysis(self, options=['all'], filter=None):
         r"""
-        Runs an analysis of all potential mutation options. Note that this might take a long time on large seeds.
+        Run an analysis of all potential mutation options. Note that this might
+        take a long time on large seeds.
 
         .. note::
 
@@ -3787,7 +3788,7 @@ class ClusterSeed(SageObject):
 
         INPUT:
 
-        - ``depth`` -- (default:infinity) integer or infinity, only seeds
+        - ``depth`` -- (default: infinity) integer or infinity, only seeds
           with distance at most ``depth`` from ``self`` are returned
         - ``up_to_equivalence`` -- boolean (default: ``True``); if ``True``,
           only `B`-matrices up to equivalence are considered

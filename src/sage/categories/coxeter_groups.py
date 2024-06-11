@@ -1287,7 +1287,7 @@ class CoxeterGroups(Category_singleton):
 
         def _test_simple_projections(self, **options):
             """
-            Runs sanity checks on :meth:`.simple_projections`
+            Run sanity checks on :meth:`.simple_projections`
             and :meth:`CoxeterGroups.ElementMethods.apply_simple_projection`
 
             EXAMPLES::

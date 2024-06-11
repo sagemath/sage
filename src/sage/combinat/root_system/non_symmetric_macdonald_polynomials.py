@@ -32,15 +32,16 @@ from sage.combinat.root_system.hecke_algebra_representation import CherednikOper
 
 class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
     r"""
-    Nonsymmetric Macdonald polynomials
+    Nonsymmetric Macdonald polynomials.
 
     INPUT:
 
     - ``KL`` -- an affine Cartan type or the group algebra of a
       realization of the affine weight lattice
-    - ``q``, ``q1``, ``q2`` -- parameters in the base ring of the group algebra (default: ``q``, ``q1``, ``q2``)
-    - ``normalized`` -- a boolean (default: ``True``)
-      whether to normalize the result to have leading coefficient 1
+    - ``q``, ``q1``, ``q2`` -- parameters in the base ring of the group algebra
+      (default: ``q``, ``q1``, ``q2``)
+    - ``normalized`` -- boolean (default: ``True``); whether to normalize the
+      result to have leading coefficient 1
 
     This implementation covers all reduced affine root systems.
     The polynomials are constructed recursively by the application
@@ -943,7 +944,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
 
     Checking T0check::
 
-        sage: T0check_on_basis = KL.T0_check_on_basis(q1,q2, convention="dominant")
+        sage: T0check_on_basis = KL.T0_check_on_basis(q1,q2, convention='dominant')
         sage: T0check_on_basis.phi  # note: this is in fact a0 phi
         (2, 0)
         sage: T0check_on_basis.v    # what to match it with?
@@ -1314,13 +1315,13 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
 
     def __init__(self, KL, q, q1, q2, normalized):
         r"""
-        Initializes the nonsymmetric Macdonald polynomial class.
+        Initialize the nonsymmetric Macdonald polynomial class.
 
         INPUT:
 
         - ``KL`` -- algebra over weight space
         - ``q``, ``q1``, ``q2`` -- parameters
-        - ``normalized`` -- a boolean (default: ``True``)
+        - ``normalized`` -- boolean (default: ``True``)
            whether to normalize the result to have leading coefficient 1
 
         EXAMPLES::
@@ -1349,8 +1350,8 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         self._q1 = q1
         self._q2 = q2
         assert self.L_prime().classical() is self.L().classical()
-        T = KL.twisted_demazure_lusztig_operators(q1, q2, convention="dominant")
-        T_Y = KL.demazure_lusztig_operators_on_classical(q, q1, q2, convention="dominant")
+        T = KL.twisted_demazure_lusztig_operators(q1, q2, convention='dominant')
+        T_Y = KL.demazure_lusztig_operators_on_classical(q, q1, q2, convention='dominant')
         CherednikOperatorsEigenvectors.__init__(self, T, T_Y, normalized=normalized)
 
     def _repr_(self):
@@ -1726,7 +1727,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         INPUT:
 
         - ``mu`` -- the index `\mu` of an eigenvector
-        - `l` -- an index `\lambda^\vee` of some `Y`
+        - ``l`` -- an index `\lambda^\vee` of some `Y`
 
         .. NOTE::
 

@@ -415,7 +415,9 @@ class LinearCodeAutGroupCanLabel:
         - ``zero_column_case`` -- boolean; set to ``True`` iff we are dealing
           with the zero column
 
-        OUTPUT: a list of generators in `S`
+        OUTPUT:
+
+        - list of generators in `S`
 
         - the order of this group
 

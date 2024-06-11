@@ -1669,7 +1669,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
               ``True``, it returns the coefficients with respect to
               the basis for the total degree of this element
 
-            OUTPUT: a list of elements of the base field
+            OUTPUT: list of elements of the base field
 
             EXAMPLES::
 

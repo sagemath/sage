@@ -18,7 +18,7 @@ from sage.categories.homset import End
 
 class AmbientSpace(CombinatorialFreeModule):
     r"""
-    Abstract class for ambient spaces
+    Abstract class for ambient spaces.
 
     All subclasses should implement a class method
     ``smallest_base_ring`` taking a Cartan type as input, and a method
@@ -230,7 +230,7 @@ class AmbientSpace(CombinatorialFreeModule):
 
     def simple_coroot(self, i):
         r"""
-        Returns the i-th simple coroot, as an element of this space
+        Return the `i`-th simple coroot, as an element of this space.
 
         EXAMPLES::
 
@@ -266,7 +266,7 @@ class AmbientSpace(CombinatorialFreeModule):
     @cached_method
     def fundamental_weight(self, i):
         r"""
-        Returns the fundamental weight `\Lambda_i` in ``self``
+        Return the fundamental weight `\Lambda_i` in ``self``.
 
         In several of the ambient spaces, it is more convenient to
         construct all fundamental weights at once. To support this, we
@@ -291,7 +291,7 @@ class AmbientSpace(CombinatorialFreeModule):
         """
         return self.fundamental_weights()[i]
 
-    def from_vector_notation(self, weight, style="lattice"):
+    def from_vector_notation(self, weight, style='lattice'):
         """
         INPUT:
 
@@ -307,7 +307,7 @@ class AmbientSpace(CombinatorialFreeModule):
 
         If style="coroots" and the data is a tuple of integers, it
         is assumed that the data represent a linear combination of
-        fundamental weights. If style="coroots", and the root lattice
+        fundamental weights. If style='coroots', and the root lattice
         is not of full rank in the ambient space, it is projected
         into the subspace corresponding to the semisimple derived group.
         This arises with Cartan type A, E6 and E7.
@@ -318,7 +318,7 @@ class AmbientSpace(CombinatorialFreeModule):
             (1, 0, 0)
             sage: RootSystem("A2").ambient_space().from_vector_notation([1,0,0])
             (1, 0, 0)
-            sage: RootSystem("A2").ambient_space().from_vector_notation((1,0),style="coroots")
+            sage: RootSystem("A2").ambient_space().from_vector_notation((1,0),style='coroots')
             (2/3, -1/3, -1/3)
         """
         if style == "coroots" and isinstance(weight, tuple) and all(xv in ZZ for xv in weight):

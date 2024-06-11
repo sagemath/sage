@@ -122,7 +122,7 @@ class GradedPartitionModule(CombinatorialFreeModule):
         - ``t`` -- the index of an element of the basis of this module,
           i.e. a partition
 
-        OUTPUT: an integer, the degree of the corresponding basis element
+        OUTPUT: integer, the degree of the corresponding basis element
 
         EXAMPLES::
 

@@ -30,10 +30,10 @@ class NilpotentLieAlgebra_dense(LieAlgebraWithStructureCoefficients):
 
     - ``R`` -- the base ring
     - ``s_coeff`` -- a dictionary of structural coefficients
-    - ``names`` -- (default:``None``) list of strings to use as names of basis
+    - ``names`` -- (default: ``None``) list of strings to use as names of basis
       elements; if ``None``, the names will be inferred from the structural
       coefficients
-    - ``index_set`` -- (default:``None``) list of hashable and comparable
+    - ``index_set`` -- (default: ``None``) list of hashable and comparable
       elements to use for indexing
     - ``step`` -- integer (optional); the nilpotency step of the
       Lie algebra if known; otherwise it will be computed when needed

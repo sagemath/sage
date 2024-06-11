@@ -132,15 +132,15 @@ def difference_matrix(g,k,lmbda=1,existence=False,check=True):
 
     INPUT:
 
-    - ``k`` -- (integer) number of columns. If ``k=None`` it is set to the
+    - ``k`` -- integer; number of columns. If ``k=None`` it is set to the
       largest value available.
 
-    - ``g`` -- (integer) cardinality of the group `G`
+    - ``g`` -- integer; cardinality of the group `G`
 
-    - ``lmbda`` -- (integer; default: 1) -- number of times each element of `G`
+    - ``lmbda`` -- integer (default: 1); number of times each element of `G`
       appears as a difference.
 
-    - ``check`` -- (boolean) Whether to check that output is correct before
+    - ``check`` -- boolean; whether to check that output is correct before
       returning it. As this is expected to be useless (but we are cautious
       guys), you may want to disable it whenever you want speed. Set to
       ``True`` by default.

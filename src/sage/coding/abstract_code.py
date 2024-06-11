@@ -205,7 +205,7 @@ class AbstractCode(Parent):
     def __init__(self, length, default_encoder_name=None,
                  default_decoder_name=None, metric='Hamming'):
         r"""
-        Initializes mandatory parameters that any code shares.
+        Initialize mandatory parameters that any code shares.
 
         This method only exists for inheritance purposes as it initializes
         parameters that need to be known by every code. The class
@@ -542,7 +542,7 @@ class AbstractCode(Parent):
 
     def add_decoder(self, name, decoder):
         r"""
-        Adds an decoder to the list of registered decoders of ``self``.
+        Add an decoder to the list of registered decoders of ``self``.
 
         .. NOTE::
 
@@ -604,7 +604,7 @@ class AbstractCode(Parent):
 
     def add_encoder(self, name, encoder):
         r"""
-        Adds an encoder to the list of registered encoders of ``self``.
+        Add an encoder to the list of registered encoders of ``self``.
 
         .. NOTE::
 
@@ -834,7 +834,7 @@ class AbstractCode(Parent):
           ``True``, return instead a :class:`dict` mapping available decoder
           name to the associated decoder class
 
-        OUTPUT: a list of strings, or a :class:`dict` mapping strings to classes
+        OUTPUT: list of strings, or a :class:`dict` mapping strings to classes
 
         EXAMPLES::
 
@@ -1009,7 +1009,7 @@ class AbstractCode(Parent):
           ``True``, return instead a :class:`dict` mapping available encoder
           name to the associated encoder class
 
-        OUTPUT: a list of strings, or a :class:`dict` mapping strings to classes
+        OUTPUT: list of strings, or a :class:`dict` mapping strings to classes
 
         EXAMPLES::
 

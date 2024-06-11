@@ -258,7 +258,7 @@ class Huffman(SageObject):
 
     def _build_code_from_tree(self, tree, d, prefix):
         r"""
-        Builds the Huffman code corresponding to a given tree and prefix.
+        Build the Huffman code corresponding to a given tree and prefix.
 
         INPUT:
 
@@ -292,7 +292,7 @@ class Huffman(SageObject):
 
     def _build_code(self, dic):
         r"""
-        Constructs a Huffman code corresponding to an alphabet with the given
+        Construct a Huffman code corresponding to an alphabet with the given
         weight table.
 
         INPUT:

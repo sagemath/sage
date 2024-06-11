@@ -845,7 +845,7 @@ class AlgebraMorphism(ModuleMorphismByLinearity):
 
     def _on_basis(self, c):
         r"""
-        Computes the image of this morphism on the basis element
+        Compute the image of this morphism on the basis element
         indexed by ``c``.
 
         INPUT:

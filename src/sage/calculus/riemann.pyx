@@ -204,7 +204,7 @@ cdef class Riemann_Map:
         opp=False, exterior = False):
 
         """
-        Initializes the ``Riemann_Map`` class. See the class :class:`Riemann_Map`
+        Initialize the ``Riemann_Map`` class. See the class :class:`Riemann_Map`
         for full documentation on the input of this initialization method.
 
         TESTS::
@@ -1094,7 +1094,7 @@ cdef comp_pt(clist, loop=True):
 cpdef get_derivatives(np.ndarray[COMPLEX_T, ndim=2] z_values, FLOAT_T xstep,
     FLOAT_T ystep):
     """
-    Computes the r*e^(I*theta) form of derivatives from the grid of points. The
+    Compute the r*e^(I*theta) form of derivatives from the grid of points. The
     derivatives are computed using quick-and-dirty taylor expansion and
     assuming analyticity. As such ``get_derivatives`` is primarily intended
     to be used for comparisons in ``plot_spiderweb`` and not for

@@ -90,7 +90,7 @@ def transversal_design(k, n, resolvable=False, check=True, existence=False):
       `n` classes of the resolvable design are obtained as the first `n` blocks,
       then the next `n` blocks, etc ... Set to ``False`` by default.
 
-    - ``check`` -- (boolean) Whether to check that output is correct before
+    - ``check`` -- boolean; whether to check that output is correct before
       returning it. As this is expected to be useless (but we are cautious
       guys), you may want to disable it whenever you want speed. Set to
       ``True`` by default.
@@ -748,10 +748,10 @@ def orthogonal_array(k,n,t=2,resolvable=False, check=True,existence=False,explai
 
     INPUT:
 
-    - ``k`` -- (integer) number of columns. If ``k=None`` it is set to the
+    - ``k`` -- integer; number of columns. If ``k=None`` it is set to the
       largest value available.
 
-    - ``n`` -- (integer) number of symbols
+    - ``n`` -- integer; number of symbols
 
     - ``t`` -- (integer; default: 2) -- strength of the array
 
@@ -1625,7 +1625,7 @@ def OA_n_times_2_pow_c_from_matrix(k,c,G,A,Y,check=True):
 
     - ``Y`` -- a vector with entries in `GF(2^c)`
 
-    - ``check`` -- (boolean) Whether to check that output is correct before
+    - ``check`` -- boolean; whether to check that output is correct before
       returning it. As this is expected to be useless (but we are cautious
       guys), you may want to disable it whenever you want speed. Set to
       ``True`` by default.

@@ -233,7 +233,7 @@ class AffineCrystalFromClassical(UniqueRepresentation, Parent):
 
     def __contains__(self, x):
         r"""
-        Checks whether ``x`` is an element of ``self``.
+        Check whether `x` is an element of ``self``.
 
         EXAMPLES::
 

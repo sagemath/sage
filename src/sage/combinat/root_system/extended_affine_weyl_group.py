@@ -54,11 +54,11 @@ def ExtendedAffineWeylGroup(cartan_type, general_linear=None, **print_options):
 
     INPUT:
 
-    - ``cartan_type`` -- An affine or finite Cartan type (a finite Cartan type is an
+    - ``cartan_type`` -- an affine or finite Cartan type (a finite Cartan type is an
       abbreviation for its untwisted affinization)
-    - ``general_linear`` -- (default: ``None``) If ``True`` and ``cartan_type`` indicates
+    - ``general_linear`` -- (default: ``None``) if ``True`` and ``cartan_type`` indicates
       untwisted type A, returns the universal central extension
-    - ``print_options`` -- Special instructions for printing elements (see below)
+    - ``print_options`` -- special instructions for printing elements (see below)
 
     .. RUBRIC:: Mnemonics
 
@@ -78,10 +78,10 @@ def ExtendedAffineWeylGroup(cartan_type, general_linear=None, **print_options):
 
     - ``print_tuple`` -- ``True`` or ``False`` (default: ``False``)
       If ``True``, elements are printed `(a,b)`, otherwise as `a * b`
-    - ``affine`` -- Prefix for simple reflections in the affine Weyl group
-    - ``classical`` -- Prefix for simple reflections in the classical Weyl group
-    - ``translation`` -- Prefix for the translation elements
-    - ``fundamental`` -- Prefix for the elements of the fundamental group
+    - ``affine`` -- prefix for simple reflections in the affine Weyl group
+    - ``classical`` -- prefix for simple reflections in the classical Weyl group
+    - ``translation`` -- prefix for the translation elements
+    - ``fundamental`` -- prefix for the elements of the fundamental group
 
     These options are not mutable.
 
@@ -101,20 +101,20 @@ def ExtendedAffineWeylGroup(cartan_type, general_linear=None, **print_options):
 
     .. RUBRIC:: Notation
 
-    - `R` -- An irreducible affine root system
-    - `I` -- Set of nodes of the Dynkin diagram of `R`
-    - `R_0` -- The classical subsystem of `R`
-    - `I_0` -- Set of nodes of the Dynkin diagram of `R_0`
-    - `E` -- Extended affine Weyl group of type `R`
-    - `W` -- Affine Weyl group of type `R`
+    - `R` -- an irreducible affine root system
+    - `I` -- set of nodes of the Dynkin diagram of `R`
+    - `R_0` -- the classical subsystem of `R`
+    - `I_0` -- set of nodes of the Dynkin diagram of `R_0`
+    - `E` -- extended affine Weyl group of type `R`
+    - `W` -- affine Weyl group of type `R`
     - `W_0` -- finite (classical) Weyl group (of type `R_0`)
     - `M` -- translation lattice for `W`
     - `L` -- translation lattice for `E`
-    - `F` -- Fundamental subgroup of `E` (the length zero elements)
-    - `P` -- Finite weight lattice
-    - `Q` -- Finite root lattice
-    - `P^\vee` -- Finite coweight lattice
-    - `Q^\vee` -- Finite coroot lattice
+    - `F` -- fundamental subgroup of `E` (the length zero elements)
+    - `P` -- finite weight lattice
+    - `Q` -- finite root lattice
+    - `P^\vee` -- finite coweight lattice
+    - `Q^\vee` -- finite coroot lattice
 
     .. RUBRIC:: Translation lattices
 
@@ -345,8 +345,8 @@ def ExtendedAffineWeylGroup(cartan_type, general_linear=None, **print_options):
 
     Here is a demonstration of the printing options::
 
-        sage: E = ExtendedAffineWeylGroup(["A",2,1], affine="sx", classical="Sx",
-        ....:                             translation="x", fundamental="pix")
+        sage: E = ExtendedAffineWeylGroup(["A",2,1], affine='sx', classical="Sx",
+        ....:                             translation='x', fundamental='pix')
         sage: PW0 = E.PW0()
         sage: y = PW0(E.lattice_basis()[1]); y
         x[Lambdacheck[1]]
@@ -1203,7 +1203,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                 INPUT:
 
                 - ``self`` -- a realization of the extended affine Weyl group
-                - ``i`` -- An affine Dynkin node
+                - ``i`` -- an affine Dynkin node
 
                 EXAMPLES::
 
@@ -1417,11 +1417,11 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                 INPUT:
 
                 - ``self`` -- an element of the extended affine Weyl group
-                - `i` -- a Dynkin node (index of a simple reflection `s_i`)
+                - ``i`` -- a Dynkin node (index of a simple reflection `s_i`)
                 - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``)
                   according to which side of ``self`` the reflection `s_i`
                   should be multiplied
-                - ``length_increasing`` -- ``True`` or ``False`` (default ``True``).
+                - ``length_increasing`` -- ``True`` or ``False`` (default: ``True``).
                   If ``False``, do the above with the word "greater" replaced by "less".
 
                 EXAMPLES::
@@ -1695,7 +1695,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                 INPUT:
 
                 - ``self`` -- an element of the extended affine Weyl group
-                - `x` -- another element with the same parent as ``self``
+                - ``x`` -- another element with the same parent as ``self``
 
                 EXAMPLES::
 
@@ -1756,14 +1756,14 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
                 EXAMPLES::
 
-                    sage: E = ExtendedAffineWeylGroup(['A',2,1], affine="s")
+                    sage: E = ExtendedAffineWeylGroup(['A',2,1], affine='s')
                     sage: x = E.FW().an_element(); x
                     pi[2] * s0*s1*s2
                     sage: la = E.lattice().an_element(); la
                     2*Lambdacheck[1] + 2*Lambdacheck[2]
                     sage: x.action(la)
                     5*Lambdacheck[1] - 3*Lambdacheck[2]
-                    sage: E = ExtendedAffineWeylGroup(['C',2,1], affine="s")
+                    sage: E = ExtendedAffineWeylGroup(['C',2,1], affine='s')
                     sage: x = E.PW0().from_translation(E.lattice_basis()[1])
                     sage: x.action(E.lattice_basis()[2])
                     Lambdacheck[1] + Lambdacheck[2]
@@ -1788,14 +1788,14 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
                 EXAMPLES::
 
-                    sage: E = ExtendedAffineWeylGroup(['A',2,1], affine="s")
+                    sage: E = ExtendedAffineWeylGroup(['A',2,1], affine='s')
                     sage: x = E.FW().an_element(); x
                     pi[2] * s0*s1*s2
                     sage: la = E.dual_lattice().an_element(); la
                     2*Lambda[1] + 2*Lambda[2]
                     sage: x.dual_action(la)
                     5*Lambda[1] - 3*Lambda[2]
-                    sage: E = ExtendedAffineWeylGroup(['C',2,1], affine="s")
+                    sage: E = ExtendedAffineWeylGroup(['C',2,1], affine='s')
                     sage: x = E.PvW0().from_dual_translation(E.dual_lattice_basis()[1])
                     sage: x.dual_action(E.dual_lattice_basis()[2])
                     Lambda[1] + Lambda[2]
@@ -1835,7 +1835,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
                 INPUT:
 
-                - ``self`` -- An element of the extended affine Weyl group
+                - ``self`` -- an element of the extended affine Weyl group
                 - ``i`` -- an affine Dynkin node
 
                 OUTPUT:
@@ -2013,7 +2013,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``E`` -- A parent with realization in :class:`ExtendedAffineWeylGroup_Class`
+        - ``E`` -- a parent with realization in :class:`ExtendedAffineWeylGroup_Class`
 
         EXAMPLES::
 
@@ -2134,7 +2134,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- an index.
+            - ``i`` -- an index
 
             OPTIONAL:
 
@@ -2203,7 +2203,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``E`` -- A parent with realization in :class:`ExtendedAffineWeylGroup_Class`
+        - ``E`` -- a parent with realization in :class:`ExtendedAffineWeylGroup_Class`
 
         EXAMPLES::
 
@@ -2401,7 +2401,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``E`` -- A parent with realization in :class:`ExtendedAffineWeylGroup_Class`
+        - ``E`` -- a parent with realization in :class:`ExtendedAffineWeylGroup_Class`
 
         EXAMPLES::
 
@@ -2454,7 +2454,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: ExtendedAffineWeylGroup(["A",3,1], affine="r").WF().simple_reflections()
+                sage: ExtendedAffineWeylGroup(["A",3,1], affine='r').WF().simple_reflections()
                 Finite family {0: r0, 1: r1, 2: r2, 3: r3}
             """
             E = self.realization_of()
@@ -2487,7 +2487,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - `i` -- an affine Dynkin index.
+            - ``i`` -- an affine Dynkin index
 
             OPTIONAL:
 
@@ -2542,7 +2542,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: E = ExtendedAffineWeylGroup(['A',2,1], affine="s")
+                sage: E = ExtendedAffineWeylGroup(['A',2,1], affine='s')
                 sage: x = E.FW().an_element(); x
                 pi[2] * s0*s1*s2
                 sage: v = RootSystem(['A',2,1]).root_lattice().an_element(); v
@@ -2561,7 +2561,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``E`` -- A parent with realization in :class:`ExtendedAffineWeylGroup_Class`
+        - ``E`` -- a parent with realization in :class:`ExtendedAffineWeylGroup_Class`
 
         EXAMPLES::
 
@@ -2733,7 +2733,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``E`` -- A parent with realization in :class:`ExtendedAffineWeylGroup_Class`
+        - ``E`` -- a parent with realization in :class:`ExtendedAffineWeylGroup_Class`
 
         EXAMPLES::
 
@@ -2842,11 +2842,11 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - `i` -- an affine Dynkin index
+            - ``i`` -- an affine Dynkin index
 
             OPTIONAL:
 
-            - ``side`` -- 'left' or 'right' (default: 'right')
+            - ``side`` -- 'left' or 'right' (default: ``'right'``)
             - ``positive`` -- boolean (default: ``False``)
 
             EXAMPLES::
@@ -2905,7 +2905,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - `E` -- A parent with realization in :class:`ExtendedAffineWeylGroup_Class`
+        - ``E`` -- a parent with realization in :class:`ExtendedAffineWeylGroup_Class`
 
         EXAMPLES::
 

@@ -42,9 +42,9 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
 
     - ``domain`` -- a vector space
     - ``f`` -- a function ``f(l,i)`` taking a basis element `l` of ``domain`` and an index `i`, and returning `F_i`
-    - ``cartan_type`` -- The Cartan type of the Hecke algebra
-    - ``q1``, ``q2`` -- The eigenvalues of the generators `T` of the Hecke algebra
-    - ``side`` -- "left" or "right" (default: "right")
+    - ``cartan_type`` -- the Cartan type of the Hecke algebra
+    - ``q1``, ``q2`` -- the eigenvalues of the generators `T` of the Hecke algebra
+    - ``side`` -- "left" or "right" (default: ``'right'``)
       whether this is a left or right representation
 
     EXAMPLES::
@@ -75,7 +75,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         sage: from sage.combinat.root_system.hecke_algebra_representation import HeckeAlgebraRepresentation
         sage: W = SymmetricGroup(3)
         sage: domain = W.algebra(QQ)
-        sage: action = lambda x,i: domain.monomial(x.apply_simple_reflection(i, side="right"))
+        sage: action = lambda x,i: domain.monomial(x.apply_simple_reflection(i, side='right'))
         sage: r = HeckeAlgebraRepresentation(domain, action, CartanType(["A",2]), 1, -1)
         sage: hash(r) # random
         3
@@ -85,14 +85,14 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
     - [HST2008]_
     """
 
-    def __init__(self, domain, on_basis, cartan_type, q1, q2, q=ZZ.one(), side="right"):
+    def __init__(self, domain, on_basis, cartan_type, q1, q2, q=ZZ.one(), side='right'):
         r"""
         TESTS::
 
             sage: from sage.combinat.root_system.hecke_algebra_representation import HeckeAlgebraRepresentation
             sage: W = SymmetricGroup(3)
             sage: domain = W.algebra(QQ)
-            sage: action = lambda x,i: domain.monomial(x.apply_simple_reflection(i, side="right"))
+            sage: action = lambda x,i: domain.monomial(x.apply_simple_reflection(i, side='right'))
             sage: HeckeAlgebraRepresentation(domain, action, CartanType(["A",2]), 1, -1)
             A representation of the (1, -1)-Hecke algebra of type ['A', 2] on Symmetric group algebra of order 3 over Rational Field
         """
@@ -149,7 +149,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
 
             sage: from sage.combinat.root_system.hecke_algebra_representation import HeckeAlgebraRepresentation
             sage: KW = SymmetricGroup(3).algebra(QQ)
-            sage: action = lambda x,i: KW.monomial(x.apply_simple_reflection(i, side="right"))
+            sage: action = lambda x,i: KW.monomial(x.apply_simple_reflection(i, side='right'))
             sage: H = HeckeAlgebraRepresentation(KW, action, CartanType(["A",2]), 1, -1)
             sage: H.cartan_type()
             ['A', 2]
@@ -240,7 +240,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
             sage: from sage.combinat.root_system.hecke_algebra_representation import HeckeAlgebraRepresentation
             sage: W = SymmetricGroup(3)
             sage: domain = W.algebra(QQ)
-            sage: action = lambda x,i: domain.monomial(x.apply_simple_reflection(i, side="right"))
+            sage: action = lambda x,i: domain.monomial(x.apply_simple_reflection(i, side='right'))
             sage: rho = HeckeAlgebraRepresentation(domain, action, CartanType(["A",2]), 1, -1)
 
             sage: rho.on_basis(W.one(), (1,2,1))
@@ -323,10 +323,10 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
 
         INPUT:
 
-        - ``word`` -- a word `i_1,\dots,i_k` for some element `w` of the Weyl group.
-          See :meth:`straighten_word` for how this word can be specified.
+        - ``word`` -- a word `i_1,\dots,i_k` for some element `w` of the Weyl group
+          See :meth:`straighten_word` for how this word can be specified
 
-        - ``signs`` -- a list `\epsilon_1,\dots,\epsilon_k` of the
+        - ``signs`` -- list `\epsilon_1,\dots,\epsilon_k` of the
           same length as ``word`` with `\epsilon_i =\pm 1` or
           ``None`` for `1,\dots,1` (default: ``None``)
 
@@ -442,7 +442,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
 
     def _test_relations(self, **options):
         r"""
-        Test that this family of operators satisfies the Iwahori Hecke relations
+        Test that this family of operators satisfies the Iwahori Hecke relations.
 
         EXAMPLES::
 
@@ -827,7 +827,7 @@ class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
           of the generators of an affine Hecke algebra on ``self``. By
           default, this is ``T``.
 
-        - ``normalized`` -- boolean (default: ``True``) whether the
+        - ``normalized`` -- boolean (default: ``True``); whether the
           eigenvector `E_\mu` is normalized so that `\mu` has
           coefficient `1`.
 

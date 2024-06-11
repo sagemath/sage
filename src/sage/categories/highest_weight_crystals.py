@@ -191,10 +191,10 @@ class HighestWeightCrystals(Category_singleton):
 
             INPUT:
 
-            - ``index_set`` -- (Default: ``None``) The index set; if ``None``
+            - ``index_set`` -- (default: ``None``) the index set; if ``None``
               then use the index set of the crystal
 
-            - ``max_depth`` -- (Default: infinity) The maximum depth to build
+            - ``max_depth`` -- (default: infinity) The maximum depth to build
 
             EXAMPLES::
 
@@ -254,7 +254,7 @@ class HighestWeightCrystals(Category_singleton):
 
             - ``q`` -- the (generic) parameter `q`
 
-            - ``prec`` -- (default: ``None``) The precision of the power
+            - ``prec`` -- (default: ``None``) the precision of the power
               series ring to use if the crystal is not known to be finite
               (i.e. the number of terms returned).
               If ``None``, then the result is returned as a lazy power series.

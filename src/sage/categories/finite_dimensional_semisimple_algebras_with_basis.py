@@ -217,7 +217,7 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
                 of the identity into primitive orthogonal
                 idempotents.
 
-                OUTPUT: a list of orthogonal idempotents of ``self``
+                OUTPUT: list of orthogonal idempotents of ``self``
 
                 EXAMPLES::
 

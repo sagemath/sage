@@ -249,7 +249,7 @@ cdef induced_hypergraph(hypergraph * h, int n, hypergraph * tmp):
 
 cdef void trace_hypergraph64(hypergraph * h, int n, hypergraph * tmp) noexcept:
     r"""
-    Stores in `tmp` the trace of the sets on {0,...,n-1} in h1.
+    Store in `tmp` the trace of the sets on `\{0, \ldots, n-1\}` in h1.
 
     Note that the size of the sets are kept as they are, i.e. the size of a set
     stored in tmp is what it was in h. This is useful information we use to cut

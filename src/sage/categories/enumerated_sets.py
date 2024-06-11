@@ -1003,7 +1003,7 @@ class EnumeratedSets(CategoryWithAxiom):
 #
         def _test_enumerated_set_contains(self, **options):
             """
-            Checks that the methods :meth:`.__contains__` and :meth:`.__iter__` are consistent.
+            Check that the methods :meth:`.__contains__` and :meth:`.__iter__` are consistent.
 
             See also :class:`TestSuite`.
 
@@ -1039,7 +1039,7 @@ class EnumeratedSets(CategoryWithAxiom):
 
         def _test_enumerated_set_iter_list(self, **options):
             """
-            Checks that the methods :meth:`.list` and :meth:`.__iter__` are consistent.
+            Check that the methods :meth:`.list` and :meth:`.__iter__` are consistent.
 
             See also: :class:`TestSuite`.
 

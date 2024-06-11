@@ -1124,7 +1124,7 @@ class AlgebraMorphism(ModuleMorphismByLinearity): # Find a better name
 
     def _on_basis(self, c):
         r"""
-        Computes the image of this morphism on the basis element indexed by
+        Compute the image of this morphism on the basis element indexed by
         ``c``.
 
         INPUT:
@@ -1151,7 +1151,7 @@ class AlgebraMorphism(ModuleMorphismByLinearity): # Find a better name
 
 class GradedModulesWithInternalProduct(Category_over_base_ring):
     r"""
-    Constructs the class of modules with internal product. This is used to give an internal
+    Construct the class of modules with internal product. This is used to give an internal
     product structure to the non-commutative symmetric functions.
 
     EXAMPLES::

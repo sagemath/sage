@@ -387,11 +387,11 @@ class Associahedra_base:
 
     def _coerce_map_from_(self, X):
         r"""
-        Return whether there is a coercion from ``X``
+        Return whether there is a coercion from ``X``.
 
         INPUT:
 
-        - ``X`` -- anything.
+        - ``X`` -- anything
 
         OUTPUT: boolean
 

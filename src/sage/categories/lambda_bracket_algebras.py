@@ -251,7 +251,7 @@ class LambdaBracketAlgebras(Category_over_base_ring):
 
             INPUT:
 
-            - ``n`` -- integer (default:``1``); how many times
+            - ``n`` -- integer (default: `1`); how many times
               to apply `T` to this element
 
             OUTPUT:

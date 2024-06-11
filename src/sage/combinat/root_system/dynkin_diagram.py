@@ -299,7 +299,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
 
     def _rich_repr_(self, display_manager, **kwds):
         """
-        Rich Output Magic Method
+        Rich Output Magic Method.
 
         Override rich output because :meth:`_repr_` outputs ascii
         art. The proper fix will be in :issue:`18328`.
@@ -323,7 +323,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
 
     def _latex_(self, scale=0.5):
         r"""
-        Return a latex representation of this Dynkin diagram
+        Return a latex representation of this Dynkin diagram.
 
         EXAMPLES::
 
@@ -403,7 +403,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
     @staticmethod
     def an_instance():
         """
-        Returns an example of Dynkin diagram
+        Return an example of Dynkin diagram.
 
         EXAMPLES::
 
@@ -451,7 +451,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
 
     def rank(self):
         r"""
-        Returns the index set for this Dynkin diagram
+        Return the index set for this Dynkin diagram.
 
         EXAMPLES::
 
@@ -476,7 +476,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
     @cached_method
     def cartan_matrix(self):
         r"""
-        Returns the Cartan matrix for this Dynkin diagram
+        Return the Cartan matrix for this Dynkin diagram.
 
         EXAMPLES::
 
@@ -489,7 +489,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
 
     def dual(self):
         r"""
-        Returns the dual Dynkin diagram, obtained by reversing all edges.
+        Return the dual Dynkin diagram, obtained by reversing all edges.
 
         EXAMPLES::
 
@@ -784,9 +784,9 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
 
     def column(self, j):
         """
-        Returns the `j^{th}` column `(a_{i,j})_i` of the
+        Return the `j^{th}` column `(a_{i,j})_i` of the
         Cartan matrix corresponding to this Dynkin diagram, as a container
-        (or iterator) of tuples `(i, a_{i,j})`
+        (or iterator) of tuples `(i, a_{i,j})`.
 
         EXAMPLES::
 
@@ -799,9 +799,9 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
 
     def row(self, i):
         """
-        Returns the `i^{th}` row `(a_{i,j})_j` of the
+        Return the `i^{th}` row `(a_{i,j})_j` of the
         Cartan matrix corresponding to this Dynkin diagram, as a container
-        (or iterator) of tuples `(j, a_{i,j})`
+        (or iterator) of tuples `(j, a_{i,j})`.
 
         EXAMPLES::
 

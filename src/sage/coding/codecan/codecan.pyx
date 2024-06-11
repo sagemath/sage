@@ -186,7 +186,7 @@ cdef class InnerGroup:
 
     def __dealloc__(self):
         r"""
-        Deallocates ``self``.
+        Deallocate ``self``.
         """
         OP_dealloc(self.row_partition)
 
@@ -552,7 +552,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
 
     def __dealloc__(self):
         r"""
-        Deallocates ``self``.
+        Deallocate ``self``.
         """
         cdef int i
         if self._points2hyp is not NULL:

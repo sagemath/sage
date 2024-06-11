@@ -970,7 +970,7 @@ def eratosthenes(n):
 
     -  ``n`` -- a positive integer
 
-    OUTPUT: a list of primes less than or equal to n
+    OUTPUT: list of primes less than or equal to n
 
     EXAMPLES::
 
@@ -1660,7 +1660,7 @@ class Sigma:
 
     def __call__(self, n, k=1):
         """
-        Computes the sum of (the k-th powers of) the divisors of n.
+        Compute the sum of (the `k`-th powers of) the divisors of `n`.
 
         EXAMPLES::
 
@@ -4141,7 +4141,7 @@ def kronecker_symbol(x,y):
 
     - ``y`` -- integer
 
-    OUTPUT: an integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -4754,14 +4754,14 @@ def continuant(v, n=None):
 
 
 def number_of_divisors(n):
-    """
-    Return the number of divisors of the integer n.
+    r"""
+    Return the number of divisors of the integer `n`.
 
     INPUT:
 
     - ``n`` -- a nonzero integer
 
-    OUTPUT: an integer, the number of divisors of n
+    OUTPUT: integer; the number of divisors of `n`
 
     EXAMPLES::
 
@@ -6013,7 +6013,7 @@ def fundamental_discriminant(D):
 
     - ``D`` -- integer
 
-    OUTPUT: an integer, the fundamental discriminant
+    OUTPUT: integer; the fundamental discriminant
 
     EXAMPLES::
 

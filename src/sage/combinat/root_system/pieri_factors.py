@@ -604,7 +604,7 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
 
         INPUT:
 
-         - ``length`` -- a non-negative integer
+         - ``length`` -- a nonnegative integer
 
         EXAMPLES::
 
@@ -892,7 +892,7 @@ class PieriFactors_type_C_affine(PieriFactors_affine_type):
         # The algorithm="delete" is a workaround when the set of
         # vertices is empty, in which case subgraph tries another
         # method which turns out to currently fail with Dynkin diagrams
-        return DiGraph(DynkinDiagram(w.parent().cartan_type())).subgraph(set(w.reduced_word()), algorithm="delete").connected_components_number()
+        return DiGraph(DynkinDiagram(w.parent().cartan_type())).subgraph(set(w.reduced_word()), algorithm='delete').connected_components_number()
 
 
 class PieriFactors_type_B_affine(PieriFactors_affine_type):
@@ -1001,7 +1001,7 @@ class PieriFactors_type_B_affine(PieriFactors_affine_type):
             support_complement = set(ct.index_set()).difference(support).difference(set([0, 1]))
         else:
             support_complement = set(ct.index_set()).difference(support).difference(set([0]))
-        return DiGraph(DynkinDiagram(ct)).subgraph(support_complement, algorithm="delete").connected_components_number() - 1
+        return DiGraph(DynkinDiagram(ct)).subgraph(support_complement, algorithm='delete').connected_components_number() - 1
 
 
 class PieriFactors_type_D_affine(PieriFactors_affine_type):

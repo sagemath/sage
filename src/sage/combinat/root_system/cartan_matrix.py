@@ -455,7 +455,7 @@ class CartanMatrix(Base, CartanType_abstract,
         """
         return self.root_system().root_space()
 
-    def reflection_group(self, type="matrix"):
+    def reflection_group(self, type='matrix'):
         """
         Return the reflection group corresponding to ``self``.
 

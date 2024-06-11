@@ -838,14 +838,14 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                   Otherwise, the standard Coxeter element is used as unique
                   maximal element.
 
-                - ``in_unitary_group`` (default:``True``) determines the
+                - ``in_unitary_group`` -- (default: ``True``) determines the
                   length function used to compute the order.
                   For real groups, both possible orders coincide, and for
                   complex non-real groups, the order in the unitary group
                   is much faster to compute.
 
-                - ``return_lengths`` (default:``False``) whether or not
-                  to also return the lengths of the elements.
+                - ``return_lengths`` -- (default: ``False``) whether or not
+                  to also return the lengths of the elements
 
                 EXAMPLES::
 

@@ -127,7 +127,7 @@ class PBWBasisCrossProduct(CombinatorialFreeModule):
 
         - ``m`` -- an element of the free abelian monoid
 
-        OUTPUT: an integer, the degree of the corresponding basis element
+        OUTPUT: integer; the degree of the corresponding basis element
 
         EXAMPLES::
 

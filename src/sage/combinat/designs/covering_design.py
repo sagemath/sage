@@ -335,7 +335,7 @@ class CoveringDesign(SageObject):
 
     def k(self):
         """
-        Return `k`, the size of blocks of the covering design
+        Return `k`, the size of blocks of the covering design.
 
         EXAMPLES::
 

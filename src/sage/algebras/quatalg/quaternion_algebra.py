@@ -1048,7 +1048,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
     def is_definite(self):
         """
-        Checks whether the quaternion algebra ``self`` is definite, i.e. whether it ramifies at the
+        Check whether the quaternion algebra ``self`` is definite, i.e. whether it ramifies at the
         unique Archimedean place of its base field QQ. This is the case if and only if both
         invariants of ``self`` are negative.
 
@@ -2007,7 +2007,7 @@ class QuaternionOrder(Parent):
 
         - ``gens`` -- list of elements of ``self``
 
-        OUTPUT: a list of four elements of ``self``
+        OUTPUT: list of four elements of ``self``
 
         EXAMPLES::
 
@@ -3561,7 +3561,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
     def is_equivalent(self, J, B=10, certificate=False, side=None):
         r"""
-        Checks whether ``self`` and ``J`` are equivalent as ideals.
+        Check whether ``self`` and ``J`` are equivalent as ideals.
         Tests equivalence as right ideals by default. Requires the underlying
         rational quaternion algebra to be definite.
 
@@ -3603,7 +3603,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
     def is_left_equivalent(self, J, B=10, certificate=False):
         r"""
-        Checks whether ``self`` and ``J`` are equivalent as left ideals.
+        Check whether ``self`` and ``J`` are equivalent as left ideals.
         Requires the underlying rational quaternion algebra to be definite.
 
         INPUT:
@@ -3626,7 +3626,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
     def is_right_equivalent(self, J, B=10, certificate=False):
         r"""
-        Checks whether ``self`` and ``J`` are equivalent as right ideals.
+        Check whether ``self`` and ``J`` are equivalent as right ideals.
         Requires the underlying rational quaternion algebra to be definite.
 
         INPUT:
@@ -3698,7 +3698,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
     def is_principal(self, certificate=False):
         r"""
-        Checks whether ``self`` is principal as a full rank quaternion ideal.
+        Check whether ``self`` is principal as a full rank quaternion ideal.
         Requires the underlying quaternion algebra to be definite.
         Independent of whether ``self`` is a left or a right ideal.
 

@@ -103,7 +103,7 @@ class HasseDiagram(DiGraph):
 
     def linear_extension(self):
         r"""
-        Return a linear extension
+        Return a linear extension.
 
         EXAMPLES::
 
@@ -1662,7 +1662,7 @@ class HasseDiagram(DiGraph):
     @lazy_attribute
     def _join(self):
         r"""
-        Computes a matrix whose ``(x,y)``-entry is the join of ``x``
+        Compute a matrix whose ``(x,y)``-entry is the join of ``x``
         and ``y`` in ``self`` if the join exists; and `-1` otherwise.
 
         EXAMPLES::
@@ -2260,7 +2260,7 @@ class HasseDiagram(DiGraph):
 
     def are_incomparable(self, i, j):
         """
-        Return whether ``i`` and ``j`` are incomparable in the poset
+        Return whether ``i`` and ``j`` are incomparable in the poset.
 
         INPUT:
 
@@ -2286,11 +2286,11 @@ class HasseDiagram(DiGraph):
 
     def are_comparable(self, i, j):
         """
-        Return whether ``i`` and ``j`` are comparable in the poset
+        Return whether ``i`` and ``j`` are comparable in the poset.
 
         INPUT:
 
-         - ``i``, ``j`` -- vertices of this Hasse diagram
+        - ``i``, ``j`` -- vertices of this Hasse diagram
 
         EXAMPLES::
 
@@ -2314,11 +2314,11 @@ class HasseDiagram(DiGraph):
 
     def antichains(self, element_class=list):
         """
-        Return all antichains of ``self``, organized as a prefix tree
+        Return all antichains of ``self``, organized as a prefix tree.
 
         INPUT:
 
-        - ``element_class`` -- (default:list) an iterable type
+        - ``element_class`` -- (default: ``list``) an iterable type
 
         EXAMPLES::
 

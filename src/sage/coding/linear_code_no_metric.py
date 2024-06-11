@@ -140,7 +140,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
     def __init__(self, base_field, length, default_encoder_name, default_decoder_name, metric='Hamming'):
         """
-        Initializes mandatory parameters that any linear code shares.
+        Initialize mandatory parameters that any linear code shares.
 
         This method only exists for inheritance purposes as it initializes
         parameters that need to be known by every linear code. The class

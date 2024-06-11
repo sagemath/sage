@@ -88,7 +88,7 @@ cdef int *hamming_weights() noexcept:
 
 def weight_dist(M):
     """
-    Computes the weight distribution of the row space of `M`.
+    Compute the weight distribution of the row space of `M`.
 
     EXAMPLES::
 

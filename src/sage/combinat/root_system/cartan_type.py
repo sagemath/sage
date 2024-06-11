@@ -503,7 +503,7 @@ class CartanTypeFactory(SageObject):
 
     def __call__(self, *args):
         """
-        Constructs a Cartan type object.
+        Construct a Cartan type object.
 
         INPUT:
 
@@ -750,11 +750,11 @@ class CartanTypeFactory(SageObject):
 
         INPUT:
 
-        - ``finite`` -- a boolean or ``None`` (default: ``None``)
+        - ``finite`` -- boolean or ``None`` (default: ``None``)
 
-        - ``affine`` -- a boolean or ``None`` (default: ``None``)
+        - ``affine`` -- boolean or ``None`` (default: ``None``)
 
-        - ``crystallographic`` -- a boolean or ``None`` (default: ``None``)
+        - ``crystallographic`` -- boolean or ``None`` (default: ``None``)
 
         The sample contains all the exceptional finite and affine
         Cartan types, as well as typical representatives of the
@@ -943,7 +943,7 @@ class CartanTypeFactory(SageObject):
                       values=dict(Stembridge="use Stembridge's notation",
                                   Kac="use Kac's notation"),
                       case_sensitive=False,
-                      alias=dict(BC="Stembridge", tilde="Stembridge", twisted="Kac"))
+                      alias=dict(BC='Stembridge', tilde='Stembridge', twisted='Kac'))
         dual_str = dict(default="*",
                       description='The string used for dual Cartan types when printing',
                       checker=lambda char: isinstance(char, str))
@@ -1048,7 +1048,7 @@ class CartanType_abstract:
         """
         return "O"
 
-    def _latex_draw_node(self, x, y, label, position="below=4pt", fill='white'):
+    def _latex_draw_node(self, x, y, label, position='below=4pt', fill='white'):
         r"""
         Draw (possibly marked [crossed out]) circular node ``i`` at the
         position ``(x,y)`` with node label ``label`` .
@@ -1261,7 +1261,7 @@ class CartanType_abstract:
 
         INPUT:
 
-        - ``marked_nodes`` -- a list of nodes to mark
+        - ``marked_nodes`` -- list of nodes to mark
 
         EXAMPLES::
 
@@ -1889,7 +1889,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
             return self.options('special_node_str')
         return super()._ascii_art_node(label)
 
-    def _latex_draw_node(self, x, y, label, position="below=4pt"):
+    def _latex_draw_node(self, x, y, label, position='below=4pt'):
         r"""
         Draw (possibly marked [crossed out]) circular node ``i`` at the
         position ``(x,y)`` with node label ``label`` .
@@ -1930,7 +1930,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
     def is_untwisted_affine(self):
         """
-        Return whether ``self`` is untwisted affine
+        Return whether ``self`` is untwisted affine.
 
         A Cartan type is untwisted affine if it is the canonical
         affine extension of some finite type. Every affine type is
@@ -2092,7 +2092,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
         combination of `\alpha_0, \alpha_1, \ldots, \alpha_n` with
         nonnegative coefficients (or alternatively, the unique minimal
         non trivial annihilating linear combination of the rows of the
-        Cartan matrix with non-negative coefficients).
+        Cartan matrix with nonnegative coefficients).
 
         Throw an error if the existence of uniqueness does not hold
 
@@ -2140,7 +2140,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
         combination of `\alpha^\vee_0, \alpha^\vee, \ldots, \alpha^\vee` with
         nonnegative coefficients (or alternatively, the unique minimal
         non trivial annihilating linear combination of the columns of the
-        Cartan matrix with non-negative coefficients).
+        Cartan matrix with nonnegative coefficients).
 
         Throw an error if the existence or uniqueness does not hold
 
@@ -2171,7 +2171,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
 
     def c(self):
         r"""
-        Returns the family (c_i)_i of integer coefficients defined by
+        Return the family (c_i)_i of integer coefficients defined by
         `c_i=max(1, a_i/a^vee_i)` (see e.g. [FSS07]_ p. 3)
 
         FIXME: the current implementation assumes that the Cartan
@@ -2648,7 +2648,7 @@ class CartanType_standard_finite(CartanType_standard, CartanType_finite):
     @cached_method
     def opposition_automorphism(self):
         r"""
-        Return the opposition automorphism
+        Return the opposition automorphism.
 
         The *opposition automorphism* is the automorphism
         `i \mapsto i^*` of the vertices Dynkin diagram such that,

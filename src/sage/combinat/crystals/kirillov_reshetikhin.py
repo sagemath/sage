@@ -434,7 +434,7 @@ class KirillovReshetikhinGenericCrystal(AffineCrystalFromClassical):
 
     def __init__(self, cartan_type, r, s, dual=None):
         r"""
-        Initializes a generic Kirillov-Reshetikhin crystal.
+        Initialize a generic Kirillov-Reshetikhin crystal.
 
         TESTS::
 
@@ -931,7 +931,7 @@ class KR_type_vertical(KirillovReshetikhinCrystalFromPromotion):
 
     def promotion_on_highest_weight_vector(self, b):
         """
-        Calculates promotion on a `{2,3,...,n}` highest weight vector ``b``.
+        Calculate promotion on a `{2, 3, \ldots, n}` highest weight vector `b`.
 
         EXAMPLES::
 
@@ -1885,7 +1885,7 @@ class KR_type_box(KirillovReshetikhinGenericCrystal, AffineCrystalFromClassical)
 
     def __init__(self, cartan_type, r, s):
         r"""
-        Initializes a Kirillov-Reshetikhin crystal ``self``.
+        Initialize a Kirillov-Reshetikhin crystal ``self``.
 
         TESTS::
 

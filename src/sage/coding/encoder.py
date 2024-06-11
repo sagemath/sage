@@ -61,7 +61,7 @@ class Encoder(SageObject):
 
     def __init__(self, code):
         r"""
-        Initializes mandatory parameters for an :class:`Encoder` object.
+        Initialize mandatory parameters for an :class:`Encoder` object.
 
         This method only exists for inheritance purposes as it initializes
         parameters that need to be known by every linear code. An abstract
@@ -115,7 +115,7 @@ class Encoder(SageObject):
 
     def encode(self, word):
         r"""
-        Transforms an element of the message space into a codeword.
+        Transform an element of the message space into a codeword.
 
         This is a default implementation which assumes that the message
         space of the encoder is `F^{k}`, where `F` is
@@ -165,7 +165,7 @@ class Encoder(SageObject):
 
     def __call__(self, m):
         r"""
-        Transforms an element of the message space into a codeword.
+        Transform an element of the message space into a codeword.
 
         This behaves the same as `self.encode`.
         See `sage.coding.encoder.Encoder.encode` for details.
