@@ -29,7 +29,7 @@ terms at http://hep.itp.tuwien.ac.at/~kreuzer/CY/. Moreover, PALP is
 included standard with Sage.
 
 PALP is described in the paper :arxiv:`math.SC/0204356`. Its distribution
-also contains the application nef.x, which was created by Erwin
+also contains the application ``nef.x``, which was created by Erwin
 Riegler and computes nef-partitions and Hodge data for toric
 complete intersections.
 
@@ -47,8 +47,8 @@ function.
    compilation time, i.e., the maximum dimension of polytopes, the
    maximum number of points, etc. These limitations may lead to errors
    during calls to different functions of these module.  Currently, a
-   ValueError exception will be raised if the output of poly.x or
-   nef.x is empty or contains the exclamation mark. The error message
+   ValueError exception will be raised if the output of ``poly.x`` or
+   ``nef.x`` is empty or contains the exclamation mark. The error message
    will contain the exact command that caused an error, the
    description and vertices of the polytope, and the obtained output.
 
@@ -2831,17 +2831,15 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
     def nef_x(self, keys):
         r"""
-        Run nef.x with given ``keys`` on vertices of this
+        Run ``nef.x`` with given ``keys`` on vertices of this
         polytope.
 
         INPUT:
 
+        -  ``keys`` -- a string of options passed to ``nef.x``; the
+           key "-f" is added automatically
 
-        -  ``keys`` -- a string of options passed to nef.x. The
-           key "-f" is added automatically.
-
-
-        OUTPUT: the output of nef.x as a string
+        OUTPUT: the output of ``nef.x`` as a string
 
         EXAMPLES: This call is used internally for computing
         nef-partitions::
@@ -3834,19 +3832,19 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
     def poly_x(self, keys, reduce_dimension=False):
         r"""
-        Run poly.x with given ``keys`` on vertices of this
+        Run ``poly.x`` with given ``keys`` on vertices of this
         polytope.
 
         INPUT:
 
-        -  ``keys`` -- a string of options passed to poly.x. The
+        -  ``keys`` -- a string of options passed to ``poly.x``. The
            key "f" is added automatically
 
         -  ``reduce_dimension`` -- boolean (default: ``False``); if ``True`` and this
-           polytope is not full-dimensional, poly.x will be called for the
+           polytope is not full-dimensional, ``poly.x`` will be called for the
            vertices of this polytope in some basis of the spanned affine space
 
-        OUTPUT: the output of poly.x as a string
+        OUTPUT: the output of ``poly.x`` as a string
 
         EXAMPLES: This call is used for determining if a polytope is
         reflexive or not::
@@ -3877,7 +3875,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             Output:
             Please increase POLY_Dmax to at least 7
 
-        You cannot call poly.x for polytopes that don't span the space (if you
+        You cannot call ``poly.x`` for polytopes that don't span the space (if you
         could, it would crush anyway)::
 
             sage: p = LatticePolytope([(1,0,0), (0,1,0), (-1,0,0), (0,-1,0)])
@@ -4655,9 +4653,7 @@ class NefPartition(SageObject, Hashable):
         r"""
         Return Hodge numbers corresponding to ``self``.
 
-        OUTPUT:
-
-        - a tuple of integers (produced by ``nef.x`` program from PALP).
+        OUTPUT: a tuple of integers (produced by ``nef.x`` program from PALP)
 
         EXAMPLES:
 
@@ -5172,7 +5168,9 @@ def _read_nef_x_partitions(data):
     Read all nef-partitions for one polytope from a string or an open
     file.
 
-    ``data`` should be an output of nef.x.
+    INPUT:
+
+    - ``data`` -- should be an output of ``nef.x``
 
     Returns the sequence of nef-partitions. Each nef-partition is given
     as a sequence of integers.
@@ -5656,7 +5654,7 @@ def read_all_polytopes(file_name):
 
     EXAMPLES:
 
-    We use poly.x to compute two polar polytopes and read them::
+    We use ``poly.x`` to compute two polar polytopes and read them::
 
         sage: # needs palp
         sage: d = lattice_polytope.cross_polytope(2)

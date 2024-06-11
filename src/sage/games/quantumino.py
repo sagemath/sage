@@ -480,7 +480,7 @@ class QuantuminoSolver(SageObject):
           - ``'common'`` -- common part between two consecutive solutions
           - ``'incremental'`` -- one piece change at a time
 
-        OUTPUT: iterator of QuantuminoState
+        OUTPUT: iterator of :class:`QuantuminoState`
 
         EXAMPLES:
 
