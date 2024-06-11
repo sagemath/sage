@@ -194,6 +194,7 @@ for both of these uses.
 
 from libc.string cimport memset
 from cysignals.memory cimport check_malloc, check_allocarray, sig_free
+from memory_allocator cimport MemoryAllocator
 
 from sage.data_structures.bitset_base cimport *
 from sage.data_structures.bitset cimport *
@@ -1517,7 +1518,8 @@ cdef class SparseGraphBackend(CGraphBackend):
         for v_int in range(cg.active_vertices.size):
             if bitset_in(cg.active_vertices, v_int):
                 maxdegree = max(degrees[v_int], maxdegree)
-        cdef SparseGraphBTNode **neighbors = <SparseGraphBTNode **>check_allocarray(maxdegree, sizeof(SparseGraphBTNode *))
+        cdef MemoryAllocator mem = MemoryAllocator()
+        cdef SparseGraphBTNode **neighbors = <SparseGraphBTNode **>mem.allocarray(maxdegree, sizeof(SparseGraphBTNode *))
 
         if not isinstance(vertices, list):
             # ALL edges
