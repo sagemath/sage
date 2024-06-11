@@ -116,7 +116,7 @@ cdef int next_swap(int n, int *c, int *o) noexcept:
 
 def permutation_iterator_transposition_list(int n):
     """
-    Returns a list of transposition indices to enumerate the
+    Return a list of transposition indices to enumerate the
     permutations on `n` letters by adjacent transpositions.
     Assumes zero-based lists.  We artificially limit the
     argument to `n < 12` to avoid overflowing 32-bit pointers.
@@ -267,7 +267,7 @@ cpdef map_to_list(array l, tuple values, int n):
     - ``values`` -- tuple; the values of the permutation
     - ``n`` -- int; the length of the array ``l``
 
-    OUTPUT: a list representing the permutation
+    OUTPUT: list representing the permutation
 
     EXAMPLES::
 

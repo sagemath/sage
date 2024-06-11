@@ -462,7 +462,7 @@ class WeakReversePlanePartitions(Tableaux):
 
     def an_element(self):
         r"""
-        Returns a particular element of the class.
+        Return a particular element of the class.
 
         TESTS::
 

@@ -98,7 +98,7 @@ def pad_right(T, length, zero=0):
 
     INPUT:
 
-    - ``T`` -- A tuple, list or other iterable
+    - ``T`` -- a tuple, list or other iterable
 
     - ``length`` -- a nonnegative integer
 
@@ -570,7 +570,7 @@ class RegularSequence(RecognizableSeries):
 
         - ``a`` -- a nonnegative integer
 
-        - ``b`` -- an integer
+        - ``b`` -- integer
 
           Alternatively, this is allowed to be a dictionary
           `b_j \mapsto c_j`. If so and applied on `f(n)`,
@@ -853,7 +853,7 @@ class RegularSequence(RecognizableSeries):
 
         INPUT:
 
-        - ``b`` -- an integer
+        - ``b`` -- integer
 
         - ``minimize`` -- (default: ``None``) a boolean or ``None``.
           If ``True``, then :meth:`~RecognizableSeries.minimized` is called after the operation,
@@ -897,7 +897,7 @@ class RegularSequence(RecognizableSeries):
 
         INPUT:
 
-        - ``b`` -- an integer
+        - ``b`` -- integer
 
         - ``minimize`` -- (default: ``None``) a boolean or ``None``.
           If ``True``, then :meth:`~RecognizableSeries.minimized` is called after the operation,
@@ -1301,7 +1301,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
 
     INPUT:
 
-    - ``k`` -- an integer at least `2` specifying the base
+    - ``k`` -- integer at least `2` specifying the base
 
     - ``coefficient_ring`` -- a (semi-)ring
 
@@ -1356,7 +1356,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
 
         INPUT:
 
-        - ``k`` -- an integer at least `2` specifying the base
+        - ``k`` -- integer at least `2` specifying the base
 
         Other input arguments are passed on to
         :meth:`~sage.combinat.recognizable_series.RecognizableSeriesSpace.__init__`.
@@ -1566,7 +1566,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
         Implicitly, the algorithm also maintains a `d \times n_\mathrm{verify}` matrix ``A``
         (where ``d`` is the dimension of the right vector valued sequence)
         whose columns are the current right vector valued sequence evaluated at
-        the non-negative integers less than `n_\mathrm{verify}` and ensures that this
+        the nonnegative integers less than `n_\mathrm{verify}` and ensures that this
         matrix has full row rank.
 
         EXAMPLES:
@@ -1875,7 +1875,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
             # see :issue:`35748` for details.
             for m_indices in cantor_product(xsrange(n_verify), repeat=d, min_slope=1):
                 # Iterate over all increasing lists of length d consisting
-                # of non-negative integers less than `n_verify`.
+                # of nonnegative integers less than `n_verify`.
 
                 U = Matrix(domain, d, d, [values(m, lines) for m in m_indices]).transpose()
                 try:
@@ -2005,7 +2005,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
         If the recurrence relations are represented by symbolic equations, then
         the following arguments are required:
 
-        - ``equations`` -- A list of equations where the elements have
+        - ``equations`` -- a list of equations where the elements have
           either the form
 
           - `f(k^M n + r) = c_{r,l} f(k^m n + l) + c_{r,l + 1} f(k^m n
@@ -2235,7 +2235,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
             sage: (S - T).is_trivial_zero()  # long time
             True
 
-        Zero-sequence with non-zero initial values::
+        Zero-sequence with nonzero initial values::
 
             sage: Seq2.from_recurrence([
             ....:     f(2*n) == 0, f(2*n + 1) == 0,
@@ -2273,7 +2273,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
             True
 
         Connection between the Stern--Brocot sequence and the number
-        of non-zero elements in the generalized Pascal's triangle (see
+        of nonzero elements in the generalized Pascal's triangle (see
         [LRS2017]_)::
 
             sage: U = Seq2.from_recurrence(M=1, m=0,
@@ -2335,9 +2335,9 @@ class RecurrenceParser:
 
         INPUT:
 
-        - ``k`` -- an integer at least `2` specifying the base
+        - ``k`` -- integer at least `2` specifying the base
 
-        - ``coefficient_ring`` -- a ring.
+        - ``coefficient_ring`` -- a ring
 
         These are the same parameters used when creating
         a :class:`RegularSequenceRing`.
@@ -2997,14 +2997,14 @@ class RecurrenceParser:
             sage: RP.parse_direct_arguments(1, 1/2, {}, {})
             Traceback (most recent call last):
             ...
-            ValueError: 1/2 is not a non-negative integer.
+            ValueError: 1/2 is not a nonnegative integer.
 
         ::
 
             sage: RP.parse_direct_arguments(1, -1, {}, {})
             Traceback (most recent call last):
             ...
-            ValueError: -1 is not a non-negative integer.
+            ValueError: -1 is not a nonnegative integer.
 
         ::
 
@@ -3067,7 +3067,7 @@ class RecurrenceParser:
             raise ValueError("%s is not a positive integer."
                              % (M,)) from None
         if m not in ZZ or m < 0:
-            raise ValueError("%s is not a non-negative integer."
+            raise ValueError("%s is not a nonnegative integer."
                              % (m,)) from None
         if M <= m:
             raise ValueError("%s is not larger than %s."
@@ -3141,7 +3141,7 @@ class RecurrenceParser:
           ``n``-th value of the sequence
 
         - ``inhomogeneities`` -- a dictionary mapping integers ``r``
-          to the inhomogeneity `g_r` as given in [HKL2022]_, Corollary D.
+          to the inhomogeneity `g_r` as given in [HKL2022]_, Corollary D
 
         EXAMPLES::
 
@@ -3336,7 +3336,7 @@ class RecurrenceParser:
           determine the linear representation
 
         - ``inhomogeneities`` -- a dictionary mapping integers ``r``
-          to the inhomogeneity `g_r` as given in [HKL2022]_, Corollary D.
+          to the inhomogeneity `g_r` as given in [HKL2022]_, Corollary D
 
         OUTPUT:
 
@@ -3692,7 +3692,7 @@ class RecurrenceParser:
         - ``recurrence_rules`` -- a namedtuple generated by
           :meth:`parameters`
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         OUTPUT: a vector
 
@@ -3750,7 +3750,7 @@ class RecurrenceParser:
         - ``recurrence_rules`` -- a namedtuple generated by
           :meth:`parameters`
 
-        - ``rem`` -- an integer between ``0`` and ``k - 1``
+        - ``rem`` -- integer between `0` and `k - 1`
 
         - ``correct_offset`` -- boolean (default: ``True``); if
           ``True``, then the resulting linear representation has no

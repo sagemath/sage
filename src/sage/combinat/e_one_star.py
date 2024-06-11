@@ -557,8 +557,8 @@ class Patch(SageObject):
     INPUT:
 
     - ``faces`` -- finite iterable of faces
-    - ``face_contour`` -- dict (default:``None``) maps the face
-      type to vectors describing the contour of unit faces. If None,
+    - ``face_contour`` -- dict (default: ``None``); maps the face
+      type to vectors describing the contour of unit faces. If ``None``,
       defaults contour are assumed for faces of type 1, 2, 3 or 1, 2, 3.
       Used in plotting methods only.
 
@@ -959,7 +959,7 @@ class Patch(SageObject):
 
         - ``other`` -- a Patch
 
-        OUTPUT: a list of vectors
+        OUTPUT: list of vectors
 
         EXAMPLES::
 
@@ -1004,12 +1004,12 @@ class Patch(SageObject):
         -  ``cmap`` -- color map (default: ``'Set1'``). It can be one of the
            following:
 
-           - string -- A coloring map. For available coloring map names type:
+           - ``string`` -- A coloring map. For available coloring map names type:
              ``sorted(colormaps)``
-           - list -- list of colors to assign cyclically to the faces
-             A list of a single color colors all the faces with the same color.
-           - dict -- a dict of face types mapped to colors, to color the
-             faces according to their type.
+           - ``list`` -- list of colors to assign cyclically to the faces
+             A list of a single color colors all the faces with the same color
+           - ``dict`` -- a dict of face types mapped to colors, to color the
+             faces according to their type
            - ``{}``, the empty dict -- shortcut for
              ``{1:'red', 2:'green', 3:'blue'}``.
 
@@ -1351,7 +1351,7 @@ class E1Star(SageObject):
     - ``sigma`` -- unimodular ``WordMorphism``, i.e. such that its incidence
       matrix has determinant `\pm 1`
 
-    - ``method`` -- 'prefix' or 'suffix' (default: 'suffix');
+    - ``method`` -- 'prefix' or 'suffix' (default: ``'suffix'``);
       enables to use an alternative definition `E_1^*(\sigma)` substitutions,
       where the abelianized of the prefix` is used instead of the suffix
 

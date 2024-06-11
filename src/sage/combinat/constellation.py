@@ -448,7 +448,7 @@ class Constellation_class(Element):
         """
         Return the connected components.
 
-        OUTPUT: a list of connected constellations
+        OUTPUT: list of connected constellations
 
         EXAMPLES::
 
@@ -1517,13 +1517,13 @@ def perms_sym_init(g, sym=None):
 
 def perms_are_connected(g, n):
     """
-    Checks that the action of the generated group is transitive.
+    Check that the action of the generated group is transitive.
 
     INPUT:
 
-    - a list of permutations of `[0, n-1]` (in a SymmetricGroup)
+    - ``g`` -- list of permutations of `[0, n-1]` (in a SymmetricGroup)
 
-    - an integer `n`
+    - ``n`` -- integer
 
     EXAMPLES::
 

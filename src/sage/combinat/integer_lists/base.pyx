@@ -526,7 +526,7 @@ cdef class Envelope():
         r"""
         Return a bound on the limit of ``self``.
 
-        OUTPUT: a nonnegative integer or `\infty`
+        OUTPUT: nonnegative integer or `\infty`
 
         This returns some upper bound for the accumulation points of
         this upper envelope. For a lower envelope, a lower bound is

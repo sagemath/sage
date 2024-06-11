@@ -81,7 +81,7 @@ class ClusterComplexFacet(SubwordComplexFacet):
 
     def upper_cluster(self):
         """
-        Return the part of the cluster that contains positive roots
+        Return the part of the cluster that contains positive roots.
 
         EXAMPLES::
 

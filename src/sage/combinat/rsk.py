@@ -3070,7 +3070,7 @@ def RSK(obj1=None, obj2=None, insertion=InsertionRules.RSK, check_standard=False
       - ``RSK.rules.EG`` (or ``'EG'``) -- Edelman-Greene insertion
         (only for reduced words of permutations/elements of a type `A`
         Coxeter group) (:class:`~sage.combinat.rsk.RuleEG`)
-      - ``RSK.rules.Hecke`` (or ``'hecke'``) -- Hecke insertion (only
+      - ``RSK.rules.Hecke`` -- (or ``'hecke'``) Hecke insertion (only
         guaranteed for generalized permutations whose top row is strictly
         increasing) (:class:`~sage.combinat.rsk.RuleHecke`)
       - ``RSK.rules.dualRSK`` (or ``'dualRSK'``) -- Dual RSK insertion

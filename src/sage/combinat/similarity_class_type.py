@@ -215,9 +215,9 @@ def fq(n, q=None):
 
     INPUT:
 
-    - ``n`` -- a non-negative integer
+    - ``n`` -- nonnegative integer
 
-    - ``q`` -- an integer or an indeterminate
+    - ``q`` -- integer or an indeterminate
 
     OUTPUT: a rational function in ``q``
 
@@ -253,13 +253,11 @@ def primitives(n, invertible=False, q=None):
 
     - ``n`` -- a positive integer
 
-    - ``invertible`` -- boolean; if set, only number of non-zero classes is returned
+    - ``invertible`` -- boolean; if set, only number of nonzero classes is returned
 
-    - ``q`` -- an integer or an indeterminate
+    - ``q`` -- integer or an indeterminate
 
-    OUTPUT:
-
-    - a rational function of the variable ``q``
+    OUTPUT: a rational function of the variable ``q``
 
     EXAMPLES::
 
@@ -290,9 +288,9 @@ def order_of_general_linear_group(n, q=None):
 
     INPUT:
 
-    - ``n`` -- a non-negative integer
+    - ``n`` -- a nonnegative integer
 
-    - ``q`` -- an integer or an indeterminate
+    - ``q`` -- integer or an indeterminate
 
     EXAMPLES::
 
@@ -336,7 +334,7 @@ def centralizer_group_cardinality(la, q=None):
 
     - ``lambda`` -- a partition
 
-    - ``q`` -- an integer or an indeterminate
+    - ``q`` -- integer or an indeterminate
 
     OUTPUT: a polynomial function of ``q``
 
@@ -582,7 +580,7 @@ class PrimarySimilarityClassType(Element,
 
         INPUT:
 
-        - ``q`` -- an integer or an indeterminate
+        - ``q`` -- integer or an indeterminate
 
         EXAMPLES::
 
@@ -761,7 +759,7 @@ class SimilarityClassType(CombinatorialElement):
 
     INPUT:
 
-    - ``tau`` -- a list of primary similarity class types or a square matrix
+    - ``tau`` -- list of primary similarity class types or a square matrix
       over a finite field
 
     EXAMPLES::
@@ -866,7 +864,7 @@ class SimilarityClassType(CombinatorialElement):
 
         INPUT:
 
-        - ``q`` -- an integer or an indeterminate
+        - ``q`` -- integer or an indeterminate
 
         EXAMPLES::
 
@@ -902,10 +900,10 @@ class SimilarityClassType(CombinatorialElement):
 
         INPUT:
 
-        - ``invertible`` -- Boolean; return number of invertible classes if set
+        - ``invertible`` -- boolean; return number of invertible classes if set
           to ``True``
 
-        - ``q`` -- An integer or an indeterminate
+        - ``q`` -- integer or an indeterminate
 
         EXAMPLES::
 
@@ -984,7 +982,7 @@ class SimilarityClassType(CombinatorialElement):
 
         INPUT:
 
-        - ``q`` -- an integer or an indeterminate
+        - ``q`` -- integer or an indeterminate
 
         EXAMPLES::
 
@@ -1005,7 +1003,7 @@ class SimilarityClassType(CombinatorialElement):
 
         INPUT:
 
-        - ``invertible`` -- A boolean; return the number of invertible
+        - ``invertible`` -- a boolean; return the number of invertible
           matrices if set
 
         EXAMPLES::
@@ -1025,7 +1023,7 @@ class SimilarityClassType(CombinatorialElement):
 
     def statistic(self, func, q=None):
         r"""
-        Return
+        Return.
 
         .. MATH::
 
@@ -1038,7 +1036,7 @@ class SimilarityClassType(CombinatorialElement):
 
         - ``func`` -- a function that takes a partition to a polynomial in ``q``
 
-        - ``q`` -- an integer or an indeterminate
+        - ``q`` -- integer or an indeterminate
 
         EXAMPLES::
 
@@ -1094,7 +1092,7 @@ class SimilarityClassTypes(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``n`` -- a non-negative integer
+    - ``n`` -- nonnegative integer
     - ``min`` -- a primary similarity class type
 
     EXAMPLES:
@@ -1162,7 +1160,7 @@ class SimilarityClassTypes(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``tau`` -- a list of primary similarity class types
+        - ``tau`` -- list of primary similarity class types
 
         EXAMPLES::
 
@@ -1232,7 +1230,7 @@ class SimilarityClassTypes(UniqueRepresentation, Parent):
         """
         return self._n
 
-    def sum(self, stat, sumover="matrices", invertible=False, q=None):
+    def sum(self, stat, sumover='matrices', invertible=False, q=None):
         r"""
         Return the sum of a local statistic over all types.
 
@@ -1250,10 +1248,10 @@ class SimilarityClassTypes(UniqueRepresentation, Parent):
             \sum n_{\tau(g)}(q)
 
         where `\tau(g)` denotes the type of a matrix `g`, and the sum is over
-        all `n \times n` matrices if ``sumover`` is set to ``"matrices"``, is
+        all `n \times n` matrices if ``sumover`` is set to ``'matrices'``, is
         over all `n \times n` similarity classes if ``sumover`` is set to
-        ``"classes"``, and over all `n \times n` types if ``sumover`` is set
-        to ``"types"``. If ``invertible`` is set to ``True``, then the sum is
+        ``'classes'``, and over all `n \times n` types if ``sumover`` is set
+        to ``'types'``. If ``invertible`` is set to ``True``, then the sum is
         only over invertible matrices or classes.
 
         INPUT:
@@ -1262,11 +1260,11 @@ class SimilarityClassTypes(UniqueRepresentation, Parent):
           of ``q``
         - ``sumover`` -- can be one of the following:
 
-          * ``"matrices"``
-          * ``"classes"``
-          * ``"types"``
+          * ``'matrices'``
+          * ``'classes'``
+          * ``'types'``
 
-        - ``q`` -- an integer or an indeterminate
+        - ``q`` -- integer or an indeterminate
 
         OUTPUT: a function of ``q``
 

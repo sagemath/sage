@@ -1579,7 +1579,7 @@ class PartitionAlgebra_ak(PartitionAlgebra_generic):
             name = "Partition algebra A_%s(%s)" % (k, n)
         cclass = SetPartitionsAk(k)
         self._element_class = PartitionAlgebraElement_ak
-        PartitionAlgebra_generic.__init__(self, R, cclass, n, k, name=name, prefix="A")
+        PartitionAlgebra_generic.__init__(self, R, cclass, n, k, name=name, prefix='A')
 
 
 class PartitionAlgebraElement_bk(PartitionAlgebraElement_generic):
@@ -1600,7 +1600,7 @@ class PartitionAlgebra_bk(PartitionAlgebra_generic):
             name = "Partition algebra B_%s(%s)" % (k, n)
         cclass = SetPartitionsBk(k)
         self._element_class = PartitionAlgebraElement_bk
-        PartitionAlgebra_generic.__init__(self, R, cclass, n, k, name=name, prefix="B")
+        PartitionAlgebra_generic.__init__(self, R, cclass, n, k, name=name, prefix='B')
 
 
 class PartitionAlgebraElement_sk(PartitionAlgebraElement_generic):
@@ -1621,7 +1621,7 @@ class PartitionAlgebra_sk(PartitionAlgebra_generic):
             name = "Partition algebra S_%s(%s)" % (k, n)
         cclass = SetPartitionsSk(k)
         self._element_class = PartitionAlgebraElement_sk
-        PartitionAlgebra_generic.__init__(self, R, cclass, n, k, name=name, prefix="S")
+        PartitionAlgebra_generic.__init__(self, R, cclass, n, k, name=name, prefix='S')
 
 
 class PartitionAlgebraElement_pk(PartitionAlgebraElement_generic):
@@ -1642,7 +1642,7 @@ class PartitionAlgebra_pk(PartitionAlgebra_generic):
             name = "Partition algebra P_%s(%s)" % (k, n)
         cclass = SetPartitionsPk(k)
         self._element_class = PartitionAlgebraElement_pk
-        PartitionAlgebra_generic.__init__(self, R, cclass, n, k, name=name, prefix="P")
+        PartitionAlgebra_generic.__init__(self, R, cclass, n, k, name=name, prefix='P')
 
 
 class PartitionAlgebraElement_tk(PartitionAlgebraElement_generic):
@@ -1663,7 +1663,7 @@ class PartitionAlgebra_tk(PartitionAlgebra_generic):
             name = "Partition algebra T_%s(%s)" % (k, n)
         cclass = SetPartitionsTk(k)
         self._element_class = PartitionAlgebraElement_tk
-        PartitionAlgebra_generic.__init__(self, R, cclass, n, k, name=name, prefix="T")
+        PartitionAlgebra_generic.__init__(self, R, cclass, n, k, name=name, prefix='T')
 
 
 class PartitionAlgebraElement_rk(PartitionAlgebraElement_generic):
@@ -1684,7 +1684,7 @@ class PartitionAlgebra_rk(PartitionAlgebra_generic):
             name = "Partition algebra R_%s(%s)" % (k, n)
         cclass = SetPartitionsRk(k)
         self._element_class = PartitionAlgebraElement_rk
-        PartitionAlgebra_generic.__init__(self, R, cclass, n, k, name=name, prefix="R")
+        PartitionAlgebra_generic.__init__(self, R, cclass, n, k, name=name, prefix='R')
 
 
 class PartitionAlgebraElement_prk(PartitionAlgebraElement_generic):
@@ -1705,7 +1705,7 @@ class PartitionAlgebra_prk(PartitionAlgebra_generic):
             name = "Partition algebra PR_%s(%s)" % (k, n)
         cclass = SetPartitionsPRk(k)
         self._element_class = PartitionAlgebraElement_prk
-        PartitionAlgebra_generic.__init__(self, R, cclass, n, k, name=name, prefix="PR")
+        PartitionAlgebra_generic.__init__(self, R, cclass, n, k, name=name, prefix='PR')
 
 
 ##########################################################

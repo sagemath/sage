@@ -70,9 +70,9 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
 
         INPUT:
 
-        - ``i`` -- a nonnegative integer
+        - ``i`` -- nonnegative integer
 
-        OUTPUT: a nonnegative integer
+        OUTPUT: nonnegative integer
 
         TESTS::
 

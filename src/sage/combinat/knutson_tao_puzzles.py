@@ -308,9 +308,7 @@ class NablaPiece(PuzzlePiece):
         r"""
         Rotate the Nabla piece by 120 degree clockwise.
 
-        OUTPUT:
-
-        - Nabla piece
+        OUTPUT: Nabla piece
 
         EXAMPLES::
 
@@ -327,9 +325,7 @@ class NablaPiece(PuzzlePiece):
         r"""
         Rotate the Nabla piece by 180 degree.
 
-        OUTPUT:
-
-        - Delta piece
+        OUTPUT: Delta piece
 
         EXAMPLES::
 
@@ -430,9 +426,7 @@ class DeltaPiece(PuzzlePiece):
         r"""
         Rotate the Delta piece by 120 degree clockwise.
 
-        OUTPUT:
-
-        - Delta piece
+        OUTPUT: Delta piece
 
         EXAMPLES::
 
@@ -449,9 +443,7 @@ class DeltaPiece(PuzzlePiece):
         r"""
         Rotate the Delta piece by 180 degree.
 
-        OUTPUT:
-
-        - Nabla piece
+        OUTPUT: Nabla piece
 
         EXAMPLES::
 
@@ -1358,7 +1350,7 @@ class PuzzleFilling:
             for k in range(d + 1):
                 yield self[k + 1, self._n - d + k]
 
-    def plot(self, labels=True, style="fill"):
+    def plot(self, labels=True, style='fill'):
         r"""
         Plot completed puzzle.
 
@@ -1570,7 +1562,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
           (3, 4): 1/\0  0\/1,
           (4, 4): 1/1\1}]
 
-    The pieces in a puzzle filling are indexed by pairs of non-negative
+    The pieces in a puzzle filling are indexed by pairs of nonnegative
     integers `(i, j)` with `1 \leq i \leq j \leq n`, where `n` is the
     length of the word labelling the triangle edge. The pieces indexed by
     `(i, i)` are the triangles along the south edge of the puzzle. ::
@@ -2064,9 +2056,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
         - ``nw_label``, ``nw_label`` -- label
         - ``pieces`` -- puzzle pieces used for the filling
 
-        OUTPUT:
-
-        - list of the fillings
+        OUTPUT: list of the fillings
 
         EXAMPLES::
 
@@ -2094,9 +2084,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
         - ``pieces`` -- puzzle pieces used for the filling
         - ``final_pieces`` -- pieces used for the last piece to be filled in
 
-        OUTPUT:
-
-        - list of lists of the fillings
+        OUTPUT: list of lists of the fillings
 
         EXAMPLES::
 

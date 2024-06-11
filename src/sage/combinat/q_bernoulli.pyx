@@ -17,9 +17,9 @@ def q_bernoulli(m, p=None):
 
     INPUT:
 
-    - `m` -- a nonnegative integer
+    - ``m`` -- a nonnegative integer
 
-    - `p` (default: ``None``) -- an optional value for `q`
+    - `p` -- (default: ``None``) an optional value for `q`
 
     OUTPUT:
 
@@ -87,7 +87,7 @@ def q_bernoulli_polynomial(m):
 
     INPUT:
 
-    - `m` -- a nonnegative integer
+    - ``m`` -- a nonnegative integer
 
     OUTPUT: a polynomial in one variable `x`
 

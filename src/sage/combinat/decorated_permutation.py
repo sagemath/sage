@@ -137,7 +137,7 @@ class DecoratedPermutations(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - `n` -- integer; the size of the decorated permutations
+    - ``n`` -- integer; the size of the decorated permutations
 
     EXAMPLES:
 

@@ -1591,7 +1591,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         method provides the coordinates of this depiction, with the
         root as the top-left vertex.
 
-        OUTPUT: a list of pairs of integers
+        OUTPUT: list of pairs of integers
 
         Every vertex of the binary tree is mapped to a pair of
         integers. The conventions are the following. The root has
@@ -2524,10 +2524,10 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         INPUT:
 
-        - ``side`` -- (default: 'left') set to 'left' to obtain a left
+        - ``side`` -- (default: ``'left'``) set to 'left' to obtain a left
           comb, and to 'right' to obtain a right comb.
 
-        OUTPUT: a list of binary trees
+        OUTPUT: list of binary trees
 
         .. SEEALSO::
 
@@ -2664,7 +2664,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         composing it. A left (resp. right) branch is maximal if it is not
         included in a strictly longer left (resp. right) branch.
 
-        OUTPUT: a list of two integers
+        OUTPUT: list of two integers
 
         EXAMPLES::
 
@@ -4225,7 +4225,7 @@ class BinaryTrees_size(BinaryTrees):
 
     def cardinality(self):
         """
-        The cardinality of ``self``
+        The cardinality of ``self``.
 
         This is a Catalan number.
 
@@ -4474,7 +4474,7 @@ class FullBinaryTrees_size(BinaryTrees):
 
     def cardinality(self):
         r"""
-        The cardinality of ``self``
+        The cardinality of ``self``.
 
         This is a Catalan number.
 

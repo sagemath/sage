@@ -503,36 +503,36 @@ class PartitionTuple(CombinatorialElement):
 
             sage: mu=PartitionTuple(([2,1],[3,2],[1,1,1]))      # indirect doctest
 
-            sage: PartitionTuples.options(display="list"); mu
+            sage: PartitionTuples.options(display='list'); mu
             ([2, 1], [3, 2], [1, 1, 1])
-            sage: PartitionTuples.options(display="diagram"); mu
+            sage: PartitionTuples.options(display='diagram'); mu
             **   ***   *
             *    **    *
             *
-            sage: PartitionTuples.options(display="compact_low"); mu
+            sage: PartitionTuples.options(display='compact_low'); mu
             1,2|2,3|1^3
-            sage: PartitionTuples.options(display="compact_high"); mu
+            sage: PartitionTuples.options(display='compact_high'); mu
             2,1|3,2|1^3
-            sage: PartitionTuples.options(display="exp_low"); mu
+            sage: PartitionTuples.options(display='exp_low'); mu
             1, 2 | 2, 3 | 1^3
-            sage: PartitionTuples.options(display="exp_high"); mu
+            sage: PartitionTuples.options(display='exp_high'); mu
             2, 1 | 3, 2 | 1^3
             sage: PartitionTuples.options._reset()
 
-            sage: Partitions.options(convention="French")
-            sage: PartitionTuples.options(display="diagram"); mu
+            sage: Partitions.options(convention='French')
+            sage: PartitionTuples.options(display='diagram'); mu
             *
             *    **    *
             **   ***   *
-            sage: PartitionTuples.options(display="list"); mu
+            sage: PartitionTuples.options(display='list'); mu
             ([2, 1], [3, 2], [1, 1, 1])
-            sage: PartitionTuples.options(display="compact_low"); mu
+            sage: PartitionTuples.options(display='compact_low'); mu
             1,2|2,3|1^3
-            sage: PartitionTuples.options(display="compact_high"); mu
+            sage: PartitionTuples.options(display='compact_high'); mu
             2,1|3,2|1^3
-            sage: PartitionTuples.options(display="exp_low"); mu
+            sage: PartitionTuples.options(display='exp_low'); mu
             1, 2 | 2, 3 | 1^3
-            sage: PartitionTuples.options(display="exp_high"); mu
+            sage: PartitionTuples.options(display='exp_high'); mu
             2, 1 | 3, 2 | 1^3
             sage: PartitionTuples.options._reset()
         """
@@ -659,7 +659,7 @@ class PartitionTuple(CombinatorialElement):
             \end{array}$}
             }
 
-            sage: PartitionTuples.options(latex="young_diagram", convention="french")
+            sage: PartitionTuples.options(latex='young_diagram', convention='french')
             sage: PartitionTuples.options(latex='exp_high'); latex(mu)      # indirect doctest
             (2,1|1^{3})
             sage: PartitionTuples.options(latex='exp_low'); latex(mu)       # indirect doctest
@@ -785,7 +785,7 @@ class PartitionTuple(CombinatorialElement):
                **    *        *
                               *
                               *
-            sage: PartitionTuples.options(convention="french")
+            sage: PartitionTuples.options(convention='french')
             sage: print(PartitionTuple([[3,2],[2,1],[],[1,1,1,1]]).diagram())
                               *
                               *
@@ -1279,13 +1279,11 @@ class PartitionTuple(CombinatorialElement):
 
         INPUT:
 
-        - ``k`` -- The component
-        - ``r`` -- The row
-        - ``c`` -- The cell
+        - ``k`` -- the component
+        - ``r`` -- the row
+        - ``c`` -- the cell
 
-        OUTPUT:
-
-        - The arm length as an integer
+        OUTPUT: the arm length as an integer
 
         The arm of cell ``(k, r, c)`` is the number of cells in the ``k``-th
         component which are to the right of the cell in row ``r`` and column
@@ -1311,13 +1309,11 @@ class PartitionTuple(CombinatorialElement):
 
         INPUT:
 
-        - ``k`` -- The component
-        - ``r`` -- The row
-        - ``c`` -- The cell
+        - ``k`` -- the component
+        - ``r`` -- the row
+        - ``c`` -- the cell
 
-        OUTPUT:
-
-        - The leg length as an integer
+        OUTPUT: the leg length as an integer
 
         The leg of cell ``(k, r, c)`` is the number of cells in the ``k``-th
         component which are below the node in row ``r`` and column ``c``.
@@ -1571,11 +1567,9 @@ class PartitionTuple(CombinatorialElement):
 
         INPUT:
 
-        - ``e`` -- an integer `e > 1`
+        - ``e`` -- integer `e > 1`
 
-        OUTPUT:
-
-        A non-negative integer.
+        OUTPUT: nonnegative integer
 
         EXAMPLES::
 
@@ -1630,9 +1624,7 @@ class PartitionTuple(CombinatorialElement):
         - ``multicharge`` -- an `l`-tuple of integers, where `l` is
           the :meth:`level` of ``self``
 
-        OUTPUT:
-
-        A non-negative integer
+        OUTPUT: nonnegative integer
 
         EXAMPLES::
 
@@ -1666,7 +1658,7 @@ class PartitionTuple(CombinatorialElement):
 
         - ``e`` -- the quantum characteristic
 
-        - ``multicharge`` -- the multicharge (default `(0,)`)
+        - ``multicharge`` -- the multicharge (default: `(0,)`)
 
         OUTPUT:
 
@@ -1738,12 +1730,10 @@ class PartitionTuple(CombinatorialElement):
 
         - ``e`` -- the quantum characteristic
 
-        - ``multicharge`` -- the multicharge (default `(0,)`)
+        - ``multicharge`` -- the multicharge (default: `(0,)`)
 
-        OUTPUT:
-
-        - a non-negative integer, which is the defect of the block
-          containing the partition tuple ``self``
+        OUTPUT: a nonnegative integer, which is the defect of the block
+        containing the partition tuple ``self``
 
         EXAMPLES::
 
@@ -1788,9 +1778,9 @@ class PartitionTuples(UniqueRepresentation, Parent):
 
     - ``level`` -- the length of the tuple
 
-    - ``size``  -- the total number of cells
+    - ``size`` -- the total number of cells
 
-    - ``regular`` -- a positive integer or a tuple of non-negative
+    - ``regular`` -- a positive integer or a tuple of nonnegative
       integers; if an integer, the highest multiplicity an entry may
       have in a component plus `1`
 
@@ -1845,7 +1835,7 @@ class PartitionTuples(UniqueRepresentation, Parent):
             raise ValueError('the level must be a positive integer')
 
         if size is not None and (not isinstance(size, (int, Integer)) or size < 0):
-            raise ValueError('the size must be a non-negative integer')
+            raise ValueError('the size must be a nonnegative integer')
 
         if isinstance(regular, (list, tuple)):
             if level is None:
@@ -1856,7 +1846,7 @@ class PartitionTuples(UniqueRepresentation, Parent):
                                  level, regular))
         if regular == 0:
             raise ValueError("regular must be a positive integer or a tuple "
-                             "of non-negative integers")
+                             "of nonnegative integers")
         if level is None:
             if size is None:
                 if regular is None:
@@ -1902,15 +1892,13 @@ class PartitionTuples(UniqueRepresentation, Parent):
 
     def _element_constructor_(self, mu):
         r"""
-        Constructs an element of :class:`PartitionTuple`.
+        Construct an element of :class:`PartitionTuple`.
 
         INPUT:
 
         - ``mu`` -- a tuple of partitions
 
-        OUTPUT:
-
-        - The corresponding :class:`PartitionTuple` object
+        OUTPUT: the corresponding :class:`PartitionTuple` object
 
         TESTS::
 
@@ -2074,7 +2062,7 @@ class PartitionTuples_all(PartitionTuples):
 
     def __init__(self):
         r"""
-        Initializes the class.
+        Initialize the class.
 
         EXAMPLES::
 
@@ -2147,7 +2135,7 @@ class PartitionTuples_level(PartitionTuples):
 
     def __init__(self, level, category=None):
         r"""
-        Initializes this class.
+        Initialize this class.
 
         EXAMPLES::
 
@@ -2158,7 +2146,7 @@ class PartitionTuples_level(PartitionTuples):
             sage: TestSuite( PartitionTuples(level=4) ).run()                           # needs sage.libs.flint
         """
         if level not in NN:
-            raise ValueError('level must be a non-negative integer')
+            raise ValueError('level must be a nonnegative integer')
         if category is None:
             category = InfiniteEnumeratedSets()
         super().__init__(category=category)
@@ -2264,7 +2252,7 @@ class PartitionTuples_size(PartitionTuples):
             sage: TestSuite( PartitionTuples(size=6) ).run()                            # needs sage.libs.flint
         """
         if size not in NN:
-            raise ValueError('size must be a non-negative integer')
+            raise ValueError('size must be a nonnegative integer')
         super().__init__(category=InfiniteEnumeratedSets())
         self._size = size
 
@@ -2358,7 +2346,7 @@ class PartitionTuples_level_size(PartitionTuples):
 
     def __init__(self, level, size):
         r"""
-        Initializes this class.
+        Initialize this class.
 
         EXAMPLES::
 
@@ -2366,7 +2354,7 @@ class PartitionTuples_level_size(PartitionTuples):
             sage: TestSuite( PartitionTuples(level=4, size=5) ).run()                   # needs sage.libs.flint sage.libs.pari
         """
         if not (level in NN and size in NN):
-            raise ValueError('n and level must be non-negative integers')
+            raise ValueError('n and level must be nonnegative integers')
         super().__init__(category=FiniteEnumeratedSets())
         self._level = level
         self._size = size
@@ -2660,8 +2648,8 @@ class RegularPartitionTuples_level(PartitionTuples_level):
 
     INPUT:
 
-    - ``level`` -- a non-negative Integer; the level
-    - ``regular`` -- a positive integer or a tuple of non-negative
+    - ``level`` -- nonnegative integer; the level
+    - ``regular`` -- positive integer or a tuple of nonnegative
       integers; if an integer, the highest multiplicity an entry may
       have in a component plus `1` with `0` representing `\infty`-regular
       (equivalently, partitions without restrictions)
@@ -2720,7 +2708,7 @@ class RegularPartitionTuples_level(PartitionTuples_level):
             sage: TestSuite(RPT).run()                                                  # needs sage.libs.flint
         """
         if level not in NN:
-            raise ValueError('level must be a non-negative integer')
+            raise ValueError('level must be a nonnegative integer')
         if not isinstance(regular, tuple):
             # This should not happen if called from RegularPartitionTuples
             regular = (regular,) * level
@@ -2729,7 +2717,7 @@ class RegularPartitionTuples_level(PartitionTuples_level):
         else:
             category = FiniteEnumeratedSets()
         if any(r not in NN for r in regular):
-            raise ValueError('regular must be a tuple of non-negative integers')
+            raise ValueError('regular must be a tuple of nonnegative integers')
         if len(regular) != level:
             raise ValueError("regular must be a tuple with length {}".format(level))
         PartitionTuples_level.__init__(self, level, category=category)
@@ -2887,7 +2875,7 @@ class RegularPartitionTuples_size(RegularPartitionTuples):
             sage: TestSuite(RPT).run()                                                  # needs sage.libs.flint
         """
         if size not in NN:
-            raise ValueError('size must be a non-negative integer')
+            raise ValueError('size must be a nonnegative integer')
         RegularPartitionTuples.__init__(self, regular, category=InfiniteEnumeratedSets())
         self._size = size
 
@@ -2966,9 +2954,9 @@ class RegularPartitionTuples_level_size(PartitionTuples_level_size):
 
     INPUT:
 
-    - ``level`` -- a non-negative Integer; the level
-    - ``size`` -- a non-negative Integer; the size
-    - ``regular`` -- a positive integer or a tuple of non-negative
+    - ``level`` -- a nonnegative integer; the level
+    - ``size`` -- a nonnegative integer; the size
+    - ``regular`` -- a positive integer or a tuple of nonnegative
       integers; if an integer, the highest multiplicity an entry may
       have in a component plus `1` with `0` representing `\infty`-regular
       (equivalently, partitions without restrictions)
@@ -3017,7 +3005,7 @@ class RegularPartitionTuples_level_size(PartitionTuples_level_size):
             sage: TestSuite(RPT).run()                                                  # needs sage.libs.flint sage.libs.pari
         """
         if size not in NN:
-            raise ValueError('size must be a non-negative integer')
+            raise ValueError('size must be a nonnegative integer')
         if not (level in ZZ and level > 0):
             raise ValueError('level must be a positive integer')
         if not isinstance(regular, tuple):
@@ -3026,7 +3014,7 @@ class RegularPartitionTuples_level_size(PartitionTuples_level_size):
         if len(regular) != level:
             raise ValueError(f'regular must be a list with length {level}')
         if any(i not in NN for i in regular):
-            raise ValueError('regular must be a list of non-negative integers')
+            raise ValueError('regular must be a list of nonnegative integers')
         PartitionTuples_level_size.__init__(self, level, size)
         self._ell = regular
 

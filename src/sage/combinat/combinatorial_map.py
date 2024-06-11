@@ -57,7 +57,7 @@ thereof, for all the combinatorial maps that apply to it.
 
 def combinatorial_map_trivial(f=None, order=None, name=None):
     r"""
-    Combinatorial map decorator
+    Combinatorial map decorator.
 
     See :ref:`sage.combinat.combinatorial_map` for a description of
     this decorator and its purpose. This default implementation does
@@ -332,7 +332,7 @@ class CombinatorialMap:
 
     def order(self):
         """
-        Returns the order of ``self``, or ``None`` if the order is not known.
+        Return the order of ``self``, or ``None`` if the order is not known.
 
         EXAMPLES::
 
@@ -351,7 +351,7 @@ class CombinatorialMap:
 
     def name(self):
         """
-        Returns the name of a combinatorial map.
+        Return the name of a combinatorial map.
         This is used for the string representation of ``self``.
 
         EXAMPLES::

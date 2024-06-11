@@ -437,7 +437,7 @@ class ResidueSequence(ClonableArray,
 
         INPUT:
 
-        - ``i`` and ``j`` -- two integers between `1` and the length of
+        - ``i``, ``j`` -- two integers between `1` and the length of
           the residue sequence
 
         If residue sequence ``self`` is of the form `(r_1, \ldots, r_n)`, and
@@ -792,8 +792,8 @@ class ResidueSequences(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``r`` and ``c`` -- the row and column indices in level one
-        - ``k``, ``r`` and ``c`` -- the component, row and column indices
+        - ``r``, ``c`` -- the row and column indices in level one
+        - ``k``, ``r``, ``c`` -- the component, row and column indices
           in higher levels
 
         EXAMPLES::

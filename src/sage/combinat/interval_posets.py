@@ -95,12 +95,12 @@ class TamariIntervalPoset(Element,
 
     INPUT:
 
-    - ``size`` -- an integer, the size of the interval-posets (number of
+    - ``size`` -- integer; the size of the interval-posets (number of
       vertices)
 
-    - ``relations`` -- a list (or tuple) of pairs ``(a,b)`` (themselves
+    - ``relations`` -- list (or tuple) of pairs ``(a,b)`` (themselves
       lists or tuples), each representing a relation of the form
-      '`a` precedes `b`' in the poset.
+      '`a` precedes `b`' in the poset
 
     - ``check`` -- boolean (default: ``True``); whether to check the
       interval-poset condition or not
@@ -722,7 +722,7 @@ class TamariIntervalPoset(Element,
 
         INPUT:
 
-        - ``v`` -- an integer representing a vertex of ``self``
+        - ``v`` -- integer representing a vertex of ``self``
           (between 1 and ``size``)
 
         OUTPUT:
@@ -761,7 +761,7 @@ class TamariIntervalPoset(Element,
 
         INPUT:
 
-        - ``v`` -- an integer representing a vertex of ``self``
+        - ``v`` -- integer representing a vertex of ``self``
           (between 1 and ``size``)
 
         EXAMPLES::
@@ -858,7 +858,7 @@ class TamariIntervalPoset(Element,
 
         INPUT:
 
-        - ``v`` -- an integer representing a vertex of ``self``
+        - ``v`` -- integer representing a vertex of ``self``
           (between 1 and ``size``)
 
         OUTPUT:
@@ -897,7 +897,7 @@ class TamariIntervalPoset(Element,
 
         INPUT:
 
-        - ``v`` -- an integer representing a vertex of ``self`` (between
+        - ``v`` -- integer representing a vertex of ``self`` (between
           1 and ``size``)
 
         EXAMPLES::
@@ -1944,8 +1944,8 @@ class TamariIntervalPoset(Element,
 
         INPUT:
 
-        - ``start`` -- an integer, the starting vertex (inclusive)
-        - ``end`` -- an integer, the ending vertex (not inclusive)
+        - ``start`` -- integer; the starting vertex (inclusive)
+        - ``end`` -- integer; the ending vertex (not inclusive)
 
         EXAMPLES::
 
@@ -2511,9 +2511,7 @@ class TamariIntervalPoset(Element,
         For the number of terms, you can use instead the method
         :meth:`number_of_new_components`.
 
-        OUTPUT:
-
-        a list of new interval-posets.
+        OUTPUT: list of new interval-posets
 
         .. SEEALSO::
 
@@ -3420,9 +3418,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         Beware that the embedding convention used here is the opposite of
         the one used by the plot method.
 
-        OUTPUT:
-
-        a Tamari interval-poset
+        OUTPUT: a Tamari interval-poset
 
         EXAMPLES:
 

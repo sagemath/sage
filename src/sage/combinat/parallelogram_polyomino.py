@@ -62,7 +62,7 @@ class LocalOptions:
 
     INPUT:
 
-    - ``name`` -- The name of the LocalOptions
+    - ``name`` -- the name of the LocalOptions
 
     - ``<options>=dict(...)`` -- dictionary specifying an option
 
@@ -111,7 +111,7 @@ class LocalOptions:
 
         INPUT:
 
-        - ``name`` -- The name of the LocalOptions
+        - ``name`` -- the name of the LocalOptions
 
         - ``<options>=dict(...)`` -- dictionary specifying an option
 
@@ -205,9 +205,9 @@ class LocalOptions:
 
         INPUT:
 
-        - ``key`` -- An option.
+        - ``key`` -- an option
 
-        - ``value`` -- The value.
+        - ``value`` -- the value
 
         EXAMPLES::
 
@@ -274,10 +274,10 @@ class LocalOptions:
 
         INPUT:
 
-        - ``get_values`` -- The options to be printed.
+        - ``get_values`` -- the options to be printed
 
         - ``<options>=dict(...)`` -- dictionary specifying an option see
-          :class:`LocalOptions` for more details.
+          :class:`LocalOptions` for more details
 
         EXAMPLES::
 
@@ -303,10 +303,10 @@ class LocalOptions:
             ....: )
             sage: o("display")
             'list'
-            sage: o(display="diagram")
+            sage: o(display='diagram')
             sage: o("display")
             'diagram'
-            sage: o(display="?")
+            sage: o(display='?')
             Current value : diagram
             {'default': 'list', 'values':
             {'diagram': 'diagram representation',
@@ -325,7 +325,7 @@ class LocalOptions:
 
         INPUT:
 
-        - ``key`` -- An option.
+        - ``key`` -- an option
 
         EXAMPLES::
 
@@ -606,8 +606,8 @@ class _drawing_tool:
 
         - ``options`` -- drawing options
 
-        - ``XY`` -- A user function to convert vector in other vector.
-                  (default : identity function)
+        - ``XY`` -- a user function to convert vector in other vector
+          (default: identity function)
 
         EXAMPLES::
 
@@ -643,9 +643,9 @@ class _drawing_tool:
 
         INPUT:
 
-        - ``v`` -- The vector to transform.
+        - ``v`` -- the vector to transform
 
-        OUTPUT: a list of 2 floats encoding a vector
+        OUTPUT: list of 2 floats encoding a vector
 
         EXAMPLES::
 
@@ -675,9 +675,9 @@ class _drawing_tool:
 
             INPUT:
 
-            - ``pos`` -- The position to translate.
+            - ``pos`` -- the position to translate
 
-            - ``v`` -- The translation vector.
+            - ``v`` -- the translation vector
 
             OUTPUT:
 
@@ -691,9 +691,9 @@ class _drawing_tool:
 
             INPUT:
 
-            - ``pos`` -- The position to rotate.
+            - ``pos`` -- the position to rotate
 
-            - ``angle`` -- The angle of rotation.
+            - ``angle`` -- the angle of rotation
 
             OUTPUT:
 
@@ -708,9 +708,9 @@ class _drawing_tool:
 
             INPUT:
 
-            - ``pos`` -- The position to mirror.
+            - ``pos`` -- the position to mirror
 
-            - ``axe`` -- The axe vector.
+            - ``axe`` -- the axe vector
 
             OUTPUT:
 
@@ -745,15 +745,15 @@ class _drawing_tool:
 
         INPUT:
 
-        - ``v1`` -- point, The first point of the line.
+        - ``v1`` -- point, The first point of the line
 
-        - ``v2`` -- point, The second point of the line.
+        - ``v2`` -- point, The second point of the line
 
-        - ``color`` -- string (default:``None``), The color of the line.
+        - ``color`` -- string (default: ``None``); the color of the line.
           If set to ``None``, the color is chosen according the
           drawing option given by ``_drawing_tool``.
 
-        - ``size`` -- integer (default:``None``), The size of the line.
+        - ``size`` -- integer (default: ``None``); the size of the line.
           If set to ``None``, the size is chosen according the
           drawing option given by ``_drawing_tool``.
 
@@ -786,13 +786,13 @@ class _drawing_tool:
 
         INPUT:
 
-        - ``list_of_vertices`` -- A list of points
+        - ``list_of_vertices`` -- a list of points
 
-        - ``color`` -- string (default:``None``), The color of the line.
+        - ``color`` -- string (default: ``None``); the color of the line.
           If set to ``None``, the color is chosen according the
           drawing option given by ``_drawing_tool``.
 
-        - ``size`` -- integer (default:``None``), The size of the line.
+        - ``size`` -- integer (default: ``None``); the size of the line.
           If set to ``None``, the size is chosen according the
           drawing option given by ``_drawing_tool``.
 
@@ -823,13 +823,13 @@ class _drawing_tool:
 
         INPUT:
 
-        - ``p1`` -- A point
+        - ``p1`` -- a point
 
-        - ``color`` -- string (default:``None``), The color of the line.
+        - ``color`` -- string (default: ``None``); the color of the line.
           If set to ``None``, the color is chosen according the
           drawing option given by ``_drawing_tool``.
 
-        - ``size`` -- integer (default:``None``), The size of the line.
+        - ``size`` -- integer (default: ``None``); the size of the line.
           If set to ``None``, the size is chosen according the
           drawing option given by ``_drawing_tool``.
 
@@ -1116,7 +1116,7 @@ class ParallelogramPolyomino(ClonableList,
 
     def __copy__(self):
         r"""
-        Copy a parallelogram Polyomino
+        Copy a parallelogram Polyomino.
 
         EXAMPLES::
 
@@ -1298,7 +1298,7 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``bijection`` -- string or ``None`` (default:``None``) The name of
+        - ``bijection`` -- string or ``None`` (default: ``None``); the name of
           the bijection. If it is set to ``None`` then the ``'Delest-Viennot'``
           bijection is used.
           Expected values are ``None``, ``'Delest-Viennot'``, or ``'Delest-Viennot-beta'``.
@@ -1422,8 +1422,8 @@ class ParallelogramPolyomino(ClonableList,
 
         - ``dyck`` -- a Dyck word
 
-        - ``bijection`` -- string or ``None`` (default:``None``) the bijection
-          to use. See :meth:`to_dyck_word` for more details.
+        - ``bijection`` -- string or ``None`` (default: ``None``); the
+          bijection to use. See :meth:`to_dyck_word` for more details.
 
         OUTPUT: a parallelogram polyomino
 
@@ -1456,8 +1456,8 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``position`` -- the cell position. This is a recursive parameter.
-          It should not be used directly.
+        - ``position`` -- the cell position; this is a recursive parameter
+          It should not be used directly
 
         EXAMPLES::
 
@@ -1513,7 +1513,7 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``bijection`` -- string or ``None`` (default:``None``) The name of
+        - ``bijection`` -- string or ``None`` (default: ``None``); the name of
           bijection to use for the conversion. The possible values are ``None``
           or ``'Aval-Boussicault'``. The ``None`` value is equivalent to
           ``'Aval-Boussicault'``.
@@ -1706,7 +1706,7 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``bijection`` -- string or ``None`` (default:``None``) The name of
+        - ``bijection`` -- string or ``None`` (default: ``None``); the name of
           bijection to use for the conversion. The possible value are ``None``,
           ``'Boussicault-Socci'`` or ``'via dyck and Delest-Viennot'``.
           The ``None`` value is equivalent to the ``'Boussicault-Socci'``
@@ -1855,11 +1855,11 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``word`` -- a word of 0 and 1.
+        - ``word`` -- a word of 0 and 1
 
         - ``up`` -- 0 or 1 (a letter of the word)
 
-        OUTPUT: a list of integers
+        OUTPUT: list of integers
 
         EXAMPLES::
 
@@ -1886,7 +1886,7 @@ class ParallelogramPolyomino(ClonableList,
         Return the list of heights associated to each vertical step of the
         parallelogram polyomino's upper path.
 
-        OUTPUT: a list of integers
+        OUTPUT: list of integers
 
         EXAMPLES::
 
@@ -1904,7 +1904,7 @@ class ParallelogramPolyomino(ClonableList,
         Return the list of heights associated to each vertical step of the
         parallelogram polyomino's lower path.
 
-        OUTPUT: a list of integers
+        OUTPUT: list of integers
 
         EXAMPLES::
 
@@ -1922,7 +1922,7 @@ class ParallelogramPolyomino(ClonableList,
         Return the list of widths associated to each horizontal step of the
         parallelogram polyomino's upper path.
 
-        OUTPUT: a list of integers
+        OUTPUT: list of integers
 
         EXAMPLES::
 
@@ -1940,7 +1940,7 @@ class ParallelogramPolyomino(ClonableList,
         Return the list of widths associated to each horizontal step of the
         parallelogram polyomino's lower path.
 
-        OUTPUT: a list of integers
+        OUTPUT: list of integers
 
         EXAMPLES::
 
@@ -2062,7 +2062,7 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``k`` -- A non negative integer.
+        - ``k`` -- nonnegative integer
 
         EXAMPLES::
 
@@ -2190,9 +2190,9 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``w`` -- The x coordinate of the box position.
+        - ``w`` -- the x coordinate of the box position
 
-        - ``h`` -- The y coordinate of the box position.
+        - ``h`` -- the y coordinate of the box position
 
         OUTPUT:
 
@@ -2288,7 +2288,7 @@ class ParallelogramPolyomino(ClonableList,
 
         def __init__(self, polyomino, row):
             r"""
-            The constructor of the class
+            The constructor of the class.
 
             EXAMPLES::
 
@@ -3052,12 +3052,12 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``box_position`` -- the position of the statring cell.
+        - ``box_position`` -- the position of the statring cell
 
-        - ``direction`` -- the direction (0 or 1).
+        - ``direction`` -- the direction (0 or 1)
 
         - ``nb_crossed_nodes`` -- ``[0]`` (default) a list containing just one
-          integer.
+          integer
 
         OUTPUT: a [row,column] position of the cell
 
@@ -3126,7 +3126,7 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``pos`` -- the [x,y] coordinate of the box.
+        - ``pos`` -- the [x,y] coordinate of the box
 
         OUTPUT: boolean
 
@@ -3164,7 +3164,7 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``box`` -- the x,y coordinate of the cell.
+        - ``box`` -- the x,y coordinate of the cell
 
         EXAMPLES::
 
@@ -3198,9 +3198,9 @@ class ParallelogramPolyomino(ClonableList,
         INPUT:
 
         - ``box`` -- the x,y coordinate of the starting point of the bounding
-                     path.
+          path
         - ``direction`` -- the initial direction of the bounding path (1 or 0,
-                           1 for left and 0 for top).
+          1 for left and 0 for top).
 
         EXAMPLES::
 
@@ -3280,9 +3280,9 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``line`` -- the x coordinate of the line.
+        - ``line`` -- the x coordinate of the line
 
-        OUTPUT: a list of integers
+        OUTPUT: list of integers
 
         EXAMPLES::
 
@@ -3339,9 +3339,9 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``column`` -- the y coordinate of the column.
+        - ``column`` -- the y coordinate of the column
 
-        OUTPUT: a list of integers
+        OUTPUT: list of integers
 
         EXAMPLES::
 
@@ -3458,7 +3458,7 @@ class ParallelogramPolyomino(ClonableList,
         the Boussicault-Socci bijection between parallelogram polyominoes
         and pair of ordered trees.
 
-        OUTPUT: a list of [row,column] position of cells
+        OUTPUT: list of [row,column] position of cells
 
         EXAMPLES::
 
@@ -3656,7 +3656,7 @@ class ParallelogramPolyomino(ClonableList,
 
     def _plot_diagram(self):
         r"""
-        Return a plot of the diagram representing ``self``
+        Return a plot of the diagram representing ``self``.
 
         TESTS::
 
@@ -3969,7 +3969,7 @@ class ParallelogramPolyominoesFactory(SetFactory):
 
         INPUT:
 
-        - ``size`` -- integer (default: ``None``), the size of the parallelogram
+        - ``size`` -- integer (default: ``None``); the size of the parallelogram
                       polyominoes contained in the family.
                       If set to ``None``, the family returned contains all
                       the parallelogram polyominoes.

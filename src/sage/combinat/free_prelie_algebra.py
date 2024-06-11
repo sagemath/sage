@@ -289,7 +289,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -337,7 +337,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
 
         INPUT:
 
-        - `R` -- a ring
+        - ``R`` -- a ring
 
         EXAMPLES::
 
@@ -1048,8 +1048,8 @@ def tree_from_sortkey(ch, labels=True):
 
     INPUT:
 
-    - ``ch`` -- a list of pairs ``(integer, label)``
-    - ``labels`` -- (default ``True``) whether to use labelled trees
+    - ``ch`` -- list of pairs ``(integer, label)``
+    - ``labels`` -- boolean (default: ``True``); whether to use labelled trees
 
     OUTPUT:
 
@@ -1101,7 +1101,7 @@ def corolla_gen(tx, list_ty, labels=True):
     INPUT:
 
     - ``tx`` -- a tree
-    - ``list_ty`` -- a list of trees
+    - ``list_ty`` -- list of trees
 
     EXAMPLES::
 

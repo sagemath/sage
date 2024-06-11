@@ -81,7 +81,7 @@ class ShuffleProduct_abstract(Parent):
 
             sage: from sage.combinat.shuffle import ShuffleProduct
             sage: SP = ShuffleProduct([1,2],[4,5,7,8,9])
-            sage: TestSuite(SP).run(skip="_test_an_element")
+            sage: TestSuite(SP).run(skip='_test_an_element')
         """
         self._l1 = l1
         self._l2 = l2
@@ -140,7 +140,7 @@ class ShuffleProduct_abstract(Parent):
 
     def __ne__(self, other):
         """
-        Test for unequality
+        Test for unequality.
 
         EXAMPLES::
 
@@ -213,7 +213,7 @@ class SetShuffleProduct(ShuffleProduct_abstract):
             sage: X = SetShuffleProduct({(1,2,3), (2,3,4)}, {(5,)})
             sage: X   # random
             Shuffle set product of: [(2, 3, 4), (1, 2, 3)] and [(5,)]
-            sage: TestSuite(X).run(skip="_test_an_element")
+            sage: TestSuite(X).run(skip='_test_an_element')
 
             sage: list(SetShuffleProduct({(1,2,3), (2,3,4)}, {(5,)}))   # random
             [[2, 3, 4, 5], [2, 5, 3, 4], [5, 2, 3, 4], [2, 3, 5, 4],
@@ -353,7 +353,7 @@ class ShuffleProduct(ShuffleProduct_abstract):
             sage: SP = ShuffleProduct([1,2,3],[4,5])
             sage: SP
             Shuffle product of: [1, 2, 3] and [4, 5]
-            sage: TestSuite(SP).run(skip="_test_an_element")
+            sage: TestSuite(SP).run(skip='_test_an_element')
 
             sage: list(ShuffleProduct(Word("aa"), Word("bbb"), Word))
             [word: aabbb, word: baabb, word: ababb, word: bbaab, word: babab, word: abbab,
@@ -567,7 +567,7 @@ class ShuffleProduct_overlapping_r(ShuffleProduct_abstract):
             sage: from sage.combinat.shuffle import ShuffleProduct_overlapping_r
             sage: w, u = map(Words(range(20)), [[2, 9], [9, 1]])
             sage: S = ShuffleProduct_overlapping_r(w,u,1)
-            sage: TestSuite(S).run(skip="_test_an_element")
+            sage: TestSuite(S).run(skip='_test_an_element')
         """
         self.r = r
         self.add = add
@@ -777,7 +777,7 @@ class ShuffleProduct_overlapping(ShuffleProduct_abstract):
             sage: from sage.combinat.shuffle import ShuffleProduct_overlapping
             sage: w, u = map(Words(range(20)), [[2, 9], [9, 1]])
             sage: S = ShuffleProduct_overlapping(w,u)
-            sage: TestSuite(S).run(skip="_test_an_element")
+            sage: TestSuite(S).run(skip='_test_an_element')
         """
         self._add = add
 

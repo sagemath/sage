@@ -1533,7 +1533,7 @@ class PrimedEntry(SageObject):
 
     def is_unprimed(self):
         """
-        Checks if ``self`` is an unprimed element.
+        Check if ``self`` is an unprimed element.
 
         TESTS::
 
@@ -1546,7 +1546,7 @@ class PrimedEntry(SageObject):
 
     def is_primed(self):
         """
-        Checks if ``self`` is a primed element.
+        Check if ``self`` is a primed element.
 
         TESTS::
 
@@ -1644,7 +1644,7 @@ class PrimedEntry(SageObject):
 
 class ShiftedPrimedTableaux(UniqueRepresentation, Parent):
     r"""
-    Returns the combinatorial class of shifted primed tableaux subject
+    Return the combinatorial class of shifted primed tableaux subject
     to the constraints given by the arguments.
 
     A primed tableau is a tableau of shifted shape on the alphabet
@@ -1869,9 +1869,7 @@ class ShiftedPrimedTableaux(UniqueRepresentation, Parent):
 
         - ``T`` -- data which can be interpreted as a primed tableau
 
-        OUTPUT:
-
-        - the corresponding primed tableau object
+        OUTPUT: the corresponding primed tableau object
 
         EXAMPLES::
 

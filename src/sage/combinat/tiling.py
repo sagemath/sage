@@ -861,7 +861,7 @@ class Polyomino(SageObject):
 
         INPUT:
 
-        - ``m`` -- square matrix, matching the dimension of ``self``.
+        - ``m`` -- square matrix, matching the dimension of ``self``
 
         OUTPUT: polyomino
 
@@ -980,7 +980,7 @@ class Polyomino(SageObject):
 
         INPUT:
 
-        - ``box`` -- Polyomino or tuple of integers (size of a box)
+        - ``box`` -- polyomino or tuple of integers (size of a box)
 
         OUTPUT: iterator of 3d polyominoes
 
@@ -1083,7 +1083,7 @@ class Polyomino(SageObject):
 
         INPUT:
 
-        - ``box`` -- Polyomino or tuple of integers (size of a box)
+        - ``box`` -- polyomino or tuple of integers (size of a box)
 
         OUTPUT: set of 3d polyominoes
 
@@ -1141,7 +1141,7 @@ class Polyomino(SageObject):
 
         INPUT:
 
-        - ``box`` -- Polyomino or tuple of integers (size of a box)
+        - ``box`` -- polyomino or tuple of integers (size of a box)
 
         - ``orientation_preserving`` -- boolean (default: ``True``);
           If ``True``, the group of isometries of the `n`-cube is restricted
@@ -1209,7 +1209,7 @@ class Polyomino(SageObject):
 
         INPUT:
 
-        - ``box`` -- Polyomino or tuple of integers (size of a box)
+        - ``box`` -- polyomino or tuple of integers (size of a box)
 
         - ``orientation_preserving`` -- boolean (default: ``True``);
           if ``True``, the group of isometries of the `n`-cube is restricted
@@ -1510,7 +1510,7 @@ class Polyomino(SageObject):
 #######################
 class TilingSolver(SageObject):
     r"""
-    Tiling solver
+    Tiling solver.
 
     Solve the problem of tiling a polyomino with a certain number
     of polyominoes.
@@ -1518,7 +1518,7 @@ class TilingSolver(SageObject):
     INPUT:
 
     - ``pieces`` -- iterable of Polyominoes
-    - ``box`` -- Polyomino or tuple of integers (size of a box)
+    - ``box`` -- polyomino or tuple of integers (size of a box)
     - ``rotation`` -- boolean (default: ``True``); whether to allow
       rotations
     - ``reflection`` -- boolean (default: ``False``); whether to allow
@@ -1610,7 +1610,7 @@ class TilingSolver(SageObject):
 
     def _repr_(self):
         r"""
-        String representation
+        String representation.
 
         EXAMPLES::
 
@@ -1783,7 +1783,7 @@ class TilingSolver(SageObject):
 
         INPUT:
 
-        - ``i`` -- integer, the `i`-th piece
+        - ``i`` -- integer; the `i`-th piece
 
         - ``mod_box_isometries`` -- boolean (default: ``False``); whether to
           consider only rows for positions up to the action of the
@@ -1857,7 +1857,7 @@ class TilingSolver(SageObject):
     @cached_method
     def rows(self):
         r"""
-        Creation of the rows
+        Creation of the rows.
 
         EXAMPLES::
 
@@ -1902,8 +1902,8 @@ class TilingSolver(SageObject):
 
         INPUT:
 
-        - ``i`` -- integer, the `i`-th piece to consider, that piece must not
-          be isometric to itself by a isometry that preserve the box.
+        - ``i`` -- integer; the `i`-th piece to consider, that piece must not
+          be isometric to itself by a isometry that preserve the box
 
         EXAMPLES::
 
@@ -2008,7 +2008,7 @@ class TilingSolver(SageObject):
 
         INPUT:
 
-        - ``row_number`` -- integer, the `i`-th row
+        - ``row_number`` -- integer; the `i`-th row
 
         OUTPUT: polyomino
 
@@ -2036,8 +2036,8 @@ class TilingSolver(SageObject):
         We check that issue :issue:`32252` is fixed and that colors of
         polyominoes are properly recovered::
 
-            sage: v = Polyomino([(0, 0), (0, 1)], color="blue")
-            sage: h = Polyomino([(0, 0), (1, 0)], color="red")
+            sage: v = Polyomino([(0, 0), (0, 1)], color='blue')
+            sage: h = Polyomino([(0, 0), (1, 0)], color='red')
             sage: T = TilingSolver(pieces=[v, h], box=(2, 2),
             ....:                  rotation=False, reflection=False, reusable=True)
             sage: for i in range(4): print(i,T.row_to_polyomino(i))
@@ -2369,7 +2369,7 @@ class TilingSolver(SageObject):
           - ``'common_prefix'`` -- common prefix between two consecutive solutions
           - ``'incremental'`` -- one piece change at a time
 
-        - ``stop`` -- integer (default:``None``), number of frames
+        - ``stop`` -- integer (default: ``None``); number of frames
 
         - ``size`` -- number (default: ``0.75``); the size of each
           ``1 \times 1`` square. This does a homothety with respect
@@ -2406,7 +2406,7 @@ class TilingSolver(SageObject):
 
         The ``show`` function takes arguments to specify the delay between
         frames (measured in hundredths of a second, default value 20) and
-        the number of iterations (default value 0, which means to iterate
+        the number of iterations (default: 0, which means to iterate
         forever). To iterate 4 times with half a second between each frame::
 
             sage: a.show(delay=50, iterations=4)        # long time, optional - imagemagick, needs sage.plot

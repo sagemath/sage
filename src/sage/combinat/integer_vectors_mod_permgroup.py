@@ -417,7 +417,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, RecursivelyEnu
 
     def roots(self):
         r"""
-        Returns the root of generation of ``self``. This method is
+        Return the root of generation of ``self``. This method is
         required to build the tree structure of ``self`` which
         inherits from the class :class:`~sage.sets.recursively_enumerated_set.RecursivelyEnumeratedSet_forest`.
 
@@ -431,7 +431,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, RecursivelyEnu
 
     def children(self, x):
         r"""
-        Returns the list of children of the element ``x``. This method
+        Return the list of children of the element ``x``. This method
         is required to build the tree structure of ``self`` which
         inherits from the class :class:`~sage.sets.recursively_enumerated_set.RecursivelyEnumeratedSet_forest`.
 
@@ -445,7 +445,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, RecursivelyEnu
 
     def permutation_group(self):
         r"""
-        Returns the permutation group given to define ``self``.
+        Return the permutation group given to define ``self``.
 
         EXAMPLES::
 
@@ -457,7 +457,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, RecursivelyEnu
 
     def is_canonical(self, v, check=True):
         r"""
-        Returns ``True`` if the integer list ``v`` is maximal in its
+        Return ``True`` if the integer list ``v`` is maximal in its
         orbit under the action of the permutation group given to
         define ``self``.  Such integer vectors are said to be
         canonical. A vector `v` is canonical if and only if
@@ -508,7 +508,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, RecursivelyEnu
 
     def __call__(self, v, check=True):
         r"""
-        Returns an element of ``self`` constructed from ``v`` if
+        Return an element of ``self`` constructed from ``v`` if
         possible.
 
         TESTS::
@@ -527,7 +527,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, RecursivelyEnu
 
     def orbit(self, v):
         r"""
-        Returns the orbit of the integer vector ``v`` under the action of the
+        Return the orbit of the integer vector ``v`` under the action of the
         permutation group defining ``self``. The result is a set.
 
         EXAMPLES:
@@ -557,7 +557,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, RecursivelyEnu
 
     def subset(self, sum=None, max_part=None):
         r"""
-        Returns the subset of ``self`` containing integer vectors
+        Return the subset of ``self`` containing integer vectors
         whose entries sum to ``sum``.
 
         EXAMPLES::
@@ -591,7 +591,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, RecursivelyEnu
 
         def check(self):
             r"""
-            Checks that ``self`` verify the invariants needed for
+            Check that ``self`` verify the invariants needed for
             living in ``self.parent()``.
 
             EXAMPLES::
@@ -1178,7 +1178,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
         INPUT:
 
         - ``v`` -- an element of ``self`` or any list of length the
-          degree of the permutation group.
+          degree of the permutation group
 
         EXAMPLES:
 

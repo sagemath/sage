@@ -170,7 +170,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
 
     def cardinality(self):
         r"""
-        Returns the number of elements in the Cartesian product of
+        Return the number of elements in the Cartesian product of
         everything in \*iters.
 
         EXAMPLES::
@@ -225,7 +225,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
 
     def list(self):
         """
-        Returns
+        Return.
 
         EXAMPLES::
 

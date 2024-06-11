@@ -47,7 +47,7 @@ class AffinePermutation(ClonableArray):
 
     def __init__(self, parent, lst, check=True):
         r"""
-        Initialize ``self``
+        Initialize ``self``.
 
         INPUT:
 
@@ -297,7 +297,7 @@ class AffinePermutation(ClonableArray):
 
     def reduced_word(self):
         r"""
-        Returns a reduced word for the affine permutation.
+        Return a reduced word for the affine permutation.
 
         EXAMPLES::
 
@@ -936,7 +936,7 @@ class AffinePermutationTypeA(AffinePermutation):
 
     def to_core(self, typ='decreasing', side='right'):
         r"""
-        Returns the core associated to the dominant element obtained by sorting
+        Return the core associated to the dominant element obtained by sorting
         the Lehmer code.
 
         INPUT:
@@ -2067,7 +2067,7 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
 
     def weyl_group(self):
         r"""
-        Returns the Weyl Group of the same type as ``self``.
+        Return the Weyl Group of the same type as ``self``.
 
         EXAMPLES::
 
@@ -2079,7 +2079,7 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
 
     def classical(self):
         r"""
-        Returns the finite permutation group.
+        Return the finite permutation group.
 
         EXAMPLES::
 
@@ -2093,7 +2093,7 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
 
     def cartan_type(self):
         r"""
-        Returns the Cartan type of ``self``.
+        Return the Cartan type of ``self``.
 
         EXAMPLES::
 
@@ -2104,7 +2104,7 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
 
     def cartan_matrix(self):
         r"""
-        Returns the Cartan matrix of ``self``.
+        Return the Cartan matrix of ``self``.
 
         EXAMPLES::
 
@@ -2192,7 +2192,7 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
 
     def from_word(self, w):
         r"""
-        Builds an affine permutation from a given word.
+        Build an affine permutation from a given word.
         Note: Already in category as ``from_reduced_word``, but this is less
         typing!
 
@@ -2208,7 +2208,7 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
     @cached_method
     def _an_element_(self):
         r"""
-        Returns a Coxeter element.
+        Return a Coxeter element.
 
         EXAMPLES::
 

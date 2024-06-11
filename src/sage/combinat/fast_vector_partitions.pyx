@@ -290,7 +290,7 @@ def fast_vector_partitions(v, min_vals=None):
     - ``min_vals`` -- optional list of nonnegative integers, of same
       length as ``v``
 
-    OUTPUT: a list of lists, each representing a vector partition of ``v``
+    OUTPUT: list of lists, each representing a vector partition of ``v``
 
     If ``min_vals`` is given, only partitions with parts ``p >= min_vals`` in
     the lexicographic ordering will appear.

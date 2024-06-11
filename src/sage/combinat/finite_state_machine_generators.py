@@ -359,16 +359,14 @@ class TransducerGenerators:
 
     def Identity(self, input_alphabet):
         """
-        Returns the identity transducer realizing the identity map.
+        Return the identity transducer realizing the identity map.
 
         INPUT:
 
         - ``input_alphabet`` -- list or other iterable
 
-        OUTPUT:
-
-        A transducer mapping each word over ``input_alphabet`` to
-        itself.
+        OUTPUT: a transducer mapping each word over ``input_alphabet`` to
+        itself
 
         EXAMPLES::
 
@@ -397,7 +395,7 @@ class TransducerGenerators:
 
     def CountSubblockOccurrences(self, block, input_alphabet):
         r"""
-        Returns a transducer counting the number of (possibly
+        Return a transducer counting the number of (possibly
         overlapping) occurrences of a block in the input.
 
         INPUT:
@@ -605,7 +603,7 @@ class TransducerGenerators:
 
     def operator(self, operator, input_alphabet, number_of_operands=2):
         r"""
-        Returns a transducer which realizes an operation
+        Return a transducer which realizes an operation
         on tuples over the given input alphabet.
 
         INPUT:
@@ -687,7 +685,7 @@ class TransducerGenerators:
 
     def all(self, input_alphabet, number_of_operands=2):
         r"""
-        Returns a transducer which realizes logical ``and`` over the given
+        Return a transducer which realizes logical ``and`` over the given
         input alphabet.
 
         INPUT:
@@ -738,7 +736,7 @@ class TransducerGenerators:
 
     def any(self, input_alphabet, number_of_operands=2):
         r"""
-        Returns a transducer which realizes logical ``or`` over the given
+        Return a transducer which realizes logical ``or`` over the given
         input alphabet.
 
         INPUT:
@@ -789,7 +787,7 @@ class TransducerGenerators:
 
     def add(self, input_alphabet, number_of_operands=2):
         r"""
-        Returns a transducer which realizes addition on pairs over the
+        Return a transducer which realizes addition on pairs over the
         given input alphabet.
 
         INPUT:
@@ -843,7 +841,7 @@ class TransducerGenerators:
 
     def sub(self, input_alphabet):
         r"""
-        Returns a transducer which realizes subtraction on pairs over
+        Return a transducer which realizes subtraction on pairs over
         the given input alphabet.
 
         INPUT:
@@ -882,7 +880,7 @@ class TransducerGenerators:
 
     def weight(self, input_alphabet, zero=0):
         r"""
-        Returns a transducer which realizes the Hamming weight of the input
+        Return a transducer which realizes the Hamming weight of the input
         over the given input alphabet.
 
         INPUT:
@@ -948,7 +946,7 @@ class TransducerGenerators:
 
     def abs(self, input_alphabet):
         r"""
-        Returns a transducer which realizes the letter-wise
+        Return a transducer which realizes the letter-wise
         absolute value of an input word over the given input alphabet.
 
         INPUT:
@@ -982,7 +980,7 @@ class TransducerGenerators:
 
     def GrayCode(self):
         """
-        Returns a transducer converting the standard binary
+        Return a transducer converting the standard binary
         expansion to Gray code.
 
         INPUT:

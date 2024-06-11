@@ -1027,7 +1027,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - `n` -- integer; the size of the matrices
+    - ``n`` -- integer; the size of the matrices
 
     EXAMPLES:
 

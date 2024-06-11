@@ -51,7 +51,7 @@ lazy_import("sage.combinat.partition", "Partition")
 
 class Composition(CombinatorialElement):
     r"""
-    Integer compositions
+    Integer compositions.
 
     A composition of a nonnegative integer `n` is a list
     `(i_1, \ldots, i_k)` of positive integers with total sum `n`.
@@ -1136,7 +1136,7 @@ class Composition(CombinatorialElement):
 
         INPUT:
 
-        - ``final_descent`` -- (Default: ``False``) a boolean integer
+        - ``final_descent`` -- boolean (default: ``False``)
 
         OUTPUT:
 

@@ -128,15 +128,13 @@ def replace_dyck_symbol(x, open_char='N', close_char='E') -> str:
 
     INPUT:
 
-    - ``x`` -- either ``ndw_open_symbol`` or ``ndw_close_symbol``.
+    - ``x`` -- either ``ndw_open_symbol`` or ``ndw_close_symbol``
 
-    - ``open_char`` -- str (optional) default ``'N'``
+    - ``open_char`` -- string (optional) default ``'N'``
 
-    - ``close_char`` -- str (optional) default ``'E'``
+    - ``close_char`` -- string (optional) default ``'E'``
 
-    OUTPUT:
-
-    - If ``x`` is ``ndw_open_symbol``, replace ``x`` with ``open_char``.
+    OUTPUT: if ``x`` is ``ndw_open_symbol``, replace ``x`` with ``open_char``
 
     - If ``x`` is ``ndw_close_symbol``, replace ``x`` with ``close_char``.
 
@@ -178,9 +176,9 @@ class NuDyckWord(CombinatorialElement):
 
     INPUT:
 
-    - k1 -- A path for the `\nu`-Dyck word
+    - ``k1`` -- a path for the `\nu`-Dyck word
 
-    - k2 -- A path for `\nu`
+    - ``k2`` -- a path for `\nu`
 
     EXAMPLES::
 
@@ -332,7 +330,7 @@ class NuDyckWord(CombinatorialElement):
 
     def __lt__(self, other):
         """
-        Return if one path is strictly included in another
+        Return if one path is strictly included in another.
 
         EXAMPLES::
 
@@ -354,7 +352,7 @@ class NuDyckWord(CombinatorialElement):
 
     def __ge__(self, other):
         """
-        Return if one path is included in another
+        Return if one path is included in another.
 
         EXAMPLES::
 
@@ -378,7 +376,7 @@ class NuDyckWord(CombinatorialElement):
 
     def __gt__(self, other):
         """
-        Return if one path is strictly included in another
+        Return if one path is strictly included in another.
 
         EXAMPLES::
 
@@ -1140,7 +1138,7 @@ class NuDyckWords(Parent):
 
     INPUT:
 
-    - ``nu`` -- the base lattice path.
+    - ``nu`` -- the base lattice path
 
     EXAMPLES::
 
@@ -1402,9 +1400,7 @@ def to_word_path(word):
 
     - ``word`` -- word to convert to wordpath
 
-    OUTPUT:
-
-    - A ``FiniteWordPath_north_east`` object.
+    OUTPUT: a ``FiniteWordPath_north_east`` object
 
     EXAMPLES::
 
@@ -1447,9 +1443,9 @@ def path_weakly_above_other(path, other) -> bool:
 
     INPUT:
 
-    - ``path`` -- The path to verify is weakly above the other path.
+    - ``path`` -- the path to verify is weakly above the other path
 
-    - ``other`` -- The other path to verify is weakly below the path.
+    - ``other`` -- the other path to verify is weakly below the path
 
     OUTPUT: bool
 

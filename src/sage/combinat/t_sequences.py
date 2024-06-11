@@ -58,7 +58,7 @@ def _nonperiodic_autocorrelation(sequences, j):
     - ``sequences`` -- either a single sequence or a list of sequences for
       which we want to compute the nonperiodic autocorrelation
 
-    - ``j`` -- integer, the parameter `j` used when calculating the nonperiodic
+    - ``j`` -- integer; the parameter `j` used when calculating the nonperiodic
       autocorrelation
     """
     if not isinstance(sequences[0], list):
@@ -81,10 +81,10 @@ def is_skew(seq, verbose=False):
 
     INPUT:
 
-    - ``seq`` -- the sequence that should be checked.
+    - ``seq`` -- the sequence that should be checked
 
-    - ``verbose`` -- a boolean (default false). If true the function will be verbose
-      when the sequences do not satisfy the contraints.
+    - ``verbose`` -- boolean (default: ``False``); if ``True`` the function
+      will be verbose when the sequences do not satisfy the contraints
 
     EXAMPLES::
 
@@ -127,10 +127,10 @@ def is_symmetric(seq, verbose=False) -> bool:
 
     INPUT:
 
-    - ``seq`` -- the sequence that should be checked.
+    - ``seq`` -- the sequence that should be checked
 
-    - ``verbose`` -- a boolean (default false). If true the function will be verbose
-      when the sequences do not satisfy the contraints.
+    - ``verbose`` -- boolean (default: ``False``); if true the function will be
+      verbose when the sequences do not satisfy the contraints.
 
     EXAMPLES::
 
@@ -177,10 +177,10 @@ def is_T_sequences_set(sequences, verbose=False):
 
     INPUT:
 
-    - ``sequences`` -- a list of four sequences.
+    - ``sequences`` -- list of four sequences
 
-    - ``verbose`` -- a boolean (default false). If true the function will be verbose
-      when the sequences do not satisfy the contraints.
+    - ``verbose`` -- boolean (default: ``False``); if true the function will be
+      verbose when the sequences do not satisfy the contraints
 
     EXAMPLES::
 
@@ -249,10 +249,10 @@ def turyn_sequences_smallcases(l, existence=False):
 
     INPUT:
 
-    - ``l`` -- integer, the length of the Turyn sequences.
+    - ``l`` -- integer; the length of the Turyn sequences
 
-    - ``existence`` -- boolean (default: ``False``). If true, only return whether the
-      Turyn sequences are available for the given length.
+    - ``existence`` -- boolean (default: ``False``); if true, only return
+      whether the Turyn sequences are available for the given length
 
     EXAMPLES:
 
@@ -579,13 +579,13 @@ def base_sequences_construction(turyn_type_seqs, check=True):
 
     INPUT:
 
-    - ``turyn_type_seqs`` -- The list of 4 Turyn type sequences that should be
-      used to construct the base sequences.
+    - ``turyn_type_seqs`` -- the list of 4 Turyn type sequences that should be
+      used to construct the base sequences
 
     - ``check`` -- boolean (default: ``True``); check that the resulting
       sequences are base sequences before returning them
 
-    OUTPUT: a list containing the four base sequences
+    OUTPUT: list containing the four base sequences
 
     EXAMPLES::
 
@@ -640,10 +640,10 @@ def is_base_sequences_tuple(base_sequences, verbose=False):
 
     INPUT:
 
-    - ``base_sequences`` -- The list of 4 sequences that should be checked.
+    - ``base_sequences`` -- the list of 4 sequences that should be checked
 
-    - ``verbose`` -- a boolean (default false). If true the function will be verbose
-      when the sequences do not satisfy the contraints.
+    - ``verbose`` -- boolean (default: ``False``); if ``True`` the function
+      will be verbose when the sequences do not satisfy the contraints
 
     EXAMPLES::
 
@@ -715,10 +715,10 @@ def turyn_type_sequences_smallcases(n, existence=False):
 
     INPUT:
 
-    - ``n`` -- integer, the length of the Turyn type sequences.
+    - ``n`` -- integer; the length of the Turyn type sequences
 
-    - ``existence`` -- boolean (default: ``False``). If true, only return whether the
-      Turyn type sequences are available for the given length.
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only return
+      whether the Turyn type sequences are available for the given length
 
     EXAMPLES:
 
@@ -812,9 +812,9 @@ def base_sequences_smallcases(n, p, existence=False, check=True):
 
     INPUT:
 
-    - ``n`` -- integer, the length of the last two base sequences
+    - ``n`` -- integer; the length of the last two base sequences
 
-    - ``p`` -- integer, `n+p` will be the length of the first two base
+    - ``p`` -- integer; `n+p` will be the length of the first two base
       sequences
 
     - ``existence`` -- boolean (default: ``False``); if ``True``, the function

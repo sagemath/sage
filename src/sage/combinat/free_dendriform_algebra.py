@@ -224,11 +224,11 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
 
     def gen(self, i):
         r"""
-        Return the ``i``-th generator of the algebra.
+        Return the `i`-th generator of the algebra.
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 

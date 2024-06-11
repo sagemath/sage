@@ -297,7 +297,7 @@ class PerfectMatching(SetPartition):
 
         INPUT:
 
-        - ``other`` -- a perfect matching of the same set of ``self``.
+        - ``other`` -- a perfect matching of the same set of ``self``
           (if the second argument is empty, the method :meth:`an_element` is
           called on the parent of the first)
 
@@ -346,7 +346,7 @@ class PerfectMatching(SetPartition):
 
         INPUT:
 
-        - ``other`` -- a perfect matching of the same set of ``self``.
+        - ``other`` -- a perfect matching of the same set of ``self``
           (if the second argument is empty, the method :meth:`an_element` is
           called on the parent of the first)
 
@@ -395,7 +395,7 @@ class PerfectMatching(SetPartition):
 
         INPUT:
 
-        - ``other`` -- a perfect matching of the same set of ``self``.
+        - ``other`` -- a perfect matching of the same set of ``self``
           (if the second argument is empty, the method :meth:`an_element` is
           called on the parent of the first)
 
@@ -428,7 +428,7 @@ class PerfectMatching(SetPartition):
 
         INPUT:
 
-        - ``other`` -- a perfect matching of the same set of ``self``.
+        - ``other`` -- a perfect matching of the same set of ``self``
           (if the second argument is empty, the method :meth:`an_element` is
           called on the parent of the first)
 

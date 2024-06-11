@@ -27,7 +27,7 @@ A guided tour
 
 Growth diagrams, invented by Sergey Fomin [Fom1994]_, [Fom1995]_,
 provide a vast generalization of the Robinson-Schensted-Knuth (RSK)
-correspondence between matrices with non-negative integer entries and
+correspondence between matrices with nonnegative integer entries and
 pairs of semistandard Young tableaux of the same shape.
 
 The main fact is that many correspondences similar to RSK can be
@@ -127,7 +127,7 @@ Invocation
 
 In general, growth diagrams are defined for `0-1`-fillings of
 arbitrary skew shapes.  In the case of the Robinson-Schensted-Knuth
-correspondence, even arbitrary non-negative integers are allowed.  In
+correspondence, even arbitrary nonnegative integers are allowed.  In
 other cases, entries may be either zero or an `r`-th root of unity -
 for example, :class:`~sage.combinat.growth.RuleDomino` insertion is
 defined for signed permutations, that is, `r=2`.  Traditionally, words
@@ -138,7 +138,7 @@ The most general possibility is to pass a dictionary of coordinates
 to (signed) entries, where zeros can be omitted.  In this case, when
 the parameter ``shape`` is not explicitly specified, it is assumed
 to be the minimal rectangle containing the origin and all coordinates
-with non-zero entries.
+with nonzero entries.
 
 For example, consider the following generalized permutation::
 
@@ -183,8 +183,8 @@ As an important example, consider the Stanley-Sundaram correspondence
 between oscillating tableaux and (partial) perfect matchings.
 Perfect matchings of `\{1, \ldots, 2r\}` are in bijection with
 `0-1`-fillings of a triangular shape with `2r-1` rows, such that for
-each `k` there is either exactly one non-zero entry in row `k` or
-exactly one non-zero entry in column `2r-k`.  Explicitly, if `(i,j)`
+each `k` there is either exactly one nonzero entry in row `k` or
+exactly one nonzero entry in column `2r-k`.  Explicitly, if `(i,j)`
 is a pair in the perfect matching, the entry in column `i-1` and row
 `2r-j` equals `1`.  For example::
 
@@ -339,7 +339,7 @@ graded graphs, it is supported by our framework.
 
 For illustration, let us implement a growth diagram class with the
 backward rule only.  Suppose that the vertices of the graph are the
-non-negative integers, the rank is given by the integer itself, and
+nonnegative integers, the rank is given by the integer itself, and
 the backward rule is `(y, z, x) \mapsto (\min(x,y), 0)` if `y = z`
 or `x = z` and `(y, z, x) \mapsto (\min(x,y), 1)` otherwise.
 
@@ -517,7 +517,7 @@ class GrowthDiagram(SageObject):
     Growth diagrams were introduced by Sergey Fomin [Fom1994]_,
     [Fom1995]_ and provide a vast generalization of the
     Robinson-Schensted-Knuth (RSK) correspondence between matrices
-    with non-negative integer entries and pairs of semistandard Young
+    with nonnegative integer entries and pairs of semistandard Young
     tableaux of the same shape.
 
     A growth diagram is based on the notion of *dual graded graphs*,
@@ -1051,7 +1051,7 @@ class GrowthDiagram(SageObject):
                 w2.extend([j+1]*v)
             else:
                 raise ValueError("can only convert fillings with"
-                                 " non-negative entries to words")
+                                 " nonnegative entries to words")
         return (w1, w2)
 
     def __iter__(self):
@@ -1636,12 +1636,12 @@ class Rule(UniqueRepresentation):
     Subclasses may provide the following methods:
 
     - ``normalize_vertex`` -- a function that converts its input to a
-      vertex.
+      vertex
 
-    - ``vertices`` -- a function that takes a non-negative integer
-      as input and returns the list of vertices on this rank.
+    - ``vertices`` -- a function that takes a nonnegative integer
+      as input and returns the list of vertices on this rank
 
-    - ``rank`` -- the rank function of the dual graded graphs.
+    - ``rank`` -- the rank function of the dual graded graphs
 
     - ``forward_rule`` -- a function with input ``(y, t, x,
       content)`` or ``(y, e, t, f, x, content)`` if
@@ -3706,7 +3706,7 @@ class RuleRSK(RulePartitions):
         Partitions of the integer 3
 
     The local rules implemented provide the RSK correspondence
-    between matrices with non-negative integer entries and pairs of
+    between matrices with nonnegative integer entries and pairs of
     semistandard tableaux, the
     :meth:`~sage.combinat.growth.RulePartitions.P_symbol` and the
     :meth:`~sage.combinat.growth.RulePartitions.Q_symbol`.  For
@@ -3766,7 +3766,7 @@ class RuleRSK(RulePartitions):
               t x
               y
 
-        - ``content`` -- a non-negative integer; the content of the cell
+        - ``content`` -- nonnegative integer; the content of the cell
 
         OUTPUT:
 
@@ -3871,7 +3871,7 @@ class RuleBurge(RulePartitions):
         Partitions of the integer 3
 
     The local rules implemented provide Burge's correspondence
-    between matrices with non-negative integer entries and pairs of
+    between matrices with nonnegative integer entries and pairs of
     semistandard tableaux, the
     :meth:`~sage.combinat.growth.RulePartitions.P_symbol` and the
     :meth:`~sage.combinat.growth.RulePartitions.Q_symbol`.  For
@@ -3918,7 +3918,7 @@ class RuleBurge(RulePartitions):
               t x
               y
 
-        - ``content`` -- a non-negative integer; the content of the cell
+        - ``content`` -- nonnegative integer; the content of the cell
 
         OUTPUT: the fourth partition according to the Burge correspondence
 

@@ -580,7 +580,7 @@ class CompositionTableaux_size(CompositionTableaux):
 
     def __init__(self, n, max_entry=None):
         r"""
-        Initializes the class of composition tableaux of size ``n``.
+        Initialize the class of composition tableaux of size `n`.
 
         TESTS::
 

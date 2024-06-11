@@ -460,10 +460,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         ``lucky_cars(PF) = [1, 2, 7]`` means that cars 1, 2 and 7 parked in
         their preferred spots and all the other cars did not.
 
-
-        OUTPUT:
-
-        - the cars that can park in their preferred spots
+        OUTPUT: the cars that can park in their preferred spots
 
         EXAMPLES::
 
@@ -488,9 +485,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         Return the number of cars that parked in their preferred parking spots
         (see [Shin]_ p. 33).
 
-        OUTPUT:
-
-        - the number of cars that parked in their preferred parking spots
+        OUTPUT: the number of cars that parked in their preferred parking spots
 
         EXAMPLES::
 
@@ -574,9 +569,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         Return the descent inversion pairs of a labelled Dyck path
         corresponding to the parking function.
 
-        OUTPUT:
-
-        - the primary and secondary diversion pairs
+        OUTPUT: the primary and secondary diversion pairs
 
         EXAMPLES::
 
@@ -602,9 +595,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
 
         Same as the cardinality of :meth:`dinversion_pairs`.
 
-        OUTPUT:
-
-        - the number of dinversion pairs
+        OUTPUT: the number of dinversion pairs
 
         EXAMPLES::
 
@@ -793,9 +784,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         r"""
         Return the labelling of the support Dyck path of the parking function.
 
-        OUTPUT:
-
-        - the labelling of the Dyck path
+        OUTPUT: the labelling of the Dyck path
 
         EXAMPLES::
 
@@ -820,9 +809,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         Return the area sequence of the support Dyck path of the
         parking function.
 
-        OUTPUT:
-
-        - the area sequence of the Dyck path
+        OUTPUT: the area sequence of the Dyck path
 
         EXAMPLES::
 
@@ -877,9 +864,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         r"""
         Return the support Dyck word of the parking function.
 
-        OUTPUT:
-
-        - the Dyck word of the corresponding parking function
+        OUTPUT: the Dyck word of the corresponding parking function
 
         .. SEEALSO:: :meth:`DyckWord`
 
@@ -970,9 +955,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         Return the non-decreasing parking function which underlies the
         parking function.
 
-        OUTPUT:
-
-        - a sorted parking function
+        OUTPUT: a sorted parking function
 
         .. SEEALSO:: :meth:`NonDecreasingParkingFunction`
 
@@ -1014,9 +997,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         - ``R`` -- (default: ``R = QQ['q','t'].fraction_field()``) the
           base ring to do the calculations over
 
-        OUTPUT:
-
-        - an element of the quasisymmetric functions over the ring ``R``
+        OUTPUT: an element of the quasisymmetric functions over the ring ``R``
 
         EXAMPLES::
 
@@ -1328,7 +1309,7 @@ class ParkingFunctions(UniqueRepresentation, Parent):
             return ParkingFunctions_all()
 
         if not isinstance(n, (Integer, int)) or n < 0:
-            raise ValueError("%s is not a non-negative integer" % n)
+            raise ValueError("%s is not a nonnegative integer" % n)
         return ParkingFunctions_n(n)
 
 

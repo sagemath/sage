@@ -199,7 +199,7 @@ def bell_number(n, algorithm='flint', **options) -> Integer:
 
     - ``n`` -- a positive integer
 
-    - ``algorithm`` -- (Default: ``'flint'``) any one of the following:
+    - ``algorithm`` -- (default: ``'flint'``) any one of the following:
 
       - ``'dobinski'`` -- use Dobinski's formula implemented in Sage
 
@@ -863,7 +863,7 @@ def stirling_number1(n, k, algorithm='gap') -> Integer:
     - ``k`` -- nonnegative machine-size integer
     - ``algorithm``:
 
-      * ``'gap'`` (default) -- use GAP's ``Stirling1`` function
+      * ``'gap'`` -- default; use GAP's ``Stirling1`` function
       * ``'flint'`` -- use flint's ``arith_stirling_number_1u`` function
 
     EXAMPLES::
@@ -917,7 +917,7 @@ def stirling_number2(n, k, algorithm=None) -> Integer:
     -  ``k`` -- nonnegative machine-size integer
     - ``algorithm``:
 
-      * ``None`` (default) -- use native implementation
+      * ``None`` -- default; use native implementation
       * ``'flint'`` -- use flint's ``arith_stirling_number_2`` function
       * ``'gap'`` -- use GAP's ``Stirling2`` function
       * ``'maxima'`` -- use Maxima's ``stirling2`` function

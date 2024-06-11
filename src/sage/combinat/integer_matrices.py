@@ -1,8 +1,8 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Counting, generating, and manipulating non-negative integer matrices
+Counting, generating, and manipulating nonnegative integer matrices
 
-Counting, generating, and manipulating non-negative integer matrices with
+Counting, generating, and manipulating nonnegative integer matrices with
 prescribed row sums and column sums.
 
 AUTHORS:
@@ -26,7 +26,7 @@ from sage.rings.integer_ring import ZZ
 
 class IntegerMatrices(UniqueRepresentation, Parent):
     r"""
-    The class of non-negative integer matrices with
+    The class of nonnegative integer matrices with
     prescribed row sums and column sums.
 
     An *integer matrix* `m` with column sums `c := (c_1,...,c_k)` and row
@@ -231,9 +231,7 @@ class IntegerMatrices(UniqueRepresentation, Parent):
         r"""
         The row sums of the integer matrices in ``self``.
 
-        OUTPUT:
-
-        - Composition
+        OUTPUT: Composition
 
         EXAMPLES::
 
@@ -248,9 +246,7 @@ class IntegerMatrices(UniqueRepresentation, Parent):
         r"""
         The column sums of the integer matrices in ``self``.
 
-        OUTPUT:
-
-        - Composition
+        OUTPUT: Composition
 
         EXAMPLES::
 
@@ -306,9 +302,7 @@ def integer_matrices_generator(row_sums, column_sums):
     - ``row_sums`` -- list or tuple
     - ``column_sums`` -- list or tuple
 
-    OUTPUT:
-
-    - an iterator producing a list of lists
+    OUTPUT: an iterator producing a list of lists
 
     EXAMPLES::
 

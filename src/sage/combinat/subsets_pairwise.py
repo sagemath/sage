@@ -124,7 +124,7 @@ class PairwiseCompatibleSubsets(RecursivelyEnumeratedSet_forest):
 
     def __contains__(self, subset):
         """
-        Membership testing
+        Membership testing.
 
         Returns whether subset is a subset of ``self._ambient``, and
         ``predicate(x,y)`` holds for every ``x,y`` in ``self``.
@@ -163,7 +163,7 @@ class PairwiseCompatibleSubsets(RecursivelyEnumeratedSet_forest):
 
     def children(self, subset_rest):
         """
-        Returns the children of a node in the tree.
+        Return the children of a node in the tree.
 
         TESTS::
 

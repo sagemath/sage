@@ -1023,7 +1023,7 @@ def full_group_by(l, key=None):
 
 def equal(iterator):
     """
-    Checks whether all elements of ``iterator`` are equal.
+    Check whether all elements of ``iterator`` are equal.
 
     INPUT:
 
@@ -1136,7 +1136,7 @@ def FSMWordSymbol(word):
 
     - ``word`` -- the input word
 
-    OUTPUT: a string of ``word``
+    OUTPUT: string of ``word``
 
     EXAMPLES::
 
@@ -1191,7 +1191,7 @@ class FSMState(SageObject):
       the state is reached as the last state of some input; only for final
       states.
 
-    - ``initial_probability`` -- (default: ``None``) The probability of
+    - ``initial_probability`` -- (default: ``None``) the probability of
       starting in this state if it is a state of a Markov chain.
 
     - ``hook`` -- (default: ``None``) A function which is called when
@@ -1213,7 +1213,7 @@ class FSMState(SageObject):
       equivalent. Note that :meth:`Automaton.determinisation` requires
       that ``color`` is hashable.
 
-    - ``allow_label_None`` -- boolean (default: ``False``); If ``True`` allows
+    - ``allow_label_None`` -- boolean (default: ``False``); if ``True`` allows
       also ``None`` as label. Note that a state with label ``None`` is used in
       :class:`FSMProcessIterator`.
 
@@ -1429,7 +1429,7 @@ class FSMState(SageObject):
 
         INPUT:
 
-        - `other` -- a state
+        - ``other`` -- a state
 
         OUTPUT: boolean
 
@@ -2350,11 +2350,7 @@ class FSMTransition(SageObject):
         """
         Return the input and output of a transition as "word_in|word_out".
 
-        INPUT:
-
-        Nothing.
-
-        OUTPUT: a string of the input and output labels
+        OUTPUT: string of the input and output labels
 
         EXAMPLES::
 
@@ -3352,7 +3348,7 @@ class FiniteStateMachine(SageObject):
 
         INPUT:
 
-        - `d` -- a dictionary
+        - ``d`` -- a dictionary
 
         OUTPUT: none
 
@@ -3979,7 +3975,7 @@ class FiniteStateMachine(SageObject):
 
     def is_Markov_chain(self, is_zero=None):
         """
-        Checks whether ``self`` is a Markov chain where the transition
+        Check whether ``self`` is a Markov chain where the transition
         probabilities are modeled as input labels.
 
         INPUT:
@@ -5123,7 +5119,7 @@ class FiniteStateMachine(SageObject):
 
         INPUT:
 
-        - ``reset`` -- boolean (default: ``True``); If ``True``, then
+        - ``reset`` -- boolean (default: ``True``); if ``True``, then
           the existing output alphabet is erased, otherwise new letters are
           appended to the existing alphabet.
 
@@ -5249,7 +5245,7 @@ class FiniteStateMachine(SageObject):
         - ``from_state`` -- (default: ``None``) If ``from_state`` is
           given, then a list of transitions starting there is given.
 
-        OUTPUT: a list of all transitions
+        OUTPUT: list of all transitions
 
         EXAMPLES::
 
@@ -5309,8 +5305,6 @@ class FiniteStateMachine(SageObject):
         """
         Return a list of all initial states.
 
-        OUTPUT: a list of all initial states
-
         EXAMPLES::
 
             sage: from sage.combinat.finite_state_machine import FSMState
@@ -5342,8 +5336,6 @@ class FiniteStateMachine(SageObject):
     def final_states(self):
         """
         Return a list of all final states.
-
-        OUTPUT: a list of all final states
 
         EXAMPLES::
 
@@ -6334,7 +6326,7 @@ class FiniteStateMachine(SageObject):
 
     def add_state(self, state):
         """
-        Adds a state to the finite state machine and returns the new
+        Add a state to the finite state machine and returns the new
         state. If the state already exists, that existing state is
         returned.
 
@@ -6373,7 +6365,7 @@ class FiniteStateMachine(SageObject):
 
     def add_states(self, states):
         """
-        Adds several states. See add_state for more information.
+        Add several states. See add_state for more information.
 
         INPUT:
 
@@ -6393,7 +6385,7 @@ class FiniteStateMachine(SageObject):
 
     def add_transition(self, *args, **kwargs):
         """
-        Adds a transition to the finite state machine and returns the
+        Add a transition to the finite state machine and returns the
         new transition.
 
         If the transition already exists, the return value of
@@ -6482,7 +6474,7 @@ class FiniteStateMachine(SageObject):
 
     def _add_fsm_transition_(self, t):
         """
-        Adds a transition.
+        Add a transition.
 
         INPUT:
 
@@ -6511,7 +6503,7 @@ class FiniteStateMachine(SageObject):
     def add_from_transition_function(self, function, initial_states=None,
                                      explore_existing_states=True):
         """
-        Constructs a finite state machine from a transition function.
+        Construct a finite state machine from a transition function.
 
         INPUT:
 
@@ -6661,7 +6653,7 @@ class FiniteStateMachine(SageObject):
 
     def add_transitions_from_function(self, function, labels_as_input=True):
         """
-        Adds one or more transitions if ``function(state, state)``
+        Add one or more transitions if ``function(state, state)``
         says that there are some.
 
         INPUT:
@@ -7460,8 +7452,8 @@ class FiniteStateMachine(SageObject):
           \ldots, B_d)`. If there is no transition from `A` to `B`,
           then ``function`` should raise a :class:`LookupError`.
 
-        - ``new_input_alphabet`` (optional) -- the new input alphabet
-          as a list.
+        - ``new_input_alphabet`` -- optional; the new input alphabet
+          as a list
 
         - ``only_accessible_components`` -- if ``True`` (default), then
           the result is piped through :meth:`.accessible_components`. If no
@@ -8787,8 +8779,6 @@ class FiniteStateMachine(SageObject):
         r"""
         Return a list of equivalence classes of states.
 
-        OUTPUT: a list of equivalence classes of states
-
         Two states `a` and `b` are equivalent if and only if there is
         a bijection `\varphi` between paths starting at `a` and paths
         starting at `b` with the following properties: Let `p_a` be a
@@ -9108,7 +9098,7 @@ class FiniteStateMachine(SageObject):
 
     def with_final_word_out(self, letters, allow_non_final=True):
         """
-        Constructs a new finite state machine with final output words
+        Construct a new finite state machine with final output words
         for all states by implicitly reading trailing letters until a
         final state is reached.
 
@@ -9543,7 +9533,7 @@ class FiniteStateMachine(SageObject):
           than `1` are used, then ``valid_input`` has to be a list of
           lists.
 
-        OUTPUT: a list of states
+        OUTPUT: list of states
 
         EXAMPLES::
 
@@ -12817,9 +12807,7 @@ class _FSMTapeCache_(SageObject):
       corresponding input track. If ``False`` input-words are
       interpreted as an iterable of letters.
 
-    OUTPUT:
-
-    A tape-cache.
+    OUTPUT: a tape-cache
 
     TESTS::
 
@@ -13093,7 +13081,7 @@ class _FSMTapeCache_(SageObject):
 
         INPUT:
 
-        - ``track_number`` -- integer (default: ``None``); If ``None``,
+        - ``track_number`` -- integer (default: ``None``); if ``None``,
           then a tuple of words (one from each track) is returned
 
         - ``length`` -- (default: ``1``) the length of the word(s)
@@ -13573,7 +13561,7 @@ def tupleofwords_to_wordoftuples(tupleofwords):
 
     - ``tupleofwords`` -- a tuple of a list of letters
 
-    OUTPUT: a list of tuples
+    OUTPUT: list of tuples
 
     Missing letters in the words are padded with the letter ``None``
     (from the empty word).
@@ -14433,8 +14421,8 @@ class FSMProcessIterator(SageObject, Iterator):
 
         INPUT:
 
-        - ``track_number`` -- integer (default: ``None``); If ``None``, then
-          a tuple of words (one from each track) is returned.
+        - ``track_number`` -- integer (default: ``None``); if ``None``, then
+          a tuple of words (one from each track) is returned
 
         - ``length`` -- (default: ``1``) the length of the word(s)
 

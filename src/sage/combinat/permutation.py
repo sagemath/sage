@@ -289,7 +289,7 @@ class Permutation(CombinatorialElement):
 
     INPUT:
 
-    - ``l`` -- Can be any one of the following:
+    - ``l`` -- can be any one of the following:
 
       - an instance of :class:`Permutation`,
 
@@ -308,9 +308,8 @@ class Permutation(CombinatorialElement):
         the permutation obtained from the pair using the inverse of the
         Robinson-Schensted algorithm.
 
-    - ``check`` (boolean) -- whether to check that input is correct. Slows
-       the function down, but ensures that nothing bad happens. This is set to
-       ``True`` by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that input is
+      correct; slows the function down, but ensures that nothing bad happens
 
     .. WARNING::
 
@@ -498,13 +497,11 @@ class Permutation(CombinatorialElement):
 
         INPUT:
 
-        - ``l`` -- a list of ``int`` variables
+        - ``l`` -- list of ``int`` variables
 
-        - ``check`` (boolean) -- whether to check that input is
-          correct. Slows the function down, but ensures that nothing bad
+        - ``check`` -- boolean (default: ``True``); whether to check that input
+          is correct. Slows the function down, but ensures that nothing bad
           happens.
-
-          This is set to ``True`` by default.
 
         TESTS::
 
@@ -1713,7 +1710,7 @@ class Permutation(CombinatorialElement):
         return DiGraph([self, enumerate(self, start=1)],
                        format='vertices_and_edges', loops=True)
 
-    def show(self, representation="cycles", orientation="landscape", **args):
+    def show(self, representation='cycles', orientation='landscape', **args):
         r"""
         Display the permutation as a drawing.
 
@@ -1721,33 +1718,33 @@ class Permutation(CombinatorialElement):
 
         - ``representation`` -- different kinds of drawings are available
 
-          - ``"cycles"`` (default) -- the permutation is displayed as a
+          - ``'cycles'`` -- default; the permutation is displayed as a
             collection of directed cycles
 
-          - ``"braid"`` -- the permutation is displayed as segments linking
-            each element `1, ..., n` to its image on a parallel line.
+          - ``'braid'`` -- the permutation is displayed as segments linking
+            each element `1, ..., n` to its image on a parallel line
 
             When using this drawing, it is also possible to display the
             permutation horizontally (``orientation = "landscape"``, default
             option) or vertically (``orientation = "portrait"``).
 
-          - ``"chord-diagram"`` -- the permutation is displayed as a directed
-            graph, all of its vertices being located on a circle.
+          - ``'chord-diagram'`` -- the permutation is displayed as a directed
+            graph, all of its vertices being located on a circle
 
         All additional arguments are forwarded to the ``show`` subcalls.
 
         EXAMPLES::
 
             sage: P20 = Permutations(20)
-            sage: P20.random_element().show(representation="cycles")                    # needs sage.graphs sage.plot
-            sage: P20.random_element().show(representation="chord-diagram")             # needs sage.graphs sage.plot
-            sage: P20.random_element().show(representation="braid")                     # needs sage.plot
-            sage: P20.random_element().show(representation="braid",                     # needs sage.plot
+            sage: P20.random_element().show(representation='cycles')                    # needs sage.graphs sage.plot
+            sage: P20.random_element().show(representation='chord-diagram')             # needs sage.graphs sage.plot
+            sage: P20.random_element().show(representation='braid')                     # needs sage.plot
+            sage: P20.random_element().show(representation='braid',                     # needs sage.plot
             ....:                           orientation='portrait')
 
         TESTS::
 
-            sage: P20.random_element().show(representation="modern_art")
+            sage: P20.random_element().show(representation='modern_art')
             Traceback (most recent call last):
             ...
             ValueError: The value of 'representation' must be equal to 'cycles', 'chord-diagram' or 'braid'
@@ -1758,7 +1755,7 @@ class Permutation(CombinatorialElement):
             if representation == "cycles":
                 d.show(**args)
             else:
-                d.show(layout="circular", **args)
+                d.show(layout='circular', **args)
 
         elif representation == "braid":
             from sage.plot.line import line
@@ -2145,7 +2142,7 @@ class Permutation(CombinatorialElement):
         - ``as_tuple`` -- boolean (default: ``False``); choice of
           output format
 
-        OUTPUT: a list of lists or a tuple of tuples
+        OUTPUT: list of lists or a tuple of tuples
 
         REFERENCES:
 
@@ -2204,7 +2201,7 @@ class Permutation(CombinatorialElement):
         - ``as_tuple`` -- boolean (default: ``False``); choice of output
           format
 
-        OUTPUT: a list of lists or a tuple of tuples
+        OUTPUT: list of lists or a tuple of tuples
 
         .. SEEALSO::
 
@@ -2746,15 +2743,16 @@ class Permutation(CombinatorialElement):
 
     def destandardize(self, weight, ordered_alphabet=None):
         r"""
-        Return destandardization of ``self`` with respect to ``weight`` and ``ordered_alphabet``.
+        Return destandardization of ``self`` with respect to ``weight`` and
+        ``ordered_alphabet``.
 
         INPUT:
 
-        - ``weight`` -- list or tuple of nonnegative integers that sum to `n` if ``self``
-          is a permutation in `S_n`.
+        - ``weight`` -- list or tuple of nonnegative integers that sum to `n`
+          if ``self`` is a permutation in `S_n`
 
-        - ``ordered_alphabet`` -- (default: ``None``) a list or tuple specifying the ordered alphabet the
-          destandardized word is over
+        - ``ordered_alphabet`` -- (default: ``None``) a list or tuple
+          specifying the ordered alphabet the destandardized word is over
 
         OUTPUT: word over the ``ordered_alphabet`` which standardizes to ``self``
 
@@ -3253,17 +3251,17 @@ class Permutation(CombinatorialElement):
 
         INPUT:
 
-        - ``final_descent`` -- boolean (default ``False``);
+        - ``final_descent`` -- boolean (default: ``False``);
           if ``True``, the last position of a non-empty
           permutation is also considered as a descent
 
         - ``side`` -- ``'right'`` (default) or ``'left'``;
           if ``'left'``, return the descents of the inverse permutation
 
-        - ``positive`` -- boolean (default ``False``);
+        - ``positive`` -- boolean (default: ``False``);
           if ``True``, return the positions that are not descents
 
-        - ``from_zero`` -- boolean (default ``False``);
+        - ``from_zero`` -- boolean (default: ``False``);
           if ``True``, return the positions starting from `0`
 
         - ``index_set`` -- list (default: ``[1, ..., n-1]`` where ``self``
@@ -3329,11 +3327,11 @@ class Permutation(CombinatorialElement):
 
         INPUT:
 
-        - ``final_descent`` -- boolean (default ``False``);
+        - ``final_descent`` -- boolean (default: ``False``);
           if ``True``, the last position of a non-empty
           permutation is also considered as a descent
 
-        - ``from_zero`` -- optional boolean (default ``False``);
+        - ``from_zero`` -- optional boolean (default: ``False``);
           if ``False``, return the positions starting from `1`
 
         EXAMPLES::
@@ -3975,7 +3973,7 @@ class Permutation(CombinatorialElement):
     # Permutohedron  Order #
     ########################
 
-    def permutohedron_lequal(self, p2, side="right") -> bool:
+    def permutohedron_lequal(self, p2, side='right') -> bool:
         r"""
         Return ``True`` if ``self`` is less or equal to ``p2`` in the
         permutohedron order.
@@ -4053,7 +4051,7 @@ class Permutation(CombinatorialElement):
             sage: sorted( [len([b for b in Permutations(3) if a.permutohedron_lequal(b)])
             ....:          for a in Permutations(3)] )
             [1, 2, 2, 3, 3, 6]
-            sage: sorted( [len([b for b in Permutations(3) if a.permutohedron_lequal(b, side="left")])
+            sage: sorted( [len([b for b in Permutations(3) if a.permutohedron_lequal(b, side='left')])
             ....:          for a in Permutations(3)] )
             [1, 2, 2, 3, 3, 6]
 
@@ -4074,7 +4072,7 @@ class Permutation(CombinatorialElement):
 
         return prod.number_of_inversions() == l2 - l1
 
-    def permutohedron_succ(self, side="right"):
+    def permutohedron_succ(self, side='right'):
         r"""
         Return a list of the permutations strictly greater than ``self``
         in the permutohedron order such that there is no permutation
@@ -4115,7 +4113,7 @@ class Permutation(CombinatorialElement):
                 succ.append(P(pp))
         return succ
 
-    def permutohedron_pred(self, side="right") -> list:
+    def permutohedron_pred(self, side='right') -> list:
         r"""
         Return a list of the permutations strictly smaller than ``self``
         in the permutohedron order such that there is no permutation
@@ -4155,7 +4153,7 @@ class Permutation(CombinatorialElement):
                 pred.append(P(pp))
         return pred
 
-    def permutohedron_smaller(self, side="right") -> list:
+    def permutohedron_smaller(self, side='right') -> list:
         r"""
         Return a list of permutations smaller than or equal to ``self``
         in the permutohedron order.
@@ -4193,7 +4191,7 @@ class Permutation(CombinatorialElement):
         """
         return transitive_ideal(lambda x: x.permutohedron_pred(side), self)
 
-    def permutohedron_greater(self, side="right") -> list:
+    def permutohedron_greater(self, side='right') -> list:
         r"""
         Return a list of permutations greater than or equal to ``self``
         in the permutohedron order.
@@ -4282,7 +4280,7 @@ class Permutation(CombinatorialElement):
         P = Permutations()
         return [P(p) for p in self.right_permutohedron_interval_iterator(other)]
 
-    def permutohedron_join(self, other, side="right") -> Permutation:
+    def permutohedron_join(self, other, side='right') -> Permutation:
         r"""
         Return the join of the permutations ``self`` and ``other``
         in the right permutohedron order (or, if ``side`` is set to
@@ -4378,10 +4376,10 @@ class Permutation(CombinatorialElement):
 
             sage: p = Permutation([3,1,2])
             sage: q = Permutation([1,3,2])
-            sage: p.permutohedron_join(q, side="left")
+            sage: p.permutohedron_join(q, side='left')
             [3, 2, 1]
             sage: r = Permutation([2,1,3])
-            sage: r.permutohedron_join(p, side="left")
+            sage: r.permutohedron_join(p, side='left')
             [3, 1, 2]
         """
         if side == "left":
@@ -4402,7 +4400,7 @@ class Permutation(CombinatorialElement):
                 xs.append(i)
         return Permutations(n)(xs)
 
-    def permutohedron_meet(self, other, side="right") -> Permutation:
+    def permutohedron_meet(self, other, side='right') -> Permutation:
         r"""
         Return the meet of the permutations ``self`` and ``other``
         in the right permutohedron order (or, if ``side`` is set to
@@ -4494,10 +4492,10 @@ class Permutation(CombinatorialElement):
 
             sage: p = Permutation([3,1,2])
             sage: q = Permutation([1,3,2])
-            sage: p.permutohedron_meet(q, side="left")
+            sage: p.permutohedron_meet(q, side='left')
             [1, 2, 3]
             sage: r = Permutation([2,1,3])
-            sage: r.permutohedron_meet(p, side="left")
+            sage: r.permutohedron_meet(p, side='left')
             [2, 1, 3]
         """
         return self.reverse().permutohedron_join(other.reverse(), side=side).reverse()
@@ -4567,7 +4565,8 @@ class Permutation(CombinatorialElement):
 
         INPUT:
 
-        - ``avoid`` -- one of the patterns ``[1,2,3]``, ``[1,3,2]``, ``[3,1,2]``, ``[3,2,1]``.
+        - ``avoid`` -- one of the patterns ``[1,2,3]``, ``[1,3,2]``,
+          ``[3,1,2]``, ``[3,2,1]``
 
         EXAMPLES::
 
@@ -5281,7 +5280,7 @@ class Permutation(CombinatorialElement):
     # Binary operations #
     #####################
 
-    def shifted_concatenation(self, other, side="right"):
+    def shifted_concatenation(self, other, side='right'):
         r"""
         Return the right (or left) shifted concatenation of ``self``
         with a permutation ``other``. These operations are also known
@@ -5290,18 +5289,18 @@ class Permutation(CombinatorialElement):
         INPUT:
 
         - ``other`` -- a permutation, a list, a tuple, or any iterable
-          representing a permutation.
+          representing a permutation
 
-        - ``side`` -- (default: ``"right"``) the string "left" or "right".
+        - ``side`` -- (default: ``'right'``) the string "left" or "right"
 
         OUTPUT:
 
-        If ``side`` is ``"right"``, the method returns the permutation
+        If ``side`` is ``'right'``, the method returns the permutation
         obtained by concatenating ``self`` with the letters of ``other``
         incremented by the size of ``self``. This is what is called
         ``side / other`` in [LR0102066]_, and denoted as the "over"
         operation.
-        Otherwise, i. e., when ``side`` is ``"left"``, the method
+        Otherwise, i. e., when ``side`` is ``'left'``, the method
         returns the permutation obtained by concatenating the letters
         of ``other`` incremented by the size of ``self`` with ``self``.
         This is what is called ``side \ other`` in [LR0102066]_
@@ -5333,7 +5332,7 @@ class Permutation(CombinatorialElement):
         INPUT:
 
         - ``other`` -- a permutation, a list, a tuple, or any iterable
-          representing a permutation.
+          representing a permutation
 
         OUTPUT:
 
@@ -6387,7 +6386,7 @@ class Permutations_mset(Permutations):
 
         INPUT:
 
-        - ``r`` -- an integer between ``0`` and ``self.cardinality()-1``
+        - ``r`` -- integer between ``0`` and ``self.cardinality()-1``
           inclusive
 
         ALGORITHM:
@@ -8099,9 +8098,9 @@ def bistochastic_as_sum_of_permutations(M, check=True):
 
     INPUT:
 
-    - ``M`` -- A bistochastic matrix
+    - ``M`` -- a bistochastic matrix
 
-    - ``check`` (boolean) -- set to ``True`` (default) to check
+    - ``check`` -- boolean; set to ``True`` (default) to check
       that the matrix is indeed bistochastic
 
     OUTPUT:
@@ -8942,7 +8941,7 @@ def bruhat_lequal(p1, p2):
 # Permutohedron #
 #################
 
-def permutohedron_lequal(p1, p2, side="right"):
+def permutohedron_lequal(p1, p2, side='right'):
     r"""
     Return ``True`` if ``p1`` is less than or equal to ``p2`` in the
     permutohedron order.
@@ -9053,7 +9052,7 @@ class CyclicPermutations(Permutations_mset):
 
     INPUT:
 
-    - ``mset`` -- A multiset
+    - ``mset`` -- a multiset
 
     EXAMPLES::
 

@@ -164,7 +164,7 @@ class ShiftingOperatorAlgebra(CombinatorialFreeModule):
 
     - ``base_ring`` -- (default: ``QQ['t']``) the base ring
 
-    - ``prefix`` -- (default: ``"S"``) the label for the shifting operators
+    - ``prefix`` -- (default: ``'S'``) the label for the shifting operators
 
     EXAMPLES::
 

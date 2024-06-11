@@ -350,7 +350,7 @@ def iterator_fast(n, l):
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
     - ``l`` -- the weights in weakly decreasing order
 
     EXAMPLES::

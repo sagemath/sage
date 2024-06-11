@@ -100,7 +100,7 @@ class PrefixClosedSet:
     @classmethod
     def create_by_alphabet(cls, alphabet):
         r"""
-        A prefix-closed set
+        A prefix-closed set.
 
         This is a convenience method for the
         creation of prefix-closed sets by specifying an alphabet.
@@ -121,7 +121,7 @@ class PrefixClosedSet:
 
     def __repr__(self):
         r"""
-        A representation string of this prefix-closed set
+        A representation string of this prefix-closed set.
 
         OUTPUT: string
 
@@ -142,9 +142,9 @@ class PrefixClosedSet:
 
         - ``w`` -- a word
 
-        - ``check`` -- boolean (default: ``True``). If set, then it is verified
+        - ``check`` -- boolean (default: ``True``); if set, then it is verified
           whether all proper prefixes of ``w`` are already in this
-          prefix-closed set.
+          prefix-closed set
 
         OUTPUT:
 

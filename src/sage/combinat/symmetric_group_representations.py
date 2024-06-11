@@ -45,7 +45,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSets
 
 lazy_import("sage.combinat.yang_baxter_graph", "YangBaxterGraph_partition")
-lazy_import("sage.groups.perm_gps.constructor", "PermutationGroupElement", as_="PermutationConstructor")
+lazy_import("sage.groups.perm_gps.constructor", "PermutationGroupElement", as_='PermutationConstructor')
 lazy_import("sage.symbolic.ring", "SR")
 
 
@@ -62,11 +62,11 @@ def SymmetricGroupRepresentation(partition, implementation="specht",
 
     - ``partition`` -- a partition of a positive integer
 
-    - ``implementation`` -- string (default: ``"specht"``), one of:
+    - ``implementation`` -- string (default: ``'specht'``); one of:
 
-      * ``"seminormal"`` -- for Young's seminormal representation
-      * ``"orthogonal"`` -- for Young's orthogonal representation
-      * ``"specht"`` -- for Specht's representation
+      * ``'seminormal'`` -- for Young's seminormal representation
+      * ``'orthogonal'`` -- for Young's orthogonal representation
+      * ``'specht'`` -- for Specht's representation
 
     - ``ring`` -- the ring over which the representation is defined
 
@@ -179,7 +179,7 @@ def SymmetricGroupRepresentation(partition, implementation="specht",
     return Rep(partition)
 
 
-def SymmetricGroupRepresentations(n, implementation="specht", ring=None,
+def SymmetricGroupRepresentations(n, implementation='specht', ring=None,
         cache_matrices=True):
     r"""
     Irreducible representations of the symmetric group.
@@ -188,11 +188,11 @@ def SymmetricGroupRepresentations(n, implementation="specht", ring=None,
 
     - ``n`` -- positive integer
 
-    - ``implementation`` -- string (default: ``"specht"``), one of:
+    - ``implementation`` -- string (default: ``'specht'``); one of:
 
-      * ``"seminormal"`` -- for Young's seminormal representation
-      * ``"orthogonal"`` -- for Young's orthogonal representation
-      * ``"specht"`` -- for Specht's representation
+      * ``'seminormal'`` -- for Young's seminormal representation
+      * ``'orthogonal'`` -- for Young's orthogonal representation
+      * ``'specht'`` -- for Specht's representation
 
     - ``ring`` -- the ring over which the representation is defined
 

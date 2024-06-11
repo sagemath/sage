@@ -179,7 +179,7 @@ class LittlewoodRichardsonTableaux(SemistandardTableaux):
 
     def __init__(self, shape, weight):
         r"""
-        Initializes the parent class of Littlewood-Richardson tableaux.
+        Initialize the parent class of Littlewood-Richardson tableaux.
 
         INPUT:
 

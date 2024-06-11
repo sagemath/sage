@@ -35,13 +35,13 @@ from sage.typeset.unicode_art import UnicodeArt, unicode_art
 
 class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
     r"""
-    Class for free modules with a named basis
+    Class for free modules with a named basis.
 
     INPUT:
 
     - ``R`` -- base ring
 
-    - ``basis_keys`` -- list, tuple, family, set, etc. defining the
+    - ``basis_keys`` -- list; tuple, family, set, etc. defining the
       indexing set for the basis of this module
 
     - ``element_class`` -- the class of which elements of this module
@@ -226,8 +226,8 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
     involves comparison by equality (not identity). Hence, the last line of
     the following example used to fail with an assertion error::
 
-        sage: F = CombinatorialFreeModule(ZZ, [1,2,3], prefix="F")
-        sage: G = CombinatorialFreeModule(ZZ, [1,2,3,4], prefix="G")
+        sage: F = CombinatorialFreeModule(ZZ, [1,2,3], prefix='F')
+        sage: G = CombinatorialFreeModule(ZZ, [1,2,3,4], prefix='G')
         sage: f =   F.monomial(1) + 2 * F.monomial(2)
         sage: g = 2*G.monomial(3) +     G.monomial(4)
         sage: tensor([f, g])
@@ -1158,7 +1158,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         INPUT:
 
-        - ``terms`` -- a list (or iterable) of pairs ``(index, coeff)``
+        - ``terms`` -- list (or iterable) of pairs ``(index, coeff)``
         - ``distinct`` -- boolean (default: ``False``); whether the indices are
           guaranteed to be distinct
 
@@ -1212,10 +1212,10 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
           the index of a basis element and each ``coeff`` belongs to the
           coefficient ring ``self.base_ring()``
 
-        - ``coerce`` -- a boolean (default: ``False``), whether to coerce
+        - ``coerce`` -- boolean (default: ``False``); whether to coerce
           the coefficients ``coeff`` to the coefficient ring
 
-        - ``remove_zeros`` -- a boolean (default: ``True``), if some
+        - ``remove_zeros`` -- boolean (default: ``True``); if some
           coefficients ``coeff`` may be zero and should therefore be removed
 
         EXAMPLES::
@@ -1264,7 +1264,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
 class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
     """
-    Tensor Product of Free Modules
+    Tensor Product of Free Modules.
 
     EXAMPLES:
 
@@ -1441,7 +1441,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
         TESTS::
 
             sage: R = NonCommutativeSymmetricFunctions(QQ).R()                      # needs sage.combinat
-            sage: Partitions.options(diagram_str="#", convention="french")          # needs sage.combinat
+            sage: Partitions.options(diagram_str='#', convention='french')          # needs sage.combinat
             sage: s = ascii_art(tensor((R[1,2], R[3,1,2]))); s                      # needs sage.combinat
             R   # R
              #     ###
@@ -1470,7 +1470,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
         TESTS::
 
             sage: R = NonCommutativeSymmetricFunctions(QQ).R()                      # needs sage.combinat
-            sage: Partitions.options(diagram_str="#", convention="french")          # needs sage.combinat
+            sage: Partitions.options(diagram_str='#', convention='french')          # needs sage.combinat
             sage: s = unicode_art(tensor((R[1,2], R[3,1,2]))); s                    # needs sage.combinat
             R    ⊗ R
              ┌┐     ┌┬┬┐
@@ -1518,8 +1518,8 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
         """
         TESTS::
 
-            sage: F = CombinatorialFreeModule(ZZ, [1,2,3], prefix="F")
-            sage: G = CombinatorialFreeModule(ZZ, [1,2,3,4], prefix="G")
+            sage: F = CombinatorialFreeModule(ZZ, [1,2,3], prefix='F')
+            sage: G = CombinatorialFreeModule(ZZ, [1,2,3,4], prefix='G')
             sage: f =   F.monomial(1) + 2 * F.monomial(2)
             sage: g = 2*G.monomial(3) +     G.monomial(4)
             sage: tensor([f, g]) # indirect doctest
@@ -1599,7 +1599,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
 
     def _tensor_of_elements(self, elements):
         """
-        Returns the tensor product of the specified elements.
+        Return the tensor product of the specified elements.
         The result should be in ``self``.
 
         EXAMPLES::
@@ -1738,7 +1738,7 @@ CombinatorialFreeModule.Tensor = CombinatorialFreeModule_Tensor
 
 class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
     """
-    An implementation of Cartesian products of modules with basis
+    An implementation of Cartesian products of modules with basis.
 
     EXAMPLES:
 
@@ -1836,7 +1836,7 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
 
         INPUT:
 
-         - ``i`` -- an integer
+         - ``i`` -- integer
 
         EXAMPLES::
 
@@ -1870,7 +1870,7 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
 
         INPUT:
 
-         - ``i`` -- an integer
+         - ``i`` -- integer
 
         EXAMPLES::
 

@@ -193,7 +193,7 @@ from sage.rings.integer_ring import ZZ
 
 
 class DeBruijnSequences(UniqueRepresentation, Parent):
-    """
+    r"""
     Represents the De Bruijn sequences of given parameters `k` and `n`.
 
     A De Bruijn sequence of parameters `k` and `n` is defined as the shortest
@@ -302,7 +302,7 @@ class DeBruijnSequences(UniqueRepresentation, Parent):
 
     def an_element(self):
         """
-        Returns the lexicographically smallest De Bruijn sequence with the given
+        Return the lexicographically smallest De Bruijn sequence with the given
         parameters.
 
         ALGORITHM:
@@ -337,7 +337,7 @@ class DeBruijnSequences(UniqueRepresentation, Parent):
 
     def cardinality(self):
         """
-        Returns the number of distinct De Bruijn sequences for the object's
+        Return the number of distinct De Bruijn sequences for the object's
         parameters.
 
         EXAMPLES::

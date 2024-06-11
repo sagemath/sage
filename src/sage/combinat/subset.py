@@ -50,7 +50,7 @@ def Subsets(s, k=None, submultiset=False):
     r"""
     Return the combinatorial class of the subsets of the finite set
     ``s``. The set can be given as a list, Set or any iterable
-    convertible to a set. Alternatively, a non-negative integer `n`
+    convertible to a set. Alternatively, a nonnegative integer `n`
     can be provided in place of ``s``; in this case, the result is
     the combinatorial class of the subsets of the set
     `\{1,2,\dots,n\}` (i.e. of the Sage ``range(1,n+1)``).
@@ -153,7 +153,7 @@ def Subsets(s, k=None, submultiset=False):
 
     if isinstance(s, (int, Integer)):
         if s < 0:
-            raise ValueError("s must be non-negative")
+            raise ValueError("s must be nonnegative")
         from sage.sets.integer_range import IntegerRange
         s = IntegerRange(1,s+1)
 
@@ -254,7 +254,7 @@ class Subsets_s(Parent):
 
     def __eq__(self, other):
         r"""
-        Equality test
+        Equality test.
 
         TESTS::
 
@@ -271,7 +271,7 @@ class Subsets_s(Parent):
 
     def __ne__(self, other):
         r"""
-        Difference test
+        Difference test.
 
         TESTS::
 
@@ -357,7 +357,7 @@ class Subsets_s(Parent):
 
     def first(self):
         """
-        Returns the first subset of ``s``. Since we aren't restricted to
+        Return the first subset of ``s``. Since we aren't restricted to
         subsets of a certain size, this is always the empty set.
 
         EXAMPLES::
@@ -524,7 +524,7 @@ class Subsets_s(Parent):
 
     def _an_element_(self):
         """
-        Returns an example of subset.
+        Return an example of subset.
 
         EXAMPLES::
 
@@ -605,7 +605,7 @@ class Subsets_sk(Subsets_s):
         Subsets_s.__init__(self, s)
         self._k = Integer(k)
         if self._k < 0:
-            raise ValueError("the integer k (={}) should be non-negative".format(k))
+            raise ValueError("the integer k (={}) should be nonnegative".format(k))
 
     def _repr_(self):
         """
@@ -632,7 +632,7 @@ class Subsets_sk(Subsets_s):
 
     def __eq__(self, other):
         r"""
-        Equality test
+        Equality test.
 
         TESTS::
 
@@ -647,7 +647,7 @@ class Subsets_sk(Subsets_s):
 
     def __ne__(self, other):
         r"""
-        Difference test
+        Difference test.
 
         TESTS::
 
@@ -858,7 +858,7 @@ class Subsets_sk(Subsets_s):
 
     def an_element(self):
         """
-        Returns an example of subset.
+        Return an example of subset.
 
         EXAMPLES::
 

@@ -100,7 +100,7 @@ cdef inline ZS1_step(list P, int n, int *m, int *h):
 
     INPUT:
 
-    - ``P`` -- a list of size `n` storing a partition of `n`
+    - ``P`` -- list of size `n` storing a partition of `n`
 
     - ``n`` -- integer; the sum of the elements of the partition stored in ``P``
 
@@ -207,7 +207,7 @@ def ZS1_next(list P):
 
     INPUT:
 
-    - ``P`` -- a list encoding a partition of an integer `n` in descending order
+    - ``P`` -- list encoding a partition of an integer `n` in descending order
       (i.e., `P_i \geq P_{i+1}`)
 
     EXAMPLES::
@@ -345,7 +345,7 @@ cdef inline ZS2_step(list P, int n, int *m, int *h):
 
     INPUT:
 
-    - ``P`` -- a list of size `n` storing a partition of `n`
+    - ``P`` -- list of size `n` storing a partition of `n`
 
     - ``n`` -- integer; the sum of the elements of the partition stored in ``P``
 
@@ -447,7 +447,7 @@ def ZS2_next(list P):
 
     INPUT:
 
-    - ``P`` -- a list encoding a partition of an integer `n` in descending order
+    - ``P`` -- list encoding a partition of an integer `n` in descending order
       (i.e., `P_i \geq P_{i+1}`)
 
     EXAMPLES::
@@ -488,7 +488,7 @@ cdef inline AccelDesc_step(list P, int n, int* m, int* h):
 
     INPUT:
 
-    - ``P`` -- a list of size `n` storing a partition of `n`
+    - ``P`` -- list of size `n` storing a partition of `n`
 
     - ``n`` -- integer; the sum of the elements of the partition stored in ``P``
 
@@ -602,7 +602,7 @@ def AccelDesc_next(list P):
 
     INPUT:
 
-    - ``P`` -- a list encoding a partition of an integer `n` in descending order
+    - ``P`` -- list encoding a partition of an integer `n` in descending order
       (i.e., `P_i \geq P_{i+1}`)
 
     EXAMPLES::
@@ -702,7 +702,7 @@ def AccelAsc_next(list P):
 
     INPUT:
 
-    - ``P`` -- a list encoding a partition of an integer `n` in ascending order
+    - ``P`` -- list encoding a partition of an integer `n` in ascending order
       (i.e., `P_i \leq P_{i+1}`)
 
     EXAMPLES::

@@ -346,7 +346,7 @@ class Core(CombinatorialElement):
 
         INPUT:
 
-        - ``w`` is a tuple of integers `[w_1,\ldots,w_m]` with `0\le w_j<k`.
+        - ``w`` -- a tuple of integers `[w_1,\ldots,w_m]` with `0\le w_j<k`
           If transposition is set to be True, then `w = [w_0,w_1]` is
           interpreted as a transposition `t_{w_0, w_1}`
           (see :meth:`_transposition_to_reduced_word`).
@@ -382,7 +382,7 @@ class Core(CombinatorialElement):
 
         - a tuple `[r,s]` such that `r` and `s` are not equivalent mod `k`
 
-        OUTPUT: a list of integers in `\{0,1,\ldots,k-1\}` representing a
+        OUTPUT: list of integers in `\{0,1,\ldots,k-1\}` representing a
         reduced word for the transposition `t`
 
         EXAMPLES::
@@ -511,7 +511,7 @@ class Core(CombinatorialElement):
 
     def contains(self, other):
         r"""
-        Checks whether ``self`` contains ``other``.
+        Check whether ``self`` contains ``other``.
 
         INPUT:
 

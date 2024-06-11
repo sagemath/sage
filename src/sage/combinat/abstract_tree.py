@@ -737,8 +737,8 @@ class AbstractTree:
 
         INPUT:
 
-        - depth -- an integer
-        - path -- optional given path (as a list) used in the recursion
+        - ``depth`` -- an integer
+        - ``path`` -- optional given path (as a list) used in the recursion
 
         .. WARNING::
 
@@ -790,7 +790,7 @@ class AbstractTree:
 
         INPUT:
 
-        - depth -- an integer
+        - ``depth`` -- an integer
 
         .. SEEALSO::
 
@@ -2192,7 +2192,7 @@ class AbstractLabelledTree(AbstractTree):
 
     def __eq__(self, other):
         """
-        Test if ``self`` is equal to ``other``
+        Test if ``self`` is equal to ``other``.
 
         TESTS::
 
@@ -2216,7 +2216,7 @@ class AbstractLabelledTree(AbstractTree):
 
     def _hash_(self):
         """
-        Return the hash value for ``self``
+        Return the hash value for ``self``.
 
         TESTS::
 
@@ -2314,7 +2314,7 @@ class AbstractLabelledTree(AbstractTree):
 class AbstractLabelledClonableTree(AbstractLabelledTree,
                                    AbstractClonableTree):
     """
-    Abstract Labelled Clonable Tree
+    Abstract Labelled Clonable Tree.
 
     This class takes care of modification for the label by the clone protocol.
 
@@ -2386,7 +2386,7 @@ class AbstractLabelledClonableTree(AbstractLabelledTree,
         INPUT:
 
         - ``path`` -- ``None`` (default) or a path (list or tuple of children
-                      index in the tree)
+          index in the tree)
 
         - ``label`` -- any sage object
 
@@ -2432,7 +2432,7 @@ class AbstractLabelledClonableTree(AbstractLabelledTree,
 
     def map_labels(self, f):
         """
-        Apply the function `f` to the labels of ``self``
+        Apply the function `f` to the labels of ``self``.
 
         This method returns a copy of ``self`` on which the function `f` has
         been applied on all labels (a label `x` is replaced by `f(x)`).

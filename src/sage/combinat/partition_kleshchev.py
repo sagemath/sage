@@ -131,14 +131,14 @@ class KleshchevPartition(Partition):
 
         EXAMPLES::
 
-            sage: KP = KleshchevPartitions(3, convention="regular")
+            sage: KP = KleshchevPartitions(3, convention='regular')
             sage: KP([5,4,4,3,2]).conormal_cells()
             {0: [(1, 4)], 1: [(5, 0), (4, 2)]}
             sage: KP([5,4,4,3,2]).conormal_cells(0)
             [(1, 4)]
             sage: KP([5,4,4,3,2]).conormal_cells(1)
             [(5, 0), (4, 2)]
-            sage: KP = KleshchevPartitions(3, convention="restricted")
+            sage: KP = KleshchevPartitions(3, convention='restricted')
             sage: KP([5,4,4,3,2]).conormal_cells()
             {0: [(1, 4), (3, 3)], 2: [(0, 5)]}
         """
@@ -192,7 +192,7 @@ class KleshchevPartition(Partition):
 
         EXAMPLES::
 
-            sage: KP = KleshchevPartitions(3, convention="regular")
+            sage: KP = KleshchevPartitions(3, convention='regular')
             sage: KP([5,4,4,3,2]).cogood_cells()
             {0: (1, 4), 1: (4, 2)}
             sage: KP([5,4,4,3,2]).cogood_cells(0)
@@ -435,7 +435,7 @@ class KleshchevPartition(Partition):
         A partition tuple is `e`-regular if we can get to the empty partition
         tuple by successively removing a sequence of good cells in the down
         direction. Equivalently, all partitions are `0`-regular and if `e > 0`
-        then a partition is `e`-regular if no `e` non-zero parts of ``self``
+        then a partition is `e`-regular if no `e` nonzero parts of ``self``
         are equal.
 
         EXAMPLES::
@@ -1098,7 +1098,7 @@ class KleshchevPartitionTupleCrystal(KleshchevPartitionTuple, KleshchevCrystalMi
 
 class KleshchevPartitions(PartitionTuples):
     r"""
-    Kleshchev partitions
+    Kleshchev partitions.
 
     A partition (tuple) `\mu` is Kleshchev if it can be recursively
     obtained by adding a sequence of good nodes to the empty
@@ -1426,7 +1426,7 @@ class KleshchevPartitions_all(KleshchevPartitions):
 
     def __init__(self, e, multicharge, convention):
         r"""
-        Initializes ``self``.
+        Initialize ``self``.
 
         EXAMPLES::
 

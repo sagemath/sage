@@ -85,7 +85,7 @@ class BaxterPermutations_size(BaxterPermutations):
 
     def _repr_(self):
         """
-        Return a string representation of ``self``
+        Return a string representation of ``self``.
 
         EXAMPLES::
 

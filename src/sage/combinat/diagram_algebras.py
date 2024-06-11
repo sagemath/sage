@@ -934,10 +934,10 @@ class BrauerDiagram(AbstractPartitionDiagram):
         The compact representation ``[A/B;pi]`` of the Brauer algebra diagram
         (see [GL1996]_) has the following components:
 
-        - ``A`` -- is a list of pairs of positive elements (upper row) that
+        - ``A`` -- a list of pairs of positive elements (upper row) that
           are connected,
 
-        - ``B`` -- is a list of pairs of negative elements (lower row) that
+        - ``B`` -- a list of pairs of negative elements (lower row) that
           are connected, and
 
         - ``pi`` --  is a permutation that is to be interpreted as the relative

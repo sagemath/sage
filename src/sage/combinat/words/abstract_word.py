@@ -830,12 +830,10 @@ class Word_class(SageObject):
 
         INPUT:
 
-        -  ``f`` -- involution on the alphabet of ``self`` (default: ``None``);
+        - ``f`` -- involution on the alphabet of ``self`` (default: ``None``);
           it must be callable on letters as well as words (e.g. WordMorphism)
 
-        OUTPUT:
-
-            iterator -- the iterated (`f`-)palindromic closure of self
+        OUTPUT: iterator -- the iterated (`f`-)palindromic closure of self
 
         EXAMPLES::
 

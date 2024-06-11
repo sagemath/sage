@@ -1,7 +1,7 @@
 # sage.doctest: needs sage.modules
 
 cpdef int _flip_c(W, set positions, list extended_root_conf_indices,
-                  int i, side="both") noexcept:
+                  int i, side='both') noexcept:
     r"""
     Flip a facet.
 
@@ -57,7 +57,7 @@ cpdef int _flip_c(W, set positions, list extended_root_conf_indices,
     if j != i:
         t = R[min(r, r_minus)]
         for k in range(min(i, j) + 1, max(i, j) + 1):
-            extended_root_conf_indices[k] = t.action_on_root_indices(extended_root_conf_indices[k], side="left")
+            extended_root_conf_indices[k] = t.action_on_root_indices(extended_root_conf_indices[k], side='left')
     return j
 
 
