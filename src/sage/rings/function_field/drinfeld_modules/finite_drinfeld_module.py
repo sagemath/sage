@@ -430,7 +430,7 @@ class DrinfeldModule_finite(DrinfeldModule):
                 return self._frobenius_charpoly.change_variable_name(var)
             self._frobenius_charpoly = getattr(self, method_name)(var)
             return self._frobenius_charpoly
-        raise NotImplementedError(f'algorithm \"{algorithm}\" not implemented')
+        raise NotImplementedError(f'algorithm "{algorithm}" not implemented')
 
     @cached_method
     def _frobenius_charpoly_CSA(self, var='X'):
