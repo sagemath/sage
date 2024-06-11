@@ -243,9 +243,8 @@ jobs:
           export SAGE_USE_CDNS=yes
           export SAGE_LIVE_DOC=yes
           export SAGE_JUPYTER_SERVER=binder:sagemath/sage-binder-env/dev
-          make doc-clean doc-uninstall
-          ./config.status && make sagemath_doc_html-no-deps sagemath_doc_pdf-no-deps
-        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
+          ./config.status && make SAGE_WHEELS=yes SAGE_EDITABLE=no sagemath_doc_html-no-deps sagemath_doc_pdf-no-deps
+        shell: sh .ci/docker-exec-script.sh BUILD ./worktree-image {0}
 
       - name: Copy live doc
         id: copylivedoc
@@ -265,3 +264,29 @@ jobs:
           name: livedoc
           path: livedoc.zip
 
+      - name: Upload sagemath-doc wheels
+        uses: actions/upload-artifact@v3
+        with:
+          name: wheels
+          path: ./wheelhouse/*.whl
+
+  upload_wheels:
+    needs: build-docs
+    runs-on: ubuntu-latest
+    env:
+      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
+    steps:
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: wheels
+          path: wheelhouse
+
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: __token__
+          password: ${{ secrets.SAGEMATH_PYPI_API_TOKEN }}
+          packages-dir: wheelhouse/
+          skip-existing: true
+          verbose: true
+        if: env.CAN_DEPLOY == 'true'
