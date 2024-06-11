@@ -42,7 +42,6 @@ AUTHORS:
                              'plot_lineorders':<list of lists>}
 
 
-
 REFERENCES
 ==========
 
@@ -90,11 +89,11 @@ def it(M, B1, nB1, lps):
     INPUT:
 
     - ``M`` -- A matroid.
-    - ``B1``-- A list of groundset elements of ``M`` that corresponds to a
+    - ``B1`` -- A list of groundset elements of ``M`` that corresponds to a
       basis of matroid ``M``.
-    - ``nB1``-- A list of elements in the ground set of M that corresponds to
+    - ``nB1`` -- A list of elements in the ground set of M that corresponds to
       ``M.simplify.groundset() \ B1``.
-    - ``lps``-- A list of elements in the ground set of matroid M that are
+    - ``lps`` -- A list of elements in the ground set of matroid M that are
       loops.
 
     OUTPUT:
@@ -233,7 +232,7 @@ def addnontripts(tripts_labels, nontripts_labels, ptsdict):
       vertices of the triangle.
     - ``ptsdict`` -- A dictionary (at least) containing ground set elements in
       ``tripts`` as keys and their (x,y) position as values.
-    - ``nontripts``-- A list of ground set elements whose corresponding points
+    - ``nontripts`` -- A list of ground set elements whose corresponding points
       are to be placed inside the triangle.
 
     OUTPUT:
@@ -300,7 +299,7 @@ def createline(ptsdict, ll, lineorders2=None):
       values.
     - ``ll`` -- A list of keys in ``ptsdict`` through which a line is to be
       drawn.
-    - ``lineorders2``-- (optional) A list of ordered lists of keys in
+    - ``lineorders2`` -- (optional) A list of ordered lists of keys in
       ``ptsdict`` such that if ll is setwise same as any of these then points
       corresponding to values of the keys will be traversed in that order thus
       overriding internal order deciding heuristic.
@@ -470,7 +469,7 @@ def addlp(M, M1, L, P, ptsdict, G=None, limits=None):
       necessarily containing elements of ``L``.
     - ``G`` -- (optional) A sage graphics object to which loops and parallel
       elements of matroid `M` added .
-    - ``limits``-- (optional) Current axes limits [xmin,xmax,ymin,ymax].
+    - ``limits`` -- (optional) Current axes limits [xmin,xmax,ymin,ymax].
 
     OUTPUT:
 
@@ -744,7 +743,7 @@ def geomrep(M1, B1=None, lineorders1=None, pd=None, sp=False):
       ``M1.groundset()`` such that if a line in geometric representation is
       setwise same as any of these then points contained will be traversed in
       that order thus overriding internal order deciding heuristic.
-    - ``pd`` - (optional) A dictionary mapping ground set elements to their
+    - ``pd`` -- (optional) A dictionary mapping ground set elements to their
       (x,y) positions.
     - ``sp`` -- (optional) If True, a positioning dictionary and line orders
       will be placed in ``M._cached_info``.
@@ -817,11 +816,8 @@ def geomrep(M1, B1=None, lineorders1=None, pd=None, sp=False):
         lims = tracklims([None, None, None, None], [pnt[0] for pnt in pl],
                          [pnt[1] for pnt in pl])
     elif M.rank() == 2:
-        nB1 = list(set(list(M.groundset())) - set(B1))
-        bline = []
-        for j in nB1:
-            if M.is_dependent([j, B1[0], B1[1]]):
-                bline.append(j)
+        nB1 = set(M.groundset()) - set(B1)
+        bline = [j for j in nB1 if M.is_dependent([j, B1[0], B1[1]])]
         interval = len(bline)+1
         if M._cached_info is not None and \
            'plot_positions' in M._cached_info.keys() and \

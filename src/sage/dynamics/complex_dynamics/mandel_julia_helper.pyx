@@ -8,7 +8,6 @@ This is the helper file providing functionality for mandel_julia.py.
 AUTHORS:
 
 - Ben Barros
-
 """
 # ****************************************************************************
 #       Copyright (C) 2017 BEN BARROS <bbarros@slu.edu>
@@ -58,6 +57,7 @@ def _color_to_RGB(color):
     if not isinstance(color, (list, tuple)):
         color = [int(255.0 * k) for k in Color(color)]
     return tuple(color)
+
 
 cpdef fast_mandelbrot_plot(double x_center, double y_center,
  double image_width, long max_iteration, long pixel_count,
@@ -187,24 +187,24 @@ cpdef fast_external_ray(double theta, long D=30, long S=10, long R=100,
 
     - ``theta`` -- double, angle between 0 and 1 inclusive.
 
-    - ``D`` -- long (optional - default: ``25``) depth of the approximation.
+    - ``D`` -- long (default: ``25``) depth of the approximation.
      As ``D`` increases, the external ray gets closer to the boundary of the
      Mandelbrot set.
 
-    - ``S`` -- long (optional - default: ``10``) sharpness of the approximation.
+    - ``S`` -- long (default: ``10``) sharpness of the approximation.
      Adjusts the number of points used to approximate the external ray (number
      of points is equal to ``S*D``).
 
-    - ``R`` -- long (optional - default: ``100``) radial parameter. If ``R`` is
+    - ``R`` -- long (default: ``100``) radial parameter. If ``R`` is
      sufficiently large, the external ray reaches enough close to infinity.
 
-    - ``pixel_count`` -- long (optional - default: ``500``) side length of image
+    - ``pixel_count`` -- long (default: ``500``) side length of image
      in number of pixels.
 
-    - ``image_width`` -- double (optional - default: ``4``) width of the image
+    - ``image_width`` -- double (default: ``4``) width of the image
      in the complex plane.
 
-    - ``prec`` -- long (optional - default: ``300``) specifies the bits of
+    - ``prec`` -- long (default: ``300``) specifies the bits of
      precision used by the Complex Field when using Newton's method to compute
      points on the external ray.
 
@@ -432,28 +432,28 @@ cpdef fast_julia_plot(double c_real, double c_imag,
     - ``c_imag`` -- double, Imaginary part of `c` value that determines Julia
       set.
 
-    - ``x_center`` -- double (optional - default: ``0.0``), Real part of center
+    - ``x_center`` -- double (default: ``0.0``), Real part of center
       point.
 
-    - ``y_center`` -- double (optional - default: ``0.0``), Imaginary part of
+    - ``y_center`` -- double (default: ``0.0``), Imaginary part of
       center point.
 
-    - ``image_width`` -- double (optional - default: ``4.0``), width of image
+    - ``image_width`` -- double (default: ``4.0``), width of image
       in the complex plane.
 
-    - ``max_iteration`` -- long (optional - default: ``500``), maximum number of
+    - ``max_iteration`` -- long (default: ``500``), maximum number of
       iterations the map ``Q_c(z)``.
 
-    - ``pixel_count`` -- long (optional - default: ``500``), side length of
+    - ``pixel_count`` -- long (default: ``500``), side length of
       image in number of pixels.
 
-    - ``level_sep`` -- long (optional - default: ``2``), number of iterations
+    - ``level_sep`` -- long (default: ``2``), number of iterations
       between each color level.
 
-    - ``color_num`` -- long (optional - default: ``40``), number of colors used
+    - ``color_num`` -- long (default: ``40``), number of colors used
       to plot image.
 
-    - ``base_color`` -- RGB color (optional - default: ``[50, 50, 50]``), color
+    - ``base_color`` -- RGB color (default: ``[50, 50, 50]``), color
       used to determine the coloring of set.
 
     OUTPUT:
@@ -553,31 +553,31 @@ cpdef julia_helper(double c_real, double c_imag, double x_center=0,
     - ``c_imag`` -- double, Imaginary part of `c` value that determines Julia
       set.
 
-    - ``x_center`` -- double (optional - default: ``0.0``), Real part of center
+    - ``x_center`` -- double (default: ``0.0``), Real part of center
       point.
 
-    - ``y_center`` -- double (optional - default: ``0.0``), Imaginary part of
+    - ``y_center`` -- double (default: ``0.0``), Imaginary part of
       center point.
 
-    - ``image_width`` -- double (optional - default: ``4.0``), width of image in
+    - ``image_width`` -- double (default: ``4.0``), width of image in
       the complex plane.
 
-    - ``max_iteration`` -- long (optional - default: ``500``), maximum number of
+    - ``max_iteration`` -- long (default: ``500``), maximum number of
       iterations the map ``Q_c(z)``.
 
-    - ``pixel_count`` -- long (optional - default: ``500``), side length of
+    - ``pixel_count`` -- long (default: ``500``), side length of
       image in number of pixels.
 
-    - ``level_sep`` -- long (optional - default: ``2``), number of iterations
+    - ``level_sep`` -- long (default: ``2``), number of iterations
       between each color level.
 
-    - ``color_num`` -- long (optional - default: ``40``), number of colors used
+    - ``color_num`` -- long (default: ``40``), number of colors used
       to plot image.
 
-    - ``base_color`` -- RGB color (optional - default: ``[50, 50, 50]``), color
+    - ``base_color`` -- RGB color (default: ``[50, 50, 50]``), color
       used to determine the coloring of set.
 
-    - ``point_color`` -- RGB color (optional - default: ``[255, 0, 0]``), color
+    - ``point_color`` -- RGB color (default: ``[255, 0, 0]``), color
       of the point `c` in the Mandelbrot set.
 
     OUTPUT:

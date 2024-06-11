@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Iterable of the keys of a Mapping associated with nonzero values
 """

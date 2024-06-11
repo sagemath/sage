@@ -125,7 +125,6 @@ REFERENCES:
     as permutation groups - the construction is too slow - unless (for
     small values or the parameter) they are made using explicit
     generators.
-
 """
 # ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -1910,7 +1909,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         INPUT:
 
-        - ``seed`` (optional, default: ``None``), if given must be a
+        - ``seed`` (default: ``None``), if given must be a
           subset of the domain of a base.  When used, an attempt to
           create a base containing all or part of ``seed`` will be
           made.
@@ -1971,7 +1970,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         INPUT:
 
-        - ``base_of_group`` (optional) -- (default: ``[1, 2, 3, ..., d]``)
+        - ``base_of_group`` -- (default: ``[1, 2, 3, ..., d]``)
           a list containing the integers `1, 2, \ldots , d` in any order,
           where `d` is the degree of ``self``
 
@@ -2471,7 +2470,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         INPUT:
 
-        - ``other`` - a permutation group.
+        - ``other`` -- a permutation group.
 
         OUTPUT:
 
@@ -2728,7 +2727,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         INPUT:
 
-        - ``N`` - A group which is acted on by ``self`` and
+        - ``N`` -- A group which is acted on by ``self`` and
           naturally embeds as a normal subgroup of the returned semidirect
           product.
 

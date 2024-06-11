@@ -399,8 +399,8 @@ class Link(SageObject):
 
         - ``presentation`` -- one of the following:
 
-          * ``'pd'`` - the arcs are returned as lists of parts in the PD code
-          * ``'gauss_code'`` - the arcs are returned as pieces of the Gauss
+          * ``'pd'`` -- the arcs are returned as lists of parts in the PD code
+          * ``'gauss_code'`` -- the arcs are returned as pieces of the Gauss
             code that start with a negative number, and end with the
             following negative one; of there exist a closed arc,
             it is returned as a list of positive numbers only
@@ -472,9 +472,9 @@ class Link(SageObject):
 
         - ``presentation`` -- string; one of the following:
 
-          * ``'wirtinger'`` - (default) the Wirtinger presentation
+          * ``'wirtinger'`` -- (default) the Wirtinger presentation
             (see :wikipedia:`Link_group`)
-          * ``'braid'`` - the presentation is given by the braid action
+          * ``'braid'`` -- the presentation is given by the braid action
             on the free group (see chapter 2 of [Bir1975]_)
 
         OUTPUT:
@@ -512,9 +512,7 @@ class Link(SageObject):
         if presentation == 'braid':
             b = self.braid()
             F = FreeGroup(b.strands())
-            rels = []
-            for x in F.gens():
-                rels.append(x * b / x)
+            rels = [x * b / x for x in F.gens()]
             return F.quotient(rels)
         elif presentation == 'wirtinger':
             arcs = self.arcs(presentation='pd')
@@ -1380,9 +1378,7 @@ class Link(SageObject):
         d = edges_graph.all_simple_cycles()
         code = []
         for i in d:
-            l = []
-            for j in i:
-                l.append(cross_number[j])
+            l = [cross_number[j] for j in i]
             del l[-1]
             code.append(l)
         oriented_code = [code, orient]
@@ -2274,11 +2270,10 @@ class Link(SageObject):
         """
         pd = self.pd_code()
         available_segments = set(flatten(pd))
-        result = []
-        # detect looped segments. They must be their own seifert circles
-        for a in available_segments:
-            if any(C.count(a) > 1 for C in pd):
-                result.append([a])
+        # detect looped segments. They must be their own Seifert circles
+        result = [[a] for a in available_segments
+                  if any(C.count(a) > 1 for C in pd)]
+
         # remove the looped segments from the available
         for a in result:
             available_segments.remove(a[0])
@@ -2654,10 +2649,10 @@ class Link(SageObject):
         - ``algorithm`` -- string (default: ``'jonesrep'``); algorithm to use
           and can be one of the following:
 
-          * ``'jonesrep'`` - use the Jones representation of the braid
+          * ``'jonesrep'`` -- use the Jones representation of the braid
             representation
 
-          * ``'statesum'`` - recursively computes the Kauffman bracket
+          * ``'statesum'`` -- recursively computes the Kauffman bracket
 
         OUTPUT:
 

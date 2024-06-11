@@ -115,8 +115,6 @@ Check it out\-\-\-we started with an integer\-lattice polytope and dualized
 to a rational\-lattice polytope.  Let's look at that.
 
 
-
-
 ::
 
     sage: P1dual.plot()
@@ -189,7 +187,6 @@ However, if a polytope is  *not*  in `\ZZ`, for example if it's in `\QQ` or
 (2') ...the dual is taken of P\-translated\-so\-barycenter\-is\-at\-origin.
 
 Keep all of this in mind as you take polar duals.
-
 
 
 Polytope Constructions

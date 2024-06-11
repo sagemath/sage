@@ -20,15 +20,17 @@ AUTHORS:
 from sage.misc.cachefunc import cached_method
 from sage.misc.bindable_class import BindableClass
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.hopf_algebras import HopfAlgebras
 from sage.categories.realizations import Category_realization_of_parent
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.permutation import Permutations, Permutation
-from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
-from sage.combinat.words.word import Word
 from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
+from sage.combinat.words.word import Word
+
+lazy_import('sage.groups.perm_gps.permgroup_element', 'PermutationGroupElement')
 
 
 class FQSymBasis_abstract(CombinatorialFreeModule, BindableClass):

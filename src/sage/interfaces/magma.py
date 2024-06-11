@@ -14,15 +14,15 @@ theory, group theory, combinatorics and algebra.
 
 The Magma interface offers three pieces of functionality:
 
-#. ``magma_console()`` - A function that dumps you into an interactive command-line Magma session.
+#. ``magma_console()`` -- A function that dumps you into an interactive command-line Magma session.
 
-#. ``magma.new(obj)`` and alternatively ``magma(obj)`` - Creation of a Magma object from a Sage object ``obj``.
+#. ``magma.new(obj)`` and alternatively ``magma(obj)`` -- Creation of a Magma object from a Sage object ``obj``.
    This provides a Pythonic interface to Magma. For example, if ``f=magma.new(10)``, then
    ``f.Factors()`` returns the prime factorization of 10 computed using Magma. If obj is a string containing
    an arbitrary Magma expression, then the expression is evaluated in Magma to create a Magma object. An example
    is ``magma.new('10 div 3')``, which returns Magma integer 3.
 
-#. ``magma.eval(expr)`` - Evaluation of the Magma expression ``expr``, with the result returned as a string.
+#. ``magma.eval(expr)`` -- Evaluation of the Magma expression ``expr``, with the result returned as a string.
 
 Type ``magma.[tab]`` for a list of all functions available from your Magma.
 Type ``magma.Function?`` for Magma's help about the Magma ``Function``.
@@ -309,23 +309,23 @@ class Magma(ExtraTabCompletion, Expect):
         """
         INPUT:
 
-        -  ``script_subdirectory`` - directory where scripts
+        -  ``script_subdirectory`` -- directory where scripts
            are read from
 
-        -  ``logfile`` - output logged to this file
+        -  ``logfile`` -- output logged to this file
 
-        -  ``server`` - address of remote server
+        -  ``server`` -- address of remote server
 
-        - ``server_tmpdir`` - temporary directory to use in remote server
+        - ``server_tmpdir`` -- temporary directory to use in remote server
 
-        -  ``user_config`` - if True, then local user
+        -  ``user_config`` -- if True, then local user
            configuration files will be read by Magma. If False (the default),
            then Magma is started with the -n option which suppresses user
            configuration files.
 
-        - ``seed`` - Seed to use in the random number generator.
+        - ``seed`` -- Seed to use in the random number generator.
 
-        -  ``command`` - (Default: 'magma') The command to execute to start Magma.
+        -  ``command`` -- (Default: 'magma') The command to execute to start Magma.
 
         EXAMPLES::
 
@@ -420,13 +420,13 @@ class Magma(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``filename`` - string
+        -  ``filename`` -- string
 
 
         OUTPUT:
 
 
-        -  ``string`` - a magma command
+        -  ``string`` -- a magma command
 
 
         EXAMPLES::
@@ -446,7 +446,7 @@ class Magma(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``s`` - a string
+        -  ``s`` -- a string
 
 
         OUTPUT: a string
@@ -475,7 +475,7 @@ class Magma(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``attrname`` - a string
+        -  ``attrname`` -- a string
 
 
         OUTPUT: MagmaFunction instance
@@ -508,9 +508,9 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``x`` - string of code
+        -  ``x`` -- string of code
 
-        -  ``strip`` - ignored
+        -  ``strip`` -- ignored
 
 
         OUTPUT: string
@@ -615,9 +615,9 @@ class Magma(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``var`` - string; a variable name
+        -  ``var`` -- string; a variable name
 
-        -  ``value`` - string; what to set var equal to
+        -  ``value`` -- string; what to set var equal to
 
 
         EXAMPLES::
@@ -637,14 +637,14 @@ class Magma(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``var`` - string; name of a variable defined in the
+        -  ``var`` -- string; name of a variable defined in the
            Magma session
 
 
         OUTPUT:
 
 
-        -  ``string`` - string representation of the value of
+        -  ``string`` -- string representation of the value of
            the variable.
 
 
@@ -663,10 +663,10 @@ class Magma(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        - ``value`` - something coercible to an element of this Magma
+        - ``value`` -- something coercible to an element of this Magma
            interface
 
-        - ``gens`` - string; comma separated list of variable names
+        - ``gens`` -- string; comma separated list of variable names
 
 
         OUTPUT: new Magma element that is equal to value with given gens
@@ -706,9 +706,9 @@ class Magma(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``x`` - object
+        -  ``x`` -- object
 
-        -  ``gens`` - string; names of generators of self,
+        -  ``gens`` -- string; names of generators of self,
            separated by commas
 
 
@@ -852,9 +852,9 @@ class Magma(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``s`` - string
+        -  ``s`` -- string
 
-        -  ``names`` - list of strings
+        -  ``names`` -- list of strings
 
 
         OUTPUT: string
@@ -875,7 +875,7 @@ class Magma(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``var`` - a string
+        -  ``var`` -- a string
 
 
         EXAMPLES::
@@ -926,14 +926,14 @@ class Magma(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``t`` - float (default: None); if not None, return
+        -  ``t`` -- float (default: None); if not None, return
            cputime since t
 
 
         OUTPUT:
 
 
-        -  ``float`` - seconds
+        -  ``float`` -- seconds
 
 
         EXAMPLES::
@@ -982,7 +982,7 @@ class Magma(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``filename`` - a string
+        -  ``filename`` -- a string
 
 
         EXAMPLES: Attaching a file that exists is fine::
@@ -1012,7 +1012,7 @@ class Magma(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``filename`` - a string
+        -  ``filename`` -- a string
 
 
         EXAMPLES::
@@ -1043,7 +1043,7 @@ class Magma(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``filename`` - string
+        -  ``filename`` -- string
 
 
         OUTPUT: output printed when loading the file
@@ -1120,15 +1120,15 @@ class Magma(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``function`` - string, a Magma function name
+        -  ``function`` -- string, a Magma function name
 
-        -  ``args`` - list of objects coercible into this magma
+        -  ``args`` -- list of objects coercible into this magma
            interface
 
-        -  ``params`` - Magma parameters, passed in after a
+        -  ``params`` -- Magma parameters, passed in after a
            colon
 
-        -  ``nvals`` - number of return values from the
+        -  ``nvals`` -- number of return values from the
            function to ask Magma for
 
 
@@ -1178,9 +1178,9 @@ class Magma(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``code`` - a string; code to evaluate
+        -  ``code`` -- a string; code to evaluate
 
-        -  ``nvals`` - an integer; number of return values
+        -  ``nvals`` -- an integer; number of return values
 
 
         OUTPUT: nvals distinct values
@@ -1240,15 +1240,15 @@ class Magma(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``left`` - something coerceable to a magma object
+        -  ``left`` -- something coerceable to a magma object
 
-        -  ``name`` - name of the constructor, e.g., sub, quo,
+        -  ``name`` -- name of the constructor, e.g., sub, quo,
            ideal, etc.
 
-        -  ``gens`` - if a list/tuple, each item is coerced to
+        -  ``gens`` -- if a list/tuple, each item is coerced to
            magma; otherwise gens itself is converted to magma
 
-        -  ``nvals`` - positive integer; number of return
+        -  ``nvals`` -- positive integer; number of return
            values
 
 
@@ -1420,9 +1420,9 @@ class Magma(ExtraTabCompletion, Expect):
         OUTPUT:
 
 
-        -  ``numbers`` - 3-tuple: major, minor, etc.
+        -  ``numbers`` -- 3-tuple: major, minor, etc.
 
-        -  ``string`` - version as a string
+        -  ``string`` -- version as a string
 
 
         EXAMPLES::
@@ -1442,7 +1442,7 @@ class Magma(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``s`` - string
+        -  ``s`` -- string
 
 
         OUTPUT: string
@@ -1474,11 +1474,11 @@ class Magma(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``verbose`` - bool (default: True); whether to
+        -  ``verbose`` -- bool (default: ``True``); whether to
            verbosely output status info the first time the command list is
            built
 
-        -  ``use_disk_cache`` - bool (default: True); use
+        -  ``use_disk_cache`` -- bool (default: ``True``); use
            cached command list, which is saved to disk.
 
 
@@ -1536,7 +1536,7 @@ class Magma(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``L`` - a list of elements of a Sage multivariate
+        -  ``L`` -- a list of elements of a Sage multivariate
            polynomial ring.
 
 
@@ -1596,7 +1596,7 @@ class Magma(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``type`` - string (e.g. 'Groebner'), see Magma
+        -  ``type`` -- string (e.g. 'Groebner'), see Magma
            documentation
 
 
@@ -1616,7 +1616,7 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        - ``n`` - number of threads
+        - ``n`` -- number of threads
 
         EXAMPLES::
 
@@ -1831,7 +1831,7 @@ def is_MagmaElement(x):
 
     INPUT:
 
-    -  ``x`` - any object
+    -  ``x`` -- any object
 
     OUTPUT: bool
 
@@ -2126,7 +2126,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
         INPUT:
 
 
-        -  ``n`` - a *positive* integer
+        -  ``n`` -- a *positive* integer
 
 
         OUTPUT: MagmaElement
@@ -2549,7 +2549,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
         OUTPUT:
 
 
-        -  ``list`` - sorted list of distinct strings
+        -  ``list`` -- sorted list of distinct strings
 
 
         EXAMPLES::
@@ -2712,16 +2712,16 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
         INPUT:
 
 
-        -  ``gens`` - object or list/tuple of generators
+        -  ``gens`` -- object or list/tuple of generators
         - further named arguments that are ignored
 
 
         OUTPUT:
 
 
-        -  ``magma element`` - the quotient object
+        -  ``magma element`` -- the quotient object
 
-        -  ``magma element`` - mapping from self to the
+        -  ``magma element`` -- mapping from self to the
            quotient object
 
 
@@ -2760,13 +2760,13 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
         INPUT:
 
 
-        -  ``gens`` - object or list/tuple of generators
+        -  ``gens`` -- object or list/tuple of generators
 
 
         OUTPUT:
 
 
-        -  ``magma element`` - a Magma ideal
+        -  ``magma element`` -- a Magma ideal
 
 
         EXAMPLES::
@@ -2834,10 +2834,10 @@ class MagmaGBLogPrettyPrinter:
 
         INPUT:
 
-        - ``verbosity`` - how much information should be printed
+        - ``verbosity`` -- how much information should be printed
           (between 0 and 1)
 
-        - ``style`` - if "magma" the full Magma log is printed; if
+        - ``style`` -- if "magma" the full Magma log is printed; if
           'sage' only the current degree and the number of pairs in
           the queue is printed (default: "magma").
 
@@ -3002,7 +3002,7 @@ class MagmaGBDefaultContext:
         """
         INPUT:
 
-        - ``magma`` - (default: ``magma_default``)
+        - ``magma`` -- (default: ``magma_default``)
 
         EXAMPLES::
 

@@ -4,7 +4,6 @@
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
-# -*- coding: utf-8 -*-
 r"""
 A ``PowComputer`` for relative extensions
 
@@ -15,7 +14,6 @@ working on linkages or other low-level `p`-adics code within the Sage library.
 AUTHORS:
 
 - David Roe, Julian Rüth (2017-06-11): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2017 David Roe <roed.math@gmail.com>

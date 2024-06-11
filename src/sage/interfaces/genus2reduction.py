@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Conductor and reduction types for genus 2 curves
 
@@ -311,8 +310,6 @@ class Genus2reduction(SageObject):
     .. MATH::
 
                    y^2 + (x^3-x^2-1)y = x^2 - x.
-
-
 
     We have::
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Homset categories
 """
@@ -155,6 +156,7 @@ class HomsetsCategory(FunctorialConstructionCategory):
                 return C.base()
         raise AttributeError("This hom category has no base")
 
+
 class HomsetsOf(HomsetsCategory):
     """
     Default class for homsets of a category.
@@ -217,6 +219,7 @@ class HomsetsOf(HomsetsCategory):
             [Category of homsets]
         """
         return [Homsets()]
+
 
 class Homsets(Category_singleton):
     """
