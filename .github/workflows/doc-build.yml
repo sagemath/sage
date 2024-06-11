@@ -121,11 +121,13 @@ jobs:
                      --workdir $(pwd) \
                      ${{ env.BUILD_IMAGE }} /bin/sh
 
-      # Docs
+      #
+      # On PRs and pushes to branches
+      #
 
       - name: Store old docs
         id: worktree
-        if: (success() || failure()) && steps.container.outcome == 'success'
+        if: (success() || failure()) && steps.container.outcome == 'success' && !startsWith(github.ref, 'refs/tags/')
         run: |
           git config --global --add safe.directory $(pwd)
           git config --global user.email "ci-sage@example.com"
@@ -136,7 +138,7 @@ jobs:
           mathjax_path_to=$(docker exec -e SAGE_USE_CDNS=yes BUILD /sage/sage -python -c "from sage_docbuild.conf import mathjax_path; print(mathjax_path)")
           new_version=$(docker exec BUILD cat src/VERSION.txt)
           mkdir -p docs/
-          docker cp BUILD:/sage/local/share/doc/sage/html docs/
+          docker cp --follow-link BUILD:/sage/local/share/doc/sage/html docs/
           # Wipe out chronic diffs between old doc and new doc
           (cd docs && \
            find . -name "*.html" | xargs sed -i -e '/class="sidebar-brand-text"/ s/Sage [0-9a-z.]* /Sage '"$new_version"' /' \
@@ -149,10 +151,6 @@ jobs:
            (echo "*.svg binary"; echo "*.pdf binary") >> .gitattributes && \
            (echo ".buildinfo"; echo '*.inv'; echo '.git*'; echo '*.svg'; echo '*.pdf'; echo '*.png'; echo 'searchindex.js') > .gitignore; \
            git add -A && git commit --quiet -m "old")
-
-      #
-      # On PRs and pushes to branches
-      #
 
       - name: Build docs
         id: docbuild
@@ -180,9 +178,6 @@ jobs:
           .ci/create-changes-html.sh $(cd docs && git rev-parse HEAD^) docs
           (cd docs && rm -rf .git)
           mv CHANGES.html docs
-          # We also need to replace the symlinks because netlify is not following them
-          # CHECK IF STILL NEEDED
-          #cp -r -L $DOC_DIR ./docs
           # Zip everything for increased performance
           zip -r docs.zip docs
 
@@ -210,6 +205,7 @@ jobs:
           export SAGE_LIVE_DOC=yes
           export SAGE_JUPYTER_SERVER=binder:sagemath/sage-binder-env/dev
           ./config.status && make SAGE_WHEELS=yes SAGE_EDITABLE=no sagemath_doc_html-no-deps sagemath_doc_pdf-no-deps
+          (cd local/var/lib/sage/ && zip /sage/sagemath_doc_wheels.zip wheels/sagemath_doc*.whl)
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
       - name: Copy live doc
@@ -221,6 +217,8 @@ jobs:
           docker cp --follow-link BUILD:/sage/local/share/doc/sage/pdf ./livedoc
           docker cp --follow-link BUILD:/sage/local/share/doc/sage/index.html ./livedoc
           zip -r livedoc.zip livedoc
+          docker cp BUILD:/sage/sagemath_doc_wheels.zip .
+          unzip sagemath_doc_wheels.zip
 
       - name: Upload live doc
         if: (success() || failure()) && steps.copylivedoc.outcome == 'success'
@@ -234,14 +232,14 @@ jobs:
         if: (success() || failure()) && steps.buildlivedoc.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
-          name: wheels
-          path: ./venv/var/lib/sage/wheels/sagemath_doc*.whl
+          name: sagemath_doc_wheels
+          path: sagemath_doc_wheels.zip
 
       - uses: pypa/gh-action-pypi-publish@release/v1
         if: (success() || failure()) && steps.buildlivedoc.outcome == 'success' && env.CAN_DEPLOY == 'true'
         with:
           user: __token__
           password: ${{ secrets.SAGEMATH_PYPI_API_TOKEN }}
-          packages-dir: wheelhouse/
+          packages-dir: wheels/
           skip-existing: true
           verbose: true
