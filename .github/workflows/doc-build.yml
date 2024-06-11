@@ -105,6 +105,9 @@ jobs:
             TARGETS=ci-build-with-fallback
 
       - name: Start container
+        id: container
+        # Try to continue when "exporting to GitHub Actions Cache" failed with timeout
+        if: (success() || failure())
         run: |
           docker run --name BUILD -dit \
                      --mount type=bind,src=$(pwd),dst=$(pwd) \
@@ -115,6 +118,7 @@ jobs:
 
       - name: Store old docs
         id: worktree
+        if: (success() || failure()) && steps.container.outcome == 'success'
         run: |
           git config --global --add safe.directory $(pwd)
           git config --global user.email "ci-sage@example.com"
@@ -129,6 +133,7 @@ jobs:
           # Wipe out chronic diffs between old doc and new doc
           (cd docs && \
            find . -name "*.html" | xargs sed -i -e '/class="sidebar-brand-text"/ s/Sage [0-9a-z.]* /Sage '"$new_version"' /' \
+                                                -e '/This is documentation for/ s/ built with GitHub PR [^.]*././' \
                                                 -e 's;'"$mathjax_path_from"';'"$mathjax_path_to"';' \
                                                 -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d')
           # Create git repo from old doc
@@ -140,9 +145,12 @@ jobs:
 
       - name: Build docs
         id: docbuild
+        if: (success() || failure()) && steps.worktree.outcome == 'success'
         # Always non-incremental because of the concern that
         # incremental docbuild may introduce broken links (inter-file references) though build succeeds
         run: |
+          export GITHUB_REF=${{ github.ref }}
+          export PR_SHA=${{ github.event.pull_request.head.sha }}
           export MAKE="make -j5 --output-sync=recurse" SAGE_NUM_THREADS=5
           make doc-clean doc-uninstall
           export SAGE_USE_CDNS=yes

@@ -31,7 +31,6 @@ And the Texture objects keep track of all their data::
 AUTHOR:
 
 - Robert Bradshaw (2007-07-07) Initial version.
-
 """
 from textwrap import dedent
 

@@ -210,5 +210,4 @@ r"""
     sage: two = R(2)
     sage: V(two*u) == two*V(u)
     True
-
 """

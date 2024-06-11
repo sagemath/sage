@@ -787,7 +787,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``x, y, z`` -- a string representing a function (such
+        - ``x``, ``y``, ``z`` -- a string representing a function (such
            as ``x="u2+v2"``, ...) vars is a list or two strings
            representing variables (such as vars = ["u","v"])
 

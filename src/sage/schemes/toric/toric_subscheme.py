@@ -9,7 +9,6 @@ AUTHORS:
 - William Stein (2005): initial version.
 
 - Andrey Novoseltsev (2010-05-17): subschemes of toric varieties.
-
 """
 
 # ****************************************************************************

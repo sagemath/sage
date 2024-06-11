@@ -41,7 +41,6 @@ EXAMPLES::
     sphinx_plot(MoebiusStrip(1,.2))
 
 
-
 By default, the surface is colored with one single color. ::
 
     sage: P = ParametricSurface(f, (srange(0,10,0.1), srange(-5,5.0,0.1)),

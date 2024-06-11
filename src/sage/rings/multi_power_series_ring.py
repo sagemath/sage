@@ -191,7 +191,6 @@ AUTHORS:
 
 - Niles Johnson (2010-07): initial code
 - Simon King (2012-08, 2013-02): Use category and coercion framework, :issue:`13412` and :issue:`14084`
-
 """
 
 #*****************************************************************************

@@ -65,7 +65,6 @@ AUTHORS:
 
 See also the functions :func:`cremona_curves` and :func:`cremona_optimal_curves`
 which enable easy looping through the Cremona elliptic curve database.
-
 """
 
 import os

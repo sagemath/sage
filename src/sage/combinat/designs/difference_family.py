@@ -1123,7 +1123,7 @@ def are_hadamard_difference_set_parameters(v, k, lmbda):
 
     INPUT:
 
-    - ``(v,k,lmbda)`` -- parameters of a difference set
+    - ``(v, k, lmbda)`` -- parameters of a difference set
 
     EXAMPLES::
 
@@ -1188,7 +1188,7 @@ def hadamard_difference_set_product(G1, D1, G2, D2):
 
     INPUT:
 
-    - ``G1,D1``, ``G2,D2`` -- two Hadamard difference sets
+    - ``G1, D1``, ``G2, D2`` -- two Hadamard difference sets
 
     EXAMPLES::
 
@@ -3463,8 +3463,8 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
 
     INPUT:
 
-    - ``v,k,l`` -- parameters of the difference family. If ``l`` is not provided
-      it is assumed to be ``1``
+    - ``v``, ``k``, ``l`` -- parameters of the difference family. If ``l`` is
+      not provided it is assumed to be ``1``
     - ``existence`` -- if ``True``, then return either ``True`` if Sage knows
       how to build such design, ``Unknown`` if it does not and ``False`` if it
       knows that the design does not exist

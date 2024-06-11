@@ -512,9 +512,7 @@ class Link(SageObject):
         if presentation == 'braid':
             b = self.braid()
             F = FreeGroup(b.strands())
-            rels = []
-            for x in F.gens():
-                rels.append(x * b / x)
+            rels = [x * b / x for x in F.gens()]
             return F.quotient(rels)
         elif presentation == 'wirtinger':
             arcs = self.arcs(presentation='pd')
@@ -1380,9 +1378,7 @@ class Link(SageObject):
         d = edges_graph.all_simple_cycles()
         code = []
         for i in d:
-            l = []
-            for j in i:
-                l.append(cross_number[j])
+            l = [cross_number[j] for j in i]
             del l[-1]
             code.append(l)
         oriented_code = [code, orient]
@@ -2274,11 +2270,10 @@ class Link(SageObject):
         """
         pd = self.pd_code()
         available_segments = set(flatten(pd))
-        result = []
-        # detect looped segments. They must be their own seifert circles
-        for a in available_segments:
-            if any(C.count(a) > 1 for C in pd):
-                result.append([a])
+        # detect looped segments. They must be their own Seifert circles
+        result = [[a] for a in available_segments
+                  if any(C.count(a) > 1 for C in pd)]
+
         # remove the looped segments from the available
         for a in result:
             available_segments.remove(a[0])

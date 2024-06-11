@@ -3638,6 +3638,11 @@ REFERENCES:
 .. [Jon2005] \V. Jones, The Jones Polynomial, 2005.
              https://math.berkeley.edu/~vfr/jones.pdf
 
+.. [JPD2018] Átila A. Jones, Fábio Protti and Renata R. Del-Vecchio:
+             *Cograph generation with linear delay*.
+             Theoretical Computer Science, 713:1-10, 2018.
+             :doi:`10.1016/j.tcs.2017.12.037`
+
 .. [JRJ94] Jourdan, Guy-Vincent; Rampon, Jean-Xavier; Jard, Claude
            (1994), "Computing on-line the lattice of maximal antichains
            of posets", Order 11 (3) p. 197-210, :doi:`10.1007/BF02115811`
