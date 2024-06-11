@@ -484,9 +484,9 @@ class DrinfeldModule_finite(DrinfeldModule):
         A = self.function_ring()
         r = self.rank()
         lc = chi[0][r]
-        coeffs = [ A([K(chi[i][j]/lc).in_base()
-                      for i in range((r-j)*n // r + 1)])
-                   for j in range(r+1) ]
+        coeffs = [A([K(chi[i][j]/lc).in_base()
+                     for i in range((r-j)*n // r + 1)])
+                  for j in range(r+1)]
         return PolynomialRing(A, name=var)(coeffs)
 
     @cached_method
