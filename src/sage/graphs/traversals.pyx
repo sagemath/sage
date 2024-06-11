@@ -444,7 +444,7 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
     cdef int now, v, vi, int_neighbor
 
     # Perform Lex BFS
-    if algorithm is "fast":
+    if algorithm == "fast":
         lex_BFS_fast_short_digraph(sd, sigma_int, pred)
         sigma = [int_to_v[sigma_int[i]] for i in range(n)]
 

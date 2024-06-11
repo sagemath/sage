@@ -2351,7 +2351,7 @@ def szeged_index(G, algorithm=None):
     if G.is_directed() and not G.is_strongly_connected():
         raise ValueError("the Szeged index is defined for "
                          "strongly connected digraphs only")
-    if G.is_directed() and algorithm is "low":
+    if G.is_directed() and algorithm == "low":
         raise ValueError("the 'low' algorithm cannot be used on digraphs")
 
     if algorithm is None:
@@ -2360,7 +2360,7 @@ def szeged_index(G, algorithm=None):
     elif algorithm not in ["low", "high"]:
         raise ValueError(f"unknown algorithm '{algorithm}'")
 
-    if algorithm is "low" and (G.has_loops() or G.has_multiple_edges()):
+    if algorithm == "low" and (G.has_loops() or G.has_multiple_edges()):
         raise ValueError("the 'low' algorithm is for simple connected "
                          "undirected graphs only")
 
@@ -2370,7 +2370,7 @@ def szeged_index(G, algorithm=None):
     cdef short_digraph sd
     cdef uint64_t s
 
-    if algorithm is "low":
+    if algorithm == "low":
         init_short_digraph(sd, G, edge_labelled=False, vertex_list=list(G), sort_neighbors=True)
         s = c_szeged_index_low_memory(sd)
     else:
