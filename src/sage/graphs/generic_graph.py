@@ -4572,8 +4572,9 @@ class GenericGraph(GenericGraph_pyx):
         has no non-oriented edge (this vertex must have odd degree), the walk
         resumes at another vertex of odd degree, if any.
 
-        This algorithm has complexity `O(m)`, where `m` is the number of edges
-        in the graph.
+        This algorithm has complexity `O(n+m)` for ``SparseGraph`` and `O(n^2)`
+        for ``DenseGraph``, where `m` is the number of edges in the graph and
+        `n` is the number of vertices in the graph.
 
         EXAMPLES:
 
@@ -14905,7 +14906,8 @@ class GenericGraph(GenericGraph_pyx):
         ALGORITHM:
 
         This method implements the algorithm proposed in [RT1975]_ for the
-        recognition of chordal graphs with time complexity in `O(m)`. The
+        recognition of chordal graphs. The time complexity of this algorithm is
+        `O(n+m)` for ``SparseGraph`` and `O(n^2)` for ``DenseGraph``. The
         algorithm works through computing a Lex BFS on the graph, then checking
         whether the order is a Perfect Elimination Order by computing for each
         vertex `v` the subgraph induced by its non-deleted neighbors, then
