@@ -7,6 +7,14 @@ on:
     branches:
       - master
       - develop
+    tags:
+      # Match all release tags including beta, rc
+      - '[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.beta[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+.beta[0-9]+'
+      - '[0-9]+.[0-9]+.rc[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+.rc[0-9]+'
   workflow_dispatch:
     # Allow to run manually
     inputs:
@@ -143,9 +151,13 @@ jobs:
            (echo ".buildinfo"; echo '*.inv'; echo '.git*'; echo '*.svg'; echo '*.pdf'; echo '*.png'; echo 'searchindex.js') > .gitignore; \
            git add -A && git commit --quiet -m "old")
 
+      #
+      # On PRs and pushes to branches
+      #
+
       - name: Build docs
         id: docbuild
-        if: (success() || failure()) && steps.worktree.outcome == 'success'
+        if: (success() || failure()) && steps.worktree.outcome == 'success' && !startsWith(github.ref, 'refs/tags/')
         # Always non-incremental because of the concern that
         # incremental docbuild may introduce broken links (inter-file references) though build succeeds
         run: |
@@ -159,7 +171,7 @@ jobs:
 
       - name: Copy docs
         id: copy
-        if: (success() || failure()) && steps.docbuild.outcome == 'success'
+        if: (success() || failure()) && steps.docbuild.outcome == 'success' && !startsWith(github.ref, 'refs/tags/')
         run: |
           set -ex
           # We copy everything to a local folder
@@ -176,15 +188,19 @@ jobs:
           zip -r docs.zip docs
 
       - name: Upload docs
-        if: (success() || failure()) && steps.copy.outcome == 'success'
+        if: (success() || failure()) && steps.copy.outcome == 'success'  && !startsWith(github.ref, 'refs/tags/')
         uses: actions/upload-artifact@v3
         with:
           name: docs
           path: docs.zip
 
+      #
+      # On release tags: live doc and wheels
+      #
+
       - name: Build live doc
         id: buildlivedoc
-        if: (success() || failure()) && steps.copy.outcome == 'success' && github.repository == 'sagemath/sage' && github.ref == 'refs/heads/develop'
+        if: startsWith(github.ref, 'refs/tags/')
         run: |
           export MAKE="make -j5 --output-sync=recurse" SAGE_NUM_THREADS=5
           export PATH="build/bin:$PATH"
@@ -216,13 +232,16 @@ jobs:
           path: livedoc.zip
 
       - name: Upload sagemath-doc wheels
+        id: uploaddocwheels
+        if: (success() || failure()) && steps.buildlivedoc.outcome == 'success'
         uses: actions/upload-artifact@v3
         with:
           name: wheels
-          path: ./wheelhouse/*.whl
+          path: ./upstream/sagemath_doc*.whl
 
   upload_wheels:
     needs: build-docs
+    if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     env:
       CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
