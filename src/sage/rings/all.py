@@ -14,47 +14,8 @@ from sage.misc.lazy_import import lazy_import
 
 from sage.rings.all__sagemath_categories import *
 
-# Ring base classes
-from sage.rings.ring import (Ring, Field, CommutativeRing, IntegralDomain,
-                             PrincipalIdealDomain)
-
-lazy_import("sage.rings.ring", "DedekindDomain")
-
-# Ring element base classes
-from sage.structure.element import (CommutativeAlgebraElement,
-        RingElement, CommutativeRingElement, IntegralDomainElement,
-        DedekindDomainElement, PrincipalIdealDomainElement,
-        EuclideanDomainElement, FieldElement)
-
-# Ideals
-from sage.rings.ideal import Ideal
-ideal = Ideal
-
-# Quotient
-from sage.rings.quotient_ring import QuotientRing
-
-# Infinities
-from sage.rings.infinity import infinity, Infinity, InfinityRing, unsigned_infinity, UnsignedInfinityRing
-
-# Rational integers.
-from sage.rings.integer_ring import IntegerRing, ZZ, crt_basis
-from sage.rings.integer import Integer
-
-# Rational numbers
-from sage.rings.rational_field import RationalField, QQ
-from sage.rings.rational import Rational
-Rationals = RationalField
-
-# Integers modulo n.
-from sage.rings.finite_rings.integer_mod_ring import IntegerModRing, Zmod
-from sage.rings.finite_rings.integer_mod import IntegerMod, Mod, mod
-Integers = IntegerModRing
-
 # Finite fields
 from sage.rings.finite_rings.all import *
-
-# Number field
-from sage.rings.number_field.all import *
 
 # Function field
 from sage.rings.function_field.all import *
@@ -66,6 +27,9 @@ from sage.rings.finite_rings.residue_field import ResidueField
 from sage.rings.padics.all import *
 from sage.rings.padics.padic_printing import _printer_defaults as padic_printing
 
+# Pseudo-ring of PARI objects.
+from sage.rings.pari_ring import PariRing, Pari
+
 # valuations
 from sage.rings.valuation.all import *
 
@@ -74,12 +38,20 @@ from sage.rings.semirings.all import *
 
 # Real numbers
 from sage.rings.real_mpfr import (RealField, RR,
-                       create_RealNumber as RealNumber)   # this is used by the preparser to wrap real literals -- very important.
+                                  create_RealNumber as RealNumber)   # this is used by the preparser to wrap real literals -- very important.
+
+# Lazy Laurent series ring
+lazy_import('sage.rings.lazy_series_ring', ['LazyLaurentSeriesRing', 'LazyPowerSeriesRing',
+                                            'LazySymmetricFunctions', 'LazyDirichletSeriesRing'])
+
+# Tate algebras
+from sage.rings.tate_algebra import TateAlgebra
+
 Reals = RealField
 
-from sage.rings.real_double import RealDoubleField, RDF, RealDoubleElement
+# Number field
+from sage.rings.number_field.all import *
 
-from sage.rings.real_lazy import RealLazyField, RLF, ComplexLazyField, CLF
 
 from sage.rings.real_arb import RealBallField, RBF
 
@@ -115,35 +87,6 @@ from sage.rings.complex_arb import ComplexBallField, CBF
 
 lazy_import("sage.rings.imaginary_unit", "I")
 
-# Power series rings
-from sage.rings.power_series_ring import PowerSeriesRing
-
-# Laurent series ring in one variable
-from sage.rings.laurent_series_ring import LaurentSeriesRing
-
-# Lazy Laurent series ring
-lazy_import('sage.rings.lazy_series_ring', ['LazyLaurentSeriesRing', 'LazyPowerSeriesRing',
-                                            'LazySymmetricFunctions', 'LazyDirichletSeriesRing'])
-
-# Tate algebras
-from sage.rings.tate_algebra import TateAlgebra
-
-# Puiseux series ring
-from sage.rings.puiseux_series_ring import PuiseuxSeriesRing
-
-# Pseudo-ring of PARI objects.
-from sage.rings.pari_ring import PariRing, Pari
-
-# Big-oh notation
-from sage.rings.big_oh import O
-
-# Fraction field
-from sage.rings.fraction_field import FractionField
-Frac = FractionField
-
-# Localization
-from sage.rings.localization import Localization
-
 # c-finite sequences
 from sage.rings.cfinite_sequence import CFiniteSequence, CFiniteSequences
 
@@ -168,3 +111,4 @@ from sage.rings.asymptotic.all import *
 
 # Register classes in numbers abc
 from sage.rings import numbers_abc
+del lazy_import
