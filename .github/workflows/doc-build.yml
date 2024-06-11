@@ -4,9 +4,14 @@ on:
   pull_request:
   merge_group:
   push:
-    branches:
-      - master
-      - develop
+    tags:
+      # Match all release tags including beta, rc
+      - '[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.beta[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+.beta[0-9]+'
+      - '[0-9]+.[0-9]+.rc[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+.rc[0-9]+'
   workflow_dispatch:
     # Allow to run manually
     inputs:
@@ -32,6 +37,8 @@ env:
   FROM_DOCKER_TARGET:     "with-targets"
   FROM_DOCKER_TAG:        ${{ github.event.inputs.docker_tag || 'dev'}}
   EXTRA_CONFIGURE_ARGS:   --enable-fat-binary
+  # For deployment of the sagemath_doc_... wheels to PyPI
+  CAN_DEPLOY:             ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
 
 jobs:
   build-docs:
@@ -114,11 +121,13 @@ jobs:
                      --workdir $(pwd) \
                      ${{ env.BUILD_IMAGE }} /bin/sh
 
-      # Docs
+      #
+      # On PRs and pushes to branches
+      #
 
       - name: Store old docs
         id: worktree
-        if: (success() || failure()) && steps.container.outcome == 'success'
+        if: (success() || failure()) && steps.container.outcome == 'success' && !startsWith(github.ref, 'refs/tags/')
         run: |
           git config --global --add safe.directory $(pwd)
           git config --global user.email "ci-sage@example.com"
@@ -129,7 +138,7 @@ jobs:
           mathjax_path_to=$(docker exec -e SAGE_USE_CDNS=yes BUILD /sage/sage -python -c "from sage_docbuild.conf import mathjax_path; print(mathjax_path)")
           new_version=$(docker exec BUILD cat src/VERSION.txt)
           mkdir -p docs/
-          docker cp BUILD:/sage/local/share/doc/sage/html docs/
+          docker cp --follow-link BUILD:/sage/local/share/doc/sage/html docs/
           # Wipe out chronic diffs between old doc and new doc
           (cd docs && \
            find . -name "*.html" | xargs sed -i -e '/class="sidebar-brand-text"/ s/Sage [0-9a-z.]* /Sage '"$new_version"' /' \
@@ -145,7 +154,7 @@ jobs:
 
       - name: Build docs
         id: docbuild
-        if: (success() || failure()) && steps.worktree.outcome == 'success'
+        if: (success() || failure()) && steps.worktree.outcome == 'success' && !startsWith(github.ref, 'refs/tags/')
         # Always non-incremental because of the concern that
         # incremental docbuild may introduce broken links (inter-file references) though build succeeds
         run: |
@@ -163,28 +172,29 @@ jobs:
         run: |
           set -ex
           # We copy everything to a local folder
-          docker cp BUILD:/sage/local/share/doc/sage/html docs
-          docker cp BUILD:/sage/local/share/doc/sage/index.html docs
+          docker cp --follow-link BUILD:/sage/local/share/doc/sage/html ./docs
+          docker cp --follow-link BUILD:/sage/local/share/doc/sage/index.html ./docs
           (cd docs && git commit -a -m 'new')
           .ci/create-changes-html.sh $(cd docs && git rev-parse HEAD^) docs
           (cd docs && rm -rf .git)
           mv CHANGES.html docs
-          # We also need to replace the symlinks because netlify is not following them
-          # CHECK IF STILL NEEDED
-          #cp -r -L $DOC_DIR ./docs
           # Zip everything for increased performance
           zip -r docs.zip docs
 
       - name: Upload docs
         if: (success() || failure()) && steps.copy.outcome == 'success'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: docs
           path: docs.zip
 
+      #
+      # On release tags: live doc and wheels
+      #
+
       - name: Build live doc
         id: buildlivedoc
-        if: (success() || failure()) && steps.copy.outcome == 'success' && github.repository == 'sagemath/sage' && github.ref == 'refs/heads/develop'
+        if: startsWith(github.ref, 'refs/tags/')
         run: |
           export MAKE="make -j5 --output-sync=recurse" SAGE_NUM_THREADS=5
           export PATH="build/bin:$PATH"
@@ -194,8 +204,8 @@ jobs:
           export SAGE_USE_CDNS=yes
           export SAGE_LIVE_DOC=yes
           export SAGE_JUPYTER_SERVER=binder:sagemath/sage-binder-env/dev
-          make doc-clean doc-uninstall
-          ./config.status && make sagemath_doc_html-no-deps sagemath_doc_pdf-no-deps
+          ./config.status && make SAGE_WHEELS=yes SAGE_EDITABLE=no sagemath_doc_html-no-deps sagemath_doc_pdf-no-deps
+          (cd venv/var/lib/sage/ && zip /sage/sagemath_doc_wheels.zip wheels/sagemath_doc*.whl)
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
       - name: Copy live doc
@@ -203,16 +213,33 @@ jobs:
         if: (success() || failure()) && steps.buildlivedoc.outcome == 'success'
         run: |
           mkdir -p ./livedoc
-          cp -r -L /sage/local/share/doc/sage/html ./livedoc
-          cp -r -L /sage/local/share/doc/sage/pdf ./livedoc
-          cp  /sage/local/share/doc/sage/index.html ./livedoc
+          docker cp --follow-link BUILD:/sage/local/share/doc/sage/html ./livedoc
+          docker cp --follow-link BUILD:/sage/local/share/doc/sage/pdf ./livedoc
+          docker cp --follow-link BUILD:/sage/local/share/doc/sage/index.html ./livedoc
           zip -r livedoc.zip livedoc
-        shell: sh .ci/docker-exec-script.sh BUILD . {0}
+          docker cp BUILD:/sage/sagemath_doc_wheels.zip .
+          unzip sagemath_doc_wheels.zip
 
       - name: Upload live doc
         if: (success() || failure()) && steps.copylivedoc.outcome == 'success'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: livedoc
           path: livedoc.zip
 
+      - name: Upload sagemath-doc wheels
+        id: uploaddocwheels
+        if: (success() || failure()) && steps.buildlivedoc.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: sagemath_doc_wheels
+          path: sagemath_doc_wheels.zip
+
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        if: (success() || failure()) && steps.buildlivedoc.outcome == 'success' && env.CAN_DEPLOY == 'true'
+        with:
+          user: __token__
+          password: ${{ secrets.SAGEMATH_PYPI_API_TOKEN }}
+          packages-dir: wheels/
+          skip-existing: true
+          verbose: true
