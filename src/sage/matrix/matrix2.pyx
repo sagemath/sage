@@ -947,7 +947,10 @@ cdef class Matrix(Matrix1):
         C = B.column() if b_is_vec else B
 
         if not extend:
-            X = self._solve_right_smith_form(C)
+            try:
+                X = self._solve_right_hermite_form(C)
+            except NotImplementedError:
+                X = self._solve_right_smith_form(C)
             return X.column(0) if b_is_vec else X
 
         if not self.is_square():
@@ -1085,13 +1088,29 @@ cdef class Matrix(Matrix1):
             [27 26 32 32 37 27  6]
             [ 2 12  2 17 16 37 32]
             [32 37 16 17  2 12  2]
-            sage: y = vector(ZZ, [-4, -1, 1, 5, 14, 31, 4])
-            sage: A.solve_left(y, extend=False)  # indirect doctest
-            (-1, 0, 1, 1, -1)
-            sage: z = vector(ZZ, [1, 2, 3, 4, 5])
-            sage: A.solve_right(z, extend=False)  # indirect doctest
+
+            sage: y = vector(ZZ, [1, 2, 3, 4, 5])
+            sage: x, = A._solve_right_smith_form(y.column()).columns()
+            sage: x.parent()
+            Ambient free module of rank 7 over the principal ideal domain Integer Ring
+            sage: A * x == y
+            True
+            sage: x
             (10, 1530831087980480, -2969971929450215, -178745029498097, 2320752168397186, -806846536262381, -520939892126393)
-            sage: A.solve_right(identity_matrix(ZZ,5), extend=False)  # indirect doctest
+
+            sage: z = vector(ZZ, [-4, -1, 1, 5, 14, 31, 4])
+            sage: x, = A.transpose()._solve_right_smith_form(z.column()).columns()
+            sage: x.parent()
+            Ambient free module of rank 5 over the principal ideal domain Integer Ring
+            sage: x * A == z
+            True
+            sage: x
+            (-1, 0, 1, 1, -1)
+
+            sage: X = A._solve_right_smith_form(identity_matrix(ZZ,5))
+            sage: X.parent()
+            Full MatrixSpace of 7 by 5 dense matrices over Integer Ring
+            sage: X
             [              -1                0                2                0                1]
             [-156182670342972   -2199494166584  310625144000132          1293916  151907461896112]
             [ 303010665531453    4267248023008 -602645168043247         -2510332 -294716315371323]
@@ -1123,6 +1142,71 @@ cdef class Matrix(Matrix1):
             raise ValueError("matrix equation has no solutions")
 
         return V * X_
+
+    def _solve_right_hermite_form(self, B):
+        r"""
+        Solve a matrix equation over a PID using the Hermite normal form.
+
+        EXAMPLES::
+
+            sage: A = matrix(ZZ, 5, 7, [(1 + x^4) % 55 for x in range(5*7)]); A
+            [ 1  2 17 27 37 21 32]
+            [37 27 17 46 12  2 17]
+            [27 26 32 32 37 27  6]
+            [ 2 12  2 17 16 37 32]
+            [32 37 16 17  2 12  2]
+
+            sage: y = vector(ZZ, [1, 2, 3, 4, 5])
+            sage: x, = A._solve_right_hermite_form(y.column()).columns()
+            sage: x.parent()
+            Ambient free module of rank 7 over the principal ideal domain Integer Ring
+            sage: A * x == y
+            True
+            sage: x
+            (7903368738919, 1664769092987, -13561109876830, -5130794714802, 11219929764616, -2728570619520, 0)
+
+            sage: z = vector(ZZ, [-4, -1, 1, 5, 14, 31, 4])
+            sage: x, = A.transpose()._solve_right_hermite_form(z.column()).columns()
+            sage: x.parent()
+            Ambient free module of rank 5 over the principal ideal domain Integer Ring
+            sage: x * A == z
+            True
+            sage: x
+            (-1, 0, 1, 1, -1)
+
+            sage: X = A._solve_right_hermite_form(identity_matrix(ZZ,5))
+            sage: X.parent()
+            Full MatrixSpace of 7 by 5 dense matrices over Integer Ring
+            sage: X
+            [  682282983347  1029536563053   550188901703   877862915448       -1147487]
+            [  143716389918   216862037808   115892034032   184913433473        -241707]
+            [-1170705152437 -1766545243552  -944049606627 -1506293815517        1968932]
+            [ -442931873812  -668365722378  -357177603912  -569900577297         744938]
+            [  968595469303  1461570161933   781069571508  1246248350502       -1629017]
+            [ -235552378240  -355438713600  -189948023680  -303074680960         396160]
+            [             0              0              0              0              0]
+        """
+        H,U = self.transpose().hermite_form(transformation=True)
+        H = H.transpose()
+        U = U.transpose()
+#        assert self*U == H
+
+        n,m = self.dimensions()
+        r = B.ncols()
+
+        from sage.matrix.constructor import matrix
+        X_ = matrix(self.base_ring(), m, r)
+        for i in range(min(n,m)):
+            v = B[i,:]
+            v -= H[i,:i] * X_[:i]
+            d = H[i][i]
+            try:
+                X_[i] = v / d
+            except (ZeroDivisionError, TypeError) as e:
+                raise ValueError("matrix equation has no solution")
+#        assert H*X_ == B
+
+        return U * X_
 
     def prod_of_row_sums(self, cols):
         r"""
