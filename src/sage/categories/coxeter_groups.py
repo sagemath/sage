@@ -2840,9 +2840,7 @@ class CoxeterGroups(Category_singleton):
 
             - ``c`` -- a Coxeter element
 
-            OUTPUT:
-
-            the ``c``-sorting word of ``self`` as a list of integers.
+            OUTPUT: the ``c``-sorting word of ``self`` as a list of integers
 
             EXAMPLES::
 

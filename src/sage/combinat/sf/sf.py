@@ -44,7 +44,7 @@ from . import llt
 
 class SymmetricFunctions(UniqueRepresentation, Parent):
     r"""
-    The abstract algebra of commutative symmetric functions
+    The abstract algebra of commutative symmetric functions.
 
     .. rubric:: Symmetric Functions in Sage
 
@@ -898,7 +898,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     def schur(self):
         r"""
-        The Schur basis of the Symmetric Functions
+        The Schur basis of the Symmetric Functions.
 
         EXAMPLES::
 
@@ -911,7 +911,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     def powersum(self):
         r"""
-        The power sum basis of the Symmetric Functions
+        The power sum basis of the Symmetric Functions.
 
         EXAMPLES::
 
@@ -924,7 +924,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     def complete(self):
         r"""
-        The complete basis of the Symmetric Functions
+        The complete basis of the Symmetric Functions.
 
         EXAMPLES::
 
@@ -937,7 +937,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     def elementary(self):
         r"""
-        The elementary basis of the Symmetric Functions
+        The elementary basis of the Symmetric Functions.
 
         EXAMPLES::
 
@@ -949,7 +949,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     def monomial(self):
         r"""
-        The monomial basis of the Symmetric Functions
+        The monomial basis of the Symmetric Functions.
 
         EXAMPLES::
 
@@ -1220,7 +1220,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     def macdonald(self, q='q', t='t'):
         r"""
-        Returns the entry point for the various Macdonald bases.
+        Return the entry point for the various Macdonald bases.
 
         INPUT:
 
@@ -1267,7 +1267,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     def hall_littlewood(self, t='t'):
         """
-        Returns the entry point for the various Hall-Littlewood bases.
+        Return the entry point for the various Hall-Littlewood bases.
 
         INPUT:
 
@@ -1299,7 +1299,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     def jack(self, t='t'):
         """
-        Returns the entry point for the various Jack bases.
+        Return the entry point for the various Jack bases.
 
         INPUT:
 
@@ -1325,7 +1325,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     def zonal(self):
         """
-        The zonal basis of the Symmetric Functions
+        The zonal basis of the Symmetric Functions.
 
         EXAMPLES::
 
@@ -1422,7 +1422,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     def __init_extra__(self):
         """
-        Sets up the coercions between the different bases
+        Sets up the coercions between the different bases.
 
         EXAMPLES::
 
@@ -1473,7 +1473,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         INPUT:
 
         - ``k`` -- a positive integer
-        - ``t`` a formal parameter; `t=1` yields a subring
+        - ``t`` -- a formal parameter; `t=1` yields a subring
 
         The subspace of the ring of symmetric functions spanned by
         `\{ s_{\lambda}[X/(1-t)] \}_{\lambda_1\le k} = \{ s_{\lambda}^{(k)}[X,t]\}_{\lambda_1 \le k}`
@@ -1503,7 +1503,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     def kschur(self, k, t='t'):
         r"""
-        Returns the `k`-Schur functions.
+        Return the `k`-Schur functions.
 
         EXAMPLES::
 
@@ -1543,7 +1543,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     def khomogeneous(self, k):
         r"""
-        Returns the homogeneous symmetric functions in the `k`-bounded subspace.
+        Return the homogeneous symmetric functions in the `k`-bounded subspace.
 
         EXAMPLES::
 
@@ -1558,7 +1558,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     def kBoundedQuotient(self, k, t='t'):
         r"""
-        Returns the `k`-bounded quotient space of the ring of symmetric functions.
+        Return the `k`-bounded quotient space of the ring of symmetric functions.
 
         INPUT:
 

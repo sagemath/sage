@@ -124,9 +124,7 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
                 - ``generators`` -- list of generators of
                   ``self`` (default: the basis of ``self``)
 
-                OUTPUT:
-
-                A list of quasi-idempotent elements of ``self``.
+                OUTPUT: list of quasi-idempotent elements of ``self``
 
                 Each quasi-idempotent `e` spans a one
                 dimensional (non unital) subalgebra of

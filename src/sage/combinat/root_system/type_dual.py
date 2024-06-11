@@ -237,7 +237,7 @@ class CartanType(cartan_type.CartanType_decorator, cartan_type.CartanType_crysta
 
     def ascii_art(self, label=None, node=None):
         """
-        Return an ascii art representation of this Cartan type
+        Return an ascii art representation of this Cartan type.
 
         (by hacking the ascii art representation of the dual Cartan type)
 

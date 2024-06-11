@@ -21,7 +21,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
     """
-    Returns the empty species. This species has no structure at all.
+    Return the empty species. This species has no structure at all.
     It is the zero of the semi-ring of species.
 
     EXAMPLES::
@@ -135,7 +135,7 @@ class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     def _equation(self, var_mapping):
         """
-        Returns the right hand side of an algebraic equation satisfied by
+        Return the right hand side of an algebraic equation satisfied by
         this species. This is a utility function called by the
         algebraic_equation_system method.
 

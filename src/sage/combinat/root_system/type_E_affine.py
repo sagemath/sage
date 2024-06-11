@@ -62,7 +62,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
 
     def dynkin_diagram(self):
         """
-        Returns the extended Dynkin diagram for affine type E.
+        Return the extended Dynkin diagram for affine type E.
 
         EXAMPLES::
 

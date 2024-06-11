@@ -217,7 +217,7 @@ def WordPaths(alphabet, steps=None):
 
     - ``alphabet`` -- ordered alphabet
 
-    - ``steps`` -- (default is ``None``). It can be one of the following:
+    - ``steps`` -- (default: ``None``) it can be one of the following:
 
       - an iterable ordered container of as many vectors as there are
         letters in the alphabet. The vectors are associated to the letters
@@ -619,8 +619,8 @@ class WordPaths_square_grid(WordPaths_all):
 
         INPUT:
 
-        - ``alphabet`` -- ordered alphabet of length 4. The order for the steps
-          is : East, North, West, South.
+        - ``alphabet`` -- ordered alphabet of length 4; the order for the steps
+          is : East, North, West, South
 
         EXAMPLES::
 
@@ -1058,7 +1058,7 @@ class FiniteWordPath_all(SageObject):
 
         INPUT:
 
-        - ``include_last`` -- bool (default: ``True``) whether to include the
+        - ``include_last`` -- boolean (default: ``True``); whether to include the
           last point
 
         EXAMPLES:
@@ -1235,12 +1235,12 @@ class FiniteWordPath_all(SageObject):
 
         INPUT:
 
-        - ``v`` -- vector (default: None) If None, the directive
+        - ``v`` -- vector (default: ``None``); if ``None``, the directive
           vector (i.e. the end point minus starting point) of the path is
-          considered.
+          considered
 
-        - ``ring`` -- ring (default: None) where to do the
-          computations. If None, RealField(53) is used.
+        - ``ring`` -- ring (default: ``None``); where to do the
+          computations. If ``None``, RealField(53) is used.
 
         OUTPUT: iterator of points
 
@@ -1295,22 +1295,22 @@ class FiniteWordPath_all(SageObject):
 
         - ``self`` -- a word path in a 3 or 4 dimension vector space
 
-        - ``v`` -- vector (default: None) If None, the directive
+        - ``v`` -- vector (default: ``None``); if ``None``, the directive
           vector (i.e. the end point minus starting point) of the path is
           considered.
 
-        - ``letters`` -- iterable (default: None) of the letters
-          to be projected. If None, then all the letters are considered.
+        - ``letters`` -- iterable (default: ``None``); of the letters
+          to be projected. If ``None``, then all the letters are considered.
 
-        - ``color`` -- dictionary (default: None) of the letters
-          mapped to colors. If None, automatic colors are chosen.
+        - ``color`` -- dictionary (default: ``None``); of the letters
+          mapped to colors. If ``None``, automatic colors are chosen.
 
-        - ``ring`` -- ring (default: None) where to do the
-          computations. If None, RealField(53) is used.
+        - ``ring`` -- ring (default: ``None``); where to do the
+          computations. If ``None``, RealField(53) is used.
 
-        - ``size`` -- number (default: ``12``) size of the points.
+        - ``size`` -- number (default: ``12``); size of the points
 
-        - ``kind`` -- string (default: ``'right'``) either
+        - ``kind`` -- string (default: ``'right'``); either
           ``'right'`` or ``'left'``. The color of a letter is given to the
           projected prefix to the right or the left of the letter.
 
@@ -1414,12 +1414,12 @@ class FiniteWordPath_all(SageObject):
 
         INPUT:
 
-        - ``v`` -- vector (default: None) If None, the directive
+        - ``v`` -- vector (default: ``None``); if ``None``, the directive
           vector (i.e. the end point minus starting point) of the path is
           considered.
 
-        - ``ring`` -- ring (default: None) where to do the
-          computations. If None, RealField(53) is used.
+        - ``ring`` -- ring (default: ``None``); where to do the
+          computations. If ``None``, RealField(53) is used.
 
         OUTPUT: word path
 
@@ -1492,7 +1492,7 @@ class FiniteWordPath_2d(FiniteWordPath_all):
           default:dict(rgbcolor='red',thickness=3)), options for the
           path drawing
 
-        - ``fill`` -- (boolean, default: ``True``), if fill is True and if
+        - ``fill`` -- (boolean, default: ``True``), if fill is ``True`` and if
           the path is closed, the inside is colored
 
         - ``filloptions`` -- (dict,

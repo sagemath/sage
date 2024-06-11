@@ -445,7 +445,7 @@ def ExtendedQuadraticResidueCode(n,F):
        quadratic residue modulo `n`.
 
 
-    OUTPUT: returns an extended quadratic residue code
+    OUTPUT: an extended quadratic residue code
 
     EXAMPLES::
 
@@ -514,7 +514,7 @@ def QuadraticResidueCode(n,F):
        quadratic residue modulo `n`.
 
 
-    OUTPUT: returns a quadratic residue code
+    OUTPUT: a quadratic residue code
 
     EXAMPLES::
 
@@ -714,15 +714,12 @@ def ToricCode(P,F):
 
     INPUT:
 
-
     -  ``P`` -- all the integer lattice points in a polytope
-       defining the toric variety.
+       defining the toric variety
 
-    -  ``F`` -- a finite field.
+    -  ``F`` -- a finite field
 
-
-    OUTPUT: returns toric code with length n = , dimension k over field
-    F.
+    OUTPUT: toric code with length n = , dimension `k` over field `F`
 
     EXAMPLES::
 

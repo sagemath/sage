@@ -153,7 +153,7 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
 
     def a_realization(self):
         r"""
-        Returns a particular realization of ``self`` (the basis of `k`-bounded monomials
+        Return a particular realization of ``self`` (the basis of `k`-bounded monomials
         if `t=1` and the basis of `k`-bounded Hall-Littlewood functions otherwise).
 
         EXAMPLES::
@@ -251,19 +251,18 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
     @cached_method
     def _G_to_km_on_basis_single_level(self, w, m):
         r"""
-        Returns the `m^{th}` level of the affine Grothendieck polynomial indexed by the
-        affine Permutation ``w``.  This code could be significantly sped up if it didn't
-        depend on the Iwahori Hecke algebra code.
+        Return the `m^{\textnormal{th}}` level of the affine Grothendieck
+        polynomial indexed by the affine Permutation ``w``. This code could be
+        significantly sped up if it didn't depend on the Iwahori Hecke algebra
+        code.
 
         INPUT:
 
-        - ``w`` -- An affine permutation (an element of the affine type `A` Weyl group).
+        - ``w`` -- an affine permutation (an element of the affine type `A` Weyl group)
 
-        - ``m`` -- An integer.
+        - ``m`` -- integer
 
-        OUTPUT:
-
-        - An element of the `k`-bounded quotient.
+        OUTPUT: an element of the `k`-bounded quotient
 
         EXAMPLES::
 
@@ -289,20 +288,18 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
 
     def _AffineGrothendieck(self, w, m):
         r"""
-        Returns the affine Grothendieck polynomial indexed by the affine permutation
+        Return the affine Grothendieck polynomial indexed by the affine permutation
         ``w``.  Because this belongs to the completion of the algebra, and hence is an
         infinite sum, it computes only up to those symmetric functions of degree at most
         ``m``.
 
         INPUT:
 
-        - ``w`` -- An affine permutation (an element of the affine type `A` Weyl group).
+        - ``w`` -- an affine permutation (an element of the affine type `A` Weyl group)
 
-        - ``m`` -- An integer.
+        - ``m`` -- integer
 
-        OUTPUT:
-
-        - An element of the `k`-bounded quotient.
+        OUTPUT: an element of the `k`-bounded quotient
 
         EXAMPLES::
 
@@ -316,16 +313,16 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
     @cached_method
     def _AffineGrothendieckPolynomial(self, la, m):
         r"""
-        Returns the affine Grothendieck polynomial indexed by the partition ``la``.
+        Return the affine Grothendieck polynomial indexed by the partition ``la``.
         Because this belongs to the completion of the algebra, and hence is an infinite
         sum, it computes only up to those symmetric functions of degree at most ``m``.
         This method is here to cache the polynomials.
 
         INPUT:
 
-        - ``la`` -- A `k`-bounded partition
+        - ``la`` -- a `k`-bounded partition
 
-        - ``m`` -- An integer
+        - ``m`` -- integer
 
         EXAMPLES::
 
@@ -337,16 +334,16 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
 
     def AffineGrothendieckPolynomial(self, la, m):
         r"""
-        Returns the affine Grothendieck polynomial indexed by the partition ``la``.
+        Return the affine Grothendieck polynomial indexed by the partition ``la``.
         Because this belongs to the completion of the algebra, and hence is an infinite
         sum, it computes only up to those symmetric functions of degree at most ``m``.
         See :meth:`_AffineGrothendieckPolynomial` for the code.
 
         INPUT:
 
-        - ``la`` -- A `k`-bounded partition
+        - ``la`` -- a `k`-bounded partition
 
-        - ``m`` -- An integer
+        - ``m`` -- integer
 
         EXAMPLES::
 
@@ -360,7 +357,7 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
 
     def an_element(self):
         r"""
-        Returns an element of the quotient ring of `k`-bounded symmetric functions. This
+        Return an element of the quotient ring of `k`-bounded symmetric functions. This
         method is here to make the TestSuite run properly.
 
         EXAMPLES::
@@ -373,7 +370,7 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
 
     def one(self):
         r"""
-        Returns the unit of the quotient ring of `k`-bounded symmetric functions. This
+        Return the unit of the quotient ring of `k`-bounded symmetric functions. This
         method is here to make the TestSuite run properly.
 
         EXAMPLES::
@@ -392,11 +389,9 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``la`` -- A partition
+        - ``la`` -- a partition
 
-        OUTPUT:
-
-        - The monomial element of the `k`-bounded quotient indexed by ``la``.
+        OUTPUT: the monomial element of the `k`-bounded quotient indexed by ``la``
 
         EXAMPLES::
 
@@ -414,7 +409,7 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``la`` -- A `k`-bounded partition
+        - ``la`` -- a `k`-bounded partition
 
         OUTPUT:
 
@@ -508,11 +503,9 @@ class KBoundedQuotientBases(Category_realization_of_parent):
 
             INPUT:
 
-            - ``la`` -- A partition
+            - ``la`` -- a partition
 
-            OUTPUT:
-
-            - The monomial element of the `k`-bounded quotient indexed by ``la``.
+            OUTPUT: the monomial element of the `k`-bounded quotient indexed by ``la``
 
             EXAMPLES::
 
@@ -533,9 +526,7 @@ class KBoundedQuotientBases(Category_realization_of_parent):
 
             - ``x`` -- a `k`-bounded partition
 
-            OUTPUT:
-
-            - an element of the `k`-bounded basis
+            OUTPUT: an element of the `k`-bounded basis
 
             EXAMPLES::
 
@@ -565,7 +556,7 @@ class KBoundedQuotientBases(Category_realization_of_parent):
 
         def ambient(self):
             r"""
-            Returns the symmetric functions.
+            Return the symmetric functions.
 
             EXAMPLES::
 
@@ -648,7 +639,7 @@ class KBoundedQuotientBases(Category_realization_of_parent):
 
         def indices(self):
             r"""
-            The set of `k`-bounded partitions of all non-negative integers.
+            The set of `k`-bounded partitions of all nonnegative integers.
 
             EXAMPLES::
 
@@ -665,11 +656,9 @@ class KBoundedQuotientBases(Category_realization_of_parent):
 
             INPUT:
 
-            - ``la`` -- A `k`-bounded partition.
+            - ``la`` -- a `k`-bounded partition
 
-            OUTPUT:
-
-            - A symmetric function in the monomial basis.
+            OUTPUT: a symmetric function in the monomial basis
 
             EXAMPLES::
 
@@ -689,15 +678,13 @@ class KBoundedQuotientBases(Category_realization_of_parent):
 
         def product(self, x, y):
             r"""
-            Returns the product of two elements ``x`` and ``y``.
+            Return the product of two elements ``x`` and ``y``.
 
             INPUT:
 
-            - ``x``, ``y`` -- Elements of the `k`-bounded quotient of symmetric functions.
+            - ``x``, ``y`` -- elements of the `k`-bounded quotient of symmetric functions
 
-            OUTPUT:
-
-            - A `k`-bounded symmetric function in the dual `k`-Schur function basis
+            OUTPUT: a `k`-bounded symmetric function in the dual `k`-Schur function basis
 
             EXAMPLES::
 
@@ -888,12 +875,12 @@ class KBoundedQuotientBasis(CombinatorialFreeModule):
 
     def __init__(self, kBoundedRing, prefix):
         r"""
-        Initializes ``self``.
+        Initialize ``self``.
 
         INPUT:
 
         - ``kBoundedRing`` -- an element which is of class :class:`KBoundedQuotient`
-        - ``prefix`` -- a string used to distinguish this basis, and used in printing.
+        - ``prefix`` -- a string used to distinguish this basis, and used in printing
 
         EXAMPLES::
 
@@ -931,7 +918,7 @@ class kMonomial(KBoundedQuotientBasis):
 
     def __init__(self, kBoundedRing):
         r"""
-        Initializes the ring which is the `k`-Bounded monomial quotient basis.
+        Initialize the ring which is the `k`-Bounded monomial quotient basis.
 
         INPUT:
 
@@ -968,12 +955,10 @@ class kMonomial(KBoundedQuotientBasis):
 
         INPUT:
 
-        - ``la`` -- A partition
+        - ``la`` -- a partition
 
-        OUTPUT:
-
-        - A `k`-bounded monomial symmetric function in the `k`-quotient of symmetric
-            functions.
+        OUTPUT: a `k`-bounded monomial symmetric function in the `k`-quotient of symmetric
+        functions
 
         EXAMPLES::
 
@@ -1020,11 +1005,9 @@ class kMonomial(KBoundedQuotientBasis):
 
         INPUT:
 
-        - ``la`` -- A `k`-bounded partition
+        - ``la`` -- a `k`-bounded partition
 
-        OUTPUT:
-
-        - A monomial symmetric function.
+        OUTPUT: a monomial symmetric function
 
         EXAMPLES::
 
@@ -1050,7 +1033,7 @@ class kbounded_HallLittlewoodP(KBoundedQuotientBasis):
 
     def __init__(self, kBoundedRing):
         r"""
-        Initializes the ring which is the `k`-Bounded Hall-Littlewood P quotient basis.
+        Initialize the ring which is the `k`-Bounded Hall-Littlewood P quotient basis.
 
         INPUT:
 
@@ -1094,9 +1077,7 @@ class kbounded_HallLittlewoodP(KBoundedQuotientBasis):
 
         - ``la`` -- a partition
 
-        OUTPUT:
-
-        - an element of the `k`-bounded Hall-Littlewood P basis.
+        OUTPUT: an element of the `k`-bounded Hall-Littlewood P basis
 
         EXAMPLES::
 
@@ -1143,9 +1124,7 @@ class kbounded_HallLittlewoodP(KBoundedQuotientBasis):
 
         - ``la`` -- a partition
 
-        OUTPUT:
-
-        - an element of the `k`-bounded monomial basis
+        OUTPUT: an element of the `k`-bounded monomial basis
 
         EXAMPLES::
 
@@ -1182,12 +1161,10 @@ class kbounded_HallLittlewoodP(KBoundedQuotientBasis):
 
         INPUT:
 
-        - ``la`` -- A partition
+        - ``la`` -- a partition
 
-        OUTPUT:
-
-        - A `k`-bounded Hall-Littlewood P symmetric function in the `k`-quotient of
-            symmetric functions.
+        OUTPUT: a `k`-bounded Hall-Littlewood P symmetric function in the `k`-quotient of
+        symmetric functions
 
         EXAMPLES::
 
@@ -1218,11 +1195,9 @@ class kbounded_HallLittlewoodP(KBoundedQuotientBasis):
 
         INPUT:
 
-        - ``la`` -- A `k`-bounded partition
+        - ``la`` -- a `k`-bounded partition
 
-        OUTPUT:
-
-        - A Hall-Littlewood symmetric function.
+        OUTPUT: a Hall-Littlewood symmetric function
 
         EXAMPLES::
 
@@ -1254,7 +1229,7 @@ class DualkSchurFunctions(KBoundedQuotientBasis):
 
     def __init__(self, kBoundedRing):
         r"""
-        Initializes the ring which is the dual `k`-Schur function basis.
+        Initialize the ring which is the dual `k`-Schur function basis.
 
         INPUT:
 
@@ -1295,11 +1270,9 @@ class DualkSchurFunctions(KBoundedQuotientBasis):
 
         INPUT:
 
-        - ``la`` -- A `k`-bounded partition.
+        - ``la`` -- a `k`-bounded partition
 
-        OUTPUT:
-
-        - A symmetric function in the Hall-Littlewood P basis
+        OUTPUT: a symmetric function in the Hall-Littlewood P basis
 
         EXAMPLES::
 
@@ -1327,11 +1300,9 @@ class DualkSchurFunctions(KBoundedQuotientBasis):
 
         INPUT:
 
-        - ``la`` -- A `k`-bounded partition.
+        - ``la`` -- a `k`-bounded partition
 
-        OUTPUT:
-
-        - A `k`-bounded quotient symmetric function in the dual `k`-Schur basis
+        OUTPUT: a `k`-bounded quotient symmetric function in the dual `k`-Schur basis
 
         EXAMPLES::
 
@@ -1377,7 +1348,7 @@ class AffineSchurFunctions(KBoundedQuotientBasis):
 
     def __init__(self, kBoundedRing):
         r"""
-        Initializes the ring which is the `k`-Bounded affine Schur quotient basis.
+        Initialize the ring which is the `k`-Bounded affine Schur quotient basis.
 
         INPUT:
 
@@ -1418,11 +1389,9 @@ class AffineSchurFunctions(KBoundedQuotientBasis):
 
         INPUT:
 
-        - ``la`` -- A `k`-bounded partition.
+        - ``la`` -- a `k`-bounded partition
 
-        OUTPUT:
-
-        - A symmetric function in the monomial basis
+        OUTPUT: a symmetric function in the monomial basis
 
         EXAMPLES::
 
@@ -1448,11 +1417,9 @@ class AffineSchurFunctions(KBoundedQuotientBasis):
 
         INPUT:
 
-        - ``la`` -- A `k`-bounded partition.
+        - ``la`` -- a `k`-bounded partition
 
-        OUTPUT:
-
-        - A `k`-bounded quotient symmetric function in the affine Schur basis
+        OUTPUT: a `k`-bounded quotient symmetric function in the affine Schur basis
 
         EXAMPLES::
 

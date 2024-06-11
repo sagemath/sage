@@ -80,15 +80,13 @@ class Macdonald(UniqueRepresentation):
 
     def __repr__(self):
         r"""
-        The family of Macdonald symmetric function bases
+        The family of Macdonald symmetric function bases.
 
         INPUT:
 
         - ``self`` -- a family of Macdonald symmetric function bases
 
-        OUTPUT:
-
-        - a string representing the Macdonald symmetric function family
+        OUTPUT: string representing the Macdonald symmetric function family
 
         EXAMPLES::
 
@@ -152,16 +150,14 @@ class Macdonald(UniqueRepresentation):
 
     def base_ring( self ):
         r"""
-        Returns the base ring of the symmetric functions where the
-        Macdonald symmetric functions live
+        Return the base ring of the symmetric functions where the
+        Macdonald symmetric functions live.
 
         INPUT:
 
         - ``self`` -- a family of Macdonald symmetric function bases
 
-        OUTPUT:
-
-        - the base ring associated to the corresponding symmetric function ring
+        OUTPUT: the base ring associated to the corresponding symmetric function ring
 
         EXAMPLES::
 
@@ -174,16 +170,14 @@ class Macdonald(UniqueRepresentation):
 
     def symmetric_function_ring( self ):
         r"""
-        Returns the base ring of the symmetric functions where the
-        Macdonald symmetric functions live
+        Return the base ring of the symmetric functions where the
+        Macdonald symmetric functions live.
 
         INPUT:
 
         - ``self`` -- a family of Macdonald symmetric function bases
 
-        OUTPUT:
-
-        - the symmetric function ring associated to the Macdonald bases
+        OUTPUT: the symmetric function ring associated to the Macdonald bases
 
         EXAMPLES::
 
@@ -195,16 +189,14 @@ class Macdonald(UniqueRepresentation):
 
     def P(self):
         r"""
-        Returns Macdonald polynomials in `P` basis.
+        Return Macdonald polynomials in `P` basis.
         The `P` basis is defined here as a normalized form of the `J` basis.
 
         INPUT:
 
         - ``self`` -- a family of Macdonald symmetric function bases
 
-        OUTPUT:
-
-        - returns the `P` Macdonald basis of symmetric functions
+        OUTPUT: the `P` Macdonald basis of symmetric functions
 
         EXAMPLES::
 
@@ -300,7 +292,7 @@ class Macdonald(UniqueRepresentation):
 
     def Q(self):
         r"""
-        Returns the Macdonald polynomials on the `Q` basis. These are dual to
+        Return the Macdonald polynomials on the `Q` basis. These are dual to
         the Macdonald polynomials on the P basis with respect to the
         `qt`-Hall scalar product.
         The `Q` basis is defined to be a normalized form of the `J` basis.
@@ -309,9 +301,7 @@ class Macdonald(UniqueRepresentation):
 
         - ``self`` -- a family of Macdonald symmetric function bases
 
-        OUTPUT:
-
-        - returns the `Q` Macdonald basis of symmetric functions
+        OUTPUT: the `Q` Macdonald basis of symmetric functions
 
         EXAMPLES::
 
@@ -363,7 +353,7 @@ class Macdonald(UniqueRepresentation):
 
     def J(self):
         r"""
-        Returns the Macdonald polynomials on the `J` basis also known as the
+        Return the Macdonald polynomials on the `J` basis also known as the
         integral form of the Macdonald polynomials. These are scalar
         multiples of both the `P` and `Q` bases. When expressed in the `P` or `Q`
         basis, the scaling coefficients are polynomials in `q` and `t` rather
@@ -376,9 +366,7 @@ class Macdonald(UniqueRepresentation):
 
         - ``self`` -- a family of Macdonald symmetric function bases
 
-        OUTPUT:
-
-        - returns the `J` Macdonald basis of symmetric functions
+        OUTPUT: the `J` Macdonald basis of symmetric functions
 
         EXAMPLES::
 
@@ -425,7 +413,7 @@ class Macdonald(UniqueRepresentation):
 
     def H(self):
         r"""
-        Returns the Macdonald polynomials on the H basis. When the `H` basis
+        Return the Macdonald polynomials on the H basis. When the `H` basis
         is expanded on the Schur basis, the coefficients are the `qt`-Kostka
         numbers.
 
@@ -433,9 +421,7 @@ class Macdonald(UniqueRepresentation):
 
         - ``self`` -- a family of Macdonald symmetric function bases
 
-        OUTPUT:
-
-        - returns the `H` Macdonald basis of symmetric functions
+        OUTPUT: the `H` Macdonald basis of symmetric functions
 
         EXAMPLES::
 
@@ -459,7 +445,7 @@ class Macdonald(UniqueRepresentation):
 
     def Ht(self):
         r"""
-        Returns the Macdonald polynomials on the `Ht` basis. The elements of
+        Return the Macdonald polynomials on the `Ht` basis. The elements of
         the `Ht` basis are eigenvectors of the `nabla` operator. When expanded
         on the Schur basis, the coefficients are the modified `qt`-Kostka
         numbers.
@@ -468,9 +454,7 @@ class Macdonald(UniqueRepresentation):
 
         - ``self`` -- a family of Macdonald symmetric function bases
 
-        OUTPUT:
-
-        - returns the `Ht` Macdonald basis of symmetric functions
+        OUTPUT: the `Ht` Macdonald basis of symmetric functions
 
         EXAMPLES::
 
@@ -507,7 +491,7 @@ class Macdonald(UniqueRepresentation):
 
     def S(self):
         r"""
-        Returns the modified Schur functions defined by the plethystic
+        Return the modified Schur functions defined by the plethystic
         substitution `S_{\mu} = s_{\mu}[X(1-t)/(1-q)]`. When the
         Macdonald polynomials in the J basis are expressed in terms of the
         modified Schur functions at `q=0`, the coefficients are `qt`-Kostka numbers.
@@ -516,9 +500,7 @@ class Macdonald(UniqueRepresentation):
 
         - ``self`` -- a family of Macdonald symmetric function bases
 
-        OUTPUT:
-
-        - returns the `S` Macdonald basis of symmetric functions
+        OUTPUT: the `S` Macdonald basis of symmetric functions
 
         EXAMPLES::
 
@@ -577,9 +559,7 @@ def c1(part, q, t):
     - ``part`` -- a partition
     - ``q``, ``t`` -- parameters
 
-    OUTPUT:
-
-    - returns a polynomial of the scalar product between the `J` and `P` bases
+    OUTPUT: a polynomial of the scalar product between the `J` and `P` bases
 
     EXAMPLES::
 
@@ -609,9 +589,7 @@ def c2(part, q, t):
     - ``part`` -- a partition
     - ``q``, ``t`` -- parameters
 
-    OUTPUT:
-
-    - returns a polynomial of the scalar product between the `J` and `P` bases
+    OUTPUT: a polynomial of the scalar product between the `J` and `P` bases
 
     EXAMPLES::
 
@@ -637,9 +615,7 @@ def cmunu1(mu, nu):
 
     - ``mu``, ``nu`` -- partitions with ``nu`` precedes ``mu``
 
-    OUTPUT:
-
-    - an element of the fraction field of polynomials in `q` and `t`
+    OUTPUT: an element of the fraction field of polynomials in `q` and `t`
 
     EXAMPLES::
 
@@ -694,9 +670,7 @@ def cmunu(mu, nu):
 
     - ``mu``, ``nu`` -- partitions with ``nu`` contained in ``mu``
 
-    OUTPUT:
-
-    - an element of the fraction field of polynomials in `q` and `t`
+    OUTPUT: an element of the fraction field of polynomials in `q` and `t`
 
     EXAMPLES::
 
@@ -743,7 +717,7 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
 
     def __init__(self, macdonald):
         r"""
-        A class for methods for one of the Macdonald bases of the symmetric functions
+        A class for methods for one of the Macdonald bases of the symmetric functions.
 
         INPUT:
 
@@ -806,16 +780,14 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
 
     def _s_to_self(self, x):
         r"""
-        Isomorphism from the Schur basis into self
+        Isomorphism from the Schur basis into self.
 
         INPUT:
 
         - ``self`` -- a Macdonald basis
         - ``x`` -- an element of the Schur basis
 
-        OUTPUT:
-
-        - returns the basis element ``x`` in the basis ``self``
+        OUTPUT: the basis element ``x`` in the basis ``self``
 
         EXAMPLES::
 
@@ -835,16 +807,14 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
 
     def _self_to_s(self, x):
         r"""
-        Isomorphism from self to the Schur basis
+        Isomorphism from self to the Schur basis.
 
         INPUT:
 
         - ``self`` -- a Macdonald basis
         - ``x`` -- an element of a Macdonald basis
 
-        OUTPUT:
-
-        - returns the basis element ``x`` in the Schur functions
+        OUTPUT: the basis element ``x`` in the Schur functions
 
         EXAMPLES::
 
@@ -864,7 +834,7 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
 
     def c1(self, part):
         r"""
-        Returns the qt-Hall scalar product between ``J(part)`` and ``P(part)``.
+        Return the `qt`-Hall scalar product between ``J(part)`` and ``P(part)``.
 
         INPUT:
 
@@ -886,7 +856,7 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
 
     def c2(self, part):
         r"""
-        Returns the `qt`-Hall scalar product between ``J(part)`` and ``Q(part)``.
+        Return the `qt`-Hall scalar product between ``J(part)`` and ``Q(part)``.
 
         INPUT:
 
@@ -947,15 +917,13 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
 
     def macdonald_family(self):
         r"""
-        Returns the family of Macdonald bases associated to the basis ``self``
+        Return the family of Macdonald bases associated to the basis ``self``.
 
         INPUT:
 
         - ``self`` -- a Macdonald basis
 
-        OUTPUT:
-
-        - the family of Macdonald symmetric functions associated to ``self``
+        OUTPUT: the family of Macdonald symmetric functions associated to ``self``
 
         EXAMPLES::
 
@@ -988,11 +956,9 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
 
             - ``self`` -- an element of a Macdonald basis
             - ``q``, ``t`` -- optional parameters to specialize
-            - ``power`` -- an integer (default: 1)
+            - ``power`` -- integer (default: 1)
 
-            OUTPUT:
-
-            - returns the symmetric function of `\nabla` acting on ``self``
+            OUTPUT: the symmetric function of `\nabla` acting on ``self``
 
             EXAMPLES::
 
@@ -1058,7 +1024,7 @@ class MacdonaldPolynomials_p(MacdonaldPolynomials_generic):
 
     def scalar_qt_basis(self, part1, part2=None):
         r"""
-        Returns the scalar product of `P(part1)` and `P(part2)`
+        Return the scalar product of `P(part1)` and `P(part2)`
         This scalar product formula is given in equation (4.11) p.323
         and (6.19) p.339 of Macdonald's book [Mac1995]_.
 
@@ -1164,7 +1130,7 @@ class MacdonaldPolynomials_j(MacdonaldPolynomials_generic):
         INPUT:
 
         - ``self`` -- a Macdonald `J` basis
-        - ``n`` -- a non-negative integer
+        - ``n`` -- a nonnegative integer
 
         EXAMPLES::
 
@@ -1188,7 +1154,7 @@ class MacdonaldPolynomials_j(MacdonaldPolynomials_generic):
 
     def _to_s(self, part):
         r"""
-        Returns a function which gives the coefficient of a partition in
+        Return a function which gives the coefficient of a partition in
         the Schur expansion of self(part).
 
         These computations are completed with coefficients in fraction
@@ -1276,9 +1242,7 @@ class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
 
         - ``x`` -- an element of ``H`` basis
 
-        OUTPUT:
-
-        - an element of the Schur basis
+        OUTPUT: an element of the Schur basis
 
         EXAMPLES::
 
@@ -1316,9 +1280,7 @@ class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
 
         - ``x`` -- an element of the Schur basis
 
-        OUTPUT:
-
-        - an element of the ``H`` basis
+        OUTPUT: an element of the ``H`` basis
 
         EXAMPLES::
 
@@ -1354,9 +1316,7 @@ class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
 
         - ``x`` -- an element of ``H`` basis
 
-        OUTPUT:
-
-        - an element of the monomial basis
+        OUTPUT: an element of the monomial basis
 
         EXAMPLES::
 
@@ -1408,9 +1368,7 @@ class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
 
         - ``f`` -- an element of the monomial basis
 
-        OUTPUT:
-
-        - an element of the ``H`` basis
+        OUTPUT: an element of the ``H`` basis
 
         EXAMPLES::
 
@@ -1485,7 +1443,7 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
 
     def _self_to_s(self, x):
         r"""
-        Convert an element of the ``Ht`` basis to the Schur basis
+        Convert an element of the ``Ht`` basis to the Schur basis.
 
         This function is here to force the coercion path to the Schur basis
         because these bases are computed using their monomial expansion.
@@ -1494,9 +1452,7 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
 
         - ``x`` -- an element of ``self``
 
-        OUTPUT:
-
-        - an element of the Schur basis
+        OUTPUT: an element of the Schur basis
 
         EXAMPLES::
 
@@ -1509,7 +1465,7 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
 
     def _s_to_self( self, x ):
         r"""
-        Convert an element of either the Schur basis to the ``Ht`` basis
+        Convert an element of either the Schur basis to the ``Ht`` basis.
 
         This function is here to force the coercion path from the Schur basis
         because these bases are computed using the monomial expansion.
@@ -1518,9 +1474,7 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
 
         - ``x`` -- an element of ``s`` basis
 
-        OUTPUT:
-
-        - an element of the basis ``self``
+        OUTPUT: an element of the basis ``self``
 
         EXAMPLES::
 
@@ -1554,9 +1508,7 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
 
         - ``nu``, ``mu`` -- partitions of the same size
 
-        OUTPUT:
-
-        - a polynomial in `q` and `t`
+        OUTPUT: a polynomial in `q` and `t`
 
         EXAMPLES::
 
@@ -1598,9 +1550,7 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
 
         - ``x`` -- an element of ``Ht`` basis
 
-        OUTPUT:
-
-        - an element of the monomial basis
+        OUTPUT: an element of the monomial basis
 
         EXAMPLES::
 
@@ -1643,9 +1593,7 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
 
         - ``f`` -- an element of the monomial basis
 
-        OUTPUT:
-
-        - an element of the ``Ht`` basis
+        OUTPUT: an element of the ``Ht`` basis
 
         EXAMPLES::
 
@@ -1684,7 +1632,7 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
     class Element(MacdonaldPolynomials_generic.Element):
         def nabla(self, q=None, t=None, power=1):
             r"""
-            Returns the value of the nabla operator applied to ``self``. The
+            Return the value of the nabla operator applied to ``self``. The
             eigenvectors of the `nabla` operator are the Macdonald polynomials in
             the `Ht` basis.  For more information see: [BGHT1999]_.
 
@@ -1699,11 +1647,9 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
 
             - ``self`` -- an element of the Macdonald `Ht` basis
             - ``q``, ``t`` -- optional parameters to specialize
-            - ``power`` -- an integer (default: 1)
+            - ``power`` -- integer (default: 1)
 
-            OUTPUT:
-
-            - returns the symmetric function of `\nabla` acting on ``self``
+            OUTPUT: the symmetric function of `\nabla` acting on ``self``
 
             EXAMPLES::
 
@@ -1800,7 +1746,7 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
 
     def _to_s(self, part):
         r"""
-        Returns a function which gives the coefficient of a partition in
+        Return a function which gives the coefficient of a partition in
         the Schur expansion of ``self(part)``.
         these computations are completed with coefficients in fraction
         field of polynomials in `q` and `t`
@@ -1932,9 +1878,7 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
             - ``self`` -- an element of the Macdonald `S` basis
             - ``k`` -- a positive integer
 
-            OUTPUT:
-
-            - returns the column adding operator on the `J` basis on ``self``
+            OUTPUT: the column adding operator on the `J` basis on ``self``
 
             EXAMPLES::
 
@@ -1962,9 +1906,7 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
             - ``self`` -- an element of the Macdonald `S` basis
             - ``k`` -- a positive integer
 
-            OUTPUT:
-
-            - returns the column adding operator on the `J` basis on ``self``
+            OUTPUT: the column adding operator on the `J` basis on ``self``
 
             EXAMPLES::
 
@@ -1980,7 +1922,7 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
 
         def _omega_qt_in_schurs(self):
             r"""
-            Returns the image of self under the omega_qt automorphism in the
+            Return the image of self under the omega_qt automorphism in the
             Schur basis.
 
             INPUT:
@@ -2008,7 +1950,7 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
 
 def qt_kostka(lam, mu):
     r"""
-    Returns the `K_{\lambda\mu}(q,t)` by computing the change
+    Return the `K_{\lambda\mu}(q,t)` by computing the change
     of basis from the Macdonald H basis to the Schurs.
 
     INPUT:

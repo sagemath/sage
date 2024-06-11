@@ -66,7 +66,7 @@ class GenericSpeciesStructure(CombinatorialObject):
 
     def parent(self):
         """
-        Returns the species that this structure is associated with.
+        Return the species that this structure is associated with.
 
         EXAMPLES::
 
@@ -127,7 +127,7 @@ class GenericSpeciesStructure(CombinatorialObject):
 
     def labels(self):
         """
-        Returns the labels used for this structure.
+        Return the labels used for this structure.
 
         .. note::
 
@@ -264,7 +264,7 @@ class SpeciesStructureWrapper(GenericSpeciesStructure):
 
     def __repr__(self):
         """
-        Returns the repr of the object which this one wraps.
+        Return the repr of the object which this one wraps.
 
         EXAMPLES::
 
@@ -402,8 +402,8 @@ class SpeciesWrapper(Parent):
 
     def labels(self):
         """
-        Returns the labels used on these structures.  If `X` is the
-        species, then :meth:`labels` returns the preimage of these
+        Return the labels used on these structures.  If `X` is the
+        species, then :meth:`labels` return the preimage of these
         structures under the functor `X`.
 
         EXAMPLES::
@@ -443,7 +443,7 @@ class SpeciesWrapper(Parent):
 
     def cardinality(self):
         """
-        Returns the number of structures in this set.
+        Return the number of structures in this set.
 
         EXAMPLES::
 

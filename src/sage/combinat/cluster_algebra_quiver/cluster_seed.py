@@ -4471,7 +4471,8 @@ class ClusterSeed(SageObject):
 
     def get_upper_cluster_algebra_element(self, a):
         r"""
-        Compute an element in the upper cluster algebra of `B` corresponding to the vector `a \in \ZZ^n`.
+        Compute an element in the upper cluster algebra of `B` corresponding to
+        the vector `a \in \ZZ^n`.
 
         See [LLM2014]_ for more details.
 
@@ -4481,7 +4482,8 @@ class ClusterSeed(SageObject):
           as the length of the vectors in `vd`
         - ``a`` -- a vector in `\ZZ^n` where `n` is the number of columns in `B`
 
-        OUTPUT: return an element in the upper cluster algebra. Depending on the input it may or may not be irreducible
+        OUTPUT: an element in the upper cluster algebra. Depending on the input
+        it may or may not be irreducible
 
         EXAMPLES::
 
@@ -5092,12 +5094,10 @@ def _multi_concatenate(l1, l2):
 
     INPUT:
 
-    -`l1` -- a 2-dimensional array.
-    -`l2` -- a single array.
+    - ``l1``` -- a 2-dimensional array
+    - ``l2`` -- a single array
 
-    OUTPUT:
-
-    A 2-dimensional array.
+    OUTPUT: a 2-dimensional array
 
     EXAMPLES::
 

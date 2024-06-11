@@ -3234,9 +3234,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
           the number of strands for the subgroup; the default is one strand
           less than ``self`` has
 
-        OUTPUT:
-
-        An instance of this class realizing the sub-algebra.
+        OUTPUT: an instance of this class realizing the sub-algebra
 
         EXAMPLES::
 

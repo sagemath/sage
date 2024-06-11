@@ -317,7 +317,7 @@ class CartanType(cartan_type.CartanType_decorator):
 
     def dynkin_diagram(self):
         """
-        Returns the Dynkin diagram for this Cartan type.
+        Return the Dynkin diagram for this Cartan type.
 
         EXAMPLES::
 
@@ -700,7 +700,7 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
 
     def special_node(self):
         r"""
-        Returns a special node of the Dynkin diagram
+        Return a special node of the Dynkin diagram.
 
         .. SEEALSO:: :meth:`~sage.combinat.root_system.CartanType_affine.special_node`
 

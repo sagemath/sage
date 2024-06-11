@@ -50,7 +50,7 @@ class CartanType(CartanType_standard_untwisted_affine):
 
     def dynkin_diagram(self):
         """
-        Returns the extended Dynkin diagram for affine type C.
+        Return the extended Dynkin diagram for affine type C.
 
         EXAMPLES::
 

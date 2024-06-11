@@ -56,9 +56,7 @@ class Character_generic(SFA_generic):
 
         - ``la`` -- a partition
 
-        OUTPUT:
-
-        - an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -130,9 +128,7 @@ class Character_generic(SFA_generic):
 
         - ``k`` -- a positive integer
 
-        OUTPUT:
-
-        - an expression in the powersum basis of the symmetric functions
+        OUTPUT: an expression in the powersum basis of the symmetric functions
 
         EXAMPLES::
 
@@ -224,7 +220,7 @@ class InducedTrivialCharacterBasis(Character_generic):
         """
         SFA_generic.__init__(self, Sym,
                              basis_name="induced trivial symmetric group character",
-                             prefix="ht", graded=False)
+                             prefix='ht', graded=False)
         self._other = Sym.complete()
         self._p = Sym.powersum()
 
@@ -248,9 +244,7 @@ class InducedTrivialCharacterBasis(Character_generic):
 
         - ``k``, ``r`` -- positive integers
 
-        OUTPUT:
-
-        - an expression in the powersum basis of the symmetric functions
+        OUTPUT: an expression in the powersum basis of the symmetric functions
 
         EXAMPLES::
 
@@ -288,9 +282,7 @@ class InducedTrivialCharacterBasis(Character_generic):
 
         - ``gamma`` -- a partition
 
-        OUTPUT:
-
-        - an expression in the powersum basis of the symmetric functions
+        OUTPUT: an expression in the powersum basis of the symmetric functions
 
         EXAMPLES::
 
@@ -326,9 +318,7 @@ class InducedTrivialCharacterBasis(Character_generic):
 
         - ``lam`` -- a partition
 
-        OUTPUT:
-
-        - an expression in the power sum basis
+        OUTPUT: an expression in the power sum basis
 
         EXAMPLES::
 
@@ -451,7 +441,7 @@ class IrreducibleCharacterBasis(Character_generic):
         """
         SFA_generic.__init__(self, Sym,
                              basis_name="irreducible symmetric group character",
-                             prefix="st", graded=False)
+                             prefix='st', graded=False)
         self._other = Sym.Schur()
         self._p = Sym.powersum()
 
@@ -475,9 +465,7 @@ class IrreducibleCharacterBasis(Character_generic):
 
         - ``k``, ``r`` -- positive integers
 
-        OUTPUT:
-
-        - an expression in the powersum basis of the symmetric functions
+        OUTPUT: an expression in the powersum basis of the symmetric functions
 
         EXAMPLES::
 
@@ -517,9 +505,7 @@ class IrreducibleCharacterBasis(Character_generic):
 
         - ``gamma`` -- a partition
 
-        OUTPUT:
-
-        - an expression in the powersum basis of the symmetric functions
+        OUTPUT: an expression in the powersum basis of the symmetric functions
 
         EXAMPLES::
 
@@ -557,9 +543,7 @@ class IrreducibleCharacterBasis(Character_generic):
 
         - ``lam`` -- a partition
 
-        OUTPUT:
-
-        - an expression in the power sum basis
+        OUTPUT: an expression in the power sum basis
 
         EXAMPLES::
 
@@ -585,9 +569,7 @@ class IrreducibleCharacterBasis(Character_generic):
 
         - ``lam`` -- a partition
 
-        OUTPUT:
-
-        - an expression in the Schur basis
+        OUTPUT: an expression in the Schur basis
 
         EXAMPLES::
 

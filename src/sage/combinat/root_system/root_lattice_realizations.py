@@ -33,7 +33,7 @@ from itertools import combinations_with_replacement
 
 class RootLatticeRealizations(Category_over_base_ring):
     r"""
-    The category of root lattice realizations over a given base ring
+    The category of root lattice realizations over a given base ring.
 
     A *root lattice realization* `L` over a base ring `R` is a free
     module (or vector space if `R` is a field) endowed with an embedding
@@ -309,7 +309,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
         def _test_root_lattice_realization(self, **options):
             """
-            Run sanity checks on this root lattice realization
+            Run sanity checks on this root lattice realization.
 
             - embedding of the root lattice
             - embedding of the root space over the same base ring
@@ -1049,13 +1049,16 @@ class RootLatticeRealizations(Category_over_base_ring):
             r"""
             Return the (restricted) root poset associated to ``self``.
 
-            The elements are given by the positive roots (resp. non-simple, positive roots), and
-            `\alpha \leq \beta` iff `\beta - \alpha` is a non-negative linear combination of simple roots.
+            The elements are given by the positive roots (resp. non-simple,
+            positive roots), and `\alpha \leq \beta` iff `\beta - \alpha` is a
+            nonnegative linear combination of simple roots.
 
             INPUT:
 
-            - ``restricted`` -- (default: ``False``) if ``True``, only non-simple roots are considered.
-            - ``facade`` -- (default: ``False``) passes facade option to the poset generator.
+            - ``restricted`` -- boolean (default: ``False``); if ``True``, only
+              non-simple roots are considered.
+            - ``facade`` -- boolean (default: ``False``); passes facade option
+              to the poset generator.
 
             EXAMPLES::
 
@@ -1146,7 +1149,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             INPUT:
 
-            - `m` -- integer
+            - ``m`` -- integer
 
             .. SEEALSO::
 
@@ -1271,7 +1274,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
         def simple_coroot(self, i):
             """
-            Returns the `i^{th}` simple coroot.
+            Return the `i^{\textnormal{th}}` simple coroot.
 
             EXAMPLES::
 
@@ -1283,7 +1286,7 @@ class RootLatticeRealizations(Category_over_base_ring):
         @cached_method
         def simple_coroots(self):
             r"""
-            Returns the family `( \alpha^\vee_i)_{i\in I}` of the simple coroots.
+            Return the family `(\alpha^\vee_i)_{i\in I}` of the simple coroots.
 
             EXAMPLES::
 
@@ -1977,25 +1980,25 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             INPUT:
 
-            - ``roots`` -- which roots to display, if any.
+            - ``roots`` -- which roots to display, if any
               Can be one of the following:
 
-              * ``"simple"`` -- The simple roots (the default)
-              * ``"classical"`` -- Not yet implemented
-              * ``"all"`` -- Only works in the finite case
+              * ``'simple'`` -- the simple roots (the default)
+              * ``'classical'`` -- not yet implemented
+              * ``'all'`` -- only works in the finite case
               * A list or tuple of roots
               * ``False``
 
-            - ``coroots`` -- which coroots to display, if any.
+            - ``coroots`` -- which coroots to display, if any
               Can be one of the following:
 
-              * ``"simple"`` -- The simple coroots (the default)
-              * ``"classical"`` -- Not yet implemented
-              * ``"all"`` -- Only works in the finite case
+              * ``'simple'`` -- the simple coroots (the default)
+              * ``'classical'`` -- not yet implemented
+              * ``'all'`` -- only works in the finite case
               * A list or tuple of coroots
               * ``False``
 
-            - ``fundamental_weights`` -- a boolean or ``None`` (default: ``None``)
+            - ``fundamental_weights`` -- boolean or ``None`` (default: ``None``)
               whether to display the fundamental weights.
               If ``None``, the fundamental weights are drawn if available.
 
@@ -2003,9 +2006,9 @@ class RootLatticeRealizations(Category_over_base_ring):
               hyperplanes to display, if any. Can be one of the
               following:
 
-              * ``"simple"`` -- The simple roots
-              * ``"classical"`` -- Not yet implemented
-              * ``"all"`` -- Only works in the finite case
+              * ``'simple'`` -- the simple roots
+              * ``'classical'`` -- not yet implemented
+              * ``'all'`` -- only works in the finite case
               * A list or tuple of roots
               * ``False`` (the default)
 
@@ -2014,7 +2017,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
               * A boolean -- Set to ``True`` to draw the fundamental
                 chamber
-              * ``"classical"`` -- Draw the classical fundamental chamber
+              * ``'classical'`` -- draw the classical fundamental chamber
               * ``None`` -- (the default) The fundamental chamber is
                 drawn except in the root lattice where this is not yet
                 implemented. For affine types the classical
@@ -2033,7 +2036,7 @@ class RootLatticeRealizations(Category_over_base_ring):
               * A boolean -- Whether to display the elements of the Weyl group
                 indexing the alcoves. This currently requires to also
                 set the ``alcoves`` option.
-              * A number `l` -- The label is drawn at level `l` (affine type
+              * A number `l` -- the label is drawn at level `l` (affine type
                 only), which only makes sense if ``affine`` is ``False``.
 
             - ``bounding_box`` -- a rational number or a list of pairs
@@ -2056,10 +2059,10 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             - ``projection`` -- one of the following (default: ``True``):
 
-              * ``True`` -- The default projection for the root
+              * ``True`` -- the default projection for the root
                 lattice realization is used.
-              * ``False`` -- No projection is used.
-              * ``barycentric`` -- A barycentric projection is used.
+              * ``False`` -- no projection is used.
+              * ``barycentric`` -- a barycentric projection is used.
               * A function -- If a function is specified, it should implement a
                 linear (or affine) map taking as input an element of
                 this root lattice realization and returning its
@@ -2067,15 +2070,15 @@ class RootLatticeRealizations(Category_over_base_ring):
                 rational coordinates.
 
             - ``color`` -- a function mapping vertices of the Dynkin
-              diagram to colors (default: ``"black"`` for 0,
-              ``"blue"`` for 1, ``"red"`` for 2, ``"green"`` for 3)
+              diagram to colors (default: ``'black'`` for 0,
+              ``'blue'`` for 1, ``'red'`` for 2, ``'green'`` for 3)
 
               This is used to set the color for the simple roots,
               fundamental weights, reflection hyperplanes, alcove
               facets, etc. If the color is ``None``, the object is not
               drawn.
 
-            - ``labels`` -- a boolean (default: ``True``)
+            - ``labels`` -- boolean (default: ``True``)
               whether to display labels on the simple roots,
               fundamental weights, etc.
 
@@ -2262,7 +2265,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             """
             return self._plot_projection_barycentric_matrix()*vector(x)
 
-        def plot_roots(self, collection="simple", **options):
+        def plot_roots(self, collection='simple', **options):
             r"""
             Plot the (simple/classical) roots of this root lattice.
 
@@ -2271,11 +2274,11 @@ class RootLatticeRealizations(Category_over_base_ring):
             - ``collection`` -- which roots to display
               can be one of the following:
 
-              * ``"simple"`` (the default)
-              * ``"classical"``
-              * ``"all"``
+              * ``'simple'`` (the default)
+              * ``'classical'``
+              * ``'all'``
 
-            - ``**options`` -- Plotting options
+            - ``**options`` -- plotting options
 
             .. SEEALSO::
 
@@ -2347,20 +2350,20 @@ class RootLatticeRealizations(Category_over_base_ring):
             roots = Family(roots, self)
             return plot_options.family_of_vectors(roots)
 
-        def plot_coroots(self, collection="simple", **options):
+        def plot_coroots(self, collection='simple', **options):
             r"""
             Plot the (simple/classical) coroots of this root lattice.
 
             INPUT:
 
-            - ``collection`` -- which coroots to display.
+            - ``collection`` -- which coroots to display
               Can be one of the following:
 
-              * ``"simple"`` (the default)
-              * ``"classical"``
-              * ``"all"``
+              * ``'simple'`` (the default)
+              * ``'classical'``
+              * ``'all'``
 
-            - ``**options`` -- Plotting options
+            - ``**options`` -- plotting options
 
             .. SEEALSO::
 
@@ -2410,7 +2413,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             INPUT:
 
-            - ``**options`` -- Plotting options
+            - ``**options`` -- plotting options
 
             .. SEEALSO::
 
@@ -2450,20 +2453,20 @@ class RootLatticeRealizations(Category_over_base_ring):
                                                   self.fundamental_weights())))
             return plot_options.family_of_vectors(fundamental_weights)
 
-        def plot_reflection_hyperplanes(self, collection="simple", **options):
+        def plot_reflection_hyperplanes(self, collection='simple', **options):
             r"""
             Plot the simple reflection hyperplanes.
 
             INPUT:
 
-            - ``collection`` -- which reflection hyperplanes to display.
+            - ``collection`` -- which reflection hyperplanes to display
               Can be one of the following:
 
-              * ``"simple"`` (the default)
-              * ``"classical"``
-              * ``"all"``
+              * ``'simple'`` (the default)
+              * ``'classical'``
+              * ``'all'``
 
-            - ``**options`` -- Plotting options
+            - ``**options`` -- plotting options
 
             .. SEEALSO::
 
@@ -2599,15 +2602,15 @@ class RootLatticeRealizations(Category_over_base_ring):
                         for vertex in self.rho().orbit()]
             return Polyhedron(vertices=vertices).plot()
 
-        def plot_fundamental_chamber(self, style="normal", **options):
+        def plot_fundamental_chamber(self, style='normal', **options):
             r"""
             Plot the (classical) fundamental chamber.
 
             INPUT:
 
-            - ``style`` -- ``"normal"`` or ``"classical"`` (default: ``"normal"``)
+            - ``style`` -- ``'normal'`` or ``'classical'`` (default: ``'normal'``)
 
-            - ``**options`` -- Plotting options
+            - ``**options`` -- plotting options
 
             .. SEEALSO::
 
@@ -2646,7 +2649,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: print(L.plot_fundamental_chamber().description())                             # needs sage.plot
                 Polygon defined by 3 points:     [(0.5, 0.5), (1.0, 0.0), (0.0, 0.0)]
 
-                sage: print(L.plot_fundamental_chamber(style="classical").description())            # needs sage.plot
+                sage: print(L.plot_fundamental_chamber(style='classical').description())            # needs sage.plot
                 Polygon defined by 3 points:     [(0.0, 0.0), (3.0, 3.0), (3.0, 0.0)]
             """
             plot_options = self.plot_parse_options(**options)
@@ -2673,12 +2676,12 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             INPUT:
 
-            - ``alcoves`` -- a list of alcoves or ``True`` (default: ``True``)
+            - ``alcoves`` -- list of alcoves or ``True`` (default: ``True``)
 
-            - ``alcove_labels`` -- a boolean or a number specifying at
+            - ``alcove_labels`` -- boolean or a number specifying at
               which level to put the label (default: ``False``)
 
-            - ``**options`` -- Plotting options
+            - ``**options`` -- plotting options
 
             .. SEEALSO::
 
@@ -2776,13 +2779,13 @@ class RootLatticeRealizations(Category_over_base_ring):
                 alcoves = list(alcoves)
             if alcoves is True or (alcoves and W.is_parent_of(alcoves[0])):
                 if alcoves is True:
-                    alcoves = W.weak_order_ideal(alcove_in_bounding_box, side="right")
+                    alcoves = W.weak_order_ideal(alcove_in_bounding_box, side='right')
                 # We assume that the fundamental alcove lies within
                 # the bounding box, and explore the alcoves
                 # intersecting the bounding box by going up right
                 # order (i.e. going away from the fundamental alcove)
                 for w in alcoves:
-                    for i in w.descents(side="right", positive=True):
+                    for i in w.descents(side='right', positive=True):
                         G += alcove_facet(w, i)
                     if alcove_labels is not False:
                         G += alcove_label(w)
@@ -2801,7 +2804,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                     shift = sum(x*v for x,v in zip(alcove, translation_vectors))
                     shift = W.from_morphism(shift.translation)
                     for w in W0:
-                        for i in w.descents(side="right", positive=True):
+                        for i in w.descents(side='right', positive=True):
                             G += alcove_facet(shift * w, i)
                         if alcove_labels:
                             G += alcove_label(w)
@@ -2872,7 +2875,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             INPUT:
 
-            - ``**options`` -- Plotting options
+            - ``**options`` -- plotting options
 
             This is mostly for testing purposes.
 
@@ -2894,16 +2897,16 @@ class RootLatticeRealizations(Category_over_base_ring):
                 [Polygon defined by 4 points]
             """
             plot_options = self.plot_parse_options(**options)
-            return plot_options.bounding_box.plot(color="gray", alpha=0.5, wireframe=False)
+            return plot_options.bounding_box.plot(color='gray', alpha=0.5, wireframe=False)
 
-        def plot_alcove_walk(self, word, start=None, foldings=None, color="orange", **options):
+        def plot_alcove_walk(self, word, start=None, foldings=None, color='orange', **options):
             r"""
             Plot an alcove walk.
 
             INPUT:
 
-            - ``word`` -- a list of elements of the index set
-            - ``foldings`` -- a list of booleans or ``None`` (default: ``None``)
+            - ``word`` -- list of elements of the index set
+            - ``foldings`` -- list of booleans or ``None`` (default: ``None``)
             - ``start`` -- an element of this space (default: ``None`` for `\rho`)
             - ``**options`` -- plotting options
 
@@ -2927,7 +2930,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             The same plot with another alcove walk::
 
                 sage: w2 = [2,1,2,0,2,0,2,1,2,0,1,2,1,2,1,0,1,2,0,2,0,1,2,0,2]
-                sage: p += L.plot_alcove_walk(w2, color="orange")       # long time, needs sage.plot sage.symbolic
+                sage: p += L.plot_alcove_walk(w2, color='orange')       # long time, needs sage.plot sage.symbolic
 
             And another with some foldings::
 
@@ -2935,7 +2938,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: pic += L.plot_alcove_walk([0,1,2,0,2,0,1,2,0,1],  # long time (3s), needs sage.plot sage.symbolic
                 ....:                      foldings=[False, False, True, False, False,
                 ....:                                False, True, False, True, False],
-                ....:                      color="green"); pic
+                ....:                      color='green'); pic
                 Graphics object consisting of 155 graphics primitives
 
             TESTS::
@@ -3022,7 +3025,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             - ``plot_labels`` -- (default: ``None``) the distance to plot
               the LS labels from the endpoint of the path; set to ``None``
               to not display the labels
-            - ``colored_labels`` -- (default: ``True``) if ``True``, then
+            - ``colored_labels`` -- boolean (default: ``True``); if ``True``, then
               color the labels the same color as the LS path
             - ``**options`` -- plotting options
 
@@ -3082,7 +3085,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             INPUT:
 
             - ``mv_polytope`` -- an MV polytope
-            - ``mark_endpoints`` -- (default: ``True``) mark the endpoints
+            - ``mark_endpoints`` -- boolean (default: ``True``); mark the endpoints
               of the MV polytope
             - ``circle_size`` -- (default: 0.06) the size of the circles
             - ``circle_thickness`` -- (default: 1.6) the thinkness of the
@@ -3155,7 +3158,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             INPUT:
 
             - ``crystal`` -- the finite crystal to plot
-            - ``plot_labels`` -- (default: ``True``) can be one of the
+            - ``plot_labels`` -- boolean (default: ``True``); can be one of the
               following:
 
               * ``True`` -- use the latex labels
@@ -3165,7 +3168,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             - ``label_color`` -- (default: ``'black'``) the color of the
               labels
-            - ``edge_labels`` -- (default: ``False``) if ``True``, then draw
+            - ``edge_labels`` -- boolean (default: ``False``); if ``True``, then draw
               in the edge label
             - ``circle_size`` -- (default: 0.06) the size of the circles
             - ``circle_thickness`` -- (default: 1.6) the thinkness of the
@@ -3476,7 +3479,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
         def simple_reflections(self):
             """
-            The images of ``self`` by all the simple reflections
+            The images of ``self`` by all the simple reflections.
 
             EXAMPLES::
 
@@ -3691,7 +3694,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
         def first_descent(self, index_set=None, positive=False):
             """
-            Return the first descent of pt
+            Return the first descent of pt.
 
             One can use the ``index_set`` option to restrict to the parabolic
             subgroup indexed by ``index_set``.
@@ -3717,7 +3720,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
         def descents(self, index_set=None, positive=False):
             """
-            Return the descents of pt
+            Return the descents of pt.
 
             EXAMPLES::
 
@@ -4086,7 +4089,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             INPUT:
 
             - ``self`` -- a positive root
-            - ``reduced_word`` -- a boolean (default: ``False``)
+            - ``reduced_word`` -- boolean (default: ``False``)
 
             OUTPUT:
 
@@ -4237,7 +4240,7 @@ class RootLatticeRealizations(Category_over_base_ring):
               of the same Cartan type, or a tuple or a list (such as a
               reduced word) of elements from the index set
 
-            - ``inverse`` -- a boolean (default: ``False``); whether to
+            - ``inverse`` -- boolean (default: ``False``); whether to
               act by the inverse element
 
             EXAMPLES::
@@ -4269,7 +4272,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             action of a corresponding reduced word)::
 
                 sage: # needs sage.libs.gap
-                sage: W = WeylGroup(['A',3], prefix="s")
+                sage: W = WeylGroup(['A',3], prefix='s')
                 sage: w = W.from_reduced_word([1, 2])
                 sage: wl.weyl_group() == W
                 False
@@ -4349,7 +4352,7 @@ class RootLatticeRealizations(Category_over_base_ring):
               the same Cartan type, or a tuple or a list (such
               as a reduced word) of elements from the index set
 
-            - ``inverse`` -- a boolean (default: ``False``); whether
+            - ``inverse`` -- boolean (default: ``False``); whether
               to act by the inverse element
 
             EXAMPLES::
@@ -4385,7 +4388,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             INPUT:
 
-            - ``index_set`` -- the Dynkin node set of the parabolic subsystem.
+            - ``index_set`` -- the Dynkin node set of the parabolic subsystem
 
             .. TODO:: This implementation is only valid in the root or weight lattice
 

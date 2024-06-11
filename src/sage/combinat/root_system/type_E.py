@@ -525,7 +525,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
 
     def dynkin_diagram(self):
         """
-        Returns a Dynkin diagram for type E.
+        Return a Dynkin diagram for type E.
 
         EXAMPLES::
 

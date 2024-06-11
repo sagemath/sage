@@ -16,7 +16,7 @@ import functools
 
 class RootSpace(CombinatorialFreeModule):
     r"""
-    The root space of a root system over a given base ring
+    The root space of a root system over a given base ring.
 
     INPUT:
 
@@ -105,7 +105,8 @@ class RootSpace(CombinatorialFreeModule):
     @cached_method
     def to_coroot_space_morphism(self):
         """
-        Returns the ``nu`` map to the coroot space over the same base ring, using the symmetrizer of the Cartan matrix
+        Return the ``nu`` map to the coroot space over the same base ring,
+        using the symmetrizer of the Cartan matrix.
 
         It does not map the root lattice to the coroot lattice, but
         has the property that any root is mapped to some scalar
@@ -273,7 +274,7 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
 
     def is_positive_root(self):
         """
-        Checks whether an element in the root space lies in the
+        Check whether an element in the root space lies in the
         nonnegative cone spanned by the simple roots.
 
         EXAMPLES::
@@ -292,7 +293,7 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
     @cached_in_parent_method
     def associated_coroot(self):
         r"""
-        Returns the coroot associated to this root
+        Return the coroot associated to this root.
 
         OUTPUT:
 
@@ -331,7 +332,7 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``self`` -- an element of the nonnegative integer span of simple roots.
+        - ``self`` -- an element of the nonnegative integer span of simple roots
 
         A root `\alpha` is a quantum root if `\ell(s_\alpha) = \langle 2 \rho, \alpha^\vee \rangle - 1`
         where `\ell` is the length function, `s_\alpha` is the reflection across the hyperplane
@@ -362,7 +363,7 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``self`` -- an element of the nonnegative integer span of simple roots.
+        - ``self`` -- an element of the nonnegative integer span of simple roots
 
         Returns None for the zero element.
 
@@ -419,7 +420,7 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``self`` -- an element of the nonnegative integer span of simple roots.
+        - ``self`` -- an element of the nonnegative integer span of simple roots
 
         Really ``self`` is an element of a coroot lattice.
 

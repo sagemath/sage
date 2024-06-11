@@ -436,19 +436,17 @@ class FiniteWord_class(Word_class):
         Return the ``exp``-th power of ``self``.
 
         If ``exp`` is `\infty`, returns the infinite periodic word of base ``self``.
-        Otherwise, `|w|\cdot exp` must be a non-negative integer.
+        Otherwise, `|w|\cdot exp` must be a nonnegative integer.
 
         INPUT:
 
-        - ``exp`` -- an integer, a rational, a float number or plus infinity
+        - ``exp`` -- integer; a rational, a float number or plus infinity
 
-        OUTPUT:
-
-        word -- the ``exp``-th power of ``self``
+        OUTPUT: word -- the ``exp``-th power of ``self``
 
         EXAMPLES:
 
-        You can take non-negative integer powers::
+        You can take nonnegative integer powers::
 
             sage: w = Word(range(6)); w
             word: 012345
@@ -464,7 +462,7 @@ class FiniteWord_class(Word_class):
             ValueError: Power of the word is not defined on the exponent -1: the length of the word (6) times the exponent (-1) must be a positive integer
 
 
-        You can take non-negative rational powers::
+        You can take nonnegative rational powers::
 
             sage: w = Word(range(6)); w
             word: 012345
@@ -525,7 +523,7 @@ class FiniteWord_class(Word_class):
         TESTS::
 
             sage: from sage.combinat.words.word import Word_class
-            sage: w = Word(iter('abba'*40), length="finite")
+            sage: w = Word(iter('abba'*40), length='finite')
             sage: w._len is None
             True
             sage: w.length()
@@ -554,10 +552,8 @@ class FiniteWord_class(Word_class):
         - ``n`` -- (optional) an integer specifying the maximal
           letter in the alphabet
 
-        OUTPUT:
-
-        - a list where the `i`-th entry indicates the multiplicity
-          of the `i`-th letter in the alphabet in ``self``
+        OUTPUT: list where the `i`-th entry indicates the multiplicity
+        of the `i`-th letter in the alphabet in ``self``
 
         EXAMPLES::
 
@@ -643,7 +639,7 @@ class FiniteWord_class(Word_class):
         INPUT:
 
         - ``self`` -- a word
-        - ``n`` -- an integer specifying the maximal letter in the alphabet (optional)
+        - ``n`` -- integer specifying the maximal letter in the alphabet (optional)
 
         OUTPUT: a word, the Schützenberger involution of ``self``
 
@@ -840,7 +836,7 @@ class FiniteWord_class(Word_class):
             sage: w = Word('abbabaab')
             sage: w.to_integer_word()
             word: 01101001
-            sage: w = Word(iter("cacao"), length="finite")
+            sage: w = Word(iter("cacao"), length='finite')
             sage: w.to_integer_word()
             word: 10102
 
@@ -862,7 +858,7 @@ class FiniteWord_class(Word_class):
             sage: w = Word('abbabaab')
             sage: w.to_integer_list()
             [0, 1, 1, 0, 1, 0, 0, 1]
-            sage: w = Word(iter("cacao"), length="finite")
+            sage: w = Word(iter("cacao"), length='finite')
             sage: w.to_integer_list()
             [1, 0, 1, 0, 2]
             sage: w = Words([3,2,1])([2,3,3,1])
@@ -1263,7 +1259,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``n`` -- an integer, or ``None``.
+        - ``n`` -- integer or ``None``
 
         OUTPUT:
 
@@ -1334,7 +1330,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``n`` -- the length of the factors.
+        - ``n`` -- the length of the factors
 
         EXAMPLES::
 
@@ -1356,7 +1352,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``n`` -- an integer or ``None`` (default: ``None``).
+        - ``n`` -- integer or ``None`` (default: ``None``).
         - ``algorithm`` -- string (default: ``'suffix tree'``), takes the
           following values:
 
@@ -1449,9 +1445,7 @@ class FiniteWord_class(Word_class):
         - ``self`` -- a word defined over a finite alphabet
         -  ``n`` -- positive integer
 
-        OUTPUT:
-
-        real number (a symbolic expression)
+        OUTPUT: real number (a symbolic expression)
 
         EXAMPLES::
 
@@ -1586,12 +1580,10 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``n`` -- a non-negative integer. Every vertex of a reduced
-          Rauzy graph of order ``n`` is a factor of length ``n`` of ``self``.
+        - ``n`` -- a nonnegative integer; every vertex of a reduced
+          Rauzy graph of order ``n`` is a factor of length ``n`` of ``self``
 
-        OUTPUT:
-
-        a looped multi-digraph
+        OUTPUT: a looped multi-digraph
 
         DEFINITION:
 
@@ -1713,8 +1705,8 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``n`` -- integer (default: ``None``). If ``None``, it returns
-          an iterator over all left special factors.
+        - ``n`` -- integer (default: ``None``); if ``None``, it returns
+          an iterator over all left special factors
 
         EXAMPLES::
 
@@ -1749,10 +1741,10 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``n`` -- integer (default: ``None``). If ``None``, it
-          returns all left special factors.
+        - ``n`` -- integer (default: ``None``); if ``None``, it
+          returns all left special factors
 
-        OUTPUT: a list of words
+        OUTPUT: list of words
 
         EXAMPLES::
 
@@ -1778,8 +1770,8 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``n`` -- integer (default: ``None``). If ``None``, it returns
-          an iterator over all right special factors.
+        - ``n`` -- integer (default: ``None``); if ``None``, it returns
+          an iterator over all right special factors
 
         EXAMPLES::
 
@@ -1814,10 +1806,10 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``n`` -- integer (default: ``None``). If ``None``, it returns
-          all right special factors.
+        - ``n`` -- integer (default: ``None``); if ``None``, it returns
+          all right special factors
 
-        OUTPUT: a list of words
+        OUTPUT: list of words
 
         EXAMPLES::
 
@@ -1841,8 +1833,8 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``n`` -- integer (default: ``None``). If ``None``, it returns
-          an iterator over all bispecial factors.
+        - ``n`` -- integer (default: ``None``); if ``None``, it returns
+          an iterator over all bispecial factors
 
         EXAMPLES::
 
@@ -1904,10 +1896,10 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``n`` -- integer (default: ``None``). If ``None``, it returns
-          all bispecial factors.
+        - ``n`` -- integer (default: ``None``); if ``None``, it returns
+          all bispecial factors
 
-        OUTPUT: a list of words
+        OUTPUT: list of words
 
         EXAMPLES::
 
@@ -1935,7 +1927,7 @@ class FiniteWord_class(Word_class):
 
     def number_of_left_special_factors(self, n):
         r"""
-        Return the number of left special factors of length ``n``.
+        Return the number of left special factors of length `n`.
 
         A factor `u` of a word `w` is *left special* if there are
         two distinct letters `a` and `b` such that `au` and `bu`
@@ -1945,9 +1937,7 @@ class FiniteWord_class(Word_class):
 
         - ``n`` -- integer
 
-        OUTPUT:
-
-        a non-negative integer
+        OUTPUT: nonnegative integer
 
         EXAMPLES::
 
@@ -1976,9 +1966,7 @@ class FiniteWord_class(Word_class):
 
         - ``n`` -- integer
 
-        OUTPUT:
-
-        a non-negative integer
+        OUTPUT: nonnegative integer
 
         EXAMPLES::
 
@@ -2141,7 +2129,7 @@ class FiniteWord_class(Word_class):
 
         - ``other`` -- a finite word
 
-        OUTPUT: bool
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -2508,14 +2496,12 @@ class FiniteWord_class(Word_class):
         INPUT:
 
         - ``f`` -- involution (default: ``None``) on the alphabet of ``self``.
-          It must be callable on letters as well as words (e.g. ``WordMorphism``).
-        - ``l`` -- integer (default: ``None``) the length of the longest
-          palindrome suffix of ````self[:-1]````, if known.
+          It must be callable on letters as well as words (e.g. ``WordMorphism``)
+        - ``l`` -- integer (default: ``None``); the length of the longest
+          palindrome suffix of ````self[:-1]````, if known
 
-        OUTPUT:
-
-        word -- If ``f`` is ``None``, the longest palindromic suffix of ``self``;
-        otherwise, the longest ``f``-palindromic suffix of ``self``.
+        OUTPUT: word -- If ``f`` is ``None``, the longest palindromic suffix of
+        ``self``; otherwise, the longest ``f``-palindromic suffix of ``self``
 
         EXAMPLES::
 
@@ -2692,9 +2678,7 @@ class FiniteWord_class(Word_class):
           default value corresponds to usual palindromes, i.e., ``f`` equal to
           the identity.
 
-        OUTPUT:
-
-        a list -- list of all the lacunas of self
+        OUTPUT: list of all the lacunas of self
 
         EXAMPLES::
 
@@ -2756,19 +2740,17 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``j`` -- rational, position of the symmetry axis of the palindrome.
+        - ``j`` -- rational; position of the symmetry axis of the palindrome.
           Must return an integer when doubled. It is an integer when the
           center of the palindrome is a letter.
 
-        - ``m`` -- integer (default: ``None``), minimal length of palindrome, if known.
+        - ``m`` -- integer (default: ``None``); minimal length of palindrome, if known.
           The parity of ``m`` can't be the same as the parity of ``2j``.
 
-        - ``f`` -- involution (default: ``None``), on the alphabet. It must be
-          callable on letters as well as words (e.g. ``WordMorphism``).
+        - ``f`` -- involution (default: ``None``) on the alphabet; it must be
+          callable on letters as well as words (e.g. ``WordMorphism``)
 
-        OUTPUT:
-
-        length of the longest ``f``-palindrome centered at position ``j``
+        OUTPUT: length of the longest ``f``-palindrome centered at position ``j``
 
         EXAMPLES::
 
@@ -2860,13 +2842,13 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``. It must
-          be callable on letters as well as words (e.g. ``WordMorphism``).
+        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g.
+          ``WordMorphism``)
 
-        OUTPUT:
-
-        a list -- The length of the maximal palindrome (or ``f``-palindrome)
-        with a given symmetry axis (letter or space between two letters).
+        OUTPUT: list -- The length of the maximal palindrome (or
+        ``f``-palindrome) with a given symmetry axis (letter or space between
+        two letters)
 
         EXAMPLES::
 
@@ -2924,13 +2906,12 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``. It must
-          be callable on letters as well as words (e.g. ``WordMorphism``).
+        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``.
+          It must be callable on letters as well as words (e.g.
+          ``WordMorphism``).
 
-        OUTPUT:
-
-        a list -- The length of the longest palindromic (or ``f``-palindromic)
-        suffix of each prefix of ``self``.
+        OUTPUT: list -- The length of the longest palindromic (or
+        ``f``-palindromic) suffix of each prefix of ``self``
 
         EXAMPLES::
 
@@ -2968,10 +2949,9 @@ class FiniteWord_class(Word_class):
         - ``f`` -- involution (default: ``None``) on the alphabet of ``self``. It must
           be callable on letters as well as words (e.g. ``WordMorphism``).
 
-        OUTPUT:
-
-        a set -- If ``f`` is ``None``, the set of all palindromic factors of ``self``;
-        otherwise, the set of all ``f``-palindromic factors of ``self``.
+        OUTPUT: a set -- If ``f`` is ``None``, the set of all palindromic
+        factors of ``self``; otherwise, the set of all ``f``-palindromic
+        factors of ``self``
 
         EXAMPLES::
 
@@ -2998,7 +2978,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``n`` -- the length of the factors.
+        - ``n`` -- the length of the factors
 
         EXAMPLES::
 
@@ -3017,10 +2997,6 @@ class FiniteWord_class(Word_class):
     def palindrome_prefixes(self):
         r"""
         Return a list of all palindrome prefixes of ``self``.
-
-        OUTPUT:
-
-        a list -- A list of all palindrome prefixes of ``self``.
 
         EXAMPLES::
 
@@ -3406,9 +3382,7 @@ class FiniteWord_class(Word_class):
         Let `p(w)` be the period of a word `w`. The positive rational number
         `|w|/p(w)` is the *order* of `w`. See Chapter 8 of [Lot2002]_.
 
-        OUTPUT:
-
-        rational -- the order
+        OUTPUT: rational -- the order
 
         EXAMPLES::
 
@@ -3569,9 +3543,7 @@ class FiniteWord_class(Word_class):
         r"""
         Return the exponent of ``self``.
 
-        OUTPUT:
-
-        integer -- the exponent
+        OUTPUT: integer -- the exponent
 
         EXAMPLES::
 
@@ -3588,7 +3560,7 @@ class FiniteWord_class(Word_class):
 
     def has_period(self, p):
         r"""
-        Return ``True`` if ``self`` has the period ``p``,
+        Return ``True`` if ``self`` has the period `p`,
         ``False`` otherwise.
 
         .. NOTE::
@@ -3598,8 +3570,8 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``p`` -- an integer to check if it is a period
-          of ``self``.
+        - ``p`` -- integer to check if it is a period
+          of ``self``
 
         EXAMPLES::
 
@@ -3635,11 +3607,11 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``divide_length`` -- boolean (default: ``False``).
-          When set to ``True``, then only periods that divide
-          the length of ``self`` are considered.
+        - ``divide_length`` -- boolean (default: ``False``);
+          when set to ``True``, then only periods that divide
+          the length of ``self`` are considered
 
-        OUTPUT: a list of positive integers
+        OUTPUT: list of positive integers
 
         EXAMPLES::
 
@@ -3798,9 +3770,7 @@ class FiniteWord_class(Word_class):
 
         - ``other`` -- finite word
 
-        OUTPUT:
-
-        - list of all the complementary subwords of ``self`` in ``other``.
+        OUTPUT: list of all the complementary subwords of ``self`` in ``other``
 
         EXAMPLES::
 
@@ -3995,7 +3965,7 @@ class FiniteWord_class(Word_class):
     def inversions(self):
         r"""
         Return a list of the inversions of ``self``. An inversion is a pair
-        `(i,j)` of non-negative integers `i < j` such that ``self[i] > self[j]``.
+        `(i,j)` of nonnegative integers `i < j` such that ``self[i] > self[j]``.
 
         EXAMPLES::
 
@@ -4028,8 +3998,8 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        -  ``weights`` -- a list or a tuple, or a dictionary keyed by the
-           letters occurring in ``self``.
+        -  ``weights`` -- list or a tuple, or a dictionary keyed by the
+           letters occurring in ``self``
 
         EXAMPLES::
 
@@ -4266,22 +4236,20 @@ class FiniteWord_class(Word_class):
         r"""
         Return the index of the first occurrence of ``sub`` in ``self``,
         such that ``sub`` is contained within ``self[start:end]``.
-        Return ``-1`` on failure.
+        Return `-1` on failure.
 
         INPUT:
 
-        - ``sub`` -- string, list, tuple or word to search for.
+        - ``sub`` -- string, list, tuple or word to search for
 
-        - ``start`` -- non-negative integer (default: ``0``) specifying
-          the position from which to start the search.
+        - ``start`` -- nonnegative integer (default: `0`) specifying
+          the position from which to start the search
 
-        - ``end`` -- non-negative integer (default: ``None``) specifying
+        - ``end`` -- nonnegative integer (default: ``None``); specifying
           the position at which the search must stop. If ``None``, then
           the search is performed up to the end of the string.
 
-        OUTPUT:
-
-        a non-negative integer or ``-1``
+        OUTPUT: nonnegative integer or `-1`
 
         EXAMPLES::
 
@@ -4321,7 +4289,7 @@ class FiniteWord_class(Word_class):
 
         Check that :issue:`12804` is fixed::
 
-            sage: w = Word(iter("ababab"), length="finite")
+            sage: w = Word(iter("ababab"), length='finite')
             sage: w.find("ab")
             0
             sage: w.find("ab", start=1)
@@ -4351,18 +4319,16 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``sub`` -- string, list, tuple or word to search for.
+        - ``sub`` -- string, list, tuple or word to search for
 
-        - ``start`` -- non-negative integer (default: ``0``) specifying
+        - ``start`` -- nonnegative integer (default: ``0``); specifying
           the position at which the search must stop.
 
-        - ``end`` -- non-negative integer (default: ``None``) specifying
+        - ``end`` -- nonnegative integer (default: ``None``); specifying
           the position from which to start the search. If ``None``, then
           the search is performed up to the end of the string.
 
-        OUTPUT:
-
-        a non-negative integer or ``-1``
+        OUTPUT: nonnegative integer or `-1`
 
         EXAMPLES::
 
@@ -4402,7 +4368,7 @@ class FiniteWord_class(Word_class):
 
         Check that :issue:`12804` is fixed::
 
-            sage: w = Word(iter("abab"), length="finite")
+            sage: w = Word(iter("abab"), length='finite')
             sage: w.rfind("ab")
             2
             sage: w.rfind("ab", end=3)
@@ -4701,9 +4667,7 @@ class FiniteWord_class(Word_class):
 
         - ``letter`` -- a letter
 
-        OUTPUT:
-
-        - integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -5016,12 +4980,11 @@ class FiniteWord_class(Word_class):
         -  ``p`` -- disjoint sets data structure (default: ``None``),
            a partition of the alphabet into disjoint sets to start with.
            If ``None``, each letter start in distinct equivalence classes.
-        -  ``involution`` -- callable (default: ``None``), an
+        -  ``involution`` -- callable (default: ``None``); an
            involution on the alphabet. If ``involution`` is not ``None``, the relation
            `R_{u,v,d} \cup R_{involution(u),involution(v),d}` is considered.
 
         OUTPUT: a disjoint set data structure
-
 
         EXAMPLES::
 
@@ -5492,9 +5455,7 @@ class FiniteWord_class(Word_class):
         - ``f`` -- involution (default: ``None``) on the alphabet of ``self``.
           It must be callable on letters as well as words (e.g. ``WordMorphism``).
 
-        OUTPUT:
-
-        word -- the left iterated ``f``-palindromic closure of ``self``.
+        OUTPUT: word -- the left iterated ``f``-palindromic closure of ``self``
 
         EXAMPLES::
 
@@ -5609,11 +5570,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``q`` -- integer (default: ``1``), the balance level
-
-        OUTPUT:
-
-        boolean -- the result
+        - ``q`` -- integer (default: ``1``); the balance level
 
         EXAMPLES::
 
@@ -5785,9 +5742,7 @@ class FiniteWord_class(Word_class):
         a factor of a Sturmian word if, and only if, the result is the
         empty word.
 
-        OUTPUT:
-
-        a finite word defined on a two-letter alphabet
+        OUTPUT: a finite word defined on a two-letter alphabet
 
         EXAMPLES::
 
@@ -5862,7 +5817,7 @@ class FiniteWord_class(Word_class):
                 raise TypeError('your word must be defined on a binary alphabet or use at most two different letters')
             elif len(alphabet) < 2:
                 return W()
-        word_from_letter = {l: W([l], datatype="list", check=False) for l in alphabet}
+        word_from_letter = {l: W([l], datatype='list', check=False) for l in alphabet}
         is_prefix = True
         current_run_length = 0
         prefix_length = 0
@@ -5929,9 +5884,7 @@ class FiniteWord_class(Word_class):
         advantage over the ``is_balanced`` method is that this one runs in
         linear time whereas ``is_balanced`` runs in quadratic time.
 
-        OUTPUT:
-
-        boolean -- the result
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -5994,9 +5947,7 @@ class FiniteWord_class(Word_class):
 
         This method runs in linear time.
 
-        OUTPUT:
-
-        boolean -- the result
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -6217,7 +6168,7 @@ class FiniteWord_class(Word_class):
         ``self.length()+other.length()`` that have both ``self`` and ``other`` as
         subwords.
 
-        If ``overlap`` is non-zero, then the combinatorial class representing
+        If ``overlap`` is nonzero, then the combinatorial class representing
         the shuffle product with overlaps is returned. The calculation of
         the shift in each overlap is done relative to the order of the
         alphabet. For example, `a` shifted by `a` is `b` in the alphabet
@@ -6276,7 +6227,7 @@ class FiniteWord_class(Word_class):
         INPUT:
 
         - ``other`` -- finite word over the integers
-        - ``shift`` -- integer or ``None`` (default: ``None``) added to each letter of
+        - ``shift`` -- integer or ``None`` (default: ``None``); added to each letter of
           ``other``. When ``shift`` is ``None``, it is replaced by ``self.length()``
 
         OUTPUT: combinatorial class of shifted shuffle products of ``self`` and ``other``
@@ -6314,8 +6265,8 @@ class FiniteWord_class(Word_class):
     def delta_inv(self, W=None, s=None):
         r"""
         Lift ``self`` via the delta operator to obtain a word containing the
-        letters in alphabet (default is ``[0, 1]``). The letters used in the
-        construction start with ``s`` (default is ``alphabet[0]``) and cycle
+        letters in alphabet (default: ``[0, 1]``). The letters used in the
+        construction start with ``s`` (default: ``alphabet[0]``) and cycle
         through alphabet.
 
         INPUT:
@@ -6488,9 +6439,7 @@ class FiniteWord_class(Word_class):
         the word obtained by taking the first letter of the words obtained
         by iterating delta on ``self``.
 
-        OUTPUT:
-
-        a word -- the result of the phi function
+        OUTPUT: a word -- the result of the phi function
 
         EXAMPLES::
 
@@ -6530,9 +6479,7 @@ class FiniteWord_class(Word_class):
         - ``self`` -- a word over the integers
         - ``W`` -- a parent object of words defined over integers
 
-        OUTPUT:
-
-        a word -- the inverse of the phi function
+        OUTPUT: a word -- the inverse of the phi function
 
         EXAMPLES::
 
@@ -6582,9 +6529,7 @@ class FiniteWord_class(Word_class):
         - ``self`` -- must be a word over the integers to get something other
           than ``False``
 
-        OUTPUT:
-
-        boolean -- whether ``self`` is a smooth prefix or not
+        OUTPUT: boolean -- whether ``self`` is a smooth prefix or not
 
         EXAMPLES::
 
@@ -6645,9 +6590,7 @@ class FiniteWord_class(Word_class):
 
         - ``self`` -- finite word of length greater than `1`
 
-        OUTPUT:
-
-        `2`-tuple `(u, v)`
+        OUTPUT: `2`-tuple `(u, v)`
 
         EXAMPLES::
 
@@ -6776,7 +6719,7 @@ class FiniteWord_class(Word_class):
         - ``thickness`` -- (default: ``1``) thickness of the contour
         - ``cmap`` -- (default: ``'hsv'``) color map; for available color map names
           type: ``import matplotlib.cm; list(matplotlib.cm.datad)``
-        - ``label`` -- string (default: ``None``) a label to add on the colored vector
+        - ``label`` -- string (default: ``None``); a label to add on the colored vector
 
         OUTPUT: Graphics
 
@@ -6943,7 +6886,7 @@ class FiniteWord_class(Word_class):
 
     def squares(self):
         r"""
-        Returns a set of all distinct squares of ``self``.
+        Return a set of all distinct squares of ``self``.
 
         EXAMPLES::
 
@@ -7063,9 +7006,7 @@ class FiniteWord_class(Word_class):
 
         - ``self`` -- word
 
-        OUTPUT:
-
-        boolean -- ``True`` if ``self`` is a Christoffel word,
+        OUTPUT: boolean -- ``True`` if ``self`` is a Christoffel word,
         ``False`` otherwise.
 
         EXAMPLES::

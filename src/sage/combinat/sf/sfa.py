@@ -239,7 +239,7 @@ from sage.misc.superseded import deprecated_function_alias
 
 def is_SymmetricFunctionAlgebra(x):
     """
-    Checks whether ``x`` is a symmetric function algebra.
+    Check whether ``x`` is a symmetric function algebra.
 
     EXAMPLES::
 
@@ -277,7 +277,7 @@ def zee(part):
 
     INPUT:
 
-    - ``part`` -- an integer partition (for example, ``[2,1,1]``)
+    - ``part`` -- integer partition (for example, ``[2,1,1]``)
 
     OUTPUT:
 
@@ -297,7 +297,7 @@ def zee(part):
 
 def is_SymmetricFunction(x):
     r"""
-    Checks whether ``x`` is a symmetric function.
+    Check whether ``x`` is a symmetric function.
 
     EXAMPLES::
 
@@ -403,7 +403,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             INPUT:
 
             - ``self`` -- a basis of the symmetric functions
-            - ``proof`` -- an optional argument (default value: ``True``)
+            - ``proof`` -- an optional argument (default: value: ``True``)
 
             EXAMPLES::
 
@@ -424,7 +424,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             INPUT:
 
             - ``self`` -- a basis of the symmetric functions
-            - ``proof`` -- an optional argument (default value: ``True``)
+            - ``proof`` -- an optional argument (default: value: ``True``)
 
             EXAMPLES::
 
@@ -452,7 +452,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
 
         def _repr_(self):
             """
-            Text representation of this basis of symmetric functions
+            Text representation of this basis of symmetric functions.
 
             INPUT:
 
@@ -1319,7 +1319,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
 
             - ``s`` -- a nonnegative integer
 
-            - ``comparison`` (default: ``None``) -- a variable
+            - ``comparison`` -- (default: ``None``) a variable
               which can take the forms ``None``, ``-1``, ``0``
               and ``1``
 
@@ -1812,14 +1812,14 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
     """
     def __init__(self, Sym, basis_name=None, prefix=None, graded=True):
         r"""
-        Initializes the symmetric function algebra.
+        Initialize the symmetric function algebra.
 
         INPUT:
 
         - ``Sym`` -- the ring of symmetric functions
         - ``basis_name`` -- name of basis (default: ``None``)
         - ``prefix`` -- prefix used to display basis
-        - ``graded`` -- (default: ``True``) if ``True``, then the basis is
+        - ``graded`` -- boolean (default: ``True``); if ``True``, then the basis is
           considered to be graded, otherwise the basis is filtered
 
         TESTS::
@@ -1861,7 +1861,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``c`` -- a list, list of lists, or partition
+        - ``c`` -- list, list of lists, or partition
 
         .. TODO::
 
@@ -1932,7 +1932,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
 
         - ``x`` -- a symmetric function
         - ``expr`` -- an expression used in the plethysm
-        - ``deg_one`` -- a list (or iterable) specifying the degree one
+        - ``deg_one`` -- list (or iterable) specifying the degree one
           variables (that is, the terms to be treated as degree-one
           elements when encountered in ``x``; they will be taken to the
           appropriate powers when computing the plethysm)
@@ -2151,13 +2151,13 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
            partition and returns a function which gives the coefficients of
            ``other(part)`` in ``self``
 
-        -  ``upper_triangular`` -- a boolean, if ``True``, the
+        -  ``upper_triangular`` -- boolean; if ``True``, the
            inverse will be computed by back substitution
 
-        -  ``lower_triangular`` -- a boolean, if ``True``, the
+        -  ``lower_triangular`` -- boolean; if ``True``, the
            inverse will be computed by forward substitution
 
-        -  ``ones_on_diagonal`` -- a boolean, if ``True``, the
+        -  ``ones_on_diagonal`` -- boolean; if ``True``, the
            entries on the diagonal of the morphism (and inverse) matrix are
            assumed to be ones. This is used to remove divisions from the
            forward and back substitute algorithms.
@@ -2383,9 +2383,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         Return the family of symmetric functions associated to the
         basis ``self``.
 
-        OUTPUT:
-
-        - returns an instance of the ring of symmetric functions
+        OUTPUT: an instance of the ring of symmetric functions
 
         EXAMPLES::
 
@@ -2703,9 +2701,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         Note that the order of the arguments is somewhat strange in order
         to facilitate partial function application.
 
-        OUTPUT:
-
-        - an element of the basis ``self``
+        OUTPUT: an element of the basis ``self``
 
         EXAMPLES::
 
@@ -2779,7 +2775,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``scalar`` -- A function ``zee`` from partitions to the base ring
+        - ``scalar`` -- a function ``zee`` from partitions to the base ring
           which specifies the scalar product by `\langle p_{\lambda},
           p_{\lambda} \rangle = \mathrm{zee}(\lambda)`. (Independently on the
           function chosen, the power sum basis will always be orthogonal;
@@ -2942,7 +2938,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         INPUT:
 
         - ``poly`` -- a symmetric polynomial
-        - ``check`` -- (default: ``True``) boolean, specifies whether
+        - ``check`` -- boolean (default: ``True``);, specifies whether
           the computation checks that the polynomial is indeed symmetric
 
         EXAMPLES::
@@ -2970,9 +2966,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
 
         - ``left``, ``right`` -- instances of this basis
 
-        OUTPUT:
-
-        - the product of ``left`` and ``right`` expressed in the basis ``self``
+        OUTPUT: the product of ``left`` and ``right`` expressed in the basis ``self``
 
         EXAMPLES::
 
@@ -3256,9 +3250,9 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         -  ``x`` -- a symmetric function over the same base ring as
            ``self``
-        -  ``include`` -- a list of variables to be treated as
+        -  ``include`` -- list of variables to be treated as
            degree one elements instead of the default degree one elements
-        -  ``exclude`` -- a list of variables to be excluded
+        -  ``exclude`` -- list of variables to be excluded
            from the default degree one elements
 
         OUTPUT:
@@ -3594,9 +3588,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         - ``x`` -- element of the ring of symmetric functions over the same
           base ring as ``self``
 
-        OUTPUT:
-
-        - an element of symmetric functions in the parent of ``self``
+        OUTPUT: an element of symmetric functions in the parent of ``self``
 
         EXAMPLES::
 
@@ -4863,7 +4855,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         - ``zee`` -- an optional function on partitions giving
           the value for the scalar product between `p_{\mu}` and `p_{\mu}`
-          (default is to use the standard :meth:`~sage.combinat.sf.sfa.zee` function)
+          (default: the standard :meth:`~sage.combinat.sf.sfa.zee` function)
 
         This is the default implementation that converts both ``self`` and
         ``x`` into either Schur functions (if ``zee`` is not specified) or
@@ -5672,9 +5664,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
           exactly ``d``, otherwise returns all terms of degree less than
           or equal to ``d``
 
-        OUTPUT:
-
-        - the homogeneous component of ``self`` of degree ``d``
+        OUTPUT: the homogeneous component of ``self`` of degree ``d``
 
         EXAMPLES::
 
@@ -5965,11 +5955,9 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``rho`` -- a partition or a list of non-negative integers
+        - ``rho`` -- a partition or a list of nonnegative integers
 
-        OUTPUT:
-
-        - an element of the base ring
+        OUTPUT: an element of the base ring
 
         EXAMPLES::
 
@@ -6008,12 +5996,10 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``n`` -- a non-negative integer to interpret ``self`` as
+        - ``n`` -- a nonnegative integer to interpret ``self`` as
           a character of `GL_n`
 
-        OUTPUT:
-
-        - a symmetric function of degree ``n``
+        OUTPUT: a symmetric function of degree ``n``
 
         EXAMPLES::
 
@@ -6060,12 +6046,12 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``n`` (default: ``infinity``) -- a nonnegative integer or
+        - ``n`` -- (default: ``infinity``) a nonnegative integer or
           ``infinity``, specifying whether to compute the principal
           specialization of order ``n`` or the stable principal
           specialization.
 
-        - ``q`` (default: ``None``) -- the value to use for `q`; the
+        - ``q`` -- (default: ``None``); -- the value to use for `q`; the
           default is to create a ring of polynomials in ``q``
           (or a field of rational functions in ``q``) over the
           given coefficient ring.
@@ -6314,10 +6300,10 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``t`` (default: ``None``) -- the value to use for `t`;
+        - ``t`` -- (default: ``None``); -- the value to use for `t`;
           the default is to create a ring of polynomials in ``t``.
 
-        - ``q`` (default: `1`) -- the value to use for `q`.  If
+        - ``q`` -- (default: `1`) the value to use for `q`.  If
           ``q`` is ``None``, then a ring (or fraction field) of
           polynomials in ``q`` is created.
 
@@ -6808,7 +6794,7 @@ def _to_polynomials(lf, R):
 
     INPUT:
 
-    - ``lf`` -- a list of symmetric functions
+    - ``lf`` -- list of symmetric functions
     - ``R`` -- the base ring
 
     .. SEEALSO::

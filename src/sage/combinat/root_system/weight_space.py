@@ -21,7 +21,7 @@ class WeightSpace(CombinatorialFreeModule):
 
     - ``root_system`` -- a root system
     - ``base_ring`` -- a ring `R`
-    - ``extended`` -- a boolean (default: ``False``)
+    - ``extended`` -- boolean (default: ``False``)
 
     The weight space (or lattice if ``base_ring`` is `\ZZ`) of a root
     system is the formal free module `\bigoplus_i R \Lambda_i`
@@ -145,7 +145,7 @@ class WeightSpace(CombinatorialFreeModule):
     @staticmethod
     def __classcall_private__(cls, root_system, base_ring, extended=False):
         """
-        Guarantees Unique representation
+        Guarantee Unique representation.
 
         .. SEEALSO:: :class:`UniqueRepresentation`
 
@@ -248,14 +248,14 @@ class WeightSpace(CombinatorialFreeModule):
     @cached_method
     def fundamental_weight(self, i):
         r"""
-        Returns the `i`-th fundamental weight
+        Return the `i`-th fundamental weight.
 
         INPUT:
 
-        - ``i`` -- an element of the index set or ``"delta"``
+        - ``i`` -- an element of the index set or ``'delta'``
 
         By a slight notational abuse, for an affine type this method
-        also accepts ``"delta"`` as input, and returns the image of
+        also accepts ``'delta'`` as input, and returns the image of
         `\delta` of the extended weight lattice in this realization.
 
         .. SEEALSO:: :meth:`~sage.combinat.root_system.weight_lattice_realization.ParentMethods.fundamental_weight`
@@ -287,7 +287,7 @@ class WeightSpace(CombinatorialFreeModule):
     @cached_method
     def basis_extension(self):
         r"""
-        Return the basis elements used to extend the fundamental weights
+        Return the basis elements used to extend the fundamental weights.
 
         EXAMPLES::
 
@@ -313,7 +313,7 @@ class WeightSpace(CombinatorialFreeModule):
     @cached_method
     def simple_root(self, j):
         r"""
-        Returns the `j^{th}` simple root
+        Return the `j^{\textnormal{th}}` simple root
 
         EXAMPLES::
 
@@ -371,7 +371,7 @@ class WeightSpace(CombinatorialFreeModule):
 
     def _repr_term(self, m):
         r"""
-        Customized monomial printing for extended weight lattices
+        Customized monomial printing for extended weight lattices.
 
         EXAMPLES::
 
@@ -389,7 +389,7 @@ class WeightSpace(CombinatorialFreeModule):
 
     def _latex_term(self, m):
         r"""
-        Customized monomial typesetting for extended weight lattices
+        Customized monomial typesetting for extended weight lattices.
 
         EXAMPLES::
 
@@ -516,7 +516,7 @@ class WeightSpaceElement(CombinatorialFreeModule.Element):
 
     def is_dominant(self):
         """
-        Checks whether an element in the weight space lies in the positive cone spanned
+        Check whether an element in the weight space lies in the positive cone spanned
         by the basis elements (fundamental weights).
 
         EXAMPLES::

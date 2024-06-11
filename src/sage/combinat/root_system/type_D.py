@@ -220,7 +220,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
     @cached_method
     def dynkin_diagram(self):
         """
-        Returns a Dynkin diagram for type D.
+        Return a Dynkin diagram for type D.
 
         EXAMPLES::
 

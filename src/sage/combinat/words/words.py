@@ -61,7 +61,7 @@ from sage.rings.integer_ring import ZZ
 
 def Words(alphabet=None, length=None, finite=True, infinite=True):
     """
-    Returns the combinatorial class of words of length k over an alphabet.
+    Return the combinatorial class of words of length k over an alphabet.
 
     EXAMPLES::
 
@@ -114,7 +114,7 @@ def Words(alphabet=None, length=None, finite=True, infinite=True):
 
 class AbstractLanguage(Parent):
     r"""
-    Abstract base class
+    Abstract base class.
 
     This is *not* to be used by any means. This class gather previous features
     of set of words (prior to :issue:`19619`). In the future that class might
@@ -192,7 +192,7 @@ class AbstractLanguage(Parent):
 
     def identity_morphism(self):
         r"""
-        Returns the identity morphism from self to itself.
+        Return the identity morphism from self to itself.
 
         EXAMPLES::
 
@@ -383,7 +383,7 @@ class FiniteWords(AbstractLanguage):
     @lazy_attribute
     def _element_classes(self):
         r"""
-        Returns a dictionary that gives the class of the element of self.
+        Return a dictionary that gives the class of the element of self.
 
         The word may be finite, infinite or of unknown length.
         Its data may be str, list, tuple, a callable or an iterable.
@@ -510,8 +510,8 @@ class FiniteWords(AbstractLanguage):
 
         -  ``data`` -- callable
         -  ``length`` -- integer or ``None`` or "infinite" or ``Infinity``
-        -  ``caching`` -- (default: ``True``) True or False. Whether to keep a cache
-           of the letters computed by the callable.
+        -  ``caching`` -- boolean (default: ``True``); whether to keep a cache
+           of the letters computed by the callable
 
         EXAMPLES::
 
@@ -537,8 +537,8 @@ class FiniteWords(AbstractLanguage):
 
         -  ``length`` -- (optional) integer
 
-        -  ``caching`` -- (default: ``True``) True or False. Whether to keep a cache
-           of the letters computed by the iterator.
+        -  ``caching`` -- boolean (default: ``True``); whether to keep a cache
+           of the letters computed by the iterator
 
         EXAMPLES::
 
@@ -561,20 +561,20 @@ class FiniteWords(AbstractLanguage):
 
         INPUT:
 
-        -  ``data`` -- (default: None) list, string, tuple, iterator, None
-           (shorthand for []), or a callable defined on [0,1,...,length].
+        -  ``data`` -- (default: ``None``) list, string, tuple, iterator, ``None``
+           (shorthand for []), or a callable defined on [0,1,...,length]
 
-        -  ``length`` -- integer (default: None). Only used if the data is an iterator or
+        -  ``length`` -- integer (default: ``None``); only used if the data is an iterator or
            a callable. It determines the length of the word.
 
-        -  ``datatype`` -- (default: None) None, "char", "list", "str",
-           "tuple", "iter", "callable" or "pickled_function". If None, then
-           the function tries to guess this from the data.
+        -  ``datatype`` -- (default: ``None``) ``None``, "char", "list", "str",
+           "tuple", "iter", "callable" or "pickled_function"; if ``None``, then
+           the function tries to guess this from the data
 
-        -  ``caching`` -- (default: ``True``) True or False. Whether to keep a cache
-           of the letters computed by an iterator or callable.
+        -  ``caching`` -- boolean (default: ``True``); whether to keep a cache
+           of the letters computed by an iterator or callable
 
-        -  ``check`` -- (default: ``True``) True or False. Whether to check if
+        -  ``check`` -- boolean (default: ``True``); whether to check if
            the 40 first letters are in the parent alphabet. This is a
            check done to test for small programming errors. Since we also
            support infinite words, we cannot really implement a more
@@ -610,9 +610,9 @@ class FiniteWords(AbstractLanguage):
 
         Word with string constructed from other types::
 
-            sage: W([0,1,1,0,1,0,0,1], datatype="str")
+            sage: W([0,1,1,0,1,0,0,1], datatype='str')
             word: 01101001
-            sage: W((0,1,1,0,1,0,0,1), datatype="str")
+            sage: W((0,1,1,0,1,0,0,1), datatype='str')
             word: 01101001
 
         Word with list::
@@ -622,9 +622,9 @@ class FiniteWords(AbstractLanguage):
 
         Word with list constructed from other types::
 
-            sage: W("01101001", datatype="list")
+            sage: W("01101001", datatype='list')
             word: 01101001
-            sage: W((0,1,1,0,1,0,0,1), datatype="list")
+            sage: W((0,1,1,0,1,0,0,1), datatype='list')
             word: 01101001
 
         Word with tuple::
@@ -634,9 +634,9 @@ class FiniteWords(AbstractLanguage):
 
         Word with tuple constructed from other types::
 
-            sage: W([0,1,1,0,1,0,0,1], datatype="tuple")
+            sage: W([0,1,1,0,1,0,0,1], datatype='tuple')
             word: 01101001
-            sage: W("01101001", datatype="str")
+            sage: W("01101001", datatype='str')
             word: 01101001
 
         Word with iterator::
@@ -886,11 +886,11 @@ class FiniteWords(AbstractLanguage):
 
     def iterate_by_length(self, l=1):
         r"""
-        Returns an iterator over all the words of self of length l.
+        Return an iterator over all the words of self of length `l`.
 
         INPUT:
 
-        - ``l`` -- integer (default: 1), the length of the desired words
+        - ``l`` -- integer (default: 1); the length of the desired words
 
         EXAMPLES::
 
@@ -921,7 +921,7 @@ class FiniteWords(AbstractLanguage):
 
     def __iter__(self):
         r"""
-        Returns an iterator over all the words of self.
+        Return an iterator over all the words of self.
 
         The iterator outputs the words in shortlex order (see
         :wikipedia:`Shortlex_order`), i.e. first by increasing length and then
@@ -992,7 +992,7 @@ class FiniteWords(AbstractLanguage):
 
     def random_element(self, length=None, *args, **kwds):
         r"""
-        Returns a random finite word on the given alphabet.
+        Return a random finite word on the given alphabet.
 
         INPUT:
 
@@ -1032,7 +1032,7 @@ class FiniteWords(AbstractLanguage):
 
         - ``arg`` -- (default: ``None``) It can be one of the following:
 
-          - ``None`` -- then the method iterates through all morphisms.
+          - ``None`` -- then the method iterates through all morphisms
 
           - tuple `(a, b)` of two integers  -- It specifies the range
             ``range(a, b)`` of values to consider for the sum of the length
@@ -1264,7 +1264,7 @@ class FiniteWords(AbstractLanguage):
 class InfiniteWords(AbstractLanguage):
     def cardinality(self):
         r"""
-        Return the cardinality of this set
+        Return the cardinality of this set.
 
         EXAMPLES::
 
@@ -1317,7 +1317,7 @@ class InfiniteWords(AbstractLanguage):
     @lazy_attribute
     def _element_classes(self):
         r"""
-        Returns a dictionary that gives the class of the element of self.
+        Return a dictionary that gives the class of the element of self.
 
         The word may be finite, infinite or of unknown length.
         Its data may be str, list, tuple, a callable or an iterable.
@@ -1430,8 +1430,8 @@ class InfiniteWords(AbstractLanguage):
 
         -  ``data`` -- callable
 
-        -  ``caching`` -- (default: ``True``) True or False. Whether to keep a cache
-           of the letters computed by the callable.
+        -  ``caching`` -- boolean (default: ``True``); whether to keep a cache
+           of the letters computed by the callable
 
         EXAMPLES::
 
@@ -1453,8 +1453,8 @@ class InfiniteWords(AbstractLanguage):
 
         -  ``data`` -- iterable
 
-        -  ``caching`` -- (default: ``True``) True or False. Whether to keep a cache
-           of the letters computed by the iterator.
+        -  ``caching`` -- boolean (default: ``True``); whether to keep a cache
+           of the letters computed by the iterator
 
         EXAMPLES::
 
@@ -1474,14 +1474,14 @@ class InfiniteWords(AbstractLanguage):
 
         -  ``data`` -- iterator or a callable
 
-        -  ``datatype`` -- (default: None) None, "iter", "callable" or
-           "pickled_function". If None, then the function tries to guess
+        -  ``datatype`` -- (default: ``None``) ``None``, "iter", "callable" or
+           "pickled_function". If ``None``, then the function tries to guess
            this from the data.
 
-        -  ``caching`` -- (default: ``True``) True or False. Whether to keep a
-           cache of the letters computed by an iterator or callable.
+        -  ``caching`` -- boolean (default: ``True``); whether to keep a
+           cache of the letters computed by an iterator or callable
 
-        -  ``check`` -- (default: ``True``) True or False. Whether to check if
+        -  ``check`` -- boolean (default: ``True``); whether to check if
            the 40 first letters are in the parent alphabet. This is a
            check done to test for small programming errors. Since we also
            support infinite words, we cannot really implement a more
@@ -1573,7 +1573,7 @@ class InfiniteWords(AbstractLanguage):
 
     def _repr_(self):
         r"""
-        Returns a string representation of self.
+        Return a string representation of self.
 
         EXAMPLES::
 
@@ -1773,10 +1773,10 @@ class FiniteOrInfiniteWords(AbstractLanguage):
 
         INPUT:
 
-        -  ``data`` -- (default: None) list, string, tuple, iterator, None
+        -  ``data`` -- (default: ``None``) list, string, tuple, iterator, ``None``
            (shorthand for []), or a callable defined on [0,1,...,length].
 
-        -  ``length`` -- (default: None) This is dependent on the type of data.
+        -  ``length`` -- (default: ``None``) this is dependent on the type of data.
            It is ignored for words defined by lists, strings, tuples,
            etc., because they have a naturally defined length.
            For callables, this defines the domain of definition,
@@ -1786,14 +1786,14 @@ class FiniteOrInfiniteWords(AbstractLanguage):
            iterator terminates; "finite" if you know that the iterator
            terminates, but do not know the length.
 
-        -  ``datatype`` -- (default: None) None, "char", "list", "str",
-           "tuple", "iter", "callable" or "pickled_function". If None, then
+        -  ``datatype`` -- (default: ``None``) ``None``, "char", "list", "str",
+           "tuple", "iter", "callable" or "pickled_function". If ``None``, then
            the function tries to guess this from the data.
 
-        -  ``caching`` -- (default: ``True``) True or False. Whether to keep a cache
-           of the letters computed by an iterator or callable.
+        -  ``caching`` -- boolean (default: ``True``); whether to keep a cache
+           of the letters computed by an iterator or callable
 
-        -  ``check`` -- (default: ``True``) True or False. Whether to check if
+        -  ``check`` -- boolean (default: ``True``); whether to check if
            the 40 first letters are in the parent alphabet. This is a
            check done to test for small programming errors. Since we also
            support infinite words, we cannot really implement a more
@@ -1827,9 +1827,9 @@ class FiniteOrInfiniteWords(AbstractLanguage):
 
         Word with string constructed from other types::
 
-            sage: Words()([0,1,1,0,1,0,0,1], datatype="str")
+            sage: Words()([0,1,1,0,1,0,0,1], datatype='str')
             word: 01101001
-            sage: Words()((0,1,1,0,1,0,0,1), datatype="str")
+            sage: Words()((0,1,1,0,1,0,0,1), datatype='str')
             word: 01101001
 
         Word with list::
@@ -1839,9 +1839,9 @@ class FiniteOrInfiniteWords(AbstractLanguage):
 
         Word with list constructed from other types::
 
-            sage: Words()("01101001", datatype="list")
+            sage: Words()("01101001", datatype='list')
             word: 01101001
-            sage: Words()((0,1,1,0,1,0,0,1), datatype="list")
+            sage: Words()((0,1,1,0,1,0,0,1), datatype='list')
             word: 01101001
 
         Word with tuple::
@@ -1851,9 +1851,9 @@ class FiniteOrInfiniteWords(AbstractLanguage):
 
         Word with tuple constructed from other types::
 
-            sage: Words()([0,1,1,0,1,0,0,1], datatype="tuple")
+            sage: Words()([0,1,1,0,1,0,0,1], datatype='tuple')
             word: 01101001
-            sage: Words()("01101001", datatype="str")
+            sage: Words()("01101001", datatype='str')
             word: 01101001
 
         Word with iterator::
@@ -1863,9 +1863,9 @@ class FiniteOrInfiniteWords(AbstractLanguage):
             word: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,...
             sage: Words()(iter("abbabaab")) # iterators default to infinite words
             word: abbabaab
-            sage: Words()(iter("abbabaab"), length="unknown")
+            sage: Words()(iter("abbabaab"), length='unknown')
             word: abbabaab
-            sage: Words()(iter("abbabaab"), length="finite")
+            sage: Words()(iter("abbabaab"), length='finite')
             word: abbabaab
 
         Word with function (a 'callable')::
@@ -2056,7 +2056,7 @@ class FiniteOrInfiniteWords(AbstractLanguage):
 
     def _repr_(self):
         r"""
-        Returns a string representation of self.
+        Return a string representation of self.
 
         EXAMPLES::
 
@@ -2076,18 +2076,18 @@ class Words_n(Parent):
 
         - ``words`` -- a set of finite words
 
-        - ``n`` -- a non-negative integer
+        - ``n`` -- a nonnegative integer
 
         TESTS::
 
             sage: Words([0,1], length=-42)
             Traceback (most recent call last):
             ...
-            ValueError: n = -42 must be non-negative
+            ValueError: n = -42 must be nonnegative
         """
         n = ZZ(n)
         if n < 0:
-            raise ValueError("n = {} must be non-negative".format(n))
+            raise ValueError("n = {} must be nonnegative".format(n))
         self._words = words
         self._n = n
 
@@ -2150,7 +2150,7 @@ class Words_n(Parent):
 
     def list(self):
         r"""
-        Returns a list of all the words contained in self.
+        Return a list of all the words contained in self.
 
         EXAMPLES::
 
@@ -2260,7 +2260,7 @@ class Words_n(Parent):
 
     def cardinality(self):
         r"""
-        Returns the number of words of length `n` from alphabet.
+        Return the number of words of length `n` from alphabet.
 
         EXAMPLES::
 

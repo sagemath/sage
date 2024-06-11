@@ -421,7 +421,7 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
 
     def _add_to_digraph(self, d):
         """
-        Adds this species as a vertex to the digraph d along with any
+        Add this species as a vertex to the digraph d along with any
         'children' of this species.
 
         Note that to avoid infinite recursion, we just return if this
@@ -454,7 +454,7 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
 
     def _equation(self, var_mapping):
         """
-        Returns the right hand side of an algebraic equation satisfied by
+        Return the right hand side of an algebraic equation satisfied by
         this species. This is a utility function called by the
         algebraic_equation_system method.
 

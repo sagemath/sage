@@ -112,9 +112,9 @@ def get_cycles(f, domain):
 
     INPUT:
 
-    - ``f`` -- function.
+    - ``f`` -- function
 
-    - ``domain`` -- iterable, a subdomain of the domain of definition of ``f``.
+    - ``domain`` -- iterable, a subdomain of the domain of definition of ``f``
 
     EXAMPLES::
 
@@ -228,7 +228,7 @@ class PeriodicPointIterator:
 
 class WordMorphism(SageObject):
     r"""
-    WordMorphism class
+    WordMorphism class.
 
     INPUT:
 
@@ -632,13 +632,11 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        -  ``w`` -- word or sequence in the domain of self
+        - ``w`` -- word or sequence in the domain of self
 
-        -  ``order`` -- integer or plus ``Infinity`` (default: 1)
+        - ``order`` -- integer or plus ``Infinity`` (default: 1)
 
-        OUTPUT:
-
-        -  ``word`` -- order-th iterated image under self of ``w``
+        OUTPUT: ``word`` -- order-th iterated image under self of ``w``
 
         EXAMPLES:
 
@@ -699,16 +697,16 @@ class WordMorphism(SageObject):
             ...
             ValueError: 0 not in alphabet
 
-        The order must be a non-negative integer or plus Infinity::
+        The order must be a nonnegative integer or plus Infinity::
 
             sage: tm('a', -1)
             Traceback (most recent call last):
             ...
-            TypeError: order (-1) must be a non-negative integer or plus Infinity
+            TypeError: order (-1) must be a nonnegative integer or plus Infinity
             sage: tm('a', 6.7)
             Traceback (most recent call last):
             ...
-            TypeError: order (6.7...) must be a non-negative integer or plus Infinity
+            TypeError: order (6.7...) must be a nonnegative integer or plus Infinity
 
         Only the first letter is considered for infinitely iterated image of
         a word under a morphism::
@@ -761,7 +759,7 @@ class WordMorphism(SageObject):
             sage: w == loads(dumps(w))
             True
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(suffix=".sobj") as f:
+            sage: with tempfile.NamedTemporaryFile(suffix='.sobj') as f:
             ....:     save(w, filename=f.name)
         """
         if order == 1:
@@ -813,7 +811,7 @@ class WordMorphism(SageObject):
             return self._domain(w)
 
         else:
-            raise TypeError("order (%s) must be a non-negative integer or plus Infinity" % order)
+            raise TypeError("order (%s) must be a nonnegative integer or plus Infinity" % order)
 
     def latex_layout(self, layout=None):
         r"""
@@ -821,13 +819,13 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``layout`` -- string (default: ``None``), can take one of the
+        - ``layout`` -- string (default: ``None``); can take one of the
           following values:
 
-          - ``None`` -- Returns the actual latex layout. By default, the
+          - ``None`` -- returns the actual latex layout; by default, the
             layout is ``'array'``
-          - ``'oneliner'`` -- Set the layout to ``'oneliner'``
-          - ``'array'`` -- Set the layout to ``'array'``
+          - ``'oneliner'`` -- set the layout to ``'oneliner'``
+          - ``'array'`` -- set the layout to ``'array'``
 
         EXAMPLES::
 
@@ -956,7 +954,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        -  ``exp`` -- a positive integer
+        - ``exp`` -- a positive integer
 
         EXAMPLES::
 
@@ -1018,7 +1016,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        -  ``other`` -- a WordMorphism.
+        - ``other`` -- a WordMorphism.
 
         OUTPUT: WordMorphism
 
@@ -1390,7 +1388,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``self`` -- An involution.
+        - ``self`` -- an involution
 
         OUTPUT: a tuple of three sets
 
@@ -1482,7 +1480,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``self`` -- a Pisot irreducible substitution.
+        - ``self`` -- a Pisot irreducible substitution
 
         EXAMPLES::
 
@@ -1512,7 +1510,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``self`` -- a Pisot irreducible substitution.
+        - ``self`` -- a Pisot irreducible substitution
 
         EXAMPLES::
 
@@ -1737,15 +1735,13 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        -  ``self`` -- an endomorphism (or more generally a self-composable
+        - ``self`` -- an endomorphism (or more generally a self-composable
            morphism), must be prolongable on ``letter``
 
-        -  ``letter`` -- in the domain of ``self``, the first letter
+        - ``letter`` -- in the domain of ``self``, the first letter
            of the fixed point.
 
-        OUTPUT:
-
-        - ``word`` -- the fixed point of ``self`` beginning with ``letter``.
+        OUTPUT: ``word`` -- the fixed point of ``self`` beginning with ``letter``
 
         EXAMPLES::
 
@@ -1998,7 +1994,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``n`` -- non-negative integer; length of the words in the language
+        - ``n`` -- nonnegative integer; length of the words in the language
 
         - ``u`` -- a word used as a seed
 
@@ -2055,11 +2051,11 @@ class WordMorphism(SageObject):
 
         Given a non-erasing substitution `s` and a word `u` the DOL-language
         generated by `s` and `u` is the union of the factors of `s^n(u)` where
-        `n` is a non-negative integer.
+        `n` is a nonnegative integer.
 
         INPUT:
 
-        - ``n`` -- non-negative integer; length of the words in the language
+        - ``n`` -- nonnegative integer; length of the words in the language
 
         - ``u`` -- a word or ``None`` (default: ``None``); if set to
           ``None`` some letter of the alphabet is used
@@ -2330,7 +2326,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        -  ``f`` -- involution (default: None) on the alphabet of ``self``.
+        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``.
            It must be callable on letters as well as words (e.g. WordMorphism).
 
         REFERENCES:
@@ -2408,7 +2404,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        -  ``f`` -- involution (default: None) on the alphabet of ``self``.
+        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``.
            It must be callable on letters as well as words (e.g. WordMorphism).
 
         REFERENCES:
@@ -2450,9 +2446,7 @@ class WordMorphism(SageObject):
           ``1, 2, \ldots, d``
         - ``k`` -- integer (default: 1)
 
-        OUTPUT:
-
-            an instance of E1Star - the dual map
+        OUTPUT: an instance of E1Star - the dual map
 
         EXAMPLES::
 
@@ -2744,7 +2738,7 @@ class WordMorphism(SageObject):
           but for substitutions with more than 3 letters
           other interesting choices are sometimes possible.
 
-        - ``translate`` -- a list of vectors of ``RR^size_alphabet``,
+        - ``translate`` -- list of vectors of ``RR^size_alphabet``,
           or a dictionary from the alphabet to lists of vectors (default: ``None``).
           Plot translated copies of the fractal.
           This option allows to plot tilings easily.
@@ -2767,7 +2761,7 @@ class WordMorphism(SageObject):
            - ``string`` -- a coloring map. For available coloring map names type:
              ``sorted(colormaps)``
 
-           - ``dict`` -- a dictionary of the alphabet mapped to colors.
+           - ``dict`` -- a dictionary of the alphabet mapped to colors
 
         - ``opacity`` -- a dictionary from the alphabet to the real interval [0,1] (default: ``None``).
           If none is specified, all letters are plotted with opacity ``1``.
@@ -3701,7 +3695,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``Z`` -- iterable (default: ``self.domain().alphabet()``), whose
+        - ``Z`` -- iterable (default: ``self.domain().alphabet()``); whose
           elements are used as an alphabet for the simplification.
 
         EXAMPLES:

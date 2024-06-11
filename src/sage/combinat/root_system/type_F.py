@@ -270,7 +270,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
 
     def dynkin_diagram(self):
         """
-        Returns a Dynkin diagram for type F.
+        Return a Dynkin diagram for type F.
 
         EXAMPLES::
 

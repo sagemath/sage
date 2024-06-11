@@ -170,7 +170,7 @@ class AmbientSpace(CombinatorialFreeModule):
 
     def _name_string(self, capitalize=True, base_ring=False, type=True):
         r"""
-        Utility to implement _repr_
+        Utility to implement _repr_.
 
         EXAMPLES::
 
@@ -402,7 +402,7 @@ class AmbientSpace(CombinatorialFreeModule):
 
     def _plot_projection(self, x):
         r"""
-        Implements the default projection to be used for plots
+        Implements the default projection to be used for plots.
 
         For affine ambient spaces, the default implementation is to
         project onto the classical coordinates according to the

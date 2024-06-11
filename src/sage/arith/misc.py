@@ -3915,7 +3915,7 @@ def multinomial(*ks):
     - either an arbitrary number of integer arguments `k_1,\dots,k_n`
     - or an iterable (e.g. a list) of integers `[k_1,\dots,k_n]`
 
-    OUTPUT: return the integer:
+    OUTPUT: the integer:
 
     .. MATH::
 

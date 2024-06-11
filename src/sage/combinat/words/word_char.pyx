@@ -68,7 +68,7 @@ cdef class WordDatatype_char(WordDatatype):
 
     def __cinit__(self):
         r"""
-        Initialization of C attributes
+        Initialization of C attributes.
 
         TESTS::
 
@@ -81,7 +81,7 @@ cdef class WordDatatype_char(WordDatatype):
 
     def __init__(self, parent, data):
         r"""
-        Constructor
+        Constructor.
 
         TESTS::
 
@@ -501,11 +501,11 @@ cdef class WordDatatype_char(WordDatatype):
 
     def __pow__(self, exp, mod):
         r"""
-        Power
+        Power.
 
         INPUT:
 
-        -  ``exp``  -- an integer, a rational, a float number or plus infinity.
+        -  ``exp`` -- an integer, a rational, a float number or plus infinity
 
         TESTS::
 
@@ -646,7 +646,7 @@ cdef class WordDatatype_char(WordDatatype):
 
     def is_square(self):
         r"""
-        Return True if self is a square, and False otherwise.
+        Return ``True`` if self is a square, and False otherwise.
 
         EXAMPLES::
 

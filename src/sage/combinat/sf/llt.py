@@ -111,7 +111,7 @@ class LLT_class(UniqueRepresentation):
 
     def __init__(self, Sym, k, t):
         r"""
-        Class of LLT symmetric function bases
+        Class of LLT symmetric function bases.
 
         INPUT:
 
@@ -155,15 +155,13 @@ class LLT_class(UniqueRepresentation):
 
     def __repr__(self):
         r"""
-        Representation of the LLT symmetric functions
+        Representation of the LLT symmetric functions.
 
         INPUT:
 
         - ``self`` -- a family of LLT symmetric function bases
 
-        OUTPUT:
-
-        - returns a string representing the LLT symmetric functions
+        OUTPUT: a string representing the LLT symmetric functions
 
         EXAMPLES::
 
@@ -183,9 +181,7 @@ class LLT_class(UniqueRepresentation):
 
         - ``self`` -- a family of LLT symmetric functions bases
 
-        OUTPUT:
-
-        - returns the symmetric function ring associated to ``self``.
+        OUTPUT: the symmetric function ring associated to ``self``
 
         EXAMPLES::
 
@@ -197,15 +193,13 @@ class LLT_class(UniqueRepresentation):
 
     def base_ring(self):
         r"""
-        Returns the base ring of ``self``.
+        Return the base ring of ``self``.
 
         INPUT:
 
         - ``self`` -- a family of LLT symmetric functions bases
 
-        OUTPUT:
-
-        - returns the base ring of the symmetric function ring associated to ``self``
+        OUTPUT: the base ring of the symmetric function ring associated to ``self``
 
         EXAMPLES::
 
@@ -216,15 +210,13 @@ class LLT_class(UniqueRepresentation):
 
     def level(self):
         r"""
-        Returns the level of ``self``.
+        Return the level of ``self``.
 
         INPUT:
 
         - ``self`` -- a family of LLT symmetric functions bases
 
-        OUTPUT:
-
-        - the level is the parameter of `k` in the basis
+        OUTPUT: the level is the parameter of `k` in the basis
 
         EXAMPLES::
 
@@ -364,16 +356,14 @@ class LLT_class(UniqueRepresentation):
 
     def hcospin(self):
         r"""
-        Returns the HCospin basis.
+        Return the HCospin basis.
         This basis is defined [LLT1997]_ equation (27).
 
         INPUT:
 
         - ``self`` -- a family of LLT symmetric functions bases
 
-        OUTPUT:
-
-        - returns the h-cospin basis of the LLT symmetric functions
+        OUTPUT: the h-cospin basis of the LLT symmetric functions
 
         EXAMPLES::
 
@@ -395,16 +385,14 @@ class LLT_class(UniqueRepresentation):
 
     def hspin(self):
         r"""
-        Returns the HSpin basis.
+        Return the HSpin basis.
         This basis is defined [LLT1997]_ equation (28).
 
         INPUT:
 
         - ``self`` -- a family of LLT symmetric functions bases
 
-        OUTPUT:
-
-        - returns the h-spin basis of the LLT symmetric functions
+        OUTPUT: the h-spin basis of the LLT symmetric functions
 
         EXAMPLES::
 
@@ -488,16 +476,14 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
 
     def _m_to_self(self, x):
         r"""
-        Isomorphism from the monomial basis into ``self``
+        Isomorphism from the monomial basis into ``self``.
 
         INPUT:
 
         - ``self`` -- an instance of the LLT hspin or hcospin basis
         - ``x`` -- an element of the monomial basis
 
-        OUTPUT:
-
-        - returns ``x`` expanded in the basis ``self``
+        OUTPUT: ``x`` expanded in the basis ``self``
 
         EXAMPLES::
 
@@ -517,16 +503,14 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
 
     def _self_to_m(self, x):
         r"""
-        Isomorphism from self to the monomial basis
+        Isomorphism from self to the monomial basis.
 
         INPUT:
 
         - ``self`` -- an instance of the LLT hspin or hcospin basis
         - ``x`` -- an element of ``self``
 
-        OUTPUT:
-
-        - returns ``x`` expanded in the monomial basis.
+        OUTPUT: ``x`` expanded in the monomial basis
 
         EXAMPLES::
 
@@ -546,15 +530,13 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
 
     def level(self):
         r"""
-        Returns the level of ``self``.
+        Return the level of ``self``.
 
         INPUT:
 
         - ``self`` -- an instance of the LLT hspin or hcospin basis
 
-        OUTPUT:
-
-        - returns the level associated to the basis ``self``.
+        OUTPUT: the level associated to the basis ``self``
 
         EXAMPLES::
 
@@ -572,9 +554,7 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
 
         - ``self`` -- an instance of the LLT hspin or hcospin basis
 
-        OUTPUT:
-
-        - returns an instance of the family of LLT bases associated to ``self``.
+        OUTPUT: an instance of the family of LLT bases associated to ``self``
 
         EXAMPLES::
 
@@ -683,7 +663,7 @@ class LLT_spin(LLT_generic):
 
     def _to_m(self, part):
         r"""
-        Returns a function which gives the coefficient of a partition
+        Return a function which gives the coefficient of a partition
         in the monomial expansion of self(part).
 
         INPUT:
@@ -751,7 +731,7 @@ class LLT_cospin(LLT_generic):
 
     def _to_m(self, part):
         r"""
-        Returns a function which gives the coefficient of part2 in the
+        Return a function which gives the coefficient of part2 in the
         monomial expansion of self(part).
 
         INPUT:

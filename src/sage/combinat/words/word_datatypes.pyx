@@ -37,7 +37,7 @@ cdef class WordDatatype():
     """
     def __reduce__(self):
         r"""
-        Default pickle support
+        Default pickle support.
 
         TESTS::
 
@@ -49,7 +49,7 @@ cdef class WordDatatype():
 
     def __hash__(self):
         r"""
-        Returns the hash for this word.
+        Return the hash for this word.
 
         TESTS::
 
@@ -112,9 +112,7 @@ cdef class WordDatatype_list(WordDatatype):
 
         - ``a`` -- anything
 
-        OUTPUT:
-
-        - boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -148,7 +146,7 @@ cdef class WordDatatype_list(WordDatatype):
         INPUT:
 
         - ``other`` -- a word
-        - ``op`` -- integer: 0, 1, 2, 3, 4 or 5
+        - ``op`` -- integer; 0, 1, 2, 3, 4 or 5
 
         OUTPUT: boolean or NotImplemented
 
@@ -270,16 +268,14 @@ cdef class WordDatatype_list(WordDatatype):
 
     def number_of_letter_occurrences(self, a):
         r"""
-        Returns the number of occurrences of the letter ``a`` in the word
+        Return the number of occurrences of the letter ``a`` in the word
         ``self``.
 
         INPUT:
 
         -  ``a`` -- a letter
 
-        OUTPUT:
-
-        - integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -351,7 +347,7 @@ cdef class WordDatatype_str(WordDatatype):
         INPUT:
 
         - ``other`` -- a word
-        - ``op`` -- integer: 0, 1, 2, 3, 4 or 5
+        - ``op`` -- integer; 0, 1, 2, 3, 4 or 5
 
         OUTPUT: boolean or NotImplemented
 
@@ -425,9 +421,7 @@ cdef class WordDatatype_str(WordDatatype):
 
         - ``w`` -- a word, or something that behaves like one (list, tuple, str, ...)
 
-        OUTPUT:
-
-        - boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -445,7 +439,7 @@ cdef class WordDatatype_str(WordDatatype):
 
     cpdef find(self, sub, start=0, end=None):
         r"""
-        Returns the index of the first occurrence of sub in self,
+        Return the index of the first occurrence of sub in self,
         such that sub is contained within self[start:end].
         Returns -1 on failure.
 
@@ -454,13 +448,11 @@ cdef class WordDatatype_str(WordDatatype):
         -  ``sub`` -- string or word to search for.
         -  ``start`` -- non negative integer (default: 0) specifying
            the position from which to start the search.
-        -  ``end`` -- non negative integer (default: None) specifying
-           the position at which the search must stop. If None, then
+        -  ``end`` -- non negative integer (default: ``None``); specifying
+           the position at which the search must stop. If ``None``, then
            the search is performed up to the end of the string.
 
-        OUTPUT:
-
-           non negative integer or -1
+        OUTPUT: non negative integer or `-1`
 
         EXAMPLES::
 
@@ -483,7 +475,7 @@ cdef class WordDatatype_str(WordDatatype):
 
     def rfind(self, sub, start=0, end=None):
         r"""
-        Returns the index of the last occurrence of sub in self,
+        Return the index of the last occurrence of sub in self,
         such that sub is contained within self[start:end].
         Returns -1 on failure.
 
@@ -492,13 +484,11 @@ cdef class WordDatatype_str(WordDatatype):
         -  ``sub`` -- string or word to search for.
         -  ``start`` -- non negative integer (default: 0) specifying
            the position at which the search must stop.
-        -  ``end`` -- non negative integer (default: None) specifying
-           the position from which to start the search. If None, then
+        -  ``end`` -- non negative integer (default: ``None``); specifying
+           the position from which to start the search. If ``None``, then
            the search is performed up to the end of the string.
 
-        OUTPUT:
-
-            non negative integer or -1
+        OUTPUT: non negative integer or `-1`
 
         EXAMPLES::
 
@@ -609,9 +599,7 @@ cdef class WordDatatype_str(WordDatatype):
 
         - ``letter`` -- a letter
 
-        OUTPUT:
-
-        - integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -640,7 +628,7 @@ cdef class WordDatatype_str(WordDatatype):
 
     def split(self, sep=None, maxsplit=None):
         r"""
-        Returns a list of words, using sep as a delimiter string.
+        Return a list of words, using sep as a delimiter string.
         If maxsplit is given, at most maxsplit splits are done.
 
         See also the partition method.
@@ -652,13 +640,11 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``sep`` -- string or word (default: None)
+        - ``sep`` -- string or word (default: ``None``)
 
-        - ``maxsplit`` -- positive integer (default: None)
+        - ``maxsplit`` -- positive integer (default: ``None``)
 
-        OUTPUT:
-
-        - a list of words
+        OUTPUT: list of words
 
         EXAMPLES:
 
@@ -762,9 +748,7 @@ cdef class WordDatatype_str(WordDatatype):
         - ``other`` -- a word (an instance of :class:`Word_class`) or a
           :class:`str`.
 
-        OUTPUT:
-
-        - boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -803,9 +787,7 @@ cdef class WordDatatype_str(WordDatatype):
         - ``other`` -- a word (an instance of :class:`Word_class`) or a
           :class:`str`.
 
-        OUTPUT:
-
-        - boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -835,9 +817,7 @@ cdef class WordDatatype_str(WordDatatype):
         - ``other`` -- a word (an instance of :class:`Word_class`) or a
           :class:`str`.
 
-        OUTPUT:
-
-        - boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -874,9 +854,7 @@ cdef class WordDatatype_str(WordDatatype):
         - ``other`` -- a word (an instance of :class:`Word_class`) or a
           :class:`str`.
 
-        OUTPUT:
-
-        - boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -960,7 +938,7 @@ cdef class WordDatatype_tuple(WordDatatype):
         INPUT:
 
         - ``other`` -- a word
-        - ``op`` -- integer: 0, 1, 2, 3, 4 or 5
+        - ``op`` -- integer; 0, 1, 2, 3, 4 or 5
 
         OUTPUT: boolean or NotImplemented
 
@@ -1052,7 +1030,7 @@ cdef class WordDatatype_tuple(WordDatatype):
 
         INPUT:
 
-        - ``key`` -- an integer
+        - ``key`` -- integer
 
         OUTPUT:
 

@@ -221,9 +221,7 @@ class SymmetricFunctionAlgebra_orthogonal(sfa.SymmetricFunctionAlgebra_generic):
 
         - ``lam`` -- a partition
 
-        OUTPUT:
-
-        - the expansion of ``s[lam]`` in the orthogonal basis ``self``
+        OUTPUT: the expansion of ``s[lam]`` in the orthogonal basis ``self``
 
         EXAMPLES::
 

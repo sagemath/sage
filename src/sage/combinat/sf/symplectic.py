@@ -229,9 +229,7 @@ class SymmetricFunctionAlgebra_symplectic(sfa.SymmetricFunctionAlgebra_generic):
 
         - ``lam`` -- a partition
 
-        OUTPUT:
-
-        - the expansion of ``s[lam]`` in the symplectic basis ``self``
+        OUTPUT: the expansion of ``s[lam]`` in the symplectic basis ``self``
 
         EXAMPLES::
 

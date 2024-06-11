@@ -51,7 +51,7 @@ class CartanType(CartanType_standard_untwisted_affine):
 
     def dynkin_diagram(self):
         """
-        Returns the extended Dynkin diagram for affine type F.
+        Return the extended Dynkin diagram for affine type F.
 
         EXAMPLES::
 
@@ -107,7 +107,7 @@ class CartanType(CartanType_standard_untwisted_affine):
 
     def ascii_art(self, label=None, node=None):
         """
-        Returns a ascii art representation of the extended Dynkin diagram
+        Return a ascii art representation of the extended Dynkin diagram.
 
         EXAMPLES::
 

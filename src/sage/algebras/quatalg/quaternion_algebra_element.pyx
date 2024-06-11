@@ -1520,9 +1520,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
         is equal to `(x + yi + zj + wk)/d` and x, y, z, w do not share
         a common factor with d.
 
-        OUTPUT:
-
-        5-tuple of Integers
+        OUTPUT: 5-tuple of Integers
 
         EXAMPLES::
 
@@ -1548,9 +1546,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
         """
         Return the integer part of this quaternion, ignoring the common denominator.
 
-        OUTPUT:
-
-        4-tuple of Integers
+        OUTPUT: 4-tuple of Integers
 
         EXAMPLES::
 

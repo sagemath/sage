@@ -69,7 +69,7 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
         - ``scalar_name`` -- specifies the name of the scalar function
           (optional)
         - ``prefix`` -- optional input, specifies the prefix to be
-          used to display the basis.
+          used to display the basis
 
         OUTPUT:
 
@@ -109,9 +109,7 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
         - ``self`` -- a homogeneous basis of symmetric functions
         - ``i`` -- a nonnegative integer
 
-        OUTPUT:
-
-        - the sum `\sum_{r=0}^i h_r \otimes h_{i-r}`
+        OUTPUT: the sum `\sum_{r=0}^i h_r \otimes h_{i-r}`
 
         EXAMPLES::
 
@@ -164,9 +162,7 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
             :meth:`omega_involution()` is a synonym for the :meth:`omega()`
             method.
 
-            OUTPUT:
-
-            - the image of ``self`` under the omega automorphism
+            OUTPUT: the image of ``self`` under the omega automorphism
 
             EXAMPLES::
 
@@ -253,12 +249,12 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
 
             INPUT:
 
-            - ``n`` (default: ``infinity``) -- a nonnegative integer or
+            - ``n`` -- (default: ``infinity``) a nonnegative integer or
               ``infinity``, specifying whether to compute the principal
               specialization of order ``n`` or the stable principal
               specialization.
 
-            - ``q`` (default: ``None``) -- the value to use for `q`; the
+            - ``q`` -- (default: ``None``) the value to use for `q`; the
               default is to create a ring of polynomials in ``q``
               (or a field of rational functions in ``q``) over the
               given coefficient ring.
@@ -363,12 +359,12 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
 
             INPUT:
 
-            - ``t`` (default: ``None``) -- the value to use for `t`;
-              the default is to create a ring of polynomials in ``t``.
+            - ``t`` -- (default: ``None``) the value to use for `t`;
+              the default is to create a ring of polynomials in ``t``
 
-            - ``q`` (default: `1`) -- the value to use for `q`.  If
+            - ``q`` -- (default: `1`) the value to use for `q`;  if
               ``q`` is ``None``, then a ring (or fraction field) of
-              polynomials in ``q`` is created.
+              polynomials in ``q`` is created
 
             EXAMPLES::
 

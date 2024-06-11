@@ -48,7 +48,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
     @classmethod
     def smallest_base_ring(cls, cartan_type=None):
         """
-        Returns the smallest base ring the ambient space can be defined upon
+        Return the smallest base ring the ambient space can be defined upon.
 
         .. SEEALSO:: :meth:`~sage.combinat.root_system.ambient_space.AmbientSpace.smallest_base_ring`
 
@@ -176,7 +176,7 @@ from .cartan_type import CartanType_standard_finite, CartanType_simply_laced, Ca
 
 class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType_simple):
     """
-    Cartan Type `A_n`
+    Cartan Type `A_n`.
 
     .. SEEALSO:: :func:`~sage.combinat.root_systems.cartan_type.CartanType`
     """
@@ -250,7 +250,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
 
     def dynkin_diagram(self):
         """
-        Returns the Dynkin diagram of type A.
+        Return the Dynkin diagram of type A.
 
         EXAMPLES::
 

@@ -930,7 +930,7 @@ class KR_type_vertical(KirillovReshetikhinCrystalFromPromotion):
         return aut[i]
 
     def promotion_on_highest_weight_vector(self, b):
-        """
+        r"""
         Calculate promotion on a `{2, 3, \ldots, n}` highest weight vector `b`.
 
         EXAMPLES::

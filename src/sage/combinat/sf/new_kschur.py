@@ -277,12 +277,12 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
 
     def __init__(self, base, t='t'):
         """
-        Initialization of the bases of the `k`-bounded subspace
+        Initialization of the bases of the `k`-bounded subspace.
 
         INPUT:
 
         - ``base`` -- a basis in the `k`-bounded subspace
-        - ``t`` -- a parameter (default: 't')
+        - ``t`` -- a parameter (default: ``'t'``)
 
         TESTS::
 
@@ -820,7 +820,7 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
 
             - ``zee`` -- an optional function on partitions giving
               the value for the scalar product between `p_{\mu}` and `p_{\mu}`
-              (default is to use the standard :meth:`~sage.combinat.sf.sfa.zee` function)
+              (default: is to use the standard :meth:`~sage.combinat.sf.sfa.zee` function)
 
             .. SEEALSO:: :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.scalar`
 
@@ -1094,9 +1094,7 @@ class kSchur(CombinatorialFreeModule):
 
         - ``left``, ``right`` -- partitions
 
-        OUTPUT:
-
-        - the product of the `k`-Schur functions indexed by ``left`` and ``right``
+        OUTPUT: the product of the `k`-Schur functions indexed by ``left`` and ``right``
 
         EXAMPLES::
 
@@ -1136,9 +1134,7 @@ class kSchur(CombinatorialFreeModule):
 
         - ``left``, ``right`` -- partitions
 
-        OUTPUT:
-
-        - an element of the `k`-Schur functions
+        OUTPUT: an element of the `k`-Schur functions
 
         EXAMPLES::
 
@@ -1184,7 +1180,7 @@ class kSchur(CombinatorialFreeModule):
 class kSplit(CombinatorialFreeModule):
     def __init__(self, kBoundedRing):
         r"""
-        The `k`-split basis of the space of `k`-bounded-symmetric functions
+        The `k`-split basis of the space of `k`-bounded-symmetric functions.
 
         Fix ``k`` a positive integer and ``t`` an element of the base ring.
 
@@ -1296,7 +1292,7 @@ class kSplit(CombinatorialFreeModule):
     @cached_method
     def _to_schur_on_basis(self, p):
         r"""
-        Computes the change of basis of `k`-split functions to Schur functions.
+        Compute the change of basis of `k`-split functions to Schur functions.
 
         When `t=1` the `k`-split basis is the product of the Schur functions
         indexed by the partitions in the `k`-split of the partition.
@@ -1490,11 +1486,9 @@ class K_kSchur(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``r`` -- A positive integer
+        - ``r`` -- a positive integer
 
-        OUTPUT:
-
-        - An element of the affine zero Hecke algebra.
+        OUTPUT: an element of the affine zero Hecke algebra
 
         EXAMPLES::
 
@@ -1520,11 +1514,9 @@ class K_kSchur(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``la`` -- A `k`-bounded partition
+        - ``la`` -- a `k`-bounded partition
 
-        OUTPUT:
-
-        - An element of the affine zero Hecke algebra.
+        OUTPUT: an element of the affine zero Hecke algebra
 
         EXAMPLES::
 
@@ -1543,11 +1535,9 @@ class K_kSchur(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``la`` -- A `k`-bounded partition
+        - ``la`` -- a `k`-bounded partition
 
-        OUTPUT:
-
-        - An element of the affine zero Hecke algebra.
+        OUTPUT: an element of the affine zero Hecke algebra
 
         EXAMPLES::
 
@@ -1567,11 +1557,9 @@ class K_kSchur(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``m`` -- An integer
+        - ``m`` -- integer
 
-        OUTPUT:
-
-        - A matrix.
+        OUTPUT: a matrix
 
         EXAMPLES::
 
@@ -1609,11 +1597,9 @@ class K_kSchur(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``la`` -- A `k`-bounded partition.
+        - ``la`` -- a `k`-bounded partition
 
-        OUTPUT:
-
-        - A symmetric function in the homogeneous basis.
+        OUTPUT: a symmetric function in the homogeneous basis
 
         EXAMPLES::
 
@@ -1654,11 +1640,9 @@ class K_kSchur(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``la`` -- A `k`-bounded partition.
+        - ``la`` -- a `k`-bounded partition
 
-        OUTPUT:
-
-        - A symmetric function in the homogeneous basis.
+        OUTPUT: a symmetric function in the homogeneous basis
 
         EXAMPLES::
 
@@ -1682,11 +1666,9 @@ class K_kSchur(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``la`` -- A `k`-bounded Partition
+        - ``la`` -- a `k`-bounded Partition
 
-        OUTPUT:
-
-        - An element of the affine zero Hecke algebra.
+        OUTPUT: an element of the affine zero Hecke algebra
 
         EXAMPLES::
 
@@ -1712,11 +1694,9 @@ class K_kSchur(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``la`` -- A `k`-bounded partition
+        - ``la`` -- a `k`-bounded partition
 
-        OUTPUT:
-
-        - An element of the `k`-bounded subspace, written in the K-`k`-Schur basis.
+        OUTPUT: an element of the `k`-bounded subspace, written in the K-`k`-Schur basis
 
         EXAMPLES::
 
@@ -1743,11 +1723,9 @@ class K_kSchur(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``x``, ``y`` -- elements of the `k`-bounded subspace, in the K-`k`-Schur basis.
+        - ``x``, ``y`` -- elements of the `k`-bounded subspace, in the K-`k`-Schur basis
 
-        OUTPUT:
-
-        - An element of the `k`-bounded subspace, in the K-`k`-Schur basis
+        OUTPUT: an element of the `k`-bounded subspace, in the K-`k`-Schur basis
 
         EXAMPLES::
 
@@ -1766,12 +1744,10 @@ class K_kSchur(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``x`` -- An expression in the K-`k`-Schur basis. Equivalently, ``x`` can be a
+        - ``x`` -- an expression in the K-`k`-Schur basis. Equivalently, ``x`` can be a
             `k`-bounded partition (then ``x`` corresponds to the basis element indexed by ``x``)
 
-        OUTPUT:
-
-        - A symmetric function.
+        OUTPUT: a symmetric function
 
         EXAMPLES::
 
@@ -1794,11 +1770,9 @@ class K_kSchur(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``x`` -- A symmetric function.
+        - ``x`` -- a symmetric function
 
-        OUTPUT:
-
-        - A `k`-bounded symmetric function in the K-`k`-Schur basis.
+        OUTPUT: a `k`-bounded symmetric function in the K-`k`-Schur basis
 
         EXAMPLES::
 

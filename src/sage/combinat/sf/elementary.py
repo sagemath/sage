@@ -54,7 +54,7 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
 
     def _dual_basis_default(self):
         """
-        Returns the default value for ``self.dual_basis()``
+        Return the default value for ``self.dual_basis()``.
 
         This method returns the dual basis to the elementary basis
         with respect to the standard scalar product, that is the
@@ -71,11 +71,11 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
             sage: e._dual_basis_default() is e.dual_basis()
             True
         """
-        return self.dual_basis(scalar=None, prefix="f", basis_name="forgotten")
+        return self.dual_basis(scalar=None, prefix='f', basis_name='forgotten')
 
     def coproduct_on_generators(self, i):
         r"""
-        Returns the coproduct on ``self[i]``.
+        Return the coproduct on ``self[i]``.
 
         INPUT:
 
@@ -337,12 +337,12 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
 
             INPUT:
 
-            - ``n`` (default: ``infinity``) -- a nonnegative integer or
+            - ``n`` -- (default: ``infinity``) a nonnegative integer or
               ``infinity``, specifying whether to compute the principal
               specialization of order ``n`` or the stable principal
               specialization.
 
-            - ``q`` (default: ``None``) -- the value to use for `q`; the
+            - ``q`` -- (default: ``None``) the value to use for `q`; the
               default is to create a ring of polynomials in ``q``
               (or a field of rational functions in ``q``) over the
               given coefficient ring.
@@ -455,10 +455,10 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
 
             INPUT:
 
-            - ``t`` (default: ``None``) -- the value to use for `t`;
+            - ``t`` -- (default: ``None``); -- the value to use for `t`;
               the default is to create a ring of polynomials in ``t``.
 
-            - ``q`` (default: `1`) -- the value to use for `q`.  If
+            - ``q`` -- (default: `1`) the value to use for `q`.  If
               ``q`` is ``None``, then a ring (or fraction field) of
               polynomials in ``q`` is created.
 

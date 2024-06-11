@@ -146,9 +146,7 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
         - ``self`` -- a basis determined by an orthotriangular definition
         - ``x`` -- an element of the basis `base` to which ``self`` is triangularly related
 
-        OUTPUT:
-
-        - an element of ``self`` equivalent to ``x``
+        OUTPUT: an element of ``self`` equivalent to ``x``
 
         EXAMPLES::
 
@@ -169,11 +167,9 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
         INPUT:
 
         - ``self`` -- a basis determined by an orthotriangular definition
-        - ``x`` -- an element of ``self`` as a basis of the ring of symmetric functions.
+        - ``x`` -- an element of ``self`` as a basis of the ring of symmetric functions
 
-        OUTPUT:
-
-        - the element ``x`` expressed in the basis to which ``self`` is triangularly related
+        OUTPUT: the element ``x`` expressed in the basis to which ``self`` is triangularly related
 
         EXAMPLES::
 
@@ -189,7 +185,7 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
 
     def _base_cache(self, n):
         """
-        Computes the change of basis between ``self`` and base for the
+        Compute the change of basis between ``self`` and base for the
         homogeneous component of size ``n``
 
         INPUT:
@@ -270,9 +266,7 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
         - ``self`` -- a basis determined by an orthotriangular definition
         - ``left``, ``right`` -- elements in ``self``
 
-        OUTPUT:
-
-        - the expansion of the product of ``left`` and ``right`` in the basis ``self``.
+        OUTPUT: the expansion of the product of ``left`` and ``right`` in the basis ``self``
 
         EXAMPLES::
 
