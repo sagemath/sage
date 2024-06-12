@@ -339,6 +339,7 @@ AC_DEFUN([SAGE_SPKG_FINALIZE], [dnl
     dnl
     dnl Determine package dependencies
     dnl
+    DIR=$[path_]SPKG_NAME
     AS_IF([test -f "$DIR/dependencies"], [dnl
         dnl - the # symbol is treated as comment which is removed
         AS_VAR_SET([DEPS], [`sed 's/^ *//; s/ *#.*//; q' $DIR/dependencies`])
