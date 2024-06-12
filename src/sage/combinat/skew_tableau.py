@@ -1142,7 +1142,7 @@ class SkewTableau(ClonableList,
 
     def row_stabilizer(self):
         """
-        Return the PermutationGroup corresponding to the row stabilizer of
+        Return the :func:`PermutationGroup` corresponding to the row stabilizer of
         ``self``.
 
         This assumes that every integer from `1` to the size of ``self``
@@ -1185,7 +1185,7 @@ class SkewTableau(ClonableList,
 
     def column_stabilizer(self):
         """
-        Return the PermutationGroup corresponding to the column stabilizer
+        Return the :func:`PermutationGroup` corresponding to the column stabilizer
         of ``self``.
 
         This assumes that every integer from `1` to the size of ``self``
@@ -1195,7 +1195,7 @@ class SkewTableau(ClonableList,
 
             sage: # needs sage.groups
             sage: cs = SkewTableau([[None,2,3],[1,5],[4]]).column_stabilizer()
-            sage: cs.order() == factorial(2)*factorial(2)
+            sage: cs.order() == factorial(2) * factorial(2)
             True
             sage: PermutationGroupElement([(1,3,2),(4,5)]) in cs
             False
