@@ -5409,6 +5409,11 @@ REFERENCES:
               Computing all S-integral points on elliptic curves
               Math. Proc. Camb. Phil. Soc. (1999), 127, 383-402
 
+.. [PU1999] Pauer F., Unterkircher A., Gröbner Bases for Ideals in Laurent
+            Polynomial Rings and their Application to Systems of Difference
+            Equations, AAECC 1999, p. 271-291
+        
+
 .. _ref-Q:
 .. _ref-R:
 
