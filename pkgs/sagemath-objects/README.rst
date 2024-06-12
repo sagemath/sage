@@ -27,7 +27,8 @@ distribution of a small part of the Sage Library.
 
 It provides a small, fundamental subset of the modules of the Sage library
 ("sagelib", `sagemath-standard`), making Sage objects, the element/parent
-framework, categories, the coercion system and the related metaclasses.
+framework, categories, the coercion system and the related metaclasses
+available.
 
 
 Dependencies
