@@ -183,7 +183,7 @@ class PRESENT(SageObject):
           used for encryption and decryption. Use ``80`` or ``128`` as a
           shortcut for the original key schedules from [BKLPPRSV2007]_.
 
-        - ``rounds``  -- integer (default: ``None``); the number of rounds. If
+        - ``rounds`` -- integer (default: ``None``); the number of rounds. If
           ``None`` the number of rounds of the key schedule is used.
 
         - ``doFinalRound`` -- boolean (default: ``False``); flag to
@@ -355,7 +355,7 @@ class PRESENT(SageObject):
         INPUT:
 
         - ``plaintext`` -- integer or bit list-like; the plaintext that will be
-          encrypted.
+          encrypted
 
         - ``key`` -- integer or bit list-like; the key
 
@@ -836,14 +836,14 @@ class PRESENT_KS(SageObject):
 
     def __getitem__(self, r):
         r"""
-        Computes the sub key for round ``r`` derived from initial master key.
+        Compute the sub key for round ``r`` derived from initial master key.
 
         The key schedule object has to have been initialised with the
         ``master_key`` argument.
 
         INPUT:
 
-        - ``r`` integer; the round for which the sub key is computed
+        - ``r`` -- integer; the round for which the sub key is computed
 
         EXAMPLES::
 
@@ -887,9 +887,7 @@ def convert_to_vector(I, L):
 
     - ``L`` -- integer; the desired bit length of the ouput
 
-    OUTPUT:
-
-    - the ``L``-bit vector representation of ``I``
+    OUTPUT: the ``L``-bit vector representation of ``I``
 
     EXAMPLES::
 

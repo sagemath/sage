@@ -70,8 +70,8 @@ class SimplifiedDES(SageObject):
         sage: Mod(len(P), 8) == 0
         True
         sage: K = sdes.list_to_string(sdes.random_key())
-        sage: C = sdes(P, K, algorithm="encrypt")
-        sage: plaintxt = sdes(C, K, algorithm="decrypt")
+        sage: C = sdes(P, K, algorithm='encrypt')
+        sage: plaintxt = sdes(C, K, algorithm='decrypt')
         sage: plaintxt == P
         True
     """
@@ -101,7 +101,7 @@ class SimplifiedDES(SageObject):
         # the S-box S_1
         self._sbox1 = SBox(0, 1, 2, 3, 2, 0, 1, 3, 3, 0, 1, 0, 2, 1, 0, 3)
 
-    def __call__(self, B, K, algorithm="encrypt"):
+    def __call__(self, B, K, algorithm='encrypt'):
         r"""
         Apply S-DES encryption or decryption on the binary string ``B``
         using the key ``K``.  The flag ``algorithm`` controls what action is
@@ -110,14 +110,14 @@ class SimplifiedDES(SageObject):
         INPUT:
 
         - ``B`` -- a binary string, where the number of bits is positive and
-          a multiple of 8.
+          a multiple of 8
 
         - ``K`` -- a secret key; this must be a 10-bit binary string
 
-        - ``algorithm`` -- (default: ``"encrypt"``) a string; a flag to signify
+        - ``algorithm`` -- (default: ``'encrypt'``) a string; a flag to signify
           whether encryption or decryption is to be applied to the binary
-          string ``B``. The encryption flag is ``"encrypt"`` and the decryption
-          flag is ``"decrypt"``.
+          string ``B``. The encryption flag is ``'encrypt'`` and the decryption
+          flag is ``'decrypt'``.
 
         OUTPUT:
 
@@ -135,8 +135,8 @@ class SimplifiedDES(SageObject):
             sage: P = bin.encoding("Encrypt this using DES!")
             sage: K = sdes.random_key()
             sage: K = sdes.list_to_string(K)
-            sage: C = sdes(P, K, algorithm="encrypt")
-            sage: plaintxt = sdes(C, K, algorithm="decrypt")
+            sage: C = sdes(P, K, algorithm='encrypt')
+            sage: plaintxt = sdes(C, K, algorithm='decrypt')
             sage: plaintxt == P
             True
 
@@ -171,20 +171,20 @@ class SimplifiedDES(SageObject):
             ...
             ValueError: secret key must be a 10-bit binary string
 
-        The value for ``algorithm`` must be either ``"encrypt"`` or
-        ``"decrypt"``::
+        The value for ``algorithm`` must be either ``'encrypt'`` or
+        ``'decrypt'``::
 
             sage: B = bin.encoding("abc")
             sage: K = sdes.list_to_string(sdes.random_key())
-            sage: sdes(B, K, algorithm="e")
+            sage: sdes(B, K, algorithm='e')
             Traceback (most recent call last):
             ...
             ValueError: algorithm must be either 'encrypt' or 'decrypt'
-            sage: sdes(B, K, algorithm="d")
+            sage: sdes(B, K, algorithm='d')
             Traceback (most recent call last):
             ...
             ValueError: algorithm must be either 'encrypt' or 'decrypt'
-            sage: sdes(B, K, algorithm="abc")
+            sage: sdes(B, K, algorithm='abc')
             Traceback (most recent call last):
             ...
             ValueError: algorithm must be either 'encrypt' or 'decrypt'
@@ -535,9 +535,9 @@ class SimplifiedDES(SageObject):
 
         - ``B`` -- list; a block of 8 bits
 
-        - ``inverse`` -- (default: ``False``) if ``True`` then use the
-          inverse permutation `P^{-1}`; if ``False`` then use the initial
-          permutation `P`
+        - ``inverse`` -- boolean (default: ``False``); if ``True`` then use the
+          inverse permutation `P^{-1}`. If ``False`` then use the initial
+          permutation `P`.
 
         OUTPUT:
 
@@ -647,7 +647,7 @@ class SimplifiedDES(SageObject):
 
         INPUT:
 
-        - ``B`` -- a list of 10 bits
+        - ``B`` -- list of 10 bits
 
         - ``n`` -- (default: 1) if ``n=1`` then perform left shift by 1
           position; if ``n=2`` then perform left shift by 2 positions. The
@@ -1160,7 +1160,7 @@ class SimplifiedDES(SageObject):
 
         INPUT:
 
-        - ``B`` -- a list of 8 bits
+        - ``B`` -- list of 8 bits
 
         - ``key`` -- an 8-bit subkey
 
@@ -1304,7 +1304,7 @@ class SimplifiedDES(SageObject):
 
         - ``S`` -- a string of bits
 
-        OUTPUT: a list representation of the string ``S``
+        OUTPUT: list representation of the string ``S``
 
         EXAMPLES:
 
@@ -1350,7 +1350,7 @@ class SimplifiedDES(SageObject):
 
     def subkey(self, K, n=1):
         r"""
-        Return the ``n``-th subkey based on the key ``K``.
+        Return the `n`-th subkey based on the key ``K``.
 
         INPUT:
 
@@ -1361,9 +1361,7 @@ class SimplifiedDES(SageObject):
           values for ``n`` are 1 and 2, since only two subkeys are defined
           for each secret key in Schaefer's S-DES.
 
-        OUTPUT:
-
-        The ``n``-th subkey based on the secret key ``K``.
+        OUTPUT: the `n`-th subkey based on the secret key ``K``
 
         EXAMPLES:
 

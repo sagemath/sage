@@ -1682,7 +1682,7 @@ class TilingSolver(SageObject):
 
     def space(self):
         r"""
-        Return an iterator over all the non negative integer coordinates
+        Return an iterator over all the nonnegative integer coordinates
         contained in the space to tile.
 
         EXAMPLES::

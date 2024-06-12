@@ -34,7 +34,7 @@ class GraftalLaceCellularAutomata(SageObject):
 
     INPUT:
 
-    - ``rule`` -- a list of length 8 with integer entries `0 \leq x < 8`
+    - ``rule`` -- list of length 8 with integer entries `0 \leq x < 8`
 
     EXAMPLES::
 

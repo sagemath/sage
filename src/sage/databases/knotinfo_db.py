@@ -334,7 +334,7 @@ class KnotInfoFilename(Enum):
 #----------------------------------------------------------------------------------------------------------------------------
 class KnotInfoDataBase(SageObject, UniqueRepresentation):
     r"""
-    Database interface to KnotInfo
+    Database interface to KnotInfo.
 
     The original data are obtained from KnotInfo web-page (URL see the example
     below). In order to have these data installed during the build process as
@@ -658,7 +658,7 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
     @cached_method
     def read_column_dict(self):
         r"""
-        Read the dictionary for the column names from the according sobj-file
+        Read the dictionary for the column names from the according sobj-file.
 
         OUTPUT: a Python dictionary containing the column names and types
 
@@ -709,12 +709,10 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
     @cached_method
     def row_names(self):
         r"""
-        Return a dictionary to obtain the original name to a row_dict key
+        Return a dictionary to obtain the original name to a row_dict key.
 
-        OUTPUT:
-
-        A python dictionary containing the names of the knots and links
-        together with their original names from the database,
+        OUTPUT: a Python dictionary containing the names of the knots and links
+        together with their original names from the database
 
         EXAMPLES::
 

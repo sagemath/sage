@@ -2184,7 +2184,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
             sage: C = Sets().CartesianProducts().example()
             sage: C
             The Cartesian product of (Set of prime numbers (basic implementation),
-             An example of an infinite enumerated set: the non negative integers,
+             An example of an infinite enumerated set: the nonnegative integers,
              An example of a finite enumerated set: {1,2,3})
             sage: C.category()
             Category of Cartesian products of sets
@@ -2214,7 +2214,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                 sage: Sets().CartesianProducts().example()
                 The Cartesian product of (Set of prime numbers (basic implementation),
-                 An example of an infinite enumerated set: the non negative integers,
+                 An example of an infinite enumerated set: the nonnegative integers,
                  An example of a finite enumerated set: {1,2,3})
             """
             from .finite_enumerated_sets import FiniteEnumeratedSets
@@ -2359,7 +2359,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                     sage: C = Sets().CartesianProducts().example(); C
                     The Cartesian product of (Set of prime numbers (basic implementation),
-                     An example of an infinite enumerated set: the non negative integers,
+                     An example of an infinite enumerated set: the nonnegative integers,
                      An example of a finite enumerated set: {1,2,3})
                     sage: C.an_element()
                     (47, 42, 1)
@@ -2520,7 +2520,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
                     sage: C = Sets().CartesianProducts().example(); C
                     The Cartesian product of (Set of prime numbers (basic implementation),
-                     An example of an infinite enumerated set: the non negative integers,
+                     An example of an infinite enumerated set: the nonnegative integers,
                      An example of a finite enumerated set: {1,2,3})
                     sage: x = C.an_element(); x
                     (47, 42, 1)

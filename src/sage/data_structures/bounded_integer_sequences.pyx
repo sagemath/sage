@@ -182,7 +182,7 @@ cdef bint biseq_init_list(biseq_t R, list data, size_t bound) except -1:
 
     INPUT:
 
-    - ``data`` -- a list of integers
+    - ``data`` -- list of integers
 
     - ``bound`` -- a number which is the maximal value of an item
     """
@@ -375,7 +375,7 @@ cdef mp_size_t biseq_contains(biseq_t S1, biseq_t S2, mp_size_t start) except -2
     INPUT:
 
     - ``S1``, ``S2`` -- two bounded integer sequences
-    - ``start`` -- integer, start index
+    - ``start`` -- integer; start index
 
     OUTPUT:
 
@@ -410,7 +410,7 @@ cdef mp_size_t biseq_startswith_tail(biseq_t S1, biseq_t S2, mp_size_t start) ex
     INPUT:
 
     - ``S1``, ``S2`` -- two bounded integer sequences
-    - ``start`` -- integer, start index
+    - ``start`` -- integer; start index
 
     OUTPUT:
 
@@ -447,14 +447,14 @@ from sage.rings.integer cimport smallInteger
 
 cdef class BoundedIntegerSequence:
     """
-    A sequence of non-negative uniformly bounded integers.
+    A sequence of nonnegative uniformly bounded integers.
 
     INPUT:
 
-    - ``bound`` -- non-negative integer. When zero, a :class:`ValueError`
+    - ``bound`` -- nonnegative integer. When zero, a :class:`ValueError`
       will be raised. Otherwise, the given bound is replaced by the
       power of two that is at least the given bound.
-    - ``data`` -- a list of integers.
+    - ``data`` -- list of integers
 
     EXAMPLES:
 
@@ -607,12 +607,12 @@ cdef class BoundedIntegerSequence:
     """
     def __cinit__(self, *args, **kwds):
         """
-        Allocate memory for underlying data
+        Allocate memory for underlying data.
 
         INPUT:
 
-        - ``bound``, non-negative integer
-        - ``data``, ignored
+        - ``bound`` -- nonnegative integer
+        - ``data`` -- ignored
 
         .. WARNING::
 
@@ -631,7 +631,7 @@ cdef class BoundedIntegerSequence:
 
     def __dealloc__(self):
         """
-        Free the memory from underlying data
+        Free the memory from underlying data.
 
         EXAMPLES::
 
@@ -646,11 +646,11 @@ cdef class BoundedIntegerSequence:
         """
         INPUT:
 
-        - ``bound`` -- positive integer. The given bound is replaced by
-          the next power of two that is greater than the given bound.
+        - ``bound`` -- positive integer; the given bound is replaced by
+          the next power of two that is greater than the given bound
 
-        - ``data`` -- a list of non-negative integers, all less than
-          ``bound``.
+        - ``data`` -- list of nonnegative integers; all less than
+          ``bound``
 
         EXAMPLES::
 
@@ -806,7 +806,7 @@ cdef class BoundedIntegerSequence:
         """
         Return the bound of this bounded integer sequence.
 
-        All items of this sequence are non-negative integers less than the
+        All items of this sequence are nonnegative integers less than the
         returned bound. The bound is a power of two.
 
         EXAMPLES::
@@ -968,7 +968,7 @@ cdef class BoundedIntegerSequence:
 
     def __contains__(self, other):
         """
-        Tells whether this bounded integer sequence contains an item or a sub-sequence
+        Tells whether this bounded integer sequence contains an item or a sub-sequence.
 
         EXAMPLES::
 
@@ -1043,7 +1043,7 @@ cdef class BoundedIntegerSequence:
 
     cpdef list list(self):
         """
-        Converts this bounded integer sequence to a list
+        Convert this bounded integer sequence to a list.
 
         NOTE:
 
@@ -1105,7 +1105,7 @@ cdef class BoundedIntegerSequence:
 
     def index(self, other):
         """
-        The index of a given item or sub-sequence of ``self``
+        The index of a given item or sub-sequence of ``self``.
 
         EXAMPLES::
 
@@ -1267,7 +1267,7 @@ cdef class BoundedIntegerSequence:
 
     def __richcmp__(self, other, op):
         """
-        Comparison of bounded integer sequences
+        Comparison of bounded integer sequences.
 
         We compare, in this order:
 

@@ -68,22 +68,20 @@ cdef class FrozenBitset:
       - :class:`Bitset` and :class:`FrozenBitset` -- If this is a
         :class:`Bitset` or :class:`FrozenBitset`, then it is copied.
 
-      - ``None`` -- If ``None``, then the bitset is set to the empty set.
+      - ``None`` -- if ``None``, then the bitset is set to the empty set
 
-      - string -- If a nonempty string, then the bitset is initialized by
+      - ``string`` -- if a nonempty string, then the bitset is initialized by
         including an element if the index of the string is ``1``. If the
         string is empty, then raise a :class:`ValueError`.
 
-      - iterable -- If an iterable, then it is assumed to contain a list of
-        nonnegative integers and those integers are placed in the set.
+      - ``iterable`` -- if an iterable, then it is assumed to contain a list of
+        nonnegative integers and those integers are placed in the set
 
-    - ``capacity`` -- (default: ``None``) The maximum capacity of the bitset.
+    - ``capacity`` -- (default: ``None``) the maximum capacity of the bitset.
       If this is not specified, then it is automatically calculated from the
       passed iterable.  It must be at least one.
 
-    OUTPUT:
-
-    - None.
+    OUTPUT: none
 
     The string representation of a :class:`FrozenBitset` ``FB`` can be
     understood as follows. Let `B = b_0 b_1 b_2 \cdots b_k` be the string
@@ -560,13 +558,7 @@ cdef class FrozenBitset:
         """
         Test if the bitset is empty.
 
-        INPUT:
-
-        - None.
-
-        OUTPUT:
-
-        - ``True`` if the bitset is empty; ``False`` otherwise.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -2351,9 +2343,10 @@ def test_bitset_unpickle(data):
 
     INPUT:
 
-    - ``data`` -- A tuple of data as would be produced by the internal, Cython-only, method ``bitset_pickle``.
+    - ``data`` -- a tuple of data as would be produced by the internal,
+      Cython-only, method ``bitset_pickle``
 
-    OUTPUT: a list form of the bitset corresponding to the pickled data
+    OUTPUT: list form of the bitset corresponding to the pickled data
 
     EXAMPLES:
 

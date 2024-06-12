@@ -149,10 +149,10 @@ class CommutativeRings(CategoryWithAxiom):
               morphism
 
             - ``gen`` -- a generator of this extension (over its base) or ``None``
-              (default: ``None``);
+              (default: ``None``)
 
             - ``gens`` -- list of generators of this extension (over its base)
-              or ``None`` (default: ``None``);
+              or ``None`` (default: ``None``)
 
             - ``name`` -- a variable name or ``None`` (default: ``None``)
 

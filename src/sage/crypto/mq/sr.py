@@ -347,14 +347,13 @@ def SR(n=1, r=1, c=1, e=4, star=False, **kwargs):
     - ``order`` -- a string to specify the term ordering of the
       variables (default: ``deglex``)
     - ``postfix`` -- a string which is appended after the variable name
-      (default: '')
-    - ``allow_zero_inversions`` -- a boolean to control whether zero
+      (default: ``''``)
+    - ``allow_zero_inversions`` -- boolean to control whether zero
       inversions raise an exception (default: ``False``)
     - ``correct_only`` -- only include correct inversion polynomials
       (default: ``False``, `\GF{2}` only)
     - ``biaffine_only`` -- only include bilinear and biaffine inversion
       polynomials (default: ``True``, `\GF{2}` only)
-
 
     EXAMPLES::
 
@@ -1090,7 +1089,7 @@ class SR_generic(MPolynomialSystemGenerator):
         """
         return self.vector(self.random_state_array(*args, **kwds))
 
-    def random_element(self, elem_type="vector", *args, **kwds):
+    def random_element(self, elem_type='vector', *args, **kwds):
         """
         Return a random element for self.  Other arguments and keywords are
         passed to random_* methods.
@@ -1373,7 +1372,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
         return _type(P)
 
-    def hex_str(self, M, typ="matrix"):
+    def hex_str(self, M, typ='matrix'):
         r"""
         Return a hex string for the provided AES state array/matrix.
 
@@ -2138,12 +2137,13 @@ class SR_gf2n(SR_generic):
     """
     def vector(self, d=None):
         """
-        Constructs a vector suitable for the algebraic representation of
+        Construct a vector suitable for the algebraic representation of
         SR, i.e. BES.
 
         INPUT:
 
-        -  ``d`` -- values for vector, must be understood by ``self.phi`` (default:``None``)
+        - ``d`` -- values for vector, must be understood by ``self.phi``
+          (default: ``None``)
 
         EXAMPLES::
 
@@ -2498,13 +2498,12 @@ class SR_gf2(SR_generic):
 
     def vector(self, d=None):
         """
-        Constructs a vector suitable for the algebraic representation of
+        Construct a vector suitable for the algebraic representation of
         SR.
 
         INPUT:
 
         -  ``d`` -- values for vector (default: ``None``)
-
 
         EXAMPLES::
 
@@ -2548,9 +2547,7 @@ class SR_gf2(SR_generic):
 
         INPUT:
 
-
         -  ``d`` -- matrix
-
 
         EXAMPLES::
 
@@ -2572,7 +2569,7 @@ class SR_gf2(SR_generic):
 
     def phi(self, l, diffusion_matrix=False):
         r"""
-        The operation `\phi` from [MR2002]_
+        The operation `\phi` from [MR2002]_.
 
         Given a list/matrix of elements in `\GF{2^e}`, return a
         matching list/matrix of elements in `\GF{2}`.
@@ -2742,7 +2739,6 @@ class SR_gf2(SR_generic):
 
         -  ``length`` -- length of state space (default: ``None``)
 
-
         EXAMPLES::
 
             sage: sr = mq.SR(1, 1, 1, 4, gf2=True)
@@ -2788,9 +2784,7 @@ class SR_gf2(SR_generic):
 
         INPUT:
 
-
         -  ``x`` -- an element in self.base_ring()
-
 
         EXAMPLES::
 
@@ -3135,13 +3129,11 @@ class SR_gf2(SR_generic):
 
         INPUT:
 
-
         -  ``xi`` -- output variables
 
         -  ``wi`` -- input variables
 
         -  ``length`` -- length of both lists
-
 
         EXAMPLES::
 

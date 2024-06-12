@@ -354,16 +354,16 @@ class FindStat(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``name`` -- the name of the user.
+        - ``name`` -- the name of the user
 
-        - ``email`` -- an email address of the user.
+        - ``email`` -- an email address of the user
 
         This information is used when submitting a statistic with
         :meth:`FindStatStatistic.submit`.
 
         EXAMPLES::
 
-            sage: findstat().set_user(name="Anonymous", email="invalid@org")
+            sage: findstat().set_user(name='Anonymous', email='invalid@org')
 
         .. NOTE::
 
@@ -383,7 +383,7 @@ class FindStat(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
-            sage: findstat().set_user(name="Anonymous", email="invalid@org")
+            sage: findstat().set_user(name='Anonymous', email='invalid@org')
             sage: findstat().user_name()
             'Anonymous'
         """
@@ -395,7 +395,7 @@ class FindStat(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
-            sage: findstat().set_user(name="Anonymous", email="invalid@org")
+            sage: findstat().set_user(name='Anonymous', email='invalid@org')
             sage: findstat().user_email()
             'invalid@org'
         """
@@ -567,13 +567,13 @@ def _data_from_iterable(iterable, mapping=False, domain=None,
       same size, or a single element and a single value.  Every
       object must be a :class:`SageObject`.
 
-    - mapping -- (default: ``False``), ``False``, if the codomain is
-      ``Integer`` and ``True`` if it is a FindStat collection
+    - ``mapping`` -- boolean (default: ``False``); ``False``, if the codomain
+      is ``Integer`` and ``True`` if it is a FindStat collection
 
-    - domain -- (optional), a :class:`FindStatCollection`, if
+    - ``domain`` -- (default: ``None``) a :class:`FindStatCollection`, if
       ``None`` it is guessed from the iterable
 
-    - codomain -- (optional), a :class:`FindStatCollection`, if
+    - ``codomain`` -- (default: ``None``) a :class:`FindStatCollection`, if
       ``None`` it is guessed from the iterable
 
     TESTS::
@@ -807,11 +807,11 @@ def _generating_functions_from_dict(gfs, style):
 
     INPUT:
 
-    - ``gfs``, a dictionary whose keys are the levels and whose values
+    - ``gfs`` -- a dictionary whose keys are the levels and whose values
       are dictionaries from values to multiplicities
 
-    - ``style``, one of ``"dictionary"``, ``"list"`` or
-      ``"polynomial"``
+    - ``style`` -- one of ``'dictionary'``, ``'list'`` or
+      ``'polynomial'``
 
     .. SEEALSO::
 
@@ -1005,20 +1005,20 @@ def findstat(query=None, values=None, distribution=None, domain=None,
         sage: findstat("Cc0024")                                                # optional -- internet
         Set of combinatorial statistics with domain Cc0024: Binary words in FindStat
 
-        sage: findstat(domain="Cores")                                          # optional -- internet
+        sage: findstat(domain='Cores')                                          # optional -- internet
         Set of combinatorial statistics with domain Cc0013: Cores in FindStat
 
     TESTS::
 
-        sage: findstat("Permutations", lambda x: 1, depth="x")                  # optional -- internet
+        sage: findstat("Permutations", lambda x: 1, depth='x')                  # optional -- internet
         Traceback (most recent call last):
         ...
-        ValueError: E021: Depth should be a non-negative integer at most 9, but is x.
+        ValueError: E021: Depth should be a nonnegative integer at most 9, but is x.
 
         sage: findstat("Permutations", lambda x: 1, depth=100)                  # optional -- internet
         Traceback (most recent call last):
         ...
-        ValueError: E021: Depth should be a non-negative integer at most 9, but is 100.
+        ValueError: E021: Depth should be a nonnegative integer at most 9, but is 100.
 
         sage: S = Permutation
         sage: findstat([(S([1,2]), 1), ([S([1,3,2]), S([1,2])], [2,3])])        # optional -- internet
@@ -1040,7 +1040,7 @@ def findstat(query=None, values=None, distribution=None, domain=None,
         max_values = int(max_values)
         assert 0 <= max_values <= FINDSTAT_MAX_VALUES
     except (ValueError, AssertionError):
-        raise ValueError("the maximal number of values for a FindStat query must be a non-negative integer less than or equal to %i" % FINDSTAT_MAX_VALUES)
+        raise ValueError("the maximal number of values for a FindStat query must be a nonnegative integer less than or equal to %i" % FINDSTAT_MAX_VALUES)
 
     check_collection = True
 
@@ -1133,18 +1133,17 @@ def findmap(*args, **kwargs):
     ``distribution``, ``depth`` and ``max_values``. They have the
     following meanings:
 
-    - ``depth`` -- (default ``FINDSTAT_DEFAULT_DEPTH``), a
-      non-negative integer, specifying how many maps to apply to
-      generate the given map.
+    - ``depth`` -- nonnegative integer (default: ``FINDSTAT_DEFAULT_DEPTH``);
+      specifying how many maps to apply to generate the given map
 
-    - ``max_values`` -- (default ``FINDSTAT_MAX_VALUES``), an integer
-      specifying how many values are sent to the finder.
+    - ``max_values`` -- integer (default: ``FINDSTAT_MAX_VALUES``); specifying
+      how many values are sent to the finder
 
-    - ``domain``, ``codomain``, an integer or string of the form
+    - ``domain``, ``codomain`` -- integer or string of the form
       ``Cc1234``, designates the domain and codomain of the sought
-      for maps.
+      for maps
 
-    - ``values``, ``distribution``, data specifying the values or
+    - ``values``, ``distribution`` -- data specifying the values or
       distribution of values of the sought for maps.  The keyword
       arguments ``depth`` and ``max_values`` are passed to the
       finder.  The data may be specified in one of the following
@@ -1240,7 +1239,7 @@ def findmap(*args, **kwargs):
         sage: findmap("Cc0024")                                                 # optional -- internet
         Set of combinatorial maps with domain Cc0024: Binary words used by FindStat
 
-        sage: findmap(codomain="Cores")                                         # optional -- internet
+        sage: findmap(codomain='Cores')                                         # optional -- internet
         Set of combinatorial maps with codomain Cc0013: Cores used by FindStat
     """
     if len(args) > 3:
@@ -1263,7 +1262,7 @@ def findmap(*args, **kwargs):
         max_values = int(max_values)
         assert 0 <= max_values <= FINDSTAT_MAX_VALUES
     except (ValueError, AssertionError):
-        raise ValueError("the maximal number of values for a FindStat query must be a non-negative integer less than or equal to %i" % FINDSTAT_MAX_VALUES)
+        raise ValueError("the maximal number of values for a FindStat query must be a nonnegative integer less than or equal to %i" % FINDSTAT_MAX_VALUES)
 
     check_collection = True
 
@@ -1612,7 +1611,7 @@ class FindStatFunction(SageObject):
         r"""
         Return the description of the statistic or map.
 
-        OUTPUT: a string.  For statistics, the first line is used as name
+        OUTPUT: string; for statistics, the first line is used as name
 
         EXAMPLES::
 
@@ -1957,7 +1956,7 @@ class FindStatCombinatorialStatistic(SageObject):
                 del gfs[lvl]
         return gfs
 
-    def generating_functions(self, style="polynomial",
+    def generating_functions(self, style='polynomial',
                              max_values=FINDSTAT_MAX_SUBMISSION_VALUES):
         r"""
         Return the generating functions of the statistic as a dictionary.
@@ -1970,19 +1969,19 @@ class FindStatCombinatorialStatistic(SageObject):
 
         INPUT:
 
-        - a string -- (default:"polynomial") can be
-          "polynomial", "dictionary", or "list".
+        - ``style`` -- string (default: ``'polynomial'``); can be
+          ``'polynomial'``, ``'dictionary'``, or ``'list'``
 
         OUTPUT:
 
-        - if ``style`` is ``"polynomial"``, the generating function is
-          returned as a polynomial.
+        - if ``style`` is ``'polynomial'``, the generating function is
+          returned as a polynomial
 
-        - if ``style`` is ``"dictionary"``, the generating function is
+        - if ``style`` is ``'dictionary'``, the generating function is
           returned as a dictionary representing the monomials of the
-          generating function.
+          generating function
 
-        - if ``style`` is ``"list"``, the generating function is
+        - if ``style`` is ``'list'``, the generating function is
           returned as a list of coefficients of the generating
           function.  In this case, leading and trailing zeros are
           omitted.
@@ -1996,13 +1995,13 @@ class FindStatCombinatorialStatistic(SageObject):
              6: q^3 + 3*q^2 + 6*q + 5,
              8: q^6 + 4*q^5 + 10*q^4 + 20*q^3 + 28*q^2 + 28*q + 14}
 
-            sage: st.generating_functions(style="dictionary")                   # optional -- internet
+            sage: st.generating_functions(style='dictionary')                   # optional -- internet
             {2: {0: 1},
              4: {0: 2, 1: 1},
              6: {0: 5, 1: 6, 2: 3, 3: 1},
              8: {0: 14, 1: 28, 2: 28, 3: 20, 4: 10, 5: 4, 6: 1}}
 
-            sage: st.generating_functions(style="list")                         # optional -- internet
+            sage: st.generating_functions(style='list')                         # optional -- internet
             {2: [1], 4: [2, 1], 6: [5, 6, 3, 1], 8: [14, 28, 28, 20, 10, 4, 1]}
 
         TESTS::
@@ -2035,18 +2034,16 @@ class FindStatCombinatorialStatistic(SageObject):
 
         INPUT:
 
-        - ``search_size`` (default:32) the number of integers in the
+        - ``search_size`` -- (default: 32) the number of integers in the
           sequence. If this is chosen too big, the OEIS result may be
           corrupted.
 
-        - ``verbose`` (default: ``True``) if true, some information about
-          the search are printed.
+        - ``verbose`` -- boolean (default: ``True``); if ``True``, some
+          information about the search are printed
 
-        OUTPUT:
-
-        - a tuple of OEIS sequences, see
-          :meth:`sage.databases.oeis.OEIS.find_by_description` for more
-          information.
+        OUTPUT: a tuple of OEIS sequences, see
+        :meth:`sage.databases.oeis.OEIS.find_by_description` for more
+        information
 
         EXAMPLES::
 
@@ -2057,7 +2054,7 @@ class FindStatCombinatorialStatistic(SageObject):
             0: A067311: Triangle read by rows: T(n,k) gives number of ways of arranging n chords on a circle with k simple intersections ...
         """
         from sage.databases.oeis import oeis
-        gen_funcs = self.generating_functions(style="list")
+        gen_funcs = self.generating_functions(style='list')
 
         OEIS_string = ""
         keys = sorted(gen_funcs.keys())
@@ -2510,7 +2507,7 @@ class FindStatStatistics(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: findstat(domain="Permutations").an_element()                  # optional -- internet
+            sage: findstat(domain='Permutations').an_element()                  # optional -- internet
             St000001: The number of reduced words for a permutation.
         """
         try:
@@ -3326,7 +3323,7 @@ class FindStatMaps(UniqueRepresentation, Parent):
         sage: ccs = sorted(FindStatCollections())[:3]                           # optional -- internet
         sage: for cc_dom in ccs:                                                # optional -- internet
         ....:     for cc_codom in ccs:
-        ....:         print(cc_dom.name(style="plural") + " -> " + cc_codom.name(style="plural"))
+        ....:         print(cc_dom.name(style='plural') + " -> " + cc_codom.name(style='plural'))
         ....:         try:
         ....:             print("    " + next(iter(FindStatMaps(cc_dom, cc_codom))).name())
         ....:         except StopIteration:
@@ -3454,7 +3451,7 @@ class FindStatMaps(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: findmap(domain="Dyck paths", codomain="Posets").an_element()  # optional -- internet
+            sage: findmap(domain="Dyck paths", codomain='Posets').an_element()  # optional -- internet
             Mp00232: parallelogram poset
         """
         try:
@@ -3890,13 +3887,13 @@ class FindStatMatchingMap(FindStatCompoundMap):
 # helper for generation of CartanTypes
 def _finite_irreducible_cartan_types_by_rank(n):
     """
-    Return the Cartan types of rank n.
+    Return the Cartan types of rank `n`.
 
     INPUT:
 
-    - n -- an integer.
+    - ``n`` -- integer
 
-    OUTPUT: the list of Cartan types of rank n
+    OUTPUT: the list of Cartan types of rank `n`
 
     TESTS::
 
@@ -3926,7 +3923,7 @@ def _plane_partitions_by_size_aux(n, outer=None):
 
     INPUT:
 
-    - n -- an integer.
+    - ``n`` -- integer
 
     OUTPUT: the plane partitions with `n` boxes as lists
 
@@ -3958,7 +3955,7 @@ def _plane_partitions_by_size(n):
 
     INPUT:
 
-    - n -- an integer.
+    - ``n`` -- integer
 
     OUTPUT: the plane partitions with `n` boxes
 
@@ -3984,7 +3981,7 @@ def _finite_lattices(n):
 
     INPUT:
 
-    - n -- an integer.
+    - ``n`` -- integer
 
     OUTPUT: the lattices with `n` elements
 
@@ -4080,7 +4077,7 @@ class FindStatCollection(Element,
 
         INPUT:
 
-        - ``parent`` -- :class:`FindStatCollections`.
+        - ``parent`` -- :class:`FindStatCollections`
 
         - ``id`` -- the (padded) FindStat identifier of the collection.
 
@@ -4245,12 +4242,10 @@ class FindStatCollection(Element,
 
         INPUT:
 
-        - ``element`` -- a Sage object that belongs to the collection.
+        - ``element`` -- a Sage object that belongs to the collection
 
-        OUTPUT:
-
-        ``True``, if ``element`` is used by the FindStat search
-        engine, and ``False`` if it is ignored.
+        OUTPUT: ``True``, if ``element`` is used by the FindStat search
+        engine, and ``False`` if it is ignored
 
         EXAMPLES::
 
@@ -4451,14 +4446,14 @@ class FindStatCollection(Element,
             return "a subset of %s: %s" % (self.id_str(), self._data["NamePlural"])
         return "%s: %s" % (self.id_str(), self._data["NamePlural"])
 
-    def name(self, style="singular"):
+    def name(self, style='singular'):
         r"""
         Return the name of the FindStat collection.
 
         INPUT:
 
-        - a string -- (default:"singular") can be
-          "singular", or "plural".
+        - ``style`` -- string (default: ``'singular'``) can be
+          ``'singular'``, or ``'plural'``
 
         OUTPUT: the name of the FindStat collection, in singular or in plural
 
@@ -4468,7 +4463,7 @@ class FindStatCollection(Element,
             sage: FindStatCollection("Binary trees").name()                     # optional -- internet
             'Binary tree'
 
-            sage: FindStatCollection("Binary trees").name(style="plural")       # optional -- internet
+            sage: FindStatCollection("Binary trees").name(style='plural')       # optional -- internet
             'Binary trees'
         """
         if style == "singular":

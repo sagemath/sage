@@ -203,11 +203,12 @@ def carlet_tang_tang_liao(n, c=None, bf=None):
 
     INPUT:
 
-    - ``n`` -- integer, the bit length of inputs and outputs, has to be even and >= 6
+    - ``n`` -- integer; the bit length of inputs and outputs, has to be even
+      and `\geq 6`
     - ``c`` -- element of `\GF{2^{n-1}}` used in the construction
-        (default: random element)
-    - ``f`` -- Function from `\GF{2^n} \to \GF{2}` or BooleanFunction on `n-1` bits
-        (default: ``x -> (1/(x+1)).trace())``
+      (default: random element)
+    - ``f`` -- function from `\GF{2^n} \to \GF{2}` or BooleanFunction on `n-1`
+      bits (default: ``x -> (1/(x+1)).trace())``)
 
     EXAMPLES::
 

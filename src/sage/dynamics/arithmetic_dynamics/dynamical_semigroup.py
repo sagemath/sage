@@ -386,9 +386,10 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         INPUT:
 
         - ``input`` -- one value that can be evaluated
-          with the generators of this dynamical semigroup.
+          with the generators of this dynamical semigroup
 
-        OUTPUT: a set of the resulting values after applying all of this dynamical semigroup's generators to ``input``
+        OUTPUT: a set of the resulting values after applying all of this
+        dynamical semigroup's generators to ``input``
 
         EXAMPLES::
 
@@ -441,7 +442,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
         INPUT:
 
-        - ``new_ring`` -- a ring.
+        - ``new_ring`` -- a ring
 
         OUTPUT:
 
@@ -639,8 +640,8 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
         INPUT:
 
-        - `p` -- value on which this dynamical semigroup can be evaluated
-        - `n` -- a nonnegative integer or a list or tuple of length 2 describing an
+        - ``p`` -- value on which this dynamical semigroup can be evaluated
+        - ``n`` -- a nonnegative integer or a list or tuple of length 2 describing an
           interval of the number line containing entirely nonnegative integers
 
         OUTPUT: a tuple of sets of values on the domain of this dynamical semigroup
@@ -753,13 +754,15 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
     def specialization(self, assignments):
         r"""
-        Returns the specialization of the generators of this dynamical semigroup.
+        Return the specialization of the generators of this dynamical semigroup.
 
         INPUT:
 
-        - `assignments` -- argument for specialization of the generators of this dynamical semigroup.
+        - ``assignments`` -- argument for specialization of the generators of
+          this dynamical semigroup
 
-        OUTPUT: a dynamical semigroup with the specialization of the generators of this dynamical semigroup
+        OUTPUT: a dynamical semigroup with the specialization of the generators
+        of this dynamical semigroup
 
         EXAMPLES::
 
@@ -1154,7 +1157,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
         OUTPUT:
 
-        A boolean that is True if and only if the generators of the two
+        A boolean that is ``True`` if and only if the generators of the two
         dynamical semigroups are equal as sets and no generator is of degree 1.
 
         EXAMPLES::
@@ -1221,8 +1224,8 @@ class DynamicalSemigroup_projective(DynamicalSemigroup):
 
     INPUT:
 
-    - ``ds_data`` -- list or tuple of dynamical systems or objects that define dynamical systems
-      over projective space.
+    - ``ds_data`` -- list or tuple of dynamical systems or objects that define
+      dynamical systems over projective space
 
     OUTPUT: :class:`DynamicalSemigroup_projective`
 
@@ -1349,7 +1352,7 @@ class DynamicalSemigroup_affine(DynamicalSemigroup):
     INPUT:
 
     - ``ds_data`` -- list or tuple of dynamical systems or objects that define dynamical systems
-      over affine space.
+      over affine space
 
     OUTPUT: :class:`DynamicalSemigroup_affine`
 

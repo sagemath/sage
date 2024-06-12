@@ -303,8 +303,8 @@ def _create_print_table(cur, col_titles, **kwds):
     - ``id_col`` -- reference to a column that can be used as an object
       identifier for each row
 
-    - ``html_table`` -- boolean that if True creates an html table instead of
-      a print table. Always set to True in the notebook.
+    - ``html_table`` -- boolean that if ``True`` creates an html table instead of
+      a print table. Always set to ``True`` in the notebook
 
     EXAMPLES::
 
@@ -1243,8 +1243,8 @@ class SQLDatabase(SageObject):
 
         INPUT:
 
-        - ``check`` -- if True, checks to make sure the database's actual
-          structure matches the skeleton on record.
+        - ``check`` -- if ``True``, checks to make sure the database's actual
+          structure matches the skeleton on record
 
         EXAMPLES::
 
@@ -2146,7 +2146,7 @@ class SQLDatabase(SageObject):
         """
         INPUT:
 
-        - ``rows`` -- a list of tuples that represent one row of data to add
+        - ``rows`` -- list of tuples that represent one row of data to add
           (types should match col types in order)
         - ``entry_order`` --  an ordered list or tuple overrides normal order
           with user defined order

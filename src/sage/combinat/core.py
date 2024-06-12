@@ -376,7 +376,7 @@ class Core(CombinatorialElement):
 
     def _transposition_to_reduced_word(self, t):
         r"""
-        Converts the transposition `t = [r,s]` to a reduced word.
+        Convert the transposition `t = [r,s]` to a reduced word.
 
         INPUT:
 
@@ -659,7 +659,7 @@ class Cores_length(UniqueRepresentation, Parent):
 
     def from_partition(self, part):
         r"""
-        Converts the partition ``part`` into a core (as the identity map).
+        Convert the partition ``part`` into a core (as the identity map).
 
         This is the inverse method to :meth:`~sage.combinat.core.Core.to_partition`.
 

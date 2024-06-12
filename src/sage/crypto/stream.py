@@ -168,7 +168,7 @@ def blum_blum_shub(length, seed=None, p=None, q=None,
     INPUT:
 
     - ``length`` -- positive integer; the number of bits in the output
-      pseudorandom bit sequence.
+      pseudorandom bit sequence
 
     - ``seed`` -- (default: ``None``) if `p` and `q` are Blum primes, then
       ``seed`` is a quadratic residue in the multiplicative group
@@ -203,9 +203,7 @@ def blum_blum_shub(length, seed=None, p=None, q=None,
       perform that many attempts at generating a random Blum prime. This
       might or might not result in a Blum prime.
 
-    OUTPUT:
-
-    - A pseudorandom bit sequence whose length is specified by ``length``.
+    OUTPUT: a pseudorandom bit sequence whose length is specified by ``length``
 
     Here is a common use case for this function. If you want this
     function to use pre-computed values for `p` and `q`, you should pass

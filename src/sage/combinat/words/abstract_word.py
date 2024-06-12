@@ -1099,7 +1099,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``max_length`` -- non negative integer or None (optional,
+        - ``max_length`` -- nonnegative integer or None (optional,
           default: None) the maximum length of the prefixes
 
         OUTPUT: iterator
@@ -1151,7 +1151,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        - ``max_length`` -- non negative integer or None (optional,
+        - ``max_length`` -- nonnegative integer or None (optional,
           default: None) the maximum length of the prefixes
 
         OUTPUT: iterator

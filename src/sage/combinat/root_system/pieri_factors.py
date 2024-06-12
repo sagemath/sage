@@ -552,7 +552,7 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
         INPUT:
 
          - ``W`` -- a Weyl group of affine type `A`
-         - ``min_length``, ``max_length`` -- non negative integers
+         - ``min_length``, ``max_length`` -- nonnegative integers
          - ``min_support``, ``max_support`` -- subsets of the index set of `W`
 
         EXAMPLES::

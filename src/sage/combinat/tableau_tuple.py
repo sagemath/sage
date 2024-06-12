@@ -3482,7 +3482,7 @@ class RowStandardTableauTuples_shape(RowStandardTableauTuples):
         # line lists back into tableaux. This is done y the following functions.
         def tableau_from_list(tab):
             """
-            Converts a list tab=[t_1,...,t_n] into the mu-tableau obtained by
+            Convert a list tab=[t_1,...,t_n] into the mu-tableau obtained by
             inserting t_1,..,t_n in order into the rows of mu, from left to right
             in each component and then left to right along the components.
             """
@@ -4845,7 +4845,7 @@ class StandardTableauTuples_shape(StandardTableauTuples):
         # now use clen and cclen to "inflate" tab into a tableau
         def tableau_from_list(tab):
             """
-            Converts a list tab=[t_1,...,t_n] into the mu-tableau obtained by
+            Convert a list tab=[t_1,...,t_n] into the mu-tableau obtained by
             inserting t_1,..,t_n in order into the rows of mu, from left to right
             in each component and then left to right along the components.
             """

@@ -1150,7 +1150,7 @@ cpdef complex_to_spiderweb(np.ndarray[COMPLEX_T, ndim = 2] z_values,
     np.ndarray[FLOAT_T, ndim = 2] dr, np.ndarray[FLOAT_T, ndim = 2] dtheta,
     spokes, circles, rgbcolor, thickness, withcolor, min_mag):
     """
-    Converts a grid of complex numbers into a matrix containing rgb data
+    Convert a grid of complex numbers into a matrix containing rgb data
     for the Riemann spiderweb plot.
 
     INPUT:

@@ -209,7 +209,7 @@ class ConwayPolynomials(Mapping):
 
     def has_polynomial(self, p, n):
         """
-        Return True if the database of Conway polynomials contains the
+        Return ``True`` if the database of Conway polynomials contains the
         polynomial of degree ``n`` over ``GF(p)``.
 
         INPUT:

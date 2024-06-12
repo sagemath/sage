@@ -989,9 +989,9 @@ cdef class BooleanFunction(SageObject):
 
         INPUT:
 
-        - ``d`` -- an integer;
-        - ``dim`` -- a Boolean (default: ``False``), if ``True``, return also
-          the dimension of the annihilator vector space.
+        - ``d`` -- integer
+        - ``dim`` -- boolean (default: ``False``); if ``True``, return also
+          the dimension of the annihilator vector space
 
         EXAMPLES::
 
@@ -1272,7 +1272,7 @@ cdef class BooleanFunction(SageObject):
 
     def derivative(self, u):
         r"""
-        Return the derivative in direction of ``u``
+        Return the derivative in direction of ``u``.
 
         INPUT:
 

@@ -1360,7 +1360,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     def from_polynomial(self, f):
         """
-        Converts a symmetric polynomial ``f`` to a symmetric function.
+        Convert a symmetric polynomial ``f`` to a symmetric function.
 
         INPUT:
 

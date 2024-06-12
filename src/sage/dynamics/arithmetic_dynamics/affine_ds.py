@@ -353,7 +353,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
 
         INPUT:
 
-        - ``n`` -- a tuple of nonnegative integers. If ``n`` is an integer,
+        - ``n`` -- a tuple of nonnegative integers; if `n` is an integer,
           then the two values of the tuple are assumed to be the same
 
         OUTPUT: :class:`DynamicalSystem_projective`
@@ -547,7 +547,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
 
     def nth_iterate_map(self, n):
         r"""
-        Return the ``n``-th iterate of ``self``.
+        Return the `n`-th iterate of ``self``.
 
         ALGORITHM:
 
@@ -618,7 +618,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
 
     def nth_iterate(self, P, n):
         r"""
-        Return the ``n``-th iterate of the point ``P`` by this dynamical system.
+        Return the `n`-th iterate of the point `P` by this dynamical system.
 
         INPUT:
 
@@ -672,7 +672,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
 
     def orbit(self, P, n):
         r"""
-        Return the orbit of ``P`` by the dynamical system.
+        Return the orbit of `P` by the dynamical system.
 
         Let `F` be this dynamical system. If `n` is an integer
         return `[P, F(P), \ldots, F^n(P)]`. If `n` is a list or
@@ -682,10 +682,10 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
 
         - ``P`` -- a point in the map's domain
 
-        - ``n`` -- a non-negative integer or list or tuple of
-          two non-negative integers
+        - ``n`` -- a nonnegative integer or list or tuple of
+          two nonnegative integers
 
-        OUTPUT: a list of points in the map's codomain
+        OUTPUT: list of points in the map's codomain
 
         EXAMPLES::
 
@@ -735,22 +735,20 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
 
     def multiplier(self, P, n, check=True):
         r"""
-        Return the multiplier of the point ``P`` of period ``n`` by this
+        Return the multiplier of the point `P` of period `n` by this
         dynamical system.
 
         INPUT:
 
         - ``P`` -- a point on domain of the map
 
-        - ``n`` -- a positive integer, the period of ``P``
+        - ``n`` -- a positive integer, the period of `P`
 
-        - ``check`` -- (default: ``True``) boolean, verify that ``P``
-          has period ``n``
+        - ``check`` -- boolean (default: ``True``); verify that `P`
+          has period `n`
 
-        OUTPUT:
-
-        A square matrix of size ``self.codomain().dimension_relative()`` in
-        the ``base_ring`` of the map.
+        OUTPUT: a square matrix of size ``self.codomain().dimension_relative()``
+        in the ``base_ring`` of the map
 
         EXAMPLES::
 
@@ -996,13 +994,13 @@ class DynamicalSystem_affine_finite_field(DynamicalSystem_affine_field,
         Every point is preperiodic over a finite field.
 
         This function returns the pair `[m,n]` where `m` is the
-        preperiod and `n` is the period of the point ``P`` by this map.
+        preperiod and `n` is the period of the point `P` by this map.
 
         INPUT:
 
         - ``P`` -- a point in the map's domain
 
-        OUTPUT: a list `[m, n]` of integers
+        OUTPUT: list `[m, n]` of integers
 
         EXAMPLES::
 

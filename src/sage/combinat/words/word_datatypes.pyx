@@ -446,13 +446,13 @@ cdef class WordDatatype_str(WordDatatype):
         INPUT:
 
         -  ``sub`` -- string or word to search for.
-        -  ``start`` -- non negative integer (default: 0) specifying
+        -  ``start`` -- nonnegative integer (default: 0) specifying
            the position from which to start the search.
-        -  ``end`` -- non negative integer (default: ``None``); specifying
+        -  ``end`` -- nonnegative integer (default: ``None``); specifying
            the position at which the search must stop. If ``None``, then
            the search is performed up to the end of the string.
 
-        OUTPUT: non negative integer or `-1`
+        OUTPUT: nonnegative integer or `-1`
 
         EXAMPLES::
 
@@ -482,13 +482,13 @@ cdef class WordDatatype_str(WordDatatype):
         INPUT:
 
         -  ``sub`` -- string or word to search for.
-        -  ``start`` -- non negative integer (default: 0) specifying
+        -  ``start`` -- nonnegative integer (default: 0) specifying
            the position at which the search must stop.
-        -  ``end`` -- non negative integer (default: ``None``); specifying
+        -  ``end`` -- nonnegative integer (default: ``None``); specifying
            the position from which to start the search. If ``None``, then
            the search is performed up to the end of the string.
 
-        OUTPUT: non negative integer or `-1`
+        OUTPUT: nonnegative integer or `-1`
 
         EXAMPLES::
 

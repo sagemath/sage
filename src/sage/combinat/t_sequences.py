@@ -129,8 +129,8 @@ def is_symmetric(seq, verbose=False) -> bool:
 
     - ``seq`` -- the sequence that should be checked
 
-    - ``verbose`` -- boolean (default: ``False``); if true the function will be
-      verbose when the sequences do not satisfy the contraints.
+    - ``verbose`` -- boolean (default: ``False``); if ``True`` the function will be
+      verbose when the sequences do not satisfy the contraints
 
     EXAMPLES::
 
@@ -179,7 +179,7 @@ def is_T_sequences_set(sequences, verbose=False):
 
     - ``sequences`` -- list of four sequences
 
-    - ``verbose`` -- boolean (default: ``False``); if true the function will be
+    - ``verbose`` -- boolean (default: ``False``); if ``True`` the function will be
       verbose when the sequences do not satisfy the contraints
 
     EXAMPLES::
@@ -251,7 +251,7 @@ def turyn_sequences_smallcases(l, existence=False):
 
     - ``l`` -- integer; the length of the Turyn sequences
 
-    - ``existence`` -- boolean (default: ``False``); if true, only return
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only return
       whether the Turyn sequences are available for the given length
 
     EXAMPLES:

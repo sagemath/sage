@@ -159,7 +159,7 @@ class DocTestDefaults(SageObject):
         EXAMPLES::
 
             sage: from sage.doctest.control import DocTestDefaults
-            sage: DocTestDefaults(timeout=100, foobar="hello")
+            sage: DocTestDefaults(timeout=100, foobar='hello')
             DocTestDefaults(foobar='hello', timeout=100)
         """
         s = "DocTestDefaults("
@@ -203,7 +203,7 @@ class DocTestDefaults(SageObject):
 
 def skipdir(dirname):
     """
-    Return True if and only if the directory ``dirname`` should not be
+    Return ``True`` if and only if the directory ``dirname`` should not be
     doctested.
 
     EXAMPLES::
@@ -228,7 +228,7 @@ def skipfile(filename, tested_optional_tags=False, *,
 
     - ``filename`` -- name of a file
 
-    - ``tested_optional_tags`` -- a list or tuple or set of optional tags to test,
+    - ``tested_optional_tags`` -- list or tuple or set of optional tags to test,
       or ``False`` (no optional test) or ``True`` (all optional tests)
 
     - ``if_installed`` -- (boolean, default ``False``) whether to skip Python/Cython files
@@ -246,7 +246,7 @@ def skipfile(filename, tested_optional_tags=False, *,
         sage: from sage.doctest.control import skipfile
         sage: skipfile("skipme.c")
         True
-        sage: filename = tmp_filename(ext=".pyx")
+        sage: filename = tmp_filename(ext='.pyx')
         sage: skipfile(filename)
         False
         sage: with open(filename, "w") as f:
@@ -388,9 +388,9 @@ class DocTestController(SageObject):
 
         INPUT:
 
-        - options -- either options generated from the command line by sage-runtests
-                     or a DocTestDefaults object (possibly with some entries modified)
-        - args -- a list of filenames to doctest
+        - ``options`` -- either options generated from the command line by sage-runtests
+          or a DocTestDefaults object (possibly with some entries modified)
+        - ``args`` -- list of filenames to doctest
 
         EXAMPLES::
 
@@ -772,7 +772,7 @@ class DocTestController(SageObject):
         with atomic_write(filename) as stats_file:
             json.dump(self.stats, stats_file, sort_keys=True, indent=4)
 
-    def log(self, s, end="\n"):
+    def log(self, s, end='\n'):
         """
         Log the string ``s + end`` (where ``end`` is a newline by default)
         to the logfile and print it to the standard output.
@@ -826,7 +826,7 @@ class DocTestController(SageObject):
 
     def create_run_id(self):
         """
-        Creates the run id.
+        Create the run id.
 
         EXAMPLES::
 
@@ -840,7 +840,7 @@ class DocTestController(SageObject):
 
     def add_files(self):
         r"""
-        Checks for the flags '--all' and '--new'.
+        Check for the flags '--all' and '--new'.
 
         For each one present, this function adds the appropriate directories and files to the todo list.
 
@@ -1183,7 +1183,7 @@ class DocTestController(SageObject):
 
     def cleanup(self, final=True):
         """
-        Runs cleanup activities after actually running doctests.
+        Run cleanup activities after actually running doctests.
 
         In particular, saves the stats to disk and closes the logfile.
 
@@ -1233,7 +1233,7 @@ class DocTestController(SageObject):
         """
         Return a string describing the optional tags used.
 
-        OUTPUT: a string with comma-separated tags (without spaces, so
+        OUTPUT: string with comma-separated tags (without spaces, so
         it can be used to build a command-line)
 
         EXAMPLES::
@@ -1242,10 +1242,10 @@ class DocTestController(SageObject):
             sage: DC = DocTestController(DocTestDefaults(), [])
             sage: DC._optional_tags_string()
             'sage'
-            sage: DC = DocTestController(DocTestDefaults(optional="all,and,some,more"), [])
+            sage: DC = DocTestController(DocTestDefaults(optional='all,and,some,more'), [])
             sage: DC._optional_tags_string()
             'all'
-            sage: DC = DocTestController(DocTestDefaults(optional="sage,openssl"), [])
+            sage: DC = DocTestController(DocTestDefaults(optional='sage,openssl'), [])
             sage: DC._optional_tags_string()
             'openssl,sage'
         """
@@ -1286,8 +1286,8 @@ class DocTestController(SageObject):
 
         INPUT:
 
-        - ``testing`` -- boolean; if True then the command to be run
-          will be printed rather than a subprocess started.
+        - ``testing`` -- boolean (default: ``False``); if ``True`` then the
+          command to be run will be printed rather than a subprocess started
 
         EXAMPLES:
 
@@ -1303,7 +1303,7 @@ class DocTestController(SageObject):
 
         ::
 
-            sage: DD = DocTestDefaults(valgrind=True, optional="all", timeout=172800)
+            sage: DD = DocTestDefaults(valgrind=True, optional='all', timeout=172800)
             sage: DC = DocTestController(DD, ["hello_world.py"])
             sage: DC.run_val_gdb(testing=True)
             exec valgrind --tool=memcheck --leak-resolution=high --leak-check=full --num-callers=25 --suppressions="...valgrind/pyalloc.supp" --suppressions="...valgrind/sage.supp" --suppressions="...valgrind/sage-additional.supp"  --log-file=.../valgrind/sage-memcheck.%p... sage-runtests --serial --timeout=172800 --optional=all hello_world.py
@@ -1588,13 +1588,13 @@ class DocTestController(SageObject):
 
 def run_doctests(module, options=None):
     """
-    Runs the doctests in a given file.
+    Run the doctests in a given file.
 
     INPUT:
 
-    - ``module`` -- a Sage module, a string, or a list of such.
+    - ``module`` -- a Sage module, a string, or a list of such
 
-    - ``options`` -- a DocTestDefaults object or None.
+    - ``options`` -- a DocTestDefaults object or ``None``
 
     EXAMPLES::
 

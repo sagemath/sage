@@ -129,7 +129,7 @@ cdef class SBox(SageObject):
         - ``S`` -- a finite iterable defining the S-box with integer or
           finite field elements
 
-        - ``big_endian`` -- (default: ``True``) controls whether bits
+        - ``big_endian`` -- boolean (default: ``True``); controls whether bits
           shall be ordered in big endian order
 
         EXAMPLES:
@@ -275,7 +275,7 @@ cdef class SBox(SageObject):
 
         INPUT:
 
-        - ``x`` -- an integer
+        - ``x`` -- integer
 
         - ``n`` -- bit length (optional)
 
@@ -563,7 +563,7 @@ cdef class SBox(SageObject):
 
     def derivative(self, u):
         r"""
-        Return the derivative in direction of ``u``
+        Return the derivative in direction of ``u``.
 
         INPUT:
 
@@ -746,7 +746,7 @@ cdef class SBox(SageObject):
         return self.maximal_difference_probability_absolute() / (2.0**self.output_size())
 
     @cached_method
-    def linear_approximation_table(self, scale="absolute_bias"):
+    def linear_approximation_table(self, scale='absolute_bias'):
         r"""
         Return linear approximation table (LAT) `A` for this S-box.
 
@@ -791,13 +791,13 @@ cdef class SBox(SageObject):
             [ 0 -2 -2  0  0 -2  2  0]
             [ 0 -2  2  0 -2  0  0 -2]
 
-            sage: lat_abs_bias/(1 << S.input_size()) == S.linear_approximation_table(scale="bias")
+            sage: lat_abs_bias/(1 << S.input_size()) == S.linear_approximation_table(scale='bias')
             True
 
-            sage: lat_abs_bias/(1 << (S.input_size()-1)) == S.linear_approximation_table(scale="correlation")
+            sage: lat_abs_bias/(1 << (S.input_size()-1)) == S.linear_approximation_table(scale='correlation')
             True
 
-            sage: lat_abs_bias*2 == S.linear_approximation_table(scale="fourier_coefficient")
+            sage: lat_abs_bias*2 == S.linear_approximation_table(scale='fourier_coefficient')
             True
 
         According to this table the first bit of the input is equal
@@ -946,8 +946,8 @@ cdef class SBox(SageObject):
 
         - ``degree`` -- (default: ``2``) integer > 0
 
-        - ``groebner`` -- (default: ``False``) calculate a reduced Groebner
-          basis of the spanning polynomials to obtain more polynomials
+        - ``groebner`` -- boolean (default: ``False``); calculate a reduced
+          Groebner basis of the spanning polynomials to obtain more polynomials
 
         EXAMPLES::
 
@@ -1583,7 +1583,7 @@ cdef class SBox(SageObject):
 
     def boomerang_uniformity(self):
         """
-        Return the boomerang uniformity
+        Return the boomerang uniformity.
 
         The boomerang uniformity is defined as the highest entry in the
         boomerang connectivity table, ignoring the first row and column.

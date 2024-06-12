@@ -5789,15 +5789,11 @@ def subfactorial(n):
 
     INPUT:
 
-
-    -  ``n`` -- non negative integer
-
+    -  ``n`` -- nonnegative integer
 
     OUTPUT:
 
-
     -  ``integer`` -- function value
-
 
     EXAMPLES::
 

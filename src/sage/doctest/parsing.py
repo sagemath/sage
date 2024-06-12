@@ -286,7 +286,7 @@ def parse_file_optional_tags(lines):
     EXAMPLES::
 
         sage: from sage.doctest.parsing import parse_file_optional_tags
-        sage: filename = tmp_filename(ext=".pyx")
+        sage: filename = tmp_filename(ext='.pyx')
         sage: with open(filename, "r") as f:
         ....:     parse_file_optional_tags(enumerate(f))
         {}
@@ -338,7 +338,7 @@ def _tag_group(tag):
 
     - ``tag`` -- string
 
-    OUTPUT: a string; one of ``'special'``, ``'optional'``, ``'standard'``, ``'sage'``
+    OUTPUT: string; one of ``'special'``, ``'optional'``, ``'standard'``, ``'sage'``
 
     EXAMPLES::
 
@@ -871,11 +871,11 @@ class SageDocTestParser(doctest.DocTestParser):
         r"""
         INPUT:
 
-        - ``optional_tags`` -- a list or tuple of strings.
+        - ``optional_tags`` -- list or tuple of strings
         - ``long`` -- boolean, whether to run doctests marked as taking a
-          long time.
-        - ``probed_tags`` -- a list or tuple of strings.
-        - ``file_optional_tags`` -- an iterable of strings.
+          long time
+        - ``probed_tags`` -- list or tuple of strings
+        - ``file_optional_tags`` -- an iterable of strings
 
         EXAMPLES::
 
@@ -946,9 +946,9 @@ class SageDocTestParser(doctest.DocTestParser):
 
         INPUT:
 
-        - ``string`` -- the string to parse.
+        - ``string`` -- the string to parse
         - ``name`` -- optional string giving the name identifying string,
-          to be used in error messages.
+          to be used in error messages
 
         OUTPUT:
 
@@ -1038,11 +1038,11 @@ class SageDocTestParser(doctest.DocTestParser):
 
         Test that :issue:`26575` is resolved::
 
-            sage: example3 = 'sage: Zp(5,4,print_mode="digits")(5)\n...00010'
+            sage: example3 = 'sage: Zp(5,4,print_mode='digits')(5)\n...00010'
             sage: parsed3 = DTP.parse(example3)
             sage: dte = parsed3[1]
             sage: dte.sage_source
-            'Zp(5,4,print_mode="digits")(5)\n'
+            'Zp(5,4,print_mode='digits')(5)\n'
             sage: dte.want
             '...00010\n'
 
@@ -1122,11 +1122,11 @@ class SageDocTestParser(doctest.DocTestParser):
             "P = polytopes.associahedron(['A',Integer(3)])\n"),
             '\n']
 
-            sage: example4 = '::\n\n        sage: C.minimum_distance(algorithm="guava")  # optional - guava\n        ...\n        24\n\n'
+            sage: example4 = '::\n\n        sage: C.minimum_distance(algorithm='guava')  # optional - guava\n        ...\n        24\n\n'
             sage: parsed4 = DTP.parse(example4)
             sage: dte = parsed4[1]
             sage: dte.sage_source
-            'C.minimum_distance(algorithm="guava")  # optional - guava\n'
+            'C.minimum_distance(algorithm='guava')  # optional - guava\n'
             sage: dte.want
             '...\n24\n'
         """
@@ -1376,9 +1376,7 @@ class SageOutputChecker(doctest.OutputChecker):
         - ``wantval`` -- a real interval element
         - ``want`` -- a :class:`MarkedOutput` describing the tolerance
 
-        OUTPUT:
-
-        - an interval element containing ``wantval``
+        OUTPUT: an interval element containing ``wantval``
 
         EXAMPLES::
 
@@ -1420,7 +1418,7 @@ class SageOutputChecker(doctest.OutputChecker):
 
     def check_output(self, want, got, optionflags):
         r"""
-        Checks to see if the output matches the desired output.
+        Check to see if the output matches the desired output.
 
         If ``want`` is a :class:`MarkedOutput` instance, takes into account the desired tolerance.
 
@@ -1428,11 +1426,9 @@ class SageOutputChecker(doctest.OutputChecker):
 
         - ``want`` -- a string or :class:`MarkedOutput`
         - ``got`` -- a string
-        - ``optionflags`` -- an integer, passed down to :class:`doctest.OutputChecker`
+        - ``optionflags`` -- integer; passed down to :class:`doctest.OutputChecker`
 
-        OUTPUT:
-
-        - boolean, whether ``got`` matches ``want`` up to the specified tolerance.
+        OUTPUT: boolean, whether ``got`` matches ``want`` up to the specified tolerance
 
         EXAMPLES::
 
@@ -1586,7 +1582,7 @@ class SageOutputChecker(doctest.OutputChecker):
 
     def do_fixup(self, want, got):
         r"""
-        Performs few changes to the strings ``want`` and ``got``.
+        Perform few changes to the strings ``want`` and ``got``.
 
         For example, remove warnings to be ignored.
 
@@ -1708,11 +1704,9 @@ class SageOutputChecker(doctest.OutputChecker):
 
         - ``example`` -- a :class:`doctest.Example` instance
         - ``got`` -- a string
-        - ``optionflags`` -- an integer, passed down to :class:`doctest.OutputChecker`
+        - ``optionflags`` -- integer; passed down to :class:`doctest.OutputChecker`
 
-        OUTPUT:
-
-        - a string, describing how ``got`` fails to match ``example.want``
+        OUTPUT: string, describing how ``got`` fails to match ``example.want``
 
         EXAMPLES::
 

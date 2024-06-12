@@ -272,7 +272,7 @@ class DyckPath(PathTableau):
     @combinatorial_map(name='to Dyck word')
     def to_DyckWord(self):
         r"""
-        Converts ``self`` to a Dyck word.
+        Convert ``self`` to a Dyck word.
 
         EXAMPLES::
 

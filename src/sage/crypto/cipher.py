@@ -62,7 +62,7 @@ class SymmetricKeyCipher(Cipher):
     """
     def __init__(self, parent, key):
         """
-        Create a symmetric cipher
+        Create a symmetric cipher.
 
         INPUT: Parent and key
 
@@ -76,7 +76,7 @@ class PublicKeyCipher(Cipher):
     """
     def __init__(self, parent, key, public=True):
         """
-        Create a public key cipher
+        Create a public key cipher.
 
         INPUT: Parent and key
 

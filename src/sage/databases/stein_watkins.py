@@ -213,7 +213,7 @@ class SteinWatkinsAllData:
             Stein-Watkins isogeny class of conductor 20
         """
         try:
-            file = bz2.open(self._file, 'rt', encoding="utf-8")
+            file = bz2.open(self._file, 'rt', encoding='utf-8')
         except OSError:
             raise OSError("The Stein-Watkins data file %s must be installed." % self._file)
         C = None

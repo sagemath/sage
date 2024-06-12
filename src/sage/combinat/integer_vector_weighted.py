@@ -39,7 +39,7 @@ class WeightedIntegerVectors(Parent, UniqueRepresentation):
 
     INPUT:
 
-     - ``n`` -- a non negative integer (optional)
+     - ``n`` -- a nonnegative integer (optional)
 
      - ``weight`` -- a tuple (or list or iterable) of positive integers
 

@@ -880,7 +880,7 @@ class OrderedTrees(UniqueRepresentation, Parent):
             return OrderedTrees_all()
         else:
             if not (isinstance(n, (Integer, int)) and n >= 0):
-                raise ValueError("n must be a non negative integer")
+                raise ValueError("n must be a nonnegative integer")
             return OrderedTrees_size(Integer(n))
 
     @cached_method

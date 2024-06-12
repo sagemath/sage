@@ -129,9 +129,9 @@ class CubicHeckeDataSection(Enum):
 
     The following choices are possible:
 
-    - ``basis``  -- list of basis elements
-    - ``reg_left_reprs``  -- data for the left regular representation
-    - ``reg_right_reprs``  -- data for the right regular representation
+    - ``basis`` -- list of basis elements
+    - ``reg_left_reprs`` -- data for the left regular representation
+    - ``reg_right_reprs`` -- data for the right regular representation
     - ``irr_reprs`` -- data for the split irreducible representations
     - ``markov_tr_cfs`` -- data for the coefficients of the formal Markov traces
 
@@ -654,9 +654,9 @@ class CubicHeckeFileCache(SageObject):
         Enum for the different sections of file cache. The following choices are
         possible:
 
-        - ``matrix_representations``  -- file cache for representation matrices
+        - ``matrix_representations`` -- file cache for representation matrices
           of basis elements
-        - ``braid_images``  -- file cache for images of braids
+        - ``braid_images`` -- file cache for images of braids
         - ``basis_extensions`` -- file cache for a dynamical growing basis used
           in the case of cubic Hecke algebras on more than 4 strands
         - ``markov_trace`` -- file cache for intermediate results of long

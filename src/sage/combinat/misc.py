@@ -181,7 +181,7 @@ class DoublyLinkedList:
 
 def _monomial_exponent_to_lower_factorial(me, x):
     r"""
-    Converts a tuple of exponents to the monomial obtained by replacing
+    Convert a tuple of exponents to the monomial obtained by replacing
     each me[i] with `x_i*(x_i - 1)*\cdots*(x_i - a_i + 1)`
 
     EXAMPLES::

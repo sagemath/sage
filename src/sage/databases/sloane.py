@@ -176,23 +176,23 @@ class SloaneEncyclopediaClass:
         return answer
 
     def install(self, oeis_url="https://oeis.org/stripped.gz",
-                names_url="https://oeis.org/names.gz", overwrite=False):
+                names_url='https://oeis.org/names.gz', overwrite=False):
         """
         Download and install the online encyclopedia, raising an IOError if
         either step fails.
 
         INPUT:
 
-        - ``oeis_url`` -- string (default: "https://oeis.org...")
-          The URL of the stripped.gz encyclopedia file.
+        - ``oeis_url`` -- string (default: ``'https://oeis.org...'``)
+          The URL of the stripped.gz encyclopedia file
 
-        - ``names_url`` -- string (default: "https://oeis.org...")
+        - ``names_url`` -- string (default: ``'https://oeis.org...'``)
           The URL of the names.gz encyclopedia file.  If you do not want to
           download this file, set names_url=None.
 
-        - ``overwrite`` -- boolean (default: ``False``) If the encyclopedia is
+        - ``overwrite`` -- boolean (default: ``False``); if the encyclopedia is
           already installed and overwrite=True, download and install the latest
-          version over the installed one.
+          version over the installed one
         """
         # See if the encyclopedia already exists
         if not overwrite and os.path.exists(self.__file__):
@@ -226,14 +226,14 @@ class SloaneEncyclopediaClass:
 
         INPUT:
 
-        - ``stripped_file`` -- string. The name of the stripped.gz OEIS file.
+        - ``stripped_file`` -- string; the name of the stripped.gz OEIS file
 
-        - ``names_file`` -- string.  The name of the names.gz OEIS file, or
-          None if the user does not want it installed.
+        - ``names_file`` -- string; the name of the names.gz OEIS file, or
+          None if the user does not want it installed
 
-        - ``overwrite`` -- boolean (default: ``False``) If the encyclopedia is
-          already installed and overwrite=True, install 'filename' over the
-          old encyclopedia.
+        - ``overwrite`` -- boolean (default: ``False``); if the encyclopedia is
+          already installed and ``overwrite=True``, install 'filename' over the
+          old encyclopedia
         """
         if not overwrite and os.path.exists(self.__file__):
             raise OSError("Sloane encyclopedia is already installed")
@@ -352,9 +352,9 @@ def copy_gz_file(gz_source, bz_destination):
 
     INPUT:
 
-    - ``gz_source`` -- string. The name of the gzipped file.
+    - ``gz_source`` -- string; the name of the gzipped file
 
-    - ``bz_destination`` -- string.  The name of the newly compressed file.
+    - ``bz_destination`` -- string; the name of the newly compressed file
     """
     import gzip
 

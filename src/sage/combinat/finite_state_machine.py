@@ -6236,7 +6236,7 @@ class FiniteStateMachine(SageObject):
 
     def _iter_process_simple_(self, iterator):
         r"""
-        Converts a :class:`process iterator <FSMProcessIterator>` to a simpler
+        Convert a :class:`process iterator <FSMProcessIterator>` to a simpler
         iterator, which only outputs the written letters.
 
         INPUT:

@@ -47,7 +47,7 @@ class DynamicalSystem_product_projective(DynamicalSystem,
 
     INPUT:
 
-    - ``polys`` -- a list of `n_1 + \cdots + n_r` multi-homogeneous polynomials, all
+    - ``polys`` -- list of `n_1 + \cdots + n_r` multi-homogeneous polynomials, all
       of which should have the same parent
 
     - ``domain`` -- a projective scheme embedded in
@@ -85,8 +85,8 @@ class DynamicalSystem_product_projective(DynamicalSystem,
 
         - ``P`` -- a point in the domain
 
-        - ``check`` -- Boolean; whether or not to perform the input checks
-          on the image point (Default: ``True``)
+        - ``check`` -- boolean (default: ``True``); whether or not to perform
+          the input checks on the image point
 
         OUTPUT: the image point in the codomain
 
@@ -127,7 +127,7 @@ class DynamicalSystem_product_projective(DynamicalSystem,
 
         - ``n`` -- a positive integer
 
-        - ``normalize`` -- (default: ``False``) boolean
+        - ``normalize`` -- boolean (default: ``False``)
 
         OUTPUT: a point in ``self.codomain()``
 
@@ -180,16 +180,16 @@ class DynamicalSystem_product_projective(DynamicalSystem,
 
         - ``P`` -- a point in ``self.domain()``
 
-        - ``N`` -- a non-negative integer or list or tuple of two non-negative integers
+        - ``N`` -- a nonnegative integer or list or tuple of two nonnegative integers
 
         kwds:
 
-        - ``check`` -- (default: ``True``) boolean
+        - ``check`` -- boolean (default: ``True``)
 
-        - ``normalize`` -- (default: ``False``) boolean
+        - ``normalize`` -- boolean (default: ``False``)
 
 
-        OUTPUT: a list of points in ``self.codomain()``
+        OUTPUT: list of points in ``self.codomain()``
 
         EXAMPLES::
 
@@ -220,7 +220,7 @@ class DynamicalSystem_product_projective(DynamicalSystem,
         except TypeError:
             raise TypeError("orbit bounds must be integers")
         if N[0] < 0 or N[1] < 0:
-            raise TypeError("orbit bounds must be non-negative")
+            raise TypeError("orbit bounds must be nonnegative")
         if N[0] > N[1]:
             return []
 

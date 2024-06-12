@@ -263,7 +263,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
             sage: enum = EnumeratedSets().Infinite().example()
             sage: algebras.FreePreLie(QQ, enum)  # indirect doctest
             Free PreLie algebra on generators indexed by An example of an
-            infinite enumerated set: the non negative integers
+            infinite enumerated set: the nonnegative integers
             over Rational Field
         """
         n = self.algebra_generators().cardinality()

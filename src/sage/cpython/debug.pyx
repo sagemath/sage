@@ -220,7 +220,7 @@ def getattr_debug(obj, name, default=_no_default):
 
 def type_debug(cls):
     """
-    Print all internals of the type ``cls``
+    Print all internals of the type ``cls``.
 
     EXAMPLES::
 

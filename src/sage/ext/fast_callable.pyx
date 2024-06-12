@@ -2068,12 +2068,12 @@ cdef class InstructionStream:
 
         INPUT:
 
-        - ``metadata`` -- The ``metadata_by_opname`` from a wrapper module
+        - ``metadata`` -- the ``metadata_by_opname`` from a wrapper module
 
-        - ``n_args`` -- The number of arguments accessible by the generated code
+        - ``n_args`` -- the number of arguments accessible by the generated code
           (this is just passed to the wrapper class)
 
-        - ``domain`` -- The domain of interpretation (this is just passed to the
+        - ``domain`` -- the domain of interpretation (this is just passed to the
           wrapper class)
 
         EXAMPLES::
@@ -2394,14 +2394,14 @@ class CompilerInstrSpec():
     The parameter list is a list of strings.  Each string is one of
     the following:
 
-    - ``'args'`` -- The instruction argument refers to an input argument of the
-      wrapper class; it is just appended to the code.
+    - ``'args'`` -- the instruction argument refers to an input argument of the
+      wrapper class; it is just appended to the code
 
-    - ``'constants'``, ``'py_constants'`` -- The instruction argument is a value; the
+    - ``'constants'``, ``'py_constants'`` -- the instruction argument is a value; the
       value is added to the corresponding list (if it's not already there) and
       the index is appended to the code.
 
-    - ``'n_inputs'``, ``'n_outputs'`` -- The instruction actually takes a variable
+    - ``'n_inputs'``, ``'n_outputs'`` -- the instruction actually takes a variable
       number of inputs or outputs (the ``n_inputs`` and ``n_outputs`` attributes of
       this instruction are ignored). The instruction argument specifies the
       number of inputs or outputs (respectively); it is just appended to the
@@ -2668,7 +2668,7 @@ class FastCallableFloatWrapper:
             with :func:`fast_callable`.
 
           - ``imag_tol`` -- float; how big of an imaginary part we're willing
-            to ignore before raising an error.
+            to ignore before raising an error
 
         OUTPUT:
 

@@ -699,7 +699,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             r"""
             Return the Cartan invariants matrix of the algebra.
 
-            OUTPUT: a matrix of non negative integers
+            OUTPUT: a matrix of nonnegative integers
 
             Let `A` be this finite dimensional algebra and
             `(S_i)_{i\in I}` be representatives of the right simple
@@ -714,7 +714,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             `S_i=\operatorname{top} P^R_i`.
 
             The *Cartan invariant matrix* `(C_{i,j})_{i,j\in I}` is a
-            matrix of non negative integers that encodes much of the
+            matrix of nonnegative integers that encodes much of the
             representation theory of `A`; namely:
 
             - `C_{i,j}` counts how many times `S_i^*\otimes S_j`

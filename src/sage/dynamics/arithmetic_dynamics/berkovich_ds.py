@@ -55,7 +55,7 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
 
     INPUT:
 
-    - ``dynamical_system`` -- A :class:`DynamicalSystem`
+    - ``dynamical_system`` -- a :class:`DynamicalSystem`
       over affine or projective space. If this input is not defined
       over a p-adic field, then ``domain`` MUST be specified.
 
@@ -376,11 +376,11 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
 
     def __getitem__(self, i):
         """
-        Return the ith polynomial.
+        Return the `i`-th polynomial.
 
         INPUT:
 
-        - ``i`` -- an integer.
+        - ``i`` -- integer
 
         OUTPUT: an element of polynomial ring or a
         fraction field of a polynomial ring
@@ -566,11 +566,11 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
 
     def scale_by(self, t):
         """
-        Scales each coordinate of this dynamical system by a factor of ``t``.
+        Scales each coordinate of this dynamical system by a factor of `t`.
 
         INPUT:
 
-        - ``t`` -- a ring element.
+        - ``t`` -- a ring element
 
         OUTPUT: none
 
@@ -646,9 +646,9 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
 
         INPUT:
 
-        - ``M`` -- a square invertible matrix.
+        - ``M`` -- a square invertible matrix
 
-        - ``adjugate`` -- (default: ``False``) boolean, also classically
+        - ``adjugate`` -- boolean (default: ``False``); also classically
           called adjoint, takes a square matrix ``M`` and finds the transpose
           of its cofactor matrix. Used for conjugation in place of inverse
           when specified ``'True'``. Functionality is the same in projective space.
@@ -711,7 +711,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
 
     def resultant(self, normalize=False):
         r"""
-        Computes the resultant of the defining polynomials of
+        Compute the resultant of the defining polynomials of
         this dynamical system.
 
         If ``normalize`` is ``True``, then first normalize the coordinate
@@ -719,7 +719,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
 
         INPUT:
 
-        - ``normalize`` -- (default: ``False``) boolean.
+        - ``normalize`` -- boolean (default: ``False``)
 
         OUTPUT: an element of the base ring of this map
 
@@ -752,7 +752,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
         INPUT:
 
         - ``n`` -- a tuple of nonnegative integers; if ``n`` is an integer,
-          then the two values of the tuple are assumed to be the same.
+          then the two values of the tuple are assumed to be the same
 
         OUTPUT: a dynamical system on affine Berkovich space
 
@@ -779,9 +779,9 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
 
         INPUT:
 
-        - ``x`` -- a point of projective Berkovich space over ``Cp``.
+        - ``x`` -- a point of projective Berkovich space over ``Cp``
 
-        - ``type_3_pole_check`` -- (default ``True``) A bool. WARNING:
+        - ``type_3_pole_check`` -- boolean (default: ``True``); WARNING:
           changing the value of ``type_3_pole_check`` can lead to mathematically
           incorrect answers. Only set to ``False`` if there are NO
           poles of the dynamical system in the disk corresponding
@@ -966,8 +966,8 @@ class DynamicalSystem_Berkovich_affine(DynamicalSystem_Berkovich):
 
     INPUT:
 
-    - ``dynamical_system`` -- A :class:`DynamicalSystem_affine`
-      of relative dimension 1.
+    - ``dynamical_system`` -- a :class:`DynamicalSystem_affine`
+      of relative dimension 1
 
     - ``domain`` -- (optional) affine or projective Berkovich space
       over `\CC_p`. If the input to ``dynamical_system`` is

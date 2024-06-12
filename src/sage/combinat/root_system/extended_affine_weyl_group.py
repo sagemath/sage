@@ -1308,7 +1308,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             def from_reduced_word(self, word):
                 r"""
-                Converts an affine or finite reduced word into a group element.
+                Convert an affine or finite reduced word into a group element.
 
                 EXAMPLES::
 
