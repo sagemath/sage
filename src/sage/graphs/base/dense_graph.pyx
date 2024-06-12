@@ -101,8 +101,8 @@ It also contains the following variables::
 .. NOTE::
 
     As the edges are stored as the adjacency matrix of the graph, enumerating
-    the edges of the graph has complexity O(n^2) and enumerating the neighbors
-    of a vertex has complexity O(n) (where n in the size of the bitset
+    the edges of the graph has complexity `O(n^2)` and enumerating the neighbors
+    of a vertex has complexity `O(n)` (where `n` in the size of the bitset
     active_vertices).
     So, the class ``DenseGraph`` should be used for graphs such that the number
     of edges is close to the square of the number of vertices.
