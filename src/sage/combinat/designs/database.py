@@ -5038,7 +5038,7 @@ LIST_OF_EDS = "\n".join("    - `k = {}`: {}".format(
 
 def ca_11_2_5_3():
     r"""
-    Return a CA with the given parameters, This CA is proven to be optimal.
+    Return a CA with the given parameters. This CA is proven to be optimal.
 
     Data obtained from https://zenodo.org/records/1476059
 
@@ -5066,7 +5066,7 @@ def ca_11_2_5_3():
 
 def ca_12_2_7_3():
     r"""
-    Return a CA with the given parameters, This CA is proven to be optimal.
+    Return a CA with the given parameters. This CA is proven to be optimal.
 
     Data obtained from https://zenodo.org/records/1476059
 
@@ -5095,7 +5095,7 @@ def ca_12_2_7_3():
 
 def ca_13_2_9_3():
     r"""
-    Return a CA with the given parameters, This CA is proven to be optimal.
+    Return a CA with the given parameters. This CA is proven to be optimal.
 
     Data obtained from https://zenodo.org/records/1476059
 
@@ -5125,7 +5125,7 @@ def ca_13_2_9_3():
 
 def ca_14_2_10_3():
     r"""
-    Return a CA with the given parameters, This CA is proven to be optimal.
+    Return a CA with the given parameters. This CA is proven to be optimal.
 
     Data obtained from https://zenodo.org/records/1476059
 
@@ -5156,7 +5156,7 @@ def ca_14_2_10_3():
 
 def ca_15_2_20_3():
     r"""
-    Return a CA with the given parameters, This CA is proven to be optimal.
+    Return a CA with the given parameters. This CA is proven to be optimal.
 
     Data obtained from [Nur2004]_
 
@@ -5188,7 +5188,7 @@ def ca_15_2_20_3():
 
 def ca_19_2_6_4():
     r"""
-    Return a CA with the given parameters, This CA is proven to be optimal.
+    Return a CA with the given parameters. This CA is proven to be optimal.
 
     Data obtained from https://zenodo.org/records/1476059
 
@@ -5224,7 +5224,7 @@ def ca_19_2_6_4():
 
 def ca_21_2_7_4():
     r"""
-    Return a CA with the given parameters, This CA is proven to be optimal.
+    Return a CA with the given parameters. This CA is proven to be optimal.
     This CA is also uniform.
 
     Data obtained from https://zenodo.org/records/1476059
@@ -5263,7 +5263,7 @@ def ca_21_2_7_4():
 
 def ca_29_2_7_5():
     r"""
-    Return a CA with the given parameters, This CA is proven to be optimal.
+    Return a CA with the given parameters. This CA is proven to be optimal.
 
     Data obtained from https://zenodo.org/records/1476059
 
@@ -5309,7 +5309,7 @@ def ca_29_2_7_5():
 
 def ca_37_2_4_6():
     r"""
-    Return a CA with the given parameters, This CA is proven to be optimal.
+    Return a CA with the given parameters. This CA is proven to be optimal.
 
     Data obtained from https://zenodo.org/records/1476059
 
@@ -5363,7 +5363,7 @@ def ca_37_2_4_6():
 
 def ca_39_2_5_6():
     r"""
-    Return a CA with the given parameters, This CA is proven to be optimal.
+    Return a CA with the given parameters. This CA is proven to be optimal.
 
     Data obtained from https://zenodo.org/records/1476059
 
@@ -5419,7 +5419,7 @@ def ca_39_2_5_6():
 
 def ca_41_2_6_6():
     r"""
-    Return a CA with the given parameters, This CA is proven to be optimal.
+    Return a CA with the given parameters. This CA is proven to be optimal.
     This CA is also uniform.
 
     Data obtained from https://zenodo.org/records/1476059
