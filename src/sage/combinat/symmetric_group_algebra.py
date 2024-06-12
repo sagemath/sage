@@ -140,7 +140,7 @@ def SymmetricGroupAlgebra(R, W, category=None):
 
     This allows for mixed expressions::
 
-        sage: x4  = 3*QS4([3, 1, 4, 2])
+        sage: x4  = 3 * QS4([3, 1, 4, 2])
         sage: x3 + x4
         2*[2, 3, 1, 4] + [3, 1, 2, 4] + 3*[3, 1, 4, 2]
 

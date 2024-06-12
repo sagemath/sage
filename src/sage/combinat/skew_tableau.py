@@ -1152,7 +1152,7 @@ class SkewTableau(ClonableList,
 
             sage: # needs sage.groups
             sage: rs = SkewTableau([[None,1,2,3],[4,5]]).row_stabilizer()
-            sage: rs.order() == factorial(3)*factorial(2)
+            sage: rs.order() == factorial(3) * factorial(2)
             True
             sage: PermutationGroupElement([(1,3,2),(4,5)]) in rs
             True
