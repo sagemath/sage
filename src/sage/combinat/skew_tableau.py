@@ -1158,7 +1158,7 @@ class SkewTableau(ClonableList,
             True
             sage: PermutationGroupElement([(1,4)]) in rs
             False
-            sage: rs = SkewTableau([[None, 1, 2],[3]]).row_stabilizer()
+            sage: rs = SkewTableau([[None,1,2],[3]]).row_stabilizer()
             sage: PermutationGroupElement([(1,2),(3,)]) in rs
             True
             sage: rs.one().domain()
