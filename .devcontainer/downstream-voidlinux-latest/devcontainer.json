@@ -1,0 +1,11 @@
+// See https://aka.ms/devcontainer.json for format details.
+{
+    "name": "voidlinux:latest downstream Sage",
+    "dockerFile": "Dockerfile",
+    "onCreateCommand": "EXTRA_SAGE_PACKAGES='_sagemath notebook pip' .devcontainer/onCreate.sh",
+    // There's no SAGE_LOCAL, so remove the symlink 'prefix'.
+    "updateContentCommand": "rm -f prefix && ln -sf /usr venv",
+    "extensions": [
+        "ms-python.python"
+    ]
+}
