@@ -38,10 +38,13 @@ case "$SYSTEM" in
         # For use in sage-spkg-info
         SYSTEM_PACKAGES_FILE_NAMES="package-version.txt requirements.txt src/pyproject.toml version_requirements.txt"
         strip_comments () {
-            echo "$NAME::"
-            echo
-            sed "s/#.*//;/^[[:space:]]*$/d;s/\"/'/g;s/^/    /;" "$@"
-            echo
+            TEXT=$(sed "s/#.*//;/^[[:space:]]*$/d;s/\"/'/g;s/^/    /;" "$@")
+            if [ -n "$(echo $TEXT)" ]; then
+                echo "$NAME::"
+                echo
+                echo "$TEXT"
+                echo
+            fi
         }
         STRIP_COMMENTS=strip_comments
         COLLECT=
