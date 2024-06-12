@@ -55,6 +55,7 @@ echo "Version Information"
 echo "-------------------"
 echo
 sage-get-system-packages versions $PKG_BASE
+echo
 echo "Equivalent System Packages"
 echo "--------------------------"
 echo
