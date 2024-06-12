@@ -1,7 +1,11 @@
 r"""
 Univariate Tropical Polynomial Semirings
 
-Implements the parent class and element class for sparse polynomials over tropical semirings. We can do addition and multiplication for tropical polynomials. Added a method to find the tropical roots of tropical polynomials. Overriden the plot method so it specifically graph the tropical polynomial in cartesian coordinates.
+Implements the parent class and element class for sparse polynomials
+over tropical semirings. We can do addition and multiplication for 
+tropical polynomials. Added a method to find the tropical roots of 
+tropical polynomials. Overriden the plot method so it specifically 
+graph the tropical polynomial in cartesian coordinates.
 
 AUTHORS:
 
@@ -11,14 +15,17 @@ AUTHORS:
 
 EXAMPLES::
 
-    We can create a tropical polynomial semiring by first defining a tropical semiring and then inputting it to ``PolynomialRing`` constructor::
+    We can create a tropical polynomial semiring by first defining a
+    tropical semiring and then inputting it to ``PolynomialRing``
+    constructor::
 
         sage: T = TropicalSemiring(QQ, use_min=False)
         sage: R = PolynomialRing(T,'y')
         sage: R
         Tropical Polynomial Semiring in y over Rational Field
 
-    We can define the element by giving a list of coefficients that starts from constant::
+    We can define the element by giving a list of coefficients that
+    starts from constant::
 
         sage: p1 = R([1,4,None,T(0)]); p1
         0*y^3 + 4*y + 1
@@ -39,7 +46,8 @@ EXAMPLES::
         sage: p1 * p2
         y^5 + 2*y^4 + 5*y^3 + 6*y^2 + 7*y + 4
 
-    Beware that when multiplying tropical polynomial with scalar, it will give an error if the scalar is not tropical number::
+    Beware that when multiplying tropical polynomial with scalar, it
+    will give an error if the scalar is not tropical number::
 
         sage: 2 * p1
         Traceback (most recent call last):
@@ -53,7 +61,9 @@ EXAMPLES::
         sage: p1(3)
         9
 
-    We can find all the tropical roots of tropical polynomial counted with multiplicity. There will no tropical root for constant polynomial. For a monomial, the tropical root is `-infinity`::
+    We can find all the tropical roots of tropical polynomial counted
+    with multiplicity. There will no tropical root for constant
+    polynomial. For a monomial, the tropical root is `-infinity`::
 
         sage: p1.roots()
         [-3, 2, 2]
@@ -69,7 +79,8 @@ EXAMPLES::
 
 TESTS::
 
-    There is no subtraction for tropical polynomials because element in tropical semiring doesn't necessarily have additive inverse::
+    There is no subtraction for tropical polynomials because element
+    in tropical semiring doesn't necessarily have additive inverse::
 
         sage: -p1
         Traceback (most recent call last):
