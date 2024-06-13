@@ -416,7 +416,6 @@ def BruckRyserChowla_check(v, k, lambd):
         sage: from sage.combinat.designs.bibd import BruckRyserChowla_check
         sage: BruckRyserChowla_check(13,25,50)                                          # needs sage.schemes
         True
-
     """
     from sage.rings.rational_field import QQ
 
@@ -1240,7 +1239,6 @@ def PBD_from_TD(k,t,u):
         [[0, 2, 4], [0, 3], [1, 2], [1, 3, 4], [0, 1], [2, 3]]
         sage: is_pairwise_balanced_design(PBD,2*2+1,[2,3])
         True
-
     """
     from .orthogonal_arrays import transversal_design
     TD = transversal_design(k+bool(u),t, check=False)
@@ -1350,7 +1348,6 @@ def BIBD_from_arc_in_desarguesian_projective_plane(n,k,existence=False):
        Some maximal arcs in finite projective planes.
        Journal of Combinatorial Theory 6, no. 3 (1969): 317-319.
        :doi:`10.1016/S0021-9800(69)80095-5`
-
     """
     q = (n-1)//(k-1)-1
     if (k % 2                 or
@@ -1428,7 +1425,6 @@ class PairwiseBalancedDesign(GroupDivisibleDesign):
       a list of lists of integers. The list will not be copied but will be
       modified in place (each block is sorted, and the whole list is
       sorted). Your ``blocks`` object will become the instance's internal data.
-
     """
     def __init__(self, points, blocks, K=None, lambd=1, check=True, copy=True,**kwds):
         r"""
@@ -1438,7 +1434,6 @@ class PairwiseBalancedDesign(GroupDivisibleDesign):
 
             sage: designs.balanced_incomplete_block_design(13,3) # indirect doctest
             (13,3,1)-Balanced Incomplete Block Design
-
         """
         try:
             i = int(points)

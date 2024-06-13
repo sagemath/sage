@@ -804,7 +804,6 @@ class AbstractCode(Parent):
             It accepts unspecified arguments as well. See the documentation of
             sage.coding.information_set_decoder.LinearCodeInformationSetDecoder
             for more details.
-
         """
         if not self._default_decoder_name:
             raise NotImplementedError("No decoder implemented for this code.")

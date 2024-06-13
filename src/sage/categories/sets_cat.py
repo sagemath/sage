@@ -71,7 +71,6 @@ def print_compare(x, y):
         1 != 2
         sage: print_compare(1,1)
         1 == 1
-
     """
     if x == y:
         return LazyFormat("%s == %s") % (x, y)
@@ -211,7 +210,6 @@ class Sets(Category_singleton):
     TESTS::
 
           sage: TestSuite(Sets()).run()
-
     """
 
     def super_categories(self):
@@ -572,7 +570,6 @@ class Sets(Category_singleton):
                 sage: Semigroups().Subobjects().is_subcategory(Semigroups().Subquotients())
                 True
                 sage: TestSuite(C).run()
-
             """
             return SubobjectsCategory.category_of(self)
 
@@ -1206,7 +1203,6 @@ class Sets(Category_singleton):
             We restore ``P.element_class`` in a proper state for further tests::
 
                 sage: P.element_class.__eq__ = eq
-
             """
             tester = self._tester(**options)
             S = list(tester.some_elements()) + [None, 0]
@@ -1245,7 +1241,6 @@ class Sets(Category_singleton):
             We restore ``P.element_class`` in a proper state for further tests::
 
                 sage: P.element_class.__eq__ = eq
-
             """
             tester = self._tester(**options)
             S = list(tester.some_elements()) + [None, 0]
@@ -1277,7 +1272,6 @@ class Sets(Category_singleton):
                 ...
                 AssertionError: non transitive equality:
                 3 + O(3^2) == O(3) and O(3) == 0 but 3 + O(3^2) != 0
-
             """
             tester = self._tester(**options)
             S = list(tester.some_elements())
@@ -1524,7 +1518,6 @@ class Sets(Category_singleton):
                 sage: F(R) == QQ
                 True
                 sage: TestSuite(QQ).run()   # indirect doctest
-
             """
             tester = self._tester(**options)
             FO = self.construction()
@@ -2654,7 +2647,6 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                  Category of modules with basis over Integer Ring,
                  ...
                  Category of objects]
-
             """
             from sage.categories.modules_with_basis import ModulesWithBasis
             return [ModulesWithBasis(self.base_ring())]

@@ -103,7 +103,6 @@ class CartanType(CartanType_standard_affine):
             BC1~
             sage: c.edges(sort=True)                                                    # needs sage.graphs
             [(0, 1, 1), (1, 0, 4)]
-
         """
         from .dynkin_diagram import DynkinDiagram_class
         n = self.n

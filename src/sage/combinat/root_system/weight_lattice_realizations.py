@@ -953,7 +953,6 @@ class WeightLatticeRealizations(Category_over_base_ring):
                 [  0   2   2   1]
                 [  0   2   4   1]
                 [1/2   1   1   0]
-
             """
             from sage.matrix.constructor import matrix
             ct = self.cartan_type()
@@ -1080,7 +1079,6 @@ class WeightLatticeRealizations(Category_over_base_ring):
                 sage: all(s1(ct) == s2(ct)                                              # needs sage.graphs
                 ....:     for ct in CartanType.samples(finite=True, crystallographic=True))
                 True
-
             """
             P = self.parent()
             ct = P.cartan_type()

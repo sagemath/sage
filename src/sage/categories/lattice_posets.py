@@ -38,7 +38,6 @@ class LatticePosets(Category):
 
         sage: C = LatticePosets()
         sage: TestSuite(C).run()
-
     """
     @cached_method
     def super_categories(self):

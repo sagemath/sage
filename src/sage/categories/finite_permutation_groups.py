@@ -322,7 +322,6 @@ class FinitePermutationGroups(CategoryWithAxiom):
                 sage: D8 = DihedralGroup(8)
                 sage: D8.profile(4, using_polya=False)
                 8
-
             """
 
             if using_polya:

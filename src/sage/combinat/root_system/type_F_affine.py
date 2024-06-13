@@ -62,7 +62,6 @@ class CartanType(CartanType_standard_untwisted_affine):
             sage: f.edges(sort=True)                                                    # needs sage.graphs
             [(0, 1, 1), (1, 0, 1), (1, 2, 1), (2, 1, 1),
              (2, 3, 2), (3, 2, 1), (3, 4, 1), (4, 3, 1)]
-
         """
         from .dynkin_diagram import DynkinDiagram_class
         g = DynkinDiagram_class(self)

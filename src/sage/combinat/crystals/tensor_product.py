@@ -886,7 +886,6 @@ class CrystalOfTableaux(CrystalOfWords):
         Traceback (most recent call last):
         ...
         ValueError: entries of each shape must be weakly decreasing
-
     """
 
     @staticmethod
@@ -909,7 +908,6 @@ class CrystalOfTableaux(CrystalOfWords):
             sage: T2 = crystals.Tableaux(['A', [1,1]], [3,1,1,1])
             sage: T1 is T2
             True
-
         """
         cartan_type = CartanType(cartan_type)
         if cartan_type.letter == 'A' and isinstance(cartan_type, SuperCartanType_standard):

@@ -298,7 +298,6 @@ class CartanType(SageObject, CartanType_abstract):
             O---O
             5   6
             F4xA2
-
         """
         from .dynkin_diagram import DynkinDiagram_class
         relabelling = self._index_relabelling
@@ -465,7 +464,6 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
         sage: RootSystem("A2xB2").ambient_space()
         Ambient space of the Root system of type A2xB2
-
     """
 
     def cartan_type(self):

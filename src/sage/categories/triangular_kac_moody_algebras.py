@@ -40,7 +40,6 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
             sage: TriangularKacMoodyAlgebras(QQ).super_categories()
             [Join of Category of graded Lie algebras with basis over Rational Field
                  and Category of kac moody algebras over Rational Field]
-
         """
         # We do not also derive from (Magmatic) algebras since we don't want *
         #   to be our Lie bracket

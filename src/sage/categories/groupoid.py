@@ -67,7 +67,6 @@ class Groupoid(CategoryWithParameters):
 
             sage: Groupoid(DihedralGroup(3)).parent_class is Groupoid(ZZ).parent_class
             True
-
         """
         return None
 

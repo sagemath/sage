@@ -1005,7 +1005,6 @@ def OA_11_185():
 
         sage: designs.orthogonal_arrays.is_available(11,185)                            # needs sage.schemes
         True
-
     """
     from sage.combinat.designs.difference_family import difference_family
 
@@ -1740,7 +1739,6 @@ def OA_520_plus_x(x):
         sage: OA = OA_520_plus_x(0)                   # not tested (already tested in OA_10_520)
         sage: is_orthogonal_array(OA,10,520,2)  # not tested (already tested in OA_10_520)
         True
-
     """
     from .orthogonal_arrays import incomplete_orthogonal_array
     k = 9+x+1

@@ -119,7 +119,6 @@ class Fields(CategoryWithAxiom):
             sage: _ = gc.collect()
             sage: len([X for X in gc.get_objects() if isinstance(X, sage.rings.finite_rings.integer_mod_ring.IntegerModRing_generic)]) - n
             0
-
         """
         from sage.rings.ring import _is_Field
         try:
@@ -154,7 +153,6 @@ class Fields(CategoryWithAxiom):
             True
             sage: F._contains_helper(Q)
             True
-
         """
         return Category_contains_method_by_parent_class(cls())
 
@@ -407,7 +405,6 @@ class Fields(CategoryWithAxiom):
                 True
                 sage: FunctionField(GF(2), 'x').is_perfect()
                 False
-
             """
             if self.characteristic() == 0:
                 return True

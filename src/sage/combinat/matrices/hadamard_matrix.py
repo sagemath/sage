@@ -802,7 +802,6 @@ def construction_four_symbol_delta_code_II(X, Y, Z, W):
         Traceback (most recent call last):
         ...
         AssertionError
-
     """
 
     n = len(Z)

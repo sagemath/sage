@@ -55,8 +55,6 @@ class TensorProductFunctor(CovariantFunctorialConstruction):
 
 
 tensor = TensorProductFunctor()
-
-
 """
 The tensor product functorial construction
 

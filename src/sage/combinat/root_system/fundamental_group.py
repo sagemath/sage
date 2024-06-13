@@ -498,7 +498,6 @@ class FundamentalGroupOfExtendedAffineWeylGroup_Class(UniqueRepresentation,
             (0, 3)
             sage: FundamentalGroupOfExtendedAffineWeylGroup(['A',2,1], general_linear=True).special_nodes()
             Integer Ring
-
         """
         return self._special_nodes
 
@@ -555,7 +554,6 @@ class FundamentalGroupOfExtendedAffineWeylGroup_Class(UniqueRepresentation,
             sage: from sage.combinat.root_system.fundamental_group import FundamentalGroupOfExtendedAffineWeylGroup
             sage: FundamentalGroupOfExtendedAffineWeylGroup(['A',2,1]).index_set()
             (0, 1, 2)
-
         """
         return self.cartan_type().index_set()
 

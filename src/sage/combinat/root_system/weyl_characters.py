@@ -451,7 +451,6 @@ class WeylCharacterRing(CombinatorialFreeModule):
             q*A2(0,0)
             sage: [A2(x) for x in [-2,-1,0,1,2,-2*q,-q,q,2*q,(1-q)]]
             [-2*A2(0,0), -A2(0,0), 0, A2(0,0), 2*A2(0,0), -2*q*A2(0,0), -q*A2(0,0), q*A2(0,0), 2*q*A2(0,0), (-q+1)*A2(0,0)]
-
         """
         # The purpose of this __call__ method is only to handle the
         # syntactical shorthand; otherwise it just delegates the work

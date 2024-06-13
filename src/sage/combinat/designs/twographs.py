@@ -68,7 +68,6 @@ class TwoGraph(IncidenceStructure):
     of size four contains an even number of elements of `T`. For more
     information, see the documentation of the
     :mod:`~sage.combinat.designs.twographs` module.
-
     """
     def __init__(self, points=None, blocks=None, incidence_matrix=None,
             name=None, check=False, copy=True):

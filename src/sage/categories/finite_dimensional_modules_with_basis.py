@@ -1059,6 +1059,5 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: C.FiniteDimensional()
                 Category of tensor products of
                  finite dimensional modules with basis over Integer Ring
-
             """
             return [self.base_category()]

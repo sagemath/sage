@@ -929,7 +929,6 @@ class ReedMullerPolynomialEncoder(Encoder):
             -x0*x1 - x1^2 + x0 + 1
             sage: E.encode(p) == c
             False
-
         """
         return _multivariate_polynomial_interpolation(
             c,

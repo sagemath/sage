@@ -121,7 +121,6 @@ def format_interval(t):
         sage: t = (2, 10)
         sage: format_interval(t)
         'between 2 and 10'
-
     """
     return str(t[0]) if t[0] == t[1] else 'between %s and %s' % (t[0], t[1])
 
@@ -249,7 +248,6 @@ class Channel(SageObject):
             sage: Chan = channels.StaticErrorRateChannel(GF(59)^6, n_err)
             sage: Chan.input_space()
             Vector space of dimension 6 over Finite Field of size 59
-
         """
         return self._input_space
 

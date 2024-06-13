@@ -192,7 +192,6 @@ def HighestWeightCrystal(dominant_weight, model=None):
         ....:             C1 = crystals.HighestWeight(wt.to_ambient().to_weight_space(ZZ), model=model)
         ....:             C2 = crystals.HighestWeight(wt, model=model)
         ....:             assert C1 == C2
-
     """
     cartan_type = dominant_weight.parent().cartan_type()
     if model is None:

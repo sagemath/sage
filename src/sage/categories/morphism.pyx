@@ -297,7 +297,6 @@ cdef class Morphism(Map):
             AssertionError: coercion from Univariate Polynomial Ring in x over Integer Ring
             to Univariate Polynomial Ring in z over Integer Ring
             already registered or discovered
-
         """
         self._codomain.register_coercion(self)
 
@@ -442,7 +441,6 @@ cdef class Morphism(Map):
             sage: f = Hom(ZZ,Zmod(1)).an_element()
             sage: bool(f) # indirect doctest
             False
-
         """
         try:
             return self._is_nonzero()
@@ -628,7 +626,6 @@ cdef class SetMorphism(Morphism):
             sage: f(2,'hello world',test=1)     # indirect doctest
             foo called with ('hello world',) {'test': 1}
             2
-
         """
         try:
             return self._function(x, *args, **kwds)
@@ -704,7 +701,6 @@ cdef class SetMorphism(Morphism):
             False
             sage: f._eq_c_impl(1)
             False
-
         """
         return isinstance(other, SetMorphism) and self.parent() == other.parent() and self._function == (<SetMorphism>other)._function
 

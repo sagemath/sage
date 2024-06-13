@@ -1029,7 +1029,6 @@ class Magmas(Category_singleton):
                 'x'
                 sage: x.is_idempotent()
                 True
-
             """
             return self * self == self
 
@@ -1178,7 +1177,6 @@ class Magmas(Category_singleton):
                     sage: y = Out.an_element()
                     sage: Out.product(x, y)
                     Out[{}] + 4*Out[{1}] + 9*Out[{2}] + Out[{1, 2}]
-
                 """
                 R = self.realization_of().a_realization()
                 return self(R(left) * R(right))

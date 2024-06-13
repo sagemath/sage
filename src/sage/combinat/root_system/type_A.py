@@ -123,7 +123,6 @@ class AmbientSpace(ambient_space.AmbientSpace):
              (1, 0, 0, -1),
              (0, 1, 0, -1),
              (0, 0, 1, -1)]
-
         """
         res = []
         for j in range(self.n):
@@ -148,7 +147,6 @@ class AmbientSpace(ambient_space.AmbientSpace):
             sage: e = RootSystem(['A',3]).ambient_lattice()
             sage: e.fundamental_weights()
             Finite family {1: (1, 0, 0, 0), 2: (1, 1, 0, 0), 3: (1, 1, 1, 0)}
-
         """
         return self.sum(self.monomial(j) for j in range(i))
 

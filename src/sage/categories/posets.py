@@ -88,7 +88,6 @@ class Posets(Category):
 
         sage: C = Posets()
         sage: TestSuite(C).run()
-
     """
     @cached_method
     def super_categories(self):
@@ -472,7 +471,6 @@ class Posets(Category):
                 True
                 sage: P.is_order_ideal([1, 3, 4])
                 False
-
             """
             return all((u in self and all(x in o for x in self.lower_covers(u))) for u in o)
 
@@ -499,7 +497,6 @@ class Posets(Category):
                 False
                 sage: P.is_order_filter({3, 6, 12})
                 True
-
             """
             return all((u in self and all(x in o for x in self.upper_covers(u))) for u in o)
 

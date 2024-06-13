@@ -57,7 +57,6 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             'bases of Non-Commutative Symmetric Functions or Quasisymmetric functions over the Rational Field'
             sage: C
             Category of bases of Non-Commutative Symmetric Functions or Quasisymmetric functions over the Rational Field
-
         """
         return "bases of Non-Commutative Symmetric Functions or Quasisymmetric functions over the %s" % self.base().base_ring()
 
@@ -874,7 +873,6 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
                 0
                 sage: L[1,1,1].duality_pairing(F[1,2])
                 1
-
             """
             return self.parent().duality_pairing(self, y)
 
@@ -1142,7 +1140,6 @@ class AlgebraMorphism(ModuleMorphismByLinearity): # Find a better name
             sage: f = AlgebraMorphism(Psi, lambda i : Phi[i,i], codomain=Phi)
             sage: f._on_basis([ 3, 2 ])
             Phi[3, 3, 2, 2]
-
         """
         if self._anti:
             c = reversed(c)
@@ -1237,7 +1234,6 @@ class GradedModulesWithInternalProduct(Category_over_base_ring):
                 R[2]
                 sage: R.internal_product(R[2,2], R[1,2])
                 0
-
             """
             if self.internal_product_on_basis is not NotImplemented:
                 return self.module_morphism(

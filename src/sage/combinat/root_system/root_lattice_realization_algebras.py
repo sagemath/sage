@@ -747,7 +747,6 @@ class Algebras(AlgebrasCategory):
                 1/(q*u)*B[Lambda[1]]
                 sage: T0(KL0.monomial(-2*omega[1]))
                 ((-u^2+1)/(q*u))*B[0] + 1/(q^2*u)*B[2*Lambda[1]]
-
             """
             # In type BC dual we used q^2 and q elsewhere
             # Not sure this is the right thing to do or just a workaround ...

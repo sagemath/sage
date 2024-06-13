@@ -1168,7 +1168,6 @@ class PlotOptions:
             sage: options = L.plot_parse_options(affine=False)
             sage: options.intersection_at_level_1(L.rho())
             Lambda[0] + Lambda[1] + Lambda[2]
-
         """
         if self.level is not None:
             return x * self.level / x.level()
@@ -1594,7 +1593,6 @@ def barycentric_projection_matrix(n, angle=0):
         ....:     m = barycentric_projection_matrix(n)
         ....:     assert sum(m.columns()).is_zero()
         ....:     assert matrix(QQ, n+1,n+1, lambda i,j: 1 if i==j else -1/n) == m.transpose()*m
-
     """
     from sage.matrix.constructor import matrix
     from sage.misc.functional import sqrt

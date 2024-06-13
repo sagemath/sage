@@ -140,7 +140,6 @@ class AmbientSpace(CombinatorialFreeModule):
             Traceback (most recent call last):
             ...
             NotImplementedError
-
         """
         raise NotImplementedError
 
@@ -169,7 +168,6 @@ class AmbientSpace(CombinatorialFreeModule):
             Ambient lattice of the Root system of type ['A', 4]
             sage: RootSystem(['B',4]).ambient_space()
             Ambient space of the Root system of type ['B', 4]
-
         """
         return self._name_string()
 
@@ -179,7 +177,6 @@ class AmbientSpace(CombinatorialFreeModule):
 
             sage: RootSystem(['A',4]).ambient_lattice()._name_string()
             "Ambient lattice of the Root system of type ['A', 4]"
-
         """
         return self._name_string_helper("ambient", capitalize=capitalize, base_ring=base_ring, type=type)
 
@@ -257,7 +254,6 @@ class AmbientSpace(CombinatorialFreeModule):
             sage: s_a = e.reflection(a)
             sage: s_a(b)
             (0, -1, 0, 0)
-
         """
         # TODO: get rid of this as one can use the generic implementation
         # (i.e. scalar and associated coroot are implemented)
@@ -406,7 +402,6 @@ class AmbientSpaceElement(CombinatorialFreeModule.Element):
             (1/2, -1/2, -1/2, -1/2)
             sage: a.associated_coroot()
             (1, -1, -1, -1)
-
         """
         # FIXME: make it work over ZZ!
         return self * self.base_ring()(2/self.inner_product(self))
@@ -508,7 +503,6 @@ class AmbientSpaceElement(CombinatorialFreeModule.Element):
             (2, 2, 3)
             sage: v.to_ambient()
             (2, 2, 3)
-
         """
         return self
 

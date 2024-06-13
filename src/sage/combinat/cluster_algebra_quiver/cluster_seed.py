@@ -1717,7 +1717,6 @@ class ClusterSeed(SageObject):
             A seed for a cluster algebra of rank 2 with 2 frozen variables
             sage: S.c_vector(0)
             (1, -1)
-
         """
         if k not in range(self._n):
             raise ValueError("The cluster seed does not have a c-vector of index %s." % k)
@@ -1867,7 +1866,6 @@ class ClusterSeed(SageObject):
             [ 0  0 -1]
             sage: S.d_vector(0)
             (1, 0, 0)
-
         """
         B = self.b_matrix()
         D = copy(self._D)
@@ -2050,7 +2048,6 @@ class ClusterSeed(SageObject):
             sage: Q.mutate(1)
             sage: Q.red_vertices()
             [1]
-
         """
         # Make sure we have c vectors on
         if not self._use_c_vec:
@@ -2075,7 +2072,6 @@ class ClusterSeed(SageObject):
             sage: Q.mutate(1)
             sage: Q.first_red_vertex()
             1
-
         """
         # Make sure we have c vectors
         if not self._use_c_vec:
@@ -2690,7 +2686,6 @@ class ClusterSeed(SageObject):
             sage: S.cluster_index('x')
             sage: S.cluster_index('(y+1)/x')
             0
-
         """
         if self._use_fpolys and isinstance(cluster_str, str):
             c = FractionField(self._R)(cluster_str)
@@ -3026,7 +3021,6 @@ class ClusterSeed(SageObject):
 
             sage: T.exchangeable_part().quiver().digraph().edges(sort=True)
             [(0, 1, (1, -1)), (2, 1, (1, -1))]
-
         """
         from sage.combinat.cluster_algebra_quiver.mutation_class import _principal_part
         eval_dict = {self.y(i): 1 for i in range(self._m)}

@@ -1538,7 +1538,6 @@ def OA_relabel(OA, k, n, blocks=tuple(), matrix=None, symbol_list=None):
         Traceback (most recent call last):
         ...
         RuntimeError: Two block have the same coordinate for one of the k dimensions
-
     """
     if blocks:
         l = []
@@ -1578,7 +1577,6 @@ def OA_standard_label(OA):
         ....:      ['b', 'b', 'b', 'b']]
         sage: OA_standard_label(C)
         [[0, 0, 0, 1], [0, 0, 1, 0], [0, 1, 0, 0], [1, 0, 0, 0], [1, 1, 1, 1]]
-
     """
     symbol_list = sorted({x for l in OA for x in l})
     mapping = {symbol: index for index, symbol in enumerate(symbol_list)}
@@ -2053,7 +2051,6 @@ def OA_from_wider_OA(OA,k):
         sage: OA_from_wider_OA(designs.orthogonal_arrays.build(6,20,2),1)[:5]
         [(19,), (19,), (19,), (19,), (19,)]
         sage: _ = designs.orthogonal_arrays.build(5,46) # indirect doctest
-
     """
     if len(OA[0]) == k:
         return OA
@@ -2191,7 +2188,6 @@ class OAMainFunctions:
              [1, 0, 2],
              [2, 2, 0]]
             sage: OA_7_50 = designs.orthogonal_arrays.build(7,50)      # indirect doctest
-
         """
         return orthogonal_array(k,n,t,resolvable=resolvable)
 

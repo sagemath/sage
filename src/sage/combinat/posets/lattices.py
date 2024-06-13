@@ -554,7 +554,6 @@ class FiniteJoinSemilattice(FinitePoset):
         sage: P = Poset([[1,2],[3],[3]])
         sage: J = JoinSemilattice(P)
         sage: TestSuite(J).run()
-
     """
     Element = JoinSemilatticeElement
     _desc = 'Finite join-semilattice'
@@ -754,7 +753,6 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         sage: P = Poset([[1,2],[3],[3]])
         sage: L = LatticePoset(P)
         sage: TestSuite(L).run()
-
     """
     Element = LatticePosetElement
 

@@ -2046,7 +2046,6 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
             ....:     g2.delete_vertex(ct.special_node())
             ....:     assert g1.vertices(sort=True) == g2.vertices(sort=True)
             ....:     assert g1.edges(sort=True) == g2.edges(sort=True)
-
         """
 
     @abstract_method
@@ -2535,7 +2534,6 @@ class CartanType_standard_finite(CartanType_standard, CartanType_finite):
             (CartanType, ('D', 4))
             sage: T == loads(dumps(T))
             True
-
         """
         return (CartanType, (self.letter, self.n))
 
@@ -2708,7 +2706,6 @@ class CartanType_standard_affine(CartanType_standard, CartanType_affine):
             False
             sage: ct1 == ct3
             False
-
         """
         assert (letter in ['A', 'B', 'C', 'BC', 'D', 'E', 'F', 'G'])
         self.letter = letter
@@ -2748,7 +2745,6 @@ class CartanType_standard_affine(CartanType_standard, CartanType_affine):
             (CartanType, ('D', 4, 1))
             sage: T == loads(dumps(T))
             True
-
         """
         return (CartanType, (self.letter, self.n, self.affine))
 
@@ -2917,7 +2913,6 @@ class CartanType_standard_untwisted_affine(CartanType_standard_affine):
 
             sage: CartanType(['B', 3, 1]).is_untwisted_affine()
             True
-
         """
         return True
 

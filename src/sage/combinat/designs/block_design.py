@@ -333,7 +333,6 @@ def DesarguesianProjectivePlaneDesign(n, point_coordinates=True, check=True):
         Traceback (most recent call last):
         ...
         ValueError: the order of a finite field must be a prime power
-
     """
     K = FiniteField(n, 'a')
     n2 = n**2

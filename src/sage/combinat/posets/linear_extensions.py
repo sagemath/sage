@@ -702,7 +702,6 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
 
             sage: [p for p in Permutations(list(P)) if list(p) in L]
             [[1, 2, 3, 4, 6, 12], [1, 2, 3, 6, 4, 12], [1, 2, 4, 3, 6, 12], [1, 3, 2, 4, 6, 12], [1, 3, 2, 6, 4, 12]]
-
         """
         if not self._is_facade:
             return super().__contains__(obj)
@@ -859,7 +858,6 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             [            0            x0             0            x2      -x1 - x3]
 
         .. SEEALSO:: :meth:`markov_chain_digraph`, :meth:`promotion`, :meth:`tau`
-
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         from sage.matrix.constructor import matrix

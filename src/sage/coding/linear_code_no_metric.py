@@ -712,7 +712,6 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             sage: L = list(C)
             sage: L[10].is_immutable()
             True
-
         """
         from sage.modules.finite_submodule_iter import \
                                                 FiniteFieldsubspace_iterator
@@ -790,7 +789,6 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
             sage: C[0].is_immutable()
             True
-
         """
         # IMPORTANT: If the __iter__() function implementation is changed
         # then the implementation here must also be changed so that

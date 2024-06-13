@@ -2371,7 +2371,6 @@ class KR_type_BnElement(KirillovReshetikhinGenericCrystalElement):
             sage: K=crystals.KirillovReshetikhin(['B',3,1],3,1)
             sage: b = K.module_generators[0]
             sage: b.f(0) # indirect doctest
-
         """
         b = self.parent().to_ambient_crystal()(self).f_string([0,0])
         if b is None:
@@ -2732,7 +2731,6 @@ class KR_type_Dn_twisted(KirillovReshetikhinGenericCrystal):
             sage: hw = [ b for b in T if all(b.epsilon(i)==0 for i in [2,3]) ]
             sage: all(K.from_pm_diagram_to_highest_weight_vector(K.from_highest_weight_vector_to_pm_diagram(b)) == b for b in hw)
             True
-
         """
         n = self.cartan_type().rank() - 1
         s = self.s()

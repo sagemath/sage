@@ -230,7 +230,6 @@ class WeightSpace(CombinatorialFreeModule):
             Coweight lattice of the Root system of type ['A', 4]
             sage: RootSystem(['B',4]).coweight_space()
             Coweight space over the Rational Field of the Root system of type ['B', 4]
-
         """
         return self._name_string()
 
@@ -540,7 +539,6 @@ class WeightSpaceElement(CombinatorialFreeModule.Element):
             sage: w = Lambda[1] - delta                                                 # needs sage.graphs
             sage: w.is_dominant()                                                       # needs sage.graphs
             True
-
         """
         return all(self.coefficient(i) >= 0 for i in self.parent().index_set())
 
@@ -560,7 +558,6 @@ class WeightSpaceElement(CombinatorialFreeModule.Element):
             Only implemented in finite Cartan type.
             Does not work for coweight lattices because there is no implemented map
             from the coweight lattice to the ambient space.
-
         """
         return self.parent().to_ambient_space_morphism()(self)
 

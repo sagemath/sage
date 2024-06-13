@@ -1711,7 +1711,6 @@ cdef class FormalCompositeMap(Map):
             Traceback (most recent call last):
             ...
             IndexError: list index out of range
-
         """
         return self.__list[i]
 
@@ -1932,7 +1931,6 @@ cdef class FormalCompositeMap(Map):
             sage: f = QQ.hom(QQbar) * ZZ.hom(QQ)                                        # needs sage.rings.number_field
             sage: f.is_injective()                                                      # needs sage.rings.number_field
             True
-
         """
         try:
             # we try the category first

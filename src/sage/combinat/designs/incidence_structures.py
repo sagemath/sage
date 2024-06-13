@@ -472,7 +472,6 @@ class IncidenceStructure:
             True
             sage: IS1._canonical_label is None or IS2._canonical_label is None
             False
-
         """
         if (self.num_points() != other.num_points() or
             self.num_blocks() != other.num_blocks() or
@@ -775,7 +774,6 @@ class IncidenceStructure:
             sage: BD = IncidenceStructure(7,[[0,1,2],[0,3,4],[0,5,6],[1,3,5],[1,4,6],[2,3,6],[2,4,5]])
             sage: BD.blocks()
             [[0, 1, 2], [0, 3, 4], [0, 5, 6], [1, 3, 5], [1, 4, 6], [2, 3, 6], [2, 4, 5]]
-
         """
         if self._point_to_index is None:
             return [b[:] for b in self._blocks]
@@ -2230,7 +2228,6 @@ class IncidenceStructure:
              \draw node...;
              \draw node...;
             \end{tikzpicture}
-
         """
         from sage.functions.trig import arctan2
 

@@ -145,7 +145,6 @@ cdef class dancing_linksWrapper:
             sage: x = dlx_solver([])
             sage: x.get_solution()
             []
-
         """
         self._rows = [row for row in rows]
         self._initialize()
@@ -173,7 +172,6 @@ cdef class dancing_linksWrapper:
             sage: x.reinitialize()             # indirect doctest
             sage: x.get_solution() if x.search() else None
             [0, 1]
-
         """
         cdef vector[int] v
         cdef vector[vector[int]] vv
@@ -226,7 +224,6 @@ cdef class dancing_linksWrapper:
             sage: x.get_solution() if x.search() else None
             [4, 5]
             sage: x.get_solution() if x.search() else None
-
         """
         sig_on()
         self._x = dancing_links()
@@ -913,7 +910,6 @@ cdef class dancing_linksWrapper:
 
             sage: x.to_sat_solver('cryptominisat')      # optional - pycryptosat        # needs sage.sat
             CryptoMiniSat solver: 4 variables, 7 clauses.
-
         """
         from sage.sat.solvers.satsolver import SAT
         s = SAT(solver)
@@ -1040,7 +1036,6 @@ cdef class dancing_linksWrapper:
             sage: d.to_milp('gurobi')           # optional - gurobi sage_numerical_backends_gurobi, needs sage.numerical.mip
             (Boolean Program (no objective, 4 variables, 4 constraints),
              MIPVariable with 4 binary components)
-
         """
         from sage.numerical.mip import MixedIntegerLinearProgram
         p = MixedIntegerLinearProgram(solver=solver)

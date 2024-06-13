@@ -107,7 +107,6 @@ class VectorSpaces(Category_module):
             sage: Q3 = FiniteRankFreeModule(QQ, 3)                                      # needs sage.modules
             sage: Modules(QQ)(Q3) is Q3                                                 # needs sage.modules
             True
-
         """
         try:
             V = x.vector_space(self.base_field())
@@ -175,7 +174,6 @@ class VectorSpaces(Category_module):
                 3
                 sage: M.tensor_module(1, 2).dimension()                                 # needs sage.modules
                 27
-
             """
             return self.rank()
 
@@ -240,7 +238,6 @@ class VectorSpaces(Category_module):
                         [Category of finite dimensional vector spaces with basis over Rational Field]
                         sage: VectorSpaces(QQ).WithBasis().FiniteDimensional().TensorProducts().FiniteDimensional()
                         Category of tensor products of finite dimensional vector spaces with basis over Rational Field
-
                     """
                     return [self.base_category()]
 
@@ -301,7 +298,6 @@ class VectorSpaces(Category_module):
                     [Category of finite dimensional vector spaces over Rational Field]
                     sage: VectorSpaces(QQ).FiniteDimensional().TensorProducts().FiniteDimensional()
                     Category of tensor products of finite dimensional vector spaces over Rational Field
-
                 """
                 return [self.base_category()]
 

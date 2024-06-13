@@ -603,7 +603,6 @@ class CylindricalDiagram(SageObject):
              &  &  &  &  & 0 & 1 & \frac{2}{3} & 1 & 1 & 1 & 0\\
              &  &  &  &  &  & 0 & 1 & 3 & 4 & 5 & 1 & 0
              \end{array}
-
         """
         D = self.diagram
         m = len(D[-1])

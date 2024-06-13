@@ -872,7 +872,6 @@ class GRSEvaluationPolynomialEncoder(Encoder):
             Traceback (most recent call last):
             ...
             ValueError: polynomial_ring's base field has to be the same as code's
-
         """
         from sage.rings.polynomial.polynomial_ring import PolynomialRing_commutative
         super().__init__(code)
@@ -1054,7 +1053,6 @@ class GRSEvaluationPolynomialEncoder(Encoder):
             6*x^4 + 6*x^3 + 2*x^2
             sage: E.encode(p) == c
             False
-
         """
         C = self.code()
         alphas = C.evaluation_points()

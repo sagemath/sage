@@ -130,7 +130,6 @@ class IntegralDomains(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: ZZ._test_fraction_field()
-
             """
             tester = self._tester(**options)
             try:

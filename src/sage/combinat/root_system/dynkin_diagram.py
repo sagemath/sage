@@ -415,7 +415,6 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
             [ 2 -1 -1]
             [-2  2 -1]
             [-1 -1  2]
-
         """
         # hyperbolic Dynkin diagram of Exercise 4.9 p. 57 of Kac Infinite Dimensional Lie Algebras.
         g = DynkinDiagram()

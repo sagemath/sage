@@ -398,7 +398,6 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
         sage: TestSuite(Phi).run()
         sage: TestSuite(Psi).run()
         sage: TestSuite(complete).run()
-
     """
 
     def __init__(self, R):
@@ -517,7 +516,6 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 sage: N.Bases().super_categories()
                 [Category of bases of Non-Commutative Symmetric Functions or Quasisymmetric functions over the Rational Field,
                  Category of realizations of graded modules with internal product over Rational Field]
-
             """
             R = self.base().base_ring()
             from .generic_basis_code import GradedModulesWithInternalProduct
@@ -2028,7 +2026,6 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 sage: N = NonCommutativeSymmetricFunctions(QQ)
                 sage: N.MultiplicativeBases().super_categories()
                 [Category of bases of Non-Commutative Symmetric Functions over the Rational Field]
-
             """
             return [self.base().Bases()]
 
@@ -4093,7 +4090,6 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 True
                 sage: all(Phi(S(Phi[comp])) == Phi[comp] for comp in Compositions(5))
                 True
-
             """
             CombinatorialFreeModule.__init__(self, NCSF.base_ring(), Compositions(),
                                              prefix='Phi', bracket=False,
@@ -4492,7 +4488,6 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 True
                 sage: all(nM(S(nM[comp])) == nM[comp] for comp in Compositions(5))
                 True
-
             """
             CombinatorialFreeModule.__init__(self, NCSF.base_ring(), Compositions(),
                                              prefix='nM', bracket=False,
@@ -4654,7 +4649,6 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 True
                 sage: all(I(S(I[comp])) == I[comp] for comp in Compositions(5))
                 True
-
             """
             CombinatorialFreeModule.__init__(self, NCSF.base_ring(), Compositions(),
                                              prefix='I', bracket=False,

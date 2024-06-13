@@ -72,7 +72,6 @@ class GradedHopfAlgebrasWithBasis(GradedModulesCategory):
             TESTS::
 
                 sage: TestSuite(GradedHopfAlgebrasWithBasis(QQ).WithRealizations()).run()
-
             """
             from sage.categories.graded_hopf_algebras import GradedHopfAlgebras
             R = self.base_category().base_ring()

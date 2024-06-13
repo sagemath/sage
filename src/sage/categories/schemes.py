@@ -138,7 +138,6 @@ class Schemes(Category):
               Defn: Natural morphism:
                       From: Integer Ring
                       To:   Rational Field
-
         """
         from sage.schemes.generic.scheme import Scheme
         if isinstance(x, Scheme):

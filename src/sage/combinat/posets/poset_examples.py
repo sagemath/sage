@@ -578,7 +578,6 @@ class Posets(metaclass=ClasscallMetaclass):
             Finite poset containing 15 elements
             sage: len(P.cover_relations())
             17
-
         """
         def lower_covers(partition):
             r"""

@@ -80,7 +80,6 @@ def two_n(B):
         ....:         sqs = designs.steiner_quadruple_system(n)
         ....:         if not two_n(sqs).is_t_design(3,2*n,4,1):
         ....:             print("Something is wrong !")
-
     """
     n = B.num_points()
     Y = []
@@ -172,7 +171,6 @@ def three_n_minus_eight(B):
         ....:         sqs = designs.steiner_quadruple_system(n)
         ....:         if not three_n_minus_eight(sqs).is_t_design(3,3*n-8,4,1):
         ....:             print("Something is wrong !")
-
     """
     n = B.num_points()
 
@@ -233,7 +231,6 @@ def three_n_minus_four(B):
         ....:         sqs = designs.steiner_quadruple_system(n)
         ....:         if not three_n_minus_four(sqs).is_t_design(3,3*n-4,4,1):
         ....:             print("Something is wrong !")
-
     """
     n = B.num_points()
 
@@ -297,7 +294,6 @@ def four_n_minus_six(B):
         ....:         sqs = designs.steiner_quadruple_system(n)
         ....:         if not four_n_minus_six(sqs).is_t_design(3,4*n-6,4,1):
         ....:             print("Something is wrong !")
-
     """
     n = B.num_points()
     f = n-2
@@ -369,7 +365,6 @@ def twelve_n_minus_ten(B):
         ....:         sqs = designs.steiner_quadruple_system(n)
         ....:         if not twelve_n_minus_ten(sqs).is_t_design(3,12*n-10,4,1):
         ....:             print("Something is wrong !")
-
     """
     n = B.num_points()
     B14 = steiner_quadruple_system(14)

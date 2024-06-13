@@ -511,7 +511,6 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
 
                 sage: [t.reduced_word() for t in CoxeterGroup(["A",3]).inversion_sequence([2,1,3,2,1,3])]
                 [[2], [1, 2, 1], [2, 3, 2], [1, 2, 3, 2, 1], [3], [1]]
-
             """
             return [self.from_reduced_word(word[:i+1]+list(reversed(word[:i])))
                     for i in range(len(word))]
@@ -741,7 +740,6 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 W = CoxeterGroup(['I',7])
                 p = W.permutahedron()
                 sphinx_plot(p)
-
             """
             n = self.one().canonical_matrix().rank()
             weights = self.fundamental_weights()

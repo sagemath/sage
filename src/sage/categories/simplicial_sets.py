@@ -421,7 +421,6 @@ class SimplicialSets(Category_singleton):
                          (f, e): ((1, 1), (1, e)),
                          (f * f, 1): ((f, e), s_0 (1, 1), (f, 1)),
                          (f * f, e): ((f, 1), s_0 (1, e), (f, e))}
-
                 """
                 edges = self.n_cells(1)
                 if not edges:
@@ -601,7 +600,6 @@ class SimplicialSets(Category_singleton):
                     {f: F1bar}
                     sage: list(d2.values())[0].parent()
                     Quotient of Univariate Laurent Polynomial Ring in F1 over Integer Ring by the ideal (-1 + F1^2)
-
                 """
                 G, d = self._universal_cover_dict()
                 phi = G.abelianization_map()
@@ -692,7 +690,6 @@ class SimplicialSets(Category_singleton):
                     [1 + F1]
                     sage: C.differential(3)
                     []
-
                 """
                 from sage.homology.chain_complex import ChainComplex
                 from sage.structure.element import get_coercion_model
@@ -886,7 +883,6 @@ class SimplicialSets(Category_singleton):
                     sage: X.universal_cover().homology(2)
                     Z^5
                     sage: from sage.libs.singular.function import singular_function
-
                 """
                 from sage.libs.singular.function import singular_function
                 from sage.libs.singular.option import opt_verb

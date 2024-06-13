@@ -1176,7 +1176,6 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
             [1, 3, 4, 7, 13, 19, 29, 43, 62, 90, 126, 174, 239, 325, 435, 580]
             sage: oeis(r)                                                        # optional -- internet
             0: A029552: Expansion of phi(x) / f(-x) in powers of x where phi(), f() are Ramanujan theta functions.
-
         """
         if i is None:
             i = self._cartan_type.special_node()

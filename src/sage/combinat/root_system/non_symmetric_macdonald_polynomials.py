@@ -1285,7 +1285,6 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: for x in [0*epsilon[0], -epsilon[0], -epsilon[1], epsilon[0], epsilon[1]]:
         ....:     x = KL.monomial(x)
         ....:     assert q^2 * Y0(Y1(Y1(Y2(Y2(start))))) == start
-
     """
 
     @staticmethod
@@ -1500,7 +1499,6 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
             sage: NonSymmetricMacdonaldPolynomials("B2~*").KL0()
             Algebra of the Ambient space of the Root system of type ['C', 2]
             over Fraction Field of Multivariate Polynomial Ring in q, q1, q2 over Rational Field
-
         """
         return self._KL.classical()
 
@@ -1527,7 +1525,6 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
             alphacheck[1] + 2*alphacheck[2]
             sage: _.parent()
             Coroot lattice of the Root system of type ['C', 2, 1]
-
         """
         #assert self.cartan_type().is_untwisted_affine()
         Qcheck = self._T_Y.Y().keys()
@@ -1919,7 +1916,6 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
             sage: om = E.L0().fundamental_weights()
             sage: E.symmetric_macdonald_polynomial(2*om[1])
             ((3*q^6*v^22+3*q^5*v^22-3*q^6*v^20+q^4*v^22-4*q^5*v^20+q^4*v^18-q^5*v^16+q^3*v^18-2*q^4*v^16+q^5*v^14-q^3*v^16+q^4*v^14-4*q^4*v^12+q^2*v^14+q^5*v^10-8*q^3*v^12+4*q^4*v^10-4*q^2*v^12+8*q^3*v^10-q*v^12-q^4*v^8+4*q^2*v^10-q^2*v^8+q^3*v^6-q*v^8+2*q^2*v^6-q^3*v^4+q*v^6-q^2*v^4+4*q*v^2-q^2+3*v^2-3*q-3)/(q^6*v^22-q^5*v^20-q^4*v^12-q^3*v^12+q^3*v^10+q^2*v^10+q*v^2-1))*B[(0, 0, 0)] + ((q*v^2+v^2-q-1)/(q*v^2-1))*B[(-2, 1, 1)] + B[(-2, 2, 0)] + B[(-2, 0, 2)] + ((-q*v^2-v^2+q+1)/(-q*v^2+1))*B[(-1, -1, 2)] + ((2*q^4*v^12+2*q^3*v^12-2*q^4*v^10-2*q^3*v^10+q^2*v^8-q^3*v^6+q*v^8-2*q^2*v^6+q^3*v^4-q*v^6+q^2*v^4-2*q*v^2-2*v^2+2*q+2)/(q^4*v^12-q^3*v^10-q*v^2+1))*B[(-1, 1, 0)] + ((-q*v^2-v^2+q+1)/(-q*v^2+1))*B[(-1, 2, -1)] + ((2*q^4*v^12+2*q^3*v^12-2*q^4*v^10-2*q^3*v^10+q^2*v^8-q^3*v^6+q*v^8-2*q^2*v^6+q^3*v^4-q*v^6+q^2*v^4-2*q*v^2-2*v^2+2*q+2)/(q^4*v^12-q^3*v^10-q*v^2+1))*B[(-1, 0, 1)] + ((-q*v^2-v^2+q+1)/(-q*v^2+1))*B[(1, -2, 1)] + ((-2*q^4*v^12-2*q^3*v^12+2*q^4*v^10+2*q^3*v^10-q^2*v^8+q^3*v^6-q*v^8+2*q^2*v^6-q^3*v^4+q*v^6-q^2*v^4+2*q*v^2+2*v^2-2*q-2)/(-q^4*v^12+q^3*v^10+q*v^2-1))*B[(1, -1, 0)] + ((-q*v^2-v^2+q+1)/(-q*v^2+1))*B[(1, 1, -2)] + ((-2*q^4*v^12-2*q^3*v^12+2*q^4*v^10+2*q^3*v^10-q^2*v^8+q^3*v^6-q*v^8+2*q^2*v^6-q^3*v^4+q*v^6-q^2*v^4+2*q*v^2+2*v^2-2*q-2)/(-q^4*v^12+q^3*v^10+q*v^2-1))*B[(1, 0, -1)] + B[(2, -2, 0)] + ((q*v^2+v^2-q-1)/(q*v^2-1))*B[(2, -1, -1)] + B[(2, 0, -2)] + B[(0, -2, 2)] + ((-2*q^4*v^12-2*q^3*v^12+2*q^4*v^10+2*q^3*v^10-q^2*v^8+q^3*v^6-q*v^8+2*q^2*v^6-q^3*v^4+q*v^6-q^2*v^4+2*q*v^2+2*v^2-2*q-2)/(-q^4*v^12+q^3*v^10+q*v^2-1))*B[(0, -1, 1)] + ((2*q^4*v^12+2*q^3*v^12-2*q^4*v^10-2*q^3*v^10+q^2*v^8-q^3*v^6+q*v^8-2*q^2*v^6+q^3*v^4-q*v^6+q^2*v^4-2*q*v^2-2*v^2+2*q+2)/(q^4*v^12-q^3*v^10-q*v^2+1))*B[(0, 1, -1)] + B[(0, 2, -2)]
-
         """
         if self.cartan_type().classical() != mu.parent().cartan_type() or not mu.is_dominant():
             raise ValueError("%s must be a dominant weight for the classical subrootsystem of %s" % (mu, self.cartan_type()))

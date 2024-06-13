@@ -1007,7 +1007,6 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
             ((alpha[1], 0),)
             sage: x.f(1).f(2)
             ((alpha[1], 0), (alpha[1] + alpha[2], 2))
-
         """
         Parent = self.parent()
         finite_cartan_type = Parent._finite_cartan_type
@@ -1096,7 +1095,6 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
             (alpha[1], 1)
             sage: x._eps(y)
             1
-
         """
         if root in self.value:
             return -1

@@ -220,7 +220,6 @@ def construction_3_5(k,n,m,r,s,t,explain_construction=False):
            Concerning eight mutually orthogonal latin squares,
            Vol. 15, n.3, pp. 255-261,
            Journal of Combinatorial Designs, 2007
-
     """
     from .orthogonal_arrays import wilson_construction, OA_relabel
     assert r <= s
@@ -366,7 +365,6 @@ def OA_and_oval(q, *, solver=None, integrality_tolerance=1e-3):
 
         sage: from sage.combinat.designs.orthogonal_arrays_build_recursive import OA_and_oval
         sage: _ = OA_and_oval
-
     """
     from sage.arith.misc import is_prime_power
     from sage.combinat.designs.block_design import projective_plane

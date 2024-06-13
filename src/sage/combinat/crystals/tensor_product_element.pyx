@@ -948,7 +948,6 @@ cdef class CrystalOfTableauxElement(TensorProductOfRegularCrystalsElement):
             [2, 1]
             sage: x.shape()
             [2, 1]
-
         """
         return self.to_tableau().shape()
 

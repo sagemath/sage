@@ -677,7 +677,6 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
             O---O---O---O
             2   3   4   0
             A4 relabelled by {1: 2, 2: 3, 3: 4, 4: 0}
-
         """
         return self._type.classical().relabel(self._relabelling)
 
@@ -726,6 +725,5 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
 
             sage: CartanType(['B', 3, 1]).relabel({1:2, 2:3, 3:0, 0:1}).is_untwisted_affine()
             True
-
         """
         return self._type.is_untwisted_affine()

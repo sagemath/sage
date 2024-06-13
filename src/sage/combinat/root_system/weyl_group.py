@@ -346,7 +346,6 @@ class WeylGroup_gens(UniqueRepresentation,
             True
             sage: type(w) == W.element_class
             True
-
         """
         return self.domain().simple_reflections().map(self.from_morphism)
 

@@ -52,7 +52,6 @@ def _Functor_unpickle(Cl, D, domain, codomain):
         True
         sage: F.domain(), loads(dumps(F)).domain()
         (Category of rings, Category of rings)
-
     """
     F = Functor.__new__(Cl)
     Functor.__init__(F, domain, codomain)
@@ -163,7 +162,6 @@ cdef class Functor(SageObject):
         sage: F(f)(p)
         (-a^2 - 2*a*b - b^2 + a + b)*t^2 + (a^2 + 2*a*b + b^2 - a - b)*t
         - 4*a^2 - 8*a*b - 4*b^2 - a - b + 1
-
     """
     def __init__(self, domain, codomain):
         """
@@ -177,7 +175,6 @@ cdef class Functor(SageObject):
             Rational Field
             sage: F(GF(2))
             Finite Field of size 2
-
         """
         if not isinstance(domain, category.Category):
             raise TypeError("domain (=%s) must be a category" % domain)
@@ -234,7 +231,6 @@ cdef class Functor(SageObject):
             sage: F = Functor(FiniteFields(), Fields())
             sage: F._apply_functor(ZZ)
             Rational Field
-
         """
         return self.__codomain(x)
 
@@ -383,7 +379,6 @@ cdef class Functor(SageObject):
             TypeError: Functor from Category of rings to Category of rings
             is ill-defined, since it sends x (=Rational Field) to something
             that is not in Category of rings.
-
         """
         from sage.categories.morphism import Morphism
         if isinstance(x, Morphism):
@@ -402,7 +397,6 @@ cdef class Functor(SageObject):
             sage: F = ForgetfulFunctor(FiniteFields(), Fields())
             sage: F.domain()
             Category of finite enumerated fields
-
         """
         return self.__domain
 
@@ -415,7 +409,6 @@ cdef class Functor(SageObject):
             sage: F = ForgetfulFunctor(FiniteFields(), Fields())
             sage: F.codomain()
             Category of fields
-
         """
         return self.__codomain
 
@@ -444,7 +437,6 @@ def is_Functor(x):
         The forgetful functor from Category of fields to Category of rings
         sage: is_Functor(F2)
         True
-
     """
     return isinstance(x, Functor)
 
@@ -472,7 +464,6 @@ class ForgetfulFunctor_generic(Functor):
            to Category of fields
         sage: F(GF(3))
         Finite Field of size 3
-
     """
     def __reduce__(self):
         """
@@ -492,7 +483,6 @@ class ForgetfulFunctor_generic(Functor):
             sage: F  # indirect doctest
             The forgetful functor from Category of finite enumerated fields
              to Category of fields
-
         """
         return "The forgetful functor from %s to %s" % (self.domain(),
                                                         self.codomain())
@@ -586,7 +576,6 @@ class IdentityFunctor_generic(ForgetfulFunctor_generic):
             True
             sage: F
             The identity functor on Category of groups
-
         """
         ForgetfulFunctor_generic.__init__(self, C, C)
 
@@ -627,7 +616,6 @@ class IdentityFunctor_generic(ForgetfulFunctor_generic):
 
             sage: F._apply_functor(ZZ)
             Integer Ring
-
         """
         return x
 

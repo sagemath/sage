@@ -1327,7 +1327,6 @@ def _create_m_sequence(q, n, check=True):
         Traceback (most recent call last):
         ...
         ValueError: q must be a prime power
-
     """
     from sage.rings.finite_rings.finite_field_constructor import GF
 

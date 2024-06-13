@@ -141,7 +141,6 @@ def trivial_covering_design(v, k, t):
           `k` does not divide `v`.
 
         * anything else: Just use every `k`-subset of `[0, 1,..., v-1]`.
-
     """
     if t == 0:  # single block [0, ..., k-1]
         blk = list(range(k))
@@ -467,7 +466,6 @@ class CoveringDesign(SageObject):
             sage: D.blocks()
             [[0, 1, 2], [0, 3, 4], [0, 5, 6], [1, 3, 5],
             [1, 4, 6], [2, 3, 6], [2, 4, 5]]
-
         """
         return self.__incidence_structure
 

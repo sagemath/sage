@@ -148,7 +148,6 @@ class HomsetsCategory(FunctorialConstructionCategory):
 
             sage: ModulesWithBasis(ZZ).Homsets().base()
             Integer Ring
-
         """
         from sage.categories.category_types import Category_over_base
         for C in self._all_super_categories_proper:

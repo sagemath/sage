@@ -652,7 +652,6 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
             sage: W.pieri_factors()._test_maximal_elements(verbose = True)
             sage: W.pieri_factors(min_length = 1)._test_maximal_elements(verbose = True)
             Strict subset of the Pieri factors; skipping test
-
         """
         tester = self._tester(**options)
         index_set = self.W.index_set()
@@ -731,7 +730,6 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
             [1, 0, 5, 4, 3]
             sage: W.pieri_factors()[[0,1,2,3,4]].reduced_word()
             [4, 3, 2, 1, 0]
-
         """
         index_set = sorted(self.W.index_set())
         support = sorted(support)

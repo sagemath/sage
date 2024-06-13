@@ -518,7 +518,6 @@ cdef class Envelope():
 
             sage: Envelope(lambda x: 3, sign=-1, min_part=2).limit_start() == Infinity
             True
-
         """
         return self.f_limit_start
 

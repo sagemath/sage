@@ -430,7 +430,6 @@ class Groups(CategoryWithAxiom):
             AUTHOR:
 
             - Rob Beezer (2010-03-15)
-
             """
             from sage.matrix.operation_table import OperationTable
             import operator

@@ -47,7 +47,6 @@ class RootSpace(CombinatorialFreeModule):
         alpha[1]
         sage: latex(r.simple_root(1))
         \alpha_{1}
-
     """
 
     def __init__(self, root_system, base_ring):
@@ -56,7 +55,6 @@ class RootSpace(CombinatorialFreeModule):
 
             sage: P = RootSystem(['A',4]).root_space()
             sage: s = P.simple_reflections()
-
         """
         from sage.categories.morphism import SetMorphism
         from sage.categories.homset import Hom
@@ -87,7 +85,6 @@ class RootSpace(CombinatorialFreeModule):
             Coroot lattice of the Root system of type ['A', 4]
             sage: RootSystem(['B',4]).coroot_space()
             Coroot space over the Rational Field of the Root system of type ['B', 4]
-
         """
         return self._name_string()
 
@@ -218,7 +215,6 @@ class RootSpace(CombinatorialFreeModule):
             Generic morphism:
             From: Root lattice of the Root system of type ['A', 2]
             To:   Ambient space of the Root system of type ['A', 2]
-
         """
         if self.root_system.dual_side:
             L = self.cartan_type().dual().root_system().ambient_space()
@@ -438,7 +434,6 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
             [1, 2, 1]
             sage: Qvee.from_vector(vector([0,2])).max_quantum_element()
             [2]
-
         """
         Qvee = self.parent()
         word = []
@@ -463,7 +458,6 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
             2*alphacheck[1] + 2*alphacheck[2]
             sage: alphavee.to_ambient()
             (2, 2)
-
         """
         return self.parent().to_ambient_space_morphism()(self)
 

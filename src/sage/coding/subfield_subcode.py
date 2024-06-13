@@ -71,7 +71,6 @@ class SubfieldSubcode(AbstractLinearCode):
             Traceback (most recent call last):
             ...
             ValueError: subfield has to be a subfield of the base field of the original code
-
         """
         if not isinstance(original_code, AbstractLinearCode):
             raise ValueError("original_code must be a linear code")

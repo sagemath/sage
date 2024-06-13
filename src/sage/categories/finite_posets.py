@@ -44,7 +44,6 @@ class FinitePosets(CategoryWithAxiom):
         sage: C is Posets().Finite()
         True
         sage: TestSuite(C).run()
-
     """
 
     class ParentMethods:
@@ -265,7 +264,6 @@ class FinitePosets(CategoryWithAxiom):
                 Finite poset containing 0 elements
                 sage: P.is_poset_morphism(f, P)
                 True
-
             """
             for x in self:
                 for y in self.upper_covers(x):
@@ -1475,7 +1473,6 @@ class FinitePosets(CategoryWithAxiom):
                 sage: P = Poset({})
                 sage: P.rowmotion_orbits_plots()
                 Graphics Array of size 1 x 1
-
             """
             from sage.plot.plot import graphics_array
             plot_of_orb_plots = []
@@ -1562,7 +1559,6 @@ class FinitePosets(CategoryWithAxiom):
                 sage: P = Poset({})
                 sage: P.toggling_orbits_plots([])
                 Graphics Array of size 1 x 1
-
             """
             from sage.plot.plot import graphics_array
             plot_of_orb_plots = []

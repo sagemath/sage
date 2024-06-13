@@ -56,7 +56,6 @@ class PoorManMap(sage.structure.sage_object.SageObject):
         sage: h = PoorManMap(sqrt, domain=(1, 4, 9), codomain=(1, 2, 3))
         sage: i == g*h
         True
-
     """
     def __init__(self, function, domain=None, codomain=None, name=None):
         """
@@ -68,7 +67,6 @@ class PoorManMap(sage.structure.sage_object.SageObject):
 
             sage: TestSuite(f).run()
             sage: TestSuite(f*g).run()
-
         """
         from collections.abc import Iterable
         if not isinstance(function, Iterable):
@@ -91,7 +89,6 @@ class PoorManMap(sage.structure.sage_object.SageObject):
             A map from (1, 2, 3)
             sage: PoorManMap(lambda x: x+2, codomain=(3,4,5))
             A map to (3, 4, 5)
-
         """
         return ((self._name if self._name is not None else "A map") +
                 (" from %s" % (self._domain,) if self._domain   is not None else ""     ) +
@@ -136,7 +133,6 @@ class PoorManMap(sage.structure.sage_object.SageObject):
             sage: h4 = PoorManMap(lambda x: x, domain=(1,2,3), codomain=(1,2,6))
             sage: f == g, f == h1, f == h2, f == h3, f == h4, f == 1, 1 == f
             (True, False, False, False, False, False, False)
-
         """
         if isinstance(other, PoorManMap):
             return (self._functions == other._functions
@@ -161,7 +157,6 @@ class PoorManMap(sage.structure.sage_object.SageObject):
             sage: h4 = PoorManMap(lambda x: x, domain=(1,2,3), codomain=(1,2,6))
             sage: f != g, f != h1, f != h2, f != h3, f != h4, f != 1, 1 != f
             (False, True, True, True, True, True, True)
-
         """
         return not (self == other)
 
@@ -176,7 +171,6 @@ class PoorManMap(sage.structure.sage_object.SageObject):
             sage: g = PoorManMap(factorial, domain=(1,2,3), codomain=(1,2,6))
             sage: hash(f) == hash(g)
             True
-
         """
         return hash((self._functions, self._domain, self._codomain, self._name))
 
@@ -256,7 +250,6 @@ class PoorManMap(sage.structure.sage_object.SageObject):
             sage: g = PoorManMap(lambda x: -x,  domain=(2,3,4), codomain=(-2,-3,-4))
             sage: (g*f)(2)
             -3
-
         """
         for function in reversed(self._functions):
             args = [function(*args)]

@@ -58,7 +58,6 @@ class FinitelyGeneratedSemigroups(CategoryWithAxiom):
 
             sage: Semigroups().FinitelyGenerated().extra_super_categories()
             [Category of enumerated sets]
-
         """
         return [EnumeratedSets()]
 
@@ -121,7 +120,6 @@ class FinitelyGeneratedSemigroups(CategoryWithAxiom):
                 ('ca', 'cab', 'ca', 'cad')
                 sage: S.succ_generators("twosided" )(S('ca'))
                 ('ac', 'bca', 'ca', 'dca', 'ca', 'cab', 'ca', 'cad')
-
             """
             left = (side == "left" or side == "twosided")
             right = (side == "right" or side == "twosided")

@@ -579,7 +579,6 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
             sage: D = codes.decoders.PuncturedCodeOriginalCodeDecoder(Cp)
             sage: D
             Decoder of Puncturing of [15, 7, 9] Reed-Solomon Code over GF(16) on position(s) [3] through Error-Erasure decoder for [15, 7, 9] Reed-Solomon Code over GF(16)
-
         """
         return "Decoder of %s through %s" % (self.code(), self.original_decoder())
 

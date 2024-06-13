@@ -139,7 +139,6 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
         0
 
         sage: TestSuite(ModulesWithBasis(ZZ)).run()
-
     """
 
     def _call_(self, x):
@@ -558,7 +557,6 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 Traceback (most recent call last):
                 ...
                 ValueError: diagonal (=3) should be a function
-
             """
             if len([x for x in [matrix, on_basis, function, diagonal] if x is not None]) != 1:
                 raise ValueError("module_morphism() takes exactly one option out of `matrix`, `on_basis`, `function`, `diagonal`")
@@ -1407,7 +1405,6 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: F = Foo(QQ, tuple(), category=C)                                  # needs sage.modules
                 sage: F.random_element() == F.zero()                                    # needs sage.modules
                 True
-
             """
             indices = self.basis().keys()
             a = self.zero()
@@ -2165,7 +2162,6 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 0
                 sage: B['a'].map_coefficients(lambda c: GF(2)(c), QQ)
                 B['a']
-
             """
             R = self.parent()
             if isinstance(f, Map):

@@ -137,7 +137,6 @@ class Rings(CategoryWithAxiom):
                 sage: R = ZpFM(3)                                                       # needs sage.rings.padics
                 sage: R.fraction_field().coerce_map_from(R).is_injective()
                 True
-
             """
             if self.domain().is_zero():
                 return True

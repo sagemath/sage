@@ -270,7 +270,6 @@ def _dump_code_in_leon_format(C):
         ));
         FINISH;
         sage: f.close()
-
     """
     from sage.misc.temporary_file import tmp_filename
     F = C.base_ring()
@@ -344,7 +343,6 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         A lot of methods of the abstract class rely on the knowledge of a generator matrix.
         It is thus strongly recommended to set an encoder with a generator matrix implemented
         as a default encoder.
-
     """
     _registered_encoders = {}
     _registered_decoders = {}
@@ -1112,7 +1110,6 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             True
             sage: A.minimum_distance() == C.minimum_distance()*D.minimum_distance()     # needs sage.libs.gap
             True
-
         """
         G1 = self.generator_matrix()
         G2 = other.generator_matrix()
@@ -1856,7 +1853,6 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             [8, 6] Hamming Code over GF(7)
             sage: C.weight_distribution() == C.weight_distribution(algorithm='leon')
             True
-
         """
         if algorithm is None:
             if self.base_ring().order() == 2:

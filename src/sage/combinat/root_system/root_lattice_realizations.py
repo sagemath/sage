@@ -394,7 +394,6 @@ class RootLatticeRealizations(Category_over_base_ring):
 
                 sage: RootSystem(['E',6]).weight_space().highest_root()                 # needs sage.graphs
                 Lambda[2]
-
             """
             if not self.root_system.is_finite():
                 raise ValueError("The root system of %s is not of finite Cartan type" % self)
@@ -740,7 +739,6 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: sorted(L.nonparabolic_positive_roots(()))                         # needs sage.graphs
                 [alpha[1], alpha[1] + alpha[2], alpha[1] + alpha[2] + alpha[3],
                  alpha[2], alpha[2] + alpha[3], alpha[3]]
-
             """
             if not self.cartan_type().is_finite():
                 raise NotImplementedError("Only implemented for "
@@ -766,7 +764,6 @@ class RootLatticeRealizations(Category_over_base_ring):
                 0
                 sage: Q.nonparabolic_positive_root_sum(())                              # needs sage.graphs
                 3*alpha[1] + 4*alpha[2] + 3*alpha[3]
-
             """
             return self.sum(self.nonparabolic_positive_roots(index_set))
 
@@ -920,7 +917,6 @@ class RootLatticeRealizations(Category_over_base_ring):
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: Only implemented for finite Cartan type
-
             """
 
             if not self.cartan_type().is_finite():
@@ -999,7 +995,6 @@ class RootLatticeRealizations(Category_over_base_ring):
             .. WARNING::
 
                 This returns an error if the Cartan type is not finite.
-
             """
             if not self.cartan_type().is_finite():
                 raise NotImplementedError("Only implemented for finite Cartan type")
@@ -1036,7 +1031,6 @@ class RootLatticeRealizations(Category_over_base_ring):
             .. WARNING::
 
                 This returns an error if the Cartan type is not finite.
-
             """
 
             if not self.cartan_type().is_finite():
@@ -1230,7 +1224,6 @@ class RootLatticeRealizations(Category_over_base_ring):
                 [-2*Lambda[1] + Lambda[2], -Lambda[1] - Lambda[2], Lambda[1] - 2*Lambda[2]]
 
             Algorithm: negate the positive roots
-
             """
             if not self.cartan_type().is_finite():
                 raise ValueError("%s is not a finite Cartan type" % self.cartan_type())
@@ -1248,7 +1241,6 @@ class RootLatticeRealizations(Category_over_base_ring):
 
                 sage: RootSystem(['A',2]).root_lattice().coroot_lattice()
                 Coroot lattice of the Root system of type ['A', 2]
-
             """
             return self.root_system.coroot_lattice()
 
@@ -1268,7 +1260,6 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: RootSystem(['A',2]).root_lattice().coroot_space(QQ['q'])
                 Coroot space over the Univariate Polynomial Ring in q over Rational Field
                  of the Root system of type ['A', 2]
-
             """
             return self.root_system.coroot_space(base_ring=base_ring)
 
@@ -1293,7 +1284,6 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: alphacheck = RootSystem(['A',3]).root_lattice().simple_coroots()
                 sage: [alphacheck[i] for i in [1, 2, 3]]
                 [alphacheck[1], alphacheck[2], alphacheck[3]]
-
             """
             if not hasattr(self,"cache_simple_coroots"):
                 self.cache_simple_coroots = Family(self.index_set(), self.simple_coroot)
@@ -1330,7 +1320,6 @@ class RootLatticeRealizations(Category_over_base_ring):
 
                 sage: RootSystem(["A",3]).ambient_space().alphacheck()
                 Finite family {1: (1, -1, 0, 0), 2: (0, 1, -1, 0), 3: (0, 0, 1, -1)}
-
             """
             if self.root_system.is_finite() and self.root_system.is_irreducible():
                 return Family(self.index_set(), self.simple_coroot,
@@ -1671,7 +1660,6 @@ class RootLatticeRealizations(Category_over_base_ring):
                 Weyl Group of type ['F', 4] (as a matrix group acting on the ambient space)
                 sage: RootSystem(['F',4]).root_space().weyl_group()                     # needs sage.libs.gap
                 Weyl Group of type ['F', 4] (as a matrix group acting on the root space)
-
             """
             from sage.combinat.root_system.weyl_group import WeylGroup
             return WeylGroup(self, prefix=prefix)
@@ -2224,7 +2212,6 @@ class RootLatticeRealizations(Category_over_base_ring):
                 [            1/3             1/3             1/3              -1]
                 sage: sum(m.columns())
                 (0, 0, 0)
-
             """
             from sage.symbolic.constants import pi
             m = matrix(QQ, barycentric_projection_matrix(self.dimension()-1, angle=2*pi/3).n(20))
@@ -3293,7 +3280,6 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: CartanType(['F',4]).root_system().coweight_lattice().dual_type_cospace()
                 Weight lattice of the Root system of type ['F', 4]
                  relabelled by {1: 4, 2: 3, 3: 2, 4: 1}
-
             """
             from .root_space import RootSpace
             from .weight_space import WeightSpace
@@ -3330,7 +3316,6 @@ class RootLatticeRealizations(Category_over_base_ring):
                 Generic morphism:
                   From: Weight lattice of the Root system of type ['B', 2]
                   To:   Ambient space of the Root system of type ['B', 2]
-
             """
 
     ##########################################################################
@@ -3846,7 +3831,6 @@ class RootLatticeRealizations(Category_over_base_ring):
                 [2, 3, 4, 5]
                 sage: alpha[1].reduced_word([1,2])                                      # needs sage.graphs
                 [2]
-
             """
             return self.to_dominant_chamber(index_set=index_set,positive=positive,reduced_word=True)[1]
 
@@ -4180,7 +4164,6 @@ class RootLatticeRealizations(Category_over_base_ring):
                 (1, 2, 3, 2, 1)
                 sage: C3_rl.simple_root(2).associated_reflection()                      # needs sage.graphs
                 (2,)
-
             """
             i, reduced_word = self.to_simple_root(reduced_word=True)
             return reduced_word + (i,) + tuple(reversed(reduced_word))
@@ -4326,7 +4309,6 @@ class RootLatticeRealizations(Category_over_base_ring):
                 [3, 4]
                 sage: mu.weyl_stabilizer(index_set = [1,2,3])
                 [3]
-
             """
             if index_set is None:
                 index_set = self.parent().cartan_type().index_set()
@@ -4401,7 +4383,6 @@ class RootLatticeRealizations(Category_over_base_ring):
                 True
                 sage: alpha.is_parabolic_root([2])
                 False
-
             """
             for i in self.support():
                 if i not in index_set:
@@ -4482,7 +4463,6 @@ class RootLatticeRealizations(Category_over_base_ring):
                 2*Lambdacheck[1] + 2*Lambdacheck[2] + 3*Lambdacheck[3]
                 sage: w.parent()
                 Coweight lattice of the Root system of type ['B', 3]
-
             """
             return self.parent().dual_type_cospace().from_vector(self.to_vector())
 
@@ -4505,7 +4485,6 @@ class RootLatticeRealizations(Category_over_base_ring):
                 2*e[0] + 2*e[1] + 3*e[2]
                 sage: v.to_classical()                                                  # needs sage.graphs
                 (2, 2, 3, 0)
-
             """
             return self.parent().classical()(self)
 
@@ -4533,7 +4512,6 @@ class RootLatticeRealizations(Category_over_base_ring):
                 2*alphacheck[1] + 2*alphacheck[2] + 3*alphacheck[3]
                 sage: alphavee.to_ambient()
                 (2, 0, 1, -3)
-
             """
 
         def is_long_root(self):

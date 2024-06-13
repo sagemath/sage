@@ -162,7 +162,6 @@ class PosetElement(Element):
             sage: P(0)._cmp(P(0))
             0
             sage: P(1)._cmp(P(2))
-
         """
         return self.parent().compare_elements(self, other)
 

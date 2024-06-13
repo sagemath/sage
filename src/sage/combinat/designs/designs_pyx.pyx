@@ -145,7 +145,6 @@ def is_covering_array(array, strength=None, levels=None, verbose=False, paramete
         ....:      [0, 1, 1, 2, 0, 2, 2, 1]]
         sage: is_covering_array(C,strength=2,parameters=True)
         (False, (8, 0, 8, 3))
-
     """
     from itertools import product, combinations
 

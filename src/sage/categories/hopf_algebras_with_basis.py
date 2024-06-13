@@ -256,7 +256,6 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: s = SymmetricFunctions(QQ).schur()                                # needs sage.combinat sage.modules
                 sage: s._test_antipode()                                                # needs lrcalc_python sage.combinat sage.modules
-
             """
             tester = self._tester(**options)
 

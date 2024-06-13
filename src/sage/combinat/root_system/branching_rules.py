@@ -1285,7 +1285,6 @@ class BranchingRule(SageObject):
             The Weyl Character Ring of Type A2 with Integer Ring coefficients
             sage: chi.branch(A2,rule=b)
             A2(0,1) + A2(1,0) + A2(0,2) + 2*A2(1,1) + A2(2,0) + A2(1,2) + A2(2,1)
-
         """
         from sage.combinat.root_system.weyl_characters import WeylCharacterRing
         if style is None:
@@ -2065,7 +2064,6 @@ def maximal_subgroups(ct, mode='print_rules'):
         A1xA1xA1xA1:branching_rule("D4","D2xD2","orthogonal_sum")*branching_rule("D2xD2","A1xA1xA1xA1",[branching_rule("D2","A1xA1","isomorphic"),branching_rule("D2","A1xA1","isomorphic")])
 
     .. SEEALSO:: :meth:`~sage.combinat.root_system.weyl_characters.WeylCharacterRing.ParentMethods.maximal_subgroups`
-
     """
 
     if CartanType(ct) == CartanType("A2"):

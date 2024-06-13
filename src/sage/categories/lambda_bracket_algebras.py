@@ -34,7 +34,6 @@ class LambdaBracketAlgebras(Category_over_base_ring):
 
     This is an abstract base category for Lie conformal algebras and
     super Lie conformal algebras.
-
     """
     @staticmethod
     def __classcall_private__(cls, R, check=True):

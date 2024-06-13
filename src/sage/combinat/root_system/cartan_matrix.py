@@ -1017,7 +1017,6 @@ class CartanMatrix(Base, CartanType_abstract,
             ]
             sage: M.principal_submatrices(proper=True)                                  # needs sage.graphs
             [[], [2], [2]]
-
         """
         iset = list(range(self.ncols()))
         ret = []
