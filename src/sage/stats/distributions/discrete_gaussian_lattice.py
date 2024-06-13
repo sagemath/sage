@@ -440,8 +440,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             56.5486677646...
 
             sage: from collections import defaultdict
-            sage: counter = defaultdict(Integer)
-            sage: m = 0
+            sage: counter = defaultdict(Integer); m = 0
             sage: def add_samples(i):
             ....:     global counter, m
             ....:     for _ in range(i):
@@ -454,7 +453,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: while abs(m*f(v)*1.0/nf/counter[v] - 1.0) >= 0.1:                     # needs sage.symbolic
             ....:     add_samples(1000)
 
-            sage: counter = defaultdict(Integer)
+            sage: counter = defaultdict(Integer); m = 0
             sage: v = vector(ZZ, n, (0, 0))
             sage: v.set_immutable()
             sage: while v not in counter:
@@ -480,8 +479,14 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: D = distributions.DiscreteGaussianDistributionLatticeSampler(ZZ^n, Sigma, c)
             sage: nf = D._normalisation_factor_zz(); nf # This has not been properly implemented
             63.76927...
-            sage: while v not in counter: add_samples(1000)
-            sage: while abs(m*f(v)*1.0/nf/counter[v] - 1.0) >= 0.1: add_samples(1000)
+            
+            sage: counter = defaultdict(Integer); m = 0
+            sage: v = vector(ZZ, n, (0, 0))
+            sage: v.set_immutable()
+            sage: while v not in counter:
+            ....:     add_samples(1000)
+            sage: while abs(m*f(v)*1.0/nf/counter[v] - 1.0) >= 0.1:                     # needs sage.symbolic
+            ....:     add_samples(1000)
 
         If the covariance provided is not positive definite, an error is thrown::
 
