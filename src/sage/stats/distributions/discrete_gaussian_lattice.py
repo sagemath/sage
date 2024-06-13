@@ -482,6 +482,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: Sigma = Matrix(ZZ, [[5, -2, 4], [-2, 10, -5], [4, -5, 5]])
             sage: c = vector(ZZ, [7, 2, 5])
             sage: D = distributions.DiscreteGaussianDistributionLatticeSampler(ZZ^n, Sigma, c)
+            sage: f = D.f
             sage: nf = D._normalisation_factor_zz(); nf # This has not been properly implemented
             63.76927...
 
@@ -489,7 +490,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
             sage: v = vector(ZZ, n, (11, 4, 8))
             sage: v.set_immutable()
-            sage: 1 / (D.f(v) / nf)
+            sage: 1 / (f(v) / nf)
             2069.93288...
 
             sage: counter = defaultdict(Integer); m = 0
