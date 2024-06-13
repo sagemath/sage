@@ -25,9 +25,10 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.calculus.functions import jacobian
-from sage.functions.hyperbolic import cosh, sinh
-from sage.functions.log import exp
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.calculus.functions", "jacobian")
+lazy_import("sage.functions.hyperbolic", ["cosh", "sinh"])
+lazy_import("sage.functions.log", "exp")
 from sage.matrix.constructor import matrix
 from sage.misc.misc_c import prod
 from sage.modules.free_module_element import vector
