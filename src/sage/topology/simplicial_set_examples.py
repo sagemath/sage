@@ -32,7 +32,6 @@ AUTHORS:
 import re
 import os
 
-from sage.env import SAGE_ENV
 from sage.misc.cachefunc import cached_method, cached_function
 from sage.misc.latex import latex
 from sage.rings.infinity import Infinity
@@ -616,14 +615,16 @@ def ComplexProjectiveSpace(n):
                                  latex_name='CP^{2}')
         return K
     if n == 3:
-        file = os.path.join(SAGE_ENV['SAGE_EXTCODE'], 'kenzo', 'CP3.txt')
+        from sage.ext_data import kenzo
+        file = os.path.join(kenzo.__path__[0], 'CP3.txt')
         data = simplicial_data_from_kenzo_output(file)
         v = [_ for _ in data.keys() if _.dimension() == 0][0]
         K = SimplicialSet_finite(data, base_point=v, name='CP^3',
                                  latex_name='CP^{3}')
         return K
     if n == 4:
-        file = os.path.join(SAGE_ENV['SAGE_EXTCODE'], 'kenzo', 'CP4.txt')
+        from sage.ext_data import kenzo
+        file = os.path.join(kenzo.__path__[0], 'CP4.txt')
         data = simplicial_data_from_kenzo_output(file)
         v = [_ for _ in data.keys() if _.dimension() == 0][0]
         K = SimplicialSet_finite(data, base_point=v, name='CP^4',
@@ -649,7 +650,7 @@ def simplicial_data_from_kenzo_output(filename):
 
         sage: from sage.topology.simplicial_set_examples import simplicial_data_from_kenzo_output
         sage: from sage.topology.simplicial_set import SimplicialSet
-        sage: sphere = os.path.join(SAGE_ENV['SAGE_EXTCODE'], 'kenzo', 'S4.txt')
+        sage: sphere = os.path.join(os.path.join(sage.ext_data.kenzo.__path__[0], 'S4.txt'))
         sage: S4 = SimplicialSet(simplicial_data_from_kenzo_output(sphere))             # needs pyparsing
         sage: S4.homology(reduced=False)                                                # needs pyparsing
         {0: Z, 1: 0, 2: 0, 3: 0, 4: Z}
