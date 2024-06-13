@@ -4601,8 +4601,10 @@ cdef class Matrix(sage.structure.element.Matrix):
         if self._ncols != self._nrows:
             raise ValueError("the matrix is not a square matrix")
 
-        from sage.groups.matrix_gps.symplectic import Sp
-        return self in Sp(self._nrows, self._base_ring, invariant_form=invariant_form)
+        if invariant_form is None:
+            from sage.groups.matrix_gps.symplectic import Sp
+            invariant_form = Sp(self._nrows, self._base_ring).invariant_form()
+        return self * invariant_form * self.transpose() == invariant_form
 
     def is_dense(self):
         """

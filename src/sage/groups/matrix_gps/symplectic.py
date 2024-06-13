@@ -270,5 +270,5 @@ class SymplecticMatrixGroup_generic(NamedMatrixGroup_generic):
             sage: G._check_matrix(G.an_element().matrix())
         """
         F = self.invariant_form()
-        if x * F * x.transpose() != F:
-            raise TypeError('matrix must be symplectic with respect to the alternating form\n{}'.format(F))
+        if not x.is_symplectic(F):
+            raise TypeError(f"matrix must be symplectic with respect to the alternating form\n{F}")
