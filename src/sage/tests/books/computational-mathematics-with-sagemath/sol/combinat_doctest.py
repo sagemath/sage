@@ -213,5 +213,4 @@ Sage example in ./sol/combinat.tex, line 566::
 
   sage: [len(list(C(n))) for n in range(9)]
   [0, 1, 1, 2, 5, 14, 42, 132, 429]
-
 """

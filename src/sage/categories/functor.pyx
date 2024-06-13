@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Functors
 
@@ -14,7 +15,6 @@ AUTHORS:
   making functors applicable to morphisms (not only to objects)
 
 - Simon King (2010-12): Pickling of functors without losing domain and codomain
-
 """
 
 # ****************************************************************************
@@ -385,8 +385,8 @@ cdef class Functor(SageObject):
             that is not in Category of rings.
 
         """
-        from sage.categories.morphism import is_Morphism
-        if is_Morphism(x):
+        from sage.categories.morphism import Morphism
+        if isinstance(x, Morphism):
             return self._apply_functor_to_morphism(x)
         y = self._apply_functor(self._coerce_into_domain(x))
         if not ((y in self.__codomain) or (y in self.__codomain.Homsets())):

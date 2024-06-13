@@ -41,7 +41,6 @@ equal to `x_1` in ``Q``. Indeed, we have
 
     sage: Q(p)*x[2] == Q(p)*x[1]*x[3]*x[5]                                              # needs sage.combinat
     True
-
 """
 # ****************************************************************************
 #       Copyright (C) 2009 Simon King <king@mathematik.nuigalway.ie>

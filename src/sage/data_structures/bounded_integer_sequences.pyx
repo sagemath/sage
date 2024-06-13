@@ -95,7 +95,6 @@ cimported in Cython modules:
 AUTHORS:
 
 - Simon King, Jeroen Demeyer (2014-10): initial version (:issue:`15820`)
-
 """
 # ****************************************************************************
 #       Copyright (C) 2014 Simon King <simon.king@uni-jena.de>

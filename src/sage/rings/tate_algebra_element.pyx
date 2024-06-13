@@ -6,7 +6,6 @@ A class for series in Tate algebras.
 AUTHOR:
 
 - Xavier Caruso, Thibaut Verron (2018-09)
-
 """
 
 # ***************************************************************************
@@ -36,7 +35,6 @@ from sage.rings.polynomial.polydict cimport PolyDict
 from sage.rings.polynomial.polydict cimport ETuple
 from sage.rings.padics.padic_generic_element cimport pAdicGenericElement
 from sage.rings.padics.precision_error import PrecisionError
-
 
 
 def _pushout_family(elements, initial=ZZ):

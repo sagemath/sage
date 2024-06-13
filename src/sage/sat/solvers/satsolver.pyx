@@ -322,7 +322,7 @@ def SAT(solver=None, *args, **kwds):
 
     - ``solver`` (string) -- select a solver. Admissible values are:
 
-        - ``"cryptominisat"`` -- note that the cryptominisat package must be
+        - ``"cryptominisat"`` -- note that the pycryptosat package must be
           installed.
 
         - ``"picosat"`` -- note that the pycosat package must be installed.

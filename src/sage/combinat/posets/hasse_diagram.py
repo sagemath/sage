@@ -2,7 +2,6 @@ r"""
 Hasse diagrams of posets
 
 {INDEX_OF_FUNCTIONS}
-
 """
 # ****************************************************************************
 #       Copyright (C) 2008 Peter Jipsen <jipsen@chapman.edu>

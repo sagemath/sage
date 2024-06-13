@@ -166,5 +166,4 @@ r"""
     sage: n = random_prime(10000)
     sage: m, n, euler_phi(m*n) == euler_phi(m)*euler_phi(n)   # random
     (5881, 1277, True)
-
 """

@@ -1,6 +1,5 @@
 # sage_setup: distribution = sagemath-coxeter3
 # sage.doctest: optional - coxeter3
-
 """
 Coxeter Groups implemented with Coxeter3
 """

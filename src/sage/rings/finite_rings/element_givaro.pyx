@@ -39,7 +39,6 @@ AUTHORS:
 - Martin Albrecht <malb@informatik.uni-bremen.de> (2006-06-05)
 - William Stein (2006-12-07): editing, lots of docs, etc.
 - Robert Bradshaw (2007-05-23): is_square/sqrt, pow.
-
 """
 
 # ****************************************************************************
@@ -686,7 +685,7 @@ cdef class Cache_givaro(Cache_base):
 
         INPUT:
 
-        - ``a,b,c`` -- :class:`FiniteField_givaroElement`
+        - ``a``, ``b``, ``c`` -- :class:`FiniteField_givaroElement`
 
         EXAMPLES::
 
@@ -707,7 +706,7 @@ cdef class Cache_givaro(Cache_base):
 
         INPUT:
 
-        - ``a,b,c`` -- :class:`FiniteField_givaroElement`
+        - ``a``, ``b``, ``c`` -- :class:`FiniteField_givaroElement`
 
         EXAMPLES::
 
@@ -728,7 +727,7 @@ cdef class Cache_givaro(Cache_base):
 
         INPUT:
 
-        - ``a,b,c`` -- :class:`FiniteField_givaroElement`
+        - ``a``, ``b``, ``c`` -- :class:`FiniteField_givaroElement`
 
         EXAMPLES::
 
@@ -1739,6 +1738,7 @@ def unpickle_FiniteField_givaroElement(parent, int x):
         sage: TestSuite(e).run() # indirect doctest
     """
     return make_FiniteField_givaroElement(parent._cache, x)
+
 
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.rings.finite_field_givaro', 'unpickle_FiniteField_givaroElement', unpickle_FiniteField_givaroElement)

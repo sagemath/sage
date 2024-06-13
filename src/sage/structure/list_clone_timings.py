@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Performance Test for Clone Protocol
 

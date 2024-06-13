@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 # sage.doctest: needs sage.groups sage.modules
 r"""
 Group algebras and beyond: the Algebra functorial construction

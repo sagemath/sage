@@ -311,8 +311,6 @@ class Genus2reduction(SageObject):
 
                    y^2 + (x^3-x^2-1)y = x^2 - x.
 
-
-
     We have::
 
         sage: genus2reduction(x^3-x^2-1, x^2 - x)

@@ -89,7 +89,7 @@ from sage.misc.randstate cimport current_randstate
 from sage.structure.coerce cimport py_scalar_parent
 from sage.structure.sequence import Sequence
 from sage.structure.coerce cimport coercion_model
-from sage.structure.element import is_Vector
+from sage.structure.element import Vector
 from sage.structure.element cimport have_same_parent
 from sage.misc.verbose import verbose
 from sage.rings.number_field.number_field_base import NumberField
@@ -444,7 +444,7 @@ cdef class Matrix(Matrix1):
             (2)
 
         """
-        if is_Vector(B):
+        if isinstance(B, Vector):
             try:
                 return self.transpose().solve_right(B, check=check)
             except ValueError as e:
@@ -883,7 +883,7 @@ cdef class Matrix(Matrix1):
             L = B.base_ring()
         except AttributeError:
             raise TypeError("the second argument must be a vector or a matrix")
-        b_is_vec = is_Vector(B)
+        b_is_vec = isinstance(B, Vector)
         if b_is_vec:
             if self.nrows() != B.degree():
                 raise ValueError("number of rows of self must equal "
@@ -12392,9 +12392,9 @@ cdef class Matrix(Matrix1):
             ...
             ValueError: similarity only makes sense for square matrices
         """
-        from sage.structure.element import is_Matrix
+        from sage.structure.element import Matrix
 
-        if not is_Matrix(other):
+        if not isinstance(other, Matrix):
             raise TypeError('similarity requires a matrix as an argument, not {0}'.format(other))
         if transformation not in [True, False]:
             raise ValueError('transformation keyword must be True or False')
@@ -12816,7 +12816,7 @@ cdef class Matrix(Matrix1):
         import sage.rings.polynomial.polynomial_ring
         n = self.ncols()
         R = self.base_ring()
-        if not is_Vector(v):
+        if not isinstance(v, Vector):
             raise TypeError('first input should be a vector, not {0}'.format(v))
         if not (var is None or isinstance(var, str)):
             generator = False
@@ -18838,7 +18838,6 @@ def _matrix_power_symbolic(A, n):
         # D^i(f) / i! with f = x^n and D = differentiation wrt x
         if hasattr(mk, 'radical_expression'):
             mk = mk.radical_expression()
-
 
         # When the variable "mk" is equal to zero, it is advisable to employ the Kronecker delta function
         # instead of utilizing the numerical value zero. This choice is made to encompass scenarios where

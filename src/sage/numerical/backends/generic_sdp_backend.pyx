@@ -14,7 +14,6 @@ class.
 AUTHORS:
 
 - Ingolfur Edvardsson (2014-07): initial implementation
-
 """
 
 #*****************************************************************************
@@ -198,7 +197,6 @@ cdef class GenericSDPBackend:
         """
         raise NotImplementedError()
 
-
     cpdef add_linear_constraint(self, coefficients, name=None):
         """
         Add a linear constraint.
@@ -232,7 +230,6 @@ cdef class GenericSDPBackend:
             "foo"
         """
         raise NotImplementedError()
-
 
     cpdef add_linear_constraints(self, int number, names=None):
         """
@@ -618,8 +615,8 @@ cdef class GenericSDPBackend:
         raise NotImplementedError()
 
 
-
 default_solver = None
+
 
 def default_sdp_solver(solver=None):
     """

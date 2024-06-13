@@ -29,9 +29,9 @@ class Ellipse(GraphicPrimitive):
 
     INPUT:
 
-    - ``x,y`` -- coordinates of the center of the ellipse
+    - ``x``, ``y`` -- coordinates of the center of the ellipse
 
-    - ``r1, r2`` -- radii of the ellipse
+    - ``r1``, ``r2`` -- radii of the ellipse
 
     - ``angle`` -- angle
 

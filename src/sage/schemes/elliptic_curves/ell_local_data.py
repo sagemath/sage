@@ -76,7 +76,6 @@ AUTHORS:
   ``ell_number_field.py`` and ``ell_rational_field.py``)
 
 - Chris Wuthrich: more documentation 2010-01
-
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -100,7 +99,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
-from sage.rings.number_field.number_field_ideal import is_NumberFieldFractionalIdeal
+from sage.rings.number_field.number_field_ideal import NumberFieldFractionalIdeal
 
 from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.ideal import is_Ideal
@@ -1197,7 +1196,7 @@ def check_prime(K, P):
     if not isinstance(K, NumberField):
         raise TypeError("%s is not a number field" % (K,))
 
-    if is_NumberFieldFractionalIdeal(P) or P in K:
+    if isinstance(P, NumberFieldFractionalIdeal) or P in K:
         # if P is an ideal, making sure it is a fractional ideal of K
         P = K.fractional_ideal(P)
         if P.is_prime():

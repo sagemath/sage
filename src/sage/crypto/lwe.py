@@ -261,7 +261,8 @@ class LWE(SageObject):
 
           - "uniform" -- secret follows the uniform distribution in `\Zmod{q}`
           - "noise" -- secret follows the noise distribution
-          - ``(lb,ub)`` -- the secret is chosen uniformly from ``[lb,...,ub]`` including both endpoints
+          - ``(lb, ub)`` -- the secret is chosen uniformly from ``[lb,...,ub]``
+            including both endpoints
 
         - ``m`` -- number of allowed samples or ``None`` if no such limit exists
           (default: ``None``)

@@ -22,7 +22,6 @@ from sage_bootstrap.util import retry
 ARCHIVE_TYPES = [SageTarFile, SageZipFile, SageTarXZFile]
 
 
-
 def open_archive(filename):
     """
     Automatically detect archive type

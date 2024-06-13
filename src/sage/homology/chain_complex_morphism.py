@@ -78,8 +78,16 @@ def is_ChainComplexMorphism(x):
           From: Chain complex with at most 7 nonzero terms over Integer Ring
           To: Chain complex with at most 7 nonzero terms over Integer Ring
         sage: is_ChainComplexMorphism(x)
+        doctest:warning...
+        DeprecationWarning: The function is_ChainComplexMorphism is deprecated;
+        use 'isinstance(..., ChainComplexMorphism)' instead.
+        See https://github.com/sagemath/sage/issues/38103 for details.
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38103,
+                "The function is_ChainComplexMorphism is deprecated; "
+                "use 'isinstance(..., ChainComplexMorphism)' instead.")
     return isinstance(x, ChainComplexMorphism)
 
 
