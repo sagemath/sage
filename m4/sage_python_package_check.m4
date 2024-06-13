@@ -20,7 +20,7 @@
 #     4. If setuptools is not available to the system python,
 #
 #     5. If the contents of version_requirements.txt (or entry in
-#        "src/pyproject.toml")are not met (wrong version, no version,
+#        "src/pyproject.toml") are not met (wrong version, no version,
 #        etc.) by the system python.
 #
 #   In any of those cases, we set sage_spkg_install_$package to "yes"
