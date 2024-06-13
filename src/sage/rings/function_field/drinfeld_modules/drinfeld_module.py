@@ -766,7 +766,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         Do not use this method, it will be removed.
         """
         from sage.misc.superseded import deprecation
-        deprecation(38199, "This semi-private method should not be used. " \
+        deprecation(38199, "This semi-private method should not be used. "
                            "It will be removed.")
         if self.rank() != 2:
             raise NotImplementedError('rank must be 2')
