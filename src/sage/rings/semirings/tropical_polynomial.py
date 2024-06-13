@@ -299,15 +299,33 @@ class TropicalPolynomial(Polynomial_generic_sparse):
 
         EXAMPLES:
 
+        Construct a tropical semiring with max-plus algebra. For max-plus algebra,
+        the graph will have a constant value at its leftmost part and will go to
+        `infinity` as `x` goes to `infinity`::
+
             sage: T = TropicalSemiring(QQ, use_min=False)
             sage: R = PolynomialRing(T, x)
             sage: p1 = R([1,3,2]); p1
             2*x^2 + 3*x + 1
             sage: p1.roots()
             [-2, 1]
-            sage: p1.piecewise_function()
+            sage: f1 = p1.piecewise_function(); f1
             piecewise(x|-->1 on (-oo, -2), x|-->x + 3 on [-2, 1], x|-->2*x + 2 
             on (1, +oo); x)
+            sage: plot(f1, (x,-3,2))
+
+        If the tropical semiring use a min-plus algebra, then it will give a
+        different result. Instead it will go to `-infinity` as `x` goes to
+        `-infinity` and will have a constant value at its rightmost part::
+
+            sage: T = TropicalSemiring(QQ, use_min=True)
+            sage: R = PolynomialRing(T, x)
+            sage: p1 = R([1,3,2])
+            sage: p1.roots()
+            [-1/2, -1/2]
+            sage: f1 = p1.piecewise_function(); f1
+            piecewise(x|-->2*x + 2 on (-oo, -1/2), x|-->1 on (-1/2, +oo); x)
+            sage: plot(f1)
 
         A constant tropical polynomial will result in a constant function::
 
@@ -342,7 +360,10 @@ class TropicalPolynomial(Polynomial_generic_sparse):
                 test_number = self.base_ring()((unique_root[i]+unique_root[i-1])/2)
 
             terms = {i:c*(test_number**i) for i, c in self.dict().items()}
-            maximum = max(terms.values())
+            if self.base_ring()._use_min:
+                maximum = min(terms.values())
+            else:
+                maximum = max(terms.values())
             found_key = None
             for key, value in terms.items():
                 if value == maximum:
