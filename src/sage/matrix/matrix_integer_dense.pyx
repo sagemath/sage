@@ -4010,8 +4010,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
            check that the matrix is invertible.
 
 
-        OUTPUT: a, d such that ``A*self == d``
-
+        OUTPUT: `A`, `d` such that ``A*self == d``
 
         -  ``A`` -- a matrix over ZZ
 
@@ -4066,13 +4065,11 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         -  ``self`` -- an invertible matrix
 
-        OUTPUT: a, d such that ``A*self == d``
-
+        OUTPUT: `A`, `d` such that ``A*self == d``
 
         -  ``A`` -- a matrix over ZZ
 
         -  ``d`` -- an integer
-
 
         EXAMPLES::
 

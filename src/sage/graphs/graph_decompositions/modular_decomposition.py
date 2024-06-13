@@ -282,9 +282,9 @@ class Node:
 
 def create_prime_node():
     """
-    Return a prime node with no children
+    Return a prime node with no children.
 
-    OUTPUT: a node object with node_type set as NodeType.PRIME
+    OUTPUT: a node object with ``node_type`` set as ``NodeType.PRIME``
 
     EXAMPLES::
 
@@ -298,9 +298,9 @@ def create_prime_node():
 
 def create_parallel_node():
     """
-    Return a parallel node with no children
+    Return a parallel node with no children.
 
-    OUTPUT: a node object with node_type set as NodeType.PARALLEL
+    OUTPUT: a node object with ``node_type`` set as ``NodeType.PARALLEL``
 
     EXAMPLES::
 
@@ -314,9 +314,9 @@ def create_parallel_node():
 
 def create_series_node():
     """
-    Return a series node with no children
+    Return a series node with no children.
 
-    OUTPUT: a node object with node_type set as NodeType.SERIES
+    OUTPUT: a node object with ``node_type`` set as ``NodeType.SERIES``
 
     EXAMPLES::
 
@@ -330,13 +330,14 @@ def create_series_node():
 
 def create_normal_node(vertex):
     """
-    Return a normal node with no children
+    Return a normal node with no children.
 
     INPUT:
 
     - ``vertex`` -- vertex number
 
-    OUTPUT: a node object representing the vertex with node_type set as NodeType.NORMAL
+    OUTPUT: a node object representing the vertex with ``node_type`` set as
+    ``NodeType.NORMAL``
 
     EXAMPLES::
 

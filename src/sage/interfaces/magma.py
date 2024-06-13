@@ -474,11 +474,9 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
+        -  ``attrname`` -- string
 
-        -  ``attrname`` -- a string
-
-
-        OUTPUT: magmaFunction instance
+        OUTPUT: :class:`MagmaFunction` instance
 
         EXAMPLES::
 
@@ -705,14 +703,12 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-
         -  ``x`` -- object
 
         -  ``gens`` -- string; names of generators of self,
            separated by commas
 
-
-        OUTPUT: magmaElement
+        OUTPUT: :class:`MagmaElement`
 
         EXAMPLES::
 
@@ -1119,7 +1115,6 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-
         -  ``function`` -- string, a Magma function name
 
         -  ``args`` -- list of objects coercible into this magma
@@ -1131,8 +1126,8 @@ class Magma(ExtraTabCompletion, Expect):
         -  ``nvals`` -- number of return values from the
            function to ask Magma for
 
-
-        OUTPUT: magmaElement or tuple of nvals MagmaElement's
+        OUTPUT: instance of :class:`MagmaElement` or a tuple of ``nvals`` many
+        :class:`MagmaElement` instances
 
         EXAMPLES::
 
@@ -2129,7 +2124,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
         -  ``n`` -- a *positive* integer
 
 
-        OUTPUT: magmaElement
+        OUTPUT: :class:`MagmaElement`
 
         EXAMPLES::
 
@@ -2501,7 +2496,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
         Return value of a given Magma attribute. This is like selfattrname
         in Magma.
 
-        OUTPUT: magmaElement
+        OUTPUT: :class:`MagmaElement`
 
         EXAMPLES::
 

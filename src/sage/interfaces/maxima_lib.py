@@ -345,7 +345,7 @@ class MaximaLib(MaximaAbstract):
 
     INPUT: none
 
-    OUTPUT: maxima interface as a Library
+    OUTPUT: Maxima interface as a Library
 
     EXAMPLES::
 
@@ -398,7 +398,7 @@ class MaximaLib(MaximaAbstract):
 
         - ``x`` -- object to coerce into self
 
-        OUTPUT: maxima element equivalent to ``x``
+        OUTPUT: Maxima element equivalent to ``x``
 
         EXAMPLES::
 
@@ -1139,7 +1139,7 @@ class MaximaLibElement(MaximaAbstractElement):
 
         - ``options`` -- string (default="")
 
-        OUTPUT: maxima object
+        OUTPUT: Maxima object
 
         EXAMPLES:
 

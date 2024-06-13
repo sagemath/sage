@@ -935,7 +935,9 @@ class DiGraph(GenericGraph):
         - ``certificate`` -- boolean (default: ``False``); whether to return a
           certificate
 
-        OUTPUT: * When ``certificate=False``, returns a boolean value
+        OUTPUT:
+
+        * When ``certificate=False``, returns a boolean value
 
         * When ``certificate=True``:
 

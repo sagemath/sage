@@ -2617,7 +2617,7 @@ class PGL(PermutationGroup_plg):
         - ``q`` -- prime power; the size of the ground field
         - ``name`` -- (default: ``'a'``) variable name of indeterminate of finite field `\GF(q)`
 
-        OUTPUT: pGL(`n`, `q`)
+        OUTPUT: PGL(`n`, `q`)
 
         .. NOTE::
 
@@ -2857,7 +2857,7 @@ class PSp(PermutationGroup_plg):
         - ``q`` -- prime power; the size of the ground field
         - ``name`` -- (default: ``'a'``) variable name of indeterminate of finite field `\GF(q)`
 
-        OUTPUT: pSp(`n`, `q`)
+        OUTPUT: PSp(`n`, `q`)
 
         .. NOTE::
 
@@ -2931,9 +2931,10 @@ class PSU(PermutationGroup_pug):
 
         - n -- positive integer; the degree
         - q -- prime power; the size of the ground field
-        - name -- (default: 'a') variable name of indeterminate of finite field GF(q)
+        - name -- (default: ``'a'``) variable name of indeterminate of finite
+          field `\GF(q)`
 
-        OUTPUT: pSU(n,q)
+        OUTPUT: PSU(`n`,`q`)
 
         .. NOTE::
 
@@ -2982,7 +2983,7 @@ class PGU(PermutationGroup_pug):
         - ``q`` -- prime power; the size of the ground field
         - ``name`` -- (default: ``'a'``) variable name of indeterminate of finite field `\GF(q)`
 
-        OUTPUT: pGU(`n`, `q`)
+        OUTPUT: PGU(`n`, `q`)
 
         .. NOTE::
 
