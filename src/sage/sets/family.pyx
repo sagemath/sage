@@ -1047,9 +1047,15 @@ class LazyFamily(AbstractFamily):
         """
         if not isinstance(other, self.__class__):
             return False
-        if not self.set == other.set:
+        try:
+            if not hash(self.set) == hash(other.set):
+                return False
+        except (TypeError, ValueError):
+            pass
+        if not repr(self) == repr(other):
             return False
-        return repr(self) == repr(other)
+        # For infinite sets, this might not terminate
+        return self.set == other.set
 
     def _repr_(self):
         """

@@ -14,10 +14,10 @@ AUTHORS:
 #                https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.sets.cartesian_product import CartesianProduct
+from sage.sets.cartesian_product import CartesianProduct_unique
 
 
-class CartesianProductPoset(CartesianProduct):
+class CartesianProductPoset(CartesianProduct_unique):
     r"""
     A class implementing Cartesian products of posets (and elements
     thereof). Compared to :class:`CartesianProduct` you are able to
@@ -110,7 +110,7 @@ class CartesianProductPoset(CartesianProduct):
         if not isinstance(category, tuple):
             category = (category,)
         category = Category.join(category + (Posets(),))
-        super().__init__(sets, category, **kwargs)
+        CartesianProduct_unique.__init__(self, sets, category, **kwargs)
 
     def le(self, left, right):
         r"""
@@ -305,7 +305,7 @@ class CartesianProductPoset(CartesianProduct):
         """
         return left.value <= right.value
 
-    class Element(CartesianProduct.Element):
+    class Element(CartesianProduct_unique.Element):
 
         def _le_(self, other):
             r"""

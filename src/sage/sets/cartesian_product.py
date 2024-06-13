@@ -6,9 +6,18 @@ AUTHORS:
 - Nicolas Thiery (2010-03): initial version
 """
 # ****************************************************************************
-#       Copyright (C) 2008 Nicolas Thiery <nthiery at users.sf.net>,
-#                          Mike Hansen <mhansen@gmail.com>,
-#                          Florent Hivert <Florent.Hivert@univ-rouen.fr>
+#       Copyright (C) 2008-2014 Nicolas Thiery <nthiery at users.sf.net>,
+#                     2008      Mike Hansen <mhansen@gmail.com>,
+#                     2008      Florent Hivert <Florent.Hivert@univ-rouen.fr>
+#                     2014      Nathann Cohen
+#                     2014      Peter Bruin
+#                     2015      Travis Scrimshaw
+#                     2015      Jori Mäntysalo
+#                     2015      Daniel Krenn
+#                     2015      David Roe
+#                     2015-2019 Vincent Delecroix
+#                     2016      Johan S. R. Nielsen
+#                     2022      Matthias Koeppe
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
@@ -20,16 +29,19 @@ from sage.misc.call import attrcall
 from sage.misc.cachefunc import cached_method
 
 from sage.categories.sets_cat import Sets
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 
 from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.structure.unique_representation import WithPicklingByInitArgs, UniqueRepresentation
 from sage.structure.element_wrapper import ElementWrapperCheckWrappedClass
+
+from sage.sets.set_from_iterator import EnumeratedSetFromIterator
 
 from sage.categories.rings import Rings
 _Rings = Rings()
 
 
-class CartesianProduct(UniqueRepresentation, Parent):
+class CartesianProduct_base(WithPicklingByInitArgs, Parent):
     """
     A class implementing a raw data structure for Cartesian products
     of sets (and elements thereof). See :obj:`cartesian_product` for
@@ -51,6 +63,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
 
     .. automethod:: CartesianProduct._cartesian_product_of_elements
     """
+
     def __init__(self, sets, category, flatten=False):
         r"""
         INPUT:
@@ -75,7 +88,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
             sage: cartesian_product([ZZ, ZZ], blub=None)
             Traceback (most recent call last):
             ...
-            TypeError: ...__init__() got an unexpected keyword argument 'blub'
+            TypeError: ...__classcall_private__() got an unexpected keyword argument 'blub'
         """
         self._sets = tuple(sets)
         Parent.__init__(self, category=category)
@@ -288,7 +301,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
             sage: Q.has_coerce_map_from(Z)  # indirect doctest
             True
         """
-        if isinstance(S, CartesianProduct):
+        if isinstance(S, CartesianProduct_base):
             S_factors = S.cartesian_factors()
             R_factors = self.cartesian_factors()
             if len(S_factors) == len(R_factors):
@@ -297,6 +310,9 @@ class CartesianProduct(UniqueRepresentation, Parent):
         return super()._coerce_map_from_(S)
 
     an_element = Sets.CartesianProducts.ParentMethods.an_element
+
+
+class CartesianProduct_with_element_wrapper(CartesianProduct_base):
 
     class Element(ElementWrapperCheckWrappedClass):
 
@@ -373,3 +389,64 @@ class CartesianProduct(UniqueRepresentation, Parent):
                 <... 'tuple'>
             """
             return self.value
+
+
+class CartesianProduct_eq_by_factors(CartesianProduct_with_element_wrapper):
+    def __eq__(self, other):
+        if isinstance(other, CartesianProduct_base):
+            # No flattening, hence we are equal if and only if our factors are equal
+            return self.cartesian_factors() == other.cartesian_factors()
+        return super().__eq__(other)
+
+    def __hash__(self):
+        # No flattening, hence we are equal if and only if our factors are equal
+        return hash(self.cartesian_factors())
+
+
+class CartesianProduct_unique(UniqueRepresentation, CartesianProduct_with_element_wrapper):
+    r"""
+    A Cartesian product with :class:`~sage.structure.unique_representation.UniqueRepresentation` behavior.
+    """
+    pass
+
+
+class CartesianProduct(CartesianProduct_base):
+
+    @staticmethod
+    def __classcall_private__(cls, sets, category, flatten=False):
+        r"""
+        Suppress :class:`~sage.structure.unique_representation.UniqueRepresentation` behavior for certain infinite factors.
+
+        Two :class:`~sage.sets.set_from_iterator.EnumeratedSetFromIterator` objects that are not known to be finite
+        cannot be reliably tested for equality. Therefore, we do not put such objects
+        in the :class:`~sage.structure.unique_representation.UniqueRepresentation` cache.
+
+        EXAMPLES::
+
+            sage: from sage.sets.set_from_iterator import EnumeratedSetFromIterator
+            sage: F = EnumeratedSetFromIterator(lambda: iter([1, 2]))
+            sage: F.category()
+            Category of facade enumerated sets
+            sage: cartesian_product([F, F]) == cartesian_product([F, F])
+            True
+            sage: cartesian_product([F, F]) is cartesian_product([F, F])
+            False
+            sage: G = EnumeratedSetFromIterator(lambda: iter([1, 2]),
+            ....:                               category=FiniteEnumeratedSets())
+            sage: G.category()
+            Category of facade finite enumerated sets
+            sage: cartesian_product([G, G]) == cartesian_product([G, G])
+            True
+            sage: cartesian_product([G, G]) is cartesian_product([G, G])
+            True
+        """
+        assert cls == CartesianProduct
+        # Trac #19195: EnumeratedSetFromIterator instances are not safe to be passed
+        # to UniqueRepresentation because EnumeratedSetFromIterator.__eq__ resorts
+        # to a semi-decision procedure for equality.
+        if not any(isinstance(set, EnumeratedSetFromIterator) and set not in FiniteEnumeratedSets()
+                   for set in sets):
+            # UniqueRepresentation is safe to use.
+            return CartesianProduct_unique(sets, category)
+        else:
+            return CartesianProduct_eq_by_factors(sets, category)

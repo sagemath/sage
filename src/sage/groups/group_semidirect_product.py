@@ -16,11 +16,11 @@ AUTHORS:
 # ****************************************************************************
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
 from sage.categories.groups import Groups
-from sage.sets.cartesian_product import CartesianProduct
+from sage.sets.cartesian_product import CartesianProduct_unique
 from sage.misc.cachefunc import cached_method
 
 
-class GroupSemidirectProductElement(CartesianProduct.Element):
+class GroupSemidirectProductElement(CartesianProduct_unique.Element):
     r"""
     Element class for :class:`GroupSemidirectProduct`.
     """
@@ -134,7 +134,7 @@ class GroupSemidirectProductElement(CartesianProduct.Element):
         return Gop((h, par._twist(~h, g)))
 
 
-class GroupSemidirectProduct(CartesianProduct):
+class GroupSemidirectProduct(CartesianProduct_unique):
     r"""
     Return the semidirect product of the groups ``G`` and ``H`` using the
     homomorphism ``twist``.
@@ -288,7 +288,7 @@ class GroupSemidirectProduct(CartesianProduct):
         self._prefix1 = prefix1
         self._print_tuple = print_tuple
         self._category = category
-        CartesianProduct.__init__(self, (G, H), category=category)
+        super().__init__((G, H), category=category)
 
     def act_to_right(self):
         r"""
