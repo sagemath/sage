@@ -354,7 +354,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: R.<x,y> = QQ[]
                 sage: C = CombinatorialFreeModule(R, range(3), prefix='x')              # needs sage.modules
                 sage: x = C.basis()                                                     # needs sage.modules
-                sage: C.echelon_form([x[0] - x[1], 2*x[1] - 2*x[2], x[0] - x[2]])       # needs sage.modules sage.rings.function_field
+                sage: C.echelon_form([x[0] - x[1], 2*x[1] - 2*x[2], x[0] - x[2]])       # needs sage.rings.function_field
                 [x[0] - x[2], x[1] - x[2]]
 
             ::
