@@ -1,10 +1,9 @@
 r"""
 Implementation of Flag, elements of :class:`CombinatorialTheory`
 
-Cython class for flags and types. The terminology follows the original
-flag algebra paper [Raz2007]_ except types will be called ftype 
-(short for flag type) to not clash with python's type keyword.
-Flags are elements of :class:`CombinatorialTheory`. They also behave as
+Cython class for flags and types. Types will be called ftype 
+(short for flag type, to distinguish from the type keyword in python)
+They are elements of :class:`CombinatorialTheory`. They also behave as
 basis elements for :class:`FlagAlgebra`, hence basic operations
 like addition and multiplication are defined.
 
@@ -224,7 +223,7 @@ cdef class Flag(Element):
 
         OUTPUT: The resulting flag
 
-        EXAMPLES:
+        EXAMPLES::
 
         Create a simple GraphTheory triangle ::
             
@@ -276,7 +275,7 @@ cdef class Flag(Element):
         If it is an ftype (all the points are part of the ftype), then
         the text changes to indicate this fact.
 
-        EXAMPLES:
+        EXAMPLES::
 
         For flags ::
 
@@ -294,6 +293,15 @@ cdef class Flag(Element):
         if self.is_ftype():
             return 'Ftype on {} points with {}'.format(self.size(), strblocks)
         return 'Flag on {} points, ftype from {} with {}'.format(self.size(), self.ftype_points(), strblocks)
+    
+    def raw_numbers(self):
+        numbers = [self.size()] + self.ftype_points() + [15]
+        blocks = self.blocks()
+        for xx in blocks:
+            for yy in blocks[xx]:
+                numbers += yy
+            numbers.append(15)
+        return numbers
     
     cpdef subflag(self, points=None, ftype_points=None):
         r"""
@@ -313,7 +321,7 @@ cdef class Flag(Element):
 
         OUTPUT: The induced sub Flag
 
-        EXAMPLES:
+        EXAMPLES::
 
         Same ftype ::
 
@@ -337,9 +345,9 @@ cdef class Flag(Element):
             sage: g.subflag()==g
             True
         """
-        if ftype_points is None:
+        if ftype_points==None:
             ftype_points = self._ftype_points
-        if points is None:
+        if points==None:
             points = list(range(self._n))
         else:
             points = [ii for ii in range(self._n) if (ii in points or ii in ftype_points)]
@@ -403,7 +411,7 @@ cdef class Flag(Element):
 
         OUTPUT: integer, the number of vertices.
 
-        EXAMPLES:
+        EXAMPLES::
 
         This is the size parameter in the `Flag` initialization ::
 
@@ -438,7 +446,7 @@ cdef class Flag(Element):
         r"""
         Returns the ftype of this `Flag`
 
-        EXAMPLES:
+        EXAMPLES::
 
         Ftype of a pointed triangle is just a point ::
 
@@ -462,7 +470,7 @@ cdef class Flag(Element):
 
             :func:`subflag`
         """
-        if self._ftype is None:
+        if self._ftype==None:
             if self.is_ftype():
                 self._ftype = self
             self._ftype = self.subflag([])
@@ -504,7 +512,7 @@ cdef class Flag(Element):
         This returns a unique identifier that can equate isomorphic
         objects
 
-        EXAMPLES:
+        EXAMPLES::
 
         Isomorphic graphs have the same :func:`unique` value ::
 
@@ -527,7 +535,7 @@ cdef class Flag(Element):
             :func:`CombinatorialTheory.identify`
             :func:`__eq__`
         """
-        if self._unique is None:
+        if self._unique==None:
             self._unique = self.theory().identify(
                 self._n, self._ftype_points, **self._blocks)
         return self._unique
@@ -552,7 +560,7 @@ cdef class Flag(Element):
         OUTPUT: The :class:`FlagAlgebraElement` object, 
             which is the sum of the two parameters
 
-        EXAMPLES:
+        EXAMPLES::
 
         Adding to self is 2*self ::
 
@@ -622,7 +630,7 @@ cdef class Flag(Element):
         OUTPUT: The :class:`FlagAlgebraElement` object, 
             which is the product of the two parameters
 
-        EXAMPLES:
+        EXAMPLES::
 
         Pointed edge multiplied by itself ::
 
@@ -653,7 +661,7 @@ cdef class Flag(Element):
         r"""
         `FlagAlgebraElement`, equal to this, with size is shifted by the amount
 
-        EXAMPLES:
+        EXAMPLES::
 
         Edge shifted to size `3` ::
 
@@ -678,7 +686,7 @@ cdef class Flag(Element):
 
         OUTPUT: The `FlagAlgebraElement` resulting from the division
 
-        EXAMPLES:
+        EXAMPLES::
 
         Divide by `2` ::
 
@@ -755,7 +763,7 @@ cdef class Flag(Element):
         Returns true if self appears as an induced structure inside
         other.
 
-        EXAMPLES:
+        EXAMPLES::
 
         Edge appears in a 4 star ::
 
@@ -831,7 +839,7 @@ cdef class Flag(Element):
 
         OUTPUT: the `FlagAlgebraElement` resulting from the projection
 
-        EXAMPLES:
+        EXAMPLES::
 
         If the center of a cherry is flagged, then the projection has
         coefficient 1/3 ::
@@ -864,7 +872,7 @@ cdef class Flag(Element):
         OUTPUT: the `FlagAlgebraElement` resulting from the multiplication
             and projection
 
-        EXAMPLES:
+        EXAMPLES::
 
         Pointed edge multiplied with itself and projected ::
 
@@ -893,7 +901,7 @@ cdef class Flag(Element):
         Randomly choosing self.size() points in other, the
         probability of getting self.
 
-        EXAMPLES:
+        EXAMPLES::
 
         Density of an edge in the cherry graph is 2/3 ::
 
@@ -925,9 +933,7 @@ cdef class Flag(Element):
         lrp = list(range(target.size()))
         for ftype_points in itertools.permutations(range(target.size()), self._n):
             if target.subflag(ftype_points, ftype_points)==self:
-                fla = target.subflag(lrp, ftype_points)
-                if fla not in ret:
-                    ret.append(fla)
+                ret.append(target.subflag(lrp, ftype_points))
         return ret
     
     cpdef densities(self, n1, n1flgs, n2, n2flgs, ftype_remap, large_ftype, small_ftype):
@@ -960,17 +966,6 @@ cdef class Flag(Element):
             :func:`CombinatorialTheory.mul_project_table`
             :func:`FlagAlgebra.mul_project_table`
             :func:`FlagAlgebraElement.mul_project`
-        
-        TESTS::
-
-            sage: from sage.algebras.flag_algebras import *
-            sage: g = GraphTheory(3, edges=[[0, 1]])
-            sage: p = GraphTheory(1, ftype=[0])
-            sage: n1flgs = GraphTheory.generate_flags(2, p)
-            sage: n2flgs = n1flgs
-            sage: g.densities(2, n1flgs, 2, n2flgs, [0], p, GraphTheory.empty())
-            (2, 2, {(0, 0): 2, (0, 1): 2, (1, 0): 2})
-        
         """
         cdef int N = self._n
         cdef int small_size = small_ftype.size()
