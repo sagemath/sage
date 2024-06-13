@@ -87,7 +87,6 @@ The treewidth of a clique is `n-1` and its treelength is 1::
 
     - Approximation of treelength based on :meth:`~sage.graphs.graph.Graph.lex_M`
     - Approximation of treelength based on BFS Layering
-    - upgrade tdlib to 0.9.0 :issue:`30813`
 
 
 Methods
@@ -618,6 +617,12 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None, nice=Fals
         Tree decomposition: Graph on 8 vertices
         sage: g.treewidth(algorithm='sage', certificate=True, kmin=4)
         Tree decomposition: Graph on 4 vertices
+
+    Check that :issue:`38159` is fixed ::
+
+        sage: G = Graph('I~~}vPlr_')
+        sage: G.treewidth(algorithm='sage') == G.treewidth(algorithm='tdlib') # optional - tdlib
+        True
 
     Trivially true::
 
