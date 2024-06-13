@@ -759,6 +759,18 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         from sage.rings.function_field.drinfeld_modules.homset import DrinfeldModuleHomset
         return DrinfeldModuleHomset(self, other, category)
 
+    def _check_rank_two(self):
+        r"""
+        Raise ``NotImplementedError`` if the rank is not two.
+
+        Do not use this method, it will be removed.
+        """
+        from sage.misc.superseded import deprecation
+        deprecation(38199, "This semi-private method should not be used. " \
+                           "It will be removed.")
+        if self.rank() != 2:
+            raise NotImplementedError('rank must be 2')
+
     def _latex_(self):
         r"""
         Return a LaTeX representation of the Drinfeld module.
