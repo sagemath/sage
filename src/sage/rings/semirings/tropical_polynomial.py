@@ -300,8 +300,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         EXAMPLES:
 
         Construct a tropical semiring with max-plus algebra. For max-plus algebra,
-        the graph will have a constant value at its leftmost part and will go to
-        `infinity` as `x` goes to `infinity`::
+        the graph will be of linear piecewise convex functions::
 
             sage: T = TropicalSemiring(QQ, use_min=False)
             sage: R = PolynomialRing(T, x)
@@ -314,8 +313,8 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             sage: plot(f1)
 
         If the tropical semiring use a min-plus algebra, then it will give a
-        different result. Instead it will go to `-infinity` as `x` goes to
-        `-infinity` and will have a constant value at its rightmost part::
+        different result. Instead it will give a graph of linear piecewise 
+        concave functions::
 
             sage: T = TropicalSemiring(QQ, use_min=True)
             sage: R = PolynomialRing(T, x)
