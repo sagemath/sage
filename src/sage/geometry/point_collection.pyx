@@ -90,11 +90,9 @@ def is_PointCollection(x):
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
-    OUTPUT:
-
-    - ``True`` if ``x`` is a point collection and ``False`` otherwise.
+    OUTPUT: ``True`` if ``x`` is a point collection and ``False`` otherwise
 
     EXAMPLES::
 
@@ -205,11 +203,9 @@ cdef class PointCollection(SageObject):
 
         - ``left`` -- a :class:`PointCollection`;
 
-        - ``right`` -- a :class:`PointCollection`.
+        - ``right`` -- a :class:`PointCollection`
 
-        OUTPUT:
-
-        - a :class:`PointCollection`.
+        OUTPUT: a :class:`PointCollection`
 
         TESTS::
 
@@ -243,9 +239,7 @@ cdef class PointCollection(SageObject):
 
         - a list of integers (as a single or many arguments).
 
-        OUTPUT:
-
-        - a :class:`point collection <PointCollection>`.
+        OUTPUT: a :class:`point collection <PointCollection>`
 
         TESTS::
 
@@ -312,11 +306,9 @@ cdef class PointCollection(SageObject):
 
         INPUT:
 
-        - ``n`` -- an integer.
+        - ``n`` -- integer
 
-        OUTPUT:
-
-        - a point, an element of the ambient :meth:`module` of ``self``.
+        OUTPUT: a point, an element of the ambient :meth:`module` of ``self``
 
         EXAMPLES::
 
@@ -330,9 +322,7 @@ cdef class PointCollection(SageObject):
         r"""
         Return the hash of ``self``.
 
-        OUTPUT:
-
-        - an integer.
+        OUTPUT: integer
 
         TESTS::
 
@@ -346,9 +336,7 @@ cdef class PointCollection(SageObject):
         r"""
         Return an iterator over points of ``self``.
 
-        OUTPUT:
-
-        - an iterator.
+        OUTPUT: an iterator
 
         TESTS::
 
@@ -365,9 +353,7 @@ cdef class PointCollection(SageObject):
         r"""
         Return the number of points in ``self``.
 
-        OUTPUT:
-
-        - an integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -381,9 +367,7 @@ cdef class PointCollection(SageObject):
         r"""
         Return a list of points of ``self``.
 
-        OUTPUT:
-
-        - a list.
+        OUTPUT: list
 
         TESTS::
 
@@ -479,9 +463,7 @@ cdef class PointCollection(SageObject):
         r"""
         Return the tuple of points of ``self``.
 
-        OUTPUT:
-
-        - a tuple.
+        OUTPUT: a tuple
 
         TESTS::
 
@@ -495,9 +477,7 @@ cdef class PointCollection(SageObject):
         r"""
         Return a LaTeX representation of ``self``.
 
-        OUTPUT:
-
-        - a string.
+        OUTPUT: string
 
         TESTS::
 
@@ -527,9 +507,7 @@ cdef class PointCollection(SageObject):
         - ``ring`` -- a base ring for the returned matrix (default: base ring of
           :meth:`module` of ``self``).
 
-        OUTPUT:
-
-        - a :class:`matrix <Matrix>`.
+        OUTPUT: a :class:`matrix <Matrix>`
 
         EXAMPLES::
 
@@ -549,9 +527,7 @@ cdef class PointCollection(SageObject):
         r"""
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        - a string.
+        OUTPUT: string
 
         TESTS::
 
@@ -629,9 +605,7 @@ cdef class PointCollection(SageObject):
         r"""
         Return the number of points in ``self``.
 
-        OUTPUT:
-
-        - an integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -653,9 +627,7 @@ cdef class PointCollection(SageObject):
           default, the direct sum of the ambient modules of ``self`` and
           ``other`` is constructed.
 
-        OUTPUT:
-
-        - a :class:`point collection <PointCollection>`.
+        OUTPUT: a :class:`point collection <PointCollection>`
 
         EXAMPLES::
 
@@ -681,9 +653,7 @@ cdef class PointCollection(SageObject):
         r"""
         Return a matrix whose columns are points of ``self``.
 
-        OUTPUT:
-
-        - a :class:`matrix <Matrix>`.
+        OUTPUT: a :class:`matrix <Matrix>`
 
         EXAMPLES::
 
@@ -701,9 +671,7 @@ cdef class PointCollection(SageObject):
 
         .. NOTE:: You can use either :meth:`dim` or :meth:`dimension`.
 
-        OUTPUT:
-
-        - an integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -784,9 +752,7 @@ cdef class PointCollection(SageObject):
         r"""
         Return a matrix whose rows are points of ``self``.
 
-        OUTPUT:
-
-        - a :class:`matrix <Matrix>`.
+        OUTPUT: a :class:`matrix <Matrix>`
 
         EXAMPLES::
 
@@ -808,9 +774,7 @@ cdef class PointCollection(SageObject):
         r"""
         Return the ambient module of ``self``.
 
-        OUTPUT:
-
-        - a :class:`module <FreeModule_generic>`.
+        OUTPUT: a :class:`module <FreeModule_generic>`
 
         EXAMPLES::
 
@@ -910,9 +874,7 @@ cdef class PointCollection(SageObject):
         r"""
         Return points of ``self`` as a :class:`frozenset`.
 
-        OUTPUT:
-
-        - a :class:`frozenset`.
+        OUTPUT: a :class:`frozenset`
 
         EXAMPLES::
 
@@ -930,7 +892,7 @@ cdef class PointCollection(SageObject):
 
         INPUT:
 
-        - ``f`` -- a file opened for writing.
+        - ``f`` -- a file opened for writing
 
         EXAMPLES::
 
@@ -972,13 +934,13 @@ def read_palp_point_collection(f, lattice=None, permutation=False):
 
     INPUT:
 
-    - ``f`` -- an opened file with PALP output.
+    - ``f`` -- an opened file with PALP output
 
     - ``lattice`` -- the lattice for points. If not given, the
       :class:`toric lattice <sage.geometry.toric_lattice.ToricLatticeFactory>`
       `M` of dimension `n` will be used.
 
-    - ``permutation`` -- (default: ``False``) if ``True``, try to retrieve
+    - ``permutation`` -- boolean (default: ``False``); if ``True``, try to retrieve
       the permutation. This parameter makes sense only when PALP computed the
       normal form of a lattice polytope.
 

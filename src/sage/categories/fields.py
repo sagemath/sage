@@ -511,7 +511,7 @@ class Fields(CategoryWithAxiom):
 
         def vector_space(self, *args, **kwds):
             r"""
-            Gives an isomorphism of this field with a vector space over a subfield.
+            Give an isomorphism of this field with a vector space over a subfield.
 
             This method is an alias for ``free_module``, which may have more documentation.
 

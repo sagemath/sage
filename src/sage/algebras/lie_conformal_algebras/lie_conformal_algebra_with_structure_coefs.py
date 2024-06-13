@@ -35,7 +35,7 @@ class LieConformalAlgebraWithStructureCoefficients(
 
     INPUT:
 
-    - ``R`` -- a ring (default: ``None``); The base ring of this Lie
+    - ``R`` -- a ring (default: ``None``); the base ring of this Lie
       conformal algebra. Behaviour is undefined if it is not a field
       of characteristic zero.
 
@@ -66,7 +66,7 @@ class LieConformalAlgebraWithStructureCoefficients(
       defined by skew-symmetry) is assumed to have vanishing
       `\lambda`-bracket.
 
-    - ``names`` -- tuple of ``str`` (default: ``None``); The list of
+    - ``names`` -- tuple of ``str`` (default: ``None``); the list of
       names for generators of this Lie conformal algebra. Do not
       include central elements in this list.
 

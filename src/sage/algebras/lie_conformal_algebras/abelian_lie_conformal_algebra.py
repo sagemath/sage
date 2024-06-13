@@ -39,7 +39,7 @@ class AbelianLieConformalAlgebra(GradedLieConformalAlgebra):
       `1` for each generator); the weights of the generators. The resulting
       Lie conformal algebra is `H`-graded.
     - ``parity`` -- ``None`` or a list of ``0`` or ``1`` (default:
-      ``None``); The parity of the generators. If not ``None`` the
+      ``None``); the parity of the generators. If not ``None`` the
       resulting Lie Conformal algebra is a Super Lie conformal
       algebra
     - ``names`` -- a tuple of ``str`` or ``None`` (default: ``None``

@@ -150,7 +150,7 @@ class PolyhedralComplex(GenericCellComplex):
 
     INPUT:
 
-    - ``maximal_cells`` -- a list, a tuple, or a dictionary (indexed by
+    - ``maximal_cells`` -- list, tuple, or dictionary (indexed by
       dimension) of cells of the Complex. Each cell is of class
       :class:`Polyhedron` of the same ambient dimension. To set up a
       :class:PolyhedralComplex, it is sufficient to provide the maximal
@@ -394,7 +394,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``increasing`` -- (default ``True``) if ``True``, return
+        - ``increasing`` -- boolean (default: ``True``); if ``True``, return
           cells in increasing order of dimension, thus starting with the
           zero-dimensional cells; otherwise it returns cells in decreasing
           order of dimension
@@ -425,7 +425,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``n`` -- non-negative integer; the dimension
+        - ``n`` -- nonnegative integer; the dimension
         - ``subcomplex`` -- (optional) if a subcomplex is given then
           return the cells which are **not** in this subcomplex
 
@@ -509,7 +509,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``increasing`` -- (default: ``False``) if ``True``, return
+        - ``increasing`` -- boolean (default: ``False``); if ``True``, return
           maximal cells in increasing order of dimension.
           Otherwise it returns cells in decreasing order of dimension.
 
@@ -552,7 +552,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``n`` -- non-negative integer; the dimension
+        - ``n`` -- nonnegative integer; the dimension
 
         .. NOTE::
 
@@ -594,7 +594,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``n`` -- (non-negative integer) the dimension
+        - ``n`` -- nonnegative integer; the dimension
 
         .. WARNING::
 
@@ -730,15 +730,15 @@ class PolyhedralComplex(GenericCellComplex):
           can be passed to :func:`exploded_plot`:
 
           - ``center`` -- (default: ``None``, denoting the origin) the center of explosion
-          - ``sticky_vertices`` -- (default: ``False``) boolean or dict.
-            Whether to draw line segments between shared vertices of the given polyhedra.
+          - ``sticky_vertices`` -- (default: ``False``) boolean or dict;
+            whether to draw line segments between shared vertices of the given polyhedra.
             A dict gives options for :func:`sage.plot.line`.
           - ``sticky_center`` -- (default: ``True``) boolean or dict. When ``center`` is
             a vertex of some of the polyhedra, whether to draw line segments connecting the
             ``center`` to the shifted copies of these vertices.
             A dict gives options for :func:`sage.plot.line`.
 
-        - ``color`` -- (default: ``None``) if ``"rainbow"``, assign a different color
+        - ``color`` -- (default: ``None``) if ``'rainbow'``, assign a different color
           to every maximal cell; otherwise, passed on to
           :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`.
 
@@ -775,7 +775,6 @@ class PolyhedralComplex(GenericCellComplex):
             ....:         Polyhedron(rays=[[-1,0,0], [0,1,0], [0,0,1]])])
             sage: g5 = pc5.plot(explosion_factor=0.3, color='rainbow', alpha=0.8,       # needs sage.plot
             ....:               point={'size': 20}, axes=False, online=True)
-
         """
         if self.dimension() > 3:
             raise ValueError("cannot plot in high dimension")
@@ -946,7 +945,7 @@ class PolyhedralComplex(GenericCellComplex):
 
     def __contains__(self, x):
         """
-        True if ``x`` is a polyhedron which is contained in this complex.
+        Return ``True`` if ``x`` is a polyhedron which is contained in this complex.
 
         EXAMPLES::
 
@@ -1062,7 +1061,7 @@ class PolyhedralComplex(GenericCellComplex):
 
     def is_compact(self):
         """
-        Test for boundedness of the polyhedral complex
+        Test for boundedness of the polyhedral complex.
 
         EXAMPLES::
 
@@ -1319,7 +1318,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``n`` -- non-negative integer; the dimension
+        - ``n`` -- nonnegative integer; the dimension
 
         .. SEEALSO::
 
@@ -1676,9 +1675,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         - ``right`` -- the other polyhedral complex (the right-hand factor)
 
-        OUTPUT:
-
-        - the product ``self x right``
+        OUTPUT: the product ``self x right``
 
         EXAMPLES::
 
@@ -2517,14 +2514,14 @@ def exploded_plot(polyhedra, *,
     - ``explosion_factor`` -- (default: 1) a nonnegative number; translate polyhedra by this
       factor of the distance from ``center`` to their center
 
-    - ``sticky_vertices`` -- (default: ``False``) boolean or dict. Whether to draw line segments between shared
+    - ``sticky_vertices`` -- (default: ``False``) boolean or dict; whether to draw line segments between shared
       vertices of the given polyhedra. A dict gives options for :func:`sage.plot.line`.
 
     - ``sticky_center`` -- (default: ``True``) boolean or dict. When ``center`` is a vertex of some
       of the polyhedra, whether to draw line segments connecting the ``center`` to the shifted copies
       of these vertices. A dict gives options for :func:`sage.plot.line`.
 
-    - ``color`` -- (default: ``None``) if ``"rainbow"``, assign a different color to every maximal cell and
+    - ``color`` -- (default: ``None``) if ``'rainbow'``, assign a different color to every maximal cell and
       every vertex; otherwise, passed on to :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`.
 
     - other keyword arguments are passed on to :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`.

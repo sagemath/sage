@@ -1300,7 +1300,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         edges = tuple(edge for edge in self.edges(names=names, algorithm=algorithm)
                       if edge[0] in vertices and edge[1] in vertices)
 
-        return Graph([vertices, edges], format="vertices_and_edges")
+        return Graph([vertices, edges], format='vertices_and_edges')
 
     graph = vertex_graph
 
@@ -1583,7 +1583,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             # If names is false, the ridges are given as tuple of indices,
             # i.e. (1,2) instead of (('f1',), ('f2',)).
             V = list(v[0] for v in V)
-        return Graph([V, E], format="vertices_and_edges")
+        return Graph([V, E], format='vertices_and_edges')
 
     @cached_method
     def vertex_facet_graph(self, names=True):
@@ -1781,14 +1781,14 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         INPUT:
 
-        - ``args`` -- integers (optional); specify an entry of the
-          flag-f-vector; must be an increasing sequence of integers
+        - ``args`` -- integer (optional); specify an entry of the
+          flag-f-vector (must be an increasing sequence of integers)
 
         OUTPUT:
 
         - a dictionary, if no arguments were given
 
-        - an Integer, if arguments were given
+        - an integer, if arguments were given
 
         EXAMPLES:
 
@@ -2674,9 +2674,7 @@ cdef class CombinatorialPolyhedron(SageObject):
           * ``'dual'`` -- start with the vertices
           * ``None`` -- choose automatically
 
-        OUTPUT:
-
-        - :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator.FaceIterator`
+        OUTPUT: :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator.FaceIterator`
 
         .. NOTE::
 
@@ -2787,9 +2785,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         r"""
         Generate the face-lattice.
 
-        OUTPUT:
-
-        - :class:`~sage.combinat.posets.lattices.FiniteLatticePoset`
+        OUTPUT: :class:`~sage.combinat.posets.lattices.FiniteLatticePoset`
 
         .. NOTE::
 
@@ -3252,7 +3248,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
     def is_compact(self):
         r"""
-        Return whether the polyhedron is compact
+        Return whether the polyhedron is compact.
 
         EXAMPLES::
 

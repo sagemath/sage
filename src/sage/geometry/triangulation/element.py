@@ -55,13 +55,11 @@ def triangulation_render_2d(triangulation, **kwds):
 
     INPUT:
 
-    - ``triangulation`` -- a :class:`Triangulation`.
+    - ``triangulation`` -- a :class:`Triangulation`
 
-    - ``**kwds`` -- keywords that are passed on to the graphics primitives.
+    - ``**kwds`` -- keywords that are passed on to the graphics primitives
 
-    OUTPUT:
-
-    A 2-d graphics object.
+    OUTPUT: a 2-d graphics object
 
     EXAMPLES::
 
@@ -116,13 +114,11 @@ def triangulation_render_3d(triangulation, **kwds):
 
     INPUT:
 
-    - ``triangulation`` -- a :class:`Triangulation`.
+    - ``triangulation`` -- a :class:`Triangulation`
 
-    - ``**kwds`` -- keywords that are  passed on to the graphics primitives.
+    - ``**kwds`` -- keywords that are  passed on to the graphics primitives
 
-    OUTPUT:
-
-    A 3-d graphics object.
+    OUTPUT: a 3-d graphics object
 
     EXAMPLES::
 
@@ -270,7 +266,7 @@ class Triangulation(Element):
 
     def point_configuration(self):
         """
-        Returns the point configuration underlying the triangulation.
+        Return the point configuration underlying the triangulation.
 
         EXAMPLES::
 
@@ -343,7 +339,7 @@ class Triangulation(Element):
 
         INPUT:
 
-        - ``i`` -- integer. The index of a simplex.
+        - ``i`` -- integer; the index of a simplex
 
         OUTPUT:
 
@@ -910,7 +906,6 @@ class Triangulation(Element):
             sage: t = p.triangulate()
             sage: t.adjacency_graph()                                                   # needs sage.graphs
             Graph on 8 vertices
-
         """
         vertices = [Set(_) for _ in list(self)]
         from sage.graphs.graph import Graph

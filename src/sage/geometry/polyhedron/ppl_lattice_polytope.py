@@ -87,7 +87,7 @@ def _class_for_LatticePolytope(dim):
 
     INPUT:
 
-    - ``dim`` -- integer. The ambient space dimension.
+    - ``dim`` -- integer; the ambient space dimension
 
     OUTPUT: the appropriate class for the lattice polytope
 
@@ -193,7 +193,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
 
     def __repr__(self):
         """
-        Return the string representation
+        Return the string representation.
 
         OUTPUT: string
 
@@ -244,7 +244,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         """
         Return the number of vertices.
 
-        OUTPUT: an integer, the number of vertices
+        OUTPUT: integer; the number of vertices
 
         EXAMPLES::
 
@@ -558,8 +558,8 @@ class LatticePolytope_PPL_class(C_Polyhedron):
 
         INPUT:
 
-        - ``dim`` -- integer. The dimension of the lattice polytope
-          fiber.
+        - ``dim`` -- integer; the dimension of the lattice polytope
+          fiber
 
         OUTPUT:
 
@@ -628,7 +628,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         INPUT:
 
         - ``polytopes`` -- a tuple/list/iterable of subsets of the
-          integral points of ``self``.
+          integral points of ``self``
 
         OUTPUT:
 
@@ -705,8 +705,8 @@ class LatticePolytope_PPL_class(C_Polyhedron):
 
         INPUT:
 
-        - ``point_coordinates`` -- a list/tuple/iterable of rational
-          numbers. The coordinates of the point.
+        - ``point_coordinates`` -- list/tuple/iterable of rational
+          numbers; the coordinates of the point
 
         OUTPUT: boolean
 
@@ -729,7 +729,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
     @cached_method
     def contains_origin(self):
         """
-        Test whether the polytope contains the origin
+        Test whether the polytope contains the origin.
 
         OUTPUT: boolean
 
@@ -869,13 +869,11 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         INPUT:
 
         - ``fiber`` -- a sub-lattice polytope defining the
-          :meth:`base_projection`.
+          :meth:`base_projection`
 
-        - ``points`` -- the points to project to the base.
+        - ``points`` -- the points to project to the base
 
-        OUTPUT:
-
-        A tuple of primitive `\ZZ`-vectors.
+        OUTPUT: a tuple of primitive `\ZZ`-vectors
 
         EXAMPLES::
 
@@ -1021,12 +1019,12 @@ class LatticePolytope_PPL_class(C_Polyhedron):
 
         INPUT:
 
-        - ``points`` -- A tuple of coordinate vectors or ``None``
+        - ``points`` -- a tuple of coordinate vectors or ``None``
           (default). If specified, the points must form complete
           orbits under the lattice automorphism group. If ``None`` all
           vertices are used.
 
-        - ``point_labels`` -- A tuple of labels for the ``points`` or
+        - ``point_labels`` -- a tuple of labels for the ``points`` or
           ``None`` (default). These will be used as labels for the do
           permutation group. If ``None``, the ``points`` will be used
           themselves.

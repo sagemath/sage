@@ -132,16 +132,16 @@ class PolyhedronFace(ConvexSet_closed):
 
         INPUT:
 
-        - ``polyhedron`` -- a :class:`Polyhedron`. The ambient
-          polyhedron.
+        - ``polyhedron`` -- a :class:`Polyhedron`; the ambient
+          polyhedron
 
-        - ``V_indices`` -- list of sorted integers. The indices of the
+        - ``V_indices`` -- list of sorted integers; the indices of the
           face-spanning V-representation objects in the ambient
-          polyhedron.
+          polyhedron
 
-        - ``H_indices`` -- list of sorted integers. The indices of the
+        - ``H_indices`` -- list of sorted integers; the indices of the
           H-representation objects of the ambient polyhedron that are
-          saturated on the face.
+          saturated on the face
 
         TESTS::
 
@@ -339,7 +339,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         INPUT:
 
-        - ``other`` -- anything.
+        - ``other`` -- anything
 
         OUTPUT:
 
@@ -597,9 +597,7 @@ class PolyhedronFace(ConvexSet_closed):
         r"""
         Return a string representation.
 
-        OUTPUT:
-
-        A string listing the V-representation indices of the face.
+        OUTPUT: a string listing the V-representation indices of the face
 
         EXAMPLES::
 
@@ -825,7 +823,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         INPUT:
 
-        - ``direction`` -- string (default: ``'outer'``), the direction in
+        - ``direction`` -- string (default: ``'outer'``); the direction in
           which to consider the normals. The other allowed option is
           ``'inner'``.
 

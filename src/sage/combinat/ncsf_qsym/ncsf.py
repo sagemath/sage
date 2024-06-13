@@ -454,7 +454,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
     def a_realization(self):
         r"""
-        Gives a realization of the algebra of non-commutative symmetric functions. This
+        Give a realization of the algebra of non-commutative symmetric functions. This
         particular realization is the complete basis of non-commutative symmetric functions.
 
         OUTPUT:

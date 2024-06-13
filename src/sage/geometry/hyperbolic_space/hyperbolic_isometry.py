@@ -88,7 +88,7 @@ class HyperbolicIsometry(Morphism):
         EXAMPLES::
 
             sage: A = HyperbolicPlane().UHP().get_isometry(matrix(2, [0,1,-1,0]))
-            sage: TestSuite(A).run(skip="_test_category")
+            sage: TestSuite(A).run(skip='_test_category')
         """
         if check:
             model.isometry_test(A)
@@ -119,9 +119,7 @@ class HyperbolicIsometry(Morphism):
         r"""
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        - a string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -592,9 +590,7 @@ class HyperbolicIsometry(Morphism):
         For a hyperbolic isometry, return the attracting fixed point;
         otherwise raise a :class:`ValueError`.
 
-        OUTPUT:
-
-        - a hyperbolic point
+        OUTPUT: a hyperbolic point
 
         EXAMPLES::
 
@@ -611,9 +607,7 @@ class HyperbolicIsometry(Morphism):
         For a hyperbolic isometry, return the attracting fixed point;
         otherwise raise a :class:`ValueError`.
 
-        OUTPUT:
-
-        - a hyperbolic point
+        OUTPUT: a hyperbolic point
 
         EXAMPLES::
 
@@ -844,9 +838,7 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
 
         Otherwise, this raises a :class:`ValueError`.
 
-        OUTPUT:
-
-        - a hyperbolic point
+        OUTPUT: a hyperbolic point
 
         EXAMPLES::
 
@@ -870,9 +862,7 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
 
         Otherwise, this raises a :class:`ValueError`.
 
-        OUTPUT:
-
-        - a hyperbolic point
+        OUTPUT: a hyperbolic point
 
         EXAMPLES::
 
@@ -952,7 +942,6 @@ class HyperbolicIsometryPD(HyperbolicIsometry):
             Isometry in PD
             [   5/8  3/8*I]
             [-3/8*I    5/8]
-
         """
         return (self._cached_isometry**n).to_model('PD')
 
@@ -1039,9 +1028,7 @@ def moebius_transform(A, z):
     - ``A`` -- a `2 \times 2` invertible matrix over the complex numbers
     - ``z`` -- a complex number or infinity
 
-    OUTPUT:
-
-    - a complex number or infinity
+    OUTPUT: a complex number or infinity
 
     EXAMPLES::
 

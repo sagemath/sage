@@ -85,9 +85,9 @@ def random_inequalities(d, n):
 
     INPUT:
 
-    - ``d`` -- integer. The dimension.
+    - ``d`` -- integer; the dimension
 
-    - ``n``  -- integer. The number of random inequalities to generate.
+    - ``n`` -- integer; the number of random inequalities to generate
 
     OUTPUT: a random set of inequalities as a :class:`StandardAlgorithm` instance
 
@@ -120,13 +120,13 @@ class DoubleDescriptionPair:
 
         INPUT:
 
-        - ``problem`` -- instance of :class:`Problem`.
+        - ``problem`` -- instance of :class:`Problem`
 
-        - ``A_rows`` -- list of row vectors of the matrix `A`. These
-          encode the inequalities.
+        - ``A_rows`` -- list of row vectors of the matrix `A`; these
+          encode the inequalities
 
         - ``R_cols`` -- list of column vectors of the matrix
-          `R`. These encode the rays.
+          `R`; these encode the rays
 
         TESTS::
 
@@ -157,11 +157,11 @@ class DoubleDescriptionPair:
 
         INPUT:
 
-        - ``A_rows`` -- list of row vectors of the matrix `A`. These
-          encode the inequalities.
+        - ``A_rows`` -- list of row vectors of the matrix `A`; these
+          encode the inequalities
 
         - ``R_cols`` -- list of column vectors of the matrix
-          `R`. These encode the rays.
+          `R`; these encode the rays
 
         OUTPUT:
 
@@ -312,7 +312,7 @@ class DoubleDescriptionPair:
 
         INPUT:
 
-        - ``a`` -- vector. Coefficient vector of a homogeneous inequality.
+        - ``a`` -- vector; coefficient vector of a homogeneous inequality
 
         OUTPUT:
 
@@ -348,7 +348,7 @@ class DoubleDescriptionPair:
 
         INPUT:
 
-        - ``ray`` -- a ray vector.
+        - ``ray`` -- a ray vector
 
         OUTPUT: a set containing the inequality vectors that are zero on ``ray``
 
@@ -515,14 +515,14 @@ class Problem:
 
     def __init__(self, A):
         r"""
-        Base class for implementations of the double description algorithm
+        Base class for implementations of the double description algorithm.
 
         It does not make sense to instantiate the base class directly,
         it just provides helpers for implementations.
 
         INPUT:
 
-        - ``A`` -- a matrix. The rows of the matrix are interpreted as
+        - ``A`` -- a matrix; the rows of the matrix are interpreted as
           homogeneous inequalities `A x \geq 0`. Must have maximal rank.
 
         TESTS::
@@ -632,7 +632,7 @@ class Problem:
         INPUT:
 
         - ``pair_class`` -- subclass of
-          :class:`DoubleDescriptionPair`.
+          :class:`DoubleDescriptionPair`
 
         OUTPUT:
 
@@ -676,7 +676,7 @@ class StandardDoubleDescriptionPair(DoubleDescriptionPair):
 
         INPUT:
 
-        - ``a`` -- vector. An inequality.
+        - ``a`` -- vector; an inequality
 
         EXAMPLES::
 
@@ -706,7 +706,7 @@ class StandardDoubleDescriptionPair(DoubleDescriptionPair):
 
 class StandardAlgorithm(Problem):
     """
-    Standard implementation of the double description algorithm
+    Standard implementation of the double description algorithm.
 
     See [FP1996]_ for the definition of the "Standard
     Algorithm".

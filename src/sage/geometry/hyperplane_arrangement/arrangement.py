@@ -441,9 +441,7 @@ class HyperplaneArrangementElement(Element):
 
         - ``i`` -- integer
 
-        OUTPUT:
-
-        The `i`-th hyperplane.
+        OUTPUT: the `i`-th hyperplane
 
         EXAMPLES::
 
@@ -587,9 +585,9 @@ class HyperplaneArrangementElement(Element):
 
     def backend(self):
         """
-        Return the backend used for polyhedral objects
+        Return the backend used for polyhedral objects.
 
-        OUTPUT: a string giving the backend or ``None`` if none is specified
+        OUTPUT: string giving the backend or ``None`` if none is specified
 
         EXAMPLES:
 
@@ -747,18 +745,18 @@ class HyperplaneArrangementElement(Element):
         return H(*hyperplanes, backend=self._backend)
 
     @cached_method
-    def intersection_poset(self, element_label="int"):
+    def intersection_poset(self, element_label='int'):
         r"""
         Return the intersection poset of the hyperplane arrangement.
 
         INPUT:
 
-        - ``element_label`` -- (default: ``"int"``) specify how an
+        - ``element_label`` -- (default: ``'int'``) specify how an
           intersection should be represented; must be one of the following:
 
-          * ``"subspace"`` -- as a subspace
-          * ``"subset"`` -- as a subset of the defining hyperplanes
-          * ``"int"`` -- as an integer
+          * ``'subspace'`` -- as a subspace
+          * ``'subset'`` -- as a subset of the defining hyperplanes
+          * ``'int'`` -- as an integer
 
         OUTPUT:
 
@@ -1009,7 +1007,7 @@ class HyperplaneArrangementElement(Element):
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = PolynomialRing(ZZ, 'z')
         z = R.gen()
-        L = self.intersection_poset(element_label="subspace").dual()
+        L = self.intersection_poset(element_label='subspace').dual()
         B = L.minimal_elements()[0]
         return R.sum(abs(L.moebius_function(B, X)) * z**X.dimension()
                      for X in L)
@@ -1074,7 +1072,7 @@ class HyperplaneArrangementElement(Element):
         We compute types `H_3` and `F_4` in Table 1 of [BHS2023]_::
 
             sage: # needs sage.libs.gap
-            sage: W = CoxeterGroup(['H',3], implementation="matrix")
+            sage: W = CoxeterGroup(['H',3], implementation='matrix')
             sage: A = HyperplaneArrangements(W.base_ring(), tuple(f'x{s}' for s in range(W.rank())))
             sage: H = A([[0] + list(r) for r in W.positive_roots()])
             sage: H.is_simplicial()                                                     # needs sage.graphs
@@ -1082,7 +1080,7 @@ class HyperplaneArrangementElement(Element):
             sage: H.primitive_eulerian_polynomial()
             z^3 + 28*z^2 + 16*z
 
-            sage: W = CoxeterGroup(['F',4], implementation="permutation")
+            sage: W = CoxeterGroup(['F',4], implementation='permutation')
             sage: A = HyperplaneArrangements(QQ, tuple(f'x{s}' for s in range(W.rank())))
             sage: H = A([[0] + list(r) for r in W.positive_roots()])
             sage: H.primitive_eulerian_polynomial()     # long time                     # needs sage.graphs
@@ -1131,7 +1129,7 @@ class HyperplaneArrangementElement(Element):
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = PolynomialRing(ZZ, 'z')
         z = R.gen()
-        L = self.intersection_poset(element_label="subspace").dual()
+        L = self.intersection_poset(element_label='subspace').dual()
         B = L.minimal_elements()[0]
         n = self.dimension()
         return R.sum(abs(L.moebius_function(B, X)) * (z - 1)**(n-X.dimension())
@@ -1365,7 +1363,7 @@ class HyperplaneArrangementElement(Element):
             ....:               vector(AA, [-1/2, AA(-1/2*v2^3 + v2), 0]))
             sage: H = HyperplaneArrangements(AA, names='xyz')
             sage: x,y,z = H.gens()
-            sage: A = H(backend="normaliz")                                     # optional - pynormaliz
+            sage: A = H(backend='normaliz')                                     # optional - pynormaliz
             sage: for v in my_vectors:                                          # optional - pynormaliz
             ....:     a, b, c = v
             ....:     A = A.add_hyperplane(a*x + b*y + c*z)
@@ -1933,7 +1931,7 @@ class HyperplaneArrangementElement(Element):
 
         INPUT:
 
-        - ``hyperplanes`` -- a list/tuple/iterable of hyperplanes
+        - ``hyperplanes`` -- list/tuple/iterable of hyperplanes
 
         OUTPUT:
 
@@ -2143,7 +2141,7 @@ class HyperplaneArrangementElement(Element):
         - ``B`` -- a region (optional); if ``None``, then
           an arbitrary region is chosen as the base region.
 
-        - ``numbered_labels`` -- bool (default: ``True``); if ``True``,
+        - ``numbered_labels`` -- boolean (default: ``True``); if ``True``,
           then the elements of the poset are numbered. Else they are labelled
           with the regions themselves.
 
@@ -2500,7 +2498,7 @@ class HyperplaneArrangementElement(Element):
 
         - ``F``, ``G`` -- two faces of ``self`` (as polyhedra)
 
-        - ``normalize`` -- Boolean (default: ``True``); if ``True``, then
+        - ``normalize`` -- boolean (default: ``True``); if ``True``, then
           this method returns the precise instance of `FG` in the list
           returned by ``self.closed_faces()``, rather than creating a new
           instance
@@ -3067,7 +3065,7 @@ class HyperplaneArrangementElement(Element):
         - ``region1``, ``region2`` -- regions of the arrangement or
           representative points of regions
 
-        OUTPUT: an integer. The number of hyperplanes separating the two regions
+        OUTPUT: integer; the number of hyperplanes separating the two regions
 
         EXAMPLES::
 
@@ -3126,7 +3124,7 @@ class HyperplaneArrangementElement(Element):
         INPUT:
 
         - ``names`` -- string or list/tuple/iterable of strings. The
-          variable names for the polynomial ring `S`.
+          variable names for the polynomial ring `S`
 
         OUTPUT: the Varchenko matrix
 
@@ -3407,7 +3405,7 @@ class HyperplaneArrangementElement(Element):
         return construct_free_chain(self)
 
     @cached_method(key=lambda self, a: None)
-    def is_free(self, algorithm="singular"):
+    def is_free(self, algorithm='singular'):
         r"""
         Return if ``self`` is free.
 
@@ -3417,11 +3415,11 @@ class HyperplaneArrangementElement(Element):
 
         INPUT:
 
-        - ``algorithm`` -- (default: ``"singular"``) can be one of
+        - ``algorithm`` -- (default: ``'singular'``) can be one of
           the following:
 
-          * ``"singular"`` -- use Singular's minimal free resolution
-          * ``"BC"`` -- use the algorithm given by Barakat and Cuntz
+          * ``'singular'`` -- use Singular's minimal free resolution
+          * ``'BC'`` -- use the algorithm given by Barakat and Cuntz
             in [BC2012]_ (much slower than using Singular)
 
         ALGORITHM:
@@ -3461,8 +3459,8 @@ class HyperplaneArrangementElement(Element):
             sage: W = WeylGroup(['B', 3], prefix='s')                                   # needs sage.combinat sage.groups
             sage: for x in W:                   # long time                             # needs sage.combinat sage.groups
             ....:    A = x.inversion_arrangement()
-            ....:    assert (A.is_free(algorithm="BC")
-            ....:            == A.is_free(algorithm="singular"))
+            ....:    assert (A.is_free(algorithm='BC')
+            ....:            == A.is_free(algorithm='singular'))
         """
         if not self.is_central():
             raise NotImplementedError("only implemented for central arrangements")
@@ -3475,7 +3473,7 @@ class HyperplaneArrangementElement(Element):
         else:
             raise ValueError("invalid algorithm")
 
-    def derivation_module_basis(self, algorithm="singular"):
+    def derivation_module_basis(self, algorithm='singular'):
         """
         Return a basis for the derivation module of ``self`` if
         one exists, otherwise return ``None``.
@@ -3486,11 +3484,11 @@ class HyperplaneArrangementElement(Element):
 
         INPUT:
 
-        - ``algorithm`` -- (default: ``"singular"``) can be one of
+        - ``algorithm`` -- (default: ``'singular'``) can be one of
           the following:
 
-          * ``"singular"`` -- use Singular's minimal free resolution
-          * ``"BC"`` -- use the algorithm given by Barakat and Cuntz
+          * ``'singular'`` -- use Singular's minimal free resolution
+          * ``'BC'`` -- use the algorithm given by Barakat and Cuntz
             in [BC2012]_ (much slower than using Singular)
 
         OUTPUT:
@@ -3533,8 +3531,8 @@ class HyperplaneArrangementElement(Element):
             ....:     return sorted([max(x.degree() for x in b) for b in B])
             sage: for x in W:                   # long time                             # needs sage.combinat sage.groups
             ....:     A = x.inversion_arrangement()
-            ....:     B = A.derivation_module_basis(algorithm="singular")
-            ....:     Bp = A.derivation_module_basis(algorithm="BC")
+            ....:     B = A.derivation_module_basis(algorithm='singular')
+            ....:     Bp = A.derivation_module_basis(algorithm='BC')
             ....:     if B is None:
             ....:         assert Bp is None
             ....:     else:
@@ -3651,7 +3649,7 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``base_ring`` -- a ring; the new base ring.
+        - ``base_ring`` -- a ring; the new base ring
 
         OUTPUT:
 

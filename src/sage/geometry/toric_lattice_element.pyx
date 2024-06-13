@@ -109,11 +109,9 @@ def is_ToricLatticeElement(x):
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
-    OUTPUT:
-
-    - ``True`` if ``x`` is an element of a toric lattice, ``False`` otherwise.
+    OUTPUT: ``True`` if ``x`` is an element of a toric lattice, ``False`` otherwise
 
     EXAMPLES::
 
@@ -154,9 +152,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
     - same as for
       :class:`~sage.modules.vector_integer_dense.Vector_integer_dense`.
 
-    OUTPUT:
-
-    - element of a toric lattice.
+    OUTPUT: element of a toric lattice
 
     TESTS::
 
@@ -210,9 +206,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
         r"""
         Return the hash of ``self``.
 
-        OUTPUT:
-
-        - integer.
+        OUTPUT: integer
 
         TESTS::
 
@@ -234,7 +228,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
 
         INPUT:
 
-        - ``other`` -- :class:`ToricLatticeElement`.
+        - ``other`` -- :class:`ToricLatticeElement`
 
         OUTPUT:
 
@@ -312,11 +306,9 @@ cdef class ToricLatticeElement(Vector_integer_dense):
 
         INPUT:
 
-        - ``right`` -- vector.
+        - ``right`` -- vector
 
-        OUTPUT:
-
-        - :class:`TypeError` exception is raised.
+        OUTPUT: :class:`TypeError` exception is raised
 
         TESTS::
 
@@ -337,9 +329,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
         r"""
         Return a LaTeX representation of ``self``.
 
-        OUTPUT:
-
-        - string.
+        OUTPUT: string
 
         TESTS::
 
@@ -355,9 +345,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
         r"""
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        - string.
+        OUTPUT: string
 
         TESTS::
 
@@ -391,9 +379,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
         - any options for toric plots (see :func:`toric_plotter.options
           <sage.geometry.toric_plotter.options>`), none are mandatory.
 
-        OUTPUT:
-
-        - a plot.
+        OUTPUT: a plot
 
         EXAMPLES::
 
@@ -414,13 +400,13 @@ def unpickle_v1(parent, entries, degree, is_mutable):
 
     INPUT:
 
-    - ``parent`` -- The parent toric lattice.
+    - ``parent`` -- the parent toric lattice
 
-    - ``entries`` -- a list. The coordinates of the lattice point.
+    - ``entries`` -- list; the coordinates of the lattice point
 
-    - ``degree`` -- integer. the dimension of the toric lattice.
+    - ``degree`` -- integer; the dimension of the toric lattice
 
-    - ``is_mutable`` -- boolean. Whether the lattice element is mutable.
+    - ``is_mutable`` -- boolean; whether the lattice element is mutable
 
     OUTPUT: the :class:`ToricLatticeElement` determined by the input data
 

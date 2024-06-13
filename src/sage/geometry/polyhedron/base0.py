@@ -72,7 +72,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
     """
     def __init__(self, parent, Vrep, Hrep, Vrep_minimal=None, Hrep_minimal=None, pref_rep=None, mutable=False, **kwds):
         """
-        Initializes the polyhedron.
+        Initialize the polyhedron.
 
         See :class:`sage.geometry.polyhedron.base.Polyhedron_base` for a description of the input
         data.
@@ -236,7 +236,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
 
     def _init_empty_polyhedron(self):
         """
-        Initializes an empty polyhedron.
+        Initialize an empty polyhedron.
 
         TESTS::
 
@@ -339,7 +339,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         - ``base_ring`` -- the new base ring
 
         - ``backend`` -- the new backend, see
-          :func:`~sage.geometry.polyhedron.constructor.Polyhedron`.
+          :func:`~sage.geometry.polyhedron.constructor.Polyhedron`
           If ``None`` (the default), attempt to keep the same backend.
           Otherwise, use the same defaulting behavior
           as described there.
@@ -362,7 +362,6 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             sage: Q = P.base_extend(ZZ, backend='field')
             sage: Q.backend()
             'field'
-
         """
         new_parent = self.parent().base_extend(base_ring, backend)
         return new_parent(self, copy=True)
@@ -448,7 +447,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
 
     def is_mutable(self):
         r"""
-        Return True if the polyhedron is mutable, i.e. it can be modified in place.
+        Return ``True`` if the polyhedron is mutable, i.e. it can be modified in place.
 
         EXAMPLES::
 
@@ -460,7 +459,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
 
     def is_immutable(self):
         r"""
-        Return True if the polyhedron is immutable, i.e. it cannot be modified in place.
+        Return ``True`` if the polyhedron is immutable, i.e. it cannot be modified in place.
 
         EXAMPLES::
 
@@ -621,14 +620,14 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
 
         INPUT:
 
-        - ``separator`` -- a string. Default is ``"\n"``.
+        - ``separator`` -- string (default: ``'\n'``)
 
-        - ``latex`` -- a boolean. Default is ``False``.
+        - ``latex`` -- boolean (default: ``False``)
 
-        - ``style`` -- either ``"positive"`` (making all coefficients positive)
-                       or ``"<="``, or ``">="``. Default is ``">="``.
+        - ``style`` -- either ``'positive'`` (making all coefficients positive)
+                       or ``'<='``, or ``'>='``; default is ``'>='``
 
-        - ``align`` -- a boolean or ``None''. Default is ``None`` in which case
+        - ``align`` -- boolean or ``None''; default is ``None`` in which case
                        ``align`` is ``True`` if ``separator`` is the newline character.
                        If set, then the lines of the output string are aligned
                        by the comparison symbol by padding blanks.
@@ -1086,7 +1085,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
 
         INPUT:
 
-        - ``base_ring`` -- A ring or ``None`` (default). The base ring
+        - ``base_ring`` -- a ring or ``None`` (default); the base ring
           of the returned matrix. If not specified, the base ring of
           the polyhedron is used.
 
@@ -1184,7 +1183,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             :meth:`ray_generator` instead to iterate over the list of
             :class:`~sage.geometry.polyhedron.representation.Ray` objects.
 
-        OUTPUT: a list of rays as lists of coordinates
+        OUTPUT: list of rays as lists of coordinates
 
         EXAMPLES::
 
@@ -1360,7 +1359,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
 
         INPUT:
 
-        - ``filename`` -- the output file.
+        - ``filename`` -- the output file
 
         .. SEEALSO::
 
@@ -1424,7 +1423,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
 
         INPUT:
 
-        - ``filename`` -- the output file.
+        - ``filename`` -- the output file
 
         .. SEEALSO::
 

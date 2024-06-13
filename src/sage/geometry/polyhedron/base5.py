@@ -579,8 +579,8 @@ class Polyhedron_base5(Polyhedron_base4):
 
         INPUT:
 
-        - ``cut_frac`` -- integer, how deeply to cut into the edge.
-          Default is `\frac{1}{3}`.
+        - ``cut_frac`` -- integer; how deeply to cut into the edge
+          Default is `\frac{1}{3}`
 
         OUTPUT: a Polyhedron object, truncated as described above
 
@@ -842,7 +842,7 @@ class Polyhedron_base5(Polyhedron_base4):
 
     def __sub__(self, other):
         r"""
-        Implement minus binary operation
+        Implement minus binary operation.
 
         Polyhedra are not a ring with respect to dilatation and
         Minkowski sum, for example `X\oplus(-1)*Y \not= X\ominus Y`.
@@ -987,9 +987,9 @@ class Polyhedron_base5(Polyhedron_base4):
 
         if self.n_vertices() + self.n_rays() < 40 and self.n_facets() < 40:
             # Check that the product preserves the backend, where possible.
-            P = polytopes.simplex(backend="cdd")
+            P = polytopes.simplex(backend='cdd')
             tester.assertEqual((self*P).backend(), self.backend())
-            Q = polytopes.simplex(backend="ppl")
+            Q = polytopes.simplex(backend='ppl')
             tester.assertEqual((self*Q).backend(), self.backend())
 
             # And that it changes the backend correctly where necessary.
@@ -1532,7 +1532,7 @@ class Polyhedron_base5(Polyhedron_base4):
 
         INPUT:
 
-        - ``scalar`` -- A scalar, not necessarily in :meth:`base_ring`
+        - ``scalar`` -- a scalar, not necessarily in :meth:`base_ring`
 
         OUTPUT:
 

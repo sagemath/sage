@@ -458,7 +458,7 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
     ALGORITHM:
 
     According to Proposition 5 [Or2020]_, the solutions corresponding
-    to non-zero eigenvalues can be found by solving a smaller
+    to nonzero eigenvalues can be found by solving a smaller
     eigenvalue problem in only the variable `\xi`. So, we do that, and
     then solve for `\eta` in terms of `\xi` as described in the
     proposition.

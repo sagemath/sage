@@ -1172,7 +1172,7 @@ cpdef complex_to_spiderweb(np.ndarray[COMPLEX_T, ndim = 2] z_values,
     - ``withcolor`` -- boolean; if ``True`` the spiderweb will be overlaid
       on the basic color plot
 
-    - ``min_mag`` -- float; The magnitude cutoff below which spiderweb
+    - ``min_mag`` -- float; the magnitude cutoff below which spiderweb
       points are not drawn. This only applies to multiply connected
       domains and is designed to prevent "fuzz" at the edge of the
       domain. Some complicated multiply connected domains (particularly

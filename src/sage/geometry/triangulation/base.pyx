@@ -50,18 +50,18 @@ cdef class Point(SageObject):
 
     INPUT:
 
-    - ``point_configuration`` -- :class:`PointConfiguration_base`. The
-      point configuration to which the point belongs.
+    - ``point_configuration`` -- :class:`PointConfiguration_base`; the
+      point configuration to which the point belongs
 
-    - ``i`` -- integer. The index of the point in the point
-      configuration.
+    - ``i`` -- integer; the index of the point in the point
+      configuration
 
-    - ``projective`` -- the projective coordinates of the point.
+    - ``projective`` -- the projective coordinates of the point
 
-    - ``affine`` -- the affine coordinates of the point.
+    - ``affine`` -- the affine coordinates of the point
 
     - ``reduced`` -- the reduced (with linearities removed)
-      coordinates of the point.
+      coordinates of the point
 
     EXAMPLES::
 
@@ -99,7 +99,7 @@ cdef class Point(SageObject):
 
     def __hash__(self):
         r"""
-        Hash value for a point in a point configuration
+        Hash value for a point in a point configuration.
 
         EXAMPLES::
 
@@ -357,11 +357,11 @@ cdef class PointConfiguration_base(Parent):
         INPUT:
 
         - ``points`` -- a tuple of tuples of projective coordinates
-          with ``1`` as the final coordinate.
+          with ``1`` as the final coordinate
 
-        - ``defined_affine`` -- Boolean. Whether the point
+        - ``defined_affine`` -- boolean; whether the point
           configuration is defined as a configuration of affine (as
-          opposed to projective) points.
+          opposed to projective) points
 
         TESTS::
 
@@ -590,11 +590,9 @@ cdef class PointConfiguration_base(Parent):
 
         INPUT:
 
-        - ``i`` -- integer.
+        - ``i`` -- integer
 
-        OUTPUT:
-
-        The ``i``-th point of the point configuration.
+        OUTPUT: the ``i``-th point of the point configuration
 
         EXAMPLES::
 
@@ -664,7 +662,7 @@ cdef class PointConfiguration_base(Parent):
 
         INPUT:
 
-        - ``i`` -- integer.
+        - ``i`` -- integer
 
         OUTPUT: a point of the point configuration
 
@@ -718,9 +716,9 @@ cdef class PointConfiguration_base(Parent):
         INPUT:
 
         - ``simplex`` -- iterable, for example a list. The elements
-          are the vertex indices of the simplex.
+          are the vertex indices of the simplex
 
-        OUTPUT: an integer that uniquely specifies the simplex
+        OUTPUT: integer that uniquely specifies the simplex
 
         EXAMPLES::
 
@@ -759,7 +757,7 @@ cdef class PointConfiguration_base(Parent):
 
         INPUT:
 
-        - ``s`` -- int. An integer that uniquely specifies a simplex.
+        - ``s`` -- an integer that uniquely specifies a simplex
 
         OUTPUT:
 
@@ -809,7 +807,7 @@ cdef class ConnectedTriangulationsIterator(SageObject):
     INPUT:
 
     - ``point_configuration`` -- a
-      :class:`~sage.geometry.triangulation.point_configuration.PointConfiguration`.
+      :class:`~sage.geometry.triangulation.point_configuration.PointConfiguration`
 
     - ``seed`` -- a regular triangulation or ``None`` (default). In
       the latter case, a suitable triangulation is generated
@@ -830,7 +828,7 @@ cdef class ConnectedTriangulationsIterator(SageObject):
       integer is passed, all returned triangulations will be star with
       respect to the
 
-    - ``fine`` -- boolean (default: ``False``). Whether to return only
+    - ``fine`` -- boolean (default: ``False``); whether to return only
       fine triangulations, that is, simplicial decompositions that
       make use of all the points of the configuration.
 

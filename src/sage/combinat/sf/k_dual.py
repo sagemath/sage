@@ -380,7 +380,7 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
 
     def retract(self,la):
         r"""
-        Gives the retract map from the symmetric functions to the quotient ring of
+        Give the retract map from the symmetric functions to the quotient ring of
         `k`-bounded symmetric functions. This method is here to make the TestSuite run
         properly.
 
@@ -401,7 +401,7 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
 
     def lift(self, la):
         r"""
-        Gives the lift map from the quotient ring of `k`-bounded symmetric functions to
+        Give the lift map from the quotient ring of `k`-bounded symmetric functions to
         the symmetric functions. This method is here to make the TestSuite run properly.
 
         INPUT:
@@ -494,7 +494,7 @@ class KBoundedQuotientBases(Category_realization_of_parent):
 
         def retract(self,la):
             r"""
-            Gives the retract map from the symmetric functions to the quotient ring of
+            Give the retract map from the symmetric functions to the quotient ring of
             `k`-bounded symmetric functions. This method is here to make the TestSuite run
             properly.
 
@@ -1261,7 +1261,7 @@ class DualkSchurFunctions(KBoundedQuotientBasis):
 
     def _dks_to_khlp_on_basis(self, la):
         r"""
-        Gives the expansion of the dual `k`-Schur basis element indexed by ``la`` into
+        Give the expansion of the dual `k`-Schur basis element indexed by ``la`` into
         the Hall-Littlewood P basis.
 
         INPUT:
@@ -1291,7 +1291,7 @@ class DualkSchurFunctions(KBoundedQuotientBasis):
 
     def _khlp_to_dks_on_basis(self, la):
         r"""
-        Gives the expansion of the `k`-bounded Hall-Littlewood P basis element indexed by
+        Give the expansion of the `k`-bounded Hall-Littlewood P basis element indexed by
         ``la`` into the dual `k`-Schur basis.
 
         INPUT:
@@ -1380,7 +1380,7 @@ class AffineSchurFunctions(KBoundedQuotientBasis):
 
     def _F_to_m_on_basis(self, la):
         r"""
-        Gives the expansion of the affine Schur basis element indexed by ``la`` into
+        Give the expansion of the affine Schur basis element indexed by ``la`` into
         the monomial basis.
 
         INPUT:
@@ -1408,7 +1408,7 @@ class AffineSchurFunctions(KBoundedQuotientBasis):
 
     def _m_to_F_on_basis(self, la):
         r"""
-        Gives the expansion of the `k`-monomial basis element indexed by ``la`` into
+        Give the expansion of the `k`-monomial basis element indexed by ``la`` into
         the affine Schur basis.
 
         INPUT:

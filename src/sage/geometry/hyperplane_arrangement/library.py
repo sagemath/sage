@@ -241,7 +241,7 @@ class HyperplaneArrangementLibrary:
         - ``data`` -- either an integer or a Cartan type (or coercible
           into; see "CartanType")
 
-        - ``K`` -- field (default:``QQ``)
+        - ``K`` -- field (default: ``QQ``)
 
         - ``names`` -- tuple of strings or ``None`` (default); the
           variable names for the ambient space
@@ -454,7 +454,7 @@ class HyperplaneArrangementLibrary:
 
         - ``n`` -- integer
 
-        - ``K`` -- field (default:``QQ``)
+        - ``K`` -- field (default: ``QQ``)
 
         - ``names`` -- tuple of strings or ``None`` (default); the
           variable names for the ambient space
@@ -513,7 +513,7 @@ class HyperplaneArrangementLibrary:
         INPUT:
 
         - ``n`` -- integer
-        - ``K`` -- field (default:``QQ``)
+        - ``K`` -- field (default: ``QQ``)
         - ``names`` -- tuple of strings or ``None`` (default); the
           variable names for the ambient space
 
@@ -687,7 +687,7 @@ class HyperplaneArrangementLibrary:
         - ``data`` -- either an integer or a Cartan type (or coercible
           into; see "CartanType")
 
-        - ``K`` -- field (default:``QQ``)
+        - ``K`` -- field (default: ``QQ``)
 
         - ``names`` -- tuple of strings or ``None`` (default); the
           variable names for the ambient space

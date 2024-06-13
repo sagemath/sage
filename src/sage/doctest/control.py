@@ -231,7 +231,7 @@ def skipfile(filename, tested_optional_tags=False, *,
     - ``tested_optional_tags`` -- list or tuple or set of optional tags to test,
       or ``False`` (no optional test) or ``True`` (all optional tests)
 
-    - ``if_installed`` -- (boolean, default ``False``) whether to skip Python/Cython files
+    - ``if_installed`` -- boolean (default: ``False``); whether to skip Python/Cython files
       that are not installed as modules
 
     - ``log`` -- function to call with log messages, or ``None``

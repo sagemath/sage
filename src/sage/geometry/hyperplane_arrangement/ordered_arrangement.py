@@ -117,7 +117,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
 
         - ``hyperplanes`` -- a tuple of hyperplanes
 
-        - ``check`` -- boolean (default ``True``); whether
+        - ``check`` -- boolean (default: ``True``); whether
           to check input
 
         - ``backend`` -- string (default: ``None``); the backend to
@@ -224,7 +224,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             mat_rows = mat.rows()[:-1]
             H1b = A1(mat_rows)
             return H1b
-        P = self.intersection_poset(element_label="subspace")
+        P = self.intersection_poset(element_label='subspace')
         center = P.maximal_elements()[0].linear_part()
         n1 = center.dimension()
         U = []

@@ -29,8 +29,8 @@ class VoronoiDiagram(SageObject):
 
     INPUT:
 
-    - ``points`` -- a list of points. Any valid input for the
-      :class:`PointConfiguration` will do.
+    - ``points`` -- list of points; any valid input for the
+      :class:`PointConfiguration` will do
 
     OUTPUT: an instance of the VoronoiDiagram class
 

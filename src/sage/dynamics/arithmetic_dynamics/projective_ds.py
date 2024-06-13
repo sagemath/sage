@@ -3911,7 +3911,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         - ``err`` -- (default: 0.01) positive real number
 
-        - ``use_algebraic_closure`` -- boolean (default: ``True``); If ``True``, uses the
+        - ``use_algebraic_closure`` -- boolean (default: ``True``); if ``True``, uses the
           algebraic closure. If ``False``, uses the smallest extension of the base field
           containing all the critical points.
 
@@ -4106,7 +4106,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         - ``check`` -- boolean (default: ``True``)
 
-        - ``use_algebraic_closure`` -- boolean (default: ``True``); If ``True``, uses the
+        - ``use_algebraic_closure`` -- boolean (default: ``True``); if ``True``, uses the
           algebraic closure. If ``False``, uses the smallest extension of the base field
           containing all the critical points.
 
@@ -4231,7 +4231,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         - ``error_bound`` -- (optional) a positive real number
 
-        - ``use_algebraic_closure`` -- boolean (default: ``True``); If ``True``, uses the
+        - ``use_algebraic_closure`` -- boolean (default: ``True``); if ``True``, uses the
           algebraic closure. If ``False``, uses the smallest extension of the base field
           containing all the critical points.
 
@@ -5017,7 +5017,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
           or ``'cycle'`` depending on whether you compute one multiplier
           per point or one per cycle
 
-        - ``use_algebraic_closure`` -- boolean (default: ``True``); If ``True`` uses the
+        - ``use_algebraic_closure`` -- boolean (default: ``True``); if ``True`` uses the
           algebraic closure. Using the algebraic closure can sometimes lead to numerical instability
           and extraneous errors. For most accurate results in dimension 1, set to ``False``.
           If ``False``, and the map is defined over projective space of

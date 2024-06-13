@@ -658,7 +658,6 @@ class ConvexSet_base(SageObject, Set_base):
             Failure in _test_convex_set:
             ...
             The following tests failed: _test_convex_set
-
         """
         if tester is None:
             tester = self._tester(**options)
@@ -906,7 +905,7 @@ class ConvexSet_base(SageObject, Set_base):
 
         INPUT:
 
-        - ``scalar`` -- A scalar, not necessarily in :meth:`base_ring`
+        - ``scalar`` -- a scalar, not necessarily in :meth:`base_ring`
 
         EXAMPLES::
 
@@ -1012,7 +1011,7 @@ class ConvexSet_compact(ConvexSet_closed):
 
     def is_universe(self):
         r"""
-        Return whether ``self`` is the whole ambient space
+        Return whether ``self`` is the whole ambient space.
 
         OUTPUT: boolean
 

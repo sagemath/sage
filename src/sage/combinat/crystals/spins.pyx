@@ -494,7 +494,7 @@ cdef class Spin(Element):
 
     def _latex_(self):
         r"""
-        Gives the latex output of a spin column.
+        Give the latex output of a spin column.
 
         EXAMPLES::
 

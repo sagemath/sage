@@ -279,9 +279,7 @@ cdef inline size_t get_next_level_fused(
     - ``new_faces`` -- needs to be of same size as ``faces``
     - ``visited_all`` -- the faces which have been visited before
 
-    OUTPUT:
-
-    - set ``new_faces`` to point to the new faces
+    OUTPUT: set ``new_faces`` to point to the new faces
 
     ALGORITHM:
 

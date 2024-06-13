@@ -1516,7 +1516,7 @@ class RootsWithHeight(UniqueRepresentation, Parent):
     @cached_method
     def word(self):
         r"""
-        Gives the initial alcove path (`\lambda`-chain) in terms of simple
+        Give the initial alcove path (`\lambda`-chain) in terms of simple
         roots. Used for plotting the path.
 
         .. NOTE::

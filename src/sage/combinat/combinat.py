@@ -1133,11 +1133,11 @@ class CombinatorialObject(SageObject):
         INPUT:
 
         -  ``l`` -- list or any object that can be converted to a
-           list by calling ``list()``.
+           list by calling ``list()``
 
-        - ``copy`` -- (boolean, default ``True``) if ``False``, then
+        - ``copy`` -- boolean (default: ``True``); if ``False``, then
           ``l`` must be a ``list``, which is assigned to ``self._list``
-          without copying.
+          without copying
 
         EXAMPLES::
 

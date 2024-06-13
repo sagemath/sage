@@ -67,7 +67,6 @@ class FormalPolyhedraModule(CombinatorialFreeModule):
         Q[conv([0], [1])] + Q[conv([1], [2])]
         sage: M_mod_lower.retract(M(I01) - 2*M(I11) + M(I12)) ==  M_mod_lower.retract(M(I01) + M(I12))
         True
-
     """
 
     @staticmethod
@@ -113,7 +112,7 @@ class FormalPolyhedraModule(CombinatorialFreeModule):
             sage: M = FormalPolyhedraModule(QQ, 1, basis=[I01, I11, I12, I02])
             sage: TestSuite(M).run()
         """
-        super().__init__(base_ring, basis, prefix="", category=category)
+        super().__init__(base_ring, basis, prefix='', category=category)
 
     def degree_on_basis(self, m):
         r"""

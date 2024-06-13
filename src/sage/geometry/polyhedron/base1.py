@@ -260,7 +260,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
 
     def is_empty(self):
         """
-        Test whether the polyhedron is the empty polyhedron
+        Test whether the polyhedron is the empty polyhedron.
 
         OUTPUT: boolean
 
@@ -285,7 +285,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
 
     def is_universe(self):
         """
-        Test whether the polyhedron is the whole ambient space
+        Test whether the polyhedron is the whole ambient space.
 
         OUTPUT: boolean
 
@@ -312,9 +312,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
         """
         Return the dimension of the polyhedron.
 
-        OUTPUT:
-
-        -1 if the polyhedron is empty, otherwise a non-negative integer.
+        OUTPUT: -1 if the polyhedron is empty, otherwise a nonnegative integer
 
         EXAMPLES::
 
@@ -719,7 +717,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
 
         - ``point`` -- coordinates of a point
 
-        OUTPUT: ``True`` or ``False``
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -792,7 +790,6 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
             A 1-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex and 1 line
             sage: Line.is_relatively_open()
             True
-
         """
         return not self.inequalities()
 
@@ -841,7 +838,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
 
         - ``point`` -- coordinates of a point
 
-        OUTPUT: ``True`` or ``False``
+        OUTPUT: boolean
 
         EXAMPLES::
 

@@ -66,13 +66,13 @@ class PivotedInequalities(SageObject):
 
     def __init__(self, base_ring, dim):
         """
-        Base class for inequalities that may contain linear subspaces
+        Base class for inequalities that may contain linear subspaces.
 
         INPUT:
 
-        - ``base_ring`` -- a field.
+        - ``base_ring`` -- a field
 
-        - ``dim`` -- integer. The ambient space dimension.
+        - ``dim`` -- integer; the ambient space dimension
 
         EXAMPLES::
 
@@ -98,7 +98,7 @@ class PivotedInequalities(SageObject):
 
         INPUT:
 
-        - ``A`` -- matrix. The inequalities.
+        - ``A`` -- matrix; the inequalities
 
         OUTPUT: the matrix of pivot columns
 
@@ -123,7 +123,7 @@ class PivotedInequalities(SageObject):
 
         INPUT:
 
-        - ``ray`` -- ray in the pivoted coordinates.
+        - ``ray`` -- ray in the pivoted coordinates
 
         OUTPUT: ray in the original coordinates
 
@@ -152,15 +152,15 @@ class Hrep2Vrep(PivotedInequalities):
 
         INPUT:
 
-        - ``base_ring`` -- a field.
+        - ``base_ring`` -- a field
 
-        - ``dim`` -- integer. The ambient space dimension.
+        - ``dim`` -- integer; the ambient space dimension
 
-        - ``inequalities`` -- list of inequalities. Each inequality
-          is given as constant term, ``dim`` coefficients.
+        - ``inequalities`` -- list of inequalities; each inequality
+          is given as constant term, ``dim`` coefficients
 
-        - ``equations`` -- list of equations. Same notation as for
-          inequalities.
+        - ``equations`` -- list of equations; same notation as for
+          inequalities
 
         EXAMPLES::
 
@@ -209,7 +209,7 @@ class Hrep2Vrep(PivotedInequalities):
 
     def _init_Vrep(self, inequalities, equations):
         """
-        Split off the linear subspace from the inequalities and select pivots
+        Split off the linear subspace from the inequalities and select pivots.
 
         INPUT:
 
@@ -279,7 +279,7 @@ class Hrep2Vrep(PivotedInequalities):
         INPUT:
 
         - ``DD`` -- a
-          :class:`~sage.geometry.polyhedron.double_description.DoubleDescriptionPair`.
+          :class:`~sage.geometry.polyhedron.double_description.DoubleDescriptionPair`
 
         TESTS::
 
@@ -382,18 +382,18 @@ class Vrep2Hrep(PivotedInequalities):
 
         INPUT:
 
-        - ``base_ring`` -- a field.
+        - ``base_ring`` -- a field
 
-        - ``dim`` -- integer. The ambient space dimension.
+        - ``dim`` -- integer; the ambient space dimension
 
-        - ``vertices`` -- list of vertices. Each vertex is given as
-          list of ``dim`` coordinates.
+        - ``vertices`` -- list of vertices; each vertex is given as
+          list of ``dim`` coordinates
 
-        - ``rays`` -- list of rays. Each ray is given as
-          list of ``dim`` coordinates, not all zero.
+        - ``rays`` -- list of rays; each ray is given as
+          list of ``dim`` coordinates, not all zero
 
-        - ``lines`` -- list of line generators. Each line is given as
-          list of ``dim`` coordinates, not all zero.
+        - ``lines`` -- list of line generators; each line is given as
+          list of ``dim`` coordinates, not all zero
 
         EXAMPLES::
 
@@ -489,7 +489,7 @@ class Vrep2Hrep(PivotedInequalities):
         INPUT:
 
         - ``DD`` -- a
-          :class:`~sage.geometry.polyhedron.double_description.DoubleDescriptionPair`.
+          :class:`~sage.geometry.polyhedron.double_description.DoubleDescriptionPair`
 
         EXAMPLES::
 

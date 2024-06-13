@@ -150,7 +150,7 @@ class Polyhedron_base7(Polyhedron_base6):
 
     def _triangulate_normaliz(self):
         r"""
-        Gives a triangulation of the polyhedron using normaliz
+        Give a triangulation of the polyhedron using normaliz.
 
         OUTPUT:
 
@@ -188,17 +188,17 @@ class Polyhedron_base7(Polyhedron_base6):
         :class:`~sage.geometry.triangulation.point_configuration.PointConfiguration`
         constructor:
 
-        - ``connected`` -- boolean (default: ``True``). Whether the
+        - ``connected`` -- boolean (default: ``True``); whether the
           triangulations should be connected to the regular
           triangulations via bistellar flips. These are much easier to
           compute than all triangulations.
 
-        - ``fine`` -- boolean (default: ``False``). Whether the
+        - ``fine`` -- boolean (default: ``False``); whether the
           triangulations must be fine, that is, make use of all points
-          of the configuration.
+          of the configuration
 
         - ``regular`` -- boolean or ``None`` (default:
-          ``None``). Whether the triangulations must be regular. A
+          ``None``); whether the triangulations must be regular. A
           regular triangulation is one that is induced by a
           piecewise-linear convex support function. In other words,
           the shadows of the faces of a polyhedron in one higher
@@ -312,7 +312,7 @@ class Polyhedron_base7(Polyhedron_base6):
 
     def _volume_lrs(self, verbose=False):
         """
-        Computes the volume of a polytope using lrs.
+        Compute the volume of a polytope using lrs.
 
         OUTPUT: the exact volume as a rational number
 
@@ -363,18 +363,21 @@ class Polyhedron_base7(Polyhedron_base6):
 
     def _volume_latte(self, verbose=False, algorithm='triangulate', **kwargs):
         """
-        Computes the volume of a polytope using LattE integrale.
+        Compute the volume of a polytope using LattE integrale.
 
         INPUT:
 
         - ``arg`` -- a cdd or LattE description string
 
-        - ``algorithm`` -- (default: 'triangulate') the integration method. Use 'triangulate' for
-          polytope triangulation or 'cone-decompose' for tangent cone decomposition method.
+        - ``algorithm`` -- (default: ``'triangulate'``) the integration method;
+          use 'triangulate' for polytope triangulation or 'cone-decompose' for
+          tangent cone decomposition method
 
-        - ``raw_output`` -- if ``True`` then return directly the output string from LattE.
+        - ``raw_output`` -- if ``True`` then return directly the output string
+          from LattE
 
-        - ``verbose`` -- if ``True`` then return directly verbose output from LattE.
+        - ``verbose`` -- if ``True`` then return directly verbose output from
+          LattE
 
         - For all other options, consult the LattE manual.
 
@@ -432,13 +435,13 @@ class Polyhedron_base7(Polyhedron_base6):
 
     def _volume_normaliz(self, measure='induced'):
         r"""
-        Computes the volume of a polytope using normaliz.
+        Compute the volume of a polytope using normaliz.
 
         INPUT:
 
-        - ``measure`` -- (default: 'induced') the measure to take. 'induced'
-          correspond to ``EuclideanVolume`` in normaliz and 'induced_lattice'
-          correspond to ``Volume`` in normaliz
+        - ``measure`` -- (default: ``'induced'``) the measure to take;
+          'induced' correspond to ``EuclideanVolume`` in normaliz and
+          'induced_lattice' correspond to ``Volume`` in normaliz
 
         OUTPUT:
 

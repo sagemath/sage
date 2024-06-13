@@ -222,7 +222,7 @@ class Hyperplane(LinearExpression):
         """
         Return the index of the largest entry of the normal vector.
 
-        OUTPUT: an integer. The index of the largest entry
+        OUTPUT: integer; the index of the largest entry
 
         EXAMPLES::
 

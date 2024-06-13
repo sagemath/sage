@@ -548,7 +548,6 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             sage: LatticePolytope([(1,2,3), (4,5,6)]) # indirect test
             1-d lattice polytope in 3-d lattice M
             sage: TestSuite(_).run()
-
         """
         if ambient is None:
             self._ambient = self
@@ -3232,7 +3231,6 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         OUTPUT: a matrix or a tuple of a matrix and a permutation
 
-
         EXAMPLES::
 
             sage: o = lattice_polytope.cross_polytope(2)
@@ -3493,7 +3491,6 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         -  ``index_shift`` -- (default:1.1)) if 1, labels are
            placed exactly at the corresponding points. Otherwise the label
            position is computed as a multiple of the point position vector.
-
 
         EXAMPLES: The default plot of a cube::
 
@@ -3973,12 +3970,10 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         INPUT:
 
-
         -  ``normal`` -- a 3-dimensional vector (can be given as
            a list), which should be perpendicular to the screen. If not given,
            will be selected randomly (new each time and it may be far from
            "nice").
-
 
         EXAMPLES: Show a pretty picture of the octahedron::
 
@@ -5802,14 +5797,12 @@ def skip_palp_matrix(data, n=1):
 
     INPUT:
 
-
     -  ``data`` -- opened file with blocks of matrix data in
        the following format: A block consisting of m+1 lines has the
        number m as the first element of its first line.
 
     -  ``n`` -- (default: 1) integer, specifies how many
        blocks should be skipped
-
 
     If EOF is reached during the process, raises ValueError exception.
 
@@ -5854,7 +5847,7 @@ def skip_palp_matrix(data, n=1):
                 raise ValueError("There are not enough data to skip!")
 
 
-def write_palp_matrix(m, ofile=None, comment="", format=None):
+def write_palp_matrix(m, ofile=None, comment='', format=None):
     r"""
     Write ``m`` into ``ofile`` in PALP format.
 
@@ -5868,7 +5861,6 @@ def write_palp_matrix(m, ofile=None, comment="", format=None):
     - ``comment`` -- a string (default: empty) see output description
 
     - ``format`` -- a format string used to print matrix entries
-
 
     OUTPUT: nothing is returned, output written to ``ofile`` has the format
 

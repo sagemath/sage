@@ -17,7 +17,7 @@ def _to_space_separated_string(l, base_ring=None):
 
     INPUT:
 
-    - ``l`` -- anything iterable.
+    - ``l`` -- anything iterable
 
     - ``base_ring`` -- ring (default: ``None``); convert this ring, if given
 
@@ -64,9 +64,9 @@ def _make_listlist(x):
 
     INPUT:
 
-    - ``x`` -- ``None`` or an iterable of iterables.
+    - ``x`` -- ``None`` or an iterable of iterables
 
-    OUTPUT: a list of lists
+    OUTPUT: list of lists
 
     EXAMPLES::
 

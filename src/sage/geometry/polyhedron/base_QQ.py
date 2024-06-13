@@ -24,7 +24,7 @@ class Polyhedron_QQ(Polyhedron_base):
 
         INPUT:
 
-        - ``x`` -- a number in the base ring.
+        - ``x`` -- a number in the base ring
 
         OUTPUT: boolean
 
@@ -44,7 +44,7 @@ class Polyhedron_QQ(Polyhedron_base):
 
         INPUT:
 
-        - ``x`` -- a number in the base ring.
+        - ``x`` -- a number in the base ring
 
         OUTPUT: boolean
 
@@ -64,7 +64,7 @@ class Polyhedron_QQ(Polyhedron_base):
 
         INPUT:
 
-        - ``x`` -- a number in the base ring.
+        - ``x`` -- a number in the base ring
 
         OUTPUT: boolean
 
@@ -231,7 +231,7 @@ class Polyhedron_QQ(Polyhedron_base):
 
         INPUT:
 
-        - ``engine`` -- string; The backend to use. Allowed values are:
+        - ``engine`` -- string; the backend to use. Allowed values are:
 
           * ``None`` (default); When no input is given the Ehrhart polynomial
             is computed using LattE Integrale (optional)
@@ -239,13 +239,13 @@ class Polyhedron_QQ(Polyhedron_base):
           * ``'normaliz'``; use Normaliz program (optional package pynormaliz).
             The backend of ``self`` must be set to ``'normaliz'``.
 
-        - ``variable`` -- string (default: ``'t'``); The variable in which the
-          Ehrhart polynomial should be expressed.
+        - ``variable`` -- string (default: ``'t'``); the variable in which the
+          Ehrhart polynomial should be expressed
 
         - When the ``engine`` is ``'latte'``, the additional input values are:
 
-          * ``verbose`` -- boolean (default: ``False``); If ``True``, print the
-            whole output of the LattE command.
+          * ``verbose`` -- boolean (default: ``False``); if ``True``, print the
+            whole output of the LattE command
 
           The following options are passed to the LattE command, for details
           consult `the LattE documentation
@@ -402,10 +402,10 @@ class Polyhedron_QQ(Polyhedron_base):
 
         INPUT:
 
-        - ``variable`` -- string (default: ``'t'``); The variable in which the
-          Ehrhart polynomial should be expressed.
+        - ``variable`` -- string (default: ``'t'``); the variable in which the
+          Ehrhart polynomial should be expressed
 
-        - ``engine`` -- string; The backend to use. Allowed values are:
+        - ``engine`` -- string; the backend to use. Allowed values are:
 
           * ``None`` (default); When no input is given the Ehrhart polynomial
             is computed using Normaliz (optional)
@@ -416,8 +416,8 @@ class Polyhedron_QQ(Polyhedron_base):
 
         - When the ``engine`` is 'latte', the additional input values are:
 
-          * ``verbose`` -- boolean (default: ``False``); If ``True``, print the
-            whole output of the LattE command.
+          * ``verbose`` -- boolean (default: ``False``); if ``True``, print the
+            whole output of the LattE command
 
           The following options are passed to the LattE command, for details
           consult `the LattE documentation
@@ -585,8 +585,8 @@ class Polyhedron_QQ(Polyhedron_base):
 
         INPUT:
 
-        - ``variable`` -- string (default: ``'t'``); The variable in which the
-          Ehrhart polynomial is expressed.
+        - ``variable`` -- string (default: ``'t'``); the variable in which the
+          Ehrhart polynomial is expressed
 
         OUTPUT:
 
@@ -662,12 +662,12 @@ class Polyhedron_QQ(Polyhedron_base):
           signed-decompose in the primal space using irrationalization.
 
         - ``irrational_all_primal`` -- boolean; triangulate and signed-decompose
-          in the primal space using irrationalization.
+          in the primal space using irrationalization
 
         - ``maxdet`` -- integer; decompose down to an index (determinant) of
-          ``maxdet`` instead of index 1 (unimodular cones).
+          ``maxdet`` instead of index 1 (unimodular cones)
 
-        - ``no_decomposition`` -- boolean; do not signed-decompose simplicial cones.
+        - ``no_decomposition`` -- boolean; do not signed-decompose simplicial cones
 
         - ``compute_vertex_cones`` -- string; either ``'cdd'`` or ``'lrs'`` or ``'4ti2'``
 
@@ -804,7 +804,7 @@ class Polyhedron_QQ(Polyhedron_base):
         INPUT:
 
         - ``vertex_permutation`` -- permutation; a permutation of the vertices
-          of ``self``.
+          of ``self``
 
         OUTPUT: a subpolytope of ``self``
 
@@ -915,7 +915,7 @@ class Polyhedron_QQ(Polyhedron_base):
 
         INPUT:
 
-        - ``conj_class_reps`` -- a list of representatives of the conjugacy
+        - ``conj_class_reps`` -- list of representatives of the conjugacy
           classes of the subgroup of the :meth:`restricted_automorphism_group` of
           the polytope. Each element is written as a permutation of the vertices
           of the polytope.
@@ -1008,7 +1008,6 @@ class Polyhedron_QQ(Polyhedron_base):
         function in `t` with coefficients in the ring of class functions.
         There are several output options to see the intermediary outputs of the
         function.
-
 
         EXAMPLES:
 
@@ -1143,12 +1142,12 @@ class Polyhedron_QQ(Polyhedron_base):
         coefficient of each `t^i` is an effective character in the ring of
         class functions of the acting group. A character `\rho` is effective if
         the coefficients of the irreducible representations in the expression
-        of `\rho` are non-negative integers.
+        of `\rho` are nonnegative integers.
 
         INPUT:
 
         - ``Hstar`` -- a rational function in `t` with coefficients in the ring
-          of class functions.
+          of class functions
 
         - ``Hstar_as_lin_comb`` -- vector. The coefficients of the irreducible
           representations of the acting group in the expression of ``Hstar`` as
@@ -1218,12 +1217,12 @@ class Polyhedron_QQ(Polyhedron_base):
         coefficient of each `t^i` is an effective character in the ring of
         class functions of the acting group. A character `\rho` is effective if
         the coefficients of the irreducible representations in the expression
-        of `\rho` are non-negative integers.
+        of `\rho` are nonnegative integers.
 
         INPUT:
 
         - ``Hstar`` -- a rational function in `t` with coefficients in the ring
-          of class functions.
+          of class functions
 
         - ``Hstar_as_lin_comb`` -- vector. The coefficients of the irreducible
           representations of the acting group in the expression of ``Hstar`` as

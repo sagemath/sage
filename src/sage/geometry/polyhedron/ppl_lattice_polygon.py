@@ -32,7 +32,7 @@ from sage.geometry.polyhedron.ppl_lattice_polytope import (
 ########################################################################
 class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
     """
-    A lattice polygon
+    A lattice polygon.
 
     This includes 2-dimensional polytopes as well as degenerate (0 and
     1-dimensional) lattice polygons. Any polytope in 2d is a polygon.
@@ -80,12 +80,12 @@ class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
 
     def _find_isomorphism_degenerate(self, polytope):
         """
-        Helper to pick an isomorphism of degenerate polygons
+        Helper to pick an isomorphism of degenerate polygons.
 
         INPUT:
 
-        - ``polytope`` -- a :class:`LatticePolytope_PPL_class`. The
-          polytope to compare with.
+        - ``polytope`` -- a :class:`LatticePolytope_PPL_class`; the
+          polytope to compare with
 
         EXAMPLES::
 
@@ -177,19 +177,19 @@ class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
                                                polytope_origin, p_ray_left,
                                                p_ray_right):
         r"""
-        Helper to find an isomorphism of polygons
+        Helper to find an isomorphism of polygons.
 
         INPUT:
 
-        - ``polytope`` -- the lattice polytope to compare to.
+        - ``polytope`` -- the lattice polytope to compare to
 
-        - ``polytope_origin`` -- `\ZZ`-vector. a vertex of ``polytope``
+        - ``polytope_origin`` -- `\ZZ`-vector; a vertex of ``polytope``
 
-        - ``p_ray_left`` -- vector. the vector from ``polytope_origin``
-          to one of its neighboring vertices.
+        - ``p_ray_left`` -- vector; the vector from ``polytope_origin``
+          to one of its neighboring vertices
 
-        - ``p_ray_right`` -- vector. the vector from
-          ``polytope_origin`` to the other neighboring vertices.
+        - ``p_ray_right`` -- vector; the vector from
+          ``polytope_origin`` to the other neighboring vertices
 
         OUTPUT:
 
@@ -247,7 +247,7 @@ class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
 
         INPUT:
 
-        - ``polytope`` -- a polytope, potentially higher-dimensional.
+        - ``polytope`` -- a polytope, potentially higher-dimensional
 
         OUTPUT:
 
@@ -337,7 +337,7 @@ class LatticePolygon_PPL_class(LatticePolytope_PPL_class):
 
         INPUT:
 
-        - ``polytope`` -- a lattice polytope.
+        - ``polytope`` -- a lattice polytope
 
         OUTPUT: boolean
 

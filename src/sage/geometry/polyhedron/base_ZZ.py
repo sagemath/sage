@@ -129,12 +129,12 @@ class Polyhedron_ZZ(Polyhedron_QQ):
           signed-decompose in the primal space using irrationalization.
 
         - ``irrational_all_primal`` -- boolean; triangulate and signed-decompose
-          in the primal space using irrationalization.
+          in the primal space using irrationalization
 
         - ``maxdet`` -- integer; decompose down to an index (determinant) of
-          ``maxdet`` instead of index 1 (unimodular cones).
+          ``maxdet`` instead of index 1 (unimodular cones)
 
-        - ``no_decomposition`` -- boolean; do not signed-decompose simplicial cones.
+        - ``no_decomposition`` -- boolean; do not signed-decompose simplicial cones
 
         - ``compute_vertex_cones`` -- string; either 'cdd' or 'lrs' or '4ti2'
 
@@ -314,7 +314,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         INPUT:
 
-        - ``engine`` -- string; The backend to use. Allowed values are:
+        - ``engine`` -- string; the backend to use. Allowed values are:
 
           * ``None`` (default); When no input is given the Ehrhart polynomial
             is computed using LattE Integrale (optional)
@@ -322,7 +322,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
           * ``'normaliz'``; use Normaliz program (optional). The backend of
             ``self`` must be set to 'normaliz'.
 
-        - ``variable`` -- string (default: 't'); The variable in which the
+        - ``variable`` -- string (default: ``'t'``); the variable in which the
           Ehrhart polynomial should be expressed.
 
         - When the ``engine`` is 'latte' or None, the additional input values are:
@@ -625,8 +625,8 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         INPUT:
 
-        - ``dim`` -- integer. The dimension of the lattice polytope
-          fiber.
+        - ``dim`` -- integer; the dimension of the lattice polytope
+          fiber
 
         OUTPUT:
 
@@ -667,7 +667,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         INPUT:
 
-        - ``translated_polyhedron`` -- a polyhedron.
+        - ``translated_polyhedron`` -- a polyhedron
 
         OUTPUT:
 
@@ -840,13 +840,13 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             summands += [X, Y]
         return tuple(decompositions)
 
-    def normal_form(self, algorithm="palp_native", permutation=False):
+    def normal_form(self, algorithm='palp_native', permutation=False):
         r"""
         Return the normal form of vertices of the lattice polytope ``self``.
 
         INPUT:
 
-        - ``algorithm`` -- must be ``"palp_native"``, the default.
+        - ``algorithm`` -- must be ``'palp_native'``, the default
 
         - ``permutation`` -- boolean (default: ``False``); if ``True``, the permutation
           applied to vertices to obtain the normal form is returned as well.
@@ -901,7 +901,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         TESTS::
 
-            sage: d.normal_form(algorithm="palp_fiction")
+            sage: d.normal_form(algorithm='palp_fiction')
             Traceback (most recent call last):
             ...
             ValueError: algorithm must be 'palp_native'

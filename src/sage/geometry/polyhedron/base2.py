@@ -111,7 +111,7 @@ class Polyhedron_base2(Polyhedron_base1):
 
         INPUT:
 
-        - ``envelope`` -- boolean (default: ``False``). If the
+        - ``envelope`` -- boolean (default: ``False``); if the
           polyhedron has non-integral vertices, this option decides
           whether to return a strictly larger lattice polytope or
           raise a ``ValueError``. This option has no effect if the
@@ -245,7 +245,7 @@ class Polyhedron_base2(Polyhedron_base1):
 
         INPUT:
 
-        - ``self`` -- A lattice polytope.
+        - ``self`` -- a lattice polytope
 
         OUTPUT:
 
@@ -321,7 +321,7 @@ class Polyhedron_base2(Polyhedron_base1):
 
         INPUT:
 
-        - ``self`` -- A lattice polytope.
+        - ``self`` -- a lattice polytope
 
         OUTPUT:
 
@@ -379,7 +379,6 @@ class Polyhedron_base2(Polyhedron_base1):
             Traceback (most recent call last):
             ...
             NotImplementedError: ...
-
         """
         return len(self.integral_points())
 
@@ -392,8 +391,8 @@ class Polyhedron_base2(Polyhedron_base1):
 
         INPUT:
 
-        - ``threshold`` -- integer (default: 100000). Use the naive
-          algorithm as long as the bounding box is smaller than this.
+        - ``threshold`` -- integer (default: 100000); use the naive
+          algorithm as long as the bounding box is smaller than this
 
         OUTPUT:
 
@@ -536,12 +535,12 @@ class Polyhedron_base2(Polyhedron_base1):
 
         INPUT:
 
-        - ``index`` -- integer. The index of the integral point to be found. If
+        - ``index`` -- integer; the index of the integral point to be found. If
           this is not in [0, ``self.integral_point_count()``), an ``IndexError``
           is raised.
 
         - ``**kwds`` -- optional keyword parameters that are passed to
-          :meth:`integral_points_count`.
+          :meth:`integral_points_count`
 
         ALGORITHM:
 
@@ -627,7 +626,7 @@ class Polyhedron_base2(Polyhedron_base1):
         INPUT:
 
         - ``**kwds`` -- optional keyword parameters that are passed to
-          :meth:`get_integral_point`.
+          :meth:`get_integral_point`
 
         OUTPUT:
 
@@ -701,7 +700,7 @@ class Polyhedron_base2(Polyhedron_base1):
         The following keyword arguments are passed to
         :func:`~sage.geometry.polyhedron.generating_function.generating_function_of_integral_points`:
 
-        - ``split`` -- (default: ``False``) a boolean or list
+        - ``split`` -- boolean (default: ``False``); a boolean or list
 
           - ``split=False`` computes the generating function directly,
             without any splitting.
@@ -739,18 +738,18 @@ class Polyhedron_base2(Polyhedron_base1):
           both at the same time.
 
         - ``Factorization_sort`` (default: ``False``) and
-          ``Factorization_simplify`` (default: ``True``) -- booleans
+          ``Factorization_simplify`` boolean (default: ``True``); booleans
 
           These are passed on to
           :class:`sage.structure.factorization.Factorization` when creating
           the result.
 
-        - ``sort_factors`` -- (default: ``False``) a boolean
+        - ``sort_factors`` -- boolean (default: ``False``)
 
-          If set, then
-          the factors of the output are sorted such that the numerator is
-          first and only then all factors of the denominator. It is ensured
-          that the sorting is always the same; use this for doctesting.
+          If set, then the factors of the output are sorted such that the
+          numerator is first and only then all factors of the denominator. It
+          is ensured that the sorting is always the same; use this for
+          doctesting.
 
         OUTPUT:
 

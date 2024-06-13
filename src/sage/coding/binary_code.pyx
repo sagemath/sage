@@ -1833,7 +1833,7 @@ cdef class PartitionStack:
 
     def _repr_at_k(self, k):
         """
-        Gives a string representing the partition at level k:
+        Give a string representing the partition at level k.
 
         EXAMPLES::
 

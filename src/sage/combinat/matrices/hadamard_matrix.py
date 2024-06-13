@@ -2991,7 +2991,7 @@ def skew_hadamard_matrix_from_good_matrices_smallcases(n, existence=False, check
     INPUT:
 
     - ``n`` -- integer; the order of the skew Hadamard matrix to be constructed
-    - ``existence`` -- boolean (default:  ``False``); If ``True``, only return
+    - ``existence`` -- boolean (default:  ``False``); if ``True``, only return
       whether the Hadamard matrix can be constructed
     - ``check`` -- boolean (default: ``True``); if ``True``, check that the matrix
       is a Hadamard matrix before returning it
