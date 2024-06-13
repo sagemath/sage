@@ -305,14 +305,13 @@ class TropicalPolynomial(Polynomial_generic_sparse):
 
             sage: T = TropicalSemiring(QQ, use_min=False)
             sage: R = PolynomialRing(T, x)
-            sage: p1 = R([1,3,2]); p1
-            2*x^2 + 3*x + 1
+            sage: p1 = R([4,2,1,3]); p1
+            3*x^3 + x^2 + 2*x + 4
             sage: p1.roots()
-            [-2, 1]
-            sage: f1 = p1.piecewise_function(); f1
-            piecewise(x|-->1 on (-oo, -2), x|-->x + 3 on [-2, 1], x|-->2*x + 2 
-            on (1, +oo); x)
-            sage: plot(f1, (x,-3,2))
+            [1/3, 1/3, 1/3]
+            sage: sage: f1 = p1.piecewise_function(); f1
+            piecewise(x|-->4 on (-oo, 1/3), x|-->3*x + 3 on (1/3, +oo); x)
+            sage: plot(f1)
 
         If the tropical semiring use a min-plus algebra, then it will give a
         different result. Instead it will go to `-infinity` as `x` goes to
@@ -320,12 +319,12 @@ class TropicalPolynomial(Polynomial_generic_sparse):
 
             sage: T = TropicalSemiring(QQ, use_min=True)
             sage: R = PolynomialRing(T, x)
-            sage: p1 = R([1,3,2])
+            sage: p1 = R([4,2,1,3])
             sage: p1.roots()
-            [-1/2, -1/2]
+            [2, 1, -2]
             sage: f1 = p1.piecewise_function(); f1
-            piecewise(x|-->2*x + 2 on (-oo, -1/2), x|-->1 on (-1/2, +oo); x)
-            sage: plot(f1)
+            piecewise(x|-->3*x + 3 on (-oo, -2), x|-->2*x + 1 on (-2, 1), x|-->x + 2 on (1, 2), x|-->4 on (2, +oo); x)
+            sage: plot(f1, (x,-3,3))
 
         A constant tropical polynomial will result in a constant function::
 
@@ -371,21 +370,16 @@ class TropicalPolynomial(Polynomial_generic_sparse):
                     break
             gradient = found_key
             intercept = R(str(self.dict()[found_key]))
-            index_interval = 1
 
             if i == 0:
                 piecewise_linear = ((-infinity, unique_root[i]), intercept+gradient*x)
             elif i == len(unique_root):
                 piecewise_linear = ((unique_root[i-1], infinity), intercept+gradient*x)
             else:
-                if index_interval%2 == 1:
-                    piecewise_linear = ([unique_root[i-1], unique_root[i]], intercept+gradient*x)
-                else:
-                    piecewise_linear = ((unique_root[i-1], unique_root[i]), intercept+gradient*x)
-                index_interval += 1
+                piecewise_linear = ((unique_root[i-1], unique_root[i]), intercept+gradient*x)
 
             pieces.append(piecewise_linear)
-        
+
         f = piecewise(pieces)
         
         return f
