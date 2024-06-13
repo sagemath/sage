@@ -431,6 +431,11 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
         - ``sigma_basis`` -- (default: ``False``) When set, ``sigma`` is treated as
             a (row) basis, i.e. the covariance matrix is computed by `\Sigma = SS^T`
 
+        .. TODO::
+
+            Rename class methods like ``.f`` and hide most of them
+            (at least behind something like ``.data``).
+
         EXAMPLES::
 
             sage: n = 2; sigma = 3.0
@@ -480,11 +485,18 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: nf = D._normalisation_factor_zz(); nf # This has not been properly implemented
             63.76927...
 
-            sage: counter = defaultdict(Integer); m = 0
-            sage: v = vector(ZZ, n, (0, 0, 0))
+        We can compute the expected number of samples before sampling a vector::
+
+            sage: v = vector(ZZ, n, (11, 4, 8))
             sage: v.set_immutable()
+            sage: 1 / (D.f(v) / nf)
+            2069.93288...
+
+            sage: counter = defaultdict(Integer); m = 0
             sage: while v not in counter:
             ....:     add_samples(1000)
+            sage: sum(counter.values())  # random
+            3000
             sage: while abs(m*f(v)*1.0/nf/counter[v] - 1.0) >= 0.1:                     # needs sage.symbolic
             ....:     add_samples(1000)
 
