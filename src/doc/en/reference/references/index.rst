@@ -2583,6 +2583,10 @@ REFERENCES:
             Wehler K3 Surfaces over finite fields*. New Zealand Journal
             of Mathematics 45 (2015), 19–31.
 
+.. [Fil2017] Ivana Filipan, *An Invitation to Combinatorial Tropical Geometry*.
+             Conference: 1st Croatian Combinatorial Days. 
+             :doi:`10.5592/CO/CCD.2016.05`.
+
 .. [FIV2012] \H. Fournier, A. Ismail, and A. Vigneron. *Computing the Gromov
              hyperbolicity of a discrete metric space*. 2012.
              :arxiv:`1210.3323`.
