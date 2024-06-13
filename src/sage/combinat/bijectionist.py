@@ -3100,6 +3100,8 @@ def _non_copying_intersection(sets):
             return result
         if s == result:
             return s
+
+
 """
 TESTS::
 

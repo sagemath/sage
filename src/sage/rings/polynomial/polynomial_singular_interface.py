@@ -189,7 +189,7 @@ class PolynomialRing_singular_repr:
 
         - ``singular`` -- Singular instance
 
-        OUTPUT: singular ring matching this ring
+        OUTPUT: Singular ring matching this ring
 
         EXAMPLES::
 

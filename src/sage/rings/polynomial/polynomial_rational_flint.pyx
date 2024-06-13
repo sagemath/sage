@@ -2085,7 +2085,7 @@ cdef class Polynomial_rational_flint(Polynomial):
            ``'gap'``, for degrees from 12 to 15;
            ``'kash'``, for degrees from 16 or more).
 
-        OUTPUT: galois group
+        OUTPUT: Galois group
 
         ALGORITHM:
 
