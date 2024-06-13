@@ -479,9 +479,9 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: D = distributions.DiscreteGaussianDistributionLatticeSampler(ZZ^n, Sigma, c)
             sage: nf = D._normalisation_factor_zz(); nf # This has not been properly implemented
             63.76927...
-            
+
             sage: counter = defaultdict(Integer); m = 0
-            sage: v = vector(ZZ, n, (0, 0))
+            sage: v = vector(ZZ, n, (0, 0, 0))
             sage: v.set_immutable()
             sage: while v not in counter:
             ....:     add_samples(1000)
