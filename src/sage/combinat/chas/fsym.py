@@ -72,7 +72,7 @@ class FSymBasis_abstract(CombinatorialFreeModule, BindableClass):
         CombinatorialFreeModule.__init__(self, alg.base_ring(),
                                          StandardTableaux(),
                                          category=FSymBases(alg),
-                                         bracket="", prefix=self._prefix)
+                                         bracket='', prefix=self._prefix)
 
     def _coerce_map_from_(self, R):
         r"""

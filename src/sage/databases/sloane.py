@@ -175,7 +175,7 @@ class SloaneEncyclopediaClass:
 
         return answer
 
-    def install(self, oeis_url="https://oeis.org/stripped.gz",
+    def install(self, oeis_url='https://oeis.org/stripped.gz',
                 names_url='https://oeis.org/names.gz', overwrite=False):
         """
         Download and install the online encyclopedia, raising an IOError if

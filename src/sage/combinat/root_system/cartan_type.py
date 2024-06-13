@@ -938,27 +938,27 @@ class CartanTypeFactory(SageObject):
         NAME = 'CartanType'
         module = 'sage.combinat.root_system.cartan_type'
         option_class = 'CartanTypeFactory'
-        notation = dict(default="Stembridge",
+        notation = dict(default='Stembridge',
                       description='Specifies which notation Cartan types should use when printed',
                       values=dict(Stembridge="use Stembridge's notation",
                                   Kac="use Kac's notation"),
                       case_sensitive=False,
                       alias=dict(BC='Stembridge', tilde='Stembridge', twisted='Kac'))
-        dual_str = dict(default="*",
+        dual_str = dict(default='*',
                       description='The string used for dual Cartan types when printing',
                       checker=lambda char: isinstance(char, str))
-        dual_latex = dict(default="\\vee",
+        dual_latex = dict(default='\\vee',
                         description='The latex used for dual CartanTypes when latexing',
                         checker=lambda char: isinstance(char, str))
-        mark_special_node = dict(default="none",
+        mark_special_node = dict(default='none',
                                description="Make the special nodes",
                                values=dict(none="no markup", latex="only in latex",
                                            printing="only in printing", both="both in latex and printing"),
                                case_sensitive=False)
-        special_node_str = dict(default="@",
+        special_node_str = dict(default='@',
                               description="The string used to indicate which node is special when printing",
                               checker=lambda char: isinstance(char, str))
-        marked_node_str = dict(default="X",
+        marked_node_str = dict(default='X',
                              description="The string used to indicate a marked node when printing",
                              checker=lambda char: isinstance(char, str))
         latex_relabel = dict(default=True,

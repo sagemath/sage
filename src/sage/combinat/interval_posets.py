@@ -2940,10 +2940,10 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
                                      description='the default value for the line width as a'
                                                  'multiple of the tikz scale when latexed',
                                      checker=lambda x: True)  # More trouble than it's worth to check
-        latex_color_decreasing = dict(default="red",
+        latex_color_decreasing = dict(default='red',
                                     description='the default color of decreasing relations when latexed',
                                     checker=lambda x: True)  # More trouble than it's worth to check
-        latex_color_increasing = dict(default="blue",
+        latex_color_increasing = dict(default='blue',
                                     description='the default color of increasing relations when latexed',
                                     checker=lambda x: True)  # More trouble than it's worth to check
         latex_hspace = dict(default=1,

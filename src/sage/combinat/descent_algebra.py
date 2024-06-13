@@ -232,7 +232,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
             CombinatorialFreeModule.__init__(self, alg.base_ring(),
                                              SubsetsSorted(range(1, alg._n)),
                                              category=DescentAlgebraBases(alg),
-                                             bracket="", prefix=prefix)
+                                             bracket='', prefix=prefix)
 
             # Change of basis:
             B = alg.B()
@@ -451,7 +451,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
             CombinatorialFreeModule.__init__(self, alg.base_ring(),
                                              Compositions(alg._n),
                                              category=DescentAlgebraBases(alg),
-                                             bracket="", prefix=prefix)
+                                             bracket='', prefix=prefix)
 
             S = NonCommutativeSymmetricFunctions(alg.base_ring()).Complete()
             self.module_morphism(self.to_nsym,
@@ -684,7 +684,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
             CombinatorialFreeModule.__init__(self, alg.base_ring(),
                                              Compositions(alg._n),
                                              category=DescentAlgebraBases(alg),
-                                             bracket="", prefix=prefix)
+                                             bracket='', prefix=prefix)
 
             # Change of basis:
             B = alg.B()

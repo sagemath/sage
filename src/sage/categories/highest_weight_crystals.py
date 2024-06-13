@@ -522,7 +522,7 @@ class HighestWeightCrystals(Category_singleton):
             G = DiGraph(d)
             from sage.graphs.dot2tex_utils import have_dot2tex
             if have_dot2tex():
-                G.set_latex_options(format="dot2tex",
+                G.set_latex_options(format='dot2tex',
                                     edge_labels=True,
                                     color_by_label=self.cartan_type()._index_set_coloring)
             return G

@@ -1849,7 +1849,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
             cat = FilteredSymmetricFunctionsBases(Sym)
         CombinatorialFreeModule.__init__(self, Sym.base_ring(), _Partitions,
                                          category=cat,
-                                         bracket="", prefix=prefix)
+                                         bracket='', prefix=prefix)
 
     _print_style = 'lex'
 
@@ -2768,7 +2768,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         """
         return self.dual_basis(scalar=zee, scalar_name="Hall scalar product")
 
-    def dual_basis(self, scalar=None, scalar_name="", basis_name=None, prefix=None):
+    def dual_basis(self, scalar=None, scalar_name='', basis_name=None, prefix=None):
         r"""
         Return the dual basis of ``self`` with respect to the scalar
         product ``scalar``.

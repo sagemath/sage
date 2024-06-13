@@ -317,7 +317,7 @@ class WeylGroups(Category_singleton):
             from sage.graphs.digraph import DiGraph
             return DiGraph(visited,
                            name="Parabolic Quantum Bruhat Graph of %s for nodes %s" % (self, index_set),
-                           format="dict_of_dicts",
+                           format='dict_of_dicts',
                            data_structure='static_sparse')
 
     class ElementMethods:

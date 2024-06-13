@@ -1064,7 +1064,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         """
         self._best_candidate = copy(self._matrix)
 
-    cdef void _latex_act_node(self, str comment="", int printlvl=0) noexcept:
+    cdef void _latex_act_node(self, str comment='', int printlvl=0) noexcept:
         """
         Print the actual status as latex (tikz) commands to
         ``self._latex_debug_string``. Only needed if one wants to visualize

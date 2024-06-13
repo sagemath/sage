@@ -1966,9 +1966,9 @@ class RootLatticeRealizations(Category_over_base_ring):
         # Root system plots
 
         def plot(self,
-                 roots="simple",
+                 roots='simple',
                  coroots=False,
-                 reflection_hyperplanes="simple",
+                 reflection_hyperplanes='simple',
                  fundamental_weights=None,
                  fundamental_chamber=None,
                  alcoves=None,
@@ -2667,7 +2667,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 lines = []
             return plot_options.cone(rays=[Lambda[i] for i in I],
                                      lines=lines,
-                                     color="lightgrey",
+                                     color='lightgrey',
                                      alpha=.3)
 
         def plot_alcoves(self, alcoves=True, alcove_labels=False, wireframe=False, **options):
@@ -2947,7 +2947,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: p = L.plot_alcove_walk([0,1,2,0,2,0,1,2,0,1],                     # needs sage.plot sage.symbolic
                 ....:                        foldings=[False, False, True, False, False,
                 ....:                                  False, True, False, True, False],
-                ....:                        color="green",
+                ....:                        color='green',
                 ....:                        start=L.rho())
                 sage: print(p.description())                                            # needs sage.plot sage.symbolic
                 Line defined by 2 points: [(-1.0, 8.0), (-1.5, 9.0)]

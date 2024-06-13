@@ -39,7 +39,7 @@ class Convert(Executable):
             sage: isinstance(Convert(), Convert)
             True
         """
-        Executable.__init__(self, "convert", executable="convert")
+        Executable.__init__(self, "convert", executable='convert')
 
     def is_functional(self):
         r"""
@@ -92,7 +92,7 @@ class Convert(Executable):
         # If an error occurred, return False
         if result.returncode:
             return FeatureTestResult(self, False, reason='Running command "{}" '
-                        'returned non-zero exit status "{}" with stderr '
+                        'returned nonzero exit status "{}" with stderr '
                         '"{}" and stdout "{}".'.format(result.args,
                                                        result.returncode,
                                                        result.stderr.strip(),
@@ -128,8 +128,8 @@ class ImageMagick(JoinFeature):
         """
         JoinFeature.__init__(self, "imagemagick",
                              [Convert()],
-                             spkg="imagemagick",
-                             url="https://www.imagemagick.org/")
+                             spkg='imagemagick',
+                             url='https://www.imagemagick.org/')
 
 def all_features():
     return [ImageMagick()]

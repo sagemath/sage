@@ -2668,7 +2668,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
             sage: Tableaux.options(display='compact')
             sage: T
             -1,-2,3/-3
-            sage: Tableaux.options(display="list",convention='English')
+            sage: Tableaux.options(display='list',convention='English')
         """
         return self.parent().options._dispatch(self, '_repr_', 'display')
 

@@ -158,8 +158,8 @@ class AmbientSpace(CombinatorialFreeModule):
             return (1 if isinstance(x, str) else 0, x)
         CombinatorialFreeModule.__init__(self, base_ring,
                                          basis_keys,
-                                         prefix="e",
-                                         latex_prefix="e",
+                                         prefix='e',
+                                         latex_prefix='e',
                                          sorting_key=sortkey,
                                          category=WeightLatticeRealizations(base_ring))
         self._weight_space = self.root_system.weight_space(base_ring=base_ring,extended=True)

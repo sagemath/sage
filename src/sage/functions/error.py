@@ -7,12 +7,12 @@ symbolics.
 
 The main objects which are exported from this module are:
 
- * :meth:`erf <Function_erf>` -- The error function
- * :meth:`erfc <Function_erfc>` -- The complementary error function
- * :meth:`erfi <Function_erfi>` -- The imaginary error function
- * :meth:`erfinv <Function_erfinv>` -- The inverse error function
- * :meth:`fresnel_sin <Function_Fresnel_sin>` -- The Fresnel integral `S(x)`
- * :meth:`fresnel_cos <Function_Fresnel_cos>` -- The Fresnel integral `C(x)`
+ * :meth:`erf <Function_erf>` -- the error function
+ * :meth:`erfc <Function_erfc>` -- the complementary error function
+ * :meth:`erfi <Function_erfi>` -- the imaginary error function
+ * :meth:`erfinv <Function_erfinv>` -- the inverse error function
+ * :meth:`fresnel_sin <Function_Fresnel_sin>` -- the Fresnel integral `S(x)`
+ * :meth:`fresnel_cos <Function_Fresnel_cos>` -- the Fresnel integral `C(x)`
 
 AUTHORS:
 

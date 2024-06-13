@@ -5640,7 +5640,7 @@ class Partition(CombinatorialElement):
                 elif isinstance(coloring, dict):
                     d = coloring
                     coloring = lambda x: d[x]
-                G.set_latex_options(format="dot2tex",
+                G.set_latex_options(format='dot2tex',
                                     edge_labels=True,
                                     color_by_label=coloring)
             return G
@@ -5673,11 +5673,11 @@ class Partition(CombinatorialElement):
 
         if directed:
             from sage.graphs.digraph import DiGraph
-            self._DDEG = DiGraph([T, edges], format="vertices_and_edges",
+            self._DDEG = DiGraph([T, edges], format='vertices_and_edges',
                                  immutable=True, multiedges=True)
         else:
             from sage.graphs.graph import Graph
-            self._DEG = Graph([T, edges], format="vertices_and_edges",
+            self._DEG = Graph([T, edges], format='vertices_and_edges',
                               immutable=True, multiedges=True)
         return self.dual_equivalence_graph(directed, coloring)
 

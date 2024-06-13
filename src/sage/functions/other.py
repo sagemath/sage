@@ -139,7 +139,7 @@ def _eval_floor_ceil(self, x, method, bits=0, **kwds):
 
     - ``x`` -- a number
 
-    - ``method`` -- should be either ``"floor"`` or ``"ceil"``
+    - ``method`` -- should be either ``'floor'`` or ``'ceil'``
 
     - ``bits`` -- how many bits to use before giving up
 
@@ -1123,7 +1123,7 @@ arg = Function_arg()
 class Function_real_part(GinacFunction):
     def __init__(self):
         r"""
-        Returns the real part of the (possibly complex) input.
+        Return the real part of the (possibly complex) input.
 
         It is possible to prevent automatic evaluation using the
         ``hold`` parameter::
@@ -1199,7 +1199,7 @@ class Function_real_part(GinacFunction):
                                                 sympy='re',
                                                 mathematica='Re',
                                                 giac='re', fricas='real'),
-                               alt_name="real")
+                               alt_name='real')
 
     def __call__(self, x, **kwargs):
         r"""
@@ -1220,7 +1220,7 @@ real = real_part = Function_real_part()
 class Function_imag_part(GinacFunction):
     def __init__(self):
         r"""
-        Returns the imaginary part of the (possibly complex) input.
+        Return the imaginary part of the (possibly complex) input.
 
         It is possible to prevent automatic evaluation using the
         ``hold`` parameter::
@@ -1263,7 +1263,7 @@ class Function_imag_part(GinacFunction):
                                                 mathematica='Im',
                                                 fricas='imag',
                                                 giac='im'),
-                               alt_name="imag")
+                               alt_name='imag')
 
     def __call__(self, x, **kwargs):
         r"""
@@ -1287,7 +1287,7 @@ imag = imag_part = imaginary = Function_imag_part()
 class Function_conjugate(GinacFunction):
     def __init__(self):
         r"""
-        Returns the complex conjugate of the input.
+        Return the complex conjugate of the input.
 
         It is possible to prevent automatic evaluation using the
         ``hold`` parameter::
@@ -1376,15 +1376,15 @@ conjugate = Function_conjugate()
 class Function_factorial(GinacFunction):
     def __init__(self):
         r"""
-        Returns the factorial of `n`.
+        Return the factorial of `n`.
 
         INPUT:
 
-        -  ``n`` -- a non-negative integer, a complex number (except negative
+        -  ``n`` -- a nonnegative integer, a complex number (except negative
            integers) or any symbolic expression
 
 
-        OUTPUT: an integer or symbolic expression
+        OUTPUT: integer or symbolic expression
 
         EXAMPLES::
 
@@ -1433,7 +1433,7 @@ class Function_factorial(GinacFunction):
             sage: factorial(-32)
             Traceback (most recent call last):
             ...
-            ValueError: factorial only defined for non-negative integers
+            ValueError: factorial only defined for nonnegative integers
 
         And very large integers remain unevaluated::
 
@@ -1572,7 +1572,7 @@ factorial = Function_factorial()
 class Function_binomial(GinacFunction):
     def __init__(self):
         r"""
-        Return the binomial coefficient
+        Return the binomial coefficient.
 
         .. MATH::
 

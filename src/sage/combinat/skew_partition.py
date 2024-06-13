@@ -1465,15 +1465,15 @@ class SkewPartitions(UniqueRepresentation, Parent):
         """
         NAME = 'SkewPartitions'
         module = 'sage.combinat.skew_partition'
-        display = dict(default="quotient",
+        display = dict(default='quotient',
                      description='Specifies how skew partitions should be printed',
                      values=dict(lists='displayed as a pair of lists',
                                  quotient='displayed as a quotient of partitions',
                                  diagram='as a skew Ferrers diagram'),
-                     alias=dict(array='diagram', ferrers_diagram="diagram",
+                     alias=dict(array='diagram', ferrers_diagram='diagram',
                                 young_diagram='diagram', pair='lists'),
                      case_sensitive=False)
-        latex = dict(default="young_diagram",
+        latex = dict(default='young_diagram',
                    description='Specifies how skew partitions should be latexed',
                    values=dict(diagram='latex as a skew Ferrers diagram',
                                young_diagram='latex as a skew Young diagram',
@@ -1482,7 +1482,7 @@ class SkewPartitions(UniqueRepresentation, Parent):
                    case_sensitive=False)
         diagram_str = dict(link_to=(Partitions.options,'diagram_str'))
         latex_diagram_str = dict(link_to=(Partitions.options,'latex_diagram_str'))
-        latex_marking_str = dict(default="X",
+        latex_marking_str = dict(default='X',
                          description='The character used to marked the deleted cells when latexing marked partitions',
                          checker=lambda char: isinstance(char, str))
         convention = dict(link_to=(Tableaux.options,'convention'))

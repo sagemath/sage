@@ -1989,7 +1989,7 @@ class FMatrix(SageObject):
         if self._FR._basecoer:
             self._FR.r_matrix.clear_cache()
 
-    def find_orthogonal_solution(self, checkpoint=False, save_results="", warm_start="", use_mp=True, verbose=True):
+    def find_orthogonal_solution(self, checkpoint=False, save_results='', warm_start='', use_mp=True, verbose=True):
         r"""
         Solve the the hexagon and pentagon relations, along with
         orthogonality constraints, to evaluate an orthogonal F-matrix.
@@ -2268,7 +2268,7 @@ class FMatrix(SageObject):
         self.ideal_basis = {eq.subs(special_values) for eq in self.ideal_basis}
         self.ideal_basis.discard(0)
 
-    def find_cyclotomic_solution(self, equations=None, algorithm="", verbose=True, output=False):
+    def find_cyclotomic_solution(self, equations=None, algorithm='', verbose=True, output=False):
         r"""
         Solve the hexagon and pentagon relations to evaluate the F-matrix.
 

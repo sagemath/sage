@@ -59,7 +59,7 @@ class LaTeX(Executable):
             sage: print(result.reason)                # not tested
             Running latex on a sample file
             (with command='latex -interaction=nonstopmode tmp_wmpos8ak.tex')
-            returned non-zero exit status='1' with stderr=''
+            returned nonzero exit status='1' with stderr=''
             and stdout='This is pdfTeX,
             ...
             Runaway argument?
@@ -95,7 +95,7 @@ class LaTeX(Executable):
             return FeatureTestResult(self, True)
         else:
             return FeatureTestResult(self, False, reason="Running latex on "
-                                     "a sample file (with command='{}') returned non-zero "
+                                     "a sample file (with command='{}') returned nonzero "
                                      "exit status='{}' with stderr='{}' "
                                      "and stdout='{}'".format(result.args,
                                                               result.returncode,
@@ -205,8 +205,8 @@ class dvips(Executable):
             sage: isinstance(dvips(), dvips)
             True
         """
-        Executable.__init__(self, "dvips", executable="dvips",
-                            url="https://tug.org/texinfohtml/dvips.html")
+        Executable.__init__(self, "dvips", executable='dvips',
+                            url='https://tug.org/texinfohtml/dvips.html')
 
 class TeXFile(StaticFile):
     r"""

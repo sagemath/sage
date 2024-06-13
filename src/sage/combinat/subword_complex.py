@@ -959,7 +959,7 @@ class SubwordComplexFacet(Simplex, Element):
                           thickness=thickness, linestyle='--')
         for root_label in root_labels:
             L += text(root_label[0], root_label[1], rgbcolor=[0, 0, 0],
-                      fontsize=fontsize, vertical_alignment="center",
+                      fontsize=fontsize, vertical_alignment='center',
                       horizontal_alignment='right')
         if len(labels) < last + 1:
             labels = list(range(1, last + 2))
@@ -975,7 +975,7 @@ class SubwordComplexFacet(Simplex, Element):
                           (shift[0] + x_max + .1,
                            shift[1] + permutation.inverse()(pseudoline + 1) - 1),
                           color=list_colors[pseudoline], fontsize=fontsize,
-                          vertical_alignment="center",
+                          vertical_alignment='center',
                           horizontal_alignment='left')
         L.axes(False)
         return L

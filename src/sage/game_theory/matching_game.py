@@ -80,8 +80,8 @@ class MatchingGame(SageObject):
 
     OR:
 
-    - ``integer`` -- an integer simply representing the number of reviewers
-      and suitors.
+    - ``integer`` -- integer simply representing the number of reviewers
+      and suitors
 
     To implement the above game in Sage::
 

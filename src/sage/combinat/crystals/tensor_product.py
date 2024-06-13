@@ -447,7 +447,7 @@ class TensorProductOfCrystals(CrystalOfWords):
         """
         NAME = 'TensorProductOfCrystals'
         module = 'sage.combinat.crystals'
-        convention = dict(default="antiKashiwara",
+        convention = dict(default='antiKashiwara',
                         description='Sets the convention used for displaying/inputting tensor product of crystals',
                         values=dict(antiKashiwara='use the anti-Kashiwara convention',
                                     Kashiwara='use the Kashiwara convention'),

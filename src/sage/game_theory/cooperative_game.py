@@ -254,7 +254,7 @@ class CooperativeGame(SageObject):
     """
     def __init__(self, characteristic_function):
         r"""
-        Initializes a co-operative game and checks the inputs.
+        Initialize a co-operative game and checks the inputs.
 
         TESTS:
 

@@ -670,7 +670,7 @@ class NormalFormGame(SageObject, MutableMapping):
 
     def __init__(self, generator=None):
         r"""
-        Initializes a Normal Form game and checks the inputs.
+        Initialize a Normal Form game and checks the inputs.
 
         EXAMPLES:
 
@@ -971,7 +971,7 @@ class NormalFormGame(SageObject, MutableMapping):
 
     def _gambit_game(self, game):
         r"""
-        Creates a ``NormalFormGame`` object from a Gambit game.
+        Create a ``NormalFormGame`` object from a Gambit game.
 
         TESTS::
 
@@ -1004,7 +1004,7 @@ class NormalFormGame(SageObject, MutableMapping):
 
     def _gambit_(self, as_integer=False, maximization=True):
         r"""
-        Creates a Gambit game from a ``NormalFormGame`` object
+        Create a Gambit game from a ``NormalFormGame`` object.
 
         INPUT:
 
@@ -1165,7 +1165,7 @@ class NormalFormGame(SageObject, MutableMapping):
 
     def is_constant_sum(self):
         r"""
-        Checks if the game is constant sum.
+        Check if the game is constant sum.
 
         EXAMPLES::
 
@@ -1294,7 +1294,7 @@ class NormalFormGame(SageObject, MutableMapping):
 
         INPUT:
 
-        - ``replacement`` -- Boolean value of whether previously created
+        - ``replacement`` -- boolean value of whether previously created
           profiles should be replaced or not
 
         TESTS::
@@ -1404,17 +1404,17 @@ class NormalFormGame(SageObject, MutableMapping):
         - ``algorithm`` -- the following algorithms should be available through
           this function:
 
-          * ``'lrs'`` -- This algorithm is only suited for 2 player games.
+          * ``'lrs'`` -- this algorithm is only suited for 2 player games.
             See the lrs web site (http://cgm.cs.mcgill.ca/~avis/C/lrs.html).
 
-          * ``'LCP'`` -- This algorithm is only suited for 2 player games.
+          * ``'LCP'`` -- this algorithm is only suited for 2 player games.
             See the gambit web site (http://gambit.sourceforge.net/).
 
-          * ``'lp'`` -- This algorithm is only suited for 2 player
+          * ``'lp'`` -- this algorithm is only suited for 2 player
             constant sum games. Uses MILP solver determined by the
             ``solver`` argument.
 
-          * ``'enumeration'`` -- This is a very inefficient
+          * ``'enumeration'`` -- this is a very inefficient
             algorithm (in essence a brute force approach).
 
             1. For each k in 1...min(size of strategy sets)
@@ -1453,7 +1453,7 @@ class NormalFormGame(SageObject, MutableMapping):
 
                 \sum_{j\in S(\rho_1)}{\rho_2}_j = 1
 
-        - ``maximization`` -- (default: ``True``) whether a player is
+        - ``maximization`` -- boolean (default: ``True``); whether a player is
           trying to maximize their utility or minimize it:
 
           * When set to ``True`` it is assumed that players aim to
@@ -1665,11 +1665,11 @@ class NormalFormGame(SageObject, MutableMapping):
 
             sage: A = matrix.identity(2)
             sage: g = NormalFormGame([A])
-            sage: g.obtain_nash(algorithm="invalid")
+            sage: g.obtain_nash(algorithm='invalid')
             Traceback (most recent call last):
             ...
             ValueError: 'algorithm' should be set to 'enumeration', 'LCP', 'lp' or 'lrs'
-            sage: g.obtain_nash(algorithm="lp", solver="invalid")
+            sage: g.obtain_nash(algorithm='lp', solver='invalid')
             Traceback (most recent call last):
             ...
             ValueError: 'solver' should be set to 'GLPK', ..., None
@@ -2605,7 +2605,7 @@ class NormalFormGame(SageObject, MutableMapping):
         - ``strategy`` -- a probability distribution vector
 
         - ``player`` -- the index of the opponent, ``0`` for the row player,
-          ``1`` for the column player.
+          ``1`` for the column player
 
         EXAMPLES::
 
@@ -2726,7 +2726,7 @@ class NormalFormGame(SageObject, MutableMapping):
 
     def _is_degenerate_pure(self, certificate=False):
         """
-        Checks whether a game is degenerate in pure strategies.
+        Check whether a game is degenerate in pure strategies.
 
         TESTS::
 

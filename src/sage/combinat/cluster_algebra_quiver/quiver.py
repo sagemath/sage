@@ -1623,7 +1623,7 @@ class ClusterQuiver(SageObject):
             raise ValueError('not a total order on the vertices of the quiver or a list of edges to be oriented')
 
     def mutation_class_iter(self, depth=infinity, show_depth=False,
-                            return_paths=False, data_type="quiver",
+                            return_paths=False, data_type='quiver',
                             up_to_equivalence=True, sink_source=False):
         """
         Return an iterator for the mutation class of ``self`` together with certain constraints.

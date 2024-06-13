@@ -572,7 +572,7 @@ class Function_arcsin(GinacFunction):
         GinacFunction.__init__(self, 'arcsin', latex_name=r"\arcsin",
                 conversions=dict(maxima='asin', sympy='asin',
                                  mathematica='ArcSin',
-                                 fricas="asin", giac="asin"))
+                                 fricas='asin', giac='asin'))
 
 
 arcsin = asin = Function_arcsin()

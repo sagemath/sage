@@ -686,15 +686,15 @@ class PlanePartition(ClonableArray,
                     for P in side]
 
         def add_topside(i, j, k):
-            return polygon(move(Uside, i, j, k), edgecolor="black",
+            return polygon(move(Uside, i, j, k), edgecolor='black',
                            color=colors[0])
 
         def add_leftside(i, j, k):
-            return polygon(move(Lside, i, j, k), edgecolor="black",
+            return polygon(move(Lside, i, j, k), edgecolor='black',
                            color=colors[1])
 
         def add_rightside(i, j, k):
-            return polygon(move(Rside, i, j, k), edgecolor="black",
+            return polygon(move(Rside, i, j, k), edgecolor='black',
                            color=colors[2])
         TP = plot([])
         for r in range(len(self.z_tableau())):

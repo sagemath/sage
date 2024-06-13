@@ -44,11 +44,9 @@ def _calc_factlist(nn):
 
     INPUT:
 
-    - ``nn`` -- integer, highest factorial to be computed
+    - ``nn`` -- integer; highest factorial to be computed
 
-    OUTPUT:
-
-    list of integers -- the list of precomputed factorials
+    OUTPUT: list of integers -- the list of precomputed factorials
 
     EXAMPLES:
 
@@ -272,9 +270,7 @@ def _big_delta_coeff(aa, bb, cc, prec=None):
 
     -  ``prec`` -- precision of the ``sqrt()`` calculation
 
-    OUTPUT:
-
-    double - Value of the Delta coefficient
+    OUTPUT: double - Value of the Delta coefficient
 
     EXAMPLES::
 
@@ -465,7 +461,7 @@ def wigner_6j(j_1, j_2, j_3, j_4, j_5, j_6, prec=None):
     - additional 6 symmetries [Reg1959]_ giving rise to 144 symmetries
       in total
 
-    - only non-zero if any triple of `j`'s fulfill a triangle relation
+    - only nonzero if any triple of `j`'s fulfill a triangle relation
 
     ALGORITHM:
 
@@ -660,7 +656,7 @@ def gaunt(l_1, l_2, l_3, m_1, m_2, m_3, prec=None):
     - zero for violating any one of the conditions: `l_1 \ge |m_1|`,
       `l_2 \ge |m_2|`, `l_3 \ge |m_3|`
 
-    - non-zero only for an even sum of the `l_i`, i.e.
+    - nonzero only for an even sum of the `l_i`, i.e.
       `J=l_1+l_2+l_3=2n` for `n` in `\Bold{N}`
 
     ALGORITHM:

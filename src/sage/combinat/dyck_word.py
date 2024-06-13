@@ -3338,18 +3338,18 @@ class DyckWords(UniqueRepresentation, Parent):
         """
         NAME = 'DyckWords'
         module = 'sage.combinat.dyck_word'
-        display = dict(default="list",
+        display = dict(default='list',
             description='Specifies how Dyck words should be printed',
             values=dict(list='displayed as a list',
                         lattice='displayed on the lattice defined by ``diagram_style``'),
             case_sensitive=False)
-        ascii_art = dict(default="path",
+        ascii_art = dict(default='path',
             description='Specifies how the ascii art of Dyck words should be printed',
             values=dict(path="Using the path string",
                         pretty_output="Using pretty printing"),
             alias=dict(pretty_print='pretty_output', path_string='path'),
             case_sensitive=False)
-        diagram_style = dict(default="grid",
+        diagram_style = dict(default='grid',
             values=dict(grid='printing as paths on a grid using N and E steps',
                         line='printing as paths on a line using NE and SE steps',),
             alias={'N-E': 'grid', 'NE-SE': 'line'},
@@ -3364,7 +3364,7 @@ class DyckWords(UniqueRepresentation, Parent):
             description='The default value for the line width as a '
                         'multiple of the tikz scale when latexed',
             checker=lambda x: True)  # More trouble than it's worth to check
-        latex_color = dict(default="black",
+        latex_color = dict(default='black',
             description='The default value for the color when latexed',
             checker=lambda x: isinstance(x, str))
         latex_bounce_path = dict(default=False,

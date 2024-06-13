@@ -827,7 +827,7 @@ class FinitePosets(CategoryWithAxiom):
                 sage: P = Poset({1: [3], 2: [3,4]})
                 sage: lex = [1, 2, 4, 3]
                 sage: l = P.birational_free_labelling(linear_extension=lex,
-                ....:                                 prefix="aaa",
+                ....:                                 prefix='aaa',
                 ....:                                 base_field=Zmod(13))
                 sage: l
                 (Fraction Field of Multivariate Polynomial Ring in a, aaa1, aaa2, aaa3, aaa4, b over Ring of integers modulo 13,

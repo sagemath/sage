@@ -52,7 +52,7 @@ lazy_import("sage.symbolic.ring", "SR")
 # #### Constructor function ################################################
 
 
-def SymmetricGroupRepresentation(partition, implementation="specht",
+def SymmetricGroupRepresentation(partition, implementation='specht',
         ring=None, cache_matrices=True):
     r"""
     The irreducible representation of the symmetric group corresponding to

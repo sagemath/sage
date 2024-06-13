@@ -507,9 +507,9 @@ and pass it down to each piece. We use this to plot our two walks::
     sage: plot_options = L.plot_parse_options(bounding_box=[[-2,5],[-2,6]])
     sage: w2 = [2,1,2,0,2,0,2,1,2,0,1,2,1,2,1,0,1,2,0,2,0,1,2,0,2]
     sage: p = L.plot_alcoves(plot_options=plot_options)
-    sage: p += L.plot_alcove_walk(w1, color="green",
+    sage: p += L.plot_alcove_walk(w1, color='green',
     ....:                         plot_options=plot_options)
-    sage: p += L.plot_alcove_walk(w2, color="orange",
+    sage: p += L.plot_alcove_walk(w2, color='orange',
     ....:                         plot_options=plot_options)
     sage: p
     Graphics object consisting of ... graphics primitives
@@ -561,7 +561,7 @@ the translation by this weight::
     sage: walk = L.reduced_word_of_translation(L(t))
     sage: plot_options = L.plot_parse_options(bounding_box=[[-2,5],[-2,5]])
     sage: p = L.plot(plot_options=plot_options)
-    sage: p += L.plot_alcove_walk(walk, color="green",
+    sage: p += L.plot_alcove_walk(walk, color='green',
     ....:                         plot_options=plot_options)
     sage: p += plot_options.family_of_vectors({t: L(t)})
     sage: plot_options.finalize(p)

@@ -27,7 +27,7 @@ from . import classical
 
 class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical):
     @staticmethod
-    def __classcall__(cls, dual_basis, scalar, scalar_name="", basis_name=None, prefix=None):
+    def __classcall__(cls, dual_basis, scalar, scalar_name='', basis_name=None, prefix=None):
         """
         Normalize the arguments.
 

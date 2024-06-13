@@ -82,7 +82,7 @@ lazy_import('sage.symbolic.ring', 'SR')
 class PiecewiseFunction(BuiltinFunction):
     def __init__(self):
         """
-        Piecewise function
+        Piecewise function.
 
         EXAMPLES::
 
@@ -96,20 +96,20 @@ class PiecewiseFunction(BuiltinFunction):
             1/2*y^2
         """
         BuiltinFunction.__init__(self, "piecewise",
-                                 latex_name="piecewise",
+                                 latex_name='piecewise',
                                  conversions=dict(), nargs=2)
 
     def __call__(self, function_pieces, **kwds):
         r"""
-        Piecewise functions
+        Piecewise functions.
 
         INPUT:
 
-        - ``function_pieces`` -- a list of pairs consisting of a
-          domain and a symbolic function.
+        - ``function_pieces`` -- list of pairs consisting of a
+          domain and a symbolic function
 
-        - ``var=x`` -- a symbolic variable or ``None`` (default). The
-          real variable in which the function is piecewise in.
+        - ``var=x`` -- a symbolic variable or ``None`` (default); the
+          real variable in which the function is piecewise in
 
         OUTPUT:
 
@@ -166,7 +166,7 @@ class PiecewiseFunction(BuiltinFunction):
 
     def _print_(self, parameters, variable):
         """
-        Return a string representation
+        Return a string representation.
 
         OUTPUT: string
 
@@ -233,11 +233,11 @@ class PiecewiseFunction(BuiltinFunction):
     def in_operands(ex):
         """
         Return whether a symbolic expression contains a piecewise
-        function as operand
+        function as operand.
 
         INPUT:
 
-        - ``ex`` -- a symbolic expression.
+        - ``ex`` -- a symbolic expression
 
         OUTPUT: boolean
 
@@ -262,7 +262,7 @@ class PiecewiseFunction(BuiltinFunction):
     @staticmethod
     def simplify(ex):
         """
-        Combine piecewise operands into single piecewise function
+        Combine piecewise operands into single piecewise function.
 
         OUTPUT:
 
@@ -336,11 +336,11 @@ class PiecewiseFunction(BuiltinFunction):
         def expression_at(self, parameters, variable, point):
             """
             Return the expression defining the piecewise function at
-            ``value``
+            ``value``.
 
             INPUT:
 
-            - ``point`` -- a real number.
+            - ``point`` -- a real number
 
             OUTPUT:
 
@@ -369,7 +369,7 @@ class PiecewiseFunction(BuiltinFunction):
 
         def domains(self, parameters, variable):
             """
-            Return the individual domains
+            Return the individual domains.
 
             See also :meth:`~expressions`.
 
@@ -389,7 +389,7 @@ class PiecewiseFunction(BuiltinFunction):
 
         def domain(self, parameters, variable):
             """
-            Return the domain
+            Return the domain.
 
             OUTPUT:
 
@@ -425,7 +425,7 @@ class PiecewiseFunction(BuiltinFunction):
 
         def expressions(self, parameters, variable):
             """
-            Return the individual domains
+            Return the individual domains.
 
             See also :meth:`~domains`.
 
@@ -442,7 +442,7 @@ class PiecewiseFunction(BuiltinFunction):
 
         def items(self, parameters, variable):
             """
-            Iterate over the pieces of the piecewise function
+            Iterate over the pieces of the piecewise function.
 
             .. NOTE::
 
@@ -468,7 +468,7 @@ class PiecewiseFunction(BuiltinFunction):
 
         def __call__(self, parameters, variable, value=None, **kwds):
             """
-            Call the piecewise function
+            Call the piecewise function.
 
             EXAMPLES::
 
@@ -493,7 +493,7 @@ class PiecewiseFunction(BuiltinFunction):
 
         def _fast_callable_(self, parameters, variable, etb):
             """
-            Override the ``fast_callable``
+            Override the ``fast_callable``.
 
             OUTPUT:
 
@@ -514,7 +514,7 @@ class PiecewiseFunction(BuiltinFunction):
 
         def restriction(self, parameters, variable, restricted_domain):
             """
-            Restrict the domain
+            Restrict the domain.
 
             INPUT:
 
@@ -540,7 +540,7 @@ class PiecewiseFunction(BuiltinFunction):
 
         def extension(self, parameters, variable, extension, extension_domain=None):
             """
-            Extend the function
+            Extend the function.
 
             INPUT:
 
@@ -1161,15 +1161,13 @@ class PiecewiseFunction(BuiltinFunction):
 
             INPUT:
 
-            - ``n`` -- a non-negative integer
+            - ``n`` -- a nonnegative integer
 
             - ``L`` -- (default: ``None``) the half-period of `f`; if none
               is provided, `L` is assumed to be the half-width of the domain
               of ``self``
 
-            OUTPUT:
-
-            - the Fourier coefficient `a_n`, as defined above
+            OUTPUT: the Fourier coefficient `a_n`, as defined above
 
             EXAMPLES:
 
@@ -1256,15 +1254,13 @@ class PiecewiseFunction(BuiltinFunction):
 
             INPUT:
 
-            - ``n`` -- a non-negative integer
+            - ``n`` -- a nonnegative integer
 
             - ``L`` -- (default: ``None``) the half-period of `f`; if none
               is provided, `L` is assumed to be the half-width of the domain
               of ``self``
 
-            OUTPUT:
-
-            - the Fourier coefficient `b_n`, as defined above
+            OUTPUT: the Fourier coefficient `b_n`, as defined above
 
             EXAMPLES:
 
@@ -1329,7 +1325,7 @@ class PiecewiseFunction(BuiltinFunction):
         def fourier_series_partial_sum(self, parameters, variable, N,
                                        L=None):
             r"""
-            Returns the partial sum up to a given order of the Fourier series
+            Return the partial sum up to a given order of the Fourier series
             of the periodic function `f` extending the piecewise-defined
             function ``self``.
 

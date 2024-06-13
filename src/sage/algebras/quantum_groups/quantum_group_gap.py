@@ -1699,7 +1699,7 @@ class QuantumGroupModule(Parent, UniqueRepresentation):
         G = DiGraph([vertices, edges], format='vertices_and_edges')
         from sage.graphs.dot2tex_utils import have_dot2tex
         if have_dot2tex():
-            G.set_latex_options(format="dot2tex",
+            G.set_latex_options(format='dot2tex',
                                 edge_labels=True,
                                 color_by_label=self._cartan_type._index_set_coloring)
         return G
@@ -2153,7 +2153,7 @@ class HighestWeightSubmodule(QuantumGroupModule):
         G = DiGraph([vertices, edges], format='vertices_and_edges')
         from sage.graphs.dot2tex_utils import have_dot2tex
         if have_dot2tex():
-            G.set_latex_options(format="dot2tex",
+            G.set_latex_options(format='dot2tex',
                                 edge_labels=True,
                                 color_by_label=self._cartan_type._index_set_coloring)
         return G

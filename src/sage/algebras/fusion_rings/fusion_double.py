@@ -131,7 +131,7 @@ class FusionDouble(CombinatorialFreeModule):
     EXAMPLES::
 
         sage: G = SmallPermutationGroup(16,9)
-        sage: F = FusionDouble(G, prefix="b",inject_variables=True)
+        sage: F = FusionDouble(G, prefix='b', inject_variables=True)
         sage: b13^2 # long time (4s)
         b0 + b2 + b4 + b15 + b16 + b17 + b18 + b24 + b26 + b27
 
@@ -289,7 +289,7 @@ class FusionDouble(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: P=FusionDouble(CyclicPermutationGroup(3),prefix="p",inject_variables=True)
+            sage: P=FusionDouble(CyclicPermutationGroup(3),prefix='p',inject_variables=True)
             sage: P.s_ij(p1,p3)
             zeta3
             sage: P.s_ijconj(p1,p3)
@@ -353,7 +353,7 @@ class FusionDouble(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: A = FusionDouble(AlternatingGroup(4),prefix="a",inject_variables=True)
+            sage: A = FusionDouble(AlternatingGroup(4),prefix='a',inject_variables=True)
             sage: [A.N_ijk(a10,a11,x) for x in A.basis()]
             [0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0]
 
@@ -423,7 +423,7 @@ class FusionDouble(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: A = FusionDouble(AlternatingGroup(4),prefix="aa",inject_variables=True)
+            sage: A = FusionDouble(AlternatingGroup(4),prefix='aa',inject_variables=True)
             sage: [A.Nk_ij(aa8,aa10,x) for x in A.basis()]
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 1]
 
@@ -546,7 +546,7 @@ class FusionDouble(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: C = FusionDouble(SymmetricGroup(3),prefix="c",inject_variables=True)
+            sage: C = FusionDouble(SymmetricGroup(3),prefix='c',inject_variables=True)
             sage: c4*c5
             c3 + c4
             sage: [C.r_matrix(c4,c5,k) for k in [c3,c4]]
@@ -697,7 +697,7 @@ class FusionDouble(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: Q=FusionDouble(SymmetricGroup(3),prefix="q",inject_variables=True)
+            sage: Q=FusionDouble(SymmetricGroup(3),prefix='q',inject_variables=True)
             sage: q3*q4
             q1 + q2 + q5 + q6 + q7
             sage: Q._names

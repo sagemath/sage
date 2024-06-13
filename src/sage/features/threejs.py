@@ -40,10 +40,10 @@ class Threejs(StaticFile):
             filename = 'unknown'
 
         StaticFile.__init__(
-            self, name="threejs",
+            self, name='threejs',
             filename=filename,
-            spkg="threejs",
-            type="standard",
+            spkg='threejs',
+            type='standard',
             search_path=threejs_search_path,
             description="JavaScript library to display 3D graphics")
 

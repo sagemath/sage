@@ -963,7 +963,7 @@ class BrauerDiagram(AbstractPartitionDiagram):
         NAME = 'Brauer diagram'
         module = 'sage.combinat.diagram_algebras'
         option_class = 'BrauerDiagram'
-        display = dict(default="normal",
+        display = dict(default='normal',
                        description='Specifies how the Brauer diagrams should be printed',
                        values=dict(normal="Using the normal representation",
                                    compact="Using the compact representation"),

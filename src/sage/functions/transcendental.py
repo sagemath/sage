@@ -173,7 +173,7 @@ class Function_stieltjes(GinacFunction):
 
         INPUT:
 
-        -  ``n`` -- non-negative integer
+        -  ``n`` -- nonnegative integer
 
         EXAMPLES::
 
@@ -378,7 +378,7 @@ class Function_zetaderiv(GinacFunction):
             zetaderiv([1.500000000 +/- 1.01e-10], 1)
         """
         GinacFunction.__init__(self, "zetaderiv", nargs=2,
-                               conversions=dict(maple="Zeta"))
+                               conversions=dict(maple='Zeta'))
 
     def _evalf_(self, n, x, parent=None, algorithm=None):
         r"""
@@ -518,7 +518,7 @@ class DickmanRho(BuiltinFunction):
     """
     def __init__(self):
         """
-        Constructs an object to represent Dickman's rho function.
+        Construct an object to represent Dickman's rho function.
 
         TESTS::
 

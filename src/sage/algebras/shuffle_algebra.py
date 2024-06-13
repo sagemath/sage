@@ -171,7 +171,7 @@ class ShuffleAlgebra(CombinatorialFreeModule):
         self.__ngens = self._alphabet.cardinality()
         cat = GradedHopfAlgebrasWithBasis(R).Commutative().Connected()
         CombinatorialFreeModule.__init__(self, R, Words(names, infinite=False),
-                                         latex_prefix="", prefix=prefix,
+                                         latex_prefix='', prefix=prefix,
                                          category=cat)
 
     def variable_names(self):

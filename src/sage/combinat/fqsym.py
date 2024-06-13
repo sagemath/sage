@@ -55,7 +55,7 @@ class FQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
         CombinatorialFreeModule.__init__(self, alg.base_ring(),
                                          Permutations(),
                                          category=FQSymBases(alg),
-                                         bracket="", prefix=self._prefix)
+                                         bracket='', prefix=self._prefix)
 
     def _coerce_map_from_(self, R):
         r"""

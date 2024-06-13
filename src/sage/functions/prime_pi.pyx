@@ -49,14 +49,12 @@ cdef class PrimePi(BuiltinFunction):
         INPUT:
 
         - ``x`` -- a real number
-        - ``prime_bound`` -- (default 0) a real number < 2^32; :func:`prime_pi` will
-          make sure to use all the primes up to ``prime_bound`` (although,
+        - ``prime_bound`` -- (default: 0) a real number `< 2^32`; :func:`prime_pi`
+          will make sure to use all the primes up to ``prime_bound`` (although,
           possibly more) in computing ``prime_pi``, this can potentially
           speedup the time of computation, at a cost to memory usage.
 
-        OUTPUT:
-
-        integer -- the number of primes :math:`\leq` ``x``
+        OUTPUT: integer -- the number of primes :math:`\leq` ``x``
 
         EXAMPLES:
 
@@ -220,12 +218,10 @@ cpdef Integer legendre_phi(x, a):
 
     - ``x`` -- a real number
 
-    - ``a`` -- a non-negative integer
+    - ``a`` -- a nonnegative integer
 
-    OUTPUT:
-
-    integer -- the number of positive integers :math:`\leq` ``x`` that are not
-    divisible by the first ``a`` primes
+    OUTPUT: integer -- the number of positive integers :math:`\leq` ``x`` that
+    are not divisible by the first ``a`` primes
 
     EXAMPLES::
 
@@ -242,7 +238,7 @@ cpdef Integer legendre_phi(x, a):
     if not isinstance(a, Integer):
         a = Integer(a)
     if a < Integer(0):
-        raise ValueError("a (=%s) must be non-negative" % a)
+        raise ValueError("a (=%s) must be nonnegative" % a)
     y = Integer(x)
 
     # legendre_phi(x, a) = 0 when x <= 0

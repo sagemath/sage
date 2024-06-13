@@ -359,7 +359,7 @@ class Function_gamma_inc(BuiltinFunction):
 
             sage: var('t')                                                              # needs sage.symbolic
             t
-            sage: integrate(-exp(-x)*x^(t-1), x, algorithm="fricas")            # optional - fricas, needs sage.symbolic
+            sage: integrate(-exp(-x)*x^(t-1), x, algorithm='fricas')            # optional - fricas, needs sage.symbolic
             gamma(t, x)
 
         .. SEEALSO::

@@ -123,7 +123,7 @@ def is_gale_ryser(r, s):
     return len(rstar) <= len(s2) and sum(r2) == sum(s2) and rstar.dominates(s)
 
 
-def gale_ryser_theorem(p1, p2, algorithm="gale",
+def gale_ryser_theorem(p1, p2, algorithm='gale',
                        *, solver=None, integrality_tolerance=1e-3):
     r"""
     Return the binary matrix given by the Gale-Ryser theorem.

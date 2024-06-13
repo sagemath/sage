@@ -1263,8 +1263,8 @@ class FusionRing(WeylCharacterRing):
                             total_charge_anyon,
                             n_strands,
                             checkpoint=False,
-                            save_results="",
-                            warm_start="",
+                            save_results='',
+                            warm_start='',
                             use_mp=True,
                             verbose=True):
         r"""

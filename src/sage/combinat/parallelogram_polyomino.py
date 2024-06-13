@@ -135,14 +135,14 @@ class LocalOptions:
             sage: o = LocalOptions(
             ....:     "Name Example",
             ....:     tikz_options=dict(
-            ....:         default="toto",
+            ....:         default='toto',
             ....:         values=dict(
-            ....:             toto="name",
+            ....:             toto='name',
             ....:             x="3"
             ....:         )
             ....:     ),
             ....:     display=dict(
-            ....:         default="list",
+            ....:         default='list',
             ....:         values=dict(
             ....:             list="list representation",
             ....:             diagram="diagram representation"
@@ -168,14 +168,14 @@ class LocalOptions:
             sage: o = LocalOptions(
             ....:     "Name Example",
             ....:     tikz_options=dict(
-            ....:         default="toto",
+            ....:         default='toto',
             ....:         values=dict(
-            ....:             toto="name",
+            ....:             toto='name',
             ....:             x="3"
             ....:         )
             ....:     ),
             ....:     display=dict(
-            ....:         default="list",
+            ....:         default='list',
             ....:         values=dict(
             ....:             list="list representation",
             ....:             diagram="diagram representation"
@@ -217,14 +217,14 @@ class LocalOptions:
             sage: o = LocalOptions(
             ....:     "Name Example",
             ....:     tikz_options=dict(
-            ....:         default="toto",
+            ....:         default='toto',
             ....:         values=dict(
-            ....:             toto="name",
+            ....:             toto='name',
             ....:             x="3"
             ....:         )
             ....:     ),
             ....:     display=dict(
-            ....:         default="list",
+            ....:         default='list',
             ....:         values=dict(
             ....:             list="list representation",
             ....:             diagram="diagram representation"
@@ -287,14 +287,14 @@ class LocalOptions:
             sage: o = LocalOptions(
             ....:     "Name Example",
             ....:     tikz_options=dict(
-            ....:         default="toto",
+            ....:         default='toto',
             ....:         values=dict(
-            ....:             toto="name",
+            ....:             toto='name',
             ....:             x="3"
             ....:         )
             ....:     ),
             ....:     display=dict(
-            ....:         default="list",
+            ....:         default='list',
             ....:         values=dict(
             ....:             list="list representation",
             ....:             diagram="diagram representation"
@@ -335,14 +335,14 @@ class LocalOptions:
             sage: o = LocalOptions(
             ....:     "Name Example",
             ....:     tikz_options=dict(
-            ....:         default="toto",
+            ....:         default='toto',
             ....:         values=dict(
-            ....:             toto="name",
+            ....:             toto='name',
             ....:             x="3"
             ....:         )
             ....:     ),
             ....:     display=dict(
-            ....:         default="list",
+            ....:         default='list',
             ....:         values=dict(
             ....:             list="list representation",
             ....:             diagram="diagram representation"
@@ -366,14 +366,14 @@ class LocalOptions:
             sage: o = LocalOptions(
             ....:     "Name Example",
             ....:     tikz_options=dict(
-            ....:         default="toto",
+            ....:         default='toto',
             ....:         values=dict(
-            ....:             toto="name",
+            ....:             toto='name',
             ....:             x="3"
             ....:         )
             ....:     ),
             ....:     display=dict(
-            ....:         default="list",
+            ....:         default='list',
             ....:         values=dict(
             ....:             list="list representation",
             ....:             diagram="diagram representation"
@@ -397,14 +397,14 @@ class LocalOptions:
             sage: o = LocalOptions(
             ....:     "Name Example",
             ....:     tikz_options=dict(
-            ....:         default="toto",
+            ....:         default='toto',
             ....:         values=dict(
-            ....:             toto="name",
+            ....:             toto='name',
             ....:             x="3"
             ....:         )
             ....:     ),
             ....:     display=dict(
-            ....:         default="list",
+            ....:         default='list',
             ....:         values=dict(
             ....:             list="list representation",
             ....:             diagram="diagram representation"
@@ -497,14 +497,14 @@ ParallelogramPolyominoesOptions = LocalOptions(
         )
     ),
     display=dict(
-        default="list",
+        default='list',
         values=dict(
             list='displayed as list',
             drawing='as a drawing',
         )
     ),
     latex=dict(
-        default="drawing",
+        default='drawing',
         values=dict(
             list='displayed as list',
             drawing='as a drawing',

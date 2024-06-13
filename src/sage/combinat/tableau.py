@@ -5620,25 +5620,25 @@ class Tableaux(UniqueRepresentation, Parent):
         """
         NAME = 'Tableaux'
         module = 'sage.combinat.tableau'
-        display = dict(default="list",
+        display = dict(default='list',
                      description='Controls the way in which tableaux are printed',
                      values=dict(list='print tableaux as lists',
                                  diagram='display as Young diagram (similar to :meth:`~sage.combinat.tableau.Tableau.pp()`',
                                  compact='minimal length string representation'),
                      alias=dict(array='diagram', ferrers_diagram='diagram', young_diagram='diagram'),
                      case_sensitive=False)
-        ascii_art = dict(default="repr",
+        ascii_art = dict(default='repr',
                      description='Controls the ascii art output for tableaux',
                      values=dict(repr='display using the diagram string representation',
                                  table='display as a table',
                                  compact='minimal length ascii art'),
                      case_sensitive=False)
-        latex = dict(default="diagram",
+        latex = dict(default='diagram',
                    description='Controls the way in which tableaux are latexed',
                    values=dict(list='as a list', diagram='as a Young diagram'),
                    alias=dict(array='diagram', ferrers_diagram='diagram', young_diagram='diagram'),
                    case_sensitive=False)
-        convention = dict(default="English",
+        convention = dict(default='English',
                           description='Sets the convention used for displaying tableaux and partitions',
                           values=dict(
                               English='use the English convention',

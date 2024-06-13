@@ -75,7 +75,7 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
                                          OrderedSetPartitions(),
                                          category=WQSymBases(alg, graded),
                                          sorting_key=sorting_key,
-                                         bracket="", prefix=self._prefix)
+                                         bracket='', prefix=self._prefix)
 
     def _repr_term(self, osp):
         r"""
@@ -549,12 +549,12 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
         NAME = 'WordQuasiSymmetricFunctions element'
         module = 'sage.combinat.chas.wqsym'
         option_class = 'WordQuasiSymmetricFunctions'
-        objects = dict(default="compositions",
+        objects = dict(default='compositions',
                        description='Specifies how basis elements of WordQuasiSymmetricFunctions should be indexed',
                        values=dict(compositions="Indexing the basis by ordered set partitions",
                                    words="Indexing the basis by packed words"),
                        case_sensitive=False)
-        display = dict(default="normal",
+        display = dict(default='normal',
                        description='Specifies how basis elements of WordQuasiSymmetricFunctions should be printed',
                        values=dict(normal="Using the normal representation",
                                    tight="Dropping spaces after commas",

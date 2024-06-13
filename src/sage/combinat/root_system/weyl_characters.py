@@ -2205,7 +2205,7 @@ class WeightRing(CombinatorialFreeModule):
             EXAMPLES::
 
                 sage: P.<v> = PolynomialRing(QQ)
-                sage: B2 = WeylCharacterRing("B2",style="coroots",base_ring=P); b2 = B2.ambient()
+                sage: B2 = WeylCharacterRing("B2",style='coroots',base_ring=P); b2 = B2.ambient()
                 sage: def T1(f): return f.demazure_lusztig(1,v)
                 sage: def T2(f): return f.demazure_lusztig(2,v)
                 sage: T1(T2(T1(T2(b2(1,-1)))))

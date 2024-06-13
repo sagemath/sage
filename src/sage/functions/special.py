@@ -166,7 +166,7 @@ lazy_import('mpmath',
 
 class SphericalHarmonic(BuiltinFunction):
     r"""
-    Returns the spherical harmonic function `Y_n^m(\theta, \varphi)`.
+    Return the spherical harmonic function `Y_n^m(\theta, \varphi)`.
 
     For integers `n > -1`, `|m| \leq n`, simplification is done automatically.
     Numeric evaluation is supported for complex `n` and `m`.
@@ -397,17 +397,15 @@ spherical_harmonic = SphericalHarmonic()
 
 def elliptic_j(z, prec=53):
     r"""
-    Returns the elliptic modular `j`-function evaluated at `z`.
+    Return the elliptic modular `j`-function evaluated at `z`.
 
     INPUT:
 
-    - ``z`` (complex) -- a complex number with positive imaginary part.
+    - ``z`` -- complex; a complex number with positive imaginary part
 
-    - ``prec`` (default: 53) -- precision in bits for the complex field.
+    - ``prec`` -- (default: 53) precision in bits for the complex field
 
-    OUTPUT:
-
-    (complex) The value of `j(z)`.
+    OUTPUT: (complex) the value of `j(z)`
 
     ALGORITHM:
 

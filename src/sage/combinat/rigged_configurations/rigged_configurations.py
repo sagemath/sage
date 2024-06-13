@@ -437,7 +437,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
         """
         NAME = 'RiggedConfigurations'
         module = 'sage.combinat.rigged_configurations.rigged_configurations'
-        display = dict(default="vertical",
+        display = dict(default='vertical',
                      description='Specifies how rigged configurations should be printed',
                      values=dict(vertical='displayed vertically',
                                  horizontal='displayed horizontally'),

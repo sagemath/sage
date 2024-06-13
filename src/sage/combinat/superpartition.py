@@ -869,7 +869,7 @@ class SuperPartitions(UniqueRepresentation, Parent):
         """,
         NAME = 'SuperPartition'
         module = 'sage.combinat.superpartition'
-        display = dict(default="default",
+        display = dict(default='default',
                        description="Specifies how the super partitions should "
                                    "be printed",
                        values=dict(list="the super partitions are displayed in "

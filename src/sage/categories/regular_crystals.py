@@ -874,7 +874,7 @@ class RegularCrystals(Category_singleton):
                         if y not in visited:
                             todo.add(y)
             from sage.graphs.graph import Graph
-            G = Graph([visited, edges], format="vertices_and_edges",
+            G = Graph([visited, edges], format='vertices_and_edges',
                       immutable=True, multiedges=True)
             from sage.graphs.dot2tex_utils import have_dot2tex
             if have_dot2tex():

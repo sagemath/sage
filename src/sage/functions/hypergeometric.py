@@ -274,9 +274,9 @@ class Hypergeometric(BuiltinFunction):
 
         INPUT:
 
-        - ``a`` -- a list or tuple of parameters
-        - ``b`` -- a list or tuple of parameters
-        - ``z`` -- a number or symbolic expression
+        - ``a`` -- list or tuple of parameters
+        - ``b`` -- list or tuple of parameters
+        - ``z`` -- number or symbolic expression
 
         EXAMPLES::
 

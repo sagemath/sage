@@ -32,8 +32,8 @@ class dvipng(Executable):
             sage: isinstance(dvipng(), dvipng)
             True
         """
-        Executable.__init__(self, "dvipng", executable="dvipng",
-                            url="https://savannah.nongnu.org/projects/dvipng/")
+        Executable.__init__(self, 'dvipng', executable='dvipng',
+                            url='https://savannah.nongnu.org/projects/dvipng/')
 
 
 def all_features():

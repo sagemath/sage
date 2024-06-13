@@ -1440,7 +1440,7 @@ Ei = exp_integral_ei = Function_exp_integral()
 # moved here from sage/functions/transcendental.py
 def exponential_integral_1(x, n=0):
     r"""
-    Returns the exponential integral `E_1(x)`. If the optional
+    Return the exponential integral `E_1(x)`. If the optional
     argument `n` is given, computes list of the first
     `n` values of the exponential integral
     `E_1(x m)`.

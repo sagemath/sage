@@ -345,7 +345,7 @@ def ExtendedAffineWeylGroup(cartan_type, general_linear=None, **print_options):
 
     Here is a demonstration of the printing options::
 
-        sage: E = ExtendedAffineWeylGroup(["A",2,1], affine='sx', classical="Sx",
+        sage: E = ExtendedAffineWeylGroup(["A",2,1], affine='sx', classical='Sx',
         ....:                             translation='x', fundamental='pix')
         sage: PW0 = E.PW0()
         sage: y = PW0(E.lattice_basis()[1]); y
@@ -1187,7 +1187,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                     Finite family {0: (pi[0], S0), 1: (pi[0], S1),
                                    2: (pi[0], S2), 3: (pi[0], S3)}
                     sage: ExtendedAffineWeylGroup(['A',3,1],
-                    ....:                         fundamental="f",
+                    ....:                         fundamental='f',
                     ....:                         print_tuple=True).FW().simple_reflections()
                     Finite family {0: (f[0], S0), 1: (f[0], S1),
                                    2: (f[0], S2), 3: (f[0], S3)}
@@ -2058,7 +2058,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: E = ExtendedAffineWeylGroup(['A',2,1], translation="tau",
+                sage: E = ExtendedAffineWeylGroup(['A',2,1], translation='tau',
                 ....:                             print_tuple=True)
                 sage: la = E.lattice().an_element(); la
                 2*Lambdacheck[1] + 2*Lambdacheck[2]
@@ -2368,7 +2368,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: E = ExtendedAffineWeylGroup(['A',2,1], affine="s",
+                sage: E = ExtendedAffineWeylGroup(['A',2,1], affine='s',
                 ....:                             print_tuple=True); WF = E.WF()
                 sage: r = E.affine_weyl().from_reduced_word
                 sage: v = r([1,0])
@@ -2776,7 +2776,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: E = ExtendedAffineWeylGroup(['A',2,1], translation="tau",
+                sage: E = ExtendedAffineWeylGroup(['A',2,1], translation='tau',
                 ....:                             print_tuple=True)
                 sage: la = E.dual_lattice().an_element(); la
                 2*Lambda[1] + 2*Lambda[2]
@@ -2947,7 +2947,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-                sage: E = ExtendedAffineWeylGroup(['A',2,1], translation="tau",
+                sage: E = ExtendedAffineWeylGroup(['A',2,1], translation='tau',
                 ....:                             print_tuple=True)
                 sage: la = E.dual_lattice().an_element(); la
                 2*Lambda[1] + 2*Lambda[2]
