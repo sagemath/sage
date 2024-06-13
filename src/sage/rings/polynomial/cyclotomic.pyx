@@ -4,7 +4,7 @@ Fast calculation of cyclotomic polynomials
 This module provides a function :func:`cyclotomic_coeffs`, which calculates the
 coefficients of cyclotomic polynomials. This is not intended to be invoked
 directly by the user, but it is called by the method
-:meth:`~sage.rings.polynomial.polynomial_ring.PolynomialRing_general.cyclotomic_polynomial`
+:meth:`~sage.rings.polynomial.polynomial_ring.PolynomialRing_generic.cyclotomic_polynomial`
 method of univariate polynomial ring objects and the top-level
 :func:`~sage.misc.functional.cyclotomic_polynomial` function.
 """

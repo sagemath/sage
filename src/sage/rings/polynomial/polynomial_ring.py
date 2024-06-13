@@ -141,6 +141,7 @@ Check that :issue:`5562` has been fixed::
 
 import sys
 
+from sage.misc.superseded import deprecation
 from sage.structure.element import Element
 from sage.structure.category_object import check_default_category
 
@@ -221,12 +222,12 @@ def is_PolynomialRing(x):
         sage: type(R)
         <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
     """
-    return isinstance(x, PolynomialRing_general)
+    return isinstance(x, PolynomialRing_generic)
 
 
 #########################################################################################
 
-class PolynomialRing_general(Ring):
+class PolynomialRing_generic(Ring):
     """
     Univariate polynomial ring over a ring.
     """
@@ -510,12 +511,12 @@ class PolynomialRing_general(Ring):
 
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-            sage: PolynomialRing_general._implementation_names(None, ZZ, True)
+            sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+            sage: PolynomialRing_generic._implementation_names(None, ZZ, True)
             [None, 'generic']
-            sage: PolynomialRing_general._implementation_names("generic", ZZ, True)
+            sage: PolynomialRing_generic._implementation_names("generic", ZZ, True)
             [None, 'generic']
-            sage: PolynomialRing_general._implementation_names("xyzzy", ZZ, True)
+            sage: PolynomialRing_generic._implementation_names("xyzzy", ZZ, True)
             Traceback (most recent call last):
             ...
             ValueError: unknown implementation 'xyzzy' for sparse polynomial rings over Integer Ring
@@ -539,8 +540,8 @@ class PolynomialRing_general(Ring):
 
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-            sage: PolynomialRing_general._implementation_names_impl("xyzzy", ZZ, True)
+            sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+            sage: PolynomialRing_generic._implementation_names_impl("xyzzy", ZZ, True)
             NotImplemented
         """
         if implementation is None or implementation == "generic":
@@ -1569,7 +1570,7 @@ class PolynomialRing_general(Ring):
                     coeffs.reverse()
                     yield self(coeffs)
 
-    def _polys_max( self, max_degree ):
+    def _polys_max(self, max_degree):
         """
         Refer to polynomials() for full documentation.
         """
@@ -1648,7 +1649,7 @@ class PolynomialRing_general(Ring):
         """
         self._Karatsuba_threshold = int(Karatsuba_threshold)
 
-    def polynomials( self, of_degree=None, max_degree=None ):
+    def polynomials(self, of_degree=None, max_degree=None):
         """
         Return an iterator over the polynomials of specified degree.
 
@@ -1713,7 +1714,7 @@ class PolynomialRing_general(Ring):
             return self._polys_max( max_degree )
         raise ValueError("you should pass exactly one of of_degree and max_degree")
 
-    def monics( self, of_degree=None, max_degree=None ):
+    def monics(self, of_degree=None, max_degree=None):
         """
         Return an iterator over the monic polynomials of specified degree.
 
@@ -1776,7 +1777,38 @@ class PolynomialRing_general(Ring):
         raise ValueError("you should pass exactly one of of_degree and max_degree")
 
 
-class PolynomialRing_commutative(PolynomialRing_general):
+# Placeholder class for deprecation
+class PolynomialRing_general(PolynomialRing_generic):
+    """
+    Univariate polynomial ring over a ring.
+
+    This class is deprecated. Please use :class:`PolynomialRing_generic`.
+    """
+
+    def __init__(self, *args, **kwds):
+        """
+        This class is deprecated. Please use :class:`PolynomialRing_generic`.
+
+        TESTS::
+
+            sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_general, PolynomialRing_generic
+            sage: PolynomialRing_general(QQ, name="a")
+            doctest:warning...DeprecationWarning:
+            The class PolynomialRing_general has been renamed to PolynomialRing_generic...
+            Univariate Polynomial Ring in a over Rational Field
+
+        Check they provide the same functionalities for backward compatability::
+
+            sage: dir(PolynomialRing_general(QQ, name="a")) == dir(PolynomialRing_generic(QQ, name="a"))
+            True
+        """
+        deprecation(
+            38207, "The class PolynomialRing_general has been renamed to PolynomialRing_generic."
+        )
+        super().__init__(*args, **kwds)
+
+
+class PolynomialRing_commutative(PolynomialRing_generic):
     """
     Univariate polynomial ring over a commutative ring.
     """
@@ -1790,7 +1822,7 @@ class PolynomialRing_commutative(PolynomialRing_general):
         else:
             defaultcat = polynomial_default_category(base_ring.category(), 1)
             category = check_default_category(defaultcat, category)
-        PolynomialRing_general.__init__(self, base_ring, name=name,
+        PolynomialRing_generic.__init__(self, base_ring, name=name,
                                         sparse=sparse, implementation=implementation,
                                         element_class=element_class, category=category)
 
