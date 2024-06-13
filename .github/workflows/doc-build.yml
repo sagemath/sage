@@ -167,7 +167,8 @@ jobs:
           (cd docs && git commit -a -m 'new')
           # Wipe out chronic diffs of new doc against old doc
           (cd docs && \
-           find . -name "*.html" | xargs sed -i -e '/This is documentation for/ s/ built with GitHub PR .*. Doc/. Doc/' )
+           find . -name "*.html" | xargs sed -i -e '/This is documentation for/ s/ built with GitHub PR .*. Doc/. Doc/' \
+                                                -e '/<link rel="stylesheet"/ s/pygments.css?v=[0-9a-f]*"/pygments.css"/')
           .ci/create-changes-html.sh $(cd docs && git rev-parse HEAD^) docs
           # Restore the new doc from changes by "wipe out"
           (cd docs && git checkout -f)
