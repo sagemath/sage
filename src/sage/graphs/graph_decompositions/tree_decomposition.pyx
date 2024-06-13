@@ -621,7 +621,7 @@ def treewidth(g, k=None, kmin=None, certificate=False, algorithm=None, nice=Fals
     Check that :issue:`38159` is fixed ::
 
         sage: G = Graph('I~~}vPlr_')
-        sage: G.treewidth(algorithm='sage') == G.treewidth(algorithm='tdlib') # optional - tdlib
+        sage: G.treewidth(algorithm='sage') == G.treewidth(algorithm='tdlib')  # optional - tdlib
         True
 
     Trivially true::
