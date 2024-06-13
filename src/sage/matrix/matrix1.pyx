@@ -479,10 +479,9 @@ cdef class Matrix(Matrix0):
         entries = [list(row) for row in self]
         return macaulay2(self.base_ring()).matrix(entries)
 
-
     def _scilab_init_(self):
         """
-        Returns a string defining a Scilab representation of self.
+        Return a string defining a Scilab representation of ``self``.
 
         EXAMPLES::
 
@@ -678,7 +677,7 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``dtype`` - The desired data-type for the array. If not given,
+        - ``dtype`` -- The desired data-type for the array. If not given,
           then the type will be determined as the minimum type required
           to hold the objects in the sequence.
 
@@ -974,7 +973,7 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``copy`` - (default: True) if True, return a copy of the list
+        - ``copy`` -- (default: ``True``) if True, return a copy of the list
           of columns which is safe to change.
 
         If ``self`` is a sparse matrix, columns are returned as sparse vectors,
@@ -1030,7 +1029,7 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``copy`` - (default: True) if True, return a copy of the list
+        - ``copy`` -- (default: ``True``) if True, return a copy of the list
           of rows which is safe to change.
 
         If ``self`` is a sparse matrix, rows are returned as sparse vectors,
@@ -1086,7 +1085,7 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``copy`` - (default: True) if True, return a copy so you can
+        - ``copy`` -- (default: ``True``) if True, return a copy so you can
           modify it safely
 
         EXAMPLES:
@@ -1149,7 +1148,7 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``copy`` - (default: True) if True, return a copy so you can
+        - ``copy`` -- (default: ``True``) if True, return a copy so you can
           modify it safely (note that the individual vectors in the copy
           should not be modified since they are mutable!)
 
@@ -1204,7 +1203,7 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``copy`` - (default: True) if True, return a copy so you can
+        - ``copy`` -- (default: ``True``) if True, return a copy so you can
            modify it safely
 
         EXAMPLES::
@@ -1280,7 +1279,7 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``copy`` - (default: True) if True, return a copy so you can
+        - ``copy`` -- (default: ``True``) if True, return a copy so you can
            modify it safely
 
         EXAMPLES::
@@ -1365,9 +1364,9 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``i`` - integer
+        - ``i`` -- integer
 
-        - ``from_list`` - bool (default: False); if true, returns the
+        - ``from_list`` -- bool (default: ``False``); if true, returns the
           ``i``'th element of ``self.columns()`` (see :func:`columns()`),
           which may be faster, but requires building a list of all
           columns the first time it is called after an entry of the
@@ -1425,9 +1424,9 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``i`` - integer
+        - ``i`` -- integer
 
-        - ``from_list`` - bool (default: False); if true, returns the
+        - ``from_list`` -- bool (default: ``False``); if true, returns the
           ``i``'th element of ``self.rows()`` (see :func:`rows`), which
           may be faster, but requires building a list of all rows the
           first time it is called after an entry of the matrix is
@@ -1487,10 +1486,10 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``bottom`` - a matrix, vector or free module element, whose
+        - ``bottom`` -- a matrix, vector or free module element, whose
           dimensions are compatible with ``self``.
 
-        - ``subdivide`` - default: ``False`` - request the resulting
+        - ``subdivide`` -- (default: ``False``); request the resulting
           matrix to have a new subdivision, separating ``self`` from ``bottom``.
 
         OUTPUT:
@@ -1777,10 +1776,10 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``right`` - a matrix, vector or free module element, whose
+        - ``right`` -- a matrix, vector or free module element, whose
           dimensions are compatible with ``self``.
 
-        - ``subdivide`` - default: ``False`` - request the resulting
+        - ``subdivide`` -- (default: ``False``); request the resulting
           matrix to have a new subdivision, separating ``self`` from
           ``right``.
 
@@ -1925,7 +1924,7 @@ cdef class Matrix(Matrix0):
             sage: D = A.augment(B)
             Traceback (most recent call last):
             ...
-            TypeError: not a constant polynomial
+            TypeError: y is not a constant polynomial
 
             sage: E = A.change_ring(R)
             sage: F = E.augment(B); F
@@ -2011,8 +2010,8 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        * ``dcols`` - list of indices of columns to be deleted from self.
-        * ``check`` - checks whether any index in ``dcols`` is out of range. Defaults to ``True``.
+        * ``dcols`` -- list of indices of columns to be deleted from self.
+        * ``check`` -- checks whether any index in ``dcols`` is out of range. Defaults to ``True``.
 
         .. SEEALSO::
 
@@ -2236,10 +2235,10 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``row``, ``col`` - index of the starting row and column.
+        - ``row``, ``col`` -- index of the starting row and column.
           Indices start at zero.
 
-        - ``nrows``, ``ncols`` - (optional) number of rows and columns to
+        - ``nrows``, ``ncols`` -- (optional) number of rows and columns to
           take. If not provided, take all rows below and all columns to
           the right of the starting entry.
 
@@ -2292,9 +2291,9 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``row`` - index of row to be set.
+        - ``row`` -- index of row to be set.
 
-        - ``v`` - a list or vector of the new entries.
+        - ``v`` -- a list or vector of the new entries.
 
         OUTPUT:
 
@@ -2365,9 +2364,9 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``col`` - index of column to be set.
+        - ``col`` -- index of column to be set.
 
-        - ``v`` - a list or vector of the new entries.
+        - ``v`` -- a list or vector of the new entries.
 
         OUTPUT:
 
@@ -2663,10 +2662,10 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        - ``nrows``, ``ncols`` - (optional) number of rows and columns in
+        - ``nrows``, ``ncols`` -- (optional) number of rows and columns in
           returned matrix space.
 
-        - ``sparse`` - whether the returned matrix space uses sparse or
+        - ``sparse`` -- whether the returned matrix space uses sparse or
           dense matrices.
 
         EXAMPLES::
@@ -2722,10 +2721,10 @@ cdef class Matrix(Matrix0):
 
         These three variables get sent to :func:`matrix_space`:
 
-        - ``nrows``, ``ncols`` - number of rows and columns in returned
+        - ``nrows``, ``ncols`` -- number of rows and columns in returned
           matrix. If not specified, defaults to ``None`` and will give a
           matrix of the same size as self.
-        - ``sparse`` - whether returned matrix is sparse or not. Defaults
+        - ``sparse`` -- whether returned matrix is sparse or not. Defaults
           to same value as self.
 
         The remaining three variables (``coerce``, ``entries``, and

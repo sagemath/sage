@@ -1,4 +1,3 @@
-# coding: utf-8
 """
 Univariate polynomial base class
 
@@ -44,7 +43,6 @@ AUTHORS:
 
 - Sebastian Oehms (2018-10): made :meth:`roots` and  :meth:`factor` work over more
   cases of proper integral domains (see :issue:`26421`)
-
 """
 
 # ****************************************************************************
@@ -334,11 +332,11 @@ cdef class Polynomial(CommutativePolynomial):
 
         INPUT:
 
-        -  ``xmin`` - float
+        -  ``xmin`` -- float
 
-        -  ``xmax`` - float
+        -  ``xmax`` -- float
 
-        -  ``*args, **kwds`` - passed to either plot or
+        -  ``*args, **kwds`` -- passed to either plot or
            point
 
 
@@ -1476,7 +1474,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: QQ(3*x + 45)
             Traceback (most recent call last):
             ...
-            TypeError: not a constant polynomial
+            TypeError: 3*x + 45 is not a constant polynomial
         """
         return self._scalar_conversion(sage.rings.rational.Rational)
 
@@ -1976,14 +1974,14 @@ cdef class Polynomial(CommutativePolynomial):
 
         INPUT:
 
-        -  ``root`` - whether or not to also return a square
+        -  ``root`` -- whether or not to also return a square
            root (default: ``False``)
 
         OUTPUT:
 
-        -  ``bool`` - whether or not a square
+        -  ``bool`` -- whether or not a square
 
-        -  ``root`` - (optional) an actual square root if
+        -  ``root`` -- (optional) an actual square root if
            found, and ``None`` otherwise.
 
         EXAMPLES::
@@ -3064,7 +3062,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``name`` - None or a string; used for printing the variable.
+        - ``name`` -- None or a string; used for printing the variable.
 
         EXAMPLES::
 
@@ -3292,9 +3290,9 @@ cdef class Polynomial(CommutativePolynomial):
 
         INPUT:
 
-        -  ``n`` - an integer
+        -  ``n`` -- an integer
 
-        -  ``value`` - value to set the n-th coefficient to
+        -  ``value`` -- value to set the n-th coefficient to
 
         OUTPUT: an :class:`IndexError` is always raised.
 
@@ -3487,9 +3485,9 @@ cdef class Polynomial(CommutativePolynomial):
 
         INPUT:
 
-        -  ``self`` - Polynomial
+        -  ``self`` -- Polynomial
 
-        -  ``right`` - Polynomial (over same base ring as
+        -  ``right`` -- Polynomial (over same base ring as
            self)
 
 
@@ -3556,9 +3554,9 @@ cdef class Polynomial(CommutativePolynomial):
 
         INPUT:
 
-          - ``self`` - Polynomial
-          - ``right`` - Polynomial (over same base ring as ``self``)
-          - ``K_threshold`` - (optional) Integer. A threshold to fall back to
+          - ``self`` -- Polynomial
+          - ``right`` -- Polynomial (over same base ring as ``self``)
+          - ``K_threshold`` -- (optional) Integer. A threshold to fall back to
             schoolbook algorithm. In the recursion, if one of the polynomials
             is of degree less that K_threshold then the classic quadratic
             polynomial is used.
@@ -3803,7 +3801,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``R`` - a ring or morphism.
+        - ``R`` -- a ring or morphism.
 
         EXAMPLES::
 
@@ -5549,11 +5547,11 @@ cdef class Polynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``n`` (default: ``None``) - if provided, should equal
+        - ``n`` (default: ``None``) -- if provided, should equal
           `q-1` where ``self.parent()`` is the field with `q`
           elements;  otherwise it will be computed.
 
-        - ``n_prime_divs`` (default: ``None``) - if provided, should
+        - ``n_prime_divs`` (default: ``None``) -- if provided, should
           be a list of the prime divisors of `n`; otherwise it
           will be computed.
 
@@ -5690,7 +5688,7 @@ cdef class Polynomial(CommutativePolynomial):
         OUTPUT:
 
 
-        -  ``bool`` - ``True`` if and only if this polynomial is
+        -  ``bool`` -- ``True`` if and only if this polynomial is
            constant
 
 
@@ -5841,8 +5839,6 @@ cdef class Polynomial(CommutativePolynomial):
 
         if self.degree() <= 1:
             return R.fraction_field()
-
-        from sage.rings.number_field.number_field import is_NumberField, NumberField
 
         if is_IntegerRing(R):
             from sage.rings.number_field.number_field import NumberField
@@ -6612,7 +6608,7 @@ cdef class Polynomial(CommutativePolynomial):
         INPUT:
 
 
-        -  ``n`` - (default: None); if given, an integer that
+        -  ``n`` -- (default: None); if given, an integer that
            is at least 0
 
 
@@ -6661,7 +6657,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``m`` - a monomial
+        - ``m`` -- a monomial
 
         OUTPUT: Coefficient in base ring.
 
@@ -6746,9 +6742,9 @@ cdef class Polynomial(CommutativePolynomial):
         INPUT:
 
 
-        -  ``n`` - an integer (the number of iterations),
+        -  ``n`` -- an integer (the number of iterations),
 
-        -  ``x0`` - an initial guess `x_0`.
+        -  ``x0`` -- an initial guess `x_0`.
 
 
         OUTPUT: A list of numbers hopefully approximating a root of
@@ -7664,7 +7660,7 @@ cdef class Polynomial(CommutativePolynomial):
         - ``algorithm`` -- ``None`` (default), ``"resultant"`` or ``"BFSS"``.
           See :meth:`.composed_op`
 
-        - ``monic`` - ``False`` (default) or ``True``.
+        - ``monic`` -- ``False`` (default) or ``True``.
           See :meth:`.composed_op`
 
         OUTPUT:
@@ -8077,14 +8073,14 @@ cdef class Polynomial(CommutativePolynomial):
         INPUT:
 
 
-        -  ``ring`` - the ring to find roots in
+        -  ``ring`` -- the ring to find roots in
 
-        -  ``multiplicities`` - bool (default: ``True``) if ``True``
+        -  ``multiplicities`` -- bool (default: ``True``) if ``True``
            return list of pairs `(r, n)`, where `r` is the root and `n` is the
            multiplicity. If ``False``, just return the unique roots, with no
            information about multiplicities.
 
-        -  ``algorithm`` - the root-finding algorithm to use.
+        -  ``algorithm`` -- the root-finding algorithm to use.
            We attempt to select a reasonable algorithm by default, but this
            lets the caller override our choice.
 
@@ -10471,7 +10467,7 @@ cdef class Polynomial(CommutativePolynomial):
         INPUT:
 
 
-        -  ``p`` - (positive integer or +infinity) the degree
+        -  ``p`` -- (positive integer or +infinity) the degree
            of the norm
 
 
@@ -12595,7 +12591,7 @@ def universal_discriminant(n):
 
     INPUT:
 
-    - ``n`` - degree of the polynomial
+    - ``n`` -- degree of the polynomial
 
     OUTPUT:
 
@@ -12633,11 +12629,11 @@ cpdef Polynomial generic_power_trunc(Polynomial p, Integer n, long prec):
 
     INPUT:
 
-    - ``p`` - a polynomial
+    - ``p`` -- a polynomial
 
-    - ``n`` - an integer (of type :class:`sage.rings.integer.Integer`)
+    - ``n`` -- an integer (of type :class:`sage.rings.integer.Integer`)
 
-    - ``prec`` - a precision (should fit into a C ``long``)
+    - ``prec`` -- a precision (should fit into a C ``long``)
 
     TESTS:
 
@@ -12894,7 +12890,7 @@ cdef class ConstantPolynomialSection(Map):
         sage: phi(y_1)
         Traceback (most recent call last):
         ...
-        TypeError: not a constant polynomial
+        TypeError: y_1 is not a constant polynomial
     """
     cpdef Element _call_(self, x):
         """
@@ -12913,7 +12909,7 @@ cdef class ConstantPolynomialSection(Map):
             sage: m(x)
             Traceback (most recent call last):
             ...
-            TypeError: not a constant polynomial
+            TypeError: x is not a constant polynomial
         """
         if x.degree() <= 0:
             try:
@@ -12921,7 +12917,7 @@ cdef class ConstantPolynomialSection(Map):
             except AttributeError:
                 return <Element>((<Polynomial>x).constant_coefficient())
         else:
-            raise TypeError("not a constant polynomial")
+            raise TypeError(f"{x} is not a constant polynomial")
 
 cdef class PolynomialBaseringInjection(Morphism):
     """

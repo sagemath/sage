@@ -496,7 +496,7 @@ def HammingGraph(n, q, X=None):
 
 def BalancedTree(r, h):
     r"""
-    Returns the perfectly balanced tree of height `h \geq 1`,
+    Return the perfectly balanced tree of height `h \geq 1`,
     whose root has degree `r \geq 2`.
 
     The number of vertices of this graph is
@@ -513,23 +513,18 @@ def BalancedTree(r, h):
     OUTPUT:
 
     The perfectly balanced tree of height `h \geq 1` and whose root has
-    degree `r \geq 2`. A :exc:`~networkx.exception.NetworkXError` is raised
-    if `r < 2` or `h < 1`.
-
-    ALGORITHM:
-
-    Uses the :ref:`NetworkX <spkg_networkx>` function
-    :func:`~networkx.generators.classic.balanced_tree`.
+    degree `r \geq 2`.
 
     EXAMPLES:
 
     A balanced tree whose root node has degree `r = 2`, and of height
     `h = 1`, has order 3 and size 2::
 
-        sage: G = graphs.BalancedTree(2, 1); G                                          # needs networkx
+        sage: G = graphs.BalancedTree(2, 1); G
         Balanced tree: Graph on 3 vertices
-        sage: G.order(); G.size()                                                       # needs networkx
+        sage: G.order()
         3
+        sage: G.size()
         2
         sage: r = 2; h = 1
         sage: v = 1 + r
@@ -539,8 +534,9 @@ def BalancedTree(r, h):
 
     Plot a balanced tree of height 5, whose root node has degree `r = 3`::
 
-        sage: G = graphs.BalancedTree(3, 5)                                             # needs networkx
-        sage: G.show()                          # long time                             # needs networkx sage.plot
+        sage: G = graphs.BalancedTree(3, 5)
+        sage: G.plot()                          # long time                             # needs sage.plot
+        Graphics object consisting of 728 graphics primitives
 
     A tree is bipartite. If its vertex set is finite, then it is planar. ::
 
@@ -563,17 +559,40 @@ def BalancedTree(r, h):
     has degree `r \geq 2`, but the construction degenerates
     gracefully::
 
-        sage: graphs.BalancedTree(1, 10)                                                # needs networkx
+        sage: graphs.BalancedTree(1, 10)
         Balanced tree: Graph on 11 vertices
 
     Similarly, we usually want the tree must have height `h \geq 1`
     but the algorithm also degenerates gracefully here::
 
-        sage: graphs.BalancedTree(3, 0)                                                 # needs networkx
+        sage: graphs.BalancedTree(3, 0)
         Balanced tree: Graph on 1 vertex
+
+    The construction is the same as the one of networkx::
+
+        sage: # needs networkx
+        sage: import networkx
+        sage: r = randint(2, 4); h = randint(1, 5)
+        sage: T = graphs.BalancedTree(r, h)
+        sage: N = Graph(networkx.balanced_tree(r, h), name="Balanced tree")
+        sage: T.is_isomorphic(N)
+        True
     """
-    import networkx
-    return Graph(networkx.balanced_tree(r, h), name="Balanced tree")
+    # Compute the number of vertices per level of the tree
+    order = [r**l for l in range(h + 1)]
+    # Compute the first index of the vertices of a level
+    begin = [0]
+    begin.extend(begin[-1] + val for val in order)
+    # The number of vertices of the tree is the first index of level h + 1
+    T = Graph(begin[-1], name="Balanced tree")
+
+    # Add edges of the r-ary tree
+    for level in range(h):
+        start = begin[level + 1]
+        for u in range(begin[level], begin[level + 1]):
+            T.add_edges((u, v) for v in range(start, start + r))
+            start += r
+    return T
 
 
 def BarbellGraph(n1, n2):
@@ -1057,9 +1076,9 @@ def CirculantGraph(n, adjacency):
     INPUT:
 
 
-    -  ``n`` - number of vertices in the graph
+    -  ``n`` -- number of vertices in the graph
 
-    -  ``adjacency`` - the list of j values
+    -  ``adjacency`` -- the list of j values
 
 
     PLOTTING: Upon construction, the position dictionary is filled to
@@ -1317,7 +1336,7 @@ def GoethalsSeidelGraph(k, r):
 
     INPUT:
 
-    - ``k,r`` -- integers
+    - ``k``, ``r`` -- integers
 
     .. SEEALSO::
 
@@ -1604,7 +1623,7 @@ def FibonacciTree(n):
 
     INPUT:
 
-    - ``n`` - the recursion depth of the Fibonacci Tree
+    - ``n`` -- the recursion depth of the Fibonacci Tree
 
     EXAMPLES::
 
@@ -1668,9 +1687,9 @@ def GeneralizedPetersenGraph(n, k):
 
     INPUT:
 
-    - ``n`` - the number of nodes is `2*n`.
+    - ``n`` -- the number of nodes is `2*n`.
 
-    - ``k`` - integer `0<k\leq\lfloor(n-1)`/`2\rfloor`. Decides
+    - ``k`` -- integer `0<k\leq\lfloor(n-1)`/`2\rfloor`. Decides
       how inner vertices are connected.
 
     PLOTTING: Upon construction, the position dictionary is filled to
@@ -2737,12 +2756,12 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
 
     INPUT:
 
-    - ``pegs`` - the number of pegs in the puzzle, 2 or greater
-    - ``disks`` - the number of disks in the puzzle, 1 or greater
-    - ``labels`` - default: ``True``, if ``True`` the graph contains
+    - ``pegs`` -- the number of pegs in the puzzle, 2 or greater
+    - ``disks`` -- the number of disks in the puzzle, 1 or greater
+    - ``labels`` -- default: ``True``, if ``True`` the graph contains
       more meaningful labels, see explanation below.  For large instances,
       turn off labels for much faster creation of the graph.
-    - ``positions`` - default: ``True``, if ``True`` the graph contains
+    - ``positions`` -- default: ``True``, if ``True`` the graph contains
       layout information.  This creates a planar layout for the case
       of three pegs.  For large instances, turn off layout information
       for much faster creation of the graph.
@@ -2837,7 +2856,7 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
 
     Some facts about this graph with `p` pegs and `d` disks:
 
-    - only automorphisms are the "obvious" ones - renumber the pegs.
+    - only automorphisms are the "obvious" ones -- renumber the pegs.
     - chromatic number is less than or equal to `p`
     - independence number is `p^{d-1}`
 
@@ -3583,7 +3602,7 @@ def trees(vertices):
 
     INPUT:
 
-    -  ``vertices`` - the size of the trees created.
+    -  ``vertices`` -- the size of the trees created.
 
     OUTPUT:
 

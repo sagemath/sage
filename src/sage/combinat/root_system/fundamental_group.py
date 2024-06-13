@@ -393,7 +393,7 @@ class FundamentalGroupOfExtendedAffineWeylGroup_Class(UniqueRepresentation,
             cartan_type = cartan_type.dual()
         if cartan_type.is_untwisted_affine():
             cartan_type_classical = cartan_type.classical()
-            I = [i for i in cartan_type_classical.index_set()]
+            I = list(cartan_type_classical.index_set())
             Q = RootSystem(cartan_type_classical).root_lattice()
             alpha = Q.simple_roots()
             omega = RootSystem(cartan_type_classical).weight_lattice().fundamental_weights()

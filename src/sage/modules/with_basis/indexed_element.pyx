@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 An element in an indexed free module
 
@@ -372,6 +371,16 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: E2 = L.exterior_power(2)
             sage: ascii_art(E2.an_element())
             2*()/\(5,6,7) + 2*()/\(5,7,6) + 3*()/\(1,2)(3,4)
+
+        We can also get the ascii art when ``one_basis``
+        is ``NotImplemented``::
+
+            sage: TL = TemperleyLiebAlgebra(8, -1, QQ)
+            sage: C = TL.cellular_basis()
+            sage: ascii_art(list(C.basis())[0])
+            C
+             (     .-. .-. .-. .-.   .-. .-. .-. .-. )
+             ( 0,  o o o o o o o o,  o o o o o o o o )
         """
         from sage.misc.repr import coeff_repr
         terms = self._sorted_items_for_printing()
@@ -390,8 +399,8 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         one_basis = None
         try:
-            if self.parent().one_basis is not NotImplemented:
-                one_basis = self.parent().one_basis()
+            if self._parent.one_basis is not NotImplemented:
+                one_basis = self._parent.one_basis()
         except (AttributeError, NotImplementedError, ValueError, TypeError):
             pass
 
@@ -457,6 +466,16 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: E2 = L.exterior_power(2)
             sage: unicode_art(E2.an_element())
             2*()∧(5,6,7) + 2*()∧(5,7,6) + 3*()∧(1,2)(3,4)
+
+        We can also get the unicode art when ``one_basis``
+        is ``NotImplemented``::
+
+            sage: TL = TemperleyLiebAlgebra(8, -1, QQ)
+            sage: C = TL.cellular_basis()
+            sage: unicode_art(list(C.basis())[0])
+            C
+             ⎛     ╭─╮ ╭─╮ ╭─╮ ╭─╮   ╭─╮ ╭─╮ ╭─╮ ╭─╮ ⎞
+             ⎝ 0,  ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬,  ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⎠
         """
         from sage.misc.repr import coeff_repr
         terms = self._sorted_items_for_printing()
@@ -475,8 +494,8 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         one_basis = None
         try:
-            if self.parent().one_basis is not NotImplemented:
-                one_basis = self.parent().one_basis()
+            if self._parent.one_basis is not NotImplemented:
+                one_basis = self._parent.one_basis()
         except (AttributeError, NotImplementedError, ValueError, TypeError):
             pass
 
@@ -1015,6 +1034,7 @@ def _unpickle_element(C, d):
         -2*B[1] - 12*B[3]
     """
     return C._from_dict(d, coerce=False, remove_zeros=False)
+
 
 # Handle old CombinatorialFreeModuleElement pickles, see Issue #22632
 from sage.misc.persist import register_unpickle_override

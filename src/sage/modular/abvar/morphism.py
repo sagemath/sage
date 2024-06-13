@@ -140,9 +140,9 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
         OUTPUT:
 
 
-        -  ``A`` - an abelian variety (the cokernel)
+        -  ``A`` -- an abelian variety (the cokernel)
 
-        -  ``phi`` - a quotient map from self.codomain() to the
+        -  ``phi`` -- a quotient map from self.codomain() to the
            cokernel of self
 
 
@@ -193,9 +193,9 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
         OUTPUT:
 
 
-        -  ``G`` - a finite group
+        -  ``G`` -- a finite group
 
-        -  ``A`` - an abelian variety (identity component of
+        -  ``A`` -- an abelian variety (identity component of
            the kernel)
 
 
@@ -369,7 +369,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
         INPUT:
 
 
-        -  ``X`` - abelian variety, finite group, or torsion
+        -  ``X`` -- abelian variety, finite group, or torsion
            element
 
 
@@ -446,11 +446,11 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
             sage: t2(C)
             Finite subgroup with invariants [2, 2] over QQ of Simple abelian subvariety 33a(1,33) of dimension 1 of J0(33)
         """
-        from .abvar import is_ModularAbelianVariety
+        from .abvar import ModularAbelianVariety_abstract
         from .finite_subgroup import FiniteSubgroup
         if isinstance(X, TorsionPoint):
             return self._image_of_element(X)
-        elif is_ModularAbelianVariety(X):
+        elif isinstance(X, ModularAbelianVariety_abstract):
             return self._image_of_abvar(X)
         elif isinstance(X, FiniteSubgroup):
             return self._image_of_finite_subgroup(X)
@@ -468,7 +468,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
         INPUT:
 
 
-        -  ``x`` - a torsion point on an abelian variety
+        -  ``x`` -- a torsion point on an abelian variety
 
 
         OUTPUT: a torsion point
@@ -556,7 +556,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
         INPUT:
 
 
-        -  ``A`` - an abelian variety
+        -  ``A`` -- an abelian variety
 
 
         OUTPUT an abelian variety
@@ -669,12 +669,12 @@ class DegeneracyMap(Morphism):
         INPUT:
 
 
-        -  ``parent`` - a space of homomorphisms of abelian
+        -  ``parent`` -- a space of homomorphisms of abelian
            varieties
 
-        -  ``A`` - a matrix defining self
+        -  ``A`` -- a matrix defining self
 
-        -  ``t`` - a list of indices defining the degeneracy
+        -  ``t`` -- a list of indices defining the degeneracy
            map
 
 
@@ -730,9 +730,9 @@ class HeckeOperator(Morphism):
         INPUT:
 
 
-        -  ``abvar`` - a modular abelian variety
+        -  ``abvar`` -- a modular abelian variety
 
-        -  ``n`` - a positive integer
+        -  ``n`` -- a positive integer
 
 
         EXAMPLES::
@@ -743,11 +743,11 @@ class HeckeOperator(Morphism):
             sage: T2.parent()
             Endomorphism ring of Abelian variety J0(37) of dimension 2
         """
-        from .abvar import is_ModularAbelianVariety
+        from .abvar import ModularAbelianVariety_abstract
         n = ZZ(n)
         if n <= 0:
             raise ValueError("n must be positive")
-        if not is_ModularAbelianVariety(abvar):
+        if not isinstance(abvar, ModularAbelianVariety_abstract):
             raise TypeError("abvar must be a modular abelian variety")
         self.__abvar = abvar
         self.__n = n
@@ -774,7 +774,7 @@ class HeckeOperator(Morphism):
         OUTPUT:
 
 
-        -  ``n`` - a (Sage) Integer
+        -  ``n`` -- a (Sage) Integer
 
 
         EXAMPLES::
@@ -823,7 +823,7 @@ class HeckeOperator(Morphism):
         INPUT:
 
 
-        -  ``var`` - a string (default: 'x')
+        -  ``var`` -- a string (default: 'x')
 
 
         OUTPUT: a polynomial in var over the rational numbers.
@@ -852,7 +852,7 @@ class HeckeOperator(Morphism):
         INPUT:
 
 
-        -  ``var`` - string (default: 'x')
+        -  ``var`` -- string (default: 'x')
 
 
         EXAMPLES::
@@ -868,6 +868,20 @@ class HeckeOperator(Morphism):
             y^2 + 3*y + 3
         """
         return self.characteristic_polynomial(var)
+
+    def fcp(self, var='x'):
+        """
+        Return the factorization of the characteristic polynomial.
+
+        EXAMPLES::
+
+            sage: t2 = J0(33).hecke_operator(2)
+            sage: t2.charpoly()
+            x^3 + 3*x^2 - 4
+            sage: t2.fcp()
+            (x - 1) * (x + 2)^2
+        """
+        return self.charpoly(var).factor()
 
     def action_on_homology(self, R=ZZ):
         r"""

@@ -16,7 +16,7 @@ from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.permutation import Permutation, Permutations, from_permutation_group_element
 from sage.combinat.permutation_cython import (left_action_same_n, right_action_same_n)
-from sage.combinat.partition import _Partitions, Partitions_n
+from sage.combinat.partition import _Partitions, Partitions, Partitions_n
 from sage.combinat.tableau import Tableau, StandardTableaux_size, StandardTableaux_shape, StandardTableaux
 from sage.algebras.group_algebra import GroupAlgebra_class
 from sage.algebras.cellular_basis import CellularBasis
@@ -293,6 +293,10 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         category = category.Unital().FiniteDimensional().WithBasis().Cellular()
         GroupAlgebra_class.__init__(self, R, W, prefix='',
                                     latex_prefix='', category=category)
+
+        # Mixin class for extra methods for representations
+        from sage.combinat.specht_module import SymmetricGroupRepresentation
+        self._representation_mixin_class = SymmetricGroupRepresentation
 
     def _repr_(self):
         """
@@ -1244,6 +1248,100 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
                 blocks[c] = [la]
         return blocks
 
+    def ladder_idemponent(self, la):
+        r"""
+        Return the ladder idempontent of ``self``.
+
+        Let `F` be a field of characteristic `p`. The *ladder idempotent*
+        of shape `\lambda` is the idempotent of `F[S_n]` defined as follows.
+        Let `T` be the :meth:`ladder tableau
+        <sage.combinat.partition.Partition.ladder_tableau>` of shape `\lambda`.
+        Let `[T]` be the set of standard tableaux whose residue sequence
+        is the same as for `T`. Let `\alpha` be the sizes of the ladders
+        of `\lambda`. Then the ladder idempontent is constructed as
+
+        .. MATH::
+
+            \widetilde{e}_{\lambda} := \frac{1}{\alpha!}
+              \left( \sum_{\sigma \in S_{\alpha}} \sigma \right)
+              \left( \overline{\sum_{U \in [T]} E_U} \right),
+
+        where `E_{UU}` is the :meth:`seminormal_basis` element over `\QQ`
+        and we project the sum to `F`, `S_{\alpha}` is the Young subgroup
+        corresponding to `\alpha`, and `\alpha! = \alpha_1! \cdots \alpha_k!`.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
+            sage: for la in Partitions(SGA.n):
+            ....:     idem = SGA.ladder_idemponent(la)
+            ....:     print(la)
+            ....:     print(idem)
+            ....:     assert idem^2 == idem
+            [4]
+            2*[1, 2, 3, 4] + 2*[1, 2, 4, 3] + 2*[2, 1, 3, 4] + 2*[2, 1, 4, 3]
+             + 2*[3, 4, 1, 2] + 2*[3, 4, 2, 1] + 2*[4, 3, 1, 2] + 2*[4, 3, 2, 1]
+            [3, 1]
+            2*[1, 2, 3, 4] + 2*[1, 2, 4, 3] + 2*[2, 1, 3, 4] + 2*[2, 1, 4, 3]
+             + [3, 4, 1, 2] + [3, 4, 2, 1] + [4, 3, 1, 2] + [4, 3, 2, 1]
+            [2, 2]
+            2*[1, 2, 3, 4] + 2*[1, 2, 4, 3] + 2*[2, 1, 3, 4] + 2*[2, 1, 4, 3]
+             + 2*[3, 4, 1, 2] + 2*[3, 4, 2, 1] + 2*[4, 3, 1, 2] + 2*[4, 3, 2, 1]
+            [2, 1, 1]
+            2*[1, 2, 3, 4] + [1, 2, 4, 3] + 2*[1, 3, 2, 4] + [1, 3, 4, 2]
+             + [1, 4, 2, 3] + 2*[1, 4, 3, 2] + 2*[2, 1, 3, 4] + [2, 1, 4, 3]
+             + 2*[2, 3, 1, 4] + [2, 3, 4, 1] + [2, 4, 1, 3] + 2*[2, 4, 3, 1]
+             + 2*[3, 1, 2, 4] + [3, 1, 4, 2] + 2*[3, 2, 1, 4] + [3, 2, 4, 1]
+             + [4, 1, 2, 3] + 2*[4, 1, 3, 2] + [4, 2, 1, 3] + 2*[4, 2, 3, 1]
+            [1, 1, 1, 1]
+            2*[1, 2, 3, 4] + [1, 2, 4, 3] + [2, 1, 3, 4] + 2*[2, 1, 4, 3]
+             + 2*[3, 4, 1, 2] + [3, 4, 2, 1] + [4, 3, 1, 2] + 2*[4, 3, 2, 1]
+
+        When `p = 0`, these idempotents will generate all of the simple
+        modules (which are the :meth:`Specht modules <specht_module>`
+        and also projective modules)::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: for la in Partitions(SGA.n):
+            ....:     idem = SGA.ladder_idemponent(la)
+            ....:     assert idem^2 == idem
+            ....:     print(la, SGA.principal_ideal(idem).dimension())
+            [5] 1
+            [4, 1] 4
+            [3, 2] 5
+            [3, 1, 1] 6
+            [2, 2, 1] 5
+            [2, 1, 1, 1] 4
+            [1, 1, 1, 1, 1] 1
+            sage: [StandardTableaux(la).cardinality() for la in Partitions(SGA.n)]
+            [1, 4, 5, 6, 5, 4, 1]
+
+        REFERENCES:
+
+        - [Ryom2015]_
+        """
+        R = self.base_ring()
+        p = R.characteristic()
+        n = self.n
+        if not p:
+            p = n + 1
+        la = _Partitions(la)
+        if sum(la) != n:
+            raise ValueError(f"{la} is not a partition of {n}")
+        Tlad, alpha = la.ladder_tableau(p, ladder_lengths=True)
+        if not all(val < p for val in alpha):
+            raise ValueError(f"{la} is not {p}-ladder restricted")
+        Tclass = Tlad.residue_sequence(p).standard_tableaux()
+        Elad = sum(epsilon_ik(T, T) for T in Tclass)
+        Elad = self.element_class(self, {sigma: R(c) for sigma, c in Elad._monomial_coefficients.items()})
+        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+        YG = SymmetricGroup(n).young_subgroup(alpha)
+        coeff = ~R.prod(factorial(val) for val in alpha)
+        G = self.group()
+        eprod = self.element_class(self, {G(list(elt.tuple())): coeff
+                                          for elt in YG})
+        return Elad * eprod
+
     @cached_method
     def algebra_generators(self):
         r"""
@@ -1623,6 +1721,28 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         span_set = specht_module_spanning_set(D, self)
         return matrix(self.base_ring(), [v.to_vector() for v in span_set]).rank()
 
+    def simple_module_parameterization(self):
+        r"""
+        Return a parameterization of the simple modules of ``self``.
+
+        The symmetric group algebra of `S_n` over a field of characteristic `p`
+        has its simple modules indexed by all `p`-regular partitions of `n`.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 6)
+            sage: SGA.simple_module_parameterization()
+            Partitions of the integer 6
+
+            sage: SGA = SymmetricGroupAlgebra(GF(2), 6)
+            sage: SGA.simple_module_parameterization()
+            2-Regular Partitions of the integer 6
+        """
+        p = self.base_ring().characteristic()
+        if p > 0:
+            return Partitions(self.n, regular=p)
+        return Partitions_n(self.n)
+
     def simple_module(self, la):
         r"""
         Return the simple module of ``self`` indexed by the partition ``la``.
@@ -1669,6 +1789,21 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             raise ValueError(f"{la} is not a partition of {self.n}")
         from sage.combinat.specht_module import simple_module_rank
         return simple_module_rank(la, self.base_ring())
+
+    def garsia_procesi_module(self, la):
+        r"""
+        Return the :class:`Garsia-Procesi module
+        <sage.combinat.symmetric_group_representations.GarsiaProcesiModule>`
+        of ``self`` indexed by ``la``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(2), 6)
+            sage: SGA.garsia_procesi_module(Partition([2,2,1,1]))
+            Garsia-Procesi module of shape [2, 2, 1, 1] over Finite Field of size 2
+        """
+        from sage.combinat.symmetric_group_representations import GarsiaProcesiModule
+        return GarsiaProcesiModule(self, la)
 
     def jucys_murphy(self, k):
         r"""
@@ -1885,9 +2020,14 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
                     basis.append(self.epsilon_ik(t1, t2, mult=mult))
         return basis
 
-    def dft(self, form="seminormal", mult='l2r'):
-        """
+    def dft(self, form=None, mult='l2r'):
+        r"""
         Return the discrete Fourier transform for ``self``.
+
+        See [Mur1983]_ for the construction of central primitive orthogonal idempotents.
+        For each idempotent `e_i` we have a homomorphic projection `v \mapsto v e_i`.
+        Choose a basis for each submodule spanned by `\{\sigma e_i | \sigma \in S_n\}`.
+        The change-of-basis from the standard basis `\{\sigma\}_\sigma` is returned.
 
         INPUT:
 
@@ -1906,15 +2046,32 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             [   0    1    0   -1    1   -1]
             [   1 -1/2    1 -1/2 -1/2 -1/2]
             [   1   -1   -1    1    1   -1]
+
+        Over fields of characteristic `p > 0` such that `p \mid n!`, we use the
+        modular Fourier transform (:issue:`37751`)::
+
+            sage: GF2S3 = SymmetricGroupAlgebra(GF(2), 3)
+            sage: GF2S3.dft()
+            [1 0 0 0 1 0]
+            [0 1 0 0 0 1]
+            [0 0 1 0 0 1]
+            [0 0 0 1 1 0]
+            [1 0 0 1 1 0]
+            [0 1 1 0 0 1]
         """
+        if form is None:
+            form = "modular" if self.base_ring().characteristic().divides(self.group().cardinality()) else "seminormal"
         if form == "seminormal":
+            if self.base_ring().characteristic().divides(self.group().cardinality()):
+                raise ValueError("seminormal does not work when p | n!")
             return self._dft_seminormal(mult=mult)
-        else:
-            raise ValueError("invalid form (= %s)" % form)
+        if form == "modular":
+            return self._dft_modular()
+        raise ValueError("invalid form (= %s)" % form)
 
     def _dft_seminormal(self, mult='l2r'):
         """
-        Return the seminormal form of the discrete Fourier for ``self``.
+        Return the seminormal form of the discrete Fourier transform for ``self``.
 
         INPUT:
 
@@ -1940,6 +2097,32 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         """
         snb = self.seminormal_basis(mult=mult)
         return matrix([vector(b) for b in snb]).inverse().transpose()
+
+    def _dft_modular(self):
+        r"""
+        Return the discrete Fourier transform when the characteristic divides the order of the group.
+
+        EXAMPLES::
+
+            sage: GF3S3 = SymmetricGroupAlgebra(GF(3), 3)
+            sage: GF3S3._dft_modular()
+            [1 0 0 0 0 0]
+            [0 1 0 0 0 0]
+            [0 0 1 0 0 0]
+            [0 0 0 1 0 0]
+            [0 0 0 0 1 0]
+            [0 0 0 0 0 1]
+        """
+        idempotents = self.central_orthogonal_idempotents()
+        # project v onto each block U_i = F_p[S_n]*e_i via \pi_i: v |--> v*e_i
+        B = self.basis()
+        blocks = [self.submodule([b * idem for b in B]) for idem in idempotents]
+        # compute the list of basis vectors lifted to the SGA from each block
+        block_decomposition_basis = [u.lift() for block in blocks for u in block.basis()]
+        # construct the matrix to the standard basis in the order given by the group
+        G = self.group()
+        mat = [[b[g] for b in block_decomposition_basis] for g in G]
+        return matrix(self.base_ring(), mat)
 
     def epsilon_ik(self, itab, ktab, star=0, mult='l2r'):
         r"""

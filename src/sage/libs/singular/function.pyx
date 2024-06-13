@@ -61,7 +61,6 @@ AUTHORS:
 - Martin Albrecht (2010-01): clean up, support for attributes
 - Simon King (2011-04): include the documentation provided by Singular as a code block
 - Burcin Erocal, Michael Brickenstein, Oleksandr Motsak, Alexander Dreyer, Simon King (2011-09): plural support
-
 """
 
 #*****************************************************************************
@@ -98,7 +97,7 @@ from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence_g
 from sage.libs.singular.decl cimport *
 from sage.libs.singular.option import opt_ctx
 from sage.libs.singular.polynomial cimport singular_vector_maximal_component
-from sage.libs.singular.singular cimport sa2si, si2sa, si2sa_intvec
+from sage.libs.singular.singular cimport sa2si, si2sa, si2sa_intvec, si2sa_bigintvec
 from sage.libs.singular.singular import error_messages
 
 from sage.interfaces.singular import get_docstring
@@ -343,8 +342,8 @@ cdef leftv* new_leftv(void *data, res_type) noexcept:
     """
     INPUT:
 
-    - ``data`` - some Singular data this interpreter object points to
-    - ``res_type`` - the type of that data
+    - ``data`` -- some Singular data this interpreter object points to
+    - ``res_type`` -- the type of that data
     """
     cdef leftv* res
     res = <leftv*>omAllocBin(sleftv_bin)
@@ -359,7 +358,7 @@ cdef free_leftv(leftv *args, ring *r = NULL):
 
     INPUT:
 
-    - ``args`` - a list of Singular arguments
+    - ``args`` -- a list of Singular arguments
     """
     args.CleanUp(r)
     omFreeBin(args, sleftv_bin)
@@ -393,6 +392,7 @@ def is_sage_wrapper_for_singular_ring(ring):
     if isinstance(ring, NCPolynomialRing_plural):
         return True
     return False
+
 
 cdef new_sage_polynomial(ring,  poly *p):
     if isinstance(ring, MPolynomialRing_libsingular):
@@ -496,9 +496,9 @@ cdef class Converter(SageObject):
 
         INPUT:
 
-        - ``args`` - a list of Python objects
-        - ``ring`` - a multivariate polynomial ring
-        - ``attributes`` - an optional dictionary of Singular
+        - ``args`` -- a list of Python objects
+        - ``ring`` -- a multivariate polynomial ring
+        - ``attributes`` -- an optional dictionary of Singular
           attributes (default: ``None``)
 
         EXAMPLES::
@@ -673,8 +673,8 @@ cdef class Converter(SageObject):
 
         INPUT:
 
-        - ``data`` - the raw data
-        - ``res_type`` - the type of the data
+        - ``data`` -- the raw data
+        - ``res_type`` -- the type of the data
         """
         return self._append_leftv( new_leftv(data, res_type) )
 
@@ -914,7 +914,7 @@ cdef class Converter(SageObject):
 
         INPUT:
 
-        - ``to_convert`` - a Singular ``leftv``
+        - ``to_convert`` -- a Singular ``leftv``
 
         TESTS:
 
@@ -954,6 +954,8 @@ cdef class Converter(SageObject):
             return si2sa(<number *>to_convert.data, self._singular_ring, self._sage_ring.base_ring())
         elif rtyp == INTVEC_CMD:
             return si2sa_intvec(<intvec *> to_convert.data)
+        elif rtyp == BIGINTVEC_CMD:
+            return si2sa_bigintvec(<bigintmat *> to_convert.data)
         elif rtyp == STRING_CMD:
             # TODO: Need to determine what kind of data can be returned by a
             # STRING_CMD--is it just ASCII strings or can it be an arbitrary
@@ -1048,6 +1050,17 @@ cdef class LibraryCallHandler(BaseCallHandler):
         """
         return False
 
+# mapping int --> string for function arity
+arity_dict = {
+        CMD_1: "CMD_1",
+        CMD_2: "CMD_2",
+        CMD_3: "CMD_3",
+        CMD_12: "CMD_12",
+        CMD_13: "CMD_13",
+        CMD_23: "CMD_23",
+        CMD_123: "CMD_123",
+        CMD_M: "CMD_M"
+}
 
 cdef class KernelCallHandler(BaseCallHandler):
     """
@@ -1125,8 +1138,9 @@ cdef class KernelCallHandler(BaseCallHandler):
 
         errorreported += 1
         error_messages.append(
-                "Wrong number of arguments (got {} arguments, arity code is {})"
-                .format(number_of_arguments, self.arity))
+                "Wrong number of arguments (got {} arguments, arity is {})"
+                .format(number_of_arguments,
+                        arity_dict.get(self.arity) or self.arity))
         return NULL
 
     cdef bint free_res(self) noexcept:
@@ -1145,13 +1159,11 @@ cdef class SingularFunction(SageObject):
     The base class for Singular functions either from the kernel or
     from the library.
     """
-
-
     def __init__(self, name):
         """
         INPUT:
 
-        - ``name`` - the name of the function
+        - ``name`` -- the name of the function
 
         EXAMPLES::
 
@@ -1231,7 +1243,7 @@ cdef class SingularFunction(SageObject):
             Traceback (most recent call last):
             ...
             RuntimeError: error in Singular function call 'size':
-            Wrong number of arguments (got 2 arguments, arity code is 302)
+            Wrong number of arguments (got 2 arguments, arity is CMD_1)
             sage: size('foobar', ring=P)
             6
 
@@ -1449,7 +1461,6 @@ cdef inline call_function(SingularFunction self, tuple args, object R, bint sign
     global myynest
     global error_messages
 
-
     cdef ring *si_ring
     if isinstance(R, MPolynomialRing_libsingular):
         si_ring = (<MPolynomialRing_libsingular>R)._ring
@@ -1634,17 +1645,17 @@ def singular_function(name):
         Traceback (most recent call last):
         ...
         RuntimeError: error in Singular function call 'factorize':
-        Wrong number of arguments (got 0 arguments, arity code is 305)
+        Wrong number of arguments (got 0 arguments, arity is CMD_12)
         sage: factorize(f, 1, 2)
         Traceback (most recent call last):
         ...
         RuntimeError: error in Singular function call 'factorize':
-        Wrong number of arguments (got 3 arguments, arity code is 305)
+        Wrong number of arguments (got 3 arguments, arity is CMD_12)
         sage: factorize(f, 1, 2, 3)
         Traceback (most recent call last):
         ...
         RuntimeError: error in Singular function call 'factorize':
-        Wrong number of arguments (got 4 arguments, arity code is 305)
+        Wrong number of arguments (got 4 arguments, arity is CMD_12)
 
     The Singular function ``list`` can be called with any number of
     arguments::
@@ -1842,6 +1853,7 @@ def list_of_functions(packages=False):
                     ph = IDNEXT(ph)
         h = IDNEXT(h)
     return l
+
 
 cdef inline RingWrap new_RingWrap(ring* r):
     cdef RingWrap ring_wrap_result = RingWrap.__new__(RingWrap)

@@ -254,14 +254,14 @@ The top of each Sage code file should follow this format::
 
     AUTHORS:
 
-    - YOUR NAME (2005-01-03): initial version
-
-    - person (date in ISO year-month-day format): short desc
+    - Your Name (2024-01-13): initial version
+    - Alice Liddell (2024-05-31): added a method; cleaned docstrings
+    - Full name (YYYY-MM-DD): short description
 
     """
 
     # ****************************************************************************
-    #       Copyright (C) 2013 YOUR NAME <your email>
+    #       Copyright (C) 2024 Your Name <your email>
     #
     # This program is free software: you can redistribute it and/or modify
     # it under the terms of the GNU General Public License as published by
@@ -341,9 +341,9 @@ information. You can use the existing functions of Sage as templates.
 
    The INPUT block describes all arguments that the function accepts.
 
-   1. The type names should be descriptive, but do not have to represent
-      the exact Sage/Python types. For example, use "integer" for
-      anything that behaves like an integer, rather than ``int``.
+   1. The type names should be descriptive, but do not have to represent the
+      exact Sage/Python types. For example, use "integer" for anything that
+      behaves like an integer, rather than "int" or "Integer".
 
    2. Mention the default values of the input arguments when applicable.
 
@@ -353,7 +353,13 @@ information. You can use the existing functions of Sage as templates.
 
        - ``n`` -- integer
 
-       - ``p`` -- prime integer (default: `2`); coprime with ``n``
+       - ``p`` -- prime integer (default: `2`); coprime with `n`
+
+       - ``var`` -- string (default: ``'lambda'``)
+
+       - ``check`` -- boolean (default: ``True``); specifies whether to check for primality
+
+       - ``algorithm`` -- (default: ``None``) the name of the algorithm to use
 
    The OUTPUT block describes the expected output. This is required if the
    one-sentence description of the function needs more explanation.
@@ -649,7 +655,7 @@ indentation:
 
     def point(self, x=1, y=2):
         r"""
-        Return the point `(x^5,y)`.
+        Return the point `(x^5, y)`.
 
         INPUT:
 
@@ -661,32 +667,32 @@ indentation:
         - ``y`` -- integer (default: `2`); the description of the
           argument ``y``
 
-        OUTPUT: the point as a tuple
+        OUTPUT: tuple; further description of the output
 
         EXAMPLES:
 
         This example illustrates ... ::
 
-            sage: A = ModuliSpace()
-            sage: A.point(2,3)
-            xxx
+            sage: A = EuclideanSpace(2)
+            sage: A.point(2, 3)
+            (2, 3)
 
         We now ... ::
 
-            sage: B = A.point(5,6)
-            sage: xxx
+            sage: B = A.point(5, 6)
+            sage: ...
 
         It is an error to ... ::
 
-            sage: C = A.point('x',7)
+            sage: C = A.point('x', 7)
             Traceback (most recent call last):
             ...
-            TypeError: unable to convert 'r' to an integer
+            TypeError: unable to convert 'x' to an integer
 
         .. NOTE::
 
-            This function uses the algorithm of [BCDT2001]_ to determine
-            whether an elliptic curve `E` over `Q` is modular.
+            This function uses :func:`pow` to determine the fifth
+            power of `x`.
 
         ...
 
@@ -696,8 +702,8 @@ indentation:
 
         TESTS::
 
-            sage: A.point(42, 0)  # Check for corner case y=0
-            xxx
+            sage: A.point(42, 0)  # check for corner case y = 0
+            ...
         """
         <body of the function>
 
@@ -1303,11 +1309,11 @@ framework. Here is a comprehensive list:
         that is, commas, hyphens, semicolons, ..., after the
         first word ends the list of packages.  Hyphens or colons between the
         word ``optional`` and the first package name are allowed.  Therefore,
-        you should not write ``# optional - depends on package CHomP`` but simply
-        ``# optional - CHomP``.
+        you should not write ``# optional - depends on package bliss`` but simply
+        ``# optional - bliss``.
 
       - Optional tags are case-insensitive, so you could also write ``# optional -
-        chOMP``.
+        Bliss``.
 
   If ``# optional`` or ``# needs`` is placed right after the ``sage:`` prompt,
   it is a block-scoped tag, which applies to all doctest lines until

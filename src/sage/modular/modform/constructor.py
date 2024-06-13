@@ -17,7 +17,6 @@ EXAMPLES::
     1 + 4092/50521*q^2 + 472384/50521*q^3 + 4194300/50521*q^4 + O(q^6),
     q + 1024*q^2 + 59048*q^3 + 1048576*q^4 + 9765626*q^5 + O(q^6)
     ]
-
 """
 
 #*****************************************************************************
@@ -58,26 +57,26 @@ def canonical_parameters(group, level, weight, base_ring):
     INPUT:
 
 
-    -  ``group`` - int, long, Sage integer, group,
+    -  ``group`` -- int, long, Sage integer, group,
        Dirichlet character, or
 
-    -  ``level`` - int, long, Sage integer, or group
+    -  ``level`` -- int, long, Sage integer, or group
 
-    -  ``weight`` - coercible to Sage integer
+    -  ``weight`` -- coercible to Sage integer
 
-    -  ``base_ring`` - commutative Sage ring
+    -  ``base_ring`` -- commutative Sage ring
 
 
     OUTPUT:
 
 
-    -  ``level`` - Sage integer
+    -  ``level`` -- Sage integer
 
-    -  ``group`` - congruence subgroup
+    -  ``group`` -- congruence subgroup
 
-    -  ``weight`` - Sage integer
+    -  ``weight`` -- Sage integer
 
-    -  ``ring`` - commutative Sage ring
+    -  ``ring`` -- commutative Sage ring
 
 
     EXAMPLES::
@@ -105,12 +104,12 @@ def canonical_parameters(group, level, weight, base_ring):
         group = group.minimize_base_ring()
         level = Integer(level)
 
-    elif arithgroup.is_CongruenceSubgroup(group):
+    elif isinstance(group, arithgroup.CongruenceSubgroupBase):
         if ( Integer(level) != group.level() ):
             raise ValueError("group.level() and level do not match.")
         # normalize the case of SL2Z
-        if arithgroup.is_SL2Z(group) or \
-           arithgroup.is_Gamma1(group) and group.level() == Integer(1):
+        if isinstance(group, arithgroup.SL2Z_class) or \
+           isinstance(group, arithgroup.Gamma1_class) and group.level() == Integer(1):
             group = arithgroup.Gamma0(Integer(1))
 
     elif group is None:
@@ -169,13 +168,13 @@ def ModularForms(group=1,
 
     INPUT:
 
-    - ``group`` - A congruence subgroup or a Dirichlet character eps.
+    - ``group`` -- A congruence subgroup or a Dirichlet character eps.
 
-    - ``weight`` - int, the weight, which must be an integer >= 1.
+    - ``weight`` -- int, the weight, which must be an integer >= 1.
 
-    - ``base_ring`` - the base ring (ignored if group is a Dirichlet character)
+    - ``base_ring`` -- the base ring (ignored if group is a Dirichlet character)
 
-    - ``eis_only`` - if True, compute only the Eisenstein part of the space.
+    - ``eis_only`` -- if True, compute only the Eisenstein part of the space.
       Only permitted (and only useful) in weight 1, where computing dimensions
       of cusp form spaces is expensive.
 
@@ -317,7 +316,7 @@ def ModularForms(group=1,
         base_ring = QQ
 
     if isinstance(group, dirichlet.DirichletCharacter) \
-           or arithgroup.is_CongruenceSubgroup(group):
+           or isinstance(group, arithgroup.CongruenceSubgroupBase):
         level = group.level()
     else:
         level = group
@@ -337,17 +336,17 @@ def ModularForms(group=1,
     (level, group, weight, base_ring, eis_only) = key
 
     M = None
-    if arithgroup.is_Gamma0(group):
+    if isinstance(group, arithgroup.Gamma0_class):
         M = ModularFormsAmbient_g0_Q(group.level(), weight)
         if base_ring != QQ:
             M = ambient_R.ModularFormsAmbient_R(M, base_ring)
 
-    elif arithgroup.is_Gamma1(group):
+    elif isinstance(group, arithgroup.Gamma1_class):
         M = ModularFormsAmbient_g1_Q(group.level(), weight, eis_only)
         if base_ring != QQ:
             M = ambient_R.ModularFormsAmbient_R(M, base_ring)
 
-    elif arithgroup.is_GammaH(group):
+    elif isinstance(group, arithgroup.GammaH_class):
         M = ModularFormsAmbient_gH_Q(group, weight, eis_only)
         if base_ring != QQ:
             M = ambient_R.ModularFormsAmbient_R(M, base_ring)
@@ -432,15 +431,15 @@ def Newforms(group, weight=2, base_ring=None, names=None):
     INPUT:
 
 
-    -  ``group`` - the congruence subgroup of the newform, or a Nebentypus
+    -  ``group`` -- the congruence subgroup of the newform, or a Nebentypus
        character
 
-    -  ``weight`` - the weight of the newform (default 2)
+    -  ``weight`` -- the weight of the newform (default 2)
 
-    -  ``base_ring`` - the base ring (defaults to `\QQ` for spaces without
+    -  ``base_ring`` -- the base ring (defaults to `\QQ` for spaces without
        character, or the base ring of the character otherwise)
 
-    -  ``names`` - if the newform has coefficients in a
+    -  ``names`` -- if the newform has coefficients in a
        number field, a generator name must be specified
 
 
@@ -489,16 +488,16 @@ def Newform(identifier, group=None, weight=2, base_ring=QQ, names=None):
     INPUT:
 
 
-    -  ``identifier`` - a canonical label, or the index of
+    -  ``identifier`` -- a canonical label, or the index of
        the specific newform desired
 
-    -  ``group`` - the congruence subgroup of the newform
+    -  ``group`` -- the congruence subgroup of the newform
 
-    -  ``weight`` - the weight of the newform (default 2)
+    -  ``weight`` -- the weight of the newform (default 2)
 
-    -  ``base_ring`` - the base ring
+    -  ``base_ring`` -- the base ring
 
-    -  ``names`` - if the newform has coefficients in a
+    -  ``names`` -- if the newform has coefficients in a
        number field, a generator name must be specified
 
 

@@ -46,8 +46,9 @@ class GroupOfIsometries(FinitelyGeneratedMatrixGroup_gap):
     r"""
     A base class for Orthogonal matrix groups with a gap backend.
 
-    Main difference to :class:`~sage.groups.matrix_gps.orthogonal.OrthogonalMatrixGroup_gap` is that we can
-    specify generators and a bilinear form. Following gap the group action is from the right.
+    Main difference to :class:`~sage.groups.matrix_gps.orthogonal.OrthogonalMatrixGroup_gap`
+    is that we can specify generators and a bilinear form. Following GAP, the group action is
+    from the right.
 
     INPUT:
 
@@ -59,10 +60,10 @@ class GroupOfIsometries(FinitelyGeneratedMatrixGroup_gap):
     - ``check`` -- bool (default: ``True``) check if the generators
       preserve the bilinear form
     - ``invariant_submodule`` -- a submodule preserved by the group action
-      (default: ``None``) registers an action on this submodule.
+      (default: ``None``) registers an action on this submodule
     - ``invariant_quotient_module`` -- a quotient module preserved by
       the group action (default: ``None``)
-      registers an action on this quotient module.
+      registers an action on this quotient module
 
     EXAMPLES::
 
@@ -134,7 +135,7 @@ class GroupOfIsometries(FinitelyGeneratedMatrixGroup_gap):
         r"""
         Return the string representation of this matrix group.
 
-        OUTPUT: a string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -159,7 +160,7 @@ class GroupOfIsometries(FinitelyGeneratedMatrixGroup_gap):
 
     def __reduce__(self):
         r"""
-        Implements pickling.
+        Implement pickling.
 
         EXAMPLES::
 
@@ -226,9 +227,9 @@ class GroupOfIsometries(FinitelyGeneratedMatrixGroup_gap):
                 return GroupActionOnSubmodule(self, S)
             if S is self._invariant_quotient_module:
                 return GroupActionOnQuotientModule(self, S)
-            from sage.modules.fg_pid.fgp_module import is_FGP_Module
+            from sage.modules.fg_pid.fgp_module import FGP_Module_class
             T = self._invariant_quotient_module
-            if is_FGP_Module(S):
+            if isinstance(S, FGP_Module_class):
                 if S.is_submodule(T):
                     V = S.V()
                     if all(V == V * f.matrix() for f in self.gens()):
@@ -358,7 +359,7 @@ class GroupActionOnQuotientModule(Action):
     - ``MatrixGroup`` --  the group acting
       :class:`GroupOfIsometries`
     - ``submodule`` -- an invariant quotient module
-    - ``is_left`` -- bool (default: ``False``)
+    - ``is_left`` -- boolean (default: ``False``)
 
     EXAMPLES::
 
@@ -376,7 +377,7 @@ class GroupActionOnQuotientModule(Action):
     """
     def __init__(self, MatrixGroup, quotient_module, is_left=False):
         r"""
-        Initialize the action
+        Initialize the action.
 
         TESTS::
 

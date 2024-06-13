@@ -88,7 +88,7 @@ from sage.modular.modsym.manin_symbol_list import (ManinSymbolList_gamma0,
                                                    ManinSymbolList_gamma1,
                                                    ManinSymbolList_gamma_h,
                                                    ManinSymbolList_character)
-from sage.modules.free_module import is_FreeModule
+from sage.modules.free_module import FreeModule_generic
 from sage.modules.free_module_element import FreeModuleElement
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -119,11 +119,11 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
 
     INPUT:
 
-    - ``weight`` - an integer
-    - ``group`` - a congruence subgroup.
-    - ``sign`` - an integer, either -1, 0, or 1
-    - ``base_ring`` - a commutative ring
-    - ``custom_init`` - a function that is called with self as input
+    - ``weight`` -- an integer
+    - ``group`` -- a congruence subgroup.
+    - ``sign`` -- an integer, either -1, 0, or 1
+    - ``base_ring`` -- a commutative ring
+    - ``custom_init`` -- a function that is called with self as input
       before any computations are done using self; this could be used
       to set a custom modular symbols presentation.
 
@@ -147,13 +147,13 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
 
         INPUT:
 
-        -  ``weight`` - an integer
+        -  ``weight`` -- an integer
 
-        -  ``group`` - a congruence subgroup.
+        -  ``group`` -- a congruence subgroup.
 
-        -  ``sign`` - an integer, either -1, 0, or 1
+        -  ``sign`` -- an integer, either -1, 0, or 1
 
-        -  ``base_ring`` - a commutative ring
+        -  ``base_ring`` -- a commutative ring
 
         EXAMPLES::
 
@@ -164,14 +164,14 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         weight = int(weight)
         if weight <= 1:
             raise ValueError("Weight (=%s) Modular symbols of weight <= 1 not defined." % weight)
-        if not arithgroup.is_CongruenceSubgroup(group):
+        if not isinstance(group, arithgroup.CongruenceSubgroupBase):
             raise TypeError("group must be a congruence subgroup")
 
         sign = int(sign)
         if base_ring not in Fields():
             raise TypeError("base_ring must be a field")
 
-        if character is None and arithgroup.is_Gamma0(group):
+        if character is None and isinstance(group, arithgroup.Gamma0_class):
             character = TrivialCharacter(group.level(), base_ring)
 
         ModularSymbolsSpace.__init__(self, group, weight,
@@ -202,7 +202,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         INPUT:
 
 
-        -  ``p`` - (default: None); if not None, return only
+        -  ``p`` -- (default: None); if not None, return only
            the `p`-new submodule.
 
 
@@ -355,33 +355,33 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         The allowed input types for `x` are as follows:
 
 
-        -  ``Vector`` - a vector of the same degree. This
+        -  ``Vector`` -- a vector of the same degree. This
            defines the corresponding linear combination of the basis of self.
 
-        -  ``ManinSymbol`` - a Manin symbol of the same weight
+        -  ``ManinSymbol`` -- a Manin symbol of the same weight
            as the space
 
-        -  ``ModularSymbolsElement`` - a modular symbol whose
+        -  ``ModularSymbolsElement`` -- a modular symbol whose
            ambient parent is this space of modular symbols. (TODO: make more
            sophisticated)
 
-        -  0 - the integer 0; results in the 0 modular symbol.
+        -  0 -- the integer 0; results in the 0 modular symbol.
 
-        -  3-tuple - Given a 3-tuple (i,u,v), returns the modular symbol
+        -  3-tuple -- Given a 3-tuple (i,u,v), returns the modular symbol
            element defined by the Manin symbol
            `[X^{i}\cdot Y^{k-2-i}, (u,v)]`, where k is the weight.
            Note that we must have `0\leq i \leq k-2`.
 
-        -  2-tuple - Given a 2-tuple (u,v), returns the element defined by
+        -  2-tuple -- Given a 2-tuple (u,v), returns the element defined by
            the Manin symbol `[X^0 \cdot Y^{2-k}, (u,v)]`.
 
-        -  2-elements list - Given a list ``[alpha, beta]``,
+        -  2-elements list -- Given a list ``[alpha, beta]``,
            where `\alpha` and `\beta` are (coercible to)
            cusps, return the modular symbol `\{\alpha, \beta\}`. When
            the weight `k > 2` return
            `Y^{k-2} \{\alpha, \beta\}`.
 
-        -  3-element list - Given a list ``[i, alpha, beta]``,
+        -  3-element list -- Given a list ``[i, alpha, beta]``,
            where `i` is an integer, and `\alpha`,
            `\beta` are (coercible to) cusps, return the modular symbol
            `X^i Y^{k-2-i} \{\alpha, \beta\}`.
@@ -695,7 +695,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
             - 3 entries: `[i, \alpha, \beta]` where `0\le i\le k-2`
               and `\alpha` and `\beta` are cusps;
 
-        - ``check`` (bool, default True) -- flag that determines
+        - ``check`` (bool, default: ``True``) -- flag that determines
           whether the input ``x`` needs processing: use check=False
           for efficiency if the input ``x`` is a list of length 3 whose
           first entry is an Integer, and whose second and third
@@ -777,7 +777,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
           polynomial over `\ZZ` of degree `k` and `\alpha` and `\beta`
           are cusps.
 
-        - ``check`` (bool, default True) -- if True check the validity
+        - ``check`` (bool, default: ``True``) -- if True check the validity
           of the input tuple ``x``
 
         OUTPUT:
@@ -1152,7 +1152,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
 
         INPUT:
 
-        -  ``codomain`` - space of modular symbols
+        -  ``codomain`` -- space of modular symbols
 
         - ``R`` (list) -- a list of lists `[a,b,c,d]` of length 4,
           which we view as elements of `GL_2(`QQ)`.
@@ -1570,7 +1570,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         INPUT:
 
 
-        -  ``x`` - an object of one of the following types:
+        -  ``x`` -- an object of one of the following types:
            ModularSymbol, ManinSymbol.
 
 
@@ -1851,7 +1851,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
 
         OUTPUT:
 
-        -  ``list`` - a list of 2-tuples (if the weight is 2)
+        -  ``list`` -- a list of 2-tuples (if the weight is 2)
            or 3-tuples, which represent the Manin symbols basis for self.
 
 
@@ -1984,9 +1984,9 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         INPUT:
 
 
-        -  ``sign`` - int (either -1 or +1)
+        -  ``sign`` -- int (either -1 or +1)
 
-        -  ``compute_dual`` - bool (default: True) also
+        -  ``compute_dual`` -- bool (default: ``True``) also
            compute dual subspace. This are useful for many algorithms.
 
 
@@ -2052,7 +2052,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
 
         OUTPUT:
 
-            - ``matrix`` - the matrix of the diamond bracket operator
+            - ``matrix`` -- the matrix of the diamond bracket operator
               on this space.
 
         EXAMPLES::
@@ -2094,14 +2094,14 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         INPUT:
 
 
-        -  ``M`` - either a submodule of this ambient free module, or
+        -  ``M`` -- either a submodule of this ambient free module, or
            generators for a submodule;
 
         - ``dual_free_module`` (bool, default None) -- this may be
            useful to speed up certain calculations; it is the
            corresponding submodule of the ambient dual module;
 
-        - ``check`` (bool, default True) -- if True, check that `M` is
+        - ``check`` (bool, default: ``True``) -- if True, check that `M` is
            a submodule, i.e. is invariant under all Hecke operators.
 
         OUTPUT:
@@ -2133,7 +2133,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
            Stein, 2007-07-27
         """
         if check:
-            if not is_FreeModule(M):
+            if not isinstance(M, FreeModule_generic):
                 V = self.free_module()
                 if not isinstance(M, (list, tuple)):
                     M = M.gens()
@@ -2191,12 +2191,12 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         INPUT:
 
 
-        -  ``algorithm`` - string (default: 'default' - choose
+        -  ``algorithm`` -- string (default: 'default', choose
            heuristically)
 
-           -  ``'pari'`` - use pari for the HNF computation
+           -  ``'pari'`` -- use pari for the HNF computation
 
-           -  ``'padic'`` - use p-adic algorithm (only good for
+           -  ``'padic'`` -- use p-adic algorithm (only good for
               dense case)
 
 
@@ -2307,13 +2307,13 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         INPUT:
 
 
-        -  ``v`` - list of positive integers
+        -  ``v`` -- list of positive integers
 
 
         OUTPUT:
 
 
-        -  ``list`` - of pairs (E, x), where E\*x is a vector
+        -  ``list`` -- of pairs (E, x), where E\*x is a vector
            with entries the eigenvalues `a_n` for
            `n \in v`.
 
@@ -2535,13 +2535,13 @@ class ModularSymbolsAmbient_wtk_g0(ModularSymbolsAmbient):
     INPUT:
 
 
-    -  ``N`` - int, the level
+    -  ``N`` -- int, the level
 
-    -  ``k`` - integer weight = 2.
+    -  ``k`` -- integer weight = 2.
 
-    -  ``sign`` - int, either -1, 0, or 1
+    -  ``sign`` -- int, either -1, 0, or 1
 
-    -  ``F`` - field
+    -  ``F`` -- field
 
 
     EXAMPLES::
@@ -2568,13 +2568,13 @@ class ModularSymbolsAmbient_wtk_g0(ModularSymbolsAmbient):
         INPUT:
 
 
-        -  ``N`` - int, the level
+        -  ``N`` -- int, the level
 
-        -  ``k`` - integer weight = 2.
+        -  ``k`` -- integer weight = 2.
 
-        -  ``sign`` - int, either -1, 0, or 1
+        -  ``sign`` -- int, either -1, 0, or 1
 
-        -  ``F`` - field
+        -  ``F`` -- field
 
 
         EXAMPLES::
@@ -2691,9 +2691,9 @@ class ModularSymbolsAmbient_wtk_g0(ModularSymbolsAmbient):
         # 1. Find coset representatives H for Gamma_0(M.level()) \ Gamma_0(self.level())
         #    (need to be careful in some small levels, cf. #13198)
 
-        if arithgroup.is_Gamma0(M.group()):
+        if isinstance(M.group(), arithgroup.Gamma0_class):
             H = arithgroup.degeneracy_coset_representatives_gamma0(level, N, 1)
-        elif arithgroup.is_Gamma1(M.group()):
+        elif isinstance(M.group(), arithgroup.Gamma1_class):
             H = arithgroup.degeneracy_coset_representatives_gamma1(level, N, 1)
         else:
             raise NotImplementedError("Degeneracy raising maps not implemented for GammaH levels")
@@ -2790,14 +2790,14 @@ class ModularSymbolsAmbient_wtk_g0(ModularSymbolsAmbient):
         INPUT:
 
 
-        -  ``i`` - nonnegative integer
+        -  ``i`` -- nonnegative integer
 
-        -  ``v`` - a list of positive integer
+        -  ``v`` -- a list of positive integer
 
 
         OUTPUT:
 
-        -  ``matrix`` - whose rows are the Hecke images
+        -  ``matrix`` -- whose rows are the Hecke images
 
         EXAMPLES::
 
@@ -2865,9 +2865,9 @@ class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
 
     INPUT:
 
-    -  ``N`` - int, the level
+    -  ``N`` -- int, the level
 
-    -  ``sign`` - int, either -1, 0, or 1
+    -  ``sign`` -- int, either -1, 0, or 1
 
 
     OUTPUT:
@@ -2886,9 +2886,9 @@ class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
 
         INPUT:
 
-        -  ``N`` - int, the level
+        -  ``N`` -- int, the level
 
-        -  ``sign`` - int, either -1, 0, or 1
+        -  ``sign`` -- int, either -1, 0, or 1
 
 
         OUTPUT:
@@ -3092,15 +3092,15 @@ class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
         INPUT:
 
 
-        -  ``i`` - nonnegative integer
+        -  ``i`` -- nonnegative integer
 
-        -  ``v`` - a list of positive integer
+        -  ``v`` -- a list of positive integer
 
 
         OUTPUT:
 
 
-        -  ``matrix`` - whose rows are the Hecke images
+        -  ``matrix`` -- whose rows are the Hecke images
 
 
         EXAMPLES::
@@ -3130,13 +3130,13 @@ class ModularSymbolsAmbient_wtk_g1(ModularSymbolsAmbient):
     INPUT:
 
 
-    -  ``level`` - int, the level
+    -  ``level`` -- int, the level
 
-    -  ``weight`` - int, the weight = 2
+    -  ``weight`` -- int, the weight = 2
 
-    -  ``sign`` - int, either -1, 0, or 1
+    -  ``sign`` -- int, either -1, 0, or 1
 
-    -  ``F`` - field
+    -  ``F`` -- field
 
 
     EXAMPLES::
@@ -3159,13 +3159,13 @@ class ModularSymbolsAmbient_wtk_g1(ModularSymbolsAmbient):
         INPUT:
 
 
-        -  ``level`` - int, the level
+        -  ``level`` -- int, the level
 
-        -  ``weight`` - int, the weight = 2
+        -  ``weight`` -- int, the weight = 2
 
-        -  ``sign`` - int, either -1, 0, or 1
+        -  ``sign`` -- int, either -1, 0, or 1
 
-        -  ``F`` - field
+        -  ``F`` -- field
 
 
         EXAMPLES::
@@ -3376,14 +3376,14 @@ class ModularSymbolsAmbient_wtk_gamma_h(ModularSymbolsAmbient):
         INPUT:
 
 
-        -  ``group`` - a congruence subgroup
+        -  ``group`` -- a congruence subgroup
            `\Gamma_H(N)`.
 
-        -  ``weight`` - int, the weight = 2
+        -  ``weight`` -- int, the weight = 2
 
-        -  ``sign`` - int, either -1, 0, or 1
+        -  ``sign`` -- int, either -1, 0, or 1
 
-        -  ``F`` - field
+        -  ``F`` -- field
 
 
         EXAMPLES::
@@ -3528,14 +3528,14 @@ class ModularSymbolsAmbient_wtk_eps(ModularSymbolsAmbient):
         INPUT:
 
 
-        -  ``eps`` - dirichlet.DirichletCharacter, the
+        -  ``eps`` -- dirichlet.DirichletCharacter, the
            "Nebentypus" character.
 
-        -  ``weight`` - int, the weight = 2
+        -  ``weight`` -- int, the weight = 2
 
-        -  ``sign`` - int, either -1, 0, or 1
+        -  ``sign`` -- int, either -1, 0, or 1
 
-        - ``base_ring`` - the base ring. It must be possible to change the ring
+        - ``base_ring`` -- the base ring. It must be possible to change the ring
           of the character to this base ring (not always canonically).
 
 
@@ -3641,11 +3641,11 @@ class ModularSymbolsAmbient_wtk_eps(ModularSymbolsAmbient):
         INPUT:
 
 
-        -  ``self`` - this space of modular symbols
+        -  ``self`` -- this space of modular symbols
 
-        -  ``codomain`` - space of modular symbols
+        -  ``codomain`` -- space of modular symbols
 
-        -  ``R`` - list of lists [a,b,c,d] of length 4, which
+        -  ``R`` -- list of lists [a,b,c,d] of length 4, which
            we view as elements of GL_2(Q).
 
 

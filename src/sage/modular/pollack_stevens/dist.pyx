@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # distutils: libraries = gmp
 # distutils: extra_compile_args = -D_XPG6
 """
@@ -26,25 +25,25 @@ REFERENCES:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.rings.power_series_ring import PowerSeriesRing
-from sage.rings.finite_rings.integer_mod_ring import Zmod
-from sage.arith.misc import binomial, bernoulli
-from sage.matrix.matrix cimport Matrix
-from sage.matrix.constructor import matrix
-from sage.structure.element cimport Element
 import operator
-from sage.rings.padics.padic_generic import pAdicGeneric
-from sage.rings.integer cimport Integer
+
+from sage.arith.misc import binomial, bernoulli
+from sage.categories.fields import Fields
+from sage.matrix.constructor import matrix
+from sage.matrix.matrix cimport Matrix
 from sage.misc.verbose import verbose
+from sage.modular.pollack_stevens.sigma0 import Sigma0
+from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.rings.infinity import Infinity
+from sage.rings.integer cimport Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.padics.padic_generic import pAdicGeneric
+from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.rational_field import QQ
+from sage.structure.element cimport Element
+from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 
 #from sage.libs.flint.ulong_extras cimport *
-
-from sage.modular.pollack_stevens.sigma0 import Sigma0
 
 cdef long overflow = 1 << (4 * sizeof(long) - 1)
 cdef long underflow = -overflow
@@ -65,7 +64,7 @@ def get_dist_classes(p, prec_cap, base, symk, implementation):
 
     - ``symk``     -- An element of Symk
 
-    - ``implementation`` - string - If not None, override the
+    - ``implementation`` -- string; If not None, override the
       automatic choice of implementation. May be 'long' or 'vector',
       otherwise raise a :class:`NotImplementedError`
 
@@ -306,7 +305,7 @@ cdef class Dist(ModuleElement):
         - ``M`` -- (default: None) an integer, the relative precision
           to which the scalar must be determined
 
-        - ``check`` -- (default: True) boolean, whether to validate
+        - ``check`` -- (default: ``True``) boolean, whether to validate
           that ``other`` is actually a multiple of this element.
 
         OUTPUT:
@@ -431,7 +430,7 @@ cdef class Dist(ModuleElement):
         - ``M`` -- (default: None) an integer, the relative precision
           to which the scalar must be determined
 
-        - ``check`` -- (default: True) boolean, whether to validate
+        - ``check`` -- (default: ``True``) boolean, whether to validate
           that ``other`` is actually a multiple of this element.
 
         OUTPUT:
@@ -742,7 +741,7 @@ cdef class Dist_vector(Dist):
     - ``ordp`` -- an integer.  This MUST be zero in the case of Symk
       of an exact ring.
 
-    - ``check`` -- (default: True) boolean, whether to validate input
+    - ``check`` -- (default: ``True``) boolean, whether to validate input
 
     EXAMPLES::
 
@@ -1167,7 +1166,7 @@ cdef class Dist_vector(Dist):
         p = self.parent().prime()
         cdef Dist_vector ans
         if p == 0:
-            if R.is_field():
+            if R in Fields():
                 ans = self._new_c()
                 ans.ordp = 0
                 ans._moments = V(v)

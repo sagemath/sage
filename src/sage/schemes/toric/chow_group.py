@@ -131,7 +131,7 @@ from sage.rings.rational_field import QQ
 from sage.rings.infinity import Infinity
 
 import sage.geometry.abc
-from sage.schemes.toric.variety import is_ToricVariety
+from sage.schemes.toric.variety import ToricVariety_field
 from sage.schemes.toric.divisor import is_ToricDivisor
 
 
@@ -230,12 +230,14 @@ class ChowCycle(FGP_Element):
 
     def degree(self) -> int:
         r"""
-        The degree of the Chow cycle.
+        Return the degree of the Chow cycle.
 
         OUTPUT:
 
         Integer. The complex dimension of the subvariety representing
-        the Chow cycle. Raises a ``ValueError`` if the Chow cycle is a
+        the Chow cycle.
+
+        This raises a :class:`ValueError` if the Chow cycle is a
         sum of mixed degree cycles.
 
         EXAMPLES::
@@ -354,7 +356,7 @@ class ChowCycle(FGP_Element):
         OUTPUT:
 
         A new :class:`ChowCycle`. If the divisor is not Cartier then
-        this method potentially raises a ``ValueError``, indicating
+        this method potentially raises a :class:`ValueError`, indicating
         that the divisor cannot be made transversal to the Chow cycle.
 
         EXAMPLES::
@@ -471,7 +473,7 @@ class ChowCycle(FGP_Element):
         If the toric variety is not simplicial, that is, has worse
         than orbifold singularities, there is no way to associate a
         cohomology class of the correct degree. In this case,
-        :meth:`cohomology_class` raises a ``ValueError``.
+        :meth:`cohomology_class` raises a :class:`ValueError`.
 
         EXAMPLES::
 
@@ -546,7 +548,7 @@ class ChowGroupFactory(UniqueFactory):
             sage: ChowGroup(P2, ZZ, check=True) == ChowGroup(P2, ZZ, check=False)   # indirect doctest
             True
         """
-        if not is_ToricVariety(toric_variety):
+        if not isinstance(toric_variety, ToricVariety_field):
             raise ValueError('first argument must be a toric variety')
 
         if base_ring not in [ZZ, QQ]:
@@ -606,7 +608,7 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
             sage: P2 = toric_varieties.P2()
             sage: A = ChowGroup_class(P2,ZZ,True); A
             Chow group of 2-d CPR-Fano toric variety covered by 3 affine patches
-            sage: is_ChowGroup(A)
+            sage: isinstance(A, ChowGroup_class)
             True
             sage: is_ChowCycle(A.an_element())
             True
@@ -1214,10 +1216,15 @@ def is_ChowGroup(x) -> bool:
         sage: A = P2.Chow_group()
         sage: from sage.schemes.toric.chow_group import is_ChowGroup
         sage: is_ChowGroup(A)
+        doctest:warning...
+        DeprecationWarning: The function is_ChowGroup is deprecated; use 'isinstance(..., ChowGroup_class)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
         sage: is_ChowGroup('Victoria')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_ChowGroup is deprecated; use 'isinstance(..., ChowGroup_class)' instead.")
     return isinstance(x, ChowGroup_class)
 
 

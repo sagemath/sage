@@ -522,7 +522,7 @@ cdef class MarchingCubesTriangles(MarchingCubes):
                     if not(self.color_function is None):
                         self.apply_color_func(&v.color, self.color_function,
                                               self.colormap, v)
-                    y_vertices[y,z] = v
+                    y_vertices[y,z] = <object>v
                 else:
                     y_vertices[y,z] = None
 
@@ -556,7 +556,7 @@ cdef class MarchingCubesTriangles(MarchingCubes):
                     if not(self.color_function is None):
                         self.apply_color_func(&v.color, self.color_function,
                                               self.colormap, v)
-                    z_vertices[y,z] = v
+                    z_vertices[y,z] = <object>v
                 else:
                     z_vertices[y,z] = None
 
@@ -631,7 +631,7 @@ cdef class MarchingCubesTriangles(MarchingCubes):
                     if not(self.color_function is None):
                         self.apply_color_func(&v.color, self.color_function,
                                               self.colormap, v)
-                    x_vertices[y,z] = v
+                    x_vertices[y,z] = <object>v
                 else:
                     x_vertices[y,z] = None
 
@@ -849,18 +849,18 @@ cpdef render_implicit(f, xrange, yrange, zrange, plot_points, cube_marchers):
     """
     INPUT:
 
-    -  ``f`` - a (fast!) callable function
+    -  ``f`` -- a (fast!) callable function
 
-    -  ``xrange`` - a 2-tuple (x_min, x_max)
+    -  ``xrange`` -- a 2-tuple (x_min, x_max)
 
-    -  ``yrange`` - a 2-tuple (y_min, y_may)
+    -  ``yrange`` -- a 2-tuple (y_min, y_may)
 
-    -  ``zrange`` - a 2-tuple (z_min, z_maz)
+    -  ``zrange`` -- a 2-tuple (z_min, z_maz)
 
-    -  ``plot_points`` - a triple of integers indicating the number of
+    -  ``plot_points`` -- a triple of integers indicating the number of
        function evaluations in each direction.
 
-    -  ``cube_marchers`` - a list of cube marchers, one for each contour.
+    -  ``cube_marchers`` -- a list of cube marchers, one for each contour.
 
     OUTPUT:
 

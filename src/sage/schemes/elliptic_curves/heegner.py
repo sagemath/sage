@@ -185,7 +185,7 @@ def heegner_point(N, D=None, c=1):
 
     - `D` -- discriminant (optional: default first valid `D`)
 
-    - `c` -- conductor (positive integer, optional, default: 1)
+    - `c` -- conductor (positive integer, default: 1)
 
     EXAMPLES::
 
@@ -5762,8 +5762,8 @@ def kolyvagin_reduction_data(E, q, first_only=True):
         sage: kolyvagin_reduction_data(EllipticCurve('2350g1'), 5, first_only=False)
         (19, 239, -311, 19, 6480, 85680)
     """
-    from .ell_generic import is_EllipticCurve
-    if not is_EllipticCurve(E):
+    from .ell_generic import EllipticCurve_generic
+    if not isinstance(E, EllipticCurve_generic):
         raise TypeError("E must be an elliptic curve")
 
     q = ZZ(q)
@@ -7055,7 +7055,7 @@ def _heegner_index_in_EK(self, D):
     basis = [G(z) for z in E.gens()] + [G(phi(z)) for z in F.gens()]
     # Make a list of the 2-power order torsion points in E(K), including 0.
     T = [G(z) for z in G.torsion_subgroup().list() if z.order() == 1 or
-            ((z.order() % 2 == 0 and len(z.order().factor()) == 1))]
+            (z.order() % 2 == 0 and len(z.order().factor()) == 1)]
 
     r = len(basis)   # rank
     V = QQ**r
@@ -7066,9 +7066,8 @@ def _heegner_index_in_EK(self, D):
         if not v:
             continue
         P = sum([basis[i] for i in range(r) if v[i]])
-        for t in T:
-            if (P+t).is_divisible_by(2):
-                B.append(V(v)/2)
+        w = V(v) / 2
+        B.extend(w for t in T if (P + t).is_divisible_by(2))
 
     A = ZZ**r
     # Take span of our vectors in (1/2)*ZZ^r, along with ZZ^r.  This is E(K)/tor.

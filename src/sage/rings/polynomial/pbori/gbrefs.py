@@ -74,7 +74,8 @@ def load_ref_gz_uu(s, o, b):
 
 
 def convert_refs(ref_file_orig):
-    content = open(ref_file_orig).read()
+    with open(ref_file_orig) as file:
+        content = file.read()
     buf_out = StringIO()
     zipped = gzip.GzipFile(filename=ref_file_orig, mode="w", fileobj=buf_out)
     zipped.write(content)

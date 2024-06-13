@@ -141,10 +141,9 @@ old pickles to work).
   - ``unpickle_appends(lst, vals)``:
     Appends the values in ``vals`` to ``lst``.  If not ``isinstance(lst, list)``,
     can be customized by defining a :meth:`append` method.
-
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2009 Carl Witty <Carl.Witty@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -152,7 +151,7 @@ old pickles to work).
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 
 import pickletools
@@ -258,6 +257,7 @@ def explain_pickle(pickle=None, file=None, compress=True, **kwargs):
 
     return explain_pickle_string(p, **kwargs)
 
+
 def explain_pickle_string(pickle, in_current_sage=False,
                           default_assumptions=False, eval=False, preparse=True,
                           pedantic=False):
@@ -295,6 +295,8 @@ def explain_pickle_string(pickle, in_current_sage=False,
 
 
 valid_name_re = re.compile('^[a-zA-Z_][a-zA-Z0-9_]*$')
+
+
 def name_is_valid(name):
     r"""
     Test whether a string is a valid Python identifier.  (We use a
@@ -318,7 +320,8 @@ def name_is_valid(name):
 # This string is used as the representation of a mark.
 the_mark = 'mark'
 
-class PickleObject():
+
+class PickleObject:
     r"""
     Pickles have a stack-based virtual machine.  The :func:`explain_pickle`
     pickle interpreter mostly uses :class:`sage.misc.sage_input.SageInputExpression` objects
@@ -374,7 +377,8 @@ class PickleObject():
         self.immutable = True
         return self.expression
 
-class PickleDict():
+
+class PickleDict:
     r"""
     An object which can be used as the value of a :class:`PickleObject`.  The items
     is a list of key-value pairs, where the keys and values are
@@ -394,7 +398,8 @@ class PickleDict():
         """
         self.items = items
 
-class PickleInstance():
+
+class PickleInstance:
     r"""
     An object which can be used as the value of a :class:`PickleObject`.  Unlike
     other possible values of a :class:`PickleObject`, a :class:`PickleInstance` doesn't represent
@@ -412,7 +417,8 @@ class PickleInstance():
         """
         self.klass = klass
 
-class PickleExplainer():
+
+class PickleExplainer:
     r"""
     An interpreter for the pickle virtual machine, that executes
     symbolically and constructs :class:`SageInputExpression` objects instead of
@@ -831,9 +837,9 @@ class PickleExplainer():
             lst.expression = self.sib(lst.value)
         elif isinstance(lst, PickleObject) or self.default_assumptions:
             if isinstance(lst.value, list) or \
-                    (isinstance(lst.value, PickleInstance) and
-                     issubclass(lst.value.klass, list)) or \
-                     self.default_assumptions:
+               (isinstance(lst.value, PickleInstance) and
+                issubclass(lst.value.klass, list)) or \
+                    self.default_assumptions:
                 if len(slice) > 1:
                     self.sib.command(lst, self.sib.name('list').extend(lst, slice))
                 else:
@@ -1105,10 +1111,10 @@ class PickleExplainer():
                 slots = state[1].value
                 state = state[0].value
             d = self.sib.getattr(obj, '__dict__')
-            for k,v in state.items:
+            for k, v in state.items:
                 self.sib.command(obj, self.sib.assign(d[k], v))
             if slots is not None:
-                for k,v in slots.items:
+                for k, v in slots.items:
                     if isinstance(k, PickleObject) and isinstance(k.value, str):
                         self.sib.command(obj, self.sib.assign(self.sib.getattr(obj, k.value), v))
                     else:
@@ -2473,6 +2479,7 @@ def unpickle_instantiate(fn, args):
 
 unpickle_persistent_loader = None
 
+
 def unpickle_persistent(s):
     r"""
     Takes an integer index and returns the persistent object with that
@@ -2681,7 +2688,7 @@ class EmptyOldstyleClass:
         return 0
 
 
-class EmptyNewstyleClass():
+class EmptyNewstyleClass:
     r"""
     A featureless new-style class (inherits from object); used for
     testing :func:`explain_pickle`.
@@ -2842,7 +2849,7 @@ class TestAppendList(list):
         raise NotImplementedError
 
 
-class TestAppendNonlist():
+class TestAppendNonlist:
     r"""
     A list-like class, carefully designed to test exact unpickling
     behavior.  Used for testing :func:`explain_pickle`.
@@ -2926,7 +2933,7 @@ class TestAppendNonlist():
         return repr(self.list)
 
 
-class TestBuild():
+class TestBuild:
     r"""
     A simple class with a :meth:`__getstate__` but no :meth:`__setstate__`.  Used for testing
     :func:`explain_pickle`.
@@ -2985,7 +2992,8 @@ class TestBuildSetstate(TestBuild):
         self.x = state[1]['y']
         self.y = state[0]['x']
 
-class TestGlobalOldName():
+
+class TestGlobalOldName:
     r"""
     A featureless new-style class.  When you try to unpickle an instance
     of this class, it is redirected to create a :class:`TestGlobalNewName` instead.
@@ -3000,7 +3008,7 @@ class TestGlobalOldName():
     pass
 
 
-class TestGlobalNewName():
+class TestGlobalNewName:
     r"""
     A featureless new-style class.  When you try to unpickle an instance
     of :class:`TestGlobalOldName`, it is redirected to create an instance of this
@@ -3032,7 +3040,8 @@ class TestGlobalNewName():
 
 register_unpickle_override('sage.misc.explain_pickle', 'TestGlobalOldName', TestGlobalNewName, call_name=('sage.misc.explain_pickle', 'TestGlobalNewName'))
 
-class TestGlobalFunnyName():
+
+class TestGlobalFunnyName:
     r"""
     A featureless new-style class which has a name that's not a legal
     Python identifier.
@@ -3065,5 +3074,5 @@ class TestGlobalFunnyName():
 
 
 TestGlobalFunnyName.__name__ = "funny$name"
-#This crashed Sphinx. Instead, we manually execute this just before the test.
-#globals()['funny$name'] = TestGlobalFunnyName
+# This crashed Sphinx. Instead, we manually execute this just before the test.
+# globals()['funny$name'] = TestGlobalFunnyName

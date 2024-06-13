@@ -54,10 +54,9 @@ import sage.rings.infinity
 import sage.rings.rational
 import sage.rings.rational_field
 import sage.rings.ideal
-import sage.libs.pari.all
-import sage.rings.ideal
 from sage.categories.basic import EuclideanDomains, DedekindDomains
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
+from sage.categories.noetherian_rings import NoetherianRings
 from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
 from sage.structure.coerce cimport is_numpy_type
 from sage.structure.element cimport parent
@@ -88,6 +87,7 @@ cdef int number_of_integer_rings = 0
 #   sigma, we do not recreate the sampler but take it from this "cache".
 _prev_discrete_gaussian_integer_sampler = (None, None)
 
+
 def is_IntegerRing(x):
     r"""
     Internal function: return ``True`` iff ``x`` is the ring `\ZZ` of integers.
@@ -106,7 +106,8 @@ def is_IntegerRing(x):
     """
     return isinstance(x, IntegerRing_class)
 
-cdef class IntegerRing_class(PrincipalIdealDomain):
+
+cdef class IntegerRing_class(CommutativeRing):
     r"""
     The ring of integers.
 
@@ -124,6 +125,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
         sage: Z.category()
         Join of Category of Dedekind domains
             and Category of euclidean domains
+            and Category of noetherian rings
             and Category of infinite enumerated sets
             and Category of metric spaces
         sage: Z(2^(2^5) + 1)
@@ -312,8 +314,10 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
             sage: A in InfiniteEnumeratedSets()
             True
         """
+        cat = (EuclideanDomains(), DedekindDomains(),
+               InfiniteEnumeratedSets().Metric(), NoetherianRings())
         Parent.__init__(self, base=self, names=('x',), normalize=False,
-                        category=(EuclideanDomains(), DedekindDomains(), InfiniteEnumeratedSets().Metric()))
+                        category=cat)
         self._populate_coercion_lists_(init_no_parent=True,
                                        convert_method_name='_integer_')
 
@@ -422,7 +426,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
             K, _ = parent(x).subfield(x)
             return K.order(K.gen())
 
-        return PrincipalIdealDomain.__getitem__(self, x)
+        return CommutativeRing.__getitem__(self, x)
 
     def range(self, start, end=None, step=None):
         """
@@ -604,7 +608,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
         - ``x``, ``y`` integers -- bounds for the result.
 
-        - ``distribution``-- a string:
+        - ``distribution`` -- a string:
 
           - ``'uniform'``
           - ``'mpz_rrandomb'``
@@ -780,7 +784,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
         - ``value`` -- this is the variable in which the answer will be
           returned
 
-        - ``x, y, distribution`` -- see :meth:`random_element`
+        - ``x``, ``y``, ``distribution`` -- see :meth:`random_element`
 
         TESTS::
 
@@ -963,12 +967,12 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
         INPUT:
 
-        - ``prime`` - a prime number
+        - ``prime`` -- a prime number
 
-        - ``check`` - (boolean, default ``True``) whether or not
+        - ``check`` -- (boolean, default ``True``) whether or not
           to check the primality of prime
 
-        - ``names`` - ignored (for compatibility with number fields)
+        - ``names`` -- ignored (for compatibility with number fields)
 
         OUTPUT: The residue field at this prime.
 
@@ -1404,7 +1408,6 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
         g = g.gcd(R( {e[j] - e[i_min]: c[j] for j in range(i_min, k)} ))
 
-
         cdef list cc
         cdef list ee
         cdef int m1, m2
@@ -1607,6 +1610,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 ZZ = IntegerRing_class()
 Z = ZZ
 
+
 def IntegerRing():
     """
     Return the integer ring.
@@ -1619,6 +1623,7 @@ def IntegerRing():
         True
     """
     return ZZ
+
 
 def crt_basis(X, xgcd=None):
     r"""
@@ -1633,7 +1638,7 @@ def crt_basis(X, xgcd=None):
 
     OUTPUT:
 
-    - ``E`` - a list of Integers such that ``E[i] = 1`` (mod ``X[i]``) and
+    - ``E`` -- a list of Integers such that ``E[i] = 1`` (mod ``X[i]``) and
       ``E[i] = 0`` (mod ``X[j]``) for all `j \neq i`.
 
     For this explanation, let ``E[i]`` be denoted by `E_i`.

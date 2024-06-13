@@ -527,12 +527,7 @@ class Kash(Expect):
         return 'quit;'
 
     def _start(self):
-        try:
-            Expect._start(self)
-        except RuntimeError:
-            # TODO: replace this error with something more accurate.
-            from sage.misc.package import PackageNotFoundError
-            raise PackageNotFoundError("kash")
+        Expect._start(self)
         # Turn off the annoying timer.
         self.eval('Time(false);')
 
@@ -547,13 +542,13 @@ class Kash(Expect):
         INPUT:
 
 
-        -  ``s`` - string containing Kash code.
+        -  ``s`` -- string containing Kash code.
 
-        -  ``newlines`` - bool (default: True); if False,
+        -  ``newlines`` -- bool (default: ``True``); if False,
            remove all backslash-newlines inserted by the Kash output
            formatter.
 
-        -  ``strip`` - ignored
+        -  ``strip`` -- ignored
         """
         x = str(x)
         x = x.rstrip()

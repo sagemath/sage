@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Base class for maps
 
@@ -62,8 +63,13 @@ def is_Map(x):
         sage: f = R.hom([x+y, x-y], R)
         sage: from sage.categories.map import is_Map
         sage: is_Map(f)
+        doctest:warning...
+        DeprecationWarning: The function is_Map is deprecated; use 'isinstance(..., Map)' instead.
+        See https://github.com/sagemath/sage/issues/38103 for details.
         True
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38103, "The function is_Map is deprecated; use 'isinstance(..., Map)' instead.")
     return isinstance(x, Map)
 
 
@@ -1272,7 +1278,7 @@ cdef class Map(Element):
 
     def section(self):
         """
-        Return a section of self.
+        Return a section of ``self``.
 
         .. NOTE::
 
@@ -1438,6 +1444,7 @@ cdef class Section(Map):
                     y |--> x - y
         """
         return self._inverse
+
 
 cdef class FormalCompositeMap(Map):
     """
@@ -2087,7 +2094,7 @@ cdef class FormalCompositeMap(Map):
             sage: ZZ(3*x + 45)              # indirect doctest
             Traceback (most recent call last):
             ...
-            TypeError: not a constant polynomial
+            TypeError: 3*x + 45 is not a constant polynomial
         """
         sections = []
         for m in reversed(list(self)):

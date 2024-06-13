@@ -98,7 +98,7 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
     - ``name`` -- a string
     - ``names`` -- a list or tuple of names, or a comma separated string
     - ``n`` -- a positive integer
-    - ``sparse`` -- bool (default: False), whether or not elements are sparse
+    - ``sparse`` -- bool (default: ``False``), whether or not elements are sparse
     - ``order`` -- string or
       :class:`~sage.rings.polynomial.term_order.TermOrder`, e.g.,
 
@@ -436,9 +436,7 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
             sage: L = LaurentPolynomialRing(QQ,'x')
             sage: type(L)
             <class 'sage.rings.polynomial.laurent_polynomial_ring.LaurentPolynomialRing_univariate_with_category'>
-            sage: L == loads(dumps(L))
-            True
-
+            sage: TestSuite(L).run()
 
         TESTS::
 

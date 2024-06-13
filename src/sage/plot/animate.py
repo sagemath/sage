@@ -116,7 +116,6 @@ REFERENCES:
 - `FFmpeg <https://www.ffmpeg.org>`_
 - `APNG <https://wiki.mozilla.org/APNG_Specification>`_
 - `browsers which support it <https://caniuse.com/#feat=apng>`_
-
 """
 
 ############################################################################
@@ -154,6 +153,7 @@ def animate(frames, **kwds):
     """
     return Animation(frames, **kwds)
 
+
 class Animation(WithEqualityById, SageObject):
     r"""
     Return an animation of a sequence of plots of objects.
@@ -164,7 +164,7 @@ class Animation(WithEqualityById, SageObject):
       graphics objects, but if they aren't, then :meth:`make_image` is
       called on them.
 
-    - ``xmin, xmax, ymin, ymax`` -- the ranges of the x and y axes.
+    - ``xmin``, ``xmax``, ``ymin``, ``ymax`` -- the ranges of the x and y axes.
 
     - ``**kwds`` -- all additional inputs are passed onto the rendering
       command. E.g., use ``figsize`` to adjust the resolution and aspect
@@ -576,19 +576,19 @@ class Animation(WithEqualityById, SageObject):
 
         INPUT:
 
-        -  ``delay`` - (default: 20) delay in hundredths of a
+        -  ``delay`` -- (default: 20) delay in hundredths of a
            second between frames
 
-        -  ``savefile`` - file that the animated gif gets saved
+        -  ``savefile`` -- file that the animated gif gets saved
            to
 
-        -  ``iterations`` - integer (default: 0); number of
+        -  ``iterations`` -- integer (default: 0); number of
            iterations of animation. If 0, loop forever.
 
-        -  ``show_path`` - boolean (default: False); if True,
+        -  ``show_path`` -- boolean (default: ``False``); if True,
            print the path to the saved file
 
-        - ``use_ffmpeg`` - boolean (default: False); if True, use
+        - ``use_ffmpeg`` -- boolean (default: ``False``); if True, use
           'ffmpeg' by default instead of 'convert'.
 
         If ``savefile`` is not specified: in notebook mode, display the
@@ -665,10 +665,10 @@ class Animation(WithEqualityById, SageObject):
         - ``show_path`` -- boolean (default: ``False``); if ``True``,
           print the path to the saved file
 
-        - ``delay`` - (default: 20) delay in hundredths of a
+        - ``delay`` -- (default: 20) delay in hundredths of a
            second between frames
 
-        - ``iterations`` - integer (default: 0); number of iterations
+        - ``iterations`` -- integer (default: 0); number of iterations
           of animation. If 0, loop forever.
 
         If ``savefile`` is not specified: in notebook mode, display
@@ -811,7 +811,7 @@ class Animation(WithEqualityById, SageObject):
         -  ``iterations`` -- integer (default: 0); number of
            iterations of animation. If 0, loop forever.
 
-        - ``format`` - (default: gif) format to use for output.
+        - ``format`` -- (default: gif) format to use for output.
           Currently supported formats are: gif,
           ogg, webm, mp4, flash, matroska, avi, wmv, quicktime.
 
@@ -912,7 +912,7 @@ class Animation(WithEqualityById, SageObject):
         - ``show_path`` -- boolean (default: ``False``); if ``True``,
           print the path to the saved file
 
-        - ``output_format`` - string (default: ``None``); format and
+        - ``output_format`` -- string (default: ``None``); format and
           suffix to use for the video.  This may be ``'mpg'``, ``'mpeg'``,
           ``'avi'``, ``'gif'``, or any other format that ``ffmpeg`` can handle.
           If this is ``None`` and the user specifies ``savefile`` with a
@@ -921,20 +921,20 @@ class Animation(WithEqualityById, SageObject):
           is specified or if the suffix cannot be determined, ``'mpg'`` is
           used.
 
-        - ``ffmpeg_options`` - string (default: ``''``); this string is
+        - ``ffmpeg_options`` -- string (default: ``''``); this string is
           passed directly to ffmpeg.
 
-        - ``delay`` - integer (default: ``None``); delay in hundredths of a
+        - ``delay`` -- integer (default: ``None``); delay in hundredths of a
           second between frames.  The framerate is 100/delay.
           This is not supported for mpeg files: for mpegs, the frame
           rate is always 25 fps.
 
-        - ``iterations`` - integer (default: 0); number of iterations
+        - ``iterations`` -- integer (default: 0); number of iterations
           of animation. If 0, loop forever.  This is only supported
           for animated gif output and requires ``ffmpeg`` version 0.9 or
           later.  For older versions, set ``iterations=None``.
 
-        - ``pix_fmt`` - string (default: 'rgb24'); used only for gif
+        - ``pix_fmt`` -- string (default: 'rgb24'); used only for gif
           output.  Different values such as 'rgb8' or 'pal8' may be
           necessary depending on how ffmpeg was installed.  Set
           ``pix_fmt=None`` to disable this option.
@@ -1000,7 +1000,7 @@ class Animation(WithEqualityById, SageObject):
             # -loop_output option can be added with the
             # ffmpeg_options argument.
             if iterations is not None:
-                loop_cmd = '-loop {0} '.format(iterations)
+                loop_cmd = f'-loop {iterations} '
             else:
                 loop_cmd = ''
             # A pix_fmt value is required for some but not all
@@ -1008,10 +1008,10 @@ class Animation(WithEqualityById, SageObject):
             # prevent sage from adding this option, and it may be
             # controlled separately through ffmpeg_options.
             if pix_fmt is not None:
-                pix_fmt_cmd = '-pix_fmt {0} '.format(pix_fmt)
+                pix_fmt_cmd = f'-pix_fmt {pix_fmt} '
             else:
                 pix_fmt_cmd = ''
-            ffmpeg_options += ' {0}{1}'.format(pix_fmt_cmd,loop_cmd)
+            ffmpeg_options += f' {pix_fmt_cmd}{loop_cmd}'
         if delay is not None and output_format != '.mpeg' and output_format != '.mpg':
             early_options += ' -r %s ' % int(100/delay)
         savefile = os.path.abspath(savefile)
@@ -1023,7 +1023,7 @@ class Animation(WithEqualityById, SageObject):
         # afterwards.  Hence 'early_options' and 'ffmpeg_options'
         # The `-nostdin` is needed to avoid the command to hang, see
         # https://stackoverflow.com/questions/16523746/ffmpeg-hangs-when-run-in-background
-        cmd = 'cd %s; ffmpeg -nostdin -y -f image2 %s -i %s %s %s' % (
+        cmd = 'cd {}; ffmpeg -nostdin -y -f image2 {} -i {} {} {}'.format(
             shlex.quote(pngdir), early_options, shlex.quote(pngs), ffmpeg_options, shlex.quote(savefile))
         from subprocess import check_call, CalledProcessError, PIPE
         try:
@@ -1053,16 +1053,16 @@ class Animation(WithEqualityById, SageObject):
 
         Input:
 
-        -  ``delay`` - (default: 20) delay in hundredths of a
+        -  ``delay`` -- (default: 20) delay in hundredths of a
            second between frames
 
-        -  ``savefile`` - file that the animated gif gets saved
+        -  ``savefile`` -- file that the animated gif gets saved
            to
 
-        -  ``iterations`` - integer (default: 0); number of
+        -  ``iterations`` -- integer (default: 0); number of
            iterations of animation. If 0, loop forever.
 
-        -  ``show_path`` - boolean (default: False); if True,
+        -  ``show_path`` -- boolean (default: ``False``); if True,
            print the path to the saved file
 
         EXAMPLES::
@@ -1114,12 +1114,12 @@ class Animation(WithEqualityById, SageObject):
 
         INPUT:
 
-        -  ``filename`` - (default: None) name of save file
+        -  ``filename`` -- (default: None) name of save file
 
-        -  ``show_path`` - boolean (default: False); if True,
+        -  ``show_path`` -- boolean (default: ``False``); if True,
            print the path to the saved file
 
-        - ``use_ffmpeg`` - boolean (default: False); if True, use
+        - ``use_ffmpeg`` -- boolean (default: ``False``); if True, use
           'ffmpeg' by default instead of 'convert' when creating GIF
           files.
 
@@ -1254,7 +1254,7 @@ class Animation(WithEqualityById, SageObject):
                     except (AttributeError, TypeError):
                         frame = None
                 if not isinstance(frame, Graphics3d):
-                    raise TypeError("Could not convert frame {} to Graphics3d".format(i))
+                    raise TypeError(f"Could not convert frame {i} to Graphics3d")
             g3d_frames.append(frame)
         # Give preference to this method's keyword arguments over those provided
         # to animate or the constructor.
@@ -1265,7 +1265,7 @@ class Animation(WithEqualityById, SageObject):
         return KeyframeAnimationGroup(g3d_frames, **kwds)
 
 
-class APngAssembler():
+class APngAssembler:
     r"""
     Builds an APNG_ (Animated PNG) from a sequence of PNG files.
     This is used by the :meth:`sage.plot.animate.Animation.apng` method.
@@ -1322,7 +1322,7 @@ class APngAssembler():
         self.num_plays = num_plays
         self.default_delay_numerator = delay
         self.default_delay_denominator = delay_denominator
-        self._matchref = dict()
+        self._matchref = {}
         self.out.write(self.magic)
 
     def add_frame(self, pngfile, delay=None, delay_denominator=None):
@@ -1449,7 +1449,7 @@ class APngAssembler():
         """
         with open(pngfile, 'rb') as png:
             if png.read(8) != self.magic:
-                raise ValueError("{} is not a PNG file".format(pngfile))
+                raise ValueError(f"{pngfile} is not a PNG file")
             while True:
                 chead = png.read(8)
                 if len(chead) == 0:
@@ -1466,7 +1466,7 @@ class APngAssembler():
                         self._copy()
                     else:
                         if cdata != ref:
-                            raise ValueError("Chunk {} mismatch".format(utype))
+                            raise ValueError(f"Chunk {utype} mismatch")
                 met = ("_first_" if self._first else "_next_") + utype
                 try:
                     met = getattr(self, met)

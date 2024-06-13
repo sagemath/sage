@@ -151,7 +151,6 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         mpq_vector_set_entry(&self._matrix[i], j, z)
         mpq_clear(z)
 
-
     ########################################################################
     # LEVEL 2 functionality
     #   * def _pickle
@@ -581,7 +580,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         INPUT:
 
         - height_guess -- integer or None
-        - proof -- boolean (default: True)
+        - proof -- boolean (default: ``True``)
         """
         from sage.matrix.misc import matrix_rational_echelon_form_multimodular
         cdef Matrix E
@@ -589,7 +588,6 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
                                  height_guess=height_guess, proof=proof)
         E._parent = self._parent
         return E, pivots
-
 
     def set_row_to_multiple_of_row(self, i, j, s):
         """
@@ -712,7 +710,6 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         v = &self._matrix[i]
         w = &_A._matrix[r]
 
-
         if cols_index is None:
             cols_index = dict([(cols[i], i) for i in range(len(cols))])
 
@@ -725,7 +722,6 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         v.num_nonzero = n
         v.degree = self._ncols
 
-
         for l from 0 <= l < n:
             v.positions[l] = cols_index[w.positions[pos[l]]]
             mpq_mul(v.entries[l], w.entries[pos[l]], minus_one)
@@ -737,7 +733,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
 
         INPUT:
 
-        - ``kwds`` - these are provided for consistency with other versions
+        - ``kwds`` -- these are provided for consistency with other versions
           of this method.  Here they are ignored as there is no optional
           behavior available.
 

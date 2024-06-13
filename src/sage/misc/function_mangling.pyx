@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 # Copyright (c) 2009, Tom Boothby <boothby@math.washington.edu>
 # All rights reserved.
 #
@@ -22,7 +23,6 @@
 # ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 """
 
 Function Mangling
@@ -34,7 +34,6 @@ AUTHORS:
 
 - Tom Boothby (2009): Original version in Python
 - Simon King (2011): Use Cython. Speedup of ``fix_to_pos``, cleaning documentation.
-
 """
 
 from sage.misc.sageinspect import sage_getargspec
@@ -82,7 +81,7 @@ cdef class ArgumentFixer:
     INPUT:
 
     - f           -- a function
-    - classmethod -- boolean (default False) -- True if the function
+    - classmethod -- boolean (default: ``False``) -- True if the function
       is a classmethod and therefore the first
       argument is expected to be the class instance.
       In that case, we ignore the first argument.
@@ -202,10 +201,10 @@ cdef class ArgumentFixer:
         EXAMPLES::
 
             sage: from sage.misc.function_mangling import ArgumentFixer
-            sage: def sum3(a,b,c=3,*args,**kwargs):
-            ....:     return a+b+c
+            sage: def sum3(a, b, c=3, *args, **kwargs):
+            ....:     return a + b + c
             sage: AF = ArgumentFixer(sum3)
-            sage: AF.fix_to_named(1,2,3,4,5,6,f=14,e=16)
+            sage: AF.fix_to_named(1, 2, 3, 4, 5, 6, f=14, e=16)
             ((4, 5, 6), (('a', 1), ('b', 2), ('c', 3), ('e', 16), ('f', 14)))
             sage: AF.fix_to_named(1,2,f=14)
             ((), (('a', 1), ('b', 2), ('c', 3), ('f', 14)))

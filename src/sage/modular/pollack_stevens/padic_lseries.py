@@ -9,7 +9,6 @@ can be restricted to `\ZZ_p^\times`, thus giving the measure attached
 to the sought `p`-adic `L`-series.
 
 All this is carefully explained in [PS2011]_.
-
 """
 # ****************************************************************************
 #       Copyright (C) 2012 Robert Pollack <rpollack@math.bu.edu>

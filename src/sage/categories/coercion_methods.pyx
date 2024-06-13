@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Coercion methods for categories
 

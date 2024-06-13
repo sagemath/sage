@@ -6,7 +6,6 @@ CVXOPT Backend
 AUTHORS:
 
 - Ingolfur Edvardsson (2014-05): initial implementation
-
 """
 #*****************************************************************************
 #       Copyright (C) 2014 Ingolfur Edvardsson <ingolfured@gmail.com>
@@ -142,19 +141,19 @@ cdef class CVXOPTBackend(GenericBackend):
 
         INPUT:
 
-        - ``lower_bound`` - the lower bound of the variable (default: 0)
+        - ``lower_bound`` -- the lower bound of the variable (default: 0)
 
-        - ``upper_bound`` - the upper bound of the variable (default: ``None``)
+        - ``upper_bound`` -- the upper bound of the variable (default: ``None``)
 
-        - ``binary`` - ``True`` if the variable is binary (default: ``False``).
+        - ``binary`` -- ``True`` if the variable is binary (default: ``False``).
 
-        - ``continuous`` - ``True`` if the variable is continuous (default: ``True``).
+        - ``continuous`` -- ``True`` if the variable is continuous (default: ``True``).
 
-        - ``integer`` - ``True`` if the variable is integer (default: ``False``).
+        - ``integer`` -- ``True`` if the variable is integer (default: ``False``).
 
-        - ``obj`` - (optional) coefficient of this variable in the objective function (default: 0.0)
+        - ``obj`` -- (optional) coefficient of this variable in the objective function (default: 0.0)
 
-        - ``name`` - an optional name for the newly added variable (default: ``None``).
+        - ``name`` -- an optional name for the newly added variable (default: ``None``).
 
         OUTPUT: The index of the newly created variable
 
@@ -367,11 +366,11 @@ cdef class CVXOPTBackend(GenericBackend):
           is a variable index (integer) and ``v`` is a value (real
           value).
 
-        - ``lower_bound`` - a lower bound, either a real value or ``None``
+        - ``lower_bound`` -- a lower bound, either a real value or ``None``
 
-        - ``upper_bound`` - an upper bound, either a real value or ``None``
+        - ``upper_bound`` -- an upper bound, either a real value or ``None``
 
-        - ``name`` - an optional name for this row (default: ``None``)
+        - ``name`` -- an optional name for this row (default: ``None``)
 
         EXAMPLES::
 
@@ -497,10 +496,10 @@ cdef class CVXOPTBackend(GenericBackend):
         from cvxopt import matrix, solvers
         h = []
 
-        #for the equation bounds
+        # for the equation bounds
         for eq_index in range(self.nrows()):
             h.append(self.row_upper_bound[eq_index])
-            #upper bound is already in G
+            # upper bound is already in G
             if self.row_lower_bound[eq_index] is not None:
                 h.append(-1 * self.row_lower_bound[eq_index])
                 for cindex in range(len(self.G_matrix)):
@@ -509,9 +508,7 @@ cdef class CVXOPTBackend(GenericBackend):
                     else:
                         self.G_matrix[cindex].append(0)
 
-
-
-        #for the upper bounds (if there are any)
+        # for the upper bounds (if there are any)
         for i in range(len(self.col_upper_bound)):
             if self.col_upper_bound[i] is not None:
                 h.append(self.col_upper_bound[i])
@@ -562,7 +559,6 @@ cdef class CVXOPTBackend(GenericBackend):
         elif self.answer['status'] == 'unknown':
             raise MIPSolverException("CVXOPT: Terminated early due to numerical difficulties or because the maximum number of iterations was reached.")
         return 0
-
 
     cpdef get_objective_value(self):
         """
@@ -659,7 +655,6 @@ cdef class CVXOPTBackend(GenericBackend):
         """
         return len(self.row_upper_bound)
 
-
     cpdef bint is_maximization(self) noexcept:
         """
         Test whether the problem is a maximization
@@ -702,7 +697,6 @@ cdef class CVXOPTBackend(GenericBackend):
             return self.prob_name
         self.prob_name = name
 
-
     cpdef row(self, int i):
         """
         Return a row
@@ -739,7 +733,6 @@ cdef class CVXOPTBackend(GenericBackend):
                 coeff.append(col[i])
             index += 1
         return (idx, coeff)
-
 
     cpdef row_bounds(self, int index):
         """

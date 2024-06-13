@@ -234,7 +234,7 @@ AUTHORS:
 # ****************************************************************************
 
 from copy import copy
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.rings.integer_ring import ZZ
 
 
@@ -715,7 +715,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         INPUT:
 
-        - ``binary, integer, real`` -- boolean. Set one of these
+        - ``binary``, ``integer``, ``real`` -- boolean. Set one of these
           arguments to ``True`` to ensure that the variable gets the
           corresponding type.
 
@@ -1899,7 +1899,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         - ``name`` -- A name for the constraint.
 
-        - ``return_indices`` -- boolean (optional, default False),
+        - ``return_indices`` -- boolean (default: ``False``),
           whether to return the indices of the added constraints.
 
         OUTPUT:
@@ -2852,7 +2852,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
               The command ::
 
-                  sage: p = MixedIntegerLinearProgram(solver="CPLEX") # optional - CPLEX
+                  sage: p = MixedIntegerLinearProgram(solver="CPLEX")   # optional - CPLEX
                   sage: p.solver_parameter("CPX_PARAM_TILIM", 60)       # optional - CPLEX
 
               works as intended.
@@ -3656,11 +3656,11 @@ cdef class MIPVariable(FiniteFamily):
             (1, 2/3)*x_0 + (1/2, 3/4)*x_1
         """
         if isinstance(left, MIPVariable):
-            if not is_Matrix(right):
+            if not isinstance(right, Matrix):
                 return NotImplemented
             return (<MIPVariable> left)._matrix_rmul_impl(right)
         else:
-            if not is_Matrix(left):
+            if not isinstance(left, Matrix):
                 return NotImplemented
             return (<MIPVariable> right)._matrix_lmul_impl(left)
 

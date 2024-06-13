@@ -192,8 +192,8 @@ from . import morphism
 from sage.rings.infinity import Infinity
 
 from sage.matrix.matrix_space import MatrixSpace
-from sage.matrix.constructor import Matrix, identity_matrix
-from sage.structure.element import is_Matrix
+from sage.matrix.constructor import matrix, identity_matrix
+from sage.structure.element import Matrix
 
 from sage.rings.integer_ring import ZZ
 
@@ -211,9 +211,9 @@ class Homspace(HomsetWithBase):
         INPUT:
 
 
-        -  ``domain, codomain`` - modular abelian varieties
+        -  ``domain, codomain`` -- modular abelian varieties
 
-        -  ``cat`` - category
+        -  ``cat`` -- category
 
 
         EXAMPLES::
@@ -228,10 +228,10 @@ class Homspace(HomsetWithBase):
             sage: H.homset_category()
             Category of modular abelian varieties over Rational Field
         """
-        from .abvar import is_ModularAbelianVariety
-        if not is_ModularAbelianVariety(domain):
+        from .abvar import ModularAbelianVariety_abstract
+        if not isinstance(domain, ModularAbelianVariety_abstract):
             raise TypeError("domain must be a modular abelian variety")
-        if not is_ModularAbelianVariety(codomain):
+        if not isinstance(codomain, ModularAbelianVariety_abstract):
             raise TypeError("codomain must be a modular abelian variety")
         self._gens = None
         HomsetWithBase.__init__(self, domain, codomain, category=cat)
@@ -356,7 +356,7 @@ class Homspace(HomsetWithBase):
                 M = M.matrix()
             else:
                 raise ValueError("cannot convert %s into %s" % (M, self))
-        elif is_Matrix(M):
+        elif isinstance(M, Matrix):
             if M.base_ring() != ZZ:
                 M = M.change_ring(ZZ)
             if side == "left":
@@ -410,7 +410,7 @@ class Homspace(HomsetWithBase):
         INPUT:
 
 
-        -  ``g`` - a matrix or morphism or object with a list
+        -  ``g`` -- a matrix or morphism or object with a list
            method
 
 
@@ -929,7 +929,7 @@ class EndomorphismSubring(Homspace):
             2
         """
         g = self.gens()
-        M = Matrix(ZZ, len(g), [(g[i]*g[j]).trace()
+        M = matrix(ZZ, len(g), [(g[i]*g[j]).trace()
                                 for i in range(len(g)) for j in range(len(g))])
         return M.determinant()
 
