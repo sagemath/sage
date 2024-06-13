@@ -57,8 +57,6 @@ graphs. Here is what they can do
     :widths: 30, 70
     :delim: |
 
-    :meth:`~DiGraph.all_paths_iterator` | Return an iterator over the paths of ``self``.
-    :meth:`~DiGraph.all_simple_paths` | Return a list of all the simple paths of ``self`` starting with one of the given vertices.
     :meth:`~DiGraph.all_cycles_iterator` | Return an iterator over all the cycles of ``self`` starting with one of the given vertices.
     :meth:`~DiGraph.all_simple_cycles` | Return a list of all simple cycles of ``self``.
 
@@ -515,7 +513,7 @@ class DiGraph(GenericGraph):
         sage: G.edges(sort=True)
         [(1, 2, None)]
 
-    Check that :trac:`27505` is fixed::
+    Check that :issue:`27505` is fixed::
 
         sage: DiGraph(DiGraph().networkx_graph(), weighted=None, format='NX')           # needs networkx
         Digraph on 0 vertices
@@ -552,7 +550,7 @@ class DiGraph(GenericGraph):
             sage: g.get_pos() == graphs.PetersenGraph().get_pos()
             True
 
-        The position dictionary is not the input one (:trac:`22424`)::
+        The position dictionary is not the input one (:issue:`22424`)::
 
             sage: my_pos = {0:(0,0), 1:(1,1)}
             sage: D = DiGraph([[0,1], [(0,1)]], pos=my_pos)
@@ -568,8 +566,8 @@ class DiGraph(GenericGraph):
             sage: DiGraph({1:{2:0}})
             Digraph on 2 vertices
 
-        An empty list or dictionary defines a simple graph (:trac:`10441` and
-        :trac:`12910`)::
+        An empty list or dictionary defines a simple graph (:issue:`10441` and
+        :issue:`12910`)::
 
             sage: DiGraph([])
             Digraph on 0 vertices
@@ -577,7 +575,7 @@ class DiGraph(GenericGraph):
             Digraph on 0 vertices
             sage: # not "Multi-digraph on 0 vertices"
 
-        Problem with weighted adjacency matrix (:trac:`13919`)::
+        Problem with weighted adjacency matrix (:issue:`13919`)::
 
             sage: B = {0:{1:2,2:5,3:4},1:{2:2,4:7},2:{3:1,4:4,5:3},
             ....:      3:{5:4},4:{5:1,6:5},5:{4:1,6:7,5:1}}
@@ -628,7 +626,7 @@ class DiGraph(GenericGraph):
             ...
             ValueError: a *directed* igraph graph was expected. To build an undirected graph, call the Graph constructor
 
-        Vertex labels are retained in the graph (:trac:`14708`)::
+        Vertex labels are retained in the graph (:issue:`14708`)::
 
             sage: g = DiGraph()
             sage: g.add_vertex(0)
@@ -640,7 +638,7 @@ class DiGraph(GenericGraph):
         """
         msg = ''
         GenericGraph.__init__(self)
-        from sage.structure.element import is_Matrix
+        from sage.structure.element import Matrix
 
         if sparse is False:
             if data_structure != "sparse":
@@ -673,7 +671,7 @@ class DiGraph(GenericGraph):
             format = 'dig6'
             if data[:8] == ">>dig6<<":
                 data = data[8:]
-        if format is None and is_Matrix(data):
+        if format is None and isinstance(data, Matrix):
             if data.is_square():
                 format = 'adjacency_matrix'
             else:
@@ -750,8 +748,8 @@ class DiGraph(GenericGraph):
         if format == 'dig6':
             if weighted is None:
                 self._weighted = False
-            self.allow_loops(True if loops else False, check=False)
-            self.allow_multiple_edges(True if multiedges else False, check=False)
+            self.allow_loops(bool(loops), check=False)
+            self.allow_multiple_edges(bool(multiedges), check=False)
             from .graph_input import from_dig6
             from_dig6(self, data)
 
@@ -790,7 +788,7 @@ class DiGraph(GenericGraph):
                 loops = any(f(v, v) for v in data[0])
             if weighted is None:
                 weighted = False
-            self.allow_multiple_edges(True if multiedges else False, check=False)
+            self.allow_multiple_edges(bool(multiedges), check=False)
             self.allow_loops(loops, check=False)
             self.add_vertices(data[0])
             self.add_edges((u, v) for u in data[0] for v in data[0] if f(u, v))
@@ -834,17 +832,17 @@ class DiGraph(GenericGraph):
         elif format == 'int':
             if weighted is None:
                 weighted = False
-            self.allow_loops(True if loops else False, check=False)
-            self.allow_multiple_edges(True if multiedges else False,
+            self.allow_loops(bool(loops), check=False)
+            self.allow_multiple_edges(bool(multiedges),
                                       check=False)
             if data < 0:
                 raise ValueError("the number of vertices cannot be strictly negative")
             elif data:
                 self.add_vertices(range(data))
         elif format == 'list_of_edges':
-            self.allow_multiple_edges(True if multiedges else False,
+            self.allow_multiple_edges(bool(multiedges),
                                       check=False)
-            self.allow_loops(True if loops else False, check=False)
+            self.allow_loops(bool(loops), check=False)
             self.add_edges(data)
         else:
             raise ValueError("unknown input format '{}'".format(format))
@@ -1046,12 +1044,12 @@ class DiGraph(GenericGraph):
 
         TESTS:
 
-        Immutable graphs yield immutable graphs (:trac:`17005`)::
+        Immutable graphs yield immutable graphs (:issue:`17005`)::
 
             sage: DiGraph([[1, 2]], immutable=True).to_undirected()._backend
             <sage.graphs.base.static_sparse_backend.StaticSparseBackend object at ...>
 
-        Vertex labels will be retained (:trac:`14708`)::
+        Vertex labels will be retained (:issue:`14708`)::
 
             sage: D.set_vertex(0, 'foo')
             sage: G = D.to_undirected()
@@ -1558,8 +1556,8 @@ class DiGraph(GenericGraph):
         is an edge, then `vu` is an edge too), then obviously the cardinality of
         its feedback arc set is the number of edges in the first graph::
 
-            sage: cycle=graphs.CycleGraph(5)
-            sage: dcycle=DiGraph(cycle)
+            sage: cycle = graphs.CycleGraph(5)
+            sage: dcycle = DiGraph(cycle)
             sage: cycle.size()
             5
             sage: dcycle.feedback_edge_set(value_only=True)                             # needs sage.numerical.mip
@@ -1580,7 +1578,7 @@ class DiGraph(GenericGraph):
         TESTS:
 
         Comparing with/without constraint generation. Also double-checks issue
-        :trac:`12833`::
+        :issue:`12833`::
 
             sage: for i in range(20):                                                   # needs sage.numerical.mip
             ....:     g = digraphs.RandomDirectedGNP(10, .3)
@@ -1591,7 +1589,7 @@ class DiGraph(GenericGraph):
             ....:         print("Oh my, oh my !")
             ....:         break
 
-        Loops are part of the feedback edge set (:trac:`23989`)::
+        Loops are part of the feedback edge set (:issue:`23989`)::
 
             sage: # needs sage.combinat
             sage: D = digraphs.DeBruijn(2, 2)
@@ -1619,7 +1617,7 @@ class DiGraph(GenericGraph):
             ....:                          constraint_generation=False)
             10
 
-        Strongly connected components are well handled (:trac:`23989`)::
+        Strongly connected components are well handled (:issue:`23989`)::
 
             sage: g = digraphs.Circuit(3) * 2
             sage: g.add_edge(0, 3)
@@ -2064,7 +2062,7 @@ class DiGraph(GenericGraph):
 
         .. SEEALSO::
 
-            :meth:`~DiGraph.reverse_edge` - Reverses a single edge.
+            :meth:`~DiGraph.reverse_edge` -- Reverses a single edge.
 
         EXAMPLES:
 
@@ -2169,7 +2167,7 @@ class DiGraph(GenericGraph):
 
         INPUT:
 
-        - ``v`` - either a single vertex or a list of vertices. If it is not
+        - ``v`` -- either a single vertex or a list of vertices. If it is not
           specified, then it is taken to be all vertices.
 
         - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
@@ -2178,31 +2176,31 @@ class DiGraph(GenericGraph):
         - ``algorithm`` -- string (default: ``None``); one of the following
           algorithms:
 
-          - ``'BFS'`` - the computation is done through a BFS centered on each
+          - ``'BFS'`` -- the computation is done through a BFS centered on each
             vertex successively. Works only if ``by_weight==False``.
 
-          - ``'Floyd-Warshall-Cython'`` - a Cython implementation of the
+          - ``'Floyd-Warshall-Cython'`` -- a Cython implementation of the
             Floyd-Warshall algorithm. Works only if ``by_weight==False`` and
             ``v is None`` or ``v`` should contain all vertices of ``self``.
 
-          - ``'Floyd-Warshall-Python'`` - a Python implementation of the
+          - ``'Floyd-Warshall-Python'`` -- a Python implementation of the
             Floyd-Warshall algorithm. Works also with weighted graphs, even with
             negative weights (but no negative cycle is allowed). However, ``v``
             must be ``None`` or ``v`` should contain all vertices of ``self``.
 
-          - ``'Dijkstra_NetworkX'`` - the Dijkstra algorithm, implemented in
+          - ``'Dijkstra_NetworkX'`` -- the Dijkstra algorithm, implemented in
             NetworkX. It works with weighted graphs, but no negative weight is
             allowed.
 
-          - ``'Dijkstra_Boost'`` - the Dijkstra algorithm, implemented in Boost
+          - ``'Dijkstra_Boost'`` -- the Dijkstra algorithm, implemented in Boost
             (works only with positive weights).
 
-          - ``'Johnson_Boost'`` - the Johnson algorithm, implemented in
+          - ``'Johnson_Boost'`` -- the Johnson algorithm, implemented in
             Boost (works also with negative weights, if there is no negative
             cycle). Works only if ``v is None`` or ``v`` should contain all
             vertices of ``self``.
 
-          - ``'From_Dictionary'`` - uses the (already computed) distances, that
+          - ``'From_Dictionary'`` -- uses the (already computed) distances, that
             are provided by input variable ``dist_dict``.
 
           - ``None`` (default): Sage chooses the best algorithm:
@@ -2425,7 +2423,7 @@ class DiGraph(GenericGraph):
             ...
             ValueError: radius is not defined for the empty DiGraph
 
-        Check that :trac:`35300` is fixed::
+        Check that :issue:`35300` is fixed::
 
             sage: H = DiGraph([[42, 'John'], [(42, 'John')]])
             sage: H.radius()
@@ -2554,7 +2552,7 @@ class DiGraph(GenericGraph):
             ...
             ValueError: diameter is not defined for the empty DiGraph
 
-        :trac:`32095` is fixed::
+        :issue:`32095` is fixed::
 
             sage: g6 = 'guQOUOQCW[IaDBCVP_IE\\RfxV@WMSaeHgheEIA@tfOJkB~@EpGLCrs'
             sage: g6 += 'aPIpwgQI_`Abs_x?VWxNJAo@w\\hffCDAW]bYGMIZGC_PYOrIw[Gp['
@@ -2565,7 +2563,7 @@ class DiGraph(GenericGraph):
             sage: G.diameter(algorithm='DiFUB', by_weight=True)
             3.0
 
-        Check that :trac:`35300` is fixed::
+        Check that :issue:`35300` is fixed::
 
             sage: H = DiGraph([[42, 'John'], [(42, 'John')]])
             sage: H.diameter()
@@ -2773,7 +2771,7 @@ class DiGraph(GenericGraph):
           maximum length of the enumerated paths. If set to ``None``, then all
           lengths are allowed.
 
-        - ``trivial`` - boolean (default: ``False``); if set to ``True``, then
+        - ``trivial`` -- boolean (default: ``False``); if set to ``True``, then
           the empty paths are also enumerated.
 
         - ``remove_acyclic_edges`` -- boolean (default: ``True``); whether
@@ -2893,7 +2891,7 @@ class DiGraph(GenericGraph):
           maximum length of the enumerated paths. If set to ``None``, then all
           lengths are allowed.
 
-        - ``trivial`` - boolean (default: ``False``); if set to ``True``, then
+        - ``trivial`` -- boolean (default: ``False``); if set to ``True``, then
           the empty paths are also enumerated.
 
         OUTPUT:
@@ -3040,7 +3038,7 @@ class DiGraph(GenericGraph):
           maximum length of the enumerated paths. If set to ``None``, then all
           lengths are allowed.
 
-        - ``trivial`` - boolean (default: ``False``); if set to ``True``, then
+        - ``trivial`` -- boolean (default: ``False``); if set to ``True``, then
           the empty paths are also enumerated.
 
         OUTPUT:
@@ -3172,9 +3170,9 @@ class DiGraph(GenericGraph):
         EXAMPLES::
 
             sage: Q = DiGraph({1: {2: ['a', 'c']}, 2: {3: ['b']}})
-            sage: F = Q.path_semigroup(); F
+            sage: F = Q.path_semigroup(); F                                             # needs sage.libs.flint
             Partial semigroup formed by the directed paths of Multi-digraph on 3 vertices
-            sage: list(F)
+            sage: list(F)                                                               # needs sage.libs.flint
             [e_1, e_2, e_3, a, c, b, a*b, c*b]
 
         """
@@ -3424,7 +3422,7 @@ class DiGraph(GenericGraph):
 
         TESTS:
 
-        :trac:`31681` is fixed::
+        :issue:`31681` is fixed::
 
             sage: H = DiGraph({0: [1], 'X': [1]}, format='dict_of_lists')
             sage: pos = H.layout_acyclic_dummy(rankdir='up')
@@ -3665,7 +3663,7 @@ class DiGraph(GenericGraph):
           ``self.edges()``; so, if ``self.edges()`` outputs an edge in the form
           ``(1, 3, None)``, then ``(1, 3)`` will not do!
 
-        - ``ends`` -- (optional, default: ``(self.sources(), self.sinks())``) a
+        - ``ends`` -- (default: ``(self.sources(), self.sinks())``) a
           pair `(S, T)` of an iterable `S` and an iterable `T`.
 
         - ``backend`` -- string or ``None`` (default); the backend to use;
@@ -3765,7 +3763,7 @@ class DiGraph(GenericGraph):
             A 0-dimensional polyhedron in QQ^0 defined as the convex hull
             of 1 vertex
 
-        A digraph with multiple edges (:trac:`28837`)::
+        A digraph with multiple edges (:issue:`28837`)::
 
             sage: G = DiGraph([(0, 1), (0,1)], multiedges=True); G
             Multi-digraph on 2 vertices
@@ -4379,6 +4377,3 @@ class DiGraph(GenericGraph):
     from sage.graphs.connectivity import strongly_connected_components_subgraphs
     from sage.graphs.connectivity import strongly_connected_component_containing_vertex
     from sage.graphs.connectivity import strong_articulation_points
-    from sage.graphs.path_enumeration import _all_paths_iterator
-    from sage.graphs.path_enumeration import all_paths_iterator
-    from sage.graphs.path_enumeration import all_simple_paths

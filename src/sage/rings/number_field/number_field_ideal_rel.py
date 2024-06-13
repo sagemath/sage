@@ -20,7 +20,6 @@ AUTHORS:
 - Steven Sivek (2005-05-16)
 - William Stein (2007-09-06)
 - Nick Alexander (2009-01)
-
 """
 
 #*****************************************************************************
@@ -271,7 +270,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
         TESTS:
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`)::
+        polynomials are supported (:issue:`252`)::
 
             sage: K.<a> = NumberField(2*x^2 - 1/3)
             sage: L.<b> = K.extension(5*x^2 + 1)
@@ -404,7 +403,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             815730721
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`)::
+        polynomials are supported (:issue:`252`)::
 
             sage: K.<a> = NumberField(2*x^2 - 1/3)
             sage: L.<b> = K.extension(5*x^2 + 1)
@@ -523,7 +522,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             True
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`)::
+        polynomials are supported (:issue:`252`)::
 
             sage: K.<a> = NumberField(2*x^2 - 1/3)
             sage: L.<b> = K.extension(5*x^2 + 1)
@@ -891,6 +890,10 @@ def is_NumberFieldFractionalIdeal_rel(x):
         sage: from sage.rings.number_field.number_field_ideal_rel import is_NumberFieldFractionalIdeal_rel
         sage: from sage.rings.number_field.number_field_ideal import is_NumberFieldFractionalIdeal
         sage: is_NumberFieldFractionalIdeal_rel(2/3)
+        doctest:warning...
+        DeprecationWarning: The function is_NumberFieldFractionalIdeal_rel is deprecated;
+        use 'isinstance(..., NumberFieldFractionalIdeal_rel' instead.
+        See https://github.com/sagemath/sage/issues/38124 for details.
         False
         sage: is_NumberFieldFractionalIdeal_rel(ideal(5))
         False
@@ -911,7 +914,9 @@ def is_NumberFieldFractionalIdeal_rel(x):
         Fractional ideal (-a)
         sage: is_NumberFieldFractionalIdeal_rel(N)
         False
-        sage: is_NumberFieldFractionalIdeal(N)
-        True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38124,
+                "The function is_NumberFieldFractionalIdeal_rel is deprecated; "
+                "use 'isinstance(..., NumberFieldFractionalIdeal_rel' instead.")
     return isinstance(x, NumberFieldFractionalIdeal_rel)

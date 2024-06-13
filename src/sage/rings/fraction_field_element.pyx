@@ -63,14 +63,14 @@ cdef class FractionFieldElement(FieldElement):
 
     TESTS:
 
-    Test if :trac:`5451` is fixed::
+    Test if :issue:`5451` is fixed::
 
         sage: A = FiniteField(9,'theta')['t']                                           # needs sage.rings.finite_rings
         sage: K.<t> = FractionField(A)                                                  # needs sage.rings.finite_rings
         sage: f = 2/(t^2 + 2*t); g = t^9/(t^18 + t^10 + t^2); f + g                     # needs sage.rings.finite_rings
         (2*t^15 + 2*t^14 + 2*t^13 + 2*t^12 + 2*t^11 + 2*t^10 + 2*t^9 + t^7 + t^6 + t^5 + t^4 + t^3 + t^2 + t + 1)/(t^17 + t^9 + t)
 
-    Test if :trac:`8671` is fixed::
+    Test if :issue:`8671` is fixed::
 
         sage: P.<n> = QQ[]
         sage: F = P.fraction_field()
@@ -160,7 +160,7 @@ cdef class FractionFieldElement(FieldElement):
         nden = codomain.coerce(self._denominator._im_gens_(codomain, im_gens, base_map=base_map))
         return codomain.coerce(nnum/nden)
 
-    cpdef reduce(self) noexcept:
+    cpdef reduce(self):
         """
         Reduce this fraction.
 
@@ -183,7 +183,7 @@ cdef class FractionFieldElement(FieldElement):
 
         TESTS:
 
-        Check that :trac:`8111` is fixed::
+        Check that :issue:`8111` is fixed::
 
             sage: K.<k>= QQ[]
             sage: frac = (64*k^2+128)/(64*k^3+256)
@@ -272,9 +272,9 @@ cdef class FractionFieldElement(FieldElement):
 
         OUTPUT:
 
-        -  ``bool`` - whether or not a square
+        -  ``bool`` -- whether or not a square
 
-        -  ``object`` - (optional) an actual square root if
+        -  ``object`` -- (optional) an actual square root if
            found, and None otherwise.
 
         EXAMPLES::
@@ -379,7 +379,7 @@ cdef class FractionFieldElement(FieldElement):
             sage: hash(R(1)/R(2))==hash(1/2)
             True
 
-        Check that :trac:`16268` is fixed::
+        Check that :issue:`16268` is fixed::
 
             sage: ku.<u> = FractionField(PolynomialRing(QQ,'u'))
             sage: a = 27*u^2+81*u+243
@@ -393,7 +393,7 @@ cdef class FractionFieldElement(FieldElement):
             sage: len(set([s,t]))
             1
 
-        Check that :trac:`25199` is fixed::
+        Check that :issue:`25199` is fixed::
 
             sage: R.<x,y,z> = QQbar[]                                                   # needs sage.rings.number_field
             sage: hash(R.0) == hash(FractionField(R).0)
@@ -584,7 +584,7 @@ cdef class FractionFieldElement(FieldElement):
 
         return s
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         """
         Compute the sum of ``self`` and ``right``.
 
@@ -669,13 +669,13 @@ cdef class FractionFieldElement(FieldElement):
         return self.__class__(self._parent, rnum*sden + rden*snum, rden*sden,
             coerce=False, reduce=False)
 
-    cpdef _mul_(self, right) noexcept:
+    cpdef _mul_(self, right):
         """
         Computes the product of ``self`` and ``right``.
 
         INPUT:
 
-        - ``right`` - ``RingElement`` to multiply with ``self``
+        - ``right`` -- ``RingElement`` to multiply with ``self``
 
         OUTPUT:
 
@@ -735,7 +735,7 @@ cdef class FractionFieldElement(FieldElement):
         return self.__class__(self._parent, rnum * snum, rden * sden,
             coerce=False, reduce=False)
 
-    cpdef _div_(self, right) noexcept:
+    cpdef _div_(self, right):
         """
         Computes the quotient of ``self`` and ``right``.
 
@@ -970,7 +970,7 @@ cdef class FractionFieldElement(FieldElement):
         return self.__class__(self._parent,
             self._denominator, self._numerator, coerce=False, reduce=False)
 
-    cpdef _richcmp_(self, other, int op) noexcept:
+    cpdef _richcmp_(self, other, int op):
         """
         EXAMPLES::
 
@@ -1136,7 +1136,7 @@ cdef class FractionFieldElement(FieldElement):
             sage: pol(rat)
             (2*y^3 + 3*y^2*z + 3*y*z^2 + z^3)/y^3
 
-        Check that :trac:`25440` has been resolved::
+        Check that :issue:`25440` has been resolved::
 
             sage: R.<x> = GF(2)[]
             sage: S.<y> = R.fraction_field()[]
@@ -1207,7 +1207,7 @@ cdef class FractionFieldElement_1poly_field(FractionFieldElement):
         if not reduce:
             self.normalize_leading_coefficients()
 
-    cdef normalize_leading_coefficients(self) noexcept:
+    cdef normalize_leading_coefficients(self):
         """
         See :meth:`reduce`.
         """
@@ -1252,7 +1252,7 @@ cdef class FractionFieldElement_1poly_field(FractionFieldElement):
         L.sort()
         return L
 
-    cpdef reduce(self) noexcept:
+    cpdef reduce(self):
         """
         Pick a normalized representation of self.
 

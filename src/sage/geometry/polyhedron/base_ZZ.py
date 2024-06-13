@@ -91,7 +91,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         TESTS:
 
-        Check :trac:`22622`::
+        Check :issue:`22622`::
 
             sage: P1 = Polyhedron(vertices = [[1, 0], [0, 1]], rays = [[1, 1]])
             sage: P1.is_lattice_polytope()
@@ -115,20 +115,20 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         INPUT:
 
-        - ``verbose`` - boolean (default: ``False``); if ``True``, print the
+        - ``verbose`` -- boolean (default: ``False``); if ``True``, print the
           whole output of the LattE command.
 
         The following options are passed to the LattE command, for details you
         should consult `the LattE documentation
         <https://www.math.ucdavis.edu/~latte/software/packages/latte_current/>`__:
 
-        - ``dual`` - boolean; triangulate and signed-decompose in the dual
+        - ``dual`` -- boolean; triangulate and signed-decompose in the dual
           space
 
-        - ``irrational_primal`` - boolean; triangulate in the dual space,
+        - ``irrational_primal`` -- boolean; triangulate in the dual space,
           signed-decompose in the primal space using irrationalization.
 
-        - ``irrational_all_primal`` - boolean; triangulate and signed-decompose
+        - ``irrational_all_primal`` -- boolean; triangulate and signed-decompose
           in the primal space using irrationalization.
 
         - ``maxdet`` -- integer; decompose down to an index (determinant) of
@@ -142,9 +142,9 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         - ``dualization`` -- string; either 'cdd' or '4ti2'
 
-        - ``triangulation`` - string; 'cddlib', '4ti2' or 'topcom'
+        - ``triangulation`` -- string; 'cddlib', '4ti2' or 'topcom'
 
-        - ``triangulation_max_height`` - integer; use a uniform distribution of
+        - ``triangulation_max_height`` -- integer; use a uniform distribution of
           height from 1 to this number
 
         .. NOTE::
@@ -329,18 +329,18 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         - When the ``engine`` is 'latte' or None, the additional input values are:
 
-          * ``verbose`` - boolean (default: ``False``); if ``True``, print the
+          * ``verbose`` -- boolean (default: ``False``); if ``True``, print the
             whole output of the LattE command.
 
           The following options are passed to the LattE command, for details
           consult `the LattE documentation
           <https://www.math.ucdavis.edu/~latte/software/packages/latte_current/>`__:
 
-          * ``dual`` - boolean; triangulate and signed-decompose in the dual
+          * ``dual`` -- boolean; triangulate and signed-decompose in the dual
             space
-          * ``irrational_primal`` - boolean; triangulate in the dual space,
+          * ``irrational_primal`` -- boolean; triangulate in the dual space,
             signed-decompose in the primal space using irrationalization.
-          * ``irrational_all_primal`` - boolean; Triangulate and signed-decompose
+          * ``irrational_all_primal`` -- boolean; Triangulate and signed-decompose
             in the primal space using irrationalization.
           * ``maxdet`` -- integer; decompose down to an index (determinant) of
             ``maxdet`` instead of index 1 (unimodular cones).
@@ -349,8 +349,8 @@ class Polyhedron_ZZ(Polyhedron_QQ):
           * ``compute_vertex_cones`` -- string; either 'cdd' or 'lrs' or '4ti2'
           * ``smith_form`` -- string; either 'ilio' or 'lidia'
           * ``dualization`` -- string; either 'cdd' or '4ti2'
-          * ``triangulation`` - string; 'cddlib', '4ti2' or 'topcom'
-          * ``triangulation_max_height`` - integer; use a uniform distribution of
+          * ``triangulation`` -- string; 'cddlib', '4ti2' or 'topcom'
+          * ``triangulation_max_height`` -- integer; use a uniform distribution of
             height from 1 to this number
 
         OUTPUT:
@@ -514,7 +514,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         TESTS:
 
-        Test that :trac:`28551` is fixed::
+        Test that :issue:`28551` is fixed::
 
             sage: polytopes.cube(backend='normaliz').polar().backend()  # optional - pynormaliz
             'normaliz'

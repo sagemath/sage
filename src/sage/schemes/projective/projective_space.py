@@ -140,12 +140,17 @@ def is_ProjectiveSpace(x):
 
         sage: from sage.schemes.projective.projective_space import is_ProjectiveSpace
         sage: is_ProjectiveSpace(ProjectiveSpace(5, names='x'))
+        doctest:warning...
+        DeprecationWarning: The function is_ProjectiveSpace is deprecated; use 'isinstance(..., ProjectiveSpace_ring)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
         sage: is_ProjectiveSpace(ProjectiveSpace(5, GF(9, 'alpha'), names='x'))         # needs sage.rings.finite_rings
         True
         sage: is_ProjectiveSpace(Spec(ZZ))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_ProjectiveSpace is deprecated; use 'isinstance(..., ProjectiveSpace_ring)' instead.")
     return isinstance(x, ProjectiveSpace_ring)
 
 
@@ -515,7 +520,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         INPUT:
 
-        - ``right`` - a projective space, product of projective spaces, or subscheme.
+        - ``right`` -- a projective space, product of projective spaces, or subscheme.
 
         OUTPUT: a product of projective spaces or subscheme.
 
@@ -778,7 +783,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         - ``v`` -- anything that defines a point
 
-        - ``check`` -- boolean (optional, default: ``True``); whether
+        - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency
 
         OUTPUT: A point of this projective space.
@@ -948,7 +953,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         INPUT:
 
-        -  ``X`` - a list or tuple of equations.
+        -  ``X`` -- a list or tuple of equations.
 
         EXAMPLES::
 
@@ -1006,9 +1011,9 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         kwds:
 
-        - ``bound`` - a real number
+        - ``bound`` -- a real number
 
-        - ``precision`` - (default: 53) a positive integer
+        - ``precision`` -- (default: 53) a positive integer
 
         OUTPUT:
 
@@ -1369,7 +1374,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         INPUT:
 
-        - ``other`` - A projective space with the same base ring as this space.
+        - ``other`` -- A projective space with the same base ring as this space.
 
         OUTPUT:
 
@@ -1539,7 +1544,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         if CS is None:
             CS = ProjectiveSpace(self.base_ring(), binomial(N + d, d) - 1)
         else:
-            if not is_ProjectiveSpace(CS):
+            if not isinstance(CS, ProjectiveSpace_ring):
                 raise TypeError("(=%s) must be a projective space" % CS)
             if CS.dimension() != binomial(N + d, d) - 1:
                 raise TypeError("(=%s) has the wrong dimension to serve as the codomain space" % CS)
@@ -2121,9 +2126,9 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
 
         INPUT:
 
-        - ``Ch`` - a homogeneous polynomial.
+        - ``Ch`` -- a homogeneous polynomial.
 
-        - ``dim`` - the dimension of the associated scheme.
+        - ``dim`` -- the dimension of the associated scheme.
 
         OUTPUT: a projective subscheme.
 
@@ -2446,7 +2451,7 @@ class ProjectiveSpace_rational_field(ProjectiveSpace_field):
 
         INPUT:
 
-        -  ``bound`` - integer.
+        -  ``bound`` -- integer.
 
         EXAMPLES::
 

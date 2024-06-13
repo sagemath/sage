@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Encoders
 
@@ -7,7 +7,6 @@ Representation of a bijection between a message space and a code.
 AUTHORS:
 
 - David Lucas (2015): initial version
-
 """
 #*****************************************************************************
 #       Copyright (C) 2015 David Lucas <david.lucas@inria.fr>
@@ -241,7 +240,7 @@ class Encoder(SageObject):
             ...
             EncodingError: Given word is not in the code
 
-        Note that since :trac:`21326`, codes cannot be of length zero::
+        Note that since :issue:`21326`, codes cannot be of length zero::
 
             sage: G = Matrix(GF(17), [])
             sage: C = LinearCode(G)

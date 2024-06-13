@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Decorators
 
@@ -11,9 +12,8 @@ AUTHORS:
 - Simon King (2011-05-26) -- improve introspection of sage_wraps. Put this
   file into the reference manual.
 - Julian Rueth (2014-03-19): added ``decorator_keywords`` decorator
-
 """
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2009 Tim Dumol
 #                     2010,2011 Johan S. R. Nielsen
 #                     2011 Simon King <simon.king@uni-jena.de>
@@ -24,7 +24,7 @@ AUTHORS:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 from functools import (partial, update_wrapper, WRAPPER_ASSIGNMENTS,
                        WRAPPER_UPDATES)
@@ -77,7 +77,7 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
 
     Demonstrate that the argument description are retained from the
     decorated function through the special method (when left
-    unchanged) (see :trac:`9976`)::
+    unchanged) (see :issue:`9976`)::
 
         sage: def diff_arg_dec(f):
         ....:     @sage_wraps(f)
@@ -124,7 +124,7 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
         True
 
     Demonstrate that sage_wraps works for non-function callables
-    (:trac:`9919`)::
+    (:issue:`9919`)::
 
         sage: def square_for_met(f):
         ....:   @sage_wraps(f)
@@ -142,7 +142,7 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
         sage: t.g.__doc__
         'My little method'
 
-    The bug described in :trac:`11734` is fixed::
+    The bug described in :issue:`11734` is fixed::
 
         sage: def square(f):
         ....:     @sage_wraps(f)
@@ -155,10 +155,10 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
         81
 
     """
-    #TRAC 9919: Workaround for bug in @update_wrapper when used with
-    #non-function callables.
+    # TRAC 9919: Workaround for bug in @update_wrapper when used with
+    # non-function callables.
     assigned = set(assigned).intersection(set(dir(wrapped)))
-    #end workaround
+    # end workaround
 
     def f(wrapper, assigned=assigned, updated=updated):
         update_wrapper(wrapper, wrapped, assigned=assigned, updated=updated)
@@ -168,16 +168,16 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
         wrapper.__wrapped__ = wrapped
         wrapper._sage_src_ = lambda: sage_getsource(wrapped)
         wrapper._sage_src_lines_ = lambda: sage_getsourcelines(wrapped)
-        #Getting the signature right in documentation by Sphinx (Issue 9976)
-        #The attribute _sage_argspec_() is read by Sphinx if present and used
-        #as the argspec of the function instead of using reflection.
+        # Getting the signature right in documentation by Sphinx (Issue 9976)
+        # The attribute _sage_argspec_() is read by Sphinx if present and used
+        # as the argspec of the function instead of using reflection.
         wrapper._sage_argspec_ = lambda: sage_getargspec(wrapped)
         return wrapper
     return f
 
 
 # Infix operator decorator
-class infix_operator():
+class infix_operator:
     """
     A decorator for functions which allows for a hack that makes
     the function behave like an infix operator.
@@ -259,7 +259,7 @@ class infix_operator():
         return wrapper_inst
 
 
-class _infix_wrapper():
+class _infix_wrapper:
     function = None
 
     def __init__(self, left=None, right=None):
@@ -348,7 +348,7 @@ def decorator_defaults(func):
     return my_wrap
 
 
-class suboptions():
+class suboptions:
     def __init__(self, name, **options):
         """
         A decorator for functions which collects all keywords
@@ -390,7 +390,7 @@ class suboptions():
             [('arrow_options', {'size': 5})]
 
          Demonstrate that the introspected argument specification of the
-         wrapped function is updated (see :trac:`9976`)::
+         wrapped function is updated (see :issue:`9976`)::
 
             sage: from sage.misc.sageinspect import sage_getargspec
             sage: sage_getargspec(f)
@@ -424,7 +424,7 @@ class suboptions():
             newArgs = [self.name + opt for opt in self.options.keys()]
             args = (argspec.args if argspec.args is not None else []) + newArgs
             defaults = (argspec.defaults if argspec.defaults is not None else ()) \
-                        + tuple(self.options.values())
+                + tuple(self.options.values())
             # Note: argspec.defaults is not always a tuple for some reason
             return FullArgSpec(args, argspec.varargs, argspec.varkw, defaults,
                                kwonlyargs=[], kwonlydefaults=None, annotations={})
@@ -433,7 +433,7 @@ class suboptions():
         return wrapper
 
 
-class options():
+class options:
     def __init__(self, **options):
         """
         A decorator for functions which allows for default options to be
@@ -454,7 +454,7 @@ class options():
             {'rgbcolor': (0, 0, 1)}
 
         Demonstrate that the introspected argument specification of the wrapped
-        function is updated (see :trac:`9976`)::
+        function is updated (see :issue:`9976`)::
 
             sage: from sage.misc.decorators import options
             sage: o = options(rgbcolor=(0,0,1))
@@ -496,9 +496,9 @@ class options():
             options.update(kwds)
             return func(*args, **options)
 
-        #Add the options specified by @options to the signature of the wrapped
-        #function in the Sphinx-generated documentation (Issue 9976), using the
-        #special attribute _sage_argspec_ (see e.g. sage.misc.sageinspect)
+        # Add the options specified by @options to the signature of the wrapped
+        # function in the Sphinx-generated documentation (Issue 9976), using the
+        # special attribute _sage_argspec_ (see e.g. sage.misc.sageinspect)
         def argspec():
             argspec = sage_getargspec(func)
             args = ((argspec.args if argspec.args is not None else []) +
@@ -573,7 +573,7 @@ class options():
         return wrapper
 
 
-class rename_keyword():
+class rename_keyword:
     def __init__(self, deprecated=None, deprecation=None, **renames):
         """
         A decorator which renames keyword arguments and optionally
@@ -659,6 +659,7 @@ class rename_keyword():
 
         return wrapper
 
+
 class specialize:
     r"""
     A decorator generator that returns a decorator that in turn
@@ -697,6 +698,7 @@ class specialize:
     def __call__(self, f):
         return sage_wraps(f)(partial(f, *self.args, **self.kwargs))
 
+
 def decorator_keywords(func):
     r"""
     A decorator for decorators with optional keyword arguments.
@@ -731,7 +733,7 @@ def decorator_keywords(func):
     @sage_wraps(func)
     def wrapped(f=None, **kwargs):
         if f is None:
-            return sage_wraps(func)(lambda f:func(f, **kwargs))
+            return sage_wraps(func)(lambda f: func(f, **kwargs))
         else:
             return func(f, **kwargs)
     return wrapped

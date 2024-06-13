@@ -607,7 +607,7 @@ def gaunt(l_1, l_2, l_3, m_1, m_2, m_3, prec=None):
         0.00689500421922113448
 
     If the sum of the `l_i` is odd, the answer is zero, even for Python
-    ints (see :trac:`14766`)::
+    ints (see :issue:`14766`)::
 
         sage: gaunt(1,2,2,1,0,-1)
         0
@@ -616,18 +616,18 @@ def gaunt(l_1, l_2, l_3, m_1, m_2, m_3, prec=None):
 
     It is an error to use non-integer values for `l` or `m`::
 
-        sage: gaunt(1.2,0,1.2,0,0,0)
+        sage: gaunt(1.2,0,1.2,0,0,0)                                                    # needs sage.rings.real_mpfr
         Traceback (most recent call last):
         ...
         TypeError: Attempt to coerce non-integral RealNumber to Integer
-        sage: gaunt(1,0,1,1.1,0,-1.1)
+        sage: gaunt(1,0,1,1.1,0,-1.1)                                                   # needs sage.rings.real_mpfr
         Traceback (most recent call last):
         ...
         TypeError: Attempt to coerce non-integral RealNumber to Integer
 
     TESTS:
 
-    Check for :trac:`14735`::
+    Check for :issue:`14735`::
 
         sage: gaunt(int(1),int(1),int(1),int(0),int(1),int(-1))
         0

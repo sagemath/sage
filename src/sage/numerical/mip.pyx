@@ -234,7 +234,7 @@ AUTHORS:
 # ****************************************************************************
 
 from copy import copy
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.rings.integer_ring import ZZ
 
 
@@ -327,7 +327,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
     TESTS:
 
-    Check that :trac:`16497` is fixed::
+    Check that :issue:`16497` is fixed::
 
         sage: for type in ["binary", "integer"]:
         ....:     k = 3
@@ -406,7 +406,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         TESTS:
 
         Checks that the objects are deallocated without invoking the cyclic garbage
-        collector (cf. :trac:`12616`)::
+        collector (cf. :issue:`12616`)::
 
             sage: del p
             sage: def just_create_variables():
@@ -420,7 +420,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: sum([1 for x in gc.get_objects() if isinstance(x,C)])
             0
 
-        We now disable the cyclic garbage collector. Since :trac:`12616` avoids
+        We now disable the cyclic garbage collector. Since :issue:`12616` avoids
         a reference cycle, the mixed integer linear program created in
         ``just_create_variables()`` is removed even without the cyclic garbage
         collection::
@@ -715,7 +715,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         INPUT:
 
-        - ``binary, integer, real`` -- boolean. Set one of these
+        - ``binary``, ``integer``, ``real`` -- boolean. Set one of these
           arguments to ``True`` to ensure that the variable gets the
           corresponding type.
 
@@ -1086,7 +1086,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: P = p.polyhedron(); P
             A 3-dimensional polyhedron in RDF^3 defined as the convex hull of 1 vertex, 1 ray, 2 lines
 
-        A square (see :trac:`14395`) ::
+        A square (see :issue:`14395`) ::
 
             sage: p = MixedIntegerLinearProgram(solver='GLPK')
             sage: x,y = p['x'], p['y']
@@ -1110,7 +1110,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         TESTS:
 
-        Check if :trac:`23326` is fixed::
+        Check if :issue:`23326` is fixed::
 
             sage: p = MixedIntegerLinearProgram(solver='GLPK')
             sage: x, y = p['x'], p['y']
@@ -1899,7 +1899,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         - ``name`` -- A name for the constraint.
 
-        - ``return_indices`` -- boolean (optional, default False),
+        - ``return_indices`` -- boolean (default: ``False``),
           whether to return the indices of the added constraints.
 
         OUTPUT:
@@ -2088,7 +2088,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
                 x_0 is a continuous variable (min=-oo, max=+oo)
                 x_1 is a continuous variable (min=-oo, max=+oo)
 
-        Catch ``True`` / ``False`` as INPUT (:trac:`13646`)::
+        Catch ``True`` / ``False`` as INPUT (:issue:`13646`)::
 
             sage: p = MixedIntegerLinearProgram(solver='GLPK')
             sage: x = p.new_variable(nonnegative=True)
@@ -2368,7 +2368,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         TESTS:
 
         Removing no constraints does not make Sage crash, see
-        :trac:`34881`::
+        :issue:`34881`::
 
              sage: MixedIntegerLinearProgram().remove_constraints([])
 
@@ -2852,7 +2852,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
               The command ::
 
-                  sage: p = MixedIntegerLinearProgram(solver="CPLEX") # optional - CPLEX
+                  sage: p = MixedIntegerLinearProgram(solver="CPLEX")   # optional - CPLEX
                   sage: p.solver_parameter("CPX_PARAM_TILIM", 60)       # optional - CPLEX
 
               works as intended.
@@ -2883,7 +2883,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         else:
             self._backend.solver_parameter(name, value)
 
-    cpdef sum(self, L) noexcept:
+    cpdef sum(self, L):
         r"""
         Efficiently computes the sum of a sequence of
         :class:`~sage.numerical.linear_functions.LinearFunction` elements
@@ -3489,7 +3489,7 @@ cdef class MIPVariable(FiniteFamily):
 
         TESTS:
 
-        Test that :trac:`20462` is fixed::
+        Test that :issue:`20462` is fixed::
 
             sage: p.<x,y> = MixedIntegerLinearProgram()
             sage: x[0], y[0]
@@ -3526,7 +3526,7 @@ cdef class MIPVariable(FiniteFamily):
 
         TESTS:
 
-        Test that :trac:`20462` is fixed::
+        Test that :issue:`20462` is fixed::
 
             sage: p.<x,y> = MixedIntegerLinearProgram()
             sage: x[0], y[0]
@@ -3656,15 +3656,15 @@ cdef class MIPVariable(FiniteFamily):
             (1, 2/3)*x_0 + (1/2, 3/4)*x_1
         """
         if isinstance(left, MIPVariable):
-            if not is_Matrix(right):
+            if not isinstance(right, Matrix):
                 return NotImplemented
             return (<MIPVariable> left)._matrix_rmul_impl(right)
         else:
-            if not is_Matrix(left):
+            if not isinstance(left, Matrix):
                 return NotImplemented
             return (<MIPVariable> right)._matrix_lmul_impl(left)
 
-    cdef _matrix_rmul_impl(self, m) noexcept:
+    cdef _matrix_rmul_impl(self, m):
         """
         Implement the action of a matrix multiplying from the right.
         """
@@ -3678,7 +3678,7 @@ cdef class MIPVariable(FiniteFamily):
         T = self._p.linear_functions_parent().tensor(V)
         return T(result)
 
-    cdef _matrix_lmul_impl(self, m) noexcept:
+    cdef _matrix_lmul_impl(self, m):
         """
         Implement the action of a matrix multiplying from the left.
         """

@@ -14,7 +14,6 @@ REFERENCES:
 
 - Chap. 1 of [KN1963]_
 - [Lee2011]_
-
 """
 
 # ****************************************************************************
@@ -1001,7 +1000,7 @@ class ContinuousMap(Morphism):
 
         ``_extensions_graph`` and ``_restrictions_graph`` were not originally
         derived quantities, but this induced a bug when dealing with other
-        derived quantities (see :trac:`26012`)::
+        derived quantities (see :issue:`26012`)::
 
             sage: M = Manifold(2, 'M')
             sage: C.<x, y> = M.chart()

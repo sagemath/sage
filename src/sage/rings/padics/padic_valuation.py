@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 `p`-adic Valuations on Number Fields and Their Subrings and Completions
 
@@ -32,7 +31,6 @@ REFERENCES:
 
 The theory used here was originally developed in [Mac1936I]_ and [Mac1936II]_. An
 overview can also be found in Chapter 4 of [Rüt2014]_.
-
 """
 #*****************************************************************************
 #       Copyright (C) 2013-2020 Julian Rüth <julian.rueth@fsfe.org>
@@ -289,7 +287,7 @@ class PadicValuationFactory(UniqueFactory):
 
         TESTS:
 
-        Verify that :trac:`28976` has been resolved::
+        Verify that :issue:`28976` has been resolved::
 
             sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
@@ -1363,7 +1361,7 @@ class pAdicFromLimitValuation(FiniteExtensionFromLimitValuation, pAdicValuation_
         sage: TestSuite(v).run(skip='_test_shift')      # long time                     # needs sage.rings.number_field
 
     The ``_test_shift`` test fails because the parent of the shift is
-    incorrect, see :trac:`23971`::
+    incorrect, see :issue:`23971`::
 
         sage: v.shift(1, -1).parent()                                                   # needs sage.rings.number_field
         Number Field in I with defining polynomial x^2 + 1 with I = 1*I

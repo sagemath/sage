@@ -68,7 +68,7 @@ Maxima has some flags that affect how the result gets simplified (By default, be
     sage: maxima_calculus("besselexpand:true")
     true
 
-The output is parseable (i. e. :trac:`31796` is fixed)::
+The output is parseable (i. e. :issue:`31796` is fixed)::
 
     sage: foo = maxima_calculus('a and (b or c)') ; foo
     a and (b or c)
@@ -79,7 +79,7 @@ The output is parseable (i. e. :trac:`31796` is fixed)::
 
 TESTS:
 
-Check our workaround for a race in ecl works, see :trac:`26968`.
+Check our workaround for a race in ecl works, see :issue:`26968`.
 We use a temporary `MAXIMA_USERDIR` so it's empty; we place it
 in `DOT_SAGE` since we expect it to have more latency than `/tmp`.
 
@@ -96,7 +96,6 @@ in `DOT_SAGE` since we expect it to have more latency than `/tmp`.
     ....:     os.wait()
     ....: '''])
     sage: tmpdir.cleanup()
-
 """
 
 # ****************************************************************************
@@ -149,7 +148,7 @@ ecl_eval("(set-locale-subdir)")
 try:
     ecl_eval("(set-pathnames)")
 except RuntimeError:
-    # Recover from :trac:`26968` by creating `*maxima-objdir*` here.
+    # Recover from :issue:`26968` by creating `*maxima-objdir*` here.
     # This cannot be done before calling `(set-pathnames)` since
     # `*maxima-objdir*` is computed there.
     # We use python `os.makedirs()` which is immune to the race.
@@ -277,7 +276,7 @@ def stdout_to_string(s):
 
     INPUT:
 
-    - ``s`` - string; command to evaluate
+    - ``s`` -- string; command to evaluate
 
     OUTPUT: string
 
@@ -301,7 +300,7 @@ def max_to_string(s):
 
     INPUT:
 
-    - ``s`` - ECL object
+    - ``s`` -- ECL object
 
     OUTPUT: string
 
@@ -327,7 +326,7 @@ def parse_max_string(s):
 
     INPUT:
 
-    - ``s`` - string
+    - ``s`` -- string
 
     OUTPUT: ECL object
 
@@ -375,7 +374,7 @@ class MaximaLib(MaximaAbstract):
             sage: maxima_lib == loads(dumps(maxima_lib))
             True
 
-        We make sure labels are turned off (see :trac:`6816`)::
+        We make sure labels are turned off (see :issue:`6816`)::
 
             sage: 'nolabels : true' in maxima_lib._MaximaLib__init_code
             True
@@ -397,7 +396,7 @@ class MaximaLib(MaximaAbstract):
 
         INPUT:
 
-        - ``x`` - object to coerce into self
+        - ``x`` -- object to coerce into self
 
         OUTPUT: Maxima element equivalent to ``x``
 
@@ -441,14 +440,14 @@ class MaximaLib(MaximaAbstract):
 
         INPUT:
 
-        - ``line`` - string; text to evaluate
+        - ``line`` -- string; text to evaluate
 
-        - ``locals`` - None (ignored); this is used for compatibility with the
+        - ``locals`` -- None (ignored); this is used for compatibility with the
           Sage notebook's generic system interface.
 
-        - ``reformat`` - boolean; whether to strip output or not
+        - ``reformat`` -- boolean; whether to strip output or not
 
-        - ``**kwds`` - All other arguments are currently ignored.
+        - ``**kwds`` -- All other arguments are currently ignored.
 
         OUTPUT: string representing Maxima output
 
@@ -499,7 +498,7 @@ class MaximaLib(MaximaAbstract):
 
         INPUT:
 
-        - ``cmd`` - string
+        - ``cmd`` -- string
 
         OUTPUT: ECL object
 
@@ -521,9 +520,9 @@ class MaximaLib(MaximaAbstract):
 
         INPUT:
 
-        -  ``var`` - string
+        -  ``var`` -- string
 
-        -  ``value`` - string
+        -  ``value`` -- string
 
         OUTPUT: none
 
@@ -545,7 +544,7 @@ class MaximaLib(MaximaAbstract):
 
         INPUT:
 
-        - ``var`` - string
+        - ``var`` -- string
 
         OUTPUT: none
 
@@ -571,7 +570,7 @@ class MaximaLib(MaximaAbstract):
 
         INPUT:
 
-        - ``var`` - string
+        - ``var`` -- string
 
         OUTPUT: string
 
@@ -591,9 +590,9 @@ class MaximaLib(MaximaAbstract):
 
         INPUT:
 
-        - ``value`` - string or ECL object
+        - ``value`` -- string or ECL object
 
-        - ``name`` - string (default: None); name to use for the variable,
+        - ``name`` -- string (default: None); name to use for the variable,
           an automatically generated name is used if this is none
 
         OUTPUT:
@@ -743,7 +742,7 @@ class MaximaLib(MaximaAbstract):
             []
 
         Make sure the abs_integrate package is being used,
-        :trac:`11483`. The following are examples from the Maxima
+        :issue:`11483`. The following are examples from the Maxima
         abs_integrate documentation::
 
             sage: integrate(abs(x), x)
@@ -755,7 +754,7 @@ class MaximaLib(MaximaAbstract):
             abs(x - 1) + abs(x)
 
         This is a known bug in Sage symbolic limits code, see
-        :trac:`17892` and https://sourceforge.net/p/maxima/bugs/3237/ ::
+        :issue:`17892` and https://sourceforge.net/p/maxima/bugs/3237/ ::
 
             sage: integrate(1 / (1 + abs(x-5)), x, -5, 6) # not tested -- known bug
             log(11) + log(2)
@@ -781,7 +780,7 @@ class MaximaLib(MaximaAbstract):
             sage: integrate(f, x, -Infinity, Infinity)  # known bug
             -erf(1/2*sqrt(2))
 
-        From :trac:`8624`::
+        From :issue:`8624`::
 
             sage: integral(abs(cos(x))*sin(x),(x,pi/2,pi))
             1/2
@@ -791,20 +790,20 @@ class MaximaLib(MaximaAbstract):
             sage: integrate(sqrt(x + sqrt(x)), x).canonicalize_radical()  # known bug
             1/12*((8*x - 3)*x^(1/4) + 2*x^(3/4))*sqrt(sqrt(x) + 1) + 1/8*log(sqrt(sqrt(x) + 1) + x^(1/4)) - 1/8*log(sqrt(sqrt(x) + 1) - x^(1/4))
 
-        And :trac:`11594`::
+        And :issue:`11594`::
 
             sage: integrate(abs(x^2 - 1), x, -2, 2)  # known bug
             4
 
         This definite integral returned zero (incorrectly) in at least
-        Maxima 5.23. The correct answer is now given (:trac:`11591`)::
+        Maxima 5.23. The correct answer is now given (:issue:`11591`)::
 
             sage: f = (x^2)*exp(x) / (1+exp(x))^2
             sage: integrate(f, (x, -infinity, infinity))
             1/3*pi^2
 
         The following integral was computed incorrectly in versions of
-        Maxima before 5.27 (see :trac:`12947`)::
+        Maxima before 5.27 (see :issue:`12947`)::
 
             sage: a = integrate(x*cos(x^3),(x,0,1/2)).n()
             sage: a.real()
@@ -834,7 +833,7 @@ class MaximaLib(MaximaAbstract):
 
         TESTS:
 
-        Check that :trac:`16224` is fixed::
+        Check that :issue:`16224` is fixed::
 
             sage: k = var('k')
             sage: sum(x^(2*k)/factorial(2*k), k, 0, oo).canonicalize_radical()
@@ -869,7 +868,7 @@ class MaximaLib(MaximaAbstract):
 
         Taking the sum of all natural numbers informs us that the sum
         is divergent.  Maxima (before 5.29.1) used to ask questions
-        about `m`, leading to a different error (see :trac:`11990`)::
+        about `m`, leading to a different error (see :issue:`11990`)::
 
             sage: m = var('m')
             sage: sum(m, m, 0, infinity)
@@ -878,21 +877,21 @@ class MaximaLib(MaximaAbstract):
             ValueError: Sum is divergent.
 
         An error with an infinite sum in Maxima (before 5.30.0,
-        see :trac:`13712`)::
+        see :issue:`13712`)::
 
             sage: n = var('n')
             sage: sum(1/((2*n-1)^2*(2*n+1)^2*(2*n+3)^2), n, 0, oo)
             3/256*pi^2
 
         Maxima correctly detects division by zero in a symbolic sum
-        (see :trac:`11894`)::
+        (see :issue:`11894`)::
 
             sage: sum(1/(m^4 + 2*m^3 + 3*m^2 + 2*m)^2, m, 0, infinity)
             Traceback (most recent call last):
             ...
             RuntimeError: ECL says: Zero to negative power computed.
 
-        Similar situation for :trac:`12410`::
+        Similar situation for :issue:`12410`::
 
             sage: x = var('x')
             sage: sum(1/x*(-1)^x, x, 0, oo)
@@ -990,7 +989,7 @@ class MaximaLib(MaximaAbstract):
             []
 
         The second limit below was computed incorrectly prior to
-        Maxima 5.24 (:trac:`10868`)::
+        Maxima 5.24 (:issue:`10868`)::
 
             sage: f(n) = 2 + 1/factorial(n)
             sage: limit(f(n), n=infinity)
@@ -999,7 +998,7 @@ class MaximaLib(MaximaAbstract):
             1/2
 
         The limit below was computed incorrectly prior to Maxima 5.30
-        (see :trac:`13526`)::
+        (see :issue:`13526`)::
 
             sage: n = var('n')
             sage: l = (3^n + (-2)^n) / (3^(n+1) + (-2)^(n+1))
@@ -1007,7 +1006,7 @@ class MaximaLib(MaximaAbstract):
             1/3
 
         The following limit computation used to incorrectly return 0
-        or infinity, depending on the domain (see :trac:`15033`)::
+        or infinity, depending on the domain (see :issue:`15033`)::
 
             sage: m = sage.calculus.calculus.maxima
             sage: _ = m.eval('domain: real')   # much faster than 'domain: complex'
@@ -1138,9 +1137,9 @@ class MaximaLibElement(MaximaAbstractElement):
 
         INPUT:
 
-        - ``vars`` - symbolic expressions
+        - ``vars`` -- symbolic expressions
 
-        - ``options`` - string (default="")
+        - ``options`` -- string (default="")
 
         OUTPUT: Maxima object
 
@@ -1167,7 +1166,7 @@ class MaximaLibElement(MaximaAbstractElement):
 
         INPUT:
 
-        - ``onscreen`` - boolean (default: True); whether to print or return
+        - ``onscreen`` -- boolean (default: ``True``); whether to print or return
 
         OUTPUT:
 
@@ -1278,9 +1277,9 @@ def sage_rat(x, y):
 
     INPUT:
 
-    - ``x`` - integer
+    - ``x`` -- integer
 
-    - ``y`` - integer
+    - ``y`` -- integer
 
     OUTPUT: rational
 
@@ -1321,7 +1320,7 @@ def mrat_to_sage(expr):
 
     INPUT:
 
-    - ``expr`` - ECL object; a Maxima MRAT expression
+    - ``expr`` -- ECL object; a Maxima MRAT expression
 
     OUTPUT: symbolic expression
 
@@ -1353,7 +1352,7 @@ def mqapply_to_sage(expr):
 
     INPUT:
 
-    - ``expr`` - ECL object; a Maxima MQAPPLY expression
+    - ``expr`` -- ECL object; a Maxima MQAPPLY expression
 
     OUTPUT: symbolic expression
 
@@ -1391,7 +1390,7 @@ def mdiff_to_sage(expr):
 
     INPUT:
 
-    - ``expr`` - ECL object; a Maxima %DERIVATIVE expression
+    - ``expr`` -- ECL object; a Maxima %DERIVATIVE expression
 
     OUTPUT: symbolic expression
 
@@ -1413,7 +1412,7 @@ def mlist_to_sage(expr):
 
     INPUT:
 
-    - ``expr`` - ECL object; a Maxima MLIST expression (i.e., a list)
+    - ``expr`` -- ECL object; a Maxima MLIST expression (i.e., a list)
 
     OUTPUT: a Python list of converted expressions.
 
@@ -1435,7 +1434,7 @@ def max_at_to_sage(expr):
 
     INPUT:
 
-    - ``expr`` - ECL object; a Maxima AT expression
+    - ``expr`` -- ECL object; a Maxima AT expression
 
     OUTPUT: symbolic expression
 
@@ -1471,7 +1470,7 @@ def dummy_integrate(expr):
 
     INPUT:
 
-    - ``expr`` - ECL object; a Maxima %INTEGRATE expression
+    - ``expr`` -- ECL object; a Maxima %INTEGRATE expression
 
     OUTPUT: symbolic expression
 
@@ -1570,7 +1569,7 @@ def pyobject_to_max(obj):
 
     INPUT:
 
-    - ``expr`` - Python object
+    - ``expr`` -- Python object
 
     OUTPUT: ECL object
 
@@ -1609,7 +1608,7 @@ def sr_to_max(expr):
 
     INPUT:
 
-    - ``expr`` - symbolic expression
+    - ``expr`` -- symbolic expression
 
     OUTPUT: ECL object
 
@@ -1629,7 +1628,7 @@ def sr_to_max(expr):
     TESTS:
 
     We should be able to convert derivatives evaluated at a point,
-    :trac:`12796`::
+    :issue:`12796`::
 
         sage: from sage.interfaces.maxima_lib import sr_to_max, max_to_sr
         sage: f = function('f')
@@ -1717,7 +1716,7 @@ def max_to_sr(expr):
 
     INPUT:
 
-    - ``expr`` - ECL object
+    - ``expr`` -- ECL object
 
     OUTPUT: symbolic expression
 

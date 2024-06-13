@@ -37,7 +37,6 @@ AUTHORS:
 - Alejandra Alvarado, Angelos Koutsianas, Beth Malmskog, Christopher Rasmussen,
   David Roe, Christelle Vincent, Mckenzie West (2018-04-25 to 2018-11-09):
   original version
-
 """
 
 
@@ -150,23 +149,21 @@ def c3_func(SUK, prec=106):
     - [AKMRVW]_ :arxiv:`1903.00977`
 
     """
-
     R = RealField(prec)
 
     all_places = list(SUK.primes()) + SUK.number_field().places(prec)
     Possible_U = Combinations(all_places, SUK.rank())
-    c1 = R(1) # guarantees final c1 >= 1
+    c1 = R(1)  # guarantees final c1 >= 1
     for U in Possible_U:
         # first, build the matrix C_{i,U}
-        columns_of_C = []
-        for unit in SUK.fundamental_units():
-            columns_of_C.append(column_Log(SUK, unit, U, prec))
+        columns_of_C = [column_Log(SUK, unit, U, prec)
+                        for unit in SUK.fundamental_units()]
         C = matrix(SUK.rank(), SUK.rank(), columns_of_C)
         # Is it invertible?
         if abs(C.determinant()) > 10**(-10):
             poss_c1 = C.inverse().apply_map(abs).norm(Infinity)
             c1 = R(max(poss_c1, c1))
-    return R(0.9999999) / (c1*SUK.rank())
+    return R(0.9999999) / (c1 * SUK.rank())
 
 
 def c4_func(SUK, v, A, prec=106):
@@ -1660,7 +1657,7 @@ def p_adic_LLL_bound(SUK, A, prec=106):
 
     - ``SUK`` -- a group of `S`-units
     - ``A`` -- a list of all products of each potential `a`, `b` in the `S`-unit equation `ax + by + 1 = 0` with each root of unity of `K`
-    - ``prec``-- precision for p-adic LLL calculations (default: 106)
+    - ``prec`` -- precision for p-adic LLL calculations (default: 106)
 
     OUTPUT:
 
@@ -2170,7 +2167,7 @@ def construct_complement_dictionaries(split_primes_list, SUK, verbose=False):
 
     - ``split_primes_list`` -- a list of rational primes which split completely in the number field `K`
     - ``SUK`` -- the `S`-unit group for a number field `K`
-    - ``verbose`` -- a boolean to provide additional feedback (default: False)
+    - ``verbose`` -- a boolean to provide additional feedback (default: ``False``)
 
     OUTPUT:
 

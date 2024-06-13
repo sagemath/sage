@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat sage.graphs
 r"""
 Finite Crystals
@@ -13,6 +14,7 @@ from sage.misc.cachefunc import cached_method
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.tensor import TensorProductsCategory
+
 
 class FiniteCrystals(CategoryWithAxiom):
     """

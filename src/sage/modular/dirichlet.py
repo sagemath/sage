@@ -16,14 +16,15 @@ EXAMPLES::
     sage: G = DirichletGroup(35)
     sage: x = G.gens()
     sage: e = x[0]*x[1]^2; e
-    Dirichlet character modulo 35 of conductor 35 mapping 22 |--> zeta12^3, 31 |--> zeta12^2 - 1
+    Dirichlet character modulo 35 of conductor 35
+     mapping 22 |--> zeta12^3, 31 |--> zeta12^2 - 1
     sage: e.order()
     12
 
 This illustrates a canonical coercion::
 
     sage: e = DirichletGroup(5, QQ).0
-    sage: f = DirichletGroup(5,CyclotomicField(4)).0
+    sage: f = DirichletGroup(5, CyclotomicField(4)).0
     sage: e*f
     Dirichlet character modulo 5 of conductor 5 mapping 2 |--> -zeta4
 
@@ -43,7 +44,6 @@ AUTHORS:
    Dirichlet characters, miscellaneous fixes
 
 -  Julian Rueth (2014-03-06): use UniqueFactory to cache DirichletGroups
-
 """
 
 # ****************************************************************************
@@ -65,6 +65,7 @@ from sage.arith.functions import lcm
 from sage.arith.misc import bernoulli, binomial, factorial, kronecker, factor, gcd, fundamental_discriminant, euler_phi, valuation
 from sage.categories.map import Map
 from sage.categories.objects import Objects
+from sage.categories.rings import Rings
 from sage.misc.cachefunc import cached_method
 from sage.misc.fast_methods import WithEqualityById
 from sage.misc.functional import round
@@ -77,7 +78,6 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ, is_RationalField
-from sage.rings.ring import is_Ring
 from sage.structure.element import MultiplicativeGroupElement
 from sage.structure.factory import UniqueFactory
 from sage.structure.gens_py import multiplicative_iterator
@@ -118,7 +118,8 @@ def kronecker_character(d):
     EXAMPLES::
 
         sage: kronecker_character(97*389*997^2)
-        Dirichlet character modulo 37733 of conductor 37733 mapping 1557 |--> -1, 37346 |--> -1
+        Dirichlet character modulo 37733 of conductor 37733
+         mapping 1557 |--> -1, 37346 |--> -1
 
     ::
 
@@ -148,7 +149,8 @@ def kronecker_character_upside_down(d):
     EXAMPLES::
 
         sage: kronecker_character_upside_down(97*389*997^2)
-        Dirichlet character modulo 37506941597 of conductor 37733 mapping 13533432536 |--> -1, 22369178537 |--> -1, 14266017175 |--> 1
+        Dirichlet character modulo 37506941597 of conductor 37733
+         mapping 13533432536 |--> -1, 22369178537 |--> -1, 14266017175 |--> 1
 
     AUTHORS:
 
@@ -213,7 +215,8 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
             sage: G.<e> = DirichletGroup(13)
             sage: G
-            Group of Dirichlet characters modulo 13 with values in Cyclotomic Field of order 12 and degree 4
+            Group of Dirichlet characters modulo 13 with values
+             in Cyclotomic Field of order 12 and degree 4
             sage: e
             Dirichlet character modulo 13 of conductor 13 mapping 2 |--> zeta12
             sage: loads(e.dumps()) == e
@@ -223,7 +226,8 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
             sage: G, x = DirichletGroup(35).objgens()
             sage: e = x[0]*x[1]; e
-            Dirichlet character modulo 35 of conductor 35 mapping 22 |--> zeta12^3, 31 |--> zeta12^2
+            Dirichlet character modulo 35 of conductor 35
+             mapping 22 |--> zeta12^3, 31 |--> zeta12^2
             sage: e.order()
             12
             sage: loads(e.dumps()) == e
@@ -235,21 +239,23 @@ class DirichletCharacter(MultiplicativeGroupElement):
             sage: TestSuite(G[1]).run()
 
         It is checked that the orders of the elements in `x` are
-        admissible (see :trac:`17283`)::
+        admissible (see :issue:`17283`)::
 
             sage: k.<i> = CyclotomicField(4)
             sage: G = DirichletGroup(192)
             sage: G([i, -1, -1])
             Traceback (most recent call last):
             ...
-            ValueError: values (= (zeta16^4, -1, -1)) must have multiplicative orders dividing (2, 16, 2), respectively
+            ValueError: values (= (zeta16^4, -1, -1)) must have
+            multiplicative orders dividing (2, 16, 2), respectively
 
             sage: from sage.modular.dirichlet import DirichletCharacter
             sage: M = FreeModule(Zmod(16), 3)
             sage: DirichletCharacter(G, M([4, 8, 8]))
             Traceback (most recent call last):
             ...
-            ValueError: values (= (4, 8, 8) modulo 16) must have additive orders dividing (2, 16, 2), respectively
+            ValueError: values (= (4, 8, 8) modulo 16) must have
+            additive orders dividing (2, 16, 2), respectively
         """
         MultiplicativeGroupElement.__init__(self, parent)
         if check:
@@ -360,7 +366,8 @@ class DirichletCharacter(MultiplicativeGroupElement):
             sage: e = DirichletGroup(7, QQ).0
             sage: f = e.change_ring(QuadraticField(3, 'a'))
             sage: f.parent()
-            Group of Dirichlet characters modulo 7 with values in Number Field in a with defining polynomial x^2 - 3 with a = 1.732050807568878?
+            Group of Dirichlet characters modulo 7 with values in Number Field in a
+             with defining polynomial x^2 - 3 with a = 1.732050807568878?
 
         ::
 
@@ -370,7 +377,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             ...
             TypeError: Unable to coerce zeta12 to a rational
 
-        We test the case where `R` is a map (:trac:`18072`)::
+        We test the case where `R` is a map (:issue:`18072`)::
 
             sage: K.<i> = QuadraticField(-1)
             sage: chi = DirichletGroup(5, K)[1]
@@ -539,7 +546,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         TESTS:
 
         Dirichlet characters modulo 1 and 2 are printed correctly (see
-        :trac:`17338`)::
+        :issue:`17338`)::
 
             sage: DirichletGroup(1)[0]
             Dirichlet character modulo 1 of conductor 1
@@ -570,7 +577,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         TESTS:
 
         Dirichlet characters modulo 1 and 2 are printed correctly (see
-        :trac:`17338`)::
+        :issue:`17338`)::
 
             sage: latex(DirichletGroup(1)[0])
             \hbox{Dirichlet character modulo } 1 \hbox{ of conductor } 1
@@ -676,7 +683,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
         TESTS:
 
-        Check that :trac:`17586` is fixed::
+        Check that :issue:`17586` is fixed::
 
             sage: DirichletGroup(1)[0].bernoulli(1)
             1/2
@@ -1054,11 +1061,14 @@ class DirichletCharacter(MultiplicativeGroupElement):
             sage: G.<a,b> = DirichletGroup(20)
             sage: c = a*b
             sage: d = c.decomposition(); d
-            [Dirichlet character modulo 4 of conductor 4 mapping 3 |--> -1, Dirichlet character modulo 5 of conductor 5 mapping 2 |--> zeta4]
+            [Dirichlet character modulo 4 of conductor 4 mapping 3 |--> -1,
+             Dirichlet character modulo 5 of conductor 5 mapping 2 |--> zeta4]
             sage: d[0].parent()
-            Group of Dirichlet characters modulo 4 with values in Cyclotomic Field of order 4 and degree 2
+            Group of Dirichlet characters modulo 4 with values
+             in Cyclotomic Field of order 4 and degree 2
             sage: d[1].parent()
-            Group of Dirichlet characters modulo 5 with values in Cyclotomic Field of order 4 and degree 2
+            Group of Dirichlet characters modulo 5 with values
+             in Cyclotomic Field of order 4 and degree 2
 
         We cannot multiply directly, since coercion of one element into the
         other parent fails in both cases::
@@ -1066,7 +1076,10 @@ class DirichletCharacter(MultiplicativeGroupElement):
             sage: d[0]*d[1] == c
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for *: 'Group of Dirichlet characters modulo 4 with values in Cyclotomic Field of order 4 and degree 2' and 'Group of Dirichlet characters modulo 5 with values in Cyclotomic Field of order 4 and degree 2'
+            TypeError: unsupported operand parent(s) for *: 'Group of Dirichlet
+            characters modulo 4 with values in Cyclotomic Field of order 4 and
+            degree 2' and 'Group of Dirichlet characters modulo 5 with values
+            in Cyclotomic Field of order 4 and degree 2'
 
         We can multiply if we are explicit about where we want the
         multiplication to take place.
@@ -1081,11 +1094,14 @@ class DirichletCharacter(MultiplicativeGroupElement):
         trivial for `k = 1` and non-cyclic for `k \ge 3`::
 
             sage: (DirichletGroup(18).0).decomposition()
-            [Dirichlet character modulo 2 of conductor 1, Dirichlet character modulo 9 of conductor 9 mapping 2 |--> zeta6]
+            [Dirichlet character modulo 2 of conductor 1,
+             Dirichlet character modulo 9 of conductor 9 mapping 2 |--> zeta6]
             sage: (DirichletGroup(36).0).decomposition()
-            [Dirichlet character modulo 4 of conductor 4 mapping 3 |--> -1, Dirichlet character modulo 9 of conductor 1 mapping 2 |--> 1]
+            [Dirichlet character modulo 4 of conductor 4 mapping 3 |--> -1,
+             Dirichlet character modulo 9 of conductor 1 mapping 2 |--> 1]
             sage: (DirichletGroup(72).0).decomposition()
-            [Dirichlet character modulo 8 of conductor 4 mapping 7 |--> -1, 5 |--> 1, Dirichlet character modulo 9 of conductor 1 mapping 2 |--> 1]
+            [Dirichlet character modulo 8 of conductor 4 mapping 7 |--> -1, 5 |--> 1,
+             Dirichlet character modulo 9 of conductor 1 mapping 2 |--> 1]
         """
         D = self.parent().decomposition()
         vals = [[z] for z in self.values_on_gens()]
@@ -1264,7 +1280,8 @@ class DirichletCharacter(MultiplicativeGroupElement):
             sage: e = G.0^2; e
             Dirichlet character modulo 13 of conductor 13 mapping 2 |--> zeta12^2
             sage: e.galois_orbit()
-            [Dirichlet character modulo 13 of conductor 13 mapping 2 |--> zeta12^2, Dirichlet character modulo 13 of conductor 13 mapping 2 |--> -zeta12^2 + 1]
+            [Dirichlet character modulo 13 of conductor 13 mapping 2 |--> zeta12^2,
+             Dirichlet character modulo 13 of conductor 13 mapping 2 |--> -zeta12^2 + 1]
 
         A non-example::
 
@@ -1322,27 +1339,33 @@ class DirichletCharacter(MultiplicativeGroupElement):
             sage: G = DirichletGroup(13)
             sage: e = G.0
             sage: e.gauss_sum()
-            -zeta156^46 + zeta156^45 + zeta156^42 + zeta156^41 + 2*zeta156^40 + zeta156^37 - zeta156^36 - zeta156^34 - zeta156^33 - zeta156^31 + 2*zeta156^30 + zeta156^28 - zeta156^24 - zeta156^22 + zeta156^21 + zeta156^20 - zeta156^19 + zeta156^18 - zeta156^16 - zeta156^15 - 2*zeta156^14 - zeta156^10 + zeta156^8 + zeta156^7 + zeta156^6 + zeta156^5 - zeta156^4 - zeta156^2 - 1
+            -zeta156^46 + zeta156^45 + zeta156^42 + zeta156^41 + 2*zeta156^40
+             + zeta156^37 - zeta156^36 - zeta156^34 - zeta156^33 - zeta156^31
+             + 2*zeta156^30 + zeta156^28 - zeta156^24 - zeta156^22 + zeta156^21
+             + zeta156^20 - zeta156^19 + zeta156^18 - zeta156^16 - zeta156^15
+             - 2*zeta156^14 - zeta156^10 + zeta156^8 + zeta156^7 + zeta156^6
+             + zeta156^5 - zeta156^4 - zeta156^2 - 1
             sage: factor(norm(e.gauss_sum()))
             13^24
 
         TESTS:
 
-        The field of algebraic numbers is supported (:trac:`19056`)::
+        The field of algebraic numbers is supported (:issue:`19056`)::
 
             sage: G = DirichletGroup(7, QQbar)
             sage: G[1].gauss_sum()
             -2.440133358345538? + 1.022618791871794?*I
 
-        Check that :trac:`19060` is fixed::
+        Check that :issue:`19060` is fixed::
 
             sage: K.<z> = CyclotomicField(8)
             sage: G = DirichletGroup(13, K)
             sage: chi = G([z^2])
             sage: chi.gauss_sum()
-            zeta52^22 + zeta52^21 + zeta52^19 - zeta52^16 + zeta52^15 + zeta52^14 + zeta52^12 - zeta52^11 - zeta52^10 - zeta52^7 - zeta52^5 + zeta52^4
+            zeta52^22 + zeta52^21 + zeta52^19 - zeta52^16 + zeta52^15 + zeta52^14
+             + zeta52^12 - zeta52^11 - zeta52^10 - zeta52^7 - zeta52^5 + zeta52^4
 
-        Check that :trac:`25127` is fixed::
+        Check that :issue:`25127` is fixed::
 
             sage: G = DirichletGroup(1)
             sage: chi = G.one()
@@ -1427,7 +1450,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
         TESTS:
 
-        The field of algebraic numbers is supported (:trac:`19056`)::
+        The field of algebraic numbers is supported (:issue:`19056`)::
 
             sage: G = DirichletGroup(7, QQbar)
             sage: G[1].gauss_sum_numerical()
@@ -1487,8 +1510,10 @@ class DirichletCharacter(MultiplicativeGroupElement):
             ...
             NotImplementedError: Characters must be from the same Dirichlet Group.
 
-            sage: all_jacobi_sums = [(DP[i].values_on_gens(),DP[j].values_on_gens(),DP[i].jacobi_sum(DP[j]))
-            ....:                   for i in range(p-1) for j in range(i, p-1)]
+            sage: all_jacobi_sums = [(DP[i].values_on_gens(),
+            ....:                     DP[j].values_on_gens(),
+            ....:                     DP[i].jacobi_sum(DP[j]))
+            ....:                    for i in range(p - 1) for j in range(i, p - 1)]
             sage: for s in all_jacobi_sums:
             ....:     print(s)
             ((1,), (1,), 5)
@@ -1523,7 +1548,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             sage: sum([g(x)*g(1-x) for x in IntegerModRing(N)])
             11
 
-        And sums where exactly one character is nontrivial (see :trac:`6393`)::
+        And sums where exactly one character is nontrivial (see :issue:`6393`)::
 
             sage: G = DirichletGroup(5); X = G.list(); Y=X[0]; Z=X[1]
             sage: Y.jacobi_sum(Z)
@@ -1547,7 +1572,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
         TESTS:
 
-        This shows that :trac:`6393` has been fixed::
+        This shows that :issue:`6393` has been fixed::
 
             sage: G = DirichletGroup(5); X = G.list(); Y = X[0]; Z = X[1]
             sage: # Y is trivial and Z is quartic
@@ -1889,15 +1914,16 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
         TESTS:
 
-        Check that :trac:`18479` is fixed::
+        Check that :issue:`18479` is fixed::
 
             sage: f = Newforms(Gamma1(25), names='a')[1]
             sage: eps = f.character()
             sage: eps.minimize_base_ring() == eps
             True
 
-        A related bug (see :trac:`18086`)::
+        A related bug (see :issue:`18086`)::
 
+            sage: x = polygen(ZZ, 'x')
             sage: K.<a,b> = NumberField([x^2 + 1, x^2 - 3])
             sage: chi = DirichletGroup(7, K).0
             sage: chi.minimize_base_ring()
@@ -2057,7 +2083,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
         TESTS:
 
-        Test that :trac:`11783` and :trac:`14368` are fixed::
+        Test that :issue:`11783` and :issue:`14368` are fixed::
 
             sage: chi = DirichletGroup(1).list()[0]
             sage: chi.values()
@@ -2256,7 +2282,8 @@ class DirichletGroupFactory(UniqueFactory):
     of `(\ZZ/N\ZZ)^*`::
 
         sage: DirichletGroup(20)
-        Group of Dirichlet characters modulo 20 with values in Cyclotomic Field of order 4 and degree 2
+        Group of Dirichlet characters modulo 20 with values
+         in Cyclotomic Field of order 4 and degree 2
 
     We create the group of Dirichlet character mod 20 with values in
     the rational numbers::
@@ -2272,7 +2299,10 @@ class DirichletGroupFactory(UniqueFactory):
     on the generators of `(Z/NZ)^*`::
 
         sage: list(G)
-        [Dirichlet character modulo 20 of conductor 1 mapping 11 |--> 1, 17 |--> 1, Dirichlet character modulo 20 of conductor 4 mapping 11 |--> -1, 17 |--> 1, Dirichlet character modulo 20 of conductor 5 mapping 11 |--> 1, 17 |--> -1, Dirichlet character modulo 20 of conductor 20 mapping 11 |--> -1, 17 |--> -1]
+        [Dirichlet character modulo 20 of conductor 1 mapping 11 |--> 1, 17 |--> 1,
+         Dirichlet character modulo 20 of conductor 4 mapping 11 |--> -1, 17 |--> 1,
+         Dirichlet character modulo 20 of conductor 5 mapping 11 |--> 1, 17 |--> -1,
+         Dirichlet character modulo 20 of conductor 20 mapping 11 |--> -1, 17 |--> -1]
 
     Next we construct the group of Dirichlet character mod 20, but with
     values in `\QQ(\zeta_n)`::
@@ -2284,7 +2314,8 @@ class DirichletGroupFactory(UniqueFactory):
     We next compute several invariants of ``G``::
 
         sage: G.gens()
-        (Dirichlet character modulo 20 of conductor 4 mapping 11 |--> -1, 17 |--> 1, Dirichlet character modulo 20 of conductor 5 mapping 11 |--> 1, 17 |--> zeta4)
+        (Dirichlet character modulo 20 of conductor 4 mapping 11 |--> -1, 17 |--> 1,
+         Dirichlet character modulo 20 of conductor 5 mapping 11 |--> 1, 17 |--> zeta4)
         sage: G.unit_gens()
         (11, 17)
         sage: G.zeta()
@@ -2298,22 +2329,29 @@ class DirichletGroupFactory(UniqueFactory):
         sage: R.<x> = PolynomialRing(QQ)
         sage: K.<a> = NumberField(x^4 + 1)
         sage: DirichletGroup(5, K)
-        Group of Dirichlet characters modulo 5 with values in Number Field in a with defining polynomial x^4 + 1
+        Group of Dirichlet characters modulo 5 with values
+         in Number Field in a with defining polynomial x^4 + 1
 
     An example where we give ``zeta``, but not its order::
 
         sage: G = DirichletGroup(5, K, a); G
-        Group of Dirichlet characters modulo 5 with values in the group of order 8 generated by a in Number Field in a with defining polynomial x^4 + 1
+        Group of Dirichlet characters modulo 5 with values in the group of order 8
+         generated by a in Number Field in a with defining polynomial x^4 + 1
         sage: G.list()
-        [Dirichlet character modulo 5 of conductor 1 mapping 2 |--> 1, Dirichlet character modulo 5 of conductor 5 mapping 2 |--> a^2, Dirichlet character modulo 5 of conductor 5 mapping 2 |--> -1, Dirichlet character modulo 5 of conductor 5 mapping 2 |--> -a^2]
+        [Dirichlet character modulo 5 of conductor 1 mapping 2 |--> 1,
+         Dirichlet character modulo 5 of conductor 5 mapping 2 |--> a^2,
+         Dirichlet character modulo 5 of conductor 5 mapping 2 |--> -1,
+         Dirichlet character modulo 5 of conductor 5 mapping 2 |--> -a^2]
 
     We can also restrict the order of the characters, either with or
     without specifying a root of unity::
 
         sage: DirichletGroup(5, K, zeta=-1, zeta_order=2)
-        Group of Dirichlet characters modulo 5 with values in the group of order 2 generated by -1 in Number Field in a with defining polynomial x^4 + 1
+        Group of Dirichlet characters modulo 5 with values in the group of order 2
+         generated by -1 in Number Field in a with defining polynomial x^4 + 1
         sage: DirichletGroup(5, K, zeta_order=2)
-        Group of Dirichlet characters modulo 5 with values in the group of order 2 generated by -1 in Number Field in a with defining polynomial x^4 + 1
+        Group of Dirichlet characters modulo 5 with values in the group of order 2
+         generated by -1 in Number Field in a with defining polynomial x^4 + 1
 
     ::
 
@@ -2331,7 +2369,8 @@ class DirichletGroupFactory(UniqueFactory):
 
         sage: p = next_prime(10^40)
         sage: g = DirichletGroup(19, GF(p)); g
-        Group of Dirichlet characters modulo 19 with values in Finite Field of size 10000000000000000000000000000000000000121
+        Group of Dirichlet characters modulo 19 with values
+         in Finite Field of size 10000000000000000000000000000000000000121
 
     Note that the root of unity has small order, i.e., it is not the
     largest order root of unity in the field::
@@ -2344,19 +2383,24 @@ class DirichletGroupFactory(UniqueFactory):
         sage: r4 = CyclotomicField(4).ring_of_integers()
         sage: G = DirichletGroup(60, r4)
         sage: G.gens()
-        (Dirichlet character modulo 60 of conductor 4 mapping 31 |--> -1, 41 |--> 1, 37 |--> 1, Dirichlet character modulo 60 of conductor 3 mapping 31 |--> 1, 41 |--> -1, 37 |--> 1, Dirichlet character modulo 60 of conductor 5 mapping 31 |--> 1, 41 |--> 1, 37 |--> zeta4)
+        (Dirichlet character modulo 60 of conductor 4
+           mapping 31 |--> -1, 41 |--> 1, 37 |--> 1,
+         Dirichlet character modulo 60 of conductor 3
+           mapping 31 |--> 1, 41 |--> -1, 37 |--> 1,
+         Dirichlet character modulo 60 of conductor 5
+           mapping 31 |--> 1, 41 |--> 1, 37 |--> zeta4)
         sage: val = G.gens()[2].values_on_gens()[2] ; val
         zeta4
         sage: parent(val)
         Gaussian Integers generated by zeta4 in Cyclotomic Field of order 4 and degree 2
-        sage: r4.residue_field(r4.ideal(29).factor()[0][0])(val)
+        sage: r4_29_0 = r4.residue_field(r4.ideal(29).factor()[0][0]); r4_29_0(val)
         doctest:warning ... DeprecationWarning: ...
         17
-        sage: r4.residue_field(r4.ideal(29).factor()[0][0])(val) * GF(29)(3)
+        sage: r4_29_0(val) * GF(29)(3)
         22
-        sage: r4.residue_field(r4.ideal(29).factor()[0][0])(G.gens()[2].values_on_gens()[2]) * 3
+        sage: r4_29_0(G.gens()[2].values_on_gens()[2]) * 3
         22
-        sage: parent(r4.residue_field(r4.ideal(29).factor()[0][0])(G.gens()[2].values_on_gens()[2]) * 3)
+        sage: parent(r4_29_0(G.gens()[2].values_on_gens()[2]) * 3)
         Residue field of Fractional ideal (-2*zeta4 + 5)
 
     ::
@@ -2398,9 +2442,11 @@ class DirichletGroupFactory(UniqueFactory):
         sage: G.gens()
         Traceback (most recent call last):
         ...
-        NotImplementedError: factorization of polynomials over rings with composite characteristic is not implemented
+        NotImplementedError: factorization of polynomials over rings
+        with composite characteristic is not implemented
         sage: G = DirichletGroup(5, Zmod(15), zeta=2); G
-        Group of Dirichlet characters modulo 5 with values in the group of order 4 generated by 2 in Ring of integers modulo 15
+        Group of Dirichlet characters modulo 5 with values in the group of order 4
+         generated by 2 in Ring of integers modulo 15
         sage: G.gens()
         (Dirichlet character modulo 5 of conductor 5 mapping 2 |--> 2,)
 
@@ -2481,7 +2527,7 @@ class DirichletGroupFactory(UniqueFactory):
             if integral:
                 base_ring = base_ring.ring_of_integers()
 
-        if not is_Ring(base_ring):
+        if base_ring not in Rings():
             raise TypeError("base_ring (= %s) must be a ring" % base_ring)
 
         # If either zeta or zeta_order is given, compute the other.
@@ -2528,12 +2574,17 @@ def is_DirichletGroup(x):
 
         sage: from sage.modular.dirichlet import is_DirichletGroup
         sage: is_DirichletGroup(DirichletGroup(11))
+        doctest:warning...
+        DeprecationWarning: The function is_DirichletGroup is deprecated; use 'isinstance(..., DirichletGroup_class)' instead.
+        See https://github.com/sagemath/sage/issues/38035 for details.
         True
         sage: is_DirichletGroup(11)
         False
         sage: is_DirichletGroup(DirichletGroup(11).0)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38035, "The function is_DirichletGroup is deprecated; use 'isinstance(..., DirichletGroup_class)' instead.")
     return isinstance(x, DirichletGroup_class)
 
 
@@ -2675,7 +2726,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
 
         TESTS:
 
-        We test the case where `R` is a map (:trac:`18072`)::
+        We test the case where `R` is a map (:issue:`18072`)::
 
             sage: # needs sage.rings.number_field
             sage: K.<i> = QuadraticField(-1)
@@ -2741,7 +2792,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
             TypeError: no coercion map from Rational Field to Integer Ring is defined
 
         Base-extended Dirichlet groups do not silently get roots of
-        unity with smaller order than expected (:trac:`6018`)::
+        unity with smaller order than expected (:issue:`6018`)::
 
             sage: G = DirichletGroup(10, QQ).base_extend(CyclotomicField(4))
             sage: H = DirichletGroup(10, CyclotomicField(4))
@@ -2980,16 +3031,16 @@ class DirichletGroup_class(WithEqualityById, Parent):
 
         INPUT:
 
-        -  ``v`` - (optional) list of elements of ``self``
+        -  ``v`` -- (optional) list of elements of ``self``
 
-        -  ``reps_only`` - (optional: default ``False``) if ``True``
+        -  ``reps_only`` -- (optional: default ``False``) if ``True``
            only returns representatives for the orbits.
 
-        -  ``sort`` - (optional: default ``True``) whether to sort
+        -  ``sort`` -- (optional: default ``True``) whether to sort
            the list of orbits and the orbits themselves (slightly faster if
            ``False``).
 
-        -  ``check`` - (optional, default: ``True``) whether or not
+        -  ``check`` -- (default: ``True``) whether or not
            to explicitly coerce each element of ``v`` into ``self``.
 
         The Galois group is the absolute Galois group of the prime subfield

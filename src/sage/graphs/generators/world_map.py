@@ -312,7 +312,7 @@ def WorldMap():
 
     TESTS:
 
-    :trac:`24488`::
+    :issue:`24488`::
 
         sage: 'Iceland' in graphs.WorldMap()
         True

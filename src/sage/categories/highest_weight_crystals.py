@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat sage.graphs
 r"""
 Highest Weight Crystals
@@ -430,7 +431,7 @@ class HighestWeightCrystals(Category_singleton):
             TESTS:
 
             Check that we fallback first to trying a crystal homset
-            (:trac:`19458`)::
+            (:issue:`19458`)::
 
                 sage: Binf = crystals.infinity.Tableaux(['A',2])
                 sage: Bi = crystals.elementary.Elementary(Binf.cartan_type(), 1)
@@ -764,7 +765,7 @@ class HighestWeightCrystals(Category_singleton):
                     ...
                     NotImplementedError: not implemented for infinite crystals
 
-                Check that :trac:`30493` is fixed::
+                Check that :issue:`30493` is fixed::
 
                     sage: CW = CartanType("G", 2)
                     sage: C = crystals.Letters(CW)
@@ -832,6 +833,7 @@ class HighestWeightCrystals(Category_singleton):
 
 ###############################################################################
 ## Morphisms
+
 
 class HighestWeightCrystalMorphism(CrystalMorphismByGenerators):
     r"""
@@ -948,6 +950,7 @@ class HighestWeightCrystalMorphism(CrystalMorphismByGenerators):
                 s += [j]*sf
             cur = cur.f_string(s)
         return cur
+
 
 class HighestWeightCrystalHomset(CrystalHomset):
     """

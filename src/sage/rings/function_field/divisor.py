@@ -37,7 +37,6 @@ We verify the Riemann-Roch theorem::
 AUTHORS:
 
 - Kwankyu Lee (2017-04-30): initial version
-
 """
 
 # ****************************************************************************
@@ -871,9 +870,10 @@ class FunctionFieldDivisor(ModuleElement):
         # invariants of M.
         basis = []
         for j in range(n):
-            i,ideg = pivot_row[j][0]
-            for k in range( den.degree() - ideg + 1 ):
-                basis.append(one.shift(k) * gens[i])
+            i, ideg = pivot_row[j][0]
+            gi = gens[i]
+            basis.extend(one.shift(k) * gi
+                         for k in range(den.degree() - ideg + 1))
         # Done!
         return basis
 

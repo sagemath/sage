@@ -36,7 +36,7 @@ from sage.rings.infinity import Infinity
 from sage.structure.factorization import Factorization
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.structure.element import is_Element
+from sage.structure.element import Element
 from .padic_base_leaves import (pAdicRingCappedRelative,
                                 pAdicRingCappedAbsolute,
                                 pAdicRingFixedMod,
@@ -1304,7 +1304,7 @@ def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
 
     TESTS:
 
-    Check that :trac:`8162` is resolved::
+    Check that :issue:`8162` is resolved::
 
         sage: R = Qq([(5,3)], names="alpha", check=False); R                            # needs sage.libs.ntl
         5-adic Unramified Extension Field in alpha defined by x^3 + 3*x + 3
@@ -1313,7 +1313,7 @@ def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
         sage: Qq(125.factor(), names="alpha") is R                                      # needs sage.libs.ntl
         True
 
-    Check that :trac:`18606` is resolved::
+    Check that :issue:`18606` is resolved::
 
         sage: x = QQ['x'].gen()
         sage: F = Qp(5,20)
@@ -1322,7 +1322,7 @@ def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
         sage: K0 is K1                                                                  # needs sage.libs.ntl
         True
     """
-    if is_Element(q):
+    if isinstance(q, Element):
         F = Integer(q).factor()
         if len(F) != 1:
             raise ValueError("q must be a prime power")
@@ -3494,7 +3494,7 @@ def split(poly, prec):
 
     TESTS:
 
-    This checks that :trac:`6186` is still fixed::
+    This checks that :issue:`6186` is still fixed::
 
         sage: k = Qp(13)
         sage: x = polygen(k)                                                            # needs sage.libs.ntl

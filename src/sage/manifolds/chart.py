@@ -22,7 +22,6 @@ REFERENCES:
 
 - Chap. 2 of [Lee2011]_
 - Chap. 1 of [Lee2013]_
-
 """
 
 # ****************************************************************************
@@ -345,7 +344,7 @@ class Chart(UniqueRepresentation, SageObject):
             []
             sage: TestSuite(X).run()
 
-        Check that :trac:`32112` has been fixed::
+        Check that :issue:`32112` has been fixed::
 
             sage: M = Manifold(2, 'M', structure='topological')
             sage: U = M.open_subset('U')
@@ -1145,7 +1144,7 @@ class Chart(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``codomain_subset`` - an instance of
+        - ``codomain_subset`` -- an instance of
           :class:`~sage.geometry.convex_set.ConvexSet_base` or another
           object with a ``__contains__`` method that accepts coordinate
           vectors
@@ -2386,7 +2385,7 @@ class RealChart(Chart):
 
         TESTS:
 
-        Check that :trac:`32929` is fixed::
+        Check that :issue:`32929` is fixed::
 
             sage: M = Manifold(2, 'M')
             sage: X.<x,y> = M.chart(r"x:(0,+oo) y:(0,2):periodic")
@@ -3726,7 +3725,7 @@ class CoordChange(SageObject):
 
         TESTS:
 
-        Check that :trac:`31923` is fixed::
+        Check that :issue:`31923` is fixed::
 
             sage: X1_to_X2.inverse().inverse() is X1_to_X2
             True

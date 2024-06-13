@@ -115,10 +115,10 @@ class BoundarySpaceElement(hecke.HeckeModuleElement):
         INPUT:
 
 
-        -  ``parent`` - BoundarySpace; a space of boundary
+        -  ``parent`` -- BoundarySpace; a space of boundary
            modular symbols
 
-        -  ``x`` - a dict with integer keys and values in the
+        -  ``x`` -- a dict with integer keys and values in the
            base field of parent.
 
 
@@ -295,14 +295,14 @@ class BoundarySpace(hecke.HeckeModule_generic):
         INPUT:
 
 
-        -  ``weight`` - int, the weight
+        -  ``weight`` -- int, the weight
 
-        -  ``group`` - arithgroup.congroup_generic.CongruenceSubgroup, a congruence
+        -  ``group`` -- arithgroup.congroup_generic.CongruenceSubgroup, a congruence
            subgroup.
 
-        -  ``sign`` - int, either -1, 0, or 1
+        -  ``sign`` -- int, either -1, 0, or 1
 
-        -  ``base_ring`` - rings.Ring (defaults to the
+        -  ``base_ring`` -- rings.Ring (defaults to the
            rational numbers)
 
 
@@ -317,12 +317,12 @@ class BoundarySpace(hecke.HeckeModule_generic):
         weight = int(weight)
         if weight <= 1:
             raise ArithmeticError("weight must be at least 2")
-        if not arithgroup.is_CongruenceSubgroup(group):
+        if not isinstance(group, arithgroup.CongruenceSubgroupBase):
             raise TypeError("group must be a congruence subgroup")
         sign = int(sign)
         if base_ring not in Rings().Commutative():
             raise TypeError("base_ring must be a commutative ring")
-        if character is None and arithgroup.is_Gamma0(group):
+        if character is None and isinstance(group, arithgroup.Gamma0_class):
             character = dirichlet.TrivialCharacter(group.level(), base_ring)
         (self.__group, self.__weight, self.__character,
          self.__sign, self.__base_ring) = (group, weight,
@@ -480,7 +480,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
             sage: B.rank()
             16
 
-        Test that :trac:`7837` is fixed::
+        Test that :issue:`7837` is fixed::
 
             sage: ModularSymbols(Gamma1(4),7).boundary_map().codomain().dimension()
             2
@@ -625,13 +625,13 @@ class BoundarySpace_wtk_g0(BoundarySpace):
         INPUT:
 
 
-        -  ``level`` - int, the level
+        -  ``level`` -- int, the level
 
-        -  ``weight`` - integer weight = 2.
+        -  ``weight`` -- integer weight = 2.
 
-        -  ``sign`` - int, either -1, 0, or 1
+        -  ``sign`` -- int, either -1, 0, or 1
 
-        -  ``F`` - field
+        -  ``F`` -- field
 
 
         EXAMPLES::
@@ -769,13 +769,13 @@ class BoundarySpace_wtk_g1(BoundarySpace):
         INPUT:
 
 
-        -  ``level`` - int, the level
+        -  ``level`` -- int, the level
 
-        -  ``weight`` - int, the weight = 2
+        -  ``weight`` -- int, the weight = 2
 
-        -  ``sign`` - int, either -1, 0, or 1
+        -  ``sign`` -- int, either -1, 0, or 1
 
-        -  ``F`` - base ring
+        -  ``F`` -- base ring
 
         EXAMPLES::
 
@@ -970,13 +970,13 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
         INPUT:
 
 
-        -  ``group`` - congruence subgroup Gamma_H(N).
+        -  ``group`` -- congruence subgroup Gamma_H(N).
 
-        -  ``weight`` - int, the weight = 2
+        -  ``weight`` -- int, the weight = 2
 
-        -  ``sign`` - int, either -1, 0, or 1
+        -  ``sign`` -- int, either -1, 0, or 1
 
-        -  ``F`` - base ring
+        -  ``F`` -- base ring
 
 
         EXAMPLES::
@@ -987,7 +987,7 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
             sage: B == loads(dumps(B))
             True
 
-        A test case from :trac:`6072`::
+        A test case from :issue:`6072`::
 
             sage: ModularSymbols(GammaH(8,[5]), 3).boundary_map()
             Hecke module morphism boundary map defined by the matrix
@@ -1120,7 +1120,7 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
             [1/11],
             -[1/11]]
 
-        Test that :trac:`6072` is fixed. ::
+        Test that :issue:`6072` is fixed. ::
 
             sage: G = GammaH(8,[3])
 
@@ -1139,7 +1139,7 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
             sage: B3.rank()
             0
 
-        Test that :trac:`25268` is fixed::
+        Test that :issue:`25268` is fixed::
 
             sage: G = GammaH(20, [13])
             sage: A = ModularSymbols(G, 3)
@@ -1224,12 +1224,12 @@ class BoundarySpace_wtk_eps(BoundarySpace):
         INPUT:
 
 
-        -  ``eps`` - dirichlet.DirichletCharacter, the
+        -  ``eps`` -- dirichlet.DirichletCharacter, the
            "Nebentypus" character.
 
-        -  ``weight`` - int, the weight = 2
+        -  ``weight`` -- int, the weight = 2
 
-        -  ``sign`` - int, either -1, 0, or 1
+        -  ``sign`` -- int, either -1, 0, or 1
 
 
         EXAMPLES::

@@ -11,7 +11,6 @@ AUTHORS:
 
 - Florian Bouyer
 - Marco Streng
-
 """
 #*****************************************************************************
 #       Copyright (C) 2011, 2012, 2013
@@ -43,17 +42,17 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
 
     INPUT:
 
-    - ``i`` - list or tuple of length 4 containing the four Igusa-Clebsch
+    - ``i`` -- list or tuple of length 4 containing the four Igusa-Clebsch
       invariants: I2,I4,I6,I10.
-    - ``reduced`` - Boolean (default = True) If True, tries to reduce the
+    - ``reduced`` -- Boolean (default = True) If True, tries to reduce the
       polynomial defining the hyperelliptic curve using the function
       :func:`reduce_polynomial` (see the :func:`reduce_polynomial`
       documentation for more details).
-    - ``precision`` - integer (default = None) Which precision for real and
+    - ``precision`` -- integer (default = None) Which precision for real and
       complex numbers should the reduction use. This only affects the
       reduction, not the correctness. If None, the algorithm uses the default
       53 bit precision.
-    - ``algorithm`` - ``'default'`` or ``'magma'``. If set to ``'magma'``, uses
+    - ``algorithm`` -- ``'default'`` or ``'magma'``. If set to ``'magma'``, uses
       Magma to parameterize Mestre's conic (needs Magma to be installed).
 
     OUTPUT:
@@ -108,7 +107,7 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
 
     Mestre's algorithm only works for generic curves of genus two, so another
     algorithm is needed for those curves with extra automorphism. See also
-    :trac:`12199`::
+    :issue:`12199`::
 
         sage: P.<x> = QQ[]
         sage: C = HyperellipticCurve(x^6 + 1)
@@ -121,7 +120,7 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
 
     Igusa-Clebsch invariants also only work over fields of characteristic
     different from 2, 3, and 5, so another algorithm will be needed for fields
-    of those characteristics. See also :trac:`12200`::
+    of those characteristics. See also :issue:`12200`::
 
         sage: P.<x> = GF(3)[]
         sage: HyperellipticCurve(x^6 + x + 1).igusa_clebsch_invariants()
@@ -227,11 +226,11 @@ def Mestre_conic(i, xyz=False, names='u,v,w'):
 
     INPUT:
 
-    - ``i`` - list or tuple of length 4 containing the four Igusa-Clebsch
+    - ``i`` -- list or tuple of length 4 containing the four Igusa-Clebsch
       invariants: I2, I4, I6, I10
-    - ``xyz`` - Boolean (default: False) if True, the algorithm also
-      returns three invariants x,y,z used in Mestre's algorithm
-    - ``names`` (default: 'u,v,w') - the variable names for the conic
+    - ``xyz`` -- Boolean (default: ``False``) if ``True``, the algorithm also
+      returns three invariants `x`,`y`,`z` used in Mestre's algorithm
+    - ``names`` (default: ``'u,v,w'``) -- the variable names for the conic
 
     OUTPUT:
 

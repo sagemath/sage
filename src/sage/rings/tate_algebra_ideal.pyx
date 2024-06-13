@@ -399,7 +399,6 @@ class TateAlgebraIdeal(Ideal_generic):
         return self.ring().ideal(gens)
 
 
-
 # Grobner bases computations
 ############################
 
@@ -411,9 +410,9 @@ def groebner_basis_buchberger(I, prec, py_integral):
 
     INPUT:
 
-    - ``I`` - an ideal in a Tate series algebra
+    - ``I`` -- an ideal in a Tate series algebra
 
-    - ``prec`` - the related precision at which the initial generators
+    - ``prec`` -- the related precision at which the initial generators
       are truncated
 
     - ``integral`` -- a boolean; if ``True``, first compute a
@@ -567,7 +566,7 @@ def groebner_basis_buchberger(I, prec, py_integral):
 
 # F5 algorithms
 
-cdef Jpair(p1, p2) noexcept:
+cdef Jpair(p1, p2):
     r"""
     Return the J-pair of ``p1`` and ``p2``
 
@@ -576,11 +575,6 @@ cdef Jpair(p1, p2) noexcept:
     - ``p1`` -- a pair (signature, series)
 
     - ``p2`` -- a pair (signature, series)
-
-    TESTS::
-
-
-
     """
     cdef TateAlgebraTerm s1, s2
     cdef TateAlgebraElement v1, v2
@@ -605,7 +599,7 @@ cdef Jpair(p1, p2) noexcept:
         return su2, t2*v2
 
 
-cdef TateAlgebraElement regular_reduce(sgb, TateAlgebraTerm s, TateAlgebraElement v, stopval) noexcept:
+cdef TateAlgebraElement regular_reduce(sgb, TateAlgebraTerm s, TateAlgebraElement v, stopval):
     r"""
     Return the result of the regular reduction of the pair ``(s,v)`` by ``sgb``
 
@@ -689,7 +683,7 @@ cdef TateAlgebraElement regular_reduce(sgb, TateAlgebraTerm s, TateAlgebraElemen
     return f
 
 
-cdef TateAlgebraElement reduce(gb, TateAlgebraElement v, stopval) noexcept:
+cdef TateAlgebraElement reduce(gb, TateAlgebraElement v, stopval):
     r"""
     Return the result of the reduction of ``v`` by ``gb``
 
@@ -853,7 +847,7 @@ def groebner_basis_pote(I, prec, verbose=0):
          ...0000000001*x^2*y + ...1210121020 + O(3^10 * <x, y>),
          ...000000001*y^2 + ...210121020*x + O(3^9 * <x, y>)]
 
-    We check that :trac:`30101` is fixed::
+    We check that :issue:`30101` is fixed::
 
         sage: I.groebner_basis(algorithm="PoTe", prec=100)  # indirect doctest
         [...0000000001*x^3 + ...2222222222*y + ...000000000*x^2*y^2 + O(3^99 * <x, y>),
@@ -1099,7 +1093,7 @@ def groebner_basis_vapote(I, prec, verbose=0, interrupt_red_with_val=False, inte
          ...0000000001*x^2*y + ...1210121020 + O(3^10 * <x, y>),
          ...000000001*y^2 + ...210121020*x + O(3^9 * <x, y>)]
 
-    We check that :trac:`30101` is fixed::
+    We check that :issue:`30101` is fixed::
 
         sage: I.groebner_basis(algorithm="VaPoTe", prec=100)  # indirect doctest
         [...0000000001*x^3 + ...2222222222*y + ...000000000*x^2*y^2 + O(3^99 * <x, y>),

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Homset categories
 """
@@ -155,6 +156,7 @@ class HomsetsCategory(FunctorialConstructionCategory):
                 return C.base()
         raise AttributeError("This hom category has no base")
 
+
 class HomsetsOf(HomsetsCategory):
     """
     Default class for homsets of a category.
@@ -218,6 +220,7 @@ class HomsetsOf(HomsetsCategory):
         """
         return [Homsets()]
 
+
 class Homsets(Category_singleton):
     """
     The category of all homsets.
@@ -237,7 +240,7 @@ class Homsets(Category_singleton):
     or equivalently that we only implement locally small categories.
     See :wikipedia:`Category_(mathematics)`.
 
-    :trac:`17364`: every homset category shall be a subcategory of the
+    :issue:`17364`: every homset category shall be a subcategory of the
     category of all homsets::
 
         sage: Schemes().Homsets().is_subcategory(Homsets())

@@ -26,9 +26,9 @@ class WordDatatype_callable(WordDatatype):
         r"""
         INPUT:
 
-        - ``parent`` - a parent
-        -  ``callable`` - a callable defined on ``range(stop=length)``
-        -  ``length`` - (default: ``None``) nonnegative integer or ``None``
+        - ``parent`` -- a parent
+        -  ``callable`` -- a callable defined on ``range(stop=length)``
+        -  ``length`` -- (default: ``None``) nonnegative integer or ``None``
 
         EXAMPLES::
 
@@ -226,7 +226,7 @@ class WordDatatype_callable(WordDatatype):
             ...
             ValueError: for infinite words, start and stop values cannot be negative
 
-        Out of range index (:trac:`8673`)::
+        Out of range index (:issue:`8673`)::
 
             sage: w = Word(lambda n:n^2, length=23)
             sage: w[100]
@@ -322,9 +322,9 @@ class WordDatatype_callable_with_caching(WordDatatype_callable):
         r"""
         INPUT:
 
-        - ``parent`` - a parent
-        -  ``callable`` - a callable defined on ``range(stop=length)``
-        -  ``length`` - (default: ``None``) nonnegative integer or ``None``
+        - ``parent`` -- a parent
+        -  ``callable`` -- a callable defined on ``range(stop=length)``
+        -  ``length`` -- (default: ``None``) nonnegative integer or ``None``
 
         EXAMPLES::
 
@@ -589,9 +589,9 @@ class WordDatatype_iter(WordDatatype):
         r"""
         INPUT:
 
-        - ``parent`` - a parent
-        -  ``iter`` - an iterator
-        -  ``length`` - (default: ``None``) the length of the word
+        - ``parent`` -- a parent
+        -  ``iter`` -- an iterator
+        -  ``length`` -- (default: ``None``) the length of the word
 
         EXAMPLES::
 
@@ -922,9 +922,9 @@ class WordDatatype_iter_with_caching(WordDatatype_iter):
         r"""
         INPUT:
 
-        - ``parent`` - a parent
-        -  ``iter`` - an iterator
-        -  ``length`` - (default: ``None``) the length of the word
+        - ``parent`` -- a parent
+        -  ``iter`` -- an iterator
+        -  ``length`` -- (default: ``None``) the length of the word
 
         EXAMPLES::
 

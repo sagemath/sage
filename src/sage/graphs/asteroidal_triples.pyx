@@ -147,7 +147,8 @@ def is_asteroidal_triple_free(G, certificate=False):
     # module sage.graphs.base.static_sparse_graph
     cdef list int_to_vertex = list(G)
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex,
+                       sort_neighbors=False)
 
     cdef bitset_t seen
     bitset_init(seen, n)
@@ -184,7 +185,7 @@ cdef list is_asteroidal_triple_free_C(uint32_t n,
                                       short_digraph sd,
                                       uint32_t** connected_structure,
                                       uint32_t* waiting_list,
-                                      bitset_t seen) noexcept:
+                                      bitset_t seen):
     """
     INPUT:
 

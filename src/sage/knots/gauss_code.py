@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Helper functions related to Gauss codes of knots
 

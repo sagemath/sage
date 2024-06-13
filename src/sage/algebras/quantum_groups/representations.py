@@ -24,6 +24,7 @@ from sage.algebras.quantum_groups.q_numbers import q_int
 from sage.categories.crystals import Crystals
 from sage.categories.quantum_group_representations import QuantumGroupRepresentations
 
+
 class QuantumGroupRepresentation(CombinatorialFreeModule):
     """
     A representation of a quantum group whose basis is indexed
@@ -125,6 +126,7 @@ class QuantumGroupRepresentation(CombinatorialFreeModule):
         alc = WLR.simple_coroots()
         return self.term( b, self._q**(b.weight().scalar(alc[i]) * self._d[i] * power) )
 
+
 class CyclicRepresentation(QuantumGroupRepresentation):
     """
     A cyclic quantum group representation that is indexed by either a
@@ -206,6 +208,7 @@ class CyclicRepresentation(QuantumGroupRepresentation):
         except (TypeError, AttributeError):
             mg = self.basis().keys().module_generators[0]
         return self.monomial(mg)
+
 
 class AdjointRepresentation(CyclicRepresentation):
     r"""
@@ -460,6 +463,7 @@ class AdjointRepresentation(CyclicRepresentation):
                                           for j in C.index_set()
                                           if A[I[i],I[j]] < 0 and j in self._zero_elts)
         return self.term(x, q_int(x.epsilon(i), self._q**self._d[i]))
+
 
 class MinusculeRepresentation(CyclicRepresentation):
     r"""

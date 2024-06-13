@@ -11,7 +11,6 @@ AUTHORS:
 - Travis Scrimshaw (2016): review tweaks
 - Marius Gerbershagen (2022) : skip simplification of expressions with a single
   number or symbolic variable
-
 """
 
 # *****************************************************************************
@@ -949,7 +948,7 @@ class ExpressionNice(Expression):
             sage: ExpressionNice(fun)
             y*(z - d(h)/dz)^2 + x*d^2(f)/dxdy
 
-        Check that :trac:`33399` is fixed::
+        Check that :issue:`33399` is fixed::
 
             sage: ExpressionNice(function('f')(x+y, x-y).diff(y))
             d(f)/d(x + y) - d(f)/d(x - y)
@@ -1047,7 +1046,7 @@ class ExpressionNice(Expression):
             sage: latex(ExpressionNice(fun))
             \frac{\partial\,{\cal F}}{\partial y}
 
-        Check that :trac:`33399` is fixed::
+        Check that :issue:`33399` is fixed::
 
             sage: latex(ExpressionNice(function('f')(x+y, x-y).diff(y)))
             \frac{\partial\,f}{\partial \left( x + y \right)}

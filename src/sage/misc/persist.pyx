@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 # cython: old_style_globals=True
 # The old_style_globals directive is important for load() to work correctly.
 # However, this should be removed in favor of user_globals; see
@@ -75,7 +76,7 @@ already_pickled = { }
 already_unpickled = { }
 
 
-cdef _normalize_filename(s) noexcept:
+cdef _normalize_filename(s):
     """
     Append the .sobj extension to a filename if it doesn't already have it.
     """
@@ -269,7 +270,7 @@ def save(obj, filename, compress=True, **kwargs):
 
     TESTS:
 
-    Check that :trac:`11577` is fixed::
+    Check that :issue:`11577` is fixed::
 
         sage: import tempfile
         sage: with tempfile.NamedTemporaryFile(suffix=".bar") as f:
@@ -729,7 +730,7 @@ class SagePickler(_BasePickler):
     - Further arguments are passed to :func:`pickle.load`, where in Python-3
       Sage sets the default ``encoding='latin1'``. This is essential to make
       pickles readable in Python-3 that were created in Python-2. See
-      :trac:`28444` for details.
+      :issue:`28444` for details.
 
     .. _pickling and unpickling external objects: https://docs.python.org/2.7/library/pickle.html#pickling-and-unpickling-external-objects
 
@@ -780,7 +781,7 @@ class SagePickler(_BasePickler):
         sage: type(g), g.bar
         (<class '__main__.Foo'>, '\x80\x07')
 
-    The following line demonstrates what would happen without :trac:`28444`::
+    The following line demonstrates what would happen without :issue:`28444`::
 
         sage: loads(b'x\x9ck`J\x8e\x8f\xcfM\xcc\xcc\x8b\x8f\xe7r\xcb\xcf\xe7*d\x0cej`/dj\r*d\xd6\x03\x00\x89\xc5\x08{', encoding='ASCII')
         Traceback (most recent call last):
@@ -806,14 +807,14 @@ class SagePickler(_BasePickler):
 
         INPUT:
 
-        - ``obj`` - the object to pickle.
+        - ``obj`` -- the object to pickle.
 
-        - ``kwargs`` - keyword arguments passed to the
+        - ``kwargs`` -- keyword arguments passed to the
           :class:`sage.misc.persist.SagePickler` constructor.
 
         OUTPUT:
 
-        - ``pickle`` - the pickled object as ``bytes``.
+        - ``pickle`` -- the pickled object as ``bytes``.
 
         EXAMPLES::
 
@@ -892,14 +893,14 @@ class SageUnpickler(_BaseUnpickler):
 
         INPUT:
 
-        - ``data`` - the pickle data as ``bytes``.
+        - ``data`` -- the pickle data as ``bytes``.
 
-        - ``kwargs`` - keyword arguments passed to the
+        - ``kwargs`` -- keyword arguments passed to the
           :class:`sage.misc.persist.SageUnpickler` constructor.
 
         OUTPUT:
 
-        - ``obj`` - the object that was serialized to the given pickle data.
+        - ``obj`` -- the object that was serialized to the given pickle data.
 
 
         EXAMPLES::
@@ -950,7 +951,7 @@ def loads(s, compress=True, **kwargs):
     The next example demonstrates that Sage strives to avoid data loss
     in the transition from Python-2 to Python-3. The problem is that Python-3
     by default would not be able to unpickle a non-ASCII Python-2 string appearing
-    in a pickle. See :trac:`28444` for details.
+    in a pickle. See :issue:`28444` for details.
     ::
 
         sage: class Foo():
@@ -970,7 +971,7 @@ def loads(s, compress=True, **kwargs):
         sage: type(g), g.bar
         (<class '__main__.Foo'>, '\x80\x07')
 
-    The following line demonstrates what would happen without :trac:`28444`::
+    The following line demonstrates what would happen without :issue:`28444`::
 
         sage: loads(b'x\x9ck`J\x8e\x8f\xcfM\xcc\xcc\x8b\x8f\xe7r\xcb\xcf\xe7*d\x0cej`/dj\r*d\xd6\x03\x00\x89\xc5\x08{', encoding='ASCII')
         Traceback (most recent call last):

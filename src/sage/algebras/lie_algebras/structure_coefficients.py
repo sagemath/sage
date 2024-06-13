@@ -31,6 +31,7 @@ from sage.algebras.lie_algebras.lie_algebra import FinitelyGeneratedLieAlgebra
 from sage.modules.free_module import FreeModule
 from sage.sets.family import Family
 
+
 class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGenerators):
     r"""
     A Lie algebra with a set of specified structure coefficients.
@@ -133,7 +134,7 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
             from sage.algebras.lie_algebras.abelian import AbelianLieAlgebra
             return AbelianLieAlgebra(R, names, index_set, **kwds)
 
-        if (names is None and len(index_set) <= 1) or len(names) <= 1:
+        if (names is None and len(index_set) <= 1) or (names is not None and len(names) <= 1):
             from sage.algebras.lie_algebras.abelian import AbelianLieAlgebra
             return AbelianLieAlgebra(R, names, index_set, **kwds)
 
@@ -255,7 +256,7 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
 
         TESTS:
 
-        Check that :trac:`23373` is fixed::
+        Check that :issue:`23373` is fixed::
 
             sage: L = lie_algebras.sl(QQ, 2)
             sage: sorted(L.structure_coefficients(True), key=str)

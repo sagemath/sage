@@ -195,7 +195,7 @@ class UniqueSimplicialComplex(SimplicialComplex, UniqueRepresentation):
     """
     This combines :class:`SimplicialComplex` and
     :class:`UniqueRepresentation`. It is intended to be used to make
-    standard examples of simplicial complexes unique. See :trac:`13566`.
+    standard examples of simplicial complexes unique. See :issue:`13566`.
 
     INPUT:
 
@@ -437,7 +437,7 @@ def SurfaceOfGenus(g, orientable=True):
 
     -  ``g`` -- a non-negative integer.  The desired genus
 
-    -  ``orientable`` -- boolean (optional, default ``True``). If
+    -  ``orientable`` -- boolean (default: ``True``). If
        ``True``, return an orientable surface, and if ``False``,
        return a non-orientable surface.
 
@@ -1243,7 +1243,7 @@ def RandomComplex(n, d, p=0.5):
     - ``d`` -- dimension of the complex
 
     -  ``p`` -- floating point number between 0 and 1
-       (optional, default 0.5)
+       (default: 0.5)
 
     A random `d`-dimensional simplicial complex on `n` vertices,
     as defined for example by Meshulam and Wallach [MW2009]_, is

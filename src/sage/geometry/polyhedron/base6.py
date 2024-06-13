@@ -174,7 +174,7 @@ class Polyhedron_base6(Polyhedron_base5):
         - ``position`` -- positive number; the position to take the projection
           point in Schlegel diagrams.
 
-        - ``orthonormal`` -- Boolean (default: True); whether to use
+        - ``orthonormal`` -- Boolean (default: ``True``); whether to use
           orthonormal projections.
 
         - ``**kwds`` -- optional keyword parameters that are passed to
@@ -375,7 +375,7 @@ class Polyhedron_base6(Polyhedron_base5):
 
         TESTS:
 
-        Check that :trac:`30015` is fixed::
+        Check that :issue:`30015` is fixed::
 
             sage: fcube = polytopes.hypercube(4)
             sage: tfcube = fcube.face_truncation(fcube.faces(0)[0])
@@ -386,7 +386,7 @@ class Polyhedron_base6(Polyhedron_base5):
             ....:     projected_vertices = [sp.transformed_coords[i] for i in indices]
             ....:     assert Polyhedron(projected_vertices).dim() == 2
 
-        Check that :trac:`31802` is fixed::
+        Check that :issue:`31802` is fixed::
 
             sage: # needs sage.plot
             sage: halfspace = Polyhedron(rays=[(0, 0, 1)], lines=[(1, 0, 0), (0, 1, 0)])
@@ -495,20 +495,20 @@ class Polyhedron_base6(Polyhedron_base5):
 
         INPUT:
 
-        - ``view`` - list (default: [0,0,1]) representing the rotation axis (see note below).
-        - ``angle`` - integer (default: 0) angle of rotation in degree from 0 to 360 (see note
+        - ``view`` -- list (default: [0,0,1]) representing the rotation axis (see note below).
+        - ``angle`` -- integer (default: 0) angle of rotation in degree from 0 to 360 (see note
           below).
-        - ``scale`` - integer (default: 1) specifying the scaling of the tikz picture.
-        - ``edge_color`` - string (default: 'blue!95!black') representing colors which tikz
+        - ``scale`` -- integer (default: 1) specifying the scaling of the tikz picture.
+        - ``edge_color`` -- string (default: 'blue!95!black') representing colors which tikz
           recognize.
-        - ``facet_color`` - string (default: 'blue!95!black') representing colors which tikz
+        - ``facet_color`` -- string (default: 'blue!95!black') representing colors which tikz
           recognize.
-        - ``vertex_color`` - string (default: 'green') representing colors which tikz
+        - ``vertex_color`` -- string (default: 'green') representing colors which tikz
           recognize.
-        - ``opacity`` - real number (default: 0.8) between 0 and 1 giving the opacity of
+        - ``opacity`` -- real number (default: 0.8) between 0 and 1 giving the opacity of
           the front facets.
-        - ``axis`` - Boolean (default: False) draw the axes at the origin or not.
-        - ``output_type`` - string (default: ``None``), valid values
+        - ``axis`` -- Boolean (default: ``False``) draw the axes at the origin or not.
+        - ``output_type`` -- string (default: ``None``), valid values
           are ``None`` (deprecated), ``'LatexExpr'`` and ``'TikzPicture'``,
           whether to return a LatexExpr object (which inherits from Python
           str) or a ``TikzPicture`` object from module
@@ -700,7 +700,7 @@ class Polyhedron_base6(Polyhedron_base5):
             ...
             ValueError: not a polytope
 
-        Check that :trac:`29073` is fixed::
+        Check that :issue:`29073` is fixed::
 
             sage: P = polytopes.icosahedron(exact=False)                                # needs sage.groups
             sage: sum(P.gale_transform()).norm() < 1e-15                                # needs sage.groups
@@ -732,7 +732,7 @@ class Polyhedron_base6(Polyhedron_base5):
                 self.gale_transform()
             return
 
-        # Check :trac:`29073`.
+        # Check :issue:`29073`.
         if not self.base_ring().is_exact() and self.ambient_dim() > 0:
             g = self.gale_transform()
             tester.assertTrue(sum(g).norm() < 1e-10 or sum(g).norm()/matrix(g).norm() < 1e-13)
@@ -856,7 +856,7 @@ class Polyhedron_base6(Polyhedron_base5):
             sage: len([x for x in schlegel_edges if x[0][0] > 0])
             8
 
-        The Schlegel projection preserves the convexity of facets, see :trac:`30015`::
+        The Schlegel projection preserves the convexity of facets, see :issue:`30015`::
 
             sage: fcube = polytopes.hypercube(4)
             sage: tfcube = fcube.face_truncation(fcube.faces(0)[0])
@@ -934,7 +934,7 @@ class Polyhedron_base6(Polyhedron_base5):
 
         TESTS:
 
-        Check that :trac:`23355` is fixed::
+        Check that :issue:`23355` is fixed::
 
             sage: P = Polyhedron([[7]]); P
             A 0-dimensional polyhedron in ZZ^1 defined as the convex hull of 1 vertex
@@ -945,7 +945,7 @@ class Polyhedron_base6(Polyhedron_base5):
             sage: P.affine_hull_projection(orthogonal='True')
             A 0-dimensional polyhedron in QQ^0 defined as the convex hull of 1 vertex
 
-        Check that :trac:`24047` is fixed::
+        Check that :issue:`24047` is fixed::
 
             sage: P1 = Polyhedron(vertices=[[-1, 1], [0, -1], [0, 0], [-1, -1]])
             sage: P2 = Polyhedron(vertices=[[1, 1], [1, -1], [0, -1], [0, 0]])
@@ -966,7 +966,7 @@ class Polyhedron_base6(Polyhedron_base5):
             ....:                          extend=True).backend()
             'field'
 
-        Check that :trac:`29116` is fixed::
+        Check that :issue:`29116` is fixed::
 
             sage: V = [[1, 0, -1, 0, 0],
             ....:      [1, 0, 0, -1, 0],
@@ -1548,13 +1548,16 @@ class Polyhedron_base6(Polyhedron_base5):
                                                          orthogonal=True,
                                                          extend=True))
             if AA is not None:
-                data_sets.append(self.affine_hull_projection(return_all_data=True,
-                                                             orthonormal=True,
-                                                             extend=True))
-                data_sets.append(self.affine_hull_projection(return_all_data=True,
-                                                             orthonormal=True,
-                                                             extend=True,
-                                                             minimal=True))
+                try:
+                    data_sets.append(self.affine_hull_projection(return_all_data=True,
+                                                                 orthonormal=True,
+                                                                 extend=True))
+                    data_sets.append(self.affine_hull_projection(return_all_data=True,
+                                                                 orthonormal=True,
+                                                                 extend=True,
+                                                                 minimal=True))
+                except ModuleNotFoundError:
+                    pass
 
         for i, data in enumerate(data_sets):
             if verbose:

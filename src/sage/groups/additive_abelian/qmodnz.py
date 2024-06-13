@@ -51,12 +51,10 @@ class QmodnZ(Parent, UniqueRepresentation):
 
     #. ``QQ/(n*ZZ)``, where
 
-        - `n` -- an integer (including 0 or negative integers).
+        - `n` -- integer (including 0 or negative integers).
 
 
-    OUTPUT:
-
-    The abelian group `\Q/n\Z`.
+    OUTPUT: the abelian group `\Q/n\Z`
 
     EXAMPLES::
 

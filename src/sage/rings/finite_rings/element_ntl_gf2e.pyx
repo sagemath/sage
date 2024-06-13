@@ -96,7 +96,7 @@ cdef int late_import() except -1:
 cdef extern from "arpa/inet.h":
     unsigned int htonl(unsigned int)
 
-cdef little_endian() noexcept:
+cdef little_endian():
     return htonl(1) != 1
 
 cdef unsigned int switch_endianess(unsigned int i) noexcept:
@@ -114,7 +114,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
     It's modeled on
     :class:`~sage.rings.finite_rings.integer_mod.NativeIntStruct`,
     but includes many functions that were previously included in
-    the parent (see :trac:`12062`).
+    the parent (see :issue:`12062`).
     """
     def __cinit__(self, parent, Py_ssize_t k, modulus):
         """
@@ -163,11 +163,11 @@ cdef class Cache_ntl_gf2e(Cache_base):
 
     def _doctest_for_5340(self):
         r"""
-        Every bug fix should have a doctest.  But :trac:`5340` only happens
+        Every bug fix should have a doctest.  But :issue:`5340` only happens
         when a garbage collection happens between restoring the modulus and
         using it, so it can't be reliably doctested using any of the
         existing Cython functions in this module.  The sole purpose of
-        this method is to doctest the fix for :trac:`5340`.
+        this method is to doctest the fix for :issue:`5340`.
 
         EXAMPLES::
 
@@ -205,7 +205,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
         mod_poly = GF2XModulus_GF2X(modulus)
         print(ccrepr(mod_poly))
 
-    cdef FiniteField_ntl_gf2eElement _new(self) noexcept:
+    cdef FiniteField_ntl_gf2eElement _new(self):
         """
         Return a new element in ``self``. Use this method to construct
         'empty' elements.
@@ -255,7 +255,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
 
         TESTS:
 
-        We check that :trac:`12584` is fixed::
+        We check that :issue:`12584` is fixed::
 
             sage: k(2^63)
             0
@@ -377,7 +377,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
 
         raise ValueError("Cannot coerce element %s to this field." % e)
 
-    cpdef FiniteField_ntl_gf2eElement fetch_int(self, number) noexcept:
+    cpdef FiniteField_ntl_gf2eElement fetch_int(self, number):
         r"""
         Given an integer less than `p^n` with base `2`
         representation `a_0 + a_1 \cdot 2 + \cdots + a_k 2^k`, this returns
@@ -396,7 +396,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
 
         TESTS:
 
-        We test that :trac:`17027` is fixed::
+        We test that :issue:`17027` is fixed::
 
             sage: K.<a> = GF(2^16)
             sage: K._cache.fetch_int(0r)
@@ -511,7 +511,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             self._parent = parent
             (<Cache_ntl_gf2e>self._parent._cache).F.restore()
 
-    cdef FiniteField_ntl_gf2eElement _new(FiniteField_ntl_gf2eElement self) noexcept:
+    cdef FiniteField_ntl_gf2eElement _new(FiniteField_ntl_gf2eElement self):
         cdef FiniteField_ntl_gf2eElement y
         (<Cache_ntl_gf2e>self._parent._cache).F.restore()
         y = FiniteField_ntl_gf2eElement.__new__(FiniteField_ntl_gf2eElement)
@@ -643,7 +643,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             sage: a.sqrt()^2 == a
             True
 
-        This failed before :trac:`4899`::
+        This failed before :issue:`4899`::
 
             sage: GF(2^16,'a')(1).sqrt()
             1
@@ -657,7 +657,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         else:
             return a
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         """
         Add two elements.
 
@@ -673,7 +673,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         GF2E_add(r.x, (<FiniteField_ntl_gf2eElement>self).x, (<FiniteField_ntl_gf2eElement>right).x)
         return r
 
-    cpdef _mul_(self, right) noexcept:
+    cpdef _mul_(self, right):
         """
         Multiply two elements.
 
@@ -689,7 +689,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         GF2E_mul(r.x, (<FiniteField_ntl_gf2eElement>self).x, (<FiniteField_ntl_gf2eElement>right).x)
         return r
 
-    cpdef _div_(self, other) noexcept:
+    cpdef _div_(self, other):
         """
         Divide two elements.
 
@@ -712,7 +712,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         GF2E_div(r.x, self.x, o.x)
         return r
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         """
         Subtract two elements.
 
@@ -761,7 +761,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         cdef FiniteField_ntl_gf2eElement o = self._parent._cache._one_element
         return o._div_(self)
 
-    cdef _pow_long(self, long n) noexcept:
+    cdef _pow_long(self, long n):
         """
         EXAMPLES::
 
@@ -800,7 +800,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         GF2E_power(r.x, self.x, n)
         return r
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         Comparison of finite field elements.
 
@@ -1261,7 +1261,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             a^8 + a^7 + a^4 + a + 1
             a^8 + a^7 + a^4 + a + 1
 
-        Big instances used to take a very long time before :trac:`32842`::
+        Big instances used to take a very long time before :issue:`32842`::
 
             sage: g = GF(2^61).gen()
             sage: g.log(g^7)
@@ -1313,6 +1313,7 @@ def unpickleFiniteField_ntl_gf2eElement(parent, elem):
         True
     """
     return parent(elem)
+
 
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.rings.finite_field_ntl_gf2e', 'unpickleFiniteField_ntl_gf2eElement', unpickleFiniteField_ntl_gf2eElement)

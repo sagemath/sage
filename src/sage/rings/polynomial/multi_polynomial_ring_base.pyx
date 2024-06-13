@@ -56,7 +56,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
 
         TESTS:
 
-        Check that containment works correctly (:trac:`10355`)::
+        Check that containment works correctly (:issue:`10355`)::
 
             sage: A1.<a> = PolynomialRing(QQ)
             sage: A2.<a,b> = PolynomialRing(QQ)
@@ -65,7 +65,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
             sage: A1(a) in A2
             True
 
-        Check that :trac:`26958` is fixed::
+        Check that :issue:`26958` is fixed::
 
             sage: from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomialRing_libsingular            # needs sage.libs.singular
             sage: class Foo(MPolynomialRing_libsingular):                                                               # needs sage.libs.singular
@@ -555,7 +555,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
         else:
             return self._generic_coerce_map(self.base_ring())
 
-    cdef _coerce_c_impl(self, x) noexcept:
+    cdef _coerce_c_impl(self, x):
         """
         Return the canonical coercion of x to this multivariate
         polynomial ring, if one is defined, or raise a TypeError.
@@ -786,8 +786,8 @@ cdef class MPolynomialRing_base(CommutativeRing):
 
         INPUT:
 
-        ``gap`` -- (optional GAP instance) Interface to which the
-                   string is addressed.
+        - ``gap`` -- (optional GAP instance) Interface to which the
+          string is addressed.
 
         NOTE:
 
@@ -1224,7 +1224,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
         TESTS:
 
         Random ring elements should live in the ring. We check the degree-
-        zero case for :trac:`28855`, but the same should hold generally::
+        zero case for :issue:`28855`, but the same should hold generally::
 
             sage: R = PolynomialRing(QQ, 'X,Y')
             sage: R.random_element(degree=0).parent() == R
@@ -1551,8 +1551,8 @@ cdef class MPolynomialRing_base(CommutativeRing):
 
         kwds:
 
-        - ``sparse`` -- boolean (optional - default: ``False``)
-          if ``True``, the function creates sparse matrices.
+        - ``sparse`` -- boolean (default: ``False``); if ``True``, the function
+          creates sparse matrices.
 
         OUTPUT:
 

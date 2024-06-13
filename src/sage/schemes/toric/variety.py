@@ -351,6 +351,9 @@ def is_ToricVariety(x):
 
         sage: from sage.schemes.toric.variety import is_ToricVariety
         sage: is_ToricVariety(1)
+        doctest:warning...
+        DeprecationWarning: The function is_ToricVariety is deprecated; use 'isinstance(..., ToricVariety_field)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         False
         sage: fan = FaceFan(lattice_polytope.cross_polytope(2))
         sage: P = ToricVariety(fan)
@@ -361,6 +364,8 @@ def is_ToricVariety(x):
         sage: is_ToricVariety(ProjectiveSpace(2))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_ToricVariety is deprecated; use 'isinstance(..., ToricVariety_field)' instead.")
     return isinstance(x, ToricVariety_field)
 
 
@@ -666,7 +671,8 @@ class ToricVariety_field(AmbientSpace):
         OUTPUT:
 
         - ``True`` if ``coordinates`` do define a valid point of ``self``,
-          otherwise a ``TypeError`` or ``ValueError`` exception is raised.
+          otherwise a :class:`TypeError` or :class:`ValueError` exception
+          is raised.
 
         TESTS::
 
@@ -927,7 +933,7 @@ class ToricVariety_field(AmbientSpace):
 
         - ``polynomials`` (the input parameter without any modifications) if
           ``polynomials`` do define valid polynomial functions on ``self``,
-          otherwise a ``ValueError`` exception is raised.
+          otherwise a :class:`ValueError` exception is raised.
 
         TESTS:
 
@@ -1102,7 +1108,7 @@ class ToricVariety_field(AmbientSpace):
         - :class:`scheme morphism
           <sage.schemes.generic.morphism.SchemeMorphism_polynomial_toric_variety>`
           if the default embedding morphism was defined for ``self``,
-          otherwise a ``ValueError`` exception is raised.
+          otherwise a :class:`ValueError` exception is raised.
 
         EXAMPLES::
 
@@ -1182,7 +1188,7 @@ class ToricVariety_field(AmbientSpace):
             sage: P1xP1.inject_coefficients()
             Defining a, b
 
-        We check that we can use names ``a`` and ``b``, :trac:`10498` is fixed::
+        We check that we can use names ``a`` and ``b``, :issue:`10498` is fixed::
 
             sage: a + b
             a + b
@@ -1196,7 +1202,7 @@ class ToricVariety_field(AmbientSpace):
             while True:
                 scope = sys._getframe(depth).f_globals
                 if (scope["__name__"] == "__main__"
-                    and scope.get("__package__", None) is None):
+                        and scope.get("__package__", None) is None):
                     break
                 depth += 1
         try:
@@ -1216,7 +1222,7 @@ class ToricVariety_field(AmbientSpace):
         this method will return the dimension of the
         largest-dimensional component.
 
-        Returns -1 if the toric variety is smooth.
+        This returns `-1` if the toric variety is smooth.
 
         EXAMPLES::
 
@@ -1227,7 +1233,7 @@ class ToricVariety_field(AmbientSpace):
             sage: toric_varieties.P2().dimension_singularities()
             -1
         """
-        for codim in range(self.dimension()+1):
+        for codim in range(self.dimension() + 1):
             if any(not cone.is_smooth() for cone in self.fan(codim)):
                 return self.dimension() - codim
         return -1
@@ -1291,7 +1297,7 @@ class ToricVariety_field(AmbientSpace):
             from sage.modules.free_module import FreeModule
             rays = fan.rays() + fan.virtual_rays()
             degrees_group = FreeModule(ZZ, len(rays)).quotient(
-                                                        rays.matrix().columns())
+                rays.matrix().columns())
             self._homogeneous_degrees_group = degrees_group
         degrees_group = self._homogeneous_degrees_group
         S = self.coordinate_ring()
@@ -1303,9 +1309,9 @@ class ToricVariety_field(AmbientSpace):
         monomials = polynomial.monomials()
         if not monomials:
             return True
-        degree = degrees_group(vector(ZZ,monomials[0].degrees()))
+        degree = degrees_group(vector(ZZ, monomials[0].degrees()))
         for monomial in monomials:
-            if degrees_group(vector(ZZ,monomial.degrees())) != degree:
+            if degrees_group(vector(ZZ, monomial.degrees())) != degree:
                 return False
         return True
 
@@ -1315,7 +1321,7 @@ class ToricVariety_field(AmbientSpace):
 
         INPUT:
 
-        - ``another`` - :class:`toric variety <ToricVariety_field>`.
+        - ``another`` -- :class:`toric variety <ToricVariety_field>`.
 
         OUTPUT:
 
@@ -1338,7 +1344,7 @@ class ToricVariety_field(AmbientSpace):
         """
         if self is another:
             return True
-        if not is_ToricVariety(another):
+        if not isinstance(another, ToricVariety_field):
             raise TypeError(
                 "only another toric variety can be checked for isomorphism; "
                 "got %s" % another)
@@ -1464,12 +1470,12 @@ class ToricVariety_field(AmbientSpace):
         from sage.schemes.toric.divisor import \
             ToricRationalDivisorClassGroup_basis_lattice
         L = ToricRationalDivisorClassGroup_basis_lattice(
-                                                self.rational_class_group())
+            self.rational_class_group())
         n = fan.nrays()
         K = None
         for cone in fan:
             sigma = Cone([GT[i] for i in range(n)
-                                if i not in cone.ambient_ray_indices()],
+                          if i not in cone.ambient_ray_indices()],
                          lattice=L)
             K = K.intersection(sigma) if K is not None else sigma
         return K
@@ -1477,7 +1483,7 @@ class ToricVariety_field(AmbientSpace):
     @cached_method
     def Mori_cone(self):
         r"""
-        Returns the Mori cone of ``self``.
+        Return the Mori cone of ``self``.
 
         OUTPUT: :class:`cone <sage.geometry.cone.ConvexRationalPolyhedralCone>`.
 
@@ -1515,7 +1521,7 @@ class ToricVariety_field(AmbientSpace):
         # so far this is not the case.
         rays = (ray * self._fan.Gale_transform()
                 for ray in self.Kaehler_cone().dual().rays())
-        return Cone(rays, lattice=ZZ**(self._fan.nrays()+1))
+        return Cone(rays, lattice=ZZ**(self._fan.nrays() + 1))
 
     def plot(self, **options):
         r"""
@@ -1604,7 +1610,7 @@ class ToricVariety_field(AmbientSpace):
             (( 0 | 0 | 1 ), ( 0 | 1 | 0 ), ( 1 | 0 | 0 ))
         """
         from sage.schemes.toric.chow_group import ChowGroup
-        return ChowGroup(self,base_ring)
+        return ChowGroup(self, base_ring)
 
     def cartesian_product(self, other,
                           coordinate_names=None, coordinate_indices=None):
@@ -1927,8 +1933,8 @@ class ToricVariety_field(AmbientSpace):
         TESTS:
 
         The cohomology ring is a circular reference that is
-        potentially troublesome on unpickling, see :trac:`15050`
-        and :trac:`15149` ::
+        potentially troublesome on unpickling, see :issue:`15050`
+        and :issue:`15149` ::
 
             sage: # needs sage.libs.singular
             sage: variety = toric_varieties.P(1)
@@ -2001,7 +2007,7 @@ class ToricVariety_field(AmbientSpace):
         A :class:`CohomologyClass`. If it exists, it is the class of
         the (properly normalized) volume form, that is, it is the
         Poincaré dual of a single point. If it does not exist, a
-        ``ValueError`` is raised.
+        :class:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -2177,11 +2183,9 @@ class ToricVariety_field(AmbientSpace):
             True
         """
         assert self.is_orbifold(), "Requires the toric variety to be an orbifold."
-        c = prod([ 1+self.cohomology_ring().gen(i) for i in range(self._fan.nrays()) ])
-        if deg is None:
-            return c
-        else:
-            return c.part_of_degree(deg)
+        c = prod([1 + self.cohomology_ring().gen(i)
+                  for i in range(self._fan.nrays())])
+        return c if deg is None else c.part_of_degree(deg)
 
     @cached_method
     def Chern_character(self, deg=None):
@@ -2218,12 +2222,9 @@ class ToricVariety_field(AmbientSpace):
         """
         assert self.is_orbifold(), "Requires the toric variety to be an orbifold."
         n_rels = self._fan.nrays() - self.dimension()
-        ch = sum([ self.cohomology_ring().gen(i).exp()
-                   for i in range(self._fan.nrays()) ]) - n_rels
-        if deg is None:
-            return ch
-        else:
-            return ch.part_of_degree(deg)
+        ch = sum([self.cohomology_ring().gen(i).exp()
+                  for i in range(self._fan.nrays())]) - n_rels
+        return ch if deg is None else ch.part_of_degree(deg)
 
     @cached_method
     def Todd_class(self, deg=None):
@@ -2265,17 +2266,14 @@ class ToricVariety_field(AmbientSpace):
                 c2 = self.Chern_class(2)
                 Td += QQ.one() / 12 * (c1**2 + c2)
                 if dim >= 3:
-                    Td += QQ.one() / 24 * c1*c2
+                    Td += QQ.one() / 24 * c1 * c2
                     if dim >= 4:
                         c3 = self.Chern_class(3)
                         c4 = self.Chern_class(4)
                         Td += -QQ.one() / 720 * (c1**4 - 4*c1**2*c2 - 3*c2**2 - c1*c3 + c4)
                         if dim >= 5:
                             raise NotImplementedError('Todd class is currently only implemented up to degree 4')
-        if deg is None:
-            return Td
-        else:
-            return Td.part_of_degree(deg)
+        return Td if deg is None else Td.part_of_degree(deg)
 
     c = Chern_class
     ch = Chern_character
@@ -2308,7 +2306,7 @@ class ToricVariety_field(AmbientSpace):
             else:
                 chi = 0
                 H = self.cohomology_basis()
-                for d in range(self.dimension()+1):
+                for d in range(self.dimension() + 1):
                     chi += (-1)**d * len(H[d])
             self._chi = chi
         return self._chi
@@ -2317,7 +2315,7 @@ class ToricVariety_field(AmbientSpace):
 
     def K(self):
         r"""
-        Returns the canonical divisor of the toric variety.
+        Return the canonical divisor of the toric variety.
 
         EXAMPLES:
 
@@ -2331,7 +2329,7 @@ class ToricVariety_field(AmbientSpace):
             6
         """
         from sage.schemes.toric.divisor import ToricDivisor
-        return ToricDivisor(self, [-1]*self._fan.nrays())
+        return ToricDivisor(self, [-1] * self._fan.nrays())
 
     def divisor(self, arg, base_ring=None, check=True, reduce=True):
         r"""
@@ -2376,7 +2374,7 @@ class ToricVariety_field(AmbientSpace):
 
         TESTS:
 
-        We check that the issue :trac:`12812` is resolved::
+        We check that the issue :issue:`12812` is resolved::
 
             sage: sum(dP6.divisor(i) for i in range(3))
             V(x) + V(u) + V(y)
@@ -2632,8 +2630,8 @@ class ToricVariety_field(AmbientSpace):
           This quotient lattice is the ambient lattice for the fan of the orbit
           closure corresponding to ``cone``.
 
-        If ``x`` is a cone not in the star of ``cone``, an ``IndexError`` is
-        raised.
+        If ``x`` is a cone not in the star of ``cone``, an :class:`IndexError`
+        is raised.
 
         See :meth:`orbit_closure` for more details.
 
@@ -2667,7 +2665,7 @@ class ToricVariety_field(AmbientSpace):
         # TODO: make the following work nicely.
         # if x in cone.lattice():
         # return quot(x)
-        # assert is_Cone(x)
+        # assert x is ConvexRationalPolyhedralCone object
         # return Cone(x.rays(), lattice=quot)
 
     def orbit_closure(self, cone):
@@ -2719,11 +2717,10 @@ class ToricVariety_field(AmbientSpace):
             sage: A2.orbit_closure(A2.fan(2)[0])
             0-d affine toric variety
         """
-        cone = self.fan().embed(cone)
-        cones = []
-        for star_cone in cone.star_generators():
-            cones.append( self._orbit_closure_projection(cone, star_cone) )
         from sage.geometry.fan import discard_faces
+        cone = self.fan().embed(cone)
+        cones = [self._orbit_closure_projection(cone, star_cone)
+                 for star_cone in cone.star_generators()]
         fan = Fan(discard_faces(cones), check=False)
         orbit_closure = ToricVariety(fan)
 
@@ -2809,7 +2806,7 @@ class ToricVariety_field(AmbientSpace):
         antiK = -self.K()
         fan_rays = self.fan().rays()
         roots = [m for m in antiK.sections()
-                 if [ray*m for ray in fan_rays].count(-1) == 1]
+                 if [ray * m for ray in fan_rays].count(-1) == 1]
         return tuple(roots)
 
     def Aut_dimension(self):
@@ -2984,7 +2981,7 @@ def normalize_names(names=None, ngens=None, prefix=None, indices=None,
             names = list(names)
         except TypeError:
             raise TypeError(
-                    "names must be a string or a list or tuple of them")
+                "names must be a string or a list or tuple of them")
         for name in names:
             if not isinstance(name, str):
                 raise TypeError(
@@ -3137,7 +3134,7 @@ class CohomologyRing(QuotientRing_generic, UniqueRepresentation):
         """
         return fr'H^\ast\left({self._variety._latex_()},{latex(QQ)}\right)'
 
-    def _element_constructor_(self,x):
+    def _element_constructor_(self, x):
         r"""
         Construct a :class:`CohomologyClass`.
 
@@ -3260,7 +3257,8 @@ class CohomologyRing(QuotientRing_generic, UniqueRepresentation):
             ([z], [z], [z])
         """
         if "_gens" not in self.__dict__:
-            self._gens = tuple( self.gen(i) for i in range(self._variety.fan().nrays()) )
+            self._gens = tuple(self.gen(i)
+                               for i in range(self._variety.fan().nrays()))
         return self._gens
 
     def gen(self, i):
@@ -3469,7 +3467,7 @@ class CohomologyClass(QuotientRingElement):
         OUTPUT:
 
         The cohomology class `\exp(` ``self`` `)` if the constant part
-        vanishes, otherwise a ``ValueError`` is raised.
+        vanishes, otherwise a :class:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -3484,6 +3482,6 @@ class CohomologyClass(QuotientRingElement):
         if not self.part_of_degree(0).is_zero():
             raise ValueError('must not have a constant part')
         exp_x = self.parent().one()
-        for d in range(1, self.parent()._variety.dimension()+1):
+        for d in range(1, self.parent()._variety.dimension() + 1):
             exp_x += self**d / factorial(d)
         return exp_x

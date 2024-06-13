@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Metaclass for inheriting comparison functions
 
@@ -22,7 +23,7 @@ methods anyway.
 
 AUTHOR:
 
-- Jeroen Demeyer (2015-05-22): initial version, see :trac:`18329`
+- Jeroen Demeyer (2015-05-22): initial version, see :issue:`18329`
 """
 
 #*****************************************************************************

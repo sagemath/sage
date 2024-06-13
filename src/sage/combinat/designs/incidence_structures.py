@@ -120,7 +120,7 @@ class IncidenceStructure:
         [[(0, 'a'), (0, 'b'), (1, 'a')], [(0, 'a'), (1, 'a')], [(0, 'b'), (1, 'a')]]
 
     The order of the points and blocks does not matter as they are sorted on
-    input (see :trac:`11333`)::
+    input (see :issue:`11333`)::
 
         sage: A = IncidenceStructure([0,1,2], [[0],[0,2]])
         sage: B = IncidenceStructure([1,0,2], [[0],[2,0]])
@@ -1147,9 +1147,9 @@ class IncidenceStructure:
             [1 1 0 0]
             [0 1 1 1]
         """
-        from sage.matrix.constructor import Matrix
+        from sage.matrix.constructor import matrix
         from sage.rings.integer_ring import ZZ
-        A = Matrix(ZZ, self.num_points(), self.num_blocks(), sparse=True)
+        A = matrix(ZZ, self.num_points(), self.num_blocks(), sparse=True)
         for j, b in enumerate(self._blocks):
             for i in b:
                 A[i, j] = 1
@@ -1486,10 +1486,10 @@ class IncidenceStructure:
 
         INPUT:
 
-        - ``t,v,k,l`` (integers) -- their value is set to ``None`` by
-          default. The function tests whether the design is a ``t-(v,k,l)``
-          design using the provided values and guesses the others. Note that
-          `l`` cannot be specified if ``t`` is not.
+        - ``t``, ``v``, ``k``, ``l`` (integers) -- their value is set to
+          ``None`` by default. The function tests whether the design is a
+          `t-(v,k,l)` design using the provided values and guesses the
+          others. Note that ``l`` cannot be specified if ``t`` is not.
 
         - ``return_parameters`` (boolean)-- whether to return the parameters of
           the `t`-design. If set to ``True``, the function returns a pair
@@ -1810,8 +1810,7 @@ class IncidenceStructure:
 
         REFERENCE:
 
-        - Soicher, Leonard, Design package manual, available at
-          https://www.gap-system.org/Manuals/pkg/design/htm/CHAP003.htm
+        - Leonard Soicher, :gap_package:`Design package manual <design/htm/CHAP003.htm>`
         """
         if algorithm == "gap":
             libgap.load_package("design")
@@ -2224,7 +2223,7 @@ class IncidenceStructure:
 
         TESTS::
 
-            # verify that :trac:`30976` is fixed
+            # verify that :issue:`30976` is fixed
             sage: IS = IncidenceStructure([1,2,3], [[1,2], [2,3]])
             sage: if latex.has_file("tikz.sty"):          # optional - latex
             ....:     IS._latex_()

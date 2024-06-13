@@ -631,7 +631,7 @@ def implicit_plot3d(f, xrange, yrange, zrange, **kwds):
 
     TESTS:
 
-    Check for :trac:`10599`::
+    Check for :issue:`10599`::
 
         sage: var('x,y,z')
         (x, y, z)
@@ -642,7 +642,7 @@ def implicit_plot3d(f, xrange, yrange, zrange, **kwds):
     """
     # These options, related to rendering with smooth shading, are irrelevant
     # since IndexFaceSet does not support surface normals:
-    # smooth: (default: False) Whether to use vertex normals to produce a
+    # smooth: (default: ``False``) Whether to use vertex normals to produce a
     #   smooth-looking surface. False is slightly faster.
     # gradient: (default: None) If smooth is True (the default), then
     #   Tachyon rendering needs vertex normals. In that case, if gradient is None

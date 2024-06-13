@@ -20,7 +20,7 @@ class RootSpace(CombinatorialFreeModule):
 
     INPUT:
 
-    - ``root_system`` - a root system
+    - ``root_system`` -- a root system
     - ``base_ring``: a ring `R`
 
     The *root space* (or lattice if ``base_ring`` is `\ZZ`) of a root
@@ -443,7 +443,7 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
         word = []
         while self != Qvee.zero():
             beta = self.max_coroot_le()
-            word += [x for x in beta.associated_reflection()]
+            word += list(beta.associated_reflection())
             self = self - beta.associated_coroot()
         W = self.parent().weyl_group()
         return (W.demazure_product(word)).reduced_word()

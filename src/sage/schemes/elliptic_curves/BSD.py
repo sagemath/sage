@@ -319,7 +319,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
       Heegner index before switching over to trying to compute the
       Heegner index bound. (Rank 0 only!)
 
-    - ``return_BSD`` -- bool (default: False) whether to return an object
+    - ``return_BSD`` -- bool (default: ``False``) whether to return an object
       which contains information to reconstruct a proof
 
     .. NOTE::
@@ -474,7 +474,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
 
     TESTS:
 
-    This was fixed by :trac:`8184` and :trac:`7575`::
+    This was fixed by :issue:`8184` and :issue:`7575`::
 
         sage: EllipticCurve('438e1').prove_BSD(verbosity=1)
         p = 2: True by 2-descent...

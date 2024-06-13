@@ -683,10 +683,8 @@ class pAdicLatticeGeneric(pAdicGeneric):
                     raise NotImplementedError("multiple conversion of a set of variables for which the module precision is not a lattice is not implemented yet")
                 for j in range(len(L)):
                     x = L[j]
-                    dx = []
-                    for i in range(j):
-                        dx.append([L[i], lattice[i,j]])
-                    prec = lattice[j,j].valuation(p)
+                    dx = [[L[i], lattice[i, j]] for i in range(j)]
+                    prec = lattice[j, j].valuation(p)
                     y = self._element_class(self, x.value(), prec, dx=dx, dx_mode='values', check=False, reduce=False)
                     for i in indices[id(x)]:
                         ans[i] = y
@@ -699,6 +697,7 @@ class pAdicLatticeGeneric(pAdicGeneric):
 
         # We return the created elements
         return ans
+
 
 class pAdicRelaxedGeneric(pAdicGeneric):
     r"""
@@ -1219,7 +1218,7 @@ class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
 
         INPUT:
 
-         - ``f``, ``g`` - the polynomials of which to take the xgcd
+         - ``f``, ``g`` -- the polynomials of which to take the xgcd
 
         OUTPUT:
 
@@ -1230,7 +1229,7 @@ class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
 
             The computations are performed using the standard Euclidean
             algorithm which might produce mathematically incorrect results in
-            some cases. See :trac:`13439`.
+            some cases. See :issue:`13439`.
 
         EXAMPLES::
 
@@ -1239,7 +1238,7 @@ class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
             sage: f.xgcd(f^2)                                                           # needs sage.libs.ntl
             ((1 + O(3^3))*x + 1 + O(3^3), 1 + O(3^3), 0)
 
-        We check that :trac:`13439` has been fixed::
+        We check that :issue:`13439` has been fixed::
 
             sage: # needs sage.libs.ntl
             sage: R.<x> = Zp(3,3)[]
@@ -1292,7 +1291,7 @@ class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
 
         INPUT:
 
-         - ``f``, ``g`` - the polynomials of which to take the gcd
+         - ``f``, ``g`` -- the polynomials of which to take the gcd
 
         OUTPUT: A polynomial
 
