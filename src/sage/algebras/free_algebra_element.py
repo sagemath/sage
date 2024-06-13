@@ -98,7 +98,6 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
             sage: with localvars(A, ['a','b','c']):
             ....:    print(-x+3*y*z)
             -a + 3*b*c
-
         """
         v = sorted(self._monomial_coefficients.items())
         P = self.parent()

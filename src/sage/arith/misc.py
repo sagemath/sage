@@ -67,7 +67,6 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
 
     INPUT:
 
-
     -  ``z`` -- real, complex, or `p`-adic number
 
     -  ``degree`` -- an integer
@@ -76,7 +75,6 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
                           coefficient size for the returned polynomial
 
     -  ``proof`` -- boolean (default: ``False``); requires height_bound to be set
-
 
     EXAMPLES::
 
@@ -1047,7 +1045,6 @@ def primes(start=2, stop=None, proof=None):
 
     OUTPUT:  an iterator over primes from ``start`` to ``stop-1``, inclusive
 
-
     EXAMPLES::
 
         sage: # needs sage.libs.pari
@@ -1172,9 +1169,7 @@ def next_probable_prime(n):
 
     INPUT:
 
-
     -  ``n`` -- an integer
-
 
     EXAMPLES::
 
@@ -1210,11 +1205,9 @@ def next_prime(n, proof=None):
 
     INPUT:
 
-
     -  ``n`` -- integer
 
     -  ``proof`` -- boolean or ``None`` (default: ``None``)
-
 
     EXAMPLES::
 
@@ -1588,11 +1581,9 @@ class Sigma:
 
     INPUT:
 
-
     -  ``n`` -- integer
 
     -  ``k`` -- integer (default: 1)
-
 
     OUTPUT: integer
 
@@ -1865,9 +1856,7 @@ def __GCD_sequence(v, **kwargs):
 
     INPUT:
 
-
     -  ``v`` -- a sequence (possibly empty)
-
 
     OUTPUT: the gcd of the elements of the sequence as an element of
     the sequence's universe, or the integer 0 if the sequence is
@@ -2478,7 +2467,6 @@ def trial_division(n, bound=None):
     -  ``int`` -- a prime p=bound that divides n, or n if
        there is no such prime.
 
-
     EXAMPLES::
 
         sage: trial_division(15)
@@ -3025,9 +3013,7 @@ class Euler_Phi:
 
     INPUT:
 
-
     -  ``n`` -- an integer
-
 
     EXAMPLES::
 
@@ -3129,7 +3115,6 @@ class Euler_Phi:
         Plot the Euler phi function.
 
         INPUT:
-
 
         -  ``xmin`` -- default: 1
 
@@ -3982,9 +3967,7 @@ def binomial_coefficients(n):
 
     INPUT:
 
-
     -  ``n`` -- an integer
-
 
     OUTPUT: dict
 
@@ -4190,11 +4173,9 @@ def legendre_symbol(x, p):
 
     INPUT:
 
-
     -  ``x`` -- integer
 
     -  ``p`` -- an odd prime number
-
 
     EXAMPLES::
 
@@ -4499,9 +4480,7 @@ class Moebius:
 
     INPUT:
 
-
     -  ``n`` -- anything that can be factored.
-
 
     OUTPUT: 0, 1, or -1
 
@@ -4588,7 +4567,6 @@ class Moebius:
         Plot the Möbius function.
 
         INPUT:
-
 
         -  ``xmin`` -- default: 0
 
@@ -4794,7 +4772,6 @@ def hilbert_symbol(a, b, p, algorithm='pari'):
 
     INPUT:
 
-
     -  ``a, b`` -- integers
 
     -  ``p`` -- integer; either prime or -1 (which
@@ -4808,7 +4785,6 @@ def hilbert_symbol(a, b, p, algorithm='pari'):
 
        -  ``'all'`` -- use both PARI and direct and check that
           the results agree, then return the common answer
-
 
     OUTPUT: integer (0, -1, or 1)
 

@@ -1596,11 +1596,9 @@ def beta1(rce, T1, T2):
 
     INPUT:
 
-
     -  ``rce`` -- tuple (or list) (r, c, e) in T1
 
     -  ``T1, T2`` -- latin bitrade
-
 
     OUTPUT: (x, c, e) in T2.
 
@@ -1641,7 +1639,6 @@ def beta2(rce, T1, T2):
 
     -  ``T1, T2`` -- latin bitrade
 
-
     OUTPUT:
 
     - (r, x, e) in T2.
@@ -1679,11 +1676,9 @@ def beta3(rce, T1, T2):
 
     INPUT:
 
-
     -  ``rce`` -- tuple (or list) (r, c, e) in T1
 
     -  ``T1, T2`` -- latin bitrade
-
 
     OUTPUT:
 

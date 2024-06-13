@@ -91,7 +91,6 @@ class BinaryRecurrenceSequence(SageObject):
 
     - ``u1`` -- integer; (the 1st term of the binary recurrence sequence)
 
-
     OUTPUT: an integral linear binary recurrence sequence defined by `u_0`,
     `u_1`, and `u_{n+2} = b u_{n+1}+c u_n`
 
@@ -849,7 +848,6 @@ def _next_good_prime(p, R, qq, patience, qqold):
     OUTPUT: a prime `\\ell` such that `\\ell` is 1 mod `p`, `b^2+4 c` is a
     square mod `\\ell` and the period of `\\ell` has ``goodness`` by ``qq`` but
     not ``qqold``, if patience has not be surpased; otherwise ``False``
-
 
     EXAMPLES::
 

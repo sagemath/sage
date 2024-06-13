@@ -57,7 +57,6 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
     - ``index_set`` -- an enumerated set; alternative indexing set
       for the generators
 
-
     OUTPUT:
 
     The Weyl Lie conformal algebra with generators

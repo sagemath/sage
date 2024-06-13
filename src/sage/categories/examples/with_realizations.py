@@ -121,7 +121,6 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
 
         sage: (1 + Out[1]) * In[2,3]
         Out[{}] + 2*Out[{1}] + 2*Out[{2}] + 2*Out[{3}] + 2*Out[{1, 2}] + 2*Out[{1, 3}] + 4*Out[{2, 3}] + 4*Out[{1, 2, 3}]
-
     """
 
     def __init__(self, R, S):

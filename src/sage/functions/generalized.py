@@ -11,7 +11,6 @@ AUTHORS:
 
 - Golam Mortuza Hossain (2009-06-26): initial version
 
-
 EXAMPLES:
 
 Dirac delta function::

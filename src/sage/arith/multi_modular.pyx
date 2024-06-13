@@ -665,7 +665,6 @@ cdef class MultiModularBasis_base():
             7
             sage: res % 10039
             9
-
         """
         cdef int i, n
         n = len(b)
@@ -721,7 +720,6 @@ cdef class MultiModularBasis_base():
             Traceback (most recent call last):
             ...
             IndexError: negative index not valid
-
         """
         if n >= self.n:
             raise IndexError("beyond bound for multi-modular prime list")

@@ -65,7 +65,6 @@ def combinatorial_map_trivial(f=None, order=None, name=None):
 
     INPUT:
 
-
     - ``f`` -- (default: ``None``, if combinatorial_map is used as a decorator) a function
     - ``name`` -- (default: ``None``) the name for nicer outputs on combinatorial maps
     - ``order`` -- (default: ``None``) the order of the combinatorial map, if it is known. Is not used, but might be helpful later

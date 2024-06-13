@@ -431,7 +431,6 @@ class Differential(UniqueRepresentation, Morphism,
             Vector space of degree 2 and dimension 0 over Rational Field
             Basis matrix:
             []
-
         """
         A = self.domain()
         F = A.base_ring()
@@ -1542,7 +1541,6 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             Return the homogeneous parts of the element. The result is given as
             a dictionary indexed by degree.
 
-
             EXAMPLES::
 
                 sage: A.<e1,e2,e3,e4,e5> = GradedCommutativeAlgebra(QQ)
@@ -2165,7 +2163,6 @@ class DifferentialGCAlgebra(GCAlgebra):
             y --> 0
             z --> 0
             t --> 0
-
         """
         return self.graded_commutative_algebra().cdg_algebra(differential)
 
@@ -2493,7 +2490,6 @@ class DifferentialGCAlgebra(GCAlgebra):
             sage: B = A.cdg_algebra(d)
             sage: B.cohomology_generators(3)
             {1: [e1 - e2, e3, e4], 2: [e1*e3, e1*e4]}
-
         """
         if not (max_degree in ZZ and max_degree > 0):
             raise ValueError('the given maximal degree must be a '
@@ -2735,7 +2731,6 @@ class DifferentialGCAlgebra(GCAlgebra):
         - [Fel2001]_
 
         - [Man2019]_
-
         """
         max_degree = int(i)
         if max_degree < 1:
@@ -2998,7 +2993,6 @@ class DifferentialGCAlgebra(GCAlgebra):
         REFERENCES:
 
         For a precise definition and properties, see [Man2019]_ .
-
         """
         self.minimal_model(max_degree, max_iterations)
         return {i: self._numerical_invariants[i]
@@ -3788,7 +3782,6 @@ class GCAlgebraMorphism(RingHomomorphism_im_gens):
             Graded Commutative Algebra endomorphism of Graded Commutative Algebra
              with generators ('e1',) in degrees (1,) over Rational Field
               Defn: (e1,) --> (2*e1,)
-
         """
         domain = parent.domain()
         codomain = parent.codomain()
@@ -4109,7 +4102,6 @@ class CohomologyClass(SageObject, CachedRepresentation):
            e5 --> e1*e2
            e6 --> e1*e2 + e3*e4
           Defn: (x1_0, x1_1, x1_2, x1_3, y1_0, y1_1) --> (e1, e2, e3, e4, e5, -e5 + e6)
-
     """
     def __init__(self, x, cdga=None):
         """

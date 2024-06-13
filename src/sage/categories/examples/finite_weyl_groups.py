@@ -91,7 +91,6 @@ class SymmetricGroup(UniqueRepresentation, Parent):
 
             sage: FiniteWeylGroups().example()
             The symmetric group on {0, ..., 3}
-
         """
         return "The symmetric group on {0, ..., %s}" % (self.n-1)
 

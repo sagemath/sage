@@ -33,7 +33,6 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
         (\Delta \otimes \Delta) = \Delta \circ \mu
 
     where `\tau(x\otimes y) = y\otimes x`.
-
     """
     def __init__(self, base_ring):
         """
@@ -41,7 +40,6 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
 
             sage: H = GradedHopfAlgebrasWithBasis(QQ).Connected().example()
             sage: TestSuite(H).run()
-
         """
         CombinatorialFreeModule.__init__(self, base_ring, NonNegativeIntegers(),
                                          category=GradedHopfAlgebrasWithBasis(base_ring).Connected())
@@ -60,7 +58,6 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
             0
             sage: H.one()
             P0
-
         """
         return self.basis().keys()(0)
 
@@ -79,7 +76,6 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
             sage: H = GradedHopfAlgebrasWithBasis(QQ).Connected().example()
             sage: H.degree_on_basis(45)
             45
-
         """
         return i
 
@@ -91,7 +87,6 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
 
             sage: GradedHopfAlgebrasWithBasis(QQ).Connected().example()
             An example of a graded connected Hopf algebra with basis over Rational Field
-
         """
         return "An example of a graded connected Hopf algebra with basis over %s" % self.base_ring()
 
@@ -104,7 +99,6 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
             sage: H = GradedHopfAlgebrasWithBasis(QQ).Connected().example()
             sage: H._repr_term(45)
             'P45'
-
         """
         return 'P' + repr(i)
 
@@ -126,7 +120,6 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
             sage: H = GradedHopfAlgebrasWithBasis(QQ).Connected().example()
             sage: H.monomial(4) * H.monomial(5)
             P9
-
         """
         return self.monomial(i+j)
 

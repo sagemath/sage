@@ -786,7 +786,6 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
         - ``x`` -- nonnegative integer
         - ``rtn`` -- list of nonnegative integers
 
-
         EXAMPLES::
 
             sage: IV = IntegerVectors(k=5)

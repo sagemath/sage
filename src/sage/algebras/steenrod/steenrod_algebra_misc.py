@@ -664,7 +664,6 @@ def serre_cartan_mono_to_string(mono, latex=False, generic=False):
     ``\beta^{e0} P^{n1} \beta^{e1} P^{n2} ...`` when `generic=True`.
     is odd.
 
-
     EXAMPLES::
 
         sage: from sage.algebras.steenrod.steenrod_algebra_misc import serre_cartan_mono_to_string

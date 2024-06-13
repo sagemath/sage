@@ -1460,7 +1460,6 @@ def exponential_integral_1(x, n=0):
       1,2,3,...,n. This is useful, e.g., when computing derivatives of
       L-functions.
 
-
     OUTPUT:
 
     A real number if n is 0 (the default) or a list of reals if n > 0.

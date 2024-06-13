@@ -77,7 +77,6 @@ class Domains(CategoryWithAxiom):
 
                 sage: ZZ._test_zero_divisors()
                 sage: ZpFM(5)._test_zero_divisors()                                     # needs sage.rings.padics
-
             """
             if not self.is_exact():
                 return # Can't check on inexact rings

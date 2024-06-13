@@ -311,7 +311,6 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             sage: I = L.subalgebra(x)
             sage: I(x) in I
             True
-
         """
         if x in self._ambient:
             x = self._ambient(x)

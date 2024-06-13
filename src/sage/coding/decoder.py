@@ -98,7 +98,6 @@ class Decoder(SageObject):
                                 works for specific channels.
         ======================  ================================================
 
-
         EXAMPLES:
 
         We call it on a class::

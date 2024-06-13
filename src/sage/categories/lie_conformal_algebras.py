@@ -62,7 +62,6 @@ operation (called the `\lambda`-bracket) `L\otimes L \rightarrow L[\lambda]`
     In the literature arbitrary gradings are allowed. In this
     implementation we only support nonnegative rational gradings.
 
-
 EXAMPLES:
 
 1. The **Virasoro** Lie conformal algebra `Vir` over a ring `R`

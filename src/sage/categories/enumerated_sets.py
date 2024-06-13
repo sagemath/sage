@@ -78,7 +78,6 @@ class EnumeratedSets(CategoryWithAxiom):
        - ``FiniteEnumeratedSets().example()``
        - ``InfiniteEnumeratedSets().example()``
 
-
     EXAMPLES::
 
         sage: EnumeratedSets()
@@ -229,7 +228,6 @@ class EnumeratedSets(CategoryWithAxiom):
                 ....:         return [5, 6, 7]
                 sage: it = iter(set_list()); [next(it), next(it), next(it)]
                 [5, 6, 7]
-
             """
             # Check if .first() and .next(x) are overridden in the subclass
             if ( self.first != self._first_from_iterator and

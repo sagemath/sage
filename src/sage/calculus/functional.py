@@ -158,7 +158,6 @@ def derivative(f, *args, **kwds):
         2-form da on the 2-dimensional differentiable manifold M
         sage: derivative(a).display()
         da = 2 dx∧dy
-
     """
     try:
         return f.derivative(*args, **kwds)

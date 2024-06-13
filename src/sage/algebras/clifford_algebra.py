@@ -1790,7 +1790,6 @@ class ExteriorAlgebra(CliffordAlgebra):
             sage: E.coproduct_on_basis((0,1,2))
             1 # x*y*z + x # y*z - y # x*z + x*y # z
              + z # x*y - x*z # y + y*z # x + x*y*z # 1
-
         """
         from sage.combinat.combinat import unshuffle_iterator
         one = self.base_ring().one()

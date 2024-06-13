@@ -417,7 +417,6 @@ def griesmer_upper_bound(n,q,d,algorithm=None):
 
         `n\geq \sum_{i=0}^{k-1} \lceil d/q^i \rceil.`
 
-
     EXAMPLES:
 
     The bound is reached for the ternary Golay codes::

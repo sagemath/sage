@@ -447,7 +447,6 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                 [Category of realizations of Ariki-Koike algebra of rank 5 and order 2
                     with q=q and u=(u0, u1, u2, u3, u4) over ...,
                  Category of finite dimensional algebras with basis over ...]
-
             """
             return [Realizations(self.base()), self.base()._category]
 

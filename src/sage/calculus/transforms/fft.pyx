@@ -72,7 +72,6 @@ def FastFourierTransform(size, base_ring=None):
         sage: a.plot().show(ymin=0)                                                     # needs sage.plot
         sage: a.forward_transform()
         sage: a.plot().show()                                                           # needs sage.plot
-
     """
     return FastFourierTransform_complex(int(size))
 
@@ -133,7 +132,6 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
             sage: a = FastFourierTransform(48)
             sage: len(a)
             48
-
         """
         return self.n
 
@@ -193,7 +191,6 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
             sage: a[0] = 1
             sage: a[0] == (1,0)
             True
-
         """
         if isinstance(i, slice):
             start, stop, step = i.indices(self.n)
@@ -218,7 +215,6 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
             sage: for i in range(4): a[i] = i
             sage: a
             [(0.0, 0.0), (1.0, 0.0), (2.0, 0.0), (3.0, 0.0)]
-
         """
         return str(list(self))
 
@@ -241,7 +237,6 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
             sage: a = FastFourierTransform(4)
             sage: a._plot_polar(0,2)                                                    # needs sage.plot sage.symbolic
             Graphics object consisting of 2 graphics primitives
-
         """
         from sage.plot.point import point
         from sage.symbolic.constants import pi, I
@@ -328,7 +323,6 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
             sage: a.inverse_transform()
             sage: a.plot() + b.plot()
             Graphics object consisting of 250 graphics primitives
-
         """
         if xmin is None:
             xmin = 0
@@ -363,7 +357,6 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
             sage: a.forward_transform()
             sage: a #abs tol 1e-2
             [(6.0, 0.0), (-2.0, 2.0), (-2.0, 0.0), (-2.0, -2.0)]
-
         """
         cdef gsl_fft_complex_wavetable * wt
         cdef gsl_fft_complex_workspace * mem
@@ -415,7 +408,6 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
             sage: a.inverse_transform()
             sage: a.plot() + b.plot()                                                   # needs sage.plot
             Graphics object consisting of 256 graphics primitives
-
         """
         cdef gsl_fft_complex_wavetable * wt
         cdef gsl_fft_complex_workspace * mem

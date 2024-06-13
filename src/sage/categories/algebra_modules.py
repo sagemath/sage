@@ -32,7 +32,6 @@ class AlgebraModules(Category_module):
     the categories of left and right modules are isomorphic. Feedback
     and use cases for potential generalizations to the non commutative
     case are welcome.
-
     """
     def __init__(self, A):
         """

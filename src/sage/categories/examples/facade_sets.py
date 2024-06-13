@@ -81,7 +81,6 @@ class PositiveIntegerMonoid(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: S = Sets().Facade().example()   # indirect doctest
-
         """
         return "An example of facade set: the monoid of positive integers"
 

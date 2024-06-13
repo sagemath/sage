@@ -235,7 +235,6 @@ class KBoundedSubspace(UniqueRepresentation, Parent):
         .. [LamSchillingShimozono10] \T. Lam, A. Schilling, M.Shimozono, K-theory Schubert calculus of the affine Grassmannian,
            Compositio Math. 146 (2010), 811-852.
 
-
         EXAMPLES::
 
             sage: kB = SymmetricFunctions(QQ).kBoundedSubspace(3,1)

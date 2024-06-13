@@ -138,7 +138,6 @@ class DiscreteValuationRings(Category_singleton):
                 Traceback (most recent call last):
                 ...
                 ValueError: Euclidean degree of the zero element not defined
-
             """
             if not self:
                 raise ValueError("Euclidean degree of the zero element not defined")

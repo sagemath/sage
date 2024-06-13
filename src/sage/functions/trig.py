@@ -927,7 +927,6 @@ class Function_arctan2(GinacFunction):
 
         Note that the `y`-coordinate is by convention the first input.
 
-
         EXAMPLES:
 
         Note the difference between the two functions::

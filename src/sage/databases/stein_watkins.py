@@ -30,7 +30,6 @@ all curves of a given conductor. It lists the curves whose coefficients are not
    elliptic curves of conductor between `n10^8` and `(n+1)10^8`. Here `n`
    varies between 0 and 99, inclusive.
 
-
 EXAMPLES: We obtain the first table of elliptic curves.
 
 ::

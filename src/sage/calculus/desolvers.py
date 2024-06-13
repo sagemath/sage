@@ -154,7 +154,6 @@ def fricas_desolve_system(des, dvars, ics, ivar):
         sage: sol = fricas_desolve_system([de1,de2], [x,y], [0,1,-1], t)  # optional - fricas
         sage: sol                                                         # optional - fricas
         [x(t) == cos(t)^2 + sin(t)^2 + 2*sin(t), y(t) == -2*cos(t) + 1]
-
     """
     from sage.interfaces.fricas import fricas
     from sage.symbolic.ring import SR
@@ -1215,7 +1214,6 @@ def desolve_rk4_determine_bounds(ics, end_points=None):
 
         sage: desolve_rk4_determine_bounds([0,2],[-2,4])
         (-2, 4)
-
     """
     if end_points is None:
         return ics[0], ics[0] + 10
@@ -1710,9 +1708,7 @@ def desolve_mintides(f, ics, initial, final, delta, tolrel=1e-16, tolabs=1e-16):
 
     - ``tolabs`` -- the absolute tolerance for the method
 
-
     OUTPUT: list with the positions of the IVP
-
 
     EXAMPLES:
 
@@ -1801,9 +1797,7 @@ def desolve_tides_mpfr(f, ics, initial, final, delta, tolrel=1e-16, tolabs=1e-16
 
     - ``digits`` -- the digits of precision used in the computation
 
-
     OUTPUT: list with the positions of the IVP
-
 
     EXAMPLES:
 

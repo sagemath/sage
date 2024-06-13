@@ -1515,7 +1515,6 @@ class FiniteWordPath_2d(FiniteWordPath_all):
 
         - ``gridoptions`` -- (dict, default: {}), options for the gridlines
 
-
         EXAMPLES:
 
         A non closed path on the square grid::

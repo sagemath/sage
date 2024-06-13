@@ -1491,7 +1491,6 @@ def read_markov(bas_ele, variables, num_strands=4):
       the coefficients
     - ``num_strands`` -- integer (default: 4); the number of strands
 
-
     OUTPUT:
 
     A list of the coefficients. The i'th member corresponds to the i'th

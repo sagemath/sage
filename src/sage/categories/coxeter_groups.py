@@ -741,7 +741,6 @@ class CoxeterGroups(Category_singleton):
                 (1, 2, 3, 0)
                 sage: d0(pi)
                 (1, 2, 3, 0)
-
             """
             if not (i in self.index_set() or i == 0):
                 raise ValueError("%s is not 0 and not in the Dynkin node set %s" % (i, self.index_set()))
@@ -1983,7 +1982,6 @@ class CoxeterGroups(Category_singleton):
                 sage: s = W.simple_reflections()                                        # needs sage.groups
                 sage: (s[3]*s[2]*s[3]).reflection_length()                              # needs sage.combinat sage.groups
                 1
-
             """
             return self.absolute_length()
 
@@ -2306,7 +2304,6 @@ class CoxeterGroups(Category_singleton):
                 [1]
                 sage: w.coset_representative([1,2,3], side='left').reduced_word()
                 []
-
             """
             while True:
                 i = self.first_descent(side=side, index_set=index_set)
@@ -2351,7 +2348,6 @@ class CoxeterGroups(Category_singleton):
                 s1*s2*s3*s4*s3*s1
                 sage: v.apply_simple_projection(1, length_increasing=False)
                 s1*s2*s3*s4*s3
-
             """
             if self.has_descent(i, side=side, positive=length_increasing):
                 return self.apply_simple_reflection(i, side=side)
@@ -2586,7 +2582,6 @@ class CoxeterGroups(Category_singleton):
                 [s1*s2*s3*s2*s1, s2, s1]
                 sage: w.lower_cover_reflections(side='left')
                 [s2*s3*s2, s3, s1]
-
             """
             if side == 'left':
                 self = self.inverse()
@@ -2634,7 +2629,6 @@ class CoxeterGroups(Category_singleton):
                 [s3, s2*s3*s2, s4, s1*s2*s3*s4*s3*s2*s1]
                 sage: w.cover_reflections(side='left')
                 [s4, s2, s1*s2*s1, s3*s4*s3]
-
             """
             if side == 'left':
                 self = self.inverse()
@@ -2973,7 +2967,6 @@ class CoxeterGroups(Category_singleton):
                 s3*s4*s1*s2*s3*s4*s2*s3*s1
                 sage: v.apply_demazure_product(v)
                 s2*s3*s4*s1*s2*s3*s4*s2*s3*s2*s1
-
             """
             # if self and element have the same parent
             if self.parent().is_parent_of(element):
@@ -3016,7 +3009,6 @@ class CoxeterGroups(Category_singleton):
                 s4*s2
                 sage: v.min_demazure_product_greater((2,3,2,1))
                 s4*s2
-
             """
             # if self and element have the same parent
             if self.parent().is_parent_of(element):
@@ -3154,7 +3146,6 @@ class CoxeterGroups(Category_singleton):
                 sage: w = W.from_reduced_word([3,2])
                 sage: v.deodhar_lift_down(w, [3])
                 s2*s3*s2
-
             """
             vmin = self.coset_representative(index_set)
             wmin = w.coset_representative(index_set)

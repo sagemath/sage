@@ -129,12 +129,10 @@ class JonesDatabase:
 
         INPUT:
 
-
         -  ``path`` -- (default: works on William Stein install)
            path must be the path to Jones's Number_Fields directory
            (http://hobbes.la.asu.edu/Number_Fields); these files should have
            been downloaded using wget
-
 
         EXAMPLES: This is how to create the database from scratch, assuming
         that the number fields are in the default directory above: From a

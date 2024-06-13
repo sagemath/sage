@@ -849,7 +849,6 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
         OUTPUT: :class:`DynamicalSemigroup`
 
-
         EXAMPLES::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)

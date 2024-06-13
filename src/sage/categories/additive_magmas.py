@@ -60,7 +60,6 @@ class AdditiveMagmas(Category_singleton):
 
         sage: C = AdditiveMagmas()
         sage: TestSuite(C).run()
-
     """
 
     def super_categories(self):

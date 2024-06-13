@@ -412,9 +412,7 @@ def zeta_symmetric(s):
 
     INPUT:
 
-
     -  ``s`` -- real or complex number
-
 
     If s is a real number the computation is done using the MPFR
     library. When the input is not real, the computation is done using
@@ -425,7 +423,6 @@ def zeta_symmetric(s):
     .. MATH::
 
                 xi(s) = \gamma(s/2 + 1) * (s-1) * \pi^{-s/2} * \zeta(s).
-
 
     EXAMPLES::
 

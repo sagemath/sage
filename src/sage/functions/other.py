@@ -320,7 +320,6 @@ class Function_ceil(BuiltinFunction):
         #. If none of the above work, Sage returns a
            ``Expression`` object.
 
-
         EXAMPLES::
 
             sage: # needs sage.symbolic
@@ -493,7 +492,6 @@ class Function_floor(BuiltinFunction):
 
         #. If none of the above work, Sage returns a
            symbolic ``Expression`` object.
-
 
         EXAMPLES::
 
@@ -1382,7 +1380,6 @@ class Function_factorial(GinacFunction):
 
         -  ``n`` -- a nonnegative integer, a complex number (except negative
            integers) or any symbolic expression
-
 
         OUTPUT: integer or symbolic expression
 

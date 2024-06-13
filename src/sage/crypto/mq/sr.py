@@ -698,7 +698,6 @@ class SR_generic(MPolynomialSystemGenerator):
 
         -  ``b`` -- an element in ``self.base_ring()``
 
-
         EXAMPLES:
 
         The S-Box table for `\GF{2^4}`::
@@ -918,10 +917,8 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-
         -  ``d`` -- state array or something coercible to a
            state array
-
 
         EXAMPLES::
 
@@ -968,13 +965,11 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-
         -  ``d`` -- state array or something coercible to a
            state array
 
         -  ``key`` -- state array or something coercible to a
            state array
-
 
         EXAMPLES::
 
@@ -995,9 +990,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-
         -  ``d`` -- a matrix, a list, or a tuple (default: ``None``)
-
 
         EXAMPLES::
 
@@ -1096,10 +1089,8 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-
         -  ``elem_type`` -- either 'vector' or 'state array'
            (default: ``'vector'``)
-
 
         EXAMPLES::
 
@@ -1378,12 +1369,10 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-
         -  ``M`` -- state array
 
         -  ``typ`` -- controls what to return, either 'matrix'
            or 'vector' (default: ``'matrix'``)
-
 
         EXAMPLES::
 
@@ -1413,9 +1402,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-
         -  ``M`` -- an AES state array
-
 
         EXAMPLES::
 
@@ -1444,9 +1431,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-
         -  ``M`` -- an AES state array
-
 
         EXAMPLES::
 
@@ -1473,7 +1458,6 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-
         -  ``dst`` -- a matrix
 
         -  ``src`` -- a matrix
@@ -1481,7 +1465,6 @@ class SR_generic(MPolynomialSystemGenerator):
         -  ``row`` -- offset row
 
         -  ``col`` -- offset columns
-
 
         EXAMPLES::
 
@@ -1521,7 +1504,6 @@ class SR_generic(MPolynomialSystemGenerator):
         -  ``n`` -- number of rounds (default: ``None``)
         -  ``rc`` -- number of rows \* number of cols (default: ``None``)
         -  ``e`` -- exponent of base field (default: ``None``)
-
 
         EXAMPLES::
 
@@ -1820,7 +1802,6 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-
         -  ``i`` -- round number
 
         -  ``plaintext`` -- optional plaintext (mandatory in
@@ -1828,7 +1809,6 @@ class SR_generic(MPolynomialSystemGenerator):
 
         -  ``ciphertext`` -- optional ciphertext (mandatory in
            last round)
-
 
         OUTPUT: tuple
 
@@ -2298,7 +2278,6 @@ class SR_gf2n(SR_generic):
 
         -  ``length`` -- length of state space (default: ``None``)
 
-
         EXAMPLES::
 
             sage: sr = mq.SR(1, 1, 1, 4)
@@ -2420,13 +2399,11 @@ class SR_gf2n(SR_generic):
 
         INPUT:
 
-
         -  ``xi`` -- output variables
 
         -  ``wi`` -- input variables
 
         -  ``length`` -- length of both lists
-
 
         EXAMPLES::
 

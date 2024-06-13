@@ -122,7 +122,6 @@ cdef class Riemann_Map:
       cases where the theta correspondence function is off by ``pi``, that
       is, if red is mapped left of the origin in the color plot.
 
-
     EXAMPLES:
 
     The unit circle identity map::
@@ -187,8 +186,6 @@ cdef class Riemann_Map:
 
     This class computes the Riemann Map via the Szego kernel using an
     adaptation of the method described by [KT1986]_.
-
-
     """
     cdef int N, B, ncorners
     cdef f
@@ -202,7 +199,6 @@ cdef class Riemann_Map:
 
     def __init__(self, fs, fprimes, COMPLEX_T a, int N=500, int ncorners=4,
         opp=False, exterior = False):
-
         """
         Initialize the ``Riemann_Map`` class. See the class :class:`Riemann_Map`
         for full documentation on the input of this initialization method.
@@ -1021,7 +1017,6 @@ cdef class Riemann_Map:
           plot in the x direction. Points in the y direction are scaled
           accordingly. Note that very large values can cause this function to
           run slowly.
-
 
         EXAMPLES:
 

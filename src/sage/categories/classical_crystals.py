@@ -228,7 +228,6 @@ class ClassicalCrystals(Category_singleton):
                 Traceback (most recent call last):
                 ...
                 ValueError: Weyl character ring does not have the right Cartan type
-
             """
             from sage.combinat.root_system.weyl_characters import WeylCharacterRing
             if R is None:

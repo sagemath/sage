@@ -107,7 +107,6 @@ class Example(UniqueRepresentation, Parent):
 
             sage: list(FiniteEnumeratedSets().example()) # indirect doctest
             [1, 2, 3]
-
         """
         return iter(self._set)
 

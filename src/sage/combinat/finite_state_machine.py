@@ -7741,7 +7741,6 @@ class FiniteStateMachine(SageObject):
         of the original finite state machines. The color of a new
         state is the tuple of colors of the constituent states.
 
-
         EXAMPLES::
 
             sage: F = Transducer([('A', 'B', 1, 0), ('B', 'A', 0, 1)],

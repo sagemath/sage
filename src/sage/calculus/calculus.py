@@ -878,7 +878,6 @@ def symbolic_product(expression, v, a, b, algorithm='maxima', hold=False):
 
         sage: symbolic_product(-x^2,x,1,n)
         (-1)^n*factorial(n)^2
-
     """
     if not (isinstance(v, Expression) and v.is_symbol()):
         if isinstance(v, str):
@@ -957,7 +956,6 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
       numerical algorithm will be faster if bits and/or degree are given
       explicitly. The algebraic algorithm ignores the last three
       parameters.
-
 
     OUTPUT: the minimal polynomial of ``self``. If the numerical algorithm
     is used, then it is proved symbolically when ``epsilon=0`` (default).
@@ -2017,7 +2015,6 @@ def at(ex, *args, **kwds):
         sage: from sage.calculus.calculus import at
         sage: at(int(1), x=1)
         1
-
     """
     if not isinstance(ex, (Expression, Function)):
         ex = SR(ex)
@@ -2146,7 +2143,6 @@ def _laplace_latex_(self, *args):
         '\\mathcal{L}\\left(f\\left(t\\right), t, s\\right)'
         sage: latex(laplace(f, t, s))
         \mathcal{L}\left(f\left(t\right), t, s\right)
-
     """
     return "\\mathcal{L}\\left(%s\\right)" % (', '.join(latex(x) for x in args))
 

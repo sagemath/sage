@@ -438,12 +438,10 @@ def ExtendedQuadraticResidueCode(n,F):
 
     INPUT:
 
-
     -  ``n`` -- an odd prime
 
     -  ``F`` -- a finite prime field whose order must be a
        quadratic residue modulo `n`.
-
 
     OUTPUT: an extended quadratic residue code
 
@@ -507,12 +505,10 @@ def QuadraticResidueCode(n,F):
 
     INPUT:
 
-
     -  ``n`` -- an odd prime
 
     -  ``F`` -- a finite prime field whose order must be a
        quadratic residue modulo `n`.
-
 
     OUTPUT: a quadratic residue code
 

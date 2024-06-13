@@ -290,7 +290,6 @@ class Encoder(SageObject):
 
         INPUT:
 
-
         - ``c`` -- a codeword of :meth:`code`
 
         OUTPUT: an element of the message space of ``self``

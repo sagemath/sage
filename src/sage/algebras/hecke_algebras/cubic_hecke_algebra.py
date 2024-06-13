@@ -2528,7 +2528,6 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
             c3*c0
             sage: CHA5._basis_extension
             [[4], [-4], [4, 1]]
-
         """
         cbTietze = list(cubic_braid.Tietze())
         order = self.get_order()

@@ -40,7 +40,6 @@ class EuclideanDomains(Category_singleton):
     TESTS::
 
         sage: TestSuite(EuclideanDomains()).run()
-
     """
     def super_categories(self):
         """
@@ -60,7 +59,6 @@ class EuclideanDomains(Category_singleton):
 
                 sage: Parent(QQ,category=EuclideanDomains()).is_euclidean_domain()
                 True
-
             """
             return True
 

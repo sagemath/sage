@@ -3877,7 +3877,6 @@ def DM_60_6_1():
 
     http://onlinelibrary.wiley.com/doi/10.1002/jcd.21384/abstract
 
-
     EXAMPLES::
 
         sage: from sage.combinat.designs.designs_pyx import is_difference_matrix

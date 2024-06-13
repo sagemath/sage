@@ -134,7 +134,6 @@ class FusionDouble(CombinatorialFreeModule):
         sage: F = FusionDouble(G, prefix='b', inject_variables=True)
         sage: b13^2 # long time (4s)
         b0 + b2 + b4 + b15 + b16 + b17 + b18 + b24 + b26 + b27
-
     """
     @staticmethod
     def __classcall_private__(cls, G, prefix='s', inject_variables=False):
@@ -329,7 +328,6 @@ class FusionDouble(CombinatorialFreeModule):
             [ 1/3  1/3 -1/3    0    0  2/3 -1/3 -1/3]
             [ 1/3  1/3 -1/3    0    0 -1/3 -1/3  2/3]
             [ 1/3  1/3 -1/3    0    0 -1/3  2/3 -1/3]
-
         """
         b = self.basis()
         S = matrix([[self.s_ij(b[x], b[y], unitary=unitary, base_coercion=base_coercion)

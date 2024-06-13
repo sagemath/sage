@@ -121,7 +121,6 @@ class HighestWeightCrystals(Category_singleton):
             A crystal element `b` is highest weight if `e_i(b)=0` for all `i` in the
             index set.
 
-
             EXAMPLES::
 
                 sage: C = crystals.Letters(['A',5])

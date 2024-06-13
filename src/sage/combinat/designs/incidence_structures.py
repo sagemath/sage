@@ -1342,7 +1342,6 @@ class IncidenceStructure:
         - ``inplace`` -- boolean (default: ``False``); if ``True`` then return
           a relabeled graph and does not touch ``self``
 
-
         EXAMPLES::
 
             sage: # needs sage.schemes

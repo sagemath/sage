@@ -362,7 +362,6 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         means that car 2 takes spots 1, car 4 takes spot 2, ..., car 1
         takes spot 6 and car 7 takes spot 7.
 
-
         OUTPUT:
 
         - the permutation of cars corresponding to the parking function
@@ -400,7 +399,6 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         means that car 1 through 4 parked in their preferred spots,
         car 5 had to park one spot farther (jumped or was displaced by one
         spot), car 6 had to jump 3 spots, and car 7 had to jump two spots.
-
 
         OUTPUT:
 

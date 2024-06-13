@@ -31,7 +31,6 @@ class FreeAlgebra(CombinatorialFreeModule):
             sage: A = AlgebrasWithBasis(QQ).example(); A                                # needs sage.modules
             An example of an algebra with basis: the free algebra on the generators ('a', 'b', 'c') over Rational Field
             sage: TestSuite(A).run()                                                    # needs sage.modules
-
         """
         self._alphabet = alphabet
         CombinatorialFreeModule.__init__(self, R,

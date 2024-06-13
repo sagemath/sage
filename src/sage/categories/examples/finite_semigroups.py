@@ -145,7 +145,6 @@ class LeftRegularBand(UniqueRepresentation, Parent):
             'ab'
             sage: S('a') * S('a')
             'a'
-
         """
         assert x in self
         assert y in self
@@ -163,7 +162,6 @@ class LeftRegularBand(UniqueRepresentation, Parent):
             sage: S = FiniteSemigroups().example(alphabet=('x','y'))
             sage: S.semigroup_generators()
             Family ('x', 'y')
-
         """
         return Family([self(i) for i in self.alphabet])
 

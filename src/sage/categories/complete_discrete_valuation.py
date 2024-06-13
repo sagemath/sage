@@ -168,7 +168,6 @@ class CompleteDiscreteValuationRings(Category_singleton):
                 2 + 3*5 + O(5^8)
                 sage: c.lift_to_precision().precision_relative() == R.precision_cap()   # needs sage.rings.padics
                 True
-
             """
 
 

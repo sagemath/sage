@@ -120,7 +120,6 @@ cdef reed_muller(mp_limb_t* f, int ldn):
     .. MATH:: f(x) = \bigoplus_{support(x)\subset I} a_I
     .. MATH:: a_i  = \bigoplus_{I\subset support(x)} f(x)
 
-
     EXAMPLES::
 
         sage: # needs sage.rings.polynomial.pbori

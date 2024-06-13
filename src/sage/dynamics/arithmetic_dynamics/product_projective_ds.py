@@ -188,7 +188,6 @@ class DynamicalSystem_product_projective(DynamicalSystem,
 
         - ``normalize`` -- boolean (default: ``False``)
 
-
         OUTPUT: list of points in ``self.codomain()``
 
         EXAMPLES::

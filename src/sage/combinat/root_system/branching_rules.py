@@ -646,7 +646,6 @@ def branch_weyl_character(chi, R, S, rule='default'):
 
     https://doc.sagemath.org/html/en/thematic_tutorials/lie.html
 
-
     EXAMPLES::
 
         sage: G2 = WeylCharacterRing("G2")

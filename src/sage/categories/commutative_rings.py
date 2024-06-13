@@ -46,7 +46,6 @@ class CommutativeRings(CategoryWithAxiom):
 
         sage: GroupAlgebra(CyclicPermutationGroup(3), QQ) in CommutativeRings()     # not implemented, needs sage.groups sage.modules
         True
-
     """
     class ParentMethods:
         def is_commutative(self) -> bool:
@@ -391,7 +390,6 @@ class CommutativeRings(CategoryWithAxiom):
             .. SEEALSO::
 
                 :meth:`derivation`
-
             """
             from sage.rings.derivation import RingDerivationModule
             if codomain is None:
@@ -461,7 +459,6 @@ class CommutativeRings(CategoryWithAxiom):
                 [x |--> x^2, y |--> y^2, z |--> z^2] - id
                 sage: R.derivation(x, twist=theta)                                          # needs sage.modules
                 x*([x |--> x^2, y |--> y^2, z |--> z^2] - id)
-
             """
             if isinstance(arg, (list, tuple)):
                 codomain = Sequence([self(0)] + list(arg)).universe()

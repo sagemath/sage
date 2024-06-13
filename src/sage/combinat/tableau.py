@@ -1267,7 +1267,6 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         - ``max_entry`` -- a nonnegative integer, the  maximum allowable number in
           the tableau. Defaults to the largest entry in the tableau if not specified
 
-
         EXAMPLES::
 
             sage: t = SemistandardTableau([[1,1,1,2,4],[3,3,4],[4,5],[6,6]])

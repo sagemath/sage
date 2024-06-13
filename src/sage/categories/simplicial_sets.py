@@ -442,7 +442,6 @@ class SimplicialSets(Category_singleton):
 
                 - ``character`` -- a dictionary
 
-
                 EXAMPLES::
 
                     sage: # needs sage.graphs sage.groups

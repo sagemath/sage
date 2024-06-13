@@ -612,7 +612,6 @@ def is_projective_plane(blocks, verbose=False):
 
     - ``verbose`` -- whether to print additional information
 
-
     EXAMPLES::
 
         sage: from sage.combinat.designs.designs_pyx import is_projective_plane

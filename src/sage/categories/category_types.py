@@ -514,7 +514,6 @@ class Category_over_base_ring(Category_over_base):
 
             sage: QQ['x'] in Algebras(Fields()) # todo: not implemented
             True
-
         """
         try:
             # The issubclass test handles extension types or when the

@@ -138,7 +138,6 @@ class NilCoxeterAlgebra(IwahoriHeckeAlgebra.T):
             sage: U = NilCoxeterAlgebra(WeylGroup(['B',2,1]))
             sage: U.homogeneous_noncommutative_variables([])
             1
-
         """
         return prod(self.homogeneous_generator_noncommutative_variables(p) for p in la)
 
@@ -180,8 +179,6 @@ class NilCoxeterAlgebra(IwahoriHeckeAlgebra.T):
             Traceback (most recent call last):
             ...
             AssertionError: Weyl Group of type ['C', 3, 1] (as a matrix group acting on the root space) is not affine type A.
-
-
         """
         assert self._cartan_type[0] == 'A' and len(self._cartan_type) == 3 and self._cartan_type[2] == 1, "%s is not affine type A." % (self._W)
         assert la in Partitions(), "%s is not a partition." % (la)

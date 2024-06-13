@@ -1142,7 +1142,6 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
             <class 'sage.algebras.quatalg.quaternion_algebra_element.QuaternionAlgebraElement_generic'>
             sage: loads(dumps(theta)) == theta
             True
-
         """
         return (unpickle_QuaternionAlgebraElement_rational_field_v0,
                 (self._parent, (self[0], self[1], self[2], self[3])))

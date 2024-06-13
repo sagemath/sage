@@ -287,7 +287,6 @@ class QuaternionAlgebraFactory(UniqueFactory):
 
             sage: QuaternionAlgebra.create_object("6.0", (QQ, -1, -1, ('i', 'j', 'k')))
             Quaternion Algebra (-1, -1) with base ring Rational Field
-
         """
         K, a, b, names = key
         return QuaternionAlgebra_ab(K, a, b, names=names)
@@ -451,7 +450,6 @@ class QuaternionAlgebra_abstract(Parent):
             Traceback (most recent call last):
             ...
             NotImplementedError: base field must be rational numbers
-
         """
         if not is_RationalField(self.base_ring()):
             raise NotImplementedError("base field must be rational numbers")
@@ -1679,7 +1677,6 @@ class QuaternionOrder(Parent):
             False
             sage: j/2 in O
             False
-
         """
         y = self.quaternion_algebra()(x)
         if y not in self.unit_ideal():
@@ -3338,7 +3335,6 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: X = BrandtModule(3,5).right_ideals()
             sage: I = X[0].intersection(X[1]); I
             Fractional ideal (2 + 6*j + 4*k, 2*i + 4*j + 34*k, 8*j + 32*k, 40*k)
-
         """
         V = self.free_module().intersection(J.free_module())
         H, d = V.basis_matrix()._clear_denom()
@@ -3918,7 +3914,6 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: I = R.ideal([1/2 + 2*j + 140*k, 2*i + 4*j + 150*k, 8*j + 104*k, 152*k])
             sage: I.is_integral()
             False
-
         """
         if self.__left_order is not None:
             return self.free_module() <= self.left_order().free_module()
@@ -3999,7 +3994,6 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             True
             sage: (2*I).is_primitive()
             False
-
         """
         _, g = self.primitive_decomposition()
         return g.is_one()
@@ -4034,7 +4028,6 @@ def basis_for_quaternion_lattice(gens, reverse=None):
 
         sage: basis_for_quaternion_lattice([A(1),i,j,k])
         [1, i, j, k]
-
     """
     if reverse is None:
         from sage.misc.superseded import deprecation

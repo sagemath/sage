@@ -115,7 +115,6 @@ class IntegerModMonoid(UniqueRepresentation, Parent):
             sage: M = FiniteMonoids().example()
             sage: M.one()
             1
-
         """
         return self(ZZ.one())
 

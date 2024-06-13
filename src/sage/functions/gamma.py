@@ -1009,7 +1009,6 @@ class Function_beta(GinacFunction):
 
         -  ``q`` -- number or symbolic expression
 
-
         OUTPUT: number or symbolic expression (if input is symbolic)
 
         EXAMPLES::

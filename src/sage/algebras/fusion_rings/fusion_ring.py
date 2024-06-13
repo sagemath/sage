@@ -634,7 +634,6 @@ class FusionRing(WeylCharacterRing):
             is *not* cached. Caching of
             :meth:`CombinatorialFreeModule.get_order` causes inconsistent
             results after calling :meth:`CombinatorialFreeModule.set_order`.
-
         """
         if self._order is None:
             self.set_order(self.basis().keys().list())

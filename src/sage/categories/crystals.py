@@ -382,7 +382,6 @@ class Crystals(Category_singleton):
                 [(-Lambda[0] + Lambda[2],),
                  (Lambda[0] - Lambda[1] + delta,),
                  (Lambda[1] - Lambda[2],)]
-
             """
             if index_set is None:
                 index_set = self.index_set()

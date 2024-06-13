@@ -150,13 +150,11 @@ class ShrinkingGeneratorCipher(SymmetricKeyCipher):
 
         INPUT:
 
-
         -  ``parent`` -- parent
 
         -  ``poly`` -- connection polynomial
 
         -  ``IS`` -- initial state
-
 
         EXAMPLES::
 

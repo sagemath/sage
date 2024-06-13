@@ -677,7 +677,6 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
         OUTPUT: a boolean indicating whether the positions form an information set
 
-
         EXAMPLES::
 
             sage: G = matrix(GF(3),2,[1,2,0,

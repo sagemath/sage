@@ -132,7 +132,6 @@ class FiniteGCAlgebra(CombinatorialFreeModule):
             sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(1,2,6,6))
             sage: type(A)
             <class 'sage.algebras.commutative_dga.GCAlgebra_with_category'>
-
     """
     @staticmethod
     def __classcall_private__(cls, base, names=None, degrees=None,
@@ -155,7 +154,6 @@ class FiniteGCAlgebra(CombinatorialFreeModule):
             sage: A2 = GradedCommutativeAlgebra(GF(2), ['x', 'y'], [3, 6], max_degree=12)
             sage: A1 is A2
             True
-
         """
         if max_degree is None:
             raise TypeError("max_degree must be specified")

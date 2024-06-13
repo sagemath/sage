@@ -253,7 +253,6 @@ def numerical_integral(func, a, b=None,
         sage: h(x) = x
         sage: numerical_integral(h,0,1)[0] # abs tol 1e-8
         0.5
-
     """
     cdef double abs_err  # step size
     cdef double result

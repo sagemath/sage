@@ -65,7 +65,6 @@ coefficients in `L`), `a \otimes b \mapsto [a_\lambda b]` satisfying
     In the literature arbitrary gradings are allowed. In this
     implementation we only support nonnegative rational gradings.
 
-
 EXAMPLES:
 
 1. The **Virasoro** Lie conformal algebra `Vir` over a ring `R`

@@ -298,7 +298,6 @@ class FreeAlgebraFactory(UniqueFactory):
             sage: FreeAlgebra.create_key(GF(5),3,'xyz',
             ....:                        implementation='letterplace', degrees=[1,2,3])
             ((1, 2, 3), Multivariate Polynomial Ring in x, y, z, x_ over Finite Field of size 5)
-
         """
         if arg1 is None and arg2 is None and names is None:
             # this is used for pickling

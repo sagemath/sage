@@ -189,7 +189,6 @@ class LetterplaceIdeal(Ideal_nc):
             running ._test_new() . . . pass
             running ._test_not_implemented_methods() . . . pass
             running ._test_pickling() . . . pass
-
         """
         Ideal_nc.__init__(self, ring, gens, coerce=coerce, side=side)
         self.__GB = self

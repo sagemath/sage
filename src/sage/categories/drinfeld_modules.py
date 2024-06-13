@@ -785,6 +785,5 @@ class DrinfeldModules(Category_over_base_ring):
                 Ore Polynomial Ring in t over Finite Field in z12 of size 5^12 over its base twisted by Frob^2
                 sage: phi.ore_variable()
                 t
-
             """
             return self.category().ore_polring().gen()

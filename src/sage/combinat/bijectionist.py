@@ -1420,7 +1420,6 @@ class Bijectionist(SageObject):
         and `\psi:Z\to A`.  Note that, in particular, `\phi` must be
         constant on blocks.
 
-
         EXAMPLES::
 
             sage: A = B = DyckWords(3)

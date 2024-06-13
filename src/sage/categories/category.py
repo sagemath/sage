@@ -491,7 +491,6 @@ class Category(UniqueRepresentation, SageObject):
 
             sage: Rings()._label
             'Rings'
-
         """
         t = str(self.__class__.__base__)
         t = t[t.rfind('.') + 1:]
@@ -970,7 +969,6 @@ class Category(UniqueRepresentation, SageObject):
             True
             sage: Sets().all_super_categories(proper=True) is Sets()._all_super_categories_proper
             True
-
         """
         if proper:
             return self._all_super_categories_proper
@@ -1391,7 +1389,6 @@ class Category(UniqueRepresentation, SageObject):
             sage: C.element_class.mro() == [X.element_class for X in C._all_super_categories] + [object]
             True
             sage: TestSuite(C).run()    # indirect doctest
-
         """
         tester = self._tester(**options)
         tester.assertEqual(self.parent_class.mro(), [C.parent_class for C in self._all_super_categories] + [object])
@@ -1624,7 +1621,6 @@ class Category(UniqueRepresentation, SageObject):
             <class 'sage.categories.algebras.Algebras.subcategory_class'>
             sage: type(cls)
             <class 'sage.structure.dynamic_class.DynamicMetaclass'>
-
         """
         return self._make_named_class('subcategory_class', 'SubcategoryMethods',
                                       cache=False, picklable=False)

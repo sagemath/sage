@@ -60,7 +60,6 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
         z*z*y*x
         sage: ((x*y)^3).degree()
         9
-
     """
     def __init__(self, A, x, check=True):
         """
@@ -85,7 +84,6 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             -x*y + y*x
             sage: loads(dumps(p)) == p
             True
-
         """
         cdef FreeAlgebra_letterplace P = A
         if check:
@@ -468,7 +466,6 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
             sage: -(3*x*y+2*z^2)
             -3*x*y - 2*z*z
-
         """
         return FreeAlgebraElement_letterplace(self._parent, -self._poly,
                                               check=False)
@@ -586,7 +583,6 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace', degrees=[2,1,3])
             sage: (x*y+z)*z   # indirect doctest
             x*y*z + z*z
-
         """
         cdef FreeAlgebraElement_letterplace left = self
         cdef FreeAlgebraElement_letterplace right = other
