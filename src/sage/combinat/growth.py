@@ -918,7 +918,6 @@ class GrowthDiagram(SageObject):
             sage: BinaryWord = GrowthDiagram.rules.BinaryWord()
             sage: BinaryWord(filling = {}).P_chain()
             [word: ]
-
         """
         if not self.is_rectangular():
             raise ValueError("the P symbol is only defined for rectangular shapes")
@@ -948,7 +947,6 @@ class GrowthDiagram(SageObject):
             sage: BinaryWord = GrowthDiagram.rules.BinaryWord()
             sage: BinaryWord(filling = {}).Q_chain()
             [word: ]
-
         """
         if not self.is_rectangular():
             raise ValueError("the Q symbol is only defined for rectangular shapes")
@@ -2038,7 +2036,6 @@ class RuleShiftedShapes(Rule):
              .  .  .  .  2
                 .  .  1  3
                    .  4  5
-
         """
         chain = P_chain[::2]
         shape = chain[-1]
@@ -2091,7 +2088,6 @@ class RuleShiftedShapes(Rule):
              .  .  .  .  2
                 .  .  1  4'
                    .  3' 5'
-
         """
         chain = Q_chain
         shape = chain[-1]
@@ -2165,7 +2161,6 @@ class RuleShiftedShapes(Rule):
 
             sage: Shifted.forward_rule([3], 0, [2], 3, [3], 0)
             (3, [4], 0)
-
         """
         if e != 0:
             raise ValueError("the P-graph should not be colored")

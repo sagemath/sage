@@ -174,7 +174,6 @@ def lfsr_sequence(key, fill, n):
         1 + x + x^4 + x^5 + x^8 + x^9 + x^12 + x^13 + x^16 + x^17 + O(x^20)
         sage: (1+x+x^3)/(g.reverse()+O(x^20))
         1 + x + x^3 + x^4 + x^5 + x^7 + x^8 + x^9 + x^11 + x^12 + x^13 + x^15 + x^16 + x^17 + x^19 + O(x^20)
-
     """
     if not isinstance(key, list):
         raise TypeError("key must be a list")

@@ -1691,7 +1691,6 @@ class Func_assoc_legendre_P(BuiltinFunction):
     REFERENCES:
 
     - [DLMF-Legendre]_
-
     """
     def __init__(self):
         r"""
@@ -1782,7 +1781,6 @@ class Func_assoc_legendre_P(BuiltinFunction):
             legendre_P(m, x)
             sage: gen_legendre_P(2, 0, 4) == legendre_P(2, 4)                           # needs sage.symbolic
             True
-
         """
         if m == 0:
             # https://dlmf.nist.gov/14.7#E1
@@ -1814,7 +1812,6 @@ class Func_assoc_legendre_P(BuiltinFunction):
             1/2*sqrt(-x^2 + 1)*x
             sage: gen_legendre_P._eval_int_ord_deg_(-2, -1, x)                          # needs sage.symbolic
             1/2*sqrt(-x^2 + 1)
-
         """
         # use connection formulas to fall back on nonnegative n and m:
         if n < 0:
@@ -1840,7 +1837,6 @@ class Func_assoc_legendre_P(BuiltinFunction):
             14.316525844904028532 - 12.785049615515157033*I
             sage: gen_legendre_P(2/3, 1, 0.)                                            # needs mpmath
             -0.773063511309286
-
         """
         return _mpmath_utils_call(_mpmath_legenp, n, m, x, parent=parent)
 
@@ -1903,7 +1899,6 @@ class Func_assoc_legendre_P(BuiltinFunction):
             Traceback (most recent call last):
             ...
             NotImplementedError: Derivative w.r.t. to the index is not supported.
-
         """
         diff_param = kwds['diff_param']
         if diff_param == 0:

@@ -545,7 +545,6 @@ class WordDatatype_callable_with_caching(WordDatatype_callable):
             sage: w = Word(range(5)) + Word('abcde')
             sage: w.__reduce__()
             (Finite words over Set of Python objects of class 'object', ([0, 1, 2, 3, 4, 'a', 'b', 'c', 'd', 'e'],))
-
         """
         from sage.misc.fpickle import pickle_function
         try:

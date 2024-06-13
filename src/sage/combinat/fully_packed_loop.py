@@ -556,7 +556,6 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
             sage: A = AlternatingSignMatrix([[0, 0, 1], [0, 1, 0], [1, 0, 0]])
             sage: fpl = FullyPackedLoop(A)
             sage: TestSuite(fpl).run()
-
         """
         if isinstance(generator, AlternatingSignMatrix):
             self._six_vertex_model = generator.to_six_vertex_model()
@@ -604,7 +603,6 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
              -- +    +    + -- +
                      |         |
                      |         |
-
         """
         # List are in the order of URDL
         # One set of rules for how to draw around even vertex, one set of rules for odd vertex

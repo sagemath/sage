@@ -243,7 +243,6 @@ class IntegerVectorsModPermutationGroup(UniqueRepresentation):
         792
         1287
         2002
-
     """
     @staticmethod
     def __classcall__(cls, G, sum=None, max_part=None, sgs=None):
@@ -832,7 +831,6 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
             sage: I = IntegerVectorsModPermutationGroup(G, sum=3)
             sage: list(iter(I))
             []
-
         """
         # Special cases when domain is empty.
         if self.n == 0:
@@ -945,7 +943,6 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
             10
             sage: IntegerVectorsModPermutationGroup(T10, 100).cardinality()
             4263421511271
-
         """
         G = self._permgroup
         k = G.degree()          # Vector length

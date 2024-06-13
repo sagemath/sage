@@ -530,7 +530,6 @@ class AlternatingSignMatrix(Element,
                 + -- +    +
                 |         |
                 |         |
-
         """
         from sage.combinat.fully_packed_loop import FullyPackedLoop
         return FullyPackedLoop(self)
@@ -777,7 +776,6 @@ class AlternatingSignMatrix(Element,
             [1 0]
             [0 1]
             ]
-
         """
         n = self.parent()._n
         M = AlternatingSignMatrices(n-1)
@@ -1547,7 +1545,6 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
             [0 0 1]  [0 1 0]
             [1 0 0], [1 0 0]
             )
-
         """
         return iter(self._lattice_initializer()[1])
 
@@ -1562,7 +1559,6 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
             sage: L = A.lattice()
             sage: L
             Finite lattice containing 7 elements
-
         """
         return LatticePoset(self._lattice_initializer(), cover_relations=True,
                             check=False)

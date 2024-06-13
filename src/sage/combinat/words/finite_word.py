@@ -972,7 +972,6 @@ class FiniteWord_class(Word_class):
             False
             sage: u.has_suffix([0,1,0,1,0])
             True
-
         """
         from sage.combinat.words.word import Word
         w = Word(other)
@@ -1049,8 +1048,6 @@ class FiniteWord_class(Word_class):
             False
             sage: u.has_prefix([0,1,1,0,1])
             True
-
-
         """
         from sage.combinat.words.word import Word
         w = Word(other)
@@ -1672,7 +1669,6 @@ class FiniteWord_class(Word_class):
         AUTHOR:
 
         Julien Leroy (March 2010): initial version
-
         """
         from sage.graphs.digraph import DiGraph
         from copy import copy
@@ -2246,7 +2242,6 @@ class FiniteWord_class(Word_class):
             Traceback (most recent call last):
             ...
             ValueError: x and y must be valid positions in self
-
         """
         length = self.length()
         if not (-length <= x < length and -length <= y < length):
@@ -2797,7 +2792,6 @@ class FiniteWord_class(Word_class):
             ...
             ValueError: (2*j-m-1)/2(=15/2) must be an integer, i.e., 2*j(=19) and
             m(=3) can't have the same parity
-
         """
         # Ensure `f` is an involutory word morphism
         if f is not None:
@@ -3785,7 +3779,6 @@ class FiniteWord_class(Word_class):
 
             sage: Word('a').subword_complementaries(Word('a'))
             [word: ]
-
         """
 
         ls = self.length()
@@ -4301,7 +4294,6 @@ class FiniteWord_class(Word_class):
             sage: w = Words('ab')(tuple('babaabaaab'))
             sage: w.find('abc')
             -1
-
         """
         if not isinstance(sub, FiniteWord_class):
             try:
@@ -4700,7 +4692,6 @@ class FiniteWord_class(Word_class):
         .. SEEALSO::
 
             :meth:`sage.combinat.words.finite_word.FiniteWord_class.number_of_factor_occurrences`
-
         """
         return Integer(sum(1 for a in self if a == letter))
     count = number_of_letter_occurrences
@@ -5682,7 +5673,6 @@ class FiniteWord_class(Word_class):
             1
             sage: w.abelian_complexity(4)
             0
-
         """
         alphabet = self.parent().alphabet()
         size = alphabet.cardinality()
@@ -5720,7 +5710,6 @@ class FiniteWord_class(Word_class):
             sage: w = words.ThueMorseWord()[:100]
             sage: [w.abelian_complexity(i) for i in range(20)]
             [1, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2]
-
         """
         return len(self.abelian_vectors(n))
 
@@ -6321,7 +6310,6 @@ class FiniteWord_class(Word_class):
             word:
             sage: Word('aabbabaa').delta()
             word: 22112
-
         """
         if self.is_empty():
             return Words()([])

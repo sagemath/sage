@@ -709,7 +709,6 @@ class RingLWEConverter(SageObject):
             sage: lwe = RingLWEConverter(rlwe)
             sage: lwe
             RingLWEConverter(RingLWE(20, 257, Discrete Gaussian sampler for polynomials of degree < 8 with σ=5.000000 in each component, x^8 - x^6 + x^4 - x^2 + 1, 'uniform', None))
-
         """
         return "RingLWEConverter(%s)" % str(self.ringlwe)
 
@@ -749,7 +748,6 @@ def samples(m, n, lwe, seed=None, balanced=False, **kwds):
         sage: samples(2, 20, 'LindnerPeikert')
         [((506, 1205, 398, 0, 337, 106, 836, 75, 1242, 642, 840, 262, 1823, 1798, 1831, 1658, 1084, 915, 1994, 163), 1447),
          ((463, 250, 1226, 1906, 330, 933, 1014, 1061, 1322, 2035, 1849, 285, 1993, 1975, 864, 1341, 41, 1955, 1818, 1357), 312)]
-
     """
     if seed is not None:
         set_random_seed(seed)

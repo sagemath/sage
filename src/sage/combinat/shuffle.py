@@ -243,7 +243,6 @@ class SetShuffleProduct(ShuffleProduct_abstract):
             Shuffle set product of: [[1, 2], [3, 4]] and [[1, 4]]
             sage: SetShuffleProduct([()], [[1,4]])
             Shuffle set product of: [()] and [[1, 4]]
-
         """
         return "Shuffle set product of: %s and %s" % (self._element_constructor_(self._l1),
                                                       self._element_constructor_(self._l2))
@@ -259,7 +258,6 @@ class SetShuffleProduct(ShuffleProduct_abstract):
             [       [ o,   o   ] ]
             [       [     / \  ] ]
             [ [  ], [    o   o ] ] and [ [ 1, 4 ] ]
-
         """
         from sage.typeset.ascii_art import ascii_art
         return (ascii_art("Set shuffle product of:") *
@@ -334,7 +332,6 @@ class ShuffleProduct(ShuffleProduct_abstract):
          'abdec']
         sage: list(ShuffleProduct("", "de", element_constructor="".join))
         ['de']
-
     """
 
     def __init__(self, l1, l2, element_constructor=None):

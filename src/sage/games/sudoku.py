@@ -270,7 +270,6 @@ class Sudoku(SageObject):
             sage: s = Sudoku('.4..32....14..3.')
             sage: s._repr_()
             '+---+---+\n|  4|   |\n|3 2|   |\n+---+---+\n|   |1 4|\n|   |3  |\n+---+---+'
-
         """
         return self.to_ascii()
 

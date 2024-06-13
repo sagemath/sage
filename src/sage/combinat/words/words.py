@@ -1214,7 +1214,6 @@ class FiniteWords(AbstractLanguage):
             Traceback (most recent call last):
             ...
             TypeError: codomain (=a) must be an instance of FiniteWords
-
         """
         n = self.alphabet().cardinality()
         if min_length < 0:

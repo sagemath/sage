@@ -193,7 +193,6 @@ def combinations(n,t):
         Traceback (most recent call last):
         ...
         AssertionError: t(=6) must be >=0 and <=n(=5)
-
     """
     from sage.rings.infinity import Infinity
     t = int(t)

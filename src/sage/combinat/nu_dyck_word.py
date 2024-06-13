@@ -322,7 +322,6 @@ class NuDyckWord(CombinatorialElement):
             True
             sage: ND3 <= ND1
             True
-
         """
         if self._nu == other._nu:
             return path_weakly_above_other(other._path, self._path)
@@ -666,7 +665,6 @@ class NuDyckWord(CombinatorialElement):
                    ___| . . . . .
                   | . . . . . . .
             ______| . . . . . . .
-
         """
         from sage.typeset.ascii_art import AsciiArt
         rep = self.parent().options.ascii_art

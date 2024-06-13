@@ -3152,7 +3152,6 @@ def RSK(obj1=None, obj2=None, insertion=InsertionRules.RSK, check_standard=False
         [[], []]
         sage: RSK(Word([]), insertion=RSK.rules.Hecke)
         [[], []]
-
     """
     if isinstance(insertion, str):
         if insertion == 'RSK':

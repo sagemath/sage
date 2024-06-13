@@ -3873,7 +3873,6 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             [[2], [2], [3]]
             sage: F.ramification_type(R=F.base_ring())                                  # needs sage.rings.function_field
             [[2], [3]]
-
         """
         # Change base ring if specified.
         if R is None:
@@ -4173,7 +4172,6 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             Looped digraph on 6 vertices
             sage: f.critical_point_portrait() #long time
             Looped digraph on 6 vertices
-
         """
         #input checking done in is_postcritically_finite
         if check:
@@ -7725,7 +7723,6 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
              (-1/2 : 1/2 : 1),
              (1/2 : -1/2 : 1),
              (1/2 : 1/2 : 1)]
-
         """
         points = [[],[]] # list of points and a list of their corresponding levels
         points[0].append(P)
@@ -8430,7 +8427,6 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
               From: Finite Field of size 3
               To:   Finite Field in z2 of size 3^2
               Defn: 1 |--> 1
-
         """
         # defines the field of fixed points
         if self.codomain().dimension_relative() != 1:
@@ -8677,7 +8673,6 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
             sage: prime = system.field_of_definition_periodic(1).prime_above(3)         # needs sage.rings.number_field
             sage: system.potential_good_reduction(prime)                                # needs sage.rings.number_field
             (False, None)
-
         """
         if self.domain().base_ring() not in NumberFields():
             raise ValueError('dynamical system must be defined over number field')

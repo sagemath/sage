@@ -604,7 +604,6 @@ class WordPaths_all(FiniteWords):
             Ambient free module of rank 3 over the principal ideal domain Integer Ring
             sage: WordPaths('abcdef',steps='triangle_grid').vector_space()
             Vector space of dimension 2 over Number Field in sqrt3 with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?
-
         """
         return self._vector_space
 
@@ -1222,7 +1221,6 @@ class FiniteWordPath_all(SageObject):
             sage: p = P('abcde')
             sage: p.tikz_trajectory()
             '(0.000, 0.000) -- (1.00, 0.000) -- (1.50, 0.866) -- (1.00, 1.73) -- (0.000, 1.73) -- (-0.500, 0.866)'
-
         """
         from sage.misc.functional import N as n
         l = (str(tuple(n(x, digits=3) for x in pt)) for pt in self.points())
@@ -1656,7 +1654,6 @@ class FiniteWordPath_2d(FiniteWordPath_all):
                ImageMagick, so please install it and try again.
 
             See www.imagemagick.org, for example.
-
         """
         from sage.plot.all import line, polygon, animate
 
@@ -1741,7 +1738,6 @@ class FiniteWordPath_2d(FiniteWordPath_all):
             sage: p = P('abcd')
             sage: p.area()          #todo: not implemented
             2
-
         """
         if not self.is_closed():
             raise TypeError("the path must be closed to compute its area")
@@ -2014,7 +2010,6 @@ class FiniteWordPath_3d(FiniteWordPath_all):
             sage: p = P('abcabcAABBC')
             sage: p.plot()                                                              # needs sage.plot
             Graphics3d Object
-
         """
         # The following line seems not to work for 3d
         # G = Graphics()
@@ -2114,7 +2109,6 @@ class FiniteWordPath_square_grid(FiniteWordPath_2d):
             Traceback (most recent call last):
             ...
             TypeError: the path must be closed to compute its area
-
         """
         if not self.is_closed():
             raise TypeError("the path must be closed to compute its area")

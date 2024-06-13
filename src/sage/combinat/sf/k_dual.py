@@ -121,7 +121,6 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
         TESTS::
 
             sage: TestSuite(Q).run()
-
         """
         R = Sym.base_ring()
         self.k = k
@@ -147,7 +146,6 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
             sage: Q = Sym.kBoundedQuotient(3,t=1)
             sage: Q.ambient()
             Symmetric Functions over Rational Field
-
         """
         return self._sym
 
@@ -274,7 +272,6 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
             m3[1, 1, 1, 1]
             sage: Q._G_to_km_on_basis_single_level(W.an_element(), 5)
             -4*m3[1, 1, 1, 1, 1]
-
         """
         kB = self._sym.kBoundedSubspace(self.k,t=1)
         g = kB.K_kschur()
@@ -890,7 +887,6 @@ class KBoundedQuotientBasis(CombinatorialFreeModule):
             'm4'
             sage: isinstance(km, sage.combinat.sf.k_dual.KBoundedQuotientBasis)
             True
-
         """
         CombinatorialFreeModule.__init__(self, kBoundedRing.base_ring(),
             kBoundedRing.indices(),

@@ -383,7 +383,6 @@ class Function_erfi(BuiltinFunction):
 
             sage: erfi(x).diff(x)                                                       # needs sage.symbolic
             2*e^(x^2)/sqrt(pi)
-
         """
         return 2*exp(x**2)/sqrt(pi)
 
@@ -421,7 +420,6 @@ class Function_erfc(BuiltinFunction):
 
             sage: erfc(x)._fricas_()                                            # optional - fricas, needs sage.symbolic
             - erf(x) + 1
-
     """
     def __init__(self):
         r"""

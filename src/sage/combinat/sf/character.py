@@ -139,7 +139,6 @@ class Character_generic(SFA_generic):
             -1/2*p[1] + 1/2*p[2]
             sage: st._b_power_k(6)
             1/6*p[1] - 1/6*p[2] - 1/6*p[3] + 1/6*p[6]
-
         """
         if k == 1:
             return self._p([1])
@@ -255,7 +254,6 @@ class InducedTrivialCharacterBasis(Character_generic):
             2*p[1] + p[1, 1] - 2*p[2] - 2*p[2, 1] + p[2, 2]
             sage: ht._b_bar_power_k_r(3,2)
             3*p[1] + p[1, 1] - 3*p[3] - 2*p[3, 1] + p[3, 3]
-
         """
         p = self._p
         return k**r * p.prod( self._b_power_k(k)-j for j in range(r) )
@@ -293,7 +291,6 @@ class InducedTrivialCharacterBasis(Character_generic):
             2*p[1] - 3*p[1, 1] + p[1, 1, 1]
             sage: ht._b_bar_power_gamma(Partition([3,3,1]))
             3*p[1, 1] + p[1, 1, 1] - 3*p[3, 1] - 2*p[3, 1, 1] + p[3, 3, 1]
-
         """
         return self._p.prod(self._b_bar_power_k_r(Integer(k), Integer(r))
                             for k, r in gamma.to_exp_dict().items())
@@ -327,7 +324,6 @@ class InducedTrivialCharacterBasis(Character_generic):
             p[1] - 2*p[1, 1] + 1/2*p[1, 1, 1] + 1/2*p[2, 1]
             sage: ht._self_to_power_on_basis([1,1,1])
             2*p[1] - 3*p[1, 1] + p[1, 1, 1]
-
         """
         return self._p.sum( c*self._b_bar_power_gamma(ga)
                             for (ga, c) in self._p(self._other(lam)) )
@@ -476,7 +472,6 @@ class IrreducibleCharacterBasis(Character_generic):
             p[] + 4*p[1] + p[1, 1] - 4*p[2] - 2*p[2, 1] + p[2, 2]
             sage: st._b_power_k_r(3,2)
             p[] + 5*p[1] + p[1, 1] - 5*p[3] - 2*p[3, 1] + p[3, 3]
-
         """
         p = self._p
         return p.sum( (-1)**(r-j) * k**j * binomial(r,j)
@@ -516,7 +511,6 @@ class IrreducibleCharacterBasis(Character_generic):
             -p[] + 8*p[1] - 6*p[1, 1] + p[1, 1, 1]
             sage: st._b_power_gamma(Partition([3,1]))
             p[] - p[1, 1] - p[3] + p[3, 1]
-
         """
         return self._p.prod(self._b_power_k_r(Integer(k), Integer(r))
                             for k, r in gamma.to_exp_dict().items())
@@ -552,7 +546,6 @@ class IrreducibleCharacterBasis(Character_generic):
             3*p[1] - 2*p[1, 1] + 1/3*p[1, 1, 1] - 1/3*p[3]
             sage: st._self_to_power_on_basis([1,1])
             p[] - p[1] + 1/2*p[1, 1] - 1/2*p[2]
-
         """
         return self._p.sum( c*self._b_power_gamma(ga)
                             for (ga, c) in self._p(self._other(lam)) )

@@ -82,7 +82,6 @@ cdef class PrimePi(BuiltinFunction):
         plots quickly and perfectly as a step function::
 
             sage: P = plot(prime_pi, 50, 100)                                           # needs sage.plot sage.symbolic
-
         """
         super(PrimePi, self).__init__('prime_pi', latex_name=r"\pi",
                                       conversions={'mathematica': 'PrimePi',
@@ -233,7 +232,6 @@ cpdef Integer legendre_phi(x, a):
         2893
         sage: legendre_phi(4215701455, 6450023226)
         1
-
     """
     if not isinstance(a, Integer):
         a = Integer(a)

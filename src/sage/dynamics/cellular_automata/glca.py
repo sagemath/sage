@@ -105,7 +105,6 @@ class GraftalLaceCellularAutomata(SageObject):
             Traceback (most recent call last):
             ...
             ValueError: invalid rule
-
         """
         if len(rule) != 8 or any(x not in range(8) for x in rule):
             raise ValueError("invalid rule")

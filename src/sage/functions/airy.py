@@ -581,7 +581,6 @@ class FunctionAiryBiGeneral(BuiltinFunction):
             sage: from sage.functions.airy import airy_bi_general
             sage: airy_bi_general(-2, 1.0)                                              # needs mpmath
             0.388621540699059
-
         """
         parent = kwargs.get('parent')
         import mpmath

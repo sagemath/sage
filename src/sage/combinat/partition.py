@@ -2063,7 +2063,6 @@ class Partition(CombinatorialElement):
             ([2, 1, 0], [2, 1, 0])
             sage: Partition([9,1,1,1,1,1,1]).frobenius_coordinates()
             ([8], [6])
-
         """
         mu = self
         muconj = mu.conjugate()     # Naive implementation
@@ -6374,7 +6373,6 @@ class Partitions(UniqueRepresentation, Parent):
             Traceback (most recent call last):
             ...
             ValueError: all parts of [3/2] should be nonnegative integers
-
         """
         if isinstance(lst, PartitionTuple):
             if lst.level() != 1:
@@ -6429,7 +6427,6 @@ class Partitions(UniqueRepresentation, Parent):
 
             sage: 0 in P
             False
-
         """
         if isinstance(x, Partition):
             return True
@@ -7174,7 +7171,6 @@ class Partitions_n(Partitions):
 
             sage: all(isinstance(i, Integer) for p in Partitions(4) for i in p)
             True
-
         """
         for p in ZS1_iterator(self.n):
             yield self.element_class(self, [Integer(i) for i in p])
@@ -7314,7 +7310,6 @@ class Partitions_nk(Partitions):
             sage: partitions = Partitions(9, length=3)
             sage: all(isinstance(i, Integer) for p in partitions for i in p)
             True
-
         """
         for p in ZS1_iterator_nk(self.n - self.k, self.k):
             v = [Integer(i + 1) for i in p]
@@ -7546,7 +7541,6 @@ class Partitions_parts_in(Partitions):
             sage: p._findfirst(0, p.parts[:])
             []
             sage: p._findfirst(p.n, [10])
-
         """
         if n == 0:
             return []
@@ -8082,7 +8076,6 @@ class PartitionsInBox(Partitions):
             ....:     len(PartitionsInBox(a, b).list())
             ....:     for a in range(6) for b in range(6))
             True
-
         """
         return binomial(self.h + self.w, self.w)
 
@@ -8614,7 +8607,6 @@ class RegularPartitions_n(RegularPartitions, Partitions_n):
             sage: P = Partitions(5, regular=1)
             sage: P.cardinality()                                                       # needs sage.libs.flint
             0
-
         """
         if self._ell > self.n:
             return Partitions_n.cardinality(self)
@@ -8679,7 +8671,6 @@ class OrderedPartitions(Partitions):
         [[9, 1], [8, 2], [7, 3], [6, 4], [5, 5], [4, 6], [3, 7], [2, 8], [1, 9]]
         sage: OrderedPartitions(4).list()                                               # needs sage.libs.gap
         [[4], [3, 1], [2, 2], [2, 1, 1], [1, 3], [1, 2, 1], [1, 1, 2], [1, 1, 1, 1]]
-
     """
 
     @staticmethod
@@ -8865,7 +8856,6 @@ class PartitionsGreatestLE(UniqueRepresentation, IntegerListsLex):
             ....:     len(PartitionsGreatestLE(n, a).list())
             ....:     for n in range(20) for a in range(6))
             True
-
         """
         return sum(number_of_partitions_length(self.n, i) for i in range(self.k+1))
 
@@ -8911,7 +8901,6 @@ class PartitionsGreatestEQ(UniqueRepresentation, IntegerListsLex):
 
         sage: PartitionsGreatestEQ(10, 2).first().parent()
         Partitions...
-
     """
 
     def __init__(self, n, k):
@@ -8955,7 +8944,6 @@ class PartitionsGreatestEQ(UniqueRepresentation, IntegerListsLex):
             ....:     len(PartitionsGreatestEQ(n, a).list())
             ....:     for n in range(20) for a in range(6))
             True
-
         """
         if not self.n:
             return 1
@@ -9348,7 +9336,6 @@ def number_of_partitions(n, algorithm='default'):
         sage: n = 100000000 + randint(0,100000000)
         sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0     # long time (4s on sage.math, 2011)
         True
-
     """
     n = ZZ(n)
     if n < 0:

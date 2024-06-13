@@ -629,7 +629,6 @@ class Cores_length(UniqueRepresentation, Parent):
 
             sage: C = Cores(3, 4)
             sage: TestSuite(C).run()
-
         """
         self.k = k
         self.n = n

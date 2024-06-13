@@ -1712,7 +1712,6 @@ class CartesianProductWithFlattening:
             sage: from sage.combinat.free_module import CartesianProductWithFlattening
             sage: CartesianProductWithFlattening([True, False, True, True])
             <sage.combinat.free_module.CartesianProductWithFlattening object at ...>
-
         """
         self._flatten = flatten
 
@@ -1726,7 +1725,6 @@ class CartesianProductWithFlattening:
             (1, 2, (3, 4), 5, 6, 7, 8)
             sage: cp((1,2,3), 4, (5,6), (7,8))
             (1, 2, 3, 4, 5, 6, 7, 8)
-
         """
         return sum((i if flatten else (i,)
                     for (i, flatten) in zip(indices, self._flatten)), ())

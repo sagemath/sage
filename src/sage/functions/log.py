@@ -989,7 +989,6 @@ class Function_exp_polar(BuiltinFunction):
             Traceback (most recent call last):
             ...
             ValueError: invalid attempt to numerically evaluate exp_polar()
-
         """
         if (not isinstance(z, Expression) and
                 bool(-const_pi < imag(z) <= const_pi)):

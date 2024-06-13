@@ -271,7 +271,6 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
             #    10 loops, best of 3: 1.73 s per loop
 
             Todo: do the same for the other non multiplicative bases?
-
             """
             return self._pow_naive(n)
 
@@ -666,7 +665,6 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
 
                 sage: s.zero().principal_specialization(3)
                 0
-
             """
             def get_variable(ring, name):
                 try:
@@ -807,7 +805,6 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
 
                 sage: s.zero().exponential_specialization()
                 0
-
             """
             def get_variable(ring, name):
                 try:

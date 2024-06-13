@@ -1053,7 +1053,6 @@ class MacdonaldPolynomials_p(MacdonaldPolynomials_generic):
 
             sage: P.scalar_qt_basis(Partition([2,1]), Partition([2,1]))
             (-q^4*t + 2*q^3*t - q^2*t + q^2 - 2*q + 1)/(-q*t^4 + 2*q*t^3 - q*t^2 + t^2 - 2*t + 1)
-
         """
         if part2 is not None and part1 != part2:
             return self.base_ring().zero()
@@ -1216,7 +1215,6 @@ class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
             sage: H = Sym.macdonald().H()
             sage: TestSuite(H).run(skip=["_test_associativity","_test_distributivity","_test_prod"])
             sage: TestSuite(H).run(elements = [H.t*H[1,1]+H.q*H[2], H[1]+(H.q+H.t)*H[1,1]])  # long time (26s on sage.math, 2012)
-
         """
         MacdonaldPolynomials_generic.__init__(self, macdonald)
         self._m = self._sym.m()
@@ -1430,7 +1428,6 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
             sage: Ht = Sym.macdonald().Ht()
             sage: TestSuite(Ht).run(skip=["_test_associativity","_test_distributivity","_test_prod"])  # long time (26s on sage.math, 2012)
             sage: TestSuite(Ht).run(elements = [Ht.t*Ht[1,1]+Ht.q*Ht[2], Ht[1]+(Ht.q+Ht.t)*Ht[1,1]])  # long time (depends on previous)
-
         """
         MacdonaldPolynomials_generic.__init__(self, macdonald)
         self._self_to_m_cache = _ht_to_m_cache
@@ -1521,7 +1518,6 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
             t^2 + q + t + 1
             sage: Lmunu(Partition([2,2]),Partition([2,1,1]))
             q*t + 2*t^2 + q + t + 1
-
         """
         if not mu:
             if not nu:
@@ -1566,7 +1562,6 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
             sage: m = Sym.m()
             sage: m(Ht[2,1])
             ((2*x^2+2*x+2)/x)*m[1, 1, 1] + ((x^2+x+1)/x)*m[2, 1] + m[3]
-
         """
         part_coeff = lambda x, d: sorted((mu,c) for mu,c in x if sum(mu) == d)
         return self._m._from_dict({ part2:
@@ -1612,7 +1607,6 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
             sage: m = Sym.m()
             sage: Ht((3*x+3)*m[1, 1, 1] + (x+2)*m[2, 1] + m[3])
             McdHt[2, 1]
-
         """
         if self.t == 1:
             subsval = self.q
@@ -1676,7 +1670,6 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
                 sage: a = sum(Ht(p) for p in Partitions(3))
                 sage: s(a.nabla())
                 (t^6+9*t^2+729)*s[1, 1, 1] + (t^5+t^4+3*t^2+9*t+324)*s[2, 1] + (t^3+3*t+27)*s[3]
-
             """
             P = self.parent()
             Ht = P._macdonald.Ht()
@@ -1713,7 +1706,6 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
             sage: S = Sym.macdonald().S()
             sage: TestSuite(S).run(skip=["_test_associativity","_test_distributivity","_test_prod"])
             sage: TestSuite(S).run(elements = [S.t*S[1,1]+S.q*S[2], S[1]+(S.q+S.t)*S[1,1]])
-
         """
         MacdonaldPolynomials_generic.__init__(self, macdonald)
         self._s = macdonald._s

@@ -76,7 +76,6 @@ lazy_import("sage.modules.free_module_element", "vector")
 
 
 class BinaryRecurrenceSequence(SageObject):
-
     """
     Create a linear binary recurrence sequence defined by initial conditions
     `u_0` and `u_1` and recurrence relation `u_{n+2} = b*u_{n+1}+c*u_n`.
@@ -104,7 +103,6 @@ class BinaryRecurrenceSequence(SageObject):
         sage: R
         Binary recurrence sequence defined by: u_n = 3 * u_{n-1} + 3 * u_{n-2};
         With initial conditions: u_0 = 2, and u_1 = 1
-
     """
 
     def __init__(self, b, c, u0=0, u1=1):
@@ -121,7 +119,6 @@ class BinaryRecurrenceSequence(SageObject):
             sage: R = BinaryRecurrenceSequence(1,1)
             sage: loads(R.dumps()) == R
             True
-
         """
         self.b = b
         self.c = c
@@ -141,7 +138,6 @@ class BinaryRecurrenceSequence(SageObject):
             sage: R
             Binary recurrence sequence defined by: u_n = 3 * u_{n-1} + 3 * u_{n-2};
             With initial conditions: u_0 = 2, and u_1 = 1
-
         """
         return 'Binary recurrence sequence defined by: u_n = ' + str(self.b) + ' * u_{n-1} + ' + str(self.c) + ' * u_{n-2};\nWith initial conditions: u_0 = ' + str(self.u0) + ', and u_1 = ' + str(self.u1)
 
@@ -858,7 +854,6 @@ def _next_good_prime(p, R, qq, patience, qqold):
         29
         sage: sage.combinat.binary_recurrence_sequences._next_good_prime(7,R,2,100,2)        #ran out of patience, as qqold == qq, so no primes work
         False
-
     """
 
     #We are looking for pth powers in R.
@@ -947,7 +942,6 @@ def _is_p_power_mod(a, p, N):
         False
         sage: sage.combinat.binary_recurrence_sequences._is_p_power_mod(2**3,3,29)
         True
-
     """
 
     #By the chinese remainder theorem, we can answer this question by examining whether
@@ -1048,7 +1042,6 @@ def _estimated_time(M2, M1, length, p):
         sage: from sage.combinat.binary_recurrence_sequences import _estimated_time
         sage: _estimated_time(2**4*3**2*5*7*11*13*17, 2**4*3**2*5*7*11*13, 20, 7)       # needs sage.symbolic
         106.211159309421
-
     """
 
     #The heuristic run time of the CRT step to go from modulus M1 to M2

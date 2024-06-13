@@ -92,7 +92,6 @@ class FunctionDiracDelta(BuiltinFunction):
     REFERENCES:
 
     - :wikipedia:`Dirac_delta_function`
-
     """
     def __init__(self):
         r"""
@@ -230,7 +229,6 @@ class FunctionHeaviside(GinacFunction):
     REFERENCES:
 
     -  :wikipedia:`Heaviside_function`
-
     """
     def __init__(self):
         r"""
@@ -426,7 +424,6 @@ class FunctionSignum(BuiltinFunction):
     REFERENCES:
 
     - :wikipedia:`Sign_function`
-
     """
     def __init__(self):
         r"""
@@ -569,7 +566,6 @@ class FunctionKroneckerDelta(BuiltinFunction):
     REFERENCES:
 
     - :wikipedia:`Kronecker_delta`
-
     """
     def __init__(self):
         r"""

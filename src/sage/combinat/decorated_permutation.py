@@ -71,7 +71,6 @@ class DecoratedPermutation(ClonableArray,
 
             sage: hash(elt1)                                                    # random
             915443076393556996
-
         """
         pi = list(pi)
         return DecoratedPermutations(len(pi))(pi)
@@ -148,7 +147,6 @@ class DecoratedPermutations(UniqueRepresentation, Parent):
         Decorated permutations of size 3
         sage: S.cardinality()
         16
-
     """
 
     def __init__(self, n):
@@ -230,7 +228,6 @@ class DecoratedPermutations(UniqueRepresentation, Parent):
             sage: S = DecoratedPermutations(3)
             sage: S._an_element_()
             [1, 2, 3]
-
         """
         return self.element_class(self, list(range(1, self._n + 1)))
 

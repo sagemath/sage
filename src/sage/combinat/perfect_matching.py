@@ -265,7 +265,6 @@ class PerfectMatching(SetPartition):
             sage: n = PerfectMatching([('c','b'),('d','f'),('e','a')])
             sage: n.standardization()
             [(1, 5), (2, 3), (4, 6)]
-
         """
         P = PerfectMatchings(2 * len(self))
         return P(SetPartition.standardization(self))

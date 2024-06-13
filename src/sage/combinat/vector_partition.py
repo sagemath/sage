@@ -240,7 +240,6 @@ class VectorPartitions(UniqueRepresentation, Parent):
         sage: Vector_Partitions = VectorPartitions([2,2], parts=[[0,1],[1,0],[1,1]], is_repeatable=lambda vec: sum(vec)%2!=0)
         sage: list(Vector_Partitions)
         [[[0, 1], [0, 1], [1, 0], [1, 0]], [[0, 1], [1, 0], [1, 1]]]
-
     """
     @staticmethod
     def __classcall_private__(cls, vec, min=None, parts=None, distinct=False, is_repeatable=None):

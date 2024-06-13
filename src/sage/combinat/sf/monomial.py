@@ -373,7 +373,6 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
 
                 sage: m.zero().principal_specialization(3)
                 0
-
             """
             if q == 1:
                 if n == infinity:
@@ -459,7 +458,6 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
 
                 sage: m.zero().exponential_specialization()
                 0
-
             """
             def get_variable(ring, name):
                 try:

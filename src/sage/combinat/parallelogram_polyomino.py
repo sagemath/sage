@@ -251,7 +251,6 @@ class LocalOptions:
             sage: o("size")
             3
             sage: o["size"]=-6
-
         """
         assert (key in self._available_options)
         if value == "?":
@@ -311,7 +310,6 @@ class LocalOptions:
             {'default': 'list', 'values':
             {'diagram': 'diagram representation',
             'list': 'list representation'}}
-
         """
         for key in options:
             value = options[key]
@@ -595,7 +593,6 @@ class _drawing_tool:
         sage: dt.draw_line([1, 1], [-1, -1])
         '\n  \\draw[color=black, line width=1] (-1.000000, 1.000000) --
         (1.000000, -1.000000);'
-
     """
 
     def __init__(self, options, XY=lambda v: v):
@@ -1242,7 +1239,6 @@ class ParallelogramPolyomino(ClonableList,
             sage: pp = ParallelogramPolyomino([[1], [1]])
             sage: pp._to_dyck_delest_viennot()
             []
-
         """
         from sage.combinat.dyck_word import DyckWord
         dyck = []
@@ -2737,7 +2733,6 @@ class ParallelogramPolyomino(ClonableList,
             (3.000000, 2.000000);
               \draw[color=black, line width=1] (1.000000, 1.000000) --
             (3.000000, 1.000000);
-
         """
         tikz_options = self.get_tikz_options()
         grid_width = self.width() + 1
@@ -3313,7 +3308,6 @@ class ParallelogramPolyomino(ClonableList,
             [0]
             sage: pp._get_path_in_pair_of_tree_from_row(0)
             []
-
         """
         pos = self._get_node_position_at_row(line)
         return self._get_number_of_nodes_in_the_bounding_path(pos, 0)
@@ -3724,7 +3718,6 @@ class ParallelogramPolyomino(ClonableList,
             ....: ])
             sage: pp._plot_bounce(directions=[0,1])                                     # needs sage.plot
             Graphics object consisting of 9 graphics primitives
-
         """
         if directions is None:
             directions = [0, 1]

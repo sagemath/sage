@@ -863,7 +863,6 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             sage: Sym1 = SymmetricFunctions(FiniteField(23))
             sage: Sym2 = SymmetricFunctions(Integers(23))
             sage: TestSuite(Sym).run()
-
         """
         # change the line below to assert(R in Rings()) once MRO issues from #15536, #15475 are resolved
         assert R in Fields() or R in Rings()  # side effect of this statement assures MRO exists for R
@@ -1438,7 +1437,6 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             2*s[] + 2*s[1] - 3*s[1, 1] + 3*s[2]
             sage: f(p.an_element()) == p.an_element()
             True
-
         """
         #powersum   = self.powersum  ()
         #complete   = self.complete  ()

@@ -253,7 +253,6 @@ class Feature(TrivialUniqueRepresentation):
             sage: from sage.features.gap import GapPackage
             sage: GapPackage("grape")  # indirect doctest
             Feature('gap_package_grape')
-
         """
         description = f'{self.name!r}: {self.description}' if self.description else f'{self.name!r}'
         return f'Feature({description})'
@@ -817,7 +816,6 @@ class StaticFile(FileFeature):
             Feature('shell')
             sage: sh.absolute_filename()
             '/bin/sh'
-
         """
         Feature.__init__(self, name, type=type, **kwds)
         self.filename = filename

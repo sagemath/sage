@@ -642,7 +642,6 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
            Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
              x0,
              x0^2 + 3*x0*x1 + x1^2
-
         """
         if b not in self.ambient_space()[1]:
             raise TypeError("point must be in projective space of dimension 2")

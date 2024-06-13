@@ -1215,7 +1215,6 @@ class DyckWord(CombinatorialElement):
 
             sage: DyckWord([1,0,1,0]).ascent_prime_decomposition()
             [[], [1, 0], [], [1, 0], []]
-
         """
         n = self.length()
         H = self.heights()
@@ -3013,7 +3012,6 @@ class DyckWord_complete(DyckWord):
             []
             sage: DyckWord([1,0]).bounce_path()
             [1, 0]
-
         """
         area_seq = self.to_area_sequence()
         i = len(area_seq) - 1

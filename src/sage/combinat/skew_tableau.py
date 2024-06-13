@@ -1131,7 +1131,6 @@ class SkewTableau(ClonableList,
             [[None, None, 3], [None, 1, 3], [2, 2]]
             sage: st.to_list() == stlist
             True
-
         """
         return [list(row) for row in self]
 

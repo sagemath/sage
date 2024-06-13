@@ -80,7 +80,6 @@ cdef int next_swap(int n, int *c, int *o) noexcept:
 
     Returns the index i such that the next permutation can be
     obtained by swapping P[i] <-> P[i+1]
-
     """
 
     cdef int j,s,q,offset

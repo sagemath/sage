@@ -665,7 +665,6 @@ class NormalFormGame(SageObject, MutableMapping):
 
     - ``generator`` -- can be a list of 2 matrices, a single matrix or left
       blank
-
     """
 
     def __init__(self, generator=None):
@@ -763,7 +762,6 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: game = NormalFormGame()
             sage: game
             Normal Form Game with the following utilities: {}
-
         """
         self.players = []
         self.utilities = {}
@@ -1367,7 +1365,6 @@ class NormalFormGame(SageObject, MutableMapping):
              (1, 1): [3, 0],
              (2, 0): [False, False],
              (2, 1): [False, False]}
-
         """
         self.players[player].add_strategy()
         self._generate_utilities(False)
@@ -2284,7 +2281,6 @@ class NormalFormGame(SageObject, MutableMapping):
             -1 1 1 0
             end
             <BLANKLINE>
-
         """
         from sage.misc.superseded import deprecation
         deprecation(27745,

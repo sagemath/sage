@@ -556,7 +556,6 @@ class OEIS:
             sage: s = oeis.find_by_entry(entry=oeis._imaginary_entry(ident='A999998', keywords=keywords))
             sage: ','.join(s.keywords()) == keywords
             True
-
         """
         return ('%I ' + ident + ' M9999 N9999\n'
                 '%S ' + ident + ' 1,1,1,1,2,1,1,1,\n'
@@ -1151,7 +1150,6 @@ class OEISSequence(SageObject, UniqueRepresentation):
             sage: s = oeis._imaginary_sequence(ident='A999993', keywords='nonn,finit')
             sage: s.is_finite()
             True
-
         """
         if 'finit' in self.keywords() or 'full' in self.keywords():
             return True

@@ -48,7 +48,6 @@ class SAGE_SRC(StaticFile):
     r"""
     A :class:`~sage.features.Feature` which describes the presence of the
     monolithic source tree of the Sage library.
-
     """
     def __init__(self):
         r"""

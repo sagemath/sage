@@ -1499,7 +1499,6 @@ class BrauerDiagrams(AbstractPartitionDiagrams):
             sage: bd = da.BrauerDiagrams(3/2)
             sage: bd.an_element() in bd
             True
-
         """
         if self.order in ZZ:
             r = ZZ(self.order)

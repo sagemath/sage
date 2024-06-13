@@ -133,7 +133,6 @@ class Stream():
         However, keep in mind that (trivially) this initialization
         code is not executed if ``_approximate_order`` is set to a
         value before it is accessed.
-
     """
     def __init__(self, true_order):
         """
@@ -545,7 +544,6 @@ class Stream_inexact(Stream):
             True
             sage: g != f
             True
-
         """
         # TODO: more cases, in particular mixed implementations,
         # could be detected
@@ -808,7 +806,6 @@ class Stream_exact(Stream):
             sage: t = Stream_exact([2], order=-1, degree=5, constant=1)
             sage: s == t
             False
-
         """
         return (isinstance(other, type(self))
                 and self._degree == other._degree
@@ -2180,7 +2177,6 @@ class Stream_plethysm(Stream_binary):
         sage: r2 = Stream_plethysm(f, g, True, p, include=[])                           # needs sage.modules
         sage: r_s - sum(r2[n] for n in range(2*(r_s.degree()+1)))                       # needs sage.modules
         (a2*b1^2-a2*b1)*p[2] + (a2*b111^2-a2*b111)*p[2, 2, 2] + (a2*b21^2-a2*b21)*p[4, 2]
-
     """
     def __init__(self, f, g, is_sparse, p, ring=None, include=None, exclude=None):
         r"""
@@ -2396,7 +2392,6 @@ class Stream_plethysm(Stream_binary):
             ....:                           if sum(mu.size() for mu in m) == 12})
             sage: A == B                        # long time
             True
-
         """
         # TODO: we should do lazy binary powering here
         while len(self._powers) < m:
@@ -2730,7 +2725,6 @@ class Stream_cauchy_invert(Stream_unary):
         sage: g = Stream_cauchy_invert(f)
         sage: [g[i] for i in range(10)]
         [-1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-
     """
     def __init__(self, series, approximate_order=None):
         """
@@ -2974,7 +2968,6 @@ class Stream_map_coefficients(Stream_unary):
         sage: g = Stream_map_coefficients(f, lambda n: -n, True)
         sage: [g[i] for i in range(10)]
         [0, -1, -1, -1, -1, -1, -1, -1, -1, -1]
-
     """
     def __init__(self, series, function, is_sparse, approximate_order=None, true_order=False):
         """

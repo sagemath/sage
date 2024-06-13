@@ -177,7 +177,6 @@ def combinatorial_map_wrapper(f=None, order=None, name=None):
         <function major_index at ...>
         sage: combinatorial_map(major_index)
         Combinatorial map: major_index
-
     """
     if f is None:
         return lambda f: CombinatorialMap(f, order=order, name=name)

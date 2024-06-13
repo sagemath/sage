@@ -1565,7 +1565,6 @@ class SR_generic(MPolynomialSystemGenerator):
             sage: sr = mq.SR(10, 1, 2, 4)
             sage: sr.varstrs('x', 2)
             ('x200', 'x201', 'x202', 'x203', 'x210', 'x211', 'x212', 'x213')
-
         """
         if rc is None:
             rc = self.r * self.c
@@ -1595,7 +1594,6 @@ class SR_generic(MPolynomialSystemGenerator):
             sage: sr = mq.SR(10, 1, 2, 4)
             sage: sr.vars('x', 2)
             (x200, x201, x202, x203, x210, x211, x212, x213)
-
         """
         gd = self.variable_dict()
         return tuple([gd[s] for s in self.varstrs(name, nr, rc, e)])
@@ -1652,7 +1650,6 @@ class SR_generic(MPolynomialSystemGenerator):
              'x101': x101,
              'x102': x102,
              'x103': x103}
-
         """
         try:
             R,gd = self._variable_dict
@@ -3242,7 +3239,6 @@ class SR_gf2_2(SR_gf2):
             sage: l = sr.inversion_polynomials_single_sbox()                            # needs sage.libs.singular
             sage: l == sr.inversion_polynomials_single_sbox(biaffine_only=True, correct_only=False)                     # needs sage.libs.singular
             True
-
         """
         e = self.e
         if x is None and w is None:

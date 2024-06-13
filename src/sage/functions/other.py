@@ -844,7 +844,6 @@ class Function_real_nth_root(BuiltinFunction):
             sage: f = real_nth_root(x, 3)                                               # needs sage.symbolic
             sage: f._sympy_()                                                           # needs sympy sage.symbolic
             Piecewise((Abs(x)**(1/3)*sign(x), Eq(im(x), 0)), (x**(1/3), True))
-
         """
         BuiltinFunction.__init__(self, "real_nth_root", nargs=2,
                                  conversions=dict(sympy='real_root',
@@ -1046,7 +1045,6 @@ class Function_arg(BuiltinFunction):
             0
             sage: arg(sqrt(2)+i)
             arg(sqrt(2) + I)
-
         """
         if isinstance(x,Expression):
             if x.is_trivial_zero():
@@ -1826,7 +1824,6 @@ class Function_sum(BuiltinFunction):
             Sum(k, (k, 1, n))
             sage: s._sympy_().doit()                                                    # needs sympy
             n**2/2 + n/2
-
         """
         import sympy
         return sympy.Sum(term, (k, a, n))

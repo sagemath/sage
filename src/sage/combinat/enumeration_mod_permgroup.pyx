@@ -118,7 +118,6 @@ cpdef int lex_cmp(ClonableIntArray v1, ClonableIntArray v2) noexcept:
         -1
         sage: lex_cmp(v3, v1)
         1
-
     """
     cdef int i
     cdef int step = min(v1._len,v2._len)

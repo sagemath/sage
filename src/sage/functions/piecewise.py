@@ -1212,7 +1212,6 @@ class PiecewiseFunction(BuiltinFunction):
                 sage: f = piecewise([[(-pi, pi/2), f1], [(pi/2, pi), f2]])
                 sage: f.fourier_series_cosine_coefficient(5, pi)
                 -3/5/pi
-
             """
             from sage.functions.trig import cos
             from sage.symbolic.constants import pi
@@ -1301,7 +1300,6 @@ class PiecewiseFunction(BuiltinFunction):
                 4/pi
                 sage: f2.fourier_series_sine_coefficient(6)
                 4/3/pi
-
             """
             from sage.functions.trig import sin
             from sage.symbolic.constants import pi
@@ -1390,7 +1388,6 @@ class PiecewiseFunction(BuiltinFunction):
                 sage: f.fourier_series_partial_sum(5)
                 -2*cos(2*pi*x)/pi^2 + 4/25*sin(5*pi*x)/pi^2
                  - 4/9*sin(3*pi*x)/pi^2 + 4*sin(pi*x)/pi^2 + 1/4
-
             """
             from sage.symbolic.constants import pi
             from sage.functions.trig import cos, sin

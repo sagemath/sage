@@ -152,7 +152,6 @@ class DocTestReporter(SageObject):
             sage: DTR = DocTestReporter(DC)
             sage: DTR.were_doctests_with_optional_tag_run('latex')   # optional - latex
             True
-
         """
         if self.controller.options.optional is True or tag in self.controller.options.optional:
             return True

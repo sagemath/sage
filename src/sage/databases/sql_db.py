@@ -141,7 +141,6 @@ def verify_type(type):
         Traceback (most recent call last):
         ...
         TypeError: float is not a legal type.
-
     """
     types = ['INTEGER','INT','BOOLEAN','REAL','TEXT','BOOL','BLOB','NOTYPE']
     if type.upper() not in types:
@@ -447,7 +446,6 @@ class SQLQuery(SageObject):
             Traceback (most recent call last):
                 ...
             ValueError: Table has no column c1
-
         """
         if not isinstance(database, SQLDatabase):
             raise TypeError('%s is not a valid SQLDatabase' % database)
@@ -1065,7 +1063,6 @@ class SQLDatabase(SageObject):
         Call ``cleanup()`` on the temporary directory to, well, clean it up::
 
             sage: d.cleanup()
-
         """
         if filename is None:
             if read_only is None:
@@ -1734,7 +1731,6 @@ class SQLDatabase(SageObject):
             sage: D.show('lucy')
             col1
             --------------------
-
         """
         if self.__read_only__:
             raise RuntimeError('Cannot rename tables in a read only database.')
@@ -1912,7 +1908,6 @@ class SQLDatabase(SageObject):
                'primary_key': False,
                'sql': 'INTEGER',
                'unique': True}}}
-
         """
         if self.__read_only__:
             raise RuntimeError('Cannot modify a read only database')

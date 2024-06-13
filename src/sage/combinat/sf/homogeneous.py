@@ -285,7 +285,6 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
                 sage: x = h.zero()
                 sage: s = x.principal_specialization(3); s
                 0
-
             """
             from sage.combinat.q_analogues import q_binomial
 
@@ -389,7 +388,6 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
                 sage: x = h.zero()
                 sage: s = x.exponential_specialization(); s
                 0
-
             """
             from sage.combinat.q_analogues import q_factorial
 

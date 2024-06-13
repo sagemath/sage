@@ -395,7 +395,6 @@ class Subsets_s(Parent):
             [{}, {1}, {2}, {3}, {1, 2}, {1, 3}, {2, 3}, {1, 2, 3}]
             sage: [sub for sub in Subsets([1,2,3,3])]
             [{}, {1}, {2}, {3}, {1, 2}, {1, 3}, {2, 3}, {1, 2, 3}]
-
         """
         k = ZZ_0
         while k <= self._s.cardinality():
@@ -474,7 +473,6 @@ class Subsets_s(Parent):
             Traceback (most recent call last):
             ...
             IndexError: index out of range
-
         """
         r = Integer(r)
         if r >= self.cardinality() or r < 0:
@@ -554,7 +552,6 @@ class Subsets_s(Parent):
             sage: Y = Subsets(0)
             sage: Y.lattice()                                                           # needs sage.combinat sage.graphs
             Finite lattice containing 1 elements
-
         """
         S = self.underlying_set()
         return S.subsets_lattice()
@@ -1323,7 +1320,6 @@ class SubMultiset_sk(SubMultiset_s):
 
             sage: Subsets([3,2,2], submultiset=True).list()
             [[], [3], [2], [3, 2], [2, 2], [3, 2, 2]]
-
         """
         from sage.combinat.integer_vector import IntegerVectors
         elts = self._keys

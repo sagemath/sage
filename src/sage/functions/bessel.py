@@ -435,7 +435,6 @@ class Function_Bessel_J(BuiltinFunction):
             Traceback (most recent call last):
             ...
             NotImplementedError: derivative with respect to order
-
         """
         if diff_param == 1:
             return (bessel_J(n - 1, x) - bessel_J(n + 1, x)) / Integer(2)
@@ -1203,7 +1202,6 @@ def Bessel(*args, **kwds):
         sage: G += plot(Bessel(1, 'J'), 0, 15, color='black', linestyle='dotted')
         sage: G += plot(Bessel(1, 'Y'), 0, 15, color='black', linestyle='dotted')
         sage: show(G, ymin=-1, ymax=1)
-
     """
     # Determine the order and type of function from the arguments and keywords.
     # These are recorded in local variables: _type, _order, _system, _nargs.

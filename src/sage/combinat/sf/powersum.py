@@ -779,7 +779,6 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
 
                 sage: p.zero().principal_specialization(3)
                 0
-
             """
             def get_variable(ring, name):
                 try:
@@ -891,7 +890,6 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
 
                 sage: p.zero().exponential_specialization()
                 0
-
             """
             def get_variable(ring, name):
                 try:

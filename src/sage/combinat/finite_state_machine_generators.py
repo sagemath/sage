@@ -384,7 +384,6 @@ class TransducerGenerators:
             [0, 1]
             sage: T([0, 1, 0, 1, 1])
             [0, 1, 0, 1, 1]
-
         """
         return Transducer(
             [(0, 0, d, d) for d in input_alphabet],
@@ -974,7 +973,6 @@ class TransducerGenerators:
             [0]
             sage: T([-1, -1, 0, 1])
             [1, 1, 0, 1]
-
         """
         return self.map(abs, input_alphabet)
 

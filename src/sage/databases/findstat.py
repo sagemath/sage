@@ -487,7 +487,6 @@ def _submit(args, url):
         ....:         "CurrentAuthor": "",
         ....:         "CurrentEmail": ""}
         sage: _submit(args, url)                                                # optional -- webbrowser
-
     """
     f = tempfile.NamedTemporaryFile(mode='w', suffix='.html', delete=False)
     verbose("Created temporary file %s" % f.name, caller_name='FindStat')
@@ -2984,7 +2983,6 @@ class FindStatMatchingStatistic(FindStatCompoundStatistic):
             sage: r = FindStatMatchingStatistic("St000042oMp00116", 1, [17, 83])          # optional -- internet
             sage: r.quality()                                                   # optional -- internet
             [17, 83]
-
         """
         return self._quality[:]
 
@@ -3932,7 +3930,6 @@ def _plane_partitions_by_size_aux(n, outer=None):
         sage: from sage.databases.findstat import _plane_partitions_by_size_aux
         sage: list(_plane_partitions_by_size_aux(3))
         [[[1], [1], [1]], [[2], [1]], [[1, 1], [1]], [[3]], [[2, 1]], [[1, 1, 1]]]
-
     """
     if n == 0:
         yield []
@@ -3969,7 +3966,6 @@ def _plane_partitions_by_size(n):
          Plane partition [[3]],
          Plane partition [[2, 1]],
          Plane partition [[1, 1, 1]]]
-
     """
     for pp in _plane_partitions_by_size_aux(n):
         yield PlanePartition(pp)
@@ -3991,7 +3987,6 @@ def _finite_lattices(n):
         sage: [L.cover_relations() for L in _finite_lattices(4)]
         [[['bottom', 0], ['bottom', 1], [0, 'top'], [1, 'top']],
          [['bottom', 0], [0, 1], [1, 'top']]]
-
     """
     if n <= 2:
         for P in Posets(n):

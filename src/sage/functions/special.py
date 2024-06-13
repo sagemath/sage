@@ -233,7 +233,6 @@ class SphericalHarmonic(BuiltinFunction):
     REFERENCES:
 
     - :wikipedia:`Spherical_harmonics`
-
     """
     def __init__(self):
         r"""
@@ -295,7 +294,6 @@ class SphericalHarmonic(BuiltinFunction):
             -1/4*sqrt(6)*sqrt(5)*cos(x)*e^(I*y)*sin(x)/sqrt(pi)
             sage: spherical_harmonic(5, -3, x, y)                                       # needs sage.symbolic
             -1/32*(9*sqrt(385)*sin(x)^4 - 8*sqrt(385)*sin(x)^2)*e^(-3*I*y)*sin(x)/sqrt(pi)
-
         """
         if n in ZZ and m in ZZ and n > -1:
             if abs(m) > n:
@@ -327,7 +325,6 @@ class SphericalHarmonic(BuiltinFunction):
             sage: ab = [(0, 0), (1, -1), (1, 0), (1, 1), (3, 2), (3, 3)]
             sage: all(d(a, b) < 1e-14 for a, b in ab)                                   # needs sage.symbolic
             True
-
         """
         return _mpmath_utils_call(_mpmath_spherharm, n, m, theta, phi, parent=parent)
 
@@ -357,7 +354,6 @@ class SphericalHarmonic(BuiltinFunction):
             True
             sage: bool(DY_theta.subs({n: 1, m: -1}) == Ynm.subs({n: 1, m: -1}).diff(theta))
             True
-
         """
         if diff_param == 2:
             return (m * cot(theta) * spherical_harmonic(n, m, theta, phi) +
@@ -533,7 +529,6 @@ class EllipticE(BuiltinFunction):
              0.000000000000000,
              0.000000000000000,
              0.000000000000000]
-
         """
         BuiltinFunction.__init__(self, 'elliptic_e', nargs=2,
                                  # Maple conversion left out since it uses
@@ -899,7 +894,6 @@ class EllipticF(BuiltinFunction):
              0.000000000000000,
              0.000000000000000,
              0.000000000000000]
-
         """
         BuiltinFunction.__init__(self, 'elliptic_f', nargs=2,
                                  conversions=dict(mathematica='EllipticF',

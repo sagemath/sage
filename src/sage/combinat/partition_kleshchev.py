@@ -788,7 +788,6 @@ class KleshchevPartitionTuple(PartitionTuple):
             ([2, 2, 1, 1], [3, 2, 2, 1, 1])
             sage: mc.parent()
             Kleshchev partitions with e=3 and multicharge=(0,2)
-
         """
         P = self.parent()
         if self.size() == 0:
@@ -1279,7 +1278,6 @@ class KleshchevPartitions(PartitionTuples):
             sage: KPls = KleshchevPartitions(2, [0,0], size=2, convention='left restricted')
             sage: [KPlg(mu) for mu in KPls] # indirect doc test
             [([1], [1]), ([2], [])]
-
         """
         if isinstance(mu, (KleshchevPartition, KleshchevPartitionTuple)):
             KPmu = mu.parent()

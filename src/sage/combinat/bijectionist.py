@@ -481,7 +481,6 @@ class Bijectionist(SageObject):
         :meth:`set_statistics`, :meth:`set_intertwining_relations`,
         :meth:`set_constant_blocks`, etc., is irrelevant.  Calling any of these
         methods a second time overrides the previous specification.
-
     """
     def __init__(self, A, B, tau=None, alpha_beta=tuple(), P=None,
                  pi_rho=tuple(), phi_psi=tuple(), Q=None,
@@ -605,7 +604,6 @@ class Bijectionist(SageObject):
             Traceback (most recent call last):
             ...
             StopIteration
-
         """
         self._bmilp = None
         self._P = DisjointSet(self._A)
@@ -645,7 +643,6 @@ class Bijectionist(SageObject):
 
             sage: bij.constant_blocks(singletons=True)
             {{'a', 'b'}, {'c'}}
-
         """
         if optimal:
             self._forced_constant_blocks()
@@ -748,7 +745,6 @@ class Bijectionist(SageObject):
             {[]: 2, [1]: 0, [1, 2]: 0, [2, 1]: 1}
             {[]: 2, [1]: 0, [1, 2]: 1, [2, 1]: 0}
             {[]: 2, [1]: 1, [1, 2]: 0, [2, 1]: 0}
-
         """
         self._bmilp = None
         self._n_statistics = len(alpha_beta)
@@ -815,7 +811,6 @@ class Bijectionist(SageObject):
               (3, 2, 1)   [[1, 3, 2], [2, 1, 3], [3, 2, 1]]   [[1, 3, 2], [2, 1, 3], [2, 3, 1]]
               (3, 2, 0)   [[2, 3, 1]]                         [[3, 1, 2]]
               (3, 1, 0)   [[3, 1, 2]]                         [[1, 2, 3]]
-
         """
         return self._statistics_fibers
 
@@ -940,7 +935,6 @@ class Bijectionist(SageObject):
             [['b', 'τ'], [[], 0], [[1], 1], [[1, 2], 2], [[2, 1], 1]]
             sage: bij.statistics_table(header=False)[1]
             [[[], 0], [[1], 1], [[1, 2], 2], [[2, 1], 1]]
-
         """
         # table for alpha
         n_statistics = self._n_statistics
@@ -1059,7 +1053,6 @@ class Bijectionist(SageObject):
             Traceback (most recent call last):
             ...
             AssertionError: element (1, 2) was not found in A
-
         """
         # it might be much cheaper to construct the sets as subsets
         # of _statistics_possible_values - however, we do not want to
@@ -1091,7 +1084,6 @@ class Bijectionist(SageObject):
             Traceback (most recent call last):
             ...
             ValueError: no possible values found for singleton block [[1, 2]]
-
         """
         self._possible_block_values = {}  # P -> Power(Z)
         for p, block in self._P.root_to_elements_dict().items():
@@ -1254,7 +1246,6 @@ class Bijectionist(SageObject):
 
         Note that the same error occurs when an element that is not the first element of the list is
         not in `A`.
-
         """
         self._bmilp = None
         for tA, tZ in elements_distributions:
@@ -1382,7 +1373,6 @@ class Bijectionist(SageObject):
             sage: bij.set_intertwining_relations((2, concat, lambda x, y: x + y), (2, skew_concat, lambda x, y: x + y))
             sage: list(bij.solutions_iterator())
             []
-
         """
         self._bmilp = None
         Pi_Rho = namedtuple("Pi_Rho", "numargs pi rho domain")
@@ -1446,7 +1436,6 @@ class Bijectionist(SageObject):
              ( [   /\   ]             ) ]
              ( [  /  \  ]             ) ]
              ( [ /    \ ], [ /\/\/\ ] ) ]
-
         """
         self._bmilp = None
         self._phi_psi = phi_psi
@@ -1467,7 +1456,6 @@ class Bijectionist(SageObject):
             sage: bij.set_homomesic([[1,2], [3]])
             sage: list(bij.solutions_iterator())
             [{1: 2, 2: 0, 3: 1}, {1: 0, 2: 2, 3: 1}]
-
         """
         self._bmilp = None
         if Q is None:
@@ -1639,7 +1627,6 @@ class Bijectionist(SageObject):
             {{'a', 'b'}}
             sage: bij.constant_blocks(optimal=True)
             {{'a', 'b'}, {'c', 'd'}}
-
         """
         if self._bmilp is None:
             self._bmilp = _BijectionistMILP(self)
@@ -1928,7 +1915,6 @@ class Bijectionist(SageObject):
             sage: d = {'a': 1, 'b': 0, 'c': 0, 'd': 0, 'e': 0}
             sage: bij._find_counterexample(bij._A, s0, d, False)
             {'a': 2, 'b': 2, 'c': 1, 'd': 3, 'e': 1}
-
         """
         bmilp = self._bmilp
         for z in self._Z:
@@ -2064,7 +2050,6 @@ class Bijectionist(SageObject):
 
             sage: sorted(D) in [d for d, _ in bij.minimal_subdistributions_iterator()]
             True
-
         """
         # see
         # https://mathoverflow.net/questions/406751/find-a-subdistribution/406975
@@ -2167,7 +2152,6 @@ class Bijectionist(SageObject):
             sage: bij._preprocess_intertwining_relations()
             sage: bij._P
             {{[1, 2, 3]}, {[1, 3, 2]}, {[2, 1, 3]}, {[2, 3, 1]}, {[3, 1, 2]}, {[3, 2, 1]}}
-
         """
         A = self._A
         P = self._P
@@ -2446,7 +2430,6 @@ class Bijectionist(SageObject):
             sage: s1_3 = next(iterator1)
             sage: len(set([tuple(sorted(s.items())) for s in [s1_1, s1_2, s1_3]]))
             3
-
         """
         if self._bmilp is None:
             self._bmilp = _BijectionistMILP(self)
@@ -2485,7 +2468,6 @@ class _BijectionistMILP:
             sage: from sage.combinat.bijectionist import _BijectionistMILP
             sage: _BijectionistMILP(bij)
             <sage.combinat.bijectionist._BijectionistMILP object at ...>
-
         """
         # the attributes of the bijectionist class we actually use:
         # _possible_block_values
@@ -2549,7 +2531,6 @@ class _BijectionistMILP:
                 x_1: s(a) = s(b) = 1
                 x_2: s(c) = 0
                 x_3: s(c) = 1
-
         """
         print("Constraints are:")
         b = self.milp.get_backend()
@@ -2608,7 +2589,6 @@ class _BijectionistMILP:
             sage: bmilp = bij._bmilp
             sage: bmilp._prepare_solution(True, bmilp._solution_cache[0])
             {'a': 0, 'c': 0}
-
         """
         P = self._bijectionist._P
         tZ = self._bijectionist._possible_block_values
@@ -2652,7 +2632,6 @@ class _BijectionistMILP:
             {'a': 0, 'b': 0, 'c': 1}
             sage: next(it)
             {'a': 1, 'b': 0, 'c': 0}
-
         """
         i = 0  # the first unconsidered element of _solution_cache
         while True:
@@ -2721,7 +2700,6 @@ class _BijectionistMILP:
                 x_1: s(a) = a
                 x_2: s(b) = b
                 x_3: s(b) = a
-
         """
         active_vars = [self._x[p, z]
                        for p in _disjoint_set_roots(self._bijectionist._P)
@@ -2855,7 +2833,6 @@ class _BijectionistMILP:
              [2, 3, 1]: 2,
              [3, 1, 2]: 2,
              [3, 2, 1]: 2}
-
         """
         Z = self._bijectionist._Z
         Z_dict = {z: i for i, z in enumerate(Z)}
@@ -2997,7 +2974,6 @@ class _BijectionistMILP:
              ( [   /\   ]             ) ]
              ( [  /  \  ]             ) ]
              ( [ /    \ ], [ /\/\/\ ] ) ]
-
         """
         P = self._bijectionist._P
         for phi, psi in self._bijectionist._phi_psi:
@@ -3114,7 +3090,6 @@ def _non_copying_intersection(sets):
         sage: A = set([1,2]); B = set([2,3])
         sage: _non_copying_intersection([A, B])
         {2}
-
     """
     sets = sorted(sets, key=len)
     result = set.intersection(*sets)
@@ -3125,8 +3100,6 @@ def _non_copying_intersection(sets):
             return result
         if s == result:
             return s
-
-
 """
 TESTS::
 

@@ -201,7 +201,6 @@ class Word_class(SageObject):
             sage: w = Word(iter('a'*100))
             sage: w.is_finite()
             False
-
         """
         return False
 
@@ -1213,7 +1212,6 @@ class Word_class(SageObject):
             sage: w = Word([1,1,1,1,1,1,1,1,1,1,1,1])
             sage: list(w._partial_sums_iterator(0))
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-
         """
         if mod in (None, 0):
             sum = start

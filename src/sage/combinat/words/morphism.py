@@ -565,7 +565,6 @@ class WordMorphism(SageObject):
             True
             sage: s != s.reversal()
             False
-
         """
         return not self == other
 
@@ -1546,7 +1545,6 @@ class WordMorphism(SageObject):
             WordMorphism: 2->456, 3->418
             sage: WordMorphism({2:[4,5,6],3:[4,1,8]})._check_primitive()
             False
-
         """
         dom_alphabet = set(self.domain().alphabet())
 
@@ -1873,7 +1871,6 @@ class WordMorphism(SageObject):
             sage: s = WordMorphism(s)
             sage: (s^2).fixed_points()
             []
-
         """
         return [self.fixed_point(letter=letter)
                 for letter in self.domain().alphabet()

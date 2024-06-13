@@ -762,7 +762,6 @@ class Function_arccot(GinacFunction):
             (0.5535743588970452-0.4023594781085251j)
             sage: arccot(1.+I)                                                          # needs sage.symbolic
             0.553574358897045 - 0.402359478108525*I
-
         """
         GinacFunction.__init__(self, 'arccot', latex_name=r"\operatorname{arccot}",
                 conversions=dict(maxima='acot', sympy='acot',

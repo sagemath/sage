@@ -1043,7 +1043,6 @@ class TableauTuple(CombinatorialElement):
               ([[1, 2], [4]], [[3]]),
               ([[1, 2]], [[3, 4]]),
               ([[1, 2]], [[3], [4]])]
-
         """
         if n is None:
             n = self.size()
@@ -1735,7 +1734,6 @@ class RowStandardTableauTuple(TableauTuple, metaclass=ClasscallMetaclass):
             2
             sage: StandardTableauTuple([[],[[2]], [[1]]]).codegree(0,(0,0,0))
             3
-
         """
         if not self:  # the trivial case
             return 0
@@ -4281,7 +4279,6 @@ class StandardTableauTuples_all(StandardTableauTuples, DisjointUnionEnumeratedSe
 
             sage: STT = StandardTableauTuples(); STT    # indirect doctest
             Standard tableau tuples
-
         """
         return "Standard tableau tuples"
 

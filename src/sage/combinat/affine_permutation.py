@@ -159,7 +159,6 @@ class AffinePermutation(ClonableArray):
             Type A affine permutation with window [-1, 3, 0, 6, 5, 4, 10, 9]
             sage: p.apply_simple_reflection(1, 'right')
             Type A affine permutation with window [-1, 3, 0, 6, 5, 4, 10, 9]
-
         """
         return self.__rmul__(q)
 

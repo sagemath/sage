@@ -135,7 +135,6 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
             sage: y = e[1, 1, 1, 1] - 2*e[2, 1, 1] + e[2, 2]
             sage: sorted(f.element_class(f, dual = y))
             [([1, 1, 1, 1], 6), ([2, 1, 1], 2), ([2, 2], 1)]
-
         """
         self._dual_basis = dual_basis
         self._scalar = scalar

@@ -96,7 +96,6 @@ class PairwiseCompatibleSubsets(RecursivelyEnumeratedSet_forest):
             An enumerated set with a forest structure
             sage: import __main__; __main__.predicate = predicate
             sage: TestSuite(P).run()
-
         """
         self._ambient = set(ambient)
         self._roots = ( ((), tuple(reversed(ambient))), )
@@ -173,7 +172,6 @@ class PairwiseCompatibleSubsets(RecursivelyEnumeratedSet_forest):
             An enumerated set with a forest structure
             sage: list(P.children( ((3,5), [14,11,7]) ))
             [((3, 5, 7), (11,)), ((3, 5, 11), (14,)), ((3, 5, 14), ())]
-
         """
         (subset, rest) = subset_rest
         predicate = self._predicate

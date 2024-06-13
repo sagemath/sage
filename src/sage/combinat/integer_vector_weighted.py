@@ -134,7 +134,6 @@ class WeightedIntegerVectors(Parent, UniqueRepresentation):
             ...
             ValueError: cannot convert [1, 2, 0] into Integer vectors of 3
              weighted by [2, 1, 1]
-
         """
         if isinstance(lst, IntegerVector):
             if lst.parent() is self:

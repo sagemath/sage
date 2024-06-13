@@ -210,7 +210,6 @@ class PlanePartition(ClonableArray,
             Traceback (most recent call last):
             ...
             ValueError: entries not all integers
-
         """
         if not all(a in ZZ for b in self for a in b):
             raise ValueError("entries not all integers")
@@ -1841,7 +1840,6 @@ class PlanePartitions_n(PlanePartitions):
             sage: P = PlanePartitions(17)
             sage: P.cardinality()
             18334
-
         """
         PPn = [1]
         for i in range(1, 1+self._n):

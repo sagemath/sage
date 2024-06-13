@@ -849,7 +849,6 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
             Dynamical System of Affine Space of dimension 1 over Integer Ring
               Defn: Defined on coordinates by sending (x) to
                     (x^3 + x^2 - x - 5)
-
         """
         d = self.codomain().ngens()
         f = self.homogenize(d).conjugate(M)

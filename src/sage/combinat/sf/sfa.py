@@ -3118,7 +3118,6 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
             sage: factor(6*s[1])
             2*s[] * 3*s[] * s[1]
-
         """
         from sage.combinat.sf.multiplicative import SymmetricFunctionAlgebra_multiplicative
         L = self.parent()
@@ -3164,7 +3163,6 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
             sage: s(6) // s(2)
             3*s[]
-
         """
         from sage.combinat.sf.multiplicative import SymmetricFunctionAlgebra_multiplicative
         # we can assume that the parents of self and other are the same
@@ -3215,7 +3213,6 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
             sage: gcd(s(9), s(6))
             3*s[]
-
         """
         from sage.combinat.sf.multiplicative import SymmetricFunctionAlgebra_multiplicative
         L = self.parent()
@@ -6245,7 +6242,6 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             {1}
             sage: set(b.one().principal_specialization(q=q) for b in B)
             {1}
-
         """
         # heuristically, it seems fastest to fall back to the
         # elementary basis - using the powersum basis would
@@ -6456,7 +6452,6 @@ class SymmetricFunctionsFunctor(ConstructionFunctor):
             sage: qbar = SymmetricFunctions(R).hecke_character()
             sage: SymmetricFunctionsFunctor(qbar, qbar.basis_name(), q)
             SymmetricFunctionsFunctor[Hecke character with q=q]
-
         """
         self._basis = basis.__class__.__base__
         self._name = name
@@ -6482,7 +6477,6 @@ class SymmetricFunctionsFunctor(ConstructionFunctor):
             Traceback (most recent call last):
             ...
             TypeError: no conversion of this rational to integer
-
         """
         from sage.combinat.sf.sf import SymmetricFunctions
         return self._basis(SymmetricFunctions(R), *self._args)

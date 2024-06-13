@@ -241,7 +241,6 @@ class Minimog:
             [        0         3 +Infinity         2]
             [        5         9         8        10]
             [        4         1         6         7]
-
         """
         return f"Minimog of type {self.type} associated to\n {self.minimog}"
 
@@ -293,7 +292,6 @@ class Minimog:
                2  10  8  2  10
             <BLANKLINE>
             0                   1
-
         """
         MINIMOG = self.minimog
         kitten = f'         {MINIMOG[0][2]}'
@@ -332,7 +330,6 @@ class Minimog:
             sage: M = Minimog(type='shuffle')
             sage: M.find_hexad0(set([2, 4]))
             ([0, 1, 2, 4, 6, 8], ['line 1', 'picture 1'])
-
         """
         MINIMOG = self.minimog
         L = set(pts)
@@ -464,7 +461,6 @@ class Minimog:
             sage: M = Minimog(type='shuffle')
             sage: M.find_hexad3([2, 3, 4], 0, 1)
             ([0, 1, 2, 3, 4, 11], ['square 2', 'picture 6'])
-
         """
         MINIMOG = self.minimog
         L = set(pts)

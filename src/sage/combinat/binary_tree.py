@@ -3705,7 +3705,6 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
             sage: BinaryTree(None).to_full()
             [., .]
-
         """
         if self.is_empty():
             return BinaryTree("[.,.]")

@@ -277,7 +277,6 @@ class SkewPartition(CombinatorialElement):
 
             sage: print(SkewPartition([[],[]])._latex_diagram())
             {\emptyset}
-
         """
         if not any(self._list):
             return "{\\emptyset}"

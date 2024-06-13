@@ -45,7 +45,6 @@ class FFmpeg(Executable):
             sage: from sage.features.ffmpeg import FFmpeg
             sage: FFmpeg().is_functional()   # optional - ffmpeg
             FeatureTestResult('ffmpeg', True)
-
         """
         # Create the content of 1-pixel png file
         content = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x00\x00\x00\x00:~\x9bU\x00\x00\x00\nIDATx\x9cc`\x00\x00\x00\x02\x00\x01H\xaf\xa4q\x00\x00\x00\x00IEND\xaeB`\x82'

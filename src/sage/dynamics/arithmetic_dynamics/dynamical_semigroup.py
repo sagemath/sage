@@ -620,7 +620,6 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: one = QQ(1)
             sage: f.nth_iterate(2, one)
             {(3 : 1), (4 : 1)}
-
         """
         n = ZZ(n)
         if n < 0:

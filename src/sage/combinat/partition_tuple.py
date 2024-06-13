@@ -460,7 +460,6 @@ class PartitionTuple(CombinatorialElement):
             Traceback (most recent call last):
             ...
             ValueError: [[], [], [2, 1, 2, 1]] is not a tuple of Partitions
-
         """
         mu = [_Partitions(nu) for nu in mu]
         CombinatorialElement.__init__(self, parent, mu)
@@ -490,7 +489,6 @@ class PartitionTuple(CombinatorialElement):
 
             sage: len( PartitionTuple([[2,1],[3,2],[1,1,1]]) )
             3
-
         """
         return self.level()
 
@@ -899,7 +897,6 @@ class PartitionTuple(CombinatorialElement):
             [([1], [3, 1], [1, 1]), ([], [4, 1], [1, 1]), ([], [3, 2], [1, 1]), ([], [3, 1, 1], [1, 1]), ([], [3, 1], [2, 1]), ([], [3, 1], [1, 1, 1])]
             sage: PartitionTuple([[],[],[],[]]).up_list()
             [([1], [], [], []), ([], [1], [], []), ([], [], [1], []), ([], [], [], [1])]
-
         """
         return list(self.up())
 
@@ -914,7 +911,6 @@ class PartitionTuple(CombinatorialElement):
             [([], [2, 1], [1, 1]), ([], [3], [1, 1]), ([], [3, 1], [1])]
             sage: [mu for mu in PartitionTuple([[],[],[]]).down()]
             []
-
         """
         for c in range(len(self)):
             for nu in self[c].down():
@@ -978,7 +974,6 @@ class PartitionTuple(CombinatorialElement):
             sage: multicharge = [IntegerModRing(3)(c) for c in [0,0,0]]
             sage: PartitionTuple([[2,1],[2],[1,1,1]]).content(0,1,0, multicharge)
             2
-
         """
         return multicharge[k]-r+c
 
@@ -1380,7 +1375,6 @@ class PartitionTuple(CombinatorialElement):
             ([2], [0, 1], [1, 1])
             sage: PartitionTuple([[1,1],[2,2,2,2],[2,1]]).to_exp()
             ([2], [0, 4], [1, 1])
-
         """
         return tuple(self[c].to_exp(k) for c in range(len(self)))
 
@@ -1397,7 +1391,6 @@ class PartitionTuple(CombinatorialElement):
             [(0, 1, 0), (1, 0, 1), (2, 0, 1), (2, 1, 0)]
             sage: PartitionTuple([[1,1],[4,3],[2,1,1]]).removable_cells()
             [(0, 1, 0), (1, 0, 3), (1, 1, 2), (2, 0, 1), (2, 2, 0)]
-
         """
         return [(k,r,c) for k in range(len(self)) for (r,c) in self[k].removable_cells()]
 
@@ -1416,7 +1409,6 @@ class PartitionTuple(CombinatorialElement):
             [(0, 0, 1), (0, 2, 0), (1, 0, 2), (1, 1, 0), (2, 0, 2), (2, 1, 1), (2, 2, 0)]
             sage: PartitionTuple([[1,1],[4,3],[2,1,1]]).addable_cells()
             [(0, 0, 1), (0, 2, 0), (1, 0, 4), (1, 1, 3), (1, 2, 0), (2, 0, 2), (2, 1, 1), (2, 3, 0)]
-
         """
         return [(k,r,c) for k in range(len(self)) for (r,c) in self[k].addable_cells()]
 

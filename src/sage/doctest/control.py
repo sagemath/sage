@@ -819,7 +819,6 @@ class DocTestController(SageObject):
             sage: with open(DD.logfile) as f:
             ....:     print(f.read())
             hello world
-
         """
         self.logger.write(s + end)
         self.logger.flush()

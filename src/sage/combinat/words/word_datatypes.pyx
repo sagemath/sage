@@ -33,7 +33,6 @@ cdef class WordDatatype():
         sage: w = Word([0,1,1,0,0,1])
         sage: isinstance(w, sage.combinat.words.word_datatypes.WordDatatype)
         True
-
     """
     def __reduce__(self):
         r"""
@@ -121,7 +120,6 @@ cdef class WordDatatype_list(WordDatatype):
             True
             sage: 3 in w
             False
-
         """
         return a in self._data
 
@@ -134,7 +132,6 @@ cdef class WordDatatype_list(WordDatatype):
             sage: w = Word([0,1,1,0])
             sage: list(iter(w))
             [0, 1, 1, 0]
-
         """
         return iter(self._data)
 
@@ -194,7 +191,6 @@ cdef class WordDatatype_list(WordDatatype):
             sage: w = Word([0,1,1,0])
             sage: len(w)
             4
-
         """
         return len(self._data)
 
@@ -207,7 +203,6 @@ cdef class WordDatatype_list(WordDatatype):
             sage: w = Word([0,1,1,0])
             sage: w.length()
             4
-
         """
         return len(self._data)
 
@@ -229,7 +224,6 @@ cdef class WordDatatype_list(WordDatatype):
             99
             sage: w[3:10:2]
             word: 3579
-
         """
         if isinstance(key, slice):
             return self._parent(self._data[key])
@@ -290,7 +284,6 @@ cdef class WordDatatype_list(WordDatatype):
         .. SEEALSO::
 
             :meth:`sage.combinat.words.finite_word.FiniteWord_class.number_of_factor_occurrences`
-
         """
         return self._data.count(a)
 
@@ -315,7 +308,6 @@ cdef class WordDatatype_str(WordDatatype):
             sage: w = Word("abba")
             sage: isinstance(w, sage.combinat.words.word_datatypes.WordDatatype_str)
             True
-
         """
         self._parent = parent
         if isinstance(data, str):
@@ -335,7 +327,6 @@ cdef class WordDatatype_str(WordDatatype):
             sage: w = Word('abba')
             sage: list(iter(w))
             ['a', 'b', 'b', 'a']
-
         """
         return iter(self._data)
 
@@ -398,7 +389,6 @@ cdef class WordDatatype_str(WordDatatype):
             True
             sage: 'c' in w
             False
-
         """
         # we need to override the non standard behaviour of
         # the __contains__ of python str
@@ -523,7 +513,6 @@ cdef class WordDatatype_str(WordDatatype):
             sage: w = Word("abbabaabababa")
             sage: len(w)
             13
-
         """
         return len(self._data)
 
@@ -536,7 +525,6 @@ cdef class WordDatatype_str(WordDatatype):
             sage: w = Word("abbabaabababa")
             sage: w.length()
             13
-
         """
         return len(self._data)
 
@@ -619,7 +607,6 @@ cdef class WordDatatype_str(WordDatatype):
         .. SEEALSO::
 
             :meth:`sage.combinat.words.finite_word.FiniteWord_class.number_of_factor_occurrences`
-
         """
         if len(letter) == 1:
             return self._data.count(letter)
@@ -769,7 +756,6 @@ cdef class WordDatatype_str(WordDatatype):
             False
             sage: u.is_suffix(w)
             True
-
         """
         if isinstance(other, WordDatatype_str):
             return other._data.endswith(self._data)
@@ -799,7 +785,6 @@ cdef class WordDatatype_str(WordDatatype):
             False
             sage: u.has_suffix("ababa")
             True
-
         """
         if isinstance(other, WordDatatype_str):
             return self._data.endswith(other._data)
@@ -875,7 +860,6 @@ cdef class WordDatatype_str(WordDatatype):
             False
             sage: abba.has_prefix(ab)
             True
-
         """
         if isinstance(other, WordDatatype_str):
             return self._data.startswith(other._data)
@@ -926,7 +910,6 @@ cdef class WordDatatype_tuple(WordDatatype):
             sage: w = Word((0,1,1,0))
             sage: list(iter(w))
             [0, 1, 1, 0]
-
         """
         return iter(self._data)
 
@@ -988,7 +971,6 @@ cdef class WordDatatype_tuple(WordDatatype):
             sage: w = Word((0,1,1,0))
             sage: len(w)
             4
-
         """
         return len(self._data)
 
@@ -1001,7 +983,6 @@ cdef class WordDatatype_tuple(WordDatatype):
             sage: w = Word((0,1,1,0))
             sage: w.length()
             4
-
         """
         return len(self._data)
 
@@ -1020,7 +1001,6 @@ cdef class WordDatatype_tuple(WordDatatype):
             True
             sage: 3 in w
             False
-
         """
         return a in self._data
 
@@ -1047,7 +1027,6 @@ cdef class WordDatatype_tuple(WordDatatype):
             word: 3579
             sage: all(w[i] == i for i in range(100))
             True
-
         """
         if isinstance(key, slice):
             return self._parent(self._data[key])

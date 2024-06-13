@@ -514,7 +514,6 @@ class Polyomino(SageObject):
 
             sage: Polyomino([], dimension=2)
             Polyomino: [], Color: gray
-
         """
         from sage.modules.free_module import FreeModule
         from sage.rings.integer_ring import ZZ
@@ -1110,7 +1109,6 @@ class Polyomino(SageObject):
             sage: sorted(sorted(a.frozenset())
             ....:        for a in p.translated_copies_intersection(b))
             [[(0, 0)], [(0, 0), (1, 0)], [(0, 1)], [(0, 2)], [(1, 0), (2, 0)], [(2, 0)]]
-
         """
         if not isinstance(box, Polyomino):
             ranges = [range(a) for a in box]
@@ -1233,7 +1231,6 @@ class Polyomino(SageObject):
              [(1, 1)],
              [(1, 1), (1, 2)],
              [(1, 2)]]
-
         """
         all_distinct_cano = self.canonical_isometric_copies(orientation_preserving,
                                                             mod_box_isometries=False)
@@ -1457,7 +1454,6 @@ class Polyomino(SageObject):
 
             sage: solution = H.self_surrounding(8, remove_incomplete_copies=False)
             sage: G = sum([p.show2d() for p in solution], Graphics())                   # needs sage.plot
-
         """
         # Define the box to tile
         minxyz, maxxyz = self.bounding_box()
@@ -1623,7 +1619,6 @@ class TilingSolver(SageObject):
             Rotation allowed: True
             Reflection allowed: False
             Reusing pieces allowed: False
-
         """
         s = "Tiling solver of %s pieces " % len(self._pieces)
         s += "into a box of size %s\n" % len(self._box)
@@ -2045,7 +2040,6 @@ class TilingSolver(SageObject):
             1 Polyomino: [(1, 0), (1, 1)], Color: blue
             2 Polyomino: [(0, 0), (1, 0)], Color: red
             3 Polyomino: [(0, 1), (1, 1)], Color: red
-
         """
         rows = self.rows()
         row = rows[row_number]
@@ -2310,7 +2304,6 @@ class TilingSolver(SageObject):
             Traceback (most recent call last):
             ...
             StopIteration
-
         """
         if not self.is_suitable():
             return

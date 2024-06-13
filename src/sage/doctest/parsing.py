@@ -205,7 +205,6 @@ def parse_optional_tags(
         sage: parse_optional_tags("sage: #this is not #needs scipy\n....: import scipy",
         ....:                     return_string_sans_tags=True)
         ({'scipy': None}, 'sage: #this is not \n....: import scipy', False)
-
     """
     safe, literals, state = strip_string_literals(string)
     split = safe.split('\n', 1)
@@ -1633,7 +1632,6 @@ class SageOutputChecker(doctest.OutputChecker):
             (False, '1.3090169943749475\n', 'ANYTHING1.3090169943749475')
             sage: OC.do_fixup(ex.want,'Long-step dual simplex will be used\n1.3090169943749475')
             (True, '1.3090169943749475\n', '\n1.3090169943749475')
-
         """
         did_fixup = False
 

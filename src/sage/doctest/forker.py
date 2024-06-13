@@ -1829,7 +1829,6 @@ class DocTestDispatcher(SageObject):
                1 of   1 in ...
                 [1 test, 1 failure, ... s]
             Killing test ...
-
         """
         opt = self.controller.options
 

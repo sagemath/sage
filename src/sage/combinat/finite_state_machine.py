@@ -2180,7 +2180,6 @@ class FSMTransition(SageObject):
         sage: U = FSMTransition('A', 'B', 0)
         sage: U == T
         False
-
     """
 
     from_state = None
@@ -2340,7 +2339,6 @@ class FSMTransition(SageObject):
             sage: from sage.combinat.finite_state_machine import FSMTransition
             sage: FSMTransition('A', 'B', 0, 0)._repr_()
             "Transition from 'A' to 'B': 0|0"
-
         """
         return "Transition from %s to %s: %s" % (repr(self.from_state),
                                                  repr(self.to_state),
@@ -4122,7 +4120,6 @@ class FiniteStateMachine(SageObject):
             43
             sage: F
             Finite state machine with 2 states
-
         """
         if not self._states_:
             return "Empty finite state machine"
@@ -5031,7 +5028,6 @@ class FiniteStateMachine(SageObject):
             [0 1 0]
             [0 0 1]
             [1 1 0]
-
         """
 
         if entry is None:
@@ -6715,7 +6711,6 @@ class FiniteStateMachine(SageObject):
             is expected to return a pair (word_in, word_out) or a list of such
             pairs. For states 0 and 0 however, it returned 1,
             which is not acceptable.
-
         """
         for s_from in self.iter_states():
             for s_to in self.iter_states():
@@ -10812,7 +10807,6 @@ class Automaton(FiniteStateMachine):
             43
             sage: A
             Automaton with 2 states
-
         """
         if not self._states_:
             return "Empty automaton"
@@ -11988,7 +11982,6 @@ class Transducer(FiniteStateMachine):
             43
             sage: T
             Transducer with 2 states
-
         """
         if not self._states_:
             return "Empty transducer"
@@ -14078,7 +14071,6 @@ class FSMProcessIterator(SageObject, Iterator):
             sage: T.process([0, 0, 0], format_output=lambda o: ''.join(o))
             [(True, 3, 'a:)'), (True, 3, 'd:)'), (True, 3, 'e:)'),
              (True, 3, 'i:)'), (True, 3, 'l:)'), (True, 3, 'n:)')]
-
         """
         import heapq
 

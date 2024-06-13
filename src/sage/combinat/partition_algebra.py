@@ -851,7 +851,6 @@ def SetPartitionsPk(k):
         {{-1}, {-2}, {2}, {3, -3}, {1}}
         sage: P2p5.random_element() #random
         {{1, 2, 3, -3}, {-1, -2}}
-
     """
     is_int, k = _int_or_half_int(k)
     if not is_int:

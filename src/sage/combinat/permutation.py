@@ -2837,7 +2837,6 @@ class Permutation(CombinatorialElement):
             sage: all(from_lehmer_code(p.to_lehmer_code()) == p
             ....:   for p in sample)
             True
-
         """
         l = len(self._list)
         # choose the best implementations
@@ -2933,7 +2932,6 @@ class Permutation(CombinatorialElement):
 
             sage: next(Permutation([5,2,3,4,1]).reduced_words_iterator())
             [1, 2, 3, 4, 3, 2, 1]
-
         """
         def aux(p):
             is_identity = True
@@ -8340,7 +8338,6 @@ class StandardPermutations_descents(StandardPermutations_n_abstract):
             sage: D = [6, 8, 10, 11, 12, 13, 14, 15, 17, 19]
             sage: P(D, n).cardinality()
             125291047596
-
         """
         def m(l):
             s = 0

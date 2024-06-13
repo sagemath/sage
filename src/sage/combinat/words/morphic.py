@@ -106,7 +106,6 @@ class WordDatatype_morphic(WordDatatype_callable):
             word: dddcdddcba
             sage: list(w[10000:10010]) == L                                             # needs sage.modules
             True
-
         """
         self._parent = parent
         # self._func = callable
@@ -153,7 +152,6 @@ class WordDatatype_morphic(WordDatatype_callable):
               'a',
               {'a': 'a', 'b': 'b'},
               2))
-
         """
         return self.__class__, (self._parent, self._morphism, self._letter,
                                 self._coding, self._len)
@@ -267,7 +265,6 @@ class WordDatatype_morphic(WordDatatype_callable):
             sage: w = WordDatatype_morphic(W, m, 'a')
             sage: w._func(5)                                                            # needs sage.modules
             'a'
-
         """
         letter = self._letter
         for a in self.representation(key):

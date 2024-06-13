@@ -179,7 +179,6 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         Traceback (most recent call last):
         ...
         ValueError: a tableau must be a list of iterables
-
     """
     @staticmethod
     def __classcall_private__(cls, t):
@@ -2517,7 +2516,6 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             Reverse row bumping is only implemented for tableaux with weakly increasing
             and strictly increasing columns (though the tableau does not need to be an
             instance of class :class:`SemistandardTableau`).
-
         """
         if not (self.is_semistandard()):
             raise ValueError("reverse bumping is only defined for semistandard tableaux")
@@ -3180,7 +3178,6 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             Traceback (most recent call last):
             ...
             IndexError: (2, 2) is not an addable cell of the tableau
-
         """
         tab = self.to_list()
         (r, c) = cell
@@ -3696,7 +3693,6 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
             sage: Tableau([]).right_key_tableau()
             []
-
         """
         if not self:
             return self
@@ -3765,7 +3761,6 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
             sage: Tableau([]).left_key_tableau()
             []
-
         """
         if not self:
             return self
@@ -4791,7 +4786,6 @@ class StandardTableau(SemistandardTableau):
             True
             sage: s.dominates([[1,2,3,4,5]])
             False
-
         """
         t = StandardTableau(t)
         return all(self.restrict(m).shape().dominates(t.restrict(m).shape())
@@ -6836,7 +6830,6 @@ class SemistandardTableaux_shape(SemistandardTableaux):
             sage: S = SemistandardTableaux([2, 2, 1, 1], max_entry=7)
             sage: S.random_element() in S
             True
-
         """
         from sage.misc.prandom import randint
         with_sentinels = [max(i, j) for i, j in zip([0]+list(self.shape), [k+1 for k in self.shape]+[0])]

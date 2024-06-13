@@ -51,7 +51,6 @@ class IntegerMatrices(UniqueRepresentation, Parent):
         ]
         sage: IM.cardinality()
         6
-
     """
     @staticmethod
     def __classcall__(cls, row_sums, column_sums):
@@ -72,7 +71,6 @@ class IntegerMatrices(UniqueRepresentation, Parent):
             Non-negative integer matrices with row sums [4, 4, 5] and column sums [3, 7, 1, 2]
             sage: IM = IntegerMatrices(Composition([4,4,5]), Composition([3,7,1,2])); IM
             Non-negative integer matrices with row sums [4, 4, 5] and column sums [3, 7, 1, 2]
-
         """
         from sage.combinat.composition import Composition
         row_sums = Composition(row_sums)
@@ -134,7 +132,6 @@ class IntegerMatrices(UniqueRepresentation, Parent):
             [1 0]  [0 1]
             [0 1], [1 0]
             ]
-
         """
         for x in integer_matrices_generator(self._row_sums, self._col_sums):
             yield matrix(ZZ, x)
@@ -218,7 +215,6 @@ class IntegerMatrices(UniqueRepresentation, Parent):
             0
             sage: len(IntegerMatrices([0], [0]).list())
             1
-
         """
         from sage.combinat.sf.sf import SymmetricFunctions
         from sage.combinat.partition import Partition

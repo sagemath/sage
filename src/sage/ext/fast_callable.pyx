@@ -1607,7 +1607,6 @@ cpdef _expression_binop_helper(s, o, op):
         add(v_0, v_1)
         sage: _expression_binop_helper(y, x, operator.add)                              # needs sage.symbolic
         add(v_1, v_0)
-
     """
     # The Cython way of handling operator overloading on cdef classes
     # (which is inherited from Python) is quite annoying.  Inside the
@@ -2655,7 +2654,6 @@ class FastCallableFloatWrapper:
         ...
         ValueError: complex fast-callable function result
         1.0*I for arguments (-1,)
-
     """
     def __init__(self, ff, imag_tol):
         r"""
@@ -2695,7 +2693,6 @@ class FastCallableFloatWrapper:
             ...
             ValueError: complex fast-callable function result 1e-09*I for
             arguments (1.00000000000000e-9*I,)
-
         """
         self._ff = ff
         self._imag_tol = imag_tol
@@ -2719,7 +2716,6 @@ class FastCallableFloatWrapper:
             ....:     result = float(0)
             sage: type(result) is float
             True
-
         """
         z = self._ff(*args)
 

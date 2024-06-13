@@ -553,7 +553,6 @@ class Diagrams(UniqueRepresentation, Parent):
         sage: D = Dgms([(0,0), (0,3), (2,2), (2,4)])
         sage: D.parent()
         Combinatorial diagrams
-
     """
 
     def __init__(self, category=None):

@@ -378,7 +378,6 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
 
                 sage: e.zero().principal_specialization(3)
                 0
-
             """
             from sage.combinat.q_analogues import q_binomial
 
@@ -476,7 +475,6 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
 
                 sage: e.zero().exponential_specialization()
                 0
-
             """
             from sage.combinat.q_analogues import q_factorial
 

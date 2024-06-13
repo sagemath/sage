@@ -534,7 +534,6 @@ class FileDocTestSource(DocTestSource):
         ...
         ValueError: unknown extension for the file to test (=...txtt),
         valid extensions are: .py, .pyx, .pxd, .pxi, .sage, .spyx, .tex, .rst, .rst.txt
-
     """
     def __init__(self, path, options):
         """

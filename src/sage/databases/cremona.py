@@ -364,7 +364,6 @@ def parse_cremona_label(label, numerical_class_code=False):
         Traceback (most recent call last):
         ...
         ValueError: x11 is not a valid Cremona label
-
     """
     m = cremona_label_regex.match(str(label))
     if m is None:
@@ -1344,7 +1343,6 @@ class MiniCremonaDatabase(SQLDatabase):
 
             sage: d = sage.databases.cremona.MiniCremonaDatabase(name='cremona', read_only=False, rebuild=True)   # not tested
             sage: d._init_from_ftpdata('/home/jec/ecdata')                                                        # not tested
-
         """
         if self.__read_only__:
             raise RuntimeError("The database must not be read_only.")

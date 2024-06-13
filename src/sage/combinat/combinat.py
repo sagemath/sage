@@ -1415,7 +1415,6 @@ class CombinatorialObject(SageObject):
                 sage: b = Bar([4])
                 sage: not b
                 False
-
         """
         return bool(self._list)
 
