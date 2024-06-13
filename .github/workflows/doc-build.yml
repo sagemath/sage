@@ -133,6 +133,7 @@ jobs:
           # Wipe out chronic diffs of old doc against new doc
           (cd docs && \
            find . -name "*.html" | xargs sed -i -e '/class="sidebar-brand-text"/ s/Sage [0-9a-z.]* /Sage '"$new_version"' /' \
+                                                -e '/<link rel="stylesheet"/ s/pygments.css?v=[0-9a-f]*"/pygments.css"/' \
                                                 -e 's;'"$mathjax_path_from"';'"$mathjax_path_to"';' \
                                                 -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d')
           # Create git repo from old doc
