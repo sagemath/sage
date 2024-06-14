@@ -80,7 +80,7 @@ class Package(object):
             raise ValueError('package names use underscores, not dashes, got {0}'.format(package_name))
 
         self.__name = package_name
-        self.__tarball = None
+        self.__tarballs = None
         self._init_checksum()
         self._init_version()
         self._init_type()
@@ -141,12 +141,23 @@ class Package(object):
 
         Instance of :class:`sage_bootstrap.tarball.Tarball`
         """
-        if self.__tarball is None:
+        return self.tarballs()[None]
+
+    def tarballs(self):
+        """
+        Return a dictionary of the tarballs
+        """
+        if self.__tarballs is None:
             from sage_bootstrap.tarball import Tarball
-            self.__tarball = Tarball(self.tarball_filename, package=self,
-                                     upstream_url=self.tarball_upstream_url,
-                                     sha1=self.sha1, sha256=self.sha256)
-        return self.__tarball
+            self.__tarballs = dict()
+            for key in self.__checksums:
+                c = self.__checksums[key]
+                tarball_filename = self._substitute_variables(c['tarball'])
+                upstream_url = self._substitute_variables(c['upstream_url'])
+                self.__tarballs[key] = Tarball(tarball_filename, package=self,
+                                               upstream_url=self.tarball_upstream_url,
+                                               sha1=c['sha1'], sha256=c['sha256'])
+        return self.__tarballs
 
     def _substitute_variables_once(self, pattern):
         """
