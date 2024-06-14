@@ -441,10 +441,6 @@ class Application(object):
                 # because it follows a simple pattern.
                 upstream_url = 'https://pypi.io/packages/source/{0:1.1}/{0}/{1}'.format(package_name, tarball)
             elif source == 'wheel':
-                if not tarball:
-                    tarball = pypi_version.tarball.replace(pypi_version.version, 'VERSION')
-                if not tarball.endswith('-none-any.whl'):
-                    raise ValueError('Only platform-independent wheels can be used for wheel packages, got {0}'.format(tarball))
                 if not version:
                     version = pypi_version.version
                 if dependencies is None:
@@ -465,7 +461,6 @@ class Application(object):
                                 self.create(dep, pkg_type=pkg_type)
                                 dep = Package(dep).name
                             dependencies.append(dep)
-                upstream_url = 'https://pypi.io/packages/{2}/{0:1.1}/{0}/{1}'.format(package_name, tarball, pypi_version.python_version)
             if not description:
                 description = pypi_version.summary
             if not license:
@@ -491,6 +486,8 @@ class Application(object):
         if pypi or source == 'pip':
             creator.set_python_data_and_scripts(pypi_package_name=pypi_version.name, source=source,
                                                 dependencies=dependencies)
+        if source == 'wheel':
+            creator.set_pypi_urls(pypi_version)
         if tarball:
             creator.set_tarball(tarball, upstream_url)
             if upstream_url and version:

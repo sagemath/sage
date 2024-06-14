@@ -89,6 +89,24 @@ class PyPiVersion(object):
         raise PyPiError('No %s url for %s found', self.python_version, self.name)
 
     @property
+    def urls(self):
+        """
+        Return the list of URLs.
+
+        Each URL is a dictionary::
+
+            {'digests': {'sha256': 'ad277f74b1c164f7248afa968700e410651eb858d7c160d109fb451dc45a2f09', ...},
+             'filename': 'rpds_py-0.10.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl',
+             'packagetype': 'bdist_wheel',
+             'python_version': 'cp310',
+             'requires_python': '>=3.8',
+             'url': 'https://files.pythonhosted.org/packages/79/c6/432ec657f5f44a878e8653c73abfc51708afd0899c3d89f2967e11f81f14/rpds_py-0.10.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl',
+             'yanked': False,
+             ...}
+        """
+        return self.json['urls']
+
+    @property
     def package_url(self):
         """
         Return the package URL
