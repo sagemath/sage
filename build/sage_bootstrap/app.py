@@ -304,7 +304,7 @@ class Application(object):
             except PyPiError as e:
                 log.warn('updating %s failed: %s', package_name, e)
 
-    def download(self, package_name, allow_upstream=False):
+    def download(self, package_name, allow_upstream=False, tags=()):
         """
         Download a package
 
@@ -315,8 +315,17 @@ class Application(object):
         log.debug('Downloading %s', package_name)
         package = Package(package_name)
         tarballs = package.tarballs()
-        for key in tarballs:
-            tarball = tarballs[key]
+        sorted_tarballs = []
+        print(tags)
+        for tag in tags:
+            for key in tarballs:
+                if tag in key:
+                    sorted_tarballs.append(tarballs[key])
+                    del tarballs[key]
+                    break
+        if not sorted_tarballs:
+            sorted_tarballs = tarballs.values()
+        for tarball in sorted_tarballs:
             tarball.download(allow_upstream=allow_upstream)
             print(tarball.upstream_fqn)
 
@@ -326,12 +335,13 @@ class Application(object):
         """
         allow_upstream = kwds.pop('allow_upstream', False)
         on_error = kwds.pop('on_error', 'stop')
+        tags = kwds.pop('tags', [])
         has_files = list(kwds.pop('has_files', []))
         pc = PackageClass(*package_classes, has_files=has_files + ['checksums.ini'], **kwds)
 
         def download_with_args(package):
             try:
-                self.download(package, allow_upstream=allow_upstream)
+                self.download(package, allow_upstream=allow_upstream, tags=tags)
             except FileNotMirroredError:
                 if on_error == 'stop':
                     raise
