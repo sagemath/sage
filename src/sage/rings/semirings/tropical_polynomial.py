@@ -17,90 +17,90 @@ AUTHORS:
 
 EXAMPLES:
 
-    Construct a tropical polynomial semiring by first defining a base 
-    semiring and then inputting it to ``PolynomialRing`` constructor::
+Construct a tropical polynomial semiring by first defining a base 
+semiring and then inputting it to ``PolynomialRing`` constructor::
 
-        sage: T = TropicalSemiring(QQ, use_min=False)
-        sage: R = PolynomialRing(T,'y')
-        sage: R
-        Tropical Polynomial Semiring in y over Rational Field
+    sage: T = TropicalSemiring(QQ, use_min=False)
+    sage: R = PolynomialRing(T,'y')
+    sage: R
+    Tropical Polynomial Semiring in y over Rational Field
 
-    We can define the element by giving a list of coefficients that
-    begins with constant. This is also the way to create a tropical
-    polynomial with `0` as coefficient::
+We can define the element by giving a list of coefficients that
+begins with constant. This is also the way to create a tropical
+polynomial with `0` as coefficient::
 
-        sage: p1 = R([1,4,None,0]); p1
-        0*y^3 + 4*y + 1
+    sage: p1 = R([1,4,None,0]); p1
+    0*y^3 + 4*y + 1
 
-    Create an element by converting from classical polynomial::
+Create an element by converting from classical polynomial::
 
-        sage: S.<y> = PolynomialRing(QQ)
-        sage: p2 = R(y^2+2*y+3); p2
-        y^2 + 2*y + 3
+    sage: S.<y> = PolynomialRing(QQ)
+    sage: p2 = R(y^2+2*y+3); p2
+    y^2 + 2*y + 3
 
-    We can do the addition, multiplication, and evaluation for tropical 
-    polynomials::
+We can do the addition, multiplication, and evaluation for tropical 
+polynomials::
 
-        sage: p1 + p2
-        0*y^3 + y^2 + 4*y + 3
-        sage: p1 * p2
-        y^5 + 2*y^4 + 5*y^3 + 6*y^2 + 7*y + 4
-        sage: p1(3)
-        9
+    sage: p1 + p2
+    0*y^3 + y^2 + 4*y + 3
+    sage: p1 * p2
+    y^5 + 2*y^4 + 5*y^3 + 6*y^2 + 7*y + 4
+    sage: p1(3)
+    9
 
-    Beware that when multiplying tropical polynomial with a scalar, it
-    will give an error if the scalar is not tropical number::
+Beware that when multiplying tropical polynomial with a scalar, it
+will give an error if the scalar is not tropical number::
 
-        sage: 2 * p1
-        Traceback (most recent call last):
-        ...
-        ArithmeticError: cannot negate any non-infinite element
-        sage: T(2) * p1
-        2*y^3 + 6*y + 3 
+    sage: 2 * p1
+    Traceback (most recent call last):
+    ...
+    ArithmeticError: cannot negate any non-infinite element
+    sage: T(2) * p1
+    2*y^3 + 6*y + 3 
 
-    We can find all the tropical roots of tropical polynomial counted
-    with multiplicity. There will be no tropical root for constant
-    polynomial. For a monomial, the tropical root is the additive identity
-    of its base tropical semiring::
+We can find all the tropical roots of tropical polynomial counted
+with multiplicity. There will be no tropical root for constant
+polynomial. For a monomial, the tropical root is the additive identity
+of its base tropical semiring::
 
-        sage: p1.roots()
-        [-3, 2, 2]
-        sage: p2.roots()
-        [1, 1]
-        sage: p3 = R(1)
-        sage: p3.roots()
-        []
-        sage: p4 = R(y^2)
-        sage: p4.roots()
-        [-infinity, -infinity]
+    sage: p1.roots()
+    [-3, 2, 2]
+    sage: p2.roots()
+    [1, 1]
+    sage: p3 = R(1)
+    sage: p3.roots()
+    []
+    sage: p4 = R(y^2)
+    sage: p4.roots()
+    [-infinity, -infinity]
 
-    The factorization of tropical polynomial to its linear factors::
+The factorization of tropical polynomial to its linear factors::
 
-        sage: p1.factorization()
-        '(y - 3)*(y + 2)^2'
-        sage: p2.factorization()
-        '1*(y + 1)^2'
-    
-    To show the induced tropical polynomial function which is a piecewise 
-    linear function::
+    sage: p1.factorization()
+    '(y - 3)*(y + 2)^2'
+    sage: p2.factorization()
+    '1*(y + 1)^2'
 
-        sage: p1.piecewise_function()
-        piecewise(x|-->1 on (-oo, -3), x|-->x + 4 on [-3, 2], x|-->3*x on 
-        (2, +oo); x)
+To show the induced tropical polynomial function which is a piecewise 
+linear function::
 
-    Draw the graph of tropical polynomial::
-        sage: p1.plot()
-        sage: plot(p2)
+    sage: p1.piecewise_function()
+    piecewise(x|-->1 on (-oo, -3), x|-->x + 4 on [-3, 2], x|-->3*x on 
+    (2, +oo); x)
+
+Draw the graph of tropical polynomial::
+    sage: p1.plot()
+    sage: plot(p2)
 
 TESTS:
 
-    There is no subtraction for tropical polynomials because element
-    in tropical semiring doesn't necessarily have additive inverse::
+There is no subtraction for tropical polynomials because element
+in tropical semiring doesn't necessarily have additive inverse::
 
-        sage: -p1
-        Traceback (most recent call last):
-        ...
-        ArithmeticError: cannot negate any non-infinite element
+    sage: -p1
+    Traceback (most recent call last):
+    ...
+    ArithmeticError: cannot negate any non-infinite element
 
 REFERENCES:
 
