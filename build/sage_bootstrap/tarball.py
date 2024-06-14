@@ -164,11 +164,16 @@ class Tarball(object):
             sha256 = self._compute_sha256()
             if sha256 != self.sha256:
                 return False
+            if self.sha1 is None:
+                return True
         elif force_sha256:
             log.warning('sha256 not available for {0}'.format(self.package.name))
             return False
         else:
             log.warning('sha256 not available for {0}, using sha1'.format(self.package.name))
+        if self.sha1 is None:
+            log.warning('sha1 not available for {0}'.format(self.package.name))
+            return True
         sha1 = self._compute_sha1()
         return sha1 == self.sha1
 
