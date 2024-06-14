@@ -278,7 +278,11 @@ class Package(object):
         """
         Whether ``tarball_filename`` is a tarball of ``self``.
         """
-        return self.tarball_filename == tarball_filename
+        tarballs = self.tarballs()
+        for key in tarballs:
+            if tarballs[key].filename == tarball_filename:
+                return True
+        return False
 
     @property
     def version(self):

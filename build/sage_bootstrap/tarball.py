@@ -66,10 +66,6 @@ class Tarball(object):
                 raise ValueError(error)
         else:
             self.__package = package
-            if package.tarball_filename != tarball_name:
-                error = 'tarball {0} is not referenced by the {1} package'.format(tarball_name, package.name)
-                log.error(error)
-                raise ValueError(error)
         self.__upstream_url = upstream_url
         self.__sha1 = sha1
         self.__sha256 = sha256
