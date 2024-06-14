@@ -153,7 +153,10 @@ class Package(object):
             for key in self.__checksums:
                 c = self.__checksums[key]
                 tarball_filename = self._substitute_variables(c['tarball'])
-                upstream_url = self._substitute_variables(c['upstream_url'])
+                if 'upstream_url' in c:
+                    upstream_url = self._substitute_variables(c['upstream_url'])
+                else:
+                    upstream_url = None
                 self.__tarballs[key] = Tarball(tarball_filename, package=self,
                                                upstream_url=upstream_url,
                                                sha1=c.get('sha1'), sha256=c.get('sha256'))
