@@ -252,7 +252,7 @@ class Application(object):
         """
         log.debug('Updating %s to %s', package_name, new_version)
         update = PackageUpdater(package_name, new_version)
-        if url is not None or update.package.tarball_upstream_url:
+        if url is not None or update.package.tarball_upstream_url_pattern:
             log.debug('Downloading %s', url)
             update.download_upstream(url)
         update.fix_checksum()
@@ -569,6 +569,6 @@ class Application(object):
                 if not key.startswith('distros_'):
                     metrics['line_count_file_' + key] += sum(package.line_count_file(filename)
                                                              for filename in filenames)
-            metrics['has_tarball_upstream_url'] += int(bool(package.tarball_upstream_url))
+            metrics['has_tarball_upstream_url'] += int(bool(package.tarball_upstream_url_pattern))
         for key, value in sorted(metrics.items()):
             print('{0}={1}'.format(key, value))
