@@ -297,12 +297,14 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
         """
         n = self.parent().ngens()
         if n == 0:
-            return codomain.coerce(self)
+            cf = next(iter(self._monomial_coefficients.values()))
+            return codomain.coerce(cf)
 
         if base_map is None:
             base_map = codomain
 
-        return codomain.sum(base_map(c) * m(*im_gens) for m, c in list(self))
+        return codomain.sum(base_map(c) * m(*im_gens)
+                            for m, c in self._monomial_coefficients.items())
 
     def variables(self):
         """
