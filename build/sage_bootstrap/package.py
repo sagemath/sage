@@ -208,7 +208,10 @@ class Package(object):
         String. The full-qualified tarball filename, but with
         ``VERSION`` instead of the actual tarball filename.
         """
-        return self.__checksums[None]['tarball']
+        try:
+            return self.__checksums[None]['tarball']
+        except KeyError:
+            return None
 
     @property
     def tarball_filename(self):
