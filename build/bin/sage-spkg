@@ -803,6 +803,14 @@ if [ $ERASE_ONLY = 1 ]; then
     exit 0
 fi
 
+if [ -z "$SAGE_INSTALL_FETCH_ONLY" ]; then
+    TAGS=$(echo $("$SAGE_INST_LOCAL"/bin/python3 -c "from packaging.tags import compatible_tags; map(print, compatible_tags())" 2>/dev/null))
+    echo $TAGS
+    if [ -n "$TAGS" ]; then
+        SAGE_DOWNLOAD_FILE_OPTIONS+=" --tags $TAGS"
+    fi
+fi
+
 if [ $INSTALL = 1 ]; then
     warning_for_experimental_packages
     ensure_pkg_src
