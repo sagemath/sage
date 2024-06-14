@@ -203,14 +203,16 @@ class Application(object):
 
     def tarball(self, package_name):
         """
-        Find the tarball filename given a package name
+        Find the tarball filenames given a package name
 
         $ sage --package tarball pari
         pari-2.8-1564-gdeac36e.tar.gz
         """
         log.debug('Looking up tarball name for %s', package_name)
         package = Package(package_name)
-        print(package.tarball.filename)
+        tarballs = package.tarballs()
+        for key in tarballs:
+            print(tarballs[key].filename)
 
     def apropos(self, incorrect_name):
         """
@@ -312,8 +314,11 @@ class Application(object):
         """
         log.debug('Downloading %s', package_name)
         package = Package(package_name)
-        package.tarball.download(allow_upstream=allow_upstream)
-        print(package.tarball.upstream_fqn)
+        tarballs = package.tarballs()
+        for key in tarballs:
+            tarball = tarballs[key]
+            tarball.download(allow_upstream=allow_upstream)
+            print(tarball.upstream_fqn)
 
     def download_cls(self, *package_classes, **kwds):
         """
@@ -344,16 +349,18 @@ class Application(object):
         Uploading /home/vbraun/Code/sage.git/upstream/pari-2.8-2044-g89b0f1e.tar.gz
         """
         package = Package(package_name)
-        if not os.path.exists(package.tarball.upstream_fqn):
-            log.debug('Skipping %s because there is no local tarball', package_name)
-            return
-        if not package.tarball.is_distributable():
-            log.info('Skipping %s because the tarball is marked as not distributable',
-                     package_name)
-            return
-        log.info('Uploading %s', package.tarball.upstream_fqn)
-        fs = FileServer()
-        fs.upload(package)
+        tarballs = package.tarballs()
+        for key in tarballs:
+            tarball = tarballs[key]
+            if not os.path.exists(tarball.upstream_fqn):
+                log.debug('Skipping %s because it does not exist locally', tarball)
+                continue
+            if not tarball.is_distributable():
+                log.info('Skipping %s because it is marked as not distributable', tarball)
+                continue
+            log.info('Uploading %s', tarball.upstream_fqn)
+            fs = FileServer()
+            fs.upload(tarball)
 
     def upload_cls(self, package_name_or_class):
         pc = PackageClass(package_name_or_class)
