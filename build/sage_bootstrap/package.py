@@ -241,7 +241,10 @@ class Package(object):
         String. The tarball upstream URL, but with the placeholder
         ``VERSION``.
         """
-        return self.__checksums[None]['upstream_url']
+        try:
+            return self.__checksums[None]['upstream_url']
+        except KeyError:
+            return None
 
     @property
     def tarball_upstream_url(self):
