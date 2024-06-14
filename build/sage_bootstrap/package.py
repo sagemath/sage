@@ -143,7 +143,9 @@ class Package(object):
         """
         if self.__tarball is None:
             from sage_bootstrap.tarball import Tarball
-            self.__tarball = Tarball(self.tarball_filename, package=self)
+            self.__tarball = Tarball(self.tarball_filename, package=self,
+                                     upstream_url=self.tarball_upstream_url,
+                                     sha1=self.sha1, sha256=self.sha256)
         return self.__tarball
 
     def _substitute_variables_once(self, pattern):
@@ -260,6 +262,12 @@ class Package(object):
             return self
         else:
             return type(self)(n)
+
+    def is_package_of_tarball(self, tarball_filename):
+        """
+        Whether ``tarball_filename`` is a tarball of ``self``.
+        """
+        return self.tarball_filename == tarball_filename
 
     @property
     def version(self):
