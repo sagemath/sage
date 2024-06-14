@@ -155,8 +155,8 @@ class Package(object):
                 tarball_filename = self._substitute_variables(c['tarball'])
                 upstream_url = self._substitute_variables(c['upstream_url'])
                 self.__tarballs[key] = Tarball(tarball_filename, package=self,
-                                               upstream_url=self.tarball_upstream_url,
-                                               sha1=c['sha1'], sha256=c['sha256'])
+                                               upstream_url=upstream_url,
+                                               sha1=c.get('sha1'), sha256=c.get('sha256'))
         return self.__tarballs
 
     def _substitute_variables_once(self, pattern):
@@ -535,7 +535,7 @@ class Package(object):
         Load the checksums from the appropriate ``checksums.ini`` file
         """
         checksums_ini = os.path.join(self.path, 'checksums.ini')
-        section = re.compile(r'\[(?P<section>[-a-zA-Z0-9_]*)\]')
+        section = re.compile(r'\[(?P<section>[-a-zA-Z0-9_.]*)\]')
         assignment = re.compile('(?P<var>[a-zA-Z0-9_]*)=(?P<value>.*)')
         result = dict()
         key = None
@@ -544,7 +544,7 @@ class Package(object):
                 for line in f.readlines():
                     match = section.match(line)
                     if match is not None:
-                        key = section.group('section')
+                        key = match.group('section')
                         result[key] = dict()
                         continue
                     match = assignment.match(line)
