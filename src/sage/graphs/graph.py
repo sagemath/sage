@@ -4530,6 +4530,20 @@ class Graph(GenericGraph):
         # The graph is factor critical if all vertices are marked even
         return len(even) == self.order()
 
+    @doc_index("Leftovers")
+    def is_bicritical(self):
+        r"""
+        Check if the graph is bicritical.
+        """
+        pass
+
+    @doc_index("Leftovers")
+    def is_matching_covered(self):
+        r"""
+        Check if the graph is matching covered.
+        """
+        pass
+
     @doc_index("Algorithmically hard stuff")
     def has_homomorphism_to(self, H, core=False, solver=None, verbose=0,
                             *, integrality_tolerance=1e-3):

@@ -14,6 +14,7 @@ Graph objects and methods
    sage/graphs/graph
    sage/graphs/digraph
    sage/graphs/bipartite_graph
+   sage/graphs/matching_covered_graph
    sage/graphs/views
 
 Constructors and databases
