@@ -116,7 +116,7 @@ class Package(object):
 
         String.
         """
-        return self.__sha1
+        return self.__checksums[None]['sha1']
 
     @property
     def sha256(self):
@@ -127,7 +127,7 @@ class Package(object):
 
         String.
         """
-        return self.__sha256
+        return self.__checksums[None]['sha256']
 
     @property
     def tarball(self):
@@ -197,7 +197,7 @@ class Package(object):
         String. The full-qualified tarball filename, but with
         ``VERSION`` instead of the actual tarball filename.
         """
-        return self.__tarball_pattern
+        return self.__checksums[None]['tarball']
 
     @property
     def tarball_filename(self):
@@ -227,7 +227,7 @@ class Package(object):
         String. The tarball upstream URL, but with the placeholder
         ``VERSION``.
         """
-        return self.__tarball_upstream_url_pattern
+        return self.__checksums[None]['upstream_url']
 
     @property
     def tarball_upstream_url(self):
@@ -520,22 +520,28 @@ class Package(object):
         Load the checksums from the appropriate ``checksums.ini`` file
         """
         checksums_ini = os.path.join(self.path, 'checksums.ini')
+        section = re.compile(r'\[(?P<section>[-a-zA-Z0-9_]*)\]')
         assignment = re.compile('(?P<var>[a-zA-Z0-9_]*)=(?P<value>.*)')
         result = dict()
+        key = None
         try:
             with open(checksums_ini, 'rt') as f:
                 for line in f.readlines():
+                    match = section.match(line)
+                    if match is not None:
+                        key = section.group('section')
+                        result[key] = dict()
+                        continue
                     match = assignment.match(line)
                     if match is None:
                         continue
                     var, value = match.groups()
-                    result[var] = value
+                    if key not in result:
+                        result[key] = dict()
+                    result[key][var] = value
         except IOError:
             pass
-        self.__sha1 = result.get('sha1', None)
-        self.__sha256 = result.get('sha256', None)
-        self.__tarball_pattern = result.get('tarball', None)
-        self.__tarball_upstream_url_pattern = result.get('upstream_url', None)
+        self.__checksums = result
         # Name of the directory containing the checksums.ini file
         self.__tarball_package_name = os.path.realpath(checksums_ini).split(os.sep)[-2]
 
