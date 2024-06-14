@@ -381,7 +381,7 @@ class Application(object):
         log.debug('Correcting the checksum of %s', package_name)
         update = ChecksumUpdater(package_name)
         pkg = update.package
-        if not pkg.tarball_filename:
+        if not pkg.tarball_pattern:
             log.info('Ignoring {0} because it is not a normal package'.format(package_name))
             return
         if not os.path.exists(pkg.tarball.upstream_fqn):
