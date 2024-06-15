@@ -480,9 +480,7 @@ class Application(object):
             tarball = upstream_url.rpartition('/')[2]
         if tarball and source is None:
             source = 'normal'
-        if tarball and not pkg_type:
-            # If we set a tarball, also make sure to create a "type" file,
-            # so that subsequent operations (downloading of tarballs) work.
+        if not pkg_type:
             pkg_type = 'optional'
         log.debug('Creating %s: %s, %s, %s', package_name, version, tarball, pkg_type)
         creator = PackageCreator(package_name)
