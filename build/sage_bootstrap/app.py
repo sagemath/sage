@@ -319,7 +319,7 @@ class Application(object):
         print(tags)
         for tag in tags:
             for key in tarballs:
-                if tag in key:
+                if key is not None and tag in key:
                     sorted_tarballs.append(tarballs[key])
                     del tarballs[key]
                     break
