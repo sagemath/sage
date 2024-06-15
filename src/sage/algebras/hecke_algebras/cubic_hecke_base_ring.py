@@ -590,7 +590,7 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
     def create_specialization(self, im_cubic_equation_roots, im_writhe_parameter=None, var='T', third_unity_root_name='E3'):
         r"""
         Return an appropriate ring containing the elements from the list
-        ``im_cubic_equation_roots`` defining a conversion map from self mapping
+        ``im_cubic_equation_roots`` defining a conversion map from ``self`` mapping
         the cubic equation roots of ``self`` to ``im_cubic_equation_roots``.
 
         INPUT:

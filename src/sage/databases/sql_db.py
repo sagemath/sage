@@ -704,7 +704,7 @@ class SQLQuery(SageObject):
         Return a new ``SQLQuery`` that is the intersection of ``self`` and
         ``other``. ``join_table`` and ``join_dict`` can be ``None`` iff the
         two queries only search one table in the database. All display columns
-        will be concatenated in order: self display cols + other display cols.
+        will be concatenated in order: ``self`` display cols + other display cols.
 
         INPUT:
 
@@ -835,10 +835,10 @@ class SQLQuery(SageObject):
 
     def union(self, other, join_table=None, join_dict=None, in_place=False):
         """
-        Return a new ``SQLQuery`` that is the union of self and other.
+        Return a new ``SQLQuery`` that is the union of ``self`` and ``other``.
         ``join_table`` and ``join_dict`` can be ``None`` iff the two queries
         only search one table in the database. All display columns will be
-        concatenated in order: self display cols + other display cols.
+        concatenated in order: ``self`` display cols + other display cols.
 
         INPUT:
 

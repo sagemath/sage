@@ -6507,10 +6507,10 @@ class FiniteStateMachine(SageObject):
           list of such tuples
 
         - ``initial_states`` -- if no initial states are given, the
-          already existing initial states of self are taken
+          already existing initial states of ``self`` are taken
 
         - ``explore_existing_states`` -- boolean (default: ``True``); if
-          ``True`` (default), then already existing states in self (e.g.
+          ``True`` (default), then already existing states in ``self`` (e.g.
           already given final states) will also be processed if they are
           reachable from the initial statess
 
@@ -6857,7 +6857,7 @@ class FiniteStateMachine(SageObject):
     def accessible_components(self):
         """
         Return a new finite state machine with the accessible states
-        of self and all transitions between those states.
+        of ``self`` and all transitions between those states.
 
         INPUT:
 
@@ -6865,12 +6865,12 @@ class FiniteStateMachine(SageObject):
 
         OUTPUT:
 
-        A finite state machine with the accessible states of self and
+        A finite state machine with the accessible states of ``self`` and
         all transitions between those states.
 
         A state is accessible if there is a directed path from an
-        initial state to the state. If self has no initial states then
-        a copy of the finite state machine self is returned.
+        initial state to the state. If ``self`` has no initial states then
+        a copy of the finite state machine ``self`` is returned.
 
         EXAMPLES::
 
@@ -7719,7 +7719,7 @@ class FiniteStateMachine(SageObject):
 
           - ``explorative`` -- an explorative algorithm is used
 
-            The input alphabet of self has to be specified.
+            The input alphabet of ``self`` has to be specified.
 
             .. WARNING::
 
@@ -8153,7 +8153,7 @@ class FiniteStateMachine(SageObject):
     def input_projection(self):
         """
         Return an automaton where the output of each transition of
-        self is deleted.
+        ``self`` is deleted.
 
         OUTPUT: an automaton
 
@@ -8370,7 +8370,7 @@ class FiniteStateMachine(SageObject):
 
     def split_transitions(self):
         """
-        Return a new transducer, where all transitions in self with input
+        Return a new transducer, where all transitions in ``self`` with input
         labels consisting of more than one letter
         are replaced by a path of the corresponding length.
 

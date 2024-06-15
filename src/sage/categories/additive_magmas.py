@@ -651,7 +651,7 @@ class AdditiveMagmas(Category_singleton):
 
             def _test_zero(self, **options):
                 r"""
-                Test that ``self.zero()`` is an element of self and
+                Test that ``self.zero()`` is an element of ``self`` and
                 is neutral for the addition.
 
                 INPUT:

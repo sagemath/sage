@@ -270,7 +270,7 @@ class CombinatorialMap:
 
     def __get__(self, inst, cls=None):
         """
-        Bounds the method of self to the given instance.
+        Bounds the method of ``self`` to the given instance.
 
         EXAMPLES::
 

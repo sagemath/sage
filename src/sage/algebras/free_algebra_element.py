@@ -84,7 +84,7 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
 
     def _repr_(self):
         """
-        Return string representation of self.
+        Return string representation of ``self``.
 
         EXAMPLES::
 
@@ -109,7 +109,7 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
 
     def _latex_(self):
         r"""
-        Return latex representation of self.
+        Return latex representation of ``self``.
 
         EXAMPLES::
 

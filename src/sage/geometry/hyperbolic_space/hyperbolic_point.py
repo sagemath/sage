@@ -270,7 +270,7 @@ class HyperbolicPoint(Element):
 
     def _richcmp_(self, other, op):
         r"""
-        Comparison of self and other.
+        Comparison of ``self`` and ``other``.
 
         EXAMPLES::
 

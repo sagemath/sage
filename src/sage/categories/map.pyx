@@ -634,7 +634,7 @@ cdef class Map(Element):
 
     def category_for(self):
         """
-        Return the category self is a morphism for.
+        Return the category ``self`` is a morphism for.
 
         .. NOTE::
 
@@ -1183,7 +1183,7 @@ cdef class Map(Element):
 
         OUTPUT:
 
-        An element of Hom(X, Z) obtained by composing self with `\phi`.  If
+        An element of Hom(X, Z) obtained by composing ``self`` with `\phi`.  If
         no canonical `\phi` exists, a :class:`TypeError` is raised.
 
         EXAMPLES::

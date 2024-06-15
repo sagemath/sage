@@ -517,10 +517,10 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         - ``n`` -- integer
         - ``generator_matrix`` -- a `k \times n` matrix over `\GF{q}` of full row rank,
           i.e. `k<n` and without zero columns
-        - partition (optional) -- a partition (as list of lists) of the set
+        - partition --  (optional) a partition (as list of lists) of the set
           `\{0, \ldots, n-1\}` which restricts the action of the permutational
           part of the group to the stabilizer of this partition
-        - algorithm_type (optional) -- use one of the following options
+        - algorithm_type -- (optional) use one of the following options
 
           * "semilinear" --  full group
           * "linear" -- no field automorphisms, i.e. `G = (GL(k,q) \times \GF{q}^n )`

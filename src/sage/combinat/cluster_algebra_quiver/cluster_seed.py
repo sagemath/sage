@@ -4202,7 +4202,7 @@ class ClusterSeed(SageObject):
 
     def greedy(self, a1, a2, algorithm='by_recursion'):
         r"""
-        Return the greedy element `x[a_1,a_2]` assuming that self is rank two.
+        Return the greedy element `x[a_1,a_2]` assuming that ``self`` is rank two.
 
         The third input can be ``'by_recursion'``, ``'by_combinatorics'``, or
         ``'just_numbers'`` to specify if the user wants the element

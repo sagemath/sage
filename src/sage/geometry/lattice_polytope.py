@@ -945,7 +945,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
     def _latex_(self):
         r"""
-        Return the latex representation of self.
+        Return the latex representation of ``self``.
 
         OUTPUT: string
 
@@ -3374,7 +3374,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
     @cached_method
     def origin(self):
         r"""
-        Return the index of the origin in the list of points of self.
+        Return the index of the origin in the list of points of ``self``.
 
         OUTPUT: integer if the origin belongs to this polytope, ``None`` otherwise
 

@@ -807,7 +807,7 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
 
     def _self_to_s(self, x):
         r"""
-        Isomorphism from self to the Schur basis.
+        Isomorphism from ``self`` to the Schur basis.
 
         INPUT:
 
@@ -1914,7 +1914,7 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
 
         def _omega_qt_in_schurs(self):
             r"""
-            Return the image of self under the omega_qt automorphism in the
+            Return the image of ``self`` under the omega_qt automorphism in the
             Schur basis.
 
             INPUT:

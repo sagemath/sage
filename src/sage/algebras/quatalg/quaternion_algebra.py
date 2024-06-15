@@ -1069,7 +1069,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
     def __eq__(self, other):
         """
-        Compare self and other.
+        Compare ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -1085,7 +1085,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
     def __ne__(self, other):
         """
-        Compare self and other.
+        Compare ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -2922,12 +2922,12 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
     @cached_method
     def basis_matrix(self):
         r"""
-        Return basis matrix `M` in Hermite normal form for self as a
+        Return basis matrix `M` in Hermite normal form for ``self`` as a
         matrix with rational entries.
 
         If `Q` is the ambient quaternion algebra, then the `\ZZ`-span of
         the rows of `M` viewed as linear combinations of Q.basis() =
-        `[1,i,j,k]` is the fractional ideal self.  Also,
+        `[1,i,j,k]` is the fractional ideal ``self``.  Also,
         ``M * M.denominator()`` is an integer matrix in Hermite normal form.
 
         OUTPUT: matrix over `\QQ`
@@ -3328,7 +3328,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
     def intersection(self, J):
         """
-        Return the intersection of the ideals self and `J`.
+        Return the intersection of the ideals ``self`` and `J`.
 
         EXAMPLES::
 
@@ -3344,7 +3344,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
     def multiply_by_conjugate(self, J):
         """
-        Return product of self and the conjugate Jbar of `J`.
+        Return product of ``self`` and the conjugate Jbar of `J`.
 
         INPUT:
 
@@ -3778,7 +3778,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
            :class:`NotImplementedError` is raised.  In particular, `p` must
            be odd and unramified in the quaternion algebra, must be
            coprime to the index of the right order in the maximal
-           order, and also coprime to the normal of self.  (The Brandt
+           order, and also coprime to the normal of ``self``.  (The Brandt
            modules code has a more general algorithm in some cases.)
 
         EXAMPLES::

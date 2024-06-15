@@ -588,7 +588,7 @@ class FanMorphism(FreeModuleMorphism):
 
         OUTPUT:
 
-        - none, but the domain fan of self is replaced with its minimal
+        - none, but the domain fan of ``self`` is replaced with its minimal
           refinement, if possible. Otherwise a :class:`ValueError`
           exception is raised.
 

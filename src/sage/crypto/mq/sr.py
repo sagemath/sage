@@ -601,7 +601,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
     def base_ring(self):
         r"""
-        Return the base field of self as determined by
+        Return the base field of ``self`` as determined by
         ``self.e``.
 
         EXAMPLES::
@@ -1069,7 +1069,7 @@ class SR_generic(MPolynomialSystemGenerator):
     def random_vector(self, *args, **kwds):
         r"""
         Return a random vector as it might appear in the algebraic
-        expression of self.
+        expression of ``self``.
 
         EXAMPLES::
 
@@ -1084,7 +1084,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
     def random_element(self, elem_type='vector', *args, **kwds):
         """
-        Return a random element for self.  Other arguments and keywords are
+        Return a random element for ``self``.  Other arguments and keywords are
         passed to random_* methods.
 
         INPUT:
@@ -1666,7 +1666,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
     def block_order(self):
         """
-        Return a block order for self where each round is a block.
+        Return a block order for ``self`` where each round is a block.
 
         EXAMPLES::
 

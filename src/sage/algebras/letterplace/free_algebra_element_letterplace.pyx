@@ -399,7 +399,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
 
     def lm_divides(self, FreeAlgebraElement_letterplace p):
         """
-        Tell whether or not the leading monomial of self divides the
+        Tell whether or not the leading monomial of ``self`` divides the
         leading monomial of another element.
 
         .. NOTE::

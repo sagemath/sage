@@ -192,7 +192,7 @@ class AbstractLanguage(Parent):
 
     def identity_morphism(self):
         r"""
-        Return the identity morphism from self to itself.
+        Return the identity morphism from ``self`` to itself.
 
         EXAMPLES::
 
@@ -383,10 +383,10 @@ class FiniteWords(AbstractLanguage):
     @lazy_attribute
     def _element_classes(self):
         r"""
-        Return a dictionary that gives the class of the element of self.
+        Return a dictionary that gives the class of the element of ``self``.
 
         The word may be finite, infinite or of unknown length.
-        Its data may be str, list, tuple, a callable or an iterable.
+        Its data may be string, list, tuple, a callable or an iterable.
         For callable and iterable, the data may be cached.
 
         EXAMPLES:
@@ -860,7 +860,7 @@ class FiniteWords(AbstractLanguage):
 
     def _an_element_(self):
         r"""
-        Return an element of self.
+        Return an element of ``self``.
 
         EXAMPLES::
 
@@ -886,7 +886,7 @@ class FiniteWords(AbstractLanguage):
 
     def iterate_by_length(self, l=1):
         r"""
-        Return an iterator over all the words of self of length `l`.
+        Return an iterator over all the words of ``self`` of length `l`.
 
         INPUT:
 
@@ -921,7 +921,7 @@ class FiniteWords(AbstractLanguage):
 
     def __iter__(self):
         r"""
-        Return an iterator over all the words of self.
+        Return an iterator over all the words of ``self``.
 
         The iterator outputs the words in shortlex order (see
         :wikipedia:`Shortlex_order`), i.e. first by increasing length and then
@@ -1316,10 +1316,10 @@ class InfiniteWords(AbstractLanguage):
     @lazy_attribute
     def _element_classes(self):
         r"""
-        Return a dictionary that gives the class of the element of self.
+        Return a dictionary that gives the class of the element of ``self``.
 
         The word may be finite, infinite or of unknown length.
-        Its data may be str, list, tuple, a callable or an iterable.
+        Its data may be string, list, tuple, a callable or an iterable.
         For callable and iterable, the data may be cached.
 
         EXAMPLES:
@@ -1572,7 +1572,7 @@ class InfiniteWords(AbstractLanguage):
 
     def _repr_(self):
         r"""
-        Return a string representation of self.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -1583,7 +1583,7 @@ class InfiniteWords(AbstractLanguage):
 
     def _an_element_(self):
         r"""
-        Return an element of self.
+        Return an element of ``self``.
 
         EXAMPLES::
 
@@ -2055,7 +2055,7 @@ class FiniteOrInfiniteWords(AbstractLanguage):
 
     def _repr_(self):
         r"""
-        Return a string representation of self.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -2168,7 +2168,7 @@ class Words_n(Parent):
 
     def _an_element_(self):
         r"""
-        Return an element of self.
+        Return an element of ``self``.
 
         EXAMPLES::
 

@@ -81,7 +81,7 @@ from sage.rings.infinity import Infinity
 class InfiniteWord_class(Word_class):
     def _repr_(self):
         r"""
-        Return a string representation of self.
+        Return a string representation of ``self``.
 
         TESTS::
 
@@ -99,7 +99,7 @@ class InfiniteWord_class(Word_class):
 
     def length(self):
         r"""
-        Return the length of self.
+        Return the length of ``self``.
 
         EXAMPLES::
 

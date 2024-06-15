@@ -2769,7 +2769,7 @@ cdef _LinkedList_concatenate(_LinkedList * lst1, _LinkedList * lst2):
 
 cdef str _LinkedList_to_string(_LinkedList * ll):
     """
-    Return a string representation of self.
+    Return a string representation of ``self``.
     """
     cdef _LinkedListNode * temp = ll.head
     cdef list s = []

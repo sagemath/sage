@@ -386,7 +386,7 @@ class Category_over_base_ring(Category_over_base):
         OUTPUT:
 
         A boolean if it is certain that ``C`` is (or is not) a
-        subcategory of self. :obj:`~sage.misc.unknown.Unknown`
+        subcategory of ``self``. :obj:`~sage.misc.unknown.Unknown`
         otherwise.
 
         EXAMPLES:

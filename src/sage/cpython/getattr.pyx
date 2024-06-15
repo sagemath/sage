@@ -241,10 +241,10 @@ cpdef getattr_from_other_class(self, cls, name):
 
     - ``name`` -- a string
 
-    If self is an instance of cls, raises an :class:`AttributeError`, to
+    If ``self`` is an instance of cls, raises an :class:`AttributeError`, to
     avoid a double lookup. This function is intended to be called from
     __getattr__, and so should not be called if name is an attribute
-    of self.
+    of ``self``.
 
     EXAMPLES::
 
@@ -382,7 +382,7 @@ cpdef getattr_from_other_class(self, cls, name):
 
 def dir_with_other_class(self, *cls):
     r"""
-    Emulates ``dir(self)``, as if self was also an instance ``cls``,
+    Emulates ``dir(self)``, as if ``self`` was also an instance ``cls``,
     right after ``caller_class`` in the method resolution order
     (``self.__class__.mro()``)
 

@@ -1731,7 +1731,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
     def _punctured_form(self, points):
         r"""
-        Return a representation of self as a :class:`LinearCode` punctured in ``points``.
+        Return a representation of ``self`` as a :class:`LinearCode` punctured in ``points``.
 
         INPUT:
 
@@ -2697,7 +2697,7 @@ class LinearCodeSyndromeDecoder(Decoder):
 
     def __hash__(self):
         """
-        Return the hash of self.
+        Return the hash of ``self``.
 
         EXAMPLES::
 

@@ -1757,7 +1757,7 @@ class Category(UniqueRepresentation, SageObject):
     # Operations on the lattice of categories
     def is_subcategory(self, c):
         """
-        Return ``True`` if self is naturally embedded as a subcategory of `c`.
+        Return ``True`` if ``self`` is naturally embedded as a subcategory of `c`.
 
         EXAMPLES::
 
@@ -1876,7 +1876,7 @@ class Category(UniqueRepresentation, SageObject):
     @cached_method
     def _meet_(self, other):
         """
-        Return the largest common subcategory of self and other.
+        Return the largest common subcategory of ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -1909,7 +1909,7 @@ class Category(UniqueRepresentation, SageObject):
         distributivity.
 
         For the meet computation, there may be several lowest common
-        sub categories of self and other, in which case, we need to
+        sub categories of ``self`` and ``other``, in which case, we need to
         take the join of them all.
 
         FIXME:

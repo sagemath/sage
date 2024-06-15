@@ -627,7 +627,7 @@ class WordMorphism(SageObject):
 
     def __call__(self, w, order=1):
         r"""
-        Return the image of ``w`` under self to the given order.
+        Return the image of ``w`` under ``self`` to the given order.
 
         INPUT:
 
@@ -635,7 +635,7 @@ class WordMorphism(SageObject):
 
         - ``order`` -- integer or plus ``Infinity`` (default: 1)
 
-        OUTPUT: ``word`` -- order-th iterated image under self of ``w``
+        OUTPUT: ``word`` -- ``order``-th iterated image under ``self`` of ``w``
 
         EXAMPLES:
 
@@ -713,7 +713,7 @@ class WordMorphism(SageObject):
             sage: tm('aba',oo)
             word: abbabaabbaababbabaababbaabbabaabbaababba...
 
-        The morphism self must be prolongable on the given letter for infinitely
+        The morphism ``self`` must be prolongable on the given letter for infinitely
         iterated image::
 
             sage: m = WordMorphism('a->ba,b->ab')
@@ -1470,7 +1470,7 @@ class WordMorphism(SageObject):
         to the largest eigenvalue (in absolute value).
 
         Unicity of the result is guaranteed when the multiplicity of the
-        largest eigenvalue is one, for example when self is a Pisot
+        largest eigenvalue is one, for example when ``self`` is a Pisot
         irreductible substitution.
 
         A substitution is Pisot irreducible if the characteristic
@@ -1500,7 +1500,7 @@ class WordMorphism(SageObject):
         to the largest eigenvalue (in absolute value).
 
         Unicity of the result is guaranteed when the multiplicity of the
-        largest eigenvalue is one, for example when self is a Pisot
+        largest eigenvalue is one, for example when ``self`` is a Pisot
         irreductible substitution.
 
         A substitution is Pisot irreducible if the characteristic
@@ -1878,7 +1878,7 @@ class WordMorphism(SageObject):
 
     def periodic_point(self, letter):
         r"""
-        Return the periodic point of self that starts with ``letter``.
+        Return the periodic point of ``self`` that starts with ``letter``.
 
         EXAMPLES::
 
@@ -2431,7 +2431,7 @@ class WordMorphism(SageObject):
 
     def dual_map(self, k=1):
         r"""
-        Return the dual map `E_k^*` of self (see [1]).
+        Return the dual map `E_k^*` of ``self`` (see [1]).
 
         .. NOTE::
 

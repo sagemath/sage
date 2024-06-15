@@ -2135,7 +2135,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
     def __contains__(self, x):
         r"""
-        Return ``True`` if self contains `x`.
+        Return ``True`` if ``self`` contains `x`.
 
         EXAMPLES::
 
@@ -3193,7 +3193,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         def degree(self):
             r"""
-            The degree of self.
+            The degree of ``self``.
 
             The degree of `\text{Sq}(i_1,i_2,i_3,...)` is
 
@@ -3287,9 +3287,9 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
             INPUT:
 
-            - ``basis`` -- string, basis in which to work
+            - ``basis`` -- string; basis in which to work
 
-            OUTPUT: representation of self in given basis
+            OUTPUT: representation of ``self`` in given basis
 
             The choices for ``basis`` are:
 
@@ -3331,7 +3331,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         def _basis_dictionary(self, basis):
             r"""
-            Convert self to ``basis``, returning a dictionary of terms of
+            Convert ``self`` to ``basis``, returning a dictionary of terms of
             the form (mono: coeff), where mono is a monomial in the given
             basis.
 

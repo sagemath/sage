@@ -515,7 +515,7 @@ cdef class GenericGraphBackend(SageObject):
 
     def loops(self, new=None):
         """
-        Get/set whether or not self allows loops.
+        Get/set whether or not ``self`` allows loops.
 
         INPUT:
 
@@ -539,7 +539,7 @@ cdef class GenericGraphBackend(SageObject):
 
     def multiple_edges(self, new=None):
         """
-        Get/set whether or not self allows multiple edges.
+        Get/set whether or not ``self`` allows multiple edges.
 
         INPUT:
 
@@ -563,7 +563,7 @@ cdef class GenericGraphBackend(SageObject):
 
     def name(self, new=None):
         """
-        Get/set name of self.
+        Get/set name of ``self``.
 
         INPUT:
 

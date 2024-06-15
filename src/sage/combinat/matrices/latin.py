@@ -331,7 +331,7 @@ class LatinSquare:
 
     def clear_cells(self):
         """
-        Mark every cell in self as being empty.
+        Mark every cell in ``self`` as being empty.
 
         EXAMPLES::
 
@@ -459,7 +459,7 @@ class LatinSquare:
 
     def is_empty_column(self, c):
         """
-        Check if column c of the partial latin square self is empty.
+        Check if column c of the partial latin square ``self`` is empty.
 
         EXAMPLES::
 
@@ -475,7 +475,7 @@ class LatinSquare:
 
     def is_empty_row(self, r):
         """
-        Check if row r of the partial latin square self is empty.
+        Check if row r of the partial latin square ``self`` is empty.
 
         EXAMPLES::
 
@@ -513,7 +513,7 @@ class LatinSquare:
     def apply_isotopism(self, row_perm, col_perm, sym_perm):
         """
         An isotopism is a permutation of the rows, columns, and symbols of
-        a partial latin square self. Use isotopism() to convert a tuple
+        a partial latin square ``self``. Use isotopism() to convert a tuple
         (indexed from 0) to a Permutation object.
 
         EXAMPLES::
@@ -554,11 +554,11 @@ class LatinSquare:
 
     def filled_cells_map(self):
         """
-        Number the filled cells of self with integers from {1, 2, 3, ...}.
+        Number the filled cells of ``self`` with integers from {1, 2, 3, ...}.
 
         INPUT:
 
-        - ``self`` -- partial latin square self (empty cells
+        - ``self`` -- partial latin square ``self`` (empty cells
           have negative values)
 
         OUTPUT:
@@ -643,7 +643,7 @@ class LatinSquare:
 
     def is_partial_latin_square(self):
         """
-        self is a partial latin square if it is an n by n matrix, and each
+        ``self`` is a partial latin square if it is an n by n matrix, and each
         symbol in [0, 1, ..., n-1] appears at most once in each row, and at
         most once in each column.
 
@@ -704,7 +704,7 @@ class LatinSquare:
 
     def is_latin_square(self):
         """
-        self is a latin square if it is an n by n matrix, and each symbol
+        ``self`` is a latin square if it is an n by n matrix, and each symbol
         in [0, 1, ..., n-1] appears exactly once in each row, and exactly
         once in each column.
 
@@ -736,7 +736,7 @@ class LatinSquare:
     def permissable_values(self, r, c):
         """
         Find all values that do not appear in row r and column c of the
-        latin square self. If self[r, c] is filled then we return the empty
+        latin square ``self``. If self[r, c] is filled then we return the empty
         list.
 
         INPUT:
@@ -822,7 +822,7 @@ class LatinSquare:
 
     def is_uniquely_completable(self):
         """
-        Return ``True`` if the partial latin square self has exactly one
+        Return ``True`` if the partial latin square ``self`` has exactly one
         completion to a latin square. This is just a wrapper for the
         current best-known algorithm, Dancing Links by Knuth. See
         dancing_links.spyx
@@ -888,7 +888,7 @@ class LatinSquare:
 
     def gcs(self):
         """
-        A greedy critical set of a latin square self is found by
+        A greedy critical set of a latin square ``self`` is found by
         successively removing elements in a row-wise (bottom-up) manner,
         checking for unique completion at each step.
 
@@ -934,7 +934,7 @@ class LatinSquare:
 
     def dlxcpp_has_unique_completion(self):
         """
-        Check if the partial latin square self of order n can be embedded
+        Check if the partial latin square ``self`` of order n can be embedded
         in precisely one latin square of order n.
 
         EXAMPLES::
@@ -953,7 +953,7 @@ class LatinSquare:
 
     def vals_in_row(self, r):
         """
-        Return a dictionary with key e if and only if row r of self has
+        Return a dictionary with key e if and only if row r of ``self`` has
         the symbol e.
 
         EXAMPLES::
@@ -977,7 +977,7 @@ class LatinSquare:
 
     def vals_in_col(self, c):
         """
-        Return a dictionary with key e if and only if column c of self has
+        Return a dictionary with key e if and only if column c of ``self`` has
         the symbol e.
 
         EXAMPLES::
@@ -1278,7 +1278,7 @@ class LatinSquare:
 
     def contained_in(self, Q):
         r"""
-        Return ``True`` if self is a subset of `Q`.
+        Return ``True`` if ``self`` is a subset of `Q`.
 
         EXAMPLES::
 

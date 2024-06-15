@@ -1456,7 +1456,7 @@ class GRSGaoDecoder(Decoder):
 
     def __hash__(self):
         """
-        Return the hash of self.
+        Return the hash of ``self``.
 
         EXAMPLES::
 

@@ -540,7 +540,7 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
 
     cpdef _div_(self, right):
         """
-        Return quotient of self by right.
+        Return quotient of ``self`` by ``right``.
 
         EXAMPLES::
 
@@ -585,15 +585,15 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
 
     def matrix(self, action='right'):
         """
-        Return the matrix of right or left multiplication of self on
+        Return the matrix of right or left multiplication of ``self`` on
         the basis for the ambient quaternion algebra.
 
-        In particular, if action is 'right' (the default), returns the
-        matrix of the mapping sending x to x*self.
+        In particular, if action is ``'right'`` (the default), returns the
+        matrix of the mapping sending ``x`` to ``x*self``.
 
         INPUT:
 
-        - ``action`` -- (default: ``'right'``) 'right' or 'left'.
+        - ``action`` -- (default: ``'right'``) ``'right'`` or ``'left'``
 
         OUTPUT: a matrix
 
@@ -659,9 +659,9 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
 
     def pair(self, right):
         """
-        Return the result of pairing self and right, which should both
+        Return the result of pairing ``self`` and ``right``, which should both
         be elements of a quaternion algebra.  The pairing is
-        (x,y) = (x.conjugate()*y).reduced_trace().
+        ``(x,y) = (x.conjugate()*y).reduced_trace()``.
 
         INPUT:
 
@@ -794,7 +794,7 @@ cdef class QuaternionAlgebraElement_generic(QuaternionAlgebraElement_abstract):
 
     cpdef _add_(self, _right):
         """
-        Return the sum of self and _right.
+        Return the sum of ``self`` and ``_right``.
 
         EXAMPLES::
 
@@ -810,7 +810,7 @@ cdef class QuaternionAlgebraElement_generic(QuaternionAlgebraElement_abstract):
 
     cpdef _sub_(self, _right):
         """
-        Return the difference of self and _right.
+        Return the difference of ``self`` and ``_right``.
 
         EXAMPLES::
 
@@ -825,7 +825,7 @@ cdef class QuaternionAlgebraElement_generic(QuaternionAlgebraElement_abstract):
 
     cpdef _mul_(self, _right):
         """
-        Return the product of self and _right.
+        Return the product of ``self`` and ``_right``.
 
         EXAMPLES::
 
@@ -1432,7 +1432,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
         """
         Return the reduced trace of ``self``.
 
-        This is `2x` if self is `x+iy+zj+wk`.
+        This is `2x` if ``self`` is `x+iy+zj+wk`.
 
         EXAMPLES::
 
@@ -1598,7 +1598,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
 
     def _multiply_by_integer(self, Integer n):
         """
-        Return the product of self times the integer n.
+        Return the product of ``self`` times the integer `n`.
 
         EXAMPLES::
 
@@ -1635,7 +1635,7 @@ cdef class QuaternionAlgebraElement_rational_field(QuaternionAlgebraElement_abst
 
     def _divide_by_integer(self, Integer n):
         """
-        Return the quotient of self by the integer n.
+        Return the quotient of ``self`` by the integer `n`.
 
         EXAMPLES::
 
@@ -1806,7 +1806,7 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
 
     cpdef _add_(self, _right):
         """
-        Add self and _right:
+        Add ``self`` and ``_right``:
 
         EXAMPLES::
 
@@ -1931,7 +1931,7 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
 
     cpdef _mul_(self, _right):
         """
-        Multiply self and _right.
+        Multiply ``self`` and ``_right``.
 
         EXAMPLES::
 

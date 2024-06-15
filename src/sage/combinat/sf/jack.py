@@ -584,7 +584,7 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
 
     def _self_to_m(self, x):
         r"""
-        Isomorphism from self to the monomial basis.
+        Isomorphism from ``self`` to the monomial basis.
 
         INPUT:
 
@@ -1235,7 +1235,7 @@ class JackPolynomials_qp(JackPolynomials_generic):
 
     def _self_to_h( self, x ):
         r"""
-        Isomorphism from self to the homogeneous basis.
+        Isomorphism from ``self`` to the homogeneous basis.
 
         INPUT:
 

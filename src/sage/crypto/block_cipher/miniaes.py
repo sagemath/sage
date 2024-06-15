@@ -406,7 +406,7 @@ class MiniAES(SageObject):
 
     def __repr__(self):
         r"""
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 

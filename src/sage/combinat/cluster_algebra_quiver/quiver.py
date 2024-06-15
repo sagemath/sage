@@ -881,8 +881,9 @@ class ClusterQuiver(SageObject):
         """
         Return the mutation type of ``self``.
 
-        Return the mutation_type of each connected component of self if it can be determined,
-        otherwise, the mutation type of this component is set to be unknown.
+        Return the mutation_type of each connected component of ``self`` if it
+        can be determined, otherwise, the mutation type of this component is
+        set to be unknown.
 
         The mutation types of the components are ordered by vertex labels.
 
@@ -1631,7 +1632,7 @@ class ClusterQuiver(SageObject):
         INPUT:
 
         - ``depth`` -- integer (default: infinity); only quivers with distance
-          at most depth from self are returned.
+          at most depth from ``self`` are returned.
         - ``show_depth`` -- boolean (default: ``False``); if ``True``, the
           actual depth of the mutation is shown
         - ``return_paths`` -- boolean (default: ``False``); if ``True``, a
@@ -1775,7 +1776,7 @@ class ClusterQuiver(SageObject):
         - ``show_depth`` -- boolean (default: ``False``); if ``True``, the
           actual depth of the mutation is shown
         - ``return_paths`` -- boolean (default: ``False``); if ``True``, a
-          shortest path of mutation sequences from self to the given quiver is
+          shortest path of mutation sequences from ``self`` to the given quiver is
           returned as well
         - ``data_type`` -- (default: ``'quiver'``) can be one of
           the following:

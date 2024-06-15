@@ -293,7 +293,7 @@ class AmbientSpace(CombinatorialFreeModule):
 
         - ``weight`` -- a vector or tuple representing a weight
 
-        Returns an element of self. If the weight lattice is not
+        Returns an element of ``self``. If the weight lattice is not
         of full rank, it coerces it into the weight lattice, or
         its ambient space by orthogonal projection. This arises
         in two cases: for SL(r+1), the weight lattice is

@@ -44,7 +44,7 @@ from sage.structure.richcmp import richcmp_method, rich_to_bool, richcmp_item
 class Word_class(SageObject):
     def parent(self):
         r"""
-        Return the parent of self.
+        Return the parent of ``self``.
 
         TESTS::
 
@@ -61,7 +61,7 @@ class Word_class(SageObject):
 
     def _repr_(self):
         r"""
-        Return a string representation of self.
+        Return a string representation of ``self``.
 
         TESTS::
 
@@ -157,7 +157,7 @@ class Word_class(SageObject):
 
     def length(self):
         r"""
-        Return the length of self.
+        Return the length of ``self``.
 
         TESTS::
 
@@ -206,7 +206,7 @@ class Word_class(SageObject):
 
     def __len__(self):
         r"""
-        Return the length of self (as a python integer).
+        Return the length of ``self`` (as a Python integer).
 
         .. NOTE::
 
@@ -372,7 +372,7 @@ class Word_class(SageObject):
 
     def _longest_common_prefix_iterator(self, other):
         r"""
-        Return an iterator of the longest common prefix of self and other.
+        Return an iterator of the longest common prefix of ``self`` and ``other``.
 
         INPUT:
 
@@ -400,7 +400,7 @@ class Word_class(SageObject):
 
     def longest_common_prefix(self, other, length='unknown'):
         r"""
-        Return the longest common prefix of self and other.
+        Return the longest common prefix of ``self`` and ``other``.
 
         INPUT:
 
@@ -496,7 +496,7 @@ class Word_class(SageObject):
 
     def _longest_periodic_prefix_iterator(self, period=1):
         r"""
-        Return an iterator of the longest prefix of self having the given
+        Return an iterator of the longest prefix of ``self`` having the given
         period.
 
         INPUT:
@@ -530,7 +530,7 @@ class Word_class(SageObject):
 
     def longest_periodic_prefix(self, period=1):
         r"""
-        Return the longest prefix of self having the given period.
+        Return the longest prefix of ``self`` having the given period.
 
         INPUT:
 
@@ -564,7 +564,7 @@ class Word_class(SageObject):
 
     def is_empty(self):
         r"""
-        Return ``True`` if the length of self is zero, and False otherwise.
+        Return ``True`` if the length of ``self`` is zero, and ``False`` otherwise.
 
         EXAMPLES::
 
@@ -592,9 +592,9 @@ class Word_class(SageObject):
         INPUT:
 
         - ``use_parent_alphabet`` -- boolean (default: ``False``); when ``True``
-          and if the self parent's alphabet is finite, it uses the index of
+          and if the ``self`` parent's alphabet is finite, it uses the index of
           the letters in the alphabet. Otherwise, the first letter occurring in
-          self is mapped to zero, and every letter that hasn't yet occurred in
+          ``self`` is mapped to zero, and every letter that hasn't yet occurred in
           the word is mapped to the next available integer.
 
         EXAMPLES::
@@ -664,7 +664,7 @@ class Word_class(SageObject):
 
     def lex_less(self, other):
         r"""
-        Return ``True`` if self is lexicographically less than other.
+        Return ``True`` if ``self`` is lexicographically less than ``other``.
 
         EXAMPLES::
 
@@ -690,11 +690,11 @@ class Word_class(SageObject):
             sage: t[:10].lex_less(t)
             True
         """
-        return self < other
+        return ``self`` < other
 
     def lex_greater(self, other):
         r"""
-        Return ``True`` if self is lexicographically greater than other.
+        Return ``True`` if ``self`` is lexicographically greater than ``other``.
 
         EXAMPLES::
 
@@ -763,7 +763,7 @@ class Word_class(SageObject):
 
     def _delta_iterator(self):
         r"""
-        Return an iterator of the image of self under the delta morphism.
+        Return an iterator of the image of ``self`` under the delta morphism.
         This is the word composed of the length of consecutive runs of the
         same letter in a given word.
 
@@ -792,7 +792,7 @@ class Word_class(SageObject):
 
     def delta(self):
         r"""
-        Return the image of self under the delta morphism.
+        Return the image of ``self`` under the delta morphism.
 
         This is the word composed of the length of consecutive runs of
         the same letter in a given word.
@@ -825,7 +825,7 @@ class Word_class(SageObject):
 
     def _iterated_right_palindromic_closure_iterator(self, f=None):
         r"""
-        Return an iterator over the iterated (`f`-)palindromic closure of self.
+        Return an iterator over the iterated (`f`-)palindromic closure of ``self``.
 
         INPUT:
 
@@ -889,11 +889,11 @@ class Word_class(SageObject):
 
     def _iterated_right_palindromic_closure_recursive_iterator(self, f=None):
         r"""
-        Return an iterator over the iterated (`f`-)palindromic closure of self.
+        Return an iterator over the iterated (`f`-)palindromic closure of ``self``.
 
         INPUT:
 
-        -  ``f`` -- involution (default: ``None``) on the alphabet of self. It must
+        -  ``f`` -- involution (default: ``None``) on the alphabet of ``self``. It must
            be callable on letters as well as words (e.g. WordMorphism).
 
         OUTPUT: iterator -- the iterated (`f`-)palindromic closure of self
@@ -977,11 +977,11 @@ class Word_class(SageObject):
 
     def iterated_right_palindromic_closure(self, f=None, algorithm='recursive'):
         r"""
-        Return the iterated (`f`-)palindromic closure of self.
+        Return the iterated (`f`-)palindromic closure of ``self``.
 
         INPUT:
 
-        -  ``f`` -- involution (default: ``None``) on the alphabet of self. It must
+        -  ``f`` -- involution (default: ``None``) on the alphabet of ``self``. It must
            be callable on letters as well as words (e.g. WordMorphism).
 
         -  ``algorithm`` -- string (default: ``'recursive'``); specifying which
@@ -1094,7 +1094,7 @@ class Word_class(SageObject):
 
     def prefixes_iterator(self, max_length=None):
         r"""
-        Return an iterator over the prefixes of self.
+        Return an iterator over the prefixes of ``self``.
 
         INPUT:
 
@@ -1146,7 +1146,7 @@ class Word_class(SageObject):
 
     def palindrome_prefixes_iterator(self, max_length=None):
         r"""
-        Return an iterator over the palindrome prefixes of self.
+        Return an iterator over the palindrome prefixes of ``self``.
 
         INPUT:
 
@@ -1185,7 +1185,7 @@ class Word_class(SageObject):
 
     def _partial_sums_iterator(self, start, mod=None):
         r"""
-        Iterator over the partial sums of the prefixes of self.
+        Iterator over the partial sums of the prefixes of ``self``.
 
         INPUT:
 
@@ -1593,7 +1593,7 @@ class Word_class(SageObject):
     def factor_occurrences_iterator(self, fact):
         r"""
         Return an iterator over all occurrences (including overlapping ones)
-        of fact in self in their order of appearance.
+        of fact in ``self`` in their order of appearance.
 
         INPUT:
 
@@ -1678,7 +1678,7 @@ class Word_class(SageObject):
     def complete_return_words_iterator(self, fact):
         r"""
         Return an iterator over all the complete return words of fact in
-        self (without unicity).
+        ``self`` (without unicity).
 
         A complete return words `u` of a factor `v`  is a factor starting
         by the given factor `v` and ending just after the next occurrence

@@ -414,7 +414,7 @@ class PQ:
 
     def simplify(self, v, left=False, right=False):
         r"""
-        Return a simplified copy of self according to the element ``v``.
+        Return a simplified copy of ``self`` according to the element ``v``.
 
         If ``self`` is a partial P-tree for ``v``, we would like to
         restrict the permutations of its children to permutations
@@ -502,7 +502,7 @@ class PQ:
         r"""
         Return a flattened copy of ``self``.
 
-        If self has only one child, we may as well consider its
+        If ``self`` has only one child, we may as well consider its
         child's children, as ``self`` encodes no information. This
         method recursively "flattens" trees having only on PQ-tree
         child, and returns it.

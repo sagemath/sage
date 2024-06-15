@@ -543,7 +543,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
     cdef _init_from_ListOfFaces(self, ListOfFaces facets, ListOfFaces Vrep):
         """
-        Initialize self from two ``ListOfFaces``.
+        Initialize ``self`` from two ``ListOfFaces``.
         """
         self._bitrep_facets = facets
         self._bitrep_Vrep = Vrep
@@ -3310,7 +3310,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
     cpdef CombinatorialPolyhedron dual(self):
         r"""
-        Return the dual/polar of self.
+        Return the dual/polar of ``self``.
 
         Only defined for bounded polyhedra.
 

@@ -114,9 +114,9 @@ cdef class WordDatatype_char(WordDatatype):
 
     def __dealloc__(self):
         r"""
-        Deallocate memory only if self uses it own memory.
+        Deallocate memory only if ``self`` uses it own memory.
 
-        Note that ``sig_free`` will not deallocate memory if self is the
+        Note that ``sig_free`` will not deallocate memory if ``self`` is the
         master of another word.
         """
         # it is strictly forbidden here to access _master here! (it will be set
@@ -646,7 +646,7 @@ cdef class WordDatatype_char(WordDatatype):
 
     def is_square(self):
         r"""
-        Return ``True`` if self is a square, and False otherwise.
+        Return ``True`` if ``self`` is a square, and ``False`` otherwise.
 
         EXAMPLES::
 

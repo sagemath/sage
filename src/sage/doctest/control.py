@@ -955,7 +955,7 @@ class DocTestController(SageObject):
 
     def expand_files_into_sources(self):
         r"""
-        Expands ``self.files``, which may include directories, into a
+        Expand ``self.files``, which may include directories, into a
         list of :class:`sage.doctest.FileDocTestSource`
 
         This function also handles the optional command line option.

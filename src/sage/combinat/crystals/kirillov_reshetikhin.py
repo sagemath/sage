@@ -2288,7 +2288,7 @@ class KR_type_Bn(KirillovReshetikhinGenericCrystal):
     @cached_method
     def to_ambient_crystal(self):
         r"""
-        Return a map from self to the ambient crystal of type `A_{2n-1}^{(2)}`.
+        Return a map from ``self`` to the ambient crystal of type `A_{2n-1}^{(2)}`.
 
         EXAMPLES::
 

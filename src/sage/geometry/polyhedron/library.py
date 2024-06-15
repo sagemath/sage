@@ -3074,8 +3074,8 @@ class Polytopes:
 
         - ``backend`` -- the backend to use to create the polytope
 
-        - ``construction`` -- the construction to use (string, default 'coxeter');
-          the other possibility is 'as_permutahedron'.
+        - ``construction`` -- string (default: 'coxeter'); the construction to use.
+          The other possibility is 'as_permutahedron'.
 
         EXAMPLES:
 

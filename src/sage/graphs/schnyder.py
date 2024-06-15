@@ -613,9 +613,9 @@ class TreeNode:
 
     def compute_number_of_descendants(self):
         """
-        Compute the number of descendants of self and all descendants.
+        Compute the number of descendants of ``self`` and all descendants.
 
-        For each TreeNode, sets result as attribute self.number_of_descendants
+        For each TreeNode, sets result as attribute ``self.number_of_descendants``.
 
         EXAMPLES::
 
@@ -642,9 +642,9 @@ class TreeNode:
 
     def compute_depth_of_self_and_children(self):
         """
-        Compute the depth of self and all descendants.
+        Compute the depth of ``self`` and all descendants.
 
-        For each TreeNode, sets result as attribute self.depth
+        For each TreeNode, sets result as ``attribute self.depth``.
 
         EXAMPLES::
 

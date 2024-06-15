@@ -592,7 +592,7 @@ class CoxeterGroups(Category_singleton):
             r"""
             Return all standard Coxeter elements in ``self``.
 
-            This is the set of all elements in self obtained from any
+            This is the set of all elements in ``self`` obtained from any
             product of the simple reflections in ``self``.
 
             .. NOTE::
@@ -1312,7 +1312,7 @@ class CoxeterGroups(Category_singleton):
             """
             Run sanity checks on the method
             :meth:`CoxeterGroups.ElementMethods.has_descent` of the
-            elements of self.
+            elements of ``self``.
 
             EXAMPLES::
 
@@ -1424,7 +1424,7 @@ class CoxeterGroups(Category_singleton):
     class ElementMethods:
         def has_descent(self, i, side='right', positive=False):
             """
-            Return whether i is a (left/right) descent of self.
+            Return whether `i` is a (left/right) descent of ``self``.
 
             See :meth:`.descents` for a description of the options.
 
@@ -1456,7 +1456,7 @@ class CoxeterGroups(Category_singleton):
 #        @abstract_method(optional = True)
         def has_right_descent(self, i):
             """
-            Return whether ``i`` is a right descent of self.
+            Return whether `i` is a right descent of ``self``.
 
             EXAMPLES::
 
@@ -1475,7 +1475,7 @@ class CoxeterGroups(Category_singleton):
 
         def has_left_descent(self, i):
             """
-            Return whether `i` is a left descent of self.
+            Return whether `i` is a left descent of ``self``.
 
             This default implementation uses that a left descent of
             `w` is a right descent of `w^{-1}`.

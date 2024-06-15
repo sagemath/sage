@@ -1592,7 +1592,7 @@ class FiniteWord_class(Word_class):
         where `w` is the unique return word to `p`.
 
         In other cases, it is the directed graph defined as followed.  Let
-        `G_n` be the Rauzy graph of order `n` of self. The vertices are the
+        `G_n` be the Rauzy graph of order `n` of ``self``. The vertices are the
         vertices of `G_n` that are either special or not prolongable to the
         right or to the left. For each couple (`u`, `v`) of such vertices
         and each directed path in `G_n` from `u` to `v` that contains no

@@ -1445,7 +1445,7 @@ def path_weakly_above_other(path, other) -> bool:
 
     - ``other`` -- the other path to verify is weakly below the path
 
-    OUTPUT: bool
+    OUTPUT: boolean
 
     EXAMPLES::
 

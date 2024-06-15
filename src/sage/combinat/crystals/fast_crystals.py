@@ -318,7 +318,7 @@ class FastCrystal(UniqueRepresentation, Parent):
 
         def weight(self):
             """
-            Return the weight of self.
+            Return the weight of ``self``.
 
             EXAMPLES::
 

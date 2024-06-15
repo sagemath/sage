@@ -528,7 +528,7 @@ class CartanType_finite(CartanType, cartan_type.CartanType_finite):
 class CartanType_affine(CartanType, cartan_type.CartanType_affine):
     def classical(self):
         """
-        Return the classical Cartan type associated with self (which should
+        Return the classical Cartan type associated with ``self`` (which should
         be affine).
 
         EXAMPLES::

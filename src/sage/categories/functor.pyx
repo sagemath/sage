@@ -390,7 +390,7 @@ cdef class Functor(SageObject):
 
     def domain(self):
         """
-        The domain of self.
+        The domain of ``self``.
 
         EXAMPLES::
 
@@ -402,7 +402,7 @@ cdef class Functor(SageObject):
 
     def codomain(self):
         """
-        The codomain of self.
+        The codomain of ``self``.
 
         EXAMPLES::
 
@@ -493,7 +493,7 @@ class ForgetfulFunctor_generic(Functor):
 
         It is tested whether the second argument belongs to the class
         of forgetful functors and has the same domain and codomain as
-        self. If the second argument is a functor of a different class
+        ``self``. If the second argument is a functor of a different class
         but happens to be a forgetful functor, both arguments will
         still be considered as being *different*.
 

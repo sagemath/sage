@@ -125,7 +125,7 @@ cdef class WordDatatype_list(WordDatatype):
 
     def __iter__(self):
         r"""
-        Return an iterator that iterates through the letters of self.
+        Return an iterator that iterates through the letters of ``self``.
 
         EXAMPLES::
 
@@ -137,8 +137,8 @@ cdef class WordDatatype_list(WordDatatype):
 
     def __richcmp__(self, other, int op):
         r"""
-        Equality test for self and other if other is an instance of
-        WordDatype_list.
+        Equality test for ``self`` and ``other`` if other is an instance of
+        ``WordDatype_list``.
 
         INPUT:
 
@@ -232,7 +232,7 @@ cdef class WordDatatype_list(WordDatatype):
 
     def __mul__(self, other):
         r"""
-        Return the concatenation of self and other.
+        Return the concatenation of ``self`` and ``other``.
 
         INPUT:
 
@@ -332,8 +332,8 @@ cdef class WordDatatype_str(WordDatatype):
 
     def __richcmp__(self, other, int op):
         r"""
-        Equality test for self and other if other is an instance of
-        WordDatype_str.
+        Equality test for ``self`` and ``other`` if other is an instance of
+        ``WordDatype_str``.
 
         INPUT:
 
@@ -551,11 +551,11 @@ cdef class WordDatatype_str(WordDatatype):
 
     def __mul__(self, other):
         r"""
-        Return the concatenation of self and other.
+        Return the concatenation of ``self`` and ``other``.
 
         INPUT:
 
-        - ``other`` -- word represented by a str
+        - ``other`` -- word represented by a string
 
         OUTPUT: word
 
@@ -903,7 +903,7 @@ cdef class WordDatatype_tuple(WordDatatype):
 
     def __iter__(self):
         r"""
-        Return an iterator that iterates through the letters of self.
+        Return an iterator that iterates through the letters of ``self``.
 
         EXAMPLES::
 
@@ -915,8 +915,8 @@ cdef class WordDatatype_tuple(WordDatatype):
 
     def __richcmp__(self, other, int op):
         r"""
-        Equality test for self and other if other is an instance of
-        WordDatype_tuple.
+        Equality test for ``self`` and ``other`` if other is an instance of
+        ``WordDatype_tuple``.
 
         INPUT:
 
@@ -1034,7 +1034,7 @@ cdef class WordDatatype_tuple(WordDatatype):
 
     def __mul__(self, other):
         r"""
-        Return the concatenation of self and other.
+        Return the concatenation of ``self`` and ``other``.
 
         INPUT:
 

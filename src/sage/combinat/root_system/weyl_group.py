@@ -823,7 +823,7 @@ class WeylGroupElement(MatrixGroupElement_gap):
 
     def action(self, v):
         """
-        Return the action of self on the vector v.
+        Return the action of ``self`` on the vector `v`.
 
         EXAMPLES::
 

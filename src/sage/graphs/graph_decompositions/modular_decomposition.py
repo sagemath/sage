@@ -160,14 +160,14 @@ class Node:
 
     def set_node_split(self, node_split):
         """
-        Add node_split to the node split of self.
+        Add node_split to the node split of ``self``.
 
         ``LEFT_SPLIT`` and ``RIGHT_SPLIT`` can exist together in ``self`` as
         ``BOTH_SPLIT``.
 
         INPUT:
 
-        - ``node_split`` -- node_split to be added to self
+        - ``node_split`` -- ``node_split`` to be added to ``self``
 
         EXAMPLES::
 

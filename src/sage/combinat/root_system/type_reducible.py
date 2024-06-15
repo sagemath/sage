@@ -223,7 +223,7 @@ class CartanType(SageObject, CartanType_abstract):
 
     def rank(self):
         """
-        Return the rank of self.
+        Return the rank of ``self``.
 
         EXAMPLES::
 

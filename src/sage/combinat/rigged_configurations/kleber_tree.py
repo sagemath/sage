@@ -1038,7 +1038,7 @@ class KleberTree(UniqueRepresentation, Parent):
 
     def plot(self, **options):
         """
-        Return the plot of self as a directed graph.
+        Return the plot of ``self`` as a directed graph.
 
         EXAMPLES::
 

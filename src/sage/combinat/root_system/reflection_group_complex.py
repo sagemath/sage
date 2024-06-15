@@ -855,7 +855,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
     @cached_method
     def is_crystallographic(self):
         r"""
-        Return ``True`` if self is crystallographic.
+        Return ``True`` if ``self`` is crystallographic.
 
         This is, if the field of definition is the rational field.
 

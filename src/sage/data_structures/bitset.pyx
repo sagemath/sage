@@ -1176,7 +1176,7 @@ cdef class FrozenBitset:
 
     cpdef complement(self):
         """
-        Return the complement of self.
+        Return the complement of ``self``.
 
         EXAMPLES::
 
@@ -1200,7 +1200,7 @@ cdef class FrozenBitset:
 
     def __invert__(self):
         """
-        Return the complement of self.
+        Return the complement of ``self``.
 
         EXAMPLES::
 

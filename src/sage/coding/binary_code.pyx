@@ -1502,7 +1502,7 @@ cdef class OrbitPartition:
 
     def _merge_perm(self, col_gamma, wd_gamma):
         """
-        Merges the cells of self under the given permutation. If gamma[a] = b,
+        Merges the cells of ``self`` under the given permutation. If gamma[a] = b,
         then after merge_perm, a and b will be in the same cell. Returns 0 if
         nothing was done, otherwise returns 1.
 
@@ -1810,7 +1810,7 @@ cdef class PartitionStack:
 
     def __repr__(self):
         """
-        Return a string representation of self.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 

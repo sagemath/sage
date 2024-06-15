@@ -380,7 +380,7 @@ lim = limit
 
 def taylor(f, *args):
     """
-    Expands self in a truncated Taylor or Laurent series in the
+    Expand ``self`` in a truncated Taylor or Laurent series in the
     variable `v` around the point `a`, containing terms
     through `(x - a)^n`. Functions in more variables are also
     supported.

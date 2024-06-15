@@ -1749,12 +1749,12 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         ALGORITHM:
 
         `p` is a prime of bad reduction if and only if the defining
-        polynomials of self have a common zero. Or stated another way,
+        polynomials of ``self`` have a common zero. Or stated another way,
         `p` is a prime of bad reduction if and only if the radical of
-        the ideal defined by the defining polynomials of self is not
+        the ideal defined by the defining polynomials of ``self`` is not
         `(x_0,x_1,\ldots,x_N)`.  This happens if and only if some
         power of each `x_i` is not in the ideal defined by the
-        defining polynomials of self. This last condition is what is
+        defining polynomials of ``self``. This last condition is what is
         checked. The lcm of the coefficients of the monomials `x_i` in
         a Groebner basis is computed. This may return extra primes.
 

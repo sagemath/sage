@@ -379,7 +379,7 @@ class Face(SageObject):
 
     def __add__(self, other):
         r"""
-        Addition of self with a Face, a Patch or a finite iterable of faces.
+        Addition of ``self`` with a Face, a Patch or a finite iterable of faces.
 
         INPUT:
 
@@ -806,7 +806,7 @@ class Patch(SageObject):
 
     def union(self, other) -> Patch:
         r"""
-        Return a Patch consisting of the union of self and other.
+        Return a Patch consisting of the union of ``self`` and ``other``.
 
         INPUT:
 
@@ -828,7 +828,7 @@ class Patch(SageObject):
 
     def difference(self, other) -> Patch:
         r"""
-        Return the difference of self and other.
+        Return the difference of ``self`` and ``other``.
 
         INPUT:
 
@@ -850,9 +850,9 @@ class Patch(SageObject):
 
     def dimension(self) -> None | int:
         r"""
-        Return the dimension of the vectors of the faces of self
+        Return the dimension of the vectors of the faces of ``self``.
 
-        It returns ``None`` if self is the empty patch.
+        It returns ``None`` if ``self`` is the empty patch.
 
         The dimension of a patch is the length of the vectors of the faces in the patch,
         which is assumed to be the same for every face in the patch.
@@ -934,7 +934,7 @@ class Patch(SageObject):
 
     def translate(self, v) -> Patch:
         r"""
-        Return a translated copy of self by vector ``v``.
+        Return a translated copy of ``self`` by vector `v`.
 
         INPUT:
 
@@ -995,9 +995,9 @@ class Patch(SageObject):
 
     def repaint(self, cmap='Set1') -> None:
         r"""
-        Repaint all the faces of self from the given color map.
+        Repaint all the faces of ``self`` from the given color map.
 
-        This only changes the colors of the faces of self.
+        This only changes the colors of the faces of ``self``.
 
         INPUT:
 

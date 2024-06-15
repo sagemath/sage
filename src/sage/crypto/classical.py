@@ -1387,7 +1387,7 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
 
     def _repr_(self):
         """
-        Return a string representation of self.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -3046,7 +3046,7 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
 
     def _repr_(self):
         """
-        Return a string representation of self.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -3275,7 +3275,7 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
 
     def _repr_(self):
         """
-        Return a string representation of self.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -3517,7 +3517,7 @@ class VigenereCryptosystem(SymmetricKeyCryptosystem):
 
     def _repr_(self):
         """
-        Return a string representation of self.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 

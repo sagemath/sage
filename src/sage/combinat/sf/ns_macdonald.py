@@ -440,7 +440,7 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
     def reading_word(self):
         """
         Return the reading word of ``self``, obtained by reading the boxes
-        entries of self from right to left, starting in the upper right.
+        entries of ``self`` from right to left, starting in the upper right.
 
         EXAMPLES::
 

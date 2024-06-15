@@ -2874,12 +2874,12 @@ class DifferentialGCAlgebra(GCAlgebra):
     def cohomology_algebra(self, max_degree=3):
         """
         Compute a CDGA with trivial differential, that is isomorphic to the cohomology of
-        self up to``max_degree``
+        ``self`` up to``max_degree``
 
         INPUT:
 
         - ``max_degree`` -- integer (default: `3`); degree to which the result is required to
-          be isomorphic to self's cohomology.
+          be isomorphic to ``self``'s cohomology
 
         EXAMPLES::
 

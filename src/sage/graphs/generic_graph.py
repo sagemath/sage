@@ -90,8 +90,8 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.complement` | Return the complement of the (di)graph.
     :meth:`~GenericGraph.line_graph` | Return the line graph of the (di)graph.
     :meth:`~GenericGraph.to_simple` | Return a simple version of itself (i.e., undirected and loops and multiple edges are removed).
-    :meth:`~GenericGraph.disjoint_union` | Return the disjoint union of self and other.
-    :meth:`~GenericGraph.union` | Return the union of self and other.
+    :meth:`~GenericGraph.disjoint_union` | Return the disjoint union of ``self`` and ``other``.
+    :meth:`~GenericGraph.union` | Return the union of ``self`` and ``other``.
     :meth:`~GenericGraph.relabel` | Relabel the vertices of ``self``
     :meth:`~GenericGraph.degree_to_cell` | Return the number of edges from vertex to an edge in cell.
     :meth:`~GenericGraph.subgraph` | Return the subgraph containing the given vertices and edges.
@@ -104,11 +104,11 @@ can be applied on both. Here is what it can do:
     :widths: 30, 70
     :delim: |
 
-    :meth:`~GenericGraph.cartesian_product` | Return the Cartesian product of self and other.
-    :meth:`~GenericGraph.tensor_product` | Return the tensor product, also called the categorical product, of self and other.
-    :meth:`~GenericGraph.lexicographic_product` | Return the lexicographic product of self and other.
-    :meth:`~GenericGraph.strong_product` | Return the strong product of self and other.
-    :meth:`~GenericGraph.disjunctive_product` | Return the disjunctive product of self and other.
+    :meth:`~GenericGraph.cartesian_product` | Return the Cartesian product of ``self`` and ``other``.
+    :meth:`~GenericGraph.tensor_product` | Return the tensor product, also called the categorical product, of ``self`` and ``other``.
+    :meth:`~GenericGraph.lexicographic_product` | Return the lexicographic product of ``self`` and ``other``.
+    :meth:`~GenericGraph.strong_product` | Return the strong product of ``self`` and ``other``.
+    :meth:`~GenericGraph.disjunctive_product` | Return the disjunctive product of ``self`` and ``other``.
 
 **Paths and cycles:**
 
@@ -163,8 +163,8 @@ can be applied on both. Here is what it can do:
 
     :meth:`~GenericGraph.coarsest_equitable_refinement` | Return the coarsest partition which is finer than the input partition, and equitable with respect to self.
     :meth:`~GenericGraph.automorphism_group` | Return the largest subgroup of the automorphism group of the (di)graph whose orbit partition is finer than the partition given.
-    :meth:`~GenericGraph.is_vertex_transitive` | Return whether the automorphism group of self is transitive within the partition provided
-    :meth:`~GenericGraph.is_isomorphic` | Test for isomorphism between self and other.
+    :meth:`~GenericGraph.is_vertex_transitive` | Return whether the automorphism group of ``self`` is transitive within the partition provided
+    :meth:`~GenericGraph.is_isomorphic` | Test for isomorphism between ``self`` and ``other``.
     :meth:`~GenericGraph.canonical_label` | Return the canonical graph.
     :meth:`~GenericGraph.is_cayley` | Check whether the graph is a Cayley graph.
 
@@ -540,7 +540,7 @@ class GenericGraph(GenericGraph_pyx):
 
     def __eq__(self, other):
         """
-        Compare self and other for equality.
+        Compare ``self`` and ``other`` for equality.
 
         Do not call this method directly. That is, for ``G.__eq__(H)`` write
         ``G == H``.
@@ -7373,7 +7373,7 @@ class GenericGraph(GenericGraph_pyx):
         r"""
         Return a minimum edge cut between vertices `s` and `t`.
 
-        A minimum edge cut between two vertices `s` and `t` of self is a set `A`
+        A minimum edge cut between two vertices `s` and `t` of ``self`` is a set `A`
         of edges of minimum weight such that the graph obtained by removing `A`
         from the graph is disconnected. For more information, see the
         :wikipedia:`Cut_(graph_theory)`.
@@ -24007,9 +24007,9 @@ class GenericGraph(GenericGraph_pyx):
                              edge_labels=False, order=False,
                              return_group=True, orbits=False):
         """
-        Return whether the automorphism group of self is transitive within
+        Return whether the automorphism group of ``self`` is transitive within
         the partition provided, by default the unit partition of the
-        vertices of self (thus by default tests for vertex transitivity in
+        vertices of ``self`` (thus by default tests for vertex transitivity in
         the usual sense).
 
         EXAMPLES::
@@ -24137,7 +24137,7 @@ class GenericGraph(GenericGraph_pyx):
 
     def is_isomorphic(self, other, certificate=False, verbosity=0, edge_labels=False):
         r"""
-        Test for isomorphism between self and other.
+        Test for isomorphism between ``self`` and ``other``.
 
         INPUT:
 

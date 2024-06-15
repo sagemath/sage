@@ -638,7 +638,7 @@ class BipartiteGraph(Graph):
 
     def __repr__(self):
         r"""
-        Return a short string representation of self.
+        Return a short string representation of ``self``.
 
         EXAMPLES::
 
@@ -2228,7 +2228,7 @@ class BipartiteGraph(Graph):
                      reduction_rules=True, solver=None, verbose=0,
                      *, integrality_tolerance=1e-3):
         r"""
-        Return a minimum vertex cover of self represented by a set of vertices.
+        Return a minimum vertex cover of ``self`` represented by a set of vertices.
 
         A minimum vertex cover of a graph is a set `S` of vertices such that
         each edge is incident to at least one element of `S`, and such that `S`

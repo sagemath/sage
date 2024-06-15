@@ -567,7 +567,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
 
         def expand(self, n, alphabet='x'):
             r"""
-            Expands the symmetric function as a symmetric polynomial in ``n`` variables.
+            Expand the symmetric function as a symmetric polynomial in ``n`` variables.
 
             INPUT:
 

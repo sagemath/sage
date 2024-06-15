@@ -883,7 +883,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
     @cached_method
     def degenerate_primes(self, check=True):
         r"""
-        Determine which primes `p` self has degenerate fibers over `\GF{p}`.
+        Determine which primes `p` ``self`` has degenerate fibers over `\GF{p}`.
 
         If ``check`` is ``False``, then may return primes that do not have degenerate fibers.
         Raises an error if the surface is degenerate.

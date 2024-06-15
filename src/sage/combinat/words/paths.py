@@ -1759,7 +1759,7 @@ class FiniteWordPath_2d(FiniteWordPath_all):
             sage: Freeman('aababaabbbAA').height()
             5
 
-        The function is well-defined if self is not simple or close::
+        The function is well-defined if ``self`` is not simple or close::
 
             sage: Freeman('aabAAB').height()
             1
@@ -1824,7 +1824,7 @@ class FiniteWordPath_2d(FiniteWordPath_all):
             sage: Freeman('aababaabbbAA').width()
             5
 
-        The function is well-defined if self is not simple or close::
+        The function is well-defined if ``self`` is not simple or close::
 
             sage: Freeman('aabAAB').width()
             2

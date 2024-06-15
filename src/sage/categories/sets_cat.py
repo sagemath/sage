@@ -2405,7 +2405,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
             def cardinality(self):
                 r"""
-                Return the cardinality of self.
+                Return the cardinality of ``self``.
 
                 EXAMPLES::
 

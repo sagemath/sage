@@ -44,7 +44,7 @@ class PermutationSpeciesStructure(GenericSpeciesStructure):
 
     def permutation_group_element(self):
         """
-        Return self as a permutation group element.
+        Return ``self`` as a permutation group element.
 
         EXAMPLES::
 

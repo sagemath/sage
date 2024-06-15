@@ -240,7 +240,7 @@ class HyperbolicGeodesic(SageObject):
 
     def __ne__(self, other):
         """
-        Test unequality of self and other.
+        Test unequality of ``self`` and ``other``.
 
         EXAMPLES::
 

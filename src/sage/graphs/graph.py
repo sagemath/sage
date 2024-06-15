@@ -2703,7 +2703,7 @@ class Graph(GenericGraph):
     @doc_index("Graph properties")
     def is_edge_transitive(self):
         r"""
-        Check if self is an edge transitive graph.
+        Check if ``self`` is an edge transitive graph.
 
         A graph is edge-transitive if its automorphism group acts transitively
         on its edge set.
@@ -2748,7 +2748,7 @@ class Graph(GenericGraph):
     @doc_index("Graph properties")
     def is_arc_transitive(self):
         r"""
-        Check if self is an arc-transitive graph.
+        Check if ``self`` is an arc-transitive graph.
 
         A graph is arc-transitive if its automorphism group acts transitively on
         its pairs of adjacent vertices.
@@ -2788,7 +2788,7 @@ class Graph(GenericGraph):
     @doc_index("Graph properties")
     def is_half_transitive(self):
         """
-        Check if self is a half-transitive graph.
+        Check if ``self`` is a half-transitive graph.
 
         A graph is half-transitive if it is both vertex and edge transitive
         but not arc-transitive.
@@ -2825,7 +2825,7 @@ class Graph(GenericGraph):
     @doc_index("Graph properties")
     def is_semi_symmetric(self):
         """
-        Check if self is semi-symmetric.
+        Check if ``self`` is semi-symmetric.
 
         A graph is semi-symmetric if it is regular, edge-transitive but not
         vertex-transitive.
@@ -6344,7 +6344,7 @@ class Graph(GenericGraph):
         .. SEEALSO::
 
             - :meth:`~sage.combinat.designs.twographs.TwoGraph.descendant` --
-              computes the descendant graph of the two-graph of self at a vertex
+              computes the descendant graph of the two-graph of ``self`` at a vertex
 
             - :func:`~sage.combinat.designs.twographs.twograph_descendant`
               -- ditto, but much faster.
@@ -7146,7 +7146,7 @@ class Graph(GenericGraph):
                      reduction_rules=True, solver=None, verbose=0,
                      *, integrality_tolerance=1e-3):
         r"""
-        Return a minimum vertex cover of self represented by a set of vertices.
+        Return a minimum vertex cover of ``self`` represented by a set of vertices.
 
         A minimum vertex cover of a graph is a set `S` of vertices such that
         each edge is incident to at least one element of `S`, and such that `S`
@@ -7743,10 +7743,10 @@ class Graph(GenericGraph):
     @doc_index("Clique-related methods")
     def clique_complex(self):
         """
-        Return the clique complex of self.
+        Return the clique complex of ``self``.
 
-        This is the largest simplicial complex on the vertices of self whose
-        1-skeleton is self.
+        This is the largest simplicial complex on the vertices of ``self`` whose
+        1-skeleton is ``self``.
 
         This is only makes sense for undirected simple graphs.
 
@@ -7776,7 +7776,7 @@ class Graph(GenericGraph):
     @doc_index("Clique-related methods")
     def clique_polynomial(self, t=None):
         r"""
-        Return the clique polynomial of self.
+        Return the clique polynomial of ``self``.
 
         This is the polynomial where the coefficient of `t^n` is the number of
         cliques in the graph with `n` vertices. The constant term of the clique
@@ -8594,7 +8594,7 @@ class Graph(GenericGraph):
     @doc_index("Connectivity, orientations, trees")
     def gomory_hu_tree(self, algorithm=None):
         r"""
-        Return a Gomory-Hu tree of self.
+        Return a Gomory-Hu tree of ``self``.
 
         Given a tree `T` with labeled edges representing capacities, it is very
         easy to determine the maximum flow between any pair of vertices :

@@ -630,7 +630,7 @@ class Groups(CategoryWithAxiom):
 
             def order(self):
                 r"""
-                Return the cardinality of self.
+                Return the cardinality of ``self``.
 
                 EXAMPLES::
 

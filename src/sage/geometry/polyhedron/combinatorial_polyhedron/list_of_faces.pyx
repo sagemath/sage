@@ -180,7 +180,7 @@ cdef class ListOfFaces:
 
     cpdef ListOfFaces __copy__(self):
         r"""
-        Return a copy of self.
+        Return a copy of ``self``.
 
         EXAMPLES::
 
@@ -478,7 +478,7 @@ cdef class ListOfFaces:
 
     def matrix(self):
         r"""
-        Obtain the matrix of self.
+        Obtain the matrix of ``self``.
 
         Each row represents a face and each column an atom.
 

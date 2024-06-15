@@ -64,7 +64,7 @@ class HopfAlgebras(Category_over_base_ring):
 
         def antipode(self):
             """
-            Return the antipode of self.
+            Return the antipode of ``self``.
 
             EXAMPLES::
 

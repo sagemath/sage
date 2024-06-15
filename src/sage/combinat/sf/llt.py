@@ -503,7 +503,7 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
 
     def _self_to_m(self, x):
         r"""
-        Isomorphism from self to the monomial basis.
+        Isomorphism from ``self`` to the monomial basis.
 
         INPUT:
 
