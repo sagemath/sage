@@ -108,28 +108,6 @@ class Package(object):
         return self.__name
 
     @property
-    def sha1(self):
-        """
-        Return the SHA1 checksum
-
-        OUTPUT:
-
-        String.
-        """
-        return self.__checksums[None]['sha1']
-
-    @property
-    def sha256(self):
-        """
-        Return the SHA256 checksum
-
-        OUTPUT:
-
-        String.
-        """
-        return self.__checksums[None]['sha256']
-
-    @property
     def tarball(self):
         """
         Return the (primary) tarball
