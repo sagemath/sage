@@ -1,14 +1,20 @@
 from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
 from sage.structure.element import Element
-from sage.structure.element import parent as get_parent_of
+from sage.structure.element import parent
+from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.integer_ring import ZZ
 from sage.categories.sets_cat import cartesian_product
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroup_generic
+from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.libs.gap.libgap import libgap
 from sage.categories.algebras import Algebras
 from sage.combinat.free_module import CombinatorialFreeModule
+from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
+from sage.categories.filtered_modules_with_basis import FilteredModulesWithBasis
+from sage.rings.integer import Integer
 
 GAP_FAIL = libgap.eval('fail')
 
@@ -293,7 +299,7 @@ class ConjugacyClassesOfSubgroups(Parent):
             sage: Z4 in B._indices
             True
         """
-        if get_parent_of(H) == self:
+        if parent(H) == self:
             return True
 
         return (isinstance(H, PermutationGroup_generic)
@@ -360,7 +366,8 @@ class BurnsideRing(CombinatorialFreeModule):
         basis = ConjugacyClassesOfSubgroups(G)
         basis.set_name(G, "1")
         category = Algebras(base_ring).Commutative().WithBasis()
-        CombinatorialFreeModule.__init__(self, base_ring, basis, category=category)
+        CombinatorialFreeModule.__init__(self, base_ring, basis,
+                                        category=category, prefix="B")
 
     def __getitem__(self, H):
         r"""
@@ -520,3 +527,131 @@ class BurnsideRing(CombinatorialFreeModule):
             Burnside ring of Symmetric group of order 4! as a permutation group
         """
         return "Burnside ring of " + repr(self._G)
+
+class ConjugacyClassOfSymmetricGroupSubgroups(ConjugacyClassOfSubgroups):
+    def __init__(self, n, C):
+        r"""
+        Initialize the conjugacy class of ``C`` in SymmetricGroup(n).
+
+        TESTS::
+
+            sage: G = SymmetricGroup(4)
+            sage: B = BurnsideRing(G)
+            sage: Z4 = CyclicPermutationGroup(4)
+            sage: TestSuite(B(Z4)).run()
+        """
+        self._n = n
+        self._G = SymmetricGroup(n)
+        ConjugacyClassOfSubgroups.__init__(self, ConjugacyClassesOfSymmetricGroupSubgroups(), C)
+
+    def __hash__(self):
+        r"""
+        Return the hash of the representative of the conjugacy class.
+        """
+        return hash(self._C)
+
+    def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+        """
+        # name = self.parent()._names.get(self._C, None)
+        name = None
+        return repr((self._n, self._C.gens())) if name is None else repr((self._n, name))
+
+    def __eq__(self, other):
+        r"""
+        Return if this element is equal to ``other``.
+
+        Two elements compare equal if they are conjugate subgroups in the parent group.
+        """
+        return (isinstance(other, ConjugacyClassOfSymmetricGroupSubgroups)
+                and self._n == other._n and _is_conjugate(self._G, self._C, other._C))
+
+class ConjugacyClassesOfSymmetricGroupSubgroups(UniqueRepresentation, Parent):
+    def __init__(self):
+        category = InfiniteEnumeratedSets()
+        Parent.__init__(self, category=category)
+
+    def _repr_(self):
+        return "Conjugacy classes of subgroups of symmetric groups"
+
+    def _element_constructor_(self, x):
+        r"""
+        x is a tuple (n, H) where H is a subgroup of S_n.
+        """
+        G = SymmetricGroup(x[0])
+        if x[1].is_subgroup(G):
+            return self.element_class(x[0], x[1])
+        raise ValueError(f"Unable to convert {x} into self: {x[1]} is not a subgroup of SymmetricGroup({x[0]})")
+
+    def __iter__(self):
+        n = 0
+        while True:
+            G = SymmetricGroup(n)
+            CC = ConjugacyClassesOfSubgroups(G)
+            yield from iter(CC)
+            n += 1
+
+    def __contains__(self, x):
+        r"""
+        x is a tuple (n, H) where H is a subgroup of S_n.
+        """
+        if parent(x) == self:
+            return True
+        return isinstance(x[0], (int, Integer)) and x[1] in ConjugacyClassesOfSubgroups(SymmetricGroup(x[0]))
+
+    Element = ConjugacyClassOfSymmetricGroupSubgroups
+
+class PolynomialMolecularDecomposition(CombinatorialFreeModule):
+    def __init__(self, base_ring=ZZ):
+        category = GradedAlgebrasWithBasis(base_ring)
+        CombinatorialFreeModule.__init__(self, base_ring,
+                                        basis_keys=ConjugacyClassesOfSymmetricGroupSubgroups(),
+                                        category=category,
+                                        prefix="PMD")
+
+    # FIXME: this is currently required, because the implementation of ``basis``
+    # in CombinatorialFreeModule overrides that of GradedModulesWithBasis
+    basis = FilteredModulesWithBasis.ParentMethods.__dict__['basis']
+
+    def __getitem__(self, x):
+        r"""
+        Return the basis element indexed by ``x``.
+        """
+        return self._from_dict({self._indices(x): 1})
+
+    @cached_method
+    def one_basis(self):
+        r"""
+        Returns (0, S0), which indexes the one of this algebra,
+        as per :meth:`AlgebrasWithBasis.ParentMethods.one_basis`.
+        """
+        return self._indices((0, SymmetricGroup(0)))
+
+    def product_on_basis(self, g1, g2):
+        n, m = g1._n, g2._n
+        H, K = g1._C, g2._C
+        def construct_element(h, k):
+            element = [None for i in range(n+m)]
+            for i in range(n+m):
+                if i<n:
+                    element[i] = h(i+1)
+                else:
+                    element[i] = n + k(i-n+1)
+            return element
+        H_ast_K = [
+            construct_element(h, k)
+            for h in H
+            for k in K
+        ]
+        G = PermutationGroup(H_ast_K)
+        return self._from_dict({self._indices((n+m, G)): 1})
+
+    def degree_on_basis(self, x):
+        r"""
+        x is an instance of ConjugacyClassOfSymmetricGroupSubgroups.
+        """
+        return x._n
+
+    def _repr_(self):
+        return "Polynomial Molecular Decomposition"
