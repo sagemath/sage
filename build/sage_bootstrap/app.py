@@ -316,7 +316,6 @@ class Application(object):
         package = Package(package_name)
         tarballs = package.tarballs()
         sorted_tarballs = []
-        print(tags)
         for tag in tags:
             for key in tarballs:
                 if key is not None and tag in key:
