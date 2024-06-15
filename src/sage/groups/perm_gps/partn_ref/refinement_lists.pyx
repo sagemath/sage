@@ -33,7 +33,6 @@ def is_isomorphic(self, other):
         sage: from sage.groups.perm_gps.partn_ref.refinement_lists import is_isomorphic
         sage: is_isomorphic([0,0,1],[1,0,0])
         [1, 2, 0]
-
     """
     cdef int i, n = len(self)
     cdef PartitionStack *part

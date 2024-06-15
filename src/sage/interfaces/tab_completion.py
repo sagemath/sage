@@ -63,7 +63,7 @@ def completions(s, globs):
     - ``globs`` -- a string: object dictionary; context in which to
       search for completions, e.g., :func:`globals()`
 
-    OUTPUT: a list of strings
+    OUTPUT: list of strings
 
     EXAMPLES::
 

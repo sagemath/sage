@@ -17,7 +17,7 @@ def random_chain_complex(level=1):
     random matrix in a random degree, with differential of degree
     either 1 or -1.  The matrix is randomly sparse or dense.
 
-    - level -- positive integer (default: 1); measure of complexity. The larger
+    - ``level`` -- positive integer (default: 1); measure of complexity. The larger
       this is, the larger the matrix can be, and the larger its degree can be
       in the chain complex.
 

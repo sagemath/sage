@@ -625,7 +625,6 @@ class Maxima(MaximaAbstract, Expect):
             sage: m._start()
             sage: m.is_running()
             True
-
         """
         Expect._start(self)
         self._sendline(r":lisp (defun tex-derivative (x l r) (tex (if $derivabbrev (tex-dabbrev x) (tex-d x '\\partial)) l r lop rop ))")
@@ -777,8 +776,6 @@ class Maxima(MaximaAbstract, Expect):
             Traceback (most recent call last):
             ...
             TypeError: Error executing code in Maxima...
-
-
         """
         if len(line) == 0:
             return ''
@@ -1120,7 +1117,7 @@ class Maxima(MaximaAbstract, Expect):
 
 def is_MaximaElement(x):
     """
-    Return True if ``x`` is of type :class:`MaximaElement`.
+    Return ``True`` if ``x`` is of type :class:`MaximaElement`.
 
     EXAMPLES::
 

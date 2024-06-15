@@ -602,7 +602,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
 
     def normalize_coordinates(self):
         r"""
-        Normalizes the coordinates of the inducing map.
+        Normalize the coordinates of the inducing map.
 
         OUTPUT: none
 

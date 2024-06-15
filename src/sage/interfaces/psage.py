@@ -72,7 +72,6 @@ class PSage(Sage):
             sage: from sage.interfaces.psage import PSage
             sage: PSage()                                   # indirect doctest
             A running non-blocking (parallel) instance of Sage (number ...)
-
         """
         return 'A running non-blocking (parallel) instance of Sage (number %s)' % (self._number)
 

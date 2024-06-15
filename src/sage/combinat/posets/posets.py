@@ -956,7 +956,7 @@ class FinitePoset(UniqueRepresentation, Parent):
     @staticmethod
     def __classcall__(cls, hasse_diagram, elements=None, category=None, facade=None, key=None):
         """
-        Normalizes the arguments passed to the constructor.
+        Normalize the arguments passed to the constructor.
 
         INPUT:
 

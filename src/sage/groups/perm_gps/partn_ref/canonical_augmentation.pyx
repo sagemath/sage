@@ -467,7 +467,6 @@ cdef iterator *setup_canonical_generator(int degree,
     - ``max_depth`` -- maximum depth of augmentations to be made from the seed object S
 
     OUTPUT: a pointer to an iterator of objects
-
     """
     if max_depth <= 1:
         raise ValueError("maximum depth (%d) must be at least two" % max_depth)

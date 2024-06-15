@@ -300,10 +300,10 @@ class multiples:
 
         INPUT:
 
-        - ``P`` -- step value: any Sage object on which a binary operation is defined
-        - ``n`` -- number of multiples: non-negative integer
-        - ``P0`` -- offset (default 0): Sage object which can be 'added' to P
-        - ``indexed`` -- boolean (default ``False``)
+        - ``P`` -- step value; any Sage object on which a binary operation is defined
+        - ``n`` -- number of multiples; nonnegative integer
+        - ``P0`` -- offset (default: 0); Sage object which can be 'added' to P
+        - ``indexed`` -- boolean (default: ``False``)
 
           If ``indexed==False``, then the iterator delivers ``P0+i*P``
           (if ``operation=='+'``) or ``P0*P**i`` (if
@@ -984,14 +984,14 @@ def discrete_log_lambda(a, base, bounds, operation='*', identity=None, inverse=N
 
     INPUT:
 
-    - a -- a group element
-    - base -- a group element
-    - bounds -- a couple (lb,ub) representing the range where we look for a logarithm
-    - operation -- string: '+', '*' or 'other'
-    - identity -- the identity element of the group
-    - inverse() -- function of 1 argument ``x`` returning inverse of ``x``
-    - op() -- function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group
-    - hash_function -- having an efficient hash function is critical for this algorithm
+    - ``a`` -- a group element
+    - ``base`` -- a group element
+    - ``bounds`` -- a couple (lb,ub) representing the range where we look for a logarithm
+    - ``operation`` -- string: '+', '*' or 'other'
+    - ``identity`` -- the identity element of the group
+    - ``inverse()`` -- function of 1 argument ``x`` returning inverse of ``x``
+    - ``op()`` -- function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group
+    - ``hash_function`` -- having an efficient hash function is critical for this algorithm
 
     OUTPUT: integer `n` such that `a=base^n` (or `a=n*base`)
 
@@ -1025,7 +1025,6 @@ def discrete_log_lambda(a, base, bounds, operation='*', identity=None, inverse=N
     AUTHOR:
 
         -- Yann Laigle-Chapuy (2009-01-25)
-
     """
     from sage.rings.integer import Integer
     from operator import mul, add
@@ -1207,7 +1206,7 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
       really is a multiple of the order
     - ``factorization`` -- the factorization of ``m``, or ``None`` in which
       case this function will need to factor ``m``
-    - ``plist`` -- a list of the prime factors of ``m``, or ``None``. Kept for compatibility only,
+    - ``plist`` -- list of the prime factors of ``m``, or ``None``. Kept for compatibility only,
       prefer the use of ``factorization``
     - ``operation`` -- string: ``'+'`` (default), ``'*'`` or ``None``
     - ``identity`` -- the identity element of the group
@@ -1354,14 +1353,14 @@ def order_from_bounds(P, bounds, d=None, operation='+',
     - ``d`` -- (optional) a positive integer; only ``m`` which are
       multiples of this will be considered
 
-    - ``operation`` -- string: ``'+'`` (default ) or ``'*'`` or other.
+    - ``operation`` -- string; ``'+'`` (default) or ``'*'`` or other.
       If other, the following must be supplied:
 
-      - ``identity`` -- the identity element for the group;
+      - ``identity`` -- the identity element for the group
       - ``inverse()`` -- a function of one argument giving the inverse
-        of a group element;
+        of a group element
       - ``op()`` -- a function of 2 arguments defining the group binary
-        operation.
+        operation
 
     .. NOTE::
 
@@ -1540,14 +1539,14 @@ def merge_points(P1, P2, operation='+',
 
     - ``P1`` -- a pair `(g_1,n_1)` where `g_1` is a group element of order `n_1`
     - ``P2`` -- a pair `(g_2,n_2)` where `g_2` is a group element of order `n_2`
-    - ``operation`` -- string: ``'+'`` (default) or ``'*'`` or other. If
+    - ``operation`` -- string; ``'+'`` (default) or ``'*'`` or other. If
       other, the following must be supplied:
 
-      - ``identity`` -- the identity element for the group;
+      - ``identity`` -- the identity element for the group
       - ``inverse()`` -- a function of one argument giving the inverse
-        of a group element;
+        of a group element
       - ``op()`` -- a function of 2 arguments defining the group
-        binary operation.
+        binary operation
 
     OUTPUT: a pair `(g_3,n_3)` where `g_3` has order `n_3=\hbox{lcm}(n_1,n_2)`
 
@@ -1626,7 +1625,7 @@ def structure_description(G, latex=False):
 
     INPUT:
 
-    - ``latex`` -- a boolean (default: ``False``); if ``True``, return a
+    - ``latex`` -- boolean (default: ``False``); if ``True``, return a
       LaTeX formatted string
 
     OUTPUT: string

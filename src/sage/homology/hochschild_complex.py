@@ -184,7 +184,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
              # Symmetric group algebra of order 3 over Rational Field
         """
         if d < 0:
-            raise ValueError("only defined for non-negative degree")
+            raise ValueError("only defined for nonnegative degree")
         return tensor([self._M] + [self._A] * d)
 
     @cached_method
@@ -668,7 +668,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
 
         def _add_(self, other):
             """
-            Module addition
+            Module addition.
 
             EXAMPLES::
 
@@ -703,7 +703,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
 
         def _lmul_(self, scalar):
             """
-            Scalar multiplication
+            Scalar multiplication.
 
             EXAMPLES::
 

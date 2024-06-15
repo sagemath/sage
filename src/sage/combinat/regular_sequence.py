@@ -1328,7 +1328,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
                       category=None,
                       **kwds):
         r"""
-        Normalizes the input in order to ensure a unique
+        Normalize the input in order to ensure a unique
         representation.
 
         For more information see :class:`RegularSequenceRing`.

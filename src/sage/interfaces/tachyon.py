@@ -695,7 +695,7 @@ from sage.misc.cachefunc import cached_method
 
 class TachyonRT(SageObject):
     r"""
-    The Tachyon Ray Tracer
+    The Tachyon Ray Tracer.
 
     Usage:
     ``tachyon_rt(model, outfile='sage.png', verbose=1, block=True, extra_opts='')``
@@ -706,7 +706,7 @@ class TachyonRT(SageObject):
        the Tachyon modeling format. Type ``sage.interfaces.tachyon?`` for a
        description of this format.
 
-    -  ``outfile`` -- (default: 'sage.png') output filename;
+    -  ``outfile`` -- (default: ``'sage.png'``) output filename;
        the extension of the filename determines the type. Supported types
        include:
 
@@ -728,15 +728,13 @@ class TachyonRT(SageObject):
 
        -  ``2`` -- very verbose output
 
-    -  ``block`` -- bool (default: ``True``); if False, run the
-       rendering command in the background.
+    -  ``block`` -- boolean (default: ``True``); if ``False``, run the
+       rendering command in the background
 
     -  ``extra_opts`` -- passed directly to tachyon command
-       line. Use tachyon_rt.usage() to see some of the possibilities.
+       line. Use ``tachyon_rt.usage()`` to see some of the possibilities
 
-    OUTPUT:
-
-    - Some text may be displayed onscreen.
+    OUTPUT: some text may be displayed onscreen
 
     - The file outfile is created.
 
@@ -746,7 +744,8 @@ class TachyonRT(SageObject):
     """
     def _repr_(self):
         """
-        Returns a brief description of this interface object (the Tachyon raytracer written by John Stone).
+        Return a brief description of this interface object (the Tachyon
+        raytracer written by John Stone).
 
         TESTS::
 
@@ -763,15 +762,15 @@ class TachyonRT(SageObject):
 
         INPUT:
 
-        - ``model`` -- string. The tachyon model.
+        - ``model`` -- string; the tachyon model
 
-        - ``outfile`` -- string, default ``'sage.png'``. The filename
-          to save the model to.
+        - ``outfile`` -- string (default: ``'sage.png'``); the filename
+          to save the model to
 
-        - ``verbose`` -- 0, 1, (default) or 2. The verbosity level.
+        - ``verbose`` -- 0, 1, (default) or 2; the verbosity level
 
-        - ``extra_opts`` -- string (default: empty string). Extra
-          options that will be appended to the tachyon commandline.
+        - ``extra_opts`` -- string (default: empty string); extra
+          options that will be appended to the tachyon commandline
 
         EXAMPLES::
 
@@ -838,7 +837,9 @@ class TachyonRT(SageObject):
 
     def usage(self, use_pager=True):
         """
-        Returns the basic description of using the Tachyon raytracer (simply what is returned by running tachyon with no input).  The output is paged unless use_pager=False.
+        Return the basic description of using the Tachyon raytracer (simply
+        what is returned by running tachyon with no input).  The output is
+        paged unless ``use_pager=False``.
 
         TESTS::
 
@@ -861,7 +862,7 @@ class TachyonRT(SageObject):
     @cached_method
     def version(self):
         """
-        Returns the version of the Tachyon raytracer being used.
+        Return the version of the Tachyon raytracer being used.
 
         TESTS::
 

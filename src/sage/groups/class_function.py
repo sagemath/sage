@@ -291,7 +291,7 @@ class ClassFunction_gap(SageObject):
 
     def __add__(self, other):
         r"""
-        Return the sum of the characters of ``self`` and other.
+        Return the sum of the characters of ``self`` and ``other``.
 
         INPUT:
 
@@ -481,14 +481,14 @@ class ClassFunction_gap(SageObject):
 
     def exterior_power(self, n):
         r"""
-        Return the antisymmetrized product of ``self`` with itself ``n``
+        Return the antisymmetrized product of ``self`` with itself `n`
         times.
 
         INPUT:
 
-        - ``n`` -- positive integer.
+        - ``n`` -- positive integer
 
-        OUTPUT: the ``n``-th antisymmetrized power of ``self`` as a :class:`ClassFunction`
+        OUTPUT: the `n`-th antisymmetrized power of ``self`` as a :class:`ClassFunction`
 
         EXAMPLES::
 

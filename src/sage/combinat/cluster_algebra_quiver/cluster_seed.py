@@ -4659,7 +4659,8 @@ class ClusterSeed(SageObject):
 
     def _produce_upper_cluster_algebra_element(self, vd, cList):
         r"""
-        Takes the compatible vectors and uses them to produce a Laurent polynomial in the upper cluster algebra.
+        Take the compatible vectors and uses them to produce a Laurent
+        polynomial in the upper cluster algebra.
 
         EXAMPLES::
 

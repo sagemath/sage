@@ -82,7 +82,7 @@ class Lisp(Expect):
                         prompt='> ',
 
                         # This is the command that starts up your program
-                        command="ecl",
+                        command='ecl',
 
                         server=server,
                         server_tmpdir=server_tmpdir,
@@ -291,7 +291,7 @@ class Lisp(Expect):
 
     def version(self):
         """
-        Returns the version of Lisp being used.
+        Return the version of Lisp being used.
 
         EXAMPLES::
 
@@ -404,7 +404,6 @@ class LispElement(RingElement, ExpectElement):
             False
             sage: two == 2
             True
-
         """
         P = self._check_valid()
         if parent(other) is not P:

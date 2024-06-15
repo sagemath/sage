@@ -220,7 +220,7 @@ class Scilab(Expect):
                  logfile=None, server=None, server_tmpdir=None,
                  seed=None):
         """
-        Initializes the Scilab class.
+        Initialize the Scilab class.
 
         EXAMPLES::
 
@@ -275,7 +275,7 @@ class Scilab(Expect):
 
     def _quit_string(self):
         """
-        Returns the string used to quit the pexpect interface.
+        Return the string used to quit the pexpect interface.
 
         EXAMPLES::
 
@@ -330,7 +330,7 @@ class Scilab(Expect):
 
     def whos(self, name=None, typ=None):
         """
-        Returns information about current objects.
+        Return information about current objects.
         Arguments:
         nam: first characters of selected names
         typ: name of selected Scilab variable type
@@ -386,13 +386,12 @@ class Scilab(Expect):
         EXAMPLES::
 
             sage: scilab.console()          # optional - scilab; not tested
-
         """
         scilab_console()
 
     def version(self):
         """
-        Returns the version of the Scilab software used.
+        Return the version of the Scilab software used.
 
         EXAMPLES::
 
@@ -423,7 +422,7 @@ class Scilab(Expect):
 
     def _object_class(self):
         """
-        Returns the class of the object.
+        Return the class of the object.
 
         EXAMPLES::
 

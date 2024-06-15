@@ -578,7 +578,7 @@ class GroupMixinLibGAP:
 
     def exponent(self):
         r"""
-        Computes the exponent of the group.
+        Compute the exponent of the group.
 
         The exponent `e` of a group `G` is the LCM of the orders of its
         elements, that is, `e` is the smallest integer such that `g^e = 1`
@@ -678,7 +678,7 @@ class GroupMixinLibGAP:
 
         INPUT:
 
-        - ``values`` -- a list of values of the character
+        - ``values`` -- list of values of the character
 
         OUTPUT: a group character
 

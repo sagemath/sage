@@ -392,7 +392,7 @@ class MaximaLib(MaximaAbstract):
 
     def _coerce_from_special_method(self, x):
         r"""
-        Coerce ``x`` into self trying to call a special underscore method.
+        Coerce ``x`` into ``self`` trying to call a special underscore method.
 
         INPUT:
 
@@ -440,12 +440,12 @@ class MaximaLib(MaximaAbstract):
 
         - ``line`` -- string; text to evaluate
 
-        - ``locals`` -- None (ignored); this is used for compatibility with the
-          Sage notebook's generic system interface.
+        - ``locals`` -- ``None`` (ignored); this is used for compatibility with the
+          Sage notebook's generic system interface
 
         - ``reformat`` -- boolean; whether to strip output or not
 
-        - ``**kwds`` -- All other arguments are currently ignored.
+        - ``**kwds`` -- all other arguments are currently ignored
 
         OUTPUT: string representing Maxima output
 
@@ -590,12 +590,10 @@ class MaximaLib(MaximaAbstract):
 
         - ``value`` -- string or ECL object
 
-        - ``name`` -- string (default: None); name to use for the variable,
+        - ``name`` -- string (default: ``None``); name to use for the variable,
           an automatically generated name is used if this is none
 
-        OUTPUT:
-
-        - string; the name of the created variable
+        OUTPUT: string; the name of the created variable
 
         EXAMPLES:
 
@@ -808,7 +806,6 @@ class MaximaLib(MaximaAbstract):
             0.124756040961038
             sage: a.imag().abs() < 3e-17
             True
-
         """
         try:
             return max_to_sr(maxima_eval(([max_integrate],
@@ -926,7 +923,6 @@ class MaximaLib(MaximaAbstract):
             factorial(n)
             sage: symbolic_product(2*x,x,1,n)
             2^n*factorial(n)
-
         """
         try:
             return max_to_sr(maxima_eval([[max_ratsimp],
@@ -1011,7 +1007,6 @@ class MaximaLib(MaximaAbstract):
             sage: limit(gamma(x + 1/2)/(sqrt(x)*gamma(x)), x=infinity)
             1
             sage: _ = m.eval('domain: complex')
-
         """
         try:
             L = [sr_to_max(SR(aa)) for aa in [expr, v, a]]
@@ -1073,7 +1068,7 @@ class MaximaLib(MaximaAbstract):
 
 def is_MaximaLibElement(x):
     r"""
-    Return True if ``x`` is of type :class:`MaximaLibElement`.
+    Return ``True`` if ``x`` is of type :class:`MaximaLibElement`.
 
     EXAMPLES::
 

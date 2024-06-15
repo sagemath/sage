@@ -750,10 +750,8 @@ connection to a server running Maple; for hints, type
 
         INPUT:
 
-
         -  ``s`` -- a string representing the function whose
            source code you want
-
 
         EXAMPLES::
 
@@ -923,7 +921,7 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
 
     def __float__(self):
         """
-        Return a floating point version of self.
+        Return a floating point version of ``self``.
 
         EXAMPLES::
 
@@ -936,7 +934,7 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
 
     def __hash__(self):
         """
-        Return a 64-bit integer representing the hash of self. Since
+        Return a 64-bit integer representing the hash of ``self``. Since
         Python uses 32-bit hashes, it will automatically convert the result
         of this to a 32-bit hash.
 
@@ -961,7 +959,7 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
 
     def _richcmp_(self, other, op):
         """
-        Compare equality between self and other, using maple.
+        Compare equality between ``self`` and ``other``, using maple.
 
         These examples are optional, and require Maple to be installed. You
         don't need to install any Sage packages for this.
@@ -1106,7 +1104,7 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
 
         INPUT:
 
-        - i -- an integer or ``None``
+        - ``i`` -- an integer or ``None``
 
         EXAMPLES::
 
@@ -1372,8 +1370,6 @@ def __doctest_cleanup():
     """
     import sage.interfaces.quit
     sage.interfaces.quit.expect_quitall()
-
-
 """
 The following only works in Maple >= 9, I guess, but could
 be useful.

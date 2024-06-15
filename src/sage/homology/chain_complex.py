@@ -73,7 +73,7 @@ def _latex_module(R, m):
     INPUT:
 
     - ``R`` -- a commutative ring
-    - ``m`` -- non-negative integer
+    - ``m`` -- nonnegative integer
 
     This is used by the ``_latex_`` method for chain complexes.
 
@@ -101,26 +101,26 @@ def ChainComplex(data=None, base_ring=None, grading_group=None,
     INPUT:
 
     - ``data`` -- the data defining the chain complex; see below for
-      more details.
+      more details
 
     The following keyword arguments are supported:
 
-    - ``base_ring`` -- a commutative ring (optional), the ring over
+    - ``base_ring`` -- a commutative ring (optional); the ring over
       which the chain complex is defined. If this is not specified,
       it is determined by the data defining the chain complex.
 
     - ``grading_group`` -- a additive free abelian group (optional,
-      default ``ZZ``), the group over which the chain complex is
-      indexed.
+      default ``ZZ``); the group over which the chain complex is
+      indexed
 
     - ``degree_of_differential`` -- element of grading_group
-      (default: ``1``). The degree of the differential.
+      (default: ``1``); the degree of the differential
 
-    - ``degree`` -- alias for ``degree_of_differential``.
+    - ``degree`` -- alias for ``degree_of_differential``
 
-    - ``check`` -- boolean (default: ``True``). If ``True``,
+    - ``check`` -- boolean (default: ``True``); if ``True``,
       check that each consecutive pair of differentials are
-      composable and have composite equal to zero.
+      composable and have composite equal to zero
 
     OUTPUT: a chain complex
 
@@ -321,7 +321,7 @@ class Chain_class(ModuleElement):
 
     def __init__(self, parent, vectors, check=True):
         r"""
-        A Chain in a Chain Complex
+        A Chain in a Chain Complex.
 
         A chain is collection of module elements for each module `C_n`
         of the chain complex `(C_n, d_n)`. There is no restriction on
@@ -423,7 +423,6 @@ class Chain_class(ModuleElement):
             sage: C = ChainComplex(base_ring=ZZ)
             sage: ascii_art(C())
             0
-
         """
         from sage.typeset.ascii_art import AsciiArt
 
@@ -568,7 +567,7 @@ class Chain_class(ModuleElement):
 
     def _add_(self, other):
         """
-        Module addition
+        Module addition.
 
         EXAMPLES::
 
@@ -592,7 +591,7 @@ class Chain_class(ModuleElement):
 
     def _lmul_(self, scalar):
         """
-        Scalar multiplication
+        Scalar multiplication.
 
         EXAMPLES::
 
@@ -764,7 +763,7 @@ class ChainComplex_class(Parent):
     @cached_method
     def rank(self, degree, ring=None):
         r"""
-        Return the rank of a differential
+        Return the rank of a differential.
 
         INPUT:
 
@@ -849,7 +848,7 @@ class ChainComplex_class(Parent):
     @cached_method
     def ordered_degrees(self, start=None, exclude_first=False):
         r"""
-        Sort the degrees in the order determined by the differential
+        Sort the degrees in the order determined by the differential.
 
         INPUT:
 
@@ -858,7 +857,7 @@ class ChainComplex_class(Parent):
 
         - ``exclude_first`` -- boolean (optional; default:
           ``False``); whether to exclude the lowest degree -- this is a
-          handy way to just get the degrees of the non-zero modules,
+          handy way to just get the degrees of the nonzero modules,
           as the domain of the first differential is zero.
 
         OUTPUT: if ``start`` has been specified, the longest tuple of degrees
@@ -871,7 +870,7 @@ class ChainComplex_class(Parent):
         * such that none of the corresponding differentials are `0\times 0`.
 
         If ``start`` has not been specified, a tuple of such tuples of
-        degrees. One for each sequence of non-zero differentials. They
+        degrees. One for each sequence of nonzero differentials. They
         are returned in sort order.
 
         EXAMPLES::
@@ -922,7 +921,7 @@ class ChainComplex_class(Parent):
 
     def degree_of_differential(self):
         """
-        Return the degree of the differentials of the complex
+        Return the degree of the differentials of the complex.
 
         OUTPUT: an element of the grading group
 
@@ -1066,7 +1065,7 @@ class ChainComplex_class(Parent):
 
     def __hash__(self):
         """
-        The hash is formed by combining the hashes of
+        The hash is formed by combining the hashes of.
 
         - the base ring
         - the differentials -- the matrices and their degrees
@@ -1387,7 +1386,7 @@ class ChainComplex_class(Parent):
         INPUT:
 
         - ``deg`` -- an element of the grading group for the chain
-          complex or None (default ``None``); if ``None``,
+          complex or ``None`` (default: ``None``); if ``None``,
           then return every Betti number, as a dictionary indexed by
           degree, or if an element of the grading group, then return
           the Betti number in that degree
@@ -1556,7 +1555,7 @@ class ChainComplex_class(Parent):
 
         INPUT:
 
-        - ``n`` -- an integer (default: 1)
+        - ``n`` -- integer (default: 1)
 
         The *shift* operation is also sometimes called *translation* or
         *suspension*.
@@ -1820,7 +1819,7 @@ class ChainComplex_class(Parent):
 
         INPUT:
 
-        - ``subdivide`` -- (default: ``False``) whether to subdivide the
+        - ``subdivide`` -- boolean (default: ``False``); whether to subdivide the
           the differential matrices
 
         EXAMPLES::
@@ -1948,7 +1947,7 @@ class ChainComplex_class(Parent):
 
         INPUT:
 
-        - ``subdivide`` -- (default: ``False``) whether to subdivide the
+        - ``subdivide`` -- boolean (default: ``False``); whether to subdivide the
           the differential matrices
 
         .. TODO::

@@ -29,13 +29,13 @@ class CellComplexReference():
 
     def __init__(self, cell_complex, degree, cells=None):
         """
-        Auxiliary base class for chains and cochains
+        Auxiliary base class for chains and cochains.
 
         INPUT:
 
-        - ``cell_complex`` -- The cell complex to reference
+        - ``cell_complex`` -- the cell complex to reference
 
-        - ``degree`` -- integer. The degree of the (co)chains
+        - ``degree`` -- integer; the degree of the (co)chains
 
         - ``cells`` -- tuple of cells or ``None``. Does not necessarily have to
           be the cells in the given degree, for computational purposes this
@@ -60,7 +60,7 @@ class CellComplexReference():
 
     def cell_complex(self):
         """
-        Return the underlying cell complex
+        Return the underlying cell complex.
 
         OUTPUT: a cell complex
 
@@ -74,7 +74,7 @@ class CellComplexReference():
 
     def degree(self):
         """
-        Return the dimension of the cells
+        Return the dimension of the cells.
 
         OUTPUT: integer; the dimension of the cells
 
@@ -95,7 +95,7 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
 
     - ``n_cells`` -- tuple of `n`-cells, which thus forms a basis for
       this module
-    - ``base_ring`` -- optional (default `\ZZ`)
+    - ``base_ring`` -- (default: `\ZZ`)
 
     One difference between chains and cochains is notation. In a
     simplicial complex, for example, a simplex ``(0,1,2)`` is written
@@ -217,7 +217,7 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
 
         def to_complex(self):
             """
-            Return the corresponding chain complex element
+            Return the corresponding chain complex element.
 
             OUTPUT: an element of the chain complex, see :mod:`sage.homology.chain_complex`
 
@@ -241,7 +241,7 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
 
         def boundary(self):
             """
-            Return the boundary of the chain
+            Return the boundary of the chain.
 
             OUTPUT: the boundary as a chain in one degree lower
 
@@ -266,7 +266,7 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
 
         def is_cycle(self):
             """
-            Test whether the chain is a cycle
+            Test whether the chain is a cycle.
 
             OUTPUT: boolean; whether the :meth:`boundary` vanishes
 
@@ -290,7 +290,7 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
 
         def is_boundary(self):
             """
-            Test whether the chain is a boundary
+            Test whether the chain is a boundary.
 
             OUTPUT:
 
@@ -324,7 +324,7 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
 
     - ``n_cells`` -- tuple of `n`-cells, which thus forms a basis for
       this module
-    - ``base_ring`` -- optional (default `\ZZ`)
+    - ``base_ring`` -- (default: `\ZZ`)
 
     One difference between chains and cochains is notation. In a
     simplicial complex, for example, a simplex ``(0,1,2)`` is written
@@ -399,7 +399,7 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
 
     def dual(self):
         """
-        Return the chains
+        Return the chains.
 
         OUTPUT: the chains of the same cells with the same base ring
 
@@ -448,7 +448,7 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
 
         def to_complex(self):
             """
-            Return the corresponding cochain complex element
+            Return the corresponding cochain complex element.
 
             OUTPUT: an element of the cochain complex, see :mod:`sage.homology.chain_complex`
 
@@ -472,7 +472,7 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
 
         def coboundary(self):
             r"""
-            Return the coboundary of this cochain
+            Return the coboundary of this cochain.
 
             OUTPUT: the coboundary as a cochain in one degree higher
 
@@ -497,7 +497,7 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
 
         def is_cocycle(self):
             """
-            Test whether the cochain is a cocycle
+            Test whether the cochain is a cocycle.
 
             OUTPUT: boolean; whether the :meth:`coboundary` vanishes
 
@@ -521,12 +521,10 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
 
         def is_coboundary(self):
             """
-            Test whether the cochain is a coboundary
+            Test whether the cochain is a coboundary.
 
-            OUTPUT:
-
-            Boolean. Whether the cochain is the :meth:`coboundary` of a cochain
-            in one degree lower.
+            OUTPUT: boolean; whether the cochain is the :meth:`coboundary` of a cochain
+            in one degree lower
 
             EXAMPLES::
 

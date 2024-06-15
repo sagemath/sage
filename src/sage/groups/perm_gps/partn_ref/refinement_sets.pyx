@@ -135,7 +135,6 @@ def set_stab_py(generators, sett, relab=False):
         ([], [7, 8, 6, 3, 4, 5, 2, 0, 1])
         sage: set_stab_py([[0,2,1,4,3,5,8,7,6],[8,7,6,3,5,4,2,1,0]], [0,3,5,6,8], True)
         ([], [2, 1, 0, 5, 4, 3, 7, 6, 8])
-
     """
     if len(generators) == 0:
         return []

@@ -1539,7 +1539,7 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
 
     def _self_to_m(self, x):
         r"""
-        Takes an element of the ``Ht`` basis and returns the expansion in the
+        Take an element of the ``Ht`` basis and return the expansion in the
         monomial basis.
 
         INPUT:

@@ -891,7 +891,7 @@ class CrystalOfTableaux(CrystalOfWords):
     @staticmethod
     def __classcall_private__(cls, cartan_type, shapes=None, shape=None):
         """
-        Normalizes the input arguments to ensure unique representation,
+        Normalize the input arguments to ensure unique representation,
         and to delegate the construction of spin tableaux.
 
         EXAMPLES::

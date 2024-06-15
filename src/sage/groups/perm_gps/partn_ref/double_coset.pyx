@@ -168,7 +168,6 @@ def coset_eq(list perm1=[0,1,2,3,4,5], list perm2=[1,2,3,4,5,0], list gens=[[1,2
         ....:       reps.append(p)
         sage: len(reps)
         8
-
     """
     cdef int i, n = len(perm1)
     assert all(len(g) == n for g in gens+[perm2])
@@ -202,7 +201,7 @@ def coset_eq(list perm1=[0,1,2,3,4,5], list perm2=[1,2,3,4,5,0], list gens=[[1,2
 
 cdef dc_work_space *allocate_dc_work_space(int n) noexcept:
     r"""
-    Allocates work space for the double_coset function. It can be
+    Allocate work space for the double_coset function. It can be
     input to the function in which case it must be deallocated after the
     function is called.
     """
@@ -252,7 +251,7 @@ cdef dc_work_space *allocate_dc_work_space(int n) noexcept:
 
 cdef void deallocate_dc_work_space(dc_work_space *work_space) noexcept:
     r"""
-    Deallocates work space for the double_coset function.
+    Deallocate work space for the double_coset function.
     """
     if work_space is NULL:
         return

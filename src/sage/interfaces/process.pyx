@@ -37,15 +37,15 @@ cdef class ContainChildren():
 
     INPUT:
 
-    - ``exitcode`` -- (integer, default 0) exit code to use when a
+    - ``exitcode`` -- integer (default: 0); exit code to use when a
       child process tries to exit the with block normally (not due to
       an exception)
 
-    - ``exceptcode`` -- (integer, default 1) exit code to use when a
+    - ``exceptcode`` -- integer (default: 1); exit code to use when a
       child process tries to exit the with block due to an exception
 
-    - ``silent`` -- (boolean, default ``False``) if ``False``, print
-      exceptions raised by the child process.
+    - ``silent`` -- boolean (default: ``False``); if ``False``, print
+      exceptions raised by the child process
 
     EXAMPLES::
 

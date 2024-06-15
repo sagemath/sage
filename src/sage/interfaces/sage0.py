@@ -35,8 +35,7 @@ class Sage(ExtraTabCompletion, Expect):
 
     INPUT:
 
-
-    -  ``server`` -- (optional); if specified runs Sage on a
+    -  ``server`` -- (optional) if specified runs Sage on a
        remote machine with address. You must have ssh keys setup so you
        can login to the remote machine by typing "ssh remote_machine" and
        no password, call _install_hints_ssh() for hints on how to do
@@ -126,8 +125,7 @@ class Sage(ExtraTabCompletion, Expect):
 
     The double quotes are needed because the call to s3 first evaluates
     its arguments using the s interpreter, so the call to s3 is passed
-    ``s('"x"')``, which is the string ``"x"``
-    in the s interpreter.
+    ``s('"x"')``, which is the string ``'x'`` in the s interpreter.
     """
     def __init__(self,
                  logfile=None,
@@ -246,7 +244,6 @@ class Sage(ExtraTabCompletion, Expect):
 
             sage: sage0(axiom(x^2+1)) #optional - axiom
             x^2 + 1
-
         """
         if isinstance(x, ExpectElement):
             if x.parent() is self:
@@ -289,7 +286,7 @@ class Sage(ExtraTabCompletion, Expect):
 
     def preparse(self, x):
         """
-        Returns the preparsed version of the string s.
+        Return the preparsed version of the string s.
 
         EXAMPLES::
 
@@ -308,11 +305,9 @@ class Sage(ExtraTabCompletion, Expect):
 
         INPUT:
 
-
         -  ``line`` -- input line of code
 
         -  ``strip`` -- ignored
-
 
         EXAMPLES::
 
@@ -459,7 +454,7 @@ class SageElement(ExpectElement):
 
     def _rich_repr_(self, display_manager, **kwds):
         """
-        Disable rich output
+        Disable rich output.
 
         This is necessary because otherwise our :meth:`__getattr__`
         would be called.
@@ -503,7 +498,7 @@ class SageElement(ExpectElement):
 
     def _sage_(self):
         """
-        Return local copy of self.
+        Return local copy of ``self``.
 
         EXAMPLES::
 

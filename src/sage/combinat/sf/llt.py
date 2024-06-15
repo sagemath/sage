@@ -227,9 +227,9 @@ class LLT_class(UniqueRepresentation):
 
     def _llt_generic(self, skp, stat):
         r"""
-        Takes in partition, list of partitions, or a list of skew
+        Take in partition, list of partitions, or a list of skew
         partitions as well as a function which takes in two partitions and
-        a level and returns a coefficient.
+        a level and return a coefficient.
 
         INPUT:
 

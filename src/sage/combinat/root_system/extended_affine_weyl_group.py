@@ -76,7 +76,7 @@ def ExtendedAffineWeylGroup(cartan_type, general_linear=None, **print_options):
 
     Recognized arguments for ``print_options`` are:
 
-    - ``print_tuple`` -- ``True`` or ``False`` (default: ``False``)
+    - ``print_tuple`` -- boolean (default: ``False``)
       If ``True``, elements are printed `(a,b)`, otherwise as `a * b`
     - ``affine`` -- prefix for simple reflections in the affine Weyl group
     - ``classical`` -- prefix for simple reflections in the classical Weyl group
@@ -1333,7 +1333,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                 OPTIONAL:
 
                 - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``)
-                - ``positive`` -- ``True`` or ``False`` (default: ``False``)
+                - ``positive`` -- boolean (default: ``False``)
 
                 If ``side='left'``, then the reflection acts
                 on the left. If ``positive=True``, then the inequality is reversed.
@@ -1365,7 +1365,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                 INPUT:
 
                 - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``)
-                - ``positive`` -- ``True`` or ``False`` (default: ``False``)
+                - ``positive`` -- boolean (default: ``False``)
                 - ``index_set`` -- an optional subset of Dynkin nodes
 
                 If ``index_set`` is not ``None``, then the descent must be in the ``index_set``.
@@ -1421,7 +1421,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                 - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``)
                   according to which side of ``self`` the reflection `s_i`
                   should be multiplied
-                - ``length_increasing`` -- ``True`` or ``False`` (default: ``True``).
+                - ``length_increasing`` -- boolean (default: ``True``).
                   If ``False``, do the above with the word "greater" replaced by "less".
 
                 EXAMPLES::
@@ -1929,7 +1929,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             OPTIONAL:
 
             - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``)
-            - ``positive`` -- ``True`` or ``False`` (default: ``False``)
+            - ``positive`` -- boolean (default: ``False``)
 
             EXAMPLES::
 
@@ -2139,7 +2139,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             OPTIONAL:
 
             - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``)
-            - ``positive`` -- ``True`` or ``False`` (default: ``False``)
+            - ``positive`` -- boolean (default: ``False``)
 
             EXAMPLES::
 
@@ -2318,7 +2318,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             OPTIONAL:
 
             - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``)
-            - ``positive`` -- ``True`` or ``False`` (default: ``False``)
+            - ``positive`` -- boolean (default: ``False``)
 
             EXAMPLES::
 
@@ -2492,7 +2492,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             OPTIONAL:
 
             - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``)
-            - ``positive`` -- ``True`` or ``False`` (default: ``False``)
+            - ``positive`` -- boolean (default: ``False``)
 
             EXAMPLES::
 
@@ -2652,7 +2652,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             OPTIONAL:
 
             - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``)
-            - ``positive`` -- ``True`` or ``False`` (default: ``False``)
+            - ``positive`` -- boolean (default: ``False``)
 
             EXAMPLES::
 

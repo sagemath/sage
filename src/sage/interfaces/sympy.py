@@ -765,7 +765,7 @@ def _sympysage_piecewise(self):
         sage: assert ex == sp._sage_()
 
         sage: _ = var('y, z')
-        sage: (x^y - z).integrate(y, algorithm="sympy")
+        sage: (x^y - z).integrate(y, algorithm='sympy')
         -y*z + cases(((log(x) != 0, x^y/log(x)), (1, y)))
     """
     from sage.functions.other import cases

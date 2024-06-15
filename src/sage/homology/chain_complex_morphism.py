@@ -331,7 +331,6 @@ class ChainComplexMorphism(Morphism):
                 [ 0 -1  0  0]
                 [ 0  0 -1  0]
                 [ 0  0  0 -1]}
-
         """
         f = dict()
         for i in self._matrix_dictionary.keys():

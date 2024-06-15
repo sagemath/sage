@@ -326,7 +326,6 @@ cdef inline int split_point_and_refine(PartitionStack *PS, int v, void *S,
     cells_to_refine_by -- an array, contents ignored
     group -- the containing group, NULL for full S_n
     perm_stack -- represents a partial traversal decomposition for group
-
     """
     PS.depth += 1
     PS_clear(PS)
@@ -384,7 +383,7 @@ cdef inline void SC_identify(int *perm, int degree) noexcept:
 
 cdef inline void SC_add_base_point(StabilizerChain *SC, int b) noexcept:
     """
-    Adds base point b to the end of SC. Assumes b is not already in the base.
+    Add base point b to the end of SC. Assumes b is not already in the base.
     """
     cdef int i, n = SC.degree
     SC.orbit_sizes[SC.base_size] = 1
@@ -480,7 +479,7 @@ cdef inline int SC_update_tree(StabilizerChain *SC, int level, int *pi, int num_
 
 cdef inline void SC_order(StabilizerChain *SC, int i, mpz_t order) noexcept:
     """
-    Gives the order of the stabilizer of base points up to but not including the
+    Give the order of the stabilizer of base points up to but not including the
     i-th, storing it to ``order``, which must be already initialized.
 
     To get the order of the full group, let ``i = 0``.
@@ -515,7 +514,7 @@ cdef inline bint SC_contains(StabilizerChain *SC, int level, int *pi, bint modif
 
 cdef inline void SC_random_element(StabilizerChain *SC, int level, int *perm) noexcept:
     """
-    Gives a random element of the level-th stabilizer. For a random element of the
+    Give a random element of the level-th stabilizer. For a random element of the
     whole group, set level to 0. Must have level < SC.base_size.
     """
     cdef int i, x, n = SC.degree

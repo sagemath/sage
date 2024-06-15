@@ -153,7 +153,7 @@ class PermutationGroup_symalt(PermutationGroup_unique):
     @staticmethod
     def __classcall__(cls, domain):
         """
-        Normalizes the input of the constructor into a set
+        Normalize the input of the constructor into a set.
 
         INPUT:
 
@@ -381,7 +381,7 @@ class SymmetricGroup(PermutationGroup_symalt):
 
     def cartan_type(self):
         r"""
-        Return the Cartan type of ``self``
+        Return the Cartan type of ``self``.
 
         The symmetric group `S_n` is a Coxeter group of type `A_{n-1}`.
 
@@ -728,7 +728,7 @@ class AlternatingGroup(PermutationGroup_symalt):
 
     def _gap_init_(self, gap=None):
         """
-        Returns the string used to create this group in GAP.
+        Return the string used to create this group in GAP.
 
         EXAMPLES::
 
@@ -1077,7 +1077,7 @@ class JankoGroup(PermutationGroup_unique):
 
         INPUT:
 
-        - ``n`` -- integer among `\{1,2,3\}`.
+        - ``n`` -- integer among `\{1,2,3\}`
 
         EXAMPLES::
 
@@ -1111,7 +1111,7 @@ class JankoGroup(PermutationGroup_unique):
 class SuzukiSporadicGroup(PermutationGroup_unique):
     def __init__(self):
         r"""
-        Suzuki Sporadic Group
+        Suzuki Sporadic Group.
 
         EXAMPLES::
 
@@ -1216,7 +1216,7 @@ class GeneralDihedralGroup(PermutationGroup_generic):
 
     INPUT:
 
-    - ``factors`` -- a list of the sizes of the cyclic factors of the
+    - ``factors`` -- list of the sizes of the cyclic factors of the
       abelian group being dihedralized (this will be sorted once
       entered)
 
@@ -1349,7 +1349,6 @@ class GeneralDihedralGroup(PermutationGroup_generic):
     AUTHOR:
 
     - Kevin Halasz (2012-7-12)
-
     """
     def __init__(self, factors):
         r"""
@@ -1767,7 +1766,7 @@ class MathieuGroup(PermutationGroup_unique):
 
         INPUT:
 
-        - ``n`` -- a positive integer in  {9, 10, 11, 12, 21, 22, 23, 24}.
+        - ``n`` -- a positive integer in  {9, 10, 11, 12, 21, 22, 23, 24}
 
         OUTPUT: the Mathieu group of degree `n`, as a permutation group
 
@@ -1817,7 +1816,7 @@ class TransitiveGroup(PermutationGroup_unique):
 
         INPUT:
 
-        - ``d`` -- non-negative integer; the degree
+        - ``d`` -- nonnegative integer; the degree
         - ``n`` -- positive integer; the index of the group in the GAP database,
           starting at 1
 
@@ -1888,7 +1887,7 @@ class TransitiveGroup(PermutationGroup_unique):
 
     def transitive_number(self):
         """
-        Return the index of this group in the GAP database, starting at 1
+        Return the index of this group in the GAP database, starting at 1.
 
         EXAMPLES::
 
@@ -1899,7 +1898,7 @@ class TransitiveGroup(PermutationGroup_unique):
 
     def degree(self):
         """
-        Return the degree of this permutation group
+        Return the degree of this permutation group.
 
         EXAMPLES::
 
@@ -1948,14 +1947,13 @@ def TransitiveGroups(d=None):
         ...
         NotImplementedError: only the transitive groups of degree at most 31
         are available in GAP's database
-
     """
     if d is None:
         return TransitiveGroupsAll()
 
     d = Integer(d)
     if d < 0:
-        raise ValueError("a transitive group acts on a non negative integer number of positions")
+        raise ValueError("a transitive group acts on a nonnegative integer number of positions")
     return TransitiveGroupsOfDegree(d)
 
 
@@ -2209,9 +2207,9 @@ class PrimitiveGroup(PermutationGroup_unique):
 
     INPUT:
 
-    - ``d`` -- non-negative integer. the degree of the group.
+    - ``d`` -- nonnegative integer; the degree of the group
 
-    - ``n`` -- positive integer. the index of the group in the GAP
+    - ``n`` -- positive integer; the index of the group in the GAP
       database, starting at 1
 
     OUTPUT: the ``n``-th primitive group of degree ``d``
@@ -2310,7 +2308,7 @@ class PrimitiveGroup(PermutationGroup_unique):
 
 def PrimitiveGroups(d=None):
     """
-    Return the set of all primitive groups of a given degree ``d``
+    Return the set of all primitive groups of a given degree ``d``.
 
     INPUT:
 
@@ -2352,7 +2350,7 @@ def PrimitiveGroups(d=None):
     else:
         d = Integer(d)
         if d < 0:
-            raise ValueError("a primitive group acts on a non negative integer number of positions")
+            raise ValueError("a primitive group acts on a nonnegative integer number of positions")
         return PrimitiveGroupsOfDegree(d)
 
 
@@ -2411,7 +2409,7 @@ class PrimitiveGroupsAll(DisjointUnionEnumeratedSets):
 
         INPUT:
 
-        - `G` -- anything.
+        - ``G`` -- anything
 
         OUTPUT: boolean
 
@@ -2484,7 +2482,7 @@ class PrimitiveGroupsOfDegree(CachedRepresentation, Parent):
 
         INPUT:
 
-        - `G` -- anything.
+        - ``G`` -- anything
 
         OUTPUT: boolean
 
@@ -2929,9 +2927,9 @@ class PSU(PermutationGroup_pug):
 
         INPUT:
 
-        - n -- positive integer; the degree
-        - q -- prime power; the size of the ground field
-        - name -- (default: ``'a'``) variable name of indeterminate of finite
+        - ``n`` -- positive integer; the degree
+        - ``q`` -- prime power; the size of the ground field
+        - ``name`` -- (default: ``'a'``) variable name of indeterminate of finite
           field `\GF(q)`
 
         OUTPUT: PSU(`n`,`q`)

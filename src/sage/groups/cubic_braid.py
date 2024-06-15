@@ -368,7 +368,7 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
 
         - ``root_bur`` -- six (resp. twelfth) root of unity in some field
           (default: root of unity over `\QQ`)
-        - ``domain``  -- (default: cyclotomic field of order 3 and degree 2, resp.
+        - ``domain`` -- (default: cyclotomic field of order 3 and degree 2, resp.
           the domain of `root_bur` if given) base ring for the Burau matrix
         - ``characteristic`` -- integer giving the characteristic of the
           domain (default: 0 or the characteristic of ``domain`` if given)
@@ -669,7 +669,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         r"""
         Enum class to select the type of the group:
 
-        - ``Coxeter`` -- ``'C'`` the full cubic braid group.
+        - ``Coxeter`` -- ``'C'`` the full cubic braid group
         - ``AssionS`` -- ``'S'`` finite factor group of type S considered by Assion
         - ``AssionU`` -- ``'U'`` finite factor group of type U considered by Assion
 
@@ -1469,7 +1469,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
         - ``root_bur`` -- (default: root of unity over `\QQ`) six (resp. twelfth)
           root of unity in some field
-        - ``domain``  -- (default: cyclotomic field of order 3 and degree 2, resp.
+        - ``domain`` -- (default: cyclotomic field of order 3 and degree 2, resp.
           the domain of ``root_bur`` if given) base ring for the Burau matrix
         - ``characteristic`` -- integer (optional); the characteristic of the
           domain; if none of the keywords ``root_bur``, ``domain`` and

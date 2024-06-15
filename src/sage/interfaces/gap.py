@@ -9,13 +9,13 @@ computer; this should be the case, since GAP is included with Sage.
 The interface offers three pieces of functionality:
 
 
-#. ``gap_console()`` -- A function that dumps you into
+#. ``gap_console()`` -- a function that dumps you into
    an interactive command-line GAP session.
 
-#. ``gap(expr)`` -- Evaluation of arbitrary GAP
+#. ``gap(expr)`` -- evaluation of arbitrary GAP
    expressions, with the result returned as a string.
 
-#. ``gap.new(expr)`` -- Creation of a Sage object that
+#. ``gap.new(expr)`` -- creation of a Sage object that
    wraps a GAP object. This provides a Pythonic interface to GAP. For
    example, if ``f=gap.new(10)``, then
    ``f.Factors()`` returns the prime factorization of
@@ -254,7 +254,6 @@ class Gap_generic(ExtraTabCompletion, Expect):
 
     - Franco Saliola (Feb 2010): refactored to separate out the generic
       code
-
     """
     _identical_function = "IsIdenticalObj"
 
@@ -299,7 +298,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
 
     def interrupt(self, tries=None, timeout=1, quit_on_fail=True):
         """
-        Interrupt the GAP process
+        Interrupt the GAP process.
 
         Gap installs a SIGINT handler, we call it directly instead of
         trying to sent Ctrl-C. Unlike
@@ -379,13 +378,12 @@ class Gap_generic(ExtraTabCompletion, Expect):
             sage: gap = Gap()
             sage: print(gap._assign_symbol())
             :=
-
         """
         return ":="
 
     def _quit_string(self):
         """
-        Returns the string used to quit GAP.
+        Return the string used to quit GAP.
 
         EXAMPLES::
 
@@ -405,7 +403,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
 
     def _read_in_file_command(self, filename):
         r"""
-        Returns the command use to read in a file in GAP.
+        Return the command use to read in a file in GAP.
 
         EXAMPLES::
 
@@ -425,7 +423,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
 
     def _continuation_prompt(self):
         """
-        Returns the continuation prompt in GAP.
+        Return the continuation prompt in GAP.
 
         EXAMPLES::
 
@@ -461,16 +459,16 @@ class Gap_generic(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``s`` -- string containing GAP code.
+        -  ``s`` -- string containing GAP code
 
-        -  ``newlines`` -- bool (default: ``True``); if False,
+        -  ``newlines`` -- boolean (default: ``True``); if ``False``,
            remove all backslash-newlines inserted by the GAP output
-           formatter.
+           formatter
 
         -  ``strip`` -- ignored
 
-        -  ``split_lines`` -- bool (default: ``True``); if True then each
-           line is evaluated separately.  If False, then the whole
+        -  ``split_lines`` -- boolean (default: ``True``); if ``True`` then each
+           line is evaluated separately.  If ``False``, then the whole
            block of code is evaluated all at once.
 
         EXAMPLES::
@@ -774,7 +772,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
 
     def _true_symbol(self):
         """
-        Returns the symbol for truth in GAP.
+        Return the symbol for truth in GAP.
 
         EXAMPLES::
 
@@ -787,7 +785,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
 
     def _false_symbol(self):
         """
-        Returns the symbol for falsity in GAP.
+        Return the symbol for falsity in GAP.
 
         EXAMPLES::
 
@@ -800,7 +798,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
 
     def _equality_symbol(self):
         """
-        Returns the symbol for equality in GAP.
+        Return the symbol for equality in GAP.
 
         EXAMPLES::
 
@@ -815,7 +813,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
 
     def version(self):
         """
-        Returns the version of GAP being used.
+        Return the version of GAP being used.
 
         EXAMPLES::
 
@@ -898,11 +896,9 @@ class Gap_generic(ExtraTabCompletion, Expect):
         INPUT:
 
         - ``record`` -- a GAP record
-        - ``name`` -- str
+        - ``name`` -- string
 
-        OUTPUT:
-
-        - :class:`GapElement`
+        OUTPUT: :class:`GapElement`
 
         EXAMPLES::
 
@@ -1004,7 +1000,6 @@ class GapElement_generic(ModuleElement, ExtraTabCompletion, ExpectElement):
             True
             sage: gap('[1,2,3]').is_string()
             False
-
         """
         return bool(self.IsString())
 
@@ -1134,7 +1129,7 @@ class Gap(Gap_generic):
 
     def _next_var_name(self):
         r"""
-        Returns the next unused variable name.
+        Return the next unused variable name.
 
         Note that names starting with dollar signs are valid GAP
         identifiers, but need to be escaped with a backslash starting
@@ -1214,7 +1209,7 @@ class Gap(Gap_generic):
 
     def _function_class(self):
         """
-        Returns the GapFunction class.
+        Return the GapFunction class.
 
         EXAMPLES::
 
@@ -1230,7 +1225,7 @@ class Gap(Gap_generic):
 
     def cputime(self, t=None):
         r"""
-        Returns the amount of CPU time that the GAP session has used. If
+        Return the amount of CPU time that the GAP session has used. If
         ``t`` is not None, then it returns the difference
         between the current CPU time and ``t``.
 
@@ -1426,7 +1421,7 @@ class Gap(Gap_generic):
 
     def _object_class(self):
         """
-        Returns the GapElement class.
+        Return the GapElement class.
 
         EXAMPLES::
 
@@ -1448,7 +1443,7 @@ class Gap(Gap_generic):
 
     def _function_element_class(self):
         """
-        Returns the GapFunctionElement class.
+        Return the GapFunctionElement class.
 
         EXAMPLES::
 
@@ -1462,7 +1457,7 @@ class Gap(Gap_generic):
     @cached_method
     def _tab_completion(self):
         """
-        Return additional tab completion entries
+        Return additional tab completion entries.
 
         OUTPUT: list of strings
 
@@ -1627,7 +1622,7 @@ class GapFunction(ExpectFunction):
 
 def is_GapElement(x):
     """
-    Return True if ``x`` is a :class:`GapElement`
+    Return ``True`` if ``x`` is a :class:`GapElement`.
 
     This function is deprecated; use :func:`isinstance`
     (of :class:`sage.interfaces.abc.GapElement`) instead.
@@ -1714,7 +1709,7 @@ def intmod_gap_to_sage(x):
     r"""
     INPUT:
 
-    - x -- Gap integer mod ring element
+    - ``x`` -- Gap integer mod ring element
 
     EXAMPLES::
 
@@ -1764,7 +1759,7 @@ gap = Gap()
 
 def reduce_load_GAP():
     """
-    Returns the GAP interface object defined in sage.interfaces.gap.
+    Return the GAP interface object defined in ``sage.interfaces.gap``.
 
     EXAMPLES::
 

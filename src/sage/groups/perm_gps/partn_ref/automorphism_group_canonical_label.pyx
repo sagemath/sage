@@ -193,7 +193,6 @@ def test_intersect_parabolic_with_alternating(int n=9, list partition=[[0,1,2],[
         2520
         sage: tipwa(9, [[0,1,2,3],[4,5,6,7,8]])
         1440
-
     """
     cdef aut_gp_and_can_lab *output
     cdef Integer I = Integer(0)
@@ -264,7 +263,6 @@ def coset_rep(list perm=[0,1,2,3,4,5], list gens=[[1,2,3,4,5,0]]):
         ....:       reps.append(r)
         sage: len(reps)
         8
-
     """
     cdef int i, n = len(perm)
     assert all(len(g) == n for g in gens)
@@ -319,7 +317,7 @@ cdef aut_gp_and_can_lab *allocate_agcl_output(int n) noexcept:
 
 cdef void deallocate_agcl_output(aut_gp_and_can_lab *output) noexcept:
     r"""
-    Deallocates an aut_gp_and_can_lab struct.
+    Deallocate an aut_gp_and_can_lab struct.
     """
     if output is not NULL:
         SC_dealloc(output.group)
@@ -329,7 +327,7 @@ cdef void deallocate_agcl_output(aut_gp_and_can_lab *output) noexcept:
 
 cdef agcl_work_space *allocate_agcl_work_space(int n) noexcept:
     r"""
-    Allocates work space for the get_aut_gp_and_can_lab function. It can be
+    Allocate work space for the get_aut_gp_and_can_lab function. It can be
     input to the function in which case it must be deallocated after the
     function is called.
     """
@@ -448,7 +446,6 @@ cdef aut_gp_and_can_lab *get_aut_gp_and_can_lab(void *S,
         cell, the smallest element occurs first!
 
     OUTPUT: a pointer to a ``aut_gp_and_can_lab`` struct
-
     """
     cdef PartitionStack *current_ps
     cdef PartitionStack *first_ps

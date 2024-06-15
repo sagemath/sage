@@ -33,7 +33,7 @@ def dhsw_snf(mat, verbose=False):
 
     INPUT:
 
-    - ``mat`` -- an integer matrix, either sparse or dense.
+    - ``mat`` -- integer matrix, either sparse or dense
 
     (They use the transpose of the matrix considered here, so they use
     rows instead of columns.)

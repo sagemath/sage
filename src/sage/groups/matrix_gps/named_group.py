@@ -67,8 +67,8 @@ def normalize_args_vectorspace(*args, **kwds):
 
     * Degree and base ring:
 
-      - ``degree`` -- integer. The degree of the affine group, that
-        is, the dimension of the affine space the group is acting on.
+      - ``degree`` -- integer; the degree of the affine group, that
+        is, the dimension of the affine space the group is acting on
 
       - ``ring`` -- a ring or an integer. The base ring of the affine
         space. If an integer is given, it must be a prime power and

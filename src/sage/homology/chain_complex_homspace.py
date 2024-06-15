@@ -117,7 +117,6 @@ def is_ChainComplexHomspace(x):
         sage: G = Hom(C, C)
         sage: is_ChainComplexHomspace(G)
         True
-
     """
     return isinstance(x, ChainComplexHomspace)
 
@@ -136,7 +135,6 @@ class ChainComplexHomspace(sage.categories.homset.Homset):
          from Chain complex with at most 5 nonzero terms over Integer Ring
            to Chain complex with at most 5 nonzero terms over Integer Ring
            in Category of chain complexes over Integer Ring
-
     """
     def __call__(self, f):
         """
@@ -154,6 +152,5 @@ class ChainComplexHomspace(sage.categories.homset.Homset):
             sage: y = G(f)
             sage: x == y
             True
-
         """
         return ChainComplexMorphism(f, self.domain(), self.codomain())

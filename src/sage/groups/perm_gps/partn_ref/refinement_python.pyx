@@ -450,7 +450,6 @@ def aut_gp_and_can_lab_python(S, partition, n,
          48)
         sage: factorial(4)*factorial(2)
         48
-
     """
     obj_wrapper = PythonObjectWrapper(S, all_children_are_equivalent, refine_and_return_invariant, compare_structures, n)
     cdef aut_gp_and_can_lab *output
@@ -533,7 +532,6 @@ def double_coset_python(S1, S2, partition1, ordering2, n,
 
         sage: double_coset_python([0,0,1], [1,0,0], [[0,1,2]], [0,1,2], 3, acae, rari, compare_lists)
         [1, 2, 0]
-
     """
     obj_wrapper1 = PythonObjectWrapper(S1, all_children_are_equivalent, refine_and_return_invariant, compare_structures, n)
     obj_wrapper2 = PythonObjectWrapper(S2, all_children_are_equivalent, refine_and_return_invariant, compare_structures, n)

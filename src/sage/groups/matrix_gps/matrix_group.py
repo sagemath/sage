@@ -189,7 +189,7 @@ class MatrixGroup_base(Group):
 
         INPUT:
 
-        - ``generators`` -- a list/tuple/iterable of group elements of ``self``
+        - ``generators`` -- list/tuple/iterable of group elements of ``self``
         - ``check`` -- boolean (default: ``True``); whether to check that each
           matrix is invertible
 
@@ -345,7 +345,7 @@ class MatrixGroup_base(Group):
         gens = ', '.join(latex(x) for x in self.gens())
         return '\\left\\langle %s \\right\\rangle' % gens
 
-    def sign_representation(self, base_ring=None, side="twosided"):
+    def sign_representation(self, base_ring=None, side='twosided'):
         r"""
         Return the sign representation of ``self`` over ``base_ring``.
 
@@ -558,12 +558,12 @@ class MatrixGroup_generic(MatrixGroup_base):
             True
             sage: SL(2, ZZ).is_trivial()
             False
-            sage: CoxeterGroup(['B',3], implementation="matrix").is_trivial()
+            sage: CoxeterGroup(['B',3], implementation='matrix').is_trivial()
             False
 
         TESTS::
 
-            sage: CoxeterGroup(['A',0], implementation="matrix").is_trivial()
+            sage: CoxeterGroup(['A',0], implementation='matrix').is_trivial()
             True
             sage: MatrixGroup([matrix(SR, [[1,x], [0,1]])]).is_trivial()
             False

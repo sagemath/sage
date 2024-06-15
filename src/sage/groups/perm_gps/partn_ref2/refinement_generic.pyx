@@ -498,11 +498,11 @@ cdef class PartitionRefinement_generic:
 
         INPUT:
 
-        - ``pos`` -- A position in ``range(self.n)``
+        - ``pos`` -- a position in ``range(self.n)``
         - ``inner_group_changed`` -- will be set to ``True`` if `G_y` got smaller
 
         OUTPUT: ``True`` if and only if the actual node compares less or equal
-        to the candidate for the canonical form.
+        to the candidate for the canonical form
         """
         raise NotImplementedError
 
@@ -865,7 +865,7 @@ cdef class PartitionRefinement_generic:
     # BACKTRACK_WITHLATEX_DEBUG = 1 in the setup.py script when
     # building this module!
     ###########################################################################
-    cdef void _latex_act_node(self, str comment="", int printlvl=0) noexcept:
+    cdef void _latex_act_node(self, str comment='', int printlvl=0) noexcept:
         r"""
         Append the actual node as a string of latex-commands to
         ``self._latex_debug_string``.

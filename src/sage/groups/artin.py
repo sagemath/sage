@@ -51,7 +51,7 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
         r"""
         Return a LaTeX representation of ``self``.
 
-        OUTPUT: a string; a valid LaTeX math command sequence
+        OUTPUT: string; a valid LaTeX math command sequence
 
         TESTS::
 
@@ -508,7 +508,7 @@ class ArtinGroup(FinitelyPresentedGroup):
         """
         Return the number of elements of ``self``.
 
-        OUTPUT: Infinity
+        OUTPUT: infinity
 
         EXAMPLES::
 

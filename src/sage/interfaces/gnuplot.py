@@ -63,18 +63,15 @@ class Gnuplot(SageObject):
 
         INPUT:
 
-
         -  ``cmd`` -- string
 
-        -  ``file`` -- string (default: None), if specified save
+        -  ``file`` -- string (default: ``None``); if specified save
            plot to given file, which may be either an eps (default) or png
-           file.
+           file
 
         -  ``verbose`` -- print some info
 
-        -  ``reset`` -- True: reset gnuplot before making
-           graph
-
+        -  ``reset`` -- true; reset gnuplot before making graph
 
         OUTPUT: displays graph
 
@@ -181,7 +178,7 @@ class Gnuplot(SageObject):
 
     def interact(self, cmd):
         import tempfile
-        with tempfile.NamedTemporaryFile(mode="w+t") as f:
+        with tempfile.NamedTemporaryFile(mode='w+t') as f:
             f.write(cmd + '\n pause -1 "Press return to continue (no further rotation possible)"')
             os.system(f'gnuplot -persist {f.name}')
 
