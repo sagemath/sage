@@ -56,12 +56,12 @@ extensions = [
     'sphinx_inline_tabs',
     'IPython.sphinxext.ipython_directive',
     'matplotlib.sphinxext.plot_directive',
-    'jupyter_sphinx',
 ]
 
 jupyter_execute_default_kernel = 'sagemath'
 
 if SAGE_LIVE_DOC == 'yes':
+    extensions.append('jupyter_sphinx')
     SAGE_JUPYTER_SERVER = os.environ.get('SAGE_JUPYTER_SERVER', 'binder')
     if SAGE_JUPYTER_SERVER.startswith('binder'):
         # format: "binder" or
