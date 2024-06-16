@@ -66,7 +66,7 @@ cdef class FrozenBitset:
       are:
 
       - :class:`Bitset` and :class:`FrozenBitset` -- If this is a
-        :class:`Bitset` or :class:`FrozenBitset`, then it is copied.
+        :class:`Bitset` or :class:`FrozenBitset`, then it is copied
 
       - ``None`` -- if ``None``, then the bitset is set to the empty set
 
@@ -2341,7 +2341,7 @@ def test_bitset_unpickle(data):
 
     INPUT:
 
-    - ``data`` -- a tuple of data as would be produced by the internal,
+    - ``data`` -- tuple of data as would be produced by the internal,
       Cython-only, method ``bitset_pickle``
 
     OUTPUT: list form of the bitset corresponding to the pickled data

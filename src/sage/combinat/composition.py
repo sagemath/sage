@@ -1249,10 +1249,10 @@ class Composition(CombinatorialElement):
 
         INPUT:
 
-        -  ``other`` -- composition
+        - ``other`` -- composition
 
-        -  ``overlap`` -- boolean (default: ``False``); if ``True``, the
-           overlapping shuffle product is returned.
+        - ``overlap`` -- boolean (default: ``False``); if ``True``, the
+          overlapping shuffle product is returned
 
         OUTPUT:
 

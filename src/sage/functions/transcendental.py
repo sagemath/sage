@@ -44,7 +44,7 @@ class Function_zeta(GinacFunction):
 
         INPUT:
 
-        -  ``s`` -- real or complex number
+        - ``s`` -- real or complex number
 
         If s is a real number, the computation is done using the MPFR
         library. When the input is not real, the computation is done using
@@ -173,7 +173,7 @@ class Function_stieltjes(GinacFunction):
 
         INPUT:
 
-        -  ``n`` -- nonnegative integer
+        - ``n`` -- nonnegative integer
 
         EXAMPLES::
 
@@ -412,7 +412,7 @@ def zeta_symmetric(s):
 
     INPUT:
 
-    -  ``s`` -- real or complex number
+    - ``s`` -- real or complex number
 
     If s is a real number the computation is done using the MPFR
     library. When the input is not real, the computation is done using
@@ -571,11 +571,11 @@ class DickmanRho(BuiltinFunction):
 
         INPUT:
 
-        -  ``n`` -- the lower endpoint of the interval for which
-           this power series holds
+        - ``n`` -- the lower endpoint of the interval for which
+          this power series holds
 
-        -  ``abs_prec`` -- the absolute precision of the
-           resulting power series
+        - ``abs_prec`` -- the absolute precision of the
+          resulting power series
 
         EXAMPLES::
 
@@ -599,14 +599,14 @@ class DickmanRho(BuiltinFunction):
 
         INPUT:
 
-        -  ``n`` -- the lower endpoint of the interval for which
-           this power series holds
+        - ``n`` -- the lower endpoint of the interval for which
+          this power series holds
 
-        -  ``abs_prec`` -- the absolute precision of the
-           resulting power series
+        - ``abs_prec`` -- the absolute precision of the
+          resulting power series
 
-        -  ``cache_ring`` -- for internal use, caches the power
-           series at this precision.
+        - ``cache_ring`` -- for internal use, caches the power
+          series at this precision
 
         EXAMPLES::
 

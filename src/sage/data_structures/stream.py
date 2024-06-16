@@ -318,7 +318,7 @@ class Stream_inexact(Stream):
 
         INPUT:
 
-        - ``d`` -- a dictionary that needs to be unpickled
+        - ``d`` -- dictionary that needs to be unpickled
 
         EXAMPLES::
 
@@ -3472,7 +3472,7 @@ class Stream_derivative(Stream_unary):
     INPUT:
 
     - ``series`` -- a :class:`Stream`
-    - ``shift`` -- a positive integer
+    - ``shift`` -- positive integer
     - ``is_sparse`` -- boolean
     """
     def __init__(self, series, shift, is_sparse):

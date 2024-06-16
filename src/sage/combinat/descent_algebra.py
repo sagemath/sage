@@ -66,7 +66,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
 
     - ``R`` -- the base ring
 
-    - ``n`` -- a nonnegative integer
+    - ``n`` -- nonnegative integer
 
     REFERENCES:
 

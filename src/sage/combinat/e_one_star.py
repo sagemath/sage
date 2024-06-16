@@ -1001,17 +1001,17 @@ class Patch(SageObject):
 
         INPUT:
 
-        -  ``cmap`` -- color map (default: ``'Set1'``). It can be one of the
-           following:
+        - ``cmap`` -- color map (default: ``'Set1'``). It can be one of the
+          following:
 
            - ``string`` -- A coloring map. For available coloring map names type:
              ``sorted(colormaps)``
            - ``list`` -- list of colors to assign cyclically to the faces
              A list of a single color colors all the faces with the same color
-           - ``dict`` -- a dict of face types mapped to colors, to color the
+           - ``dict`` -- dict of face types mapped to colors, to color the
              faces according to their type
            - ``{}``, the empty dict -- shortcut for
-             ``{1:'red', 2:'green', 3:'blue'}``.
+             ``{1:'red', 2:'green', 3:'blue'}``
 
         EXAMPLES:
 

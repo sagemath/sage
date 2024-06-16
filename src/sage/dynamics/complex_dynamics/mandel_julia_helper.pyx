@@ -425,28 +425,28 @@ cpdef fast_julia_plot(double c_real, double c_imag,
       set
 
     - ``x_center`` -- double (default: ``0.0``); real part of center
-      point.
+      point
 
     - ``y_center`` -- double (default: ``0.0``); imaginary part of
-      center point.
+      center point
 
     - ``image_width`` -- double (default: ``4.0``); width of image
-      in the complex plane.
+      in the complex plane
 
     - ``max_iteration`` -- long (default: ``500``); maximum number of
-      iterations the map ``Q_c(z)``.
+      iterations the map ``Q_c(z)``
 
     - ``pixel_count`` -- long (default: ``500``); side length of
-      image in number of pixels.
+      image in number of pixels
 
     - ``level_sep`` -- long (default: ``2``); number of iterations
-      between each color level.
+      between each color level
 
     - ``color_num`` -- long (default: ``40``); number of colors used
-      to plot image.
+      to plot image
 
     - ``base_color`` -- RGB color (default: ``[50, 50, 50]``); color
-      used to determine the coloring of set.
+      used to determine the coloring of set
 
     OUTPUT: 24-bit RGB image of the Julia set in the complex plane
 
@@ -565,10 +565,10 @@ cpdef julia_helper(double c_real, double c_imag, double x_center=0,
       to plot image
 
     - ``base_color`` -- RGB color (default: ``[50, 50, 50]``); color
-      used to determine the coloring of set.
+      used to determine the coloring of set
 
     - ``point_color`` -- RGB color (default: ``[255, 0, 0]``); color
-      of the point `c` in the Mandelbrot set.
+      of the point `c` in the Mandelbrot set
 
     OUTPUT: 24-bit RGB image of the Julia and Mandelbrot sets in the complex plane
 
@@ -639,7 +639,7 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
     - ``image_width`` -- double, width of the image in the complex plane
 
     - ``max_iteration`` -- long, maximum number of iterations the map `f(z)`
-      considered.
+      considered
 
     - ``pixel_count`` -- long, side length of image in number of pixels
 

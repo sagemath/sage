@@ -144,7 +144,7 @@ def gale_ryser_theorem(p1, p2, algorithm='gale',
       - ``'ryser'`` implements the construction due to Ryser [Ryser63]_.
       - ``'gale'`` (default) implements the construction due to Gale [Gale57]_.
 
-    - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear Programming
+    - ``solver`` -- (default: ``None``) specify a Mixed Integer Linear Programming
       (MILP) solver to be used. If set to ``None``, the default one is used. For
       more information on MILP solvers and which default solver is used, see
       the method
@@ -1167,9 +1167,9 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
 
         INPUT:
 
-        -  ``n`` -- degree (must be 0)
+        - ``n`` -- degree (must be 0)
 
-        -  ``k`` -- length of exponent tuples (must be 0)
+        - ``k`` -- length of exponent tuples (must be 0)
 
         EXAMPLES::
 

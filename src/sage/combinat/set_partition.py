@@ -487,7 +487,7 @@ class AbstractSetPartition(ClonableArray,
 
         INPUT:
 
-        - ``self`` -- a set partition of an ordered set
+        - ``self`` -- set partition of an ordered set
 
         OUTPUT: a set partition
 
@@ -2103,7 +2103,7 @@ class SetPartitions(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``s`` -- a set of sets
+        - ``s`` -- set of sets
 
         EXAMPLES::
 
@@ -2256,7 +2256,7 @@ class SetPartitions(UniqueRepresentation, Parent):
         INPUT:
 
         - ``rooks`` -- list of pairs `(i,j)` satisfying
-          `0 < i < j < n+1`.
+          `0 < i < j < n+1`
 
         - ``bijection`` -- (default: ``arcs``) defines the map from
           rook placements to set partitions.  These are currently:
@@ -2266,7 +2266,7 @@ class SetPartitions(UniqueRepresentation, Parent):
           - ``rho``: :meth:`from_rook_placement_rho`.
           - ``psi``: :meth:`from_rook_placement_psi`.
 
-        - ``n`` -- (optional) the size of the ground set.
+        - ``n`` -- (optional) the size of the ground set
 
         .. SEEALSO::
 
@@ -2360,7 +2360,7 @@ class SetPartitions(UniqueRepresentation, Parent):
         - ``n`` -- integer specifying the size of the set
           partition to be produced
 
-        - ``rooks`` -- list of pairs `(i,j)` such that `0 < i < j < n+1`.
+        - ``rooks`` -- list of pairs `(i,j)` such that `0 < i < j < n+1`
 
         OUTPUT: a set partition
 
@@ -2414,7 +2414,7 @@ class SetPartitions(UniqueRepresentation, Parent):
         - ``n`` -- integer specifying the size of the set
           partition to be produced
 
-        - ``rooks`` -- list of pairs `(i,j)` such that `0 < i < j < n+1`.
+        - ``rooks`` -- list of pairs `(i,j)` such that `0 < i < j < n+1`
 
         OUTPUT: a set partition
 

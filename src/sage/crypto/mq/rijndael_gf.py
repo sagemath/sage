@@ -580,7 +580,7 @@ class RijndaelGF(SageObject):
         - ``key`` -- the key to encrypt/decrypt ``text`` with
 
         - ``algorithm`` -- whether to encrypt or decrypt ``text``. Flag for
-          encryption is "encrypt", flag for decryption is "decrypt".
+          encryption is "encrypt", flag for decryption is "decrypt"
 
         - ``format`` -- the format of ``text`` and ``key``, either "hex" or
           "binary"
@@ -681,7 +681,7 @@ class RijndaelGF(SageObject):
           single element in `\GF{2^8}`
 
         - ``matrix`` -- boolean (default: ``True``); return a list if ``False``.
-          Return a state matrix if ``True``.
+          Return a state matrix if ``True``
 
         OUTPUT:
 
@@ -797,7 +797,7 @@ class RijndaelGF(SageObject):
           single element in `\GF{2^8}`
 
         - ``matrix`` -- boolean (default: ``True``); return a list if ``False``.
-          Return a state matrix over `\GF{2^8}` if ``True``.
+          Return a state matrix over `\GF{2^8}` if ``True``
 
         OUTPUT:
 
@@ -923,7 +923,7 @@ class RijndaelGF(SageObject):
         - ``key`` -- the key to encrypt ``plain`` with
 
         - ``format`` -- (default: ``hex``) the string format of ``key`` and
-          ``plain``, either "hex" or "binary".
+          ``plain``, either "hex" or "binary"
 
         OUTPUT: string of the plaintext ``plain`` encrypted with the key ``key``
 
@@ -1458,7 +1458,7 @@ class RijndaelGF(SageObject):
           "encrypt" and the decryption flag is "decrypt".
 
         - ``f_attr`` -- (default: ``None``) a dictionary of keyword attributes to
-          pass to ``f`` when it is called.
+          pass to ``f`` when it is called
 
         - ``g_attr`` -- (default: ``None``) a dictionary of keyword attributes to
           pass to ``g`` when it is called; does nothing if ``g`` is a
@@ -1921,7 +1921,7 @@ class RijndaelGF(SageObject):
 
         - ``state`` -- the state matrix to apply SubBytes to
 
-        - ``algorithm`` -- (default: ``'encrypt'``) Whether to apply the
+        - ``algorithm`` -- (default: ``'encrypt'``) whether to apply the
           encryption step of SubBytes or its decryption inverse. The encryption
           flag is "encrypt" and the decryption flag is "decrypt".
 
@@ -2076,7 +2076,7 @@ class RijndaelGF(SageObject):
         - ``col`` -- the column number of the entry represented by this
           method's output
 
-        - ``algorithm`` -- (default: ``'encrypt'``) Whether to perform ShiftRows'
+        - ``algorithm`` -- (default: ``'encrypt'``) whether to perform ShiftRows'
           encryption step or its decryption inverse. The encryption flag is
           "encrypt" and the decryption flag is "decrypt".
 

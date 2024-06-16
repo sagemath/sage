@@ -2214,9 +2214,9 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
 
         - ``pieces`` -- puzzle pieces to be used
         - ``lambda``, ``mu`` -- edge labels of puzzle for northwest and north east side
-        - ``nu`` -- (default: ``None``) If ``nu`` is not specified a dictionary is returned with
+        - ``nu`` -- (default: ``None``) if ``nu`` is not specified a dictionary is returned with
           the structure coefficients corresponding to all south labels; if ``nu`` is given, only
-          the coefficients with the specified label is returned.
+          the coefficients with the specified label is returned
 
         OUTPUT: dictionary
 

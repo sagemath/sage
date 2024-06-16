@@ -98,9 +98,9 @@ def pad_right(T, length, zero=0):
 
     INPUT:
 
-    - ``T`` -- a tuple, list or other iterable
+    - ``T`` -- tuple, list or other iterable
 
-    - ``length`` -- a nonnegative integer
+    - ``length`` -- nonnegative integer
 
     - ``zero`` -- (default: ``0``) the elements to pad with
 
@@ -134,7 +134,7 @@ def value(D, k):
 
     INPUT:
 
-    - ``D`` -- a tuple or other iterable
+    - ``D`` -- tuple or other iterable
 
     - ``k`` -- the base
 
@@ -265,7 +265,7 @@ class RegularSequence(RecognizableSeries):
 
         INPUT:
 
-        - ``n`` -- a nonnegative integer
+        - ``n`` -- nonnegative integer
 
         OUTPUT: an element of the universe of the sequence
 
@@ -568,7 +568,7 @@ class RegularSequence(RecognizableSeries):
 
         INPUT:
 
-        - ``a`` -- a nonnegative integer
+        - ``a`` -- nonnegative integer
 
         - ``b`` -- integer
 
@@ -1416,7 +1416,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
 
         INPUT:
 
-        - ``n`` -- a nonnegative integer
+        - ``n`` -- nonnegative integer
 
         OUTPUT: a word
 
@@ -2005,7 +2005,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
         If the recurrence relations are represented by symbolic equations, then
         the following arguments are required:
 
-        - ``equations`` -- a list of equations where the elements have
+        - ``equations`` -- list of equations where the elements have
           either the form
 
           - `f(k^M n + r) = c_{r,l} f(k^m n + l) + c_{r,l + 1} f(k^m n
@@ -2044,12 +2044,12 @@ class RegularSequenceRing(RecognizableSeriesSpace):
           see [HKL2022]_, Definition 3.1, as well as in the description of
           ``equations`` above
 
-        - ``coeffs`` -- a dictionary where ``coeffs[(r, j)]`` is the
+        - ``coeffs`` -- dictionary where ``coeffs[(r, j)]`` is the
           coefficient `c_{r,j}` as given in the description of ``equations`` above.
           If ``coeffs[(r, j)]`` is not given for some ``r`` and ``j``, then it is
           assumed to be zero.
 
-        - ``initial_values`` -- a dictionary mapping integers ``n`` to the
+        - ``initial_values`` -- dictionary mapping integers ``n`` to the
           ``n``-th value of the sequence
 
         Optional keyword-only argument:
@@ -3132,15 +3132,15 @@ class RecurrenceParser:
         - ``ll``, ``uu``, ``n1``, ``dim`` -- parameters and dimension of the
           resulting linear representation, see [HKL2022]_, Theorem A
 
-        - ``coeffs`` -- a dictionary mapping ``(r, j)`` to the coefficients
+        - ``coeffs`` -- dictionary mapping ``(r, j)`` to the coefficients
           `c_{r, j}` as given in [HKL2022]_, Equation (3.1).
           If ``coeffs[(r, j)]`` is not given for some ``r`` and ``j``,
           then it is assumed to be zero.
 
-        - ``initial_values`` -- a dictionary mapping integers ``n`` to the
+        - ``initial_values`` -- dictionary mapping integers ``n`` to the
           ``n``-th value of the sequence
 
-        - ``inhomogeneities`` -- a dictionary mapping integers ``r``
+        - ``inhomogeneities`` -- dictionary mapping integers ``r``
           to the inhomogeneity `g_r` as given in [HKL2022]_, Corollary D
 
         EXAMPLES::
@@ -3324,18 +3324,18 @@ class RecurrenceParser:
         - ``ll`` -- parameter of the resulting linear representation,
           see [HKL2022]_, Theorem A
 
-        - ``coeffs`` -- a dictionary where ``coeffs[(r, j)]`` is the
+        - ``coeffs`` -- dictionary where ``coeffs[(r, j)]`` is the
           coefficient `c_{r,j}` as given in :meth:`RegularSequenceRing.from_recurrence`.
           If ``coeffs[(r, j)]`` is not given for some ``r`` and ``j``,
           then it is assumed to be zero.
 
-        - ``initial_values`` -- a dictionary mapping integers ``n`` to the
+        - ``initial_values`` -- dictionary mapping integers ``n`` to the
           ``n``-th value of the sequence
 
         - ``last_value_needed`` -- last initial value which is needed to
           determine the linear representation
 
-        - ``inhomogeneities`` -- a dictionary mapping integers ``r``
+        - ``inhomogeneities`` -- dictionary mapping integers ``r``
           to the inhomogeneity `g_r` as given in [HKL2022]_, Corollary D
 
         OUTPUT:
@@ -3526,10 +3526,10 @@ class RecurrenceParser:
         vice versa, i.e.,
 
         - ``ind[i]`` -- a pair ``(j, d)`` representing the sequence `x(k^j n + d)`
-          in the `i`-th component (0-based) of the resulting linear representation,
+          in the `i`-th component (0-based) of the resulting linear representation
 
         - ``ind[(j, d)]`` -- the (0-based) row number of the sequence
-          `x(k^j n + d)` in the linear representation.
+          `x(k^j n + d)` in the linear representation
 
         EXAMPLES::
 

@@ -1772,7 +1772,7 @@ class PartitionTuples(UniqueRepresentation, Parent):
 
     - ``size`` -- the total number of cells
 
-    - ``regular`` -- a positive integer or a tuple of nonnegative
+    - ``regular`` -- positive integer or a tuple of nonnegative
       integers; if an integer, the highest multiplicity an entry may
       have in a component plus `1`
 
@@ -1888,7 +1888,7 @@ class PartitionTuples(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``mu`` -- a tuple of partitions
+        - ``mu`` -- tuple of partitions
 
         OUTPUT: the corresponding :class:`PartitionTuple` object
 
@@ -2946,9 +2946,9 @@ class RegularPartitionTuples_level_size(PartitionTuples_level_size):
 
     INPUT:
 
-    - ``level`` -- a nonnegative integer; the level
-    - ``size`` -- a nonnegative integer; the size
-    - ``regular`` -- a positive integer or a tuple of nonnegative
+    - ``level`` -- nonnegative integer; the level
+    - ``size`` -- nonnegative integer; the size
+    - ``regular`` -- positive integer or a tuple of nonnegative
       integers; if an integer, the highest multiplicity an entry may
       have in a component plus `1` with `0` representing `\infty`-regular
       (equivalently, partitions without restrictions)

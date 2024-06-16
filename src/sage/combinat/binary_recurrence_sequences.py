@@ -204,13 +204,20 @@ class BinaryRecurrenceSequence(SageObject):
         More concretely, there are 4 classes of degeneracy, that can all be formulated
         in terms of the matrix `F = [[0,1], [c, b]]`.
 
-        - `F` is singular --  this corresponds to ``c`` = 0, and thus `\\alpha*\\beta = 0`. This sequence is geometric after term ``u0`` and so we call it ``quasigeometric``.
+        - `F` is singular -- this corresponds to ``c`` = 0, and thus
+          `\\alpha*\\beta = 0`. This sequence is geometric after term ``u0``
+          and so we call it ``quasigeometric``
 
-        - `v = [[u_0], [u_1]]` is an eigenvector of `F` -- this corresponds to a ``geometric`` sequence with `a*b = 0`.
+        - `v = [[u_0], [u_1]]` is an eigenvector of `F` -- this corresponds to
+          a ``geometric`` sequence with `a*b = 0`
 
-        - `F` is nondiagonalizable -- this corresponds to `\\alpha = \\beta`.  This sequence will be the point-wise product of an arithmetic and geometric sequence.
+        - `F` is nondiagonalizable -- this corresponds to `\\alpha = \\beta`.
+          This sequence will be the point-wise product of an arithmetic and
+          geometric sequence.
 
-        - `F^k` is scaler, for some `k>1` -- this corresponds to `\\alpha/\\beta` a `k` th root of unity. This sequence is a union of several geometric sequences, and so we again call it ``quasigeometric``.
+        - `F^k` is scaler, for some `k>1` -- this corresponds to
+          `\\alpha/\\beta` a `k` th root of unity. This sequence is a union of
+          several geometric sequences, and so we again call it ``quasigeometric``
 
         EXAMPLES::
 
@@ -500,23 +507,24 @@ class BinaryRecurrenceSequence(SageObject):
 
     def pthpowers(self, p, Bound):
         """
-        Find the indices of proveably all pth powers in the recurrence sequence bounded by Bound.
+        Find the indices of proveably all pth powers in the recurrence sequence
+        bounded by Bound.
 
-        Let `u_n` be a binary recurrence sequence.  A ``p`` th power in `u_n` is a solution
-        to `u_n = y^p` for some integer `y`.  There are only finitely many ``p`` th powers in
-        any recurrence sequence [SS1983]_.
+        Let `u_n` be a binary recurrence sequence.  A ``p`` th power in `u_n`
+        is a solution to `u_n = y^p` for some integer `y`.  There are only
+        finitely many ``p`` th powers in any recurrence sequence [SS1983]_.
 
         INPUT:
 
         - ``p`` -- a rational prime integer (the fixed p in `u_n = y^p`)
 
-        - ``Bound`` -- a natural number (the maximum index `n` in `u_n = y^p` that is checked).
+        - ``Bound`` -- a natural number (the maximum index `n` in `u_n = y^p` that is checked)
 
         OUTPUT:
 
-        - A list of the indices of all ``p`` th powers less bounded by
-          ``Bound``. If the sequence is degenerate and there are many
-          ``p`` th powers, raises :class:`ValueError`.
+        A list of the indices of all ``p`` th powers less bounded by
+        ``Bound``. If the sequence is degenerate and there are many
+        ``p`` th powers, raises :class:`ValueError`.
 
         EXAMPLES::
 
@@ -932,7 +940,7 @@ def _is_p_power_mod(a, p, N):
 
     - ``p`` -- a rational prime number
 
-    - ``N`` -- a positive integer
+    - ``N`` -- positive integer
 
     OUTPUT: ``True`` if `a` is a `p`-th power modulo `N`; ``False`` otherwise
 

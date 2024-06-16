@@ -1715,7 +1715,7 @@ class SkewPartitions_n(SkewPartitions):
 
     INPUT:
 
-    - ``n`` -- a nonnegative integer
+    - ``n`` -- nonnegative integer
 
     - ``overlap`` -- integer (default: `0`)
 
@@ -1767,7 +1767,7 @@ class SkewPartitions_n(SkewPartitions):
 
         INPUT:
 
-        - ``n`` -- a nonnegative integer
+        - ``n`` -- nonnegative integer
         - ``overlap`` -- integer
 
         TESTS::

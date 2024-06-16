@@ -226,9 +226,9 @@ class DocTestReporter(SageObject):
 
         - ``source`` -- a source from :mod:`sage.doctest.sources`
 
-        - ``fail_msg`` -- a string
+        - ``fail_msg`` -- string
 
-        - ``event`` -- a string
+        - ``event`` -- string
 
         - ``output`` -- optional string
 

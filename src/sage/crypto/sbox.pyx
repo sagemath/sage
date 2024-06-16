@@ -1133,13 +1133,13 @@ cdef class SBox(SageObject):
           represents a variable and the sign of an integer indicates
           inversion
 
-        - ``symbolic`` -- a string that can be parsed by the
+        - ``symbolic`` -- string that can be parsed by the
           ``SymbolicLogic`` package
 
-        - ``dimacs`` -- a string in DIMACS format which is the gold
+        - ``dimacs`` -- string in DIMACS format which is the gold
           standard for SAT-solver input (cf. http://www.satlib.org/)
 
-        - ``dimacs_headless`` -- a string in DIMACS format, but without
+        - ``dimacs_headless`` -- string in DIMACS format, but without
           the header; this is useful for concatenation of outputs
 
         EXAMPLES:

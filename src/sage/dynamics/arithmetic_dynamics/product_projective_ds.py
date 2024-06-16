@@ -125,7 +125,7 @@ class DynamicalSystem_product_projective(DynamicalSystem,
 
         - ``P`` -- a point in ``self.domain()``
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         - ``normalize`` -- boolean (default: ``False``)
 
@@ -180,7 +180,7 @@ class DynamicalSystem_product_projective(DynamicalSystem,
 
         - ``P`` -- a point in ``self.domain()``
 
-        - ``N`` -- a nonnegative integer or list or tuple of two nonnegative integers
+        - ``N`` -- nonnegative integer or list or tuple of two nonnegative integers
 
         kwds:
 
@@ -254,7 +254,7 @@ class DynamicalSystem_product_projective(DynamicalSystem,
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         OUTPUT: a dynamical system of products of projective spaces
 

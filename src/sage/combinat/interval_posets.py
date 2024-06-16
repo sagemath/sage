@@ -274,7 +274,7 @@ class TamariIntervalPoset(Element,
 
         INPUT:
 
-        - ``D`` -- a dictionary with a list of latex parameters to change
+        - ``D`` -- dictionary with a list of latex parameters to change
 
         EXAMPLES::
 

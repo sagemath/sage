@@ -570,12 +570,10 @@ class CompositionTableaux_size(CompositionTableaux):
 
     INPUT:
 
-    - ``n`` -- a nonnegative integer
-    - ``max_entry`` -- a nonnegative integer (default: `n`)
+    - ``n`` -- nonnegative integer
+    - ``max_entry`` -- nonnegative integer (default: `n`)
 
-    OUTPUT:
-
-    - The class of composition tableaux of size ``n``.
+    OUTPUT: the class of composition tableaux of size `n`
     """
 
     def __init__(self, n, max_entry=None):
@@ -673,7 +671,7 @@ class CompositionTableaux_shape(CompositionTableaux):
     INPUT:
 
     - ``comp`` -- a composition
-    - ``max_entry`` -- a nonnegative integer (default: size of ``comp``)
+    - ``max_entry`` -- nonnegative integer (default: size of ``comp``)
     """
     def __init__(self, comp, max_entry=None):
         """

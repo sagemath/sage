@@ -264,7 +264,7 @@ cpdef map_to_list(array l, tuple values, int n):
 
     - ``l`` -- array of unsigned int (i.e., type ``'I'``)
     - ``values`` -- tuple; the values of the permutation
-    - ``n`` -- int; the length of the array ``l``
+    - ``n`` -- integer; the length of the array ``l``
 
     OUTPUT: list representing the permutation
 

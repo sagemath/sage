@@ -1961,7 +1961,7 @@ class MiniAES(SageObject):
 
         INPUT:
 
-        - ``N`` -- a nonnegative integer less than or equal to 15, or a list
+        - ``N`` -- nonnegative integer less than or equal to 15, or a list
           of such integers
 
         OUTPUT: a binary string representing ``N``
@@ -2070,7 +2070,7 @@ class MiniAES(SageObject):
 
         INPUT:
 
-        - ``N`` -- a nonnegative integer less than or equal to 15, or a list
+        - ``N`` -- nonnegative integer less than or equal to 15, or a list
           of such integers
 
         OUTPUT: elements of the finite field `\GF{2^4}`

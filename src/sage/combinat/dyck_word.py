@@ -384,7 +384,7 @@ class DyckWord(CombinatorialElement):
 
         INPUT:
 
-        - ``D`` -- a dictionary with a list of latex parameters to change
+        - ``D`` -- dictionary with a list of latex parameters to change
 
         EXAMPLES::
 
@@ -674,11 +674,11 @@ class DyckWord(CombinatorialElement):
             south-east steps.
 
         - ``labelling`` -- (if type is "N-E") a list of labels assigned to
-          the up steps in ``self``.
+          the up steps in ``self``
 
-        - ``underpath`` -- (if type is "N-E", default:``True``) If ``True``,
+        - ``underpath`` -- (if type is "N-E", default:``True``) if ``True``,
           the labelling is shown under the path; otherwise, it is shown to
-          the right of the path.
+          the right of the path
 
         EXAMPLES::
 
@@ -1677,7 +1677,7 @@ class DyckWord(CombinatorialElement):
 
         INPUT:
 
-        - ``usemap`` -- a string, either ``'1L0R'``, ``'1R0L'``, ``'L1R0'``,
+        - ``usemap`` -- string, either ``'1L0R'``, ``'1R0L'``, ``'L1R0'``,
           ``'R1L0'``
 
         Other valid ``usemap`` are ``'1R0L'``, ``'L1R0'``, and ``'R1L0'``.
@@ -2728,7 +2728,7 @@ class DyckWord_complete(DyckWord):
         INPUT:
 
         - ``tunnel_type`` -- (default: ``'centered'``) can be one of the
-          following: ``'left'``, ``'right'``, ``'centered'``, or ``'all'``.
+          following: ``'left'``, ``'right'``, ``'centered'``, or ``'all'``
 
         EXAMPLES::
 

@@ -307,10 +307,10 @@ class SageSpoofInOut(SageObject):
     INPUT:
 
     - ``outfile`` -- (default: ``tempfile.TemporaryFile()``) a seekable open file
-      object to which stdout and stderr should be redirected.
+      object to which stdout and stderr should be redirected
 
     - ``infile`` -- (default: ``open(os.devnull)``) an open file object
-      from which stdin should be redirected.
+      from which stdin should be redirected
 
     EXAMPLES::
 
@@ -1068,7 +1068,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
         - ``compiler`` -- a callable that, applied to example,
           produces a code object
 
-        - ``globs`` -- a dictionary in which to execute the code
+        - ``globs`` -- dictionary in which to execute the code
 
         OUTPUT: the output of the compiled code snippet
 
@@ -1339,15 +1339,13 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
         - ``example`` -- a :class:`doctest.Example` instance in ``test``
 
-        - ``got`` -- a string, the result of running ``example``
+        - ``got`` -- string; the result of running ``example``
 
         - ``check_duration`` -- number (default: ``0``); time spent for checking
           the test output
 
-        OUTPUT: prints a report to ``out``
-
-        - if in debugging mode, starts an IPython prompt at the point
-          of the failure
+        OUTPUT: prints a report to ``out``; if in debugging mode, starts an
+        IPython prompt at the point of the failure
 
         EXAMPLES::
 
@@ -1382,9 +1380,9 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
         - ``example`` -- a :class:`doctest.Example` instance in ``test``
 
-        - ``got`` -- a string, the result of running ``example``
+        - ``got`` -- string, the result of running ``example``
 
-        - ``globs`` -- a dictionary of globals, used if in debugging mode
+        - ``globs`` -- dictionary of globals, used if in debugging mode
 
         OUTPUT: prints a report to ``out``
 
@@ -1511,7 +1509,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
         - ``example`` -- a :class:`doctest.Example` instance in ``test``
 
-        - ``got`` -- a string, the result of running ``example``
+        - ``got`` -- string; the result of running ``example``
 
         - ``check_duration`` -- number (default: ``0``); time spent for checking
           the test output
@@ -1638,11 +1636,10 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
         INPUT:
 
-        - ``D`` -- a dictionary to update with cputime and walltime
+        - ``D`` -- dictionary to update with cputime and walltime
 
-        OUTPUT:
-
-        - the number of failures (or False if there is no failure attribute)
+        OUTPUT: the number of failures (or ``False`` if there is no failure
+        attribute)
 
         EXAMPLES::
 
@@ -2539,7 +2536,7 @@ class DocTestTask():
         - ``result_queue`` -- an instance of :class:`multiprocessing.Queue`
           to store the doctest result. For testing, this can also be ``None``
 
-        - ``baseline`` -- a dictionary, the ``baseline_stats`` value
+        - ``baseline`` -- dictionary, the ``baseline_stats`` value
 
         OUTPUT:
 

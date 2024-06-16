@@ -217,7 +217,7 @@ cpdef Integer legendre_phi(x, a):
 
     - ``x`` -- a real number
 
-    - ``a`` -- a nonnegative integer
+    - ``a`` -- nonnegative integer
 
     OUTPUT: integer -- the number of positive integers :math:`\leq` ``x`` that
     are not divisible by the first ``a`` primes

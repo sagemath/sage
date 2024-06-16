@@ -657,7 +657,7 @@ class FullyCommutativeElement(NormalizedClonableList):
 
         INPUT:
 
-        - ``J`` -- a set of two integers representing two noncommuting
+        - ``J`` -- set of two integers representing two noncommuting
           generators of the Coxeter system
 
         - ``direction`` -- string, ``'upper'`` or ``'lower'``; the function

@@ -651,7 +651,7 @@ class MutablePosetShell(SageObject):
 
         INPUT:
 
-        - ``memo`` -- a dictionary which assigns to the id of the
+        - ``memo`` -- dictionary which assigns to the id of the
           calling shell to a copy of it
 
         - ``poset`` -- the poset to which the newly created shells
@@ -864,7 +864,7 @@ class MutablePosetShell(SageObject):
 
         INPUT:
 
-        - ``marked`` -- a set in which marked shells are stored
+        - ``marked`` -- set in which marked shells are stored
 
         - ``reverse`` -- boolean (default: ``False``); if set, reverses the
           order, i.e., ``False`` searches towards ``'oo'`` and
@@ -980,7 +980,7 @@ class MutablePosetShell(SageObject):
 
         INPUT:
 
-        - ``marked`` -- a set in which marked shells are stored
+        - ``marked`` -- set in which marked shells are stored
 
         - ``reverse`` -- boolean (default: ``False``); if set, reverses the
           order, i.e., ``False`` searches towards ``'oo'`` and
@@ -2051,7 +2051,7 @@ class MutablePoset(SageObject):
         INPUT:
 
         - ``element`` -- an object (hashable and supporting comparison
-          with the operator ``<=``).
+          with the operator ``<=``)
 
         OUTPUT: nothing
 
@@ -2217,7 +2217,7 @@ class MutablePoset(SageObject):
         - ``key`` -- the key of an object
 
         - ``raise_key_error`` -- boolean (default: ``True``); switch raising
-          :class:`KeyError` on and off.
+          :class:`KeyError` on and off
 
         OUTPUT: nothing
 
@@ -2395,7 +2395,7 @@ class MutablePoset(SageObject):
         - ``key`` -- the key of an object
 
         - ``raise_key_error`` -- boolean (default: ``False``); switch raising
-          :class:`KeyError` on and off.
+          :class:`KeyError` on and off
 
         OUTPUT: nothing
 

@@ -1147,13 +1147,13 @@ class ImplicitSuffixTree(SageObject):
 
         INPUT:
 
-        - ``n`` -- integer, or ``None``
+        - ``n`` -- integer or ``None``
 
         OUTPUT:
 
-        -  If ``n`` is an integer, returns the number of distinct factors
-           of length ``n``. If ``n`` is ``None``, returns the total number of
-           distinct factors.
+        If ``n`` is an integer, returns the number of distinct factors
+        of length ``n``. If ``n`` is ``None``, returns the total number of
+        distinct factors.
 
         EXAMPLES::
 
@@ -1233,13 +1233,13 @@ class ImplicitSuffixTree(SageObject):
 
         INPUT:
 
-        - ``n`` -- integer, or ``None``
+        - ``n`` -- integer or ``None``
 
         OUTPUT:
 
-        -  If ``n`` is an integer, returns an iterator over all distinct
-           factors of length ``n``. If ``n`` is ``None``, returns an iterator
-           generating all distinct factors.
+        If ``n`` is an integer, returns an iterator over all distinct
+        factors of length ``n``. If ``n`` is ``None``, returns an iterator
+        generating all distinct factors.
 
         EXAMPLES::
 

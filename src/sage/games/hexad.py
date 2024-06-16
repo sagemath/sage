@@ -311,7 +311,7 @@ class Minimog:
 
         INPUT:
 
-        - ``pts`` -- a set of 2 distinct elements of MINIMOG, but not
+        - ``pts`` -- set of 2 distinct elements of MINIMOG, but not
           including the "points at infinity"
 
         OUTPUT:
@@ -355,7 +355,7 @@ class Minimog:
 
         INPUT:
 
-        - ``pts`` -- a set of 5 distinct elements of MINIMOG
+        - ``pts`` -- set of 5 distinct elements of MINIMOG
 
         OUTPUT:
 

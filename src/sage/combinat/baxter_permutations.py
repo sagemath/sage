@@ -25,8 +25,8 @@ class BaxterPermutations(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``n`` -- (default: ``None``) a nonnegative integer, the size of
-      the permutations.
+    - ``n`` -- nonnegative integer (default: ``None``); the size of
+      the permutations
 
     OUTPUT:
 

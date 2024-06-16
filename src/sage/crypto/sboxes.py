@@ -271,7 +271,7 @@ def gold(n, i):
     INPUT:
 
     - ``n`` -- size of the S-Box
-    - ``i`` -- a positive integer
+    - ``i`` -- positive integer
 
     EXAMPLES::
 
@@ -294,7 +294,7 @@ def kasami(n, i):
     INPUT:
 
     - ``n`` -- size of the S-Box
-    - ``i`` -- a positive integer
+    - ``i`` -- positive integer
 
     EXAMPLES::
 

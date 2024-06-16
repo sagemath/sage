@@ -646,8 +646,7 @@ def q_jordan(t, q=None):
 
     INPUT:
 
-    -  ``t`` -- an integer partition, or an argument accepted by
-       :class:`Partition`
+    - ``t`` -- integer partition, or an argument accepted by :class:`Partition`
 
     - ``q`` -- (default: ``None``) the variable `q`; if ``None``, then use a
       default variable in `\ZZ[q]`

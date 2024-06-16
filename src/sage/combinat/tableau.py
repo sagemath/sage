@@ -1263,8 +1263,8 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         INPUT:
 
-        - ``max_entry`` -- a nonnegative integer, the  maximum allowable number in
-          the tableau. Defaults to the largest entry in the tableau if not specified
+        - ``max_entry`` -- nonnegative integer; the maximum allowable number in
+          the tableau (defaults to the largest entry in the tableau if not specified)
 
         EXAMPLES::
 

@@ -199,7 +199,7 @@ class DocTestSource():
         - ``doc`` -- list of lines of a docstring, each including
           the trailing newline
 
-        - ``namespace`` -- a dictionary or
+        - ``namespace`` -- dictionary or
           :class:`sage.doctest.util.RecordingDict`, used in the
           creation of new :class:`doctest.DocTest` s
 
@@ -265,7 +265,7 @@ class DocTestSource():
 
         INPUT:
 
-        - ``namespace`` -- a dictionary or
+        - ``namespace`` -- dictionary or
           :class:`sage.doctest.util.RecordingDict`, used in the
           creation of new :class:`doctest.DocTest` s.
 
@@ -275,7 +275,7 @@ class DocTestSource():
 
         - ``doctests`` -- list of doctests defined by this source
 
-        - ``extras`` -- a dictionary with ``extras['tab']`` either
+        - ``extras`` -- dictionary with ``extras['tab']`` either
           ``False`` or a list of linenumbers on which tabs appear
 
         EXAMPLES::
@@ -387,13 +387,13 @@ class StringDocTestSource(DocTestSource):
     - ``basename`` -- string such as 'sage.doctests.sources', going
       into the names of created doctests and examples
 
-    - ``source`` -- a string, giving the source code to be parsed for
+    - ``source`` -- string, giving the source code to be parsed for
       doctests
 
     - ``options`` -- a :class:`sage.doctest.control.DocTestDefaults`
       or equivalent
 
-    - ``printpath`` -- a string, to be used in place of a filename
+    - ``printpath`` -- string, to be used in place of a filename
       when doctest failures are displayed
 
     - ``lineno_shift`` -- integer (default: 0) by which to shift
@@ -475,7 +475,7 @@ class StringDocTestSource(DocTestSource):
 
         INPUT:
 
-        - ``namespace`` -- a dictionary or :class:`sage.doctest.util.RecordingDict`
+        - ``namespace`` -- dictionary or :class:`sage.doctest.util.RecordingDict`
 
         OUTPUT:
 
@@ -731,13 +731,13 @@ class FileDocTestSource(DocTestSource):
 
         INPUT:
 
-        - ``namespace`` -- a dictionary or :class:`sage.doctest.util.RecordingDict`
+        - ``namespace`` -- dictionary or :class:`sage.doctest.util.RecordingDict`
 
         OUTPUT:
 
         - ``doctests`` -- list of doctests defined in this file
 
-        - ``extras`` -- a dictionary
+        - ``extras`` -- dictionary
 
         EXAMPLES::
 
@@ -1148,7 +1148,7 @@ class PythonSource(SourceLanguage):
 
         INPUT:
 
-        - ``line`` -- a string, one line of an input file
+        - ``line`` -- string, one line of an input file
 
         OUTPUT: an object that, when evaluated in a boolean context, gives
         ``True`` or ``False`` depending on whether the input line marks the
@@ -1265,12 +1265,10 @@ class TexSource(SourceLanguage):
 
         INPUT:
 
-        - ``line`` -- a string, one line of an input file
+        - ``line`` -- string, one line of an input file
 
-        OUTPUT:
-
-        - a boolean giving whether the input line marks the
-          start of a docstring (verbatim block).
+        OUTPUT: a boolean giving whether the input line marks the
+        start of a docstring (verbatim block)
 
         EXAMPLES::
 
@@ -1342,10 +1340,10 @@ class TexSource(SourceLanguage):
 
         INPUT:
 
-        - ``line`` -- a string, one line of an input file
+        - ``line`` -- string, one line of an input file
 
         - ``check_skip`` -- boolean (default: ``True``); used internally in
-          starting_docstring
+          ``starting_docstring``
 
         OUTPUT: boolean; whether the input line marks the end of a docstring
         (verbatim block)

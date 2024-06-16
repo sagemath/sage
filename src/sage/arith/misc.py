@@ -2452,7 +2452,7 @@ def mqrr_rational_reconstruction(u, m, T):
 
 
 def trial_division(n, bound=None):
-    """
+    r"""
     Return the smallest prime divisor less than or equal to ``bound`` of the
     positive integer `n`, or `n` if there is no such prime. If the optional
     argument bound is omitted, then bound `\leq n`.

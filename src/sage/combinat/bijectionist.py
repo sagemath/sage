@@ -564,7 +564,7 @@ class Bijectionist(SageObject):
 
         INPUT:
 
-        - ``P`` -- a set partition of `A`, singletons may be omitted
+        - ``P`` -- set partition of `A`, singletons may be omitted
 
         EXAMPLES:
 
@@ -1447,7 +1447,7 @@ class Bijectionist(SageObject):
 
         INPUT:
 
-        - ``Q`` -- a set partition of ``A``
+        - ``Q`` -- set partition of ``A``
 
         EXAMPLES::
 
@@ -2678,7 +2678,7 @@ class _BijectionistMILP:
 
         INPUT:
 
-        - ``solution`` -- a dictionary from the indices of the MILP to
+        - ``solution`` -- dictionary from the indices of the MILP to
           a boolean
 
         EXAMPLES::
@@ -3035,7 +3035,7 @@ def _invert_dict(d):
 
     INPUT:
 
-    - ``d`` -- a dict
+    - ``d`` -- dictionary
 
     EXAMPLES::
 

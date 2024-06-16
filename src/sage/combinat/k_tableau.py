@@ -4094,7 +4094,7 @@ class StrongTableaux(UniqueRepresentation, Parent):
         INPUT:
 
         - ``unmarkedT`` -- list of lists representing a strong unmarked tableau
-        - ``k`` -- a positive integer
+        - ``k`` -- positive integer
         - ``weight`` -- list of nonnegative integers indicating the weight
 
         OUTPUT: an iterator that returns ``StrongTableau`` objects
@@ -4195,7 +4195,7 @@ class StrongTableaux(UniqueRepresentation, Parent):
         - ``Tlist`` -- a partial standard strong `k`-tableau as a list of lists
         - ``tij`` -- a pair of integers representing a transposition
         - ``v`` -- the label to add to the tableau
-        - ``k`` -- a positive integer
+        - ``k`` -- positive integer
 
         OUTPUT: list of lists, in particular, it is ``Tlist``
 
@@ -4289,8 +4289,8 @@ class StrongTableaux(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``k`` -- a positive integer
-        - ``size`` -- a positive integer
+        - ``k`` -- positive integer
+        - ``size`` -- positive integer
         - ``outer_shape`` -- list which is a `k+1`-core (default: ``None``)
         - ``inner_shape`` -- list which is a `k+1`-core (default: ``[]``)
 
@@ -4394,7 +4394,7 @@ class StrongTableaux(UniqueRepresentation, Parent):
         INPUT:
 
         - ``T`` -- a non-empty column strict tableau as a list of lists
-        - ``k`` -- a positive integer
+        - ``k`` -- positive integer
 
         OUTPUT: list of pairs of values ``[i,j]`` representing the transpositions `t_{ij}`
 

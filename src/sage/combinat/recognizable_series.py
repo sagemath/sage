@@ -1555,7 +1555,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
 
     - ``coefficient_ring`` -- a (semi-)ring
 
-    - ``alphabet`` -- a tuple, list or
+    - ``alphabet`` -- tuple, list or
       :class:`~sage.sets.totally_ordered_finite_set.TotallyOrderedFiniteSet`.
       If specified, then the ``indices`` are the
       finite words over this ``alphabet``.

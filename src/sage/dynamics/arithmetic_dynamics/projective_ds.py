@@ -522,7 +522,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         INPUT:
 
-        - ``n`` -- a tuple of nonnegative integers; if ``n`` is an integer,
+        - ``n`` -- tuple of nonnegative integers; if ``n`` is an integer,
           then the two values of the tuple are assumed to be the same
 
         OUTPUT:
@@ -594,7 +594,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         INPUT:
 
-        - ``period`` -- a positive integer or a list/tuple `[m,n]` where
+        - ``period`` -- positive integer or a list/tuple `[m,n]` where
           `m` is the preperiod and `n` is the period
 
         OUTPUT:
@@ -1005,7 +1005,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         - ``P`` -- a point in this map's domain
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         kwds:
 
@@ -1143,8 +1143,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         kwds:
 
-        - ``n`` -- (default: 5) a positive integer
-          Order of periodic points to use or preimages to take if starting points are specified.
+        - ``n`` -- positive integer (default: 5); order of periodic points to
+          use or preimages to take if starting points are specified
 
         - ``f_starting_point`` -- (default: ``None``) value in the base number field or None.
           If ``f_starting_point`` is None, we solve for points of period ``n`` for ``self``.
@@ -1517,7 +1517,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         - ``P`` -- a point in this dynamical system's domain
 
-        - ``n`` -- a nonnegative integer or list or tuple of two
+        - ``n`` -- nonnegative integer or list or tuple of two
           nonnegative integers
 
         kwds:
@@ -2496,7 +2496,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         - ``P`` -- a point on domain of this map
 
-        - ``n`` -- a positive integer, the period of ``P``
+        - ``n`` -- positive integer, the period of ``P``
 
         - ``check`` -- boolean (default: ``True``); verify that ``P``
           has period ``n``
@@ -2597,11 +2597,11 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         - ``P`` -- a point on domain of this map
 
-        - ``n`` -- a positive integer, the period of ``P``
+        - ``n`` -- positive integer, the period of ``P``
 
-        - ``p`` -- a positive integer
+        - ``p`` -- positive integer
 
-        - ``k`` -- a positive integer
+        - ``k`` -- positive integer
 
         OUTPUT:
 
@@ -2726,7 +2726,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         - ``Q`` -- a point in the domain of this map
 
-        - ``n`` -- a positive integer, the depth of the pre-image tree
+        - ``n`` -- positive integer, the depth of the pre-image tree
 
         kwds:
 
@@ -2754,7 +2754,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
           `n`-th-preimage equation into `\CC`. We make the choice of the first
           embedding returned by ``field_def.embeddings(ComplexField())``.
 
-        - ``digits`` -- a positive integer; the number of decimal digits to
+        - ``digits`` -- positive integer; the number of decimal digits to
           display for complex numbers. This only applies if ``display_complex``
           is set to ``True``.
 
@@ -2867,7 +2867,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         kwds:
 
         - ``prime_bound`` --  (default: ``[1, 20]``) a list or tuple of
-           two positive integers or an integer for the upper bound
+          two positive integers or an integer for the upper bound
 
         - ``bad_primes`` -- (optional) a list or tuple of integer primes,
           the primes of bad reduction
@@ -3577,7 +3577,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         The following keywords are used in most cases:
 
         - ``num_cpus`` -- (default: 2) the number of threads to use. Setting to a
-          larger number can greatly speed up this function.
+          larger number can greatly speed up this function
 
         The following keywords are used only when the dimension of the domain is 1 and
         the base ring is the rationals, but ignored in all other cases:
@@ -4312,9 +4312,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         INPUT:
 
-        - ``n`` -- a positive integer; the period
+        - ``n`` -- positive integer; the period
 
-        - ``m`` -- a nonnegative integer; the preperiod
+        - ``m`` -- nonnegative integer; the preperiod
 
         kwds:
 
@@ -4655,7 +4655,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         - ``minimal`` -- boolean (default: ``True``); ``True`` specifies to
           find only the periodic points of minimal period ``n`` and ``False``
@@ -4666,7 +4666,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
           are the points in the support of the dynatomic cycle.
 
         - ``R`` -- (optional) a commutative ring. Defaults to the base ring of
-          this map.
+          this map
 
         - ``algorithm`` -- (default: ``'variety'``) must be one of
           the following:
@@ -5007,7 +5007,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         INPUT:
 
-        - ``n`` -- a positive integer, the period
+        - ``n`` -- positive integer, the period
 
         - ``formal`` -- boolean (default: ``False``); ``True`` specifies
           to find the formal ``n`` multiplier spectra of this map and
@@ -5448,7 +5448,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         are 4 cases:
 
         - multipliers and ``n`` periodic points all distinct -- in this case,
-          we can use Proposition 4.1 of [Hutz2019]_ to compute the sigma invariants.
+          we can use Proposition 4.1 of [Hutz2019]_ to compute the sigma invariants
 
         - ``n`` -- periodic points are all distinct, multipliers are repeated; here we
           can use Proposition 4.2 of [Hutz2019]_ to compute the sigma invariants.
@@ -5469,7 +5469,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         INPUT:
 
-        - ``n`` -- a positive integer, the period
+        - ``n`` -- positive integer, the period
 
         - ``formal`` -- boolean (default: ``False``); ``True`` specifies
           to find the values of the elementary symmetric polynomials
@@ -5479,7 +5479,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
           periodic points of period ``n``
 
         - ``embedding`` -- (default: ``None``) must be ``None``, passing an embedding
-          is no longer supported, see :issue: `32205`.
+          is no longer supported, see :issue: `32205`
 
         - ``type`` -- (default: ``'point'``) string; either ``'point'``
           or ``'cycle'`` depending on whether you compute with one
@@ -7795,8 +7795,8 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
 
         - ``R`` -- a field or embedding
 
-        - ``num_cpus`` -- (default: 2) the number of threads to run in parallel.
-          Increasing ``num_cpus`` can potentially greatly speed up this function.
+        - ``num_cpus`` -- (default: 2) the number of threads to run in parallel;
+          increasing ``num_cpus`` can potentially greatly speed up this function
 
         OUTPUT: set of conjugating `n+1` by `n+1` matrices
 
@@ -8048,8 +8048,8 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
 
         - ``R`` -- a field or embedding
 
-        - ``num_cpus`` -- (default: 2) the number of threads to run in parallel.
-          Increasing ``num_cpus`` can potentially greatly speed up this function.
+        - ``num_cpus`` -- (default: 2) the number of threads to run in parallel;
+          increasing ``num_cpus`` can potentially greatly speed up this function
 
         OUTPUT: boolean
 
@@ -9183,8 +9183,8 @@ class DynamicalSystem_projective_finite_field(DynamicalSystem_projective_field,
         The following keywords are used when the dimension of the domain
         is greater than 1:
 
-        - ``num_cpus`` -- (default: 2) the number of threads to use. Setting to a
-          larger number can greatly speed up this function.
+        - ``num_cpus`` -- (default: 2) the number of threads to use; setting to a
+          larger number can greatly speed up this function
 
         The following keywords are used when the dimension of the domain is 1:
 

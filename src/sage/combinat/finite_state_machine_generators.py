@@ -521,7 +521,7 @@ class TransducerGenerators:
 
         - ``input_alphabet`` -- list or other iterable
 
-        - ``threshold`` -- a positive integer specifying how many
+        - ``threshold`` -- positive integer specifying how many
           occurrences of ``True`` inputs are waited for
 
         OUTPUT:

@@ -806,7 +806,7 @@ def _generating_functions_from_dict(gfs, style):
 
     INPUT:
 
-    - ``gfs`` -- a dictionary whose keys are the levels and whose values
+    - ``gfs`` -- dictionary whose keys are the levels and whose values
       are dictionaries from values to multiplicities
 
     - ``style`` -- one of ``'dictionary'``, ``'list'`` or
@@ -1401,7 +1401,7 @@ class FindStatFunction(SageObject):
         - ``data``, a dictionary with "Description", "Code", etc.
 
         - ``function`` -- (optional), a callable implementing the
-          statistic or map, or ``None``.
+          statistic or map, or ``None``
 
         ``data`` should be provided if and only if ``id`` refers to a
         new statistic or map (with identifier 0).
@@ -1626,7 +1626,7 @@ class FindStatFunction(SageObject):
         INPUT:
 
         - a string -- for statistics, this is the name of the
-          statistic followed by its description on a separate line.
+          statistic followed by its description on a separate line
 
         This information is used when submitting the statistic or map with
         :meth:`submit`.
@@ -1720,7 +1720,7 @@ class FindStatFunction(SageObject):
         INPUT:
 
         - a string -- each reference should be on a single line, and
-          consist of one or more links to the same item.
+          consist of one or more links to the same item
 
         FindStat will automatically resolve the links, if possible.
         A complete list of supported services can be found at
@@ -1769,7 +1769,7 @@ class FindStatFunction(SageObject):
 
         INPUT:
 
-        - a string -- SageMath code producing the values of the statistic or map.
+        - a string -- SageMath code producing the values of the statistic or map
 
         Contributors are encouraged to submit code for statistics
         using :meth:`FindStatStatistic.set_code`.  Modifying the
@@ -2125,7 +2125,7 @@ class FindStatStatistic(Element,
 
         - ``parent`` -- :class:`FindStatStatistics`
 
-        - ``id`` -- the (padded) FindStat identifier of the statistic.
+        - ``id`` -- the (padded) FindStat identifier of the statistic
 
         EXAMPLES::
 
@@ -2301,7 +2301,7 @@ class FindStatStatistic(Element,
 
         INPUT:
 
-        - a string -- code producing the values of the statistic.
+        - a string -- code producing the values of the statistic
 
         Contributors are encouraged to submit SageMath code in the form::
 
@@ -2434,7 +2434,7 @@ class FindStatStatistics(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``id`` -- a string containing the FindStat identifier of
+        - ``id`` -- string containing the FindStat identifier of
           the statistic, or the corresponding integer
 
         EXAMPLES::
@@ -3274,7 +3274,7 @@ class FindStatMap(Element,
 
         INPUT:
 
-        - a string -- the new name of the map.
+        - a string -- the new name of the map
 
         This information is used when submitting the map with
         :meth:`submit`.
@@ -3369,7 +3369,7 @@ class FindStatMaps(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``id`` -- a string containing the FindStat identifier of
+        - ``id`` -- string containing the FindStat identifier of
           the map, or an integer giving its id
 
         EXAMPLES::
@@ -3600,7 +3600,7 @@ class FindStatMapQuery(FindStatMap):
 
     def __getitem__(self, i):
         """
-        Return the i-th result in the query.
+        Return the `i`-th result in the query.
 
         EXAMPLES::
 
@@ -3728,7 +3728,7 @@ class FindStatCompoundMap(Element, FindStatCombinatorialMap):
 
     def __getitem__(self, i):
         """
-        Return the i-th map in the compound map.
+        Return the `i`-th map in the compound map.
 
         EXAMPLES::
 
@@ -4074,9 +4074,9 @@ class FindStatCollection(Element,
 
         - ``parent`` -- :class:`FindStatCollections`
 
-        - ``id`` -- the (padded) FindStat identifier of the collection.
+        - ``id`` -- the (padded) FindStat identifier of the collection
 
-        - ``data`` -- a dictionary containing the properties of the
+        - ``data`` -- dictionary containing the properties of the
           collection, such as its name, the corresponding class in
           sage, and so on.
 

@@ -239,10 +239,10 @@ class AttributeAccessTracerProxy():
         - ``delegate`` -- the actual object to be proxied
 
         - ``prefix`` -- (default: ``"  "``)
-          string to prepend to each printed output.
+          string to prepend to each printed output
 
         - ``reads`` -- (default: ``True``)
-          whether to trace read access as well.
+          whether to trace read access as well
 
         EXAMPLES::
 
@@ -335,10 +335,10 @@ def trace_method(obj, meth, **kwds):
     - ``meth`` -- the name of the method to be traced
 
     - ``prefix`` -- (default: ``"  "``)
-      string to prepend to each printed output.
+      string to prepend to each printed output
 
     - ``reads`` -- (default: ``True``)
-      whether to trace read access as well.
+      whether to trace read access as well
 
     EXAMPLES::
 

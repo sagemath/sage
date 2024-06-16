@@ -5631,7 +5631,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         - ``other`` -- a poset
 
-        - ``labels`` -- string (default: 'pairs'); if set to 'pairs', each
+        - ``labels`` -- string (default: ``'pairs'``); if set to 'pairs', each
           element ``v`` in this poset will be named ``(0, v)`` and each
           element ``u`` in ``other`` will be named ``(1, u)`` in the
           result. If set to 'integers', the elements of the result

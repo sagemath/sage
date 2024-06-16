@@ -1680,16 +1680,14 @@ def perms_canonical_labels(p, e=None):
 
     INPUT:
 
-    - ``p`` -- a list of at least 2 permutations
+    - ``p`` -- list of at least 2 permutations
 
-    - ``e`` -- None or a list of integer in the domain of the
+    - ``e`` -- ``None`` or a list of integer in the domain of the
       permutations. If provided, then the renumbering algorithm is
       only performed from the elements of ``e``.
 
-    OUTPUT:
-
-    - a pair made of a list of permutations (as a list of lists) and a
-      list that corresponds to the conjugacy used.
+    OUTPUT: a pair made of a list of permutations (as a list of lists) and a
+    list that corresponds to the conjugacy used.
 
     EXAMPLES::
 

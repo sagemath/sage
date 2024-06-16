@@ -750,8 +750,8 @@ connection to a server running Maple; for hints, type
 
         INPUT:
 
-        -  ``s`` -- a string representing the function whose
-           source code you want
+        - ``s`` -- string representing the function whose
+          source code you want
 
         EXAMPLES::
 
@@ -783,8 +783,8 @@ connection to a server running Maple; for hints, type
 
         INPUT:
 
-        -  ``string`` -- a string to search for in the maple help
-           system
+        - ``string`` -- string to search for in the maple help
+          system
 
         EXAMPLES::
 
@@ -800,7 +800,7 @@ connection to a server running Maple; for hints, type
 
         INPUT:
 
-        -  ``package`` -- string
+        - ``package`` -- string
 
         EXAMPLES: Some functions are unknown to Maple until you use with to
         include the appropriate package.
@@ -1100,11 +1100,11 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
 
     def op(self, i=None):
         """
-        Return the i-th operand of this expression.
+        Return the `i`-th operand of this expression.
 
         INPUT:
 
-        - ``i`` -- an integer or ``None``
+        - ``i`` -- integer or ``None``
 
         EXAMPLES::
 
@@ -1370,6 +1370,8 @@ def __doctest_cleanup():
     """
     import sage.interfaces.quit
     sage.interfaces.quit.expect_quitall()
+
+
 """
 The following only works in Maple >= 9, I guess, but could
 be useful.

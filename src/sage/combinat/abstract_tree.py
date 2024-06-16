@@ -737,7 +737,7 @@ class AbstractTree:
 
         INPUT:
 
-        - ``depth`` -- an integer
+        - ``depth`` -- integer
         - ``path`` -- optional given path (as a list) used in the recursion
 
         .. WARNING::
@@ -790,7 +790,7 @@ class AbstractTree:
 
         INPUT:
 
-        - ``depth`` -- an integer
+        - ``depth`` -- integer
 
         .. SEEALSO::
 

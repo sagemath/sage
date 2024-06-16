@@ -99,7 +99,7 @@ def ascii_to_bin(A):
 
     INPUT:
 
-    - ``A`` -- a string or list of ASCII characters
+    - ``A`` -- string or list of ASCII characters
 
     OUTPUT: the binary representation of ``A``
 
@@ -392,7 +392,7 @@ def least_significant_bits(n, k):
 
     - ``n`` -- integer
 
-    - ``k`` -- a positive integer
+    - ``k`` -- positive integer
 
     OUTPUT:
 

@@ -2947,7 +2947,7 @@ class Partition(CombinatorialElement):
 
         INPUT:
 
-        - ``e`` -- a nonnegative integer; `0` is considered as `\infty`
+        - ``e`` -- nonnegative integer; `0` is considered as `\infty`
           (analogous to the characteristic of a ring)
         - ``ladder_sizes`` -- boolean (default: ``False``); if ``True``, also
           return the sizes of the ladders
@@ -3009,7 +3009,7 @@ class Partition(CombinatorialElement):
 
         INPUT:
 
-        - ``e`` -- a nonnegative integer; if ``0``, then we
+        - ``e`` -- nonnegative integer; if ``0``, then we
           set ``e = self.size() + 1``
 
         EXAMPLES::
@@ -3175,7 +3175,7 @@ class Partition(CombinatorialElement):
 
         INPUT:
 
-        - ``p`` -- a prime integer
+        - ``p`` -- prime integer
 
         OUTPUT: nonnegative integer
 
@@ -4673,7 +4673,7 @@ class Partition(CombinatorialElement):
 
         INPUT:
 
-        - ``k`` -- a nonnegative integer
+        - ``k`` -- nonnegative integer
 
         OUTPUT: a partition
 
@@ -5348,7 +5348,7 @@ class Partition(CombinatorialElement):
 
         - ``smaller`` -- a partition (default: an empty list ``[]``)
 
-        - ``k`` -- a positive integer (default: 1)
+        - ``k`` -- positive integer (default: 1)
 
         OUTPUT: the number of such paths
 
@@ -7010,15 +7010,15 @@ class Partitions_n(Partitions):
 
         ALGORITHM:
 
-         - It is a python Implementation of RANDPAR, see [NW1978]_.  The
-           complexity is unknown, there may be better algorithms.
+        - It is a python Implementation of RANDPAR, see [NW1978]_.  The
+          complexity is unknown, there may be better algorithms.
 
            .. TODO::
 
                Check in Knuth AOCP4.
 
-         - There is also certainly a lot of room for optimizations, see
-           comments in the code.
+        - There is also certainly a lot of room for optimizations, see
+          comments in the code.
 
         AUTHOR:
 
@@ -9243,15 +9243,15 @@ def number_of_partitions(n, algorithm='default'):
 
     INPUT:
 
-    -  ``n`` -- an integer
+    - ``n`` -- integer
 
-    -  ``algorithm`` -- (default: ``'default'``)
+    - ``algorithm`` -- (default: ``'default'``)
        [Will be deprecated except in Partition().cardinality() ]
 
-       -  ``'default'`` -- if ``k`` is not ``None``, then use Gap (very slow);
+       - ``'default'`` -- if ``k`` is not ``None``, then use Gap (very slow);
           if  ``k`` is ``None``, use FLINT
 
-       -  ``'flint'`` -- use FLINT
+       - ``'flint'`` -- use FLINT
 
     EXAMPLES::
 

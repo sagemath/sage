@@ -208,7 +208,7 @@ cpdef dict negate(dict D):
 
     INPUT:
 
-    - ``X`` -- a dictionary representing a vector `X`
+    - ``X`` -- dictionary representing a vector `X`
 
     EXAMPLES::
 
@@ -226,7 +226,7 @@ cpdef dict scal(a, dict D, bint factor_on_left=True):
     INPUT:
 
     - ``a`` -- an element of the base ring `K`
-    - ``X`` -- a dictionary representing a vector `X`
+    - ``X`` -- dictionary representing a vector `X`
 
     EXAMPLES::
 

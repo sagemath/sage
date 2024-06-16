@@ -3148,7 +3148,7 @@ def _to_minimaj_blocks(T):
 
     INPUT:
 
-    - ``T`` -- a sequence of row words corresponding to (skew-)tableaux.
+    - ``T`` -- a sequence of row words corresponding to (skew-)tableaux
 
     OUTPUT:
 

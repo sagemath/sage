@@ -1302,7 +1302,7 @@ class SimplifiedDES(SageObject):
 
         INPUT:
 
-        - ``S`` -- a string of bits
+        - ``S`` -- string of bits
 
         OUTPUT: list representation of the string ``S``
 

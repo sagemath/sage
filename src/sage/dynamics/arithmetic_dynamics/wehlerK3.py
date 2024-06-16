@@ -995,7 +995,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         Checks to confirm that all of the 2x2 minors of the Jacobian generated from
         the biquadratic and bilinear forms have no common vanishing points.
 
-        OUTPUT:  Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -2288,7 +2288,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``P`` -- point on the K3 surface
 
-        - ``N`` -- a nonnegative integer or list or tuple of two nonnegative integers
+        - ``N`` -- nonnegative integer or list or tuple of two nonnegative integers
 
         kwds:
 
@@ -2347,7 +2347,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``P`` -- a point on the K3 surface
 
-        - ``N`` -- a nonnegative integer or list or tuple of two nonnegative integers
+        - ``N`` -- nonnegative integer or list or tuple of two nonnegative integers
 
         kwds:
 

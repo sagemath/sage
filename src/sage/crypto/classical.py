@@ -258,9 +258,9 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``A`` -- a string monoid over some alphabet; this is the non-empty
+        - ``A`` -- string monoid over some alphabet; this is the non-empty
           alphabet over which the plaintext and ciphertext spaces
-          are defined.
+          are defined
 
         OUTPUT: an affine cryptosystem over the alphabet ``A``
 
@@ -430,7 +430,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
           must be encoded using the upper-case letters of the English
           alphabet.
 
-        - ``pdict`` -- a dictionary of key, possible plaintext
+        - ``pdict`` -- dictionary of key, possible plaintext
           pairs. This should be the output of :func:`brute_force` with
           ``ranking="none"``.
 
@@ -639,7 +639,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
           must be encoded using the upper-case letters of the English
           alphabet.
 
-        - ``pdict`` -- a dictionary of key, possible plaintext
+        - ``pdict`` -- dictionary of key, possible plaintext
           pairs. This should be the output of :func:`brute_force` with
           ``ranking="none"``.
 
@@ -985,7 +985,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
           `\ZZ/n\ZZ \times \ZZ/n\ZZ` such that `\gcd(a,n) = 1` with `n`
           being the size of the ciphertext and plaintext spaces.
 
-        - ``C`` -- a string of ciphertext; possibly an empty string.
+        - ``C`` -- string of ciphertext; possibly an empty string.
           Characters in this string must be encoded using one of the
           supported alphabets. See the method :func:`encoding()` for more
           information.
@@ -1057,7 +1057,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
           `\ZZ/n\ZZ \times \ZZ/n\ZZ` such that `\gcd(a,n) = 1` with `n`
           being the size of the ciphertext and plaintext spaces.
 
-        - ``P`` -- a string of plaintext; possibly an empty string.
+        - ``P`` -- string of plaintext; possibly an empty string.
           Characters in this string must be encoded using one of the
           supported alphabets. See the method :func:`encoding()` for more
           information.
@@ -1123,7 +1123,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``S`` -- a string, possibly empty
+        - ``S`` -- string, possibly empty
 
         OUTPUT: the encoding of ``S`` over the string monoid of this
         cryptosystem; if ``S`` is an empty string, return an empty string
@@ -1287,7 +1287,7 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
 
     INPUT:
 
-    - ``S`` -- a string monoid over some alphabet
+    - ``S`` -- string monoid over some alphabet
 
     - ``m`` -- integer `> 0`; the block length of matrices that specify
       block permutations
@@ -1329,7 +1329,7 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``S`` -- a string monoid over some alphabet
+        - ``S`` -- string monoid over some alphabet
 
         - ``m`` -- integer `> 0`; the block length of matrices that specify
           block permutations
@@ -1501,7 +1501,7 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``M`` -- a string, possibly empty
+        - ``M`` -- string, possibly empty
 
         OUTPUT: the encoding of ``M`` over the string monoid of this Hill
         cipher
@@ -1530,7 +1530,7 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
 
         - ``A`` -- a key within the key space of this Hill cipher
 
-        - ``C`` -- a string (possibly empty) over the string monoid of this
+        - ``C`` -- string (possibly empty) over the string monoid of this
           Hill cipher
 
         OUTPUT: the plaintext corresponding to the ciphertext ``C``
@@ -1556,8 +1556,8 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
 
         - ``A`` -- a key within the key space of this Hill cipher
 
-        - ``M`` -- a string (possibly empty) over the string monoid of this
-          Hill cipher.
+        - ``M`` -- string (possibly empty) over the string monoid of this
+          Hill cipher
 
         OUTPUT: the ciphertext corresponding to the plaintext ``M``
 
@@ -1791,9 +1791,9 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``A`` -- a string monoid over some alphabet; this is the non-empty
+        - ``A`` -- string monoid over some alphabet; this is the non-empty
           alphabet over which the plaintext and ciphertext spaces
-          are defined.
+          are defined
 
         OUTPUT: a shift cryptosystem over the alphabet ``A``
 
@@ -1995,7 +1995,7 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
           must be encoded using the upper-case letters of the English
           alphabet.
 
-        - ``pdict`` -- a dictionary of key, possible plaintext pairs.
+        - ``pdict`` -- dictionary of key, possible plaintext pairs.
           This should be the output of :func:`brute_force` with
           ``ranking="none"``.
 
@@ -2232,7 +2232,7 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
           must be encoded using the upper-case letters of the English
           alphabet.
 
-        - ``pdict`` -- a dictionary of key, possible plaintext pairs.
+        - ``pdict`` -- dictionary of key, possible plaintext pairs.
           This should be the output of :func:`brute_force` with
           ``ranking="none"``.
 
@@ -2640,7 +2640,7 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
           shift cipher. This key is an integer `k` satisfying the inequality
           `0 \leq k < n`, where `n` is the size of the cipher domain.
 
-        - ``C`` -- a string of ciphertext; possibly an empty string
+        - ``C`` -- string of ciphertext; possibly an empty string
           Characters in this string must be encoded using one of the
           supported alphabets. See the method :func:`encoding()`
           for more information.
@@ -2697,7 +2697,7 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
           This key is an integer `k` satisfying the inequality
           `0 \leq k < n`, where `n` is the size of the cipher domain.
 
-        - ``P`` -- a string of plaintext; possibly an empty string.
+        - ``P`` -- string of plaintext; possibly an empty string.
           Characters in this string must be encoded using one of the
           supported alphabets. See the method :func:`encoding()` for more
           information.
@@ -2759,7 +2759,7 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``S`` -- a string, possibly empty
+        - ``S`` -- string, possibly empty
 
         OUTPUT: the encoding of ``S`` over the string monoid of this
         cryptosystem; if ``S`` is an empty string, return an empty string
@@ -2975,7 +2975,7 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
 
     INPUT:
 
-    - ``S`` -- a string monoid over some alphabet
+    - ``S`` -- string monoid over some alphabet
 
     OUTPUT: a substitution cryptosystem over the alphabet ``S``
 
@@ -3124,7 +3124,7 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``M`` -- a string, possibly empty
+        - ``M`` -- string, possibly empty
 
         OUTPUT: the encoding of ``M`` over the string monoid of this
         cryptosystem
@@ -3153,7 +3153,7 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
 
         - ``K`` -- a key belonging to the key space of this substitution cipher
 
-        - ``C`` -- a string (possibly empty) over the string monoid of this
+        - ``C`` -- string (possibly empty) over the string monoid of this
           cryptosystem
 
         OUTPUT: the plaintext corresponding to the ciphertext ``C``
@@ -3177,8 +3177,8 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
 
         - ``K`` -- a key belonging to the key space of this substitution cipher
 
-        - ``M`` -- a string (possibly empty) over the string monoid of this
-          cryptosystem.
+        - ``M`` -- string (possibly empty) over the string monoid of this
+          cryptosystem
 
         OUTPUT: the ciphertext corresponding to the plaintext ``M``
 
@@ -3199,7 +3199,7 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
 
     INPUT:
 
-    - ``S`` -- a string monoid over some alphabet
+    - ``S`` -- string monoid over some alphabet
 
     - ``n`` -- integer `> 0`; a block length of a block permutation
 
@@ -3356,7 +3356,7 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``M`` -- a string, possibly empty
+        - ``M`` -- string, possibly empty
 
         OUTPUT: the encoding of ``M`` over the string monoid of this
         cryptosystem
@@ -3386,8 +3386,8 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
         - ``K`` -- a key belonging to the key space of this transposition
           cipher
 
-        - ``C`` -- a string (possibly empty) over the string monoid of this
-          cryptosystem.
+        - ``C`` -- string (possibly empty) over the string monoid of this
+          cryptosystem
 
         OUTPUT: the plaintext corresponding to the ciphertext ``C``
 
@@ -3412,7 +3412,7 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
         - ``K`` -- a key belonging to the key space of this transposition
           cipher
 
-        - ``M`` -- a string (possibly empty) over the string monoid of this
+        - ``M`` -- string (possibly empty) over the string monoid of this
           cryptosystem
 
         OUTPUT: the ciphertext corresponding to the plaintext ``M``
@@ -3436,7 +3436,7 @@ class VigenereCryptosystem(SymmetricKeyCryptosystem):
 
     INPUT:
 
-    - ``S`` -- a string monoid over some alphabet
+    - ``S`` -- string monoid over some alphabet
 
     - ``n`` -- integer `> 0`; block length of an encryption/decryption key
 
@@ -3593,7 +3593,7 @@ class VigenereCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``M`` -- a string, possibly empty
+        - ``M`` -- string, possibly empty
 
         OUTPUT: the encoding of ``M`` over the string monoid of this
         cryptosystem
@@ -3622,7 +3622,7 @@ class VigenereCryptosystem(SymmetricKeyCryptosystem):
 
         - ``K`` -- a key belonging to the key space of this Vigenere cipher
 
-        - ``C`` -- a string (possibly empty) over the string monoid of this
+        - ``C`` -- string (possibly empty) over the string monoid of this
           cryptosystem
 
         OUTPUT: the plaintext corresponding to the ciphertext ``C``
@@ -3646,7 +3646,7 @@ class VigenereCryptosystem(SymmetricKeyCryptosystem):
 
         - ``K`` -- a key belonging to the key space of this Vigenere cipher
 
-        - ``M`` -- a string (possibly empty) over the string monoid of this
+        - ``M`` -- string (possibly empty) over the string monoid of this
           cryptosystem
 
         OUTPUT: the ciphertext corresponding to the plaintext ``M``

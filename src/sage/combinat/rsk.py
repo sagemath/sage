@@ -347,7 +347,7 @@ class Rule(UniqueRepresentation):
 
         INPUT:
 
-        - ``p``, ``q`` -- two tableaux of the same shape.
+        - ``p``, ``q`` -- two tableaux of the same shape
 
         - ``output`` -- (default: ``'array'``) if ``q`` is semi-standard:
 
@@ -953,7 +953,7 @@ class RuleHecke(Rule):
 
         - ``p``, ``q`` -- two tableaux of the same shape
 
-        -  ``output`` -- (default: ``'array'``) if ``q`` is semi-standard:
+        - ``output`` -- (default: ``'array'``) if ``q`` is semi-standard:
 
           - ``'array'`` -- as a two-line array (i.e. generalized permutation
             or biword)

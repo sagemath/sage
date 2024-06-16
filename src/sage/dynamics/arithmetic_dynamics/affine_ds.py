@@ -353,7 +353,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
 
         INPUT:
 
-        - ``n`` -- a tuple of nonnegative integers; if `n` is an integer,
+        - ``n`` -- tuple of nonnegative integers; if `n` is an integer,
           then the two values of the tuple are assumed to be the same
 
         OUTPUT: :class:`DynamicalSystem_projective`
@@ -434,7 +434,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
 
         INPUT:
 
-        - ``period`` -- a positive integer or a list/tuple `[m,n]`,
+        - ``period`` -- positive integer or a list/tuple `[m,n]`,
           where `m` is the preperiod and `n` is the period
 
         OUTPUT:
@@ -559,7 +559,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         OUTPUT: a dynamical system of affine space
 
@@ -624,7 +624,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
 
         - ``P`` -- a point in the map's domain
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         OUTPUT: a point in the map's codomain
 
@@ -682,7 +682,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
 
         - ``P`` -- a point in the map's domain
 
-        - ``n`` -- a nonnegative integer or list or tuple of
+        - ``n`` -- nonnegative integer or list or tuple of
           two nonnegative integers
 
         OUTPUT: list of points in the map's codomain
@@ -742,7 +742,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
 
         - ``P`` -- a point on domain of the map
 
-        - ``n`` -- a positive integer, the period of `P`
+        - ``n`` -- positive integer, the period of `P`
 
         - ``check`` -- boolean (default: ``True``); verify that `P`
           has period `n`

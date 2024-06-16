@@ -239,7 +239,7 @@ cpdef getattr_from_other_class(self, cls, name):
 
     - ``cls`` -- a new-style class
 
-    - ``name`` -- a string
+    - ``name`` -- string
 
     If ``self`` is an instance of cls, raises an :class:`AttributeError`, to
     avoid a double lookup. This function is intended to be called from

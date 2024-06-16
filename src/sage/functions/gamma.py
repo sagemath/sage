@@ -1005,9 +1005,9 @@ class Function_beta(GinacFunction):
 
         INPUT:
 
-        -  ``p`` -- number or symbolic expression
+        - ``p`` -- number or symbolic expression
 
-        -  ``q`` -- number or symbolic expression
+        - ``q`` -- number or symbolic expression
 
         OUTPUT: number or symbolic expression (if input is symbolic)
 

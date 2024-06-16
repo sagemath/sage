@@ -581,13 +581,13 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
 
     - ``n`` -- the width or depth of the array, also known as the rank
 
-    - ``k`` -- (default: ``None``) If specified, this is the maximum value that
+    - ``k`` -- (default: ``None``) if specified, this is the maximum value that
       can occur in the patterns
 
-    - ``top_row`` -- (default: ``None``) If specified, this is the fixed top
+    - ``top_row`` -- (default: ``None``) if specified, this is the fixed top
       row of all patterns
 
-    - ``strict`` -- (default: ``False``) Set to ``True`` if all patterns are
+    - ``strict`` -- (default: ``False``) set to ``True`` if all patterns are
       strict patterns
 
     TESTS:

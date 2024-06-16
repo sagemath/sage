@@ -251,7 +251,7 @@ def primitives(n, invertible=False, q=None):
 
     INPUT:
 
-    - ``n`` -- a positive integer
+    - ``n`` -- positive integer
 
     - ``invertible`` -- boolean; if set, only number of nonzero classes is returned
 
@@ -288,7 +288,7 @@ def order_of_general_linear_group(n, q=None):
 
     INPUT:
 
-    - ``n`` -- a nonnegative integer
+    - ``n`` -- nonnegative integer
 
     - ``q`` -- integer or an indeterminate
 
@@ -629,7 +629,7 @@ class PrimarySimilarityClassTypes(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``n`` -- a positive integer
+    - ``n`` -- positive integer
     - ``min`` -- a primary matrix type of size ``n``
 
     EXAMPLES:

@@ -32,9 +32,9 @@ class SpikeFunction:
 
     INPUT:
 
-    -  ``v`` -- list of pairs (x, height)
+    - ``v`` -- list of pairs (x, height)
 
-    -  ``eps`` -- parameter that determines approximation to a true spike
+    - ``eps`` -- parameter that determines approximation to a true spike
 
     OUTPUT: a function with spikes at each point ``x`` in ``v`` with the given height
 

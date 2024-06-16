@@ -332,11 +332,11 @@ def SR(n=1, r=1, c=1, e=4, star=False, **kwargs):
 
     INPUT:
 
-    -  ``n`` -- the number of rounds (default: 1)
-    -  ``r`` -- the number of rows in the state array (default: 1)
-    -  ``c`` -- the number of columns in the state array (default: 1)
-    -  ``e`` -- the exponent of the finite extension field (default: 4)
-    -  ``star`` -- determines if SR\* or SR should be constructed (default: ``False``)
+    - ``n`` -- the number of rounds (default: 1)
+    - ``r`` -- the number of rows in the state array (default: 1)
+    - ``c`` -- the number of columns in the state array (default: 1)
+    - ``e`` -- the exponent of the finite extension field (default: 4)
+    - ``star`` -- determines if SR\* or SR should be constructed (default: ``False``)
     - ``aes_mode`` -- as the SR key schedule specification differs
       slightly from the AES key schedule, this parameter controls
       which schedule to use (default: ``True``)
@@ -344,9 +344,9 @@ def SR(n=1, r=1, c=1, e=4, star=False, **kwargs):
       over `\GF{2^e}` (default: ``False``)
     - ``polybori`` -- use the ``BooleanPolynomialRing`` as polynomial
       representation (default: ``True``, `\GF{2}` only)
-    - ``order`` -- a string to specify the term ordering of the
+    - ``order`` -- string to specify the term ordering of the
       variables (default: ``deglex``)
-    - ``postfix`` -- a string which is appended after the variable name
+    - ``postfix`` -- string which is appended after the variable name
       (default: ``''``)
     - ``allow_zero_inversions`` -- boolean to control whether zero
       inversions raise an exception (default: ``False``)
@@ -671,7 +671,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-        -  ``d`` -- state array or something coercible to a state array
+        - ``d`` -- state array or something coercible to a state array
 
         EXAMPLES::
 
@@ -696,7 +696,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-        -  ``b`` -- an element in ``self.base_ring()``
+        - ``b`` -- an element in ``self.base_ring()``
 
         EXAMPLES:
 
@@ -917,8 +917,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-        -  ``d`` -- state array or something coercible to a
-           state array
+        - ``d`` -- state array or something coercible to a state array
 
         EXAMPLES::
 
@@ -965,11 +964,9 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-        -  ``d`` -- state array or something coercible to a
-           state array
+        - ``d`` -- state array or something coercible to a state array
 
-        -  ``key`` -- state array or something coercible to a
-           state array
+        - ``key`` -- state array or something coercible to a state array
 
         EXAMPLES::
 
@@ -990,7 +987,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-        -  ``d`` -- a matrix, a list, or a tuple (default: ``None``)
+        - ``d`` -- a matrix, a list, or a tuple (default: ``None``)
 
         EXAMPLES::
 
@@ -1089,8 +1086,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-        -  ``elem_type`` -- either 'vector' or 'state array'
-           (default: ``'vector'``)
+        - ``elem_type`` -- either 'vector' or 'state array' (default: ``'vector'``)
 
         EXAMPLES::
 
@@ -1369,10 +1365,10 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-        -  ``M`` -- state array
+        - ``M`` -- state array
 
-        -  ``typ`` -- controls what to return, either 'matrix'
-           or 'vector' (default: ``'matrix'``)
+        - ``typ`` -- controls what to return, either 'matrix'
+          or 'vector' (default: ``'matrix'``)
 
         EXAMPLES::
 
@@ -1402,7 +1398,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-        -  ``M`` -- an AES state array
+        - ``M`` -- an AES state array
 
         EXAMPLES::
 
@@ -1431,7 +1427,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-        -  ``M`` -- an AES state array
+        - ``M`` -- an AES state array
 
         EXAMPLES::
 
@@ -1458,13 +1454,13 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-        -  ``dst`` -- a matrix
+        - ``dst`` -- a matrix
 
-        -  ``src`` -- a matrix
+        - ``src`` -- a matrix
 
-        -  ``row`` -- offset row
+        - ``row`` -- offset row
 
-        -  ``col`` -- offset columns
+        - ``col`` -- offset columns
 
         EXAMPLES::
 
@@ -1500,10 +1496,10 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-        -  ``name`` -- name of the variable
-        -  ``n`` -- number of rounds (default: ``None``)
-        -  ``rc`` -- number of rows \* number of cols (default: ``None``)
-        -  ``e`` -- exponent of base field (default: ``None``)
+        - ``name`` -- name of the variable
+        - ``n`` -- number of rounds (default: ``None``)
+        - ``rc`` -- number of rows \* number of cols (default: ``None``)
+        - ``e`` -- exponent of base field (default: ``None``)
 
         EXAMPLES::
 
@@ -1799,13 +1795,13 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-        -  ``i`` -- round number
+        - ``i`` -- round number
 
-        -  ``plaintext`` -- optional plaintext (mandatory in
-           first round)
+        - ``plaintext`` -- optional plaintext (mandatory in
+          first round)
 
-        -  ``ciphertext`` -- optional ciphertext (mandatory in
-           last round)
+        - ``ciphertext`` -- optional ciphertext (mandatory in
+          last round)
 
         OUTPUT: tuple
 
@@ -1867,7 +1863,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-        -  ``i`` -- round (`0 \leq i \leq n`)
+        - ``i`` -- round (`0 \leq i \leq n`)
 
         EXAMPLES::
 
@@ -2175,7 +2171,7 @@ class SR_gf2n(SR_generic):
 
         INPUT:
 
-        -  ``l`` -- element to perform `\phi` on.
+        - ``l`` -- element to perform `\phi` on
 
         EXAMPLES::
 
@@ -2273,7 +2269,7 @@ class SR_gf2n(SR_generic):
 
         INPUT:
 
-        -  ``length`` -- length of state space (default: ``None``)
+        - ``length`` -- length of state space (default: ``None``)
 
         EXAMPLES::
 
@@ -2396,11 +2392,11 @@ class SR_gf2n(SR_generic):
 
         INPUT:
 
-        -  ``xi`` -- output variables
+        - ``xi`` -- output variables
 
-        -  ``wi`` -- input variables
+        - ``wi`` -- input variables
 
-        -  ``length`` -- length of both lists
+        - ``length`` -- length of both lists
 
         EXAMPLES::
 
@@ -2427,9 +2423,9 @@ class SR_gf2n(SR_generic):
 
         INPUT:
 
-        -  ``name`` -- variable name
-        -  ``i`` -- round number
-        -  ``l`` -- r\*c (default: ``None``)
+        - ``name`` -- variable name
+        - ``i`` -- round number
+        - ``l`` -- r\*c (default: ``None``)
 
         EXAMPLES::
 
@@ -2477,7 +2473,7 @@ class SR_gf2(SR_generic):
 
         INPUT:
 
-        -  ``d`` -- values for vector (default: ``None``)
+        - ``d`` -- values for vector (default: ``None``)
 
         EXAMPLES::
 
@@ -2521,7 +2517,7 @@ class SR_gf2(SR_generic):
 
         INPUT:
 
-        -  ``d`` -- matrix
+        - ``d`` -- matrix
 
         EXAMPLES::
 
@@ -2550,7 +2546,7 @@ class SR_gf2(SR_generic):
 
         INPUT:
 
-        -  ``l`` -- element to perform `\phi` on.
+        - ``l`` -- element to perform `\phi` on
         - ``diffusion_matrix`` -- if ``True``, the given matrix ``l`` is
           transformed to a matrix which performs the same operation
           over `\GF{2}` as ``l`` over `\GF{2^n}` (default: ``False``).
@@ -2711,7 +2707,7 @@ class SR_gf2(SR_generic):
 
         INPUT:
 
-        -  ``length`` -- length of state space (default: ``None``)
+        - ``length`` -- length of state space (default: ``None``)
 
         EXAMPLES::
 
@@ -2758,7 +2754,7 @@ class SR_gf2(SR_generic):
 
         INPUT:
 
-        -  ``x`` -- an element in self.base_ring()
+        - ``x`` -- an element in self.base_ring()
 
         EXAMPLES::
 
@@ -3103,11 +3099,11 @@ class SR_gf2(SR_generic):
 
         INPUT:
 
-        -  ``xi`` -- output variables
+        - ``xi`` -- output variables
 
-        -  ``wi`` -- input variables
+        - ``wi`` -- input variables
 
-        -  ``length`` -- length of both lists
+        - ``length`` -- length of both lists
 
         EXAMPLES::
 
@@ -3137,9 +3133,9 @@ class SR_gf2(SR_generic):
 
         INPUT:
 
-        -  ``name`` -- variable name
-        -  ``i`` -- round number
-        -  ``l`` -- length of variable list (default: ``None`` = r\*c)
+        - ``name`` -- variable name
+        - ``i`` -- round number
+        - ``l`` -- length of variable list (default: ``None`` = r\*c)
 
         EXAMPLES::
 
@@ -3185,7 +3181,7 @@ class SR_gf2_2(SR_gf2):
         - ``w`` -- input variables  (default: ``None``)
         - ``biaffine_only`` -- ignored (always ``False``)
         - ``correct_only`` -- ignored (always ``True``)
-        - ``groebner`` -- precompute the Groebner basis for this S-Box (default: ``False``).
+        - ``groebner`` -- precompute the Groebner basis for this S-Box (default: ``False``)
 
         EXAMPLES::
 

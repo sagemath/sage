@@ -1376,8 +1376,8 @@ class Function_factorial(GinacFunction):
 
         INPUT:
 
-        -  ``n`` -- a nonnegative integer, a complex number (except negative
-           integers) or any symbolic expression
+        - ``n`` -- a nonnegative integer, a complex number (except negative
+          integers) or any symbolic expression
 
         OUTPUT: integer or symbolic expression
 
@@ -1586,8 +1586,8 @@ class Function_binomial(GinacFunction):
 
         INPUT:
 
-        -  ``x``, ``m`` -- numbers or symbolic expressions. Either ``m``
-           or ``x-m`` must be an integer, else the output is symbolic.
+        - ``x``, ``m`` -- numbers or symbolic expressions; either ``m``
+          or ``x-m`` must be an integer, else the output is symbolic
 
         OUTPUT: number or symbolic expression (if input is symbolic)
 

@@ -124,11 +124,11 @@ class SloaneEncyclopediaClass:
     def __getitem__(self, N):
         """
         Return sequence N in the encyclopedia. If sequence N does not
-        exist, return [].
+        exist, return ``[]``.
 
         INPUT:
 
-        -  ``N`` -- int
+        - ``N`` -- integer
 
         OUTPUT: list
         """
@@ -155,9 +155,9 @@ class SloaneEncyclopediaClass:
 
         INPUT:
 
-        -  ``seq`` -- list
+        - ``seq`` -- list
 
-        -  ``maxresults`` -- int
+        - ``maxresults`` -- integer
 
         OUTPUT: list of 2-tuples (i, v), where v is a sequence with seq as
         a subsequence.
@@ -311,7 +311,7 @@ class SloaneEncyclopediaClass:
 
         INPUT:
 
-        - ``N`` -- int
+        - ``N`` -- integer
 
         OUTPUT: string
 

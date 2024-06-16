@@ -465,7 +465,7 @@ def CRT_automorphisms(automorphisms, order_elts, degree, moduli):
 
     - ``order_elts`` -- list of lists of the orders of the elements of ``automorphisms``
 
-    - ``degree`` -- a positive integer
+    - ``degree`` -- positive integer
 
     - ``moduli`` -- list of prime powers, i.e., `p^k`
 
@@ -510,9 +510,9 @@ def valid_automorphisms(automorphisms_CRT, rational_function, ht_bound, M,
 
     - ``rational_function`` -- a one variable rational function
 
-    - ``ht_bound`` -- a positive integer
+    - ``ht_bound`` -- positive integer
 
-    - ``M`` -- a positive integer, a product of prime powers
+    - ``M`` -- positive integer, a product of prime powers
 
     - ``return_functions`` -- boolean (default: ``False``)
 
@@ -2066,12 +2066,12 @@ def greedy_independence_check(P, repeated_mult, point_to_mult):
 
     - ``P`` -- a projective space
 
-    - ``repeated_mult`` -- a dictionary of integers to lists of points of
+    - ``repeated_mult`` -- dictionary of integers to lists of points of
       the projective space ``P``. The list of points should be conjugation
       invariant. The keys are considered as weights, and this function attempts
       to minimize the total weight
 
-    - ``point_to_mult`` -- a dictionary of points of ``P`` to tuples of the form
+    - ``point_to_mult`` -- dictionary of points of ``P`` to tuples of the form
       (multiplier, level), where multiplier is the characteristic polynomial
       of the multiplier of the point, and level is the number of preimages
       taken to find the point

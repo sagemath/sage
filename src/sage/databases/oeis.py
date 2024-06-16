@@ -167,7 +167,7 @@ def _fetch(url):
 
     INPUT:
 
-    - ``url`` -- a string corresponding to the URL to be fetched
+    - ``url`` -- string corresponding to the URL to be fetched
 
     OUTPUT: string representing the fetched web page
 
@@ -396,7 +396,7 @@ class OEIS:
         r"""
         INPUT:
 
-        - ``ident`` -- a string representing the A-number of the sequence
+        - ``ident`` -- string representing the A-number of the sequence
           or an integer representing its number
 
         - ``fetch`` -- boolean (default: ``False``); whether to force fetching the
@@ -421,7 +421,7 @@ class OEIS:
         r"""
         INPUT:
 
-        - ``entry`` -- a string corresponding to an entry in the internal format
+        - ``entry`` -- string corresponding to an entry in the internal format
           of the OEIS
 
         OUTPUT: the corresponding OEIS sequence
@@ -444,7 +444,7 @@ class OEIS:
 
         INPUT:
 
-        - ``description`` -- (string) the description the searched sequences.
+        - ``description`` -- string; the description the searched sequences
 
         - ``max_results`` -- (integer, default: 3) the maximum number of results
           we want. In any case, the on-line encyclopedia will not return more
@@ -540,9 +540,9 @@ class OEIS:
 
         INPUT:
 
-        - ``ident`` -- a string representing the A-number of the sequence
+        - ``ident`` -- string representing the A-number of the sequence
 
-        - ``keywords`` -- a string corresponding to the keyword field of the
+        - ``keywords`` -- string corresponding to the keyword field of the
           sequence
 
         OUTPUT: string representing the entry of the sequence
@@ -597,7 +597,7 @@ class OEIS:
 
         INPUT:
 
-        - ``ident`` -- a string representing the A-number of the sequence
+        - ``ident`` -- string representing the A-number of the sequence
 
         - ``keywords`` -- string (default: ``'sign,easy'``); a list of words
           separated by commas
@@ -672,7 +672,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``ident`` -- a string representing the A-number of the sequence or an
+        - ``ident`` -- string representing the A-number of the sequence or an
           integer representing its number
 
         TESTS::
@@ -737,7 +737,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``format`` -- (string, default: 'A').
+        - ``format`` -- string (default: ``'A'``)
 
         OUTPUT:
 
@@ -1557,7 +1557,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``fetch`` -- boolean (default: ``False``).
+        - ``fetch`` -- boolean (default: ``False``)
 
         OUTPUT:
 

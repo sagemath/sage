@@ -63,7 +63,7 @@ class FunctionDiracDelta(BuiltinFunction):
 
     INPUT:
 
-    -  ``x`` -- a real number or a symbolic expression
+    - ``x`` -- a real number or a symbolic expression
 
     DEFINITION:
 
@@ -99,7 +99,7 @@ class FunctionDiracDelta(BuiltinFunction):
 
         INPUT:
 
-        -  ``x`` -- a real number or a symbolic expression
+        - ``x`` -- a real number or a symbolic expression
 
         EXAMPLES::
 
@@ -128,7 +128,7 @@ class FunctionDiracDelta(BuiltinFunction):
         """
         INPUT:
 
-        -  ``x`` -- a real number or a symbolic expression
+        - ``x`` -- a real number or a symbolic expression
 
         EXAMPLES::
 
@@ -179,7 +179,7 @@ class FunctionHeaviside(GinacFunction):
 
     INPUT:
 
-    -  ``x`` -- a real number or a symbolic expression
+    - ``x`` -- a real number or a symbolic expression
 
     DEFINITION:
 
@@ -236,7 +236,7 @@ class FunctionHeaviside(GinacFunction):
 
         INPUT:
 
-        -  ``x`` -- a real number or a symbolic expression
+        - ``x`` -- a real number or a symbolic expression
 
         EXAMPLES::
 
@@ -286,7 +286,7 @@ class FunctionUnitStep(GinacFunction):
 
     INPUT:
 
-    -  ``x`` -- a real number or a symbolic expression
+    - ``x`` -- a real number or a symbolic expression
 
     DEFINITION:
 
@@ -327,7 +327,7 @@ class FunctionUnitStep(GinacFunction):
 
         INPUT:
 
-        -  ``x`` -- a real number or a symbolic expression
+        - ``x`` -- a real number or a symbolic expression
 
         EXAMPLES::
 
@@ -374,7 +374,7 @@ class FunctionSignum(BuiltinFunction):
 
     INPUT:
 
-    -  ``x`` -- a real number or a symbolic expression
+    - ``x`` -- a real number or a symbolic expression
 
     DEFINITION:
 
@@ -543,8 +543,8 @@ class FunctionKroneckerDelta(BuiltinFunction):
 
     INPUT:
 
-    -  ``m`` -- a number or a symbolic expression
-    -  ``n`` -- a number or a symbolic expression
+    - ``m`` -- a number or a symbolic expression
+    - ``n`` -- a number or a symbolic expression
 
     DEFINITION:
 

@@ -450,7 +450,7 @@ class NuDyckWord(CombinatorialElement):
 
         INPUT:
 
-        - ``D`` -- a dictionary with a list of latex parameters to change
+        - ``D`` -- dictionary with a list of latex parameters to change
 
         EXAMPLES::
 
@@ -493,7 +493,7 @@ class NuDyckWord(CombinatorialElement):
         - ``show_points`` -- boolean (default: ``False``); value to indicate
           if points should be shown on path
 
-        - ``tikz_scale`` -- (default: 1) scale for use with the tikz package.
+        - ``tikz_scale`` -- (default: 1) scale for use with the tikz package
 
         EXAMPLES::
 
@@ -704,10 +704,10 @@ class NuDyckWord(CombinatorialElement):
           - "N-E" to show ``self`` as a path of north and east steps, or
 
         - ``labelling`` -- (if style is "N-E") a list of labels assigned to
-          the up steps in ``self``.
+          the up steps in ``self``
 
         - ``underpath`` -- (if style is "N-E", default: ``True``) If ``True``,
-          an ``x`` to show the boxes between `\nu` and the `\nu`-Dyck Path.
+          an ``x`` to show the boxes between `\nu` and the `\nu`-Dyck Path
 
         EXAMPLES::
 

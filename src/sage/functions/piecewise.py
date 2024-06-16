@@ -1090,9 +1090,9 @@ class PiecewiseFunction(BuiltinFunction):
 
             INPUT:
 
-            -  ``x`` -- variable of ``self``
+            - ``x`` -- variable of ``self``
 
-            -  ``s`` -- variable of Laplace transform.
+            - ``s`` -- variable of Laplace transform
 
             We assume that a piecewise function is 0 outside of its domain and
             that the left-most endpoint of the domain is 0.
@@ -1161,7 +1161,7 @@ class PiecewiseFunction(BuiltinFunction):
 
             INPUT:
 
-            - ``n`` -- a nonnegative integer
+            - ``n`` -- nonnegative integer
 
             - ``L`` -- (default: ``None``) the half-period of `f`; if none
               is provided, `L` is assumed to be the half-width of the domain
@@ -1253,7 +1253,7 @@ class PiecewiseFunction(BuiltinFunction):
 
             INPUT:
 
-            - ``n`` -- a nonnegative integer
+            - ``n`` -- nonnegative integer
 
             - ``L`` -- (default: ``None``) the half-period of `f`; if none
               is provided, `L` is assumed to be the half-width of the domain
@@ -1343,7 +1343,7 @@ class PiecewiseFunction(BuiltinFunction):
 
             INPUT:
 
-            - ``N`` -- a positive integer; the order of the partial sum
+            - ``N`` -- positive integer; the order of the partial sum
 
             - ``L`` -- (default: ``None``) the half-period of `f`; if none
               is provided, `L` is assumed to be the half-width of the domain

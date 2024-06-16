@@ -448,7 +448,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         - ``formal`` -- boolean (default: ``False``); ``True`` signals to return number
           field or finite field over which the formal periodic points are defined, where a
@@ -574,7 +574,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
 
         - ``point`` -- a point in this map's domain
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         - ``return_embedding`` -- boolean (default: ``False``); if ``True``, return
           an embedding of base field of dynamical system into the returned number

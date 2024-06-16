@@ -751,7 +751,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
 
         INPUT:
 
-        - ``n`` -- a tuple of nonnegative integers; if ``n`` is an integer,
+        - ``n`` -- tuple of nonnegative integers; if `n` is an integer,
           then the two values of the tuple are assumed to be the same
 
         OUTPUT: a dynamical system on affine Berkovich space
@@ -1054,7 +1054,7 @@ class DynamicalSystem_Berkovich_affine(DynamicalSystem_Berkovich):
 
         INPUT:
 
-        - ``n`` -- a tuple of nonnegative integers. If ``n`` is an integer,
+        - ``n`` -- tuple of nonnegative integers. If `n` is an integer,
           then the two values of the tuple are assumed to be the same
 
         OUTPUT: a dynamical system on projective Berkovich space

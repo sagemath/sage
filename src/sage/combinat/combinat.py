@@ -197,7 +197,7 @@ def bell_number(n, algorithm='flint', **options) -> Integer:
 
     INPUT:
 
-    - ``n`` -- a positive integer
+    - ``n`` -- positive integer
 
     - ``algorithm`` -- (default: ``'flint'``) any one of the following:
 
@@ -533,7 +533,7 @@ def euler_number(n, algorithm='flint') -> Integer:
 
     INPUT:
 
-    - ``n`` -- a positive integer
+    - ``n`` -- positive integer
 
     - ``algorithm`` -- (default: ``'flint'``) any one of the following:
 
@@ -683,7 +683,7 @@ def fibonacci(n, algorithm='pari') -> Integer:
 
     INPUT:
 
-    - ``algorithm`` -- a string:
+    - ``algorithm`` -- string:
 
       * ``'pari'`` -- (default) use the PARI C library's
         :pari:`fibo` function
@@ -742,9 +742,9 @@ def lucas_number1(n, P, Q):
 
     INPUT:
 
-    -  ``n`` -- integer
+    - ``n`` -- integer
 
-    -  ``P, Q`` -- integer or rational numbers
+    - ``P``, ``Q`` -- integer or rational numbers
 
     OUTPUT: integer or rational number
 
@@ -809,9 +809,9 @@ def lucas_number2(n, P, Q):
 
     INPUT:
 
-    -  ``n`` -- integer
+    - ``n`` -- integer
 
-    -  ``P, Q`` -- integer or rational numbers
+    - ``P``, ``Q`` -- integer or rational numbers
 
     OUTPUT: integer or rational number
 
@@ -911,8 +911,8 @@ def stirling_number2(n, k, algorithm=None) -> Integer:
 
     INPUT:
 
-    -  ``n`` -- nonnegative machine-size integer
-    -  ``k`` -- nonnegative machine-size integer
+    - ``n`` -- nonnegative machine-size integer
+    - ``k`` -- nonnegative machine-size integer
     - ``algorithm``:
 
       * ``None`` -- default; use native implementation
@@ -1132,8 +1132,8 @@ class CombinatorialObject(SageObject):
 
         INPUT:
 
-        -  ``l`` -- list or any object that can be converted to a
-           list by calling ``list()``
+        - ``l`` -- list or any object that can be converted to a
+          list by calling ``list()``
 
         - ``copy`` -- boolean (default: ``True``); if ``False``, then
           ``l`` must be a ``list``, which is assigned to ``self._list``
@@ -1496,10 +1496,10 @@ class CombinatorialElement(CombinatorialObject, Element,
 
     INPUT:
 
-    -  ``parent`` -- the :class:`Parent` class for this element
+    - ``parent`` -- the :class:`Parent` class for this element
 
-    -  ``lst`` -- list or any object that can be converted to a
-       list by calling ``list()``
+    - ``lst`` -- list or any object that can be converted to a
+      list by calling ``list()``
 
     EXAMPLES::
 
@@ -2096,13 +2096,12 @@ def fibonacci_sequence(start, stop=None, algorithm=None) -> Iterator:
 
     INPUT:
 
-    -  ``start`` -- starting value
+    - ``start`` -- starting value
 
-    -  ``stop`` -- stopping value
+    - ``stop`` -- stopping value
 
-    -  ``algorithm`` -- (default: ``None``) passed on to
-       fibonacci function (or not passed on if ``None``, i.e., use the
-       default)
+    - ``algorithm`` -- (default: ``None``) passed on to fibonacci function (or
+      not passed on if ``None``, i.e., use the default)
 
     EXAMPLES::
 

@@ -1273,7 +1273,7 @@ class SkewTableau(ClonableList,
         INPUT:
 
         - ``check`` -- (default: ``True``) check to make sure ``self`` is
-          semistandard. Set to ``False`` to avoid this check.
+          semistandard; set to ``False`` to avoid this check
 
         EXAMPLES::
 

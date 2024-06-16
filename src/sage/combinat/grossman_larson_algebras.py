@@ -267,7 +267,7 @@ class GrossmanLarsonAlgebra(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``i`` -- a nonnegative integer
+        - ``i`` -- nonnegative integer
 
         EXAMPLES::
 

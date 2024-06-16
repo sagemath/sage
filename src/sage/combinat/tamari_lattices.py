@@ -235,9 +235,9 @@ def TamariLattice(n, m=1):
 
     INPUT:
 
-    - ``n`` -- a nonnegative integer (the index)
+    - ``n`` -- nonnegative integer (the index)
 
-    - ``m`` -- an optional nonnegative integer (the slope, default to 1)
+    - ``m`` -- nonnegative integer (the slope, default: 1)
 
     OUTPUT: a finite lattice
 
@@ -344,7 +344,7 @@ def DexterSemilattice(n):
 
     INPUT:
 
-    - ``n`` -- a nonnegative integer (the index)
+    - ``n`` -- nonnegative integer (the index)
 
     OUTPUT: a finite meet-semilattice
 

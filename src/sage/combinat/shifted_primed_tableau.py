@@ -1359,7 +1359,7 @@ class PrimedEntry(SageObject):
 
     INPUT:
 
-    - ``entry`` -- a half integer or a string of an integer
+    - ``entry`` -- half integer or string of an integer
       possibly ending in ``p`` or ``'``
     - ``double`` -- the doubled value
     """

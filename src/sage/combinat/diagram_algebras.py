@@ -530,7 +530,7 @@ class AbstractPartitionDiagram(AbstractSetPartition):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         EXAMPLES::
 
@@ -934,13 +934,13 @@ class BrauerDiagram(AbstractPartitionDiagram):
         The compact representation ``[A/B;pi]`` of the Brauer algebra diagram
         (see [GL1996]_) has the following components:
 
-        - ``A`` -- a list of pairs of positive elements (upper row) that
-          are connected,
+        - ``A`` -- list of pairs of positive elements (upper row) that
+          are connected
 
-        - ``B`` -- a list of pairs of negative elements (lower row) that
-          are connected, and
+        - ``B`` -- list of pairs of negative elements (lower row) that
+          are connected
 
-        - ``pi`` --  is a permutation that is to be interpreted as the relative
+        - ``pi`` -- a permutation that is to be interpreted as the relative
           order of the remaining elements in the top row and the bottom row
 
         EXAMPLES::
@@ -2787,7 +2787,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
         INPUT:
 
-        - ``i`` -- a half integer between 1/2 and `k-1/2`
+        - ``i`` -- half integer between `1/2` and `k-1/2`
 
         EXAMPLES::
 
@@ -2880,7 +2880,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
         INPUT:
 
-        - ``i`` -- a half integer between 1/2 and `k-1/2`
+        - ``i`` -- half integer between `1/2` and `k-1/2`
 
         .. NOTE::
 
@@ -2976,7 +2976,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
         INPUT:
 
-        - ``i`` -- a half integer between 1/2 and `k`
+        - ``i`` -- half integer between `1/2` and `k`
 
         ALGORITHM:
 
@@ -4700,7 +4700,7 @@ class PropagatingIdeal(SubPartitionAlgebra):
 
             INPUT:
 
-            - ``n`` -- a positive integer
+            - ``n`` -- positive integer
 
             EXAMPLES::
 

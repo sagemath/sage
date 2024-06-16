@@ -542,7 +542,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         INPUT:
 
         - ``p`` -- a value on which dynamical systems can evaluate
-        - ``n`` -- a nonnegative integer
+        - ``n`` -- nonnegative integer
 
         OUTPUT: a set of values
 
@@ -640,7 +640,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         INPUT:
 
         - ``p`` -- value on which this dynamical semigroup can be evaluated
-        - ``n`` -- a nonnegative integer or a list or tuple of length 2 describing an
+        - ``n`` -- nonnegative integer or a list or tuple of length 2 describing an
           interval of the number line containing entirely nonnegative integers
 
         OUTPUT: a tuple of sets of values on the domain of this dynamical semigroup
@@ -987,7 +987,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
         INPUT:
 
-        - ``n`` -- a nonnegative integer
+        - ``n`` -- nonnegative integer
 
         OUTPUT: :class:`DynamicalSemigroup`
 
@@ -1278,7 +1278,7 @@ class DynamicalSemigroup_projective(DynamicalSemigroup):
 
         INPUT:
 
-        - ``n`` -- a tuple of nonnegative integers. If ``n`` is an integer,
+        - ``n`` -- tuple of nonnegative integers; if `n` is an integer,
           then the two values of the tuple are assumed to be the same
 
         OUTPUT: :class:`DynamicalSemigroup_affine`
@@ -1404,7 +1404,7 @@ class DynamicalSemigroup_affine(DynamicalSemigroup):
 
         INPUT:
 
-        - ``n`` -- a tuple of nonnegative integers. If ``n`` is an integer,
+        - ``n`` -- tuple of nonnegative integers; if `n` is an integer,
           then the two values of the tuple are assumed to be the same
 
         OUTPUT: :class:`DynamicalSemigroup_projective`

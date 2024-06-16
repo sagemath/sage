@@ -1750,7 +1750,7 @@ class Rule(UniqueRepresentation):
 
         INPUT:
 
-        - ``n`` -- a positive integer specifying which rank of
+        - ``n`` -- positive integer specifying which rank of
           the graph to test
 
         EXAMPLES:

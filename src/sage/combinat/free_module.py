@@ -1208,7 +1208,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         INPUT:
 
-        - ``d`` -- a dictionary ``{index: coeff}`` where each ``index`` is
+        - ``d`` -- dictionary ``{index: coeff}`` where each ``index`` is
           the index of a basis element and each ``coeff`` belongs to the
           coefficient ring ``self.base_ring()``
 
@@ -1552,8 +1552,8 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
         r"""
         INPUT:
 
-         - ``modules`` -- a tuple `(F_1,\dots,F_n)` of
-           free modules whose tensor product is self
+         - ``modules`` -- tuple `(F_1,\dots,F_n)` of
+          free modules whose tensor product is self
 
         Returns the canonical multilinear morphism from
         `F_1 \times \dots \times F_n` to `F_1 \otimes \dots \otimes F_n`
@@ -1702,11 +1702,11 @@ class CartesianProductWithFlattening:
         """
         INPUT:
 
-         - ``flatten`` -- a tuple of booleans
+         - ``flatten`` -- tuple of booleans
 
         This constructs a callable which accepts ``len(flatten)``
         arguments, and builds a tuple out them. When ``flatten[i]``,
-        the i-th argument itself should be a tuple which is flattened
+        the `i`-th argument itself should be a tuple which is flattened
         in the result.
 
             sage: from sage.combinat.free_module import CartesianProductWithFlattening

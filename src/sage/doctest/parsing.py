@@ -144,7 +144,7 @@ def parse_optional_tags(
 
     INPUT:
 
-    - ``string`` -- a string
+    - ``string`` -- string
 
     - ``return_string_sans_tags`` -- boolean (default: ``False``);; whether to
       additionally return ``string`` with the optional tags removed but other
@@ -276,11 +276,10 @@ def parse_file_optional_tags(lines):
 
     INPUT:
 
-    - ``lines`` -- iterable of pairs ``(lineno, line)``.
+    - ``lines`` -- iterable of pairs ``(lineno, line)``
 
-    OUTPUT:
-
-    a dictionary whose keys are strings (tags); see :func:`parse_optional_tags`
+    OUTPUT: dictionary whose keys are strings (tags);
+    see :func:`parse_optional_tags`
 
     EXAMPLES::
 
@@ -582,13 +581,11 @@ def parse_tolerance(source, want):
 
     INPUT:
 
-    - ``source`` -- a string, the source of a doctest
-    - ``want`` -- a string, the desired output of the doctest
+    - ``source`` -- string, the source of a doctest
+    - ``want`` -- string, the desired output of the doctest
 
-    OUTPUT:
-
-    ``want`` if there are no tolerance tags specified; a
-    :class:`MarkedOutput` version otherwise.
+    OUTPUT: ``want`` if there are no tolerance tags specified; a
+    :class:`MarkedOutput` version otherwise
 
     EXAMPLES::
 
@@ -1423,11 +1420,12 @@ class SageOutputChecker(doctest.OutputChecker):
 
         INPUT:
 
-        - ``want`` -- a string or :class:`MarkedOutput`
-        - ``got`` -- a string
+        - ``want`` -- string or :class:`MarkedOutput`
+        - ``got`` -- string
         - ``optionflags`` -- integer; passed down to :class:`doctest.OutputChecker`
 
-        OUTPUT: boolean, whether ``got`` matches ``want`` up to the specified tolerance
+        OUTPUT: boolean; whether ``got`` matches ``want`` up to the specified
+        tolerance
 
         EXAMPLES::
 
@@ -1587,12 +1585,12 @@ class SageOutputChecker(doctest.OutputChecker):
 
         INPUT:
 
-        - ``want`` -- a string or :class:`MarkedOutput`
-        - ``got`` -- a string
+        - ``want`` -- string or :class:`MarkedOutput`
+        - ``got`` -- string
 
         OUTPUT: a tuple:
 
-        - bool, ``True`` when some fixup were performed and ``False`` otherwise
+        - boolean, ``True`` when some fixup were performed and ``False`` otherwise
         - string, edited wanted string
         - string, edited got string
 
@@ -1701,7 +1699,7 @@ class SageOutputChecker(doctest.OutputChecker):
         INPUT:
 
         - ``example`` -- a :class:`doctest.Example` instance
-        - ``got`` -- a string
+        - ``got`` -- string
         - ``optionflags`` -- integer; passed down to :class:`doctest.OutputChecker`
 
         OUTPUT: string, describing how ``got`` fails to match ``example.want``

@@ -212,7 +212,7 @@ class BlumGoldwasser(PublicKeyCryptosystem):
           `t+1`-th iteration of the Blum-Blum-Shub algorithm.
 
         - ``K`` -- a private key `(p, q, a, b)` where `p` and `q` are
-          distinct Blum primes and `\gcd(p, q) = ap + bq = 1`.
+          distinct Blum primes and `\gcd(p, q) = ap + bq = 1`
 
         OUTPUT:
 

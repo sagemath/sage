@@ -73,7 +73,7 @@ class LocalOptions:
     - ``checker`` -- a function for checking whether a particular value for
       the option is valid
     - ``default`` -- the default value of the option
-    - ``values`` -- a dictionary of the legal values for this option (this
+    - ``values`` -- dictionary of the legal values for this option (this
       automatically defines the corresponding ``checker``); this dictionary
       gives the possible options, as keys, together with a brief description
       of them
@@ -122,7 +122,7 @@ class LocalOptions:
         - ``checker`` -- a function for checking whether a particular value for
           the option is valid
         - ``default`` -- the default value of the option
-        - ``values`` -- a dictionary of the legal values for this option (this
+        - ``values`` -- dictionary of the legal values for this option (this
           automatically defines the corresponding ``checker``); this dictionary
           gives the possible options, as keys, together with a brief
           description of them.
@@ -783,7 +783,7 @@ class _drawing_tool:
 
         INPUT:
 
-        - ``list_of_vertices`` -- a list of points
+        - ``list_of_vertices`` -- list of points
 
         - ``color`` -- string (default: ``None``); the color of the line.
           If set to ``None``, the color is chosen according the
@@ -2472,7 +2472,7 @@ class ParallelogramPolyomino(ClonableList,
         INPUT:
 
         - ``direction`` -- the initial direction of the bounce path (see above
-          for the definition).
+          for the definition)
 
         EXAMPLES::
 
@@ -2559,7 +2559,7 @@ class ParallelogramPolyomino(ClonableList,
         INPUT:
 
         - ``direction`` -- the initial direction of the bounce path
-          (see :meth:`bounce_path` for the definition).
+          (see :meth:`bounce_path` for the definition)
 
         EXAMPLES::
 
@@ -3195,7 +3195,7 @@ class ParallelogramPolyomino(ClonableList,
         - ``box`` -- the x,y coordinate of the starting point of the bounding
           path
         - ``direction`` -- the initial direction of the bounding path (1 or 0,
-          1 for left and 0 for top).
+          1 for left and 0 for top)
 
         EXAMPLES::
 
@@ -3702,7 +3702,7 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``directions`` -- direction(s) `0` and/or `1` of the bounce paths.
+        - ``directions`` -- direction(s) `0` and/or `1` of the bounce paths
 
         TESTS::
 

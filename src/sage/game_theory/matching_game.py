@@ -72,7 +72,7 @@ class MatchingGame(SageObject):
 
     Two potential inputs are accepted (see below to see the effect of each):
 
-    - ``reviewer/suitors_preferences`` -- a dictionary containing the
+    - ``reviewer/suitors_preferences`` -- dictionary containing the
       preferences of all players:
 
       * key - each reviewer/suitors

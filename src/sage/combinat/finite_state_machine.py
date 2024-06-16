@@ -1108,7 +1108,7 @@ def FSMLetterSymbol(letter):
     INPUT:
 
     - ``letter`` -- the input letter or ``None`` (representing the
-      empty word).
+      empty word)
 
     OUTPUT:
 
@@ -1192,9 +1192,9 @@ class FSMState(SageObject):
       states.
 
     - ``initial_probability`` -- (default: ``None``) the probability of
-      starting in this state if it is a state of a Markov chain.
+      starting in this state if it is a state of a Markov chain
 
-    - ``hook`` -- (default: ``None``) A function which is called when
+    - ``hook`` -- (default: ``None``) a function which is called when
       the state is reached during processing input. It takes two input
       parameters: the first is the current state (to allow using the same
       hook for several states), the second is the current process
@@ -1206,7 +1206,7 @@ class FSMState(SageObject):
       processing of a finite state machine the input immediately. See
       also the example below.
 
-    - ``color`` -- (default: ``None``) In order to distinguish states,
+    - ``color`` -- (default: ``None``) in order to distinguish states,
       they can be given an arbitrary "color" (an arbitrary object).
       This is used in :meth:`FiniteStateMachine.equivalence_classes`:
       states of different colors are never considered to be
@@ -1697,7 +1697,7 @@ class FSMState(SageObject):
 
         INPUT:
 
-        - ``memo`` -- a dictionary storing already processed elements
+        - ``memo`` -- dictionary storing already processed elements
 
         OUTPUT: a new state
 
@@ -1728,7 +1728,7 @@ class FSMState(SageObject):
         INPUT:
 
         - ``memo`` -- (default: ``None``) a dictionary storing already
-          processed elements.
+          processed elements
 
         OUTPUT: a new state
 
@@ -2282,7 +2282,7 @@ class FSMTransition(SageObject):
 
         INPUT:
 
-        - ``memo`` -- a dictionary storing already processed elements
+        - ``memo`` -- dictionary storing already processed elements
 
         OUTPUT: a new transition
 
@@ -2308,7 +2308,7 @@ class FSMTransition(SageObject):
         INPUT:
 
         - ``memo`` -- (default: ``None``) a dictionary storing already
-          processed elements.
+          processed elements
 
         OUTPUT: a new transition
 
@@ -3183,10 +3183,10 @@ class FiniteStateMachine(SageObject):
 
         INPUT:
 
-        - ``memo`` -- a dictionary storing already processed elements
+        - ``memo`` -- dictionary storing already processed elements
 
-        - ``new_class`` -- a class for the copy. By default
-          (``None``), the class of ``self`` is used.
+        - ``new_class`` -- a class for the copy; by default
+          (``None``), the class of ``self`` is used
 
         OUTPUT: a new finite state machine
 
@@ -3227,7 +3227,7 @@ class FiniteStateMachine(SageObject):
 
         INPUT:
 
-        - ``memo`` -- a dictionary storing already processed elements
+        - ``memo`` -- dictionary storing already processed elements
 
         OUTPUT: a new finite state machine
 
@@ -3248,7 +3248,7 @@ class FiniteStateMachine(SageObject):
         INPUT:
 
         - ``memo`` -- (default: ``None``) a dictionary storing already
-          processed elements.
+          processed elements
 
         OUTPUT: a new finite state machine
 
@@ -3346,7 +3346,7 @@ class FiniteStateMachine(SageObject):
 
         INPUT:
 
-        - ``d`` -- a dictionary
+        - ``d`` -- dictionary
 
         OUTPUT: none
 
@@ -3375,7 +3375,7 @@ class FiniteStateMachine(SageObject):
         INPUT:
 
         - ``memo`` -- (default: ``None``) a dictionary storing already
-          processed elements.
+          processed elements
 
         - ``labels`` -- (default: ``None``) a dictionary or callable
           mapping old labels to new labels. If ``None``, then the new
@@ -3420,7 +3420,7 @@ class FiniteStateMachine(SageObject):
         INPUT:
 
         - ``states`` -- list (or an iterator) of states (either labels or
-          instances of :class:`FSMState`) of the sub-finite-state-machine.
+          instances of :class:`FSMState`) of the sub-finite-state-machine
 
         OUTPUT:
 
@@ -4312,7 +4312,7 @@ class FiniteStateMachine(SageObject):
 
         INPUT:
 
-        - ``coordinates`` -- a dictionary or a function mapping labels
+        - ``coordinates`` -- dictionary or a function mapping labels
           of states to pairs interpreted as coordinates. If no
           coordinates are given, states a placed equidistantly on a
           circle of radius `3`. See also :meth:`.set_coordinates`.
@@ -4333,11 +4333,11 @@ class FiniteStateMachine(SageObject):
           typesetting in LaTeX's mathematics mode. If not given,
           :meth:`.default_format_transition_label` is used.
 
-        - ``loop_where`` -- a dictionary or a function mapping labels of
+        - ``loop_where`` -- dictionary or a function mapping labels of
           initial states to one of ``'above'``, ``'left'``, ``'below'``,
           ``'right'``. If not given, ``'above'`` is used.
 
-        - ``initial_where`` -- a dictionary or a function mapping
+        - ``initial_where`` -- dictionary or a function mapping
           labels of initial states to one of ``'above'``, ``'left'``,
           ``'below'``, ``'right'``. If not given, TikZ' default
           (currently ``'left'``) is used.
@@ -4347,13 +4347,13 @@ class FiniteStateMachine(SageObject):
           double'`` is used unless there are non-empty final output
           words.
 
-        - ``accepting_distance`` -- a string giving a LaTeX length
+        - ``accepting_distance`` -- string giving a LaTeX length
           used for the length of the arrow leading from a final state.
           If not given, TikZ' default (currently ``'3ex'``) is used
           unless there are non-empty final output words, in which case
           ``'7ex'`` is used.
 
-        - ``accepting_where`` -- a dictionary or a function mapping
+        - ``accepting_where`` -- dictionary or a function mapping
           labels of final states to one of ``'above'``, ``'left'``,
           ``'below'``, ``'right'``. If not given, TikZ' default
           (currently ``'right'``) is used. If the final state has a
@@ -4880,7 +4880,7 @@ class FiniteStateMachine(SageObject):
 
         INPUT:
 
-        - ``coordinates`` -- a dictionary or a function mapping labels
+        - ``coordinates`` -- dictionary or a function mapping labels
           of states to pairs interpreted as coordinates
 
         - ``default`` -- if ``True``, then states not given by
@@ -5238,8 +5238,8 @@ class FiniteStateMachine(SageObject):
 
         INPUT:
 
-        - ``from_state`` -- (default: ``None``) If ``from_state`` is
-          given, then a list of transitions starting there is given.
+        - ``from_state`` -- (default: ``None``) if ``from_state`` is
+          given, then a list of transitions starting there is given
 
         OUTPUT: list of all transitions
 
@@ -5258,8 +5258,8 @@ class FiniteStateMachine(SageObject):
 
         INPUT:
 
-        - ``from_state`` -- (default: ``None``) If ``from_state`` is
-          given, then a list of transitions starting there is given.
+        - ``from_state`` -- (default: ``None``) if ``from_state`` is
+          given, then a list of transitions starting there is given
 
         OUTPUT: an iterator of all transitions
 
@@ -6971,7 +6971,7 @@ class FiniteStateMachine(SageObject):
 
         INPUT:
 
-        -   ``other`` -- a :class:`FiniteStateMachine`.
+        -   ``other`` -- a :class:`FiniteStateMachine`
 
         OUTPUT:
 
@@ -7439,7 +7439,7 @@ class FiniteStateMachine(SageObject):
         INPUT:
 
         - ``other`` -- a finite state machine (for `d=2`) or a list
-          (or iterable) of `d-1` finite state machines.
+          (or iterable) of `d-1` finite state machines
 
         - ``function`` has to accept `d` transitions from `A_j` to `B_j`
           for `j\in\{1, \ldots, d\}` and returns a pair ``(word_in, word_out)``
@@ -7463,7 +7463,7 @@ class FiniteStateMachine(SageObject):
           :class:`ValueError` is raised.
 
         - ``new_class`` -- class of the new finite state machine. By
-          default (``None``), the class of ``self`` is used.
+          default (``None``), the class of ``self`` is used
 
         OUTPUT:
 
@@ -8213,7 +8213,7 @@ class FiniteStateMachine(SageObject):
 
         INPUT:
 
-        - ``what`` -- (default: ``input``) either ``input`` or ``output``.
+        - ``what`` -- (default: ``input``) either ``input`` or ``output``
 
         OUTPUT: an automaton
 
@@ -12782,13 +12782,13 @@ class _FSMTapeCache_(SageObject):
     - ``tape_cache_manager`` -- list of the existing instances of
       :class:`_FSMTapeCache_`. ``self`` will be appended to this list
 
-    - ``tape`` -- a tuple or list of the input tracks (iterables)
+    - ``tape`` -- tuple or list of the input tracks (iterables)
 
     - ``tape_ended`` -- list of booleans (one for each track of the
       tape), which indicate whether the track iterator has already raised
       a ``StopIteration`` exception
 
-    - ``position`` -- a tuple of pairs `(p, t)` marking the current
+    - ``position`` -- tuple of pairs `(p, t)` marking the current
       positions of each of the input tracks. There `p` is the number
       of letter read from track `t`. The pairs of ``position`` are
       sorted first by `p` (smallest first) and then by `t`, i.e.,
@@ -12926,7 +12926,7 @@ class _FSMTapeCache_(SageObject):
 
         INPUT:
 
-        - ``memo`` -- a dictionary
+        - ``memo`` -- dictionary
 
         OUTPUT: an instance of ``_FSMCacheTape_``
 
@@ -13174,7 +13174,7 @@ class _FSMTapeCache_(SageObject):
 
         - ``track_number`` -- integer
 
-        - ``word`` -- a tuple or list of letters
+        - ``word`` -- tuple or list of letters
 
         OUTPUT: boolean
 
@@ -13503,7 +13503,7 @@ class _FSMTapeCacheDetectAll_(_FSMTapeCache_):
 
         - ``track_number`` -- integer
 
-        - ``word`` -- a tuple or list of letters. Only its length is used
+        - ``word`` -- tuple or list of letters; only its length is used
 
         OUTPUT: boolean
 
@@ -13551,7 +13551,7 @@ def tupleofwords_to_wordoftuples(tupleofwords):
 
     INPUT:
 
-    - ``tupleofwords`` -- a tuple of a list of letters
+    - ``tupleofwords`` -- tuple of a list of letters
 
     OUTPUT: list of tuples
 
@@ -14101,10 +14101,10 @@ class FSMProcessIterator(SageObject, Iterator):
         INPUT:
 
         - ``state`` -- state which has to be processed (i.e., the
-          current state, this branch is in).
+          current state, this branch is in)
 
         - ``tape_cache`` -- an instance of :class:`_FSMTapeCache_` (storing
-          information what to read next).
+          information what to read next)
 
         - ``outputs`` -- list of output tapes on each of which words
           were written until reaching ``state``

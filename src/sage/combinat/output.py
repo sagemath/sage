@@ -30,7 +30,7 @@ def tex_from_array(array, with_lines=True):
 
     - ``array`` -- list of list
     - ``with_lines`` -- boolean (default: ``True``); whether to draw a line to
-      separate the entries in the array.
+      separate the entries in the array
 
     Empty rows are allowed; however, such rows should be given as
     ``[None]`` rather than ``[]``.
@@ -248,9 +248,9 @@ def tex_from_array_tuple(a_tuple, with_lines=True):
 
     INPUT:
 
-    - ``a_tuple`` -- a tuple of lists of lists
+    - ``a_tuple`` -- tuple of lists of lists
     - ``with_lines`` -- boolean (default: ``True``); whether to draw lines to
-      separate the entries in the components of ``a_tuple``.
+      separate the entries in the components of ``a_tuple``
 
     .. SEEALSO:: :meth:`tex_from_array` for the description of each array
 

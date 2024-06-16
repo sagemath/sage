@@ -48,7 +48,7 @@ class DatabaseCremona(StaticFile):
     INPUT:
 
     - ``name`` -- either ``'cremona'`` (the default) for the full large
-      database or ``'cremona_mini'`` for the small database.
+      database or ``'cremona_mini'`` for the small database
 
     EXAMPLES::
 
