@@ -213,10 +213,18 @@ def is_IntegerMod(x):
 
         sage: from sage.rings.finite_rings.integer_mod import is_IntegerMod
         sage: is_IntegerMod(5)
+        doctest:warning...
+        DeprecationWarning: The function is_IntegerMod is deprecated;
+        use 'isinstance(..., IntegerMod_abstract)' instead.
+        See https://github.com/sagemath/sage/issues/38128 for details.
         False
         sage: is_IntegerMod(Mod(5,10))
         True
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38128,
+                       "The function is_IntegerMod is deprecated; "
+                       "use 'isinstance(..., IntegerMod_abstract)' instead.")
     return isinstance(x, IntegerMod_abstract)
 
 
@@ -4213,18 +4221,18 @@ def lucas(k, P, Q=1, n=None):
     """
     cdef IntegerMod_abstract p,q
 
-    if n is None and not is_IntegerMod(P):
+    if n is None and not isinstance(P, IntegerMod_abstract):
         raise ValueError
 
     if n is None:
         n = P.modulus()
 
-    if not is_IntegerMod(P):
+    if not isinstance(P, IntegerMod_abstract):
         p = Mod(P,n)
     else:
         p = P
 
-    if not is_IntegerMod(Q):
+    if not isinstance(Q, IntegerMod_abstract):
         q = Mod(Q,n)
     else:
         q = Q

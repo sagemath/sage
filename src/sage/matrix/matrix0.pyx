@@ -42,7 +42,7 @@ from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.rings import Rings
 
 import sage.rings.abc
-from sage.rings.integer_ring import is_IntegerRing
+from sage.rings.integer_ring import IntegerRing_class
 
 import sage.modules.free_module
 
@@ -5975,7 +5975,7 @@ cdef class Matrix(sage.structure.element.Matrix):
                 return (~self.lift_centered()).change_ring(R)
             except (TypeError, ZeroDivisionError):
                 raise ZeroDivisionError("input matrix must be nonsingular")
-        elif algorithm is None and is_IntegerRing(R):
+        elif algorithm is None and isinstance(R, IntegerRing_class):
             try:
                 return (~self).change_ring(R)
             except (TypeError, ZeroDivisionError):
