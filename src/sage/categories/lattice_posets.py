@@ -63,7 +63,7 @@ class LatticePosets(Category):
 
             INPUT:
 
-             - ``x``, ``y`` -- elements of ``self``
+            - ``x``, ``y`` -- elements of ``self``
 
             EXAMPLES::
 
@@ -79,7 +79,7 @@ class LatticePosets(Category):
 
             INPUT:
 
-             - ``x``, ``y`` -- elements of ``self``
+            - ``x``, ``y`` -- elements of ``self``
 
             EXAMPLES::
 

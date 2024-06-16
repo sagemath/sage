@@ -3843,7 +3843,7 @@ class PMDiagram(CombinatorialObject):
 
     def outer_shape(self):
         r"""
-        Return the outer shape of the `\pm` diagram
+        Return the outer shape of the `\pm` diagram.
 
         EXAMPLES::
 
@@ -3869,7 +3869,8 @@ class PMDiagram(CombinatorialObject):
 
     def intermediate_shape(self):
         """
-        Return the intermediate shape of the pm diagram (inner shape plus positions of plusses)
+        Return the intermediate shape of the pm diagram (inner shape plus
+        positions of plusses).
 
         EXAMPLES::
 

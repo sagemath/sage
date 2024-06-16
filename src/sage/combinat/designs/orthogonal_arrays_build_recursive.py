@@ -274,7 +274,7 @@ def construction_3_5(k,n,m,r,s,t,explain_construction=False):
 
 def construction_3_6(k,n,m,i,explain_construction=False):
     r"""
-    Return a `OA(k,nm+i)`
+    Return a `OA(k,nm+i)`.
 
     This is Wilson's construction with `r` columns of order `1`, in which each
     block intersects at most two truncated columns. Such a design exists when
@@ -577,7 +577,7 @@ def construction_q_x(k, q, x, check=True, explain_construction=False):
 
 def thwart_lemma_3_5(k,n,m,a,b,c,d=0,complement=False,explain_construction=False):
     r"""
-    Return an `OA(k,nm+a+b+c+d)`
+    Return an `OA(k,nm+a+b+c+d)`.
 
     *(When `d=0`)*
 
@@ -883,7 +883,7 @@ def thwart_lemma_4_1(k,n,m,explain_construction=False):
 
 def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
     r"""
-    Return an `OA(k+1,n_1n_2n_3)`
+    Return an `OA(k+1,n_1n_2n_3)`.
 
     The three factor product construction from [DukesLing14]_ does the following:
 

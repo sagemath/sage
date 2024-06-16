@@ -1181,7 +1181,7 @@ class GradedModulesWithInternalProduct(Category_over_base_ring):
 
             INPUT:
 
-             - ``I``, ``J`` -- compositions indexing two elements of the basis of self
+            - ``I``, ``J`` -- compositions indexing two elements of the basis of self
 
             Returns the internal product of the corresponding basis elements.
             If this method is implemented, the internal product is defined from

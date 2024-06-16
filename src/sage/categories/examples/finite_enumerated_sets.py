@@ -17,7 +17,7 @@ from sage.rings.integer_ring import IntegerRing
 
 class Example(UniqueRepresentation, Parent):
     r"""
-    An example of a finite enumerated set: `\{1,2,3\}`
+    An example of a finite enumerated set: `\{1,2,3\}`.
 
     This class provides a minimal implementation of a finite enumerated set.
 

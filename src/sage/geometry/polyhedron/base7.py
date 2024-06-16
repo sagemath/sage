@@ -76,7 +76,7 @@ class Polyhedron_base7(Polyhedron_base6):
           TOPCOM is used if it is available and internal routines otherwise.
 
         - ``**kwds`` -- keyword arguments that are passed to the
-          triangulation engine (see :meth:`triangulate`).
+          triangulation engine (see :meth:`triangulate`)
 
         OUTPUT: the centroid as vector
 

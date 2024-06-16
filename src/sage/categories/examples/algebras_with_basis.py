@@ -19,7 +19,7 @@ from sage.combinat.words.words import Words
 
 class FreeAlgebra(CombinatorialFreeModule):
     r"""
-    An example of an algebra with basis: the free algebra
+    An example of an algebra with basis: the free algebra.
 
     This class illustrates a minimal implementation of an algebra with basis.
     """

@@ -697,7 +697,7 @@ cdef class FreeAlgebra_letterplace(Parent):
     # Coercion
     cpdef _coerce_map_from_(self, S):
         """
-        A ring ``R`` coerces into ``self``, if
+        A ring ``R`` coerces into ``self``, if:
 
         - it coerces into the current polynomial ring, or
         - it is a free graded algebra in letterplace implementation,

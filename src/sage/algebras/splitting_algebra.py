@@ -577,7 +577,7 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
     @cached_method
     def scalar_base_ring(self):
         r"""
-        Return the ring of scalars of ``self`` (considered as an algebra)
+        Return the ring of scalars of ``self`` (considered as an algebra).
 
         EXAMPLES::
 

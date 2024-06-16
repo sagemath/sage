@@ -375,8 +375,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         INPUT:
 
-        - ``index`` -- optional. Either an integer or ``None``
-          (default).
+        - ``index`` -- integer or ``None`` (default)
 
         OUTPUT:
 
@@ -416,8 +415,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         INPUT:
 
-        - ``index`` -- optional. Either an integer or ``None``
-          (default).
+        - ``index`` -- integer or ``None`` (default)
 
         OUTPUT:
 
@@ -669,7 +667,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         INPUT:
 
-        - ``base_field`` -- (default: the fraction field of the base ring) a field.
+        - ``base_field`` -- a field (default: the fraction field of the base ring)
 
         EXAMPLES::
 

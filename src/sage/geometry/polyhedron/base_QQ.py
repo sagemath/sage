@@ -91,13 +91,13 @@ class Polyhedron_QQ(Polyhedron_base):
 
         INPUT:
 
-        - ``verbose`` -- (boolean; ``False`` by default) whether to display
-          verbose output.
+        - ``verbose`` -- boolean (default: ``False``); whether to display
+          verbose output
 
-        - ``use_Hrepresentation`` -- (boolean; ``False`` by default) -- whether
+        - ``use_Hrepresentation`` -- boolean (default: ``False``); whether
           to send the H or V representation to LattE
 
-        - ``preprocess`` -- (boolean; ``True`` by default) whether, if the integral hull
+        - ``preprocess`` -- boolean (default: ``True``); whether, if the integral hull
           is known to lie in a coordinate hyperplane, to tighten bounds to reduce dimension
 
         .. SEEALSO::
@@ -649,7 +649,7 @@ class Polyhedron_QQ(Polyhedron_base):
         INPUT:
 
         - ``verbose`` -- boolean (default: ``False``); if ``True``, print the
-          whole output of the LattE command.
+          whole output of the LattE command
 
         The following options are passed to the LattE command, for details you
         should consult `the LattE documentation
@@ -659,7 +659,7 @@ class Polyhedron_QQ(Polyhedron_base):
           space
 
         - ``irrational_primal`` -- boolean; triangulate in the dual space,
-          signed-decompose in the primal space using irrationalization.
+          signed-decompose in the primal space using irrationalization
 
         - ``irrational_all_primal`` -- boolean; triangulate and signed-decompose
           in the primal space using irrationalization

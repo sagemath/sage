@@ -421,7 +421,7 @@ class DoubleDescriptionPair:
 
         INPUT:
 
-        - ``r1``, ``r2`` -- two rays.
+        - ``r1``, ``r2`` -- two rays
 
         OUTPUT: boolean; whether the two rays are adjacent
 

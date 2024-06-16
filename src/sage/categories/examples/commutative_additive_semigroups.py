@@ -19,7 +19,7 @@ from sage.sets.family import Family
 
 class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
     r"""
-    An example of a commutative additive monoid: the free commutative monoid
+    An example of a commutative additive monoid: the free commutative monoid.
 
     This class illustrates a minimal implementation of a commutative additive monoid.
 
@@ -73,7 +73,7 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
 
         INPUT:
 
-         - ``alphabet`` -- tuple of strings; the generators of the semigroup
+        - ``alphabet`` -- tuple of strings; the generators of the semigroup
 
         EXAMPLES::
 

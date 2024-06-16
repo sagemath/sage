@@ -514,7 +514,7 @@ class QuotientOfLeftZeroSemigroup(UniqueRepresentation, Parent):
 class IncompleteSubquotientSemigroup(UniqueRepresentation,Parent):
     def __init__(self, category=None):
         r"""
-        An incompletely implemented subquotient semigroup, for testing purposes
+        An incompletely implemented subquotient semigroup, for testing purposes.
 
         EXAMPLES::
 

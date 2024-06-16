@@ -111,10 +111,10 @@ class FinitePermutationGroups(CategoryWithAxiom):
 
             INPUT:
 
-             - ``self`` -- a permutation group `G`
-             - ``parent`` -- a free module with basis indexed by partitions,
-               or behave as such, with a ``term`` and ``sum`` method
-               (default: the symmetric functions over the rational field in the `p` basis)
+            - ``self`` -- a permutation group `G`
+            - ``parent`` -- a free module with basis indexed by partitions,
+              or behave as such, with a ``term`` and ``sum`` method
+              (default: the symmetric functions over the rational field in the `p` basis)
 
             The *cycle index* of a permutation group `G`
             (:wikipedia:`Cycle_index`) is a gadget counting the

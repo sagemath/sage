@@ -29,7 +29,8 @@ poly_reduce = singular_function("NF")
 # Free algebra elements
 cdef class FreeAlgebraElement_letterplace(AlgebraElement):
     """
-    Weighted homogeneous elements of a free associative unital algebra (letterplace implementation)
+    Weighted homogeneous elements of a free associative unital algebra
+    (letterplace implementation).
 
     EXAMPLES::
 

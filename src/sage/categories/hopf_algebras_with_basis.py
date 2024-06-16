@@ -169,11 +169,11 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         @abstract_method(optional=True)
         def antipode_on_basis(self, x):
             """
-            The antipode of the Hopf algebra on the basis (optional)
+            The antipode of the Hopf algebra on the basis (optional).
 
             INPUT:
 
-             - ``x`` -- an index of an element of the basis of ``self``
+            - ``x`` -- an index of an element of the basis of ``self``
 
             Returns the antipode of the basis element indexed by ``x``.
 

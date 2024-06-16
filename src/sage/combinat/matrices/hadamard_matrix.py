@@ -3312,7 +3312,7 @@ def symmetric_conference_matrix(n, check=True):
 
 def szekeres_difference_set_pair(m, check=True):
     r"""
-    Construct Szekeres `(2m+1,m,1)`-cyclic difference family
+    Construct Szekeres `(2m+1,m,1)`-cyclic difference family.
 
     Let `4m+3` be a prime power. Theorem 3 in [Sz1969]_ contains a construction of a pair
     of *complementary difference sets* `A`, `B` in the subgroup `G` of the quadratic
@@ -3362,7 +3362,7 @@ def szekeres_difference_set_pair(m, check=True):
 
 def typeI_matrix_difference_set(G, A):
     r"""
-    (1,-1)-incidence type I matrix of a difference set `A` in `G`
+    (1,-1)-incidence type I matrix of a difference set `A` in `G`.
 
     Let `A` be a difference set in a group `G` of order `n`. Return `n\times n`
     matrix `M` with `M_{ij}=1` if `A_i A_j^{-1} \in A`, and `M_{ij}=-1` otherwise.
@@ -3385,7 +3385,7 @@ def typeI_matrix_difference_set(G, A):
 
 def rshcd_from_prime_power_and_conference_matrix(n):
     r"""
-    Return a `((n-1)^2,1)`-RSHCD if `n` is prime power, and symmetric `(n-1)`-conference matrix exists
+    Return a `((n-1)^2,1)`-RSHCD if `n` is prime power, and symmetric `(n-1)`-conference matrix exists.
 
     The construction implemented here is Theorem 16 (and Corollary 17) from [WW1972]_.
 

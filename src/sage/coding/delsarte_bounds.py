@@ -233,7 +233,7 @@ def _delsarte_LP_building(n, d, d_star, q, isinteger, solver, maxc=0):
 
 def _delsarte_cwc_LP_building(n, d, w, solver, isinteger):
     r"""
-    LP builder for Delsarte's LP for constant weight codes
+    LP builder for Delsarte's LP for constant weight codes.
 
     It is used in :func:`delsarte_bound_constant_weight_code`; not exported.
 
@@ -364,7 +364,7 @@ def delsarte_bound_constant_weight_code(n, d, w, return_data=False,
 def delsarte_bound_hamming_space(n, d, q, return_data=False,
                                  solver='PPL', isinteger=False):
     r"""
-    Find the Delsarte bound on codes in ``H_q^n`` of minimal distance ``d``
+    Find the Delsarte bound on codes in ``H_q^n`` of minimal distance ``d``.
 
     Find the Delsarte bound [De1973]_ on the size of codes in
     the Hamming space ``H_q^n`` of minimal distance ``d``.

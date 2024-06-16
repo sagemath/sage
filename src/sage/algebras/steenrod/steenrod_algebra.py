@@ -2309,7 +2309,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
     def P(self, *nums):
         r"""
-        The element `P(a, b, c, ...)`
+        The element `P(a, b, c, \ldots)`.
 
         INPUT:
 

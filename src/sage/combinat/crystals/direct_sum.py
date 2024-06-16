@@ -33,8 +33,8 @@ class DirectSumOfCrystals(DisjointUnionEnumeratedSets):
 
     INPUT:
 
-     - ``crystals`` -- list of crystals of the same Cartan type
-     - ``keepkey`` -- boolean
+    - ``crystals`` -- list of crystals of the same Cartan type
+    - ``keepkey`` -- boolean
 
     The option ``keepkey`` is by default set to ``False``, assuming
     that the crystals are all distinct. In this case the elements of

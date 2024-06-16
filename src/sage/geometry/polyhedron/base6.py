@@ -495,7 +495,7 @@ class Polyhedron_base6(Polyhedron_base5):
 
         INPUT:
 
-        - ``view`` -- list (default: [0,0,1]) representing the rotation axis (see note below).
+        - ``view`` -- list (default: [0,0,1]) representing the rotation axis (see note below)
         - ``angle`` -- integer (default: 0); angle of rotation in degree from 0 to 360 (see note
           below)
         - ``scale`` -- integer (default: 1); the scaling of the tikz picture
@@ -507,7 +507,7 @@ class Polyhedron_base6(Polyhedron_base5):
           recognize
         - ``opacity`` -- real number (default: 0.8) between 0 and 1 giving the opacity of
           the front facets
-        - ``axis`` -- boolean (default: ``False``); draw the axes at the origin or not.
+        - ``axis`` -- boolean (default: ``False``); draw the axes at the origin or not
         - ``output_type`` -- string (default: ``None``); valid values
           are ``None`` (deprecated), ``'LatexExpr'`` and ``'TikzPicture'``,
           whether to return a LatexExpr object (which inherits from Python
@@ -1114,7 +1114,7 @@ class Polyhedron_base6(Polyhedron_base5):
           both are returned, encapsulated in an instance of
           :class:`~sage.geometry.convex_set.AffineHullProjectionData`.
 
-        - ``return_all_data`` -- boolean (default: ``False``).
+        - ``return_all_data`` -- boolean (default: ``False``)
 
           If set, then ``as_polyhedron`` and ``as_affine_map`` will set
           (possibly overridden) and additional (internal) data concerning
@@ -1124,7 +1124,7 @@ class Polyhedron_base6(Polyhedron_base5):
           this case.
 
         - ``orthogonal`` -- boolean (default: ``False``); if ``True``,
-          provide an orthogonal transformation.
+          provide an orthogonal transformation
 
         - ``orthonormal`` -- boolean (default: ``False``); if ``True``,
           provide an orthonormal transformation. If the base ring does not

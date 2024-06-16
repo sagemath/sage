@@ -201,7 +201,7 @@ def GDD_4_2(q, existence=False, check=True):
 
 class GroupDivisibleDesign(IncidenceStructure):
     r"""
-    Group Divisible Design (GDD)
+    Group Divisible Design (GDD).
 
     Let `K` and `G` be sets of positive integers and let `\lambda` be a positive
     integer. A Group Divisible Design of index `\lambda` and order `v` is a

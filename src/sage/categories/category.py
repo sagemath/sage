@@ -929,7 +929,7 @@ class Category(UniqueRepresentation, SageObject):
 
         INPUT:
 
-         - ``proper`` -- boolean (default: ``False``); whether to exclude this category
+        - ``proper`` -- boolean (default: ``False``); whether to exclude this category
 
         Since :issue:`11943`, the order of super categories is
         determined by Python's method resolution order C3 algorithm.
@@ -1370,7 +1370,7 @@ class Category(UniqueRepresentation, SageObject):
 
     def _test_category_graph(self, **options):
         """
-        Check that the category graph matches with Python's method resolution order
+        Check that the category graph matches with Python's method resolution order.
 
         .. note::
 

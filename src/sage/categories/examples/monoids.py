@@ -19,7 +19,7 @@ from sage.sets.family import Family
 
 class FreeMonoid(FreeSemigroup):
     r"""
-    An example of a monoid: the free monoid
+    An example of a monoid: the free monoid.
 
     This class illustrates a minimal implementation of a monoid. For a
     full featured implementation of free monoids, see :func:`FreeMonoid`.

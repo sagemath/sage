@@ -24,7 +24,7 @@ _Rings = Rings()
 
 class Bimodules(CategoryWithParameters):
     """
-    The category of `(R,S)`-bimodules
+    The category of `(R,S)`-bimodules.
 
     For `R` and `S` rings, a `(R,S)`-bimodule `X` is a left `R`-module
     and right `S`-module such that the left and right actions commute:

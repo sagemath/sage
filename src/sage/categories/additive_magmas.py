@@ -175,7 +175,7 @@ class AdditiveMagmas(Category_singleton):
 
             INPUT:
 
-             - ``x``, ``y`` -- elements of this additive magma
+            - ``x``, ``y`` -- elements of this additive magma
 
             EXAMPLES::
 

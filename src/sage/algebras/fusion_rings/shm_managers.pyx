@@ -301,7 +301,7 @@ cdef class KSHandler:
 
     def __reduce__(self):
         r"""
-        Provide pickling / unpickling support for ``self.``
+        Provide pickling / unpickling support for ``self``.
 
         TESTS::
 
@@ -710,7 +710,7 @@ cdef class FvarsHandler:
 
     def __reduce__(self):
         r"""
-        Provide pickling / unpickling support for ``self.``
+        Provide pickling / unpickling support for ``self``.
 
         TESTS::
 

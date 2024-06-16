@@ -126,7 +126,7 @@ class TwoGraph(IncidenceStructure):
 
     def descendant(self, v):
         """
-        The descendant :class:`graph <sage.graphs.graph.Graph>` at ``v``
+        The descendant :class:`graph <sage.graphs.graph.Graph>` at ``v``.
 
         The :mod:`switching class of graphs <sage.combinat.designs.twographs>`
         corresponding to ``self`` contains a graph ``D`` with ``v`` its own connected
@@ -174,7 +174,7 @@ class TwoGraph(IncidenceStructure):
 
 def taylor_twograph(q):
     r"""
-    constructing Taylor's two-graph for `U_3(q)`, `q` odd prime power
+    constructing Taylor's two-graph for `U_3(q)`, `q` odd prime power.
 
     The Taylor's two-graph `T` has the `q^3+1` points of the projective plane over `F_{q^2}`
     singular w.r.t. the non-degenerate Hermitean form `S` preserved by `U_3(q)` as its ground set;
@@ -257,7 +257,7 @@ def is_twograph(T) -> bool:
 
 def twograph_descendant(G, v, name=None):
     r"""
-    Return the descendant graph w.r.t. vertex `v` of the two-graph of `G`
+    Return the descendant graph w.r.t. vertex `v` of the two-graph of `G`.
 
     In the :mod:`switching class <sage.combinat.designs.twographs>` of `G`,
     construct a graph `\Delta` with `v` an isolated vertex, and return the subgraph

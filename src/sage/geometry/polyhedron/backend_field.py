@@ -168,7 +168,7 @@ class Polyhedron_field(Polyhedron_base):
         INPUT:
 
         - ``vertices`` -- list of points; each point can be specified
-           as any iterable container of ``internal_base_ring`` elements
+          as any iterable container of ``internal_base_ring`` elements
 
         - ``rays`` -- list of rays; each ray can be specified as any
           iterable container of ``internal_base_ring`` elements

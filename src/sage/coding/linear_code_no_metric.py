@@ -1273,7 +1273,7 @@ class LinearCodeSystematicEncoder(Encoder):
 
     def systematic_permutation(self):
         r"""
-        Return a permutation which would take the systematic positions into [0,..,k-1]
+        Return a permutation which would take the systematic positions into [0,..,k-1].
 
         EXAMPLES::
 

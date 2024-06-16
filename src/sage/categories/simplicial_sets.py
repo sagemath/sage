@@ -204,7 +204,7 @@ class SimplicialSets(Category_singleton):
         class ParentMethods:
             def base_point(self):
                 """
-                Return this simplicial set's base point
+                Return this simplicial set's base point.
 
                 EXAMPLES::
 

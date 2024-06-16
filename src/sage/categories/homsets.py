@@ -27,8 +27,8 @@ class HomsetsCategory(FunctorialConstructionCategory):
 
         INPUT:
 
-         - ``cls`` -- the category class for the functor `F`
-         - ``category`` -- a category `Cat`
+        - ``cls`` -- the category class for the functor `F`
+        - ``category`` -- a category `Cat`
 
         OUTPUT: a category
 

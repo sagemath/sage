@@ -335,7 +335,7 @@ class Triangulation(Element):
 
     def __getitem__(self, i):
         """
-        Access the point indices of the i-th simplex of the triangulation.
+        Access the point indices of the `i`-th simplex of the triangulation.
 
         INPUT:
 
@@ -343,7 +343,7 @@ class Triangulation(Element):
 
         OUTPUT:
 
-        A tuple of integers. The vertex indices of the i-th simplex.
+        A tuple of integers. The vertex indices of the `i`-th simplex.
 
         EXAMPLES::
 

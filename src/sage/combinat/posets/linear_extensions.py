@@ -93,7 +93,8 @@ class LinearExtensionOfPoset(ClonableArray,
     @staticmethod
     def __classcall_private__(cls, linear_extension, poset):
         r"""
-        Implements the shortcut ``LinearExtensionOfPoset(linear_extension, poset)`` to ``LinearExtensionsOfPoset(poset)(linear_extension)``
+        Implements the shortcut ``LinearExtensionOfPoset(linear_extension, poset)``
+        to ``LinearExtensionsOfPoset(poset)(linear_extension)``.
 
         INPUT:
 

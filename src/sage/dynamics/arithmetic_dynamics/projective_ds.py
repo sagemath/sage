@@ -3385,13 +3385,13 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         INPUT:
 
-         - ``m`` -- the preperiod of the preperiodic points to make affine
+        - ``m`` -- the preperiod of the preperiodic points to make affine
 
-         - ``n`` -- the period of the preperiodic points to make affine
+        - ``n`` -- the period of the preperiodic points to make affine
 
-         - ``return_conjugation`` -- boolean (default: ``False``); if ``True``, return a tuple
-           ``(g, phi)`` where ``g`` is a model with affine (n, m) preperiodic points
-           and ``phi`` is the matrix that moves ``f`` to ``g``.
+        - ``return_conjugation`` -- boolean (default: ``False``); if ``True``, return a tuple
+          ``(g, phi)`` where ``g`` is a model with affine (n, m) preperiodic points
+          and ``phi`` is the matrix that moves ``f`` to ``g``.
 
         OUTPUT: a dynamical system conjugate to this one
 

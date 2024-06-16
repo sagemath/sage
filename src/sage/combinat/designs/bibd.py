@@ -73,14 +73,14 @@ def biplane(n, existence=False):
 
     - ``n`` -- integer; order of the biplane
 
-     - ``existence`` -- boolean; instead of building the design, return:
+    - ``existence`` -- boolean; instead of building the design, return:
 
-       - ``True`` -- meaning that Sage knows how to build the design
+      - ``True`` -- meaning that Sage knows how to build the design
 
-       - ``Unknown`` -- meaning that Sage does not know how to build the
-         design, but that the design may exist (see :mod:`sage.misc.unknown`)
+      - ``Unknown`` -- meaning that Sage does not know how to build the
+        design, but that the design may exist (see :mod:`sage.misc.unknown`)
 
-       - ``False`` -- meaning that the design does not exist
+      - ``False`` -- meaning that the design does not exist
 
     .. SEEALSO::
 
@@ -1179,7 +1179,7 @@ def v_5_1_BIBD(v, check=True):
 
 def _get_r_s_t_u(v):
     r"""
-    Implements the table from [ClaytonSmith]_
+    Implements the table from [ClaytonSmith]_.
 
     Return the parameters ``r,s,t,u`` associated with an integer ``v``.
 
@@ -1398,7 +1398,7 @@ def BIBD_from_arc_in_desarguesian_projective_plane(n,k,existence=False):
 
 class PairwiseBalancedDesign(GroupDivisibleDesign):
     r"""
-    Pairwise Balanced Design (PBD)
+    Pairwise Balanced Design (PBD).
 
     A Pairwise Balanced Design, or `(v,K,\lambda)`-PBD, is a collection
     `\mathcal B` of blocks defined on a set `X` of size `v`, such that any block
@@ -1467,7 +1467,7 @@ class PairwiseBalancedDesign(GroupDivisibleDesign):
 
 class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
     r"""
-    Balanced Incomplete Block Design (BIBD)
+    Balanced Incomplete Block Design (BIBD).
 
     INPUT:
 

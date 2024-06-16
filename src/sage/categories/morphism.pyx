@@ -302,7 +302,7 @@ cdef class Morphism(Map):
 
     def register_as_conversion(self):
         r"""
-        Register this morphism as a conversion to Sage's coercion model
+        Register this morphism as a conversion to Sage's coercion model.
 
         (see :mod:`sage.structure.coerce`).
 

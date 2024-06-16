@@ -186,7 +186,7 @@ class LinearCodeAutGroupCanLabel:
 
     def __init__(self, C, P=None, algorithm_type='semilinear'):
         """
-        see :class:`LinearCodeAutGroupCanLabel`
+        See :class:`LinearCodeAutGroupCanLabel`.
 
         INPUT:
 

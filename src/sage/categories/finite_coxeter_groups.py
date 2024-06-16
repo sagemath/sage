@@ -677,7 +677,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
 
         def permutahedron(self, point=None, base_ring=None):
             r"""
-            Return the permutahedron of ``self``,
+            Return the permutahedron of ``self``.
 
             This is the convex hull of the point ``point`` in the weight
             basis under the action of ``self`` on the underlying vector

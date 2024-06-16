@@ -2045,7 +2045,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         INPUT:
 
-        - ``points`` -- a tuple of points or point indices or ``None``
+        - ``points`` -- tuple of points or point indices or ``None``
           (default). A subset of points for which to compute the Gale
           transform. By default, all points are used.
 

@@ -1864,7 +1864,7 @@ def OA_from_quasi_difference_matrix(M,G,add_col=True,fill_hole=True):
 
 def OA_from_Vmt(m,t,V):
     r"""
-    Return an Orthogonal Array from a `V(m,t)`
+    Return an Orthogonal Array from a `V(m,t)`.
 
     INPUT:
 
@@ -1888,7 +1888,7 @@ def OA_from_Vmt(m,t,V):
 
 def QDM_from_Vmt(m,t,V):
     r"""
-    Return a QDM from a `V(m,t)`
+    Return a QDM from a `V(m,t)`.
 
     **Definition**
 
@@ -1952,7 +1952,7 @@ def QDM_from_Vmt(m,t,V):
 
 def OA_from_PBD(k,n,PBD, check=True):
     r"""
-    Return an `OA(k,n)` from a PBD
+    Return an `OA(k,n)` from a PBD.
 
     **Construction**
 
@@ -2135,7 +2135,7 @@ class OAMainFunctions:
     @staticmethod
     def explain_construction(k,n,t=2):
         r"""
-        Return a string describing how to builds an `OA(k,n)`
+        Return a string describing how to builds an `OA(k,n)`.
 
         INPUT:
 
@@ -2153,7 +2153,7 @@ class OAMainFunctions:
     @staticmethod
     def build(k,n,t=2,resolvable=False):
         r"""
-        Return an `OA(k,n)` of strength `t`
+        Return an `OA(k,n)` of strength `t`.
 
         An orthogonal array of parameters `k,n,t` is a matrix with `k`
         columns filled with integers from `[n]` in such a way that for any
@@ -2194,7 +2194,7 @@ class OAMainFunctions:
     @staticmethod
     def exists(k,n,t=2):
         r"""
-        Return the existence status of an `OA(k,n)`
+        Return the existence status of an `OA(k,n)`.
 
         INPUT:
 

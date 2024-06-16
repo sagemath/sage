@@ -19,7 +19,7 @@ from sage.categories.tensor import tensor
 
 class MyGroupAlgebra(CombinatorialFreeModule):
     r"""
-    An example of a Hopf algebra with basis: the group algebra of a group
+    An example of a Hopf algebra with basis: the group algebra of a group.
 
     This class illustrates a minimal implementation of a Hopf algebra with basis.
     """

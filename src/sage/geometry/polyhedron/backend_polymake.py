@@ -259,8 +259,8 @@ class Polyhedron_polymake(Polyhedron_base):
         INPUT:
 
         - ``vertices`` -- list of points; each point can be specified
-           as any iterable container of
-           :meth:`~sage.geometry.polyhedron.base.base_ring` elements
+          as any iterable container of
+          :meth:`~sage.geometry.polyhedron.base.base_ring` elements
 
         - ``rays`` -- list of rays; each ray can be specified as any
           iterable container of
@@ -292,8 +292,8 @@ class Polyhedron_polymake(Polyhedron_base):
         INPUT:
 
         - ``vertices`` -- list of points; each point can be specified
-           as any iterable container of
-           :meth:`~sage.geometry.polyhedron.base.base_ring` elements
+          as any iterable container of
+          :meth:`~sage.geometry.polyhedron.base.base_ring` elements
 
         - ``rays`` -- list of rays; each ray can be specified as any
           iterable container of

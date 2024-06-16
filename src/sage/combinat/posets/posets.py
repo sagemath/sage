@@ -3644,7 +3644,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         def init_LP(k, cycles, inc_P):
             r"""
-            Initialize a LP object with k colors and the constraints from 'cycles'
+            Initialize a LP object with k colors and the constraints from 'cycles'.
 
                 sage: init_LP(1,2,3) # not tested
             """

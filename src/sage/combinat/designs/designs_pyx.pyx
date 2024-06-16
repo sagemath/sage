@@ -352,7 +352,7 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology='O
 
 def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=False):
     r"""
-    Check that input is a Group Divisible Design on `\{0, \ldots, v-1\}`
+    Check that input is a Group Divisible Design on `\{0, \ldots, v-1\}`.
 
     For more information on Group Divisible Designs, see
     :class:`~sage.combinat.designs.group_divisible_designs.GroupDivisibleDesign`.
@@ -592,7 +592,7 @@ def is_pairwise_balanced_design(blocks,v,K=None,lambd=1,verbose=False):
 
 def is_projective_plane(blocks, verbose=False):
     r"""
-    Test whether the blocks form a projective plane on `\{0,...,v-1\}`
+    Test whether the blocks form a projective plane on `\{0,...,v-1\}`.
 
     A *projective plane* is an incidence structure that has the following properties:
 
@@ -730,7 +730,7 @@ def is_difference_matrix(M,G,k,lmbda=1,verbose=False):
 
 def is_quasi_difference_matrix(M,G,int k,int lmbda,int mu,int u,verbose=False):
     r"""
-    Test if the matrix is a `(G,k;\lambda,\mu;u)`-quasi-difference matrix
+    Test if the matrix is a `(G,k;\lambda,\mu;u)`-quasi-difference matrix.
 
     Let `G` be an abelian group of order `n`. A
     `(n,k;\lambda,\mu;u)`-quasi-difference matrix (QDM) is a matrix `Q_{ij}`
@@ -1008,7 +1008,7 @@ cpdef _OA_cache_get(int k,int n):
 
 cpdef _OA_cache_construction_available(int k,int n):
     r"""
-    Test if a construction is implemented using the cache's information
+    Test if a construction is implemented using the cache's information.
 
     INPUT:
 

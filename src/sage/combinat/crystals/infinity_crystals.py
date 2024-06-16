@@ -448,7 +448,7 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
 
         def seg(self):
             r"""
-            Return the statistic `\mathrm{seg}` of ``self.``
+            Return the statistic `\mathrm{seg}` of ``self``.
 
             More precisely, following [LS2012]_, define a `k`-segment of a
             tableau `T` in `\mathcal{B}(\infty)` to be a maximal string

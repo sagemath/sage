@@ -180,7 +180,9 @@ def _is_a_splitting(S1, S2, n, return_automorphism=False):
 
 def _lift2smallest_field(a):
     """
-    INPUT: a is an element of a finite field GF(q)
+    INPUT:
+
+    - ``a`` -- an element of a finite field GF(q)
 
     OUTPUT: the element b of the smallest subfield F of GF(q) for
     which F(b)=a.

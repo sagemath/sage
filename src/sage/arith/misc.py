@@ -4379,7 +4379,7 @@ def primitive_root(n, check=True):
 
 def nth_prime(n):
     """
-    Return the `n`-th prime number (1-indexed, so that 2 is the 1st prime.)
+    Return the `n`-th prime number (1-indexed, so that 2 is the 1st prime).
 
     INPUT:
 

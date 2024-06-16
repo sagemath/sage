@@ -356,7 +356,7 @@ cdef class PointConfiguration_base(Parent):
 
         INPUT:
 
-        - ``points`` -- a tuple of tuples of projective coordinates
+        - ``points`` -- tuple of tuples of projective coordinates
           with ``1`` as the final coordinate
 
         - ``defined_affine`` -- boolean; whether the point
@@ -656,7 +656,7 @@ cdef class PointConfiguration_base(Parent):
 
     def point(self, i):
         """
-        Return the i-th point of the configuration.
+        Return the `i`-th point of the configuration.
 
         Same as :meth:`__getitem__`
 
@@ -757,7 +757,7 @@ cdef class PointConfiguration_base(Parent):
 
         INPUT:
 
-        - ``s`` -- an integer that uniquely specifies a simplex
+        - ``s`` -- integer that uniquely specifies a simplex
 
         OUTPUT:
 

@@ -302,7 +302,7 @@ def plot_hyperplane(hyperplane, **kwds):
       string, it is labeled by that string, otherwise it is not
       labeled
 
-    - ``label_color`` -- (default: ``'black'``) Color for hyperplane_label
+    - ``label_color`` -- (default: ``'black'``) color for hyperplane_label
 
     - ``label_fontsize`` -- size for ``hyperplane_label`` font (default: 14)
       (does not work in 3d, yet)

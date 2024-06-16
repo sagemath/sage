@@ -97,8 +97,8 @@ class Polyhedron_number_field(Polyhedron_field, Polyhedron_base_number_field):
         INPUT:
 
         - ``vertices`` -- list of points. Each point can be specified
-           as any iterable container of
-           :meth:`~sage.geometry.polyhedron.base.base_ring` elements.
+          as any iterable container of
+          :meth:`~sage.geometry.polyhedron.base.base_ring` elements.
 
         - ``rays`` -- list of rays. Each ray can be specified as any
           iterable container of

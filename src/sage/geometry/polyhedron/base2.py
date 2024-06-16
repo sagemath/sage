@@ -731,7 +731,7 @@ class Polyhedron_base2(Polyhedron_base1):
           The variable names of the Laurent polynomial ring of the output
           are this string followed by an integer.
 
-        - ``names`` -- a list or tuple of names (strings), or a comma separated string
+        - ``names`` -- list or tuple of names (strings), or a comma separated string
 
           ``name`` is extracted from ``names``, therefore ``names`` has to contain
           exactly one variable name, and ``name`` and``names`` cannot be specified

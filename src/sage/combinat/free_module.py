@@ -1552,7 +1552,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
         r"""
         INPUT:
 
-         - ``modules`` -- tuple `(F_1,\dots,F_n)` of
+        - ``modules`` -- tuple `(F_1,\dots,F_n)` of
           free modules whose tensor product is self
 
         Returns the canonical multilinear morphism from
@@ -1702,7 +1702,7 @@ class CartesianProductWithFlattening:
         """
         INPUT:
 
-         - ``flatten`` -- tuple of booleans
+        - ``flatten`` -- tuple of booleans
 
         This constructs a callable which accepts ``len(flatten)``
         arguments, and builds a tuple out them. When ``flatten[i]``,
@@ -1834,7 +1834,7 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
 
         INPUT:
 
-         - ``i`` -- integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -1868,7 +1868,7 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
 
         INPUT:
 
-         - ``i`` -- integer
+        - ``i`` -- integer
 
         EXAMPLES::
 

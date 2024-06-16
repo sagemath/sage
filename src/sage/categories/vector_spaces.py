@@ -27,7 +27,7 @@ _Fields = Fields()
 
 class VectorSpaces(Category_module):
     """
-    The category of (abstract) vector spaces over a given field
+    The category of (abstract) vector spaces over a given field.
 
     ??? with an embedding in an ambient vector space ???
 

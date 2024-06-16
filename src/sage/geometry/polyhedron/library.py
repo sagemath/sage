@@ -498,7 +498,7 @@ class Polytopes:
 
         INPUT:
 
-        - ``n`` -- a positive integer, the number of vertices
+        - ``n`` -- positive integer; the number of vertices
 
         - ``exact`` -- boolean (default: ``True``); if ``False`` floating point
           numbers are used for coordinates
@@ -577,7 +577,7 @@ class Polytopes:
 
         INPUT:
 
-        - ``n`` -- a positive integer giving the size of the permutation matrices
+        - ``n`` -- positive integer giving the size of the permutation matrices
 
         - ``backend`` -- the backend to use to create the polytope
 
@@ -3074,7 +3074,7 @@ class Polytopes:
 
         - ``backend`` -- the backend to use to create the polytope
 
-        - ``construction`` -- string (default: 'coxeter'); the construction to use.
+        - ``construction`` -- string (default: ``'coxeter'``); the construction to use.
           The other possibility is 'as_permutahedron'.
 
         EXAMPLES:
@@ -3166,7 +3166,7 @@ class Polytopes:
           - If ``None`` (the default), it returns the `\pm 1`-cube of
             dimension ``dim``.
 
-          - ``'zero_one'`` -- (string). Return the `0/1`-cube.
+          - ``'zero_one'`` -- string; return the `0/1`-cube
 
           - a list of length ``dim``. Its elements are pairs of
             numbers `(a,b)` with `a < b`. The cube will be the product of
@@ -3346,7 +3346,7 @@ class Polytopes:
           - If the input is ``None`` (the default), returns the convex hull of
             the eight `\pm 1` vectors of length three.
 
-          - ``'zero_one'`` -- (string). Return the `0/1`-cube.
+          - ``'zero_one'`` -- string; return the `0/1`-cube
 
           - a list of 3 lists of length 2. The cube will be a product of
             these three intervals.

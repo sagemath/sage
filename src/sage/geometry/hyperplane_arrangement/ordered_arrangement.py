@@ -115,7 +115,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
 
         - ``parent`` -- the parent :class:`OrderedHyperplaneArrangements`
 
-        - ``hyperplanes`` -- a tuple of hyperplanes
+        - ``hyperplanes`` -- tuple of hyperplanes
 
         - ``check`` -- boolean (default: ``True``); whether
           to check input
@@ -552,7 +552,7 @@ class OrderedHyperplaneArrangements(HyperplaneArrangements):
           preserve signs of hyperplane equations
 
         - ``check`` -- boolean (default: ``True``); whether to
-          perform argument checking.
+          perform argument checking
 
         EXAMPLES::
 

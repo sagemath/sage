@@ -381,7 +381,7 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
 
     class Fundamental(CombinatorialFreeModule, BindableClass):
         r"""
-        The Subset algebra, in the fundamental basis
+        The Subset algebra, in the fundamental basis.
 
         INPUT:
 
@@ -457,7 +457,7 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
 
     class In(CombinatorialFreeModule, BindableClass):
         r"""
-        The Subset Algebra, in the ``In`` basis
+        The Subset Algebra, in the ``In`` basis.
 
         INPUT:
 
@@ -500,7 +500,7 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
 
     class Out(CombinatorialFreeModule, BindableClass):
         r"""
-        The Subset Algebra, in the `Out` basis
+        The Subset Algebra, in the `Out` basis.
 
         INPUT:
 

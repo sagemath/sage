@@ -2019,7 +2019,7 @@ class IncidenceStructure:
     def coloring(self, k=None, solver=None, verbose=0,
                  *, integrality_tolerance=1e-3):
         r"""
-        Compute a (weak) `k`-coloring of the hypergraph
+        Compute a (weak) `k`-coloring of the hypergraph.
 
         A weak coloring of a hypergraph `\mathcal H` is an assignment of colors
         to its vertices such that no set is monochromatic.

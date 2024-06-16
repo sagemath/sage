@@ -382,7 +382,7 @@ class HyperplaneArrangementElement(Element):
 
         - ``parent`` -- the parent :class:`HyperplaneArrangements`
 
-        - ``hyperplanes`` -- a tuple of hyperplanes
+        - ``hyperplanes`` -- tuple of hyperplanes
 
         - ``check`` -- boolean (default: ``True``); whether to check input
 
@@ -2139,7 +2139,7 @@ class HyperplaneArrangementElement(Element):
         INPUT:
 
         - ``B`` -- a region (optional); if ``None``, then
-          an arbitrary region is chosen as the base region.
+          an arbitrary region is chosen as the base region
 
         - ``numbered_labels`` -- boolean (default: ``True``); if ``True``,
           then the elements of the poset are numbered. Else they are labelled
@@ -3722,7 +3722,7 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
           whether or not there is a warning shown
 
         - ``check`` -- boolean (default: ``True``); whether to
-          perform argument checking.
+          perform argument checking
 
         EXAMPLES::
 

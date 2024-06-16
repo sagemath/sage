@@ -854,7 +854,7 @@ class CartanTypeFactory(SageObject):
     @classmethod
     def color(cls, i):
         """
-        Default color scheme for the vertices of a Dynkin diagram (and associated objects)
+        Default color scheme for the vertices of a Dynkin diagram (and associated objects).
 
         EXAMPLES::
 

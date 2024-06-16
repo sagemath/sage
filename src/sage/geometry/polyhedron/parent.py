@@ -42,17 +42,17 @@ def Polyhedra(ambient_space_or_base_ring=None, ambient_dim=None, backend=None, *
     - ``ambient_space`` -- a free module
 
     - ``backend`` -- string. The name of the backend for computations. There are
-       several backends implemented:
+      several backends implemented:
 
-         * ``backend="ppl"`` uses the Parma Polyhedra Library
+        * ``backend="ppl"`` uses the Parma Polyhedra Library
 
-         * ``backend="cdd"`` uses CDD
+        * ``backend="cdd"`` uses CDD
 
-         * ``backend="normaliz"`` uses normaliz
+        * ``backend="normaliz"`` uses normaliz
 
-         * ``backend="polymake"`` uses polymake
+        * ``backend="polymake"`` uses polymake
 
-         * ``backend="field"`` a generic Sage implementation
+        * ``backend="field"`` a generic Sage implementation
 
     OUTPUT:
 
@@ -207,7 +207,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
     - ``ambient_dim`` -- integer; the ambient space dimension
 
     - ``backend`` -- string; the name of the backend for computations. There are
-       several backends implemented:
+      several backends implemented:
 
       * ``backend="ppl"`` uses the Parma Polyhedra Library
 

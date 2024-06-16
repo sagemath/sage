@@ -33,7 +33,7 @@ def _simplify_full_rad(f):
 
     INPUT:
 
-     - ``f`` -- a symbolic expression
+    - ``f`` -- a symbolic expression
 
     EXAMPLES::
 
@@ -55,16 +55,15 @@ class ParametrizedSurface3D(SageObject):
 
     INPUT:
 
-     - ``surface_equation`` -- a 3-tuple of functions specifying a parametric
-       representation of the surface
+    - ``surface_equation`` -- a 3-tuple of functions specifying a parametric
+      representation of the surface
 
-     - ``variables`` -- a 2-tuple of intrinsic coordinates `(u, v)` on the
-       surface, with `u` and `v` symbolic variables, or a 2-tuple of triples
-       `(u, u_{min}, u_{max})`,
-       `(v, v_{min}, v_{max})` when the parameter range
-       for the coordinates is known.
+    - ``variables`` -- a 2-tuple of intrinsic coordinates `(u, v)` on the
+      surface, with `u` and `v` symbolic variables, or a 2-tuple of triples
+      `(u, u_{min}, u_{max})`, `(v, v_{min}, v_{max})` when the parameter range
+      for the coordinates is known
 
-     - ``name`` -- name of the surface (optional).
+    - ``name`` -- name of the surface (optional)
 
 
     .. note::
@@ -417,7 +416,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``coords`` -- 2-tuple specifying the intrinsic coordinates ``(u, v)`` of the point.
+        - ``coords`` -- 2-tuple specifying the intrinsic coordinates ``(u, v)`` of the point
 
         OUTPUT: 3-vector specifying the coordinates in `\RR^3` of the point
 
@@ -446,10 +445,10 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``coords`` -- 2-tuple specifying the intrinsic coordinates ``(u, v)`` of the point.
+        - ``coords`` -- 2-tuple specifying the intrinsic coordinates ``(u, v)`` of the point
 
-         - ``components`` -- 2-tuple specifying the components of the tangent
-           vector in the intrinsic coordinate frame
+        - ``components`` -- 2-tuple specifying the components of the tangent
+          vector in the intrinsic coordinate frame
 
         OUTPUT: 3-vector specifying the components in `\RR^3` of the vector
 
@@ -494,8 +493,8 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``urange`` -- 2-tuple specifying the parameter range for `u`
-         - ``vrange`` -- 2-tuple specifying the parameter range for `v`
+        - ``urange`` -- 2-tuple specifying the parameter range for `u`
+        - ``vrange`` -- 2-tuple specifying the parameter range for `v`
 
         EXAMPLES::
 
@@ -612,7 +611,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``index`` -- tuple ``(i, j)`` specifying the index of the component `g_{ij}`.
+        - ``index`` -- tuple ``(i, j)`` specifying the index of the component `g_{ij}`
 
         OUTPUT: component `g_{ij}` of the first fundamental form
 
@@ -669,7 +668,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``vector1``, ``vector2`` -- vectors on the surface.
+        - ``vector1``, ``vector2`` -- vectors on the surface
 
         OUTPUT: first fundamental form evaluated on the input vectors
 
@@ -769,7 +768,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``index`` -- tuple ``(i, j)`` specifying the index of the component `g^{ij}`.
+        - ``index`` -- tuple ``(i, j)`` specifying the index of the component `g^{ij}`
 
         OUTPUT: component of the inverse of the fundamental form
 
@@ -797,7 +796,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``theta`` -- rotation angle
+        - ``theta`` -- rotation angle
 
         OUTPUT: rotation matrix with respect to the natural frame
 
@@ -846,7 +845,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``coordinates`` -- either ``ext`` (default) or ``int``.
+        - ``coordinates`` -- either ``ext`` (default) or ``int``
 
         OUTPUT: orthogonal frame field as a dictionary
 
@@ -908,8 +907,8 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``index`` -- index of the basis vector;
-         - ``coordinates`` -- either ``ext`` (default) or ``int``.
+        - ``index`` -- index of the basis vector
+        - ``coordinates`` -- either ``ext`` (default) or ``int``
 
         OUTPUT: orthonormal frame vector field
 
@@ -942,8 +941,8 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``v``, ``w`` -- vector fields on the surface, expressed
-           as pairs of functions or as vectors of length 2
+        - ``v``, ``w`` -- vector fields on the surface, expressed
+          as pairs of functions or as vectors of length 2
 
         OUTPUT: the Lie bracket `[v, w]`
 
@@ -978,14 +977,14 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``e1``, ``e2`` -- vector fields in intrinsic coordinates on
-           the surface, expressed as pairs of functions, or as vectors of
-           length 2.
+        - ``e1``, ``e2`` -- vector fields in intrinsic coordinates on
+          the surface, expressed as pairs of functions, or as vectors of
+          length 2
 
         OUTPUT:
 
-         - Dictionary of structure functions, where the key ``(i, j, k)`` refers to
-           the structure function `c_{i,j}^k`.
+        Dictionary of structure functions, where the key ``(i, j, k)`` refers to
+        the structure function `c_{i,j}^k`.
 
         EXAMPLES::
 
@@ -1093,7 +1092,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``index`` -- a 2-tuple ``(i, j)`` specifying the element of the second-order frame.
+        - ``index`` -- a 2-tuple ``(i, j)`` specifying the element of the second-order frame
 
         OUTPUT: the second-order derivative `r_{ij}`
 
@@ -1140,7 +1139,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``index`` -- a 2-tuple ``(i, j)``
+        - ``index`` -- a 2-tuple ``(i, j)``
 
         OUTPUT: component `h_{ij}` of the second fundamental form
 
@@ -1194,7 +1193,7 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``vector1``, ``vector2`` -- 2-tuples representing the input vectors.
+        - ``vector1``, ``vector2`` -- 2-tuples representing the input vectors
 
         OUTPUT: value of the second fundamental form evaluated on the given vectors
 
@@ -1279,8 +1278,8 @@ class ParametrizedSurface3D(SageObject):
 
         OUTPUT:
 
-         - Dictionary where the keys are two-tuples ``(i, j)``, with values the
-           corresponding component of the shape operator.
+        Dictionary where the keys are two-tuples ``(i, j)``, with values the
+        corresponding component of the shape operator.
 
         EXAMPLES::
 
@@ -1475,25 +1474,25 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``p0`` -- 2-tuple with coordinates of the initial point
+        - ``p0`` -- 2-tuple with coordinates of the initial point
 
-         - ``v0`` -- 2-tuple with components of the initial tangent vector to the geodesic
+        - ``v0`` -- 2-tuple with components of the initial tangent vector to the geodesic
 
-         - ``tinterval`` -- list ``[a, b, M]``, where ``(a,b)`` is the domain
-           of the geodesic and ``M`` is the number of subdivision points used
-           when returning the solution
+        - ``tinterval`` -- list ``[a, b, M]``, where ``(a,b)`` is the domain
+          of the geodesic and ``M`` is the number of subdivision points used
+          when returning the solution
 
         OUTPUT:
 
         List of lists ``[t, [u1(t), u2(t)], [v1(t), v2(t)], [x1(t), x2(t), x3(t)]]``, where
 
-         - ``t`` -- a subdivision point;
+        - ``t`` -- a subdivision point;
 
-         - ``[u1(t), u2(t)]`` are the intrinsic coordinates of the geodesic point;
+        - ``[u1(t), u2(t)]`` are the intrinsic coordinates of the geodesic point;
 
-         - ``[v1(t), v2(t)]`` are the intrinsic coordinates of the tangent vector to the geodesic;
+        - ``[v1(t), v2(t)]`` are the intrinsic coordinates of the tangent vector to the geodesic;
 
-         - ``[x1(t), x2(t), x3(t)]`` are the coordinates of the geodesic point in the three-dimensional space.
+        - ``[x1(t), x2(t), x3(t)]`` are the coordinates of the geodesic point in the three-dimensional space.
 
         EXAMPLES::
 
@@ -1531,8 +1530,8 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``curve`` -- curve in intrinsic coordinates along which to do parallel transport
-         - ``t`` -- curve parameter
+        - ``curve`` -- curve in intrinsic coordinates along which to do parallel transport
+        - ``t`` -- curve parameter
 
         EXAMPLES::
 
@@ -1588,24 +1587,24 @@ class ParametrizedSurface3D(SageObject):
 
         INPUT:
 
-         - ``curve`` -- 2-tuple of functions which determine the curve with respect to
-           the local coordinate system;
+        - ``curve`` -- 2-tuple of functions which determine the curve with respect to
+          the local coordinate system
 
-         - ``t`` -- symbolic variable denoting the curve parameter;
+        - ``t`` -- symbolic variable denoting the curve parameter
 
-         - ``v0`` -- 2-tuple representing the initial vector;
+        - ``v0`` -- 2-tuple representing the initial vector
 
-         - ``tinterval`` -- list ``[a, b, N]``, where ``(a, b)`` is the domain of the curve
-           and ``N`` is the number of subdivision points.
+        - ``tinterval`` -- list ``[a, b, N]``, where ``(a, b)`` is the domain of the curve
+          and ``N`` is the number of subdivision points
 
         OUTPUT:
 
         The list consisting of lists ``[t, [v1(t), v2(t)]]``, where
 
-         - ``t`` -- a subdivision point;
+        - ``t`` -- a subdivision point;
 
-         - ``[v1(t), v2(t)]`` is the list of coordinates of the vector parallel translated
-           along the curve.
+        - ``[v1(t), v2(t)]`` is the list of coordinates of the vector parallel translated
+          along the curve.
 
         EXAMPLES::
 

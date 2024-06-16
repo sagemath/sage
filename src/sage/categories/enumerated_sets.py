@@ -860,7 +860,7 @@ class EnumeratedSets(CategoryWithAxiom):
         @cached_method
         def _an_element_from_iterator(self):
             """
-            Return the first element of ``self`` returned by :meth:`__iter__`
+            Return the first element of ``self`` returned by :meth:`__iter__`.
 
             If ``self`` is empty, the exception
             :class:`~sage.categories.sets_cat.EmptySetError` is raised instead.

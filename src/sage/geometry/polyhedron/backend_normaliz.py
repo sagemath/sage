@@ -1031,7 +1031,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         INPUT:
 
-        - ``data`` -- a dictionary
+        - ``data`` -- dictionary
 
         - ``verbose`` -- boolean (default: ``False``)
 
@@ -1054,7 +1054,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
         r"""
         Get the data necessary to reproduce the normaliz cone.
 
-        OUTPUT: ``data`` -- a dictionary
+        OUTPUT: ``data`` -- dictionary
 
         TESTS:
 
@@ -1096,7 +1096,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         INPUT:
 
-        - ``data`` -- a dictionary of PyNormaliz cone input properties
+        - ``data`` -- dictionary of PyNormaliz cone input properties
 
         - ``file_output`` -- string (optional); a filename to which the
           representation should be written. If set to ``None`` (default),

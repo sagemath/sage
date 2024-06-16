@@ -576,7 +576,7 @@ class CylindricalDiagram(SageObject):
 
     def _latex_(self):
         r"""
-        Return a `\LaTeX` representation of ``self``
+        Return a `\LaTeX` representation of ``self``.
 
         EXAMPLES::
 

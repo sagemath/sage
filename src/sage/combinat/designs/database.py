@@ -310,7 +310,7 @@ LIST_OF_MOLS_CONSTRUCTIONS = ", ".join(":func:`{} MOLS of order {} <MOLS_{}_{}>`
 
 def OA_7_18():
     r"""
-    Return an OA(7,18)
+    Return an OA(7,18).
 
     Proved in [JulianAbel13]_.
 
@@ -364,7 +364,7 @@ def OA_7_18():
 
 def OA_9_40():
     r"""
-    Return an OA(9,40)
+    Return an OA(9,40).
 
     As explained in the Handbook III.3.62 [DesignHandbook]_. Uses the fact that
     `40 = 2^3 \times 5` and that `5` is prime.
@@ -404,7 +404,7 @@ def OA_9_40():
 
 def OA_7_66():
     r"""
-    Return an OA(7,66)
+    Return an OA(7,66).
 
     Construction shared by Julian R. Abel.
 
@@ -444,7 +444,7 @@ def OA_7_66():
 
 def OA_7_68():
     r"""
-    Return an OA(7,68)
+    Return an OA(7,68).
 
     Construction shared by Julian R. Abel.
 
@@ -484,7 +484,7 @@ def OA_7_68():
 
 def OA_8_69():
     r"""
-    Return an OA(8,69)
+    Return an OA(8,69).
 
     Construction shared by Julian R. Abel.
 
@@ -556,7 +556,7 @@ def OA_8_69():
 
 def OA_7_74():
     r"""
-    Return an OA(7,74)
+    Return an OA(7,74).
 
     Construction shared by Julian R. Abel.
 
@@ -596,7 +596,7 @@ def OA_7_74():
 
 def OA_8_76():
     r"""
-    Return an OA(8,76)
+    Return an OA(8,76).
 
     Construction shared by Julian R. Abel.
 
@@ -663,7 +663,7 @@ def OA_8_76():
 
 def OA_11_80():
     r"""
-    Return an OA(11,80)
+    Return an OA(11,80).
 
     As explained in the Handbook III.3.76 [DesignHandbook]_. Uses the fact that
     `80 = 2^4 \times 5` and that `5` is prime.
@@ -705,7 +705,7 @@ def OA_11_80():
 
 def OA_15_112():
     r"""
-    Return an OA(15,112)
+    Return an OA(15,112).
 
     Published by Julian R. Abel in [Ab1995]_. Uses the fact that 112 = `2^4
     \times 7` and that `7` is prime.
@@ -751,7 +751,7 @@ def OA_15_112():
 
 def OA_9_120():
     r"""
-    Return an OA(9,120)
+    Return an OA(9,120).
 
     Construction shared by Julian R. Abel:
 
@@ -797,7 +797,7 @@ def OA_9_120():
 
 def OA_9_135():
     r"""
-    Return an OA(9,135)
+    Return an OA(9,135).
 
     Construction shared by Julian R. Abel:
 
@@ -882,7 +882,7 @@ def OA_9_135():
 
 def OA_11_160():
     r"""
-    Return an OA(11,160)
+    Return an OA(11,160).
 
     Published by Julian R. Abel in [Ab1995]_. Uses the fact that `160 = 2^5
     \times 5` is a product of a power of `2` and a prime number.
@@ -925,7 +925,7 @@ def OA_11_160():
 
 def OA_16_176():
     r"""
-    Return an OA(16,176)
+    Return an OA(16,176).
 
     Published by Julian R. Abel in [Ab1995]_. Uses the fact that `176 = 2^4
     \times 11` is a product of a power of `2` and a prime number.
@@ -979,7 +979,7 @@ def OA_16_176():
 
 def OA_11_185():
     r"""
-    Return an OA(11,185)
+    Return an OA(11,185).
 
     The construction is given in [Greig99]_. In Julian R. Abel's words:
 
@@ -1123,7 +1123,7 @@ def OA_10_205():
 
 def OA_16_208():
     r"""
-    Return an OA(16,208)
+    Return an OA(16,208).
 
     Published by Julian R. Abel in [Ab1995]_. Uses the fact that `208 = 2^4
     \times 13` is a product of `2` and a prime number.
@@ -1182,7 +1182,7 @@ def OA_16_208():
 
 def OA_15_224():
     r"""
-    Return an OA(15,224)
+    Return an OA(15,224).
 
     Published by Julian R. Abel in [Ab1995]_ (uses the fact that `224=2^5
     \times 7` is a product of a power of `2` and a prime number).
@@ -1229,7 +1229,7 @@ def OA_15_224():
 
 def OA_11_254():
     r"""
-    Return an OA(11,254)
+    Return an OA(11,254).
 
     This constructions appears in [Greig99]_.
 
@@ -1268,7 +1268,7 @@ def OA_11_254():
 
 def OA_20_352():
     r"""
-    Return an OA(20,352)
+    Return an OA(20,352).
 
     Published by Julian R. Abel in [Ab1995]_ (uses the fact that `352=2^5
     \times 11` is the product of a power of `2` and a prime number).
@@ -1327,7 +1327,7 @@ def OA_20_352():
 
 def OA_20_416():
     r"""
-    Return an OA(20,416)
+    Return an OA(20,416).
 
     Published by Julian R. Abel in [Ab1995]_ (uses the fact that `416=2^5
     \times 13` is the product of a power of `2` and a prime number).
@@ -1387,7 +1387,7 @@ def OA_20_416():
 
 def OA_20_544():
     r"""
-    Return an OA(20,544)
+    Return an OA(20,544).
 
     Published by Julian R. Abel in [Ab1995]_ (uses the fact that
     `544=2^5 \times 17` is the product of a power of `2` and a prime number).
@@ -1456,7 +1456,7 @@ def OA_20_544():
 
 def OA_17_560():
     r"""
-    Return an OA(17,560)
+    Return an OA(17,560).
 
     This OA is built in Corollary 2.2 of [Thwarts]_.
 
@@ -1515,7 +1515,7 @@ def OA_17_560():
 
 def OA_11_640():
     r"""
-    Return an OA(11,640)
+    Return an OA(11,640).
 
     Published by Julian R. Abel in [Ab1995]_ (uses the fact that `640=2^7
     \times 5` is the product of a power of `2` and a prime number).
@@ -1557,7 +1557,7 @@ def OA_11_640():
 
 def OA_10_796():
     r"""
-    Return an OA(10,796)
+    Return an OA(10,796).
 
     Construction shared by Julian R. Abel, from [AC07]_:
 
@@ -1628,7 +1628,7 @@ def OA_10_796():
 
 def OA_10_469():
     r"""
-    Return an OA(10,469)
+    Return an OA(10,469).
 
     This construction appears in [Brouwer80]_. It is based on the same technique
     used in
@@ -1797,7 +1797,7 @@ def OA_10_520():
 
 def OA_12_522():
     r"""
-    Return an OA(12,522)
+    Return an OA(12,522).
 
     This design is built by the slightly more general construction
     :func:`OA_520_plus_x`.
@@ -1819,7 +1819,7 @@ def OA_12_522():
 
 def OA_14_524():
     r"""
-    Return an OA(14,524)
+    Return an OA(14,524).
 
     This design is built by the slightly more general construction
     :func:`OA_520_plus_x`.
@@ -1841,7 +1841,7 @@ def OA_14_524():
 
 def OA_15_896():
     r"""
-    Return an OA(15,896)
+    Return an OA(15,896).
 
     Uses the fact that `896 = 2^7 \times 7` is the product of a power of `2` and
     a prime number.
@@ -1888,7 +1888,7 @@ def OA_15_896():
 
 def OA_9_1078():
     r"""
-    Return an OA(9,1078)
+    Return an OA(9,1078).
 
     This is obtained through the generalized Brouwer-van Rees
     construction. Indeed, `1078 = 89.11 + (99=9.11)` and there exists an
@@ -1918,7 +1918,7 @@ def OA_9_1078():
 
 def OA_25_1262():
     r"""
-    Return an OA(25,1262)
+    Return an OA(25,1262).
 
     The construction is given in [Greig99]_. In Julian R. Abel's words:
 
@@ -1955,7 +1955,7 @@ def OA_25_1262():
 
 def OA_9_1612():
     r"""
-    Return an OA(9,1612)
+    Return an OA(9,1612).
 
     This is obtained through the generalized Brouwer-van Rees
     construction. Indeed, `1612 = 89.17 + (99=9.11)` and there exists an
@@ -1985,7 +1985,7 @@ def OA_9_1612():
 
 def OA_10_1620():
     r"""
-    Return an OA(10,1620)
+    Return an OA(10,1620).
 
     This is obtained through the generalized Brouwer-van Rees
     construction. Indeed, `1620 = 144.11+(36=4.9)` and there exists an
@@ -4050,7 +4050,7 @@ LIST_OF_DM = "\n".join(r"    - `\lambda={}`:\n       ".format(l) +
 
 def RBIBD_120_8_1():
     r"""
-    Return a resolvable `BIBD(120,8,1)`
+    Return a resolvable `BIBD(120,8,1)`.
 
     This function output a list ``L`` of `17\times 15` blocks such that
     ``L[i*15:(i+1)*15]`` is a partition of `120`.

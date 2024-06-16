@@ -134,7 +134,7 @@ cdef class InnerGroup:
     """
     def __cinit__(self, k=0, algorithm='semilinear', **kwds):
         r"""
-        See :class:`sage.coding.codecan.codecan.InnerGroup`
+        See :class:`sage.coding.codecan.codecan.InnerGroup`.
 
         INPUT:
 

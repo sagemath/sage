@@ -116,7 +116,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
         INPUT:
 
         - ``verbose`` -- boolean (default: ``False``); if ``True``, print the
-          whole output of the LattE command.
+          whole output of the LattE command
 
         The following options are passed to the LattE command, for details you
         should consult `the LattE documentation
@@ -126,7 +126,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
           space
 
         - ``irrational_primal`` -- boolean; triangulate in the dual space,
-          signed-decompose in the primal space using irrationalization.
+          signed-decompose in the primal space using irrationalization
 
         - ``irrational_all_primal`` -- boolean; triangulate and signed-decompose
           in the primal space using irrationalization
@@ -266,8 +266,8 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         INPUT:
 
-        - ``variable`` -- (string, default='t'); the variable in which the
-          Ehrhart polynomial is expressed.
+        - ``variable`` -- string (default=``'t'``); the variable in which the
+          Ehrhart polynomial is expressed
 
         OUTPUT: a univariate polynomial over a rational field
 
@@ -323,7 +323,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             ``self`` must be set to 'normaliz'.
 
         - ``variable`` -- string (default: ``'t'``); the variable in which the
-          Ehrhart polynomial should be expressed.
+          Ehrhart polynomial should be expressed
 
         - When the ``engine`` is 'latte' or None, the additional input values are:
 
@@ -849,7 +849,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
         - ``algorithm`` -- must be ``'palp_native'``, the default
 
         - ``permutation`` -- boolean (default: ``False``); if ``True``, the permutation
-          applied to vertices to obtain the normal form is returned as well.
+          applied to vertices to obtain the normal form is returned as well
 
         For more more detail,
         see :meth:`~sage.geometry.lattice_polytope.LatticePolytopeClass.normal_form`.

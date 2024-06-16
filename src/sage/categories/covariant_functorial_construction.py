@@ -93,14 +93,14 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
     In practice, each subclass of this class should provide the
     following attributes:
 
-     - ``_functor_category`` -- string which should match the name of
-       the nested category class to be used in each category to
-       specify information and generic operations for elements of this
-       category
+    - ``_functor_category`` -- string which should match the name of
+      the nested category class to be used in each category to
+      specify information and generic operations for elements of this
+      category
 
-     - ``_functor_name`` -- string which specifies the name of the
-       functor, and also (when relevant) of the method on parents and
-       elements used for calling the construction
+    - ``_functor_name`` -- string which specifies the name of the
+      functor, and also (when relevant) of the method on parents and
+      elements used for calling the construction
 
     TODO: What syntax do we want for `F_{Cat}`? For example, for the
     tensor product construction, which one do we want among (see
@@ -394,9 +394,9 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
 
         INPUT:
 
-         - ``cls`` -- the category class for the functorial construction `F`
-         - ``category`` -- a category `Cat`
-         - ``*args`` -- further arguments for the functor
+        - ``cls`` -- the category class for the functorial construction `F`
+        - ``category`` -- a category `Cat`
+        - ``*args`` -- further arguments for the functor
 
         EXAMPLES::
 
@@ -525,9 +525,9 @@ class CovariantConstructionCategory(FunctorialConstructionCategory):
 
         INPUT:
 
-         - ``cls`` -- the category class for the functor `F`
-         - ``category`` -- a category `Cat`
-         - ``*args`` -- further arguments for the functor
+        - ``cls`` -- the category class for the functor `F`
+        - ``category`` -- a category `Cat`
+        - ``*args`` -- further arguments for the functor
 
         OUTPUT: a (join) category
 

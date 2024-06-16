@@ -123,7 +123,7 @@ def difference_matrix_product(k, M1, G1, lmbda1, M2, G2, lmbda2, check=True):
 
 def difference_matrix(g,k,lmbda=1,existence=False,check=True):
     r"""
-    Return a `(g,k,\lambda)`-difference matrix
+    Return a `(g,k,\lambda)`-difference matrix.
 
     A matrix `M` is a `(g,k,\lambda)`-difference matrix if it has size `\lambda
     g\times k`, its entries belong to the group `G` of cardinality `g`, and

@@ -484,7 +484,7 @@ def relabel_system(B):
 
 def P(alpha, m):
     r"""
-    Return the collection of pairs `P_{\alpha}(m)`
+    Return the collection of pairs `P_{\alpha}(m)`.
 
     For more information on this system, see [Han1960]_.
 
@@ -547,7 +547,7 @@ def _missing_pair(n,l):
 
 def barP(eps, m):
     r"""
-    Return the collection of pairs `\overline P_{\alpha}(m)`
+    Return the collection of pairs `\overline P_{\alpha}(m)`.
 
     For more information on this system, see [Han1960]_.
 
@@ -562,7 +562,7 @@ def barP(eps, m):
 @cached_function
 def barP_system(m):
     r"""
-    Return the 1-factorization of `K_{2m}` `\overline P(m)`
+    Return the 1-factorization of `K_{2m}` `\overline P(m)`.
 
     For more information on this system, see [Han1960]_.
 

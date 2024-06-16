@@ -441,7 +441,7 @@ def v_4_1_rbibd(v,existence=False):
 
 def PBD_4_7(v,check=True, existence=False):
     r"""
-    Return a `(v,\{4,7\})`-PBD
+    Return a `(v,\{4,7\})`-PBD.
 
     For all `v` such that `n\equiv 1\pmod{3}` and `n\neq 10,19, 31` there exists
     a `(v,\{4,7\})`-PBD. This is proved in Proposition IX.4.5 from [BJL99]_,

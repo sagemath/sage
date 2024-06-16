@@ -500,7 +500,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         INPUT:
 
         - ``constraint`` -- a constraint (inequality or equation) of
-          the polytope.
+          the polytope
 
         OUTPUT:
 
@@ -627,7 +627,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
 
         INPUT:
 
-        - ``polytopes`` -- a tuple/list/iterable of subsets of the
+        - ``polytopes`` -- tuple/list/iterable of subsets of the
           integral points of ``self``
 
         OUTPUT:
@@ -947,7 +947,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
 
         INPUT:
 
-        - ``vertex_labels`` -- a tuple or ``None`` (default). The
+        - ``vertex_labels`` -- tuple or ``None`` (default). The
           labels of the vertices that will be used in the output
           permutation group. By default, the vertices are used
           themselves.
@@ -1019,12 +1019,12 @@ class LatticePolytope_PPL_class(C_Polyhedron):
 
         INPUT:
 
-        - ``points`` -- a tuple of coordinate vectors or ``None``
+        - ``points`` -- tuple of coordinate vectors or ``None``
           (default). If specified, the points must form complete
           orbits under the lattice automorphism group. If ``None`` all
           vertices are used.
 
-        - ``point_labels`` -- a tuple of labels for the ``points`` or
+        - ``point_labels`` -- tuple of labels for the ``points`` or
           ``None`` (default). These will be used as labels for the do
           permutation group. If ``None``, the ``points`` will be used
           themselves.

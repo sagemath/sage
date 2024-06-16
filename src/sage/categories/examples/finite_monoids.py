@@ -21,7 +21,7 @@ from sage.rings.integer_ring import ZZ
 
 class IntegerModMonoid(UniqueRepresentation, Parent):
     r"""
-    An example of a finite monoid: the integers mod `n`
+    An example of a finite monoid: the integers mod `n`.
 
     This class illustrates a minimal implementation of a finite monoid.
 

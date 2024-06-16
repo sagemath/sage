@@ -213,7 +213,7 @@ class Hrep2Vrep(PivotedInequalities):
 
         INPUT:
 
-        - ``inequalities``, ``equations`` -- see :class:`Vrep2Hrep`.
+        - ``inequalities``, ``equations`` -- see :class:`Vrep2Hrep`
 
         OUTPUT: the pivoted inequalities
 
@@ -349,7 +349,7 @@ class Hrep2Vrep(PivotedInequalities):
 
         INPUT:
 
-        - ``inequalities``, ``equations`` -- see :class:`Hrep2Vrep`.
+        - ``inequalities``, ``equations`` -- see :class:`Hrep2Vrep`
 
         EXAMPLES::
 
@@ -459,7 +459,7 @@ class Vrep2Hrep(PivotedInequalities):
 
         INPUT:
 
-        - ``vertices``, ``rays``, ``lines`` -- see :class:`Vrep2Hrep`.
+        - ``vertices``, ``rays``, ``lines`` -- see :class:`Vrep2Hrep`
 
         OUTPUT: matrix of pivoted inequalities for the dual homogenized cone
 
@@ -538,7 +538,7 @@ class Vrep2Hrep(PivotedInequalities):
 
         INPUT:
 
-        - ``vertices``, ``rays``, ``lines`` -- see :class:`Vrep2Hrep`.
+        - ``vertices``, ``rays``, ``lines`` -- see :class:`Vrep2Hrep`
 
         EXAMPLES::
 

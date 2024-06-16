@@ -17,7 +17,7 @@ from sage.rings.integer import Integer
 
 class NonNegativeIntegers(UniqueRepresentation, Parent):
     r"""
-    An example of infinite enumerated set: the nonnegative integers
+    An example of infinite enumerated set: the nonnegative integers.
 
     This class provides a minimal implementation of an infinite enumerated set.
 

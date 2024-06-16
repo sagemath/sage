@@ -796,7 +796,7 @@ class _TransformHrepresentation:
       The numerator of the generating function has to be multiplied
       with ``factor`` *after* substituting ``rules``.
 
-    - ``rules`` -- a dictionary mapping Laurent polynomial variables to
+    - ``rules`` -- dictionary mapping Laurent polynomial variables to
       Laurent polynomials
 
       Substitute ``rules`` into the generating function.
@@ -852,7 +852,7 @@ class _TransformHrepresentation:
 
         - ``numerator`` -- a Laurent polynomial
 
-        - ``terms`` -- a tuple or other iterable of Laurent polynomials
+        - ``terms`` -- tuple or other iterable of Laurent polynomials
 
           The denominator is the product of factors `1 - t` for each
           `t` in ``terms``.
@@ -903,7 +903,7 @@ class _SplitOffSimpleInequalities(_TransformHrepresentation):
       The numerator of the generating function has to be multiplied
       with ``factor`` *after* substituting ``rules``.
 
-    - ``rules`` -- a dictionary mapping Laurent polynomial variables to
+    - ``rules`` -- dictionary mapping Laurent polynomial variables to
       Laurent polynomials
 
       Substitute ``rules`` into the generating function.
@@ -1213,7 +1213,7 @@ class _EliminateByEquations(_TransformHrepresentation):
       The numerator of the generating function has to be multiplied
       with ``factor`` *after* substituting ``rules``.
 
-    - ``rules`` -- a dictionary mapping Laurent polynomial variables to
+    - ``rules`` -- dictionary mapping Laurent polynomial variables to
       Laurent polynomials
 
       Substitute ``rules`` into the generating function.
@@ -1369,7 +1369,7 @@ class _TransformMod(_TransformHrepresentation):
 
     - ``B`` -- a Laurent polynomial ring
 
-    - ``mod`` -- a dictionary mapping an index ``i`` to ``(m, r)``
+    - ``mod`` -- dictionary mapping an index ``i`` to ``(m, r)``
 
       This is one entry of the output tuple of :meth:`generate_mods`.
 
@@ -1385,7 +1385,7 @@ class _TransformMod(_TransformHrepresentation):
       The numerator of the generating function has to be multiplied
       with ``factor`` *after* substituting ``rules``.
 
-    - ``rules`` -- a dictionary mapping Laurent polynomial variables to
+    - ``rules`` -- dictionary mapping Laurent polynomial variables to
       Laurent polynomials
 
       Substitute ``rules`` into the generating function.

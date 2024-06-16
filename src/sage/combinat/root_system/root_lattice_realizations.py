@@ -4174,8 +4174,8 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             INPUT:
 
-             - ``self`` -- an element `t` at level `0`
-             - ``x`` -- an element of the same space
+            - ``self`` -- an element `t` at level `0`
+            - ``x`` -- an element of the same space
 
             EXAMPLES::
 

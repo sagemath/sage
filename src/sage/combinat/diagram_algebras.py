@@ -116,7 +116,7 @@ def brauer_diagrams(k):
 
     INPUT:
 
-     - ``k`` -- the order of the Brauer diagrams
+    - ``k`` -- the order of the Brauer diagrams
 
     EXAMPLES::
 

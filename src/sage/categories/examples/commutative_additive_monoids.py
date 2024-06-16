@@ -17,7 +17,7 @@ from .commutative_additive_semigroups import FreeCommutativeAdditiveSemigroup
 
 class FreeCommutativeAdditiveMonoid(FreeCommutativeAdditiveSemigroup):
     r"""
-    An example of a commutative additive monoid: the free commutative monoid
+    An example of a commutative additive monoid: the free commutative monoid.
 
     This class illustrates a minimal implementation of a commutative monoid.
 
@@ -73,7 +73,7 @@ class FreeCommutativeAdditiveMonoid(FreeCommutativeAdditiveSemigroup):
 
         INPUT:
 
-         - ``alphabet`` -- tuple of strings; the generators of the monoid
+        - ``alphabet`` -- tuple of strings; the generators of the monoid
 
         EXAMPLES::
 

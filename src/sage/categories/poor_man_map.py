@@ -17,9 +17,9 @@ import sage.structure.sage_object
 
 class PoorManMap(sage.structure.sage_object.SageObject):
     """
-    A class for maps between sets which are not (yet) modeled by parents
+    A class for maps between sets which are not (yet) modeled by parents.
 
-    Could possibly disappear when all combinatorial classes / enumerated sets will be parents
+    Could possibly disappear when all combinatorial classes / enumerated sets will be parents.
 
     INPUT:
 
@@ -180,8 +180,8 @@ class PoorManMap(sage.structure.sage_object.SageObject):
 
         INPUT:
 
-         - ``self`` -- a map `f`
-         - ``other`` -- a map `g`
+        - ``self`` -- a map `f`
+        - ``other`` -- a map `g`
 
         Returns the composition map `f\circ g` of `f`` and `g`
 
