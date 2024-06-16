@@ -6393,6 +6393,11 @@ REFERENCES:
              Journal of Combinatorial Theory, Series A 16.3 (1974), pp 313–333.
              :doi:`10.1016/0097-3165(74)90056-9`
 
+.. [TVY2020] \N. V. Tsilevich, A. M. Vershik, and S. Yuzvinsky.
+             *The intrinsic hyperplane arrangement in an arbitrary irreducible
+             representation of the symmetric group*, Arnold Math. J. **6**
+             no. 2 (2020) pp. 173-187.
+
 .. [TW1980] \A.D. Thomas and G.V. Wood, Group Tables (Exeter: Shiva
             Publishing, 1980)
 
