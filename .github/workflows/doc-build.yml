@@ -130,10 +130,10 @@ jobs:
           new_version=$(docker exec BUILD cat src/VERSION.txt)
           mkdir -p docs/
           docker cp BUILD:/sage/local/share/doc/sage/html docs/
-          # Wipe out chronic diffs between old doc and new doc
+          # Wipe out chronic diffs of old doc against new doc
           (cd docs && \
            find . -name "*.html" | xargs sed -i -e '/class="sidebar-brand-text"/ s/Sage [0-9a-z.]* /Sage '"$new_version"' /' \
-                                                -e '/This is documentation for/ s/ built with GitHub PR [^.]*././' \
+                                                -e '/<link rel="stylesheet"/ s/?v=[0-9a-f]*"/"/' \
                                                 -e 's;'"$mathjax_path_from"';'"$mathjax_path_to"';' \
                                                 -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d')
           # Create git repo from old doc
@@ -166,7 +166,13 @@ jobs:
           docker cp BUILD:/sage/local/share/doc/sage/html docs
           docker cp BUILD:/sage/local/share/doc/sage/index.html docs
           (cd docs && git commit -a -m 'new')
+          # Wipe out chronic diffs of new doc against old doc
+          (cd docs && \
+           find . -name "*.html" | xargs sed -i -e '/This is documentation for/ s/ built with GitHub PR .*. Doc/. Doc/' \
+                                                -e '/<link rel="stylesheet"/ s/?v=[0-9a-f]*"/"/')
           .ci/create-changes-html.sh $(cd docs && git rev-parse HEAD^) docs
+          # Restore the new doc from changes by "wipe out"
+          (cd docs && git checkout -f)
           (cd docs && rm -rf .git)
           mv CHANGES.html docs
           # We also need to replace the symlinks because netlify is not following them
