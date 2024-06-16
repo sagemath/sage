@@ -6537,8 +6537,8 @@ cdef class Polynomial(CommutativePolynomial):
 
         TESTS::
 
-            sage: a = RIF['x'](1/3)
-            sage: (a - a).exponents()
+            sage: a = RIF['x'](1/3)                                                     # needs sage.rings.real_interval_field
+            sage: (a - a).exponents()                                                   # needs sage.rings.real_interval_field
             [0]
         """
         cdef Py_ssize_t i
@@ -7943,11 +7943,12 @@ cdef class Polynomial(CommutativePolynomial):
 
         The following examples show that :issue:`11782` has been fixed::
 
-            sage: var('x')                                                              # needs sage.symbolic
+            sage: # needs sage.libs.pari sage.symbolic
+            sage: var('x')
             x
-            sage: ZZ.quo(81)['x'](3*x^2 + 3*x + 3).discriminant()                       # needs sage.libs.pari sage.symbolic
+            sage: ZZ.quo(81)['x'](3*x^2 + 3*x + 3).discriminant()
             54
-            sage: ZZ.quo(9)['x'](2*x^3 + x^2 + x).discriminant()                        # needs sage.libs.pari sage.symbolic
+            sage: ZZ.quo(9)['x'](2*x^3 + x^2 + x).discriminant()
             2
 
         This was fixed by :issue:`15422`::
@@ -8486,7 +8487,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         ::
 
-            sage: # needs sage.rings.complex_double sage.rings.real_mpfr
+            sage: # needs numpy sage.rings.complex_double sage.rings.real_mpfr
             sage: rflds = (RR, RDF, RealField(100))
             sage: cflds = (CC, CDF, ComplexField(100))
             sage: def cross(a, b):
@@ -9772,6 +9773,8 @@ cdef class Polynomial(CommutativePolynomial):
             sage: d = z^4 + (2*t + 4)*z^3 + (-t + 5)*z^2 + (t^2 + 2)*z + t^2 + 2*t + 1
             sage: prec = 9
             sage: x = n.subs(z=w)/d.subs(z=w) + O(w^prec)
+
+            sage: # needs sage.libs.flint (otherwise timeout)
             sage: nc, dc = Pz(x.list()).rational_reconstruction(z^prec)
             sage: (nc, dc) == (n, d)
             True

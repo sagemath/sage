@@ -3776,9 +3776,13 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
         if isinstance(self._descr, ANExtensionElement) and self._descr._generator is QQbar_I_generator:
             return repr(self._descr._value)
         if self.parent().options.display_format == 'radical':
-            radical = self.radical_expression()
-            if radical is not self:
-                return repr(radical)
+            try:
+                radical = self.radical_expression()
+            except ImportError:
+                pass
+            else:
+                if radical is not self:
+                    return repr(radical)
         if self.parent() is QQbar:
             return repr(CIF(self._value))
         else:
@@ -3819,9 +3823,13 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
         if isinstance(self._descr, ANExtensionElement) and self._descr._generator is QQbar_I_generator:
             return latex(self._descr._value)
         if self.parent().options.display_format == 'radical':
-            radical = self.radical_expression()
-            if radical is not self:
-                return latex(radical)
+            try:
+                radical = self.radical_expression()
+            except ImportError:
+                pass
+            else:
+                if radical is not self:
+                    return latex(radical)
         return repr(self).replace('*I', r' \sqrt{-1}')
 
     def _sage_input_(self, sib, coerce):
