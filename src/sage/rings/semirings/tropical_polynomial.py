@@ -39,17 +39,23 @@ Create an element by converting from classical polynomial::
     y^2 + 2*y + 3
 
 We can do the addition, multiplication, and evaluation for tropical 
-polynomials::
+polynomials. When doing evaluation, make sure the input number is tropical.
+If not, then it will raise an error::
 
     sage: p1 + p2
     0*y^3 + y^2 + 4*y + 3
     sage: p1 * p2
     y^5 + 2*y^4 + 5*y^3 + 6*y^2 + 7*y + 4
     sage: p1(3)
+    Traceback (most recent call last):
+    ...
+    TypeError: no common canonical parent for objects with parents: 
+    'Tropical semiring over Rational Field' and 'Integer Ring'
+    sage: p1(T(3))
     9
 
 Beware that when multiplying tropical polynomial with a scalar, it
-will give an error if the scalar is not tropical number::
+will raise an error if the scalar is not tropical number::
 
     sage: 2 * p1
     Traceback (most recent call last):
@@ -58,10 +64,10 @@ will give an error if the scalar is not tropical number::
     sage: T(2) * p1
     2*y^3 + 6*y + 3 
 
-We can find all the tropical roots of tropical polynomial counted
-with multiplicity. There will be no tropical root for constant
-polynomial. For a monomial, the tropical root is the additive identity
-of its base tropical semiring::
+We can also find all the tropical roots of tropical polynomial counted
+with multiplicity. There will be no tropical root for constant polynomial. 
+For a monomial, the tropical root is the additive identity of its base 
+tropical semiring::
 
     sage: p1.roots()
     [-3, 2, 2]
@@ -146,37 +152,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
     polynomials over any tropical semiring. A sparse polynomial is 
     represented using a dictionary which maps each exponent to the
     corresponding coefficient. The coefficients is a tropical number.
-    """
-
-    def __call__(self, val):
-        r"""
-        Return the value of ``self`` evaluated at ``val``.
-
-        INPUT:
-
-        - ``val`` -- a number from the base ring of tropical semiring
-
-        OUTPUT:
-
-        A single tropical number
-
-        EXAMPLES:
-
-            sage: T = TropicalSemiring(QQ, use_min=False)
-            sage: R = PolynomialRing(T, x)
-            sage: p1 = R([1,4,None,T(0)])
-            sage: p1(1)
-            5
-
-        """
-
-        if val.parent() is not self.base_ring():
-            val = self.base_ring()(val)
-        terms = [c*(val**i) for i, c in self.dict().items()]
-        if self.base_ring()._use_min:
-            return min(terms)
-        else:
-            return max(terms)
+    """                                                                            
     
     def roots(self):
         r"""
