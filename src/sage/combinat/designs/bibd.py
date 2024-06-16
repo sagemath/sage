@@ -680,12 +680,12 @@ def BIBD_from_difference_family(G, D, lambd=None, check=True):
 
     - ``G`` -- a finite additive Abelian group
 
-    - ``D`` -- a difference family on ``G`` (short blocks are allowed).
+    - ``D`` -- a difference family on ``G`` (short blocks are allowed)
 
     - ``lambd`` -- the `\lambda` parameter (optional, only used if ``check`` is
       ``True``)
 
-    - ``check`` -- whether or not we check the output (default: ``True``)
+    - ``check`` -- boolean (default ``True``); whether or not we check the output
 
     EXAMPLES::
 
@@ -1229,7 +1229,7 @@ def PBD_from_TD(k,t,u):
 
     INPUT:
 
-    - ``k``, ``t``, ``u`` -- integers such that `0\leq u \leq t`.
+    - ``k``, ``t``, ``u`` -- integers such that `0\leq u \leq t`
 
     EXAMPLES::
 
@@ -1408,13 +1408,13 @@ class PairwiseBalancedDesign(GroupDivisibleDesign):
 
     INPUT:
 
-    - ``points`` -- the underlying set. If ``points`` is an integer `v`, then
-      the set is considered to be `\{0, ..., v-1\}`.
+    - ``points`` -- the underlying set; if ``points`` is an integer `v`, then
+      the set is considered to be `\{0, ..., v-1\}`
 
     - ``blocks`` -- collection of blocks
 
     - ``K`` -- list of integers of which the sizes of the blocks must be
-      elements. Set to ``None`` (automatic guess) by default.
+      elements; set to ``None`` (automatic guess) by default
 
     - ``lambd`` -- integer; value of `\lambda`, set to `1` by default
 
@@ -1472,12 +1472,12 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
     INPUT:
 
     - ``points`` -- the underlying set. If ``points`` is an integer `v`, then
-      the set is considered to be `\{0, ..., v-1\}`.
+      the set is considered to be `\{0, ..., v-1\}`
 
     - ``blocks`` -- collection of blocks
 
     - ``k`` -- integer; size of the blocks. Set to ``None`` (automatic guess)
-      by default.
+      by default
 
     - ``lambd`` -- integer; value of `\lambda`, set to `1` by default
 
@@ -1548,7 +1548,7 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
         - ``s`` -- (default: `2`) the maximum number of points from the arc
           in each block
 
-        - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear
+        - ``solver`` -- (default: ``None``) specify a Mixed Integer Linear
           Programming (MILP) solver to be used. If set to ``None``, the default
           one is used. For more information on MILP solvers and which default
           solver is used, see the method :meth:`solve

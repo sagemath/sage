@@ -234,7 +234,7 @@ def gs_interpolation_linalg(points, tau, parameters, wy):
     INPUT:
 
     - ``points`` -- list of tuples ``(xi, yi)`` such that we seek ``Q`` with
-      ``(xi,yi)`` being a root of ``Q`` with multiplicity ``s``.
+      ``(xi,yi)`` being a root of ``Q`` with multiplicity ``s``
 
     - ``tau`` -- integer; the number of errors one wants to decode
 
@@ -245,7 +245,7 @@ def gs_interpolation_linalg(points, tau, parameters, wy):
       - the second integer is the list size parameter.
 
     - ``wy`` -- integer; the `y`-weight, where we seek `Q` of low
-      ``(1, wy)``-weighted degree.
+      ``(1, wy)``-weighted degree
 
     EXAMPLES:
 
@@ -309,7 +309,7 @@ def lee_osullivan_module(points, parameters, wy):
     INPUT:
 
     - ``points`` -- list of tuples ``(xi, yi)`` such that we seek `Q` with
-      ``(xi,yi)`` being a root of `Q` with multiplicity `s`.
+      ``(xi,yi)`` being a root of `Q` with multiplicity `s`
 
     - ``parameters`` -- (default: ``None``) a pair of integers, where:
 
@@ -318,7 +318,7 @@ def lee_osullivan_module(points, parameters, wy):
       - the second integer is the list size parameter.
 
     - ``wy`` -- integer; the `y`-weight, where we seek `Q` of low
-      ``(1,wy)`` weighted degree.
+      ``(1,wy)`` weighted degree
 
     EXAMPLES::
 
@@ -363,7 +363,7 @@ def gs_interpolation_lee_osullivan(points, tau, parameters, wy):
     INPUT:
 
     - ``points`` -- list of tuples ``(xi, yi)`` such that we seek ``Q`` with
-      ``(xi,yi)`` being a root of ``Q`` with multiplicity ``s``.
+      ``(xi,yi)`` being a root of ``Q`` with multiplicity ``s``
 
     - ``tau`` -- integer; the number of errors one wants to decode
 
@@ -374,7 +374,7 @@ def gs_interpolation_lee_osullivan(points, tau, parameters, wy):
       - the second integer is the list size parameter.
 
     - ``wy`` -- integer; the `y`-weight, where we seek ``Q`` of low
-      ``(1,wy)`` weighted degree.
+      ``(1,wy)`` weighted degree
 
     EXAMPLES::
 

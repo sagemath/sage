@@ -460,7 +460,7 @@ cpdef executor(tuple params):
 
     INPUT:
 
-    - ``params`` -- a tuple ``((fn_name, fmats_id), fn_args)`` where
+    - ``params`` -- tuple ``((fn_name, fmats_id), fn_args)`` where
       ``fn_name`` is the name of the function to be executed, ``fmats_id``
       is the ``id`` of the :class:`FMatrix` object, and ``fn_args`` is a
       tuple containing all arguments to be passed to the function ``fn_name``.

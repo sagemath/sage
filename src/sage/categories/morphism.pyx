@@ -634,11 +634,11 @@ cdef class SetMorphism(Morphism):
 
     cdef dict _extra_slots(self):
         """
+        Extend the dictionary with extra slots for this class.
+
         INPUT:
 
-        - ``_slots`` -- a dictionary
-
-        Extends the dictionary with extra slots for this class.
+        - ``_slots`` -- dictionary
 
         EXAMPLES::
 
@@ -658,7 +658,7 @@ cdef class SetMorphism(Morphism):
         """
         INPUT:
 
-        - ``_slots`` -- a dictionary
+        - ``_slots`` -- dictionary
 
         Updates the slots of ``self`` from the data in the dictionary
 
@@ -804,7 +804,7 @@ cdef class SetIsomorphism(SetMorphism):
 
         INPUT:
 
-        - ``_slots`` -- a dictionary
+        - ``_slots`` -- dictionary
 
         EXAMPLES::
 
@@ -829,7 +829,7 @@ cdef class SetIsomorphism(SetMorphism):
 
         INPUT:
 
-        - ``_slots`` -- a dictionary
+        - ``_slots`` -- dictionary
 
         EXAMPLES::
 

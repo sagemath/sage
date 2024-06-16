@@ -22,7 +22,7 @@ def var(*args, **kwds):
       before or after variable names are ignored.
 
     - ``kwds`` -- keyword arguments can be given to specify domain and
-      custom latex_name for variables. See EXAMPLES for usage.
+      custom latex_name for variables; see EXAMPLES for usage
 
     .. NOTE::
 
@@ -139,7 +139,7 @@ def function(s, **kwds):
     - ``nargs=0`` -- number of arguments the function accepts, defaults to
       variable number of arguments, or 0
     - ``latex_name`` -- name used when printing in latex mode
-    - ``conversions`` -- a dictionary specifying names of this function in
+    - ``conversions`` -- dictionary specifying names of this function in
       other systems, this is used by the interfaces internally during conversion
     - ``eval_func`` -- method used for automatic evaluation
     - ``evalf_func`` -- method used for numeric evaluation

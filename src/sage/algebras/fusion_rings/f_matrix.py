@@ -974,7 +974,7 @@ class FMatrix(SageObject):
 
         INPUT:
 
-        - ``filename`` -- a string specifying the name of the pickle file
+        - ``filename`` -- string specifying the name of the pickle file
           to be used
 
         The current directory is used unless an absolute path to a file in
@@ -1442,7 +1442,7 @@ class FMatrix(SageObject):
 
         INPUT:
 
-        - ``option`` -- a string determining equations to be set up:
+        - ``option`` -- string determining equations to be set up:
 
           * ``'hexagons'`` -- get equations imposed on the F-matrix by
             the hexagon relations in the definition of a braided category
@@ -2032,7 +2032,7 @@ class FMatrix(SageObject):
           results much more quickly.
 
         - ``verbose`` -- boolean (default: ``True``); whether the
-          solver should print out intermediate progress reports.
+          solver should print out intermediate progress reports
 
         OUTPUT:
 

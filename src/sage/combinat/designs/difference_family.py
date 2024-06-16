@@ -135,7 +135,7 @@ def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
     INPUT:
 
     - ``G`` -- group of cardinality ``v``
-    - ``D`` -- a set of ``k``-subsets of ``G``
+    - ``D`` -- set of ``k``-subsets of ``G``
     - ``v``, ``k`` and ``l`` -- optional parameters of the difference family
     - ``verbose`` -- boolean (default: ``False``); whether to print additional
       information
@@ -1558,7 +1558,7 @@ def is_relative_difference_set(R, G, H, params, verbose=False):
     - ``R`` -- list; the relative diffeence set of length `k`
     - ``G`` -- an additive abelian group of order `mn`
     - ``H`` -- list; a submodule of ``G`` of order `n`
-    - ``params`` -- a tuple in the form `(m, n, k, d)`
+    - ``params`` -- tuple in the form `(m, n, k, d)`
     - ``verbose`` -- boolean (default: ``False``); if ``True``, the function
       will be verbose when the sequences do not satisfy the contraints
 
@@ -3062,8 +3062,8 @@ def are_complementary_difference_sets(G, A, B, verbose=False):
     INPUT:
 
     - ``G`` -- a group of odd order
-    - ``A`` -- a set of elements of ``G``
-    - ``B`` -- a set of elements of ``G``
+    - ``A`` -- set of elements of ``G``
+    - ``B`` -- set of elements of ``G``
     - ``verbose`` -- boolean (default: ``False``); if ``True`` the function will
       be verbose when the sets do not satisfy the contraints
 

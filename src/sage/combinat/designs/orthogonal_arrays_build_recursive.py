@@ -345,7 +345,7 @@ def OA_and_oval(q, *, solver=None, integrality_tolerance=1e-3):
 
     - ``q`` -- a prime power
 
-    - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear
+    - ``solver`` -- (default: ``None``) specify a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve

@@ -955,7 +955,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             INPUT:
 
             - ``w`` -- a permutation
-            - ``L`` -- a tuple `(a_1, \ldots, a_n)`
+            - ``L`` -- tuple `(a_1, \ldots, a_n)`
 
             EXAMPLES::
 

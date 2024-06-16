@@ -90,8 +90,8 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
       <= i < min(len(l), len(floor)``. Similarly, if ``floor`` is a
       function, then ``floor(i) <= l[i]`` for ``0 <= i < len(l)``.
 
-    - ``max_part`` -- a nonnegative integer or `\infty`: an upper
-      bound on all parts: ``l[i] <= max_part`` for ``0 <= i < len(l)``.
+    - ``max_part`` -- nonnegative integer or `\infty`; an upper
+      bound on all parts: ``l[i] <= max_part`` for ``0 <= i < len(l)``
 
     - ``ceiling`` -- upper bounds on the individual parts ``l[i]``;
       this takes the same type of input as ``floor``, except that
@@ -113,13 +113,13 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
       or ``ceiling`` and the errors raised when there is no proper
       enumeration.
 
-    - ``name`` -- a string or ``None`` (default: ``None``); if set,
+    - ``name`` -- string or ``None`` (default: ``None``); if set,
       this will be passed down to :meth:`Parent.rename` to specify the
       name of ``self``. It is recommended to use rename method directly
       because this feature may become deprecated.
 
     - ``element_constructor`` -- a function (or callable) that creates
-      elements of ``self`` from a list. See also :class:`Parent`.
+      elements of ``self`` from a list. See also :class:`Parent`
 
     - ``element_class`` -- a class for the elements of ``self``
       (default: `ClonableArray`). This merely sets the attribute
@@ -1102,7 +1102,7 @@ class IntegerListsLexIter(builtins.object):
     - ``_current_sum`` -- the sum of the parts of ``_current_list``;
 
     - ``_search_ranges`` -- list of same length as
-      ``_current_list``: the range for each part.
+      ``_current_list``: the range for each part
 
     Furthermore, we assume that there is no obvious contradiction
     in the constraints:

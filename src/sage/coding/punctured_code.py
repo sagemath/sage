@@ -35,7 +35,7 @@ def _puncture(v, points):
 
     - ``v`` -- a vector or a list of vectors
 
-    - ``points`` -- a set of integers, or an integer
+    - ``points`` -- set of integers, or an integer
 
     EXAMPLES::
 
@@ -67,7 +67,7 @@ def _insert_punctured_positions(l, punctured_points, value=None):
 
     - ``l`` -- list
 
-    - ``punctured_points`` -- a set of integers
+    - ``punctured_points`` -- set of integers
 
     - ``value`` -- (default: ``None``) an element to insert in every position
       given in``punctured_points``.  If it is let to ``None``, a random value
@@ -274,9 +274,9 @@ class PuncturedCode(AbstractLinearCode):
           :meth:`original_code`. This allow to avoid the computation of a
           generator matrix for ``self``.
 
-        - ``encoder_name`` -- (default: ``None``) Name of the encoder which will be used
+        - ``encoder_name`` -- (default: ``None``) name of the encoder which will be used
           to encode ``word``. The default encoder of ``self`` will be used if
-          default value is kept
+          default value is kept.
 
         OUTPUT: an element of ``self``
 

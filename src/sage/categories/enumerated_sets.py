@@ -951,7 +951,7 @@ class EnumeratedSets(CategoryWithAxiom):
             INPUT:
 
             - ``is_injective`` -- boolean (default: ``True``); whether to assume
-              that `f` is injective.
+              that `f` is injective
 
             EXAMPLES::
 

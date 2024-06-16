@@ -108,47 +108,42 @@ the best possible solution, that may belong to a linear or nonlinear code.
 
 This module implements:
 
--  ``codesize_upper_bound(n,d,q)``, for the best known (as of May,
-   2006) upper bound `A(n,d)` for the size of a code of length `n`,
-   minimum distance `d` over a field of size `q`.
+- ``codesize_upper_bound(n,d,q)``, for the best known (as of May, 2006) upper
+  bound `A(n,d)` for the size of a code of length `n`, minimum distance `d`
+  over a field of size `q`.
 
--  ``dimension_upper_bound(n,d,q)``, an upper bound
-   `B(n,d)=B_q(n,d)` for the dimension of a linear code of
-   length `n`, minimum distance `d` over a field of size `q`.
+- ``dimension_upper_bound(n,d,q)``, an upper bound `B(n,d)=B_q(n,d)` for the
+  dimension of a linear code of length `n`, minimum distance `d` over a field
+  of size `q`.
 
--  ``gilbert_lower_bound(n,q,d)``, a lower bound for number of
-   elements in the largest code of min distance `d` in
-   `\GF{q}^n`.
+- ``gilbert_lower_bound(n,q,d)``, a lower bound for number of elements in the
+  largest code of min distance `d` in `\GF{q}^n`.
 
--  ``gv_info_rate(n,delta,q)``, `log_q(GLB)/n`, where GLB is
-   the Gilbert lower bound and `\delta = d/n`.
+- ``gv_info_rate(n,delta,q)``, `log_q(GLB)/n`, where GLB is the Gilbert lower
+  bound and `\delta = d/n`.
 
--  ``gv_bound_asymp(delta,q)``, asymptotic analog of Gilbert lower
-   bound.
+- ``gv_bound_asymp(delta,q)``, asymptotic analog of Gilbert lower bound.
 
--  ``plotkin_upper_bound(n,q,d)``
+- ``plotkin_upper_bound(n,q,d)``
 
--  ``plotkin_bound_asymp(delta,q)``, asymptotic analog of Plotkin
-   bound.
+- ``plotkin_bound_asymp(delta,q)``, asymptotic analog of Plotkin bound.
 
--  ``griesmer_upper_bound(n,q,d)``
+- ``griesmer_upper_bound(n,q,d)``
 
--  ``elias_upper_bound(n,q,d)``
+- ``elias_upper_bound(n,q,d)``
 
--  ``elias_bound_asymp(delta,q)``, asymptotic analog of Elias bound.
+- ``elias_bound_asymp(delta,q)``, asymptotic analog of Elias bound.
 
--  ``hamming_upper_bound(n,q,d)``
+- ``hamming_upper_bound(n,q,d)``
 
--  ``hamming_bound_asymp(delta,q)``, asymptotic analog of Hamming
-   bound.
+- ``hamming_bound_asymp(delta,q)``, asymptotic analog of Hamming bound.
 
--  ``singleton_upper_bound(n,q,d)``
+- ``singleton_upper_bound(n,q,d)``
 
--  ``singleton_bound_asymp(delta,q)``, asymptotic analog of Singleton
-   bound.
+- ``singleton_bound_asymp(delta,q)``, asymptotic analog of Singleton bound.
 
--  ``mrrw1_bound_asymp(delta,q)``, "first" asymptotic
-   McEliese-Rumsey-Rodemich-Welsh bound for the information rate.
+- ``mrrw1_bound_asymp(delta,q)``, "first" asymptotic
+  McEliese-Rumsey-Rodemich-Welsh bound for the information rate.
 
 -  Delsarte (a.k.a. Linear Programming (LP)) upper bounds.
 

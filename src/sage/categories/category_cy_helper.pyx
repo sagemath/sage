@@ -294,7 +294,7 @@ cpdef tuple canonicalize_axioms(AxiomContainer all_axioms, axioms):
 
     - ``all_axioms`` -- all available axioms
 
-    - ``axioms`` -- a set (or iterable) of axioms
+    - ``axioms`` -- set (or iterable) of axioms
 
     .. NOTE::
 

@@ -3574,7 +3574,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         - ``side`` -- if ``'left'`` performs left equivalence test. If ``'right'
           ``or ``None`` performs right ideal equivalence test
 
-        OUTPUT: bool, or (bool, alpha) if ``certificate`` is ``True``
+        OUTPUT: boolean, or (boolean, alpha) if ``certificate`` is ``True``
 
         EXAMPLES::
 
@@ -3611,7 +3611,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
         - ``certificate`` -- if ``True`` returns an element alpha such that J*alpha=I
 
-        OUTPUT: bool, or (bool, alpha) if ``certificate`` is ``True``
+        OUTPUT: boolean, or (boolean, alpha) if ``certificate`` is ``True``
         """
         if certificate:
             is_equiv, cert = self.conjugate().is_right_equivalent(J.conjugate(), B, True)
@@ -3634,7 +3634,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
         - ``certificate`` -- if ``True`` returns an element alpha such that alpha*J=I
 
-        OUTPUT: bool, or (bool, alpha) if ``certificate`` is ``True``
+        OUTPUT: boolean, or (boolean, alpha) if ``certificate`` is ``True``
 
         EXAMPLES::
 

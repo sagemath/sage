@@ -401,7 +401,7 @@ cdef class Map(Element):
 
         INPUT:
 
-        - ``slots`` -- a dictionary of slots to be updated;
+        - ``slots`` -- dictionary of slots to be updated;
           the dictionary must have the keys ``'_domain'`` and
           ``'_codomain'``, and may have the keys ``'_repr_type_str'``
           and ``'_is_coercion'``

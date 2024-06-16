@@ -1345,7 +1345,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
         INPUT:
 
-        - ``diff`` -- a dictionary defining a differential
+        - ``diff`` -- dictionary defining a differential
 
         The keys of the dictionary are generators of the algebra, and
         the associated values are their targets under the
@@ -1375,7 +1375,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
         INPUT:
 
-        - ``differential`` -- a dictionary defining a differential or
+        - ``differential`` -- dictionary defining a differential or
           a map defining a valid differential
 
         The keys of the dictionary are generators of the algebra, and
@@ -1707,7 +1707,7 @@ class GCAlgebra_multigraded(GCAlgebra):
 
     - ``base`` -- the base field
 
-    - ``degrees`` -- a tuple or list specifying the degrees of the
+    - ``degrees`` -- tuple or list specifying the degrees of the
       generators
 
     - ``names`` -- (optional) names of the generators: a list of
@@ -1864,7 +1864,7 @@ class GCAlgebra_multigraded(GCAlgebra):
 
         - ``n`` -- degree or integer
         - ``total`` -- boolean (default: ``False``); if ``True``, return the
-          basis in total degree `n`.
+          basis in total degree `n`
 
         If `n` is an integer rather than a multi-index, then the
         total degree is used in that case as well.
@@ -1902,7 +1902,7 @@ class GCAlgebra_multigraded(GCAlgebra):
 
         INPUT:
 
-        - ``diff`` -- a dictionary defining a differential
+        - ``diff`` -- dictionary defining a differential
 
         The keys of the dictionary are generators of the algebra, and
         the associated values are their targets under the
@@ -1928,7 +1928,7 @@ class GCAlgebra_multigraded(GCAlgebra):
 
         INPUT:
 
-        - ``differential`` -- a dictionary defining a differential or
+        - ``differential`` -- dictionary defining a differential or
           a map defining a valid differential
 
         The keys of the dictionary are generators of the algebra, and
@@ -2128,7 +2128,7 @@ class DifferentialGCAlgebra(GCAlgebra):
 
         INPUT:
 
-        - ``differential`` -- a dictionary defining a differential or
+        - ``differential`` -- dictionary defining a differential or
           a map defining a valid differential
 
         The keys of the dictionary are generators of the algebra, and

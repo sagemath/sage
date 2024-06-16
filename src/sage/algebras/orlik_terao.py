@@ -359,7 +359,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``S`` -- a frozenset which is a subset of the groundset of `M`
+        - ``S`` -- frozenset which is a subset of the groundset of `M`
 
         EXAMPLES::
 

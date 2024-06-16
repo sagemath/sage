@@ -466,7 +466,7 @@ def delsarte_bound_additive_hamming_space(n, d, q, d_star=1, q_base=0, return_da
     - ``q`` -- the size of the alphabet
 
     - ``d_star`` -- the (lower bound on) minimal distance of the dual code;
-      only makes sense for additive codes.
+      only makes sense for additive codes
 
     - ``q_base`` -- if ``0``, the code is assumed to be linear. Otherwise,
       ``q=q_base^m`` and the code is linear over ``F_{q_base}``
@@ -483,7 +483,7 @@ def delsarte_bound_additive_hamming_space(n, d, q, d_star=1, q_base=0, return_da
       list), you are on your own!
 
     - ``isinteger`` -- if ``True``, uses an integer programming solver (ILP),
-      rather that an LP solver. Can be very slow if set to ``True``.
+      rather that an LP solver (can be very slow if set to ``True``)
 
     EXAMPLES:
 

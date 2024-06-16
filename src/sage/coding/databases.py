@@ -122,13 +122,13 @@ def best_linear_code_in_codetables_dot_de(n, k, F, verbose=False):
 
     INPUT:
 
-    -  ``n`` -- integer; the length of the code
+    - ``n`` -- integer; the length of the code
 
-    -  ``k`` -- integer; the dimension of the code
+    - ``k`` -- integer; the dimension of the code
 
-    -  ``F`` -- finite field, of order 2, 3, 4, 5, 7, 8, or 9
+    - ``F`` -- finite field, of order 2, 3, 4, 5, 7, 8, or 9
 
-    -  ``verbose`` -- boolean (default: ``False``)
+    - ``verbose`` -- boolean (default: ``False``)
 
     OUTPUT: an unparsed text explaining the construction of the code
 
@@ -189,22 +189,22 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
 
     INPUT:
 
-    -  ``n`` -- integer; maximal length
+    - ``n`` -- integer; maximal length
 
-    -  ``k`` -- integer; maximal dimension
+    - ``k`` -- integer; maximal dimension
 
-    -  ``b`` -- integer; requires that the generators all have weight divisible
+    - ``b`` -- integer; requires that the generators all have weight divisible
        by ``b`` (if ``b=2``, all self-orthogonal codes are generated, and if
        ``b=4``, all doubly even codes are generated). Must be an even positive
        integer.
 
-    -  ``parent`` -- used in recursion (default: ``None``)
+    - ``parent`` -- used in recursion (default: ``None``)
 
-    -  ``BC`` -- used in recursion (default: ``None``)
+    - ``BC`` -- used in recursion (default: ``None``)
 
-    -  ``equal`` -- if ``True``, generates only [n, k] codes (default: ``False``)
+    - ``equal`` -- if ``True``, generates only [n, k] codes (default: ``False``)
 
-    -  ``in_test`` -- used in recursion (default: ``None``)
+    - ``in_test`` -- used in recursion (default: ``None``)
 
     EXAMPLES:
 

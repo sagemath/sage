@@ -147,14 +147,6 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
         """
         Return unicode art for the knot.
 
-        INPUT:
-
-        - a knot
-
-        OUTPUT:
-
-        - unicode art for the knot
-
         EXAMPLES::
 
             sage: W = Knots()
@@ -540,11 +532,9 @@ class Knots(Singleton, Parent):
 
         INPUT:
 
-        - a signed Gauss code
+        - ``gauss`` -- a signed Gauss code
 
-        OUTPUT:
-
-        - a knot
+        OUTPUT: a knot
 
         EXAMPLES::
 

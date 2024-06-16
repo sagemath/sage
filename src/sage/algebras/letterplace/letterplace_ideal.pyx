@@ -161,11 +161,11 @@ class LetterplaceIdeal(Ideal_nc):
         """
         INPUT:
 
-        - ``ring``: A free algebra in letterplace implementation.
-        - ``gens``: List, tuple or sequence of generators.
-        - ``coerce`` (optional bool, default ``True``):
-          Shall ``gens`` be coerced first?
-        - ``side``: optional string, one of ``'twosided'`` (default),
+        - ``ring`` -- a free algebra in letterplace implementation
+        - ``gens`` -- list, tuple or sequence of generators
+        - ``coerce`` -- boolean (default: ``True``); whether ``gens`` shall be
+          coerced first
+        - ``side`` -- optional string, one of ``'twosided'`` (default),
           ``'left'`` or ``'right'``. Determines whether the ideal
           is a left, right or twosided ideal. Groebner bases or
           only supported in the twosided case.

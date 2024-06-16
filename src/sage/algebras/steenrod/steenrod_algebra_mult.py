@@ -846,7 +846,7 @@ def make_mono_admissible(mono, p=2, generic=None):
 
     INPUT:
 
-    - ``mono`` -- a tuple of nonnegative integers
+    - ``mono`` -- tuple of nonnegative integers
     - ``p`` -- prime number (default: 2)
     - ``generic`` -- whether to use the generic Steenrod algebra (default: depends on prime)
 

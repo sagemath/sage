@@ -690,7 +690,7 @@ class Word_class(SageObject):
             sage: t[:10].lex_less(t)
             True
         """
-        return ``self`` < other
+        return self < other
 
     def lex_greater(self, other):
         r"""

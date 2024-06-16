@@ -73,7 +73,7 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
 
         INPUT:
 
-         - ``alphabet`` -- a tuple of strings: the generators of the semigroup
+         - ``alphabet`` -- tuple of strings; the generators of the semigroup
 
         EXAMPLES::
 

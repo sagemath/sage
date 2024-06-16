@@ -36,10 +36,10 @@ class lfun_generic():
 
     where
 
-    - ``conductor`` -- integer, the conductor
+    - ``conductor`` -- integer; the conductor
 
     - ``gammaV`` -- list of Gamma-factor parameters, e.g. [0] for
-      Riemann zeta, [0,1] for ell.curves, (see examples).
+      Riemann zeta, [0,1] for ell.curves, (see examples)
 
     - ``weight`` -- positive real number, usually an integer e.g. 1 for
       Riemann zeta, 2 for `H^1` of curves/`\QQ`
@@ -51,7 +51,7 @@ class lfun_generic():
       included
 
     - ``residues`` -- vector of residues of `L^*(s)` in those poles or
-      set residues='automatic' (default value)
+      set ``residues='automatic'`` (default)
 
     - ``init`` -- list of coefficients
 
@@ -118,11 +118,11 @@ class lfun_generic():
 
         INPUT:
 
-        -  ``v`` -- list of complex numbers or unary function
+        - ``v`` -- list of complex numbers or unary function
 
-        -  ``cutoff`` -- unused
+        - ``cutoff`` -- unused
 
-        -  ``w`` --  list of complex numbers or unary function
+        - ``w`` --  list of complex numbers or unary function
 
         EXAMPLES::
 
@@ -331,9 +331,9 @@ def lfun_eta_quotient(scalings, exponents):
 
     INPUT:
 
-    - scalings -- a list of integers, the scaling factors
+    - ``scalings`` -- list of integers; the scaling factors
 
-    - exponents -- a list of integers, the exponents
+    - ``exponents`` -- list of integers; the exponents
 
     EXAMPLES::
 
@@ -443,7 +443,7 @@ class LFunction(SageObject):
     We compute with the `L`-series of a rank `1` curve. ::
 
         sage: E = EllipticCurve('37a')
-        sage: L = E.lseries().dokchitser(algorithm="pari"); L
+        sage: L = E.lseries().dokchitser(algorithm='pari'); L
         PARI L-function associated to Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
         sage: L(1)
         0.000000000000000
@@ -464,7 +464,7 @@ class LFunction(SageObject):
     `L`-series of a rank `2` elliptic curve::
 
         sage: E = EllipticCurve('389a')
-        sage: L = E.lseries().dokchitser(algorithm="pari")
+        sage: L = E.lseries().dokchitser(algorithm='pari')
         sage: L.num_coeffs()
         163
         sage: L.derivative(1, E.rank())
@@ -478,7 +478,7 @@ class LFunction(SageObject):
 
         sage: x = var('x')
         sage: K = NumberField(x**4 - x**2 - 1,'a')
-        sage: L = K.zeta_function(algorithm="pari")
+        sage: L = K.zeta_function(algorithm='pari')
         sage: L.conductor
         400
         sage: L.num_coeffs()
@@ -511,8 +511,8 @@ class LFunction(SageObject):
 
         INPUT:
 
-        - lfun -- a PARI :pari:`lfun` object or an instance of :class:`lfun_generic`
-        - prec -- integer (default: 53) number of *bits* of precision
+        - ``lfun`` -- a PARI :pari:`lfun` object or an instance of :class:`lfun_generic`
+        - ``prec`` -- integer (default: 53) number of *bits* of precision
 
         EXAMPLES::
 
@@ -584,11 +584,11 @@ class LFunction(SageObject):
         EXAMPLES::
 
             sage: E = EllipticCurve('11a')
-            sage: L = E.lseries().dokchitser(algorithm="pari")
+            sage: L = E.lseries().dokchitser(algorithm='pari')
             sage: L.num_coeffs()
             27
             sage: E = EllipticCurve('5077a')
-            sage: L = E.lseries().dokchitser(algorithm="pari")
+            sage: L = E.lseries().dokchitser(algorithm='pari')
             sage: L.num_coeffs()
             591
 
@@ -649,9 +649,9 @@ class LFunction(SageObject):
 
         INPUT:
 
-        -  ``s`` -- complex number
+        - ``s`` -- complex number
 
-        - ``D`` -- optional integer (default 1)
+        - ``D`` -- integer (default: 1)
 
         EXAMPLES::
 
@@ -673,13 +673,11 @@ class LFunction(SageObject):
 
         INPUT:
 
-        -  ``s`` -- complex number; point about which to expand
+        - ``s`` -- complex number; point about which to expand
 
-        -  ``k`` -- optional integer (default: 6), series is
-           `O(``var``^k)`
+        - ``k`` -- integer (default: 6); series is `O(``var``^k)`
 
-        -  ``var`` -- optional string (default: 'z'), variable of power
-           series
+        - ``var`` -- string (default: ``'z'``); variable of power series
 
         EXAMPLES::
 
@@ -689,7 +687,7 @@ class LFunction(SageObject):
             sage: L.taylor_series(2, 3)
             1.64493406684823 - 0.937548254315844*z + 0.994640117149451*z^2 + O(z^3)
             sage: E = EllipticCurve('37a')
-            sage: L = E.lseries().dokchitser(algorithm="pari")
+            sage: L = E.lseries().dokchitser(algorithm='pari')
             sage: L.taylor_series(1)
             0.000000000000000 + 0.305999773834052*z + 0.186547797268162*z^2 - 0.136791463097188*z^3 + 0.0161066468496401*z^4 + 0.0185955175398802*z^5 + O(z^6)
 
@@ -697,7 +695,7 @@ class LFunction(SageObject):
         precision::
 
             sage: E = EllipticCurve('389a')
-            sage: L = E.lseries().dokchitser(200,algorithm="pari")
+            sage: L = E.lseries().dokchitser(200,algorithm='pari')
             sage: L.taylor_series(1, 3)
             2...e-63 + (...e-63)*z + 0.75931650028842677023019260789472201907809751649492435158581*z^2 + O(z^3)
 
@@ -747,7 +745,7 @@ class LFunction(SageObject):
 
         INPUT:
 
-        -  ``s`` -- complex number
+        - ``s`` -- complex number
 
         .. NOTE::
 
@@ -758,7 +756,7 @@ class LFunction(SageObject):
         EXAMPLES::
 
             sage: E = EllipticCurve('5077a')
-            sage: L = E.lseries().dokchitser(100, algorithm="pari")
+            sage: L = E.lseries().dokchitser(100, algorithm='pari')
             sage: L(1)
             0.00000000000000000000000000000
             sage: L(1 + I)

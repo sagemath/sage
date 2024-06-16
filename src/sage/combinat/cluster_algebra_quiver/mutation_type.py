@@ -44,7 +44,8 @@ def is_mutation_finite(M, nr_of_checks=None):
 
     INPUT:
 
-    - ``nr_of_checks`` -- (default: ``None``) number of mutations applied. Standard is 500*(number of vertices of self).
+    - ``nr_of_checks`` -- number of mutations applied (default: ``None``);
+      standard is 500*(number of vertices of self)
 
     ALGORITHM:
 

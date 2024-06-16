@@ -1996,7 +1996,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        -  ``S`` -- a Sage object.
+        - ``S`` -- a Sage object
 
         The algebras that coerce into the mod p Steenrod algebra are:
 
@@ -2313,7 +2313,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        -  ``a``, ``b``, ``c``, ... -- nonnegative integers
+        - ``a``, ``b``, ``c``, ... -- nonnegative integers
 
         OUTPUT:
 
@@ -2539,11 +2539,11 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        -  ``s`` -- nonnegative integer
+        - ``s`` -- nonnegative integer
 
-        -  ``t`` -- positive integer
+        - ``t`` -- positive integer
 
-        -  ``p`` -- positive prime number
+        - ``p`` -- positive prime number
 
         OUTPUT: element of the Steenrod algebra
 
@@ -4225,12 +4225,11 @@ def Sq(*nums):
 
     INPUT:
 
-    -  ``a``, ``b``, ``c``, ... -- nonnegative integers
+    - ``a``, ``b``, ``c``, ... -- nonnegative integers
 
     OUTPUT: element of the Steenrod algebra
 
-    This returns the Milnor basis element
-    `\text{Sq}(a, b, c, ...)`.
+    This returns the Milnor basis element `\text{Sq}(a, b, c, ...)`.
 
     EXAMPLES::
 

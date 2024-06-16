@@ -500,9 +500,9 @@ def End(X, category=None):
 
     INPUT:
 
-    -  ``X`` -- anything
+    - ``X`` -- anything
 
-    -  ``category`` -- (optional) category in which to coerce ``X``
+    - ``category`` -- (optional) category in which to coerce ``X``
 
     OUTPUT: a set of endomorphisms in category
 

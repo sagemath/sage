@@ -50,12 +50,12 @@ def n_k_params(C, n_k):
 
     - ``C`` -- a GRS code or ``None``
 
-    - ``n_k`` -- a tuple `(n,k)` being length and dimension of a GRS code, or
-      ``None``.
+    - ``n_k`` -- tuple `(n,k)` being length and dimension of a GRS code, or
+      ``None``
 
     OUTPUT:
 
-    - ``n_k`` -- a tuple `(n,k)` being length and dimension of a GRS code.
+    - ``n_k`` -- tuple `(n,k)` being length and dimension of a GRS code
 
     EXAMPLES::
 
@@ -155,7 +155,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
     - ``code`` -- a code associated to this decoder
 
     - ``tau`` -- integer (default: ``None``); the number of errors one wants the
-      Guruswami-Sudan algorithm to correct.
+      Guruswami-Sudan algorithm to correct
 
     - ``parameters`` -- (default: ``None``) a pair of integers, where:
 

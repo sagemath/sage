@@ -1012,10 +1012,10 @@ class Crystals(Category_singleton):
             - ``labels`` -- boolean (default: ``False``); whether to suppress
               labeling of the vertices
 
-            - ``scaling_factor`` -- (default: ``1.0``) Increasing or decreasing the
+            - ``scaling_factor`` -- (default: ``1.0``) increasing or decreasing the
               scaling factor changes the size of the image
 
-            - ``tallness`` -- (default: ``1.0``) Increasing makes the image taller
+            - ``tallness`` -- (default: ``1.0``) increasing makes the image taller
               without increasing the width
 
             EXAMPLES::

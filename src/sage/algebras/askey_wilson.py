@@ -850,7 +850,7 @@ class AlgebraMorphism(ModuleMorphismByLinearity):
 
         INPUT:
 
-        - ``c`` -- a tuple of length 6
+        - ``c`` -- tuple of length 6
 
         OUTPUT: element of the codomain
 

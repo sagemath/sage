@@ -719,10 +719,10 @@ cdef class Riemann_Map:
           Riemann map.
 
         - ``rgbcolor`` -- float array (default: ``[0,0,0]``) the
-          red-green-blue color of the boundary.
+          red-green-blue color of the boundary
 
         - ``thickness`` -- positive float (default: ``1``) the thickness of
-          the lines or points in the boundary.
+          the lines or points in the boundary
 
         EXAMPLES:
 
@@ -766,7 +766,7 @@ cdef class Riemann_Map:
 
         INPUT:
 
-        - ``plot_range`` -- a tuple of the form ``[xmin, xmax, ymin, ymax]``;
+        - ``plot_range`` -- tuple of the form ``[xmin, xmax, ymin, ymax]``;
           if the value is ``[]``, the default plotting window of the map will
           be used
 
@@ -848,10 +848,10 @@ cdef class Riemann_Map:
         The following inputs may be passed in as named parameters:
 
         - ``spokes`` -- integer (default: ``16``); the number of equally
-          spaced radial lines to plot.
+          spaced radial lines to plot
 
         - ``circles`` -- integer (default: ``4``); the number of equally
-          spaced circles about the center to plot.
+          spaced circles about the center to plot
 
         - ``pts`` -- integer (default: ``32``); the number of points to
           plot. Each radial line is made by ``1*pts`` points, each circle
@@ -1069,7 +1069,7 @@ cdef comp_pt(clist, loop=True):
     - ``clist`` -- list of complex numbers
 
     - ``loop`` -- boolean (default: ``True``); controls whether or not the
-      first point will be added as the last to plot a closed circle.
+      first point will be added as the last to plot a closed circle
 
     EXAMPLES:
 
@@ -1423,7 +1423,7 @@ cpdef cauchy_kernel(t, args):
 
     - ``t`` -- the boundary parameter, meant to be integrated over
 
-    - ``args`` -- a tuple containing:
+    - ``args`` -- tuple containing:
 
       - ``epsilon`` -- float; the skew of the ellipse (0 is circular)
 

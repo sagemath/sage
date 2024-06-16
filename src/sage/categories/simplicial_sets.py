@@ -439,7 +439,7 @@ class SimplicialSets(Category_singleton):
 
                 INPUT:
 
-                - ``character`` -- a dictionary
+                - ``character`` -- dictionary
 
                 EXAMPLES::
 
@@ -526,7 +526,7 @@ class SimplicialSets(Category_singleton):
 
                 INPUT:
 
-                - ``character`` -- a dictionary
+                - ``character`` -- dictionary
 
                 EXAMPLES::
 
@@ -621,7 +621,7 @@ class SimplicialSets(Category_singleton):
 
                 INPUT:
 
-                - ``twisting_operator`` -- a dictionary, associating the twist of each
+                - ``twisting_operator`` -- dictionary, associating the twist of each
                   simplex. If it is not given, the canonical one (associated to the
                   laurent polynomial ring abelianization of the fundamental group, ignoring
                   torsion) is used.
@@ -639,10 +639,10 @@ class SimplicialSets(Category_singleton):
                   return the cochain complex (that is, the dual of the chain
                   complex).
 
-                - ``verbose`` -- boolean (default: ``False``); ignored.
+                - ``verbose`` -- boolean (default: ``False``); ignored
 
                 - ``subcomplex`` -- (default: ``None``) if present,
-                  compute the chain complex relative to this subcomplex.
+                  compute the chain complex relative to this subcomplex
 
                 - ``check`` -- boolean (default: ``False``); if ``True``, make
                   sure that the chain complex is actually a chain complex:
@@ -821,7 +821,7 @@ class SimplicialSets(Category_singleton):
                 - ``n`` -- positive integer
 
                 - ``reduced`` -- boolean (default: ``False``); if set to True,
-                  the presentation matrix will be reduced.
+                  the presentation matrix will be reduced
 
                 EXAMPLES::
 

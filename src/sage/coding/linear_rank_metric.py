@@ -142,8 +142,8 @@ def to_matrix_representation(v, sub_field=None, basis=None):
 
     - ``v`` -- a vector over some field `\GF{q^m}`
 
-    - ``sub_field`` -- (default: ``None``) a sub field of `\GF{q^m}`. If not
-      specified, it is the prime subfield `\GF{p}` of `\GF{q^m}`.
+    - ``sub_field`` -- (default: ``None``) a sub field of `\GF{q^m}`; if not
+      specified, it is the prime subfield `\GF{p}` of `\GF{q^m}`
 
     - ``basis`` -- (default: ``None``) a basis of `\GF{q^m}` as a vector space over
       ``sub_field``. If not specified, given that `q = p^s`, let
@@ -235,8 +235,8 @@ def rank_weight(c, sub_field=None, basis=None):
 
     - ``c`` -- a vector over some field `\GF{q^m}`; or a matrix over `\GF{q}`
 
-    - ``sub_field`` -- (default: ``None``) a sub field of `\GF{q^m}`. If not
-      specified, it is the prime subfield `\GF{p}` of `\GF{q^m}`.
+    - ``sub_field`` -- (default: ``None``) a sub field of `\GF{q^m}`; if not
+      specified, it is the prime subfield `\GF{p}` of `\GF{q^m}`
 
     - ``basis`` -- (default: ``None``) a basis of `\GF{q^m}` as a vector space over
       ``sub_field``. If not specified, given that `q = p^s`, let
@@ -272,8 +272,8 @@ def rank_distance(a, b, sub_field=None, basis=None):
 
     - ``b`` -- a vector over some field `\GF{q^m}`
 
-    - ``sub_field`` -- (default: ``None``) a sub field of `\GF{q^m}`. If not
-      specified, it is the prime subfield `\GF{p}` of `\GF{q^m}`.
+    - ``sub_field`` -- (default: ``None``) a sub field of `\GF{q^m}`; if not
+      specified, it is the prime subfield `\GF{p}` of `\GF{q^m}`
 
     - ``basis`` -- (default: ``None``) a basis of `\GF{q^m}` as a vector space over
       ``sub_field``. If not specified, given that `q = p^s`, let

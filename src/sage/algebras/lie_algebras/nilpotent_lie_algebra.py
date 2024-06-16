@@ -29,7 +29,7 @@ class NilpotentLieAlgebra_dense(LieAlgebraWithStructureCoefficients):
     INPUT:
 
     - ``R`` -- the base ring
-    - ``s_coeff`` -- a dictionary of structural coefficients
+    - ``s_coeff`` -- dictionary of structural coefficients
     - ``names`` -- (default: ``None``) list of strings to use as names of basis
       elements; if ``None``, the names will be inferred from the structural
       coefficients

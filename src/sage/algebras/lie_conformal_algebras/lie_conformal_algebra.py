@@ -189,7 +189,7 @@ class LieConformalAlgebra(UniqueRepresentation, Parent):
       ring of this Lie conformal algebra. Behaviour is undefined
       if it is not a field of characteristic zero.
 
-    - ``arg0`` -- a dictionary (default: ``None``);
+    - ``arg0`` -- dictionary (default: ``None``);
       a dictionary containing the `\lambda` brackets of the
       generators of this Lie conformal algebra. The keys of this
       dictionary are pairs of either names or indices of the
@@ -215,13 +215,12 @@ class LieConformalAlgebra(UniqueRepresentation, Parent):
       pair (besides the ones defined by skew-symmetry) is assumed
       to have vanishing `\lambda`-bracket.
 
-    - ``names`` -- tuple of ``str`` (default: ``None``); the list of
+    - ``names`` -- tuple of strings (default: ``None``); the list of
       names for generators of this Lie conformal algebra. Do not
       include central elements in this list.
 
-    - ``central_elements`` -- tuple of ``str`` (default: ``None``);
-      A list of names for central elements of this Lie conformal
-      algebra.
+    - ``central_elements`` -- tuple of strings (default: ``None``);
+      a list of names for central elements of this Lie conformal algebra
 
     - ``index_set`` -- enumerated set (default: ``None``); an
       indexing set for the generators of this Lie conformal algebra.

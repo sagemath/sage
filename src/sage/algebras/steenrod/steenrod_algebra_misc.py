@@ -858,16 +858,14 @@ def arnonA_mono_to_string(mono, latex=False, p=2):
 
     INPUT:
 
-    -  ``mono`` -- tuple of pairs of nonnegative integers
+    - ``mono`` -- tuple of pairs of nonnegative integers
        (m,k) with `m >= k`
 
     - ``latex`` -- boolean (default: ``False``); if ``True``, output
       LaTeX string
 
-    OUTPUT:
-
-    ``string`` -- concatenation of strings of the form ``X^{m}_{k}``
-    for each pair (m,k)
+    OUTPUT: concatenation of strings of the form ``X^{m}_{k}`` for each pair
+    (m,k)
 
     EXAMPLES::
 

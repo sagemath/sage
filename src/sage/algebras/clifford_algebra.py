@@ -1702,7 +1702,7 @@ class ExteriorAlgebra(CliffordAlgebra):
 
         INPUT:
 
-        - ``s_coeff`` -- a dictionary whose keys are in `I \times I`, where
+        - ``s_coeff`` -- dictionary whose keys are in `I \times I`, where
           `I` is the index set of the underlying vector space `V`, and whose
           values can be coerced into 1-forms (degree 1 elements) in ``E``
           (usually, these values will just be elements of `V`)
@@ -1725,7 +1725,7 @@ class ExteriorAlgebra(CliffordAlgebra):
 
         INPUT:
 
-        - ``s_coeff`` -- a dictionary whose keys are in `I \times I`, where
+        - ``s_coeff`` -- dictionary whose keys are in `I \times I`, where
           `I` is the index set of the underlying vector space `V`, and whose
           values can be coerced into 1-forms (degree 1 elements) in ``E``
           (usually, these values will just be elements of `V`)
@@ -2201,7 +2201,7 @@ class ExteriorAlgebraBoundary(ExteriorAlgebraDifferential):
     INPUT:
 
     - ``E`` -- an exterior algebra of a vector space `L`
-    - ``s_coeff`` -- a dictionary whose keys are in `I \times I`, where
+    - ``s_coeff`` -- dictionary whose keys are in `I \times I`, where
       `I` is the index set of the basis of the vector space `L`, and whose
       values can be coerced into 1-forms (degree 1 elements) in ``E``;
       this dictionary will be used to define the Lie algebra structure
@@ -2446,7 +2446,7 @@ class ExteriorAlgebraCoboundary(ExteriorAlgebraDifferential):
     INPUT:
 
     - ``E`` -- an exterior algebra of a vector space `L`
-    - ``s_coeff`` -- a dictionary whose keys are in `I \times I`, where
+    - ``s_coeff`` -- dictionary whose keys are in `I \times I`, where
       `I` is the index set of the basis of the vector space `L`, and whose
       values can be coerced into 1-forms (degree 1 elements) in ``E``;
       this dictionary will be used to define the Lie algebra structure

@@ -228,13 +228,13 @@ class CyclicCode(AbstractLinearCode):
     INPUT:
 
     - ``generator_pol`` -- (default: ``None``) the generator polynomial
-      of ``self``. That is, the highest-degree monic polynomial which divides
-      every polynomial representation of a codeword in ``self``.
+      of ``self``; that is, the highest-degree monic polynomial which divides
+      every polynomial representation of a codeword in ``self``
 
-    - ``length`` -- (default: ``None``) the length of ``self``. It has to be
-      bigger than the degree of ``generator_pol``.
+    - ``length`` -- (default: ``None``) the length of ``self``; it has to be
+      bigger than the degree of ``generator_pol``
 
-    - ``code`` -- (default: ``None``) a linear code.
+    - ``code`` -- (default: ``None``) a linear code
 
     - ``check`` -- boolean (default: ``False``);  whether the cyclicity of
       ``self`` must be checked while finding the generator polynomial. See
@@ -244,7 +244,7 @@ class CyclicCode(AbstractLinearCode):
       ``length-1``, corresponding to (a subset of) the defining set of the code.
       Will be modified if it is not cyclotomic-closed.
 
-    - ``field`` -- (default: ``None``) the base field of ``self``.
+    - ``field`` -- (default: ``None``) the base field of ``self``
 
     - ``primitive_root`` -- (default: ``None``) the primitive root of
       the splitting field which contains the roots of the generator polynomial.

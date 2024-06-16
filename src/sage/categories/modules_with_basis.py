@@ -240,7 +240,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             INPUT:
 
             - ``self`` -- a parent `X` in ``ModulesWithBasis(R)`` with
-              basis `x=(x_i)_{i\in I}`.
+              basis `x=(x_i)_{i\in I}`
 
             Exactly one of the four following options must be
             specified in order to define the morphism:
@@ -279,7 +279,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 of the image of the basis vector `x_i` is `i`.
 
             - ``unitriangular`` -- boolean (default: ``False``);
-              Only meaningful for a triangular morphism.
+              only meaningful for a triangular morphism.
               As a shorthand, one may use ``unitriangular="lower"``
               for ``triangular='lower', unitriangular=True``.
 

@@ -550,7 +550,7 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
 
         INPUT:
 
-        - ``points`` -- a set of positions where to puncture ``self``
+        - ``points`` -- set of positions where to puncture ``self``
 
         EXAMPLES::
 
@@ -1884,7 +1884,7 @@ class GRSErrorErasureDecoder(Decoder):
 
         INPUT:
 
-        - ``word_and_erasure_vector`` -- a tuple whose:
+        - ``word_and_erasure_vector`` -- tuple whose:
 
           * first element is an element of the ambient space of the code
           * second element is a vector over `\GF{2}` whose length is the

@@ -42,11 +42,11 @@ class AbelianLieConformalAlgebra(GradedLieConformalAlgebra):
       ``None``); the parity of the generators. If not ``None`` the
       resulting Lie Conformal algebra is a Super Lie conformal
       algebra
-    - ``names`` -- a tuple of ``str`` or ``None`` (default: ``None``
-      ); the list of names of the generators of this algebra.
+    - ``names`` -- tuple of strings or ``None`` (default: ``None``);
+      the list of names of the generators of this algebra.
     - ``index_set`` -- an enumerated set or ``None`` (default:
-      ``None``); A set indexing the generators of this Lie
-      conformal algebra.
+      ``None``); a set indexing the generators of this Lie
+      conformal algebra
 
     OUTPUT:
 

@@ -672,7 +672,7 @@ class AbstractCode(Parent):
 
         - ``word`` -- an element in the ambient space as ``self``
 
-        - ``decoder_name`` -- (default: ``None``) Name of the decoder which will be used
+        - ``decoder_name`` -- (default: ``None``) name of the decoder which will be used
           to decode ``word``. The default decoder of ``self`` will be used if
           default value is kept.
 
@@ -708,7 +708,7 @@ class AbstractCode(Parent):
 
         - ``word`` -- an element in the ambient space as ``self``
 
-        - ``decoder_name`` -- (default: ``None``) Name of the decoder which will be used
+        - ``decoder_name`` -- (default: ``None``) name of the decoder which will be used
           to decode ``word``. The default decoder of ``self`` will be used if
           default value is kept.
 

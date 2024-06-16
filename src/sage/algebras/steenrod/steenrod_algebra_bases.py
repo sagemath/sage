@@ -20,29 +20,29 @@ documentation for the function
 Monks [Mon1998]_ and Wood [Woo1998]_ for more information about them. For
 commutator bases, see the preprint by Palmieri and Zhang [PZ2008]_.
 
-- ``'milnor'``: Milnor basis.
+- ``'milnor'`` -- Milnor basis
 
-- ``'serre-cartan'`` or ``'adem'`` or ``'admissible'``: Serre-Cartan basis.
+- ``'serre-cartan'`` or ``'adem'`` or ``'admissible'`` -- Serre-Cartan basis
 
 Most of the rest of the bases are only defined when `p=2`.  The only
 exceptions are the `P^s_t`-bases and the commutator bases, which are
 defined at all primes.
 
--  ``'wood_y'``: Wood's Y basis.
+- ``'wood_y'`` -- Wood's Y basis
 
--  ``'wood_z'``: Wood's Z basis.
+- ``'wood_z'`` -- Wood's Z basis
 
--  ``'wall'``, ``'wall_long'``: Wall's basis.
+- ``'wall'``, ``'wall_long'`` -- Wall's basis
 
--  ``'arnon_a'``, ``'arnon_a_long'``: Arnon's A basis.
+- ``'arnon_a'``, ``'arnon_a_long'`` -- Arnon's A basis
 
--  ``'arnon_c'``: Arnon's C basis.
+- ``'arnon_c'`` -- Arnon's C basis
 
--  ``'pst'``, ``'pst_rlex'``, ``'pst_llex'``, ``'pst_deg'``, ``'pst_revz'``:
-   various `P^s_t`-bases.
+- ``'pst'``, ``'pst_rlex'``, ``'pst_llex'``, ``'pst_deg'``, ``'pst_revz'`` --
+  various `P^s_t`-bases
 
--  ``'comm'``, ``'comm_rlex'``, ``'comm_llex'``, ``'comm_deg'``, ``'comm_revz'``,
-   or these with ``'_long'`` appended: various commutator bases.
+- ``'comm'``, ``'comm_rlex'``, ``'comm_llex'``, ``'comm_deg'``, ``'comm_revz'``,
+   or these with ``'_long'`` appended -- various commutator bases
 
 The main functions provided here are
 

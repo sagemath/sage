@@ -1210,9 +1210,9 @@ class FusionRing(WeylCharacterRing):
 
         INPUT:
 
-        - ``mapper`` -- a string specifying the name of a function defined
+        - ``mapper`` -- string specifying the name of a function defined
           in the ``fast_parallel_fusion_ring_braid_repn`` module
-        - ``input_args`` -- a tuple of arguments to be passed to mapper
+        - ``input_args`` -- tuple of arguments to be passed to mapper
 
         This method applies the mapper in parallel if a ``worker_pool``
         is provided.

@@ -389,7 +389,7 @@ class ConstructionFunctor(Functor):
         - ``other_bases`` -- the arguments passed to the functor
           ``other_functor``
 
-        - ``reason`` -- a string or ``None`` (default).
+        - ``reason`` -- string or ``None`` (default)
 
         TESTS::
 
@@ -1719,8 +1719,8 @@ class LaurentPolynomialFunctor(ConstructionFunctor):
         """
         INPUT:
 
-        - ``var`` -- a string or a list of strings
-        - ``multi_variate`` -- optional bool, default ``False`` if ``var`` is a string
+        - ``var`` -- string or a list of strings
+        - ``multi_variate`` -- optional boolean, default ``False`` if ``var`` is a string
           and ``True`` otherwise: If ``True``, application to a Laurent polynomial
           ring yields a multivariate Laurent polynomial ring.
 
@@ -1864,7 +1864,7 @@ class VectorFunctor(ConstructionFunctor):
         INPUT:
 
         - ``n`` -- the rank of the to-be-created modules (nonnegative integer)
-        - ``is_sparse`` -- (optional bool, default ``False``), create sparse implementation of modules
+        - ``is_sparse`` -- boolean (default: ``False``), create sparse implementation of modules
         - ``inner_product_matrix`` -- ``n`` by ``n`` matrix, used to compute inner products in the
           to-be-created modules
         - ``name_mapping``, ``latex_name_mapping`` -- Dictionaries from base rings to names
@@ -2185,7 +2185,7 @@ class SubspaceFunctor(ConstructionFunctor):
         """
         INPUT:
 
-        ``basis`` -- a list of elements of a free module.
+        ``basis`` -- list of elements of a free module.
 
         TESTS::
 

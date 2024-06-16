@@ -659,7 +659,7 @@ class Modules(Category_module):
 
             INPUT:
 
-            - ``self`` -- a parent `X` in ``Modules(R)``.
+            - ``self`` -- a parent `X` in ``Modules(R)``
 
             - ``function`` -- a function `f` from `X` to `Y`
 

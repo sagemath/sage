@@ -135,7 +135,7 @@ class NakajimaMonomial(Element):
         r"""
         INPUT:
 
-        - ``d`` -- a dictionary of with pairs of the form ``{(i,k): y}``
+        - ``d`` -- dictionary of with pairs of the form ``{(i,k): y}``
 
         EXAMPLES::
 
@@ -864,9 +864,9 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``Y`` -- a dictionary whose key is a pair and whose value
+        - ``Y`` -- dictionary whose key is a pair and whose value
           is an integer
-        - ``A`` -- a dictionary whose key is a pair and whose value
+        - ``A`` -- dictionary whose key is a pair and whose value
           is an integer
 
         EXAMPLES::

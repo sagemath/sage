@@ -405,7 +405,7 @@ class Link(SageObject):
             following negative one; of there exist a closed arc,
             it is returned as a list of positive numbers only
 
-        OUTPUT: a list of lists representing the arcs based upon ``presentation``
+        OUTPUT: list of lists representing the arcs based upon ``presentation``
 
         EXAMPLES::
 
@@ -475,9 +475,7 @@ class Link(SageObject):
           * ``'braid'`` -- the presentation is given by the braid action
             on the free group (see chapter 2 of [Bir1975]_)
 
-        OUTPUT:
-
-        - a finitely presented group
+        OUTPUT: a finitely presented group
 
         EXAMPLES::
 
@@ -612,7 +610,7 @@ class Link(SageObject):
 
         INPUT:
 
-        - ``remove_loops`` -- boolean (default: ``False``). If set to ``True``
+        - ``remove_loops`` -- boolean (default: ``False``); if set to ``True``
           loops will be removed first. This can reduce the number of strands
           needed for an ambient isotopic braid closure. However, this can lead
           to a loss of the regular isotopy.
@@ -1876,8 +1874,8 @@ class Link(SageObject):
 
         INPUT:
 
-        - `\omega` -- a complex number of modulus 1. This is assumed to be
-          coercible to ``QQbar``.
+        - `\omega` -- a complex number of modulus 1; this is assumed to be
+          coercible to ``QQbar``
 
         This is defined as the signature of the Hermitian matrix
 
@@ -3097,7 +3095,7 @@ class Link(SageObject):
 
         INPUT:
 
-        - ``varnames`` -- string (default ``t0, t1``)
+        - ``varnames`` -- string (default: ``'t0, t1'``)
 
         OUTPUT: a Laurent polynomial in the given variable names
 
@@ -3285,9 +3283,9 @@ class Link(SageObject):
 
     def coloring_maps(self, n=None, finitely_presented=False):
         r"""
-        Return the ``n``-coloring maps of ``self``. These are group
+        Return the `n`-coloring maps of ``self``. These are group
         homomorphisms from the fundamental group of ``self`` to the
-        ``n``-th dihedral group.
+        `n`-th dihedral group.
 
         INPUT:
 
@@ -3295,14 +3293,14 @@ class Link(SageObject):
           of the determinant of ``self`` will be taken). Note that there
           are no coloring maps if n is coprime to the determinant of ``self``
 
-        - ``finitely_presented`` (default ``False``) whether to choose the
-          dihedral groups as finitely presented groups. If not set to ``True``
-          they are represented as permutation groups.
+        - ``finitely_presented`` -- boolean (default: ``False``); whether to
+          choose the dihedral groups as finitely presented groups. If not set
+          to ``True`` they are represented as permutation groups.
 
         OUTPUT:
 
         a list of group homomporhisms from the fundamental group of ``self``
-        to the ``n``-th dihedral group (represented according to the key
+        to the `n`-th dihedral group (represented according to the key
         argument ``finitely_presented``).
 
         EXAMPLES::
@@ -3386,10 +3384,10 @@ class Link(SageObject):
           components
 
         - ``solver`` -- the linear solver to use, see
-          :class:`~sage.numerical.mip.MixedIntegerLinearProgram`.
+          :class:`~sage.numerical.mip.MixedIntegerLinearProgram`
 
-        - ``color`` -- (default: 'blue') a color or a coloring (as returned
-          by :meth:`colorings`.
+        - ``color`` -- string (default: ``'blue'``); a color or a coloring (as
+          returned by :meth:`colorings`
 
         The usual keywords for plots can be used here too.
 
@@ -3935,7 +3933,7 @@ class Link(SageObject):
         OUTPUT:
 
         A tuple ``(l, proved)`` where ``l`` is the matching list and ``proved`` a boolean
-        telling if the entries of ``l`` are checked to be isotopic to self or not.
+        telling if the entries of ``l`` are checked to be isotopic to ``self`` or not.
 
         EXAMPLES::
 
@@ -3953,7 +3951,6 @@ class Link(SageObject):
             sage: k = k4_1.connected_sum(k5_2)
             sage: k._knotinfo_matching_list()   # optional - database_knotinfo
             ([<KnotInfo.K9_12: '9_12'>], False)
-
         """
         from sage.knots.knotinfo import KnotInfoSeries
         pd_code = self.pd_code()
@@ -4060,14 +4057,14 @@ class Link(SageObject):
 
         INPUT:
 
-        - ``mirror_version`` -- boolean (default is ``True``). If set to ``False``
+        - ``mirror_version`` -- boolean (default: ``True``); if set to ``False``
           the result of the method will be just the instance of :class:`~sage.knots.knotinfo.KnotInfoBase`
           (by default the result is a tuple of the instance and an enum, see
           explanation of the output below)
 
-        - ``unique`` -- boolean (default is ``True``). This only affects the case
+        - ``unique`` -- boolean (default: ``True``); this only affects the case
           where a unique identification is not possible. If set to ``False`` you
-          can obtain a matching list (see explanation of the output below)
+          can obtain a matching list (see explanation of the output below).
 
         OUTPUT:
 
@@ -4545,7 +4542,6 @@ class Link(SageObject):
             verbose 1 (... link.py, is_isotopic) identified by KnotInfoSeries ([<KnotInfo.L8n2_0: 'L8n2{0}'>, <KnotInfo.L8n2_1: 'L8n2{1}'>], SymmetryMutant.reverse)
             True
             sage: set_verbose(0)
-
         """
         from sage.misc.verbose import verbose
         if not isinstance(other, Link):

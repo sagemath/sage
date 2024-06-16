@@ -42,7 +42,7 @@ class FermionicGhostsLieConformalAlgebra(GradedLieConformalAlgebra):
     - ``ngens`` -- an even positive Integer (default: ``2``); the
       number of non-central generators of this Lie conformal
       algebra
-    - ``names`` -- a tuple of ``str``; alternative names for the
+    - ``names`` -- tuple of strings; alternative names for the
       generators
     - ``index_set`` -- an enumerated set; alternative indexing
       set for the generators

@@ -60,7 +60,7 @@ class Groups(CategoryWithAxiom):
         - ``index_set`` -- (optional) an index set for the generators; if
           an integer, then this represents `\{0, 1, \ldots, n-1\}`
 
-        - ``names`` -- a string or list/tuple/iterable of strings
+        - ``names`` -- string or list/tuple/iterable of strings
           (default: ``'x'``); the generator names or name prefix
 
         When the index set is an integer or only variable names are given,
@@ -509,7 +509,7 @@ class Groups(CategoryWithAxiom):
             - ``index_set`` -- (optional) an index set for the generators; if
               an integer, then this represents `\{0, 1, \ldots, n-1\}`
 
-            - ``names`` -- a string or list/tuple/iterable of strings
+            - ``names`` -- string or list/tuple/iterable of strings
               (default: ``'x'``); the generator names or name prefix
 
             EXAMPLES::

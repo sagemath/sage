@@ -51,10 +51,10 @@ class Dokchitser(SageObject):
 
     where
 
-    - ``conductor`` -- integer, the conductor
+    - ``conductor`` -- integer; the conductor
 
     - ``gammaV`` -- list of Gamma-factor parameters, e.g. [0] for
-      Riemann zeta, [0,1] for ell.curves, (see examples).
+      Riemann zeta, [0,1] for ell.curves, (see examples)
 
     - ``weight`` -- positive real number, usually an integer e.g. 1 for
       Riemann zeta, 2 for `H^1` of curves/`\QQ`
@@ -66,9 +66,9 @@ class Dokchitser(SageObject):
       included
 
     - ``residues`` -- vector of residues of `L^*(s)` in those poles or
-      set residues='automatic' (default value)
+      set ``residues='automatic'`` (default)
 
-    - ``prec`` -- integer (default: 53) number of *bits* of precision
+    - ``prec`` -- integer (default: 53); number of *bits* of precision
 
     RIEMANN ZETA FUNCTION:
 
@@ -254,7 +254,7 @@ class Dokchitser(SageObject):
             template = string.Template(tf.read())
 
         from tempfile import NamedTemporaryFile
-        with NamedTemporaryFile(suffix=".gp", mode="w+t") as f:
+        with NamedTemporaryFile(suffix='.gp', mode='w+t') as f:
             f.write(template.substitute(i=str(self.__instance)))
             f.flush()
             self.__gp.read(f.name)
@@ -388,21 +388,21 @@ class Dokchitser(SageObject):
 
         INPUT:
 
-        -  ``v`` -- list of complex numbers or string (pari function of k)
+        - ``v`` -- list of complex numbers or string (pari function of k)
 
-        -  ``cutoff`` -- real number = 1 (default: 1)
+        - ``cutoff`` -- real number (default: 1)
 
-        -  ``w`` -- list of complex numbers or string (pari function of k)
+        - ``w`` -- list of complex numbers or string (pari function of k)
 
-        -  ``pari_precode`` -- some code to execute in pari
+        - ``pari_precode`` -- some code to execute in pari
            before calling initLdata
 
-        -  ``max_imaginary_part`` -- (default: 0): redefine if
-           you want to compute L(s) for s having large imaginary part,
+        - ``max_imaginary_part`` -- (default: 0) redefine if
+           you want to compute L(s) for s having large imaginary part
 
-        -  ``max_asymp_coeffs`` -- (default: 40): at most this
+        - ``max_asymp_coeffs`` -- (default: 40) at most this
            many terms are generated in asymptotic series for phi(t) and
-           G(s,t).
+           G(s,t)
 
         EXAMPLES::
 
@@ -490,7 +490,7 @@ class Dokchitser(SageObject):
         r"""
         INPUT:
 
-        -  ``s`` -- complex number
+        - ``s`` -- complex number
 
         .. NOTE::
 
@@ -574,14 +574,11 @@ class Dokchitser(SageObject):
 
         INPUT:
 
-        -  ``a`` -- complex number (default: 0); point about
-           which to expand
+        - ``a`` -- complex number (default: 0); point about which to expand
 
-        -  ``k`` -- integer (default: 6), series is
-           `O(``var``^k)`
+        - ``k`` -- integer (default: 6); series is `O(``var``^k)`
 
-        -  ``var`` -- string (default: 'z'), variable of power
-           series
+        - ``var`` -- string (default: ``'z'``); variable of power series
 
         EXAMPLES::
 
@@ -645,7 +642,7 @@ class Dokchitser(SageObject):
         and also determines the residues if ``self.poles !=
         []`` and residues='automatic'.
 
-        More specifically: for `T>1` (default 1.2),
+        More specifically: for `T>1` (default: 1.2),
         ``self.check_functional_equation(T)`` should ideally
         return 0 (to the current precision).
 
@@ -698,8 +695,8 @@ class Dokchitser(SageObject):
 
         INPUT:
 
-        -  ``coefgrow`` -- string that evaluates to a PARI
-           function of n that defines a coefgrow function.
+        - ``coefgrow`` -- string that evaluates to a PARI function of n that
+          defines a coefgrow function
 
         EXAMPLES::
 

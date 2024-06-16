@@ -243,7 +243,7 @@ class PBWData(): # UniqueRepresentation?
 
         INPUT:
 
-        - ``reduced_word`` -- a tuple corresponding to a reduced word
+        - ``reduced_word`` -- tuple corresponding to a reduced word
 
         EXAMPLES::
 

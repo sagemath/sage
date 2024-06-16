@@ -79,7 +79,7 @@ class GoppaCode(AbstractLinearCode):
     - ``generating_pol`` -- a monic polynomial with coefficients in a finite
       field `\GF{p^m}`, the code is defined over `\GF{p}`, `p` must be a prime number
 
-    - ``defining_set`` -- a set of elements of `\GF{p^m}` that are not roots
+    - ``defining_set`` -- set of elements of `\GF{p^m}` that are not roots
       of `g`, its cardinality is the length of the code
 
     EXAMPLES::

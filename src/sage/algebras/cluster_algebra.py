@@ -1230,7 +1230,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
       to be a valid variable name;  supersedes ``cluster_variable_prefix``
 
     - ``coefficient_prefix`` -- string (default: ``'y'``); it needs to be
-      a valid variable name.
+      a valid variable name
 
     - ``coefficient_names`` -- list of strings; each element needs
       to be a valid variable name; supersedes ``cluster_variable_prefix``
@@ -1995,7 +1995,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``g_vector`` -- a tuple: the g-vector to find
+        - ``g_vector`` -- tuple; the g-vector to find
         - ``depth`` -- a positive integer or infinity (default: ``infinity``);
           the maximum distance from ``self.current_seed`` to reach
 

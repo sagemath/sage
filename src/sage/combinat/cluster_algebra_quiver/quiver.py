@@ -694,10 +694,10 @@ class ClusterQuiver(SageObject):
         INPUT:
 
         - ``fig_size`` -- (default: 1) factor by which the size of the
-          plot is multiplied.
+          plot is multiplied
 
         - ``circular`` -- boolean (default: ``True``); if ``True``, the
-          circular plot is chosen, otherwise >>spring<< is used.
+          circular plot is chosen, otherwise >>spring<< is used
 
         TESTS::
 
@@ -715,7 +715,7 @@ class ClusterQuiver(SageObject):
 
         - ``filename`` -- the filename the image is saved to
         - ``circular`` -- boolean (default: ``False``); if ``True``, the
-          circular plot is chosen, otherwise >>spring<< is used.
+          circular plot is chosen, otherwise >>spring<< is used
 
         EXAMPLES::
 
@@ -1341,9 +1341,9 @@ class ClusterQuiver(SageObject):
           ``self``, a function which takes in the ClusterQuiver and returns a
           vertex or an iterator of vertices, or a string of the parameter
           wanting to be called on ClusterQuiver that will return a vertex or
-          an iterator of vertices.
+          an iterator of vertices
         - ``inplace`` -- boolean (default: ``True``); if ``False``, the result
-          is returned, otherwise ``self`` is modified.
+          is returned, otherwise ``self`` is modified
 
         EXAMPLES::
 

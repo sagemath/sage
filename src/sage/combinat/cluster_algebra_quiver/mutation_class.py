@@ -388,7 +388,8 @@ def _digraph_to_dig6(dg, hashable=False):
     INPUT:
 
     - ``dg`` -- a digraph
-    - ``hashable`` -- (Boolean; optional; default: ``False``) if ``True``, the edge labels are turned into a dict.
+    - ``hashable`` -- boolean (default: ``False``); if ``True``, the edge
+      labels are turned into a dict
 
     EXAMPLES::
 

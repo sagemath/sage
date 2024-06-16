@@ -164,7 +164,7 @@ class Posets(Category):
 
             INPUT:
 
-            - ``x``, ``y`` -- elements of ``self``.
+            - ``x``, ``y`` -- elements of ``self``
 
             EXAMPLES::
 
@@ -183,7 +183,7 @@ class Posets(Category):
 
             INPUT:
 
-            - ``x``, ``y`` -- elements of ``self``.
+            - ``x``, ``y`` -- elements of ``self``
 
             This default implementation delegates the work to :meth:`le`.
 
@@ -205,7 +205,7 @@ class Posets(Category):
 
             INPUT:
 
-            - ``x``, ``y`` -- elements of ``self``.
+            - ``x``, ``y`` -- elements of ``self``
 
             This default implementation delegates the work to :meth:`le`.
 
@@ -227,7 +227,7 @@ class Posets(Category):
 
             INPUT:
 
-            - ``x``, ``y`` -- elements of ``self``.
+            - ``x``, ``y`` -- elements of ``self``
 
             This default implementation delegates the work to :meth:`lt`.
 

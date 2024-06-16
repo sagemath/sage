@@ -100,7 +100,7 @@ def transversal_design(k, n, resolvable=False, check=True, existence=False):
         - ``True`` -- meaning that Sage knows how to build the design
 
         - ``Unknown`` -- meaning that Sage does not know how to build the
-          design, but that the design may exist (see :mod:`sage.misc.unknown`).
+          design, but that the design may exist (see :mod:`sage.misc.unknown`)
 
         - ``False`` -- meaning that the design does not exist
 
@@ -753,7 +753,7 @@ def orthogonal_array(k,n,t=2,resolvable=False, check=True,existence=False,explai
 
     - ``n`` -- integer; number of symbols
 
-    - ``t`` -- (integer; default: 2) -- strength of the array
+    - ``t`` -- (integer; default: 2); strength of the array
 
     - ``resolvable`` -- boolean (default: ``False``); set to ``True`` if you
       want the design to be resolvable. The `n` classes of the resolvable
@@ -769,7 +769,7 @@ def orthogonal_array(k,n,t=2,resolvable=False, check=True,existence=False,explai
         - ``True`` -- meaning that Sage knows how to build the design
 
         - ``Unknown`` -- meaning that Sage does not know how to build the
-          design, but that the design may exist (see :mod:`sage.misc.unknown`).
+          design, but that the design may exist (see :mod:`sage.misc.unknown`)
 
         - ``False`` -- meaning that the design does not exist
 
@@ -1086,7 +1086,7 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
         - ``True`` -- meaning that Sage knows how to build the design
 
         - ``Unknown`` -- meaning that Sage does not know how to build the
-          design, but that the design may exist (see :mod:`sage.misc.unknown`).
+          design, but that the design may exist (see :mod:`sage.misc.unknown`)
 
         - ``False`` -- meaning that the design does not exist
 
@@ -1414,7 +1414,7 @@ def OA_find_disjoint_blocks(OA, k, n, x,
 
     - ``k``, ``n``, ``x`` -- integers
 
-    - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear
+    - ``solver`` -- (default: ``None``) specify a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve
@@ -1475,7 +1475,7 @@ def OA_relabel(OA, k, n, blocks=tuple(), matrix=None, symbol_list=None):
     INPUT:
 
     - ``OA`` -- an OA, or rather a list of blocks of length `k`, each
-      of which contains integers from `0` to `n-1`.
+      of which contains integers from `0` to `n-1`
 
     - ``k``, ``n`` -- integers
 
@@ -1809,7 +1809,7 @@ def OA_from_quasi_difference_matrix(M,G,add_col=True,fill_hole=True):
     - ``G`` -- a group
 
     - ``add_col`` -- boolean; whether to add a column to the final OA equal to
-      `(x_1,\dots,x_g,x_1,\dots,x_g,\dots)` where `G=\{x_1,\dots,x_g\}`.
+      `(x_1,\dots,x_g,x_1,\dots,x_g,\dots)` where `G=\{x_1,\dots,x_g\}`
 
     - ``fill_hole`` -- boolean; whether to return the incomplete orthogonal
       array, or complete it with the `OA(k,u)` (default). When ``fill_hole is

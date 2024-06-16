@@ -61,7 +61,7 @@ class ParityCheckCode(AbstractLinearCode):
         INPUT:
 
         - ``base_field`` -- the base field over which ``self`` is defined
-                            or GF(2) if no base_field.
+          or GF(2) if no base_field
 
         - ``dimension`` -- the dimension of ``self`` or 7 if no dimension
 

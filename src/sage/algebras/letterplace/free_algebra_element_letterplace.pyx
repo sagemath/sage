@@ -65,11 +65,11 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
         """
         INPUT:
 
-        - A free associative unital algebra in letterplace implementation, `A`.
-        - A homogeneous polynomial that can be coerced into the currently
-          used polynomial ring of `A`.
-        - ``check`` (optional bool, default ``True``): Do not attempt the
-          above coercion (for internal use only).
+        - ``A`` - a free associative unital algebra in letterplace implementation
+        - ``x`` -- a homogeneous polynomial that can be coerced into the currently
+          used polynomial ring of `A`
+        - ``check`` -- boolean (default: ``True``); do not attempt the
+          above coercion (for internal use only)
 
         TESTS::
 

@@ -142,7 +142,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             - ``action`` -- a function (default: :obj:`operator.mul`)
 
             - ``side`` -- 'left' or 'right' (default: ``'right'``):
-              on which side of ``self`` the elements of `S` acts.
+              on which side of ``self`` the elements of `S` acts
 
             See :meth:`annihilator` for the assumptions and definition
             of the annihilator.

@@ -193,7 +193,7 @@ class HighestWeightCrystals(Category_singleton):
             - ``index_set`` -- (default: ``None``) the index set; if ``None``
               then use the index set of the crystal
 
-            - ``max_depth`` -- (default: infinity) The maximum depth to build
+            - ``max_depth`` -- (default: infinity) the maximum depth to build
 
             EXAMPLES::
 

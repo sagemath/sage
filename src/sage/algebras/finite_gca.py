@@ -78,12 +78,12 @@ class FiniteGCAlgebra(CombinatorialFreeModule):
     - ``degrees`` -- (optional) a tuple or list specifying the degrees
       of the generators; if omitted, each generator is given degree
       1, and if both ``names`` and ``degrees`` are omitted, an error is
-      raised.
+      raised
     - ``max_degree`` -- the maximal degree of the graded algebra
-    - ``mul_symbol`` -- (optional) symbol used for multiplication. If omitted,
-      the string "*" is used.
-    - ``mul_latex_symbol`` -- (optional) latex symbol used for multiplication.
-      If omitted, the empty string is used.
+    - ``mul_symbol`` -- (optional) symbol used for multiplication; if omitted,
+      the string "*" is used
+    - ``mul_latex_symbol`` -- (optional) latex symbol used for multiplication;
+      if omitted, the empty string is used
 
     EXAMPLES::
 

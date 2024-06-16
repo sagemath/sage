@@ -73,7 +73,7 @@ class FreeCommutativeAdditiveMonoid(FreeCommutativeAdditiveSemigroup):
 
         INPUT:
 
-         - ``alphabet`` -- a tuple of strings: the generators of the monoid
+         - ``alphabet`` -- tuple of strings; the generators of the monoid
 
         EXAMPLES::
 

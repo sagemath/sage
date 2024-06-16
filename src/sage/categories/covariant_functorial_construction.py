@@ -93,14 +93,14 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
     In practice, each subclass of this class should provide the
     following attributes:
 
-     - ``_functor_category`` -- a string which should match the name of
+     - ``_functor_category`` -- string which should match the name of
        the nested category class to be used in each category to
        specify information and generic operations for elements of this
-       category.
+       category
 
-     - ``_functor_name`` -- a string which specifies the name of the
+     - ``_functor_name`` -- string which specifies the name of the
        functor, and also (when relevant) of the method on parents and
-       elements used for calling the construction.
+       elements used for calling the construction
 
     TODO: What syntax do we want for `F_{Cat}`? For example, for the
     tensor product construction, which one do we want among (see

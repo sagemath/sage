@@ -45,7 +45,7 @@ def frequency_table(string):
 
     INPUT:
 
-    - ``string`` -- a string of symbols over some alphabet
+    - ``string`` -- string of symbols over some alphabet
 
     OUTPUT:
 
@@ -297,7 +297,7 @@ class Huffman(SageObject):
 
         INPUT:
 
-        - ``dic`` -- a dictionary that associates to each symbol of an alphabet
+        - ``dic`` -- dictionary that associates to each symbol of an alphabet
           a numeric value. If we consider the frequency of each alphabetic
           symbol, then ``dic`` is considered as the frequency table of the
           alphabet with each numeric (nonnegative integer) value being the
@@ -377,7 +377,7 @@ class Huffman(SageObject):
 
         INPUT:
 
-        - ``string`` -- a string of symbols over an alphabet
+        - ``string`` -- string of symbols over an alphabet
 
         OUTPUT: a Huffman encoding of ``string``
 
@@ -402,7 +402,7 @@ class Huffman(SageObject):
 
         INPUT:
 
-        - ``string`` -- a string of Huffman encodings
+        - ``string`` -- string of Huffman encodings
 
         OUTPUT: the Huffman decoding of ``string``
 

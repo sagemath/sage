@@ -114,7 +114,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
               nodes of the Dynkin diagram; (default: all of them)
 
             - ``as_word`` -- boolean (default: ``False``); if ``True``, then
-              return instead a reduced decomposition of the longest element.
+              return instead a reduced decomposition of the longest element
 
             Should this method be called maximal_element? longest_element?
 

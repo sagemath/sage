@@ -227,7 +227,7 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology='O
       is not an orthogonal array `OA(k,n)`
 
     - ``terminology`` -- string; how to phrase the information when ``verbose =
-      True``. Possible values are `"OA"`, `"MOLS"`.
+      True``. Possible values are `"OA"`, `"MOLS"`
 
     EXAMPLES::
 
@@ -368,10 +368,10 @@ def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=Fals
     - ``v`` -- integers; size of the ground set assumed to be `X=\{0,...,v-1\}`
 
     - ``G`` -- list of integers of which the sizes of the groups must be
-      elements. Set to ``None`` (automatic guess) by default.
+      elements. Set to ``None`` (automatic guess) by default
 
     - ``K`` -- list of integers of which the sizes of the blocks must be
-      elements. Set to ``None`` (automatic guess) by default.
+      elements. Set to ``None`` (automatic guess) by default
 
     - ``lambd`` -- value of `\lambda`. Set to `1` by default
 

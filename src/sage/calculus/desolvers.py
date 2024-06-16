@@ -14,40 +14,40 @@ symbolic variables, for example with ``var("_C")``.
 
 Commands:
 
-- :func:`desolve` -- Compute the "general solution" to a 1st or 2nd order
-  ODE via Maxima.
+- :func:`desolve` -- compute the "general solution" to a 1st or 2nd order
+  ODE via Maxima
 
-- :func:`desolve_laplace` -- Solve an ODE using Laplace transforms via
-  Maxima. Initial conditions are optional.
+- :func:`desolve_laplace` -- solve an ODE using Laplace transforms via
+  Maxima. Initial conditions are optional
 
-- :func:`desolve_rk4` -- Solve numerically an IVP for one first order
-  equation, return list of points or plot.
+- :func:`desolve_rk4` -- solve numerically an IVP for one first order
+  equation, return list of points or plot
 
-- :func:`desolve_system_rk4` -- Solve numerically an IVP for a system of first
-  order equations, return list of points.
+- :func:`desolve_system_rk4` -- solve numerically an IVP for a system of first
+  order equations, return list of points
 
-- :func:`desolve_odeint` -- Solve numerically a system of first-order ordinary
+- :func:`desolve_odeint` -- solve numerically a system of first-order ordinary
   differential equations using :func:`~scipy:scipy.integrate.odeint` from
   the module :mod:`scipy:scipy.integrate`.
 
-- :func:`desolve_system` -- Solve a system of 1st order ODEs of any size using
-  Maxima. Initial conditions are optional.
+- :func:`desolve_system` -- solve a system of 1st order ODEs of any size using
+  Maxima. Initial conditions are optional
 
-- :func:`eulers_method` -- Approximate solution to a 1st order DE,
-  presented as a table.
+- :func:`eulers_method` -- approximate solution to a 1st order DE,
+  presented as a table
 
-- :func:`eulers_method_2x2` -- Approximate solution to a 1st order system
-  of DEs, presented as a table.
+- :func:`eulers_method_2x2` -- approximate solution to a 1st order system
+  of DEs, presented as a table
 
-- :func:`eulers_method_2x2_plot` -- Plot the sequence of points obtained
-  from Euler's method.
+- :func:`eulers_method_2x2_plot` -- plot the sequence of points obtained
+  from Euler's method
 
 The following functions require the optional package ``tides``:
 
-- :func:`desolve_mintides` -- Numerical solution of a system of 1st order ODEs via
-  the Taylor series integrator method implemented in TIDES.
+- :func:`desolve_mintides` -- numerical solution of a system of 1st order ODEs via
+  the Taylor series integrator method implemented in TIDES
 
-- :func:`desolve_tides_mpfr` -- Arbitrary precision Taylor series integrator implemented in TIDES
+- :func:`desolve_tides_mpfr` -- arbitrary precision Taylor series integrator implemented in TIDES
 
 AUTHORS:
 

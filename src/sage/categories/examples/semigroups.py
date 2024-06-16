@@ -180,7 +180,7 @@ class FreeSemigroup(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``alphabet`` -- a tuple of strings: the generators of the semigroup
+        - ``alphabet`` -- tuple of strings; the generators of the semigroup
 
         EXAMPLES::
 
@@ -252,7 +252,7 @@ class FreeSemigroup(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``x`` -- a string
+        - ``x`` -- string
 
         EXAMPLES::
 
@@ -481,7 +481,7 @@ class QuotientOfLeftZeroSemigroup(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``x`` -- an element of the ambient semigroup (``self.ambient()``).
+        - ``x`` -- an element of the ambient semigroup (``self.ambient()``)
 
         OUTPUT: an element of ``self``
 

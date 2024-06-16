@@ -784,12 +784,12 @@ cdef class FreeAlgebra_letterplace(Parent):
 
         INPUT:
 
-        - A dictionary. Keys: tuples of exponents. Values:
-          The coefficients of the corresponding monomial
-          in the to-be-created element.
-        - ``check`` (optional bool, default ``True``):
-          This is forwarded to the initialisation of
-          :class:`~sage.algebras.letterplace.free_algebra_element_letterplace.FreeAlgebraElement_letterplace`.
+        - ``D`` -- dictionary; keys: tuples of exponents, values:
+          the coefficients of the corresponding monomial
+          in the to-be-created element
+        - ``check`` -- boolean (default: ``True``);
+          this is forwarded to the initialisation of
+          :class:`~sage.algebras.letterplace.free_algebra_element_letterplace.FreeAlgebraElement_letterplace`
 
         TESTS:
 

@@ -66,13 +66,12 @@ class LieConformalAlgebraWithStructureCoefficients(
       defined by skew-symmetry) is assumed to have vanishing
       `\lambda`-bracket.
 
-    - ``names`` -- tuple of ``str`` (default: ``None``); the list of
+    - ``names`` -- tuple of strings (default: ``None``); the list of
       names for generators of this Lie conformal algebra. Do not
       include central elements in this list.
 
-    - ``central_elements`` -- tuple of ``str`` (default: ``None``);
-      A list of names for central
-      elements of this Lie conformal algebra.
+    - ``central_elements`` -- tuple of strings (default: ``None``);
+      a list of names for central elements of this Lie conformal algebra
 
     - ``index_set`` -- enumerated set (default: ``None``);
       an indexing set for the generators of this Lie
@@ -80,7 +79,7 @@ class LieConformalAlgebraWithStructureCoefficients(
       list.
 
     - ``parity`` -- tuple of `0` or `1` (default: tuple of `0`);
-       a tuple specifying the parity of each non-central generator.
+       a tuple specifying the parity of each non-central generator
 
     EXAMPLES:
 
@@ -121,14 +120,14 @@ class LieConformalAlgebraWithStructureCoefficients(
 
         INPUT:
 
-        - ``s_coeff`` -- a dictionary as in
+        - ``s_coeff`` -- dictionary as in
           :class:`~sage.algebras.lie_conformal_algebras.lie_conformal_algebra_with_structure_coefficients.LieConformalAlgebraWithStructureCoefficients`
         - ``index_set`` -- a finite enumerated set indexing the
           generators (not counting the central elements).
-        - ``ce`` -- a tuple of ``str``; a list of names for the central
+        - ``ce`` -- tuple of strings; a list of names for the central
           generators of this Lie conformal algebra
-        - ``parity`` -- a tuple of `0` or `1` (default: tuple of `0`);
-          this tuple specifies the parity of each non-central generator.
+        - ``parity`` -- tuple of `0` or `1` (default: tuple of `0`);
+          this tuple specifies the parity of each non-central generator
 
         OUTPUT:
 

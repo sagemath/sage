@@ -37,7 +37,7 @@ class ExtendedCode(AbstractLinearCode):
 
     INPUT:
 
-    -  ``C`` -- a linear code
+    - ``C`` -- a linear code
 
     EXAMPLES::
 

@@ -307,13 +307,12 @@ def DesarguesianProjectivePlaneDesign(n, point_coordinates=True, check=True):
 
     - ``n`` -- integer which must be a power of a prime number
 
-    - ``point_coordinates`` -- (boolean) whether to label the points with their
-      homogeneous coordinates (default) or with integers.
+    - ``point_coordinates`` -- boolean (default: ``True``); whether to label the
+      points with their homogeneous coordinates (default) or with integers
 
-    - ``check`` -- boolean; whether to check that output is correct before
-      returning it. As this is expected to be useless (but we are cautious
-      guys), you may want to disable it whenever you want speed. Set to
-      ``True`` by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that output is
+      correct before returning it. As this is expected to be useless (but we
+      are cautious guys), you may want to disable it whenever you want speed.
 
     .. SEEALSO::
 

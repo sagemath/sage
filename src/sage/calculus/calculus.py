@@ -949,7 +949,7 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
     - ``degree`` -- the expected algebraic degree
 
     - ``epsilon`` -- return without error as long as
-      f(self) epsilon, in the case that the result cannot be proven.
+      f(self) epsilon, in the case that the result cannot be proven
 
       All of the above parameters are optional, with epsilon=0, ``bits`` and
       ``degree`` tested up to 1000 and 24 by default respectively. The
@@ -2230,13 +2230,13 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
 
     INPUT:
 
-    - ``x`` -- a string
+    - ``x`` -- string
 
     - ``equals_sub`` -- boolean (default: ``False``); if ``True``, replace
       '=' by '==' in self
 
     - ``maxima`` -- (default: the calculus package's copy of
-      Maxima) the Maxima interpreter to use.
+      Maxima) the Maxima interpreter to use
 
     EXAMPLES::
 
@@ -2554,7 +2554,7 @@ def symbolic_expression_from_string(s, syms=None, accept_sequence=False, *, pars
 
     INPUT:
 
-    - ``s`` -- a string
+    - ``s`` -- string
 
     - ``syms`` -- (default: ``{}``) dictionary of
       strings to be regarded as symbols or functions;

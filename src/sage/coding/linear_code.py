@@ -635,7 +635,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
     # nonzero example.
     def binomial_moment(self, i):
         r"""
-        Return the i-th binomial moment of the `[n,k,d]_q`-code `C`:
+        Return the `i`-th binomial moment of the `[n,k,d]_q`-code `C`:
 
         .. MATH::
 
@@ -1351,12 +1351,12 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         INPUT:
 
-        -  ``algorithm`` -- (default: ``None``) the name of the algorithm to use
-           to perform minimum distance computation. ``algorithm`` can be:
+        - ``algorithm`` -- (default: ``None``) the name of the algorithm to use
+          to perform minimum distance computation. ``algorithm`` can be:
 
-           - ``None``, to use GAP methods (but not Guava)
+          - ``None``, to use GAP methods (but not Guava)
 
-           - ``'guava'``, to use the optional GAP package Guava
+          - ``'guava'``, to use the optional GAP package Guava
 
         OUTPUT: integer; minimum distance of this code
 
@@ -1426,10 +1426,10 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         INPUT:
 
-        -  ``algorithm`` -- (default: ``None``) the name of the algorithm to use
-           to perform minimum weight codeword search. If set to ``None``,
-           a search using GAP methods will be done. ``algorithm`` can be:
-           - ``'guava'``, which will use optional GAP package Guava
+        - ``algorithm`` -- (default: ``None``) the name of the algorithm to use
+          to perform minimum weight codeword search. If set to ``None``,
+          a search using GAP methods will be done. ``algorithm`` can be:
+          - ``'guava'``, which will use optional GAP package Guava
 
         REMARKS:
 
@@ -1735,7 +1735,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         INPUT:
 
-        - ``points`` -- a set of positions where to puncture ``self``
+        - ``points`` -- set of positions where to puncture ``self``
 
         EXAMPLES::
 
@@ -1803,7 +1803,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         INPUT:
 
-        - ``algorithm`` -- (default: ``None``) If set to ``'gap'``,
+        - ``algorithm`` -- (default: ``None``) if set to ``'gap'``,
           call GAP. If set to ``'leon'``, call the option GAP package GUAVA and
           call a function therein by Jeffrey Leon (see warning below). If set to
           ``'binary'``, use an algorithm optimized for binary codes. The default

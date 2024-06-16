@@ -279,7 +279,7 @@ def sage_include_directories(use_sources=False):
 
     INPUT:
 
-    -  ``use_sources`` -- boolean (default: ``False``)
+    - ``use_sources`` -- boolean (default: ``False``)
 
     OUTPUT:
 
@@ -342,8 +342,7 @@ default_required_modules = ('fflas-ffpack', 'givaro', 'gsl', 'linbox', 'Singular
 default_optional_modules = ('lapack',)
 
 
-def cython_aliases(required_modules=None,
-                   optional_modules=None):
+def cython_aliases(required_modules=None, optional_modules=None):
     """
     Return the aliases for compiling Cython code. These aliases are
     macros which can occur in ``# distutils`` headers.
@@ -351,10 +350,10 @@ def cython_aliases(required_modules=None,
     INPUT:
 
     - ``required_modules`` -- (default: taken from ``default_required_modules``)
-      iterable of ``str`` values.
+      iterable of string values
 
     - ``optional_modules`` -- (default: taken from ``default_optional_modules``)
-      iterable of ``str`` values.
+      iterable of string values
 
     EXAMPLES::
 

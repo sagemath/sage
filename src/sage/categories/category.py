@@ -1465,12 +1465,12 @@ class Category(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``name`` -- a string; the name of the class as an attribute of
-          ``self``. E.g. "parent_class"
-        - ``method_provider`` -- a string; the name of an attribute of
+        - ``name`` -- string; the name of the class as an attribute of
+          ``self`` (e.g. "parent_class")
+        - ``method_provider`` -- string; the name of an attribute of
           ``self`` that provides methods for the new class (in
-          addition to those coming from the super categories).
-          E.g. "ParentMethods"
+          addition to those coming from the super categories,
+          e.g. "ParentMethods")
         - ``cache`` -- boolean or ``ignore_reduction`` (default: ``False``)
           (passed down to dynamic_class; for internal use only)
         - ``picklable`` -- boolean (default: ``True``)
@@ -1991,7 +1991,7 @@ class Category(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``axiom`` -- a string, the name of an axiom
+        - ``axiom`` -- string, the name of an axiom
 
         This is a lazy version of :meth:`_with_axiom` which is used to
         avoid recursion loops during join calculations.
@@ -2048,7 +2048,7 @@ class Category(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``axiom`` -- a string, the name of an axiom
+        - ``axiom`` -- string, the name of an axiom
 
         EXAMPLES::
 
@@ -2293,7 +2293,7 @@ class Category(UniqueRepresentation, SageObject):
         - ``categories`` -- list (or iterable) of categories
         - ``as_list`` -- boolean (default: ``False``);
           whether the result should be returned as a list
-        - ``axioms`` -- a tuple of strings; the names of some
+        - ``axioms`` -- tuple of strings; the names of some
           supplementary axioms
 
         .. SEEALSO:: :meth:`__and__` for a shortcut
@@ -2706,9 +2706,9 @@ class CategoryWithParameters(Category):
 
         INPUT:
 
-        - ``name`` -- a string; the name of the class as an attribute
+        - ``name`` -- string; the name of the class as an attribute
           of ``self``
-        - ``method_provider`` -- a string; the name of an attribute of
+        - ``method_provider`` -- string; the name of an attribute of
           ``self`` that provides methods for the new class (in
           addition to what comes from the super categories)
         - ``**options`` -- other named options to pass down to
@@ -2820,7 +2820,7 @@ class CategoryWithParameters(Category):
 
         INPUT:
 
-        - ``name`` -- a string; the name of the class as an attribute
+        - ``name`` -- string; the name of the class as an attribute
           of ``self``
 
         .. SEEALSO::

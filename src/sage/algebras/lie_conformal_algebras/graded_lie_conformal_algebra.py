@@ -62,13 +62,13 @@ class GradedLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
       ring of this Lie conformal algebra. Behaviour is undefined if
       it is not a field of characteristic zero
 
-    - ``s_coeff`` -- a dictionary (default: ``None``); as in the
+    - ``s_coeff`` -- dictionary (default: ``None``); as in the
       input of :class:`LieConformalAlgebra`
 
-    - ``names`` -- tuple of ``str`` (default: ``None``); as in the
+    - ``names`` -- tuple of strings (default: ``None``); as in the
       input of :class:`LieConformalAlgebra`
 
-    - ``central_elements`` -- tuple of ``str`` (default: ``None``);
+    - ``central_elements`` -- tuple of strings (default: ``None``);
       as in the input of :class:`LieConformalAlgebra`
 
     - ``index_set`` -- enumerated set (default: ``None``); as in the

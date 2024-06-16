@@ -285,9 +285,9 @@ class FinitePosets(CategoryWithAxiom):
               of ``self``, as a list (or iterable); this should be
               an order ideal if ``direction`` is set to ``'down'``,
               and an order filter if ``direction`` is set to
-              ``'up'``.
+              ``'up'``
             - ``direction`` -- ``'up'`` or ``'down'`` (default:
-              ``'down'``).
+              ``'down'``)
 
             The antichain of (minimal) generators of an order ideal
             `I` in a poset `P` is the set of all minimal elements of
@@ -604,7 +604,7 @@ class FinitePosets(CategoryWithAxiom):
               names of extra variables to be adjoined to the ground
               field (these don't have an effect on the labels)
 
-            - ``labels`` -- (default: ``'x'``) Either a function
+            - ``labels`` -- (default: ``'x'``) either a function
               that takes an element of the poset and returns a name
               for the indeterminate corresponding to that element,
               or a string containing a comma-separated list of

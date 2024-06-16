@@ -2776,8 +2776,8 @@ class ClusterSeed(SageObject):
 
         INPUT:
 
-        - ``options`` -- (default: ``['all']``) a list of mutation options.
-        - ``filter`` -- (default: ``None``) A vertex or interval of vertices to limit our search to
+        - ``options`` -- (default: ``['all']``) a list of mutation options
+        - ``filter`` -- (default: ``None``) a vertex or interval of vertices to limit our search to
 
         Possible options are:
 
@@ -3760,7 +3760,7 @@ class ClusterSeed(SageObject):
           ``depth`` is set; returns the depth of the mutation class, i.e.,
           the maximal distance from ``self`` of an element in the mutation class
         - ``up_to_equivalence`` -- (default: ``True``); if ``True``, only
-          clusters up to equivalence are considered.
+          clusters up to equivalence are considered
 
         EXAMPLES:
 
@@ -4376,7 +4376,7 @@ class ClusterSeed(SageObject):
         INPUT:
 
         - ``verbose`` -- boolean (default: ``False``); if ``True``, prints
-          output during the computation.
+          output during the computation
 
         EXAMPLES:
 

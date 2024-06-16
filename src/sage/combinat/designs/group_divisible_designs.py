@@ -66,7 +66,7 @@ def group_divisible_design(v, K, G, existence=False, check=False):
         - ``True`` -- meaning that Sage knows how to build the design
 
         - ``Unknown`` -- meaning that Sage does not know how to build the
-          design, but that the design may exist (see :mod:`sage.misc.unknown`).
+          design, but that the design may exist (see :mod:`sage.misc.unknown`)
 
         - ``False`` -- meaning that the design does not exist
 
@@ -146,7 +146,7 @@ def GDD_4_2(q, existence=False, check=True):
         - ``True`` -- meaning that Sage knows how to build the design
 
         - ``Unknown`` -- meaning that Sage does not know how to build the
-          design, but that the design may exist (see :mod:`sage.misc.unknown`).
+          design, but that the design may exist (see :mod:`sage.misc.unknown`)
 
         - ``False`` -- meaning that the design does not exist
 
@@ -222,18 +222,18 @@ class GroupDivisibleDesign(IncidenceStructure):
     INPUT:
 
     - ``points`` -- the underlying set. If ``points`` is an integer `v`, then
-      the set is considered to be `\{0, ..., v-1\}`.
+      the set is considered to be `\{0, ..., v-1\}`
 
     - ``groups`` -- the groups of the design. Set to ``None`` for an automatic
-      guess (this triggers ``check=True`` and can thus cost some time).
+      guess (this triggers ``check=True`` and can thus cost some time)
 
     - ``blocks`` -- collection of blocks
 
     - ``G`` -- list of integers of which the sizes of the groups must be
-      elements. Set to ``None`` (automatic guess) by default.
+      elements. Set to ``None`` (automatic guess) by default
 
     - ``K`` -- list of integers of which the sizes of the blocks must be
-      elements. Set to ``None`` (automatic guess) by default.
+      elements. Set to ``None`` (automatic guess) by default
 
     - ``lambd`` -- integer (default: `1`); value of `\lambda`
 

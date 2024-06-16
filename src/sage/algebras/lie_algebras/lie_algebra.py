@@ -704,7 +704,7 @@ class LieAlgebra(Parent, UniqueRepresentation):  # IndexedGenerators):
 
         INPUT:
 
-        - ``d`` -- a dictionary ``{index: coeff}`` where each ``index`` is the
+        - ``d`` -- dictionary ``{index: coeff}`` where each ``index`` is the
           index of a basis element and each ``coeff`` belongs to the
           coefficient ring ``self.base_ring()``
 

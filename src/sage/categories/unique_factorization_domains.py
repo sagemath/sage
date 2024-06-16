@@ -135,7 +135,7 @@ class UniqueFactorizationDomains(Category_singleton):
 
             INPUT:
 
-            - ``f``, ``g`` -- two polynomials defined over this UFD.
+            - ``f``, ``g`` -- two polynomials defined over this UFD
 
             .. NOTE::
 

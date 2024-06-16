@@ -598,7 +598,7 @@ class IncidenceStructure:
 
         INPUT:
 
-        - ``points`` -- a set of points
+        - ``points`` -- set of points
 
         .. NOTE::
 
@@ -659,13 +659,13 @@ class IncidenceStructure:
 
         INPUT:
 
-        - ``points`` -- a set of points
+        - ``points`` -- set of points
 
-        - ``min_size`` (integer; default 1) -- minimum size of the sets to
-          keep. By default all empty sets are discarded, i.e. ``min_size=1``.
+        - ``min_size`` -- integer (default: 1); minimum size of the sets to
+          keep. By default all empty sets are discarded, i.e. ``min_size=1``
 
-        - ``multiset`` (boolean; default ``True``) -- whether to keep multiple
-          copies of the same set.
+        - ``multiset`` -- boolean (default: ``True``); whether to keep multiple
+          copies of the same set
 
         .. NOTE::
 
@@ -804,10 +804,10 @@ class IncidenceStructure:
 
         INPUT:
 
-        - ``p`` -- a point (or a set of points) of the incidence structure.
+        - ``p`` -- a point (or a set of points) of the incidence structure
 
-        - ``subset`` -- boolean; whether to interpret the argument as a set of
-          point (``subset=True``) or as a point (``subset=False``, default).
+        - ``subset`` -- boolean (default: ``False``); whether to interpret the
+          argument as a set of point or as a point (default)
 
         EXAMPLES::
 
@@ -1335,7 +1335,7 @@ class IncidenceStructure:
               ``l[1]``, ...
 
             - ``None`` -- the incidence structure is relabeled to be on
-              `\{0,1,...,n-1\}` in the ordering given by :meth:`ground_set`.
+              `\{0,1,...,n-1\}` in the ordering given by :meth:`ground_set`
 
         - ``inplace`` -- boolean (default: ``False``); if ``True`` then return
           a relabeled graph and does not touch ``self``
@@ -1422,7 +1422,7 @@ class IncidenceStructure:
 
         INPUT:
 
-        - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear
+        - ``solver`` -- (default: ``None``) specify a Mixed Integer Linear
           Programming (MILP) solver to be used. If set to ``None``, the default
           one is used. For more information on LP solvers and which default
           solver is used, see the method :meth:`solve
@@ -1771,11 +1771,11 @@ class IncidenceStructure:
         INPUT:
 
         - ``algorithm`` -- whether to use Sage's implementation
-          (``algorithm=None``, default) or use GAP's (``algorithm="gap"``).
+          (``algorithm=None``, default) or use GAP's (``algorithm='gap'``)
 
           .. NOTE::
 
-              The ``algorithm="gap"`` option requires GAP's Design package
+              The ``algorithm='gap'`` option requires GAP's Design package
               (included in the ``gap_packages`` Sage spkg).
 
         EXAMPLES:
@@ -1888,9 +1888,9 @@ class IncidenceStructure:
         INPUT:
 
         - ``certificate`` -- boolean; whether to return the classes along with
-          the binary answer (see examples below).
+          the binary answer (see examples below)
 
-        - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear
+        - ``solver`` -- (default: ``None``) specify a Mixed Integer Linear
           Programming (MILP) solver to be used. If set to ``None``, the default
           one is used. For more information on MILP solvers and which default
           solver is used, see the method :meth:`solve
@@ -1901,14 +1901,13 @@ class IncidenceStructure:
         - ``verbose`` -- integer (default: `0`); sets the level of
           verbosity. Set to `0` by default, which means quiet.
 
-        - ``check`` -- boolean; whether to check that output is correct before
-          returning it. As this is expected to be useless (but we are cautious
-          guys), you may want to disable it whenever you want speed. Set to
-          ``True`` by default.
+        - ``check`` -- boolean (default: ``True``); whether to check that
+          output is correct before returning it. As this is expected to be
+          useless (but we are cautious guys), you may want to disable it
+          whenever you want speed.
 
         - ``integrality_tolerance`` -- parameter for use with MILP solvers over
-          an inexact base ring; see
-          :meth:`MixedIntegerLinearProgram.get_values`.
+          an inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`
 
         EXAMPLES:
 
@@ -2031,7 +2030,7 @@ class IncidenceStructure:
           provided, otherwise returns an optimal coloring (i.e. with the minimum
           possible number of colors).
 
-        - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear
+        - ``solver`` -- (default: ``None``) specify a Mixed Integer Linear
           Programming (MILP) solver to be used. If set to ``None``, the default
           one is used. For more information on MILP solvers and which default
           solver is used, see the method :meth:`solve
@@ -2039,15 +2038,14 @@ class IncidenceStructure:
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- nonnegative integer (default: `0`). Set the level
+        - ``verbose`` -- nonnegative integer (default: `0`); set the level
           of verbosity you want from the linear program solver. Since the
           problem is `NP`-complete, its solving may take some time depending on
           the graph. A value of `0` means that there will be no message printed by
           the solver.
 
         - ``integrality_tolerance`` -- parameter for use with MILP solvers over
-          an inexact base ring; see
-          :meth:`MixedIntegerLinearProgram.get_values`.
+          an inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`
 
         EXAMPLES:
 

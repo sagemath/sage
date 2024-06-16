@@ -34,17 +34,17 @@ class PBWBasisCrossProduct(CombinatorialFreeModule):
 
     The implementation involves the following:
 
-    - A set of algebra generators -- the set of generators `x,y,z`.
+    - A set of algebra generators -- the set of generators `x,y,z`
 
     - The index of the unit element -- the unit element in the monoid
-      of monomials.
+      of monomials
 
     - A product -- this is given on basis elements by using
-      :meth:`product_on_basis`.
+      :meth:`product_on_basis`
 
     - A degree function -- this is determined on the basis elements
       by using :meth:`degree_on_basis` which returns the sum of exponents
-      of the monomial.
+      of the monomial
     """
     def __init__(self, base_ring):
         """

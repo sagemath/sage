@@ -49,7 +49,7 @@ class FreeBosonsLieConformalAlgebra(GradedLieConformalAlgebra):
     - ``gram_matrix``: a symmetric square matrix with coefficients
       in ``R`` (default: ``identity_matrix(ngens)``); the Gram
       matrix of the inner product
-    - ``names`` -- a tuple of ``str``; alternative names for the
+    - ``names`` -- tuple of strings; alternative names for the
       generators
     - ``index_set`` -- an enumerated set; alternative indexing set
       for the generators

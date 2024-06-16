@@ -56,7 +56,7 @@ cdef class KSHandler:
     - ``field`` -- F-matrix's base cyclotomic field
     - ``use_mp`` -- boolean indicating whether to construct a shared
       memory block to back ``self``
-    - ``init_data`` -- a dictionary or :class:`KSHandler` object containing
+    - ``init_data`` -- dictionary or :class:`KSHandler` object containing
       known squares for initialization, e.g., from a solver checkpoint
     - ``name`` -- the name of a shared memory object (used by child processes
         for attaching)
@@ -396,7 +396,7 @@ cdef class FvarsHandler:
     - ``field`` -- base field for polynomial ring
     - ``idx_to_sextuple`` -- map relating a single integer index to a sextuple
       of ``FusionRing`` elements
-    - ``init_data`` -- a dictionary or :class:`FvarsHandler` object containing
+    - ``init_data`` -- dictionary or :class:`FvarsHandler` object containing
       known squares for initialization, e.g., from a solver checkpoint
     - ``use_mp`` -- integer indicating the number of child processes
       used for multiprocessing; if running serially, use 0
