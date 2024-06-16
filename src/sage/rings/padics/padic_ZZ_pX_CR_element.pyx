@@ -1795,7 +1795,6 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 #        (1 + \alpha \pi^{\lambda})^p \equiv {  1 + (\alpha^p - \epsilon \alpha) \pi_K^{p \lambda}  mod \mathfrak{p}_K^{p \lambda + 1}   if \lambda = \frac{e_K}{p-1}
 #                                             \ 1 - \epsilon \alpha \pi_K^{\lambda + e}             mod \mathfrak{p}_K^{\lambda + e + 1} if \lambda > \frac{e_K}{p-1}
 
-
     def __pow__(pAdicZZpXCRElement self, _right, m): # m ignored
         r"""
         Computes ``self^right``.
@@ -3247,6 +3246,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         """
         self._normalize()
         return self.ext_p_list_precs(pos, self.relprec)
+
 
 def make_ZZpXCRElement(parent, unit, ordp, relprec, version):
     """
