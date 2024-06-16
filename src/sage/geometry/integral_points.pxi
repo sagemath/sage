@@ -948,7 +948,7 @@ cdef class Inequality_int:
             'integer: (2, 3, 7) x + -5 >= 0'
         """
         s = 'integer: ('
-        s += ', '.join([str(self.A[i]) for i in range(self.dim)])
+        s += ', '.join(str(self.A[i]) for i in range(self.dim))
         s += ') x + ' + str(self.b) + ' >= 0'
         return s
 
