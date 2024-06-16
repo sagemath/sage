@@ -589,7 +589,8 @@ class ConjugacyClassesOfSymmetricGroupSubgroups(UniqueRepresentation, Parent):
         while True:
             G = SymmetricGroup(n)
             CC = ConjugacyClassesOfSubgroups(G)
-            yield from iter(CC)
+            for H in CC:
+                yield self((n, H._C))
             n += 1
 
     def __contains__(self, x):
@@ -599,6 +600,9 @@ class ConjugacyClassesOfSymmetricGroupSubgroups(UniqueRepresentation, Parent):
         if parent(x) == self:
             return True
         return isinstance(x[0], (int, Integer)) and x[1] in ConjugacyClassesOfSubgroups(SymmetricGroup(x[0]))
+
+    def subset(self, size):
+        return ConjugacyClassesOfSubgroups(SymmetricGroup(size))
 
     Element = ConjugacyClassOfSymmetricGroupSubgroups
 
