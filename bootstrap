@@ -313,15 +313,16 @@ mkdir -p config 2>/dev/null
 
 if [ $ALWAYSDOWNLOAD = yes ]; then
     if [ -n "$CONFTARBALL_URL" ]; then
-        URL="$CONFTARBALL_URL"/configure-$CONFVERSION.tar.gz
+        CONFTARBALL=$(sage-package tarball configure)
+        URL="$CONFTARBALL_URL"/"$CONFTARBALL"
         SAGE_DL_LOGLEVEL=""
         [ "${BOOTSTRAP_QUIET}" = "yes" ] && SAGE_DL_LOGLEVEL="--log=WARNING"
-        sage-download-file ${SAGE_DL_LOGLEVEL} "$URL" upstream/configure-$CONFVERSION.tar.gz
+        sage-download-file ${SAGE_DL_LOGLEVEL} "$URL" upstream/"$CONFTARBALL"
         if [ $? -ne 0 ]; then
-            echo >&2 "Error: downloading configure-$CONFVERSION.tar.gz from $CONFTARBALL_URL failed"
+            echo >&2 "Error: downloading $CONFTARBALL from $CONFTARBALL_URL failed"
             exit 1
         fi
-        echo >&2 "Downloaded configure-$CONFVERSION.tar.gz from $CONFTARBALL_URL "
+        echo >&2 "Downloaded $CONFTARBALL from $CONFTARBALL_URL "
     else
         bootstrap_download || exit $?
     fi
