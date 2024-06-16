@@ -1601,7 +1601,7 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
 
     INPUT:
 
-    - ``G`` -- a Sage Graph
+    - ``G`` -- a Sage graph
 
     - ``reverse`` -- boolean (default: ``False``); whether to return the
       vertices in discovery order, or the reverse
@@ -1616,8 +1616,8 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
 
     By default, return the ordering `\alpha` as a list. When ``tree`` is
     ``True``, the method returns a tuple `(\alpha, T)`, where `T` is a directed
-    tree with the same set of vertices as `G`and a directed edge from `u` to `v`
-    if `u` was the first vertex to saw `v`.
+    tree with the same set of vertices as `G` and a directed edge from `u` to `v`
+    if `u` was the first vertex to see `v`.
 
     EXAMPLES:
 
