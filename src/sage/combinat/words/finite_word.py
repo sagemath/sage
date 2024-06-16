@@ -5561,7 +5561,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``q`` -- integer (default: ``1``); the balance level
+        - ``q`` -- integer (default: `1`); the balance level
 
         EXAMPLES::
 

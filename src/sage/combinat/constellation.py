@@ -1544,7 +1544,7 @@ def perms_are_connected(g, n):
 
 def perms_canonical_labels_from(x, y, j0, verbose=False):
     r"""
-    Return canonical labels for ``x``, ``y`` that starts at ``j0``
+    Return canonical labels for ``x``, ``y`` that starts at ``j0``.
 
     .. WARNING::
 

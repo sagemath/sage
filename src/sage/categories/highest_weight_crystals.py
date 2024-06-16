@@ -669,7 +669,7 @@ class HighestWeightCrystals(Category_singleton):
 
         class ParentMethods:
             """
-            Implements operations on tensor products of crystals.
+            Implement operations on tensor products of crystals.
             """
             @cached_method
             def highest_weight_vectors(self):

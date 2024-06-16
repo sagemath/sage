@@ -802,7 +802,7 @@ cdef class PointConfiguration_base(Parent):
 ########################################################################
 cdef class ConnectedTriangulationsIterator(SageObject):
     r"""
-    A Python shim for the C++-class 'triangulations'
+    A Python shim for the C++-class 'triangulations'.
 
     INPUT:
 

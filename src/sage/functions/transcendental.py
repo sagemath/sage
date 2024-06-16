@@ -650,7 +650,7 @@ class DickmanRho(BuiltinFunction):
 
     def approximate(self, x, parent=None):
         r"""
-        Approximate using de Bruijn's formula
+        Approximate using de Bruijn's formula.
 
         .. MATH::
 

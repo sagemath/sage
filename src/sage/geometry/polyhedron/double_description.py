@@ -109,7 +109,7 @@ class DoubleDescriptionPair:
 
     def __init__(self, problem, A_rows, R_cols):
         r"""
-        Base class for a double description pair `(A, R)`
+        Base class for a double description pair `(A, R)`.
 
         .. warning::
 

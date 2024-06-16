@@ -128,7 +128,7 @@ def _random_admissible_cone(ambient_dim):
 
     INPUT:
 
-    - ``ambient_dim`` -- a positive integer representing the dimension
+    - ``ambient_dim`` -- positive integer representing the dimension
       of the ambient lattice in which the returned cone lives
 
     OUTPUT:

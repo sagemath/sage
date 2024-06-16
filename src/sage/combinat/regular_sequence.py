@@ -2054,7 +2054,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
 
         Optional keyword-only argument:
 
-        - ``offset`` -- integer (default: ``0``); see explanation of
+        - ``offset`` -- integer (default: `0`); see explanation of
           ``equations`` above
 
         - ``inhomogeneities`` -- (default: ``{}``) a dictionary

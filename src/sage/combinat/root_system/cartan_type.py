@@ -1066,7 +1066,7 @@ class CartanType_abstract:
 
     def _latex_draw_arrow_tip(self, x, y, rot=0):
         r"""
-        Draw an arrow tip at the point ``(x, y)`` rotated by ``rot``
+        Draw an arrow tip at the point ``(x, y)`` rotated by ``rot``.
 
         INPUT:
 
@@ -1663,7 +1663,7 @@ class CartanType_crystallographic(CartanType_abstract):
 
     def is_crystallographic(self):
         """
-        Implements :meth:`CartanType_abstract.is_crystallographic`
+        Implement :meth:`CartanType_abstract.is_crystallographic`
         by returning ``True``.
 
         EXAMPLES::
@@ -2551,7 +2551,7 @@ class CartanType_standard_finite(CartanType_standard, CartanType_finite):
 
     def index_set(self):
         r"""
-        Implements :meth:`CartanType_abstract.index_set`.
+        Implement :meth:`CartanType_abstract.index_set`.
 
         The index set for all standard finite Cartan types is of the form
         `\{1, \ldots, n\}`. (See :mod:`~sage.combinat.root_system.type_I`
@@ -2812,7 +2812,7 @@ class CartanType_standard_affine(CartanType_standard, CartanType_affine):
 
     def index_set(self):
         r"""
-        Implements :meth:`CartanType_abstract.index_set`.
+        Implement :meth:`CartanType_abstract.index_set`.
 
         The index set for all standard affine Cartan types is of the form
         `\{0, \ldots, n\}`.
@@ -3072,7 +3072,7 @@ class SuperCartanType_standard(UniqueRepresentation, SageObject):
 class CartanType_simple_finite:
     def __setstate__(self, dict):
         """
-        Implements the unpickling of Cartan types pickled by Sage <= 4.0.
+        Implement the unpickling of Cartan types pickled by Sage <= 4.0.
 
         EXAMPLES:
 

@@ -2503,28 +2503,35 @@ def exploded_plot(polyhedra, *,
                   center=None, explosion_factor=1, sticky_vertices=False,
                   sticky_center=True, point=None, **kwds):
     r"""
-    Return a plot of several ``polyhedra`` in one figure with extra space between them.
+    Return a plot of several ``polyhedra`` in one figure with extra space
+    between them.
 
     INPUT:
 
-    - ``polyhedra`` -- an iterable of :class:`~sage.geometry.polyhedron.base.Polyhedron_base` objects
+    - ``polyhedra`` -- an iterable of
+      :class:`~sage.geometry.polyhedron.base.Polyhedron_base` objects
 
-    - ``center`` -- (default: ``None``, denoting the origin) the center of explosion
+    - ``center`` -- (default: ``None``, denoting the origin) the center of
+      explosion
 
-    - ``explosion_factor`` -- (default: 1) a nonnegative number; translate polyhedra by this
-      factor of the distance from ``center`` to their center
+    - ``explosion_factor`` -- (default: 1) a nonnegative number; translate
+      polyhedra by this factor of the distance from ``center`` to their center
 
-    - ``sticky_vertices`` -- (default: ``False``) boolean or dict; whether to draw line segments between shared
-      vertices of the given polyhedra. A dict gives options for :func:`sage.plot.line`.
+    - ``sticky_vertices`` -- (default: ``False``) boolean or dict; whether to
+      draw line segments between shared vertices of the given polyhedra. A dict
+      gives options for :func:`sage.plot.line`.
 
-    - ``sticky_center`` -- (default: ``True``) boolean or dict. When ``center`` is a vertex of some
-      of the polyhedra, whether to draw line segments connecting the ``center`` to the shifted copies
-      of these vertices. A dict gives options for :func:`sage.plot.line`.
+    - ``sticky_center`` -- (default: ``True``) boolean or dict. When ``center``
+      is a vertex of some of the polyhedra, whether to draw line segments
+      connecting the ``center`` to the shifted copies of these vertices. A dict
+      gives options for :func:`sage.plot.line`.
 
-    - ``color`` -- (default: ``None``) if ``'rainbow'``, assign a different color to every maximal cell and
-      every vertex; otherwise, passed on to :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`.
+    - ``color`` -- (default: ``None``) if ``'rainbow'``, assign a different
+      color to every maximal cell and every vertex; otherwise, passed on to
+      :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`
 
-    - other keyword arguments are passed on to :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`.
+    - other keyword arguments are passed on to
+      :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`
 
     EXAMPLES::
 

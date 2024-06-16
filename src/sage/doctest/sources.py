@@ -78,7 +78,8 @@ doctest_line_number = re.compile(r"^\s*doctest:[0-9]")
 
 def get_basename(path):
     """
-    This function returns the basename of the given path, e.g. sage.doctest.sources or doc.ru.tutorial.tour_advanced
+    This function returns the basename of the given path, e.g.
+    ``sage.doctest.sources`` or ``doc.ru.tutorial.tour_advanced``.
 
     EXAMPLES::
 
@@ -659,7 +660,7 @@ class FileDocTestSource(DocTestSource):
     @lazy_attribute
     def basename(self):
         """
-        The basename of this file source, e.g. sage.doctest.sources
+        The basename of this file source, e.g. ``sage.doctest.sources``.
 
         EXAMPLES::
 

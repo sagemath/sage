@@ -982,7 +982,7 @@ def get_bound_dynamical(F, f, m=1, dynatomic=True, prec=53, emb=None):
 
 def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorithm='HS', check_minimal=True):
     r"""
-    Determine the poly with smallest coefficients in `SL(2,\ZZ)` orbit of ``F``
+    Determine the poly with smallest coefficients in `SL(2,\ZZ)` orbit of ``F``.
 
     Smallest is in the sense of global height.
     The method is the algorithm in Hutz-Stoll [HS2018]_.

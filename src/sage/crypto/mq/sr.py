@@ -2165,7 +2165,7 @@ class SR_gf2n(SR_generic):
 
     def phi(self, l):
         r"""
-        The operation `\phi` from [MR2002]_
+        The operation `\phi` from [MR2002]_.
 
         Projects state arrays to their algebraic representation.
 

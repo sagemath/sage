@@ -4556,7 +4556,7 @@ class Permutation(CombinatorialElement):
     @combinatorial_map(name='Simion-Schmidt map')
     def simion_schmidt(self, avoid=[1,2,3]):
         r"""
-        Implements the Simion-Schmidt map which sends an arbitrary permutation
+        Implement the Simion-Schmidt map which sends an arbitrary permutation
         to a pattern avoiding permutation, where the permutation pattern is one
         of four length-three patterns.  This method also implements the bijection
         between (for example) ``[1,2,3]``- and ``[1,3,2]``-avoiding permutations.

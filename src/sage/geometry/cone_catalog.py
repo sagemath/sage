@@ -98,7 +98,7 @@ def _preprocess_args(ambient_dim, lattice):
 
     INPUT:
 
-    - ``ambient_dim`` -- a nonnegative integer; the dimension of the
+    - ``ambient_dim`` -- nonnegative integer; the dimension of the
       ambient space in which the cone will live
 
     - ``lattice`` -- a toric lattice; the lattice in which the cone
@@ -176,7 +176,7 @@ def downward_monotone(ambient_dim=None, lattice=None):
 
     INPUT:
 
-    - ``ambient_dim`` -- a nonnegative integer (default: ``None``); the
+    - ``ambient_dim`` -- nonnegative integer (default: ``None``); the
       dimension of the ambient space
 
     - ``lattice`` -- a toric lattice (default: ``None``); the lattice in
@@ -307,7 +307,7 @@ def nonnegative_orthant(ambient_dim=None, lattice=None):
 
     INPUT:
 
-    - ``ambient_dim`` -- a nonnegative integer (default: ``None``); the
+    - ``ambient_dim`` -- nonnegative integer (default: ``None``); the
       dimension of the ambient space
 
     - ``lattice`` -- a toric lattice (default: ``None``); the lattice in
@@ -412,10 +412,10 @@ def rearrangement(p, ambient_dim=None, lattice=None):
 
     INPUT:
 
-    - ``p`` -- a nonnegative integer; the number of components to
+    - ``p`` -- nonnegative integer; the number of components to
       "rearrange", between ``1`` and ``ambient_dim`` inclusive
 
-    - ``ambient_dim`` -- a nonnegative integer (default: ``None``); the
+    - ``ambient_dim`` -- nonnegative integer (default: ``None``); the
       dimension of the ambient space
 
     - ``lattice`` -- a toric lattice (default: ``None``); the lattice in
@@ -636,7 +636,7 @@ def schur(ambient_dim=None, lattice=None):
 
     INPUT:
 
-    - ``ambient_dim`` -- a nonnegative integer (default: ``None``); the
+    - ``ambient_dim`` -- nonnegative integer (default: ``None``); the
       dimension of the ambient space
 
     - ``lattice`` -- a toric lattice (default: ``None``); the lattice in
@@ -775,7 +775,7 @@ def trivial(ambient_dim=None, lattice=None):
 
     INPUT:
 
-    - ``ambient_dim`` -- a nonnegative integer (default: ``None``); the
+    - ``ambient_dim`` -- nonnegative integer (default: ``None``); the
       dimension of the ambient space
 
     - ``lattice`` -- a toric lattice (default: ``None``); the lattice in

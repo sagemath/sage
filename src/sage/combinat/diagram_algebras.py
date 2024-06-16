@@ -5775,7 +5775,7 @@ def propagating_number(sp):
 
 def to_set_partition(l, k=None):
     r"""
-    Convert input to a set partition of `\{1, \ldots, k, -1, \ldots, -k\}`
+    Convert input to a set partition of `\{1, \ldots, k, -1, \ldots, -k\}`.
 
     Convert a list of a list of numbers to a set partitions. Each list
     of numbers in the outer list specifies the numbers contained in one

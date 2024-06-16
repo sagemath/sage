@@ -576,7 +576,7 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
 
     def special_node(self):
         """
-        Implement :meth:`CartanType_affine.special_node`
+        Implement :meth:`CartanType_affine.special_node`.
 
         The special node of the dual of an affine type `T` is the
         special node of `T`.

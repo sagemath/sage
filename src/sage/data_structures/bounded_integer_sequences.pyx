@@ -712,7 +712,7 @@ cdef class BoundedIntegerSequence:
 
     def __reduce__(self):
         """
-        Pickling of :class:`BoundedIntegerSequence`
+        Pickling of :class:`BoundedIntegerSequence`.
 
         EXAMPLES::
 

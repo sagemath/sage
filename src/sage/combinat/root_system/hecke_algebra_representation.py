@@ -23,7 +23,7 @@ from sage.rings.integer_ring import ZZ
 
 class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
     r"""
-    A representation of an (affine) Hecke algebra given by the action of the `T` generators
+    A representation of an (affine) Hecke algebra given by the action of the `T` generators.
 
     Let `F_i` be a family of operators implementing an action of the
     operators `(T_i)_{i\in I}` of the Hecke algebra on some vector
@@ -198,7 +198,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
 
     def Ti_inverse_on_basis(self, x, i):
         r"""
-        The `T_i^{-1}` operators, on basis elements
+        The `T_i^{-1}` operators, on basis elements.
 
         INPUT:
 
@@ -681,7 +681,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
 
     def _test_Y(self, **options):
         r"""
-        Test the `T_w^{-1}` operators
+        Test the `T_w^{-1}` operators.
 
         EXAMPLES::
 

@@ -221,13 +221,12 @@ def LatticePolytope(data, compute_vertices=True, n=0, lattice=None):
           for the file format;
 
     - ``compute_vertices`` -- boolean (default: ``True``); if ``True``, the
-       convex hull of the given points will be computed for
-       determining vertices. Otherwise, the given points must be
-       vertices;
+      convex hull of the given points will be computed for determining
+      vertices. Otherwise, the given points must be vertices.
 
-    - ``n`` -- integer (default: 0) if ``data`` is a name of a file,
-       that contains data blocks for several polytopes, the ``n``-th block
-       will be used;
+    - ``n`` -- integer (default: 0); if ``data`` is a name of a file,
+      that contains data blocks for several polytopes, the ``n``-th block
+      will be used
 
     - ``lattice`` -- the ambient lattice of the polytope. If not given, a
       suitable lattice will be determined automatically, most likely the
@@ -1219,7 +1218,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         INPUT:
 
-        - ``data`` -- a string or a file
+        - ``data`` -- string or file
 
         OUTPUT: none
 
@@ -1769,7 +1768,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         the given point.
 
         The matrix of distances m gives distances m[i,j] between the i-th
-        facet (which is also the i-th vertex of the polar polytope in the
+        facet (which is also the `i`-th vertex of the polar polytope in the
         reflexive case) and j-th point of this polytope.
 
         If point is specified, integral distances from the point to all
@@ -2645,7 +2644,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         INPUT:
 
-        - ``base_field`` -- (default: the rationals) a field.
+        - ``base_field`` -- (default: the rationals) a field
 
         EXAMPLES::
 
@@ -2835,8 +2834,8 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         INPUT:
 
-        -  ``keys`` -- a string of options passed to ``nef.x``; the
-           key "-f" is added automatically
+        - ``keys`` -- string of options passed to ``nef.x``; the
+          key "-f" is added automatically
 
         OUTPUT: the output of ``nef.x`` as a string
 
@@ -2897,7 +2896,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         INPUT:
 
-        - ``algorithm`` -- (default: ``'palp_native'``) The algorithm which is used
+        - ``algorithm`` -- (default: ``'palp_native'``) the algorithm which is used
           to compute the normal form. Options are:
 
           * ``'palp'`` -- run external PALP code, usually the fastest option
@@ -3176,8 +3175,9 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         INPUT:
 
-        -   ``permutation`` -- boolean (default: ``False``); whether to return the permutation of
-            the order of the vertices that was applied to obtain this matrix.
+        - ``permutation`` -- boolean (default: ``False``); whether to return
+          the permutation of the order of the vertices that was applied to
+          obtain this matrix
 
         OUTPUT: a matrix or a tuple of a matrix and a permutation
 
@@ -3443,54 +3443,54 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         Most of the parameters are self-explanatory:
 
-        -  ``show_facets`` -- (default: ``True``)
+        - ``show_facets`` -- (default: ``True``)
 
-        -  ``facet_opacity`` -- (default:0.5)
+        - ``facet_opacity`` -- (default:0.5)
 
-        -  ``facet_color`` -- (default:(0,1,0))
+        - ``facet_color`` -- (default:(0,1,0))
 
-        -  ``facet_colors`` -- (default:None) if specified, must be a list of
-           colors for each facet separately, used instead of ``facet_color``
+        - ``facet_colors`` -- (default:None) if specified, must be a list of
+          colors for each facet separately, used instead of ``facet_color``
 
-        -  ``show_edges`` -- boolean (default: ``True``); whether to draw
-           edges as lines
+        - ``show_edges`` -- boolean (default: ``True``); whether to draw
+          edges as lines
 
-        -  ``edge_thickness`` -- (default:3)
+        - ``edge_thickness`` -- (default:3)
 
-        -  ``edge_color`` -- (default:(0.5,0.5,0.5))
+        - ``edge_color`` -- (default:(0.5,0.5,0.5))
 
-        -  ``show_vertices`` -- boolean (default: ``True``); whether to draw
-           vertices as balls
+        - ``show_vertices`` -- boolean (default: ``True``); whether to draw
+          vertices as balls
 
-        -  ``vertex_size`` -- (default:10)
+        - ``vertex_size`` -- (default:10)
 
-        -  ``vertex_color`` -- (default:(1,0,0))
+        - ``vertex_color`` -- (default:(1,0,0))
 
-        -  ``show_points`` -- boolean (default: ``True``); whether to draw
-           other points as balls
+        - ``show_points`` -- boolean (default: ``True``); whether to draw
+          other points as balls
 
-        -  ``point_size`` -- (default:10)
+        - ``point_size`` -- (default:10)
 
-        -  ``point_color`` -- (default:(0,0,1))
+        - ``point_color`` -- (default:(0,0,1))
 
-        -  ``show_vindices`` -- (default: same as
-           ``show_vertices``) whether to show indices of vertices
+        - ``show_vindices`` -- (default: same as
+          ``show_vertices``) whether to show indices of vertices
 
-        -  ``vindex_color`` -- (default:(0,0,0)) color for
-           vertex labels
+        - ``vindex_color`` -- (default:(0,0,0)) color for
+          vertex labels
 
-        -  ``vlabels`` -- (default:None) if specified, must be a list of labels
-           for each vertex, default labels are vertex indices
+        - ``vlabels`` -- (default:None) if specified, must be a list of labels
+          for each vertex, default labels are vertex indices
 
-        -  ``show_pindices`` -- (default: same as ``show_points``)
-           whether to show indices of other points
+        - ``show_pindices`` -- (default: same as ``show_points``)
+          whether to show indices of other points
 
-        -  ``pindex_color`` -- (default:(0,0,0)) color for
-           point labels
+        - ``pindex_color`` -- (default:(0,0,0)) color for
+          point labels
 
-        -  ``index_shift`` -- (default:1.1)) if 1, labels are
-           placed exactly at the corresponding points. Otherwise the label
-           position is computed as a multiple of the point position vector.
+        - ``index_shift`` -- (default:1.1)) if 1, labels are
+          placed exactly at the corresponding points. Otherwise the label
+          position is computed as a multiple of the point position vector.
 
         EXAMPLES: The default plot of a cube::
 
@@ -3615,8 +3615,8 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
     def point(self, i):
         r"""
-        Return the i-th point of this polytope, i.e. the i-th column of the
-        matrix returned by points().
+        Return the `i`-th point of this polytope, i.e. the `i`-th column of the
+        matrix returned by ``points()``.
 
         EXAMPLES: First few points are actually vertices::
 
@@ -3834,12 +3834,12 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         INPUT:
 
-        -  ``keys`` -- a string of options passed to ``poly.x``. The
-           key "f" is added automatically
+        - ``keys`` -- string of options passed to ``poly.x``. The
+          key "f" is added automatically
 
-        -  ``reduce_dimension`` -- boolean (default: ``False``); if ``True`` and this
-           polytope is not full-dimensional, ``poly.x`` will be called for the
-           vertices of this polytope in some basis of the spanned affine space
+        - ``reduce_dimension`` -- boolean (default: ``False``); if ``True`` and this
+          polytope is not full-dimensional, ``poly.x`` will be called for the
+          vertices of this polytope in some basis of the spanned affine space
 
         OUTPUT: the output of ``poly.x`` as a string
 
@@ -3970,10 +3970,9 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         INPUT:
 
-        -  ``normal`` -- a 3-dimensional vector (can be given as
-           a list), which should be perpendicular to the screen. If not given,
-           will be selected randomly (new each time and it may be far from
-           "nice").
+        - ``normal`` -- a 3-dimensional vector (can be given as a list), which
+          should be perpendicular to the screen. If not given, will be selected
+          randomly (new each time and it may be far from "nice").
 
         EXAMPLES: Show a pretty picture of the octahedron::
 
@@ -4025,8 +4024,8 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
     def vertex(self, i):
         r"""
-        Return the i-th vertex of this polytope, i.e. the i-th column of
-        the matrix returned by vertices().
+        Return the `i`-th vertex of this polytope, i.e. the `i`-th column of
+        the matrix returned by ``vertices()``.
 
         EXAMPLES: Note that numeration starts with zero::
 
@@ -5124,7 +5123,7 @@ def _palp_convert_permutation(permutation):
 
     INPUT:
 
-    - ``permutation`` -- a string specifying a PALP style permutation
+    - ``permutation`` -- string specifying a PALP style permutation
 
     OUTPUT: a :class:`permutation group element <sage.groups.perm_gps.permgroup_element.PermutationGroupElement>`
 
@@ -5224,17 +5223,15 @@ def _read_poly_x_incidences(data, dim):
 
     INPUT:
 
-    -  ``data`` -- an opened file with incidence
-       information. The first line will be skipped, each consecutive line
+    - ``data`` -- an opened file with incidence
+      information. The first line will be skipped, each consecutive line
        contains incidence information for all faces of one dimension, the
        first word of each line is a comment and is dropped.
 
-    -  ``dim`` -- dimension of the polytope.
+    - ``dim`` -- dimension of the polytope
 
-    OUTPUT:
-
-    a sequence F, such that F[d][i] is a sequence of vertices
-    or facets corresponding to the i-th d-dimensional face.
+    OUTPUT: a sequence F, such that F[d][i] is a sequence of vertices
+    or facets corresponding to the `i`-th d-dimensional face
 
     TESTS::
 
@@ -5453,13 +5450,10 @@ def convex_hull(points):
 
     INPUT:
 
-    -  ``points`` -- list that can be converted into
-       vectors of the same dimension over `\ZZ`.
+    - ``points`` -- list that can be converted into
+      vectors of the same dimension over `\ZZ`
 
-    OUTPUT:
-
-    list of vertices of the convex hull of the given points (as
-    vectors).
+    OUTPUT: list of vertices of the convex hull of the given points (as vectors)
 
     EXAMPLES: Let's compute the convex hull of several points on a line
     in the plane::
@@ -5530,9 +5524,9 @@ def minkowski_sum(points1, points2):
 
     INPUT:
 
-    -  ``points1, points2`` -- lists of objects that can be
-       converted into vectors of the same dimension, treated as vertices
-       of two polytopes.
+    - ``points1, points2`` -- lists of objects that can be
+      converted into vectors of the same dimension, treated as vertices
+      of two polytopes.
 
     OUTPUT: list of vertices of the Minkowski sum, given as vectors
 
@@ -5609,7 +5603,7 @@ def positive_integer_relations(points):
     new_relations = []
     for i in range(n_nonpivots):
         # Find a nonnegative linear combination of relations,
-        # such that all components are nonnegative and the i-th one is 1
+        # such that all components are nonnegative and the `i`-th one is 1
         MIP = MixedIntegerLinearProgram(maximization=False, base_ring=QQ)
         w = MIP.new_variable(integer=False, nonnegative=True)
         b = vector([0] * i + [1] + [0] * (n_nonpivots - i - 1))
@@ -5642,7 +5636,7 @@ def read_all_polytopes(file_name):
 
     INPUT:
 
-    - ``file_name`` -- a string with the name of a file with VERTICES of
+    - ``file_name`` -- string with the name of a file with VERTICES of
       polytopes
 
     OUTPUT: a sequence of polytopes
@@ -5797,12 +5791,12 @@ def skip_palp_matrix(data, n=1):
 
     INPUT:
 
-    -  ``data`` -- opened file with blocks of matrix data in
-       the following format: A block consisting of m+1 lines has the
-       number m as the first element of its first line.
+    - ``data`` -- opened file with blocks of matrix data in
+      the following format: A block consisting of m+1 lines has the
+      number m as the first element of its first line.
 
-    -  ``n`` -- (default: 1) integer, specifies how many
-       blocks should be skipped
+    - ``n`` -- (default: 1) integer, specifies how many
+      blocks should be skipped
 
     If EOF is reached during the process, raises ValueError exception.
 
@@ -5858,7 +5852,7 @@ def write_palp_matrix(m, ofile=None, comment='', format=None):
 
     - ``ofile`` -- a file opened for writing (default: ``stdout``)
 
-    - ``comment`` -- a string (default: empty) see output description
+    - ``comment`` -- string (default: empty) see output description
 
     - ``format`` -- a format string used to print matrix entries
 

@@ -30,7 +30,7 @@ class SurfaceGenerators:
     @staticmethod
     def Catenoid(c=1, name='Catenoid'):
         r"""
-        Return a catenoid surface, with parametric representation
+        Return a catenoid surface, with parametric representation.
 
         .. MATH::
 
@@ -63,7 +63,7 @@ class SurfaceGenerators:
     @staticmethod
     def Crosscap(r=1, name='Crosscap'):
         r"""
-        Return a crosscap surface, with parametrization
+        Return a crosscap surface, with parametrization.
 
         .. MATH::
 
@@ -97,7 +97,7 @@ class SurfaceGenerators:
     @staticmethod
     def Dini(a=1, b=1, name="Dini's surface"):
         r"""
-        Return Dini's surface, with parametrization
+        Return Dini's surface, with parametrization.
 
         .. MATH::
 
@@ -172,7 +172,7 @@ class SurfaceGenerators:
     @staticmethod
     def Enneper(name="Enneper's surface"):
         r"""
-        Return Enneper's surface, with parametrization
+        Return Enneper's surface, with parametrization.
 
         .. MATH::
 
@@ -203,7 +203,7 @@ class SurfaceGenerators:
     @staticmethod
     def Helicoid(h=1, name='Helicoid'):
         r"""
-        Return a helicoid surface, with parametrization
+        Return a helicoid surface, with parametrization.
 
         .. MATH::
 

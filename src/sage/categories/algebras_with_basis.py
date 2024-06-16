@@ -372,6 +372,6 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
         class ElementMethods:
             """
-            Implements operations on elements of tensor products of algebras with basis
+            Implement operations on elements of tensor products of algebras with basis
             """
             pass

@@ -402,7 +402,7 @@ class AmbientSpace(CombinatorialFreeModule):
 
     def _plot_projection(self, x):
         r"""
-        Implements the default projection to be used for plots.
+        Implement the default projection to be used for plots.
 
         For affine ambient spaces, the default implementation is to
         project onto the classical coordinates according to the

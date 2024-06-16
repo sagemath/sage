@@ -1179,7 +1179,7 @@ def v_5_1_BIBD(v, check=True):
 
 def _get_r_s_t_u(v):
     r"""
-    Implements the table from [ClaytonSmith]_.
+    Implement the table from [ClaytonSmith]_.
 
     Return the parameters ``r,s,t,u`` associated with an integer ``v``.
 

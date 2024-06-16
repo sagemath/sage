@@ -1433,7 +1433,7 @@ class Word_class(SageObject):
 
         - ``self`` -- word over natural numbers
 
-        - ``base`` -- integer (default: 2), greater or equal to 2
+        - ``base`` -- integer (default: 2) greater or equal to 2
 
         - ``mod`` -- modulo (default: ``None``); can take the following
           values:
@@ -1529,7 +1529,7 @@ class Word_class(SageObject):
         INPUT:
 
         - ``other`` -- a finite word
-        - ``start`` -- integer (default: ``0``), where the search starts
+        - ``start`` -- integer (default: ``0``); where the search starts
 
         OUTPUT: integer or ``None``
 

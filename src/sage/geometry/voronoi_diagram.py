@@ -249,7 +249,7 @@ class VoronoiDiagram(SageObject):
         - ``cell_colors`` -- (default: ``None``) provide the colors for the cells, either as
           dictionary. Randomly colored cells are provided with ``None``.
         - ``**kwds`` -- optional keyword parameters, passed on as arguments for
-          plot().
+          plot()
 
         OUTPUT: a graphics object
 

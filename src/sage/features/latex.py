@@ -24,7 +24,7 @@ latex_spkg = 'texlive'
 
 class LaTeX(Executable):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``latex``
+    A :class:`~sage.features.Feature` describing the presence of ``latex``.
 
     EXAMPLES::
 
@@ -105,7 +105,7 @@ class LaTeX(Executable):
 
 class latex(LaTeX):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``latex``
+    A :class:`~sage.features.Feature` describing the presence of ``latex``.
 
     EXAMPLES::
 
@@ -126,7 +126,7 @@ class latex(LaTeX):
 
 class pdflatex(LaTeX):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``pdflatex``
+    A :class:`~sage.features.Feature` describing the presence of ``pdflatex``.
 
     EXAMPLES::
 
@@ -147,7 +147,7 @@ class pdflatex(LaTeX):
 
 class xelatex(LaTeX):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``xelatex``
+    A :class:`~sage.features.Feature` describing the presence of ``xelatex``.
 
     EXAMPLES::
 
@@ -168,7 +168,7 @@ class xelatex(LaTeX):
 
 class lualatex(LaTeX):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``lualatex``
+    A :class:`~sage.features.Feature` describing the presence of ``lualatex``.
 
     EXAMPLES::
 
@@ -189,7 +189,7 @@ class lualatex(LaTeX):
 
 class dvips(Executable):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``dvips``
+    A :class:`~sage.features.Feature` describing the presence of ``dvips``.
 
     EXAMPLES::
 
@@ -210,7 +210,7 @@ class dvips(Executable):
 
 class TeXFile(StaticFile):
     r"""
-    A :class:`sage.features.Feature` describing the presence of a TeX file
+    A :class:`sage.features.Feature` describing the presence of a TeX file.
 
     EXAMPLES::
 

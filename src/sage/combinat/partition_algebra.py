@@ -1948,8 +1948,8 @@ def to_set_partition(l, k=None):
 
 
 def identity(k):
-    """
-    Return the identity set partition 1, -1, ..., k, -k
+    r"""
+    Return the identity set partition `1, -1, \ldots, k, -k`.
 
     EXAMPLES::
 

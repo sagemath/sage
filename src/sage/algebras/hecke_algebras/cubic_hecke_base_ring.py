@@ -804,7 +804,7 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
 
         INPUT:
 
-        - ``characteristic`` -- integer (default: ``0``); the characteristic
+        - ``characteristic`` -- integer (default: `0`); the characteristic
           of the field
 
         EXAMPLES::

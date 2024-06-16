@@ -499,9 +499,9 @@ class OEIS:
 
         - ``subsequence`` -- list or tuple of integers
 
-        - ``max_results`` -- integer (default: 3), the maximum of results requested
+        - ``max_results`` -- integer (default: 3); the maximum of results requested
 
-        - ``first_result`` -- integer (default: 0) allow to skip the
+        - ``first_result`` -- integer (default: 0); allow to skip the
           ``first_result`` first results in the search, to go further.
           This is useful if you are looking for a sequence that may appear
           after the 100 first found sequences.

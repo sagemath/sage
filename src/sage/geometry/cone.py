@@ -994,7 +994,7 @@ class IntegralRayCollection(SageObject, Hashable, Iterable):
 
         INPUT:
 
-        - ``base_field`` -- (default: the rationals) a field.
+        - ``base_field`` -- (default: the rationals) a field
 
         EXAMPLES::
 
@@ -1247,7 +1247,7 @@ class IntegralRayCollection(SageObject, Hashable, Iterable):
         INPUT:
 
         - ``base_ring`` -- (default: from lattice) the base ring to use
-                           for the generated module.
+          for the generated module
 
         OUTPUT: a module spanned by the generators of ``self``
 
@@ -1628,7 +1628,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         - ``point`` -- anything; an attempt will be made to convert it
           into an element compatible with the ambient space of ``self``
 
-        - ``region`` -- a string (default: 'whole cone'); can be
+        - ``region`` -- string (default: 'whole cone'); can be
           either 'whole cone', 'interior', or 'relative interior'
 
         OUTPUT:
@@ -4483,7 +4483,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
           in the cone, or something that can be converted to a
           point. For example, a list or tuple of integers.
 
-        - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear Programming
+        - ``solver`` -- (default: ``None``) specify a Mixed Integer Linear Programming
           (MILP) solver to be used. If set to ``None``, the default one is used. For
           more information on MILP solvers and which default solver is used, see
           the method
@@ -4491,8 +4491,8 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
           of the class
           :class:`MixedIntegerLinearProgram <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``); sets the level of verbosity
-          of the LP solver. Set to 0 by default, which means quiet
+        - ``verbose`` -- integer (default: `0`); sets the level of verbosity
+          of the LP solver. Set to `0` by default, which means quiet.
 
         - ``integrality_tolerance`` -- parameter for use with MILP solvers over an
           inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`
@@ -5256,7 +5256,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         INPUT:
 
           - ``ring`` -- (default: ``ZZ``) the ring from which the random
-            generator weights are chosen; either ``ZZ`` or ``QQ``.
+            generator weights are chosen; either ``ZZ`` or ``QQ``
 
         OUTPUT:
 
@@ -5396,7 +5396,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         INPUT:
 
         - ``K2`` -- (default: ``self``) the codomain cone; the image of
-          this cone under the returned generators is a subset of ``K2``.
+          this cone under the returned generators is a subset of ``K2``
 
         OUTPUT:
 

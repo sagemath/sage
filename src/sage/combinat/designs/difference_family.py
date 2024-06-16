@@ -832,7 +832,7 @@ def radical_difference_family(K, k, l=1, existence=False, check=True):
 
     - ``K`` -- a finite field
     - ``k`` -- positive integer; the size of the blocks
-    - ``l`` -- integer (default: ``1``); the `\lambda` parameter
+    - ``l`` -- integer (default: `1`); the `\lambda` parameter
     - ``existence`` -- if ``True``, then return either ``True`` if Sage knows
       how to build such design, ``Unknown`` if it does not and ``False`` if it
       knows that the design does not exist

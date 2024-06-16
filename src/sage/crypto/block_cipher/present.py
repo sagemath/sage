@@ -716,10 +716,10 @@ class PRESENT_KS(SageObject):
 
         INPUT:
 
-        - ``keysize`` -- integer (default: ``80``); the size of the keys that
-          will be used in bits. It must be either 80 or 128.
+        - ``keysize`` -- integer (default: `80`); the size of the keys that
+          will be used in bits. It must be either `80` or `128`.
 
-        - ``rounds`` -- integer (default: ``31``); the number of rounds
+        - ``rounds`` -- integer (default: `31`); the number of rounds
           ``self`` can create keys for
 
         - ``master_key`` -- integer or bit list-like (default: ``None``); the

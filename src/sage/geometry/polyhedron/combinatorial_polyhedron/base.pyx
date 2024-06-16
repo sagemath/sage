@@ -3168,7 +3168,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
     def _test_a_maximal_chain(self, tester=None, **options):
         """
-        Run tests on the method :meth:`.a_maximal_chain`
+        Run tests on the method :meth:`.a_maximal_chain`.
 
         TESTS::
 

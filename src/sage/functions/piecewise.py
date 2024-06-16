@@ -185,7 +185,7 @@ class PiecewiseFunction(BuiltinFunction):
 
     def _subs_(self, subs_map, options, parameters, x):
         """
-        Callback from Pynac `subs()`
+        Callback from Pynac ``subs()``.
 
         EXAMPLES:
 
@@ -410,7 +410,7 @@ class PiecewiseFunction(BuiltinFunction):
 
         def __len__(self, parameters, variable):
             """
-            Return the number of "pieces"
+            Return the number of "pieces".
 
             OUTPUT: integer
 

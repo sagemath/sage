@@ -178,7 +178,7 @@ class LieAlgebras(Category_over_base_ring):
 
         def extra_super_categories(self):
             """
-            Implements the fact that a finite dimensional Lie algebra over
+            Implement the fact that a finite dimensional Lie algebra over
             a finite ring is finite.
 
             EXAMPLES::

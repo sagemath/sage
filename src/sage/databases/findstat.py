@@ -3470,7 +3470,7 @@ class FindStatMapQuery(FindStatMap):
                  depth=FINDSTAT_DEFAULT_DEPTH,
                  debug=False):
         """
-        Initialize a query for FindStat (compound) maps
+        Initialize a query for FindStat (compound) maps.
 
         INPUT:
 

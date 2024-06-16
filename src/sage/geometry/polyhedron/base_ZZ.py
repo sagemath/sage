@@ -30,7 +30,7 @@ from sage.arith.misc import gcd
 #########################################################################
 class Polyhedron_ZZ(Polyhedron_QQ):
     r"""
-    Base class for Polyhedra over `\ZZ`
+    Base class for Polyhedra over `\ZZ`.
 
     TESTS::
 
@@ -266,7 +266,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         INPUT:
 
-        - ``variable`` -- string (default=``'t'``); the variable in which the
+        - ``variable`` -- string (default: ``'t'``); the variable in which the
           Ehrhart polynomial is expressed
 
         OUTPUT: a univariate polynomial over a rational field

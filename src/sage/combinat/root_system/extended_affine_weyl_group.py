@@ -991,7 +991,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
     @cached_method
     def PW0_to_WF_func(self, x):
         r"""
-        Implements coercion from style "PW0" to "WF".
+        Implement coercion from style "PW0" to "WF".
 
         EXAMPLES::
 

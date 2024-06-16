@@ -752,7 +752,7 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
     @cached_method
     def read(self, column):
         r"""
-        Access a column of KnotInfo / LinkInfo
+        Access a column of KnotInfo / LinkInfo.
 
         INPUT:
 

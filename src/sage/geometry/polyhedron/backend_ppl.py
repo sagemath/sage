@@ -542,7 +542,7 @@ class Polyhedron_ppl(Polyhedron_mutable):
 #########################################################################
 class Polyhedron_QQ_ppl(Polyhedron_ppl, Polyhedron_QQ):
     r"""
-    Polyhedra over `\QQ` with ppl
+    Polyhedra over `\QQ` with ppl.
 
     INPUT:
 
@@ -562,7 +562,7 @@ class Polyhedron_QQ_ppl(Polyhedron_ppl, Polyhedron_QQ):
 #########################################################################
 class Polyhedron_ZZ_ppl(Polyhedron_ppl, Polyhedron_ZZ):
     r"""
-    Polyhedra over `\ZZ` with ppl
+    Polyhedra over `\ZZ` with ppl.
 
     INPUT:
 

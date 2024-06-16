@@ -1157,7 +1157,7 @@ class Algebras(AlgebrasCategory):
 
         def acted_upon(self, w):
             """
-            Implements the action of ``w`` on ``self``.
+            Implement the action of ``w`` on ``self``.
 
             INPUT:
 

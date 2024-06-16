@@ -337,7 +337,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
     @lazy_attribute
     def element_class(self):
         """
-        The (default) class for the elements of this parent
+        The (default) class for the elements of this parent.
 
         Overrides :meth:`Parent.element_class` to force the
         construction of Python class. This is currently needed to
@@ -1799,7 +1799,7 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
 
     def _sets_keys(self):
         """
-        In waiting for self._sets.keys()
+        In waiting for ``self._sets.keys()``.
 
         TESTS::
 

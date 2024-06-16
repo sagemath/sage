@@ -670,8 +670,9 @@ class WeakTableau_core(WeakTableau_abstract):
     @staticmethod
     def __classcall_private__(cls, t, k):
         r"""
-        Implements the shortcut ``WeakTableau_core(t, k)`` to ``WeakTableaux_core(k, shape , weight)(t)``
-        where ``shape`` is the shape of the tableau and ``weight`` is its weight.
+        Implement the shortcut ``WeakTableau_core(t, k)`` to
+        ``WeakTableaux_core(k, shape , weight)(t)`` where ``shape`` is the
+        shape of the tableau and ``weight`` is its weight.
 
         TESTS::
 
@@ -1363,8 +1364,9 @@ class WeakTableau_bounded(WeakTableau_abstract):
     @staticmethod
     def __classcall_private__(cls, t, k):
         r"""
-        Implements the shortcut ``WeakTableau_bounded(t, k)`` to ``WeakTableaux_bounded(k, shape, weight)(t)``
-        where ``shape`` is the shape of the tableau and ``weight`` is its weight.
+        Implement the shortcut ``WeakTableau_bounded(t, k)`` to
+        ``WeakTableaux_bounded(k, shape, weight)(t)`` where ``shape`` is the
+        shape of the tableau and ``weight`` is its weight.
 
         TESTS::
 
@@ -1822,7 +1824,7 @@ class WeakTableau_factorized_permutation(WeakTableau_abstract):
     @staticmethod
     def __classcall_private__(cls, t, k, inner_shape=[]):
         r"""
-        Implements the shortcut ``WeakTableau_factorized_permutation(t, k)`` to
+        Implement the shortcut ``WeakTableau_factorized_permutation(t, k)`` to
         ``WeakTableaux_factorized_permutation(k, shape, weight)(t)``
         where ``shape`` is the shape of the tableau as a `(k+1)`-core (or a tuple of
         `(k+1)`-cores if the tableau is skew) and ``weight`` is its weight.

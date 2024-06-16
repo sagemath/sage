@@ -717,7 +717,7 @@ class CartanMatrix(Base, CartanType_abstract,
 
     def is_simply_laced(self):
         """
-        Implements :meth:`CartanType_abstract.is_simply_laced()`.
+        Implement :meth:`CartanType_abstract.is_simply_laced()`.
 
         A Cartan matrix is simply-laced if all non diagonal entries are `0`
         or `-1`.
@@ -737,7 +737,7 @@ class CartanMatrix(Base, CartanType_abstract,
 
     def is_crystallographic(self):
         """
-        Implements :meth:`CartanType_abstract.is_crystallographic`.
+        Implement :meth:`CartanType_abstract.is_crystallographic`.
 
         A Cartan matrix is crystallographic if it is symmetrizable.
 

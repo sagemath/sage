@@ -358,7 +358,7 @@ class CartanType(cartan_type.CartanType_decorator):
 
     def dual(self):
         """
-        Implements :meth:`sage.combinat.root_system.cartan_type.CartanType_abstract.dual`,
+        Implement :meth:`sage.combinat.root_system.cartan_type.CartanType_abstract.dual`,
         using that taking the dual and relabelling are commuting operations.
 
         EXAMPLES::
@@ -717,7 +717,7 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
 
     def is_untwisted_affine(self):
         """
-        Implement :meth:`CartanType_affine.is_untwisted_affine`
+        Implement :meth:`CartanType_affine.is_untwisted_affine`.
 
         A relabelled Cartan type is untwisted affine if the original is.
 

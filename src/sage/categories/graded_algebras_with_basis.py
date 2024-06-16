@@ -175,7 +175,7 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
         class ParentMethods:
             """
-            Implements operations on tensor products of super algebras
+            Implement operations on tensor products of super algebras
             with basis.
             """
             @cached_method

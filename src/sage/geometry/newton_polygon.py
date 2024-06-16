@@ -261,7 +261,7 @@ class NewtonPolygon_element(Element):
 
         INPUT:
 
-        - ``exp`` -- a positive integer
+        - ``exp`` -- positive integer
 
         OUTPUT: this Newton polygon scaled by a factor ``exp``
 
@@ -284,7 +284,7 @@ class NewtonPolygon_element(Element):
 
     def __lshift__(self, i):
         """
-        Return ``self`` shifted by `(0,i)`
+        Return ``self`` shifted by `(0,i)`.
 
         INPUT:
 

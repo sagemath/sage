@@ -1468,7 +1468,7 @@ class E1Star(SageObject):
         INPUT:
 
         - ``patch`` -- a patch
-        - ``iterations`` -- integer (default: 1) number of iterations
+        - ``iterations`` -- integer (default: 1); number of iterations
 
         OUTPUT: a patch
 

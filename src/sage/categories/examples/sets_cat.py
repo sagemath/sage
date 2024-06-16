@@ -106,7 +106,7 @@ class PrimeNumbers(UniqueRepresentation, Parent):
 
     def an_element(self):
         """
-        Implements :meth:`Sets.ParentMethods.an_element`.
+        Implement :meth:`Sets.ParentMethods.an_element`.
 
         TESTS::
 
@@ -186,7 +186,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
 
     def an_element(self):
         """
-        Implements :meth:`Sets.ParentMethods.an_element`.
+        Implement :meth:`Sets.ParentMethods.an_element`.
 
         TESTS::
 

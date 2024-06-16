@@ -578,7 +578,7 @@ class Hrepresentation(PolyhedronRepresentation):
 
     def is_incident(self, Vobj):
         """
-        Return whether the incidence matrix element (Vobj,self) == 1
+        Return whether the incidence matrix element (Vobj,self) == 1.
 
         EXAMPLES::
 
@@ -594,7 +594,7 @@ class Hrepresentation(PolyhedronRepresentation):
 
     def __mul__(self, Vobj):
         """
-        Shorthand for ``self.eval(x)``
+        Shorthand for ``self.eval(x)``.
 
         EXAMPLES::
 
@@ -674,9 +674,9 @@ class Hrepresentation(PolyhedronRepresentation):
 
         INPUT:
 
-        - ``prefix`` -- a string
+        - ``prefix`` -- string
 
-        - ``indices`` -- a tuple or other iterable
+        - ``indices`` -- tuple or other iterable
 
         - ``latex`` -- boolean
 
@@ -1269,7 +1269,7 @@ class Vrepresentation(PolyhedronRepresentation):
 
     def is_incident(self, Hobj):
         """
-        Return whether the incidence matrix element (self,Hobj) == 1
+        Return whether the incidence matrix element (self,Hobj) == 1.
 
         EXAMPLES::
 
@@ -1287,7 +1287,7 @@ class Vrepresentation(PolyhedronRepresentation):
 
     def __mul__(self, Hobj):
         """
-        Shorthand for self.evaluated_on(Hobj)
+        Shorthand for self.evaluated_on(Hobj).
 
         TESTS::
 
@@ -1413,7 +1413,7 @@ class Vertex(Vrepresentation):
 
     def evaluated_on(self, Hobj):
         r"""
-        Return `A\vec{x}+b`
+        Return `A\vec{x}+b`.
 
         EXAMPLES::
 
@@ -1528,7 +1528,7 @@ class Ray(Vrepresentation):
 
     def evaluated_on(self, Hobj):
         r"""
-        Return `A\vec{r}`
+        Return `A\vec{r}`.
 
         EXAMPLES::
 
@@ -1626,7 +1626,7 @@ class Line(Vrepresentation):
 
     def evaluated_on(self, Hobj):
         r"""
-        Return `A\vec{\ell}`
+        Return `A\vec{\ell}`.
 
         EXAMPLES::
 
@@ -1647,23 +1647,23 @@ def repr_pretty(coefficients, type, prefix='x', indices=None,
 
     INPUT:
 
-    - ``coefficients`` -- a tuple or other iterable
+    - ``coefficients`` -- tuple or other iterable
 
     - ``type`` -- either ``0`` (``PolyhedronRepresentation.INEQUALITY``)
       or ``1`` (``PolyhedronRepresentation.EQUATION``)
 
-    - ``prefix`` -- a string (default: ``'x'``)
+    - ``prefix`` -- string (default: ``'x'``)
 
-    - ``indices`` -- a tuple or other iterable
+    - ``indices`` -- tuple or other iterable
 
     - ``latex`` -- boolean
 
     - ``split`` -- boolean (default: ``False``); if set to ``True``,
-                   the output is split into a 3-tuple containing the left-hand side,
-                   the relation, and the right-hand side of the object.
+      the output is split into a 3-tuple containing the left-hand side,
+      the relation, and the right-hand side of the object
 
     - ``style`` -- either ``'positive'`` (making all coefficients positive), or
-                   ``'<='`` or ``'>='``.
+      ``'<='`` or ``'>='``
 
     OUTPUT: a string or 3-tuple of strings (depending on ``split``)
 

@@ -203,7 +203,7 @@ class IndexedSequence(SageObject):
 
     def _repr_(self):
         """
-        Implements print method.
+        Implement print method.
 
         EXAMPLES::
 
@@ -574,7 +574,7 @@ class IndexedSequence(SageObject):
 
     def __mul__(self, other):
         """
-        Implements scalar multiplication (on the right).
+        Implement scalar multiplication (on the right).
 
         EXAMPLES::
 
@@ -594,7 +594,7 @@ class IndexedSequence(SageObject):
 
     def __eq__(self, other):
         """
-        Implements boolean equals.
+        Implement boolean equals.
 
         EXAMPLES::
 
@@ -664,7 +664,7 @@ class IndexedSequence(SageObject):
 
     def ifft(self):
         """
-        Implements the gsl ``FastFourierTransform.inverse`` in
+        Implement the gsl ``FastFourierTransform.inverse`` in
         :mod:`~sage.calculus.transforms.fft`.
 
         If the number of sample points in the input is a power of 2
@@ -765,7 +765,7 @@ class IndexedSequence(SageObject):
 
     def idwt(self, other='haar', wavelet_k=2):
         r"""
-        Implements the gsl ``WaveletTransform.backward()`` in
+        Implement the gsl ``WaveletTransform.backward()`` in
         :mod:`~sage.calculus.transforms.dwt`.
 
         Assumes the length of the sample is a power of 2. Uses the

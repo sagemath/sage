@@ -794,7 +794,7 @@ class DES_KS(SageObject):
 
         INPUT:
 
-        - ``rounds`` -- integer (default: ``16``); the number of rounds
+        - ``rounds`` -- integer (default: `16`); the number of rounds
           ``self`` can create keys for
 
         - ``masterKey`` -- integer or bit list-like (default: ``None``); the

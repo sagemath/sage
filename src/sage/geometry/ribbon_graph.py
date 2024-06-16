@@ -1170,8 +1170,8 @@ def bipartite_ribbon_graph(p, q):
 
     INPUT:
 
-    - ``p`` -- a positive integer
-    - ``q`` -- a positive integer
+    - ``p`` -- positive integer
+    - ``q`` -- positive integer
 
     EXAMPLES::
 

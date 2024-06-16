@@ -817,7 +817,6 @@ class _drawing_tool:
         r"""
         Return the TIKZ code for a point.
 
-
         INPUT:
 
         - ``p1`` -- a point

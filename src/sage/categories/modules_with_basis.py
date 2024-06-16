@@ -2490,13 +2490,13 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
         class ParentMethods:
             """
-            Implements operations on tensor products of modules with basis.
+            Implement operations on tensor products of modules with basis.
             """
             pass
 
         class ElementMethods:
             """
-            Implements operations on elements of tensor products of modules
+            Implement operations on elements of tensor products of modules
             with basis.
             """
 

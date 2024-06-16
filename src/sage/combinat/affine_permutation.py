@@ -1118,7 +1118,7 @@ class AffinePermutationTypeC(AffinePermutation):
 
     def position(self, i):
         r"""
-        Find the position `j` such the ``self.value(j)=i``
+        Find the position `j` such the ``self.value(j)=i``.
 
         EXAMPLES::
 

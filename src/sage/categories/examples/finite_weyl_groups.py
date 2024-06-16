@@ -97,7 +97,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
     @cached_method
     def one(self):
         """
-        Implements :meth:`Monoids.ParentMethods.one`.
+        Implement :meth:`Monoids.ParentMethods.one`.
 
         EXAMPLES::
 
@@ -108,7 +108,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
 
     def index_set(self):
         """
-        Implements :meth:`CoxeterGroups.ParentMethods.index_set`.
+        Implement :meth:`CoxeterGroups.ParentMethods.index_set`.
 
         EXAMPLES::
 
@@ -146,7 +146,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
 
     def product(self, x, y):
         """
-        Implements :meth:`Semigroups.ParentMethods.product`.
+        Implement :meth:`Semigroups.ParentMethods.product`.
 
         EXAMPLES::
 
@@ -175,7 +175,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
 
         def has_right_descent(self, i):
             """
-            Implements :meth:`CoxeterGroups.ElementMethods.has_right_descent`.
+            Implement :meth:`CoxeterGroups.ElementMethods.has_right_descent`.
 
             EXAMPLES::
 

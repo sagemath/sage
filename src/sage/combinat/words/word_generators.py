@@ -1354,7 +1354,7 @@ class WordGenerator:
         INPUT:
 
         - ``n`` -- integer; the length of the word
-        - ``m`` -- integer (default: 2), the size of the output alphabet
+        - ``m`` -- integer (default: 2); the size of the output alphabet
         - ``alphabet`` -- (default: `\{0,1,...,m-1\}`) any container of
           length m that is suitable to build an instance of
           OrderedAlphabet (list, tuple, str, ...)

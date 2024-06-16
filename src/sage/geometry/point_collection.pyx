@@ -505,7 +505,7 @@ cdef class PointCollection(SageObject):
         INPUT:
 
         - ``ring`` -- a base ring for the returned matrix (default: base ring of
-          :meth:`module` of ``self``).
+          :meth:`module` of ``self``)
 
         OUTPUT: a :class:`matrix <Matrix>`
 
@@ -715,18 +715,16 @@ cdef class PointCollection(SageObject):
 
         INPUT:
 
-        - ``point`` -- a point of ``self``;
+        - ``point`` -- a point of ``self``
 
         - ``start`` -- (optional) an integer, if given, the search will start
-          at this position;
+          at this position
 
         - ``stop`` -- (optional) an integer, if given, the search will stop
-          at this position.
+          at this position
 
-        OUTPUT:
-
-        - an integer if ``point`` is in ``self[start:stop]``, otherwise a
-          :class:`ValueError` exception is raised.
+        OUTPUT: an integer if ``point`` is in ``self[start:stop]``, otherwise a
+        :class:`ValueError` exception is raised
 
         EXAMPLES::
 

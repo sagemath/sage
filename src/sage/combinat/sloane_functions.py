@@ -2262,7 +2262,7 @@ class A000015(SloaneSequence):
 class A000016(SloaneSequence):
     def __init__(self):
         r"""
-        Sloane's A000016
+        Sloane's A000016.
 
         INPUT:
 
@@ -4236,7 +4236,7 @@ class A000583(SloaneSequence):
 class A000142(SloaneSequence):
     def __init__(self):
         r"""
-        Factorial numbers: `n! = 1 \cdot 2 \cdot 3 \cdots n`
+        Factorial numbers: `n! = 1 \cdot 2 \cdot 3 \cdots n`.
 
         Order of symmetric group `S_n`, number of permutations of
         `n` letters.

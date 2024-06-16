@@ -10,7 +10,7 @@ from .base import Polyhedron_base
 
 class Polyhedron_QQ(Polyhedron_base):
     r"""
-    Base class for Polyhedra over `\QQ`
+    Base class for Polyhedra over `\QQ`.
 
     TESTS::
 

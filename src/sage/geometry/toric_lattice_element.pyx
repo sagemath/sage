@@ -396,7 +396,7 @@ cdef class ToricLatticeElement(Vector_integer_dense):
 
 def unpickle_v1(parent, entries, degree, is_mutable):
     """
-    Unpickle a :class:`ToricLatticeElement`
+    Unpickle a :class:`ToricLatticeElement`.
 
     INPUT:
 

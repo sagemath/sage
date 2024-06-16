@@ -425,7 +425,7 @@ class QuantuminoSolver(SageObject):
 
     def __repr__(self):
         r"""
-        String representation
+        String representation.
 
         EXAMPLES::
 

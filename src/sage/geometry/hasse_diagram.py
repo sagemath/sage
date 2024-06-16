@@ -46,8 +46,8 @@ def lattice_from_incidences(atom_to_coatoms, coatom_to_atoms,
       non-empty "face" requires at least one of the specified atoms
       present. Used to ensure that each face has a vertex.
 
-    - ``key`` -- any hashable value (default: ``None``). It is passed down
-      to :class:`~sage.combinat.posets.posets.FinitePoset`.
+    - ``key`` -- any hashable value (default: ``None``); it is passed down
+      to :class:`~sage.combinat.posets.posets.FinitePoset`
 
     - all other keyword arguments will be passed to ``face_constructor`` on
       each call

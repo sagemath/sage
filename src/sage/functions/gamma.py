@@ -816,7 +816,7 @@ class Function_psi1(GinacFunction):
 class Function_psi2(GinacFunction):
     def __init__(self):
         r"""
-        Derivatives of the digamma function `\psi(x)`. T
+        Derivatives of the digamma function `\psi(x)`.
 
         EXAMPLES::
 

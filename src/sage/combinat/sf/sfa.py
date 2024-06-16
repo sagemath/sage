@@ -573,7 +573,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
         @cached_method
         def one_basis(self):
             r"""
-            Return the empty partition, as per ``AlgebrasWithBasis.ParentMethods.one_basis``
+            Return the empty partition, as per ``AlgebrasWithBasis.ParentMethods.one_basis``.
 
             INPUT:
 
@@ -2736,7 +2736,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
 
     def _dual_basis_default(self):
         """
-        Return the default value for ``self.dual_basis()``
+        Return the default value for ``self.dual_basis()``.
 
         .. SEEALSO:: :meth:`dual_basis`
 

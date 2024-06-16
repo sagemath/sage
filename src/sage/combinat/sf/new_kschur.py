@@ -1076,7 +1076,7 @@ class kSchur(CombinatorialFreeModule):
 
     def _product_on_basis_via_rectangles(self, left, right):
         r"""
-        Multiply two `k`-Schur functions at `t=1` indexed by ``left`` and ``right``
+        Multiply two `k`-Schur functions at `t=1` indexed by ``left`` and ``right``.
 
         This algorithm uses the property that if `R` is an `r \times (k+1-r)`
         rectangle, then

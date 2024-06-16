@@ -1244,9 +1244,9 @@ class Projection(SageObject):
         INPUT:
 
         - ``view`` -- list (default: [0,0,1]) representing the rotation axis (see note below)
-        - ``angle`` -- integer (default: 0) angle of rotation in degree from 0 to 360 (see note
+        - ``angle`` -- integer (default: 0); angle of rotation in degree from 0 to 360 (see note
           below)
-        - ``scale`` -- integer (default: 1) specifying the scaling of the tikz picture
+        - ``scale`` -- integer (default: 1); the scaling of the tikz picture
         - ``edge_color`` -- string (default: ``'blue!95!black'``) representing colors which tikz
           recognize
         - ``facet_color`` -- string (default: ``'blue!95!black'``) representing colors which tikz

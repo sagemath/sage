@@ -357,7 +357,7 @@ class CartanType(cartan_type.CartanType_decorator):
 
     def dual(self):
         """
-        Implements
+        Implement
         :meth:`sage.combinat.root_system.cartan_type.CartanType_abstract.dual`,
         using that taking the dual and marking nodes are commuting operations.
 

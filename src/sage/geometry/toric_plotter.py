@@ -419,7 +419,7 @@ class ToricPlotter(SageObject):
 
         INPUT:
 
-        - ``labels`` -- a string or a list of strings
+        - ``labels`` -- string or list of strings
 
         - ``positions`` -- list of points
 
@@ -718,7 +718,7 @@ def _unrecognized_option(option):
 
     INPUT:
 
-    - ``option`` -- a string
+    - ``option`` -- string
 
     OUTPUT: none, a :class:`KeyError` exception is raised
 
@@ -856,7 +856,7 @@ def options(option=None, **kwds):
 
     OR:
 
-    - ``option`` -- a string, name of the option whose value you wish to get;
+    - ``option`` -- string, name of the option whose value you wish to get;
 
     OR:
 
@@ -951,10 +951,10 @@ def options(option=None, **kwds):
 
     - ``font_size`` -- integer; the size of font used for labels
 
-    - ``ray_label`` -- a string or a list of strings used for ray labels; use
+    - ``ray_label`` -- string or list of strings used for ray labels; use
       ``None`` to hide labels
 
-    - ``wall_label`` -- a string or a list of strings used for wall labels; use
+    - ``wall_label`` -- string or list of strings used for wall labels; use
       ``None`` to hide labels
 
     - ``radius`` -- a positive number, the radius of the cut-off region for
@@ -1066,7 +1066,7 @@ def sector(ray1, ray2, **extra_options):
     - ``ray1``, ``ray2`` -- rays in 2- or 3-dimensional space of the same
       length
 
-    - ``extra_options`` -- a dictionary of options that should be passed to
+    - ``extra_options`` -- dictionary of options that should be passed to
       lower level plotting functions
 
     OUTPUT: a plot

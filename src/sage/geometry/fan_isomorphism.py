@@ -29,7 +29,7 @@ def fan_isomorphic_necessary_conditions(fan1, fan2):
 
     INPUT:
 
-    - ``fan1``, ``fan2`` -- two fans.
+    - ``fan1``, ``fan2`` -- two fans
 
     OUTPUT:
 
@@ -69,7 +69,7 @@ def fan_isomorphism_generator(fan1, fan2):
 
     INPUT:
 
-    - ``fan1``, ``fan2`` -- two fans.
+    - ``fan1``, ``fan2`` -- two fans
 
     OUTPUT:
 

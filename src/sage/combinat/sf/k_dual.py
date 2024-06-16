@@ -565,7 +565,7 @@ class KBoundedQuotientBases(Category_realization_of_parent):
 
         def __getitem__(self, c):
             r"""
-            Implements shorthand for accessing basis elements.
+            Implement shorthand for accessing basis elements.
 
             For a basis `X` indexed by partitions, this method allows for
             `X[[3,2]]` and `X[3,2]` to be equivalent to `X[Partition([3,2])]`.
@@ -648,7 +648,7 @@ class KBoundedQuotientBases(Category_realization_of_parent):
 
         def lift(self, la):
             r"""
-            Implements the lift map from the basis ``self`` to the monomial basis of
+            Implement the lift map from the basis ``self`` to the monomial basis of
             symmetric functions.
 
             INPUT:
@@ -945,7 +945,7 @@ class kMonomial(KBoundedQuotientBasis):
 
     def retract(self, la):
         r"""
-        Implements the retract function on the monomial basis. Given a partition ``la``,
+        Implement the retract function on the monomial basis. Given a partition ``la``,
         the retract will return the corresponding `k`-bounded monomial basis element if
         ``la`` is `k`-bounded; zero otherwise.
 
@@ -996,7 +996,7 @@ class kMonomial(KBoundedQuotientBasis):
 
     def lift(self, la):
         r"""
-        Implements the lift function on the monomial basis. Given a `k`-bounded partition
+        Implement the lift function on the monomial basis. Given a `k`-bounded partition
         ``la``, the lift will return the corresponding monomial basis element.
 
         INPUT:
@@ -1151,7 +1151,7 @@ class kbounded_HallLittlewoodP(KBoundedQuotientBasis):
 
     def retract(self, la):
         r"""
-        Implements the retract function on the Hall-Littlewood P basis. Given a partition
+        Implement the retract function on the Hall-Littlewood P basis. Given a partition
         ``la``, the retract will return the corresponding `k`-bounded Hall-Littlewood P
         basis element if ``la`` is `k`-bounded; zero otherwise.
 
@@ -1185,7 +1185,7 @@ class kbounded_HallLittlewoodP(KBoundedQuotientBasis):
 
     def lift(self, la):
         r"""
-        Implements the lift function on the Hall-Littlewood P basis. Given a `k`-bounded
+        Implement the lift function on the Hall-Littlewood P basis. Given a `k`-bounded
         partition ``la``, the lift will return the corresponding Hall-Littlewood P basis
         element.
 

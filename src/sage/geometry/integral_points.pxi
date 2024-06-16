@@ -350,10 +350,10 @@ cpdef rectangular_box_points(list box_min, list box_max,
 
     INPUT:
 
-    - ``box_min`` -- a list of integers; the minimal value for each
+    - ``box_min`` -- list of integers; the minimal value for each
       coordinate of the rectangular bounding box
 
-    - ``box_max`` -- a list of integers; the maximal value for each
+    - ``box_max`` -- list of integers; the maximal value for each
       coordinate of the rectangular bounding box
 
     - ``polyhedron`` -- a

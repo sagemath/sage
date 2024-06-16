@@ -1687,7 +1687,7 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
 class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
     def __init__(self, macdonald):
         r"""
-        An implementation of the basis `s_\lambda[(1-t)X/(1-q)]`
+        An implementation of the basis `s_\lambda[(1-t)X/(1-q)]`.
 
         This is perhaps misnamed as a 'Macdonald' basis for
         the symmetric functions but is used in the calculation
@@ -1806,7 +1806,7 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
 
         def _creation_by_determinant_helper(self, k, part):
             r"""
-            Formula from [LLM1998]_ Corollary 4.3 p. 970
+            Formula from [LLM1998]_ Corollary 4.3 p. 970.
 
             This is part of a formula for a column adding creation operator
             for the `J` basis and its action on the `S` basis.

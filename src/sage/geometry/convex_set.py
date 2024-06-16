@@ -252,7 +252,7 @@ class ConvexSet_base(SageObject, Set_base):
 
     def _test_an_affine_basis(self, tester=None, **options):
         r"""
-        Run tests on the method :meth:`.an_affine_basis`
+        Run tests on the method :meth:`.an_affine_basis`.
 
         TESTS::
 
