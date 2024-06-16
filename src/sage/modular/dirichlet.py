@@ -172,10 +172,18 @@ def is_DirichletCharacter(x) -> bool:
 
         sage: from sage.modular.dirichlet import is_DirichletCharacter
         sage: is_DirichletCharacter(trivial_character(3))
+        doctest:warning...
+        DeprecationWarning: The function is_DirichletCharacter is deprecated;
+        use 'isinstance(..., DirichletCharacter)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         True
         sage: is_DirichletCharacter([1])
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_DirichletCharacter is deprecated; "
+                "use 'isinstance(..., DirichletCharacter)' instead.")
     return isinstance(x, DirichletCharacter)
 
 
@@ -262,7 +270,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             orders = parent.integers_mod().unit_group().gens_orders()
             if len(x) != len(orders):
                 raise ValueError("wrong number of values (= {}) on generators (want {})".format(x, len(orders)))
-            if free_module_element.is_FreeModuleElement(x):
+            if isinstance(x, free_module_element.FreeModuleElement):
                 x = parent._module(x)
                 if any(u * v for u, v in zip(x, orders)):
                     raise ValueError("values (= {} modulo {}) must have additive orders dividing {}, respectively"
@@ -276,7 +284,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
                                      .format(x, orders))
                 self.values_on_gens.set_cache(x)
         else:
-            if free_module_element.is_FreeModuleElement(x):
+            if isinstance(x, free_module_element.FreeModuleElement):
                 self.element.set_cache(x)
             else:
                 self.values_on_gens.set_cache(x)

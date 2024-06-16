@@ -27,15 +27,31 @@ from pprint import pformat
 ################################################################################
 
 def is_ProbabilitySpace(S):
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_ProbabilitySpace is deprecated; "
+                "use 'isinstance(..., ProbabilitySpace_generic)' instead.")
     return isinstance(S, ProbabilitySpace_generic)
 
 def is_DiscreteProbabilitySpace(S):
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_DiscreteProbabilitySpace is deprecated; "
+                "use 'isinstance(..., DiscreteProbabilitySpace)' instead.")
     return isinstance(S, DiscreteProbabilitySpace)
 
 def is_RandomVariable(X):
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_RandomVariable is deprecated; "
+                "use 'isinstance(..., RandomVariable_generic)' instead.")
     return isinstance(X, RandomVariable_generic)
 
 def is_DiscreteRandomVariable(X):
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_DiscreteRandomVariable is deprecated; "
+                "use 'isinstance(..., DiscreteRandomVariable)' instead.")
     return isinstance(X, DiscreteRandomVariable)
 
 ################################################################################
@@ -49,7 +65,7 @@ class RandomVariable_generic(Parent):
     A random variable.
     """
     def __init__(self, X, RR):
-        if not is_ProbabilitySpace(X):
+        if not isinstance(X, ProbabilitySpace_generic):
             raise TypeError("Argument X (= %s) must be a probability space" % X)
         Parent.__init__(self, X)
         self._codomain = RR
@@ -81,7 +97,7 @@ class DiscreteRandomVariable(RandomVariable_generic):
         - f -- a dictionary such that X[x] = value for x in X
           is the discrete function on X
         """
-        if not is_DiscreteProbabilitySpace(X):
+        if not isinstance(X, DiscreteProbabilitySpace):
             raise TypeError("Argument X (= %s) must be a discrete probability space" % X)
         if check:
             raise NotImplementedError("Not implemented")
