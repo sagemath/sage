@@ -413,14 +413,23 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         
         return f
     
-    def plot(self):
+    def plot(self, xmin=None, xmax=None):
         r"""
         Return the plot of tropical polynomial function of ``self``
 
+        INPUT:
+
+        - ``xmin`` -- (default: ``None``)
+        - ``xmax`` -- (default: ``None``)
+
         OUTPUT:
 
-        A plot of piecewise linear function with its `xmin` and `xmax` 
-        modified so the graph looks clear and well-presented
+        If ``xmin`` and ``xmax`` is given, then it will return a plot
+        of piecewise linear function of ``self`` with domain start from
+        ``xmin`` to ``xmax``. Otherwise, the domain will start from the
+        the minimum root of ``self`` minus 1 to maximum root of ``self``
+        plus 1. If the function of ``self`` is constant or linear, then 
+        the default domain will be [-1,1].
 
         EXAMPLES:
 
@@ -444,14 +453,41 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             sage: p1 = R([4,2,1,3])
             sage: p1.roots()
             [2, 1, -2]
-            sage: plot(p1)
-            
+            sage: plot(p1, xmin=-4, xmax=4)
+        
+        TESTS:
+
+        If ``xmin`` or ``xmax`` is given as an input, then the others also
+        have to be given. Otherwise it will raise an error::
+
+            sage: plot(p1, 5)
+            Traceback (most recent call last):
+            ...
+            ValueError: Expected 2 inputs for xmin and xmax, but got 1
+        
+        The error also occured when ``xmin`` is greater or equal than ``xmax``::
+
+            sage: plot(p1, 5, 3)
+            Traceback (most recent call last):
+            ...
+            ValueError: xmin = 5 should be less than xmax = 3
+
         """
 
-        from sage.all import plot
+        from sage.plot.plot import plot
         f = self.piecewise_function()
-        roots = sorted(self.roots())
-        return plot(f, (x, roots[0]-1, roots[-1]+1))
+        if xmin is None and xmax is None:
+            roots = sorted(self.roots())
+            if roots == [] or len(set(roots))==1:
+                return plot(f, xmin=-1, xmax=1)
+            else:
+                return plot(f, xmin=roots[0]-1, xmax=roots[-1]+1)
+        elif xmin is None or xmax is None:
+            raise ValueError(f"Expected 2 inputs for xmin and xmax, but got 1")
+        elif (xmin>=xmax):
+            raise ValueError(f"xmin = {xmin} should be less than xmax = {xmax}")
+        else:
+            return plot(f, xmin=xmin, xmax=xmax)
 
 
 class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
