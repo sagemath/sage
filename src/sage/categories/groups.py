@@ -70,7 +70,7 @@ class Groups(CategoryWithAxiom):
 
         EXAMPLES::
 
-            sage: # needs sage.groups
+            sage: # needs sage.combinat sage.groups
             sage: Groups.free(index_set=ZZ)
             Free group indexed by Integer Ring
             sage: Groups().free(ZZ)
@@ -273,7 +273,7 @@ class Groups(CategoryWithAxiom):
             ::
 
                 sage: M = SL(2, 2)                                                      # needs sage.modules
-                sage: M.cayley_table()                                                  # needs sage.modules
+                sage: M.cayley_table()                                                  # needs sage.libs.gap sage.modules
                 *  a b c d e f
                  +------------
                 a| a b c d e f
@@ -477,8 +477,8 @@ class Groups(CategoryWithAxiom):
                 )
 
                 sage: G = SL(2, GF(2))                                                  # needs sage.modules
-                sage: g = G.gens()[0]                                                   # needs sage.modules
-                sage: g.conjugacy_class()                                               # needs sage.modules
+                sage: g = G.gens()[0]                                                   # needs sage.groups sage.modules
+                sage: g.conjugacy_class()                                               # needs sage.groups sage.modules
                 Conjugacy class of [1 1]
                 [0 1] in Special Linear Group of degree 2 over Finite Field of size 2
 
@@ -515,7 +515,7 @@ class Groups(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: # needs sage.groups
+                sage: # needs sage.combinat sage.groups
                 sage: Groups.Commutative.free(index_set=ZZ)
                 Free abelian group indexed by Integer Ring
                 sage: Groups().Commutative().free(ZZ)
@@ -592,13 +592,13 @@ class Groups(CategoryWithAxiom):
 
                 We check the other portion of :issue:`16718` is fixed::
 
-                    sage: len(C.j_classes())                                            # needs sage.groups
+                    sage: len(C.j_classes())                                            # needs sage.graphs sage.groups
                     1
 
                 An example with an infinitely generated group (a better output
                 is needed)::
 
-                    sage: # needs sage.groups
+                    sage: # needs sage.combinat sage.groups
                     sage: G = Groups.free([1,2])
                     sage: H = Groups.free(ZZ)
                     sage: C = cartesian_product([G, H])
@@ -631,17 +631,17 @@ class Groups(CategoryWithAxiom):
 
             def order(self):
                 r"""
-                Return the cardinality of self.
+                Return the cardinality of ``self``.
 
                 EXAMPLES::
 
-                    sage: C = cartesian_product([SymmetricGroup(10), SL(2, GF(3))])     # needs sage.groups sage.rings.finite_rings
-                    sage: C.order()                                                     # needs sage.groups sage.rings.finite_rings
+                    sage: C = cartesian_product([SymmetricGroup(10), SL(2, GF(3))])     # needs sage.groups sage.modules
+                    sage: C.order()                                                     # needs sage.groups sage.modules
                     87091200
 
                 TESTS::
 
-                    sage: C.order.__module__                                            # needs sage.groups sage.rings.finite_rings
+                    sage: C.order.__module__                                            # needs sage.groups sage.modules
                     'sage.categories.groups'
 
                 .. TODO::
