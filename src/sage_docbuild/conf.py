@@ -1074,3 +1074,7 @@ if 'tags' not in locals():
 
 for feature in all_features():
     tags.add('feature_' + feature.name.replace('.', '_'))
+
+
+if SAGE_LIVE_DOC == 'yes':
+    tags.add('jupyter_sphinx')
