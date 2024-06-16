@@ -45,6 +45,7 @@ from sage.arith.misc import (hilbert_conductor_inverse,
                              kronecker as kronecker_symbol,
                              prime_divisors,
                              valuation)
+from sage.misc.classcall_metaclass import ClasscallMetaclass
 from sage.rings.real_mpfr import RR
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -232,7 +233,8 @@ class QuaternionAlgebraFactory(UniqueFactory):
 
         TESTS::
 
-            sage: QuaternionAlgebra.create_key(-1,-1)
+            sage: from sage.algebras.quatalg.quaternion_algebra import _QuaternionAlgebra
+            sage: _QuaternionAlgebra.create_key(-1,-1)
             (Rational Field, -1, -1, ('i', 'j', 'k'))
         """
         # QuaternionAlgebra(D)
@@ -285,14 +287,15 @@ class QuaternionAlgebraFactory(UniqueFactory):
 
         TESTS::
 
-            sage: QuaternionAlgebra.create_object("6.0", (QQ, -1, -1, ('i', 'j', 'k')))
+            sage: from sage.algebras.quatalg.quaternion_algebra import _QuaternionAlgebra
+            sage: _QuaternionAlgebra.create_object("6.0", (QQ, -1, -1, ('i', 'j', 'k')))
             Quaternion Algebra (-1, -1) with base ring Rational Field
         """
         K, a, b, names = key
         return QuaternionAlgebra_ab(K, a, b, names=names)
 
 
-QuaternionAlgebra = QuaternionAlgebraFactory("QuaternionAlgebra")
+_QuaternionAlgebra = QuaternionAlgebraFactory("QuaternionAlgebra")
 
 ########################################################
 # Classes
@@ -308,26 +311,22 @@ def is_QuaternionAlgebra(A):
         sage: sage.algebras.quatalg.quaternion_algebra.is_QuaternionAlgebra(QuaternionAlgebra(QQ,-1,-1))
         doctest:warning...
         DeprecationWarning: the function is_QuaternionAlgebra is deprecated;
-        use 'isinstance(..., QuaternionAlgebra_abstract)' instead
+        use 'isinstance(..., QuaternionAlgebra)' instead
         See https://github.com/sagemath/sage/issues/37896 for details.
         True
         sage: sage.algebras.quatalg.quaternion_algebra.is_QuaternionAlgebra(ZZ)
         False
     """
     from sage.misc.superseded import deprecation
-    deprecation(37896, "the function is_QuaternionAlgebra is deprecated; use 'isinstance(..., QuaternionAlgebra_abstract)' instead")
-    return isinstance(A, QuaternionAlgebra_abstract)
+    deprecation(37896, "the function is_QuaternionAlgebra is deprecated; use 'isinstance(..., QuaternionAlgebra)' instead")
+    return isinstance(A, QuaternionAlgebra)
 
 
-class QuaternionAlgebra_abstract(Parent):
-    def _repr_(self):
-        """
-        EXAMPLES::
+class QuaternionAlgebra(Parent, metaclass=ClasscallMetaclass):
 
-            sage: sage.algebras.quatalg.quaternion_algebra.QuaternionAlgebra_abstract(QQ)._repr_()
-            'Quaternion Algebra with base ring Rational Field'
-        """
-        return "Quaternion Algebra with base ring %s" % self.base_ring()
+    @staticmethod
+    def __classcall_private__(cls, *args, **kwds):
+        return _QuaternionAlgebra(*args, **kwds)
 
     def ngens(self):
         """
@@ -618,7 +617,10 @@ class QuaternionAlgebra_abstract(Parent):
         return self.free_module()
 
 
-class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
+QuaternionAlgebra_abstract = QuaternionAlgebra  # deprecated alias
+
+
+class QuaternionAlgebra_ab(QuaternionAlgebra):
     """
     A quaternion algebra of the form `(a, b)_K`.
 
