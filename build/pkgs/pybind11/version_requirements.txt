@@ -1,1 +1,2 @@
+# per https://github.com/scipy/scipy/blob/maintenance/1.13.x/pyproject.toml
 pybind11 >= 2.12.0
