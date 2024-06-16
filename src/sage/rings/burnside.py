@@ -628,11 +628,18 @@ class PolynomialMolecularDecomposition(CombinatorialFreeModule):
         """
         return self._indices((0, SymmetricGroup(0)))
 
+    # Remember, a basis element here is a molecular species.
+    # When two basis elements are multiplied, you get another
+    # molecular species, ie a basis element.
+    # Any molecular species centered on cardinality n M_n,
+    # is equivalent to [S_n/H] where H is some conjugacy class
+    # of subgroups of S_n.
+
     def product_on_basis(self, g1, g2):
         n, m = g1._n, g2._n
         H, K = g1._C, g2._C
         def construct_element(h, k):
-            element = [None for i in range(n+m)]
+            element = [None for _ in range(n+m)]
             for i in range(n+m):
                 if i<n:
                     element[i] = h(i+1)
