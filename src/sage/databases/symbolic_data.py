@@ -153,7 +153,7 @@ class SymbolicData:
                 name = self.__genpath + name + ".xml"
                 open(name)
             except OSError:
-                raise AttributeError("No ideal matching '%s' found in database." % orig_name)
+                raise AttributeError(f"no ideal matching '{orig_name}' found in database")
 
         dom = parse(name)
         res = _dom2ideal(dom)
@@ -184,7 +184,7 @@ class SymbolicData:
            sage: sd.Cyclic5 # optional - database_symbolic_data
            Traceback (most recent call last):
            ...
-           AttributeError: No ideal matching 'Cyclic5' found in database.
+           AttributeError: no ideal matching 'Cyclic5' found in database...
 
            sage: sd.Cyclic_5 # optional - database_symbolic_data
            Ideal (v + w + x + y + z,
