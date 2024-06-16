@@ -266,76 +266,64 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             poly *= linear
         return poly
     
-    def factorization(self):
+    def factor(self):
         r"""
-        Return the factorization of ``self`` to its linear factors
+        Return the tropical factorization of ``self``
 
         OUTPUT:
 
-        If ``self`` can be factored, then return a string that represents 
-        its factorization. Otherwise, return the string 'Can not be factored'
+        A Factoization object of ``self``. If self can be factored, then
+        return its tropical linear factorization. Otherwise, return ``self``.
 
         EXAMPLES:
 
-            sage: T = TropicalSemiring(QQ, use_min=False)
+        A tropical polynomial can be factored if and only if it is the same 
+        with its conjugate::
+
+            sage: T = TropicalSemiring(QQ, use_min=True)
             sage: R = PolynomialRing(T, x)
-            sage: S.<x> = PolynomialRing(QQ)
-            sage: p1 = R(x^3+4*x^2+5*x-1)
+            sage: p1 = R([6,3,1,0]); p1
+            0*x^3 + x^2 + 3*x + 6
             sage: p1.roots()
-            [-6, 1, 3]
-            sage: p1.factorization()
-            '1*(x + (-6))*(x + 1)*(x + 3)'
+            [3, 2, 1]
+            sage: factor(p1)
+            (0) * (0*x + 1) * (0*x + 2) * (0*x + 3)
+            sage: p1.conjugate()
+            0*x^3 + x^2 + 3*x + 6
         
-        A tropical polynomial can not be factored if it is not the same with
-        its conjugate::
+        ::
 
-            sage: p2 = R([2,1,-1]); p2
-            -x^2 + x + 2
-            sage: p2.factorization()
-            'Can not be factored'
+            sage: sage: p2 = R([4,4,2]); p2
+            2*x^2 + 4*x + 4
+            sage: p2.roots()
+            [1, 1]
+            sage: factor(p2)
+            2*x^2 + 4*x + 4
             sage: p2.conjugate()
-            -x^2 + 1/2*x + 2
-
-        The addition in tropical polynomial is defined in the tropical sense.
-        Therefore the monomial will be factored to::
-
-            sage: p3 = R(3*x^4)
-            sage: p3.factorization()
-            '3*(x + +infinity)^4'
+            2*x^2 + 3*x + 4
+            sage: factor(p2.conjugate())
+            (2) * (0*x + 1)^2
 
         """
 
-        if self != self.conjugate():
-            return 'Can not be factored'
+        from sage.structure.factorization import Factorization
 
-        if self.roots() == []:
-            return str(self)
-        
-        leading = str(self.dict()[self.degree()])
-        variable = self.variable_name()
-        terms = []
-        if leading != '0':
-            terms.append(leading)
+        if self != self.conjugate() or self.roots() == []:
+            return self
+
+        R = self.parent()
+        unit = self.dict()[self.degree()]
         roots_order = {}
         for root in self.roots():
             if root in roots_order:
                 roots_order[root] += 1
             else:
-                roots_order[root] = 1
-        for root, order in roots_order.items():
-            if root >= 0:
-                if order == 1:
-                    term = f"({variable} + {root})"
-                else:
-                    term = f"({variable} + {root})^{order}"
-            else:
-                if order == 1:
-                    term = f"({variable} + ({root}))"
-                else:
-                    term = f"({variable} + ({root}))^{order}"
-            terms.append(term)
+                roots_order[root] = 1 
+        factors = []
+        for root in roots_order:
+            factors.append((R([root, 0]), roots_order[root]))
         
-        return '*'.join(terms)
+        return Factorization(factors, unit=unit)
 
     def piecewise_function(self):
         r"""
@@ -486,7 +474,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
 
     def _element_constructor_(self, x, check=True):
         C = self.element_class
-        if isinstance(x, list):
+        if isinstance(x, (list, tuple)):
             for i, coeff in enumerate(x):
                 if coeff == 0:
                     x[i] = self.base()(0)
