@@ -611,9 +611,9 @@ class HasseDiagram(DiGraph):
 
         INPUT:
 
-        -  ``x`` -- any element of the poset
+        - ``x`` -- any element of the poset
 
-        -  ``y`` -- any element of the poset
+        - ``y`` -- any element of the poset
 
         .. NOTE::
 
@@ -645,9 +645,9 @@ class HasseDiagram(DiGraph):
 
         INPUT:
 
-        -  ``x`` -- any element of the poset
+        - ``x`` -- any element of the poset
 
-        -  ``y`` -- any element of the poset
+        - ``y`` -- any element of the poset
 
         .. SEEALSO:: :meth:`interval`
 
@@ -2361,7 +2361,7 @@ class HasseDiagram(DiGraph):
           (default: ``None``)
 
         - ``conversion`` -- (default: ``None``) used to pass
-           the list of elements of the poset in their fixed order
+          the list of elements of the poset in their fixed order
 
         OUTPUT:
 

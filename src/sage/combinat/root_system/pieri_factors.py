@@ -604,7 +604,7 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
 
         INPUT:
 
-         - ``length`` -- a nonnegative integer
+         - ``length`` -- nonnegative integer
 
         EXAMPLES::
 

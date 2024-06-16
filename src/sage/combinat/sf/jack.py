@@ -886,7 +886,7 @@ class JackPolynomials_p(JackPolynomials_generic):
         INPUT:
 
         - ``self`` -- an instance of the Jack `P` basis of the symmetric functions
-        - ``n`` -- a positive integer indicating the degree
+        - ``n`` -- positive integer indicating the degree
 
         EXAMPLES::
 
@@ -1193,7 +1193,7 @@ class JackPolynomials_qp(JackPolynomials_generic):
         INPUT:
 
         - ``self`` -- an instance of the Jack `Qp` basis of the symmetric functions
-        - ``n`` -- a positive integer indicating the degree
+        - ``n`` -- positive integer indicating the degree
 
         EXAMPLES::
 

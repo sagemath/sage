@@ -1788,7 +1788,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
         INPUT:
 
-        - ``refl_repr`` -- a dictionary representing the matrices of the
+        - ``refl_repr`` -- dictionary representing the matrices of the
           generators of ``self`` with keys given by the index set, or
           ``None`` to reset to the default reflection representation
 

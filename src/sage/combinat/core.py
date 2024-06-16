@@ -346,10 +346,12 @@ class Core(CombinatorialElement):
 
         INPUT:
 
-        - ``w`` -- a tuple of integers `[w_1,\ldots,w_m]` with `0\le w_j<k`
-          If transposition is set to be True, then `w = [w_0,w_1]` is
+        - ``w`` -- tuple of integers `[w_1,\ldots,w_m]` with `0\le w_j<k`.
+          If transposition is set to be ``True``, then `w = [w_0,w_1]` is
           interpreted as a transposition `t_{w_0, w_1}`
           (see :meth:`_transposition_to_reduced_word`).
+
+        - ``transposition`` -- boolean (default: ``False``)
 
         The output is the (left) action of the product of the corresponding simple transpositions
         on ``self``, that is `s_{w_1} \cdots s_{w_m}(self)`. See :meth:`affine_symmetric_group_simple_action`.

@@ -267,7 +267,7 @@ cdef class WordDatatype_list(WordDatatype):
 
         INPUT:
 
-        -  ``a`` -- a letter
+        - ``a`` -- a letter
 
         OUTPUT: integer
 
@@ -435,12 +435,12 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        -  ``sub`` -- string or word to search for.
-        -  ``start`` -- nonnegative integer (default: 0) specifying
-           the position from which to start the search.
-        -  ``end`` -- nonnegative integer (default: ``None``); specifying
-           the position at which the search must stop. If ``None``, then
-           the search is performed up to the end of the string.
+        - ``sub`` -- string or word to search for
+        - ``start`` -- nonnegative integer (default: 0) specifying
+          the position from which to start the search.
+        - ``end`` -- nonnegative integer (default: ``None``); specifying
+          the position at which the search must stop. If ``None``, then
+          the search is performed up to the end of the string.
 
         OUTPUT: nonnegative integer or `-1`
 
@@ -471,12 +471,12 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        -  ``sub`` -- string or word to search for.
-        -  ``start`` -- nonnegative integer (default: 0) specifying
-           the position at which the search must stop.
-        -  ``end`` -- nonnegative integer (default: ``None``); specifying
-           the position from which to start the search. If ``None``, then
-           the search is performed up to the end of the string.
+        - ``sub`` -- string or word to search for
+        - ``start`` -- nonnegative integer (default: 0) specifying
+          the position at which the search must stop.
+        - ``end`` -- nonnegative integer (default: ``None``); specifying
+          the position from which to start the search. If ``None``, then
+          the search is performed up to the end of the string.
 
         OUTPUT: nonnegative integer or `-1`
 
@@ -733,7 +733,7 @@ cdef class WordDatatype_str(WordDatatype):
         INPUT:
 
         - ``other`` -- a word (an instance of :class:`Word_class`) or a
-          :class:`str`.
+          :class:`str`
 
         OUTPUT: boolean
 
@@ -771,7 +771,7 @@ cdef class WordDatatype_str(WordDatatype):
         INPUT:
 
         - ``other`` -- a word (an instance of :class:`Word_class`) or a
-          :class:`str`.
+          :class:`str`
 
         OUTPUT: boolean
 
@@ -800,7 +800,7 @@ cdef class WordDatatype_str(WordDatatype):
         INPUT:
 
         - ``other`` -- a word (an instance of :class:`Word_class`) or a
-          :class:`str`.
+          :class:`str`
 
         OUTPUT: boolean
 
@@ -837,7 +837,7 @@ cdef class WordDatatype_str(WordDatatype):
         INPUT:
 
         - ``other`` -- a word (an instance of :class:`Word_class`) or a
-          :class:`str`.
+          :class:`str`
 
         OUTPUT: boolean
 

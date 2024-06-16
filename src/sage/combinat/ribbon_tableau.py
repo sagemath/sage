@@ -413,13 +413,13 @@ def insertion_tableau(skp, perm, evaluation, tableau, length):
     """
     INPUT:
 
-    -  ``skp`` -- skew partitions
+    - ``skp`` -- skew partitions
 
-    -  ``perm, evaluation`` -- nonnegative integers
+    - ``perm, evaluation`` -- nonnegative integers
 
-    -  ``tableau`` -- skew tableau
+    - ``tableau`` -- skew tableau
 
-    -  ``length`` -- integer
+    - ``length`` -- integer
 
     TESTS::
 
@@ -480,11 +480,11 @@ def count_rec(nexts, current, part, weight, length):
     """
     INPUT:
 
-    -  ``nexts, current, part`` -- skew partitions
+    - ``nexts, current, part`` -- skew partitions
 
-    -  ``weight`` -- nonnegative integer list
+    - ``weight`` -- nonnegative integer list
 
-    -  ``length`` -- integer
+    - ``length`` -- integer
 
     TESTS::
 
@@ -516,11 +516,11 @@ def list_rec(nexts, current, part, weight, length):
     """
     INPUT:
 
-    -  ``nexts, current, part`` -- skew partitions
+    - ``nexts, current, part`` -- skew partitions
 
-    -  ``weight`` -- nonnegative integer list
+    - ``weight`` -- nonnegative integer list
 
-    -  ``length`` -- integer
+    - ``length`` -- integer
 
     TESTS::
 
@@ -575,11 +575,11 @@ def spin_rec(t, nexts, current, part, weight, length):
 
     INPUT:
 
-    -  ``weight`` -- list of nonnegative integers
+    - ``weight`` -- list of nonnegative integers
 
-    -  ``length`` -- the length of the ribbons we're tiling with
+    - ``length`` -- the length of the ribbons we're tiling with
 
-    -  ``t`` -- the variable
+    - ``t`` -- the variable
 
     EXAMPLES::
 

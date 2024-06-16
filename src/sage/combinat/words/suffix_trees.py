@@ -833,9 +833,8 @@ class ImplicitSuffixTree(SageObject):
 
         INPUT:
 
-        -  ``word_labels`` -- boolean (default: ``False``); if ``False``, labels
-           the edges by pairs `(i, j)`. If ``True``, labels the edges by
-           ``word[i:j]``.
+        - ``word_labels`` -- boolean (default: ``False``); if ``False``, labels
+          the edges by pairs `(i, j)`. If ``True``, labels the edges by ``word[i:j]``
 
         EXAMPLES::
 
@@ -866,14 +865,13 @@ class ImplicitSuffixTree(SageObject):
 
         INPUT:
 
-        -  ``word_labels`` -- boolean (default: ``False``); if ``False``, labels
-           the edges by pairs `(i, j)`; if ``True``, labels the edges by
-           ``word[i:j]``.
-        -  ``layout`` -- (default: ``'tree'``)
-        -  ``tree_root`` -- (default: 0)
-        -  ``tree_orientation`` -- (default: ``'up'``)
-        -  ``vertex_colors`` -- (default: ``None``)
-        -  ``edge_labels`` -- (default: ``True``)
+        - ``word_labels`` -- boolean (default: ``False``); if ``False``, labels
+          the edges by pairs `(i, j)`; if ``True``, labels the edges by ``word[i:j]``
+        - ``layout`` -- (default: ``'tree'``)
+        - ``tree_root`` -- (default: 0)
+        - ``tree_orientation`` -- (default: ``'up'``)
+        - ``vertex_colors`` -- (default: ``None``)
+        - ``edge_labels`` -- (default: ``True``)
 
         EXAMPLES::
 
@@ -908,9 +906,8 @@ class ImplicitSuffixTree(SageObject):
 
         INPUT:
 
-        -  ``word_labels`` -- (default: ``None``) if ``False``, labels the
-           edges by pairs `(i, j)`; if ``True``, labels the edges by
-           ``word[i:j]``.
+        - ``word_labels`` -- (default: ``None``) if ``False``, labels the edges
+          by pairs `(i, j)`; if ``True``, labels the edges by ``word[i:j]``
 
         EXAMPLES::
 
@@ -1150,7 +1147,7 @@ class ImplicitSuffixTree(SageObject):
 
         INPUT:
 
-        -  ``n`` -- an integer, or ``None``.
+        - ``n`` -- integer, or ``None``
 
         OUTPUT:
 
@@ -1236,7 +1233,7 @@ class ImplicitSuffixTree(SageObject):
 
         INPUT:
 
-        -  ``n`` -- an integer, or ``None``.
+        - ``n`` -- integer, or ``None``
 
         OUTPUT:
 
@@ -1686,7 +1683,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
 
             - ``node`` -- a node of ``self``
             - ``parent`` -- the parent of a node in ``self``
-            - ``head`` -- a tuple indicating the head of the list ``P(node)``
+            - ``head`` -- tuple indicating the head of the list ``P(node)``
 
             OUTPUT: ``(i, pos)``, the new head of ``P(node)``
             """

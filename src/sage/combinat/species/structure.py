@@ -149,7 +149,7 @@ class GenericSpeciesStructure(CombinatorialObject):
 
         INPUT:
 
-        - ``labels`` -- a list of labels
+        - ``labels`` -- list of labels
 
         OUTPUT:
 
@@ -304,7 +304,7 @@ class SpeciesStructureWrapper(GenericSpeciesStructure):
 
         INPUT:
 
-        - ``labels`` -- a list of labels
+        - ``labels`` -- list of labels
 
         OUTPUT:
 

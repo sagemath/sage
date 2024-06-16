@@ -47,31 +47,31 @@ def Word(data=None, alphabet=None, length=None, datatype=None, caching=True, RSK
 
     INPUT:
 
-    -  ``data`` -- (default: ``None``) list, string, tuple, iterator, free
-       monoid element, ``None`` (shorthand for ``[]``), or a callable defined
-       on ``[0,1,...,length]``
+    - ``data`` -- (default: ``None``) list, string, tuple, iterator, free
+      monoid element, ``None`` (shorthand for ``[]``), or a callable defined
+      on ``[0,1,...,length]``
 
-    -  ``alphabet`` -- any argument accepted by Words
+    - ``alphabet`` -- any argument accepted by Words
 
-    -  ``length`` -- (default: ``None``) This is dependent on the type of data.
-       It is ignored for words defined by lists, strings, tuples,
-       etc., because they have a naturally defined length.
-       For callables, this defines the domain of definition,
-       which is assumed to be ``[0, 1, 2, ..., length-1]``.
-       For iterators: Infinity if you know the iterator will not
-       terminate (default); ``'unknown'`` if you do not know whether the
-       iterator terminates; ``'finite'`` if you know that the iterator
-       terminates, but do not know the length.
+    - ``length`` -- (default: ``None``) this is dependent on the type of data.
+      It is ignored for words defined by lists, strings, tuples,
+      etc., because they have a naturally defined length.
+      For callables, this defines the domain of definition,
+      which is assumed to be ``[0, 1, 2, ..., length-1]``.
+      For iterators: Infinity if you know the iterator will not
+      terminate (default); ``'unknown'`` if you do not know whether the
+      iterator terminates; ``'finite'`` if you know that the iterator
+      terminates, but do not know the length.
 
-    -  ``datatype`` -- (default: ``None``) ``None``, ``'list'``, ``'str'``,
-       ``'tuple'``, ``'iter'``, ``'callable'``; if ``None``, then the function
-       tries to guess this from the data
+    - ``datatype`` -- (default: ``None``) ``None``, ``'list'``, ``'str'``,
+      ``'tuple'``, ``'iter'``, ``'callable'``; if ``None``, then the function
+      tries to guess this from the data
 
-    -  ``caching`` -- boolean (default: ``True``); whether to
-       keep a cache of the letters computed by an iterator or callable
+    - ``caching`` -- boolean (default: ``True``); whether to
+      keep a cache of the letters computed by an iterator or callable
 
-    -  ``RSK_data`` -- (default: ``None``) semistandard and a
-       standard Young tableau to run the inverse RSK bijection on
+    - ``RSK_data`` -- (default: ``None``) semistandard and a
+      standard Young tableau to run the inverse RSK bijection on
 
     .. NOTE::
 

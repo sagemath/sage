@@ -470,7 +470,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
 
         - ``self`` -- a Hall-Littlewood symmetric function basis
         - ``basis`` -- another symmetric function basis
-        - ``n`` -- a nonnegative integer representing the degree
+        - ``n`` -- nonnegative integer representing the degree
 
         OUTPUT:
 
@@ -572,8 +572,8 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
             INPUT:
 
             - ``self`` -- an element of a Hall-Littlewood basis
-            - ``n`` -- a positive integer
-            - ``alphabet`` -- a string representing a variable name (default: ``'x'``)
+            - ``n`` -- positive integer
+            - ``alphabet`` -- string representing a variable name (default: ``'x'``)
 
             OUTPUT: a symmetric polynomial of ``self`` in ``n`` variables
 
@@ -997,7 +997,7 @@ class HallLittlewood_qp(HallLittlewood_generic):
         INPUT:
 
         - ``self`` -- an instance of the Hall-Littlewood `P` basis
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         EXAMPLES::
 

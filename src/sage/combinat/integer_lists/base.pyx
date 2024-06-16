@@ -604,9 +604,9 @@ cdef class Envelope():
 
         INPUT:
 
-        - ``m`` -- a nonnegative integer (starting value)
+        - ``m`` -- nonnegative integer (starting value)
 
-        - ``j`` -- a nonnegative integer (position)
+        - ``j`` -- nonnegative integer (position)
 
         This method adapts this envelope to the additional local
         constraint imposed by having a part `m` at position `j`.

@@ -1991,12 +1991,13 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
 
     def find_g_vector(self, g_vector, depth=infinity):
         r"""
-        Return a mutation sequence to obtain a seed containing the g-vector ``g_vector`` from the initial seed.
+        Return a mutation sequence to obtain a seed containing the g-vector
+        ``g_vector`` from the initial seed.
 
         INPUT:
 
         - ``g_vector`` -- tuple; the g-vector to find
-        - ``depth`` -- a positive integer or infinity (default: ``infinity``);
+        - ``depth`` -- positive integer or infinity (default: ``infinity``);
           the maximum distance from ``self.current_seed`` to reach
 
         OUTPUT:
@@ -2222,7 +2223,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
         - ``allowed_directions`` -- iterable of integers
           (default: ``range(self.rank())``); the directions in which to mutate
 
-        - ``depth`` -- a positive integer or infinity (default: ``infinity``);
+        - ``depth`` -- positive integer or infinity (default: ``infinity``);
           the maximum depth at which to stop searching
 
         - ``catch_KeyboardInterrupt`` -- boolean (default: ``False``); whether to
@@ -2344,7 +2345,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``depth`` -- a positive integer or infinity; the maximum depth
+        - ``depth`` -- positive integer or infinity; the maximum depth
           at which to stop searching
 
         EXAMPLES::
@@ -2371,7 +2372,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``depth`` -- a positive integer or infinity (default: ``infinity``);
+        - ``depth`` -- positive integer or infinity (default: ``infinity``);
           the maximum depth at which to compute
 
         EXAMPLES::

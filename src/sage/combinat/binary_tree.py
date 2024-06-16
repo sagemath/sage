@@ -1243,7 +1243,8 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         INPUT:
 
-        - ``usemap`` -- a string, either ``1L0R``, ``1R0L``, ``L1R0``, ``R1L0``
+        - ``usemap`` -- string; either ``'1L0R'``, ``'1R0L'``, ``'L1R0'``,
+          ``'R1L0'``
 
         The bijection is defined recursively as follows:
 
@@ -2524,8 +2525,8 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         INPUT:
 
-        - ``side`` -- (default: ``'left'``) set to 'left' to obtain a left
-          comb, and to 'right' to obtain a right comb.
+        - ``side`` -- (default: ``'left'``) set to ``'left'`` to obtain a left
+          comb, and to ``'right'`` to obtain a right comb
 
         OUTPUT: list of binary trees
 
@@ -4037,7 +4038,7 @@ def from_tamari_sorting_tuple(key):
 
     INPUT:
 
-    - ``key`` -- a tuple of integers
+    - ``key`` -- tuple of integers
 
     EXAMPLES::
 

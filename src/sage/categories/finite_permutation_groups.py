@@ -294,7 +294,7 @@ class FinitePermutationGroups(CategoryWithAxiom):
 
             INPUT:
 
-            - ``n`` -- a nonnegative integer
+            - ``n`` -- nonnegative integer
 
             - ``using_polya`` -- boolean (default: ``True``); if ``True``, the
               computation uses Pólya enumeration (and all values of the profile

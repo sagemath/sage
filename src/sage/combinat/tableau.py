@@ -1329,8 +1329,8 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         - ``n`` -- integer specifying the maximal letter in the
           alphabet (optional)
-        - ``check`` -- (default: ``True``) Check to make sure ``self`` is
-          semistandard. Set to ``False`` to avoid this check. (optional)
+        - ``check`` -- boolean (default: ``True``); check to make sure ``self``
+          is semistandard
 
         OUTPUT: a tableau, the Schuetzenberger involution of ``self``
 
@@ -1394,8 +1394,8 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         - ``n`` -- integer specifying the maximal letter in the
           alphabet (optional)
-        - ``check`` -- (default: ``True``) Check to make sure ``self`` is
-          semistandard. Set to ``False`` to avoid this check. (optional)
+        - ``check`` -- boolean (default: ``True``); check to make sure ``self``
+          is semistandard
 
         OUTPUT: a tableau, the evacuation of ``self``
 
@@ -5059,8 +5059,8 @@ def from_shape_and_word(shape, w, convention='French'):
 
     - ``w`` -- a word whose length equals that of the partition
 
-    - ``convention`` -- a string which can take values ``'French'`` or
-      ``'English'``; the default is ``'French'``
+    - ``convention`` -- string (default: ``'French'``); can take values
+      ``'French'`` or ``'English'``
 
     OUTPUT:
 

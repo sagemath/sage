@@ -1320,8 +1320,8 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
 
         - ``KL`` -- algebra over weight space
         - ``q``, ``q1``, ``q2`` -- parameters
-        - ``normalized`` -- boolean (default: ``True``)
-           whether to normalize the result to have leading coefficient 1
+        - ``normalized`` -- boolean (default: ``True``); whether to normalize
+          the result to have leading coefficient 1
 
         EXAMPLES::
 

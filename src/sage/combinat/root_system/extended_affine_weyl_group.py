@@ -1421,8 +1421,8 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                 - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``)
                   according to which side of ``self`` the reflection `s_i`
                   should be multiplied
-                - ``length_increasing`` -- boolean (default: ``True``).
-                  If ``False``, do the above with the word "greater" replaced by "less".
+                - ``length_increasing`` -- boolean (default: ``True``);
+                  if ``False``, do the above with the word "greater" replaced by "less"
 
                 EXAMPLES::
 

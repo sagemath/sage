@@ -351,7 +351,7 @@ class FSymBases(Category_realization_of_parent):
             INPUT:
 
             - ``basis`` -- a basis of the dual Hopf algebra
-            - ``degree`` -- a nonnegative integer
+            - ``degree`` -- nonnegative integer
 
             OUTPUT:
 

@@ -533,7 +533,7 @@ class Semigroups(CategoryWithAxiom):
 
             INPUT:
 
-            - ``n`` -- a positive integer
+            - ``n`` -- positive integer
 
             EXAMPLES::
 

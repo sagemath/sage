@@ -1016,7 +1016,7 @@ class BranchingRule(SageObject):
         INPUT:
 
         - ``R``, ``S`` -- CartanTypes
-        -  ``f`` -- a function from the weight lattice of R to the weight lattice of S
+        - ``f`` -- a function from the weight lattice of R to the weight lattice of S
         """
         self._R = CartanType(R)
         self._S = CartanType(S)
@@ -1198,8 +1198,8 @@ class BranchingRule(SageObject):
             For more detailed information use verbose=True
 
         In this example, `0` is the affine root, that is, the negative
-        of the highest root, for `"G2"`. If `i => j` is printed, this
-        means that the i-th simple (or affine) root of the ambient
+        of the highest root, for `"G2"`. If `i \geq j` is printed, this
+        means that the `i`-th simple (or affine) root of the ambient
         group restricts to the j-th simple root of the subgroup.
         For reference the Dynkin diagrams are also printed. The
         extended Dynkin diagram of the ambient group is printed if
@@ -1303,7 +1303,7 @@ def branching_rule(Rtype, Stype, rule='default'):
 
     - ``S`` -- the Weyl Character Ring of `H`
 
-    - ``rule`` -- a string describing the branching rule as a map from
+    - ``rule`` -- string describing the branching rule as a map from
       the weight space of `S` to the weight space of `R`
 
     If the rule parameter is omitted, in some cases, a default rule is supplied. See
@@ -1962,7 +1962,7 @@ def branching_rule_from_plethysm(chi, cartan_type, return_matrix=False):
 
     - ``chi`` -- the character of an irreducible representation `\pi` of
       a group `G`
-    - ``cartan_type`` -- a classical Cartan type (`A`,`B`,`C` or `D`).
+    - ``cartan_type`` -- a classical Cartan type (`A`,`B`,`C` or `D`)
 
     It is assumed that the image of the irreducible representation pi
     naturally has its image in the group `G`.

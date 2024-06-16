@@ -62,26 +62,26 @@ class IntegerListsLex(IntegerLists, metaclass=ClasscallMetaclass):
 
     INPUT:
 
-    - ``min_sum`` -- a nonnegative integer (default: 0);
+    - ``min_sum`` -- nonnegative integer (default: 0);
       a lower bound on ``sum(l)``
 
-    - ``max_sum`` -- a nonnegative integer or `\infty` (default: `\infty`);
+    - ``max_sum`` -- nonnegative integer or `\infty` (default: `\infty`);
       an upper bound on ``sum(l)``
 
-    - ``n`` -- a nonnegative integer (optional); if specified, this
+    - ``n`` -- nonnegative integer (optional); if specified, this
       overrides ``min_sum`` and ``max_sum``
 
-    - ``min_length`` -- a nonnegative integer (default: `0`); a lower
+    - ``min_length`` -- nonnegative integer (default: `0`); a lower
       bound on ``len(l)``
 
-    - ``max_length`` -- a nonnegative integer or `\infty` (default:
+    - ``max_length`` -- nonnegative integer or `\infty` (default:
       `\infty`); an upper bound on ``len(l)``
 
     - ``length`` -- integer (optional); overrides ``min_length``
       and ``max_length`` if specified
 
-    - ``min_part`` -- a nonnegative integer; a lower bounds on all
-       parts: ``min_part <= l[i]`` for ``0 <= i < len(l)``
+    - ``min_part`` -- nonnegative integer; a lower bounds on all
+      parts: ``min_part <= l[i]`` for ``0 <= i < len(l)``
 
     - ``floor`` -- list of nonnegative integers or a function; lower
       bounds on the individual parts `l[i]`
@@ -1388,11 +1388,11 @@ class IntegerListsLexIter(builtins.object):
 
         INPUT:
 
-        - ``i`` -- a nonnegative integer (position)
+        - ``i`` -- nonnegative integer (position)
 
-        - ``max_sum`` -- a nonnegative integer or ``+oo``
+        - ``max_sum`` -- nonnegative integer or ``+oo``
 
-        - ``prev`` -- a nonnegative integer or ``None``
+        - ``prev`` -- nonnegative integer or ``None``
 
         Return coarse lower and upper bounds for the value ``m``
         of the part at position ``i`` so that there could exists

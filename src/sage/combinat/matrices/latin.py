@@ -624,7 +624,7 @@ class LatinSquare:
 
         INPUT:
 
-        -  ``self`` -- LatinSquare
+        - ``self`` -- LatinSquare
 
         EXAMPLES::
 
@@ -741,11 +741,11 @@ class LatinSquare:
 
         INPUT:
 
-        -  ``self`` -- LatinSquare
+        - ``self`` -- LatinSquare
 
-        -  ``r`` -- int; row of the latin square
+        - ``r`` -- integer; row of the latin square
 
-        -  ``c`` -- int; column of the latin square
+        - ``c`` -- integer; column of the latin square
 
         EXAMPLES::
 
@@ -788,7 +788,7 @@ class LatinSquare:
 
         INPUT:
 
-        -  ``self`` -- LatinSquare
+        - ``self`` -- LatinSquare
 
         OUTPUT:
 
@@ -1467,20 +1467,20 @@ def isotopism(p):
 
     According to the type of input (see examples below):
 
-    - an integer `n` -- the function returns the identity on `1,...,n`.
+    - an integer `n` -- the function returns the identity on `1,...,n`
 
     - a string representing a permutation in disjoint cycles notation,
       e.g. `(0,1,2)(3,4,5)` -- the corresponding permutation is returned,
-      shifted by 1 to act on `1,...,n`.
+      shifted by 1 to act on `1,...,n`
 
     - list/tuple of tuples -- assumes disjoint cycle notation, see previous
-      entry.
+      entry
 
     - a list of integers -- the function adds `1` to each member of the
-      list, and returns the corresponding permutation.
+      list, and returns the corresponding permutation
 
     - a :class:`PermutationGroupElement` ``p`` -- returns a permutation
-      describing ``p`` **without** any shift.
+      describing ``p`` **without** any shift
 
     EXAMPLES::
 
@@ -1596,11 +1596,11 @@ def beta1(rce, T1, T2):
 
     INPUT:
 
-    -  ``rce`` -- tuple (or list) (r, c, e) in T1
+    - ``rce`` -- tuple (or list) (r, c, e) in T1
 
-    -  ``T1, T2`` -- latin bitrade
+    - ``T1``, ``T2`` -- latin bitrade
 
-    OUTPUT: (x, c, e) in T2.
+    OUTPUT: (x, c, e) in T2
 
     EXAMPLES::
 
@@ -1635,13 +1635,11 @@ def beta2(rce, T1, T2):
 
     INPUT:
 
-    -  ``rce`` -- tuple (or list) (r, c, e) in T1
+    - ``rce`` -- tuple (or list) (r, c, e) in T1
 
-    -  ``T1, T2`` -- latin bitrade
+    - ``T1``, ``T2`` -- latin bitrade
 
-    OUTPUT:
-
-    - (r, x, e) in T2.
+    OUTPUT: (r, x, e) in T2
 
     EXAMPLES::
 
@@ -1676,13 +1674,11 @@ def beta3(rce, T1, T2):
 
     INPUT:
 
-    -  ``rce`` -- tuple (or list) (r, c, e) in T1
+    - ``rce`` -- tuple (or list) (r, c, e) in T1
 
-    -  ``T1, T2`` -- latin bitrade
+    - ``T1, T2`` -- latin bitrade
 
-    OUTPUT:
-
-    - (r, c, x) in T2.
+    OUTPUT: (r, c, x) in T2.
 
     EXAMPLES::
 
@@ -1882,7 +1878,7 @@ def back_circulant(n):
 
     INPUT:
 
-    -  ``n`` -- int; order of the latin square.
+    - ``n`` -- integer; order of the latin square
 
     EXAMPLES::
 
@@ -1912,7 +1908,7 @@ def forward_circulant(n):
 
     INPUT:
 
-    -  ``n`` -- int; order of the latin square.
+    - ``n`` -- integer; order of the latin square
 
     EXAMPLES::
 
@@ -1988,7 +1984,7 @@ def elementary_abelian_2group(s):
 
     INPUT:
 
-    -  ``s`` -- int; order of the latin square will be 2s.
+    - ``s`` -- integer; order of the latin square will be 2s
 
     EXAMPLES::
 

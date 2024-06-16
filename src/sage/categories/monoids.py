@@ -296,7 +296,7 @@ class Monoids(CategoryWithAxiom):
 
             INPUT:
 
-            - ``n`` -- a nonnegative integer
+            - ``n`` -- nonnegative integer
 
             EXAMPLES::
 
@@ -312,7 +312,7 @@ class Monoids(CategoryWithAxiom):
 
             INPUT:
 
-            - ``n`` -- a nonnegative integer
+            - ``n`` -- nonnegative integer
 
             This naive implementation does not use binary
             exponentiation; there are cases where this is actually

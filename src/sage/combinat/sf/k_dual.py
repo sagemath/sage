@@ -56,7 +56,7 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
 
         - ``Sym`` -- an element of class :class:`sage.combinat.sf.sf.SymmetricFunctions`
 
-        - ``k`` -- a positive integer
+        - ``k`` -- positive integer
 
         - ``R`` -- a ring
 
@@ -877,7 +877,7 @@ class KBoundedQuotientBasis(CombinatorialFreeModule):
         INPUT:
 
         - ``kBoundedRing`` -- an element which is of class :class:`KBoundedQuotient`
-        - ``prefix`` -- a string used to distinguish this basis, and used in printing
+        - ``prefix`` -- string used to distinguish this basis, and used in printing
 
         EXAMPLES::
 

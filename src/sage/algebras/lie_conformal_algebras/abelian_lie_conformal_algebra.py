@@ -33,7 +33,7 @@ class AbelianLieConformalAlgebra(GradedLieConformalAlgebra):
 
     - ``R`` -- a commutative ring; the base ring of this Lie
       conformal algebra
-    - ``ngens`` -- a positive integer (default: `1`); the number
+    - ``ngens`` -- positive integer (default: `1`); the number
       of generators of this Lie conformal algebra
     - ``weights`` -- list of positive rational numbers (default:
       `1` for each generator); the weights of the generators. The resulting

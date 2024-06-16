@@ -210,7 +210,7 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
 
         INPUT:
 
-        - ``n`` -- a nonnegative integer
+        - ``n`` -- nonnegative integer
 
         EXAMPLES::
 
@@ -260,7 +260,7 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
 
         INPUT:
 
-        - ``n`` -- a nonnegative integer
+        - ``n`` -- nonnegative integer
 
         EXAMPLES::
 

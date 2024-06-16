@@ -266,8 +266,8 @@ class FiniteMeetSemilattice(FinitePoset):
 
         INPUT:
 
-        -  ``x``, ``y`` -- two elements of the (semi)lattice OR
-        -  ``x`` -- list or tuple of elements
+        - ``x``, ``y`` -- two elements of the (semi)lattice OR
+        - ``x`` -- list or tuple of elements
 
         EXAMPLES::
 
@@ -591,8 +591,8 @@ class FiniteJoinSemilattice(FinitePoset):
 
         INPUT:
 
-        -  ``x, y`` -- two elements of the (semi)lattice OR
-        -  ``x`` -- list or tuple of elements
+        - ``x``, ``y`` -- two elements of the (semi)lattice OR
+        - ``x`` -- list or tuple of elements
 
         EXAMPLES::
 
@@ -2951,7 +2951,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         - ``other`` -- a lattice
 
-        - ``labels`` -- a string (default: ``'pairs'``); can be one of
+        - ``labels`` -- string (default: ``'pairs'``); can be one of
           the following:
 
           * ``'pairs'`` -- each element ``v`` in this poset will be
@@ -4210,7 +4210,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``type`` -- a string; can be one of the following:
+        - ``type`` -- string; can be one of the following:
 
           * ``'interval'`` -- allow only doublings of an interval
           * ``'lower'`` -- allow doublings of lower pseudo-interval; that is, a
@@ -4878,7 +4878,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``labels`` -- a string; the type of elements in the resulting lattice
+        - ``labels`` -- string; the type of elements in the resulting lattice
 
         OUTPUT: a distributive lattice
 

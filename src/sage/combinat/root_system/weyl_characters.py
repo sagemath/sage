@@ -519,7 +519,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``d1`` -- a dictionary of weight multiplicities
+        - ``d1`` -- dictionary of weight multiplicities
         - ``b`` -- a dominant weight
 
         If ``d1`` is the dictionary of weight multiplicities of a character,
@@ -701,7 +701,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``dd`` -- a dictionary of weights
+        - ``dd`` -- dictionary of weights
 
         - ``word`` -- (optional) a Weyl group reduced word
 
@@ -1033,7 +1033,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``mdict`` -- a dictionary mapping weights to coefficients,
+        - ``mdict`` -- dictionary mapping weights to coefficients,
           and representing a linear combination of weights which
           shall be invariant under the action of the Weyl group
 
@@ -1062,7 +1062,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``mdict`` -- a dictionary of weight multiplicities
+        - ``mdict`` -- dictionary of weight multiplicities
 
         The output of this method is a dictionary whose keys are dominant
         weights that is the same as the :meth:`monomial_coefficients` method
@@ -1241,7 +1241,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
 
             - ``S`` -- a Weyl character ring for a Lie subgroup or subalgebra
 
-            -  ``rule`` -- a branching rule
+            - ``rule`` -- a branching rule
 
             See :func:`~sage.combinat.root_system.branching_rules.branch_weyl_character`
             for more information about branching rules.
@@ -1351,7 +1351,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
 
             INPUT:
 
-            - ``k`` -- a nonnegative integer
+            - ``k`` -- nonnegative integer
 
             The algorithm is based on the
             identity `k h_k = \sum_{r=1}^k p_k h_{k-r}` relating the power-sum
@@ -1389,7 +1389,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
 
             INPUT:
 
-            - ``k`` -- a nonnegative integer
+            - ``k`` -- nonnegative integer
 
             The algorithm is based on the
             identity `k e_k = \sum_{r=1}^k (-1)^{k-1} p_k e_{k-r}` relating the
@@ -1430,7 +1430,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
 
             INPUT:
 
-            - ``r`` -- a positive integer
+            - ``r`` -- positive integer
 
             This is a virtual character,
             whose weights are the weights of ``self``, each multiplied by `r`.
@@ -1451,7 +1451,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
 
             INPUT:
 
-            - ``r`` -- a positive integer
+            - ``r`` -- positive integer
 
             Return the dictionary of weight multiplicities for the Adams
             operation, needed for internal use by symmetric and exterior powers.
@@ -1852,7 +1852,7 @@ class WeightRing(CombinatorialFreeModule):
 
         INPUT:
 
-        -  ``weight`` -- an element of the weight space, or a tuple
+        - ``weight`` -- an element of the weight space, or a tuple
 
         This method is responsible for constructing an appropriate
         weight from the data in ``weight``, and then return the
@@ -2088,7 +2088,7 @@ class WeightRing(CombinatorialFreeModule):
 
             INPUT:
 
-            - ``k`` -- a nonzero integer
+            - ``k`` -- nonzero integer
 
             EXAMPLES::
 

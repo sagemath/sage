@@ -263,7 +263,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
               can be used (with care) to define affine maps.
               Only meaningful with ``on_basis``.
 
-            - ``position`` -- a nonnegative integer specifying which
+            - ``position`` -- nonnegative integer specifying which
               positional argument is used as the input of the function `f`
               (default: 0); this is currently only used with ``on_basis``.
 

@@ -376,7 +376,7 @@ class Word_class(SageObject):
 
         INPUT:
 
-        -  ``other`` -- word
+        - ``other`` -- word
 
         OUTPUT: iterator
 
@@ -404,15 +404,15 @@ class Word_class(SageObject):
 
         INPUT:
 
-        -  ``other`` -- word
+        - ``other`` -- word
 
-        -  ``length`` -- string (default: ``'unknown'``)
-           the length type of the resulting word if known. It may be one of
-           the following:
+        - ``length`` -- string (default: ``'unknown'``)
+          the length type of the resulting word if known. It may be one of
+          the following:
 
-           - ``'unknown'``
-           - ``'finite'``
-           - ``'infinite'``
+          - ``'unknown'``
+          - ``'finite'``
+          - ``'infinite'``
 
         EXAMPLES::
 
@@ -728,8 +728,8 @@ class Word_class(SageObject):
 
         INPUT:
 
-        -  ``morphism`` -- can be an instance of WordMorphism, or
-           anything that can be used to construct one
+        - ``morphism`` -- can be an instance of WordMorphism, or
+          anything that can be used to construct one
 
         EXAMPLES::
 
@@ -893,8 +893,8 @@ class Word_class(SageObject):
 
         INPUT:
 
-        -  ``f`` -- involution (default: ``None``) on the alphabet of ``self``. It must
-           be callable on letters as well as words (e.g. WordMorphism).
+        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g. WordMorphism)
 
         OUTPUT: iterator -- the iterated (`f`-)palindromic closure of self
 
@@ -981,22 +981,20 @@ class Word_class(SageObject):
 
         INPUT:
 
-        -  ``f`` -- involution (default: ``None``) on the alphabet of ``self``. It must
-           be callable on letters as well as words (e.g. WordMorphism).
+        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g. WordMorphism)
 
-        -  ``algorithm`` -- string (default: ``'recursive'``); specifying which
-           algorithm to be used when computing the iterated palindromic closure.
-           It must be one of the two following values:
+        - ``algorithm`` -- string (default: ``'recursive'``); specifying which
+          algorithm to be used when computing the iterated palindromic closure.
+          It must be one of the two following values:
 
-           - ``'definition'`` -- computed using the definition
-           - ``'recursive'`` -- computation based on an efficient formula
-             that recursively computes the iterated right palindromic closure
-             without having to recompute the longest `f`-palindromic suffix
-             at each iteration [2].
+          - ``'definition'`` -- computed using the definition
+          - ``'recursive'`` -- computation based on an efficient formula
+            that recursively computes the iterated right palindromic closure
+            without having to recompute the longest `f`-palindromic suffix
+            at each iteration [2].
 
-        OUTPUT:
-
-            word -- the iterated (`f`-)palindromic closure of self
+        OUTPUT: word -- the iterated (`f`-)palindromic closure of self
 
         EXAMPLES::
 
@@ -1191,7 +1189,7 @@ class Word_class(SageObject):
 
         - ``self`` -- a word over the integers
         - ``start`` -- integer; the first letter of the resulting word
-        - ``mod`` -- (default: ``None``) It can be one of the following:
+        - ``mod`` -- (default: ``None``) it can be one of the following:
             - None or 0 : result is over the integers
             - integer : result is over the integers modulo ``mod``.
 
@@ -1236,7 +1234,7 @@ class Word_class(SageObject):
 
         - ``self`` -- a word over the integers
         - ``start`` -- integer; the first letter of the resulting word
-        - ``mod`` -- (default: ``None``) It can be one of the following:
+        - ``mod`` -- (default: ``None``) it can be one of the following:
             - None or 0 : result is over the integers
             - integer : result is over the integers modulo ``mod``.
 
@@ -1296,7 +1294,7 @@ class Word_class(SageObject):
         INPUT:
 
         - ``self`` -- a word over the integers
-        - ``mod`` -- (default: ``None``) It can be one of the following:
+        - ``mod`` -- (default: ``None``) it can be one of the following:
             - None or 0 : result is over the integers
             - integer : result is over the integers modulo ``mod``.
 
@@ -1372,7 +1370,7 @@ class Word_class(SageObject):
         INPUT:
 
         - ``self`` -- a word over the integers
-        - ``mod`` -- (default: ``None``) It can be one of the following:
+        - ``mod`` -- (default: ``None``) it can be one of the following:
             - None or 0 : result is over the integers
             - integer : result is over the integers modulo ``mod``.
 
@@ -1433,16 +1431,14 @@ class Word_class(SageObject):
 
         INPUT:
 
-        -  ``self`` -- word over natural numbers
+        - ``self`` -- word over natural numbers
 
-        -  ``base`` -- integer (default: 2), greater or equal to 2
+        - ``base`` -- integer (default: 2), greater or equal to 2
 
-        -  ``mod`` -- modulo (default: ``None``); can take the following
-           values:
-
-           - ``integer`` -- the modulo
-
-           - ``None`` -- the value ``base`` is considered for the modulo
+        - ``mod`` -- modulo (default: ``None``); can take the following
+          values:
+          - ``integer`` -- the modulo
+          - ``None`` -- the value ``base`` is considered for the modulo
 
         EXAMPLES:
 

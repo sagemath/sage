@@ -107,7 +107,7 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
         INPUT:
 
         - ``self`` -- a homogeneous basis of symmetric functions
-        - ``i`` -- a nonnegative integer
+        - ``i`` -- nonnegative integer
 
         OUTPUT: the sum `\sum_{r=0}^i h_r \otimes h_{i-r}`
 
@@ -187,7 +187,7 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
 
             INPUT:
 
-            - ``n`` -- a nonnegative integer
+            - ``n`` -- nonnegative integer
 
             - ``alphabet`` -- (default: ``'x'``) a variable for the expansion
 

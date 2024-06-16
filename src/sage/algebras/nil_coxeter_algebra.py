@@ -84,7 +84,7 @@ class NilCoxeterAlgebra(IwahoriHeckeAlgebra.T):
 
         INPUT:
 
-        - ``r`` -- a positive integer at most the rank of the Weyl group
+        - ``r`` -- positive integer at most the rank of the Weyl group
 
         EXAMPLES::
 

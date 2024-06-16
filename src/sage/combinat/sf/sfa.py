@@ -1313,11 +1313,11 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
 
             INPUT:
 
-            - ``n`` -- a nonnegative integer
+            - ``n`` -- nonnegative integer
 
-            - ``d`` -- a nonnegative integer
+            - ``d`` -- nonnegative integer
 
-            - ``s`` -- a nonnegative integer
+            - ``s`` -- nonnegative integer
 
             - ``comparison`` -- (default: ``None``) a variable
               which can take the forms ``None``, ``-1``, ``0``
@@ -1979,7 +1979,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         - ``f`` -- a function that takes in two partitions
           (basis elements) and returns an element of the target domain
         - ``orthogonal`` -- if orthogonal is set to ``True``, then
-          ``f(part1, part2)`` is assumed to be 0 if ``part1 != part2``.
+          ``f(part1, part2)`` is assumed to be 0 if ``part1 != part2``
 
         EXAMPLES::
 
@@ -2051,31 +2051,31 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        -  ``element`` -- an element of a realization `M` of the ring of
-           symmetric functions. Note that `M` can be a different realization
-           than the one in which ``self`` is written, and does not have to
-           be specified. It is assumed that the basis of ``self`` is indexed
-           by partitions, and the degree of a basis element is the size of
-           the partition indexing it.
+        - ``element`` -- an element of a realization `M` of the ring of
+          symmetric functions. Note that `M` can be a different realization
+          than the one in which ``self`` is written, and does not have to
+          be specified. It is assumed that the basis of ``self`` is indexed
+          by partitions, and the degree of a basis element is the size of
+          the partition indexing it.
 
-        -  ``cache_function`` -- a function which accepts an
-           integer `n` as its input and creates the cache for that homogeneous
-           component (saving it in ``cache_dict``).
+        - ``cache_function`` -- a function which accepts an
+          integer `n` as its input and creates the cache for that homogeneous
+          component (saving it in ``cache_dict``).
 
-        -  ``cache_dict`` -- a dictionary storing a cache.
-           It should be indexed by the positive integers `n`. Its values
-           are dictionaries indexed by the partitions of size `n`. The values
-           of those latter dictionaries are, again, dictionaries indexed by
-           partitions of size `n`. Altogether, ``cache_dict`` should be
-           understood to encode a graded linear map from `M` to the
-           realization ``self`` of the ring of symmetric functions; the
-           encoding is done in such a way that, for any `n` and any partitions
-           ``lam`` and ``mu`` of `n`, the ``self[mu]``-coordinate of the image
-           of ``M[lam]`` under this linear map (in the basis ``self``) is
-           ``cache_dict[lam][mu]``.
+        - ``cache_dict`` -- dictionary storing a cache.
+          It should be indexed by the positive integers `n`. Its values
+          are dictionaries indexed by the partitions of size `n`. The values
+          of those latter dictionaries are, again, dictionaries indexed by
+          partitions of size `n`. Altogether, ``cache_dict`` should be
+          understood to encode a graded linear map from `M` to the
+          realization ``self`` of the ring of symmetric functions; the
+          encoding is done in such a way that, for any `n` and any partitions
+          ``lam`` and ``mu`` of `n`, the ``self[mu]``-coordinate of the image
+          of ``M[lam]`` under this linear map (in the basis ``self``) is
+          ``cache_dict[lam][mu]``.
 
-        -  ``subs_dict`` -- (optional) a dictionary for any substitutions
-           to make after the value is extracted from ``cache_dict``.
+        - ``subs_dict`` -- (optional) a dictionary for any substitutions
+          to make after the value is extracted from ``cache_dict``
 
         EXAMPLES::
 
@@ -2132,35 +2132,35 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        -  ``n`` -- an integer, the homogeneous component of
-           symmetric functions for which we want to a morphism's inverse
+        - ``n`` -- integer, the homogeneous component of
+          symmetric functions for which we want to a morphism's inverse
 
-        -  ``base_ring`` -- the base ring being worked over
+        - ``base_ring`` -- the base ring being worked over
 
-        -  ``self_to_other_cache`` -- a dictionary which
-           stores the transition from ``self`` to ``other``
+        - ``self_to_other_cache`` -- dictionary which
+          stores the transition from ``self`` to ``other``
 
-        -  ``other_to_self_cache`` -- a dictionary which
-           stores the transition from ``other`` to ``self``
+        - ``other_to_self_cache`` -- dictionary which
+          stores the transition from ``other`` to ``self``
 
-        -  ``to_other_function`` -- a function which takes in
-           a partition and returns a function which gives the coefficients of
-           ``self(part)`` in the ``other`` basis
+        - ``to_other_function`` -- a function which takes in
+          a partition and returns a function which gives the coefficients of
+          ``self(part)`` in the ``other`` basis
 
-        -  ``to_self_function`` -- a function which takes in a
-           partition and returns a function which gives the coefficients of
-           ``other(part)`` in ``self``
+        - ``to_self_function`` -- a function which takes in a
+          partition and returns a function which gives the coefficients of
+          ``other(part)`` in ``self``
 
-        -  ``upper_triangular`` -- boolean; if ``True``, the
-           inverse will be computed by back substitution
+        - ``upper_triangular`` -- boolean; if ``True``, the
+          inverse will be computed by back substitution
 
-        -  ``lower_triangular`` -- boolean; if ``True``, the
-           inverse will be computed by forward substitution
+        - ``lower_triangular`` -- boolean; if ``True``, the
+          inverse will be computed by forward substitution
 
-        -  ``ones_on_diagonal`` -- boolean; if ``True``, the
-           entries on the diagonal of the morphism (and inverse) matrix are
-           assumed to be ones. This is used to remove divisions from the
-           forward and back substitute algorithms.
+        - ``ones_on_diagonal`` -- boolean; if ``True``, the
+          entries on the diagonal of the morphism (and inverse) matrix are
+          assumed to be ones. This is used to remove divisions from the
+          forward and back substitute algorithms.
 
         OUTPUT:
 
@@ -2418,13 +2418,12 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         INPUT:
 
         - ``basis`` -- a basis of the ring of symmetric functions
-        - ``n`` -- a nonnegative integer
+        - ``n`` -- nonnegative integer
 
         OUTPUT:
 
-        - a matrix of coefficients giving the expansion of the
-          homogeneous degree-`n` elements of ``self`` in the
-          degree-`n` elements of ``basis``
+        A matrix of coefficients giving the expansion of the homogeneous
+        degree-`n` elements of ``self`` in the degree-`n` elements of ``basis``.
 
         EXAMPLES::
 
@@ -2633,12 +2632,12 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        -  ``k`` -- a positive integer
+        - ``k`` -- positive integer
 
-        -  ``g`` -- a symmetric function in the power sum basis
+        - ``g`` -- a symmetric function in the power sum basis
 
-        -  ``cache`` -- a dictionary whose keys are (k, g) pairs
-           and values are the cached output of this function
+        - ``cache`` -- dictionary whose keys are (k, g) pairs
+          and values are the cached output of this function
 
         EXAMPLES::
 
@@ -2881,7 +2880,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``ps`` -- a string specifying the printing style
+        - ``ps`` -- string specifying the printing style
 
         EXAMPLES::
 
@@ -3245,12 +3244,12 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        -  ``x`` -- a symmetric function over the same base ring as
-           ``self``
-        -  ``include`` -- list of variables to be treated as
-           degree one elements instead of the default degree one elements
-        -  ``exclude`` -- list of variables to be excluded
-           from the default degree one elements
+        - ``x`` -- a symmetric function over the same base ring as
+          ``self``
+        - ``include`` -- list of variables to be treated as
+          degree one elements instead of the default degree one elements
+        - ``exclude`` -- list of variables to be excluded
+          from the default degree one elements
 
         OUTPUT:
 
@@ -5150,7 +5149,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         OUTPUT:
 
@@ -5315,7 +5314,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         OUTPUT:
 
@@ -5514,7 +5513,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
           selecting only certain terms (namely, only the items failing
           the condition are being expanded)
 
-        - ``n`` -- a nonnegative integer
+        - ``n`` -- nonnegative integer
 
         - ``alphabet`` -- (default: ``'x'``) a variable for the expansion
 
@@ -5747,7 +5746,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``n`` -- a nonnegative integer
+        - ``n`` -- nonnegative integer
 
         - ``alphabet`` -- (default: ``'x'``) a variable for the expansion
 
@@ -5993,7 +5992,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``n`` -- a nonnegative integer to interpret ``self`` as
+        - ``n`` -- nonnegative integer to interpret ``self`` as
           a character of `GL_n`
 
         OUTPUT: a symmetric function of degree ``n``

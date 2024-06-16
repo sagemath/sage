@@ -280,7 +280,7 @@ def _mutation_class_iter( dg, n, m, depth=infinity, return_dig6=False, show_dept
     INPUT:
 
     - ``dg`` -- a digraph with `n+m` vertices
-    - ``depth`` -- a positive integer or infinity specifying (roughly) how many
+    - ``depth`` -- positive integer or infinity specifying (roughly) how many
       steps away from the initial seed to mutate
     - ``return_dig6`` -- indicates whether to convert digraph data to dig6
       string data

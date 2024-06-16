@@ -191,7 +191,7 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
         INPUT:
 
         - ``self`` -- a basis determined by an orthotriangular definition
-        - ``n`` -- a nonnegative integer
+        - ``n`` -- nonnegative integer
 
         EXAMPLES::
 

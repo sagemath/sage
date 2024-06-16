@@ -364,7 +364,7 @@ def Poset(data=None, element_labels=None, cover_relations=False, linear_extensio
       6. A previously constructed poset (the poset itself is returned).
 
     - ``element_labels`` -- (default: ``None``); an optional list or
-      dictionary of objects that label the poset elements.
+      dictionary of objects that label the poset elements
 
     - ``cover_relations`` -- boolean (default: ``False``); whether the
       data can be assumed to describe a directed acyclic graph whose
@@ -817,7 +817,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         :class:`~sage.combinat.posets.posets.FinitePoset`, itself built with
         ``facade = False``)
 
-    - ``key`` -- any hashable value (default: ``None``).
+    - ``key`` -- any hashable value (default: ``None``)
 
     EXAMPLES::
 
@@ -1739,7 +1739,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         Given an element `a` in a poset `P`, the `a`-spectrum is the list of
         integers whose `i`-th term contains the number of linear extensions of
-        `P` with element `a` located in the i-th position.
+        `P` with element `a` located in the `i`-th position.
 
         INPUT:
 
@@ -1747,9 +1747,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         - ``a`` -- an element of the poset
 
-        OUTPUT:
-
-        The `a`-spectrum of this poset, returned as a list.
+        OUTPUT: the `a`-spectrum of this poset, returned as a list
 
         EXAMPLES::
 
@@ -1907,7 +1905,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         - Options to change element look:
 
-          * ``element_colors`` -- a dictionary where keys are colors and values
+          * ``element_colors`` -- dictionary where keys are colors and values
             are lists of elements
           * ``element_color`` -- a color for elements not set in
             ``element_colors``
@@ -1921,13 +1919,13 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         - Options to change cover relation look:
 
-          * ``cover_colors`` -- a dictionary where keys are colors and values
+          * ``cover_colors`` -- dictionary where keys are colors and values
             are lists of cover relations given as pairs of elements
           * ``cover_color`` -- a color for elements not set in
             ``cover_colors``
           * ``cover_style`` -- style for cover relations: ``'solid'``,
             ``'dashed'``, ``'dotted'`` or ``'dashdot'``
-          * ``cover_labels`` -- a dictionary, list or function representing
+          * ``cover_labels`` -- dictionary, list or function representing
             labels of the covers of the poset. When set to ``None`` (default)
             no label is displayed on the edges of the Hasse Diagram.
           * ``cover_labels_background`` -- a background color for cover
@@ -2113,10 +2111,9 @@ class FinitePoset(UniqueRepresentation, Parent):
         - ``label_elements`` -- boolean (default: ``True``); whether to display
           element labels
 
-        - ``element_labels`` -- (default: ``None``) a dictionary of
-          element labels
+        - ``element_labels`` -- dictionary (default: ``None``) of element labels
 
-        - ``cover_labels`` -- a dictionary, list or function representing labels
+        - ``cover_labels`` -- dictionary, list or function representing labels
           of the covers of ``self``; when set to ``None`` (default) no label is
           displayed on the edges of the Hasse Diagram
 
@@ -3529,7 +3526,7 @@ class FinitePoset(UniqueRepresentation, Parent):
           integer (the dimension) or a certificate, i.e. a smallest set of
           linear extensions
 
-        - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear Programming
+        - ``solver`` -- (default: ``None``) specify a Mixed Integer Linear Programming
           (MILP) solver to be used. If set to ``None``, the default one is used. For
           more information on MILP solvers and which default solver is used, see
           the method
@@ -4718,8 +4715,8 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-         - ``element_constructor`` -- a function taking an iterable as
-           argument (default: ``list``)
+        - ``element_constructor`` -- a function taking an iterable as
+          argument (default: ``list``)
 
         OUTPUT:
 

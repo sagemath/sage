@@ -511,9 +511,9 @@ class CartanTypeFactory(SageObject):
           and rank is an integer or a pair of integers
 
         - ``[letter, rank, twist]`` -- letter is one of 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'BC'
-           and rank and twist are integers
+          and rank and twist are integers
 
-        - ``str`` -- a string
+        - ``str`` -- string
 
         - ``object`` -- a Cartan type, or an object with a Cartan type method
 

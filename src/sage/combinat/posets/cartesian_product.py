@@ -25,12 +25,11 @@ class CartesianProductPoset(CartesianProduct):
 
     INPUT:
 
-    - ``sets`` -- a tuple of parents
+    - ``sets`` -- tuple of parents
 
-    - ``category`` -- a subcategory of
-      ``Sets().CartesianProducts() & Posets()``
+    - ``category`` -- a subcategory of ``Sets().CartesianProducts() & Posets()``
 
-    - ``order`` -- a string or function specifying an order less or equal;
+    - ``order`` -- string or function specifying an order less or equal;
       it can be one of the following:
 
       - ``'native'`` -- elements are ordered by their native ordering,

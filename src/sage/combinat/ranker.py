@@ -26,7 +26,7 @@ def from_list(l):
 
     INPUT:
 
-    -  ``l`` -- list
+    - ``l`` -- list
 
     OUTPUT: ``[rank, unrank]`` -- functions
 

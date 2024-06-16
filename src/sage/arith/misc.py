@@ -967,7 +967,7 @@ def eratosthenes(n):
 
     INPUT:
 
-    - ``n`` -- a positive integer
+    - ``n`` -- positive integer
 
     OUTPUT: list of primes less than or equal to `n`
 
@@ -2459,9 +2459,9 @@ def trial_division(n, bound=None):
 
     INPUT:
 
-    - ``n`` -- a positive integer
+    - ``n`` -- positive integer
 
-    - ``bound`` -- (optional) a positive integer
+    - ``bound`` -- (optional) positive integer
 
     OUTPUT: a prime ``p=bound`` that divides `n`, or `n` if
     there is no such prime
@@ -2523,12 +2523,12 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
 
     INPUT:
 
-    - ``n`` -- a nonzero integer
+    - ``n`` -- nonzero integer
 
     - ``proof`` -- boolean or ``None`` (default: ``None``)
 
     - ``int_`` -- boolean (default: ``False``); whether to return
-       answers as Python integers
+      answers as Python integers
 
     - ``algorithm`` -- string
 
@@ -2540,8 +2540,8 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
        - ``'magma'`` -- use Magma (requires magma be installed)
 
     - ``verbose`` -- integer (default: 0); PARI's debug
-       variable is set to this; e.g., set to 4 or 8 to see lots of output
-       during factorization.
+      variable is set to this. E.g., set to 4 or 8 to see lots of output
+      during factorization.
 
     OUTPUT: factorization of `n`
 
@@ -3116,8 +3116,7 @@ class Euler_Phi:
 
         - ``rgbcolor`` -- default: (0,0,1)
 
-        - ``join`` -- boolean (default: ``True``); whether to join the
-           points
+        - ``join`` -- boolean (default: ``True``); whether to join the points
 
         - ``**kwds`` -- passed on
 
@@ -3150,7 +3149,7 @@ def carmichael_lambda(n):
 
     INPUT:
 
-    - ``n`` -- a positive integer
+    - ``n`` -- positive integer
 
     OUTPUT: the Carmichael function of ``n``
 
@@ -3538,7 +3537,7 @@ def CRT_basis(moduli):
     INPUT:
 
     - ``moduli`` -- list of pairwise coprime moduli `m` which admit an
-       extended Euclidean algorithm
+      extended Euclidean algorithm
 
     OUTPUT:
 
@@ -3588,7 +3587,7 @@ def CRT_vectors(X, moduli):
     INPUT:
 
     - ``X`` -- list or tuple, consisting of lists/tuples/vectors/etc of
-       integers of the same length
+      integers of the same length
     - ``moduli`` -- list of len(X) moduli
 
     OUTPUT:  ``list`` -- application of CRT componentwise
@@ -3633,7 +3632,7 @@ def binomial(x, m, **kwds):
     INPUT:
 
     - ``x``, ``m`` -- numbers or symbolic expressions; either ``m``
-       or ``x-m`` must be an integer
+      or ``x-m`` must be an integer
 
     OUTPUT: number or symbolic expression (if input is symbolic)
 
@@ -4268,7 +4267,7 @@ def primitive_root(n, check=True):
 
     INPUT:
 
-    - ``n`` -- a nonzero integer
+    - ``n`` -- nonzero integer
     - ``check`` -- boolean (default: ``True``); if ``False``, then `n` is assumed
       to be a positive integer possessing a primitive root, and behavior
       is undefined otherwise.
@@ -4384,7 +4383,7 @@ def nth_prime(n):
 
     INPUT:
 
-    - ``n`` -- a positive integer
+    - ``n`` -- positive integer
 
     OUTPUT: the `n`-th prime number
 
@@ -4727,7 +4726,7 @@ def number_of_divisors(n):
 
     INPUT:
 
-    - ``n`` -- a nonzero integer
+    - ``n`` -- nonzero integer
 
     OUTPUT: integer; the number of divisors of `n`
 
@@ -4765,7 +4764,7 @@ def hilbert_symbol(a, b, p, algorithm='pari'):
     - ``a``, ``b`` -- integers
 
     - ``p`` -- integer; either prime or -1 (which
-       represents the archimedean place)
+      represents the archimedean place)
 
     - ``algorithm`` -- string
 
@@ -5243,7 +5242,7 @@ def integer_floor(x):
     INPUT:
 
     - ``x`` -- an object that has a floor method or is
-       coercible to integer
+      coercible to integer
 
     OUTPUT: integer
 
@@ -5650,7 +5649,7 @@ def sum_of_k_squares(k, n):
 
     INPUT:
 
-    - ``k`` -- a nonnegative integer
+    - ``k`` -- nonnegative integer
 
     - ``n`` -- integer
 
@@ -6289,7 +6288,7 @@ def dedekind_psi(N):
 
     INPUT:
 
-    - ``N`` -- a positive integer
+    - ``N`` -- positive integer
 
     OUTPUT: integer
 

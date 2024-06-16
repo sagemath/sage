@@ -1049,7 +1049,7 @@ def hadamard_matrix_cooper_wallis_construction(x1, x2, x3, x4, A, B, C, D, check
     - ``C`` -- the matrix described above
     - ``D`` -- the matrix described above
     - ``check`` -- boolean (default: ``True``); if ``True``, check that the resulting
-      matrix is Hadamard before returing it.
+      matrix is Hadamard before returing it
 
     EXAMPLES::
 
@@ -1126,7 +1126,7 @@ def hadamard_matrix_cooper_wallis_smallcases(n, check=True, existence=False):
     - ``check`` -- boolean (default: ``True``); if ``True``, check that the matrix
       is a Hadamard matrix before returning
     - ``existence`` -- boolean (default: ``False``); if ``True``, only check if
-      the matrix exists.
+      the matrix exists
 
     OUTPUT:
 

@@ -3663,7 +3663,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
 
         INPUT:
 
-        - ``tij`` -- a transposition represented as a pair `(i, j)`.
+        - ``tij`` -- a transposition represented as a pair `(i, j)`
 
         OUTPUT: ``self`` after it has been modified by the action of the transposition ``tij``
 
@@ -4470,7 +4470,7 @@ class StrongTableaux(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``transeq`` -- a sequence of transpositions `t_{ij}` (a list of pairs).
+        - ``transeq`` -- a sequence of transpositions `t_{ij}` (a list of pairs)
         - ``emptyTableau`` -- (default: ``[]``) an empty list or a skew strong tableau
           possibly consisting of ``None`` entries
 

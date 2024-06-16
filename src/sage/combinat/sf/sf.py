@@ -1339,7 +1339,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``k`` -- a positive integer indicating the level
+        - ``k`` -- positive integer indicating the level
         - ``t`` -- a parameter (default: `t`)
 
         LLT polynomials in `hspin` and `hcospin` bases.
@@ -1470,7 +1470,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``k`` -- a positive integer
+        - ``k`` -- positive integer
         - ``t`` -- a formal parameter; `t=1` yields a subring
 
         The subspace of the ring of symmetric functions spanned by
@@ -1560,7 +1560,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``k`` -- a positive integer
+        - ``k`` -- positive integer
 
         The quotient of the ring of symmetric functions ...
 
@@ -1591,7 +1591,7 @@ class SymmetricaConversionOnBasis:
         INPUT:
 
         - ``t`` -- a function taking a monomial in CombinatorialFreeModule(QQ, Partitions()),
-           and returning a (partition, coefficient) list.
+          and returning a (partition, coefficient) list
 
         - ``domain``, ``codomain`` -- parents
 

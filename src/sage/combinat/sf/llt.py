@@ -116,7 +116,7 @@ class LLT_class(UniqueRepresentation):
         INPUT:
 
         - ``self`` -- a family of LLT symmetric function bases
-        - ``k`` -- a positive integer (the level)
+        - ``k`` -- positive integer (the level)
         - ``t`` -- a parameter (default: `t`)
 
         EXAMPLES::
@@ -595,7 +595,7 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
         INPUT:
 
         - ``self`` -- an instance of the LLT hspin or hcospin basis
-        - ``n`` -- a positive integer representing the degree
+        - ``n`` -- positive integer representing the degree
 
         EXAMPLES::
 

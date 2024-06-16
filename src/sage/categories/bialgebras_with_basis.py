@@ -156,7 +156,7 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             INPUT:
 
-            - ``n`` -- a nonnegative integer
+            - ``n`` -- nonnegative integer
 
             OUTPUT: the image of ``self`` under the convolution power `\mathrm{Id}^{*n}`
 

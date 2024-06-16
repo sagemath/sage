@@ -164,7 +164,7 @@ def KirillovReshetikhinCrystal(cartan_type, r, s, model='KN'):
 
     - ``r`` -- a label of finite Dynkin diagram
 
-    - ``s`` -- a positive integer
+    - ``s`` -- positive integer
 
     - ``model`` -- (default: ``'KN'``) can be one of the following:
 

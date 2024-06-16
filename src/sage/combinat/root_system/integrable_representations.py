@@ -466,7 +466,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
 
         INPUT:
 
-        - ``n`` -- a tuple representing a weight
+        - ``n`` -- tuple representing a weight
 
         EXAMPLES::
 
@@ -821,7 +821,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
 
         INPUT:
 
-        - ``n`` -- a tuple representing a weight `\mu`
+        - ``n`` -- tuple representing a weight `\mu`
 
         EXAMPLES::
 
@@ -1032,7 +1032,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         OPTIONAL:
 
         - ``mu`` -- a weight, or alternatively,
-        - ``n`` -- a tuple representing a weight `\mu`
+        - ``n`` -- tuple representing a weight `\mu`
 
         If no optional parameter is specified, this returns `m_\Lambda`.
         If ``mu`` is specified, it returns `m_{\Lambda,\mu}`. You may
@@ -1082,7 +1082,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
 
         - ``i`` -- (default: 0) an element of the index set
         - ``weyl_character_ring`` -- a WeylCharacterRing
-        - ``sequence`` -- a dictionary
+        - ``sequence`` -- dictionary
         - ``depth`` -- (default: 5) an upper bound for `k` determining
           how many terms to give
 

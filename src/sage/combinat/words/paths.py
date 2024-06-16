@@ -1994,7 +1994,7 @@ class FiniteWordPath_3d(FiniteWordPath_all):
         - ``startpoint`` -- (boolean, default: ``True``), draw the start point?
 
         - ``startoptions`` -- (dict, default:dict(rgbcolor='red',size=10))
-           options for the start point drawing
+          options for the start point drawing
 
         EXAMPLES::
 

@@ -446,7 +446,7 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
             INPUT:
 
             - ``other`` -- a basis in the ring of symmetric functions
-            - ``n`` -- a positive integer
+            - ``n`` -- positive integer
 
             The entry in the `i^{th}` row and `j^{th}` column is the
             coefficient obtained by writing the `i^{th}` element of the
@@ -671,7 +671,7 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
 
             INPUT:
 
-            -  ``nu`` -- a partition or a list of integers
+            - ``nu`` -- a partition or a list of integers
 
             - ``t`` -- (default: ``None``, in which case ``t`` is used) an
               element of the base ring
@@ -1485,7 +1485,7 @@ class K_kSchur(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``r`` -- a positive integer
+        - ``r`` -- positive integer
 
         OUTPUT: an element of the affine zero Hecke algebra
 

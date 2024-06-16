@@ -50,7 +50,7 @@ def krawtchouk(n, q, l, x, check=True):
 
     - ``n``, ``q``, ``x`` -- arbitrary numbers
 
-    - ``l`` -- a nonnegative integer
+    - ``l`` -- nonnegative integer
 
     - ``check`` -- check the input for correctness. ``True`` by
       default. Otherwise, pass it as it is. Use ``check=False`` at
@@ -135,7 +135,7 @@ def eberlein(n, w, k, u, check=True):
 
     - ``w``, ``k``, ``x`` -- arbitrary numbers
 
-    - ``n`` -- a nonnegative integer
+    - ``n`` -- nonnegative integer
 
     - ``check`` -- check the input for correctness. ``True`` by
       default. Otherwise, pass it as it is. Use ``check=False`` at

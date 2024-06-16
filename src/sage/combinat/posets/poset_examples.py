@@ -613,7 +613,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         EXAMPLES::
 
@@ -937,7 +937,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         EXAMPLES::
 
@@ -1454,7 +1454,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         EXAMPLES::
 
@@ -1578,7 +1578,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         EXAMPLES::
 
@@ -1603,7 +1603,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         A permutation `u = u_1 \cdots u_n` contains the pattern
         `v = v_1 \cdots v_m` if there is a (not necessarily consecutive)
@@ -1801,7 +1801,7 @@ class Posets(metaclass=ClasscallMetaclass):
         INPUT:
 
         - ``ribbon`` -- a finite poset that is a ribbon
-        - ``hangers`` -- a dictionary mapping an element on the ribbon
+        - ``hangers`` -- dictionary mapping an element on the ribbon
           to a list of d-complete posets that it covers
         - ``anchor`` -- (optional) a ``tuple`` (``ribbon_elmt``,
           ``anchor_elmt``, ``anchor_poset``), where ``anchor_elmt`` covers

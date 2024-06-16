@@ -3145,7 +3145,7 @@ cdef class BinaryCodeClassifier:
         INPUT:
 
         - ``CC`` -- a BinaryCode object
-        - ``verbosity`` -- a nonnegative integer
+        - ``verbosity`` -- nonnegative integer
 
         OUTPUT:
             a tuple, (gens, labeling, size, base)

@@ -39,7 +39,7 @@ class FusionRing(WeylCharacterRing):
     INPUT:
 
     - ``ct`` -- the Cartan type of a simple (finite-dimensional) Lie algebra
-    - ``k`` -- a nonnegative integer
+    - ``k`` -- nonnegative integer
     - ``conjugate`` -- (default: ``False``) set ``True`` to obtain
       the complex conjugate ring
     - ``cyclotomic_order`` -- (default: computed depending on ``ct`` and ``k``)
@@ -1276,7 +1276,7 @@ class FusionRing(WeylCharacterRing):
 
         - ``fusing_anyon`` -- a basis element of ``self``
         - ``total_charge_anyon`` -- a basis element of ``self``
-        - ``n_strands`` -- a positive integer greater than 2
+        - ``n_strands`` -- positive integer greater than 2
         - ``checkpoint`` -- boolean (default: ``False``);
           whether the F-matrix solver should pickle checkpoints
         - ``save_results`` -- (optional) a string indicating the name of

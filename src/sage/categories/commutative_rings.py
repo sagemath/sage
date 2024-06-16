@@ -274,7 +274,7 @@ class CommutativeRings(CategoryWithAxiom):
 
             INPUT:
 
-            - ``n`` -- a nonnegative integer (default: 1)
+            - ``n`` -- nonnegative integer (default: 1)
 
             OUTPUT:
 

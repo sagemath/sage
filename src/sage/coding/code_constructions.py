@@ -441,7 +441,7 @@ def ExtendedQuadraticResidueCode(n,F):
     - ``n`` -- an odd prime
 
     - ``F`` -- a finite prime field whose order must be a
-       quadratic residue modulo `n`
+      quadratic residue modulo `n`
 
     OUTPUT: an extended quadratic residue code
 
@@ -508,7 +508,7 @@ def QuadraticResidueCode(n,F):
     - ``n`` -- an odd prime
 
     - ``F`` -- a finite prime field whose order must be a
-       quadratic residue modulo `n`
+      quadratic residue modulo `n`
 
     OUTPUT: a quadratic residue code
 
@@ -711,7 +711,7 @@ def ToricCode(P,F):
     INPUT:
 
     - ``P`` -- all the integer lattice points in a polytope
-       defining the toric variety
+      defining the toric variety
 
     - ``F`` -- a finite field
 

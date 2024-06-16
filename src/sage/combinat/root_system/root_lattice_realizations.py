@@ -1052,7 +1052,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             - ``restricted`` -- boolean (default: ``False``); if ``True``, only
               non-simple roots are considered.
             - ``facade`` -- boolean (default: ``False``); passes facade option
-              to the poset generator.
+              to the poset generator
 
             EXAMPLES::
 

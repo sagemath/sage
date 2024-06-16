@@ -123,7 +123,7 @@ class ProductSpeciesStructure(GenericSpeciesStructure):
 
         INPUT:
 
-        - ``labels`` -- a list of labels
+        - ``labels`` -- list of labels
 
         OUTPUT:
 

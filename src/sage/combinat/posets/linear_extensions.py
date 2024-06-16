@@ -320,7 +320,7 @@ class LinearExtensionOfPoset(ClonableArray,
 
         INPUT:
 
-        - ``i`` -- an integer between `1` and `n-1`, where `n` is the
+        - ``i`` -- integer between `1` and `n-1`, where `n` is the
           cardinality of the poset
 
         The operator `\tau_i` on a linear extension `\pi` of a poset

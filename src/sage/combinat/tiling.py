@@ -1142,7 +1142,7 @@ class Polyomino(SageObject):
         - ``box`` -- polyomino or tuple of integers (size of a box)
 
         - ``orientation_preserving`` -- boolean (default: ``True``);
-          If ``True``, the group of isometries of the `n`-cube is restricted
+          if ``True``, the group of isometries of the `n`-cube is restricted
           to those that preserve the orientation, i.e. of determinant 1.
 
         - ``mod_box_isometries`` -- boolean (default: ``False``); whether to
@@ -1697,7 +1697,7 @@ class TilingSolver(SageObject):
         r"""
         Return a dictionary mapping coordinates to integers.
 
-        OUTPUT: dict
+        OUTPUT: dictionary
 
         EXAMPLES::
 
@@ -2369,7 +2369,7 @@ class TilingSolver(SageObject):
           to the center of each polyomino.
 
         - ``axes`` -- boolean (default: ``False``); whether the x and
-          y axes are shown.
+          y axes are shown
 
         EXAMPLES::
 

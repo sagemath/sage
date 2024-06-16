@@ -774,7 +774,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                 INPUT:
 
-                - ``n`` -- a positive integer
+                - ``n`` -- positive integer
 
                 OUTPUT:
 
@@ -1913,20 +1913,18 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             def expand(self, n, alphabet='x'):
                 r"""
                 Expand the noncommutative symmetric function into an
-                element of a free algebra in ``n`` indeterminates of
+                element of a free algebra in `n` indeterminates of
                 an alphabet, which by default is ``'x'``.
 
                 INPUT:
 
-                - ``n`` -- a nonnegative integer; the number of variables
+                - ``n`` -- nonnegative integer; the number of variables
                   in the expansion
                 - ``alphabet`` -- (default: ``'x'``); the alphabet in
                   which ``self`` is to be expanded
 
-                OUTPUT:
-
-                - An expansion of ``self`` into the ``n`` variables
-                  specified by ``alphabet``.
+                OUTPUT: an expansion of ``self`` into the `n` variables
+                specified by ``alphabet``
 
                 EXAMPLES::
 
@@ -2340,12 +2338,10 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                 INPUT:
 
-                - ``i`` -- a positive integer
+                - ``i`` -- positive integer
 
-                OUTPUT:
-
-                - The result of applying the coproduct to the `i^{th}`
-                  generator of ``self``.
+                OUTPUT: the result of applying the coproduct to the `i^{th}`
+                generator of ``self``
 
                 EXAMPLES::
 
@@ -2430,13 +2426,13 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                 INPUT:
 
-                - ``i`` -- a positive integer
+                - ``i`` -- positive integer
 
                 OUTPUT:
 
-                - The image of the `i`-th generator of the multiplicative
-                  basis ``self`` under the antipode of the algebra of
-                  non-commutative symmetric functions.
+                The image of the `i`-th generator of the multiplicative basis
+                ``self`` under the antipode of the algebra of non-commutative
+                symmetric functions.
 
                 EXAMPLES::
 
@@ -2462,12 +2458,10 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                 INPUT:
 
-                - ``i`` -- a positive integer
+                - ``i`` -- positive integer
 
-                OUTPUT:
-
-                - The result of applying the coproduct to the
-                  `i^{th}` generator of ``self``.
+                OUTPUT: the result of applying the coproduct to the
+                `i^{th}` generator of ``self``
 
                 EXAMPLES::
 
@@ -2755,7 +2749,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                 INPUT:
 
-                - ``n`` -- a positive integer
+                - ``n`` -- positive integer
 
                 OUTPUT:
 
@@ -3329,7 +3323,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                 INPUT:
 
-                - ``n`` -- a positive integer
+                - ``n`` -- positive integer
 
                 OUTPUT:
 
@@ -3656,12 +3650,10 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``n`` -- a positive integer
+            - ``n`` -- positive integer
 
-            OUTPUT:
-
-            - The expansion of the complete generator indexed by ``n`` into the
-              Psi basis.
+            OUTPUT: the expansion of the complete generator indexed by ``n``
+            into the Psi basis
 
             TESTS::
 
@@ -3696,12 +3688,10 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``n`` -- a positive integer
+            - ``n`` -- positive integer
 
-            OUTPUT:
-
-            - The expansion of the `\Psi` function indexed by ``n`` in the
-              complete basis.
+            OUTPUT: the expansion of the `\Psi` function indexed by ``n`` in
+            the complete basis
 
             TESTS::
 
@@ -3970,7 +3960,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                 INPUT:
 
-                - ``n`` -- a positive integer
+                - ``n`` -- positive integer
 
                 OUTPUT:
 
@@ -4102,12 +4092,10 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``n`` -- a positive integer
+            - ``n`` -- positive integer
 
-            OUTPUT:
-
-            - The expansion of the complete function indexed by ``n`` in the
-              `\Phi` basis.
+            OUTPUT: the expansion of the complete function indexed by ``n`` in
+            the `\Phi` basis
 
             TESTS::
 
@@ -4132,12 +4120,10 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``n`` -- a positive integer
+            - ``n`` -- positive integer
 
-            OUTPUT:
-
-            - The expansion of the `\Phi` function indexed by ``n`` in the
-              complete basis.
+            OUTPUT: the expansion of the `\Phi` function indexed by ``n`` in
+            the complete basis
 
             TESTS::
 
@@ -4230,7 +4216,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                 INPUT:
 
-                - ``n`` -- a positive integer
+                - ``n`` -- positive integer
 
                 OUTPUT:
 
@@ -5389,7 +5375,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``n`` -- a positive integer
+            - ``n`` -- positive integer
 
             OUTPUT:
 
@@ -5565,7 +5551,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``n`` -- a positive integer
+            - ``n`` -- positive integer
 
             OUTPUT:
 

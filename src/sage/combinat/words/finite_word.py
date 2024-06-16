@@ -1187,7 +1187,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        -  ``n`` -- an integer, or ``None``.
+        - ``n`` -- integer or ``None``
         - ``algorithm`` -- string (default: ``'suffix tree'``), takes the
           following values:
 
@@ -1349,7 +1349,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``n`` -- integer or ``None`` (default: ``None``).
+        - ``n`` -- integer or ``None`` (default: ``None``)
         - ``algorithm`` -- string (default: ``'suffix tree'``), takes the
           following values:
 
@@ -1440,7 +1440,7 @@ class FiniteWord_class(Word_class):
         INPUT:
 
         - ``self`` -- a word defined over a finite alphabet
-        -  ``n`` -- positive integer
+        - ``n`` -- positive integer
 
         OUTPUT: real number (a symbolic expression)
 
@@ -1577,7 +1577,7 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``n`` -- a nonnegative integer; every vertex of a reduced
+        - ``n`` -- nonnegative integer; every vertex of a reduced
           Rauzy graph of order ``n`` is a factor of length ``n`` of ``self``
 
         OUTPUT: a looped multi-digraph
@@ -2940,8 +2940,8 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``. It must
-          be callable on letters as well as words (e.g. ``WordMorphism``).
+        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g. ``WordMorphism``).
 
         OUTPUT: a set -- If ``f`` is ``None``, the set of all palindromic
         factors of ``self``; otherwise, the set of all ``f``-palindromic
@@ -3132,8 +3132,8 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``. It must
-          be callable on letters as well as words (e.g. ``WordMorphism``).
+        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g. ``WordMorphism``)
 
         OUTPUT:
 
@@ -3199,8 +3199,8 @@ class FiniteWord_class(Word_class):
         - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``) the
           direction of the  closure
 
-        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``.
-          It must be callable on letters as well as words (e.g. ``WordMorphism``).
+        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g. ``WordMorphism``)
 
         OUTPUT:
 
@@ -3275,8 +3275,8 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``. It must
-          be callable on letters as well as words (e.g. ``WordMorphism``).
+        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g. ``WordMorphism``)
 
         EXAMPLES::
 
@@ -3991,8 +3991,8 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        -  ``weights`` -- list or a tuple, or a dictionary keyed by the
-           letters occurring in ``self``
+        - ``weights`` -- list or tuple, or dictionary keyed by the
+          letters occurring in ``self``
 
         EXAMPLES::
 
@@ -4314,7 +4314,7 @@ class FiniteWord_class(Word_class):
         - ``sub`` -- string, list, tuple or word to search for
 
         - ``start`` -- nonnegative integer (default: ``0``); specifying
-          the position at which the search must stop.
+          the position at which the search must stop
 
         - ``end`` -- nonnegative integer (default: ``None``); specifying
           the position from which to start the search. If ``None``, then
@@ -4966,14 +4966,14 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        -  ``other`` -- word on the same alphabet as ``self``
-        -  ``delay`` -- integer (default: ``0``)
-        -  ``p`` -- disjoint sets data structure (default: ``None``),
-           a partition of the alphabet into disjoint sets to start with.
-           If ``None``, each letter start in distinct equivalence classes.
-        -  ``involution`` -- callable (default: ``None``); an
-           involution on the alphabet. If ``involution`` is not ``None``, the relation
-           `R_{u,v,d} \cup R_{involution(u),involution(v),d}` is considered.
+        - ``other`` -- word on the same alphabet as ``self``
+        - ``delay`` -- integer (default: ``0``)
+        - ``p`` -- disjoint sets data structure (default: ``None``),
+          a partition of the alphabet into disjoint sets to start with.
+          If ``None``, each letter start in distinct equivalence classes.
+        - ``involution`` -- callable (default: ``None``); an
+          involution on the alphabet. If ``involution`` is not ``None``, the relation
+          `R_{u,v,d} \cup R_{involution(u),involution(v),d}` is considered.
 
         OUTPUT: a disjoint set data structure
 
@@ -5443,8 +5443,8 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``.
-          It must be callable on letters as well as words (e.g. ``WordMorphism``).
+        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g. ``WordMorphism``)
 
         OUTPUT: word -- the left iterated ``f``-palindromic closure of ``self``
 
@@ -6165,8 +6165,8 @@ class FiniteWord_class(Word_class):
 
         INPUT:
 
-        -  ``other`` -- finite word
-        -  ``overlap`` -- (default: ``0``) integer or ``True``
+        - ``other`` -- finite word
+        - ``overlap`` -- (default: ``0``) integer or ``True``
 
         OUTPUT: combinatorial class of shuffle product of ``self`` and ``other``
 

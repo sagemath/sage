@@ -554,7 +554,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             - ``c`` -- a Coxeter element of ``self`` (as a tuple, or
               as an element of ``self``)
 
-            - ``m`` -- a positive integer (default: 1)
+            - ``m`` -- positive integer (default: 1)
 
             - ``on_roots`` -- boolean (default: ``False``); if
               ``on_roots`` is ``True``, the lattice is realized on

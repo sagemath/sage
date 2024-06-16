@@ -384,7 +384,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             OUTPUT: an element of the powersum basis
 
@@ -416,7 +416,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             OUTPUT: an element of the `\mathbf{cp}` basis
 
@@ -607,7 +607,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             OUTPUT:
 
@@ -681,7 +681,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             OUTPUT: an element of the tensor square of the `\mathbf{m}` basis
 
@@ -891,7 +891,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             OUTPUT: an element of the `\mathbf{m}` basis
 
@@ -918,7 +918,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             OUTPUT: an element of the `\mathbf{h}` basis
 
@@ -944,7 +944,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             OUTPUT: an element of the `\mathbf{p}` basis
 
@@ -1066,7 +1066,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             OUTPUT: an element of the `\mathbf{m}` basis
 
@@ -1092,7 +1092,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             OUTPUT: an element of the `\mathbf{e}` basis
 
@@ -1119,7 +1119,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             OUTPUT: an element of the `\mathbf{p}` basis
 
@@ -1259,7 +1259,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             OUTPUT: an element of the `\mathbf{m}` basis
 
@@ -1282,7 +1282,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             OUTPUT: an element of the `\mathbf{e}` basis
 
@@ -1308,7 +1308,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             OUTPUT: an element of the `\mathbf{h}` basis
 
@@ -1334,7 +1334,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             OUTPUT: an element of the `\mathbf{x}` basis
 
@@ -1357,7 +1357,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             OUTPUT:
 
@@ -1421,7 +1421,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             OUTPUT: an element of the tensor square of ``self``
 
@@ -1457,7 +1457,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             OUTPUT: an element in the basis ``self``
 
@@ -1519,7 +1519,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
             - ``i`` -- (default: 1) index in the base set for ``A`` specifying
               which set of primitives this belongs to
 
@@ -1651,7 +1651,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             OUTPUT: an element of the `\mathbf{m}` basis
 
@@ -1718,7 +1718,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             OUTPUT: an element of the `\mathbf{p}` basis
 
@@ -1844,7 +1844,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             OUTPUT: an element of the `\mathbf{m}` basis
 
@@ -1871,7 +1871,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             OUTPUT: an element of the `\rho` basis
 
@@ -1986,7 +1986,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             OUTPUT: an element of the `\mathbf{m}` basis
 
@@ -2051,7 +2051,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             OUTPUT: an element of the `\chi` basis
 

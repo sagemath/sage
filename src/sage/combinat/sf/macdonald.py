@@ -1129,7 +1129,7 @@ class MacdonaldPolynomials_j(MacdonaldPolynomials_generic):
         INPUT:
 
         - ``self`` -- a Macdonald `J` basis
-        - ``n`` -- a nonnegative integer
+        - ``n`` -- nonnegative integer
 
         EXAMPLES::
 
@@ -1785,7 +1785,7 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
         INPUT:
 
         - ``self`` -- a Macdonald `S` basis
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         EXAMPLES::
 
@@ -1814,8 +1814,7 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
             INPUT:
 
             - ``self`` -- an element of the Macdonald `S` basis
-            - ``k`` -- a positive integer at least as big as the
-              length of ``part``
+            - ``k`` -- positive integer at least as big as the length of ``part``
             - ``part`` -- a partition
 
             OUTPUT:
@@ -1868,7 +1867,7 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
             INPUT:
 
             - ``self`` -- an element of the Macdonald `S` basis
-            - ``k`` -- a positive integer
+            - ``k`` -- positive integer
 
             OUTPUT: the column adding operator on the `J` basis on ``self``
 
@@ -1896,7 +1895,7 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
             INPUT:
 
             - ``self`` -- an element of the Macdonald `S` basis
-            - ``k`` -- a positive integer
+            - ``k`` -- positive integer
 
             OUTPUT: the column adding operator on the `J` basis on ``self``
 

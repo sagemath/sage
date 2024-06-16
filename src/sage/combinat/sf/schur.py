@@ -232,7 +232,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
             INPUT:
 
             - ``self`` -- an element of the Schur symmetric function basis
-            - ``n`` -- a nonnegative integer
+            - ``n`` -- nonnegative integer
 
             OUTPUT: the ``n`-th power of an instance of ``self`` in the Schur basis
 
@@ -457,7 +457,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
 
             INPUT:
 
-            - ``n`` -- a positive integer
+            - ``n`` -- positive integer
 
             OUTPUT:
 
@@ -554,7 +554,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
 
             INPUT:
 
-            - ``n`` -- a nonnegative integer
+            - ``n`` -- nonnegative integer
 
             - ``alphabet`` -- (default: ``'x'``) a variable for the expansion
 
@@ -760,7 +760,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
             INPUT:
 
             - ``t`` -- (default: ``None``) the value to use for `t`;
-              the default is to create a ring of polynomials in ``t``.
+              the default is to create a ring of polynomials in ``t``
 
             - ``q`` -- (default: `1`) the value to use for `q`.  If
               ``q`` is ``None``, then a ring (or fraction field) of

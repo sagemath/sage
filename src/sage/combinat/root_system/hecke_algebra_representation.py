@@ -821,7 +821,7 @@ class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
         INPUT:
 
         - ``T`` -- a family `(T_i)_{i\in I}` implementing the action of
-          the generators of an affine Hecke algebra on ``self``.
+          the generators of an affine Hecke algebra on ``self``
 
         - ``T_Y`` -- a family `(T^Y_i)_{i\in I}` implementing the action
           of the generators of an affine Hecke algebra on ``self``. By

@@ -377,10 +377,10 @@ class WordGenerator:
 
         INPUT:
 
-        -  ``alphabet`` -- (default: (0, 1) ) any container that is suitable to
-           build an instance of OrderedAlphabet (list, tuple, str, ...)
+        - ``alphabet`` -- (default: ``(0, 1)``) any container that is suitable
+          to build an instance of OrderedAlphabet (list, tuple, str, ...)
 
-        -  ``base`` -- an integer (default: 2); greater than or equal to 2
+        - ``base`` -- integer (default: 2); greater than or equal to 2
 
         EXAMPLES:
 
@@ -495,11 +495,11 @@ class WordGenerator:
 
         INPUT:
 
-        -  ``alphabet`` -- any container of length two that is suitable to
-           build an instance of OrderedAlphabet (list, tuple, str, ...)
+        - ``alphabet`` -- any container of length two that is suitable to
+          build an instance of OrderedAlphabet (list, tuple, str, ...)
 
-        -  ``construction_method`` -- can be any of the following:
-           "recursive", "fixed point", "function" (see below for definitions).
+        - ``construction_method`` -- can be any of the following:
+          "recursive", "fixed point", "function" (see below for definitions)
 
         Recursive construction: the Fibonacci word is the limit of the
         following sequence of words: `S_0 = 0`, `S_1 = 01`,
@@ -625,11 +625,11 @@ class WordGenerator:
 
         INPUT:
 
-        -  ``morphism`` -- endomorphism prolongable on ``first_letter``. It
-           must be something that WordMorphism's constructor understands
-           (dict, str, ...).
+        - ``morphism`` -- endomorphism prolongable on ``first_letter``. It
+          must be something that WordMorphism's constructor understands
+          (dict, str, ...).
 
-        -  ``first_letter`` -- the first letter of the fixed point
+        - ``first_letter`` -- the first letter of the fixed point
 
         OUTPUT: the fixed point of the morphism beginning with ``first_letter``
 
@@ -744,19 +744,19 @@ class WordGenerator:
 
         INPUT:
 
-        -  ``slope`` -- the slope of the word. It can be one of the following:
+        - ``slope`` -- the slope of the word. It can be one of the following:
 
-           -  real number in `]0, 1[`
+          - real number in `]0, 1[`
 
-           -  iterable over the continued fraction expansion of a real
-              number in `]0, 1[`
+          - iterable over the continued fraction expansion of a real
+            number in `]0, 1[`
 
-        -  ``alphabet`` -- any container of length two that is suitable to
-           build an instance of OrderedAlphabet (list, tuple, str, ...)
+        - ``alphabet`` -- any container of length two that is suitable to
+          build an instance of OrderedAlphabet (list, tuple, str, ...)
 
-        -  ``bits`` -- integer (optional and considered only if ``slope`` is
-           a real number) the number of bits to consider when computing the
-           continued fraction.
+        - ``bits`` -- integer (optional and considered only if ``slope`` is
+          a real number); the number of bits to consider when computing the
+          continued fraction
 
         OUTPUT: word
 
@@ -987,8 +987,8 @@ class WordGenerator:
 
         INPUT:
 
-        -  ``alphabet`` -- (default: (1,2)) an iterable of two positive
-           integers
+        - ``alphabet`` -- (default: (1,2)) an iterable of two positive
+          integers
 
         OUTPUT: infinite word
 
@@ -1063,10 +1063,10 @@ class WordGenerator:
 
         INPUT:
 
-        -  ``a`` -- positive integer (default: 1), the first letter occurring
-           in the returned Kolakoski word.
-        -  ``b`` -- positive integer (default: 2), the second and last letter
-           occurring in the returned Kolakoski word.
+        - ``a`` -- positive integer (default: 1); the first letter occurring
+          in the returned Kolakoski word
+        - ``b`` -- positive integer (default: 2); the second and last letter
+          occurring in the returned Kolakoski word
 
         OUTPUT: iterator
 
@@ -1237,8 +1237,8 @@ class WordGenerator:
 
         INPUT:
 
-        -  ``directive_word`` -- an infinite word or a period of a periodic
-           infinite word
+        - ``directive_word`` -- an infinite word or a period of a periodic
+          infinite word
 
         EXAMPLES::
 
@@ -1283,9 +1283,9 @@ class WordGenerator:
 
         INPUT:
 
-        -  ``directive_word`` -- an infinite word or a finite word. If
-           directive_word is finite, then it is repeated to give
-           an infinite word.
+        - ``directive_word`` -- an infinite word or a finite word; if
+          directive_word is finite, then it is repeated to give
+          an infinite word
 
         TESTS::
 
@@ -1355,9 +1355,9 @@ class WordGenerator:
 
         - ``n`` -- integer; the length of the word
         - ``m`` -- integer (default: 2), the size of the output alphabet
-        -  ``alphabet`` -- (default: `\{0,1,...,m-1\}`) any container of
-           length m that is suitable to build an instance of
-           OrderedAlphabet (list, tuple, str, ...)
+        - ``alphabet`` -- (default: `\{0,1,...,m-1\}`) any container of
+          length m that is suitable to build an instance of
+          OrderedAlphabet (list, tuple, str, ...)
 
         EXAMPLES::
 
@@ -1406,9 +1406,8 @@ class WordGenerator:
 
         INPUT:
 
-        -  ``alphabet`` -- any container of length two that is
-           suitable to build an instance of OrderedAlphabet (list, tuple, str,
-           ...)
+        - ``alphabet`` -- any container of length two that is suitable to build
+          an instance of OrderedAlphabet (list, tuple, str, ...)
 
         EXAMPLES::
 

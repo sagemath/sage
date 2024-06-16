@@ -505,7 +505,7 @@ cdef class WordDatatype_char(WordDatatype):
 
         INPUT:
 
-        -  ``exp`` -- an integer, a rational, a float number or plus infinity
+        - ``exp`` -- integer, rational, float, or plus infinity
 
         TESTS::
 

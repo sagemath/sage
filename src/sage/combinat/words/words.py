@@ -445,7 +445,7 @@ class FiniteWords(AbstractLanguage):
 
         INPUT:
 
-        -  ``data`` -- word
+        - ``data`` -- word
 
         EXAMPLES::
 
@@ -508,10 +508,10 @@ class FiniteWords(AbstractLanguage):
 
         INPUT:
 
-        -  ``data`` -- callable
-        -  ``length`` -- integer or ``None`` or "infinite" or ``Infinity``
-        -  ``caching`` -- boolean (default: ``True``); whether to keep a cache
-           of the letters computed by the callable
+        - ``data`` -- callable
+        - ``length`` -- integer or ``None`` or "infinite" or ``Infinity``
+        - ``caching`` -- boolean (default: ``True``); whether to keep a cache
+          of the letters computed by the callable
 
         EXAMPLES::
 
@@ -533,12 +533,12 @@ class FiniteWords(AbstractLanguage):
 
         INPUT:
 
-        -  ``data`` -- iterable
+        - ``data`` -- iterable
 
-        -  ``length`` -- (optional) integer
+        - ``length`` -- (optional) integer
 
-        -  ``caching`` -- boolean (default: ``True``); whether to keep a cache
-           of the letters computed by the iterator
+        - ``caching`` -- boolean (default: ``True``); whether to keep a cache
+          of the letters computed by the iterator
 
         EXAMPLES::
 
@@ -561,24 +561,24 @@ class FiniteWords(AbstractLanguage):
 
         INPUT:
 
-        -  ``data`` -- (default: ``None``) list, string, tuple, iterator, ``None``
-           (shorthand for []), or a callable defined on [0,1,...,length]
+        - ``data`` -- (default: ``None``) list, string, tuple, iterator, ``None``
+          (shorthand for []), or a callable defined on [0,1,...,length]
 
-        -  ``length`` -- integer (default: ``None``); only used if the data is an iterator or
-           a callable. It determines the length of the word.
+        - ``length`` -- integer (default: ``None``); only used if the data is
+          an iterator or a callable. It determines the length of the word
 
-        -  ``datatype`` -- (default: ``None``) ``None``, "char", "list", "str",
-           "tuple", "iter", "callable" or "pickled_function"; if ``None``, then
-           the function tries to guess this from the data
+        - ``datatype`` -- (default: ``None``) ``None``, "char", "list", "str",
+          "tuple", "iter", "callable" or "pickled_function"; if ``None``, then
+          the function tries to guess this from the data
 
-        -  ``caching`` -- boolean (default: ``True``); whether to keep a cache
-           of the letters computed by an iterator or callable
+        - ``caching`` -- boolean (default: ``True``); whether to keep a cache
+          of the letters computed by an iterator or callable
 
-        -  ``check`` -- boolean (default: ``True``); whether to check if
-           the 40 first letters are in the parent alphabet. This is a
-           check done to test for small programming errors. Since we also
-           support infinite words, we cannot really implement a more
-           accurate check.
+        - ``check`` -- boolean (default: ``True``); whether to check if
+          the 40 first letters are in the parent alphabet. This is a
+          check done to test for small programming errors. Since we also
+          support infinite words, we cannot really implement a more
+          accurate check.
 
         .. NOTE::
 
@@ -996,8 +996,8 @@ class FiniteWords(AbstractLanguage):
 
         INPUT:
 
-        - ``length`` -- (optional) the length of the word. If not set, will use
-          a uniformly random number between 0 and 10.
+        - ``length`` -- (optional) the length of the word; if not set, will use
+          a uniformly random number between 0 and 10
 
         - all other argument are transmitted to the random generator of the
           alphabet
@@ -1030,23 +1030,23 @@ class FiniteWords(AbstractLanguage):
 
         INPUT:
 
-        - ``arg`` -- (default: ``None``) It can be one of the following:
+        - ``arg`` -- (default: ``None``) it can be one of the following:
 
           - ``None`` -- then the method iterates through all morphisms
 
-          - tuple `(a, b)` of two integers  -- It specifies the range
+          - tuple `(a, b)` of two integers -- it specifies the range
             ``range(a, b)`` of values to consider for the sum of the length
-            of the image of each letter in the alphabet.
+            of the image of each letter in the alphabet
 
-          - list of nonnegative integers -- The length of the list must be
-            equal to the size of the alphabet, and the i-th integer of
-            ``arg`` determines the length of the word mapped to by the i-th
-            letter of the (ordered) alphabet.
+          - list of nonnegative integers -- the length of the list must be
+            equal to the size of the alphabet, and the `i`-th integer of
+            ``arg`` determines the length of the word mapped to by the `i`-th
+            letter of the (ordered) alphabet
 
-        - ``codomain`` -- (default: ``None``) a combinatorial class of words.
-          By default, ``codomain`` is ``self``.
+        - ``codomain`` -- (default: ``None``) a combinatorial class of words;
+          by default, ``codomain`` is ``self``
 
-        - ``min_length`` -- (default: 1) nonnegative integer. If ``arg`` is
+        - ``min_length`` -- nonnegative integer (default: 1); if ``arg`` is
           not specified, then iterate through all the morphisms where the
           length of the images of each letter in the alphabet is at least
           ``min_length``. This is ignored if ``arg`` is a list.
@@ -1381,7 +1381,7 @@ class InfiniteWords(AbstractLanguage):
 
         INPUT:
 
-        -  ``data`` -- word
+        - ``data`` -- word
 
         EXAMPLES::
 
@@ -1427,10 +1427,10 @@ class InfiniteWords(AbstractLanguage):
 
         INPUT:
 
-        -  ``data`` -- callable
+        - ``data`` -- callable
 
-        -  ``caching`` -- boolean (default: ``True``); whether to keep a cache
-           of the letters computed by the callable
+        - ``caching`` -- boolean (default: ``True``); whether to keep a cache
+          of the letters computed by the callable
 
         EXAMPLES::
 
@@ -1450,10 +1450,10 @@ class InfiniteWords(AbstractLanguage):
 
         INPUT:
 
-        -  ``data`` -- iterable
+        - ``data`` -- iterable
 
-        -  ``caching`` -- boolean (default: ``True``); whether to keep a cache
-           of the letters computed by the iterator
+        - ``caching`` -- boolean (default: ``True``); whether to keep a cache
+          of the letters computed by the iterator
 
         EXAMPLES::
 
@@ -1471,20 +1471,20 @@ class InfiniteWords(AbstractLanguage):
 
         INPUT:
 
-        -  ``data`` -- iterator or a callable
+        - ``data`` -- iterator or a callable
 
-        -  ``datatype`` -- (default: ``None``) ``None``, "iter", "callable" or
-           "pickled_function". If ``None``, then the function tries to guess
-           this from the data.
+        - ``datatype`` -- (default: ``None``) ``None``, "iter", "callable" or
+          "pickled_function"; if ``None``, then the function tries to guess
+          this from the data
 
-        -  ``caching`` -- boolean (default: ``True``); whether to keep a
-           cache of the letters computed by an iterator or callable
+        - ``caching`` -- boolean (default: ``True``); whether to keep a
+          cache of the letters computed by an iterator or callable
 
-        -  ``check`` -- boolean (default: ``True``); whether to check if
-           the 40 first letters are in the parent alphabet. This is a
-           check done to test for small programming errors. Since we also
-           support infinite words, we cannot really implement a more
-           accurate check.
+        - ``check`` -- boolean (default: ``True``); whether to check if
+          the 40 first letters are in the parent alphabet. This is a
+          check done to test for small programming errors. Since we also
+          support infinite words, we cannot really implement a more
+          accurate check.
 
         .. NOTE::
 
@@ -1772,31 +1772,31 @@ class FiniteOrInfiniteWords(AbstractLanguage):
 
         INPUT:
 
-        -  ``data`` -- (default: ``None``) list, string, tuple, iterator, ``None``
-           (shorthand for []), or a callable defined on [0,1,...,length].
+        - ``data`` -- (default: ``None``) list, string, tuple, iterator, ``None``
+          (shorthand for []), or a callable defined on [0,1,...,length]
 
-        -  ``length`` -- (default: ``None``) this is dependent on the type of data.
-           It is ignored for words defined by lists, strings, tuples,
-           etc., because they have a naturally defined length.
-           For callables, this defines the domain of definition,
-           which is assumed to be [0, 1, 2, ..., length-1].
-           For iterators: Infinity if you know the iterator will not
-           terminate (default); "unknown" if you do not know whether the
-           iterator terminates; "finite" if you know that the iterator
-           terminates, but do not know the length.
+        - ``length`` -- (default: ``None``) this is dependent on the type of data.
+          It is ignored for words defined by lists, strings, tuples,
+          etc., because they have a naturally defined length.
+          For callables, this defines the domain of definition,
+          which is assumed to be [0, 1, 2, ..., length-1].
+          For iterators: Infinity if you know the iterator will not
+          terminate (default); "unknown" if you do not know whether the
+          iterator terminates; "finite" if you know that the iterator
+          terminates, but do not know the length.
 
-        -  ``datatype`` -- (default: ``None``) ``None``, "char", "list", "str",
-           "tuple", "iter", "callable" or "pickled_function". If ``None``, then
-           the function tries to guess this from the data.
+        - ``datatype`` -- (default: ``None``) ``None``, "char", "list", "str",
+          "tuple", "iter", "callable" or "pickled_function"; if ``None``, then
+          the function tries to guess this from the data.
 
-        -  ``caching`` -- boolean (default: ``True``); whether to keep a cache
-           of the letters computed by an iterator or callable
+        - ``caching`` -- boolean (default: ``True``); whether to keep a cache
+          of the letters computed by an iterator or callable
 
-        -  ``check`` -- boolean (default: ``True``); whether to check if
-           the 40 first letters are in the parent alphabet. This is a
-           check done to test for small programming errors. Since we also
-           support infinite words, we cannot really implement a more
-           accurate check.
+        - ``check`` -- boolean (default: ``True``); whether to check if
+          the 40 first letters are in the parent alphabet. This is a
+          check done to test for small programming errors. Since we also
+          support infinite words, we cannot really implement a more
+          accurate check.
 
         .. NOTE::
 
@@ -2073,9 +2073,9 @@ class Words_n(Parent):
         r"""
         INPUT:
 
-        - ``words`` -- a set of finite words
+        - ``words`` -- set of finite words
 
-        - ``n`` -- a nonnegative integer
+        - ``n`` -- nonnegative integer
 
         TESTS::
 

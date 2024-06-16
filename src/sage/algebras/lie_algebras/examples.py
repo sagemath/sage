@@ -323,7 +323,7 @@ def pwitt(R, p):
     INPUT:
 
     - ``R`` -- the base ring
-    - ``p`` -- a positive integer that is `0` in ``R``
+    - ``p`` -- positive integer that is `0` in `R`
 
     EXAMPLES::
 

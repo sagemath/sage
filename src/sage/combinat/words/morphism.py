@@ -953,7 +953,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``exp`` -- a positive integer
+        - ``exp`` -- positive integer
 
         EXAMPLES::
 
@@ -1015,7 +1015,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``other`` -- a WordMorphism.
+        - ``other`` -- a WordMorphism
 
         OUTPUT: WordMorphism
 
@@ -1691,7 +1691,7 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``k`` -- a positive integer or ``None``. If set to a positive integer,
+        - ``k`` -- positive integer or ``None``. If set to a positive integer,
           then the function return ``True`` if ``self`` is `k`-uniform.
           If set to ``None``, then the function return ``True`` if ``self``
           is uniform.
@@ -1734,10 +1734,10 @@ class WordMorphism(SageObject):
         INPUT:
 
         - ``self`` -- an endomorphism (or more generally a self-composable
-           morphism), must be prolongable on ``letter``
+          morphism), must be prolongable on ``letter``
 
         - ``letter`` -- in the domain of ``self``, the first letter
-           of the fixed point.
+          of the fixed point
 
         OUTPUT: ``word`` -- the fixed point of ``self`` beginning with ``letter``
 
@@ -2323,8 +2323,8 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``.
-           It must be callable on letters as well as words (e.g. WordMorphism).
+        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g. WordMorphism)
 
         REFERENCES:
 
@@ -2401,8 +2401,8 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``.
-           It must be callable on letters as well as words (e.g. WordMorphism).
+        - ``f`` -- involution (default: ``None``) on the alphabet of ``self``;
+          it must be callable on letters as well as words (e.g. WordMorphism)
 
         REFERENCES:
 
@@ -2724,11 +2724,11 @@ class WordMorphism(SageObject):
           Default values: ``1000`` for a 1D fractal,
           ``50000`` for a 2D fractal, ``10000`` for a 3D fractal.
 
-        - ``exchange`` -- boolean (default: ``False``).
-          Plot the Rauzy fractal with domain exchange.
+        - ``exchange`` -- boolean (default: ``False``); plot the Rauzy fractal
+          with domain exchange
 
-        - ``eig`` -- a real element of ``QQbar`` of degree >= 2 (default: ``None``).
-          The eigenvalue used to plot the fractal.
+        - ``eig`` -- a real element of ``QQbar`` of degree >= 2 (default: ``None``);
+          the eigenvalue used to plot the fractal.
           It must be an eigenvalue of ``self.incidence_matrix()``.
           The one used by default the maximal eigenvalue of
           ``self.incidence_matrix()`` (usually a Pisot number),
@@ -2758,19 +2758,20 @@ class WordMorphism(SageObject):
            - ``string`` -- a coloring map. For available coloring map names type:
              ``sorted(colormaps)``
 
-           - ``dict`` -- a dictionary of the alphabet mapped to colors
+           - ``dict`` -- dictionary of the alphabet mapped to colors
 
-        - ``opacity`` -- a dictionary from the alphabet to the real interval [0,1] (default: ``None``).
-          If none is specified, all letters are plotted with opacity ``1``.
+        - ``opacity`` -- dictionary from the alphabet to the real interval
+          [0,1] (default: ``None``); if none is specified, all letters are
+          plotted with opacity ``1``
 
-        - ``plot_origin`` -- a couple ``(k,c)`` (default: ``None``).
-          If specified, mark the origin by a point of size ``k`` and color ``c``.
+        - ``plot_origin`` -- a couple ``(k,c)`` (default: ``None``);
+          if specified, mark the origin by a point of size ``k`` and color ``c``
 
-        - ``plot_basis`` -- boolean (default: ``False``).
-          Plot the projection of the canonical basis with the fractal.
+        - ``plot_basis`` -- boolean (default: ``False``); plot the projection
+          of the canonical basis with the fractal
 
-        - ``point_size`` -- float (default: ``None``).
-          The size of the points used to plot the fractal.
+        - ``point_size`` -- float (default: ``None``); the size of the points
+          used to plot the fractal
 
         EXAMPLES:
 
@@ -3423,8 +3424,8 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``w`` -- finite iterable (default: ``self.domain().alphabet()``).
-          Represents a word used to start the language.
+        - ``w`` -- finite iterable (default: ``self.domain().alphabet()``);
+          represents a word used to start the language
 
         EXAMPLES::
 
@@ -3450,8 +3451,8 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``w`` -- finite iterable (default: ``self.domain().alphabet()``).
-          Represents a word used to start the language.
+        - ``w`` -- finite iterable (default: ``self.domain().alphabet()``);
+          represents a word used to start the language
 
         EXAMPLES::
 
@@ -3480,8 +3481,8 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``w`` -- finite iterable (default: ``self.domain().alphabet()``).
-          Represents a word used to start the language.
+        - ``w`` -- finite iterable (default: ``self.domain().alphabet()``);
+          represents a word used to start the language
 
         EXAMPLES:
 
@@ -3527,8 +3528,8 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``w`` -- finite iterable (default: ``self.domain().alphabet()``).
-          Represents a word used to start the language.
+        - ``w`` -- finite iterable (default: ``self.domain().alphabet()``);
+          represents a word used to start the language
 
         - ``allow_growing`` -- boolean or ``None`` (default: ``None``). If
           ``False``, return only the primitive roots that contain no growing
@@ -3692,8 +3693,8 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``Z`` -- iterable (default: ``self.domain().alphabet()``); whose
-          elements are used as an alphabet for the simplification.
+        - ``Z`` -- iterable (default: ``self.domain().alphabet()``) whose
+          elements are used as an alphabet for the simplification
 
         EXAMPLES:
 

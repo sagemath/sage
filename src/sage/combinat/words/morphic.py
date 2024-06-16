@@ -284,7 +284,7 @@ class WordDatatype_morphic(WordDatatype_callable):
         INPUT:
 
         - ``self`` -- an endomorphism, must be prolongable on
-           letter
+          letter
 
         - ``letter`` -- a letter in the domain of ``self``
 

@@ -80,11 +80,9 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
         INPUT:
 
         - ``self`` -- an elementary basis of the symmetric functions
-        - ``i`` -- a nonnegative integer
+        - ``i`` -- nonnegative integer
 
-        OUTPUT:
-
-        - returns the coproduct on the elementary generator `e(i)`
+        OUTPUT: the coproduct on the elementary generator `e(i)`
 
         EXAMPLES::
 
@@ -222,7 +220,7 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
 
             INPUT:
 
-            - ``n`` -- a positive integer
+            - ``n`` -- positive integer
 
             OUTPUT:
 
@@ -277,7 +275,7 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
 
             INPUT:
 
-            - ``n`` -- a nonnegative integer
+            - ``n`` -- nonnegative integer
 
             - ``alphabet`` -- (default: ``'x'``) a variable for the expansion
 
@@ -454,8 +452,8 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
 
             INPUT:
 
-            - ``t`` -- (default: ``None``); the value to use for `t`;
-              the default is to create a ring of polynomials in ``t``.
+            - ``t`` -- (default: ``None``); the value to use for `t`.
+              The default is to create a ring of polynomials in `t`.
 
             - ``q`` -- (default: `1`) the value to use for `q`.  If
               ``q`` is ``None``, then a ring (or fraction field) of

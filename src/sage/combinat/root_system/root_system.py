@@ -794,9 +794,9 @@ def WeylDim(ct, coeffs):
 
     INPUT:
 
-    -  ``ct`` -- a Cartan type
+    - ``ct`` -- a Cartan type
 
-    -  ``coeffs`` -- list of nonnegative integers
+    - ``coeffs`` -- list of nonnegative integers
 
     The length of the list must equal the rank type[1]. A dominant
     weight hwv is constructed by summing the fundamental weights with

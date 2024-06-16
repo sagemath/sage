@@ -57,11 +57,9 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
         INPUT:
 
         - ``self`` -- the power sum basis of the symmetric functions
-        - ``i`` -- a positive integer
+        - ``i`` -- positive integer
 
-        OUTPUT:
-
-        - the result of the coproduct on the generator `p(i)`
+        OUTPUT: the result of the coproduct on the generator `p(i)`
 
         EXAMPLES::
 
@@ -197,7 +195,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
 
         INPUT:
 
-        - ``k`` -- a nonnegative integer
+        - ``k`` -- nonnegative integer
         - ``rho`` -- a partition or a list of nonnegative integers
 
         OUTPUT: an element of the base ring
@@ -434,7 +432,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
 
             INPUT:
 
-            - ``n`` -- a positive integer
+            - ``n`` -- positive integer
 
             OUTPUT:
 
@@ -547,7 +545,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
 
             INPUT:
 
-            - ``n`` -- a positive integer
+            - ``n`` -- positive integer
 
             OUTPUT:
 
@@ -613,7 +611,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
 
             INPUT:
 
-            - ``n`` -- a nonnegative integer
+            - ``n`` -- nonnegative integer
 
             - ``alphabet`` -- (default: ``'x'``) a variable for the expansion
 
@@ -865,7 +863,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
             INPUT:
 
             - ``t`` -- (default: ``None``) the value to use for `t`;
-              the default is to create a ring of polynomials in ``t``.
+              the default is to create a ring of polynomials in ``t``
 
             - ``q`` -- (default: `1`) the value to use for `q`.  If
               ``q`` is ``None``, then a ring (or fraction field) of

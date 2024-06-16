@@ -119,13 +119,12 @@ class DLXMatrix:
 
     def __eq__(self, other):
         r"""
-        Return ``True`` if every attribute of
-        ``other`` matches the attribute of
-        ``self``.
+        Return ``True`` if every attribute of ``other`` matches the attribute
+        of ``self``.
 
         INPUT:
 
-        -  ``other`` -- a DLX matrix
+        - ``other`` -- a DLX matrix
 
         EXAMPLES::
 

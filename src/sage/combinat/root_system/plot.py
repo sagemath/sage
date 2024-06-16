@@ -977,8 +977,7 @@ class PlotOptions:
 
         INPUT:
 
-        - ``label`` -- a string, or a Sage object upon which latex will
-          be called
+        - ``label`` -- string or Sage object upon which latex will be called
 
         - ``position`` -- a position
 

@@ -155,12 +155,10 @@ def compositions_order(n):
 
     INPUT:
 
-    - ``n`` -- a positive integer
+    - ``n`` -- positive integer
 
-    OUTPUT:
-
-    - A list of the compositions of ``n`` sorted into decreasing order
-      by `\rhd`
+    OUTPUT: list of the compositions of ``n`` sorted into decreasing order
+    by `\rhd`
 
     EXAMPLES::
 

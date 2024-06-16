@@ -250,7 +250,7 @@ def compat(n, mu, nu):
 
     INPUT:
 
-    - ``n`` -- a positive integer
+    - ``n`` -- positive integer
     - ``mu``, ``nu`` -- partitions
 
     OUTPUT: list of partitions

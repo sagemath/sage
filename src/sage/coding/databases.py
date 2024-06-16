@@ -194,9 +194,9 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
     - ``k`` -- integer; maximal dimension
 
     - ``b`` -- integer; requires that the generators all have weight divisible
-       by ``b`` (if ``b=2``, all self-orthogonal codes are generated, and if
-       ``b=4``, all doubly even codes are generated). Must be an even positive
-       integer.
+      by ``b`` (if ``b=2``, all self-orthogonal codes are generated, and if
+      ``b=4``, all doubly even codes are generated). Must be an even positive
+      integer.
 
     - ``parent`` -- used in recursion (default: ``None``)
 

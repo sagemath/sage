@@ -126,7 +126,7 @@ class Character_generic(SFA_generic):
 
         INPUT:
 
-        - ``k`` -- a positive integer
+        - ``k`` -- positive integer
 
         OUTPUT: an expression in the powersum basis of the symmetric functions
 

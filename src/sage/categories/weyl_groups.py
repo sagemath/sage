@@ -440,7 +440,7 @@ class WeylGroups(Category_singleton):
             INPUT:
 
                 - ``self`` -- an element `w` of a Weyl group `W`
-                - ``max_length`` -- a nonnegative integer or infinity (default: infinity)
+                - ``max_length`` -- nonnegative integer or infinity (default: infinity)
 
             Returns the generating series for the Pieri factorizations
             `w = u_1 \cdots u_k`, where `u_i` is a Pieri factor for

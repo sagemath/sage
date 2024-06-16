@@ -125,7 +125,7 @@ class YangBaxterGraph_generic(SageObject):
         - ``root`` -- the root vertex of the graph
 
         - ``operators`` -- list of callables that map vertices to (new)
-          vertices.
+          vertices
 
         .. NOTE::
 
@@ -519,7 +519,7 @@ class YangBaxterGraph_generic(SageObject):
 
         INPUT:
 
-        - ``edge_dict`` -- a dictionary keyed by the (unlabelled) edges.
+        - ``edge_dict`` -- dictionary keyed by the (unlabelled) edges
 
         EXAMPLES::
 

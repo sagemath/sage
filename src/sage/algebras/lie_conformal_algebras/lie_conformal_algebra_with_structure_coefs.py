@@ -79,7 +79,7 @@ class LieConformalAlgebraWithStructureCoefficients(
       list.
 
     - ``parity`` -- tuple of `0` or `1` (default: tuple of `0`);
-       a tuple specifying the parity of each non-central generator
+      a tuple specifying the parity of each non-central generator
 
     EXAMPLES:
 

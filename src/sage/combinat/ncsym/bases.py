@@ -37,7 +37,7 @@ class NCSymBasis_abstract(CombinatorialFreeModule, BindableClass):
 
         INPUT:
 
-        - ``x`` -- a set partition or list of lists of integers
+        - ``x`` -- set partition or list of lists of integers
 
         EXAMPLES::
 
@@ -122,11 +122,11 @@ class NCSymOrNCSymDualBases(Category_realization_of_parent):
 
         def __getitem__(self, i):
             """
-            Return the basis element indexed by ``i``.
+            Return the basis element indexed by `i`.
 
             INPUT:
 
-            - ``i`` -- a set partition or a list of list of integers
+            - ``i`` -- set partition or a list of list of integers
 
             EXAMPLES::
 
@@ -171,7 +171,7 @@ class NCSymOrNCSymDualBases(Category_realization_of_parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             OUTPUT: either the `0` or the `1` of the base ring of ``self``
 
@@ -236,12 +236,12 @@ class NCSymOrNCSymDualBases(Category_realization_of_parent):
             INPUT:
 
             - ``basis`` -- a basis of the dual Hopf algebra
-            - ``degree`` -- a nonnegative integer
+            - ``degree`` -- nonnegative integer
 
             OUTPUT:
 
-            - the matrix of scalar products between the basis ``self`` and the
-              basis ``basis`` in the dual Hopf algebra of degree ``degree``
+            The matrix of scalar products between the basis ``self`` and the
+            basis ``basis`` in the dual Hopf algebra of degree ``degree``.
 
             EXAMPLES:
 
@@ -432,8 +432,8 @@ class NCSymBases(Category_realization_of_parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
-            - ``i`` -- a positive integer
+            - ``A`` -- set partition
+            - ``i`` -- positive integer
 
             OUTPUT: an element of ``self``
 

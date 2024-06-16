@@ -1213,8 +1213,8 @@ class KirillovReshetikhinTableauxElement(TensorProductOfRegularCrystalsElement):
 
         INPUT:
 
-        - ``rows`` -- (default: ``True``) set to ``True`` if the resulting
-          array is by row, otherwise it is by column.
+        - ``rows`` -- boolean (default: ``True``); set to ``True`` if the
+          resulting array is by row, otherwise it is by column
 
         EXAMPLES::
 
@@ -1583,8 +1583,8 @@ class KRTableauxSpinElement(KirillovReshetikhinTableauxElement):
 
         INPUT:
 
-        - ``rows`` -- (default: ``True``) set to ``True`` if the resulting
-          array is by row, otherwise it is by column.
+        - ``rows`` -- boolean (default: ``True``); set to ``True`` if the
+          resulting array is by row, otherwise it is by column
 
         EXAMPLES::
 

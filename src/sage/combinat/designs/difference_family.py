@@ -710,7 +710,7 @@ def one_radical_difference_family(K, k):
     INPUT:
 
     - ``K`` -- a finite field of cardinality `q`
-    - ``k`` -- a positive integer so that `k(k-1)` divides `q-1`
+    - ``k`` -- positive integer so that `k(k-1)` divides `q-1`
 
     OUTPUT: either a difference family or ``None`` if it does not exist
 
