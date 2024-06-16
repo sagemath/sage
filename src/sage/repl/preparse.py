@@ -64,7 +64,7 @@ that in pure Python this would be a syntax error)::
     4
     sage: 87.factor()
     3 * 29
-    sage: 15.10.sqrt()
+    sage: 15.10.sqrt()                                                                  # needs sage.rings.real_mpfr
     3.88587184554509
     sage: preparse('87.sqrt()')
     'Integer(87).sqrt()'
@@ -83,7 +83,7 @@ frequently request it::
 Symbolic functional notation::
 
     sage: # needs sage.symbolic
-    sage: a=10; f(theta, beta) = theta + beta; b = x^2 + theta
+    sage: a = 10; f(theta, beta) = theta + beta; b = x^2 + theta
     sage: f
     (theta, beta) |--> beta + theta
     sage: a
@@ -1032,7 +1032,7 @@ def parse_ellipsis(code, preparse_step=True):
         '(ellipsis_range(1,2,Ellipsis,n))'
         sage: parse_ellipsis("for i in (f(x) .. L[10]):")
         'for i in (ellipsis_iter(f(x) ,Ellipsis, L[10])):'
-        sage: [1.0..2.0]
+        sage: [1.0..2.0]                                                                # needs sage.rings.real_mpfr
         [1.00000000000000, 2.00000000000000]
 
     TESTS:
