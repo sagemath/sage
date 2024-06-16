@@ -19040,13 +19040,13 @@ class GenericGraph(GenericGraph_pyx):
             sage: D.add_path([22, 23, 24, 5])
             sage: D.add_path([5, 33, 34, 35])
             sage: list(D.depth_first_search(5, neighbors=D.neighbors_in))
-            [5, 4, 3, 2, 1, 0, 24, 23, 22]
+            [5, 24, 23, 22, 4, 3, 2, 1, 0]
             sage: list(D.breadth_first_search(5, neighbors=D.neighbors_in))
-            [5, 24, 4, 23, 3, 22, 2, 1, 0]
+            [5, 4, 24, 3, 23, 2, 22, 1, 0]
             sage: list(D.depth_first_search(5, neighbors=D.neighbors_out))
-            [5, 6, 7, 8, 9, 33, 34, 35]
+            [5, 33, 34, 35, 6, 7, 8, 9]
             sage: list(D.breadth_first_search(5, neighbors=D.neighbors_out))
-            [5, 33, 6, 34, 7, 35, 8, 9]
+            [5, 6, 33, 7, 34, 8, 35, 9]
 
         You can get edges of the DFS tree instead of the vertices using the
         ``edges`` parameter::
