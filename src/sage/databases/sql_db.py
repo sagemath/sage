@@ -54,7 +54,6 @@ AUTHORS:
   reformat output in show
 
 - Emily A. Kirkman and Robert L. Miller (2007-06-17): initial version
-
 """
 # FUTURE TODOs (Ignore for now):
 #    - order by clause in query strings

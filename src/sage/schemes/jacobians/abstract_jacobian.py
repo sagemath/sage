@@ -6,7 +6,6 @@ This module defines the base class of Jacobians as an abstract scheme.
 AUTHORS:
 
 - William Stein (2005)
-
 """
 
 # ****************************************************************************

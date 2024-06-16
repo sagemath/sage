@@ -583,7 +583,7 @@ cdef class SparseGraph(CGraph):
 
         INPUT:
 
-        - ``u, v`` -- non-negative integers
+        - ``u``, ``v`` -- non-negative integers
 
         OUTPUT:
             0 -- No error.
@@ -863,7 +863,7 @@ cdef class SparseGraph(CGraph):
 
         INPUT:
 
-        - ``u, v`` -- non-negative integers
+        - ``u``, ``v`` -- non-negative integers
 
         - ``l`` -- a positive integer label, or zero for no label
 
@@ -890,7 +890,7 @@ cdef class SparseGraph(CGraph):
 
         INPUT:
 
-         - ``u, v`` -- non-negative integers, must be in self
+         - ``u``, ``v`` -- non-negative integers, must be in self
 
          - ``l`` -- a positive integer label, or zero for no label
 
@@ -924,7 +924,8 @@ cdef class SparseGraph(CGraph):
 
         INPUT:
 
-        - ``u, v`` -- integers from `0, ..., n-1`, where `n` is the number of vertices
+        - ``u``, ``v`` -- integers from `0`, ..., `n-1`, where `n` is the
+          number of vertices
 
         OUTPUT: one of
 
@@ -954,9 +955,10 @@ cdef class SparseGraph(CGraph):
 
         INPUT:
 
-        - ``u, v`` -- integers from 0, ..., n-1, where n is the number of vertices
-            arc_labels -- must be a pointer to an (allocated) integer array
-            size -- the length of the array
+        - ``u``, ``v`` -- integers from `0`, ..., `n-1`, where `n` is the
+          number of vertices
+        - ``arc_labels`` -- must be a pointer to an (allocated) integer array
+        - ``size`` -- the length of the array
 
         OUTPUT:
 
@@ -1001,9 +1003,8 @@ cdef class SparseGraph(CGraph):
 
         INPUT:
 
-        - ``u, v`` -- integers from 0, ..., n-1, where n is the number of vertices
-            arc_labels -- must be a pointer to an (allocated) integer array
-            size -- the length of the array
+        - ``u``, ``v`` -- integers from `0`, ..., `n-1`, where `n` is the
+          number of vertices
 
         OUTPUT:
 
@@ -1085,7 +1086,8 @@ cdef class SparseGraph(CGraph):
 
         INPUT:
 
-        - ``u, v`` -- integers from `0, ..., n-1`, where `n` is the number of vertices
+        - ``u``, ``v`` -- integers from `0`, ..., `n-1`, where `n` is the
+          number of vertices
 
         - ``l`` -- a positive integer label, or zero for no label
 
@@ -1117,7 +1119,8 @@ cdef class SparseGraph(CGraph):
 
         INPUT:
 
-        - ``u, v`` -- integers from `0, ..., n-1`, where `n` is the number of vertices
+        - ``u``, ``v`` -- integers from `0`, ..., `n-1`, where `n` is the
+          number of vertices
 
         - ``l`` -- a positive integer label, or zero for no label, or ``-1`` for any label
 
@@ -1301,7 +1304,7 @@ cdef class SparseGraphBackend(CGraphBackend):
 
         INPUT:
 
-         - ``u,v`` -- the vertices of the edge
+         - ``u``, ``v`` -- the vertices of the edge
 
         EXAMPLES::
 
@@ -1335,7 +1338,7 @@ cdef class SparseGraphBackend(CGraphBackend):
 
         INPUT:
 
-         - ``u, v`` -- the vertices of the edge
+         - ``u``, ``v`` -- the vertices of the edge
 
          - ``l`` -- the edge label, or ``None``
 
@@ -1401,7 +1404,7 @@ cdef class SparseGraphBackend(CGraphBackend):
 
         INPUT:
 
-         - ``u,v`` -- the vertices of the edge
+         - ``u``, ``v`` -- the vertices of the edge
 
          - ``l`` -- the edge label
 

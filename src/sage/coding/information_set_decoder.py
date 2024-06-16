@@ -24,7 +24,6 @@ AUTHORS:
 
 - David Lucas, Johan Rosenkilde, Yann Laigle-Chapuy (2016-02, 2017-06): initial
   version
-
 """
 
 #******************************************************************************

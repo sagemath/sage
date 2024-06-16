@@ -473,5 +473,4 @@ Sage example in ./float.tex, line 2245::
   1.732050807568878?
   sage: x.interval(RealIntervalField(100))
   1.73205080756887729352744634151?
-
 """

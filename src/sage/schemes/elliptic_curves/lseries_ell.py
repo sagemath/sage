@@ -9,7 +9,6 @@ AUTHORS:
   instead of floats.
 
 - William Stein et al. (2005 and later)
-
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein

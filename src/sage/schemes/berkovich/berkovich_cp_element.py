@@ -23,7 +23,6 @@ involved exposition, see Chapter 1 and 2 of [BR2010]_.
 AUTHORS:
 
 - Alexander Galarraga (2020-06-22): initial implementation
-
 """
 
 # *****************************************************************************

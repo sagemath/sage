@@ -151,5 +151,4 @@ Sage example in ./numbertheory.tex, line 1226::
   6954104378
   sage: mod(2,p)^6954104378
   17
-
 """

@@ -145,8 +145,7 @@ Or you can create a homomorphism from one lattice to any other::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.geometry.toric_lattice_element import (ToricLatticeElement,
-                                                 is_ToricLatticeElement)
+from sage.geometry.toric_lattice_element import ToricLatticeElement
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.geometry.toric_plotter', 'ToricPlotter')
 from sage.misc.latex import latex
@@ -181,6 +180,10 @@ def is_ToricLattice(x):
         sage: from sage.geometry.toric_lattice import (
         ....:   is_ToricLattice)
         sage: is_ToricLattice(1)
+        doctest:warning...
+        DeprecationWarning: The function is_ToricLattice is deprecated;
+        use 'isinstance(..., ToricLattice_generic)' instead.
+        See https://github.com/sagemath/sage/issues/38126 for details.
         False
         sage: N = ToricLattice(3)
         sage: N
@@ -188,6 +191,10 @@ def is_ToricLattice(x):
         sage: is_ToricLattice(N)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38126,
+                "The function is_ToricLattice is deprecated; "
+                "use 'isinstance(..., ToricLattice_generic)' instead.")
     return isinstance(x, ToricLattice_generic)
 
 
@@ -208,6 +215,10 @@ def is_ToricLatticeQuotient(x):
         sage: from sage.geometry.toric_lattice import (
         ....:   is_ToricLatticeQuotient)
         sage: is_ToricLatticeQuotient(1)
+        doctest:warning...
+        DeprecationWarning: The function is_ToricLatticeQuotient is deprecated;
+        use 'isinstance(..., ToricLattice_quotient)' instead.
+        See https://github.com/sagemath/sage/issues/38126 for details.
         False
         sage: N = ToricLattice(3)
         sage: N
@@ -221,6 +232,10 @@ def is_ToricLatticeQuotient(x):
         sage: is_ToricLatticeQuotient(Q)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38126,
+                "The function is_ToricLatticeQuotient is deprecated; "
+                "use 'isinstance(..., ToricLattice_quotient)' instead.")
     return isinstance(x, ToricLattice_quotient)
 
 
@@ -446,7 +461,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
             coordinates = [ZZ(_) for _ in args]
         except TypeError:
             # Prohibit conversion of elements of other lattices
-            if (is_ToricLatticeElement(args[0])
+            if (isinstance(args[0], ToricLatticeElement)
                 and args[0].parent().ambient_module()
                 is not self.ambient_module()):
                 raise TypeError("%s cannot be converted to %s!"
@@ -472,7 +487,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
             TypeError: N(1, 2, 3) cannot be converted to 3-d lattice M!
 
         """
-        if (is_ToricLattice(other) and
+        if (isinstance(other, ToricLattice_generic) and
             other.ambient_module() is not self.ambient_module()):
             return None
         return super()._convert_map_from_(other)
@@ -625,14 +640,14 @@ class ToricLattice_generic(FreeModule_generic_pid):
             True
         """
         # Lattice-specific input check
-        if not is_ToricLattice(other):
+        if not isinstance(other, ToricLattice_generic):
             raise TypeError("%s is not a toric lattice!" % other)
         if self.ambient_module() != other.ambient_module():
             raise ValueError("%s and %s have different ambient lattices!" %
                              (self, other))
         # Construct a generic intersection, but make sure to return a lattice.
         I = super().intersection(other)
-        if not is_ToricLattice(I):
+        if not isinstance(I, ToricLattice_generic):
             I = self.ambient_module().submodule(I.basis())
         return I
 
@@ -757,7 +772,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
             True
         """
         S = super().saturation()
-        return S if is_ToricLattice(S) else self.ambient_module().submodule(S)
+        return S if isinstance(S, ToricLattice_generic) else self.ambient_module().submodule(S)
 
     def span(self, gens, base_ring=ZZ, *args, **kwds):
         r"""
@@ -800,7 +815,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
         if base_ring is ZZ and all(g in A for g in gens):
             return ToricLattice_sublattice(A, gens)
         for g in gens:
-            if is_ToricLatticeElement(g) and g not in A:
+            if isinstance(g, ToricLatticeElement) and g not in A:
                 raise ValueError("%s cannot generate a sublattice of %s"
                                  % (g, A))
         return super().span(gens, base_ring, *args, **kwds)
@@ -854,7 +869,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
         if base_ring is ZZ and all(g in A for g in basis):
             return ToricLattice_sublattice_with_basis(A, basis)
         for g in basis:
-            if is_ToricLatticeElement(g) and g not in A:
+            if isinstance(g, ToricLatticeElement) and g not in A:
                 raise ValueError("%s cannot generate a sublattice of %s"
                                  % (g, A))
         return super().span_of_basis(basis, base_ring, *args, **kwds)

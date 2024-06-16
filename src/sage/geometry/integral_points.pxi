@@ -175,7 +175,6 @@ cpdef tuple ray_matrix_normal_form(R):
     return (e, d, VDinv)
 
 
-
 # The optimized version avoids constructing new matrices, vectors, and lattice points
 cpdef tuple loop_over_parallelotope_points(e, d, MatrixClass VDinv,
                                            MatrixClass R, lattice,
@@ -240,7 +239,6 @@ cpdef tuple loop_over_parallelotope_points(e, d, MatrixClass VDinv,
     if A is None:
         assert(len(gens) == d)
     return tuple(gens)
-
 
 
 ##############################################################################
@@ -338,7 +336,6 @@ cdef translate_points(v_list, VectorClass delta):
     for v in v_list:
         for i in range(dim):
             v[i] -= delta.get_unsafe(i)
-
 
 
 ##############################################################################
@@ -663,7 +660,6 @@ cdef loop_over_rectangular_box_points(list box_min, list box_max,
             inequalities.prepare_next_to_inner_loop(p)
 
 
-
 cdef loop_over_rectangular_box_points_saturated(list box_min, list box_max,
                                                 InequalityCollection inequalities,
                                                 int d):
@@ -984,7 +980,6 @@ cdef class Inequality_int:
 
     cdef bint is_equality(Inequality_int self, int inner_loop_variable) noexcept:
         return inner_loop_variable * self.coeff + self.cache == 0
-
 
 
 cdef class InequalityCollection:
@@ -1420,7 +1415,6 @@ cdef class InequalityCollection:
             if (<Inequality_generic>ineq).is_equality(inner_loop_variable):
                 result.append( (<Inequality_generic>ineq).index )
         return frozenset(result)
-
 
 
 cpdef print_cache(InequalityCollection inequality_collection):

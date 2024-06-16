@@ -1505,9 +1505,7 @@ class RESetMapReduce():
             sage: S.run()  # indirect doctest
             720*x^6 + 120*x^5 + 24*x^4 + 6*x^3 + 2*x^2 + x + 1
         """
-        res = []
-        for i in range(self._nprocess):
-            res.append(tuple(self._workers[i]._stats))
+        res = [tuple(self._workers[i]._stats) for i in range(self._nprocess)]
         self._stats = res
 
     def print_communication_statistics(self, blocksize=16):
