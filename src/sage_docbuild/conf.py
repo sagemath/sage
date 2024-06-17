@@ -32,7 +32,7 @@ from IPython.lib.lexers import IPythonConsoleLexer, IPyLexer
 from sage.misc.sagedoc import extlinks
 from sage.env import SAGE_DOC_SRC, SAGE_DOC, PPLPY_DOCS, MATHJAX_DIR
 from sage.misc.latex_macros import sage_mathjax_macros
-from sage.features import PythonModule
+from sage.features.sphinx import JupyterSphinx
 from sage.features.all import all_features
 import sage.version
 
@@ -59,10 +59,13 @@ extensions = [
     'matplotlib.sphinxext.plot_directive',
 ]
 
+if JupyterSphinx().is_present():
+    extensions.append('jupyter_sphinx')
+
 jupyter_execute_default_kernel = 'sagemath'
 
 if SAGE_LIVE_DOC == 'yes':
-    extensions.append('jupyter_sphinx')
+    JupyterSphinx().require()
     SAGE_JUPYTER_SERVER = os.environ.get('SAGE_JUPYTER_SERVER', 'binder')
     if SAGE_JUPYTER_SERVER.startswith('binder'):
         # format: "binder" or
@@ -1059,7 +1062,7 @@ def setup(app):
     app.add_transform(SagemathTransform)
     if SAGE_LIVE_DOC == 'yes' or SAGE_PREPARSED_DOC == 'yes':
         app.add_transform(SagecodeTransform)
-    if SAGE_LIVE_DOC != 'yes':
+    if not JupyterSphinx().is_present():
         app.add_directive("jupyter-execute", Ignore)
         app.add_directive("jupyter-kernel", Ignore)
         app.add_directive("jupyter-input", Ignore)
@@ -1095,7 +1098,3 @@ if 'tags' not in locals():
 
 for feature in all_features():
     tags.add('feature_' + feature.name.replace('.', '_'))
-
-
-if SAGE_LIVE_DOC == 'yes':
-    tags.add('jupyter_sphinx')
