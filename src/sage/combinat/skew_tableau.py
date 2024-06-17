@@ -6,11 +6,11 @@ AUTHORS:
 - Mike Hansen: Initial version
 - Travis Scrimshaw, Arthur Lubovsky (2013-02-11):
   Factored out ``CombinatorialClass``
-- Trevor K. Karn (2022-08-03): added `backward_slide`
+- Trevor K. Karn (2022-08-03): added ``backward_slide``
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
-#       Copyright (C) 2013 Travis Scrimshaw <tscrim at ucdavis.edu>
+#       Copyright (C) 2013 Travis Scrimshaw <tcscrims at gmail.com>
 #       Copyright (C) 2013 Arthur Lubovsky
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -26,6 +26,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.misc.lazy_import import lazy_import
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.sets_cat import Sets
@@ -37,7 +38,6 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.arith.misc import factorial
 from sage.rings.infinity import PlusInfinity
-from sage.matrix.special import zero_matrix
 
 from sage.structure.list_clone import ClonableList
 from sage.combinat.partition import Partition
@@ -48,6 +48,8 @@ from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.words.words import Words
 
 from sage.misc.persist import register_unpickle_override
+
+lazy_import('sage.matrix.special', 'zero_matrix')
 
 
 class SkewTableau(ClonableList,
@@ -109,7 +111,7 @@ class SkewTableau(ClonableList,
             sage: st = SkewTableau([[None,1,1],[None,2],[4]])
             sage: TestSuite(st).run()
 
-        A skew tableau is immutable, see :trac:`15862`::
+        A skew tableau is immutable, see :issue:`15862`::
 
             sage: T = SkewTableau([[None,2],[2]])
             sage: t0 = T[0]
@@ -204,7 +206,7 @@ class SkewTableau(ClonableList,
 
         EXAMPLES:
 
-        Check that :trac:`35137` is fixed::
+        Check that :issue:`35137` is fixed::
 
             sage: t = SkewTableau([[None,1,2]])
             sage: hash(t) == hash(tuple(t))

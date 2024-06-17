@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.graphs, sage.combinat
 r"""
 Posets
@@ -68,7 +69,7 @@ class Posets(Category):
         True
 
     At this point, this has to be implemented by hand. Once
-    :trac:`10130` will be resolved, this will be automatically
+    :issue:`10130` will be resolved, this will be automatically
     provided by this category::
 
         sage: # not implemented

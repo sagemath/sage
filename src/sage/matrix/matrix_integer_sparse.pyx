@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Sparse integer matrices
 
@@ -110,10 +109,10 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             if z:
                 mpz_vector_set_entry(&self._matrix[se.i], se.j, z.value)
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, x) noexcept:
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, x):
         mpz_vector_set_entry(&self._matrix[i], j, (<Integer> x).value)
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         cdef Integer x
         x = Integer()
         mpz_vector_get_entry(x.value, &self._matrix[i], j)
@@ -131,7 +130,6 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             [1 1 1]
         """
         return mpz_vector_is_entry_zero_unsafe(&self._matrix[i], j)
-
 
     ########################################################################
     # LEVEL 2 functionality
@@ -160,7 +158,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
     # def _multiply_classical(left, matrix.Matrix _right):
     # def _list(self):
 
-    cpdef _lmul_(self, Element right) noexcept:
+    cpdef _lmul_(self, Element right):
         """
         EXAMPLES::
 
@@ -182,7 +180,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             mpz_vector_scalar_multiply(M_row, self_row, _x.value)
         return M
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         cdef Py_ssize_t i
         cdef Matrix_integer_sparse M
 
@@ -196,7 +194,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         mpz_clear(mul)
         return M
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         cdef Py_ssize_t i
         cdef Matrix_integer_sparse M
 
@@ -231,7 +229,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         self.cache('dict', d)
         return d
 
-    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix _right) noexcept:
+    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix _right):
         """
         Return the product of the sparse integer matrices
         ``self`` and ``_right``.
@@ -365,7 +363,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
 
         INPUT:
 
-        - `modulus` - a number
+        - `modulus` -- a number
 
         OUTPUT:
 
@@ -381,7 +379,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         """
         return self._mod_int_c(modulus)
 
-    cdef _mod_int_c(self, mod_int p) noexcept:
+    cdef _mod_int_c(self, mod_int p):
         cdef Py_ssize_t i, j
         cdef Matrix_modn_sparse res
         cdef mpz_vector* self_row
@@ -394,7 +392,6 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             for j from 0 <= j < self_row.num_nonzero:
                 set_entry(res_row, self_row.positions[j], mpz_fdiv_ui(self_row.entries[j], p))
         return res
-
 
     def rational_reconstruction(self, N):
         """
@@ -414,7 +411,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
 
         TESTS:
 
-        Check that :trac:`9345` is fixed::
+        Check that :issue:`9345` is fixed::
 
             sage: A = random_matrix(ZZ, 3, 3, sparse=True)
             sage: A.rational_reconstruction(0)
@@ -432,14 +429,14 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
 
         INPUT:
 
-        - ``algorithm`` - determines which algorithm to use, options are:
+        - ``algorithm`` -- determines which algorithm to use, options are:
 
-          - 'pari' - use the :pari:`matkerint` function from the PARI library
-          - 'padic' - use the p-adic algorithm from the IML library
-          - 'default' - use a heuristic to decide which of the two above
+          - 'pari' -- use the :pari:`matkerint` function from the PARI library
+          - 'padic' -- use the p-adic algorithm from the IML library
+          - 'default' -- use a heuristic to decide which of the two above
             routines is fastest.  This is the default value.
 
-        - ``proof`` - this is passed to the p-adic IML algorithm.
+        - ``proof`` -- this is passed to the p-adic IML algorithm.
           If not specified, the global flag for linear algebra will be used.
 
         OUTPUT:
@@ -642,7 +639,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             [0 2]
             [0 0]
 
-        The examples above show that :trac:`10626` has been implemented.
+        The examples above show that :issue:`10626` has been implemented.
 
 
         .. SEEALSO::
@@ -732,7 +729,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
 
             This method is much slower than converting to a dense matrix and
             computing the determinant there. There is not much point in making
-            it available. See :trac:`28318`.
+            it available. See :issue:`28318`.
 
         EXAMPLES::
 
@@ -782,10 +779,10 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
 
         INPUT:
 
-        - ``var`` -- (optional, default ``'x'``) the name of the variable
+        - ``var`` -- (default: ``'x'``) the name of the variable
           of the polynomial
 
-        - ``algorithm`` -- (optional, default ``None``) one of ``None``,
+        - ``algorithm`` -- (default: ``None``) one of ``None``,
           ``'linbox'``, or an algorithm accepted by
           :meth:`sage.matrix.matrix_sparse.Matrix_sparse.charpoly`
 
@@ -886,10 +883,10 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
 
         INPUT:
 
-        - ``var`` -- (optional, default ``'x'``) the name of the variable
+        - ``var`` -- (default: ``'x'``) the name of the variable
           of the polynomial
 
-        - ``algorithm`` -- (optional, default ``None``) one of ``None``,
+        - ``algorithm`` -- (default: ``None``) one of ``None``,
           ``'linbox'``, or an algorithm accepted by
           :meth:`sage.matrix.matrix_sparse.Matrix_sparse.minpoly`
 
@@ -997,26 +994,26 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         INPUT:
 
 
-        -  ``B`` - a matrix or vector
+        -  ``B`` -- a matrix or vector
 
-        -  ``algorithm`` - one of the following:
+        -  ``algorithm`` -- one of the following:
 
-            - ``'linbox'`` or ``'linbox_default'`` - (default) use LinBox
+            - ``'linbox'`` or ``'linbox_default'`` -- (default) use LinBox
               and let it chooses the appropriate algorithm
 
-            -  ``linbox_dense_elimination'`` - use LinBox dense elimination
+            -  ``linbox_dense_elimination'`` -- use LinBox dense elimination
 
-            - ``'linbox_sparse_elimination'`` - use LinBox sparse elimination
+            - ``'linbox_sparse_elimination'`` -- use LinBox sparse elimination
 
-            -  ``'linbox_ blackbox'`` - LinBox via a Blackbox algorithm
+            -  ``'linbox_ blackbox'`` -- LinBox via a Blackbox algorithm
 
-            -  ``'linbox_wiedemann'`` - use LinBox implementation of
+            -  ``'linbox_wiedemann'`` -- use LinBox implementation of
                Wiedemann's algorithm
 
-            -  ``'generic'`` - use the Sage generic implementation
+            -  ``'generic'`` -- use the Sage generic implementation
                (via inversion)
 
-        - ``check_rank`` - whether to check that the rank is maximal
+        - ``check_rank`` -- whether to check that the rank is maximal
 
         OUTPUT: a matrix or vector
 
@@ -1262,7 +1259,6 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
 
         cdef Matrix_integer_dense X = matrix(ZZ, A.coldim(), B.ncols(), sparse=False)  # solution
         cdef Vector_integer_dense d = vector(ZZ, X.ncols(), sparse=False)  # multipliers
-
 
         sig_on()
         cdef size_t i, j

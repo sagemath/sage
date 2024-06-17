@@ -60,7 +60,6 @@ REFERENCES:
 For additional models of the hyperbolic plane and its relationship
 see [CFKP1997]_. For a more detailed explanation on hyperbolic arcs
 see [Sta1993]_.
-
 """
 # *****************************************************************************
 #       Copyright (C) 2011 Hartmut Monien <monien@th.physik.uni-bonn.de>,
@@ -180,12 +179,12 @@ class HyperbolicArc(HyperbolicArcCore):
 
     INPUT:
 
-    - ``A, B`` -- end points of the hyperbolic arc
+    - ``A``, ``B`` -- end points of the hyperbolic arc
     - ``model`` -- the hyperbolic model used, which is one of the following:
 
-      * ``'UHP'`` - upper half plane
-      * ``'PD'`` - Poincaré disk
-      * ``'KM'`` - Klein disk
+      * ``'UHP'`` -- upper half plane
+      * ``'PD'`` -- Poincaré disk
+      * ``'KM'`` -- Klein disk
 
     TESTS::
 
@@ -227,7 +226,8 @@ class HyperbolicArc(HyperbolicArcCore):
             sage: HyperbolicArc(0, 1/2+I*sqrt(3)/2, "UHP", {})
             Hyperbolic arc (0.000000000000000, 0.500000000000000 + 0.866025403784439*I)
         """
-        return "Hyperbolic arc (%s, %s)" % (self.A, self.B)
+        return f"Hyperbolic arc ({self.A}, {self.B})"
+
 
 @rename_keyword(color='rgbcolor')
 @options(alpha=1, fill=False, thickness=1, rgbcolor="blue", zorder=2, linestyle='solid')
@@ -237,15 +237,15 @@ def hyperbolic_arc(a, b, model="UHP", **options):
 
     INPUT:
 
-    - ``a, b`` - complex numbers connected by a hyperbolic arc
+    - ``a``, ``b`` -- complex numbers connected by a hyperbolic arc
 
     - ``model`` -- (default: ``'UHP'``) hyperbolic model used,
       which is one of the following:
 
-      * ``'UHP'`` - upper half plane
-      * ``'PD'`` - Poincaré disk
-      * ``'KM'`` - Klein disk
-      * ``'HM'`` - hyperboloid model
+      * ``'UHP'`` -- upper half plane
+      * ``'PD'`` -- Poincaré disk
+      * ``'KM'`` -- Klein disk
+      * ``'HM'`` -- hyperboloid model
 
     OPTIONS:
 
@@ -389,9 +389,9 @@ def hyperbolic_arc(a, b, model="UHP", **options):
 
         # Check for valid points
         if a[2] < 0 or a[0]**2+a[1]**2-a[2]**2 + 1 > EPSILON:
-            raise ValueError("%s is not a valid point in the HM model" % (a,))
+            raise ValueError(f"{a} is not a valid point in the HM model")
         if b[2] < 0 or b[0]**2+b[1]**2-b[2]**2 + 1 > EPSILON:
-            raise ValueError("%s is not a valid point in the HM model" % (b,))
+            raise ValueError(f"{b} is not a valid point in the HM model")
 
         HM = HyperbolicPlane().HM()
         geodesic = HM.get_geodesic(a, b)

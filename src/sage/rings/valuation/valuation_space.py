@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Spaces of valuations
 
@@ -43,7 +42,6 @@ EXAMPLES::
 
         sage: v = valuations.TrivialPseudoValuation(QQ)
         sage: v._test_category()
-
 """
 # ****************************************************************************
 #       Copyright (C) 2016-2017 Julian Rüth <julian.rueth@fsfe.org>
@@ -96,7 +94,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
 
     .. TODO::
 
-        The comparison problem might be fixed by :trac:`22029` or similar.
+        The comparison problem might be fixed by :issue:`22029` or similar.
 
     TESTS::
 

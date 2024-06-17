@@ -6,7 +6,6 @@ AUTHORS:
 - Marco Streng (2010-07-20)
 
 - Nick Alexander (2008-01-08)
-
 """
 # ****************************************************************************
 #       Copyright (C) 2008 Nick Alexander <ncalexander@gmail.com>
@@ -24,9 +23,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.matrix.constructor import Matrix
+from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
-from sage.rings.ring import IntegralDomain
+from sage.categories.integral_domains import IntegralDomains
 from sage.rings.rational_field import is_RationalField
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.fraction_field import is_FractionField
@@ -40,7 +39,7 @@ from sage.schemes.affine.affine_point import SchemeMorphism_point_affine
 from sage.schemes.projective.projective_point import SchemeMorphism_point_projective_field
 from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.structure.all import Sequence
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 
 from .con_field import ProjectiveConic_field
 from .con_finite_field import ProjectiveConic_finite_field
@@ -143,7 +142,7 @@ def Conic(base_field, F=None, names=None, unique=True):
         sage: Conic([a([x,x^2]) for x in range(5)])
         Projective Conic Curve over Finite Field of size 13 defined by x^2 - y*z
     """
-    if not (base_field is None or isinstance(base_field, IntegralDomain)):
+    if not (base_field is None or base_field in IntegralDomains()):
         if names is None:
             names = F
         F = base_field
@@ -173,13 +172,13 @@ def Conic(base_field, F=None, names=None, unique=True):
                 if len(C) != 3:
                     raise TypeError("points in F (=%s) must be planar" % F)
                 P = C.universe()
-                if not isinstance(P, IntegralDomain):
+                if P not in IntegralDomains():
                     raise TypeError("coordinates of points in F (=%s) must "
                                     "be in an integral domain" % F)
                 L.append(Sequence([C[0]**2, C[0] * C[1],
                                    C[0] * C[2], C[1]**2,
                                    C[1] * C[2], C[2]**2], P.fraction_field()))
-            M = Matrix(L)
+            M = matrix(L)
             if unique and M.rank() != 5:
                 raise ValueError("points in F (=%s) do not define a unique "
                                  "conic" % F)
@@ -202,7 +201,7 @@ def Conic(base_field, F=None, names=None, unique=True):
 
     if isinstance(F, QuadraticForm):
         F = F.matrix()
-    if is_Matrix(F) and F.is_square() and F.ncols() == 3:
+    if isinstance(F, Matrix) and F.is_square() and F.ncols() == 3:
         if names is None:
             names = 'x,y,z'
         temp_ring = PolynomialRing(F.base_ring(), 3, names)
@@ -217,8 +216,8 @@ def Conic(base_field, F=None, names=None, unique=True):
 
     if base_field is None:
         base_field = F.base_ring()
-    if not isinstance(base_field, IntegralDomain):
-        raise ValueError("Base field (=%s) must be a field" % base_field)
+    if base_field not in IntegralDomains():
+        raise ValueError(f"Base field (={base_field}) must be a field")
     base_field = base_field.fraction_field()
     if names is None:
         names = F.parent().variable_names()

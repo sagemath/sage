@@ -26,6 +26,7 @@ from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.permutation import Permutations
 from sage.sets.family import Family
 
+
 class YokonumaHeckeAlgebra(CombinatorialFreeModule):
     r"""
     The Yokonuma-Hecke algebra `Y_{d,n}(q)`.
@@ -474,7 +475,7 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
 
             TESTS:
 
-            Check that :trac:`26424` is fixed::
+            Check that :issue:`26424` is fixed::
 
                 sage: Y = algebras.YokonumaHecke(3, 3)
                 sage: t = 3 * prod(Y.t())

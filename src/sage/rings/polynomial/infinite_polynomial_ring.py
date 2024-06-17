@@ -221,7 +221,7 @@ all constituents coerce.
     sage: x[2]/2+(5/3)*a[3]*x[4] + 1
     5/3*a_3*x_4 + 1/2*x_2 + 1
 
-Check that :trac:`22514` is fixed::
+Check that :issue:`22514` is fixed::
 
     sage: R.<x> = InfinitePolynomialRing(ZZ)
     sage: a = R(3)
@@ -416,7 +416,7 @@ class InfiniteGenDict:
         """
         INPUT:
 
-        ``Gens`` -- a list of generators of an infinite polynomial ring.
+        - ``Gens`` -- a list of generators of an infinite polynomial ring.
 
         EXAMPLES::
 
@@ -522,8 +522,8 @@ class GenDictWithBasering:
         """
         INPUT:
 
-        ``parent`` -- a ring.
-        ``start`` -- some dictionary, usually the dictionary of variables of ``parent``.
+        - ``parent`` -- a ring
+        - ``start`` -- some dictionary, usually the dictionary of variables of ``parent``
 
         EXAMPLES::
 
@@ -669,9 +669,9 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
         """
         INPUT:
 
-        ``R`` -- base ring.
-        ``names`` -- list of generator names.
-        ``order`` -- string determining the monomial order of the infinite polynomial ring.
+        - ``R`` -- base ring
+        - ``names`` -- list of generator names
+        - ``order`` -- string determining the monomial order of the infinite polynomial ring
 
         EXAMPLES::
 
@@ -865,7 +865,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
 
         INPUT:
 
-        ``x`` -- any object that can be interpreted in ``self``.
+        - ``x`` -- any object that can be interpreted in ``self``.
 
         TESTS::
 
@@ -1048,7 +1048,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
 
         INPUT:
 
-        ``R`` - a ring.
+        - ``R`` -- a ring.
 
         OUTPUT:
 
@@ -1069,7 +1069,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             sage: R
             Infinite polynomial ring in a, b over Integer Ring
 
-        The following tests against a bug that was fixed at :trac:`10468`::
+        The following tests against a bug that was fixed at :issue:`10468`::
 
             sage: R.<x,y> = InfinitePolynomialRing(QQ)
             sage: R.tensor_with_ring(QQ) is R
@@ -1098,11 +1098,11 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
 
         Since Infinite Polynomial Rings must have at least one
         generator, they have infinitely many variables and are thus
-        not noetherian, as a ring.
+        not Noetherian, as a ring.
 
         .. NOTE::
 
-            Infinite Polynomial Rings over a field `F` are noetherian as
+            Infinite Polynomial Rings over a field `F` are Noetherian as
             `F(G)` modules, where `G` is the symmetric group of the
             natural numbers. But this is not what the method
             ``is_noetherian()`` is answering.
@@ -1142,7 +1142,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             sage: R.is_field()
             False
 
-        :trac:`9443`::
+        :issue:`9443`::
 
             sage: W = PowerSeriesRing(InfinitePolynomialRing(QQ,'a'),'x')
             sage: W.is_field()
@@ -1156,8 +1156,8 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
 
         INPUT:
 
-        ``x`` -- a string of the form ``a+'_'+str(n)``, where a is the
-        name of a generator, and n is an integer
+        - ``x`` -- a string of the form ``a+'_'+str(n)``, where a is the
+          name of a generator, and n is an integer
 
         RETURN:
 
@@ -1320,7 +1320,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
 
         TESTS:
 
-        :trac:`9443`::
+        :issue:`9443`::
 
             sage: W = PolynomialRing(InfinitePolynomialRing(QQ,'a'),2,'x,y')
             sage: W.is_integral_domain()
@@ -1585,7 +1585,7 @@ class InfinitePolynomialRing_dense(InfinitePolynomialRing_sparse):
 
         INPUT:
 
-        ``R`` - a ring.
+        - ``R`` -- a ring.
 
         OUTPUT:
 
@@ -1606,7 +1606,7 @@ class InfinitePolynomialRing_dense(InfinitePolynomialRing_sparse):
             sage: R
             Infinite polynomial ring in a, b over Integer Ring
 
-        The following tests against a bug that was fixed at :trac:`10468`::
+        The following tests against a bug that was fixed at :issue:`10468`::
 
             sage: R.<x,y> = InfinitePolynomialRing(QQ, implementation='sparse')
             sage: R.tensor_with_ring(QQ) is R

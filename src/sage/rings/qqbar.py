@@ -269,7 +269,8 @@ The paper "ARPREC: An Arbitrary Precision Computation Package" by
 Bailey, Yozo, Li and Thompson discusses this result. Evidently it is
 difficult to find, but we can easily verify it. ::
 
-    sage: alpha = QQbar.polynomial_root(x^10 + x^9 - x^7 - x^6 - x^5 - x^4 - x^3 + x + 1, RIF(1, 1.2))
+    sage: alpha = QQbar.polynomial_root(x^10 + x^9 - x^7 - x^6
+    ....:                                - x^5 - x^4 - x^3 + x + 1, RIF(1, 1.2))
     sage: lhs = alpha^630 - 1
     sage: rhs_num = (alpha^315 - 1) * (alpha^210 - 1) * (alpha^126 - 1)^2 * (alpha^90 - 1) * (alpha^3 - 1)^3 * (alpha^2 - 1)^5 * (alpha - 1)^3
     sage: rhs_den = (alpha^35 - 1) * (alpha^15 - 1)^2 * (alpha^14 - 1)^2 * (alpha^5 - 1)^6 * alpha^68
@@ -347,7 +348,7 @@ fact that the third output is different than the first::
 
 Just for fun, let's try ``sage_input`` on a very complicated expression. The
 output of this example changed with the rewriting of polynomial multiplication
-algorithms in :trac:`10255`::
+algorithms in :issue:`10255`::
 
     sage: rt2 = sqrt(AA(2))
     sage: rt3 = sqrt(QQbar(3))
@@ -468,8 +469,10 @@ http://mathworld.wolfram.com/TrigonometryAnglesPi17.html)::
     0.?e-15
 
     sage: ax = polygen(AA)
-    sage: x2 = AA.polynomial_root(256*ax**8 - 128*ax**7 - 448*ax**6 + 192*ax**5 + 240*ax**4 - 80*ax**3 - 40*ax**2 + 8*ax + 1, RIF(0.9829, 0.983))
-    sage: y2 = (1-x2**2).sqrt()
+    sage: x2 = AA.polynomial_root(256*ax**8 - 128*ax**7 - 448*ax**6 + 192*ax**5
+    ....:                          + 240*ax**4 - 80*ax**3 - 40*ax**2 + 8*ax + 1,
+    ....:                         RIF(0.9829, 0.983))
+    sage: y2 = (1 - x2**2).sqrt()
     sage: x - x2
     0.?e-18
     sage: y - y2
@@ -480,14 +483,15 @@ y2`` but this is currently infinitely long.
 
 TESTS:
 
-Verify that :trac:`10981` is fixed::
+Verify that :issue:`10981` is fixed::
 
     sage: x = AA['x'].gen()
     sage: P = 1/(1+x^4)
     sage: P.partial_fraction_decomposition()
-    (0, [(-0.3535533905932738?*x + 1/2)/(x^2 - 1.414213562373095?*x + 1), (0.3535533905932738?*x + 1/2)/(x^2 + 1.414213562373095?*x + 1)])
+    (0, [(-0.3535533905932738?*x + 1/2)/(x^2 - 1.414213562373095?*x + 1),
+         (0.3535533905932738?*x + 1/2)/(x^2 + 1.414213562373095?*x + 1)])
 
-Check that :trac:`22202` is fixed::
+Check that :issue:`22202` is fixed::
 
     sage: R1.<x> = AA[]; R2.<s> = QQbar[]
     sage: v = QQbar.polynomial_root(x^2 - x + 1, CIF(0.5, RIF(-0.87, -0.85)))
@@ -495,8 +499,8 @@ Check that :trac:`22202` is fixed::
     sage: QQ(a)
     1/4
 
-This example from :trac:`17896` should run in reasonable time, see also
-:trac:`15600`::
+This example from :issue:`17896` should run in reasonable time, see also
+:issue:`15600`::
 
     sage: x,y = polygens(QQ,"x,y")
     sage: p1 = x^5 + 6*x^4 - 42*x^3 - 142*x^2 + 467*x + 422
@@ -507,7 +511,7 @@ This example from :trac:`17896` should run in reasonable time, see also
     sage: z, = [r for r in p4.roots(QQbar, False) if r in ival]
     sage: z.exactify()
 
-Check that :trac:`17895` is fixed. We check that ``polynomial_root``
+Check that :issue:`17895` is fixed. We check that ``polynomial_root``
 runs under 5 seconds (used to take ~40sec)::
 
     sage: x,y = polygens(QQ,"x,y")
@@ -520,7 +524,7 @@ runs under 5 seconds (used to take ~40sec)::
     sage: z2 = QQbar.polynomial_root(p4, ival)
     sage: cancel_alarm()
 
-Check that :trac:`28530` is fixed::
+Check that :issue:`28530` is fixed::
 
     sage: x = polygen(QQ)
     sage: K.<a> = NumberField(x^2 - x - 6256320, embedding=-2500.763730596996)
@@ -539,20 +543,41 @@ Check that :trac:`28530` is fixed::
     ....: (83132288614462248899077910195645998*a + 254420831388756945210526696075302411552001)*y^2)
     sage: lc = lc.change_ring(QQbar)
     sage: lc.roots(CIF)
-    [(-1.000505492239?, 2),
-     (-1.000000000000?, 2),
-     (-0.999999999662605?, 1),
+    [(-1.0005054922387982573627768714?, 2),
+     (-1.0000000000000000000000000000?, 2),
+     (-0.9999999996626050731848036720993?, 1),
      (0, 2),
-     (1.000000000000?, 2),
-     (1.000505492239?, 2),
-     (0.999999587? + 0.?e-11*I, 1),
-     (0.999999999? + 0.?e-11*I, 1)]
+     (1.0000000000000000000000000000?, 2),
+     (1.0005054922387982573627768714?, 2),
+     (0.999999586737109168744488? + 0.?e-43*I, 1),
+     (0.999999999662605073184804? + 0.?e-43*I, 1)]
+
+Check that issue:`37927` is fixed::
+
+    sage: y = polygen(QQ, 'y')
+    sage: v1 = QQbar.polynomial_root(y**2 + 1, CIF(0, -1))
+    sage: v2 = -QQbar(2).sqrt()
+    sage: M = matrix(QQbar, [[0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+    ....:              [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+    ....:              [-4, 2*v1, 1, 64, -32*v1, -16, 8*v1, 4, -2*v1, -1],
+    ....:              [4*v1, 1, 0, -192*v1, -80, 32*v1, 12, -4*v1, -1, 0],
+    ....:               [2, 0, 0, -480, 160*v1, 48, -12*v1, -2, 0, 0],
+    ....:               [-4, 2*I, 1, 64, -32*I, -16, 8*I, 4, -2*I, -1],
+    ....:               [4*I, 1, 0, -192*I, -80, 32*I, 12, -4*I, -1, 0],
+    ....:               [2, 0, 0, -480, 160*I, 48, -12*I, -2, 0, 0],
+    ....:               [0, 0, 0, 8, 4*v2, 4, 2*v2, 2, v2, 1],
+    ....:               [0, 0, 0, 24*v2, 20, 8*v2, 6, 2*v2, 1, 0],
+    ....:               [0, 0, 0, 8, 4*v2, 4, 2*v2, 2, -v2, 1],
+    ....:               [0, 0, 0, 24*v2, 20, 8*v2, 6, 2*v2, 1, 0],
+    ....:               [0, 0, 0, -4096, -1024*I, 256, 64*I, -16, -4*I, 1],
+    ....:               [0, 0, 0, -4096, 1024*I, 256, -64*I, -16, 4*I, 1]])
+    sage: M.right_kernel_matrix()
+    [   1.000000000000000? + 0.?e-16*I                                 0                                 0 -0.00925925925925926? + 0.?e-19*I               0.?e-35 + 0.?e-18*I -0.11111111111111111? + 0.?e-18*I               0.?e-34 + 0.?e-17*I   0.5555555555555555? + 0.?e-16*I                                 0  -0.5925925925925926? + 0.?e-17*I]
 
 AUTHOR:
 
 - Carl Witty (2007-01-27): initial version
 - Carl Witty (2007-10-29): massive rewrite to support complex as well as real numbers
-
 """
 
 import itertools
@@ -560,7 +585,6 @@ import operator
 
 import sage.rings.abc
 import sage.rings.number_field.number_field_base
-import sage.rings.ring
 from sage.arith.misc import factor
 from sage.categories.action import Action
 from sage.misc.cachefunc import cached_method
@@ -752,7 +776,7 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
         REFERENCES:
 
         - [GCL1992]_ Section 8.8
-        - :trac:`25390` and https://github.com/sagemath/sage/files/10659152/qqbar.pdf.gz
+        - :issue:`25390` and https://github.com/sagemath/sage/files/10659152/qqbar.pdf.gz
 
         .. TODO::
 
@@ -888,7 +912,7 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
             sage: F = QQbar._factor_multivariate_polynomial(p); F
             (a + (-1.189207115002722?*I)*b) * (a + 1.189207115002722?*I*b)
 
-        A test that led to :trac:`26898`::
+        A test that led to :issue:`26898`::
 
             sage: # needs sage.libs.singular
             sage: R.<x> = QQ[]
@@ -898,7 +922,7 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
             ....:    factor_f = (x - b).map_coefficients(hom)
             ....:    assert(minpoly % factor_f == 0)
 
-        Test :trac:`29076`::
+        Test :issue:`29076`::
 
             sage: # needs sage.libs.singular
             sage: AA['x','y'](1).factor()   # indirect doctest
@@ -1423,7 +1447,7 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
 
         INPUT:
 
-        - ``poly_degree`` - default: 2 - degree of the random
+        - ``poly_degree`` -- default: 2; degree of the random
           polynomial over the integers of which the returned algebraic
           real number is a (real part of a) root. This is not
           necessarily the degree of the minimal polynomial of the
@@ -1433,7 +1457,7 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
           coefficients but that will not vary the degree of the
           extension containing the element.
 
-        - ``args``, ``kwds`` - arguments and keywords passed to the random
+        - ``args``, ``kwds`` -- arguments and keywords passed to the random
           number generator for elements of ``ZZ``, the integers. See
           :meth:`~sage.rings.integer_ring.IntegerRing_class.random_element` for
           details, or see example below.
@@ -1909,7 +1933,7 @@ class AlgebraicField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicF
 
         INPUT:
 
-        - ``poly_degree`` - default: 2 - degree of the random polynomial over
+        - ``poly_degree`` -- default: 2; degree of the random polynomial over
           the integers of which the returned algebraic number is a root. This
           is not necessarily the degree of the minimal polynomial of the
           number. Increase this parameter to achieve a greater diversity of
@@ -1917,7 +1941,7 @@ class AlgebraicField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicF
           also vary the distribution of the coefficients but that will not vary
           the degree of the extension containing the element.
 
-        - ``args``, ``kwds`` - arguments and keywords passed to the random
+        - ``args``, ``kwds`` -- arguments and keywords passed to the random
           number generator for elements of ``ZZ``, the integers. See
           :meth:`~sage.rings.integer_ring.IntegerRing_class.random_element` for
           details, or see example below.
@@ -2311,8 +2335,8 @@ def do_polred(poly, threshold=32):
 
     INPUT:
 
-    - ``poly`` - a monic irreducible polynomial with integer coefficients
-    - ``threshold`` - an integer used to decide whether to run ``polredbest``
+    - ``poly`` -- a monic irreducible polynomial with integer coefficients
+    - ``threshold`` -- an integer used to decide whether to run ``polredbest``
 
     OUTPUT:
 
@@ -2343,7 +2367,7 @@ def do_polred(poly, threshold=32):
         sage: do_polred(x^3 + 123456)
         (-1/4*x, -4*x, x^3 - 1929)
 
-    This shows that :trac:`13054` has been fixed::
+    This shows that :issue:`13054` has been fixed::
 
         sage: do_polred(x^4 - 4294967296*x^2 + 54265257667816538374400)
         (1/4*x, 4*x, x^4 - 268435456*x^2 + 211973662764908353025)
@@ -2639,7 +2663,8 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
     Things work fine with rational numbers, too::
 
         sage: number_field_elements_from_algebraics((QQbar(1/2), AA(17)))
-        (Rational Field, [1/2, 17], Ring morphism:
+        (Rational Field, [1/2, 17],
+         Ring morphism:
             From: Rational Field
             To:   Algebraic Real Field
             Defn: 1 |--> 1)
@@ -2691,8 +2716,8 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
     It is also possible to have an embedded Number Field::
 
         sage: x = polygen(ZZ)
-        sage: my_num = AA.polynomial_root(x^3-2, RIF(0,3))
-        sage: res = number_field_elements_from_algebraics(my_num,embedded=True)
+        sage: my_num = AA.polynomial_root(x^3 - 2, RIF(0,3))
+        sage: res = number_field_elements_from_algebraics(my_num, embedded=True)
         sage: res[0].gen_embedding()
         1.259921049894873?
         sage: res[2]
@@ -2784,12 +2809,14 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
     Tests trivial cases::
 
         sage: number_field_elements_from_algebraics([], embedded=True)
-        (Rational Field, [], Ring morphism:
+        (Rational Field, [],
+         Ring morphism:
            From: Rational Field
            To:   Algebraic Real Field
            Defn: 1 |--> 1)
         sage: number_field_elements_from_algebraics([1], embedded=True)
-        (Rational Field, [1], Ring morphism:
+        (Rational Field, [1],
+         Ring morphism:
            From: Rational Field
            To:   Algebraic Real Field
            Defn: 1 |--> 1)
@@ -2799,7 +2826,7 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
         sage: # needs sage.libs.gap sage.symbolic
         sage: UCF = UniversalCyclotomicField()
         sage: E = UCF.gen(5)
-        sage: L.<b> = NumberField(x^2-189*x+16, embedding=200)
+        sage: L.<b> = NumberField(x^2 - 189*x + 16, embedding=200)
         sage: x = polygen(ZZ)
         sage: my_nums = [-52*E - 136*E^2 - 136*E^3 - 52*E^4,
         ....:            L.gen()._algebraic_(AA),
@@ -4198,11 +4225,11 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
 
         INPUT:
 
-        - ``extend`` - bool (default: True); ignored if self is in QQbar, or
+        - ``extend`` -- bool (default: ``True``); ignored if self is in QQbar, or
           positive in AA. If self is negative in AA, do the following: if True,
           return a square root of self in QQbar, otherwise raise a ValueError.
 
-        - ``all`` - bool (default: False); if True, return a list of all square
+        - ``all`` -- bool (default: ``False``); if True, return a list of all square
           roots. If False, return just one square root, or raise an ValueError
           if self is a negative element of AA and extend=False.
 
@@ -4279,7 +4306,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
 
         INPUT:
 
-        -  ``all`` - bool (default: ``False``). If ``True``, return a list of
+        -  ``all`` -- bool (default: ``False``). If ``True``, return a list of
            all `n`-th roots as complex algebraic numbers.
 
         .. WARNING::
@@ -4383,7 +4410,8 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
             sage: AA(elt)
             Traceback (most recent call last):
             ...
-            ValueError: need a real or complex embedding to convert a non rational element of a number field into an algebraic number
+            ValueError: need a real or complex embedding to convert a non rational
+            element of a number field into an algebraic number
             sage: hom(elt) == rt
             True
 
@@ -4392,7 +4420,8 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
             sage: (nf, elt, hom) = rt.as_number_field_element(embedded=True)
             sage: nf.coerce_embedding()
             Generic morphism:
-              From: Number Field in a with defining polynomial y^3 - 2*y^2 - 31*y - 50 with a = 7.237653139801104?
+              From: Number Field in a with defining polynomial y^3 - 2*y^2 - 31*y - 50
+                    with a = 7.237653139801104?
               To:   Algebraic Real Field
               Defn: a -> 7.237653139801104?
             sage: elt
@@ -4519,9 +4548,11 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
             sage: QQbar(2)._exact_field()
             Trivial generator
             sage: (sqrt(QQbar(2)) + sqrt(QQbar(19)))._exact_field()
-            Number Field in a with defining polynomial y^4 - 20*y^2 + 81 with a in -3.789313782671036?
+            Number Field in a with defining polynomial y^4 - 20*y^2 + 81
+             with a in -3.789313782671036?
             sage: (QQbar(7)^(3/5))._exact_field()
-            Number Field in a with defining polynomial y^5 - 2*y^4 - 18*y^3 + 38*y^2 + 82*y - 181 with a in 2.554256611698490?
+            Number Field in a with defining polynomial
+             y^5 - 2*y^4 - 18*y^3 + 38*y^2 + 82*y - 181 with a in 2.554256611698490?
         """
         sd = self._descr
         if isinstance(sd, (ANRational, ANExtensionElement)):
@@ -4707,7 +4738,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
 
         TESTS:
 
-        Check that :trac:`20209` is fixed::
+        Check that :issue:`20209` is fixed::
 
             sage: RIF(QQbar(2).sqrt())
             1.414213562373095?
@@ -4802,11 +4833,10 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
         roots = poly.roots(SR, multiplicities=False)
         if len(roots) != poly.degree():
             return self
+        itv = interval_field(self._value)
         while True:
-            candidates = []
-            for root in roots:
-                if interval_field(root).overlaps(interval_field(self._value)):
-                    candidates.append(root)
+            candidates = [root for root in roots
+                          if interval_field(root).overlaps(itv)]
             if len(candidates) == 1:
                 return candidates[0]
             roots = candidates
@@ -4896,7 +4926,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
         component has to be compared for exact equality, which can be
         a costly operation.  For the special case where both numbers
         have the same minimal polynomial, that cost can be avoided,
-        though (see :trac:`16964`)::
+        though (see :issue:`16964`)::
 
             sage: x = polygen(ZZ)
             sage: p = 69721504*x^8 + 251777664*x^6 + 329532012*x^4 + 184429548*x^2 + 37344321
@@ -4904,8 +4934,8 @@ class AlgebraicNumber(AlgebraicNumber_base):
             [-0.0221204634374361? - 1.090991904211621?*I,
              -0.0221204634374361? + 1.090991904211621?*I,
              -0.8088604911480535?*I,
-             0.?e-215 - 0.7598602580415435?*I,
-             0.?e-229 + 0.7598602580415435?*I,
+             0.?e-182 - 0.7598602580415435?*I,
+             0.?e-249 + 0.7598602580415435?*I,
              0.8088604911480535?*I,
              0.0221204634374361? - 1.090991904211621?*I,
              0.0221204634374361? + 1.090991904211621?*I]
@@ -4964,7 +4994,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
             sage: QQbar.zeta(3).real() == -1/2
             True
 
-        Check that :trac:`26593` is fixed (the test here has to be repeated
+        Check that :issue:`26593` is fixed (the test here has to be repeated
         twice)::
 
             sage: pi = x^7 - 2*x^6 + x^3 - 2*x^2 + 2*x - 1
@@ -4976,7 +5006,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
             sage: pi = b.minpoly()
             sage: K = NumberField(pi, 'b', embedding=b)
 
-        Check that :trac:`29220` is fixed::
+        Check that :issue:`29220` is fixed::
 
             sage: # needs sage.symbolic
             sage: a = AA(2**(1/2) - 2**(1/3))
@@ -5422,7 +5452,7 @@ class AlgebraicReal(AlgebraicNumber_base):
 
         TESTS:
 
-        Both of the following examples, from :trac:`11728`, trigger
+        Both of the following examples, from :issue:`11728`, trigger
         taking the real part below. This is necessary because
         sometimes a very small (e.g., 1e-17) complex part appears in a
         complex interval used to create an AlgebraicReal.::
@@ -5471,7 +5501,7 @@ class AlgebraicReal(AlgebraicNumber_base):
 
         We have to ensure after doing this that self._value is still
         real which is not the case without calling _ensure_real (see
-        :trac:`11728`)::
+        :issue:`11728`)::
 
             sage: x = polygen(ZZ, 'x')
             sage: P = AA['x'](1 + x^4); a1,a2 = P.factor()[0][0], P.factor()[1][0]; a1*a2
@@ -5680,7 +5710,7 @@ class AlgebraicReal(AlgebraicNumber_base):
 
         TESTS:
 
-        Check that :trac:`15501` is fixed::
+        Check that :issue:`15501` is fixed::
 
             sage: a = QQbar((-1)^(1/4)).real()                                          # needs sage.symbolic
             sage: (floor(a-a) + a).parent()                                             # needs sage.symbolic
@@ -6027,7 +6057,7 @@ class AlgebraicReal(AlgebraicNumber_base):
 
         TESTS:
 
-        Check that :trac:`26898` is fixed.  This calculation triggers the 40 bits
+        Check that :issue:`26898` is fixed.  This calculation triggers the 40 bits
         of extra precision below, and the point is not that the length of the list
         is seven, but that the code runs in a reasonable time::
 
@@ -6343,7 +6373,7 @@ class AlgebraicNumberPowQQAction(Action):
         sage: AA(-16)^(1/4)/QQbar.zeta(8)
         2
 
-    We check that :trac:`7859` is fixed::
+    We check that :issue:`7859` is fixed::
 
         sage: (AA(2)^(1/2)-AA(2)^(1/2))^(1/2)
         0
@@ -7543,7 +7573,7 @@ class ANRoot(ANDescr):
 
         TESTS:
 
-        Verify that :trac:`12727` is fixed::
+        Verify that :issue:`12727` is fixed::
 
             sage: m = sqrt(sin(pi/5)); a = QQbar(m); b = AA(m)                          # needs sage.symbolic
             sage: a.minpoly()                                                           # needs sage.symbolic
@@ -7675,7 +7705,7 @@ class ANRoot(ANDescr):
             sage: y._interval_fast(128)
             -0.68232780382801932736948373971104825689?
 
-        Check that :trac:`15493` is fixed::
+        Check that :issue:`15493` is fixed::
 
             sage: y._interval_fast(20).parent() is RealIntervalField(20)
             True
@@ -8780,7 +8810,7 @@ for t1 in (ANRational, ANRoot, ANExtensionElement, ANUnaryExpr, ANBinaryExpr):
     for t2 in (ANUnaryExpr, ANBinaryExpr, ANRoot):
         _binop_algo[t1, t2] = _binop_algo[t2, t1] = an_binop_expr
 
-qq_generator = AlgebraicGenerator(QQ, ANRoot(AAPoly.gen() - 1, RIF(1)))
+qq_generator = AlgebraicGenerator(QQ, ANRoot(AAPoly([1, -1]), RIF.one()))
 
 
 def _init_qqbar():

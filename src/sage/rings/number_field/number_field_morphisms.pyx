@@ -62,13 +62,13 @@ cdef class NumberFieldEmbedding(Morphism):
         else:
             self._gen_image = R(gen_embedding)
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         A helper for pickling and copying.
 
         INPUT:
 
-        ``_slots`` -- a dictionary
+        - ``_slots`` -- a dictionary
 
         OUTPUT:
 
@@ -93,13 +93,13 @@ cdef class NumberFieldEmbedding(Morphism):
         slots['_gen_image'] = self._gen_image
         return slots
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         A helper for unpickling and copying.
 
         INPUT:
 
-        ``_slots`` -- a dictionary providing values for the c(p)def slots of self.
+        - ``_slots`` -- a dictionary providing values for the c(p)def slots of self.
 
         EXAMPLES::
 
@@ -119,7 +119,7 @@ cdef class NumberFieldEmbedding(Morphism):
         Morphism._update_slots(self, _slots)
         self._gen_image = _slots['_gen_image']
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         EXAMPLES::
 
@@ -231,7 +231,7 @@ cdef class EmbeddedNumberFieldMorphism(NumberFieldEmbedding):
             'Number Field in a with defining polynomial x^3 + 2 with a = -1.259921049894873?' and
             'Number Field in a with defining polynomial x^3 + 2 with a = 0.6299605249474365? + 1.091123635971722?*I'
 
-        The following was fixed to raise a ``TypeError`` in :trac:`15331`::
+        The following was fixed to raise a ``TypeError`` in :issue:`15331`::
 
             sage: L.<i> = NumberField(x^2 + 1)
             sage: K = NumberField(L(i/2+3).minpoly(), names=('i0',), embedding=L(i/2+3))
@@ -322,7 +322,7 @@ cdef class EmbeddedNumberFieldConversion(Map):
         self.ambient_field = ambient_field
         Map.__init__(self, K, L)
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         EXAMPLES::
 
@@ -344,7 +344,7 @@ cdef class EmbeddedNumberFieldConversion(Map):
         return gen_image
 
 
-cpdef matching_root(poly, target, ambient_field=None, margin=1, max_prec=None) noexcept:
+cpdef matching_root(poly, target, ambient_field=None, margin=1, max_prec=None):
     """
     Given a polynomial and a ``target``, choose the root that
     ``target`` best approximates as compared in ``ambient_field``.
@@ -407,7 +407,7 @@ cpdef matching_root(poly, target, ambient_field=None, margin=1, max_prec=None) n
             ambient_field = ambient_field.to_prec(ambient_field.prec() * 2)
 
 
-cpdef closest(target, values, margin=1) noexcept:
+cpdef closest(target, values, margin=1):
     """
     This is a utility function that returns the item in ``values`` closest to
     target (with respect to the ``abs`` function). If ``margin`` is greater
@@ -443,6 +443,7 @@ cpdef closest(target, values, margin=1) noexcept:
                     return values[i]
         else:
             return None
+
 
 def root_from_approx(f, a):
     """
@@ -504,6 +505,7 @@ def root_from_approx(f, a):
             or (not isinstance(rel, bool) and test_relation_maxima(rel))):
             raise ValueError("{} is not a root of {}".format(a, f))
         return a
+
 
 def create_embedding_from_approx(K, gen_image):
     """
@@ -598,7 +600,7 @@ cdef class CyclotomicFieldEmbedding(NumberFieldEmbedding):
             ...
             TypeError: The zeta_order of the new field must be a multiple of the zeta_order of the original.
 
-        Check that :trac:`13765` is fixed::
+        Check that :issue:`13765` is fixed::
 
             sage: z3=(CC(-1)^(1/3))^2
             sage: Ka.<a>=CyclotomicField(3,embedding=z3)
@@ -626,13 +628,13 @@ cdef class CyclotomicFieldEmbedding(NumberFieldEmbedding):
         self.ratio = L._log_gen(K.coerce_embedding()(K.gen()))
         self._gen_image = L.gen() ** self.ratio
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         A helper for pickling and copying.
 
         INPUT:
 
-        ``_slots`` -- a dictionary
+        - ``_slots`` -- a dictionary
 
         OUTPUT:
 
@@ -657,13 +659,13 @@ cdef class CyclotomicFieldEmbedding(NumberFieldEmbedding):
         slots['ratio'] = self.ratio
         return slots
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         A helper for unpickling and copying.
 
         INPUT:
 
-        ``_slots`` -- a dictionary providing values for the c(p)def slots of self.
+        - ``_slots`` -- a dictionary providing values for the c(p)def slots of self.
 
         EXAMPLES::
 
@@ -684,7 +686,7 @@ cdef class CyclotomicFieldEmbedding(NumberFieldEmbedding):
         self._gen_image = _slots['_gen_image']
         self.ratio = _slots['ratio']
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         EXAMPLES::
 
@@ -732,7 +734,7 @@ cdef class CyclotomicFieldConversion(Map):
         ...
         ValueError: Element z1 has no image in the codomain
 
-    Tests from :trac:`29511`::
+    Tests from :issue:`29511`::
 
         sage: K.<z> = CyclotomicField(12)
         sage: K1.<z1> = CyclotomicField(3)
@@ -765,7 +767,7 @@ cdef class CyclotomicFieldConversion(Map):
         self.phi = L.hom([M.gen()**(n3//n2)])
         Map.__init__(self, K, L)
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         Call a conversion map between cyclotomic fields.
 

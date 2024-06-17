@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 The C3 algorithm, under control of a total order
 
@@ -295,7 +296,7 @@ Depending on the linear extension `l` it was necessary to add between
 one and five bases for control; for example, `216` linear extensions
 required the addition of four bases::
 
-    sage: sorted(Word(stats).evaluation_sparse())                                       # needs sage.graphs sage.modules
+    sage: sorted(Word(stats).evaluation_sparse())                                       # needs sage.combinat sage.graphs sage.modules
     [(1, 36), (2, 108), (3, 180), (4, 216), (5, 180)]
 
 We now consider a hierarchy of categories::
@@ -319,9 +320,9 @@ For a typical category, few bases, if any, need to be added to force
     sage: x.mro == x.mro_standard
     False
     sage: x.all_bases_len()
-    70
+    72
     sage: x.all_bases_controlled_len()
-    74
+    76
 
     sage: C = GradedHopfAlgebrasWithBasis(QQ)
     sage: x = HierarchyElement(C, attrcall("super_categories"), attrgetter("_cmp_key"))
@@ -415,7 +416,7 @@ cdef class CmpKey:
     is a facade set. The second bit is set if ``self`` is finite.
     And so on. The choice of the flags is adhoc and was primarily
     crafted so that the order between categories would not change
-    too much upon integration of :trac:`13589` and would be
+    too much upon integration of :issue:`13589` and would be
     reasonably session independent. The number ``i`` is there
     to resolve ambiguities; it is session dependent, and is
     assigned increasingly when new categories are created.
@@ -659,7 +660,7 @@ def C3_merge(list lists):
             raise ValueError("Cannot merge the items %s."%', '.join(repr(head) for head in heads))
     return out
 
-cpdef identity(x) noexcept:
+cpdef identity(x):
     r"""
     EXAMPLES::
 
@@ -669,7 +670,7 @@ cpdef identity(x) noexcept:
     """
     return x
 
-cpdef tuple C3_sorted_merge(list lists, key=identity) noexcept:
+cpdef tuple C3_sorted_merge(list lists, key=identity):
     r"""
     Return the sorted input lists merged using the ``C3`` algorithm, with a twist.
 

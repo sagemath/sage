@@ -356,7 +356,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         TESTS:
 
-        Check if we still allow nonsense (see :trac:`7951`)::
+        Check if we still allow nonsense (see :issue:`7951`)::
 
             sage: P = PolynomialRing(QQ, 0, '')
             sage: P('pi')
@@ -365,7 +365,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
             TypeError: unable to convert pi to a rational
 
         Check that it is possible to convert strings to iterated
-        polynomial rings (see :trac:`13327`)::
+        polynomial rings (see :issue:`13327`)::
 
             sage: Rm = QQ["a"]["b, c"]
             sage: Rm("a*b")
@@ -374,7 +374,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
             True
 
         Check that conversion from PARI works correctly (see
-        :trac:`17974`)::
+        :issue:`17974`)::
 
             sage: A.<a> = PolynomialRing(QQ)
             sage: B.<d,e> = PolynomialRing(A)
@@ -403,7 +403,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
             sage: f.sage(locals={'a': a, 'd': d})
             a*d
 
-        Check that :trac:`21999` is fixed::
+        Check that :issue:`21999` is fixed::
 
             sage: R = QQbar['s,t']                                                      # needs sage.rings.number_field
             sage: type(R({(1,2): 3}).coefficients()[0])
@@ -554,11 +554,11 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         INPUT:
 
-        -  ``f`` - monomial.
+        -  ``f`` -- monomial.
 
-        -  ``g`` - monomial.
+        -  ``g`` -- monomial.
 
-        -  ``coeff`` - divide coefficients as well (default:
+        -  ``coeff`` -- divide coefficients as well (default:
            False).
 
         OUTPUT: monomial.
@@ -650,9 +650,9 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         INPUT:
 
-        -  ``f`` - monomial.
+        -  ``f`` -- monomial.
 
-        -  ``g`` - monomial.
+        -  ``g`` -- monomial.
 
         OUTPUT: monomial.
 
@@ -704,9 +704,9 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
         INPUT:
 
 
-        -  ``f`` - monomial
+        -  ``f`` -- monomial
 
-        -  ``G`` - list/set of mpolynomials
+        -  ``G`` -- list/set of mpolynomials
 
 
         EXAMPLES::
@@ -802,9 +802,9 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         INPUT:
 
-        -  ``h`` - monomial.
+        -  ``h`` -- monomial.
 
-        -  ``g`` - monomial.
+        -  ``g`` -- monomial.
 
         OUTPUT: Boolean.
 
@@ -853,7 +853,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         INPUT:
 
-        -  ``t`` - a monomial.
+        -  ``t`` -- a monomial.
 
         OUTPUT: a list of monomials.
 

@@ -187,7 +187,7 @@ class CartanType(SageObject, CartanType_abstract):
 
         TESTS:
 
-        Check that :trac:`20418` is fixed::
+        Check that :issue:`20418` is fixed::
 
             sage: ct = CartanType(["A2", "B2"])
             sage: ct == (1, 2, 1)
@@ -514,9 +514,9 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
         INPUT:
 
-        - ``i`` - an integer in range(self.components)
+        - ``i`` -- an integer in range(self.components)
 
-        - ``v`` - a vector in the i-th component weight lattice
+        - ``v`` -- a vector in the i-th component weight lattice
 
         EXAMPLES::
 

@@ -7,17 +7,17 @@ exec </dev/null
 # We don't have to set up CFLAGS etc., since these are taken from ECL
 # (i.e., ECL uses the ones that were specified when ECL was built).
 # We unset them to avoid passing another copy to the linker,
-# which is overquoted in some cases, see Trac #29606.
+# which is overquoted in some cases, see Issue #29606.
 unset CFLAGS
 unset LDFLAGS
 
-# workaround for configure braindamage, see Trac #15546
+# workaround for configure braindamage, see Issue #15546
 export EMACS=no
 
 
 cd src/
 
-# Use newer version of config.guess and config.sub (see Trac #19734)
+# Use newer version of config.guess and config.sub (see Issue #19734)
 cp "$SAGE_ROOT"/config/config.* .
 
 # Patch out bad 'multiple targets' rule

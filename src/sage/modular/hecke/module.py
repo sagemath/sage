@@ -22,7 +22,7 @@ from sage.modules.free_module import FreeModule
 from sage.modules.module import Module
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.ring import CommutativeRing
+from sage.categories.commutative_rings import CommutativeRings
 from sage.structure.sequence import Sequence
 
 from . import algebra
@@ -38,12 +38,18 @@ def is_HeckeModule(x):
 
         sage: from sage.modular.hecke.module import is_HeckeModule
         sage: is_HeckeModule(ModularForms(Gamma0(7), 4))
+        doctest:warning...
+        DeprecationWarning: the function is_HeckeModule is deprecated;
+        use 'isinstance(..., HeckeModule_generic)' instead
+        See https://github.com/sagemath/sage/issues/37895 for details.
         True
         sage: is_HeckeModule(QQ^3)
         False
         sage: is_HeckeModule(J0(37).homology())
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37895, "the function is_HeckeModule is deprecated; use 'isinstance(..., HeckeModule_generic)' instead")
     return isinstance(x, HeckeModule_generic)
 
 
@@ -76,7 +82,7 @@ class HeckeModule_generic(Module):
             sage: ModularForms(3, 3).category()
             Category of Hecke modules over Rational Field
         """
-        if not isinstance(base_ring, CommutativeRing):
+        if base_ring not in CommutativeRings():
             raise TypeError("base_ring must be commutative ring")
 
         from sage.categories.hecke_modules import HeckeModules
@@ -438,11 +444,11 @@ class HeckeModule_generic(Module):
 
         INPUT:
 
-        -  ``ModularSymbols self`` - an arbitrary space of modular symbols
+        -  ``ModularSymbols self`` -- an arbitrary space of modular symbols
 
         OUTPUT:
 
-        -  ``int`` - the level
+        -  ``int`` -- the level
 
         EXAMPLES::
 
@@ -456,7 +462,7 @@ class HeckeModule_generic(Module):
         r"""
         Return the rank of this module over its base ring.
 
-        This raises a ``NotImplementedError``, since this is an
+        This raises a :class:`NotImplementedError`, since this is an
         abstract base class.
 
         EXAMPLES::
@@ -473,7 +479,7 @@ class HeckeModule_generic(Module):
         Return the submodule of ``self`` corresponding to ``X``.
 
         As this is an abstract base class, this raises a
-        ``NotImplementedError``.
+        :class:`NotImplementedError`.
 
         EXAMPLES::
 
@@ -652,7 +658,7 @@ class HeckeModule_free_module(HeckeModule_generic):
             sage: M._element_eigenvalue(M.0)
             1
         """
-        if not element.is_HeckeModuleElement(x):
+        if not isinstance(x, element.HeckeModuleElement):
             raise TypeError("x must be a Hecke module element.")
         if x not in self.ambient_hecke_module():
             raise ArithmeticError("x must be in the ambient Hecke module.")
@@ -739,7 +745,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         r"""
         Return the ambient module associated to this module.
 
-        As this is an abstract base class, raise ``NotImplementedError``.
+        As this is an abstract base class, raise :class:`NotImplementedError`.
 
         EXAMPLES::
 
@@ -924,21 +930,21 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         INPUT:
 
-        -  ``anemic`` - bool (default: True), if True, use only
+        -  ``anemic`` -- bool (default: ``True``), if True, use only
            Hecke operators of index coprime to the level.
 
-        -  ``bound`` - int or None, (default: None). If None,
+        -  ``bound`` -- int or None, (default: None). If None,
            use all Hecke operators up to the Sturm bound, and hence obtain the
            same result as one would obtain by using every element of the Hecke
            ring. If a fixed integer, decompose using only Hecke operators
            `T_p`, with `p` prime, up to bound.
-        -  ``sort_by_basis`` - bool (default: ``False``); If True the resulting
+        -  ``sort_by_basis`` -- bool (default: ``False``); If True the resulting
            decomposition will be sorted as if it was free modules, ignoring the
            Hecke module structure. This will save a lot of time.
 
         OUTPUT:
 
-        -  ``list`` - a list of subspaces of ``self``.
+        -  ``list`` -- a list of subspaces of ``self``.
 
         EXAMPLES::
 
@@ -1226,9 +1232,9 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         INPUT:
 
-        -  ``n`` - index of Hecke operator
+        -  ``n`` -- index of Hecke operator
 
-        -  ``name`` - print representation of generator of
+        -  ``name`` -- print representation of generator of
            eigenvalue field
 
         EXAMPLES::
@@ -1270,7 +1276,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         TESTS:
 
-        This checks that :trac:`15201` is fixed::
+        This checks that :issue:`15201` is fixed::
 
             sage: M = ModularSymbols(5, 6, sign=1)
             sage: f = M.decomposition()[0]
@@ -1399,10 +1405,10 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         INPUT:
 
-        -  ``ModularSymbols self`` - Hecke equivariant space of
+        -  ``ModularSymbols self`` -- Hecke equivariant space of
            modular symbols
 
-        -  ``int n`` - an integer at least 1.
+        -  ``int n`` -- an integer at least 1.
 
         EXAMPLES::
 
@@ -1485,7 +1491,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         INPUT:
 
-        -  ``n`` - integer
+        -  ``n`` -- integer
 
         OUTPUT: a polynomial
 
@@ -1501,7 +1507,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         Return ``True`` if this space is simple as a module for the
         corresponding Hecke algebra.
 
-        Raises ``NotImplementedError``, as this is an abstract base
+        This raises :class:`NotImplementedError`, as this is an abstract base
         class.
 
         EXAMPLES::
@@ -1672,9 +1678,9 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         INPUT:
 
-        -  ``n`` - number of eigenvalues
+        -  ``n`` -- number of eigenvalues
 
-        -  ``alpha`` - name of generate for eigenvalue field
+        -  ``alpha`` -- name of generate for eigenvalue field
 
         EXAMPLES:
 
@@ -1735,11 +1741,11 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         INPUT:
 
-        -  ``self`` - an arbitrary Hecke module
+        -  ``self`` -- an arbitrary Hecke module
 
         OUTPUT:
 
-        -  ``int`` - the weight
+        -  ``int`` -- the weight
 
         EXAMPLES::
 

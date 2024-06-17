@@ -10,17 +10,16 @@ relevant Manin relations off of that picture. The algorithm follows [PS2011]_.
 AUTHORS:
 
 - Robert Pollack, Jonathan Hanke (2012): initial version
-
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Robert Pollack <rpollack@math.bu.edu>
 #                          Jonathan Hanke <jonhanke@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.matrix.matrix_space import MatrixSpace
 from sage.modular.modsym.all import P1List
@@ -1275,7 +1274,7 @@ class ManinRelations(PollackStevensModularDomain):
 
         INPUT:
 
-        - ``r1, r2`` -- rational numbers
+        - ``r1``, ``r2`` -- rational numbers
 
         OUTPUT:
 
@@ -1308,8 +1307,8 @@ class ManinRelations(PollackStevensModularDomain):
 
         INPUT:
 
-        - ``r1, r2`` -- rational numbers (that are assumed to be connected by a
-          unimodular path)
+        - ``r1``, ``r2`` -- rational numbers (that are assumed to be connected
+          by a unimodular path)
 
         OUTPUT:
 

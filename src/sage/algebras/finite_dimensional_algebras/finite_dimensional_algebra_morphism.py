@@ -15,7 +15,7 @@ Morphisms Between Finite Algebras
 from sage.misc.cachefunc import cached_method
 from sage.rings.morphism import RingHomomorphism_im_gens
 from sage.rings.homset import RingHomset_generic
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 
 
 class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
@@ -191,6 +191,7 @@ class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
         coker_I = I.basis_matrix().transpose().kernel().basis_matrix().transpose()
         return self.domain().ideal((self._matrix * coker_I).kernel().basis_matrix(), given_by_matrix=True)
 
+
 class FiniteDimensionalAlgebraHomset(RingHomset_generic):
     """
     Set of morphisms between two finite-dimensional algebras.
@@ -240,10 +241,10 @@ class FiniteDimensionalAlgebraHomset(RingHomset_generic):
                 return f
             if f.parent() == self:
                 return FiniteDimensionalAlgebraMorphism(self, f._matrix, check, unitary)
-        elif is_Matrix(f):
+        elif isinstance(f, Matrix):
             return FiniteDimensionalAlgebraMorphism(self, f, check, unitary)
         try:
-            from sage.matrix.constructor import Matrix
-            return FiniteDimensionalAlgebraMorphism(self, Matrix(f), check, unitary)
+            from sage.matrix.constructor import matrix
+            return FiniteDimensionalAlgebraMorphism(self, matrix(f), check, unitary)
         except Exception:
             return RingHomset_generic.__call__(self, f, check)

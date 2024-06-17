@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Functors
 
@@ -14,7 +15,6 @@ AUTHORS:
   making functors applicable to morphisms (not only to objects)
 
 - Simon King (2010-12): Pickling of functors without losing domain and codomain
-
 """
 
 # ****************************************************************************
@@ -42,7 +42,7 @@ def _Functor_unpickle(Cl, D, domain, codomain):
 
     AUTHOR:
 
-    - Simon King (2010-12): :trac:`10460`
+    - Simon King (2010-12): :issue:`10460`
 
     EXAMPLES::
 
@@ -179,9 +179,9 @@ cdef class Functor(SageObject):
             Finite Field of size 2
 
         """
-        if not category.is_Category(domain):
+        if not isinstance(domain, category.Category):
             raise TypeError("domain (=%s) must be a category" % domain)
-        if not category.is_Category(codomain):
+        if not isinstance(codomain, category.Category):
             raise TypeError("codomain (=%s) must be a category" % codomain)
         self.__domain = domain
         self.__codomain = codomain
@@ -203,7 +203,7 @@ cdef class Functor(SageObject):
 
         AUTHOR:
 
-        - Simon King (2010-12):  :trac:`10460`
+        - Simon King (2010-12):  :issue:`10460`
 
         TESTS::
 
@@ -314,7 +314,7 @@ cdef class Functor(SageObject):
             Functor from Category of rings to Category of fields
 
         A functor can be renamed if its type is a Python class
-        (see :trac:`16156`)::
+        (see :issue:`16156`)::
 
             sage: I = IdentityFunctor(Rings()); I
             The identity functor on Category of rings
@@ -364,7 +364,7 @@ cdef class Functor(SageObject):
         The last example shows that it is tested whether the result of
         applying the functor lies in the functor's codomain. Note that
         the matrix functor used to be defined similar to this example,
-        which was fixed in :trac:`8807`::
+        which was fixed in :issue:`8807`::
 
             sage: class IllFunctor(Functor):
             ....:   def __init__(self, m, n):
@@ -385,8 +385,8 @@ cdef class Functor(SageObject):
             that is not in Category of rings.
 
         """
-        from sage.categories.morphism import is_Morphism
-        if is_Morphism(x):
+        from sage.categories.morphism import Morphism
+        if isinstance(x, Morphism):
             return self._apply_functor_to_morphism(x)
         y = self._apply_functor(self._coerce_into_domain(x))
         if not ((y in self.__codomain) or (y in self.__codomain.Homsets())):
@@ -512,7 +512,7 @@ class ForgetfulFunctor_generic(Functor):
             sage: F1 = ForgetfulFunctor(FiniteFields(), Fields())
 
         This is to test against a bug occurring in a previous version
-        (see :trac:`8800`)::
+        (see :issue:`8800`)::
 
             sage: F1 == QQ #indirect doctest
             False
@@ -660,7 +660,7 @@ def ForgetfulFunctor(domain, codomain):
 
     INPUT:
 
-    ``C``, ``D`` - two categories
+    ``C``, ``D`` -- two categories
 
     OUTPUT:
 

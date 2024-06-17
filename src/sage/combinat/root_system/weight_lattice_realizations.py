@@ -535,7 +535,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
 
             INPUT:
 
-            - ``f`` - a linear map from ``self`` to ``self`` which preserves alcoves
+            - ``f`` -- a linear map from ``self`` to ``self`` which preserves alcoves
 
             This method returns the Dynkin diagram automorphism for
             the decomposition `f = d w` (see
@@ -1061,7 +1061,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
                 sage: [al[i].symmetric_form(al[i]) for i in P.index_set()]              # needs sage.graphs
                 [2, 4, 8]
 
-            Check that :trac:`31410` is fixed, and the symmetric form
+            Check that :issue:`31410` is fixed, and the symmetric form
             computed on the weight space is the same as the symmetric
             form computed on the root space::
 

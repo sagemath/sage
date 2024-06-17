@@ -33,7 +33,6 @@ AUTHORS:
     Implementation of :meth:`exp_int` (from sage/functions/special.py).
     Implementation of :meth:`exponential_integral_1` (from
     sage/functions/transcendental.py).
-
 """
 
 # ****************************************************************************
@@ -180,7 +179,7 @@ class Function_exp_integral_e(BuiltinFunction):
 
         TESTS:
 
-        Check that Python ints work (:trac:`14766`)::
+        Check that Python ints work (:issue:`14766`)::
 
             sage: exp_integral_e(int(3), 0)                                             # needs mpmath
             1/2
@@ -443,7 +442,7 @@ class Function_log_integral(BuiltinFunction):
 
         TESTS:
 
-        Verify that :trac:`28917` is fixed::
+        Verify that :issue:`28917` is fixed::
 
             sage: latex(log_integral(x))                                                # needs sage.symbolic
             \operatorname{log\_integral}\left(x\right)
@@ -639,7 +638,7 @@ class Function_log_integral_offset(BuiltinFunction):
 
         TESTS:
 
-        Verify that the problem described in :trac:`28917` no longer appears here::
+        Verify that the problem described in :issue:`28917` no longer appears here::
 
             sage: latex(log_integral_offset)
             \operatorname{log\_integral\_offset}
@@ -1375,7 +1374,7 @@ class Function_exp_integral(BuiltinFunction):
 
     TESTS:
 
-    Show that the evaluation and limit issue in :trac:`13271` is fixed::
+    Show that the evaluation and limit issue in :issue:`13271` is fixed::
 
         sage: # needs sage.symbolic
         sage: var('Z')
@@ -1470,7 +1469,7 @@ def exponential_integral_1(x, n=0):
 
     EXAMPLES::
 
-        sage: # needs sage.libs.pari
+        sage: # needs sage.libs.pari sage.rings.real_mpfr
         sage: exponential_integral_1(2)
         0.0489005107080611
         sage: exponential_integral_1(2, 4)  # abs tol 1e-18
@@ -1519,7 +1518,7 @@ def exponential_integral_1(x, n=0):
         ....:         if e >= c:
         ....:             print("exponential_integral_1(%s, %s)[%s] with precision %s has error of %s >= %s"%(a, n, i, prec, e, c))
 
-    ALGORITHM: use the PARI C-library function ``eint1``.
+    ALGORITHM: use the PARI C-library function :pari:`eint1`.
 
     REFERENCE:
 

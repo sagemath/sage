@@ -141,7 +141,6 @@ REFERENCES:
 
 Augmentations are described originally in [Mac1936I]_ and [Mac1936II]_. An
 overview can also be found in Chapter 4 of [Rüt2014]_.
-
 """
 # ****************************************************************************
 #       Copyright (C) 2013-2017 Julian Rüth <julian.rueth@fsfe.org>
@@ -589,7 +588,7 @@ class AugmentedValuation_base(InductiveValuation):
             sage: R.<x> = K[]
             sage: v = GaussValuation(R, K.valuation(2))
             sage: w = v.augmentation(x^2 + x + 1, 1)
-            sage: w.restriction(QQ['x'])                                                # needs sage.lins.singular
+            sage: w.restriction(QQ['x'])                                                # needs sage.libs.singular
             [ Gauss valuation induced by 2-adic valuation, v(x^2 + x + 1) = 1 ]
         """
         if ring.is_subring(self.domain()):
@@ -1091,7 +1090,7 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
 
         TESTS:
 
-        Verify that :trac:`30305` has been resolved::
+        Verify that :issue:`30305` has been resolved::
 
             sage: # needs sage.rings.number_field
             sage: R.<T> = QQ[]
@@ -1782,7 +1781,7 @@ class FiniteAugmentedValuation(AugmentedValuation_base, FiniteInductiveValuation
             sage: w.simplify(x^10/2 + 1, force=True)
             (u + 1)*2^-1 + O(2^4)
 
-        Check that :trac:`25607` has been resolved, i.e., the coefficients
+        Check that :issue:`25607` has been resolved, i.e., the coefficients
         in the following example are small::
 
             sage: # needs sage.libs.ntl sage.rings.number_field

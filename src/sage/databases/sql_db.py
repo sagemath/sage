@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Relational (sqlite) Databases Module
 
@@ -55,7 +54,6 @@ AUTHORS:
   reformat output in show
 
 - Emily A. Kirkman and Robert L. Miller (2007-06-17): initial version
-
 """
 # FUTURE TODOs (Ignore for now):
 #    - order by clause in query strings
@@ -433,7 +431,7 @@ class SQLQuery(SageObject):
             0
             1
 
-        Test that :trac:`27562` is fixed::
+        Test that :issue:`27562` is fixed::
 
             sage: D = SQLDatabase()
             sage: r = SQLQuery(D, {'table_name':'simon', 'display_cols':['a1'], 'expression':['b2','<=', 3]})

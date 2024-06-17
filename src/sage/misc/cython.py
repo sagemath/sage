@@ -94,26 +94,26 @@ def cython(filename, verbose=0, compile_message=False,
     - ``verbose`` (integer, default 0) -- level of verbosity. A negative
       value ensures complete silence.
 
-    - ``compile_message`` (bool, default False) -- if True, print
+    - ``compile_message`` (bool, default: ``False``) -- if True, print
       ``'Compiling <filename>...'`` to the standard error.
 
-    - ``use_cache`` (bool, default False) -- if True, check the
+    - ``use_cache`` (bool, default: ``False``) -- if True, check the
       temporary build directory to see if there is already a
       corresponding .so file. If so, and if the .so file is newer than the
       Cython file, don't recompile, just reuse the .so file.
 
-    - ``create_local_c_file`` (bool, default False) -- if True, save a
+    - ``create_local_c_file`` (bool, default: ``False``) -- if True, save a
       copy of the ``.c`` or ``.cpp`` file in the current directory.
 
-    - ``annotate`` (bool, default True) -- if True, create an html file which
+    - ``annotate`` (bool, default: ``True``) -- if True, create an html file which
       annotates the conversion from .pyx to .c. By default this is only created
       in the temporary directory, but if ``create_local_c_file`` is also True,
       then save a copy of the .html file in the current directory.
 
-    - ``sage_namespace`` (bool, default True) -- if True, import
+    - ``sage_namespace`` (bool, default: ``True``) -- if True, import
       ``sage.all``.
 
-    - ``create_local_so_file`` (bool, default False) -- if True, save a
+    - ``create_local_so_file`` (bool, default: ``False``) -- if True, save a
       copy of the compiled .so file in the current directory.
 
     OUTPUT: a tuple ``(name, dir)`` where ``name`` is the name
@@ -122,10 +122,10 @@ def cython(filename, verbose=0, compile_message=False,
 
     TESTS:
 
-    Before :trac:`12975`, it would have been needed to write ``#clang c++``,
+    Before :issue:`12975`, it would have been needed to write ``#clang c++``,
     but upper case ``C++`` has resulted in an error.
     Using pkgconfig to find the libraries, headers and macros. This is a
-    work around while waiting for :trac:`22461` which will offer a better
+    work around while waiting for :issue:`22461` which will offer a better
     solution::
 
         sage: code = [
@@ -151,7 +151,7 @@ def cython(filename, verbose=0, compile_message=False,
         ....:        "cdef vector[int] * v = new vector[int](4)\n")
 
     Check that compiling C++ code works when creating a local C file,
-    first moving to a tempdir to avoid clutter.  Before :trac:`22113`,
+    first moving to a tempdir to avoid clutter.  Before :issue:`22113`,
     the create_local_c_file argument was not tested for C++ code::
 
         sage: orig_cwd = os.getcwd()
@@ -210,7 +210,7 @@ def cython(filename, verbose=0, compile_message=False,
         ...
         RuntimeError: ...
 
-    As of :trac:`29139` the default is ``cdivision=True``::
+    As of :issue:`29139` the default is ``cdivision=True``::
 
         sage: cython('''
         ....: cdef size_t foo = 3/2
@@ -227,7 +227,7 @@ def cython(filename, verbose=0, compile_message=False,
         ....: ''')
 
     In Cython 0.29.33 using `from PACKAGE cimport MODULE` is broken
-    when `PACKAGE` is a namespace package, see :trac:`35322`::
+    when `PACKAGE` is a namespace package, see :issue:`35322`::
 
         sage: cython('''
         ....: from sage.misc cimport cachefunc
@@ -348,7 +348,7 @@ def cython(filename, verbose=0, compile_message=False,
                     libraries=standard_libs,
                     library_dirs=standard_libdirs)
 
-    directives = dict(language_level=3, cdivision=True)
+    directives = {'language_level': 3, 'cdivision': True}
 
     try:
         # Change directories to target_dir so that Cython produces the correct
@@ -456,17 +456,17 @@ def cython_lambda(vars, expr, verbose=0, **kwds):
 
     INPUT:
 
-    - ``vars`` - list of pairs (variable name, c-data type), where the variable
+    - ``vars`` -- list of pairs (variable name, c-data type), where the variable
       names and data types are strings, OR a string such as ``'double x, int y,
       int z'``
 
-    - ``expr`` - an expression involving the vars and constants; you can access
+    - ``expr`` -- an expression involving the vars and constants; you can access
       objects defined in the current module scope ``globals()`` using
       ``sage.object_name``.
 
     .. warning::
 
-        Accessing ``globals()`` doesn't actually work, see :trac:`12446`.
+        Accessing ``globals()`` doesn't actually work, see :issue:`12446`.
 
     EXAMPLES:
 
@@ -542,7 +542,7 @@ def cython_import(filename, **kwds):
 
     INPUT:
 
-    - ``filename`` - a string; name of a file that contains Cython
+    - ``filename`` -- a string; name of a file that contains Cython
       code
 
     See the function :func:`sage.misc.cython.cython` for documentation
@@ -578,7 +578,7 @@ def cython_import_all(filename, globals, **kwds):
 
     INPUT:
 
-    - ``filename`` - a string; name of a file that contains Cython
+    - ``filename`` -- a string; name of a file that contains Cython
       code
     """
     m = cython_import(filename, **kwds)

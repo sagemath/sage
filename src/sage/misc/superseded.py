@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Handling Superseded Functionality
 
@@ -38,8 +39,8 @@ def _check_issue_number(issue_number):
 
     OUTPUT:
 
-    This function returns nothing. A ``ValueError`` or ``TypeError`` is
-    raised if the argument cannot be a valid issue number.
+    This function returns nothing. A :class:`ValueError` or :class:`TypeError`
+    is raised if the argument cannot be a valid issue number.
 
     EXAMPLES::
 
@@ -97,6 +98,7 @@ def deprecation(issue_number, message, stacklevel=4):
     """
     warning(issue_number, message, DeprecationWarning, stacklevel)
 
+
 def deprecation_cython(issue_number, message, stacklevel=3):
     r"""
     Issue a deprecation warning -- for use in cython functions
@@ -134,6 +136,7 @@ def deprecation_cython(issue_number, message, stacklevel=3):
         False
     """
     warning(issue_number, message, DeprecationWarning, stacklevel)
+
 
 def warning(issue_number, message, warning_class=Warning, stacklevel=3):
     r"""
@@ -212,7 +215,7 @@ def experimental_warning(issue_number, message, stacklevel=4):
     warning(issue_number, message, FutureWarning, stacklevel)
 
 
-class experimental():
+class experimental:
     def __init__(self, issue_number, stacklevel=4):
         """
         A decorator which warns about the experimental/unstable status of
@@ -255,7 +258,7 @@ class experimental():
 
         The following test works together with the doc-test for
         :meth:`__experimental_self_test` to demonstrate that warnings are issued only
-        once, even in doc-tests (see :trac:`20601`).
+        once, even in doc-tests (see :issue:`20601`).
         ::
 
             sage: from sage.misc.superseded import __experimental_self_test
@@ -318,10 +321,10 @@ class experimental():
         return wrapper
 
 
-class __experimental_self_test():
+class __experimental_self_test:
     r"""
     This is a class only to demonstrate with a doc-test that the @experimental
-    decorator only issues a warning message once (see :trac:`20601`).
+    decorator only issues a warning message once (see :issue:`20601`).
 
     The test below does not issue a warning message because that warning has
     already been issued by a previous doc-test in the @experimental code. Note
@@ -339,7 +342,7 @@ class __experimental_self_test():
         print("I'm " + x)
 
 
-class DeprecatedFunctionAlias():
+class DeprecatedFunctionAlias:
     """
     A wrapper around methods or functions which automatically prints a
     deprecation message. See :func:`deprecated_function_alias`.
@@ -357,7 +360,7 @@ class DeprecatedFunctionAlias():
             sage: g = deprecated_function_alias(13109, number_of_partitions)            # needs sage.combinat
             sage: from sage.misc.superseded import deprecated_function_alias
             sage: g.__doc__                                                             # needs sage.combinat
-            'Deprecated: Use :func:`number_of_partitions` instead.\nSee :trac:`13109` for details.\n\n'
+            'Deprecated: Use :func:`number_of_partitions` instead.\nSee :issue:`13109` for details.\n\n'
         """
         _check_issue_number(issue_number)
         try:
@@ -375,7 +378,7 @@ class DeprecatedFunctionAlias():
             sphinxrole = "meth"
         doc = 'Deprecated: '
         doc += 'Use :' + sphinxrole + ':`' + self.func.__name__ + '` instead.\n'
-        doc += 'See :trac:`' + str(self.issue_number) + '` for details.\n\n'
+        doc += 'See :issue:`' + str(self.issue_number) + '` for details.\n\n'
         self.__doc__ = doc
 
     @lazy_attribute
@@ -469,7 +472,7 @@ class DeprecatedFunctionAlias():
             sage: obj.old_meth.instance is obj
             True
 
-        :trac:`19125`::
+        :issue:`19125`::
 
             sage: from sage.misc.superseded import deprecated_function_alias
             sage: class A:
@@ -533,7 +536,7 @@ def deprecated_function_alias(issue_number, func):
         See https://github.com/sagemath/sage/issues/13109 for details.
         42
 
-    :trac:`11585`::
+    :issue:`11585`::
 
         sage: def a(): pass
         sage: b = deprecated_function_alias(13109, a)

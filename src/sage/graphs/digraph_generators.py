@@ -51,7 +51,6 @@ AUTHORS:
 
 Functions and methods
 ---------------------
-
 """
 # ****************************************************************************
 #           Copyright (C) 2006 Robert L. Miller <rlmillster@gmail.com>
@@ -108,7 +107,6 @@ class DiGraphGenerators:
                     - RandomTournament
                     - TransitiveTournament
                     - tournaments_nauty
-
 
 
     ORDERLY GENERATION: digraphs(vertices, property=lambda x: True,
@@ -244,21 +242,21 @@ class DiGraphGenerators:
             sage: digraphs.ButterflyGraph(2, vertices='vectors').edges(sort=True,       # needs sage.modules sage.rings.finite_rings
             ....:                                                      labels=False)
             [(((0, 0), 0), ((0, 0), 1)),
-            (((0, 0), 0), ((1, 0), 1)),
-            (((0, 0), 1), ((0, 0), 2)),
-            (((0, 0), 1), ((0, 1), 2)),
-            (((0, 1), 0), ((0, 1), 1)),
-            (((0, 1), 0), ((1, 1), 1)),
-            (((0, 1), 1), ((0, 0), 2)),
-            (((0, 1), 1), ((0, 1), 2)),
-            (((1, 0), 0), ((0, 0), 1)),
-            (((1, 0), 0), ((1, 0), 1)),
-            (((1, 0), 1), ((1, 0), 2)),
-            (((1, 0), 1), ((1, 1), 2)),
-            (((1, 1), 0), ((0, 1), 1)),
-            (((1, 1), 0), ((1, 1), 1)),
-            (((1, 1), 1), ((1, 0), 2)),
-            (((1, 1), 1), ((1, 1), 2))]
+             (((0, 0), 0), ((1, 0), 1)),
+             (((0, 0), 1), ((0, 0), 2)),
+             (((0, 0), 1), ((0, 1), 2)),
+             (((0, 1), 0), ((0, 1), 1)),
+             (((0, 1), 0), ((1, 1), 1)),
+             (((0, 1), 1), ((0, 0), 2)),
+             (((0, 1), 1), ((0, 1), 2)),
+             (((1, 0), 0), ((0, 0), 1)),
+             (((1, 0), 0), ((1, 0), 1)),
+             (((1, 0), 1), ((1, 0), 2)),
+             (((1, 0), 1), ((1, 1), 2)),
+             (((1, 1), 0), ((0, 1), 1)),
+             (((1, 1), 0), ((1, 1), 1)),
+             (((1, 1), 1), ((1, 0), 2)),
+             (((1, 1), 1), ((1, 1), 2))]
             sage: pos = digraphs.ButterflyGraph(2).get_pos()
             sage: pos['11', 0]
             (0, 0)
@@ -649,14 +647,16 @@ class DiGraphGenerators:
 
         INPUT:
 
-        - ``graphs`` -- a :class:`Graph` or an iterable containing :class:`Graph`
-          the graph6 string of these graphs is used as an input for ``directg``.
+        - ``graphs`` -- a :class:`Graph` or an iterable containing
+          :class:`Graph`.  The graph6 string of these graphs is used as an input
+          for ``directg``.
 
         - ``options`` (str) -- a string passed to directg as if it was run at
           a system command line. Available options from directg --help::
 
             -e<int> | -e<int>:<int>  specify a value or range of the total number of arcs
             -o       orient each edge in only one direction, never both
+            -a       only make acyclic orientations (implies -o)
             -f<int>  Use only the subgroup that fixes the first <int> vertices setwise
             -V       only output graphs with nontrivial groups (including exchange of
                      isolated vertices).  The -f option is respected.
@@ -664,7 +664,7 @@ class DiGraphGenerators:
                      the part number (first is 0) and the second is the number of
                      parts. Splitting is done per input graph independently.
 
-        - ``debug`` (boolean) -- default: ``False`` - if ``True``
+        - ``debug`` -- boolean (default: ``False``); if ``True``
           directg standard error and standard output are displayed.
 
         EXAMPLES::
@@ -679,6 +679,19 @@ class DiGraphGenerators:
             '001001000'
             sage: len(list(digraphs.nauty_directg(graphs.PetersenGraph(), options="-o")))
             324
+
+        Generate non-isomorphic acyclic orientations::
+
+            sage: K = graphs.CompleteGraph(4)
+            sage: all(d.is_directed_acyclic() for d in digraphs.nauty_directg(K, options='-a'))
+            True
+            sage: sum(1 for _ in digraphs.nauty_directg(K, options='-a'))
+            1
+            sage: S = graphs.StarGraph(4)
+            sage: all(d.is_directed_acyclic() for d in digraphs.nauty_directg(S, options='-a'))
+            True
+            sage: sum(1 for _ in digraphs.nauty_directg(S, options='-a'))
+            5
 
         TESTS::
 
@@ -923,7 +936,7 @@ class DiGraphGenerators:
             sage: digraphs.DeBruijn(0, 0)                                               # needs sage.combinat
             De Bruijn digraph (k=0, n=0): Looped multi-digraph on 0 vertices
 
-        :trac:`22355`::
+        :issue:`22355`::
 
             sage: db = digraphs.DeBruijn(2, 2, vertices='strings')                      # needs sage.combinat
             sage: db.vertices(sort=True)                                                # needs sage.combinat
@@ -940,10 +953,11 @@ class DiGraphGenerators:
             ...
             ValueError: unknown type for vertices
         """
-        from sage.combinat.words.words import Words
         from sage.rings.integer import Integer
 
         if vertices == 'strings':
+            from sage.combinat.words.words import Words
+
             W = Words(list(range(k)) if isinstance(k, Integer) else k, n)
             A = Words(list(range(k)) if isinstance(k, Integer) else k, 1)
             g = DiGraph(loops=True)
@@ -1185,7 +1199,7 @@ class DiGraphGenerators:
             ...
             ValueError: diameter must be greater than or equal to one
 
-        :trac:`22355`::
+        :issue:`22355`::
 
             sage: K = digraphs.Kautz(2, 2, vertices='strings')                          # needs sage.combinat
             sage: K.vertices(sort=True)                                                 # needs sage.combinat
@@ -1208,10 +1222,10 @@ class DiGraphGenerators:
         if D < 1:
             raise ValueError("diameter must be greater than or equal to one")
 
-        from sage.combinat.words.words import Words
         from sage.rings.integer import Integer
 
         if vertices == 'strings':
+            from sage.combinat.words.words import Words
 
             my_alphabet = Words([str(i) for i in range(k + 1)] if isinstance(k,
                                 Integer) else k, 1)

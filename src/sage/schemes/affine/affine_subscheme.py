@@ -6,7 +6,6 @@ AUTHORS:
 - David Kohel, William Stein (2005): initial version
 
 - Ben Hutz (2013): affine subschemes
-
 """
 
 # ****************************************************************************
@@ -476,7 +475,7 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
             sage: X.multiplicity(Q2)                                                    # needs sage.libs.singular
             7
 
-        Check that :trac:`27479` is fixed::
+        Check that :issue:`27479` is fixed::
 
             sage: A1.<x> = AffineSpace(QQ, 1)
             sage: X = A1.subscheme([x^1789 + x])
