@@ -119,10 +119,8 @@ if [ -n "$SAGE_SILENT_BUILD" -a ${use_prefix} = true ]; then
     status=$?
     if [[ $status != 0 ]]; then
         if [ -n "$GITHUB_ACTIONS" ]; then
-            echo :":"error file=$logfile:":" ==== ERROR IN LOG FILE $logfile ====
-            echo "::group::${logname}"
+            echo "  [$logname] error installing, exit status $status. Log file:"
             sed "s;^;  [$logname]   ;" "$logfile" >&2
-            echo "::endgroup::"
         else
             echo "  [$logname] error installing, exit status $status. End of log file:"
             tail -n 120 "$logfile" | sed "/Please email sage-devel/,$ d;s;^;  [$logname]   ;" >&2
