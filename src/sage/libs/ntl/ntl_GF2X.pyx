@@ -55,7 +55,7 @@ def GF2XHexOutput(have_hex=None):
 
     INPUT:
 
-    - have_hex -- if True hex representation will be used
+    - ``have_hex`` -- if ``True`` hex representation will be used
 
     EXAMPLES::
 
@@ -91,7 +91,7 @@ cdef class ntl_GF2X():
     """
     def __init__(self, x=[]):
         """
-        Constructs a new polynomial over GF(2).
+        Construct a new polynomial over GF(2).
 
         A value may be passed to this constructor. If you pass a string
         to the constructor please note that byte sequences and the hexadecimal
@@ -180,7 +180,7 @@ cdef class ntl_GF2X():
 
     def __repr__(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -339,7 +339,7 @@ cdef class ntl_GF2X():
 
     def __richcmp__(ntl_GF2X self, other, int op):
         """
-        Compare self to other.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -365,7 +365,7 @@ cdef class ntl_GF2X():
 
     def __lshift__(ntl_GF2X self, int i):
         """
-        Return left shift of self by i bits ( == multiplication by
+        Return left shift of ``self`` by i bits ( == multiplication by
         `X^i`).
 
         INPUT:
@@ -384,7 +384,7 @@ cdef class ntl_GF2X():
 
     def __rshift__(ntl_GF2X self, int offset):
         """
-        Return right shift of self by i bits ( == floor division by
+        Return right shift of ``self`` by i bits ( == floor division by
         `X^i`).
 
         INPUT:
@@ -403,7 +403,7 @@ cdef class ntl_GF2X():
 
     def GCD(ntl_GF2X self, other):
         """
-        Return GCD of self and other.
+        Return GCD of ``self`` and ``other``.
 
         INPUT:
             other -- ntl.GF2X
@@ -425,7 +425,7 @@ cdef class ntl_GF2X():
 
     def XGCD(ntl_GF2X self, other):
         """
-        Return the extended gcd of self and other, i.e., elements r, s, t such that
+        Return the extended gcd of ``self`` and ``other``, i.e., elements r, s, t such that.
 
             r = s  * self + t  * other.
 
@@ -439,7 +439,6 @@ cdef class ntl_GF2X():
             sage: r,s,t = a.XGCD(b)
             sage: r == a*s + t*b
             True
-
         """
         cdef ntl_GF2X r = ntl_GF2X.__new__(ntl_GF2X)
         cdef ntl_GF2X s = ntl_GF2X.__new__(ntl_GF2X)
@@ -453,7 +452,7 @@ cdef class ntl_GF2X():
 
     def deg(ntl_GF2X self):
         """
-        Returns the degree of this polynomial
+        Return the degree of this polynomial.
 
         EXAMPLES::
 
@@ -464,7 +463,7 @@ cdef class ntl_GF2X():
 
     def list(ntl_GF2X self):
         """
-        Represents this element as a list of binary digits.
+        Represent this element as a list of binary digits.
 
         EXAMPLES::
 
@@ -483,7 +482,7 @@ cdef class ntl_GF2X():
 
     def bin(ntl_GF2X self):
         r"""
-        Returns binary representation of this element.
+        Return binary representation of this element.
 
         It is the same as setting \code{ntl.GF2XHexOutput(False)} and
         representing this element afterwards. However it should be
@@ -539,8 +538,8 @@ cdef class ntl_GF2X():
 
         INPUT:
 
-        - self  -- GF2X element
-        - R     -- PolynomialRing over GF(2)
+        - ``self`` -- GF2X element
+        - ``R`` -- PolynomialRing over GF(2)
 
         OUTPUT: polynomial in R
 
@@ -565,7 +564,7 @@ cdef class ntl_GF2X():
 
         INPUT:
 
-        - i -- degree of X
+        - ``i`` -- degree of X
 
         EXAMPLES::
 
@@ -595,9 +594,9 @@ cdef class ntl_GF2X():
 
     def LeadCoeff(self):
         """
-        Return the leading coefficient of self.
+        Return the leading coefficient of ``self``.
 
-        This is always 1 except when self == 0.
+        This is always 1 except when ``self == 0``.
 
         EXAMPLES::
 
@@ -614,7 +613,7 @@ cdef class ntl_GF2X():
 
     def ConstTerm(self):
         """
-        Return the constant term of self.
+        Return the constant term of ``self``.
 
         EXAMPLES::
 
@@ -631,7 +630,7 @@ cdef class ntl_GF2X():
 
     def SetCoeff(self, int i, a):
         """
-        Set the value of a coefficient of self.
+        Set the value of a coefficient of ``self``.
 
         EXAMPLES::
 
@@ -660,7 +659,7 @@ cdef class ntl_GF2X():
 
     def diff(self):
         """
-        Differentiate self.
+        Differentiate ``self``.
 
         EXAMPLES::
 
@@ -679,7 +678,7 @@ cdef class ntl_GF2X():
 
         INPUT:
 
-        - hi -- bit position until which reverse is requested
+        - ``hi`` -- bit position until which reverse is requested
 
         EXAMPLES::
 
@@ -695,7 +694,7 @@ cdef class ntl_GF2X():
 
     def weight(self):
         """
-        Return the number of nonzero coefficients in self.
+        Return the number of nonzero coefficients in ``self``.
 
         EXAMPLES::
 
@@ -747,7 +746,7 @@ cdef class ntl_GF2X():
 
     def NumBytes(self):
         """
-        Return the number of bytes of self, i.e., floor((NumBits(self)+7)/8)
+        Return the number of bytes of ``self``, i.e., floor((NumBits(self)+7)/8).
 
         EXAMPLES::
 

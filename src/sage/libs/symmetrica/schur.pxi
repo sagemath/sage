@@ -138,7 +138,7 @@ def newtrans_symmetrica(perm):
 
 def compute_schur_with_alphabet_symmetrica(part, length, alphabet='x'):
     """
-    Computes the expansion of a schurfunction labeled by a
+    Compute the expansion of a schurfunction labeled by a
     partition PART as a POLYNOM erg. The INTEGER length specifies the
     length of the alphabet.
 
@@ -200,7 +200,6 @@ def compute_homsym_with_alphabet_symmetrica(n, length, alphabet='x'):
         a^3 + 2*a^2*b + 2*a*b^2 + b^3
         sage: symmetrica.compute_homsym_with_alphabet([2,1],2,'x').parent()
         Multivariate Polynomial Ring in x0, x1 over Integer Ring
-
     """
     late_import()
     cdef OP cn = callocobject(), clength = callocobject(), cresult = callocobject()
@@ -247,7 +246,6 @@ def compute_elmsym_with_alphabet_symmetrica(n, length, alphabet='x'):
         0
         sage: symmetrica.compute_elmsym_with_alphabet([3,2,1],2)
         0
-
     """
     late_import()
     cdef OP cn = callocobject(), clength = callocobject(), cresult = callocobject()
@@ -296,7 +294,6 @@ def compute_monomial_with_alphabet_symmetrica(n, length, alphabet='x'):
         a^2 + b^2
         sage: symmetrica.compute_monomial_with_alphabet(2,2,'x').parent()
         Multivariate Polynomial Ring in x0, x1 over Integer Ring
-
     """
     late_import()
     cdef OP cn = callocobject(), clength = callocobject(), cresult = callocobject()
@@ -343,7 +340,6 @@ def compute_powsym_with_alphabet_symmetrica(n, length, alphabet='x'):
         a^2 + b^2
         sage: symmetrica.compute_powsym_with_alphabet([2,1],2,'a,b')
         a^3 + a^2*b + a*b^2 + b^3
-
     """
     late_import()
     cdef OP cn = callocobject(), clength = callocobject(), cresult = callocobject()
@@ -525,7 +521,6 @@ def t_SCHUR_ELMSYM_symmetrica(schur):
 
 def t_SCHUR_POWSYM_symmetrica(schur):
     """
-
     """
 
     cdef OP cschur = callocobject(), cresult = callocobject()
@@ -544,9 +539,9 @@ def t_SCHUR_POWSYM_symmetrica(schur):
     return res
 
 def t_POLYNOM_SCHUR_symmetrica(p):
-    """
-    Converts a symmetric polynomial with base ring QQ or ZZ into a symmetric function
-    in the Schur basis.
+    r"""
+    Convert a symmetric polynomial with base ring `\QQ` or `\ZZ` into a
+    symmetric function in the Schur basis.
     """
     cdef OP polynom = callocobject(), cresult = callocobject()
 
@@ -569,7 +564,6 @@ def t_POLYNOM_SCHUR_symmetrica(p):
 
 def t_MONOMIAL_HOMSYM_symmetrica(monomial):
     """
-
     """
 
     cdef OP cmonomial = callocobject(), cresult = callocobject()
@@ -589,7 +583,6 @@ def t_MONOMIAL_HOMSYM_symmetrica(monomial):
 
 def t_MONOMIAL_ELMSYM_symmetrica(monomial):
     """
-
     """
 
     cdef OP cmonomial = callocobject(), cresult = callocobject()
@@ -610,7 +603,6 @@ def t_MONOMIAL_ELMSYM_symmetrica(monomial):
 
 def t_MONOMIAL_SCHUR_symmetrica(monomial):
     """
-
     """
 
     cdef OP cmonomial = callocobject(), cresult = callocobject()
@@ -631,7 +623,6 @@ def t_MONOMIAL_SCHUR_symmetrica(monomial):
 
 def t_MONOMIAL_POWSYM_symmetrica(monomial):
     """
-
     """
 
     cdef OP cmonomial = callocobject(), cresult = callocobject()
@@ -650,9 +641,9 @@ def t_MONOMIAL_POWSYM_symmetrica(monomial):
     return res
 
 def t_POLYNOM_MONOMIAL_symmetrica(p):
-    """
-    Converts a symmetric polynomial with base ring QQ or ZZ into a symmetric function
-    in the monomial basis.
+    r"""
+    Convert a symmetric polynomial with base ring `\QQ` or `\ZZ` into a
+    symmetric function in the monomial basis.
     """
     cdef OP polynom = callocobject(), cresult = callocobject()
 
@@ -675,7 +666,6 @@ def t_POLYNOM_MONOMIAL_symmetrica(p):
 
 def t_ELMSYM_SCHUR_symmetrica(elmsym):
     """
-
     """
 
     cdef OP celmsym = callocobject(), cresult = callocobject()
@@ -696,7 +686,6 @@ def t_ELMSYM_SCHUR_symmetrica(elmsym):
 
 def t_ELMSYM_POWSYM_symmetrica(elmsym):
     """
-
     """
 
     cdef OP celmsym = callocobject(), cresult = callocobject()
@@ -716,7 +705,6 @@ def t_ELMSYM_POWSYM_symmetrica(elmsym):
 
 def t_ELMSYM_MONOMIAL_symmetrica(elmsym):
     """
-
     """
 
     cdef OP celmsym = callocobject(), cresult = callocobject()
@@ -737,7 +725,6 @@ def t_ELMSYM_MONOMIAL_symmetrica(elmsym):
 
 def t_ELMSYM_HOMSYM_symmetrica(elmsym):
     """
-
     """
 
     cdef OP celmsym = callocobject(), cresult = callocobject()
@@ -756,9 +743,9 @@ def t_ELMSYM_HOMSYM_symmetrica(elmsym):
     return res
 
 def t_POLYNOM_ELMSYM_symmetrica(p):
-    """
-    Converts a symmetric polynomial with base ring QQ or ZZ into a symmetric function
-    in the elementary basis.
+    r"""
+    Convert a symmetric polynomial with base ring `\QQ` or `\ZZ` into a
+    symmetric function in the elementary basis.
     """
     cdef OP polynom = callocobject(), cresult = callocobject()
 
@@ -781,7 +768,6 @@ def t_POLYNOM_ELMSYM_symmetrica(p):
 
 def t_HOMSYM_SCHUR_symmetrica(homsym):
     """
-
     """
 
     cdef OP chomsym = callocobject(), cresult = callocobject()
@@ -801,7 +787,6 @@ def t_HOMSYM_SCHUR_symmetrica(homsym):
 
 def t_HOMSYM_POWSYM_symmetrica(homsym):
     """
-
     """
 
     cdef OP chomsym = callocobject(), cresult = callocobject()
@@ -822,7 +807,6 @@ def t_HOMSYM_POWSYM_symmetrica(homsym):
 
 def t_HOMSYM_MONOMIAL_symmetrica(homsym):
     """
-
     """
 
     cdef OP chomsym = callocobject(), cresult = callocobject()
@@ -842,7 +826,6 @@ def t_HOMSYM_MONOMIAL_symmetrica(homsym):
 
 def t_HOMSYM_ELMSYM_symmetrica(homsym):
     """
-
     """
 
     cdef OP chomsym = callocobject(), cresult = callocobject()
@@ -863,7 +846,6 @@ def t_HOMSYM_ELMSYM_symmetrica(homsym):
 
 def t_POWSYM_MONOMIAL_symmetrica(powsym):
     """
-
     """
 
     cdef OP cpowsym = callocobject(), cresult = callocobject()
@@ -884,7 +866,6 @@ def t_POWSYM_MONOMIAL_symmetrica(powsym):
 
 def t_POWSYM_SCHUR_symmetrica(powsym):
     """
-
     """
 
     cdef OP cpowsym = callocobject(), cresult = callocobject()
@@ -904,7 +885,6 @@ def t_POWSYM_SCHUR_symmetrica(powsym):
 
 def t_POWSYM_ELMSYM_symmetrica(powsym):
     """
-
     """
 
     cdef OP cpowsym = callocobject(), cresult = callocobject()
@@ -924,7 +904,6 @@ def t_POWSYM_ELMSYM_symmetrica(powsym):
 
 def t_POWSYM_HOMSYM_symmetrica(powsym):
     """
-
     """
 
     cdef OP cpowsym = callocobject(), cresult = callocobject()
@@ -943,9 +922,9 @@ def t_POWSYM_HOMSYM_symmetrica(powsym):
     return res
 
 def t_POLYNOM_POWER_symmetrica(p):
-    """
-    Converts a symmetric polynomial with base ring QQ or ZZ into a symmetric function
-    in the power sum basis.
+    r"""
+    Convert a symmetric polynomial with base ring `\QQ` or `\ZZ` into a
+    symmetric function in the power sum basis.
     """
     cdef OP polynom = callocobject(), cresult = callocobject()
 

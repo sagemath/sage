@@ -77,8 +77,6 @@ def kostka_tab_symmetrica(shape, content):
          [[None, 2], [None, 3], [1]]]
         sage: symmetrica.kostka_tab([[2,2],[1]],[1,1,1])
         [[[None, 1], [2, 3]], [[None, 2], [1, 3]]]
-
-
     """
     late_import()
 
@@ -115,7 +113,7 @@ def kostka_tab_symmetrica(shape, content):
 
 def kostka_tafel_symmetrica(n):
     """
-    Returns the table of Kostka numbers of weight n.
+    Return the table of Kostka numbers of weight `n`.
 
     EXAMPLES::
 

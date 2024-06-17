@@ -1775,7 +1775,8 @@ class MagmaFunction(ExpectFunction):
 
 def is_MagmaElement(x):
     """
-    Return ``True`` if ``x`` is of type :class:`MagmaElement`, and False otherwise.
+    Return ``True`` if ``x`` is of type :class:`MagmaElement`, and ``False``
+    otherwise.
 
     INPUT:
 

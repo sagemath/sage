@@ -11,7 +11,6 @@ def strict_to_odd_part_symmetrica(part):
     implements the bijection between strict partitions
     and partitions with odd parts. input is a VECTOR type partition, the
     result is a partition of the same weight with only odd parts.
-
     """
 
     #Make sure that the partition is strict
@@ -75,7 +74,6 @@ def q_core_symmetrica(part, d):
     removing of all hooks of length d (= INTEGER object).
     The result may be an empty object, if the whole
     partition disappears.
-
     """
 
 

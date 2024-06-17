@@ -51,7 +51,7 @@ cdef class ntl_mat_GF2E():
     """
     def __init__(self, modulus = None, nrows=0, ncols=0, v=None):
         """
-        Constructs a matrix over ntl.GF2E.
+        Construct a matrix over ntl.GF2E.
 
         INPUT:
             modulus -- GF2E context
@@ -153,7 +153,7 @@ cdef class ntl_mat_GF2E():
 
     def modulus_context(self):
         """
-        Returns the structure that holds the underlying NTL GF2E modulus.
+        Return the structure that holds the underlying NTL GF2E modulus.
 
         EXAMPLES::
 
@@ -182,7 +182,7 @@ cdef class ntl_mat_GF2E():
 
     def __repr__(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -306,7 +306,7 @@ cdef class ntl_mat_GF2E():
 
     def __richcmp__(ntl_mat_GF2E self, other, int op):
         """
-        Compare self to other.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -335,7 +335,7 @@ cdef class ntl_mat_GF2E():
 
     def NumRows(self):
         """
-        Return the number of rows in self.
+        Return the number of rows in ``self``.
 
         EXAMPLES::
 
@@ -347,7 +347,7 @@ cdef class ntl_mat_GF2E():
 
     def NumCols(self):
         """
-        Return the number of columns in self.
+        Return the number of columns in ``self``.
 
         EXAMPLES::
 
@@ -428,7 +428,7 @@ cdef class ntl_mat_GF2E():
 
     def determinant(self):
         """
-        Returns the determinant.
+        Return the determinant.
 
         EXAMPLES::
 
@@ -474,7 +474,7 @@ cdef class ntl_mat_GF2E():
 
     def list(self):
         """
-        Returns a list of the entries in this matrix
+        Return a list of the entries in this matrix.
 
         EXAMPLES::
 
@@ -487,13 +487,12 @@ cdef class ntl_mat_GF2E():
             True
             sage: all(a.modulus_context() is ctx for a in l)
             True
-
         """
         return [self[i,j] for i in range(self.NumRows()) for j in range(self.x.NumCols())]
 
     def IsZero(self):
         """
-        Return True if self is zero, and false otherwise.
+        Return ``True`` if ``self`` is zero, and ``False`` otherwise.
 
         EXAMPLES::
 
@@ -513,7 +512,7 @@ cdef class ntl_mat_GF2E():
 
     def _sage_(ntl_mat_GF2E self, k=None):
         """
-        Returns a ``Matrix`` over a ``FiniteField`` representation
+        Return a ``Matrix`` over a ``FiniteField`` representation
         of this element.
 
         INPUT:
@@ -549,10 +548,7 @@ cdef class ntl_mat_GF2E():
 
     def transpose(ntl_mat_GF2E self):
         """
-        Returns the transposed matrix of self.
-
-        OUTPUT:
-            transposed Matrix
+        Return the transposed matrix of ``self``.
 
         EXAMPLES::
 
@@ -590,8 +586,8 @@ cdef class ntl_mat_GF2E():
         return r
 
     def IsIdent(self, n = -1):
-        """
-        test if A is the n x n identity matrix
+        r"""
+        Test if `A` is the `n \times n` identity matrix.
 
         EXAMPLES::
 
@@ -645,7 +641,7 @@ cdef class ntl_mat_GF2E():
 
     def kernel(self):
         """
-        Computes a basis for the kernel of the map ``x -> x*A``, where
+        Compute a basis for the kernel of the map ``x -> x*A``, where
         ``x`` is a row vector.
 
         EXAMPLES::
@@ -669,10 +665,10 @@ cdef class ntl_mat_GF2E():
 
         INPUT:
 
-        -  ``density`` -- float; proportion (roughly) to be considered for
-           changes
-        -  ``nonzero`` -- Bool (default: ``False``); whether the new entries
-           are forced to be non-zero
+        - ``density`` -- float; proportion (roughly) to be considered for
+          changes
+        - ``nonzero`` -- boolean (default: ``False``); whether the new entries
+          are forced to be nonzero
 
         EXAMPLES::
 

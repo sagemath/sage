@@ -26,7 +26,7 @@ from sage.groups.perm_gps.partn_ref.double_coset cimport double_coset, int_cmp
 def is_isomorphic(self, other):
     r"""
     Return the bijection as a permutation if two lists are isomorphic, return
-    False otherwise.
+    ``False`` otherwise.
 
     EXAMPLES::
 

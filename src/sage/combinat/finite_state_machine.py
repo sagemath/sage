@@ -2326,7 +2326,7 @@ class FSMTransition(SageObject):
 
     def _repr_(self):
         """
-        Represents a transitions as from state to state and input, output.
+        Represent a transitions as from state to state and input, output.
 
         INPUT:
 
@@ -4093,7 +4093,7 @@ class FiniteStateMachine(SageObject):
 
     def _repr_(self):
         """
-        Represents the finite state machine as "Finite state machine
+        Represent the finite state machine as "Finite state machine
         with n states" where n is the number of states.
 
         INPUT:
@@ -10779,7 +10779,7 @@ class Automaton(FiniteStateMachine):
 
     def _repr_(self):
         """
-        Represents the finite state machine as "Automaton with n
+        Represent the finite state machine as "Automaton with n
         states" where n is the number of states.
 
         INPUT:
@@ -11955,7 +11955,7 @@ class Transducer(FiniteStateMachine):
 
     def _repr_(self):
         """
-        Represents the transducer as "Transducer with n states" where
+        Represent the transducer as "Transducer with n states" where
         n is the number of states.
 
         INPUT:

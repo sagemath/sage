@@ -188,7 +188,7 @@ which is now automatically generated:
 Reading a gp file::
 
     sage: import tempfile
-    sage: gpfile = tempfile.NamedTemporaryFile(mode="w")
+    sage: gpfile = tempfile.NamedTemporaryFile(mode='w')
     sage: __ = gpfile.file.write("mysquare(n) = {\n")
     sage: __ = gpfile.file.write("    n^2;\n")
     sage: __ = gpfile.file.write("}\n")

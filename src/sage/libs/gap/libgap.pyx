@@ -274,7 +274,7 @@ class Gap(Parent):
 
         INPUT:
 
-        - ``x`` -- anything that defines a GAP object.
+        - ``x`` -- anything that defines a GAP object
 
         OUTPUT: a :class:`GapElement`
 
@@ -292,7 +292,6 @@ class Gap(Parent):
             [ 1/3, 2/3, 4/5 ]
             sage: libgap(vector((1/3, 0.8, 3)))
             [ 0.333333, 0.8, 3. ]
-
         """
         initialize()
         if isinstance(x, GapElement):
@@ -324,7 +323,7 @@ class Gap(Parent):
 
         INPUT:
 
-        - ``M`` -- a matrix.
+        - ``M`` -- a matrix
 
         OUTPUT:
 
@@ -358,7 +357,7 @@ class Gap(Parent):
 
         We gracefully handle the case that the conversion fails (:issue:`18039`)::
 
-            sage: F.<a> = GF(9, modulus="first_lexicographic")                          # needs sage.rings.finite_rings
+            sage: F.<a> = GF(9, modulus='first_lexicographic')                          # needs sage.rings.finite_rings
             sage: libgap(Matrix(F, [[a]]))                                              # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
@@ -379,8 +378,8 @@ class Gap(Parent):
 
         INPUT:
 
-        - ``gap_command`` -- a string containing a valid gap command
-          without the trailing semicolon.
+        - ``gap_command`` -- string containing a valid gap command
+          without the trailing semicolon
 
         OUTPUT: a :class:`GapElement`
 
@@ -432,7 +431,7 @@ class Gap(Parent):
     @cached_method
     def function_factory(self, function_name):
         """
-        Return a GAP function wrapper
+        Return a GAP function wrapper.
 
         This is almost the same as calling
         ``libgap.eval(function_name)``, but faster and makes it
@@ -440,7 +439,7 @@ class Gap(Parent):
 
         INPUT:
 
-        - ``function_name`` -- string. The name of a GAP function.
+        - ``function_name`` -- string; the name of a GAP function
 
         OUTPUT:
 
@@ -459,13 +458,13 @@ class Gap(Parent):
 
     def set_global(self, variable, value):
         """
-        Set a GAP global variable
+        Set a GAP global variable.
 
         INPUT:
 
-        - ``variable`` -- string. The variable name.
+        - ``variable`` -- string; the variable name
 
-        - ``value`` -- anything that defines a GAP object.
+        - ``value`` -- anything that defines a GAP object
 
         EXAMPLES::
 
@@ -484,11 +483,11 @@ class Gap(Parent):
 
     def unset_global(self, variable):
         """
-        Remove a GAP global variable
+        Remove a GAP global variable.
 
         INPUT:
 
-        - ``variable`` -- string. The variable name.
+        - ``variable`` -- string; the variable name
 
         EXAMPLES::
 
@@ -508,11 +507,11 @@ class Gap(Parent):
 
     def get_global(self, variable):
         """
-        Get a GAP global variable
+        Get a GAP global variable.
 
         INPUT:
 
-        - ``variable`` -- string. The variable name.
+        - ``variable`` -- string; the variable name
 
         OUTPUT:
 
@@ -533,13 +532,13 @@ class Gap(Parent):
 
     def global_context(self, variable, value):
         """
-        Temporarily change a global variable
+        Temporarily change a global variable.
 
         INPUT:
 
-        - ``variable`` -- string. The variable name.
+        - ``variable`` -- string; the variable name
 
-        - ``value`` -- anything that defines a GAP object.
+        - ``value`` -- anything that defines a GAP object
 
         OUTPUT: a context manager that sets/reverts the given global variable
 
@@ -646,7 +645,7 @@ class Gap(Parent):
     @cached_method
     def __dir__(self):
         """
-        Customize tab completion
+        Customize tab completion.
 
         EXAMPLES::
 
@@ -663,8 +662,8 @@ class Gap(Parent):
 
         INPUT:
 
-        - ``name`` -- string. The name of the GAP function you want to
-          call.
+        - ``name`` -- string; the name of the GAP function you want to
+          call
 
         OUTPUT:
 
@@ -691,7 +690,7 @@ class Gap(Parent):
 
     def show(self):
         """
-        Return statistics about the GAP owned object list
+        Return statistics about the GAP owned object list.
 
         This includes the total memory allocated by GAP as returned by
         ``libgap.eval('TotalMemoryAllocated()'), as well as garbage collection
@@ -752,7 +751,7 @@ class Gap(Parent):
 
     def collect(self):
         """
-        Manually run the garbage collector
+        Manually run the garbage collector.
 
         EXAMPLES::
 

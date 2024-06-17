@@ -50,7 +50,7 @@ from sage.misc.randstate cimport current_randstate
 
 def ntl_GF2E_random(ntl_GF2EContext_class ctx):
     """
-    Returns a random element from GF2E modulo the current modulus.
+    Return a random element from GF2E modulo the current modulus.
 
     INPUT:
 
@@ -84,7 +84,7 @@ cdef class ntl_GF2E():
 
     def __init__(self, x=None, modulus=None):
         """
-        Constructs a new finite field element in GF(2**x).
+        Construct a new finite field element in GF(2**x).
 
         If you pass a string to the constructor please note that byte
         sequences and the hexadecimal notation are Little Endian in
@@ -176,7 +176,7 @@ cdef class ntl_GF2E():
 
     def modulus_context(self):
         """
-        Returns the structure that holds the underlying NTL GF2E modulus.
+        Return the structure that holds the underlying NTL GF2E modulus.
 
         EXAMPLES::
 
@@ -191,7 +191,7 @@ cdef class ntl_GF2E():
 
     def __repr__(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -204,7 +204,7 @@ cdef class ntl_GF2E():
 
     def __copy__(self):
         """
-        Return a copy of self.
+        Return a copy of ``self``.
 
         EXAMPLES::
 
@@ -319,7 +319,7 @@ cdef class ntl_GF2E():
 
     def __richcmp__(ntl_GF2E self, other, int op):
         r"""
-        Compare self to other.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -350,7 +350,7 @@ cdef class ntl_GF2E():
 
     def IsZero(ntl_GF2E self):
         """
-        Returns True if this element equals zero, False otherwise.
+        Return ``True`` if this element equals zero, ``False`` otherwise.
 
         EXAMPLES::
 
@@ -365,7 +365,7 @@ cdef class ntl_GF2E():
 
     def IsOne(ntl_GF2E self):
         """
-        Returns True if this element equals one, False otherwise.
+        Return ``True`` if this element equals one, ``False`` otherwise.
 
         EXAMPLES::
 
@@ -380,7 +380,7 @@ cdef class ntl_GF2E():
 
     def trace(ntl_GF2E self):
         """
-        Returns the trace of this element.
+        Return the trace of this element.
 
         EXAMPLES::
 
@@ -397,7 +397,7 @@ cdef class ntl_GF2E():
 
     def rep(ntl_GF2E self):
         """
-        Returns a ntl.GF2X copy of this element.
+        Return a ntl.GF2X copy of this element.
 
         EXAMPLES::
 
@@ -414,7 +414,7 @@ cdef class ntl_GF2E():
 
     def list(ntl_GF2E self):
         """
-        Represents this element as a list of binary digits.
+        Represent this element as a list of binary digits.
 
         EXAMPLES::
 
@@ -451,7 +451,7 @@ cdef class ntl_GF2E():
 
         INPUT:
 
-        - `k` -- (optional) a field `\GF{2^d}`
+        - ``k`` -- (optional) a field `\GF{2^d}`
 
         OUTPUT: :class:`FiniteFieldElement` over `k`
 

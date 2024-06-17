@@ -37,13 +37,13 @@ IsDocumentedWord = libgap.function_factory('IsDocumentedWord')
 
 def load_or_compute(name, function):
     """
-    Helper to load a cached value or compute it
+    Helper to load a cached value or compute it.
 
     INPUT:
 
-    - ``name`` -- string. Part of the cache filename
+    - ``name`` -- string; part of the cache filename
 
-    - ``function`` -- function. To compute the value if not cached.
+    - ``function`` -- function; to compute the value if not cached
 
     OUTPUT: the value of ``function``, possibly cached
 
@@ -70,7 +70,7 @@ def load_or_compute(name, function):
 
 def list_keywords():
     """
-    Return the GAP reserved keywords
+    Return the GAP reserved keywords.
 
     OUTPUT: tuple of strings
 
@@ -89,7 +89,7 @@ KEYWORDS = list_keywords()
 
 def list_globals():
     """
-    Return the GAP reserved keywords
+    Return the GAP reserved keywords.
 
     OUTPUT: tuple of strings
 
@@ -112,7 +112,7 @@ GLOBALS = load_or_compute('globals', list_globals)
 
 def list_functions():
     """
-    Return the GAP documented global functions
+    Return the GAP documented global functions.
 
     OUTPUT: tuple of strings
 

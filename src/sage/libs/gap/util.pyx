@@ -38,7 +38,7 @@ from sage.interfaces.gap_workspace import prepare_workspace_dir
 
 cdef class ObjWrapper():
     """
-    Wrapper for GAP master pointers
+    Wrapper for GAP master pointers.
 
     EXAMPLES::
 
@@ -55,9 +55,9 @@ cdef class ObjWrapper():
 
         INPUT:
 
-        - ``lhs``, ``rhs`` -- :class:`ObjWrapper`.
+        - ``lhs``, ``rhs`` -- :class:`ObjWrapper`
 
-        - ``op`` -- integer. The comparison operation to be performed.
+        - ``op`` -- integer; the comparison operation to be performed
 
         OUTPUT: boolean
 
@@ -89,7 +89,7 @@ cdef class ObjWrapper():
 
     def __hash__(self):
         """
-        Return a hash value
+        Return a hash value.
 
         EXAMPLES::
 
@@ -295,7 +295,7 @@ cdef Obj gap_eval(str gap_string) except? NULL:
 
     INPUT:
 
-    - ``gap_string`` -- string. A valid statement in GAP.
+    - ``gap_string`` -- string; a valid statement in GAP
 
     OUTPUT:
 

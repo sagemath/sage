@@ -194,7 +194,7 @@ from sage.rings.integer_ring import ZZ
 
 class DeBruijnSequences(UniqueRepresentation, Parent):
     r"""
-    Represents the De Bruijn sequences of given parameters `k` and `n`.
+    Represent the De Bruijn sequences of given parameters `k` and `n`.
 
     A De Bruijn sequence of parameters `k` and `n` is defined as the shortest
     cyclic sequence that incorporates all substrings of length `n` a `k`-ary
