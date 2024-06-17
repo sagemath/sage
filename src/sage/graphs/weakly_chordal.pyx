@@ -51,7 +51,7 @@ cdef inline is_long_hole_free_process(g, short_digraph sd, bitset_t dense_graph,
                                       list id_label, int* path, int* InPath,
                                       int* neighbor_index, set VisitedP3,
                                       bint certificate,
-                                      int a, int b, int c, int n) noexcept:
+                                      int a, int b, int c, int n):
     """
     This method is part of method ``is_long_hole_free``.
 
@@ -212,7 +212,8 @@ def is_long_hole_free(g, certificate=False):
     cdef int n = g.order()
     cdef list id_label = list(g)
     cdef short_digraph sd
-    init_short_digraph(sd, g, edge_labelled=False, vertex_list=id_label)
+    init_short_digraph(sd, g, edge_labelled=False, vertex_list=id_label,
+                       sort_neighbors=False)
 
     # Make a dense copy of the graph for quick adjacency tests
     cdef bitset_t dense_graph
@@ -279,7 +280,7 @@ cdef inline is_long_antihole_free_process(g, short_digraph sd, bitset_t dense_gr
                                           list id_label, int* path, int* InPath,
                                           int* neighbor_index, set VisitedP3,
                                           bint certificate,
-                                          int a, int b, int c, int n) noexcept:
+                                          int a, int b, int c, int n):
     """
     This method is part of method ``is_long_antihole_free``.
 

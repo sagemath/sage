@@ -15,7 +15,6 @@ REFERENCES:
 
 - [Lee2011]_
 - [KN1963]_
-
 """
 #******************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
@@ -164,7 +163,7 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
              Real Field with 53 bits of precision
             sage: TestSuite(E).run()
 
-        Check whether :trac:`31233` is solved::
+        Check whether :issue:`31233` is solved::
 
             sage: S1 = manifolds.Sphere(1)
             sage: iota = S1.embedding()

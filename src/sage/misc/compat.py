@@ -1,6 +1,6 @@
 """Cross-platform compatibility routines and wrappers."""
 
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2017 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -8,7 +8,7 @@
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 import os
 import subprocess

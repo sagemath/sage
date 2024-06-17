@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Hecke modules
 """
@@ -121,7 +122,7 @@ class HeckeModules(Category_module):
 
             EXAMPLES::
 
-                sage: # needs sage.modular
+                sage: # needs sage.libs.pari sage.modular
                 sage: M = ModularForms(Gamma0(7), 4)
                 sage: H = M._Hom_(M, category=HeckeModules(QQ)); H
                 Set of Morphisms
@@ -139,11 +140,11 @@ class HeckeModules(Category_module):
             Fixing :meth:`_test_zero` (``__call__`` should accept a
             function as input) and :meth:`_test_elements*` (modular
             form morphisms elements should inherit from categories) is
-            :trac:`12879`.
+            :issue:`12879`.
 
             TESTS::
 
-                sage: H = M._Hom_(M, category=HeckeModules(GF(5))); H                   # needs sage.modular sage.rings.finite_rings
+                sage: H = M._Hom_(M, category=HeckeModules(GF(5))); H                   # needs sage.libs.pari sage.modular
                 Traceback (most recent call last):
                 ...
                 TypeError: Category of Hecke modules over Finite Field of size 5
@@ -170,7 +171,7 @@ class HeckeModules(Category_module):
             TESTS:
 
             Check that Hom sets of Hecke modules are in the correct
-            category (see :trac:`17359`)::
+            category (see :issue:`17359`)::
 
                 sage: HeckeModules(ZZ).Homsets().super_categories()
                 [Category of modules over Integer Ring, Category of homsets]

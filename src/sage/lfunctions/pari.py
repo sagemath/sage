@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 `L`-functions from PARI
 
@@ -7,7 +6,6 @@ This is a wrapper around the general PARI L-functions functionality.
 AUTHORS:
 
 - Frédéric Chapoton (2018) interface
-
 """
 # ****************************************************************************
 #       Copyright (C) 2018 Frédéric Chapoton <chapoton@unistra.fr>
@@ -48,7 +46,7 @@ class lfun_generic():
 
     - ``eps`` -- complex number; sign in functional equation
 
-    - ``poles`` -- (default: []) list of points where `L^*(s)` has
+    - ``poles`` -- (default: ``[]``) list of points where `L^*(s)` has
       (simple) poles; only poles with `Re(s)>weight/2` should be
       included
 
@@ -145,7 +143,7 @@ class lfun_generic():
             0.9985830631627461
 
         Illustrate that one can give a list of complex numbers for v
-        (see :trac:`10937`)::
+        (see :issue:`10937`)::
 
             sage: l2 = lfun_generic(conductor=1, gammaV=[0, 1], weight=12, eps=1)
             sage: l2.init_coeffs(list(delta_qexp(1000))[1:])
@@ -156,7 +154,7 @@ class lfun_generic():
         TESTS:
 
         Verify that setting the `w` parameter does not raise an error
-        (see :trac:`10937`)::
+        (see :issue:`10937`)::
 
             sage: L2 = lfun_generic(conductor=1, gammaV=[0, 1], weight=12, eps=1)
             sage: L2.init_coeffs(list(delta_qexp(1000))[1:], w=[1..1000])
@@ -711,7 +709,7 @@ class LFunction(SageObject):
             sage: L.taylor_series(1, 3)
             2...e-63 + (...e-63)*z + 0.75931650028842677023019260789472201907809751649492435158581*z^2 + O(z^3)
 
-        Check that :trac:`25402` is fixed::
+        Check that :issue:`25402` is fixed::
 
             sage: L = EllipticCurve("24a1").modular_form().lseries()
             sage: L.taylor_series(-1, 3)

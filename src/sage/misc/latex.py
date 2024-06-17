@@ -14,7 +14,6 @@ AUTHORS:
 - William Stein: original implementation
 
 - Joel B. Mohler: latex_variable_name() drastic rewrite and many doc-tests
-
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -69,7 +68,9 @@ def list_function(x):
     r"""
     Returns the LaTeX code for a list ``x``.
 
-    INPUT: ``x`` - a list
+    INPUT:
+
+    - ``x`` -- a list
 
     EXAMPLES::
 
@@ -112,7 +113,7 @@ def tuple_function(x, combine_all=False):
         sage: tuple_function((1,2,3))
         '\\left(1, 2, 3\\right)'
 
-    Check that :trac:`11775` is fixed::
+    Check that :issue:`11775` is fixed::
 
         sage: tuple_function((1,2,3), combine_all=True)
         '1 2 3'
@@ -298,7 +299,7 @@ def float_function(x):
 
     TESTS:
 
-    Check that :trac:`7356` is fixed::
+    Check that :issue:`7356` is fixed::
 
         sage: latex(float(2e-13))
         2 \times 10^{-13}
@@ -605,18 +606,18 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
 
     -  ``filename`` -- string; file to process, including full path
 
-    -  ``debug`` -- bool (optional, default ``False``); whether to print
+    -  ``debug`` -- bool (default: ``False``); whether to print
        verbose debugging output
 
-    -  ``density`` -- integer (optional, default 150); how big output
+    -  ``density`` -- integer (default: 150); how big output
        image is.
 
     -  ``engine`` -- string: latex engine to use.
 
-    -  ``png`` -- bool (optional, default ``False``); whether to produce a
+    -  ``png`` -- bool (default: ``False``); whether to produce a
        png file.
 
-    -  ``do_in_background`` -- bool (optional, default ``False``).  Unused,
+    -  ``do_in_background`` -- bool (default: ``False``).  Unused,
        kept for backwards compatibility.
 
     OUTPUT:
@@ -685,7 +686,7 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
     from sage.features.dvipng import dvipng
     if png:
         if ((not engine or engine == "latex")
-            and not (dvipng().is_present() or ImageMagick().is_present())):
+                and not (dvipng().is_present() or ImageMagick().is_present())):
             print()
             print("Error: neither dvipng nor convert (from the ImageMagick suite)")
             print("appear to be installed. Displaying LaTeX, PDFLaTeX output")
@@ -865,7 +866,7 @@ class LatexCall:
             sage: print(latex([x, 2]))                                                  # needs sage.symbolic
             \left[x, 2\right]
 
-        Check that :trac:`11775` is fixed::
+        Check that :issue:`11775` is fixed::
 
             sage: latex((x,2), combine_all=True)                                        # needs sage.symbolic
             x 2
@@ -1007,7 +1008,7 @@ class Latex(LatexCall):
         - ``engine`` -- latex engine to use. Currently ``'latex'``,
           ``'pdflatex'``, ``'xelatex'`` and ``'lualatex'`` are supported
 
-        - ``locals`` - extra local variables used when evaluating Sage code in ``x``
+        - ``locals`` -- extra local variables used when evaluating Sage code in ``x``
 
         .. WARNING::
 
@@ -1132,7 +1133,7 @@ class Latex(LatexCall):
 
         INPUT:
 
-        - ``left``, ``right`` - strings or ``None``
+        - ``left``, ``right`` -- strings or ``None``
 
         If both ``left`` and ``right`` are ``None``, then return the
         current delimiters.  Otherwise, set the left and/or right
@@ -1250,7 +1251,7 @@ class Latex(LatexCall):
 
         INPUT:
 
-        - ``align`` - a string (``'r'`` for right, ``'c'`` for center,
+        - ``align`` -- a string (``'r'`` for right, ``'c'`` for center,
           ``'l'`` for left) or ``None``.
 
         OUTPUT:
@@ -1338,7 +1339,7 @@ class Latex(LatexCall):
             Warning: `some_inexistent_file.sty` is not part of this computer's TeX installation.
             This file is required for blah. It can be downloaded from: http://blah.org/
 
-        This test checks that the bug in :trac:`9091` is fixed::
+        This test checks that the bug in :issue:`9091` is fixed::
 
             sage: latex.check_file("article.cls", "The article class is really critical.")    # optional - latex
         """
@@ -1583,11 +1584,11 @@ def _latex_file_(objects, title='SAGE', debug=False,
 
     - ``math_right`` -- string (default: '\\]'), right delimiter for math mode
 
-    - ``debug`` -- bool (default: False); print verbose output
+    - ``debug`` -- bool (default: ``False``); print verbose output
 
     - ``sep`` -- string (default: ``''``); separator between math objects
 
-    - ``tiny`` -- bool (default: False); use 'tiny' font.
+    - ``tiny`` -- bool (default: ``False``); use 'tiny' font.
 
     - ``extra_preamble`` -- string (default: ``''``); extra LaTeX commands,
        inserted before ``"\\begin{document}"``
@@ -2019,13 +2020,13 @@ def repr_lincomb(symbols, coeffs):
         sage: repr_lincomb(['a', 'b'], [1,1])
         '\\text{\\texttt{a}} + \\text{\\texttt{b}}'
 
-    Verify that a certain corner case works (see :trac:`5707` and
-    :trac:`5766`)::
+    Verify that a certain corner case works (see :issue:`5707` and
+    :issue:`5766`)::
 
         sage: repr_lincomb([1,5,-3],[2,8/9,7])
         '2\\cdot 1 + \\frac{8}{9}\\cdot 5 + 7\\cdot -3'
 
-    Verify that :trac:`17299` (latex representation of modular symbols)
+    Verify that :issue:`17299` (latex representation of modular symbols)
     is fixed::
 
         sage: x = EllipticCurve('64a1').modular_symbol_space(sign=1).basis()[0]         # needs sage.schemes
@@ -2270,7 +2271,7 @@ def latex_variable_name(x, is_fname=False):
         return latex_varify(prefix, is_fname)
 
 
-class LatexExamples():
+class LatexExamples:
     r"""
     A catalogue of Sage objects with complicated ``_latex_`` methods.
     Use these for testing :func:`latex`, :func:`view`, the Typeset

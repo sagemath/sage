@@ -39,11 +39,11 @@ def xsrange(start, end=None, step=1, universe=None, *, coerce=True, bint include
 
     INPUT:
 
-    - ``start`` - number (default: 0)
+    - ``start`` -- number (default: 0)
 
-    - ``end`` - number
+    - ``end`` -- number
 
-    - ``step`` - number (default: 1)
+    - ``step`` -- number (default: 1)
 
     - ``universe`` -- parent or type where all the elements should live
       (default: deduce from inputs)
@@ -53,7 +53,7 @@ def xsrange(start, end=None, step=1, universe=None, *, coerce=True, bint include
       automatically detected universe)
 
     - ``include_endpoint`` -- whether or not to include the endpoint
-      (default: False). This is only relevant if ``end`` is actually of
+      (default: ``False``). This is only relevant if ``end`` is actually of
       the form ``start + k*step`` for some integer `k`.
 
     ` ``endpoint_tolerance`` -- used to determine whether or not the
@@ -96,7 +96,7 @@ def xsrange(start, end=None, step=1, universe=None, *, coerce=True, bint include
 
     TESTS:
 
-    Ranges can be very large, see :trac:`20094`::
+    Ranges can be very large, see :issue:`20094`::
 
         sage: it = xsrange(10^30, 10^100)
         sage: for i in range(5):
@@ -184,11 +184,11 @@ def srange(*args, **kwds):
 
     INPUT:
 
-    - ``start`` - number (default: 0)
+    - ``start`` -- number (default: 0)
 
-    - ``end`` - number
+    - ``end`` -- number
 
-    - ``step`` - number (default: 1)
+    - ``step`` -- number (default: 1)
 
     - ``universe -- parent or type where all the elements should live
       (default: deduce from inputs). This is only used if ``coerce`` is
@@ -199,7 +199,7 @@ def srange(*args, **kwds):
       automatically detected universe)
 
     - ``include_endpoint`` -- whether or not to include the endpoint
-      (default: False). This is only relevant if ``end`` is actually of
+      (default: ``False``). This is only relevant if ``end`` is actually of
       the form ``start + k*step`` for some integer `k`.
 
     ` ``endpoint_tolerance`` -- used to determine whether or not the
@@ -289,14 +289,14 @@ def srange(*args, **kwds):
 
     TESTS:
 
-    These are doctests from :trac:`6409`::
+    These are doctests from :issue:`6409`::
 
         sage: srange(1,QQ(0),include_endpoint=True)
         []
         sage: srange(1,QQ(0),-1,include_endpoint=True)
         [1, 0]
 
-    Test :trac:`11753`::
+    Test :issue:`11753`::
 
         sage: srange(1,1,0)
         Traceback (most recent call last):

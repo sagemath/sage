@@ -32,12 +32,12 @@ class QuotientRingElement(RingElement):
 
     INPUT:
 
-    - ``parent`` - the ring `R/I`
+    - ``parent`` -- the ring `R/I`
 
-    - ``rep`` - a representative of the element in `R`; this is used
+    - ``rep`` -- a representative of the element in `R`; this is used
       as the internal representation of the element
 
-    - ``reduce`` - bool (optional, default: True) - if True, then the
+    - ``reduce`` -- bool (default: ``True``) -- if True, then the
       internal representation of the element is ``rep`` reduced modulo
       the ideal `I`
 
@@ -170,7 +170,7 @@ class QuotientRingElement(RingElement):
             sage: S(2).is_unit()                                                        # needs sage.libs.singular
             True
 
-        Check that :trac:`29469` is fixed::
+        Check that :issue:`29469` is fixed::
 
             sage: a.is_unit()                                                           # needs sage.libs.singular
             True
@@ -200,7 +200,7 @@ class QuotientRingElement(RingElement):
             sage: a-2*a*b     # indirect doctest                                        # needs sage.libs.singular
             -2*a*b + a
 
-        In :trac:`11068`, the case of quotient rings without
+        In :issue:`11068`, the case of quotient rings without
         assigned names has been covered as well::
 
             sage: # needs sage.libs.singular
@@ -392,7 +392,7 @@ class QuotientRingElement(RingElement):
             sage: 1/a                                                                   # needs sage.libs.singular
             a
 
-        Check that :trac:`13670` is fixed (i.e. that the error message
+        Check that :issue:`13670` is fixed (i.e. that the error message
         actually describes what happens when the result of division is not defined)::
 
             sage: R.<x1,x2> = QQ[]
@@ -422,7 +422,7 @@ class QuotientRingElement(RingElement):
 
         # We are computing L/R modulo the ideal.
         (L, R) = (self.__rep, right.__rep)
-        P  = self.parent()
+        P = self.parent()
         I = P.defining_ideal()
 
         if not hasattr(I, 'groebner_basis'):
@@ -474,7 +474,7 @@ class QuotientRingElement(RingElement):
         EXAMPLES:
 
         Ring homomorphisms whose domain is the fraction field of a
-        quotient ring work correctly (see :trac:`16135`)::
+        quotient ring work correctly (see :issue:`16135`)::
 
             sage: # needs sage.libs.singular
             sage: R.<x, y> = QQ[]
@@ -648,7 +648,7 @@ class QuotientRingElement(RingElement):
             sage: a > b                                                                 # needs sage.libs.singular
             True
 
-        See :trac:`7797`::
+        See :issue:`7797`::
 
             sage: # needs sage.combinat sage.libs.singular sage.modules
             sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
@@ -657,8 +657,8 @@ class QuotientRingElement(RingElement):
             sage: Q.0^4    # indirect doctest
             ybar*zbar*zbar*xbar + ybar*zbar*zbar*ybar + ybar*zbar*zbar*zbar
 
-        The issue from :trac:`8005` was most likely fixed as part of
-        :trac:`9138`::
+        The issue from :issue:`8005` was most likely fixed as part of
+        :issue:`9138`::
 
             sage: # needs sage.libs.singular
             sage: F = GF(5)
@@ -801,13 +801,13 @@ class QuotientRingElement(RingElement):
         """
         return [self.__class__(self.parent(), m) for m in self.__rep.monomials()]
 
-    def _singular_(self, singular=singular_default):
+    def _singular_(self, singular=None):
         """
         Return Singular representation of self.
 
         INPUT:
 
-        -  ``singular`` - a non-standard interpreter may be
+        -  ``singular`` -- a non-standard interpreter may be
            provided
 
         EXAMPLES::
@@ -844,7 +844,9 @@ class QuotientRingElement(RingElement):
             a - 2/3*b
         """
         if singular is None:
-            raise ImportError("could not import singular")
+            singular = singular_default
+            if singular is None:
+                raise ImportError("could not import singular")
         return self.__rep._singular_(singular)
 
     def _magma_init_(self, magma):
@@ -941,7 +943,7 @@ class QuotientRingElement(RingElement):
 
         INPUT:
 
-        -  ``G`` - a list of quotient ring elements
+        -  ``G`` -- a list of quotient ring elements
 
         .. WARNING::
 

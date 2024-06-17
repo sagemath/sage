@@ -3,25 +3,25 @@ cpdef call_registered_function(unsigned serial,
                                list args,
                                bint hold,
                                bint allow_numeric_result,
-                               result_parent) noexcept:
+                               result_parent):
     r"""
     Call a function registered with Pynac (GiNaC).
 
     INPUT:
 
-    - ``serial`` - serial number of the function
+    - ``serial`` -- serial number of the function
 
-    - ``nargs`` - declared number of args (0 is variadic)
+    - ``nargs`` -- declared number of args (0 is variadic)
 
-    - ``args`` - a list of arguments to pass to the function;
+    - ``args`` -- a list of arguments to pass to the function;
       each must be an :class:`Expression`
 
-    - ``hold`` - whether to leave the call unevaluated
+    - ``hold`` -- whether to leave the call unevaluated
 
-    - ``allow_numeric_result`` - if ``True``, keep numeric results numeric;
+    - ``allow_numeric_result`` -- if ``True``, keep numeric results numeric;
       if ``False``, make all results symbolic expressions
 
-    - ``result_parent`` - an instance of :class:`SymbolicRing`
+    - ``result_parent`` -- an instance of :class:`SymbolicRing`
 
     EXAMPLES::
 
@@ -173,7 +173,7 @@ cpdef unsigned register_or_update_function(self, name, latex_name, int nargs,
 cdef dict sfunction_serial_dict = {}
 
 
-cpdef get_sfunction_from_serial(unsigned int serial) noexcept:
+cpdef get_sfunction_from_serial(unsigned int serial):
     """
     Return an already created :class:`SymbolicFunction` given the serial.
 
@@ -189,7 +189,7 @@ cpdef get_sfunction_from_serial(unsigned int serial) noexcept:
     return sfunction_serial_dict.get(serial)
 
 
-cpdef get_sfunction_from_hash(long myhash) noexcept:
+cpdef get_sfunction_from_hash(long myhash):
     """
     Return an already created :class:`SymbolicFunction` given the hash.
 

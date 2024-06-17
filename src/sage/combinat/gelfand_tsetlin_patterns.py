@@ -19,7 +19,6 @@ REFERENCES:
    A Generating Function of Strict Gelfand Patterns and Some Formulas on
    Characters of General Linear Groups.
    J. Math. Soc. Japan **40** (4), pp. 671--685, 1988.
-
 """
 # ****************************************************************************
 #       Copyright (C) 2013 Travis Scrimshaw <tscrim@ucdavis.edu>
@@ -173,7 +172,7 @@ class GelfandTsetlinPattern(ClonableArray,
             sage: hash(gt) == hash(gt)
             True
 
-        Check that :trac:`14717` is fixed::
+        Check that :issue:`14717` is fixed::
 
             sage: GT = GelfandTsetlinPattern([[2, 1, 0], [2, 0], [1]])
             sage: GT in {}
@@ -783,7 +782,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
             sage: t == GelfandTsetlinPattern([[1]])
             True
 
-        Check that :trac:`25919` is fixed::
+        Check that :issue:`25919` is fixed::
 
             sage: t = GelfandTsetlinPattern([[1]])
             sage: u = GelfandTsetlinPatterns()[1]
@@ -854,7 +853,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
              [[1, 0, 0], [0, 0], [0]],
              [[1, 0, 0], [1, 0], [0]]]
 
-        Check that :trac:`14718` is fixed::
+        Check that :issue:`14718` is fixed::
 
             sage: T = GelfandTsetlinPatterns(1,3)
             sage: list(T)
@@ -1211,7 +1210,7 @@ class GelfandTsetlinPatternsTopRow(GelfandTsetlinPatterns):
 
         TESTS:
 
-        Check a border case in :trac:`14765`::
+        Check a border case in :issue:`14765`::
 
             sage: G = GelfandTsetlinPatterns(top_row=[])
             sage: list(G)

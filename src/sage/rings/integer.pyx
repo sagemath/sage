@@ -113,7 +113,7 @@ AUTHORS:
 
 - David Roe (2012-03): deprecate :meth:`~sage.rings.integer.Integer.is_power`
   in favour of :meth:`~sage.rings.integer.Integer.is_perfect_power` (see
-  :trac:`12116`)
+  :issue:`12116`)
 
 - Vincent Delecroix (2017-05-03): faster integer-rational comparisons
 
@@ -121,7 +121,7 @@ AUTHORS:
 
 - Vincent Klein (2017-05-22): Integer constructor support gmpy2.mpz parameter
 
-- Samuel Lelièvre (2018-08-02): document that divisors are sorted (:trac:`25983`)
+- Samuel Lelièvre (2018-08-02): document that divisors are sorted (:issue:`25983`)
 """
 # ****************************************************************************
 #       Copyright (C) 2004, 2006 William Stein <wstein@gmail.com>
@@ -211,27 +211,27 @@ cdef object numpy_long_interface = {'typestr': '=i4' if sizeof(long) == 4 else '
 cdef object numpy_int64_interface = {'typestr': '=i8'}
 cdef object numpy_object_interface = {'typestr': '|O'}
 
-cdef set_from_Integer(Integer self, Integer other) noexcept:
+cdef set_from_Integer(Integer self, Integer other):
     mpz_set(self.value, other.value)
 
 
-cdef _digits_naive(mpz_t v,l,int offset,Integer base,digits) noexcept:
+cdef _digits_naive(mpz_t v,l,int offset,Integer base,digits):
     """
     This method fills in digit entries in the list, l, using the most
     basic digit algorithm -- repeat division by base.
 
     INPUT:
 
-    - ``v`` - the value whose digits we want to put into the list
+    - ``v`` -- the value whose digits we want to put into the list
 
-    - ``l`` - the list to file
+    - ``l`` -- the list to file
 
-    - ``offset`` - offset from the beginning of the list that we want
+    - ``offset`` -- offset from the beginning of the list that we want
       to fill at
 
     - ``base`` -- the base to which we finding digits
 
-    - ``digits`` - a python sequence type with objects to use for digits
+    - ``digits`` -- a python sequence type with objects to use for digits
       note that python negative index semantics are relied upon
 
     AUTHORS:
@@ -262,21 +262,21 @@ cdef _digits_naive(mpz_t v,l,int offset,Integer base,digits) noexcept:
 
     mpz_clear(mpz_value)
 
-cdef _digits_internal(mpz_t v,l,int offset,int power_index,power_list,digits) noexcept:
+cdef _digits_internal(mpz_t v,l,int offset,int power_index,power_list,digits):
     """
     INPUT:
 
-    - ``v`` - the value whose digits we want to put into the list
+    - ``v`` -- the value whose digits we want to put into the list
 
-    - ``l`` - the list to file
+    - ``l`` -- the list to file
 
-    - ``offset`` - offset from the beginning of the list that we want
+    - ``offset`` -- offset from the beginning of the list that we want
       to fill at
 
-    - ``power_index`` - a measure of size to fill and index to
+    - ``power_index`` -- a measure of size to fill and index to
       power_list we're filling ``1 << (power_index+1)`` digits
 
-    - ``power_list`` - a list of powers of the base, precomputed in
+    - ``power_list`` -- a list of powers of the base, precomputed in
       method digits digits - a python sequence type with objects to
       use for digits note that python negative index semantics are
       relied upon
@@ -337,7 +337,7 @@ def is_Integer(x):
     return isinstance(x, Integer)
 
 
-cdef inline Integer as_Integer(x) noexcept:
+cdef inline Integer as_Integer(x):
     if isinstance(x, Integer):
         return <Integer>x
     else:
@@ -379,7 +379,7 @@ cdef class IntegerWrapper(Integer):
             sage: n.parent()
             Set of all prime numbers: 2, 3, 5, 7, ...
 
-        Pickling seems to work now (as of :trac:`10314`)::
+        Pickling seems to work now (as of :issue:`10314`)::
 
             sage: nn = loads(dumps(n))
             sage: nn
@@ -532,7 +532,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: Integer('0X2AEEF')
             175855
 
-        Test conversion from PARI (:trac:`11685`)::
+        Test conversion from PARI (:issue:`11685`)::
 
             sage: # needs sage.libs.pari
             sage: ZZ(pari(-3))
@@ -582,7 +582,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: a == ZZ(L, base=2^64)
             True
 
-        Test comparisons with numpy types (see :trac:`13386` and :trac:`18076`)::
+        Test comparisons with numpy types (see :issue:`13386` and :issue:`18076`)::
 
             sage: import numpy                                                          # needs numpy
             sage: numpy.int8('12') == 12                                                # needs numpy
@@ -746,7 +746,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: v[Integer(2):Integer(4)]
             [3, 4]
 
-        See :trac:`20750`::
+        See :issue:`20750`::
 
             sage: import re
             sage: p = re.compile('(a)b')
@@ -773,7 +773,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         """
         return codomain.coerce(self)
 
-    cdef _xor(Integer self, Integer other) noexcept:
+    cdef _xor(Integer self, Integer other):
         cdef Integer x
         x = PY_NEW(Integer)
         mpz_xor(x.value, self.value, other.value)
@@ -871,7 +871,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: all((a > b) == (RR(a) > RR(b)) for (a, b) in zip(Ilist, flist))
             True
 
-        Verify that :trac:`12149` was fixed (and the fix is consistent
+        Verify that :issue:`12149` was fixed (and the fix is consistent
         with Python ints)::
 
             sage: a = int(1); b = 1; n = float('nan')
@@ -915,7 +915,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         return rich_to_bool_sgn(op, c)
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         r"""
         EXAMPLES::
 
@@ -1366,12 +1366,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``base`` - integer (default: 10)
+        -  ``base`` -- integer (default: 10)
 
-        -  ``digits`` - optional indexable object as source for
+        -  ``digits`` -- optional indexable object as source for
            the digits
 
-        -  ``padto`` - the minimal length of the returned list,
+        -  ``padto`` -- the minimal length of the returned list,
            sufficient number of zeros are added to make the list minimum that
            length (default: 0)
 
@@ -1698,7 +1698,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``base`` - integer (default: 10)
+        -  ``base`` -- integer (default: 10)
 
         EXAMPLES::
 
@@ -1764,7 +1764,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         return coercion_model.bin_op(left, right, operator.add)
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         """
         Integer addition.
 
@@ -1782,7 +1782,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         mpz_add(x.value, self.value, (<Integer>right).value)
         return x
 
-    cdef _add_long(self, long n) noexcept:
+    cdef _add_long(self, long n):
         """
         Fast path for adding a C long.
 
@@ -1851,7 +1851,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         return coercion_model.bin_op(left, right, operator.sub)
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         """
         Integer subtraction.
 
@@ -1889,12 +1889,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         mpz_neg(x.value, self.value)
         return x
 
-    cpdef _neg_(self) noexcept:
+    cpdef _neg_(self):
         cdef Integer x = <Integer>PY_NEW(Integer)
         mpz_neg(x.value, self.value)
         return x
 
-    cpdef _act_on_(self, s, bint self_on_left) noexcept:
+    cpdef _act_on_(self, s, bint self_on_left):
         """
         EXAMPLES::
 
@@ -1911,7 +1911,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             else:
                 return s * int(self)  # will raise the appropriate exception
 
-    cdef _mul_long(self, long n) noexcept:
+    cdef _mul_long(self, long n):
         """
         Fast path for multiplying a C long.
 
@@ -1959,7 +1959,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         return coercion_model.bin_op(left, right, operator.mul)
 
-    cpdef _mul_(self, right) noexcept:
+    cpdef _mul_(self, right):
         """
         Integer multiplication.
 
@@ -2032,7 +2032,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         return coercion_model.bin_op(left, right, operator.truediv)
 
-    cpdef _div_(self, right) noexcept:
+    cpdef _div_(self, right):
         r"""
         Computes `\frac{a}{b}`
 
@@ -2049,7 +2049,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         mpq_div_zz(x.value, self.value, (<Integer>right).value)
         return x
 
-    cpdef _floordiv_(self, right) noexcept:
+    cpdef _floordiv_(self, right):
         r"""
         Computes the whole part of `\frac{x}{y}`.
 
@@ -2175,7 +2175,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             TypeError: no canonical coercion from Univariate Polynomial
             Ring in t over Rational Field to Rational Field
 
-        Test for :trac:`34143`::
+        Test for :issue:`34143`::
 
             sage: pow(5,7,13).parent()
             Integer Ring
@@ -2191,7 +2191,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         # left is a non-Element: do the powering with a Python int
         return left ** int(right)
 
-    cpdef _pow_(self, other) noexcept:
+    cpdef _pow_(self, other):
         """
         Integer powering.
 
@@ -2271,7 +2271,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         else:
             return ~r
 
-    cdef _pow_long(self, long n) noexcept:
+    cdef _pow_long(self, long n):
         if n == 0:
             return smallInteger(1)
         elif n == 1:
@@ -2301,7 +2301,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sig_off()
             return q
 
-    cpdef _pow_int(self, n) noexcept:
+    cpdef _pow_int(self, n):
         """
         Integer powering to an integer exponent.
 
@@ -2320,9 +2320,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``n`` - integer `\geq 1` (must fit in the C ``int`` type).
+        -  ``n`` -- integer `\geq 1` (must fit in the C ``int`` type).
 
-        -  ``truncate_mode`` - boolean, whether to allow truncation if
+        -  ``truncate_mode`` -- boolean, whether to allow truncation if
            ``self`` is not an ``n``-th power.
 
         OUTPUT:
@@ -2611,7 +2611,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``m`` - integer `\geq 2`
+        -  ``m`` -- integer `\geq 2`
 
         AUTHORS:
 
@@ -2763,9 +2763,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``m`` - default: natural log base e
+        -  ``m`` -- default: natural log base e
 
-        -  ``prec`` - integer (default: ``None``): if ``None``, returns
+        -  ``prec`` -- integer (default: ``None``): if ``None``, returns
            symbolic, else to given bits of precision as in :class:`RealField`
 
         EXAMPLES::
@@ -2820,12 +2820,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: log(0)                                                                # needs sage.symbolic
             -Infinity
 
-        Some rational bases yield integer logarithms (:trac:`21517`)::
+        Some rational bases yield integer logarithms (:issue:`21517`)::
 
             sage: ZZ(8).log(1/2)
             -3
 
-        Check that Python ints are accepted (:trac:`21518`)::
+        Check that Python ints are accepted (:issue:`21518`)::
 
             sage: ZZ(8).log(int(2))
             3
@@ -2882,7 +2882,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         INPUT:
 
 
-        -  ``prec`` - integer (default: None): if None, returns
+        -  ``prec`` -- integer (default: None): if None, returns
            symbolic, else to given bits of precision as in :class:`RealField`
 
 
@@ -2918,7 +2918,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``m`` - Integer
+        -  ``m`` -- Integer
 
         OUTPUT: Integer
 
@@ -3344,7 +3344,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: [int(a) % b for a,b in signs] == control
             True
 
-        This example caused trouble in :trac:`6083`::
+        This example caused trouble in :issue:`6083`::
 
             sage: a = next_prime(2**31)                                                 # needs sage.libs.pari
             sage: b = Integers(a)(100)                                                  # needs sage.libs.pari
@@ -3401,13 +3401,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``other`` - the divisor
+        -  ``other`` -- the divisor
 
         OUTPUT:
 
-        -  ``q`` - the quotient of self/other
+        -  ``q`` -- the quotient of self/other
 
-        -  ``r`` - the remainder of self/other
+        -  ``r`` -- the remainder of self/other
 
         EXAMPLES::
 
@@ -3433,14 +3433,14 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         TESTS:
 
         The divisor can be rational as well, although the remainder
-        will always be zero (:trac:`7965`)::
+        will always be zero (:issue:`7965`)::
 
             sage: 5.quo_rem(QQ(2))
             (5/2, 0)
             sage: 5.quo_rem(2/3)
             (15/2, 0)
 
-        Check that :trac:`29009` is fixed:
+        Check that :issue:`29009` is fixed:
 
             sage: divmod(1, sys.maxsize+1r)  # should not raise OverflowError: Python int too large to convert to C long
             (0, 1)
@@ -3546,7 +3546,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         TESTS:
 
-        Check that :trac:`9345` is fixed::
+        Check that :issue:`9345` is fixed::
 
             sage: 0.rational_reconstruction(0)
             Traceback (most recent call last):
@@ -3668,7 +3668,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: hash(1-n) == hash(int(1-n))
             True
 
-        These tests come from :trac:`4957`::
+        These tests come from :issue:`4957`::
 
             sage: n = 2^31 + 2^13
             sage: hash(n)             # random
@@ -3683,7 +3683,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         """
         return mpz_pythonhash(self.value)
 
-    cdef hash_c(self) noexcept:
+    cdef hash_c(self):
         """
         A C version of the __hash__ function.
         """
@@ -3858,30 +3858,30 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``algorithm`` - string
+        -  ``algorithm`` -- string
 
-           - ``'pari'`` - (default) use the PARI library
+           - ``'pari'`` -- (default) use the PARI library
 
-           - ``'flint'`` - use the FLINT library
+           - ``'flint'`` -- use the FLINT library
 
-           - ``'kash'`` - use the KASH computer algebra system (requires
+           - ``'kash'`` -- use the KASH computer algebra system (requires
              kash)
 
-           - ``'magma'`` - use the MAGMA computer algebra system (requires
+           - ``'magma'`` -- use the MAGMA computer algebra system (requires
              an installation of MAGMA)
 
-           - ``'qsieve'`` - use Bill Hart's quadratic sieve code;
+           - ``'qsieve'`` -- use Bill Hart's quadratic sieve code;
              WARNING: this may not work as expected, see qsieve? for
              more information
 
-           - ``'ecm'`` - use ECM-GMP, an implementation of Hendrik
+           - ``'ecm'`` -- use ECM-GMP, an implementation of Hendrik
              Lenstra's elliptic curve method.
 
-        - ``proof`` - bool (default: ``True``) whether or not to prove
+        - ``proof`` -- bool (default: ``True``) whether or not to prove
           primality of each factor (only applicable for ``'pari'``
           and ``'ecm'``).
 
-        - ``limit`` - int or None (default: None) if limit is
+        - ``limit`` -- int or None (default: None) if limit is
           given it must fit in a ``signed int``, and the factorization is done
           using trial division and primes up to limit.
 
@@ -4199,7 +4199,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         sig_off()
         return t
 
-    cpdef RingElement _valuation(Integer self, Integer p) noexcept:
+    cpdef RingElement _valuation(Integer self, Integer p):
         r"""
         Return the p-adic valuation of ``self``.
 
@@ -4224,7 +4224,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         mpz_clear(u)
         return v
 
-    cdef object _val_unit(Integer self, Integer p) noexcept:
+    cdef object _val_unit(Integer self, Integer p):
         r"""
         Return a pair: the p-adic valuation of ``self``, and the p-adic unit
         of ``self``.
@@ -4255,7 +4255,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``p`` - an integer at least 2.
+        -  ``p`` -- an integer at least 2.
 
         EXAMPLES::
 
@@ -4317,13 +4317,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``p`` - an integer at least 2.
+        -  ``p`` -- an integer at least 2.
 
         OUTPUT:
 
-        -  ``v_p(self)`` - the p-adic valuation of ``self``
+        -  ``v_p(self)`` -- the p-adic valuation of ``self``
 
-        -  ``u_p(self)`` - ``self`` / `p^{v_p(\mathrm{self})}`
+        -  ``u_p(self)`` -- ``self`` / `p^{v_p(\mathrm{self})}`
 
         EXAMPLES::
 
@@ -4373,7 +4373,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         mpz_tdiv_q_2exp(odd.value, self.value, bits)
         return odd
 
-    cdef Integer _divide_knowing_divisible_by(Integer self, Integer right) noexcept:
+    cdef Integer _divide_knowing_divisible_by(Integer self, Integer right):
         r"""
         Return the integer ``self`` / ``right`` when ``self`` is divisible by right.
 
@@ -4711,7 +4711,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES:
 
-        This example addresses :trac:`23502`::
+        This example addresses :issue:`23502`::
 
             sage: n = 6
             sage: n.round()
@@ -5220,7 +5220,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             True
             sage: proof.arithmetic(True)
 
-        We check that :trac:`4777` is fixed::
+        We check that :issue:`4777` is fixed::
 
             sage: n = 150607571^14
             sage: n.is_prime_power()                                                    # needs sage.libs.pari
@@ -5543,7 +5543,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         TESTS:
 
         This is a test to make sure we work around a bug in GMP, see
-        :trac:`4612`.
+        :issue:`4612`.
 
         ::
 
@@ -5862,7 +5862,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``proof`` - bool or None (default: None, see
+        -  ``proof`` -- bool or None (default: None, see
            ``proof.arithmetic`` or :mod:`sage.structure.proof`) Note that the global Sage
            default is ``proof=True``
 
@@ -5901,7 +5901,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        - ``proof`` - if ``True`` ensure that the returned value is the next
+        - ``proof`` -- if ``True`` ensure that the returned value is the next
           prime power and if set to ``False`` uses probabilistic methods
           (i.e. the result is not guaranteed). By default it uses global
           configuration variables to determine which alternative to use (see
@@ -5947,7 +5947,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        - ``proof`` - if ``True`` ensure that the returned value is the next
+        - ``proof`` -- if ``True`` ensure that the returned value is the next
           prime power and if set to ``False`` uses probabilistic methods
           (i.e. the result is not guaranteed). By default it uses global
           configuration variables to determine which alternative to use (see
@@ -6013,7 +6013,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        - ``proof`` - if ``True`` ensure that the returned value is the next
+        - ``proof`` -- if ``True`` ensure that the returned value is the next
           prime power and if set to ``False`` uses probabilistic methods
           (i.e. the result is not guaranteed). By default it uses global
           configuration variables to determine which alternative to use (see
@@ -6200,7 +6200,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         d = self // 4
         return d % 4 in [2, 3] and d.is_squarefree()
 
-    cpdef __pari__(self) noexcept:
+    cpdef __pari__(self):
         """
         Return the PARI version of this integer.
 
@@ -6461,7 +6461,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: type(0.sqrt(prec=53))                                                 # needs sage.rings.real_mpfr
             <class 'sage.rings.real_mpfr.RealNumber'>
 
-        Check that :trac:`9466` and :trac:`26509` are fixed::
+        Check that :issue:`9466` and :issue:`26509` are fixed::
 
             sage: 3.sqrt(extend=False, all=True)
             []
@@ -6525,7 +6525,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             There is no guarantee that the cofactors will be minimal. If you
             need the cofactors to be minimal use :meth:`_xgcd`. Also, using
             :meth:`_xgcd` directly might be faster in some cases, see
-            :trac:`13628`.
+            :issue:`13628`.
 
         EXAMPLES::
 
@@ -6668,7 +6668,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         return g, s, t
 
-    cpdef _shift_helper(Integer self, y, int sign) noexcept:
+    cpdef _shift_helper(Integer self, y, int sign):
         """
         Compute left and right shifts of integers.
         Shifts ``self`` ``y`` bits to the left if ``sign`` is `1`, and to the right
@@ -6810,7 +6810,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             return x >> int(y)
         return (<Integer>x)._shift_helper(y, -1)
 
-    cdef _and(Integer self, Integer other) noexcept:
+    cdef _and(Integer self, Integer other):
         cdef Integer x = PY_NEW(Integer)
         mpz_and(x.value, self.value, other.value)
         return x
@@ -6831,7 +6831,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             return (<Integer>x)._and(y)
         return coercion_model.bin_op(x, y, operator.and_)
 
-    cdef _or(Integer self, Integer other) noexcept:
+    cdef _or(Integer self, Integer other):
         cdef Integer x = PY_NEW(Integer)
         mpz_ior(x.value, self.value, other.value)
         return x
@@ -6909,13 +6909,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         INPUT:
 
-        -  ``self`` - Integer
+        -  ``self`` -- Integer
 
-        -  ``n`` - Integer, or ideal of integer ring
+        -  ``n`` -- Integer, or ideal of integer ring
 
         OUTPUT:
 
-        -  ``x`` - Integer such that x\*self = 1 (mod m), or
+        -  ``x`` -- Integer such that x\*self = 1 (mod m), or
            raises ZeroDivisionError.
 
         IMPLEMENTATION:
@@ -6939,12 +6939,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             ...
             ZeroDivisionError: inverse of Mod(..., ...) does not exist
 
-        We check that :trac:`10625` is fixed::
+        We check that :issue:`10625` is fixed::
 
             sage: ZZ(2).inverse_mod(ZZ.ideal(3))
             2
 
-        We check that :trac:`9955` is fixed::
+        We check that :issue:`9955` is fixed::
 
             sage: Rational(3) % Rational(-1)
             0
@@ -7109,7 +7109,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: 13.binomial(2r)
             78
 
-        Check that it can be interrupted (:trac:`17852`)::
+        Check that it can be interrupted (:issue:`17852`)::
 
             sage: alarm(0.5); (2^100).binomial(2^22, algorithm='mpir')
             Traceback (most recent call last):
@@ -7117,7 +7117,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             AlarmInterrupt
 
         For PARI, we try 10 interrupts with increasing intervals to
-        check for reliable interrupting, see :trac:`18919`::
+        check for reliable interrupting, see :issue:`18919`::
 
             sage: from cysignals import AlarmInterrupt
             sage: for i in [1..10]:             # long time (5s)                        # needs sage.libs.pari
@@ -7163,6 +7163,40 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         else:
             raise ValueError("algorithm must be one of: 'pari' or 'gmp' (alias: 'mpir')")
 
+    def to_bytes(self, length=1, byteorder="big", is_signed=False):
+        r"""
+        Return an array of bytes representing an integer.
+
+        Internally relies on the python ``int.to_bytes()`` method.
+
+        INPUT:
+
+        - ``length`` -- positive integer (default: ``1``); integer is represented in
+          ``length`` bytes
+        - ``byteorder`` -- str (default: ``"big"``); determines the byte order of
+          the output; can only be ``"big"`` or ``"little"``
+        - ``is_signed`` -- boolean (default: ``False``); determines whether to use two's
+          compliment to represent the integer
+
+        .. TODO::
+
+            It should be possible to convert straight from the gmp type in cython.
+            This could be significantly faster, but I am unsure of the fastest and cleanest
+            way to do this.
+
+        EXAMPLES::
+
+            sage: (1024).to_bytes(2, byteorder='big')
+            b'\x04\x00'
+            sage: (1024).to_bytes(10, byteorder='big')
+            b'\x00\x00\x00\x00\x00\x00\x00\x00\x04\x00'
+            sage: (-1024).to_bytes(10, byteorder='big', is_signed=True)
+            b'\xff\xff\xff\xff\xff\xff\xff\xff\xfc\x00'
+            sage: x = 1000
+            sage: x.to_bytes((x.bit_length() + 7) // 8, byteorder='little')
+            b'\xe8\x03'
+        """
+        return int(self).to_bytes(length=length, byteorder=byteorder, signed=is_signed)
 
 cdef int mpz_set_str_python(mpz_ptr z, char* s, int base) except -1:
     """
@@ -7324,7 +7358,7 @@ def GCD_list(v):
         sage: type(w)
         <class 'sage.rings.integer.Integer'>
 
-    Check that the bug reported in :trac:`3118` has been fixed::
+    Check that the bug reported in :issue:`3118` has been fixed::
 
         sage: sage.rings.integer.GCD_list([2,2,3])
         1
@@ -7338,7 +7372,7 @@ def GCD_list(v):
         sage: type(w)
         <class 'sage.rings.integer.Integer'>
 
-    Check that the GCD of the empty list is zero (:trac:`17257`)::
+    Check that the GCD of the empty list is zero (:issue:`17257`)::
 
         sage: GCD_list([])
         0
@@ -7391,87 +7425,6 @@ def make_integer(s):
 
 cdef class int_to_Z(Morphism):
     """
-    Morphism from Python ints to Sage integers.
-
-    EXAMPLES::
-
-        sage: f = ZZ.coerce_map_from(int)
-        sage: type(f)
-        <class 'sage.rings.integer.long_to_Z'>
-        sage: f(5r)
-        5
-        sage: type(f(5r))
-        <class 'sage.rings.integer.Integer'>
-        sage: 1 + 2r
-        3
-        sage: type(1 + 2r)
-        <class 'sage.rings.integer.Integer'>
-
-    This is intended for internal use by the coercion system,
-    to facilitate fast expressions mixing ints and more complex
-    Python types.  Note that (as with all morphisms) the input
-    is forcably coerced to the domain ``int`` if it is not
-    already of the correct type which may have undesirable results::
-
-        sage: f.domain()
-        Set of Python objects of class 'int'
-        sage: f(1/3)
-        0
-        sage: f(1.7)
-        1
-        sage: f("10")
-        10
-
-    A pool is used for small integers::
-
-        sage: f(10) is f(10)
-        True
-        sage: f(-2) is f(-2)
-        True
-    """
-
-    def __init__(self):
-        """
-        TESTS::
-
-            sage: f = ZZ.coerce_map_from(int)
-            sage: f.parent()
-            Set of Morphisms from Set of Python objects of class 'int' to Integer Ring in Category of sets
-        """
-        import sage.categories.homset
-        from sage.sets.pythonclass import Set_PythonType
-        Morphism.__init__(self, sage.categories.homset.Hom(Set_PythonType(int), integer_ring.ZZ))
-
-    cpdef Element _call_(self, a) noexcept:
-        """
-        Return a new integer with the same value as ``a``.
-
-        TESTS::
-
-            sage: f = ZZ.coerce_map_from(int)
-            sage: f(100r)
-            100
-        """
-        if type(a) is not int:
-            raise TypeError("must be a Python int object")
-
-        return smallInteger(PyLong_AsLong(a))
-
-    def _repr_type(self):
-        """
-        TESTS::
-
-            sage: f = ZZ.coerce_map_from(int)
-            sage: print(f)
-            Native morphism:
-              From: Set of Python objects of class 'int'
-              To:   Integer Ring
-        """
-        return "Native"
-
-
-cdef class long_to_Z(Morphism):
-    """
     EXAMPLES::
 
         sage: f = ZZ.coerce_map_from(int)
@@ -7487,7 +7440,7 @@ cdef class long_to_Z(Morphism):
         from sage.sets.pythonclass import Set_PythonType
         Morphism.__init__(self, sage.categories.homset.Hom(Set_PythonType(long), integer_ring.ZZ))
 
-    cpdef Element _call_(self, a) noexcept:
+    cpdef Element _call_(self, a):
         cdef Integer r
         cdef long l
         cdef int err = 0
@@ -7512,7 +7465,7 @@ cdef int sizeof_Integer
 # from. DO NOT INITIALIZE IT AGAIN and DO NOT REFERENCE IT!
 cdef Integer global_dummy_Integer
 global_dummy_Integer = Integer()
-# Reallocate to one limb to fix :trac:`31340` and :trac:`33081`
+# Reallocate to one limb to fix :issue:`31340` and :issue:`33081`
 _mpz_realloc(global_dummy_Integer.value, 1)
 
 
@@ -7527,7 +7480,7 @@ def _check_global_dummy_Integer():
         True
     """
     # Check that it has exactly one limb allocated
-    # This is assumed later in fast_tp_new() :trac:`33081`
+    # This is assumed later in fast_tp_new() :issue:`33081`
     cdef mpz_ptr dummy = global_dummy_Integer.value
     if dummy._mp_alloc == 1 and dummy._mp_size == 0:
         return True
@@ -7671,7 +7624,7 @@ cdef void fast_tp_dealloc(PyObject* o) noexcept:
 
 
 from sage.misc.allocator cimport hook_tp_functions
-cdef hook_fast_tp_functions() noexcept:
+cdef hook_fast_tp_functions():
     """
     Initialize the fast integer creation functions.
     """
@@ -7689,7 +7642,7 @@ cdef hook_fast_tp_functions() noexcept:
     # to be constructed/destructed.
     hook_tp_functions(global_dummy_Integer, <newfunc>(&fast_tp_new), <destructor>(&fast_tp_dealloc), False)
 
-cdef integer(x) noexcept:
+cdef integer(x):
     if isinstance(x, Integer):
         return x
     return Integer(x)
@@ -7719,7 +7672,7 @@ hook_fast_tp_functions()
 
 # zero and one initialization
 initialized = False
-cdef set_zero_one_elements() noexcept:
+cdef set_zero_one_elements():
     global the_integer_ring, initialized
     if initialized:
         return
@@ -7739,7 +7692,7 @@ DEF small_pool_max = 256
 # we could use the above zero and one here
 cdef list small_pool = [Integer(k) for k in range(small_pool_min, small_pool_max+1)]
 
-cdef inline Integer smallInteger(long value) noexcept:
+cdef inline Integer smallInteger(long value):
     """
     This is the fastest way to create a (likely) small Integer.
     """
@@ -7793,7 +7746,7 @@ cdef double mpz_get_d_nearest(mpz_t x) except? -648555075988944.5:
 
     AUTHORS:
 
-    - Jeroen Demeyer (:trac:`16385`, based on :trac:`14416`)
+    - Jeroen Demeyer (:issue:`16385`, based on :issue:`14416`)
     """
     cdef mp_bitcnt_t sx = mpz_sizeinbase(x, 2)
 

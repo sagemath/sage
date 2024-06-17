@@ -34,14 +34,14 @@ EXAMPLES::
     1
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Robert Pollack <rpollack@math.bu.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.continued_fraction import convergents
 from .sigma0 import Sigma0
@@ -594,7 +594,7 @@ class ManinMap():
 
         - ``f`` -- anything that can be called with elements of the coefficient module
         - ``codomain`` -- (default: None) the codomain of the return map
-        - ``to_moments`` -- (default: False) if True, will apply ``f`` to each of the moments instead
+        - ``to_moments`` -- (default: ``False``) if True, will apply ``f`` to each of the moments instead
 
         EXAMPLES::
 
@@ -654,7 +654,7 @@ class ManinMap():
 
         INPUT:
 
-        - ``gamma`` - `2 \times 2` integer matrix of nonzero determinant, with a
+        - ``gamma`` -- `2 \times 2` integer matrix of nonzero determinant, with a
           well-defined action on the coefficient module
 
         OUTPUT:

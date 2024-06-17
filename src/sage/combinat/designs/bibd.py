@@ -125,7 +125,7 @@ def balanced_incomplete_block_design(v, k, lambd=1, existence=False, use_LJCR=Fa
 
     INPUT:
 
-    - ``v,k,lambd`` (integers)
+    - ``v``, ``k``, ``lambd`` -- integers
 
     - ``existence`` (boolean) -- instead of building the design, return:
 
@@ -371,7 +371,7 @@ def BruckRyserChowla_check(v, k, lambd):
 
     INPUT:
 
-    - ``v, k, lambd`` -- integers; parameters to check
+    - ``v``, ``k``, ``lambd`` -- integers; parameters to check
 
     OUTPUT:
 
@@ -528,7 +528,7 @@ def BIBD_from_TD(v,k,existence=False):
 
     INPUT:
 
-    - ``v,k`` -- (integers) computes a `(v,k,1)`-BIBD.
+    - ``v``, ``k`` -- (integers) computes a `(v,k,1)`-BIBD.
 
     - ``existence``  -- (boolean) instead of building the design, return:
 
@@ -681,14 +681,14 @@ def BIBD_from_difference_family(G, D, lambd=None, check=True):
 
     INPUT:
 
-    - ``G`` - a finite additive Abelian group
+    - ``G`` -- a finite additive Abelian group
 
-    - ``D`` - a difference family on ``G`` (short blocks are allowed).
+    - ``D`` -- a difference family on ``G`` (short blocks are allowed).
 
-    - ``lambd`` - the `\lambda` parameter (optional, only used if ``check`` is
+    - ``lambd`` -- the `\lambda` parameter (optional, only used if ``check`` is
       ``True``)
 
-    - ``check`` - whether or not we check the output (default: ``True``)
+    - ``check`` -- whether or not we check the output (default: ``True``)
 
     EXAMPLES::
 
@@ -789,7 +789,7 @@ def v_4_1_BIBD(v, check=True):
         sage: assert designs.difference_family(37,4,existence=True)
         sage: _ = designs.difference_family(37,4)
 
-    Check some larger `(v,4,1)`-BIBD (see :trac:`17557`)::
+    Check some larger `(v,4,1)`-BIBD (see :issue:`17557`)::
 
         sage: for v in range(400):                                      # long time
         ....:     if v%12 in [1,4]:
@@ -852,7 +852,7 @@ def BIBD_from_PBD(PBD, v, k, check=True, base_cases=None):
 
     INPUT:
 
-    - ``v,k`` -- integers.
+    - ``v``, ``k`` -- integers.
 
     - ``PBD`` -- A PBD on `r=(v-1)/(k-1)` points, such that for any block of
       ``PBD`` of size `s` there must exist a `((k-1)s+1,k,1)`-BIBD.
@@ -879,7 +879,7 @@ def BIBD_from_PBD(PBD, v, k, check=True, base_cases=None):
     for X in PBD:
         n = len(X)
         N = (k-1)*n+1
-        if not (n,k) in base_cases:
+        if (n,k) not in base_cases:
             base_cases[n,k] = _relabel_bibd(balanced_incomplete_block_design(N,k), N)
 
         for XX in base_cases[n,k]:
@@ -959,7 +959,7 @@ def PBD_4_5_8_9_12(v, check=True):
          [0, 15, 27, 38], [0, 16, 22, 32], [0, 17, 23, 34],
         ...
 
-    Check that :trac:`16476` is fixed::
+    Check that :issue:`16476` is fixed::
 
         sage: from sage.combinat.designs.bibd import PBD_4_5_8_9_12
         sage: for v in (0,1,4,5,8,9,12,13,16,17,20,21,24,25):                           # needs sage.schemes
@@ -1233,7 +1233,7 @@ def PBD_from_TD(k,t,u):
 
     INPUT:
 
-    - ``k,t,u`` -- integers such that `0\leq u \leq t`.
+    - ``k``, ``t``, ``u`` -- integers such that `0\leq u \leq t`.
 
     EXAMPLES::
 
@@ -1308,7 +1308,7 @@ def BIBD_from_arc_in_desarguesian_projective_plane(n,k,existence=False):
 
     INPUT:
 
-    - ``n,k`` (integers) -- must be powers of two (among other restrictions).
+    - ``n``, ``k`` (integers) -- must be powers of two (among other restrictions).
 
     - ``existence`` (boolean) -- whether to return the BIBD obtained through
       this construction (default), or to merely indicate with a boolean return
@@ -1553,7 +1553,7 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
 
         INPUT:
 
-        - ``s`` - (default to ``2``) the maximum number of points from the arc
+        - ``s`` -- (default to ``2``) the maximum number of points from the arc
           in each block
 
         - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear

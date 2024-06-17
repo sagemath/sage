@@ -195,7 +195,7 @@ def find_isomorphism(fan1, fan2, check=False):
 
     - ``fan1``, ``fan2`` -- two fans.
 
-    - ``check`` -- boolean (default: False). Passed to the fan
+    - ``check`` -- boolean (default: ``False``). Passed to the fan
       morphism constructor, see
       :func:`~sage.geometry.fan_morphism.FanMorphism`.
 
@@ -346,7 +346,7 @@ def fan_2d_echelon_forms(fan):
         ....:     fan2 = Fan(perm_cones, rays=[m*vector(r) for r in perm_rays])
         ....:     assert fan_2d_echelon_form(fan2) in echelon_forms
 
-    The trivial case was fixed in :trac:`18613`::
+    The trivial case was fixed in :issue:`18613`::
 
         sage: fan = Fan([], lattice=ToricLattice(2))
         sage: fan_2d_echelon_forms(fan)

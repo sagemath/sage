@@ -108,9 +108,10 @@ Which you can't do with hyperplane arrangements::
 #                  http://www.gnu.org/licenses/
 # *****************************************************************************
 
+import sage.geometry.abc
 
-from sage.misc.cachefunc import cached_method
 from sage.geometry.linear_expression import LinearExpression, LinearExpressionModule
+from sage.misc.cachefunc import cached_method
 
 
 class Hyperplane(LinearExpression):
@@ -460,9 +461,8 @@ class Hyperplane(LinearExpression):
             sage: h.intersection(polytopes.cube())
             A 2-dimensional polyhedron in QQ^3 defined as the convex hull of 3 vertices
         """
-        from sage.geometry.polyhedron.base import is_Polyhedron
         from sage.geometry.polyhedron.constructor import Polyhedron
-        if not is_Polyhedron(other):
+        if not isinstance(other, sage.geometry.abc.Polyhedron):
             try:
                 other = other.polyhedron()
             except AttributeError:
@@ -518,7 +518,7 @@ class Hyperplane(LinearExpression):
 
         INPUT:
 
-        - ``signed`` -- boolean (optional, default: ``True``); whether
+        - ``signed`` -- boolean (default: ``True``); whether
           to preserve the overall sign
 
         OUTPUT:
@@ -551,7 +551,7 @@ class Hyperplane(LinearExpression):
 
         TESTS:
 
-        Check that :trac:`30078` is fixed::
+        Check that :issue:`30078` is fixed::
 
             sage: # needs sage.rings.number_field
             sage: R.<sqrt2> = QuadraticField(2)
@@ -560,7 +560,7 @@ class Hyperplane(LinearExpression):
             sage: B
             Arrangement <x + 1>
 
-        Check that :trac:`30749` is fixed::
+        Check that :issue:`30749` is fixed::
 
             sage: # needs sage.rings.number_field
             sage: tau = (1+AA(5).sqrt()) / 2

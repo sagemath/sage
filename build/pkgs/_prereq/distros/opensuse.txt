@@ -23,6 +23,6 @@ gcc-c++
 ca-certificates
 # gunzip needed for ppl spkg
 gzip
-# Trac #32368
+# Issue #32368
 findutils
 diffutils

@@ -500,7 +500,6 @@ initLdata(vstr,cutoff=1.2,vdualstr="")=
 }
 
 
-
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 \\ phi(t) - inverse Mellin transform of the product of Gamma-factors      \\
 \\          computed either with Taylor in 0 or from asymptotics          \\

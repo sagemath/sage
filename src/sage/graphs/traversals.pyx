@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # cython: binding=True
 # distutils: language = c++
 r"""
@@ -107,7 +106,7 @@ def _is_valid_lex_BFS_order(G, L):
     return True
 
 
-cdef lex_BFS_fast_short_digraph(short_digraph sd, uint32_t *sigma, uint32_t *pred) noexcept:
+cdef lex_BFS_fast_short_digraph(short_digraph sd, uint32_t *sigma, uint32_t *pred):
     r"""
     Perform a lexicographic breadth first search (LexBFS) on the graph.
 
@@ -429,7 +428,8 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
     # calling out_neighbors. This data structure is well documented in the
     # module sage.graphs.base.static_sparse_graph
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v,
+                       sort_neighbors=False)
 
     # Initialize the predecessors array
     cdef MemoryAllocator mem = MemoryAllocator()
@@ -602,7 +602,8 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
     cdef list int_to_v = list(G)
 
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v,
+                       sort_neighbors=False)
 
     # Perform Lex UP
 
@@ -773,7 +774,8 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
     cdef list int_to_v = list(G)
 
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v,
+                       sort_neighbors=False)
 
     # Perform Lex DFS
 
@@ -946,7 +948,8 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
     cdef list int_to_v = list(G)
 
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v,
+                       sort_neighbors=False)
 
     # Perform Lex DOWN
 
@@ -1412,7 +1415,8 @@ def lex_M_fast(G, triangulation=False, initial_vertex=None):
         int_to_v[0], int_to_v[i] = int_to_v[i], int_to_v[0]
 
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v,
+                       sort_neighbors=False)
     cdef uint32_t* p_tmp
     cdef uint32_t* p_end
 
@@ -1671,7 +1675,8 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
         raise ValueError("vertex ({0}) is not a vertex of the graph".format(initial_vertex))
 
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex,
+                       sort_neighbors=False)
     cdef uint32_t** p_vertices = sd.neighbors
     cdef uint32_t* p_tmp
     cdef uint32_t* p_end
@@ -1747,7 +1752,7 @@ cdef inline int swap(int* alpha, int* alpha_inv, int u, int new_pos_u) noexcept:
 
 
 cdef maximum_cardinality_search_M_short_digraph(short_digraph sd, int initial_vertex,
-                                                int* alpha, int* alpha_inv, list F, bint* X) noexcept:
+                                                int* alpha, int* alpha_inv, list F, bint* X):
     r"""
     Compute the ordering and the edges of the triangulation produced by MCS-M.
 
@@ -2045,7 +2050,8 @@ def maximum_cardinality_search_M(G, initial_vertex=None):
     # calling out_neighbors. This data structure is well documented in the
     # module sage.graphs.base.static_sparse_graph
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex,
+                       sort_neighbors=False)
 
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef int* alpha = <int*>mem.calloc(N, sizeof(int))

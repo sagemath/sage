@@ -817,8 +817,8 @@ class PuzzlePieces:
             Nablas : [a\b/c, b\c/a, c\a/b]
             Deltas : [a/c\b, b/a\c, c/b\a]
         """
-        s = "Nablas : %s\n" % sorted([p for p in self._nabla_pieces], key=str)
-        s += "Deltas : %s" % sorted([p for p in self._delta_pieces], key=str)
+        s = "Nablas : %s\n" % sorted(self._nabla_pieces, key=str)
+        s += "Deltas : %s" % sorted(self._delta_pieces, key=str)
         return s
 
     def delta_pieces(self):

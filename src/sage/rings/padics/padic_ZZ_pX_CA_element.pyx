@@ -157,7 +157,6 @@ AUTHORS:
 - Robert Harron (2011-09): fixes/enhancements
 
 - Julian Rueth (2012-10-15): fixed an initialization bug
-
 """
 # ****************************************************************************
 #       Copyright (C) 2008 David Roe <roed.math@gmail.com>
@@ -237,7 +236,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
 
         TESTS:
 
-        Check that :trac:`13600` is fixed::
+        Check that :issue:`13600` is fixed::
 
             sage: K = W.fraction_field()
             sage: W(K.zero())
@@ -247,12 +246,12 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             sage: W(K.zero().add_bigoh(3))
             O(w^3)
 
-        Check that :trac:`3865` is fixed:
+        Check that :issue:`3865` is fixed:
 
             sage: W(gp('5 + O(5^2)'))
             w^5 + 2*w^7 + 4*w^9 + O(w^10)
 
-        Check that :trac:`13612` has been fixed::
+        Check that :issue:`13612` has been fixed::
 
             sage: # needs sage.libs.flint
             sage: R = ZpCA(3)
@@ -846,7 +845,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         else:
             self._set_prec_abs(ordp + relprec)
 
-    cdef pAdicZZpXCAElement _new_c(self, long absprec) noexcept:
+    cdef pAdicZZpXCAElement _new_c(self, long absprec):
         """
         Returns a new element with the same parent as ``self`` and
         absolute precision ``absprec``.
@@ -944,7 +943,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         """
         return ~self.to_fraction_field()
 
-    cpdef pAdicZZpXCRElement to_fraction_field(self) noexcept:
+    cpdef pAdicZZpXCRElement to_fraction_field(self):
         """
         Returns ``self`` cast into the fraction field of ``self.parent()``.
 
@@ -971,7 +970,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             ans.unit = self.value
         return ans
 
-    cdef pAdicZZpXCAElement _lshift_c(self, long n) noexcept:
+    cdef pAdicZZpXCAElement _lshift_c(self, long n):
         """
         Multiplies ``self`` by the uniformizer raised to the power ``n``.  If
         ``n`` is negative, right shifts by ``-n``.
@@ -1022,7 +1021,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             return ans
         return self._rshift_c(-mpz_get_si((<Integer>shift).value))
 
-    cdef pAdicZZpXCAElement _rshift_c(self, long n) noexcept:
+    cdef pAdicZZpXCAElement _rshift_c(self, long n):
         """
         Divides ``self`` by the uniformizer raised to the power ``n``.  If
         parent is not a field, throws away the non-positive part of
@@ -1120,7 +1119,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             return ans
         return self._rshift_c(mpz_get_si((<Integer>shift).value))
 
-    cpdef _neg_(self) noexcept:
+    cpdef _neg_(self):
         """
         Returns ``-self``.
 
@@ -1386,7 +1385,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         sig_off()
         return ans
 
-    cpdef _add_(self, _right) noexcept:
+    cpdef _add_(self, _right):
         """
         Computes the sum of ``self`` and ``right``.
 
@@ -1424,7 +1423,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             ZZ_pX_add(ans.value, tmpP, right.value)
         return ans
 
-    cpdef _sub_(self, _right) noexcept:
+    cpdef _sub_(self, _right):
         """
         Returns the difference of ``self`` and ``right``.
 
@@ -1465,7 +1464,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             ZZ_pX_sub(ans.value, tmpP, right.value)
         return ans
 
-    cpdef _mul_(self, _right) noexcept:
+    cpdef _mul_(self, _right):
         """
         Returns the product of ``self`` and ``right``.
 
@@ -1518,7 +1517,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             ZZ_pX_MulMod_pre(ans.value, self_adapted, right_adapted, self.prime_pow.get_modulus_capdiv(ans_absprec)[0])
         return ans
 
-    cpdef _div_(self, right) noexcept:
+    cpdef _div_(self, right):
         """
         Returns the quotient of ``self`` by ``right``.
 
@@ -1651,7 +1650,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
                     ans = (self.valuation_c() >= aprec)
         return ans
 
-    cpdef ntl_ZZ_pX _ntl_rep(self) noexcept:
+    cpdef ntl_ZZ_pX _ntl_rep(self):
         """
         Return an ``ntl_ZZ_pX`` that holds the value of ``self``.
 
@@ -1673,7 +1672,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         ans.x = self.value
         return ans
 
-    cpdef _ntl_rep_abs(self) noexcept:
+    cpdef _ntl_rep_abs(self):
         """
         Return a pair ``(f, 0)`` where ``f = self._ntl_rep()``.
 
@@ -1792,7 +1791,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         # Should be sped up later
         return (self - right).is_zero(absprec)
 
-    cpdef pAdicZZpXCAElement lift_to_precision(self, absprec=None) noexcept:
+    cpdef pAdicZZpXCAElement lift_to_precision(self, absprec=None):
         """
         Returns a ``pAdicZZpXCAElement`` congruent to ``self`` but with
         absolute precision at least ``absprec``.
@@ -1913,7 +1912,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             sage: list(A(0,4).expansion())
             []
 
-        Check that :trac:`25879` has been resolved::
+        Check that :issue:`25879` has been resolved::
 
             sage: K = ZpCA(3,5)
             sage: R.<a> = K[]
@@ -2153,7 +2152,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
 
         TESTS:
 
-        Check that :trac:`22083` has been resolved::
+        Check that :issue:`22083` has been resolved::
 
             sage: R.<a> = ZpCA(2).extension(x^2 - 2)
             sage: R.teichmuller(a)
@@ -2271,7 +2270,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             else:
                 return self.absprec
 
-    cpdef pAdicZZpXCAElement unit_part(self) noexcept:
+    cpdef pAdicZZpXCAElement unit_part(self):
         """
         Returns the unit part of ``self``, ie ``self / uniformizer^(self.valuation())``
 
@@ -2294,7 +2293,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         """
         return self._rshift_c(self.valuation_c())
 
-    cdef ext_p_list(self, bint pos) noexcept:
+    cdef ext_p_list(self, bint pos):
         """
         Returns a list of integers (in the Eisenstein case) or a list
         of lists of integers (in the unramified case).  ``self`` can

@@ -93,12 +93,17 @@ def is_ModularFormsSpace(x):
 
         sage: from sage.modular.modform.space import is_ModularFormsSpace
         sage: is_ModularFormsSpace(ModularForms(11,2))
+        doctest:warning...
+        DeprecationWarning: The function is_ModularFormsSpace is deprecated; use 'isinstance(..., ModularFormsSpace)' instead.
+        See https://github.com/sagemath/sage/issues/38035 for details.
         True
         sage: is_ModularFormsSpace(CuspForms(11,2))
         True
         sage: is_ModularFormsSpace(3)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38035, "The function is_ModularFormsSpace is deprecated; use 'isinstance(..., ModularFormsSpace)' instead.")
     return isinstance(x, ModularFormsSpace)
 
 
@@ -140,7 +145,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         if WARN:
             print("Modular forms -- under development -- do not trust yet.")
             WARN = False
-        if not arithgroup.is_CongruenceSubgroup(group):
+        if not isinstance(group, arithgroup.CongruenceSubgroupBase):
             raise TypeError("group (=%s) must be a congruence subgroup" % group)
         weight = Integer(weight)
         if not ((character is None) or isinstance(character, dirichlet.DirichletCharacter)):
@@ -159,7 +164,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         INPUT:
 
 
-        -  ``new_prec`` - positive integer (default: None)
+        -  ``new_prec`` -- positive integer (default: None)
 
 
         OUTPUT: if new_prec is None, returns the current precision.
@@ -191,7 +196,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         INPUT:
 
 
-        -  ``new_prec`` - positive integer
+        -  ``new_prec`` -- positive integer
 
 
         EXAMPLES::
@@ -365,7 +370,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             sage: CuspForms(DirichletGroup(11).0,3).has_character()
             True
         """
-        return not self.character() is None
+        return self.character() is not None
 
     def is_ambient(self):
         """
@@ -642,7 +647,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
         INPUT:
 
-        - ``prec`` - integer (>=0) or None
+        - ``prec`` -- integer (>=0) or None
 
         If prec is None, the prec is computed to be *at least* large
         enough so that each q-expansion determines the form as an element
@@ -929,7 +934,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         INPUT:
 
 
-        -  ``self, right`` - spaces of modular forms
+        -  ``self, right`` -- spaces of modular forms
 
 
         OUTPUT: True if self embeds in right, and False otherwise.
@@ -1053,7 +1058,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             sage: f = q-24*q^2+O(q^3) ; S(f)
             q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6)
 
-        Test that :trac:`13156` is fixed::
+        Test that :issue:`13156` is fixed::
 
             sage: R.<q> = QQ[[]]
             sage: ModularForms(1, 12)(R(0))
@@ -1069,7 +1074,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             sage: g.is_old()
             True
 
-        Test that :trac:`32168` is fixed::
+        Test that :issue:`32168` is fixed::
 
             sage: M0 = ModularForms(Gamma0(8), 10)
             sage: M1 = ModularForms(Gamma1(8), 10)
@@ -1334,7 +1339,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             ...
             ArithmeticError: vector is not in free module
 
-        We check that :trac:`10450` is fixed::
+        We check that :issue:`10450` is fixed::
 
             sage: M = CuspForms(Gamma1(22), 2).new_submodule()  # long time (3s on sage.math, 2011)
             sage: M.hecke_matrix(3)  # long time
@@ -1503,8 +1508,8 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             raise NotImplementedError
         if self.__sturm_bound is None:
             G = self.group()
-            from sage.modular.arithgroup.all import is_Gamma1
-            if is_Gamma1(G) and self.character() is not None:
+            from sage.modular.arithgroup.all import Gamma1_class
+            if isinstance(G, Gamma1_class) and self.character() is not None:
                 from sage.modular.arithgroup.all import Gamma0
                 G = Gamma0(self.level())
             # the +1 below is because O(q^prec) has precision prec.
@@ -1532,7 +1537,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             sage: N.cuspidal_submodule().dimension()
             1
 
-        We check that a bug noticed on :trac:`10450` is fixed::
+        We check that a bug noticed on :issue:`10450` is fixed::
 
             sage: M = ModularForms(6, 10)
             sage: W = M.span_of_basis(M.basis()[0:2])
@@ -1721,7 +1726,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             sage: M.eisenstein_submodule()
             Eisenstein subspace of dimension 1 of Modular Forms space of dimension 2 for Congruence Subgroup Gamma0(11) of weight 2 over Rational Field
 
-        We check that a bug noticed on :trac:`10450` is fixed::
+        We check that a bug noticed on :issue:`10450` is fixed::
 
             sage: M = ModularForms(6, 10)
             sage: W = M.span_of_basis(M.basis()[0:2])
@@ -1852,15 +1857,15 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         INPUT:
 
 
-        -  ``f`` - a modular form or power series
+        -  ``f`` -- a modular form or power series
 
-        -  ``forms`` - (default: None) a specific list of
+        -  ``forms`` -- (default: None) a specific list of
            modular forms or q-expansions.
 
-        -  ``prec`` - if forms are given, compute with them to
+        -  ``prec`` -- if forms are given, compute with them to
            the given precision
 
-        -  ``indep`` - (default: True) whether the given list
+        -  ``indep`` -- (default: ``True``) whether the given list
            of forms are assumed to form a basis.
 
 
@@ -1929,6 +1934,6 @@ def contains_each(V, B):
         False
     """
     for b in B:
-        if not (b in V):
+        if b not in V:
             return False
     return True

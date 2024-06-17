@@ -44,7 +44,6 @@ REFERENCES:
 
 - \K. Conrad: *Exterior powers* [Con2013]_
 - Chap. 19 of S. Lang: *Algebra* [Lan2002]_
-
 """
 #******************************************************************************
 #       Copyright (C) 2017 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
@@ -173,7 +172,7 @@ class ExtPowerFreeModule(FiniteRankFreeModule_abstract):
         a = 3 e_0∧e_1 - e_0∧e_2 + 4 e_1∧e_2
 
     An alternative is to construct the alternating contravariant tensor from an
-     empty list of components and to set the nonzero components afterwards::
+    empty list of components and to set the nonzero components afterwards::
 
         sage: a = A([], name='a')
         sage: a.set_comp(e)[0,1] = 3

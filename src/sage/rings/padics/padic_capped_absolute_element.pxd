@@ -6,8 +6,8 @@ ctypedef mpz_t celement
 include "CA_template_header.pxi"
 
 cdef class pAdicCappedAbsoluteElement(CAElement):
-    cdef lift_c(self) noexcept
-    cdef pari_gen _to_gen(self) noexcept
+    cdef lift_c(self)
+    cdef pari_gen _to_gen(self)
 
 from sage.rings.padics.pow_computer cimport PowComputer_base
 cdef class PowComputer_(PowComputer_base):

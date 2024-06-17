@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 SageMath version and banner info
 """
@@ -37,7 +38,7 @@ def banner_text(full=True):
 
     INPUT:
 
-    - ``full`` -- boolean (optional, default=``True``)
+    - ``full`` -- boolean (default: ``True``)
 
     OUTPUT:
 
@@ -192,10 +193,10 @@ def require_version(major, minor=0, tiny=0, prerelease=False,
     INPUT:
 
     - major -- integer
-    - minor -- integer (optional, default = 0)
-    - tiny -- float (optional, default = 0)
-    - prerelease -- boolean (optional, default = False)
-    - print_message -- boolean (optional, default = False)
+    - minor -- integer (default: 0)
+    - tiny -- float (default: 0)
+    - prerelease -- boolean (default: ``False``)
+    - print_message -- boolean (default: ``False``)
 
     OUTPUT:
 

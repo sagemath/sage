@@ -81,7 +81,6 @@ REFERENCE:
 - [2] Leon, Jeffrey. Permutation Group Algorithms Based on Partitions, I:
   Theory and Algorithms. J. Symbolic Computation, Vol. 12 (1991), pp.
   533-583.
-
 """
 
 #*****************************************************************************
@@ -116,6 +115,7 @@ cdef int compare_perms(int *gamma_1, int *gamma_2, void *S1, void *S2, int degre
         if j != 0:
             return j
     return 0
+
 
 def coset_eq(list perm1=[0,1,2,3,4,5], list perm2=[1,2,3,4,5,0], list gens=[[1,2,3,4,5,0]]):
     """
@@ -198,6 +198,7 @@ def coset_eq(list perm1=[0,1,2,3,4,5], list perm2=[1,2,3,4,5,0], list gens=[[1,2
         x = False
     sig_free(isomorphism)
     return x
+
 
 cdef dc_work_space *allocate_dc_work_space(int n) noexcept:
     r"""
@@ -313,14 +314,13 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
     isom -- space to store the isomorphism to,
         or NULL if isomorphism is not needed
 
-    NOTE:
-    The partition ``partition1`` and the resulting partition from ``ordering2``
-    *must* satisfy the property that in each cell, the smallest element occurs
-    first!
+    .. NOTE::
 
-    OUTPUT:
-    1 if S1 and S2 are isomorphic, otherwise 0.
+        The partition ``partition1`` and the resulting partition from
+        ``ordering2`` *must* satisfy the property that in each cell, the
+        smallest element occurs first!
 
+    OUTPUT: ``1`` if ``S1`` and ``S2`` are isomorphic, otherwise ``0``
     """
     cdef PartitionStack *current_ps
     cdef PartitionStack *first_ps

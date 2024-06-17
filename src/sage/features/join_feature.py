@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Join features
 """
@@ -152,7 +153,7 @@ class JoinFeature(Feature):
 
     def unhide(self):
         r"""
-        Revert what :meth:`hide` does.
+        Revert what :meth:`hide` did.
 
         EXAMPLES::
 

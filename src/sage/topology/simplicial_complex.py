@@ -111,7 +111,7 @@ simplicial complex::
     sage: X.is_pure()
     True
 
-Mutability (see :trac:`12587`)::
+Mutability (see :issue:`12587`)::
 
     sage: S = SimplicialComplex([[1,4], [2,4]])
     sage: S.add_face([1,3])
@@ -139,7 +139,7 @@ Mutability (see :trac:`12587`)::
     True
 
 We can also make mutable copies of an immutable simplicial complex
-(see :trac:`14142`)::
+(see :issue:`14142`)::
 
     sage: S = SimplicialComplex([[1,4], [2,4]])
     sage: S.set_immutable()
@@ -159,22 +159,24 @@ We can also make mutable copies of an immutable simplicial complex
 #  cohomology: compute cup products (and Massey products?)
 
 from copy import copy
-from sage.misc.lazy_import import lazy_import
-from sage.misc.cachefunc import cached_method
-from .cell_complex import GenericCellComplex
-from sage.structure.sage_object import SageObject
-from sage.structure.parent import Parent
-from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.polynomial.polynomial_ring import polygens
-from sage.sets.set import Set
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.structure.category_object import normalize_names
-from sage.misc.latex import latex
-from sage.misc.superseded import deprecation
-from functools import total_ordering
 from itertools import combinations, chain
+from functools import total_ordering
+
+from .cell_complex import GenericCellComplex
+from sage.categories.fields import Fields
+from sage.misc.cachefunc import cached_method
+from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
+from sage.misc.superseded import deprecation
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring import polygens
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
+from sage.sets.set import Set
+from sage.structure.category_object import normalize_names
+from sage.structure.parent import Parent
+from sage.structure.sage_object import SageObject
 
 lazy_import('sage.categories.simplicial_complexes', 'SimplicialComplexes')
 lazy_import('sage.matrix.constructor', 'matrix')
@@ -321,10 +323,7 @@ def rename_vertex(n, keep, left=True):
     try:
         return lookup[n]
     except KeyError:
-        if left:
-            return "L" + str(n)
-        else:
-            return "R" + str(n)
+        return ("L" + str(n)) if left else ("R" + str(n))
 
 
 @total_ordering
@@ -644,7 +643,7 @@ class Simplex(SageObject):
 
         answer = []
         for x in lattice_paths(self.tuple(), other.tuple()):
-            new = tuple(["L" + str(v) + "R" + str(w) for (v, w) in x])
+            new = tuple(["L" + str(v) + "R" + str(w) for v, w in x])
             answer.append(Simplex(new))
         return answer
 
@@ -917,12 +916,12 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         sage: l = designs.ProjectiveGeometryDesign(2, 1, GF(4,name='a'))                # needs sage.rings.finite_rings
         sage: f = lambda S: not any(len(set(S).intersection(x))>2 for x in l)
-        sage: SimplicialComplex(from_characteristic_function=(f, l.ground_set()))       # needs sage.rings.finite_rings
+        sage: SimplicialComplex(from_characteristic_function=(f, l.ground_set()))       # needs sage.rings.finite_rings, long time
         Simplicial complex with 21 vertices and 168 facets
 
     TESTS:
 
-    Check that we can make mutable copies (see :trac:`14142`)::
+    Check that we can make mutable copies (see :issue:`14142`)::
 
         sage: S = SimplicialComplex([[0,2], [0,3]], is_mutable=False)
         sage: S.is_mutable()
@@ -974,8 +973,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: S == S3
             True
 
-        Test that we have fixed a problem revealed in :trac:`20718`;
-        see also :trac:`20720`::
+        Test that we have fixed a problem revealed in :issue:`20718`;
+        see also :issue:`20720`::
 
             sage: SimplicialComplex([2])
             Simplicial complex with vertex set (0, 1, 2) and facets {(0, 1, 2)}
@@ -1374,7 +1373,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         INPUT:
 
-        - ``increasing`` -- (optional, default ``True``) if ``True``, return
+        - ``increasing`` -- (default: ``True``) if ``True``, return
           faces in increasing order of dimension, thus starting with
           the empty face. Otherwise it returns faces in decreasing order of
           dimension.
@@ -2008,7 +2007,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
            this will cause problems if the two factors have any
            vertices with names in common.
 
-        :type rename_vertices: boolean; optional, default True
+        :type rename_vertices: boolean; optional, default: ``True``
 
         EXAMPLES::
 
@@ -2435,10 +2434,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
                 if H_with_gens:
                     chains = self.n_chains(i, base_ring=base_ring)
                     new_H = []
-                    for (H, gen) in H_with_gens:
+                    for H, gen in H_with_gens:
                         v = gen.vector(i)
                         new_gen = chains.zero()
-                        for (coeff, chaine) in zip(v, chains.gens()):
+                        for coeff, chaine in zip(v, chains.gens()):
                             new_gen += coeff * chaine
                         new_H.append((H, new_gen))
                     answer[i] = new_H
@@ -2450,7 +2449,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             # Fix non-reduced answer.
             if subcomplex is None and not reduced and 0 in dim:
                 try:
-                    if base_ring.is_field():
+                    if base_ring in Fields():
                         rank = answer[0].dimension()
                     else:
                         rank = len(answer[0].invariants())
@@ -2473,7 +2472,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         INPUT:
 
-        - ``base_ring`` - coefficient ring (optional, default
+        - ``base_ring`` -- coefficient ring (default:
           ``QQ``). Must be a field.
 
         Denote by `C` the chain complex associated to this simplicial
@@ -2582,7 +2581,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         TESTS:
 
-        Check that the bug reported at :trac:`14354` has been fixed::
+        Check that the bug reported at :issue:`14354` has been fixed::
 
             sage: T = SimplicialComplex([range(1,5)]).n_skeleton(1)
             sage: T.homology()                                                          # needs sage.modules
@@ -2592,7 +2591,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             {0: 0, 1: Z x Z, 2: 0}
 
         Check that the ``_faces`` cache is treated correctly
-        (:trac:`20758`)::
+        (:issue:`20758`)::
 
             sage: T = SimplicialComplex([range(1,5)]).n_skeleton(1)
             sage: _ = T.faces()       # populate the _faces attribute
@@ -2602,7 +2601,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             True
 
         Check that the ``__enlarged`` cache is treated correctly
-        (:trac:`20758`)::
+        (:issue:`20758`)::
 
             sage: T = SimplicialComplex([range(1,5)]).n_skeleton(1)
             sage: T.homology()  # to populate the __enlarged attribute                  # needs sage.modules
@@ -2611,7 +2610,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: len(T._SimplicialComplex__enlarged) > 0                               # needs sage.modules
             True
 
-        Check we've fixed the bug reported at :trac:`14578`::
+        Check we've fixed the bug reported at :issue:`14578`::
 
             sage: t0 = SimplicialComplex()
             sage: t0.add_face(('a', 'b'))
@@ -2620,7 +2619,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: t0.homology()                                                         # needs sage.modules
             {0: Z, 1: 0, 2: 0}
 
-        Check that we've fixed the bug reported at :trac:`22880`::
+        Check that we've fixed the bug reported at :issue:`22880`::
 
             sage: X = SimplicialComplex([[0], [1]])
             sage: temp = X.faces(SimplicialComplex(()))
@@ -2728,7 +2727,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         TESTS:
 
         Check that the ``_faces`` cache is treated properly: see
-        :trac:`20758`::
+        :issue:`20758`::
 
             sage: T = SimplicialComplex([range(1,5)]).n_skeleton(1)
             sage: _ = T.faces()     # populate the _faces attribute
@@ -3076,7 +3075,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         def all_homologies_vanish(F):
             S = self.link(F)
             H = S.homology(base_ring=base_ring)
-            if base_ring.is_field():
+            if base_ring in Fields():
                 return all(H[j].dimension() == 0 for j in range(S.dimension()))
             else:
                 return not any(H[j].invariants() for j in range(S.dimension()))
@@ -3460,7 +3459,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: SC = SimplicialComplex([(0,1,2),(0,2,3),(2,3,4),(1,2,4), \
                                           (1,4,5),(0,3,6),(3,6,7),(4,5,7)])
 
-        This was taking a long time before :trac:`20078`::
+        This was taking a long time before :issue:`20078`::
 
             sage: sorted(SC.minimal_nonfaces())
             [(0, 4),
@@ -4097,7 +4096,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         INPUT:
 
-        - ``base_point`` (optional, default None) -- if this complex is
+        - ``base_point`` (default: None) -- if this complex is
           not path-connected, then specify a vertex; the fundamental
           group is computed with that vertex as a base point. If the
           complex is path-connected, then you may specify a vertex or
@@ -4229,7 +4228,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: Z3.is_isomorphic(Z2)
             False
 
-        We check that :trac:`20751` is fixed::
+        We check that :issue:`20751` is fixed::
 
             sage: C1 = SimplicialComplex([[1,2,3], [2,4], [3,5], [5,6]])
             sage: C2 = SimplicialComplex([['a','b','c'], ['b','d'], ['c','e'], ['e','f']])
@@ -4282,7 +4281,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         .. WARNING::
 
-            Since :trac:`14319` the domain of the automorphism group is equal to
+            Since :issue:`14319` the domain of the automorphism group is equal to
             the graph's vertex set, and the ``translation`` argument has become
             useless.
 
@@ -4303,7 +4302,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: sorted(group.domain())                                                # needs sage.groups
             ['1', '2', '3', 'a']
 
-        Check that :trac:`17032` is fixed::
+        Check that :issue:`17032` is fixed::
 
             sage: s = SimplicialComplex([[(0,1),(2,3)]])
             sage: s.automorphism_group().cardinality()                                  # needs sage.groups
@@ -4496,42 +4495,6 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         d = self._vertex_to_index
         return {idx: v for v, idx in d.items()}
-
-    def _chomp_repr_(self):
-        r"""
-        String representation of ``self`` suitable for use by the CHomP
-        program.  This lists each facet on its own line, and makes
-        sure vertices are listed as numbers.
-
-        This function is deprecated.
-
-        EXAMPLES::
-
-            sage: S = SimplicialComplex([(0,1,2), (2,3,5)])
-            sage: print(S._chomp_repr_())
-            doctest:...: DeprecationWarning: the CHomP interface is deprecated; hence so is this function
-            See https://github.com/sagemath/sage/issues/33777 for details.
-            (2, 3, 5)
-            (0, 1, 2)
-
-        A simplicial complex whose vertices are tuples, not integers::
-
-            sage: S = SimplicialComplex([[(0,1), (1,2), (3,4)]])
-            sage: S._chomp_repr_()
-            '(0, 1, 2)\n'
-        """
-        deprecation(33777, "the CHomP interface is deprecated; hence so is this function")
-        s = ""
-        numeric = self._is_numeric()
-        if not numeric:
-            d = self._translation_to_numeric()
-        for f in self.facets():
-            if numeric:
-                s += str(f)
-            else:
-                s += '(' + ', '.join(str(d[a]) for a in f) + ')'
-            s += '\n'
-        return s
 
     # this function overrides the standard one for GenericCellComplex,
     # because it lists the maximal faces, not the total number of faces.
@@ -4776,7 +4739,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         Shellable complexes are partitionable::
 
-            sage: # needs sage.numerical.mip
+            sage: # needs sage.numerical.mip, long time
             sage: X = SimplicialComplex([[1,3,5], [1,3,6], [1,4,5], [1,4,6],
             ....:                        [2,3,5], [2,3,6], [2,4,5]])
             sage: X.is_partitionable()
@@ -4998,7 +4961,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         if b % 2:
             return ZZ.zero()
-        if a == 0 and b == 0:
+        if a == 0 == b:
             return ZZ.one()
         if base_ring in self._bbn and not verbose:
             if base_ring in self._bbn_all_computed:
@@ -5049,7 +5012,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: Y.is_golod()
             True
         """
-        H = [a+b for (a, b) in self.bigraded_betti_numbers()]
+        H = [a+b for a, b in self.bigraded_betti_numbers()]
         if 0 in H:
             H.remove(0)
 
@@ -5120,6 +5083,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         from .moment_angle_complex import MomentAngleComplex
         return MomentAngleComplex(self)
+
 
 # Miscellaneous utility functions.
 

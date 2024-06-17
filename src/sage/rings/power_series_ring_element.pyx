@@ -12,7 +12,7 @@ AUTHORS:
 - David Harvey (2006-09-11): added solve_linear_de() method
 - Robert Bradshaw (2007-04): sqrt, rmul, lmul, shifting
 - Robert Bradshaw (2007-04): Cython version
-- Simon King (2012-08): use category and coercion framework, :trac:`13412`
+- Simon King (2012-08): use category and coercion framework, :issue:`13412`
 
 EXAMPLES::
 
@@ -254,7 +254,7 @@ cdef class PowerSeries(AlgebraElement):
         else:
             raise NotImplementedError
 
-    cpdef base_extend(self, R) noexcept:
+    cpdef base_extend(self, R):
         """
         Return a copy of this power series but with coefficients in R.
 
@@ -311,7 +311,7 @@ cdef class PowerSeries(AlgebraElement):
         S = self._parent.change_ring(R)
         return S(self)
 
-    cpdef _richcmp_(self, right, int op) noexcept:
+    cpdef _richcmp_(self, right, int op):
         r"""
         Comparison of self and ``right``.
 
@@ -358,7 +358,7 @@ cdef class PowerSeries(AlgebraElement):
 
         TESTS:
 
-        :trac:`9457` is fixed::
+        :issue:`9457` is fixed::
 
             sage: A.<t> = PowerSeriesRing(ZZ)
             sage: g = t + t^3 + t^5 + O(t^6); g
@@ -540,7 +540,7 @@ cdef class PowerSeries(AlgebraElement):
         INPUT:
 
 
-        -  ``n`` - (optional) an integer that is at least 0. If ``n`` is
+        -  ``n`` -- (optional) an integer that is at least 0. If ``n`` is
            not given, it will be taken to be the precision of self,
            unless this is ``+Infinity``, in which case we just return
            ``self.list()``.
@@ -740,7 +740,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: latex(f)
             -\frac{1}{2} t + \frac{2}{3} t^{2} - \frac{9}{7} t^{15} + O(t^{20})
 
-        Check that :trac:`26606` is fixed::
+        Check that :issue:`26606` is fixed::
 
             sage: R.<beta> = QQ[]
             sage: S.<x> = R[[]]
@@ -813,7 +813,7 @@ cdef class PowerSeries(AlgebraElement):
         v = [a[i] for i in range(min(prec, len(a)))]
         return self._parent._poly_ring()(v)
 
-    cdef _inplace_truncate(self, long prec) noexcept:
+    cdef _inplace_truncate(self, long prec):
         return self.truncate(prec)
 
     def add_bigoh(self, prec):
@@ -917,7 +917,7 @@ cdef class PowerSeries(AlgebraElement):
             return self.prec()
         return min(self.prec(), f.prec())
 
-    cdef common_prec_c(self, PowerSeries f) noexcept:
+    cdef common_prec_c(self, PowerSeries f):
         if self._prec is infinity:
             return f._prec
         elif f._prec is infinity:
@@ -1048,7 +1048,7 @@ cdef class PowerSeries(AlgebraElement):
                     v[k-n] = x
         return self._parent(v, self.prec()-n)
 
-    cpdef _div_(self, denom_r) noexcept:
+    cpdef _div_(self, denom_r):
         """
         EXAMPLES::
 
@@ -1062,7 +1062,7 @@ cdef class PowerSeries(AlgebraElement):
 
         TESTS:
 
-        The following tests against bugs that were fixed in :trac:`8972`::
+        The following tests against bugs that were fixed in :issue:`8972`::
 
             sage: P.<t> = ZZ[]
             sage: R.<x> = P[[]]
@@ -1594,7 +1594,7 @@ cdef class PowerSeries(AlgebraElement):
             ...
             ValueError: unable to take the square root of 1/2
 
-        Check :trac:`30655`::
+        Check :issue:`30655`::
 
             sage: t = polygen(QQ, 't')
             sage: x = t.parent()[['x']].0
@@ -1750,7 +1750,7 @@ cdef class PowerSeries(AlgebraElement):
 
         - ``n`` -- integer
 
-        - ``prec`` -- integer (optional) - precision of the result. Though, if
+        - ``prec`` -- integer (optional); precision of the result. Though, if
           this series has finite precision, then the result cannot have larger
           precision.
 
@@ -2344,22 +2344,18 @@ cdef class PowerSeries(AlgebraElement):
 
               f'(t) = a(t) f(t) + b(t).
 
-
-
         INPUT:
 
+        -  ``self`` -- the power series `a(t)`
 
-        -  ``self`` - the power series `a(t)`
-
-        -  ``b`` - the power series `b(t)` (default is
+        -  ``b`` -- the power series `b(t)` (default is
            zero)
 
-        -  ``f0`` - the constant term of `f` ("initial
+        -  ``f0`` -- the constant term of `f` ("initial
            condition") (default is 1)
 
-        -  ``prec`` - desired precision of result (this will be
+        -  ``prec`` -- desired precision of result (this will be
            reduced if either a or b have less precision available)
-
 
         OUTPUT: the power series `f`, to indicated precision
 
@@ -2454,7 +2450,7 @@ cdef class PowerSeries(AlgebraElement):
         INPUT:
 
 
-        -  ``prec`` - integer; default is
+        -  ``prec`` -- integer; default is
            ``self.parent().default_prec``
 
 
@@ -2516,7 +2512,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: (t + O(t^2)).exp(0)
             O(t^0)
 
-        Handle nonzero constant term (fixes :trac:`4477`)::
+        Handle nonzero constant term (fixes :issue:`4477`)::
 
             sage: # needs sage.rings.real_mpfr
             sage: R.<x> = PowerSeriesRing(RR)
@@ -2764,9 +2760,13 @@ cdef class PowerSeries(AlgebraElement):
     def egf_to_ogf(self):
         r"""
         Return the ordinary generating function power series,
-        assuming self is an exponential generating function power series.
+        assuming ``self`` is an exponential generating function power series.
 
-        This function is known as ``serlaplace`` in PARI/GP.
+        This is a formal Laplace transform.
+
+        This function is known as :pari:`serlaplace` in PARI/GP.
+
+        .. SEEALSO:: :meth:`ogf_to_egf` for the inverse method.
 
         EXAMPLES::
 
@@ -2775,14 +2775,18 @@ cdef class PowerSeries(AlgebraElement):
             sage: f.egf_to_ogf()
             t + t^2 + 2*t^3
         """
-        return self.parent()([self[i] * arith.factorial(i) for i in range(self.degree()+1)])
+        return self.parent()([self[i] * arith.factorial(i) for i in range(self.degree() + 1)])
 
     def ogf_to_egf(self):
         r"""
         Return the exponential generating function power series,
-        assuming self is an ordinary generating function power series.
+        assuming ``self`` is an ordinary generating function power series.
+
+        This is a formal Borel transform.
 
         This can also be computed as ``serconvol(f,exp(t))`` in PARI/GP.
+
+        .. SEEALSO:: :meth:`egf_to_ogf` for the inverse method.
 
         EXAMPLES::
 
@@ -2791,7 +2795,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: f.ogf_to_egf()
             t + 1/2*t^2 + 1/3*t^3
         """
-        return self.parent()([self[i] / arith.factorial(i) for i in range(self.degree()+1)])
+        return self.parent()([self[i] / arith.factorial(i) for i in range(self.degree() + 1)])
 
     def __pari__(self):
         """
@@ -2890,8 +2894,6 @@ def _solve_linear_de(R, N, L, a, b, f0):
     .. MATH::
 
          (t^N g)'  =  a t^N g  +  t^{N-1} b  +  O(t^{N+L'-1}).
-
-
 
     Next we want to find `h` modulo `t^{L-L'}` such
     that `f = g + t^{L'} h` is a solution of the original

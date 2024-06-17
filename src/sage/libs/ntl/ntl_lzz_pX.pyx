@@ -4,7 +4,6 @@
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
-
 """
 ntl_lzz_pX.pyx
 
@@ -232,7 +231,7 @@ cdef class ntl_zz_pX():
         zz_pX_SetCoeff_long(self.x, i, val)
         return
 
-    cdef ntl_zz_pX _new(self) noexcept:
+    cdef ntl_zz_pX _new(self):
         """
         Quick and dirty method for creating a new object with the
         same zz_pContext as self.
@@ -749,7 +748,6 @@ cdef class ntl_zz_pX():
             zz_pX_InvTrunc(y.x, self.x, m)
             sig_off()
         return y
-
 
     def is_zero(self):
         """

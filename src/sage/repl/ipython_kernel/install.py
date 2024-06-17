@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 Installing the SageMath Jupyter Kernel and Extensions
 
@@ -11,7 +12,6 @@ in the Jupyter notebook's kernel drop-down. This is done by
     directories might be different during runs of the tests and actual
     installation and because we might be lacking write permission to places
     such as ``/usr/share``.
-
 """
 
 import errno
@@ -34,7 +34,7 @@ class SageKernelSpec():
 
         INPUT:
 
-        - ``prefix`` -- (optional, default: ``sys.prefix``)
+        - ``prefix`` -- (default: ``sys.prefix``)
           directory for the installation prefix
 
         EXAMPLES::
@@ -283,12 +283,12 @@ def have_prerequisites(debug=True):
     Check that we have all prerequisites to run the Jupyter notebook.
 
     In particular, the Jupyter notebook requires OpenSSL whether or
-    not you are using https. See :trac:`17318`.
+    not you are using https. See :issue:`17318`.
 
     INPUT:
 
-    ``debug`` -- boolean (default: ``True``). Whether to print debug
-    information in case that prerequisites are missing.
+    - ``debug`` -- boolean (default: ``True``). Whether to print debug
+      information in case that prerequisites are missing.
 
     OUTPUT:
 

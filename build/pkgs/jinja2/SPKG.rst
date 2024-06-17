@@ -15,18 +15,10 @@ adding functionality useful for templating environments.
 License
 -------
 
-Modified BSD License
-
+BSD-3-Clause
 
 Upstream Contact
 ----------------
 
-Author: Pocoo Team <http://pocoo.org>
+https://pypi.org/project/Jinja2/
 
-Homepage: http://jinja.pocoo.org/
-
-Special Update/Build Instructions
----------------------------------
-
-None. (Just make sure its prerequisites are new enough in Sage, to avoid
-downloads during the build / installation.)

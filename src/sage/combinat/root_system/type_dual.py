@@ -99,7 +99,7 @@ class CartanType(cartan_type.CartanType_decorator, cartan_type.CartanType_crysta
             False
 
         Test that the produced Cartan type is in the appropriate
-        abstract classes (see :trac:`13724`)::
+        abstract classes (see :issue:`13724`)::
 
             sage: from sage.combinat.root_system import cartan_type
             sage: ct = CartanType(['B',3,1]).dual()

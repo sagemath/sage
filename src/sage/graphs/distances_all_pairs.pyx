@@ -145,7 +145,7 @@ from sage.graphs.base.static_sparse_graph cimport (short_digraph,
 cdef inline c_all_pairs_shortest_path_BFS(short_digraph sd,
                                           unsigned short* predecessors,
                                           unsigned short* distances,
-                                          uint32_t* eccentricity) noexcept:
+                                          uint32_t* eccentricity):
     r"""
     See the module's documentation.
     """
@@ -269,7 +269,7 @@ cdef inline all_pairs_shortest_path_BFS(gg,
                                         unsigned short* predecessors,
                                         unsigned short* distances,
                                         uint32_t* eccentricity,
-                                        vertex_list=None) noexcept:
+                                        vertex_list=None):
     r"""
     See the module's documentation.
 
@@ -304,7 +304,8 @@ cdef inline all_pairs_shortest_path_BFS(gg,
     # Copying the whole graph to obtain the list of neighbors quicker than by
     # calling out_neighbors
     cdef short_digraph sd
-    init_short_digraph(sd, gg, edge_labelled=False, vertex_list=int_to_vertex)
+    init_short_digraph(sd, gg, edge_labelled=False, vertex_list=int_to_vertex,
+                       sort_neighbors=False)
 
     c_all_pairs_shortest_path_BFS(sd, predecessors, distances, eccentricity)
 
@@ -1057,7 +1058,8 @@ def eccentricity(G, algorithm="standard", vertex_list=None):
         ecc = c_eccentricity(G, vertex_list=int_to_vertex)
 
     else:
-        init_short_digraph(sd, G, edge_labelled=False, vertex_list=vertex_list)
+        init_short_digraph(sd, G, edge_labelled=False, vertex_list=vertex_list,
+                           sort_neighbors=False)
 
         if algorithm == "DHV":
             ecc = c_eccentricity_DHV(sd)
@@ -1141,7 +1143,7 @@ cdef uint32_t diameter_lower_bound_2sweep(short_digraph g,
 
 cdef tuple diameter_lower_bound_2Dsweep(short_digraph g,
                                         short_digraph rev_g,
-                                        uint32_t source) noexcept:
+                                        uint32_t source):
     r"""
     Lower bound on the diameter of digraph using directed version of 2-sweep.
 
@@ -1255,7 +1257,7 @@ cdef tuple diameter_lower_bound_2Dsweep(short_digraph g,
 
 
 cdef tuple diameter_lower_bound_multi_sweep(short_digraph g,
-                                            uint32_t source) noexcept:
+                                            uint32_t source):
     """
     Lower bound on the diameter using multi-sweep.
 
@@ -1799,7 +1801,7 @@ def diameter(G, algorithm=None, source=None):
 
     TESTS:
 
-    This was causing a segfault. Fixed in :trac:`17873` ::
+    This was causing a segfault. Fixed in :issue:`17873` ::
 
         sage: G = graphs.PathGraph(1)
         sage: diameter(G, algorithm='iFUB')
@@ -1832,7 +1834,8 @@ def diameter(G, algorithm=None, source=None):
     # module sage.graphs.base.static_sparse_graph
     cdef list int_to_vertex = list(G)
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex,
+                       sort_neighbors=False)
     cdef short_digraph rev_sd  # to store copy of sd with edges reversed
 
     # and we map the source to an int in [0,n-1]
@@ -1934,7 +1937,8 @@ def radius_DHV(G):
 
     cdef list int_to_vertex = list(G)
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex,
+                       sort_neighbors=False)
 
     cdef uint32_t source, ecc_source
     cdef uint32_t antipode, ecc_antipode
@@ -2051,7 +2055,8 @@ def wiener_index(G):
     # calling out_neighbors.  This data structure is well documented in the
     # module sage.graphs.base.static_sparse_graph
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=list(G))
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=list(G),
+                       sort_neighbors=False)
 
     # allocated some data structures
     cdef bitset_t seen
@@ -2305,7 +2310,7 @@ def szeged_index(G, algorithm=None):
 
     TESTS:
 
-    Not defined when the graph is not connected (:trac:`26803`)::
+    Not defined when the graph is not connected (:issue:`26803`)::
 
         sage: szeged_index(Graph({0: [1], 2: []}))
         Traceback (most recent call last):
@@ -2363,12 +2368,13 @@ def szeged_index(G, algorithm=None):
         return 0
 
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=list(G))
     cdef uint64_t s
 
     if algorithm is "low":
+        init_short_digraph(sd, G, edge_labelled=False, vertex_list=list(G), sort_neighbors=True)
         s = c_szeged_index_low_memory(sd)
     else:
+        init_short_digraph(sd, G, edge_labelled=False, vertex_list=list(G), sort_neighbors=False)
         s = c_szeged_index_high_memory(sd)
 
     free_short_digraph(sd)

@@ -19,7 +19,6 @@ AUTHORS:
   heights
 - Robert Harron (2012-08): conjugate() now works for all fields contained in
   CM fields
-
 """
 # ****************************************************************************
 #       Copyright (C) 2004, 2007 William Stein <wstein@gmail.com>
@@ -50,6 +49,7 @@ from sage.libs.gmp.pylong cimport mpz_pythonhash
 from cpython.object cimport Py_EQ, Py_NE, Py_LT, Py_GT, Py_LE, Py_GE
 from sage.structure.richcmp cimport rich_to_bool
 
+import sage.rings.abc
 import sage.rings.polynomial.polynomial_element
 from sage.rings.polynomial.evaluation_ntl cimport ZZX_evaluation_mpfi
 import sage.rings.rational_field
@@ -125,7 +125,7 @@ def _inverse_mod_generic(elt, I):
     function called from each of the ``OrderElement_xxx`` classes, since
     otherwise we'd have to have the same code three times over (there
     is no ``OrderElement_generic`` class - no multiple inheritance). See
-    :trac:`4190`.
+    :issue:`4190`.
 
     EXAMPLES::
 
@@ -170,7 +170,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         sage: a^3
         -a - 1
     """
-    cdef _new(self) noexcept:
+    cdef _new(self):
         """
         Quickly creates a new initialized NumberFieldElement with the same
         parent as self.
@@ -182,7 +182,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         x._fld_denominator = self._fld_denominator
         return x
 
-    cdef number_field(self) noexcept:
+    cdef number_field(self):
         r"""
 
         Return the number field of self. Only accessible from Cython.
@@ -409,7 +409,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             True
 
         This also gets called for unpickling order elements; we check that
-        :trac:`6462` is fixed::
+        :issue:`6462` is fixed::
 
             sage: L = NumberField(x^3 - x - 1,'a'); OL = L.maximal_order(); w = OL.0
             sage: loads(dumps(w)) == w # indirect doctest
@@ -506,7 +506,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: gap(p._gap_init_())
             -3+2*E(8)+E(8)^2
 
-        Check that :trac:`15276` is fixed::
+        Check that :issue:`15276` is fixed::
 
             sage: for n in range(2,20):                                                 # needs sage.libs.gap
             ....:     K = CyclotomicField(n)
@@ -551,7 +551,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: type(_)
             <class 'sage.libs.gap.element.GapElement_Cyclotomic'>
 
-        Check that :trac:`15276` is fixed::
+        Check that :issue:`15276` is fixed::
 
             sage: for n in range(2,20):                                                 # needs sage.libs.gap
             ....:     K = CyclotomicField(n)
@@ -783,7 +783,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             return QQ.zero()
         return coeffs[n]
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         r"""
         EXAMPLES::
 
@@ -1000,7 +1000,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             1.2599210498948731647672106072782283506
 
         Number field with a real-valued coercion embedding
-        (:trac:`21105`)::
+        (:issue:`21105`)::
 
             sage: k.<cbrt2> = NumberField(x^3 - 2, embedding=1.26)
             sage: abs(cbrt2)
@@ -1327,7 +1327,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: a.abs(i=1)
             2.41421356237309
 
-        Check that :trac:`16147` is fixed::
+        Check that :issue:`16147` is fixed::
 
             sage: x = polygen(ZZ)
             sage: f = x^3 - x - 1
@@ -1338,7 +1338,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             1.32471795724475
 
         Check that for fields with real coercion embeddings, absolute
-        values are in the same field (:trac:`21105`)::
+        values are in the same field (:issue:`21105`)::
 
             sage: x = polygen(ZZ)
             sage: f = x^3 - x - 1
@@ -1635,7 +1635,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: t and u.norm(K) == -a
             True
 
-        Verify that :trac:`27469` has been fixed::
+        Verify that :issue:`27469` has been fixed::
 
             sage: L.<z24> = CyclotomicField(24); L
             Cyclotomic Field of order 24 and degree 8
@@ -1663,8 +1663,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         if not isinstance(L, NumberField):
             raise ValueError("L (=%s) must be a NumberField in is_norm" % L)
 
-        from sage.rings.number_field.number_field import is_AbsoluteNumberField
-        if is_AbsoluteNumberField(L):
+        from sage.rings.number_field.number_field import NumberField_absolute
+        if isinstance(L, NumberField_absolute):
             Lrel = L.relativize(K.hom(L), L.variable_name() + '0')
             b, x = self.is_norm(Lrel, element=True, proof=proof)
             h = Lrel.structure()[0]
@@ -1773,7 +1773,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         TESTS:
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`)::
+        polynomials are supported (:issue:`252`)::
 
             sage: K.<a> = NumberField(x^2 + 1/2)
             sage: L.<b> = K.extension(x^2 - 1/2)
@@ -1803,8 +1803,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         - Francis Clarke (2010-12-26)
         """
         K = self.parent()
-        from sage.rings.number_field.number_field_rel import is_RelativeNumberField
-        if (not is_RelativeNumberField(L)) or L.base_field() != K:
+        from sage.rings.number_field.number_field_rel import NumberField_relative
+        if not isinstance(L, NumberField_relative) or L.base_field() != K:
             raise ValueError("L (=%s) must be a relative number field with base field K (=%s) in rnfisnorm" % (L, K))
 
         rnf_data = K.pari_rnfnorm_data(L, proof=proof)
@@ -1826,7 +1826,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: (a^2)._mpfr_(RR)
             -1.00000000000000
 
-        Verify that :trac:`13005` has been fixed::
+        Verify that :issue:`13005` has been fixed::
 
             sage: K.<a> = NumberField(x^2 - 5)
             sage: RR(K(1))
@@ -1988,8 +1988,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             raise ArithmeticError("factorization of 0 is not defined")
 
         K = self.parent()
-        from sage.rings.number_field.order import is_NumberFieldOrder
-        if is_NumberFieldOrder(K):
+        if isinstance(K, sage.rings.abc.Order):
             K = K.number_field()
         fac = K.ideal(self).factor()
         # Check whether all prime ideals in `fac` are principal
@@ -2088,8 +2087,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         if R.is_field():
             return R.one()
 
-        from sage.rings.number_field.order import is_NumberFieldOrder
-        if not is_NumberFieldOrder(R):
+        if not isinstance(R, sage.rings.abc.Order):
             raise NotImplementedError("gcd() for %r is not implemented" % R)
 
         K = R.number_field()
@@ -2117,7 +2115,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         TESTS:
 
         Check that the output is correct even for numbers that are
-        very close to zero (:trac:`9596`)::
+        very close to zero (:issue:`9596`)::
 
             sage: K.<sqrt2> = QuadraticField(2)
             sage: a = 30122754096401; b = 21300003689580
@@ -2182,7 +2180,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         TESTS:
 
-        Test that :trac:`16894` is fixed::
+        Test that :issue:`16894` is fixed::
 
             sage: K.<a> = QuadraticField(22)
             sage: u = K.units()[0]
@@ -2385,7 +2383,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: 2^I                                                                   # needs sage.symbolic
             2^I
 
-        Test :trac:`14895`::
+        Test :issue:`14895`::
 
             sage: K.<sqrt2> = QuadraticField(2)
             sage: 2^sqrt2                                                               # needs sage.symbolic
@@ -2443,7 +2441,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         self._numerator = t2
         self._denominator = t1
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         r"""
         EXAMPLES::
 
@@ -2469,7 +2467,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         x._reduce_c_()
         return x
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         r"""
         EXAMPLES::
 
@@ -2494,7 +2492,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         x._reduce_c_()
         return x
 
-    cpdef _mul_(self, right) noexcept:
+    cpdef _mul_(self, right):
         """
         Returns the product of self and other as elements of a number
         field.
@@ -2542,7 +2540,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         # but asymptotically fast poly multiplication means it's
         # actually faster to *not* build a table!?!
 
-    cpdef _div_(self, other) noexcept:
+    cpdef _div_(self, other):
         """
         Returns the quotient of self and other as elements of a number
         field.
@@ -2584,7 +2582,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: (a+1/3)*(5*a+2/7)/(a+1/3)
             5*a + 2/7
 
-        For order elements, see :trac:`4190`::
+        For order elements, see :issue:`4190`::
 
             sage: K = NumberField(x^2 - 17, 'a')
             sage: OK = K.ring_of_integers()
@@ -2654,7 +2652,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         """
         return not IsZero_ZZX(self._numerator)
 
-    cpdef _neg_(self) noexcept:
+    cpdef _neg_(self):
         r"""
         EXAMPLES::
 
@@ -2669,7 +2667,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         x._denominator = self._denominator
         return x
 
-    cpdef _copy_for_parent(self, Parent parent) noexcept:
+    cpdef _copy_for_parent(self, Parent parent):
         r"""
         Return a copy of ``self`` with the parent replaced by ``parent``.
 
@@ -2765,7 +2763,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: (2*I).__invert__()
             -1/2*I
 
-        We check that :trac:`20693` has been resolved, i.e. number
+        We check that :issue:`20693` has been resolved, i.e. number
         field elements with huge denominator can be inverted::
 
             sage: K.<zeta22> = CyclotomicField(22)
@@ -2958,7 +2956,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             I
 
         Conversely, some elements are too complicated to be written in
-        terms of radicals directly. At least until :trac:`17516` gets
+        terms of radicals directly. At least until :issue:`17516` gets
         addressed. In those cases, the generator might be converted
         and its expression be used to convert other elements. This
         avoids regressions but can lead to fairly complicated
@@ -2974,7 +2972,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         TESTS:
 
-        :trac:`33804`::
+        :issue:`33804`::
 
             sage: Pol.<x> = QQ[]
             sage: p = x^8 + x^7 - 9*x^6 - 3*x^5 - 6*x^4 + x^3 - 14*x^2 + 2*x + 2
@@ -3232,7 +3230,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         return h
 
-    cpdef list _coefficients(self) noexcept:
+    cpdef list _coefficients(self):
         """
         Return the coefficients of the underlying polynomial corresponding
         to this number field element.
@@ -3894,7 +3892,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         TESTS:
 
-        Some checks for :trac:`29215`::
+        Some checks for :issue:`29215`::
 
             sage: K = QuadraticField(-5)
             sage: v = QuadraticField(3).ideal(5)
@@ -3914,8 +3912,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             ...
             ValueError: P must be prime
         """
-        from sage.rings.number_field.number_field_ideal import is_NumberFieldIdeal
-        if not is_NumberFieldIdeal(P):
+        from sage.rings.number_field.number_field_ideal import NumberFieldIdeal
+        if not isinstance(P, NumberFieldIdeal):
             if isinstance(P, NumberFieldElement):
                 P = self.number_field().fractional_ideal(P)
             else:
@@ -4763,7 +4761,7 @@ cdef class NumberFieldElement_absolute(NumberFieldElement):
         otherwise ``'sage'`` is used.  The constant ``TUNE_CHARPOLY_NF``
         should give reasonable performance on all architectures;
         however, if you feel the need to customize it to your own
-        machine, see :trac:`5213` for a tuning script.
+        machine, see :issue:`5213` for a tuning script.
 
         EXAMPLES:
 
@@ -5121,7 +5119,7 @@ cdef class NumberFieldElement_relative(NumberFieldElement):
         otherwise ``'sage'`` is used.  The constant ``TUNE_CHARPOLY_NF``
         should give reasonable performance on all architectures;
         however, if you feel the need to customize it to your own
-        machine, see :trac:`5213` for a tuning script.
+        machine, see :issue:`5213` for a tuning script.
 
         EXAMPLES::
 
@@ -5247,7 +5245,7 @@ cdef class OrderElement_absolute(NumberFieldElement_absolute):
         self._number_field = K
         (<Element>self)._parent = order
 
-    cdef _new(self) noexcept:
+    cdef _new(self):
         """
         Quickly creates a new initialized NumberFieldElement with the same
         parent as ``self``.
@@ -5269,7 +5267,7 @@ cdef class OrderElement_absolute(NumberFieldElement_absolute):
         x._fld_denominator = self._fld_denominator
         return x
 
-    cdef number_field(self) noexcept:
+    cdef number_field(self):
         r"""
         Return the number field of ``self``. Only accessible from Cython.
 
@@ -5318,7 +5316,7 @@ cdef class OrderElement_absolute(NumberFieldElement_absolute):
         Implement inversion, checking that the return value has the right
         parent.
 
-        See :trac:`4190`.
+        See :issue:`4190`.
 
         EXAMPLES::
 
@@ -5363,10 +5361,10 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
         (<Element>self)._parent = order
         self._number_field = K
 
-    cdef number_field(self) noexcept:
+    cdef number_field(self):
         return self._number_field
 
-    cdef _new(self) noexcept:
+    cdef _new(self):
         """
         Quickly creates a new initialized NumberFieldElement with the same
         parent as self.
@@ -5394,7 +5392,7 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
         r"""
         Implement division, checking that the result has the right parent.
 
-        See :trac:`4190`.
+        See :issue:`4190`.
 
         EXAMPLES::
 
@@ -5447,7 +5445,7 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
         r"""
         The characteristic polynomial of this order element over its base ring.
 
-        This special implementation works around :trac:`4738`.  At this
+        This special implementation works around :issue:`4738`.  At this
         time the base ring of relative order elements is `\ZZ`; it should
         be the ring of integers of the base field.
 
@@ -5472,7 +5470,7 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
         r"""
         The minimal polynomial of this order element over its base ring.
 
-        This special implementation works around :trac:`4738`.  At this
+        This special implementation works around :issue:`4738`.  At this
         time the base ring of relative order elements is `\ZZ`; it should
         be the ring of integers of the base field.
 

@@ -1124,9 +1124,9 @@ def SChainComplex(kchaincomplex, start=0, end=15):
 
     - ``kchaincomplex`` -- A KenzoChainComplex
 
-    - ``start`` -- An integer number (optional, default 0)
+    - ``start`` -- An integer number (default: 0)
 
-    - ``end`` -- An integer number greater than or equal to ``start`` (optional, default 15)
+    - ``end`` -- An integer number greater than or equal to ``start`` (default: 15)
 
     OUTPUT:
 
@@ -1175,7 +1175,7 @@ def SAbstractSimplex(simplex, dim):
 
     - ``simplex`` -- An abstract simplex of Kenzo.
 
-    - ``dim``-- The dimension of ``simplex``.
+    - ``dim`` -- The dimension of ``simplex``.
 
     OUTPUT:
 

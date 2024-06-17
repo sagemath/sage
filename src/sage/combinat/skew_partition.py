@@ -151,13 +151,15 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.sets.set import Set
-from sage.graphs.digraph import DiGraph
-from sage.matrix.matrix_space import MatrixSpace
+from sage.misc.lazy_import import lazy_import
 
 from sage.combinat.combinat import CombinatorialElement
 from sage.combinat.partition import Partitions, _Partitions
 from sage.combinat.tableau import Tableaux
 from sage.combinat.composition import Compositions
+
+lazy_import('sage.graphs.digraph', 'DiGraph')
+lazy_import('sage.matrix.matrix_space', 'MatrixSpace')
 
 
 class SkewPartition(CombinatorialElement):
@@ -271,7 +273,7 @@ class SkewPartition(CombinatorialElement):
 
         TESTS:
 
-        Check that :trac:`34760` is fixed::
+        Check that :issue:`34760` is fixed::
 
             sage: print(SkewPartition([[],[]])._latex_diagram())
             {\emptyset}
@@ -306,7 +308,7 @@ class SkewPartition(CombinatorialElement):
 
         TESTS:
 
-        Check that :trac:`34760` is fixed::
+        Check that :issue:`34760` is fixed::
 
             sage: print(SkewPartition([[],[]])._latex_young_diagram())
             {\emptyset}
@@ -338,7 +340,7 @@ class SkewPartition(CombinatorialElement):
 
         TESTS:
 
-        Check that :trac:`34760` is fixed::
+        Check that :issue:`34760` is fixed::
 
             sage: print(SkewPartition([[],[]])._latex_marked())
             {\emptyset}

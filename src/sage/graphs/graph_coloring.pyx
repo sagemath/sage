@@ -1,6 +1,5 @@
 # cython: binding=True
 # distutils: language = c++
-
 """
 Graph coloring
 
@@ -106,7 +105,8 @@ def format_coloring(data, value_only=False, hex_colors=False, vertex_color_dict=
         {0: ['a', 'b'], 1: ['c'], 2: ['d']}
         sage: format_coloring(color_classes, value_only=False, hex_colors=True)         # needs sage.plot
         {'#0000ff': ['d'], '#00ff00': ['c'], '#ff0000': ['a', 'b']}
-        sage: format_coloring(color_classes, value_only=False, hex_colors=False, vertex_color_dict=True)
+        sage: format_coloring(color_classes, value_only=False, hex_colors=False,
+        ....:                 vertex_color_dict=True)
         {'a': 0, 'b': 0, 'c': 1, 'd': 2}
         sage: format_coloring(color_classes, value_only=False, hex_colors=True,         # needs sage.plot
         ....:                 vertex_color_dict=True)
@@ -122,7 +122,8 @@ def format_coloring(data, value_only=False, hex_colors=False, vertex_color_dict=
         sage: format_coloring([], value_only=False, hex_colors=True,                    # needs sage.plot
         ....:                 vertex_color_dict=True)
         {}
-        sage: format_coloring([], value_only=False, hex_colors=False, vertex_color_dict=True)
+        sage: format_coloring([], value_only=False, hex_colors=False,
+        ....:                 vertex_color_dict=True)
         {}
     """
     if value_only:
@@ -327,7 +328,7 @@ def all_graph_colorings(G, n, count_only=False, hex_colors=False,
         raise RuntimeError("too much recursion, Graph coloring failed")
 
 
-cpdef first_coloring(G, n=0, hex_colors=False) noexcept:
+cpdef first_coloring(G, n=0, hex_colors=False):
     r"""
     Return the first vertex coloring found.
 
@@ -352,7 +353,7 @@ cpdef first_coloring(G, n=0, hex_colors=False) noexcept:
 
     TESTS:
 
-    :trac:`33554` is fixed::
+    :issue:`33554` is fixed::
 
         sage: P3 = graphs.PathGraph(3)
         sage: [len(graph_coloring.first_coloring(P3, k)) for k in range(P3.order() + 1)]
@@ -365,7 +366,7 @@ cpdef first_coloring(G, n=0, hex_colors=False) noexcept:
             return C
 
 
-cpdef number_of_n_colorings(G, n) noexcept:
+cpdef number_of_n_colorings(G, n):
     r"""
     Compute the number of `n`-colorings of a graph
 
@@ -397,7 +398,7 @@ cpdef number_of_n_colorings(G, n) noexcept:
     return m
 
 
-cpdef numbers_of_colorings(G) noexcept:
+cpdef numbers_of_colorings(G):
     r"""
     Compute the number of colorings of a graph.
 
@@ -416,7 +417,7 @@ cpdef numbers_of_colorings(G) noexcept:
     return answer
 
 
-cpdef chromatic_number(G) noexcept:
+cpdef chromatic_number(G):
     r"""
     Return the chromatic number of the graph.
 
@@ -532,7 +533,7 @@ def vertex_coloring(g, k=None, value_only=False, hex_colors=False, solver=None, 
        sage: vertex_coloring(empty)
        []
 
-    :trac:`33559` is fixed::
+    :issue:`33559` is fixed::
 
         sage: G = Graph('MgCgS?_O@IeTHKG??')
         sage: len(G.coloring(algorithm='MILP'))                                         # needs sage.numerical.mip
@@ -872,8 +873,8 @@ def fractional_chromatic_index(G, solver="PPL", verbose_constraints=False, verbo
           The default solver used here is ``"PPL"`` which provides exact
           results, i.e. a rational number, although this may be slower that
           using other solvers. Be aware that this method may loop endlessly when
-          using some non exact solvers as reported in :trac:`23658` and
-          :trac:`23798`.
+          using some non exact solvers as reported in :issue:`23658` and
+          :issue:`23798`.
 
     - ``verbose_constraints`` -- boolean (default: ``False``); whether to
       display which constraints are being generated
@@ -891,7 +892,7 @@ def fractional_chromatic_index(G, solver="PPL", verbose_constraints=False, verbo
 
     TESTS:
 
-    Issue reported in :trac:`23658` and :trac:`23798` with non exact
+    Issue reported in :issue:`23658` and :issue:`23798` with non exact
     solvers::
 
         sage: g = graphs.PetersenGraph()
@@ -1856,13 +1857,13 @@ def linear_arboricity(g, plus_one=None, hex_colors=False, value_only=False,
 
     TESTS:
 
-    Asking for the value of the linear arboricity only (:trac:`24991`)::
+    Asking for the value of the linear arboricity only (:issue:`24991`)::
 
         sage: from sage.graphs.graph_coloring import linear_arboricity
         sage: sorted(linear_arboricity(G, value_only=True) for G in graphs(4))          # needs sage.numerical.mip
         [0, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2]
 
-    Test parameter ``hex_color`` (:trac:`26228`)::
+    Test parameter ``hex_color`` (:issue:`26228`)::
 
         sage: from sage.graphs.graph_coloring import linear_arboricity
         sage: g = graphs.Grid2dGraph(4, 4)
@@ -2076,13 +2077,13 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0,
 
     TESTS:
 
-    Issue :trac:`24991` is fixed::
+    Issue :issue:`24991` is fixed::
 
         sage: from sage.graphs.graph_coloring import acyclic_edge_coloring
         sage: sorted(acyclic_edge_coloring(G, value_only=True) for G in graphs(4))      # needs sage.numerical.mip
         [2, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5]
 
-    Test parameter ``hex_color`` (:trac:`26228`)::
+    Test parameter ``hex_color`` (:issue:`26228`)::
 
         sage: from sage.graphs.graph_coloring import acyclic_edge_coloring
         sage: g = graphs.CompleteGraph(4)
@@ -2090,7 +2091,7 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0,
         sage: sorted(d)                                                                 # needs sage.numerical.mip
         ['#0066ff', '#00ff66', '#cbff00', '#cc00ff', '#ff0000']
 
-    The acyclic chromatic index of a graph without edge is 0 (:trac:`27079`)::
+    The acyclic chromatic index of a graph without edge is 0 (:issue:`27079`)::
 
         sage: from sage.graphs.graph_coloring import acyclic_edge_coloring
         sage: g = Graph(3)
@@ -2101,7 +2102,7 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0,
         sage: acyclic_edge_coloring(g, k=None, hex_colors=False)                        # needs sage.numerical.mip
         []
 
-    Empty graph  (:trac:`27079`)::
+    Empty graph  (:issue:`27079`)::
 
         sage: from sage.graphs.graph_coloring import acyclic_edge_coloring
         sage: acyclic_edge_coloring(Graph(), k=None, value_only=True)                   # needs sage.numerical.mip

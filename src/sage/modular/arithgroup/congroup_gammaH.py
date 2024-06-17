@@ -100,6 +100,9 @@ def is_GammaH(x):
 
         sage: from sage.modular.arithgroup.all import is_GammaH
         sage: is_GammaH(GammaH(13, [2]))
+        doctest:warning...
+        DeprecationWarning: The function is_GammaH is deprecated; use 'isinstance(..., GammaH_class)' instead.
+        See https://github.com/sagemath/sage/issues/38035 for details.
         True
         sage: is_GammaH(Gamma0(6))
         True
@@ -108,6 +111,8 @@ def is_GammaH(x):
         sage: is_GammaH(sage.modular.arithgroup.congroup_generic.CongruenceSubgroup(5))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38035, "The function is_GammaH is deprecated; use 'isinstance(..., GammaH_class)' instead.")
     return isinstance(x, GammaH_class)
 
 
@@ -505,7 +510,7 @@ class GammaH_class(CongruenceSubgroup):
 
         INPUT:
 
-        ``self`` -- a congruence subgroup Gamma_0(N), Gamma_1(N), or Gamma_H(N)
+        - ``self`` -- a congruence subgroup Gamma_0(N), Gamma_1(N), or Gamma_H(N)
 
         OUTPUT:
 
@@ -694,7 +699,7 @@ class GammaH_class(CongruenceSubgroup):
             sage: len(v)
             361
 
-        This demonstrates the problem underlying :trac:`1220`::
+        This demonstrates the problem underlying :issue:`1220`::
 
             sage: G = GammaH(99, [67])
             sage: G._reduce_coset(11,-3)
@@ -1026,7 +1031,7 @@ class GammaH_class(CongruenceSubgroup):
             True
         """
 
-        from .all import is_Gamma0, is_Gamma1
+        from .all import Gamma0_class, Gamma1_class
         if not isinstance(other, GammaH_class):
             raise NotImplementedError
 
@@ -1035,17 +1040,17 @@ class GammaH_class(CongruenceSubgroup):
             return False
 
         # easy cases
-        if is_Gamma0(other):
+        if isinstance(other, Gamma0_class):
             return True  # recall self is a GammaH, so it's contained in Gamma0
 
-        if is_Gamma1(other) and len(self._generators_for_H()) > 0:
+        if isinstance(other, Gamma1_class) and len(self._generators_for_H()) > 0:
             return False
 
         else:
             # difficult case
             t = other._list_of_elements_in_H()
             for x in self._generators_for_H():
-                if not (x in t):
+                if x not in t:
                     return False
             return True
 
@@ -1242,8 +1247,8 @@ class GammaH_class(CongruenceSubgroup):
 
         INPUT:
 
-        -  ``k`` - an integer (default: 2), the weight. Not fully implemented for k = 1.
-        -  ``p`` - integer (default: 0); if nonzero, compute the `p`-new subspace.
+        -  ``k`` -- an integer (default: 2), the weight. Not fully implemented for k = 1.
+        -  ``p`` -- integer (default: 0); if nonzero, compute the `p`-new subspace.
 
         OUTPUT: Integer
 
@@ -1347,7 +1352,7 @@ class GammaH_class(CongruenceSubgroup):
         - ``sign`` (default: None): if not None, return only characters of the
           given sign
 
-        - ``galois_orbits`` (default: False): if True, return only one
+        - ``galois_orbits`` (default: ``False``): if True, return only one
           character from each Galois orbit.
 
         EXAMPLES::
@@ -1402,7 +1407,7 @@ def _list_subgroup(N, gens):
             raise ValueError("gen (=%s) is not in (Z/%sZ)^*" % (g, N))
         gk = int(g) % N
         sbgrp = [gk]
-        while not (gk in H):
+        while gk not in H:
             gk = (gk * g) % N
             sbgrp.append(gk)
         H = {(x * h) % N for x in sbgrp for h in H}

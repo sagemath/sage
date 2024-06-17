@@ -29,18 +29,20 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.richcmp import richcmp
 from sage.categories.classical_crystals import ClassicalCrystals
 from sage.categories.loop_crystals import LoopCrystals
-from sage.graphs.digraph import DiGraph
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.root_system import RootSystem
-from sage.modules.free_module_element import free_module_element as vector
 from sage.rings.integer import Integer
-from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.misc.misc_c import prod
 from sage.categories.sets_cat import Sets
 from sage.misc.cachefunc import cached_method, cached_in_parent_method
+from sage.misc.lazy_import import lazy_import
 from sage.categories.highest_weight_crystals import HighestWeightCrystals
 from copy import copy
 from sage.misc.latex import latex
+
+lazy_import('sage.graphs.digraph', 'DiGraph')
+lazy_import('sage.combinat.root_system.weyl_group', 'WeylGroup')
+lazy_import('sage.modules.free_module_element', 'vector')
 
 
 class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
@@ -175,7 +177,7 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
         sage: C([1,3]).is_admissible() #check if a valid vertex
         False
 
-    Alcove path crystals now works in affine type (:trac:`14143`)::
+    Alcove path crystals now works in affine type (:issue:`14143`)::
 
         sage: C = crystals.AlcovePaths(['A',2,1],[1,0,0]) ; C
         Highest weight crystal of alcove paths of type ['A', 2, 1] and weight Lambda[0]
@@ -295,7 +297,7 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
             sage: C = crystals.AlcovePaths(['A',2,1],[1,0],False)
             sage: TestSuite(C).run(skip="_test_stembridge_local_axioms") #long time
 
-        Check that :trac:`20292` is fixed::
+        Check that :issue:`20292` is fixed::
 
             sage: A = crystals.AlcovePaths(['A',2], [1,0])
             sage: A.category()
@@ -656,7 +658,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
         TESTS:
 
-        Check that crystal morphisms work (:trac:`19481`)::
+        Check that crystal morphisms work (:issue:`19481`)::
 
             sage: C1 = crystals.AlcovePaths(['A',2],[1,0])
             sage: C2 = crystals.AlcovePaths(['A',2],[2,0])
@@ -665,7 +667,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
             [(), ((alpha[1], 0),), ((alpha[1], 0), (alpha[1] + alpha[2], 0))]
 
         Check that all weights are of level 0 in the KR crystal setting
-        (:trac:`20292`)::
+        (:issue:`20292`)::
 
             sage: A = crystals.AlcovePaths(['A',2,1], [1,0], highest_weight_crystal=False)
             sage: all(x.weight().level() == 0 for x in A)
@@ -941,7 +943,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
         INPUT:
 
-        - ``i`` - element of the index_set of the underlying root_system.
+        - ``i`` -- element of the index_set of the underlying root_system.
 
         OUTPUT:
 

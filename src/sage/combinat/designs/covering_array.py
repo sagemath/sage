@@ -39,7 +39,6 @@ REFERENCES:
 AUTHORS:
 
 - Aaron Dwyer and brett stevens (2022): initial version
-
 """
 
 # **********************************************************************

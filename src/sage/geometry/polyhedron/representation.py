@@ -15,7 +15,7 @@ H(yperplane) and V(ertex) representation objects for polyhedra
 
 
 from sage.structure.sage_object import SageObject
-from sage.structure.element import is_Vector
+from sage.structure.element import Vector
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.rings.integer_ring import ZZ
 from sage.modules.free_module_element import vector
@@ -151,7 +151,7 @@ class PolyhedronRepresentation(SageObject):
 
         TESTS:
 
-        Check :trac:`30954`::
+        Check :issue:`30954`::
 
             sage: P = (1/2)*polytopes.cube()
             sage: Q = (1/2)*polytopes.cube(backend='field')
@@ -250,7 +250,7 @@ class PolyhedronRepresentation(SageObject):
 
         TESTS:
 
-        Checks that :trac:`27709` is fixed::
+        Checks that :issue:`27709` is fixed::
 
             sage: C = polytopes.cube()
             sage: C.vertices()[0].vector()[0] = 3
@@ -499,7 +499,7 @@ class Hrepresentation(PolyhedronRepresentation):
 
         TESTS:
 
-        Checks that :trac:`27709` is fixed::
+        Checks that :issue:`27709` is fixed::
 
             sage: C = polytopes.cube()
             sage: C.inequalities()[0].A()[2] = 5
@@ -540,7 +540,7 @@ class Hrepresentation(PolyhedronRepresentation):
 
         TESTS:
 
-        Checking that :trac:`28463` is fixed::
+        Checking that :issue:`28463` is fixed::
 
             sage: P = polytopes.simplex()
             sage: F1 = P.Hrepresentation()[1]
@@ -645,7 +645,7 @@ class Hrepresentation(PolyhedronRepresentation):
             sage: ineq.eval( vector(ZZ, [3,2]) )
             5
         """
-        if is_Vector(Vobj):
+        if isinstance(Vobj, Vector):
             return self.A() * Vobj + self.b()
         return Vobj.evaluated_on(self)
 
@@ -899,7 +899,7 @@ class Inequality(Hrepresentation):
 
         TESTS:
 
-        Test that :trac:`21105` has been fixed::
+        Test that :issue:`21105` has been fixed::
 
             sage: x = polygen(ZZ, 'x')
             sage: K.<cbrt2> = NumberField(x^3 - 2, 'a', embedding=1.26)                 # needs sage.rings.number_field

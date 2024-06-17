@@ -114,7 +114,7 @@ def sorting_keys(element):
 
     INPUT:
 
-    - ``element`` - A CohomologyClass
+    - ``element`` -- A CohomologyClass
 
     OUTPUT:
 
@@ -179,7 +179,7 @@ class Differential(UniqueRepresentation, Morphism,
             sage: d1 is d2
             True
 
-        Check that :trac:`34818` is solved::
+        Check that :issue:`34818` is solved::
 
             sage: A.<a,b,x,u> = GradedCommutativeAlgebra(QQ,degrees=(2,2,3,3))
             sage: A = A.quotient(A.ideal([a*u,b*u,x*u]))
@@ -638,7 +638,7 @@ class Differential_multigraded(Differential):
 
             Rename this to ``differential_matrix`` once inheritance,
             overriding, and cached methods work together better. See
-            :trac:`17201`.
+            :issue:`17201`.
 
         INPUT:
 
@@ -889,11 +889,11 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
       1, and if both ``names`` and ``degrees`` are omitted, an error is
       raised.
 
-    - ``R`` (optional, default None) -- the ring over which the
+    - ``R`` (default: None) -- the ring over which the
       algebra is defined: if this is specified, the algebra is defined
       to be ``R/I``.
 
-    - ``I`` (optional, default None) -- an ideal in ``R``. It is
+    - ``I`` (default: None) -- an ideal in ``R``. It is
       should include, among other relations, the squares of the
       generators of odd degree
 
@@ -954,7 +954,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             sage: A1 is A2
             True
 
-        Testing the single generator case (:trac:`25276`)::
+        Testing the single generator case (:issue:`25276`)::
 
             sage: A3.<z> = GradedCommutativeAlgebra(QQ)
             sage: z**2 == 0
@@ -1581,6 +1581,83 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             """
             return self.lift().dict()
 
+        def __call__(self, *values, **kwargs):
+            r"""
+            Evaluate the reduced expression of this element at ``x``, where ``x``
+            is either the tuple of values to evaluate in, a dictionary indicating
+            to which value is each generator evaluated, or keywords giving
+            the value to which generators should be evaluated.
+
+            INPUT:
+
+            - ``values`` -- (optional) either the values in which the variables
+              will be evaluated or a dictionary
+
+            OUTPUT:
+
+            this element evaluated at the given values
+
+            EXAMPLES::
+
+                sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(1, 2, 2, 3))
+                sage: f = x*y - 5*y*z + 7*x*y^2*z^3*t
+                sage: f(3, y, x^2, x*z)
+                3*y
+                sage: f(x=3)
+                21*y^2*z^3*t - 5*y*z + 3*y
+                sage: f({x:3, z:x^2})
+                3*y
+
+            If the wrong number of values is provided, it results in an error::
+
+                sage: f(3, 5, y)
+                Traceback (most recent call last):
+                ...
+                ValueError: number of arguments does not match number of variables in parent
+
+            It is also possible to use keywords like this::
+
+                sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(1, 2, 2, 3))
+                sage: f = x*y - 5*y*z + 7*x*y^2*z^3*t
+                sage: f(x=3)
+                21*y^2*z^3*t - 5*y*z + 3*y
+                sage: f(t=x,y=z)
+                -5*z^2 + x*z
+
+            If both a dictionary and keywords are used, only the dictionary is
+            considered::
+
+                sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(1, 2, 2, 3))
+                sage: f = x*y - 5*y*z + 7*x*y^2*z^3*t
+                sage: f({x:1}, t=x,y=z)
+                7*y^2*z^3*t - 5*y*z + y
+            """
+            gens = self.parent().gens()
+            images = list(gens)
+            if values and not isinstance(values[0], dict):
+                for (i, p) in enumerate(values):
+                    images[i] = p
+            if len(values) == 1 and isinstance(values[0], dict):
+                images = list(gens)
+                for (i, g) in enumerate(gens):
+                    if g in values[0]:
+                        images[i] = values[0][g]
+            elif len(values) == len(gens):
+                images = list(values)
+            elif values:
+                raise ValueError("number of arguments does not match number of variables in parent")
+            else:
+                images = list(gens)
+                for (i, g) in enumerate(gens):
+                    gstr = str(g)
+                    if gstr in kwargs:
+                        images[i] = kwargs[gstr]
+            res = 0
+            for (m, c) in self.dict().items():
+                term = prod((gen**y for (y, gen) in zip(m, images)), c)
+                res += term
+            return res
+
         def basis_coefficients(self, total=False):
             """
             Return the coefficients of this homogeneous element with
@@ -1796,7 +1873,7 @@ class GCAlgebra_multigraded(GCAlgebra):
         Basis in degree ``n``.
 
         - ``n`` -- degree or integer
-        - ``total`` (optional, default False) -- if True, return the
+        - ``total`` (default: ``False``) -- if True, return the
           basis in total degree ``n``.
 
         If ``n`` is an integer rather than a multi-index, then the
@@ -2338,7 +2415,7 @@ class DifferentialGCAlgebra(GCAlgebra):
 
         TESTS:
 
-        Check that the issue discovered in :trac:`28155` is solved::
+        Check that the issue discovered in :issue:`28155` is solved::
 
             sage: A.<e1,e2,e3,e4,e5> = GradedCommutativeAlgebra(QQ)
             sage: B = A.cdg_algebra({e5:e1*e2+e3*e4})
@@ -2519,7 +2596,6 @@ class DifferentialGCAlgebra(GCAlgebra):
             Free module generated by {[x2_0]} over Rational Field
             sage: [p(g.representative()) for g in T.cohomology(2).basis().keys()]
             [z]
-
 
 
             sage: A.<e1, e2, e3, e4, e5, e6, e7> = GradedCommutativeAlgebra(QQ)
@@ -3111,7 +3187,7 @@ class DifferentialGCAlgebra(GCAlgebra):
                 sage: b.cohomology_class().parent()
                 Free module generated by {} over Rational Field
 
-            Check that the issue detected in :trac:`28155` is solved::
+            Check that the issue detected in :issue:`28155` is solved::
 
                 sage: A.<e1,e2,e3,e4,e5> = GradedCommutativeAlgebra(QQ)
                 sage: B = A.cdg_algebra({e5: e1*e2+e3*e4})
@@ -3815,7 +3891,7 @@ class GCAlgebraMorphism(RingHomomorphism_im_gens):
 
         INPUT:
 
-        - ``total`` (optional, default ``False``) -- if ``True``, use
+        - ``total`` (default: ``False``) -- if ``True``, use
           the total degree to determine whether the morphism is graded
           (relevant only in the multigraded case)
 
@@ -4108,8 +4184,8 @@ def exterior_algebra_basis(n, degrees):
 
     INPUT:
 
-    - ``n`` - integer
-    - ``degrees`` - iterable of integers
+    - ``n`` -- integer
+    - ``degrees`` -- iterable of integers
 
     Return list of lists, each list representing exponents for the
     corresponding generators. (So each list consists of 0's and 1's.)

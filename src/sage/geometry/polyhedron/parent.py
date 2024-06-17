@@ -9,10 +9,12 @@ Parents for Polyhedra
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
+import sage.geometry.abc
+
 from sage.structure.parent import Parent
 from sage.structure.element import get_coercion_model
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.modules.free_module import FreeModule, is_FreeModule
+from sage.modules.free_module import FreeModule, FreeModule_generic
 from sage.misc.cachefunc import cached_method, cached_function
 from sage.misc.lazy_import import lazy_import
 import sage.rings.abc
@@ -22,8 +24,6 @@ from sage.rings.real_double import RDF
 from sage.categories.fields import Fields
 from sage.categories.rings import Rings
 from sage.categories.modules import Modules
-
-from sage.geometry.polyhedron.base import is_Polyhedron
 from .representation import Inequality, Equation, Vertex, Ray, Line
 
 
@@ -480,9 +480,8 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         if self.base_ring() in Fields():
             from sage.modules.free_module import VectorSpace
             return VectorSpace(self.base_ring(), self.ambient_dim())
-        else:
-            from sage.modules.free_module import FreeModule
-            return FreeModule(self.base_ring(), self.ambient_dim())
+        from sage.modules.free_module import FreeModule
+        return FreeModule(self.base_ring(), self.ambient_dim())
 
     ambient_space = Vrepresentation_space
 
@@ -521,7 +520,6 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             sage: Polyhedra(K, 4)._repr_base_ring()                                     # needs sage.rings.number_field
             '(Number Field in sqrt3 with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?)'
         """
-
         if self.base_ring() is ZZ:
             return 'ZZ'
         if self.base_ring() is QQ:
@@ -535,9 +533,9 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         else:
             if self.base_ring() is AA:
                 return 'AA'
-        return '({0})'.format(self.base_ring())
+        return f'({self.base_ring()})'
 
-    def _repr_ambient_module(self):
+    def _repr_ambient_module(self) -> str:
         """
         Return an abbreviated string representation of the ambient
         space.
@@ -606,7 +604,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             sage: P(0)
             A 0-dimensional polyhedron in QQ^3 defined as the convex hull of 1 vertex
 
-        Check that :trac:`21270` is fixed::
+        Check that :issue:`21270` is fixed::
 
             sage: # needs sage.rings.number_field
             sage: poly = polytopes.regular_polygon(7)
@@ -693,7 +691,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             if convert and Vrep:
                 Vrep = [convert_base_ring(_) for _ in Vrep]
             return self.element_class(self, Vrep, Hrep, **kwds)
-        if nargs == 1 and is_Polyhedron(args[0]):
+        if nargs == 1 and isinstance(args[0], sage.geometry.abc.Polyhedron):
             copy = kwds.pop('copy', args[0].parent() is not self)
             mutable = kwds.pop('mutable', False)
 
@@ -765,7 +763,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         TESTS:
 
-        Test that :trac:`22575` is fixed::
+        Test that :issue:`22575` is fixed::
 
             sage: P = Polyhedra(ZZ,3).base_extend(QQ, backend='field')
             sage: P.backend()
@@ -866,7 +864,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         TESTS:
 
-        Test that :trac:`28770` is fixed::
+        Test that :issue:`28770` is fixed::
 
             sage: z = QQ['z'].0
             sage: K = NumberField(z^2 - 2, 's')                                         # needs sage.rings.number_field
@@ -885,7 +883,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         from sage.structure.element import Element
         if isinstance(other, Element):
             other = other.parent()
-        if hasattr(other, "is_ring") and other.is_ring():
+        if other in Rings():
             other_ring = other
         else:
             try:
@@ -1011,7 +1009,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         from sage.structure.coerce_actions import ActedUponAction
         from sage.categories.action import PrecomposedAction
 
-        if op is operator.add and is_FreeModule(other):
+        if op is operator.add and isinstance(other, FreeModule_generic):
             base_ring = self._coerce_base_ring(other)
             extended_self = self.base_extend(base_ring)
             extended_other = other.base_extend(base_ring)
