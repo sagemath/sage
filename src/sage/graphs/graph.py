@@ -4753,11 +4753,313 @@ class Graph(GenericGraph):
         return len(even) == self.order()
 
     @doc_index("Leftovers")
-    def is_bicritical(self):
+    def is_bicritical(self, matching=None, algorithm='Edmonds', coNP_certificate=False,
+                      solver=None, verbose=0, *, integrality_tolerance=0.001):
         r"""
         Check if the graph is bicritical.
+
+        A nontrivial graph `G` is bicritical if `G - u - v` has a perfect
+        matching for any two distinct vertices `u` and `v` of `G`. Bicritical
+        graphs (of order four or more) are special kind of matching covered
+        graphs. Each maximal barrier of a bicritical graph is a singleton.
+        Thus, for a bicritical graph, the canonical partition of the vertex set
+        is the set of sets where each set is an indiviudal vertex.
+        Three-connected bicritical graphs, aka `bricks`, play an important role
+        in the theory of matching covered graphs.
+
+        This method implements the algorithm proposed in [LZ2001]_ and we
+        assume that a graph of order two is bicritical. The time complexity of
+        the algorithm is `\mathcal{O}(|V| \cdot |E|)`, if a perfect matching of
+        the graph is given, where `|V|` and `|E|` are the order and the size of
+        the graph respectively. Otherwise, time complexity may be dominated by
+        the time needed to compute a maximum matching of the graph.
+
+        Note that a :class:`ValueError` is returned if the graph is trivial,
+        i.e., it has at most one vertex.
+
+        INPUT:
+
+        - ``matching`` -- (default: ``None``); a perfect matching of the
+          graph, that can be given using any valid input format of
+          :class:`~sage.graphs.graph.Graph`.
+
+          If set to ``None``, a matching is computed using the other parameters.
+
+        - ``algorithm`` -- string (default: ``Edmonds``); the algorithm to be
+          used to compute a maximum matching of the graph among
+
+          - ``'Edmonds'`` selects Edmonds' algorithm as implemented in NetworkX,
+
+          - ``'LP'`` uses a Linear Program formulation of the matching problem.
+
+        - coNP_certificate -- boolean (default: ``False``); if set to ``True``
+          a set of pair of vertices (say `u` and `v`) is returned such that
+          `G - u - v` does not have a perfect matching if `G` is not bicritical
+          or otherwise ``None`` is returned.
+
+        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+          Linear Programming (MILP) solver to be used. If set to ``None``, the
+          default one is used. For more information on MILP solvers and which
+          default solver is used, see the method :meth:`solve
+          <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+          :class:`MixedIntegerLinearProgram
+          <sage.numerical.mip.MixedIntegerLinearProgram>`.
+
+        - ``verbose`` -- integer (default: ``0``); sets the level of verbosity:
+          set to 0 by default, which means quiet (only useful when ``algorithm
+          == 'LP'``).
+
+        - ``integrality_tolerance`` -- float; parameter for use with MILP
+          solvers over an inexact base ring; see
+          :meth:`MixedIntegerLinearProgram.get_values`.
+
+        OUTPUT:
+
+        - A boolean indicating whether the graph is bicritical or not.
+
+        - If ``coNP_certificate`` is set to ``True``, a set of pair of vertices
+          is returned in case the graph is not bicritical otherwise ``None`` is
+          returned.
+
+        EXAMPLES:
+
+        Petersen graph is bicritical::
+
+            sage: G = graphs.PetersenGraph()
+            sage: G.is_bicritical()
+            True
+
+        A graph is bicritical if and only if the underlying simple graph is bicritical::
+
+            sage: G = graphs.PetersenGraph()
+            sage: G.allow_multiple_edges(True)
+            sage: G.add_edge(0, 5)
+            sage: G.is_bicritical()
+            True
+
+        A nontrivial circular ladder graph whose order is not divisible by 4 is bicritical::
+
+            sage: G = graphs.CircularLadderGraph(5)
+            sage: G.is_bicritical()
+            True
+
+        The graph obtained by splicing two bicritical graph is also bicritical::
+
+            sage: # K(4) with one extra edge (say K(4)+) is bicritical
+            sage: G = graphs.CompleteGraph(4)
+            sage: G.allow_multiple_edges(True)
+            sage: G.is_bicritical()
+            True
+            sage: # Let H := K(4)+ ☉ #K(4)+ such that H has no multiple egde
+            sage: H = Graph()
+            sage: H.add_edges([
+            ....:    (0, 1), (0, 2), (0, 3), (0, 4), (1, 2),
+            ....:    (1, 5), (2, 5), (3, 4), (3, 5), (4, 5)
+            ....: ])
+            sage: H.is_bicritical()
+            True
+
+        A graph with more that one component is not bicritical::
+
+            sage: cycle1 = graphs.CycleGraph(4)
+            sage: cycle2 = graphs.CycleGraph(6)
+            sage: cycle2.relabel(lambda v: v + 4)
+            sage: G = Graph()
+            sage: G.add_edges(cycle1.edges() + cycle2.edges())
+            sage: len(G.connected_components())
+            2
+            sage: G.is_bicritical()
+            False
+
+        Graphs (of order more than two) with cut-vertices are not bicritical::
+
+            sage: G = graphs.CycleGraph(6)
+            sage: G.add_edges([(5, 6), (5, 7), (6, 7)])
+            sage: G.is_cut_vertex(5)
+            True
+            sage: G.has_perfect_matching()
+            True
+            sage: G.is_bicritical()
+            False
+
+        A graph of order two is assumed to be bicritical::
+
+            sage: G = graphs.CompleteBipartiteGraph(1, 1)
+            sage: G.is_bicritical()
+            True
+            sage: G = graphs.CompleteBipartiteGraph(2, 0)
+            sage: G.is_bicritical()
+            True
+
+        Bipartite graphs of order three or more are not bicritical::
+
+            sage: G = graphs.CompleteBipartiteGraph(3, 3)
+            sage: G.has_perfect_matching()
+            True
+            sage: G.is_bicritical()
+            False
+
+        One may specify a matching::
+
+            sage: G = graphs.WheelGraph(10)
+            sage: M = G.matching()
+            sage: G.is_bicritical(M)
+            True
+            sage: H = graphs.HexahedralGraph()
+            sage: N = H.matching()
+            sage: H.is_bicritical()
+            False
+
+        One may ask for a co-`\mathcal{NP}` certificate::
+
+            sage: G = graphs.CompleteGraph(14)
+            sage: G.is_bicritical(coNP_certificate=True)
+            (True, None)
+            sage: H = graphs.CircularLadderGraph(20)
+            sage: M = H.matching()
+            sage: H.is_bicritical(matching=M, coNP_certificate=True)
+            (False, {0, 2})
+
+        TESTS:
+
+        If the graph is trivial::
+
+            sage: G = Graph()
+            sage: G.is_bicritical()
+            Traceback (most recent call last):
+            ...
+            ValueError: the graph is trivial
+            sage: H = graphs.CycleGraph(1)
+            sage: H.is_bicritical()
+            Traceback (most recent call last):
+            ...
+            ValueError: the graph is trivial
+
+        Providing with a wrong matching::
+
+            sage: G = graphs.CompleteGraph(6)
+            sage: M = Graph(G.matching())
+            sage: M.add_edges([(0, 1), (0, 2)])
+            sage: G.is_bicritical(matching=M)
+            Traceback (most recent call last):
+            ...
+            ValueError: the input is not a matching
+            sage: N = Graph(G.matching())
+            sage: N.add_edge(6, 7)
+            sage: G.is_bicritical(matching=N)
+            Traceback (most recent call last):
+            ...
+            ValueError: the input is not a matching of the graph
+            sage: J = Graph()
+            sage: J.add_edges([(0, 1), (2, 3)])
+            sage: G.is_bicritical(matching=J)
+            Traceback (most recent call last):
+            ...
+            ValueError: the input is not a perfect matching of the graph
+
+        REFERENCES:
+
+        - [LZ2001]_
+
+        - [LM2024]_
+
+        .. SEEALSO::
+            :meth:`~sage.graphs.graph.Graph.is_factor_critical`,
+            :meth:`~sage.graphs.graph.Graph.is_matching_covered`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.canonical_partition`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.is_brick`
+
+        AUTHORS:
+
+        - Janmenjaya Panda (2024-06-17)
         """
-        pass
+
+        # The graph must be nontrivial
+        if self.order() < 2:
+            raise ValueError("the graph is trivial")
+
+        # A graph of order two is assumed to be bicritical
+        if self.order() == 2:
+            return (True, None) if coNP_certificate else True
+
+        # The graph must have an even number of vertices
+        if self.order() % 2:
+            return (False, set(self.vertices()[:2])) if coNP_certificate else False
+
+        # The graph must be connected
+        if not self.is_connected():
+            if not coNP_certificate:
+                return False
+
+            components = self.connected_components()
+
+            # Check if there is an odd component with at least three vertices
+            for component in components:
+                if len(component) % 2 and len(component) > 2:
+                    return (False, set(component[:2]))
+
+            # Check if there are at least two even components
+            components_of_even_order = [component for component in components if len(component) % 2 == 0]
+            if len(components_of_even_order) > 1:
+                return (False, set([components_of_even_order[0][0], components_of_even_order[1][0]]))
+
+            # Or otherwise there is at most one even component with at least two trivial odd components
+            u, v = None, None
+
+            for component in components:
+                if len(component) % 2 == 0 and u is not None:
+                    v = component[0]
+                    return (False, set([u, v]))
+                elif len(component) == 1:
+                    u = component[0]
+
+        # Bipartite graphs of order at least three are not bicritical
+        if self.is_bipartite():
+            if not coNP_certificate:
+                return False
+
+            from sage.graphs.bipartite_graph import BipartiteGraph
+            H = BipartiteGraph(self)
+            color_class_A, color_class_B = H.bipartition()
+            del H
+
+            if len(color_class_A) > 1:
+                return (False, set(list(color_class_A)[:2]))
+            else:
+                return (False, set(list(color_class_B)[:2]))
+
+        if matching:
+            # The input matching must be a valid perfect matching of the graph
+            M = Graph(matching)
+            if any(d != 1 for d in M.degree()):
+                raise ValueError("the input is not a matching")
+            if not M.is_subgraph(self, induced=False):
+                raise ValueError("the input is not a matching of the graph")
+            if (self.order() != M.order()) or (self.order() != 2*M.size()):
+                raise ValueError("the input is not a perfect matching of the graph")
+        else:
+            # A maximum matching of the graph is computed
+            M = Graph(self.matching(algorithm=algorithm, solver=solver, verbose=verbose,
+                                    integrality_tolerance=integrality_tolerance))
+
+            # It must be a perfect matching
+            if self.order() != M.order():
+                return (False, set([M.edges[0][0], M.edges[0][1]])) if coNP_certificate else False
+
+        # G is bicritical iff for each vertex u with its M-matched neighbor being v,
+        # every vertex of the graph distinct from v must be reachable from u through an even length
+        # M-alternating uv-path starting with an edge not in M and ending with an edge in M
+
+        for u in self.vertices():
+            v = next(M.neighbor_iterator(u))
+
+            even = self.M_alternating_even_mark(u, M)
+
+            for w in self.vertices():
+                if w != v and w not in even:
+                    return (False, set([v, w])) if coNP_certificate else False
+
+        return (True, None) if coNP_certificate else True
 
     @doc_index("Leftovers")
     def is_matching_covered(self):
