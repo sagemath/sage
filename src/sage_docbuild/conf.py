@@ -27,6 +27,7 @@ import sphinx
 import sphinx.ext.intersphinx as intersphinx
 from sphinx import highlighting
 from sphinx.transforms import SphinxTransform
+from sphinx.util.docutils import SphinxDirective
 from IPython.lib.lexers import IPythonConsoleLexer, IPyLexer
 from sage.misc.sagedoc import extlinks
 from sage.env import SAGE_DOC_SRC, SAGE_DOC, PPLPY_DOCS, MATHJAX_DIR
@@ -1037,6 +1038,14 @@ class SagecodeTransform(SphinxTransform):
                         parent.insert(index + 1, container)
 
 
+class Ignore(SphinxDirective):
+
+    has_content = True
+
+    def run(self):
+        return []
+
+
 # This replaces the setup() in sage.misc.sagedoc_conf
 def setup(app):
     app.connect('autodoc-process-docstring', process_docstring_cython)
@@ -1050,6 +1059,12 @@ def setup(app):
     app.add_transform(SagemathTransform)
     if SAGE_LIVE_DOC == 'yes' or SAGE_PREPARSED_DOC == 'yes':
         app.add_transform(SagecodeTransform)
+    if SAGE_LIVE_DOC != 'yes':
+        app.add_directive("jupyter-execute", Ignore)
+        app.add_directive("jupyter-kernel", Ignore)
+        app.add_directive("jupyter-input", Ignore)
+        app.add_directive("jupyter-output", Ignore)
+        app.add_directive("thebe-button", Ignore)
 
     # When building the standard docs, app.srcdir is set to SAGE_DOC_SRC +
     # 'LANGUAGE/DOCNAME'.
