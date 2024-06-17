@@ -70,7 +70,7 @@ def modS_relations(syms):
     OUTPUT:
 
 
-    -  ``rels`` - set of pairs of pairs (j, s), where if
+    -  ``rels`` -- set of pairs of pairs (j, s), where if
        mod[i] = (j,s), then x_i = s\*x_j (mod S relations)
 
 
@@ -138,11 +138,11 @@ def modI_relations(syms, sign):
 
     - ``syms`` -- :class:`ManinSymbolList`
 
-    -  ``sign`` - int (either -1, 0, or 1)
+    -  ``sign`` -- int (either -1, 0, or 1)
 
     OUTPUT:
 
-    -  ``rels`` - set of pairs of pairs (j, s), where if
+    -  ``rels`` -- set of pairs of pairs (j, s), where if
        mod[i] = (j,s), then x_i = s\*x_j (mod S relations)
 
     EXAMPLES::
@@ -204,12 +204,12 @@ def T_relation_matrix_wtk_g0(syms, mod, field, sparse):
 
     - ``syms`` -- :class:`ManinSymbolList`
 
-    -  ``mod`` - list that gives quotient modulo some two-term relations, i.e.,
+    -  ``mod`` -- list that gives quotient modulo some two-term relations, i.e.,
        the S relations, and if sign is nonzero, the I relations.
 
-    -  ``field`` - base_ring
+    -  ``field`` -- base_ring
 
-    -  ``sparse`` - (True or False) whether to use sparse rather than dense
+    -  ``sparse`` -- (True or False) whether to use sparse rather than dense
        linear algebra
 
     OUTPUT: A sparse matrix whose rows correspond to the reduction of
@@ -266,25 +266,25 @@ def gens_to_basis_matrix(syms, relation_matrix, mod, field, sparse):
 
     - ``syms`` -- :class:`ManinSymbolList`
 
-    -  ``relation_matrix`` - as output by
+    -  ``relation_matrix`` -- as output by
        ``__compute_T_relation_matrix(self, mod)``
 
-    -  ``mod`` - quotient of modular symbols modulo the
+    -  ``mod`` -- quotient of modular symbols modulo the
        2-term S (and possibly I) relations
 
-    -  ``field`` - base field
+    -  ``field`` -- base field
 
-    -  ``sparse`` - (bool): whether or not matrix should be
+    -  ``sparse`` -- (bool): whether or not matrix should be
        sparse
 
     OUTPUT:
 
-    -  ``matrix`` - a matrix whose ith row expresses the
+    -  ``matrix`` -- a matrix whose ith row expresses the
        Manin symbol generators in terms of a basis of Manin symbols
        (modulo the S, (possibly I,) and T rels) Note that the entries of
        the matrix need not be integers.
 
-    -  ``list`` - integers i, such that the Manin symbols `x_i` are a basis.
+    -  ``list`` -- integers i, such that the Manin symbols `x_i` are a basis.
 
     EXAMPLES::
 
@@ -294,8 +294,8 @@ def gens_to_basis_matrix(syms, relation_matrix, mod, field, sparse):
         sage: gens_to_basis_matrix(L, T_relation_matrix_wtk_g0(L, modS, GF(3), 24), modS, GF(3), True)
         (24 x 2 sparse matrix over Finite Field of size 3, [13, 23])
     """
-    from sage.structure.element import is_Matrix
-    if not is_Matrix(relation_matrix):
+    from sage.structure.element import Matrix
+    if not isinstance(relation_matrix, Matrix):
         raise TypeError("relation_matrix must be a matrix")
     if not isinstance(mod, list):
         raise TypeError("mod must be a list")
@@ -370,9 +370,9 @@ def compute_presentation(syms, sign, field, sparse=None):
 
     - ``syms`` -- :class:`ManinSymbolList`
 
-    -  ``sign`` - integer (-1, 0, 1)
+    -  ``sign`` -- integer (-1, 0, 1)
 
-    -  ``field`` - a field
+    -  ``field`` -- a field
 
 
     OUTPUT:

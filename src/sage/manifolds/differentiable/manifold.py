@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Differentiable Manifolds
 
@@ -421,7 +420,6 @@ REFERENCES:
 - [Ser1992]_
 - [Ber2008]_
 - [BG1988]_
-
 """
 
 # ****************************************************************************
@@ -2993,7 +2991,7 @@ class DifferentiableManifold(TopologicalManifold):
           :class:`~sage.manifolds.differentiable.automorphismfield.AutomorphismFieldParal`
           describing the automorphism `P` that relates the basis `(e_i)` to
           the basis `(f_i)` according to `f_i = P(e_i)`
-        - ``compute_inverse`` (default: True) -- if set to True, the inverse
+        - ``compute_inverse`` (default: ``True``) -- if set to True, the inverse
           automorphism is computed and the change from basis `(f_i)` to `(e_i)`
           is set to it in the internal dictionary ``self._frame_changes``
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 # cython: old_style_globals=True
 # The old_style_globals directive is important for load() to work correctly.
 # However, this should be removed in favor of user_globals; see
@@ -806,14 +807,14 @@ class SagePickler(_BasePickler):
 
         INPUT:
 
-        - ``obj`` - the object to pickle.
+        - ``obj`` -- the object to pickle.
 
-        - ``kwargs`` - keyword arguments passed to the
+        - ``kwargs`` -- keyword arguments passed to the
           :class:`sage.misc.persist.SagePickler` constructor.
 
         OUTPUT:
 
-        - ``pickle`` - the pickled object as ``bytes``.
+        - ``pickle`` -- the pickled object as ``bytes``.
 
         EXAMPLES::
 
@@ -892,14 +893,14 @@ class SageUnpickler(_BaseUnpickler):
 
         INPUT:
 
-        - ``data`` - the pickle data as ``bytes``.
+        - ``data`` -- the pickle data as ``bytes``.
 
-        - ``kwargs`` - keyword arguments passed to the
+        - ``kwargs`` -- keyword arguments passed to the
           :class:`sage.misc.persist.SageUnpickler` constructor.
 
         OUTPUT:
 
-        - ``obj`` - the object that was serialized to the given pickle data.
+        - ``obj`` -- the object that was serialized to the given pickle data.
 
 
         EXAMPLES::

@@ -39,7 +39,6 @@ Kronecker delta function::
     sage: m, n = var('m,n')                                                             # needs sage.symbolic
     sage: kronecker_delta(m, n)                                                         # needs sage.symbolic
     kronecker_delta(m, n)
-
 """
 
 ##############################################################################
@@ -65,7 +64,7 @@ class FunctionDiracDelta(BuiltinFunction):
 
     INPUT:
 
-    -  ``x`` - a real number or a symbolic expression
+    -  ``x`` -- a real number or a symbolic expression
 
     DEFINITION:
 
@@ -102,7 +101,7 @@ class FunctionDiracDelta(BuiltinFunction):
 
         INPUT:
 
-        -  ``x`` - a real number or a symbolic expression
+        -  ``x`` -- a real number or a symbolic expression
 
         EXAMPLES::
 
@@ -131,7 +130,7 @@ class FunctionDiracDelta(BuiltinFunction):
         """
         INPUT:
 
-        -  ``x`` - a real number or a symbolic expression
+        -  ``x`` -- a real number or a symbolic expression
 
         EXAMPLES::
 
@@ -182,7 +181,7 @@ class FunctionHeaviside(GinacFunction):
 
     INPUT:
 
-    -  ``x`` - a real number or a symbolic expression
+    -  ``x`` -- a real number or a symbolic expression
 
     DEFINITION:
 
@@ -240,7 +239,7 @@ class FunctionHeaviside(GinacFunction):
 
         INPUT:
 
-        -  ``x`` - a real number or a symbolic expression
+        -  ``x`` -- a real number or a symbolic expression
 
         EXAMPLES::
 

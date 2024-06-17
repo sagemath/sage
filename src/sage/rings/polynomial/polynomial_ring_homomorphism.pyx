@@ -13,7 +13,6 @@ This module currently implements the canonical ring homomorphism from
 AUTHORS:
 
 - Peter Bruin (March 2014): initial version
-
 """
 
 from sage.rings.morphism cimport RingHomomorphism_from_base

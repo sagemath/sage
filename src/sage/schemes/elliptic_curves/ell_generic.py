@@ -98,10 +98,15 @@ def is_EllipticCurve(x):
         sage: from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
         sage: E = EllipticCurve([1,2,3/4,7,19])
         sage: is_EllipticCurve(E)
+        doctest:warning...
+        DeprecationWarning: The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
         sage: is_EllipticCurve(0)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.")
     return isinstance(x, EllipticCurve_generic)
 
 
@@ -456,10 +461,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
                 P = self(P)
             except TypeError:
                 return False
-        if P.curve() == self:
-            return True
-        x, y, a = P[0], P[1], self.ainvs()
-        return y**2 + a[0]*x*y + a[2]*y == x**3 + a[1]*x**2 + a[3]*x + a[4]
+        return P.curve() == self
 
     def __call__(self, *args, **kwds):
         r"""
@@ -572,10 +574,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         P = args[0]
         if isinstance(P, groups.AdditiveAbelianGroupElement) and isinstance(P.parent(),ell_torsion.EllipticCurveTorsionSubgroup):
             return self(P.element())
-        if isinstance(args[0],
-                      (ell_point.EllipticCurvePoint_field,
-                       ell_point.EllipticCurvePoint_number_field,
-                       ell_point.EllipticCurvePoint)):
+        if isinstance(args[0], ell_point.EllipticCurvePoint):
             if P.curve() is self:
                 return P
             # check if denominator of the point contains a factor of the
@@ -726,11 +725,11 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         - ``x`` -- an element of the base ring of the curve, or of an extension.
 
-        - ``all`` (bool, default False) -- if True, return a (possibly
+        - ``all`` (bool, default: ``False``) -- if True, return a (possibly
           empty) list of all points; if False, return just one point,
           or raise a :class:`ValueError` if there are none.
 
-        - ``extend`` (bool, default False) --
+        - ``extend`` (bool, default: ``False``) --
 
           - if ``False``, extend the base if necessary and possible to
             include `x`, and only return point(s) defined over this
@@ -2908,7 +2907,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E.is_isomorphic(F.change_ring(CC))
             False
         """
-        if not is_EllipticCurve(other):
+        if not isinstance(other, EllipticCurve_generic):
             return False
         if field is None:
             if self.base_ring() != other.base_ring():
@@ -2955,7 +2954,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        - ``complete_cube`` -- boolean (default: True); for
+        - ``complete_cube`` -- boolean (default: ``True``); for
           meaning, see below.
 
         OUTPUT:
@@ -3272,7 +3271,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        - ``xmin, xmax`` -- (optional) points will be computed at
+        - ``xmin``, ``xmax`` -- (optional) points will be computed at
           least within this range, but possibly farther.
 
         - ``components`` -- a string, one of the following:

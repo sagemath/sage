@@ -857,7 +857,6 @@ cdef class FrozenBitset:
         """
         return bitset_bytes(self._bitset)
 
-
     def __repr__(self):
         """
         Return a string representing the bitset as a binary vector.

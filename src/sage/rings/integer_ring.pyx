@@ -54,8 +54,6 @@ import sage.rings.infinity
 import sage.rings.rational
 import sage.rings.rational_field
 import sage.rings.ideal
-import sage.libs.pari.all
-import sage.rings.ideal
 from sage.categories.basic import EuclideanDomains, DedekindDomains
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.noetherian_rings import NoetherianRings
@@ -89,6 +87,7 @@ cdef int number_of_integer_rings = 0
 #   sigma, we do not recreate the sampler but take it from this "cache".
 _prev_discrete_gaussian_integer_sampler = (None, None)
 
+
 def is_IntegerRing(x):
     r"""
     Internal function: return ``True`` iff ``x`` is the ring `\ZZ` of integers.
@@ -106,6 +105,7 @@ def is_IntegerRing(x):
         False
     """
     return isinstance(x, IntegerRing_class)
+
 
 cdef class IntegerRing_class(CommutativeRing):
     r"""
@@ -608,7 +608,7 @@ cdef class IntegerRing_class(CommutativeRing):
 
         - ``x``, ``y`` integers -- bounds for the result.
 
-        - ``distribution``-- a string:
+        - ``distribution`` -- a string:
 
           - ``'uniform'``
           - ``'mpz_rrandomb'``
@@ -784,7 +784,7 @@ cdef class IntegerRing_class(CommutativeRing):
         - ``value`` -- this is the variable in which the answer will be
           returned
 
-        - ``x, y, distribution`` -- see :meth:`random_element`
+        - ``x``, ``y``, ``distribution`` -- see :meth:`random_element`
 
         TESTS::
 
@@ -967,12 +967,12 @@ cdef class IntegerRing_class(CommutativeRing):
 
         INPUT:
 
-        - ``prime`` - a prime number
+        - ``prime`` -- a prime number
 
-        - ``check`` - (boolean, default ``True``) whether or not
+        - ``check`` -- (boolean, default ``True``) whether or not
           to check the primality of prime
 
-        - ``names`` - ignored (for compatibility with number fields)
+        - ``names`` -- ignored (for compatibility with number fields)
 
         OUTPUT: The residue field at this prime.
 
@@ -1408,7 +1408,6 @@ cdef class IntegerRing_class(CommutativeRing):
 
         g = g.gcd(R( {e[j] - e[i_min]: c[j] for j in range(i_min, k)} ))
 
-
         cdef list cc
         cdef list ee
         cdef int m1, m2
@@ -1611,6 +1610,7 @@ cdef class IntegerRing_class(CommutativeRing):
 ZZ = IntegerRing_class()
 Z = ZZ
 
+
 def IntegerRing():
     """
     Return the integer ring.
@@ -1623,6 +1623,7 @@ def IntegerRing():
         True
     """
     return ZZ
+
 
 def crt_basis(X, xgcd=None):
     r"""
@@ -1637,7 +1638,7 @@ def crt_basis(X, xgcd=None):
 
     OUTPUT:
 
-    - ``E`` - a list of Integers such that ``E[i] = 1`` (mod ``X[i]``) and
+    - ``E`` -- a list of Integers such that ``E[i] = 1`` (mod ``X[i]``) and
       ``E[i] = 0`` (mod ``X[j]``) for all `j \neq i`.
 
     For this explanation, let ``E[i]`` be denoted by `E_i`.

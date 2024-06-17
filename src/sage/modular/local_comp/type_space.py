@@ -12,7 +12,6 @@ space* of `f` is the span of the modular eigensymbols corresponding to all of
 these twists, which lie in a space of modular symbols for a suitable `\Gamma_H`
 subgroup. This space is the key to computing the isomorphism class of the local
 component of the newform at `p`.
-
 """
 
 import operator

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Normal form games with N players.
 
@@ -623,7 +622,6 @@ AUTHORS:
 - James Campbell and Vince Knight (06-2014): Original version
 
 - Tobenna P. Igwe: Constant-sum game solvers
-
 """
 
 # ****************************************************************************
@@ -1390,9 +1388,8 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: example._is_complete()
             False
         """
-        results = []
-        for profile in self.utilities.values():
-            results.append(all(type(i) is not bool for i in profile))
+        results = (all(not isinstance(i, bool) for i in profile)
+                   for profile in self.utilities.values())
         return all(results)
 
     def obtain_nash(self, algorithm=False, maximization=True, solver=None):
@@ -1404,20 +1401,20 @@ class NormalFormGame(SageObject, MutableMapping):
 
         INPUT:
 
-        - ``algorithm`` - the following algorithms should be available through
+        - ``algorithm`` -- the following algorithms should be available through
           this function:
 
-          * ``'lrs'`` - This algorithm is only suited for 2 player games.
+          * ``'lrs'`` -- This algorithm is only suited for 2 player games.
             See the lrs web site (http://cgm.cs.mcgill.ca/~avis/C/lrs.html).
 
-          * ``'LCP'`` - This algorithm is only suited for 2 player games.
+          * ``'LCP'`` -- This algorithm is only suited for 2 player games.
             See the gambit web site (http://gambit.sourceforge.net/).
 
-          * ``'lp'`` - This algorithm is only suited for 2 player
+          * ``'lp'`` -- This algorithm is only suited for 2 player
             constant sum games. Uses MILP solver determined by the
             ``solver`` argument.
 
-          * ``'enumeration'`` - This is a very inefficient
+          * ``'enumeration'`` -- This is a very inefficient
             algorithm (in essence a brute force approach).
 
             1. For each k in 1...min(size of strategy sets)
@@ -1833,7 +1830,7 @@ class NormalFormGame(SageObject, MutableMapping):
 
         - ``solver`` -- the solver to be used to solve the LP:
 
-          * ``'gambit'`` - his uses the solver included within the gambit
+          * ``'gambit'`` -- his uses the solver included within the gambit
             library to create and solve the LP
 
           * for further possible values, see :class:`MixedIntegerLinearProgram`

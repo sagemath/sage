@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Cached Functions and Methods
 
@@ -1553,8 +1554,8 @@ class CachedMethodPickle():
         """
         INPUT:
 
-        - ``inst`` - some instance.
-        - ``name`` (string) - usually the name of an attribute
+        - ``inst`` -- some instance.
+        - ``name`` (string) -- usually the name of an attribute
           of ``inst`` to which ``self`` is assigned.
 
         TESTS::

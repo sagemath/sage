@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Formal sums
 
@@ -94,6 +95,12 @@ class FormalSum(ModuleElement):
           up constructing a formal sum.
         - ``reduce`` -- reduce (default: ``True``) if ``False``, do not
           combine common terms
+
+        .. WARNING::
+
+            Setting ``reduce`` to ``False`` can cause issues when comparing
+            equal sums where terms are not combined in the same way (e.g.
+            `2x + 3x` and `4x + 1x` will compare as not equal).
 
         EXAMPLES::
 
@@ -230,8 +237,19 @@ class FormalSum(ModuleElement):
             True
             sage: a == 0          # 0 is coerced into a.parent()(0)
             False
+
+        TESTS::
+
+            sage: a = FormalSum([(1, 3), (2, 5)])
+            sage: b = FormalSum([(2, 5), (1, 3)])
+            sage: a == b
+            True
+            sage: b == a
+            True
         """
-        return richcmp(self._data, other._data, op)
+        self_data = [(c, x) for (x, c) in sorted(self._data, key=str)]
+        other_data = [(c, x) for (x, c) in sorted(other._data, key=str)]
+        return richcmp(self_data, other_data, op)
 
     def _neg_(self):
         """
@@ -359,9 +377,9 @@ class FormalSums(UniqueRepresentation, Module):
 
         - ``x`` -- formal sum, list or number
 
-        - ``check`` -- bool (default: True)
+        - ``check`` -- bool (default: ``True``)
 
-        - ``reduce`` -- bool (default: True); whether to combine terms
+        - ``reduce`` -- bool (default: ``True``); whether to combine terms
 
         EXAMPLES::
 

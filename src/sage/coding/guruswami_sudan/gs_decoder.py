@@ -1,4 +1,4 @@
-# sage.doctest: needs sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings sage.symbolic
 r"""
 Guruswami-Sudan decoder for (Generalized) Reed-Solomon codes
 
@@ -25,6 +25,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from sage.arith.misc import integer_floor as floor
 from sage.coding.grs_code import GeneralizedReedSolomonCode
 from sage.rings.integer_ring import ZZ
 from sage.coding.decoder import Decoder
@@ -344,8 +345,8 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
           - ``tau`` is the obtained decoding radius, and
 
-          - ``s, ell`` are the multiplicity parameter, respectively list size
-            parameter giving this radius.
+          - ``(s, l)`` are the multiplicity parameter and the list size
+            parameter giving the radius
 
         EXAMPLES::
 

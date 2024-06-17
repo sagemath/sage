@@ -185,10 +185,10 @@ class DocBuilder():
         """
         INPUT:
 
-        - ``name`` - the name of a subdirectory in SAGE_DOC_SRC, such as
+        - ``name`` -- the name of a subdirectory in SAGE_DOC_SRC, such as
           'tutorial' or 'bordeaux_2008'
 
-        - ``lang`` - (default "en") the language of the document.
+        - ``lang`` -- (default "en") the language of the document.
         """
         doc = name.split(os.path.sep)
 
@@ -867,20 +867,10 @@ class ReferenceSubBuilder(DocBuilder):
         """
         Return the Sphinx environment for this project.
         """
-        class FakeConfig():
-            values = tuple()
-
-        class FakeApp():
-            def __init__(self, dir):
-                self.srcdir = dir
-                self.config = FakeConfig()
-
         env_pickle = os.path.join(self._doctrees_dir(), 'environment.pickle')
         try:
             with open(env_pickle, 'rb') as f:
                 env = pickle.load(f)
-                env.app = FakeApp(self.dir)
-                env.config.values = env.app.config.values
                 logger.debug("Opened Sphinx environment: %s", env_pickle)
                 return env
         except (OSError, EOFError) as err:
@@ -897,29 +887,14 @@ class ReferenceSubBuilder(DocBuilder):
             for doc in env.all_docs:
                 env.all_docs[doc] = time.time()
             logger.info("Updated %d reST file mtimes", len(env.all_docs))
+
             # This is the only place we need to save (as opposed to
             # load) Sphinx's pickle, so we do it right here.
-            env_pickle = os.path.join(self._doctrees_dir(),
-                                      'environment.pickle')
-
-            # When cloning a new branch (see
-            # SAGE_LOCAL/bin/sage-clone), we hard link the doc output.
-            # To avoid making unlinked, potentially inconsistent
-            # copies of the environment, we *don't* use
-            # env.topickle(env_pickle), which first writes a temporary
-            # file.  We adapt sphinx.environment's
-            # BuildEnvironment.topickle:
+            env_pickle = os.path.join(self._doctrees_dir(), 'environment.pickle')
 
             # remove unpicklable attributes
             env.set_warnfunc(None)
-            del env.config.values
             with open(env_pickle, 'wb') as picklefile:
-                # remove potentially pickling-problematic values from config
-                for key, val in vars(env.config).items():
-                    if key.startswith('_') or isinstance(val, (types.ModuleType,
-                                                               types.FunctionType,
-                                                               type)):
-                        del env.config[key]
                 pickle.dump(env, picklefile, pickle.HIGHEST_PROTOCOL)
 
             logger.debug("Saved Sphinx environment: %s", env_pickle)
@@ -1230,7 +1205,7 @@ class SingleFileBuilder(DocBuilder):
         """
         INPUT:
 
-        - ``path`` - the path to the file for which documentation
+        - ``path`` -- the path to the file for which documentation
           should be built
         """
         self.lang = 'en'
@@ -1305,7 +1280,6 @@ def setup(app):
    :members:
    :undoc-members:
    :show-inheritance:
-
 """.format(heading, __file__, module_name)
         with open(os.path.join(self.dir, 'index.rst'), 'w') as indexfile:
             indexfile.write(index)

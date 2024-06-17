@@ -24,6 +24,7 @@ from sage.rings.integer import Integer
 from sage.sets.family import Family
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 
+
 class FreelyGeneratedLieConformalAlgebra(LieConformalAlgebraWithBasis):
     """
     Base class for a central extension of a freely generated Lie

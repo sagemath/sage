@@ -144,6 +144,7 @@ class FreeMonoidElement(MonoidElement):
 
         Check that :issue:`14509` is fixed::
 
+            sage: # needs sage.symbolic
             sage: K.< alpha,b > = FreeAlgebra(SR)
             sage: latex(alpha*b)
             \alpha b
@@ -171,14 +172,14 @@ class FreeMonoidElement(MonoidElement):
         """
         EXAMPLES::
 
-            sage: M.<x,y,z>=FreeMonoid(3)
+            sage: M.<x,y,z> = FreeMonoid(3)
             sage: (x*y).subs(x=1,y=2,z=14)
             2
             sage: (x*y).subs({x:z,y:z})
             z^2
-            sage: M1=MatrixSpace(ZZ,1,2)
-            sage: M2=MatrixSpace(ZZ,2,1)
-            sage: (x*y).subs({x:M1([1,2]),y:M2([3,4])})
+            sage: M1 = MatrixSpace(ZZ,1,2)                                              # needs sage.modules
+            sage: M2 = MatrixSpace(ZZ,2,1)                                              # needs sage.modules
+            sage: (x*y).subs({x: M1([1,2]), y: M2([3,4])})                              # needs sage.modules
             [11]
 
             sage: M.<x,y> = FreeMonoid(2)

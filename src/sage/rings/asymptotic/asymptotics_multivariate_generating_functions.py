@@ -199,18 +199,20 @@ Classes and Methods
 from functools import total_ordering
 from itertools import combinations_with_replacement
 
-from sage.structure.element import RingElement
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
-from sage.calculus.var import var
-from sage.calculus.functional import diff
-from sage.symbolic.ring import SR
+from sage.categories.rings import Rings
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.categories.rings import Rings
+from sage.structure.element import RingElement
+from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp_by_eq_and_lt
+from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import("sage.calculus.var", "var")
+lazy_import("sage.calculus.functional", "diff")
+lazy_import("sage.symbolic.ring", "SR")
 
 
 @total_ordering
@@ -2874,7 +2876,7 @@ class FractionWithFactoredDenominator(RingElement):
 
         - ``approx`` -- an individual or list of symbolic expressions in
           one variable
-        - ``alpha`` - a list of positive integers of length
+        - ``alpha`` -- a list of positive integers of length
           ``self.denominator_ring.ngens()``
         - ``interval`` -- a list of positive integers
         - ``exp_scale`` -- (optional; default: 1) a number
@@ -3994,7 +3996,7 @@ def diff_op(A, B, AB_derivs, V, M, r, N):
     - ``V`` -- the variables of the ``A[j]`` and ``B``
     - ``M`` -- a symmetric `l \times l` matrix, where `l` is the
       length of ``V``
-    - ``r, N`` -- natural numbers
+    - ``r``, ``N`` -- natural numbers
 
     OUTPUT:
 
@@ -4122,8 +4124,8 @@ def diff_op_simple(A, B, AB_derivs, x, v, a, N):
 
     INPUT:
 
-    - ``A, B`` -- Symbolic functions in the variable ``x``
-    - ``AB_derivs`` - a dictionary whose keys are the (symbolic)
+    - ``A``, ``B`` -- Symbolic functions in the variable ``x``
+    - ``AB_derivs`` -- a dictionary whose keys are the (symbolic)
       derivatives of ``A`` up to order ``2 * N`` if ``v`` is even or
       ``N`` if ``v`` is odd and the (symbolic) derivatives of ``B``
       up to order ``2 * N + v`` if ``v`` is even or ``N + v``
@@ -4131,7 +4133,7 @@ def diff_op_simple(A, B, AB_derivs, x, v, a, N):
       that are the keys evaluated at a common point `p`
     - ``x`` -- a symbolic variable
     - ``a`` -- a complex number
-    - ``v, N`` -- natural numbers
+    - ``v``, ``N`` -- natural numbers
 
     OUTPUT:
 

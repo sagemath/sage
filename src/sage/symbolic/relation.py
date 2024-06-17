@@ -355,7 +355,6 @@ AUTHORS:
 - William Stein: second version
 
 - William Stein (2007-07-16): added arithmetic with symbolic equations
-
 """
 from itertools import product
 import operator
@@ -591,12 +590,12 @@ def solve(f, *args, **kwds):
 
     INPUT:
 
-    -  ``f`` - equation or system of equations (given by a
+    -  ``f`` -- equation or system of equations (given by a
        list or tuple)
 
-    -  ``*args`` - variables to solve for.
+    -  ``*args`` -- variables to solve for.
 
-    -  ``solution_dict`` - bool (default: False); if True or non-zero,
+    -  ``solution_dict`` -- bool (default: ``False``); if True or non-zero,
        return a list of dictionaries containing the solutions. If there
        are no solutions, return an empty list (rather than a list containing
        an empty dictionary). Likewise, if there's only a single solution,
@@ -605,16 +604,16 @@ def solve(f, *args, **kwds):
     There are a few optional keywords if you are trying to solve a single
     equation.  They may only be used in that context.
 
-    -  ``multiplicities`` - bool (default: False); if True,
+    -  ``multiplicities`` -- bool (default: ``False``); if True,
        return corresponding multiplicities.  This keyword is
        incompatible with ``to_poly_solve=True`` and does not make
        any sense when solving inequalities.
 
-    -  ``explicit_solutions`` - bool (default: False); require that
+    -  ``explicit_solutions`` -- bool (default: ``False``); require that
        all roots be explicit rather than implicit. Not used
        when solving inequalities.
 
-    -  ``to_poly_solve`` - bool (default: False) or string; use
+    -  ``to_poly_solve`` -- bool (default: ``False``) or string; use
        Maxima's ``to_poly_solver`` package to search for more possible
        solutions, but possibly encounter approximate solutions.
        This keyword is incompatible with ``multiplicities=True``
@@ -622,11 +621,11 @@ def solve(f, *args, **kwds):
        to 'force' (string) omits Maxima's solve command (useful when
        some solutions of trigonometric equations are lost).
 
-    - ``algorithm`` - string (default: 'maxima'); to use SymPy's
+    - ``algorithm`` -- string (default: 'maxima'); to use SymPy's
       solvers set this to 'sympy'. Note that SymPy is always used
       for diophantine equations. Another choice is 'giac'.
 
-    - ``domain`` - string (default: 'complex'); setting this to 'real'
+    - ``domain`` -- string (default: 'complex'); setting this to 'real'
       changes the way SymPy solves single equations; inequalities
       are always solved in the real domain.
 
@@ -1479,11 +1478,11 @@ def solve_mod(eqns, modulus, solution_dict=False):
     INPUT:
 
 
-    -  ``eqns`` - equation or list of equations
+    -  ``eqns`` -- equation or list of equations
 
-    -  ``modulus`` - an integer
+    -  ``modulus`` -- an integer
 
-    -  ``solution_dict`` - bool (default: False); if True or non-zero,
+    -  ``solution_dict`` -- bool (default: ``False``); if True or non-zero,
        return a list of dictionaries containing the solutions. If there
        are no solutions, return an empty list (rather than a list containing
        an empty dictionary). Likewise, if there's only a single solution,
@@ -1627,13 +1626,13 @@ def _solve_mod_prime_power(eqns, p, m, vars):
     INPUT:
 
 
-    -  ``eqns`` - equation or list of equations
+    -  ``eqns`` -- equation or list of equations
 
-    -  ``p`` - a prime
+    -  ``p`` -- a prime
 
-    -  ``i`` - an integer > 0
+    -  ``i`` -- an integer > 0
 
-    -  ``vars`` - a list of variables to solve for
+    -  ``vars`` -- a list of variables to solve for
 
 
     EXAMPLES::
@@ -1711,7 +1710,7 @@ def solve_ineq_univar(ineq):
 
     INPUT:
 
-    - ``ineq`` - inequality in one variable
+    - ``ineq`` -- inequality in one variable
 
     OUTPUT:
 
@@ -1763,13 +1762,13 @@ def solve_ineq_fourier(ineq, vars=None):
 
     INPUT:
 
-    - ``ineq`` - list with system of inequalities
+    - ``ineq`` -- list with system of inequalities
 
-    - ``vars`` - optionally list with variables for Fourier elimination.
+    - ``vars`` -- optionally list with variables for Fourier elimination.
 
     OUTPUT:
 
-    - ``list`` - output is list of solutions as a list of simple inequalities
+    - ``list`` -- output is list of solutions as a list of simple inequalities
       output [A,B,C] means (A or B or C) each A, B, C is again a list and
       if A=[a,b], then A means (a and b). The list is empty if there is no
       solution.
@@ -1836,7 +1835,7 @@ def solve_ineq(ineq, vars=None):
 
     INPUT:
 
-    - ``ineq`` - one inequality or a list of inequalities
+    - ``ineq`` -- one inequality or a list of inequalities
 
       Case1: If ``ineq`` is one equality, then it should be rational
       expression in one variable. This input is passed to
@@ -1850,7 +1849,7 @@ def solve_ineq(ineq, vars=None):
       http://maxima.cvs.sourceforge.net/viewvc/maxima/maxima/share/contrib/fourier_elim/rtest_fourier_elim.mac
       for a big gallery of problems covered by this algorithm.
 
-    - ``vars`` - optional parameter with list of variables. This list
+    - ``vars`` -- optional parameter with list of variables. This list
       is used only if Fourier elimination is used. If omitted or if
       rational inequality is solved, then variables are determined
       automatically.

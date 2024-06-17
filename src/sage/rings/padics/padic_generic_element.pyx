@@ -12,7 +12,6 @@ AUTHORS:
 - David Harvey: doctests
 
 - Julian Rueth: fixes for exp() and log(), implemented gcd, xgcd
-
 """
 # ****************************************************************************
 #       Copyright (C) 2007-2013 David Roe <roed@math.harvard.edu>
@@ -4466,8 +4465,8 @@ def _findprec(c_1, c_2, c_3, p):
 
     INPUT:
 
-    - `c_1`, `c_2`, `c_3` - positive integers
-    - `p` - prime
+    - `c_1`, `c_2`, `c_3` -- positive integers
+    - `p` -- prime
 
     OUTPUT:
 
@@ -4514,6 +4513,7 @@ def _compute_g(p, n, prec, terms):
     for i in range(n):
         g[i+1] = -(g[i]/(v-v**2)).integral()
     return [x.truncate(terms) for x in g]
+
 
 cpdef dwork_mahler_coeffs(R, int bd=20):
     r"""
@@ -4617,9 +4617,9 @@ cpdef gauss_table(long long p, int f, int prec, bint use_longs):
 
     INPUT:
 
-    - ``p`` - prime
-    - ``f``, ``prec`` - positive integers
-    - ``use_longs`` - boolean; if ``True``, computations are done in C ``long long``
+    - ``p`` -- prime
+    - ``f``, ``prec`` -- positive integers
+    - ``use_longs`` -- boolean; if ``True``, computations are done in C ``long long``
         integers rather than Sage `p`-adics, and the results are returned
         as a Python array rather than a list.
 

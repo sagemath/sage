@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Magmas
 """
@@ -383,11 +384,11 @@ class Magmas(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: SymmetricGroup(1).algebra(QQ).is_field()                      # needs sage.groups
+                    sage: SymmetricGroup(1).algebra(QQ).is_field()                      # needs sage.combinat sage.groups
                     True
-                    sage: SymmetricGroup(1).algebra(ZZ).is_field()                      # needs sage.groups
+                    sage: SymmetricGroup(1).algebra(ZZ).is_field()                      # needs sage.combinat sage.groups
                     False
-                    sage: SymmetricGroup(2).algebra(QQ).is_field()                      # needs sage.groups
+                    sage: SymmetricGroup(2).algebra(QQ).is_field()                      # needs sage.combinat sage.groups
                     False
                 """
                 if not self.base_ring().is_field(proof):
@@ -845,22 +846,22 @@ class Magmas(Category_singleton):
 
             INPUT:
 
-            - ``names`` - the type of names used
+            - ``names`` -- the type of names used
 
-              * ``'letters'`` - lowercase ASCII letters are used
+              * ``'letters'`` -- lowercase ASCII letters are used
                 for a base 26 representation of the elements'
                 positions in the list given by
                 :meth:`~sage.matrix.operation_table.OperationTable.column_keys`,
                 padded to a common width with leading 'a's.
-              * ``'digits'`` - base 10 representation of the
+              * ``'digits'`` -- base 10 representation of the
                 elements' positions in the list given by
                 :meth:`~sage.matrix.operation_table.OperationTable.column_keys`,
                 padded to a common width with leading zeros.
-              * ``'elements'`` - the string representations
+              * ``'elements'`` -- the string representations
                 of the elements themselves.
               * a list - a list of strings, where the length
                 of the list equals the number of elements.
-            - ``elements`` - default = ``None``.  A list of
+            - ``elements`` -- default = ``None``.  A list of
               elements of the magma, in forms that can be
               coerced into the structure, eg. their string
               representations. This may be used to impose an
@@ -1141,9 +1142,9 @@ class Magmas(Category_singleton):
 
                 Here is a more elaborate example involving a sub algebra::
 
-                    sage: Z = SymmetricGroup(5).algebra(QQ).center()                    # needs sage.groups
-                    sage: B = Z.basis()                                                 # needs sage.groups
-                    sage: B[3] * B[2]                                                   # needs sage.groups
+                    sage: Z = SymmetricGroup(5).algebra(QQ).center()                    # needs sage.combinat sage.groups
+                    sage: B = Z.basis()                                                 # needs sage.combinat sage.groups
+                    sage: B[3] * B[2]                                                   # needs sage.combinat sage.groups
                     4*B[2] + 6*B[3] + 5*B[6]
                 """
                 assert x in self

@@ -638,7 +638,7 @@ class DiGraph(GenericGraph):
         """
         msg = ''
         GenericGraph.__init__(self)
-        from sage.structure.element import is_Matrix
+        from sage.structure.element import Matrix
 
         if sparse is False:
             if data_structure != "sparse":
@@ -671,7 +671,7 @@ class DiGraph(GenericGraph):
             format = 'dig6'
             if data[:8] == ">>dig6<<":
                 data = data[8:]
-        if format is None and is_Matrix(data):
+        if format is None and isinstance(data, Matrix):
             if data.is_square():
                 format = 'adjacency_matrix'
             else:
@@ -1556,8 +1556,8 @@ class DiGraph(GenericGraph):
         is an edge, then `vu` is an edge too), then obviously the cardinality of
         its feedback arc set is the number of edges in the first graph::
 
-            sage: cycle=graphs.CycleGraph(5)
-            sage: dcycle=DiGraph(cycle)
+            sage: cycle = graphs.CycleGraph(5)
+            sage: dcycle = DiGraph(cycle)
             sage: cycle.size()
             5
             sage: dcycle.feedback_edge_set(value_only=True)                             # needs sage.numerical.mip
@@ -2062,7 +2062,7 @@ class DiGraph(GenericGraph):
 
         .. SEEALSO::
 
-            :meth:`~DiGraph.reverse_edge` - Reverses a single edge.
+            :meth:`~DiGraph.reverse_edge` -- Reverses a single edge.
 
         EXAMPLES:
 
@@ -2167,7 +2167,7 @@ class DiGraph(GenericGraph):
 
         INPUT:
 
-        - ``v`` - either a single vertex or a list of vertices. If it is not
+        - ``v`` -- either a single vertex or a list of vertices. If it is not
           specified, then it is taken to be all vertices.
 
         - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
@@ -2176,31 +2176,31 @@ class DiGraph(GenericGraph):
         - ``algorithm`` -- string (default: ``None``); one of the following
           algorithms:
 
-          - ``'BFS'`` - the computation is done through a BFS centered on each
+          - ``'BFS'`` -- the computation is done through a BFS centered on each
             vertex successively. Works only if ``by_weight==False``.
 
-          - ``'Floyd-Warshall-Cython'`` - a Cython implementation of the
+          - ``'Floyd-Warshall-Cython'`` -- a Cython implementation of the
             Floyd-Warshall algorithm. Works only if ``by_weight==False`` and
             ``v is None`` or ``v`` should contain all vertices of ``self``.
 
-          - ``'Floyd-Warshall-Python'`` - a Python implementation of the
+          - ``'Floyd-Warshall-Python'`` -- a Python implementation of the
             Floyd-Warshall algorithm. Works also with weighted graphs, even with
             negative weights (but no negative cycle is allowed). However, ``v``
             must be ``None`` or ``v`` should contain all vertices of ``self``.
 
-          - ``'Dijkstra_NetworkX'`` - the Dijkstra algorithm, implemented in
+          - ``'Dijkstra_NetworkX'`` -- the Dijkstra algorithm, implemented in
             NetworkX. It works with weighted graphs, but no negative weight is
             allowed.
 
-          - ``'Dijkstra_Boost'`` - the Dijkstra algorithm, implemented in Boost
+          - ``'Dijkstra_Boost'`` -- the Dijkstra algorithm, implemented in Boost
             (works only with positive weights).
 
-          - ``'Johnson_Boost'`` - the Johnson algorithm, implemented in
+          - ``'Johnson_Boost'`` -- the Johnson algorithm, implemented in
             Boost (works also with negative weights, if there is no negative
             cycle). Works only if ``v is None`` or ``v`` should contain all
             vertices of ``self``.
 
-          - ``'From_Dictionary'`` - uses the (already computed) distances, that
+          - ``'From_Dictionary'`` -- uses the (already computed) distances, that
             are provided by input variable ``dist_dict``.
 
           - ``None`` (default): Sage chooses the best algorithm:
@@ -2771,7 +2771,7 @@ class DiGraph(GenericGraph):
           maximum length of the enumerated paths. If set to ``None``, then all
           lengths are allowed.
 
-        - ``trivial`` - boolean (default: ``False``); if set to ``True``, then
+        - ``trivial`` -- boolean (default: ``False``); if set to ``True``, then
           the empty paths are also enumerated.
 
         - ``remove_acyclic_edges`` -- boolean (default: ``True``); whether
@@ -2891,7 +2891,7 @@ class DiGraph(GenericGraph):
           maximum length of the enumerated paths. If set to ``None``, then all
           lengths are allowed.
 
-        - ``trivial`` - boolean (default: ``False``); if set to ``True``, then
+        - ``trivial`` -- boolean (default: ``False``); if set to ``True``, then
           the empty paths are also enumerated.
 
         OUTPUT:
@@ -3038,7 +3038,7 @@ class DiGraph(GenericGraph):
           maximum length of the enumerated paths. If set to ``None``, then all
           lengths are allowed.
 
-        - ``trivial`` - boolean (default: ``False``); if set to ``True``, then
+        - ``trivial`` -- boolean (default: ``False``); if set to ``True``, then
           the empty paths are also enumerated.
 
         OUTPUT:
@@ -3170,9 +3170,9 @@ class DiGraph(GenericGraph):
         EXAMPLES::
 
             sage: Q = DiGraph({1: {2: ['a', 'c']}, 2: {3: ['b']}})
-            sage: F = Q.path_semigroup(); F
+            sage: F = Q.path_semigroup(); F                                             # needs sage.libs.flint
             Partial semigroup formed by the directed paths of Multi-digraph on 3 vertices
-            sage: list(F)
+            sage: list(F)                                                               # needs sage.libs.flint
             [e_1, e_2, e_3, a, c, b, a*b, c*b]
 
         """
@@ -3663,7 +3663,7 @@ class DiGraph(GenericGraph):
           ``self.edges()``; so, if ``self.edges()`` outputs an edge in the form
           ``(1, 3, None)``, then ``(1, 3)`` will not do!
 
-        - ``ends`` -- (optional, default: ``(self.sources(), self.sinks())``) a
+        - ``ends`` -- (default: ``(self.sources(), self.sinks())``) a
           pair `(S, T)` of an iterable `S` and an iterable `T`.
 
         - ``backend`` -- string or ``None`` (default); the backend to use;

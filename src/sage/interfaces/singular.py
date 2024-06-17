@@ -12,16 +12,16 @@ The Singular interface will only work if Singular is installed on
 your computer; this should be the case, since Singular is included
 with Sage. The interface offers three pieces of functionality:
 
-#. ``singular_console()`` - A function that dumps you
+#. ``singular_console()`` -- A function that dumps you
    into an interactive command-line Singular session.
 
-#. ``singular(expr, type='def')`` - Creation of a
+#. ``singular(expr, type='def')`` -- Creation of a
    Singular object. This provides a Pythonic interface to Singular.
    For example, if ``f=singular(10)``, then
    ``f.factorize()`` returns the factorization of
    `10` computed using Singular.
 
-#. ``singular.eval(expr)`` - Evaluation of arbitrary
+#. ``singular.eval(expr)`` -- Evaluation of arbitrary
    Singular expressions, with the result returned as a string.
 
 Of course, there are polynomial rings and ideals in Sage as well
@@ -322,7 +322,6 @@ AUTHORS:
 - Simon King (2011-06-06): Make conversion from Singular to Sage more flexible.
 
 - Simon King (2015): Extend pickling capabilities.
-
 """
 
 # ****************************************************************************
@@ -580,12 +579,12 @@ class Singular(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``x`` - string (of code)
+        -  ``x`` -- string (of code)
 
-        -  ``allow_semicolon`` - default: False; if False then
+        -  ``allow_semicolon`` -- default: ``False``; if False then
            raise a :class:`TypeError` if the input line contains a semicolon.
 
-        -  ``strip`` - ignored
+        -  ``strip`` -- ignored
 
         EXAMPLES::
 
@@ -883,7 +882,7 @@ class Singular(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``gens`` - list or tuple of Singular objects (or
+        -  ``gens`` -- list or tuple of Singular objects (or
            objects that can be made into Singular objects via evaluation)
 
 
@@ -1484,10 +1483,10 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         INPUT:
 
 
-        -  ``n`` - an integer *or* a 2-tuple (for setting
+        -  ``n`` -- an integer *or* a 2-tuple (for setting
            matrix elements)
 
-        -  ``value`` - anything (is coerced to a Singular
+        -  ``value`` -- anything (is coerced to a Singular
            object if it is not one already)
 
 
@@ -1713,13 +1712,13 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         INPUT:
 
 
-        -  ``R`` - (default: None); an optional polynomial ring.
+        -  ``R`` -- (default: None); an optional polynomial ring.
            If it is provided, then you have to make sure that it
            matches the current singular ring as, e.g., returned by
            singular.current_ring(). By default, the output of
            :meth:`sage_global_ring` is used.
 
-        -  ``kcache`` - (default: None); an optional dictionary
+        -  ``kcache`` -- (default: None); an optional dictionary
            for faster finite field lookups, this is mainly useful for finite
            extension fields
 
@@ -1922,11 +1921,11 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
 
         INPUT:
 
-        -  ``R`` - (default: None); an optional ring, over which
+        -  ``R`` -- (default: None); an optional ring, over which
            the resulting matrix is going to be defined.
            By default, the output of :meth:`sage_global_ring` is used.
 
-        - ``sparse`` - (default: True); determines whether the
+        - ``sparse`` -- (default: ``True``); determines whether the
           resulting matrix is sparse or not.
 
         EXAMPLES::
@@ -1940,19 +1939,19 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             [0.0 0.0]
             [0.0 0.0]
         """
-        from sage.matrix.constructor import Matrix
+        from sage.matrix.constructor import matrix
         nrows, ncols = int(self.nrows()), int(self.ncols())
 
         if R is None:
             R = self.sage_global_ring()
-            A = Matrix(R, nrows, ncols, sparse=sparse)
+            A = matrix(R, nrows, ncols, sparse=sparse)
             # this is slow
             for x in range(nrows):
                 for y in range(ncols):
                     A[x, y] = self[x + 1, y + 1].sage_poly(R)
             return A
 
-        A = Matrix(R, nrows, ncols, sparse=sparse)
+        A = matrix(R, nrows, ncols, sparse=sparse)
         # this is slow
         for x in range(nrows):
             for y in range(ncols):
@@ -2242,9 +2241,9 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         INPUT:
 
 
-        -  ``name`` - string to choose the attribute
+        -  ``name`` -- string to choose the attribute
 
-        -  ``value`` - boolean value or None for reading,
+        -  ``value`` -- boolean value or None for reading,
            (default:None)
 
 
@@ -2417,7 +2416,7 @@ def get_docstring(name):
 
     INPUT:
 
-    - ``name`` - a Singular function name
+    - ``name`` -- a Singular function name
 
     EXAMPLES::
 
@@ -2519,7 +2518,7 @@ class SingularGBLogPrettyPrinter:
 
         INPUT:
 
-        - ``verbosity`` - how much information should be printed
+        - ``verbosity`` -- how much information should be printed
           (between 0 and 3)
 
         EXAMPLES::
@@ -2672,7 +2671,7 @@ class SingularGBDefaultContext:
 
         INPUT:
 
-        -  ``singular`` - Singular instance (default: default instance)
+        -  ``singular`` -- Singular instance (default: default instance)
 
         EXAMPLES::
 

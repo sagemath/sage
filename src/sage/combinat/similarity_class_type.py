@@ -203,7 +203,7 @@ from sage.rings.fraction_field import FractionField
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
-from sage.structure.element import Element, is_Matrix
+from sage.structure.element import Element, Matrix
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -807,7 +807,7 @@ class SimilarityClassType(CombinatorialElement):
             sage: tau.parent().size()
             24
         """
-        if is_Matrix(tau):
+        if isinstance(tau, Matrix):
             n = tau.nrows()
             F = tau.base_ring()
             R = PolynomialRing(F, 't')

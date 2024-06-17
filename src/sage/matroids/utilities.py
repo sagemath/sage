@@ -493,7 +493,7 @@ def lift_cross_ratios(A, lift_map=None):
     INPUT:
 
     - ``A`` -- a matrix over a ring ``source_ring``.
-    - ``lift_map`` -- a python dictionary, mapping each cross ratio of ``A`` to some element
+    - ``lift_map`` -- a Python dictionary, mapping each cross ratio of ``A`` to some element
       of a target ring, and such that ``lift_map[source_ring(1)] = target_ring(1)``.
 
     OUTPUT:
