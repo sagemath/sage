@@ -1514,7 +1514,7 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
 
     def __repr__(self):
         r"""
-        A string to describe self.
+        A string to describe ``self``.
 
         EXAMPLES::
 

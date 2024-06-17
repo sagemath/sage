@@ -41,7 +41,7 @@ from sage.algebras.quantum_groups.q_numbers import q_factorial
 
 class FockSpaceOptions(GlobalOptions):
     r"""
-    Sets and displays the global options for elements of the Fock
+    Set and display the global options for elements of the Fock
     space classes.  If no parameters are set, then the function
     returns a copy of the options dictionary.
 

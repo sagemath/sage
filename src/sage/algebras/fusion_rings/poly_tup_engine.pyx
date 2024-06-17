@@ -259,7 +259,7 @@ cpdef list get_variables_degrees(list eqns, int nvars):
 
 cpdef list variables(tuple eq_tup):
     """
-    Return indices of all variables appearing in eq_tup.
+    Return indices of all variables appearing in ``eq_tup``.
 
     EXAMPLES::
 

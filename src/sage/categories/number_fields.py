@@ -140,14 +140,15 @@ class NumberFields(Category_singleton):
 
             - ``max_asymp_coeffs`` -- integer (default: 40)
 
-            - ``algorithm`` -- (default: ``'pari'``) either 'gp' or 'pari'
+            - ``algorithm`` -- (default: ``'pari'``) either ``'gp'`` or
+              ``'pari'``
 
             OUTPUT: the zeta function of this number field
 
-            If algorithm is 'gp', this returns an interface to Tim
+            If algorithm is ``'gp'``, this returns an interface to Tim
             Dokchitser's gp script for computing with L-functions.
 
-            If algorithm is 'pari', this returns instead an interface to Pari's
+            If algorithm is ``'pari'``, this returns instead an interface to Pari's
             own general implementation of L-functions.
 
             EXAMPLES::

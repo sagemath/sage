@@ -1413,7 +1413,7 @@ class SkewPartitions(UniqueRepresentation, Parent):
     # add options to class
     class options(GlobalOptions):
         """
-        Sets and displays the options for elements of the skew partition
+        Set and display the options for elements of the skew partition
         classes.  If no parameters are set, then the function returns a copy of
         the options dictionary.
 

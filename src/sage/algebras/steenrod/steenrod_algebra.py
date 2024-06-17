@@ -680,7 +680,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
     def prime(self):
         r"""
-        The prime associated to self.
+        The prime associated to ``self``.
 
         EXAMPLES::
 
@@ -693,7 +693,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
     def basis_name(self):
         r"""
-        The basis name associated to self.
+        The basis name associated to ``self``.
 
         EXAMPLES::
 
@@ -3130,7 +3130,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         """
         def prime(self):
             """
-            The prime associated to self.
+            The prime associated to ``self``.
 
             EXAMPLES::
 
@@ -3149,7 +3149,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         def basis_name(self):
             """
-            The basis name associated to self.
+            The basis name associated to ``self``.
 
             EXAMPLES::
 

@@ -1974,7 +1974,7 @@ class QuiverMutationType_Reducible(QuiverMutationType_abstract):
         INPUT:
 
         - ``data`` -- list; each of whose entries is a
-          ``QuiverMutationType_Irreducible``
+          :class:`QuiverMutationType_Irreducible`
 
         EXAMPLES::
 

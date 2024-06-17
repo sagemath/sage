@@ -307,16 +307,13 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
         """
         Define ``self`` to be equal to the combinatorial species ``x``.
 
-        This is
-        used to define combinatorial species recursively. All of the real
-        work is done by calling the .set() method for each of the series
-        associated to self.
+        This is used to define combinatorial species recursively. All of the
+        real work is done by calling the ``.set()`` method for each of the
+        series associated to ``self``.
 
-        EXAMPLES: The species of linear orders L can be recursively defined
+        EXAMPLES: The species of linear orders `L` can be recursively defined
         by `L = 1 + X*L` where 1 represents the empty set species
-        and X represents the singleton species.
-
-        ::
+        and `X` represents the singleton species::
 
             sage: X = species.SingletonSpecies()
             sage: E = species.EmptySetSpecies()

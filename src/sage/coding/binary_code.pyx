@@ -1689,7 +1689,7 @@ cdef class PartitionStack:
 
     def print_data(self):
         """
-        Print all data for self.
+        Print all data for ``self``.
 
         EXAMPLES::
 

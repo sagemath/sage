@@ -5289,7 +5289,7 @@ class Permutation(CombinatorialElement):
         - ``other`` -- a permutation, a list, a tuple, or any iterable
           representing a permutation
 
-        - ``side`` -- (default: ``'right'``) the string "left" or "right"
+        - ``side`` -- string (default: ``'right'``); ``'left'`` or ``'right'``
 
         OUTPUT:
 

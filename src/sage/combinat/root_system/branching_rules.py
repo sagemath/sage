@@ -1175,7 +1175,7 @@ class BranchingRule(SageObject):
 
     def describe(self, verbose=False, debug=False, no_r=False):
         r"""
-        Describes how extended roots restrict under self.
+        Describe how extended roots restrict under ``self``.
 
         EXAMPLES::
 

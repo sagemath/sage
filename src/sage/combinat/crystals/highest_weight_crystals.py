@@ -309,8 +309,8 @@ class FiniteDimensionalHighestWeightCrystal_TypeE(TensorProductOfCrystals):
 
     def module_generator(self):
         """
-        This yields the module generator (or highest weight element) of the classical
-        crystal of given dominant weight in self.
+        Yield the module generator (or highest weight element) of the classical
+        crystal of given dominant weight in ``self``.
 
         EXAMPLES::
 

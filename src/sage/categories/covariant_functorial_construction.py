@@ -216,7 +216,7 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
-            sage: E = CombinatorialFreeModule(QQ, ["a", "b", "c"]); E.rename("E")       # needs sage.modules
+            sage: E = CombinatorialFreeModule(QQ, ["a", "b", "c"]); E.rename('E')       # needs sage.modules
             sage: tensor((E, E, E))                                                     # needs sage.modules
             E # E # E
         """

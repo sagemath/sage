@@ -1554,7 +1554,7 @@ class Sets(Category_singleton):
             EXAMPLES::
 
                 sage: C = AlgebrasWithBasis(QQ)
-                sage: A = C.example(); A.rename("A")                                    # needs sage.combinat sage.modules
+                sage: A = C.example(); A.rename('A')                                    # needs sage.combinat sage.modules
                 sage: A.cartesian_product(A, A)                                         # needs sage.combinat sage.modules
                 A (+) A (+) A
                 sage: ZZ.cartesian_product(GF(2), FiniteEnumeratedSet([1,2,3]))
@@ -2590,8 +2590,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 EXAMPLES::
 
                     sage: # needs sage.modules
-                    sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.rename("F")
-                    sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename("G")
+                    sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.rename('F')
+                    sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename('G')
                     sage: S = cartesian_product([F, G])
                     sage: x = (S.monomial((0,4)) + 2 * S.monomial((0,5))
                     ....:      + 3 * S.monomial((1,6)))
@@ -2609,9 +2609,9 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 EXAMPLES::
 
                     sage: # needs sage.modules
-                    sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.rename("F")
-                    sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename("G")
-                    sage: H = CombinatorialFreeModule(ZZ, [4,7]); H.rename("H")
+                    sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.rename('F')
+                    sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename('G')
+                    sage: H = CombinatorialFreeModule(ZZ, [4,7]); H.rename('H')
                     sage: S = cartesian_product([F, G, H])
                     sage: x = (S.monomial((0,4)) + 2 * S.monomial((0,5))
                     ....:      + 3 * S.monomial((1,6)) + 4 * S.monomial((2,4))

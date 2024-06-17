@@ -408,7 +408,7 @@ class TensorProductOfCrystals(CrystalOfWords):
     # add options to class
     class options(GlobalOptions):
         r"""
-        Sets the global options for tensor products of crystals. The default is to
+        Set the global options for tensor products of crystals. The default is to
         use the anti-Kashiwara convention.
 
         There are two conventions for how `e_i` and `f_i` act on tensor products,

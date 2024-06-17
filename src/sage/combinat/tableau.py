@@ -5546,7 +5546,7 @@ class Tableaux(UniqueRepresentation, Parent):
     # add options to class
     class options(GlobalOptions):
         r"""
-        Sets the global options for elements of the tableau, skew_tableau,
+        Set the global options for elements of the tableau, skew_tableau,
         and tableau tuple classes. The defaults are for tableau to be
         displayed as a list, latexed as a Young diagram using the English
         convention.

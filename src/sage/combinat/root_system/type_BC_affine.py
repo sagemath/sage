@@ -242,7 +242,7 @@ class CartanType(CartanType_standard_affine):
 
     def classical(self):
         """
-        Return the classical Cartan type associated with self.
+        Return the classical Cartan type associated with ``self``.
 
             sage: CartanType(["BC", 3, 2]).classical()
             ['C', 3]

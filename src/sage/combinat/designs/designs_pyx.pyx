@@ -952,15 +952,15 @@ _OA_cache[0].max_true = -1
 _OA_cache[1].max_true = -1
 _OA_cache_size = 2
 
-cpdef _OA_cache_set(int k,int n,truth_value):
+cpdef _OA_cache_set(int k, int n, truth_value):
     r"""
-    Sets a value in the OA cache of existence results.
+    Set a value in the OA cache of existence results.
 
     INPUT:
 
     - ``k``, ``n`` -- integers
 
-    - ``truth_value`` -- one of ``True,False,Unknown``
+    - ``truth_value`` -- one of ``True``, ``False``, ``Unknown``
     """
     global _OA_cache, _OA_cache_size
     cdef int i
@@ -989,7 +989,7 @@ cpdef _OA_cache_set(int k,int n,truth_value):
 
 cpdef _OA_cache_get(int k,int n):
     r"""
-    Gets a value from the OA cache of existence results.
+    Get a value from the OA cache of existence results.
 
     INPUT:
 

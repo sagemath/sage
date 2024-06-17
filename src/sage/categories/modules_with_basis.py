@@ -68,8 +68,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
     Let `X` and `Y` be two modules with basis. We can build `Hom(X,Y)`::
 
-        sage: X = CombinatorialFreeModule(QQ, [1,2]); X.rename("X")                     # needs sage.modules
-        sage: Y = CombinatorialFreeModule(QQ, [3,4]); Y.rename("Y")                     # needs sage.modules
+        sage: X = CombinatorialFreeModule(QQ, [1,2]); X.rename('X')                     # needs sage.modules
+        sage: Y = CombinatorialFreeModule(QQ, [3,4]); Y.rename('Y')                     # needs sage.modules
         sage: H = Hom(X, Y); H                                                          # needs sage.modules
         Set of Morphisms from X to Y
          in Category of finite dimensional vector spaces with basis over Rational Field
@@ -283,7 +283,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
               As a shorthand, one may use ``unitriangular="lower"``
               for ``triangular='lower', unitriangular=True``.
 
-            - ``side`` -- "left" or "right" (default: ``'left'``);
+            - ``side`` -- ``'left'`` or ``'right'`` (default: ``'left'``);
               only meaningful for a morphism built from a matrix
 
             EXAMPLES:
@@ -301,8 +301,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             ::
 
                 sage: # needs sage.modules
-                sage: X = CombinatorialFreeModule(QQ, [1,2,3]);   X.rename("X")
-                sage: Y = CombinatorialFreeModule(QQ, [1,2,3,4]); Y.rename("Y")
+                sage: X = CombinatorialFreeModule(QQ, [1,2,3]);   X.rename('X')
+                sage: Y = CombinatorialFreeModule(QQ, [1,2,3,4]); Y.rename('Y')
                 sage: def f(i):
                 ....:     return Y.monomial(i) + 2*Y.monomial(i+1)
                 sage: phi = X.module_morphism(f, codomain=Y)
@@ -436,7 +436,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             and `Y` have the same index set `I`::
 
                 sage: # needs sage.modules
-                sage: X = CombinatorialFreeModule(ZZ, [1, 2, 3]); X.rename("X")
+                sage: X = CombinatorialFreeModule(ZZ, [1, 2, 3]); X.rename('X')
                 sage: from sage.arith.misc import factorial
                 sage: phi = X.module_morphism(diagonal=factorial, codomain=X)
                 sage: x = X.basis()
@@ -450,9 +450,9 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             and `Y` is `m`::
 
                 sage: # needs sage.modules
-                sage: X = CombinatorialFreeModule(ZZ, [1,2,3]); X.rename("X")
+                sage: X = CombinatorialFreeModule(ZZ, [1,2,3]); X.rename('X')
                 sage: x = X.basis()
-                sage: Y = CombinatorialFreeModule(ZZ, [3,4]); Y.rename("Y")
+                sage: Y = CombinatorialFreeModule(ZZ, [3,4]); Y.rename('Y')
                 sage: y = Y.basis()
                 sage: m = matrix([[0,1,2], [3,5,0]])
                 sage: phi = X.module_morphism(matrix=m, codomain=Y)
@@ -472,8 +472,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: # needs sage.modules
                 sage: I = list(range(1, 200))
-                sage: X = CombinatorialFreeModule(QQ, I); X.rename("X"); x = X.basis()
-                sage: Y = CombinatorialFreeModule(QQ, I); Y.rename("Y"); y = Y.basis()
+                sage: X = CombinatorialFreeModule(QQ, I); X.rename('X'); x = X.basis()
+                sage: Y = CombinatorialFreeModule(QQ, I); Y.rename('Y'); y = Y.basis()
                 sage: f = Y.sum_of_monomials * divisors
                 sage: phi = X.module_morphism(f, triangular='upper', codomain=Y)
                 sage: phi(x[2])
@@ -525,7 +525,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             TESTS::
 
-                sage: X = CombinatorialFreeModule(ZZ, [1,2,3]); X.rename("X")           # needs sage.modules
+                sage: X = CombinatorialFreeModule(ZZ, [1,2,3]); X.rename('X')           # needs sage.modules
                 sage: phi = X.module_morphism(codomain=X)                               # needs sage.modules
                 Traceback (most recent call last):
                 ...
@@ -534,7 +534,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             ::
 
-                sage: X = CombinatorialFreeModule(ZZ, [1,2,3]); X.rename("X")           # needs sage.modules
+                sage: X = CombinatorialFreeModule(ZZ, [1,2,3]); X.rename('X')           # needs sage.modules
                 sage: phi = X.module_morphism(diagonal=factorial, matrix=matrix(),      # needs sage.modules
                 ....:                         codomain=X)
                 Traceback (most recent call last):
@@ -544,7 +544,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             ::
 
-                sage: X = CombinatorialFreeModule(ZZ, [1,2,3]); X.rename("X")           # needs sage.modules
+                sage: X = CombinatorialFreeModule(ZZ, [1,2,3]); X.rename('X')           # needs sage.modules
                 sage: phi = X.module_morphism(matrix=factorial, codomain=X)             # needs sage.modules
                 Traceback (most recent call last):
                 ...
@@ -552,7 +552,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             ::
 
-                sage: X = CombinatorialFreeModule(ZZ, [1,2,3]); X.rename("X")           # needs sage.modules
+                sage: X = CombinatorialFreeModule(ZZ, [1,2,3]); X.rename('X')           # needs sage.modules
                 sage: phi = X.module_morphism(diagonal=3, codomain=X)                   # needs sage.modules
                 Traceback (most recent call last):
                 ...
@@ -597,7 +597,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 Free module generated by {1, 2, 3} over Rational Field
                 sage: C._name = "foobar"; C
                 foobar over Rational Field
-                sage: C.rename("barfoo"); C
+                sage: C.rename('barfoo'); C
                 barfoo
 
                 sage: class FooBar(Parent):
@@ -981,7 +981,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             EXAMPLES::
 
                 sage: C = AlgebrasWithBasis(QQ)
-                sage: A = C.example(); A.rename("A")                                    # needs sage.combinat sage.modules
+                sage: A = C.example(); A.rename('A')                                    # needs sage.combinat sage.modules
                 sage: A.tensor(A, A)                                                    # needs sage.combinat sage.modules
                 A # A # A
                 sage: A.rename(None)                                                    # needs sage.combinat sage.modules
@@ -1781,7 +1781,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: X = CombinatorialFreeModule(QQ, [1,2,3,4]); X.rename("X")         # needs sage.modules
+                sage: X = CombinatorialFreeModule(QQ, [1,2,3,4]); X.rename('X')         # needs sage.modules
                 sage: X.monomial(2).support_of_term()                                   # needs sage.modules
                 2
                 sage: X.term(3, 2).support_of_term()                                    # needs sage.modules
@@ -1813,7 +1813,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: # needs sage.modules
                 sage: X = CombinatorialFreeModule(QQ, [1, 2, 3])
-                sage: X.rename("X"); x = X.basis()
+                sage: X.rename('X'); x = X.basis()
                 sage: x = 3*X.monomial(1) + 2*X.monomial(2) + 4*X.monomial(3)
                 sage: x.leading_support()
                 3
@@ -1848,7 +1848,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             EXAMPLES::
 
                 sage: # needs sage.modules
-                sage: X = CombinatorialFreeModule(QQ, [1, 2, 3]); X.rename("X")
+                sage: X = CombinatorialFreeModule(QQ, [1, 2, 3]); X.rename('X')
                 sage: x = 3*X.monomial(1) + 2*X.monomial(2) + 4*X.monomial(3)
                 sage: x.leading_item()
                 (3, 4)
@@ -1878,7 +1878,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             EXAMPLES::
 
                 sage: # needs sage.modules
-                sage: X = CombinatorialFreeModule(QQ, [1, 2, 3]); X.rename("X")
+                sage: X = CombinatorialFreeModule(QQ, [1, 2, 3]); X.rename('X')
                 sage: x = 3*X.monomial(1) + 2*X.monomial(2) + X.monomial(3)
                 sage: x.leading_monomial()
                 B[3]
@@ -1907,7 +1907,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             EXAMPLES::
 
                 sage: # needs sage.modules
-                sage: X = CombinatorialFreeModule(QQ, [1, 2, 3]); X.rename("X")
+                sage: X = CombinatorialFreeModule(QQ, [1, 2, 3]); X.rename('X')
                 sage: x = 3*X.monomial(1) + 2*X.monomial(2) + X.monomial(3)
                 sage: x.leading_coefficient()
                 1
@@ -1936,7 +1936,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             EXAMPLES::
 
                 sage: # needs sage.modules
-                sage: X = CombinatorialFreeModule(QQ, [1, 2, 3]); X.rename("X")
+                sage: X = CombinatorialFreeModule(QQ, [1, 2, 3]); X.rename('X')
                 sage: x = 3*X.monomial(1) + 2*X.monomial(2) + X.monomial(3)
                 sage: x.leading_term()
                 B[3]
@@ -1962,7 +1962,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: X = CombinatorialFreeModule(QQ, [1, 2, 3]); X.rename("X")         # needs sage.modules
+                sage: X = CombinatorialFreeModule(QQ, [1, 2, 3]); X.rename('X')         # needs sage.modules
                 sage: x = 3*X.monomial(1) + 2*X.monomial(2) + 4*X.monomial(3)           # needs sage.modules
                 sage: x.trailing_support()                                              # needs sage.modules
                 1
@@ -1993,7 +1993,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             EXAMPLES::
 
                 sage: # needs sage.modules
-                sage: X = CombinatorialFreeModule(QQ, [1, 2, 3]); X.rename("X")
+                sage: X = CombinatorialFreeModule(QQ, [1, 2, 3]); X.rename('X')
                 sage: x = 3*X.monomial(1) + 2*X.monomial(2) + X.monomial(3)
                 sage: x.trailing_item()
                 (1, 3)
@@ -2023,7 +2023,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             EXAMPLES::
 
                 sage: # needs sage.modules
-                sage: X = CombinatorialFreeModule(QQ, [1, 2, 3]); X.rename("X")
+                sage: X = CombinatorialFreeModule(QQ, [1, 2, 3]); X.rename('X')
                 sage: x = 3*X.monomial(1) + 2*X.monomial(2) + X.monomial(3)
                 sage: x.trailing_monomial()
                 B[1]
@@ -2052,7 +2052,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             EXAMPLES::
 
                 sage: # needs sage.modules
-                sage: X = CombinatorialFreeModule(QQ, [1, 2, 3]); X.rename("X")
+                sage: X = CombinatorialFreeModule(QQ, [1, 2, 3]); X.rename('X')
                 sage: x = 3*X.monomial(1) + 2*X.monomial(2) + X.monomial(3)
                 sage: x.trailing_coefficient()
                 3
@@ -2081,7 +2081,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             EXAMPLES::
 
                 sage: # needs sage.modules
-                sage: X = CombinatorialFreeModule(QQ, [1, 2, 3]); X.rename("X")
+                sage: X = CombinatorialFreeModule(QQ, [1, 2, 3]); X.rename('X')
                 sage: x = 3*X.monomial(1) + 2*X.monomial(2) + X.monomial(3)
                 sage: x.trailing_term()
                 3*B[1]
@@ -2328,8 +2328,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 EXAMPLES::
 
                     sage: # needs sage.modules
-                    sage: X = CombinatorialFreeModule(QQ, [1,2,3]);   X.rename("X")
-                    sage: Y = CombinatorialFreeModule(QQ, [1,2,3,4]); Y.rename("Y")
+                    sage: X = CombinatorialFreeModule(QQ, [1,2,3]);   X.rename('X')
+                    sage: Y = CombinatorialFreeModule(QQ, [1,2,3,4]); Y.rename('Y')
                     sage: H = Hom(X, Y)
                     sage: x = X.basis()
                     sage: def on_basis(i):
@@ -2345,9 +2345,9 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 Diagonal functions can be constructed using the ``diagonal`` option::
 
                     sage: # needs sage.modules
-                    sage: X = CombinatorialFreeModule(QQ, [1,2,3,4]); X.rename("X")
+                    sage: X = CombinatorialFreeModule(QQ, [1,2,3,4]); X.rename('X')
                     sage: Y = CombinatorialFreeModule(QQ, [1,2,3,4],
-                    ....:                             key='Y'); Y.rename("Y")
+                    ....:                             key='Y'); Y.rename('Y')
                     sage: H = Hom(X, Y)
                     sage: x = X.basis()
                     sage: phi = H(diagonal=lambda x: x^2)
@@ -2368,8 +2368,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 We check that the homset category is properly set up::
 
                     sage: # needs sage.modules
-                    sage: X = CombinatorialFreeModule(QQ, [1,2,3]);   X.rename("X")
-                    sage: Y = CombinatorialFreeModule(QQ, [1,2,3,4]); Y.rename("Y")
+                    sage: X = CombinatorialFreeModule(QQ, [1,2,3]);   X.rename('X')
+                    sage: Y = CombinatorialFreeModule(QQ, [1,2,3,4]); Y.rename('Y')
                     sage: H = Hom(X, Y)
                     sage: H.zero().category_for()
                     Category of finite dimensional vector spaces with basis over Rational Field
@@ -2391,8 +2391,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             EXAMPLES::
 
                 sage: # needs sage.modules
-                sage: X = CombinatorialFreeModule(QQ, [1,2,3]);   X.rename("X")
-                sage: Y = CombinatorialFreeModule(QQ, [1,2,3,4]); Y.rename("Y")
+                sage: X = CombinatorialFreeModule(QQ, [1,2,3]);   X.rename('X')
+                sage: Y = CombinatorialFreeModule(QQ, [1,2,3,4]); Y.rename('Y')
                 sage: H = Hom(X, Y)
                 sage: x = X.basis()
                 sage: f = H(lambda x: Y.zero()).on_basis()
@@ -2417,7 +2417,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: X = CombinatorialFreeModule(QQ, [1,2,3]); X.rename("X")           # needs sage.modules
+                sage: X = CombinatorialFreeModule(QQ, [1,2,3]); X.rename('X')           # needs sage.modules
                 sage: phi = End(X)(lambda x: 2*x)                                       # needs sage.modules
                 sage: phi._on_basis(3)                                                  # needs sage.modules
                 2*B[3]
@@ -2528,9 +2528,9 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
                     sage: # needs sage.modules
                     sage: A = CombinatorialFreeModule(ZZ, [1,2], prefix='A')
-                    sage: A.rename("A")
+                    sage: A.rename('A')
                     sage: B = CombinatorialFreeModule(ZZ, [3,4], prefix='B')
-                    sage: B.rename("B")
+                    sage: B.rename('B')
 
                 and `f` the bilinear morphism `(a,b) \mapsto b \otimes a`
                 from `A \times B` to `B \otimes A`::
@@ -2581,7 +2581,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
                     sage: # needs sage.modules
                     sage: C = CombinatorialFreeModule(QQ, [(1,3),(2,4)], prefix='C')
-                    sage: C.rename("C")
+                    sage: C.rename('C')
                     sage: def f(a, b):
                     ....:     return C.sum_of_terms([((1,3), QQ(a[1]*b[3])),
                     ....:                            ((2,4), QQ(a[2]*b[4]))])

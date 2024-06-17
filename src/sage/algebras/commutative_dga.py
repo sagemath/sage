@@ -934,7 +934,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
         - ``base`` -- the base ring of the algebra
 
         - ``names`` -- the names of the variables; by default, set to ``x1``,
-          ``x2``, etc
+          ``x2``, etc.
 
         - ``degrees`` -- the degrees of the generators; by default, set to 1
 
@@ -2528,8 +2528,8 @@ class DifferentialGCAlgebra(GCAlgebra):
 
     def minimal_model(self, i=3, max_iterations=3, partial_result=False):
         r"""
-        Try to compute a map from a ``i``-minimal gcda that is a
-        ``i``-quasi-isomorphism to self.
+        Try to compute a map from a `i`-minimal gcda that is a
+        `i`-quasi-isomorphism to ``self``.
 
         INPUT:
 

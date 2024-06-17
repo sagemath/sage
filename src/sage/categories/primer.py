@@ -1114,8 +1114,8 @@ algebraic structure. This includes:
 Let for example `A` and `B` be two parents, and let us construct the
 Cartesian product `A \times B \times B`::
 
-    sage: A = AlgebrasWithBasis(QQ).example();     A.rename("A")                        # needs sage.combinat sage.modules
-    sage: B = HopfAlgebrasWithBasis(QQ).example(); B.rename("B")                        # needs sage.groups sage.modules
+    sage: A = AlgebrasWithBasis(QQ).example();     A.rename('A')                        # needs sage.combinat sage.modules
+    sage: B = HopfAlgebrasWithBasis(QQ).example(); B.rename('B')                        # needs sage.groups sage.modules
     sage: C = cartesian_product([A, B, B]); C                                           # needs sage.combinat sage.groups sage.modules
     A (+) B (+) B
 

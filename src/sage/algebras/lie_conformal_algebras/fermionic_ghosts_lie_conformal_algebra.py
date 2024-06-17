@@ -74,7 +74,7 @@ class FermionicGhostsLieConformalAlgebra(GradedLieConformalAlgebra):
     """
     def __init__(self,R,ngens=2,names=None,index_set=None):
         """
-        Initialize self.
+        Initialize ``self``.
 
         TESTS::
 

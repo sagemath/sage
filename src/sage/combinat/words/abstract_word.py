@@ -587,7 +587,7 @@ class Word_class(SageObject):
     def _to_integer_iterator(self, use_parent_alphabet=False):
         r"""
         Return an iterator over the letters of an integer representation of
-        self.
+        ``self``.
 
         INPUT:
 
@@ -724,7 +724,7 @@ class Word_class(SageObject):
 
     def apply_morphism(self, morphism):
         r"""
-        Return the word obtained by applying the morphism to self.
+        Return the word obtained by applying the morphism to ``self``.
 
         INPUT:
 

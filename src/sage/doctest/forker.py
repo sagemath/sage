@@ -470,7 +470,7 @@ class SageSpoofInOut(SageObject):
 
     def getvalue(self):
         r"""
-        Gets the value that has been printed to ``outfile`` since the
+        Get the value that has been printed to ``outfile`` since the
         last time this function was called.
 
         EXAMPLES::

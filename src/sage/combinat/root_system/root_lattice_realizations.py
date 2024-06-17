@@ -476,7 +476,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             if not hasattr(self,"_simple_roots"):
                 self._simple_roots = Family(self.index_set(), self.simple_root)
                 # Should we use rename to set a nice name for this family?
-                # self._simple_roots.rename("alpha")
+                # self._simple_roots.rename('alpha')
                 # This break some doctests
             return self._simple_roots
 
@@ -1288,7 +1288,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             if not hasattr(self,"cache_simple_coroots"):
                 self.cache_simple_coroots = Family(self.index_set(), self.simple_coroot)
                 # Should we use rename to set a nice name for this family?
-                # self.cache_simple_coroots.rename("alphacheck")
+                # self.cache_simple_coroots.rename('alphacheck')
                 # break some doctests
             return self.cache_simple_coroots
 
@@ -1548,7 +1548,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             """
             res = self.alpha().zip(self.reflection, self.alphacheck())
             # Should we use rename to set a nice name for this family?
-            res.rename("simple reflections")
+            res.rename('simple reflections')
             return res
 
         s = simple_reflections
@@ -1643,7 +1643,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 raise NotImplementedError("only implemented when 'to_negative' is True")
             res = self.alpha().zip(self.projection, self.alphacheck())
             # Should this use rename to set a nice name for this family?
-            res.rename("pi")
+            res.rename('pi')
             return res
 
         ##########################################################################

@@ -175,11 +175,11 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
 
     def __getitem__(self, i):
         """
-        Gets the `i`-th element of the array.
+        Get the `i`-th element of the array.
 
         INPUT:
 
-        - ``i``: An integer.
+        - ``i`` -- integer
 
         OUTPUT: the `i`-th element of the array ``self[i]``
 

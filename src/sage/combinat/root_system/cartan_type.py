@@ -884,7 +884,7 @@ class CartanTypeFactory(SageObject):
     # add options to class
     class options(GlobalOptions):
         r"""
-        Sets and displays the options for Cartan types. If no parameters
+        Set and display the options for Cartan types. If no parameters
         are set, then the function returns a copy of the options dictionary.
 
         The ``options`` to partitions can be accessed as the method

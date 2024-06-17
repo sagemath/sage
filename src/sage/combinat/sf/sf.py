@@ -522,14 +522,14 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
     One can also use the Sage standard renaming idiom to get shorter outputs::
 
         sage: Sym = SymmetricFunctions(QQ)
-        sage: Sym.rename("Sym")
+        sage: Sym.rename('Sym')
         sage: Sym
         Sym
         sage: Sym.rename()
 
     And we name it back::
 
-        sage: Sym.rename("Symmetric Functions over Rational Field"); Sym
+        sage: Sym.rename('Symmetric Functions over Rational Field'); Sym
         Symmetric Functions over Rational Field
 
     .. rubric:: Other bases
@@ -1421,7 +1421,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     def __init_extra__(self):
         """
-        Sets up the coercions between the different bases.
+        Set up the coercions between the different bases.
 
         EXAMPLES::
 

@@ -391,7 +391,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
     # add options to class
     class options(GlobalOptions):
         r"""
-        Sets and displays the options for rigged configurations.
+        Set and display the options for rigged configurations.
         If no parameters are set, then the function returns a copy of
         the options dictionary.
 

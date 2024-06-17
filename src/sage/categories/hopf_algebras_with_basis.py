@@ -37,7 +37,7 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         sage: A = C.example(); A                                                        # needs sage.groups
         An example of Hopf algebra with basis: the group algebra of the
          Dihedral group of order 6 as a permutation group over Rational Field
-        sage: A.rename("A")                                                             # needs sage.groups
+        sage: A.rename('A')                                                             # needs sage.groups
         sage: A.category()                                                              # needs sage.groups
         Category of finite dimensional Hopf algebras with basis over Rational Field
 

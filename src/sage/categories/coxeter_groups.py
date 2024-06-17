@@ -443,9 +443,9 @@ class CoxeterGroups(Category_singleton):
 
             INPUT:
 
-            - ``predicate``: a predicate on the elements of ``self`` defining an
+            - ``predicate`` -- a predicate on the elements of ``self`` defining an
               weak order ideal in ``self``
-            - ``side``: "left" or "right" (default: ``'right'``)
+            - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``)
 
             OUTPUT: an enumerated set
 
@@ -891,7 +891,7 @@ class CoxeterGroups(Category_singleton):
             INPUT:
 
             - ``self`` -- a Coxeter group `W`
-            - ``side`` -- 'left' or 'right' (default: ``'right'``)
+            - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``)
             - ``length_increasing`` -- boolean (default: ``True``); whether
               the operator increases or decreases length
 
@@ -1537,7 +1537,7 @@ class CoxeterGroups(Category_singleton):
 
             - ``index_set`` -- a subset (as a list or iterable) of the nodes of the Dynkin diagram;
               (default: all of them)
-            - ``side`` -- 'left' or 'right' (default: ``'right'``)
+            - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``)
             - ``positive`` -- boolean (default: ``False``)
 
             The ``index_set`` option can be used to restrict to the
@@ -1578,7 +1578,7 @@ class CoxeterGroups(Category_singleton):
 
             INPUT:
 
-            - ``side`` -- "left" or "right" (default: ``'right'``)
+            - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``)
 
             An element is Grassmannian if it has at
             most one descent on the right (resp. on the left).
@@ -2273,7 +2273,7 @@ class CoxeterGroups(Category_singleton):
             INPUT:
 
             - ``index_set`` -- a subset (or iterable) of the nodes of the Dynkin diagram
-            - ``side`` -- 'left' or 'right'
+            - ``side`` -- ``'left'`` or ``'right'``
 
             EXAMPLES::
 
@@ -2319,7 +2319,7 @@ class CoxeterGroups(Category_singleton):
             INPUT:
 
             - ``i`` -- an element of the index set of the Coxeter group
-            - ``side`` -- 'left' or 'right' (default: ``'right'``)
+            - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``)
             - ``length_increasing`` -- boolean (default: ``True``);
               specifying the direction of the projection
 
@@ -2714,7 +2714,7 @@ class CoxeterGroups(Category_singleton):
             INPUT:
 
             - ``other`` -- an element of the same Coxeter group
-            - ``side`` -- 'left' or 'right'  (default: ``'right'``)
+            - ``side`` -- ``'left'`` or ``'right'``  (default: ``'right'``)
 
             OUTPUT: boolean
 
@@ -2784,7 +2784,7 @@ class CoxeterGroups(Category_singleton):
 
             INPUT:
 
-            - ``side`` -- 'left' or 'right' (default: ``'right'``)
+            - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``)
             - ``positive`` -- boolean (default: ``False``)
             - ``index_set`` -- list of indices or None
 
@@ -2946,7 +2946,7 @@ class CoxeterGroups(Category_singleton):
                 reduced word) of elements from the index set of the
                 Coxeter group.
 
-            - ``side`` -- 'left' or 'right' (default: ``'right'``); the
+            - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``); the
                 side of ``self`` on which the element should be
                 applied. If ``side`` is 'left' then the operation is
                 applied on the left.

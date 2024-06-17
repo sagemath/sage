@@ -205,7 +205,7 @@ class LieConformalAlgebraWithStructureCoefficients(
                  category=None, element_class=None, prefix=None, names=None,
                  latex_names=None, parity=None, **kwds):
         """
-        Initialize self.
+        Initialize ``self``.
 
         TESTS::
 

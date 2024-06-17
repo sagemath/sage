@@ -261,7 +261,7 @@ class FastCrystal(UniqueRepresentation, Parent):
 
     def digraph(self):
         """
-        Return the digraph associated to self.
+        Return the digraph associated to ``self``.
 
         EXAMPLES::
 
@@ -403,7 +403,7 @@ class FastCrystal(UniqueRepresentation, Parent):
 
         def e(self, i):
             """
-            Return the action of `e_i` on self.
+            Return the action of `e_i` on ``self``.
 
             EXAMPLES::
 
@@ -422,7 +422,7 @@ class FastCrystal(UniqueRepresentation, Parent):
 
         def f(self, i):
             """
-            Return the action of `f_i` on self.
+            Return the action of `f_i` on ``self``.
 
             EXAMPLES::
 

@@ -3257,7 +3257,7 @@ class ClusterSeed(SageObject):
 
     def set_cluster(self, cluster, force=False):
         r"""
-        Sets the cluster for ``self`` to ``cluster``.
+        Set the cluster for ``self`` to ``cluster``.
 
         .. warning::
 

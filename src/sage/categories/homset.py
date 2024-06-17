@@ -303,7 +303,7 @@ def Hom(X, Y, category=None, check=True):
     category. Case of a non parent::
 
         sage: # needs sage.graphs
-        sage: S = SimplicialComplex([[1,2], [1,4]]); S.rename("S")
+        sage: S = SimplicialComplex([[1,2], [1,4]]); S.rename('S')
         sage: Hom(S, S, SimplicialComplexes())
         Set of Morphisms from S to S in Category of finite simplicial complexes
         sage: Hom(Set(), S, Sets())
@@ -323,7 +323,7 @@ def Hom(X, Y, category=None, check=True):
         sage: class PermissiveCategory(Category):
         ....:     def super_categories(self): return [Objects()]
         ....:     def __contains__(self, X): return True
-        sage: C = PermissiveCategory(); C.rename("Permissive category")
+        sage: C = PermissiveCategory(); C.rename('Permissive category')
         sage: S.category().is_subcategory(C)
         False
         sage: S in C
@@ -611,8 +611,8 @@ class Homset(Set_generic):
         r"""
         TESTS::
 
-            sage: X = ZZ['x']; X.rename("X")
-            sage: Y = ZZ['y']; Y.rename("Y")
+            sage: X = ZZ['x']; X.rename('X')
+            sage: Y = ZZ['y']; Y.rename('Y')
             sage: f = X.hom([0], Y)
             sage: class MyHomset(Homset):
             ....:     def _an_element_(self):
@@ -1268,8 +1268,8 @@ class HomsetWithBase(Homset):
         r"""
         TESTS::
 
-            sage: X = ZZ['x']; X.rename("X")
-            sage: Y = ZZ['y']; Y.rename("Y")
+            sage: X = ZZ['x']; X.rename('X')
+            sage: Y = ZZ['y']; Y.rename('Y')
             sage: f = X.hom([0], Y)
             sage: class MyHomset(HomsetWithBase):
             ....:     def _an_element_(self):

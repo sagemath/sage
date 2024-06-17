@@ -85,7 +85,7 @@ class FreeFermionsLieConformalAlgebra(GradedLieConformalAlgebra):
     def __init__(self, R, ngens=None, gram_matrix=None, names=None,
                  index_set=None):
         """
-        Initialize self.
+        Initialize ``self``.
 
         TESTS::
 

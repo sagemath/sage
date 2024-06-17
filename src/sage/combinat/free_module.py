@@ -261,7 +261,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
     We check that issue :issue:`28681` is fixed::
 
-        sage: F = CombinatorialFreeModule(ZZ, ZZ); F.rename("F")
+        sage: F = CombinatorialFreeModule(ZZ, ZZ); F.rename('F')
         sage: FF = tensor((F,F))
         sage: cartesian_product((FF,FF))
         F # F (+) F # F
@@ -467,7 +467,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
     def construction(self):
         """
-        The construction functor and base ring for self.
+        The construction functor and base ring for ``self``.
 
         EXAMPLES::
 
@@ -694,8 +694,8 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         A coercion between free modules with the same indices exists
         whenever a coercion map is defined between their base rings::
 
-            sage: F = CombinatorialFreeModule(ZZ, ["a", "b"]);      F.rename("F")
-            sage: G = CombinatorialFreeModule(QQ, ["a", "b"]);      G.rename("G")
+            sage: F = CombinatorialFreeModule(ZZ, ["a", "b"]);      F.rename('F')
+            sage: G = CombinatorialFreeModule(QQ, ["a", "b"]);      G.rename('G')
             sage: G(F.monomial("a"))
             B['a']
             sage: G(-3*F.monomial("a"))
@@ -703,7 +703,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         Otherwise, there is no conversion between distinct free modules::
 
-            sage: H = CombinatorialFreeModule(ZZ, ["a", "b", "c"]); H.rename("H")
+            sage: H = CombinatorialFreeModule(ZZ, ["a", "b", "c"]); H.rename('H')
             sage: H(F.monomial("a"))
             Traceback (most recent call last):
             ...
@@ -1270,8 +1270,8 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
 
     We construct two free modules, assign them short names, and construct their tensor product::
 
-        sage: F = CombinatorialFreeModule(ZZ, [1,2]); F.rename("F")
-        sage: G = CombinatorialFreeModule(ZZ, [3,4]); G.rename("G")
+        sage: F = CombinatorialFreeModule(ZZ, [1,2]); F.rename('F')
+        sage: G = CombinatorialFreeModule(ZZ, [3,4]); G.rename('G')
         sage: T = tensor([F, G]); T
         F # G
 
@@ -1306,7 +1306,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
 
     The tensor product is associative and flattens sub tensor products::
 
-        sage: H = CombinatorialFreeModule(ZZ, [5,6]); H.rename("H")
+        sage: H = CombinatorialFreeModule(ZZ, [5,6]); H.rename('H')
         sage: tensor([F, tensor([G, H])])
         F # G # H
         sage: tensor([tensor([F, G]), H])
@@ -1396,8 +1396,8 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
 
             sage: F = CombinatorialFreeModule(ZZ, [1,2,3])
             sage: G = CombinatorialFreeModule(ZZ, [1,2,3,8])
-            sage: F.rename("F")
-            sage: G.rename("G")
+            sage: F.rename('F')
+            sage: G.rename('G')
             sage: T = tensor([F, G])
             sage: T # indirect doctest
             F # G
@@ -1426,9 +1426,9 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: F = CombinatorialFreeModule(ZZ, [1,2])
-            sage: F.rename("F")
+            sage: F.rename('F')
             sage: G = CombinatorialFreeModule(ZZ, [3,4])
-            sage: G.rename("G")
+            sage: G.rename('G')
             sage: T = tensor([F, G]); T
             F # G
             sage: T.tensor_factors()
@@ -1501,8 +1501,8 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
 
             sage: F = CombinatorialFreeModule(ZZ, [1,2,3])
             sage: G = CombinatorialFreeModule(ZZ, [1,2,3,8])
-            sage: F.rename("F")
-            sage: G.rename("G")
+            sage: F.rename('F')
+            sage: G.rename('G')
             sage: latex(tensor([F, F, G])) # indirect doctest
             \text{\texttt{F}} \otimes \text{\texttt{F}} \otimes \text{\texttt{G}}
             sage: F._latex_ = lambda : "F"
@@ -1560,9 +1560,9 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: F = CombinatorialFreeModule(ZZ, [1,2]); F.rename("F")
-            sage: G = CombinatorialFreeModule(ZZ, [3,4]); G.rename("G")
-            sage: H = CombinatorialFreeModule(ZZ, [5,6]); H.rename("H")
+            sage: F = CombinatorialFreeModule(ZZ, [1,2]); F.rename('F')
+            sage: G = CombinatorialFreeModule(ZZ, [3,4]); G.rename('G')
+            sage: H = CombinatorialFreeModule(ZZ, [5,6]); H.rename('H')
 
             sage: f =   F.monomial(1) + 2*F.monomial(2)
             sage: g = 2*G.monomial(3) +   G.monomial(4)
@@ -1604,9 +1604,9 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: F = CombinatorialFreeModule(ZZ, [1,2]); F.rename("F")
-            sage: G = CombinatorialFreeModule(ZZ, [3,4]); G.rename("G")
-            sage: H = CombinatorialFreeModule(ZZ, [5,6]); H.rename("H")
+            sage: F = CombinatorialFreeModule(ZZ, [1,2]); F.rename('F')
+            sage: G = CombinatorialFreeModule(ZZ, [3,4]); G.rename('G')
+            sage: H = CombinatorialFreeModule(ZZ, [5,6]); H.rename('H')
 
             sage: f =   F.monomial(1) + 2 * F.monomial(2)
             sage: g = 2*G.monomial(3) +     G.monomial(4)
@@ -1742,9 +1742,9 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
 
     We construct two free modules, assign them short names, and construct their Cartesian product::
 
-        sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.rename("F")
-        sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename("G")
-        sage: H = CombinatorialFreeModule(ZZ, [4,7]); H.rename("H")
+        sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.rename('F')
+        sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename('G')
+        sage: H = CombinatorialFreeModule(ZZ, [4,7]); H.rename('H')
         sage: S = cartesian_product([F, G])
         sage: S
         F (+) G
@@ -1818,7 +1818,7 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
             sage: F = CombinatorialFreeModule(ZZ, [2,4,5])
             sage: CP = cartesian_product([F, F]); CP  # indirect doctest
             Free module generated by {2, 4, 5} over Integer Ring (+) Free module generated by {2, 4, 5} over Integer Ring
-            sage: F.rename("F"); CP
+            sage: F.rename('F'); CP
             F (+) F
         """
         from sage.categories.cartesian_product import cartesian_product
@@ -1838,8 +1838,8 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.rename("F")
-            sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename("G")
+            sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.rename('F')
+            sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename('G')
             sage: S = cartesian_product([F, G])
             sage: phi = S.cartesian_embedding(0)
             sage: phi(F.monomial(4) + 2 * F.monomial(5))
@@ -1872,8 +1872,8 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.rename("F")
-            sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename("G")
+            sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.rename('F')
+            sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename('G')
             sage: S = cartesian_product([F, G])
             sage: x = S.monomial((0,4)) + 2 * S.monomial((0,5)) + 3 * S.monomial((1,6))
             sage: S.cartesian_projection(0)(x)
@@ -1902,8 +1902,8 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.rename("F")
-            sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename("G")
+            sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.rename('F')
+            sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename('G')
             sage: S = cartesian_product([F, G])
             sage: f =   F.monomial(4) + 2*F.monomial(5)
             sage: g = 2*G.monomial(4) +   G.monomial(6)
@@ -1941,8 +1941,8 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.rename("F")
-            sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename("G")
+            sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.rename('F')
+            sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename('G')
             sage: S = cartesian_product([F, G])
             sage: S.cartesian_factors()
             (F, G)

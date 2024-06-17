@@ -728,7 +728,7 @@ class DifferentialWeylAlgebra(UniqueRepresentation, Parent):
     # add options to class
     class options(GlobalOptions):
         r"""
-        Sets the global options for elements of the differential Weyl
+        Set the global options for elements of the differential Weyl
         algebra class. The default is to have the factored
         representations turned off.
 

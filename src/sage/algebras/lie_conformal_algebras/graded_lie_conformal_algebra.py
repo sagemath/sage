@@ -105,7 +105,7 @@ class GradedLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
                  category=None, prefix=None, names=None, latex_names=None,
                  parity=None, weights=None, **kwds):
         """
-        Initialize self.
+        Initialize ``self``.
 
         TESTS::
 

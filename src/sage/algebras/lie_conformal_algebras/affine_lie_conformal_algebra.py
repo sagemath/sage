@@ -83,7 +83,7 @@ class AffineLieConformalAlgebra(GradedLieConformalAlgebra):
     """
     def __init__(self, R, ct, names=None, prefix=None, bracket=None):
         """
-        Initialize self.
+        Initialize ``self``.
 
         TESTS::
 

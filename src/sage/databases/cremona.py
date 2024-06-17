@@ -158,7 +158,7 @@ def is_optimal_id(id):
     INPUT:
 
     - ``id`` -- string of form letter code followed by an
-      integer, e.g., a3, bb5, etc
+      integer, e.g., a3, bb5, etc.
 
     OUTPUT: boolean
 

@@ -467,7 +467,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
 
             In the following examples, we rename {{{Sym}}} for brevity::
 
-                sage: Sym.rename("Sym"); Sym
+                sage: Sym.rename('Sym'); Sym
                 Sym
 
             Classical bases::

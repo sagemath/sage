@@ -1642,7 +1642,7 @@ def is_skew_hadamard_matrix(M, normalized=False, verbose=False):
 @matrix_method
 def hadamard_matrix(n, existence=False, check=True, construction_name=False):
     r"""
-    Tries to construct a Hadamard matrix using the available methods.
+    Try to construct a Hadamard matrix using the available methods.
 
     Currently all orders `\le 1200` for which a construction is
     known are implemented. For `n > 1200`, only some orders are available.
@@ -3083,7 +3083,7 @@ _skew_had_cache = {}
 def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True,
                          construction_name=False):
     r"""
-    Tries to construct a skew Hadamard matrix.
+    Try to construct a skew Hadamard matrix.
 
     A Hadamard matrix `H` is called skew if `H=S-I`, for `I` the identity matrix
     and `-S=S^\top`. Currently all orders `\le 1200` for which a construction is
@@ -3266,7 +3266,7 @@ def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True,
 
 def symmetric_conference_matrix(n, check=True):
     r"""
-    Tries to construct a symmetric conference matrix.
+    Try to construct a symmetric conference matrix.
 
     A conference matrix is an `n\times n` matrix `C` with 0s on the main diagonal
     and 1s and -1s elsewhere, satisfying `CC^\top=(n-1)I`.

@@ -502,7 +502,7 @@ class GenericCombinatorialSpecies(SageObject):
         INPUT:
 
         - ``series_ring_class`` -- a class for the series ring such as
-          ``ExponentialGeneratingSeriesRing``, etc
+          ``ExponentialGeneratingSeriesRing``, etc.
 
         - ``prefix`` -- the string prefix associated with the generating series
           such as "cis" for the cycle index series. This prefix appears in the

@@ -1880,7 +1880,7 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
 
     cpdef _sub_(self, _right):
         """
-        Subtract _right from self.
+        Subtract ``_right`` from ``self``.
 
         EXAMPLES::
 

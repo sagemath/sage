@@ -53,7 +53,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
     - A collection of *reflections* which are the conjugates of all
       the non trivial powers of the simple reflections.
 
-    The usual notions of reduced words, length, irreducibility, etc
+    The usual notions of reduced words, length, irreducibility, etc.,
     can be canonically defined from the above.
 
     The following methods must be implemented:

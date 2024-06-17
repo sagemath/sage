@@ -726,7 +726,7 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
 
         EXAMPLES::
 
-            sage: Sym = SymmetricFunctions(FractionField(QQ['q,t'])); Sym.rename("Sym"); Sym
+            sage: Sym = SymmetricFunctions(FractionField(QQ['q,t'])); Sym.rename('Sym'); Sym
             Sym
             sage: Sym.macdonald().P()
             Sym in the Macdonald P basis
@@ -780,7 +780,7 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
 
     def _s_to_self(self, x):
         r"""
-        Isomorphism from the Schur basis into self.
+        Isomorphism from the Schur basis into ``self``.
 
         INPUT:
 

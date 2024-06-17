@@ -1982,7 +1982,7 @@ class KR_type_box(KirillovReshetikhinGenericCrystal, AffineCrystalFromClassical)
 
     def similarity_factor(self):
         r"""
-        Sets the similarity factor used to map to the ambient crystal.
+        Set the similarity factor used to map to the ambient crystal.
 
         EXAMPLES::
 
@@ -2272,7 +2272,7 @@ class KR_type_Bn(KirillovReshetikhinGenericCrystal):
 
     def similarity_factor(self):
         r"""
-        Sets the similarity factor used to map to the ambient crystal.
+        Set the similarity factor used to map to the ambient crystal.
 
         EXAMPLES::
 

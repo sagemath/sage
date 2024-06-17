@@ -38,7 +38,7 @@ cdef extern from "Python.h":
 
 cdef class AttributeErrorMessage:
     """
-    Tries to emulate the standard Python :class:`AttributeError` message.
+    Try to emulate the standard Python :class:`AttributeError` message.
 
     .. NOTE::
 

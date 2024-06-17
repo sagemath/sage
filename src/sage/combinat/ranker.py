@@ -180,7 +180,7 @@ def unrank(L, i):
 
     INPUT:
 
-    - ``L`` -- list, tuple, finite enumerated set, etc
+    - ``L`` -- list, tuple, finite enumerated set, etc.
     - ``i`` -- an int or :class:`Integer`
 
     The purpose of this utility is to give a uniform idiom to recover

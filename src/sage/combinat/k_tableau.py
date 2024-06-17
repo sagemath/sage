@@ -3620,7 +3620,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
 
     def set_weight( self, mu ):
         """
-        Sets a new weight ``mu`` for ``self``.
+        Set a new weight ``mu`` for ``self``.
 
         This method first tests if the underlying standard tableau is column-strict with
         respect to the weight ``mu``.  If it is, then it changes the weight and returns

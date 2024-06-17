@@ -1483,7 +1483,7 @@ class FSMState(SageObject):
     @final_word_out.setter
     def final_word_out(self, final_word_out):
         """
-        Sets the value of the final output word of a final state.
+        Set the value of the final output word of a final state.
 
         INPUT:
 
@@ -1538,7 +1538,7 @@ class FSMState(SageObject):
     @property
     def is_final(self):
         """
-        Describes whether the state is final or not.
+        Describe whether the state is final or not.
 
         ``True`` if the state is final and ``False`` otherwise.
 

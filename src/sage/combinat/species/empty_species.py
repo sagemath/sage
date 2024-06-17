@@ -98,7 +98,7 @@ class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     def _gs(self, series_ring, base_ring):
         """
-        Return the generating series for self.
+        Return the generating series for ``self``.
 
         EXAMPLES::
 

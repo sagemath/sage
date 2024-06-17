@@ -2686,9 +2686,9 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
         INPUT:
 
-        - ``side`` -- 'left' or 'right'
+        - ``side`` -- ``'left'`` or ``'right'``
 
-        OUTPUT: the left order if side='left'; the right order if side='right'
+        OUTPUT: the left order if ``side='left'``; the right order if ``side='right'``
 
         EXAMPLES::
 
@@ -3180,7 +3180,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
     def conjugate(self):
         """
-        Return the ideal with generators the conjugates of the generators for self.
+        Return the ideal with generators the conjugates of the generators for ``self``.
 
         OUTPUT: a quaternionic fractional ideal
 
@@ -3733,7 +3733,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
     def __contains__(self, x):
         """
-        Return whether x is in self.
+        Return whether ``x`` is in ``self``.
 
         EXAMPLES::
 

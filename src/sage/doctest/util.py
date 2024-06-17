@@ -436,7 +436,7 @@ class NestedName:
 
     def __setitem__(self, index, value):
         """
-        Sets the value at a given indentation level.
+        Set the value at a given indentation level.
 
         INPUT:
 

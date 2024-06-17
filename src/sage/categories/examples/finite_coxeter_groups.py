@@ -117,7 +117,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
 
     def __contains__(self, x):
         r"""
-        Check in the element x is in the mathematical parent self.
+        Check if the element ``x`` is in the mathematical parent ``self``.
 
         EXAMPLES::
 

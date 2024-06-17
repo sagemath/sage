@@ -116,7 +116,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
                 sage: from sage.categories.examples.finite_enumerated_sets import Example
                 sage: class FreshExample(Example): pass
-                sage: C = FreshExample(); C.rename("FreshExample")
+                sage: C = FreshExample(); C.rename('FreshExample')
                 sage: C.cardinality
                 <bound method FiniteEnumeratedSets.ParentMethods._cardinality_from_iterator of FreshExample>
 
@@ -310,7 +310,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
                 sage: from sage.categories.examples.finite_enumerated_sets import Example
                 sage: class FreshExample(Example): pass
-                sage: C = FreshExample(); C.rename("FreshExample")
+                sage: C = FreshExample(); C.rename('FreshExample')
                 sage: C.list
                 <bound method EnumeratedSets.ParentMethods.list of FreshExample>
                 sage: C.unrank

@@ -78,7 +78,7 @@ class AbelianLieConformalAlgebra(GradedLieConformalAlgebra):
     def __init__(self, R, ngens=1, weights=None,
                  parity=None, names=None, index_set=None):
         """
-        Initialize self.
+        Initialize ``self``.
 
         EXAMPLES::
 

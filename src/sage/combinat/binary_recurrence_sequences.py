@@ -833,9 +833,9 @@ def _goodness(n, R, p):
 
 
 def _next_good_prime(p, R, qq, patience, qqold):
-    """
-    Find the next prime `\\ell` which is good by ``qq`` but not by ``qqold``, 1 mod ``p``, and for which
-    ``b^2+4*c`` is a square mod `\\ell`, for the sequence ``R`` if it is possible in runtime patience.
+    r"""
+    Find the next prime `\ell` which is good by ``qq`` but not by ``qqold``, 1 mod ``p``, and for which
+    ``b^2+4*c`` is a square mod `\ell`, for the sequence ``R`` if it is possible in runtime patience.
 
     INPUT:
 
@@ -849,8 +849,8 @@ def _next_good_prime(p, R, qq, patience, qqold):
 
     - ``qqold`` --  a perfect power less than or equal to ``qq``
 
-    OUTPUT: a prime `\\ell` such that `\\ell` is 1 mod `p`, `b^2+4 c` is a
-    square mod `\\ell` and the period of `\\ell` has ``goodness`` by ``qq`` but
+    OUTPUT: a prime `\ell` such that `\ell` is 1 mod `p`, `b^2+4 c` is a
+    square mod `\ell` and the period of `\ell` has ``goodness`` by ``qq`` but
     not ``qqold``, if patience has not be surpased; otherwise ``False``
 
     EXAMPLES::

@@ -406,7 +406,7 @@ class LatinSquare:
     def nr_filled_cells(self):
         """
         Return the number of filled cells (i.e. cells with a positive
-        value) in the partial latin square self.
+        value) in the partial latin square ``self``.
 
         EXAMPLES::
 
@@ -492,7 +492,7 @@ class LatinSquare:
     def nr_distinct_symbols(self):
         """
         Return the number of distinct symbols in the partial latin square
-        self.
+        ``self``.
 
         EXAMPLES::
 

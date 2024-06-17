@@ -97,7 +97,8 @@ class Encoder(SageObject):
         r"""
         Test inequality of ``self`` and ``other``.
 
-        This is a generic implementation, which returns the inverse of ``__eq__`` for self.
+        This is a generic implementation, which returns the inverse of
+        ``__eq__`` for ``self``.
 
         EXAMPLES::
 

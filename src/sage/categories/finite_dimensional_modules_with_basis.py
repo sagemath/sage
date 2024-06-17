@@ -64,7 +64,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             - ``action`` -- a function (default: :obj:`operator.mul`)
 
-            - ``side`` -- 'left' or 'right' (default: ``'right'``)
+            - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``)
 
             - ``category`` -- a category
 
@@ -119,10 +119,10 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             Taking annihilator is order reversing for inclusion::
 
                 sage: # needs sage.modules
-                sage: A   = F.annihilator([]);    A  .rename("A")
-                sage: Ax  = F.annihilator([x]);   Ax .rename("Ax")
-                sage: Ay  = F.annihilator([y]);   Ay .rename("Ay")
-                sage: Axy = F.annihilator([x,y]); Axy.rename("Axy")
+                sage: A   = F.annihilator([]);    A  .rename('A')
+                sage: Ax  = F.annihilator([x]);   Ax .rename('Ax')
+                sage: Ay  = F.annihilator([y]);   Ay .rename('Ay')
+                sage: Axy = F.annihilator([x,y]); Axy.rename('Axy')
                 sage: P = Poset(([A, Ax, Ay, Axy], attrcall("is_submodule")))           # needs sage.graphs
                 sage: sorted(P.cover_relations(), key=str)                              # needs sage.graphs
                 [[Ax, A], [Axy, Ax], [Axy, Ay], [Ay, A]]
@@ -141,7 +141,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             - ``action`` -- a function (default: :obj:`operator.mul`)
 
-            - ``side`` -- 'left' or 'right' (default: ``'right'``):
+            - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``):
               on which side of ``self`` the elements of `S` acts
 
             See :meth:`annihilator` for the assumptions and definition
@@ -580,7 +580,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             - ``base_ring`` -- a ring (default: ``None``, meaning the
               base ring of the codomain)
 
-            - ``side`` -- "left" or "right" (default: ``'left'``)
+            - ``side`` -- ``'left'`` or ``'right'`` (default: ``'left'``)
 
             If ``side`` is "left", this morphism is considered as
             acting on the left; i.e. each column of the matrix
@@ -775,8 +775,8 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: # needs sage.modules
                 sage: category = FiniteDimensionalModulesWithBasis(ZZ)
-                sage: X = CombinatorialFreeModule(ZZ, [1,2], category=category); X.rename("X"); x = X.basis()
-                sage: Y = CombinatorialFreeModule(ZZ, [3,4], category=category); Y.rename("Y"); y = Y.basis()
+                sage: X = CombinatorialFreeModule(ZZ, [1,2], category=category); X.rename('X'); x = X.basis()
+                sage: Y = CombinatorialFreeModule(ZZ, [3,4], category=category); Y.rename('Y'); y = Y.basis()
                 sage: phi = X.module_morphism(on_basis={1: y[3] + 3*y[4], 2: 2*y[3] + 5*y[4]}.__getitem__,
                 ....:                         codomain=Y, category=category)
                 sage: psi = ~phi

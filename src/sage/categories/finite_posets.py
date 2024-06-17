@@ -310,7 +310,7 @@ class FinitePosets(CategoryWithAxiom):
                 sage: sorted(sorted(p) for p in gen)
                 [[1, 2], [2, 3]]
 
-            If ``direction`` is 'up', then this instead computes
+            If ``direction`` is ``'up'``, then this instead computes
             the minimal generators for an order filter::
 
                 sage: I = P.order_filter([Set([1,2]), Set([2,3]), Set([1])])
@@ -384,7 +384,7 @@ class FinitePosets(CategoryWithAxiom):
             - ``antichain`` -- an antichain of ``self``, as a list (or
               iterable), or, more generally, generators of an order ideal
               (resp. order filter)
-            - ``direction`` -- 'up' or 'down' (default: ``'up'``)
+            - ``direction`` -- ``'up'`` or ``'down'`` (default: ``'up'``)
 
             OUTPUT:
 
@@ -1970,13 +1970,13 @@ class FinitePosets(CategoryWithAxiom):
             r"""
             Return the order filters (resp. order ideals) of ``self``, as lists.
 
-            If ``direction`` is 'up', returns the order filters (upper sets).
+            If ``direction`` is ``'up'``, returns the order filters (upper sets).
 
-            If ``direction`` is 'down', returns the order ideals (lower sets).
+            If ``direction`` is ``'down'``, returns the order ideals (lower sets).
 
             INPUT:
 
-            - ``direction`` -- 'up' or 'down'
+            - ``direction`` -- ``'up'`` or ``'down'``
 
             EXAMPLES::
 

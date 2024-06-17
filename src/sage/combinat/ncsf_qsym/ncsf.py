@@ -78,7 +78,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
     We use the Sage standard renaming idiom to get shorter outputs::
 
-        sage: NCSF.rename("NCSF")
+        sage: NCSF.rename('NCSF')
         sage: NCSF
         NCSF
 

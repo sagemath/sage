@@ -442,7 +442,7 @@ class AffineCrystalFromClassicalElement(ElementWrapper):
 
     def phi(self, i):
         r"""
-        Return the maximal time the crystal operator `f_i` can be applied to self.
+        Return the maximal time the crystal operator `f_i` can be applied to ``self``.
 
         EXAMPLES::
 

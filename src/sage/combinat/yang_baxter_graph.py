@@ -484,7 +484,7 @@ class YangBaxterGraph_generic(SageObject):
 
         INPUT:
 
-        - ``v`` -- tuple, Permutation, etc
+        - ``v`` -- tuple, Permutation, etc.
 
         - ``inplace`` -- if ``True``, modifies ``self``; otherwise returns a
           modified copy of ``self``
@@ -676,7 +676,7 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
 
         - ``i`` -- positive integer between ``1`` and ``len(u)-1``, inclusive
 
-        - ``u`` -- tuple, list, permutation, etc
+        - ``u`` -- tuple, list, permutation, etc.
 
         EXAMPLES::
 
@@ -729,7 +729,7 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
 
         INPUT:
 
-        - ``v`` -- tuple, Permutation, etc
+        - ``v`` -- tuple, Permutation, etc.
 
         - ``inplace`` -- if ``True``, modifies ``self``; otherwise
           returns a modified copy of ``self``
@@ -907,7 +907,7 @@ class SwapIncreasingOperator(SwapOperator):
 
         - ``i`` -- positive integer between ``1`` and ``len(u)-1``, inclusive
 
-        - ``u`` -- tuple, list, permutation, etc
+        - ``u`` -- tuple, list, permutation, etc.
 
         EXAMPLES::
 

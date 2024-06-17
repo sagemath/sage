@@ -417,7 +417,8 @@ class Polyhedron_ppl(Polyhedron_mutable):
 
         - ``v`` -- a vertex, ray, or line
 
-        - ``typ`` -- integer according to `:sage:`~sage.geometry.polyhedron.representation.LINE` etc
+        - ``typ`` -- integer according to
+          `:sage:`~sage.geometry.polyhedron.representation.LINE` etc.
 
         EXAMPLES::
 
@@ -490,7 +491,8 @@ class Polyhedron_ppl(Polyhedron_mutable):
 
         - ``c`` -- an inequality or equation
 
-        - ``typ`` -- integer according to `:sage:`~sage.geometry.polyhedron.representation.INEQUALITY` etc
+        - ``typ`` -- integer according to
+          `:sage:`~sage.geometry.polyhedron.representation.INEQUALITY` etc.
 
         EXAMPLES::
 

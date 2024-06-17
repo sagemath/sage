@@ -24,7 +24,7 @@ word_options = {'identifier': 'word: ',
 
 def WordOptions(**kwargs):
     """
-    Sets the global options for elements of the word class.
+    Set the global options for elements of the word class.
     The defaults are for words to be displayed in list notation.
 
     INPUT:

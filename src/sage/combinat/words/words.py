@@ -557,7 +557,7 @@ class FiniteWords(AbstractLanguage):
 
     def __call__(self, data=None, length=None, datatype=None, caching=True, check=True):
         r"""
-        Construct a new word object with parent self.
+        Construct a new word object with parent ``self``.
 
         INPUT:
 
@@ -1467,7 +1467,7 @@ class InfiniteWords(AbstractLanguage):
 
     def __call__(self, data=None, datatype=None, caching=True, check=True):
         r"""
-        Construct a new word object with parent self.
+        Construct a new word object with parent ``self``.
 
         INPUT:
 
@@ -1768,7 +1768,7 @@ class FiniteOrInfiniteWords(AbstractLanguage):
 
     def __call__(self, data=None, length=None, datatype=None, caching=True, check=True):
         r"""
-        Construct a new word object with parent self.
+        Construct a new word object with parent ``self``.
 
         INPUT:
 
@@ -2149,7 +2149,7 @@ class Words_n(Parent):
 
     def list(self):
         r"""
-        Return a list of all the words contained in self.
+        Return a list of all the words contained in ``self``.
 
         EXAMPLES::
 

@@ -985,9 +985,9 @@ class Modules(Category_module):
 
                     sage: # needs sage.modules
                     sage: F = CombinatorialFreeModule(ZZ, [1,2])
-                    sage: F.rename("F")
+                    sage: F.rename('F')
                     sage: G = CombinatorialFreeModule(ZZ, [3,4])
-                    sage: G.rename("G")
+                    sage: G.rename('G')
                     sage: T = tensor([F, G]); T
                     F # G
                     sage: T.tensor_factors()
