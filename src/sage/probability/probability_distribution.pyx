@@ -10,6 +10,14 @@ This module provides three types of probability distributions:
 
 - :class:`GeneralDiscreteDistribution`: user-defined discrete distributions.
 
+REFERENCES:
+
+- GNU gsl library, General discrete distributions
+  http://www.gnu.org/software/gsl/manual/html_node/General-Discrete-Distributions.html
+
+- GNU gsl library, Random number distributions
+  http://www.gnu.org/software/gsl/manual/html_node/Random-Number-Distributions.html
+
 AUTHORS:
 
 - Josh Kantor (2007-02): first version
@@ -21,13 +29,6 @@ AUTHORS:
 
 - Kwankyu Lee (2010-05-29): F-distribution support.
 
-REFERENCES:
-
-    GNU gsl library, General discrete distributions
-    http://www.gnu.org/software/gsl/manual/html_node/General-Discrete-Distributions.html
-
-    GNU gsl library, Random number distributions
-    http://www.gnu.org/software/gsl/manual/html_node/Random-Number-Distributions.html
 """
 # ****************************************************************************
 #       Copyright (C) 2004, 2005, 2006 Joshua Kantor <kantor.jm@gmail.com>

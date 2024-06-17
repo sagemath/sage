@@ -154,6 +154,7 @@ class SagemathTransform(Transform):
                 node.rawsource = source
                 node[:] = [nodes.Text(source)]
 
+
 # This is only used by sage.misc.sphinxify
 
 
