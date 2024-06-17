@@ -214,7 +214,7 @@ class BinaryRecurrenceSequence(SageObject):
 
         - `F` is nondiagonalizable -- this corresponds to `\\alpha = \\beta`.  This sequence will be the point-wise product of an arithmetic and geometric sequence.
 
-        - `F^k` is scaler, for some `k>1` -- this corresponds to `\\alpha/\\beta` a `k` th root of unity. This sequence is a union of several geometric sequences, and so we again call it ``quasigeometric``.
+        - `F^k` is scalar, for some `k>1` -- this corresponds to `\\alpha/\\beta` a `k` th root of unity. This sequence is a union of several geometric sequences, and so we again call it ``quasigeometric``.
 
         EXAMPLES::
 
@@ -289,7 +289,7 @@ class BinaryRecurrenceSequence(SageObject):
         i.e. the union of multiple geometric sequences, or geometric after term ``u0``.
 
         If `\\alpha/\\beta` is a `k` th root of unity, where `k>1`, then necessarily `k = 2, 3, 4, 6`.
-        Then `F = [[0,1],[c,b]` is diagonalizable, and `F^k = [[\\alpha^k, 0], [0,\\beta^k]]` is scaler
+        Then `F = [[0,1],[c,b]` is diagonalizable, and `F^k = [[\\alpha^k, 0], [0,\\beta^k]]` is a scalar
         matrix.  Thus for all values of `j` mod `k`, the `j` mod `k` terms of `u_n` form a geometric
         series.
 
