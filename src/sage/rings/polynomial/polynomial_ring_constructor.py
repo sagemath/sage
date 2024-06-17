@@ -37,6 +37,7 @@ from sage.rings.integer import Integer
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.semirings.tropical_semiring import TropicalSemiring
 from sage.rings.semirings.tropical_polynomial import TropicalPolynomialSemiring
+from sage.rings.semirings.tropical_mpolynomial import TropicalMPolynomialSemiring
 
 from sage.misc.cachefunc import weak_cached_function
 import sage.misc.weak_dict
@@ -722,7 +723,7 @@ def PolynomialRing(base_ring, *args, **kwds):
 
     if multivariate or len(names) != 1:
         if is_tropical:
-            pass # will add MTropicalPolynomialSemiring
+            return TropicalMPolynomialSemiring(base_ring, names)
         else:
             return _multi_variate(base_ring, names, **kwds)
     else:

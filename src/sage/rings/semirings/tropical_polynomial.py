@@ -23,8 +23,8 @@ semiring and then inputting it to ``PolynomialRing`` constructor::
     sage: R
     Tropical Polynomial Semiring in y over Rational Field
 
-We can define the element by giving a list of coefficients that
-begins with constant. This is also the way to create a tropical
+We can define the element by giving a list or tuple of coefficients
+that begins with constant. This is also the way to create a tropical
 polynomial with `0` as coefficient::
 
     sage: p1 = R([1,4,None,0]); p1
@@ -138,7 +138,6 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-# from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.rings.polynomial.polynomial_element_generic import \
@@ -522,7 +521,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
 class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
     """
     Semiring structure of tropical polynomials in one variable
-      
+
     """
 
     @staticmethod
@@ -547,5 +546,5 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         return C(self, x, check=check)
 
     def _repr_(self):
-        return (f"Tropical Polynomial Semiring in {self.variable_name()}"
+        return (f"Univariate Tropical Polynomial Semiring in {self.variable_name()}"
             f" over {self.base_ring().base_ring()}")
