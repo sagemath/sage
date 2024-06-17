@@ -4563,6 +4563,12 @@ REFERENCES:
              measures*. Publications Mathématiques de l'Institut des
              Hautes Études Scientifiques 98(1)  (2003), pp. 167-212.
 
+.. [LZ2001] Dingjun Lou and Ning Zhong. *A highly efficient algorithm to
+            determine bicritical graphs.* In: Wang, J. (eds) Computing and
+            Combinatorics. Lecture Notes in Computer Science, vol 2108,
+            pages 349--356. Springer, Berlin, Heidelberg, 2001,
+            :doi:`10.1007/3-540-44679-6_38`.
+
 .. [LZ2004] S. Lando and A. Zvonkine, "Graphs on surfaces and their
             applications", Springer-Verlag, 2004.
 
