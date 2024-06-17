@@ -6,7 +6,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.integer_ring import ZZ
 from sage.categories.sets_cat import cartesian_product
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
+from sage.categories.sets_with_grading import SetsWithGrading
 from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroup_generic
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.libs.gap.libgap import libgap
@@ -320,6 +320,81 @@ class ConjugacyClassesOfSubgroups(Parent):
 
     Element = ConjugacyClassOfSubgroups
 
+class ConjugacyClassOfSubgroups_SymmetricGroup(ConjugacyClassOfSubgroups):
+    def __init__(self, parent, C):
+        r"""
+        Initialize the conjugacy class of ``C`` in SymmetricGroup(n).
+
+        TESTS::
+
+            sage: G = SymmetricGroup(4)
+            sage: B = BurnsideRing(G)
+            sage: Z4 = CyclicPermutationGroup(4)
+            sage: TestSuite(B(Z4)).run()
+        """
+        ConjugacyClassOfSubgroups.__init__(self, parent, C)
+
+    def grade(self):
+        return self.parent()._G.degree()
+
+    def __hash__(self):
+        r"""
+        Return the hash of the representative of the conjugacy class.
+        """
+        return hash((hash(self.parent()._G), hash(self._C)))
+
+    def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+        """
+        return repr((self.grade(), super()._repr_()))
+
+    def __eq__(self, other):
+        r"""
+        Return if this element is equal to ``other``.
+
+        Two elements compare equal if they are conjugate subgroups in the parent group.
+        """
+        return (isinstance(other, ConjugacyClassOfSubgroups_SymmetricGroup)
+                and self.grade() == other.grade() and _is_conjugate(self.parent()._G, self._C, other._C))
+
+class ConjugacyClassesOfSubgroups_SymmetricGroup(ConjugacyClassesOfSubgroups):
+    def __init__(self, n):
+        ConjugacyClassesOfSubgroups.__init__(self, SymmetricGroup(n))
+
+    Element = ConjugacyClassOfSubgroups_SymmetricGroup
+
+class ConjugacyClassesOfSubgroups_SymmetricGroup_all(UniqueRepresentation, Parent):
+    def __init__(self):
+        category = SetsWithGrading().Infinite()
+        Parent.__init__(self, category=category)
+
+    def _repr_(self):
+        return "Conjugacy classes of subgroups of symmetric groups"
+
+    def subset(self, size):
+        return ConjugacyClassesOfSubgroups_SymmetricGroup(size)
+
+    def _element_constructor_(self, H):
+        r"""
+        H is a subgroup of a symmetric group.
+        """
+        return self.subset(H.degree())(H)
+
+    def __iter__(self):
+        n = 0
+        while True:
+            yield from self.subset(n)
+            n += 1
+
+    def __contains__(self, H):
+        r"""
+        Returns if H is a subgroup of a symmetric group.
+        """
+        return H in self.subset(H.degree())
+
+    Element = ConjugacyClassOfSubgroups_SymmetricGroup
+
 class BurnsideRing(CombinatorialFreeModule):
     def __init__(self, G, base_ring=ZZ):
         r"""
@@ -528,89 +603,11 @@ class BurnsideRing(CombinatorialFreeModule):
         """
         return "Burnside ring of " + repr(self._G)
 
-class ConjugacyClassOfSymmetricGroupSubgroups(ConjugacyClassOfSubgroups):
-    def __init__(self, n, C):
-        r"""
-        Initialize the conjugacy class of ``C`` in SymmetricGroup(n).
-
-        TESTS::
-
-            sage: G = SymmetricGroup(4)
-            sage: B = BurnsideRing(G)
-            sage: Z4 = CyclicPermutationGroup(4)
-            sage: TestSuite(B(Z4)).run()
-        """
-        self._n = n
-        self._G = SymmetricGroup(n)
-        ConjugacyClassOfSubgroups.__init__(self, ConjugacyClassesOfSymmetricGroupSubgroups(), C)
-
-    def __hash__(self):
-        r"""
-        Return the hash of the representative of the conjugacy class.
-        """
-        return hash(self._C)
-
-    def _repr_(self):
-        r"""
-        Return a string representation of ``self``.
-        """
-        # name = self.parent()._names.get(self._C, None)
-        name = None
-        return repr((self._n, self._C.gens())) if name is None else repr((self._n, name))
-
-    def __eq__(self, other):
-        r"""
-        Return if this element is equal to ``other``.
-
-        Two elements compare equal if they are conjugate subgroups in the parent group.
-        """
-        return (isinstance(other, ConjugacyClassOfSymmetricGroupSubgroups)
-                and self._n == other._n and _is_conjugate(self._G, self._C, other._C))
-
-class ConjugacyClassesOfSymmetricGroupSubgroups(UniqueRepresentation, Parent):
-    def __init__(self):
-        category = InfiniteEnumeratedSets()
-        Parent.__init__(self, category=category)
-
-    def _repr_(self):
-        return "Conjugacy classes of subgroups of symmetric groups"
-
-    def _element_constructor_(self, x):
-        r"""
-        x is a tuple (n, H) where H is a subgroup of S_n.
-        """
-        G = SymmetricGroup(x[0])
-        if x[1].is_subgroup(G):
-            return self.element_class(x[0], x[1])
-        raise ValueError(f"Unable to convert {x} into self: {x[1]} is not a subgroup of SymmetricGroup({x[0]})")
-
-    def __iter__(self):
-        n = 0
-        while True:
-            G = SymmetricGroup(n)
-            CC = ConjugacyClassesOfSubgroups(G)
-            for H in CC:
-                yield self((n, H._C))
-            n += 1
-
-    def __contains__(self, x):
-        r"""
-        x is a tuple (n, H) where H is a subgroup of S_n.
-        """
-        if parent(x) == self:
-            return True
-        return isinstance(x[0], (int, Integer)) and x[1] in ConjugacyClassesOfSubgroups(SymmetricGroup(x[0]))
-
-    def subset(self, size):
-        return ConjugacyClassesOfSubgroups(SymmetricGroup(size))
-
-    Element = ConjugacyClassOfSymmetricGroupSubgroups
-
 class PolynomialMolecularDecomposition(CombinatorialFreeModule):
     def __init__(self, base_ring=ZZ):
         category = GradedAlgebrasWithBasis(base_ring)
         CombinatorialFreeModule.__init__(self, base_ring,
-                                        basis_keys=ConjugacyClassesOfSymmetricGroupSubgroups(),
+                                        basis_keys=ConjugacyClassesOfSubgroups_SymmetricGroup_all(),
                                         category=category,
                                         prefix="PMD")
 
@@ -630,7 +627,7 @@ class PolynomialMolecularDecomposition(CombinatorialFreeModule):
         Returns (0, S0), which indexes the one of this algebra,
         as per :meth:`AlgebrasWithBasis.ParentMethods.one_basis`.
         """
-        return self._indices((0, SymmetricGroup(0)))
+        return self._indices(SymmetricGroup(0))
 
     # Remember, a basis element here is a molecular species.
     # When two basis elements are multiplied, you get another
@@ -640,12 +637,13 @@ class PolynomialMolecularDecomposition(CombinatorialFreeModule):
     # of subgroups of S_n.
 
     def product_on_basis(self, g1, g2):
-        n, m = g1._n, g2._n
+        n, m = g1.grade(), g2.grade()
         H, K = g1._C, g2._C
+
         def construct_element(h, k):
             element = [None for _ in range(n+m)]
             for i in range(n+m):
-                if i<n:
+                if i < n:
                     element[i] = h(i+1)
                 else:
                     element[i] = n + k(i-n+1)
@@ -655,14 +653,19 @@ class PolynomialMolecularDecomposition(CombinatorialFreeModule):
             for h in H
             for k in K
         ]
+        # There is no way to create SymmetricGroup(0) using the
+        # PermutationGroup constructor as used here, so a special
+        # case has to be added.
+        if n+m == 0:
+            return self._from_dict({self._indices(SymmetricGroup(0)): 1})
         G = PermutationGroup(H_ast_K)
-        return self._from_dict({self._indices((n+m, G)): 1})
+        return self._from_dict({self._indices(G): 1})
 
     def degree_on_basis(self, x):
         r"""
-        x is an instance of ConjugacyClassOfSymmetricGroupSubgroups.
+        x is an instance of ConjugacyClassOfSubgroups_SymmetricGroup.
         """
-        return x._n
+        return x.grade()
 
     def _repr_(self):
         return "Polynomial Molecular Decomposition"
