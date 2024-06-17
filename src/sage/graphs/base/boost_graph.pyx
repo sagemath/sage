@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 r"""
 Interface to run Boost algorithms
 
@@ -2662,10 +2661,10 @@ cpdef shortest_paths_from_vertices(g, vertex_list=None, order=None,
     - ``algorithm`` -- string (default: ``None``); one of the following
       algorithms:
 
-      - ``'Dijkstra'``, ``'Dijkstra_Boost'`` - the Dijkstra algorithm
+      - ``'Dijkstra'``, ``'Dijkstra_Boost'`` -- the Dijkstra algorithm
         implemented in Boost (works only with positive weights)
 
-      - ``'Bellman-Ford'``, ``'Bellman-Ford_Boost'`` - the Bellman-Ford
+      - ``'Bellman-Ford'``, ``'Bellman-Ford_Boost'`` -- the Bellman-Ford
         algorithm implemented in Boost (works also with negative weights,
         if there is no negative cycle)
 

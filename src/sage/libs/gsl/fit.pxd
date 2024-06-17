@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # distutils: libraries = GSL_LIBRARIES
 # distutils: library_dirs = GSL_LIBDIR
 # distutils: include_dirs = GSL_INCDIR
@@ -38,7 +37,6 @@ cdef extern from "gsl/gsl_fit.h":
 
   int gsl_fit_mul_est ( double x, double c1, double c11,
                    double *y, double *y_err)
-
 
 
   int gsl_fit_poly ( double * x, double * w, double * y, size_t n,

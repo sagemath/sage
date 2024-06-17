@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Topological Manifolds
 
@@ -307,7 +306,6 @@ REFERENCES:
 - [Lee2013]_
 - [KN1963]_
 - [Huy2005]_
-
 """
 
 # ****************************************************************************

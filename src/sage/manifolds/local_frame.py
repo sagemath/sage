@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Local Frames
 
@@ -160,7 +159,6 @@ Let us check the components of `f` with respect to the frame `e`::
     [1, 0, 0]
     sage: f[3].comp(e)[:]
     [0, 1, 0]
-
 """
 
 # *****************************************************************************

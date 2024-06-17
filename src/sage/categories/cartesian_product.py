@@ -19,6 +19,7 @@ from sage.categories.pushout import MultivariateConstructionFunctor
 
 native_python_containers = {tuple, list, set, frozenset, range}
 
+
 class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConstructionFunctor):
     """
     The Cartesian product functor.
@@ -216,6 +217,7 @@ class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConst
             False
         """
         return not (self == other)
+
 
 class CartesianProductsCategory(CovariantConstructionCategory):
     r"""

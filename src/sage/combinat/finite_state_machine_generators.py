@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 # sage.doctest: needs sage.graphs sage.modules
 r"""
 Common Automata and Transducers (Finite State Machines Generators)
@@ -76,7 +75,6 @@ ACKNOWLEDGEMENT:
 
 Functions and methods
 ---------------------
-
 """
 # ****************************************************************************
 #       Copyright (C) 2014--2015 Clemens Heuberger <clemens.heuberger@aau.at>

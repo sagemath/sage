@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # distutils: libraries = GSL_LIBRARIES
 # distutils: library_dirs = GSL_LIBDIR
 # distutils: include_dirs = GSL_INCDIR
@@ -149,6 +148,3 @@ cdef extern from "gsl/gsl_complex_math.h":
   gsl_complex  gsl_complex_arccsch(gsl_complex z)
 
   gsl_complex  gsl_complex_arccoth(gsl_complex z)
-
-
-

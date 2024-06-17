@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Multivariate Power Series
 
@@ -147,7 +146,6 @@ AUTHORS:
 
 - Niles Johnson (07/2010): initial code
 - Simon King (08/2012): Use category and coercion framework, :issue:`13412`
-
 """
 # ****************************************************************************
 #       Copyright (C) 2010 Niles Johnson <nilesj@gmail.com>

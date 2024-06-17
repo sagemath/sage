@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Euclidean Spaces
 
@@ -398,7 +397,6 @@ AUTHORS:
 REFERENCES:
 
 - \M. Berger: *Geometry I* [Ber1987]_
-
 """
 
 #*****************************************************************************

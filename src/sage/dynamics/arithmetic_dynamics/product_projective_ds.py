@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 r"""
 Dynamical systems for products of projective spaces
 
@@ -328,8 +327,8 @@ class DynamicalSystem_product_projective_finite_field(DynamicalSystem_product_pr
         """
         V = []
         E = []
-        from sage.schemes.product_projective.space import is_ProductProjectiveSpaces
-        if is_ProductProjectiveSpaces(self.domain()):
+        from sage.schemes.product_projective.space import ProductProjectiveSpaces_ring
+        if isinstance(self.domain(), ProductProjectiveSpaces_ring):
             for P in self.domain():
                 V.append(str(P))
                 Q = self(P)

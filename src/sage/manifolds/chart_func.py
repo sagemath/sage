@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Chart Functions
 
@@ -23,7 +22,6 @@ AUTHORS:
   calculus (CoordFunctionSymb)
 - Florentin Jaffredo (2018) : series expansion with respect to a given
   parameter
-
 """
 # ****************************************************************************
 #  Copyright (C) 2017 Marco Mancini <marco.mancini@obspm.fr>
@@ -1314,9 +1312,6 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
              (x, y) ↦ 2*x + y**2
             sage: (f + -f).display()
             (x, y) ↦ 0
-
-
-
         """
         curr = self._calc_method._current
         if other._expansion_symbol is not None:

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Elements with labels.
 
@@ -15,7 +14,7 @@ with vertex labels.
 from sage.misc.latex import latex
 
 
-class ElementWithLabel():
+class ElementWithLabel:
     """
     Auxiliary class for showing/viewing :class:`Poset`s with
     non-injective labelings.

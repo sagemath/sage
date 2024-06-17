@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 """
 `p`-adic Generic Nodes
 
@@ -1219,7 +1218,7 @@ class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
 
         INPUT:
 
-         - ``f``, ``g`` - the polynomials of which to take the xgcd
+         - ``f``, ``g`` -- the polynomials of which to take the xgcd
 
         OUTPUT:
 
@@ -1292,7 +1291,7 @@ class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
 
         INPUT:
 
-         - ``f``, ``g`` - the polynomials of which to take the gcd
+         - ``f``, ``g`` -- the polynomials of which to take the gcd
 
         OUTPUT: A polynomial
 

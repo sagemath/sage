@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-singular
 """
 The Fusion Ring of the Drinfeld Double of a Finite Group
 """
@@ -26,6 +25,7 @@ from sage.rings.number_field.number_field import CyclotomicField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.ideal import Ideal
 from sage.matrix.constructor import matrix
+
 
 class FusionDouble(CombinatorialFreeModule):
     r"""

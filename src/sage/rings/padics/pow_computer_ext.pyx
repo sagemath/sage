@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-ntl
 # distutils: libraries = NTL_LIBRARIES gmp m
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR
@@ -298,6 +297,7 @@ def ZZ_pX_eis_shift_test(_shifter, _a, _n, _finalprec):
     cdef long finalprec = _finalprec
     ZZ_pX_eis_shift_p(shifter, &x.x, &a.x, n, finalprec)
     return x
+
 
 cdef int ZZ_pX_eis_shift_p(PowComputer_ZZ_pX self, ZZ_pX_c* x, ZZ_pX_c* a, long n, long finalprec) except -1:
     """

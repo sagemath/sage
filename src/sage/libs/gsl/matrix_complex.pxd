@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # distutils: libraries = GSL_LIBRARIES
 # distutils: library_dirs = GSL_LIBDIR
 # distutils: include_dirs = GSL_INCDIR
@@ -84,7 +83,6 @@ cdef extern from "gsl/gsl_matrix_complex_double.h":
   int  gsl_matrix_complex_fscanf(FILE * stream, gsl_matrix_complex * m)
 
   int  gsl_matrix_complex_fprintf(FILE * stream, gsl_matrix_complex * m, char * format)
-
 
 
   # Copying or exchanging elements

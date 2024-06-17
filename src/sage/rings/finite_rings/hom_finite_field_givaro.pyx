@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-linbox
 # distutils: libraries = givaro NTL_LIBRARIES gmp m
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR
@@ -206,7 +205,6 @@ cdef class FiniteFieldHomomorphism_givaro(FiniteFieldHomomorphism_generic):
         cdef int log = y.element
         log = (log*self._power) % self._order_codomain
         return make_FiniteField_givaroElement(self._codomain_cache, log)
-
 
 
 cdef class FrobeniusEndomorphism_givaro(FrobeniusEndomorphism_finite_field):

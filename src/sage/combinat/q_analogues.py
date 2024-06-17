@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 r"""
 `q`-Analogues
 """
@@ -145,7 +144,7 @@ def q_binomial(n, k, q=None, algorithm='auto'):
 
     INPUT:
 
-    - ``n, k`` -- the values `n` and `k` defined above
+    - ``n``, ``k`` -- the values `n` and `k` defined above
 
     - ``q`` -- (default: ``None``) the variable `q`; if ``None``, then use a
       default variable in `\ZZ[q]`

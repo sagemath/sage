@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Alternating contravariant tensors on free modules
 
@@ -27,7 +26,6 @@ REFERENCES:
 
 - Chap. 23 of R. Godement : *Algebra* [God1968]_
 - Chap. 15 of S. Lang : *Algebra* [Lan2002]_
-
 """
 #******************************************************************************
 #       Copyright (C) 2017 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>

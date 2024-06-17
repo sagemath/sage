@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-ntl
 # distutils: sources = sage/rings/bernmm/bern_modp.cpp sage/rings/bernmm/bern_modp_util.cpp sage/rings/bernmm/bern_rat.cpp
 # distutils: libraries = NTL_LIBRARIES pthread gmp
 # distutils: extra_compile_args = NTL_CFLAGS
@@ -35,7 +34,6 @@ cdef extern from "bernmm/bern_rat.h":
 
 cdef extern from "bernmm/bern_modp.h":
     long bern_modp "bernmm::bern_modp" (long p, long k)
-
 
 
 from sage.rings.rational cimport Rational

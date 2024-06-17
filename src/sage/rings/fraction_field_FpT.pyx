@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 # distutils: libraries = gmp NTL_LIBRARIES
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR
@@ -769,11 +768,11 @@ cdef class FpTElement(FieldElement):
 
         INPUT:
 
-        -  ``extend`` - bool (default: True); if True, return a
+        -  ``extend`` -- bool (default: ``True``); if True, return a
            square root in an extension ring, if necessary. Otherwise, raise a
            ValueError if the square is not in the base ring.
 
-        -  ``all`` - bool (default: False); if True, return all
+        -  ``all`` -- bool (default: ``False``); if True, return all
            square roots of self, instead of just one.
 
         EXAMPLES::

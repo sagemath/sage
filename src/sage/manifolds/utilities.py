@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Utilities for Calculus
 
@@ -12,7 +11,6 @@ AUTHORS:
 - Travis Scrimshaw (2016): review tweaks
 - Marius Gerbershagen (2022) : skip simplification of expressions with a single
   number or symbolic variable
-
 """
 
 # *****************************************************************************

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.graphs          (because all doctests use SimplicialComplex)
 r"""
 Homspaces between chain complexes
@@ -84,7 +83,6 @@ EXAMPLES::
     sage: w = G(f)
     sage: w == x
     True
-
 """
 
 # ****************************************************************************

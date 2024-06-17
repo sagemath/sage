@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs primecountpy
 r"""
 Counting primes
@@ -21,7 +20,6 @@ AUTHORS:
 
 - Dima Pasechnik (2021): removed buggy cython code, replaced it with
   calls to primecount/primecountpy spkg
-
 """
 
 # ****************************************************************************

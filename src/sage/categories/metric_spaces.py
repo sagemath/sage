@@ -18,6 +18,7 @@ from sage.categories.covariant_functorial_construction import RegressiveCovarian
 from sage.categories.with_realizations import WithRealizationsCategory
 from sage.categories.homsets import HomsetsCategory
 
+
 class MetricSpacesCategory(RegressiveCovariantConstructionCategory):
 
     _functor_category = "Metric"
@@ -72,6 +73,7 @@ class MetricSpacesCategory(RegressiveCovariantConstructionCategory):
             Join of Category of topological groups and Category of metric spaces
         """
         return "metric {}".format(self.base_category()._repr_object_names())
+
 
 class MetricSpaces(MetricSpacesCategory):
     r"""

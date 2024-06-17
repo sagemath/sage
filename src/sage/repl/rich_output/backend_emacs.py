@@ -4,7 +4,6 @@ Emacs sage-mode Backend for the Sage Rich Output System
 
 This module defines the Emacs backend for :mod:`sage.repl.rich_output`
 based on the IPython shell version.
-
 """
 
 # ****************************************************************************

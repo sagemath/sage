@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 "Birch and Swinnerton-Dyer formulas"
 
 from sage.arith.misc import prime_divisors
@@ -320,7 +319,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
       Heegner index before switching over to trying to compute the
       Heegner index bound. (Rank 0 only!)
 
-    - ``return_BSD`` -- bool (default: False) whether to return an object
+    - ``return_BSD`` -- bool (default: ``False``) whether to return an object
       which contains information to reconstruct a proof
 
     .. NOTE::

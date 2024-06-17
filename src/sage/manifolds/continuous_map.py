@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Continuous Maps Between Topological Manifolds
 
@@ -15,7 +14,6 @@ REFERENCES:
 
 - Chap. 1 of [KN1963]_
 - [Lee2011]_
-
 """
 
 # ****************************************************************************

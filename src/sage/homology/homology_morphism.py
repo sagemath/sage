@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.graphs          (because all doctests use the catalog simplicial_complexes)
 r"""
 Induced morphisms on homology
@@ -52,8 +51,8 @@ class InducedHomologyMorphism(Morphism):
     INPUT:
 
     - ``map`` -- the map of simplicial complexes
-    - ``base_ring`` -- a field (optional, default ``QQ``)
-    - ``cohomology`` -- boolean (optional, default ``False``). If
+    - ``base_ring`` -- a field (default: ``QQ``)
+    - ``cohomology`` -- boolean (default: ``False``). If
       ``True``, return the induced map in cohomology rather than
       homology.
 
@@ -136,8 +135,8 @@ class InducedHomologyMorphism(Morphism):
         INPUT:
 
         - ``map`` -- the map of simplicial complexes
-        - ``base_ring`` -- a field (optional, default ``QQ``)
-        - ``cohomology`` -- boolean (optional, default ``False``). If
+        - ``base_ring`` -- a field (default: ``QQ``)
+        - ``cohomology`` -- boolean (default: ``False``). If
           ``True``, return the induced map in cohomology rather than
           homology.
 
@@ -214,7 +213,7 @@ class InducedHomologyMorphism(Morphism):
 
         INPUT:
 
-        - ``deg`` -- (optional, default ``None``) the degree
+        - ``deg`` -- (default: ``None``) the degree
 
         EXAMPLES::
 

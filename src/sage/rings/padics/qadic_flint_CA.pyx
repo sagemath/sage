@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 include "sage/libs/linkages/padics/fmpz_poly_unram.pxi"
 include "sage/libs/linkages/padics/unram_shared.pxi"
 include "CA_template.pxi"

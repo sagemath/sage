@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 """
 Discrete subgroups of `\\ZZ^n`
 
@@ -14,7 +13,6 @@ TESTS::
     sage: from sage.modules.free_module_integer import IntegerLattice
     sage: L = IntegerLattice(random_matrix(ZZ, 10, 10))
     sage: TestSuite(L).run()
-
 """
 
 ##############################################################################

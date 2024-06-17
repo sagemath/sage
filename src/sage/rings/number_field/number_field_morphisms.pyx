@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 # sage.doctest: needs sage.rings.number_field
 r"""
 Embeddings into ambient fields
@@ -69,7 +68,7 @@ cdef class NumberFieldEmbedding(Morphism):
 
         INPUT:
 
-        ``_slots`` -- a dictionary
+        - ``_slots`` -- a dictionary
 
         OUTPUT:
 
@@ -100,7 +99,7 @@ cdef class NumberFieldEmbedding(Morphism):
 
         INPUT:
 
-        ``_slots`` -- a dictionary providing values for the c(p)def slots of self.
+        - ``_slots`` -- a dictionary providing values for the c(p)def slots of self.
 
         EXAMPLES::
 
@@ -445,6 +444,7 @@ cpdef closest(target, values, margin=1):
         else:
             return None
 
+
 def root_from_approx(f, a):
     """
     Return an exact root of the polynomial `f` closest to `a`.
@@ -505,6 +505,7 @@ def root_from_approx(f, a):
             or (not isinstance(rel, bool) and test_relation_maxima(rel))):
             raise ValueError("{} is not a root of {}".format(a, f))
         return a
+
 
 def create_embedding_from_approx(K, gen_image):
     """
@@ -633,7 +634,7 @@ cdef class CyclotomicFieldEmbedding(NumberFieldEmbedding):
 
         INPUT:
 
-        ``_slots`` -- a dictionary
+        - ``_slots`` -- a dictionary
 
         OUTPUT:
 
@@ -664,7 +665,7 @@ cdef class CyclotomicFieldEmbedding(NumberFieldEmbedding):
 
         INPUT:
 
-        ``_slots`` -- a dictionary providing values for the c(p)def slots of self.
+        - ``_slots`` -- a dictionary providing values for the c(p)def slots of self.
 
         EXAMPLES::
 

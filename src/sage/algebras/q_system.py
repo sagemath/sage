@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.graphs sage.modules
 r"""
 Q-Systems
@@ -565,6 +564,7 @@ class QSystem(CombinatorialFreeModule):
             """
             return self.parent().sum_of_terms((tl*tr, cl*cr)
                                               for tl,cl in self for tr,cr in x)
+
 
 def is_tamely_laced(ct):
     r"""

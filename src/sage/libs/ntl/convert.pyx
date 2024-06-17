@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-ntl
 # distutils: depends = NTL/ZZ.h
 # distutils: libraries = NTL_LIBRARIES gmp
 # distutils: extra_compile_args = NTL_CFLAGS
@@ -6,7 +5,6 @@
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
-
 """
 Conversion between NTL's ``ZZ`` and various other types
 """

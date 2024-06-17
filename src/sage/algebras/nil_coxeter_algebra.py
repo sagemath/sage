@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 """
 Nil-Coxeter Algebra
@@ -15,6 +14,7 @@ from sage.combinat.sf.sf import SymmetricFunctions
 from sage.misc.misc_c import prod
 from sage.rings.rational_field import QQ
 from sage.combinat.partition import Partitions
+
 
 class NilCoxeterAlgebra(IwahoriHeckeAlgebra.T):
     r"""

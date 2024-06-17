@@ -21,7 +21,6 @@ the table as printed in the second edition::
     5
     sage: MOLS_handbook_data.lower_bound(7968)
     31
-
 """
 
 _LOWER_BOUNDS: tuple[int, ...]

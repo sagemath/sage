@@ -67,6 +67,7 @@ class FilteredModulesCategory(RegressiveCovariantConstructionCategory, Category_
         """
         return "filtered {}".format(self.base_category()._repr_object_names())
 
+
 class FilteredModules(FilteredModulesCategory):
     r"""
     The category of filtered modules over a given ring `R`.

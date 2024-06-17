@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 #**************************************************************************
 #        Copyright (C) 2008-9 Robert L. Miller <rlmillster@gmail.com>
 #

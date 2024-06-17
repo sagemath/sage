@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Vector Fields
 
@@ -46,7 +45,6 @@ REFERENCES:
 - [Lee2013]_
 - [ONe1983]_
 - [BG1988]_
-
 """
 
 # *****************************************************************************

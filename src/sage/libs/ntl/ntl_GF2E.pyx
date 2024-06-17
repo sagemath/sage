@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-ntl
 # distutils: libraries = NTL_LIBRARIES gmp m
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR
@@ -71,6 +70,7 @@ def ntl_GF2E_random(ntl_GF2EContext_class ctx):
     r.c = ctx
     r.x = GF2E_random()
     return r
+
 
 cdef class ntl_GF2E():
     r"""

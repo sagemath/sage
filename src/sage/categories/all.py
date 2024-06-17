@@ -105,7 +105,7 @@ from sage.categories.commutative_algebra_ideals import CommutativeAlgebraIdeals
 
 # schemes and varieties
 from sage.categories.modular_abelian_varieties import ModularAbelianVarieties
-from sage.categories.schemes import Schemes, AbelianVarieties
+from sage.categories.schemes import Schemes, AbelianVarieties, Jacobians
 
 # * with basis
 from sage.categories.modules_with_basis import ModulesWithBasis

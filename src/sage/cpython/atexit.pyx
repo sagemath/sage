@@ -25,7 +25,7 @@ cdef class restore_atexit:
 
     INPUT:
 
-    - ``run`` (bool, default: False) -- if True, when exiting the
+    - ``run`` (bool, default: ``False``) -- if True, when exiting the
       context (but before restoring the old exit functions), run all
       atexit functions which were added inside the context.
 

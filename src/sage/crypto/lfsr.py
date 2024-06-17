@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.rings.finite_rings
 r"""
 Linear feedback shift register (LFSR) sequence commands
@@ -115,7 +114,6 @@ AUTHORS:
 
 - Timothy Brock (2006-04-17): added ``lfsr_autocorrelation`` and
   ``lfsr_connection_polynomial``.
-
 """
 
 ###########################################################################

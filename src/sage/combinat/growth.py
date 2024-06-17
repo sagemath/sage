@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.graphs
 r"""
 Growth diagrams and dual graded graphs
@@ -477,7 +476,6 @@ from itertools import zip_longest
 
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.combinat.posets.posets import Poset
 from sage.combinat.words.word import Word
 from sage.combinat.words.words import Words
 from sage.combinat.binary_tree import BinaryTree, BinaryTrees, LabelledBinaryTree
@@ -2123,8 +2121,8 @@ class RuleShiftedShapes(Rule):
 
         INPUT:
 
-        - ``y, e, t, f, x`` -- a path of three partitions and two
-          colors from a cell in a growth diagram, labelled as::
+        - ``y``, ``e``, ``t``, ``f``, ``x`` -- a path of three partitions and
+          two colors from a cell in a growth diagram, labelled as::
 
               t f x
               e
@@ -2223,8 +2221,8 @@ class RuleShiftedShapes(Rule):
 
         INPUT:
 
-        - ``y, g, z, h, x`` -- a path of three partitions and two
-          colors from a cell in a growth diagram, labelled as::
+        - ``y``, ``g``, ``z``, ``h``, ``x`` -- a path of three partitions and
+          two colors from a cell in a growth diagram, labelled as::
 
                   x
                   h
@@ -2516,8 +2514,8 @@ class RuleLLMS(Rule):
 
         INPUT:
 
-        - ``y, e, t, f, x`` -- a path of three partitions and two
-          colors from a cell in a growth diagram, labelled as::
+        - ``y``, ``e``, ``t``, ``f``, ``x`` -- a path of three partitions and
+          two colors from a cell in a growth diagram, labelled as::
 
               t f x
               e
@@ -2790,7 +2788,7 @@ class RuleBinaryWord(Rule):
 
         INPUT:
 
-        - ``y, t, x`` -- three binary words from a cell in a growth
+        - ``y``, ``t``, ``x`` -- three binary words from a cell in a growth
           diagram, labelled as::
 
               t x
@@ -2852,7 +2850,7 @@ class RuleBinaryWord(Rule):
 
         See [Fom1995]_ Lemma 4.6.1, page 40.
 
-        - ``y, z, x`` -- three binary words from a cell in a growth diagram,
+        - ``y``, ``z``, ``x`` -- three binary words from a cell in a growth diagram,
           labelled as::
 
                 x
@@ -3206,7 +3204,7 @@ class RuleSylvester(Rule):
 
         INPUT:
 
-        - ``y, t, x`` -- three binary trees from a cell in a growth
+        - ``y``, ``t``, ``x`` -- three binary trees from a cell in a growth
           diagram, labelled as::
 
               t x
@@ -3329,7 +3327,7 @@ class RuleSylvester(Rule):
 
         INPUT:
 
-        - ``y, z, x`` -- three binary trees from a cell in a growth
+        - ``y``, ``z``, ``x`` -- three binary trees from a cell in a growth
           diagram, labelled as::
 
                 x
@@ -3522,7 +3520,7 @@ class RuleYoungFibonacci(Rule):
 
         INPUT:
 
-        - ``y, t, x`` -- three Fibonacci words from a
+        - ``y``, ``t``, ``x`` -- three Fibonacci words from a
           cell in a growth diagram, labelled as::
 
               t x
@@ -3578,7 +3576,7 @@ class RuleYoungFibonacci(Rule):
 
         See [Fom1995]_ Lemma 4.4.1, page 35.
 
-        - ``y, z, x`` -- three Fibonacci words from a cell in a
+        - ``y``, ``z``, ``x`` -- three Fibonacci words from a cell in a
           growth diagram, labelled as::
 
                 x
@@ -3766,7 +3764,7 @@ class RuleRSK(RulePartitions):
 
         INPUT:
 
-        - ``y, t, x`` -- three partitions from a cell in a
+        - ``y``, ``t``, ``x`` -- three partitions from a cell in a
           growth diagram, labelled as::
 
               t x
@@ -3821,7 +3819,7 @@ class RuleRSK(RulePartitions):
 
         INPUT:
 
-        - ``y, z, x`` -- three partitions from a cell in a
+        - ``y``, ``z``, ``x`` -- three partitions from a cell in a
           growth diagram, labelled as::
 
               x
@@ -3918,7 +3916,7 @@ class RuleBurge(RulePartitions):
 
         INPUT:
 
-        - ``y, t, x`` -- three  from a cell in a growth diagram,
+        - ``y``, ``t``, ``x`` -- three  from a cell in a growth diagram,
           labelled as::
 
               t x
@@ -3967,7 +3965,7 @@ class RuleBurge(RulePartitions):
 
         INPUT:
 
-        - ``y, z, x`` -- three partitions from a cell in a
+        - ``y``, ``z``, ``x`` -- three partitions from a cell in a
           growth diagram, labelled as::
 
               x
@@ -4211,7 +4209,7 @@ class RuleDomino(Rule):
 
         INPUT:
 
-        - ``y, t, x`` -- three partitions from a cell in a
+        - ``y``, ``t``, ``x`` -- three partitions from a cell in a
           growth diagram, labelled as::
 
               t x

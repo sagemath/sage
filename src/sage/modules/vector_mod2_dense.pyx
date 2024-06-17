@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-linbox
 # distutils: libraries = M4RI_LIBRARIES GDLIB_LIBRARIES LIBPNG_LIBRARIES
 # distutils: library_dirs = M4RI_LIBDIR GDLIB_LIBDIR LIBPNG_LIBDIR
 # distutils: include_dirs = M4RI_INCDIR GDLIB_INCDIR LIBPNG_INCDIR
@@ -290,7 +289,6 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         """
         mzd_write_bit(self._entries, 0, i, value)
 
-
     def __reduce__(self):
         """
         EXAMPLES::
@@ -348,7 +346,6 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         for i from 0 <= i < self._entries.width:
             res += Integer(row[i]).popcount()
         return res
-
 
     cpdef _dot_product_(self, Vector right):
         """
@@ -465,7 +462,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
 
         INPUT:
 
-        - ``copy`` - always ``True``
+        - ``copy`` -- always ``True``
 
         EXAMPLES::
 

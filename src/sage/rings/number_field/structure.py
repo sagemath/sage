@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 # sage.doctest: needs sage.rings.number_field
 r"""
 Helper classes for structural embeddings and isomorphisms of number fields
@@ -44,7 +43,6 @@ structure morphisms::
 AUTHORS:
 
 - Julian Rueth (2014-04-03): initial version
-
 """
 #*****************************************************************************
 #       Copyright (C) 2014 Julian Rueth <julian.rueth@fsfe.org>

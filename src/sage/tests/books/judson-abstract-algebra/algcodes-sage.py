@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 ##          Sage Doctest File         ##
 #**************************************#
 #*    Generated from PreTeXt source   *#
@@ -127,5 +126,4 @@ r"""
 
     sage: H.decode_to_code(received) == received
     True
-
 """

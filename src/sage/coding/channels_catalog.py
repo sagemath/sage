@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Index of channels
 
@@ -13,7 +12,6 @@ The ``channels`` object may be used to access the codes that Sage can build.
 To import these names into the global namespace, use::
 
     sage: from sage.coding.channels_catalog import *
-
 """
 #*****************************************************************************
 #       Copyright (C) 2015 David Lucas <david.lucas@inria.fr>

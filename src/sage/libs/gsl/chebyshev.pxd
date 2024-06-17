@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # distutils: libraries = GSL_LIBRARIES
 # distutils: library_dirs = GSL_LIBDIR
 # distutils: include_dirs = GSL_INCDIR
@@ -29,7 +28,6 @@ cdef extern from "gsl/gsl_chebyshev.h":
 
   double gsl_cheb_eval_mode( gsl_cheb_series * cs, double x, gsl_mode_t mode)
   int gsl_cheb_eval_mode_e( gsl_cheb_series * cs,  double x, gsl_mode_t mode, double * result, double * abserr)
-
 
 
   int gsl_cheb_calc_deriv(gsl_cheb_series * deriv,  gsl_cheb_series * cs)

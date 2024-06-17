@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 r"""
 Common combinatorial tools
 
@@ -39,9 +38,7 @@ def coeff_pi(J, I):
     - ``J`` -- a composition
     - ``I`` -- a composition refining ``J``
 
-    OUTPUT:
-
-    - integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -63,9 +60,7 @@ def coeff_lp(J,I):
     - ``J`` -- a composition
     - ``I`` -- a composition refining ``J``
 
-    OUTPUT:
-
-    - integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -87,9 +82,7 @@ def coeff_ell(J,I):
     - ``J`` -- a composition
     - ``I`` -- a composition refining ``J``
 
-    OUTPUT:
-
-    - integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -111,9 +104,7 @@ def coeff_sp(J, I):
     - ``J`` -- a composition
     - ``I`` -- a composition refining ``J``
 
-    OUTPUT:
-
-    - integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -133,11 +124,9 @@ def coeff_dab(I, J):
 
     INPUT:
 
-    - ``I, J`` -- compositions
+    - ``I``, ``J`` -- compositions
 
-    OUTPUT:
-
-    - An integer
+    OUTPUT: integer
 
     EXAMPLES::
 

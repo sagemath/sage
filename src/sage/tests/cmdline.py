@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 r"""
 This file contains some tests that Sage command line options actually
 do something.
@@ -51,7 +50,6 @@ test.spyx
 AUTHORS:
 
 - Jeroen Demeyer (2010-11-20): initial version (:issue:`10300`)
-
 """
 from subprocess import Popen, PIPE
 import os

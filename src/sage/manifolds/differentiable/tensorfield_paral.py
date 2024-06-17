@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Tensor Fields with Values on a Parallelizable Manifold
 
@@ -289,7 +288,6 @@ as follows::
     3
     sage: t[1,2,2,1] # check of the antisymmetry with respect to the last 2 indices
     -3
-
 """
 
 # *****************************************************************************

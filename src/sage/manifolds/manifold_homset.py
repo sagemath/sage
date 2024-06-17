@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Sets of Morphisms between Topological Manifolds
 
@@ -16,7 +15,6 @@ REFERENCES:
 
 - [Lee2011]_
 - [KN1963]_
-
 """
 #******************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>

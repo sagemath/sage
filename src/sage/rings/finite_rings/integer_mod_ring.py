@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Ring `\ZZ/n\ZZ` of integers modulo `n`
 
@@ -97,7 +96,7 @@ class IntegerModFactory(UniqueFactory):
     - ``is_field`` -- bool (default: ``False``); assert that
       the order is prime and hence the quotient ring belongs to
       the category of fields
-    - ``category`` (optional) - the category that the quotient ring belongs to.
+    - ``category`` (optional) -- the category that the quotient ring belongs to.
 
     .. NOTE::
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Elements of finitely generated modules over a PID
 
@@ -64,7 +63,7 @@ class FGP_Element(ModuleElement):
 
         - ``x`` -- element of M.V()
 
-        - ``check`` -- (default: True) if True, verify that x in M.V()
+        - ``check`` -- (default: ``True``) if True, verify that x in M.V()
 
         EXAMPLES::
 

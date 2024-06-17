@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 # sage.doctest: needs sage.rings.finite_rings
 r"""
 Resolvable Balanced Incomplete Block Design (RBIBD)
@@ -66,7 +65,7 @@ def resolvable_balanced_incomplete_block_design(v,k,existence=False):
 
     INPUT:
 
-    - ``v,k`` (integers)
+    - ``v``, ``k`` (integers)
 
     - ``existence`` (boolean) -- instead of building the design, return:
 

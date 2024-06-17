@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 ##          Sage Doctest File         ##
 #**************************************#
 #*    Generated from PreTeXt source   *#
@@ -194,5 +193,4 @@ r"""
 
     sage: len(factored)
     3
-
 """

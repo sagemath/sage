@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Differential Forms
 
@@ -30,7 +29,6 @@ REFERENCES:
 
 - [KN1963]_
 - [Lee2013]_
-
 """
 
 # *****************************************************************************

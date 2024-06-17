@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 r"""
 Power series implemented using PARI
 
@@ -57,7 +56,6 @@ implementation for power series over `k`::
 AUTHORS:
 
 - Peter Bruin (December 2013): initial version
-
 """
 
 # ****************************************************************************

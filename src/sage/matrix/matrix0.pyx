@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 """
 Base class for matrices, part 0
 
@@ -156,6 +155,28 @@ cdef class Matrix(sage.structure.element.Matrix):
             [      y       x 2*x + y]
         """
         return list(self._list())
+
+    def dense_coefficient_list(self, order=None) -> list:
+        """
+        Return a list of *all* coefficients of ``self``.
+
+        By default, this is the same as :meth:`list`.
+
+        INPUT:
+
+        - ``order`` -- (optional) an ordering of the basis indexing set
+
+        EXAMPLES::
+
+            sage: A = matrix([[1,2,3], [4,5,6]])
+            sage: A.dense_coefficient_list()
+            [1, 2, 3, 4, 5, 6]
+            sage: A.dense_coefficient_list([(1,2), (1,0), (0,1), (0,2), (0,0), (1,1)])
+            [6, 4, 2, 3, 1, 5]
+        """
+        if order is None:
+            return self.list()
+        return [self[i] for i in order]
 
     def _list(self):
         """
@@ -624,10 +645,10 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         USAGE:
 
-        - ``A[i, j]`` - the i,j element (or elements, if i or j are
+        - ``A[i, j]`` -- the i,j element (or elements, if i or j are
           slices or lists) of A, or
 
-        - ``A[i:j]`` - rows of A, according to slice notation
+        - ``A[i:j]`` -- rows of A, according to slice notation
 
         EXAMPLES::
 
@@ -1071,9 +1092,9 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        - ``key`` - any legal indexing (i.e., such that self[key] works)
+        - ``key`` -- any legal indexing (i.e., such that self[key] works)
 
-        - ``value`` - values that are used to set the elements indicated by key.
+        - ``value`` -- values that are used to set the elements indicated by key.
 
         EXAMPLES::
 
@@ -1426,7 +1447,6 @@ cdef class Matrix(sage.structure.element.Matrix):
             row_index = <object>PyTuple_GET_ITEM(key_tuple, 0)
             col_index = <object>PyTuple_GET_ITEM(key_tuple, 1)
 
-
             if PyIndex_Check(col_index):
                 col = col_index
                 if col < 0:
@@ -1525,7 +1545,6 @@ cdef class Matrix(sage.structure.element.Matrix):
                 if col_list_len != len(value_row):
                     raise IndexError("value does not have the right number of columns")
 
-
         if single_row:
             if value_list_one_dimensional:
                 value_row = value_list
@@ -1559,9 +1578,6 @@ cdef class Matrix(sage.structure.element.Matrix):
                     for col in range(col_list_len):
                         self.set_unsafe(row, col_list[col], self._coerce_element(value_row[col]))
         return
-
-
-
 
     cdef _coerce_element(self, x):
         """
@@ -1804,7 +1820,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        - ``rep_mapping`` - a dictionary or callable used to override
+        - ``rep_mapping`` -- a dictionary or callable used to override
           the usual representation of elements.
 
           If ``rep_mapping`` is a dictionary then keys should be
@@ -1820,23 +1836,23 @@ cdef class Matrix(sage.structure.element.Matrix):
           call :func:`repr` on elements which should have the default
           representation.
 
-        - ``zero`` - string (default: ``None``); if not ``None`` use
+        - ``zero`` -- string (default: ``None``); if not ``None`` use
           the value of ``zero`` as the representation of the zero
           element.
 
-        - ``plus_one`` - string (default: ``None``); if not ``None``
+        - ``plus_one`` -- string (default: ``None``); if not ``None``
           use the value of ``plus_one`` as the representation of the
           one element.
 
-        - ``minus_one`` - string (default: ``None``); if not ``None``
+        - ``minus_one`` -- string (default: ``None``); if not ``None``
           use the value of ``minus_one`` as the representation of the
           negative of the one element.
 
-        - ``unicode`` - boolean (default: ``False``).
+        - ``unicode`` -- boolean (default: ``False``).
           Whether to use Unicode symbols instead of ASCII symbols
           for brackets and subdivision lines.
 
-        - ``shape`` - one of ``"square"`` or ``"round"`` (default: ``None``).
+        - ``shape`` -- one of ``"square"`` or ``"round"`` (default: ``None``).
           Switches between round and square brackets.
           The default depends on the setting of the ``unicode`` keyword
           argument. For Unicode symbols, the default is round brackets
@@ -1958,7 +1974,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: K = (A - e).kernel()
             sage: P = K.basis_matrix()
             sage: P.str()
-            '[              1.000000000000000? + 0.?e-17*I  -2.116651487479748? + 0.0255565807096352?*I -0.2585224251020429? + 0.2886023409047535?*I  -0.4847545623533090? - 1.871890760086142?*I]'
+            '[             1.000000000000000? + 0.?e-17*I -2.116651487479748? + 0.0255565807096352?*I -0.2585224251020429? + 0.288602340904754?*I -0.4847545623533090? - 1.871890760086142?*I]'
 
         Use single-row delimiters where appropriate::
 
@@ -2427,9 +2443,9 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        -  ``self`` - an nxn matrix
+        -  ``self`` -- an nxn matrix
 
-        -  ``f`` - a polynomial in n variables x=(x1,...,xn)
+        -  ``f`` -- a polynomial in n variables x=(x1,...,xn)
 
         OUTPUT: The polynomial f(self\*x).
 
@@ -2590,7 +2606,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        - ``c1``, ``c2`` - integers specifying columns of ``self`` to interchange
+        - ``c1``, ``c2`` -- integers specifying columns of ``self`` to interchange
 
         OUTPUT:
 
@@ -2775,7 +2791,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        - ``r1``, ``r2`` - integers specifying rows of ``self`` to interchange
+        - ``r1``, ``r2`` -- integers specifying rows of ``self`` to interchange
 
         OUTPUT:
 
@@ -3193,11 +3209,11 @@ cdef class Matrix(sage.structure.element.Matrix):
         INPUT:
 
 
-        -  ``i`` - ith row
+        -  ``i`` -- ith row
 
-        -  ``s`` - scalar
+        -  ``s`` -- scalar
 
-        -  ``start_col`` - only rescale entries at this column
+        -  ``start_col`` -- only rescale entries at this column
            and to the right
 
 
@@ -3312,11 +3328,11 @@ cdef class Matrix(sage.structure.element.Matrix):
         INPUT:
 
 
-        -  ``i`` - ith column
+        -  ``i`` -- ith column
 
-        -  ``s`` - scalar
+        -  ``s`` -- scalar
 
-        -  ``start_row`` - only rescale entries at this row
+        -  ``start_row`` -- only rescale entries at this row
            and lower
 
 
@@ -3587,15 +3603,15 @@ cdef class Matrix(sage.structure.element.Matrix):
         INPUT:
 
 
-        -  ``i`` - integer, index into the rows of self
+        -  ``i`` -- integer, index into the rows of self
 
-        -  ``A`` - a matrix
+        -  ``A`` -- a matrix
 
-        -  ``r`` - integer, index into rows of A
+        -  ``r`` -- integer, index into rows of A
 
-        -  ``cols`` - a *sorted* list of integers.
+        -  ``cols`` -- a *sorted* list of integers.
 
-        -  ``(cols_index`` - ignored)
+        -  ``(cols_index`` -- ignored)
 
 
         EXAMPLES::
@@ -3822,9 +3838,9 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        - ``return_diag`` -- bool(default:False) if True and ``self`` is (skew)-symmetrizable the diagonal entries of the matrix `D` are returned.
-        - ``skew`` -- bool(default:False) if True, (skew-)symmetrizability is checked.
-        - ``positive`` -- bool(default:True) if True, the condition that `D` has positive entries is added.
+        - ``return_diag`` -- bool(default: ``False``) if True and ``self`` is (skew)-symmetrizable the diagonal entries of the matrix `D` are returned.
+        - ``skew`` -- bool(default: ``False``) if True, (skew-)symmetrizability is checked.
+        - ``positive`` -- bool(default: ``True``) if True, the condition that `D` has positive entries is added.
 
         OUTPUT:
 
@@ -3889,7 +3905,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        -  ``v`` -  a list of scalars.  The length can be less than
+        -  ``v`` --  a list of scalars.  The length can be less than
            the number of rows of ``self`` but not greater.
 
         OUTPUT:
@@ -3966,7 +3982,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        -  ``v`` -  a list of scalars.  The length can be less than
+        -  ``v`` --  a list of scalars.  The length can be less than
            the number of columns of ``self`` but not greater.
 
         OUTPUT:
@@ -4082,10 +4098,10 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        - ``skew`` - boolean (default: ``False``); Set to ``True`` to
+        - ``skew`` -- boolean (default: ``False``); Set to ``True`` to
           check if the matrix is skew-Hermitian instead of Hermitian.
 
-        - ``tolerance`` - a real number; the maximum difference we'll
+        - ``tolerance`` -- a real number; the maximum difference we'll
           tolerate between entries of the given matrix and its conjugate-
           transpose.
 
@@ -4220,7 +4236,6 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         self.cache(key, True)
         return True
-
 
     def is_hermitian(self):
         r"""
@@ -4461,8 +4476,8 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        - ``return_diag`` -- bool(default:False) if True and ``self`` is symmetrizable the diagonal entries of the matrix `D` are returned.
-        - ``positive`` -- bool(default:True) if True, the condition that `D` has positive entries is added.
+        - ``return_diag`` -- bool(default: ``False``) if True and ``self`` is symmetrizable the diagonal entries of the matrix `D` are returned.
+        - ``positive`` -- bool(default: ``True``) if True, the condition that `D` has positive entries is added.
 
         OUTPUT:
 
@@ -4504,8 +4519,8 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        - ``return_diag`` -- bool(default:False) if True and ``self`` is skew-symmetrizable the diagonal entries of the matrix `D` are returned.
-        - ``positive`` -- bool(default:True) if True, the condition that `D` has positive entries is added.
+        - ``return_diag`` -- bool(default: ``False``) if True and ``self`` is skew-symmetrizable the diagonal entries of the matrix `D` are returned.
+        - ``positive`` -- bool(default: ``True``) if True, the condition that `D` has positive entries is added.
 
         OUTPUT:
 
@@ -5149,7 +5164,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        -  ``v`` - a free module element.
+        -  ``v`` -- a free module element.
 
         OUTPUT: The vector times matrix product v\*A.
 
@@ -5254,9 +5269,9 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        - ``v`` - free module element
+        - ``v`` -- free module element
 
-        - ``n`` - nonnegative integer
+        - ``n`` -- nonnegative integer
 
         EXAMPLES::
 
@@ -6229,6 +6244,7 @@ cdef class Matrix(sage.structure.element.Matrix):
     cdef int _strassen_default_echelon_cutoff(self) except -2:
         return -1
 
+
 #######################
 # Unpickling
 #######################
@@ -6285,6 +6301,7 @@ def set_max_rows(n):
     deprecation(30552, "'set_max_rows' is replaced by 'matrix.options.max_rows'")
     from sage.matrix.constructor import options
     options.max_rows = n-1
+
 
 def set_max_cols(n):
     """

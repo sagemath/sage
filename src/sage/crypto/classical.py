@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.combinat
 r"""
 Classical Cryptosystems
@@ -294,7 +293,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``(a,b)`` -- a secret key; this key is used for both encryption and
+        - ``(a, b)`` -- a secret key; this key is used for both encryption and
           decryption. For the affine cryptosystem whose plaintext and
           ciphertext spaces are `A`, a key is an ordered pair
           `(a,b) \in \ZZ / n\ZZ \times \ZZ / n\ZZ` where `n` is the size or
@@ -983,7 +982,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``a, b`` -- a secret key belonging to the key space of this affine
+        - ``a``, ``b`` -- a secret key belonging to the key space of this affine
           cipher. This key must be an element of
           `\ZZ/n\ZZ \times \ZZ/n\ZZ` such that `\gcd(a,n) = 1` with `n`
           being the size of the ciphertext and plaintext spaces.
@@ -1057,7 +1056,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``a, b`` -- a secret key belonging to the key space of this affine
+        - ``a``, ``b`` -- a secret key belonging to the key space of this affine
           cipher. This key must be an element of
           `\ZZ/n\ZZ \times \ZZ/n\ZZ` such that `\gcd(a,n) = 1` with `n`
           being the size of the ciphertext and plaintext spaces.
@@ -1182,7 +1181,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``a, b`` -- a secret key for this affine cipher. The ordered pair
+        - ``a``, ``b`` -- a secret key for this affine cipher. The ordered pair
           `(a,b)` must be an element of `\ZZ/n\ZZ \times \ZZ/n\ZZ` such that
           `\gcd(a,n) = 1`.
 
@@ -1296,9 +1295,9 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
 
     INPUT:
 
-    - ``S`` - a string monoid over some alphabet
+    - ``S`` -- a string monoid over some alphabet
 
-    - ``m`` - integer `> 0`; the block length of matrices that specify
+    - ``m`` -- integer `> 0`; the block length of matrices that specify
       block permutations
 
     OUTPUT:
@@ -1340,9 +1339,9 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``S`` - a string monoid over some alphabet
+        - ``S`` -- a string monoid over some alphabet
 
-        - ``m`` - integer `> 0`; the block length of matrices that specify
+        - ``m`` -- integer `> 0`; the block length of matrices that specify
           block permutations
 
         OUTPUT:
@@ -1367,7 +1366,7 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``A`` - a matrix which specifies a block permutation
+        - ``A`` -- a matrix which specifies a block permutation
 
         EXAMPLES::
 
@@ -1576,9 +1575,9 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``A`` - a key within the key space of this Hill cipher
+        - ``A`` -- a key within the key space of this Hill cipher
 
-        - ``M`` - a string (possibly empty) over the string monoid of this
+        - ``M`` -- a string (possibly empty) over the string monoid of this
           Hill cipher.
 
         OUTPUT:
@@ -3015,7 +3014,7 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
 
     INPUT:
 
-    - ``S`` - a string monoid over some alphabet
+    - ``S`` -- a string monoid over some alphabet
 
     OUTPUT:
 
@@ -3064,7 +3063,7 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``K`` - a key which is a permutation of the cryptosystem alphabet
+        - ``K`` -- a key which is a permutation of the cryptosystem alphabet
 
         EXAMPLES::
 
@@ -3137,7 +3136,7 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``K`` - a key belonging to the key space of this cryptosystem
+        - ``K`` -- a key belonging to the key space of this cryptosystem
 
         OUTPUT:
 
@@ -3170,7 +3169,7 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``M`` - a string, possibly empty
+        - ``M`` -- a string, possibly empty
 
         OUTPUT:
 
@@ -3198,9 +3197,9 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``K`` - a key belonging to the key space of this substitution cipher
+        - ``K`` -- a key belonging to the key space of this substitution cipher
 
-        - ``C`` - a string (possibly empty) over the string monoid of this
+        - ``C`` -- a string (possibly empty) over the string monoid of this
           cryptosystem.
 
         OUTPUT:
@@ -3224,9 +3223,9 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``K`` - a key belonging to the key space of this substitution cipher
+        - ``K`` -- a key belonging to the key space of this substitution cipher
 
-        - ``M`` - a string (possibly empty) over the string monoid of this
+        - ``M`` -- a string (possibly empty) over the string monoid of this
           cryptosystem.
 
         OUTPUT:
@@ -3250,9 +3249,9 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
 
     INPUT:
 
-    - ``S`` - a string monoid over some alphabet
+    - ``S`` -- a string monoid over some alphabet
 
-    - ``n`` - integer `> 0`; a block length of a block permutation
+    - ``n`` -- integer `> 0`; a block length of a block permutation
 
     OUTPUT:
 
@@ -3300,7 +3299,7 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
 
         INPUT:
 
-        - ``K`` - a key which specifies a block permutation
+        - ``K`` -- a key which specifies a block permutation
 
         EXAMPLES::
 
@@ -3496,7 +3495,7 @@ class VigenereCryptosystem(SymmetricKeyCryptosystem):
 
     INPUT:
 
-    - ``S``-- a string monoid over some alphabet
+    - ``S`` -- a string monoid over some alphabet
 
     - ``n`` -- integer `> 0`; block length of an encryption/decryption key
 

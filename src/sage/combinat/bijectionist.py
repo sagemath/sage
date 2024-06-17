@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.numerical.mip
 r"""
 A bijectionist's toolkit
@@ -361,7 +360,6 @@ Value restrictions::
     Traceback (most recent call last):
     ...
     ValueError: no possible values found for singleton block [[1, 2]]
-
 """
 # ****************************************************************************
 #       Copyright (C) 2020 Martin Rubey <martin.rubey at tuwien.ac.at>
@@ -625,10 +623,10 @@ class Bijectionist(SageObject):
 
         INPUT:
 
-        - ``singletons`` -- (optional, default: ``False``) whether or not to
+        - ``singletons`` -- (default: ``False``) whether or not to
           include singleton blocks in the output
 
-        - ``optimal`` -- (optional, default: ``False``) whether or not to
+        - ``optimal`` -- (default: ``False``) whether or not to
           compute the coarsest possible partition
 
         .. NOTE::

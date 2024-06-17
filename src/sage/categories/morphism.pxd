@@ -9,3 +9,6 @@ cdef class Morphism(Map):
 cdef class SetMorphism(Morphism):
     cdef object _function
     cpdef bint _eq_c_impl(left, Element right) noexcept
+
+cdef class SetIsomorphism(SetMorphism):
+    cdef object _inverse

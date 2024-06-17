@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 """
 Sandpiles
 
@@ -439,7 +438,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- (default: ``True``) boolean
 
         OUTPUT:
 
@@ -673,7 +672,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        ``name`` -- name of an internal method
+        - ``name`` -- name of an internal method
 
         EXAMPLES::
 
@@ -796,7 +795,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        ``kwds`` -- (optional) arguments passed to the show method for Graph or DiGraph
+        - ``kwds`` -- (optional) arguments passed to the show method for Graph or DiGraph
 
         EXAMPLES::
 
@@ -815,7 +814,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        ``kwds`` -- (optional) arguments passed to the show method for Graph or DiGraph
+        - ``kwds`` -- (optional) arguments passed to the show method for Graph or DiGraph
 
         EXAMPLES::
 
@@ -1023,7 +1022,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        ``v`` - (optional) vertex name
+        - ``v`` -- (optional) vertex name
 
         OUTPUT:
 
@@ -1062,7 +1061,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        ``v`` -- (optional) vertex name
+        - ``v`` -- (optional) vertex name
 
         OUTPUT:
 
@@ -1244,7 +1243,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        ``k`` -- integer
+        - ``k`` -- integer
 
         OUTPUT:
 
@@ -1308,7 +1307,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- (default: ``True``) boolean
 
         OUTPUT:
 
@@ -1371,7 +1370,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- (default: ``True``) boolean
 
         OUTPUT:
 
@@ -1430,7 +1429,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- (default: ``True``) boolean
 
         OUTPUT:
 
@@ -1490,7 +1489,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- (default: ``True``) boolean
 
         OUTPUT:
 
@@ -1587,7 +1586,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- (default: ``True``) boolean
 
         OUTPUT:
 
@@ -1624,7 +1623,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- (default: ``True``) boolean
 
         OUTPUT:
 
@@ -1707,7 +1706,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        ``multivariable`` -- (default: ``True``) boolean
+        - ``multivariable`` -- (default: ``True``) boolean
 
         OUTPUT:
 
@@ -1747,7 +1746,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- (default: ``True``) boolean
 
         OUTPUT:
 
@@ -2048,7 +2047,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- (default: ``True``) boolean
 
         OUTPUT:
 
@@ -2137,7 +2136,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        ``smax`` -- (optional) SandpileConfig or list representing a SandpileConfig
+        - ``smax`` -- (optional) SandpileConfig or list representing a SandpileConfig
 
 
         OUTPUT:
@@ -2349,7 +2348,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        ``k`` -- integer
+        - ``k`` -- integer
 
         OUTPUT:
 
@@ -2539,7 +2538,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        ``gens`` -- (default: ``False``) boolean
+        - ``gens`` -- (default: ``False``) boolean
 
         OUTPUT:
 
@@ -2631,7 +2630,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        ``verbose`` -- (default: ``False``) boolean
+        - ``verbose`` -- (default: ``False``) boolean
 
         OUTPUT:
 
@@ -2709,7 +2708,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- (default: ``True``) boolean
 
         OUTPUT:
 
@@ -2838,7 +2837,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        ``orbits`` - list of lists partitioning the vertices
+        - ``orbits`` -- list of lists partitioning the vertices
 
         OUTPUT:
 
@@ -2897,7 +2896,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- (default: ``True``) boolean
 
         OUTPUT:
 
@@ -2995,7 +2994,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        ``memo`` -- (optional) dict
+        - ``memo`` -- (optional) dict
 
         EXAMPLES::
 
@@ -3048,7 +3047,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        ``name`` -- name of an internal method
+        - ``name`` -- name of an internal method
 
         EXAMPLES::
 
@@ -3120,7 +3119,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        ``other`` -- SandpileConfig
+        - ``other`` -- SandpileConfig
 
         OUTPUT:
 
@@ -3144,7 +3143,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        ``other`` -- SandpileConfig
+        - ``other`` -- SandpileConfig
 
         OUTPUT:
 
@@ -3169,7 +3168,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        ``other`` -- SandpileConfig
+        - ``other`` -- SandpileConfig
 
         OUTPUT:
 
@@ -3222,7 +3221,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        ``other`` -- SandpileConfig or Integer
+        - ``other`` -- SandpileConfig or Integer
 
         OUTPUT:
 
@@ -3259,7 +3258,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        ``other`` -- Integer
+        - ``other`` -- Integer
 
         OUTPUT:
 
@@ -3285,7 +3284,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        ``other`` -- SandpileConfig
+        - ``other`` -- SandpileConfig
 
         OUTPUT:
 
@@ -3317,7 +3316,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        ``other`` -- SandpileConfig
+        - ``other`` -- SandpileConfig
 
         OUTPUT:
 
@@ -3344,7 +3343,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        ``other`` -- SandpileConfig
+        - ``other`` -- SandpileConfig
 
         OUTPUT:
 
@@ -3376,7 +3375,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        ``other`` -- SandpileConfig
+        - ``other`` -- SandpileConfig
 
         OUTPUT:
 
@@ -3406,7 +3405,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        ``k`` -- SandpileConfig
+        - ``k`` -- SandpileConfig
 
         OUTPUT:
 
@@ -3447,7 +3446,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        ``other`` -- SandpileConfig
+        - ``other`` -- SandpileConfig
 
         OUTPUT:
 
@@ -3539,7 +3538,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        ``v`` -- vertex
+        - ``v`` -- vertex
 
         OUTPUT:
 
@@ -3566,7 +3565,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        ``sigma`` -- SandpileConfig or (list or dict representing a SandpileConfig)
+        - ``sigma`` -- SandpileConfig or (list or dict representing a SandpileConfig)
 
         OUTPUT:
 
@@ -3670,7 +3669,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        ``with_firing_vector`` -- (default: ``False``)  boolean
+        - ``with_firing_vector`` -- (default: ``False``)  boolean
 
         OUTPUT:
 
@@ -3743,7 +3742,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        ``distrib`` -- (optional) list of nonnegative numbers summing to 1 (representing a prob. dist.)
+        - ``distrib`` -- (optional) list of nonnegative numbers summing to 1 (representing a prob. dist.)
 
         OUTPUT:
 
@@ -3902,7 +3901,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        ``with_firing_vector`` -- (default: ``False``)  boolean
+        - ``with_firing_vector`` -- (default: ``False``)  boolean
 
         OUTPUT:
 
@@ -4001,7 +4000,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        ``with_firing_vector`` -- (default: ``False``) boolean
+        - ``with_firing_vector`` -- (default: ``False``) boolean
 
         OUTPUT:
 
@@ -4079,7 +4078,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-         ``orbits`` -- list of lists of vertices
+         - ``orbits`` -- list of lists of vertices
 
         OUTPUT:
 
@@ -4104,7 +4103,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        ``v`` -- vertex
+        - ``v`` -- vertex
 
         OUTPUT:
 
@@ -4220,7 +4219,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- (default: ``True``) boolean
 
         OUTPUT:
 
@@ -4367,7 +4366,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        ``name`` -- name of an internal method
+        - ``name`` -- name of an internal method
 
         EXAMPLES::
 
@@ -4460,7 +4459,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        ``other`` -- SandpileDivisor
+        - ``other`` -- SandpileDivisor
 
         OUTPUT:
 
@@ -4484,7 +4483,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        ``other`` -- integer
+        - ``other`` -- integer
 
         OUTPUT:
 
@@ -4509,7 +4508,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        ``other`` -- Integer
+        - ``other`` -- Integer
 
         OUTPUT:
 
@@ -4534,7 +4533,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        ``other`` -- SandpileDivisor
+        - ``other`` -- SandpileDivisor
 
         OUTPUT:
 
@@ -4559,7 +4558,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        ``other`` -- SandpileDivisor
+        - ``other`` -- SandpileDivisor
 
         OUTPUT:
 
@@ -4584,7 +4583,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        ``other`` -- SandpileDivisor
+        - ``other`` -- SandpileDivisor
 
         OUTPUT:
 
@@ -4629,7 +4628,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        ``other`` -- SandpileDivisor
+        - ``other`` -- SandpileDivisor
 
         OUTPUT:
 
@@ -4661,7 +4660,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        ``other`` -- SandpileDivisor
+        - ``other`` -- SandpileDivisor
 
         OUTPUT:
 
@@ -4688,7 +4687,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        ``other`` -- SandpileDivisor
+        - ``other`` -- SandpileDivisor
 
         OUTPUT:
 
@@ -4720,7 +4719,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        ``other`` -- SandpileDivisor
+        - ``other`` -- SandpileDivisor
 
         OUTPUT:
 
@@ -4809,7 +4808,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        ``v`` -- vertex
+        - ``v`` -- vertex
 
         OUTPUT:
 
@@ -4835,7 +4834,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        ``sigma`` -- SandpileDivisor or (list or dict representing a SandpileDivisor)
+        - ``sigma`` -- SandpileDivisor or (list or dict representing a SandpileDivisor)
 
         OUTPUT:
 
@@ -4928,7 +4927,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- (default: ``True``) boolean
 
         OUTPUT:
 
@@ -5067,7 +5066,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        ``distrib`` -- (optional)  list of nonnegative numbers representing a probability distribution on the vertices
+        - ``distrib`` -- (optional)  list of nonnegative numbers representing a probability distribution on the vertices
 
         OUTPUT:
 
@@ -5393,7 +5392,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        ``verbose`` -- (default: ``False``)  boolean
+        - ``verbose`` -- (default: ``False``)  boolean
 
         EXAMPLES::
 
@@ -5464,7 +5463,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        ``with_witness`` -- (default: ``False``) boolean
+        - ``with_witness`` -- (default: ``False``) boolean
 
         OUTPUT:
 
@@ -5529,7 +5528,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        ``verbose`` -- (default: ``False``) boolean
+        - ``verbose`` -- (default: ``False``) boolean
 
         EXAMPLES::
 
@@ -5578,7 +5577,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        ``v`` -- (default: ``sink``) vertex
+        - ``v`` -- (default: ``sink``) vertex
 
         OUTPUT:
 
@@ -5663,7 +5662,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        ``v`` -- (default: ``sink``) vertex
+        - ``v`` -- (default: ``sink``) vertex
 
         OUTPUT:
 
@@ -5712,7 +5711,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        ``with_rank_seq`` -- (default: ``False``) boolean
+        - ``with_rank_seq`` -- (default: ``False``) boolean
 
         OUTPUT:
 
@@ -5746,7 +5745,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- (default: ``True``) boolean
 
         OUTPUT:
 
@@ -5886,7 +5885,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        ``distrib`` -- (optional) list of nonnegative numbers representing a probability distribution on the vertices
+        - ``distrib`` -- (optional) list of nonnegative numbers representing a probability distribution on the vertices
 
         OUTPUT:
 
@@ -5924,7 +5923,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        ``orbits`` -- list of lists of vertices
+        - ``orbits`` -- list of lists of vertices
 
         OUTPUT:
 
@@ -5981,7 +5980,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        ``cycle`` -- (default: ``False``) boolean
+        - ``cycle`` -- (default: ``False``) boolean
 
         OUTPUT:
 
@@ -6029,7 +6028,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        ``with_firing_vector`` -- (default: ``False``) boolean
+        - ``with_firing_vector`` -- (default: ``False``) boolean
 
         EXAMPLES::
 
@@ -6092,7 +6091,7 @@ def sandlib(selector=None):
 
     INPUT:
 
-    ``selector`` -- (optional) identifier or None
+    - ``selector`` -- (optional) identifier or None
 
     OUTPUT:
 
@@ -6171,7 +6170,7 @@ def triangle_sandpile(n):
 
     INPUT:
 
-    ``n`` -- integer
+    - ``n`` -- integer
 
     OUTPUT:
 
@@ -6217,7 +6216,7 @@ def aztec_sandpile(n):
 
     INPUT:
 
-    ``n`` -- integer
+    - ``n`` -- integer
 
     OUTPUT:
 
@@ -6363,9 +6362,9 @@ def firing_graph(S, eff):
 
     INPUT:
 
-    ``S`` -- Sandpile
+    - ``S`` -- Sandpile
 
-    ``eff`` -- list of divisors
+    - ``eff`` -- list of divisors
 
     OUTPUT:
 
@@ -6400,9 +6399,9 @@ def parallel_firing_graph(S, eff):
 
     INPUT:
 
-    ``S`` -- Sandpile
+    - ``S`` -- Sandpile
 
-    ``eff`` -- list of divisors
+    - ``eff`` -- list of divisors
 
     OUTPUT:
 
@@ -6439,9 +6438,9 @@ def admissible_partitions(S, k):
 
     INPUT:
 
-    ``S`` -- Sandpile
+    - ``S`` -- Sandpile
 
-    ``k`` -- integer
+    - ``k`` -- integer
 
     OUTPUT:
 
@@ -6493,9 +6492,9 @@ def partition_sandpile(S, p):
 
     INPUT:
 
-    ``S`` -- Sandpile
+    - ``S`` -- Sandpile
 
-    ``p`` -- partition of the vertices of ``S``
+    - ``p`` -- partition of the vertices of ``S``
 
     OUTPUT:
 
@@ -6566,7 +6565,7 @@ def wilmes_algorithm(M):
 
     INPUT:
 
-    ``M`` -- square integer matrix of full rank
+    - ``M`` -- square integer matrix of full rank
 
     OUTPUT:
 

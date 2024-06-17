@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 r"""
 Projective plane conics over `\QQ`
 
@@ -7,7 +6,6 @@ AUTHORS:
 - Marco Streng (2010-07-20)
 
 - Nick Alexander (2008-01-08)
-
 """
 # ****************************************************************************
 #       Copyright (C) 2008 Nick Alexander <ncalexander@gmail.com>

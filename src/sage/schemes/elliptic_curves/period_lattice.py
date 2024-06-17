@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 r"""
 Period lattices of elliptic curves and related functions
 
@@ -105,7 +104,6 @@ AUTHORS:
   - Added support for complex embeddings, May 2009.
 
   - Added complex elliptic logs, March 2010; enhanced, October 2010.
-
 """
 
 import sage.rings.abc
@@ -1333,7 +1331,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         INPUT:
 
-        - ``xP, yP`` (real or complex) -- Coordinates of a point on
+        - ``xP``, ``yP`` (real or complex) -- Coordinates of a point on
           the embedded elliptic curve associated with this period
           lattice.
 
@@ -1991,7 +1989,7 @@ def normalise_periods(w1, w2):
 
     INPUT:
 
-    - ``w1,w2`` (complex) -- two complex numbers with non-real ratio
+    - ``w1``, ``w2`` -- two complex numbers with non-real ratio
 
     OUTPUT:
 

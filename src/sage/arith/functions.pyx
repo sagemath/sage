@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Fast Arithmetic Functions
 """
@@ -29,7 +28,7 @@ def lcm(a, b=None):
 
     INPUT:
 
-    - ``a,b`` -- two elements of a ring with lcm or
+    - ``a``, ``b`` -- two elements of a ring with lcm or
 
     - ``a`` -- a list, tuple or iterable of elements of a ring with lcm
 

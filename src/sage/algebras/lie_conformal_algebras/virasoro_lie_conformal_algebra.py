@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 r"""
 Virasoro Lie Conformal Algebra
@@ -28,6 +27,8 @@ AUTHORS:
 #*****************************************************************************
 
 from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
+
+
 class VirasoroLieConformalAlgebra(GradedLieConformalAlgebra):
     """
     The Virasoro Lie Conformal algebra over `R`.

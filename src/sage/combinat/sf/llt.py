@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 r"""
 LLT symmetric functions
@@ -493,8 +492,8 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
 
         INPUT:
 
-        - ``self`` - an instance of the LLT hspin or hcospin basis
-        - ``x`` - an element of the monomial basis
+        - ``self`` -- an instance of the LLT hspin or hcospin basis
+        - ``x`` -- an element of the monomial basis
 
         OUTPUT:
 

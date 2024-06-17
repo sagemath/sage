@@ -1,11 +1,9 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Declaration file for simple set datastructures
 
 AUTHORS:
 
 - Robert Miller (2011--2013): initial version
-
 """
 
 #*****************************************************************************

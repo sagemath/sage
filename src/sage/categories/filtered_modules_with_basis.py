@@ -35,6 +35,7 @@ from sage.misc.cachefunc import cached_method
 from sage.categories.subobjects import SubobjectsCategory
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 
+
 class FilteredModulesWithBasis(FilteredModulesCategory):
     r"""
     The category of filtered modules with a distinguished basis.
@@ -125,7 +126,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
             INPUT:
 
-            - ``d`` -- (optional, default ``None``) nonnegative integer
+            - ``d`` -- (default: ``None``) nonnegative integer
               or ``None``
 
             OUTPUT:

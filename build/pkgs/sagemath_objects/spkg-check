@@ -1,15 +1,45 @@
 #!/usr/bin/env bash
 cd src
 
+if [ ! -r tox.ini ]; then
+    echo "Not testing the package because there is no tox.ini"
+    exit 0
+fi
+
+for lib in "$SAGE_SRC/bin/sage-src-env-config" "$SAGE_SRC/bin/sage-env-config" "$SAGE_SRC/bin/sage-env" "$SAGE_ROOT/build/bin/sage-build-env-config" "$SAGE_ROOT/build/bin/sage-build-env"; do
+    source "$lib"
+    if [ $? -ne 0 ]; then
+        echo >&2 "Error: failed to source $lib"
+        echo >&2 "Is $SAGE_ROOT the correct SAGE_ROOT?"
+        exit 1
+    fi
+done
+
 export PIP_NO_INDEX=true
 export PIP_FIND_LINKS="file://$SAGE_SPKG_WHEELS"
 
-export TOX_PARALLEL_NO_SPINNER=1
+unset tox_args
+
 wheel="$(sed -n '1s,.*@ file://,,p' $SAGE_SPKG_SCRIPTS/$PKG_BASE/spkg-requirements.txt)"
-echo Running "tox -r -p auto -v --installpkg $wheel"
-tox -r -p auto -v --installpkg "$wheel"
+if [ -n "$wheel" ]; then
+    tox_envs=$(tox -l)
+    tox_args="-r -p auto -v --installpkg $wheel"
+elif [ "$SAGE_EDITABLE" = yes ]; then
+    tox_envs=$(tox -l | sed s/norequirements/editable/)
+    # FIXME: Should use -r if sage_setup or another build requirement changes
+    tox_args="-r -v -v -v -v -e $(echo $tox_envs | sed 's/ /,/g')"
+else
+    echo "Not testing the package because SAGE_WHEELS=$SAGE_WHEELS and SAGE_EDITABLE=$SAGE_EDITABLE"
+    exit 0
+fi
+
+export TOX_PARALLEL_NO_SPINNER=1
+
+echo Running "tox $tox_args"
+tox $tox_args
 status=$?
 case $status:$SAGE_CHECK:$([ -r known-test-failures.json ]; echo $?) in
+    0:no:*)   echo "Not testing the package because SAGE_CHECK=no";;
     0:*:0)    echo "Passed the test suite (modulo baseline known-test-failures*.json)";;
     0:*:*)    echo "Passed the test suite";;
     *:warn:0) echo "Warning: New failures (not in baseline known-test-failures*.json (ignored)"; status=0;;
@@ -18,10 +48,12 @@ case $status:$SAGE_CHECK:$([ -r known-test-failures.json ]; echo $?) in
     *:yes:*)  echo "Failures testing the package";;
 esac
 # Show summaries of failures (suppress lines ending with '[failed in baseline]')
-for f in $(pwd)/.tox/sagepython-sagewheels-nopypi-norequirements*/log/*-command*.log; do
-    if [ -r "$f" ]; then
-        echo "$f"
-        grep '^sage -t.*#[^]]*$' "$f"
-    fi
+for e in $tox_envs; do
+    for f in $(pwd)/.tox/$e/log/*-command*.log; do
+        if [ -r "$f" ]; then
+            echo "$f"
+            grep '^sage -t.*#[^]]*$' "$f"
+        fi
+    done
 done
 exit $status

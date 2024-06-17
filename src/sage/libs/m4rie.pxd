@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-linbox
 ##############################################################################
 #       Copyright (C) 2010 Martin Albrecht <martinralbrecht@googlemail.com>
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -7,7 +6,6 @@
 ##############################################################################
 
 from sage.libs.m4ri cimport mzd_t, m4ri_word
-
 
 
 cdef extern from "m4rie/m4rie.h":

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 r"""
 Galois representations attached to elliptic curves
 
@@ -97,7 +96,6 @@ REFERENCES:
 AUTHORS:
 
 - chris wuthrich (02/10): moved from ell_rational_field.py.
-
 """
 
 ######################################################################
@@ -1109,7 +1107,7 @@ class GaloisRepresentation(SageObject):
 
         - a prime ``p``
 
-        - a natural number ``bound`` (optional, default=10000)
+        - a natural number ``bound`` (default: 10000)
 
         OUTPUT:
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 # sage.doctest: needs sage.geometry.polyhedron sage.graphs
 r"""
 Subschemes of toric space
@@ -10,7 +9,6 @@ AUTHORS:
 - William Stein (2005): initial version.
 
 - Andrey Novoseltsev (2010-05-17): subschemes of toric varieties.
-
 """
 
 # ****************************************************************************

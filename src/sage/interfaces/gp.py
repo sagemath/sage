@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 # sage.doctest: needs sage.libs.pari
 r"""
 Interface to the GP calculator of PARI/GP
@@ -467,7 +466,7 @@ class Gp(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``t`` - (default: None); if not None, then returns
+        -  ``t`` -- (default: None); if not None, then returns
            time since t
 
 

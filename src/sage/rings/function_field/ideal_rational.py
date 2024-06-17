@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Ideals of function fields: rational
 """
@@ -359,7 +358,7 @@ class FunctionFieldIdealInfinite_rational(FunctionFieldIdealInfinite):
 
     - ``ring`` -- infinite maximal order
 
-    - ``gen``-- generator
+    - ``gen`` -- generator
 
     Note that the infinite maximal order is a principal ideal domain.
 

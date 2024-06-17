@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 """
 Discrete Wavelet Transform
 
@@ -9,7 +8,6 @@ AUTHOR:
 
 - Josh Kantor (2006-10-07)  - initial version
 - David Joyner (2006-10-09) - minor changes to docstrings and examples.
-
 """
 
 # ****************************************************************************

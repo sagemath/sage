@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Places of function fields
 
@@ -45,7 +44,6 @@ AUTHORS:
 - Kwankyu Lee (2017-04-30): initial version
 
 - Brent Baccala (2019-12-20): function fields of characteristic zero
-
 """
 
 # ****************************************************************************

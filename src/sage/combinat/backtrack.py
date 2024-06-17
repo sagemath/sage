@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Backtracking
 
@@ -10,7 +9,6 @@ tree or graph structure.
   described by a ``children`` function, with branch pruning, etc.
 
 This module has mostly been superseded by ``RecursivelyEnumeratedSet``.
-
 """
 # ****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,

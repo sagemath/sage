@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Graded Algebra of Mixed Differential Forms
 
@@ -18,7 +17,6 @@ for details.
 AUTHORS:
 
 - Michael Jung (2019) : initial version
-
 """
 
 #******************************************************************************

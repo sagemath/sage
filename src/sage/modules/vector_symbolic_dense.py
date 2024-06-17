@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 """
 Dense vectors over the symbolic ring
 
@@ -43,7 +42,6 @@ Test pickling/unpickling::
     sage: u = vector(SR, [sin(x^2)])
     sage: loads(dumps(u)) == u
     True
-
 """
 
 # ****************************************************************************

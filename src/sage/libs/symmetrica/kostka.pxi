@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 from cpython.object cimport *
 from cysignals.signals cimport sig_on, sig_off
 
@@ -97,7 +96,6 @@ def kostka_tab_symmetrica(shape, content):
         _op_skew_partition(shape, cshape)
     else:
         _op_partition(shape, cshape)
-
 
 
     #Check to make sure the content is compatible with the shape.

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 r"""
 Catalog Of Crystal Models For `B(\infty)`
 

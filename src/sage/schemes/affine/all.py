@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """nodoctest
 all.py -- export of affine to Sage
 """

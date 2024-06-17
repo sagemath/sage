@@ -1,11 +1,9 @@
-# sage_setup: distribution = sagemath-repl
 # sage.doctest: needs sage.libs.pari
 """
 This file contains all the example code from the published book
 'Elementary Number Theory: Primes, Congruences, and Secrets' by
 William Stein, Springer-Verlag, 2009.
 """
-
 
 """
 sage: prime_range(10,50)

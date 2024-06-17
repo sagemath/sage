@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 """
 `L`-series for elliptic curves
 
@@ -10,7 +9,6 @@ AUTHORS:
   instead of floats.
 
 - William Stein et al. (2005 and later)
-
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein
@@ -314,8 +312,8 @@ class Lseries_ell(SageObject):
 
         INPUT:
 
-        - ``x``-- positive floating point number
-        - ``y``-- positive floating point number
+        - ``x`` -- positive floating point number
+        - ``y`` -- positive floating point number
         - ``stepsize`` -- positive floating point number
 
         OUTPUT:

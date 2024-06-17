@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.libs.gap
 """
 Branching Rules
@@ -1017,8 +1016,8 @@ class BranchingRule(SageObject):
         """
         INPUT:
 
-        - ``R, S`` -- CartanTypes
-        -  ``f`` -- a function from the weight lattice of R to the weight lattice of S.
+        - ``R``, ``S`` -- CartanTypes
+        -  ``f`` -- a function from the weight lattice of R to the weight lattice of S
         """
         self._R = CartanType(R)
         self._S = CartanType(S)

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Symbolic Computation
 
@@ -852,7 +851,7 @@ def symbolic_product(expression, v, a, b, algorithm='maxima', hold=False):
 
       - ``'mathematica'`` -- (optional) use Mathematica
 
-    - ``hold`` - (default: ``False``) if ``True``, don't evaluate
+    - ``hold`` -- (default: ``False``) if ``True``, don't evaluate
 
     EXAMPLES::
 
@@ -1181,7 +1180,7 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
       series, which allows more limits to be computed (but may also
       crash in some obscure cases due to bugs in Maxima).
 
-    - ``**argv`` - 1 named parameter
+    - ``**argv`` -- 1 named parameter
 
     .. note::
 
@@ -1498,7 +1497,7 @@ def mma_free_limit(expression, v, a, dir=None):
     - ``expression`` -- symbolic expression
     - ``v`` -- variable
     - ``a`` -- value where the variable goes to
-    - ``dir`` -- ``'+'``, ``'-'`` or ``None`` (optional, default: ``None``)
+    - ``dir`` -- ``'+'``, ``'-'`` or ``None`` (default: ``None``)
 
     EXAMPLES::
 

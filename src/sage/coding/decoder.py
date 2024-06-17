@@ -1,5 +1,4 @@
-# sage_setup: distribution = sagemath-modules
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Decoders
 
@@ -10,7 +9,6 @@ AUTHORS:
 - David Joyner (2009-02-01): initial version
 
 - David Lucas (2015-06-29): abstract class version
-
 """
 #*****************************************************************************
 #       Copyright (C) 2009 David Joyner <wdjoyner@gmail.com>

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Support for persistent functions in .sage files
 
@@ -45,6 +44,7 @@ import inspect
 import os
 
 from sage.misc import persist
+
 
 class func_persist:
     r"""

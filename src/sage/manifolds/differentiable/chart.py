@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Coordinate Charts on Differentiable Manifolds
 
@@ -21,7 +20,6 @@ AUTHORS:
 REFERENCES:
 
 - Chap. 1 of [Lee2013]_
-
 """
 # ****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: optional - numpy
 r"""
 Dense vectors using a NumPy backend
@@ -201,7 +200,6 @@ cdef class Vector_double_dense(Vector_numpy_dense):
 
         return self._new(self._vector_numpy*self._python_dtype(right))
 
-
     def inv_fft(self,algorithm="radix2", inplace=False):
         """
         This performs the inverse fast Fourier transform on the vector.
@@ -311,7 +309,6 @@ cdef class Vector_double_dense(Vector_numpy_dense):
         """
         return self.change_ring(CDF)
 
-
     def zero_at(self, eps):
         r"""
         Returns a copy with small entries replaced by zeros.
@@ -322,7 +319,7 @@ cdef class Vector_double_dense(Vector_numpy_dense):
 
         INPUT:
 
-        - ``eps`` - cutoff value
+        - ``eps`` -- cutoff value
 
         OUTPUT:
 
@@ -361,14 +358,13 @@ cdef class Vector_double_dense(Vector_numpy_dense):
         v = self._new(out)
         return v
 
-
     def norm(self, p=2):
         r"""
         Returns the norm (or related computations) of the vector.
 
         INPUT:
 
-        - ``p`` - default: 2 - controls which norm is computed,
+        - ``p`` -- (default: 2); controls which norm is computed,
           allowable values are any real number and positive and
           negative infinity.  See output discussion for specifics.
 
@@ -546,7 +542,6 @@ cdef class Vector_double_dense(Vector_numpy_dense):
             return self._sage_dtype(numpy.std(self._vector_numpy, ddof=1))
         else:
             return self._sage_dtype(numpy.std(self._vector_numpy, ddof=0))
-
 
     def stats_kurtosis(self):
         """

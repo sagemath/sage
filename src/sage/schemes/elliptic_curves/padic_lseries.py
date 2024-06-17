@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.rings.padics
 r"""
 `p`-adic `L`-functions of elliptic curves
@@ -44,7 +43,6 @@ AUTHORS:
 - Chris Wuthrich (11/2008): added quadratic_twists
 
 - David Loeffler (01/2011): added nontrivial Teichmueller components
-
 """
 
 ######################################################################
@@ -1555,7 +1553,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
         if prec > 10:
             print("Warning: Very large value for the precision.")
         if prec == 0:
-            prec = floor((log(10000)/log(p)))
+            prec = floor(log(10000)/log(p))
             verbose("prec set to %s" % prec)
         eh = E.formal()
         om = eh.differential(prec=p**prec+3)

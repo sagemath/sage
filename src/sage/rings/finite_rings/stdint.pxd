@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 C Integer Types Used in Finite Rings
 """

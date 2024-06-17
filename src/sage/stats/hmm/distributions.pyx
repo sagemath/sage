@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: optional - numpy
 r"""
 Distributions used in implementing Hidden Markov Models
@@ -32,7 +31,6 @@ cdef double sqrt2pi = sqrt(2*math.pi)
 
 from sage.misc.randstate cimport current_randstate, randstate
 from sage.stats.time_series cimport TimeSeries
-
 
 
 cdef double random_normal(double mean, double std, randstate rstate) noexcept:

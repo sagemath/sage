@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 r"""
 Tutte polynomial
 
@@ -606,7 +605,7 @@ def _tutte_polynomial_internal(G, x, y, edge_selector, cache=None):
     INPUT:
 
     - ``G`` -- the graph
-    - ``x,y`` -- the variables `x,y` respectively
+    - ``x``, ``y`` -- the variables `x`, `y` respectively
     - ``edge_selector`` -- the heuristic for selecting edges used in the
       deletion contraction recurrence
 

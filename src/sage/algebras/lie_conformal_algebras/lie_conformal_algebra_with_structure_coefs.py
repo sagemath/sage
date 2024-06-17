@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 """
 Lie Conformal Algebras With Structure Coefficients
@@ -6,7 +5,6 @@ Lie Conformal Algebras With Structure Coefficients
 AUTHORS:
 
 - Reimundo Heluani (2019-08-09): Initial implementation.
-
 """
 
 # *****************************************************************************
@@ -27,6 +25,7 @@ from .finitely_freely_generated_lca import FinitelyFreelyGeneratedLCA
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.structure.indexed_generators import (IndexedGenerators,
                                                standardize_names_index_set)
+
 
 class LieConformalAlgebraWithStructureCoefficients(
                                         FinitelyFreelyGeneratedLCA):

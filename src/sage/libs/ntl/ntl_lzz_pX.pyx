@@ -1,11 +1,9 @@
-# sage_setup: distribution = sagemath-ntl
 # distutils: libraries = NTL_LIBRARIES gmp m
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
-
 """
 ntl_lzz_pX.pyx
 
@@ -750,7 +748,6 @@ cdef class ntl_zz_pX():
             zz_pX_InvTrunc(y.x, self.x, m)
             sig_off()
         return y
-
 
     def is_zero(self):
         """

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 # distutils: language = c++
 r"""
 Fast compiled graphs
@@ -898,7 +897,7 @@ cdef class CGraph:
 
         INPUT:
 
-         - ``u, v`` -- non-negative integers, must be in self
+         - ``u``, ``v`` -- non-negative integers, must be in self
 
         OUTPUT: one of
 
@@ -980,7 +979,7 @@ cdef class CGraph:
 
         INPUT:
 
-         - ``u, v`` -- non-negative integers, must be in self
+         - ``u``, ``v`` -- non-negative integers, must be in self
 
          - ``l`` -- a positive integer label, or zero for no label
 
@@ -1013,7 +1012,7 @@ cdef class CGraph:
 
         INPUT:
 
-         - ``u, v`` -- non-negative integers, must be in self
+         - ``u``, ``v`` -- non-negative integers, must be in self
 
          - ``l`` -- a positive integer label, or zero for no label
 
@@ -2364,7 +2363,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         INPUT:
 
-         - ``u,v`` -- the vertices of the edge
+         - ``u``, ``v`` -- the vertices of the edge
 
          - ``l`` -- the edge label
 
@@ -2496,7 +2495,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         INPUT:
 
-        - ``u, v`` -- the vertices of the edge
+        - ``u``, ``v`` -- the vertices of the edge
 
         - ``l`` -- the edge label
 
@@ -2912,7 +2911,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         INPUT:
 
-            - ``other`` - a subclass of :class:`CGraphBackend`
+            - ``other`` -- a subclass of :class:`CGraphBackend`
             - ``vertices`` -- a iterable over the vertex labels
             - ``ignore_labels`` -- boolean (default: ``False``); whether to ignore the labels
 

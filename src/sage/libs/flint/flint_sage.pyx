@@ -3,7 +3,6 @@
 # WARNING: src/sage/libs/flint/flint_sage.pyx is generated from
 # src/sage_setup/autogen/flint/templates/flint_sage.pyx.template;
 # please make sure that you are modifying the correct file!
-
 """
 Flint imports
 
