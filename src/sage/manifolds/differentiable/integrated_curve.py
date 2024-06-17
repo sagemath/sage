@@ -95,7 +95,6 @@ AUTHORS:
 - Karim Van Aelst (2017): initial version
 - Florentin Jaffredo (2018): integration over multiple charts, use of
   ``fast_callable`` to improve the computation speed
-
 """
 
 # **********************************************************************

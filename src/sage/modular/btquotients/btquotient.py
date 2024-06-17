@@ -990,9 +990,8 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
         a = 0
         pn = 1
         val = z.valuation()
-        L = []
-        for ii in range(val):
-            L.append(0)
+        L = [0 for _ in range(val)]
+
         L.extend(z.expansion())
         for n in range(len(L)):
             if L[n] != 0:

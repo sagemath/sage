@@ -1955,7 +1955,7 @@ class HyperplaneArrangementElement(Element):
         lhs = matrix(R, d, d)
         rhs = vector(R, d)
         vertices = set()
-        for indices in M.independent_r_sets(d):
+        for indices in M.independent_sets(d):
             for row, i in enumerate(indices):
                 lhs[row] = A_list[i]
             b_list = [b_list_list[i] for i in indices]

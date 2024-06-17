@@ -624,7 +624,6 @@ def build_groebner_basis_doc_string():
 Turn off heuristic by setting heuristic=False
   Additional options come from the actual buchberger implementation.
   In case of our standard Python implementation these are the following:
-
 """
     gdoc += "\n".join(k + "  :  " + repr(additional_options_from_buchberger[k])
                       for k in additional_options_from_buchberger)

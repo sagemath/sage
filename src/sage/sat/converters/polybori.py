@@ -430,13 +430,10 @@ class CNFEncoder(ANF2CNFConverter):
         """
         E = []
         for num_negated in range(length + 1):
-            if (((num_negated % 2) ^ ((length + 1) % 2)) == equal_zero):
+            if ((num_negated % 2) ^ ((length + 1) % 2)) == equal_zero:
                 continue
-            start = []
-            for i in range(num_negated):
-                start.append(1)
-            for i in range(length - num_negated):
-                start.append(-1)
+            start = [1 for _ in range(num_negated)]
+            start.extend(-1 for _ in range(length - num_negated))
             E.extend(Permutations(start))
         return E
 

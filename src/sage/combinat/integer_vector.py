@@ -136,7 +136,7 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
 
     INPUT:
 
-    - ``p1, p2`` -- list of integers representing the vectors
+    - ``p1``, ``p2`` -- list of integers representing the vectors
       of row/column sums
 
     - ``algorithm`` -- two possible string values:

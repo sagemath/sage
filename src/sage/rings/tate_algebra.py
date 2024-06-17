@@ -117,7 +117,6 @@ Computations with ideals in Tate algebras are also supported::
 AUTHORS:
 
 - Xavier Caruso, Thibaut Verron (2018-09)
-
 """
 
 

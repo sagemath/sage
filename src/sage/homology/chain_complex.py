@@ -50,7 +50,7 @@ from copy import copy
 from functools import reduce
 
 from sage.structure.parent import Parent
-from sage.structure.element import ModuleElement, is_Vector, coercion_model
+from sage.structure.element import ModuleElement, Vector, coercion_model
 from sage.misc.cachefunc import cached_method
 
 from sage.rings.integer_ring import ZZ
@@ -731,7 +731,7 @@ class ChainComplex_class(Parent):
             vectors = vectors._vec
         data = dict()
         for degree, vec in vectors.items():
-            if not is_Vector(vec):
+            if not isinstance(vec, Vector):
                 vec = vector(self.base_ring(), vec)
                 vec.set_immutable()
             if check and vec.degree() != self.free_module_rank(degree):
@@ -1506,10 +1506,7 @@ class ChainComplex_class(Parent):
                             diff_dict[i] = current - lower
                             if i-D in diff_dict:
                                 diff_dict[i-D] -= current - lower
-                differences = []
-                for i in diff_dict:
-                    if diff_dict[i] != 0:
-                        differences.append(i)
+                differences = [i for i, di in diff_dict.items() if di != 0]
                 answer.append((p, differences))
         return answer
 

@@ -5,7 +5,6 @@ This module contains a function that generates a ReST index table of functions
 for use in doc-strings.
 
 {INDEX_OF_FUNCTIONS}
-
 """
 
 import inspect
@@ -166,7 +165,7 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True, 
     # If input is a class/module, we list all its non-private and methods/functions
     if inspect.isclass(obj) or inspect.ismodule(obj):
         list_of_entries, names = list_of_subfunctions(
-                obj, only_local_functions=only_local_functions)
+            obj, only_local_functions=only_local_functions)
     else:
         list_of_entries = obj
 
@@ -270,12 +269,12 @@ def list_of_subfunctions(root, only_local_functions=True):
     else:
         raise ValueError("'root' must be a module or a class.")
 
-    def local_filter(f,name):
+    def local_filter(f, name):
         if only_local_functions:
             if ismodule:
                 return inspect.getmodule(root) == inspect.getmodule(f)
             else:
-                return not any(hasattr(s,name) for s in superclasses)
+                return not any(hasattr(s, name) for s in superclasses)
         else:
             return inspect.isclass(root) or not (f is gen_rest_table_index)
 
@@ -288,13 +287,13 @@ def list_of_subfunctions(root, only_local_functions=True):
         return True
 
     functions = {getattr(root, name): name for name, f in root.__dict__.items() if
-                  (not name.startswith('_')            and  # private functions
-                   can_import(f)                       and  # unresolved lazy imports
-                   not hasattr(f, 'issue_number')      and  # deprecated functions
-                   not inspect.isclass(f)              and  # classes
-                   callable(getattr(f, '__func__', f)) and  # e.g. GenericGraph.graphics_array_defaults
-                   local_filter(f, name))                   # possibly filter imported functions
-                  }
+                 (not name.startswith('_') and             # private functions
+                  can_import(f) and                        # unresolved lazy imports
+                  not hasattr(f, 'issue_number') and       # deprecated functions
+                  not inspect.isclass(f) and               # classes
+                  callable(getattr(f, '__func__', f)) and  # e.g. GenericGraph.graphics_array_defaults
+                  local_filter(f, name))                   # possibly filter imported functions
+                 }
 
     return list(functions.keys()), functions
 

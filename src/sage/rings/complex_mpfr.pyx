@@ -69,6 +69,8 @@ NumberFieldElement_quadratic = ()
 AA = None
 QQbar = None
 CDF = CLF = RLF = None
+
+
 def late_import():
     """
     Import the objects/modules after build (when needed).
@@ -89,11 +91,13 @@ def late_import():
         from sage.rings.real_lazy import CLF, RLF
         from sage.rings.complex_double import CDF
 
+
 cdef object numpy_complex_interface = {'typestr': '=c16'}
 cdef object numpy_object_interface = {'typestr': '|O'}
 
 cdef mpfr_rnd_t rnd
 rnd = MPFR_RNDN
+
 
 def set_global_complex_round_mode(n):
     """
@@ -110,6 +114,7 @@ def set_global_complex_round_mode(n):
     """
     global rnd
     rnd = n
+
 
 def is_ComplexNumber(x):
     r"""
@@ -145,6 +150,8 @@ def is_ComplexNumber(x):
 
 
 cache = {}
+
+
 def ComplexField(prec=53, names=None):
     """
     Return the complex field with real and imaginary parts having prec
@@ -673,7 +680,6 @@ class ComplexField_class(sage.rings.abc.ComplexField):
         from sage.categories.pushout import AlgebraicClosureFunctor
         return (AlgebraicClosureFunctor(), self._real_field())
 
-
     def random_element(self, component_max=1, *args, **kwds):
         r"""
         Return a uniformly distributed random number inside a square
@@ -856,6 +862,7 @@ class ComplexField_class(sage.rings.abc.ComplexField):
         from sage.structure.factorization import Factorization
         return Factorization([(R(gg).monic(), e) for gg, e in zip(*F)],
                              f.leading_coefficient())
+
 
 cdef class ComplexNumber(sage.structure.element.FieldElement):
     """
@@ -1428,7 +1435,6 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             True
         """
         return gmpy2.GMPy_MPC_From_mpfr(self.__re, self.__im)
-
 
     def _mpmath_(self, prec=None, rounding=None):
         """
@@ -2300,8 +2306,6 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         mpfr_clear(ch)
         return z
 
-
-
     def eta(self, omit_frac=False):
         r"""
         Return the value of the Dedekind `\eta` function on ``self``,
@@ -2366,7 +2370,6 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             return self._parent(self.__pari__().eta(not omit_frac))
         except sage.libs.pari.all.PariError:
             raise ValueError("value must be in the upper half plane")
-
 
     def sin(self):
         """
@@ -2460,7 +2463,6 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         mpfr_clear(b)
         mpfr_clear(a)
         return z
-
 
     def tanh(self):
         """
@@ -2728,7 +2730,6 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         x = RealNumber(self._parent._real_field(), None)
         mpfr_atan2(x.value, self.__im, self.__re, rnd)
         return x
-
 
     def arg(self):
         """
@@ -3079,7 +3080,6 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         mpfr_clear(r)
         return zlist
-
 
     def is_square(self):
         r"""
@@ -3497,6 +3497,7 @@ cpdef int cmp_abs(ComplexNumber a, ComplexNumber b) noexcept:
     mpfr_clear(tmp)
 
     return res
+
 
 def _format_complex_number(real, imag, format_spec):
     """

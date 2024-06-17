@@ -18,7 +18,6 @@ AUTHORS:
 
 - Kimi Tsukazaki and John Cremona: 2013-07: The 10 (hyper)-elliptic cases and
   the generic algorithm.  See [KT2013]_.
-
 """
 
 # ****************************************************************************
