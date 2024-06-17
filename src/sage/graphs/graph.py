@@ -4329,6 +4329,228 @@ class Graph(GenericGraph):
         raise ValueError('algorithm must be set to either "Edmonds" or "LP"')
 
     @doc_index("Leftovers")
+    def M_alternating_even_mark(self, vertex, matching):
+        r"""
+        Return the set of vertices each of which is reachable from the provided
+        vertex through an (even length matching-alternating) path starting with an
+        edge not in the matching and ending with an edge in the matching
+
+        This method implements the algorithm proposed in [LR2004]_. Note that the
+        complexity of the algorithm is linear in number of edges.
+
+        INPUT:
+
+        - ``vertex`` -- a vertex of the graph
+
+        - ``matching`` -- a matching of the graph; it can be given using any
+          valid input format of :class:`~sage.graphs.graph.Graph`
+
+        OUTPUT:
+
+        - ``even`` -- the set of vertices each of which is reachable from the
+          provided vertex through a path starting with an edge not in the
+          matching and ending with an edge in the matching
+
+        EXAMPLES:
+
+        Show the list of required vertices for a graph `G` with a matching `M`
+        for a vertex `u`::
+
+            sage: G = graphs.CycleGraph(3)
+            sage: M = G.matching()
+            sage: M
+            [(0, 2, None)]
+            sage: S0 = G.M_alternating_even_mark(0, M)
+            sage: S0
+            {0}
+            sage: S1 = G.M_alternating_even_mark(1, M)
+            sage: S1
+            {0, 1, 2}
+
+        The graph can have multiple edges::
+
+            sage: G = graphs.CompleteBipartiteGraph(3, 3)
+            sage: G.allow_multiple_edges(True)
+            sage: G.add_edge(0, 3)
+            sage: M = G.matching()
+            sage: u = 0
+            sage: S = G.M_alternating_even_mark(u, M)
+            sage: S
+            {0, 1, 2}
+
+        For a factor critical graph `G` with a near perfect matching `M` and
+        `u` being the (unique) `M`-exposed vertex, each vertex in `G` is
+        reachable from `u` through an even length `M`-alternating path as
+        described above::
+
+            sage: # A wheel graph of an odd order is factor critical
+            sage: G = graphs.WheelGraph(11)
+            sage: M = Graph(G.matching())
+            sage: G.is_factor_critical(M)
+            True
+            sage: for v in G.vertices():
+            ....:     if v not in M.vertices():
+            ....:          break
+            ....:
+            sage: S = G.M_alternating_even_mark(v, M)
+            sage: S == set(G.vertices())
+            True
+
+        For a matching covered graph `G` with a perfect matching `M` and for
+        some vertex `u` with `v` being its `M`-matched neighbor, each neighbor
+        of `v` is reachable from `u` through an even length `M`-alternating
+        path as described above::
+
+            sage: # K(4) ☉ K(3, 3) is matching covered
+            sage: G = Graph()
+            sage: G.add_edges([
+            ....:    (0, 2), (0, 3), (0, 4), (1, 2),
+            ....:    (1, 3), (1, 4), (2, 5), (3, 6),
+            ....:    (4, 7), (5, 6), (5, 7), (6, 7)
+            ....: ])
+            sage: M = Graph(G.matching())
+            sage: G.is_matching_covered(M)
+            True
+            sage: u = 0
+            sage: v = next(M.neighbor_iterator(u))
+            sage: S = G.M_alternating_even_mark(u, M)
+            sage: (set(G.neighbor_iterator(v))).issubset(S)
+            True
+
+        For a bicritical graph `G` with a perfect matching `M` and for some
+        vertex `u` with its `M`-matched neighbor being `v`, each vertex of the
+        graph distinct from `v` is reachable from `u` through an even length
+        `M`-alternating path as described above::
+
+            sage: # Petersen graph is bicritical
+            sage: G = graphs.PetersenGraph()
+            sage: M = Graph(G.matching())
+            sage: G.is_bicritical(M)
+            True
+            sage: u = random.choice(G.vertices())  # needs random
+            sage: v = next(M.neighbor_iterator(u))
+            sage: S = G.M_alternating_even_mark(u, M)
+            sage: S == (set(G.vertices()) - {v})
+            True
+
+        TESTS:
+
+        Giving a wrong vertex::
+
+            sage: G = graphs.HexahedralGraph()
+            sage: M = G.matching()
+            sage: u = G.order()
+            sage: S = G.M_alternating_even_mark(u, M)
+            Traceback (most recent call last):
+            ...
+            ValueError: '8' is not a vertex of the graph
+
+        Giving a wrong matching::
+
+            sage: G = graphs.CompleteGraph(6)
+            sage: M = [(0, 1), (0, 2)]
+            sage: u = 0
+            sage: S = G.M_alternating_even_mark(u, M)
+            Traceback (most recent call last):
+            ...
+            ValueError: the input is not a matching
+            sage: G = graphs.CompleteBipartiteGraph(3, 3)
+            sage: M = [(2*i, 2*i + 1) for i in range(4)]
+            sage: u = 0
+            sage: S = G.M_alternating_even_mark(u, M)
+            Traceback (most recent call last):
+            ...
+            ValueError: the input is not a matching of the graph
+
+        REFERENCES:
+
+        - [LR2004]_
+
+        .. SEEALSO::
+            :meth:`~sage.graphs.graph.Graph.is_factor_critical`,
+            :meth:`~sage.graphs.graph.Graph.is_matching_covered`,
+            :meth:`~sage.graphs.graph.Graph.is_bicritical`
+        """
+
+        G = self.to_simple()
+
+        # The input vertex must be a valid vertex of the graph
+        if vertex not in G.vertices():
+            raise ValueError("'{}' is not a vertex of the graph".format(vertex))
+
+        # The input matching must be a valid matching of the graph
+        M = Graph(matching)
+        if any(d != 1 for d in M.degree()):
+            raise ValueError("the input is not a matching")
+        if not M.is_subgraph(G, induced=False):
+            raise ValueError("the input is not a matching of the graph")
+
+        # Build an M-alternating tree T rooted at vertex
+        import itertools
+        from queue import Queue
+
+        q = Queue()
+        q.put(vertex)
+
+        even = set([vertex])
+        odd = set()
+        predecessor = {vertex: vertex}
+        rank = {vertex: 0}
+
+        if vertex in M.vertices():
+            u = M.neighbors(vertex)[0]
+            predecessor[u] = None
+            rank[u] = -1
+            odd.add(u)
+
+        while not q.empty():
+            x = q.get()
+            for y in G.neighbor_iterator(x):
+                if y in odd:
+                    continue
+                elif y in even:
+                    # Search t := LCA(x, y)
+                    ancestor_x = [x]
+                    ancestor_y = [y]
+
+                    while ancestor_x[-1] != ancestor_y[-1]:
+                        if rank[ancestor_x[-1]] > rank[ancestor_y[-1]]:
+                            ancestor_x.append(predecessor[ancestor_x[-1]])
+                        elif rank[ancestor_x[-1]] < rank[ancestor_y[-1]]:
+                            ancestor_y.append(predecessor[ancestor_y[-1]])
+                        else:
+                            ancestor_x.append(predecessor[ancestor_x[-1]])
+                            ancestor_y.append(predecessor[ancestor_y[-1]])
+
+                    lcs = ancestor_x.pop()
+                    ancestor_y.pop()
+                    # Set t as pred of all vertices of the chains and add
+                    # vertices marked odd to the queue
+                    for a in itertools.chain(ancestor_x, ancestor_y):
+                        predecessor[a] = lcs
+                        rank[a] = rank[lcs] + 1
+
+                        if a in odd:
+                            even.add(a)
+                            odd.discard(a)
+                            q.put(a)
+
+                elif y in M.vertices():
+                    # y has not been visited yet
+                    z = next(M.neighbor_iterator(y))
+                    odd.add(y)
+                    even.add(z)
+                    q.put(z)
+
+                    predecessor[y] = x
+                    predecessor[z] = y
+
+                    rank[y] = rank[x] + 1
+                    rank[z] = rank[y] + 1
+
+        return even
+
+    @doc_index("Leftovers")
     def is_factor_critical(self, matching=None, algorithm='Edmonds', solver=None, verbose=0,
                            *, integrality_tolerance=0.001):
         r"""
