@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Unique Representation
 
@@ -536,7 +537,6 @@ provide unique representation behaviour, in spite of its name! Hence, for
 unique representation behaviour, one has to implement hash and equality test
 accordingly, for example by inheriting from
 :class:`~sage.misc.fast_methods.WithEqualityById`.
-
 """
 # ****************************************************************************
 #  Copyright (C) 2008 Nicolas M. Thiery <nthiery at users.sf.net>
@@ -1008,7 +1008,7 @@ class CachedRepresentation(metaclass=ClasscallMetaclass):
             True
         """
         instance = typecall(cls, *args, **options)
-        assert isinstance( instance, cls )
+        assert isinstance(instance, cls)
         if instance.__class__.__reduce__ == CachedRepresentation.__reduce__:
             instance._reduction = (cls, args, options)
         return instance
@@ -1090,16 +1090,14 @@ class CachedRepresentation(metaclass=ClasscallMetaclass):
             sage: c is C(3)
             False
         """
-        del_list = []
         cache = None
+        # not clear why the loop below is taking the last C
         for C in cls.mro():
             try:
                 cache = C.__classcall__.cache
             except AttributeError:
                 pass
-        for k in cache:
-            if issubclass(k[0][0],cls):
-                del_list.append(k)
+        del_list = [k for k in cache if issubclass(k[0][0], cls)]
         for k in del_list:
             del cache[k]
 
@@ -1149,6 +1147,7 @@ class CachedRepresentation(metaclass=ClasscallMetaclass):
         """
         return self
 
+
 def unreduce(cls, args, keywords):
     """
     Calls a class on the given arguments::
@@ -1166,7 +1165,7 @@ def unreduce(cls, args, keywords):
 
 class UniqueRepresentation(CachedRepresentation, WithEqualityById):
     r"""
-    Classes derived from UniqueRepresentation inherit a unique
+    Classes derived from ``UniqueRepresentation`` inherit a unique
     representation behavior for their instances.
 
     .. SEEALSO::

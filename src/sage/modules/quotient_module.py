@@ -6,7 +6,6 @@ AUTHORS:
 - William Stein (2009): initial version
 
 - Kwankyu Lee (2022-05): added quotient module over domain
-
 """
 
 # ****************************************************************************
@@ -30,6 +29,7 @@ from sage.modules.free_module import (
 # Quotients of ambient free modules over a domain
 #
 ###############################################################################
+
 
 class QuotientModule_free_ambient(Module_free_ambient):
     """
@@ -179,7 +179,7 @@ class QuotientModule_free_ambient(Module_free_ambient):
         if isinstance(M, Submodule_free_ambient):
             return self._module.has_coerce_map_from(self.ambient_module())
         if (isinstance(M, QuotientModule_free_ambient)
-            and M.free_cover() == self.free_cover()):
+                and M.free_cover() == self.free_cover()):
             try:
                 return M.free_relations().is_submodule(self.free_relations())
             except NotImplementedError:

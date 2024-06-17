@@ -276,7 +276,6 @@ rectangles. Obviously, there is one solution::
 REFERENCES:
 
 .. [Knuth1] Knuth, Donald (2000). "Dancing links". :arxiv:`cs/0011047`.
-
 """
 # ****************************************************************************
 #       Copyright (C) 2011-2015 Sébastien Labbé <slabqc@gmail.com>
@@ -305,7 +304,7 @@ def ncube_isometry_group(n, orientation_preserving=True):
     INPUT:
 
     - ``n`` -- positive integer, dimension of the space
-    - ``orientation_preserving`` -- bool (optional, default: ``True``),
+    - ``orientation_preserving`` -- bool (default: ``True``),
       whether the orientation is preserved
 
     OUTPUT:
@@ -373,7 +372,7 @@ def ncube_isometry_group_cosets(n, orientation_preserving=True):
     INPUT:
 
     - ``n`` -- positive integer, dimension of the space
-    - ``orientation_preserving`` -- bool (optional, default: ``True``),
+    - ``orientation_preserving`` -- bool (default: ``True``),
       whether the orientation is preserved
 
     OUTPUT:
@@ -948,7 +947,7 @@ class Polyomino(SageObject):
 
         INPUT:
 
-        - ``orientation_preserving`` -- bool (optional, default: ``True``);
+        - ``orientation_preserving`` -- bool (default: ``True``);
           if ``True``, the group of isometries of the `n`-cube is restricted
           to those that preserve the orientation, i.e. of determinant 1.
 
@@ -991,12 +990,13 @@ class Polyomino(SageObject):
         """
         if mod_box_isometries:
             L = ncube_isometry_group_cosets(self._dimension, orientation_preserving)
-            P_cosets = set(frozenset((m * self).canonical() for m in coset) for coset in L)
+            P_cosets = {frozenset((m * self).canonical() for m in coset)
+                        for coset in L}
             P_cosets_representents = [min(s, key=lambda a: a.sorted_list()) for s in P_cosets]
-            return sorted(P_cosets_representents, key=lambda a:a.sorted_list())
+            return sorted(P_cosets_representents, key=lambda a: a.sorted_list())
         else:
             L = ncube_isometry_group(self._dimension, orientation_preserving)
-            P_images = set((m * self).canonical() for m in L)
+            P_images = {(m * self).canonical() for m in L}
             return sorted(P_images, key=lambda a: a.sorted_list())
 
     def translated_copies(self, box):
@@ -1173,7 +1173,7 @@ class Polyomino(SageObject):
 
         - ``box`` -- Polyomino or tuple of integers (size of a box)
 
-        - ``orientation_preserving`` -- bool (optional, default: ``True``);
+        - ``orientation_preserving`` -- bool (default: ``True``);
           If ``True``, the group of isometries of the `n`-cube is restricted
           to those that preserve the orientation, i.e. of determinant 1.
 
@@ -1222,8 +1222,8 @@ class Polyomino(SageObject):
             raise ValueError("Dimension of input box must match the "
                              "dimension of the polyomino")
         box_min_coords, box_max_coords = box.bounding_box()
-        if mod_box_isometries and len(set(b-a for (a,b) in zip(box_min_coords,
-                                      box_max_coords))) < box._dimension:
+        if mod_box_isometries and len({b - a for a, b in zip(box_min_coords,
+                                                             box_max_coords)}) < box._dimension:
             raise NotImplementedError("The code below assumes that the"
                     " sizes of the box (={}) are all distinct when"
                     " argument `mod_box_isometries` is True.".format(box))
@@ -1241,7 +1241,7 @@ class Polyomino(SageObject):
 
         - ``box`` -- Polyomino or tuple of integers (size of a box)
 
-        - ``orientation_preserving`` -- bool (optional, default: ``True``);
+        - ``orientation_preserving`` -- bool (default: ``True``);
           if ``True``, the group of isometries of the `n`-cube is restricted
           to those that preserve the orientation, i.e. of determinant 1.
 
@@ -1267,8 +1267,8 @@ class Polyomino(SageObject):
         """
         all_distinct_cano = self.canonical_isometric_copies(orientation_preserving,
                                                             mod_box_isometries=False)
-        return set([t for cano in all_distinct_cano
-                    for t in cano.translated_copies_intersection(box=box)])
+        return {t for cano in all_distinct_cano
+                for t in cano.translated_copies_intersection(box=box)}
 
     def neighbor_edges(self):
         r"""
@@ -1394,7 +1394,7 @@ class Polyomino(SageObject):
         INPUT:
 
         - ``self`` -- a polyomino of dimension 3
-        - ``size`` -- number (optional, default: ``1``), the size of each
+        - ``size`` -- number (default: ``1``), the size of each
           ``1 \times 1 \times 1`` cube. This does a homothety with respect
           to the center of the polyomino.
 
@@ -1424,11 +1424,11 @@ class Polyomino(SageObject):
         INPUT:
 
         - ``self`` -- a polyomino of dimension 2
-        - ``size`` -- number (optional, default: ``0.7``), the size of each
+        - ``size`` -- number (default: ``0.7``), the size of each
           square.
-        - ``color`` -- color (optional, default: ``'black'``), color of
+        - ``color`` -- color (default: ``'black'``), color of
           the boundary line.
-        - ``thickness`` -- number (optional, default: ``1``), how thick the
+        - ``thickness`` -- number (default: ``1``), how thick the
           boundary line is.
 
         EXAMPLES::
@@ -1554,13 +1554,13 @@ class TilingSolver(SageObject):
 
     - ``pieces`` -- iterable of Polyominoes
     - ``box`` -- Polyomino or tuple of integers (size of a box)
-    - ``rotation`` -- bool (optional, default: ``True``), whether to allow
+    - ``rotation`` -- bool (default: ``True``), whether to allow
       rotations
-    - ``reflection`` -- bool (optional, default: ``False``), whether to allow
+    - ``reflection`` -- bool (default: ``False``), whether to allow
       reflections
-    - ``reusable`` -- bool (optional, default: ``False``), whether to allow
+    - ``reusable`` -- bool (default: ``False``), whether to allow
       the pieces to be reused
-    - ``outside`` -- bool (optional, default: ``False``), whether to allow
+    - ``outside`` -- bool (default: ``False``), whether to allow
       pieces to partially go outside of the box (all non-empty intersection
       of the pieces with the box are considered)
 
@@ -1766,11 +1766,10 @@ class TilingSolver(SageObject):
              ((2, 0), 4), ((2, 1), 5)]
         """
         if self._reusable:
-            return dict((c, i) for i, c in enumerate(self.space()))
-        else:
-            number_of_pieces = len(self._pieces)
-            return dict((c, i+number_of_pieces)
-                        for i, c in enumerate(self.space()))
+            return {c: i for i, c in enumerate(self.space())}
+
+        number_of_pieces = len(self._pieces)
+        return {c: i + number_of_pieces for i, c in enumerate(self.space())}
 
     @cached_method
     def int_to_coord_dict(self):
@@ -1811,14 +1810,10 @@ class TilingSolver(SageObject):
             True
             sage: all(B[A[i]] == i for i in A)
             True
-
         """
         if self._reusable:
-            return dict((i, c) for i, c in enumerate(self.space()))
-        else:
-            number_of_pieces = len(self._pieces)
-            return dict((i+number_of_pieces, c)
-                        for i, c in enumerate(self.space()))
+            return dict(enumerate(self.space()))
+        return dict(enumerate(self.space(), start=len(self._pieces)))
 
     @cached_method
     def rows_for_piece(self, i, mod_box_isometries=False):
@@ -2294,7 +2289,7 @@ class TilingSolver(SageObject):
 
         INPUT:
 
-        - ``partial`` -- string (optional, default: ``None``), whether to
+        - ``partial`` -- string (default: ``None``), whether to
           include partial (incomplete) solutions. It can be one of the
           following:
 
@@ -2421,7 +2416,7 @@ class TilingSolver(SageObject):
 
         INPUT:
 
-        - ``partial`` -- string (optional, default: ``None``), whether to
+        - ``partial`` -- string (default: ``None``), whether to
           include partial (incomplete) solutions. It can be one of the
           following:
 
@@ -2429,13 +2424,13 @@ class TilingSolver(SageObject):
           - ``'common_prefix'`` -- common prefix between two consecutive solutions
           - ``'incremental'`` -- one piece change at a time
 
-        - ``stop`` -- integer (optional, default:``None``), number of frames
+        - ``stop`` -- integer (default:``None``), number of frames
 
-        - ``size`` -- number (optional, default: ``0.75``), the size of each
+        - ``size`` -- number (default: ``0.75``), the size of each
           ``1 \times 1`` square. This does a homothety with respect
           to the center of each polyomino.
 
-        - ``axes`` -- bool (optional, default:``False``), whether the x and
+        - ``axes`` -- bool (default:``False``), whether the x and
           y axes are shown.
 
         EXAMPLES::

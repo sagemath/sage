@@ -1,7 +1,7 @@
 r"""
 Linear matroids
 
-When `A` is an `r` times `E` matrix, the linear matroid `M[A]` has ground set
+When `A` is an `r` times `E` matrix, the linear matroid `M[A]` has groundset
 `E` and, for independent sets, all `F` subset of `E` such that the columns of
 `M[A]` indexed by `F` are linearly independent.
 
@@ -148,10 +148,10 @@ cdef GF3, GF3_one, GF3_zero, GF3_minus_one
 #    provide alternative implementations
 # Below is some code, commented out currently, to get you going.
 
-cdef inline gauss_jordan_reduce(LeanMatrix A, columns) noexcept:
+cdef inline gauss_jordan_reduce(LeanMatrix A, columns):
     return A.gauss_jordan_reduce(columns)   # Not a Sage matrix operation
 
-cdef inline characteristic(LeanMatrix A) noexcept:
+cdef inline characteristic(LeanMatrix A):
     return A.characteristic()   # Not a Sage matrix operation
 
 # Implementation using default Sage matrices
@@ -297,7 +297,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             sig_free(self._prow)
             self._prow = NULL
 
-    cdef list _setup_internal_representation(self, matrix, reduced_matrix, ring, keep_initial_representation) noexcept:
+    cdef list _setup_internal_representation(self, matrix, reduced_matrix, ring, keep_initial_representation):
         """
         Setup the internal representation matrix ``self._A`` and the array of row- and column indices ``self._prow``.
 
@@ -345,7 +345,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                 self._prow[self._A.nrows() + r] = r
         return P
 
-    cpdef _forget(self) noexcept:
+    cpdef _forget(self):
         """
         Remove the internal representation matrix.
 
@@ -364,7 +364,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         """
         self._representation = None
 
-    cpdef base_ring(self) noexcept:
+    cpdef base_ring(self):
         """
         Return the base ring of the matrix representing the matroid.
 
@@ -377,7 +377,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         """
         return self._A.base_ring()
 
-    cpdef characteristic(self) noexcept:
+    cpdef characteristic(self):
         """
         Return the characteristic of the base ring of the matrix representing
         the matroid.
@@ -422,7 +422,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         self._prow[x] = py
         BasisExchangeMatroid._exchange(self, x, y)
 
-    cdef  _exchange_value_internal(self, long x, long y) noexcept:
+    cdef  _exchange_value_internal(self, long x, long y):
         r"""
         Return the (x, y) entry of the current representation.
         """
@@ -466,12 +466,11 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             'Linear matroid of rank 2 on 5 elements represented over the
             Finite Field of size 5'
         """
-        S = "Linear matroid of rank " + str(self.rank()) + " on " + str(self.size()) + " elements represented over the " + repr(self.base_ring())
-        return S
+        return f'Linear matroid of rank {self.rank()} on {self.size()} elements represented over the {self.base_ring()!r}'
 
     # representations
 
-    cpdef representation(self, B=None, reduced=False, labels=None, order=None, lift_map=None) noexcept:
+    cpdef representation(self, B=None, reduced=False, labels=None, order=None, lift_map=None):
         r"""
         Return a matrix representing the matroid.
 
@@ -496,17 +495,26 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         - ``B`` -- (default: ``None``) a subset of elements. When provided,
           the representation is such that a basis `B'` that maximally
           intersects `B` is an identity matrix.
+
         - ``reduced`` -- (default: ``False``) when ``True``, return a reduced
           matrix `D` (so `[I\ \  D]` is a representation of the matroid).
           Otherwise return a full representation matrix.
+
         - ``labels`` -- (default: ``None``) when ``True``, return additionally
           a list of column labels (if ``reduced=False``) or a list of row
           labels and a list of column labels (if ``reduced=True``).
           The default setting, ``None``, will not return the labels for a full
           matrix, but will return the labels for a reduced matrix.
-        - ``order`` -- (default: ``None``) an ordering of the groundset
-          elements. If provided, the columns (and, in case of a reduced
-          representation, rows) will be presented in the given order.
+
+        - ``order`` -- sequence or ``None`` or ``True`` (default: ``None``);
+
+          - when a sequence, it should be an ordering of the groundset
+            elements, and the columns (and, in case of a reduced
+            representation, rows) will be presented in the given order,
+          - when ``None``, use the same ordering that :meth:`groundset_list`
+            uses,
+          - when ``True``, return a morphism of free modules instead of a matrix.
+
         - ``lift_map`` -- (default: ``None``) a dictionary containing the cross
           ratios of the representing matrix in its domain. If provided, the
           representation will be transformed by mapping its cross ratios according
@@ -579,9 +587,47 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             [     1      0      0      1      0      1      1      1]
             [     0      1      0 -z + 1      1      0      0      1]
             [     0      0      1      0      1      -1 z - 1      0]
+
+        As morphisms::
+
+            sage: M = matroids.catalog.Fano()
+            sage: A = M.representation(order=True); A
+            Generic morphism:
+             From: Free module generated by {'a', 'b', 'c', 'd', 'e', 'f', 'g'}
+                   over Finite Field of size 2
+             To:   Free module generated by {0, 1, 2} over Finite Field of size 2
+            sage: print(A._unicode_art_matrix())
+              a b c d e f g
+            0⎛1 0 0 0 1 1 1⎞
+            1⎜0 1 0 1 0 1 1⎟
+            2⎝0 0 1 1 1 0 1⎠
+            sage: A = M.representation(B='efg', order=True); A
+            Generic morphism:
+             From: Free module generated by {'a', 'b', 'c', 'd', 'e', 'f', 'g'}
+                   over Finite Field of size 2
+             To:   Free module generated by {0, 1, 2} over Finite Field of size 2
+            sage: print(A._unicode_art_matrix())
+              a b c d e f g
+            0⎛1 1 0 1 1 0 0⎞
+            1⎜1 0 1 1 0 1 0⎟
+            2⎝1 1 1 0 0 0 1⎠
+            sage: A = M.representation(B='abc', order=True, reduced=True); A
+            Generic morphism:
+             From: Free module generated by {'d', 'e', 'f', 'g'}
+                   over Finite Field of size 2
+             To:   Free module generated by {'a', 'b', 'c'} over Finite Field of size 2
+            sage: print(A._unicode_art_matrix())
+              d e f g
+            a⎛0 1 1 1⎞
+            b⎜1 0 1 1⎟
+            c⎝1 1 0 1⎠
         """
         cdef LeanMatrix A
-        if order is None:
+        column_keys = None
+        if order is True:
+            order = self.groundset_list()
+            column_keys = tuple(order)
+        elif order is None:
             order = self.groundset_list()
         else:
             if not frozenset(order) == self.groundset():
@@ -608,16 +654,14 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                 B = self._subset_internal(B)
                 A = self._basic_representation(B)
             A = A.matrix_from_rows_and_columns(range(A.nrows()), order_idx)
-            if lift_map is None:
-                if labels:
-                    return (A._matrix_(), order)
-                else:
-                    return A._matrix_()
-            else:
-                if labels:
-                    return (lift_cross_ratios(A._matrix_(), lift_map), order)
-                else:
-                    return lift_cross_ratios(A._matrix_(), lift_map)
+            Am = A._matrix_()
+            if lift_map is not None:
+                Am = lift_cross_ratios(Am, lift_map)
+            if column_keys is not None:
+                Am = matrix(Am, row_keys=range(A.nrows()), column_keys=column_keys)
+            if labels:
+                return Am, order
+            return Am
         else:
             if B is None:
                 B = frozenset(self.basis())
@@ -638,18 +682,16 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                     Ci.append(C.index(e))
                     Cl.append(e)
             A = A.matrix_from_rows_and_columns(Ri, Ci)
-            if lift_map is None:
-                if labels or labels is None:
-                    return (A._matrix_(), Rl, Cl)
-                else:
-                    return A._matrix_()
-            else:
-                if labels or labels is None:
-                    return (lift_cross_ratios(A._matrix_(), lift_map), Rl, Cl)
-                else:
-                    return lift_cross_ratios(A._matrix_(), lift_map)
+            Am = A._matrix_()
+            if lift_map is not None:
+                Am = lift_cross_ratios(Am, lift_map)
+            if column_keys is not None:
+                Am = matrix(Am, row_keys=tuple(Rl), column_keys=tuple(Cl))
+            if labels or (labels is None and column_keys is None):
+                return Am, Rl, Cl
+            return Am
 
-    cpdef _current_rows_cols(self, B=None) noexcept:
+    cpdef _current_rows_cols(self, B=None):
         """
         Return the current row and column labels of a reduced matrix.
 
@@ -687,7 +729,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             cols[self._prow[self._idx[e]]] = e
         return rows, cols
 
-    cpdef LeanMatrix _basic_representation(self, B=None) noexcept:
+    cpdef LeanMatrix _basic_representation(self, B=None):
         """
         Return a basic matrix representation of the matroid.
 
@@ -735,7 +777,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                 i += 1
         return A
 
-    cpdef representation_vectors(self) noexcept:
+    cpdef representation_vectors(self):
         """
         Return a dictionary that associates a column vector with each element
         of the matroid.
@@ -755,7 +797,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         R = self._matrix_().columns()
         return {e: R[self._idx[e]] for e in self.groundset()}
 
-    cpdef LeanMatrix _reduced_representation(self, B=None) noexcept:
+    cpdef LeanMatrix _reduced_representation(self, B=None):
         r"""
         Return a reduced representation of the matroid, i.e. a matrix `R` such
         that `[I\ \ R]` represents the matroid.
@@ -801,14 +843,11 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
         INPUT:
 
-        - ``other`` -- A matroid instance, assumed to have the same base
-          ring as ``self``.
+        - ``other`` -- matroid; assumed to have the same base ring as ``self``
         - ``morphism`` -- a dictionary mapping the groundset of ``self`` to
-          the groundset of ``other``.
+          the groundset of ``other``
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         .. WARNING::
 
@@ -877,7 +916,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                 normalization[N.pop()] = self._one
         return True
 
-    cpdef is_field_equivalent(self, other) noexcept:
+    cpdef is_field_equivalent(self, other):
         """
         Test for matroid representation equality.
 
@@ -889,11 +928,9 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
         INPUT:
 
-        - ``other`` -- A matroid.
+        - ``other`` -- matroid
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         .. SEEALSO::
 
@@ -964,7 +1001,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         morphism = {e: e for e in self.groundset()}
         return self._is_field_isomorphism(other, morphism)
 
-    cpdef is_field_isomorphism(self, other, morphism) noexcept:
+    cpdef is_field_isomorphism(self, other, morphism):
         r"""
         Test if a provided morphism induces a bijection between represented
         matroids.
@@ -978,15 +1015,13 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
         INPUT:
 
-        - ``other`` -- A matroid.
+        - ``other`` -- matroid
         - ``morphism`` -- A map from the groundset of ``self`` to the
           groundset of ``other``. See documentation of the
           :meth:`M.is_isomorphism() <sage.matroids.matroid.Matroid.is_isomorphism>`
           method for more on what is accepted as input.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         .. SEEALSO::
 
@@ -1050,7 +1085,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         else:
             return self._is_field_isomorphism(copy(other), mf)
 
-    cpdef _fast_isom_test(self, other) noexcept:
+    cpdef _fast_isom_test(self, other):
         """
         Fast (field) isomorphism test for some subclasses.
 
@@ -1108,11 +1143,9 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
         INPUT:
 
-        - ``other`` -- A matroid.
+        - ``other`` -- matroid
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         .. SEEALSO::
 
@@ -1275,16 +1308,16 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
     # minors, dual
 
-    cpdef _minor(self, contractions, deletions) noexcept:
+    cpdef _minor(self, contractions, deletions):
         r"""
         Return a minor.
 
         INPUT:
 
-        - ``contractions`` -- An object with Python's ``frozenset`` interface
-          containing a subset of ``self.groundset()``.
-        - ``deletions`` -- An object with Python's ``frozenset`` interface
-          containing a subset of ``self.groundset()``.
+        - ``contractions`` -- an object with Python's ``frozenset`` interface
+          containing a subset of ``self.groundset()``
+        - ``deletions`` -- an object with Python's ``frozenset`` interface
+          containing a subset of ``self.groundset()``
 
         .. NOTE::
 
@@ -1319,11 +1352,11 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                 M.set_unsafe(i, j, self._exchange_value(rows[i], cols[j]))
         return type(self)(reduced_matrix=M, groundset=rows + cols)
 
-    cpdef dual(self) noexcept:
+    cpdef dual(self):
         r"""
         Return the dual of the matroid.
 
-        Let `M` be a matroid with ground set `E`. If `B` is the set of bases
+        Let `M` be a matroid with groundset `E`. If `B` is the set of bases
         of `M`, then the set `\{E - b : b \in B\}` is the set of bases of
         another matroid, the *dual* of `M`.
 
@@ -1350,7 +1383,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         rows, cols = self._current_rows_cols()
         return type(self)(reduced_matrix=R, groundset=cols + rows)
 
-    cpdef has_line_minor(self, k, hyperlines=None, certificate=False) noexcept:
+    cpdef has_line_minor(self, k, hyperlines=None, certificate=False):
         r"""
         Test if the matroid has a `U_{2, k}`-minor.
 
@@ -1404,17 +1437,15 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             pass
         return Matroid.has_line_minor(self, k, hyperlines, certificate)
 
-    cpdef has_field_minor(self, N) noexcept:
+    cpdef has_field_minor(self, N):
         """
         Check if ``self`` has a minor field isomorphic to ``N``.
 
         INPUT:
 
-        - ``N`` -- A matroid.
+        - ``N`` -- matroid
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         .. SEEALSO::
 
@@ -1462,7 +1493,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
     # cycles, cocycles and cross ratios
 
-    cpdef _exchange_value(self, e, f) noexcept:
+    cpdef _exchange_value(self, e, f):
         """
         Return the matrix entry indexed by row `e` and column `f`.
 
@@ -1490,7 +1521,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         """
         return self._exchange_value_internal(self._idx[e], self._idx[f])
 
-    cpdef fundamental_cycle(self, B, e) noexcept:
+    cpdef fundamental_cycle(self, B, e):
         """
         Return the fundamental cycle, relative to ``B``, containing element
         ``e``.
@@ -1524,6 +1555,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             sage: frozenset(v.keys()) == M.fundamental_circuit([0, 1], 3)
             True
         """
+        B = frozenset(B)
         if e in B or not self._is_basis(B):
             return None
         self._move_current_basis(B, set())
@@ -1536,7 +1568,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                 chain[f] = -x
         return chain
 
-    cpdef fundamental_cocycle(self, B, e) noexcept:
+    cpdef fundamental_cocycle(self, B, e):
         """
         Return the fundamental cycle, relative to ``B``, containing element
         ``e``.
@@ -1570,6 +1602,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             sage: frozenset(v.keys()) == M.fundamental_cocircuit([0, 1], 0)
             True
         """
+        B = frozenset(B)
         if e not in B or not self._is_basis(B):
             return None
         self._move_current_basis(B, set())
@@ -1581,7 +1614,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                 cochain[f] = x
         return cochain
 
-    cpdef _line_ratios(self, F) noexcept:
+    cpdef _line_ratios(self, F):
         """
         Return the set of nonzero ratios of column entries after contracting
         a rank-`r-2` flat ``F``.
@@ -1612,7 +1645,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                     rat.add(s * (t ** (-1)))
         return rat
 
-    cpdef _line_length(self, F) noexcept:
+    cpdef _line_length(self, F):
         """
         Return ``len(M.contract(F).simplify())``, where ``F`` is assumed to be
         a flat of rank 2 less than the matroid.
@@ -1632,7 +1665,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         """
         return 2 + len(self._line_ratios(F))
 
-    cpdef _line_cross_ratios(self, F) noexcept:
+    cpdef _line_cross_ratios(self, F):
         """
         Return the set of cross ratios of column entries after contracting a
         rank-`r-2` flat ``F``.
@@ -1660,7 +1693,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                 cr.add(r2 / r1)
         return cr
 
-    cpdef cross_ratios(self, hyperlines=None) noexcept:
+    cpdef cross_ratios(self, hyperlines=None):
         r"""
         Return the set of cross ratios that occur in this linear matroid.
 
@@ -1718,7 +1751,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             CR.difference_update(asc)
         return CR2
 
-    cpdef cross_ratio(self, F, a, b, c, d) noexcept:
+    cpdef cross_ratio(self, F, a, b, c, d):
         r"""
         Return the cross ratio of the four ordered points ``a, b, c, d``
         after contracting a flat ``F`` of codimension 2.
@@ -1740,7 +1773,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         INPUT:
 
         - ``F`` -- A flat of codimension 2
-        - ``a, b, c, d`` -- elements of the groundset
+        - ``a``, ``b``, ``c``, ``d`` -- elements of the groundset
 
         OUTPUT:
 
@@ -1775,7 +1808,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             raise ValueError("points a, b, c, d do not form a 4-point line in M/F")
         return cr1 / cr2
 
-    cpdef _line_cross_ratio_test(self, F, x, fundamentals) noexcept:
+    cpdef _line_cross_ratio_test(self, F, x, fundamentals):
         r"""
         Check whether the cross ratios involving a fixed element in a fixed
         rank-2 minor are in a specified subset.
@@ -1835,20 +1868,18 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             return False
         return True
 
-    cpdef _cross_ratio_test(self, x, fundamentals, hyperlines=None) noexcept:
+    cpdef _cross_ratio_test(self, x, fundamentals, hyperlines=None):
         r"""
         Test if the cross ratios using a given element of this linear matroid
         are contained in a given set of fundamentals.
 
         INPUT:
 
-        - ``x`` -- an element of the ground set
+        - ``x`` -- an element of the groundset
         - ``fundamentals`` -- a subset of the base ring
         - ``hyperlines`` (optional) -- a set of flats of rank=full_rank-2
 
-        OUTPUT:
-
-        Boolean. ``True`` if each cross ratio using ``x`` is an element of
+        OUTPUT: boolean ``True`` if each cross ratio using ``x`` is an element of
         ``fundamentals``. If ``hyperlines`` is specified, then the method
         tests if each cross ratio in a minor that arises by contracting a flat
         ``F`` in ``hyperlines`` and uses ``x`` is in ``fundamentals``. If
@@ -1883,7 +1914,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         return True
 
     # linear extension
-    cpdef linear_extension(self, element, chain=None, col=None) noexcept:
+    cpdef linear_extension(self, element, chain=None, col=None):
         r"""
         Return a linear extension of this matroid.
 
@@ -1897,7 +1928,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         - ``col`` -- (default: ``None``) a column to be appended to
           ``self.representation()``. Can be any iterable.
         - ``chain`` -- (default: ``None``) a dictionary that maps elements of
-          the ground set to elements of the base ring.
+          the groundset to elements of the base ring.
 
         OUTPUT:
 
@@ -1951,7 +1982,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                 raise TypeError("chain argument needs to be a dictionary")
             return self._linear_extensions(element, [chain])[0]
 
-    cpdef linear_coextension(self, element, cochain=None, row=None) noexcept:
+    cpdef linear_coextension(self, element, cochain=None, row=None):
         r"""
         Return a linear coextension of this matroid.
 
@@ -1977,7 +2008,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         - ``row`` -- (default: ``None``) a row to be appended to
           ``self.representation()``. Can be any iterable.
         - ``cochain`` -- (default: ``None``) a dictionary that maps elements
-          of the ground set to elements of the base ring.
+          of the groundset to elements of the base ring.
 
         OUTPUT:
 
@@ -2052,7 +2083,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                 raise TypeError("cochain argument needs to be a dictionary")
             return self._linear_coextensions(element, [cochain])[0]
 
-    cpdef _linear_extensions(self, element, chains) noexcept:
+    cpdef _linear_extensions(self, element, chains):
         r"""
         Return the linear extensions of this matroid representation specified
         by the given chains.
@@ -2063,7 +2094,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
         - ``element`` -- the name of the new element.
         - ``chains`` -- a list of dictionaries, each of which maps elements of
-          the ground set to elements of the base ring.
+          the groundset to elements of the base ring.
 
         OUTPUT:
 
@@ -2100,7 +2131,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             ext.append(type(self)(matrix=M, groundset=E))
         return ext
 
-    cpdef _linear_coextensions(self, element, cochains) noexcept:
+    cpdef _linear_coextensions(self, element, cochains):
         r"""
         Return the linear coextensions of this matroid representation
         specified by the given cochains.
@@ -2111,7 +2142,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
         - ``element`` -- the name of the new element.
         - ``cochains`` -- a list of dictionaries, each of which maps elements
-          of the ground set to elements of the base ring.
+          of the groundset to elements of the base ring.
 
         OUTPUT:
 
@@ -2148,7 +2179,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             coext.append(type(self)(matrix=M, groundset=E))
         return coext
 
-    cdef _extend_chains(self, C, f, fundamentals=None) noexcept:
+    cdef _extend_chains(self, C, f, fundamentals=None):
         r"""
         Extend a list of chains for ``self / f`` to a list of chains for
         ``self``.
@@ -2165,7 +2196,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                 if fundamentals is None:
                     values = R
                 else:   # generate only chains that satisfy shallow test for 'crossratios in fundamentals'
-                    T = set(c.keys())
+                    T = frozenset(c.keys())
                     if not self._is_independent(T | set([f])):
                         raise ValueError("_extend_chains can only extend chains with basic support")
                     self._move_current_basis(T | set([f]), set())
@@ -2210,7 +2241,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             res = [chain for chain in res if len(chain) < 2 or self._linear_extensions(ne, [chain])[0]._cross_ratio_test(ne, fundamentals, hyperlines)]
         return res
 
-    cpdef _linear_extension_chains(self, F, fundamentals=None) noexcept:  # assumes independent F
+    cpdef _linear_extension_chains(self, F, fundamentals=None):  # assumes independent F
         r"""
         Create a list of chains that determine single-element extensions of
         this linear matroid representation.
@@ -2235,17 +2266,17 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
             sage: M = Matroid(reduced_matrix=Matrix(GF(2), [[1, 1, 0],
             ....:                                      [1, 0, 1], [0, 1, 1]]))
-            sage: len(M._linear_extension_chains(F=set([0, 1, 2])))
+            sage: len(M._linear_extension_chains(F=frozenset([0, 1, 2])))
             8
-            sage: M._linear_extension_chains(F=set())
+            sage: M._linear_extension_chains(F=frozenset())
             [{}]
-            sage: M._linear_extension_chains(F=set([1]))
+            sage: M._linear_extension_chains(F=frozenset([1]))
             [{}, {1: 1}]
-            sage: len(M._linear_extension_chains(F=set([0, 1])))
+            sage: len(M._linear_extension_chains(F=frozenset([0, 1])))
             4
             sage: N = Matroid(ring=QQ, reduced_matrix=[[1, 1, 0],
             ....: [1, 0, 1], [0, 1, 1]])
-            sage: N._linear_extension_chains(F=set([0, 1]),
+            sage: N._linear_extension_chains(F=frozenset([0, 1]),
             ....:                           fundamentals=set([1, -1, 1/2, 2]))
             [{0: 1}, {}, {0: 1, 1: 1}, {0: -1, 1: 1}, {1: 1}]
         """
@@ -2257,7 +2288,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         C = self.components()
         if len(C) == 1:
             for f in F:
-                sf = set([f])
+                sf = frozenset([f])
                 ff = self._closure(sf)
                 M = self._minor(contractions=sf, deletions=ff - sf)
                 if M.is_connected():
@@ -2286,7 +2317,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                 chains = new_chains
         return chains
 
-    cpdef linear_extension_chains(self, F=None, simple=False, fundamentals=None) noexcept:
+    cpdef linear_extension_chains(self, F=None, simple=False, fundamentals=None):
         r"""
         Create a list of chains that determine the single-element extensions
         of this linear matroid representation.
@@ -2299,7 +2330,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         INPUT:
 
         - ``F`` -- (default: ``self.groundset()``) a subset of the groundset.
-        - ``simple`` -- (default: ``False``) a boolean variable.
+        - ``simple`` -- (default: ``False``) boolean
         - ``fundamentals`` -- (default: ``None``) a set elements of the base
           ring.
 
@@ -2385,7 +2416,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             chains = simple_chains
         return chains
 
-    cpdef linear_coextension_cochains(self, F=None, cosimple=False, fundamentals=None) noexcept:
+    cpdef linear_coextension_cochains(self, F=None, cosimple=False, fundamentals=None):
         r"""
         Create a list of cochains that determine the single-element
         coextensions of this linear matroid representation.
@@ -2399,7 +2430,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         INPUT:
 
         - ``F`` -- (default: ``self.groundset()``) a subset of the groundset.
-        - ``cosimple`` -- (default: ``False``) a boolean variable.
+        - ``cosimple`` -- (default: ``False``) boolean
         - ``fundamentals`` -- (default: ``None``) a set elements of the base
           ring.
 
@@ -2443,7 +2474,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         """
         return self.dual().linear_extension_chains(F=F, simple=cosimple, fundamentals=fundamentals)
 
-    cpdef linear_extensions(self, element=None, F=None, simple=False, fundamentals=None) noexcept:
+    cpdef linear_extensions(self, element=None, F=None, simple=False, fundamentals=None):
         r"""
         Create a list of linear matroids represented by rank-preserving single-element
         extensions of this linear matroid representation.
@@ -2452,8 +2483,8 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
         - ``element`` -- (default: ``None``) the name of the new element of
           the groundset.
-        - ``F`` -- (default: ``None``) a subset of the ground set.
-        - ``simple`` -- (default: ``False``) a boolean variable.
+        - ``F`` -- (default: ``None``) a subset of the groundset.
+        - ``simple`` -- (default: ``False``) boolean
         - ``fundamentals`` -- (default: ``None``) a set elements of the base
           ring.
 
@@ -2511,7 +2542,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         chains = self.linear_extension_chains(F, simple=simple, fundamentals=fundamentals)
         return self._linear_extensions(element, chains)
 
-    cpdef linear_coextensions(self, element=None, F=None, cosimple=False, fundamentals=None) noexcept:
+    cpdef linear_coextensions(self, element=None, F=None, cosimple=False, fundamentals=None):
         r"""
         Create a list of linear matroids represented by corank-preserving single-element
         coextensions of this linear matroid representation.
@@ -2520,8 +2551,8 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
         - ``element`` -- (default: ``None``) the name of the new element of
           the groundset.
-        - ``F`` -- (default: ``None``) a subset of the ground set.
-        - ``cosimple`` -- (default: ``False``) a boolean variable.
+        - ``F`` -- (default: ``None``) a subset of the groundset.
+        - ``cosimple`` -- (default: ``False``) boolean
         - ``fundamentals`` -- (default: ``None``) a set elements of the base
           ring.
 
@@ -2582,7 +2613,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         cochains = self.linear_coextension_cochains(F, cosimple=cosimple, fundamentals=fundamentals)
         return self._linear_coextensions(element, cochains)
 
-    cpdef is_valid(self) noexcept:
+    cpdef bint is_valid(self):
         r"""
         Test if the data represent an actual matroid.
 
@@ -2633,14 +2664,14 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
     # connectivity
 
-    cpdef _is_3connected_shifting(self, certificate=False) noexcept:
+    cpdef _is_3connected_shifting(self, certificate=False):
         r"""
         Return ``True`` if the matroid is 4-connected, ``False`` otherwise. It can
         optionally return a separator as a witness.
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) a boolean; if ``True``,
+        - ``certificate`` -- (default: ``False``) boolean; if ``True``,
           then return ``True, None`` if the matroid is 3-connected,
           and ``False,`` `X` otherwise, where `X` is a `<3`-separation
 
@@ -2681,7 +2712,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                 return False, self.components()[0]
             else:
                 return False
-        if self.rank()>self.size()-self.rank():
+        if self.rank() > self.size() - self.rank():
             return self.dual()._is_3connected_shifting(certificate)
 
         # the partial matrix
@@ -2690,10 +2721,10 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         X, Y = self._current_rows_cols()
 
         # create mapping between elements and columns
-        dX = dict(zip(range(len(X)),X))
-        dY = dict(zip(range(len(Y)),Y))
+        dX = dict(zip(range(len(X)), X))
+        dY = dict(zip(range(len(Y)), Y))
 
-        for (x,y) in spanning_forest(M):
+        for (x, y) in spanning_forest(M):
             P_rows=[x]
             P_cols=[y]
             Q_rows=[]
@@ -2712,14 +2743,14 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             return True, None
         return True
 
-    cpdef _is_4connected_shifting(self, certificate=False) noexcept:
+    cpdef _is_4connected_shifting(self, certificate=False):
         r"""
         Return ``True`` if the matroid is 4-connected, ``False`` otherwise. It can
         optionally return a separator as a witness.
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) a boolean; if ``True``,
+        - ``certificate`` -- (default: ``False``) boolean; if ``True``,
           then return ``True, None`` if the matroid is 4-connected,
           and ``False,`` `X` otherwise, where `X` is a `<4`-separation
 
@@ -2827,7 +2858,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         INPUT:
 
         - ``R`` -- (default: the base ring of ``self``) the base ring
-        - ``ordering`` -- (optional) an ordering of the ground set
+        - ``ordering`` -- (optional) an ordering of the groundset
 
         .. SEEALSO::
 
@@ -2851,8 +2882,8 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             sage: # needs sage.groups
             sage: G = SymmetricGroup(4)
             sage: action = lambda g, x: g(x + 1) - 1
-            sage: OTG1 = M.orlik_terao_algebra(QQ, invariant=(G,action))
-            sage: OTG2 = M.orlik_terao_algebra(QQ, invariant=(action,G))
+            sage: OTG1 = M.orlik_terao_algebra(QQ, invariant=(G, action))
+            sage: OTG2 = M.orlik_terao_algebra(QQ, invariant=(action, G))
             sage: OTG1 is OTG2
             True
         """
@@ -2880,49 +2911,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         from sage.algebras.orlik_terao import OrlikTeraoAlgebra
         return OrlikTeraoAlgebra(R, self, ordering)
 
-    # Copying, loading, saving
-
-    def __copy__(self):
-        """
-        Create a shallow copy.
-
-        EXAMPLES::
-
-            sage: M = Matroid(Matrix(GF(7), [[1, 0, 0, 1, 1], [0, 1, 0, 1, 2],
-            ....:                                           [0, 0, 1, 1, 3]]))
-            sage: N = copy(M)  # indirect doctest
-            sage: M == N
-            True
-        """
-        cdef LinearMatroid N
-        if self._representation is not None:
-            N = LinearMatroid(groundset=self._E, matrix=self._representation, keep_initial_representation=True)
-        else:
-            rows, cols = self._current_rows_cols()
-            N = LinearMatroid(groundset=rows + cols, reduced_matrix=self._A)
-        N.rename(self.get_custom_name())
-        return N
-
-    def __deepcopy__(self, memo):
-        """
-        Create a deep copy.
-
-        EXAMPLES::
-
-            sage: M = Matroid(Matrix(GF(7), [[1, 0, 0, 1, 1], [0, 1, 0, 1, 2],
-            ....:                                           [0, 0, 1, 1, 3]]))
-            sage: N = deepcopy(M)  # indirect doctest
-            sage: M == N
-            True
-        """
-        cdef LinearMatroid N
-        if self._representation is not None:
-            N = LinearMatroid(groundset=deepcopy(self._E, memo), matrix=deepcopy(self._representation, memo), keep_initial_representation=True)
-        else:
-            rows, cols = self._current_rows_cols()
-            N = LinearMatroid(groundset=deepcopy(rows + cols, memo), reduced_matrix=deepcopy(self._A, memo))
-        N.rename(deepcopy(self.get_custom_name(), memo))
-        return N
+    # copying, loading, saving
 
     def __reduce__(self):
         """
@@ -2972,6 +2961,43 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             reduced = True
         data = (A, gs, reduced, self.get_custom_name())
         return sage.matroids.unpickling.unpickle_linear_matroid, (version, data)
+
+    cpdef relabel(self, mapping):
+        r"""
+        Return an isomorphic matroid with relabeled groundset.
+
+        The output is obtained by relabeling each element `e` by
+        ``mapping[e]``, where ``mapping`` is a given injective map. If
+        ``mapping[e]`` is not defined, then the identity map is assumed.
+
+        INPUT:
+
+        - ``mapping`` -- a Python object such that ``mapping[e]`` is the new
+          label of `e`
+
+        OUTPUT: matroid
+
+        EXAMPLES::
+
+            sage: M = matroids.catalog.Fano()
+            sage: sorted(M.groundset())
+            ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+            sage: N = M.relabel({'g': 'x'})
+            sage: sorted(N.groundset())
+            ['a', 'b', 'c', 'd', 'e', 'f', 'x']
+
+        TESTS::
+
+            sage: M = matroids.catalog.Fano()
+            sage: f = {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7}
+            sage: N = M.relabel(f)
+            sage: for S in powerset(M.groundset()):
+            ....:     assert M.rank(S) == N.rank([f[x] for x in S])
+        """
+        d = self._relabel_map(mapping)
+        E = [d[x] for x in self.groundset_list()]
+        M = LinearMatroid(groundset=E, matrix=self._matrix_())
+        return M
 
 # Binary matroid
 
@@ -3116,7 +3142,7 @@ cdef class BinaryMatroid(LinearMatroid):
         self._zero = GF2_zero
         self._one = GF2_one
 
-    cpdef base_ring(self) noexcept:
+    cpdef base_ring(self):
         r"""
         Return the base ring of the matrix representing the matroid,
         in this case `\GF{2}`.
@@ -3130,7 +3156,7 @@ cdef class BinaryMatroid(LinearMatroid):
         global GF2
         return GF2
 
-    cpdef characteristic(self) noexcept:
+    cpdef characteristic(self):
         """
         Return the characteristic of the base ring of the matrix representing
         the matroid, in this case `2`.
@@ -3158,13 +3184,13 @@ cdef class BinaryMatroid(LinearMatroid):
         self._prow[y] = p
         BasisExchangeMatroid._exchange(self, x, y)
 
-    cdef  __fundamental_cocircuit(self, bitset_t C, long x) noexcept:
+    cdef  __fundamental_cocircuit(self, bitset_t C, long x):
         r"""
         Fill bitset `C` with the incidence vector of the `B`-fundamental cocircuit using ``x``. Internal method using packed elements.
         """
         bitset_copy(C, (<BinaryMatrix>self._A)._M[self._prow[x]])
 
-    cdef _coclosure_internal(self, bitset_t R, bitset_t F) noexcept:
+    cdef _coclosure_internal(self, bitset_t R, bitset_t F):
         """
         Bitpacked version of ``coclosure``.
 
@@ -3187,7 +3213,7 @@ cdef class BinaryMatroid(LinearMatroid):
                 bitset_add(R, y)
             y = bitset_next(self._inside, y + 1)
 
-    cdef  _exchange_value_internal(self, long x, long y) noexcept:
+    cdef  _exchange_value_internal(self, long x, long y):
         r"""
         Return the (x, y) entry of the current representation.
         """
@@ -3210,10 +3236,9 @@ cdef class BinaryMatroid(LinearMatroid):
             sage: repr(M)  # indirect doctest
             'Binary matroid of rank 3 on 7 elements, type (3, 0)'
         """
-        S = "Binary matroid of rank " + str(self.rank()) + " on " + str(self.size()) + " elements, type (" + str(self.bicycle_dimension()) + ', ' + str(self.brown_invariant()) + ')'
-        return S
+        return f'Binary matroid of rank {self.rank()} on {self.size()} elements, type ({self.bicycle_dimension()}, {self.brown_invariant()})'
 
-    cpdef _current_rows_cols(self, B=None) noexcept:
+    cpdef _current_rows_cols(self, B=None):
         """
         Return the current row and column labels of a reduced matrix.
 
@@ -3254,7 +3279,7 @@ cdef class BinaryMatroid(LinearMatroid):
                 c += 1
         return rows, cols
 
-    cpdef LeanMatrix _basic_representation(self, B=None) noexcept:
+    cpdef LeanMatrix _basic_representation(self, B=None):
         """
         Return a basic matrix representation of the matroid.
 
@@ -3293,7 +3318,7 @@ cdef class BinaryMatroid(LinearMatroid):
             self._move_current_basis(B, set())
         return self._A.copy()   # Deprecated Sage matrix operation
 
-    cpdef LeanMatrix _reduced_representation(self, B=None) noexcept:
+    cpdef LeanMatrix _reduced_representation(self, B=None):
         r"""
         Return a reduced representation of the matroid, i.e. a matrix `R` such
         that `[I\ \ R]` represents the matroid.
@@ -3335,7 +3360,7 @@ cdef class BinaryMatroid(LinearMatroid):
 
     # isomorphism
 
-    cpdef _is_isomorphic(self, other, certificate=False) noexcept:
+    cpdef _is_isomorphic(self, other, certificate=False):
         """
         Test if ``self`` is isomorphic to ``other``.
 
@@ -3343,13 +3368,11 @@ cdef class BinaryMatroid(LinearMatroid):
 
         INPUT:
 
-        - ``other`` -- A matroid,
-        - optional parameter ``certificate`` -- Boolean.
+        - ``other`` -- matroid
+        - ``certificate`` -- boolean (default: ``False``)
 
-        OUTPUT:
-
-        Boolean,
-        and, if certificate = True, a dictionary giving the isomorphism or None
+        OUTPUT: boolean, and, if ``certificate = True``, a dictionary giving
+        the isomorphism or ``None``
 
         .. NOTE::
 
@@ -3383,7 +3406,7 @@ cdef class BinaryMatroid(LinearMatroid):
         else:
             return LinearMatroid._is_isomorphic(self, other)
 
-    cpdef _is_isomorphism(self, other, morphism) noexcept:
+    cpdef _is_isomorphism(self, other, morphism):
         r"""
         Test if a given bijection is an isomorphism.
 
@@ -3392,13 +3415,11 @@ cdef class BinaryMatroid(LinearMatroid):
 
         INPUT:
 
-        - ``other`` -- A matroid instance.
+        - ``other`` -- matroid
         - ``morphism`` -- a dictionary mapping the groundset of ``self`` to
           the groundset of ``other``
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -3414,7 +3435,7 @@ cdef class BinaryMatroid(LinearMatroid):
             return LinearMatroid._is_isomorphism(self, other, morphism)
 
     # invariants
-    cpdef _make_invariant(self) noexcept:
+    cpdef _make_invariant(self):
         """
         Create an invariant.
 
@@ -3504,7 +3525,7 @@ cdef class BinaryMatroid(LinearMatroid):
         self._b_invariant = tuple([d, b2, len(Fm), len(F0), len(Fp), p[0], p[1], p[2]])
         self._b_partition = tuple([Fm, F0, Fp])
 
-    cpdef _invariant(self) noexcept:
+    cpdef _invariant(self):
         r"""
         Return a matroid invariant.
 
@@ -3533,7 +3554,7 @@ cdef class BinaryMatroid(LinearMatroid):
             self._make_invariant()
         return self._b_invariant
 
-    cpdef bicycle_dimension(self) noexcept:
+    cpdef bicycle_dimension(self):
         r"""
         Return the bicycle dimension of the binary matroid.
 
@@ -3542,9 +3563,7 @@ cdef class BinaryMatroid(LinearMatroid):
         bicycle dimension of its cocycle-space, and is an invariant for binary
         matroids. See [Pen2012]_, [GR2001]_ for more information.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -3556,7 +3575,7 @@ cdef class BinaryMatroid(LinearMatroid):
             self._make_invariant()
         return self._b_invariant[0]
 
-    cpdef brown_invariant(self) noexcept:
+    cpdef brown_invariant(self):
         r"""
         Return the value of Brown's invariant for the binary matroid.
 
@@ -3574,9 +3593,7 @@ cdef class BinaryMatroid(LinearMatroid):
         The Brown invariant of a binary matroid equals the Brown invariant of
         its cocycle-space.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -3593,12 +3610,12 @@ cdef class BinaryMatroid(LinearMatroid):
             self._make_invariant()
         return self._b_invariant[1]
 
-    cpdef _principal_tripartition(self) noexcept:
+    cpdef _principal_tripartition(self):
         r"""
         Return the principal tripartition of the binary matroid.
 
         The principal tripartition is a partition `(F_{-1}, F_0, F_{1})` of
-        the ground set. A defining property is the following. It is
+        the groundset. A defining property is the following. It is
         straightforward that if the bicycle dimension of a matroid `M` is `k`,
         then the bicycle dimension of `M\setminus e' is one of `k-1, k, k + 1`
         for each element `e` of `M`. Then if `F_i` denotes the set of elements
@@ -3631,7 +3648,7 @@ cdef class BinaryMatroid(LinearMatroid):
         P = self._b_partition
         return frozenset([self._E[e] for e in P[0]]), frozenset([self._E[e] for e in P[1]]), frozenset([self._E[e] for e in P[2]])
 
-    cpdef BinaryMatrix _projection(self) noexcept:
+    cpdef BinaryMatrix _projection(self):
         """
         Return the projection matrix onto the row space.
 
@@ -3672,7 +3689,7 @@ cdef class BinaryMatroid(LinearMatroid):
             self._make_invariant()
         return self._b_projection
 
-    cpdef BinaryMatrix _projection_partition(self) noexcept:
+    cpdef BinaryMatrix _projection_partition(self):
         """
         Return the equitable partition of the graph whose incidence matrix is
         the projection matrix of this matroid.
@@ -3704,7 +3721,7 @@ cdef class BinaryMatroid(LinearMatroid):
             self._eq_part = self._b_projection.equitable_partition()   # Not a Sage matrix operation
         return self._eq_part
 
-    cpdef _fast_isom_test(self, other) noexcept:
+    cpdef _fast_isom_test(self, other):
         r"""
         Run a quick test to see if two binary matroids are isomorphic.
 
@@ -3738,16 +3755,16 @@ cdef class BinaryMatroid(LinearMatroid):
 
     # minors, dual
 
-    cpdef _minor(self, contractions, deletions) noexcept:
+    cpdef _minor(self, contractions, deletions):
         r"""
         Return a minor.
 
         INPUT:
 
-        - ``contractions`` -- An object with Python's ``frozenset`` interface
-          containing a subset of ``self.groundset()``.
-        - ``deletions`` -- An object with Python's ``frozenset`` interface
-          containing a subset of ``self.groundset()``.
+        - ``contractions`` -- an object with Python's ``frozenset`` interface
+          containing a subset of ``self.groundset()``
+        - ``deletions`` -- an object with Python's ``frozenset`` interface
+          containing a subset of ``self.groundset()``
 
         .. NOTE::
 
@@ -3781,7 +3798,7 @@ cdef class BinaryMatroid(LinearMatroid):
                              keep_initial_representation=False)
 
     # graphicness test
-    cpdef is_graphic(self) noexcept:
+    cpdef bint is_graphic(self):
         """
         Test if the binary matroid is graphic.
 
@@ -3790,9 +3807,7 @@ cdef class BinaryMatroid(LinearMatroid):
         matroid is independent if and only if the corresponding subgraph is
         acyclic.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -3852,7 +3867,7 @@ cdef class BinaryMatroid(LinearMatroid):
         # now self is graphic iff there is a binary vector x so that M*x = 0 and x_0 = 1, so:
         return BinaryMatroid(m).corank(frozenset([0])) > 0
 
-    cpdef is_valid(self) noexcept:
+    cpdef bint is_valid(self):
         r"""
         Test if the data obey the matroid axioms.
 
@@ -3873,7 +3888,7 @@ cdef class BinaryMatroid(LinearMatroid):
 
     # representability
 
-    cpdef binary_matroid(self, randomized_tests=1, verify = True) noexcept:
+    cpdef binary_matroid(self, randomized_tests=1, verify = True):
         r"""
         Return a binary matroid representing ``self``.
 
@@ -3903,7 +3918,7 @@ cdef class BinaryMatroid(LinearMatroid):
         """
         return self
 
-    cpdef is_binary(self, randomized_tests=1) noexcept:
+    cpdef is_binary(self, randomized_tests=1):
         r"""
         Decide if ``self`` is a binary matroid.
 
@@ -3911,9 +3926,7 @@ cdef class BinaryMatroid(LinearMatroid):
 
         - ``randomized_tests`` -- Ignored.
 
-        OUTPUT:
-
-        A Boolean.
+        OUTPUT: boolean
 
         ALGORITHM:
 
@@ -3930,55 +3943,6 @@ cdef class BinaryMatroid(LinearMatroid):
             True
         """
         return True
-
-    def __copy__(self):
-        """
-        Create a shallow copy.
-
-        EXAMPLES::
-
-            sage: M = Matroid(Matrix(GF(2), [[1, 0, 0, 1, 1], [0, 1, 0, 1, 2],
-            ....:      [0, 0, 1, 1, 3]]))
-            sage: N = copy(M)  # indirect doctest
-            sage: M == N
-            True
-        """
-        cdef BinaryMatroid N
-        cdef list basis
-        if self._representation is not None:
-            N = BinaryMatroid(groundset=self._E, matrix=self._representation, keep_initial_representation=True)
-        else:
-            basis = [0] * self.full_rank()
-            for e in self.basis():
-                basis[self._prow[self._idx[e]]] = e
-            N = BinaryMatroid(groundset=self._E, matrix=self._A, basis=basis)
-        N.rename(self.get_custom_name())
-        return N
-
-    def __deepcopy__(self, memo):
-        """
-        Create a deep copy.
-
-        EXAMPLES::
-
-            sage: M = Matroid(Matrix(GF(2), [[1, 0, 0, 1, 1], [0, 1, 0, 1, 2],
-            ....:      [0, 0, 1, 1, 3]]))
-            sage: N = deepcopy(M)  # indirect doctest
-            sage: M == N
-            True
-        """
-        from copy import deepcopy
-        cdef BinaryMatroid N
-        cdef list basis
-        if self._representation is not None:
-            N = BinaryMatroid(groundset=deepcopy(self._E, memo), matrix=deepcopy(self._representation, memo), keep_initial_representation=True)
-        else:
-            basis = [0] * self.full_rank()
-            for e in self.basis():
-                basis[self._prow[self._idx[e]]] = e
-            N = BinaryMatroid(groundset=deepcopy(self._E, memo), matrix=deepcopy(self._A, memo), basis=deepcopy(basis, memo))
-        N.rename(deepcopy(self.get_custom_name(), memo))
-        return N
 
     def __reduce__(self):
         """
@@ -4037,6 +4001,43 @@ cdef class BinaryMatroid(LinearMatroid):
             basis = self._current_rows_cols()[0]
         data = (A, gs, basis, self.get_custom_name())
         return sage.matroids.unpickling.unpickle_binary_matroid, (version, data)
+
+    cpdef relabel(self, mapping):
+        r"""
+        Return an isomorphic matroid with relabeled groundset.
+
+        The output is obtained by relabeling each element `e` by
+        ``mapping[e]``, where ``mapping`` is a given injective map. If
+        ``mapping[e]`` is not defined, then the identity map is assumed.
+
+        INPUT:
+
+        - ``mapping`` -- a Python object such that ``mapping[e]`` is the new
+          label of `e`
+
+        OUTPUT: matroid
+
+        EXAMPLES::
+
+            sage: M = matroids.catalog.Fano()
+            sage: sorted(M.groundset())
+            ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+            sage: N = M.relabel({'g': 'x'})
+            sage: sorted(N.groundset())
+            ['a', 'b', 'c', 'd', 'e', 'f', 'x']
+
+        TESTS::
+
+            sage: M = matroids.catalog.Fano()
+            sage: f = {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7}
+            sage: N = M.relabel(f)
+            sage: for S in powerset(M.groundset()):
+            ....:     assert M.rank(S) == N.rank([f[x] for x in S])
+        """
+        d = self._relabel_map(mapping)
+        E = [d[x] for x in self.groundset_list()]
+        M = BinaryMatroid(groundset=E, matrix=self._matrix_())
+        return M
 
 cdef class TernaryMatroid(LinearMatroid):
     r"""
@@ -4181,7 +4182,7 @@ cdef class TernaryMatroid(LinearMatroid):
         self._one = GF3_one
         self._two = GF3_minus_one
 
-    cpdef base_ring(self) noexcept:
+    cpdef base_ring(self):
         r"""
         Return the base ring of the matrix representing the matroid, in this
         case `\GF{3}`.
@@ -4195,7 +4196,7 @@ cdef class TernaryMatroid(LinearMatroid):
         global GF3
         return GF3
 
-    cpdef characteristic(self) noexcept:
+    cpdef characteristic(self):
         """
         Return the characteristic of the base ring of the matrix representing
         the matroid, in this case `3`.
@@ -4223,13 +4224,13 @@ cdef class TernaryMatroid(LinearMatroid):
         self._prow[y] = p
         BasisExchangeMatroid._exchange(self, x, y)
 
-    cdef  __fundamental_cocircuit(self, bitset_t C, long x) noexcept:
+    cdef  __fundamental_cocircuit(self, bitset_t C, long x):
         r"""
         Fill bitset `C` with the incidence vector of the `B`-fundamental cocircuit using ``x``. Internal method using packed elements.
         """
         bitset_copy(C, (<TernaryMatrix>self._A)._M0[self._prow[x]])
 
-    cdef _coclosure_internal(self, bitset_t R, bitset_t F) noexcept:
+    cdef _coclosure_internal(self, bitset_t R, bitset_t F):
         """
         Bitpacked version of ``coclosure``.
 
@@ -4252,7 +4253,7 @@ cdef class TernaryMatroid(LinearMatroid):
                 bitset_add(R, y)
             y = bitset_next(self._inside, y + 1)
 
-    cdef  _exchange_value_internal(self, long x, long y) noexcept:
+    cdef  _exchange_value_internal(self, long x, long y):
         r"""
         Return the (x, y) entry of the current representation.
         """
@@ -4277,14 +4278,14 @@ cdef class TernaryMatroid(LinearMatroid):
             sage: repr(M)  # indirect doctest
             'Ternary matroid of rank 3 on 7 elements, type 0-'
         """
-        S = "Ternary matroid of rank " + str(self.rank()) + " on " + str(self.size()) + " elements, type " + str(self.bicycle_dimension())
+        S = f'Ternary matroid of rank {self.rank()} on {self.size()} elements, type {self.bicycle_dimension()}'
         if self.character() == 1:
             S = S + '+'
         else:
             S = S + '-'
         return S
 
-    cpdef _current_rows_cols(self, B=None) noexcept:
+    cpdef _current_rows_cols(self, B=None):
         """
         Return the current row and column labels of a reduced matrix.
 
@@ -4325,7 +4326,7 @@ cdef class TernaryMatroid(LinearMatroid):
                 c += 1
         return rows, cols
 
-    cpdef LeanMatrix _basic_representation(self, B=None) noexcept:
+    cpdef LeanMatrix _basic_representation(self, B=None):
         """
         Return a basic matrix representation of the matroid.
 
@@ -4364,7 +4365,7 @@ cdef class TernaryMatroid(LinearMatroid):
             self._move_current_basis(B, set())
         return self._A.copy()   # Deprecated Sage matrix operation
 
-    cpdef LeanMatrix _reduced_representation(self, B=None) noexcept:
+    cpdef LeanMatrix _reduced_representation(self, B=None):
         r"""
         Return a reduced representation of the matroid, i.e. a matrix `R`
         such that `[I\ \ R]` represents the matroid.
@@ -4406,20 +4407,18 @@ cdef class TernaryMatroid(LinearMatroid):
 
     # isomorphism
 
-    cpdef _is_isomorphic(self, other, certificate=False) noexcept:
+    cpdef _is_isomorphic(self, other, certificate=False):
         """
         Test if ``self`` is isomorphic to ``other``. Internal version that
         performs no checks on input.
 
         INPUT:
 
-        - ``other`` -- A matroid,
-        - optional parameter ``certificate`` -- Boolean.
+        - ``other`` -- matroid
+        - ``certificate`` -- boolean (default: ``False``)
 
-        OUTPUT:
-
-        Boolean,
-        and, if certificate = True, a dictionary giving the isomorphism or None
+        OUTPUT: boolean, and, if ``certificate = True``, a dictionary giving
+        the isomorphism or ``None``
 
         .. NOTE::
 
@@ -4445,7 +4444,7 @@ cdef class TernaryMatroid(LinearMatroid):
 
     # invariants
 
-    cpdef _make_invariant(self) noexcept:
+    cpdef _make_invariant(self):
         """
         Create an invariant.
 
@@ -4517,7 +4516,7 @@ cdef class TernaryMatroid(LinearMatroid):
         self._t_partition = tuple([F, Fa, Fb, Fc])
         self._t_invariant = tuple([d, c, len(F), len(Fa), len(Fb), len(Fc), p[0], p[1], p[2], p[3], p[4], p[5]])
 
-    cpdef _invariant(self) noexcept:
+    cpdef _invariant(self):
         r"""
         Return a matroid invariant.
 
@@ -4533,7 +4532,7 @@ cdef class TernaryMatroid(LinearMatroid):
         - ``(L, La, Lb, Lc)`` is the triple of lengths of the principal
           quadripartition.
         - ``(p0, ..., p5)`` counts of edges in a characteristic graph of the
-          matroid whose vertex set is the ground set of the matroid,
+          matroid whose vertex set is the groundset of the matroid,
           restricted to the sets in the principal quadripartition.
 
         EXAMPLES::
@@ -4546,7 +4545,7 @@ cdef class TernaryMatroid(LinearMatroid):
             self._make_invariant()
         return self._t_invariant
 
-    cpdef bicycle_dimension(self) noexcept:
+    cpdef bicycle_dimension(self):
         r"""
         Return the bicycle dimension of the ternary matroid.
 
@@ -4555,9 +4554,7 @@ cdef class TernaryMatroid(LinearMatroid):
         bicycle dimension of its rowspace, and is a matroid invariant.
         See [Pen2012]_.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -4569,7 +4566,7 @@ cdef class TernaryMatroid(LinearMatroid):
             self._make_invariant()
         return self._t_invariant[0]
 
-    cpdef character(self) noexcept:
+    cpdef character(self):
         r"""
         Return the character of the ternary matroid.
 
@@ -4581,9 +4578,7 @@ cdef class TernaryMatroid(LinearMatroid):
         character of its cocycle-space, and is an invariant for ternary
         matroids. See [Pen2012]_.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -4595,11 +4590,11 @@ cdef class TernaryMatroid(LinearMatroid):
             self._make_invariant()
         return self._t_invariant[1]
 
-    cpdef _principal_quadripartition(self) noexcept:
+    cpdef _principal_quadripartition(self):
         r"""
-        Return an ordered partition of the ground set.
+        Return an ordered partition of the groundset.
 
-        The partition groups each element `e` of the ground set
+        The partition groups each element `e` of the groundset
         according to the bicycle dimension and the character of `M/e`, where
         `M` is the present matroid.
 
@@ -4628,7 +4623,7 @@ cdef class TernaryMatroid(LinearMatroid):
             self._make_invariant()
         return tuple([[self._E[j] for j in self._t_partition[0]], [self._E[j] for j in self._t_partition[1]], [self._E[j] for j in self._t_partition[2]], [self._E[j] for j in self._t_partition[3]]])
 
-    cpdef TernaryMatrix _projection(self) noexcept:
+    cpdef TernaryMatrix _projection(self):
         """
         Return the projection matrix onto the row space.
 
@@ -4669,7 +4664,7 @@ cdef class TernaryMatroid(LinearMatroid):
             self._make_invariant()
         return self._t_projection
 
-    cpdef _fast_isom_test(self, other) noexcept:
+    cpdef _fast_isom_test(self, other):
         r"""
            Run a quick test to see if two ternary matroids are isomorphic.
 
@@ -4700,16 +4695,16 @@ cdef class TernaryMatroid(LinearMatroid):
 
     # minors, dual
 
-    cpdef _minor(self, contractions, deletions) noexcept:
+    cpdef _minor(self, contractions, deletions):
         r"""
         Return a minor.
 
         INPUT:
 
-        - ``contractions`` -- An object with Python's ``frozenset`` interface
-          containing a subset of ``self.groundset()``.
-        - ``deletions`` -- An object with Python's ``frozenset`` interface
-          containing a subset of ``self.groundset()``.
+        - ``contractions`` -- an object with Python's ``frozenset`` interface
+          containing a subset of ``self.groundset()``
+        - ``deletions`` -- an object with Python's ``frozenset`` interface
+          containing a subset of ``self.groundset()``
 
         .. NOTE::
 
@@ -4742,7 +4737,7 @@ cdef class TernaryMatroid(LinearMatroid):
                              basis=bas,
                              keep_initial_representation=False)
 
-    cpdef is_valid(self) noexcept:
+    cpdef bint is_valid(self):
         r"""
         Test if the data obey the matroid axioms.
 
@@ -4763,7 +4758,7 @@ cdef class TernaryMatroid(LinearMatroid):
 
     # representability
 
-    cpdef ternary_matroid(self, randomized_tests=1, verify = True) noexcept:
+    cpdef ternary_matroid(self, randomized_tests=1, verify = True):
         r"""
         Return a ternary matroid representing ``self``.
 
@@ -4793,17 +4788,15 @@ cdef class TernaryMatroid(LinearMatroid):
         """
         return self
 
-    cpdef is_ternary(self, randomized_tests=1) noexcept:
+    cpdef is_ternary(self, randomized_tests=1):
         r"""
         Decide if ``self`` is a binary matroid.
 
         INPUT:
 
-        - ``randomized_tests`` -- Ignored.
+        - ``randomized_tests`` -- ignored
 
-        OUTPUT:
-
-        A Boolean.
+        OUTPUT: boolean
 
         ALGORITHM:
 
@@ -4820,55 +4813,6 @@ cdef class TernaryMatroid(LinearMatroid):
             True
         """
         return True
-
-    def __copy__(self):
-        """
-        Create a shallow copy.
-
-        EXAMPLES::
-
-            sage: M = Matroid(Matrix(GF(3), [[1, 0, 0, 1, 1], [0, 1, 0, 1, 2],
-            ....:     [0, 0, 1, 1, 3]]))
-            sage: N = copy(M)  # indirect doctest
-            sage: M == N
-            True
-        """
-        cdef TernaryMatroid N
-        cdef list basis
-        if self._representation is not None:
-            N = TernaryMatroid(groundset=self._E, matrix=self._representation, keep_initial_representation=True)
-        else:
-            basis = [0] * self.full_rank()
-            for e in self.basis():
-                basis[self._prow[self._idx[e]]] = e
-            N = TernaryMatroid(groundset=self._E, matrix=self._A, basis=basis)
-        N.rename(self.get_custom_name())
-        return N
-
-    def __deepcopy__(self, memo):
-        """
-        Create a deep copy.
-
-        EXAMPLES::
-
-            sage: M = Matroid(Matrix(GF(3), [[1, 0, 0, 1, 1], [0, 1, 0, 1, 2],
-            ....:           [0, 0, 1, 1, -1]]))
-            sage: N = deepcopy(M)  # indirect doctest
-            sage: M == N
-            True
-        """
-        from copy import deepcopy
-        cdef TernaryMatroid N
-        cdef list basis
-        if self._representation is not None:
-            N = TernaryMatroid(groundset=deepcopy(self._E, memo), matrix=deepcopy(self._representation, memo), keep_initial_representation=True)
-        else:
-            basis = [0] * self.full_rank()
-            for e in self.basis():
-                basis[self._prow[self._idx[e]]] = e
-            N = TernaryMatroid(groundset=deepcopy(self._E, memo), matrix=deepcopy(self._A, memo), basis=deepcopy(basis, memo))
-        N.rename(deepcopy(self.get_custom_name(), memo))
-        return N
 
     def __reduce__(self):
         """
@@ -4931,6 +4875,43 @@ cdef class TernaryMatroid(LinearMatroid):
             basis = self._current_rows_cols()[0]
         data = (A, gs, basis, self.get_custom_name())
         return sage.matroids.unpickling.unpickle_ternary_matroid, (version, data)
+
+    cpdef relabel(self, mapping):
+        r"""
+        Return an isomorphic matroid with relabeled groundset.
+
+        The output is obtained by relabeling each element `e` by
+        ``mapping[e]``, where ``mapping`` is a given injective map. If
+        ``mapping[e]`` is not defined, then the identity map is assumed.
+
+        INPUT:
+
+        - ``mapping`` -- a Python object such that ``mapping[e]`` is the new
+          label of `e`
+
+        OUTPUT: matroid
+
+        EXAMPLES::
+
+            sage: M = matroids.catalog.NonFano()
+            sage: sorted(M.groundset())
+            ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+            sage: N = M.relabel({'g': 'x'})
+            sage: sorted(N.groundset())
+            ['a', 'b', 'c', 'd', 'e', 'f', 'x']
+
+        TESTS::
+
+            sage: M = matroids.catalog.NonFano()
+            sage: f = {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7}
+            sage: N = M.relabel(f)
+            sage: for S in powerset(M.groundset()):
+            ....:     assert M.rank(S) == N.rank([f[x] for x in S])
+        """
+        d = self._relabel_map(mapping)
+        E = [d[x] for x in self.groundset_list()]
+        M = TernaryMatroid(groundset=E, matrix=self._matrix_())
+        return M
 
 # Quaternary Matroids
 
@@ -5078,7 +5059,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
         self._x_zero = (<QuaternaryMatrix>self._A)._x_zero
         self._x_one = (<QuaternaryMatrix>self._A)._x_one
 
-    cpdef base_ring(self) noexcept:
+    cpdef base_ring(self):
         r"""
         Return the base ring of the matrix representing the matroid, in this
         case `\GF{4}`.
@@ -5092,7 +5073,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
         """
         return (<QuaternaryMatrix>self._A).base_ring()
 
-    cpdef characteristic(self) noexcept:
+    cpdef characteristic(self):
         """
         Return the characteristic of the base ring of the matrix representing
         the matroid, in this case `2`.
@@ -5121,13 +5102,13 @@ cdef class QuaternaryMatroid(LinearMatroid):
         self._prow[y] = p
         BasisExchangeMatroid._exchange(self, x, y)
 
-    cdef  __fundamental_cocircuit(self, bitset_t C, long x) noexcept:
+    cdef  __fundamental_cocircuit(self, bitset_t C, long x):
         r"""
         Fill bitset `C` with the incidence vector of the `B`-fundamental cocircuit using ``x``. Internal method using packed elements.
         """
         bitset_union(C, (<QuaternaryMatrix>self._A)._M0[self._prow[x]], (<QuaternaryMatrix>self._A)._M1[self._prow[x]])
 
-    cdef _coclosure_internal(self, bitset_t R, bitset_t F) noexcept:
+    cdef _coclosure_internal(self, bitset_t R, bitset_t F):
         """
         Bitpacked version of ``coclosure``.
 
@@ -5150,7 +5131,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
                 bitset_add(R, y)
             y = bitset_next(self._inside, y + 1)
 
-    cdef  _exchange_value_internal(self, long x, long y) noexcept:
+    cdef  _exchange_value_internal(self, long x, long y):
         r"""
         Return the (x, y) entry of the current representation.
         """
@@ -5167,10 +5148,9 @@ cdef class QuaternaryMatroid(LinearMatroid):
             sage: repr(M)  # indirect doctest                                           # needs sage.rings.finite_rings
             'Quaternary matroid of rank 2 on 3 elements'
         """
-        S = "Quaternary matroid of rank " + str(self.rank()) + " on " + str(self.size()) + " elements"
-        return S
+        return f'Quaternary matroid of rank {self.rank()} on {self.size()} elements'
 
-    cpdef _current_rows_cols(self, B=None) noexcept:
+    cpdef _current_rows_cols(self, B=None):
         """
         Return the current row and column labels of a reduced matrix.
 
@@ -5212,7 +5192,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
                 c += 1
         return rows, cols
 
-    cpdef LeanMatrix _basic_representation(self, B=None) noexcept:
+    cpdef LeanMatrix _basic_representation(self, B=None):
         """
         Return a basic matrix representation of the matroid.
 
@@ -5236,7 +5216,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-            sage: M = matroids.catalog.Q10()                                     # needs sage.rings.finite_rings
+            sage: M = matroids.catalog.Q10()                                            # needs sage.rings.finite_rings
             sage: M._basic_representation()                                             # needs sage.rings.finite_rings
             5 x 10 QuaternaryMatrix
             [100001x00y]
@@ -5255,7 +5235,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
             self._move_current_basis(B, set())
         return self._A.copy()   # Deprecated Sage matrix operation
 
-    cpdef LeanMatrix _reduced_representation(self, B=None) noexcept:
+    cpdef LeanMatrix _reduced_representation(self, B=None):
         r"""
         Return a reduced representation of the matroid, i.e. a matrix `R` such
         that `[I\ \ R]` represents the matroid.
@@ -5279,7 +5259,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-            sage: M = matroids.catalog.Q10()                                     # needs sage.rings.finite_rings
+            sage: M = matroids.catalog.Q10()                                            # needs sage.rings.finite_rings
             sage: M._reduced_representation()                                           # needs sage.rings.finite_rings
             5 x 5 QuaternaryMatrix
             [1x00y]
@@ -5299,7 +5279,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
         _, cols = self._current_rows_cols()
         return self._A.matrix_from_rows_and_columns(range(self.full_rank()), [self._idx[e] for e in cols])
 
-    cpdef _make_invariant(self) noexcept:
+    cpdef _make_invariant(self):
         """
         Create an invariant.
 
@@ -5307,7 +5287,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-            sage: M = matroids.catalog.Q10()                                     # needs sage.rings.finite_rings
+            sage: M = matroids.catalog.Q10()                                            # needs sage.rings.finite_rings
             sage: M._invariant()  # indirect doctest                                    # needs sage.rings.finite_rings
             (0, 0, 5, 5, 20, 10, 25)
         """
@@ -5366,7 +5346,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
         self._q_partition = tuple([F, Fa, Fb])
         self._q_invariant = tuple([d, len(F), len(Fa), len(Fb), p[0], p[1], p[2]])
 
-    cpdef _invariant(self) noexcept:
+    cpdef _invariant(self):
         r"""
         Return a matroid invariant.
 
@@ -5386,7 +5366,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-            sage: M = matroids.catalog.Q10()                                     # needs sage.rings.finite_rings
+            sage: M = matroids.catalog.Q10()                                            # needs sage.rings.finite_rings
             sage: M._invariant()                                                        # needs sage.rings.finite_rings
             (0, 0, 5, 5, 20, 10, 25)
         """
@@ -5394,7 +5374,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
             self._make_invariant()
         return self._q_invariant
 
-    cpdef bicycle_dimension(self) noexcept:
+    cpdef bicycle_dimension(self):
         r"""
         Return the bicycle dimension of the quaternary matroid.
 
@@ -5407,13 +5387,11 @@ cdef class QuaternaryMatroid(LinearMatroid):
         The bicycle dimension of a matroid equals the bicycle dimension of its
         rowspace, and is a matroid invariant. See [Pen2012]_.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
-            sage: M = matroids.catalog.Q10()                                     # needs sage.rings.finite_rings
+            sage: M = matroids.catalog.Q10()                                            # needs sage.rings.finite_rings
             sage: M.bicycle_dimension()                                                 # needs sage.rings.finite_rings
             0
         """
@@ -5421,12 +5399,12 @@ cdef class QuaternaryMatroid(LinearMatroid):
             self._make_invariant()
         return self._q_invariant[0]
 
-    cpdef _principal_tripartition(self) noexcept:
+    cpdef _principal_tripartition(self):
         r"""
         Return the principal tripartition of the quaternary matroid.
 
         The principal tripartition is a partition `(F_{-1}, F_0, F_{1})` of
-        the ground set. A defining property is the following. It is
+        the groundset. A defining property is the following. It is
         straightforward that if the bicycle dimension of a matroid `M` is `k`,
         then the bicycle dimension of `M\setminus e' is one of `k-1, k, k + 1`
         for each element `e` of `M`. Then if `F_i` denotes the set of elements
@@ -5460,7 +5438,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
         P = self._q_partition
         return frozenset([self._E[e] for e in P[0]]), frozenset([self._E[e] for e in P[1]]), frozenset([self._E[e] for e in P[2]])
 
-    cpdef _fast_isom_test(self, other) noexcept:
+    cpdef _fast_isom_test(self, other):
         r"""
         Run a quick test to see if two quaternary matroids are isomorphic.
 
@@ -5479,8 +5457,8 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-           sage: M = matroids.catalog.Q10().delete('a')                          # needs sage.rings.finite_rings
-           sage: N = matroids.catalog.Q10().delete('b')                          # needs sage.rings.finite_rings
+           sage: M = matroids.catalog.Q10().delete('a')                                 # needs sage.rings.finite_rings
+           sage: N = matroids.catalog.Q10().delete('b')                                 # needs sage.rings.finite_rings
            sage: M._fast_isom_test(N) is None                                           # needs sage.rings.finite_rings
            True
         """
@@ -5489,16 +5467,16 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
     # minors, dual
 
-    cpdef _minor(self, contractions, deletions) noexcept:
+    cpdef _minor(self, contractions, deletions):
         r"""
         Return a minor.
 
         INPUT:
 
-        - ``contractions`` -- An object with Python's ``frozenset`` interface
-          containing a subset of ``self.groundset()``.
-        - ``deletions`` -- An object with Python's ``frozenset`` interface
-          containing a subset of ``self.groundset()``.
+        - ``contractions`` -- an object with Python's ``frozenset`` interface
+          containing a subset of ``self.groundset()``
+        - ``deletions`` -- an object with Python's ``frozenset`` interface
+          containing a subset of ``self.groundset()``
 
         .. NOTE::
 
@@ -5515,7 +5493,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         EXAMPLES::
 
-            sage: M = matroids.catalog.Q10()                                     # needs sage.rings.finite_rings
+            sage: M = matroids.catalog.Q10()                                            # needs sage.rings.finite_rings
             sage: N = M._minor(contractions=set(['a']), deletions=set([]))              # needs sage.rings.finite_rings
             sage: N._minor(contractions=set([]), deletions=set(['b', 'c']))             # needs sage.rings.finite_rings
             Quaternary matroid of rank 4 on 7 elements
@@ -5531,7 +5509,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
                              basis=bas,
                              keep_initial_representation=False)
 
-    cpdef is_valid(self) noexcept:
+    cpdef bint is_valid(self):
         r"""
         Test if the data obey the matroid axioms.
 
@@ -5549,55 +5527,6 @@ cdef class QuaternaryMatroid(LinearMatroid):
             True
         """
         return True
-
-    def __copy__(self):
-        """
-        Create a shallow copy.
-
-        EXAMPLES::
-
-            sage: M = Matroid(Matrix(GF(4, 'x'), [[1, 0, 0, 1, 1],                      # needs sage.rings.finite_rings
-            ....:        [0, 1, 0, 1, 2], [0, 0, 1, 1, 3]]))
-            sage: N = copy(M)  # indirect doctest                                       # needs sage.rings.finite_rings
-            sage: M == N                                                                # needs sage.rings.finite_rings
-            True
-        """
-        cdef QuaternaryMatroid N
-        cdef list basis
-        if self._representation is not None:
-            N = QuaternaryMatroid(groundset=self._E, matrix=self._representation, keep_initial_representation=True)
-        else:
-            basis = [0] * self.full_rank()
-            for e in self.basis():
-                basis[self._prow[self._idx[e]]] = e
-            N = QuaternaryMatroid(groundset=self._E, matrix=self._A, basis=basis)
-        N.rename(self.get_custom_name())
-        return N
-
-    def __deepcopy__(self, memo):
-        """
-        Create a deep copy.
-
-        EXAMPLES::
-
-            sage: M = Matroid(Matrix(GF(4, 'x'), [[1, 0, 0, 1, 1],                      # needs sage.rings.finite_rings
-            ....:               [0, 1, 0, 1, 2], [0, 0, 1, 1, -1]]))
-            sage: N = deepcopy(M)  # indirect doctest                                   # needs sage.rings.finite_rings
-            sage: M == N                                                                # needs sage.rings.finite_rings
-            True
-        """
-        from copy import deepcopy
-        cdef QuaternaryMatroid N
-        cdef list basis
-        if self._representation is not None:
-            N = QuaternaryMatroid(groundset=deepcopy(self._E, memo), matrix=deepcopy(self._representation, memo), keep_initial_representation=True)
-        else:
-            basis = [0] * self.full_rank()
-            for e in self.basis():
-                basis[self._prow[self._idx[e]]] = e
-            N = QuaternaryMatroid(groundset=deepcopy(self._E, memo), matrix=deepcopy(self._A, memo), basis=deepcopy(basis, memo))
-        N.rename(deepcopy(self.get_custom_name(), memo))
-        return N
 
     def __reduce__(self):
         """
@@ -5656,6 +5585,43 @@ cdef class QuaternaryMatroid(LinearMatroid):
             basis = self._current_rows_cols()[0]
         data = (A, gs, basis, self.get_custom_name())
         return sage.matroids.unpickling.unpickle_quaternary_matroid, (version, data)
+
+    cpdef relabel(self, mapping):
+        r"""
+        Return an isomorphic matroid with relabeled groundset.
+
+        The output is obtained by relabeling each element `e` by
+        ``mapping[e]``, where ``mapping`` is a given injective map. If
+        ``mapping[e]`` is not defined, then the identity map is assumed.
+
+        INPUT:
+
+        - ``mapping`` -- a Python object such that ``mapping[e]`` is the new
+          label of `e`
+
+        OUTPUT: matroid
+
+        EXAMPLES::
+
+            sage: M = matroids.catalog.RelaxedNonFano("abcdefg")
+            sage: sorted(M.groundset())
+            ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+            sage: N = M.relabel({'g':'x'})
+            sage: sorted(N.groundset())
+            ['a', 'b', 'c', 'd', 'e', 'f', 'x']
+
+        TESTS::
+
+            sage: M = matroids.catalog.RelaxedNonFano("abcdefg")
+            sage: f = {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7}
+            sage: N = M.relabel(f)
+            sage: for S in powerset(M.groundset()):
+            ....:     assert M.rank(S) == N.rank([f[x] for x in S])
+        """
+        d = self._relabel_map(mapping)
+        E = [d[x] for x in self.groundset_list()]
+        M = QuaternaryMatroid(groundset=E, matrix=self._matrix_())
+        return M
 
 # Regular Matroids
 
@@ -5751,7 +5717,7 @@ cdef class RegularMatroid(LinearMatroid):
         """
         LinearMatroid.__init__(self, matrix, groundset, reduced_matrix, ring=ZZ, keep_initial_representation=keep_initial_representation)
 
-    cdef list _setup_internal_representation(self, matrix, reduced_matrix, ring, keep_initial_representation) noexcept:
+    cdef list _setup_internal_representation(self, matrix, reduced_matrix, ring, keep_initial_representation):
         """
         Setup the internal representation matrix ``self._A`` and the array of
         row- and column indices ``self._prow``.
@@ -5794,7 +5760,7 @@ cdef class RegularMatroid(LinearMatroid):
                 self._prow[self._A.nrows() + r] = r
         return P
 
-    cpdef base_ring(self) noexcept:
+    cpdef base_ring(self):
         r"""
         Return the base ring of the matrix representing the matroid, in this
         case `\ZZ`.
@@ -5807,7 +5773,7 @@ cdef class RegularMatroid(LinearMatroid):
         """
         return ZZ
 
-    cpdef characteristic(self) noexcept:
+    cpdef characteristic(self):
         """
         Return the characteristic of the base ring of the matrix representing
         the matroid, in this case `0`.
@@ -5851,7 +5817,7 @@ cdef class RegularMatroid(LinearMatroid):
         self._prow[x] = py
         BasisExchangeMatroid._exchange(self, x, y)
 
-    cdef  _exchange_value_internal(self, long x, long y) noexcept:
+    cdef  _exchange_value_internal(self, long x, long y):
         r"""
         Return the (x, y) entry of the current representation.
 
@@ -5875,10 +5841,9 @@ cdef class RegularMatroid(LinearMatroid):
             sage: repr(M)  # indirect doctest
             'Regular matroid of rank 5 on 10 elements with 162 bases'
         """
-        S = "Regular matroid of rank " + str(self.rank()) + " on " + str(self.size()) + " elements with " + str(self.bases_count()) + " bases"
-        return S
+        return f'Regular matroid of rank {self.rank()} on {self.size()} elements with {self.bases_count()} bases'
 
-    cpdef bases_count(self) noexcept:
+    cpdef bases_count(self):
         """
         Count the number of bases.
 
@@ -5898,7 +5863,7 @@ cdef class RegularMatroid(LinearMatroid):
             self._bases_count = (R * R.transpose()).det()
         return self._bases_count
 
-    cpdef _projection(self) noexcept:
+    cpdef _projection(self):
         """
         Return the projection matrix onto the row space.
 
@@ -5938,7 +5903,7 @@ cdef class RegularMatroid(LinearMatroid):
             self._r_projection = R.transpose() * (R * R.transpose()).adjugate() * R
         return self._r_projection
 
-    cpdef _invariant(self) noexcept:
+    cpdef _invariant(self):
         """
         Compute a regular matroid invariant.
 
@@ -5960,6 +5925,7 @@ cdef class RegularMatroid(LinearMatroid):
             sage: M._invariant() == O._invariant()
             False
         """
+        from sage.matroids.utilities import cmp_elements_key
         # TODO: this currently uses Sage matrices internally. Perhaps dependence on those can be eliminated for further speed gains.
         if self._r_invariant is not None:
             return self._r_invariant
@@ -5985,10 +5951,10 @@ cdef class RegularMatroid(LinearMatroid):
                     for k in range(j):
                         if P.get_unsafe(i, j)*P.get_unsafe(j, k)*P.get_unsafe(k, i)<0:
                             N=N+1
-        self._r_invariant = hash(tuple([tuple([(w, A[w]) for w in sorted(A)]), tuple([(w, B[w]) for w in sorted(B)]), N]))
+        self._r_invariant = hash(tuple([tuple([(w, A[w]) for w in sorted(A, key=cmp_elements_key)]), tuple([(w, B[w]) for w in sorted(B, key=cmp_elements_key)]), N]))
         return self._r_invariant
 
-    cpdef _hypergraph(self) noexcept:
+    cpdef _hypergraph(self):
         """
         Create a bipartite digraph and a vertex partition.
 
@@ -6018,6 +5984,7 @@ cdef class RegularMatroid(LinearMatroid):
         """
         # NEW VERSION, Uses Sage'S Graph Isomorphism
         from sage.graphs.digraph import DiGraph
+        from sage.matroids.utilities import cmp_elements_key
         if self._r_hypergraph is not None:
             return (self._hypergraph_vertex_partition, self._hypergraph_tuples, self._r_hypergraph)
         cdef Matrix P = self._projection()
@@ -6043,8 +6010,8 @@ cdef class RegularMatroid(LinearMatroid):
                     else:
                         B[w] = [frozenset([e, f])]
                     E.append(frozenset([e, f]))
-        self._hypergraph_vertex_partition = [[str(x) for x in A[w]] for w in sorted(A)] + [['**' + str(x) for x in B[w]] for w in sorted(B)]
-        self._hypergraph_tuples = [(w, len(A[w])) for w in sorted(A)] + [(w, len(B[w])) for w in sorted(B)]
+        self._hypergraph_vertex_partition = [[str(x) for x in A[w]] for w in sorted(A, key=cmp_elements_key)] + [['**' + str(x) for x in B[w]] for w in sorted(B, key=cmp_elements_key)]
+        self._hypergraph_tuples = [(w, len(A[w])) for w in sorted(A, key=cmp_elements_key)] + [(w, len(B[w])) for w in sorted(B, key=cmp_elements_key)]
         G = DiGraph()
         G.add_vertices([str(x) for x in V] + ['**' + str(x) for x in E])
         # Note that Sage's Graph object attempts a sort on calling G.vertices(), which means vertices have to be well-behaved.
@@ -6071,7 +6038,7 @@ cdef class RegularMatroid(LinearMatroid):
         #     self._r_hypergraph = self._r_hypergraph.max_refined()
         # return self._r_hypergraph
 
-    cpdef _is_isomorphic(self, other, certificate=False) noexcept:
+    cpdef _is_isomorphic(self, other, certificate=False):
         """
         Test if ``self`` is isomorphic to ``other``.
 
@@ -6079,13 +6046,11 @@ cdef class RegularMatroid(LinearMatroid):
 
         INPUT:
 
-        - ``other`` -- A matroid,
-        - optional parameter ``certificate`` -- Boolean.
+        - ``other`` -- matroid
+        - ``certificate`` -- boolean (default: ``False``)
 
-        OUTPUT:
-
-        Boolean,
-        and, if certificate = True, a dictionary giving the isomorphism or None
+        OUTPUT: boolean, and, if ``certificate = True``, a dictionary giving
+        the isomorphism or ``None``
 
         .. NOTE::
 
@@ -6139,7 +6104,7 @@ cdef class RegularMatroid(LinearMatroid):
         else:
             return LinearMatroid._is_isomorphic(self, other)
 
-    cpdef _fast_isom_test(self, other) noexcept:
+    cpdef _fast_isom_test(self, other):
         r"""
         Run a quick test to see if two regular matroids are isomorphic.
 
@@ -6180,7 +6145,7 @@ cdef class RegularMatroid(LinearMatroid):
             if self._is_field_isomorphism(other, m):
                 return True
 
-    cdef _hypertest(self, other) noexcept:
+    cdef _hypertest(self, other):
         """
         Test if the hypergraphs associated with ``self`` and ``other`` are
         isomorphic, and if so return an isomorphism.
@@ -6213,7 +6178,7 @@ cdef class RegularMatroid(LinearMatroid):
             idx={str(f):f for f in other.groundset()}
             return {e:idx[m[str(e)]] for e in self.groundset() if str(e) in m}
 
-    cpdef has_line_minor(self, k, hyperlines=None, certificate=False) noexcept:
+    cpdef has_line_minor(self, k, hyperlines=None, certificate=False):
         r"""
         Test if the matroid has a `U_{2, k}`-minor.
 
@@ -6266,7 +6231,7 @@ cdef class RegularMatroid(LinearMatroid):
             return False
         return Matroid.has_line_minor(self, k, hyperlines, certificate)
 
-    cpdef _linear_extension_chains(self, F, fundamentals=None) noexcept:
+    cpdef _linear_extension_chains(self, F, fundamentals=None):
         r"""
         Create a list of chains that determine single-element extensions of
         this linear matroid representation.
@@ -6290,20 +6255,20 @@ cdef class RegularMatroid(LinearMatroid):
         EXAMPLES::
 
             sage: M = matroids.Wheel(3)
-            sage: len(M._linear_extension_chains(F=set([0, 1, 2])))
+            sage: len(M._linear_extension_chains(F=frozenset([0, 1, 2])))
             7
-            sage: M._linear_extension_chains(F=set())
+            sage: M._linear_extension_chains(F=frozenset())
             [{}]
-            sage: M._linear_extension_chains(F=set([1]))
+            sage: M._linear_extension_chains(F=frozenset([1]))
             [{}, {1: 1}]
-            sage: len(M._linear_extension_chains(F=set([0, 1])))
+            sage: len(M._linear_extension_chains(F=frozenset([0, 1])))
             4
         """
         if fundamentals is None:
             fundamentals = set([1])
         return LinearMatroid._linear_extension_chains(self, F, fundamentals)
 
-    cpdef is_graphic(self) noexcept:
+    cpdef bint is_graphic(self):
         """
         Test if the regular matroid is graphic.
 
@@ -6312,9 +6277,7 @@ cdef class RegularMatroid(LinearMatroid):
         matroid is independent if and only if the corresponding subgraph is
         acyclic.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -6336,7 +6299,7 @@ cdef class RegularMatroid(LinearMatroid):
         """
         return BinaryMatroid(reduced_matrix=self._reduced_representation()).is_graphic()
 
-    cpdef is_valid(self) noexcept:
+    cpdef bint is_valid(self):
         r"""
         Test if the data obey the matroid axioms.
 
@@ -6344,9 +6307,7 @@ cdef class RegularMatroid(LinearMatroid):
         representation matrix is *totally unimodular*, i.e. if all square
         submatrices have determinant in `\{-1, 0, 1\}`.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -6367,7 +6328,21 @@ cdef class RegularMatroid(LinearMatroid):
 
     # representation
 
-    cpdef binary_matroid(self, randomized_tests=1, verify = True) noexcept:
+    cpdef bint is_regular(self):
+        r"""
+        Return if ``self`` is regular.
+
+        This is trivially ``True`` for a :class:`RegularMatroid`.
+
+        EXAMPLES::
+
+            sage: M = matroids.catalog.R10()
+            sage: M.is_regular()
+            True
+        """
+        return True
+
+    cpdef binary_matroid(self, randomized_tests=1, verify = True):
         r"""
         Return a binary matroid representing ``self``.
 
@@ -6398,7 +6373,7 @@ cdef class RegularMatroid(LinearMatroid):
         A, E = self.representation(B = self.basis(), reduced = False, labels = True)
         return BinaryMatroid(matrix = A, groundset = E)
 
-    cpdef is_binary(self, randomized_tests=1) noexcept:
+    cpdef is_binary(self, randomized_tests=1):
         r"""
         Decide if ``self`` is a binary matroid.
 
@@ -6406,9 +6381,7 @@ cdef class RegularMatroid(LinearMatroid):
 
         - ``randomized_tests`` -- Ignored.
 
-        OUTPUT:
-
-        A Boolean.
+        OUTPUT: boolean
 
         ALGORITHM:
 
@@ -6426,7 +6399,7 @@ cdef class RegularMatroid(LinearMatroid):
         """
         return True
 
-    cpdef ternary_matroid(self, randomized_tests=1, verify = True) noexcept:
+    cpdef ternary_matroid(self, randomized_tests=1, verify = True):
         r"""
         Return a ternary matroid representing ``self``.
 
@@ -6457,7 +6430,7 @@ cdef class RegularMatroid(LinearMatroid):
         A, E = self.representation(B = self.basis(), reduced = False, labels = True)
         return TernaryMatroid(matrix = A, groundset = E)
 
-    cpdef is_ternary(self, randomized_tests=1) noexcept:
+    cpdef is_ternary(self, randomized_tests=1):
         r"""
         Decide if ``self`` is a ternary matroid.
 
@@ -6465,9 +6438,7 @@ cdef class RegularMatroid(LinearMatroid):
 
         - ``randomized_tests`` -- Ignored.
 
-        OUTPUT:
-
-        A Boolean.
+        OUTPUT: boolean
 
         ALGORITHM:
 
@@ -6486,46 +6457,6 @@ cdef class RegularMatroid(LinearMatroid):
         return True
 
     # Copying, loading, saving
-
-    def __copy__(self):
-        """
-        Create a shallow copy.
-
-        EXAMPLES::
-
-            sage: M = matroids.catalog.R10()
-            sage: N = copy(M)  # indirect doctest
-            sage: M == N
-            True
-        """
-        cdef RegularMatroid N
-        if self._representation is not None:
-            N = RegularMatroid(groundset=self._E, matrix=self._representation, keep_initial_representation=True)
-        else:
-            rows, cols = self._current_rows_cols()
-            N = RegularMatroid(groundset=rows + cols, reduced_matrix=self._A)
-        N.rename(self.get_custom_name())
-        return N
-
-    def __deepcopy__(self, memo):
-        """
-        Create a deep copy.
-
-        EXAMPLES::
-
-            sage: M = matroids.catalog.R10()
-            sage: N = deepcopy(M)  # indirect doctest
-            sage: M == N
-            True
-        """
-        cdef RegularMatroid N
-        if self._representation is not None:
-            N = RegularMatroid(groundset=deepcopy(self._E, memo), matrix=deepcopy(self._representation, memo), keep_initial_representation=True)
-        else:
-            rows, cols = self._current_rows_cols()
-            N = RegularMatroid(groundset=deepcopy(rows + cols, memo), reduced_matrix=deepcopy(self._A, memo))
-        N.rename(deepcopy(self.get_custom_name(), memo))
-        return N
 
     def __reduce__(self):
         """
@@ -6575,3 +6506,40 @@ cdef class RegularMatroid(LinearMatroid):
             reduced = True
         data = (A, gs, reduced, self.get_custom_name())
         return sage.matroids.unpickling.unpickle_regular_matroid, (version, data)
+
+    cpdef relabel(self, mapping):
+        r"""
+        Return an isomorphic matroid with relabeled groundset.
+
+        The output is obtained by relabeling each element `e` by
+        ``mapping[e]``, where ``mapping`` is a given injective map. If
+        ``mapping[e]`` is not defined, then the identity map is assumed.
+
+        INPUT:
+
+        - ``mapping`` -- a Python object such that ``mapping[e]`` is the new
+          label of `e`
+
+        OUTPUT: matroid
+
+        EXAMPLES::
+
+            sage: M = matroids.catalog.R10()
+            sage: sorted(M.groundset())
+            ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
+            sage: N = M.relabel({'g': 'x'})
+            sage: sorted(N.groundset())
+            ['a', 'b', 'c', 'd', 'e', 'f', 'h', 'i', 'j', 'x']
+
+        TESTS::
+
+            sage: M = matroids.catalog.R10()
+            sage: f = {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7}
+            sage: N = M.relabel(f)
+            sage: for S in powerset(M.groundset()):
+            ....:     assert M.rank(S) == N.rank([M._relabel_map(f)[x] for x in S])
+        """
+        d = self._relabel_map(mapping)
+        E = [d[x] for x in self.groundset_list()]
+        M = RegularMatroid(groundset=E, matrix=self._matrix_())
+        return M

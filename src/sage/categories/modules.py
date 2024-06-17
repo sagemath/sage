@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Modules
 """
@@ -222,7 +223,7 @@ class Modules(Category_module):
                 sage: C2.base_ring.__module__
                 'sage.categories.modules'
 
-                sage: # needs sage.combinat sage.modules
+                sage: # needs sage.combinat sage.groups sage.modules
                 sage: C3 = DescentAlgebra(QQ,3).B().category()
                 sage: C3.base_ring.__module__
                 'sage.categories.modules'
@@ -885,7 +886,8 @@ class Modules(Category_module):
                     sage: M.category()                                                  # needs sage.modules
                     Category of Cartesian products of modules with basis
                      over (Dedekind domains and euclidean domains
-                     and infinite enumerated sets and metric spaces)
+                      and noetherian rings
+                      and infinite enumerated sets and metric spaces)
                     sage: M.base_ring()                                                 # needs sage.modules
                     Integer Ring
 
@@ -997,7 +999,9 @@ class Modules(Category_module):
                 TESTS::
 
                     sage: Cat = ModulesWithBasis(ZZ).FiniteDimensional().TensorProducts()
-                    sage: M = CombinatorialFreeModule(ZZ, ((1, 1), (1, 2), (2, 1), (2, 2)), category=Cat)               # needs sage.modules
+                    sage: M = CombinatorialFreeModule(ZZ,                               # needs sage.modules
+                    ....:                             ((1, 1), (1, 2), (2, 1), (2, 2)),
+                    ....:                             category=Cat)
                     sage: M.construction()                                              # needs sage.modules
                     doctest:warning...
                     DeprecationWarning: implementations of Modules().TensorProducts() now must define the method tensor_factors

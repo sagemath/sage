@@ -49,16 +49,16 @@ def set_modsym_print_mode(mode="manin"):
 
     INPUT:
 
-    -  ``mode`` - a string. The possibilities are as
+    -  ``mode`` -- a string. The possibilities are as
        follows:
 
-    -  ``'manin'`` - (the default) formal sums of Manin
+    -  ``'manin'`` -- (the default) formal sums of Manin
        symbols [P(X,Y),(u,v)]
 
-    -  ``'modular'`` - formal sums of Modular symbols
+    -  ``'modular'`` -- formal sums of Modular symbols
        P(X,Y)\*alpha,beta, where alpha and beta are cusps
 
-    -  ``'vector'`` - as vectors on the basis for the
+    -  ``'vector'`` -- as vectors on the basis for the
        ambient space
 
     OUTPUT: none

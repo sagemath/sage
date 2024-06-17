@@ -77,7 +77,6 @@ AUTHORS:
 - Maarten Derickx (2011-09-14): fixed ideal_with_gens_over_base()
 
 - Kwankyu Lee (2017-04-30): added ideals for global function fields
-
 """
 
 # ****************************************************************************

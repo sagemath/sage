@@ -4,7 +4,6 @@
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
-
 """
 ntl_lzz_p.pyx
 
@@ -150,7 +149,7 @@ cdef class ntl_zz_p():
         ## now that we've determined the modulus, set that modulus.
         self.c.restore_c()
 
-    cdef ntl_zz_p _new(self) noexcept:
+    cdef ntl_zz_p _new(self):
         """
         Quick and dirty zz_p object creation.
 

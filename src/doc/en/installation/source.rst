@@ -5,7 +5,7 @@
 Install from Source Code
 ========================
 
-Building Sage from the :wikipedia:`source code <Source_code>` has the major
+Building Sage from the source code has the major
 advantage that your install will be optimized for your particular computer and
 should therefore offer better performance and compatibility than a binary
 install.
@@ -528,14 +528,14 @@ Installation steps
    There are different possibilities to make using Sage a little easier:
 
    - Make a symbolic link from :file:`/usr/local/bin/sage` (or another
-     directory in your :envvar:`PATH`) to :file:`$SAGE_ROOT/sage`::
+     directory in your :envvar:`PATH`) to :sage_root:`sage`::
 
          $ ln -s /path/to/sage_root/sage /usr/local/bin/sage
 
      Now simply typing ``sage`` from any directory should be sufficient to run
      Sage.
 
-   - Copy :file:`$SAGE_ROOT/sage` to a location in your :envvar:`PATH`.
+   - Copy :sage_root:`sage` to a location in your :envvar:`PATH`.
      If you do this, make sure you edit the line:
 
      .. CODE-BLOCK:: bash
@@ -573,7 +573,7 @@ Installation steps
      right clicking the mouse on the icon).
 
    - On Linux and macOS systems, you can make an alias to
-     :file:`$SAGE_ROOT/sage`.
+     :sage_root:`sage`.
      For example, put something similar to the following line in your
      :file:`.bashrc` file:
 
@@ -602,8 +602,9 @@ Make targets
 ------------
 
 To build Sage from scratch, you would typically execute ``make`` in Sage's home
-directory to build Sage and its :wikipedia:`HTML <HTML>`
-documentation.
+directory to build Sage and its documentation in HTML format, suitable for
+viewing in a web browser.
+
 The ``make`` command is pretty smart, so if your build of Sage is interrupted,
 then running ``make`` again should cause it to pick up where it left off.
 The ``make`` command can also be given options, which control what is built and
@@ -777,7 +778,7 @@ Sage-specific environment variables controlling the build process
   the nearest mirrors.
 
   This sequence of operations is defined by the files in the directory
-  :file:`$SAGE_ROOT/.upstream.d`.
+  :sage_root:`.upstream.d`.
 
 .. envvar:: SAGE_NUM_THREADS
 
@@ -1124,12 +1125,12 @@ see a list, execute ``sage.env.[TAB]`` while running Sage.
 
     Variables dealing with valgrind and friends:
 
-    - :envvar:`SAGE_TIMEOUT_VALGRIND` - used for Sage's doctesting: the
+    - :envvar:`SAGE_TIMEOUT_VALGRIND` -- used for Sage's doctesting: the
       number of seconds to allow a doctest before timing it out, if tests
       are run using ``??``.  If this isn't set, the default is 1024*1024
       seconds.
 
-    - :envvar:`SAGE_VALGRIND` - trigger black magic in Python.
+    - :envvar:`SAGE_VALGRIND` -- trigger black magic in Python.
 
     - :envvar:`SAGE_MEMCHECK_FLAGS`, :envvar:`SAGE_MASSIF_FLAGS`,
       :envvar:`SAGE_CACHEGRIND_FLAGS`, :envvar:`SAGE_OMEGA_FLAGS` - flags

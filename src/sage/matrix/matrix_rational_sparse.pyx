@@ -93,10 +93,10 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             if z:
                 mpq_vector_set_entry(&self._matrix[se.i], se.j, z.value)
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, x) noexcept:
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, x):
         mpq_vector_set_entry(&self._matrix[i], j, (<Rational> x).value)
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         cdef Rational x
         x = Rational()
         mpq_vector_get_entry(x.value, &self._matrix[i], j)
@@ -151,7 +151,6 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         mpq_vector_set_entry(&self._matrix[i], j, z)
         mpq_clear(z)
 
-
     ########################################################################
     # LEVEL 2 functionality
     #   * def _pickle
@@ -168,7 +167,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
     #   * _list -- list of underlying elements (need not be a copy)
     #   * x _dict -- sparse dictionary of underlying elements (need not be a copy)
 
-    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix _right) noexcept:
+    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix _right):
         cdef Matrix_rational_sparse right, ans
         right = _right
 
@@ -581,7 +580,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         INPUT:
 
         - height_guess -- integer or None
-        - proof -- boolean (default: True)
+        - proof -- boolean (default: ``True``)
         """
         from sage.matrix.misc import matrix_rational_echelon_form_multimodular
         cdef Matrix E
@@ -589,7 +588,6 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
                                  height_guess=height_guess, proof=proof)
         E._parent = self._parent
         return E, pivots
-
 
     def set_row_to_multiple_of_row(self, i, j, s):
         """
@@ -712,7 +710,6 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         v = &self._matrix[i]
         w = &_A._matrix[r]
 
-
         if cols_index is None:
             cols_index = dict([(cols[i], i) for i in range(len(cols))])
 
@@ -725,7 +722,6 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         v.num_nonzero = n
         v.degree = self._ncols
 
-
         for l from 0 <= l < n:
             v.positions[l] = cols_index[w.positions[pos[l]]]
             mpq_mul(v.entries[l], w.entries[pos[l]], minus_one)
@@ -737,7 +733,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
 
         INPUT:
 
-        - ``kwds`` - these are provided for consistency with other versions
+        - ``kwds`` -- these are provided for consistency with other versions
           of this method.  Here they are ignored as there is no optional
           behavior available.
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8
 r"""
 Arbitrary precision complex balls
 
@@ -180,6 +179,8 @@ from sage.libs.gsl.complex cimport gsl_complex_rect
 from sage.rings.real_double cimport RealDoubleElement
 from sage.rings.complex_double cimport ComplexDoubleElement
 from sage.rings.integer cimport Integer
+from sage.rings.rational_field import QQ
+from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.polynomial.polynomial_complex_arb cimport Polynomial_complex_arb
 from sage.rings.real_arb cimport mpfi_to_arb, arb_to_mpfi
 from sage.rings.real_arb import RealBallField
@@ -336,6 +337,13 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
 
         sage: loads(dumps(ComplexBallField(60))) is ComplexBallField(60)
         True
+
+    .. SEEALSO::
+
+        - :mod:`sage.rings.complex_arb`
+        - :mod:`sage.rings.complex_mpfr`
+        - :mod:`sage.rings.complex_mpfi`
+        - :mod:`sage.rings.real_arb`
     """
     Element = ComplexBall
 
@@ -562,8 +570,7 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
         elif isinstance(other, ComplexBallField):
             return other._prec >= self._prec
 
-        import sage.rings.number_field.number_field as number_field
-        if isinstance(other, number_field.NumberField_generic):
+        if other is not QQ and isinstance(other, NumberField):
             emb = other.coerce_embedding()
             return emb is not None and self.has_coerce_map_from(emb.codomain())
 
@@ -1022,10 +1029,10 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
           balls, or elements of any parent that coerces into this ball field,
           e.g. rational or algebraic numbers.
 
-        - ``rel_tol`` (optional, default `2^{-p}` where `p` is the precision of
+        - ``rel_tol`` (default: `2^{-p}` where `p` is the precision of
           the ball field) -- relative accuracy goal
 
-        - ``abs_tol`` (optional, default `2^{-p}` where `p` is the precision of
+        - ``abs_tol`` (default: `2^{-p}` where `p` is the precision of
           the ball field) -- absolute accuracy goal
 
         Additionally, the following optional parameters can be used to control
@@ -1254,6 +1261,7 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
 
         return res
 
+
 cdef inline bint _do_sig(long prec) noexcept:
     """
     Whether signal handlers should be installed for calls to FLINT.
@@ -1293,7 +1301,7 @@ cdef bint arb_gt_neg_one(arb_t b) noexcept:
     arb_clear(neg_one)
     return res
 
-cdef inline real_ball_field(ComplexBall ball) noexcept:
+cdef inline real_ball_field(ComplexBall ball):
     return ball._parent._base
 
 cdef class ComplexBall(RingElement):
@@ -1545,7 +1553,7 @@ cdef class ComplexBall(RingElement):
 
     # Conversions
 
-    cpdef ComplexIntervalFieldElement _complex_mpfi_(self, parent) noexcept:
+    cpdef ComplexIntervalFieldElement _complex_mpfi_(self, parent):
         """
         Return :class:`ComplexIntervalFieldElement` of the same value.
 
@@ -1610,7 +1618,7 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``parent`` - :class:`~sage.rings.complex_mpfr.ComplexField_class`,
+        - ``parent`` -- :class:`~sage.rings.complex_mpfr.ComplexField_class`,
           target parent.
 
         EXAMPLES::
@@ -1638,7 +1646,7 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``parent`` - :class:`~sage.rings.real_mpfi.RealIntervalField_class`,
+        - ``parent`` -- :class:`~sage.rings.real_mpfi.RealIntervalField_class`,
           target parent.
 
         EXAMPLES::
@@ -1663,7 +1671,7 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``parent`` - :class:`~sage.rings.real_mpfr.RealField_class`,
+        - ``parent`` -- :class:`~sage.rings.real_mpfr.RealField_class`,
           target parent.
 
         EXAMPLES::
@@ -1804,7 +1812,7 @@ cdef class ComplexBall(RingElement):
 
     # Real and imaginary part, midpoint, radius
 
-    cpdef RealBall real(self) noexcept:
+    cpdef RealBall real(self):
         """
         Return the real part of this ball.
 
@@ -1825,7 +1833,7 @@ cdef class ComplexBall(RingElement):
         arb_set(r.value, acb_realref(self.value))
         return r
 
-    cpdef RealBall imag(self) noexcept:
+    cpdef RealBall imag(self):
         """
         Return the imaginary part of this ball.
 
@@ -2197,7 +2205,7 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``ampl`` - A **real** ball (or an object that can be coerced to a
+        - ``ampl`` -- A **real** ball (or an object that can be coerced to a
           real ball).
 
         OUTPUT:
@@ -2330,7 +2338,7 @@ cdef class ComplexBall(RingElement):
         """
         return acb_is_real(self.value)
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         Compare ``left`` and ``right``.
 
@@ -2617,7 +2625,7 @@ cdef class ComplexBall(RingElement):
         acb_conj(res.value, self.value)
         return res
 
-    cpdef _add_(self, other) noexcept:
+    cpdef _add_(self, other):
         """
         Return the sum of two balls, rounded to the ambient field's precision.
 
@@ -2635,7 +2643,7 @@ cdef class ComplexBall(RingElement):
         if _do_sig(prec(self)): sig_off()
         return res
 
-    cpdef _sub_(self, other) noexcept:
+    cpdef _sub_(self, other):
         """
         Return the difference of two balls, rounded to the ambient field's
         precision.
@@ -2676,7 +2684,7 @@ cdef class ComplexBall(RingElement):
         if _do_sig(prec(self)): sig_off()
         return res
 
-    cpdef _mul_(self, other) noexcept:
+    cpdef _mul_(self, other):
         """
         Return the product of two balls, rounded to the ambient field's
         precision.
@@ -2776,7 +2784,7 @@ cdef class ComplexBall(RingElement):
             raise TypeError("unsupported operand type(s) for >>: '{}' and '{}'"
                             .format(type(val).__name__, type(shift).__name__))
 
-    cpdef _div_(self, other) noexcept:
+    cpdef _div_(self, other):
         """
         Return the quotient of two balls, rounded to the ambient field's
         precision.
@@ -2843,7 +2851,7 @@ cdef class ComplexBall(RingElement):
         else:
             return sage.structure.element.bin_op(base, expo, operator.pow)
 
-    cpdef pow(self, expo, analytic=False) noexcept:
+    cpdef pow(self, expo, analytic=False):
         r"""
         Raise this ball to the power of ``expo``.
 
@@ -4703,7 +4711,7 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``m`` - complex ball
+        - ``m`` -- complex ball
 
         EXAMPLES::
 
@@ -4741,7 +4749,7 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``m`` - complex ball
+        - ``m`` -- complex ball
 
         EXAMPLES::
 
@@ -4778,9 +4786,9 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``phi`` - complex ball
+        - ``phi`` -- complex ball
 
-        - ``m`` - complex ball
+        - ``m`` -- complex ball
 
         EXAMPLES::
 
@@ -4818,9 +4826,9 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``y`` - complex ball
+        - ``y`` -- complex ball
 
-        - ``z`` - complex ball
+        - ``z`` -- complex ball
 
         EXAMPLES::
 
@@ -4843,9 +4851,9 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``y`` - complex ball
+        - ``y`` -- complex ball
 
-        - ``z`` - complex ball
+        - ``z`` -- complex ball
 
         EXAMPLES::
 
@@ -4868,11 +4876,11 @@ cdef class ComplexBall(RingElement):
 
         INPUT:
 
-        - ``y`` - complex ball
+        - ``y`` -- complex ball
 
-        - ``z`` - complex ball
+        - ``z`` -- complex ball
 
-        - ``p`` - complex bamm
+        - ``p`` -- complex bamm
 
         EXAMPLES::
 
@@ -4895,7 +4903,7 @@ cdef class ComplexBall(RingElement):
 
         EXAMPLES::
 
-        - ``tau`` - a complex ball with positive imaginary part
+        - ``tau`` -- a complex ball with positive imaginary part
 
         EXAMPLES::
 
@@ -4915,7 +4923,7 @@ cdef class ComplexBall(RingElement):
 
         EXAMPLES::
 
-        - ``tau`` - a complex ball with positive imaginary part
+        - ``tau`` -- a complex ball with positive imaginary part
 
         EXAMPLES::
 

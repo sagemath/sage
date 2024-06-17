@@ -35,7 +35,6 @@ REFERENCES:
 
 - [Ser1972]_
 - [Sut2012]_
-
 """
 # ****************************************************************************
 #       Copyright (C) 2012 Eric Larson <elarson3@gmail.com>
@@ -739,9 +738,7 @@ def _exceptionals(E, L, patience=1000):
         if (not D) or (patience == 0):
             break
 
-    for l in D:
-        output.append(l)
-
+    output.extend(D)
     output.sort()
     return output
 

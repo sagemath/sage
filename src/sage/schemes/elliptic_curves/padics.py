@@ -1586,7 +1586,7 @@ def matrix_of_frobenius(self, p, prec=20, check=False, check_hypotheses=True, al
     - ``prec`` -- (relative) `p`-adic precision for
       result  (default 20)
 
-    - ``check`` -- boolean (default: False), whether to perform a
+    - ``check`` -- boolean (default: ``False``), whether to perform a
       consistency check. This will slow down the computation by a
       constant factor 2. (The consistency check is to verify
       that its trace is correct to the specified precision. Otherwise,

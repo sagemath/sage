@@ -12,7 +12,9 @@ AUTHORS:
 """
 
 # ****************************************************************************
-#       Copyright (C) 2016 Volker Braun <vbraun.name@gmail.com>
+#       Copyright (C) 2015-2016 Volker Braun <vbraun.name@gmail.com>
+#                     2020-2024 Matthias Koeppe
+#                     2022      Thierry Monteil
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,7 +40,6 @@ SageMath Bootstrap Library
 Provides scripts to manage the packages of Sage-the-distribution,
 including SageMath's database of equivalent system packages,
 and to download and upload tarballs from/to SageMath servers.
-
 """
 
 
@@ -270,18 +271,19 @@ def make_parser():
     parser_config = subparsers.add_parser(
         'config', epilog=epilog_config,
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        help='Print the configuration')
+        help='print the configuration')
 
     parser_list = subparsers.add_parser(
         'list', epilog=epilog_list,
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        help='Print a list of packages known to Sage')
+        help='print a list of packages known to Sage')
     parser_list.add_argument(
-        'package_class', metavar='[package_name|:package_type:]',
+        'package_class', metavar='[PACKAGE_NAME|pkg:pypi/DISTRIBUTION-NAME|:PACKAGE_TYPE:]',
         type=str, default=[':all-or-nothing:'], nargs='*',
-        help=('package name or designator for all packages of a given type '
+        help=('package name, pkg:pypi/ followed by a distribution name, '
+              'or designator for all packages of a given type '
               '(one of :all:, :standard:, :optional:, and :experimental:); '
-              'default: :all: (or nothing when --include-dependencies or --exclude-dependencies is given'))
+              'default: :all: (or nothing when --include-dependencies or --exclude-dependencies is given)'))
     parser_list.add_argument(
         '--has-file', action='append', default=[], metavar='FILENAME', dest='has_files',
         help=('only include packages that have this file in their metadata directory '
@@ -303,11 +305,12 @@ def make_parser():
     parser_properties = subparsers.add_parser(
         'properties', epilog=epilog_properties,
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        help='Print properties of given packages')
+        help='print properties of given packages')
     parser_properties.add_argument(
-        'package_class', metavar='[package_name|:package_type:]',
+        'package_class', metavar='[PACKAGE_NAME|pkg:pypi/DISTRIBUTION-NAME|:PACKAGE_TYPE:]',
         type=str, nargs='+',
-        help=('package name or designator for all packages of a given type '
+        help=('package name, pkg:pypi/ followed by a distribution name, '
+              'or designator for all packages of a given type '
               '(one of :all:, :standard:, :optional:, and :experimental:)'))
     parser_properties.add_argument(
         '--format', type=str, default='plain',
@@ -316,7 +319,7 @@ def make_parser():
     parser_dependencies = subparsers.add_parser(
         'dependencies', epilog=epilog_dependencies,
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        help='Print the list of packages that are dependencies of given packages')
+        help='print the list of packages that are dependencies of given packages')
     parser_dependencies.add_argument(
         'package_class', metavar='[package_name|:package_type:]',
         type=str, nargs='+',
@@ -341,121 +344,136 @@ def make_parser():
     parser_name = subparsers.add_parser(
         'name', epilog=epilog_name,
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        help='Find the package name given a tarball filename')
-    parser_name.add_argument('tarball_filename', type=str, help='Tarball filename')
+        help='find the package name given a tarball filename')
+    parser_name.add_argument('tarball_filename', type=str, help='tarball filename')
 
     parser_tarball = subparsers.add_parser(
         'tarball', epilog=epilog_tarball,
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        help='Find the tarball filename given a package name')
-    parser_tarball.add_argument('package_name', type=str, help='Package name')
+        help='find the tarball filename given a package name')
+    parser_tarball.add_argument('package_name', type=str, help='package name')
 
     parser_apropos = subparsers.add_parser(
         'apropos', epilog=epilog_apropos,
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        help='Find up to 5 package names that are close to the given name')
+        help='find up to 5 package names that are close to the given name')
     parser_apropos.add_argument(
         'incorrect_name', type=str,
-        help='Fuzzy name to search for')
+        help='fuzzy name to search for')
 
     parser_update = subparsers.add_parser(
         'update', epilog=epilog_update,
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        help='Update a package. This modifies the Sage sources.')
+        help='update a package, modifying the Sage sources')
     parser_update.add_argument(
-        'package_name', type=str, help='Package name')
+        'package_name', type=str, help='package name')
     parser_update.add_argument(
-        'new_version', type=str, help='New version')
+        'new_version', type=str, help='new version')
     parser_update.add_argument(
-        '--url', type=str, default=None, help='Download URL')
+        '--url', type=str, default=None, help='download URL')
     parser_update.add_argument(
         '--commit', action="store_true",
-        help='Whether to run "git commit"')
+        help='whether to run "git commit"')
 
     parser_update_latest = subparsers.add_parser(
         'update-latest', epilog=epilog_update_latest,
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        help='Update a package to the latest version. This modifies the Sage sources.')
+        help='update a package to the latest version, modifying the Sage sources')
     parser_update_latest.add_argument(
-        'package_name', type=str, help='Package name (:all: for all packages)')
+        'package_name', type=str, help='package name (:all: for all packages)')
     parser_update_latest.add_argument(
         '--commit', action="store_true",
-        help='Whether to run "git commit"')
+        help='whether to run "git commit"')
 
     parser_download = subparsers.add_parser(
         'download', epilog=epilog_download,
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        help='Download tarball')
+        help='download tarball')
     parser_download.add_argument(
-        'package_name', type=str, help='Package name or :type:')
+        'package_class', metavar='[package_name|:package_type:]',
+        type=str, nargs='+',
+        help=('package name or designator for all packages of a given type '
+              '(one of :all:, :standard:, :optional:, and :experimental:)'))
+    parser_download.add_argument(
+        '--has-file', action='append', default=[], metavar='FILENAME', dest='has_files',
+        help=('only include packages that have this file in their metadata directory '
+              '(examples: SPKG.rst, spkg-configure.m4, distros/debian.txt, spkg-install|spkg-install.in)'))
+    parser_download.add_argument(
+        '--no-file', action='append', default=[], metavar='FILENAME', dest='no_files',
+        help=('only include packages that do not have this file in their metadata directory '
+              '(examples: huge, patches, huge|has_nonfree_dependencies)'))
+    parser_download.add_argument(
+        '--exclude', nargs='*', action='append', default=[], metavar='PACKAGE_NAME',
+        help='exclude package from list')
     parser_download.add_argument(
         '--allow-upstream', action="store_true",
-        help='Whether to fall back to downloading from the upstream URL')
+        help='whether to fall back to downloading from the upstream URL')
     parser_download.add_argument(
         '--on-error', choices=['stop', 'warn'], default='stop',
-        help='What to do if the tarball cannot be downloaded')
+        help='what to do if the tarball cannot be downloaded')
     parser_download.add_argument(
         '--no-check-certificate', action='store_true',
-        help='Do not check SSL certificates for https connections')
+        help='do not check SSL certificates for https connections')
 
     parser_upload = subparsers.add_parser(
         'upload', epilog=epilog_upload,
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        help='Upload tarball to Sage mirrors')
+        help='upload tarball to Sage mirrors')
     parser_upload.add_argument(
-        'package_name', type=str, help='Package name or :type:')
+        'package_name', type=str, help='package name or :type:')
 
     parser_fix_checksum = subparsers.add_parser(
         'fix-checksum', epilog=epilog_fix_checksum,
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        help='Fix the checksum of normal packages.')
+        help='fix the checksum of normal packages')
     parser_fix_checksum.add_argument(
-        'package_class', metavar='[package_name|:package_type:]',
+        'package_class', metavar='[PACKAGE_NAME|pkg:pypi/DISTRIBUTION-NAME|:PACKAGE_TYPE:]',
         type=str, default=[':all:'], nargs='*',
-        help=('package name or designator for all packages of a given type '
-              '(one of :all:, :standard:, :optional:, and :experimental:); '
-              'default: :all:'))
+        help=('package name, pkg:pypi/ followed by a distribution name, '
+              'or designator for all packages of a given type '
+              '(one of :all:, :standard:, :optional:, and :experimental:; default: :all:)'))
 
     parser_create = subparsers.add_parser(
         'create', epilog=epilog_create,
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        help='Create or overwrite package.')
+        help='create or overwrite a package')
     parser_create.add_argument(
         'package_name', default=None, type=str,
-        help='Package name.')
+        help='package name')
     parser_create.add_argument(
-        '--source', type=str, default=None, help='Package source (one of normal, wheel, script, pip); default depends on provided arguments')
+        '--source', type=str, default=None, help='package source (one of normal, wheel, script, pip); default depends on provided arguments')
     parser_create.add_argument(
-        '--version', type=str, default=None, help='Package version')
+        '--version', type=str, default=None, help='package version')
     parser_create.add_argument(
-        '--tarball', type=str, default=None, help='Tarball filename pattern, e.g. Foo-VERSION.tar.bz2')
+        '--tarball', type=str, default=None, help='tarball filename pattern, e.g. Foo-VERSION.tar.bz2')
     parser_create.add_argument(
-        '--type', type=str, default=None, help='Package type')
+        '--type', type=str, default=None, help='package type')
     parser_create.add_argument(
-        '--url', type=str, default=None, help='Download URL pattern, e.g. http://example.org/Foo-VERSION.tar.bz2')
+        '--url', type=str, default=None, help='download URL pattern, e.g. http://example.org/Foo-VERSION.tar.bz2')
     parser_create.add_argument(
-        '--description', type=str, default=None, help='Short description of the package (for SPKG.rst)')
+        '--description', type=str, default=None, help='short description of the package (for SPKG.rst)')
     parser_create.add_argument(
-        '--license', type=str, default=None, help='License of the package (for SPKG.rst)')
+        '--license', type=str, default=None, help='license of the package (for SPKG.rst)')
     parser_create.add_argument(
-        '--upstream-contact', type=str, default=None, help='Upstream contact (for SPKG.rst)')
+        '--upstream-contact', type=str, default=None, help='upstream contact (for SPKG.rst)')
     parser_create.add_argument(
         '--pypi', action="store_true",
-        help='Create a package for a Python package available on PyPI')
+        help='create a package for a Python package available on PyPI')
 
     parser_clean = subparsers.add_parser(
         'clean', epilog=epilog_clean,
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        help='Remove outdated source tarballs from the upstream/ directory')
+        help='remove outdated source tarballs from the upstream/ directory')
 
     parser_metrics = subparsers.add_parser(
         'metrics', epilog=epilog_metrics,
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        help='Print metrics of given packages')
+        help='print metrics of given packages')
     parser_metrics.add_argument(
-        'package_class', metavar='[package_name|:package_type:]',
+        'package_class', metavar='[PACKAGE_NAME|pkg:pypi/DISTRIBUTION-NAME|:PACKAGE_TYPE:]',
         type=str, nargs='*', default=[':all:'],
-        help=('package name or designator for all packages of a given type '
+        help=('package name, pkg:pypi/ followed by a distribution name, '
+              'or designator for all packages of a given type '
               '(one of :all:, :standard:, :optional:, and :experimental:; default: :all:)'))
 
     return parser
@@ -517,7 +535,9 @@ def run():
                 ssl._create_default_https_context = ssl._create_unverified_context
             except ImportError:
                 pass
-        app.download_cls(args.package_name,
+        app.download_cls(*args.package_class,
+                         has_files=args.has_files, no_files=args.no_files,
+                         exclude=args.exclude,
                          allow_upstream=args.allow_upstream,
                          on_error=args.on_error)
     elif args.subcommand == 'create':

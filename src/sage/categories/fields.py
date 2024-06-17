@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Fields
 """
@@ -18,6 +19,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.category_singleton import Category_contains_method_by_parent_class
 from sage.categories.euclidean_domains import EuclideanDomains
 from sage.categories.division_rings import DivisionRings
+from sage.categories.noetherian_rings import NoetherianRings
 
 from sage.structure.element import coerce_binop
 
@@ -33,7 +35,9 @@ class Fields(CategoryWithAxiom):
         sage: K
         Category of fields
         sage: Fields().super_categories()
-        [Category of euclidean domains, Category of division rings]
+        [Category of euclidean domains,
+         Category of division rings,
+         Category of noetherian rings]
 
         sage: K(IntegerRing())
         Rational Field
@@ -54,10 +58,9 @@ class Fields(CategoryWithAxiom):
         EXAMPLES::
 
             sage: Fields().extra_super_categories()
-            [Category of euclidean domains]
-
+            [Category of euclidean domains, Category of noetherian rings]
         """
-        return [EuclideanDomains()]
+        return [EuclideanDomains(), NoetherianRings()]
 
     def __contains__(self, x):
         """
@@ -165,7 +168,9 @@ class Fields(CategoryWithAxiom):
             sage: K
             Category of fields
             sage: Fields().super_categories()
-            [Category of euclidean domains, Category of division rings]
+            [Category of euclidean domains,
+             Category of division rings,
+             Category of noetherian rings]
 
             sage: K(IntegerRing())  # indirect doctest
             Rational Field
@@ -494,19 +499,14 @@ class Fields(CategoryWithAxiom):
                 cur = cur.gcd(cur.derivative())
                 f.append(cur)
 
-            g = []
-            for i in range(len(f) - 1):
-                g.append(f[i] // f[i+1])
-
-            a = []
-            for i in range(len(g) - 1):
-                a.append(g[i] // g[i+1])
+            g = [f[i] // f[i + 1] for i in range(len(f) - 1)]
+            a = [g[i] // g[i + 1] for i in range(len(g) - 1)]
             a.append(g[-1])
 
             unit = f[-1]
             for i in range(len(a)):
                 if a[i].degree() > 0:
-                    factors.append((a[i], i+1))
+                    factors.append((a[i], i + 1))
                 else:
                     unit = unit * a[i].constant_coefficient() ** (i + 1)
 

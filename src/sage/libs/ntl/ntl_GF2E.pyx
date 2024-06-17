@@ -71,6 +71,7 @@ def ntl_GF2E_random(ntl_GF2EContext_class ctx):
     r.x = GF2E_random()
     return r
 
+
 cdef class ntl_GF2E():
     r"""
     The :class:`GF2E` represents a finite extension field over GF(2)
@@ -155,7 +156,7 @@ cdef class ntl_GF2E():
             self.c = <ntl_GF2EContext_class>ntl_GF2EContext(modulus)
             self.c.restore_c()
 
-    cdef ntl_GF2E _new(self) noexcept:
+    cdef ntl_GF2E _new(self):
         cdef ntl_GF2E r
         self.c.restore_c()
         r = ntl_GF2E.__new__(ntl_GF2E)

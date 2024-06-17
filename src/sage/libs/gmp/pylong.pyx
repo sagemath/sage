@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Various functions to deal with conversion mpz <-> Python int/long
 
@@ -56,7 +57,7 @@ cdef extern from *:
 cdef size_t PyLong_nails = 8*sizeof(digit) - PyLong_SHIFT
 
 
-cdef mpz_get_pylong_large(mpz_srcptr z) noexcept:
+cdef mpz_get_pylong_large(mpz_srcptr z):
     """
     Convert a non-zero ``mpz`` to a Python ``long``.
     """
@@ -68,7 +69,7 @@ cdef mpz_get_pylong_large(mpz_srcptr z) noexcept:
     return L
 
 
-cdef mpz_get_pylong(mpz_srcptr z) noexcept:
+cdef mpz_get_pylong(mpz_srcptr z):
     """
     Convert an ``mpz`` to a Python ``long``.
     """
@@ -77,7 +78,7 @@ cdef mpz_get_pylong(mpz_srcptr z) noexcept:
     return mpz_get_pylong_large(z)
 
 
-cdef mpz_get_pyintlong(mpz_srcptr z) noexcept:
+cdef mpz_get_pyintlong(mpz_srcptr z):
     """
     Convert an ``mpz`` to a Python ``int`` if possible, or a ``long``
     if the value is too large.

@@ -260,7 +260,7 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
     if dim[0] < dim[1]:
         # introduce "artificial" basis points (representing infinity)
         def approx_norm(v):
-            r,r1 = (v.inner_product(v)).sqrtrem()
+            r, r1 = (v.inner_product(v)).sqrtrem()
             return r + (r1 > 0)
         artificial_length = max(approx_norm(v) for v in basis) * 2
         additional_vectors = identity_matrix(dim[1]) * artificial_length

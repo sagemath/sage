@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Factory for cached representations
 
@@ -40,7 +41,6 @@ AUTHORS:
 - Robert Bradshaw (2008): initial version.
 - Simon King (2013): extended documentation.
 - Julian Rueth (2014-05-09): use ``_cache_key`` if parameters are unhashable
-
 """
 
 #*****************************************************************************
@@ -372,7 +372,7 @@ cdef class UniqueFactory(SageObject):
         version = self.get_version(sage_version)
         return self.get_object(version, key, kwds)
 
-    cpdef get_object(self, version, key, extra_args) noexcept:
+    cpdef get_object(self, version, key, extra_args):
         """
         Returns the object corresponding to ``key``, creating it with
         ``extra_args`` if necessary (for example, it isn't in the cache
@@ -436,7 +436,7 @@ cdef class UniqueFactory(SageObject):
             pass
         return obj
 
-    cpdef get_version(self, sage_version) noexcept:
+    cpdef get_version(self, sage_version):
         """
         This is provided to allow more or less granular control over
         pickle versioning. Objects pickled in the same version of Sage
@@ -507,7 +507,7 @@ cdef class UniqueFactory(SageObject):
         """
         raise NotImplementedError
 
-    cpdef other_keys(self, key, obj) noexcept:
+    cpdef other_keys(self, key, obj):
         """
         Sometimes during object creation, certain defaults are chosen which
         may result in a new (more specific) key. This allows the more specific
@@ -534,7 +534,7 @@ cdef class UniqueFactory(SageObject):
         """
         return []
 
-    cpdef reduce_data(self, obj) noexcept:
+    cpdef reduce_data(self, obj):
         """
         The results of this function can be returned from
         :meth:`__reduce__`. This is here so the factory internals can
@@ -569,6 +569,7 @@ cdef class UniqueFactory(SageObject):
 
 # This is used to handle old UniqueFactory pickles
 factory_unpickles = {}
+
 
 def register_factory_unpickle(name, callable):
     """
@@ -631,6 +632,7 @@ def register_factory_unpickle(name, callable):
     """
     #global factory_unpickles
     factory_unpickles[name] = callable
+
 
 def generic_factory_unpickle(factory, *args):
     """
@@ -729,6 +731,7 @@ def generic_factory_unpickle(factory, *args):
     # strip this.
     return factory(*args[1], **args[2])
 
+
 def generic_factory_reduce(self, proto):
     """
     Used to provide a ``__reduce__`` method if one does not already exist.
@@ -743,6 +746,7 @@ def generic_factory_reduce(self, proto):
         raise NotImplementedError("__reduce__ not implemented for %s" % type(self))
     else:
         return self._factory_data[0].reduce_data(self)
+
 
 def lookup_global(name):
     """

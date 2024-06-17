@@ -38,15 +38,17 @@ from sage.structure.list_clone import ClonableList
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.combinat.skew_tableau import SkewTableau, SemistandardSkewTableaux
 from sage.combinat.partition import Partition, Partitions
-from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.combinat.core import Core
 from sage.rings.integer_ring import ZZ
 from sage.functions.generalized import sgn
+from sage.misc.lazy_import import lazy_import
 from sage.misc.flatten import flatten
 from sage.combinat.skew_partition import SkewPartition
 from sage.combinat.tableau import Tableaux
 from sage.combinat.composition import Composition
 import copy
+
+lazy_import('sage.combinat.root_system.weyl_group', 'WeylGroup')
 
 
 def WeakTableau(t, k, inner_shape=[], representation="core"):
@@ -1273,7 +1275,7 @@ class WeakTableaux_core(WeakTableaux_abstract):
         - ``weight`` -- the weight of the `k`-tableaux
         - ``inner_shape`` -- the inner shape of the skew `k`-tableaux represented as a
           `(k+1)`-core;  for straight tableaux the inner shape does not need to be
-          specified (default: [])
+          specified (default: ``[]``)
 
         TESTS::
 
@@ -3369,7 +3371,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
 
         INPUT:
 
-        - ``form`` - optional argument to indicate 'inner', 'outer' or 'skew' (default : 'outer')
+        - ``form`` -- optional argument to indicate 'inner', 'outer' or 'skew' (default : 'outer')
 
         OUTPUT:
 
@@ -4122,9 +4124,9 @@ class StrongTableaux(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``k``, ``size`` - a positive integers
-        - ``outer_shape`` - a list representing a `k+1`-core (default: ``None``)
-        - ``inner_shape`` - a list representing a `k+1`-core (default: [])
+        - ``k``, ``size`` -- positive integers
+        - ``outer_shape`` -- a list representing a `k+1`-core (default: ``None``)
+        - ``inner_shape`` -- a list representing a `k+1`-core (default: ``[]``)
 
         OUTPUT:
 
@@ -4172,9 +4174,9 @@ class StrongTableaux(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``unmarkedT`` - a list of lists representing a strong unmarked tableau
-        - ``k`` - a positive integer
-        - ``weight`` - a list of non-negative integers indicating the weight
+        - ``unmarkedT`` -- a list of lists representing a strong unmarked tableau
+        - ``k`` -- a positive integer
+        - ``weight`` -- a list of non-negative integers indicating the weight
 
         OUTPUT:
 
@@ -4232,10 +4234,10 @@ class StrongTableaux(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``unmarkedT`` - a list of lists which is a partially marked strong `k`-tableau
-        - ``marking`` - a list of pairs of coordinates where cells are to be marked
-        - ``k`` - a positive integer
-        - ``weight`` - a tuple of the weight of the output tableau
+        - ``unmarkedT`` -- a list of lists which is a partially marked strong `k`-tableau
+        - ``marking`` -- a list of pairs of coordinates where cells are to be marked
+        - ``k`` -- a positive integer
+        - ``weight`` -- a tuple of the weight of the output tableau
 
         OUTPUT:
 
@@ -4275,10 +4277,10 @@ class StrongTableaux(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``Tlist`` - a partial standard strong `k`-tableau as a list of lists
-        - ``tij`` - a pair of integers representing a transposition
-        - ``v`` - the label to add to the tableau
-        - ``k`` - a positive integer
+        - ``Tlist`` -- a partial standard strong `k`-tableau as a list of lists
+        - ``tij`` -- a pair of integers representing a transposition
+        - ``v`` -- the label to add to the tableau
+        - ``k`` -- a positive integer
 
         OUTPUT:
 
@@ -4329,7 +4331,7 @@ class StrongTableaux(UniqueRepresentation, Parent):
         INPUT:
 
         - ``Tlist`` -- a filling of a `k+1`-core as a list of lists
-        - ``k`` - an integer
+        - ``k`` -- an integer
 
         OUTPUT:
 
@@ -4376,10 +4378,10 @@ class StrongTableaux(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``k`` - a positive integer
-        - ``size`` - a positive integer
-        - ``outer_shape`` - a list which is a `k+1`-core (default: ``None``)
-        - ``inner_shape`` - a list which is a `k+1`-core (default: [])
+        - ``k`` -- a positive integer
+        - ``size`` -- a positive integer
+        - ``outer_shape`` -- a list which is a `k+1`-core (default: ``None``)
+        - ``inner_shape`` -- a list which is a `k+1`-core (default: ``[]``)
 
         OUTPUT:
 

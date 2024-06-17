@@ -83,21 +83,21 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
 
         kwds:
 
-        - ``bound`` - real number (optional, default: 0). The bound for the coordinates for
+        - ``bound`` -- real number (default: 0). The bound for the coordinates for
           subschemes with dimension at least 1.
 
-        - ``precision`` - integer (optional, default: 53). The precision to use to
+        - ``precision`` -- integer (default: 53). The precision to use to
           compute the elements of bounded height for number fields.
 
-        - ``point_tolerance`` - positive real number (optional, default: `10^{-10}`).
+        - ``point_tolerance`` -- positive real number (default: `10^{-10}`).
           For numerically inexact fields, two points are considered the same
           if their coordinates are within tolerance.
 
-        - ``zero_tolerance`` - positive real number (optional, default: `10^{-10}`).
+        - ``zero_tolerance`` -- positive real number (default: `10^{-10}`).
           For numerically inexact fields, points are on the subscheme if they
           satisfy the equations to within tolerance.
 
-        - ``tolerance`` - a rational number in (0,1] used in doyle-krumm algorithm-4
+        - ``tolerance`` -- a rational number in (0,1] used in doyle-krumm algorithm-4
           for enumeration over number fields.
 
         OUTPUT:
@@ -169,9 +169,9 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
             the numerical fields are inexact;points may be computed partially or incorrectly.
             6
         """
-        from sage.schemes.projective.projective_space import is_ProjectiveSpace
+        from sage.schemes.projective.projective_space import ProjectiveSpace_ring
         X = self.codomain()
-        if not is_ProjectiveSpace(X) and X.base_ring() in Fields():
+        if not isinstance(X, ProjectiveSpace_ring) and X.base_ring() in Fields():
             if hasattr(X.base_ring(), 'precision'):
                 numerical = True
                 verbose("Warning: computations in the numerical fields are inexact;points may be computed partially or incorrectly.", level=0)
@@ -305,15 +305,15 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
 
         INPUT:
 
-        ``F`` - numerical ring
+        - ``F`` -- numerical ring
 
         kwds:
 
-        - ``point_tolerance`` - positive real number (optional, default: `10^{-10}`).
+        - ``point_tolerance`` -- positive real number (default: `10^{-10}`).
           For numerically inexact fields, two points are considered the same
           if their coordinates are within tolerance.
 
-        - ``zero_tolerance`` - positive real number (optional, default: `10^{-10}`).
+        - ``zero_tolerance`` -- positive real number (default: `10^{-10}`).
           For numerically inexact fields, points are on the subscheme if they
           satisfy the equations to within tolerance.
 
@@ -377,7 +377,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
             ...
             TypeError: F must be a numerical field
         """
-        from sage.schemes.projective.projective_space import is_ProjectiveSpace
+        from sage.schemes.projective.projective_space import ProjectiveSpace_ring
         if F is None:
             F = CC
         if F not in Fields() or not hasattr(F, 'precision'):
@@ -387,7 +387,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
             raise TypeError('base ring must be a number field')
 
         PP = X.ambient_space().change_ring(F)
-        if not is_ProjectiveSpace(X) and X.base_ring() in Fields():
+        if not isinstance(X, ProjectiveSpace_ring) and X.base_ring() in Fields():
             #Then it must be a subscheme
             dim_ideal = X.defining_ideal().dimension()
             if dim_ideal < 1: # no points
@@ -486,7 +486,7 @@ class SchemeHomset_points_projective_ring(SchemeHomset_points):
 
         INPUT:
 
-        - ``B`` -- integer (optional, default=0). The bound for the
+        - ``B`` -- integer (default: 0). The bound for the
           coordinates.
 
         EXAMPLES::

@@ -487,8 +487,8 @@ class RootSystem(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``restricted`` -- (default:False) if True, only non-simple roots are considered.
-        - ``facade`` -- (default:False) passes facade option to the poset generator.
+        - ``restricted`` -- (default: ``False``) if True, only non-simple roots are considered.
+        - ``facade`` -- (default: ``False``) passes facade option to the poset generator.
 
         EXAMPLES::
 

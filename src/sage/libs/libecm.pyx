@@ -61,6 +61,7 @@ cdef extern from "ecm.h":
     void ecm_clear (ecm_params)
     int ECM_NO_FACTOR_FOUND
 
+
 def ecmfactor(number, double B1, verbose=False, sigma=0):
     """
     Try to find a factor of a positive integer using ECM (Elliptic Curve Method).
@@ -72,7 +73,7 @@ def ecmfactor(number, double B1, verbose=False, sigma=0):
 
     - ``B1`` -- bound for step 1 of ECM
 
-    - ``verbose`` (default: False) -- print some debugging information
+    - ``verbose`` (default: ``False``) -- print some debugging information
 
     OUTPUT:
 

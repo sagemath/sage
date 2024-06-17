@@ -115,13 +115,15 @@ REFERENCES:
 from itertools import repeat
 from copy import copy
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.structure.element import Element
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.topology.simplicial_complex import SimplicialComplex, Simplex
 from sage.categories.simplicial_complexes import SimplicialComplexes
-from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.geometry.cone import Cone
 from sage.combinat.subword_complex_c import _flip_c, _construct_facets_c
+
+lazy_import('sage.geometry.polyhedron.constructor', 'Polyhedron')
+lazy_import('sage.geometry.cone', 'Cone')
 
 
 class SubwordComplexFacet(Simplex, Element):
@@ -1854,8 +1856,8 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         """
         N = len(self.group().long_element(as_word=True))
         F = self.greedy_facet(side="positive")
-        Fs = set([F])
-        seen = set([F])
+        Fs = {F}
+        seen = {F}
         covers = []
         while Fs:
             F = Fs.pop()
@@ -1895,7 +1897,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         from sage.graphs.digraph import DiGraph
         return DiGraph(self.cover_relations(label=label))
 
-    def interval(self, I, J):
+    def interval(self, I, J) -> set:
         """
         Return the interval [I,J] in the increasing flip graph subword complex.
 
@@ -1924,7 +1926,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         """
         G = self.increasing_flip_graph()
         paths = G.all_paths(I, J)
-        return set(K for path in paths for K in path)
+        return {K for path in paths for K in path}
 
     def increasing_flip_poset(self):
         """
@@ -1964,9 +1966,9 @@ def _greedy_facet(Q, w, side="negative", n=None, pos=0, l=None, elems=[]):
     - ``Q`` -- a word
     - ``w`` -- an element in the Coxeter group
     - ``side`` -- optional, either ``'negative'`` (default) or ``'positive'``
-    - ``n`` -- an integer (optional, defaults to the length of `Q`)
-    - ``pos`` -- an integer (optional, default 0)
-    - ``l`` -- an integer (optional, defaults to the length of `w`)
+    - ``n`` -- an integer (default: the length of `Q`)
+    - ``pos`` -- an integer (default: 0)
+    - ``l`` -- an integer (default: the length of `w`)
     - ``elems`` -- a list (optional)
 
     OUTPUT:
@@ -2125,8 +2127,8 @@ def _greedy_flip_algorithm(Q, w):
                     flip_to_ancestors.append(j)
                     next_index = i + 1
                     has_new_child = True
-                    facet_list.append([x for x in F])
-                    extended_root_conf_indices_list.append([x for x in R])
+                    facet_list.append(list(F))
+                    extended_root_conf_indices_list.append(list(R))
         if not has_new_child:
             i = flip_to_ancestors.pop()
             if i != -1:

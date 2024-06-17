@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 De Bruijn sequences
 
@@ -54,7 +53,6 @@ AUTHOR:
 
 - Nathann Cohen (2011): Some work on the documentation and defined the
   ``__contain__`` method
-
 """
 
 # ******************************************************************************
@@ -95,7 +93,7 @@ def debruijn_sequence(int k, int n):
     return sequence
 
 
-cdef gen(int t, int p, k, n) noexcept:
+cdef gen(int t, int p, k, n):
     """
     The internal generation function. This should not be accessed by the
     user.
@@ -122,7 +120,7 @@ def is_debruijn_sequence(seq, k, n):
 
     - ``seq`` -- Sequence of elements in `0..k-1`.
 
-    - ``n,k`` -- Integers.
+    - ``n``, ``k`` -- Integers.
 
     EXAMPLES::
 

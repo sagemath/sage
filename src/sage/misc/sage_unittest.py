@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Unit testing for Sage objects
 """
@@ -17,7 +18,7 @@ import sys
 import traceback
 
 
-class TestSuite():
+class TestSuite:
     """
     Test suites for Sage objects.
 
@@ -173,10 +174,10 @@ class TestSuite():
 
         INPUT:
 
-         - ``category``         - a category; reserved for future use
-         - ``skip``             - a string or list (or iterable) of strings
-         - ``raise_on_failure`` - a boolean (default: False)
-         - ``catch``            - a boolean (default: True)
+         - ``category``         -- a category; reserved for future use
+         - ``skip``             -- a string or list (or iterable) of strings
+         - ``raise_on_failure`` -- a boolean (default: ``False``)
+         - ``catch``            -- a boolean (default: ``True``)
 
         All other options are passed down to the individual tests.
 
@@ -576,7 +577,7 @@ class InstanceTester(unittest.TestCase):
         return list(some_tuples(S, repeat, self._max_runs, self._max_samples))
 
 
-class PythonObjectWithTests():
+class PythonObjectWithTests:
     """
     Utility class for running basis tests on a plain Python object
     (that is not in SageObject). More test methods can be added here.

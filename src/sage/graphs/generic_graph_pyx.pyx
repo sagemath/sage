@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 GenericGraph Cython functions
 
@@ -258,7 +257,7 @@ def spring_layout_fast(G, iterations=50, int dim=2, vpos=None, bint rescale=True
 
 
 @cython.cdivision(True)
-cdef run_spring(int iterations, dimension_t _dim, double* pos, int* edges, int n, int m, bint height) noexcept:
+cdef run_spring(int iterations, dimension_t _dim, double* pos, int* edges, int n, int m, bint height):
     r"""
     Find a locally optimal layout for this graph, according to the
     constraints that neighboring nodes want to be a fixed distance
@@ -400,7 +399,7 @@ cdef inline double sqrt_approx(double x, double y, double xx, double yy) noexcep
         ....:    y = abs(y)
         ....:    return max(x,y) + min(x,y)**2/(2*max(x,y))
 
-        sage: polar_plot([1,lambda x:dist(cos(x),sin(x))], (0, 2*math.pi))              # needs sage.plot
+        sage: polar_plot([1, lambda x: dist(cos(x), sin(x))], (0, 2*math.pi))           # needs sage.plot sage.symbolic
         Graphics object consisting of 2 graphics primitives
     """
     if xx < yy:
@@ -1159,7 +1158,7 @@ def _test_vectors_equal_inferior():
 
 
 cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
-                             long backtrack_bound=1000, find_path=False) noexcept:
+                             long backtrack_bound=1000, find_path=False):
     r"""
     Randomized backtracking for finding Hamiltonian cycles and paths.
 
@@ -1382,7 +1381,8 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
     # static copy of the graph for more efficient operations
     cdef list int_to_vertex = list(G)
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex,
+                       sort_neighbors=True)
     cdef short_digraph rev_sd
     cdef bint reverse = False
     if directed:
