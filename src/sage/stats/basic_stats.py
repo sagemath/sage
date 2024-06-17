@@ -28,7 +28,6 @@ in the module.
 AUTHOR:
 
 - Andrew Hou (11/06/2009)
-
 """
 # ***********************************************************************
 #          Copyright (C) 2009, Andrew Hou <amhou@uw.edu>
@@ -108,7 +107,7 @@ def mode(v):
     in `v`, then the mode is the list of elements of `v` that
     occur `n` times. The list is sorted if possible.
 
-    This function is deprecated.  Use :func:`scipy.stats.mode` or
+    This function is deprecated.  Use :func:`scipy:scipy.stats.mode` or
     :func:`statistics.mode` instead.
 
     .. NOTE::

@@ -68,7 +68,7 @@ cdef extern from "wrap.cpp":
     long two_descent_get_selmer_rank(two_descent* t)
     void two_descent_saturate(two_descent* t, long sat_bd, long sat_low_bd)
 
-cdef object string_sigoff(char* s) noexcept:
+cdef object string_sigoff(char* s):
     sig_off()
     # Makes a python string and deletes what is pointed to by s.
     t = char_to_str(s)
@@ -78,6 +78,7 @@ cdef object string_sigoff(char* s) noexcept:
 
 # set the default bit precision
 mwrank_set_precision(150)
+
 
 def get_precision():
     """
@@ -173,6 +174,7 @@ def initprimes(filename, verb=False):
     filename = str_to_bytes(filename, FS_ENCODING, 'surrogateescape')
     mwrank_initprimes(filename, verb)
 
+
 ############# bigint ###########################################
 #
 # In mwrank (and eclib) bigint is synonymous with NTL's ZZ class.
@@ -238,7 +240,7 @@ cdef class _bigint:
         return string_sigoff(bigint_to_str(self.x))
 
 
-cdef make_bigint(bigint* x) noexcept:
+cdef make_bigint(bigint* x):
     cdef _bigint y
     sig_off()
     y = _bigint.__new__(_bigint)
@@ -529,6 +531,7 @@ def parse_point_list(s):
     pts = s[2:-2].split('],[')
     return [[Integer(x) for x in pt.split(",")] for pt in pts]
 
+
 cdef class _mw:
     """
     Cython class wrapping eclib's mw class.
@@ -589,7 +592,7 @@ cdef class _mw:
             P1 = [-3:0:1]         is generator number 1
             saturating up to 20...Saturation index bound (for points of good reduction)  = 3
             Reducing saturation bound from given value 20 to computed index bound 3
-            Tamagawa index primes are [ 2 ]
+            Tamagawa index primes are [ 2 ]...
             Checking saturation at [ 2 3 ]
             Checking 2-saturation
             Points were proved 2-saturated (max q used = 7)
@@ -599,7 +602,7 @@ cdef class _mw:
             P2 = [-2:3:1]         is generator number 2
             saturating up to 20...Saturation index bound (for points of good reduction)  = 4
             Reducing saturation bound from given value 20 to computed index bound 4
-            Tamagawa index primes are [ 2 ]
+            Tamagawa index primes are [ 2 ]...
             Checking saturation at [ 2 3 ]
             Checking 2-saturation
             possible kernel vector = [1,1]
@@ -614,7 +617,7 @@ cdef class _mw:
             P3 = [-14:25:8]       is generator number 3
             saturating up to 20...Saturation index bound (for points of good reduction)  = 3
             Reducing saturation bound from given value 20 to computed index bound 3
-            Tamagawa index primes are [ 2 ]
+            Tamagawa index primes are [ 2 ]...
             Checking saturation at [ 2 3 ]
             Checking 2-saturation
             Points were proved 2-saturated (max q used = 11)

@@ -6,7 +6,6 @@ AUTHORS:
 - William Stein (2007-12): initial version
 
 - William Stein and Robert Bradshaw (2008-01): Many improvements
-
 """
 #*****************************************************************************
 #      Copyright (C) 2007 William Stein <wstein@gmail.com>
@@ -59,7 +58,7 @@ def line3d(points, thickness=1, radius=None, arrow_head=False, **kwds):
 
     - ``radius`` -- (default: None)
 
-    - ``arrow_head`` -- (default: False)
+    - ``arrow_head`` -- (default: ``False``)
 
     - ``color`` -- a string (``"red"``, ``"green"`` etc)
       or a tuple (r, g, b) with r, g, b numbers between 0 and 1
@@ -942,9 +941,8 @@ class Point(PrimitiveObject):
 
         radius = self.size * TACHYON_PIXEL
         texture = self.texture.id
-        return ("Sphere center {center[0]!r} {center[1]!r} {center[2]!r} "
-                "Rad {radius!r} {texture}").format(center=cen, radius=radius,
-                                                   texture=texture)
+        return (f"Sphere center {cen[0]!r} {cen[1]!r} {cen[2]!r} "
+                f"Rad {radius!r} {texture}")
 
     def obj_repr(self, render_params):
         """
@@ -980,7 +978,7 @@ class Point(PrimitiveObject):
         name = render_params.unique_name('point')
         transform = render_params.transform
         cen = self.loc if transform is None else transform(self.loc)
-        return ["draw %s DIAMETER %s {%s %s %s}\n%s" % (name, int(self.size), cen[0], cen[1], cen[2], self.texture.jmol_str('$' + name))]
+        return ["draw {} DIAMETER {} {{{} {} {}}}\n{}".format(name, int(self.size), cen[0], cen[1], cen[2], self.texture.jmol_str('$' + name))]
 
     def threejs_repr(self, render_params):
         r"""
@@ -1010,7 +1008,7 @@ class Point(PrimitiveObject):
         color = '#' + str(self.texture.hex_rgb())
         opacity = float(self.texture.opacity)
         size = float(self.size)
-        point = dict(point=center, size=size, color=color, opacity=opacity)
+        point = {'point': center, 'size': size, 'color': color, 'opacity': opacity}
         return [('point', point)]
 
     def stl_binary_repr(self, render_params):
@@ -1037,12 +1035,12 @@ class Line(PrimitiveObject):
 
     - ``points`` -- list of points to pass through
 
-    - ``thickness`` -- (optional, default 5) diameter of the line
+    - ``thickness`` -- (default: 5) diameter of the line
 
-    - ``corner_cutoff`` -- (optional, default 0.5) threshold for
+    - ``corner_cutoff`` -- (default: 0.5) threshold for
       smoothing (see :meth:`corners`).
 
-    - ``arrow_head`` -- (optional, default ``False``) if ``True`` make
+    - ``arrow_head`` -- (default: ``False``) if ``True`` make
       this curve into an arrow
 
     The parameter ``corner_cutoff`` is a bound for the cosine of the
@@ -1198,13 +1196,13 @@ class Line(PrimitiveObject):
             TP = P if T is None else T(P)
             if P in corners:
                 if cmd:
-                    cmds.append(cmd + " {%s %s %s} " % TP)
+                    cmds.append(cmd + " {{{} {} {}}} ".format(*TP))
                     cmds.append(self.texture.jmol_str('$' + name))
                 type = 'arrow' if self.arrow_head and P is last_corner else 'curve'
                 name = render_params.unique_name('line')
-                cmd = "draw %s diameter %s %s {%s %s %s} " % (name, int(self.thickness), type, TP[0], TP[1], TP[2])
+                cmd = "draw {} diameter {} {} {{{} {} {}}} ".format(name, int(self.thickness), type, TP[0], TP[1], TP[2])
             else:
-                cmd += " {%s %s %s} " % TP
+                cmd += " {{{} {} {}}} ".format(*TP)
         cmds.append(cmd)
         cmds.append(self.texture.jmol_str('$' + name))
         return cmds
@@ -1216,13 +1214,13 @@ class Line(PrimitiveObject):
 
         INPUT:
 
-        - ``corner_cutoff`` -- (optional, default ``None``) If the
+        - ``corner_cutoff`` -- (default: ``None``) If the
           cosine of the angle between adjacent line segments is smaller than
           this bound, then there will be a sharp corner in the path.
           Otherwise, the path is smoothed. If ``None``,
           then the default value 0.5 is used.
 
-        - ``max_len`` -- (optional, default ``None``) Maximum number
+        - ``max_len`` -- (default: ``None``) Maximum number
           of points allowed in a single path. If this is set, this
           creates corners at smooth points in order to break the path
           into smaller pieces.
@@ -1392,7 +1390,7 @@ class Line(PrimitiveObject):
             transform = render_params.transform
             if transform is not None:
                 points = [transform(p) for p in points]
-            line = dict(points=points, color=color, opacity=opacity, linewidth=thickness)
+            line = {'points': points, 'color': color, 'opacity': opacity, 'linewidth': thickness}
             reprs.append(('line', line))
         return reprs
 

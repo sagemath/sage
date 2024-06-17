@@ -85,7 +85,7 @@ class Text(GraphicPrimitive):
             sage: t = T[0];t                                                            # needs sage.symbolic
             Text 'I like cool constants' at the point (3.1415926535...,2.7182818284...)
         """
-        return "Text '%s' at the point (%s,%s)" % (self.string, self.x, self.y)
+        return f"Text '{self.string}' at the point ({self.x},{self.y})"
 
     def _allowed_options(self):
         """
@@ -227,39 +227,39 @@ def text(string, xy, **options):
 
     2D OPTIONS:
 
-    - ``fontsize`` - How big the text is. Either an integer that
+    - ``fontsize`` -- How big the text is. Either an integer that
       specifies the size in points or a string which specifies a size (one of
       'xx-small', 'x-small', 'small', 'medium', 'large', 'x-large', 'xx-large')
 
-    - ``fontstyle`` - A string either 'normal', 'italic' or 'oblique'
+    - ``fontstyle`` -- A string either 'normal', 'italic' or 'oblique'
 
-    - ``fontweight`` - A numeric value in the range 0-1000 or a string (one of
+    - ``fontweight`` -- A numeric value in the range 0-1000 or a string (one of
       'ultralight', 'light', 'normal', 'regular', 'book',' 'medium', 'roman',
       'semibold', 'demibold', 'demi', 'bold', 'heavy', 'extra bold', 'black')
 
-    - ``rgbcolor`` - The color as an RGB tuple
+    - ``rgbcolor`` -- The color as an RGB tuple
 
-    - ``hue`` - The color given as a hue
+    - ``hue`` -- The color given as a hue
 
-    - ``alpha`` - A float (0.0 transparent through 1.0 opaque)
+    - ``alpha`` -- A float (0.0 transparent through 1.0 opaque)
 
-    - ``background_color`` - The background color
+    - ``background_color`` -- The background color
 
-    - ``rotation`` - How to rotate the text: angle in degrees, vertical, horizontal
+    - ``rotation`` -- How to rotate the text: angle in degrees, vertical, horizontal
 
-    - ``vertical_alignment`` - How to align vertically: top, center, bottom
+    - ``vertical_alignment`` -- How to align vertically: top, center, bottom
 
-    - ``horizontal_alignment`` - How to align horizontally: left, center, right
+    - ``horizontal_alignment`` -- How to align horizontally: left, center, right
 
-    - ``zorder`` - The layer level in which to draw
+    - ``zorder`` -- The layer level in which to draw
 
-    - ``clip`` - (default: False) Whether to clip or not
+    - ``clip`` -- (default: ``False``) Whether to clip or not
 
-    - ``axis_coords`` - (default: False) If True, use axis coordinates, so that
+    - ``axis_coords`` -- (default: ``False``) If True, use axis coordinates, so that
       (0,0) is the lower left and (1,1) upper right, regardless of the x and y
       range of plotted values.
 
-    - ``bounding_box`` - A dictionary specifying a bounding box. Currently the text location.
+    - ``bounding_box`` -- A dictionary specifying a bounding box. Currently the text location.
 
     EXAMPLES::
 

@@ -193,7 +193,7 @@ def RandomBipartite(n1, n2, p, set_position=False, seed=None):
 
     INPUT:
 
-    - ``n1, n2`` -- Cardinalities of the two sets
+    - ``n1``, ``n2`` -- Cardinalities of the two sets
 
     - ``p`` -- Probability for an edge to exist
 
@@ -288,7 +288,7 @@ def RandomRegularBipartite(n1, n2, d1, set_position=False, seed=None):
 
     INPUT:
 
-    - ``n1, n2`` -- number of vertices in each side
+    - ``n1``, ``n2`` -- number of vertices in each side
 
     - ``d1`` -- degree of the vertices in the set of cardinality `n1`.
 
@@ -1289,15 +1289,15 @@ def RandomLobster(n, p, q, seed=None):
 
     INPUT:
 
-    - ``n`` - expected number of vertices in the backbone
+    - ``n`` -- expected number of vertices in the backbone
 
-    - ``p`` - probability of adding an edge to the
+    - ``p`` -- probability of adding an edge to the
       backbone
 
-    - ``q`` - probability of adding an edge (claw) to the
+    - ``q`` -- probability of adding an edge (claw) to the
       arms
 
-    - ``seed`` - a ``random.Random`` seed or a Python ``int`` for the random
+    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``).
 
 

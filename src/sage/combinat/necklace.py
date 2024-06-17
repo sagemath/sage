@@ -210,7 +210,7 @@ class Necklaces_evaluation(UniqueRepresentation, Parent):
 
         ::
 
-            sage: comps = [[],[2,2],[3,2,7],[4,2],[0,4,2],[2,0,4]]+Compositions(4).list()
+            sage: comps = [[],[2,2],[3,2,7],[4,2],[0,4,2],[2,0,4]] + Compositions(4).list()
             sage: ns = [Necklaces(comp) for comp in comps]
             sage: all(n.cardinality() == len(n.list()) for n in ns)                     # needs sage.libs.pari
             True
@@ -457,7 +457,7 @@ def _sfc(content, equality=False):
     INPUT:
 
     - ``content`` -- a list of non-negative integers with no leading 0s
-    - ``equality`` -- boolean (optional, default: ``True``)
+    - ``equality`` -- boolean (default: ``True``)
 
     .. WARNING::
 

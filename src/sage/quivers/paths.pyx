@@ -109,7 +109,7 @@ cdef class QuiverPath(MonoidElement):
         """
         biseq_dealloc(self._path)
 
-    cdef QuiverPath _new_(self, int start, int end) noexcept:
+    cdef QuiverPath _new_(self, int start, int end):
         """
         TESTS::
 
@@ -159,7 +159,7 @@ cdef class QuiverPath(MonoidElement):
         """
         MonoidElement.__init__(self, parent=parent)
         self._start = start
-        self._end   = end
+        self._end = end
         biseq_init_list(self._path, path, parent._nb_arrows)
 
     def __reduce__(self):
@@ -194,10 +194,10 @@ cdef class QuiverPath(MonoidElement):
         if h == -1:
             return -2
         return h
-        ## bitset_hash is not a good hash either
-        ## We should consider using FNV-1a hash, see http://www.isthe.com/chongo/tech/comp/fnv/,
-        ## Or the hash defined in http://burtleburtle.net/bob/hash/doobs.html
-        ## Or http://www.azillionmonkeys.com/qed/hash.html
+        # bitset_hash is not a good hash either
+        # We should consider using FNV-1a hash, see http://www.isthe.com/chongo/tech/comp/fnv/,
+        # Or the hash defined in http://burtleburtle.net/bob/hash/doobs.html
+        # Or http://www.azillionmonkeys.com/qed/hash.html
 
     def _repr_(self):
         r"""
@@ -260,7 +260,7 @@ cdef class QuiverPath(MonoidElement):
         """
         return self._path.length != 0
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         Comparison for :class:`QuiverPaths`.
 
@@ -429,7 +429,7 @@ cdef class QuiverPath(MonoidElement):
                 init = self._end
             if start < stop:
                 end = E[biseq_getitem(self._path, stop-1)][1]
-            else: # the result will be a path of length 0
+            else:  # the result will be a path of length 0
                 end = init
             OUT = self._new_(init, end)
             biseq_init_slice(OUT._path, self._path, start, stop, step)
@@ -465,7 +465,7 @@ cdef class QuiverPath(MonoidElement):
         for i in range(self._path.length):
             yield E[biseq_getitem(self._path, i)]
 
-    cpdef _mul_(self, other) noexcept:
+    cpdef _mul_(self, other):
         """
         Compose two paths.
 
@@ -500,10 +500,10 @@ cdef class QuiverPath(MonoidElement):
         if self._end != right._start:
             return None
         cdef QuiverPath OUT = self._new_(self._start, right._end)
-        biseq_init_concat(OUT._path, self._path,right._path)
+        biseq_init_concat(OUT._path, self._path, right._path)
         return OUT
 
-    cpdef _mod_(self, other) noexcept:
+    cpdef _mod_(self, other):
         """
         Return what remains of this path after removing the initial segment ``other``.
 
@@ -606,7 +606,7 @@ cdef class QuiverPath(MonoidElement):
             return (None, None, None)
         return (self[:i], self[i:], P[self._path.length-i:])
 
-    cpdef tuple complement(self, QuiverPath subpath) noexcept:
+    cpdef tuple complement(self, QuiverPath subpath):
         """
         Return a pair ``(a,b)`` of paths s.t. ``self = a*subpath*b``,
         or ``(None, None)`` if ``subpath`` is not a subpath of this path.
@@ -771,7 +771,7 @@ cdef class QuiverPath(MonoidElement):
         cdef QuiverPath out = QuiverPath.__new__(Q.element_class)
         out._parent = Q
         out._start = self._end
-        out._end   = self._start
+        out._end = self._start
         sig_check()
         biseq_init(out._path, self._path.length, self._path.itembitsize)
         cdef mp_size_t l = self._path.length - 1

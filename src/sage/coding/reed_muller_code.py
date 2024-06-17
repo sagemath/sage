@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Reed-Muller code
 
@@ -50,7 +50,7 @@ def _binomial_sum(n, k):
 
     INPUT:
 
-    - ``n, k`` - integers
+    - ``n``, ``k`` -- integers
 
     EXAMPLES::
 

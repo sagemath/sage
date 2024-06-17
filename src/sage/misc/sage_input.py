@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 Sage Input Formatting
 
@@ -184,22 +185,22 @@ def sage_input(x, preparse=True, verify=False, allow_locals=False):
 
     INPUT:
 
-    - ``x`` - the value we want to find an input form for
+    - ``x`` -- the value we want to find an input form for
 
-    - ``preparse`` - (default ``True``) Whether to generate code that requires
+    - ``preparse`` -- (default ``True``) Whether to generate code that requires
       the preparser.  With ``True``, generated code requires the preparser.
       With ``False``, generated code requires that the preparser not be used.
       With ``None``, generated code will work whether or not the preparser is
       used.
 
-    - ``verify`` - (default ``False``) If ``True``, then the answer will be
+    - ``verify`` -- (default ``False``) If ``True``, then the answer will be
       evaluated with :func:`sage_eval`, and an exception will be raised if the
       result is not equal to the original value.  (In fact, for ``verify=True``,
       :func:`sage_input` is effectively run three times, with ``preparse`` set
       to ``True``, ``False``, and ``None``, and all three results are checked.)
       This is particularly useful for doctests.
 
-    - ``allow_locals`` - (default ``False``) If ``True``, then values that
+    - ``allow_locals`` -- (default ``False``) If ``True``, then values that
       :func:`sage_input` cannot handle are returned in a dictionary, and the
       returned code assumes that this dictionary is passed as the ``locals``
       parameter of :func:`sage_eval`.  (Otherwise, if :func:`sage_input` cannot
@@ -314,7 +315,7 @@ class SageInputBuilder:
 
         INPUT:
 
-        - ``allow_locals`` - (default ``False``) If true, then values
+        - ``allow_locals`` -- (default ``False``) If true, then values
                 that cannot be converted to input form will be stored in
                 a dictionary, which must be passed as the ``locals``
                 when evaluating the result.
@@ -611,11 +612,11 @@ class SageInputBuilder:
         r"""
         INPUT:
 
-        - ``x`` - an arbitrary value
+        - ``x`` -- an arbitrary value
 
-        - ``sie`` - a :class:`SageInputExpression`
+        - ``sie`` -- a :class:`SageInputExpression`
 
-        - ``name`` - a requested variable name
+        - ``name`` -- a requested variable name
 
         Enters ``x`` and ``sie`` in a cache, so that subsequent calls
         ``self(x)`` will directly return ``sie``.  Also, marks the
@@ -658,11 +659,11 @@ class SageInputBuilder:
         r"""
         INPUT:
 
-        - ``x`` - an arbitrary value
+        - ``x`` -- an arbitrary value
 
-        - ``sie`` - a :class:`SageInputExpression`
+        - ``sie`` -- a :class:`SageInputExpression`
 
-        - ``name`` - a requested variable name
+        - ``name`` -- a requested variable name
 
         Enters ``x`` and ``sie`` in a cache, so that subsequent calls
         ``self(x)`` will directly return ``sie``.  Also, marks the
@@ -1207,7 +1208,7 @@ _prec_funcall = 40
 _prec_atomic = 42
 
 
-class SageInputExpression():
+class SageInputExpression:
     r"""
     Subclasses of this class represent expressions for :func:`sage_input`.
     \sage classes should define a \method{_sage_input_} method, which
@@ -1769,9 +1770,9 @@ class SIE_literal_stringrep(SIE_literal):
 
         INPUT:
 
-        - ``sib`` - a :class:`SageInputBuilder`
+        - ``sib`` -- a :class:`SageInputBuilder`
 
-        - ``n`` - a string; the value to be printed for this expression
+        - ``n`` -- a string; the value to be printed for this expression
 
         EXAMPLES::
 
@@ -1844,11 +1845,11 @@ class SIE_call(SageInputExpression):
 
         INPUT:
 
-        - ``sib`` - a :class:`SageInputBuilder`
+        - ``sib`` -- a :class:`SageInputBuilder`
 
-        - ``func`` - a :class:`SageInputExpression` representing a function
+        - ``func`` -- a :class:`SageInputExpression` representing a function
 
-        - ``args`` - a list of instances of :class:`SageInputExpression`
+        - ``args`` -- a list of instances of :class:`SageInputExpression`
           representing the positional arguments
 
         - ``kwargs`` -- a dictionary mapping strings to instances of
@@ -2055,11 +2056,11 @@ class SIE_getattr(SageInputExpression):
 
         INPUT:
 
-        - ``sib`` - a :class:`SageInputBuilder`
+        - ``sib`` -- a :class:`SageInputBuilder`
 
-        - ``obj`` - a :class:`SageInputExpression` representing an object
+        - ``obj`` -- a :class:`SageInputExpression` representing an object
 
-        - ``attr`` - a string; the attribute name
+        - ``attr`` -- a string; the attribute name
 
         EXAMPLES::
 
@@ -2290,7 +2291,7 @@ class SIE_dict(SageInputExpression):
         """
         return "{dict: {%s}}" % \
             ', '.join([repr(key) + ':' + repr(val)
-                       for key,val in self._sie_entries])
+                       for key, val in self._sie_entries])
 
     def _sie_referenced(self):
         r"""
@@ -2306,7 +2307,7 @@ class SIE_dict(SageInputExpression):
             sage: sie._sie_referenced()
             [{atomic:1}, {atomic:2}, {atomic:3}, {atomic:'beguilement'}, {atomic:'legacy'}, {atomic:'passage'}]
         """
-        return [k for k,v in self._sie_entries] + [v for k,v in self._sie_entries]
+        return [k for k, v in self._sie_entries] + [v for k, v in self._sie_entries]
 
     def _sie_format(self, sif):
         r"""
@@ -2324,8 +2325,8 @@ class SIE_dict(SageInputExpression):
             sage: sie._sie_format(sif)
             ("{'carnivores':1, 'thinking':2, 'triumph':3}", 42)
         """
-        return "{%s}" %\
-            ', '.join(sif.format(k, 0)+':'+sif.format(v, 0) for k,v in self._sie_entries), _prec_atomic
+        return "{%s}" % ', '.join(sif.format(k, 0) + ':' + sif.format(v, 0)
+                                  for k, v in self._sie_entries), _prec_atomic
 
 
 class SIE_binary(SageInputExpression):
@@ -2348,13 +2349,13 @@ class SIE_binary(SageInputExpression):
 
         INPUT:
 
-        - ``sib`` - a :class:`SageInputBuilder`
+        - ``sib`` -- a :class:`SageInputBuilder`
 
-        - ``op`` - a string representing a binary operator, such as '*' or '%'
+        - ``op`` -- a string representing a binary operator, such as '*' or '%'
 
-        - ``lhs`` - a :class:`SageInputExpression`
+        - ``lhs`` -- a :class:`SageInputExpression`
 
-        - ``rhs`` - a :class:`SageInputExpression`
+        - ``rhs`` -- a :class:`SageInputExpression`
 
         EXAMPLES::
 
@@ -2477,6 +2478,7 @@ class SIE_binary(SageInputExpression):
         rhs = sif.format(self._sie_operands[1], prec+1)
         return '%s%s%s' % (lhs, fop, rhs), prec
 
+
 class SIE_unary(SageInputExpression):
     r"""
     This class represents an arithmetic expression with a unary operator
@@ -2497,9 +2499,9 @@ class SIE_unary(SageInputExpression):
 
         INPUT:
 
-        - ``sib`` - a :class:`SageInputBuilder`
+        - ``sib`` -- a :class:`SageInputBuilder`
 
-        - ``op`` - a string representing a unary operator, such as '-'
+        - ``op`` -- a string representing a unary operator, such as '-'
 
         - ``operand`` -- a :class:`SageInputExpression`
 
@@ -2659,6 +2661,7 @@ class SIE_unary(SageInputExpression):
         """
         return self._sie_op == '-'
 
+
 class SIE_gens_constructor(SageInputExpression):
     r"""
     This class represents an expression that can create a \sage parent
@@ -2683,12 +2686,12 @@ class SIE_gens_constructor(SageInputExpression):
 
         INPUT:
 
-        - ``sib`` - a :class:`SageInputBuilder`
+        - ``sib`` -- a :class:`SageInputBuilder`
 
-        - ``constr`` - a :class:`SageInputExpression` for constructing this
+        - ``constr`` -- a :class:`SageInputExpression` for constructing this
           parent ``normally``
 
-        - ``gen_names`` - a tuple of generator names
+        - ``gen_names`` -- a tuple of generator names
 
         - ``gens_syntax`` -- an optional :class:`SageInputExpression` for
           constructing this parent using the \sage preparser generators syntax
@@ -2707,7 +2710,7 @@ class SIE_gens_constructor(SageInputExpression):
         super().__init__(sib)
         self._sie_constr = constr
         self._sie_gen_names = gen_names
-        self._sie_gens = None # will be overwritten from .parent_with_gens()
+        self._sie_gens = None  # will be overwritten from .parent_with_gens()
         self._sie_gens_constr = gens_syntax
         self._sie_assign_gens = False
         self._sie_generated = False
@@ -2888,6 +2891,7 @@ class SIE_gens_constructor(SageInputExpression):
 
         return self._sie_constr._sie_format(sif)
 
+
 class SIE_gen(SageInputExpression):
     r"""
     This class represents a named generator of a parent with named
@@ -2908,11 +2912,11 @@ class SIE_gen(SageInputExpression):
 
         INPUT:
 
-        - ``sib`` - a :class:`SageInputBuilder`
+        - ``sib`` -- a :class:`SageInputBuilder`
 
-        - ``parent`` - a :class:`SIE_gens_constructor`
+        - ``parent`` -- a :class:`SIE_gens_constructor`
 
-        - ``name`` - a string with the name of this generator
+        - ``name`` -- a string with the name of this generator
 
         EXAMPLES::
 
@@ -3038,6 +3042,7 @@ class SIE_gen(SageInputExpression):
         """
         return self._sie_get_varname(sif) == self._sie_preferred_varname
 
+
 class SIE_import_name(SageInputExpression):
     r"""
     This class represents a name which has been imported from a module.
@@ -3059,13 +3064,13 @@ class SIE_import_name(SageInputExpression):
 
         INPUT:
 
-        - ``sib`` - a :class:`SageInputBuilder`
+        - ``sib`` -- a :class:`SageInputBuilder`
 
-        - ``module`` - a module name
+        - ``module`` -- a module name
 
-        - ``name`` - an object name
+        - ``name`` -- an object name
 
-        - ``alt_name`` - an alternate object name, or None (the default)
+        - ``alt_name`` -- an alternate object name, or None (the default)
                       to use name
 
         EXAMPLES::
@@ -3173,6 +3178,7 @@ class SIE_import_name(SageInputExpression):
                                                     rename)
         return name, _prec_atomic
 
+
 class SIE_assign(SageInputExpression):
     r"""
     This class represents an assignment command.
@@ -3192,11 +3198,11 @@ class SIE_assign(SageInputExpression):
 
         INPUT:
 
-        - ``sib`` - a :class:`SageInputBuilder`
+        - ``sib`` -- a :class:`SageInputBuilder`
 
-        - ``lhs`` - the left-hand side of the assignment
+        - ``lhs`` -- the left-hand side of the assignment
 
-        - ``rhs`` - the right-hand side of the assignment
+        - ``rhs`` -- the right-hand side of the assignment
 
         EXAMPLES::
 
@@ -3278,6 +3284,7 @@ class SIE_assign(SageInputExpression):
         """
         return '%s = %s' % (sif.format(self._sie_lhs, 0), sif.format(self._sie_rhs, 0))
 
+
 class SageInputFormatter:
     r"""
     An instance of this class is used to keep track of variable names
@@ -3304,9 +3311,9 @@ class SageInputFormatter:
 
         INPUT:
 
-        - ``e`` - a :class:`SageInputExpression`
+        - ``e`` -- a :class:`SageInputExpression`
 
-        - ``prec`` - an integer representing a precedence level
+        - ``prec`` -- an integer representing a precedence level
 
         First, we check to see if ``e`` should be replaced by a variable.
         If so, we generate the command to assign the variable, and return
@@ -3441,6 +3448,7 @@ class SageInputFormatter:
         else:
             return name
 
+
 def verify_same(a, b):
     r"""
     Verify that two Sage values are the same.  This is an extended equality
@@ -3473,8 +3481,8 @@ def verify_same(a, b):
             assert(a.parent() == b.parent())
         AssertionError
     """
-    from sage.structure.element import is_Element
-    if is_Element(a):
+    from sage.structure.element import Element
+    if isinstance(a, Element):
         assert a.parent() == b.parent()
     else:
         assert type(a) is type(b)
@@ -3511,9 +3519,9 @@ def verify_si_answer(x, answer, preparse):
 
     INPUT:
 
-    - ``x`` - an arbitrary Sage value
+    - ``x`` -- an arbitrary Sage value
 
-    - ``answer`` - a string, or a :class:`SageInputAnswer`
+    - ``answer`` -- a string, or a :class:`SageInputAnswer`
 
     - ``preparse`` -- ``True``, ``False``, or ``None``
 
@@ -3534,6 +3542,7 @@ def verify_si_answer(x, answer, preparse):
         verify_same(x, sage_eval(answer, preparse=False))
     else:
         verify_same(x, sage_eval(answer, preparse=preparse))
+
 
 class SageInputAnswer(tuple):
     r"""

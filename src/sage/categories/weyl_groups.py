@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat sage.groups
 r"""
 Weyl Groups
@@ -166,14 +167,14 @@ class WeylGroups(Category_singleton):
 
             INPUT:
 
-            - ``x`` - an element in the group `W`
+            - ``x`` -- an element in the group `W`
 
-            - ``y`` - an element in the group `W`
+            - ``y`` -- an element in the group `W`
 
             - ``side`` (default: ``'upper'``) -- must be one of the following:
 
-              * ``'upper'`` - return the upper Bruhat cone of the interval [``x``, ``y``]
-              * ``'lower'`` - return the lower Bruhat cone of the interval [``x``, ``y``]
+              * ``'upper'`` -- return the upper Bruhat cone of the interval [``x``, ``y``]
+              * ``'lower'`` -- return the lower Bruhat cone of the interval [``x``, ``y``]
 
             - ``backend`` -- string (default: ``'cdd'``); the backend to use to create the polyhedron
 

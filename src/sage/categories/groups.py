@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Groups
 """
@@ -102,7 +103,7 @@ class Groups(CategoryWithAxiom):
 
                 sage: A = AlternatingGroup(4)                                           # needs sage.groups
                 sage: A.group_generators()                                              # needs sage.groups
-                Family ((2,3,4), (1,2,3))
+                Family ((1,2,3), (2,3,4))
             """
             from sage.sets.family import Family
             try:
@@ -124,7 +125,7 @@ class Groups(CategoryWithAxiom):
                 sage: # needs sage.groups
                 sage: A = AlternatingGroup(4)
                 sage: A.monoid_generators()
-                Family ((2,3,4), (1,2,3))
+                Family ((1,2,3), (2,3,4))
                 sage: F.<x,y> = FreeGroup()
                 sage: F.monoid_generators()
                 Family (x, y, x^-1, y^-1)
@@ -209,22 +210,22 @@ class Groups(CategoryWithAxiom):
 
             INPUT:
 
-            - ``names`` - the type of names used, values are:
+            - ``names`` -- the type of names used, values are:
 
-              * ``'letters'`` - lowercase ASCII letters are used
+              * ``'letters'`` -- lowercase ASCII letters are used
                 for a base 26 representation of the elements'
                 positions in the list given by :meth:`list`,
                 padded to a common width with leading 'a's.
-              * ``'digits'`` - base 10 representation of the
+              * ``'digits'`` -- base 10 representation of the
                 elements' positions in the list given by
                 :meth:`~sage.matrix.operation_table.OperationTable.column_keys`,
                 padded to a common width with leading zeros.
-              * ``'elements'`` - the string representations
+              * ``'elements'`` -- the string representations
                 of the elements themselves.
               * a list - a list of strings, where the length
                 of the list equals the number of elements.
 
-            - ``elements`` - default = ``None``.  A list of
+            - ``elements`` -- (default = ``None``);  A list of
               elements of the group, in forms that can be
               coerced into the structure, eg. their string
               representations. This may be used to impose an

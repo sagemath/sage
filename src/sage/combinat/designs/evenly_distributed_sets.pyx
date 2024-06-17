@@ -18,6 +18,7 @@ Classes and methods
 
 cimport cython
 
+from sage.categories.fields import Fields
 from libc.limits cimport UINT_MAX
 from libc.string cimport memset, memcpy
 
@@ -65,7 +66,7 @@ cdef class EvenlyDistributedSetsBacktracker:
 
     - ``k`` -- a positive integer such that `k(k-1)` divides `q-1`
 
-    - ``up_to_isomorphism`` - (boolean, default ``True``) whether only consider
+    - ``up_to_isomorphism`` -- (boolean, default ``True``) whether only consider
       evenly distributed sets up to automorphisms of the field of the form
       `x \mapsto ax + b`. If set to ``False`` then the iteration is over all
       evenly distributed sets that contain ``0`` and ``1``.
@@ -106,7 +107,6 @@ cdef class EvenlyDistributedSetsBacktracker:
         sage: E = EvenlyDistributedSetsBacktracker(Zmod(13), 4, up_to_isomorphism=True)
         sage: for B in E: print(B)
         [0, 1, 11, 5]
-
 
 
     Or only count them::
@@ -214,8 +214,8 @@ cdef class EvenlyDistributedSetsBacktracker:
 
         cdef unsigned int i,j
 
-        if not K.is_field():
-            raise ValueError("{} is not a field".format(K))
+        if K not in Fields():
+            raise ValueError(f"{K} is not a field")
         cdef unsigned int q = K.cardinality()
         cdef unsigned int e = k*(k-1)/2
         if (q-1) % (2*e) != 0:

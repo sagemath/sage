@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Miscellaneous functions
 
@@ -52,16 +53,6 @@ from sage.misc.lazy_import import lazy_import
 lazy_import("sage.combinat.subset", ["powerset", "subsets", "uniq"],
             deprecation=35564)
 
-lazy_import("sage.misc.call", ["AttrCallObject", "attrcall", "call_method"],
-            deprecation=29869)
-
-lazy_import("sage.misc.verbose", ["verbose", "set_verbose", "set_verbose_files",
-                                  "get_verbose_files", "unset_verbose_files", "get_verbose"],
-            deprecation=17815)
-
-lazy_import("sage.misc.repr", ["coeff_repr", "repr_lincomb"],
-            deprecation=29892)
-
 lazy_import("sage.misc.timing", ["cputime", "GlobalCputime", "walltime"],
             deprecation=35816)
 
@@ -70,44 +61,6 @@ LOCAL_IDENTIFIER = '%s.%s' % (HOSTNAME, os.getpid())
 #################################################################
 # File and directory utilities
 #################################################################
-
-
-def sage_makedirs(dirname, mode=0o777):
-    """
-    Python version of ``mkdir -p``: try to create a directory, and also
-    create all intermediate directories as necessary.  Succeed silently
-    if the directory already exists (unlike ``os.makedirs()``).
-    Raise other errors (like permission errors) normally.
-
-    This function is deprecated; use ``os.makedirs(..., exist_ok=True)``
-    instead.
-
-    EXAMPLES::
-
-        sage: from sage.misc.misc import sage_makedirs
-        sage: sage_makedirs(DOT_SAGE) # no output
-        doctest:warning...
-        DeprecationWarning: sage_makedirs is deprecated; use os.makedirs(..., exist_ok=True) instead
-        See https://github.com/sagemath/sage/issues/32987 for details.
-
-    The following fails because we are trying to create a directory in
-    place of an ordinary file::
-
-        sage: filename = tmp_filename()
-        sage: sage_makedirs(filename)
-        Traceback (most recent call last):
-        ...
-        FileExistsError: [Errno ...] File exists: ...
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32987,
-                'sage_makedirs is deprecated; use os.makedirs(..., exist_ok=True) instead')
-    try:
-        os.makedirs(dirname)
-    except OSError:
-        if not os.path.isdir(dirname):
-            raise
-
 
 # We create the DOT_SAGE directory (if it does not exist yet; note in particular
 # that it may already have been created by the bin/sage script) with
@@ -216,79 +169,6 @@ def try_read(obj, splitlines=False):
     return data
 
 
-#################################################
-# Next we create the Sage temporary directory.
-#################################################
-
-
-@lazy_string
-def SAGE_TMP():
-    """
-    EXAMPLES::
-
-        sage: from sage.misc.misc import SAGE_TMP
-        sage: SAGE_TMP
-        doctest:warning...
-        DeprecationWarning: SAGE_TMP is deprecated; please use python's
-        "tempfile" module instead.
-        See https://github.com/sagemath/sage/issues/33213 for details.
-        l'.../temp/...'
-
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(33213, "SAGE_TMP is deprecated; please use python's \"tempfile\" module instead.")
-    d = os.path.join(DOT_SAGE, 'temp', HOSTNAME, str(os.getpid()))
-    os.makedirs(d, exist_ok=True)
-    return d
-
-
-@lazy_string
-def ECL_TMP():
-    """
-    Temporary directory that should be used by ECL interfaces launched from
-    Sage.
-
-    EXAMPLES::
-
-        sage: from sage.misc.misc import ECL_TMP
-        sage: ECL_TMP
-        doctest:warning...
-        DeprecationWarning: ECL_TMP is deprecated and is no longer used
-        by the ECL interface in sage
-        See https://github.com/sagemath/sage/issues/33213 for details.
-        ...
-
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(33213, "ECL_TMP is deprecated and is no longer used by the ECL interface in sage")
-    import atexit
-    import tempfile
-    d = tempfile.TemporaryDirectory()
-    result = os.path.join(d.name, 'ecl')
-    atexit.register(lambda: d.cleanup())
-    return result
-
-
-@lazy_string
-def SPYX_TMP():
-    r"""
-    EXAMPLES::
-
-        sage: from sage.misc.misc import SPYX_TMP
-        sage: SPYX_TMP
-        doctest:warning...
-        DeprecationWarning: SPYX_TMP is deprecated;
-        use sage.misc.temporary_file.spyx_tmp instead
-        See https://github.com/sagemath/sage/issues/33213 for details.
-        ...
-
-    """
-    from sage.misc.temporary_file import spyx_tmp
-    from sage.misc.superseded import deprecation
-    deprecation(33213, "SPYX_TMP is deprecated; use sage.misc.temporary_file.spyx_tmp instead")
-    return spyx_tmp()
-
-
 SAGE_DB = os.path.join(DOT_SAGE, 'db')
 os.makedirs(SAGE_DB, exist_ok=True)
 
@@ -297,41 +177,6 @@ try:
     os.makedirs(os.environ["MPLCONFIGDIR"], exist_ok=True)
 except KeyError:
     pass
-
-
-def union(x, y=None):
-    """
-    Return the union of x and y, as a list. The resulting list need not
-    be sorted and can change from call to call.
-
-    INPUT:
-
-
-    -  ``x`` - iterable
-
-    -  ``y`` - iterable (may optionally omitted)
-
-
-    OUTPUT: list
-
-    EXAMPLES::
-
-        sage: answer = union([1,2,3,4], [5,6]); answer
-        doctest:...: DeprecationWarning: sage.misc.misc.union is deprecated...
-        See https://github.com/sagemath/sage/issues/32096 for details.
-        [1, 2, 3, 4, 5, 6]
-        sage: union([1,2,3,4,5,6], [5,6]) == answer
-        True
-        sage: union((1,2,3,4,5,6), [5,6]) == answer
-        True
-        sage: union((1,2,3,4,5,6), set([5,6])) == answer
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32096, "sage.misc.misc.union is deprecated, use 'list(set(x).union(y))' or a more suitable replacement")
-    if y is None:
-        return list(set(x))
-    return list(set(x).union(y))
 
 
 def exactly_one_is_true(iterable):
@@ -403,7 +248,7 @@ def newton_method_sizes(N):
     INPUT:
 
 
-    -  ``N`` - positive integer
+    -  ``N`` -- positive integer
 
 
     EXAMPLES::
@@ -581,7 +426,7 @@ class BackslashOperator:
         r"""
         EXAMPLES::
 
-            sage: # needs sage.modules
+            sage: # needs scipy sage.modules
             sage: A = matrix(RDF, 5, 5, 2)
             sage: b = vector(RDF, 5, range(5))
             sage: v = A \ b
@@ -673,9 +518,9 @@ def random_sublist(X, s):
     INPUT:
 
 
-    -  ``X`` - list
+    -  ``X`` -- list
 
-    -  ``s`` - floating point number between 0 and 1
+    -  ``s`` -- floating point number between 0 and 1
 
 
     OUTPUT: list
@@ -829,18 +674,18 @@ def exists(S, P):
     INPUT:
 
 
-    -  ``S`` - object (that supports enumeration)
+    -  ``S`` -- object (that supports enumeration)
 
-    -  ``P`` - function that returns True or False
+    -  ``P`` -- function that returns True or False
 
 
     OUTPUT:
 
 
-    -  ``bool`` - whether or not P is True for some element
+    -  ``bool`` -- whether or not P is True for some element
        x of S
 
-    -  ``object`` - x
+    -  ``object`` -- x
 
 
     EXAMPLES: lambda functions are very useful when using the exists
@@ -879,17 +724,17 @@ def forall(S, P):
 
     INPUT:
 
-    -  ``S`` - object (that supports enumeration)
+    -  ``S`` -- object (that supports enumeration)
 
-    -  ``P`` - function that returns True or False
+    -  ``P`` -- function that returns True or False
 
     OUTPUT:
 
 
-    -  ``bool`` - whether or not P is True for all elements
+    -  ``bool`` -- whether or not P is True for all elements
        of S
 
-    -  ``object`` - x
+    -  ``object`` -- x
 
 
     EXAMPLES: lambda functions are very useful when using the forall

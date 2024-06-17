@@ -111,7 +111,7 @@ class IndexedMonoidElement(MonoidElement):
 
         scalar_mult = P._print_options['scalar_mult']
 
-        exp = lambda v: '^{}'.format(v) if v != 1 else ''
+        exp = lambda v: f'^{v}' if v != 1 else ''
         return scalar_mult.join(P._repr_generator(g) + exp(v) for g,v in monomial)
 
     def _ascii_art_(self):
@@ -180,7 +180,7 @@ class IndexedMonoidElement(MonoidElement):
             if scalar_mult == "*":
                 scalar_mult = " "
 
-        exp = lambda v: '^{{{}}}'.format(v) if v != 1 else ''
+        exp = lambda v: f'^{{{v}}}' if v != 1 else ''
         return scalar_mult.join(P._latex_generator(g) + exp(v) for g,v in monomial)
 
     def __iter__(self):
@@ -287,7 +287,7 @@ class IndexedMonoidElement(MonoidElement):
             sage: (a*c^3).support()
             [0, 2]
         """
-        supp = set(key for key, exp in self._sorted_items() if exp != 0)
+        supp = {key for key, exp in self._sorted_items() if exp != 0}
         return sorted(supp)
 
     def leading_support(self):
@@ -569,9 +569,9 @@ class IndexedFreeAbelianMonoidElement(IndexedMonoidElement):
             1
         """
         if not isinstance(n, (int, Integer)):
-            raise TypeError("Argument n (= {}) must be an integer".format(n))
+            raise TypeError(f"Argument n (= {n}) must be an integer")
         if n < 0:
-            raise ValueError("Argument n (= {}) must be positive".format(n))
+            raise ValueError(f"Argument n (= {n}) must be positive")
         if n == 1:
             return self
         if n == 0:
@@ -780,7 +780,7 @@ class IndexedMonoid(Parent, IndexedGenerators, UniqueRepresentation):
         if x is None:
             return self.one()
         if x in self._indices:
-            raise TypeError("unable to convert {!r}, use gen() instead".format(x))
+            raise TypeError(f"unable to convert {x!r}, use gen() instead")
         return self.element_class(self, x)
 
     def _an_element_(self):
@@ -891,7 +891,7 @@ class IndexedFreeMonoid(IndexedMonoid):
             sage: FreeMonoid(index_set=ZZ)
             Free monoid indexed by Integer Ring
         """
-        return "Free monoid indexed by {}".format(self._indices)
+        return f"Free monoid indexed by {self._indices}"
 
     Element = IndexedFreeMonoidElement
 
@@ -931,7 +931,7 @@ class IndexedFreeMonoid(IndexedMonoid):
             IndexError: 0 is not in the index set
         """
         if x not in self._indices:
-            raise IndexError("{} is not in the index set".format(x))
+            raise IndexError(f"{x} is not in the index set")
         try:
             return self.element_class(self, ((self._indices(x),1),))
         except (TypeError, NotImplementedError): # Backup (e.g., if it is a string)
@@ -971,7 +971,7 @@ class IndexedFreeAbelianMonoid(IndexedMonoid):
             sage: FreeAbelianMonoid(index_set=ZZ)
             Free abelian monoid indexed by Integer Ring
         """
-        return "Free abelian monoid indexed by {}".format(self._indices)
+        return f"Free abelian monoid indexed by {self._indices}"
 
     def _element_constructor_(self, x=None):
         """
@@ -998,7 +998,7 @@ class IndexedFreeAbelianMonoid(IndexedMonoid):
             1
         """
         if isinstance(x, (list, tuple)):
-            d = dict()
+            d = {}
             for k, v in x:
                 if k in d:
                     d[k] += v
@@ -1047,7 +1047,7 @@ class IndexedFreeAbelianMonoid(IndexedMonoid):
             IndexError: 0 is not in the index set
         """
         if x not in self._indices:
-            raise IndexError("{} is not in the index set".format(x))
+            raise IndexError(f"{x} is not in the index set")
         try:
             return self.element_class(self, {self._indices(x): 1})
         except (TypeError, NotImplementedError):  # Backup (e.g., if it is a string)

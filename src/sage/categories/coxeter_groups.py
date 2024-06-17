@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Coxeter Groups
 """
@@ -709,7 +710,7 @@ class CoxeterGroups(Category_singleton):
 
             INPUT:
 
-            - ``i`` - an element of the index set of ``self``
+            - ``i`` -- an element of the index set of ``self``
 
             See :meth:`.simple_projections` for the options and for
             the definition of the simple projections.
@@ -952,13 +953,51 @@ class CoxeterGroups(Category_singleton):
                 Sign representation of
                  Weyl Group of type ['A', 1, 1] (as a matrix group acting on the root space)
                  over Integer Ring
-
             """
             if base_ring is None:
                 from sage.rings.integer_ring import ZZ
                 base_ring = ZZ
             from sage.modules.with_basis.representation import SignRepresentationCoxeterGroup
             return SignRepresentationCoxeterGroup(self, base_ring)
+
+        def reflection_representation(self, base_ring=None, side="left"):
+            r"""
+            Return the reflection representation of ``self``.
+
+            This is also the canonical faithful representation of a
+            Coxeter group.
+
+            INPUT:
+
+            - ``base_ring`` -- (optional) the base ring; the default is
+              the base ring of :meth:`canonical_representation`
+            - ``side`` -- ignored
+
+            EXAMPLES::
+
+                sage: W = CoxeterGroup(['D', 4])
+                sage: W.reflection_representation()
+                Reflection representation of Finite Coxeter group over
+                 Integer Ring with Coxeter matrix:
+                [1 3 2 2]
+                [3 1 3 3]
+                [2 3 1 2]
+                [2 3 2 1]
+
+                sage: W = CoxeterGroup(['I', 13])
+                sage: W.reflection_representation()
+                Reflection representation of Finite Coxeter group over
+                 Universal Cyclotomic Field with Coxeter matrix:
+                [ 1 13]
+                [13  1]
+
+                sage: W = WeylGroup(["B", 3, 1])
+                sage: W.reflection_representation(QQ)
+                Reflection representation of Weyl Group of type ['B', 3, 1]
+                 (as a matrix group acting on the root space)
+            """
+            from sage.modules.with_basis.representation import ReflectionRepresentation
+            return ReflectionRepresentation(self, base_ring)
 
         def demazure_product(self, Q):
             r"""
@@ -1168,6 +1207,11 @@ class CoxeterGroups(Category_singleton):
         def canonical_representation(self):
             r"""
             Return the canonical faithful representation of ``self``.
+
+            .. SEEALSO::
+
+                To obtain the underlying module with the action, use
+                :meth:`reflection_representation`.
 
             EXAMPLES::
 
@@ -1492,10 +1536,10 @@ class CoxeterGroups(Category_singleton):
 
             INPUT:
 
-            - ``index_set`` - a subset (as a list or iterable) of the nodes of the Dynkin diagram;
+            - ``index_set`` -- a subset (as a list or iterable) of the nodes of the Dynkin diagram;
               (default: all of them)
-            - ``side`` - 'left' or 'right' (default: 'right')
-            - ``positive`` - a boolean (default: ``False``)
+            - ``side`` -- 'left' or 'right' (default: 'right')
+            - ``positive`` -- a boolean (default: ``False``)
 
             The ``index_set`` option can be used to restrict to the
             parabolic subgroup indexed by ``index_set``.
@@ -2232,8 +2276,8 @@ class CoxeterGroups(Category_singleton):
 
             INPUT:
 
-            - ``index_set`` - a subset (or iterable) of the nodes of the Dynkin diagram
-            - ``side`` - 'left' or 'right'
+            - ``index_set`` -- a subset (or iterable) of the nodes of the Dynkin diagram
+            - ``side`` -- 'left' or 'right'
 
             EXAMPLES::
 
@@ -2279,9 +2323,9 @@ class CoxeterGroups(Category_singleton):
 
             INPUT:
 
-            - ``i`` - an element of the index set of the Coxeter group
-            - ``side`` - 'left' or 'right' (default: 'right')
-            - ``length_increasing`` - a boolean (default: True) specifying
+            - ``i`` -- an element of the index set of the Coxeter group
+            - ``side`` -- 'left' or 'right' (default: 'right')
+            - ``length_increasing`` -- a boolean (default: ``True``) specifying
               the direction of the projection
 
             See :meth:`CoxeterGroups.ParentMethods.simple_projections`
@@ -2749,7 +2793,7 @@ class CoxeterGroups(Category_singleton):
             INPUT:
 
             - side -- 'left' or 'right'  (default: 'right')
-            - positive -- a boolean (default: False)
+            - positive -- a boolean (default: ``False``)
             - index_set -- a list of indices or None
 
             OUTPUT: a list
@@ -2796,7 +2840,7 @@ class CoxeterGroups(Category_singleton):
 
             INPUT:
 
-            - ``c``-- a Coxeter element.
+            - ``c`` -- a Coxeter element.
 
             OUTPUT:
 
@@ -2868,7 +2912,7 @@ class CoxeterGroups(Category_singleton):
 
             Number of `c`-sortable elements in `A_3` (Catalan number)::
 
-                sage: len([w for w in W if w.is_coxeter_sortable(c)])
+                sage: len([w for w in W if w.is_coxeter_sortable(c)])                   # needs sage.rings.number_field
                 14
 
             TESTS::
@@ -2921,7 +2965,7 @@ class CoxeterGroups(Category_singleton):
                 applied. If ``side`` is 'left' then the operation is
                 applied on the left.
 
-            - ``length_increasing`` -- a boolean (default True)
+            - ``length_increasing`` -- a boolean (default: ``True``)
                 whether to act length increasingly or decreasingly
 
             EXAMPLES::

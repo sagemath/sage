@@ -19,7 +19,6 @@ AUTHORS:
   heights
 - Robert Harron (2012-08): conjugate() now works for all fields contained in
   CM fields
-
 """
 # ****************************************************************************
 #       Copyright (C) 2004, 2007 William Stein <wstein@gmail.com>
@@ -50,6 +49,7 @@ from sage.libs.gmp.pylong cimport mpz_pythonhash
 from cpython.object cimport Py_EQ, Py_NE, Py_LT, Py_GT, Py_LE, Py_GE
 from sage.structure.richcmp cimport rich_to_bool
 
+import sage.rings.abc
 import sage.rings.polynomial.polynomial_element
 from sage.rings.polynomial.evaluation_ntl cimport ZZX_evaluation_mpfi
 import sage.rings.rational_field
@@ -170,7 +170,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         sage: a^3
         -a - 1
     """
-    cdef _new(self) noexcept:
+    cdef _new(self):
         """
         Quickly creates a new initialized NumberFieldElement with the same
         parent as self.
@@ -182,7 +182,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         x._fld_denominator = self._fld_denominator
         return x
 
-    cdef number_field(self) noexcept:
+    cdef number_field(self):
         r"""
 
         Return the number field of self. Only accessible from Cython.
@@ -783,7 +783,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             return QQ.zero()
         return coeffs[n]
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         r"""
         EXAMPLES::
 
@@ -1663,8 +1663,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         if not isinstance(L, NumberField):
             raise ValueError("L (=%s) must be a NumberField in is_norm" % L)
 
-        from sage.rings.number_field.number_field import is_AbsoluteNumberField
-        if is_AbsoluteNumberField(L):
+        from sage.rings.number_field.number_field import NumberField_absolute
+        if isinstance(L, NumberField_absolute):
             Lrel = L.relativize(K.hom(L), L.variable_name() + '0')
             b, x = self.is_norm(Lrel, element=True, proof=proof)
             h = Lrel.structure()[0]
@@ -1803,8 +1803,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         - Francis Clarke (2010-12-26)
         """
         K = self.parent()
-        from sage.rings.number_field.number_field_rel import is_RelativeNumberField
-        if (not is_RelativeNumberField(L)) or L.base_field() != K:
+        from sage.rings.number_field.number_field_rel import NumberField_relative
+        if not isinstance(L, NumberField_relative) or L.base_field() != K:
             raise ValueError("L (=%s) must be a relative number field with base field K (=%s) in rnfisnorm" % (L, K))
 
         rnf_data = K.pari_rnfnorm_data(L, proof=proof)
@@ -1988,8 +1988,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             raise ArithmeticError("factorization of 0 is not defined")
 
         K = self.parent()
-        from sage.rings.number_field.order import is_NumberFieldOrder
-        if is_NumberFieldOrder(K):
+        if isinstance(K, sage.rings.abc.Order):
             K = K.number_field()
         fac = K.ideal(self).factor()
         # Check whether all prime ideals in `fac` are principal
@@ -2088,8 +2087,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         if R.is_field():
             return R.one()
 
-        from sage.rings.number_field.order import is_NumberFieldOrder
-        if not is_NumberFieldOrder(R):
+        if not isinstance(R, sage.rings.abc.Order):
             raise NotImplementedError("gcd() for %r is not implemented" % R)
 
         K = R.number_field()
@@ -2443,7 +2441,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         self._numerator = t2
         self._denominator = t1
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         r"""
         EXAMPLES::
 
@@ -2469,7 +2467,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         x._reduce_c_()
         return x
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         r"""
         EXAMPLES::
 
@@ -2494,7 +2492,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         x._reduce_c_()
         return x
 
-    cpdef _mul_(self, right) noexcept:
+    cpdef _mul_(self, right):
         """
         Returns the product of self and other as elements of a number
         field.
@@ -2542,7 +2540,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         # but asymptotically fast poly multiplication means it's
         # actually faster to *not* build a table!?!
 
-    cpdef _div_(self, other) noexcept:
+    cpdef _div_(self, other):
         """
         Returns the quotient of self and other as elements of a number
         field.
@@ -2654,7 +2652,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         """
         return not IsZero_ZZX(self._numerator)
 
-    cpdef _neg_(self) noexcept:
+    cpdef _neg_(self):
         r"""
         EXAMPLES::
 
@@ -2669,7 +2667,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         x._denominator = self._denominator
         return x
 
-    cpdef _copy_for_parent(self, Parent parent) noexcept:
+    cpdef _copy_for_parent(self, Parent parent):
         r"""
         Return a copy of ``self`` with the parent replaced by ``parent``.
 
@@ -3232,7 +3230,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         return h
 
-    cpdef list _coefficients(self) noexcept:
+    cpdef list _coefficients(self):
         """
         Return the coefficients of the underlying polynomial corresponding
         to this number field element.
@@ -3914,8 +3912,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             ...
             ValueError: P must be prime
         """
-        from sage.rings.number_field.number_field_ideal import is_NumberFieldIdeal
-        if not is_NumberFieldIdeal(P):
+        from sage.rings.number_field.number_field_ideal import NumberFieldIdeal
+        if not isinstance(P, NumberFieldIdeal):
             if isinstance(P, NumberFieldElement):
                 P = self.number_field().fractional_ideal(P)
             else:
@@ -5247,7 +5245,7 @@ cdef class OrderElement_absolute(NumberFieldElement_absolute):
         self._number_field = K
         (<Element>self)._parent = order
 
-    cdef _new(self) noexcept:
+    cdef _new(self):
         """
         Quickly creates a new initialized NumberFieldElement with the same
         parent as ``self``.
@@ -5269,7 +5267,7 @@ cdef class OrderElement_absolute(NumberFieldElement_absolute):
         x._fld_denominator = self._fld_denominator
         return x
 
-    cdef number_field(self) noexcept:
+    cdef number_field(self):
         r"""
         Return the number field of ``self``. Only accessible from Cython.
 
@@ -5363,10 +5361,10 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
         (<Element>self)._parent = order
         self._number_field = K
 
-    cdef number_field(self) noexcept:
+    cdef number_field(self):
         return self._number_field
 
-    cdef _new(self) noexcept:
+    cdef _new(self):
         """
         Quickly creates a new initialized NumberFieldElement with the same
         parent as self.

@@ -555,7 +555,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
         else:
             return self._generic_coerce_map(self.base_ring())
 
-    cdef _coerce_c_impl(self, x) noexcept:
+    cdef _coerce_c_impl(self, x):
         """
         Return the canonical coercion of x to this multivariate
         polynomial ring, if one is defined, or raise a TypeError.
@@ -786,8 +786,8 @@ cdef class MPolynomialRing_base(CommutativeRing):
 
         INPUT:
 
-        ``gap`` -- (optional GAP instance) Interface to which the
-                   string is addressed.
+        - ``gap`` -- (optional GAP instance) Interface to which the
+          string is addressed.
 
         NOTE:
 
@@ -1551,8 +1551,8 @@ cdef class MPolynomialRing_base(CommutativeRing):
 
         kwds:
 
-        - ``sparse`` -- boolean (optional - default: ``False``)
-          if ``True``, the function creates sparse matrices.
+        - ``sparse`` -- boolean (default: ``False``); if ``True``, the function
+          creates sparse matrices.
 
         OUTPUT:
 

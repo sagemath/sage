@@ -45,7 +45,6 @@ AUTHORS:
 - Maarten Derickx (2011-09-11): added doctests, fixed pickling
 
 - Kwankyu Lee (2017-04-30): added elements for global function fields
-
 """
 # *****************************************************************************
 #       Copyright (C) 2010      William Stein <wstein@gmail.com>
@@ -86,6 +85,7 @@ def is_FunctionFieldElement(x):
     from sage.rings.function_field.function_field import is_FunctionField
     return is_FunctionField(x.parent())
 
+
 def make_FunctionFieldElement(parent, element_class, representing_element):
     """
     Used for unpickling FunctionFieldElement objects (and subclasses).
@@ -122,7 +122,7 @@ cdef class FunctionFieldElement(FieldElement):
         return (make_FunctionFieldElement,
                 (self._parent, type(self), self._x))
 
-    cdef FunctionFieldElement _new_c(self) noexcept:
+    cdef FunctionFieldElement _new_c(self):
         cdef type t = type(self)
         cdef FunctionFieldElement x = <FunctionFieldElement>t.__new__(t)
         x._parent = self._parent
@@ -698,7 +698,7 @@ cdef class FunctionFieldElement(FieldElement):
         """
         raise NotImplementedError("is_nth_power() not implemented for generic elements")
 
-    cpdef FunctionFieldElement nth_root(self, n) noexcept:
+    cpdef FunctionFieldElement nth_root(self, n):
         """
         Return an ``n``-th root of this element in the function field.
 

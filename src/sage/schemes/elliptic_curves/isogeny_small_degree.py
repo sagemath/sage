@@ -18,7 +18,6 @@ AUTHORS:
 
 - Kimi Tsukazaki and John Cremona: 2013-07: The 10 (hyper)-elliptic cases and
   the generic algorithm.  See [KT2013]_.
-
 """
 
 # ****************************************************************************
@@ -173,7 +172,7 @@ def Psi(l, use_stored=True):
 
     - ``l`` -- either 2, 3, 5, 7, or 13.
 
-    - ``use_stored`` (boolean, default True) -- If True, use
+    - ``use_stored`` (boolean, default: ``True``) -- If True, use
       precomputed values, otherwise compute them on the fly.
 
     .. NOTE::
@@ -564,7 +563,7 @@ def _sporadic_Q_data(j):
     w = w1 # real period
     if j in [-121, -24729001, -162677523113838677, QQ(-882216989)/131072]:
         w = 2*w2-w1 # imaginary period
-    kerpol = prod(([X-L.elliptic_exponential(n*w/ell)[0] for n in range(1,(ell+1)//2)]))
+    kerpol = prod([X-L.elliptic_exponential(n*w/ell)[0] for n in range(1,(ell+1)//2)])
     if j == -162677523113838677:
         kerpolcoeffs = [(37*c.real()).round()/37 for c in list(kerpol)]
     else:
@@ -2110,7 +2109,7 @@ def isogenies_prime_degree_genus_plus_0_j0(E, l, minimal_models=True):
         raise ValueError("%s must be one of %s." % (l,hyperelliptic_primes))
     F = E.base_field()
     if E.j_invariant() != 0:
-        raise ValueError(("j-invariant must be 0."))
+        raise ValueError("j-invariant must be 0.")
     if F.characteristic() in [2,3,l]:
         raise NotImplementedError("Not implemented in characteristic 2, 3 or l.")
 

@@ -219,7 +219,9 @@ from sys import maxsize
 
 import sage.rings.abc
 
+from sage.structure.parent import Parent
 from sage.categories.rings import Rings
+from sage.categories.semirings import Semirings
 from sage.misc.fast_methods import Singleton
 from sage.misc.lazy_import import lazy_import
 from sage.rings.ring import CommutativeRing
@@ -232,7 +234,7 @@ lazy_import('sage.rings.integer', 'Integer')
 _obj = {}
 
 
-class _uniq():
+class _uniq:
     def __new__(cls, *args):
         """
         This ensures uniqueness of these objects.
@@ -248,7 +250,7 @@ class _uniq():
         return O
 
 
-class AnInfinity():
+class AnInfinity:
     """
     TESTS::
 
@@ -560,7 +562,7 @@ class AnInfinity():
             return -sib.name('oo')
 
 
-class UnsignedInfinityRing_class(Singleton, CommutativeRing):
+class UnsignedInfinityRing_class(Singleton, Parent):
 
     def __init__(self):
         """
@@ -584,7 +586,9 @@ class UnsignedInfinityRing_class(Singleton, CommutativeRing):
             sage: UnsignedInfinityRing(3) == UnsignedInfinityRing(-19.5)
             True
         """
-        CommutativeRing.__init__(self, self, names=('oo',), normalize=False)
+        cat = Semirings().Commutative()
+        Parent.__init__(self, self, names=('oo',), normalize=False,
+                        category=cat)
 
     def ngens(self) -> int:
         """
@@ -598,19 +602,6 @@ class UnsignedInfinityRing_class(Singleton, CommutativeRing):
             1
         """
         return 1
-
-    def fraction_field(self):
-        """
-        The unsigned infinity ring isn't an integral domain.
-
-        EXAMPLES::
-
-            sage: UnsignedInfinityRing.fraction_field()
-            Traceback (most recent call last):
-            ...
-            TypeError: infinity 'ring' has no fraction field
-        """
-        raise TypeError("infinity 'ring' has no fraction field")
 
     def gen(self, n=0):
         """
@@ -1294,7 +1285,10 @@ class InfinityRing_class(Singleton, CommutativeRing):
             sage: QQbar(-2*i)*infinity                                                  # needs sage.rings.number_field sage.symbolic
             (-I)*Infinity
         """
-        from sage.symbolic.ring import SR
+        try:
+            from sage.symbolic.ring import SR
+        except ImportError:
+            return None
         if SR.has_coerce_map_from(other):
             return SR
 
@@ -1810,10 +1804,15 @@ def test_comparison(ring):
         ...
         AssertionError: testing -1000.0 in Symbolic Ring: id = ...
     """
-    from sage.symbolic.ring import SR
+
     from sage.rings.rational_field import QQ
-    elements = [-1e3, 99.9999, -SR(2).sqrt(), 0, 1,
-                3 ** (-QQ.one() / 3), SR.pi(), 100000]
+    elements = [-1e3, 99.9999, 0, 1, 100000]
+    try:
+        from sage.symbolic.ring import SR
+    except ImportError:
+        pass
+    else:
+        elements += [-SR(2).sqrt(), SR.pi(), 3 ** (-QQ.one() / 3)]
     elements.append(ring.an_element())
     elements.extend(ring.some_elements())
     for z in elements:
@@ -1869,7 +1868,7 @@ def test_signed_infinity(pos_inf):
         sage: test_signed_infinity(RIF(oo))                                             # needs sage.rings.real_interval_field
         sage: test_signed_infinity(SR(oo))                                              # needs sage.symbolic
     """
-    msg = 'testing {} ({})'.format(pos_inf, type(pos_inf))
+    msg = f'testing {pos_inf} ({type(pos_inf)})'
     assert InfinityRing(pos_inf) is infinity, msg
     assert InfinityRing(-pos_inf) is minus_infinity, msg
     assert infinity == pos_inf, msg

@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 r"""
 Graphics objects
 
@@ -21,7 +20,6 @@ AUTHORS:
   moved to new module :mod:`~sage.plot.multigraphics`; various improvements and
   fixes in :meth:`Graphics.matplotlib` and ``Graphics._set_scale``; new method
   :meth:`Graphics.inset`
-
 """
 
 # ****************************************************************************
@@ -100,23 +98,23 @@ def _parse_figsize(figsize):
         # figsize should be a pair of positive numbers
         if len(figsize) != 2:
             raise ValueError("figsize should be a positive number or a list "
-                             "of two positive numbers, not {0}".format(figsize))
+                             f"of two positive numbers, not {figsize}")
         figsize = (float(figsize[0]), float(figsize[1]))  # floats for mpl
         if not (figsize[0] > 0 and figsize[1] > 0):
             raise ValueError("figsize should be positive numbers, "
-                             "not {0} and {1}".format(figsize[0], figsize[1]))
+                             f"not {figsize[0]} and {figsize[1]}")
     else:
         # in this case, figsize is a single number representing the width and
         # should be positive
         try:
             figsize = float(figsize)  # to pass to mpl
         except TypeError:
-            raise TypeError("figsize should be a positive number, not {0}".format(figsize))
+            raise TypeError(f"figsize should be a positive number, not {figsize}")
         if figsize > 0:
             default_width, default_height = rcParams['figure.figsize']
             figsize = (figsize, default_height * figsize / default_width)
         else:
-            raise ValueError("figsize should be positive, not {0}".format(figsize))
+            raise ValueError(f"figsize should be positive, not {figsize}")
     return figsize
 
 
@@ -207,7 +205,7 @@ class Graphics(WithEqualityById, SageObject):
         INPUT:
 
 
-        -  ``ratio`` - a positive real number or 'automatic'
+        -  ``ratio`` -- a positive real number or 'automatic'
 
 
         EXAMPLES: We create a plot of the upper half of a circle, but it
@@ -325,28 +323,28 @@ class Graphics(WithEqualityById, SageObject):
 
         INPUT:
 
-        - ``title`` - (default: None) string, the legend title
+        - ``title`` -- (default: None) string, the legend title
 
-        - ``ncol`` - (default: 1) positive integer, the number of columns
+        - ``ncol`` -- (default: 1) positive integer, the number of columns
 
-        - ``columnspacing`` - (default: None) the spacing between columns
+        - ``columnspacing`` -- (default: None) the spacing between columns
 
-        - ``borderaxespad`` - (default: None) float, length between the axes and the legend
+        - ``borderaxespad`` -- (default: None) float, length between the axes and the legend
 
-        - ``back_color`` - (default: 'white') This parameter can be a string
+        - ``back_color`` -- (default: 'white') This parameter can be a string
           denoting a color or an RGB tuple. The string can be a color name
           as in ('red', 'green', 'yellow', ...) or a floating point number
           like '0.8' which gets expanded to (0.8, 0.8, 0.8). The
           tuple form is just a floating point RGB tuple with all values ranging
           from 0 to 1.
 
-        - ``handlelength`` - (default: 0.05) float, the length of the legend handles
+        - ``handlelength`` -- (default: 0.05) float, the length of the legend handles
 
-        - ``handletextpad`` - (default: 0.5) float, the pad between the legend handle and text
+        - ``handletextpad`` -- (default: 0.5) float, the pad between the legend handle and text
 
-        - ``labelspacing`` - (default: 0.02) float, vertical space between legend entries
+        - ``labelspacing`` -- (default: 0.02) float, vertical space between legend entries
 
-        - ``loc`` - (default: 'best') May be a string, an integer or a tuple. String or
+        - ``loc`` -- (default: 'best') May be a string, an integer or a tuple. String or
               integer inputs must be one of the following:
 
           - 0, 'best'
@@ -374,29 +372,29 @@ class Graphics(WithEqualityById, SageObject):
           - Tuple arguments represent an absolute (x, y) position on the plot
             in axes coordinates (meaning from 0 to 1 in each direction).
 
-        - ``markerscale`` - (default: 0.6) float, how much to scale the markers in the legend.
+        - ``markerscale`` -- (default: 0.6) float, how much to scale the markers in the legend.
 
-        - ``numpoints`` - (default: 2) integer, the number of points in the legend for line
+        - ``numpoints`` -- (default: 2) integer, the number of points in the legend for line
 
-        - ``borderpad`` - (default: 0.6) float, the fractional whitespace inside the legend border
+        - ``borderpad`` -- (default: 0.6) float, the fractional whitespace inside the legend border
           (between 0 and 1)
 
-        - ``font_family`` - (default: 'sans-serif') string, one of 'serif', 'sans-serif',
+        - ``font_family`` -- (default: 'sans-serif') string, one of 'serif', 'sans-serif',
           'cursive', 'fantasy', 'monospace'
 
-        - ``font_style`` - (default: 'normal') string, one of 'normal', 'italic', 'oblique'
+        - ``font_style`` -- (default: 'normal') string, one of 'normal', 'italic', 'oblique'
 
-        - ``font_variant`` - (default: 'normal') string, one of 'normal', 'small-caps'
+        - ``font_variant`` -- (default: 'normal') string, one of 'normal', 'small-caps'
 
-        - ``font_weight`` - (default: 'medium') string, one of 'black', 'extra bold', 'bold',
+        - ``font_weight`` -- (default: 'medium') string, one of 'black', 'extra bold', 'bold',
           'semibold', 'medium', 'normal', 'light'
 
-        - ``font_size`` - (default: 'medium') string, one of 'xx-small', 'x-small', 'small',
+        - ``font_size`` -- (default: 'medium') string, one of 'xx-small', 'x-small', 'small',
           'medium', 'large', 'x-large', 'xx-large' or an absolute font size (e.g. 12)
 
-        -  ``shadow`` - (default: True) boolean - draw a shadow behind the legend
+        -  ``shadow`` -- (default: ``True``) boolean -- draw a shadow behind the legend
 
-        - ``fancybox`` - (default: False) a boolean.  If True, draws a frame with a round
+        - ``fancybox`` -- (default: ``False``) a boolean.  If True, draws a frame with a round
           fancybox.
 
         These are all keyword arguments.
@@ -470,7 +468,7 @@ class Graphics(WithEqualityById, SageObject):
         INPUT:
 
 
-        -  ``xmin, xmax, ymin, ymax`` - floats
+        -  ``xmin, xmax, ymin, ymax`` -- floats
 
 
         EXAMPLES::
@@ -585,7 +583,7 @@ class Graphics(WithEqualityById, SageObject):
         INPUT:
 
 
-        -  ``s`` - integer, a font size in points.
+        -  ``s`` -- integer, a font size in points.
 
 
         If called with no input, return the current fontsize.
@@ -618,7 +616,7 @@ class Graphics(WithEqualityById, SageObject):
 
         INPUT:
 
-        - ``s`` - float, relative size of axes labels w.r.t. to the tick marks,
+        - ``s`` -- float, relative size of axes labels w.r.t. to the tick marks,
           the size of the tick marks being set by :meth:`fontsize`.
 
         If called with no input, return the current relative size.
@@ -655,7 +653,7 @@ class Graphics(WithEqualityById, SageObject):
         INPUT:
 
 
-        -  ``show`` - bool
+        -  ``show`` -- bool
 
 
         If called with no input, return the current axes setting.
@@ -703,7 +701,7 @@ class Graphics(WithEqualityById, SageObject):
         INPUT:
 
 
-        -  ``c`` - an RGB color 3-tuple, where each tuple entry
+        -  ``c`` -- an RGB color 3-tuple, where each tuple entry
            is a float between 0 and 1
 
 
@@ -748,7 +746,7 @@ class Graphics(WithEqualityById, SageObject):
         INPUT:
 
 
-        -  ``l`` - (default: None) a list of two strings or
+        -  ``l`` -- (default: None) a list of two strings or
            None
 
 
@@ -815,7 +813,7 @@ class Graphics(WithEqualityById, SageObject):
         INPUT:
 
 
-        -  ``c`` - an RGB 3-tuple of numbers between 0 and 1
+        -  ``c`` -- an RGB 3-tuple of numbers between 0 and 1
 
 
         If called with no input, return the current axes_label_color
@@ -904,7 +902,7 @@ class Graphics(WithEqualityById, SageObject):
         INPUT:
 
 
-        -  ``c`` - an RGB 3-tuple of numbers between 0 and 1
+        -  ``c`` -- an RGB 3-tuple of numbers between 0 and 1
 
 
         If called with no input, return the current tick_label_color
@@ -1389,7 +1387,7 @@ class Graphics(WithEqualityById, SageObject):
         if isinstance(scale, (list, tuple)):
             if len(scale) != 2 and len(scale) != 3:
                 raise ValueError("If the input is a tuple, it must be of "
-                    "the form (scale, base) or (scale, basex, basey)")
+                                 "the form (scale, base) or (scale, basex, basey)")
             if len(scale) == 2:
                 base = scale[1]
             else:
@@ -1398,7 +1396,7 @@ class Graphics(WithEqualityById, SageObject):
 
         if scale not in ('linear', 'loglog', 'semilogx', 'semilogy'):
             raise ValueError("The scale must be one of 'linear', 'loglog',"
-                    " 'semilogx' or 'semilogy' -- got '{0}'".format(scale))
+                             f" 'semilogx' or 'semilogy' -- got '{scale}'")
 
         if isinstance(base, (list, tuple)):
             basex, basey = base
@@ -1437,37 +1435,37 @@ class Graphics(WithEqualityById, SageObject):
     # NOTE: If you intend to use a new parameter in show(), you should update
     # this dictionary to contain the default value for that parameter.
 
-    SHOW_OPTIONS = dict(# axes options
-                        axes=None, axes_labels=None, axes_labels_size=None,
-                        axes_pad=None, base=None, scale=None,
-                        xmin=None, xmax=None, ymin=None, ymax=None,
-                        flip_x=False, flip_y=False,
-                        # Figure options
-                        aspect_ratio=None, dpi=DEFAULT_DPI, fig_tight=True,
-                        figsize=None, fontsize=None, frame=False,
-                        title=None, title_pos=None, transparent=False,
-                        # Grid options
-                        gridlines=None, gridlinesstyle=None,
-                        hgridlinesstyle=None, vgridlinesstyle=None,
-                        # Legend options
-                        legend_options={}, show_legend=None,
-                        # Ticks options
-                        ticks=None, tick_formatter=None, ticks_integer=False,
-                        # Text options
-                        typeset='default')
+    SHOW_OPTIONS = {  # axes options
+        'axes': None, 'axes_labels': None, 'axes_labels_size': None,
+        'axes_pad': None, 'base': None, 'scale': None,
+        'xmin': None, 'xmax': None, 'ymin': None, 'ymax': None,
+        'flip_x': False, 'flip_y': False,
+        # Figure options
+        'aspect_ratio': None, 'dpi': DEFAULT_DPI, 'fig_tight': True,
+        'figsize': None, 'fontsize': None, 'frame': False,
+        'title': None, 'title_pos': None, 'transparent': False,
+        # Grid options
+        'gridlines': None, 'gridlinesstyle': None,
+        'hgridlinesstyle': None, 'vgridlinesstyle': None,
+        # Legend options
+        'legend_options': {}, 'show_legend': None,
+        # Ticks options
+        'ticks': None, 'tick_formatter': None, 'ticks_integer': False,
+        # Text options
+        'typeset': 'default'}
 
     # Default options for the legends:
 
-    LEGEND_OPTIONS = dict(back_color='white', borderpad=0.6,
-                          borderaxespad=None,
-                          columnspacing=None,
-                          fancybox=False, font_family='sans-serif',
-                          font_size='medium', font_style='normal',
-                          font_variant='normal', font_weight='medium',
-                          handlelength=0.05, handletextpad=0.5,
-                          labelspacing=0.02, loc='best',
-                          markerscale=0.6, ncol=1, numpoints=2,
-                          shadow=True, title=None)
+    LEGEND_OPTIONS = {'back_color': 'white', 'borderpad': 0.6,
+                      'borderaxespad': None,
+                      'columnspacing': None,
+                      'fancybox': False, 'font_family': 'sans-serif',
+                      'font_size': 'medium', 'font_style': 'normal',
+                      'font_variant': 'normal', 'font_weight': 'medium',
+                      'handlelength': 0.05, 'handletextpad': 0.5,
+                      'labelspacing': 0.02, 'loc': 'best',
+                      'markerscale': 0.6, 'ncol': 1, 'numpoints': 2,
+                      'shadow': True, 'title': None}
 
     @suboptions('legend', **LEGEND_OPTIONS)
     def show(self, **kwds):
@@ -1482,20 +1480,20 @@ class Graphics(WithEqualityById, SageObject):
 
         OPTIONAL INPUT:
 
-        - ``dpi`` - (default: 100) dots per inch
+        - ``dpi`` -- (default: 100) dots per inch
 
-        - ``figsize`` - (default: [6.4, 4.8]) [width, height] inches. The
+        - ``figsize`` -- (default: [6.4, 4.8]) [width, height] inches. The
           maximum value of each of the width and the height can be 327
           inches, at the default ``dpi`` of 100 dpi, which is just shy of
           the maximum allowed value of 32768 dots (pixels).
 
-        - ``fig_tight`` - (default: True) whether to clip the drawing
+        - ``fig_tight`` -- (default: ``True``) whether to clip the drawing
           tightly around drawn objects.  If True, then the resulting
           image will usually not have dimensions corresponding to
           ``figsize``.  If False, the resulting image will have
           dimensions corresponding to ``figsize``.
 
-        - ``aspect_ratio`` - the perceived height divided by the
+        - ``aspect_ratio`` -- the perceived height divided by the
           perceived width. For example, if the aspect ratio is set to ``1``, circles
           will look round and a unit square will appear to have sides
           of equal length, and if the aspect ratio is set ``2``, vertical units will be
@@ -1503,23 +1501,23 @@ class Graphics(WithEqualityById, SageObject):
           high as it is wide.  If set to ``'automatic'``, the aspect ratio
           is determined by ``figsize`` and the picture fills the figure.
 
-        - ``axes`` - (default: True)
+        - ``axes`` -- (default: ``True``)
 
-        - ``axes_labels`` - (default: None) list (or tuple) of two
+        - ``axes_labels`` -- (default: None) list (or tuple) of two
           strings; the first is used as the label for the horizontal
           axis, and the second for the vertical axis.
 
-        - ``axes_labels_size`` - (default: current setting -- 1.6) scale factor
+        - ``axes_labels_size`` -- (default: current setting -- 1.6) scale factor
           relating the size of the axes labels with respect to the size of the
           tick marks.
 
-        - ``fontsize`` - (default: current setting -- 10) positive
+        - ``fontsize`` -- (default: current setting -- 10) positive
           integer; used for axes labels; if you make this very large,
           you may have to increase figsize to see all labels.
 
-        - ``frame`` - (default: False) draw a frame around the image
+        - ``frame`` -- (default: ``False``) draw a frame around the image
 
-        - ``gridlines`` - (default: None) can be any of the following:
+        - ``gridlines`` -- (default: None) can be any of the following:
 
           - None, False: do not add grid lines.
 
@@ -1550,9 +1548,9 @@ class Graphics(WithEqualityById, SageObject):
           rendering of the grid lines, the horizontal grid lines or the
           vertical grid lines, respectively.
 
-        - ``transparent`` - (default: False) If True, make the background transparent.
+        - ``transparent`` -- (default: ``False``) If True, make the background transparent.
 
-        - ``axes_pad`` - (default: 0.02 on ``"linear"`` scale, 1 on
+        - ``axes_pad`` -- (default: 0.02 on ``"linear"`` scale, 1 on
           ``"log"`` scale).
 
           - In the ``"linear"`` scale, it determines the percentage of the
@@ -1568,11 +1566,11 @@ class Graphics(WithEqualityById, SageObject):
             then the new minimum after padding the axis will be
             `m - m/b^{\mathrm{axes\_pad}}`.
 
-        - ``ticks_integer`` - (default: False) guarantee that the ticks
+        - ``ticks_integer`` -- (default: ``False``) guarantee that the ticks
           are integers (the ``ticks`` option, if specified, will
           override this)
 
-        - ``ticks`` - A matplotlib locator for the major ticks, or
+        - ``ticks`` -- A matplotlib locator for the major ticks, or
           a number. There are several options.  For more information about
           locators, type ``from matplotlib import ticker`` and then
           ``ticker?``.
@@ -1597,7 +1595,7 @@ class Graphics(WithEqualityById, SageObject):
             ticks at the locations specified.  This includes the case of
             of the empty list, which will give no ticks.  See examples.
 
-        - ``tick_formatter`` - A matplotlib formatter for the major
+        - ``tick_formatter`` -- A matplotlib formatter for the major
           ticks. There are several options.  For more information about
           formatters, type ``from matplotlib import ticker`` and then
           ``ticker?``.
@@ -1630,9 +1628,9 @@ class Graphics(WithEqualityById, SageObject):
             use an external LaTeX compiler, then set the keyword option
             ``typeset``.  See examples.
 
-        - ``title`` - (default: None) The title for the plot
+        - ``title`` -- (default: None) The title for the plot
 
-        - ``title_pos`` - (default: None) The position of the title for the
+        - ``title_pos`` -- (default: None) The position of the title for the
             plot. It must be a tuple or a list of two real numbers
             ``(x_pos, y_pos)`` which indicate the relative position of the
             title within the plot. The plot itself can be considered to
@@ -1656,12 +1654,12 @@ class Graphics(WithEqualityById, SageObject):
             entry of ``ticks`` must also be a list of numbers which give the
             positions of the labels. See the examples below.
 
-        - ``show_legend`` - (default: None) If True, show the legend
+        - ``show_legend`` -- (default: None) If True, show the legend
 
-        - ``legend_*`` - all the options valid for :meth:`set_legend_options`
+        - ``legend_*`` -- all the options valid for :meth:`set_legend_options`
             prefixed with ``legend_``
 
-        - ``base`` - (default: 10) the base of the logarithm if
+        - ``base`` -- (default: 10) the base of the logarithm if
           a logarithmic scale is set. This must be greater than 1. The base
           can be also given as a list or tuple ``(basex, basey)``.
           ``basex`` sets the base of the logarithm along the horizontal
@@ -1695,10 +1693,10 @@ class Graphics(WithEqualityById, SageObject):
 
         - ``ymax`` -- ending y value in the rendered figure.
 
-        - ``flip_x`` -- (default: False) boolean. If True, flip the horizontal
+        - ``flip_x`` -- (default: ``False``) boolean. If True, flip the horizontal
           axis.
 
-        - ``flip_y`` -- (default: False) boolean. If True, flip the vertical
+        - ``flip_y`` -- (default: ``False``) boolean. If True, flip the vertical
           axis.
 
         - ``typeset`` -- (default: ``"default"``) string. The type of
@@ -2360,9 +2358,9 @@ class Graphics(WithEqualityById, SageObject):
         return {'xmin': xmin, 'xmax': xmax, 'ymin': ymin, 'ymax': ymax}
 
     def _matplotlib_tick_formatter(self, subplot, base=(10, 10),
-                            locator_options={}, scale=('linear', 'linear'),
-                            tick_formatter=(None, None), ticks=(None, None),
-                            xmax=None, xmin=None, ymax=None, ymin=None):
+                                   locator_options={}, scale=('linear', 'linear'),
+                                   tick_formatter=(None, None), ticks=(None, None),
+                                   xmax=None, xmin=None, ymax=None, ymin=None):
         r"""
         Take a matplotlib subplot instance representing the graphic and set
         the ticks formatting. This function is only for internal use.
@@ -2388,8 +2386,10 @@ class Graphics(WithEqualityById, SageObject):
         # This function is created to refactor some code that is repeated
         # in the matplotlib function
         from matplotlib.ticker import (FixedLocator, Locator,
-                LogFormatterMathtext, LogLocator, MaxNLocator,
-                MultipleLocator, NullLocator, ScalarFormatter)
+                                       LogFormatterMathtext,
+                                       LogLocator, MaxNLocator,
+                                       MultipleLocator,
+                                       NullLocator, ScalarFormatter)
 
         x_locator, y_locator = ticks
         # ---------------------- Location of x-ticks ---------------------
@@ -2411,8 +2411,8 @@ class Graphics(WithEqualityById, SageObject):
                 x_locator = MultipleLocator(float(x_locator))
             else:  # not enough room for two major ticks
                 raise ValueError('Expand the range of the independent '
-                'variable to allow two multiples of your tick locator '
-                '(option `ticks`).')
+                                 'variable to allow two multiples of your tick locator '
+                                 '(option `ticks`).')
 
         # ---------------------- Location of y-ticks ---------------------
         if y_locator is None:
@@ -2432,8 +2432,8 @@ class Graphics(WithEqualityById, SageObject):
                 y_locator = MultipleLocator(float(y_locator))
             else:  # not enough room for two major ticks
                 raise ValueError('Expand the range of the dependent '
-                'variable to allow two multiples of your tick locator '
-                '(option `ticks`).')
+                                 'variable to allow two multiples of your tick locator '
+                                 '(option `ticks`).')
 
         x_formatter, y_formatter = tick_formatter
         from matplotlib.ticker import FuncFormatter, FixedFormatter
@@ -2454,8 +2454,8 @@ class Graphics(WithEqualityById, SageObject):
             if scale[0] == 'log':
                 # We need to strip out '\\mathdefault' from the string
                 x_formatter = FuncFormatter(lambda n, pos:
-                    LogFormatterMathtext(base=base[0])(n, pos).replace(
-                        "\\mathdefault", ""))
+                                            LogFormatterMathtext(base=base[0])(n, pos).replace(
+                                                "\\mathdefault", ""))
             else:
                 # circumvent the problem of symbolic tick values (trac #34693)
                 if isinstance(x_locator, FixedLocator):
@@ -2466,8 +2466,8 @@ class Graphics(WithEqualityById, SageObject):
             if (not isinstance(ticks[0], (list, tuple)) or
                     len(ticks[0]) != len(x_formatter)):
                 raise ValueError("If the first component of the list "
-                    "`tick_formatter` is a list then the first component "
-                    "of `ticks` must also be a list of equal length.")
+                                 "`tick_formatter` is a list then the first component "
+                                 "of `ticks` must also be a list of equal length.")
             x_formatter = FixedFormatter(x_formatter)
         # ---------------------- Formatting y-ticks ----------------------
         if y_formatter is None:
@@ -2483,8 +2483,8 @@ class Graphics(WithEqualityById, SageObject):
             if scale[1] == 'log':
                 # We need to strip out '\\mathdefault' from the string
                 y_formatter = FuncFormatter(lambda n, pos:
-                    LogFormatterMathtext(base=base[1])(n, pos).replace(
-                        "\\mathdefault", ""))
+                                            LogFormatterMathtext(base=base[1])(n, pos).replace(
+                                                "\\mathdefault", ""))
             else:
                 # circumvent the problem of symbolic tick values (trac #34693)
                 if isinstance(y_locator, FixedLocator):
@@ -2495,8 +2495,8 @@ class Graphics(WithEqualityById, SageObject):
             if (not isinstance(ticks[1], (list, tuple)) or
                     len(ticks[1]) != len(y_formatter)):
                 raise ValueError("If the second component of the list "
-                    "`tick_formatter` is a list then the second component "
-                    "of `ticks` must also be a list of equal length.")
+                                 "`tick_formatter` is a list then the second component "
+                                 "of `ticks` must also be a list of equal length.")
             y_formatter = FixedFormatter(y_formatter)
 
         subplot.xaxis.set_major_locator(x_locator)
@@ -2544,13 +2544,13 @@ class Graphics(WithEqualityById, SageObject):
 
         INPUT:
 
-        -  ``vmin`` - the current min for this variable (e.g. xmin or ymin)
+        -  ``vmin`` -- the current min for this variable (e.g. xmin or ymin)
 
-        -  ``vmax`` - the current max for this variable (e.g. xmax or ymax)
+        -  ``vmax`` -- the current max for this variable (e.g. xmax or ymax)
 
-        -  ``basev`` - the base of the logarithmic scale for this variable
+        -  ``basev`` -- the base of the logarithmic scale for this variable
 
-        - ``axes_pad`` - the padding for the axis. It determines the
+        - ``axes_pad`` -- the padding for the axis. It determines the
           exponent of the fraction of the minimum (resp. maximum) that is
           subtracted from the minimum (resp. added to the maximum) value of
           the axis. For instance if the minimum is `m` and the base of the
@@ -2788,7 +2788,7 @@ class Graphics(WithEqualityById, SageObject):
             rcParams['text.usetex'] = True
         elif typeset != 'default':  # We won't change (maybe user-set) defaults
             raise ValueError("typeset must be set to one of 'default', 'latex',"
-                             " or 'type1'; got '{}'.".format(typeset))
+                             f" or 'type1'; got '{typeset}'.")
 
         self.fontsize(fontsize)
         self.axes_labels(l=axes_labels)
@@ -2805,7 +2805,7 @@ class Graphics(WithEqualityById, SageObject):
         if not subplot:
             subplot = figure.add_subplot(111)
         # Add all the primitives to the subplot
-        old_opts = dict()
+        old_opts = {}
         for g in self._objects:
             opts, old_opts[g] = g.options(), g.options()
             for k, v in opts.items():
@@ -2867,7 +2867,7 @@ class Graphics(WithEqualityById, SageObject):
 
         if show_legend:
             from matplotlib.font_manager import FontProperties
-            lopts = dict()
+            lopts = {}
             lopts.update(legend_options)
             lopts.update(self._legend_opts)
             prop = FontProperties(
@@ -2898,8 +2898,8 @@ class Graphics(WithEqualityById, SageObject):
         subplot.set_xlim([xmin, xmax])
         subplot.set_ylim([ymin, ymax])
 
-        locator_options = dict(nbins=9, steps=[1, 2, 5, 10],
-                               integer=ticks_integer)
+        locator_options = {'nbins': 9, 'steps': [1, 2, 5, 10],
+                           'integer': ticks_integer}
 
         if axes is None:
             axes = self._show_axes
@@ -3055,7 +3055,7 @@ class Graphics(WithEqualityById, SageObject):
             # We do this change only on linear scale, otherwise matplotlib
             # errors out with a memory error.
             from matplotlib.ticker import (AutoMinorLocator, FixedLocator,
-                    LogLocator, NullLocator)
+                                           LogLocator, NullLocator)
             if isinstance(x_locator, (NullLocator, FixedLocator)):
                 subplot.xaxis.set_minor_locator(NullLocator())
             elif xscale == 'linear':
@@ -3090,8 +3090,8 @@ class Graphics(WithEqualityById, SageObject):
 
             if gridlinesstyle is None:
                 # Set up the default grid style
-                gridlinesstyle = dict(color='black', linestyle=':',
-                                      linewidth=0.5)
+                gridlinesstyle = {'color': 'black', 'linestyle': ':',
+                                  'linewidth': 0.5}
 
             vgridstyle = gridlinesstyle.copy()
             if vgridlinesstyle is not None:
@@ -3180,7 +3180,7 @@ class Graphics(WithEqualityById, SageObject):
                 labeltrans = offset_copy(trans, figure, x=xaxis_labeloffset,
                                          y=0, units='points')
                 subplot.xaxis.set_label_coords(x=xaxis_labelx,
-                                    y=xaxis_labely, transform=labeltrans)
+                                               y=xaxis_labely, transform=labeltrans)
 
                 ylabel = subplot.yaxis.get_label()
                 ylabel.set_horizontalalignment('center')
@@ -3190,7 +3190,7 @@ class Graphics(WithEqualityById, SageObject):
                 labeltrans = offset_copy(trans, figure, x=0,
                                          y=yaxis_labeloffset, units='points')
                 subplot.yaxis.set_label_coords(x=yaxis_labelx,
-                                    y=yaxis_labely, transform=labeltrans)
+                                               y=yaxis_labely, transform=labeltrans)
 
         # This option makes the xlim and ylim limits not take effect
         # todo: figure out which limits were specified, and let the
@@ -3341,7 +3341,7 @@ class Graphics(WithEqualityById, SageObject):
             Graphics object consisting of 1 graphics primitive
 
         """
-        options = dict()
+        options = {}
         options.update(self.SHOW_OPTIONS)
         options.update(self._extra_kwds)
         options.update(kwds)
@@ -3406,7 +3406,7 @@ class Graphics(WithEqualityById, SageObject):
             # tight_layout adjusts the *subplot* parameters so ticks aren't cut off, etc.
             figure.tight_layout()
 
-            opts = dict(dpi=dpi, transparent=transparent)
+            opts = {'dpi': dpi, 'transparent': transparent}
             if fig_tight is True:
                 opts['bbox_inches'] = 'tight'
             if self._bbox_extra_artists:
@@ -3438,7 +3438,7 @@ class Graphics(WithEqualityById, SageObject):
         """
         tmpfilename = tmp_filename(ext='.pgf')
         self.save(filename=tmpfilename, **kwds)
-        with open(tmpfilename, "r") as tmpfile:
+        with open(tmpfilename) as tmpfile:
             latex_list = tmpfile.readlines()
         from sage.misc.latex import latex
         latex.add_package_to_preamble_if_available('pgf')
@@ -3464,7 +3464,7 @@ class Graphics(WithEqualityById, SageObject):
         for g in self:
             g_zorder = g.options().get('zorder', 0)
             if hasattr(g, 'xdata'):
-                g_str = '{0}:\t{1}'.format(g, list(zip(g.xdata, g.ydata)))
+                g_str = f'{g}:\t{list(zip(g.xdata, g.ydata))}'
             else:
                 g_str = repr(g)
             data.append([g_zorder, g_str, g])

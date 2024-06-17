@@ -453,15 +453,13 @@ class tr_data_rel:
                     # Enumerate all elements of Z_F with T_2 <= br
                     T2s = []
                     trace_elts_found = False
-                    for i in range(len(self.trace_elts)):
-                        tre = self.trace_elts[i]
+                    for tre in self.trace_elts:
                         if tre[0] <= bl and tre[1] >= br:
                             trace_elts_found = True
                             if verbose >= 2:
                                 print("  found copy!")
-                            for theta in tre[2]:
-                                if theta.trace() >= bl and theta.trace() <= br:
-                                    T2s.append(theta)
+                            T2s.extend(theta for theta in tre[2]
+                                       if bl <= theta.trace() <= br)
                             break
                     if not trace_elts_found:
                         T2s = self.F._positive_integral_elements_with_trace([bl,br])
@@ -923,7 +921,7 @@ def enumerate_totallyreal_fields_all(n, B, verbose=0, return_seqs=False,
       the polynomials as sequences (for easier exporting to a file). This
       also returns a list of four numbers, as explained in the OUTPUT
       section below.
-    - ``return_pari_objects`` -- (boolean, default: True) if both
+    - ``return_pari_objects`` -- (boolean, default: ``True``) if both
       ``return_seqs`` and ``return_pari_objects`` are ``False`` then it
       returns the elements as Sage objects; otherwise it returns PARI
       objects.

@@ -1282,8 +1282,15 @@ def is_MutablePoset(P):
         sage: from sage.data_structures.mutable_poset import is_MutablePoset
         sage: P = MP()
         sage: is_MutablePoset(P)
+        doctest:warning...
+        DeprecationWarning: The function is_MutablePoset is deprecated; use 'isinstance(..., MutablePoset)' instead.
+        See https://github.com/sagemath/sage/issues/38125 for details.
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38125,
+                "The function is_MutablePoset is deprecated; "
+                "use 'isinstance(..., MutablePoset)' instead.")
     return isinstance(P, MutablePoset)
 
 
@@ -1402,7 +1409,7 @@ class MutablePoset(SageObject):
             ...
             TypeError: 33 is not iterable; do not know what to do with it.
         """
-        if is_MutablePoset(data):
+        if isinstance(data, MutablePoset):
             if key is not None:
                 raise TypeError('Cannot use key when data is a poset.')
             self._copy_shells_(data, lambda e: e)
@@ -1554,7 +1561,7 @@ class MutablePoset(SageObject):
 
         INPUT:
 
-        ``key`` -- the key of an object.
+        - ``key`` -- the key of an object.
 
         OUTPUT:
 
@@ -1588,7 +1595,7 @@ class MutablePoset(SageObject):
 
         INPUT:
 
-        ``key`` -- the key of an object.
+        - ``key`` -- the key of an object.
 
         OUTPUT:
 
@@ -2299,21 +2306,21 @@ class MutablePoset(SageObject):
         - ``key`` -- the key of an object.
 
         - ``raise_key_error`` -- (default: ``True``) switch raising
-          ``KeyError`` on and off.
+          :class:`KeyError` on and off.
 
         OUTPUT:
 
         Nothing.
 
         If the element is not a member and ``raise_key_error`` is set
-        (default), raise a ``KeyError``.
+        (default), raise a :class:`KeyError`.
 
         .. NOTE::
 
             As with Python's ``set``, the methods :meth:`remove`
             and :meth:`discard` only differ in their behavior when an
             element is not contained in the poset: :meth:`remove`
-            raises a ``KeyError`` whereas :meth:`discard` does not
+            raises a :class:`KeyError` whereas :meth:`discard` does not
             raise any exception.
 
             This default behavior can be overridden with the
@@ -2479,21 +2486,21 @@ class MutablePoset(SageObject):
         - ``key`` -- the key of an object.
 
         - ``raise_key_error`` -- (default: ``False``) switch raising
-          ``KeyError`` on and off.
+          :class:`KeyError` on and off.
 
         OUTPUT:
 
         Nothing.
 
         If the element is not a member and ``raise_key_error`` is set
-        (not default), raise a ``KeyError``.
+        (not default), raise a :class:`KeyError`.
 
         .. NOTE::
 
             As with Python's ``set``, the methods :meth:`remove`
             and :meth:`discard` only differ in their behavior when an
             element is not contained in the poset: :meth:`remove`
-            raises a ``KeyError`` whereas :meth:`discard` does not
+            raises a :class:`KeyError` whereas :meth:`discard` does not
             raise any exception.
 
             This default behavior can be overridden with the

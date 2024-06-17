@@ -208,7 +208,7 @@ class BezierPath(GraphicPrimitive_xydata):
         """
         x0, y0 = self.vertices[0]
         x1, y1 = self.vertices[-1]
-        return "Bezier path from (%s, %s) to (%s, %s)" % (x0, y0, x1, y1)
+        return f"Bezier path from ({x0}, {y0}) to ({x1}, {y1})"
 
     def _render_on_subplot(self, subplot):
         """
@@ -341,7 +341,7 @@ def bezier_path(path, **options):
 
     - ``path`` -- a list of lists of tuples (see above)
     - ``alpha`` -- default: 1
-    - ``fill`` -- default: False
+    - ``fill`` -- default: ``False``
     - ``thickness`` -- default: 1
     - ``linestyle`` -- default: ``'solid'``, The style of the line, which is one
        of ``'dashed'``, ``'dotted'``, ``'solid'``, ``'dashdot'``, or ``'--'``,

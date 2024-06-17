@@ -6,7 +6,6 @@ AUTHORS:
 - Yoora Yi Tenen (2012-11-16): Add documentation for :meth:`log()` (:issue:`12113`)
 
 - Tomas Kalvoda (2015-04-01): Add :meth:`exp_polar()` (:issue:`18085`)
-
 """
 
 from sage.misc.functional import log as log
@@ -63,7 +62,7 @@ class Function_exp(GinacFunction):
 
         sage: exp(float(2.5))
         12.182493960703473
-        sage: exp(RDF('2.5'))
+        sage: exp(RDF('2.5'))                                                           # needs sage.symbolic
         12.182493960703473
 
     To prevent automatic evaluation, use the ``hold`` parameter::

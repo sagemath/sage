@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Quantum Group Representations
 
@@ -23,6 +24,7 @@ from sage.categories.modules import Modules
 from sage.categories.category_types import Category_module
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.tensor import tensor, TensorProductsCategory
+
 
 class QuantumGroupRepresentations(Category_module):
     """

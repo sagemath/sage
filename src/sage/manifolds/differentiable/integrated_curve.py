@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Integrated Curves and Geodesics in Manifolds
 
@@ -96,7 +95,6 @@ AUTHORS:
 - Karim Van Aelst (2017): initial version
 - Florentin Jaffredo (2018): integration over multiple charts, use of
   ``fast_callable`` to improve the computation speed
-
 """
 
 # **********************************************************************
@@ -948,8 +946,8 @@ class IntegratedCurve(DifferentiableCurve):
         - ``method`` -- (default: ``'odeint'``) numerical scheme to
           use for the integration of the curve; available algorithms are:
 
-          * ``'odeint'`` - makes use of
-            `scipy.integrate.odeint <https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.odeint.html>`_
+          * ``'odeint'`` -- makes use of
+            :func:`scipy:scipy.integrate.odeint`
             via Sage solver
             :func:`~sage.calculus.desolvers.desolve_odeint`; ``odeint`` invokes
             the LSODA algorithm of the
@@ -957,27 +955,27 @@ class IntegratedCurve(DifferentiableCurve):
             automatically selects between implicit Adams method (for non-stiff
             problems) and a method based on backward differentiation formulas
             (BDF) (for stiff problems).
-          * ``'rk4_maxima'`` - 4th order classical Runge-Kutta, which
+          * ``'rk4_maxima'`` -- 4th order classical Runge-Kutta, which
             makes use of Maxima's dynamics package via Sage solver
             :func:`~sage.calculus.desolvers.desolve_system_rk4` (quite slow)
-          * ``'dopri5'`` - Dormand-Prince Runge-Kutta of order (4)5 provided by
-            `scipy.integrate.ode <https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.ode.html>`_
-          * ``'dop853'`` - Dormand-Prince Runge-Kutta of order 8(5,3) provided by
-            `scipy.integrate.ode <https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.ode.html>`_
+          * ``'dopri5'`` -- Dormand-Prince Runge-Kutta of order (4)5 provided by
+            :obj:`scipy:scipy.integrate.ode`
+          * ``'dop853'`` -- Dormand-Prince Runge-Kutta of order 8(5,3) provided by
+            :obj:`scipy:scipy.integrate.ode`
 
           and those provided by ``GSL`` via Sage class
           :class:`~sage.calculus.ode.ode_solver`:
 
-          * ``'rk2'`` - embedded Runge-Kutta (2,3)
-          * ``'rk4'`` - 4th order classical Runge-Kutta
-          * ``'rkf45'`` - Runge-Kutta-Felhberg (4,5)
-          * ``'rkck'`` - embedded Runge-Kutta-Cash-Karp (4,5)
-          * ``'rk8pd'`` - Runge-Kutta Prince-Dormand (8,9)
-          * ``'rk2imp'`` - implicit 2nd order Runge-Kutta at Gaussian points
-          * ``'rk4imp'`` - implicit 4th order Runge-Kutta at Gaussian points
-          * ``'gear1'`` - `M=1` implicit Gear
-          * ``'gear2'`` - `M=2` implicit Gear
-          * ``'bsimp'`` - implicit Bulirsch-Stoer (requires Jacobian)
+          * ``'rk2'`` -- embedded Runge-Kutta (2,3)
+          * ``'rk4'`` -- 4th order classical Runge-Kutta
+          * ``'rkf45'`` -- Runge-Kutta-Felhberg (4,5)
+          * ``'rkck'`` -- embedded Runge-Kutta-Cash-Karp (4,5)
+          * ``'rk8pd'`` -- Runge-Kutta Prince-Dormand (8,9)
+          * ``'rk2imp'`` -- implicit 2nd order Runge-Kutta at Gaussian points
+          * ``'rk4imp'`` -- implicit 4th order Runge-Kutta at Gaussian points
+          * ``'gear1'`` -- `M=1` implicit Gear
+          * ``'gear2'`` -- `M=2` implicit Gear
+          * ``'bsimp'`` -- implicit Bulirsch-Stoer (requires Jacobian)
 
         - ``solution_key`` -- (default: ``None``) key which the
           resulting numerical solution will be associated to; a default
@@ -1425,8 +1423,8 @@ class IntegratedCurve(DifferentiableCurve):
         Integrate the curve numerically over the domain of integration, with
         the ability to switch chart mid-integration.
 
-        The only supported solver is
-        `scipy.integrate.ode <https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.ode.html>`_, because it supports basic event handling, needed to detect when the
+        The only supported solver is :obj:`scipy:scipy.integrate.ode`,
+        because it supports basic event handling, needed to detect when the
         curve is reaching the frontier of the chart. This is an adaptive step
         solver. So the ``step`` is not the step of integration but instead the
         step used to peak at the current chart, and switch if needed.
@@ -1525,8 +1523,8 @@ class IntegratedCurve(DifferentiableCurve):
 
         The integration is done as usual, but using the method
         :meth:`solve_across_charts` instead of :meth:`solve`. This forces the
-        use of ``scipy.integrate.ode`` as the solver, because of event handling
-        support.
+        use of :obj:`scipy:scipy.integrate.ode` as the solver, because of event
+        handling support.
 
         The argument ``verbose=True`` will cause the solver to write a small
         message each time it is switching chart::
