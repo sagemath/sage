@@ -44,7 +44,6 @@ REFERENCES:
 
 - \K. Conrad: *Exterior powers* [Con2013]_
 - Chap. 19 of S. Lang: *Algebra* [Lan2002]_
-
 """
 #******************************************************************************
 #       Copyright (C) 2017 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>

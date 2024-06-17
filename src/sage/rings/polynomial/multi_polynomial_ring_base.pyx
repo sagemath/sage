@@ -786,8 +786,8 @@ cdef class MPolynomialRing_base(CommutativeRing):
 
         INPUT:
 
-        ``gap`` -- (optional GAP instance) Interface to which the
-                   string is addressed.
+        - ``gap`` -- (optional GAP instance) Interface to which the
+          string is addressed.
 
         NOTE:
 
@@ -1551,8 +1551,8 @@ cdef class MPolynomialRing_base(CommutativeRing):
 
         kwds:
 
-        - ``sparse`` -- boolean (optional - default: ``False``)
-          if ``True``, the function creates sparse matrices.
+        - ``sparse`` -- boolean (default: ``False``); if ``True``, the function
+          creates sparse matrices.
 
         OUTPUT:
 

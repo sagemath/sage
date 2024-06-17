@@ -74,7 +74,7 @@ cdef class Matrix_laurent_mpolynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        ``i`` -- an integer
+        - ``i`` -- an integer
 
         OUTPUT:
 

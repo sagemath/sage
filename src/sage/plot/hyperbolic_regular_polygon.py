@@ -42,7 +42,7 @@ class HyperbolicRegularPolygon(HyperbolicPolygon):
 
     - ``i_angle`` -- interior angle of the polygon
 
-    - ``center``-- center point as a complex number of the polygon
+    - ``center`` -- center point as a complex number of the polygon
 
     EXAMPLES:
 
@@ -177,10 +177,10 @@ class HyperbolicRegularPolygon(HyperbolicPolygon):
 
         INPUT:
 
-        - ``z``-- point in the upper complex halfplane to which
+        - ``z`` -- point in the upper complex halfplane to which
           apply the isometry
 
-        - ``alpha``-- angle of rotation (radians, counterclockwise)
+        - ``alpha`` -- angle of rotation (radians, counterclockwise)
 
         OUTPUT:
 

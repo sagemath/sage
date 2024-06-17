@@ -83,8 +83,8 @@ cdef class FiniteZZsubmodule_iterator:
 
     INPUT:
 
-        - ``basis``  - the elements `(g_0, \ldots, g_n)`
-        - ``order`` (optional) - the additive_orders `m_i` of `g_i`.
+        - ``basis``  -- the elements `(g_0, \ldots, g_n)`
+        - ``order`` (optional) -- the additive_orders `m_i` of `g_i`.
         - ``coset_rep`` (optional) -- an element of g,
           if one aims to compute a coset of the `\ZZ`-submodule `M`.
         - ``immutable`` (optional; default: ``False``)  -- set it to

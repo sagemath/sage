@@ -28,7 +28,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
 from sage.misc.superseded import deprecated_function_alias
 from sage.misc.verbose import verbose
-from sage.modular.arithgroup.all import Gamma0, is_CongruenceSubgroup
+from sage.modular.arithgroup.all import Gamma0, CongruenceSubgroupBase
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial import MPolynomial
@@ -41,7 +41,7 @@ from sage.structure.richcmp import richcmp_method, richcmp
 
 from .constructor import ModularForms
 from .element import is_ModularFormElement, GradedModularFormElement
-from .space import is_ModularFormsSpace
+from .space import ModularFormsSpace
 
 
 def _span_of_forms_in_weight(forms, weight, prec, stop_dim=None, use_random=False):
@@ -231,7 +231,7 @@ class ModularFormsRing(Parent):
         """
         if isinstance(group, (int, Integer)):
             group = Gamma0(group)
-        elif not is_CongruenceSubgroup(group):
+        elif not isinstance(group, CongruenceSubgroupBase):
             raise ValueError("group (=%s) should be a congruence subgroup" % group)
 
         if base_ring != ZZ and not base_ring.is_field() and not base_ring.is_finite():
@@ -592,7 +592,7 @@ class ModularFormsRing(Parent):
             sage: M(D) + 53
             54 + 65520/691*q + 134250480/691*q^2 + 11606736960/691*q^3 + 274945048560/691*q^4 + 3199218815520/691*q^5 + O(q^6)
         """
-        if is_ModularFormsSpace(M):
+        if isinstance(M, ModularFormsSpace):
             if M.group() == self.group() and self.has_coerce_map_from(M.base_ring()):
                 return True
         if self.base_ring().has_coerce_map_from(M):
@@ -985,7 +985,7 @@ class ModularFormsRing(Parent):
         - ``prec`` (integer or ``None``, default: ``None``) -- power series
           precision. If ``None``, the precision defaults to the Sturm bound for
           the requested level and weight.
-        - ``use_random`` (boolean, default: True) -- whether or not to use a
+        - ``use_random`` (boolean, default: ``True``) -- whether or not to use a
           randomized algorithm when building up the space of forms at the given
           weight from known generators of small weight.
 

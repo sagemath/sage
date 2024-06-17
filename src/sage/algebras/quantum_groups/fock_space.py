@@ -1607,6 +1607,7 @@ class FockSpaceBases(Category_realization_of_parent):
 ###############################################################################
 ## Truncated Fock space
 
+
 class FockSpaceTruncated(FockSpace):
     r"""
     This is the Fock space given by partitions of length no more than `k`.

@@ -397,7 +397,7 @@ REFERENCES:
 
 **B**
 
-.. [Bab86] L. Babai. *On Lovász' lattice reduction and the nearest lattice point problem*, 
+.. [Bab86] L. Babai. *On Lovász' lattice reduction and the nearest lattice point problem*,
             Combinatorica, 6(1), 1986, 1-13. :doi:`10.1007/BF02579403`.
 
 .. [Baer2020] Christian Bär. *The Faddeev-LeVerrier algorithm and the Pfaffian*.
@@ -405,6 +405,12 @@ REFERENCES:
 
 .. [BaKi2001] Bakalov and Kirillov, *Lectures on tensor categories and modular functors*,
             AMS (2001).
+
+.. [BRP2018] Basson D., Breuer F., Pink R., Drinfeld modular forms of arbitrary rank.
+             Part I: :arxiv:`1805.12335`,
+             Part II: :arxiv:`1805.12337`,
+             Part III: :arxiv:`1805.12339`,
+             2018.
 
 .. [Ba1994] Kaushik Basu. *The Traveler's Dilemma: Paradoxes of
             Rationality in Game Theory*. The American Economic Review
@@ -2236,6 +2242,10 @@ REFERENCES:
 
 .. [Djo2023b] \D. Đoković, Email Communication. 26 January 2023.
 
+.. [Djo2024] \D. Đoković.
+            *Two classes of Hadamard matrices of Goethals-Seidel type*
+            :arxiv:`2404.14375`
+
 .. [DK2013] John R. Doyle and David Krumm, *Computing algebraic
             numbers of bounded height*, :arxiv:`1111.4963v4` (2013).
 
@@ -2774,6 +2784,10 @@ REFERENCES:
 
 .. [Gek1991] \E.-U. Gekeler. On finite Drinfeld modules. Journal of
              algebra, 1(141):187–203, 1991.
+
+.. [Gek2017] \E.-U. Gekeler. On Drinfeld modular forms of higher rank.
+             Journal de théorie des nombres de Bordeaux,
+             Volume 29 (2017) no. 3, pp. 875-902. :doi:`10.5802/jtnb.1005`
 
 .. [GG2012] Jim Geelen and Bert Gerards, Characterizing graphic
             matroids by a system of linear equations,
@@ -3628,6 +3642,11 @@ REFERENCES:
 .. [Jon2005] \V. Jones, The Jones Polynomial, 2005.
              https://math.berkeley.edu/~vfr/jones.pdf
 
+.. [JPD2018] Átila A. Jones, Fábio Protti and Renata R. Del-Vecchio:
+             *Cograph generation with linear delay*.
+             Theoretical Computer Science, 713:1-10, 2018.
+             :doi:`10.1016/j.tcs.2017.12.037`
+
 .. [JRJ94] Jourdan, Guy-Vincent; Rampon, Jean-Xavier; Jard, Claude
            (1994), "Computing on-line the lattice of maximal antichains
            of posets", Order 11 (3) p. 197-210, :doi:`10.1007/BF02115811`
@@ -4052,6 +4071,12 @@ REFERENCES:
             *Generalized Young walls and crystal bases for quantum affine
             algebra of type* `A`. Proc. Amer. Math. Soc. **138** (2010), no. 11,
             3877--3889.
+
+.. [KS2012] Jerome Kelleher, Barry O'Sullivan,
+            *Generating all partitions: A Comparison of encodings*,
+            Journal of Mathematical Modelling and Algorithms, 11:89-104, 2012.
+            :doi:`10.1007/s10852-011-9168-y`
+            :arxiv:`0909.2331`
 
 .. [KS2015] Karel Klouda and Štěpán Starosta,
             *An Algorithm Enumerating All Infinite Repetitions in a D0L System*.
@@ -6774,6 +6799,11 @@ REFERENCES:
 .. [ZL2014] Wei Zhou and George Labahn. "Unimodular completion of polynomial
             matrices".  In Proceedings ISSAC 2014, pages 413-420. ACM, 2014.
             :doi:`10.1145/2608628.2608640`
+
+.. [ZS1998] Antoine Zoghbi, Ivan Stojmenovic,
+            *Fast Algorithms for Generating Integer Partitions*,
+            Intern. J. Computer Math., Vol. 70., pp. 319--332, 1998.
+            http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.42.1287
 
 .. [ZZ2005] Hechun Zhang and R. B. Zhang.
             *Dual canonical bases for the quantum special linear group

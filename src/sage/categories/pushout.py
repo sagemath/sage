@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Coercion via construction functors
 """
@@ -3465,7 +3466,7 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
 
         INPUT:
 
-        ``other`` -- Construction Functor.
+        - ``other`` -- Construction Functor.
 
         OUTPUT:
 

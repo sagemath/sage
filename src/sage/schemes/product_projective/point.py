@@ -110,7 +110,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         INPUT:
 
-        - ``i`` - integer.
+        - ``i`` -- integer.
 
         OUTPUT:
 
@@ -326,7 +326,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         INPUT:
 
-        - ``L`` - a list of non-negative integers
+        - ``L`` -- a list of non-negative integers
 
         OUTPUT:
 
@@ -537,8 +537,8 @@ class ProductProjectiveSpaces_point_field(ProductProjectiveSpaces_point_ring):
             sage: Q.intersection_multiplicity(Y)                                        # needs sage.libs.singular
             2
         """
-        from sage.schemes.product_projective.space import is_ProductProjectiveSpaces
-        if is_ProductProjectiveSpaces(self.codomain()):
+        from sage.schemes.product_projective.space import ProductProjectiveSpaces_ring
+        if isinstance(self.codomain(), ProductProjectiveSpaces_ring):
             raise TypeError("this point must be a point on a subscheme of a product of projective spaces")
         return self.codomain().intersection_multiplicity(X, self)
 
@@ -565,8 +565,8 @@ class ProductProjectiveSpaces_point_field(ProductProjectiveSpaces_point_ring):
             sage: Q3.multiplicity()                                                     # needs sage.libs.singular
             6
         """
-        from sage.schemes.product_projective.space import is_ProductProjectiveSpaces
-        if is_ProductProjectiveSpaces(self.codomain()):
+        from sage.schemes.product_projective.space import ProductProjectiveSpaces_ring
+        if isinstance(self.codomain(), ProductProjectiveSpaces_ring):
             raise TypeError("this point must be a point on a subscheme of a product of projective spaces")
         return self.codomain().multiplicity(self)
 

@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# sage_setup: distribution = sagemath-repl
 r"""
 The ``pretty_print`` command
 
@@ -216,15 +216,15 @@ def pretty_print(*args, **kwds):
     - ``**kwds`` -- optional keyword arguments that are passed to the
       rich representation. Examples include:
 
-        - ``dpi`` - dots per inch
+        - ``dpi`` -- dots per inch
 
         - ``figsize``- [width, height] (same for square aspect)
 
-        - ``axes`` - (default: True)
+        - ``axes`` -- (default: ``True``)
 
-        - ``fontsize`` - positive integer
+        - ``fontsize`` -- positive integer
 
-        - ``frame`` - (default: False) draw a MATLAB-like frame around
+        - ``frame`` -- (default: ``False``) draw a MATLAB-like frame around
           the image
 
     EXAMPLES::

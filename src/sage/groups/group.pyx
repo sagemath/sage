@@ -218,7 +218,6 @@ cdef class Group(Parent):
         """
         return self.order() == 1
 
-
     def is_multiplicative(self):
         r"""
         Return ``True`` if the group operation is given by ``*`` (rather than ``+``).

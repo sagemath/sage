@@ -308,7 +308,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         INPUT:
 
-        - ``base`` - an optional integer (default is ``10``)
+        - ``base`` -- an optional integer (default is ``10``)
 
         EXAMPLES::
 
@@ -661,7 +661,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
           - ``'iml'``: uses IML library
 
-        -  ``check_invertible`` - only used when ``algorithm=iml``. Whether to
+        -  ``check_invertible`` -- only used when ``algorithm=iml``. Whether to
            check that matrix is invertible
 
         EXAMPLES::
@@ -771,7 +771,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
           - ``'generic'``: calls the generic Sage implementation
 
-        -  ``proof`` - bool or None; if None use
+        -  ``proof`` -- bool or None; if None use
            proof.linear_algebra(); only relevant for the padic algorithm.
 
         .. NOTE::
@@ -1057,9 +1057,9 @@ cdef class Matrix_rational_dense(Matrix_dense):
         INPUT:
 
 
-        -  ``var`` - (optional) the variable name as a string (default is 'x')
+        -  ``var`` -- (optional) the variable name as a string (default is 'x')
 
-        -  ``algorithm`` - an optional specification of an algorithm. It can
+        -  ``algorithm`` -- an optional specification of an algorithm. It can
            be one of
 
            - ``None``: (default) will use linbox
@@ -1348,7 +1348,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         INPUT:
 
-        - ``kwds`` - these are provided for consistency with other versions
+        - ``kwds`` -- these are provided for consistency with other versions
           of this method.  Here they are ignored as there is no optional
           behavior available.
 
@@ -1513,10 +1513,10 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
           - ``'classical'``: just clear each column using Gauss elimination.
 
-        -  ``height_guess``, ``**kwds`` - all passed to the
+        -  ``height_guess``, ``**kwds`` -- all passed to the
            multimodular algorithm; ignored by other algorithms.
 
-        -  ``proof`` - bool or None (default: None, see
+        -  ``proof`` -- bool or None (default: None, see
            proof.linear_algebra or sage.structure.proof). Passed to the
            multimodular algorithm. Note that the Sage global default is
            ``proof=True``.
@@ -1778,9 +1778,9 @@ cdef class Matrix_rational_dense(Matrix_dense):
         INPUT:
 
 
-        -  ``height_guess`` - integer or None
+        -  ``height_guess`` -- integer or None
 
-        -  ``proof`` - boolean (default: None, see
+        -  ``proof`` -- boolean (default: None, see
            proof.linear_algebra or sage.structure.proof) Note that the Sage
            global default is proof=True.
 
@@ -1866,23 +1866,23 @@ cdef class Matrix_rational_dense(Matrix_dense):
         INPUT:
 
 
-        -  ``is_diagonalizable`` - ignored
+        -  ``is_diagonalizable`` -- ignored
 
-        -  ``dual`` - whether to also return decompositions for
+        -  ``dual`` -- whether to also return decompositions for
            the dual
 
-        -  ``algorithm`` - an optional specification of an algorithm
+        -  ``algorithm`` -- an optional specification of an algorithm
 
-           - ``None`` - (default) use default algorithm for computing Echelon
+           - ``None`` -- (default) use default algorithm for computing Echelon
              forms
 
            - 'multimodular': much better if the answers
              factors have small height
 
-        -  ``height_guess`` - positive integer; only used by
+        -  ``height_guess`` -- positive integer; only used by
            the multimodular algorithm
 
-        -  ``proof`` - bool or None (default: None, see
+        -  ``proof`` -- bool or None (default: None, see
            proof.linear_algebra or sage.structure.proof); only used by the
            multimodular algorithm. Note that the Sage global default is
            proof=True.
@@ -1939,16 +1939,16 @@ cdef class Matrix_rational_dense(Matrix_dense):
         INPUT:
 
 
-        -  ``self`` - a square matrix over the rational
+        -  ``self`` -- a square matrix over the rational
            numbers
 
-        -  ``echelon_algorithm`` - an optional algorithm to be passed to the
+        -  ``echelon_algorithm`` -- an optional algorithm to be passed to the
            method ``echelon_form``
 
-        -  ``'multimodular'`` - use this if the answers have
+        -  ``'multimodular'`` -- use this if the answers have
            small height
 
-        -  ``**kwds`` - passed on to echelon function.
+        -  ``**kwds`` -- passed on to echelon function.
 
         .. NOTE::
 
@@ -1963,7 +1963,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         OUTPUT:
 
 
-        -  ``Sequence`` - list of tuples (V,t), where V is a
+        -  ``Sequence`` -- list of tuples (V,t), where V is a
            vector spaces and t is True if and only if the charpoly of self on
            V is irreducible. The tuples are in order corresponding to the
            elements of the sorted list self.charpoly().factor().
@@ -2209,13 +2209,13 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         INPUT:
 
-        -  ``density`` - number between 0 and 1 (default: 1)
+        -  ``density`` -- number between 0 and 1 (default: 1)
 
-        -  ``num_bound`` - numerator bound (default: 2)
+        -  ``num_bound`` -- numerator bound (default: 2)
 
-        -  ``den_bound`` - denominator bound (default: 2)
+        -  ``den_bound`` -- denominator bound (default: 2)
 
-        -  ``distribution`` - ``None`` or '1/n' (default: ``None``); if '1/n'
+        -  ``distribution`` -- ``None`` or '1/n' (default: ``None``); if '1/n'
            then ``num_bound``, ``den_bound`` are ignored and numbers are chosen
            using the GMP function ``mpq_randomize_entry_recip_uniform``
 
@@ -2472,7 +2472,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         INPUT:
 
-        - ``algorithm`` - an optional specification of an algorithm. One of
+        - ``algorithm`` -- an optional specification of an algorithm. One of
 
           - ``None``: (default) will use flint
 
@@ -2672,13 +2672,13 @@ cdef class Matrix_rational_dense(Matrix_dense):
         INPUT:
 
 
-        -  ``i`` - integer, index into the rows of self
+        -  ``i`` -- integer, index into the rows of self
 
-        -  ``A`` - a matrix
+        -  ``A`` -- a matrix
 
-        -  ``r`` - integer, index into rows of A
+        -  ``r`` -- integer, index into rows of A
 
-        -  ``cols`` - a *sorted* list of integers.
+        -  ``cols`` -- a *sorted* list of integers.
 
 
         EXAMPLES::
@@ -2841,9 +2841,9 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         INPUT:
 
-        -  ``i`` - integer
+        -  ``i`` -- integer
 
-        -  ``from_list`` - ignored
+        -  ``from_list`` -- ignored
 
         EXAMPLES::
 
@@ -2885,9 +2885,9 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         INPUT:
 
-        -  ``i`` - integer
+        -  ``i`` -- integer
 
-        -  ``from_list`` - ignored
+        -  ``from_list`` -- ignored
 
         EXAMPLES::
 

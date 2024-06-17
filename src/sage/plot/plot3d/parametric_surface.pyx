@@ -41,7 +41,6 @@ EXAMPLES::
     sphinx_plot(MoebiusStrip(1,.2))
 
 
-
 By default, the surface is colored with one single color. ::
 
     sage: P = ParametricSurface(f, (srange(0,10,0.1), srange(-5,5.0,0.1)),
@@ -146,15 +145,15 @@ cdef class ParametricSurface(IndexFaceSet):
 
     INPUT:
 
-    - ``f`` - (default: ``None``) The defining function. Either a tuple of
+    - ``f`` -- (default: ``None``) The defining function. Either a tuple of
       three functions, or a single function which returns a tuple, taking
       two python floats as input. To subclass, pass ``None`` for ``f`` and
       override ``eval_c`` or ``eval`` instead.
 
-    - ``domain`` - (default: ``None``) A tuple of two lists, defining the
+    - ``domain`` -- (default: ``None``) A tuple of two lists, defining the
       grid of `u,v` values. If ``None``, this will be calculated automatically.
 
-    - ``color`` - (default: ``None``) A pair `(h,c)` where `h` is
+    - ``color`` -- (default: ``None``) A pair `(h,c)` where `h` is
       a function with values in `[0,1]` and `c` is a colormap. The
       color of a point `p` is then defined as the composition
       `c(h(p))`

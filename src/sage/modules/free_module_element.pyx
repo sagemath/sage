@@ -602,11 +602,11 @@ def prepare(v, R, degree=None):
 
     INPUT:
 
-    - ``v`` - a dictionary with non-negative integers as keys,
+    - ``v`` -- a dictionary with non-negative integers as keys,
       or a list or other object that can be converted by the ``Sequence``
       constructor
-    - ``R`` - a ring containing all the entries, possibly given as ``None``
-    - ``degree`` -  a requested size for the list when the input is a dictionary,
+    - ``R`` -- a ring containing all the entries, possibly given as ``None``
+    - ``degree`` --  a requested size for the list when the input is a dictionary,
       otherwise ignored
 
     OUTPUT:
@@ -704,10 +704,10 @@ def zero_vector(arg0, arg1=None):
 
     INPUT:
 
-    - ``degree`` - the number of zero entries in the vector or
+    - ``degree`` -- the number of zero entries in the vector or
       free module element
 
-    - ``ring`` - default ``ZZ`` - the base ring of the vector
+    - ``ring`` -- (default: ``ZZ``); the base ring of the vector
       space or module containing the constructed zero vector
 
     OUTPUT:
@@ -776,10 +776,10 @@ def random_vector(ring, degree=None, *args, **kwds):
 
     INPUT:
 
-    - ring -- default: ``ZZ`` - the base ring for the entries
+    - ring -- (default: ``ZZ``); the base ring for the entries
     - degree -- a non-negative integer for the number of entries in the vector
-    - sparse -- default: ``False`` - whether to use a sparse implementation
-    - args, kwds - additional arguments and keywords are passed
+    - sparse -- (default: ``False``); whether to use a sparse implementation
+    - args, kwds -- additional arguments and keywords are passed
       to the ``random_element()`` method of the ring
 
     OUTPUT:
@@ -948,6 +948,50 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         self._parent = parent
         self._degree = parent.degree()
         self._is_immutable = 0
+
+    # specified in ModulesWithBasis.ElementMethods.monomial_coefficients
+    def monomial_coefficients(self, copy=True):
+        r"""
+        Return a dictionary whose keys are indices of basis elements
+        in the support of ``self`` and whose values are the
+        corresponding coefficients.
+
+        INPUT:
+
+        - ``copy`` -- (default: ``True``) if ``self`` is internally
+          represented by a dictionary ``d``, then make a copy of ``d``;
+          if ``False``, then this can cause undesired behavior by
+          mutating ``d``
+
+        EXAMPLES::
+
+            sage: V = ZZ^3
+            sage: v = V([1, 0, 5])
+            sage: v.monomial_coefficients()
+            {0: 1, 2: 5}
+
+        Check that it works for submodules (:issue:`34455`)::
+
+            sage: V = ZZ^3
+            sage: U = V.submodule([[1, 2, 3], [1, 1, 1]])
+            sage: U
+            Free module of degree 3 and rank 2 over Integer Ring
+            Echelon basis matrix:
+            [ 1  0 -1]
+            [ 0  1  2]
+            sage: u = U([2, 3, 4])
+            sage: u.monomial_coefficients()
+            {0: 2, 1: 3}
+        """
+        base_ring = self.parent().base_ring()
+        if self.parent().is_ambient() and base_ring == self.parent().coordinate_ring():
+            return self.dict(copy=copy)
+        coordinates = self.parent().coordinate_vector(self)
+        # coordinate_vector returns coefficients in the fraction field.
+        # convert back to the base ring.
+        return {index: base_ring(value)
+                for index, value in enumerate(coordinates)
+                if value}
 
     def _giac_init_(self):
         """
@@ -1672,7 +1716,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         INPUT:
 
-        - ``p`` - default: 2 -- ``p`` can be a real number greater than 1,
+        - ``p`` -- default: 2 -- ``p`` can be a real number greater than 1,
           infinity (``oo`` or ``Infinity``), or a symbolic expression.
 
           - `p=1`: the taxicab (Manhattan) norm
@@ -1929,7 +1973,6 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         assert value.parent() is self.coordinate_ring()
         self.set_unsafe(i, value)
-
 
     def __invert__(self):
         """
@@ -2280,8 +2323,6 @@ cdef class FreeModuleElement(Vector):   # abstract base class
                 e[i] = c
         return e
 
-    monomial_coefficients = dict
-
     #############################
     # Plotting
     #############################
@@ -2289,7 +2330,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         INPUT:
 
-        - ``plot_type`` - (default: 'arrow' if v has 3 or fewer components,
+        - ``plot_type`` -- (default: 'arrow' if v has 3 or fewer components,
             otherwise 'step') type of plot. Options are:
 
             - 'arrow' to draw an arrow
@@ -2303,7 +2344,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
           Both 'arrow' and 'point' raise exceptions if the vector has
           more than 3 dimensions.
 
-        - ``start`` - (default: origin in correct dimension) may be a tuple,
+        - ``start`` -- (default: origin in correct dimension) may be a tuple,
           list, or vector.
 
         EXAMPLES:
@@ -2408,7 +2449,6 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         else:
             start = list(start)
 
-
         if plot_type == 'arrow' or plot_type == 'point':
             dimension = len(coords)
             if dimension == 3:
@@ -2442,20 +2482,20 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         r"""
         INPUT:
 
-        -  ``xmin`` - (default: 0) start x position to start
+        -  ``xmin`` -- (default: 0) start x position to start
            plotting
 
-        -  ``xmax`` - (default: 1) stop x position to stop
+        -  ``xmax`` -- (default: 1) stop x position to stop
            plotting
 
-        -  ``eps`` - (default: determined by xmax) we view this
+        -  ``eps`` -- (default: determined by xmax) we view this
            vector as defining a function at the points xmin, xmin + eps, xmin
            + 2\*eps, ...,
 
-        -  ``res`` - (default: all points) total number of
+        -  ``res`` -- (default: all points) total number of
            points to include in the graph
 
-        -  ``connect`` - (default: True) if True draws a line;
+        -  ``connect`` -- (default: ``True``) if True draws a line;
            otherwise draw a list of points.
 
 
@@ -2651,7 +2691,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         INPUT:
 
-        - ``right`` - A vector of the same size as ``self``, either
+        - ``right`` -- A vector of the same size as ``self``, either
           degree three or degree seven.
 
         OUTPUT:
@@ -2847,7 +2887,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         INPUT:
 
 
-        -  ``right`` - vector of the same degree as self. It
+        -  ``right`` -- vector of the same degree as self. It
            need not be in the same vector space as self, as long as the
            coefficients can be multiplied.
 
@@ -3117,7 +3157,6 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         return self
 
-
     def monic(self):
         """
         Return this vector divided through by the first nonzero entry of
@@ -3260,7 +3299,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         INPUT:
 
-        - ``right`` - a vector of the same degree as ``self``
+        - ``right`` -- a vector of the same degree as ``self``
 
         OUTPUT:
 
@@ -3364,7 +3403,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         INPUT:
 
-        - ``right`` - a vector (or free module element) of any size, whose
+        - ``right`` -- a vector (or free module element) of any size, whose
           elements are compatible (with regard to multiplication) with the
           elements of ``self``.
 
@@ -3483,7 +3522,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         INPUT:
 
-        - ``right`` - a vector of the same degree as ``self``
+        - ``right`` -- a vector of the same degree as ``self``
 
         OUTPUT:
 
@@ -3852,7 +3891,6 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         else:
             return self.parent().ambient_module().sparse_module()(self.list())
 
-
     def apply_map(self, phi, R=None, sparse=None):
         """
         Apply the given map phi (an arbitrary Python function or callable
@@ -3865,10 +3903,10 @@ cdef class FreeModuleElement(Vector):   # abstract base class
               is sparse.
 
 
-        -  ``phi`` - arbitrary Python function or callable
+        -  ``phi`` -- arbitrary Python function or callable
            object
 
-        -  ``R`` - (optional) ring
+        -  ``R`` -- (optional) ring
 
 
         OUTPUT: a free module element over R
@@ -3998,7 +4036,6 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         else:
             return vector(R, v, sparse=sparse)
 
-
     def _derivative(self, var=None):
         """
         Differentiate with respect to var by differentiating each element
@@ -4101,8 +4138,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         from sage.misc.functional import integral
         return self.apply_map(lambda x: integral(x,*args, **kwds))
 
-    integrate=integral
-
+    integrate = integral
 
     def nintegral(self, *args, **kwds):
         """
@@ -4231,6 +4267,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             return vector(ring, coeffs)
         return vector(coeffs)
 
+
 #############################################
 # Generic dense element
 #############################################
@@ -4282,6 +4319,7 @@ def make_FreeModuleElement_generic_dense_v1(parent, entries, degree, is_mutable)
     v._degree = degree
     v._is_immutable = not is_mutable
     return v
+
 
 cdef class FreeModuleElement_generic_dense(FreeModuleElement):
     """
@@ -4602,7 +4640,6 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
             (-1.00000000000000, 0.000000000000000, 0.666666666666667, 1.00000000000000)
         """
         self._entries[i] = value
-
 
     def list(self, copy=True):
         """
@@ -5253,7 +5290,6 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         else:
             self._entries.pop(i, None)
 
-
     def denominator(self):
         """
         Return the least common multiple of the denominators of the
@@ -5307,8 +5343,6 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
             return dict(self._entries)
         else:
             return self._entries
-
-    monomial_coefficients = dict
 
     def list(self, copy=True):
         """

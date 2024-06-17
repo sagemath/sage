@@ -36,7 +36,6 @@ AUTHORS:
 - Robert Bradshaw
 
 - John Cremona
-
 """
 #*****************************************************************************
 #       Copyright (C) 2017 Robert Bradshaw <robertwb@math.washington.edu>

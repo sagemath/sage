@@ -17,7 +17,6 @@ AUTHORS:
 
 - Julian Rueth (2013-04-09) - Collected common code in
   :class:`Set_object_binary`, fixed ``__hash__``.
-
 """
 
 # ****************************************************************************

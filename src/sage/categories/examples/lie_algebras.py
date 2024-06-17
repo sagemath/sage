@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.modules
 r"""
 Examples of a Lie algebra
@@ -15,6 +16,7 @@ from sage.categories.lie_algebras import LieAlgebras
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element_wrapper import ElementWrapper
+
 
 class LieAlgebraFromAssociative(Parent, UniqueRepresentation):
     r"""

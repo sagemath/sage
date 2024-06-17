@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat
 r"""
 Examples of algebras with basis
@@ -14,6 +15,7 @@ from sage.sets.family import Family
 from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.words.words import Words
+
 
 class FreeAlgebra(CombinatorialFreeModule):
     r"""

@@ -5,7 +5,6 @@ Functor construction for all spaces
 AUTHORS:
 
 - Jonas Jermann (2013): initial version
-
 """
 
 # ****************************************************************************

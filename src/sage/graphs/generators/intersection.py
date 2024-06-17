@@ -408,7 +408,7 @@ def OrthogonalArrayBlockGraph(k, n, OA=None):
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     - ``OA`` -- An orthogonal array. If set to ``None`` (default) then
       :func:`~sage.combinat.designs.orthogonal_arrays.orthogonal_array` is

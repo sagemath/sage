@@ -89,7 +89,7 @@ from sage.misc.randstate cimport current_randstate
 from sage.structure.coerce cimport py_scalar_parent
 from sage.structure.sequence import Sequence
 from sage.structure.coerce cimport coercion_model
-from sage.structure.element import is_Vector
+from sage.structure.element import Vector
 from sage.structure.element cimport have_same_parent
 from sage.misc.verbose import verbose
 from sage.rings.number_field.number_field_base import NumberField
@@ -444,7 +444,7 @@ cdef class Matrix(Matrix1):
             (2)
 
         """
-        if is_Vector(B):
+        if isinstance(B, Vector):
             try:
                 return self.transpose().solve_right(B, check=check)
             except ValueError as e:
@@ -883,7 +883,7 @@ cdef class Matrix(Matrix1):
             L = B.base_ring()
         except AttributeError:
             raise TypeError("the second argument must be a vector or a matrix")
-        b_is_vec = is_Vector(B)
+        b_is_vec = isinstance(B, Vector)
         if b_is_vec:
             if self.nrows() != B.degree():
                 raise ValueError("number of rows of self must equal "
@@ -1035,9 +1035,9 @@ cdef class Matrix(Matrix1):
         INPUT:
 
 
-        -  ``B`` - a matrix
+        -  ``B`` -- a matrix
 
-        -  ``check`` - bool (default: True); if False, if there
+        -  ``check`` -- bool (default: ``True``); if False, if there
            is no solution this function will not detect that fact.
 
 
@@ -1108,7 +1108,7 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``right`` - the right operand of the product.  A matrix
+        - ``right`` -- the right operand of the product.  A matrix
           of the same size as ``self`` such that multiplication
           of elements of the base rings of ``self`` and ``right``
           is defined, once Sage's coercion model is applied.  If
@@ -2018,9 +2018,9 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``algorithm`` - string:
-            - ``"df"`` - Generic O(n^4) division-free algorithm
-            - ``"hessenberg"`` - Use the Hessenberg form of the matrix
+        - ``algorithm`` -- string:
+            - ``"df"`` -- Generic O(n^4) division-free algorithm
+            - ``"hessenberg"`` -- Use the Hessenberg form of the matrix
 
         EXAMPLES::
 
@@ -2327,8 +2327,8 @@ cdef class Matrix(Matrix1):
         - ``algorithm`` (default: ``None``) -- string, the algorithm to use;
           currently the following algorithms have been implemented:
 
-          * ``'bfl'`` - using the Bär-Faddeev-LeVerrier algorithm
-          * ``'definition'`` - using the definition given by perfect
+          * ``'bfl'`` -- using the Bär-Faddeev-LeVerrier algorithm
+          * ``'definition'`` -- using the definition given by perfect
             matchings
 
         - ``check`` (default: ``True``) -- boolean determining whether to
@@ -2653,7 +2653,7 @@ cdef class Matrix(Matrix1):
         INPUT:
 
 
-        -  ``phi`` - a morphism, so phi is callable and
+        -  ``phi`` -- a morphism, so phi is callable and
            phi.domain() and phi.codomain() are defined. The codomain must be a
            ring.
 
@@ -2700,11 +2700,11 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``sparse`` -- True to make the output a sparse matrix; default False
+        - ``sparse`` -- True to make the output a sparse matrix; default: ``False``
 
-        -  ``phi`` - arbitrary Python function or callable object
+        -  ``phi`` -- arbitrary Python function or callable object
 
-        -  ``R`` - (optional) ring
+        -  ``R`` -- (optional) ring
 
         OUTPUT: a matrix over R
 
@@ -2954,10 +2954,10 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``var`` - a variable name (default: 'x')
-        - ``algorithm`` - string:
-            - ``"df"`` - Generic `O(n^4)` division-free algorithm
-            - ``"hessenberg"`` - Use the Hessenberg form of the matrix
+        - ``var`` -- a variable name (default: 'x')
+        - ``algorithm`` -- string:
+            - ``"df"`` -- Generic `O(n^4)` division-free algorithm
+            - ``"hessenberg"`` -- Use the Hessenberg form of the matrix
 
         EXAMPLES:
 
@@ -3124,7 +3124,7 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``var`` - a variable name (default: ``'x'``)
+        - ``var`` -- a variable name (default: ``'x'``)
 
         OUTPUT:
 
@@ -3278,7 +3278,7 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        -  ``var`` - (default: 'x') name of variable of charpoly
+        -  ``var`` -- (default: 'x') name of variable of charpoly
 
         EXAMPLES::
 
@@ -3409,7 +3409,7 @@ cdef class Matrix(Matrix1):
         INPUT:
 
 
-        -  ``self`` - a square matrix
+        -  ``self`` -- a square matrix
 
 
         OUTPUT: element of the base ring of self
@@ -3605,7 +3605,7 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        -  ``var`` - name of the indeterminate of the charpoly
+        -  ``var`` -- name of the indeterminate of the charpoly
 
         The characteristic polynomial is represented as a vector of ints,
         where the constant term of the characteristic polynomial is the 0th
@@ -3986,20 +3986,20 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``algorithm`` - default: 'default' - a keyword that selects the
+        - ``algorithm`` -- (default: 'default'); a keyword that selects the
           algorithm employed.  Allowable values are:
 
-          - 'default' - allows the algorithm to be chosen automatically
-          - 'generic' - naive algorithm usable for matrices over any field
-          - 'flint' - FLINT library code for matrices over the rationals
+          - 'default' -- allows the algorithm to be chosen automatically
+          - 'generic' -- naive algorithm usable for matrices over any field
+          - 'flint' -- FLINT library code for matrices over the rationals
             or the integers
-          - 'pari' - PARI library code for matrices over number fields
+          - 'pari' -- PARI library code for matrices over number fields
             or the integers
-          - 'padic' - padic algorithm from IML library for matrices
+          - 'padic' -- padic algorithm from IML library for matrices
             over the rationals and integers
-          - 'pluq' - PLUQ matrix factorization for matrices mod 2
+          - 'pluq' -- PLUQ matrix factorization for matrices mod 2
 
-        - ``basis`` - default: 'default' - a keyword that describes
+        - ``basis`` -- (default: 'default'); a keyword that describes
           the format of the basis returned.  Allowable values are:
 
           - 'default': uses 'echelon' over fields; 'computed' otherwise.
@@ -4684,20 +4684,20 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``algorithm`` - default: 'default' - a keyword that selects the
+        - ``algorithm`` -- (default: 'default'); a keyword that selects the
           algorithm employed.  Allowable values are:
 
-          - 'default' - allows the algorithm to be chosen automatically
-          - 'generic' - naive algorithm usable for matrices over any field
-          - 'flint' - FLINT library code for matrices over the rationals
+          - 'default' -- allows the algorithm to be chosen automatically
+          - 'generic' -- naive algorithm usable for matrices over any field
+          - 'flint' -- FLINT library code for matrices over the rationals
             or the integers
-          - 'pari' - PARI library code for matrices over number fields
+          - 'pari' -- PARI library code for matrices over number fields
             or the integers
-          - 'padic' - padic algorithm from IML library for matrices
+          - 'padic' -- padic algorithm from IML library for matrices
             over the rationals and integers
-          - 'pluq' - PLUQ matrix factorization for matrices mod 2
+          - 'pluq' -- PLUQ matrix factorization for matrices mod 2
 
-        - ``basis`` - default: 'echelon' - a keyword that describes the
+        - ``basis`` -- (default: 'echelon'); a keyword that describes the
           format of the basis used to construct the right kernel.
           Allowable values are:
 
@@ -5052,20 +5052,20 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``algorithm`` - default: 'default' - a keyword that selects the
+        - ``algorithm`` -- (default: 'default'); a keyword that selects the
           algorithm employed.  Allowable values are:
 
-          - 'default' - allows the algorithm to be chosen automatically
-          - 'generic' - naive algorithm usable for matrices over any field
-          - 'flint' - FLINT library code for matrices over the rationals
+          - 'default' -- allows the algorithm to be chosen automatically
+          - 'generic' -- naive algorithm usable for matrices over any field
+          - 'flint' -- FLINT library code for matrices over the rationals
             or the integers
-          - 'pari' - PARI library code for matrices over number fields
+          - 'pari' -- PARI library code for matrices over number fields
             or the integers
-          - 'padic' - padic algorithm from IML library for matrices
+          - 'padic' -- padic algorithm from IML library for matrices
             over the rationals and integers
-          - 'pluq' - PLUQ matrix factorization for matrices mod 2
+          - 'pluq' -- PLUQ matrix factorization for matrices mod 2
 
-        - ``basis`` - default: 'echelon' - a keyword that describes
+        - ``basis`` -- (default: 'echelon'); a keyword that describes
           the format of the basis used to construct the left kernel.
           Allowable values are:
 
@@ -5201,12 +5201,12 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``V`` - vector subspace
+        - ``V`` -- vector subspace
 
-        - ``check`` - (optional) default: True; whether to check that
+        - ``check`` -- (optional) default: ``True``; whether to check that
           V is invariant under the action of self.
 
-        - ``poly`` - (optional) default: None; if not None, compute instead
+        - ``poly`` -- (optional) default: None; if not None, compute instead
           the kernel of poly(self) on V.
 
         OUTPUT:
@@ -5502,17 +5502,17 @@ cdef class Matrix(Matrix1):
         INPUT:
 
 
-        -  ``self`` - a matrix
+        -  ``self`` -- a matrix
 
-        -  ``algorithm`` - 'spin' (default): algorithm involves
+        -  ``algorithm`` -- 'spin' (default): algorithm involves
            iterating the action of self on a vector. 'kernel': naively just
            compute `ker(f_i(A))` for each factor `f_i`.
 
-        -  ``dual`` - bool (default: False): If True, also
+        -  ``dual`` -- bool (default: ``False``): If True, also
            returns the corresponding decomposition of V under the action of
            the transpose of A. The factors are guaranteed to correspond.
 
-        -  ``is_diagonalizable`` - if the matrix is known to
+        -  ``is_diagonalizable`` -- if the matrix is known to
            be diagonalizable, set this to True, which might speed up the
            algorithm in some cases.
 
@@ -5525,12 +5525,12 @@ cdef class Matrix(Matrix1):
         OUTPUT:
 
 
-        - ``Sequence`` - list of pairs (V,t), where V is a vector
+        - ``Sequence`` -- list of pairs (V,t), where V is a vector
           spaces and t is a bool, and t is True exactly when the
           charpoly of self on V is irreducible.
 
 
-        - (optional) list - list of pairs (W,t), where W is a vector
+        - (optional) list -- list of pairs (W,t), where W is a vector
           space and t is a bool, and t is True exactly when the
           charpoly of the transpose of self on W is irreducible.
 
@@ -5580,7 +5580,7 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``self`` - a matrix with field entries
+        - ``self`` -- a matrix with field entries
 
         OUTPUT: a list of reduced row echelon form basis
         """
@@ -5786,7 +5786,7 @@ cdef class Matrix(Matrix1):
             sage: t.decomposition_of_subspace(v, check_restrict=False) == t.decomposition_of_subspace(v)                # needs sage.libs.pari
             True
         """
-        if not sage.modules.free_module.is_FreeModule(M):
+        if not isinstance(M, sage.modules.free_module.FreeModule_generic):
             raise TypeError("M must be a free module.")
         if not self.is_square():
             raise ArithmeticError("self must be a square matrix")
@@ -5833,9 +5833,9 @@ cdef class Matrix(Matrix1):
         INPUT:
 
 
-        -  ``V`` - vector subspace
+        -  ``V`` -- vector subspace
 
-        -  ``check`` - (optional) default: True; if False may
+        -  ``check`` -- (optional) default: ``True``; if False may
            not check that V is invariant (hence can be faster).
 
 
@@ -5906,7 +5906,7 @@ cdef class Matrix(Matrix1):
         INPUT:
 
 
-        -  ``V`` - vector space (subspace of ambient space on
+        -  ``V`` -- vector space (subspace of ambient space on
            which self acts)
 
 
@@ -5942,7 +5942,7 @@ cdef class Matrix(Matrix1):
         INPUT:
 
 
-        -  ``V`` - vector space (space of degree
+        -  ``V`` -- vector space (space of degree
            ``self.ncols()``) that contains the image of self.
 
 
@@ -5981,15 +5981,15 @@ cdef class Matrix(Matrix1):
         INPUT:
 
 
-        -  ``self`` - Matrix
+        -  ``self`` -- Matrix
 
-        -  ``v`` - Vector
+        -  ``v`` -- Vector
 
 
         OUTPUT:
 
 
-        -  ``list`` - list of Vectors
+        -  ``list`` -- list of Vectors
 
 
         ALGORITHM: The current implementation just adds vectors to a vector
@@ -6039,9 +6039,9 @@ cdef class Matrix(Matrix1):
         INPUT:
 
 
-        -  ``i`` - an integer
+        -  ``i`` -- an integer
 
-        -  ``t`` - an integer (default: 0) if t is nonzero, use
+        -  ``t`` -- an integer (default: 0) if t is nonzero, use
            only the first t linear recurrence relations.
 
 
@@ -6528,21 +6528,21 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``self`` - a square matrix over an exact field.  For inexact
+        - ``self`` -- a square matrix over an exact field.  For inexact
           matrices consult the numerical or symbolic matrix classes.
 
-        - ``format`` - default: ``None``
+        - ``format`` -- default: ``None``
 
-          - ``'all'`` - attempts to create every eigenspace.  This will
+          - ``'all'`` -- attempts to create every eigenspace.  This will
             always be possible for matrices with rational entries.
-          - ``'galois'`` - for each irreducible factor of the characteristic
+          - ``'galois'`` -- for each irreducible factor of the characteristic
             polynomial, a single eigenspace will be output for a
             single root/eigenvalue for the irreducible factor.
-          - ``None`` - Uses the 'all' format if the base ring is contained
+          - ``None`` -- Uses the 'all' format if the base ring is contained
             in an algebraically closed field which is implemented.
             Otherwise, uses the 'galois' format.
 
-        - ``var`` - default: 'a' - variable name used to
+        - ``var`` -- (default: 'a'); variable name used to
           represent elements of the root field of each
           irreducible factor of the characteristic polynomial.
           If var='a', then the root fields will be in terms of
@@ -6550,7 +6550,7 @@ cdef class Matrix(Matrix1):
           the irreducible factors of the characteristic polynomial,
           even for linear factors.
 
-        - ``algebraic_multiplicity`` - default: False - whether or
+        - ``algebraic_multiplicity`` -- (default: ``False``); whether or
           not to include the algebraic multiplicity of each eigenvalue
           in the output.  See the discussion below.
 
@@ -8254,7 +8254,7 @@ cdef class Matrix(Matrix1):
         - ``subdivide`` -- (boolean, default: ``False``) whether to
           subdivide the returned matrix.  See the description of the
           (output) below for details.
-        - ``kwds`` - additional keywords that can be passed to
+        - ``kwds`` -- additional keywords that can be passed to
           the method that computes the echelon form.
 
         OUTPUT:
@@ -8820,7 +8820,7 @@ cdef class Matrix(Matrix1):
         INPUT:
 
 
-        -  ``cutoff`` - integer (default: 0 - let class
+        -  ``cutoff`` -- integer (default: 0 -- let class
            decide).
 
 
@@ -9215,7 +9215,7 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``left``, ``right`` - two matrices, such that if ``left`` is
+        - ``left``, ``right`` -- two matrices, such that if ``left`` is
           augmented by placing ``right`` on the right side of ``left``,
           then the result is ``self``.  It is the responsibility of the
           calling routine to ensure this condition holds.
@@ -9260,7 +9260,7 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``top``, ``bottom`` - two matrices, such that if ``top`` is
+        - ``top``, ``bottom`` -- two matrices, such that if ``top`` is
         stacked by placing ``top`` above ``bottom``, then the result
         is ``self``.  It is the responsibility of the calling routine
         to ensure this condition holds.
@@ -9339,8 +9339,8 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``A`` - a matrix
-        - ``subdivide`` - default: True - whether or not to return
+        - ``A`` -- a matrix
+        - ``subdivide`` -- (default: ``True``); whether or not to return
           natural subdivisions with the matrix
 
         OUTPUT:
@@ -9450,11 +9450,11 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        -  ``density`` - ``float`` (default: ``1``); upper bound for the
+        -  ``density`` -- ``float`` (default: ``1``); upper bound for the
            proportion of entries that are changed
-        -  ``nonzero`` - Bool (default: ``False``); if ``True``, then new
+        -  ``nonzero`` -- Bool (default: ``False``); if ``True``, then new
            entries will be nonzero
-        -  ``*args, **kwds`` - Remaining parameters may be passed to the
+        -  ``*args, **kwds`` -- Remaining parameters may be passed to the
            ``random_element`` function of the base ring
 
         EXAMPLES:
@@ -10055,7 +10055,7 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``maxsize`` - integer (default: ``512``). Maximal dimension
+        - ``maxsize`` -- integer (default: ``512``). Maximal dimension
           in either x or y direction of the resulting image. If
           ``None`` or a maxsize larger than
           ``max(self.nrows(),self.ncols())`` is given the image will
@@ -10401,7 +10401,7 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``full`` - default: ``True`` - if ``True`` then the
+        - ``full`` -- (default: ``True``); if ``True`` then the
           returned matrices have dimensions as described below.
           If ``False`` the ``R`` matrix has no zero rows and the
           columns of ``Q`` are a basis for the column space of
@@ -10696,7 +10696,7 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``self`` - is a matrix whose columns are to be orthogonalized.
+        - ``self`` -- is a matrix whose columns are to be orthogonalized.
           The base ring of the matrix needs to have its fraction field
           implemented.
 
@@ -10844,8 +10844,8 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``self`` - a matrix whose rows are to be orthogonalized.
-        - ``orthonormal`` - default: ``False`` - if ``True`` the
+        - ``self`` -- a matrix whose rows are to be orthogonalized.
+        - ``orthonormal`` -- (default: ``False``); if ``True`` the
           returned orthogonal vectors are unit vectors.  This keyword
           is ignored if the matrix is over ``RDF`` or ``CDF`` and the
           results are always orthonormal.
@@ -11195,18 +11195,18 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``base_ring`` - Ring in which to compute the Jordan form.
+        - ``base_ring`` -- Ring in which to compute the Jordan form.
 
-        - ``sparse`` - (default ``False``) If ``sparse=True``, return a sparse
+        - ``sparse`` -- (default ``False``) If ``sparse=True``, return a sparse
           matrix.
 
-        - ``subdivide`` - (default ``True``) If ``subdivide=True``, the
+        - ``subdivide`` -- (default ``True``) If ``subdivide=True``, the
           subdivisions for the Jordan blocks in the matrix are shown.
 
-        - ``transformation`` - (default ``False``) If ``transformation=True``,
+        - ``transformation`` -- (default ``False``) If ``transformation=True``,
           computes also the transformation matrix.
 
-        - ``eigenvalues`` - (default ``None``) A complete set of roots, with
+        - ``eigenvalues`` -- (default ``None``) A complete set of roots, with
           multiplicity, of the characteristic polynomial of `A`, encoded as
           a list of pairs, each having the form `(r, m)` with `r` a root and
           `m` its multiplicity. If this is ``None``, then Sage computes this
@@ -11215,7 +11215,7 @@ cdef class Matrix(Matrix1):
           other rings, providing this list manually is the only way to
           compute Jordan normal forms.
 
-        - ``check_input`` - (default ``True``) A Boolean specifying whether
+        - ``check_input`` -- (default ``True``) A Boolean specifying whether
           the list ``eigenvalues`` (if provided) has to be checked for
           correctness. Set this to ``False`` for a speedup if the eigenvalues
           are known to be correct.
@@ -11904,7 +11904,7 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``base_field`` - a new field to use for entries of the matrix.
+        - ``base_field`` -- a new field to use for entries of the matrix.
 
         OUTPUT:
 
@@ -12102,7 +12102,7 @@ cdef class Matrix(Matrix1):
         - ``other`` -- a matrix, which should be square, and of the same size
           as ``self``.
 
-        - ``transformation`` -- default: ``False`` - if ``True``, the output
+        - ``transformation`` -- (default: ``False``); if ``True``, the output
           may include the change-of-basis matrix (also known as the similarity
           transformation). See below for an exact description.
 
@@ -12392,9 +12392,9 @@ cdef class Matrix(Matrix1):
             ...
             ValueError: similarity only makes sense for square matrices
         """
-        from sage.structure.element import is_Matrix
+        from sage.structure.element import Matrix
 
-        if not is_Matrix(other):
+        if not isinstance(other, Matrix):
             raise TypeError('similarity requires a matrix as an argument, not {0}'.format(other))
         if transformation not in [True, False]:
             raise ValueError('transformation keyword must be True or False')
@@ -12515,9 +12515,9 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``self`` - a square matrix over a field.
+        - ``self`` -- a square matrix over a field.
 
-        - ``v`` - a vector with a degree equal to the size of the matrix.
+        - ``v`` -- a vector with a degree equal to the size of the matrix.
 
         There is no explicit error-checking, it is the responsibility of
         the calling routine to provide accurate input.
@@ -12649,12 +12649,12 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``self`` - a square matrix with entries from a field.
+        - ``self`` -- a square matrix with entries from a field.
 
-        - ``v`` - a vector with a degree equal to the size of the matrix
+        - ``v`` -- a vector with a degree equal to the size of the matrix
           and entries compatible with the entries of the matrix.
 
-        - ``var`` - default: ``None`` - if specified as a string or
+        - ``var`` -- (default: ``None``); if specified as a string or
           a generator of a polynomial ring, then this will be used
           to construct a polynomial reflecting a relation of linear
           dependence on the powers `A^iv` *and* this will cause
@@ -12662,7 +12662,7 @@ cdef class Matrix(Matrix1):
           A generator must create polynomials with coefficients from
           the same field as the matrix entries.
 
-        - ``basis`` - default: ``echelon`` - the basis for the
+        - ``basis`` -- (default: ``echelon``); the basis for the
           subspace is "echelonized" by default, but the keyword
           'iterates' will return a subspace with a user basis
           equal to the largest linearly independent
@@ -12816,7 +12816,7 @@ cdef class Matrix(Matrix1):
         import sage.rings.polynomial.polynomial_ring
         n = self.ncols()
         R = self.base_ring()
-        if not is_Vector(v):
+        if not isinstance(v, Vector):
             raise TypeError('first input should be a vector, not {0}'.format(v))
         if not (var is None or isinstance(var, str)):
             generator = False
@@ -13346,29 +13346,29 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``pivot`` - pivoting strategy
+        - ``pivot`` -- pivoting strategy
 
-          - 'auto' (default) - see if the matrix entries are
+          - 'auto' (default) -- see if the matrix entries are
             ordered (i.e. if they have an absolute value method),
             and if so, use a the partial pivoting strategy.
             Otherwise, fall back to the nonzero strategy.  This
             is the best choice for general routines that may
             call this for matrix entries of a variety of types.
 
-          - 'partial' - each column is examined for
+          - 'partial' -- each column is examined for
             the element with the largest absolute value and the
             row containing this element is swapped into place.
 
-          - 'nonzero' - the first nonzero element in a column
+          - 'nonzero' -- the first nonzero element in a column
             is located and the row with this element is used.
 
-        - ``format`` - contents of output, see more discussion
+        - ``format`` -- contents of output, see more discussion
           below about output.
 
-          - 'plu' (default) - a triple; matrices P, L and U
+          - 'plu' (default) -- a triple; matrices P, L and U
             such that A = P*L*U.
 
-          - 'compact' - a pair; row permutation as a tuple, and the
+          - 'compact' -- a pair; row permutation as a tuple, and the
             matrices L and U combined into one matrix.
 
         OUTPUT:
@@ -13834,13 +13834,13 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``self`` - a matrix that is symmetric or Hermitian,
+        - ``self`` -- a matrix that is symmetric or Hermitian,
           over a ring that has a fraction field implemented.
 
-        - ``algorithm`` - ``'symmetric'`` or ``'hermitian'``,
+        - ``algorithm`` -- ``'symmetric'`` or ``'hermitian'``,
           according to the corresponding property of the matrix.
 
-        - ``check`` - default: ``True`` - if ``True`` then
+        - ``check`` -- (default: ``True``); if ``True`` then
           performs the check that the matrix is consistent with the
           ``algorithm`` keyword.
 
@@ -14095,14 +14095,14 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``self`` - a square matrix over a ring.  The base ring
+        - ``self`` -- a square matrix over a ring.  The base ring
           must have an implemented fraction field.
 
-        - ``algorithm`` - default: ``'symmetric'``.  Either
+        - ``algorithm`` -- default: ``'symmetric'``.  Either
           ``'symmetric'`` or ``'hermitian'``, according to if
           the input matrix is symmetric or hermitian.
 
-        - ``check`` - default: ``True`` - if ``True`` then
+        - ``check`` -- (default: ``True``); if ``True`` then
           performs the check that the matrix is consistent with the
           ``algorithm`` keyword.
 
@@ -15311,10 +15311,10 @@ cdef class Matrix(Matrix1):
         INPUT:
 
 
-        -  ``f`` - a function that is evaluated on each
+        -  ``f`` -- a function that is evaluated on each
            element of this matrix.
 
-        -  ``indices`` - whether or not to return the indices
+        -  ``indices`` -- whether or not to return the indices
            and elements of this matrix that satisfy the function.
 
 
@@ -15546,17 +15546,17 @@ cdef class Matrix(Matrix1):
         INPUT:
 
 
-        -  ``self`` - a matrix whose entries are coercible into ``CDF``
+        -  ``self`` -- a matrix whose entries are coercible into ``CDF``
 
-        -  ``p`` - one of the following options:
+        -  ``p`` -- one of the following options:
 
-        -  ``1`` - the largest column-sum norm
+        -  ``1`` -- the largest column-sum norm
 
-        -  ``2 (default)`` - the Euclidean norm
+        -  ``2 (default)`` -- the Euclidean norm
 
-        -  ``Infinity`` - the largest row-sum norm
+        -  ``Infinity`` -- the largest row-sum norm
 
-        -  ``'frob'`` - the Frobenius (sum of squares) norm
+        -  ``'frob'`` -- the Frobenius (sum of squares) norm
 
 
         OUTPUT: RDF number
@@ -16138,7 +16138,7 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        ``i`` -- an integer
+        - ``i`` -- an integer
 
         OUTPUT:
 
@@ -16409,10 +16409,10 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-            - ``include_zero_rows`` -- bool (default: True); if False
+            - ``include_zero_rows`` -- bool (default: ``True``); if False
               the zero rows in the output matrix are deleted.
 
-            - ``transformation`` -- bool (default: False) a matrix U such that U*self == H.
+            - ``transformation`` -- bool (default: ``False``) a matrix U such that U*self == H.
 
         OUTPUT:
 
@@ -16593,9 +16593,9 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``self`` - a square matrix over an exact field.
+        - ``self`` -- a square matrix over an exact field.
 
-        - ``basis`` - default; ``True`` - controls whether or not to
+        - ``basis`` -- (default; ``True``); controls whether or not to
           compute a change-of-basis matrix (also called a transformation
           matrix).
 
@@ -16836,12 +16836,12 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``self`` - a square matrix with entries from an exact field.
+        - ``self`` -- a square matrix with entries from an exact field.
 
-        - ``transformation`` - default: False - if ``True`` return a
+        - ``transformation`` -- (default: ``False``); if ``True`` return a
           change-of-basis matrix relating the matrix and its ZigZag form.
 
-        - ``subdivide`` - default: ``True`` - if ``True`` the ZigZag
+        - ``subdivide`` -- (default: ``True``); if ``True`` the ZigZag
           form matrix is subdivided according to the companion matrices
           described in the output section below.
 
@@ -17111,16 +17111,16 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``self`` - a square matrix with entries from an exact field.
+        - ``self`` -- a square matrix with entries from an exact field.
 
-        - ``format`` - default: 'right' - one of 'right', 'bottom',
+        - ``format`` -- (default: 'right'); one of 'right', 'bottom',
           'left', 'top' or 'invariants'.  The first four will cause a
           matrix to be returned with companion matrices dictated by the
           keyword.  The value 'invariants' will cause a list of lists to
           be returned, where each list contains coefficients of a
           polynomial associated with a companion matrix.
 
-        - ``subdivide`` - default: 'True' - if 'True' and a matrix is
+        - ``subdivide`` -- (default: 'True'); if 'True' and a matrix is
           returned, then it contains subdivisions delineating the
           companion matrices along the diagonal.
 
@@ -18838,7 +18838,6 @@ def _matrix_power_symbolic(A, n):
         # D^i(f) / i! with f = x^n and D = differentiation wrt x
         if hasattr(mk, 'radical_expression'):
             mk = mk.radical_expression()
-
 
         # When the variable "mk" is equal to zero, it is advisable to employ the Kronecker delta function
         # instead of utilizing the numerical value zero. This choice is made to encompass scenarios where

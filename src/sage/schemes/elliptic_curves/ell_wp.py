@@ -36,7 +36,6 @@ AUTHORS:
 
 - Jeroen Demeyer (2014-03-06): code clean up, fix characteristic bound
   for quadratic algorithm (see :issue:`15855`)
-
 """
 
 #*****************************************************************************

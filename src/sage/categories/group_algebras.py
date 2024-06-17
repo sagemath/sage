@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Group Algebras
 
@@ -29,6 +30,7 @@ AUTHOR:
 
 from sage.misc.cachefunc import cached_method
 from sage.categories.algebra_functor import AlgebrasCategory
+
 
 class GroupAlgebras(AlgebrasCategory):
     r"""

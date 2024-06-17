@@ -615,7 +615,7 @@ def EllipticCurve_from_j(j, minimal_twist=True):
 
     - ``j`` -- an element of some field.
 
-    - ``minimal_twist`` (boolean, default True) -- If True and ``j``
+    - ``minimal_twist`` (boolean, default: ``True``) -- If True and ``j``
       is in `\QQ`, the curve returned is a minimal twist, i.e. has
       minimal conductor; when there is more than one curve with
       minimal conductor, the curve returned is the one whose label

@@ -43,15 +43,15 @@ from sage.matrix.constructor import matrix
 from sage.matrix.special import block_diagonal_matrix, identity_matrix
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
-from sage.modular.arithgroup.congroup_gamma0 import is_Gamma0
-from sage.modular.arithgroup.congroup_gamma1 import is_Gamma1
-from sage.modular.arithgroup.congroup_gammaH import is_GammaH
-from sage.modular.arithgroup.congroup_generic import is_CongruenceSubgroup
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_class
+from sage.modular.arithgroup.congroup_gamma1 import Gamma1_class
+from sage.modular.arithgroup.congroup_gammaH import GammaH_class
+from sage.modular.arithgroup.congroup_generic import CongruenceSubgroupBase
 from sage.modular.modform.constructor import Newform
 from sage.modular.modsym.modsym import ModularSymbols
 from sage.modular.modsym.space import ModularSymbolsSpace
 from sage.modular.quatalg.brandt import BrandtModule
-from sage.modules.free_module import is_FreeModule
+from sage.modules.free_module import FreeModule_generic
 from sage.modules.free_module_element import vector
 from sage.rings.fast_arith import prime_range
 from sage.rings.infinity import infinity
@@ -85,12 +85,15 @@ def is_ModularAbelianVariety(x) -> bool:
 
     INPUT:
 
-    -  ``x`` - object
+    -  ``x`` -- object
 
     EXAMPLES::
 
         sage: from sage.modular.abvar.abvar import is_ModularAbelianVariety
         sage: is_ModularAbelianVariety(5)
+        doctest:warning...
+        DeprecationWarning: The function is_ModularAbelianVariety is deprecated; use 'isinstance(..., ModularAbelianVariety_abstract)' instead.
+        See https://github.com/sagemath/sage/issues/38035 for details.
         False
         sage: is_ModularAbelianVariety(J0(37))
         True
@@ -101,6 +104,8 @@ def is_ModularAbelianVariety(x) -> bool:
         sage: is_ModularAbelianVariety(EllipticCurve('37a'))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38035, "The function is_ModularAbelianVariety is deprecated; use 'isinstance(..., ModularAbelianVariety_abstract)' instead.")
     return isinstance(x, ModularAbelianVariety_abstract)
 
 
@@ -114,24 +119,24 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``groups`` - a tuple of congruence subgroups
+        -  ``groups`` -- a tuple of congruence subgroups
 
-        -  ``base_field`` - a field
+        -  ``base_field`` -- a field
 
-        -  ``is_simple`` - bool; whether or not self is
+        -  ``is_simple`` -- bool; whether or not self is
            simple
 
-        -  ``newform_level`` - if self is isogenous to a
+        -  ``newform_level`` -- if self is isogenous to a
            newform abelian variety, returns the level of that abelian variety
 
-        -  ``isogeny_number`` - which isogeny class the
+        -  ``isogeny_number`` -- which isogeny class the
            corresponding newform is in; this corresponds to the Cremona letter
            code
 
-        -  ``number`` - the t number of the degeneracy map that
+        -  ``number`` -- the t number of the degeneracy map that
            this abelian variety is the image under
 
-        -  ``check`` - whether to do some type checking on the
+        -  ``check`` -- whether to do some type checking on the
            defining data
 
 
@@ -161,7 +166,7 @@ class ModularAbelianVariety_abstract(Parent):
             if not isinstance(groups, tuple):
                 raise TypeError("groups must be a tuple")
             for G in groups:
-                if not is_CongruenceSubgroup(G):
+                if not isinstance(G, CongruenceSubgroupBase):
                     raise TypeError("each element of groups must be a congruence subgroup")
         self.__groups = groups
         if is_simple is not None:
@@ -215,7 +220,7 @@ class ModularAbelianVariety_abstract(Parent):
             sage: (J0(23) * J0(21)).is_J0()
             False
         """
-        return len(self.groups()) == 1 and is_Gamma0(self.groups()[0]) \
+        return len(self.groups()) == 1 and isinstance(self.groups()[0], Gamma0_class) \
             and self.is_ambient()
 
     def is_J1(self) -> bool:
@@ -237,7 +242,7 @@ class ModularAbelianVariety_abstract(Parent):
             sage: J1(23)[0].is_J1()
             False
         """
-        return len(self.groups()) == 1 and is_Gamma1(self.groups()[0]) \
+        return len(self.groups()) == 1 and isinstance(self.groups()[0], Gamma1_class) \
             and self.is_ambient()
 
     ##########################################################################
@@ -605,11 +610,11 @@ class ModularAbelianVariety_abstract(Parent):
             ValueError: self must be simple
         """
         N, G = self.newform_level()
-        if is_Gamma0(G):
+        if isinstance(G, Gamma0_class):
             group = ''
-        elif is_Gamma1(G):
+        elif isinstance(G, Gamma1_class):
             group = 'G1'
-        elif is_GammaH(G):
+        elif isinstance(G, GammaH_class):
             group = 'GH%s' % (str(G._generators_for_H()).replace(' ', ''))
         return '%s%s%s' % (N, cremona_letter_code(self.isogeny_number()), group)
 
@@ -744,7 +749,7 @@ class ModularAbelianVariety_abstract(Parent):
 
         INPUT:
 
-        - ``self, other`` -- modular abelian varieties
+        - ``self``, ``other`` -- modular abelian varieties
 
         OUTPUT: an isogeny
 
@@ -765,7 +770,7 @@ class ModularAbelianVariety_abstract(Parent):
             ...
             NotImplementedError: _simple_isogeny only implemented when both abelian variety have the same ambient product Jacobian
         """
-        if not is_ModularAbelianVariety(other):
+        if not isinstance(other, ModularAbelianVariety_abstract):
             raise TypeError("other must be a modular abelian variety")
 
         if not self.is_simple():
@@ -791,9 +796,9 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``B`` - modular abelian varieties
+        -  ``B`` -- modular abelian varieties
 
-        -  ``cat`` - category
+        -  ``cat`` -- category
 
 
         EXAMPLES::
@@ -832,7 +837,7 @@ class ModularAbelianVariety_abstract(Parent):
             sage: A.in_same_ambient_variety(J0(11))
             False
         """
-        if not is_ModularAbelianVariety(other):
+        if not isinstance(other, ModularAbelianVariety_abstract):
             return False
         if self.groups() != other.groups():
             return False
@@ -889,21 +894,21 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``other`` - a modular abelian variety or a finite
+        -  ``other`` -- a modular abelian variety or a finite
            group
 
 
         OUTPUT: If other is a modular abelian variety:
 
 
-        -  ``G`` - finite subgroup of self
+        -  ``G`` -- finite subgroup of self
 
-        -  ``A`` - abelian variety (identity component of
+        -  ``A`` -- abelian variety (identity component of
            intersection)
 
         If other is a finite group:
 
-        -  ``G`` - a finite group
+        -  ``G`` -- a finite group
 
 
         EXAMPLES: We intersect some abelian varieties with finite
@@ -1083,7 +1088,7 @@ class ModularAbelianVariety_abstract(Parent):
             sage: A+B # long time
             Abelian subvariety of dimension 20 of J0(206)
         """
-        if not is_ModularAbelianVariety(other):
+        if not isinstance(other, ModularAbelianVariety_abstract):
             if other == 0:
                 return self
             raise TypeError("other must be a modular abelian variety")
@@ -1100,7 +1105,7 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``self, other`` - modular abelian varieties
+        -  ``self, other`` -- modular abelian varieties
 
 
         OUTPUT: abelian variety
@@ -1128,7 +1133,7 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``n`` - a nonnegative integer
+        -  ``n`` -- a nonnegative integer
 
 
         OUTPUT: an abelian variety
@@ -1172,7 +1177,7 @@ class ModularAbelianVariety_abstract(Parent):
             sage: d[0] * d[1] * J0(11)
             Abelian subvariety of dimension 4 of J0(65) x J0(65) x J0(11)
         """
-        if not is_ModularAbelianVariety(other):
+        if not isinstance(other, ModularAbelianVariety_abstract):
             raise TypeError("other must be a modular abelian variety")
         if other.base_ring() != self.base_ring():
             raise TypeError("self and other must have the same base ring")
@@ -1189,7 +1194,7 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``other`` - a finite subgroup or subvariety
+        -  ``other`` -- a finite subgroup or subvariety
         -  further named arguments, that are currently ignored.
 
 
@@ -1229,7 +1234,7 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``other`` - a finite subgroup or subvariety
+        -  ``other`` -- a finite subgroup or subvariety
 
 
         EXAMPLES: Quotient out by a finite group::
@@ -1292,9 +1297,9 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``M, t`` - integers level and `t`, or
+        -  ``M, t`` -- integers level and `t`, or
 
-        -  ``Mlist, tlist`` - if self is in a nontrivial
+        -  ``Mlist, tlist`` -- if self is in a nontrivial
            product ambient Jacobian, input consists of a list of levels and
            corresponding list of `t`'s.
 
@@ -1376,13 +1381,13 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``G`` - a finite subgroup of self
+        -  ``G`` -- a finite subgroup of self
 
 
         OUTPUT: abelian variety - the quotient `Q` of self by `G`
 
 
-        -  ``morphism`` - from self to the quotient
+        -  ``morphism`` -- from self to the quotient
            `Q`
 
 
@@ -1437,16 +1442,16 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``B`` - an abelian subvariety of self
+        -  ``B`` -- an abelian subvariety of self
 
 
         OUTPUT:
 
 
-        -  ``abelian variety`` - quotient `Q` of self
+        -  ``abelian variety`` -- quotient `Q` of self
            by B
 
-        -  ``morphism`` - from self to the quotient
+        -  ``morphism`` -- from self to the quotient
            `Q`
 
 
@@ -1524,7 +1529,7 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``A`` - an abelian variety
+        -  ``A`` -- an abelian variety
 
 
         OUTPUT: a morphism
@@ -1968,7 +1973,7 @@ class ModularAbelianVariety_abstract(Parent):
             sage: A.is_subvariety(J)
             True
         """
-        if not is_ModularAbelianVariety(other):
+        if not isinstance(other, ModularAbelianVariety_abstract):
             return False
         if self is other:
             return True
@@ -2034,7 +2039,7 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``none_if_not_known`` - (default: False) if True,
+        -  ``none_if_not_known`` -- (default: ``False``) if True,
            return None instead of attempting to compute the newform level, if
            it isn't already known. This None result is not cached.
 
@@ -2104,11 +2109,11 @@ class ModularAbelianVariety_abstract(Parent):
         """
         v = []
         for G in self.groups():
-            if is_Gamma0(G):
+            if isinstance(G, Gamma0_class):
                 v.append('J0(%s)' % G.level())
-            elif is_Gamma1(G):
+            elif isinstance(G, Gamma1_class):
                 v.append('J1(%s)' % G.level())
-            elif is_GammaH(G):
+            elif isinstance(G, GammaH_class):
                 v.append('JH(%s,%s)' % (G.level(), G._generators_for_H()))
         return ' x '.join(v)
 
@@ -2125,11 +2130,11 @@ class ModularAbelianVariety_abstract(Parent):
         """
         v = []
         for G in self.groups():
-            if is_Gamma0(G):
+            if isinstance(G, Gamma0_class):
                 v.append('J_0(%s)' % G.level())
-            elif is_Gamma1(G):
+            elif isinstance(G, Gamma1_class):
                 v.append('J_1(%s)' % G.level())
-            elif is_GammaH(G):
+            elif isinstance(G, GammaH_class):
                 v.append('J_H(%s,%s)' % (G.level(), G._generators_for_H()))
         return ' \\times '.join(v)
 
@@ -2245,7 +2250,7 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``n`` - an integer `\geq 1`.
+        -  ``n`` -- an integer `\geq 1`.
 
 
         OUTPUT: a matrix
@@ -2289,7 +2294,7 @@ class ModularAbelianVariety_abstract(Parent):
 
         INPUT:
 
-        - ``proof`` -- a boolean (default: True)
+        - ``proof`` -- a boolean (default: ``True``)
 
         OUTPUT:
 
@@ -2662,9 +2667,9 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``n`` - integer `\geq 1`
+        -  ``n`` -- integer `\geq 1`
 
-        -  ``var`` - string (default: 'x'); valid variable
+        -  ``var`` -- string (default: 'x'); valid variable
            name
 
 
@@ -2709,9 +2714,9 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``n`` - positive integer
+        -  ``n`` -- positive integer
 
-        -  ``var`` - string (default: 'x')
+        -  ``var`` -- string (default: 'x')
 
 
         EXAMPLES::
@@ -3077,13 +3082,13 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``X`` - list of elements of other finite subgroups
+        -  ``X`` -- list of elements of other finite subgroups
            of this modular abelian variety or elements that coerce into the
            rational homology (viewed as a rational vector space); also X could
            be a finite subgroup itself that is contained in this abelian
            variety.
 
-        -  ``field_of_definition`` - (default: None) field
+        -  ``field_of_definition`` -- (default: None) field
            over which this group is defined. If None try to figure out the
            best base field.
 
@@ -3200,7 +3205,7 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``none_if_not_known`` - (default: False) - if
+        -  ``none_if_not_known`` -- (default: ``False``); if
            True, return None instead of attempting to compute the degen map's
            `t`, if it isn't known. This None result is not cached.
 
@@ -3299,7 +3304,7 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``none_if_not_known`` - bool (default: False); if
+        -  ``none_if_not_known`` -- bool (default: ``False``); if
            True then this function may return None instead of True of False if
            we don't already know whether or not self is simple.
 
@@ -3330,12 +3335,12 @@ class ModularAbelianVariety_abstract(Parent):
         Return a sequence of abelian subvarieties of self that are all
         simple, have finite intersection and sum to self.
 
-        INPUT: simple- bool (default: True) if True, all factors are
+        INPUT: simple- bool (default: ``True``) if True, all factors are
         simple. If False, each factor returned is isogenous to a power of a
         simple and the simples in each factor are distinct.
 
 
-        -  ``bound`` - int (default: None) if given, only use
+        -  ``bound`` -- int (default: None) if given, only use
            Hecke operators up to this bound when decomposing. This can give
            wrong answers, so use with caution!
 
@@ -3543,9 +3548,9 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``simple`` - bool (default: True)
+        -  ``simple`` -- bool (default: ``True``)
 
-        -  ``bound`` - integer (default: None); if given,
+        -  ``bound`` -- integer (default: None); if given,
            passed onto decomposition function
 
 
@@ -3694,7 +3699,7 @@ class ModularAbelianVariety_abstract(Parent):
 
         INPUT:
 
-        -  ``A`` - (default: None); if given, A must be an
+        -  ``A`` -- (default: None); if given, A must be an
            abelian variety that contains self, in which case the complement of
            self is taken inside A. Otherwise the complement is taken in the
            ambient product Jacobian.
@@ -3825,7 +3830,7 @@ class ModularAbelianVariety_abstract(Parent):
         INPUT:
 
 
-        -  ``other`` - abelian variety
+        -  ``other`` -- abelian variety
 
 
         OUTPUT: list of simple abelian varieties
@@ -3987,14 +3992,14 @@ class ModularAbelianVariety(ModularAbelianVariety_abstract):
         INPUT:
 
 
-        -  ``groups`` - a tuple of congruence subgroups
+        -  ``groups`` -- a tuple of congruence subgroups
 
-        -  ``lattice`` - (default: `\ZZ^n`) a
+        -  ``lattice`` -- (default: `\ZZ^n`) a
            full lattice in `\ZZ^n`, where `n` is the
            sum of the dimensions of the spaces of cuspidal modular symbols
            corresponding to each `\Gamma \in` groups
 
-        -  ``base_field`` - a field (default:
+        -  ``base_field`` -- a field (default:
            `\QQ`)
 
 
@@ -4009,7 +4014,7 @@ class ModularAbelianVariety(ModularAbelianVariety_abstract):
             lattice = ZZ**(2 * self._ambient_dimension())
         if check:
             n = self._ambient_dimension()
-            if not is_FreeModule(lattice):
+            if not isinstance(lattice, FreeModule_generic):
                 raise TypeError("lattice must be a free module")
             if lattice.base_ring() != ZZ:
                 raise TypeError("lattice must be over ZZ")
@@ -4026,7 +4031,7 @@ class ModularAbelianVariety(ModularAbelianVariety_abstract):
         OUTPUT:
 
 
-        -  ``lattice`` - a lattice embedded in the rational
+        -  ``lattice`` -- a lattice embedded in the rational
            homology of the ambient product Jacobian
 
 
@@ -4099,7 +4104,7 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
             sage: sum(D, D[0]) == A
             True
         """
-        if not is_ModularAbelianVariety(other):
+        if not isinstance(other, ModularAbelianVariety_abstract):
             if other == 0:
                 return self
             raise TypeError("sum not defined")
@@ -4175,7 +4180,7 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
         INPUT:
 
 
-        -  ``lattice`` - a lattice
+        -  ``lattice`` -- a lattice
 
 
         EXAMPLES: We do something evil - there's no type checking since
@@ -4280,9 +4285,9 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
         INPUT:
 
 
-        -  ``n`` - a positive integer
+        -  ``n`` -- a positive integer
 
-        -  ``sign`` - 0, +1, or -1; if 1 or -1 act on the +1 or
+        -  ``sign`` -- 0, +1, or -1; if 1 or -1 act on the +1 or
            -1 quotient of the integral homology.
 
 
@@ -4310,9 +4315,9 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
         INPUT:
 
 
-        -  ``n`` - a positive integer
+        -  ``n`` -- a positive integer
 
-        -  ``sign`` - 0, +1, or -1; if 1 or -1 act on the +1 or
+        -  ``sign`` -- 0, +1, or -1; if 1 or -1 act on the +1 or
            -1 quotient of the rational homology.
 
 
@@ -4397,7 +4402,7 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
             sage: D[2].is_subvariety(D[0] + D[1])
             False
         """
-        if not is_ModularAbelianVariety(other):
+        if not isinstance(other, ModularAbelianVariety_abstract):
             return False
         if not isinstance(other, ModularAbelianVariety_modsym_abstract):
             return ModularAbelianVariety_abstract.is_subvariety(self, other)
@@ -4457,9 +4462,9 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
         INPUT:
 
 
-        -  ``self`` - a modular abelian variety
+        -  ``self`` -- a modular abelian variety
 
-        -  ``p`` - prime number or None (default); if p is a
+        -  ``p`` -- prime number or None (default); if p is a
            prime, return the p-new subvariety. Otherwise return the full new
            subvariety.
 
@@ -4492,9 +4497,9 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
         INPUT:
 
 
-        -  ``self`` - a modular abelian variety
+        -  ``self`` -- a modular abelian variety
 
-        -  ``p`` - prime number or None (default); if p is a
+        -  ``p`` -- prime number or None (default); if p is a
            prime, return the p-old subvariety. Otherwise return the full old
            subvariety.
 
@@ -4525,12 +4530,12 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
         Decompose this modular abelian variety as a product of abelian
         subvarieties, up to isogeny.
 
-        INPUT: simple- bool (default: True) if True, all factors are
+        INPUT: simple- bool (default: ``True``) if True, all factors are
         simple. If False, each factor returned is isogenous to a power of a
         simple and the simples in each factor are distinct.
 
 
-        -  ``bound`` - int (default: None) if given, only use
+        -  ``bound`` -- int (default: None) if given, only use
            Hecke operators up to this bound when decomposing. This can give
            wrong answers, so use with caution!
 
@@ -4695,7 +4700,7 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
             self.__component_group[p] = (one, one, one)
             return one
         # Cases that we don't know how to handle yet.
-        if not is_Gamma0(self.group()):
+        if not isinstance(self.group(), Gamma0_class):
             raise NotImplementedError("computation of component group not implemented when group isn't Gamma0")
         if self.level() % (p * p) == 0:
             raise NotImplementedError("computation of component group not implemented when p^2 divides the level")
@@ -4879,7 +4884,7 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
             mul = 1
         elif N.valuation(p) == 1:
             M = self.modular_symbols(sign=1)
-            if is_Gamma0(M.group()):
+            if isinstance(M.group(), Gamma0_class):
                 g = self.component_group_order(p)
                 W = M.atkin_lehner_operator(p).matrix()
                 if W == -1:
@@ -4941,7 +4946,7 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
         except KeyError:
             pass
         p = Integer(p)
-        if not is_Gamma0(self.group()):
+        if not isinstance(self.group(), Gamma0_class):
             raise NotImplementedError("Brandt module only defined on Gamma0")
         if not p.is_prime():
             raise ValueError("p must be a prime integer")
@@ -5023,11 +5028,11 @@ def random_hecke_operator(M, t=None, p=2):
     INPUT:
 
 
-    -  ``M`` - modular symbols space
+    -  ``M`` -- modular symbols space
 
-    -  ``t`` - None or a Hecke operator
+    -  ``t`` -- None or a Hecke operator
 
-    -  ``p`` - a prime
+    -  ``p`` -- a prime
 
 
     OUTPUT: Hecke operator prime
@@ -5058,7 +5063,7 @@ def factor_new_space(M):
     INPUT:
 
 
-    -  ``M`` - modular symbols space
+    -  ``M`` -- modular symbols space
 
 
     OUTPUT: list of factors
@@ -5198,9 +5203,9 @@ def modsym_lattices(M, factors):
     INPUT:
 
 
-    -  ``M`` - modular symbols spaces
+    -  ``M`` -- modular symbols spaces
 
-    -  ``factors`` - Sequence
+    -  ``factors`` -- Sequence
        (simple_factorization_of_modsym_space)
 
 
