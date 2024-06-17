@@ -424,7 +424,7 @@ class ECM(SageObject):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         - ``factor_digits`` -- integer; decimal digits estimate of the
           wanted factor
@@ -520,13 +520,13 @@ class ECM(SageObject):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         - ``factor_digits`` -- integer or ``None`` (default); decimal
           digits estimate of the wanted factor
 
         - ``B1`` -- integer; Stage 1 bound (default: 2000). This is
-          used as bound if ``factor_digits`` is not specified.
+          used as bound if ``factor_digits`` is not specified
 
         - ``kwds`` -- optional keyword parameters
 
@@ -581,7 +581,7 @@ class ECM(SageObject):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         - ``factor_digits`` -- integer or ``None`` (default); optional
           guess at how many digits are in the smallest factor
@@ -689,7 +689,7 @@ class ECM(SageObject):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         - ``factor_digits`` -- the (estimated) number of digits of the
           smallest factor

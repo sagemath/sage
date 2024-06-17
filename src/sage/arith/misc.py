@@ -278,7 +278,7 @@ algebraic_dependency = algdep
 
 def bernoulli(n, algorithm='default', num_threads=1):
     r"""
-    Return the n-th Bernoulli number, as a rational number.
+    Return the `n`-th Bernoulli number, as a rational number.
 
     INPUT:
 
@@ -1578,7 +1578,7 @@ def divisors(n):
 
 class Sigma:
     """
-    Return the sum of the k-th powers of the divisors of n.
+    Return the sum of the `k`-th powers of the divisors of `n`.
 
     INPUT:
 
@@ -1601,7 +1601,7 @@ class Sigma:
 
         sage: P = plot(sigma, 1, 100)                                                   # needs sage.plot
 
-    This method also works with k-th powers.
+    This method also works with `k`-th powers.
 
     ::
 
@@ -1640,7 +1640,7 @@ class Sigma:
     def __repr__(self):
         """
         A description of this class, which computes the sum of the
-        k-th powers of the divisors of n.
+        `k`-th powers of the divisors of `n`.
 
         EXAMPLES::
 
@@ -1679,7 +1679,7 @@ class Sigma:
     def plot(self, xmin=1, xmax=50, k=1, pointsize=30, rgbcolor=(0,0,1), join=True,
              **kwds):
         """
-        Plot the sigma (sum of k-th powers of divisors) function.
+        Plot the sigma (sum of `k`-th powers of divisors) function.
 
         INPUT:
 

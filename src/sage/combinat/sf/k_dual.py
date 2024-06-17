@@ -249,7 +249,7 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
     @cached_method
     def _G_to_km_on_basis_single_level(self, w, m):
         r"""
-        Return the `m^{\textnormal{th}}` level of the affine Grothendieck
+        Return the `m`-th level of the affine Grothendieck
         polynomial indexed by the affine Permutation ``w``. This code could be
         significantly sped up if it didn't depend on the Iwahori Hecke algebra
         code.

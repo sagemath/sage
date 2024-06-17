@@ -985,7 +985,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
 
     def cn(self, n):
         r"""
-        Return the nth Dirichlet coefficient of the logarithmic
+        Return the `n`-th Dirichlet coefficient of the logarithmic
         derivative of the L-function attached to ``self``, shifted so that
         the critical line lies on the imaginary axis.
 

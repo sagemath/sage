@@ -1940,7 +1940,7 @@ class TilingSolver(SageObject):
             Dancing links solver for 96 columns and 5484 rows
 
         It is possible to avoid to compute 4 times each solution up to
-        rotations. This is done by choosing a piece (here the 0-th) and
+        rotations. This is done by choosing a piece (here the `0`-th) and
         considering 4 times less positions for that piece. To be precise,
         90 positions instead of 360, therefore the dancing links solver
         below has 270 less rows::

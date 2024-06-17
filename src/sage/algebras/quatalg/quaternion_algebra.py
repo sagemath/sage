@@ -1112,7 +1112,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
     def gen(self, i=0):
         """
-        Return the `i^{th}` generator of ``self``.
+        Return the `i`-th generator of ``self``.
 
         INPUT:
 
@@ -1511,7 +1511,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 ############################################################
 def unpickle_QuaternionAlgebra_v0(*key):
     """
-    The 0th version of pickling for quaternion algebras.
+    The `0`-th version of pickling for quaternion algebras.
 
     EXAMPLES::
 
@@ -1718,7 +1718,7 @@ class QuaternionOrder(Parent):
 
     def gen(self, n):
         """
-        Return the n-th generator.
+        Return the `n`-th generator.
 
         INPUT:
 

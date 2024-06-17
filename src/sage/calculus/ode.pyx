@@ -147,13 +147,13 @@ class ode_solver():
 
     - ``'rk2'`` -- embedded Runge-Kutta (2,3)
 
-    - ``'rk4'`` -- 4th order classical Runge-Kutta
+    - ``'rk4'`` -- `4`-th order classical Runge-Kutta
 
     - ``'rk8pd'`` -- Runge-Kutta Prince-Dormand (8,9)
 
     - ``'rk2imp'`` -- implicit 2nd order Runge-Kutta at gaussian points
 
-    - ``'rk4imp'`` -- implicit 4th order Runge-Kutta at gaussian points
+    - ``'rk4imp'`` -- implicit `4`-th order Runge-Kutta at gaussian points
 
     - ``'bsimp'`` -- implicit Burlisch-Stoer (requires jacobian)
 

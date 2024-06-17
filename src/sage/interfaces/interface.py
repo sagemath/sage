@@ -320,7 +320,7 @@ class Interface(WithEqualityById, ParentWithBase):
 
     def _coerce_from_special_method(self, x):
         """
-        Tries to coerce to ``self`` by calling a special underscore method.
+        Try to coerce to ``self`` by calling a special underscore method.
 
         If no such method is defined, raises an AttributeError instead of a
         TypeError.
@@ -450,7 +450,7 @@ class Interface(WithEqualityById, ParentWithBase):
 
     def _exponent_symbol(self):
         """
-        Return the symbol used to denote ``*10^`` in floats, e.g 'e' in 1.5e6
+        Return the symbol used to denote ``*10^`` in floats, e.g 'e' in 1.5e6.
 
         EXAMPLES::
 
@@ -1440,7 +1440,7 @@ class InterfaceElement(Element):
 
         INPUT:
 
-        - ``operation`` -- a string representing the operation
+        - ``operation`` -- string representing the operation
           being performed; for example, '*', or '1/'
 
         - ``other`` -- the other operand; if ``other`` is ``None``,

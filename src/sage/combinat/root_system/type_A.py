@@ -155,7 +155,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
         returns the vector (1, ... ,1) which in the ['A',r]
         weight lattice, interpreted as a weight of GL(r+1,CC)
         is the determinant. If the optional parameter k is
-        given, returns (k, ... ,k), the k-th power of the
+        given, returns (k, ... ,k), the `k`-th power of the
         determinant.
 
         EXAMPLES::

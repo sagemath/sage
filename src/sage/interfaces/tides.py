@@ -391,7 +391,7 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
 
     - ``tolabs`` -- the absolute tolerance
 
-    -  ``output`` -- the name of the file that the compiled integrator will write to
+    - ``output`` -- the name of the file that the compiled integrator will write to
 
     This function creates two files, integrator and driver, that can be used
     later with the min_tides library [TIDES]_.
@@ -646,10 +646,10 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
     - ``delta`` -- the step of the output
 
     - ``parameters`` -- the variables inside the function that should be treated
-       as parameters
+      as parameters
 
     - ``parameter_values`` -- the values of the parameters for the particular
-       initial value problem
+      initial value problem
 
     - ``dig`` -- the number of digits of precision that will be used in the integration
 
@@ -657,7 +657,7 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
 
     - ``tolabs`` -- the absolute tolerance
 
-    -  ``output`` -- the name of the file that the compiled integrator will write to
+    - ``output`` -- the name of the file that the compiled integrator will write to
 
     This function creates two files, integrator and driver, that can be used
     later with the tides library ([TIDES]_).

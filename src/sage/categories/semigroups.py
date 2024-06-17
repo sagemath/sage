@@ -529,7 +529,7 @@ class Semigroups(CategoryWithAxiom):
 
         def _pow_int(self, n):
             """
-            Return ``self`` to the `n^{th}` power.
+            Return ``self`` to the `n`-th power.
 
             INPUT:
 

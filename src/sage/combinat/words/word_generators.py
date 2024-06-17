@@ -514,7 +514,7 @@ class WordGenerator:
         #. if the next letter is `1`, append `1` to the word;
         #. move to the next letter of the word.
 
-        Function: Over the alphabet `\{1, 2\}`, the n-th letter of the
+        Function: Over the alphabet `\{1, 2\}`, the `n`-th letter of the
         Fibonacci word is
         `\lfloor (n+2) \varphi \rfloor - \lfloor (n+1) \varphi \rfloor`
         where `\varphi=(1+\sqrt{5})/2` is the golden ratio.

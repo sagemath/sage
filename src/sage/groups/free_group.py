@@ -115,7 +115,7 @@ def _lexi_gen(zeroes=False):
 
     Python generator object which outputs a character from the alphabet on each
     ``next()`` call in lexicographical order. The integer `i` is appended
-    to the output string on the `i^{th}` iteration through the alphabet.
+    to the output string on the `i`-th iteration through the alphabet.
 
     EXAMPLES::
 

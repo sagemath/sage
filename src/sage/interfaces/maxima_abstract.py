@@ -114,7 +114,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         Interface.__init__(self, name)
 
     ###########################################
-    # System -- change directory, etc
+    # System -- change directory, etc.
     ###########################################
     def chdir(self, dir):
         r"""
@@ -403,7 +403,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         INPUT:
 
         - ``t`` -- float (default: ``None``); if \var{t} is not None, then
-          it returns the difference between the current CPU time and \var{t}.
+          it returns the difference between the current CPU time and \var{t}
 
         OUTPUT: float
 
@@ -597,14 +597,14 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``args`` -- a string with variable names separated by
-           commas
+        - ``args`` -- string with variable names separated by
+          commas
 
-        - ``defn`` -- a string (or Maxima expression) that
-           defines a function of the arguments in Maxima.
+        - ``defn`` -- string (or Maxima expression) that
+          defines a function of the arguments in Maxima
 
         - ``rep`` -- an optional string; if given, this is how
-           the function will print
+          the function will print
 
         OUTPUT: Maxima function
 
@@ -688,11 +688,11 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``f`` -- a string representing a function (such as
-           f="sin(x)") [var, xmin, xmax]
+        - ``f`` -- string representing a function (such as
+          f="sin(x)") [var, xmin, xmax]
 
         - ``options`` -- an optional string representing plot2d
-           options in gnuplot format
+          options in gnuplot format
 
         EXAMPLES::
 
@@ -711,18 +711,18 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``r`` -- a string representing a function (such as
-           r="[x(t),y(t)]")
+        - ``r`` -- string representing a function (such as
+          r="[x(t),y(t)]")
 
-        - ``var`` -- a string representing the variable (such
-           as var = "t")
+        - ``var`` -- string representing the variable (such
+          as var = "t")
 
         - ``trange`` -- [tmin, tmax] are numbers with tmintmax
 
         - ``nticks`` -- int (default: 50)
 
         - ``options`` -- an optional string representing plot2d
-           options in gnuplot format
+          options in gnuplot format
 
         EXAMPLES::
 
@@ -758,8 +758,8 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``f`` -- a string representing a function (such as
-           f="sin(x)") [var, min, max]
+        - ``f`` -- string representing a function (such as
+          f="sin(x)") [var, min, max]
 
         - ``args`` should be of the form '[x, xmin, xmax]', '[y, ymin, ymax]',
           '[grid, nx, ny]', options
@@ -783,17 +783,17 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``x``, ``y``, ``z`` -- a string representing a function (such
-           as ``x="u2+v2"``, ...) vars is a list or two strings
+        - ``x``, ``y``, ``z`` -- string representing a function (such
+          as ``x="u2+v2"``, ...) vars is a list or two strings
            representing variables (such as vars = ["u","v"])
 
         - ``urange`` -- [umin, umax]
 
         - ``vrange`` -- [vmin, vmax] are lists of numbers with
-           umin umax, vmin vmax
+          umin umax, vmin vmax
 
         - ``options`` -- optional string representing plot2d
-           options in gnuplot format
+          options in gnuplot format
 
         OUTPUT: displays a plot on screen or saves to a file
 
@@ -836,13 +836,13 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        -  ``de`` -- a string representing the ODE
+        - ``de`` -- string representing the ODE
 
         - ``vars`` -- list of strings representing the two
-           variables
+          variables
 
         - ``ics`` -- a triple of numbers [a,b1,b2] representing
-           y(a)=b1, y'(a)=b2
+          y(a)=b1, y'(a)=b2
 
         EXAMPLES::
 
@@ -878,14 +878,14 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``de`` -- a string representing the ODE (e.g., de =
-           "diff(f(x),x,2)=diff(f(x),x)+sin(x)")
+        - ``de`` -- string representing the ODE (e.g., de =
+          "diff(f(x),x,2)=diff(f(x),x)+sin(x)")
 
         - ``vars`` -- list of strings representing the
-           variables (e.g., vars = ["x","f"])
+          variables (e.g., vars = ["x","f"])
 
         - ``ics`` -- list of numbers representing initial
-           conditions, with symbols allowed which are represented by strings
+          conditions, with symbols allowed which are represented by strings
            (eg, f(0)=1, f'(0)=2 is ics = [0,1,2])
 
         EXAMPLES::
@@ -998,12 +998,12 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         INPUT:
 
         - ``ptsx`` -- [x1,...,xn], where the xi and yi are
-           real,
+          real,
 
         - ``ptsy`` -- [y1,...,yn]
 
-        - ``options`` -- a string representing maxima plot2d
-           options
+        - ``options`` -- string representing maxima plot2d
+          options
 
         The points are (x1,y1), (x2,y2), etc.
 
@@ -1440,7 +1440,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
     def diff(self, var='x', n=1):
         """
-        Return the n-th derivative of ``self``.
+        Return the `n`-th derivative of ``self``.
 
         INPUT:
 
@@ -1490,15 +1490,15 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         - ``b`` -- upper endpoint of integration
 
         - ``desired_relative_error`` -- (default: ``'1e-8'``) the
-           desired relative error
+          desired relative error
 
         - ``maximum_num_subintervals`` -- (default: 200)
-           maxima number of subintervals
+          maxima number of subintervals
 
         OUTPUT: approximation to the integral
 
         - estimated absolute error of the
-           approximation
+          approximation
 
         - the number of integrand evaluations
 
@@ -1628,7 +1628,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
     def dot(self, other):
         """
-        Implements the notation ``self . other``.
+        Implement the notation ``self . other``.
 
         INPUT:
 
@@ -1649,7 +1649,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
     def __getitem__(self, n):
         r"""
-        Return the n-th element of this list.
+        Return the `n`-th element of this list.
 
         INPUT:
 
@@ -1683,7 +1683,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
     def __iter__(self):
         """
-        Return an iterator for self.
+        Return an iterator for ``self``.
 
         INPUT: none
 
@@ -1891,7 +1891,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         INPUT:
 
-        - ``operation`` -- a string representing the operation
+        - ``operation`` -- string representing the operation
           being performed. For example, '*', or '1/'
 
         - ``other`` -- the other operand. If ``other`` is ``None``,
@@ -2139,12 +2139,12 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
 
         INPUT:
 
-        - ``operation`` -- a string representing the operation
-           being performed. For example, '\*', or '1/'
+        - ``operation`` -- string representing the operation
+          being performed. For example, '\*', or '1/'
 
         - ``f`` -- the other operand; if ``f`` is
-           ``None``, then the operation is assumed to be unary
-           rather than binary
+          ``None``, then the operation is assumed to be unary
+          rather than binary
 
         EXAMPLES::
 

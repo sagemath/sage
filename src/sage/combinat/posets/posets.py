@@ -5363,7 +5363,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``other``, a poset.
+        - ``other`` -- poset
 
         - ``labels`` -- (defaults to 'pairs') If set to 'pairs', each
           element ``v`` in this poset will be named ``(0,v)`` and each
@@ -5527,7 +5527,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``other``, a poset.
+        - ``other`` -- poset
 
         - ``labels`` -- (defaults to 'pairs') If set to 'pairs', each
           element ``v`` in this poset will be named ``(0,v)`` and each
@@ -8786,7 +8786,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``other``, a poset.
+        - ``other`` -- poset
 
         .. NOTE::
 

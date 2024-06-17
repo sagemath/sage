@@ -36,7 +36,7 @@ class LatticeDiagram(CombinatorialObject):
 
     def __getitem__(self, i):
         """
-        Return the `i^{th}` entry of ``self``.
+        Return the `i`-th entry of ``self``.
 
         Note that the indexing for lattice diagrams starts at `1`.
 

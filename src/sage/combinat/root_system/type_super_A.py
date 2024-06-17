@@ -378,7 +378,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
         def has_descent(self, i, positive=False):
             """
             Test if ``self`` has a descent at position `i`, that is
-            if ``self`` is on the strict negative side of the `i^{th}`
+            if ``self`` is on the strict negative side of the `i`-th
             simple reflection hyperplane.
 
             If ``positive`` is ``True``, tests if it is on the strict

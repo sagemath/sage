@@ -545,7 +545,7 @@ class Polyhedron_base2(Polyhedron_base1):
         ALGORITHM:
 
         The function computes each of the components of the requested point in
-        turn. To compute x_i, the ith component, it bisects the upper and lower
+        turn. To compute x_i, the `i`-th component, it bisects the upper and lower
         bounds on x_i given by the bounding box. At each bisection, it uses
         :meth:`integral_points_count` to determine on which side of the
         bisecting hyperplane the requested point lies.

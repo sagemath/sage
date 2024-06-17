@@ -643,7 +643,7 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
 
     def __getitem__(self, n):
         r"""
-        Return the n-th element of this list.
+        Return the `n`-th element of this list.
 
         .. note::
 

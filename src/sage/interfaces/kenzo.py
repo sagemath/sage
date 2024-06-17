@@ -151,7 +151,7 @@ def MooreSpace(m, n):
 
     INPUT:
 
-    - ``m`` -- a positive integer; the order of the nontrivial homology group
+    - ``m`` -- positive integer; the order of the nontrivial homology group
 
     - ``n`` -- the dimension in which the homology is not trivial
 
@@ -574,7 +574,7 @@ class KenzoChainComplex(KenzoObject):
 
         - ``dim`` -- integer or ``None`` (default)
 
-        - ``comb`` -- a list representing a formal sum of generators in the module
+        - ``comb`` -- list representing a formal sum of generators in the module
           of dimension ``dim`` or ``None`` (default). For example, to represent
           G7G12 + 3*G7G0 - 5*G7G3 we use the list [3, 'G7G0', -5, 'G7G3', 1, 'G7G12'].
           Note that the generators must be in ascending order respect to the number
@@ -628,7 +628,7 @@ class KenzoChainComplex(KenzoObject):
 
     def orgn(self):
         r"""
-        Return the :orgn slot of Kenzo, which stores as a list the origin of the object
+        Return the :orgn slot of Kenzo, which stores as a list the origin of the object.
 
         EXAMPLES::
 
@@ -724,7 +724,7 @@ class KenzoSimplicialSet(KenzoChainComplex):
 
     def homotopy_group(self, n):
         """
-        Return the n'th homotopy group of ``self``
+        Return the `n`-th homotopy group of ``self``.
 
         INPUT:
 
@@ -998,7 +998,7 @@ def s2k_dictmat(sdictmat):
 
     INPUT:
 
-    - ``sdictmat`` -- a dictionary in Sage
+    - ``sdictmat`` -- dictionary in Sage
 
     OUTPUT: a :class:`EclObject`
 
@@ -1023,7 +1023,7 @@ def pairing(slist):
 
     INPUT:
 
-    - ``slist`` -- a list in Sage
+    - ``slist`` -- list in Sage
 
     OUTPUT: a :class:`EclObject`
 
@@ -1421,7 +1421,7 @@ class KenzoChainComplexMorphism(KenzoObject):
 
         - ``dim`` -- integer
 
-        - ``comb`` -- a list representing a formal sum of generators in the module
+        - ``comb`` -- list representing a formal sum of generators in the module
           of dimension ``dim``. For example, to represent G7G12 + 3*G7G0 - 5*G7G3
           we use the list [3, 'G7G0', -5, 'G7G3', 1, 'G7G12']. Note that the
           generators must be in ascending order respect to the number after the
@@ -1597,7 +1597,7 @@ class KenzoChainComplexMorphism(KenzoObject):
         INPUT:
 
         - ``object`` -- a KenzoChainComplexMorphism instance, a tuple of
-          KenzoChainComplexMorphism instances or None (default).
+          KenzoChainComplexMorphism instances or None (default)
 
         OUTPUT:
 
@@ -1663,7 +1663,7 @@ class KenzoChainComplexMorphism(KenzoObject):
         INPUT:
 
         - ``object`` -- a KenzoChainComplexMorphism instance, a tuple of
-          KenzoChainComplexMorphism instances or None (default).
+          KenzoChainComplexMorphism instances or None (default)
 
         OUTPUT:
 
@@ -1837,7 +1837,7 @@ def build_morphism(source_complex, target_complex, degree, algorithm, strategy, 
       function) uses as arguments a degree and a generator or a combination,
       respectively.
 
-    - ``orgn`` -- a list containing a description about the origin of the morphism
+    - ``orgn`` -- list containing a description about the origin of the morphism
 
     OUTPUT: a :class:`KenzoChainComplexMorphism`
 
@@ -1929,7 +1929,7 @@ def s2k_listofmorphisms(l):
 
     INPUT:
 
-    - ``l`` -- a list of morphisms of chain complexes
+    - ``l`` -- list of morphisms of chain complexes
 
     OUTPUT: a :class:`EclObject`
 
@@ -1957,7 +1957,7 @@ def BicomplexSpectralSequence(l):
 
     INPUT:
 
-    - ``l`` -- a list of morphisms of chain complexes
+    - ``l`` -- list of morphisms of chain complexes
 
     OUTPUT: a :class:`KenzoSpectralSequence`
 

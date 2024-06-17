@@ -2613,7 +2613,7 @@ class _BijectionistMILP:
         - ``additional_constraints`` -- list of constraints for the
           underlying MILP
 
-        - ``on_blocks``, whether to return the solution on blocks or
+        - ``on_blocks`` -- whether to return the solution on blocks or
           on all elements
 
         TESTS::

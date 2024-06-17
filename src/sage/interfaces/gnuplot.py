@@ -63,15 +63,14 @@ class Gnuplot(SageObject):
 
         INPUT:
 
-        -  ``cmd`` -- string
+        - ``cmd`` -- string
 
-        -  ``file`` -- string (default: ``None``); if specified save
-           plot to given file, which may be either an eps (default) or png
-           file
+        - ``file`` -- string (default: ``None``); if specified save
+          plot to given file, which may be either an eps (default) or png file
 
-        -  ``verbose`` -- print some info
+        - ``verbose`` -- print some info
 
-        -  ``reset`` -- true; reset gnuplot before making graph
+        - ``reset`` -- true; reset gnuplot before making graph
 
         OUTPUT: displays graph
 
@@ -141,19 +140,19 @@ class Gnuplot(SageObject):
 
         INPUT:
 
-        -  ``f`` -- (string) a function of two variables, e.g.,
-           'cos(u)\*(3 + v\*cos(u/2)), sin(u)\*(3 + v\*cos(u/2)),
-           v\*sin(u/2)'
+        - ``f`` -- string; a function of two variables, e.g.,
+          'cos(u)\*(3 + v\*cos(u/2)), sin(u)\*(3 + v\*cos(u/2)),
+          v\*sin(u/2)'
 
-        -  ``range1`` -- (string) range of values for one
-           variable, e.g., '[u=-pi:pi]'
+        - ``range1`` -- string; range of values for one
+          variable, e.g., '[u=-pi:pi]'
 
-        -  ``range2`` -- (string) range of values for another
-           variable, e.g., '[v=-0.2:0.2]'
+        - ``range2`` -- string; range of values for another
+          variable, e.g., '[v=-0.2:0.2]'
 
-        -  ``samples`` -- (int) number of sample points to use
+        - ``samples`` -- (int) number of sample points to use
 
-        -  ``title`` -- (string) title of the graph.
+        - ``title`` -- string; title of the graph
 
         EXAMPLES::
 

@@ -459,7 +459,7 @@ class ScilabElement(ExpectElement):
 
     def __setitem__(self, n, value):
         """
-        Sets an element of a matrix.
+        Set an element of a matrix.
 
         EXAMPLES::
 

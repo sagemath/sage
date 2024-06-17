@@ -541,13 +541,12 @@ class Kash(Expect):
 
         INPUT:
 
-        -  ``s`` -- string containing Kash code
+        - ``s`` -- string containing Kash code
 
-        -  ``newlines`` -- boolean (default: ``True``); if ``False``,
-           remove all backslash-newlines inserted by the Kash output
-           formatter
+        - ``newlines`` -- boolean (default: ``True``); if ``False``,
+          remove all backslash-newlines inserted by the Kash output formatter
 
-        -  ``strip`` -- ignored
+        - ``strip`` -- ignored
         """
         x = str(x)
         x = x.rstrip()

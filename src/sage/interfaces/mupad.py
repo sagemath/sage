@@ -606,7 +606,7 @@ class MupadElement(ExtraTabCompletion, ExpectElement):
 
     def __len__(self):
         r"""
-        The analogue in MuPAD of Python's len is the method nops
+        The analogue in MuPAD of Python's len is the method nops.
 
         EXAMPLES::
 

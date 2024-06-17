@@ -132,7 +132,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
         @abstract_method
         def fundamental_weight(self, i):
             r"""
-            Return the `i^{\textnormal{th}}` fundamental weight.
+            Return the `i`-th fundamental weight.
 
             INPUT:
 
@@ -769,7 +769,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
             simple coroot associated to `\alpha_{i_k}`.
 
             This function returns a list of the form `[+1,+1,-1,...]`,
-            where the `k^{th}` entry denotes whether the `k^{th}` step was
+            where the `k`-th entry denotes whether the `k`-th step was
             positive or negative.
 
             See equation 3.4, of Ram: Alcove walks ..., :arxiv:`math/0601343v1`

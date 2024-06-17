@@ -15,7 +15,7 @@ algebra. You do not have to install any optional packages.
 The Macaulay2 interface offers three pieces of functionality:
 
 - ``macaulay2_console()`` -- a function that dumps you
-  into an interactive command-line Macaulay2 session.
+  into an interactive command-line Macaulay2 session
 
 - ``macaulay2.eval(expr)`` -- evaluation of arbitrary Macaulay2
   expressions, with the result returned as a string
@@ -427,7 +427,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
         INPUT:
 
         - ``var`` -- string; the name of the variable in Macaulay2
-        - ``value`` -- a string to evaluate
+        - ``value`` -- string to evaluate
 
         EXAMPLES::
 
@@ -708,7 +708,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
         INPUT:
 
         - ``base_ring`` -- base ring (see examples below)
-        - ``vars`` -- a tuple or string that defines the variable names
+        - ``vars`` -- tuple or string that defines the variable names
         - ``order`` -- string (default: ``'Lex'``); the monomial order
 
         OUTPUT: a Macaulay2 ring

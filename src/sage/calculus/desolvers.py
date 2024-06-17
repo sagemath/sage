@@ -1301,7 +1301,7 @@ def desolve_rk4(de, dvar, ics=None, ivar=None, end_points=None, step=0.1, output
 
     ALGORITHM:
 
-    4th order Runge-Kutta method. Wrapper for command ``rk`` in
+    `4`-th order Runge-Kutta method. Wrapper for command ``rk`` in
     Maxima's dynamics package.  Perhaps could be faster by using
     fast_float instead.
 
@@ -1386,7 +1386,7 @@ def desolve_rk4(de, dvar, ics=None, ivar=None, end_points=None, step=0.1, output
 def desolve_system_rk4(des, vars, ics=None, ivar=None, end_points=None, step=0.1):
     r"""
     Solve numerically a system of first-order ordinary differential
-    equations using the 4th order Runge-Kutta method. Wrapper for
+    equations using the `4`-th order Runge-Kutta method. Wrapper for
     Maxima command ``rk``.
 
     INPUT:
@@ -1436,7 +1436,7 @@ def desolve_system_rk4(des, vars, ics=None, ivar=None, end_points=None, step=0.1
 
     ALGORITHM:
 
-    4th order Runge-Kutta method. Wrapper for command ``rk`` in Maxima's
+    `4`-th order Runge-Kutta method. Wrapper for command ``rk`` in Maxima's
     dynamics package.  Perhaps could be faster by using ``fast_float``
     instead.
 

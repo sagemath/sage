@@ -557,14 +557,14 @@ class Octave(Expect):
 
         INPUT:
 
-        -  ``f`` -- a pair of strings representing the
-           differential equations; the independent variable must be called x
-           and the dependent variable must be called y.
+        - ``f`` -- a pair of strings representing the
+          differential equations; the independent variable must be called x
+          and the dependent variable must be called y
 
-        -  ``ics`` -- a pair [x0,y0] such that x(t0) = x0, y(t0)
-           = y0
+        - ``ics`` -- a pair [x0,y0] such that x(t0) = x0, y(t0)
+          = y0
 
-        -  ``trange`` -- a pair [t0,t1]
+        - ``trange`` -- a pair [t0,t1]
 
         OUTPUT: a gnuplot window appears
 

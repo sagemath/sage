@@ -1871,11 +1871,11 @@ class HasseDiagram(DiGraph):
 
         INPUT:
 
-        - ``return_list``, a boolean. If ``False`` (the default), return
-          an element that is not the top neither the bottom element of the
-          lattice, but is comparable to all elements of the lattice, if
-          the lattice is vertically decomposable and ``None`` otherwise.
-          If ``True``, return list of decomposition elements.
+        - ``return_list`` -- boolean (default: ``False``); if ``False`` (the
+          default), return an element that is not the top neither the bottom
+          element of the lattice, but is comparable to all elements of the
+          lattice, if the lattice is vertically decomposable and ``None``
+          otherwise. If ``True``, return list of decomposition elements.
 
         EXAMPLES::
 
@@ -2160,8 +2160,8 @@ class HasseDiagram(DiGraph):
 
         INPUT:
 
-        - ``upper``, a Boolean -- if ``True``, test whether the lattice is
-          upper semimodular; otherwise test whether the lattice is
+        - ``upper`` -- boolean; if ``True``, test whether the lattice is
+          upper semimodular. Otherwise test whether the lattice is
           lower semimodular.
 
         OUTPUT:

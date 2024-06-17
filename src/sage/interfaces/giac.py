@@ -769,7 +769,7 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
 
         INPUT:
 
-        -  ``string`` -- a string to search for in the giac help system
+        - ``string`` -- string to search for in the giac help system
 
         EXAMPLES::
 
@@ -810,7 +810,7 @@ class GiacFunction(ExpectFunction):
     def _instancedoc_(self):
         """
         Return the Giac help for this function. This gets called when
-        doing "?" on self.
+        doing ``?`` on ``self``.
 
         EXAMPLES::
 
@@ -826,7 +826,7 @@ class GiacFunctionElement(FunctionElement):
     def _instancedoc_(self):
         """
         Return the Giac help for this function. This gets called when
-        doing "?" on self.
+        doing ``?`` on ``self``.
 
         EXAMPLES::
 
@@ -1144,11 +1144,11 @@ class GiacElement(ExpectElement):
 
         INPUT:
 
-        -  ``var`` -- variable
+        - ``var`` -- variable
 
-        -  ``min`` -- default: ``None``
+        - ``min`` -- default: ``None``
 
-        -  ``max`` -- default: ``None``
+        - ``max`` -- default: ``None``
 
         This returns the definite integral if xmin is not ``None``, otherwise
         an indefinite integral.
@@ -1182,11 +1182,11 @@ class GiacElement(ExpectElement):
 
         INPUT:
 
-        -  ``var`` -- variable
+        - ``var`` -- variable
 
-        -  ``min`` -- default: ``None``
+        - ``min`` -- default: ``None``
 
-        -  ``max`` -- default: ``None``
+        - ``max`` -- default: ``None``
 
         This returns the definite integral if xmin is not ``None``, otherwise
         an indefinite integral.

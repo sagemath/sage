@@ -42,7 +42,7 @@ coefficients in `L`), `a \otimes b \mapsto [a_\lambda b]` satisfying
 
    `T` is usually called the *translation operation* or the *derivative*.
    For an element `a \in L` we will say that `Ta` is the *derivative of*
-   `a`. We define the *n-th products* `a_{(n)} b` for `a,b \in L` by
+   `a`. We define the *`n`-th products* `a_{(n)} b` for `a,b \in L` by
 
    .. MATH::
 
@@ -197,7 +197,7 @@ class LieConformalAlgebra(UniqueRepresentation, Parent):
       pair of generators ``'a'`` and ``'b'``, the value of
       ``arg0[('a','b')]`` is a dictionary whose keys are positive
       integer numbers and the corresponding value for the
-      key ``j`` is a dictionary itself representing the j-th product
+      key ``j`` is a dictionary itself representing the `j`-th product
       `a_{(j)}b`. Thus, for a positive integer number `j`, the
       value of ``arg0[('a','b')][j]`` is a dictionary whose entries
       are pairs ``('c',n)`` where ``'c'`` is the name of a generator

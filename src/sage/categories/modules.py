@@ -697,7 +697,7 @@ class Modules(Category_module):
               something that can be turned into one via
               ``self.submodule(submodule)``
 
-            - ``check``, other keyword arguments: passed on to
+            - ``check``, other keyword arguments -- passed on to
               :meth:`quotient_module`.
 
             This method just delegates to :meth:`quotient_module`.

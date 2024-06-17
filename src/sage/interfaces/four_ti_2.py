@@ -144,7 +144,7 @@ class FourTi2():
 
         INPUT:
 
-        - ``row`` -- a list of integers
+        - ``row`` -- list of integers
         - ``filename`` -- a file name not including a path
 
         EXAMPLES::
@@ -234,7 +234,7 @@ class FourTi2():
 
         INPUT:
 
-        - ``kwds`` -- a dict controlling what data is written to what files
+        - ``kwds`` -- dict controlling what data is written to what files
 
         OUTPUT: the value of the key ``project``
 
@@ -282,7 +282,7 @@ class FourTi2():
         - ``command`` -- the 4ti2 program to run
         - ``project`` -- the file name of the project to run on
         - ``verbose`` -- display the output of 4ti2 if ``True``
-        - ``options`` -- a list of strings to pass to the program
+        - ``options`` -- list of strings to pass to the program
 
         EXAMPLES::
 

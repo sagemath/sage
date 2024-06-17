@@ -850,7 +850,7 @@ class MapleFunction(ExpectFunction):
     def _instancedoc_(self):
         """
         Return the Maple help for this function. This gets called when
-        doing "?" on self.
+        doing ``?`` on ``self``.
 
         EXAMPLES::
 

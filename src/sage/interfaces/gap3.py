@@ -296,9 +296,9 @@ class Gap3(Gap_generic):
 
         INPUT:
 
-        -  command -- string (default: ``'gap3'``); points to the gap3
-           executable on your system. By default, it is assumed the
-           executable is in your path.
+        - command -- string (default: ``'gap3'``); points to the gap3
+          executable on your system. By default, it is assumed the
+          executable is in your path.
 
         EXAMPLES::
 
@@ -660,7 +660,7 @@ class GAP3Element(GapElement_generic):
       the variable name for the object
 
     - ``name`` -- string (default: ``None``); the variable name to use for the
-      object. If ``None``, then a variable name is generated.
+      object. If ``None``, then a variable name is generated
 
     .. NOTE::
 

@@ -242,7 +242,7 @@ cdef inline int PS_move_all_mins_to_front(PartitionStack *PS) noexcept:
 cdef inline int PS_get_perm_from(PartitionStack *PS1, PartitionStack *PS2, int *gamma) noexcept:
     """
     Store the permutation determined by PS2[i] -> PS1[i] for each i, where PS[i]
-    denotes the entry of the ith cell of the discrete partition PS.
+    denotes the entry of the `i`-th cell of the discrete partition PS.
     """
     cdef int i
     for i from 0 <= i < PS1.degree:
@@ -480,7 +480,7 @@ cdef inline int SC_update_tree(StabilizerChain *SC, int level, int *pi, int num_
 cdef inline void SC_order(StabilizerChain *SC, int i, mpz_t order) noexcept:
     """
     Give the order of the stabilizer of base points up to but not including the
-    i-th, storing it to ``order``, which must be already initialized.
+    `i`-th, storing it to ``order``, which must be already initialized.
 
     To get the order of the full group, let ``i = 0``.
     """
@@ -531,7 +531,7 @@ cdef inline void update_perm_stack(StabilizerChain *group, int level, int point,
     int *perm_stack) noexcept:
     """
     Ensure that perm_stack[level] is gamma_0^{-1}...gamma_{level-1}^{-1}, where
-    each gamma_i represents the coset representative at the ith level determined
+    each gamma_i represents the coset representative at the `i`-th level determined
     by our current position in the search tree.
 
     For internal use within the automorphism group, canonical label and double

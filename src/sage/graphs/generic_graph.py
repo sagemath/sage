@@ -80,7 +80,7 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.clear` | Empty the graph of vertices and edges and removes name, associated objects, and position information.
     :meth:`~GenericGraph.degree` | Return the degree (in + out for digraphs) of a vertex or of vertices.
     :meth:`~GenericGraph.average_degree` | Return the average degree of the graph.
-    :meth:`~GenericGraph.degree_histogram` | Return a list, whose ith entry is the frequency of degree i.
+    :meth:`~GenericGraph.degree_histogram` | Return a list, whose `i`-th entry is the frequency of degree i.
     :meth:`~GenericGraph.degree_iterator` | Return an iterator over the degrees of the (di)graph.
     :meth:`~GenericGraph.degree_sequence` | Return the degree sequence of this (di)graph.
     :meth:`~GenericGraph.random_subgraph` | Return a random subgraph containing each vertex with probability ``p``.
@@ -16268,7 +16268,7 @@ class GenericGraph(GenericGraph_pyx):
         - ``k`` -- integer; the maximum path length for considering edges in
           the power graph
 
-        OUTPUT: the kth power graph based on shortest distances between nodes
+        OUTPUT: the `k`-th power graph based on shortest distances between nodes
 
         EXAMPLES:
 

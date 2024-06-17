@@ -717,7 +717,7 @@ def ToricCode(P,F):
 
     - ``F`` -- a finite field
 
-    OUTPUT: toric code with length n = , dimension `k` over field `F`
+    OUTPUT: toric code with length `n`, dimension `k` over field `F`
 
     EXAMPLES::
 

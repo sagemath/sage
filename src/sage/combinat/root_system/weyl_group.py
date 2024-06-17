@@ -475,7 +475,7 @@ class WeylGroup_gens(UniqueRepresentation,
 
     def simple_reflection(self, i):
         """
-        Return the `i^{th}` simple reflection.
+        Return the `i`-th simple reflection.
 
         EXAMPLES::
 
@@ -860,7 +860,7 @@ class WeylGroupElement(MatrixGroupElement_gap):
         Test if ``self`` has a descent at position ``i``.
 
         An element `w` has a descent in position `i` if `w` is
-        on the strict negative side of the `i^{th}` simple reflection
+        on the strict negative side of the `i`-th simple reflection
         hyperplane.
 
         If ``positive`` is ``True``, tests if it is on the strict

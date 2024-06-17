@@ -76,7 +76,7 @@ cdef class ImmutableListWithParent(ClonableArray):
     cpdef _set_index(self, k, value):
         r"""
         Return a sibling of ``self`` obtained by setting the
-        `k^{th}` entry of ``self`` to value.
+        `k`-th entry of ``self`` to value.
 
         EXAMPLES::
 

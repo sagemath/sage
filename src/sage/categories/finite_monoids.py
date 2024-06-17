@@ -47,7 +47,7 @@ class FiniteMonoids(CategoryWithAxiom):
 
                 a_1 * a_2 * \cdots * a_k
 
-            The 0th face of this is obtained by deleting `a_1`, and
+            The `0`-th face of this is obtained by deleting `a_1`, and
             the `k`-th face is obtained by deleting `a_k`. The other
             faces are obtained by multiplying elements: the 1st face
             is

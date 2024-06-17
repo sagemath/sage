@@ -35,11 +35,11 @@ class Sage(ExtraTabCompletion, Expect):
 
     INPUT:
 
-    -  ``server`` -- (optional) if specified runs Sage on a
-       remote machine with address. You must have ssh keys setup so you
-       can login to the remote machine by typing "ssh remote_machine" and
-       no password, call _install_hints_ssh() for hints on how to do
-       that.
+    - ``server`` -- (optional) if specified runs Sage on a
+      remote machine with address. You must have ssh keys setup so you
+      can login to the remote machine by typing "ssh remote_machine" and
+      no password, call _install_hints_ssh() for hints on how to do
+      that.
 
 
     The version of Sage should be the same as on the local machine,
@@ -305,9 +305,9 @@ class Sage(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``line`` -- input line of code
+        - ``line`` -- input line of code
 
-        -  ``strip`` -- ignored
+        - ``strip`` -- ignored
 
         EXAMPLES::
 

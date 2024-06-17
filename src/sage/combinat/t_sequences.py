@@ -747,11 +747,11 @@ def turyn_type_sequences_smallcases(n, existence=False):
     The Turyn type sequences are stored in hexadecimal format.
     Given `n` hexadecimal digits `h_1, h_2,...,h_n`, it is possible to get the
     Turyn type sequences by converting each `h_i` (`1 \le i \le n-1`) into a
-    four digits binary number. Then, the j-th binary digit is `0` if the i-th
-    number in the j-th sequence is `1`, and it is `1` if the number in the
+    four digits binary number. Then, the `j`-th binary digit is `0` if the `i`-th
+    number in the `j`-th sequence is `1`, and it is `1` if the number in the
     sequence is -1.
 
-    For the n-th digit, it should be converted to a 3 digits binary number, and
+    For the `n`-th digit, it should be converted to a 3 digits binary number, and
     then the same mapping as before can be used (see also [BDKR2013]_).
     """
     def convertLists(hexstring):

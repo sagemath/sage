@@ -86,9 +86,9 @@ class BinaryRecurrenceSequence(SageObject):
 
     - ``c`` -- integer; (partially determining the recurrence relation)
 
-    - ``u0`` -- integer; (the 0th term of the binary recurrence sequence)
+    - ``u0`` -- integer; (the `0`-th term of the binary recurrence sequence)
 
-    - ``u1`` -- integer; (the 1st term of the binary recurrence sequence)
+    - ``u1`` -- integer; (the `1`-st term of the binary recurrence sequence)
 
     OUTPUT: an integral linear binary recurrence sequence defined by `u_0`,
     `u_1`, and `u_{n+2} = b u_{n+1}+c u_n`
@@ -160,7 +160,7 @@ class BinaryRecurrenceSequence(SageObject):
 
     def __call__(self, n, modulus=0):
         """
-        Give the nth term of a binary recurrence sequence, possibly mod some modulus.
+        Give the `n`-th term of a binary recurrence sequence, possibly mod some modulus.
 
         INPUT:
 
@@ -170,7 +170,7 @@ class BinaryRecurrenceSequence(SageObject):
 
         OUTPUT:
 
-        - An integer (the nth term of the binary recurrence sequence modulo ``modulus``)
+        - An integer (the `n`-th term of the binary recurrence sequence modulo ``modulus``)
 
         EXAMPLES::
 
@@ -507,7 +507,7 @@ class BinaryRecurrenceSequence(SageObject):
 
     def pthpowers(self, p, Bound):
         """
-        Find the indices of proveably all pth powers in the recurrence sequence
+        Find the indices of proveably all `p`-th powers in the recurrence sequence
         bounded by Bound.
 
         Let `u_n` be a binary recurrence sequence.  A ``p`` th power in `u_n`

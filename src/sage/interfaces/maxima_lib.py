@@ -518,9 +518,9 @@ class MaximaLib(MaximaAbstract):
 
         INPUT:
 
-        -  ``var`` -- string
+        - ``var`` -- string
 
-        -  ``value`` -- string
+        - ``value`` -- string
 
         OUTPUT: none
 

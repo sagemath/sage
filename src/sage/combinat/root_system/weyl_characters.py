@@ -1297,7 +1297,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
 
         def __pow__(self, n):
             """
-            Return the n-th power of ``self``.
+            Return the `n`-th power of ``self``.
 
             We override the method in :mod:`sage.monoids.monoids` since
             using the Brauer-Klimyk algorithm, it is more efficient to

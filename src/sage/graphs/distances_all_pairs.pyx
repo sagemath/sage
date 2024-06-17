@@ -943,7 +943,7 @@ def eccentricity(G, algorithm='standard', vertex_list=None):
     Return the vector of eccentricities in G.
 
     The array returned is of length `n`, and its `i`-th component is the
-    eccentricity of the ith vertex in ``G.vertices(sort=True)``.
+    eccentricity of the `i`-th vertex in ``G.vertices(sort=True)``.
 
     INPUT:
 

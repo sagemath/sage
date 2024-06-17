@@ -22,7 +22,7 @@ enumerated in the Shephard-Todd classification as `G_{4}`, `G_{25}` and
 
 Coxeter realized these groups as subgroups of unitary groups with respect
 to a certain Hermitian form over the complex numbers (in fact over `\QQ`
-adjoined with a primitive 12-th root of unity).
+adjoined with a primitive `12`-th root of unity).
 
 In "Einige endliche Faktorgruppen der Zopfgruppen" (Math. Z., 163 (1978),
 291-302) J. Assion considered two series `S(m)` and `U(m)` of finite

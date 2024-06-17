@@ -189,7 +189,7 @@ class NonDecreasingParkingFunction(Element):
 
     def __getitem__(self, n):
         """
-        Return the `n^{th}` item in the underlying list.
+        Return the `n`-th item in the underlying list.
 
         .. note::
 

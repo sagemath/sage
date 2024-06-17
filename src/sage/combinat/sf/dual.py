@@ -480,7 +480,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
     def transition_matrix(self, basis, n):
         r"""
-        Return the transition matrix between the `n^{th}` homogeneous components
+        Return the transition matrix between the `n`-th homogeneous components
         of ``self`` and ``basis``.
 
         INPUT:

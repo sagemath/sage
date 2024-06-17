@@ -1381,7 +1381,7 @@ def GoethalsSeidelGraph(k, r):
 
 def DorogovtsevGoltsevMendesGraph(n):
     """
-    Construct the n-th generation of the Dorogovtsev-Goltsev-Mendes
+    Construct the `n`-th generation of the Dorogovtsev-Goltsev-Mendes
     graph.
 
     EXAMPLES::
@@ -2225,7 +2225,7 @@ def LCFGraph(n, shift_list, repeats):
     s_k-1] describes edges to be created by the following scheme: for
     each i, connect vertex i to vertex (i + s_i). Then, repeats
     specifies the number of times to repeat this process, where on the
-    jth repeat we connect vertex (i + j\*len(shift_list)) to vertex (
+    `j`-th repeat we connect vertex (i + j\*len(shift_list)) to vertex (
     i + j\*len(shift_list) + s_i).
 
     INPUT:

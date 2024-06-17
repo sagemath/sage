@@ -1719,7 +1719,7 @@ def tau1(T1, T2, cells_map):
        \tau_1 = \beta_2^{-1} \beta_3
 
     where the composition is left to right and `\beta_i : T2 \rightarrow T1`
-    changes just the `i^{th}` coordinate of a triple.
+    changes just the `i`-th coordinate of a triple.
 
     EXAMPLES::
 
@@ -1773,7 +1773,7 @@ def tau2(T1, T2, cells_map):
        \tau_2 = \beta_3^{-1} \beta_1
 
     where the composition is left to right and `\beta_i : T2 \rightarrow T1`
-    changes just the `i^{th}` coordinate of a triple.
+    changes just the `i`-th coordinate of a triple.
 
     EXAMPLES::
 
@@ -1827,7 +1827,7 @@ def tau3(T1, T2, cells_map):
        \tau_3 = \beta_1^{-1} \beta_2
 
     where the composition is left to right and `\beta_i : T2 \rightarrow T1`
-    changes just the `i^{th}` coordinate of a triple.
+    changes just the `i`-th coordinate of a triple.
 
     EXAMPLES::
 

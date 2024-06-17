@@ -77,7 +77,7 @@ class NilCoxeterAlgebra(IwahoriHeckeAlgebra.T):
 
     def homogeneous_generator_noncommutative_variables(self, r):
         r"""
-        Give the `r^{th}` homogeneous function inside the Nil-Coxeter algebra.
+        Give the `r`-th homogeneous function inside the Nil-Coxeter algebra.
         In finite type `A` this is the sum of all decreasing elements of length `r`.
         In affine type `A` this is the sum of all cyclically decreasing elements of length `r`.
         This is only defined in finite type `A`, `B` and affine types `A^{(1)}`, `B^{(1)}`, `C^{(1)}`, `D^{(1)}`.

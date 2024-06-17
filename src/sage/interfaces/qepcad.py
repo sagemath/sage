@@ -627,7 +627,7 @@ def _qepcad_atoms(formula):
 
     INPUT:
 
-    - `formula` (string) -- a quantifier-free formula.
+    - ``formula`` -- string; a quantifier-free formula
 
     .. NOTE::
 
@@ -1876,7 +1876,7 @@ class qepcad_formula_factory:
         OUTPUT:
 
         - ``form_strs`` -- list of formulas as strings
-        - ``vars`` -- a frozenset of all variables in the formulas
+        - ``vars`` -- frozenset of all variables in the formulas
 
         EXAMPLES::
 

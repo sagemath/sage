@@ -530,9 +530,9 @@ class ToricLattice_generic(FreeModule_generic_pid):
 
         OUTPUT:
 
-        - ``None``, we do not think of toric lattices as constructed from
-          simpler objects since we do not want to perform arithmetic involving
-          different lattices.
+        ``None``, we do not think of toric lattices as constructed from
+        simpler objects since we do not want to perform arithmetic involving
+        different lattices.
 
         TESTS::
 

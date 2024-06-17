@@ -48,7 +48,7 @@ of :ref:`examples <finite_state_machine_examples>`.
     :meth:`~TransducerGenerators.add` | Returns a transducer realizing addition.
     :meth:`~TransducerGenerators.sub` | Returns a transducer realizing subtraction.
     :meth:`~TransducerGenerators.CountSubblockOccurrences` | Returns a transducer counting the occurrences of a subblock.
-    :meth:`~TransducerGenerators.Wait` | Returns a transducer writing ``False`` until first (or k-th) true input is read.
+    :meth:`~TransducerGenerators.Wait` | Returns a transducer writing ``False`` until first (or `k`-th) true input is read.
     :meth:`~TransducerGenerators.weight` | Returns a transducer realizing the Hamming weight.
     :meth:`~TransducerGenerators.GrayCode` | Returns a transducer realizing binary Gray code.
     :meth:`~TransducerGenerators.Recursion` | Returns a transducer defined by recursions.

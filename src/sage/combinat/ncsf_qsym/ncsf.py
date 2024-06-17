@@ -2333,14 +2333,14 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             # @cached_method?
             def coproduct_on_generators(self, i):
                 r"""
-                Return the image of the `i^{th}` generator of the algebra under
+                Return the image of the `i`-th generator of the algebra under
                 the coproduct.
 
                 INPUT:
 
                 - ``i`` -- positive integer
 
-                OUTPUT: the result of applying the coproduct to the `i^{th}`
+                OUTPUT: the result of applying the coproduct to the `i`-th
                 generator of ``self``
 
                 EXAMPLES::
@@ -2453,7 +2453,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
             def coproduct_on_generators(self, i):
                 r"""
-                Return the image of the `i^{th}` generator of the
+                Return the image of the `i`-th generator of the
                 multiplicative basis ``self`` under the coproduct.
 
                 INPUT:
@@ -2461,7 +2461,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 - ``i`` -- positive integer
 
                 OUTPUT: the result of applying the coproduct to the
-                `i^{th}` generator of ``self``
+                `i`-th generator of ``self``
 
                 EXAMPLES::
 

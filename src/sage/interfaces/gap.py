@@ -459,17 +459,16 @@ class Gap_generic(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``s`` -- string containing GAP code
+        - ``s`` -- string containing GAP code
 
-        -  ``newlines`` -- boolean (default: ``True``); if ``False``,
-           remove all backslash-newlines inserted by the GAP output
-           formatter
+        - ``newlines`` -- boolean (default: ``True``); if ``False``,
+          remove all backslash-newlines inserted by the GAP output formatter
 
-        -  ``strip`` -- ignored
+        - ``strip`` -- ignored
 
-        -  ``split_lines`` -- boolean (default: ``True``); if ``True`` then each
-           line is evaluated separately.  If ``False``, then the whole
-           block of code is evaluated all at once.
+        - ``split_lines`` -- boolean (default: ``True``); if ``True`` then each
+          line is evaluated separately.  If ``False``, then the whole
+          block of code is evaluated all at once.
 
         EXAMPLES::
 
@@ -630,13 +629,13 @@ class Gap_generic(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        - ``line`` -- (string) a command.
-        - ``allow_use_file`` (optional bool, default ``True``) --
-          allow to evaluate long commands using :meth:`_eval_line_using_file`.
-        - ``wait_for_prompt`` (optional bool, default ``True``) --
-          wait until the prompt appears in the sub-process' output.
-        - ``restart_if_needed`` (optional bool, default ``True``) --
-          If it is ``True``, the command evaluation is evaluated
+        - ``line`` -- string; a command
+        - ``allow_use_file`` -- boolean (default ``True``);
+          allow to evaluate long commands using :meth:`_eval_line_using_file`
+        - ``wait_for_prompt`` -- boolean (default ``True``);
+          wait until the prompt appears in the sub-process' output
+        - ``restart_if_needed`` -- boolean (default ``True``);
+          if it is ``True``, the command evaluation is evaluated
           a second time after restarting the interface, if an
           :class:`EOFError` occurred.
 

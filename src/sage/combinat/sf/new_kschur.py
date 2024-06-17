@@ -448,10 +448,10 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
             - ``other`` -- a basis in the ring of symmetric functions
             - ``n`` -- positive integer
 
-            The entry in the `i^{th}` row and `j^{th}` column is the
-            coefficient obtained by writing the `i^{th}` element of the
+            The entry in the `i`-th row and `j`-th column is the
+            coefficient obtained by writing the `i`-th element of the
             basis of ``self`` in terms of the basis ``other``, and extracting the
-            `j^{th}` coefficient.
+            `j`-th coefficient.
 
             EXAMPLES::
 
@@ -1478,10 +1478,10 @@ class K_kSchur(CombinatorialFreeModule):
 
     def _homogeneous_generators_noncommutative_variables_zero_Hecke(self, r):
         r"""
-        Return the ``r^{th}`` homogeneous generator, viewed as an element inside the
+        Return the `r`-th homogeneous generator, viewed as an element inside the
         affine zero Hecke algebra.
 
-        This is the sum of all cyclically decreasing elements of order ``r``.
+        This is the sum of all cyclically decreasing elements of order `r`.
 
         INPUT:
 

@@ -1655,7 +1655,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             Return the coefficients of this homogeneous element with
             respect to the basis in its degree.
 
-            For example, if this is the sum of the 0th and 2nd basis
+            For example, if this is the sum of the `0`-th and `2`-nd basis
             elements, return the list ``[1, 0, 1]``.
 
             Raise an error if the element is not homogeneous.

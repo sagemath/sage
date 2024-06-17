@@ -204,7 +204,7 @@ cdef class PythonPartitionStack:
 
     def set_entry(self, int i, int entry):
         """
-        Set the ith entry of the entries array to entry.
+        Set the `i`-th entry of the entries array to entry.
 
         EXAMPLES::
 
@@ -219,7 +219,7 @@ cdef class PythonPartitionStack:
 
     def get_entry(self, int i):
         """
-        Get the ith entry of the entries array.
+        Get the `i`-th entry of the entries array.
 
         EXAMPLES::
 
@@ -247,7 +247,7 @@ cdef class PythonPartitionStack:
 
     def set_level(self, int i, int level):
         """
-        Set the ith entry of the levels array to entry.
+        Set the `i`-th entry of the levels array to entry.
 
         EXAMPLES::
 
@@ -264,7 +264,7 @@ cdef class PythonPartitionStack:
 
     def get_level(self, int i):
         """
-        Get the ith entry of the levels array.
+        Get the `i`-th entry of the levels array.
 
         EXAMPLES::
 

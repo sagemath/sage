@@ -6,8 +6,8 @@ non-increasing list of positive integers (the *parts* of the
 partition) with total sum `n`.
 
 A partition can be depicted by a diagram made of rows of cells,
-where the number of cells in the `i^{th}` row starting from
-the top is the `i^{th}` part of the partition.
+where the number of cells in the `i`-th row starting from
+the top is the `i`-th part of the partition.
 
 The coordinate system related to a partition applies from the top
 to the bottom and from left to right. So, the corners of the
@@ -330,7 +330,7 @@ class Partition(CombinatorialElement):
 
     A partition is often represented as a diagram consisting of **cells**,
     or **boxes**, placed in rows on top of each other such that the number of
-    cells in the `i^{th}` row, reading from top to bottom, is the `i^{th}`
+    cells in the `i`-th row, reading from top to bottom, is the `i`-th
     part of the partition. The rows are left-justified (and become shorter
     and shorter the farther down one goes). This diagram is called the
     **Young diagram** of the partition, or more precisely its Young diagram
@@ -2355,7 +2355,7 @@ class Partition(CombinatorialElement):
 
     def get_part(self, i, default=Integer(0)):
         r"""
-        Return the `i^{th}` part of ``self``, or ``default`` if it does
+        Return the `i`-th part of ``self``, or ``default`` if it does
         not exist.
 
         EXAMPLES::

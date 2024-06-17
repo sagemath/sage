@@ -184,7 +184,7 @@ class Expect(Interface):
 
         INPUT:
 
-        - ``server`` -- string or ``None`` (default); name of a remote host to connect to using ``ssh``.
+        - ``server`` -- string or ``None`` (default); name of a remote host to connect to using ``ssh``
 
         - ``command`` -- one of:
 
@@ -817,9 +817,9 @@ If this all works, you can then make calls like:
 
         INPUT:
 
-        - ``line`` -- (string) a command.
-        - ``restart_if_needed`` -- (optional bool, default ``True``) --
-          If it is ``True``, the command evaluation is evaluated
+        - ``line`` -- string; a command
+        - ``restart_if_needed`` -- boolean (default ``True``);
+          if it is ``True``, the command evaluation is evaluated
           a second time after restarting the interface, if an
           :class:`EOFError` occurred.
 
@@ -914,13 +914,13 @@ If this all works, you can then make calls like:
 
         INPUT:
 
-        - ``line`` -- (string) a command.
-        - ``allow_use_file`` (optional bool, default ``True``) --
+        - ``line`` -- string; a command
+        - ``allow_use_file`` -- boolean (default ``True``);
           allow to evaluate long commands using :meth:`_eval_line_using_file`.
-        - ``wait_for_prompt`` (optional bool, default ``True``) --
+        - ``wait_for_prompt`` -- boolean (default ``True``);
           wait until the prompt appears in the sub-process' output.
-        - ``restart_if_needed`` (optional bool, default ``True``) --
-          If it is ``True``, the command evaluation is evaluated
+        - ``restart_if_needed`` -- boolean (default ``True``);
+          if it is ``True``, the command evaluation is evaluated
           a second time after restarting the interface, if an
           :class:`EOFError` occurred.
 
@@ -1182,10 +1182,10 @@ If this all works, you can then make calls like:
 
         INPUT:
 
-        -  ``expr`` -- ``None`` or a string or list of strings
-           (default: ``None``)
+        - ``expr`` -- ``None`` or a string or list of strings
+          (default: ``None``)
 
-        -  ``timeout`` -- ``None`` or a number (default: ``None``)
+        - ``timeout`` -- ``None`` or a number (default: ``None``)
 
         EXAMPLES:
 
@@ -1265,7 +1265,7 @@ If this all works, you can then make calls like:
 
         INPUT:
 
-        -  ``string`` -- a string
+        - ``string`` -- string
 
         EXAMPLES: We illustrate this function using the Singular interface::
 
@@ -1362,10 +1362,10 @@ If this all works, you can then make calls like:
         - ``code`` -- text to evaluate
 
         - ``strip`` -- boolean; whether to strip output prompts,
-          etc. (ignored in the base class).
+          etc. (ignored in the base class)
 
         - ``locals`` -- None (ignored); this is used for compatibility
-          with the Sage notebook's generic system interface.
+          with the Sage notebook's generic system interface
 
         - ``allow_use_file`` -- boolean (default: ``True``); if ``True`` and
           ``code`` exceeds an interface-specific threshold then ``code`` will

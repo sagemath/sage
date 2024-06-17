@@ -1200,7 +1200,7 @@ class BranchingRule(SageObject):
         In this example, `0` is the affine root, that is, the negative
         of the highest root, for `"G2"`. If `i \geq j` is printed, this
         means that the `i`-th simple (or affine) root of the ambient
-        group restricts to the j-th simple root of the subgroup.
+        group restricts to the `j`-th simple root of the subgroup.
         For reference the Dynkin diagrams are also printed. The
         extended Dynkin diagram of the ambient group is printed if
         the affine root restricts to a simple root. More information

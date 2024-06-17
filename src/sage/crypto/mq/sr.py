@@ -1869,13 +1869,13 @@ class SR_generic(MPolynomialSystemGenerator):
 
             sage: sr = mq.SR(1, 1, 1, 4, gf2=True, polybori=False)
 
-        The 0-th subkey is the user provided key, so only conjugacy
+        The `0`-th subkey is the user provided key, so only conjugacy
         relations or field polynomials are added.::
 
             sage: sr.key_schedule_polynomials(0)
             (k000^2 + k000, k001^2 + k001, k002^2 + k002, k003^2 + k003)
 
-        The 1-th subkey is derived from the user provided key according to
+        The `1`-st subkey is derived from the user provided key according to
         the key schedule which is non-linear.::
 
             sage: sr.key_schedule_polynomials(1)

@@ -197,7 +197,7 @@ class Gp(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        - ``stacksize`` -- integer (default: 10000000) the initial PARI
+        - ``stacksize`` -- integer (default: 10000000); the initial PARI
           stacksize in bytes (default: 10MB)
         - ``script_subdirectory`` -- string (default: ``None``); name of the
           subdirectory of SAGE_EXTCODE/pari from which to read scripts
@@ -383,7 +383,7 @@ class Gp(ExtraTabCompletion, Expect):
 
     def set_precision(self, prec):
         """
-        Sets the PARI precision (in decimal digits) for real
+        Set the PARI precision (in decimal digits) for real
         computations, and returns the old value.
 
         .. NOTE::
@@ -422,7 +422,7 @@ class Gp(ExtraTabCompletion, Expect):
 
     def set_series_precision(self, prec=None):
         """
-        Sets the PARI power series precision, and returns the old precision.
+        Set the PARI power series precision, and returns the old precision.
 
         EXAMPLES::
 
@@ -473,8 +473,8 @@ class Gp(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``t`` -- (default: ``None``); if not None, then returns
-           time since t
+        - ``t`` -- (default: ``None``); if not None, then returns
+          time since t
 
 
         .. warning::

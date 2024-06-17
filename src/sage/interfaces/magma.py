@@ -309,23 +309,23 @@ class Magma(ExtraTabCompletion, Expect):
         """
         INPUT:
 
-        -  ``script_subdirectory`` -- directory where scripts
-           are read from
+        - ``script_subdirectory`` -- directory where scripts
+          are read from
 
-        -  ``logfile`` -- output logged to this file
+        - ``logfile`` -- output logged to this file
 
-        -  ``server`` -- address of remote server
+        - ``server`` -- address of remote server
 
         - ``server_tmpdir`` -- temporary directory to use in remote server
 
-        -  ``user_config`` -- if ``True``, then local user
-           configuration files will be read by Magma. If ``False`` (the default),
-           then Magma is started with the -n option which suppresses user
-           configuration files.
+        - ``user_config`` -- if ``True``, then local user
+          configuration files will be read by Magma. If ``False`` (the default),
+          then Magma is started with the -n option which suppresses user
+          configuration files.
 
         - ``seed`` -- seed to use in the random number generator
 
-        -  ``command`` -- (default: ``'magma'``) the command to execute to start Magma.
+        - ``command`` -- (default: ``'magma'``) the command to execute to start Magma
 
         EXAMPLES::
 
@@ -419,11 +419,11 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``filename`` -- string
+        - ``filename`` -- string
 
         OUTPUT:
 
-        -  ``string`` -- a magma command
+        - ``string`` -- a magma command
 
         EXAMPLES::
 
@@ -441,7 +441,7 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``s`` -- string
+        - ``s`` -- string
 
         OUTPUT: string
 
@@ -468,7 +468,7 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``attrname`` -- string
+        - ``attrname`` -- string
 
         OUTPUT: :class:`MagmaFunction` instance
 
@@ -500,9 +500,9 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``x`` -- string of code
+        - ``x`` -- string of code
 
-        -  ``strip`` -- ignored
+        - ``strip`` -- ignored
 
         OUTPUT: string
 
@@ -604,9 +604,9 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``var`` -- string; a variable name
+        - ``var`` -- string; a variable name
 
-        -  ``value`` -- string; what to set var equal to
+        - ``value`` -- string; what to set var equal to
 
         EXAMPLES::
 
@@ -624,8 +624,8 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``var`` -- string; name of a variable defined in the
-           Magma session
+        - ``var`` -- string; name of a variable defined in the
+          Magma session
 
         OUTPUT: string representation of the value of the variable
 
@@ -644,7 +644,7 @@ class Magma(ExtraTabCompletion, Expect):
         INPUT:
 
         - ``value`` -- something coercible to an element of this Magma
-           interface
+          interface
 
         - ``gens`` -- string; comma separated list of variable names
 
@@ -684,10 +684,10 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``x`` -- object
+        - ``x`` -- object
 
-        -  ``gens`` -- string; names of generators of self,
-           separated by commas
+        - ``gens`` -- string; names of generators of self,
+          separated by commas
 
         OUTPUT: :class:`MagmaElement`
 
@@ -792,7 +792,7 @@ class Magma(ExtraTabCompletion, Expect):
 
     def _coerce_from_special_method(self, x):
         """
-        Tries to coerce to ``self`` by calling a special underscore method.
+        Try to coerce to ``self`` by calling a special underscore method.
 
         If no such method is defined, raises an AttributeError instead of a
         TypeError.
@@ -828,9 +828,9 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``s`` -- string
+        - ``s`` -- string
 
-        -  ``names`` -- list of strings
+        - ``names`` -- list of strings
 
         OUTPUT: string
 
@@ -849,7 +849,7 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``var`` -- string
+        - ``var`` -- string
 
         EXAMPLES::
 
@@ -898,12 +898,12 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``t`` -- float (default: ``None``); if not None, return
-           cputime since t
+        - ``t`` -- float (default: ``None``); if not None, return
+          cputime since t
 
         OUTPUT:
 
-        -  ``float`` -- seconds
+        - ``float`` -- seconds
 
         EXAMPLES::
 
@@ -927,7 +927,7 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``dir`` -- string
+        - ``dir`` -- string
 
         EXAMPLES::
 
@@ -950,7 +950,7 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``filename`` -- string
+        - ``filename`` -- string
 
         EXAMPLES: Attaching a file that exists is fine::
 
@@ -978,7 +978,7 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``filename`` -- string
+        - ``filename`` -- string
 
         EXAMPLES::
 
@@ -1007,7 +1007,7 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``filename`` -- string
+        - ``filename`` -- string
 
         OUTPUT: output printed when loading the file
 
@@ -1082,16 +1082,16 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``function`` -- string, a Magma function name
+        - ``function`` -- string, a Magma function name
 
-        -  ``args`` -- list of objects coercible into this magma
-           interface
+        - ``args`` -- list of objects coercible into this magma
+          interface
 
-        -  ``params`` -- Magma parameters, passed in after a
-           colon
+        - ``params`` -- Magma parameters, passed in after a
+          colon
 
-        -  ``nvals`` -- number of return values from the
-           function to ask Magma for
+        - ``nvals`` -- number of return values from the
+          function to ask Magma for
 
         OUTPUT: instance of :class:`MagmaElement` or a tuple of ``nvals`` many
         :class:`MagmaElement` instances
@@ -1139,9 +1139,9 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``code`` -- string; code to evaluate
+        - ``code`` -- string; code to evaluate
 
-        -  ``nvals`` -- integer; number of return values
+        - ``nvals`` -- integer; number of return values
 
         OUTPUT: nvals distinct values
 
@@ -1199,16 +1199,16 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``left`` -- something coerceable to a magma object
+        - ``left`` -- something coerceable to a magma object
 
-        -  ``name`` -- name of the constructor, e.g., sub, quo,
-           ideal, etc.
+        - ``name`` -- name of the constructor, e.g., sub, quo,
+          ideal, etc.
 
-        -  ``gens`` -- if a list/tuple, each item is coerced to
-           magma; otherwise gens itself is converted to magma
+        - ``gens`` -- if a list/tuple, each item is coerced to
+          magma; otherwise gens itself is converted to magma
 
-        -  ``nvals`` -- positive integer; number of return
-           values
+        - ``nvals`` -- positive integer; number of return
+          values
 
         OUTPUT: a single magma object if nvals == 1; otherwise a tuple of
         nvals magma objects.
@@ -1377,9 +1377,9 @@ class Magma(ExtraTabCompletion, Expect):
 
         OUTPUT:
 
-        -  ``numbers`` -- 3-tuple: major, minor, etc.
+        - ``numbers`` -- 3-tuple: major, minor, etc.
 
-        -  ``string`` -- version as a string
+        - ``string`` -- version as a string
 
         EXAMPLES::
 
@@ -1397,7 +1397,7 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``s`` -- string
+        - ``s`` -- string
 
         OUTPUT: string
 
@@ -1427,12 +1427,12 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``verbose`` -- boolean (default: ``True``); whether to
-           verbosely output status info the first time the command list is
+        - ``verbose`` -- boolean (default: ``True``); whether to
+          verbosely output status info the first time the command list is
            built
 
-        -  ``use_disk_cache`` -- boolean (default: ``True``); use
-           cached command list, which is saved to disk
+        - ``use_disk_cache`` -- boolean (default: ``True``); use
+          cached command list, which is saved to disk
 
         OUTPUT: list of strings
 
@@ -1487,8 +1487,8 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``L`` -- list of elements of a Sage multivariate
-           polynomial ring
+        - ``L`` -- list of elements of a Sage multivariate
+          polynomial ring
 
         OUTPUT: the magma ideal generated by the elements of L
 
@@ -1523,9 +1523,9 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``type`` -- string (e.g. 'Groebner')
+        - ``type`` -- string (e.g. 'Groebner')
 
-        -  ``level`` -- integer >= 0
+        - ``level`` -- integer >= 0
 
         EXAMPLES::
 
@@ -1545,8 +1545,8 @@ class Magma(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``type`` -- string (e.g. 'Groebner'), see Magma
-           documentation
+        - ``type`` -- string (e.g. 'Groebner'), see Magma
+          documentation
 
         EXAMPLES::
 
@@ -1779,7 +1779,7 @@ def is_MagmaElement(x):
 
     INPUT:
 
-    -  ``x`` -- any object
+    - ``x`` -- any object
 
     OUTPUT: boolean
 
@@ -1848,7 +1848,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
         """
         INPUT:
 
-        -  ``attrname`` -- string
+        - ``attrname`` -- string
 
         OUTPUT: a Magma function partially evaluated with ``self`` as the first
         input
@@ -2068,12 +2068,12 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
     def gen(self, n):
         """
-        Return the n-th generator of this Magma element. Note that
-        generators are 1-based in Magma rather than 0 based!
+        Return the `n`-th generator of this Magma element. Note that
+        generators are 1-based in Magma rather than 0-based!
 
         INPUT:
 
-        -  ``n`` -- a *positive* integer
+        - ``n`` -- *positive* integer
 
 
         OUTPUT: :class:`MagmaElement`
@@ -2176,7 +2176,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
         INPUT:
 
-        -  ``*args`` -- import arguments
+        - ``*args`` -- import arguments
 
         OUTPUT: self(\*args)
 
@@ -2319,7 +2319,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
         -  binary quadratic forms
 
         -  elements of quadratic, cyclotomic number fields, and general
-           number fields
+          number fields
 
         -  points
 
@@ -2493,7 +2493,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
         OUTPUT:
 
-        -  ``list`` -- sorted list of distinct strings
+        - ``list`` -- sorted list of distinct strings
 
         EXAMPLES::
 
@@ -2631,7 +2631,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
         INPUT:
 
-        -  ``gens`` -- object or list/tuple of generators
+        - ``gens`` -- object or list/tuple of generators
 
         EXAMPLES::
 
@@ -2654,15 +2654,15 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
         INPUT:
 
-        -  ``gens`` -- object or list/tuple of generators
+        - ``gens`` -- object or list/tuple of generators
         - further named arguments that are ignored
 
         OUTPUT:
 
-        -  ``magma element`` -- the quotient object
+        - ``magma element`` -- the quotient object
 
-        -  ``magma element`` -- mapping from ``self`` to the
-           quotient object
+        - ``magma element`` -- mapping from ``self`` to the
+          quotient object
 
         EXAMPLES::
 
@@ -2698,11 +2698,11 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
         INPUT:
 
-        -  ``gens`` -- object or list/tuple of generators
+        - ``gens`` -- object or list/tuple of generators
 
         OUTPUT:
 
-        -  ``magma element`` -- a Magma ideal
+        - ``magma element`` -- a Magma ideal
 
         EXAMPLES::
 

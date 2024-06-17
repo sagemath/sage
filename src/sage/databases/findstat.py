@@ -513,11 +513,11 @@ def _data_to_str(data, domain, codomain=None):
 
     INPUT:
 
-    - ``data``, a list of lists of objects
+    - ``data`` -- list of lists of objects
 
-    - ``domain``, a :class:`FindStatCollection`
+    - ``domain`` -- :class:`FindStatCollection`
 
-    - ``codomain`` -- (optional), a :class:`FindStatCollection` or ``None``
+    - ``codomain`` -- (optional) :class:`FindStatCollection` or ``None``
 
     If ``codomain`` is ``None``, the values are treated as integers.
 
@@ -681,8 +681,8 @@ def _data_from_function(function, domain):
 
     INPUT:
 
-    - ``function``, a callable
-    - ``domain``, a :class:`FindStatCollection`
+    - ``function`` -- a callable
+    - ``domain`` -- a :class:`FindStatCollection`
 
     If ``function`` returns the value ``None``, the pair is omitted.
 
@@ -706,9 +706,9 @@ def _data_from_data(data, max_values):
 
     INPUT:
 
-    - ``data``, an iterable over pairs of lists of the same size
+    - ``data`` -- an iterable over pairs of lists of the same size
 
-    - ``max_values``, the maximal number of objects (and values) to
+    - ``max_values`` -- the maximal number of objects (and values) to
       return
 
     We assume that the number of elements in each pair weakly
@@ -749,11 +749,11 @@ def _distribution_from_data(data, domain, max_values, generating_functions=False
 
     INPUT:
 
-    - ``data``, an iterable over pairs of lists of the same size
+    - ``data`` -- an iterable over pairs of lists of the same size
 
-    - ``domain``, a :class:`FindStatCollection`
+    - ``domain`` -- a :class:`FindStatCollection`
 
-    - ``max_values``, the maximal number of objects (and values) to
+    - ``max_values`` -- the maximal number of objects (and values) to
       return
 
     TESTS::
@@ -1395,12 +1395,12 @@ class FindStatFunction(SageObject):
 
         INPUT:
 
-        - ``id``, a padded identifier, with number 0 reserved for new
+        - ``id`` -- a padded identifier, with number 0 reserved for new
           statistics or maps.
 
-        - ``data``, a dictionary with "Description", "Code", etc.
+        - ``data`` -- dictionary with "Description", "Code", etc.
 
-        - ``function`` -- (optional), a callable implementing the
+        - ``function`` -- (optional) a callable implementing the
           statistic or map, or ``None``
 
         ``data`` should be provided if and only if ``id`` refers to a
@@ -1844,12 +1844,10 @@ class FindStatCombinatorialStatistic(SageObject):
 
         INPUT:
 
-        - ``max_values``, an integer determining how many terms to
+        - ``max_values`` -- integer determining how many terms to
           return at most
 
-        OUTPUT:
-
-        A list of ``(string, value)`` pairs.
+        OUTPUT: list of ``(string, value)`` pairs
 
         This method is overridden in :class:`FindStatStatisticQuery`.
 
@@ -2717,7 +2715,7 @@ class FindStatStatisticQuery(FindStatStatistic):
 
     def __getitem__(self, i):
         """
-        Return the t-th result in the query.
+        Return the `t`-th result in the query.
 
         EXAMPLES::
 
@@ -2919,13 +2917,13 @@ class FindStatMatchingStatistic(FindStatCompoundStatistic):
 
         INPUT:
 
-        - ``matching_statistic``, a compound statistic identifier
+        - ``matching_statistic`` -- a compound statistic identifier
 
-        - ``offset``, the offset of the values, as provided by FindStat
+        - ``offset`` -- the offset of the values, as provided by FindStat
 
-        - ``quality``, the quality of the match, as provided by FindStat
+        - ``quality`` -- the quality of the match, as provided by FindStat
 
-        - ``domain`` -- (optional), the domain of the compound statistic
+        - ``domain`` -- (optional) the domain of the compound statistic
 
         EXAMPLES::
 
@@ -3816,11 +3814,11 @@ class FindStatMatchingMap(FindStatCompoundMap):
 
         INPUT:
 
-        - ``matching_map``, a compound map identifier
+        - ``matching_map`` -- a compound map identifier
 
-        - ``quality``, the quality of the match, as provided by FindStat
+        - ``quality`` -- the quality of the match, as provided by FindStat
 
-        - ``domain`` -- (optional), the domain of the compound map
+        - ``domain`` -- (optional) the domain of the compound map
 
         - ``codomain`` -- (optional), the codomain of the compound map
 

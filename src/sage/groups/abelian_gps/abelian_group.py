@@ -1882,7 +1882,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
 
     def gen(self, n):
         """
-        Return the nth generator of this subgroup.
+        Return the `n`-th generator of this subgroup.
 
         EXAMPLES::
 

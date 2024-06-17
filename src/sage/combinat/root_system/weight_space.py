@@ -312,7 +312,7 @@ class WeightSpace(CombinatorialFreeModule):
     @cached_method
     def simple_root(self, j):
         r"""
-        Return the `j^{\textnormal{th}}` simple root.
+        Return the `j`-th simple root.
 
         EXAMPLES::
 

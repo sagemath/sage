@@ -653,7 +653,7 @@ optional Sage package Mathics installed.
         return "]"
 
     # #########################################
-    # System -- change directory, etc
+    # System -- change directory, etc.
     # #########################################
     def chdir(self, dir):
         """

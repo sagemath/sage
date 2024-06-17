@@ -14,7 +14,7 @@ def _linear_extension_prepare(D):
 
     INPUT:
 
-    - ``D``, the Hasse diagram of a poset
+    - ``D`` -- the Hasse diagram of a poset
 
     OUTPUT:
 
@@ -249,7 +249,7 @@ def linear_extension_iterator(D):
 
     INPUT:
 
-    - ``D``, the Hasse diagram of a poset.
+    - ``D`` -- the Hasse diagram of a poset
 
     .. WARNING::
 

@@ -5402,8 +5402,8 @@ class Permutation(CombinatorialElement):
             sage: list(sigma.nth_roots(2))
             []
 
-        For n >= 6, this algorithm begins to be more efficient than naive search
-        (look at all permutations and test their n-th power).
+        For `n \geq 6`, this algorithm begins to be more efficient than naive search
+        (look at all permutations and test their `n`-th power).
 
         .. SEEALSO::
 
@@ -5436,7 +5436,7 @@ class Permutation(CombinatorialElement):
 
         def merging_cycles(list_of_cycles):
             """
-            Generate all l-cycles such that its n-th power is the product
+            Generate all l-cycles such that its `n`-th power is the product
             of cycles in 'cycles' (which contains gcd(l, n) cycles of length l/gcd(l, n))
             """
             lC = len(list_of_cycles)

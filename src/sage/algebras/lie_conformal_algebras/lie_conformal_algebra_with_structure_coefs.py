@@ -48,7 +48,7 @@ class LieConformalAlgebraWithStructureCoefficients(
       generators `a` and `b`, the value of ``s_coeff[('a','b')]`` is
       a dictionary whose keys are positive integer numbers and the
       corresponding value for the key `j` is a dictionary itself
-      representing the j-th product `a_{(j)}b`.
+      representing the `j`-th product `a_{(j)}b`.
       Thus, for a positive integer number `j`, the value of
       ``s_coeff[('a','b')][j]`` is a dictionary whose entries are
       pairs ``('c',n)`` where ``'c'`` is the name of a generator

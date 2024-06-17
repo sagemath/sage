@@ -31,7 +31,7 @@ class ExtraTabCompletion():
 
     def __dir__(self):
         """
-        Add to the dir() output
+        Add to the ``dir()`` output.
 
         This is used by IPython to read off the tab completions.
 
@@ -58,9 +58,9 @@ def completions(s, globs):
 
     INPUT:
 
-    - ``s`` -- a string
+    - ``s`` -- string
 
-    - ``globs`` -- a string: object dictionary; context in which to
+    - ``globs`` -- string: object dictionary; context in which to
       search for completions, e.g., :func:`globals()`
 
     OUTPUT: list of strings

@@ -702,37 +702,37 @@ class TachyonRT(SageObject):
 
     INPUT:
 
-    -  ``model`` -- a string that describes a 3d model in
-       the Tachyon modeling format. Type ``sage.interfaces.tachyon?`` for a
-       description of this format.
+    - ``model`` -- string that describes a 3d model in
+      the Tachyon modeling format. Type ``sage.interfaces.tachyon?`` for a
+      description of this format.
 
-    -  ``outfile`` -- (default: ``'sage.png'``) output filename;
-       the extension of the filename determines the type. Supported types
-       include:
+    - ``outfile`` -- (default: ``'sage.png'``) output filename;
+      the extension of the filename determines the type. Supported types
+      include:
 
-       -  ``tga`` -- 24-bit (uncompressed)
+      - ``tga`` -- 24-bit (uncompressed)
 
-       -  ``bmp`` -- 24-bit Windows BMP (uncompressed)
+      - ``bmp`` -- 24-bit Windows BMP (uncompressed)
 
-       -  ``ppm`` -- 24-bit PPM (uncompressed)
+      - ``ppm`` -- 24-bit PPM (uncompressed)
 
-       -  ``rgb`` -- 24-bit SGI RGB (uncompressed)
+      - ``rgb`` -- 24-bit SGI RGB (uncompressed)
 
-       -  ``png`` -- 24-bit PNG (compressed, lossless)
+      - ``png`` -- 24-bit PNG (compressed, lossless)
 
-    -  ``verbose`` -- integer; (default: 1)
+    - ``verbose`` -- integer; (default: 1)
 
-       -  ``0`` -- silent
+      - ``0`` -- silent
 
-       -  ``1`` -- some output
+      - ``1`` -- some output
 
-       -  ``2`` -- very verbose output
+      - ``2`` -- very verbose output
 
-    -  ``block`` -- boolean (default: ``True``); if ``False``, run the
-       rendering command in the background
+    - ``block`` -- boolean (default: ``True``); if ``False``, run the
+      rendering command in the background
 
-    -  ``extra_opts`` -- passed directly to tachyon command
-       line. Use ``tachyon_rt.usage()`` to see some of the possibilities
+    - ``extra_opts`` -- passed directly to tachyon command
+      line. Use ``tachyon_rt.usage()`` to see some of the possibilities
 
     OUTPUT: some text may be displayed onscreen
 
@@ -880,7 +880,7 @@ class TachyonRT(SageObject):
 
     def help(self, use_pager=True):
         """
-        Deprecated: type 'sage.interfaces.tachyon?' for help
+        Deprecated: type 'sage.interfaces.tachyon?' for help.
 
         TESTS::
 

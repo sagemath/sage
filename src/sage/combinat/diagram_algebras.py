@@ -3198,7 +3198,7 @@ class OrbitBasis(DiagramAlgebra):
 
         O_\pi = \sum_{\tau \geq \pi} \mu_{2k}(\pi, \tau) D_\tau.
 
-    If `\tau` is a partition of `\ell` blocks and the `i^{th}` block of
+    If `\tau` is a partition of `\ell` blocks and the `i`-th block of
     `\tau` is a union of `b_i` blocks of `\pi`, then
 
     .. MATH::

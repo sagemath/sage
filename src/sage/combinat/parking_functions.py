@@ -509,8 +509,8 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
 
         OUTPUT:
 
-        - the pairs `(i, j)` such that `i < j`, and `i^{th}` area = `j^{th}` area,
-          and `i^{th}` label < `j^{th}` label
+        The pairs `(i, j)` such that `i < j`, and `i`-th area = `j`-th area,
+        and `i`-th label < `j`-th label
 
         EXAMPLES::
 
@@ -539,8 +539,8 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
 
         OUTPUT:
 
-        - the pairs `(i, j)` such that `i < j`, and `i^{th}` area = `j^{th}` area +1,
-          and `i^{th}` label > `j^{th}` label
+        The pairs `(i, j)` such that `i < j`, and `i`-th area = `j`-th area +1,
+        and `i`-th label > `j`-th label
 
         EXAMPLES::
 
@@ -650,7 +650,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         For example, ``ides_composition(PF) = [4, 2, 1]`` means that
         the descents of the inverse of the permutation
         :meth:`diagonal_reading_word` of the parking function with
-        word ``PF`` are at the 4th and 6th positions.
+        word ``PF`` are at the `4`-th and `6`-th positions.
 
         OUTPUT:
 
@@ -687,7 +687,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
             :issue:`20555`.
 
         For example, ``ides(PF) = [2, 3, 4, 6]`` means that descents are at
-        the 2nd, 3rd, 4th and 6th positions in the inverse of the
+        the 2nd, 3rd, `4`-th and `6`-th positions in the inverse of the
         :meth:`diagonal_reading_word` of the parking function (see [GXZ]_ p. 2).
 
         OUTPUT:

@@ -30,8 +30,8 @@ def Mwrank(options='', server=None, server_tmpdir=None):
 
     INPUT:
 
-    -  ``options`` -- string; passed when starting mwrank.
-       The format is::
+    - ``options`` -- string; passed when starting mwrank.
+      The format is::
 
        -h       help            prints this info and quits
        -q       quiet           turns OFF banner display and prompt
@@ -152,8 +152,8 @@ class Mwrank_class(Expect):
         """
         INPUT:
 
-        -  ``options`` -- string; passed when starting mwrank.
-           The format is::
+        - ``options`` -- string; passed when starting mwrank.
+          The format is::
 
            -h       help            prints this info and quits
            -q       quiet           turns OFF banner display and prompt

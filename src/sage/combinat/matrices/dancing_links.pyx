@@ -421,7 +421,7 @@ cdef class dancing_linksWrapper:
             sage: sorted(map(sorted, d.solutions_iterator()))
             [[0, 1], [2, 3], [4, 5]]
 
-        To impose that the 0th row is part of the solution, the rows of the new
+        To impose that the `0`-th row is part of the solution, the rows of the new
         problem are::
 
             sage: d_using_0 = d.restrict([0])
@@ -438,7 +438,7 @@ cdef class dancing_linksWrapper:
             sage: d.restrict([2]).rows()
             [[0, 1, 2], [3, 4, 5], [0, 1, 6], [2, 3, 4, 5], [0], [1, 2, 3, 4, 5]]
 
-        This method allows to find solutions where the 0th row is part of a
+        This method allows to find solutions where the `0`-th row is part of a
         solution::
 
             sage: sorted(map(sorted, d.restrict([0]).solutions_iterator()))
@@ -453,7 +453,7 @@ cdef class dancing_linksWrapper:
             sage: sorted(map(sorted, d.restrict([3]).solutions_iterator()))
             [[2, 3]]
 
-        Here there are no solution using both 0th and 3rd row::
+        Here there are no solution using both `0`-th and 3rd row::
 
             sage: list(d.restrict([0,3]).solutions_iterator())
             []

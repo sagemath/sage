@@ -147,7 +147,7 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
         """
         return self.get('$Polymake::Version')
 
-    # Pickling etc
+    # Pickling etc.
 
     def __reduce__(self):
         """
@@ -607,8 +607,9 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``topic``, a string
-        - ``pager``, optional bool, default ``True``: When True, display help, otherwise return as a string.
+        - ``topic`` -- string
+        - ``pager`` -- boolean (default: ``True``); when ``True``, display
+          help, otherwise return as a string
 
         EXAMPLES::
 
@@ -713,8 +714,9 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
 
         INPUT:
 
-        - ``app``, a string, one of "common", "fulton", "group", "matroid", "topaz",
-          "fan", "graph", "ideal", "polytope", "tropical"
+        - ``app`` -- string; one of ``'common'``, ``'fulton'``, ``'group'``,
+          ``'matroid'``, ``'topaz'``, ``'fan'``, ``'graph'``, ``'ideal'``,
+          ``'polytope'``, ``'tropical'``
 
         EXAMPLES:
 

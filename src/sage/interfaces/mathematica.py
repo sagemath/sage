@@ -649,7 +649,7 @@ remote connection to a server running Mathematica -- for hints, type
         return "]"
 
     ###########################################
-    # System -- change directory, etc
+    # System -- change directory, etc.
     ###########################################
     def chdir(self, dir):
         """
@@ -1227,7 +1227,7 @@ def request_wolfram_alpha(input, verbose=False):
 
 def parse_moutput_from_json(page_data, verbose=False):
     r"""
-    Return the list of outputs found in the json (with key ``'moutput'``)
+    Return the list of outputs found in the json (with key ``'moutput'``).
 
     INPUT:
 

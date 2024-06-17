@@ -29,7 +29,7 @@ class LCAWithGeneratorsElement(IndexedFreeModuleElement):
     """
     def T(self, n=1):
         r"""
-        The n-th derivative of this element.
+        The `n`-th derivative of this element.
 
         INPUT:
 

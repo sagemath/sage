@@ -1265,7 +1265,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
         def simple_coroot(self, i):
             """
-            Return the `i^{\textnormal{th}}` simple coroot.
+            Return the `i`-th simple coroot.
 
             EXAMPLES::
 

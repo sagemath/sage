@@ -1027,7 +1027,7 @@ def T2starGeneralizedQuadrangleGraph(q, dual=False, hyperoval=None, field=None, 
 
     - ``hyperoval`` -- a hyperoval (i.e. a complete 2-arc; a set of points in
       the plane meeting every line in 0 or 2 points) in the plane of points with
-      0th coordinate 0 in `PG(3,q)` over the field ``field``. Each point of
+      `0`-th coordinate 0 in `PG(3,q)` over the field ``field``. Each point of
       ``hyperoval`` must be a length 4 vector over ``field`` with 1st non-0
       coordinate equal to 1. By default, ``hyperoval`` and ``field`` are not
       specified, and constructed on the fly. In particular, ``hyperoval`` we

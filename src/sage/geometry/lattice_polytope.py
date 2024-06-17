@@ -1767,9 +1767,9 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         Return the matrix of distances for this polytope or distances for
         the given point.
 
-        The matrix of distances m gives distances m[i,j] between the i-th
+        The matrix of distances m gives distances m[i,j] between the `i`-th
         facet (which is also the `i`-th vertex of the polar polytope in the
-        reflexive case) and j-th point of this polytope.
+        reflexive case) and `j`-th point of this polytope.
 
         If point is specified, integral distances from the point to all
         facets of this polytope will be computed.
@@ -4225,10 +4225,10 @@ class NefPartition(SageObject, Hashable):
 
     It is very easy to create a nef-partition for the octahedron, since for
     this polytope any decomposition of vertices is a nef-partition. We create a
-    3-part nef-partition with the 0-th and 1-st vertices belonging to the 0-th
-    part (recall that numeration in Sage starts with 0), the 2-nd and 5-th
-    vertices belonging to the 1-st part, and 3-rd and 4-th vertices belonging
-    to the 2-nd part::
+    3-part nef-partition with the `0`-th and `1`-st vertices belonging to the `0`-th
+    part (recall that numeration in Sage starts with 0), the `2`-nd and `5`-th
+    vertices belonging to the `1`-st part, and `3`-rd and `4`-th vertices belonging
+    to the `2`-nd part::
 
         sage: o = lattice_polytope.cross_polytope(3)
         sage: np = NefPartition([0,0,1,2,2,1], o)

@@ -23,7 +23,7 @@ two vertices `u,v\in G` is the Hamming distance between their labels.
 **Tokens** and their **action**: in the terminology of
 [Epp2008]_, a token represents a transition of the form:
 
-    *switch the k-th bit of the binary string from 0 to 1*
+    *switch the `k`-th bit of the binary string from 0 to 1*
 
 Each token can be matched with a 'reversed' token that performs the
 same switch in the opposite direction. Alternatively, a token can be

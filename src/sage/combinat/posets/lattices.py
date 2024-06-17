@@ -2277,7 +2277,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``unique``, a Boolean -- If ``True``, return ``True`` only
+        - ``unique`` -- boolean; if ``True``, return ``True`` only
           if the lattice has exactly one orthocomplementation. If
           ``False`` (the default), return ``True`` when the lattice
           has at least one orthocomplementation.

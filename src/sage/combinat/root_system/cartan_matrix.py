@@ -750,7 +750,7 @@ class CartanMatrix(Base, CartanType_abstract,
 
     def column_with_indices(self, j):
         """
-        Return the `j^{th}` column `(a_{i,j})_i` of ``self`` as a container
+        Return the `j`-th column `(a_{i,j})_i` of ``self`` as a container
         (or iterator) of tuples `(i, a_{i,j})`
 
         EXAMPLES::
@@ -763,7 +763,7 @@ class CartanMatrix(Base, CartanType_abstract,
 
     def row_with_indices(self, i):
         """
-        Return the `i^{th}` row `(a_{i,j})_j` of ``self`` as a container
+        Return the `i`-th row `(a_{i,j})_j` of ``self`` as a container
         (or iterator) of tuples `(j, a_{i,j})`
 
         EXAMPLES::

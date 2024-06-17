@@ -1024,7 +1024,7 @@ class R(ExtraTabCompletion, Interface):
 
     def _left_list_delim(self):
         """
-        Return the left delimiter for lists in R, which is 'c('
+        Return the left delimiter for lists in R, which is 'c('.
 
         OUTPUT: string
 
@@ -1037,7 +1037,7 @@ class R(ExtraTabCompletion, Interface):
 
     def _right_list_delim(self):
         """
-        Return the right delimiter for lists in R, which is 'c('
+        Return the right delimiter for lists in R, which is 'c('.
 
         OUTPUT: string
 
@@ -1551,7 +1551,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
 
         INPUT:
 
-        - ``n`` -- an integer, a tuple, a string that makes sense to R, or an
+        - ``n`` -- integer, a tuple, a string that makes sense to R, or an
           RElement
 
         OUTPUT: RElement
@@ -1609,7 +1609,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
 
     def __bool__(self):
         """
-        Implements bool(self).
+        Implement ``bool(self)``.
 
         .. NOTE::
 
@@ -1769,7 +1769,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
 
     def dot_product(self, other):
         """
-        Implements the notation ``self . other``.
+        Implement the notation ``self . other``.
 
         INPUT:
 
@@ -1964,7 +1964,7 @@ class RFunction(InterfaceFunction):
 
     def _instancedoc_(self):
         """
-        Return the help for self.
+        Return the help for ``self``.
 
         EXAMPLES::
 

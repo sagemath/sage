@@ -494,7 +494,7 @@ cdef class PartitionRefinement_generic:
     #####################################################################
     cdef bint _inner_min_(self, int pos, bint * inner_group_changed) noexcept:
         """
-        Minimize the node by the action of the inner group on the ith position.
+        Minimize the node by the action of the inner group on the `i`-th position.
 
         INPUT:
 

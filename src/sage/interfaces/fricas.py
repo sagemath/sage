@@ -461,7 +461,7 @@ http://fricas.sourceforge.net.
 
         INPUT:
 
-        - ``filename``, a string ending in '.input'.
+        - ``filename`` -- string ending in '.input'.
 
         OUTPUT: string with the command for reading filename without output
 
@@ -509,9 +509,9 @@ http://fricas.sourceforge.net.
 
         INPUT:
 
-        - ``line``, a string that was sent to FriCAS.
+        - ``line`` -- string that was sent to FriCAS
 
-        - ``output``, a string returned by FriCAS
+        - ``output`` -- string returned by FriCAS
 
         OUTPUT: none
 
@@ -647,8 +647,8 @@ http://fricas.sourceforge.net.
 
         INPUT:
 
-        - ``var``, ``value``: strings, the first representing a valid
-          FriCAS variable identifier, the second a FriCAS expression.
+        - ``var``, ``value`` -- strings; the first representing a valid
+          FriCAS variable identifier, the second a FriCAS expression
 
         OUTPUT: none
 
@@ -1157,7 +1157,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
     def gen(self, n):
         """
-        Return an error, since the n-th generator in FriCAS is not well defined.
+        Return an error, since the `n`-th generator in FriCAS is not well defined.
         """
         raise NotImplementedError
 
@@ -1188,7 +1188,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
         """
         INPUT:
 
-        - ``domain``, a FriCAS SExpression
+        - ``domain`` -- a FriCAS SExpression
 
         OUTPUT: a corresponding Sage type
 

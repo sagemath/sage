@@ -1044,7 +1044,7 @@ class LinearCodeSystematicEncoder(Encoder):
     - ``systematic_positions`` -- (default: ``None``) the positions in codewords that
       should correspond to the message symbols. A list of `k` distinct integers in
       the range 0 to `n-1` where `n` is the length of the code and `k` its
-      dimension. The 0th symbol of a message will then be at position
+      dimension. The `0`-th symbol of a message will then be at position
       ``systematic_positions[0]``, the 1st index at position
       ``systematic_positions[1]``, etc. A :class:`ValueError` is raised at
       construction time if the supplied indices do not form an information set.
