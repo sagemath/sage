@@ -616,7 +616,7 @@ class Knots(Singleton, Parent):
         INPUT:
 
         - ``n`` -- the crossing number
-        - ``k`` -- a positive integer
+        - ``k`` -- positive integer
 
         OUTPUT: the knot `K_{n,k}` in the Rolfsen table
 

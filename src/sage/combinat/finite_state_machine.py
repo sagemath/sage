@@ -9443,10 +9443,10 @@ class FiniteStateMachine(SageObject):
 
         INPUT:
 
-        - ``edge_label``: (default: ``'words_in_out'``) can be
-             - ``'words_in_out'`` (labels will be strings ``'i|o'``)
-             - a function with which takes as input a transition
-               and outputs (returns) the label
+        - ``edge_label`` -- (default: ``'words_in_out'``) can be
+            - ``'words_in_out'`` (labels will be strings ``'i|o'``)
+            - a function with which takes as input a transition
+              and outputs (returns) the label
 
         OUTPUT: a :class:`directed graph <DiGraph>`
 

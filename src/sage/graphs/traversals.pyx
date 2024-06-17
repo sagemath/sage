@@ -1771,7 +1771,7 @@ cdef maximum_cardinality_search_M_short_digraph(short_digraph sd, int initial_ve
     - ``sd`` -- a ``short_digraph`` as documented in
       :mod:`~sage.graphs.base.static_sparse_graph`
 
-    - ``initial_vertex`` -- int; initial vertex for the search
+    - ``initial_vertex`` -- integer; initial vertex for the search
 
     - ``alpha`` -- int array of size `N`; the computed ordering of MCS-M
 

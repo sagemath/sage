@@ -157,8 +157,8 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
 
         INPUT:
 
-         - ``self``: a functor `F`
-         - ``categories``: a non empty tuple of categories
+         - ``self`` -- a functor `F`
+         - ``categories`` -- a non empty tuple of categories
 
         EXAMPLES::
 
@@ -182,8 +182,8 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
 
         INPUT:
 
-         - ``self``: a functor `F`
-         - ``category``: a category
+         - ``self`` -- a functor `F`
+         - ``category`` -- a category
 
         EXAMPLES::
 
@@ -209,8 +209,8 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
 
         INPUT:
 
-         - ``self``: a covariant functorial construction `F`
-         - ``args``: a tuple (or iterable) of parents or elements
+         - ``self`` -- a covariant functorial construction `F`
+         - ``args`` -- a tuple (or iterable) of parents or elements
 
         Returns `F(args)`
 

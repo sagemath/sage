@@ -229,7 +229,7 @@ class AbstractLanguage(Parent):
 
         - ``w`` -- word
 
-        - ``length`` -- integer (default: ``40``)
+        - ``length`` -- integer (default: `40`)
 
         EXAMPLES::
 

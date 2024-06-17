@@ -406,8 +406,8 @@ def is_comparability_MILP(g, certificate=False, solver=None, verbose=0):
       :meth:`~sage.numerical.mip.MixedIntegerLinearProgram.solve` of the class
       :class:`~sage.numerical.mip.MixedIntegerLinearProgram`.
 
-    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
-      to 0 by default, which means quiet.
+    - ``verbose`` -- integer (default: `0`); sets the level of verbosity. Set
+      to `0` by default, which means quiet.
 
      EXAMPLES:
 
@@ -501,7 +501,7 @@ def is_comparability(g, algorithm='greedy', certificate=False, check=True,
     - ``algorithm`` -- choose the implementation used to do the test
 
       - ``'greedy'`` -- a greedy algorithm (see the documentation of the
-        :mod:`comparability module <sage.graphs.comparability>`).
+        :mod:`comparability module <sage.graphs.comparability>`)
 
       - ``'MILP'`` -- a Mixed Integer Linear Program formulation of the
         problem. Beware, for this implementation is unable to return negative
@@ -523,8 +523,8 @@ def is_comparability(g, algorithm='greedy', certificate=False, check=True,
       :meth:`~sage.numerical.mip.MixedIntegerLinearProgram.solve` of the class
       :class:`~sage.numerical.mip.MixedIntegerLinearProgram`.
 
-    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
-      to 0 by default, which means quiet.
+    - ``verbose`` -- integer (default: `0`); sets the level of verbosity. Set
+      to `0` by default, which means quiet.
 
     EXAMPLES::
 
@@ -589,7 +589,7 @@ def is_permutation(g, algorithm='greedy', certificate=False, check=True,
       :meth:`is_comparability`
 
       - ``'greedy'`` -- a greedy algorithm (see the documentation of the
-        :mod:`comparability module <sage.graphs.comparability>`).
+        :mod:`comparability module <sage.graphs.comparability>`)
 
       - ``'MILP'`` -- a Mixed Integer Linear Program formulation of the
         problem. Beware, for this implementation is unable to return negative
@@ -611,8 +611,8 @@ def is_permutation(g, algorithm='greedy', certificate=False, check=True,
       :meth:`~sage.numerical.mip.MixedIntegerLinearProgram.solve` of the class
       :class:`~sage.numerical.mip.MixedIntegerLinearProgram`.
 
-    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
-      to 0 by default, which means quiet.
+    - ``verbose`` -- integer (default: `0`); sets the level of verbosity. Set
+      to `0` by default, which means quiet.
 
     .. NOTE::
 

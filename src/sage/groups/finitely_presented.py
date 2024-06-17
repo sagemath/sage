@@ -1382,7 +1382,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         - ``ab`` -- the abelianization  of ``self`` as a finitely presented group
           with a minimal number `n` of generators
-        -  ``R`` -- a Laurent polynomial ring with `n` variables with base ring ``ring``
+        - ``R`` -- a Laurent polynomial ring with `n` variables with base ring ``ring``
         - ``ideal`` -- list of generators of an ideal ``I`` in ``R`` such that ``R/I``
           is the group algebra of the abelianization over ``ring``
         - ``image`` -- list  with the images of the generators of ``self`` in ``R/I``

@@ -57,7 +57,7 @@ def all_paths(G, start, end, use_multiedges=False, report_edges=False, labels=Fa
     - ``end`` -- a vertex of a graph, where to end
 
     - ``use_multiedges`` -- boolean (default: ``False``); this parameter is
-      used only if the graph has multiple edges.
+      used only if the graph has multiple edges
 
         - If ``False``, the graph is considered as simple and an edge label
           is arbitrarily selected for each edge as in
@@ -319,7 +319,7 @@ def shortest_simple_paths(self, source, target, weight_function=None,
       in the graph are weighted, otherwise all edges have weight 1
 
     - ``check_weight`` -- boolean (default: ``True``); whether to check that the
-      ``weight_function`` outputs a number for each edge.
+      ``weight_function`` outputs a number for each edge
 
     - ``algorithm`` -- string (default: ``None``); the algorithm to use in
       computing ``k`` shortest paths of ``self``. The following algorithms are
@@ -1404,10 +1404,10 @@ def _all_paths_iterator(self, vertex, ending_vertices=None,
       lengths are allowed.
 
     - ``trivial`` -- boolean (default: ``False``); if set to ``True``, then
-      the empty paths are also enumerated.
+      the empty paths are also enumerated
 
     - ``use_multiedges`` -- boolean (default: ``False``); this parameter is
-      used only if the graph has multiple edges.
+      used only if the graph has multiple edges
 
         - If ``False``, the graph is considered as simple and an edge label
           is arbitrarily selected for each edge as in
@@ -1669,10 +1669,10 @@ def all_paths_iterator(self, starting_vertices=None, ending_vertices=None,
       lengths are allowed.
 
     - ``trivial`` -- boolean (default: ``False``); if set to ``True``, then
-      the empty paths are also enumerated.
+      the empty paths are also enumerated
 
     - ``use_multiedges`` -- boolean (default: ``False``); this parameter is
-      used only if the graph has multiple edges.
+      used only if the graph has multiple edges
 
         - If ``False``, the graph is considered as simple and an edge label
           is arbitrarily selected for each edge as in
@@ -1904,10 +1904,10 @@ def all_simple_paths(self, starting_vertices=None, ending_vertices=None,
       lengths are allowed.
 
     - ``trivial`` -- boolean (default: ``False``); if set to ``True``, then
-      the empty paths are also enumerated.
+      the empty paths are also enumerated
 
     - ``use_multiedges`` -- boolean (default: ``False``); this parameter is
-      used only if the graph has multiple edges.
+      used only if the graph has multiple edges
 
         - If ``False``, the graph is considered as simple and an edge label
           is arbitrarily selected for each edge as in

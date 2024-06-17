@@ -538,7 +538,7 @@ class ClassFunction_gap(SageObject):
 
     def degree(self):
         r"""
-        Return the degree of the character self.
+        Return the degree of the character ``self``.
 
         EXAMPLES::
 

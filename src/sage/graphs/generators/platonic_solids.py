@@ -215,7 +215,7 @@ def IcosahedralGraph():
 
 def DodecahedralGraph():
     """
-    Return a Dodecahedral graph (with 20 nodes)
+    Return a Dodecahedral graph (with 20 nodes).
 
     The dodecahedral graph is cubic symmetric, so the spring-layout algorithm
     will be very effective for display. It is dual to the icosahedral graph.

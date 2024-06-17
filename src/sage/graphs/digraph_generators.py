@@ -214,7 +214,7 @@ class DiGraphGenerators:
 
         INPUT:
 
-        - ``n`` -- a nonnegative integer; the dimension of the butterfly graph
+        - ``n`` -- nonnegative integer; the dimension of the butterfly graph
 
         - ``vertices`` -- string (default: ``'strings'``); specifies whether the
           vertices are zero-one strings (default) or tuples over GF(2)
@@ -664,7 +664,7 @@ class DiGraphGenerators:
                      parts. Splitting is done per input graph independently.
 
         - ``debug`` -- boolean (default: ``False``); if ``True``
-          directg standard error and standard output are displayed.
+          directg standard error and standard output are displayed
 
         EXAMPLES::
 

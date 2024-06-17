@@ -744,7 +744,7 @@ def test_maximal_modules(tree_root, graph):
 
 def get_vertices(component_root):
     """
-    Compute the list of vertices in the (co)component
+    Compute the list of vertices in the (co)component.
 
     INPUT:
 
@@ -1277,7 +1277,7 @@ def random_md_tree(max_depth, max_fan_out, leaf_probability):
     - ``max_depth`` -- the maximum depth of the tree
 
     - ``max_fan_out`` -- the maximum number of children a node can have
-      (must be >=4 as a prime node must have at least 4 vertices).
+      (must be >=4 as a prime node must have at least 4 vertices)
 
     - ``leaf_probability`` -- the probability that a subtree is a leaf
 

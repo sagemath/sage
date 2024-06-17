@@ -449,9 +449,9 @@ def RandomBlockGraph(m, k, kmax=None, incidence_structure=False, seed=None):
 
     INPUT:
 
-    - ``m`` -- integer; number of blocks (at least one).
+    - ``m`` -- integer; number of blocks (at least one)
 
-    - ``k`` -- integer; minimum number of vertices of a block (at least two).
+    - ``k`` -- integer; minimum number of vertices of a block (at least two)
 
     - ``kmax`` -- integer (default: ``None``); by default, each block has `k`
       vertices. When the parameter `kmax` is specified (with `kmax \geq k`), the
@@ -1049,7 +1049,7 @@ def pruned_tree(T, f, s):
     - ``T`` -- a tree
 
     - ``f`` -- a rational number; the edge deletion fraction. This value must be
-      chosen in `[0..1]`.
+      chosen in `[0..1]`
 
     - ``s`` -- a real number between 0 and 1; selection barrier for the size of
       trees
@@ -1290,14 +1290,12 @@ def RandomLobster(n, p, q, seed=None):
 
     - ``n`` -- expected number of vertices in the backbone
 
-    - ``p`` -- probability of adding an edge to the
-      backbone
+    - ``p`` -- probability of adding an edge to the backbone
 
-    - ``q`` -- probability of adding an edge (claw) to the
-      arms
+    - ``q`` -- probability of adding an edge (claw) to the arms
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
-      number generator (default: ``None``).
+      number generator (default: ``None``)
 
     EXAMPLES:
 
@@ -1346,7 +1344,7 @@ def RandomTree(n, seed=None):
 
     INPUT:
 
-    -  ``n`` -- number of vertices in the tree
+    - ``n`` -- number of vertices in the tree
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
@@ -2183,7 +2181,7 @@ def blossoming_contour(t, shift=0, seed=None):
 
     - ``t`` -- a binary tree (non-empty)
 
-    - ``shift`` -- integer (default: `0`), used as a starting index
+    - ``shift`` -- integer (default: `0`); used as a starting index
 
     OUTPUT: contour word of a random blossoming of `t`
 
@@ -2387,7 +2385,7 @@ def RandomUnitDiskGraph(n, radius=.1, side=1, seed=None):
 
     - ``n`` -- number of nodes
 
-    - ``radius`` -- float (default: ``0.1``); two vertices at distance less than
+    - ``radius`` -- float (default: `0.1`); two vertices at distance less than
       ``radius`` are connected by an edge
 
     - ``side`` -- float (default: ``1``); indicate the side of the area in which

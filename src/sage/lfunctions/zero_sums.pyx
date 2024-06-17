@@ -898,7 +898,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
 
     def __init__(self, E, N=None, ncpus=1):
         r"""
-        Initialize self.
+        Initialize ``self``.
 
         INPUT:
 
@@ -908,8 +908,8 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
           the conductor of E. This is passable so that rank estimation
           can be done for curves whose (large) conductor has been precomputed.
 
-        - ``ncpus`` -- (default: 1) the number of CPUs to use for computations.
-          If set to ``None``, the max available amount will be used
+        - ``ncpus`` -- (default: 1) the number of CPUs to use for computations;
+          if set to ``None``, the max available amount will be used
 
         EXAMPLES::
 

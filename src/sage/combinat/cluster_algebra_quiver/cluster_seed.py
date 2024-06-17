@@ -2281,25 +2281,25 @@ class ClusterSeed(SageObject):
 
         Possible values for vertex types in ``sequence`` are:
 
-        - ``'first_source'``: mutates at first found source vertex,
-        - ``'sources'``: mutates at all sources,
-        - ``'first_sink'``: mutates at first sink,
-        - ``'sinks'``: mutates at all sink vertices,
-        - ``'green'``: mutates at the first green vertex,
-        - ``'red'``: mutates at the first red vertex,
-        - ``'urban_renewal'`` or ``'urban'``: mutates at first urban renewal vertex,
-        - ``'all_urban_renewals'`` or ``'all_urban'``: mutates at all
-          urban renewal vertices.
+        - ``'first_source'`` -- mutates at first found source vertex
+        - ``'sources'`` -- mutates at all sources
+        - ``'first_sink'`` -- mutates at first sink
+        - ``'sinks'`` -- mutates at all sink vertices
+        - ``'green'`` -- mutates at the first green vertex
+        - ``'red'`` -- mutates at the first red vertex
+        - ``'urban_renewal'`` or ``'urban'`` -- mutates at first urban renewal vertex
+        - ``'all_urban_renewals'`` or ``'all_urban'`` -- mutates at all
+          urban renewal vertices
 
         For ``input_type``, if no value is given, preference will
         be given to vertex names, then indices, then cluster variables.
         If all input is not of the same type, an error is given.
         Possible values for ``input_type`` are:
 
-        - ``'vertices'``: interprets the input sequence as vertices
-        - ``'indices'``: interprets the input sequence as indices
-        - ``'cluster_vars'``: interprets the input sequence as cluster variables
-          this must be selected if inputting a sequence of cluster variables.
+        - ``'vertices'`` -- interprets the input sequence as vertices
+        - ``'indices'`` -- interprets the input sequence as indices
+        - ``'cluster_vars'`` -- interprets the input sequence as cluster variables.
+          This must be selected if inputting a sequence of cluster variables.
 
         EXAMPLES::
 

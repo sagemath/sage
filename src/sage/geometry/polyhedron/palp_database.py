@@ -47,7 +47,6 @@ from sage.geometry.polyhedron.ppl_lattice_polytope import LatticePolytope_PPL
 class PALPreader(SageObject):
     """
     Read PALP database of polytopes.
-.
 
     INPUT:
 

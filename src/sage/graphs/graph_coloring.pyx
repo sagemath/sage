@@ -151,7 +151,7 @@ def all_graph_colorings(G, n, count_only=False, hex_colors=False,
 
     * ``G`` -- a graph
 
-    * ``n`` -- a positive integer; the number of colors
+    * ``n`` -- positive integer; the number of colors
 
     * ``count_only`` -- boolean (default: ``False``); when set to ``True``, it
       returns 1 for each coloring and ignores other parameters
@@ -338,7 +338,7 @@ cpdef first_coloring(G, n=0, hex_colors=False):
 
     INPUT:
 
-    -  ``n`` -- integer (default: 0); the minimal number of colors to try
+    - ``n`` -- integer (default: 0); the minimal number of colors to try
 
     - ``hex_colors`` -- boolean (default: ``False``); when set to ``True``, the
       partition returned is a dictionary whose keys are colors and whose values
@@ -374,7 +374,7 @@ cpdef number_of_n_colorings(G, n):
 
     - ``G`` -- a graph
 
-    - ``n`` -- a positive integer; the number of colors
+    - ``n`` -- positive integer; the number of colors
 
     EXAMPLES::
 
@@ -492,8 +492,8 @@ def vertex_coloring(g, k=None, value_only=False, hex_colors=False, solver=None, 
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
-      to 0 by default, which means quiet.
+    - ``verbose`` -- integer (default: `0`); sets the level of verbosity. Set
+      to `0` by default, which means quiet.
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
       over an inexact base ring; see
@@ -1011,8 +1011,8 @@ def grundy_coloring(g, k, value_only=True, solver=None, verbose=0,
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
-      to 0 by default, which means quiet.
+    - ``verbose`` -- integer (default: `0`); sets the level of verbosity. Set
+      to `0` by default, which means quiet.
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
       over an inexact base ring; see
@@ -1165,8 +1165,8 @@ def b_coloring(g, k, value_only=True, solver=None, verbose=0,
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
-      to 0 by default, which means quiet.
+    - ``verbose`` -- integer (default: `0`); sets the level of verbosity. Set
+      to `0` by default, which means quiet.
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
       over an inexact base ring; see
@@ -1336,8 +1336,8 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
-      to 0 by default, which means quiet.
+    - ``verbose`` -- integer (default: `0`); sets the level of verbosity. Set
+      to `0` by default, which means quiet.
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
       over an inexact base ring; see
@@ -1813,8 +1813,8 @@ def linear_arboricity(g, plus_one=None, hex_colors=False, value_only=False,
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
-      to 0 by default, which means quiet.
+    - ``verbose`` -- integer (default: `0`); sets the level of verbosity. Set
+      to `0` by default, which means quiet.
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
       over an inexact base ring; see
@@ -2021,8 +2021,8 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0,
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
-      to 0 by default, which means quiet.
+    - ``verbose`` -- integer (default: `0`); sets the level of verbosity. Set
+      to `0` by default, which means quiet.
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
       over an inexact base ring; see

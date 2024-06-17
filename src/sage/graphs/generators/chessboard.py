@@ -59,10 +59,10 @@ def ChessboardGraphGenerator(dim_list, rook=True, rook_radius=None,
     - ``knight`` -- boolean (default: ``True``); indicating whether the chess
       piece is able to move like a knight
 
-    - ``knight_x`` -- integer (default: ``1``); indicates the number on steps
+    - ``knight_x`` -- integer (default: `1`); indicates the number on steps
       the chess piece moves in one dimension when moving like a knight
 
-    - ``knight_y`` -- integer (default: ``2``); indicates the number on steps
+    - ``knight_y`` -- integer (default: `2`); indicates the number on steps
       the chess piece moves in the second dimension when moving like a knight
 
     - ``relabel`` -- boolean (default: ``False``); indicates whether the
@@ -385,10 +385,10 @@ def KnightGraph(dim_list, one=1, two=2, relabel=False):
     - ``dim_list`` -- iterable (list, set, dict); provides the dimensions
       `n_1, n_2, \ldots, n_d`, with `n_i \geq 1`, of the chessboard
 
-    - ``one`` -- integer (default: ``1``); indicates the number of steps in the
+    - ``one`` -- integer (default: `1`); indicates the number of steps in the
       first dimension
 
-    - ``two`` -- integer (default: ``2``); indicates the number of steps in the
+    - ``two`` -- integer (default: `2`); indicates the number of steps in the
       second dimension
 
     - ``relabel`` -- boolean (default: ``False``); indicates whether the

@@ -512,7 +512,7 @@ class LFunction(SageObject):
         INPUT:
 
         - ``lfun`` -- a PARI :pari:`lfun` object or an instance of :class:`lfun_generic`
-        - ``prec`` -- integer (default: 53) number of *bits* of precision
+        - ``prec`` -- integer (default: 53); number of *bits* of precision
 
         EXAMPLES::
 

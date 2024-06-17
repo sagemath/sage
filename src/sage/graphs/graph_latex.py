@@ -622,7 +622,7 @@ class GraphLatex(SageObject):
 
         INPUT:
 
-        - ``option_name`` -- a string for a latex option contained in the list
+        - ``option_name`` -- string for a latex option contained in the list
           ``sage.graphs.graph_latex.GraphLatex.__graphlatex_options``;
           a :class:`ValueError` is raised if the option is not allowed
 
@@ -656,13 +656,13 @@ class GraphLatex(SageObject):
           measurement used for all dimensions.  Possible values are: ``'in'``,
           ``'mm'``, ``'cm'``, ``'pt'``, ``'em'``, ``'ex'``.
 
-        - ``scale`` -- float (default: ``1.0``); a dimensionless number that
+        - ``scale`` -- float (default: `1.0`); a dimensionless number that
           multiplies every linear dimension. So you can design at sizes you are
           accustomed to, then shrink or expand to meet other needs. Though fonts
           do not scale.
 
         - ``graphic_size`` -- tuple (default: ``(5, 5)``); overall dimensions
-          (width, length) of the bounding box around the entire graphic image.
+          (width, length) of the bounding box around the entire graphic image
 
         - ``margins`` -- 4-tuple (default: ``(0, 0, 0, 0)``); portion of graphic
           given over to a plain border as a tuple of four numbers: (left, right,
@@ -687,7 +687,7 @@ class GraphLatex(SageObject):
           These color specifications are consistent throughout the options for
           a ``tikzpicture``.
 
-        - ``vertex_colors`` -- a dictionary whose keys are vertices of the graph
+        - ``vertex_colors`` -- dictionary whose keys are vertices of the graph
           and whose values are colors. These will be used to color the outline
           of vertices. See the explanation above for the ``vertex_color`` option
           to see possible values. These values need only be specified for a
@@ -699,7 +699,7 @@ class GraphLatex(SageObject):
           above for the ``vertex_color`` option to see possible values. This
           color is ignored for the ``sphere`` vertex shape.
 
-        - ``vertex_fill_colors`` -- a dictionary whose keys are vertices of the
+        - ``vertex_fill_colors`` -- dictionary whose keys are vertices of the
           graph and whose values are colors. These will be used to fill the
           interior of vertices. See the explanation above for the
           ``vertex_color`` option to see possible values. These values need only
@@ -713,7 +713,7 @@ class GraphLatex(SageObject):
           ``vertex_color`` and ``vertex_colors``, which are normally used for
           the outline of the vertex.
 
-        - ``vertex_shapes`` -- a dictionary whose keys are vertices of the graph
+        - ``vertex_shapes`` -- dictionary whose keys are vertices of the graph
           and whose values are shapes. See ``vertex_shape`` for the allowable
           possibilities.
 
@@ -724,7 +724,7 @@ class GraphLatex(SageObject):
           parameter), while still containing labels. However, if labels are not
           of a uniform size, then the vertices will not be either.
 
-        - ``vertex_sizes`` -- a dictionary of sizes for some of the vertices
+        - ``vertex_sizes`` -- dictionary of sizes for some of the vertices
 
         - ``vertex_labels`` -- boolean (default: ``True``); determine whether or
           not to display the vertex labels.  If ``False`` subsequent options
@@ -742,7 +742,7 @@ class GraphLatex(SageObject):
           use as the default for labels of vertices. See the explanation above
           for the ``vertex_color`` option to see possible values.
 
-        - ``vertex_label_colors`` -- a dictionary whose keys are vertices of the
+        - ``vertex_label_colors`` -- dictionary whose keys are vertices of the
           graph and whose values are colors. These will be used for the text of
           the labels of vertices. See the explanation above for the
           ``vertex_color`` option to see possible values. These values need only
@@ -756,7 +756,7 @@ class GraphLatex(SageObject):
           the edge, and at an angle to the positive x-axis, similar in spirit to
           polar coordinates.
 
-        - ``vertex_label_placements`` -- a dictionary of placements indexed by
+        - ``vertex_label_placements`` -- dictionary of placements indexed by
           the vertices. See the explanation for ``vertex_label_placement`` for
           the possible values.
 
@@ -764,7 +764,7 @@ class GraphLatex(SageObject):
           default for an edge. See the explanation above for the
           ``vertex_color`` option to see possible values.
 
-        - ``edge_colors`` -- a dictionary whose keys are edges of the graph and
+        - ``edge_colors`` -- dictionary whose keys are edges of the graph and
           whose values are colors. These will be used to color the edges. See
           the explanation above for the ``vertex_color`` option to see possible
           values. These values need only be specified for a proper subset of the
@@ -780,7 +780,7 @@ class GraphLatex(SageObject):
           the explanation above for the ``vertex_color`` option to see possible
           values.
 
-        - ``edge_fill_colors`` -- a dictionary whose keys are edges of the graph
+        - ``edge_fill_colors`` -- dictionary whose keys are edges of the graph
           and whose values are colors. See the explanation above for the
           ``vertex_color`` option to see possible values. These values need
           only be specified for a proper subset of the vertices. Specified
@@ -790,7 +790,7 @@ class GraphLatex(SageObject):
           edges. Note that ``tkz-graph`` does not interpret this number for
           loops.
 
-        - ``edge_thicknesses`` -- a dictionary of thicknesses for some of the
+        - ``edge_thicknesses`` -- dictionary of thicknesses for some of the
           edges of a graph. These values need only be specified for a proper
           subset of the vertices. Specified values will supersede a default
           value.
@@ -808,7 +808,7 @@ class GraphLatex(SageObject):
           as the default for labels of edges. See the explanation above for the
           ``vertex_color`` option to see possible values.
 
-        - ``edge_label_colors`` -- a dictionary whose keys are edges of the
+        - ``edge_label_colors`` -- dictionary whose keys are edges of the
           graph and whose values are colors. These will be used for the text of
           the labels of edges. See the explanation above for the
           ``vertex_color`` option to see possible values. These values need only
@@ -822,7 +822,7 @@ class GraphLatex(SageObject):
           ``True`` means the label is rotated to follow the direction of the
           edge it labels.
 
-        - ``edge_label_slopes`` -- a dictionary of booleans, indexed by some
+        - ``edge_label_slopes`` -- dictionary of booleans, indexed by some
           subset of the edges.  See the ``edge_label_sloped`` option for a
           description of sloped edge labels.
 
@@ -835,7 +835,7 @@ class GraphLatex(SageObject):
           the midpoint of the edge. The default value of ``0.50`` places the
           label on the midpoint of the edge.
 
-        - ``edge_label_placements`` -- a dictionary of edge placements, indexed
+        - ``edge_label_placements`` -- dictionary of edge placements, indexed
           by the edges.  See the ``edge_label_placement`` option for a
           description of the allowable values.
 
@@ -845,7 +845,7 @@ class GraphLatex(SageObject):
           specifying a compass point (North, South, East, West) as one of
           ``'NO'``, ``'SO'``, ``'EA'``, ``'WE'``.
 
-        - ``loop_placements`` -- a dictionary of loop placements.  See the
+        - ``loop_placements`` -- dictionary of loop placements.  See the
           ``loop_placements`` option for the allowable values.  While loops are
           technically edges, this dictionary is indexed by vertices.
 

@@ -149,8 +149,8 @@ cdef MPolynomialRing_libsingular make_letterplace_ring(base_ring, blocks):
 
     INPUT:
 
-    - ``base_ring``: A multivariate polynomial ring.
-    - ``blocks``: The number of blocks to be formed.
+    - ``base_ring`` -- a multivariate polynomial ring
+    - ``blocks`` -- the number of blocks to be formeds
 
     OUTPUT:
 

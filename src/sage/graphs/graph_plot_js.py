@@ -134,24 +134,24 @@ def gen_html_code(G,
       previously computed position of nodes into account if there is one, or to
       compute a spring layout
 
-    - ``vertex_size`` -- integer (default: ``7``); the size of a vertex' circle
+    - ``vertex_size`` -- integer (default: `7`); the size of a vertex' circle
 
-    - ``edge_thickness`` -- integer (default: ``4``); thickness of an edge
+    - ``edge_thickness`` -- integer (default: `4`); thickness of an edge
 
-    - ``charge`` -- integer (default: ``-120``); the vertices' charge. Defines
+    - ``charge`` -- integer (default: `-120`); the vertices' charge. Defines
       how they repulse each other. See
       `<https://github.com/mbostock/d3/wiki/Force-Layout>`_ for more
       information
 
-    - ``link_distance`` -- integer (default: ``30``); see
+    - ``link_distance`` -- integer (default: `30`); see
       `<https://github.com/mbostock/d3/wiki/Force-Layout>`_ for more
       information
 
-    - ``link_strength`` -- integer (default: ``2``); see
+    - ``link_strength`` -- integer (default: `2`); see
       `<https://github.com/mbostock/d3/wiki/Force-Layout>`_ for more
       information
 
-    - ``gravity`` -- float (default: ``0.04``); see
+    - ``gravity`` -- float (default: `0.04`); see
       `<https://github.com/mbostock/d3/wiki/Force-Layout>`_ for more
       information
 

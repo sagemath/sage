@@ -686,16 +686,16 @@ class CubeGroup(PermutationGroup_generic):
 
         - ``mv`` -- can one of the following:
 
-          -  ``list`` -- list of facets (as returned by
-             self.facets())
+          - ``list`` -- list of facets (as returned by
+            self.facets())
 
-          -  ``dict`` -- list of faces (as returned by
-             ``self.faces()``)
+          - ``dict`` -- list of faces (as returned by
+            ``self.faces()``)
 
-          -  ``str`` -- either cycle notation (passed to GAP) or
-             a product of generators or Singmaster notation
+          - ``str`` -- either cycle notation (passed to GAP) or
+            a product of generators or Singmaster notation
 
-          -  ``perm_group element`` -- returned as an element of ``self``
+          - ``perm_group element`` -- returned as an element of ``self``
 
         - ``check`` -- check if the input is valid
 
@@ -845,7 +845,7 @@ class CubeGroup(PermutationGroup_generic):
 
         INPUT:
 
-        - ``mv`` -- a string of the form ``Xa*Yb*...``,
+        - ``mv`` -- string of the form ``Xa*Yb*...``,
           where ``X``, ``Y``, ... are in ``R``, ``L``, ``F``, ``B``, ``U``,
           ``D`` and ``a``, ``b``, ... are integers
 
@@ -982,7 +982,7 @@ class CubeGroup(PermutationGroup_generic):
 
         INPUT:
 
-        - ``mv`` -- a string in the Singmaster notation
+        - ``mv`` -- string in the Singmaster notation
         - ``title`` -- boolean (default: ``True``); display the title information
 
         The first one below is "superflip+4 spot" (in 26q\* moves) and the

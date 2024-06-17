@@ -3,7 +3,7 @@ r"""
 Families of graphs derived from classical geometries over finite fields
 
 These include graphs of polar spaces, affine polar graphs, graphs
-related to Hermitean unitals, graphs on nonisotropic points, etc
+related to Hermitean unitals, graphs on nonisotropic points, etc.
 
 The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 """
@@ -388,7 +388,7 @@ def OrthogonalPolarGraph(m, q, sign='+'):
 
 def NonisotropicOrthogonalPolarGraph(m, q, sign='+', perp=None):
     r"""
-    Return the Graph `NO^{\epsilon,\perp}_{m}(q)`
+    Return the Graph `NO^{\epsilon,\perp}_{m}(q)`.
 
     Let the vectorspace of dimension `m` over `F_q` be endowed with a
     nondegenerate quadratic form `F`, of type ``sign`` for `m` even.
@@ -550,7 +550,7 @@ def NonisotropicOrthogonalPolarGraph(m, q, sign='+', perp=None):
 
 def _polar_graph(m, q, g, intersection_size=None):
     r"""
-    The helper function to build graphs `(D)U(m,q)` and `(D)Sp(m,q)`
+    The helper function to build graphs `(D)U(m,q)` and `(D)Sp(m,q)`.
 
     Building a graph on an orbit of a group `g` of `m\times m` matrices over
     `GF(q)` on the points (or subspaces of dimension ``m//2``) isotropic
@@ -1124,7 +1124,7 @@ def T2starGeneralizedQuadrangleGraph(q, dual=False, hyperoval=None, field=None, 
 
 def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_hyperoval=True):
     r"""
-    Return the Haemers graph obtained from `T_2^*(q)^*`
+    Return the Haemers graph obtained from `T_2^*(q)^*`.
 
     Let `q` be a power of 2. In Sect. 8.A of [BL1984]_ one finds a construction
     of a strongly regular graph with parameters `(q^2(q+2),q^2+q-1,q-2,q)` from
@@ -1481,7 +1481,7 @@ def OrthogonalDualPolarGraph(e, d, q):
     INPUT:
 
     - ``e`` -- integer; type of the orthogonal polar space to consider;
-      must be `-1, 0` or  `1`.
+      must be `-1, 0` or  `1`
 
     - ``d`` -- integer; diameter of the graph
 

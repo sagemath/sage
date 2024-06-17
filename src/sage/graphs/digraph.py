@@ -1025,13 +1025,13 @@ class DiGraph(GenericGraph):
 
         INPUT:
 
-         - ``data_structure`` -- string (default: ``None``); one of
-           ``'sparse'``, ``'static_sparse'``, or ``'dense'``. See the
-           documentation of :class:`Graph` or :class:`DiGraph`.
+        - ``data_structure`` -- string (default: ``None``); one of
+          ``'sparse'``, ``'static_sparse'``, or ``'dense'``. See the
+          documentation of :class:`Graph` or :class:`DiGraph`.
 
-         - ``sparse`` -- boolean (default: ``None``); ``sparse=True`` is an
-           alias for ``data_structure="sparse"``, and ``sparse=False`` is an
-           alias for ``data_structure="dense"``.
+        - ``sparse`` -- boolean (default: ``None``); ``sparse=True`` is an
+          alias for ``data_structure="sparse"``, and ``sparse=False`` is an
+          alias for ``data_structure="dense"``.
 
         EXAMPLES::
 
@@ -1131,7 +1131,7 @@ class DiGraph(GenericGraph):
         - ``vertices`` -- a vertex or a list of vertices
 
         - ``labels`` -- boolean (default: ``True``); whether to return edges as
-          pairs of vertices, or as triples containing the labels.
+          pairs of vertices, or as triples containing the labels
 
         EXAMPLES::
 
@@ -1150,7 +1150,7 @@ class DiGraph(GenericGraph):
         - ``vertices`` -- a vertex or a list of vertices
 
         - ``labels`` -- boolean (default: ``True``); whether to return edges as
-          pairs of vertices, or as triples containing the labels.
+          pairs of vertices, or as triples containing the labels
 
         EXAMPLES::
 
@@ -1178,7 +1178,7 @@ class DiGraph(GenericGraph):
         - ``vertices`` -- a vertex or a list of vertices
 
         - ``labels`` -- boolean (default: ``True``); whether to return edges as
-          pairs of vertices, or as triples containing the labels.
+          pairs of vertices, or as triples containing the labels
 
         EXAMPLES::
 
@@ -1496,8 +1496,8 @@ class DiGraph(GenericGraph):
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``); sets the level of
-          verbosity. Set to 0 by default, which means quiet.
+        - ``verbose`` -- integer (default: `0`); sets the level of
+          verbosity. Set to `0` by default, which means quiet.
 
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
@@ -2188,7 +2188,7 @@ class DiGraph(GenericGraph):
             allowed.
 
           - ``'Dijkstra_Boost'`` -- the Dijkstra algorithm, implemented in Boost
-            (works only with positive weights).
+            (works only with positive weights)
 
           - ``'Johnson_Boost'`` -- the Johnson algorithm, implemented in
             Boost (works also with negative weights, if there is no negative
@@ -2196,7 +2196,7 @@ class DiGraph(GenericGraph):
             vertices of ``self``.
 
           - ``'From_Dictionary'`` -- uses the (already computed) distances, that
-            are provided by input variable ``dist_dict``.
+            are provided by input variable ``dist_dict``
 
           - ``None`` (default): Sage chooses the best algorithm:
             ``'From_Dictionary'`` if ``dist_dict`` is not None, ``'BFS'`` for
@@ -2212,11 +2212,11 @@ class DiGraph(GenericGraph):
         - ``check_weight`` -- boolean (default: ``True``); if ``True``, we check
           that the ``weight_function`` outputs a number for each edge
 
-        - ``dist_dict`` -- a dictionary (default: ``None``); a dict of dicts of
+        - ``dist_dict`` -- dictionary (default: ``None``); a dict of dicts of
           distances (used only if ``algorithm=='From_Dictionary'``)
 
         - ``with_labels`` -- boolean (default: ``False``); whether to return a
-          list or a dictionary keyed by vertices.
+          list or a dictionary keyed by vertices
 
         EXAMPLES::
 
@@ -3649,7 +3649,7 @@ class DiGraph(GenericGraph):
           ``(1, 3, None)``, then ``(1, 3)`` will not do!
 
         - ``ends`` -- (default: ``(self.sources(), self.sinks())``) a
-          pair `(S, T)` of an iterable `S` and an iterable `T`.
+          pair `(S, T)` of an iterable `S` and an iterable `T`
 
         - ``backend`` -- string or ``None`` (default); the backend to use;
           see :meth:`sage.geometry.polyhedron.constructor.Polyhedron`

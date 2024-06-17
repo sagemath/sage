@@ -284,20 +284,20 @@ def steenrod_algebra_basis(n, basis='milnor', p=2, **kwds):
     documentation for :mod:`sage.algebras.steenrod.steenrod_algebra`
     for details on each basis:
 
-    - ``'milnor'``: Milnor basis.
-    - ``'serre-cartan'`` or ``'adem'`` or ``'admissible'``: Serre-Cartan basis.
-    - ``'pst'``, ``'pst_rlex'``, ``'pst_llex'``, ``'pst_deg'``, ``'pst_revz'``:
-      various `P^s_t`-bases.
+    - ``'milnor'`` -- Milnor basis
+    - ``'serre-cartan'`` or ``'adem'`` or ``'admissible'`` -- Serre-Cartan basis
+    - ``'pst'``, ``'pst_rlex'``, ``'pst_llex'``, ``'pst_deg'``, ``'pst_revz'`` --
+      various `P^s_t`-bases
     - ``'comm'``, ``'comm_rlex'``, ``'comm_llex'``, ``'comm_deg'``, ``'comm_revz'``, or
-      any of these with ``'_long'`` appended: various commutator bases.
+      any of these with ``'_long'`` appended -- various commutator bases
 
     The rest of these bases are only defined when `p=2`.
 
-    - ``'wood_y'``: Wood's Y basis.
-    - ``'wood_z'``: Wood's Z basis.
-    - ``'wall'`` or ``'wall_long'``: Wall's basis.
-    - ``'arnon_a'`` or ``'arnon_a_long'``: Arnon's A basis.
-    - ``'arnon_c'``: Arnon's C basis.
+    - ``'wood_y'`` -- Wood's Y basis
+    - ``'wood_z'`` -- Wood's Z basis
+    - ``'wall'`` or ``'wall_long'`` -- Wall's basis
+    - ``'arnon_a'`` or ``'arnon_a_long'`` -- Arnon's A basis
+    - ``'arnon_c'`` -- Arnon's C basis
 
     EXAMPLES::
 

@@ -104,7 +104,7 @@ class FinitelyGeneratedSemigroups(CategoryWithAxiom):
 
             INPUT:
 
-            - ``side``: "left", "right", or "twosided"
+            - ``side`` -- ``'left'``, ``'right'``, or ``'twosided'`` (default)
 
             .. TODO:: Design choice:
 

@@ -4313,7 +4313,7 @@ class FiniteWord_class(Word_class):
 
         - ``sub`` -- string, list, tuple or word to search for
 
-        - ``start`` -- nonnegative integer (default: ``0``); specifying
+        - ``start`` -- nonnegative integer (default: `0`); specifying
           the position at which the search must stop
 
         - ``end`` -- nonnegative integer (default: ``None``); specifying
@@ -4967,7 +4967,7 @@ class FiniteWord_class(Word_class):
         INPUT:
 
         - ``other`` -- word on the same alphabet as ``self``
-        - ``delay`` -- integer (default: ``0``)
+        - ``delay`` -- integer (default: `0`)
         - ``p`` -- disjoint sets data structure (default: ``None``),
           a partition of the alphabet into disjoint sets to start with.
           If ``None``, each letter start in distinct equivalence classes.

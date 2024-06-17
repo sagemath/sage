@@ -72,17 +72,15 @@ cdef class Functor(SageObject):
       Instead, one should implement three methods, which are composed in the
       default call method:
 
-      - ``_coerce_into_domain(self, x)``: Return an object of ``self``'s
+      - ``_coerce_into_domain(self, x)`` -- return an object of ``self``'s
         domain, corresponding to ``x``, or raise a :class:`TypeError`.
-
         - Default: Raise :class:`TypeError` if ``x`` is not in ``self``'s domain.
 
-      - ``_apply_functor(self, x)``: Apply ``self`` to an object ``x`` of
+      - ``_apply_functor(self, x)`` -- apply ``self`` to an object ``x`` of
         ``self``'s domain.
-
         - Default: Conversion into ``self``'s codomain.
 
-      - ``_apply_functor_to_morphism(self, f)``: Apply ``self`` to a morphism
+      - ``_apply_functor_to_morphism(self, f)`` -- apply ``self`` to a morphism
         ``f`` in ``self``'s domain.
         - Default: Return ``self(f.domain()).hom(f,self(f.codomain()))``.
 

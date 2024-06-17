@@ -42,7 +42,7 @@ from sage.env import SAGE_EXTCODE
 
 class Dokchitser(SageObject):
     r"""
-    Dokchitser's `L`-functions Calculator
+    Dokchitser's `L`-functions Calculator.
 
     Create a Dokchitser `L`-series with
 
@@ -395,14 +395,13 @@ class Dokchitser(SageObject):
         - ``w`` -- list of complex numbers or string (pari function of k)
 
         - ``pari_precode`` -- some code to execute in pari
-           before calling initLdata
+          before calling initLdata
 
         - ``max_imaginary_part`` -- (default: 0) redefine if
-           you want to compute L(s) for s having large imaginary part
+          you want to compute L(s) for s having large imaginary part
 
         - ``max_asymp_coeffs`` -- (default: 40) at most this
-           many terms are generated in asymptotic series for phi(t) and
-           G(s,t)
+          many terms are generated in asymptotic series for phi(t) and G(s,t)
 
         EXAMPLES::
 
@@ -646,22 +645,22 @@ class Dokchitser(SageObject):
         ``self.check_functional_equation(T)`` should ideally
         return 0 (to the current precision).
 
-        -  if what this function returns does not look like 0 at all,
-           probably the functional equation is wrong (i.e. some of the
-           parameters gammaV, conductor etc., or the coefficients are wrong),
+        - if what this function returns does not look like 0 at all,
+          probably the functional equation is wrong (i.e. some of the
+          parameters gammaV, conductor etc., or the coefficients are wrong),
 
-        -  if checkfeq(T) is to be used, more coefficients have to be
-           generated (approximately T times more), e.g. call cflength(1.3),
-           initLdata("a(k)",1.3), checkfeq(1.3)
+        - if checkfeq(T) is to be used, more coefficients have to be
+          generated (approximately T times more), e.g. call cflength(1.3),
+          initLdata("a(k)",1.3), checkfeq(1.3)
 
-        -  T=1 always (!) returns 0, so T has to be away from 1
+        - T=1 always (!) returns 0, so T has to be away from 1
 
-        -  default value `T=1.2` seems to give a reasonable
-           balance
+        - default value `T=1.2` seems to give a reasonable
+          balance
 
-        -  if you don't have to verify the functional equation or the
-           L-values, call num_coeffs(1) and initLdata("a(k)",1), you need
-           slightly less coefficients.
+        - if you don't have to verify the functional equation or the
+          L-values, call num_coeffs(1) and initLdata("a(k)",1), you need
+          slightly less coefficients.
 
         EXAMPLES::
 

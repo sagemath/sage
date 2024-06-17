@@ -218,7 +218,7 @@ cdef inline bint PS_is_fixed(PartitionStack *PS, int m) noexcept:
 
 cdef inline int PS_clear(PartitionStack *PS) noexcept:
     """
-    Sets the current partition to the first shallower one, i.e. forgets about
+    Set the current partition to the first shallower one, i.e. forgets about
     boundaries between cells that are new to the current level.
     """
     cdef int i, cur_start = 0

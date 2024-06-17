@@ -342,7 +342,7 @@ class ShuffleProduct(ShuffleProduct_abstract):
 
         - ``l1``, ``l2`` -- iterable: iterables to shuffle
 
-        - ``element_constructor``:  constructor for the returned elements
+        - ``element_constructor`` -- constructor for the returned elements
 
         TESTS::
 

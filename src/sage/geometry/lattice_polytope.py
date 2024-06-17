@@ -5225,8 +5225,8 @@ def _read_poly_x_incidences(data, dim):
 
     - ``data`` -- an opened file with incidence
       information. The first line will be skipped, each consecutive line
-       contains incidence information for all faces of one dimension, the
-       first word of each line is a comment and is dropped.
+      contains incidence information for all faces of one dimension, the
+      first word of each line is a comment and is dropped.
 
     - ``dim`` -- dimension of the polytope
 

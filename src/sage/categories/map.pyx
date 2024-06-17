@@ -1499,9 +1499,9 @@ cdef class FormalCompositeMap(Map):
         """
         INPUT:
 
-        - ``parent``: a homset
-        - ``first``: a map or a list of maps
-        - ``second``: a map or None
+        - ``parent`` -- a homset
+        - ``first`` -- a map or a list of maps
+        - ``second`` -- a map or None
 
         .. NOTE::
 

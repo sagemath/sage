@@ -1697,7 +1697,7 @@ class ArgumentGroupFactory(UniqueFactory):
       The factory will analyze ``data`` and interpret it as
       ``specification`` or ``domain``.
 
-    - ``specification`` -- a string
+    - ``specification`` -- string
 
       The following is possible:
 

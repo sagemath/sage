@@ -1507,15 +1507,15 @@ class FinitePosets(CategoryWithAxiom):
 
             INPUT:
 
-            - ``vs``: a list (or other iterable) of elements of ``self``
+            - ``vs`` -- a list (or other iterable) of elements of ``self``
               (but since the output depends on the order, sets should
               not be used as ``vs``).
 
             OUTPUT:
 
-            - a partition of the order ideals of ``self``, as a list of
-              sets ``L`` such that for each ``L`` and ``i``, cyclically:
-              ``self.order_ideal_toggles(L[i], vs) == L[i+1]``.
+            A partition of the order ideals of ``self``, as a list of
+            sets ``L`` such that for each ``L`` and ``i``, cyclically:
+            ``self.order_ideal_toggles(L[i], vs) == L[i+1]``.
 
             EXAMPLES::
 
@@ -1778,7 +1778,7 @@ class FinitePosets(CategoryWithAxiom):
 
             INPUT:
 
-            - ``vs``: a list (or other iterable) of elements of ``self``
+            - ``vs`` -- list (or other iterable) of elements of ``self``
               (but since the output depends on the order, sets should
               not be used as ``vs``).
 

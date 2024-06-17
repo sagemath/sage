@@ -1038,7 +1038,7 @@ class ChainComplex_class(Parent):
 
         INPUT:
 
-        - ``degree`` -- an element of the grading group or ``None`` (default).
+        - ``degree`` -- an element of the grading group or ``None`` (default)
 
         OUTPUT:
 
@@ -1435,11 +1435,11 @@ class ChainComplex_class(Parent):
 
         INPUT:
 
-        -  ``max_prime`` -- prime number; search for torsion mod `p` for
-           all `p` strictly less than this number
+        - ``max_prime`` -- prime number; search for torsion mod `p` for
+          all `p` strictly less than this number
 
-        -  ``min_prime`` -- prime (default: 2); search for
-           torsion mod `p` for primes at least as big as this
+        - ``min_prime`` -- prime (default: 2); search for
+          torsion mod `p` for primes at least as big as this
 
         Return a list of pairs `(p, d)` where `p` is a prime at which
         there is torsion and `d` is a list of dimensions in which this

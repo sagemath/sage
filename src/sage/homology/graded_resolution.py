@@ -105,7 +105,7 @@ class GradedFiniteFreeResolution(FiniteFreeResolution):
       degrees of `n` summands of the free module `M`; this is a list of zero
       degrees of length `n` by default
 
-    - ``name`` -- a string; name of the base ring
+    - ``name`` -- string; name of the base ring
     """
     def __init__(self, module, degrees=None, shifts=None, name='S', **kwds):
         r"""
@@ -425,7 +425,7 @@ class GradedFiniteFreeResolution_singular(GradedFiniteFreeResolution, FiniteFree
       degrees of `n` summands of the free module `M`; this is a list of zero
       degrees of length `n` by default
 
-    - ``name`` -- a string; name of the base ring
+    - ``name`` -- string; name of the base ring
 
     - ``algorithm`` -- Singular algorithm to compute a resolution of ``ideal``
 

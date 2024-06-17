@@ -208,7 +208,7 @@ class SymmetricGroup(PermutationGroup_symalt):
 
     INPUT:
 
-    - ``n`` -- a positive integer, or list or tuple thereof
+    - ``n`` -- positive integer, or list or tuple thereof
 
     .. NOTE::
 
@@ -674,7 +674,7 @@ class AlternatingGroup(PermutationGroup_symalt):
 
         INPUT:
 
-        - ``n`` -- a positive integer, or list or tuple thereof
+        - ``n`` -- positive integer, or list or tuple thereof
 
         .. NOTE::
 
@@ -749,7 +749,7 @@ class CyclicPermutationGroup(PermutationGroup_unique):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         .. NOTE::
 
@@ -839,7 +839,7 @@ class DiCyclicGroup(PermutationGroup_unique):
 
     INPUT:
 
-    - ``n`` -- a positive integer, two or greater
+    - ``n`` -- positive integer, two or greater
 
     OUTPUT:
 
@@ -1424,7 +1424,7 @@ class DihedralGroup(PermutationGroup_unique):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         OUTPUT: the dihedral group of order `2n`, as a permutation group
 
@@ -1516,7 +1516,7 @@ class SplitMetacyclicGroup(PermutationGroup_unique):
         - ``p`` -- a prime number that is the prime underlying this
           p-group
 
-        - ``m`` -- a positive integer such that the order of this
+        - ``m`` -- positive integer such that the order of this
           group is the `p^m`. Be aware that, for even `p`, `m` must be
           greater than 3, while for odd `p`, `m` must be greater than
           2.
@@ -1657,7 +1657,7 @@ class SemidihedralGroup(PermutationGroup_unique):
 
         INPUT:
 
-        - ``m`` -- a positive integer; the power of 2 that is the
+        - ``m`` -- positive integer; the power of 2 that is the
           group's order
 
         OUTPUT:
@@ -1766,7 +1766,7 @@ class MathieuGroup(PermutationGroup_unique):
 
         INPUT:
 
-        - ``n`` -- a positive integer in  {9, 10, 11, 12, 21, 22, 23, 24}
+        - ``n`` -- positive integer in {9, 10, 11, 12, 21, 22, 23, 24}
 
         OUTPUT: the Mathieu group of degree `n`, as a permutation group
 
@@ -2088,7 +2088,7 @@ class TransitiveGroupsOfDegree(CachedRepresentation, Parent):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         EXAMPLES::
 
@@ -2503,7 +2503,7 @@ class PrimitiveGroupsOfDegree(CachedRepresentation, Parent):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         EXAMPLES::
 

@@ -306,7 +306,7 @@ cdef class DenseGraph(CGraph):
 
         - ``u``, ``v`` -- nonnegative integers, must be in self
 
-        - ``l`` -- a positive integer label, or zero for no label, or ``-1`` for any label
+        - ``l`` -- positive integer label, or zero for no label, or ``-1`` for any label
 
         OUTPUT:
             0 -- False
@@ -603,7 +603,7 @@ cdef class DenseGraphBackend(CGraphBackend):
         INPUT:
 
         - ``edges`` -- an iterable of edges to be added; each edge can either be
-           of the form ``(u, v)`` or ``(u, v, l)``
+          of the form ``(u, v)`` or ``(u, v, l)``
 
         - ``directed`` -- if ``False``, adds ``(v, u)`` as well as ``(u, v)``
 

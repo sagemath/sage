@@ -710,7 +710,7 @@ def minimal_schnyder_wood(graph, root_edge=None, minimal=True, check=True):
       will be labelled ``-3``
 
     - ``minimal`` -- boolean (default: ``True``); whether to return a
-      minimal or a maximal Schnyder wood.
+      minimal or a maximal Schnyder wood
 
     - ``check`` -- boolean (default: ``True``); whether to check if the input
       is a planar triangulation

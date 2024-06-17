@@ -1004,7 +1004,7 @@ class Patch(SageObject):
         - ``cmap`` -- color map (default: ``'Set1'``). It can be one of the
           following:
 
-           - ``string`` -- A coloring map. For available coloring map names type:
+           - ``string`` -- a coloring map; for available coloring map names type:
              ``sorted(colormaps)``
            - ``list`` -- list of colors to assign cyclically to the faces
              A list of a single color colors all the faces with the same color

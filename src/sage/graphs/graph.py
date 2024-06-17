@@ -531,10 +531,10 @@ class Graph(GenericGraph):
        ``name='complete')`` gives the graph a name
 
     - ``loops`` -- boolean (default: ``None``); whether to allow loops (ignored
-       if data is an instance of the ``Graph`` class)
+      if data is an instance of the ``Graph`` class)
 
     - ``multiedges`` -- boolean (default: ``None``); whether to allow multiple
-       edges (ignored if data is an instance of the ``Graph`` class).
+      edges (ignored if data is an instance of the ``Graph`` class)
 
     - ``weighted`` -- boolean (default: ``None``); whether graph thinks of
       itself as weighted or not. See
@@ -580,7 +580,7 @@ class Graph(GenericGraph):
       is the number of vertices.
 
     - ``convert_empty_dict_labels_to_None`` -- this arguments sets the default
-       edge labels used by NetworkX (empty dictionaries) to be replaced by
+      edge labels used by NetworkX (empty dictionaries) to be replaced by
        ``None``, the default Sage edge label. It is set to ``True`` iff a
        NetworkX graph is on the input.
 
@@ -2602,7 +2602,7 @@ class Graph(GenericGraph):
         INPUT:
 
         - ``certificate`` -- boolean (default: ``False``); whether to return a
-          certificate.
+          certificate
 
         OUTPUT:
 
@@ -2949,8 +2949,8 @@ class Graph(GenericGraph):
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``); sets the level of
-          verbosity. Set to 0 by default, which means quiet.
+        - ``verbose`` -- integer (default: `0`); sets the level of
+          verbosity. Set to `0` by default, which means quiet.
 
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
@@ -3166,8 +3166,8 @@ class Graph(GenericGraph):
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``); sets the level of
-          verbosity. Set to 0 by default, which means quiet.
+        - ``verbose`` -- integer (default: `0`); sets the level of
+          verbosity. Set to `0` by default, which means quiet.
 
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
@@ -3275,8 +3275,8 @@ class Graph(GenericGraph):
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``); sets the level of
-          verbosity. Set to 0 by default, which means quiet.
+        - ``verbose`` -- integer (default: `0`); sets the level of
+          verbosity. Set to `0` by default, which means quiet.
 
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
@@ -3617,8 +3617,8 @@ class Graph(GenericGraph):
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``); sets the level of
-          verbosity. Set to 0 by default, which means quiet.
+        - ``verbose`` -- integer (default: `0`); sets the level of
+          verbosity. Set to `0` by default, which means quiet.
 
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
@@ -3716,8 +3716,8 @@ class Graph(GenericGraph):
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``); sets the level of
-          verbosity. Set to 0 by default, which means quiet.
+        - ``verbose`` -- integer (default: `0`); sets the level of
+          verbosity. Set to `0` by default, which means quiet.
 
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
@@ -3840,7 +3840,7 @@ class Graph(GenericGraph):
             the :mod:`MILP module <sage.numerical.mip>`).
 
         - ``hex_colors`` -- boolean (default: ``False``); if ``True``, return a
-          dictionary which can easily be used for plotting.
+          dictionary which can easily be used for plotting
 
         - ``solver`` -- string (default: ``None``); specify a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
@@ -3850,8 +3850,8 @@ class Graph(GenericGraph):
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``); sets the level of
-          verbosity. Set to 0 by default, which means quiet.
+        - ``verbose`` -- integer (default: `0`); sets the level of
+          verbosity. Set to `0` by default, which means quiet.
 
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
@@ -4170,8 +4170,8 @@ class Graph(GenericGraph):
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``); sets the level of verbosity:
-          set to 0 by default, which means quiet (only useful when ``algorithm
+        - ``verbose`` -- integer (default: `0`); sets the level of verbosity:
+          set to `0` by default, which means quiet (only useful when ``algorithm
           == "LP"``)
 
         - ``integrality_tolerance`` -- float; parameter for use with MILP
@@ -4362,8 +4362,8 @@ class Graph(GenericGraph):
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``); sets the level of verbosity:
-          set to 0 by default, which means quiet (only useful when ``algorithm
+        - ``verbose`` -- integer (default: `0`); sets the level of verbosity:
+          set to `0` by default, which means quiet (only useful when ``algorithm
           == "LP"``)
 
         - ``integrality_tolerance`` -- float; parameter for use with MILP
@@ -4554,8 +4554,8 @@ class Graph(GenericGraph):
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``); sets the level of
-          verbosity. Set to 0 by default, which means quiet.
+        - ``verbose`` -- integer (default: `0`); sets the level of
+          verbosity. Set to `0` by default, which means quiet.
 
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
@@ -4721,8 +4721,8 @@ class Graph(GenericGraph):
           of the class
           :class:`MixedIntegerLinearProgram <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``); sets the level of
-          verbosity. Set to 0 by default, which means quiet.
+        - ``verbose`` -- integer (default: `0`); sets the level of
+          verbosity. Set to `0` by default, which means quiet.
 
         EXAMPLES:
 
@@ -4833,8 +4833,8 @@ class Graph(GenericGraph):
 
         INPUT:
 
-        - ``family`` -- a list of lists defining the family `F` (actually, a
-          Family of subsets of ``G.vertices(sort=False)``).
+        - ``family`` -- list of lists defining the family `F` (actually, a
+          Family of subsets of ``G.vertices(sort=False)``)
 
         - ``solver`` -- string (default: ``None``); specify a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
@@ -4844,8 +4844,8 @@ class Graph(GenericGraph):
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``); sets the level of
-          verbosity. Set to 0 by default, which means quiet.
+        - ``verbose`` -- integer (default: `0`); sets the level of
+          verbosity. Set to `0` by default, which means quiet.
 
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
@@ -4970,8 +4970,8 @@ class Graph(GenericGraph):
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``); sets the level of
-          verbosity. Set to 0 by default, which means quiet.
+        - ``verbose`` -- integer (default: `0`); sets the level of
+          verbosity. Set to `0` by default, which means quiet.
 
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
@@ -5225,7 +5225,7 @@ class Graph(GenericGraph):
         INPUT:
 
         - ``v`` -- a vertex (default: ``None``); set to ``None`` (default) to
-          get a dictionary associating each vertex with its centrality degree.
+          get a dictionary associating each vertex with its centrality degree
 
         .. SEEALSO::
 
@@ -5311,7 +5311,7 @@ class Graph(GenericGraph):
             allowed.
 
           - ``'Dijkstra_Boost'`` -- the Dijkstra algorithm, implemented in Boost
-            (works only with positive weights).
+            (works only with positive weights)
 
           - ``'Johnson_Boost'`` -- the Johnson algorithm, implemented in
             Boost (works also with negative weights, if there is no negative
@@ -5319,7 +5319,7 @@ class Graph(GenericGraph):
             vertices of ``self``.
 
           - ``'From_Dictionary'`` -- uses the (already computed) distances, that
-            are provided by input variable ``dist_dict``.
+            are provided by input variable ``dist_dict``
 
           - ``None`` (default): Sage chooses the best algorithm:
             ``'From_Dictionary'`` if ``dist_dict`` is not None, ``'BFS'`` for
@@ -5335,11 +5335,11 @@ class Graph(GenericGraph):
         - ``check_weight`` -- boolean (default: ``True``); if ``True``, we check
           that the ``weight_function`` outputs a number for each edge
 
-        - ``dist_dict`` -- a dictionary (default: ``None``); a dict of dicts of
+        - ``dist_dict`` -- dictionary (default: ``None``); a dict of dicts of
           distances (used only if ``algorithm=='From_Dictionary'``)
 
         - ``with_labels`` -- boolean (default: ``False``); whether to return a
-          list or a dictionary keyed by vertices.
+          list or a dictionary keyed by vertices
 
         EXAMPLES::
 
@@ -5530,7 +5530,7 @@ class Graph(GenericGraph):
         - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
           weights are taken into account; if ``False``, all edges have weight 1
 
-        - ``algorithm`` -- string (default: ``'DHV'``).
+        - ``algorithm`` -- string (default: ``'DHV'``)
 
           - ``'DHV'`` -- radius computation is done using the algorithm proposed
             in [Dragan2018]_. Works for graph with nonnegative edge weights
@@ -5877,7 +5877,7 @@ class Graph(GenericGraph):
 
         INPUT:
 
-        - ``dist`` -- a nonnegative integer or a list of nonnegative integers;
+        - ``dist`` -- nonnegative integer or a list of nonnegative integers;
           specified distance(s) for the connecting vertices. ``Infinity`` may
           be used here to describe vertex pairs in separate components.
 
@@ -6052,13 +6052,13 @@ class Graph(GenericGraph):
 
         INPUT:
 
-         - ``data_structure`` -- one of ``'sparse'``, ``'static_sparse'``, or
-           ``'dense'``. See the documentation of :class:`Graph` or
-           :class:`DiGraph`.
+        - ``data_structure`` -- one of ``'sparse'``, ``'static_sparse'``, or
+          ``'dense'``. See the documentation of :class:`Graph` or
+          :class:`DiGraph`.
 
-         - ``sparse`` -- boolean (default: ``None``); ``sparse=True`` is an
-           alias for ``data_structure="sparse"``, and ``sparse=False`` is an
-           alias for ``data_structure="dense"``.
+        - ``sparse`` -- boolean (default: ``None``); ``sparse=True`` is an
+          alias for ``data_structure="sparse"``, and ``sparse=False`` is an
+          alias for ``data_structure="dense"``.
 
         EXAMPLES::
 
@@ -6280,7 +6280,7 @@ class Graph(GenericGraph):
 
         INPUT:
 
-         - ``s`` -- list of vertices of ``self``
+        - ``s`` -- list of vertices of ``self``
 
         - ``inplace`` -- boolean (default: ``True``); whether to do the
           modification inplace, or to return a copy of the graph after
@@ -6379,8 +6379,8 @@ class Graph(GenericGraph):
 
         INPUT:
 
-         - ``filename`` -- a string
-         - ``**options`` -- same layout options as :meth:`.layout`
+        - ``filename`` -- string
+        - ``**options`` -- same layout options as :meth:`.layout`
 
         EXAMPLES::
 
@@ -6430,8 +6430,8 @@ class Graph(GenericGraph):
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``); sets the level of
-          verbosity. Set to 0 by default, which means quiet.
+        - ``verbose`` -- integer (default: `0`); sets the level of
+          verbosity. Set to `0` by default, which means quiet.
 
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
@@ -6733,8 +6733,8 @@ class Graph(GenericGraph):
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``); sets the level of
-          verbosity. Set to 0 by default, which means quiet.
+        - ``verbose`` -- integer (default: `0`); sets the level of
+          verbosity. Set to `0` by default, which means quiet.
 
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
@@ -6831,8 +6831,8 @@ class Graph(GenericGraph):
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``); sets the level of
-          verbosity. Set to 0 by default, which means quiet.
+        - ``verbose`` -- integer (default: `0`); sets the level of
+          verbosity. Set to `0` by default, which means quiet.
 
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
@@ -7100,8 +7100,8 @@ class Graph(GenericGraph):
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``); sets the level of
-          verbosity. Set to 0 by default, which means quiet.
+        - ``verbose`` -- integer (default: `0`); sets the level of
+          verbosity. Set to `0` by default, which means quiet.
 
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
@@ -7196,8 +7196,8 @@ class Graph(GenericGraph):
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``); sets the level of
-          verbosity. Set to 0 by default, which means quiet.
+        - ``verbose`` -- integer (default: `0`); sets the level of
+          verbosity. Set to `0` by default, which means quiet.
 
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
@@ -7613,7 +7613,7 @@ class Graph(GenericGraph):
 
         INPUT:
 
-         - ``algorithm`` -- either ``cliquer`` or ``networkx``
+        - ``algorithm`` -- either ``cliquer`` or ``networkx``
 
            - ``cliquer`` -- this wraps the C program Cliquer [NO2003]_
 
@@ -8294,8 +8294,8 @@ class Graph(GenericGraph):
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``); sets the level of
-          verbosity. Set to 0 by default, which means quiet.
+        - ``verbose`` -- integer (default: `0`); sets the level of
+          verbosity. Set to `0` by default, which means quiet.
 
         EXAMPLES::
 
@@ -8410,8 +8410,8 @@ class Graph(GenericGraph):
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``); sets the level of
-          verbosity. Set to 0 by default, which means quiet.
+        - ``verbose`` -- integer (default: `0`); sets the level of
+          verbosity. Set to `0` by default, which means quiet.
 
         EXAMPLES::
 
@@ -8504,7 +8504,7 @@ class Graph(GenericGraph):
 
     def _gomory_hu_tree(self, vertices, algorithm=None):
         r"""
-        Return a Gomory-Hu tree associated to self.
+        Return a Gomory-Hu tree associated to ``self``.
 
         This function is the private counterpart of ``gomory_hu_tree()``, with
         the difference that it has an optional argument needed for recursive
@@ -8514,7 +8514,7 @@ class Graph(GenericGraph):
 
         INPUT:
 
-        - ``vertices`` -- a set of "real" vertices, as opposed to the fakes one
+        - ``vertices`` -- set of "real" vertices, as opposed to the fakes one
           introduced during the computations. This variable is useful for the
           algorithm and for recursion purposes.
 
@@ -8712,8 +8712,8 @@ class Graph(GenericGraph):
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``); sets the level of
-          verbosity. Set to 0 by default, which means quiet.
+        - ``verbose`` -- integer (default: `0`); sets the level of
+          verbosity. Set to `0` by default, which means quiet.
 
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
@@ -9156,8 +9156,8 @@ class Graph(GenericGraph):
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``); sets the level of verbosity:
-          set to 0 by default, which means quiet (only useful when
+        - ``verbose`` -- integer (default: `0`); sets the level of verbosity:
+          set to `0` by default, which means quiet (only useful when
           ``algorithm == "LP_matching"`` or ``algorithm == "LP"``)
 
         - ``integrality_tolerance`` -- float; parameter for use with MILP
@@ -9759,7 +9759,7 @@ class Graph(GenericGraph):
         INPUT:
 
         - ``nonedgesonly`` -- boolean (default: ``True``); if ``True``, assigns
-          `0` value to adjacent vertices.
+          `0` value to adjacent vertices
 
         OUTPUT: list of tuples of edge pairs
 
@@ -9839,7 +9839,7 @@ class Graph(GenericGraph):
         INPUT:
 
         - ``certificate`` -- boolean (default: ``False``); whether to return
-          a certificate.
+          a certificate
 
         OUTPUT:
 

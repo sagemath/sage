@@ -481,7 +481,7 @@ class AbelianGroupAutomorphismGroup_subgroup(AbelianGroupAutomorphismGroup_gap):
     INPUT:
 
     - ``ambient`` -- the ambient group
-    - ``generators`` -- a tuple of gap elements of the ambient group
+    - ``generators`` -- tuple of gap elements of the ambient group
 
     EXAMPLES::
 

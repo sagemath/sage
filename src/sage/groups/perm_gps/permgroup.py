@@ -269,12 +269,12 @@ def PermutationGroup(gens=None, *args, **kwds):
 
     INPUT:
 
-    -  ``gens`` -- (default: ``None``) list of generators
+    - ``gens`` -- (default: ``None``) list of generators
 
-    -  ``gap_group`` -- (optional) a gap permutation group
+    - ``gap_group`` -- (optional) a gap permutation group
 
-    -  ``canonicalize`` -- boolean (default: ``True``); if ``True``,
-       sort generators and remove duplicates
+    - ``canonicalize`` -- boolean (default: ``True``); if ``True``,
+      sort generators and remove duplicates
 
     OUTPUT: a permutation group
 
@@ -617,7 +617,7 @@ class PermutationGroup_generic(FiniteGroup):
     @cached_method
     def _has_natural_domain(self):
         """
-        Return whether the underlying domain is of the form (1,...,n)
+        Return whether the underlying domain is of the form (1,...,n).
 
         EXAMPLES::
 
@@ -1590,7 +1590,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         INPUT:
 
-        - ``x``, ``y`` -- two elements of the domain.
+        - ``x``, ``y`` -- two elements of the domain
 
         EXAMPLES::
 
@@ -2651,28 +2651,28 @@ class PermutationGroup_generic(FiniteGroup):
         representation for the direct product. The direct product of
         permutation groups will be a permutation group again. For a direct
         product ``D``, the GAP operation ``Embedding(D,i)`` returns the
-        homomorphism embedding the i-th factor into ``D``. The GAP operation
-        ``Projection(D,i)`` gives the projection of ``D`` onto the i-th factor.
+        homomorphism embedding the `i`-th factor into ``D``. The GAP operation
+        ``Projection(D,i)`` gives the projection of ``D`` onto the `i`-th factor.
         This method returns a 5-tuple: a permutation group and 4 morphisms.
 
         INPUT:
 
-        -  ``self``, ``other`` -- permutation groups
+        - ``self``, ``other`` -- permutation groups
 
         OUTPUT:
 
-        -  ``D`` -- a direct product of the inputs, returned as
-           a permutation group as well
+        - ``D`` -- a direct product of the inputs, returned as
+          a permutation group as well
 
-        -  ``iota1`` -- an embedding of ``self`` into ``D``
+        - ``iota1`` -- an embedding of ``self`` into ``D``
 
-        -  ``iota2`` -- an embedding of ``other`` into ``D``
+        - ``iota2`` -- an embedding of ``other`` into ``D``
 
-        -  ``pr1`` -- the projection of ``D`` onto ``self`` (giving a
-           splitting ``1 - other - D - self - 1``)
+        - ``pr1`` -- the projection of ``D`` onto ``self`` (giving a
+          splitting ``1 - other - D - self - 1``)
 
-        -  ``pr2`` -- the projection of ``D`` onto ``other`` (giving a
-           splitting ``1 - self - D - other - 1``)
+        - ``pr2`` -- the projection of ``D`` onto ``other`` (giving a
+          splitting ``1 - self - D - other - 1``)
 
         EXAMPLES::
 
@@ -3149,7 +3149,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         INPUT:
 
-        - ``other`` -- (default: ``None``) a permutation group.
+        - ``other`` -- (default: ``None``) a permutation group
 
         OUTPUT:
 
@@ -4209,9 +4209,9 @@ class PermutationGroup_generic(FiniteGroup):
 
         INPUT:
 
-        -  ``self`` -- this group
+        - ``self`` -- this group
 
-        -  ``right`` -- a permutation group
+        - ``right`` -- a permutation group
 
         OUTPUT: ``None``, or a morphism of permutation groups
 
@@ -4258,9 +4258,9 @@ class PermutationGroup_generic(FiniteGroup):
 
         INPUT:
 
-        -  ``self`` -- this group
+        - ``self`` -- this group
 
-        -  ``right`` -- a permutation group
+        - ``right`` -- a permutation group
 
         OUTPUT: boolean; ``True`` if ``self`` and ``right`` are isomorphic
         groups; ``False`` otherwise

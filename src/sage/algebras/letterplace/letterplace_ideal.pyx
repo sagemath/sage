@@ -357,8 +357,8 @@ class LetterplaceIdeal(Ideal_nc):
 
         INPUT:
 
-        - ``G``: A list or tuple of elements, an ideal,
-          the ambient algebra, or a single element.
+        - ``G`` -- a list or tuple of elements, an ideal,
+          the ambient algebra, or a single element
 
         OUTPUT:
 

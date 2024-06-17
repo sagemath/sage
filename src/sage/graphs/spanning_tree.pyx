@@ -53,7 +53,7 @@ def kruskal(G, by_weight=True, weight_function=None, check_weight=False, check=F
     - ``G`` -- an undirected graph
 
     - ``by_weight`` -- boolean (default: ``True``); if ``True``, the edges in
-      the graph are weighted; if ``False``, all edges have weight 1.
+      the graph are weighted. If ``False``, all edges have weight 1.
 
     - ``weight_function`` -- function (default: ``None``); a function that takes
       as input an edge ``(u, v, l)`` and outputs its weight. If not ``None``,
@@ -262,7 +262,7 @@ def kruskal_iterator(G, by_weight=True, weight_function=None, check_weight=False
     - ``G`` -- an undirected graph
 
     - ``by_weight`` -- boolean (default: ``True``); if ``True``, the edges in
-      the graph are weighted; if ``False``, all edges have weight 1.
+      the graph are weighted. If ``False``, all edges have weight 1.
 
     - ``weight_function`` -- function (default: ``None``); a function that takes
       as input an edge ``(u, v, l)`` and outputs its weight. If not ``None``,
@@ -366,7 +366,7 @@ def kruskal_iterator_from_edges(edges, union_find, by_weight=True,
       forest
 
     - ``by_weight`` -- boolean (default: ``True``); if ``True``, the edges in
-      the graph are weighted; if ``False``, all edges have weight 1.
+      the graph are weighted. If ``False``, all edges have weight 1.
 
     - ``weight_function`` -- function (default: ``None``); a function that takes
       as input an edge ``(u, v, l)`` and outputs its weight. If not ``None``,
@@ -442,11 +442,11 @@ def filter_kruskal(G, threshold=10000, by_weight=True, weight_function=None,
     - ``G`` -- an undirected graph
 
     - ``threshold`` -- integer (default: 10000); maximum number of edges on
-       which to run kruskal algorithm. Above that value, edges are partitioned
-       into sets of size at most ``threshold``
+      which to run kruskal algorithm. Above that value, edges are partitioned
+      into sets of size at most ``threshold``
 
     - ``by_weight`` -- boolean (default: ``True``); if ``True``, the edges in
-      the graph are weighted; if ``False``, all edges have weight 1.
+      the graph are weighted. If ``False``, all edges have weight 1.
 
     - ``weight_function`` -- function (default: ``None``); a function that takes
       as input an edge ``(u, v, l)`` and outputs its weight. If not ``None``,
@@ -515,11 +515,11 @@ def filter_kruskal_iterator(G, threshold=10000, by_weight=True, weight_function=
     - ``G`` -- an undirected graph
 
     - ``threshold`` -- integer (default: 10000); maximum number of edges on
-       which to run kruskal algorithm. Above that value, edges are partitioned
-       into sets of size at most ``threshold``
+      which to run kruskal algorithm. Above that value, edges are partitioned
+      into sets of size at most ``threshold``
 
     - ``by_weight`` -- boolean (default: ``True``); if ``True``, the edges in
-      the graph are weighted; if ``False``, all edges have weight 1.
+      the graph are weighted. If ``False``, all edges have weight 1.
 
     - ``weight_function`` -- function (default: ``None``); a function that takes
       as input an edge ``(u, v, l)`` and outputs its weight. If not ``None``,
@@ -715,7 +715,7 @@ def boruvka(G, by_weight=True, weight_function=None, check_weight=True, check=Fa
     - ``G`` -- an undirected graph
 
     - ``by_weight`` -- boolean (default: ``True``); if ``True``, the edges in
-      the graph are weighted. If ``False``, all edges have weight 1.
+      the graph are weighted. If ``False``, all edges have weight 1
 
     - ``weight_function`` -- function (default: ``None``); a function that takes
       as input an edge ``(u, v, l)`` and outputs its weight. If not ``None``,
@@ -946,7 +946,7 @@ def random_spanning_tree(G, output_as_graph=False, by_weight=False, weight_funct
       not convertible to a float, an error is raised)
 
     - ``check_weight`` -- boolean (default: ``True``); whether to check that
-      the ``weight_function`` outputs a number for each edge.
+      the ``weight_function`` outputs a number for each edge
 
     .. SEEALSO::
 

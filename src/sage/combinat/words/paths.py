@@ -229,21 +229,21 @@ def WordPaths(alphabet, steps=None):
         to the letters according to their order in steps (given vectors
         first, opposite vectors after).
 
-      - ``None``: In this case, the type of steps are guessed from the
-        length of alphabet.
+      - ``None`` -- in this case, the type of steps are guessed from the
+        length of alphabet
 
-      - 'square_grid' or 'square': (default when size of alphabet is 4)
+      - ``'square_grid'`` or ``'square'`` -- (default when size of alphabet is 4)
         The order is : East, North, West, South.
 
-      - 'triangle_grid' or 'triangle':
+      - ``'triangle_grid'`` or ``'triangle'``
 
-      - 'hexagonal_grid' or 'hexagon': (default when size of alphabet is 6)
+      - ``'hexagonal_grid'`` or ``'hexagon'`` -- (default when size of alphabet is 6)
 
-      - 'cube_grid' or 'cube':
+      - ``'cube_grid'`` or ``'cube'``
 
-      - 'north_east', 'ne' or 'NE': (the default when size of alphabet is 2)
+      - ``'north_east'``, ``'ne'`` or ``'NE'`` -- (the default when size of alphabet is 2)
 
-      - 'dyck':
+      - ``'dyck'``
 
     OUTPUT: the combinatorial class of all paths of the given type
 

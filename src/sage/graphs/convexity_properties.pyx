@@ -295,7 +295,7 @@ cdef class ConvexityProperties:
 
         INPUT:
 
-        * ``vertices`` -- a list of vertices
+        * ``vertices`` -- list of vertices
 
         EXAMPLES::
 

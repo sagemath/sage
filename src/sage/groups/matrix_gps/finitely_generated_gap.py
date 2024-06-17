@@ -835,7 +835,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
         INPUT:
 
-        - ``degree`` -- a positive integer
+        - ``degree`` -- positive integer
 
         - ``chi`` -- (default: trivial character) a linear group character of this group
 

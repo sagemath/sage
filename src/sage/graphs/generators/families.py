@@ -158,7 +158,7 @@ def FurerGadget(k, prefix=None):
 
     - ``G`` -- the Furer gadget of order ``k``
 
-    - ``coloring`` -- a list of list of vertices, representing the
+    - ``coloring`` -- list of list of vertices, representing the
       partition induced by the coloring of ``G``'s vertices
 
     EXAMPLES:
@@ -266,7 +266,7 @@ def CaiFurerImmermanGraph(G, twisted=False):
 
     - ``H`` -- the Cai-Furer-Immerman graph on ``G``
 
-    - ``coloring`` -- a list of list of vertices, representing the
+    - ``coloring`` -- list of list of vertices, representing the
       partition induced by the coloring on ``H``
 
     EXAMPLES:
@@ -1072,9 +1072,9 @@ def CirculantGraph(n, adjacency):
 
     INPUT:
 
-    -  ``n`` -- number of vertices in the graph
+    - ``n`` -- number of vertices in the graph
 
-    -  ``adjacency`` -- the list of j values
+    - ``adjacency`` -- the list of j values
 
     PLOTTING: Upon construction, the position dictionary is filled to
     override the spring-layout algorithm. By convention, each circulant
@@ -1182,27 +1182,27 @@ def CubeGraph(n, embedding=1):
 
     - ``n`` -- integer; the dimension of the cube graph
 
-    - ``embedding`` -- integer (default: ``1``); two embeddings of the `n`-cube
+    - ``embedding`` -- integer (default: `1`); two embeddings of the `n`-cube
       are available:
 
-      - ``1``: the `n`-cube is projected inside a regular `2n`-gonal polygon by
+      - ``1`` -- the `n`-cube is projected inside a regular `2n`-gonal polygon by
         a skew orthogonal projection. See the :wikipedia:`Hypercube` for more
         details.
 
-      - ``2``: orthogonal projection of the `n`-cube. This orientation shows
+      - ``2`` -- orthogonal projection of the `n`-cube. This orientation shows
         columns of independent vertices such that the neighbors of a vertex are
         located in the columns on the left and on the right. The number of
         vertices in each column represents rows in Pascal's triangle. See for
         instance the :wikipedia:`10-cube` for more details.
 
-      - ``3``: oblique projection of the `n`-cube. Oblique projection involves
+      - ``3`` -- oblique projection of the `n`-cube. Oblique projection involves
         aligning one face parallel to the viewer and projecting at a specified
         angle, maintaining equal size for edges parallel to one axis while
         applying fixed foreshortening to others. This method simplifies the
         representation of a four-dimensional hypercube onto a two-dimensional
         plane, offering a geometrically consistent visualization.
 
-      - ``None`` or ``O``: no embedding is provided
+      - ``None`` or ``O`` -- no embedding is provided
 
     EXAMPLES:
 
@@ -2230,11 +2230,11 @@ def LCFGraph(n, shift_list, repeats):
 
     INPUT:
 
-    -  ``n`` -- the number of nodes
+    - ``n`` -- the number of nodes
 
-    -  ``shift_list`` -- list of integer shifts mod `n`
+    - ``shift_list`` -- list of integer shifts mod `n`
 
-    -  ``repeats`` -- the number of times to repeat the process
+    - ``repeats`` -- the number of times to repeat the process
 
     EXAMPLES::
 
@@ -2421,9 +2421,9 @@ def NKStarGraph(n, k):
 
     INPUT:
 
-    -  ``n`` -- integer
+    - ``n`` -- integer
 
-    -  ``k`` -- integer
+    - ``k`` -- integer
 
     EXAMPLES::
 
@@ -2482,7 +2482,7 @@ def NStarGraph(n):
 
     INPUT:
 
-    -  ``n`` -- integer
+    - ``n`` -- integer
 
     EXAMPLES::
 
@@ -2606,7 +2606,7 @@ def PaleyGraph(q):
 
 def PasechnikGraph(n):
     r"""
-    Pasechnik strongly regular graph on `(4n-1)^2` vertices
+    Pasechnik strongly regular graph on `(4n-1)^2` vertices.
 
     A strongly regular graph with parameters of the orthogonal array graph
     :func:`~sage.graphs.graph_generators.GraphGenerators.OrthogonalArrayBlockGraph`,
@@ -2647,7 +2647,7 @@ def PasechnikGraph(n):
 
 def SquaredSkewHadamardMatrixGraph(n):
     r"""
-    Pseudo-`OA(2n,4n-1)`-graph from a skew Hadamard matrix of order `4n`
+    Pseudo-`OA(2n,4n-1)`-graph from a skew Hadamard matrix of order `4n`.
 
     A strongly regular graph with parameters of the orthogonal array graph
     :func:`~sage.graphs.graph_generators.GraphGenerators.OrthogonalArrayBlockGraph`,
@@ -2847,7 +2847,7 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
 
     Some facts about this graph with `p` pegs and `d` disks:
 
-    - only automorphisms are the "obvious" ones -- renumber the pegs.
+    - only automorphisms are the "obvious" ones -- renumber the pegs
     - chromatic number is less than or equal to `p`
     - independence number is `p^{d-1}`
 
@@ -3591,7 +3591,7 @@ def trees(vertices):
 
     INPUT:
 
-    -  ``vertices`` -- the size of the trees created.
+    - ``vertices`` -- the size of the trees created
 
     OUTPUT:
 
@@ -3842,7 +3842,7 @@ def RingedTree(k, vertex_labels=True):
 
 def MathonPseudocyclicMergingGraph(M, t):
     r"""
-    Mathon's merging of classes in a pseudo-cyclic 3-class association scheme
+    Mathon's merging of classes in a pseudo-cyclic 3-class association scheme.
 
     Construct strongly regular graphs from p.97 of [BL1984]_.
 
@@ -3915,7 +3915,7 @@ def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None):
 
     INPUT:
 
-    - ``t`` -- a positive integer
+    - ``t`` -- positive integer
 
     - ``G`` -- if ``None`` (default), try to construct the necessary graph
       with parameters `(4t+1,2t,t-1,t)`, otherwise use the user-supplied one,

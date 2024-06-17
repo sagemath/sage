@@ -391,7 +391,7 @@ def AbelianGroup(n, gens_orders=None, names='f'):
     INPUT:
 
     - ``n`` -- integer (optional); if not specified, will be derived
-       from ``gens_orders``.
+      from ``gens_orders``
 
     - ``gens_orders`` -- list of nonnegative integers in the form
        `[a_0, a_1, \dots, a_{n-1}]`, typically written in increasing
@@ -399,7 +399,7 @@ def AbelianGroup(n, gens_orders=None, names='f'):
        than `n`. The orders of the commuting generators, with `0`
        denoting an infinite cyclic factor.
 
-    -  ``names`` -- (optional) names of generators
+    - ``names`` -- (optional) names of generators
 
     Alternatively, you can also give input in the form
     ``AbelianGroup(gens_orders, names='f')``, where the names keyword
@@ -486,7 +486,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
       (commuting) generators. Zero denotes an infinite cyclic
       generator.
 
-    - ``names`` -- names of the group generators (optional).
+    - ``names`` -- names of the group generators (optional)
 
     EXAMPLES::
 

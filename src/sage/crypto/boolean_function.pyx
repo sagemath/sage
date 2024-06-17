@@ -542,11 +542,14 @@ cdef class BooleanFunction(SageObject):
         """
         The truth table of the Boolean function.
 
-        INPUT: a string representing the desired format, can be either
+        INPUT:
 
-        - ``'bin'`` (default): we return a tuple of Boolean values
-        - ``'int'``: we return a tuple of 0 or 1 values
-        - ``'hex'``: we return a string representing the truth table in hexadecimal
+        - ``format`` - string representing the desired format; can be either
+
+            - ``'bin'`` -- (default) we return a tuple of Boolean values
+            - ``'int'`` -- we return a tuple of 0 or 1 values
+            - ``'hex'`` -- we return a string representing the truth table in
+              hexadecimal
 
         EXAMPLES::
 

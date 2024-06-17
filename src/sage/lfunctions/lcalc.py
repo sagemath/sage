@@ -44,7 +44,7 @@ prec = 32
 
 class LCalc(SageObject):
     r"""
-    Rubinstein's `L`-functions Calculator
+    Rubinstein's `L`-functions Calculator.
 
     Type ``lcalc.[tab]`` for a list of useful commands that
     are implemented using the command line interface, but return
@@ -138,8 +138,7 @@ class LCalc(SageObject):
 
         INPUT:
 
-        - ``x, y, stepsize`` -- positive floating point
-           numbers
+        - ``x, y, stepsize`` -- positive floating point numbers
 
         - ``L`` -- defines `L`-function (default: Riemann zeta function)
 

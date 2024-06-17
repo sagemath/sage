@@ -31,7 +31,7 @@ def IntervalGraph(intervals, points_ordered=False):
 
     INPUT:
 
-    - ``intervals`` -- the list of pairs `(a_i,b_i)` defining the graph.
+    - ``intervals`` -- the list of pairs `(a_i,b_i)` defining the graph
 
     - ``points_ordered`` -- states whether every interval `(a_i,b_i)` of
       `intervals` satisfies `a_i<b_i`. If satisfied then setting
@@ -292,7 +292,7 @@ def ToleranceGraph(tolrep):
     INPUT:
 
     - ``tolrep`` -- list of triples `(l_i,r_i,t_i)` where `(l_i,r_i)` denotes a
-      closed interval on the real line and `t_i` a positive value.
+      closed interval on the real line and `t_i` a positive value
 
     .. NOTE::
 

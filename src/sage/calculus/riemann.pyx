@@ -883,7 +883,7 @@ cdef class Riemann_Map:
           run slowly.
           - only for multiply connected domains
 
-        - ``min_mag`` -- float (default: ``0.001``); the magnitude cutoff
+        - ``min_mag`` -- float (default: `0.001`); the magnitude cutoff
           below which spiderweb points are not drawn. This only applies
           to multiply connected domains and is designed to prevent
           "fuzz" at the edge of the domain. Some complicated multiply

@@ -309,7 +309,7 @@ class CoxeterGroups(Category_singleton):
 
             INPUT:
 
-            - ``word``: a list (or iterable) of indices in
+            - ``word`` -- a list (or iterable) of indices in
               ``self.index_set()``
 
             OUTPUT:

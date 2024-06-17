@@ -664,10 +664,10 @@ class BipartiteGraph(Graph):
           an immutable object and cannot be ``None``.
 
         - ``left`` -- boolean (default: ``False``); if ``True``, puts the new
-          vertex in the left partition.
+          vertex in the left partition
 
         - ``right`` -- boolean (default: ``False``); if ``True``, puts the new
-          vertex in the right partition.
+          vertex in the right partition
 
         Obviously, ``left`` and ``right`` are mutually exclusive.
 
@@ -989,7 +989,7 @@ class BipartiteGraph(Graph):
         - ``u`` -- the tail of an edge
 
         - ``v`` -- (default: ``None``); the head of an edge. If ``v=None``, then
-          attempt to understand ``u`` as a edge tuple.
+          attempt to understand ``u`` as a edge tuple
 
         - ``label`` -- (default: ``None``); the label of the edge ``(u, v)``
 
@@ -1079,7 +1079,7 @@ class BipartiteGraph(Graph):
         INPUT:
 
         - ``edges`` -- an iterable of edges, given either as ``(u, v)``
-          or ``(u, v, label)``.
+          or ``(u, v, label)``
 
         - ``loops`` -- ignored
 
@@ -1189,7 +1189,7 @@ class BipartiteGraph(Graph):
         INPUT:
 
         - ``edges`` -- an iterable of edges, given either as ``(u, v)``
-          or ``(u, v, label)``.
+          or ``(u, v, label)``
 
         TESTS::
 
@@ -1253,7 +1253,7 @@ class BipartiteGraph(Graph):
 
     def allow_loops(self, new, check=True):
         """
-        Change whether loops are permitted in the (di)graph
+        Change whether loops are permitted in the (di)graph.
 
         .. NOTE::
 
@@ -2091,8 +2091,8 @@ class BipartiteGraph(Graph):
           class :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``); sets the level of
-          verbosity. Set to 0 by default, which means quiet.
+        - ``verbose`` -- integer (default: `0`); sets the level of
+          verbosity. Set to `0` by default, which means quiet.
 
         - ``integrality_tolerance`` -- float; parameter for use with
           MILP solvers over an inexact base ring; see
@@ -2282,8 +2282,8 @@ class BipartiteGraph(Graph):
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: ``0``); sets the level of
-          verbosity. Set to 0 by default, which means quiet.
+        - ``verbose`` -- integer (default: `0`); sets the level of
+          verbosity. Set to `0` by default, which means quiet.
 
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
@@ -2573,7 +2573,7 @@ class BipartiteGraph(Graph):
         - ``edge_labels`` -- boolean (default: ``False``); when set to
           ``True``, allows only permutations respecting edge labels
 
-        - ``algorithm`` -- a string (default: ``None``). The algorithm to use;
+        - ``algorithm`` -- string (default: ``None``). The algorithm to use;
           currently available:
 
           * ``'bliss'``: use the optional package bliss

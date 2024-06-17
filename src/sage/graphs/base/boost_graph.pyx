@@ -66,7 +66,7 @@ cdef boost_graph_from_sage_graph(BoostGenGraph *g, g_sage, vertex_to_int, revers
 
     - ``g_sage`` -- a Sage graph
 
-    - ``vertex_to_int`` -- a dictionary; it is a mapping from the vertex set of
+    - ``vertex_to_int`` -- dictionary; it is a mapping from the vertex set of
       ``g_sage`` to `(0, \ldots, n-1)`
 
     - ``reverse`` -- boolean (default: ``False``); when set to ``True``, the
@@ -109,7 +109,7 @@ cdef boost_weighted_graph_from_sage_graph(BoostWeightedGraph *g,
 
     - ``g_sage`` -- a Sage graph
 
-    - ``vertex_to_int`` -- a dictionary; it is a mapping from the vertex set of
+    - ``vertex_to_int`` -- dictionary; it is a mapping from the vertex set of
       ``g_sage`` to `(0, \ldots, n-1)`
 
     - ``weight_function`` -- function (default: ``None``); a function which
@@ -1835,7 +1835,7 @@ cpdef radius_DHV(g, weight_function=None, check_weight=True):
       weight 1.
 
     - ``check_weight`` -- boolean (default: ``True``); if ``True``, we check
-      that the ``weight_function`` outputs a number for each edge.
+      that the ``weight_function`` outputs a number for each edge
 
     EXAMPLES::
 
@@ -2519,7 +2519,7 @@ cpdef diameter(G, algorithm=None, source=None,
       weight 1.
 
     - ``check_weight`` -- boolean (default: ``True``); if ``True``, we check
-      that the ``weight_function`` outputs a number for each edge.
+      that the ``weight_function`` outputs a number for each edge
 
     EXAMPLES::
 
@@ -2896,7 +2896,7 @@ cpdef wiener_index(g, algorithm=None, weight_function=None, check_weight=True):
       weight 1.
 
     - ``check_weight`` -- boolean (default: ``True``); if ``True``, we check
-      that the ``weight_function`` outputs a number for each edge.
+      that the ``weight_function`` outputs a number for each edge
 
     EXAMPLES:
 

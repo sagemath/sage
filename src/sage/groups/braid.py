@@ -489,11 +489,11 @@ class Braid(FiniteTypeArtinGroupElement):
 
             * ``'left-right'``, the braid is printed from left to right
 
-        - ``gap`` -- floating point number (default: 0.05). determines
-          the size of the gap left when a strand goes under another.
+        - ``gap`` -- floating point number (default: 0.05); determines
+          the size of the gap left when a strand goes under another
 
         - ``aspect_ratio`` -- floating point number (default:
-          ``1``). The aspect ratio.
+          ``1``); the aspect ratio
 
         - ``**kwds`` -- other keyword options that are passed to
           :meth:`~sage.plot.bezier_path` and :meth:`~sage.plot.line`
@@ -1307,7 +1307,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
         INPUT:
 
-        - ``qagrad`` -- a tuple of the quantum and annular grading to compute
+        - ``qagrad`` -- tuple of the quantum and annular grading to compute
 
         - ``ring`` -- (default: ``ZZ``) the coefficient ring
 
@@ -2501,7 +2501,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
 
         INPUT:
 
-        - ``names`` -- a tuple of strings; the names of the generators
+        - ``names`` -- tuple of strings; the names of the generators
 
         TESTS::
 
@@ -3457,7 +3457,7 @@ def BraidGroup(n=None, names='s'):
       group is assumed to have one more strand than generators.
 
     - ``names`` -- string or list/tuple/iterable of strings (default:
-      ``'x'``). The generator names or name prefix.
+      ``'x'``); the generator names or name prefix
 
     EXAMPLES::
 

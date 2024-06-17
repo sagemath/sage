@@ -497,7 +497,7 @@ def length_and_string_from_graph6(s):
     INPUT:
 
     - ``s`` -- a graph6 string describing a binary vector (and encoding its
-      length).
+      length)
 
     EXAMPLES::
 
@@ -1175,14 +1175,14 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
     - ``max_iter`` -- maximum number of iterations
 
     - ``reset_bound`` -- number of iterations before restarting the
-       procedure
+      procedure
 
     - ``backtrack_bound`` -- number of iterations to elapse before
-       discarding the last 5 vertices of the path
+      discarding the last 5 vertices of the path
 
     - ``find_path`` -- boolean (default: ``False``); if set to ``True``, will
-       search a Hamiltonian path. If ``False``, will search for a
-       Hamiltonian cycle.
+      search a Hamiltonian path. If ``False``, will search for a Hamiltonian
+      cycle.
 
     OUTPUT:
 

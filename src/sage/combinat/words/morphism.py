@@ -2488,7 +2488,7 @@ class WordMorphism(SageObject):
           but for substitutions with more than 3 letters
           other interesting choices are sometimes possible.
 
-        - ``prec`` -- integer (default: ``53``).
+        - ``prec`` -- integer (default: `53`).
           The number of bits used in the floating point representations
           of the coordinates.
 
@@ -2748,7 +2748,7 @@ class WordMorphism(SageObject):
           is not plotted with the ``translate`` option;
           the vector ``(0,0,...,0)`` has to be added manually.
 
-        - ``prec`` -- integer (default: ``53``).
+        - ``prec`` -- integer (default: `53`).
           The number of bits used in the floating point representations
           of the points of the fractal.
 
@@ -3186,10 +3186,10 @@ class WordMorphism(SageObject):
         The output is a 3-tuple of lists (mortal, polynomial, exponential)
         where:
 
-        - ``mortal``: list of mortal letters
-        - ``polynomial``: a list of lists where ``polynomial[i]`` is the
-          list of letters with growth `n^i`.
-        - ``exponential``: list of at least exponentionally growing letters
+        - ``mortal`` -- list of mortal letters
+        - ``polynomial`` -- list of lists where ``polynomial[i]`` is the
+          list of letters with growth `n^i`
+        - ``exponential`` -- list of at least exponentionally growing letters
 
         EXAMPLES::
 

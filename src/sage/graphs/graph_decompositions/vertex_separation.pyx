@@ -470,7 +470,7 @@ def linear_ordering_to_path_decomposition(G, L):
 def pathwidth(self, k=None, certificate=False, algorithm='BAB', verbose=False,
               max_prefix_length=20, max_prefix_number=10**6, *, solver=None):
     r"""
-    Compute the pathwidth of ``self`` (and provides a decomposition)
+    Compute the pathwidth of ``self`` (and provides a decomposition).
 
     INPUT:
 
@@ -1395,8 +1395,8 @@ def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
-      to 0 by default, which means quiet.
+    - ``verbose`` -- integer (default: `0`); sets the level of verbosity. Set
+      to `0` by default, which means quiet.
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
       over an inexact base ring; see

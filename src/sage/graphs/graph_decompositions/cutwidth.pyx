@@ -109,7 +109,7 @@ optimal layout for the cutwidth of `G`.
 **Variables:**
 
 - `x_v^k` -- variable set to 1 if vertex `v` is placed in the ordering at
-  position `i` with `i\leq k`, and 0 otherwise.
+  position `i` with `i\leq k`, and 0 otherwise
 
 - `y_{u,v}^{k}` -- variable set to 1 if one of `u` or `v` is at a position
   `i\leq k` and the other is at a position `j>k`, and so we have to count edge
@@ -295,7 +295,7 @@ def cutwidth(G, algorithm='exponential', cut_off=0, solver=None, verbose=False,
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
     - ``verbose`` -- boolean (default: ``False``); whether to display
-      information on the computations.
+      information on the computations
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
       over an inexact base ring; see
@@ -624,8 +624,8 @@ def cutwidth_MILP(G, lower_bound=0, solver=None, verbose=0,
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
-      to 0 by default, which means quiet.
+    - ``verbose`` -- integer (default: `0`); sets the level of verbosity. Set
+      to `0` by default, which means quiet.
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
       over an inexact base ring; see

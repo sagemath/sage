@@ -89,7 +89,7 @@ def GL(n, R, var='a'):
 
     INPUT:
 
-    - ``n`` -- a positive integer
+    - ``n`` -- positive integer
 
     - ``R`` -- ring or an integer; if an integer is specified, the
       corresponding finite field is used

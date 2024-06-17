@@ -232,17 +232,17 @@ cdef class SparseGraph(CGraph):
 
     INPUT:
 
-     - ``nverts`` -- nonnegative integer, the number of vertices
+    - ``nverts`` -- nonnegative integer, the number of vertices
 
-     - ``expected_degree`` -- nonnegative integer (default: 16); expected upper
-        bound on degree of vertices
+    - ``expected_degree`` -- nonnegative integer (default: 16); expected upper
+      bound on degree of vertices
 
-     - ``extra_vertices`` -- nonnegative integer (default: 0); how many extra
-        vertices to allocate
+    - ``extra_vertices`` -- nonnegative integer (default: 0); how many extra
+      vertices to allocate
 
-     - ``verts`` -- optional list of vertices to add
+    - ``verts`` -- optional list of vertices to add
 
-     - ``arcs`` -- optional list of arcs to add
+    - ``arcs`` -- optional list of arcs to add
 
     The first ``nverts`` are created as vertices of the graph, and the next
     ``extra_vertices`` can be freely added without reallocation. See top level
@@ -375,7 +375,7 @@ cdef class SparseGraph(CGraph):
 
         INPUT:
 
-         - ``total`` -- integer; the total size to make the array
+        - ``total`` -- integer; the total size to make the array
 
         Returns -1 and fails if reallocation would destroy any active vertices.
 
@@ -713,7 +713,7 @@ cdef class SparseGraph(CGraph):
 
         INPUT:
 
-         - ``u`` -- integer
+        - ``u`` -- integer
 
         EXAMPLES::
 
@@ -792,7 +792,7 @@ cdef class SparseGraph(CGraph):
 
         INPUT:
 
-         - ``v`` -- integer
+        - ``v`` -- integer
 
         EXAMPLES::
 
@@ -862,7 +862,7 @@ cdef class SparseGraph(CGraph):
 
         - ``u``, ``v`` -- nonnegative integers
 
-        - ``l`` -- a positive integer label, or zero for no label
+        - ``l`` -- positive integer label, or zero for no label
 
         OUTPUT: ``0`` -- no error
         """
@@ -886,9 +886,9 @@ cdef class SparseGraph(CGraph):
 
         INPUT:
 
-         - ``u``, ``v`` -- nonnegative integers, must be in self
+        - ``u``, ``v`` -- nonnegative integers, must be in ``self``
 
-         - ``l`` -- a positive integer label, or zero for no label
+        - ``l`` -- positive integer label, or zero for no label
 
         EXAMPLES::
 
@@ -925,7 +925,7 @@ cdef class SparseGraph(CGraph):
 
         OUTPUT: one of
 
-        - positive integer -- indicates that there is a label on ``(u, v)``.
+        - positive integer -- indicates that there is a label on ``(u, v)``
 
         - ``0`` -- either the arc ``(u, v)`` is unlabeled, or there is no arc at all.
         """
@@ -1081,7 +1081,7 @@ cdef class SparseGraph(CGraph):
         - ``u``, ``v`` -- integers from `0`, ..., `n-1`, where `n` is the
           number of vertices
 
-        - ``l`` -- a positive integer label, or zero for no label
+        - ``l`` -- positive integer label, or zero for no label
 
         OUTPUT: one of
 
@@ -1114,7 +1114,7 @@ cdef class SparseGraph(CGraph):
         - ``u``, ``v`` -- integers from `0`, ..., `n-1`, where `n` is the
           number of vertices
 
-        - ``l`` -- a positive integer label, or zero for no label, or ``-1`` for any label
+        - ``l`` -- positive integer label, or zero for no label, or ``-1`` for any label
 
         OUTPUT: one of
 
@@ -1294,7 +1294,7 @@ cdef class SparseGraphBackend(CGraphBackend):
 
         INPUT:
 
-         - ``u``, ``v`` -- the vertices of the edge
+        - ``u``, ``v`` -- the vertices of the edge
 
         EXAMPLES::
 
@@ -1328,9 +1328,9 @@ cdef class SparseGraphBackend(CGraphBackend):
 
         INPUT:
 
-         - ``u``, ``v`` -- the vertices of the edge
+        - ``u``, ``v`` -- the vertices of the edge
 
-         - ``l`` -- the edge label, or ``None``
+        - ``l`` -- the edge label, or ``None``
 
         EXAMPLES::
 
@@ -1366,7 +1366,7 @@ cdef class SparseGraphBackend(CGraphBackend):
 
         INPUT:
 
-         - ``new`` -- boolean (to set) or ``None`` (to get)
+        - ``new`` -- boolean (to set) or ``None`` (to get)
 
         EXAMPLES::
 
@@ -1392,11 +1392,11 @@ cdef class SparseGraphBackend(CGraphBackend):
 
         INPUT:
 
-         - ``u``, ``v`` -- the vertices of the edge
+        - ``u``, ``v`` -- the vertices of the edge
 
-         - ``l`` -- the edge label
+        - ``l`` -- the edge label
 
-         - ``directed`` -- if ``False``, also set ``(v,u)`` with label ``l``
+        - ``directed`` -- if ``False``, also set ``(v,u)`` with label ``l``
 
         EXAMPLES::
 

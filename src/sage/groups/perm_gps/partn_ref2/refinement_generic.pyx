@@ -282,7 +282,7 @@ cdef class _BestValStore:
 
     cdef long * get_row(self, int i) noexcept:
         r"""
-        Return the i-th row.
+        Return the `i`-th row.
 
         If this row is not yet initialized (i >= self.storage_length), then
         we extend the array and fill the new positions
@@ -825,12 +825,12 @@ cdef class PartitionRefinement_generic:
 
         There are to possibilities depending on the flag
         ``self._is_candidate_initialized``:
-         - ``True``: There is another leaf equal to this node. This defines an automorphism
-           which we add to the group of known automorphisms stored in
-           ``self._known_automorphisms``.
-         - ``False``: We have shown, that the current leaf is smaller than all
-           other leaf nodes already visited. We set it to be the
-           candidate for the canonical form.
+        - ``True`` -- There is another leaf equal to this node. This defines an automorphism
+          which we add to the group of known automorphisms stored in
+          ``self._known_automorphisms``.
+        - ``False`` -- We have shown, that the current leaf is smaller than all
+          other leaf nodes already visited. We set it to be the
+          candidate for the canonical form.
         """
         from sage.libs.gap.libgap import libgap
         cdef int i

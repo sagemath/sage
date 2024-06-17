@@ -526,7 +526,7 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
     - ``base`` -- a group element
     - ``ord`` -- the order of ``base`` or ``None``, in this case we try
       to compute it
-    - ``operation`` -- a string (default: ``'*'``) denoting whether we
+    - ``operation`` -- string (default: ``'*'``) denoting whether we
       are in an additive group or a multiplicative one
     - ``identity`` -- the group's identity
     - ``inverse()`` -- function of 1 argument ``x``, returning inverse of ``x``
@@ -1200,7 +1200,7 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
     INPUT:
 
     - ``P`` -- a Sage object which is a group element
-    - ``m`` -- a Sage integer which is a multiple of the order of ``P``,
+    - ``m`` -- Sage integer which is a multiple of the order of ``P``,
       i.e. we require that ``m*P=0`` (or ``P**m=1``)
     - ``check`` -- a Boolean (default: ``True``), indicating whether we check if ``m``
       really is a multiple of the order

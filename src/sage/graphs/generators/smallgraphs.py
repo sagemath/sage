@@ -132,7 +132,7 @@ def HarriesGraph(embedding=1):
 
     INPUT:
 
-    - ``embedding`` -- integer (default: ``1``); two embeddings are available,
+    - ``embedding`` -- integer (default: `1`); two embeddings are available,
       and can be selected by setting ``embedding`` to 1 or 2
 
     EXAMPLES::
@@ -251,7 +251,7 @@ def HarriesWongGraph(embedding=1):
 
     INPUT:
 
-    - ``embedding`` -- integer (default: ``1``); two embeddings are available,
+    - ``embedding`` -- integer (default: `1`); two embeddings are available,
       and can be selected by setting ``embedding`` to 1 or 2
 
     EXAMPLES::
@@ -448,7 +448,7 @@ def Cell600(embedding=1):
 
     INPUT:
 
-    - ``embedding`` -- integer (default: ``1``); two different embeddings for a
+    - ``embedding`` -- integer (default: `1`); two different embeddings for a
       plot
 
     EXAMPLES::
@@ -801,7 +801,7 @@ def Balaban10Cage(embedding=1):
 
     INPUT:
 
-    - ``embedding`` -- integer (default: ``1``); two embeddings are available,
+    - ``embedding`` -- integer (default: `1`); two embeddings are available,
       and can be selected by setting ``embedding`` to be either 1 or 2
 
     EXAMPLES::
@@ -869,7 +869,7 @@ def Balaban11Cage(embedding=1):
 
     INPUT:
 
-    - ``embedding`` -- integer (default: ``1``); three embeddings are available,
+    - ``embedding`` -- integer (default: `1`); three embeddings are available,
       and can be selected by setting ``embedding`` to be 1, 2, or 3
 
       - The first embedding is the one appearing on page 9 of the Fifth Annual
@@ -1110,7 +1110,7 @@ def BiggsSmithGraph(embedding=1):
 
     INPUT:
 
-    - ``embedding`` -- integer (default: ``1``); two embeddings are available,
+    - ``embedding`` -- integer (default: `1`); two embeddings are available,
       and can be selected by setting ``embedding`` to be 1 or 2
 
     EXAMPLES:
@@ -2716,7 +2716,7 @@ def GrayGraph(embedding=1):
 
     INPUT:
 
-    - ``embedding`` -- integer (default: ``1``); two embeddings are available,
+    - ``embedding`` -- integer (default: `1`); two embeddings are available,
       and can be selected by setting ``embedding`` to 1 or 2
 
     EXAMPLES::
@@ -3415,7 +3415,7 @@ def LjubljanaGraph(embedding=1):
 
     INPUT:
 
-    - ``embedding`` -- integer (default: ``1``); two embeddings are available,
+    - ``embedding`` -- integer (default: `1`); two embeddings are available,
       and can be selected by setting ``embedding`` to 1 or 2
 
     EXAMPLES::
@@ -3607,7 +3607,7 @@ def McGeeGraph(embedding=2):
 
     INPUT:
 
-    - ``embedding`` -- integer (default: ``2``); two embeddings are available,
+    - ``embedding`` -- integer (default: `2`); two embeddings are available,
       and can be selected by setting ``embedding`` to 1 or 2
 
     EXAMPLES::
@@ -3821,7 +3821,7 @@ def NauruGraph(embedding=2):
 
     INPUT:
 
-    - ``embedding`` -- integer (default: ``2``); two embeddings are available,
+    - ``embedding`` -- integer (default: `2`); two embeddings are available,
       and can be selected by setting ``embedding`` to 1 or 2
 
     EXAMPLES::
@@ -4460,7 +4460,7 @@ def TutteCoxeterGraph(embedding=2):
 
     INPUT:
 
-    - ``embedding`` -- integer (default: ``2``); two embeddings are available,
+    - ``embedding`` -- integer (default: `2`); two embeddings are available,
       and can be selected by setting ``embedding`` to 1 or 2
 
     EXAMPLES::

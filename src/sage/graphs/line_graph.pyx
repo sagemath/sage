@@ -421,7 +421,7 @@ def root_graph(g, verbose=False):
     - ``g`` -- a graph
 
     - ``verbose`` -- boolean (default: ``False``); display some information
-      about what is happening inside of the algorithm.
+      about what is happening inside of the algorithm
 
     .. WARNING::
 

@@ -1040,7 +1040,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
          - self._classical_group            This is the classical group returned by as_classical_group method.
          - self._classical_base_group       this only differs in special cases for Assion groups from the former.
          - self._classical_invariant_form   invariant form of the classical base group.
-         - self._centralizing_matrix        for Assion groups: element in classical base group commuting with self.
+         - self._centralizing_matrix        for Assion groups: element in classical base group commuting with ``self``.
          - self._centralizing_element       image under natural map of the former one in the projective classical group.
          - self._classical_embedding        as subgroup of classical base group (if different from classical group).
 

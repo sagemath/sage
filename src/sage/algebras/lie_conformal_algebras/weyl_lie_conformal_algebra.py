@@ -48,9 +48,9 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
 
     - ``R`` -- a commutative ring; the base ring of this Lie
       conformal algebra
-    - ``ngens``: an even positive Integer (default: `2`); the number
+    - ``ngens`` -- an even positive Integer (default: `2`); the number
       of non-central generators of this Lie conformal algebra
-    - ``gram_matrix``: a matrix (default: ``None``); a non-singular
+    - ``gram_matrix`` -- a matrix (default: ``None``); a non-singular
       skew-symmetric square matrix with coefficients in `R`
     - ``names`` -- list or tuple of strings; alternative names
       for the generators

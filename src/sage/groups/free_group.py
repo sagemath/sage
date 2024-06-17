@@ -723,7 +723,7 @@ def wrap_FreeGroup(libgap_free_group):
 
 class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
     """
-    A class that wraps GAP's FreeGroup
+    A class that wraps GAP's FreeGroup.
 
     See :func:`FreeGroup` for details.
 
@@ -742,7 +742,7 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
 
         INPUT:
 
-        - ``generator_names`` -- a tuple of strings; the names of the
+        - ``generator_names`` -- tuple of strings; the names of the
           generators
 
         - ``libgap_free_group`` -- a LibGAP free group (default: ``None``);

@@ -184,7 +184,7 @@ cpdef tuple loop_over_parallelotope_points(e, d, MatrixClass VDinv,
 
     See :meth:`parallelotope_points` for ``e``, ``d``, ``VDinv``, ``R``, ``lattice``.
 
-    - ``A``, ``b``: Either both ``None`` or a vector and number. If
+    - ``A``, ``b`` -- either both ``None`` or a vector and number. If
       present, only the parallelotope points satisfying `A x \leq b`
       are returned.
 

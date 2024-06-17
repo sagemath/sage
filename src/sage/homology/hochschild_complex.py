@@ -113,7 +113,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
 
             sage: SGA = SymmetricGroupAlgebra(QQ, 3)
             sage: T = SGA.trivial_representation()
-            sage: T.rename("Trivial representation of SGA")
+            sage: T.rename('Trivial representation of SGA')
             sage: SGA.hochschild_complex(T)
             Hochschild complex of Symmetric group algebra of order 3 over Rational Field
              with coefficients in Trivial representation of SGA

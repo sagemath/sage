@@ -127,9 +127,9 @@ class Category(UniqueRepresentation, SageObject):
     r"""
     The base class for modeling mathematical categories, like for example:
 
-    - ``Groups()``: the category of groups
-    - ``EuclideanDomains()``: the category of euclidean rings
-    - ``VectorSpaces(QQ)``: the category of vector spaces over the field of
+    - ``Groups()`` -- the category of groups
+    - ``EuclideanDomains()`` -- the category of euclidean rings
+    - ``VectorSpaces(QQ)`` -- the category of vector spaces over the field of
       rationals
 
     See :mod:`sage.categories.primer` for an introduction to
@@ -200,10 +200,10 @@ class Category(UniqueRepresentation, SageObject):
     We define a hierarchy of four categories ``As()``, ``Bs()``,
     ``Cs()``, ``Ds()`` with a diamond inheritance. Think for example:
 
-    - ``As()``: the category of sets
-    - ``Bs()``: the category of additive groups
-    - ``Cs()``: the category of multiplicative monoids
-    - ``Ds()``: the category of rings
+    - ``As()`` -- the category of sets
+    - ``Bs()`` -- the category of additive groups
+    - ``Cs()`` -- the category of multiplicative monoids
+    - ``Ds()`` -- the category of rings
 
     ::
 

@@ -942,7 +942,7 @@ def GridGraph(dim_list):
     INPUT:
 
     - ``dim_list`` -- list of integers representing the number of nodes to
-       extend in each dimension
+      extend in each dimension
 
     PLOTTING: When plotting, this graph will use the default spring-layout
     algorithm, unless a position dictionary is specified.

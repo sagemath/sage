@@ -250,7 +250,7 @@ def dominating_sets(g, k=1, independent=False, total=False, connected=False,
 
     INPUT:
 
-    - ``k`` -- a nonnegative integer (default: ``1``); the domination distance
+    - ``k`` -- nonnegative integer (default: `1`); the domination distance
 
     - ``independent`` -- boolean (default: ``False``); when ``True``, computes
       minimum independent dominating sets, that is minimum dominating sets that
@@ -271,8 +271,8 @@ def dominating_sets(g, k=1, independent=False, total=False, connected=False,
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
-      to 0 by default, which means quiet.
+    - ``verbose`` -- integer (default: `0`); sets the level of verbosity. Set
+      to `0` by default, which means quiet.
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
       over an inexact base ring; see
@@ -502,7 +502,7 @@ def dominating_set(g, k=1, independent=False, total=False, connected=False, valu
 
     INPUT:
 
-    - ``k`` -- a nonnegative integer (default: ``1``); the domination distance
+    - ``k`` -- nonnegative integer (default: `1`); the domination distance
 
     - ``independent`` -- boolean (default: ``False``); when ``True``, computes a
       minimum independent dominating set, that is a minimum dominating set that
@@ -527,8 +527,8 @@ def dominating_set(g, k=1, independent=False, total=False, connected=False, valu
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
-      to 0 by default, which means quiet.
+    - ``verbose`` -- integer (default: `0`); sets the level of verbosity. Set
+      to `0` by default, which means quiet.
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
       over an inexact base ring; see
@@ -654,7 +654,7 @@ def _peel(G, A):
 
     - ``G`` -- a graph
 
-    - ``A`` -- a set of vertices of `G`
+    - ``A`` -- set of vertices of `G`
 
     OUTPUT:
 
@@ -813,7 +813,7 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=True, k=1):
       a copy of the input graph; if set to ``False``, the input graph will be
       modified (relabeled)
 
-    - ``k`` -- a nonnegative integer (default: ``1``); the domination distance
+    - ``k`` -- nonnegative integer (default: `1`); the domination distance
 
     OUTPUT:
 
@@ -1106,7 +1106,7 @@ def greedy_dominating_set(G, k=1, vertices=None, ordering=None, return_sets=Fals
 
     - ``G`` -- a Graph
 
-    - ``k`` -- integer (default: ``1``); the domination distance to consider
+    - ``k`` -- integer (default: `1`); the domination distance to consider
 
     - ``vertices`` -- iterable container of vertices (default: ``None``); when
       specified, return a dominating set of the specified vertices only
@@ -1306,8 +1306,8 @@ def maximum_leaf_number(G, solver=None, verbose=0, integrality_tolerance=1e-3):
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
-      to 0 by default, which means quiet.
+    - ``verbose`` -- integer (default: `0`); sets the level of verbosity. Set
+      to `0` by default, which means quiet.
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
       over an inexact base ring; see

@@ -88,7 +88,7 @@ def AbelianGroupWithValues(values, n, gens_orders=None, names='f', check=False, 
       associate to the generators
 
     - ``n`` -- integer (optional); if not specified, will be derived
-       from ``gens_orders``
+      from ``gens_orders``
 
     - ``gens_orders`` -- list of nonnegative integers in the form
        `[a_0, a_1, \dots, a_{n-1}]`, typically written in increasing
@@ -96,7 +96,7 @@ def AbelianGroupWithValues(values, n, gens_orders=None, names='f', check=False, 
        than n. The orders of the commuting generators, with `0`
        denoting an infinite cyclic factor.
 
-    -  ``names`` -- (optional) names of generators
+    - ``names`` -- (optional) names of generators
 
     - ``values_group`` -- a parent or ``None`` (default). The common
       parent of the values. This might be a group, but can also just

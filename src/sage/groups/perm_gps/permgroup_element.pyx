@@ -280,13 +280,13 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         INPUT:
 
-        -  ``g`` -- defines element
+        - ``g`` -- defines element
 
-        -  ``parent`` -- defines parent group (``g`` must be in
-           parent if specified, or a :class:`TypeError` is raised)
+        - ``parent`` -- defines parent group (``g`` must be in
+          parent if specified, or a :class:`TypeError` is raised)
 
-        -  ``check`` -- boolean (default: ``True``); if ``False`` assumes ``g``
-           is a gap element in parent (if specified)
+        - ``check`` -- boolean (default: ``True``); if ``False`` assumes ``g``
+          is a gap element in parent (if specified)
 
         EXAMPLES:
 
@@ -967,7 +967,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         INPUT:
 
-        -  ``i`` -- integer
+        - ``i`` -- integer
 
         OUTPUT: a permutation group element
 
@@ -1679,7 +1679,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sign(sigma) = (-1)^{\sum_c len(c)-1}
 
 
-        where the sum is over cycles in self.
+        where the sum is over cycles in ``self``.
         """
         cdef int cycle_len_sum = 0
         cdef int i, k

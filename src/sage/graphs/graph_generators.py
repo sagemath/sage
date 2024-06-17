@@ -1653,8 +1653,8 @@ class GraphGenerators:
 
         INPUT:
 
-        - ``hexagon_count`` -- a positive integer smaller than or equal to 30
-          This specifies the number of hexagons in the generated benzenoids
+        - ``hexagon_count`` -- positive integer smaller than or equal to 30;
+          this specifies the number of hexagons in the generated benzenoids
 
         - ``benzenoids`` -- (default: ``False``); if ``True`` only benzenoids are
           generated
@@ -1942,7 +1942,7 @@ class GraphGenerators:
 
         INPUT:
 
-        - ``order`` -- a positive integer smaller than or equal to 64;
+        - ``order`` -- positive integer smaller than or equal to 64;
           this specifies the number of vertices in the generated graphs
 
         - ``minimum_degree`` -- (default: ``None``); a value `\geq 1` and `\leq
@@ -2171,7 +2171,7 @@ class GraphGenerators:
 
         INPUT:
 
-        - ``order`` -- a positive integer smaller than or equal to 64;
+        - ``order`` -- positive integer smaller than or equal to 64;
           this specifies the number of vertices in the generated triangulations
 
         - ``minimum_degree`` -- (default: ``None``); a value `\geq 3` and `\leq 5`,
@@ -2357,7 +2357,7 @@ class GraphGenerators:
 
         INPUT:
 
-        - ``order`` -- a positive integer smaller than or equal to 64;
+        - ``order`` -- positive integer smaller than or equal to 64;
           this specifies the number of vertices in the generated quadrangulations
 
         - ``minimum_degree`` -- default: ``None``; a value `\geq 2` and `\leq
@@ -2802,17 +2802,15 @@ def canaug_traverse_vert(g, aut_gens, max_verts, property, dig=False, loops=Fals
 
     INPUT:
 
-    -  ``g`` -- current position on the tree
+    - ``g`` -- current position on the tree
 
-    -  ``aut_gens`` -- list of generators of Aut(g), in
-       list notation
+    - ``aut_gens`` -- list of generators of Aut(g), in list notation
 
-    -  ``max_verts`` -- when to retreat
+    - ``max_verts`` -- when to retreat
 
-    -  ``property`` -- check before traversing below g
+    - ``property`` -- check before traversing below g
 
-    -  ``degree_sequence`` -- specify a degree sequence to try to
-       obtain
+    - ``degree_sequence`` -- specify a degree sequence to try to obtain
 
     EXAMPLES::
 
@@ -2992,12 +2990,11 @@ def canaug_traverse_edge(g, aut_gens, property, dig=False, loops=False, sparse=T
 
     INPUT:
 
-    -  ``g`` -- current position on the tree
+    - ``g`` -- current position on the tree
 
-    -  ``aut_gens`` -- list of generators of Aut(g), in
-       list notation
+    - ``aut_gens`` -- list of generators of Aut(g), in list notation
 
-    -  ``property`` -- check before traversing below g
+    - ``property`` -- check before traversing below g
 
     EXAMPLES::
 

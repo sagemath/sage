@@ -17,7 +17,7 @@ class GaloisGroup_perm(_GaloisMixin, PermutationGroup_generic):
 
     - ``field`` -- a field, separable over its base
 
-    - ``names`` -- a string or tuple of length 1, giving a variable name for
+    - ``names`` -- string or tuple of length 1, giving a variable name for
       the splitting field
 
     - ``gc_numbering`` -- boolean, whether to express permutations in terms of

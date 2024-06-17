@@ -409,10 +409,10 @@ cdef class simple_connected_genus_backtracker:
 
         INPUT:
 
-        - ``style`` -- integer (default: ``1``); find minimum genus if 1,
+        - ``style`` -- integer (default: `1`); find minimum genus if 1,
           maximum genus if 2
 
-        - ``cutoff`` -- integer (default: ``0``); stop searching if search style
+        - ``cutoff`` -- integer (default: `0`); stop searching if search style
           is 1 and ``genus`` `\leq` ``cutoff``, or if style is 2 and ``genus``
           `\geq` ``cutoff``.  This is useful where the genus of the graph has a
           known bound.
