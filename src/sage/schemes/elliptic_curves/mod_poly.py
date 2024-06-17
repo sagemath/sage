@@ -12,8 +12,8 @@ AUTHORS:
 """
 
 from sage.structure.element import parent
-
 from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 from sage.libs.pari import pari
 from cypari2.handle_error import PariError
@@ -116,22 +116,23 @@ def classical_modular_polynomial(l, j=None):
         except KeyError:
             pass
 
+        P = PolynomialRing(ZZ, ['X', 'Y'])
         try:
-            Phi = ZZ['X,Y'](_db[l])
+            Phi = P(_db[l])
         except ValueError:
             try:
                 pari_Phi = pari.polmodular(l)
             except PariError:
                 raise NotImplementedError('modular polynomial is not in database and computing it on the fly is not yet implemented')
             d = {(i, j): c for i,f in enumerate(pari_Phi) for j, c in enumerate(f)}
-            Phi = ZZ['X,Y'](d)
+            Phi = P(d)
 
         if l <= _cache_bound:
             _cache[l] = Phi
 
         return Phi
 
-    R = parent(j)['Y']
+    R = PolynomialRing(parent(j), 'Y')
     Y = R.gen()
 
     # If the generic polynomial is in the cache or the database, evaluating
@@ -144,7 +145,7 @@ def classical_modular_polynomial(l, j=None):
         pass
     else:
         if l <= _cache_bound:
-            _cache[l] = ZZ['X,Y'](Phi)
+            _cache[l] = P(Phi)
         return Phi(j, Y)
 
     # Now try to get the instantiated modular polynomial directly from PARI.
@@ -157,7 +158,7 @@ def classical_modular_polynomial(l, j=None):
     except PariError:
         pass
     except TypeError:
-        return R(ZZ['Y'](pari_Phi))
+        return R(PolynomialRing(ZZ, 'Y')(pari_Phi))
 
     # Nothing worked. Fall back to computing the generic modular polynomial
     # and simply evaluating it.

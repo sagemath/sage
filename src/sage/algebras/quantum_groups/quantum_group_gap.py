@@ -384,7 +384,7 @@ class QuantumGroup(UniqueRepresentation, Parent):
             self._libgap = R.QuantizedUEA()
             self._libgap_q = libgap.eval('_q')
             self._libgap_base = libgap.eval('QuantumField')
-            base_field = QQ['q'].fraction_field()
+            base_field = PolynomialRing(QQ, 'q').fraction_field()
             q = base_field.gen()
         else:
             base_field = q.parent()

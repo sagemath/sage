@@ -22,6 +22,7 @@ from sage.rings.rational_field import QQ
 from sage.misc.misc_c import prod
 from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_field
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 from .constructor import EllipticCurve
 from .ell_curve_isogeny import EllipticCurveIsogeny, isogeny_codomain_from_kernel
@@ -1601,7 +1602,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         R = self.base_ring()
 
         if not P:
-            return R['x'].one()
+            return PolynomialRing(R, 'x').one()
 
         S = P.base_ring()
         if not S.has_coerce_map_from(R):
@@ -2185,7 +2186,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         elif p == 7:
             return -self.c6()
         else:
-            R = k['x']
+            R = PolynomialRing(k, 'x')
             x = R.gen()
             E = self.short_weierstrass_model()
             f = (x**3+E.a4()*x+E.a6())**((p-1)//2)

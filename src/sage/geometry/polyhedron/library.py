@@ -1373,7 +1373,7 @@ class Polytopes:
             # construct the exact number field
             from sage.rings.qqbar import AA
             from sage.rings.number_field.number_field import NumberField
-            R = QQ['x']
+            R = PolynomialRing(QQ, 'x')
             f = R([-1, 1, 1, 1])
             embedding = construct_z(AA)
             base_ring = NumberField(f, name='z', embedding=embedding)

@@ -30,6 +30,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
 from sage.structure.category_object import CategoryObject
 from sage.rings.integer import Integer
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.categories.homset import Hom
 from sage.categories.function_fields import FunctionFields
 
@@ -165,7 +166,7 @@ class RationalFunctionField(FunctionField):
         from .place_rational import FunctionFieldPlace_rational
         self._place_class = FunctionFieldPlace_rational
 
-        R = constant_field[names[0]]
+        R = PolynomialRing(constant_field, names[0])
         self._hash = hash((constant_field, names))
         self._ring = R
         self._field = R.fraction_field()
@@ -350,8 +351,9 @@ class RationalFunctionField(FunctionField):
         v = f.list()
         denom = lcm([a.denominator() for a in v])
         S = denom.parent()
-        x, t = S.base_ring()['%s,%s' % (f.parent().variable_name(),
-                                        self.variable_name())].gens()
+        x, t = PolynomialRing(S.base_ring(),
+                              [f.parent().variable_name(),
+                               self.variable_name()]).gens()
         phi = S.hom([t])
         return sum([phi((denom * v[i]).numerator()) * x**i for i in range(len(v))]), denom
 

@@ -15,6 +15,7 @@ from sage.misc.lazy_import import lazy_import
 from sage.structure.sage_object import SageObject
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from sage.rings.integer import Integer
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 lazy_import('sage.databases.conway', 'ConwayPolynomials')
 
@@ -58,7 +59,7 @@ def conway_polynomial(p, n):
         RuntimeError: requested Conway polynomial not in database.
     """
     (p, n) = (int(p), int(n))
-    R = FiniteField(p)['x']
+    R = PolynomialRing(FiniteField(p), 'x')
     try:
         return R(ConwayPolynomials()[p][n])
     except KeyError:

@@ -622,7 +622,8 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         one = ZZ.one()
         two = ZZ(2)
         if self.weight() > two:
-            R = ZZ['X']
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            R = PolynomialRing(ZZ, 'X')
             X = R.gen(0)
             # need to add first two terms, which aren't necessarily
             # zero in this case. we do the first here, and the
@@ -796,7 +797,8 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
             if len(x) != 3:
                 raise ValueError("%s must have length 3" % x)
             f = x[0]
-            R = self.base_ring()['X', 'Y']
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            R = PolynomialRing(self.base_ring(), ['X', 'Y'])
             X = R.gen(0)
             try:
                 f = R(f)

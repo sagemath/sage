@@ -128,7 +128,8 @@ def is_mathon_PC_srg(int v, int k, int l, int mu):
             l == (v - 5)//4 and
             mu == (v - 1)//4):
         from sage.rings.integer_ring import ZZ
-        K = ZZ['x']
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        K = PolynomialRing(ZZ, 'x')
         x = K.gen()
         rpoly = (w for w in (x*(4*x*(4*x - 1) - 1) - mu).roots() if w[0] > 0)
         try:

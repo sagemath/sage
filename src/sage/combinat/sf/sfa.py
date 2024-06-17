@@ -3812,12 +3812,12 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             if hasattr(parent,"t"):
                 t = parent.t
             else:
-                t = BR(QQ['t'].gen())
+                t = BR(PolynomialRing(QQ, 't').gen())
         if q is None:
             if hasattr(parent,"q"):
                 q = parent.q
             else:
-                q = BR(QQ['q'].gen())
+                q = BR(PolynomialRing(QQ, 'q').gen())
         one = BR.one()
         if not t:
             res = p._from_dict({m: BR(prod(one - q**k for k in m) * c)
@@ -3886,12 +3886,12 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             if hasattr(parent,"t"):
                 t = parent.t
             else:
-                t = BR(QQ['t'].gen())
+                t = BR(PolynomialRing(QQ, 't').gen())
         if q is None:
             if hasattr(parent,"q"):
                 q = parent.q
             else:
-                q = BR(QQ['q'].gen())
+                q = BR(PolynomialRing(QQ, 'q').gen())
         one = BR.one()
         if not t:
             res = p._from_dict({m: c * (-one)**(sum(m)-len(m))
@@ -4844,12 +4844,12 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             if hasattr(parent,"q"):
                 q = parent.q
             else:
-                q = BR(QQ['q'].gen())
+                q = BR(PolynomialRing(QQ, 'q').gen())
         if t is None:
             if hasattr(parent,"t"):
                 t = parent.t
             else:
-                t = BR(QQ['t'].gen())
+                t = BR(PolynomialRing(QQ, 't').gen())
         Ht = parent.realization_of().macdonald(q=q,t=t).Ht()
         return parent(Ht(self).nabla(power=power))
 
@@ -4988,14 +4988,14 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
                 t = self.parent().t
             else:
                 if q is None:
-                    t = QQ['q','t'].gens()[1]
+                    t = PolynomialRing(QQ, ['q','t']).gens()[1]
                 else:
-                    t = QQ['t'].gen()
+                    t = PolynomialRing(QQ, 't').gen()
         if q is None:
             if hasattr(parent,"q"):
                 q = parent.q
             else:
-                q = QQ['q','t'].gens()[0]
+                q = PolynomialRing(QQ, ['q','t']).gens()[0]
         f = lambda part1, part2: part1.centralizer_size(t=t, q=q)
         return p._apply_multi_module_morphism(p(self), p(x), f, orthogonal=True)
 
@@ -5066,7 +5066,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             if hasattr(parent,"t"):
                 t = self.parent().t
             else:
-                t = QQ['t'].gen()
+                t = PolynomialRing(QQ, 't').gen()
         zee = lambda part: part.centralizer_size()*t**part.length()
         return self.scalar(x, zee)
 

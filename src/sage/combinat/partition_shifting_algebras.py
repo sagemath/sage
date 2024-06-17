@@ -31,6 +31,7 @@ from sage.misc.cachefunc import cached_method
 from sage.rings.rational_field import QQ
 from sage.rings.semirings.non_negative_integer_semiring import NonNegativeIntegerSemiring
 from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
 class ShiftingSequenceSpace(Singleton, Parent):
@@ -235,7 +236,7 @@ class ShiftingOperatorAlgebra(CombinatorialFreeModule):
         s[3, 2, 1]
     """
 
-    def __init__(self, base_ring=QQ['t'], prefix='S'):
+    def __init__(self, base_ring=PolynomialRing(QQ, 't'), prefix='S'):
         r"""
         Initialize ``self``.
 

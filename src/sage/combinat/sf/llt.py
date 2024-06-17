@@ -39,6 +39,7 @@ from sage.combinat.partition import Partition, Partitions, _Partitions
 from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom
 from sage.rings.rational_field import QQ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 # cache for H spin basis
 hsp_to_m_cache = {}
@@ -48,7 +49,7 @@ m_to_hsp_cache = {}
 hcosp_to_m_cache = {}
 m_to_hcosp_cache = {}
 
-QQt = QQ['t'].fraction_field()
+QQt = PolynomialRing(QQ, 't').fraction_field()
 # This is to become the "abstract algebra" for llt polynomials
 
 

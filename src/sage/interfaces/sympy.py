@@ -190,9 +190,10 @@ def _sympysage_polynomial_ring(self):
         sage: ZZxy._sage_()
         Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Integer Ring
     """
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
     base_ring = self.domain._sage_()
     variables = ','.join(map(str, self.gens))
-    return base_ring[variables]
+    return PolynomialRing(base_ring, variables)
 
 
 def _sympysage_polynomial(self):
@@ -222,9 +223,10 @@ def _sympysage_polynomial(self):
         sage: p._sage_().parent()
         Univariate Polynomial Ring in x over Univariate Polynomial Ring in y over Integer Ring
     """
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
     base_ring = self.domain._sage_()
     variables = ','.join(map(str, self.gens))
-    R = base_ring[variables]
+    R = PolynomialRing(base_ring, variables)
     return R.sum(base_ring(coeff) * R.monomial(*exp) for exp, coeff in self.rep.terms(order=None))
 
 

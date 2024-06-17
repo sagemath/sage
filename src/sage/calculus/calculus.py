@@ -424,6 +424,7 @@ from sage.rings.rational_field import QQ
 from sage.rings.real_double import RealDoubleElement
 from sage.rings.real_mpfr import RR, create_RealNumber
 from sage.rings.cc import CC
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 from sage.misc.latex import latex
 from sage.misc.parser import Parser, LookupNameMaker
@@ -1119,7 +1120,7 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
 
             for degree in degree_list:
 
-                f = QQ[var](algdep(a, degree))  # TODO: use the known_bits parameter?
+                f = PolynomialRing(QQ, var)(algdep(a, degree))  # TODO: use the known_bits parameter?
                 # If indeed we have found a minimal polynomial,
                 # it should be accurate to a much higher precision.
                 error = abs(f(aa))
@@ -1151,7 +1152,7 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
 
     if algorithm is None or algorithm == 'algebraic':
         from sage.rings.qqbar import QQbar
-        return QQ[var](QQbar(ex).minpoly())
+        return PolynomialRing(QQ, var)(QQbar(ex).minpoly())
 
     raise ValueError("Unknown algorithm: %s" % algorithm)
 

@@ -867,7 +867,8 @@ class KirillovReshetikhinCrystals(Category_singleton):
                 """
                 if q is None:
                     from sage.rings.rational_field import QQ
-                    q = QQ['q'].gens()[0]
+                    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                    q = PolynomialRing(QQ, 'q').gen()
                 P0 = self.weight_lattice_realization().classical()
                 B = P0.algebra(q.parent())
                 if group_components:

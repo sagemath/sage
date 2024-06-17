@@ -24,6 +24,7 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.sets_cat import Sets
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.combinat.combinat import CombinatorialElement
 from sage.combinat.skew_partition import SkewPartition, SkewPartitions
 from sage.combinat.skew_tableau import SkewTableau, SkewTableaux, SemistandardSkewTableaux
@@ -641,7 +642,7 @@ def spin_polynomial_square(part, weight, length):
         sage: spin_polynomial_square([[6]*6, [3,3]], [4,4,2], 3)
         3*t^18 + 5*t^16 + 9*t^14 + 6*t^12 + 3*t^10
     """
-    R = ZZ['t']
+    R = PolynomialRing(ZZ, 't')
 
     if part in _Partitions:
         part = SkewPartition([part, _Partitions([])])
@@ -710,7 +711,7 @@ def cospin_polynomial(part, weight, length):
         sage: cospin_polynomial([[6]*6, [3,3]], [4,4,2], 3)
         3*t^4 + 6*t^3 + 9*t^2 + 5*t + 3
     """
-    R = ZZ['t']
+    R = PolynomialRing(ZZ, 't')
 
     # The power in the spin polynomial are all half integers
     # or all integers.  Manipulation of expressions need to

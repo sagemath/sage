@@ -52,6 +52,7 @@ from sage.structure.richcmp cimport rich_to_bool
 import sage.rings.abc
 import sage.rings.polynomial.polynomial_element
 from sage.rings.polynomial.evaluation_ntl cimport ZZX_evaluation_mpfi
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 import sage.rings.rational_field
 import sage.rings.rational
 import sage.rings.integer_ring
@@ -2282,7 +2283,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         """
         # For now, use pari's factoring abilities
         K = self.number_field()
-        R = K['t']
+        R = PolynomialRing(K, 't')
         f = R([-self, 0, 1])
         roots = f.roots()
         if extend and not roots:
@@ -2317,7 +2318,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         ALGORITHM: Use PARI to factor `x^n` - ``self`` in `K`.
         """
-        R = self.number_field()['t']
+        R = PolynomialRing(self.number_field(), 't')
         if not self:
             return [self] if all else self
         f = (R.gen(0) << (n-1)) - self
@@ -3063,7 +3064,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             [a, (-zeta3 - 1)*a, zeta3*a]
         """
         f = self.absolute_minpoly()
-        g = K['x'](f)
+        g = PolynomialRing(K, 'x')(f)
         return [a for a,_ in g.roots()]
 
     def conjugate(self):
@@ -5151,7 +5152,7 @@ cdef class NumberFieldElement_relative(NumberFieldElement):
                 algorithm = 'pari'
             else:
                 algorithm = 'sage'
-        R = QQ[var]
+        R = PolynomialRing(QQ, var)
         if algorithm == 'pari':
             return R(self.__pari__().charpoly())
         if algorithm == 'sage':
@@ -5522,7 +5523,7 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
             Univariate Polynomial Ring in x over Integer Ring
         """
         K = self.parent().number_field()
-        R = ZZ[var]
+        R = PolynomialRing(ZZ, var)
         return R(K(self).absolute_charpoly(var))
 
     def absolute_minpoly(self, var='x'):
@@ -5545,7 +5546,7 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
             Univariate Polynomial Ring in x over Integer Ring
         """
         K = self.parent().number_field()
-        R = ZZ[var]
+        R = PolynomialRing(ZZ, var)
         return R(K(self).absolute_minpoly(var))
 
 

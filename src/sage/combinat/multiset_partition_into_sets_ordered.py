@@ -78,6 +78,7 @@ from sage.misc.lazy_import import lazy_import
 from sage.sets.set import Set_object
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.arith.misc import binomial
 
@@ -3401,7 +3402,7 @@ class MinimajCrystal(UniqueRepresentation, Parent):
             (q^2+q+1)*s[2, 1, 1] + q*s[2, 2]
         """
         H = [self._OMPs(list(b)) for b in self.highest_weight_vectors()]
-        Sym = SymmetricFunctions(ZZ[q])
+        Sym = SymmetricFunctions(PolynomialRing(ZZ, q))
         q = Sym.base_ring().gens()[0]
         s = Sym.schur()
         return sum((q**(t.minimaj()) * s[sorted(t.weight().values(), reverse=True)]

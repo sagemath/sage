@@ -190,7 +190,8 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
     if proof and not height_bound:
         raise ValueError("height_bound must be given for proof=True")
 
-    R = ZZ['x']
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+    R = PolynomialRing(ZZ, 'x')
     x = R.gen()
 
     z = py_scalar_to_element(z)

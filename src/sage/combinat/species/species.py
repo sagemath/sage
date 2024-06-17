@@ -52,6 +52,7 @@ three internal nodes.
 # ****************************************************************************
 from .generating_series import OrdinaryGeneratingSeriesRing, ExponentialGeneratingSeriesRing, CycleIndexSeriesRing
 from sage.rings.rational_field import QQ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.sage_object import SageObject
 from sage.misc.cachefunc import cached_method
 from sage.combinat.species.misc import accept_size
@@ -793,7 +794,7 @@ class GenericCombinatorialSpecies(SageObject):
         """
         d = self.digraph()
 
-        Qz = QQ['z'].fraction_field()
+        Qz = PolynomialRing(QQ, 'z').fraction_field()
 
         # Generate the variable names and the corresponding polynomial rings
         var_names = ["node%s" % i for i in range(d.num_verts())]

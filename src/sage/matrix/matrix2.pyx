@@ -3672,7 +3672,8 @@ cdef class Matrix(Matrix1):
             Py_INCREF(o)
             PyList_SET_ITEM(v, i, o)
 
-        R = self._base_ring[var]    # polynomial ring over the base ring
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        R = PolynomialRing(self._base_ring, var)
         return R(v)
 
     #####################################################################################

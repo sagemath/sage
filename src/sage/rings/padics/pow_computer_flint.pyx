@@ -19,7 +19,7 @@ from sage.structure.richcmp cimport richcmp_not_equal
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
-
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 cdef class PowComputer_flint(PowComputer_class):
     """
@@ -423,7 +423,7 @@ cdef class PowComputer_flint_1step(PowComputer_flint):
             sage: A.polynomial(2)
             x^3 + 17*x + 23
         """
-        R = ZZ[var]
+        R = PolynomialRing(ZZ, var)
         x = R.gen()
         cdef Polynomial_integer_dense_flint ans = (<Polynomial_integer_dense_flint?>x)._new()
         if _n is None:
@@ -437,7 +437,7 @@ cdef class PowComputer_flint_1step(PowComputer_flint):
         Returns a polynomial with the value stored in ``value`` and
         variable name ``var``.
         """
-        R = ZZ[var]
+        R = PolynomialRing(ZZ, var)
         x = R.gen()
         cdef Polynomial_integer_dense_flint ans = (<Polynomial_integer_dense_flint?>x)._new()
         fmpz_poly_set(ans._poly, value)

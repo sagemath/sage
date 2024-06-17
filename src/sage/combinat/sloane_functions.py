@@ -134,6 +134,7 @@ from sage.rings.integer import Integer as Integer_class
 # You may have to import more here when defining new sequences
 import sage.arith.all as arith
 from sage.rings.rational_field import QQ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.combinat import combinat
 from sage.misc.misc_c import prod
 
@@ -657,7 +658,7 @@ class A000009(SloaneSequence):
             sage: [next(it) for i in range(14)]
             [1, 1, 1, 2, 2, 3, 4, 5, 6, 8, 10, 12, 15, 18]
         """
-        _, x = QQ['x'].objgen()
+        _, x = PolynomialRing(QQ, 'x').objgen()
         k = 0
         yield ZZ.one()
         p = 1

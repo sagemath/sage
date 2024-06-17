@@ -38,11 +38,12 @@ from sage.structure.sage_object import SageObject
 import sage.structure.formal_sum as formal_sum
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.misc.latex import latex
 
 _C = cusps.Cusps
 
-X, Y = ZZ['X,Y'].gens()
+X, Y = PolynomialRing(ZZ, ['X','Y']).gens()
 
 
 @richcmp_method

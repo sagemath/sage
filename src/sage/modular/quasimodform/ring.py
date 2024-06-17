@@ -264,7 +264,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
 
         self.__group = group
         self.__modular_forms_subring = ModularFormsRing(group, base_ring)
-        self.__polynomial_subring = self.__modular_forms_subring[name]
+        self.__polynomial_subring = PolynomialRing(self.__modular_forms_subring, name)
         cat = GradedAlgebras(base_ring).Commutative()
         Parent.__init__(self, base=base_ring, category=cat)
 

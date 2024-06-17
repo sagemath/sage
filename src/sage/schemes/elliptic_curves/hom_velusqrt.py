@@ -130,6 +130,7 @@ from sage.rings.integer import Integer
 from sage.structure.all import coercion_model as cm
 from sage.structure.richcmp import op_EQ
 from sage.structure.sequence import Sequence
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 from .constructor import EllipticCurve
 from .ell_finite_field import EllipticCurve_finite_field
@@ -360,7 +361,7 @@ class FastEllipticPolynomial:
             IJK = _choose_IJK(2*n+1)    # [1,3,5,7,...,2n-1] = [0,1,2,3,...,n-2,n-1]
 
         self.base = E.base_ring()
-        R, Z = self.base['Z'].objgen()
+        R, Z = PolynomialRing(self.base, 'Z').objgen()
 
         # Cassels, Lectures on Elliptic Curves, p.132
         A,B = E.a_invariants()[-2:]
@@ -885,7 +886,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
               From: Elliptic Curve defined by y^2 + 3*t*x*y + (3*t+2)*y = x^3 + (2*t+4)*x^2 + (t+4)*x + 3*t over Finite Field in t of size 5^2
               To:   Elliptic Curve defined by y^2 = x^3 + (4*t+3)*x + 2 over Finite Field in t of size 5^2
         """
-        R, Z = self._internal_base_ring['Z'].objgen()
+        R, Z = PolynomialRing(self._internal_base_ring, 'Z').objgen()
         poly = self._raw_domain.two_division_polynomial().monic()(Z)
 
         f = 1
@@ -899,7 +900,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
                     imX0 = imX0.polynomial()    # K is a FiniteField
                 except AttributeError:
                     imX0 = imX0.lift()          # K is a PolynomialQuotientRing
-                V = R['V'].gen()
+                V = PolynomialRing(R, 'V').gen()
                 f *= (Z - imX0(V)).resultant(g(V))
 
         a6,a4,a2,_ = f.monic().list()
@@ -1132,12 +1133,12 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             sage: phi.rational_maps()[1].parent()
             Fraction Field of Multivariate Polynomial Ring in x, y over Finite Field in z2 of size 101^2
         """
-        S = self._internal_base_ring['x,y']
+        S = PolynomialRing(self._internal_base_ring, ['x', 'y'])
         fx, fy = map(S, self._pre_iso.rational_maps())
         fx, fy = self._raw_eval(fx, fy)
         gx, gy = self._post_iso.rational_maps()
         fx, fy = gx(fx, fy), gy(fx, fy)
-        R = self._domain.base_ring()['x,y'].fraction_field()
+        R = PolynomialRing(self._domain.base_ring(), ['x', 'y']).fraction_field()
         return R(fx), R(fy)
 
     @cached_method
@@ -1169,12 +1170,12 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
             sage: phi.x_rational_map().parent()
             Fraction Field of Univariate Polynomial Ring in x over Finite Field in z2 of size 101^2
         """
-        S = self._internal_base_ring['x']
+        S = PolynomialRing(self._internal_base_ring, 'x')
         fx = S(self._pre_iso.x_rational_map())
         fx = self._raw_eval(fx)
         gx = self._post_iso.x_rational_map()
         fx = gx(fx)
-        R = self._domain.base_ring()['x'].fraction_field()
+        R = PolynomialRing(self._domain.base_ring(), 'x').fraction_field()
         return R(fx)
 
     def scaling_factor(self):

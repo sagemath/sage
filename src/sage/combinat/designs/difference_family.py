@@ -2081,7 +2081,7 @@ def skew_supplementary_difference_set_over_polynomial_ring(n, existence=False, c
     from sage.rings.finite_rings.integer_mod_ring import Zmod
 
     Z3 = Zmod(mod)
-    R = ZZ['x']
+    R = PolynomialRing(ZZ, 'x')
     x = R.gen()
     F = Z3.extension(poly(x))
 

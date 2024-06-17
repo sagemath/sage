@@ -4570,7 +4570,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                     new_f, mat = f.affine_preperiodic_model(m, n, return_conjugation=True)
                     new_f.normalize_coordinates()
                     # we now deform by a parameter t
-                    T = R['t']
+                    T = PolynomialRing(R, 't')
                     t = T.gens()[0]
                     Pt = ProjectiveSpace(N-1, R=T, names=[str(i) for i in CR.gens()])
                     deformed_polys = [poly + t*Pt.gens()[-1]**d for poly in new_f.defining_polynomials()[:-1]]
@@ -4927,7 +4927,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                             new_f, mat = f.affine_preperiodic_model(0, n, return_conjugation=True)
                             new_f.normalize_coordinates()
                             # we now deform by a parameter t
-                            T = R['t']
+                            T = PolynomialRing(R, 't')
                             t = T.gens()[0]
                             Pt = ProjectiveSpace(N-1, R=T, names=[str(i) for i in CR.gens()])
                             deformed_polys = [poly + t*Pt.gens()[-1]**d for poly in new_f.defining_polynomials()[:-1]]
@@ -5764,7 +5764,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 new_f = f.affine_preperiodic_model(0, n)
                 new_f.normalize_coordinates()
                 # we now deform by a parameter t
-                T = base_ring['k']
+                T = PolynomialRing(base_ring, 'k')
                 k = T.gens()[0]
                 Pt = ProjectiveSpace(N, R=T, names=[str(i) for i in CR.gens()])
                 deformed_polys = [poly + k*Pt.gens()[-1]**d for poly in new_f.defining_polynomials()[:-1]]

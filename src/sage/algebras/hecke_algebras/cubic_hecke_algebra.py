@@ -135,6 +135,7 @@ from sage.modules.free_module_element import vector
 from sage.matrix.matrix_space import MatrixSpace
 from sage.algebras.hecke_algebras.cubic_hecke_base_ring import CubicHeckeRingOfDefinition
 from sage.algebras.hecke_algebras.cubic_hecke_matrix_rep import CubicHeckeMatrixSpace, AbsIrreducibeRep, RepresentationType
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
 ##############################################################################
@@ -959,7 +960,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         #  defining the cubic equation
         # ----------------------------------------------------------------------
         pu, pv, pw = cubic_equation_parameters
-        pol_bas_ring = base_ring['h']
+        pol_bas_ring = PolynomialRing(base_ring, 'h')
         cubic_equation = pol_bas_ring([-pw, pv, -pu, 1])
 
         verbose('cubic_equation %s defined' % cubic_equation, level=2)
@@ -3017,7 +3018,6 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         cf = [-w, v, -u, 1]
         if as_coefficients:
             return cf
-        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         P = PolynomialRing(BaseRing, var)
         return P(cf)
 

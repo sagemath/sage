@@ -3395,7 +3395,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
                 # curve and get
                 # 2 yy' + a1 y + a1 xy' + a3 y' = 3 x^2 + 2a2 x + a4
 
-                R = RR['x']
+                R = PolynomialRing(RR, 'x')
                 x = R.gen()
                 if a1 == 0:
                     # a horizontal tangent line can only occur at a root of

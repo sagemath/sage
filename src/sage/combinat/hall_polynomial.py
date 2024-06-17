@@ -21,7 +21,7 @@ from sage.misc.misc_c import prod
 from sage.rings.integer_ring import ZZ
 from sage.combinat.partition import Partition
 from sage.combinat.q_analogues import q_binomial
-
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 def hall_polynomial(nu, mu, la, q=None):
     r"""
@@ -152,7 +152,7 @@ def hall_polynomial(nu, mu, la, q=None):
         0
     """
     if q is None:
-        q = ZZ['q'].gen()
+        q = PolynomialRing(ZZ, 'q').gen()
     R = q.parent()
 
     # Make sure they are partitions
