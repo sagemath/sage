@@ -386,6 +386,7 @@ class LLT_class(UniqueRepresentation):
     def hspin(self):
         r"""
         Return the HSpin basis.
+
         This basis is defined [LLT1997]_ equation (28).
 
         INPUT:

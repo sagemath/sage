@@ -1373,7 +1373,7 @@ class IntegerVectors_nnondescents(UniqueRepresentation, IntegerVectors):
 
     The grading parameters on the integer vector `v` are:
 
-    - ``n`` -- the sum of the parts of `v`,
+    - ``n`` -- the sum of the parts of `v`
 
     - ``c`` -- the non descents composition of `v`
 

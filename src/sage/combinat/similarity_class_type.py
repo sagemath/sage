@@ -334,7 +334,7 @@ def centralizer_group_cardinality(la, q=None):
 
     - ``lambda`` -- a partition
 
-    - ``q`` -- integer or an indeterminate
+    - ``q`` -- an integer or an indeterminate
 
     OUTPUT: a polynomial function of ``q``
 

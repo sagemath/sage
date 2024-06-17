@@ -141,8 +141,8 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
         INPUT:
 
         - ``self`` -- a monomial symmetric function basis
-        - ``f`` -- a polynomial in finitely many variables over the same base ring as ``self``
-          It is assumed that this polynomial is symmetric
+        - ``f`` -- a polynomial in finitely many variables over the same base ring as ``self``;
+          it is assumed that this polynomial is symmetric
         - ``check`` -- boolean (default: ``True``); checks whether the polynomial is indeed symmetric
 
         OUTPUT:

@@ -144,8 +144,8 @@ class LowerChristoffelWord(FiniteWord_list):
         r"""
         INPUT:
 
-        - ``p`` -- integer coprime with ``q``
-        - ``q`` -- integer coprime with ``p``
+        - ``p`` -- integer coprime with `q`
+        - ``q`` -- integer coprime with `p`
         - ``alphabet`` -- sequence of two elements (default: (0, 1))
         - ``algorithm`` -- construction method (default: ``'cf'``).
           It can be one of the following:

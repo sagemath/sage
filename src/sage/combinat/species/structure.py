@@ -403,7 +403,7 @@ class SpeciesWrapper(Parent):
     def labels(self):
         """
         Return the labels used on these structures.  If `X` is the
-        species, then :meth:`labels` return the preimage of these
+        species, then :meth:`labels` returns the preimage of these
         structures under the functor `X`.
 
         EXAMPLES::
