@@ -10,7 +10,7 @@ lazy_import('sage.matroids.constructor', 'Matroid')
 lazy_import('sage.matroids', 'matroids_catalog', 'matroids')
 
 # Add Oriented Matroids
-from .oriented_matroids.all import *
+from sage.matroids.oriented_matroids.all import *
 
 del lazy_import
 del install_doc
