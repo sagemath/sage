@@ -35,8 +35,12 @@ class PyPiError(Exception):
 
 class PyPiVersion(object):
 
-    def __init__(self, package_name, source='normal'):
+    def __init__(self, package_name, source='normal', version=None):
         self.name = package_name
+        if version is None:
+            self.suffix = ''
+        else:
+            self.suffix = '/' + version
         self.json = self._get_json()
         # Replace provided name with the canonical name
         self.name = self.json['info']['name']
@@ -55,7 +59,7 @@ class PyPiVersion(object):
 
     @property
     def json_url(self):
-        return 'https://pypi.python.org/pypi/{0}/json'.format(self.name)
+        return 'https://pypi.python.org/pypi/{0}{1}/json'.format(self.name, self.suffix)
 
     @property
     def version(self):
@@ -138,7 +142,10 @@ class PyPiVersion(object):
         if package is None:
             package = Package(self.name)
         if package.version == self.version:
-            log.info('%s is already at the latest version', self.name)
+            if self.suffix:
+                log.info('%s is already at this version', self.name)
+            else:
+                log.info('%s is already at the latest version', self.name)
             return
         log.info('Updating %s: %s -> %s', package.name, package.version, self.version)
         update = PackageUpdater(package.name, self.version)

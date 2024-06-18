@@ -433,13 +433,13 @@ class Application(object):
         if pypi:
             if source is None:
                 try:
-                    if PyPiVersion(package_name, source='wheel').tarball.endswith('-none-any.whl'):
+                    if PyPiVersion(package_name, source='wheel', version=version).tarball.endswith('-none-any.whl'):
                         source = 'wheel'
                     else:
                         source = 'normal'
                 except PyPiError:
                     source = 'normal'
-            pypi_version = PyPiVersion(package_name, source=source)
+            pypi_version = PyPiVersion(package_name, source=source, version=version)
             if source == 'normal':
                 if not tarball:
                     # Guess the general format of the tarball name.
