@@ -330,12 +330,6 @@ class ConjugacyClassOfSubgroups_SymmetricGroup(ConjugacyClassOfSubgroups):
         """
         return hash((hash(SymmetricGroup(self.grade())), hash(self._C)))
 
-    def _repr_(self):
-        r"""
-        Return a string representation of ``self``.
-        """
-        return f"({self.grade()}, {super()._repr_()})"
-
     def __eq__(self, other):
         r"""
         Return if this element is equal to ``other``.
