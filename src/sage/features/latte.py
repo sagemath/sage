@@ -35,7 +35,7 @@ class Latte_count(Executable):
             sage: isinstance(Latte_count(), Latte_count)
             True
         """
-        Executable.__init__(self, "count", executable='count',
+        Executable.__init__(self, 'count', executable='count',
                             spkg='latte_int',
                             url=LATTE_URL)
 
@@ -52,7 +52,7 @@ class Latte_integrate(Executable):
             sage: isinstance(Latte_integrate(), Latte_integrate)
             True
         """
-        Executable.__init__(self, "integrate", executable='integrate',
+        Executable.__init__(self, 'integrate', executable='integrate',
                             spkg='latte_int',
                             url=LATTE_URL)
 
@@ -76,7 +76,7 @@ class Latte(JoinFeature):
             sage: isinstance(Latte(), Latte)
             True
         """
-        JoinFeature.__init__(self, "latte_int",
+        JoinFeature.__init__(self, 'latte_int',
                              (Latte_count(), Latte_integrate()),
                              description='LattE')
 

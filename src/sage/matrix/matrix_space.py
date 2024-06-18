@@ -1886,7 +1886,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         - ``already_echelonized`` -- boolean (default: ``False``); whether
           the elements of ``gens`` are already in (not necessarily
-           reduced) echelon form
+          reduced) echelon form
 
         - ``unitriangular`` -- boolean (default: ``False``); whether
           the lift morphism is unitriangular

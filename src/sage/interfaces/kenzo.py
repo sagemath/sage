@@ -1597,13 +1597,13 @@ class KenzoChainComplexMorphism(KenzoObject):
         INPUT:
 
         - ``object`` -- a KenzoChainComplexMorphism instance, a tuple of
-          KenzoChainComplexMorphism instances or None (default)
+          KenzoChainComplexMorphism instances or ``None`` (default)
 
         OUTPUT:
 
         A :class:`KenzoChainComplexMorphism`, sum of the morphism ``self``
-        and the morphism(s given by ``object`` (if ``object`` is None, ``self``
-        morphism is returned).
+        and the morphism(s given by ``object`` (if ``object`` is ``None``,
+        ``self`` morphism is returned).
 
         EXAMPLES::
 
@@ -1663,14 +1663,14 @@ class KenzoChainComplexMorphism(KenzoObject):
         INPUT:
 
         - ``object`` -- a KenzoChainComplexMorphism instance, a tuple of
-          KenzoChainComplexMorphism instances or None (default)
+          KenzoChainComplexMorphism instances or ``None`` (default)
 
         OUTPUT:
 
-        - A :class:`KenzoChainComplexMorphism`, difference of the morphism ``self`` and the
-          morphism(s) given by ``object`` (if ``object`` is None, ``self`` morphism is returned).
-          For example, if ``object`` = (mrph1, mrph2, mrph3) the result is
-          ``self`` - mrph1 - mrph2 - mrph3.
+        A :class:`KenzoChainComplexMorphism`, difference of the morphism
+        `self`` and the morphism(s) given by ``object`` (if ``object`` is
+        ``None``, ``self`` morphism is returned). For example, if ``object`` =
+        (mrph1, mrph2, mrph3) the result is ``self`` - mrph1 - mrph2 - mrph3.
 
         EXAMPLES::
 

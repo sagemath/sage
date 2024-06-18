@@ -4818,20 +4818,20 @@ class GenericGraph(GenericGraph_pyx):
           use in computing a minimum spanning tree of ``G``. The following
           algorithms are supported:
 
-          - ``'Prim_Boost'`` -- prim's algorithm (Boost implementation)
+          - ``'Prim_Boost'`` -- Prim's algorithm (Boost implementation)
 
           - ``'Prim_fringe'`` -- a variant of Prim's algorithm that ignores the
             labels on the edges
 
           - ``'Prim_edge'`` -- a variant of Prim's algorithm
 
-          - ``'Kruskal'`` -- kruskal's algorithm
+          - ``'Kruskal'`` -- Kruskal's algorithm
 
           - ``'Filter_Kruskal'`` -- a variant of Kruskal's algorithm [OSS2009]_
 
-          - ``'Kruskal_Boost'`` -- kruskal's algorithm (Boost implementation)
+          - ``'Kruskal_Boost'`` -- Kruskal's algorithm (Boost implementation)
 
-          - ``'Boruvka'`` -- boruvka's algorithm
+          - ``'Boruvka'`` -- Boruvka's algorithm
 
           - ``NetworkX`` -- uses NetworkX's minimum spanning tree
             implementation
@@ -15431,7 +15431,7 @@ class GenericGraph(GenericGraph_pyx):
         INPUT:
 
         - ``vertices`` -- a single vertex or an iterable container of vertices
-          (default: ``None); when set, check whether the set of vertices is a
+          (default: ``None``); when set, check whether the set of vertices is a
           clique, otherwise check whether ``self`` is a clique
 
         - ``directed_clique`` -- boolean (default: ``False``); if set to
@@ -15666,7 +15666,7 @@ class GenericGraph(GenericGraph_pyx):
         INPUT:
 
         - ``vertices`` -- a single vertex or an iterable container of vertices
-          (default: ``None); when set, check whether the given set of vertices
+          (default: ``None``); when set, check whether the given set of vertices
           is an independent set, otherwise, check whether the set of vertices of
           ``self`` is an independent set
 
@@ -15808,7 +15808,7 @@ class GenericGraph(GenericGraph_pyx):
 
         INPUT:
 
-        - ``nbunch`` -- list of vertices (default: ``None); the vertices to
+        - ``nbunch`` -- list of vertices (default: ``None``); the vertices to
           inspect. If ``nbunch=None``, returns data for all vertices in the
           graph.
 
@@ -16459,7 +16459,7 @@ class GenericGraph(GenericGraph_pyx):
 
         - ``algorithm`` -- string (default: ``'bfs'``); the algorithm to use:
 
-          - ``'bfs'`` -- bFS-based algorithm
+          - ``'bfs'`` -- BFS-based algorithm
 
           - any algorithm accepted by
             :meth:`~sage.matrix.matrix_integer_dense.Matrix_integer_dense.charpoly`

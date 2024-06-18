@@ -983,8 +983,8 @@ class R(ExtraTabCompletion, Interface):
 
         - ``command`` -- string
 
-        OUTPUT: HelpExpression -- a subclass of string whose __repr__ method is
-        __str__, so it prints nicely
+        OUTPUT: HelpExpression -- a subclass of string whose ``__repr__``
+        method is ``__str__``, so it prints nicely
 
         EXAMPLES::
 
@@ -1309,7 +1309,7 @@ class R(ExtraTabCompletion, Interface):
             sage: r.quartz()
             sage: r.hist("rnorm(100)")
             sage: r.library("lattice")
-            sage: r.histogram(x = "~ wt | cyl", data='mtcars')
+            sage: r.histogram(x = '~ wt | cyl', data='mtcars')
             sage: r.dev_off()
 
         In the notebook, one can use r.png() to open the device, but
@@ -1775,7 +1775,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
 
         - ``self``, ``other`` -- R elements
 
-        OUTPUT: RElement
+        OUTPUT: R element
 
         EXAMPLES::
 

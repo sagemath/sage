@@ -182,7 +182,7 @@ def solve_system_with_difficult_last_row(B, A):
     return X
 
 def saturation(A, proof=True, p=0, max_dets=5):
-    """
+    r"""
     Compute a saturation matrix of `A`.
 
     INPUT:

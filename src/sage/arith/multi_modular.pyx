@@ -905,7 +905,7 @@ cdef class MultiModularBasis(MultiModularBasis_base):
         INPUT:
 
         - ``z`` -- a placeholder for the constructed integers; *must* be
-          allocated and have length at least vn,but each z[j] *must* NOT be
+          allocated and have length at least vn,but each z[j] *must not* be
           initialized
         - ``b`` -- array holding the reductions mod each `m_i`; it *must* have
           length at least ``len(self)``

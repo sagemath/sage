@@ -392,8 +392,8 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
     - ``bounds`` -- a 2-tuple of integers ``(lower,upper)`` with ``0<=lower<=upper``
     - ``operation`` -- string: ``'*'``, ``'+'``, other
     - ``identity`` -- the identity element of the group
-    - ``inverse()`` -- function of 1 argument ``x``, returning inverse of ``x``
-    - ``op()`` -- function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group
+    - ``inverse`` -- function of 1 argument ``x``, returning inverse of ``x``
+    - ``op`` -- function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group
 
     OUTPUT:
 
@@ -529,8 +529,8 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
     - ``operation`` -- string (default: ``'*'``) denoting whether we
       are in an additive group or a multiplicative one
     - ``identity`` -- the group's identity
-    - ``inverse()`` -- function of 1 argument ``x``, returning inverse of ``x``
-    - ``op()`` -- function of 2 arguments ``x``, ``y``, returning ``x*y`` in the group
+    - ``inverse`` -- function of 1 argument ``x``, returning inverse of ``x``
+    - ``op`` -- function of 2 arguments ``x``, ``y``, returning ``x*y`` in the group
     - ``hash_function`` -- having an efficient hash function is critical
       for this algorithm (see examples)
 
@@ -989,8 +989,8 @@ def discrete_log_lambda(a, base, bounds, operation='*', identity=None, inverse=N
     - ``bounds`` -- a couple (lb,ub) representing the range where we look for a logarithm
     - ``operation`` -- string: '+', '*' or 'other'
     - ``identity`` -- the identity element of the group
-    - ``inverse()`` -- function of 1 argument ``x`` returning inverse of ``x``
-    - ``op()`` -- function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group
+    - ``inverse`` -- function of 1 argument ``x`` returning inverse of ``x``
+    - ``op`` -- function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group
     - ``hash_function`` -- having an efficient hash function is critical for this algorithm
 
     OUTPUT: integer `n` such that `a=base^n` (or `a=n*base`)
@@ -1357,9 +1357,9 @@ def order_from_bounds(P, bounds, d=None, operation='+',
       If other, the following must be supplied:
 
       - ``identity`` -- the identity element for the group
-      - ``inverse()`` -- a function of one argument giving the inverse
+      - ``inverse`` -- a function of one argument giving the inverse
         of a group element
-      - ``op()`` -- a function of 2 arguments defining the group binary
+      - ``op`` -- a function of 2 arguments defining the group binary
         operation
 
     .. NOTE::
@@ -1543,9 +1543,9 @@ def merge_points(P1, P2, operation='+',
       other, the following must be supplied:
 
       - ``identity`` -- the identity element for the group
-      - ``inverse()`` -- a function of one argument giving the inverse
+      - ``inverse`` -- a function of one argument giving the inverse
         of a group element
-      - ``op()`` -- a function of 2 arguments defining the group
+      - ``op`` -- a function of 2 arguments defining the group
         binary operation
 
     OUTPUT: a pair `(g_3,n_3)` where `g_3` has order `n_3=\hbox{lcm}(n_1,n_2)`

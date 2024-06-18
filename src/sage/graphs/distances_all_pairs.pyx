@@ -2277,14 +2277,14 @@ def szeged_index(G, algorithm=None):
 
     EXAMPLES:
 
-    ``True`` for any connected graph [KRG1996]_::
+    True for any connected graph [KRG1996]_::
 
         sage: from sage.graphs.distances_all_pairs import szeged_index
         sage: g = graphs.PetersenGraph()
         sage: g.wiener_index() <= szeged_index(g)
         True
 
-    ``True`` for all trees [KRG1996]_::
+    True for all trees [KRG1996]_::
 
         sage: g = Graph()
         sage: g.add_edges(graphs.CubeGraph(5).min_spanning_tree())

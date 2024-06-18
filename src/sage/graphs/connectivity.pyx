@@ -436,7 +436,7 @@ def blocks_and_cut_vertices(G, algorithm='Tarjan_Boost', sort=False, key=None):
       - ``'Tarjan_Boost'`` -- default; Tarjan's algorithm (Boost
         implementation)
 
-      - ``'Tarjan_Sage'`` -- tarjan's algorithm (Sage implementation)
+      - ``'Tarjan_Sage'`` -- Tarjan's algorithm (Sage implementation)
 
     - ``sort`` -- boolean (default: ``False``); whether to sort vertices inside
       the components and the list of cut vertices

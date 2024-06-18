@@ -2506,7 +2506,7 @@ cpdef diameter(G, algorithm=None, source=None,
         [Broder2000]_. See the code's documentation for more details.
 
       - ``'DiFUB'`` -- computes the diameter of a weighted directed graph
-        using the weighted version of the algorithm proposed in [CGLM2012]_
+        using the weighted version of the algorithm proposed in [CGLM2012]_.
         See the code's documentation for more details.
 
     - ``source`` -- (default: ``None``) vertex from which to start the

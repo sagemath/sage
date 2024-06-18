@@ -205,7 +205,7 @@ class dvips(Executable):
             sage: isinstance(dvips(), dvips)
             True
         """
-        Executable.__init__(self, "dvips", executable='dvips',
+        Executable.__init__(self, 'dvips', executable='dvips',
                             url='https://tug.org/texinfohtml/dvips.html')
 
 class TeXFile(StaticFile):

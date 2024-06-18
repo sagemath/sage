@@ -272,19 +272,19 @@ cdef run_spring(int iterations, dimension_t _dim, double* pos, int* edges, int n
 
     INPUT:
 
-    - iterations -- number of steps to take
-    - _dim -- number of dimensions of freedom. Provide a value of type `D_TWO`
+    - ``iterations`` -- number of steps to take
+    - ``_dim`` -- number of dimensions of freedom. Provide a value of type `D_TWO`
       for 2 dimensions, or type `D_THREE` for three dimensions. The actual
       value does not matter: only its type is important.
-    - pos -- already initialized initial positions. Each vertex is stored as
+    - ``pos`` -- already initialized initial positions. Each vertex is stored as
       [dim] consecutive doubles. These doubles are then placed consecutively
       in the array. For example, if dim=3, we would have
       pos = [x_1, y_1, z_1, x_2, y_2, z_2, ... , x_n, y_n, z_n]
-    - edges -- List of edges, sorted lexicographically by the first (smallest)
+    - ``edges`` -- List of edges, sorted lexicographically by the first (smallest)
       vertex, terminated by -1, -1. The first two entries represent the first
       edge, and so on.
-    - n -- number of vertices in the graph
-    - height -- if ``True``, do not update the last coordinate ever
+    - ``n`` -- number of vertices in the graph
+    - ``height`` -- if ``True``, do not update the last coordinate ever
 
     OUTPUT: modifies contents of pos
 

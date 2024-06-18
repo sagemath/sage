@@ -293,8 +293,7 @@ class PHC_Object:
 
         - ``self`` -- for access to self_out_file_contents, the string
           of raw PHCpack output
-
-        - get_failures -- boolean (default: ``False``);  the default
+        - ``get_failures`` -- boolean (default: ``False``); the default
           is to not process failed homotopies.  These either lie on
           positive-dimensional components or at infinity.
 
@@ -336,7 +335,7 @@ class PHC_Object:
 
         - ``self`` -- for access to self_out_file_contents, the string
           of raw PHCpack output
-        - get_failures -- boolean (default: ``False``);  the default
+        - ``get_failures`` -- boolean (default: ``False``); the default
           is to not process failed homotopies.  These either lie on
           positive-dimensional components or at infinity.
 
