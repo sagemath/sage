@@ -33,6 +33,57 @@ def _is_conjugate(G, H1, H2):
     """
     return GAP_FAIL != libgap.RepresentativeAction(G, H1, H2)
 
+class SubgroupNameStore():
+    def __init__(self, basis_keys):
+        r"""
+        This class stores subgroup <-> name associations.
+        """
+        self._key_constructor = basis_keys
+        self._cache = dict() # invariant to subgroups
+        self._names = dict() # dictionary mapping subgroups to names
+
+    def _group_invariant(self, H):
+        return H.order()
+
+    def _normalize(self, H):
+        print('Normalize was called')
+        key = self._key_constructor(H)
+        p = self._group_invariant(key._C)
+        if p in self._cache:
+            for H0 in self._cache[p]:
+                if _is_conjugate(key.subgroup_of(), key._C, H0):
+                    return H0
+            else:
+                self._cache[p].append(H)
+        else:
+            self._cache[p] = [H]
+        return H
+
+    def get_name(self, H):
+        r"""
+        Takes a subgroup as input and returns its associated name, if any.
+        Otherwise, the generators are returned. Returns a string.
+        """
+        G = self._normalize(H)
+        name = self._names.get(G, None)
+        return name if name else repr(G.gens())
+    
+    def set_name(self, H, name):
+        r"""
+        Takes a subgroup as input and sets its name.
+        """
+        if not isinstance(name, str):
+            raise ValueError("name must be a string")
+        G = self._normalize(H)
+        self._names[G] = name
+    
+    def unset_name(self, H):
+        r"""
+        Takes a subgroup as input and removes its name, if any.
+        """
+        G = self._normalize(H)
+        self._names.pop(G, None)
+
 class ConjugacyClassOfSubgroups(Element):
     def __init__(self, parent, C):
         r"""
@@ -47,6 +98,9 @@ class ConjugacyClassOfSubgroups(Element):
         """
         Element.__init__(self, parent)
         self._C = C
+
+    def subgroup_of(self):
+        return self.parent()._G
 
     def __hash__(self):
         r"""
@@ -81,8 +135,7 @@ class ConjugacyClassOfSubgroups(Element):
             sage: B[Z4]
             B[((1,2,3,4),)]
         """
-        name = self.parent()._names.get(self._C, None)
-        return repr(self._C.gens()) if name is None else name
+        return self.parent()._namegetter(self._C)
 
     def __le__(self, other):
         r"""
@@ -103,7 +156,7 @@ class ConjugacyClassOfSubgroups(Element):
             17
         """
         return (isinstance(other, ConjugacyClassOfSubgroups)
-                and (GAP_FAIL != libgap.ContainedConjugates(self.parent()._G,
+                and (GAP_FAIL != libgap.ContainedConjugates(self.subgroup_of(),
                                                             other._C,
                                                             self._C,
                                                             True)))
@@ -124,7 +177,7 @@ class ConjugacyClassOfSubgroups(Element):
             True
         """
         return (isinstance(other, ConjugacyClassOfSubgroups)
-                and _is_conjugate(self.parent()._G, self._C, other._C))
+                and _is_conjugate(self.subgroup_of(), self._C, other._C))
 
 class ConjugacyClassesOfSubgroups(Parent):
     def __init__(self, G):
@@ -143,8 +196,7 @@ class ConjugacyClassesOfSubgroups(Parent):
             sage: TestSuite(C).run()
         """
         self._G = G
-        self._cache = dict() # invariant to subgroups
-        self._names = dict() # dictionary mapping subgroups to names
+        self._namegetter = lambda H: repr(H.gens())
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
     def __eq__(self, other):
@@ -181,52 +233,6 @@ class ConjugacyClassesOfSubgroups(Parent):
         """
         return hash(self._G)
 
-    def _group_invariant(self, H):
-        r"""
-        Return the set of group invariants associated with ``H``.
-
-        TESTS::
-
-            sage: from sage.rings.burnside import ConjugacyClassesOfSubgroups
-            sage: G = SymmetricGroup(4)
-            sage: C = ConjugacyClassesOfSubgroups(G)
-            sage: Z4 = CyclicPermutationGroup(4)
-            sage: C._group_invariant(Z4)
-            4
-        """
-        return H.order()
-
-    def _normalize(self, H):
-        r"""
-        Add ``H`` as the representative of its conjugacy class to the cache and return it.
-
-        If a representative of the conjugacy class of ``H``
-        already exists in the cache, return that.
-
-        TESTS::
-
-            sage: G = SymmetricGroup(4)
-            sage: B = BurnsideRing(G)
-            sage: H1 = PermutationGroup([(1,2)])
-            sage: H2 = PermutationGroup([(2,3)])
-            sage: B[H1]
-            B[((3,4),)]
-            sage: B[H2] #indirect doctest
-            B[((3,4),)]
-        """
-        if not H.is_subgroup(self._G):
-            raise ValueError(f"{H} is not a subgroup of {self._G}")
-        p = self._group_invariant(H)
-        if p in self._cache:
-            for H0 in self._cache[p]:
-                if _is_conjugate(self._G, H, H0):
-                    return H0
-            else:
-                self._cache[p].append(H)
-        else:
-            self._cache[p] = [H]
-        return H
-
     def _element_constructor_(self, x):
         r"""
         Construct the conjugacy class of subgroups containing ``x``.
@@ -241,38 +247,8 @@ class ConjugacyClassesOfSubgroups(Parent):
             ((1,2,3,4),)
         """
         if x.is_subgroup(self._G):
-            return self.element_class(self, self._normalize(x))
-        raise ValueError(f"unable to convert {x} into {self}: not a subgroup of " + repr(self._G))
-
-    def set_name(self, H, name):
-        r"""
-        Rename conjugacy class of ``H`` to ``name``.
-
-        Passing ``None`` to ``name`` will remove any previously assigned name.
-
-        INPUT:
-
-        ``H`` -- a subgroup of ``G``.
-        ``name`` -- a string that ``H`` should be printed as.
-
-        EXAMPLES::
-
-            sage: G = SymmetricGroup(4)
-            sage: B = BurnsideRing(G)
-            sage: Z4 = CyclicPermutationGroup(4)
-            sage: B[Z4]
-            B[((1,2,3,4),)]
-            sage: B._indices.set_name(Z4, "Z4")
-            sage: B[Z4]
-            B[Z4]
-            sage: B._indices.set_name(Z4, None)
-            sage: B[Z4]
-            B[((1,2,3,4),)]
-        """
-        H_norm = self._normalize(H)
-        if not isinstance(name, str) and name is not None:
-            raise TypeError("name must be a string or None")
-        self._names[H_norm] = name
+            return self.element_class(self, x)
+        raise ValueError(f"unable to convert {x} into {self}: not a subgroup of {self._G}")
 
     def __iter__(self):
         r"""
@@ -333,21 +309,24 @@ class ConjugacyClassOfSubgroups_SymmetricGroup(ConjugacyClassOfSubgroups):
             sage: TestSuite(B(Z4)).run()
         """
         ConjugacyClassOfSubgroups.__init__(self, parent, C)
+    
+    def subgroup_of(self):
+        return SymmetricGroup(self.grade())
 
     def grade(self):
-        return self.parent()._G.degree()
+        return self._C.degree()
 
     def __hash__(self):
         r"""
         Return the hash of the representative of the conjugacy class.
         """
-        return hash((hash(self.parent()._G), hash(self._C)))
+        return hash((hash(SymmetricGroup(self.grade())), hash(self._C)))
 
     def _repr_(self):
         r"""
         Return a string representation of ``self``.
         """
-        return repr((self.grade(), super()._repr_()))
+        return f"({self.grade()}, {super()._repr_()})"
 
     def __eq__(self, other):
         r"""
@@ -356,7 +335,7 @@ class ConjugacyClassOfSubgroups_SymmetricGroup(ConjugacyClassOfSubgroups):
         Two elements compare equal if they are conjugate subgroups in the parent group.
         """
         return (isinstance(other, ConjugacyClassOfSubgroups_SymmetricGroup)
-                and self.grade() == other.grade() and _is_conjugate(self.parent()._G, self._C, other._C))
+                and self.grade() == other.grade() and _is_conjugate(SymmetricGroup(self._C), self._C, other._C))
 
 class ConjugacyClassesOfSubgroups_SymmetricGroup(ConjugacyClassesOfSubgroups):
     def __init__(self, n):
@@ -366,6 +345,7 @@ class ConjugacyClassesOfSubgroups_SymmetricGroup(ConjugacyClassesOfSubgroups):
 
 class ConjugacyClassesOfSubgroups_SymmetricGroup_all(UniqueRepresentation, Parent):
     def __init__(self):
+        self._namegetter = lambda H: repr(H.gens())
         category = SetsWithGrading().Infinite()
         Parent.__init__(self, category=category)
 
@@ -379,7 +359,7 @@ class ConjugacyClassesOfSubgroups_SymmetricGroup_all(UniqueRepresentation, Paren
         r"""
         H is a subgroup of a symmetric group.
         """
-        return self.subset(H.degree())(H)
+        return self.element_class(self, H)
 
     def __iter__(self):
         n = 0
@@ -395,7 +375,7 @@ class ConjugacyClassesOfSubgroups_SymmetricGroup_all(UniqueRepresentation, Paren
 
     Element = ConjugacyClassOfSubgroups_SymmetricGroup
 
-class BurnsideRing(CombinatorialFreeModule):
+class BurnsideRing(CombinatorialFreeModule, SubgroupNameStore):
     def __init__(self, G, base_ring=ZZ):
         r"""
         The Burnside ring of the group ``G``.
@@ -438,11 +418,13 @@ class BurnsideRing(CombinatorialFreeModule):
             sage: TestSuite(B).run()
         """
         self._G = G
-        basis = ConjugacyClassesOfSubgroups(G)
-        basis.set_name(G, "1")
+        basis_keys = ConjugacyClassesOfSubgroups(G)
         category = Algebras(base_ring).Commutative().WithBasis()
-        CombinatorialFreeModule.__init__(self, base_ring, basis,
+        CombinatorialFreeModule.__init__(self, base_ring, basis_keys,
                                         category=category, prefix="B")
+        SubgroupNameStore.__init__(self, basis_keys)
+        basis_keys._namegetter = self.get_name
+        self.set_name(G, "1")
 
     def __getitem__(self, H):
         r"""
@@ -566,7 +548,7 @@ class BurnsideRing(CombinatorialFreeModule):
         """
         #TODO: Find faster way to multiply
         assert g1.parent() == g2.parent()
-        G = g1.parent()._G
+        G = g1.subgroup_of()
         dom1 = [frozenset(g) for g in G.cosets(g1._C, side="left")]
         dom2 = [frozenset(g) for g in G.cosets(g2._C, side="left")]
         domain = cartesian_product([dom1, dom2])
@@ -603,13 +585,16 @@ class BurnsideRing(CombinatorialFreeModule):
         """
         return "Burnside ring of " + repr(self._G)
 
-class PolynomialMolecularDecomposition(CombinatorialFreeModule):
+class PolynomialMolecularDecomposition(CombinatorialFreeModule, SubgroupNameStore):
     def __init__(self, base_ring=ZZ):
+        basis_keys = ConjugacyClassesOfSubgroups_SymmetricGroup_all()
         category = GradedAlgebrasWithBasis(base_ring)
         CombinatorialFreeModule.__init__(self, base_ring,
-                                        basis_keys=ConjugacyClassesOfSubgroups_SymmetricGroup_all(),
+                                        basis_keys=basis_keys,
                                         category=category,
                                         prefix="PMD")
+        SubgroupNameStore.__init__(self, basis_keys)
+        basis_keys._namegetter = self.get_name
 
     # FIXME: this is currently required, because the implementation of ``basis``
     # in CombinatorialFreeModule overrides that of GradedModulesWithBasis
