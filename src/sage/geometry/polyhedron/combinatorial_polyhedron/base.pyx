@@ -118,6 +118,7 @@ cdef class CombinatorialPolyhedron(SageObject):
     INPUT:
 
     - ``data`` -- an instance of
+
       * :class:`~sage.geometry.polyhedron.parent.Polyhedron_base`
       * or a :class:`~sage.geometry.lattice_polytope.LatticePolytopeClass`
       * or a :class:`~sage.geometry.cone.ConvexRationalPolyhedralCone`
@@ -135,15 +136,19 @@ cdef class CombinatorialPolyhedron(SageObject):
         affine hull
       * or a tuple consisting of facets and vertices as two
         :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces`.
+
     - ``Vrep`` -- (optional) when ``data`` is an incidence matrix, it should
       be the list of ``[vertices, rays, lines]``, if the rows in the incidence_matrix
       should correspond to names
+
     - ``facets`` -- (optional) when ``data`` is an incidence matrix or a list of facets,
       it should be a list of facets that would be used instead of indices (of the columns
       of the incidence matrix).
+
     - ``unbounded`` -- value will be overwritten if ``data`` is a polyhedron;
       if ``unbounded`` and ``data`` is incidence matrix or a list of facets,
       need to specify ``far_face``
+
     - ``far_face`` -- (semi-optional); if the polyhedron is unbounded this
       needs to be set to the list of indices of the rays and line unless ``data`` is
       an instance of :class:`~sage.geometry.polyhedron.parent.Polyhedron_base`.
@@ -1306,7 +1311,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         INPUT:
 
         - ``names`` -- boolean (default: ``True``); if ``False``,
-          then the nodes of the graph are labeld by the
+          then the nodes of the graph are labeled by the
           indices of the Vrepresentation
 
         - ``algorithm`` -- string (optional);
