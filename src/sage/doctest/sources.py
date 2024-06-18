@@ -975,7 +975,7 @@ class PythonSource(SourceLanguage):
 
     def _update_quotetype(self, line):
         r"""
-        Update the track of what kind of quoted string we're in.
+        Update the track of what kind of quoted string we are in.
 
         We need to track whether we're inside a triple quoted
         string, since a triple quoted string that starts a line
@@ -1080,7 +1080,7 @@ class PythonSource(SourceLanguage):
 
         - ``line`` -- string; one line of an input file
 
-        OUTPUT: either None or a Match object
+        OUTPUT: either ``None`` or a Match object
 
         EXAMPLES::
 

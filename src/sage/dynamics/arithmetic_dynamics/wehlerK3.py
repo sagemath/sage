@@ -190,7 +190,8 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         INPUT: ``P`` -- point in `\mathbb{P}^2 \times \mathbb{P}^2`
 
-        OUTPUT: AttributeError; ``True`` if the point is not on the surface
+        OUTPUT: ``True`` if the point is not on the surface; ``AttributeError``
+        otherwise
 
         EXAMPLES::
 

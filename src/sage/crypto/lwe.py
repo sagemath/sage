@@ -259,8 +259,8 @@ class LWE(SageObject):
           :class:`DiscreteGaussianDistributionIntegerSampler` or :class:`UniformSampler`
         - ``secret_dist`` -- distribution of the secret (default: ``'uniform'``); one of
 
-          - ``"uniform"`` -- secret follows the uniform distribution in `\Zmod{q}`
-          - ``"noise"`` -- secret follows the noise distribution
+          - ``'uniform'`` -- secret follows the uniform distribution in `\Zmod{q}`
+          - ``'noise'`` -- secret follows the noise distribution
           - ``(lb, ub)`` -- the secret is chosen uniformly from ``[lb,...,ub]``
             including both endpoints
 
@@ -464,9 +464,9 @@ class UniformNoiseLWE(LWE):
         - ``n`` -- security parameter (integer >= 89)
         - ``instance`` -- one of
 
-          - ``"key"`` -- the LWE-instance that hides the secret key is generated
-          - ``"encrypt"`` -- the LWE-instance that hides the message is generated
-            (default: ``key``)
+          - ``'key'`` -- the LWE-instance that hides the secret key is generated
+          - ``'encrypt'`` -- the LWE-instance that hides the message is generated
+            (default: ``'key'``)
 
         - ``m`` -- number of allowed samples or ``None`` in which case ``m`` is
           chosen as in [CGW2013]_.  (default: ``None``)

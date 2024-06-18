@@ -506,7 +506,9 @@ class OEIS:
           This is useful if you are looking for a sequence that may appear
           after the 100 first found sequences.
 
-        OUTPUT: a tuple (with fancy formatting) of at most ``max_results`` OEIS
+        OUTPUT:
+
+        A tuple (with fancy formatting) of at most ``max_results`` OEIS
         sequences. Those sequences can be used without the need to fetch the
         database again.
 
