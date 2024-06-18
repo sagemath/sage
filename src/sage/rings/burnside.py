@@ -104,7 +104,7 @@ class ConjugacyClassOfSubgroups(Element):
         return self.parent()._G
 
     def default_name(self):
-        return repr(self._C)
+        return repr(self._C.gens())
 
     def __hash__(self):
         r"""
@@ -319,7 +319,7 @@ class ConjugacyClassOfSubgroups_SymmetricGroup(ConjugacyClassOfSubgroups):
         return SymmetricGroup(self.grade())
 
     def default_name(self):
-        return f"({self.grade()}, {repr(self._C)})"
+        return f"({self.grade()}, {repr(self._C.gens())})"
 
     def grade(self):
         return self._C.degree()
