@@ -118,23 +118,23 @@ cdef class CombinatorialPolyhedron(SageObject):
     INPUT:
 
     - ``data`` -- an instance of
-       * :class:`~sage.geometry.polyhedron.parent.Polyhedron_base`
-       * or a :class:`~sage.geometry.lattice_polytope.LatticePolytopeClass`
-       * or a :class:`~sage.geometry.cone.ConvexRationalPolyhedralCone`
-       * or an ``incidence_matrix`` as in
-         :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.incidence_matrix`
-         In this case you should also specify the ``Vrep`` and ``facets`` arguments
-       * or list of facets, each facet given as
-         a list of ``[vertices, rays, lines]`` if the polyhedron is unbounded,
-         then rays and lines and the extra argument ``nr_lines`` are required
-         if the polyhedron contains no lines, the rays can be thought of
-         as the vertices of the facets deleted from a bounded polyhedron see
-         :class:`~sage.geometry.polyhedron.parent.Polyhedron_base` on how to use
-         rays and lines
-       * or an integer, representing the dimension of a polyhedron equal to its
-         affine hull
-       * or a tuple consisting of facets and vertices as two
-         :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces`.
+      * :class:`~sage.geometry.polyhedron.parent.Polyhedron_base`
+      * or a :class:`~sage.geometry.lattice_polytope.LatticePolytopeClass`
+      * or a :class:`~sage.geometry.cone.ConvexRationalPolyhedralCone`
+      * or an ``incidence_matrix`` as in
+        :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.incidence_matrix`
+        In this case you should also specify the ``Vrep`` and ``facets`` arguments
+      * or list of facets, each facet given as
+        a list of ``[vertices, rays, lines]`` if the polyhedron is unbounded,
+        then rays and lines and the extra argument ``nr_lines`` are required
+        if the polyhedron contains no lines, the rays can be thought of
+        as the vertices of the facets deleted from a bounded polyhedron see
+        :class:`~sage.geometry.polyhedron.parent.Polyhedron_base` on how to use
+        rays and lines
+      * or an integer, representing the dimension of a polyhedron equal to its
+        affine hull
+      * or a tuple consisting of facets and vertices as two
+        :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces`.
     - ``Vrep`` -- (optional) when ``data`` is an incidence matrix, it should
       be the list of ``[vertices, rays, lines]``, if the rows in the incidence_matrix
       should correspond to names
@@ -159,7 +159,7 @@ cdef class CombinatorialPolyhedron(SageObject):
     a lattice polytope::
 
         sage: points = [(1,0,0), (0,1,0), (0,0,1),
-        ....: (-1,0,0), (0,-1,0), (0,0,-1)]
+        ....:           (-1,0,0), (0,-1,0), (0,0,-1)]
         sage: L = LatticePolytope(points)
         sage: CombinatorialPolyhedron(L)
         A 3-dimensional combinatorial polyhedron with 8 facets
@@ -186,10 +186,10 @@ cdef class CombinatorialPolyhedron(SageObject):
 
     a list of facets::
 
-        sage: CombinatorialPolyhedron(((1,2,3),(1,2,4),(1,3,4),(2,3,4)))
+        sage: CombinatorialPolyhedron(((1,2,3), (1,2,4), (1,3,4), (2,3,4)))
         A 3-dimensional combinatorial polyhedron with 4 facets
         sage: facetnames = ['facet0', 'facet1', 'facet2', 'myfacet3']
-        sage: facetinc = ((1,2,3),(1,2,4),(1,3,4),(2,3,4))
+        sage: facetinc = ((1,2,3), (1,2,4), (1,3,4), (2,3,4))
         sage: C = CombinatorialPolyhedron(facetinc, facets=facetnames)
         sage: C.Vrepresentation()
         (1, 2, 3, 4)
@@ -991,10 +991,13 @@ cdef class CombinatorialPolyhedron(SageObject):
         r"""
         Return the facets as lists of ``[vertices, rays, lines]``.
 
-        If ``names`` is ``False``, then the Vrepresentatives in the facets
-        are given by their indices in the Vrepresentation.
-
         The facets are the maximal nontrivial faces.
+
+        INPUT:
+
+        - ``names`` -- boolean (default: ``True``); if ``False``, then the
+          Vrepresentatives in the facets are given by their indices in the
+          Vrepresentation.
 
         EXAMPLES::
 
