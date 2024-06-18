@@ -90,7 +90,7 @@ from sage.graphs.graph              import Graph
 from sage.geometry.polyhedron.base  import Polyhedron_base
 from sage.geometry.lattice_polytope import LatticePolytopeClass
 from sage.geometry.cone             import ConvexRationalPolyhedralCone
-from sage.structure.element         import Matrix
+from sage.matrix.matrix2           cimport Matrix
 from sage.matrix.matrix_dense      cimport Matrix_dense
 from sage.misc.misc                 import is_iterator
 from .conversions import (incidence_matrix_to_bit_rep_of_facets,
@@ -118,32 +118,37 @@ cdef class CombinatorialPolyhedron(SageObject):
     INPUT:
 
     - ``data`` -- an instance of
-       * :class:`~sage.geometry.polyhedron.parent.Polyhedron_base`
-       * or a :class:`~sage.geometry.lattice_polytope.LatticePolytopeClass`
-       * or a :class:`~sage.geometry.cone.ConvexRationalPolyhedralCone`
-       * or an ``incidence_matrix`` as in
-         :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.incidence_matrix`
-         In this case you should also specify the ``Vrep`` and ``facets`` arguments
-       * or list of facets, each facet given as
-         a list of ``[vertices, rays, lines]`` if the polyhedron is unbounded,
-         then rays and lines and the extra argument ``nr_lines`` are required
-         if the polyhedron contains no lines, the rays can be thought of
-         as the vertices of the facets deleted from a bounded polyhedron see
-         :class:`~sage.geometry.polyhedron.parent.Polyhedron_base` on how to use
-         rays and lines
-       * or an integer, representing the dimension of a polyhedron equal to its
-         affine hull
-       * or a tuple consisting of facets and vertices as two
-         :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces`.
+
+      * :class:`~sage.geometry.polyhedron.parent.Polyhedron_base`
+      * or a :class:`~sage.geometry.lattice_polytope.LatticePolytopeClass`
+      * or a :class:`~sage.geometry.cone.ConvexRationalPolyhedralCone`
+      * or an ``incidence_matrix`` as in
+        :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.incidence_matrix`
+        In this case you should also specify the ``Vrep`` and ``facets`` arguments
+      * or list of facets, each facet given as
+        a list of ``[vertices, rays, lines]`` if the polyhedron is unbounded,
+        then rays and lines and the extra argument ``nr_lines`` are required
+        if the polyhedron contains no lines, the rays can be thought of
+        as the vertices of the facets deleted from a bounded polyhedron see
+        :class:`~sage.geometry.polyhedron.parent.Polyhedron_base` on how to use
+        rays and lines
+      * or an integer, representing the dimension of a polyhedron equal to its
+        affine hull
+      * or a tuple consisting of facets and vertices as two
+        :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces`.
+
     - ``Vrep`` -- (optional) when ``data`` is an incidence matrix, it should
       be the list of ``[vertices, rays, lines]``, if the rows in the incidence_matrix
       should correspond to names
+
     - ``facets`` -- (optional) when ``data`` is an incidence matrix or a list of facets,
       it should be a list of facets that would be used instead of indices (of the columns
       of the incidence matrix).
+
     - ``unbounded`` -- value will be overwritten if ``data`` is a polyhedron;
       if ``unbounded`` and ``data`` is incidence matrix or a list of facets,
       need to specify ``far_face``
+
     - ``far_face`` -- (semi-optional); if the polyhedron is unbounded this
       needs to be set to the list of indices of the rays and line unless ``data`` is
       an instance of :class:`~sage.geometry.polyhedron.parent.Polyhedron_base`.
@@ -159,7 +164,7 @@ cdef class CombinatorialPolyhedron(SageObject):
     a lattice polytope::
 
         sage: points = [(1,0,0), (0,1,0), (0,0,1),
-        ....: (-1,0,0), (0,-1,0), (0,0,-1)]
+        ....:           (-1,0,0), (0,-1,0), (0,0,-1)]
         sage: L = LatticePolytope(points)
         sage: CombinatorialPolyhedron(L)
         A 3-dimensional combinatorial polyhedron with 8 facets
@@ -186,10 +191,10 @@ cdef class CombinatorialPolyhedron(SageObject):
 
     a list of facets::
 
-        sage: CombinatorialPolyhedron(((1,2,3),(1,2,4),(1,3,4),(2,3,4)))
+        sage: CombinatorialPolyhedron(((1,2,3), (1,2,4), (1,3,4), (2,3,4)))
         A 3-dimensional combinatorial polyhedron with 4 facets
         sage: facetnames = ['facet0', 'facet1', 'facet2', 'myfacet3']
-        sage: facetinc = ((1,2,3),(1,2,4),(1,3,4),(2,3,4))
+        sage: facetinc = ((1,2,3), (1,2,4), (1,3,4), (2,3,4))
         sage: C = CombinatorialPolyhedron(facetinc, facets=facetnames)
         sage: C.Vrepresentation()
         (1, 2, 3, 4)
@@ -991,10 +996,13 @@ cdef class CombinatorialPolyhedron(SageObject):
         r"""
         Return the facets as lists of ``[vertices, rays, lines]``.
 
-        If ``names`` is ``False``, then the Vrepresentatives in the facets
-        are given by their indices in the Vrepresentation.
-
         The facets are the maximal nontrivial faces.
+
+        INPUT:
+
+        - ``names`` -- boolean (default: ``True``); if ``False``, then the
+          Vrepresentatives in the facets are given by their indices in the
+          Vrepresentation.
 
         EXAMPLES::
 
@@ -1062,9 +1070,19 @@ cdef class CombinatorialPolyhedron(SageObject):
         return tuple(facets)
 
     @cached_method
-    def incidence_matrix(self):
+    def incidence_matrix(self, names=False, **kwds):
         """
         Return the incidence matrix.
+
+        INPUT:
+
+        - ``names`` -- boolean (default: ``False``); if ``True``, construct
+          a morphism of free modules instead of a matrix,
+          where the codomain's basis is indexed by the vertices/rays/lines
+          and the domain's basis is indexed by the inequalities/equations.
+
+        - ``**kwds`` -- other keywords to pass to
+          :func:`~sage.matrix.constructor.matrix`.
 
         .. NOTE::
 
@@ -1121,6 +1139,25 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: P.combinatorial_polyhedron().incidence_matrix()
             [1 1]
 
+        Constructing a free module morphism::
+
+            sage: facetinc = ((1,2,3), (1,2,4), (1,3,4), (2,3,4))
+            sage: C = CombinatorialPolyhedron(facetinc, facets=['F1', 'F2', 'F3', 'F4'])
+            sage: C.Vrepresentation()
+            (1, 2, 3, 4)
+            sage: C.Hrepresentation()
+            ('F1', 'F2', 'F3', 'F4')
+            sage: phi_HV = C.incidence_matrix(names=True); phi_HV
+            Generic morphism:
+              From: Free module generated by {1, 2, 3, 4} over Integer Ring
+              To:   Free module generated by {'F1', 'F2', 'F3', 'F4'} over Integer Ring
+            sage: print(phi_HV._unicode_art_matrix())
+               1 2 3 4
+            F1⎛1 1 1 0⎞
+            F2⎜1 1 0 1⎟
+            F3⎜1 0 1 1⎟
+            F4⎝0 1 1 1⎠
+
         TESTS:
 
         Check that :issue:`29455` is fixed::
@@ -1151,24 +1188,27 @@ cdef class CombinatorialPolyhedron(SageObject):
                 # To be consistent with ``Polyhedron_base``,
                 for i in range(self.n_Hrepresentation()):
                     incidence_matrix.set_unsafe_int(0, i, 1)
-            incidence_matrix.set_immutable()
-            return incidence_matrix
+        else:
+            # If equations are present, we add them as last columns.
+            n_facets = self.n_facets()
+            if self.facet_names() is not None:
+                n_equations = len(self.equations())
+                for Hindex in range(n_facets, n_facets + n_equations):
+                    for Vindex in range(self.n_Vrepresentation()):
+                        incidence_matrix.set_unsafe_int(Vindex, Hindex, 1)
 
-        # If equations are present, we add them as last columns.
-        n_facets = self.n_facets()
-        if self.facet_names() is not None:
-            n_equations = len(self.equations())
-            for Hindex in range(n_facets, n_facets + n_equations):
-                for Vindex in range(self.n_Vrepresentation()):
+            facet_iter = self.face_iter(self.dimension() - 1, algorithm='primal')
+            for facet in facet_iter:
+                Hindex = facet.ambient_H_indices()[0]
+                for Vindex in facet.ambient_V_indices():
                     incidence_matrix.set_unsafe_int(Vindex, Hindex, 1)
 
-        facet_iter = self.face_iter(self.dimension() - 1, algorithm='primal')
-        for facet in facet_iter:
-            Hindex = facet.ambient_H_indices()[0]
-            for Vindex in facet.ambient_V_indices():
-                incidence_matrix.set_unsafe_int(Vindex, Hindex, 1)
-
         incidence_matrix.set_immutable()
+
+        if names:
+            return matrix(incidence_matrix,
+                          row_keys=self.Hrepresentation(),
+                          column_keys=self.Vrepresentation())
 
         return incidence_matrix
 
@@ -1271,7 +1311,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         INPUT:
 
         - ``names`` -- boolean (default: ``True``); if ``False``,
-          then the nodes of the graph are labeld by the
+          then the nodes of the graph are labeled by the
           indices of the Vrepresentation
 
         - ``algorithm`` -- string (optional);
@@ -1305,9 +1345,11 @@ cdef class CombinatorialPolyhedron(SageObject):
     graph = vertex_graph
 
     @cached_method
-    def vertex_adjacency_matrix(self, algorithm=None):
+    def vertex_adjacency_matrix(self, algorithm=None, **kwds):
         """
         Return the binary matrix of vertex adjacencies.
+
+        By default, the matrix is a dense immutable matrix over the integers.
 
         INPUT:
 
@@ -1316,6 +1358,9 @@ cdef class CombinatorialPolyhedron(SageObject):
           * ``'primal'`` -- start with the facets
           * ``'dual'`` -- start with the vertices
           * ``None`` -- choose automatically
+
+        - ``**kwds`` -- other keywords to pass to
+          :func:`~sage.matrix.constructor.matrix`.
 
         .. SEEALSO::
 
@@ -1335,6 +1380,20 @@ cdef class CombinatorialPolyhedron(SageObject):
             [0 1 0 0 0 1 0 1]
             [0 0 1 0 1 0 1 0]
 
+        As a sparse matrix::
+
+            sage: P = polytopes.permutahedron(6, backend='field')                       # needs sage.combinat
+            sage: C = P.combinatorial_polyhedron()                                      # needs sage.combinat
+            sage: C.vertex_adjacency_matrix(sparse=True)                                # needs sage.combinat
+            720 x 720 sparse matrix over Integer Ring...
+
+        As a numpy matrix::
+
+            sage: C.vertex_adjacency_matrix(sparse=False, implementation='numpy')       # needs sage.combinat
+            720 x 720 dense matrix over Integer Ring...
+            sage: type(_)                                                               # needs sage.combinat
+            <class 'sage.matrix.matrix_numpy_integer_dense.Matrix_numpy_integer_dense'>
+
         TESTS::
 
             sage: CombinatorialPolyhedron(-1).vertex_adjacency_matrix()
@@ -1344,20 +1403,41 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: polytopes.cube().vertex_adjacency_matrix().is_immutable()
             True
         """
-        from sage.rings.integer_ring import ZZ
         from sage.matrix.constructor import matrix
-        cdef Matrix_dense adjacency_matrix = matrix(
-                ZZ, self.n_Vrepresentation(), self.n_Vrepresentation(), 0)
-        cdef size_t i, first, second
+        base_ring = kwds.pop('base_ring', None)
+        if base_ring is None:
+            from sage.rings.integer_ring import ZZ as base_ring
+        sparse = kwds.pop('sparse', False)
+        immutable = kwds.pop('immutable', True)
 
         self._compute_edges(self._algorithm_to_dual(algorithm))
-        for i in range(self._edges.length):
-            first = self._edges.get(i).first
-            second = self._edges.get(i).second
-            adjacency_matrix.set_unsafe_int(first, second, 1)
-            adjacency_matrix.set_unsafe_int(second, first, 1)
-        adjacency_matrix.set_immutable()
-        return adjacency_matrix
+
+        cdef size_t n, i, first, second
+        n = self.n_Vrepresentation()
+
+        cdef Matrix adjacency_matrix_sparse
+        cdef Matrix_dense adjacency_matrix
+
+        if sparse:
+            adjacency_matrix_sparse = matrix(base_ring, n, n, 0, sparse=True, **kwds)
+            for i in range(self._edges.length):
+                first = self._edges.get(i).first
+                second = self._edges.get(i).second
+                adjacency_matrix_sparse.set_unsafe(first, second, 1)
+                adjacency_matrix_sparse.set_unsafe(second, first, 1)
+            if immutable:
+                adjacency_matrix_sparse.set_immutable()
+            return adjacency_matrix_sparse
+        else:
+            adjacency_matrix = matrix(base_ring, n, n, 0, **kwds)
+            for i in range(self._edges.length):
+                first = self._edges.get(i).first
+                second = self._edges.get(i).second
+                adjacency_matrix.set_unsafe_int(first, second, 1)
+                adjacency_matrix.set_unsafe_int(second, first, 1)
+            if immutable:
+                adjacency_matrix.set_immutable()
+            return adjacency_matrix
 
     def ridges(self, add_equations=False, names=True, algorithm=None):
         r"""
