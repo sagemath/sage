@@ -10,7 +10,7 @@ cdef extern from 'symmetrica/def.h':
 
 def dimension_symmetrization_symmetrica(n, part):
     """
-    computes the dimension of the degree of a irreducible
+    Compute the dimension of the degree of a irreducible
     representation of the GL_n, n is a INTEGER object, labeled
     by the PARTITION object a.
     """

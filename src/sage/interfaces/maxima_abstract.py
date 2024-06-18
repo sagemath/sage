@@ -719,7 +719,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         - ``trange`` -- [tmin, tmax] are numbers with tmintmax
 
-        - ``nticks`` -- int (default: 50)
+        - ``nticks`` -- integer (default: 50)
 
         - ``options`` -- an optional string representing plot2d
           options in gnuplot format

@@ -1662,7 +1662,7 @@ cdef number *sa2si(Element elem, ring * _ring) noexcept:
 
 cdef object si2sa_intvec(intvec *v):
     r"""
-    create a sage tuple from a singular vector of integers.
+    Create a sage tuple from a singular vector of integers.
 
     INPUT:
 
@@ -1680,7 +1680,7 @@ cdef object si2sa_intvec(intvec *v):
 
 cdef object si2sa_bigintvec(bigintmat *v):
     r"""
-    create a sage tuple from a singular vector of big integers.
+    Create a sage tuple from a singular vector of big integers.
 
     INPUT:
 

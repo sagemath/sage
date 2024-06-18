@@ -3553,7 +3553,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
 
     def __call__(self, *args, **keywords):
         r"""
-        Allows for a poset to be directly transformed into an interval-poset.
+        Allow for a poset to be directly transformed into an interval-poset.
 
         It is some kind of coercion but cannot be made through the coercion
         system because posets do not have parents.

@@ -132,7 +132,7 @@ cdef class MatroidSum(Matroid):
 
     INPUT:
 
-    - ``matroids`` -- a iterator of matroids.
+    - ``matroids`` -- iterator of matroids
 
     OUTPUT:
 
@@ -238,7 +238,7 @@ cdef class PartitionMatroid(Matroid):
 
     INPUT:
 
-    - ``partition`` -- an iterator of disjoint sets.
+    - ``partition`` -- iterator of disjoint sets
 
     OUTPUT:
 

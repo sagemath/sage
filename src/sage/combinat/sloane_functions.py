@@ -6978,8 +6978,8 @@ class A001836(SloaneSequence):
 # a group of sequences uses this function:
 def recur_gen2(a0, a1, a2, a3):
     r"""
-    homogeneous general second-order linear recurrence generator with
-    fixed coefficients
+    Homogeneous general second-order linear recurrence generator with
+    fixed coefficients.
 
     a(0) = a0, a(1) = a1, a(n) = a2\*a(n-1) + a3\*a(n-2)
 
@@ -7875,7 +7875,7 @@ class A061084(SloaneSequence):
 # a group of sequences uses this function:
 def recur_gen3(a0, a1, a2, a3, a4, a5):
     r"""
-    homogeneous general third-order linear recurrence generator with
+    Homogeneous general third-order linear recurrence generator with
     fixed coefficients
 
     a(0) = a0, a(1) = a1, a(2) = a2, a(n) = a3\*a(n-1) + a4\*a(n-2) +
@@ -8095,7 +8095,7 @@ def perm_mh(m, h):
 
 class A079922(SloaneSequence):
     r"""
-    function returns solutions to the Dancing School problem with
+    Function returns solutions to the Dancing School problem with
     `n` girls and `n+3` boys.
 
     The value is `per(B)`, the permanent of the (0,1)-matrix
@@ -8162,7 +8162,7 @@ class A079922(SloaneSequence):
 
 class A079923(SloaneSequence):
     r"""
-    function returns solutions to the Dancing School problem with
+    Function returns solutions to the Dancing School problem with
     `n` girls and `n+4` boys.
 
     The value is `per(B)`, the permanent of the (0,1)-matrix

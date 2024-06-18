@@ -855,8 +855,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
         - ``test`` -- an instance of :class:`doctest.DocTest`
 
-        - ``compileflags`` -- int (default: 0) the set of compiler flags used to
-          execute examples (passed in to the :func:`compile`)
+        - ``compileflags`` -- integer (default: 0) the set of compiler flags
+          used to execute examples (passed in to the :func:`compile`)
 
         - ``out`` -- a function for writing the output (defaults to
           :func:`sys.stdout.write`)

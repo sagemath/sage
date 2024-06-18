@@ -51,11 +51,10 @@ cdef class CutNode:
     hyperplanes and closing the set to become a linear subclass again, and for
     adding a hyperplane to the set of *forbidden* hyperplanes, and similarly
     closing that set.
-
     """
     def __cinit__(self, MC, N=None):
         """
-        Internal data structure init
+        Internal data structure init.
 
         EXAMPLES::
 
@@ -187,7 +186,7 @@ cdef class LinearSubclassesIter:
 
         INPUT:
 
-        - ``MC`` -- a member of class LinearSubclasses.
+        - ``MC`` -- a member of class LinearSubclasses
 
         EXAMPLES::
 
@@ -258,13 +257,13 @@ cdef class LinearSubclasses:
 
     INPUT:
 
-    - ``M`` -- a matroid.
-    - ``line_length`` -- (default: ``None``) an integer.
+    - ``M`` -- matroid
+    - ``line_length`` -- integer (default: ``None``)
     - ``subsets`` -- (default: ``None``) a set of subsets of the groundset of
-      ``M``.
+      ``M``
     - ``splice`` -- (default: ``None``) a matroid `N` such that for some
       `e \in E(N)` and some `f \in E(M)`, we have
-      `N\setminus e= M\setminus f`.
+      `N\setminus e= M\setminus f`
 
     OUTPUT: an enumerator for the linear subclasses of M
 
@@ -414,13 +413,13 @@ cdef class MatroidExtensions(LinearSubclasses):
 
     INPUT:
 
-    - ``M`` -- a matroid
+    - ``M`` -- matroid
     - ``e`` -- an element
-    - ``line_length`` (default: ``None``) -- an integer
-    - ``subsets`` (default: ``None``) -- a set of subsets of the groundset of
+    - ``line_length`` -- integer (default: ``None``)
+    - ``subsets`` -- (default: ``None``) a set of subsets of the groundset of
       ``M``
     - ``splice`` -- a matroid `N` such that for some `f \in E(M)`, we have
-      `N\setminus e= M\setminus f`.
+      `N\setminus e= M\setminus f`
 
     OUTPUT:
 

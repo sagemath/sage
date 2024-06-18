@@ -20841,7 +20841,7 @@ class GenericGraph(GenericGraph_pyx):
 
         def slide(v, dx):
             """
-            shift the vertex ``v`` and its descendants to the right by ``dx``.
+            Shift the vertex ``v`` and its descendants to the right by ``dx``.
 
             Precondition: ``v`` and its descendants have already had their
             positions computed.

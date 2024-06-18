@@ -421,8 +421,8 @@ class CompositeConstructionFunctor(ConstructionFunctor):
 
     INPUT:
 
-    ``F1, F2,...`` -- A list of Construction Functors. The result is the
-    composition ``F1`` followed by ``F2`` followed by ...
+    - ``F1, F2,...`` -- a list of Construction Functors. The result is the
+      composition ``F1`` followed by ``F2`` followed by ...
 
     EXAMPLES::
 
@@ -2185,7 +2185,7 @@ class SubspaceFunctor(ConstructionFunctor):
         """
         INPUT:
 
-        ``basis`` -- list of elements of a free module.
+        - ``basis`` -- list of elements of a free module
 
         TESTS::
 

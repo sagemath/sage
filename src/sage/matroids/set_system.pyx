@@ -288,13 +288,13 @@ cdef class SetSystem:
 
     cdef inline _subset(self, long k):
         """
-        Return the k-th subset, in index format.
+        Return the `k`-th subset, in index format.
         """
         return bitset_list(self._subsets[k])
 
     cdef subset(self, k):
         """
-        Return the k-th subset.
+        Return the `k`-th subset.
         """
         cdef long i
         F = set()
@@ -523,11 +523,11 @@ cdef class SetSystem:
 
         OUTPUT:
 
-        - ``P``, an equitable ordered partition of the groundset, stored as a
-          SetSystem.
-        - ``EP``, the corresponding equitable partition of the edges, stored
-          as a list of lists of indices of subsets of this SetSystem.
-        - ``h``, an integer invariant of the SetSystem.
+        - ``P`` -- an equitable ordered partition of the groundset, stored as a
+          SetSystem
+        - ``EP`` -- the corresponding equitable partition of the edges, stored
+          as a list of lists of indices of subsets of this SetSystem
+        - ``h`` -- integer invariant of the SetSystem
 
         EXAMPLES::
 
@@ -633,15 +633,15 @@ cdef class SetSystem:
 
         INPUT:
 
-        - ``other`` -- a SetSystem
-        - ``SP`` (optional) -- a SetSystem storing an ordered partition of the
+        - ``other`` -- SetSystem
+        - ``SP`` -- (optional) SetSystem storing an ordered partition of the
           groundset of ``self``
-        - ``OP`` (optional) -- a SetSystem storing an ordered partition of the
+        - ``OP`` -- (optional) SetSystem storing an ordered partition of the
           groundset of ``other``
 
         OUTPUT:
 
-        ``morphism`` -- a dictionary containing an isomorphism respecting the
+        ``morphism`` -- dictionary containing an isomorphism respecting the
         given ordered partitions, or ``None`` if no such isomorphism exists.
 
         EXAMPLES::
@@ -696,10 +696,10 @@ cdef class SetSystem:
 
         - ``is_equiv`` -- a function that determines if a given groundset
           isomorphism is a valid equivalence
-        - ``other`` -- a SetSystem
-        - ``SP`` (optional) -- a SetSystem storing an ordered partition of the
+        - ``other`` -- SetSystem
+        - ``SP`` -- (optional) SetSystem storing an ordered partition of the
           groundset of ``self``
-        - ``OP`` (optional) -- a SetSystem storing an ordered partition of the
+        - ``OP`` -- (optional) SetSystem storing an ordered partition of the
           groundset of ``other``
 
         OUTPUT:

@@ -856,10 +856,10 @@ class ManifoldSubset(UniqueRepresentation, Parent):
 
         - ``loops`` -- boolean (default: ``False``); whether to include the trivial containment
           of each subset in itself as loops of the digraph
-        - ``quotient`` -- boolean (default: ``False``); whether to contract directed cycles in the graph,
-          replacing equivalence classes of equal subsets by a single vertex.
-           In this case, each vertex of the digraph is a set of :class:`ManifoldSubset`
-           instances.
+        - ``quotient`` -- boolean (default: ``False``); whether to contract directed
+          cycles in the graph, replacing equivalence classes of equal subsets by a
+          single vertex. In this case, each vertex of the digraph is a set of
+          :class:`ManifoldSubset` instances.
         - ``open_covers`` -- boolean (default: ``False``); whether to include vertices for open covers
         - ``points`` -- boolean (default: ``False``); whether to include vertices for declared points;
           this can also be an iterable for the points to include
@@ -1194,10 +1194,10 @@ class ManifoldSubset(UniqueRepresentation, Parent):
 
         - ``loops`` -- boolean (default: ``False``); whether to include the trivial containment
           of each subset in itself as loops of the digraph
-        - ``quotient`` -- boolean (default: ``False``); whether to contract directed cycles in the graph,
-          replacing equivalence classes of equal subsets by a single vertex.
-           In this case, each vertex of the digraph is a set of :class:`ManifoldSubset`
-           instances.
+        - ``quotient`` -- boolean (default: ``False``); whether to contract
+          directed cycles in the graph, replacing equivalence classes of equal
+          subsets by a single vertex. In this case, each vertex of the digraph
+          is a set of :class:`ManifoldSubset` instances.
         - ``open_covers`` -- boolean (default: ``False``); whether to include vertices for open covers
         - ``points`` -- boolean (default: ``False``); whether to include vertices for declared points;
           this can also be an iterable for the points to include

@@ -415,7 +415,7 @@ class Function_ceil(BuiltinFunction):
     #FIXME: this should be moved to _eval_
     def __call__(self, x, **kwds):
         """
-        Allows an object of this class to behave like a function. If
+        Allow an object of this class to behave like a function. If
         ``ceil`` is an instance of this class, we can do ``ceil(n)`` to get
         the ceiling of ``n``.
 
@@ -583,7 +583,7 @@ class Function_floor(BuiltinFunction):
     #FIXME: this should be moved to _eval_
     def __call__(self, x, **kwds):
         """
-        Allows an object of this class to behave like a function. If
+        Allow an object of this class to behave like a function. If
         ``floor`` is an instance of this class, we can do ``floor(n)`` to
         obtain the floor of ``n``.
 

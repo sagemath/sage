@@ -1277,7 +1277,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         """
         def coprod_list(t):
             """
-            if t = (n0, n1, ...), then return list of terms (i0, i1,
+            If t = (n0, n1, ...), then return list of terms (i0, i1,
             ...) where ik <= nk for each k.  From each such term, can
             recover the second factor in the coproduct.
             """

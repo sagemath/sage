@@ -522,7 +522,7 @@ cdef class ntl_mat_GF2():
 
     def IsIdent(self, n = -1):
         """
-        test if this matrix is the n x n identity matrix.
+        Test if this matrix is the n x n identity matrix.
 
         EXAMPLES::
 
@@ -542,7 +542,7 @@ cdef class ntl_mat_GF2():
 
     def IsDiag(self, long n, ntl_GF2 d):
         """
-        test if X is an  n x n diagonal matrix with d on diagonal.
+        Test if X is an  n x n diagonal matrix with d on diagonal.
 
         EXAMPLES::
 

@@ -66,9 +66,9 @@ class RankMatroid(Matroid):
 
     INPUT:
 
-    - ``groundset`` -- the groundset of a matroid.
+    - ``groundset`` -- the groundset of a matroid
     - ``rank_function`` -- a function mapping subsets of ``groundset`` to
-      nonnegative integers.
+      nonnegative integers
 
     OUTPUT: a matroid on ``groundset`` whose rank function equals ``rank_function``
 
@@ -82,7 +82,6 @@ class RankMatroid(Matroid):
         True
         sage: M.is_isomorphic(matroids.Uniform(3, 6))
         True
-
     """
     def __init__(self, groundset, rank_function):
         """
@@ -169,7 +168,7 @@ class RankMatroid(Matroid):
 
         INPUT:
 
-        - ``other`` -- A matroid.
+        - ``other`` -- matroid
 
         OUTPUT:
 
@@ -210,7 +209,7 @@ class RankMatroid(Matroid):
 
         INPUT:
 
-        - ``other`` -- A matroid.
+        - ``other`` -- matroid
 
         OUTPUT:
 

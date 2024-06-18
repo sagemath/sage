@@ -644,7 +644,7 @@ def ForgetfulFunctor(domain, codomain):
 
     INPUT:
 
-    ``C``, ``D`` -- two categories
+    - ``C``, ``D`` -- two categories
 
     OUTPUT:
 

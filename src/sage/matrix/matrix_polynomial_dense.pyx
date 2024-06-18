@@ -110,11 +110,11 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        - ``shifts`` -- list of integers, or ``None``.
+        - ``shifts`` -- list of integers, or ``None``
 
-        - ``row_wise`` -- (default: ``True``) boolean, if ``True``
+        - ``row_wise`` -- boolean (default: ``True``); if ``True``
           then shifts apply to the columns of the matrix and otherwise to its
-          rows (see the class description for more details).
+          rows (see the class description for more details)
 
         EXAMPLES::
 
@@ -188,13 +188,13 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         INPUT:
 
         - ``shifts`` -- (default: ``None``) list of integers;
-          ``None`` is interpreted as ``shifts=[0,...,0]``.
+          ``None`` is interpreted as ``shifts=[0,...,0]``
 
-        - ``row_wise`` -- (default: ``True``) boolean, if ``True``
+        - ``row_wise`` -- boolean (default: ``True``); if ``True``
           then shifts apply to the columns of the matrix and otherwise to its
-          rows (see the class description for more details).
+          rows (see the class description for more details)
 
-        OUTPUT: an integer matrix
+        OUTPUT: integer matrix
 
         EXAMPLES::
 
@@ -307,11 +307,11 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        - ``d`` -- a list of integers, or an integer,
+        - ``d`` -- list of integers, or an integer,
 
-        - ``row_wise`` -- (default: ``True``) boolean, if ``True``
+        - ``row_wise`` -- boolean (default: ``True``); if ``True``
           (resp. ``False``) then `d` should be a list of length equal to the
-          row (resp. column) dimension of this matrix.
+          row (resp. column) dimension of this matrix
 
         OUTPUT: a matrix over the base field
 
@@ -403,11 +403,11 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        - ``d`` -- a list of integers, or an integer,
+        - ``d`` -- list of integers, or an integer,
 
-        - ``row_wise`` -- (default: ``True``) boolean, if ``True``
+        - ``row_wise`` -- boolean (default: ``True``); if ``True``
           (resp. ``False``) then `d` should be a list of length equal to the
-          row (resp. column) dimension of this matrix.
+          row (resp. column) dimension of this matrix
 
         OUTPUT: a polynomial matrix
 
@@ -494,11 +494,11 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        - ``d`` -- a list of integers, or an integer,
+        - ``d`` -- list of integers, or an integer,
 
-        - ``row_wise`` -- (default: ``True``) boolean, if ``True``
+        - ``row_wise`` -- boolean (default: ``True``); if ``True``
           (resp. ``False``) then `d` should be a list of length equal to the
-          row (resp. column) dimension of this matrix.
+          row (resp. column) dimension of this matrix
 
         OUTPUT: a polynomial matrix
 
@@ -599,14 +599,14 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         INPUT:
 
         - ``degree`` -- (default: ``None``) a list of nonnegative
-          integers, or a nonnegative integer,
+          integers, or a nonnegative integer
 
-        - ``row_wise`` -- (default: ``True``) boolean, if ``True``
+        - ``row_wise`` -- boolean (default: ``True``); if ``True``
           (resp. ``False``) then ``degree`` should be a list of length equal to
-          the row (resp. column) dimension of this matrix.
+          the row (resp. column) dimension of this matrix
 
-        - ``entry_wise`` -- (default: ``False``) boolean, if ``True``
-          then the input ``degree`` and ``row_wise`` are ignored.
+        - ``entry_wise`` -- boolean (default: ``False``); if ``True``
+          then the input ``degree`` and ``row_wise`` are ignored
 
         OUTPUT: a polynomial matrix
 
@@ -680,7 +680,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: M.reverse([2,3,-1])
             Traceback (most recent call last):
             ...
-            ValueError: degree argument must be a non-negative integer, got -1
+            ValueError: degree argument must be a nonnegative integer, got -1
 
         .. SEEALSO::
 
@@ -822,9 +822,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        - ``B`` -- a polynomial matrix or polynomial vector.
+        - ``B`` -- a polynomial matrix or polynomial vector
 
-        - ``d`` -- a positive integer.
+        - ``d`` -- positive integer
 
         OUTPUT:
 
@@ -970,9 +970,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        - ``B`` -- a polynomial matrix or polynomial vector.
+        - ``B`` -- a polynomial matrix or polynomial vector
 
-        - ``d`` -- a positive integer.
+        - ``d`` -- positive integer
 
         OUTPUT:
 
@@ -1085,9 +1085,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         INPUT:
 
         - ``shifts`` -- (default: ``None``) list of integers;
-          ``None`` is interpreted as ``shifts=[0,...,0]``.
+          ``None`` is interpreted as ``shifts=[0,...,0]``
 
-        OUTPUT: a list of integers
+        OUTPUT: list of integers
 
         REFERENCES:
 
@@ -1160,9 +1160,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         INPUT:
 
         - ``shifts`` -- (default: ``None``) list of integers;
-          ``None`` is interpreted as ``shifts=[0,...,0]``.
+          ``None`` is interpreted as ``shifts=[0,...,0]``
 
-        OUTPUT: a list of integers
+        OUTPUT: list of integers
 
         EXAMPLES::
 
@@ -1234,10 +1234,10 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         INPUT:
 
         - ``shifts`` -- (default: ``None``) list of integers;
-          ``None`` is interpreted as ``shifts=[0,...,0]``.
+          ``None`` is interpreted as ``shifts=[0,...,0]``
 
-        - ``row_wise`` -- (default: ``True``) boolean, ``True`` if
-          working row-wise (see the class description).
+        - ``row_wise`` -- boolean (default: ``True``); ``True`` if
+          working row-wise (see the class description)
 
         OUTPUT: a matrix over the base field
 
@@ -1311,12 +1311,12 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        - ``row_wise`` -- (default: ``True``) boolean, ``True`` if
-          one considers the row-wise shifted Popov form.
+        - ``row_wise`` -- boolean (default: ``True``); ``True`` if
+          one considers the row-wise shifted Popov form
 
-        - ``include_zero_vectors`` -- (default: ``True``) boolean,
+        - ``include_zero_vectors`` -- boolean (default: ``True``);
           ``False`` if one does not allow zero rows in row reduced forms (resp.
-          zero columns in column reduced forms).
+          zero columns in column reduced forms)
 
         OUTPUT: boolean
 
@@ -1376,14 +1376,14 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         INPUT:
 
         - ``shifts`` -- (default: ``None``) list of integers;
-          ``None`` is interpreted as ``shifts=[0,...,0]``.
+          ``None`` is interpreted as ``shifts=[0,...,0]``
 
-        - ``row_wise`` -- (default: ``True``) boolean, ``True`` if
-          working row-wise (see the class description).
+        - ``row_wise`` -- boolean (default: ``True``); ``True`` if
+          working row-wise (see the class description)
 
-        - ``include_zero_vectors`` -- (default: ``True``) boolean,
+        - ``include_zero_vectors`` -- boolean (default: ``True``);
           ``False`` if one does not allow zero rows in row reduced forms (resp.
-          zero columns in column reduced forms).
+          zero columns in column reduced forms)
 
         OUTPUT: a boolean value
 
@@ -1456,16 +1456,16 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         INPUT:
 
         - ``shifts`` -- (default: ``None``) list of integers;
-          ``None`` is interpreted as ``shifts=[0,...,0]``.
+          ``None`` is interpreted as ``shifts=[0,...,0]``
 
-        - ``row_wise`` -- (default: ``True``) boolean, ``True`` if
-          working row-wise (see the class description).
+        - ``row_wise`` -- boolean (default: ``True``); ``True`` if
+          working row-wise (see the class description)
 
-        - ``return_degree`` -- (default: ``False``) boolean, ``True``
-          implies that the pivot degrees are returned.
+        - ``return_degree`` -- boolean (default: ``False``); ``True``
+          implies that the pivot degrees are returned
 
-        OUTPUT: a list of integers if ``return_degree=False``; a pair of lists
-        of integers otherwise.
+        OUTPUT: list of integers if ``return_degree=False``; a pair of lists
+        of integers otherwise
 
         REFERENCES:
 
@@ -1584,17 +1584,17 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         INPUT:
 
         - ``shifts`` -- (default: ``None``) list of integers;
-          ``None`` is interpreted as ``shifts=[0,...,0]``.
+          ``None`` is interpreted as ``shifts=[0,...,0]``
 
-        - ``row_wise`` -- (default: ``True``) boolean, ``True`` if
-          working row-wise (see the class description).
+        - ``row_wise`` -- boolean (default: ``True``); ``True`` if
+          working row-wise (see the class description)
 
-        - ``ordered`` -- (default: ``False``) boolean, ``True`` if
-          checking for an ordered weak Popov form.
+        - ``ordered`` -- boolean (default: ``False``); ``True`` if
+          checking for an ordered weak Popov form
 
-        - ``include_zero_vectors`` -- (default: ``True``) boolean,
+        - ``include_zero_vectors`` -- boolean (default: ``True``);
           ``False`` if one does not allow zero rows (resp. zero columns) in
-          (ordered) weak Popov forms.
+          (ordered) weak Popov forms
 
         OUTPUT: boolean
 
@@ -1723,18 +1723,18 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         INPUT:
 
         - ``shifts`` -- (default: ``None``) list of integers;
-          ``None`` is interpreted as ``shifts=[0,...,0]``.
+          ``None`` is interpreted as ``shifts=[0,...,0]``
 
-        - ``row_wise`` -- (default: ``True``) boolean, ``True`` if
-          working row-wise (see the class description).
+        - ``row_wise`` -- boolean (default: ``True``); ``True`` if
+          working row-wise (see the class description)
 
         - ``up_to_permutation`` -- (option, default: ``False``) boolean,
           ``True`` if testing Popov form up to row permutation (if working
           row-wise).
 
-        - ``include_zero_vectors`` -- (default: ``True``) boolean,
+        - ``include_zero_vectors`` -- boolean (default: ``True``);
           ``False`` if one does not allow zero rows (resp. zero columns) in
-          Popov forms.
+          Popov forms
 
         OUTPUT: boolean
 
@@ -1868,16 +1868,16 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        - ``row_wise`` -- (default: ``True``) boolean, ``True`` if
-          working row-wise (see the class description).
+        - ``row_wise`` -- boolean (default: ``True``); ``True`` if
+          working row-wise (see the class description)
 
-        - ``lower_echelon`` -- (default: ``False``) boolean,
+        - ``lower_echelon`` -- boolean (default: ``False``);
           ``False`` if working with upper triangular Hermite forms, ``True`` if
           working with lower triangular Hermite forms.
 
-        - ``include_zero_vectors`` -- (default: ``True``) boolean,
+        - ``include_zero_vectors`` -- boolean (default: ``True``);
           ``False`` if one does not allow zero rows (resp. zero columns) in
-          Hermite forms.
+          Hermite forms
 
         OUTPUT: boolean
 
@@ -1968,28 +1968,28 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        - ``transformation`` -- (default: ``False``). If this
-          is ``True``, the transformation matrix `U` will be returned as well.
+        - ``transformation`` -- (default: ``False``) if this
+          is ``True``, the transformation matrix `U` will be returned as well
 
         - ``shifts`` -- (default: ``None``) list of integers;
-          ``None`` is interpreted as ``shifts=[0,...,0]``.
+          ``None`` is interpreted as ``shifts=[0,...,0]``
 
-        - ``row_wise`` -- (default: ``True``) boolean, ``True`` if
-          working row-wise (see the class description).
+        - ``row_wise`` -- boolean (default: ``True``); ``True`` if
+          working row-wise (see the class description)
 
-        - ``ordered`` -- (default: ``False``) boolean, ``True`` if
-          seeking an ordered weak Popov form.
+        - ``ordered`` -- boolean (default: ``False``); ``True`` if
+          seeking an ordered weak Popov form
 
-        - ``include_zero_vectors`` -- (default: ``True``) boolean,
+        - ``include_zero_vectors`` -- boolean (default: ``True``);
           ``False`` if zero rows (resp. zero columns) should be discarded from
-          the (ordered) weak Popov forms.
+          the (ordered) weak Popov forms
 
         OUTPUT:
 
-        - A polynomial matrix which is a weak Popov form of ``self`` if
-          ``transformation`` is ``False``; otherwise two polynomial matrices
-          which are a weak Popov form of ``self`` and the corresponding
-          unimodular transformation.
+        A polynomial matrix which is a weak Popov form of ``self`` if
+        ``transformation`` is ``False``; otherwise two polynomial matrices
+        which are a weak Popov form of ``self`` and the corresponding
+        unimodular transformation.
 
         ALGORITHM:
 
@@ -2255,18 +2255,18 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        - ``transformation`` -- (default: ``False``). If this
-          is ``True``, the transformation matrix `U` will be returned as well.
+        - ``transformation`` -- (default: ``False``) if this
+          is ``True``, the transformation matrix `U` will be returned as well
 
         - ``shifts`` -- (default: ``None``) list of integers;
-          ``None`` is interpreted as ``shifts=[0,...,0]``.
+          ``None`` is interpreted as ``shifts=[0,...,0]``
 
-        - ``row_wise`` -- (default: ``True``) boolean, ``True`` if
-          working row-wise (see the class description).
+        - ``row_wise`` -- boolean (default: ``True``); ``True`` if
+          working row-wise (see the class description)
 
-        - ``include_zero_vectors`` -- (default: ``True``) boolean,
+        - ``include_zero_vectors`` -- boolean (default: ``True``);
           ``False`` if zero rows (resp. zero columns) should be discarded from
-          the Popov forms.
+          the Popov forms
 
         OUTPUT:
 
@@ -2453,20 +2453,20 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        - ``transformation`` -- (default: ``False``). If this
+        - ``transformation`` -- (default: ``False``) if this
           is ``True``, the transformation matrix `U` will be returned as well:
           this is a unimodular matrix over `\Bold{K}[x]` such that ``self``
           equals `UR`, where `R` is the output matrix.
 
         - ``shifts`` -- (default: ``None``) list of integers;
-          ``None`` is interpreted as ``shifts=[0,...,0]``.
+          ``None`` is interpreted as ``shifts=[0,...,0]``
 
-        - ``row_wise`` -- (default: ``True``) boolean, ``True`` if
-          working row-wise (see the class description).
+        - ``row_wise`` -- boolean (default: ``True``); ``True`` if
+          working row-wise (see the class description)
 
-        - ``include_zero_vectors`` -- (default: ``True``) boolean,
+        - ``include_zero_vectors`` -- boolean (default: ``True``);
           ``False`` if one does not allow zero rows in row reduced forms (resp.
-          zero columns in column reduced forms).
+          zero columns in column reduced forms)
 
         OUTPUT:
 
@@ -2496,8 +2496,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: R2.is_reduced()
             False
 
-        If the matrix is an `n \times 1` matrix with at least one non-zero entry,
-        `R` has a single non-zero entry and that entry is a scalar multiple of
+        If the matrix is an `n \times 1` matrix with at least one nonzero entry,
+        `R` has a single nonzero entry and that entry is a scalar multiple of
         the greatest-common-divisor of the entries of the matrix::
 
             sage: A = matrix([[x*(x-1)*(x+1)], [x*(x-2)*(x+2)], [x]])
@@ -2574,10 +2574,10 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         INPUT:
 
         - ``include_zero_rows`` -- boolean (default: ``True``); if ``False``,
-          the zero rows in the output matrix are deleted.
+          the zero rows in the output matrix are deleted
 
         - ``transformation`` -- boolean (default: ``False``); if ``True``,
-          return the transformation matrix.
+          return the transformation matrix
 
         OUTPUT:
 
@@ -2937,7 +2937,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         """
         # Step 0: find parameter d  (delta in above reference)
         cdegA = self.column_degrees() # zero columns of A --> entries -1 in cdegA
-        cdeg = B.column_degrees()  # all non-negative since column reduced
+        cdeg = B.column_degrees()  # all nonnegative since column reduced
         d = max([cdegA[i]-cdeg[i]+1 for i in range(B.nrows())])
         if d<=0: # A already reduced modulo B, quotient is zero
             return (self.parent().zero().__copy__(), self)
@@ -3127,16 +3127,16 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        - ``B`` -- polynomial matrix.
+        - ``B`` -- polynomial matrix
 
         - ``shifts`` -- (default: ``None``) list of integers;
-          ``None`` is interpreted as ``shifts=[0,...,0]``.
+          ``None`` is interpreted as ``shifts=[0,...,0]``
 
-        - ``row_wise`` -- (default: ``True``) boolean, ``True`` if
-          working row-wise (see the class description).
+        - ``row_wise`` -- boolean (default: ``True``); ``True`` if
+          working row-wise (see the class description)
 
-        - ``return_quotient`` -- (default: ``False``). If this
-          is ``True``, the quotient will be returned as well.
+        - ``return_quotient`` -- (default: ``False``) if this
+          is ``True``, the quotient will be returned as well
 
         OUTPUT: a polynomial matrix if ``return_quotient=False``, two
         polynomial matrices otherwise.
@@ -3274,20 +3274,20 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        - ``pmat`` -- a polynomial matrix.
+        - ``pmat`` -- a polynomial matrix
 
-        - ``order`` -- a list of positive integers, or a positive integer.
+        - ``order`` -- list of positive integers, or a positive integer
 
         - ``shifts`` -- (default: ``None``) list of integers;
-          ``None`` is interpreted as ``shifts=[0,...,0]``.
+          ``None`` is interpreted as ``shifts=[0,...,0]``
 
-        - ``row_wise`` -- (default: ``True``) boolean, if ``True``
+        - ``row_wise`` -- boolean (default: ``True``); if ``True``
           then the basis considered row-wise and operates on the left of
-          ``pmat``; otherwise it is column-wise and operates on the right of
+          ``pmat``. Otherwise it is column-wise and operates on the right of
           ``pmat``.
 
-        - ``normal_form`` -- (default: ``False``) boolean, if
-          ``True`` then checks for a basis in ``shifts``-Popov form.
+        - ``normal_form`` -- boolean (default: ``False``); if
+          ``True`` then checks for a basis in ``shifts``-Popov form
 
         OUTPUT: boolean
 
@@ -3490,18 +3490,18 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        - ``order`` -- a list of positive integers, or a positive integer.
+        - ``order`` -- list of positive integers, or a positive integer
 
         - ``shifts`` -- (default: ``None``) list of integers;
-          ``None`` is interpreted as ``shifts=[0,...,0]``.
+          ``None`` is interpreted as ``shifts=[0,...,0]``
 
-        - ``row_wise`` -- (default: ``True``) boolean, if ``True``
+        - ``row_wise`` -- boolean (default: ``True``); if ``True``
           then the output basis is considered row-wise and operates on the left
-          of ``self``; otherwise it is column-wise and operates on the right
+          of ``self``. Otherwise it is column-wise and operates on the right
           of ``self``.
 
-        - ``normal_form`` -- (default: ``False``) boolean, if
-          ``True`` then the output basis is in ``shifts``-Popov form.
+        - ``normal_form`` -- boolean (default: ``False``); if
+          ``True`` then the output basis is in ``shifts``-Popov form
 
         OUTPUT: a polynomial matrix
 
@@ -3649,9 +3649,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        - ``order`` -- a list of positive integers.
+        - ``order`` -- list of positive integers
 
-        - ``shifts`` -- a list of integers.
+        - ``shifts`` -- list of integers
 
         OUTPUT:
 
@@ -3793,18 +3793,18 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        - ``pmat`` -- a polynomial matrix.
+        - ``pmat`` -- a polynomial matrix
 
         - ``shifts`` -- (default: ``None``) list of integers;
-          ``None`` is interpreted as ``shifts=[0,...,0]``.
+          ``None`` is interpreted as ``shifts=[0,...,0]``
 
-        - ``row_wise`` -- (default: ``True``) boolean, if ``True``
+        - ``row_wise`` -- boolean (default: ``True``); if ``True``
           then the basis is considered row-wise and operates on the left of
-          ``pmat``; otherwise it is column-wise and operates on the right of
+          ``pmat``. Otherwise it is column-wise and operates on the right of
           ``pmat``.
 
-        - ``normal_form`` -- (default: ``False``) boolean, if
-          ``True`` then checks for a basis in ``shifts``-Popov form.
+        - ``normal_form`` -- boolean (default: ``False``); if
+          ``True`` then checks for a basis in ``shifts``-Popov form
 
         OUTPUT: boolean
 
@@ -3923,15 +3923,15 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         INPUT:
 
         - ``shifts`` -- (default: ``None``) list of integers;
-          ``None`` is interpreted as ``shifts=[0,...,0]``.
+          ``None`` is interpreted as ``shifts=[0,...,0]``
 
-        - ``row_wise`` -- (default: ``True``) boolean, if ``True``
+        - ``row_wise`` -- boolean (default: ``True``); if ``True``
           then the output basis considered row-wise and operates on the left
-          of ``self``; otherwise it is column-wise and operates on the right
+          of ``self``. Otherwise it is column-wise and operates on the right
           of ``self``.
 
-        - ``normal_form`` -- (default: ``False``) boolean, if
-          ``True`` then the output basis is in ``shifts``-Popov form.
+        - ``normal_form`` -- boolean (default: ``False``); if
+          ``True`` then the output basis is in ``shifts``-Popov form
 
         OUTPUT: a polynomial matrix
 
@@ -4248,7 +4248,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         return completion
 
-    def basis_completion(self, row_wise=True, algorithm="approximant"):
+    def basis_completion(self, row_wise=True, algorithm='approximant'):
         r"""
         Return a Smith form-preserving nonsingular completion of a basis of
         this matrix: row-wise completing a row basis if ``row_wise`` is True;
@@ -4280,24 +4280,24 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        - ``row_wise`` -- (default: ``True``) boolean, if ``True`` then
-          compute a row-wise completion, else compute a column-wise completion.
+        - ``row_wise`` -- boolean (default: ``True``); if ``True`` then
+          compute a row-wise completion, else compute a column-wise completion
 
-        - ``algorithm`` -- (default: ``"approximant"``) selects the
+        - ``algorithm`` -- (default: ``'approximant'``) selects the
           approach for computing the completion; currently supported:
-          ``"approximant"`` and ``"smith"``.
+          ``'approximant'`` and ``'smith'``
 
-        OUTPUT: a matrix over the same base ring as the input matrix, which forms a
-        completion as defined above.
+        OUTPUT: a matrix over the same base ring as the input matrix, which
+        forms a completion as defined above
 
         ALGORITHM:
 
-        - ``approximant``: the approximant-based algorithm follows the ideas in
+        - ``'approximant'`` -- the approximant-based algorithm follows the ideas in
           [ZL2014]_ , based on polynomial reversals combined with the
           computation of a minimal kernel basis and a minimal approximant
           basis.
 
-        - ``smith``: the Smith form-based algorithm computes the Smith form of
+        - ``'smith'`` -- the Smith form-based algorithm computes the Smith form of
           this matrix along with corresponding unimodular transformations, from
           which a completion is readily obtained.
 
@@ -4369,7 +4369,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: mat = matrix([[x*(x-1)*(x-2), (x-2)*(x-3)*(x-4), (x-4)*(x-5)*(x-6)]])
             sage: mat
             [        x^3 - 3*x^2 + 2*x   x^3 - 9*x^2 + 26*x - 24 x^3 - 15*x^2 + 74*x - 120]
-            sage: rcomp = mat.basis_completion(algorithm="smith"); rcomp
+            sage: rcomp = mat.basis_completion(algorithm='smith'); rcomp
             [        -1/12*x - 1/12         -1/12*x + 5/12                      0]
             [                  1/12                   1/12 1/24*x^2 - 13/24*x + 2]
             sage: mat.stack(rcomp).determinant()
@@ -4382,7 +4382,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             [1 0]
             [0 x]
             [0 0]
-            sage: ccomp = mat.basis_completion(row_wise=False, algorithm="smith")
+            sage: ccomp = mat.basis_completion(row_wise=False, algorithm='smith')
             sage: ccomp
             [1/2*x - 1/2]
             [  1/2*x - 1]
@@ -4395,7 +4395,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: field.<a> = NumberField(x**2 - 2)
             sage: ring.<y> = field[]
             sage: mat = matrix([[3*a*y - 1, (-8*a - 1)*y - 2*a + 1]])
-            sage: rcomp = mat.basis_completion(algorithm="smith"); rcomp
+            sage: rcomp = mat.basis_completion(algorithm='smith'); rcomp
             [ 39/119*a - 30/119 -99/119*a + 67/119]
             sage: mat.stack(rcomp).determinant()
             1
@@ -4408,28 +4408,28 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             []
             sage: matrix(ring, 0, 0).basis_completion(row_wise=False)
             []
-            sage: matrix(ring, 0, 0).basis_completion(algorithm="smith")
+            sage: matrix(ring, 0, 0).basis_completion(algorithm='smith')
             []
-            sage: matrix(ring, 0, 0).basis_completion(row_wise=False,algorithm="smith")
+            sage: matrix(ring, 0, 0).basis_completion(row_wise=False,algorithm='smith')
             []
             sage: matrix(ring, 0, 2).basis_completion()
             [1 0]
             [0 1]
             sage: matrix(ring, 0, 2).basis_completion(row_wise=False)
             []
-            sage: matrix(ring, 0, 2).basis_completion(algorithm="smith")
+            sage: matrix(ring, 0, 2).basis_completion(algorithm='smith')
             [1 0]
             [0 1]
-            sage: matrix(ring, 0, 2).basis_completion(row_wise=False,algorithm="smith")
+            sage: matrix(ring, 0, 2).basis_completion(row_wise=False,algorithm='smith')
             []
             sage: matrix(ring, 2, 0).basis_completion()
             []
             sage: matrix(ring, 2, 0).basis_completion(row_wise=False)
             [1 0]
             [0 1]
-            sage: matrix(ring, 2, 0).basis_completion(algorithm="smith")
+            sage: matrix(ring, 2, 0).basis_completion(algorithm='smith')
             []
-            sage: matrix(ring, 2, 0).basis_completion(row_wise=False,algorithm="smith")
+            sage: matrix(ring, 2, 0).basis_completion(row_wise=False,algorithm='smith')
             [1 0]
             [0 1]
         """
@@ -4482,8 +4482,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        - ``row_wise`` -- (default: ``True``) boolean, if ``True`` then
-          check for row-wise completion, else check for column-wise completion.
+        - ``row_wise`` -- boolean (default: ``True``); if ``True`` then
+          check for row-wise completion, else check for column-wise completion
 
         OUTPUT: a boolean indicating whether this matrix is a completion of
         ``mat``.

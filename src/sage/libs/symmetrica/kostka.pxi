@@ -8,7 +8,7 @@ cdef extern from 'symmetrica/def.h':
 
 def kostka_number_symmetrica(shape, content):
     """
-    computes the kostkanumber, i.e. the number of
+    Compute the kostkanumber, i.e. the number of
     tableaux of given shape, which is a PARTITION object, and
     of given content, which also is a PARTITION object, or a VECTOR
     object with INTEGER entries. The
@@ -55,7 +55,7 @@ def kostka_number_symmetrica(shape, content):
 
 def kostka_tab_symmetrica(shape, content):
     """
-    computes the list of tableaux of given shape
+    Compute the list of tableaux of given shape
     and content. shape is a PARTITION object or a
     SKEWPARTITION object and
     content is a PARTITION object or a VECTOR object with

@@ -174,7 +174,7 @@ class TwoGraph(IncidenceStructure):
 
 def taylor_twograph(q):
     r"""
-    constructing Taylor's two-graph for `U_3(q)`, `q` odd prime power.
+    Constructing Taylor's two-graph for `U_3(q)`, `q` odd prime power.
 
     The Taylor's two-graph `T` has the `q^3+1` points of the projective plane over `F_{q^2}`
     singular w.r.t. the non-degenerate Hermitean form `S` preserved by `U_3(q)` as its ground set;

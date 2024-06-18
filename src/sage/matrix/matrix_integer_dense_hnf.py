@@ -24,7 +24,7 @@ def max_det_prime(n):
 
     INPUT:
 
-    - ``n`` -- a positive integer
+    - ``n`` -- positive integer
 
     OUTPUT: a prime number
 
@@ -50,14 +50,14 @@ def det_from_modp_and_divisor(A, d, p, z_mod, moduli, z_so_far=ZZ(1), N_so_far=Z
 
     INPUT:
 
-    - A -- a square matrix
-    - d -- a divisor of the determinant of A
-    - p -- a prime
-    - z_mod -- values of det/d (mod ...)
-    - moduli -- the moduli so far
-    - z_so_far -- for a modulus p in the list moduli,
-      (z_so_far mod p) is the determinant of A modulo p.
-    - N_so_far -- N_so_far is the product over the primes in the list moduli.
+    - ``A`` -- a square matrix
+    - ``d`` -- a divisor of the determinant of A
+    - ``p`` -- a prime
+    - ``z_mod`` -- values of det/d (mod ...)
+    - ``moduli`` -- the moduli so far
+    - ``z_so_far`` -- for a modulus p in the list moduli,
+      (z_so_far mod p) is the determinant of A modulo p
+    - ``N_so_far`` -- N_so_far is the product over the primes in the list moduli
 
     OUTPUT:
 
@@ -95,19 +95,17 @@ def det_given_divisor(A, d, proof=True, stabilize=2):
 
     INPUT:
 
-    - ``A`` -- a square integer matrix
-    - ``d`` -- a nonzero integer that is assumed to divide the determinant of A
-    - ``proof`` -- bool (default: ``True``) compute det modulo enough primes
+    - ``A`` -- square integer matrix
+    - ``d`` -- nonzero integer that is assumed to divide the determinant of A
+    - ``proof`` -- boolean (default: ``True``); compute det modulo enough primes
       so that the determinant is computed provably correctly (via the
       Hadamard bound).  It would be VERY hard for ``det()`` to fail even
       with proof=False.
-    - ``stabilize`` -- int (default: 2) if proof = False, then compute
+    - ``stabilize`` -- integer (default: 2); if proof = False, then compute
       the determinant modulo `p` until ``stabilize`` successive modulo
       determinant computations stabilize.
 
-    OUTPUT:
-
-    integer -- determinant
+    OUTPUT: integer -- determinant
 
     EXAMPLES::
 
@@ -201,8 +199,8 @@ def det_padic(A, proof=True, stabilize=2):
 
     - ``proof`` -- boolean
 
-    - ``stabilize`` (default: 2) -- if proof False, number of successive primes so that
-      CRT det must stabilize.
+    - ``stabilize`` -- (default: 2) if proof False, number of successive primes so that
+      CRT det must stabilize
 
     EXAMPLES::
 
@@ -233,15 +231,13 @@ def double_det(A, b, c, proof):
 
     INPUT:
 
-    - A -- an (n-1) x n matrix
-    - b -- a 1 x n matrix
-    - c -- a 1 x n matrix
-    - proof -- whether or not to compute the det modulo enough times to
-      provably compute the determinant.
+    - ``A`` -- an (n-1) x n matrix
+    - ``b`` -- a 1 x n matrix
+    - ``c`` -- a 1 x n matrix
+    - ``proof`` -- whether or not to compute the det modulo enough times to
+      provably compute the determinant
 
-    OUTPUT:
-
-    - a pair of two integers.
+    OUTPUT: a pair of two integers
 
     EXAMPLES::
 
@@ -293,11 +289,11 @@ def add_column_fallback(B, a, proof):
 
         B -- a square matrix (may be singular)
         a -- an n x 1 matrix, where B has n rows
-        proof -- bool; whether to prove result correct
+        proof -- boolean; whether to prove result correct
 
     OUTPUT:
 
-        x   -- a vector such that H' = H_B.augment(x) is the HNF of A = B.augment(a).
+    - x -- a vector such that H' = H_B.augment(x) is the HNF of A = B.augment(a)
 
     EXAMPLES::
 
@@ -327,20 +323,18 @@ def add_column_fallback(B, a, proof):
 
 def solve_system_with_difficult_last_row(B, a):
     """
-    Solve B*x = a when the last row of `B` contains huge entries using
-    a clever trick that reduces the problem to solve C*x = a where `C`
+    Solve ``B*x = a`` when the last row of `B` contains huge entries using
+    a clever trick that reduces the problem to solve ``C*x = a`` where `C`
     is `B` but with the last row replaced by something small, along
     with one easy null space computation.  The latter are both solved
     `p`-adically.
 
     INPUT:
 
-    - B -- a square n x n nonsingular matrix with painful big bottom row.
-    - a -- an n x 1 column matrix
+    - ``B`` -- a square n x n nonsingular matrix with painful big bottom row
+    - ``a`` -- an n x 1 column matrix
 
-    OUTPUT:
-
-    - the unique solution to B*x = a.
+    OUTPUT: the unique solution to ``B*x = a``
 
     EXAMPLES::
 
@@ -417,14 +411,14 @@ def add_column(B, H_B, a, proof):
 
     INPUT:
 
-    - B   -- a square matrix (may be singular)
-    - H_B -- the Hermite normal form of B
-    - a -- an n x 1 matrix, where B has n rows
-    - proof -- bool; whether to prove result correct, in case we use fallback method.
+    - ``B`` -- a square matrix (may be singular)
+    - ``H_B`` -- the Hermite normal form of B
+    - ``a`` -- an n x 1 matrix, where B has n rows
+    - ``proof`` -- boolean; whether to prove result correct, in case we use fallback method
 
     OUTPUT:
 
-    - x   -- a vector such that H' = H_B.augment(x) is the HNF of A = B.augment(a).
+    - x -- a vector such that H' = H_B.augment(x) is the HNF of A = B.augment(a)
 
     EXAMPLES::
 
@@ -467,14 +461,14 @@ def add_row(A, b, pivots, include_zero_rows):
 
     INPUT:
 
-    - A -- a matrix in Hermite normal form with n column
-    - b -- an n x 1 row matrix
-    - pivots -- sorted list of integers; the pivot positions of A.
+    - ``A`` -- a matrix in Hermite normal form with n column
+    - ``b`` -- an n x 1 row matrix
+    - ``pivots`` -- sorted list of integers; the pivot positions of A
 
     OUTPUT:
 
-    - H -- the Hermite normal form of A.stack(b).
-    - new_pivots -- the pivot columns of H.
+    - ``H`` -- the Hermite normal form of A.stack(b)
+    - ``new_pivots`` -- the pivot columns of H
 
     EXAMPLES::
 
@@ -506,11 +500,9 @@ def pivots_of_hnf_matrix(H):
 
     INPUT:
 
-    - H -- a matrix that must be HNF
+    - ``H`` -- a matrix that must be HNF
 
-    OUTPUT:
-
-    - list -- list of pivots
+    OUTPUT: list -- list of pivots
 
     EXAMPLES::
 
@@ -542,9 +534,7 @@ def hnf_square(A, proof):
 
     - a nonsingular n x n matrix A over the integers.
 
-    OUTPUT:
-
-    - the Hermite normal form of A.
+    OUTPUT: the Hermite normal form of A
 
     EXAMPLES::
 
@@ -566,7 +556,7 @@ def hnf_square(A, proof):
 
     # Small cases -- do not use this algorithm
     if n <= 3:
-        return A.echelon_form(algorithm="pari")
+        return A.echelon_form(algorithm='pari')
 
     if A.rank() < A.nrows():
         raise ValueError("matrix must have full rank")
@@ -673,7 +663,7 @@ def probable_pivot_rows(A):
 
     INPUT:
 
-    - A -- a matrix
+    - ``A`` -- a matrix
 
     OUTPUT: a tuple of integers
 
@@ -695,7 +685,7 @@ def probable_pivot_columns(A):
     """
     INPUT:
 
-    - A -- a matrix
+    - ``A`` -- a matrix
 
     OUTPUT: a tuple of integers
 
@@ -723,8 +713,8 @@ def ones(H, pivots):
 
     INPUT:
 
-    - H -- matrix in Hermite form
-    - pivots -- list of integers (all pivot positions of H).
+    - ``H`` -- matrix in Hermite form
+    - ``pivots`` -- list of integers (all pivot positions of H)
 
     OUTPUT:
 
@@ -764,8 +754,8 @@ def extract_ones_data(H, pivots):
 
     INPUT:
 
-    - H -- a matrix in HNF
-    - pivots -- list of all pivot column positions of H
+    - ``H`` -- a matrix in HNF
+    - ``pivots`` -- list of all pivot column positions of H
 
     OUTPUT:
 
@@ -773,9 +763,9 @@ def extract_ones_data(H, pivots):
     where onecol, onerow, non_onecol, non_onerow are as for
     the ones function, and C, D, E are matrices:
 
-    - C -- submatrix of all non-onecol columns and onecol rows
-    - D -- all non-onecol columns and other rows
-    - E -- inverse of D
+    - ``C`` -- submatrix of all non-onecol columns and onecol rows
+    - ``D`` -- all non-onecol columns and other rows
+    - ``E`` -- inverse of D
 
     If D is not invertible or there are 0 or more than 2 non onecols,
     then C, D, and E are set to None.
@@ -872,9 +862,9 @@ def probable_hnf(A, include_zero_rows, proof):
 
     INPUT:
 
-    - A -- a matrix
-    - include_zero_rows -- bool
-    - proof -- bool
+    - ``A`` -- a matrix
+    - ``include_zero_rows`` -- bool
+    - ``proof`` -- bool
 
     OUTPUT:
 
@@ -1004,8 +994,8 @@ def pad_zeros(A, nrows):
 
     INPUT:
 
-    - A -- a matrix
-    - nrows -- an integer that is at least as big as the number of rows of A.
+    - ``A`` -- a matrix
+    - ``nrows`` -- integer that is at least as big as the number of rows of A
 
     OUTPUT: a matrix with nrows rows
 
@@ -1037,15 +1027,15 @@ def hnf(A, include_zero_rows=True, proof=True):
 
     INPUT:
 
-    - A -- an n x m matrix A over the integers.
-    - include_zero_rows -- bool (default: ``True``) whether or not to include zero
+    - ``A`` -- an n x m matrix A over the integers
+    - ``include_zero_rows`` -- boolean (default: ``True``); whether or not to include zero
       rows in the output matrix
-    - proof -- whether or not to prove the result correct.
+    - ``proof`` -- whether or not to prove the result correct
 
     OUTPUT:
 
-    - matrix -- the Hermite normal form of A
-    - pivots -- the pivot column positions of A
+    - ``matrix`` -- the Hermite normal form of A
+    - ``pivots`` -- the pivot column positions of A
 
     EXAMPLES::
 
@@ -1113,13 +1103,13 @@ def hnf_with_transformation(A, proof=True):
 
     INPUT:
 
-    - A -- an n x m matrix A over the integers.
-    - proof -- whether or not to prove the result correct.
+    - ``A`` -- an n x m matrix A over the integers
+    - ``proof`` -- whether or not to prove the result correct
 
     OUTPUT:
 
-    - matrix -- the Hermite normal form H of A
-    - U -- a unimodular matrix such that U * A = H
+    - ``matrix`` -- the Hermite normal form H of A
+    - ``U`` -- a unimodular matrix such that U * A = H
 
     EXAMPLES::
 
@@ -1218,12 +1208,12 @@ def sanity_checks(times=50, n=8, m=5, proof=True, stabilize=2,
 
     INPUT:
 
-    - times -- number of times to randomly try matrices with each shape
-    - n -- number of rows
-    - m -- number of columns
-    - proof -- test with proof true
-    - stabilize -- parameter to pass to hnf algorithm when proof is False
-    - check_using_magma -- if True use Magma instead of PARI to check
+    - ``times`` -- number of times to randomly try matrices with each shape
+    - ``n`` -- number of rows
+    - ``m`` -- number of columns
+    - ``proof`` -- test with proof true
+    - ``stabilize`` -- parameter to pass to hnf algorithm when proof is False
+    - ``check_using_magma`` -- if ``True`` use Magma instead of PARI to check
       correctness of computed HNF's. Since PARI's HNF is buggy and slow (as of
       2008-02-16 non-pivot entries sometimes are not normalized to be
       nonnegative) the default is Magma.

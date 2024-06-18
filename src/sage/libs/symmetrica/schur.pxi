@@ -55,7 +55,7 @@ cdef extern from 'symmetrica/def.h':
 
 def outerproduct_schur_symmetrica(parta, partb):
     """
-    you enter two PARTITION objects, and the result is
+    You enter two PARTITION objects, and the result is
     a SCHUR object, which is the expansion of the product
     of the two schurfunctions, labeled by
     the two PARTITION objects parta and partb.
@@ -92,7 +92,7 @@ def outerproduct_schur_symmetrica(parta, partb):
 
 def dimension_schur_symmetrica(s):
     """
-    you enter a SCHUR object a, and the result is the
+    You enter a SCHUR object a, and the result is the
     dimension of the corresponding representation of the
     symmetric group sn.
     """
@@ -115,7 +115,7 @@ def dimension_schur_symmetrica(s):
 
 def newtrans_symmetrica(perm):
     """
-    computes the decomposition of a schubertpolynomial labeled by
+    Compute the decomposition of a schubertpolynomial labeled by
     the permutation perm, as a sum of Schurfunction.
 
     FIXME!
@@ -182,7 +182,7 @@ def compute_schur_with_alphabet_symmetrica(part, length, alphabet='x'):
 
 def compute_homsym_with_alphabet_symmetrica(n, length, alphabet='x'):
     """
-    computes the expansion of a homogeneous(=complete) symmetric
+    Compute the expansion of a homogeneous(=complete) symmetric
     function labeled by a INTEGER number as a POLYNOM erg.
     The object number may also be a  PARTITION or a HOM_SYM object.
     The INTEGER laenge specifies the length of the alphabet.
@@ -228,7 +228,7 @@ def compute_homsym_with_alphabet_symmetrica(n, length, alphabet='x'):
 
 def compute_elmsym_with_alphabet_symmetrica(n, length, alphabet='x'):
     """
-    computes the expansion of a elementary symmetric
+    Compute the expansion of a elementary symmetric
     function labeled by a INTEGER number as a POLYNOM erg.
     The object number may also be a  PARTITION or a ELM_SYM object.
     The INTEGER length specifies the length of the alphabet.
@@ -278,7 +278,7 @@ def compute_elmsym_with_alphabet_symmetrica(n, length, alphabet='x'):
 
 def compute_monomial_with_alphabet_symmetrica(n, length, alphabet='x'):
     """
-    computes the expansion of a monomial symmetric
+    Compute the expansion of a monomial symmetric
     function labeled by a PARTITION number as a POLYNOM erg.
     The INTEGER laenge specifies the length of the alphabet.
 
@@ -323,7 +323,7 @@ def compute_monomial_with_alphabet_symmetrica(n, length, alphabet='x'):
 
 def compute_powsym_with_alphabet_symmetrica(n, length, alphabet='x'):
     """
-    computes the expansion of a power symmetric
+    Compute the expansion of a power symmetric
     function labeled by a INTEGER label or by a PARTITION label
     or a POW_SYM label as a POLYNOM erg.
     The INTEGER laenge specifies the length of the alphabet.
@@ -432,7 +432,7 @@ def part_part_skewschur_symmetrica(outer, inner):
 
 def hall_littlewood_symmetrica(part):
     """
-    computes the so called Hall Littlewood Polynomials, i.e.
+    Compute the so called Hall Littlewood Polynomials, i.e.
     a SCHUR object, whose coefficient are polynomials in one
     variable. The method, which is used for the computation is described
     in the paper: A.O. Morris The Characters of the group GL(n,q)

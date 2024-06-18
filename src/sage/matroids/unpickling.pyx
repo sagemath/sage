@@ -56,8 +56,8 @@ def unpickle_basis_matroid(version, data):
 
     INPUT:
 
-    - ``version`` -- an integer, expected to be 0
-    - ``data`` -- a tuple ``(E, R, name, BB)`` in which ``E`` is the groundset
+    - ``version`` -- integer; expected to be 0
+    - ``data`` -- tuple ``(E, R, name, BB)`` in which ``E`` is the groundset
       of the matroid, ``R`` is the rank, ``name`` is a custom name, and ``BB``
       is the bitpacked list of bases, as pickled by Sage's ``bitset_pickle``.
 
@@ -102,8 +102,8 @@ def unpickle_circuits_matroid(version, data):
 
     INPUT:
 
-    - ``version`` -- an integer, expected to be 0
-    - ``data`` -- a tuple ``(E, C, name)`` in which ``E`` is the groundset
+    - ``version`` -- integer; expected to be 0
+    - ``data`` -- tuple ``(E, C, name)`` in which ``E`` is the groundset
       of the matroid, ``C`` is the list of circuits , and ``name`` is a custom
       name.
 
@@ -143,8 +143,8 @@ def unpickle_circuit_closures_matroid(version, data):
 
     INPUT:
 
-    - ``version`` -- an integer, expected to be 0
-    - ``data`` -- a tuple ``(E, CC, name)`` in which ``E`` is the groundset
+    - ``version`` -- integer; expected to be 0
+    - ``data`` -- tuple ``(E, CC, name)`` in which ``E`` is the groundset
       of the matroid, ``CC`` is the dictionary of circuit closures, and
       ``name`` is a custom name.
 
@@ -184,8 +184,8 @@ def unpickle_flats_matroid(version, data):
 
     INPUT:
 
-    - ``version`` -- an integer, expected to be 0
-    - ``data`` -- a tuple ``(E, F, name)`` in which ``E`` is the groundset of
+    - ``version`` -- integer; expected to be 0
+    - ``data`` -- tuple ``(E, F, name)`` in which ``E`` is the groundset of
       the matroid, ``F`` is the dictionary of flats, and ``name`` is a custom
       name.
 
@@ -226,9 +226,9 @@ def unpickle_dual_matroid(version, data):
 
     INPUT:
 
-    - ``version`` -- an integer, expected to be 0
-    - ``data`` -- a tuple ``(M, name)`` in which ``M`` is
-      the internal matroid, and ``name`` is a custom name.
+    - ``version`` -- integer; expected to be 0
+    - ``data`` -- tuple ``(M, name)`` in which ``M`` is
+      the internal matroid, and ``name`` is a custom name
 
     OUTPUT: matroid
 
@@ -452,8 +452,8 @@ def unpickle_linear_matroid(version, data):
 
     INPUT:
 
-    - ``version`` -- an integer (currently 0).
-    - ``data`` -- a tuple ``(A, E, reduced, name)`` where ``A`` is the
+    - ``version`` -- integer (currently 0)
+    - ``data`` -- tuple ``(A, E, reduced, name)`` where ``A`` is the
       representation matrix, ``E`` is the groundset of the matroid,
       ``reduced`` is a boolean indicating whether ``A`` is a reduced matrix,
       and ``name`` is a custom name.
@@ -470,7 +470,7 @@ def unpickle_linear_matroid(version, data):
         ....:                                               [0, 1, 1, 1, 3]]))
         sage: M == loads(dumps(M))  # indirect doctest
         True
-        sage: M.rename("U35")
+        sage: M.rename('U35')
         sage: loads(dumps(M))
         U35
     """
@@ -497,8 +497,8 @@ def unpickle_binary_matroid(version, data):
 
     INPUT:
 
-    - ``version`` -- an integer (currently 0).
-    - ``data`` -- a tuple ``(A, E, B, name)`` where ``A`` is the
+    - ``version`` -- integer (currently 0)
+    - ``data`` -- tuple ``(A, E, B, name)`` where ``A`` is the
       representation matrix, ``E`` is the groundset of the matroid, ``B`` is
       the currently displayed basis, and ``name`` is a custom name.
 
@@ -514,7 +514,7 @@ def unpickle_binary_matroid(version, data):
         ....:                            [0, 0, 1, 1]]))
         sage: M == loads(dumps(M))  # indirect doctest
         True
-        sage: M.rename("U34")
+        sage: M.rename('U34')
         sage: loads(dumps(M))
         U34
     """
@@ -541,8 +541,8 @@ def unpickle_ternary_matroid(version, data):
 
     INPUT:
 
-    - ``version`` -- an integer (currently 0).
-    - ``data`` -- a tuple ``(A, E, B, name)`` where ``A`` is the
+    - ``version`` -- integer (currently 0)
+    - ``data`` -- tuple ``(A, E, B, name)`` where ``A`` is the
       representation matrix, ``E`` is the groundset of the matroid, ``B`` is
       the currently displayed basis, and ``name`` is a custom name.
 
@@ -559,7 +559,7 @@ def unpickle_ternary_matroid(version, data):
         ....:           [0, 0, 1, 1]]))
         sage: M == loads(dumps(M))  # indirect doctest
         True
-        sage: M.rename("U34")
+        sage: M.rename('U34')
         sage: loads(dumps(M))
         U34
     """
@@ -586,8 +586,8 @@ def unpickle_quaternary_matroid(version, data):
 
     INPUT:
 
-    - ``version`` -- an integer (currently 0).
-    - ``data`` -- a tuple ``(A, E, B, name)`` where ``A`` is the
+    - ``version`` -- integer (currently 0)
+    - ``data`` -- tuple ``(A, E, B, name)`` where ``A`` is the
       representation matrix, ``E`` is the groundset of the matroid, ``B`` is
       the currently displayed basis, and ``name`` is a custom name.
 
@@ -604,7 +604,7 @@ def unpickle_quaternary_matroid(version, data):
         ....:          [0, 0, 1, 1]]))
         sage: M == loads(dumps(M))  # indirect doctest
         True
-        sage: M.rename("U34")
+        sage: M.rename('U34')
         sage: loads(dumps(M))
         U34
         sage: M = QuaternaryMatroid(Matrix(GF(4, 'x'), [[1, 0, 1],                      # needs sage.rings.finite_rings
@@ -636,8 +636,8 @@ def unpickle_regular_matroid(version, data):
 
     INPUT:
 
-    - ``version`` -- an integer (currently 0).
-    - ``data`` -- a tuple ``(A, E, reduced, name)`` where ``A`` is the
+    - ``version`` -- integer (currently 0)
+    - ``data`` -- tuple ``(A, E, reduced, name)`` where ``A`` is the
       representation matrix, ``E`` is the groundset of the matroid,
       ``reduced`` is a boolean indicating whether ``A`` is a reduced matrix,
       and ``name`` is a custom name.
@@ -653,7 +653,7 @@ def unpickle_regular_matroid(version, data):
         sage: M = matroids.catalog.R10()
         sage: M == loads(dumps(M))  # indirect doctest
         True
-        sage: M.rename("R_{10}")
+        sage: M.rename('R_{10}')
         sage: loads(dumps(M))
         R_{10}
     """
@@ -684,8 +684,8 @@ def unpickle_minor_matroid(version, data):
 
     INPUT:
 
-    - ``version`` -- an integer, currently `0`.
-    - ``data`` -- a tuple ``(M, C, D, name)``, where ``M`` is the original
+    - ``version`` -- integer; currently `0`
+    - ``data`` -- tuple ``(M, C, D, name)``, where ``M`` is the original
       matroid of which the output is a minor, ``C`` is the set of
       contractions, ``D`` is the set of deletions, and ``name`` is a custom
       name.
@@ -725,8 +725,8 @@ def unpickle_graphic_matroid(version, data):
 
     INPUT:
 
-    - ``version`` -- an integer (currently 0).
-    - ``data`` -- a tuple consisting of a SageMath graph and a name.
+    - ``version`` -- integer (currently 0)
+    - ``data`` -- tuple consisting of a SageMath graph and a name
 
     OUTPUT: :class:`GraphicMatroid`
 

@@ -152,7 +152,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
     def det(self, k=1):
         """
-        returns the vector (1, ... ,1) which in the ['A',r]
+        Return the vector (1, ... ,1) which in the ['A',r]
         weight lattice, interpreted as a weight of GL(r+1,CC)
         is the determinant. If the optional parameter k is
         given, returns (k, ... ,k), the `k`-th power of the

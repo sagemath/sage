@@ -102,7 +102,7 @@ cdef class WordDatatype_char(WordDatatype):
     @cython.wraparound(False)  # not check not correctly handle negative indices
     cdef _set_data(self, data):
         r"""
-        set the attribute ._data and ._length from the sequence data
+        Set the attribute ._data and ._length from the sequence data
         (usually data is a word, a tuple or a list)
         """
         cdef size_t i

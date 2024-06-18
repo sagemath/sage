@@ -449,7 +449,7 @@ cdef class ntl_zz_pX():
 
     def __lshift__(ntl_zz_pX self, long n):
         """
-        Shifts this polynomial to the left, which is multiplication by `x^n`.
+        Shift this polynomial to the left, which is multiplication by `x^n`.
 
         EXAMPLES::
 
@@ -464,7 +464,7 @@ cdef class ntl_zz_pX():
 
     def __rshift__(ntl_zz_pX self, long n):
         """
-        Shifts this polynomial to the right, which is division by `x^n` (and truncation).
+        Shift this polynomial to the right, which is division by `x^n` (and truncation).
 
         EXAMPLES::
 

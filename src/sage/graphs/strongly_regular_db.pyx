@@ -1188,6 +1188,7 @@ def SRG_from_RSHCD(v, k, l, mu, existence=False, check=True):
     - ``check`` -- boolean (default: ``True``); whether to check that output is
       correct before returning it. As this is expected to be useless (but we
       are cautious guys), you may want to disable it whenever you want speed.
+
     EXAMPLES:
 
     some graphs ::
@@ -1876,7 +1877,7 @@ cpdef latin_squares_graph_parameters(int v, int k, int l,int mu):
 
 def _H_3_cayley_graph(L):
     r"""
-    return the `L`-Cayley graph of the group `H_3` from Prop. 12 in [JK2003]_.
+    Return the `L`-Cayley graph of the group `H_3` from Prop. 12 in [JK2003]_.
 
     INPUT:
 
@@ -2907,7 +2908,7 @@ def strongly_regular_graph(int v, int k, int l, int mu=-1, bint existence=False,
 
 def strongly_regular_graph_lazy(int v, int k, int l, int mu=-1, bint existence=False):
     r"""
-    return a promise to build an `(v,k,l,mu)`-srg.
+    Return a promise to build an `(v,k,l,mu)`-srg.
 
     Return a promise to build an `(v,k,l,mu)`-srg as a tuple `t`, with `t[0]` a
     function to evaluate on `*t[1:]`.

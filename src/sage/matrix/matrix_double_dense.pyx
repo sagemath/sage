@@ -13,7 +13,6 @@ AUTHORS:
 
 - William Stein: many bug fixes and touch ups.
 
-
 EXAMPLES::
 
     sage: b = Mat(RDF,2,3).basis()
@@ -171,7 +170,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
     cpdef _sub_(self, right):
         """
-        Return self - right
+        Return ``self - right``.
 
         EXAMPLES::
 
@@ -373,7 +372,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         INPUT:
 
-        - ``p`` -- (default: 'frob'); controls which norm is used
+        - ``p`` -- (default: ``'frob'``); controls which norm is used
           to compute the condition number, allowable values are
           'frob' (for the Frobenius norm), integers -2, -1, 1, 2,
           positive and negative infinity. See output discussion
@@ -712,10 +711,10 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         the list is the minimum of the row count and column count for the
         matrix.
 
-        The number of non-zero singular values will be the rank of the
+        The number of nonzero singular values will be the rank of the
         matrix.  However, as a numerical matrix, it is impossible to
         control the difference between zero entries and very small
-        non-zero entries.  As an informed consumer it is up to you
+        nonzero entries.  As an informed consumer it is up to you
         to use the output responsibly.  We will do our best, and give
         you the tools to work with the output, but we cannot
         give you a guarantee.
@@ -740,7 +739,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         EXAMPLES:
 
         Singular values close to zero have trailing digits that may vary
-        on different hardware.  For exact matrices, the number of non-zero
+        on different hardware.  For exact matrices, the number of nonzero
         singular values will equal the rank of the matrix.  So for some of
         the doctests we round the small singular values that ideally would
         be zero, to control the variability across hardware.
@@ -865,7 +864,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             if scipy is None: import scipy
             eps = 2*max(self._nrows, self._ncols)*numpy.finfo(float).eps*sv[0]
         eps = RDF(eps)
-        # locate non-zero entries
+        # locate nonzero entries
         rank = 0
         while rank < diag and sv[rank] > eps:
             rank = rank + 1
@@ -897,11 +896,11 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         - ``A = P*L*U``
         - ``P`` is a square permutation matrix, of size `m\times m`,
           so is all zeroes, but with exactly a single one in each
-          row and each column.
+          row and each column
         - ``L`` is lower-triangular, square of size `m\times m`,
-          with every diagonal entry equal to one.
+          with every diagonal entry equal to one
         - ``U`` is upper-triangular with size `m\times n`, i.e.
-          entries below the "diagonal" are all zero.
+          entries below the "diagonal" are all zero
 
         The computed decomposition is cached and returned on
         subsequent calls, thus requiring the results to be immutable.
@@ -1440,7 +1439,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         The SciPy routines used for these computations produce eigenvectors
         normalized to have length 1, but on different hardware they may vary
         by a complex sign. So for doctests we have normalized output by forcing
-        their eigenvectors to have their first non-zero entry equal to one.
+        their eigenvectors to have their first nonzero entry equal to one.
 
         ALGORITHM:
 
@@ -1514,7 +1513,6 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             ....:   spectrum[i][1][0] = matrix(CDF, spectrum[i][1]).echelon_form()[0]
             sage: spectrum
             [(1.0*I, [(1.0, 0.0)], 1), (1.0, [(0.0, 1.0)], 1)]
-
         """
         if not self.is_square():
             raise ArithmeticError("self must be a square matrix")
@@ -1598,7 +1596,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         The SciPy routines used for these computations produce eigenvectors
         normalized to have length 1, but on different hardware they may vary
         by a complex sign. So for doctests we have normalized output by forcing
-        their eigenvectors to have their first non-zero entry equal to one.
+        their eigenvectors to have their first nonzero entry equal to one.
 
         ALGORITHM:
 
@@ -1834,7 +1832,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
     def conjugate(self):
         r"""
         Return the conjugate of this matrix, i.e. the matrix whose entries are
-        the conjugates of the entries of self.
+        the conjugates of the entries of ``self``.
 
         EXAMPLES::
 
@@ -1871,22 +1869,22 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         r"""
         Return the singular value decomposition of this matrix.
 
-        The U and V matrices are not unique and may be returned with different
-        values in the future or on different systems. The S matrix is unique
+        The `U` and `V` matrices are not unique and may be returned with different
+        values in the future or on different systems. The `S` matrix is unique
         and contains the singular values in descending order.
 
         The computed decomposition is cached and returned on subsequent calls.
 
         INPUT:
 
-        - A -- a matrix
+        - ``A`` -- a matrix
 
         OUTPUT:
 
-        - U, S, V -- immutable matrices such that `A = U*S*V.conj().transpose()`
-          where U and V are orthogonal and S is zero off of the diagonal.
+        ``U, S, V`` -- immutable matrices such that ``A = U*S*V.conj().transpose()``
+        where `U` and `V` are orthogonal and `S` is zero off of the diagonal
 
-        Note that if self is m-by-n, then the dimensions of the
+        Note that if ``self`` is m-by-n, then the dimensions of the
         matrices that this returns are (m,m), (m,n), and (n, n).
 
         .. NOTE::
@@ -2217,11 +2215,11 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         - ``tol`` -- (default: ``1e-12``); the largest value of the
           absolute value of the difference between two matrix entries
-          for which they will still be considered equal.
+          for which they will still be considered equal
 
-        - ``algorithm`` -- (default: 'orthonormal'); set to 'orthonormal'
-          for a stable procedure and set to 'naive' for a fast
-          procedure.
+        - ``algorithm`` -- (default: ``'orthonormal'``); set to
+          ``'orthonormal'`` for a stable procedure and set to 'naive' for a
+          fast procedure
 
         OUTPUT:
 
@@ -2407,9 +2405,9 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         - ``tol`` -- (default: ``1e-12``); the largest value of the
           absolute value of the difference between two matrix entries
-          for which they will still be considered equal.
+          for which they will still be considered equal
 
-        - ``skew`` -- (default: ``False``); Specifies the type of the
+        - ``skew`` -- (default: ``False``); specifies the type of the
           test. Set to ``True`` to check whether the matrix is
           skew-Hermitian.
 
@@ -2484,7 +2482,6 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         AUTHOR:
 
         - Rob Beezer (2011-03-30)
-
         """
         import sage.rings.complex_double
         global numpy
@@ -2528,8 +2525,8 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
           absolute value of the difference between two matrix entries
           for which they will still be considered equal.
 
-        - ``algorithm`` -- string (default: "naive"); either "naive"
-          or "orthonormal"
+        - ``algorithm`` -- string (default: ``'naive'``); either ``'naive'``
+          or ``'orthonormal'``
 
         OUTPUT:
 
@@ -2656,9 +2653,9 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
           absolute value of the difference between two matrix entries
           for which they will still be considered equal.
 
-        - ``algorithm`` -- (default: 'orthonormal'); set to 'orthonormal'
-          for a stable procedure and set to 'naive' for a fast
-          procedure.
+        - ``algorithm`` -- (default: ``'orthonormal'``); set to
+          ``'orthonormal'`` for a stable procedure and set to ``'naive'`` for a
+          fast procedure
 
         OUTPUT:
 
@@ -2759,7 +2756,6 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         AUTHOR:
 
         - Rob Beezer (2011-03-30)
-
         """
         if algorithm == "naive":
             return super()._is_hermitian(skew=True, tolerance=tol)
@@ -2778,9 +2774,9 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
           absolute value of the difference between two matrix entries
           for which they will still be considered equal.
 
-        - ``algorithm`` -- (default: 'orthonormal'); set to 'orthonormal'
-          for a stable procedure and set to 'naive' for a fast
-          procedure.
+        - ``algorithm`` -- (default: ``'orthonormal'``); set to
+          ``'orthonormal'`` for a stable procedure and set to ``'naive'`` for a
+          fast procedure
 
         OUTPUT:
 
@@ -3399,7 +3395,6 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             Traceback (most recent call last):
             ...
             ValueError: matrix is not Hermitian
-
         """
         from sage.rings.real_double import RDF
         from sage.rings.complex_double import CDF
@@ -3716,7 +3711,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         INPUT:
 
-        - ``eps`` -- Cutoff value
+        - ``eps`` -- cutoff value
 
         OUTPUT: a modified copy of the matrix
 
@@ -3752,11 +3747,11 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
     def round(self, ndigits=0):
         """
         Return a copy of the matrix where all entries have been rounded
-        to a given precision in decimal digits (default 0 digits).
+        to a given precision in decimal digits (default: 0 digits).
 
         INPUT:
 
-        - ``ndigits`` -- The precision in number of decimal digits
+        - ``ndigits`` -- the precision in number of decimal digits
 
         OUTPUT: a modified copy of the matrix
 
