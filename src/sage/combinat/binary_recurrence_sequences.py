@@ -289,7 +289,7 @@ class BinaryRecurrenceSequence(SageObject):
         i.e. the union of multiple geometric sequences, or geometric after term ``u0``.
 
         If `\\alpha/\\beta` is a `k` th root of unity, where `k>1`, then necessarily `k = 2, 3, 4, 6`.
-        Then `F = [[0,1],[c,b]` is diagonalizable, and `F^k = [[\\alpha^k, 0], [0,\\beta^k]]` is a scalar
+        Then `F = [[0,1],[c,b]` is diagonalizable, and `F^k = [[\\alpha^k, 0], [0,\\beta^k]]` is a diagonal
         matrix.  Thus for all values of `j` mod `k`, the `j` mod `k` terms of `u_n` form a geometric
         series.
 
@@ -900,7 +900,7 @@ def _next_good_prime(p, R, qq, patience, qqold):
 
                 # requiring that b^2 + 4c is a square in GF(R._ell) ensures that the period mod R._ell
                 # divides R._ell - 1
-                if legendre_symbol(R.b**2 + 4 * R.c, R._ell) == 1:
+                if legendre_symbol(R.b**2 + 4*R.c, R._ell) == 1:
 
                     N = _goodness(R._ell, R, p)
 
