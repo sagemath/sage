@@ -46,7 +46,6 @@ class SubgroupNameStore():
         return H.order()
 
     def _normalize(self, H):
-        print('Normalize was called')
         key = self._key_constructor(H)
         p = self._group_invariant(key._C)
         if p in self._cache:
@@ -64,9 +63,11 @@ class SubgroupNameStore():
         Takes a subgroup as input and returns its associated name, if any.
         Otherwise, the generators are returned. Returns a string.
         """
+        # If name exists, I want to return that, otherwise I want a default name.
+        # But only basis_keys can provide that default name.
         G = self._normalize(H)
         name = self._names.get(G, None)
-        return name if name else repr(G.gens())
+        return name if name else self._key_constructor(H).default_name()
     
     def set_name(self, H, name):
         r"""
@@ -102,6 +103,9 @@ class ConjugacyClassOfSubgroups(Element):
     def subgroup_of(self):
         return self.parent()._G
 
+    def default_name(self):
+        return repr(self._C)
+
     def __hash__(self):
         r"""
         Return the hash of the representative of the conjugacy class.
@@ -128,14 +132,15 @@ class ConjugacyClassOfSubgroups(Element):
             sage: Z4 = CyclicPermutationGroup(4)
             sage: B[Z4]
             B[((1,2,3,4),)]
-            sage: B._indices.set_name(Z4, "Z4")
+            sage: B.set_name(Z4, "Z4")
             sage: B[Z4] #indirect doctest
             B[Z4]
-            sage: B._indices.set_name(Z4, None)
+            sage: B.unset_name(Z4)
             sage: B[Z4]
             B[((1,2,3,4),)]
         """
-        return self.parent()._namegetter(self._C)
+        namefunc = self.parent()._namegetter
+        return namefunc(self._C) if namefunc else self.default_name()
 
     def __le__(self, other):
         r"""
@@ -196,7 +201,7 @@ class ConjugacyClassesOfSubgroups(Parent):
             sage: TestSuite(C).run()
         """
         self._G = G
-        self._namegetter = lambda H: repr(H.gens())
+        self._namegetter = None
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
     def __eq__(self, other):
@@ -313,6 +318,9 @@ class ConjugacyClassOfSubgroups_SymmetricGroup(ConjugacyClassOfSubgroups):
     def subgroup_of(self):
         return SymmetricGroup(self.grade())
 
+    def default_name(self):
+        return f"({self.grade()}, {repr(self._C)})"
+
     def grade(self):
         return self._C.degree()
 
@@ -345,7 +353,7 @@ class ConjugacyClassesOfSubgroups_SymmetricGroup(ConjugacyClassesOfSubgroups):
 
 class ConjugacyClassesOfSubgroups_SymmetricGroup_all(UniqueRepresentation, Parent):
     def __init__(self):
-        self._namegetter = lambda H: repr(H.gens())
+        self._namegetter = None
         category = SetsWithGrading().Infinite()
         Parent.__init__(self, category=category)
 
