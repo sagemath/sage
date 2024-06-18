@@ -1564,7 +1564,7 @@ class FSMState(SageObject):
     @is_final.setter
     def is_final(self, is_final):
         """
-        Defines the state as a final state or a non-final state.
+        Define the state as a final state or a non-final state.
 
         INPUT:
 

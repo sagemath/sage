@@ -581,8 +581,8 @@ class Graph(GenericGraph):
 
     - ``convert_empty_dict_labels_to_None`` -- this arguments sets the default
       edge labels used by NetworkX (empty dictionaries) to be replaced by
-       ``None``, the default Sage edge label. It is set to ``True`` iff a
-       NetworkX graph is on the input.
+      ``None``, the default Sage edge label. It is set to ``True`` iff a
+      NetworkX graph is on the input.
 
     EXAMPLES:
 

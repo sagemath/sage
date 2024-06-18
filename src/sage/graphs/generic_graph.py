@@ -546,9 +546,10 @@ class GenericGraph(GenericGraph_pyx):
         ``G == H``.
 
         Two graphs are considered equal if the following hold:
-        - they are either both directed, or both undirected;
-        - they have the same settings for loops, multiedges, and weightedness;
-        - they have the same set of vertices;
+
+        - they are either both directed, or both undirected
+        - they have the same settings for loops, multiedges, and weightedness
+        - they have the same set of vertices
         - they have the same (multi)set of arrows/edges, where labels of
           arrows/edges are taken into account if *and only if* the graphs are
           considered weighted. See :meth:`~GenericGraph.weighted`.
@@ -11131,15 +11132,15 @@ class GenericGraph(GenericGraph_pyx):
 
         - ``algorithm`` -- string (default: ``None``); the algorithm to use in
           computing PageRank of ``G``. The following algorithms are
-           supported:
+          supported:
 
-          - ``NetworkX`` -- uses NetworkX's default implementation (Scipy as of 2.6)
+          - ``'NetworkX'`` -- uses NetworkX's default implementation (Scipy as of 2.6)
 
           - ``'Scipy'`` -- uses Scipy's PageRank algorithm implementation
 
           - ``'igraph'`` -- uses igraph's PageRank algorithm implementation
 
-          - ``"None"`` -- uses best implementation available
+          - ``None`` -- uses best implementation available
 
         OUTPUT: a dictionary containing the PageRank value of each node
 

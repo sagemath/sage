@@ -375,7 +375,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
 
     cpdef _act_on_(self, vec, bint self_on_left):
         r"""
-        Defines the action of ``self`` as a linear transformation
+        Define the action of ``self`` as a linear transformation
         on the vector space, in the basis given by the simple
         roots.
 

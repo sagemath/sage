@@ -858,7 +858,7 @@ class GAP3Record(GAP3Element):
 
     def _tab_completion(self):
         r"""
-        Defines the list of methods and attributes that will appear for tab
+        Define the list of methods and attributes that will appear for tab
         completion.
 
         OUTPUT:

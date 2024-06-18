@@ -56,7 +56,7 @@ _CommutativeRings = CommutativeRings()
 
 def WehlerK3Surface(polys):
     r"""
-    Defines a K3 Surface over `\mathbb{P}^2 \times \mathbb{P}^2` defined as
+    Define a K3 Surface over `\mathbb{P}^2 \times \mathbb{P}^2` defined as
     the intersection of a bilinear and biquadratic form. [Weh1998]_
 
     INPUT: Bilinear and biquadratic polynomials as a tuple or list

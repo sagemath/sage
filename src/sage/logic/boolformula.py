@@ -155,12 +155,12 @@ class BooleanFormula:
 
     - ``self`` -- calling object
 
-    - ``exp`` -- a string; this contains the boolean expression
+    - ``exp`` -- string; this contains the boolean expression
       to be manipulated
 
-    - ``tree`` -- a list; this contains the parse tree of the expression.
+    - ``tree`` -- list; this contains the parse tree of the expression
 
-    - ``vo`` -- a list; this contains the variables in the expression, in the
+    - ``vo`` -- list; this contains the variables in the expression, in the
       order that they appear; each variable only occurs once in the list
     """
     __expression = ""
@@ -188,8 +188,6 @@ class BooleanFormula:
         r"""
         Return a string representation of this statement.
 
-        OUTPUT: a string representation of calling statement
-
         EXAMPLES::
 
             sage: import sage.logic.propcalc as propcalc
@@ -202,7 +200,7 @@ class BooleanFormula:
         r"""
         Return a LaTeX representation of this statement.
 
-        OUTPUT: a string containing the latex code for the statement
+        OUTPUT: string containing the latex code for the statement
 
         EXAMPLES::
 
@@ -224,7 +222,7 @@ class BooleanFormula:
         r"""
         Convert the calling boolean formula into polish notation.
 
-        OUTPUT: a string representation of the formula in polish notation
+        OUTPUT: string representation of the formula in polish notation
 
         EXAMPLES:
 
@@ -317,7 +315,7 @@ class BooleanFormula:
 
         INPUT:
 
-        - ``other`` -- a boolean formula; this is the statement
+        - ``other`` -- boolean formula; this is the statement
           on the right side of the operator
 
         OUTPUT:
@@ -342,7 +340,7 @@ class BooleanFormula:
 
         INPUT:
 
-        - ``other`` -- a boolean formula; this is the formula on
+        - ``other`` -- boolean formula; this is the formula on
           the right side of the operator
 
         OUTPUT: a boolean formula of the form ``self & other``
@@ -365,7 +363,7 @@ class BooleanFormula:
 
         INPUT:
 
-        - ``other`` -- a boolean formula; this is the formula on
+        - ``other`` -- boolean formula; this is the formula on
           the right side of the operator
 
         OUTPUT: a boolean formula of the form ``self ^ other``
@@ -388,7 +386,7 @@ class BooleanFormula:
 
         INPUT:
 
-        - ``other`` -- a boolean formula; this is the formula on
+        - ``other`` -- boolean formula; this is the formula on
           the right side of the operator
 
         OUTPUT: a boolean formula of the form ``self ^ other``
@@ -437,7 +435,7 @@ class BooleanFormula:
 
         INPUT:
 
-        - ``other`` -- a boolean formula; this is the formula
+        - ``other`` -- boolean formula; this is the formula
           on the right side of the operator
 
         OUTPUT:
@@ -462,7 +460,7 @@ class BooleanFormula:
 
         INPUT:
 
-        - ``other`` -- a boolean formula; this is the formula
+        - ``other`` -- boolean formula; this is the formula
           on the right side of the operator
 
         OUTPUT:
@@ -487,7 +485,7 @@ class BooleanFormula:
 
         INPUT:
 
-        - ``other`` -- a boolean formula; this is the formula
+        - ``other`` -- boolean formula; this is the formula
           on the right side of the comparator
 
         OUTPUT: a boolean value to be determined as follows:
@@ -526,9 +524,7 @@ class BooleanFormula:
         - ``end`` -- (default: -1) an integer; this is the last
           row of the truth table to be created
 
-        OUTPUT:
-
-        The truth table as a 2-D array
+        OUTPUT: the truth table as a 2-D array
 
         EXAMPLES:
 
@@ -604,8 +600,8 @@ class BooleanFormula:
 
         INPUT:
 
-        - ``var_values`` -- a dictionary; this contains the
-          pairs of variables and their boolean values.
+        - ``var_values`` -- dictionary; this contains the
+          pairs of variables and their boolean values
 
         OUTPUT: the result of the evaluation as a boolean
 
@@ -844,13 +840,13 @@ class BooleanFormula:
 
         - ``self`` -- calling object
 
-        - ``other`` -- instance of BooleanFormula class.
+        - ``other`` -- instance of BooleanFormula class
 
         OUTPUT: a boolean value to be determined as follows:
 
-        True - if the two formulas are logically equivalent
+        ``True`` -- if the two formulas are logically equivalent
 
-        False - if the two formulas are not logically equivalent
+        ``False`` -- if the two formulas are not logically equivalent
 
         EXAMPLES:
 
@@ -1022,11 +1018,7 @@ class BooleanFormula:
 #        This function uses the propcalc package to simplify an expression to
 #        its minimal form.
 #
-#        INPUT:
-#             self -- the calling object.
-#
-#        OUTPUT:
-#            A simplified expression.
+#        OUTPUT: a simplified expression
 #
 #        EXAMPLES::
 
@@ -1092,13 +1084,11 @@ class BooleanFormula:
 
         INPUT:
 
-        - ``tree`` -- a list; this is a branch of a
+        - ``tree`` -- list; this is a branch of a
           parse tree and can only contain the '&', '|'
           and '~' operators along with variables
 
-        OUTPUT:
-
-        A 3-tuple.
+        OUTPUT: a 3-tuple
 
         EXAMPLES:
 
@@ -1144,7 +1134,7 @@ class BooleanFormula:
         - ``other`` -- instance of :class:`BooleanFormula`; this
           is the formula on the right of the operator
 
-        - ``op`` -- a string; this is the operator used to
+        - ``op`` -- string; this is the operator used to
           combine the two formulas
 
         OUTPUT: the result as an instance of :class:`BooleanFormula`
@@ -1172,10 +1162,10 @@ class BooleanFormula:
 
         INPUT:
 
-        - ``x`` -- an integer; this is the number from
+        - ``x`` -- integer; this is the number from
           which to take the bit
 
-        - ``c`` -- an integer; this is the but number to
+        - ``c`` -- integer; this is the but number to
           be taken, where 0 is the low order bit
 
         OUTPUT: a boolean to be determined as follows:
@@ -1233,7 +1223,7 @@ class BooleanFormula:
 
         INPUT:
 
-        - ``tree`` -- a list; this represents a branch
+        - ``tree`` -- list; this represents a branch
           of a parse tree
 
         OUTPUT:
@@ -1319,7 +1309,7 @@ class BooleanFormula:
 
         INPUT:
 
-        - ``tree`` -- a list; this represents a branch of
+        - ``tree`` -- list; this represents a branch of
           a parse tree
 
         OUTPUT: a new list
@@ -1357,7 +1347,7 @@ class BooleanFormula:
 
         INPUT:
 
-        - ``tree`` -- a list; this represents a branch
+        - ``tree`` -- list; this represents a branch
           of a parse tree
 
         OUTPUT: a new list
@@ -1425,7 +1415,7 @@ class BooleanFormula:
 
         INPUT:
 
-        - ``str`` -- a string; this contains a logical
+        - ``str`` -- string; this contains a logical
           expression
 
         OUTPUT: the next operator as a string

@@ -43,7 +43,7 @@ class FusionRing(WeylCharacterRing):
     - ``conjugate`` -- (default: ``False``) set ``True`` to obtain
       the complex conjugate ring
     - ``cyclotomic_order`` -- (default: computed depending on ``ct`` and ``k``)
-    - ``fusion_labels`` --  (default: ``None``) either a tuple of strings to use as labels of the
+    - ``fusion_labels`` -- (default: ``None``) either a tuple of strings to use as labels of the
       basis of simple objects, or a string from which the labels will be
       constructed
     - ``inject_variables`` -- (default: ``False``): use with ``fusion_labels``.

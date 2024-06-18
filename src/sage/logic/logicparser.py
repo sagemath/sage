@@ -98,7 +98,7 @@ def parse(s):
 
     INPUT:
 
-    - ``s`` -- a string containing a boolean formula
+    - ``s`` -- string containing a boolean formula
 
     OUTPUT:
 
@@ -133,7 +133,7 @@ def polish_parse(s):
 
     INPUT:
 
-    - ``s`` -- a string containing a boolean expression
+    - ``s`` -- string containing a boolean expression
 
     OUTPUT: the full syntax parse tree as a nested list
 
@@ -225,7 +225,7 @@ def recover_formula(prefix_tree):
 
     INPUT:
 
-    - ``prefix_tree`` -- a list; this is a full syntax parse
+    - ``prefix_tree`` -- list; this is a full syntax parse
       tree in prefix form
 
     OUTPUT: the formula as a string
@@ -278,7 +278,7 @@ def recover_formula_internal(prefix_tree):
 
     INPUT:
 
-    - ``prefix_tree`` -- a list; this is a simple tree
+    - ``prefix_tree`` -- list; this is a simple tree
       with at most one operator in prefix form
 
     OUTPUT: the formula as a string
@@ -342,10 +342,10 @@ def prefix_to_infix(prefix_tree):
 
     INPUT:
 
-    - ``prefix_tree`` -- a list; this is a full syntax parse
+    - ``prefix_tree`` -- list; this is a full syntax parse
       tree in prefix form
 
-    OUTPUT: a list containing the tree in infix form
+    OUTPUT: list containing the tree in infix form
 
     EXAMPLES:
 
@@ -384,7 +384,7 @@ def to_infix_internal(prefix_tree):
 
     INPUT:
 
-    - ``prefix_tree`` -- a list; this is a simple parse tree
+    - ``prefix_tree`` -- list; this is a simple parse tree
       in prefix form with at most one operator
 
     OUTPUT: the tree in infix form as a list
@@ -433,7 +433,7 @@ def tokenize(s):
 
     INPUT:
 
-    - ``s`` -- a string representation of a boolean formula
+    - ``s`` -- string representation of a boolean formula
 
     OUTPUT:
 
@@ -515,9 +515,9 @@ def tree_parse(toks, polish=False):
 
     INPUT:
 
-    - ``toks`` -- a list of tokens from a boolean formula
+    - ``toks`` -- list of tokens from a boolean formula
 
-    - ``polish`` -- (default: ``False``) a boolean; when ``True``,
+    - ``polish`` -- boolean (default: ``False``); when ``True``,
       :func:`~sage.logic.logicparser.tree_parse()` will return
       the full syntax parse tree
 
@@ -572,14 +572,14 @@ def parse_ltor(toks, n=0, polish=False):
 
     INPUT:
 
-    - ``toks`` -- a list of tokens. Each token is atomic.
+    - ``toks`` -- list of tokens; each token is atomic
 
-    - ``n`` -- (default: 0) an integer representing which order of
+    - ``n`` -- integer (default: 0) representing which order of
       operations are occurring
 
-    - ``polish`` -- (default: ``False``) a boolean; when ``True``, double
+    - ``polish`` -- boolean (default: ``False``); when ``True``, double
       negations are not cancelled and negated statements are turned into
-      list of length two.
+      list of length two
 
     OUTPUT: the parse tree as a nested list that depends on ``polish`` as follows:
 

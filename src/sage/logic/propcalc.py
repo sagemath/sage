@@ -154,7 +154,7 @@ def formula(s):
 
     INPUT:
 
-    - ``s`` -- a string that contains a logical expression
+    - ``s`` -- string that contains a logical expression
 
     OUTPUT: an instance of :class:`BooleanFormula`
 

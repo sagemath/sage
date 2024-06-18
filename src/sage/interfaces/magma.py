@@ -1429,7 +1429,7 @@ class Magma(ExtraTabCompletion, Expect):
 
         - ``verbose`` -- boolean (default: ``True``); whether to
           verbosely output status info the first time the command list is
-           built
+          built
 
         - ``use_disk_cache`` -- boolean (default: ``True``); use
           cached command list, which is saved to disk
@@ -2311,22 +2311,22 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
         Types that are nicely latexed include:
 
-        -  rationals
+        - rationals
 
-        -  matrices
+        - matrices
 
-        -  polynomials
+        - polynomials
 
-        -  binary quadratic forms
+        - binary quadratic forms
 
-        -  elements of quadratic, cyclotomic number fields, and general
+        - elements of quadratic, cyclotomic number fields, and general
           number fields
 
-        -  points
+        - points
 
-        -  elliptic curves
+        - elliptic curves
 
-        -  power series
+        - power series
 
         IMPLEMENTATION: Calls latex.m, which is in
         SAGE_EXTCODE/magma/latex.m

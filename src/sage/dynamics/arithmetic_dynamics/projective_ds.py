@@ -2866,7 +2866,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         kwds:
 
-        - ``prime_bound`` --  (default: ``[1, 20]``) a list or tuple of
+        - ``prime_bound`` -- (default: ``[1, 20]``) a list or tuple of
           two positive integers or an integer for the upper bound
 
         - ``bad_primes`` -- (optional) a list or tuple of integer primes,

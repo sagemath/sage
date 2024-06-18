@@ -785,7 +785,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         - ``x``, ``y``, ``z`` -- string representing a function (such
           as ``x="u2+v2"``, ...) vars is a list or two strings
-           representing variables (such as vars = ["u","v"])
+          representing variables (such as vars = ["u","v"])
 
         - ``urange`` -- [umin, umax]
 
@@ -886,7 +886,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         - ``ics`` -- list of numbers representing initial
           conditions, with symbols allowed which are represented by strings
-           (eg, f(0)=1, f'(0)=2 is ics = [0,1,2])
+          (eg, f(0)=1, f'(0)=2 is ics = [0,1,2])
 
         EXAMPLES::
 
