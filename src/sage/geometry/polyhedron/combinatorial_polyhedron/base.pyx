@@ -1377,16 +1377,16 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         As a sparse matrix::
 
-            sage: P = polytopes.permutahedron(6, backend='field')                  # optional - sage.combinat
-            sage: C = P.combinatorial_polyhedron()                                 # optional - sage.combinat
-            sage: C.vertex_adjacency_matrix(sparse=True)                           # optional - sage.combinat
+            sage: P = polytopes.permutahedron(6, backend='field')                       # needs sage.combinat
+            sage: C = P.combinatorial_polyhedron()                                      # needs sage.combinat
+            sage: C.vertex_adjacency_matrix(sparse=True)                                # needs sage.combinat
             720 x 720 sparse matrix over Integer Ring...
 
         As a numpy matrix::
 
-            sage: C.vertex_adjacency_matrix(sparse=False, implementation='numpy')  # optional - sage.combinat
-            720 x 720 sparse matrix over Integer Ring...
-            sage: type(_)
+            sage: C.vertex_adjacency_matrix(sparse=False, implementation='numpy')       # needs sage.combinat
+            720 x 720 dense matrix over Integer Ring...
+            sage: type(_)                                                               # needs sage.combinat
             <class 'sage.matrix.matrix_numpy_integer_dense.Matrix_numpy_integer_dense'>
 
         TESTS::
@@ -1424,6 +1424,7 @@ cdef class CombinatorialPolyhedron(SageObject):
                 adjacency_matrix_sparse.set_immutable()
             return adjacency_matrix_sparse
         else:
+            adjacency_matrix = matrix(base_ring, n, n, 0, **kwds)
             for i in range(self._edges.length):
                 first = self._edges.get(i).first
                 second = self._edges.get(i).second
