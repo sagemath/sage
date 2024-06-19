@@ -91,20 +91,20 @@ polynomial `\bar{p}(x)` with the same roots which can be factored. Therefore
 this two polynomial determine the same function. We call `\bar{p}(x)` the
 conjugate of `p(x)`. The conjugate can be a convex or cancave function::
 
-    sage: p1.conjugate('convex')
+    sage: p1.convex_conjugate()
     0*y^3 + 2*y^2 + 4*y + 1
-    sage: p1.conjugate('concave')
+    sage: p1.concave_conjugate()
     0*y^3 + -3*y^2 + -1*y + 1
-    sage: p1.conjugate('convex').factor()
+    sage: p1.convex_conjugate().factor()
     (0) * (0*y + -3) * (0*y + 2)^2
     
-Now, we check that the induced tropical polynomial function of `p(x)` and
-`\bar{p}(x)` is really the same::
+Because we are using max-plus algebra, then we can check that the induced 
+tropical polynomial function of `p(x)` and its convex conjugate is the same::
 
     sage: p1.piecewise_function()
     piecewise(x|-->1 on (-oo, -3), x|-->x + 4 on [-3, 2], x|-->3*x on 
     (2, +oo); x)
-    sage: p1.conjugate('convex').piecewise_function()
+    sage: p1.convex_conjugate().piecewise_function()
     piecewise(x|-->1 on (-oo, -3), x|-->x + 4 on (-3, 2), x|-->3*x on 
     (2, +oo); x)
 
@@ -114,8 +114,8 @@ Plot the graph of some tropical polynomials::
 
 TESTS:
 
-There is no subtraction for tropical polynomials because element
-in tropical semiring doesn't necessarily have additive inverse::
+There is no subtraction for tropical polynomials because element in tropical 
+semiring doesn't necessarily have additive inverse::
 
     sage: -p1
     Traceback (most recent call last):
@@ -179,7 +179,6 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             [0, 0]
 
         """
-
         tropical_roots = []
         if len(self.dict()) == 1:
             exponent = list(self.dict())[0]
@@ -220,60 +219,31 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             
         return sorted(tropical_roots)
     
-    def conjugate(self, shape='convex'):
+    def _conjugate(self, use_min):
         r"""
-        Return the tropical polynomial which has the same roots as ``self`` 
-        and additionally which can be factored
+        Return the tropical polynomial which has the same roots as ``self``
 
         INPUT:
 
-        - ``shape`` -- string: choose between 'convex' or 'concave' 
-        [default: 'convex'], the shape of tropical polynomial function
-
-        OUTPUT:
-
-        - ``poly`` -- TropicalPolynomial
+        - ``use_min`` -- bool. If `True` then the base tropical semiring
+        will use a min-plus algebra. Otherwise it use a max-plus algebra
+        
+        OUTPUT: TropicalPolynomial
 
         EXAMPLES:
 
-            sage: T = TropicalSemiring(QQ, use_min=False)
+            sage: T = TropicalSemiring(QQ, use_min=True)
             sage: R = PolynomialRing(T, x)
-            sage: p1 = R([5,3,0])
-            sage: p1.factor()
-            (0) * (0*x + 2) * (0*x + 3)
-            sage: p1.conjugate('convex')
-            0*x^2 + 3*x + 5
-            sage: p1.conjugate('concave')
-            0*x^2 + 2*x + 5
-        
-        ::
-
-            sage: p2 = R([4,0,2])
-            sage: p2.factor()
-            2*x^2 + 0*x + 4
-            sage: p2.conjugate('convex')
-            2*x^2 + 3*x + 4
-            sage: p2.conjugate('concave')
-            2*x^2 + 3*x + 4
-            sage: p2.conjugate('concave').factor()
-            (2) * (0*x + 1)^2
-            sage: p2.conjugate('convex').piecewise_function()
-            piecewise(x|-->4 on (-oo, 1), x|-->2*x + 2 on (1, +oo); x)
-            sage: p2.conjugate('concave').piecewise_function()
-            piecewise(x|-->2*x + 2 on (-oo, 1), x|-->4 on (1, +oo); x)
+            sage: p1 = R([5,4,1,0,2,4,3]); p1
+            sage: p1._conjugate(True)
+            3*x^6 + 2*x^5 + 1*x^4 + 0*x^3 + 1*x^2 + 3*x + 5
+            sage: p1._conjugate(False)
+            3*x^6 + 5*x^5 + 7*x^4 + 8*x^3 + 7*x^2 + 6*x + 5   
 
         """
-
         from sage.rings.polynomial.polynomial_ring_constructor import \
             PolynomialRing
         
-        if shape not in ['convex', 'concave']:
-            raise ValueError("Invalid shape type. Choose either 'convex' or \
-                             'concave'.")
-        if shape == 'convex':
-            use_min = False
-        else:
-            use_min = True
         roots = self.roots()
         T = TropicalSemiring(self.parent().base().base_ring(), use_min=use_min)
         R = PolynomialRing(T, self.parent().variable_name())
@@ -281,21 +251,83 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         for root in roots:
             linear = R([root, 0])
             poly *= linear
-        return poly        
+        return poly
+
+    def convex_conjugate(self):
+        r"""
+        Return the tropical polynomial which has the same roots as ``self``, 
+        which can be factored and the function is convex
+
+        OUTPUT: TropicalPolynomial
+
+        EXAMPLES:
+
+            sage: T = TropicalSemiring(QQ, use_min=True)
+            sage: R = PolynomialRing(T, x)
+            sage: p1 = R([5,3,0])
+            sage: p1.factor()
+            (0) * (0*x^2 + 3*x + 5)
+            sage: p1.is_convex()
+            False
+            sage: p1.convex_conjugate()
+            0*x^2 + 5/2*x + 5
+            sage: p1.convex_conjugate().factor()
+            (0) * (0*x + 5/2)^2
+            sage: p1.convex_conjugate().is_convex()
+            True
+
+        """
+        return self._conjugate(False)
+
+    def concave_conjugate(self):
+        r"""
+        Return the tropical polynomial which has the same roots as ``self``, 
+        which can be factored and the function is concave
+
+        OUTPUT: TropicalPolynomial
+
+        EXAMPLES:
+
+            sage: T = TropicalSemiring(QQ, use_min=False)
+            sage: R = PolynomialRing(T, x)
+            sage: p1 = R([4,0,2])
+            sage: p1.factor()
+            (2) * (0*x^2 + -2*x + 2)
+            sage: p1.is_concave()
+            False
+            sage: p1.concave_conjugate()
+            2*x^2 + 3*x + 4
+            sage: p1.concave_conjugate().factor()
+            (2) * (0*x + 1)^2
+            sage: p1.concave_conjugate().is_concave()
+            True
+
+        """
+        return self._conjugate(True)     
 
     def is_convex(self):
         """
-        Return "True" if the induced function of this tropical polynomial
+        Return "True" if the induced function of the tropical polynomial
         is convex
-
         """
-
+        if len(self.dict()) == 1:
+            return True
+        
         return not self.parent().base()._use_min
+    
+    def is_concave(self):
+        """
+        Return "True" if the induced function of the tropical polynomial
+        is concave
+        """
+        if len(self.dict()) == 1:
+            return True
+        
+        return self.parent().base()._use_min
     
     def factor(self):
         r"""
-        Return the tropical factorization of ``self`` into its linear factors
-        if possible
+        Return the factorization of ``self`` into its tropical linear factors
 
         OUTPUT:
 
@@ -303,37 +335,27 @@ class TropicalPolynomial(Polynomial_generic_sparse):
 
         EXAMPLES:
 
-        A tropical polynomial can be factored if and only if it is the same 
-        with its conjugate::
-
             sage: T = TropicalSemiring(QQ, use_min=True)
             sage: R = PolynomialRing(T, x)
             sage: p1 = R([6,3,1,0]); p1
             0*x^3 + 1*x^2 + 3*x + 6
             sage: factor(p1)
             (0) * (0*x + 1) * (0*x + 2) * (0*x + 3)
-            sage: p1.conjugate('concave')
-            0*x^3 + 1*x^2 + 3*x + 6
-        
-        ::
 
+        Such factorization is not always possible::
+        
             sage: p2 = R([4,4,2]); p2
             2*x^2 + 4*x + 4
             sage: p2.factor()
             (2) * (0*x^2 + 2*x + 2)
-            sage: p2.conjugate('concave')
-            2*x^2 + 3*x + 4
-            sage: factor(p2.conjugate())
-            (2) * (0*x + 1)^2
 
         """
-
         from sage.structure.factorization import Factorization
 
         if self.parent().base()._use_min:
-            conjugate = self.conjugate('concave')
+            conjugate = self.concave_conjugate()
         else:
-            conjugate = self.conjugate('convex')
+            conjugate = self.convex_conjugate()
 
         unit = self.dict()[self.degree()]
         if self != conjugate or self.roots() == []:
@@ -385,7 +407,6 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             3*x + 1
             
         """
-
         from sage.symbolic.ring import SR
         from sage.rings.infinity import infinity
         from sage.functions.piecewise import piecewise
@@ -501,12 +522,11 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             ValueError: xmin = 5 should be less than xmax = 3
 
         """
-
         from sage.plot.plot import plot
         f = self.piecewise_function()
         if xmin is None and xmax is None:
             roots = sorted(self.roots())
-            if roots == [] or len(set(roots))==1:
+            if roots==[] or self.parent().base().zero() in roots:
                 return plot(f, xmin=-1, xmax=1)
             else:
                 return plot(f, xmin=roots[0]-1, xmax=roots[-1]+1)
