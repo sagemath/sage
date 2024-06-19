@@ -125,7 +125,6 @@ AUTHORS:
 - Grayson Jorgenson (2016-08)
 
 - Kwankyu Lee (2019-05): added integral projective curves
-
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>

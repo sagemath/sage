@@ -33,7 +33,6 @@ AUTHORS:
 - Robert Bradshaw (2007-04): generalization to hyperelliptic curves
 
 - Julian Rueth (2014-05-09): improved caching
-
 """
 
 # ****************************************************************************
@@ -96,7 +95,7 @@ class SpecialCubicQuotientRingElement(ModuleElement):
 
         - ``parent`` -- a :class:`SpecialCubicQuotientRing`
 
-        - ``p0, p1, p2`` -- coefficients; must be coercible
+        - ``p0``, ``p1``, ``p2`` -- coefficients; must be coercible
           into parent.poly_ring()
 
         - ``check`` -- bool (default: ``True``): whether to carry
@@ -604,7 +603,7 @@ class SpecialCubicQuotientRing(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``p0, p1, p2`` -- coefficients; must be coercible
+        - ``p0``, ``p1``, ``p2`` -- coefficients; must be coercible
           into poly_ring()
 
         - ``check`` -- bool (default: ``True``): whether to carry
@@ -1024,7 +1023,7 @@ def reduce_all(Q, p, coeffs, offset, compute_exact_form=False):
 
     OUTPUT:
 
-    - ``A, B`` -- pair such that the input differential is
+    - ``A``, ``B`` -- pair such that the input differential is
       cohomologous to (A + Bx) dx/y.
 
     .. NOTE::
@@ -1110,7 +1109,7 @@ def frobenius_expansion_by_newton(Q, p, M):
 
     OUTPUT:
 
-    - ``F0, F1`` -- elements of
+    - ``F0``, ``F1`` -- elements of
       ``SpecialCubicQuotientRing(Q)``, as described above
 
     - ``r`` -- non-negative integer, as described above
@@ -1298,7 +1297,7 @@ def frobenius_expansion_by_series(Q, p, M):
 
     OUTPUT:
 
-    - ``F0, F1`` -- elements of
+    - ``F0``, ``F1`` -- elements of
       ``SpecialCubicQuotientRing(Q)``, as described above
 
     - ``r`` -- non-negative integer, as described above

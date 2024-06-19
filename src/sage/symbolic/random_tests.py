@@ -110,7 +110,7 @@ def normalize_prob_list(pl, extra=()):
     if len(pl) == 0:
         return pl
     result = []
-    total = sum([float(p[0]) for p in pl])
+    total = sum(float(p[0]) for p in pl)
     for p in pl:
         prob = p[0]
         val = p[1]
@@ -120,8 +120,8 @@ def normalize_prob_list(pl, extra=()):
             p_extra = extra
         if isinstance(val, list):
             norm_val = normalize_prob_list(val, extra=p_extra)
-            for np in norm_val:
-                result.append(((prob / total) * np[0], np[1]) + np[2:])
+            result.extend(((prob / total) * np[0], np[1]) + np[2:]
+                          for np in norm_val)
         else:
             result.append(((prob / total), val) + p_extra)
     return result

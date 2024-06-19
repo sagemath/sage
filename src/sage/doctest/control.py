@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 Classes involved in doctesting
 
@@ -723,7 +724,7 @@ class DocTestController(SageObject):
             sage: import json
             sage: filename = tmp_filename()
             sage: with open(filename, 'w') as stats_file:
-            ....:     json.dump({'sage.doctest.control':{'walltime':1.0r}}, stats_file)
+            ....:     json.dump({'sage.doctest.control': {'walltime': 1.0r}}, stats_file)
             sage: DC.load_stats(filename)
             sage: DC.stats['sage.doctest.control']
             {'walltime': 1.0}
@@ -758,7 +759,7 @@ class DocTestController(SageObject):
 
             sage: from sage.doctest.control import DocTestDefaults, DocTestController
             sage: DC = DocTestController(DocTestDefaults(), [])
-            sage: DC.stats['sage.doctest.control'] = {'walltime':1.0r}
+            sage: DC.stats['sage.doctest.control'] = {'walltime': 1.0r}
             sage: filename = tmp_filename()
             sage: DC.save_stats(filename)
             sage: import json
@@ -1033,8 +1034,8 @@ class DocTestController(SageObject):
             sage: DC = DocTestController(DD, [dirname])
             sage: DC.expand_files_into_sources()
             sage: for i, source in enumerate(DC.sources):
-            ....:     DC.stats[source.basename] = {'walltime': 0.1*(i+1)}
-            sage: DC.stats['sage.doctest.control'] = {'failed':True,'walltime':1.0}
+            ....:     DC.stats[source.basename] = {'walltime': 0.1r * (i+1)}
+            sage: DC.stats['sage.doctest.control'] = {'failed': True, 'walltime': 1.0r}
             sage: DC.filter_sources()
             Only doctesting files that failed last test.
             sage: len(DC.sources)
@@ -1064,7 +1065,7 @@ class DocTestController(SageObject):
             sage: DC.expand_files_into_sources()
             sage: DC.sources.sort(key=lambda s:s.basename)
             sage: for i, source in enumerate(DC.sources):
-            ....:     DC.stats[source.basename] = {'walltime': 0.1*(i+1)}
+            ....:     DC.stats[source.basename] = {'walltime': 0.1r * (i+1)}
             sage: DC.sort_sources()
             Sorting sources by runtime so that slower doctests are run first....
             sage: print("\n".join(source.basename for source in DC.sources))
@@ -1205,7 +1206,7 @@ class DocTestController(SageObject):
             sage: DC.sources.sort(key=lambda s:s.basename)
 
             sage: for i, source in enumerate(DC.sources):
-            ....:     DC.stats[source.basename] = {'walltime': 0.1*(i+1)}
+            ....:     DC.stats[source.basename] = {'walltime': 0.1r * (i+1)}
             ....:
 
             sage: DC.run()

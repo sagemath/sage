@@ -9,7 +9,6 @@ AUTHORS:
 - Jeroen Demeyer (2013-11-22): initial version, split off from other
   files, made Polynomial_padic the common base class for all p-adic
   polynomials.
-
 """
 
 #*****************************************************************************

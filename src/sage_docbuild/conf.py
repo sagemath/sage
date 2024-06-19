@@ -20,6 +20,7 @@ from sage.misc.sagedoc_conf import *
 
 import sys
 import os
+import re
 import importlib
 import dateutil.parser
 import sphinx
@@ -441,11 +442,24 @@ html_theme_options = {
 }
 
 if not version.split('.')[-1].isnumeric():  # develop version
-    html_theme_options.update({
-        "announcement": f'This is documentation for Sage development version {version}. '
-                         'The documentation for the latest stable version is available '
-                         '<a href="https://doc.sagemath.org/html/en/index.html">here</a>.'
-})
+    ver = f'<a href="https://livedoc--sagemath.netlify.app/html/en/index.html">{version}</a>'
+    github_ref = os.environ.get('GITHUB_REF', '')
+    if github_ref:
+        match = re.search(r'refs/pull/(\d+)/merge', github_ref)
+        if match:
+            # As this doc is built for a GitHub PR, we plant links
+            # to the PR in the announcement banner.
+            pr_number = match.group(1)
+            pr_url = f'https://github.com/sagemath/sage/pull/{pr_number}'
+            pr_sha = os.environ.get('PR_SHA', '')
+            pr_commit = pr_url + f'/commits/{pr_sha}'
+            ver += f' built with GitHub PR <a href="{pr_url}">#{pr_number}</a>' \
+                   f' on <a href="{pr_commit}">{pr_sha[:7]}</a>' \
+                   f' [<a href="/changes.html">changes</a>]'
+    banner = f'This is documentation for Sage development version {ver}. ' \
+              'Documentation for the latest stable version is ' \
+              '<a href="https://doc.sagemath.org/html/en/index.html">here</a>.'
+    html_theme_options.update({ "announcement": banner })
 
 # The name of the Pygments (syntax highlighting) style to use. This
 # overrides a HTML theme's corresponding setting.

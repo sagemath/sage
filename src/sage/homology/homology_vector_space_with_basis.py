@@ -1,5 +1,4 @@
 # sage.doctest: needs sage.graphs          (because all doctests use the catalogs simplicial_complexes, cubical_complexes)
-
 """
 Homology and cohomology with a basis
 

@@ -157,7 +157,6 @@ AUTHORS:
 - Simon King (2010-12): (:issue:`8800`) fixed a bug in ``denominator()``.
 
 - Simon King (2010-12), Peter Bruin (June 2014): (:issue:`10513`) new coercion model and category framework.
-
 """
 
 ###########################################################################
@@ -3110,8 +3109,8 @@ class FreeModule_generic(Module_free_ambient):
             Domain: Vector space of dimension 2 over Rational Field
             Codomain: Vector space of dimension 2 over Rational Field
         """
-        from sage.structure.element import is_Matrix
-        if codomain is None and is_Matrix(im_gens):
+        from sage.structure.element import Matrix
+        if codomain is None and isinstance(im_gens, Matrix):
             side = kwds.get("side", "left")
             n = im_gens.nrows() if side == "right" else im_gens.ncols()
             from sage.categories.pushout import pushout
@@ -3280,8 +3279,8 @@ class FreeModule_generic(Module_free_ambient):
            probability `1-prob`. Otherwise coefficients will be chosen
            randomly from base ring (and may be zero).
 
-        - ``*args, **kwds`` -- passed on to ``random_element()`` function
-           of base ring.
+        - ``*args``, ``**kwds`` -- passed on to the :func:`random_element`
+          function of the base ring.
 
         EXAMPLES::
 
@@ -5949,7 +5948,7 @@ class FreeModule_ambient(FreeModule_generic):
            probability `1-prob`. Otherwise coefficients will be chosen
            randomly from base ring (and may be zero).
 
-        - ``*args, **kwds`` -- passed on to random_element function of base
+        - ``*args``, ``**kwds`` -- passed on to random_element function of base
            ring.
 
 

@@ -519,7 +519,6 @@ The components on the basis are returned by the square bracket operator for
     [2, 0, -5]
     sage: [v.coefficient(i) for i in {1,2,3}]
     [2, 0, -5]
-
 """
 # ******************************************************************************
 #       Copyright (C) 2014-2021 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>

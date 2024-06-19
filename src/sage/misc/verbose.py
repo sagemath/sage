@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Verbosity System and Logging in SageMath
 
@@ -89,7 +90,7 @@ AUTHORS:
 Functions
 =========
 """
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2006, 2007 William Stein <wstein@gmail.com>
 #       Copyright (C) 2006 Gonzalo Tornaria
 #       Copyright (C) 2008 John H. Palmieri
@@ -102,7 +103,7 @@ Functions
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 import sys
 import os

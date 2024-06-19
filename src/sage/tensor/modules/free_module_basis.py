@@ -18,7 +18,6 @@ REFERENCES:
 
 - Chap. 10 of R. Godement : *Algebra* [God1968]_
 - Chap. 3 of S. Lang : *Algebra* [Lan2002]_
-
 """
 #******************************************************************************
 #       Copyright (C) 2015, 2018 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>

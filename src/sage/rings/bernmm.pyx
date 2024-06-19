@@ -36,7 +36,6 @@ cdef extern from "bernmm/bern_modp.h":
     long bern_modp "bernmm::bern_modp" (long p, long k)
 
 
-
 from sage.rings.rational cimport Rational
 
 

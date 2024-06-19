@@ -22,7 +22,6 @@ EXAMPLES::
 AUTHORS:
 
 - Ivo Maffei (2020-07-28): initial version
-
 """
 
 # ****************************************************************************
@@ -597,7 +596,7 @@ def UstimenkoGraph(const int m, const int q):
 
     INPUT:
 
-    - ``m, q`` -- integers; ``q`` must be a prime power and ``m > 1``.
+    - ``m``, ``q`` -- integers; `q` must be a prime power and `m > 1`
 
     EXAMPLES::
 
@@ -652,7 +651,7 @@ def BilinearFormsGraph(const int d, const int e, const int q):
 
     INPUT:
 
-    - ``d, e`` -- integers; dimension of the matrices
+    - ``d``, ``e`` -- integers; dimension of the matrices
     - ``q`` -- integer; a prime power
 
     EXAMPLES::
@@ -1085,7 +1084,7 @@ def GrassmannGraph(const int q, const int n, const int input_e):
     INPUT:
 
     - ``q`` -- a prime power
-    - ``n, e`` -- integers with ``n > e+1``
+    - ``n``, ``e`` -- integers with `n > e+1`
 
     EXAMPLES::
 
@@ -1264,7 +1263,7 @@ def graph_from_GQ_spread(const int s, const int t):
 
     INPUT:
 
-    - ``s, t`` -- integers; order of the generalised quadrangle
+    - ``s``, ``t`` -- integers; order of the generalised quadrangle
 
     EXAMPLES::
 
@@ -1310,7 +1309,7 @@ def GeneralisedDodecagonGraph(const int s, const int t):
 
     INPUT:
 
-    - ``s, t`` -- integers; order of the generalised dodecagon
+    - ``s``, ``t`` -- integers; order of the generalised dodecagon
 
     EXAMPLES::
 
@@ -1418,7 +1417,7 @@ def GeneralisedOctagonGraph(const int s, const int t):
 
     INPUT:
 
-    - ``s, t`` -- integers; order of the generalised octagon
+    - ``s``, ``t`` -- integers; order of the generalised octagon
 
     EXAMPLES::
 
@@ -1529,7 +1528,7 @@ def GeneralisedHexagonGraph(const int s, const int t):
 
     INPUT:
 
-    - ``s, t`` -- integers; order of the generalised hexagon
+    - ``s``, ``t`` -- integers; order of the generalised hexagon
 
     EXAMPLES::
 
@@ -2099,8 +2098,8 @@ def graph_with_classical_parameters(int d, int b, alpha_in, beta_in, int gamma):
 
     INPUT:
 
-    - ``d, b, alpha_in, beta_in`` -- numbers; the parameters of the graph;
-      ``d`` and ``b`` must be integers
+    - ``d``, ``b``, ``alpha_in``, ``beta_in`` -- numbers; the parameters of the
+      graph; ``d`` and ``b`` must be integers
 
     - ``gamma`` -- element of the enum ``ClassicalParametersGraph``
 
@@ -2324,7 +2323,7 @@ def pseudo_partition_graph(int m, int a):
 
     INPUT:
 
-    - ``m, a`` -- integers; parameters of the graph
+    - ``m``, ``a`` -- integers; parameters of the graph
 
     EXAMPLES::
 

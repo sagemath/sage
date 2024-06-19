@@ -179,7 +179,6 @@ cdef class InnerGroup:
             elif algorithm == "linear":
                 self.frob_pow = 0
 
-
         self.compute_transporter = False
         if "transporter" in kwds:
             self.transporter = kwds["transporter"]
@@ -641,7 +640,6 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
                 self._autom_group_generators.append(transp_inv * x * self._transporter)
             self._inner_group_stabilizer_order = (len(F) - 1) ** len(P)
 
-
         if remaining_inner_group.get_frob_pow() > 0:
             x = S(autom=F.hom([F.primitive_element() ** (remaining_inner_group.get_frob_pow() * F.characteristic())]))
             self._autom_group_generators.append(transp_inv * x * self._transporter)
@@ -900,7 +898,6 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
                         return True
         return True
 
-
     cdef bint _inner_min_refine(self, bint *inner_stab_changed, bint *changed_partition) noexcept:
         """
         Refine the partition ``self.part`` by computing the orbit (respectively
@@ -1013,8 +1010,6 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         - ``False`` only if the image under this homomorphism of group actions
           compares larger than the image of the candidate for the canonical form.
         """
-
-
         self._hyp_part.depth += 1
         PS_clear(self._hyp_part)
         cdef bitset_t *nonsingletons = NULL
