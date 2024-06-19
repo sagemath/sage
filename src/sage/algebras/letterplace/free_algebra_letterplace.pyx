@@ -120,14 +120,15 @@ TESTS::
     We also do not support coercion from a subalgebra, or between free
     algebras with different term orderings, yet.
 """
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.libs.singular.function import lib, singular_function
-from sage.libs.singular.function cimport RingWrap
-from sage.libs.singular.ring cimport singular_ring_delete, singular_ring_reference
+from sage.algebras.free_algebra import FreeAlgebra
 from sage.categories.algebras import Algebras
+from sage.libs.singular.function cimport RingWrap
+from sage.libs.singular.function import lib, singular_function
+from sage.libs.singular.ring cimport singular_ring_delete, singular_ring_reference
+from sage.misc.cachefunc import cached_method
 from sage.rings.noncommutative_ideals import IdealMonoid_nc
 from sage.rings.polynomial.plural cimport new_CRing
-from sage.misc.cachefunc import cached_method
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 #####################
 # Define some singular functions
@@ -197,7 +198,7 @@ cdef MPolynomialRing_libsingular make_letterplace_ring(base_ring, blocks):
 #####################
 # The free algebra
 
-cdef class FreeAlgebra_letterplace(Parent):
+cdef class FreeAlgebra_letterplace(Parent, FreeAlgebra):
     """
     Finitely generated free algebra, with arithmetic restricted to weighted homogeneous elements.
 
