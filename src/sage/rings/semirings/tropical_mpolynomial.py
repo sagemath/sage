@@ -67,7 +67,9 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 class TropicalMPolynomial(MPolynomial_polydict):
-    pass
+    
+    def roots(self):
+        pass
 
 class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
     def __init__(self, base_semiring, names):
