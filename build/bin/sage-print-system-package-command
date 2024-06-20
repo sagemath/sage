@@ -51,6 +51,9 @@ do
         --yes)
             YES=yes
             ;;
+        --ignore-missing)
+            IGNORE_MISSING=yes
+            ;;
         -*)
             echo >&2 "$0: unknown option $1"
             exit 1
@@ -82,23 +85,28 @@ options=
 env=
 shopt -s extglob
 
-function print_shell_command()
+function print_shell_command_unquoted()
 {
     if [ -n "$OUTPUT_RST" ]; then
         echo
         echo "$RST_INDENT.. CODE-BLOCK:: bash"
         echo
     fi
-    # shell-quote arguments if necessary
-    quoted=$(for a in "$@"; do printf "%q " $a; done)
     if [ -z "$WRAP" -o $# -lt 6 ]; then
-        echo "${PROMPT}${quoted}"
+        echo "${PROMPT}$@"
     else
-        sage-bootstrap-python -c "import textwrap; print(' \\\\\n'.join(textwrap.wrap(r'''${quoted}''', $WRAP, initial_indent=r'''${PROMPT}''', subsequent_indent=r'''${CONTINUATION}''', break_long_words=False, break_on_hyphens=False)))"
+        sage-bootstrap-python -c "import textwrap; print(' \\\\\n'.join(textwrap.wrap(r'''$@''', $WRAP, initial_indent=r'''${PROMPT}''', subsequent_indent=r'''${CONTINUATION}''', break_long_words=False, break_on_hyphens=False)))"
     fi
     if [ -n "$OUTPUT_RST" ]; then
         echo
     fi
+}
+
+function print_shell_command()
+{
+    # shell-quote arguments if necessary
+    set -- $(for a in "$@"; do printf "%q " $a; done)
+    print_shell_command_unquoted "$@"
 }
 
 function print_comment()
@@ -142,7 +150,18 @@ case $system:$command in
     @(debian*|ubuntu*):*)
         [ "$NO_INSTALL_RECOMMENDS" = yes ] && options="$options --no-install-recommends"
         [ "$YES" = yes ] && options="$options --yes" env="DEBIAN_FRONTEND=noninteractive "
-        [ -n "$system_packages" ] && print_shell_command ${SUDO}${env}apt-get $command $options $system_packages
+        case "$command:$system_packages:$IGNORE_MISSING" in
+            install:*" "*:yes)
+                print_shell_command_unquoted "PACKAGES=\"$system_packages\""
+                print_shell_command_unquoted 'PACKAGES=$(apt list $PACKAGES 2>/dev/null | tee /dev/stderr | sed -n '\''/\//s/\/.*//p'\'')'
+                print_shell_command_unquoted ${SUDO}${env}apt-get $command $options \$PACKAGES
+                ;;
+            *::*)
+                ;;
+            *)
+                print_shell_command ${SUDO}${env}apt-get $command $options $system_packages
+                ;;
+        esac
         ;;
     @(fedora*|redhat*|centos*):install)
         [ "$YES" = yes ] && options="$options -y"
