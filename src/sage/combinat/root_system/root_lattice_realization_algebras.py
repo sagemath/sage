@@ -572,7 +572,7 @@ class Algebras(AlgebrasCategory):
                 ....:    T = KL.demazure_lusztig_operators(q1,q2)
                 ....:    T._test_relations()
 
-                sage: for cartan_type in CartanType.samples(crystallographic=True): # long time (12s)
+                sage: for cartan_type in CartanType.samples(crystallographic=True):  # long time (12s)
                 ....:    L = RootSystem(cartan_type).weight_lattice()
                 ....:    KL = L.algebra(K)
                 ....:    T = KL.demazure_lusztig_operators(q1,q2)
