@@ -76,8 +76,8 @@ def ExtendedAffineWeylGroup(cartan_type, general_linear=None, **print_options):
 
     Recognized arguments for ``print_options`` are:
 
-    - ``print_tuple`` -- boolean (default: ``False``)
-      If ``True``, elements are printed `(a,b)`, otherwise as `a * b`
+    - ``print_tuple`` -- boolean (default: ``False``); if ``True``, elements
+      are printed `(a,b)`, otherwise as `a * b`
     - ``affine`` -- prefix for simple reflections in the affine Weyl group
     - ``classical`` -- prefix for simple reflections in the classical Weyl group
     - ``translation`` -- prefix for the translation elements

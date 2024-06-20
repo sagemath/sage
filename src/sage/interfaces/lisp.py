@@ -369,8 +369,8 @@ class Lisp(Expect):
 
     def function_call(self, function, args=None, kwds=None):
         """
-        Calls the Lisp function with given args and kwds.
-        For Lisp functions, the kwds are ignored.
+        Call the Lisp function with given ``args`` and ``kwds``.
+        For Lisp functions, the ``kwds`` are ignored.
 
         EXAMPLES::
 

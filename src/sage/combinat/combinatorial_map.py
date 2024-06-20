@@ -286,7 +286,7 @@ class CombinatorialMap:
 
     def __call__(self, *args, **kwds):
         """
-        Calls the combinatorial map.
+        Call the combinatorial map.
 
         EXAMPLES::
 

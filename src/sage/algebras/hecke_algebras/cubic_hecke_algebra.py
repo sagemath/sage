@@ -2969,7 +2969,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``var`` -- string (default: ``'h'``) setting the indeterminate of the
+        - ``var`` -- string (default: ``'h'``); setting the indeterminate of the
           equation
         - ``as_coefficients`` -- boolean (default: ``False``);  if set to ``True``
           the list of coefficients is returned

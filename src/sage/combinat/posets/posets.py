@@ -4366,7 +4366,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``algorithm`` -- (default: ``'singular'``), possible
+        - ``algorithm`` -- (default: ``'singular'``); possible
           values are ``'singular'``, ``'sage'``, ``'gap'``,
           ``'pari'``, ``'maple'``, ``'magma'``, ``'fricas'``
 

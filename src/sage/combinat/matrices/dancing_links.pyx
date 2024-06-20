@@ -992,10 +992,10 @@ cdef class dancing_linksWrapper:
 
         INPUT:
 
-        - ``solver`` -- string or ``None`` (default: ``None``), possible
+        - ``solver`` -- string or ``None`` (default: ``None``); possible
           values include ``'GLPK'``, ``'GLPK/exact'``, ``'Coin'``,
           ``'CPLEX'``, ``'Gurobi'``, ``'CVXOPT'``, ``'PPL'``,
-          ``'InteractiveLP'``.
+          ``'InteractiveLP'``
 
         OUTPUT:
 
@@ -1063,10 +1063,10 @@ cdef class dancing_linksWrapper:
 
         INPUT:
 
-        - ``solver`` -- string or ``None`` (default: ``None``), possible
+        - ``solver`` -- string or ``None`` (default: ``None``); possible
           values include ``'GLPK'``, ``'GLPK/exact'``, ``'Coin'``,
           ``'CPLEX'``, ``'Gurobi'``, ``'CVXOPT'``, ``'PPL'``,
-          ``'InteractiveLP'``.
+          ``'InteractiveLP'``
 
         OUTPUT: list of rows or ``None`` if no solution is found
 

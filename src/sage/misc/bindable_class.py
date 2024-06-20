@@ -18,7 +18,7 @@ from sage.misc.classcall_metaclass import ClasscallMetaclass
 
 class BindableClass(metaclass=ClasscallMetaclass):
     """
-    Bindable classes
+    Bindable classes.
 
     This class implements a binding behavior for nested classes that
     derive from it. Namely, if a nested class ``Outer.Inner`` derives
@@ -125,7 +125,7 @@ class BindableClass(metaclass=ClasscallMetaclass):
     @staticmethod
     def __classget__(cls, instance, owner):
         """
-        Binds ``cls`` to ``instance``, returning a ``BoundClass``
+        Bind ``cls`` to ``instance``, returning a ``BoundClass``.
 
         INPUT:
 

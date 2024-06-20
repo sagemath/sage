@@ -16,13 +16,13 @@ def have_program(program, path=None):
 
     INPUT:
 
-    - ``program`` -- a string, the name of the program to check.
+    - ``program`` -- string, the name of the program to check
 
-    - ``path`` -- string or None. Paths to search for ``program``,
+    - ``path`` -- string or ``None``. Paths to search for ``program``,
       separated by ``os.pathsep``. If ``None``, use the :envvar:`PATH`
       environment variable.
 
-    OUTPUT: bool
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -116,7 +116,7 @@ cdef class redirection:
 
     - ``dest`` -- where the source file should be redirected to
 
-    - ``close`` -- (boolean, default: ``True``) whether to close the
+    - ``close`` -- boolean (default: ``True``); whether to close the
       destination file upon exiting the context. This is only supported
       if ``dest`` is a Python file.
 

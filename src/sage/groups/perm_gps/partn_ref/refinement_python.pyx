@@ -491,7 +491,7 @@ def double_coset_python(S1, S2, partition1, ordering2, n,
     refine_and_return_invariant,
     compare_structures):
     """
-    Calls the double coset function.
+    Call the double coset function.
 
     INPUT:
 

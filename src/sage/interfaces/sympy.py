@@ -1197,7 +1197,7 @@ def sympy_init():
 
 def check_expression(expr, var_symbols, only_from_sympy=False):
     """
-    Does ``eval(expr)`` both in Sage and SymPy and does other checks.
+    Do ``eval(expr)`` both in Sage and SymPy and other checks.
 
     EXAMPLES::
 

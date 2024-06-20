@@ -434,7 +434,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
 
         OUTPUT:
             data -- output of pickle
-            version -- int
+            version -- integer
 
         EXAMPLES::
 

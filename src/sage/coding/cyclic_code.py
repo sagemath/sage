@@ -150,7 +150,7 @@ def bch_bound(n, D, arithmetic=False):
 
     - ``D`` -- list of integers
 
-    - ``arithmetic`` -- (default: ``False``), if it is set to ``True``, then it
+    - ``arithmetic`` -- (default: ``False``); if it is set to ``True``, then it
       computes the BCH bound using the longest arithmetic sequence definition
 
     OUTPUT:
@@ -763,7 +763,7 @@ class CyclicCode(AbstractLinearCode):
 
         INPUT:
 
-        - ``arithmetic`` -- (default: ``False``), if it is set to ``True``,
+        - ``arithmetic`` -- (default: ``False``); if it is set to ``True``,
           then it computes the BCH bound using the longest arithmetic sequence
           definition
 

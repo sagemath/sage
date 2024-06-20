@@ -63,7 +63,7 @@ import types
 
 def is_lazy_string(obj):
     """
-    Checks if the given object is a lazy string.
+    Check if the given object is a lazy string.
 
     EXAMPLES::
 
@@ -77,15 +77,14 @@ def is_lazy_string(obj):
 
 def lazy_string(f, *args, **kwargs):
     """
-    Creates a lazy string.
+    Create a lazy string.
 
     INPUT:
 
-    - ``f``, either a callable or a (format) string
+    - ``f`` -- either a callable or a (format) string
     - positional arguments that are given to ``f``, either by calling or by
       applying it as a format string
-    - named arguments, that are forwarded to ``f`` if it is not a string
-
+    - named arguments that are forwarded to ``f`` if it is not a string
 
     EXAMPLES::
 
@@ -137,11 +136,11 @@ cdef class _LazyString():
 
     INPUT:
 
-    - ``f``, either a callable or a (format) string
-    - ``args``, a tuple of arguments that are given to ``f``, either by calling
+    - ``f`` -- either a callable or a (format) string
+    - ``args`` -- tuple of arguments that are given to ``f``, either by calling
       or by applying it as a format string
-    - ``kwargs``, a dictionary of optional arguments, that are forwarded to ``f``
-      if it is a callable.
+    - ``kwargs`` -- dictionary of optional arguments, that are forwarded to ``f``
+      if it is a callable
 
     .. NOTE::
 
@@ -184,11 +183,11 @@ cdef class _LazyString():
         """
         INPUT:
 
-        - ``f``, either a callable or a (format) string
-        - ``args``, a tuple of arguments that are given to ``f``, either by calling
+        - ``f`` -- either a callable or a (format) string
+        - ``args`` -- tuple of arguments that are given to ``f``, either by calling
           or by applying it as a format string
-        - ``kwargs``, a dictionary of optional arguments, that are forwarded to ``f``
-          if it is a callable.
+        - ``kwargs`` -- dictionary of optional arguments, that are forwarded to ``f``
+          if it is a callable
 
         EXAMPLES::
 
@@ -324,7 +323,6 @@ cdef class _LazyString():
             sage: s = lazy_string(f)
             sage: os.fspath(s)
             '/dev/null'
-
         """
         return str(self)
 
@@ -509,8 +507,8 @@ cdef class _LazyString():
 
         INPUT:
 
-        - ``args``, a tuple
-        - ``kwds``, a dict
+        - ``args`` -- tuple
+        - ``kwds`` -- dictionary
 
         .. NOTE::
 

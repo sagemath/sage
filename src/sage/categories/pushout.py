@@ -1864,7 +1864,8 @@ class VectorFunctor(ConstructionFunctor):
         INPUT:
 
         - ``n`` -- the rank of the to-be-created modules (nonnegative integer)
-        - ``is_sparse`` -- boolean (default: ``False``), create sparse implementation of modules
+        - ``is_sparse`` -- boolean (default: ``False``); create sparse
+          implementation of modules
         - ``inner_product_matrix`` -- ``n`` by ``n`` matrix, used to compute inner products in the
           to-be-created modules
         - ``name_mapping``, ``latex_name_mapping`` -- Dictionaries from base rings to names

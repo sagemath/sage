@@ -823,7 +823,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
 
     def function_call(self, function, args=None, kwds=None):
         """
-        Calls the GAP function with args and kwds.
+        Call the GAP function with ``args`` and ``kwds``.
 
         EXAMPLES::
 

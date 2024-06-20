@@ -3084,7 +3084,7 @@ class Euler_Phi:
 
     def __call__(self, n):
         """
-        Calls the euler_phi function.
+        Call the ``euler_phi`` function.
 
         EXAMPLES::
 

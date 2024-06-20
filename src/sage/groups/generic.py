@@ -526,7 +526,7 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
     - ``base`` -- a group element
     - ``ord`` -- the order of ``base`` or ``None``, in this case we try
       to compute it
-    - ``operation`` -- string (default: ``'*'``) denoting whether we
+    - ``operation`` -- string (default: ``'*'``); denoting whether we
       are in an additive group or a multiplicative one
     - ``identity`` -- the group's identity
     - ``inverse`` -- function of 1 argument ``x``, returning inverse of ``x``

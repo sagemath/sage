@@ -82,9 +82,9 @@ class InlineFortran:
 
         INPUT:
 
-        - ``x`` -- Fortran code
+        - ``x`` -- fortran code
 
-        - ``globals`` -- a dict to which to add the functions from the
+        - ``globals`` -- dictionary to which to add the functions from the
           fortran module
 
         - ``locals`` -- ignored

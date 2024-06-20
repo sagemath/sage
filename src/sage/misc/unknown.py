@@ -102,7 +102,7 @@ class UnknownError(TypeError):
 @richcmp_method
 class UnknownClass(UniqueRepresentation):
     """
-    The Unknown truth value
+    The Unknown truth value.
 
     The ``Unknown`` object is used in Sage in several places as return value
     in addition to ``True`` and ``False``, in order to signal uncertainty

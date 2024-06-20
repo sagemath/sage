@@ -283,7 +283,8 @@ def process_line(location, line, replacements, row_index, verbose=False):
     - ``line`` -- a source code line
     - ``replacements`` -- the array output from :func:`find_replacements`
     - ``row_index`` -- the line number where ``import`` appears
-    - ``verbose`` -- if True, issue print statements when interesting examples are found
+    - ``verbose`` -- if ``True``, issue print statements when interesting
+      examples are found
 
     OUTPUT: an array ``[new_line, replacements]`` with entries
 
@@ -346,7 +347,7 @@ def make_replacements_in_file(location, package_regex=None, verbose=False, outpu
     - ``location`` -- a file path
     - ``package_regex`` -- (default: :obj:`default_package_regex`) a regular expression matching
       the ``sage.PAC.KAGE.all`` package names from which we do not want to import.
-    - ``verbose`` -- if True, issue print statements when interesting examples are found
+    - ``verbose`` -- if ``True``, issue print statements when interesting examples are found
     - ``output`` -- a file path; if ``None``, overwrite the file given by ``location``
 
     EXAMPLES::
@@ -396,7 +397,7 @@ def walkdir_replace_dot_all(dir, file_regex=r'.*[.](py|pyx|pxi)$', package_regex
     - ``file_regex`` -- a regular expression matching the file names to process
     - ``package_regex`` -- (default: :obj:`default_package_regex`) a regular expression matching
       the ``sage.PAC.KAGE.all`` package names from which we do not want to import.
-    - ``verbose`` -- if True, print statements when interesting examples are found
+    - ``verbose`` -- if ``True``, print statements when interesting examples are found
     - ``excluded_file_regex`` -- a regular expression matching the file names to exclude
 
     EXAMPLES::

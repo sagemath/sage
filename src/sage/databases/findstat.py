@@ -4445,7 +4445,7 @@ class FindStatCollection(Element,
 
         INPUT:
 
-        - ``style`` -- string (default: ``'singular'``) can be
+        - ``style`` -- string (default: ``'singular'``); can be
           ``'singular'``, or ``'plural'``
 
         OUTPUT: the name of the FindStat collection, in singular or in plural

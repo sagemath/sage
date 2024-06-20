@@ -1535,7 +1535,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- boolean (default: ``False``) whether to return
+        - ``certificate`` -- boolean (default: ``False``); whether to return
           instead a maximum chain of left modular elements
 
         EXAMPLES::

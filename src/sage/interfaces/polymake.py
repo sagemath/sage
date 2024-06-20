@@ -1657,11 +1657,13 @@ class PolymakeFunctionElement(InterfaceFunctionElement):
         """
         INPUT:
 
-        - Polymake object that this function is bound to
-        - name (string): It actually says how to call this function in polymake.
-          So, if it is a member function, it will look like `"$SAGE123[0]->func_name"`.
-        - ``memberfunction`` (bool, default: ``False``): Whether this is a member function
-          or a plain function applied with this element as first argument.
+        - ``obj`` -- Polymake object that this function is bound to
+        - ``name`` -- string; it actually says how to call this function in
+          polymake. So, if it is a member function, it will look like
+          `"$SAGE123[0]->func_name"`.
+        - ``memberfunction`` -- boolean (default: ``False``); whether this is a
+          member function or a plain function applied with this element as
+          first argument
 
         EXAMPLES::
 

@@ -38,7 +38,7 @@ def banner_text(full=True):
 
     - ``full`` -- boolean (default: ``True``)
 
-    OUTPUT: a string containing the banner message
+    OUTPUT: string containing the banner message
 
     If option full is ``False``, a simplified plain ASCII banner is
     displayed; if ``True`` the full banner with box art is displayed.
@@ -182,17 +182,17 @@ def version_dict():
 def require_version(major, minor=0, tiny=0, prerelease=False,
                     print_message=False):
     """
-    True if Sage version is at least major.minor.tiny.
+    Return ``True`` if Sage version is at least ``major.minor.tiny``.
 
     INPUT:
 
-    - major -- integer
-    - minor -- integer (default: 0)
-    - tiny -- float (default: 0)
-    - prerelease -- boolean (default: ``False``)
-    - print_message -- boolean (default: ``False``)
+    - ``major`` -- integer
+    - ``minor`` -- integer (default: 0)
+    - ``tiny`` -- float (default: 0)
+    - ``prerelease`` -- boolean (default: ``False``)
+    - ``print_message`` -- boolean (default: ``False``)
 
-    OUTPUT: ``True`` if major.minor.tiny is <= version of Sage, ``False``
+    OUTPUT: ``True`` if ``major.minor.tiny`` is <= version of Sage, ``False``
     otherwise
 
     For example, if the Sage version number is 3.1.2, then
@@ -205,7 +205,7 @@ def require_version(major, minor=0, tiny=0, prerelease=False,
     if the optional argument prerelease is True, then a prerelease
     version of Sage counts as if it were the released version.
 
-    If optional argument print_message is True and this function
+    If optional argument print_message is ``True`` and this function
     is returning False, print a warning message.
 
     EXAMPLES::

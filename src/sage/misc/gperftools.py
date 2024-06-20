@@ -52,7 +52,7 @@ class Profiler(SageObject):
 
     def __init__(self, filename=None):
         """
-        Interface to the gperftools profiler
+        Interface to the gperftools profiler.
 
         INPUT:
 
@@ -73,7 +73,7 @@ class Profiler(SageObject):
 
     def filename(self):
         """
-        Return the file name
+        Return the file name.
 
         OUTPUT: string
 
@@ -88,7 +88,7 @@ class Profiler(SageObject):
 
     def _repr_(self):
         """
-        Return string representation
+        Return string representation.
 
         OUTPUT: string
 
@@ -102,7 +102,7 @@ class Profiler(SageObject):
 
     def _libc(self):
         """
-        Return libc
+        Return libc.
 
         OUTPUT: a ctypes shared library handle
 
@@ -124,7 +124,7 @@ class Profiler(SageObject):
 
     def _libprofiler(self):
         """
-        Return libprofiler
+        Return libprofiler.
 
         OUTPUT: a ctypes shared library handle
 
@@ -147,7 +147,7 @@ class Profiler(SageObject):
 
     def start(self):
         """
-        Start profiling
+        Start profiling.
 
         EXAMPLES::
 
@@ -168,7 +168,7 @@ class Profiler(SageObject):
 
     def stop(self):
         """
-        Stop the CPU profiler
+        Stop the CPU profiler.
 
         EXAMPLES::
 
@@ -240,14 +240,13 @@ class Profiler(SageObject):
 
     def _call_pprof(self, *args, **kwds):
         """
-        Run the pprof binary
+        Run the pprof binary.
 
         INPUT:
 
-        - ``args`` -- list of strings. The arguments to ``pprof``.
+        - ``args`` -- list of strings; the arguments to ``pprof``
 
-        - ``kwds`` -- keyword arguments passed to
-          ``subprocess.check_call``.
+        - ``kwds`` -- keyword arguments passed to ``subprocess.check_call``
 
         EXAMPLES::
 
@@ -263,7 +262,7 @@ class Profiler(SageObject):
 
     def top(self, cumulative=True):
         """
-        Print text report
+        Print text report.
 
         OUTPUT: nothing; a textual report is printed to stdout
 
@@ -291,15 +290,15 @@ class Profiler(SageObject):
 
         INPUT:
 
-        - ``filename`` -- string. The filename to save at. Must end
+        - ``filename`` -- string; the filename to save at. Must end
           with one of ``.dot``, ``.ps``, ``.pdf``, ``.svg``, ``.gif``,
           or ``.txt`` to specify the output file format.
 
-        - ``cumulative`` -- boolean (default:
-          ``True``). Whether to return cumulative timings.
+        - ``cumulative`` -- boolean (default: ``True``); whether to return
+          cumulative timings
 
-        - ``verbose`` -- boolean (default:
-          ``True``). Whether to print informational messages.
+        - ``verbose`` -- boolean (default: ``True``); whether to print
+          informational messages
 
         EXAMPLES::
 
@@ -339,9 +338,9 @@ def crun(s, evaluator):
     """
     Profile single statement.
 
-    - ``s`` -- string. Sage code to profile.
+    - ``s`` -- string; Sage code to profile
 
-    - ``evaluator`` -- callable to evaluate.
+    - ``evaluator`` -- callable to evaluate
 
     EXAMPLES::
 

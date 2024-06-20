@@ -600,7 +600,7 @@ def tutte_polynomial(G, edge_selector=None, cache=None):
 @_cached
 def _tutte_polynomial_internal(G, x, y, edge_selector, cache=None):
     """
-    Does the recursive computation of the Tutte polynomial.
+    Do the recursive computation of the Tutte polynomial.
 
     INPUT:
 

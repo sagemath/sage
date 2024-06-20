@@ -10,7 +10,7 @@ def flatten(in_list, ltypes=(list, tuple), max_level=sys.maxsize):
 
     INPUT:
 
-    - ``in_list`` -- a list or tuple
+    - ``in_list`` -- list or tuple
     - ``ltypes`` -- optional list of particular types to flatten
     - ``max_level`` -- the maximum level to flatten
 

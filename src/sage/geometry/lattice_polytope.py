@@ -5852,7 +5852,7 @@ def write_palp_matrix(m, ofile=None, comment='', format=None):
 
     - ``ofile`` -- a file opened for writing (default: ``stdout``)
 
-    - ``comment`` -- string (default: empty) see output description
+    - ``comment`` -- string (default: empty); see output description
 
     - ``format`` -- a format string used to print matrix entries
 

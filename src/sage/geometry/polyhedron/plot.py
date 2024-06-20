@@ -1247,12 +1247,12 @@ class Projection(SageObject):
         - ``angle`` -- integer (default: 0); angle of rotation in degree from 0 to 360 (see note
           below)
         - ``scale`` -- integer (default: 1); the scaling of the tikz picture
-        - ``edge_color`` -- string (default: ``'blue!95!black'``) representing colors which tikz
-          recognize
-        - ``facet_color`` -- string (default: ``'blue!95!black'``) representing colors which tikz
-          recognize
-        - ``vertex_color`` -- string (default: ``'green'``) representing colors which tikz
-          recognize
+        - ``edge_color`` -- string (default: ``'blue!95!black'``); representing colors which tikz
+          recognizes
+        - ``facet_color`` -- string (default: ``'blue!95!black'``); representing colors which tikz
+          recognizes
+        - ``vertex_color`` -- string (default: ``'green'``); representing colors which tikz
+          recognizes
         - ``opacity`` -- real number (default: 0.8) between 0 and 1 giving the opacity of
           the front facets
         - ``axis`` -- boolean (default: ``False``); draw the axes at the origin or not
@@ -1468,11 +1468,11 @@ class Projection(SageObject):
 
         - ``scale`` -- integer specifying the scaling of the tikz picture
         - ``edge_color`` -- string representing colors which tikz
-          recognize
+          recognizes
         - ``facet_color`` -- string representing colors which tikz
-          recognize
+          recognizes
         - ``vertex_color`` -- string representing colors which tikz
-          recognize
+          recognizes
         - ``opacity`` -- real number between 0 and 1 giving the opacity of
           the front facets
         - ``axis`` -- boolean (default: ``False``); draw the axes at the origin or not
@@ -1600,11 +1600,11 @@ class Projection(SageObject):
         - ``angle`` -- integer angle of rotation in degree from 0 to 360
         - ``scale`` -- integer specifying the scaling of the tikz picture
         - ``edge_color`` -- string representing colors which tikz
-          recognize
+          recognizes
         - ``facet_color`` -- string representing colors which tikz
-          recognize
+          recognizes
         - ``vertex_color`` -- string representing colors which tikz
-          recognize
+          recognizes
         - ``opacity`` -- real number between 0 and 1 giving the opacity of
           the front facets
         - ``axis`` -- boolean draw the axes at the origin or not
@@ -1752,11 +1752,11 @@ class Projection(SageObject):
         - ``angle`` -- integer angle of rotation in degree from 0 to 360
         - ``scale`` -- integer specifying the scaling of the tikz picture
         - ``edge_color`` -- string representing colors which tikz
-          recognize
+          recognizes
         - ``facet_color`` -- string representing colors which tikz
-          recognize
+          recognizes
         - ``vertex_color`` -- string representing colors which tikz
-          recognize
+          recognizes
         - ``opacity`` -- real number between 0 and 1 giving the opacity of
           the front facets
         - ``axis`` -- boolean draw the axes at the origin or not

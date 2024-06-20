@@ -1188,7 +1188,7 @@ class FiniteWord_class(Word_class):
         INPUT:
 
         - ``n`` -- integer or ``None``
-        - ``algorithm`` -- string (default: ``'suffix tree'``), takes the
+        - ``algorithm`` -- string (default: ``'suffix tree'``); takes the
           following values:
 
           - ``'suffix tree'`` -- construct and use the suffix tree of the word

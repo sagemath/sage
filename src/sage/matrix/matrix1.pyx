@@ -2105,8 +2105,9 @@ cdef class Matrix(Matrix0):
 
         INPUT:
 
-        * ``drows`` -- list of indices of rows to be deleted from ``self``.
-        * ``check`` -- (boolean, default: ``True``); whether to check if any index in ``drows`` is out of range.
+        - ``drows`` -- list of indices of rows to be deleted from ``self``
+        - ``check`` -- boolean (default: ``True``); whether to check if any
+          index in ``drows`` is out of range
 
         .. SEEALSO::
 

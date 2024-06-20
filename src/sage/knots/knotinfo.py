@@ -1236,9 +1236,9 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``var1`` -- string (default: ``'v'``) for the name of the first variable
-        - ``var2`` -- string (default: ``'z'``) for the name of the second variable
-        - ``original`` -- boolean (default: ``False``) if set to
+        - ``var1`` -- string (default: ``'v'``); for the name of the first variable
+        - ``var2`` -- string (default: ``'z'``); for the name of the second variable
+        - ``original`` -- boolean (default: ``False``); if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:

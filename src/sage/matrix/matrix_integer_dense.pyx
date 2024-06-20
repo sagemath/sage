@@ -1795,9 +1795,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         - ``proof`` -- (default: ``True``); if proof=False certain
           determinants are computed using a randomized hybrid p-adic
-           multimodular strategy until it stabilizes twice (instead of up to
-           the Hadamard bound). It is *incredibly* unlikely that one would
-           ever get an incorrect result with proof=False.
+          multimodular strategy until it stabilizes twice (instead of up to
+          the Hadamard bound). It is *incredibly* unlikely that one would
+          ever get an incorrect result with proof=False.
 
         - ``include_zero_rows`` -- boolean (default: ``True``); if ``False``,
           don't include zero rows

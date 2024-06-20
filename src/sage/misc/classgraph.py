@@ -14,20 +14,22 @@ import inspect
 
 def class_graph(top, depth=5, name_filter=None, classes=None, as_graph=True):
     """
-    Return the class inheritance graph of a module, class, or object
+    Return the class inheritance graph of a module, class, or object.
 
     INPUT:
 
-     - ``top`` -- the module, class, or object to start with (e.g. ``sage``, ``Integer``, ``3``)
-     - ``depth`` -- maximal recursion depth within submodules (default: 5)
-     - ``name_filter`` -- e.g. 'sage.rings' to only consider classes in :mod:`sage.rings`
-     - ``classes`` -- optional dictionary to be filled in (it is also returned)
-     - ``as_graph`` -- a boolean (default: ``True``)
+    - ``top`` -- the module, class, or object to start with (e.g. ``sage``,
+      ``Integer``, ``3``)
+    - ``depth`` -- maximal recursion depth within submodules (default: 5)
+    - ``name_filter`` -- e.g. 'sage.rings' to only consider classes in
+      :mod:`sage.rings`
+    - ``classes`` -- optional dictionary to be filled in (it is also returned)
+    - ``as_graph`` -- boolean (default: ``True``)
 
     OUTPUT:
 
-     - An oriented graph, with class names as vertices, and an edge
-       from each class to each of its bases.
+    An oriented graph, with class names as vertices, and an edge
+    from each class to each of its bases.
 
     EXAMPLES:
 

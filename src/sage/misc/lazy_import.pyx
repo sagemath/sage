@@ -227,9 +227,7 @@ cdef class LazyImport():
         """
         Return the wrapped object, importing it if necessary.
 
-        OUTPUT:
-
-        - the wrapped object
+        OUTPUT: the wrapped object
 
         EXAMPLES::
 
@@ -363,7 +361,7 @@ cdef class LazyImport():
 
     def __getattr__(self, attr):
         """
-        Attribute lookup on self defers to attribute lookup on the
+        Attribute lookup on ``self`` defers to attribute lookup on the
         wrapped object.
 
         EXAMPLES::
@@ -380,7 +378,7 @@ cdef class LazyImport():
 
     def __dir__(self):
         """
-        Tab completion on self defers to completion on the wrapped
+        Tab completion on ``self`` defers to completion on the wrapped
         object.
 
         EXAMPLES::
@@ -394,7 +392,7 @@ cdef class LazyImport():
 
     def __call__(self, *args, **kwds):
         """
-        Calling self calls the wrapped object.
+        Calling ``self`` calls the wrapped object.
 
         EXAMPLES::
 
@@ -908,7 +906,7 @@ cdef class LazyImport():
 
     def __copy__(self):
         """
-        Support copy()
+        Support ``copy()``.
 
         TESTS::
 
@@ -929,7 +927,7 @@ cdef class LazyImport():
 
     def __deepcopy__(self, memo=None):
         """
-        Support copy()
+        Support ``copy()``.
 
         TESTS::
 
@@ -1001,16 +999,16 @@ def lazy_import(module, names, as_=None, *,
 
     INPUT:
 
-    - ``module`` -- a string representing the module to import
+    - ``module`` -- string representing the module to import
 
-    - ``names`` -- a string or list of strings representing the names to
+    - ``names`` -- string or list of strings representing the names to
       import from module
 
     - ``as_`` -- (optional) a string or list of strings representing the
       names of the objects in the importing module. This is analogous to
       ``from ... import ... as ...``.
 
-    - ``at_startup`` -- a boolean (default: ``False``);
+    - ``at_startup`` -- boolean (default: ``False``);
       whether the lazy import is supposed to be resolved at startup time
 
     - ``namespace`` -- the namespace where importing the names; by default,

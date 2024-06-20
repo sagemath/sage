@@ -36,7 +36,6 @@ cdef class _lazy_attribute():
         Traceback (most recent call last):
         ...
         NotImplementedError: Only instantiate wrapper python class
-
     """
 
     cdef public f
@@ -590,7 +589,7 @@ class lazy_class_attribute(lazy_attribute):
     """
     def __get__(self, _, cls):
         """
-        Implements the attribute access protocol.
+        Implement the attribute access protocol.
 
         EXAMPLES::
 

@@ -110,7 +110,6 @@ cdef class ArgumentFixer:
         sage: af = ArgumentFixer(one.__init__, classmethod=True)
         sage: af.fix_to_pos(1,2,3,a=31,b=2,n=3)
         ((1, 2, 3), (('a', 31), ('b', 2), ('n', 3)))
-
     """
     def __init__(self, f, classmethod = False):
         try:
@@ -205,7 +204,6 @@ cdef class ArgumentFixer:
             ((4, 5, 6), (('a', 1), ('b', 2), ('c', 3), ('e', 16), ('f', 14)))
             sage: AF.fix_to_named(1,2,f=14)
             ((), (('a', 1), ('b', 2), ('c', 3), ('f', 14)))
-
         """
         cdef list ARGS = []
         cdef tuple arg_names = self._arg_names

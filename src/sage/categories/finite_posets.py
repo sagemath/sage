@@ -1890,7 +1890,7 @@ class FinitePosets(CategoryWithAxiom):
 
             INPUT:
 
-            - ``as_ideals`` -- boolean (default: ``True``), if ``True`` returns
+            - ``as_ideals`` -- boolean (default: ``True``); if ``True`` returns
               a poset on the set of order ideals, otherwise on the set
               of antichains
             - ``facade`` -- boolean or ``None`` (default); whether to
