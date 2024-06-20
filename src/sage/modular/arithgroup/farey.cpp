@@ -736,6 +736,7 @@ size_t FareySymbol::nu3() const {
 }
 
 size_t FareySymbol::rank_pi() const {
+  using namespace std::placeholders;
   if( index() == 2 ) return 1;
   return count_if(pairing.begin(), pairing.end(),
                   bind(greater<int>(), placeholders::_1, 0))/2;
