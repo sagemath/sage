@@ -124,6 +124,7 @@ semiring doesn't necessarily have additive inverse::
 
 REFERENCES:
 
+    - [Bru2013]_
     - [Fil2017]_
 
 """
