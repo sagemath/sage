@@ -263,7 +263,7 @@ cdef class FreeAbelianMonoidElement(MonoidElement):
             s = "1"
         return s
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         Rich comparison.
 
@@ -321,7 +321,7 @@ cdef class FreeAbelianMonoidElement(MonoidElement):
 
     def __pow__(self, n, modulus):
         """
-        Raises self to the power of ``n``.
+        Raise ``self`` to the power of ``n``.
 
         AUTHORS:
 

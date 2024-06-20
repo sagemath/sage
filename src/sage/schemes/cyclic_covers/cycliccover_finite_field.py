@@ -54,8 +54,6 @@ EXAMPLES::
     [          0           0 79 + O(107)      O(107)]
     [     O(107) 42 + O(107)           0           0]
     [30 + O(107)      O(107)           0           0]
-
-
 """
 
 # *****************************************************************************
@@ -333,20 +331,20 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
 
         INPUT:
 
-        -   ``i`` - The power of x in the expression `Frob(x^i dx/y^j) / dx`
+        -   ``i`` -- The power of x in the expression `Frob(x^i dx/y^j) / dx`
 
-        -   ``j`` - The (negative) power of y in the expression
-                    `Frob(x^i dx/y^j) / dx`
+        -   ``j`` -- The (negative) power of y in the expression
+                     `Frob(x^i dx/y^j) / dx`
 
         OUTPUT:
 
-        ``frobij`` - a Matrix of size  (d * (N0 - 1) + ) x (N0)
-                     that represents the Frobenius expansion of
-                     x^i dx/y^j modulo p^(N0 + 1)
+        ``frobij`` -- a Matrix of size  (d * (N0 - 1) + ) x (N0)
+                      that represents the Frobenius expansion of
+                      x^i dx/y^j modulo p^(N0 + 1)
 
-                    the entry (l, s) corresponds to the coefficient associated
-                    to the monomial x**(p * (i + 1 + l) -1) * y**(p * -(j + r*s))
-                    (l, s) --> (p * (i + 1 + l) -1, p * -(j + r*s))
+                      the entry (l, s) corresponds to the coefficient associated
+                      to the monomial x**(p * (i + 1 + l) -1) * y**(p * -(j + r*s))
+                      (l, s) --> (p * (i + 1 + l) -1, p * -(j + r*s))
 
         ALGORITHM:
 
@@ -1150,7 +1148,7 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
             x^8 + 532*x^7 - 2877542*x^6 - 242628176*x^5 + 4390163797795*x^4 - 247015136050256*x^3
              - 2982540407204025062*x^2 + 561382189105547134612*x + 1074309286591662654798721
 
-        A non-monic example checking that :trac:`29015` is fixed::
+        A non-monic example checking that :issue:`29015` is fixed::
 
             sage: a = 3
             sage: K.<s> = GF(83^3);

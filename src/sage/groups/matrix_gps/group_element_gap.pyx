@@ -20,7 +20,7 @@ Matrix group elements implemented in GAP
 from sage.groups.matrix_gps.group_element cimport is_MatrixGroupElement
 from sage.libs.gap.element cimport GapElement
 from sage.misc.cachefunc import cached_method
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.structure.factorization import Factorization
 from sage.structure.richcmp cimport richcmp
 
@@ -65,7 +65,7 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
         from sage.libs.gap.libgap import libgap
         M_gap = libgap(M)
         if check:
-            if not is_Matrix(M):
+            if not isinstance(M, Matrix):
                 raise TypeError('M must be a matrix')
             if M.parent() is not parent.matrix_space():
                 raise TypeError('M must be a in the matrix space of the group')
@@ -136,7 +136,7 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
         """
         return self.matrix()._latex_()
 
-    cpdef _act_on_(self, x, bint self_on_left) noexcept:
+    cpdef _act_on_(self, x, bint self_on_left):
         """
         EXAMPLES::
 
@@ -157,7 +157,7 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
             except TypeError:
                 return None
 
-    cpdef _richcmp_(self, other, int op) noexcept:
+    cpdef _richcmp_(self, other, int op):
         """
         EXAMPLES::
 
@@ -230,7 +230,7 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
         """
         return self.matrix()
 
-    cpdef list list(self) noexcept:
+    cpdef list list(self):
         """
         Return list representation of this matrix.
 
@@ -306,14 +306,14 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
 
         This method writes the group element as a product of the
         elements of the list ``gens``, or the standard generators of
-        the parent of self if ``gens`` is None.
+        the parent of ``self`` if ``gens`` is ``None``.
 
         INPUT:
 
         - ``gens`` -- a list/tuple/iterable of elements (or objects
           that can be converted to group elements), or ``None``
-          (default). By default, the generators of the parent group
-          are used.
+          (default); by default, the generators of the parent group
+          are used
 
         OUTPUT:
 

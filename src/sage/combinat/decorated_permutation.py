@@ -189,7 +189,7 @@ class DecoratedPermutations(UniqueRepresentation, Parent):
         if isinstance(pi, DecoratedPermutation):
             return len(pi) == self._n
 
-        values = [v for v in pi]
+        values = list(pi)
         if len(values) != self._n:
             return False
         abs_values = [abs(v) for v in values]

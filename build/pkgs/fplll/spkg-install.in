@@ -11,7 +11,7 @@ if [ "x$SAGE_DEBUG" = "xyes" ]; then
 fi
 
 if [ -x "$SAGE_LOCAL"/bin/gcc ]; then
-    # Trac #31624: Avoid C++ ABI issues
+    # Issue #31624: Avoid C++ ABI issues
     CONFIGUREFLAGS="$CONFIGUREFLAGS --without-qd"
 fi
 

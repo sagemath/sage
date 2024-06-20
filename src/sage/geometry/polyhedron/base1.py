@@ -205,7 +205,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
             sage: P == Q
             False
 
-        Test that we have fixed a problem revealed in :trac:`31701`,
+        Test that we have fixed a problem revealed in :issue:`31701`,
         where neither of the two polyhedra contains the other::
 
             sage: P = Polyhedron(vertices=[(1, 1), (0, 0), (1, 2)])
@@ -330,7 +330,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
             sage: simplex.ambient_dim()
             4
 
-        The empty set is a special case (:trac:`12193`)::
+        The empty set is a special case (:issue:`12193`)::
 
             sage: P1=Polyhedron(vertices=[[1,0,0],[0,1,0],[0,0,1]])
             sage: P2=Polyhedron(vertices=[[2,0,0],[0,2,0],[0,0,2]])
@@ -634,7 +634,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
             sage: ray.contains(['hello', 'kitty'])   # no common ring for coordinates
             False
 
-        The empty polyhedron needs extra care, see :trac:`10238`::
+        The empty polyhedron needs extra care, see :issue:`10238`::
 
             sage: empty = Polyhedron(); empty
             The empty polyhedron in ZZ^0
@@ -651,7 +651,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
 
         TESTS:
 
-        Passing non-iterable objects does not cause an exception, see :trac:`32013`::
+        Passing non-iterable objects does not cause an exception, see :issue:`32013`::
 
             sage: None in Polyhedron(vertices=[(0,0)], rays=[(1,0)], base_ring=QQ)
             False
@@ -752,7 +752,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
             sage: P.interior_contains( [0,0] )
             False
 
-        The empty polyhedron needs extra care, see :trac:`10238`::
+        The empty polyhedron needs extra care, see :issue:`10238`::
 
             sage: empty = Polyhedron(); empty
             The empty polyhedron in ZZ^0
@@ -873,7 +873,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
             sage: P.relative_interior_contains( (1,0) )
             False
 
-        The empty polyhedron needs extra care, see :trac:`10238`::
+        The empty polyhedron needs extra care, see :issue:`10238`::
 
             sage: empty = Polyhedron(); empty
             The empty polyhedron in ZZ^0

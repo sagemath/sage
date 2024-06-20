@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Modules
 """
@@ -112,7 +113,7 @@ class Modules(Category_module):
         - Implement a ``FreeModules(R)`` category, when so prompted by a
           concrete use case: e.g.  modeling a free module with several
           bases (using :meth:`Sets.SubcategoryMethods.Realizations`)
-          or with an atlas of local maps (see e.g. :trac:`15916`).
+          or with an atlas of local maps (see e.g. :issue:`15916`).
     """
 
     @staticmethod
@@ -222,7 +223,7 @@ class Modules(Category_module):
                 sage: C2.base_ring.__module__
                 'sage.categories.modules'
 
-                sage: # needs sage.combinat sage.modules
+                sage: # needs sage.combinat sage.groups sage.modules
                 sage: C3 = DescentAlgebra(QQ,3).B().category()
                 sage: C3.base_ring.__module__
                 'sage.categories.modules'
@@ -286,7 +287,7 @@ class Modules(Category_module):
 
                 - Typically, the category of graded modules should
                   define a separate ``graded_dual`` construction (see
-                  :trac:`15647`). For now the two constructions are
+                  :issue:`15647`). For now the two constructions are
                   not distinguished which is an oversimplified model.
 
             .. SEEALSO::
@@ -876,7 +877,7 @@ class Modules(Category_module):
                     sage: C.base_ring()
                     Integer Ring
 
-                Check that :trac:`29225` is fixed::
+                Check that :issue:`29225` is fixed::
 
                     sage: M = cartesian_product((ZZ^2, ZZ^3)); M                        # needs sage.modules
                     The Cartesian product of
@@ -885,7 +886,8 @@ class Modules(Category_module):
                     sage: M.category()                                                  # needs sage.modules
                     Category of Cartesian products of modules with basis
                      over (Dedekind domains and euclidean domains
-                     and infinite enumerated sets and metric spaces)
+                      and noetherian rings
+                      and infinite enumerated sets and metric spaces)
                     sage: M.base_ring()                                                 # needs sage.modules
                     Integer Ring
 
@@ -997,7 +999,9 @@ class Modules(Category_module):
                 TESTS::
 
                     sage: Cat = ModulesWithBasis(ZZ).FiniteDimensional().TensorProducts()
-                    sage: M = CombinatorialFreeModule(ZZ, ((1, 1), (1, 2), (2, 1), (2, 2)), category=Cat)               # needs sage.modules
+                    sage: M = CombinatorialFreeModule(ZZ,                               # needs sage.modules
+                    ....:                             ((1, 1), (1, 2), (2, 1), (2, 2)),
+                    ....:                             category=Cat)
                     sage: M.construction()                                              # needs sage.modules
                     doctest:warning...
                     DeprecationWarning: implementations of Modules().TensorProducts() now must define the method tensor_factors

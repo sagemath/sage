@@ -138,7 +138,6 @@ REFERENCES:
 An overview of some computational tools relating to valuations on function
 fields can be found in Section 4.6 of [Rüt2014]_. Most of this was originally
 developed for number fields in [Mac1936I]_ and [Mac1936II]_.
-
 """
 
 # ****************************************************************************
@@ -303,7 +302,7 @@ class FunctionFieldValuationFactory(UniqueFactory):
             sage: w = GaussValuation(R, valuations.TrivialValuation(QQ)).augmentation(x - 1, 1)
             sage: v = K.valuation(w) # indirect doctest
 
-        Check that :trac:`25294` has been resolved::
+        Check that :issue:`25294` has been resolved::
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]

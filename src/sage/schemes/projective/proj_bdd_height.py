@@ -14,7 +14,6 @@ AUTHORS:
 REFERENCES:
 
 - [Krumm2016]
-
 """
 
 import itertools
@@ -103,7 +102,7 @@ def QQ_points_of_bounded_height(PS, dim, bound, normalize=False):
 
     - ``bound`` -- a real number
 
-    - ``normalize`` -- boolean (optional, default: ``False``); whether to
+    - ``normalize`` -- boolean (default: ``False``); whether to
       normalize the coordinates of returned points
 
     OUTPUT:
@@ -242,7 +241,7 @@ def points_of_bounded_height(PS, K, dim, bound, prec=53):
 
     - ``K`` -- a number field
 
-    - ``dim`` -- a positive interger
+    - ``dim`` -- a positive integer
 
     - ``bound`` -- a real number
 

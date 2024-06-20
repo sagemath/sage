@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Category of chain complexes
 """
@@ -161,6 +162,7 @@ class ChainComplexes(Category_module):
             except TypeError:
                 # if not, this methods needs to be overwritten by parent
                 raise NotImplementedError
+
 
 class HomologyFunctor(Functor):
     r"""

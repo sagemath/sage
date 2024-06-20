@@ -109,7 +109,7 @@ cdef class constant
 cdef class wrapped_libmp_function
 cdef class wrapped_specfun
 
-cdef __isint(MPF *v) noexcept:
+cdef __isint(MPF *v):
     return v.special == S_ZERO or (v.special == S_NORMAL and mpz_sgn(v.exp) >= 0)
 
 cdef int MPF_set_any(MPF *re, MPF *im, x, MPopts opts, bint str_tuple_ok) except -1:
@@ -185,7 +185,7 @@ cdef int MPF_set_any(MPF *re, MPF *im, x, MPopts opts, bint str_tuple_ok) except
             return 1
     return 0
 
-cdef binop(int op, x, y, MPopts opts) noexcept:
+cdef binop(int op, x, y, MPopts opts):
     cdef int typx
     cdef int typy
     cdef MPF xre, xim, yre, yim
@@ -286,7 +286,6 @@ cdef binop(int op, x, y, MPopts opts) noexcept:
                 MPF_mul(&tmp1,  &xim,   &yre,  opts_exact)
                 MPF_add(&rc.im, &rc.im, &tmp1, opts)
             return rc
-
 
     elif op == OP_DIV:
         if typx == 1 and typy == 1:
@@ -498,7 +497,7 @@ cdef class Context:
 
     _prec_rounding = property(_get_prec_rounding)
 
-    cpdef mpf make_mpf(ctx, tuple v) noexcept:
+    cpdef mpf make_mpf(ctx, tuple v):
         """
         Creates an mpf from tuple data ::
 
@@ -511,7 +510,7 @@ cdef class Context:
         MPF_set_tuple(&x.value, v)
         return x
 
-    cpdef mpc make_mpc(ctx, tuple v) noexcept:
+    cpdef mpc make_mpc(ctx, tuple v):
         """
         Creates an mpc from tuple data ::
 
@@ -973,7 +972,7 @@ cdef class Context:
 
     # Doing a+b directly doesn't work with mpi, presumably due to
     # Cython trying to be clever with the operation resolution
-    cdef _stupid_add(ctx, a, b) noexcept:
+    cdef _stupid_add(ctx, a, b):
         return a + b
 
     def _convert_param(ctx, x):
@@ -1485,7 +1484,6 @@ cdef class wrapped_libmp_function:
         #    if self.mpi_f:
         #        return global_context.make_mpi(self.mpi_f(x._mpi_, prec))
         raise NotImplementedError("%s of a %s" % (self.name, type(x)))
-
 
 
 cdef class wrapped_specfun:
@@ -2152,7 +2150,6 @@ cdef class mpf(mpf_base):
         return binop(OP_RICHCMP+op, self, other, global_opts)
 
 
-
 cdef class constant(mpf_base):
     """
     Represents a mathematical constant with dynamic precision.
@@ -2508,7 +2505,7 @@ cdef class mpc(mpnumber):
 
         TESTS:
 
-        Check that :trac:`31676` is fixed::
+        Check that :issue:`31676` is fixed::
 
             sage: from mpmath import mpc
             sage: hash(mpc(1, -1)) == hash(mpc(-1, -1))  # should not return OverflowError: Python int too large to convert to C ssize_t

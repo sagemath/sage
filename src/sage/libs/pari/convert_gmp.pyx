@@ -7,7 +7,7 @@ Utility function to convert PARI ``GEN``s to/from the GMP types
 AUTHORS:
 
 - Luca De Feo (2016-09-06): Separate Sage-specific components from
-  generic C-interface in ``Pari`` (:trac:`20241`)
+  generic C-interface in ``Pari`` (:issue:`20241`)
 """
 
 #*****************************************************************************
@@ -27,7 +27,7 @@ from sage.libs.gmp.all cimport *
 from cypari2.paridecl cimport *
 from cypari2.stack cimport new_gen
 
-cdef Gen new_gen_from_mpz_t(mpz_t value) noexcept:
+cdef Gen new_gen_from_mpz_t(mpz_t value):
     """
     Create a new PARI Gen of type ``t_INT`` from a given
     GMP integer ``value``.
@@ -40,7 +40,7 @@ cdef Gen new_gen_from_mpz_t(mpz_t value) noexcept:
     TESTS:
 
     Check that the hash of an integer does not depend on existing
-    garbage on the stack (:trac:`11611`)::
+    garbage on the stack (:issue:`11611`)::
 
         sage: foo = pari(2^(32*1024))  # Create large integer to put PARI stack in known state
         sage: a5 = pari(5)
@@ -73,7 +73,7 @@ cdef inline GEN _new_GEN_from_mpz_t(mpz_t value) noexcept:
     return z
 
 
-cdef Gen new_gen_from_mpq_t(mpq_t value) noexcept:
+cdef Gen new_gen_from_mpq_t(mpq_t value):
     """
     Create a new PARI Gen of type ``t_INT`` or ``t_FRAC`` from a given
     GMP rational ``value``.
@@ -92,7 +92,7 @@ cdef Gen new_gen_from_mpq_t(mpq_t value) noexcept:
     TESTS:
 
     Check that the hash of a rational does not depend on existing
-    garbage on the stack (:trac:`11854`)::
+    garbage on the stack (:issue:`11854`)::
 
         sage: foo = pari(2^(32*1024))  # Create large integer to put PARI stack in known state
         sage: a5 = pari(5/7)
@@ -121,7 +121,7 @@ cdef inline GEN _new_GEN_from_mpq_t(mpq_t value) noexcept:
 
 
 cdef Gen new_gen_from_padic(long ordp, long relprec,
-                            mpz_t prime, mpz_t p_pow, mpz_t unit) noexcept:
+                            mpz_t prime, mpz_t p_pow, mpz_t unit):
     """
     Create a new PARI Gen of type ``t_PADIC`` from the given input data
     as GMP integers.
@@ -155,7 +155,7 @@ cdef GEN _new_GEN_from_mpq_t_matrix(mpq_t** B, long nr, long nc) noexcept:
     return A
 
 
-cdef Gen rational_matrix(mpq_t** B, long nr, long nc) noexcept:
+cdef Gen rational_matrix(mpq_t** B, long nr, long nc):
     """
     Create a new PARI matrix of type ``t_MAT`` from a given
     array of GMP rationals ``mpq_t``.

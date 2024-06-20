@@ -422,7 +422,7 @@ class Derangements(UniqueRepresentation, Parent):
             R = PolynomialRing(QQ, 'x', len(A))
             S = sum(R.gens())
             e = prod((S - x)**y for (x, y) in zip(R.gens(), A))
-            return Integer(e.coefficient(dict([(x, y) for (x, y) in zip(R.gens(), A)])))
+            return Integer(e.coefficient(dict(zip(R.gens(), A))))
         return self._count_der(len(self._set))
 
     def _rand_der(self):
@@ -500,7 +500,7 @@ class Derangements(UniqueRepresentation, Parent):
 
         TESTS:
 
-        Check that index error discovered in :trac:`29974` is fixed::
+        Check that index error discovered in :issue:`29974` is fixed::
 
             sage: D = Derangements([1,1,2,2])
             sage: _ = [D.random_element() for _ in range(20)]

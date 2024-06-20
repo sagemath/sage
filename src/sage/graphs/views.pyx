@@ -564,7 +564,7 @@ cdef class EdgesView:
             sage: G == E
             False
 
-        Check that :trac:`29180` is fixed::
+        Check that :issue:`29180` is fixed::
 
             sage: G = graphs.CycleGraph(4)
             sage: E = graphs.EmptyGraph()
@@ -716,7 +716,7 @@ cdef class EdgesView:
 
         INPUT:
 
-        - ``left,right`` -- :class:`EdgesView` or list of edges
+        - ``left``, ``right`` -- :class:`EdgesView` or list of edges
 
         EXAMPLES::
 

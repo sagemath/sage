@@ -27,6 +27,7 @@ AUTHORS:
 
 from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
 
+
 class NeveuSchwarzLieConformalAlgebra(GradedLieConformalAlgebra):
     """
     The Neveu-Schwarz super Lie conformal algebra.

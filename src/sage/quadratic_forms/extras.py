@@ -3,7 +3,7 @@ Extra functions for quadratic forms
 """
 
 from sage.matrix.constructor import matrix
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.arith.misc import legendre_symbol
 from sage.rings.integer_ring import ZZ
 
@@ -22,9 +22,9 @@ def is_triangular_number(n, return_value=False):
 
     INPUT:
 
-    - ``n`` - an integer
+    - ``n`` -- an integer
 
-    - ``return_value`` - a boolean set to ``False`` by default. If set to
+    - ``return_value`` -- a boolean set to ``False`` by default. If set to
       ``True`` the function returns a pair made of a boolean and the value `v`
       such that `v(v+1)/2 = n`.
 
@@ -103,7 +103,7 @@ def extend_to_primitive(A_input):
         [(1, 2, 3), (0, 1, 1), (-1, 0, 0)]
     """
     # Deal with a list of vectors
-    if not is_Matrix(A_input):
+    if not isinstance(A_input, Matrix):
         A = matrix(A_input)      # Make a matrix A with the given rows.
         vec_output_flag = True
     else:

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Non-unital non-associative algebras
 """
@@ -32,7 +33,7 @@ class MagmaticAlgebras(Category_over_base_ring):
         :class:`MagmaticAlgebras` will eventually replace the current
         :class:`Algebras` for consistency with
         e.g. :wikipedia:`Algebras` which assumes neither associativity
-        nor the existence of a unit (see :trac:`15043`).
+        nor the existence of a unit (see :issue:`15043`).
 
     EXAMPLES::
 
@@ -136,8 +137,8 @@ class MagmaticAlgebras(Category_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: D4 = DescentAlgebra(QQ, 4).B()                                # needs sage.combinat sage.modules
-                    sage: D4.algebra_generators()                                       # needs sage.combinat sage.modules
+                    sage: D4 = DescentAlgebra(QQ, 4).B()                                # needs sage.combinat sage.groups sage.modules
+                    sage: D4.algebra_generators()                                       # needs sage.combinat sage.groups sage.modules
                     Lazy family (...)_{i in Compositions of 4}
 
                     sage: R.<x> = ZZ[]
@@ -221,8 +222,8 @@ class MagmaticAlgebras(Category_over_base_ring):
 
                 """
                 return self.linear_combination((self.product_on_basis(mon_left, mon_right), coeff_left * coeff_right )
-                                                for (mon_left, coeff_left) in left.monomial_coefficients().items()
-                                                for (mon_right, coeff_right) in right.monomial_coefficients().items() )
+                                                for (mon_left, coeff_left) in left.monomial_coefficients(copy=False).items()
+                                                for (mon_right, coeff_right) in right.monomial_coefficients(copy=False).items() )
 
         class FiniteDimensional(CategoryWithAxiom_over_base_ring):
             class ParentMethods:

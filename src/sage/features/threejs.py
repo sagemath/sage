@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 import os
 
 from . import StaticFile
@@ -25,8 +26,6 @@ class Threejs(StaticFile):
         """
         from sage.env import SAGE_SHARE, THREEJS_DIR
 
-        version = self.required_version()
-
         threejs_search_path = THREEJS_DIR or (
             os.path.join(SAGE_SHARE, "jupyter", "nbextensions", "threejs-sage"),
             os.path.join(SAGE_SHARE, "sagemath", "threejs-sage"),
@@ -34,9 +33,15 @@ class Threejs(StaticFile):
             os.path.join(SAGE_SHARE, "threejs-sage")
             )
 
+        try:
+            version = self.required_version()
+            filename = os.path.join(version, "three.min.js")
+        except FileNotFoundError:
+            filename = 'unknown'
+
         StaticFile.__init__(
             self, name="threejs",
-            filename=os.path.join(version, "three.min.js"),
+            filename=filename,
             spkg="threejs",
             type="standard",
             search_path=threejs_search_path,
@@ -45,6 +50,11 @@ class Threejs(StaticFile):
     def required_version(self):
         """
         Return the version of threejs that Sage requires.
+
+        Defining what version is required is delegated to the distribution package
+        that provides the file ``threejs-version.txt`` in :mod:`sage.ext_data.threejs`.
+
+        If the file is not provided, :class:`FileNotFoundError` is raised.
 
         EXAMPLES::
 

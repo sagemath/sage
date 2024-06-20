@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Access to the KnotInfo database
 
@@ -204,7 +203,7 @@ in the KnotInfo database::
     ....:           [17,19,8,18], [9,10,11,14], [10,12,13,11],
     ....:           [12,19,15,13], [20,16,14,15], [16,20,17,2]])
     sage: L.get_knotinfo()
-    (<KnotInfo.K0_1: '0_1'>, None)
+    (<KnotInfo.K0_1: '0_1'>, <SymmetryMutant.itself: 's'>)
 
 
 REFERENCES:
@@ -213,11 +212,10 @@ REFERENCES:
 - `LinkInfo <https://linkinfo.sitehost.iu.edu/>`__
 
 
-
 AUTHORS:
 
 - Sebastian Oehms August 2020: initial version
-- Sebastian Oehms June   2022: add :meth:`conway_polynomial` and :meth:`khovanov_polynomial` (:trac:`33969`)
+- Sebastian Oehms June   2022: add :meth:`conway_polynomial` and :meth:`khovanov_polynomial` (:issue:`33969`)
 
 Thanks to Chuck Livingston and Allison Moore for their support. For further acknowledgments see the correspondig hompages.
 """
@@ -334,6 +332,47 @@ def knotinfo_bool(string):
     elif string == 'N':
         return False
     raise ValueError('%s is not a KnotInfo boolean')
+
+
+class SymmetryMutant(Enum):
+    r"""
+    Enum to specify the symmetry mutant link of the prime link listed in the
+    KnotInfo and LinkInfo databases. From the KnotInfo description page:
+
+        If a knot is viewed as the oriented diffeomorphism
+        class of an oriented pair, `K = (S_3, S_1)`, with `S_i`
+        diffeomorphic to `S^i`, there are four oriented knots
+        associated to any particular knot `K`. In addition to
+        `K` itself, there is the reverse, `K^r = (S_3, -S_1)`,
+        the concordance inverse, `-K = (-S_3, -S_1)`, and the
+        mirror image, `K^m = (-S_3, S_1)`.
+    """
+    itself = 's'
+    reverse = 'r'
+    concordance_inverse = 'mr'
+    mirror_image = 'm'
+    mixed = 'x' # to be used in connection with KnotInfoSeries
+    unknown = '?'
+
+    def __gt__(self, other):
+        r"""
+        Implement comparison of different items in order to have ``sorted`` work.
+
+        EXAMPLES::
+
+            sage: from sage.knots.knotinfo import SymmetryMutant
+            sage: sorted(SymmetryMutant)        # indirect doctest
+            [<SymmetryMutant.mixed: 'x'>,
+            <SymmetryMutant.itself: 's'>,
+            <SymmetryMutant.reverse: 'r'>,
+            <SymmetryMutant.concordance_inverse: 'mr'>,
+            <SymmetryMutant.mirror_image: 'm'>,
+            <SymmetryMutant.unknown: '?'>]
+        """
+        # We use the reversal of the alphabetical order of the values so that
+        # `itself` occurs before the mirrored cases
+        return self.value < other.value
+
 
 # ---------------------------------------------------------------------------------
 # KnotInfoBase
@@ -503,7 +542,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``original`` -- boolean (optional, default ``False``) if set to
+        - ``original`` -- boolean (default: ``False``) if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -545,7 +584,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``original`` -- boolean (optional, default ``False``) if set to
+        - ``original`` -- boolean (default: ``False``) if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -588,7 +627,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``original`` -- boolean (optional, default ``False``) if set to
+        - ``original`` -- boolean (default: ``False``) if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -622,7 +661,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``original`` -- boolean (optional, default ``False``) if set to
+        - ``original`` -- boolean (default: ``False``) if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -649,7 +688,7 @@ class KnotInfoBase(Enum):
 
         TESTS:
 
-        Check that :trac:`33966` is fixed::
+        Check that :issue:`33966` is fixed::
 
             sage: KnotInfo.K0_1.braid_notation()
             (1,)
@@ -945,13 +984,29 @@ class KnotInfoBase(Enum):
 
             sage: KnotInfo.K6_3.is_reversible()
             True
+
+        TESTS::
+
+            sage: KnotInfo.K10_67.is_reversible() # optional - database_knotinfo
+            False
+            sage: KnotInfo.L7a4_0.is_reversible() # optional - database_knotinfo
         """
-        symmetry_type = self.symmetry_type()
-        if symmetry_type == 'reversible':
+        if self.is_knot():
+            symmetry_type = self.symmetry_type()
+            if symmetry_type == 'reversible':
+                return True
+            if symmetry_type == 'fully amphicheiral':
+                return True
+            return False
+
+        # revert orientation
+        b = self.braid()
+        bt = list(b.Tietze())
+        bt.reverse()
+        br = b.parent()(tuple(bt))
+        if b.is_conjugated(br):
             return True
-        if symmetry_type == 'fully amphicheiral':
-            return True
-        return False
+        return None
 
     @cached_method
     def is_amphicheiral(self, positive=False):
@@ -960,7 +1015,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``positive`` -- boolean (optional, default False) whether to check
+        - ``positive`` -- boolean (default: ``False``) whether to check
           if ``self`` is positive or negative amphicheiral (see documentation
           of :meth:`symmetry_type`)
 
@@ -1294,7 +1349,7 @@ class KnotInfoBase(Enum):
 
         - ``var1`` -- (default: ``'a'``) the first variable
         - ``var2`` -- (default: ``'z'``) the second variable
-        - ``original`` -- boolean (optional, default ``False``) if set to
+        - ``original`` -- boolean (default: ``False``) if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -1562,7 +1617,7 @@ class KnotInfoBase(Enum):
         INPUT:
 
         - ``var`` -- (default: ``'t'``) the variable
-        - ``original`` -- boolean (optional, default ``False``) if set to
+        - ``original`` -- boolean (default: ``False``) if set to
           ``True`` the original table entry is returned as a string
         - ``laurent_poly`` -- boolean (default ``False``) see the note below
 
@@ -1652,7 +1707,7 @@ class KnotInfoBase(Enum):
         INPUT:
 
         - ``var`` -- (default: ``'t'``) the variable
-        - ``original`` -- boolean (optional, default ``False``) if set to
+        - ``original`` -- boolean (default: ``False``) if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -1897,7 +1952,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``use_item`` -- (optional, default ``self.items.pd_notation``)
+        - ``use_item`` -- (default: ``self.items.pd_notation``)
           instance of :class:`KnotInfoColumns` to choose the column
           that should be used to construct the link. Allowed values
           are:
@@ -2095,7 +2150,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``unique`` -- boolean (optional, default=``True``) if set to ``False``
+        - ``unique`` -- boolean (default: ``True``) if set to ``False``
           it is only checked if ``self`` is among the recovered items
 
         EXAMPLES::
@@ -2123,6 +2178,9 @@ class KnotInfoBase(Enum):
             else:
                 l = self.link()
             if mirror:
+                if self.is_amphicheiral():
+                    # no need to test again
+                    return True
                 l = l.mirror_image()
 
             def check_result(L, m):
@@ -2131,12 +2189,10 @@ class KnotInfoBase(Enum):
                 """
                 if L != self:
                     return False
-                if m is None or m == '?':
-                    return True
                 if mirror:
-                    return m
+                    return m is SymmetryMutant.mirror_image
                 else:
-                    return not m
+                    return m is SymmetryMutant.itself
 
             try:
                 L, m = l.get_knotinfo()
@@ -2160,7 +2216,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``verbose`` -- boolean (optional, default ``True``) to suppress
+        - ``verbose`` -- boolean (default: ``True``) to suppress
           the message printed on the invocation
 
         EXAMPLES::
@@ -2183,7 +2239,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``oriented`` -- boolean (default False) it only affects proper links.
+        - ``oriented`` -- boolean (default: ``False``) it only affects proper links.
           By default the items of the series will be again series of links
           collecting all orientation mutants of an unoriented name. To obtain
           the series of the individual links this keyword has to be set to
@@ -2346,21 +2402,21 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``oriented`` -- boolean (optional, default ``False``) it only affects
+        - ``oriented`` -- boolean (default: ``False``) it only affects
           series of proper links. By default the list items of a series of proper
           links are again series of links collecting all orientation types of an
           unoriented name. To obtain the list of the individual links this
           keyword has to be set to ``True``
 
-        - ``comp`` (optional, default ``None``) if given an integer for this
+        - ``comp`` (default: ``None``) if given an integer for this
           keyword the list is restriced to links having the according number
           of components. This keyword implies ``oriented=True``
 
-        - ``det`` (optional, default ``None``) if given an integer for this
+        - ``det`` (default: ``None``) if given an integer for this
           keyword the list is restriced to links having the according value
           for its determinant. This keyword implies ``oriented=True``
 
-        - ``homfly`` (optional, default ``None``) if given a HOMFLY-PT polynomial
+        - ``homfly`` (default: ``None``) if given a HOMFLY-PT polynomial
           having ``normalization='vz'`` for this keyword the list is restriced to
           links having the according value for its HOMFLY-PT polynomial. This
           keyword implies ``oriented=True``
@@ -2438,16 +2494,16 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``oriented`` -- boolean (optional, default ``False``) see the
+        - ``oriented`` -- boolean (default: ``False``) see the
           description for :meth:`list`
 
-        - ``comp`` (optional, default ``None``) see the description for
+        - ``comp`` (default: ``None``) see the description for
           :meth:`list`
 
-        - ``det`` (optional, default ``None``) see the description for
+        - ``det`` (default: ``None``) see the description for
           :meth:`list`
 
-        - ``homfly`` (optional, default ``None``) see the description for
+        - ``homfly`` (default: ``None``) see the description for
           :meth:`list`
 
         EXAMPLES::
@@ -2597,7 +2653,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``unique`` -- boolean (optional, default=``True``) see
+        - ``unique`` -- boolean (default: ``True``) see
           :meth:`KnotInfoBase.is_recoverable`
         - ``max_samples`` -- non negative integer or ``infinity`` (optional,
           default ``8``) limits the number of items to check (random sample).
@@ -2655,7 +2711,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``verbose`` -- boolean (optional, default ``True``) to suppress
+        - ``verbose`` -- boolean (default: ``True``) to suppress
           the message printed on the invocation
 
         EXAMPLES::

@@ -133,7 +133,7 @@ class Circle(GraphicPrimitive):
             sage: c = C[0]; c
             Circle defined by (2.0,3.0) with r=5.0
         """
-        return "Circle defined by (%s,%s) with r=%s" % (self.x, self.y, self.r)
+        return f"Circle defined by ({self.x},{self.y}) with r={self.r}"
 
     def _render_on_subplot(self, subplot):
         """
@@ -173,7 +173,7 @@ class Circle(GraphicPrimitive):
         INPUT:
 
 
-        -  ``z`` - optional 3D height above `xy`-plane.
+        -  ``z`` -- optional 3D height above `xy`-plane.
 
         EXAMPLES::
 
@@ -240,27 +240,27 @@ def circle(center, radius, **options):
 
     OPTIONS:
 
-    - ``alpha`` - default: 1
+    - ``alpha`` -- default: 1
 
-    - ``fill`` - default: False
+    - ``fill`` -- default: ``False``
 
-    - ``thickness`` - default: 1
+    - ``thickness`` -- default: 1
 
-    - ``linestyle`` - default: ``'solid'`` (2D plotting only) The style of the
+    - ``linestyle`` -- default: ``'solid'`` (2D plotting only) The style of the
       line, which is one of ``'dashed'``, ``'dotted'``, ``'solid'``, ``'dashdot'``,
       or ``'--'``, ``':'``, ``'-'``, ``'-.'``, respectively.
 
-    - ``edgecolor`` - default: 'blue' (2D plotting only)
+    - ``edgecolor`` -- default: 'blue' (2D plotting only)
 
-    - ``facecolor`` - default: 'blue' (2D plotting only, useful only
+    - ``facecolor`` -- default: 'blue' (2D plotting only, useful only
       if ``fill=True``)
 
-    - ``rgbcolor`` - 2D or 3D plotting.  This option overrides
+    - ``rgbcolor`` -- 2D or 3D plotting.  This option overrides
       ``edgecolor`` and ``facecolor`` for 2D plotting.
 
-    - ``legend_label`` - the label for this item in the legend
+    - ``legend_label`` -- the label for this item in the legend
 
-    - ``legend_color`` - the color for the legend label
+    - ``legend_color`` -- the color for the legend label
 
     EXAMPLES:
 

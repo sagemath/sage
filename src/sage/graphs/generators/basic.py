@@ -2,7 +2,6 @@ r"""
 Basic graphs
 
 The methods defined here appear in :mod:`sage.graphs.graph_generators`.
-
 """
 # ****************************************************************************
 #           Copyright (C) 2006 Robert L. Miller <rlmillster@gmail.com>
@@ -453,7 +452,7 @@ def CompleteBipartiteGraph(p, q, set_position=True):
 
     INPUT:
 
-    - ``p,q`` -- number of vertices in each side
+    - ``p``, ``q`` -- number of vertices in each side
 
     - ``set_position`` -- boolean (default ``True``); if set to ``True``, we
       assign positions to the vertices so that the set of cardinality `p` is
@@ -537,14 +536,14 @@ def CompleteBipartiteGraph(p, q, set_position=True):
         sage: G = graphics_array(j)
         sage: G.show()                          # long time
 
-    :trac:`12155`::
+    :issue:`12155`::
 
         sage: graphs.CompleteBipartiteGraph(5,6).complement()
         complement(Complete bipartite graph of order 5+6): Graph on 11 vertices
 
     TESTS:
 
-    Prevent negative dimensions (:trac:`18530`)::
+    Prevent negative dimensions (:issue:`18530`)::
 
         sage: graphs.CompleteBipartiteGraph(-1,1)
         Traceback (most recent call last):
@@ -828,7 +827,7 @@ def Toroidal6RegularGrid2dGraph(p, q):
 
     INPUT:
 
-    - ``p, q`` -- integers (see above)
+    - ``p``, ``q`` -- integers
 
     EXAMPLES:
 

@@ -17,11 +17,11 @@ TESTS::
 
 .. TODO::
 
-    The following skipped tests should be removed once :trac:`13999` is fixed::
+    The following skipped tests should be removed once :issue:`13999` is fixed::
 
         sage: TestSuite(S).run(skip=['_test_nonzero_equal', '_test_elements', '_test_zero'])
 
-In :trac:`11068`, non-commutative quotient rings `R/I` were
+In :issue:`11068`, non-commutative quotient rings `R/I` were
 implemented.  The only requirement is that the two-sided ideal `I`
 provides a ``reduce`` method so that ``I.reduce(x)`` is the normal
 form of an element `x` with respect to `I` (i.e., we have
@@ -80,7 +80,7 @@ quotient ring is commutative::
     sage: (a+b+2)^4
     16 + 32*a + 32*b
 
-Since :trac:`7797`, there is an implementation of free algebras
+Since :issue:`7797`, there is an implementation of free algebras
 based on Singular's implementation of the Letterplace Algebra. Our
 letterplace wrapper allows to provide the above toy example more
 easily::
@@ -101,7 +101,6 @@ easily::
     sage: Q2 = F.quo(F*[F.prod(m) for m in product(F.gens(), repeat=2)]*F)
     sage: Q2.is_commutative()
     True
-
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -242,7 +241,7 @@ def QuotientRing(R, I, names=None, **kwds):
 
     TESTS:
 
-    By :trac:`11068`, the following does not return a generic
+    By :issue:`11068`, the following does not return a generic
     quotient ring but a usual quotient of the integer ring::
 
         sage: R = Integers(8)
@@ -251,7 +250,7 @@ def QuotientRing(R, I, names=None, **kwds):
         Ring of integers modulo 2
 
     Here is an example of the quotient of a free algebra by a
-    twosided homogeneous ideal (see :trac:`7797`)::
+    twosided homogeneous ideal (see :issue:`7797`)::
 
         sage: # needs sage.combinat sage.libs.singular sage.modules
         sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
@@ -273,7 +272,7 @@ def QuotientRing(R, I, names=None, **kwds):
         sage: j^3
         -j*k*i - j*k*j - j*k*k
 
-    Check that :trac:`5978` is fixed by if we quotient by the zero ideal `(0)`
+    Check that :issue:`5978` is fixed by if we quotient by the zero ideal `(0)`
     then we just return ``R``::
 
         sage: R = QQ['x']
@@ -307,7 +306,7 @@ def QuotientRing(R, I, names=None, **kwds):
         kwds.pop('implementation')
         return BooleanPolynomialRing(R.ngens(), names=names, **kwds)
     # workaround to silence warning from #34806
-    from sage.rings.number_field.order import Order
+    from sage.rings.abc import Order
     if isinstance(R, Order):
         if not R.is_maximal():
             raise NotImplementedError('only implemented for maximal orders')
@@ -480,7 +479,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         if R not in _Rings:
             raise TypeError("The first argument must be a ring, but %s is not" % R)
         # workaround to silence warning from #34806
-        from sage.rings.number_field.order import Order
+        from sage.rings.abc import Order
         if isinstance(R, Order):
             M = R.number_field().ideal_monoid()
         else:
@@ -596,7 +595,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
 
         AUTHOR:
 
-        - Simon King (2011-03-23): See :trac:`7797`.
+        - Simon King (2011-03-23): See :issue:`7797`.
 
         EXAMPLES:
 
@@ -728,7 +727,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             False
 
         Test that there also is a lift for rings that are no
-        instances of :class:`~sage.rings.ring.Ring` (see :trac:`11068`)::
+        instances of :class:`~sage.rings.ring.Ring` (see :issue:`11068`)::
 
             sage: # needs sage.modules
             sage: MS = MatrixSpace(GF(5), 2, 2)
@@ -1000,7 +999,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         TESTS:
 
         We create an ideal of a fairly generic integer ring (see
-        :trac:`5666`)::
+        :issue:`5666`)::
 
             sage: R = Integers(10)
             sage: R.ideal(1)
@@ -1103,7 +1102,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
 
         TESTS:
 
-        We check that :trac:`13682` is fixed::
+        We check that :issue:`13682` is fixed::
 
             sage: R.<x,y> = PolynomialRing(QQ)
             sage: I = R.ideal(x^2 + y^2)
@@ -1256,7 +1255,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
 
         INPUT:
 
-        -  ``singular`` - Singular instance (default: the
+        -  ``singular`` -- Singular instance (default: the
            default Singular instance)
 
         .. NOTE::
@@ -1320,7 +1319,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
 
         INPUT:
 
-        -  ``magma`` - a Magma instance
+        -  ``magma`` -- a Magma instance
 
         EXAMPLES::
 
@@ -1353,6 +1352,30 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             Degree reverse lexicographic term order
         """
         return self.__R.term_order()
+
+    def random_element(self):
+        r"""
+        Return a random element of this quotient ring obtained by
+        sampling a random element of the cover ring and reducing
+        it modulo the defining ideal.
+
+        EXAMPLES::
+
+            sage: R.<x,y> = QQ[]
+            sage: S = R.quotient([x^3, y^2])
+            sage: S.random_element()  # random
+            -8/5*xbar^2 + 3/2*xbar*ybar + 2*xbar - 4/23
+
+        TESTS:
+
+        Make sure we are not just getting images of integers in this
+        ring (which would be the case if the default implementation
+        of this method was inherited from generic rings)::
+
+            sage: any(S.random_element() not in ZZ for _ in range(999))
+            True
+        """
+        return self.retract(self.cover_ring().random_element())
 
 
 class QuotientRing_generic(QuotientRing_nc, ring.CommutativeRing):

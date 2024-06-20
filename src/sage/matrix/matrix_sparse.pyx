@@ -15,9 +15,9 @@ from cysignals.signals cimport sig_check
 
 cimport sage.matrix.matrix as matrix
 cimport sage.matrix.matrix0 as matrix0
+from sage.categories.rings import Rings
 from sage.structure.element cimport Element, Vector
 from sage.structure.richcmp cimport richcmp_item, rich_to_bool
-from sage.rings.ring import is_Ring
 
 from cpython cimport *
 from cpython.object cimport Py_EQ, Py_NE
@@ -62,7 +62,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             [2.00000000000000*x  -2.00000000000000]
             [-------------------------------------]
         """
-        if not is_Ring(ring):
+        if ring not in Rings():
             raise TypeError("input must be a ring")
         if ring is self._base_ring:
             if self._is_immutable:
@@ -301,7 +301,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         return left.new_matrix(left._nrows, right._ncols, entries=e, coerce=False, copy=False)
 
-    cpdef _lmul_(self, Element right) noexcept:
+    cpdef _lmul_(self, Element right):
         """
         Left scalar multiplication. Internal usage only.
 
@@ -349,9 +349,8 @@ cdef class Matrix_sparse(matrix.Matrix):
             r = get_ij(nz, k, 0)
             c = get_ij(nz, k, 1)
             entry = self.get_unsafe(r,c)*right
-            M.set_unsafe(r,c,entry)
+            M.set_unsafe(r, c, entry)
         return M
-
 
     cdef bint _will_use_strassen(self, matrix0.Matrix right) except -2:
         # never use Strassen for sparse matrix multiply
@@ -370,7 +369,7 @@ cdef class Matrix_sparse(matrix.Matrix):
         else:
             raise RuntimeError("unknown matrix version (=%s)" % version)
 
-    cpdef _richcmp_(self, right, int op) noexcept:
+    cpdef _richcmp_(self, right, int op):
         """
         Rich comparison.
 
@@ -473,7 +472,6 @@ cdef class Matrix_sparse(matrix.Matrix):
             A.subdivide(list(reversed([self._ncols - t for t in col_divs])),
                             list(reversed([self._nrows - t for t in row_divs])))
         return A
-
 
     def _reverse_unsafe(self):
         r"""
@@ -663,7 +661,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         -  ``R`` -- (optional) ring
 
-        - ``sparse`` -- (optional, default ``True``) whether to return
+        - ``sparse`` -- (default: ``True``) whether to return
           a sparse or a dense matrix
 
         OUTPUT: a matrix over ``R``
@@ -696,7 +694,7 @@ cdef class Matrix_sparse(matrix.Matrix):
         If we did not specify the codomain, the resulting matrix in the
         above case ends up over `\ZZ` again::
 
-            sage: n = m.apply_map(lambda x:x%3)
+            sage: n = m.apply_map(lambda x: x%3)
             sage: n.parent()
             Full MatrixSpace of 10000 by 10000 sparse matrices over Integer Ring
             sage: n[1, 2]
@@ -757,7 +755,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             [4|1]
 
         When applying a map to a sparse zero matrix, the codomain is determined
-        from the image of zero (:trac:`29214`)::
+        from the image of zero (:issue:`29214`)::
 
             sage: matrix(RR, 2, 2, sparse=True).apply_map(floor).base_ring() is ZZ
             True
@@ -968,7 +966,7 @@ cdef class Matrix_sparse(matrix.Matrix):
                         A.set_unsafe(new_row, new_col, entry)
         return A
 
-    cdef _stack_impl(self, bottom) noexcept:
+    cdef _stack_impl(self, bottom):
         r"""
         Stack ``self`` on top of ``bottom``::
 
@@ -1010,7 +1008,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         TESTS:
 
-        One can stack matrices over different rings (:trac:`16399`). ::
+        One can stack matrices over different rings (:issue:`16399`). ::
 
             sage: M = Matrix(ZZ, 2, 3, range(6), sparse=True)
             sage: N = Matrix(QQ, 1, 3, [10,11,12], sparse=True)
@@ -1087,7 +1085,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         TESTS:
 
-        Verify that :trac:`12689` is fixed::
+        Verify that :issue:`12689` is fixed::
 
             sage: A = identity_matrix(QQ, 2, sparse=True)
             sage: B = identity_matrix(ZZ, 2, sparse=True)
@@ -1119,7 +1117,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             Z._subdivide_on_augment(self, other)
         return Z
 
-    cdef _vector_times_matrix_(self, Vector v) noexcept:
+    cdef _vector_times_matrix_(self, Vector v):
         """
         Return the vector times matrix product.
 
@@ -1152,7 +1150,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             s[j] += v[i] * a
         return s
 
-    cdef _matrix_times_vector_(self, Vector v) noexcept:
+    cdef _matrix_times_vector_(self, Vector v):
         """
         Return the matrix times vector product.
 
@@ -1176,7 +1174,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             sage: (m * v).parent() is m.column(0).parent()
             True
 
-        Check that the bug in :trac:`13854` has been fixed::
+        Check that the bug in :issue:`13854` has been fixed::
 
             sage: # needs sage.combinat sage.libs.singular
             sage: A.<x,y> = FreeAlgebra(QQ, 2)

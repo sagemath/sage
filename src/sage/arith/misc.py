@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Miscellaneous arithmetic functions
 
@@ -69,14 +68,14 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
     INPUT:
 
 
-    -  ``z`` - real, complex, or `p`-adic number
+    -  ``z`` -- real, complex, or `p`-adic number
 
-    -  ``degree`` - an integer
+    -  ``degree`` -- an integer
 
-    -  ``height_bound`` - an integer (default: ``None``) specifying the maximum
+    -  ``height_bound`` -- an integer (default: ``None``) specifying the maximum
                           coefficient size for the returned polynomial
 
-    -  ``proof`` - a boolean (default: ``False``), requires height_bound to be set
+    -  ``proof`` -- a boolean (default: ``False``), requires height_bound to be set
 
 
     EXAMPLES::
@@ -285,21 +284,23 @@ def bernoulli(n, algorithm='default', num_threads=1):
 
     INPUT:
 
-    - ``n`` - an integer
+    - ``n`` -- an integer
     - ``algorithm``:
 
       - ``'default'`` -- use 'flint' for n <= 20000, then 'arb' for n <= 300000
         and 'bernmm' for larger values (this is just a heuristic, and not guaranteed
         to be optimal on all hardware)
-      - ``'arb'`` -- use the arb library
-      - ``'flint'`` -- use the FLINT library
+      - ``'arb'`` -- use the ``bernoulli_fmpq_ui`` function (formerly part of
+        Arb) of the FLINT library
+      - ``'flint'`` -- use the ``arith_bernoulli_number`` function of the FLINT
+        library
       - ``'pari'`` -- use the PARI C library
       - ``'gap'`` -- use GAP
       - ``'gp'`` -- use PARI/GP interpreter
       - ``'magma'`` -- use MAGMA (optional)
       - ``'bernmm'`` -- use bernmm package (a multimodular algorithm)
 
-    - ``num_threads`` - positive integer, number of
+    - ``num_threads`` -- positive integer, number of
       threads to use (only used for bernmm algorithm)
 
     EXAMPLES::
@@ -403,13 +404,13 @@ def factorial(n, algorithm='gmp'):
 
     INPUT:
 
-    -  ``n`` - an integer
+    -  ``n`` -- an integer
 
-    -  ``algorithm`` - string (default: 'gmp'):
+    -  ``algorithm`` -- string (default: 'gmp'):
 
-       -  ``'gmp'`` - use the GMP C-library factorial function
+       -  ``'gmp'`` -- use the GMP C-library factorial function
 
-       -  ``'pari'`` - use PARI's factorial function
+       -  ``'pari'`` -- use PARI's factorial function
 
     OUTPUT: an integer
 
@@ -527,7 +528,7 @@ def is_prime(n) -> bool:
 
     TESTS:
 
-    Make sure the warning from :trac:`25046` works as intended::
+    Make sure the warning from :issue:`25046` works as intended::
 
         sage: is_prime(7/1)
         doctest:warning
@@ -543,7 +544,7 @@ def is_prime(n) -> bool:
         False
 
     However, number fields redefine ``.is_prime()`` in an incompatible fashion
-    (cf. :trac:`32340`) and we should not warn::
+    (cf. :issue:`32340`) and we should not warn::
 
         sage: x = polygen(ZZ, 'x')
         sage: K.<i> = NumberField(x^2 + 1)                                              # needs sage.rings.number_field
@@ -687,9 +688,9 @@ def is_pseudoprime_power(n, get_data=False):
 
     INPUT:
 
-    -  ``n`` - an integer
+    -  ``n`` -- an integer
 
-    -  ``get_data`` - (boolean) instead of a boolean return a pair `(p,k)` so
+    -  ``get_data`` -- (boolean) instead of a boolean return a pair `(p,k)` so
        that ``n`` equals `p^k` and `p` is a pseudoprime or `(n,0)` otherwise.
 
     EXAMPLES::
@@ -813,11 +814,11 @@ def prime_powers(start, stop=None):
 
     INPUT:
 
-    - ``start`` - an integer. If two inputs are given, a lower bound
+    - ``start`` -- an integer. If two inputs are given, a lower bound
       for the returned set of prime powers. If this is the only input,
       then it is an upper bound.
 
-    - ``stop`` - an integer (default: ``None``). An upper bound for the
+    - ``stop`` -- an integer (default: ``None``). An upper bound for the
       returned set of prime powers.
 
     OUTPUT:
@@ -863,7 +864,7 @@ def prime_powers(start, stop=None):
 
     TESTS:
 
-    Check that output are always Sage integers (:trac:`922`)::
+    Check that output are always Sage integers (:issue:`922`)::
 
         sage: v = prime_powers(10)                                                      # needs sage.libs.pari
         sage: type(v[0])                                                                # needs sage.libs.pari
@@ -886,7 +887,7 @@ def prime_powers(start, stop=None):
         ...
         TypeError: unable to convert 'bar' to an integer
 
-    Check that long input are accepted (:trac:`17852`)::
+    Check that long input are accepted (:issue:`17852`)::
 
         sage: prime_powers(6l)                                                          # needs sage.libs.pari
         [2, 3, 4, 5]
@@ -933,7 +934,7 @@ def primes_first_n(n, leave_pari=False):
 
     INPUT:
 
-    - `n` - a nonnegative integer
+    - `n` -- a nonnegative integer
 
     OUTPUT:
 
@@ -969,7 +970,7 @@ def eratosthenes(n):
 
     INPUT:
 
-    -  ``n`` - a positive integer
+    -  ``n`` -- a positive integer
 
     OUTPUT:
 
@@ -1037,7 +1038,7 @@ def primes(start=2, stop=None, proof=None):
 
     INPUT:
 
-    - ``start`` -- an integer (optional, default: 2) lower bound for the primes
+    - ``start`` -- an integer (default: 2) lower bound for the primes
 
     - ``stop`` -- an integer (or infinity) upper (open) bound for the
       primes
@@ -1178,7 +1179,7 @@ def next_probable_prime(n):
     INPUT:
 
 
-    -  ``n`` - an integer
+    -  ``n`` -- an integer
 
 
     EXAMPLES::
@@ -1216,9 +1217,9 @@ def next_prime(n, proof=None):
     INPUT:
 
 
-    -  ``n`` - integer
+    -  ``n`` -- integer
 
-    -  ``proof`` - bool or None (default: None)
+    -  ``proof`` -- bool or None (default: None)
 
 
     EXAMPLES::
@@ -1394,14 +1395,14 @@ def random_prime(n, proof=None, lbound=2):
 
     INPUT:
 
-    -  ``n`` - an integer `\geq 2`.
+    -  ``n`` -- an integer `\geq 2`.
 
-    -  ``proof`` - bool or ``None`` (default: ``None``) If ``False``, the function uses a
+    -  ``proof`` -- bool or ``None`` (default: ``None``) If ``False``, the function uses a
        pseudo-primality test, which is much faster for really big numbers but
        does not provide a proof of primality. If ``None``, uses the global default
        (see :mod:`sage.structure.proof.proof`)
 
-    - ``lbound`` - an integer `\geq 2`, lower bound for the chosen primes
+    - ``lbound`` -- an integer `\geq 2`, lower bound for the chosen primes
 
     EXAMPLES::
 
@@ -1506,7 +1507,7 @@ def divisors(n):
 
     INPUT:
 
-    -  ``n`` - the element
+    -  ``n`` -- the element
 
     EXAMPLES:
 
@@ -1594,9 +1595,9 @@ class Sigma:
     INPUT:
 
 
-    -  ``n`` - integer
+    -  ``n`` -- integer
 
-    -  ``k`` - integer (default: 1)
+    -  ``k`` -- integer (default: 1)
 
 
     OUTPUT: integer
@@ -1697,20 +1698,20 @@ class Sigma:
         INPUT:
 
 
-        -  ``xmin`` - default: 1
+        -  ``xmin`` -- default: 1
 
-        -  ``xmax`` - default: 50
+        -  ``xmax`` -- default: 50
 
-        -  ``k`` - default: 1
+        -  ``k`` -- default: 1
 
-        -  ``pointsize`` - default: 30
+        -  ``pointsize`` -- default: 30
 
-        -  ``rgbcolor`` - default: (0,0,1)
+        -  ``rgbcolor`` -- default: (0,0,1)
 
-        -  ``join`` - default: True; whether to join the
+        -  ``join`` -- default: ``True``; whether to join the
            points.
 
-        -  ``**kwds`` - passed on
+        -  ``**kwds`` -- passed on
 
         EXAMPLES::
 
@@ -1739,7 +1740,7 @@ def gcd(a, b=None, **kwargs):
 
     INPUT:
 
-    - ``a,b`` -- two elements of a ring with gcd or
+    - ``a``, ``b`` -- two elements of a ring with gcd or
 
     - ``a`` -- a list or tuple of elements of a ring with gcd
 
@@ -1766,7 +1767,7 @@ def gcd(a, b=None, **kwargs):
 
     Note that to take the gcd of `n` elements for `n \not= 2` you must
     put the elements into a list by enclosing them in ``[..]``.  Before
-    :trac:`4988` the following wrongly returned 3 since the third parameter
+    :issue:`4988` the following wrongly returned 3 since the third parameter
     was just ignored::
 
         sage: gcd(3, 6, 2)
@@ -1793,7 +1794,7 @@ def gcd(a, b=None, **kwargs):
     TESTS:
 
     The following shows that indeed coercion takes place before computing
-    the gcd. This behaviour was introduced in :trac:`10771`::
+    the gcd. This behaviour was introduced in :issue:`10771`::
 
         sage: R.<x> = QQ[]
         sage: S.<x> = ZZ[]
@@ -1804,7 +1805,7 @@ def gcd(a, b=None, **kwargs):
         sage: parent(gcd([1/p, q]))
         Fraction Field of Univariate Polynomial Ring in x over Rational Field
 
-    Make sure we try QQ and not merely ZZ (:trac:`13014`)::
+    Make sure we try QQ and not merely ZZ (:issue:`13014`)::
 
         sage: bool(gcd(2/5, 3/7) == gcd(SR(2/5), SR(3/7)))                              # needs sage.symbolic
         True
@@ -1873,7 +1874,7 @@ def __GCD_sequence(v, **kwargs):
     INPUT:
 
 
-    -  ``v`` - A sequence (possibly empty)
+    -  ``v`` -- A sequence (possibly empty)
 
 
     OUTPUT: The gcd of the elements of the sequence as an element of
@@ -1969,12 +1970,12 @@ def xgcd(a, b):
 
     INPUT:
 
-    -  ``a, b`` - integers or more generally, element of a ring for which the
+    -  ``a, b`` -- integers or more generally, element of a ring for which the
        xgcd make sense (e.g. a field or univariate polynomials).
 
     OUTPUT:
 
-    -  ``g, s, t`` - such that `g = s\cdot a + t\cdot b`
+    -  ``g, s, t`` -- such that `g = s\cdot a + t\cdot b`
 
     .. NOTE::
 
@@ -2035,7 +2036,7 @@ def xgcd(a, b):
 
     TESTS:
 
-    We check that :trac:`3330` has been fixed::
+    We check that :issue:`3330` has been fixed::
 
         sage: # needs sage.rings.number_field
         sage: R.<a,b> = NumberField(x^2 - 3, 'g').extension(x^2 - 7, 'h')[]
@@ -2332,7 +2333,7 @@ def rational_reconstruction(a, m, algorithm='fast'):
 
     - ``algorithm`` -- (default: 'fast')
 
-      - ``'fast'`` - a fast implementation using direct GMP library calls
+      - ``'fast'`` -- a fast implementation using direct GMP library calls
         in Cython.
 
     OUTPUT:
@@ -2418,7 +2419,7 @@ def mqrr_rational_reconstruction(u, m, T):
 
     INPUT:
 
-    - ``u, m, T`` -  integers such that `m > u \ge 0`, `T > 0`.
+    - ``u``, ``m``, ``T`` --  integers such that `m > u \ge 0`, `T > 0`
 
     OUTPUT:
 
@@ -2478,13 +2479,13 @@ def trial_division(n, bound=None):
 
     INPUT:
 
-    -  ``n`` - a positive integer
+    -  ``n`` -- a positive integer
 
-    - ``bound`` - (optional) a positive integer
+    - ``bound`` -- (optional) a positive integer
 
     OUTPUT:
 
-    -  ``int`` - a prime p=bound that divides n, or n if
+    -  ``int`` -- a prime p=bound that divides n, or n if
        there is no such prime.
 
 
@@ -3039,7 +3040,7 @@ class Euler_Phi:
     INPUT:
 
 
-    -  ``n`` - an integer
+    -  ``n`` -- an integer
 
 
     EXAMPLES::
@@ -3144,18 +3145,18 @@ class Euler_Phi:
         INPUT:
 
 
-        -  ``xmin`` - default: 1
+        -  ``xmin`` -- default: 1
 
-        -  ``xmax`` - default: 50
+        -  ``xmax`` -- default: 50
 
-        -  ``pointsize`` - default: 30
+        -  ``pointsize`` -- default: 30
 
-        -  ``rgbcolor`` - default: (0,0,1)
+        -  ``rgbcolor`` -- default: (0,0,1)
 
-        -  ``join`` - default: True; whether to join the
+        -  ``join`` -- default: ``True``; whether to join the
            points.
 
-        -  ``**kwds`` - passed on
+        -  ``**kwds`` -- passed on
 
         EXAMPLES::
 
@@ -3293,7 +3294,7 @@ def carmichael_lambda(n):
         ...
         ValueError: Input n must be a positive integer.
 
-    Bug reported in :trac:`8283`::
+    Bug reported in :issue:`8283`::
 
         sage: from sage.arith.misc import carmichael_lambda
         sage: type(carmichael_lambda(16))
@@ -3331,11 +3332,11 @@ def crt(a, b, m=None, n=None):
 
     INPUT:
 
-    - ``a``, ``b`` - two residues (elements of some ring for which
+    - ``a``, ``b`` -- two residues (elements of some ring for which
       extended gcd is available), or two lists, one of residues and
       one of moduli.
 
-    - ``m``, ``n`` - (default: ``None``) two moduli, or ``None``.
+    - ``m``, ``n`` -- (default: ``None``) two moduli, or ``None``.
 
     OUTPUT:
 
@@ -3575,7 +3576,7 @@ def CRT_basis(moduli):
 
     INPUT:
 
-    - ``moduli`` - list of pairwise coprime moduli `m` which admit an
+    - ``moduli`` -- list of pairwise coprime moduli `m` which admit an
        extended Euclidean algorithm
 
     OUTPUT:
@@ -3625,13 +3626,13 @@ def CRT_vectors(X, moduli):
 
     INPUT:
 
-    -  ``X`` - list or tuple, consisting of lists/tuples/vectors/etc of
+    -  ``X`` -- list or tuple, consisting of lists/tuples/vectors/etc of
        integers of the same length
-    -  ``moduli`` - list of len(X) moduli
+    -  ``moduli`` -- list of len(X) moduli
 
     OUTPUT:
 
-    -  ``list`` - application of CRT componentwise.
+    -  ``list`` -- application of CRT componentwise.
 
     EXAMPLES::
 
@@ -3672,7 +3673,7 @@ def binomial(x, m, **kwds):
 
     INPUT:
 
-    -  ``x``, ``m`` - numbers or symbolic expressions. Either ``m``
+    -  ``x``, ``m`` -- numbers or symbolic expressions. Either ``m``
        or ``x-m`` must be an integer.
 
     OUTPUT: number or symbolic expression (if input is symbolic)
@@ -3729,11 +3730,11 @@ def binomial(x, m, **kwds):
     TESTS:
 
     We test that certain binomials are very fast (this should be
-    instant) -- see :trac:`3309`::
+    instant) -- see :issue:`3309`::
 
         sage: a = binomial(RR(1140000.78), 23310000)
 
-    We test conversion of arguments to Integers -- see :trac:`6870`::
+    We test conversion of arguments to Integers -- see :issue:`6870`::
 
         sage: binomial(1/2, 1/1)                                                        # needs sage.libs.pari
         1/2
@@ -3744,8 +3745,8 @@ def binomial(x, m, **kwds):
         sage: binomial(3/2, SR(1/1))                                                    # needs sage.symbolic
         3/2
 
-    Some floating point cases -- see :trac:`7562`, :trac:`9633`, and
-    :trac:`12448`::
+    Some floating point cases -- see :issue:`7562`, :issue:`9633`, and
+    :issue:`12448`::
 
         sage: binomial(1., 3)
         0.000000000000000
@@ -3803,7 +3804,7 @@ def binomial(x, m, **kwds):
         sage: binomial(Qp(3)(-1/2),4) # p-adic number with valuation >= 0
         1 + 3 + 2*3^2 + 3^3 + 2*3^4 + 3^6 + 3^7 + 3^8 + 3^11 + 2*3^14 + 2*3^16 + 2*3^17 + 2*3^19 + O(3^20)
 
-    Check that :trac:`35811` is fixed::
+    Check that :issue:`35811` is fixed::
 
         sage: binomial(Qp(3)(1/3),4) # p-adic number with negative valuation
         2*3^-5 + 2*3^-4 + 3^-3 + 2*3^-2 + 2*3^-1 + 2 + 2*3 + 2*3^2 + 2*3^3 + 2*3^4 + 2*3^5 +
@@ -4002,7 +4003,7 @@ def binomial_coefficients(n):
     INPUT:
 
 
-    -  ``n`` - an integer
+    -  ``n`` -- an integer
 
 
     OUTPUT: dict
@@ -4049,8 +4050,8 @@ def multinomial_coefficients(m, n):
 
     INPUT:
 
-    -  ``m`` - integer
-    -  ``n`` - integer
+    -  ``m`` -- integer
+    -  ``n`` -- integer
 
     OUTPUT: dict
 
@@ -4212,9 +4213,9 @@ def legendre_symbol(x, p):
     INPUT:
 
 
-    -  ``x`` - integer
+    -  ``x`` -- integer
 
-    -  ``p`` - an odd prime number
+    -  ``p`` -- an odd prime number
 
 
     EXAMPLES::
@@ -4274,12 +4275,11 @@ def jacobi_symbol(a, b):
     where `(a|p_j)` are Legendre Symbols.
 
 
-
     INPUT:
 
-    -  ``a`` - an integer
+    -  ``a`` -- an integer
 
-    -  ``b`` - an odd integer
+    -  ``b`` -- an odd integer
 
     EXAMPLES::
 
@@ -4319,7 +4319,7 @@ def primitive_root(n, check=True):
     INPUT:
 
     - ``n`` -- a non-zero integer
-    - ``check`` -- bool (default: True); if False, then `n` is assumed
+    - ``check`` -- bool (default: ``True``); if False, then `n` is assumed
       to be a positive integer possessing a primitive root, and behavior
       is undefined otherwise.
 
@@ -4381,7 +4381,7 @@ def primitive_root(n, check=True):
         3
 
     We test that various numbers without primitive roots give
-    an error - see :trac:`10836`::
+    an error - see :issue:`10836`::
 
         sage: # needs sage.libs.pari
         sage: primitive_root(15)
@@ -4524,7 +4524,7 @@ class Moebius:
     INPUT:
 
 
-    -  ``n`` - anything that can be factored.
+    -  ``n`` -- anything that can be factored.
 
 
     OUTPUT: 0, 1, or -1
@@ -4614,18 +4614,18 @@ class Moebius:
         INPUT:
 
 
-        -  ``xmin`` - default: 0
+        -  ``xmin`` -- default: 0
 
-        -  ``xmax`` - default: 50
+        -  ``xmax`` -- default: 50
 
-        -  ``pointsize`` - default: 30
+        -  ``pointsize`` -- default: 30
 
-        -  ``rgbcolor`` - default: (0,0,1)
+        -  ``rgbcolor`` -- default: (0,0,1)
 
-        -  ``join`` - default: True; whether to join the points
+        -  ``join`` -- default: ``True``; whether to join the points
            (very helpful in seeing their order).
 
-        -  ``**kwds`` - passed on
+        -  ``**kwds`` -- passed on
 
         EXAMPLES::
 
@@ -4710,8 +4710,8 @@ def continuant(v, n=None):
 
     INPUT:
 
-    -  ``v`` - list or tuple of elements of a ring
-    -  ``n`` - optional integer
+    -  ``v`` -- list or tuple of elements of a ring
+    -  ``n`` -- optional integer
 
     OUTPUT: element of ring (integer, polynomial, etcetera).
 
@@ -4783,7 +4783,7 @@ def number_of_divisors(n):
 
     INPUT:
 
-    - ``n`` - a nonzero integer
+    - ``n`` -- a nonzero integer
 
     OUTPUT:
 
@@ -4821,18 +4821,18 @@ def hilbert_symbol(a, b, p, algorithm="pari"):
     INPUT:
 
 
-    -  ``a, b`` - integers
+    -  ``a, b`` -- integers
 
-    -  ``p`` - integer; either prime or -1 (which
+    -  ``p`` -- integer; either prime or -1 (which
        represents the archimedean place)
 
-    -  ``algorithm`` - string
+    -  ``algorithm`` -- string
 
-       -  ``'pari'`` - (default) use the PARI C library
+       -  ``'pari'`` -- (default) use the PARI C library
 
-       -  ``'direct'`` - use a Python implementation
+       -  ``'direct'`` -- use a Python implementation
 
-       -  ``'all'`` - use both PARI and direct and check that
+       -  ``'all'`` -- use both PARI and direct and check that
           the results agree, then return the common answer
 
 
@@ -5134,18 +5134,18 @@ def falling_factorial(x, a):
 
     TESTS:
 
-    Check that :trac:`14858` is fixed::
+    Check that :issue:`14858` is fixed::
 
         sage: falling_factorial(-4, SR(2))                                              # needs sage.symbolic
         20
 
-    Check that :trac:`16770` is fixed::
+    Check that :issue:`16770` is fixed::
 
         sage: d = var('d')                                                              # needs sage.symbolic
         sage: parent(falling_factorial(d, 0))                                           # needs sage.symbolic
         Symbolic Ring
 
-    Check that :trac:`20075` is fixed::
+    Check that :issue:`20075` is fixed::
 
         sage: bool(falling_factorial(int(4), int(2)) == falling_factorial(4,2))
         True
@@ -5224,20 +5224,20 @@ def rising_factorial(x, a):
 
     TESTS:
 
-    Check that :trac:`14858` is fixed::
+    Check that :issue:`14858` is fixed::
 
         sage: bool(rising_factorial(-4, 2) ==                                           # needs sage.symbolic
         ....:      rising_factorial(-4, SR(2)) ==
         ....:      rising_factorial(SR(-4), SR(2)))
         True
 
-    Check that :trac:`16770` is fixed::
+    Check that :issue:`16770` is fixed::
 
         sage: d = var('d')                                                              # needs sage.symbolic
         sage: parent(rising_factorial(d, 0))                                            # needs sage.symbolic
         Symbolic Ring
 
-    Check that :trac:`20075` is fixed::
+    Check that :issue:`20075` is fixed::
 
         sage: bool(rising_factorial(int(4), int(2)) == rising_factorial(4,2))
         True
@@ -5304,7 +5304,7 @@ def integer_floor(x):
 
     INPUT:
 
-    -  ``x`` - an object that has a floor method or is
+    -  ``x`` -- an object that has a floor method or is
        coercible to int
 
     OUTPUT: an Integer
@@ -5818,13 +5818,13 @@ def subfactorial(n):
     INPUT:
 
 
-    -  ``n`` - non negative integer
+    -  ``n`` -- non negative integer
 
 
     OUTPUT:
 
 
-    -  ``integer`` - function value
+    -  ``integer`` -- function value
 
 
     EXAMPLES::
@@ -6041,7 +6041,7 @@ def fundamental_discriminant(D):
 
     INPUT:
 
-    - ``D`` - an integer
+    - ``D`` -- an integer
 
     OUTPUT:
 
@@ -6106,7 +6106,7 @@ def squarefree_divisors(x):
     TESTS:
 
     Check that the first divisor (i.e. `1`) is a Sage integer (see
-    :trac:`17852`)::
+    :issue:`17852`)::
 
         sage: a = next(squarefree_divisors(14))
         sage: a
@@ -6158,9 +6158,9 @@ def dedekind_sum(p, q, algorithm='default'):
     -  ``p``, ``q`` -- integers
     -  ``algorithm`` -- must be one of the following
 
-       -  ``'default'`` - (default) use FLINT
-       -  ``'flint'`` - use FLINT
-       -  ``'pari'`` - use PARI (gives different results if `p` and `q`
+       -  ``'default'`` -- (default) use FLINT
+       -  ``'flint'`` -- use FLINT
+       -  ``'pari'`` -- use PARI (gives different results if `p` and `q`
           are not coprime)
 
     OUTPUT: a rational number

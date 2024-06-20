@@ -9,14 +9,15 @@ AUTHOR:
 * Martin Albrecht <malb@informatik.uni-bremen.de>
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Martin Albrecht <malb@informatik.uni-bremen.de>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
+from sage.categories.fields import Fields
 from sage.matrix.matrix_generic_dense cimport Matrix_generic_dense
 from sage.matrix.matrix2 cimport Matrix
 
@@ -460,7 +461,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        ``i`` -- an integer
+        - ``i`` -- an integer
 
         OUTPUT:
 
@@ -570,7 +571,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             sage: m.det()
             0
 
-        Check :trac:`23535` is fixed::
+        Check :issue:`23535` is fixed::
 
             sage: x = polygen(QQ)
             sage: K.<a,b> = NumberField([x^2 - 2, x^2 - 5])
@@ -605,7 +606,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         else:
             R = self._base_ring
 
-            if isinstance(R, MPolynomialRing_libsingular) and R.base_ring().is_field():
+            if isinstance(R, MPolynomialRing_libsingular) and R.base_ring() in Fields():
                 singular_det = singular_function("det")
                 d = singular_det(self)
 

@@ -521,9 +521,9 @@ class Polyhedron_base7(Polyhedron_base6):
             sage: P5.volume()                                                           # needs sage.rings.number_field
             2.377641290737884?
 
-            sage: polytopes.icosahedron().volume()                                      # needs sage.rings.number_field
+            sage: polytopes.icosahedron().volume()                                      # needs sage.groups sage.rings.number_field
             5/12*sqrt5 + 5/4
-            sage: numerical_approx(_)  # abs tol 1e9                                    # needs sage.rings.number_field
+            sage: numerical_approx(_)  # abs tol 1e9                                    # needs sage.groups sage.rings.number_field
             2.18169499062491
 
         When considering lower-dimensional polytopes, we can ask for the
@@ -660,7 +660,7 @@ class Polyhedron_base7(Polyhedron_base6):
             sage: Q.volume.is_in_cache()
             True
 
-        Induced volumes work with lrs (:trac:`33410`)::
+        Induced volumes work with lrs (:issue:`33410`)::
 
             sage: P = Polyhedron([[0, 0], [1, 1]])
             sage: P.volume(measure='induced', engine='lrs')             # optional - lrslib
@@ -861,8 +861,8 @@ class Polyhedron_base7(Polyhedron_base6):
 
         Testing a polytope with non-rational vertices::
 
-            sage: P = polytopes.icosahedron()                                           # needs sage.rings.number_field
-            sage: P.integrate(x^2*y^2*z^2)                              # optional - latte_int, needs sage.rings.number_field
+            sage: P = polytopes.icosahedron()                                           # needs sage.groups sage.rings.number_field
+            sage: P.integrate(x^2*y^2*z^2)                              # optional - latte_int, needs sage.groups sage.rings.number_field
             Traceback (most recent call last):
             ...
             TypeError: the base ring must be ZZ, QQ, or RDF

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Delete item from PyDict by exact value and hash
 
@@ -62,7 +63,7 @@ cdef int del_dictitem_by_exact_value(PyDictObject *mp, PyObject *value, Py_hash_
 
     TESTS:
 
-    The following is an indirect doctest, as discussed on :trac:`13394`.
+    The following is an indirect doctest, as discussed on :issue:`13394`.
     ::
 
         sage: from sage.misc.weak_dict import WeakValueDictionary
@@ -87,7 +88,7 @@ cdef int del_dictitem_by_exact_value(PyDictObject *mp, PyObject *value, Py_hash_
     TESTS:
 
     The following shows that the deletion of deeply nested structures does not
-    result in an error, by :trac:`15506`::
+    result in an error, by :issue:`15506`::
 
         sage: class A: pass
         sage: a = A(); prev = a
@@ -156,7 +157,7 @@ def test_del_dictitem_by_exact_value(D, value, h):
 
     TESTS:
 
-    See :trac:`13394` for a discussion.
+    See :issue:`13394` for a discussion.
     ::
 
         sage: from sage.cpython.dict_del_by_value import test_del_dictitem_by_exact_value

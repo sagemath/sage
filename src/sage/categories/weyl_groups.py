@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat sage.groups
 r"""
 Weyl Groups
@@ -166,14 +167,14 @@ class WeylGroups(Category_singleton):
 
             INPUT:
 
-            - ``x`` - an element in the group `W`
+            - ``x`` -- an element in the group `W`
 
-            - ``y`` - an element in the group `W`
+            - ``y`` -- an element in the group `W`
 
             - ``side`` (default: ``'upper'``) -- must be one of the following:
 
-              * ``'upper'`` - return the upper Bruhat cone of the interval [``x``, ``y``]
-              * ``'lower'`` - return the lower Bruhat cone of the interval [``x``, ``y``]
+              * ``'upper'`` -- return the upper Bruhat cone of the interval [``x``, ``y``]
+              * ``'lower'`` -- return the lower Bruhat cone of the interval [``x``, ``y``]
 
             - ``backend`` -- string (default: ``'cdd'``); the backend to use to create the polyhedron
 
@@ -554,7 +555,7 @@ class WeylGroups(Category_singleton):
                 + 2*m[3, 3, 1, 1] + m[3, 3, 2] + 3*m[4, 1, 1, 1, 1]
                 + 2*m[4, 2, 1, 1] + m[4, 2, 2] + m[4, 3, 1]
 
-            One more example (:trac:`14095`)::
+            One more example (:issue:`14095`)::
 
                 sage: G = SymmetricGroup(4)
                 sage: w = G.from_reduced_word([3,2,3,1])

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Integral domains
 """
@@ -103,6 +104,8 @@ class IntegralDomains(CategoryWithAxiom):
 
             EXAMPLES::
 
+                sage: ZZ.is_integral_domain()
+                True
                 sage: QQ.is_integral_domain()
                 True
                 sage: Parent(QQ, category=IntegralDomains()).is_integral_domain()
@@ -112,6 +115,9 @@ class IntegralDomains(CategoryWithAxiom):
                 sage: L.is_integral_domain()                                            # needs sage.combinat
                 True
                 sage: L.is_integral_domain(proof=True)                                  # needs sage.combinat
+                True
+
+                sage: ZZ['x'].is_integral_domain()
                 True
             """
             return True

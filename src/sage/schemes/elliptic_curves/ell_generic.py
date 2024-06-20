@@ -98,10 +98,15 @@ def is_EllipticCurve(x):
         sage: from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
         sage: E = EllipticCurve([1,2,3/4,7,19])
         sage: is_EllipticCurve(E)
+        doctest:warning...
+        DeprecationWarning: The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
         sage: is_EllipticCurve(0)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.")
     return isinstance(x, EllipticCurve_generic)
 
 
@@ -279,7 +284,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E._latex_()
             'y^2 + x y + 3 y = x^{3} + 2 x^{2} + 4 x + 5 '
 
-        Check that :trac:`12524` is solved::
+        Check that :issue:`12524` is solved::
 
             sage: x = polygen(ZZ, 'x')
             sage: K.<phi> = NumberField(x^2 - x - 1)                                    # needs sage.rings.number_field
@@ -456,10 +461,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
                 P = self(P)
             except TypeError:
                 return False
-        if P.curve() == self:
-            return True
-        x, y, a = P[0], P[1], self.ainvs()
-        return y**2 + a[0]*x*y + a[2]*y == x**3 + a[1]*x**2 + a[3]*x + a[4]
+        return P.curve() == self
 
     def __call__(self, *args, **kwds):
         r"""
@@ -546,11 +548,11 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: T = E.torsion_subgroup()
             sage: [E(t) for t in T]
             [(0 : 1 : 0),
-            (9 : 23 : 1),
-            (2 : 2 : 1),
-            (1 : -1 : 1),
-            (2 : -5 : 1),
-            (9 : -33 : 1)]
+             (9 : 23 : 1),
+             (2 : 2 : 1),
+             (1 : -1 : 1),
+             (2 : -5 : 1),
+             (9 : -33 : 1)]
 
         ::
 
@@ -572,10 +574,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         P = args[0]
         if isinstance(P, groups.AdditiveAbelianGroupElement) and isinstance(P.parent(),ell_torsion.EllipticCurveTorsionSubgroup):
             return self(P.element())
-        if isinstance(args[0],
-                      (ell_point.EllipticCurvePoint_field,
-                       ell_point.EllipticCurvePoint_number_field,
-                       ell_point.EllipticCurvePoint)):
+        if isinstance(args[0], ell_point.EllipticCurvePoint):
             if P.curve() is self:
                 return P
             # check if denominator of the point contains a factor of the
@@ -726,11 +725,11 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         - ``x`` -- an element of the base ring of the curve, or of an extension.
 
-        - ``all`` (bool, default False) -- if True, return a (possibly
+        - ``all`` (bool, default: ``False``) -- if True, return a (possibly
           empty) list of all points; if False, return just one point,
           or raise a :class:`ValueError` if there are none.
 
-        - ``extend`` (bool, default False) --
+        - ``extend`` (bool, default: ``False``) --
 
           - if ``False``, extend the base if necessary and possible to
             include `x`, and only return point(s) defined over this
@@ -865,7 +864,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: 2*P
             ((1/4*x^4 - 4*x)/(x^3 + 2) : ((-1/8*x^6 - 5*x^3 + 4)/(x^6 + 4*x^3 + 4))*y : 1)
 
-        Check that :trac:`30297` is fixed::
+        Check that :issue:`30297` is fixed::
 
             sage: K = Qp(5)                                                             # needs sage.rings.padics
             sage: E = EllipticCurve([K(0), K(1)])                                       # needs sage.rings.padics
@@ -981,7 +980,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             Abelian group of points on Elliptic Curve defined
             by y^2 = x^3 + x + 1 over Finite Field in a of size 5^10
 
-        Point sets of elliptic curves are unique (see :trac:`17008`)::
+        Point sets of elliptic curves are unique (see :issue:`17008`)::
 
             sage: E = EllipticCurve([2, 3])
             sage: E.point_homset() is E.point_homset(QQ)
@@ -1998,7 +1997,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         TESTS:
 
-        Check that :trac:`33164` is fixed::
+        Check that :issue:`33164` is fixed::
 
             sage: E = EllipticCurve('11a3')
             sage: R.<X> = QQ[]
@@ -2189,7 +2188,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E._multiple_x_numerator(11) is E._multiple_x_numerator(11)
             True
 
-        Check for :trac:`33156`::
+        Check for :issue:`33156`::
 
             sage: # needs sage.rings.finite_rings
             sage: E = EllipticCurve(GF(65537), [5,5])
@@ -2286,7 +2285,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E._multiple_x_denominator(11) is E._multiple_x_denominator(11)
             True
 
-        Check for :trac:`33156`::
+        Check for :issue:`33156`::
 
             sage: # needs sage.rings.finite_rings
             sage: E = EllipticCurve(GF(65537), [5,5])
@@ -2410,7 +2409,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             ....:     Q = -n*P
             ....:     assert Q == E(eval(f,P))
 
-        The following test shows that :trac:`4364` is indeed fixed::
+        The following test shows that :issue:`4364` is indeed fixed::
 
             sage: # needs sage.rings.finite_rings
             sage: p = next_prime(2^30 - 41)
@@ -2422,7 +2421,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: f = E.multiplication_by_m(2)
             sage: assert(E(eval(f,P)) == 2*P)
 
-        The following test shows that :trac:`6413` is fixed for elliptic curves over finite fields::
+        The following test shows that :issue:`6413` is fixed for elliptic curves over finite fields::
             sage: p = 7
             sage: K.<a> = GF(p^2)
             sage: E = EllipticCurve(K, [a + 3, 5 - a])
@@ -2449,7 +2448,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
             sage: p = 7
             sage: K.<a> = GF(p^2)
-            sage: E = EllipticCurve(K, [K.random_element(), K.random_element()])
+            sage: E = EllipticCurve(j=K.random_element())
             sage: E.multiplication_by_m(p * 2)[0] == E.multiplication_by_m(p * 2, x_only=True)
             True
         """
@@ -2527,7 +2526,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         NOTE: This function is currently *much* slower than the
         result of ``self.multiplication_by_m()``, because
         constructing an isogeny precomputes a significant amount
-        of information. See :trac:`7368` and :trac:`8014` for the
+        of information. See :issue:`7368` and :issue:`8014` for the
         status of improving this situation.
 
         INPUT:
@@ -2552,7 +2551,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         TESTS:
 
-        Tests for :trac:`32490`::
+        Tests for :issue:`32490`::
 
             sage: E = EllipticCurve(QQbar, [1,0])                                       # needs sage.rings.number_field
             sage: E.multiplication_by_m_isogeny(1).rational_maps()                      # needs sage.rings.number_field
@@ -2574,7 +2573,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             ((1/4*x^4 + 33/4*x^2 - 121/2*x + 363/4)/(x^3 - 3/4*x^2 - 33/2*x + 121/4),
              (-1/256*x^7 + 1/128*x^6*y - 7/256*x^6 - 3/256*x^5*y - 105/256*x^5 - 165/256*x^4*y + 1255/256*x^4 + 605/128*x^3*y - 473/64*x^3 - 1815/128*x^2*y - 10527/256*x^2 + 2541/128*x*y + 4477/32*x - 1331/128*y - 30613/256)/(1/16*x^6 - 3/32*x^5 - 519/256*x^4 + 341/64*x^3 + 1815/128*x^2 - 3993/64*x + 14641/256))
 
-        Test for :trac:`34727`::
+        Test for :issue:`34727`::
 
             sage: E = EllipticCurve([5,5])
             sage: E.multiplication_by_m_isogeny(-1)
@@ -2908,7 +2907,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E.is_isomorphic(F.change_ring(CC))
             False
         """
-        if not is_EllipticCurve(other):
+        if not isinstance(other, EllipticCurve_generic):
             return False
         if field is None:
             if self.base_ring() != other.base_ring():
@@ -2955,7 +2954,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        - ``complete_cube`` -- boolean (default: True); for
+        - ``complete_cube`` -- boolean (default: ``True``); for
           meaning, see below.
 
         OUTPUT:
@@ -2992,7 +2991,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E.short_weierstrass_model(complete_cube=False)
             Elliptic Curve defined by y^2 = x^3 + x + 2 over Finite Field of size 3
 
-        This used to be different see :trac:`3973`::
+        This used to be different see :issue:`3973`::
 
             sage: E.short_weierstrass_model()
             Elliptic Curve defined by y^2 = x^3 + x + 2 over Finite Field of size 3
@@ -3272,7 +3271,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        - ``xmin, xmax`` -- (optional) points will be computed at
+        - ``xmin``, ``xmax`` -- (optional) points will be computed at
           least within this range, but possibly farther.
 
         - ``components`` -- a string, one of the following:
@@ -3313,7 +3312,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: plot(E, xmin=25, xmax=26)                                             # needs sage.plot
             Graphics object consisting of 2 graphics primitives
 
-        With :trac:`12766` we added the components keyword::
+        With :issue:`12766` we added the components keyword::
 
             sage: E.real_components()
             2
@@ -3538,7 +3537,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         TESTS:
 
-        This shows that the bug at :trac:`4937` is fixed::
+        This shows that the bug at :issue:`4937` is fixed::
 
             sage: a = 804515977734860566494239770982282063895480484302363715494873
             sage: b = 584772221603632866665682322899297141793188252000674256662071

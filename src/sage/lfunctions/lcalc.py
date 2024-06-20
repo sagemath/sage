@@ -52,12 +52,12 @@ class LCalc(SageObject):
     inputs for the L-function are:
 
 
-    -  ``"`` - (default) the Riemann zeta function
+    -  ``"`` -- (default) the Riemann zeta function
 
-    -  ``'tau'`` - the L function of the Ramanujan delta
+    -  ``'tau'`` -- the L function of the Ramanujan delta
        function
 
-    -  elliptic curve E - where E is an elliptic curve over
+    -  elliptic curve E -- where E is an elliptic curve over
        `\QQ`; defines `L(E,s)`
 
 
@@ -109,9 +109,9 @@ class LCalc(SageObject):
         INPUT:
 
 
-        -  ``n`` - integer
+        -  ``n`` -- integer
 
-        -  ``L`` - defines `L`-function (default:
+        -  ``L`` -- defines `L`-function (default:
            Riemann zeta function)
 
 
@@ -145,10 +145,10 @@ class LCalc(SageObject):
         INPUT:
 
 
-        -  ``x, y, stepsize`` - positive floating point
+        -  ``x, y, stepsize`` -- positive floating point
            numbers
 
-        -  ``L`` - defines `L`-function (default:
+        -  ``L`` -- defines `L`-function (default:
            Riemann zeta function)
 
 
@@ -178,9 +178,9 @@ class LCalc(SageObject):
         INPUT:
 
 
-        -  ``s`` - complex number
+        -  ``s`` -- complex number
 
-        -  ``L`` - defines `L`-function (default:
+        -  ``L`` -- defines `L`-function (default:
            Riemann zeta function)
 
 
@@ -211,18 +211,18 @@ class LCalc(SageObject):
         INPUT:
 
 
-        -  ``s0, s1`` - complex numbers
+        -  ``s0, s1`` -- complex numbers
 
-        -  ``number_samples`` - integer
+        -  ``number_samples`` -- integer
 
-        -  ``L`` - defines `L`-function (default:
+        -  ``L`` -- defines `L`-function (default:
            Riemann zeta function)
 
 
         OUTPUT:
 
 
-        -  ``list`` - list of pairs (s, zeta(s)), where the s
+        -  ``list`` -- list of pairs (s, zeta(s)), where the s
            are equally spaced sampled points on the line from s0 to s1.
 
 
@@ -302,20 +302,20 @@ class LCalc(SageObject):
         INPUT:
 
 
-        -  ``s`` - complex numbers
+        -  ``s`` -- complex numbers
 
-        -  ``dmin`` - integer
+        -  ``dmin`` -- integer
 
-        -  ``dmax`` - integer
+        -  ``dmax`` -- integer
 
-        -  ``L`` - defines `L`-function (default:
+        -  ``L`` -- defines `L`-function (default:
            Riemann zeta function)
 
 
         OUTPUT:
 
 
-        -  ``list`` - list of pairs (d, L(s,chi_d))
+        -  ``list`` -- list of pairs (d, L(s,chi_d))
 
 
         EXAMPLES::
@@ -373,20 +373,20 @@ class LCalc(SageObject):
         INPUT:
 
 
-        -  ``n`` - integer
+        -  ``n`` -- integer
 
-        -  ``dmin`` - integer
+        -  ``dmin`` -- integer
 
-        -  ``dmax`` - integer
+        -  ``dmax`` -- integer
 
-        -  ``L`` - defines `L`-function (default:
+        -  ``L`` -- defines `L`-function (default:
            Riemann zeta function)
 
 
         OUTPUT:
 
 
-        -  ``dict`` - keys are the discriminants `d`,
+        -  ``dict`` -- keys are the discriminants `d`,
            and values are list of corresponding zeros.
 
 
@@ -422,7 +422,7 @@ class LCalc(SageObject):
         INPUT:
 
 
-        -  ``L`` - defines `L`-function (default:
+        -  ``L`` -- defines `L`-function (default:
            Riemann zeta function)
 
 

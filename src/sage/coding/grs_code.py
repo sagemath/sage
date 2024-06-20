@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Reed-Solomon codes and Generalized Reed-Solomon codes
 
@@ -127,7 +127,7 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
 
     TESTS:
 
-    Test that the bug in :trac:`30045` is fixed::
+    Test that the bug in :issue:`30045` is fixed::
 
         sage: F = GF(5)
         sage: C = codes.GeneralizedReedSolomonCode(F.list()[:5], 2)
@@ -514,7 +514,7 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
             sage: F = GF(11)
             sage: n, k = 10, 5
             sage: C = codes.GeneralizedReedSolomonCode(F.list()[:n], k)
-            sage: C.weight_distribution()                                               # optional - sage.symbolic
+            sage: C.weight_distribution()                                               # needs sage.symbolic
             [1, 0, 0, 0, 0, 0, 2100, 6000, 29250, 61500, 62200]
 
         TESTS:
@@ -523,11 +523,11 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
 
             sage: F = GF(7)
             sage: C = codes.GeneralizedReedSolomonCode(F.list(), 3)
-            sage: C.weight_distribution() == super(codes.GeneralizedReedSolomonCode, C).weight_distribution() # long time   # optional - sage.symbolic
+            sage: C.weight_distribution() == super(codes.GeneralizedReedSolomonCode, C).weight_distribution()  # long time, needs sage.symbolic
             True
             sage: F = GF(8)
             sage: C = codes.GeneralizedReedSolomonCode(F.list(), 3)
-            sage: C.weight_distribution() == super(codes.GeneralizedReedSolomonCode, C).weight_distribution() # long time   # optional - sage.symbolic
+            sage: C.weight_distribution() == super(codes.GeneralizedReedSolomonCode, C).weight_distribution()  # long time, needs sage.symbolic
             True
         """
         from sage.symbolic.ring import SR
@@ -993,7 +993,7 @@ class GRSEvaluationPolynomialEncoder(Encoder):
 
         TESTS:
 
-        The bug described in :trac:`20744` is now fixed::
+        The bug described in :issue:`20744` is now fixed::
 
             sage: F = GF(11)
             sage: Fm.<my_variable> = F[]
@@ -1305,7 +1305,7 @@ class GRSBerlekampWelchDecoder(Decoder):
             ...
             ValueError: The word to decode has to be in the ambient space of the code
 
-        The bug detailed in :trac:`20340` has been fixed::
+        The bug detailed in :issue:`20340` has been fixed::
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(59).list()[:40], 12)
             sage: c = C.random_element()
@@ -1367,7 +1367,7 @@ class GRSBerlekampWelchDecoder(Decoder):
             ...
             ValueError: The word to decode has to be in the ambient space of the code
 
-        The bug detailed in :trac:`20340` has been fixed::
+        The bug detailed in :issue:`20340` has been fixed::
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(59).list()[:40], 12)
             sage: c = C.random_element()
@@ -1548,13 +1548,11 @@ class GRSGaoDecoder(Decoder):
 
         INPUT:
 
-        - ``a, b`` -- polynomials over ``PolRing``
+        - ``a``, ``b`` -- polynomials over ``PolRing``
 
         - ``PolRing`` -- polynomial ring of the output
 
-        OUTPUT:
-
-        - a tuple of polynomials
+        OUTPUT: tuple of polynomials
 
         EXAMPLES::
 
@@ -1690,7 +1688,7 @@ class GRSGaoDecoder(Decoder):
             ...
             ValueError: The word to decode has to be in the ambient space of the code
 
-        The bug detailed in :trac:`20340` has been fixed::
+        The bug detailed in :issue:`20340` has been fixed::
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(59).list()[:40], 12)
             sage: c = C.random_element()
@@ -1753,7 +1751,7 @@ class GRSGaoDecoder(Decoder):
             ...
             ValueError: The word to decode has to be in the ambient space of the code
 
-        The bug detailed in :trac:`20340` has been fixed::
+        The bug detailed in :issue:`20340` has been fixed::
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(59).list()[:40], 12)
             sage: c = C.random_element()
@@ -2139,13 +2137,11 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
 
         INPUT:
 
-        - ``a, b`` -- polynomials over ``PolRing``
+        - ``a``, ``b`` -- polynomials over ``PolRing``
 
         - ``PolRing`` -- polynomial ring of the output
 
-        OUTPUT:
-
-        - a tuple of polynomials
+        OUTPUT: tuple of polynomials
 
         EXAMPLES::
 

@@ -228,7 +228,7 @@ cdef class pAdicZZpXElement(pAdicExtElement):
         else:
             raise ValueError("context must be a power of the appropriate prime")
 
-    cdef ext_p_list_precs(self, bint pos, long prec) noexcept:
+    cdef ext_p_list_precs(self, bint pos, long prec):
         """
         Returns a list giving a series representation of ``self``.
 
@@ -400,7 +400,7 @@ cdef class pAdicZZpXElement(pAdicExtElement):
            sage: ((1+2*w)).norm()^5                                                     # needs sage.geometry.polyhedron
            1 + 5^2
 
-        Check that :trac:`11586` has been resolved::
+        Check that :issue:`11586` has been resolved::
 
             sage: R.<x> = QQ[]
             sage: f = x^2 + 3*x + 1
@@ -487,7 +487,7 @@ cdef class pAdicZZpXElement(pAdicExtElement):
 
         TESTS:
 
-        We check that :trac:`32072` is resolved::
+        We check that :issue:`32072` is resolved::
 
             sage: F = Qp(2)
             sage: S.<x> = F[]
@@ -550,7 +550,7 @@ cdef class pAdicZZpXElement(pAdicExtElement):
 
         TESTS:
 
-        Check that :trac:`13647` has been fixed::
+        Check that :issue:`13647` has been fixed::
 
             sage: # needs sage.libs.flint
             sage: K = ZpCA(3)
@@ -623,7 +623,7 @@ def _test_preprocess_list(R, L):
     return preprocess_list(R(0), L)
 
 
-cdef preprocess_list(pAdicZZpXElement elt, L) noexcept:
+cdef preprocess_list(pAdicZZpXElement elt, L):
     """
     See the documentation for :func:`_test_preprocess_list`.
     """
@@ -738,7 +738,8 @@ def _find_val_aprec_test(R, L):
     """
     return find_val_aprec(R.prime_pow, L)
 
-cdef find_val_aprec(PowComputer_ext pp, L) noexcept:
+
+cdef find_val_aprec(PowComputer_ext pp, L):
     r"""
     Given a list ``L``, finds the minimum valuation, minimum absolute
     precision and minimum common type of the elements.
@@ -843,7 +844,8 @@ def _test_get_val_prec(R, a):
     """
     return get_val_prec(R.prime_pow, a)
 
-cdef get_val_prec(PowComputer_ext pp, a) noexcept:
+
+cdef get_val_prec(PowComputer_ext pp, a):
     r"""
     Return valuation, absolute precision and type of an input element.
 

@@ -67,7 +67,7 @@ TESTS::
     Residue field in zbar of Fractional ideal (17)
     sage: TestSuite(ff).run()
 
-Verify that :trac:`15192` has been resolved::
+Verify that :issue:`15192` has been resolved::
 
     sage: a.is_unit()                                                                   # needs sage.rings.number_field
     True
@@ -81,7 +81,7 @@ Verify that :trac:`15192` has been resolved::
     Residue field in a of Principal ideal (t^3 + t + 4) of
      Univariate Polynomial Ring in t over Finite Field of size 11
 
-Verify that :trac:`7475` is fixed::
+Verify that :issue:`7475` is fixed::
 
     sage: K = ZZ.residue_field(2)
     sage: loads(dumps(K)) is K
@@ -184,7 +184,7 @@ from sage.rings.finite_rings.finite_field_constructor import zech_log_bound, Fin
 from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn
 from sage.rings.ideal import is_Ideal
 from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
-from sage.rings.number_field.number_field_ideal import is_NumberFieldIdeal
+from sage.rings.number_field.number_field_ideal import NumberFieldIdeal
 
 from sage.rings.fraction_field import is_FractionField
 
@@ -345,7 +345,7 @@ class ResidueFieldFactory(UniqueFactory):
                 if not p.ring().base_ring().is_prime_field():
                     # neither of these will work over non-prime fields quite yet.  We should use relative finite field extensions.
                     raise NotImplementedError
-            elif not (is_NumberFieldIdeal(p) or p.ring() is ZZ):
+            elif not (isinstance(p, NumberFieldIdeal) or p.ring() is ZZ):
                 raise NotImplementedError
         if isinstance(names, tuple):
             if names:
@@ -411,7 +411,7 @@ class ResidueFieldFactory(UniqueFactory):
                 raise ValueError("unrecognized finite field type")
 
         # Should generalize to allowing residue fields of relative extensions to be extensions of finite fields.
-        if is_NumberFieldIdeal(p):
+        if isinstance(p, NumberFieldIdeal):
             characteristic = p.smallest_integer()
         else: # ideal of a function field
             characteristic = pring.base_ring().characteristic()
@@ -568,7 +568,7 @@ class ResidueField_generic(Field):
         The residue field is determined by a prime (fractional) ideal in a
         number field. If this ideal can be coerced into a different number
         field, then the construction functor applied to this number field will
-        return the corresponding residue field. See :trac:`15223`.
+        return the corresponding residue field. See :issue:`15223`.
 
         EXAMPLES::
 
@@ -631,7 +631,7 @@ class ResidueField_generic(Field):
 
         .. NOTE::
 
-            The behaviour of this method was changed in :trac:`8800`.
+            The behaviour of this method was changed in :issue:`8800`.
             Before, an error was raised if there was no coercion. Now,
             a conversion is possible even when there is no coercion.
             This is like for different finite fields.
@@ -648,13 +648,13 @@ class ResidueField_generic(Field):
             sage: ResidueField_generic._element_constructor_(F, i)
             8
 
-        With :trac:`8800`, we also have::
+        With :issue:`8800`, we also have::
 
             sage: ResidueField_generic._element_constructor_(F, GF(13)(8))              # needs sage.rings.number_field
             8
 
         Here is a test that was temporarily removed, but newly introduced
-        in :trac:`8800`::
+        in :issue:`8800`::
 
             sage: # needs sage.rings.finite_rings
             sage: R.<t> = GF(17)[]; P = R.ideal(t^3 + t^2 + 7)
@@ -698,7 +698,7 @@ class ResidueField_generic(Field):
 
         TESTS:
 
-        Check that :trac:`11319` is fixed::
+        Check that :issue:`11319` is fixed::
 
             sage: GF(13).has_coerce_map_from(F)                                         # needs sage.rings.number_field
             True
@@ -919,6 +919,7 @@ class ResidueField_generic(Field):
         """
         return 1 + hash(self.ideal())
 
+
 cdef class ReductionMap(Map):
     """
     A reduction map from a (subset) of a number field or function field to
@@ -995,7 +996,7 @@ cdef class ReductionMap(Map):
         self._repr_type_str = "Partially defined reduction"
         Map.__init__(self, Hom(K, F, SetsWithPartialMaps()))
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         Helper for copying and pickling.
 
@@ -1026,7 +1027,7 @@ cdef class ReductionMap(Map):
         slots['_section'] = self._section
         return slots
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         Helper for copying and pickling.
 
@@ -1056,7 +1057,7 @@ cdef class ReductionMap(Map):
         self._PB = _slots['_PB']
         self._section = _slots['_section']
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         Apply this reduction map to an element that coerces into the global
         field.
@@ -1101,7 +1102,7 @@ cdef class ReductionMap(Map):
             ...
             ZeroDivisionError...
 
-        An example to show that the issue raised in :trac:`1951`
+        An example to show that the issue raised in :issue:`1951`
         has been fixed::
 
             sage: # needs sage.rings.number_field
@@ -1305,7 +1306,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
         self._repr_type_str = "Reduction"
         RingHomomorphism.__init__(self, Hom(K,F))
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         Helper for copying and pickling.
 
@@ -1338,7 +1339,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
         slots['_section'] = self._section
         return slots
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         Helper for copying and pickling.
 
@@ -1370,7 +1371,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
         self._PB = _slots['_PB']
         self._section = _slots['_section']
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         Applies this morphism to an element.
 
@@ -1574,7 +1575,7 @@ cdef class LiftingMap(Section):
         self._PB = PB
         Section.__init__(self, reduction)
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         Helper for copying and pickling.
 
@@ -1600,7 +1601,7 @@ cdef class LiftingMap(Section):
         slots['_PB'] = self._PB
         return slots
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         Helper for copying and pickling.
 
@@ -1625,7 +1626,7 @@ cdef class LiftingMap(Section):
         self._to_order = _slots['_to_order']
         self._PB = _slots['_PB']
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         Lift from this residue class field to the number field.
 
@@ -1684,6 +1685,7 @@ cdef class LiftingMap(Section):
               To:   Maximal Order generated by theta_12 in Cyclotomic Field of order 12 and degree 4
         """
         return "Lifting"
+
 
 class ResidueFiniteField_prime_modn(ResidueField_generic, FiniteField_prime_modn):
     """

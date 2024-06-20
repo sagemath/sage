@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 # sage.doctest: needs sage.modules
 r"""
 User-interface globals
@@ -48,7 +49,7 @@ available as global::
 
 AUTHORS:
 
-- Jeroen Demeyer (2015-03-30): initial version (:trac:`12446`)
+- Jeroen Demeyer (2015-03-30): initial version (:issue:`12446`)
 """
 
 # ****************************************************************************

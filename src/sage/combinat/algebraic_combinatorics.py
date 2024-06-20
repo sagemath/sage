@@ -12,7 +12,8 @@ Enumerated sets of combinatorial objects
 ----------------------------------------
 
 - :ref:`sage.combinat.catalog_partitions`
-- :class:`~sage.combinat.gelfand_tsetlin_patterns.GelfandTsetlinPattern`, :class:`~sage.combinat.gelfand_tsetlin_patterns.GelfandTsetlinPatterns`
+- :class:`~sage.combinat.gelfand_tsetlin_patterns.GelfandTsetlinPattern`,
+  :class:`~sage.combinat.gelfand_tsetlin_patterns.GelfandTsetlinPatterns`
 - :class:`~sage.combinat.knutson_tao_puzzles.KnutsonTaoPuzzleSolver`
 
 Groups and Algebras
@@ -39,7 +40,7 @@ Combinatorial Representation Theory
 - :ref:`sage.combinat.cluster_algebra_quiver.all`
 - :class:`~sage.combinat.kazhdan_lusztig.KazhdanLusztigPolynomial`
 - :class:`~sage.combinat.symmetric_group_representations.SymmetricGroupRepresentation`
-- :class:`~sage.combinat.specht_module.SpechtModule`
+- :ref:`sage.combinat.specht_module`
 - :ref:`sage.combinat.yang_baxter_graph`
 - :ref:`sage.combinat.hall_polynomial`
 - :ref:`sage.combinat.key_polynomial`
