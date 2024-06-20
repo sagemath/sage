@@ -566,7 +566,7 @@ class Algebras(AlgebrasCategory):
 
                 sage: K = QQ['q1,q2']
                 sage: q1, q2 = K.gens()
-                sage: for cartan_type in CartanType.samples(crystallographic=True): # long time (12s)
+                sage: for cartan_type in CartanType.samples(crystallographic=True):  # long time (12s)
                 ....:    L = RootSystem(cartan_type).root_lattice()
                 ....:    KL = L.algebra(K)
                 ....:    T = KL.demazure_lusztig_operators(q1,q2)
