@@ -1254,8 +1254,16 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
         maxstrlen = max([len(xx) for xx in strs])
         flgs = self.flags()
         for ii in range(len(self)):
-            if len(self)<20 or abs(self.values()[ii])>=1e-8:
+            if len(self)<20:
                 sttrl.append(('{:<'+str(maxstrlen)+'} - {}').format(strs[ii], str(flgs[ii])))
+            else:
+                include = True
+                try: 
+                    include = abs(float(self.values()[ii]))>=1e-8
+                except: 
+                    include = self.values()[ii]!=0
+                if include:
+                    sttrl.append(('{:<'+str(maxstrlen)+'} - {}').format(strs[ii], str(flgs[ii])))
         return "\n".join(sttrl)
     
     def as_flag_algebra_element(self):
