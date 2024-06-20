@@ -210,6 +210,7 @@ from sage.structure.parent import Parent
 from sage.structure.element import CommutativeAlgebraElement
 from sage.rings.ring import CommutativeAlgebra
 from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RR
 from sage.algebras.flag import Flag
 
 from sage.categories.sets_cat import Sets
@@ -774,12 +775,14 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         sdp_result = solve_sdp(block_sizes, list(avals), 
                                mat_inds, mat_vals)
         if maximize:
-            ret = -sdp_result['primal']
+            ret = max(-sdp_result['primal'], -sdp_result['dual'])
         else:
-            ret = sdp_result['dual']
+            ret = min(sdp_result['primal'], sdp_result['dual'])
         print("Result is {}".format(ret), flush=True)
         if certificate:
-            ret = (ret, sdp_result)
+            ralg = FlagAlgebra(RR, self)
+            vec = ralg(target_size, sdp_result['y'])
+            ret = (ret, vec, sdp_result)
         return ret
     
     def _gfe(self, excluded, n, ftype):
@@ -1251,7 +1254,7 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
         maxstrlen = max([len(xx) for xx in strs])
         flgs = self.flags()
         for ii in range(len(self)):
-            if len(self)<20 or self.values()[ii]!=0:
+            if len(self)<20 or abs(self.values()[ii])>=1e-8:
                 sttrl.append(('{:<'+str(maxstrlen)+'} - {}').format(strs[ii], str(flgs[ii])))
         return "\n".join(sttrl)
     
