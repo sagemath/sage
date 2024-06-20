@@ -2427,7 +2427,7 @@ class FMatrix(SageObject):
             Partitioned 6 equations into 6 components of size:
             [1, 1, 1, 1, 1, 1]
             Computing appropriate NumberField...
-            sage: f.certify_pentagons()  is None      # not tested (long time ~1.5s, cypari issue in doctesting framework)
+            sage: f.certify_pentagons()  is None      # not tested (cypari issue in doctesting framework), long time (~1.5s)
             True
         """
         fvars_copy = deepcopy(self._fvars)

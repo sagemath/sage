@@ -2034,7 +2034,7 @@ class Multizetas_iterated(CombinatorialFreeModule):
                 sage: M = Multizetas(QQ)
                 sage: a = 28*M((3,9))+150*M((5,7))+168*M((7,5))
                 sage: b = 5197/691*M((12,))
-                sage: a.iterated() == b.iterated() # not tested, long time 20s
+                sage: a.iterated() == b.iterated()                                      # not tested, long time (20s)
                 True
             """
             if op not in [op_EQ, op_NE]:
