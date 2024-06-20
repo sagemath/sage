@@ -1103,7 +1103,7 @@ class Algebras(AlgebrasCategory):
 
                 sage: K = QQ['q1,q2'].fraction_field()
                 sage: q1, q2 = K.gens()
-                sage: for cartan_type in CartanType.samples(affine=True, crystallographic=True): # long time (12s)
+                sage: for cartan_type in CartanType.samples(affine=True, crystallographic=True):  # long time (12s)
                 ....:     if cartan_type.rank() > 4: continue
                 ....:     if cartan_type.type() == 'BC': continue
                 ....:     KL = RootSystem(cartan_type).weight_lattice().algebra(K)
