@@ -8851,7 +8851,7 @@ cdef class Polynomial(CommutativePolynomial):
                          'you expect.')
 
                 import numpy
-                from numpy.linalg.linalg import LinAlgError
+                from numpy.linalg import LinAlgError
                 from sage.rings.complex_double import CDF
 
                 numpy_dtype = ('complex' if input_complex else 'double')

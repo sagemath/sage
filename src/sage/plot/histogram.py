@@ -92,6 +92,8 @@ class Histogram(GraphicPrimitive):
             {'xmax': 10.0, 'xmin': 3.0, 'ymax': 0.476190476190..., 'ymin': 0}
         """
         import numpy
+        if int(numpy.version.short_version[0]) > 1:
+            numpy.set_printoptions(legacy="1.25")
 
         # Extract these options (if they are not None) and pass them to
         # histogram()

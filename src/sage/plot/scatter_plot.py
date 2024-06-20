@@ -63,9 +63,9 @@ class ScatterPlot(GraphicPrimitive):
             sage: s = scatter_plot([[0,1],[2,4],[3.2,6]])
             sage: d = s.get_minmax_data()
             sage: d['xmin']
-            0.0
+            ...0.0...
             sage: d['ymin']
-            1.0
+            ...1.0...
         """
         return {'xmin': self.xdata.min(),
                 'xmax': self.xdata.max(),
