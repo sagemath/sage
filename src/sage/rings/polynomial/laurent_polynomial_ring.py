@@ -237,19 +237,28 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
     """
     from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
     from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
+    from sage.rings.polynomial.generalized_order import GeneralizedOrder
+
+    
+
+    order = None
+    if "order" in kwds:
+        order = kwds["order"]
+        if isinstance(order, GeneralizedOrder):
+            del kwds["order"]
 
     R = PolynomialRing(base_ring, *args, **kwds)
-    if R in _cache:
-        return _cache[R]   # put () here to re-enable weakrefs
+    if (R, order) in _cache:
+        return _cache[(R, order)]   # put () here to re-enable weakrefs
 
     if is_PolynomialRing(R):
         # univariate case
-        P = LaurentPolynomialRing_univariate(R)
+        P = LaurentPolynomialRing_univariate(R, order=order)
     else:
         assert is_MPolynomialRing(R)
-        P = LaurentPolynomialRing_mpair(R)
+        P = LaurentPolynomialRing_mpair(R, order=order)
 
-    _cache[R] = P
+    _cache[(R, order)] = P
     return P
 
 def _split_dict_(D, indices, group_by=None):
@@ -429,7 +438,7 @@ def from_fraction_field(L, x):
 
 
 class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
-    def __init__(self, R):
+    def __init__(self, R, order=None):
         """
         EXAMPLES::
 
@@ -448,7 +457,7 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
         """
         if R.ngens() != 1:
             raise ValueError("must be 1 generator")
-        LaurentPolynomialRing_generic.__init__(self, R)
+        LaurentPolynomialRing_generic.__init__(self, R, order=order)
 
     Element = LaurentPolynomial_univariate
 
@@ -579,7 +588,7 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
 
 
 class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
-    def __init__(self, R):
+    def __init__(self, R, order=None):
         """
         EXAMPLES::
 
@@ -594,7 +603,7 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
             raise ValueError("n must be positive")
         if not R.base_ring().is_integral_domain():
             raise ValueError("base ring must be an integral domain")
-        LaurentPolynomialRing_generic.__init__(self, R)
+        LaurentPolynomialRing_generic.__init__(self, R, order=order)
 
     Element = LazyImport('sage.rings.polynomial.laurent_polynomial_mpair', 'LaurentPolynomial_mpair')
 

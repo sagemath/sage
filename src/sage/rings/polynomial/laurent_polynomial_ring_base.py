@@ -48,7 +48,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         sage: TestSuite(R).run()
 
     """
-    def __init__(self, R):
+    def __init__(self, R, order=None):
         """
         EXAMPLES::
 
@@ -59,6 +59,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         self._n = R.ngens()
         self._R = R
         names = R.variable_names()
+        self._order = order
         self._one_element = self.element_class(self, R.one())
         CommutativeRing.__init__(self, R.base_ring(), names=names,
                                  category=R.category())
@@ -69,6 +70,9 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         ER = PolynomialRing(R.base_ring(), ernames)
         self._extended_ring = ER
         self._extended_ring_ideal = ER.ideal([ER.gen(2*i)*ER.gen(2*i+1)-1 for i in range(self._n)])
+
+    def order(self):
+        return self._order
 
     def ngens(self):
         """
@@ -311,7 +315,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         """
         if type(self) is not type(right):
             return False
-        return self._R == right._R
+        return self._R == right._R 
 
     def __ne__(self, other):
         """
