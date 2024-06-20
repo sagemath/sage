@@ -590,15 +590,14 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         EXAMPLES::
 
             sage: print(latex(ProjectiveSpace(1, ZZ, 'x')))
-            {\mathbf P}_{\Bold{Z}}^1
+            {\mathbf P}_{\Bold{Z}}^{1}
 
         TESTS::
 
-            sage: ProjectiveSpace(3, Zp(5), 'y')._latex_()                              # needs sage.rings.padics
-            '{\\mathbf P}_{\\Bold{Z}_{5}}^3'
+            sage: ProjectiveSpace(11, Zp(5), 'y')._latex_()                              # needs sage.rings.padics
+            '{\\mathbf P}_{\\Bold{Z}_{5}}^{11}'
         """
-        return "{\\mathbf P}_{%s}^%s" % (latex(self.base_ring()),
-                                         self.dimension_relative())
+        return "{\\mathbf P}_{%s}^{%s}" % (latex(self.base_ring()), self.dimension_relative())
 
     def _linear_system_as_kernel(self, d, pt, m):
         """
