@@ -1651,12 +1651,14 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
     def _is_binary_linear_matroid_regular(self, *, time_limit=60.0, certificate=False,
                                           use_direct_graphicness_test=True,
+                                          prefer_graphicness=True,
                                           series_parallel_ok=True,
                                           check_graphic_minors_planar=False,
                                           stop_when_irregular=True,
                                           three_sum_pivot_children=False,
                                           three_sum_strategy=None,
-                                          construct_graphs=False,
+                                          construct_leaf_graphs=False,
+                                          construct_all_graphs=False,
                                           row_keys=None,
                                           column_keys=None):
         r"""
@@ -1787,25 +1789,26 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         cdef bool result_bool
         cdef CMR_REGULAR_PARAMS params
         cdef CMR_REGULAR_STATS stats
-        cdef CMR_MATROID_DEC *dec = NULL
+        cdef CMR_SEYMOUR_NODE *dec = NULL
         cdef CMR_MINOR *minor = NULL
 
-        cdef CMR_MATROID_DEC **pdec = &dec
+        cdef CMR_SEYMOUR_NODE **pdec = &dec
         cdef CMR_MINOR **pminor = &minor
 
         cdef dict kwds = dict(use_direct_graphicness_test=use_direct_graphicness_test,
+                              prefer_graphicness=prefer_graphicness,
                               series_parallel_ok=series_parallel_ok,
                               check_graphic_minors_planar=check_graphic_minors_planar,
-                              recurse=True,
                               stop_when_irregular=stop_when_irregular,
                               stop_when_nongraphic=False,
                               stop_when_noncographic=False,
                               stop_when_nongraphic_and_noncographic=False,
                               three_sum_pivot_children=three_sum_pivot_children,
                               three_sum_strategy=three_sum_strategy,
-                              construct_graphs=construct_graphs)
+                              construct_leaf_graphs=construct_leaf_graphs,
+                              construct_all_graphs=construct_all_graphs)
 
-        _set_cmr_regular_parameters(&params, kwds)
+        _set_cmr_seymour_parameters(&params.seymour, kwds)
         sig_on()
         try:
             CMR_CALL(CMRregularTest(cmr, self._mat, &result_bool, pdec, pminor,
@@ -1824,12 +1827,14 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
     def is_totally_unimodular(self, *, time_limit=60.0, certificate=False,
                               use_direct_graphicness_test=True,
+                              prefer_graphicness=True,
                               series_parallel_ok=True,
                               check_graphic_minors_planar=False,
                               stop_when_nonTU=True,
                               three_sum_pivot_children=False,
                               three_sum_strategy=None,
-                              construct_graphs=False,
+                              construct_leaf_graphs=False,
+                              construct_all_graphs=False,
                               row_keys=None,
                               column_keys=None):
         r"""
@@ -1966,29 +1971,31 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         cdef bool result_bool
         cdef CMR_TU_PARAMS params
         cdef CMR_TU_STATS stats
-        cdef CMR_MATROID_DEC *dec = NULL
+        cdef CMR_SEYMOUR_NODE *dec = NULL
         cdef CMR_SUBMAT *submat = NULL
 
-        cdef CMR_MATROID_DEC **pdec = &dec
+        cdef CMR_SEYMOUR_NODE **pdec = &dec
         cdef CMR_SUBMAT **psubmat = &submat
 
         if three_sum_pivot_children:
             raise NotImplementedError
         cdef dict kwds = dict(use_direct_graphicness_test=use_direct_graphicness_test,
+                              prefer_graphicness=prefer_graphicness,
                               series_parallel_ok=series_parallel_ok,
                               check_graphic_minors_planar=check_graphic_minors_planar,
-                              recurse=True,
                               stop_when_irregular=stop_when_nonTU,
                               stop_when_nongraphic=False,
                               stop_when_noncographic=False,
                               stop_when_nongraphic_and_noncographic=False,
                               three_sum_pivot_children=three_sum_pivot_children,
                               three_sum_strategy=three_sum_strategy,
-                              construct_graphs=construct_graphs)
+                              construct_leaf_graphs=construct_leaf_graphs,
+                              construct_all_graphs=construct_all_graphs)
 
         params.algorithm = CMR_TU_ALGORITHM_DECOMPOSITION
-        params.directCamion = False
-        _set_cmr_regular_parameters(&params.regular, kwds)
+        params.ternary = True
+        params.camionFirst = False
+        _set_cmr_seymour_parameters(&params.seymour, kwds)
         sig_on()
         try:
             CMR_CALL(CMRtuTest(cmr, self._mat, &result_bool, pdec, psubmat,
@@ -2025,46 +2032,26 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         raise NotImplementedError
 
 
-cdef _cmr_dec_construct(param):
-    if not param:
-        return CMR_DEC_CONSTRUCT_NONE
-    if param == 'leaves':
-        return CMR_DEC_CONSTRUCT_LEAVES
-    return CMR_DEC_CONSTRUCT_ALL
-
-
-cdef _set_cmr_regular_parameters(CMR_REGULAR_PARAMS *params, dict kwds):
-    CMR_CALL(CMRregularParamsInit(params))
+cdef _set_cmr_seymour_parameters(CMR_SEYMOUR_PARAMS *params, dict kwds):
+    CMR_CALL(CMRseymourParamsInit(params))
+    params.stopWhenIrregular = kwds['stop_when_irregular']
+    params.stopWhenNongraphic = kwds['stop_when_nongraphic']
+    params.stopWhenNoncographic = kwds['stop_when_noncographic']
+    params.stopWhenNeitherGraphicNorCoGraphic = kwds['stop_when_nongraphic_and_noncographic']
     params.directGraphicness = kwds['use_direct_graphicness_test']
+    params.preferGraphicness = kwds['prefer_graphicness']
     params.seriesParallel = kwds['series_parallel_ok']
     params.planarityCheck = kwds['check_graphic_minors_planar']
     params.threeSumPivotChildren = kwds['three_sum_pivot_children']
     if kwds['three_sum_strategy'] is not None:
         if kwds['three_sum_strategy'] == 'Mixed_Mixed':
-            params.threeSumStrategy = CMR_MATROID_DEC_THREESUM_FLAG_CONCENTRATED_RANK |                                        CMR_MATROID_DEC_THREESUM_FLAG_FIRST_MIXED |                                        CMR_MATROID_DEC_THREESUM_FLAG_SECOND_MIXED
+            params.threeSumStrategy = CMR_SEYMOUR_THREESUM_FLAG_CONCENTRATED_RANK |                                        CMR_SEYMOUR_THREESUM_FLAG_FIRST_MIXED |                                        CMR_SEYMOUR_THREESUM_FLAG_SECOND_MIXED
         elif kwds['three_sum_strategy'] == 'Wide_Wide':
-            params.threeSumStrategy = CMR_MATROID_DEC_THREESUM_FLAG_DISTRIBUTED_RANKS | CMR_MATROID_DEC_THREESUM_FLAG_FIRST_WIDE | CMR_MATROID_DEC_THREESUM_FLAG_SECOND_WIDE
+            params.threeSumStrategy = CMR_SEYMOUR_THREESUM_FLAG_DISTRIBUTED_RANKS | CMR_SEYMOUR_THREESUM_FLAG_FIRST_WIDE | CMR_SEYMOUR_THREESUM_FLAG_SECOND_WIDE
         else:
             params.threeSumStrategy = kwds['three_sum_strategy']
-    treeFlags_list = []
-    if kwds['recurse'] is True:
-        treeFlags_list.append(CMR_REGULAR_TREE_FLAGS_RECURSE)
-    if kwds['stop_when_irregular'] is True:
-        treeFlags_list.append(CMR_REGULAR_TREE_FLAGS_STOP_IRREGULAR)
-    if kwds['stop_when_nongraphic'] is True:
-        treeFlags_list.append(CMR_REGULAR_TREE_FLAGS_STOP_NONGRAPHIC)
-    if kwds['stop_when_noncographic'] is True:
-        treeFlags_list.append(CMR_REGULAR_TREE_FLAGS_STOP_NONCOGRAPHIC)
-    if kwds['stop_when_nongraphic_and_noncographic'] is True:
-        treeFlags_list.append(CMR_REGULAR_TREE_FLAGS_STOP_NONGRAPHIC_NONCOGRAPHIC)
-    if treeFlags_list:
-        treeFlag = 0
-        for flag in treeFlags_list:
-            treeFlag |= flag
-        params.treeFlags = treeFlag
-    else:
-        params.treeFlags = 0
-    params.graphs = _cmr_dec_construct(kwds['construct_graphs'])
+    params.constructLeafGraphs = kwds['construct_leaf_graphs']
+    params.constructAllGraphs = kwds['construct_all_graphs']
 
 
 cdef _sage_edge(CMR_GRAPH *graph, CMR_GRAPH_EDGE e):

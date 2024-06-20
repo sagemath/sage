@@ -26,7 +26,7 @@ from sage.rings.integer_ring import ZZ
 from sage.structure.sage_object cimport SageObject
 
 from .constructor import Matrix
-from .matrix_cmr_sparse cimport Matrix_cmr_chr_sparse, _sage_edges, _sage_graph, _set_cmr_regular_parameters
+from .matrix_cmr_sparse cimport Matrix_cmr_chr_sparse, _sage_edges, _sage_graph, _set_cmr_seymour_parameters
 from .matrix_space import MatrixSpace
 
 
@@ -66,16 +66,16 @@ cdef class DecompositionNode(SageObject):
                 base_ring = self._matrix.parent().base_ring()
         self._base_ring = base_ring
 
-    cdef _set_dec(self, CMR_MATROID_DEC *dec):
+    cdef _set_dec(self, CMR_SEYMOUR_NODE *dec):
         if self._dec != NULL:
             # We own it, so we have to free it.
-            CMR_CALL(CMRmatroiddecRelease(cmr, &self._dec))
+            CMR_CALL(CMRseymourRelease(cmr, &self._dec))
         if dec != NULL:
-            CMR_CALL(CMRmatroiddecCapture(cmr, dec))
+            CMR_CALL(CMRseymourCapture(cmr, dec))
         self._dec = dec
 
     cdef _set_root_dec(self):
-        cdef CMR_MATROID_DEC *root
+        cdef CMR_SEYMOUR_NODE *root
         cdef Matrix_cmr_chr_sparse matrix
         try:
             matrix = self.matrix()
@@ -89,7 +89,7 @@ cdef class DecompositionNode(SageObject):
 
         sig_on()
         try:
-            CMR_CALL(CMRmatroiddecCreateMatrixRoot(cmr, &root, isTernary, mat))
+            CMR_CALL(CMRseymourCreate(cmr, &root, isTernary, mat))
         finally:
             sig_off()
         self._set_dec(root)
@@ -134,7 +134,7 @@ cdef class DecompositionNode(SageObject):
         if self._row_keys is not None:
             return len(self._row_keys)
         if self._dec != NULL:
-            return CMRmatroiddecNumRows(self._dec)
+            return CMRseymourNumRows(self._dec)
         if self._matrix is not None:
             return self._matrix.nrows()
         raise RuntimeError('nrows undefined')
@@ -143,7 +143,7 @@ cdef class DecompositionNode(SageObject):
         if self._column_keys is not None:
             return len(self._column_keys)
         if self._dec != NULL:
-            return CMRmatroiddecNumColumns(self._dec)
+            return CMRseymourNumColumns(self._dec)
         if self._matrix is not None:
             return self._matrix.ncols()
         raise RuntimeError('ncols undefined')
@@ -177,7 +177,7 @@ cdef class DecompositionNode(SageObject):
         if self._matrix is not None:
             return self._matrix
         cdef Matrix_cmr_chr_sparse result
-        cdef CMR_CHRMAT *mat = CMRmatroiddecGetMatrix(self._dec)
+        cdef CMR_CHRMAT *mat = CMRseymourGetMatrix(self._dec)
         if mat == NULL:
             return None
         ms = MatrixSpace(self.base_ring(), mat.numRows, mat.numColumns, sparse=True)
@@ -267,7 +267,7 @@ cdef class DecompositionNode(SageObject):
         r"""
         Returns true iff the decomposition is over `\mathbb{F}_3`.
         """
-        return <bint> CMRmatroiddecIsTernary(self._dec)
+        return <bint> CMRseymourIsTernary(self._dec)
 
     def nchildren(self):
         r"""
@@ -277,7 +277,7 @@ cdef class DecompositionNode(SageObject):
             return len(self._child_nodes)
         if self._dec == NULL:
             return 0
-        return CMRmatroiddecNumChildren(self._dec)
+        return CMRseymourNumChildren(self._dec)
 
     cdef _CMRelement_to_key(self, CMR_ELEMENT element):
         if not CMRelementIsValid(element):
@@ -292,11 +292,11 @@ cdef class DecompositionNode(SageObject):
     def _create_child_node(self, index):
         row_keys = self.row_keys()
         column_keys = self.column_keys()
-        cdef CMR_MATROID_DEC *child_dec = CMRmatroiddecChild(self._dec, index)
-        cdef CMR_ELEMENT *parent_rows = CMRmatroiddecChildRowsToParent(self._dec, index)
-        cdef CMR_ELEMENT *parent_columns = CMRmatroiddecChildColumnsToParent(self._dec, index)
-        child_nrows = CMRmatroiddecNumRows(child_dec)
-        child_ncols = CMRmatroiddecNumColumns(child_dec)
+        cdef CMR_SEYMOUR_NODE *child_dec = CMRseymourChild(self._dec, index)
+        cdef CMR_ELEMENT *parent_rows = CMRseymourChildRowsToParent(self._dec, index)
+        cdef CMR_ELEMENT *parent_columns = CMRseymourChildColumnsToParent(self._dec, index)
+        child_nrows = CMRseymourNumRows(child_dec)
+        child_ncols = CMRseymourNumColumns(child_dec)
 
         if parent_rows == NULL or all(parent_rows[i] == 0 for i in range(child_nrows)):
             raise ValueError(f"Child {index} does not have parents rows")
@@ -506,19 +506,19 @@ cdef class DecompositionNode(SageObject):
         return result
 
     def _regularity(self):
-        cdef int8_t regularity = CMRmatroiddecRegularity(self._dec)
+        cdef int8_t regularity = CMRseymourRegularity(self._dec)
         if regularity:
             return regularity > 0
         raise ValueError('It is not determined whether the decomposition node is regular/TU')
 
     def _graphicness(self):
-        cdef int8_t graphicness = CMRmatroiddecGraphicness(self._dec)
+        cdef int8_t graphicness = CMRseymourGraphicness(self._dec)
         if graphicness:
             return graphicness > 0
         raise ValueError('It is not determined whether the decomposition node is graphic/network')
 
     def _cographicness(self):
-        cdef int8_t cographicness = CMRmatroiddecCographicness(self._dec)
+        cdef int8_t cographicness = CMRseymourCographicness(self._dec)
         if cographicness:
             return cographicness > 0
         raise ValueError('It is not determined whether the decomposition node is cographic/conetwork')
@@ -645,6 +645,7 @@ cdef class DecompositionNode(SageObject):
     def _binary_linear_matroid_complete_decomposition(self, *,
                                         time_limit=60.0,
                                         use_direct_graphicness_test=True,
+                                        prefer_graphicness=True,
                                         series_parallel_ok=True,
                                         check_graphic_minors_planar=False,
                                         recurse=True,
@@ -654,7 +655,8 @@ cdef class DecompositionNode(SageObject):
                                         stop_when_nongraphic_and_noncographic=False,
                                         three_sum_pivot_children=False,
                                         three_sum_strategy=None,
-                                        construct_graphs=False):
+                                        construct_leaf_graphs=False,
+                                        construct_all_graphs=False):
         r"""
         EXAMPLES::
 
@@ -762,9 +764,9 @@ cdef class DecompositionNode(SageObject):
         """
         cdef CMR_REGULAR_PARAMS params
         cdef CMR_REGULAR_STATS stats
-        cdef CMR_MATROID_DEC *clone = NULL
+        cdef CMR_SEYMOUR_NODE *clone = NULL
 
-        cdef CMR_MATROID_DEC **pclone = &clone
+        cdef CMR_SEYMOUR_NODE **pclone = &clone
 
         if self._dec == NULL:
             base_ring = self.base_ring()
@@ -773,21 +775,22 @@ cdef class DecompositionNode(SageObject):
             self._set_root_dec()
 
         cdef dict kwds = dict(use_direct_graphicness_test=use_direct_graphicness_test,
+                              prefer_graphicness=prefer_graphicness,
                               series_parallel_ok=series_parallel_ok,
                               check_graphic_minors_planar=check_graphic_minors_planar,
-                              recurse=recurse,
                               stop_when_irregular=stop_when_irregular,
                               stop_when_nongraphic=stop_when_nongraphic,
                               stop_when_noncographic=stop_when_noncographic,
                               stop_when_nongraphic_and_noncographic=stop_when_nongraphic_and_noncographic,
                               three_sum_pivot_children=three_sum_pivot_children,
                               three_sum_strategy=three_sum_strategy,
-                              construct_graphs=construct_graphs)
-        _set_cmr_regular_parameters(&params, kwds)
+                              construct_leaf_graphs=construct_leaf_graphs,
+                              construct_all_graphs=construct_all_graphs)
+        _set_cmr_seymour_parameters(&params.seymour, kwds)
 
         sig_on()
         try:
-            CMR_CALL(CMRmatroiddecCloneUnknown(cmr, self._dec, pclone))
+            CMR_CALL(CMRseymourCloneUnknown(cmr, self._dec, pclone))
             CMR_CALL(CMRregularCompleteDecomposition(cmr, clone, &params, &stats, time_limit))
         finally:
             sig_off()
@@ -854,8 +857,58 @@ cdef class DecompositionNode(SageObject):
             # compute it... wait for CMR functions
             raise NotImplementedError("TU Not Determined")
 
+    def nminors(self):
+        r"""
+        Return the number of minors of the node.
+        """
+        if self._minors is not None:
+            return len(self._minors)
+        if self._dec == NULL:
+            return 0
+        return CMRseymourNumMinors(self._dec)
+
+    def _create_minor(self, index):
+        cdef CMR_MINOR * minor = CMRseymourMinor(self._dec, index)
+        cdef CMR_MINOR_TYPE typ = CMRminorType(minor)
+        import sage.matroids.matroids_catalog as matroids
+        from sage.graphs.graph_generators import graphs
+        from sage.matroids.matroid import Matroid
+
+        if typ == CMR_MINOR_TYPE_FANO:
+            return matroids.catalog.Fano()
+        if typ == CMR_MINOR_TYPE_FANO_DUAL:
+            return matroids.catalog.Fano().dual()
+        if typ == CMR_MINOR_TYPE_K5:
+            return matroids.CompleteGraphic(5)
+        if typ == CMR_MINOR_TYPE_K5_DUAL:
+            return matroids.CompleteGraphic(5).dual()
+        if typ == CMR_MINOR_TYPE_K33:
+            E = 'abcdefghi'
+            G = graphs.CompleteBipartiteGraph(3, 3)
+            return Matroid(groundset=E, graph=G, regular=True)
+        if typ == CMR_MINOR_TYPE_K33_DUAL:
+            return matroids.catalog.K33dual()
+        if typ == CMR_MINOR_TYPE_DETERMINANT:
+            return '|det| = 2 submatrix'
+        if typ == CMR_MINOR_TYPE_ENTRY:
+            return 'bad entry'
+        if typ == CMR_MINOR_TYPE_CUSTOM:
+            return 'custom'
+
+    def _minors(self):
+        if self._minors is not None:
+            return self._minors
+        minors_tuple = tuple(self._create_minor(index)
+                               for index in range(self.nminors()))
+        self._minors = minors_tuple
+        return self._minors
+
+    def minors(self):
+        return self._minors()
+
     def complete_decomposition(self, *, time_limit=60.0,
                                use_direct_graphicness_test=True,
+                               prefer_graphicness=True,
                                series_parallel_ok=True,
                                check_graphic_minors_planar=False,
                                recurse=True,
@@ -865,7 +918,8 @@ cdef class DecompositionNode(SageObject):
                                stop_when_nonnetwork_and_nonconetwork=False,
                                three_sum_pivot_children=False,
                                three_sum_strategy=None,
-                               construct_graphs=False):
+                               construct_leaf_graphs=False,
+                               construct_all_graphs=False):
         r"""
         EXAMPLES::
 
@@ -926,31 +980,33 @@ cdef class DecompositionNode(SageObject):
         """
         cdef CMR_TU_PARAMS params
         cdef CMR_TU_STATS stats
-        cdef CMR_MATROID_DEC *clone = NULL
+        cdef CMR_SEYMOUR_NODE *clone = NULL
 
-        cdef CMR_MATROID_DEC **pclone = &clone
+        cdef CMR_SEYMOUR_NODE **pclone = &clone
 
         if self._dec == NULL:
             self._set_root_dec()
 
         cdef dict kwds = dict(use_direct_graphicness_test=use_direct_graphicness_test,
+                              prefer_graphicness=prefer_graphicness,
                               series_parallel_ok=series_parallel_ok,
                               check_graphic_minors_planar=check_graphic_minors_planar,
-                              recurse=recurse,
                               stop_when_irregular=stop_when_nonTU,
                               stop_when_nongraphic=stop_when_nonnetwork,
                               stop_when_noncographic=stop_when_nonconetwork,
                               stop_when_nongraphic_and_noncographic=stop_when_nonnetwork_and_nonconetwork,
                               three_sum_pivot_children=three_sum_pivot_children,
                               three_sum_strategy=three_sum_strategy,
-                              construct_graphs=construct_graphs)
+                              construct_leaf_graphs=construct_leaf_graphs,
+                              construct_all_graphs=construct_all_graphs)
         params.algorithm = CMR_TU_ALGORITHM_DECOMPOSITION
-        params.directCamion = False
-        _set_cmr_regular_parameters(&params.regular, kwds)
+        params.ternary = True
+        params.camionFirst = False
+        _set_cmr_seymour_parameters(&params.seymour, kwds)
 
         sig_on()
         try:
-            CMR_CALL(CMRmatroiddecCloneUnknown(cmr, self._dec, pclone))
+            CMR_CALL(CMRseymourCloneUnknown(cmr, self._dec, pclone))
             CMR_CALL(CMRtuCompleteDecomposition(cmr, clone, &params, &stats, time_limit))
         finally:
             sig_off()
@@ -1549,20 +1605,20 @@ cdef class ThreeSumNode(SumNode):
 
         self.set_default_keys()
 
-        cdef CMR_MATROID_DEC *child1_dec = CMRmatroiddecChild(self._dec, 0)
-        cdef CMR_ELEMENT *parent_rows1 = CMRmatroiddecChildRowsToParent(self._dec, 0)
-        cdef CMR_ELEMENT *parent_columns1 = CMRmatroiddecChildColumnsToParent(self._dec, 0)
-        cdef CMR_CHRMAT *mat1 = CMRmatroiddecGetMatrix(child1_dec)
+        cdef CMR_SEYMOUR_NODE *child1_dec = CMRseymourChild(self._dec, 0)
+        cdef CMR_ELEMENT *parent_rows1 = CMRseymourChildRowsToParent(self._dec, 0)
+        cdef CMR_ELEMENT *parent_columns1 = CMRseymourChildColumnsToParent(self._dec, 0)
+        cdef CMR_CHRMAT *mat1 = CMRseymourGetMatrix(child1_dec)
 
-        cdef CMR_MATROID_DEC *child2_dec = CMRmatroiddecChild(self._dec, 1)
-        cdef CMR_ELEMENT *parent_rows2 = CMRmatroiddecChildRowsToParent(self._dec, 1)
-        cdef CMR_ELEMENT *parent_columns2 = CMRmatroiddecChildColumnsToParent(self._dec, 1)
-        cdef CMR_CHRMAT *mat2 = CMRmatroiddecGetMatrix(child2_dec)
+        cdef CMR_SEYMOUR_NODE *child2_dec = CMRseymourChild(self._dec, 1)
+        cdef CMR_ELEMENT *parent_rows2 = CMRseymourChildRowsToParent(self._dec, 1)
+        cdef CMR_ELEMENT *parent_columns2 = CMRseymourChildColumnsToParent(self._dec, 1)
+        cdef CMR_CHRMAT *mat2 = CMRseymourGetMatrix(child2_dec)
 
         cdef size_t index1, index2
 
-        child1_nrows = CMRmatroiddecNumRows(child1_dec)
-        child1_ncols = CMRmatroiddecNumColumns(child1_dec)
+        child1_nrows = CMRseymourNumRows(child1_dec)
+        child1_ncols = CMRseymourNumColumns(child1_dec)
 
         if self.is_concentrated_rank(): # Mixed_Mixed
             child1_row_keys = tuple(self._CMRelement_to_key(parent_rows1[i])
@@ -1627,8 +1683,8 @@ cdef class ThreeSumNode(SumNode):
                                           column_keys=child1_column_keys,
                                           base_ring=self.base_ring())
 
-        child2_nrows = CMRmatroiddecNumRows(child2_dec)
-        child2_ncols = CMRmatroiddecNumColumns(child2_dec)
+        child2_nrows = CMRseymourNumRows(child2_dec)
+        child2_ncols = CMRseymourNumColumns(child2_dec)
 
         if self.is_concentrated_rank(): # Mixed_Mixed
             child2_row_keys = tuple(self._CMRelement_to_key(parent_rows2[i])
@@ -1717,10 +1773,10 @@ cdef class ThreeSumNode(SumNode):
             sage: C.is_concentrated_rank()
             False
         """
-        return <bint> CMRmatroiddecThreeSumDistributedRanks(self._dec)
+        return <bint> CMRseymourThreeSumDistributedRanks(self._dec)
 
     def is_concentrated_rank(self):
-        return <bint> CMRmatroiddecThreeSumConcentratedRank(self._dec)
+        return <bint> CMRseymourThreeSumConcentratedRank(self._dec)
 
     def block_matrix_form(self):
         r"""
@@ -1801,7 +1857,7 @@ cdef class BaseGraphicNode(DecompositionNode):
         """
         if self._graph is not None:
             return self._graph
-        self._graph = _sage_graph(CMRmatroiddecGraph(self._dec))
+        self._graph = _sage_graph(CMRseymourGraph(self._dec))
         return self._graph
 
     def forest_edges(self):
@@ -1844,18 +1900,18 @@ cdef class BaseGraphicNode(DecompositionNode):
         """
         if self._forest_edges is not None:
             return self._forest_edges
-        cdef CMR_GRAPH *graph = CMRmatroiddecGraph(self._dec)
-        cdef size_t num_edges = CMRmatroiddecGraphSizeForest(self._dec)
-        cdef CMR_GRAPH_EDGE *edges = CMRmatroiddecGraphForest(self._dec)
+        cdef CMR_GRAPH *graph = CMRseymourGraph(self._dec)
+        cdef size_t num_edges = CMRseymourGraphSizeForest(self._dec)
+        cdef CMR_GRAPH_EDGE *edges = CMRseymourGraphForest(self._dec)
         self._forest_edges = _sage_edges(graph, edges, num_edges, self.row_keys())
         return self._forest_edges
 
     def coforest_edges(self):
         if self._coforest_edges is not None:
             return self._coforest_edges
-        cdef CMR_GRAPH *graph = CMRmatroiddecGraph(self._dec)
-        cdef size_t num_edges = CMRmatroiddecGraphSizeCoforest(self._dec)
-        cdef CMR_GRAPH_EDGE *edges = CMRmatroiddecGraphCoforest(self._dec)
+        cdef CMR_GRAPH *graph = CMRseymourGraph(self._dec)
+        cdef size_t num_edges = CMRseymourGraphSizeCoforest(self._dec)
+        cdef CMR_GRAPH_EDGE *edges = CMRseymourGraphCoforest(self._dec)
         self._coforest_edges = _sage_edges(graph, edges, num_edges, self.column_keys())
         return self._coforest_edges
 
@@ -1871,13 +1927,13 @@ cdef class CographicNode(BaseGraphicNode):
         r"""
         Actually the cograph of matrix, in the case where it is not graphic.
         """
-        return _sage_graph(CMRmatroiddecCograph(self._dec))
+        return _sage_graph(CMRseymourCograph(self._dec))
 
 
 cdef class PlanarNode(BaseGraphicNode):
     @cached_method
     def cograph(self):
-        return _sage_graph(CMRmatroiddecCograph(self._dec))
+        return _sage_graph(CMRseymourCograph(self._dec))
 
 
 cdef class SeriesParallelReductionNode(DecompositionNode):
@@ -1909,36 +1965,18 @@ cdef class SeriesParallelReductionNode(DecompositionNode):
         return self.child_nodes()[0].matrix()
 
 
-cdef class SpecialLeafNode(DecompositionNode):
+cdef class R10Node(DecompositionNode):
 
     @cached_method
     def _matroid(self):
         r"""
 
         """
-        cdef CMR_MATROID_DEC_TYPE typ = CMRmatroiddecType(self._dec)
+        cdef CMR_SEYMOUR_NODE_TYPE typ = CMRseymourType(self._dec)
         import sage.matroids.matroids_catalog as matroids
-        from sage.graphs.graph_generators import graphs
-        from sage.matroids.matroid import Matroid
 
-        if typ == CMR_MATROID_DEC_TYPE_R10:
+        if typ == CMR_SEYMOUR_NODE_TYPE_R10:
             return matroids.catalog.R10()
-        if typ == CMR_MATROID_DEC_TYPE_FANO:
-            return matroids.catalog.Fano()
-        if typ == CMR_MATROID_DEC_TYPE_FANO_DUAL:
-            return matroids.catalog.Fano().dual()
-        if typ == CMR_MATROID_DEC_TYPE_K5:
-            return matroids.CompleteGraphic(5)
-        if typ == CMR_MATROID_DEC_TYPE_K5_DUAL:
-            return matroids.CompleteGraphic(5).dual()
-        if typ == CMR_MATROID_DEC_TYPE_K33:
-            E = 'abcdefghi'
-            G = graphs.CompleteBipartiteGraph(3, 3)
-            return Matroid(groundset=E, graph=G, regular=True)
-        if typ == CMR_MATROID_DEC_TYPE_K33_DUAL:
-            return matroids.catalog.K33dual()
-        if typ == CMR_MATROID_DEC_TYPE_DETERMINANT:
-            return '|det| = 2 submatrix'
         assert False, 'special leaf node with unknown type'
 
     def _repr_(self):
@@ -1951,14 +1989,14 @@ cdef class SpecialLeafNode(DecompositionNode):
         assert NotImplementedError
 
         # cdef int representation_matrix
-        # cdef CMR_MATROID_DEC_TYPE typ = CMRdecIsSpecialLeaf(self._dec, &representation_matrix)
+        # cdef CMR_SEYMOUR_NODE_TYPE typ = CMRdecIsSpecialLeaf(self._dec, &representation_matrix)
         # return Matrix_cmr_chr_sparse._from_data(representation_matrix, immutable=False)
 
 
 cdef class PivotsNode(DecompositionNode):
 
     def npivots(self):
-        return CMRmatroiddecNumPivots(self._dec)
+        return CMRseymourNumPivots(self._dec)
 
     @cached_method
     def pivot_rows_and_columns(self):
@@ -1982,8 +2020,8 @@ cdef class PivotsNode(DecompositionNode):
             sage: certificate.pivot_rows_and_columns()
             ((1, 8),)
         """
-        cdef size_t *pivot_rows = CMRmatroiddecPivotRows(self._dec)
-        cdef size_t *pivot_columns = CMRmatroiddecPivotColumns(self._dec)
+        cdef size_t *pivot_rows = CMRseymourPivotRows(self._dec)
+        cdef size_t *pivot_columns = CMRseymourPivotColumns(self._dec)
 
         return tuple((pivot_rows[i], pivot_columns[i]) for i in range(self.npivots()))
 
@@ -1997,10 +2035,6 @@ cdef class PivotsNode(DecompositionNode):
                                for index in range(self.nchildren()))
         self._child_nodes = children_tuple
         return self._child_nodes
-
-
-cdef class SubmatrixNode(DecompositionNode):
-    pass
 
 
 cdef class SymbolicNode(DecompositionNode):
@@ -2100,43 +2134,41 @@ cdef class ElementKey:
             return "".join([str(a) for a in self._key])
 
 
-cdef _class(CMR_MATROID_DEC *dec):
-    cdef CMR_MATROID_DEC_TYPE typ = CMRmatroiddecType(dec)
+cdef _class(CMR_SEYMOUR_NODE *dec):
+    cdef CMR_SEYMOUR_NODE_TYPE typ = CMRseymourType(dec)
 
-    if typ == CMR_MATROID_DEC_TYPE_ONE_SUM:
+    if typ == CMR_SEYMOUR_NODE_TYPE_ONE_SUM:
         return OneSumNode
-    if typ == CMR_MATROID_DEC_TYPE_TWO_SUM:
+    if typ == CMR_SEYMOUR_NODE_TYPE_TWO_SUM:
         return TwoSumNode
-    if typ == CMR_MATROID_DEC_TYPE_THREE_SUM:
+    if typ == CMR_SEYMOUR_NODE_TYPE_THREE_SUM:
         return ThreeSumNode
-    if typ == CMR_MATROID_DEC_TYPE_GRAPH:
+    if typ == CMR_SEYMOUR_NODE_TYPE_GRAPH:
         return GraphicNode
-    if typ == CMR_MATROID_DEC_TYPE_COGRAPH:
+    if typ == CMR_SEYMOUR_NODE_TYPE_COGRAPH:
         return CographicNode
-    if typ == CMR_MATROID_DEC_TYPE_PLANAR:
+    if typ == CMR_SEYMOUR_NODE_TYPE_PLANAR:
         return PlanarNode
-    if typ < -1:
-        return SpecialLeafNode
-    if typ == CMR_MATROID_DEC_TYPE_SERIES_PARALLEL:
+    if typ == CMR_SEYMOUR_NODE_TYPE_SERIES_PARALLEL:
         return SeriesParallelReductionNode
-    if typ == CMR_MATROID_DEC_TYPE_PIVOTS:
+    if typ == CMR_SEYMOUR_NODE_TYPE_PIVOTS:
         return PivotsNode
-    if typ == CMR_MATROID_DEC_TYPE_SUBMATRIX:
-        return SubmatrixNode
-    if typ == CMR_MATROID_DEC_TYPE_IRREGULAR:
+    if typ == CMR_SEYMOUR_NODE_TYPE_IRREGULAR:
         return ThreeConnectedIrregularNode
-    if typ == CMR_MATROID_DEC_TYPE_UNKNOWN:
+    if typ == CMR_SEYMOUR_NODE_TYPE_UNKNOWN:
         return UnknownNode
+    if typ == CMR_SEYMOUR_NODE_TYPE_R10:
+        return R10Node
     raise NotImplementedError
 
 
-cdef create_DecompositionNode(CMR_MATROID_DEC *dec, matrix=None, row_keys=None, column_keys=None, base_ring=None):
+cdef create_DecompositionNode(CMR_SEYMOUR_NODE *dec, matrix=None, row_keys=None, column_keys=None, base_ring=None):
     r"""
     Create an instance of a subclass of :class:`DecompositionNode`.
 
     INPUT:
 
-    - ``dec`` -- a ``CMR_MATROID_DEC``
+    - ``dec`` -- a ``CMR_SEYMOUR_NODE``
     """
     if dec == NULL:
         return None
