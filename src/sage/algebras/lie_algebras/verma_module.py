@@ -1191,7 +1191,6 @@ class VermaModuleMorphism(Morphism):
             return self.codomain()
 
 
-
 class VermaModuleHomset(Homset):
     r"""
     The set of morphisms from a Verma module to another module in
