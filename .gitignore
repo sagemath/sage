@@ -225,6 +225,7 @@ build/pkgs/wheel/version_requirements.txt
 /pkgs/sagemath-sirocco/setup.cfg
 /pkgs/sagemath-tdlib/setup.cfg
 /pkgs/sagemath-categories/setup.cfg
+/pkgs/sagemath-cmr/setup.cfg
 /pkgs/sagemath-environment/setup.cfg
 /pkgs/sagemath-repl/setup.cfg
 /pkgs/sagemath-objects/pyproject.toml
@@ -235,6 +236,7 @@ build/pkgs/wheel/version_requirements.txt
 /pkgs/sagemath-sirocco/pyproject.toml
 /pkgs/sagemath-tdlib/pyproject.toml
 /pkgs/sagemath-categories/pyproject.toml
+/pkgs/sagemath-cmr/pyproject.toml
 /pkgs/sagemath-environment/pyproject.toml
 /pkgs/sagemath-repl/pyproject.toml
 /pkgs/sagemath-objects/requirements*.txt
@@ -245,6 +247,7 @@ build/pkgs/wheel/version_requirements.txt
 /pkgs/sagemath-sirocco/requirements*.txt
 /pkgs/sagemath-tdlib/requirements*.txt
 /pkgs/sagemath-categories/requirements*.txt
+/pkgs/sagemath-cmr/requirements*.txt
 /pkgs/sagemath-environment/requirements*.txt
 /pkgs/sagemath-repl/requirements*.txt
 /pkgs/sagemath-categories/MANIFEST.in
