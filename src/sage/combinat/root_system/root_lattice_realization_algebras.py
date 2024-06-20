@@ -584,7 +584,7 @@ class Algebras(AlgebrasCategory):
             to specify explicitly the elements on which to run the
             tests::
 
-                sage: for cartan_type in CartanType.samples(crystallographic=True): # long time (12s)
+                sage: for cartan_type in CartanType.samples(crystallographic=True):  # long time (12s)
                 ....:    L = RootSystem(cartan_type).ambient_space()
                 ....:    KL = L.algebra(K)
                 ....:    weight_lattice = RootSystem(cartan_type).weight_lattice(extended=L.is_extended())
