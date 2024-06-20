@@ -724,7 +724,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         alg = FlagAlgebra(QQ, self)
         
-        one_vector = alg(target_size, [1]*len(self.generate_flags(target_size)))
+        one_vector = target_element.ftype().project()<<(target_size - target_element.ftype().size())
         constraints_flags.extend([one_vector, one_vector*(-1)])
         constraints_vals.extend([1, -1])
 
