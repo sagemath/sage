@@ -167,6 +167,7 @@ cdef extern from "cmr/graph.h":
     # CMR_ERROR CMRgraphPrint(CMR_GRAPH* graph, FILE* stream)
     CMR_ERROR CMRgraphMergeNodes(CMR* cmr, CMR_GRAPH* graph, CMR_GRAPH_NODE u, CMR_GRAPH_NODE v)
     # CMR_ERROR CMRgraphCreateFromEdgeList(CMR* cmr, CMR_GRAPH** pgraph, CMR_ELEMENT** pedgeElements, char*** pnodeLabels, FILE* stream)
+    # CMR_ERROR CMRgraphCopy(CMR* cmr, CMR_GRAPH* graph, CMR_GRAPH** pcopy)
 
 cdef extern from "cmr/matroid.h":
 
@@ -175,91 +176,30 @@ cdef extern from "cmr/matroid.h":
     CMR_ERROR CMRchrmatBinaryPivots(CMR* cmr, CMR_CHRMAT* matrix, size_t numPivots, size_t* pivotRows, size_t* pivotColumns, CMR_CHRMAT** presult)
     CMR_ERROR CMRchrmatTernaryPivots(CMR* cmr, CMR_CHRMAT* matrix, size_t numPivots, size_t* pivotRows, size_t* pivotColumns, CMR_CHRMAT** presult)
 
+    ctypedef int CMR_MINOR_TYPE
+
+    const int CMR_MINOR_TYPE_DETERMINANT
+    const int CMR_MINOR_TYPE_ENTRY
+    const int CMR_MINOR_TYPE_CUSTOM
+    const int CMR_MINOR_TYPE_U24
+    const int CMR_MINOR_TYPE_FANO
+    const int CMR_MINOR_TYPE_FANO_DUAL
+    const int CMR_MINOR_TYPE_K5
+    const int CMR_MINOR_TYPE_K5_DUAL
+    const int CMR_MINOR_TYPE_K33
+    const int CMR_MINOR_TYPE_K33_DUAL
+
     ctypedef struct CMR_MINOR:
         size_t numPivots
         size_t* pivotRows
         size_t* pivotColumns
         CMR_SUBMAT* remainingSubmatrix
+        CMR_MINOR_TYPE type
 
-    CMR_ERROR CMRminorCreate(CMR* cmr, CMR_MINOR** pminor, size_t numPivots, CMR_SUBMAT* submatrix)
+    CMR_ERROR CMRminorCreate(CMR* cmr, CMR_MINOR** pminor, size_t numPivots, CMR_SUBMAT* submatrix, CMR_MINOR_TYPE type)
     CMR_ERROR CMRminorFree(CMR* cmr, CMR_MINOR** pminor)
-
-    ctypedef struct CMR_MATROID_DEC
-
-    ctypedef int CMR_MATROID_DEC_TYPE
-
-    const int CMR_MATROID_DEC_TYPE_IRREGULAR
-    const int CMR_MATROID_DEC_TYPE_UNKNOWN
-    const int CMR_MATROID_DEC_TYPE_ONE_SUM
-    const int CMR_MATROID_DEC_TYPE_TWO_SUM
-    const int CMR_MATROID_DEC_TYPE_THREE_SUM
-    const int CMR_MATROID_DEC_TYPE_SERIES_PARALLEL
-    const int CMR_MATROID_DEC_TYPE_PIVOTS
-    const int CMR_MATROID_DEC_TYPE_SUBMATRIX
-    const int CMR_MATROID_DEC_TYPE_GRAPH
-    const int CMR_MATROID_DEC_TYPE_COGRAPH
-    const int CMR_MATROID_DEC_TYPE_PLANAR
-    const int CMR_MATROID_DEC_TYPE_R10
-    const int CMR_MATROID_DEC_TYPE_FANO
-    const int CMR_MATROID_DEC_TYPE_FANO_DUAL
-    const int CMR_MATROID_DEC_TYPE_K5
-    const int CMR_MATROID_DEC_TYPE_K5_DUAL
-    const int CMR_MATROID_DEC_TYPE_K33
-    const int CMR_MATROID_DEC_TYPE_K33_DUAL
-    const int CMR_MATROID_DEC_TYPE_DETERMINANT
-
-    ctypedef int CMR_MATROID_DEC_THREESUM_FLAG
-
-    const int CMR_MATROID_DEC_THREESUM_FLAG_NO_PIVOTS
-    const int CMR_MATROID_DEC_THREESUM_FLAG_DISTRIBUTED_RANKS
-    const int CMR_MATROID_DEC_THREESUM_FLAG_CONCENTRATED_RANK
-    const int CMR_MATROID_DEC_THREESUM_FLAG_FIRST_WIDE
-    const int CMR_MATROID_DEC_THREESUM_FLAG_FIRST_TALL
-    const int CMR_MATROID_DEC_THREESUM_FLAG_FIRST_MIXED
-    const int CMR_MATROID_DEC_THREESUM_FLAG_FIRST_ALLREPR
-    const int CMR_MATROID_DEC_THREESUM_FLAG_SECOND_WIDE
-    const int CMR_MATROID_DEC_THREESUM_FLAG_SECOND_TALL
-    const int CMR_MATROID_DEC_THREESUM_FLAG_SECOND_MIXED
-    const int CMR_MATROID_DEC_THREESUM_FLAG_SECOND_ALLREPR
-    const int CMR_MATROID_DEC_THREESUM_FLAG_SEYMOUR
-    const int CMR_MATROID_DEC_THREESUM_FLAG_TRUEMPER
-
-    bool CMRmatroiddecIsTernary(CMR_MATROID_DEC* dec)
-    bool CMRmatroiddecThreeSumDistributedRanks(CMR_MATROID_DEC* dec)
-    bool CMRmatroiddecThreeSumConcentratedRank(CMR_MATROID_DEC* dec)
-    bool CMRmatroiddecHasTranspose(CMR_MATROID_DEC* dec)
-    CMR_CHRMAT* CMRmatroiddecGetMatrix(CMR_MATROID_DEC* dec)
-    CMR_CHRMAT* CMRmatroiddecGetTranspose(CMR_MATROID_DEC* dec)
-    size_t CMRmatroiddecNumChildren(CMR_MATROID_DEC* dec)
-    CMR_MATROID_DEC* CMRmatroiddecChild(CMR_MATROID_DEC* dec, size_t childIndex)
-    CMR_MATROID_DEC_TYPE CMRmatroiddecType(CMR_MATROID_DEC* dec)
-    int8_t CMRmatroiddecGraphicness(CMR_MATROID_DEC* dec)
-    int8_t CMRmatroiddecCographicness(CMR_MATROID_DEC* dec)
-    int8_t CMRmatroiddecRegularity(CMR_MATROID_DEC* dec)
-    size_t CMRmatroiddecNumRows(CMR_MATROID_DEC* dec)
-    size_t CMRmatroiddecNumColumns(CMR_MATROID_DEC* dec)
-    CMR_ELEMENT* CMRmatroiddecChildRowsToParent(CMR_MATROID_DEC* dec, size_t childIndex)
-    CMR_ELEMENT* CMRmatroiddecChildColumnsToParent(CMR_MATROID_DEC* dec, size_t childIndex)
-    CMR_GRAPH* CMRmatroiddecGraph(CMR_MATROID_DEC* dec)
-    CMR_GRAPH_EDGE* CMRmatroiddecGraphForest(CMR_MATROID_DEC* dec)
-    size_t CMRmatroiddecGraphSizeForest(CMR_MATROID_DEC* dec)
-    CMR_GRAPH_EDGE* CMRmatroiddecGraphCoforest(CMR_MATROID_DEC* dec)
-    size_t CMRmatroiddecGraphSizeCoforest(CMR_MATROID_DEC* dec)
-    bool* CMRmatroiddecGraphArcsReversed(CMR_MATROID_DEC* dec)
-    CMR_GRAPH* CMRmatroiddecCograph(CMR_MATROID_DEC* dec)
-    size_t CMRmatroiddecCographSizeForest(CMR_MATROID_DEC* dec)
-    CMR_GRAPH_EDGE* CMRmatroiddecCographForest(CMR_MATROID_DEC* dec)
-    size_t CMRmatroiddecCographSizeCoforest(CMR_MATROID_DEC* dec)
-    CMR_GRAPH_EDGE* CMRmatroiddecCographCoforest(CMR_MATROID_DEC* dec)
-    bool* CMRmatroiddecCographArcsReversed(CMR_MATROID_DEC* dec)
-    size_t CMRmatroiddecNumPivots(CMR_MATROID_DEC* dec)
-    size_t* CMRmatroiddecPivotRows(CMR_MATROID_DEC* dec)
-    size_t* CMRmatroiddecPivotColumns(CMR_MATROID_DEC* dec)
-    # CMR_ERROR CMRmatroiddecPrint(CMR* cmr, CMR_MATROID_DEC* dec, FILE* stream, bool printChildren, bool printParentElements, bool printMatrices, bool printGraphs, bool printReductions, bool printPivots)
-    CMR_ERROR CMRmatroiddecCloneUnknown(CMR* cmr, CMR_MATROID_DEC* dec, CMR_MATROID_DEC** pclone)
-    CMR_ERROR CMRmatroiddecCapture(CMR* cmr, CMR_MATROID_DEC* dec)
-    CMR_ERROR CMRmatroiddecRelease(CMR* cmr, CMR_MATROID_DEC** pdec)
-    CMR_ERROR CMRmatroiddecCreateMatrixRoot(CMR* cmr, CMR_MATROID_DEC** pdec, bool isTernary, CMR_CHRMAT* matrix)
+    CMR_MINOR_TYPE CMRminorType(CMR_MINOR* minor)
+    # CMR_ERROR CMRminorWriteToFile(CMR* cmr, CMR_MINOR* minor, size_t numRows, size_t numColumns, const char* fileName)
 
 cdef extern from "cmr/separation.h":
 
@@ -365,39 +305,47 @@ cdef extern from "cmr/network.h":
     CMR_ERROR CMRnetworkTestMatrix(CMR* cmr, CMR_CHRMAT* matrix, bool* pisNetwork, bool* psupportIsGraphic, CMR_GRAPH** pdigraph, CMR_GRAPH_EDGE** pforestArcs, CMR_GRAPH_EDGE** pcoforestArcs, bool** parcsReversed, CMR_SUBMAT** psubmatrix, CMR_NETWORK_STATISTICS* stats, double timeLimit)
     CMR_ERROR CMRnetworkTestTranspose(CMR* cmr, CMR_CHRMAT* matrix, bool* pisConetwork, bool* psupportIsCographic, CMR_GRAPH** pdigraph, CMR_GRAPH_EDGE** pforestArcs, CMR_GRAPH_EDGE** pcoforestArcs, bool** parcsReversed, CMR_SUBMAT** psubmatrix, CMR_NETWORK_STATISTICS* stats, double timeLimit)
 
-cdef extern from "cmr/regular.h":
 
-    ctypedef int CMR_DEC_CONSTRUCT
+cdef extern from "cmr/seymour.h":
 
-    const int CMR_DEC_CONSTRUCT_NONE
-    const int CMR_DEC_CONSTRUCT_LEAVES
-    const int CMR_DEC_CONSTRUCT_ALL
+    ctypedef int CMR_SEYMOUR_THREESUM_FLAG
 
-    const int CMR_REGULAR_TREE_FLAGS_RECURSE
-    const int CMR_REGULAR_TREE_FLAGS_STOP_IRREGULAR
-    const int CMR_REGULAR_TREE_FLAGS_STOP_NONGRAPHIC
-    const int CMR_REGULAR_TREE_FLAGS_STOP_NONCOGRAPHIC
-    const int CMR_REGULAR_TREE_FLAGS_STOP_NONGRAPHIC_NONCOGRAPHIC
-    const int CMR_REGULAR_TREE_FLAGS_DEFAULT
+    const int CMR_SEYMOUR_THREESUM_FLAG_NO_PIVOTS
+    const int CMR_SEYMOUR_THREESUM_FLAG_DISTRIBUTED_RANKS
+    const int CMR_SEYMOUR_THREESUM_FLAG_CONCENTRATED_RANK
+    const int CMR_SEYMOUR_THREESUM_FLAG_FIRST_WIDE
+    const int CMR_SEYMOUR_THREESUM_FLAG_FIRST_TALL
+    const int CMR_SEYMOUR_THREESUM_FLAG_FIRST_MIXED
+    const int CMR_SEYMOUR_THREESUM_FLAG_FIRST_ALLREPR
+    const int CMR_SEYMOUR_THREESUM_FLAG_SECOND_WIDE
+    const int CMR_SEYMOUR_THREESUM_FLAG_SECOND_TALL
+    const int CMR_SEYMOUR_THREESUM_FLAG_SECOND_MIXED
+    const int CMR_SEYMOUR_THREESUM_FLAG_SECOND_ALLREPR
+    const int CMR_SEYMOUR_THREESUM_FLAG_SEYMOUR
+    const int CMR_SEYMOUR_THREESUM_FLAG_TRUEMPER
 
-    ctypedef struct CMR_REGULAR_PARAMS:
-        bint directGraphicness
-        bint seriesParallel
-        bint planarityCheck
-        int treeFlags
+    ctypedef struct CMR_SEYMOUR_PARAMS:
+        bool stopWhenIrregular
+        bool stopWhenNongraphic
+        bool stopWhenNoncographic
+        bool stopWhenNeitherGraphicNorCoGraphic
+        bool seriesParallel
+        bool planarityCheck
+        bool directGraphicness
+        bool preferGraphicness
         bool threeSumPivotChildren
         int threeSumStrategy
-        CMR_DEC_CONSTRUCT graphs
+        bool constructLeafGraphs
+        bool constructAllGraphs
 
-    CMR_ERROR CMRregularParamsInit(CMR_REGULAR_PARAMS* params)
+    CMR_ERROR CMRseymourParamsInit(CMR_SEYMOUR_PARAMS* params)
 
-    ctypedef struct CMR_REGULAR_STATS:
+    ctypedef struct CMR_SEYMOUR_STATS:
         uint32_t totalCount
         double totalTime
         CMR_SP_STATISTICS seriesParallel
         CMR_GRAPHIC_STATISTICS graphic
         CMR_NETWORK_STATISTICS network
-        CMR_CAMION_STATISTICS camion
         uint32_t sequenceExtensionCount
         double sequenceExtensionTime
         uint32_t sequenceGraphicCount
@@ -406,10 +354,82 @@ cdef extern from "cmr/regular.h":
         double enumerationTime
         uint32_t enumerationCandidatesCount
 
+    CMR_ERROR CMRseymourStatsInit(CMR_SEYMOUR_STATS* stats)
+    # CMR_ERROR CMRseymourStatsPrint(FILE* stream, CMR_SEYMOUR_STATS* stats, const char* prefix)
+
+    ctypedef struct CMR_SEYMOUR_NODE
+
+    ctypedef int CMR_SEYMOUR_NODE_TYPE
+
+    const int CMR_SEYMOUR_NODE_TYPE_IRREGULAR
+    const int CMR_SEYMOUR_NODE_TYPE_UNKNOWN
+    const int CMR_SEYMOUR_NODE_TYPE_ONE_SUM
+    const int CMR_SEYMOUR_NODE_TYPE_TWO_SUM
+    const int CMR_SEYMOUR_NODE_TYPE_THREE_SUM
+    const int CMR_SEYMOUR_NODE_TYPE_SERIES_PARALLEL
+    const int CMR_SEYMOUR_NODE_TYPE_PIVOTS
+    const int CMR_SEYMOUR_NODE_TYPE_GRAPH
+    const int CMR_SEYMOUR_NODE_TYPE_COGRAPH
+    const int CMR_SEYMOUR_NODE_TYPE_PLANAR
+    const int CMR_SEYMOUR_NODE_TYPE_R10
+
+    bool CMRseymourIsTernary(CMR_SEYMOUR_NODE* node)
+    bool CMRseymourThreeSumDistributedRanks(CMR_SEYMOUR_NODE* node)
+    bool CMRseymourThreeSumConcentratedRank(CMR_SEYMOUR_NODE* node)
+    bool CMRseymourHasTranspose(CMR_SEYMOUR_NODE* node)
+    CMR_CHRMAT* CMRseymourGetMatrix(CMR_SEYMOUR_NODE* node)
+    CMR_CHRMAT* CMRseymourGetTranspose(CMR_SEYMOUR_NODE* node)
+    size_t CMRseymourNumChildren(CMR_SEYMOUR_NODE* node)
+    CMR_SEYMOUR_NODE* CMRseymourChild(CMR_SEYMOUR_NODE* node, size_t childIndex)
+    CMR_SEYMOUR_NODE_TYPE CMRseymourType(CMR_SEYMOUR_NODE* node)
+    size_t CMRseymourNumMinors(CMR_SEYMOUR_NODE* node)
+    CMR_MINOR* CMRseymourMinor(CMR_SEYMOUR_NODE* node, size_t minorIndex)
+    int8_t CMRseymourGraphicness(CMR_SEYMOUR_NODE* node)
+    int8_t CMRseymourCographicness(CMR_SEYMOUR_NODE* node)
+    int8_t CMRseymourRegularity(CMR_SEYMOUR_NODE* node)
+    size_t CMRseymourNumRows(CMR_SEYMOUR_NODE* node)
+    size_t CMRseymourNumColumns(CMR_SEYMOUR_NODE* node)
+    CMR_ELEMENT* CMRseymourChildRowsToParent(CMR_SEYMOUR_NODE* node, size_t childIndex)
+    CMR_ELEMENT* CMRseymourChildColumnsToParent(CMR_SEYMOUR_NODE* node, size_t childIndex)
+    CMR_GRAPH* CMRseymourGraph(CMR_SEYMOUR_NODE* node)
+    CMR_GRAPH_EDGE* CMRseymourGraphForest(CMR_SEYMOUR_NODE* node)
+    size_t CMRseymourGraphSizeForest(CMR_SEYMOUR_NODE* node)
+    CMR_GRAPH_EDGE* CMRseymourGraphCoforest(CMR_SEYMOUR_NODE* node)
+    size_t CMRseymourGraphSizeCoforest(CMR_SEYMOUR_NODE* node)
+    bool* CMRseymourGraphArcsReversed(CMR_SEYMOUR_NODE* node)
+    CMR_GRAPH* CMRseymourCograph(CMR_SEYMOUR_NODE* node)
+    size_t CMRseymourCographSizeForest(CMR_SEYMOUR_NODE* node)
+    CMR_GRAPH_EDGE* CMRseymourCographForest(CMR_SEYMOUR_NODE* node)
+    size_t CMRseymourCographSizeCoforest(CMR_SEYMOUR_NODE* node)
+    CMR_GRAPH_EDGE* CMRseymourCographCoforest(CMR_SEYMOUR_NODE* node)
+    bool* CMRseymourCographArcsReversed(CMR_SEYMOUR_NODE* node)
+    size_t CMRseymourNumPivots(CMR_SEYMOUR_NODE* node)
+    size_t* CMRseymourPivotRows(CMR_SEYMOUR_NODE* node)
+    size_t* CMRseymourPivotColumns(CMR_SEYMOUR_NODE* node)
+    size_t CMRseymourGetUsed(CMR_SEYMOUR_NODE* node)
+    # CMR_ERROR CMRseymourPrint(CMR* cmr, CMR_SEYMOUR_NODE* node, FILE* stream, bool printChildren, bool printParentElements, bool printMatrices, bool printGraphs, bool printReductions, bool printPivots)
+    CMR_ERROR CMRseymourCapture(CMR* cmr, CMR_SEYMOUR_NODE* node)
+    CMR_ERROR CMRseymourRelease(CMR* cmr, CMR_SEYMOUR_NODE** pnode)
+    CMR_ERROR CMRseymourCreate(CMR* cmr, CMR_SEYMOUR_NODE** pnode, bool isTernary, CMR_CHRMAT* matrix)
+    CMR_ERROR CMRseymourCloneUnknown(CMR* cmr, CMR_SEYMOUR_NODE* node, CMR_SEYMOUR_NODE** pclone)
+    CMR_ERROR CMRseymourCloneSubtrees(CMR* cmr, size_t numSubtrees, CMR_SEYMOUR_NODE** subtreeRoots,CMR_SEYMOUR_NODE** clonedSubtrees)
+
+
+cdef extern from "cmr/regular.h":
+
+    ctypedef struct CMR_REGULAR_PARAMS:
+        CMR_SEYMOUR_PARAMS seymour
+
+    CMR_ERROR CMRregularParamsInit(CMR_REGULAR_PARAMS* params)
+
+    ctypedef struct CMR_REGULAR_STATS:
+        CMR_SEYMOUR_STATS seymour
+
     CMR_ERROR CMRregularStatsInit(CMR_REGULAR_STATS* stats)
     # CMR_ERROR CMRstatsRegularPrint(FILE* stream, CMR_REGULAR_STATS* stats, const char* prefix)
-    CMR_ERROR CMRregularTest(CMR* cmr, CMR_CHRMAT* matrix, bint *pisRegular, CMR_MATROID_DEC** pdec, CMR_MINOR** pminor, CMR_REGULAR_PARAMS* params, CMR_REGULAR_STATS* stats, double timeLimit)
-    CMR_ERROR CMRregularCompleteDecomposition(CMR* cmr, CMR_MATROID_DEC* dec, CMR_REGULAR_PARAMS* params, CMR_REGULAR_STATS* stats, double timeLimit)
+    CMR_ERROR CMRregularTest(CMR* cmr, CMR_CHRMAT* matrix, bint *pisRegular, CMR_SEYMOUR_NODE** pnode, CMR_MINOR** pminor, CMR_REGULAR_PARAMS* params, CMR_REGULAR_STATS* stats, double timeLimit)
+    CMR_ERROR CMRregularCompleteDecomposition(CMR* cmr, CMR_SEYMOUR_NODE* node, CMR_REGULAR_PARAMS* params, CMR_REGULAR_STATS* stats, double timeLimit)
+    CMR_ERROR CMRregularRefineDecomposition(CMR* cmr, size_t numNodes, CMR_SEYMOUR_NODE** nodes, CMR_REGULAR_PARAMS* params, CMR_REGULAR_STATS* stats, double timeLimit)
 
 
 cdef extern from "cmr/tu.h":
@@ -422,13 +442,15 @@ cdef extern from "cmr/tu.h":
 
     ctypedef struct CMR_TU_PARAMS:
         CMR_TU_ALGORITHM algorithm
-        bool directCamion
-        CMR_REGULAR_PARAMS regular
+        CMR_SEYMOUR_PARAMS seymour
+        bool ternary
+        bool camionFirst
 
     CMR_ERROR CMRtuParamsInit(CMR_TU_PARAMS* params)
 
     ctypedef struct CMR_TU_STATS:
-        CMR_REGULAR_STATS decomposition
+        CMR_SEYMOUR_STATS seymour
+        CMR_CAMION_STATISTICS camion
 
         uint32_t enumerationRowSubsets
         uint32_t enumerationColumnSubsets
@@ -440,8 +462,8 @@ cdef extern from "cmr/tu.h":
 
     CMR_ERROR CMRtuStatsInit(CMR_TU_STATS* stats)
     # CMR_ERROR CMRtuStatsPrint(FILE* stream, CMR_TU_STATS* stats, const char* prefix)
-    CMR_ERROR CMRtuTest(CMR* cmr, CMR_CHRMAT* matrix, bool* pisTotallyUnimodular, CMR_MATROID_DEC** pdec, CMR_SUBMAT** psubmatrix, CMR_TU_PARAMS* params, CMR_TU_STATS* stats, double timeLimit)
-    CMR_ERROR CMRtuCompleteDecomposition(CMR* cmr, CMR_MATROID_DEC* dec, CMR_TU_PARAMS* params, CMR_TU_STATS* stats, double timeLimit)
+    CMR_ERROR CMRtuTest(CMR* cmr, CMR_CHRMAT* matrix, bool* pisTotallyUnimodular, CMR_SEYMOUR_NODE** proot, CMR_SUBMAT** psubmatrix, CMR_TU_PARAMS* params, CMR_TU_STATS* stats, double timeLimit)
+    CMR_ERROR CMRtuCompleteDecomposition(CMR* cmr, CMR_SEYMOUR_NODE* node, CMR_TU_PARAMS* params, CMR_TU_STATS* stats, double timeLimit)
 
 
 cdef extern from "cmr/equimodular.h":
