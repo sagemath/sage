@@ -106,11 +106,11 @@ class BGGDualModule(CombinatorialFreeModule):
 
             sage: g = LieAlgebra(QQ, cartan_type=['B', 2])
             sage: La = g.cartan_type().root_system().weight_space().fundamental_weights()
-            sage: M = g.verma_module(2*La[1]+La[2])
+            sage: M = g.verma_module(2*La[1] + La[2])
             sage: Mc = M.dual()
             sage: TestSuite(Mc).run()
 
-            sage: M = g.verma_module(2/3*La[1]-3/5*La[2])
+            sage: M = g.verma_module(2/3*La[1] - 3/5*La[2])
             sage: Mc = M.dual()
             sage: TestSuite(Mc).run()
         """
@@ -449,7 +449,7 @@ class SimpleModuleIndices(IndexedFreeAbelianMonoid):
 
             sage: g = LieAlgebra(QQ, cartan_type=['E', 6])
             sage: La = g.cartan_type().root_system().weight_lattice().fundamental_weights()
-            sage: L = g.simple_module(La[1]+La[3])
+            sage: L = g.simple_module(La[1] + La[3])
             sage: from sage.algebras.lie_algebras.bgg_dual_module import SimpleModuleIndices
             sage: SimpleModuleIndices(L) is L._indices
             True
@@ -464,10 +464,10 @@ class SimpleModuleIndices(IndexedFreeAbelianMonoid):
 
             sage: g = LieAlgebra(QQ, cartan_type=['A', 2])
             sage: La = g.cartan_type().root_system().weight_space().fundamental_weights()
-            sage: I = g.simple_module(2*La[1]+La[2]).indices()
+            sage: I = g.simple_module(2*La[1] + La[2]).indices()
             sage: TestSuite(I).run()
 
-            sage: I = g.simple_module(2*La[1]-1/3*La[2]).indices()
+            sage: I = g.simple_module(2*La[1] - 1/3*La[2]).indices()
             sage: TestSuite(I).run(max_runs=150)  # long time
         """
         self._simple = simple
@@ -509,7 +509,7 @@ class SimpleModuleIndices(IndexedFreeAbelianMonoid):
 
             sage: g = LieAlgebra(QQ, cartan_type=['E', 6])
             sage: La = g.cartan_type().root_system().weight_lattice().fundamental_weights()
-            sage: I = g.simple_module(2*La[1]+La[2]).indices()
+            sage: I = g.simple_module(2*La[1] + La[2]).indices()
             sage: I._an_element_()
             1
         """
@@ -679,7 +679,7 @@ class SimpleModuleIndices(IndexedFreeAbelianMonoid):
         .. TODO::
 
             Avoid unnecessary computations by using the corresponding
-            (combinastorial) crystal.
+            (combinatorial) crystal.
 
         EXAMPLES::
 
@@ -800,11 +800,11 @@ class SimpleModule(ModulePrinting, CombinatorialFreeModule):
 
             sage: g = LieAlgebra(QQ, cartan_type=['E', 6])
             sage: La = g.cartan_type().root_system().weight_space().fundamental_weights()
-            sage: type(g.simple_module(La[1]+La[2]))
+            sage: type(g.simple_module(La[1] + La[2]))
             <class 'sage.algebras.lie_algebras.bgg_dual_module.FiniteDimensionalSimpleModule_with_category'>
-            sage: type(g.simple_module(La[1]-La[2]))
+            sage: type(g.simple_module(La[1] - La[2]))
             <class 'sage.algebras.lie_algebras.bgg_dual_module.SimpleModule_with_category'>
-            sage: type(g.simple_module(La[1]+3/2*La[2]))
+            sage: type(g.simple_module(La[1] + 3/2*La[2]))
             <class 'sage.algebras.lie_algebras.bgg_dual_module.SimpleModule_with_category'>
         """
         if weight.is_dominant_weight():
@@ -819,12 +819,12 @@ class SimpleModule(ModulePrinting, CombinatorialFreeModule):
 
             sage: g = LieAlgebra(QQ, cartan_type=['G', 2])
             sage: La = g.cartan_type().root_system().weight_lattice().fundamental_weights()
-            sage: L = g.simple_module(La[1]+La[2])
+            sage: L = g.simple_module(La[1] + La[2])
             sage: TestSuite(L).run()
 
             sage: g = LieAlgebra(QQ, cartan_type=['A', 2])
             sage: La = g.cartan_type().root_system().weight_lattice().fundamental_weights()
-            sage: L = g.simple_module(La[1]-La[2])
+            sage: L = g.simple_module(La[1] - La[2])
             sage: TestSuite(L).run()
         """
         self._g = g
@@ -988,7 +988,7 @@ class SimpleModule(ModulePrinting, CombinatorialFreeModule):
 
             sage: g = LieAlgebra(QQ, cartan_type=['B', 4])
             sage: La = g.cartan_type().root_system().weight_lattice().fundamental_weights()
-            sage: L = g.simple_module(2*La[1]+3*La[4])
+            sage: L = g.simple_module(2*La[1] + 3*La[4])
             sage: L.dual() is L
             True
         """
@@ -1064,7 +1064,7 @@ class SimpleModule(ModulePrinting, CombinatorialFreeModule):
             sage: g = LieAlgebra(QQ, cartan_type=['A', 2])
             sage: P = g.cartan_type().root_system().weight_lattice()
             sage: La = P.fundamental_weights()
-            sage: la = La[1]+La[2]
+            sage: la = La[1] + La[2]
             sage: L = g.simple_module(la)
             sage: from itertools import product
             sage: al = P.simple_roots()
@@ -1118,7 +1118,7 @@ class SimpleModule(ModulePrinting, CombinatorialFreeModule):
 
                 sage: g = LieAlgebra(QQ, cartan_type=['A', 2])
                 sage: La = g.cartan_type().root_system().weight_lattice().fundamental_weights()
-                sage: L = g.simple_module(La[1]+La[2])
+                sage: L = g.simple_module(La[1] + La[2])
                 sage: v = L.highest_weight_vector(); v
                 u[Lambda[1] + Lambda[2]]
                 sage: f1, f2 = g.pbw_basis().f()
@@ -1165,7 +1165,7 @@ class FiniteDimensionalSimpleModule(SimpleModule):
 
             sage: g = LieAlgebra(QQ, cartan_type=['A', 2])
             sage: La = g.cartan_type().root_system().weight_lattice().fundamental_weights()
-            sage: L = g.simple_module(La[1]+La[2])
+            sage: L = g.simple_module(La[1] + La[2])
             sage: L.bgg_resolution()
             BGG resolution of Simple module with highest weight Lambda[1] + Lambda[2]
              of Lie algebra of ['A', 2] in the Chevalley basis

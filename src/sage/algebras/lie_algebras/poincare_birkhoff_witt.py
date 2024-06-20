@@ -657,7 +657,7 @@ class PoincareBirkhoffWittBasisSemisimpleLieAlgebra(PoincareBirkhoffWittBasis):
             sage: PBW = L.pbw_basis()
             sage: E, F, H = PBW.algebra_generators()
             sage: TestSuite(PBW).run(elements=[E, F, H])
-            sage: TestSuite(PBW).run(elements=[E, F, H, E*F + H]) # long time
+            sage: TestSuite(PBW).run(elements=[E, F, H, E*F + H])  # long time
         """
         super().__init__(g, basis_key, *args, **kwds)
         if self._basis_key == self._g._triangular_key:
@@ -801,5 +801,14 @@ class PoincareBirkhoffWittBasisSemisimpleLieAlgebra(PoincareBirkhoffWittBasis):
             EXAMPLES::
 
                 sage: g = LieAlgebra(QQ, cartan_type=['D', 4])
+                sage: U = g.pbw_basis()
+                sage: e = U.e()
+                sage: f = U.f()
+                sage: elts = [e[1], e[1]*e[2], e[3]+e[4], e[1]*e[3]*e[4] + e[2],
+                ....:         f[1], f[1]*f[2], f[3]+f[4], e[1]*e[3]*e[4] + e[2],
+                ....:         e[1]*f[1], f[1]*e[1], (e[2]*f[2] - f[2]*e[2])^2]
+                sage: all((b*bp).transpose() == bp.transpose() * b.transpose()
+                ....:     for b in elts for bp in elts)
+                True
             """
             return self.parent().transpose(self)

@@ -422,7 +422,7 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
                 The transpose `\tau` is the map that sends the root basis
                 elements `e_{\alpha} \leftrightarrow e_{-\alpha}` and fixes
                 the Cartan subalgebra `h_{\alpha}`. It is an anti-involution
-                in the sense `[\tau(a), \tau(b)] = \tau([a, b])`.
+                in the sense `[\tau(a), \tau(b)] = \tau([b, a])`.
 
                 EXAMPLES::
 

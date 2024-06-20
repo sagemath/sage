@@ -530,7 +530,7 @@ class WeightSpaceElement(CombinatorialFreeModule.Element):
             sage: w.is_dominant()
             False
 
-        In the extended affine weight lattice, 'delta' is orthogonal to
+        In the extended affine weight lattice, ``'delta'`` is orthogonal to
         the positive coroots, so adding or subtracting it should not
         affect dominance::
 
@@ -563,7 +563,7 @@ class WeightSpaceElement(CombinatorialFreeModule.Element):
             sage: w.is_dominant_weight()
             False
 
-        In the extended affine weight lattice, 'delta' is orthogonal to
+        In the extended affine weight lattice, ``'delta'`` is orthogonal to
         the positive coroots, so adding or subtracting it should not
         affect dominance::
 

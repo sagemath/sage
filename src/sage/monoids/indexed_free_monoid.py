@@ -291,7 +291,7 @@ class IndexedMonoidElement(MonoidElement):
         try:
             return sorted(supp, key=print_options['sorting_key'],
                           reverse=print_options['sorting_reverse'])
-        except Exception: # Sorting the output is a plus, but if we can't, no big deal
+        except Exception:  # Sorting the output is a plus, but if we can't, no big deal
             return list(supp)
 
     def leading_support(self):
@@ -527,7 +527,7 @@ class IndexedFreeAbelianMonoidElement(IndexedMonoidElement):
         try:
             v.sort(key=print_options['sorting_key'],
                    reverse=print_options['sorting_reverse'])
-        except Exception: # Sorting the output is a plus, but if we can't, no big deal
+        except Exception:  # Sorting the output is a plus, but if we can't, no big deal
             pass
         return v
 
@@ -967,7 +967,7 @@ class IndexedFreeAbelianMonoid(IndexedMonoid):
     .. TODO::
 
         Implement a subclass when the index sets is finite that utilizes
-        vectors or the polydict monomials with the index order is fixed.
+        vectors or the polydict monomials with the index order fixed.
     """
     def _repr_(self):
         """

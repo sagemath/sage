@@ -48,7 +48,7 @@ class BGGResolution(UniqueRepresentation, ChainComplex_class):
 
         sage: g = LieAlgebra(QQ, cartan_type=['A', 2])
         sage: La = g.cartan_type().root_system().weight_lattice().fundamental_weights()
-        sage: L = g.simple_module(La[1]+4*La[2])
+        sage: L = g.simple_module(La[1] + 4*La[2])
         sage: res = L.bgg_resolution()
         sage: ascii_art(res)
                                 [ 1 -1]       [1]
@@ -57,7 +57,7 @@ class BGGResolution(UniqueRepresentation, ChainComplex_class):
 
         sage: g = LieAlgebra(QQ, cartan_type=['D', 4])
         sage: La = g.cartan_type().root_system().weight_lattice().fundamental_weights()
-        sage: L = g.simple_module(La[1]+La[2]+3*La[3])
+        sage: L = g.simple_module(La[1] + La[2] + 3*La[3])
         sage: res = L.bgg_resolution()
         sage: w0 = WeylGroup(g.cartan_type(), prefix='s').long_element()
         sage: all(res.differential(i) * res.differential(i+1) == 0
@@ -72,7 +72,7 @@ class BGGResolution(UniqueRepresentation, ChainComplex_class):
 
             sage: g = LieAlgebra(QQ, cartan_type=['B', 2])
             sage: La = g.cartan_type().root_system().weight_lattice().fundamental_weights()
-            sage: L = g.simple_module(La[1]+La[2])
+            sage: L = g.simple_module(La[1] + La[2])
             sage: res = L.bgg_resolution()
             sage: TestSuite(res).run()
         """
@@ -113,7 +113,7 @@ class BGGResolution(UniqueRepresentation, ChainComplex_class):
 
             sage: g = LieAlgebra(QQ, cartan_type=['C', 2])
             sage: La = g.cartan_type().root_system().weight_lattice().fundamental_weights()
-            sage: L = g.simple_module(La[1]+La[2])
+            sage: L = g.simple_module(La[1] + La[2])
             sage: res = L.bgg_resolution()
             sage: res.simple_module() is L
             True

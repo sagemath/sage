@@ -3922,8 +3922,8 @@ class RootLatticeRealizations(Category_over_base_ring):
 
                 \langle \lambda + \rho, \alpha^{\vee} \rangle \notin \ZZ_{<0}
 
-            for all positive roots `\alpha`. Note that this does *not*
-            imply that `\langle \lambda + \rho, \alpha^{\vee} \rangle \geq 0`
+            for all positive roots `\alpha`. Note that begin Verma dominant does
+            *not* imply that `\langle \lambda+\rho, \alpha^{\vee} \rangle \geq 0`
             for any positive root `\alpha`. This is used to determine if
             a Verma module is simple or projective.
 
