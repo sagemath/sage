@@ -594,7 +594,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         TESTS::
 
-            sage: ProjectiveSpace(11, Zp(5), 'y')._latex_()                              # needs sage.rings.padics
+            sage: ProjectiveSpace(11, Zp(5), 'y')._latex_()                             # needs sage.rings.padics
             '{\\mathbf P}_{\\Bold{Z}_{5}}^{11}'
         """
         return "{\\mathbf P}_{%s}^{%s}" % (latex(self.base_ring()), self.dimension_relative())

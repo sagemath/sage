@@ -336,7 +336,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         TESTS::
 
-            sage: AffineSpace(11, Zp(5), 'y')._latex_()                                  # needs sage.rings.padics
+            sage: AffineSpace(11, Zp(5), 'y')._latex_()                                 # needs sage.rings.padics
             '\\mathbf{A}_{\\Bold{Z}_{5}}^{11}'
         """
         return "\\mathbf{A}_{%s}^{%s}" % (latex(self.base_ring()), self.dimension_relative())
