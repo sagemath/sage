@@ -14,6 +14,7 @@ import operator
 from sage.categories.category_with_axiom import CategoryWithAxiom, CategoryWithAxiom_over_base_ring
 from sage.categories.fields import Fields
 from sage.categories.homsets import HomsetsCategory
+from sage.categories.subobjects import SubobjectsCategory
 from sage.categories.tensor import TensorProductsCategory
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
@@ -1049,6 +1050,41 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                         3
                     """
                     return self.matrix().trace
+
+    class Subobjects(SubobjectsCategory):
+        """
+        A category for submodules of finite dimensional modules with basis.
+
+        EXAMPLES::
+
+            sage: ModulesWithBasis(ZZ).FiniteDimensional().Subobjects()
+            Category of subobjects of finite dimensional modules with basis over Integer Ring
+            sage: ModulesWithBasis(ZZ).FiniteDimensional().Subobjects().all_super_categories()
+            [Category of subobjects of finite dimensional modules with basis over Integer Ring,
+            Category of subobjects of modules with basis over Integer Ring,
+            Category of finite dimensional modules with basis over Integer Ring,
+            Category of modules with basis over Integer Ring,
+            Category of finite dimensional modules over Integer Ring,
+            Category of modules over Integer Ring,
+            Category of bimodules over Integer Ring on the left and Integer Ring on the right,
+            Category of right modules over Integer Ring,
+            Category of left modules over Integer Ring,
+            Category of commutative additive groups,
+            Category of additive groups,
+            Category of additive inverse additive unital additive magmas,
+            Category of commutative additive monoids,
+            Category of additive monoids,
+            Category of additive unital additive magmas,
+            Category of commutative additive semigroups,
+            Category of additive commutative additive magmas,
+            Category of additive semigroups,
+            Category of additive magmas,
+            Category of subobjects of sets,
+            Category of subquotients of sets,
+            Category of sets,
+            Category of sets with partial maps,
+            Category of objects]
+        """
 
     class TensorProducts(TensorProductsCategory):
 

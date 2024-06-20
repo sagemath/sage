@@ -30,6 +30,7 @@ from sage.categories.fields import Fields
 from sage.categories.modules import Modules
 from sage.categories.poor_man_map import PoorManMap
 from sage.categories.map import Map
+from sage.categories.subobjects import SubobjectsCategory
 from sage.structure.element import Element, parent
 
 
@@ -2429,6 +2430,38 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 2*B[3]
             """
             return self(self.domain().monomial(i))
+
+    class Subobjects(SubobjectsCategory):
+        """
+        A category for submodules of modules with basis.
+
+        EXAMPLES::
+
+            sage: ModulesWithBasis(ZZ).Subobjects()
+            Category of subobjects of modules with basis over Integer Ring
+            sage: ModulesWithBasis(ZZ).Subobjects().all_super_categories()
+            [Category of subobjects of modules with basis over Integer Ring,
+             Category of modules with basis over Integer Ring,
+             Category of modules over Integer Ring,
+             Category of bimodules over Integer Ring on the left and Integer Ring on the right,
+             Category of right modules over Integer Ring,
+             Category of left modules over Integer Ring,
+             Category of commutative additive groups,
+             Category of additive groups,
+             Category of additive inverse additive unital additive magmas,
+             Category of commutative additive monoids,
+             Category of additive monoids,
+             Category of additive unital additive magmas,
+             Category of commutative additive semigroups,
+             Category of additive commutative additive magmas,
+             Category of additive semigroups,
+             Category of additive magmas,
+             Category of subobjects of sets,
+             Category of subquotients of sets,
+             Category of sets,
+             Category of sets with partial maps,
+             Category of objects]
+        """
 
     class CartesianProducts(CartesianProductsCategory):
         """
