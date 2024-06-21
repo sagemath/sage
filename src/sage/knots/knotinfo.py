@@ -203,7 +203,7 @@ in the KnotInfo database::
     ....:           [17,19,8,18], [9,10,11,14], [10,12,13,11],
     ....:           [12,19,15,13], [20,16,14,15], [16,20,17,2]])
     sage: L.get_knotinfo()
-    (<KnotInfo.K0_1: '0_1'>, <SymmetryMutant.itself: 's'>)
+    KnotInfo['K0_1']
 
 
 REFERENCES:
@@ -280,6 +280,7 @@ def eval_knotinfo(string, locals={}, to_tuple=True):
     new_string = new_string.replace(';', ',')
     return sage_eval(new_string, locals=locals)
 
+
 def knotinfo_int(string):
     r"""
     Preparse a string from the KnotInfo database representing an integer.
@@ -304,6 +305,7 @@ def knotinfo_int(string):
         raise NotImplementedError('this integer is not provided by the database')
     else:
         return int(string)
+
 
 def knotinfo_bool(string):
     r"""
@@ -349,9 +351,9 @@ class SymmetryMutant(Enum):
     """
     itself = 's'
     reverse = 'r'
-    concordance_inverse = 'mr'
+    concordance_inverse = 'c'
     mirror_image = 'm'
-    mixed = 'x' # to be used in connection with KnotInfoSeries
+    mixed = 'x'  # to be used in connection with KnotInfoSeries
     unknown = '?'
 
     def __gt__(self, other):
@@ -365,13 +367,102 @@ class SymmetryMutant(Enum):
             [<SymmetryMutant.mixed: 'x'>,
             <SymmetryMutant.itself: 's'>,
             <SymmetryMutant.reverse: 'r'>,
-            <SymmetryMutant.concordance_inverse: 'mr'>,
             <SymmetryMutant.mirror_image: 'm'>,
+            <SymmetryMutant.concordance_inverse: 'c'>,
             <SymmetryMutant.unknown: '?'>]
         """
         # We use the reversal of the alphabetical order of the values so that
         # `itself` occurs before the mirrored cases
         return self.value < other.value
+
+    def rev(self):
+        r"""
+        Return the reverse of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.knots.knotinfo import SymmetryMutant
+            sage: all( sym.rev().rev() == sym for sym in SymmetryMutant)
+            True
+        """
+        if self is SymmetryMutant.itself:
+            return SymmetryMutant.reverse
+        elif self is SymmetryMutant.reverse:
+            return SymmetryMutant.itself
+        elif self is SymmetryMutant.mirror_image:
+            return SymmetryMutant.concordance_inverse
+        elif self is SymmetryMutant.concordance_inverse:
+            return SymmetryMutant.mirror_image
+        return self
+
+    def mir(self):
+        r"""
+        Return the mirror image of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.knots.knotinfo import SymmetryMutant
+            sage: all( sym.mir().mir() == sym for sym in SymmetryMutant)
+            True
+        """
+        if self is SymmetryMutant.itself:
+            return SymmetryMutant.mirror_image
+        elif self is SymmetryMutant.reverse:
+            return SymmetryMutant.concordance_inverse
+        elif self is SymmetryMutant.mirror_image:
+            return SymmetryMutant.itself
+        elif self is SymmetryMutant.concordance_inverse:
+            return SymmetryMutant.reverse
+        return self
+
+    def matches(self, link):
+        r"""
+        Return the list of other symmetry mutants that give isotopic links
+        with respect to ``link`` and ``self``. For ``self`` is
+        ``SymmetryMutant.unknown`` a boolean is returned which is ``True``
+        if the chirality of ``link`` is unknown.
+
+        EXAMPLES::
+
+            sage: from sage.knots.knotinfo import SymmetryMutant
+            sage: SymmetryMutant.itself.matches(KnotInfo.K6_1)
+            [<SymmetryMutant.reverse: 'r'>]
+            sage: SymmetryMutant.mirror_image.matches(KnotInfo.K6_1)
+            [<SymmetryMutant.concordance_inverse: 'c'>]
+        """
+        rev = link.is_reversible()
+        achp = link.is_amphicheiral(positive=True)
+        ach = link.is_amphicheiral()
+        if self is SymmetryMutant.unknown:
+            if rev is None or ach is None or achp is None:
+                return True
+            else:
+                return False
+        res = []
+        if rev:
+            res.append(self.rev())
+        if achp:
+            res.append(self.mir())
+        if ach:
+            res.append(self.rev().mir())
+        return res
+
+    def is_minimal(self, link):
+        r"""
+        Return whether ``self`` is minimal among its matching mutants.
+
+        EXAMPLES::
+
+            sage: from sage.knots.knotinfo import SymmetryMutant
+            sage: SymmetryMutant.itself.is_minimal(KnotInfo.K6_1)
+            True
+            sage: SymmetryMutant.concordance_inverse.is_minimal(KnotInfo.K6_1)
+            False
+        """
+        if self in [SymmetryMutant.unknown, SymmetryMutant.mixed]:
+            return False
+        matches = self.matches(link)
+        return all(self < other for other in matches)
 
 
 # ---------------------------------------------------------------------------------
@@ -530,7 +621,7 @@ class KnotInfoBase(Enum):
             sage: L._homfly_pol_ring('u', 'v')
             Multivariate Laurent Polynomial Ring in u, v over Integer Ring
         """
-        K3_1 = Knots().from_table(3,1)
+        K3_1 = Knots().from_table(3, 1)
         return K3_1.homfly_polynomial(var1=var1, var2=var2).parent()
 
     @cached_method
@@ -871,7 +962,7 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: KnotInfo.K5_2.three_genus()     # optional - databsase_knotinfo
+            sage: KnotInfo.K5_2.three_genus()     # optional - database_knotinfo
             1
 
         Note that this differs from the corresponding result in Sage
@@ -899,8 +990,8 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: KnotInfo.K5_2.signature()       # optional - databsase_knotinfo
-            1
+            sage: KnotInfo.K5_2.signature()       # optional - database_knotinfo
+            -2
         """
         return knotinfo_int(self[self.items.signature])
 
@@ -970,7 +1061,7 @@ class KnotInfoBase(Enum):
         if not self.is_knot():
             raise NotImplementedError('this is only available for knots')
 
-        symmetry_type = self[self.items.symmetry_type].strip() # for example K10_88 is a case with trailing whitespaces
+        symmetry_type = self[self.items.symmetry_type].strip()  # for example K10_88 is a case with trailing whitespaces
         if not symmetry_type and self.crossing_number() == 0:
             return 'fully amphicheiral'
         return symmetry_type
@@ -1322,7 +1413,7 @@ class KnotInfoBase(Enum):
                 homfly_polynomial = homfly_polynomial.strip('}')
 
         L, M = R.gens()
-        lc = {'v': L, 'z':M}
+        lc = {'v': L, 'z': M}
         return eval_knotinfo(homfly_polynomial, locals=lc)
 
     @cached_method
@@ -2195,9 +2286,13 @@ class KnotInfoBase(Enum):
                     return m is SymmetryMutant.itself
 
             try:
-                L, m = l.get_knotinfo()
+                ki = l.get_knotinfo()
+                if type(ki) == tuple:
+                    L, m = ki
+                else:
+                    L, m = l.get_knotinfo().to_knotinfo()[0]
                 if isinstance(L, KnotInfoBase):
-                    return check_result(L,m)
+                    return check_result(L, m)
                 elif unique:
                     return False
             except NotImplementedError:
@@ -2526,7 +2621,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
         l = []
         cr = self._crossing_number
         if cr > 0:
-            LS = type(self)(cr - 1, self._is_knot, self._is_alternating, self._name_unoriented )
+            LS = type(self)(cr - 1, self._is_knot, self._is_alternating, self._name_unoriented)
             l = LS.lower_list(oriented=oriented, comp=comp, det=det, homfly=homfly)
         return l + self.list(oriented=oriented, comp=comp, det=det, homfly=homfly)
 
