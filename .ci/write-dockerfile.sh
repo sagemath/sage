@@ -77,7 +77,7 @@ case $SYSTEM in
             *)
                 #
                 # The Ubuntu Docker images are "minimized", meaning that some large
-                # bits such AS documentation has been removed. We have to unminimize
+                # bits such as documentation has been removed. We have to unminimize
                 # once (which reinstalls the full versions of some minimized packages),
                 # or e.g. the maxima documentation (which we depend on for correct operation)
                 # will be missing.

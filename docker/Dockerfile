@@ -93,13 +93,13 @@ RUN apt-get -qq update \
     && apt-get -qq install -y --no-install-recommends gfortran gcc g++ libstdc++-10-dev sudo openssl \
     && apt-get -qq clean \
     && rm -r /var/lib/apt/lists/*
-# Sage refuses to build AS root, so we add a "sage" user that can sudo without a password.
-# We also want this user at runtime AS some commands in sage know about the user that was used during build.
+# Sage refuses to build as root, so we add a "sage" user that can sudo without a password.
+# We also want this user at runtime as some commands in sage know about the user that was used during build.
 ARG HOME=/home/sage
 RUN adduser --quiet --shell /bin/bash --gecos "Sage user,101,," --disabled-password --home "$HOME" sage \
     && echo "sage ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/01-sage \
     && chmod 0440 /etc/sudoers.d/01-sage
-# Run everything from now on AS the sage user in sage's home
+# Run everything from now on as the sage user in sage's home
 USER sage
 ENV HOME $HOME
 WORKDIR $HOME
@@ -283,7 +283,7 @@ ARG SAGE_ROOT=/home/sage/sage
 # ARTIFACT_BASE to the image size. As of mid 2018 this is notably the case with
 # the docker instances provided by setup_remote_docker on CircleCI. As a
 # result, the sagemath-dev images that are "build-from-latest" are twice AS big
-# AS the ones that are build on GitLab:
+# as the ones that are build on GitLab:
 # https://github.com/moby/moby/issues/6119#issuecomment-268870519
 COPY --chown=sage:sage --from=sagemath-dev-patch $SAGE_ROOT $SAGE_ROOT
 ARG ARTIFACT_BASE=source-clean
