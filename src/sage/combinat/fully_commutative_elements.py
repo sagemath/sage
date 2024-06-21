@@ -387,7 +387,7 @@ class FullyCommutativeElement(NormalizedClonableList):
         - ``side`` -- string (default: ``'left'``); if set to 'right', determine
           if ``self`` has ``s`` as a right descent
 
-        OUTPUT: a boolean value
+        OUTPUT: boolean
 
         EXAMPLES::
 

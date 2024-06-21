@@ -88,12 +88,10 @@ class Lseries_complex(Lseries):
 
         - ``s`` -- complex number
 
-        - ``prec`` -- integer (default: 53) the number of bits of precision
-          used in computing the lseries of the newforms.
+        - ``prec`` -- integer (default: 53); the number of bits of precision
+          used in computing the lseries of the newforms
 
-        OUTPUT:
-
-        a complex number L(A, s).
+        OUTPUT: a complex number L(A, s)
 
         EXAMPLES::
 
@@ -122,7 +120,6 @@ class Lseries_complex(Lseries):
             sage: L = JH(17,[2]).lseries()
             sage: L(1)                                                                  # needs sage.symbolic
             0.386769938387780
-
         """
         abelian_variety = self.abelian_variety()
         # Check for easy dimension zero case
@@ -205,7 +202,7 @@ class Lseries_complex(Lseries):
 
     def vanishes_at_1(self):
         """
-        Return True if `L(1)=0` and return False otherwise.
+        Return ``True`` if `L(1)=0` and return ``False`` otherwise.
 
         OUTPUT: boolean
 

@@ -334,7 +334,7 @@ cdef class Matrix_numpy_dense(Matrix_dense):
 
         INPUT:
 
-        - ``tol`` --  the largest value of the absolute value of the
+        - ``tol`` -- the largest value of the absolute value of the
           difference between two matrix entries for which they will
           still be considered equal.
 

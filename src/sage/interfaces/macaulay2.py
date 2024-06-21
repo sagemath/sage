@@ -255,8 +255,8 @@ class Macaulay2(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        - filename: the name of the file to be loaded and executed
-          (type: string)
+        - ``filename`` -- string; the name of the file to be loaded and
+          executed
 
         OUTPUT:
 

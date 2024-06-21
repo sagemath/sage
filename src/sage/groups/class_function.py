@@ -507,7 +507,7 @@ class ClassFunction_gap(SageObject):
 
     def scalar_product(self, other):
         r"""
-        Return the scalar product of ``self`` with other.
+        Return the scalar product of ``self`` with ``other``.
 
         EXAMPLES::
 

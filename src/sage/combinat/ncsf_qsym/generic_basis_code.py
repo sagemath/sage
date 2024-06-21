@@ -1002,7 +1002,7 @@ class AlgebraMorphism(ModuleMorphismByLinearity): # Find a better name
         - ``codomain`` -- the codomain
         - ``position`` -- integer (default: 0)
         - ``category`` -- a category (default: ``None``)
-        - ``anti`` -- boolean (default: False)
+        - ``anti`` -- boolean (default: ``False``)
 
         OUTPUT: module morphism
 

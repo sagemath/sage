@@ -368,9 +368,9 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         - ``minus_one`` -- ignored.  Only for compatibility with
           generic matrices.
 
-        - ``unicode`` -- boolean (default: ``False``).
-          Whether to use Unicode symbols instead of ASCII symbols
-          for brackets and subdivision lines.
+        - ``unicode`` -- boolean (default: ``False``);
+          whether to use Unicode symbols instead of ASCII symbols
+          for brackets and subdivision lines
 
         - ``shape`` -- one of ``'square'`` or ``'round'`` (default: ``None``).
           Switches between round and square brackets.
@@ -1055,7 +1055,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             - ``'pluq'`` -- uses PLUQ factorization
             - ``'classical'`` -- uses classical Gaussian elimination
 
-        - ``k`` --  the parameter 'k' of the M4RI algorithm. It MUST be between 1
+        - ``k`` -- the parameter 'k' of the M4RI algorithm. It MUST be between 1
           and 16 (inclusive). If it is not specified it will be calculated as
           3/4 * log_2( min(nrows, ncols) ) as suggested in the M4RI paper.
         - ``reduced`` -- return reduced row echelon form (default: ``True``)

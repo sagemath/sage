@@ -609,7 +609,7 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
     - ``density`` -- integer (default: 150); how big output
       image is
 
-    - ``engine`` -- string: latex engine to use
+    - ``engine`` -- string; latex engine to use
 
     - ``png`` -- boolean (default: ``False``); whether to produce a
       png file
@@ -1733,8 +1733,7 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
        ``preview`` with the 'tightpage' option
 
     - ``margin`` -- float or ``None`` (default: ``None``); adds a margin
-      of ``margin`` mm. Has no affect if the option ``tightpage`` is
-       ``False``.
+      of ``margin`` mm. Has no affect if the option ``tightpage`` is ``False``.
 
     - ``mode`` -- string (default: ``'inline'``); ``'display'`` for
       displaymath or ``'inline'`` for inline math

@@ -805,7 +805,7 @@ def _goodness(n, R, p):
 
     INPUT:
 
-    - ``n`` --  an integer
+    - ``n`` -- an integer
 
     - ``R`` -- an object in the class ``BinaryRecurrenceSequence``
 
@@ -847,7 +847,7 @@ def _next_good_prime(p, R, qq, patience, qqold):
 
     - ``patience`` -- a real number
 
-    - ``qqold`` --  a perfect power less than or equal to ``qq``
+    - ``qqold`` -- a perfect power less than or equal to ``qq``
 
     OUTPUT: a prime `\ell` such that `\ell` is 1 mod `p`, `b^2+4 c` is a
     square mod `\ell` and the period of `\ell` has ``goodness`` by ``qq`` but
@@ -1041,7 +1041,7 @@ def _estimated_time(M2, M1, length, p):
 
     - ``length`` -- list (the current length of the list of congruences mod ``M1``)
 
-    - ``p`` --  a prime
+    - ``p`` -- a prime
 
     OUTPUT: the estimated run time of the "CRT" step to combine consistent congruences
 

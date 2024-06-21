@@ -571,9 +571,9 @@ def some_tuples(elements, repeat, bound, max_samples=None):
     - ``repeat`` -- integer (default: ``None``); the length of the tuples to be returned.
       If ``None``, just returns entries from ``elements``.
     - ``bound`` -- the maximum number of tuples returned (ignored if ``max_samples`` given)
-    - ``max_samples`` -- nonnegative integer (default: ``None``).  If given,
+    - ``max_samples`` -- nonnegative integer (default: ``None``); if given,
       then a sample of the possible tuples will be returned,
-      instead of the first few in the standard order.
+      instead of the first few in the standard order
 
     OUTPUT:
 

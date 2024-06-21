@@ -205,7 +205,7 @@ class SetShuffleProduct(ShuffleProduct_abstract):
 
         - ``l1``, ``l2`` -- iterable: the sets to shuffle
 
-        - ``element_constructor`` --  constructor for the returned elements
+        - ``element_constructor`` -- constructor for the returned elements
 
         TESTS::
 

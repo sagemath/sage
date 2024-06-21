@@ -2991,11 +2991,15 @@ class CoxeterGroups(Category_singleton):
 
         def min_demazure_product_greater(self, element):
             r"""
-            Find the unique Bruhat-minimum element ``u`` such that ``v`` `\le` ``w`` * ``u`` where ``v`` is ``self``, ``w`` is ``element`` and ``*`` is the Demazure product.
+            Find the unique Bruhat-minimum element ``u`` such that ``v`` `\le`
+            ``w`` * ``u`` where ``v`` is ``self``, ``w`` is ``element`` and
+            ``*`` is the Demazure product.
 
             INPUT:
 
-            - ``element`` is either an element of the same Coxeter group as ``self`` or a list (such as a reduced word) of elements from the index set of the Coxeter group.
+            - ``element`` -- is either an element of the same Coxeter group as
+              ``self`` or a list (such as a reduced word) of elements from the
+              index set of the Coxeter group
 
             EXAMPLES::
 

@@ -178,11 +178,10 @@ class Semigroups(CategoryWithAxiom):
 
             INPUT:
 
-            - ``side`` -- "left", "right", or "twosided":
-              the side on which the generators act (default: "right")
-            - ``simple`` -- boolean (default: ``False``):
-              if ``True``, returns a simple graph (no loops, no labels,
-              no multiple edges)
+            - ``side`` -- ``'left'``, ``'right'``, or ``'twosided'``:
+              the side on which the generators act (default: ``'right'``)
+            - ``simple`` -- boolean (default: ``False``); if ``True``, returns
+              a simple graph (no loops, no labels, no multiple edges)
             - ``generators`` -- list; tuple, or family of elements
               of ``self`` (default: ``self.semigroup_generators()``)
             - ``connecting_set`` -- alias for ``generators``; deprecated

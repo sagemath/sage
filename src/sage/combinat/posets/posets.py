@@ -1911,8 +1911,8 @@ class FinitePoset(UniqueRepresentation, Parent):
             ``element_colors``
           * ``element_shape`` -- the shape of elements, like ``'s'`` for
             square; see https://matplotlib.org/api/markers_api.html for the list
-          * ``element_size`` (default: 200) - the size of elements
-          * ``label_elements`` boolean (default: ``True``); whether to display
+          * ``element_size`` -- (default: 200) the size of elements
+          * ``label_elements`` -- boolean (default: ``True``); whether to display
             element labels
           * ``element_labels`` (default: ``None``); a dictionary where keys
             are elements and values are labels to show

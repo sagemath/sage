@@ -267,7 +267,7 @@ class GroupActionOnSubmodule(Action):
 
     INPUT:
 
-    - ``MatrixGroup`` --  an instance of :class:`GroupOfIsometries`
+    - ``MatrixGroup`` -- an instance of :class:`GroupOfIsometries`
     - ``submodule`` -- an invariant submodule
     - ``is_left`` -- boolean (default: ``False``)
 
@@ -356,7 +356,7 @@ class GroupActionOnQuotientModule(Action):
 
     INPUT:
 
-    - ``MatrixGroup`` --  the group acting
+    - ``MatrixGroup`` -- the group acting
       :class:`GroupOfIsometries`
     - ``submodule`` -- an invariant quotient module
     - ``is_left`` -- boolean (default: ``False``)

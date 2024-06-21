@@ -943,7 +943,7 @@ class TopologicalManifold(ManifoldSubset):
 
         INPUT:
 
-        - ``coordinates`` --  single string composed of the coordinate symbols
+        - ``coordinates`` -- single string composed of the coordinate symbols
           separated by a space
         - ``domain`` -- (default: ``None``) string containing the name of the
           chart's domain, which must be a subset of the current manifold; if

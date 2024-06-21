@@ -1846,9 +1846,9 @@ cdef class Matrix(sage.structure.element.Matrix):
           use the value of ``minus_one`` as the representation of the
           negative of the one element.
 
-        - ``unicode`` -- boolean (default: ``False``).
-          Whether to use Unicode symbols instead of ASCII symbols
-          for brackets and subdivision lines.
+        - ``unicode`` -- boolean (default: ``False``);
+          whether to use Unicode symbols instead of ASCII symbols
+          for brackets and subdivision lines
 
         - ``shape`` -- one of ``'square'`` or ``'round'`` (default: ``None``).
           Switches between round and square brackets.
@@ -3894,7 +3894,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        - ``v`` --  a list of scalars.  The length can be less than
+        - ``v`` -- a list of scalars.  The length can be less than
           the number of rows of ``self`` but not greater.
 
         OUTPUT:
@@ -3971,7 +3971,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         INPUT:
 
-        - ``v`` --  a list of scalars.  The length can be less than
+        - ``v`` -- a list of scalars.  The length can be less than
           the number of columns of ``self`` but not greater.
 
         OUTPUT:

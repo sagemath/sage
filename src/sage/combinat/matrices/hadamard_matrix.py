@@ -2270,7 +2270,7 @@ def williamson_goethals_seidel_skew_hadamard_matrix(a, b, c, d, check=True):
     - ``b`` -- 1,-1 list; the 1st row of `B`
     - ``d`` -- 1,-1 list; the 1st row of `C`
     - ``c`` -- 1,-1 list; the 1st row of `D`
-    - ``check`` --  boolean (default: ``True``); if ``True``, check that the
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the
       resulting matrix is skew Hadamard before returning it
 
     EXAMPLES::
@@ -2313,7 +2313,7 @@ def skew_hadamard_matrix_spence_construction(n, check=True):
     INPUT:
 
     - ``n`` -- positive integer
-    - ``check`` --  boolean (default: ``True``); if ``True``, check that the
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the
       resulting matrix is Hadamard before returning it
 
     OUTPUT:

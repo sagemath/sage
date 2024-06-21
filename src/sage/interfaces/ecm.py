@@ -90,15 +90,15 @@ class ECM(SageObject):
 
         - ``c`` -- integer `n`; perform `n` runs for each input
 
-        - ``pm1`` --  boolean; perform P-1 instead of ECM
+        - ``pm1`` -- boolean; perform P-1 instead of ECM
 
-        - ``pp1`` --  boolean; perform P+1 instead of ECM
+        - ``pp1`` -- boolean; perform P+1 instead of ECM
 
         - ``q`` -- boolean; quiet mode
 
         - ``v`` -- boolean; verbose mode
 
-        - ``timestamp`` --  boolean; print a time stamp with each number
+        - ``timestamp`` -- boolean; print a time stamp with each number
 
         - ``mpzmod`` -- boolean; use GMP's mpz_mod for mod reduction
 

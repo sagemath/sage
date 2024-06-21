@@ -1298,11 +1298,9 @@ class mwrank_MordellWeil(SageObject):
         Return a list of the generating points in this Mordell-Weil
         group.
 
-        OUTPUT:
-
-        (list) A list of lists of length 3, each holding the
+        OUTPUT: list of lists of length 3, each holding the
         primitive integer coordinates `[x,y,z]` of a generating
-        point.
+        point
 
         EXAMPLES::
 

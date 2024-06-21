@@ -242,8 +242,8 @@ class LieConformalAlgebra(UniqueRepresentation, Parent):
       ``LieConformalAlgebras(R).Super()``, even if all generators
       are even.
 
-    - ``category`` The category that this Lie conformal algebra
-      belongs to.
+    - ``category`` -- the category that this Lie conformal algebra
+      belongs to
 
     In addition we accept the following keywords:
 

@@ -40,7 +40,7 @@ class Frobby:
         - ``action`` -- string telling Frobby what to do
         - ``input`` -- ``None`` or string that is passed to Frobby as standard in
         - ``options`` -- list of options without the dash in front
-        - ``verbose`` -- boolean (default: false); print detailed information
+        - ``verbose`` -- boolean (default: ``False``); print detailed information
 
         OUTPUT: string -- what Frobby wrote to the standard output stream
 

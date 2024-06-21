@@ -131,8 +131,8 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
 
         INPUT:
 
-         - self: a functor F
-         - parents: a list (or iterable) of parents.
+         - ``self`` -- a functor `F`
+         - ``parents`` -- a list (or iterable) of parents
 
         EXAMPLES::
 

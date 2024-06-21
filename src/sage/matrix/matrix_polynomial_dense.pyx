@@ -1385,7 +1385,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
           ``False`` if one does not allow zero rows in row reduced forms (resp.
           zero columns in column reduced forms)
 
-        OUTPUT: a boolean value
+        OUTPUT: boolean
 
         REFERENCES:
 

@@ -1163,7 +1163,7 @@ class ClusterAlgebraSeed(SageObject):
 
         INPUT:
 
-        - ``k`` --  an integer in ``range(self.parent().rank())``;
+        - ``k`` -- an integer in ``range(self.parent().rank())``;
           the direction in which we are mutating
 
         - ``old_g_vector`` -- tuple; the `k`-th g-vector of ``self``

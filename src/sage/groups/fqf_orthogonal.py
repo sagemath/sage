@@ -387,7 +387,7 @@ class ActionOnFqf(Action):
 
     INPUT:
 
-    - ``orthogonal_grp`` --  an instance of :class:`GroupOfIsometries`
+    - ``orthogonal_grp`` -- an instance of :class:`GroupOfIsometries`
     - ``fqf`` -- a torsion quadratic module
     - ``on_subquotient`` -- boolean (default: ``False``)
     - ``is_left`` -- boolean (default: ``False``)

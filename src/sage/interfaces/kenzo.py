@@ -450,7 +450,7 @@ class KenzoChainComplex(KenzoObject):
 
         INPUT:
 
-        - ``other`` --  The Kenzo object with which to compute the tensor product
+        - ``other`` -- The Kenzo object with which to compute the tensor product
 
         OUTPUT: a :class:`KenzoChainComplex`
 

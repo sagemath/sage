@@ -37,7 +37,7 @@ class FermionicGhostsLieConformalAlgebra(GradedLieConformalAlgebra):
 
     INPUT:
 
-    - ``R`` --  a commutative ring; the base ring of this Lie
+    - ``R`` -- a commutative ring; the base ring of this Lie
       conformal algebra
     - ``ngens`` -- an even positive Integer (default: ``2``); the
       number of non-central generators of this Lie conformal

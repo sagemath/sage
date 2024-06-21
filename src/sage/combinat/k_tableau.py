@@ -3326,7 +3326,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
         INPUT:
 
         - ``form`` -- optional argument to indicate 'inner', 'outer' or 'skew'
-          (default: : 'outer')
+          (default: 'outer')
 
         OUTPUT: a `k+1`-core or a pair of `k+1`-cores if form is not 'inner' or 'outer'
 

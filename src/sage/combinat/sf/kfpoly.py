@@ -300,7 +300,7 @@ def dom(mup, snu):
     - ``mup`` -- a partition conjugate to ``mu``
     - ``snu`` -- a sequence of positive integers
 
-    OUTPUT: a boolean value
+    OUTPUT: boolean
 
     EXAMPLES::
 

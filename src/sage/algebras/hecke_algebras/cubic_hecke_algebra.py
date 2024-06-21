@@ -320,10 +320,10 @@ class CubicHeckeElement(CombinatorialFreeModule.Element):
           this can be obtained by the attribute :attr:`CubicHeckeAlgebra.repr_type`
           of ``self``; the following values are possible:
 
-          - ``RegularLeft`` --  (regular left repr. from the above URL)
-          - ``RegularRight`` --  (regular right repr. from the above URL)
+          - ``RegularLeft`` -- (regular left repr. from the above URL)
+          - ``RegularRight`` -- (regular right repr. from the above URL)
           - ``SplitIrredChevie`` -- (split irred. repr. via CHEVIE)
-          - ``SplitIrredMarin`` --  (split irred. repr. from the above URL)
+          - ``SplitIrredMarin`` -- (split irred. repr. from the above URL)
           - default:  ``SplitIrredChevie`` taken if GAP3 and CHEVIE are installed
             on the system, otherwise the default will be ``SplitIrredMarin``
 
@@ -660,13 +660,13 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
 
     - ``names`` -- string containing the names of the generators as images of
       the braid group generators
-    - ``cubic_equation_parameters`` --  tuple ``(u, v, w)`` of three elements
+    - ``cubic_equation_parameters`` -- tuple ``(u, v, w)`` of three elements
       in an integral domain used as coefficients in the cubic equation. If this
       argument is given the base ring will be set to the common parent of
       ``u, v, w``. In addition a conversion map from the generic base ring is
       supplied. This keyword can also be used to change the variable names of
       the generic base ring (see example 3 below)
-    - ``cubic_equation_roots`` --  tuple ``(a, b, c)`` of three elements in an
+    - ``cubic_equation_roots`` -- tuple ``(a, b, c)`` of three elements in an
       integral domain which stand for the roots of the cubic equation. If this
       argument is given the extension ring will be set to the common parent of
       ``a, b, c``. In addition a conversion map from the generic extension ring
@@ -1942,7 +1942,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``braid_tietze`` --  braid in Tietze form
+        - ``braid_tietze`` -- braid in Tietze form
         - ``braid_image_vect`` -- image of the given braid in ``self`` in vector
           representation
 

@@ -170,7 +170,7 @@ class FiniteMonoids(CategoryWithAxiom):
 
             INPUT:
 
-            - ``base_ring`` (default: `\QQ`) a field
+            - ``base_ring`` -- (default: `\QQ`) a field
 
             OUTPUT:
 

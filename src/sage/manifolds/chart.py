@@ -895,15 +895,13 @@ class Chart(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - restrict: a tuple of conditions (combined with 'or'), a list of
+        - ``restrict`` -- a tuple of conditions (combined with 'or'), a list of
           conditions (combined with 'and') or a single coordinate condition
-        - substitutions: dictionary (keys: coordinates of ``self``) giving the
+        - ``substitutions`` -- dictionary (keys: coordinates of ``self``) giving the
           value of each coordinate
 
-        OUTPUT:
-
-        - boolean stating whether the conditions are fulfilled by the
-          coordinate values
+        OUTPUT: boolean stating whether the conditions are fulfilled by the
+        coordinate values
 
         TESTS::
 

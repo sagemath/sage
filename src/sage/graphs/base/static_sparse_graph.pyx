@@ -35,7 +35,7 @@ five fields
 
 - ``n`` -- ``int``; the number of vertices in the graph
 
-- ``m`` --  --`int``; the number of edges in the graph
+- ``m`` -- ``int``; the number of edges in the graph
 
 - ``edges`` -- ``uint32_t *``; array whose length is the number of edges of the
   graph

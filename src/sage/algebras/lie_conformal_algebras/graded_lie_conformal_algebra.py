@@ -81,12 +81,12 @@ class GradedLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
       ``index_set`` or ``names``. Central elements are assumed
       to have weight ``0``.
 
-    - ``category`` The category that this Lie conformal algebra
-      belongs to.
+    - ``category`` -- the category that this Lie conformal algebra
+      belongs to
 
     - ``parity`` -- tuple of ``0`` or ``1`` (default: tuple of
       ``0``); a tuple specifying the parity of each non-central
-      generator.
+      generator
 
     EXAMPLES::
 

@@ -438,7 +438,7 @@ class Sphere(PseudoRiemannianSubmanifold):
 
         INPUT:
 
-        - ``coord_name`` --  string describing the type of coordinates
+        - ``coord_name`` -- string describing the type of coordinates
         - ``names`` -- (default: ``None``) must be a tuple containing
           the coordinate symbols for the first chart in the list; if
           ``None``, the standard convention is used

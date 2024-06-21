@@ -3656,7 +3656,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
           - ``'flint'`` -- let flint do the determinant
 
-          - ``'padic'`` --  uses a p-adic / multimodular
+          - ``'padic'`` -- uses a p-adic / multimodular
             algorithm that relies on code in IML and linbox
 
           - ``'linbox'`` -- calls linbox det (you *must* set
@@ -4519,7 +4519,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: B._solve_flint(A)
             Traceback (most recent call last):
             ...
-            ValueError: ``self`` must be a square matrix
+            ValueError: self must be a square matrix
             sage: A._solve_flint(B, right=False)
             Traceback (most recent call last):
             ...

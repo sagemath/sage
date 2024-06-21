@@ -104,19 +104,19 @@ def characteristic_polynomial_from_traces(traces, d, q, i, sign, deg=None, use_f
 
     INPUT:
 
-    - ``traces`` -- a list of integers `t_1, \dots, t_k`
+    - ``traces`` -- list of integers `t_1, \dots, t_k`
 
     - ``d`` -- the degree of the characteristic polynomial
 
     - ``q`` -- power of a prime number
 
-    - ``i`` -- integer, the weight in the motivic sense
+    - ``i`` -- integer; the weight in the motivic sense
 
-    - ``sign`` -- integer, the sign
+    - ``sign`` -- integer; the sign
 
-    - ``deg`` -- an integer or ``None``
+    - ``deg`` -- integer or ``None``
 
-    - ``use_fe`` -- a boolean (default: ``True``)
+    - ``use_fe`` -- boolean (default: ``True``)
 
     OUTPUT: a polynomial
 
@@ -319,7 +319,7 @@ def capital_M(n):
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
     OUTPUT: a rational
 
@@ -375,7 +375,7 @@ def gamma_list_to_cyclotomic(galist):
 
     INPUT:
 
-    - ``galist`` -- a list of integers, where an integer `n` represents
+    - ``galist`` -- list of integers, where an integer `n` represents
       the power `(x^{|n|} - 1)^{\operatorname{sgn}(n)}`
 
     OUTPUT:
@@ -700,7 +700,6 @@ class HypergeometricData:
             sage: H = Hyp(cyclotomic=([5], [1,1,1,1]))
             sage: [H.zigzag(x) for x in [0,1/6,1/4,1/2,3/4,5/6]]
             [-4, -4, -3, -2, -1, 0]
-
         """
         alpha = self._alpha
         beta = self._beta
@@ -1325,13 +1324,13 @@ class HypergeometricData:
 
         - ``p`` -- a prime number
 
-        - ``f`` -- an integer such that `q = p^f`
+        - ``f`` -- integer such that `q = p^f`
 
         - ``t`` -- a rational parameter
 
         - ``prec`` -- precision (optional)
 
-        - ``cache_p`` -- a boolean
+        - ``cache_p`` -- boolean
 
         OUTPUT: integer
 
@@ -1468,11 +1467,11 @@ class HypergeometricData:
 
         - ``p`` -- a prime number
 
-        - ``f`` -- an integer such that `q = p^f`
+        - ``f`` -- integer such that `q = p^f`
 
         - ``t`` -- a rational parameter
 
-        - ``ring`` -- optional (default: :class:`UniversalCyclotomicfield`)
+        - ``ring`` -- (default: :class:`UniversalCyclotomicfield`)
 
         The ring could be also ``ComplexField(n)`` or ``QQbar``.
 
@@ -1620,7 +1619,6 @@ class HypergeometricData:
             sage: H = Hyp(cyclotomic=([1,1,1], [6,2]))
             sage: [H.sign(4,p) for p in [5,7,11,13,17,19]]
             [1, 1, -1, -1, 1, 1]
-
         """
         t = QQ(t)
         if 0 in self._alpha:

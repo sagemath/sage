@@ -1564,7 +1564,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
 
         INPUT:
 
-        - ``chart`` --  chart in which the principal directions are to be
+        - ``chart`` -- chart in which the principal directions are to be
           computed
 
         OUTPUT:
@@ -1630,7 +1630,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
 
         INPUT:
 
-        - ``chart`` --  chart in which the principal curvatures are to be
+        - ``chart`` -- chart in which the principal curvatures are to be
           computed
 
         OUTPUT:

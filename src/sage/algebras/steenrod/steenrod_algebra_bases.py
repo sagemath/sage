@@ -266,9 +266,9 @@ def steenrod_algebra_basis(n, basis='milnor', p=2, **kwds):
     - ``n`` -- nonnegative integer
     - ``basis`` -- string, which basis to use (default: ``'milnor'``)
     - ``p`` -- positive prime number (default: 2)
-    - ``profile`` -- profile function (default: ``None``).  This
+    - ``profile`` -- profile function (default: ``None``); this
       is just passed on to the functions :func:`milnor_basis` and
-      :func:`pst_basis`.
+      :func:`pst_basis`
     - ``truncation_type`` -- truncation type, either 0 or Infinity
       (default: Infinity if no profile function is specified,
       0 otherwise).  This is just passed on to the function

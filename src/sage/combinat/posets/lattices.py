@@ -3351,7 +3351,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``other`` --  a finite lattice
+        - ``other`` -- a finite lattice
 
         EXAMPLES:
 

@@ -122,7 +122,7 @@ class lfun_generic():
 
         - ``cutoff`` -- unused
 
-        - ``w`` --  list of complex numbers or unary function
+        - ``w`` -- list of complex numbers or unary function
 
         EXAMPLES::
 

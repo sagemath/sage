@@ -10635,7 +10635,7 @@ class GenericGraph(GenericGraph_pyx):
           w_i)` representing a flow from `s_i` to `t_i` of intensity `w_i`. When
           the pairs are of size `2`, an intensity of `1` is assumed.
 
-        - ``integer`` boolean (default: ``True``); whether to require an integer
+        - ``integer`` -- boolean (default: ``True``); whether to require an integer
           multicommodity flow
 
         - ``use_edge_labels`` -- boolean (default: ``False``); whether to
@@ -16164,8 +16164,8 @@ class GenericGraph(GenericGraph_pyx):
 
         INPUT:
 
-        - ``by_weight`` boolean (default: `False``); if ``True``, the edges in
-          the graph are weighted; if ``False``, all edges have weight 1.
+        - ``by_weight`` -- boolean (default: `False``); if ``True``, the edges in
+          the graph are weighted. If ``False``, all edges have weight 1.
 
         - ``algorithm`` -- string (default: ``None``); one of the following
           algorithms:
@@ -24482,8 +24482,8 @@ class GenericGraph(GenericGraph_pyx):
         - ``edge_labels`` -- boolean (default: ``False``); when set to
           ``True``, allows only permutations respecting edge labels
 
-        - ``algorithm`` -- string (default: ``None``). The algorithm to use;
-          currently available:
+        - ``algorithm`` -- string (default: ``None``); the algorithm to use.
+          Currently available:
 
           * ``'bliss'``: use the optional package bliss
             (http://www.tcs.tkk.fi/Software/bliss/index.html);

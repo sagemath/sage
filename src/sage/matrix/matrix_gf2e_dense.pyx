@@ -1036,7 +1036,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         - ``row_to`` -- row index of source
         - ``row_from`` -- row index of destination
-        - ``multiple`` --  finite field element
+        - ``multiple`` -- finite field element
         - ``start_col`` -- only start at this column index
 
         EXAMPLES::

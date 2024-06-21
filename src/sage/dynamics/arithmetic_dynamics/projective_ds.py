@@ -1522,7 +1522,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         kwds:
 
-        - ``check`` --  boolean (default: ``True``)
+        - ``check`` -- boolean (default: ``True``)
 
         - ``normalize`` -- boolean (default: ``False``)
 

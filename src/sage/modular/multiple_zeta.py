@@ -556,7 +556,7 @@ def extend_multiplicative_basis(B, n) -> Iterator:
 
     - ``B`` -- function mapping integer to list of tuples of compositions
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
     OUTPUT: each term is a tuple of tuples of compositions
 
@@ -659,7 +659,7 @@ class Multizetas(CombinatorialFreeModule):
         if R in Domains():
             cat = cat & Domains()
         W = Words(PositiveIntegers(), infinite=False)
-        CombinatorialFreeModule.__init__(self, R, W, prefix="Z", category=cat)
+        CombinatorialFreeModule.__init__(self, R, W, prefix='Z', category=cat)
 
     def _repr_(self) -> str:
         r"""
@@ -945,7 +945,7 @@ class Multizetas(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         EXAMPLES::
 
@@ -966,7 +966,7 @@ class Multizetas(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         EXAMPLES::
 
@@ -990,7 +990,7 @@ class Multizetas(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         EXAMPLES::
 
@@ -1016,9 +1016,9 @@ class Multizetas(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``d`` -- (non-negative integer) the weight
+        - ``d`` -- nonnegative integer; the weight
 
-        - ``reverse`` -- (boolean, default ``False``) change the ordering of compositions
+        - ``reverse`` -- boolean (default: ``False``); change the ordering of compositions
 
         EXAMPLES::
 
@@ -1039,7 +1039,7 @@ class Multizetas(CombinatorialFreeModule):
             []
         """
         if d < 0:
-            raise ValueError('d must be a non-negative integer')
+            raise ValueError('d must be a nonnegative integer')
         if d == 0:
             return [self([])]
         if d == 1:
@@ -1142,7 +1142,7 @@ class Multizetas(CombinatorialFreeModule):
 
             INPUT:
 
-            - ``basis`` (optional) -- either ``None`` or a function such that
+            - ``basis`` -- optional; either ``None`` or a function such that
               ``basis(d)`` is a basis of the weight ``d`` multiple zeta values.
               If ``None``, the Hoffman basis is used.
 
@@ -1416,7 +1416,7 @@ class Multizetas_iterated(CombinatorialFreeModule):
         cat = GradedAlgebrasWithBasis(R).Commutative()
         if R in Domains():
             cat = cat & Domains()
-        CombinatorialFreeModule.__init__(self, R, Words10, prefix="I",
+        CombinatorialFreeModule.__init__(self, R, Words10, prefix='I',
                                          category=cat)
 
     def _repr_(self) -> str:
@@ -1748,9 +1748,7 @@ class Multizetas_iterated(CombinatorialFreeModule):
 
         - ``w`` -- a word in 0 and 1
 
-        OUTPUT:
-
-        an element in the auxiliary F-algebra
+        OUTPUT: an element in the auxiliary F-algebra
 
         The coefficients are in the base ring.
 
@@ -2075,7 +2073,7 @@ class All_iterated(CombinatorialFreeModule):
         """
         if R not in Rings():
             raise TypeError("argument R must be a ring")
-        CombinatorialFreeModule.__init__(self, R, Words10, prefix="I")
+        CombinatorialFreeModule.__init__(self, R, Words10, prefix='I')
 
     def _repr_(self) -> str:
         """
@@ -2571,7 +2569,7 @@ def rho_matrix_inverse(n):
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
     EXAMPLES::
 

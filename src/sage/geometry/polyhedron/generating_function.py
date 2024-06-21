@@ -98,7 +98,7 @@ def generating_function_of_integral_points(polyhedron, split=False,
       both at the same time.
 
     - ``Factorization_sort`` (default: ``False``) and
-      ``Factorization_simplify`` (default: ``True``); booleans
+      ``Factorization_simplify`` (default: ``True``) -- booleans
 
       These are passed on to
       :class:`sage.structure.factorization.Factorization` when creating

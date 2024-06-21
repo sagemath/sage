@@ -62,7 +62,7 @@ cdef class FrozenBitset:
 
     INPUT:
 
-    - ``iter`` -- initialization parameter (default: ``None``). Valid input
+    - ``iter`` -- initialization parameter (default: ``None``); valid inputs
       are:
 
       - :class:`Bitset` and :class:`FrozenBitset` -- If this is a

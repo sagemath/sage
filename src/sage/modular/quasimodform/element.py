@@ -150,7 +150,7 @@ class QuasiModularFormsElement(ModuleElement):
 
     def _repr_(self):
         r"""
-        String representation of self.
+        String representation of ``self``.
 
         TESTS::
 
@@ -178,7 +178,7 @@ class QuasiModularFormsElement(ModuleElement):
 
     def _richcmp_(self, other, op):
         r"""
-        Compare self with other.
+        Compare ``self`` with ``other``.
 
         TESTS::
 
@@ -225,7 +225,7 @@ class QuasiModularFormsElement(ModuleElement):
 
     def __neg__(self):
         r"""
-        The negation of ``self```
+        The negation of ``self```.
 
         TESTS::
 
@@ -240,7 +240,7 @@ class QuasiModularFormsElement(ModuleElement):
 
     def _mul_(self, other):
         r"""
-        The multiplication of two ``QuasiModularFormElement``
+        The multiplication of two ``QuasiModularFormElement``.
 
         INPUT:
 
@@ -263,7 +263,7 @@ class QuasiModularFormsElement(ModuleElement):
 
     def _lmul_(self, c):
         r"""
-        The left action of the base ring on self.
+        The left action of the base ring on ``self``.
 
         INPUT:
 
@@ -285,7 +285,7 @@ class QuasiModularFormsElement(ModuleElement):
 
     def __bool__(self):
         r"""
-        Return whether ``self`` is non-zero.
+        Return whether ``self`` is nonzero.
 
         EXAMPLES::
 
@@ -452,7 +452,7 @@ class QuasiModularFormsElement(ModuleElement):
 
         INPUT:
 
-        - ``names`` (str, default: ``None``) -- a list or tuple of names
+        - ``names``-- string (default: ``None``); list or tuple of names
           (strings), or a comma separated string. Defines the names for the
           generators of the multivariate polynomial ring. The default names are
           of the form ``ABCk`` where ``k`` is a number corresponding to the
@@ -475,7 +475,6 @@ class QuasiModularFormsElement(ModuleElement):
             5
             sage: (QM.0 + QM.1 + QM.2*QM.1 + QM.3*QM.4).polynomial()
             E3_1*E4_0 + E2_0*E3_0 + E2 + E2_0
-
         """
         P = self.parent().polynomial_ring(names)
         poly_gens = P.gens()

@@ -2488,9 +2488,9 @@ class WordMorphism(SageObject):
           but for substitutions with more than 3 letters
           other interesting choices are sometimes possible.
 
-        - ``prec`` -- integer (default: `53`).
-          The number of bits used in the floating point representations
-          of the coordinates.
+        - ``prec`` -- integer (default: `53`);
+          the number of bits used in the floating point representations
+          of the coordinates
 
         OUTPUT:
 
@@ -2748,9 +2748,9 @@ class WordMorphism(SageObject):
           is not plotted with the ``translate`` option;
           the vector ``(0,0,...,0)`` has to be added manually.
 
-        - ``prec`` -- integer (default: `53`).
-          The number of bits used in the floating point representations
-          of the points of the fractal.
+        - ``prec`` -- integer (default: `53`);
+          the number of bits used in the floating point representations
+          of the points of the fractal
 
         - ``colormap`` -- color map or dictionary (default: ``'hsv'``).
           It can be one of the following:
@@ -3531,7 +3531,7 @@ class WordMorphism(SageObject):
         - ``w`` -- finite iterable (default: ``self.domain().alphabet()``);
           represents a word used to start the language
 
-        - ``allow_growing`` -- boolean or ``None`` (default: ``None``). If
+        - ``allow_growing`` -- boolean or ``None`` (default: ``None``); if
           ``False``, return only the primitive roots that contain no growing
           letters. If ``True``, return only the primitive roots that contain at
           least one growing letter. If ``None``, return both.

@@ -738,7 +738,7 @@ class Polyhedron_base2(Polyhedron_base1):
           both at the same time.
 
         - ``Factorization_sort`` (default: ``False``) and
-          ``Factorization_simplify`` boolean (default: ``True``); booleans
+          ``Factorization_simplify`` (default: ``True``) -- booleans
 
           These are passed on to
           :class:`sage.structure.factorization.Factorization` when creating

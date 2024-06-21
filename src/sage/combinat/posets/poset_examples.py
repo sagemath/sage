@@ -1315,7 +1315,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``n`` --  a positive integer
+        - ``n`` -- a positive integer
 
         - ``label`` -- (default: ``'permutations'``) a label for the elements
           of the poset returned by the function; the options are

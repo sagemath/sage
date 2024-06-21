@@ -808,7 +808,8 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
 
     def tensor(self, *args, **kwds):
         r"""
-        Construct a tensor field on the domain of ``self`` or a tensor product of ``self`` with other modules.
+        Construct a tensor field on the domain of ``self`` or a tensor product
+        of ``self`` with other modules.
 
         If ``args`` consist of other parents, just delegate to :meth:`tensor_product`.
 

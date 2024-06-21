@@ -2399,7 +2399,7 @@ def mqrr_rational_reconstruction(u, m, T):
 
     INPUT:
 
-    - ``u``, ``m``, ``T`` --  integers such that `m > u \ge 0`, `T > 0`
+    - ``u``, ``m``, ``T`` -- integers such that `m > u \ge 0`, `T > 0`
 
     OUTPUT:
 

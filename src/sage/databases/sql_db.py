@@ -2143,7 +2143,7 @@ class SQLDatabase(SageObject):
 
         - ``rows`` -- list of tuples that represent one row of data to add
           (types should match col types in order)
-        - ``entry_order`` --  an ordered list or tuple overrides normal order
+        - ``entry_order`` -- an ordered list or tuple overrides normal order
           with user defined order
 
         EXAMPLES::

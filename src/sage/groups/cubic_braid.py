@@ -1150,7 +1150,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
             INPUT:
 
-            - ``m`` --  integer; the dimension of the classical groups
+            - ``m`` -- integer; the dimension of the classical groups
               vector-space of operation
 
             The function calculates the centralizing matrix and the
@@ -1223,7 +1223,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
             INPUT:
 
-            - ``m`` --  integer; the dimension of the classical groups
+            - ``m`` -- integer; the dimension of the classical groups
               vector-space of operation
 
             The function calculates the centralizing_matrix and the

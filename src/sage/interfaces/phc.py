@@ -185,8 +185,8 @@ class PHC_Object:
 
         INPUT:
 
-        - output_file_contents: the string output of PHCpack
-        - input_ring: for coercion of the variables into the desired ring.
+        - ``output_file_contents`` -- the string output of PHCpack
+        - ``input_ring`` -- for coercion of the variables into the desired ring
 
         EXAMPLES::
 

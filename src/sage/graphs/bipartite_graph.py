@@ -2573,8 +2573,8 @@ class BipartiteGraph(Graph):
         - ``edge_labels`` -- boolean (default: ``False``); when set to
           ``True``, allows only permutations respecting edge labels
 
-        - ``algorithm`` -- string (default: ``None``). The algorithm to use;
-          currently available:
+        - ``algorithm`` -- string (default: ``None``); the algorithm to use.
+          Currently available:
 
           * ``'bliss'``: use the optional package bliss
             (http://www.tcs.tkk.fi/Software/bliss/index.html);
