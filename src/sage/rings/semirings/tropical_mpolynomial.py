@@ -66,15 +66,57 @@ from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
+from sage.rings.polynomial.polydict import PolyDict, ETuple
+
 
 class TropicalMPolynomial(MPolynomial_polydict):
+
+    def add_zero_coefficient(self, *args):
+        """
+        Return a new tropical polynomial that include additional/modified
+        terms with coefficient equals 0
+        
+        INPUT:
+
+        *args: A variable number of arguments. Each argument should be of 
+        type tuple that represent the exponent of terms
+
+        EXAMPLES:
+
+            sage: T = TropicalSemiring(QQ, use_min=False)
+            sage: R = PolynomialRing(T, 'x,y')
+            sage: S.<x,y> = QQ[]
+            sage: c1 = 5+3*x+2*y+x*y
+            sage: p1 = R(c1); p1
+            1*x*y + 3*x + 2*y + 5
+            sage: p1.add_zero_coefficient((0,0),(3,0))
+            0*x^3 + 1*x*y + 3*x + 2*y + 0
+
+        TESTS:
+
+            sage: p1.add_zero_coefficient((1,2,1))
+            Traceback (most recent call last):
+            ...
+            ValueError: Lenght of tuple should not exceed 2
+
+        """
+        new_dict = self.dict()
+        R = self.parent()
+        for exponent in args:
+            if len(exponent) > len(R.variable_names()):
+                raise ValueError(f"Lenght of tuple should not exceed " \
+                                 f"{len(R.variable_names())}")
+            etuple = ETuple(exponent)
+            new_dict[etuple] = 0
+
+        return R(new_dict)
     
     def roots(self):
         """
 
         OUTPUT:
 
-        - tropical_roots -- a list of list, where the inner list is of the
+        - tropical_roots -- a list of lists, where the inner list is of the
         form [[x0,y0], [x1,y1], gradient, order] with [x0, y0] and [x1,y1]
         is the coordinates of point defining the line segment of tropical
         roots (two variables only)
@@ -216,20 +258,35 @@ class TropicalMPolynomial(MPolynomial_polydict):
 
         return tropical_roots   
 
+
 class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
+    """
+    Semiring structure of tropical polynomials in multiple variables
+    """
+
     def __init__(self, base_semiring, names):
         Parent.__init__(self, base=base_semiring, names=names)
 
     Element = TropicalMPolynomial
 
     def _element_constructor_(self, x):
+        """"
+        Construct the element of this tropical multivariate polynomial
+        semiring
+
+        INPUT:
+
+        - ``x`` -- dict or MPolynomial
+
+        """
+
         C = self.element_class
         new_dict = {}
 
         if isinstance(x, MPolynomial):
             x = x.dict()
 
-        for key, value in x.items():
+        for key, value in x.items(): # convert each coefficient to tropical
             new_dict[key] = self.base()(value)
 
         return C(self, new_dict)
@@ -237,3 +294,16 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
     def _repr_(self):
         return (f"Multivarite Tropical Polynomial Semiring in {', '.join(self.variable_names())}"
             f" over {self.base_ring().base_ring()}")
+    
+    def random_element(self):
+        """
+        Return a random element from this semiring
+
+        """
+
+        from sage.rings.polynomial.polynomial_ring_constructor import \
+            PolynomialRing
+        R = PolynomialRing(self.base().base_ring(), self.variable_names())
+
+        return self(R.random_element())
+        
