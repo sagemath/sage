@@ -271,8 +271,8 @@ def dominating_sets(g, k=1, independent=False, total=False, connected=False,
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: `0`); sets the level of verbosity. Set
-      to `0` by default, which means quiet.
+    - ``verbose`` -- integer (default: 0); sets the level of verbosity. Set
+      to 0 by default, which means quiet.
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
       over an inexact base ring; see
@@ -527,8 +527,8 @@ def dominating_set(g, k=1, independent=False, total=False, connected=False, valu
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: `0`); sets the level of verbosity. Set
-      to `0` by default, which means quiet.
+    - ``verbose`` -- integer (default: 0); sets the level of verbosity. Set
+      to 0 by default, which means quiet.
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
       over an inexact base ring; see
@@ -1306,8 +1306,8 @@ def maximum_leaf_number(G, solver=None, verbose=0, integrality_tolerance=1e-3):
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: `0`); sets the level of verbosity. Set
-      to `0` by default, which means quiet.
+    - ``verbose`` -- integer (default: 0); sets the level of verbosity. Set
+      to 0 by default, which means quiet.
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
       over an inexact base ring; see

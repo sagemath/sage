@@ -193,7 +193,7 @@ class NonDecreasingParkingFunction(Element):
 
         .. note::
 
-           Note that this is different than the image of ``n`` under
+           Note that this is different than the image of `n` under
            function.  It is "off by one".
 
         EXAMPLES::

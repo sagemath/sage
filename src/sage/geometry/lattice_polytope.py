@@ -4225,10 +4225,10 @@ class NefPartition(SageObject, Hashable):
 
     It is very easy to create a nef-partition for the octahedron, since for
     this polytope any decomposition of vertices is a nef-partition. We create a
-    3-part nef-partition with the `0`-th and `1`-st vertices belonging to the `0`-th
-    part (recall that numeration in Sage starts with 0), the `2`-nd and `5`-th
-    vertices belonging to the `1`-st part, and `3`-rd and `4`-th vertices belonging
-    to the `2`-nd part::
+    3-part nef-partition with the 0th and 1st vertices belonging to the 0th
+    part (recall that numeration in Sage starts with 0), the 2nd and 5th
+    vertices belonging to the 1st part, and 3rd and 4th vertices belonging
+    to the 2nd part::
 
         sage: o = lattice_polytope.cross_polytope(3)
         sage: np = NefPartition([0,0,1,2,2,1], o)
@@ -5524,7 +5524,7 @@ def minkowski_sum(points1, points2):
 
     INPUT:
 
-    - ``points1, points2`` -- lists of objects that can be
+    - ``points1``, ``points2`` -- lists of objects that can be
       converted into vectors of the same dimension, treated as vertices
       of two polytopes.
 

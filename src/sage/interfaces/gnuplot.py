@@ -141,14 +141,13 @@ class Gnuplot(SageObject):
         INPUT:
 
         - ``f`` -- string; a function of two variables, e.g.,
-          'cos(u)\*(3 + v\*cos(u/2)), sin(u)\*(3 + v\*cos(u/2)),
-          v\*sin(u/2)'
+          ``'cos(u)\*(3 + v\*cos(u/2)), sin(u)\*(3 + v\*cos(u/2)), v\*sin(u/2)'``
 
         - ``range1`` -- string; range of values for one
-          variable, e.g., '[u=-pi:pi]'
+          variable, e.g., ``'[u=-pi:pi]'``
 
         - ``range2`` -- string; range of values for another
-          variable, e.g., '[v=-0.2:0.2]'
+          variable, e.g., ``'[v=-0.2:0.2]'``
 
         - ``samples`` -- (int) number of sample points to use
 

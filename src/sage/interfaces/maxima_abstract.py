@@ -882,7 +882,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
           "diff(f(x),x,2)=diff(f(x),x)+sin(x)")
 
         - ``vars`` -- list of strings representing the
-          variables (e.g., vars = ["x","f"])
+          variables (e.g., ``vars = ["x","f"]``)
 
         - ``ics`` -- list of numbers representing initial
           conditions, with symbols allowed which are represented by strings

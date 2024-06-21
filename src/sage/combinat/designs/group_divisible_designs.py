@@ -70,10 +70,9 @@ def group_divisible_design(v, K, G, existence=False, check=False):
 
         - ``False`` -- meaning that the design does not exist
 
-    - ``check`` -- boolean; whether to check that output is correct before
-      returning it. As this is expected to be useless (but we are cautious
-      guys), you may want to disable it whenever you want speed. Set to ``True``
-      by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that output is
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
     .. NOTE::
 
@@ -150,10 +149,9 @@ def GDD_4_2(q, existence=False, check=True):
 
         - ``False`` -- meaning that the design does not exist
 
-    - ``check`` -- boolean; whether to check that output is correct before
-      returning it. As this is expected to be useless (but we are cautious
-      guys), you may want to disable it whenever you want speed. Set to ``True``
-      by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that output is
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
     EXAMPLES::
 

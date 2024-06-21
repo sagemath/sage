@@ -619,8 +619,8 @@ class LatinSquare:
 
     def top_left_empty_cell(self):
         """
-        Return the least [r, c] such that self[r, c] is an empty cell. If
-        all cells are filled then we return None.
+        Return the least ``[r, c]`` such that ``self[r, c]`` is an empty cell.
+        If all cells are filled then we return ``None``.
 
         INPUT:
 
@@ -736,8 +736,8 @@ class LatinSquare:
     def permissable_values(self, r, c):
         """
         Find all values that do not appear in row r and column c of the
-        latin square ``self``. If self[r, c] is filled then we return the empty
-        list.
+        latin square ``self``. If ``self[r, c]`` is filled then we return the
+        empty list.
 
         INPUT:
 

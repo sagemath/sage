@@ -90,10 +90,9 @@ def transversal_design(k, n, resolvable=False, check=True, existence=False):
       `n` classes of the resolvable design are obtained as the first `n` blocks,
       then the next `n` blocks, etc ... Set to ``False`` by default.
 
-    - ``check`` -- boolean; whether to check that output is correct before
-      returning it. As this is expected to be useless (but we are cautious
-      guys), you may want to disable it whenever you want speed. Set to
-      ``True`` by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that output is
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
     - ``existence`` -- boolean; instead of building the design, return:
 
@@ -533,8 +532,8 @@ def wilson_construction(OA,k,r,m,u,check=True,explain_construction=False):
       the construction
 
     - ``check`` -- boolean (default: ``True``); whether to check that output is
-      correct before returning it. As this is expected to be useless (but we
-      are cautious guys), you may want to disable it whenever you want speed.
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
     REFERENCE:
 
@@ -700,8 +699,8 @@ def TD_product(k,TD1,n1,TD2,n2, check=True):
     - ``k``, ``n1``, ``n2`` -- integers
 
     - ``check`` -- boolean (default: ``True``); whether to check that output is
-      correct before returning it. As this is expected to be useless (but we are
-      cautious guys), you may want to disable it whenever you want speed.
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
     .. NOTE::
 
@@ -761,8 +760,8 @@ def orthogonal_array(k,n,t=2,resolvable=False, check=True,existence=False,explai
       etc.
 
     - ``check`` -- boolean (default: ``True``); whether to check that output is
-      correct before returning it. As this is expected to be useless (but we
-      are cautious guys), you may want to disable it whenever you want speed.
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
     - ``existence`` -- boolean; instead of building the design, return:
 
@@ -1623,10 +1622,9 @@ def OA_n_times_2_pow_c_from_matrix(k,c,G,A,Y,check=True):
 
     - ``Y`` -- a vector with entries in `GF(2^c)`
 
-    - ``check`` -- boolean; whether to check that output is correct before
-      returning it. As this is expected to be useless (but we are cautious
-      guys), you may want to disable it whenever you want speed. Set to
-      ``True`` by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that output is
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
     .. NOTE::
 

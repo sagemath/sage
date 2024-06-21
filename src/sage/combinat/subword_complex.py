@@ -755,9 +755,9 @@ class SubwordComplexFacet(Simplex, Element):
           of the pseudolines
         - ``labels`` -- list (default: ``[]``); to change the labels
           of the pseudolines
-        - ``thickness`` -- integer (default: `3`); for the thickness
+        - ``thickness`` -- integer (default: 3); for the thickness
           of the pseudolines
-        - ``fontsize`` -- integer (default: `14`); for the size
+        - ``fontsize`` -- integer (default: 14); for the size
           of the font used for labels
         - ``shift`` -- couple of coordinates (default: ``(0,0)``)
           to change the origin

@@ -690,7 +690,7 @@ cdef StabilizerChain *SC_symmetric_group(int n) noexcept:
             SC.parents[i][i+j] = b
             SC.labels[i][i+j] = j
         for j in range(n - i - 1):
-            #`j`-th generator sends i+j+1 to b
+            #j-th generator sends i+j+1 to b
             memcpy(SC.generators[i] + n*j, id_perm, n * sizeof(int) )
             SC.generators[i][n*j + i+j+1] = b
             SC.generators[i][n*j + b] = i+j+1
@@ -733,7 +733,7 @@ cdef StabilizerChain *SC_alternating_group(int n) noexcept:
             SC.labels[i][i+j] = j
         SC.labels[i][n-1] = -(n-i-2)
         for j in range(n - i - 2):
-            #`j`-th generator sends i+j+1 to b, i+j+2 to i+j+1, and b to i+j+2
+            #j-th generator sends i+j+1 to b, i+j+2 to i+j+1, and b to i+j+2
             memcpy(SC.generators[i] + n*j, id_perm, n * sizeof(int) )
             SC.generators[i][n*j + i+j+1] = b
             SC.generators[i][n*j + b    ] = i+j+2

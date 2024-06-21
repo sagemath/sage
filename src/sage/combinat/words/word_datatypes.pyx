@@ -409,7 +409,8 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``w`` -- a word, or something that behaves like one (list, tuple, str, ...)
+        - ``w`` -- a word, or something that behaves like one (``list``,
+          ``tuple``, ``str``, ...)
 
         OUTPUT: boolean
 

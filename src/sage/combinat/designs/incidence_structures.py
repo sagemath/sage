@@ -1430,8 +1430,8 @@ class IncidenceStructure:
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: `0`); sets the level of
-          verbosity. Set to `0` by default, which means quiet.
+        - ``verbose`` -- integer (default: 0); sets the level of
+          verbosity. Set to 0 by default, which means quiet.
 
         - ``integrality_tolerance`` -- parameter for use with MILP solvers over
           an inexact base ring; see
@@ -1898,13 +1898,12 @@ class IncidenceStructure:
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: `0`); sets the level of
-          verbosity. Set to `0` by default, which means quiet.
+        - ``verbose`` -- integer (default: 0); sets the level of
+          verbosity. Set to 0 by default, which means quiet.
 
         - ``check`` -- boolean (default: ``True``); whether to check that
           output is correct before returning it. As this is expected to be
-          useless (but we are cautious guys), you may want to disable it
-          whenever you want speed.
+          useless, you may want to disable it whenever you want speed.
 
         - ``integrality_tolerance`` -- parameter for use with MILP solvers over
           an inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`

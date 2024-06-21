@@ -1595,7 +1595,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
 
         A nonnegative integer greater than or equal to the analytic rank of
         ``self``. If the returned value is 0 or 1 (the latter if parity is not
-        False), then this is the true analytic rank of ``self``.
+        ``False``), then this is the true analytic rank of ``self``.
 
         .. NOTE::
 

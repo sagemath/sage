@@ -2488,7 +2488,7 @@ class WordMorphism(SageObject):
           but for substitutions with more than 3 letters
           other interesting choices are sometimes possible.
 
-        - ``prec`` -- integer (default: `53`);
+        - ``prec`` -- integer (default: 53);
           the number of bits used in the floating point representations
           of the coordinates
 
@@ -2748,7 +2748,7 @@ class WordMorphism(SageObject):
           is not plotted with the ``translate`` option;
           the vector ``(0,0,...,0)`` has to be added manually.
 
-        - ``prec`` -- integer (default: `53`);
+        - ``prec`` -- integer (default: 53);
           the number of bits used in the floating point representations
           of the points of the fractal
 

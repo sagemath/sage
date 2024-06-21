@@ -211,7 +211,7 @@ cdef class ntl_ZZ_pEX():
 
     def __setitem__(self, long i, a):
         r"""
-        Set the `i`-th coefficient of ``self`` to be a.
+        Set the i-th coefficient of ``self`` to be a.
 
         EXAMPLES::
 
@@ -234,7 +234,7 @@ cdef class ntl_ZZ_pEX():
 
     def __getitem__(self, long i):
         r"""
-        Return the `i`-th coefficient of ``self``.
+        Return the i-th coefficient of ``self``.
 
         EXAMPLES::
 

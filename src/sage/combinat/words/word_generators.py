@@ -378,7 +378,7 @@ class WordGenerator:
         INPUT:
 
         - ``alphabet`` -- (default: ``(0, 1)``) any container that is suitable
-          to build an instance of OrderedAlphabet (list, tuple, str, ...)
+          to build an instance of OrderedAlphabet (``list``, ``tuple``, ``str``, ...)
 
         - ``base`` -- integer (default: 2); greater than or equal to 2
 
@@ -496,7 +496,7 @@ class WordGenerator:
         INPUT:
 
         - ``alphabet`` -- any container of length two that is suitable to
-          build an instance of OrderedAlphabet (list, tuple, str, ...)
+          build an instance of OrderedAlphabet (``list``, ``tuple``, ``str``, ...)
 
         - ``construction_method`` -- can be any of the following:
           "recursive", "fixed point", "function" (see below for definitions)
@@ -752,7 +752,8 @@ class WordGenerator:
             number in `]0, 1[`
 
         - ``alphabet`` -- any container of length two that is suitable to
-          build an instance of OrderedAlphabet (list, tuple, str, ...)
+          build an instance of OrderedAlphabet (``list``, ``tuple``, ``str``,
+          ...)
 
         - ``bits`` -- integer (optional and considered only if ``slope`` is
           a real number); the number of bits to consider when computing the
@@ -1357,7 +1358,7 @@ class WordGenerator:
         - ``m`` -- integer (default: 2); the size of the output alphabet
         - ``alphabet`` -- (default: `\{0,1,...,m-1\}`) any container of
           length m that is suitable to build an instance of
-          OrderedAlphabet (list, tuple, str, ...)
+          OrderedAlphabet (``list``, ``tuple``, ``str``, ...)
 
         EXAMPLES::
 
@@ -1407,7 +1408,7 @@ class WordGenerator:
         INPUT:
 
         - ``alphabet`` -- any container of length two that is suitable to build
-          an instance of OrderedAlphabet (list, tuple, str, ...)
+          an instance of OrderedAlphabet (``list``, ``tuple``, ``str``, ...)
 
         EXAMPLES::
 

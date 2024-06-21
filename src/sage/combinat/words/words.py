@@ -509,7 +509,7 @@ class FiniteWords(AbstractLanguage):
         INPUT:
 
         - ``data`` -- callable
-        - ``length`` -- integer or ``None`` or "infinite" or ``Infinity``
+        - ``length`` -- integer or ``None`` or ``'infinite'`` or ``Infinity``
         - ``caching`` -- boolean (default: ``True``); whether to keep a cache
           of the letters computed by the callable
 
@@ -1781,8 +1781,8 @@ class FiniteOrInfiniteWords(AbstractLanguage):
           For callables, this defines the domain of definition,
           which is assumed to be [0, 1, 2, ..., length-1].
           For iterators: Infinity if you know the iterator will not
-          terminate (default); "unknown" if you do not know whether the
-          iterator terminates; "finite" if you know that the iterator
+          terminate (default); ``'unknown'`` if you do not know whether the
+          iterator terminates; ``'finite'`` if you know that the iterator
           terminates, but do not know the length.
 
         - ``datatype`` -- (default: ``None``) ``None``, "char", "list", "str",

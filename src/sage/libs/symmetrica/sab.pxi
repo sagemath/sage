@@ -122,10 +122,7 @@ def odg_symmetrica(part, perm):
 
 
 def ndg_symmetrica(part, perm):
-    """
-    """
     cdef OP cpart, cperm, cD
-
 
     cpart = callocobject()
     cperm = callocobject()
@@ -144,10 +141,7 @@ def ndg_symmetrica(part, perm):
     return res
 
 def specht_dg_symmetrica(part, perm):
-    """
-    """
     cdef OP cpart, cperm, cD
-
 
     cpart = callocobject()
     cperm = callocobject()

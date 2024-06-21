@@ -2125,7 +2125,7 @@ class Compositions_n(Compositions):
 
 def composition_iterator_fast(n):
     """
-    Iterator over compositions of ``n`` yielded as lists.
+    Iterator over compositions of `n` yielded as lists.
 
     TESTS::
 

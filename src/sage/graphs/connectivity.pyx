@@ -1032,8 +1032,8 @@ def edge_connectivity(G,
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: `0`); sets the level of verbosity. Set
-      to `0` by default, which means quiet.
+    - ``verbose`` -- integer (default: 0); sets the level of verbosity. Set
+      to 0 by default, which means quiet.
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
       over an inexact base ring; see
@@ -1350,8 +1350,8 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: `0`); sets the level of verbosity. Set
-      to `0` by default, which means quiet.
+    - ``verbose`` -- integer (default: 0); sets the level of verbosity. Set
+      to 0 by default, which means quiet.
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
       over an inexact base ring; see
@@ -2093,8 +2093,8 @@ def cleave(G, cut_vertices=None, virtual_edges=True, solver=None, verbose=0,
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: `0`); sets the level of verbosity. Set
-      to `0` by default, which means quiet.
+    - ``verbose`` -- integer (default: 0); sets the level of verbosity. Set
+      to 0 by default, which means quiet.
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
       over an inexact base ring; see
@@ -2314,8 +2314,8 @@ def spqr_tree(G, algorithm='Hopcroft_Tarjan', solver=None, verbose=0,
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: `0`); sets the level of verbosity. Set
-      to `0` by default, which means quiet.
+    - ``verbose`` -- integer (default: 0); sets the level of verbosity. Set
+      to 0 by default, which means quiet.
 
     - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
       over an inexact base ring; see

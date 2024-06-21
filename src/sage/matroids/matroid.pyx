@@ -7986,8 +7986,8 @@ cdef class Matroid(SageObject):
           method :meth:`~sage.numerical.mip.MixedIntegerLinearProgram.solve` of
           the class :class:`~sage.numerical.mip.MixedIntegerLinearProgram`.
 
-        - ``verbose`` -- integer (default: `0`); sets the level of verbosity
-          of the LP solver. Set to `0` by default, which means quiet.
+        - ``verbose`` -- integer (default: 0); sets the level of verbosity
+          of the LP solver. Set to 0 by default, which means quiet.
 
         .. SEEALSO::
 

@@ -2820,9 +2820,9 @@ def odd_part(n):
 
 def prime_to_m_part(n, m):
     """
-    Return the prime-to-``m`` part of ``n``.
+    Return the prime-to-`m` part of `n`.
 
-    This is the largest divisor of ``n`` that is coprime to ``m``.
+    This is the largest divisor of `n` that is coprime to `m`.
 
     INPUT:
 
@@ -3029,7 +3029,7 @@ class Euler_Phi:
         sage: euler_phi(37)                                                             # needs sage.libs.pari
         36
 
-    Notice that euler_phi is defined to be 0 on negative numbers and 0::
+    Notice that ``euler_phi`` is defined to be 0 on negative numbers and 0::
 
         sage: euler_phi(-1)
         0

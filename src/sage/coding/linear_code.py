@@ -1428,8 +1428,8 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         - ``algorithm`` -- (default: ``None``) the name of the algorithm to use
           to perform minimum weight codeword search. If set to ``None``,
-          a search using GAP methods will be done. ``algorithm`` can be:
-          - ``'guava'``, which will use optional GAP package Guava
+          a search using GAP methods will be done. ``algorithm`` can be
+          ``'guava'``, which will use the optional GAP package Guava.
 
         REMARKS:
 

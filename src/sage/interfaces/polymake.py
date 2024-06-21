@@ -147,7 +147,7 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
         """
         return self.get('$Polymake::Version')
 
-    # Pickling etc.
+    # Pickling, etc.
 
     def __reduce__(self):
         """

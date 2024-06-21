@@ -707,8 +707,8 @@ def PBD_4_7_from_Y(gdd,check=True):
     - ``gdd`` -- a `(v,\{4,5,7\},Y)`-GDD where `Y=\NN-\{3,6,10\}`
 
     - ``check`` -- boolean (default: ``True``); whether to check that output is
-      correct before returning it. As this is expected to be useless (but we
-      are cautious guys), you may want to disable it whenever you want speed.
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
     EXAMPLES::
 

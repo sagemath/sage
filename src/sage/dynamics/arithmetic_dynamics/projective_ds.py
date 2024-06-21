@@ -5479,7 +5479,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
           periodic points of period ``n``
 
         - ``embedding`` -- (default: ``None``) must be ``None``, passing an embedding
-          is no longer supported, see :issue: `32205`
+          is no longer supported, see :issue:`32205`
 
         - ``type`` -- (default: ``'point'``) string; either ``'point'``
           or ``'cycle'`` depending on whether you compute with one

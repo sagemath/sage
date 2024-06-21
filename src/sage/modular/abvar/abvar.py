@@ -4578,7 +4578,7 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
         return self.__modsym
 
     def component_group_order(self, p):
-        """
+        r"""
         Return the order of the component group of the special fiber
         at `p` of the Neron model of ``self``.
 

@@ -765,10 +765,9 @@ def v_4_1_BIBD(v, check=True):
 
     - ``v`` -- integer; number of points
 
-    - ``check`` -- boolean; whether to check that output is correct before
-      returning it. As this is expected to be useless (but we are cautious
-      guys), you may want to disable it whenever you want speed. Set to ``True``
-      by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that output is
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
     EXAMPLES::
 
@@ -855,8 +854,8 @@ def BIBD_from_PBD(PBD, v, k, check=True, base_cases=None):
       ``PBD`` of size `s` there must exist a `((k-1)s+1,k,1)`-BIBD
 
     - ``check`` -- boolean (default: ``True``); whether to check that output is
-      correct before returning it. As this is expected to be useless (but we
-      are cautious guys), you may want to disable it whenever you want speed.
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
     - ``base_cases`` -- caching system, for internal use
 
@@ -942,10 +941,9 @@ def PBD_4_5_8_9_12(v, check=True):
 
     - ``v`` -- integer congruent to `0` or `1` modulo `4`
 
-    - ``check`` -- boolean; whether to check that output is correct before
-      returning it. As this is expected to be useless (but we are cautious
-      guys), you may want to disable it whenever you want speed. Set to ``True``
-      by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that output is
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
     EXAMPLES::
 
@@ -1556,8 +1554,8 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: `0`); sets the level of
-          verbosity. Set to `0` by default, which means quiet.
+        - ``verbose`` -- integer (default: 0); sets the level of
+          verbosity. Set to 0 by default, which means quiet.
 
         - ``integrality_tolerance`` -- parameter for use with MILP solvers over
           an inexact base ring; see

@@ -1325,7 +1325,7 @@ cdef class InequalityCollection:
 
         INPUT:
 
-        - ``inner_loop_variable`` -- integer; the `0`-th coordinate of
+        - ``inner_loop_variable`` -- integer; the 0th coordinate of
           the lattice point
 
         OUTPUT: boolean; whether the lattice point is in the polyhedron
@@ -1362,7 +1362,7 @@ cdef class InequalityCollection:
 
         INPUT:
 
-        - ``inner_loop_variable`` -- integer; the `0`-th coordinate of
+        - ``inner_loop_variable`` -- integer; the 0th coordinate of
           the lattice point
 
         OUTPUT:

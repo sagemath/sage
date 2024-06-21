@@ -1529,7 +1529,7 @@ class Word_class(SageObject):
         INPUT:
 
         - ``other`` -- a finite word
-        - ``start`` -- integer (default: `0`); where the search starts
+        - ``start`` -- integer (default: `0`) where the search starts
 
         OUTPUT: integer or ``None``
 

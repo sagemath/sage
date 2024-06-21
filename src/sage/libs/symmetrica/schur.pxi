@@ -460,9 +460,6 @@ def hall_littlewood_symmetrica(part):
 
 
 def t_SCHUR_MONOMIAL_symmetrica(schur):
-    """
-    """
-
     cdef OP cschur = callocobject(), cresult = callocobject()
 
     _op_schur(schur, cschur)
@@ -480,9 +477,6 @@ def t_SCHUR_MONOMIAL_symmetrica(schur):
 
 
 def t_SCHUR_HOMSYM_symmetrica(schur):
-    """
-    """
-
     cdef OP cschur = callocobject(), cresult = callocobject()
 
     _op_schur(schur, cschur)
@@ -500,9 +494,6 @@ def t_SCHUR_HOMSYM_symmetrica(schur):
 
 
 def t_SCHUR_ELMSYM_symmetrica(schur):
-    """
-    """
-
     cdef OP cschur = callocobject(), cresult = callocobject()
 
     _op_schur(schur, cschur)
@@ -520,9 +511,6 @@ def t_SCHUR_ELMSYM_symmetrica(schur):
 
 
 def t_SCHUR_POWSYM_symmetrica(schur):
-    """
-    """
-
     cdef OP cschur = callocobject(), cresult = callocobject()
 
     _op_schur(schur, cschur)
@@ -563,9 +551,6 @@ def t_POLYNOM_SCHUR_symmetrica(p):
 
 
 def t_MONOMIAL_HOMSYM_symmetrica(monomial):
-    """
-    """
-
     cdef OP cmonomial = callocobject(), cresult = callocobject()
 
     _op_monomial(monomial, cmonomial)
@@ -582,9 +567,6 @@ def t_MONOMIAL_HOMSYM_symmetrica(monomial):
     return res
 
 def t_MONOMIAL_ELMSYM_symmetrica(monomial):
-    """
-    """
-
     cdef OP cmonomial = callocobject(), cresult = callocobject()
 
     _op_monomial(monomial, cmonomial)
@@ -602,9 +584,6 @@ def t_MONOMIAL_ELMSYM_symmetrica(monomial):
 
 
 def t_MONOMIAL_SCHUR_symmetrica(monomial):
-    """
-    """
-
     cdef OP cmonomial = callocobject(), cresult = callocobject()
 
     _op_monomial(monomial, cmonomial)
@@ -622,9 +601,6 @@ def t_MONOMIAL_SCHUR_symmetrica(monomial):
 
 
 def t_MONOMIAL_POWSYM_symmetrica(monomial):
-    """
-    """
-
     cdef OP cmonomial = callocobject(), cresult = callocobject()
 
     _op_monomial(monomial, cmonomial)
@@ -665,9 +641,6 @@ def t_POLYNOM_MONOMIAL_symmetrica(p):
 
 
 def t_ELMSYM_SCHUR_symmetrica(elmsym):
-    """
-    """
-
     cdef OP celmsym = callocobject(), cresult = callocobject()
 
     _op_elmsym(elmsym, celmsym)
@@ -685,9 +658,6 @@ def t_ELMSYM_SCHUR_symmetrica(elmsym):
 
 
 def t_ELMSYM_POWSYM_symmetrica(elmsym):
-    """
-    """
-
     cdef OP celmsym = callocobject(), cresult = callocobject()
 
     _op_elmsym(elmsym, celmsym)
@@ -704,9 +674,6 @@ def t_ELMSYM_POWSYM_symmetrica(elmsym):
     return res
 
 def t_ELMSYM_MONOMIAL_symmetrica(elmsym):
-    """
-    """
-
     cdef OP celmsym = callocobject(), cresult = callocobject()
 
     _op_elmsym(elmsym, celmsym)
@@ -724,9 +691,6 @@ def t_ELMSYM_MONOMIAL_symmetrica(elmsym):
 
 
 def t_ELMSYM_HOMSYM_symmetrica(elmsym):
-    """
-    """
-
     cdef OP celmsym = callocobject(), cresult = callocobject()
 
     _op_elmsym(elmsym, celmsym)
@@ -767,9 +731,6 @@ def t_POLYNOM_ELMSYM_symmetrica(p):
 
 
 def t_HOMSYM_SCHUR_symmetrica(homsym):
-    """
-    """
-
     cdef OP chomsym = callocobject(), cresult = callocobject()
 
     _op_homsym(homsym, chomsym)
@@ -786,9 +747,6 @@ def t_HOMSYM_SCHUR_symmetrica(homsym):
     return res
 
 def t_HOMSYM_POWSYM_symmetrica(homsym):
-    """
-    """
-
     cdef OP chomsym = callocobject(), cresult = callocobject()
 
     _op_homsym(homsym, chomsym)
@@ -806,9 +764,6 @@ def t_HOMSYM_POWSYM_symmetrica(homsym):
 
 
 def t_HOMSYM_MONOMIAL_symmetrica(homsym):
-    """
-    """
-
     cdef OP chomsym = callocobject(), cresult = callocobject()
 
     _op_homsym(homsym, chomsym)
@@ -825,9 +780,6 @@ def t_HOMSYM_MONOMIAL_symmetrica(homsym):
     return res
 
 def t_HOMSYM_ELMSYM_symmetrica(homsym):
-    """
-    """
-
     cdef OP chomsym = callocobject(), cresult = callocobject()
 
     _op_homsym(homsym, chomsym)
@@ -845,9 +797,6 @@ def t_HOMSYM_ELMSYM_symmetrica(homsym):
 
 
 def t_POWSYM_MONOMIAL_symmetrica(powsym):
-    """
-    """
-
     cdef OP cpowsym = callocobject(), cresult = callocobject()
 
     _op_powsym(powsym, cpowsym)
@@ -865,9 +814,6 @@ def t_POWSYM_MONOMIAL_symmetrica(powsym):
 
 
 def t_POWSYM_SCHUR_symmetrica(powsym):
-    """
-    """
-
     cdef OP cpowsym = callocobject(), cresult = callocobject()
 
     _op_powsym(powsym, cpowsym)
@@ -884,9 +830,6 @@ def t_POWSYM_SCHUR_symmetrica(powsym):
     return res
 
 def t_POWSYM_ELMSYM_symmetrica(powsym):
-    """
-    """
-
     cdef OP cpowsym = callocobject(), cresult = callocobject()
 
     _op_powsym(powsym, cpowsym)
@@ -903,9 +846,6 @@ def t_POWSYM_ELMSYM_symmetrica(powsym):
     return res
 
 def t_POWSYM_HOMSYM_symmetrica(powsym):
-    """
-    """
-
     cdef OP cpowsym = callocobject(), cresult = callocobject()
 
     _op_powsym(powsym, cpowsym)
@@ -946,8 +886,6 @@ def t_POLYNOM_POWER_symmetrica(p):
 
 
 def mult_schur_schur_symmetrica(s1, s2):
-    """
-    """
     cdef OP cs1 = callocobject(), cs2 = callocobject(), cresult = callocobject()
 
     _op_schur(s1, cs1)
@@ -967,8 +905,6 @@ def mult_schur_schur_symmetrica(s1, s2):
 
 
 def mult_monomial_monomial_symmetrica(m1, m2):
-    """
-    """
     cdef OP cm1 = callocobject(), cm2 = callocobject(), cresult = callocobject()
 
     _op_monomial(m1, cm1)

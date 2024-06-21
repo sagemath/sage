@@ -480,10 +480,9 @@ def construction_q_x(k, q, x, check=True, explain_construction=False):
         - `OA(k,q)-q.OA(k,1)`
         - `OA(k,x+2)`
 
-    - ``check`` -- boolean; whether to check that output is correct before
-      returning it. As this is expected to be useless (but we are cautious
-      guys), you may want to disable it whenever you want speed. Set to
-      ``True`` by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that output is
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
     - ``explain_construction`` -- boolean; return a string describing
       the construction

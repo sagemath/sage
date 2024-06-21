@@ -219,8 +219,6 @@ def set_verbose(level, files='all'):
 
 
 def set_verbose_files(file_name):
-    """
-    """
     if not isinstance(file_name, list):
         file_name = [file_name]
     global verbose_files
@@ -228,14 +226,10 @@ def set_verbose_files(file_name):
 
 
 def get_verbose_files():
-    """
-    """
     return verbose_files
 
 
 def unset_verbose_files(file_name):
-    """
-    """
     if not isinstance(file_name, list):
         file_name = [file_name]
     for X in file_name:

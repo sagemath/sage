@@ -514,8 +514,7 @@ cdef int cteichmuller(celement out, celement value, long prec, PowComputer_class
     INPUT:
 
     - ``out`` -- an ``celement`` which is set to a `q-1` root of unity
-                 congruent to `value` mod `\pi`; or 0 if `a \equiv 0
-                 \pmod{\pi}`.
+      congruent to `value` mod `\pi`; or 0 if `a \equiv 0 \pmod{\pi}`
     - ``value`` -- an ``celement``, the element mod `\pi` to lift
     - ``prec`` -- a long, the precision to which to lift
     - ``prime_pow`` -- the ``PowComputer`` of the ring
@@ -531,7 +530,7 @@ cdef int cconv(celement out, x, long prec, long valshift, PowComputer_class prim
     - ``out`` -- an ``celement`` to store the output
     - ``x`` -- a Sage element that can be converted to a `p`-adic element
     - ``prec`` -- a long, giving the precision desired: absolute if
-                  `valshift = 0`, relative if `valshift > 0`
+      `valshift = 0`, relative if `valshift > 0`
     - ``valshift`` -- the power of the uniformizer to divide by before
       storing the result in ``out``
     - ``prime_pow`` -- a PowComputer for the ring
@@ -548,10 +547,10 @@ cdef inline long cconv_mpz_t(celement out, mpz_t x, long prec, bint absolute, Po
     - ``out`` -- an ``celement`` to store the output
     - ``x`` -- an ``mpz_t`` giving the integer to be converted
     - ``prec`` -- a long, giving the precision desired: absolute or
-                  relative depending on the ``absolute`` input
+      relative depending on the ``absolute`` input
     - ``absolute`` -- if False then extracts the valuation and returns
-                      it, storing the unit in ``out``; if ``True`` then
-                      just reduces ``x`` modulo the precision.
+      it, storing the unit in ``out``; if ``True`` then just reduces ``x``
+      modulo the precision
     - ``prime_pow`` -- a PowComputer for the ring
 
     OUTPUT:
@@ -567,7 +566,7 @@ cdef inline int cconv_mpz_t_out(mpz_t out, celement x, long valshift, long prec,
     possible.
 
     - ``out`` -- stores the resulting integer as an integer between 0
-                 and `p^{prec + valshift}`
+      and `p^{prec + valshift}`
     - ``x`` -- an ``celement`` giving the underlying `p`-adic element
     - ``valshift`` -- a long giving the power of `p` to shift `x` by
     -` ``prec`` -- a long, the precision of ``x``: currently not used
@@ -585,10 +584,10 @@ cdef inline long cconv_mpq_t(celement out, mpq_t x, long prec, bint absolute, Po
     - ``out`` -- an ``celement`` to store the output
     - ``x`` -- an ``mpq_t`` giving the rational to be converted
     - ``prec`` -- a long, giving the precision desired: absolute or
-                  relative depending on the ``absolute`` input
+      relative depending on the ``absolute`` input
     - ``absolute`` -- if False then extracts the valuation and returns
-                      it, storing the unit in ``out``; if ``True`` then
-                      just reduces ``x`` modulo the precision.
+      it, storing the unit in ``out``; if ``True`` then just reduces ``x``
+      modulo the precision
     - ``prime_pow`` -- a PowComputer for the ring
 
     OUTPUT:

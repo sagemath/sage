@@ -800,8 +800,8 @@ def _largest_ppower_divisor(N):
 
 def _goodness(n, R, p):
     """
-    Return the goodness of ``n`` for the sequence ``R`` and the prime ``p`` -- that is the largest
-    non-``p`` prime power dividing ``period(n)``.
+    Return the goodness of `n` for the sequence `R` and the prime `p` -- that is the largest
+    non-`p` prime power dividing ``period(n)``.
 
     INPUT:
 

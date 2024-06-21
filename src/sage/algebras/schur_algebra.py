@@ -542,10 +542,10 @@ def GL_irreducible_character(n, mu, KK):
     INPUT:
 
     - ``n`` -- positive integer
-    - ``mu`` -- a partition of at most ``n`` parts
+    - ``mu`` -- a partition of at most `n` parts
     - ``KK`` -- a field
 
-    OUTPUT: a symmetric function which should be interpreted in ``n``
+    OUTPUT: a symmetric function which should be interpreted in `n`
     variables to be meaningful as a character
 
     EXAMPLES:

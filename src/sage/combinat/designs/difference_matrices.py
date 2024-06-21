@@ -141,8 +141,8 @@ def difference_matrix(g,k,lmbda=1,existence=False,check=True):
       appears as a difference
 
     - ``check`` -- boolean (default: ``True``); whether to check that output is
-      correct before returning it. As this is expected to be useless (but we
-      are cautious guys), you may want to disable it whenever you want speed.
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
     - ``existence`` -- boolean; instead of building the design, return:
 

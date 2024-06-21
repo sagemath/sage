@@ -453,7 +453,7 @@ cdef class dancing_linksWrapper:
             sage: sorted(map(sorted, d.restrict([3]).solutions_iterator()))
             [[2, 3]]
 
-        Here there are no solution using both `0`-th and 3rd row::
+        Here there are no solutions using both 0th and 3rd row::
 
             sage: list(d.restrict([0,3]).solutions_iterator())
             []

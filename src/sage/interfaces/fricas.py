@@ -1157,7 +1157,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
     def gen(self, n):
         """
-        Return an error, since the `n`-th generator in FriCAS is not well defined.
+        Return an error, since the n-th generator in FriCAS is not well defined.
         """
         raise NotImplementedError
 

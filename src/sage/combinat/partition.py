@@ -7650,7 +7650,7 @@ class Partitions_parts_in(Partitions):
 
     def _fast_iterator(self, n, parts):
         """
-        A fast iterator for the partitions of ``n`` which returns lists and
+        A fast iterator for the partitions of `n` which returns lists and
         not partition types. This function is not intended to be called
         directly.
 
@@ -7693,7 +7693,7 @@ class Partitions_parts_in(Partitions):
 
     def _other_iterator(self, n, parts):
         """
-        A fast iterator for the partitions of ``n`` which returns lists and
+        A fast iterator for the partitions of `n` which returns lists and
         not partition types. This function is not intended to be called
         directly.
 

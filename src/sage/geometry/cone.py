@@ -4491,8 +4491,8 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
           of the class
           :class:`MixedIntegerLinearProgram <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-        - ``verbose`` -- integer (default: `0`); sets the level of verbosity
-          of the LP solver. Set to `0` by default, which means quiet.
+        - ``verbose`` -- integer (default: 0); sets the level of verbosity
+          of the LP solver. Set to 0 by default, which means quiet.
 
         - ``integrality_tolerance`` -- parameter for use with MILP solvers over an
           inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`

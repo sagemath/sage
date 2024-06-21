@@ -157,7 +157,7 @@ The following is a puzzle owned by Florent Hivert::
     sage: L.append(Polyomino([(0,0),(0,1),(0,2),(1,0),(1,1),(1,2)],"pink"))
 
 By default, rotations are allowed and reflections are not. In this case,
-there are no solution for tiling a `8 \times 8` rectangular box::
+there are no solutions for tiling a `8 \times 8` rectangular box::
 
     sage: T = TilingSolver(L, box=(8,8))
     sage: T.number_of_solutions()                                       # long time (2.5s)
@@ -1940,7 +1940,7 @@ class TilingSolver(SageObject):
             Dancing links solver for 96 columns and 5484 rows
 
         It is possible to avoid to compute 4 times each solution up to
-        rotations. This is done by choosing a piece (here the `0`-th) and
+        rotations. This is done by choosing a piece (here the 0th) and
         considering 4 times less positions for that piece. To be precise,
         90 positions instead of 360, therefore the dancing links solver
         below has 270 less rows::

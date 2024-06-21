@@ -873,7 +873,7 @@ def RandomIntervalGraph(n, seed=None):
 
 def growing_subtrees(T, k):
     r"""
-    Return a list of the vertex sets of ``n`` randomly chosen subtrees of ``T``.
+    Return a list of the vertex sets of `n` randomly chosen subtrees of `T`.
 
     For a tree of order `n`, the collection contains `n` subtrees with maximum
     order `k` and average order `\frac{k + 1}{2}`.
@@ -928,7 +928,7 @@ def growing_subtrees(T, k):
 
 def connecting_nodes(T, l):
     r"""
-    Return a list of the vertex sets of ``n`` randomly chosen subtrees of ``T``.
+    Return a list of the vertex sets of `n` randomly chosen subtrees of `T`.
 
     This method is part of
     :meth:`~sage.graphs.generators.random.RandomChordalGraph`.
@@ -1027,7 +1027,7 @@ def connecting_nodes(T, l):
 
 def pruned_tree(T, f, s):
     r"""
-    Return a list of the vertex sets of ``n`` randomly chosen subtrees of ``T``.
+    Return a list of the vertex sets of `n` randomly chosen subtrees of `T`.
 
     This method is part of
     :meth:`~sage.graphs.generators.random.RandomChordalGraph`.

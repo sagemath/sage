@@ -1659,9 +1659,9 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
           matrix, although the matrix may exist (see :mod:`sage.misc.unknown`).
         - ``False`` -- meaning that the matrix does not exist
 
-    - ``check`` -- boolean (default: ``True``); whether to check that output is correct before
-      returning it. As this is expected to be useless (but we are cautious
-      guys), you may want to disable it whenever you want speed.
+    - ``check`` -- boolean (default: ``True``); whether to check that output is
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
     - ``construction_name`` -- boolean (default: ``False``); if it is ``True``,
       ``existence`` is ``True``, and a matrix exists, output the construction name.
       It has no effect if ``existence`` is set to ``False``.
@@ -3104,8 +3104,8 @@ def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True,
     - ``skew_normalize`` -- boolean (default: ``True``); whether to make the 1st
       row all-one, and adjust the 1st column accordingly
     - ``check`` -- boolean (default: ``True``); whether to check that output is
-      correct before returning it. As this is expected to be useless (but we are
-      cautious guys), you may want to disable it whenever you want speed
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
     - ``construction_name`` -- boolean (default: ``False``); if it is ``True``,
       ``existence`` is ``True``, and a matrix exists, output the construction name.
       It has no effect if ``existence`` is set to ``False``.
@@ -3279,8 +3279,8 @@ def symmetric_conference_matrix(n, check=True):
 
     - ``n`` -- integer;  dimension of the matrix
     - ``check`` -- boolean (default: ``True``); whether to check that output is
-      correct before returning it. As this is expected to be useless (but we are
-      cautious guys), you may want to disable it whenever you want speed
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
     EXAMPLES::
 

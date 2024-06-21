@@ -311,8 +311,8 @@ def DesarguesianProjectivePlaneDesign(n, point_coordinates=True, check=True):
       points with their homogeneous coordinates (default) or with integers
 
     - ``check`` -- boolean (default: ``True``); whether to check that output is
-      correct before returning it. As this is expected to be useless (but we
-      are cautious guys), you may want to disable it whenever you want speed.
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
     .. SEEALSO::
 
@@ -520,10 +520,9 @@ def HughesPlane(q2, check=True):
 
     - ``q2`` -- an even power of an odd prime number
 
-    - ``check`` -- boolean; whether to check that output is correct before
-      returning it. As this is expected to be useless (but we are cautious
-      guys), you may want to disable it whenever you want speed. Set to
-      ``True`` by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that output is
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
     EXAMPLES::
 
@@ -638,8 +637,8 @@ def projective_plane_to_OA(pplane, pt=None, check=True):
       then it is set to `n^2 + n`
 
     - ``check`` -- boolean (default: ``True``); whether to check that output is
-      correct before returning it. As this is expected to be useless (but we
-      are cautious guys), you may want to disable it whenever you want speed.
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
     EXAMPLES::
 

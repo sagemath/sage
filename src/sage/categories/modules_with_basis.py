@@ -1364,7 +1364,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             ALGORITHM:
 
-            Return a sum of ``n`` terms, each of which is formed by
+            Return a sum of `n` terms, each of which is formed by
             multiplying a random element of the base ring by a random
             element of the group.
 

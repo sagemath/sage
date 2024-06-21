@@ -189,7 +189,7 @@ cdef class ntl_zz_pX():
 
     def __getitem__(self, long i):
         """
-        Return the `i`-th coefficient of f.
+        Return the i-th coefficient of f.
 
         EXAMPLES::
 
@@ -212,7 +212,7 @@ cdef class ntl_zz_pX():
 
     def __setitem__(self, long i, val):
         """
-        Set the `i`-th coefficient of ``self`` to val. If
+        Set the i-th coefficient of ``self`` to val. If
         i is out of range, raise an exception.
 
         EXAMPLES::

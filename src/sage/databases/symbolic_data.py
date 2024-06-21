@@ -130,8 +130,6 @@ class SymbolicData:
             return t
 
         def _dom2ideal(node):
-            """
-            """
             l = []
 
             if str(node.nodeName) in ['vars', 'poly']:

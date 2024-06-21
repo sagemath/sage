@@ -245,7 +245,7 @@ def ZS1_next(list P):
 
 def ZS1_iterator_nk(int n, int k):
     r"""
-    An iterator for the partitions of ``n`` of length at most ``k`` (in the
+    An iterator for the partitions of `n` of length at most `k` (in the
     decreasing lexicographic order) which returns lists and not objects of type
     :class:`~sage.combinat.partition.Partition`.
 

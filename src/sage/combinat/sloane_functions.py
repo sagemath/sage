@@ -1144,8 +1144,8 @@ class A000010(SloaneSequence):
         to `n`. Number of totatives of `n`.
 
         Euler totient function `\phi(n)`: count numbers `n`
-        and prime to `n`. euler_phi is a standard Sage function
-        implemented in PARI
+        and prime to `n`. ``euler_phi`` is a standard Sage function
+        implemented in PARI.
 
         INPUT:
 
@@ -6877,8 +6877,8 @@ class A001836(SloaneSequence):
         Numbers `n` such that `\phi(2n-1) < \phi(2n)`,
         where `\phi` is Euler's totient function.
 
-        Euler's totient function is also known as euler_phi, euler_phi is
-        a standard Sage function.
+        Euler's totient function is also known as ``euler_phi``; ``euler_phi``
+        is a standard Sage function.
 
         INPUT:
 

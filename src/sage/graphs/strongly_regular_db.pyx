@@ -1186,8 +1186,8 @@ def SRG_from_RSHCD(v, k, l, mu, existence=False, check=True):
       can build such a graph
 
     - ``check`` -- boolean (default: ``True``); whether to check that output is
-      correct before returning it. As this is expected to be useless (but we
-      are cautious guys), you may want to disable it whenever you want speed.
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
     EXAMPLES:
 
@@ -2796,8 +2796,8 @@ def strongly_regular_graph(int v, int k, int l, int mu=-1, bint existence=False,
         - ``False`` -- meaning that no such strongly regular graph exists
 
     - ``check`` -- boolean (default: ``True``); whether to check that output is
-      correct before returning it. As this is expected to be useless (but we
-      are cautious guys), you may want to disable it whenever you want speed.
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
     EXAMPLES:
 

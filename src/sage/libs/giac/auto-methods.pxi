@@ -3275,7 +3275,7 @@ cdef class GiacMethods_base:
         cube(Pnt(A),Pnt(B),Pnt(C))
         Draws the direct cube with vertices A,B with a face in the plane (A,B,C).
         See also: 1/ parallelepiped 2/ cylinder 3/ icosahedron 4/ dodecahedron 5/ octahedron 6/ tetrahedron 7/ centered_cube
-        Ex1:cube([0,0,0],[3,0,0],[0,0,1])
+        Ex1: cube([0,0,0],[3,0,0],[0,0,1])
         Ex2: A,B,C:=point(1,0,0),point(1,1,0),point(0,1,0);c:=cube(A,B,C);A,B,C,D,E,F,G,H:=sommets(c);
         Ex3: A,B,K:=point(1,0,0),point(1,1,0),point(0,2,0);c:=cube(A,B,C);A,B,C,D,E,F,G,H:=sommets(c);
         Ex4: c:=cube([0,0,0],[1,0,0],[0,1,0]);c1,c2,c4,c3,c5,c6,c7,c8:=sommets(c);
