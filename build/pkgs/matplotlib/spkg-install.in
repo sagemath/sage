@@ -6,4 +6,7 @@ export CXX=$(echo "$CXX" | sed 's/-std=[a-z0-9+]*//g')
 cd src
 
 # Finally install
-sdh_pip_install .
+# https://matplotlib.org/stable/install/dependencies.html#use-system-libraries
+sdh_pip_install -C setup-args="-Dsystem-freetype=true" \
+                -C setup-args="-Dsystem-qhull=true" \
+                .
