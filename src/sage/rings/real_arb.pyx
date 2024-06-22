@@ -675,12 +675,16 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
             [-4.733045976388941e+363922934236666733021124 +/- ...e+363922934236666733021108],
             [+/- inf], [+/- inf], [+/- inf], nan]
         """
-        import sage.symbolic.constants
         inf = self(sage.rings.infinity.Infinity)
-        return [self(0), self(1), self(1)/3,
-                -self(2)**(Integer(2)**80),
-                inf, -inf, self.zero().add_error(inf),
-                self.element_class(self, sage.symbolic.constants.NotANumber())]
+        elements = [self(0), self(1), self(1)/3, -self(2)**(Integer(2)**80),
+                    inf, -inf, self.zero().add_error(inf)]
+        try:
+            from sage.symbolic.constants import NotANumber
+        except ImportError:
+            pass
+        else:
+            elements.append(self.element_class(self, NotANumber()))
+        return elements
 
     def _sum_of_products(self, terms):
         r"""
@@ -1421,8 +1425,7 @@ cdef class RealBall(RingElement):
                 raise ValueError("unsupported string format")
         else:
             # the initializers that trigger imports
-            import sage.symbolic.constants
-            import sage.symbolic.expression
+            import sage.rings.infinity
             if isinstance(mid, sage.rings.infinity.AnInfinity):
                 if isinstance(mid, sage.rings.infinity.PlusInfinity):
                     arb_pos_inf(self.value)
@@ -1430,33 +1433,39 @@ cdef class RealBall(RingElement):
                     arb_neg_inf(self.value)
                 else:
                     arb_zero_pm_inf(self.value)
-            elif isinstance(mid, sage.symbolic.constants.Constant):
-                if _do_sig(prec(self)): sig_on()
-                try:
-                    if isinstance(mid, sage.symbolic.constants.NotANumber):
-                        arb_indeterminate(self.value)
-                    elif isinstance(mid, sage.symbolic.constants.Pi):
-                        arb_const_pi(self.value, prec(self))
-                    elif isinstance(mid, sage.symbolic.constants.Log2):
-                        arb_const_log2(self.value, prec(self))
-                    elif isinstance(mid, sage.symbolic.constants.Catalan):
-                        arb_const_catalan(self.value, prec(self))
-                    elif isinstance(mid, sage.symbolic.constants.Khinchin):
-                        arb_const_khinchin(self.value, prec(self))
-                    elif isinstance(mid, sage.symbolic.constants.Glaisher):
-                        arb_const_glaisher(self.value, prec(self))
-                    elif isinstance(mid, sage.symbolic.constants.EulerGamma):
-                        arb_const_euler(self.value, prec(self))
-                    else:
-                        raise TypeError("unsupported constant")
-                finally:
-                    if _do_sig(prec(self)): sig_off()
-            elif isinstance(mid, sage.symbolic.expression.E):
-                if _do_sig(prec(self)): sig_on()
-                arb_const_e(self.value, prec(self))
-                if _do_sig(prec(self)): sig_off()
             else:
-                raise TypeError("unsupported midpoint type")
+                try:
+                    import sage.symbolic.constants
+                    import sage.symbolic.expression
+                except ImportError:
+                    raise TypeError("unsupported midpoint type")
+                if isinstance(mid, sage.symbolic.constants.Constant):
+                    if _do_sig(prec(self)): sig_on()
+                    try:
+                        if isinstance(mid, sage.symbolic.constants.NotANumber):
+                            arb_indeterminate(self.value)
+                        elif isinstance(mid, sage.symbolic.constants.Pi):
+                            arb_const_pi(self.value, prec(self))
+                        elif isinstance(mid, sage.symbolic.constants.Log2):
+                            arb_const_log2(self.value, prec(self))
+                        elif isinstance(mid, sage.symbolic.constants.Catalan):
+                            arb_const_catalan(self.value, prec(self))
+                        elif isinstance(mid, sage.symbolic.constants.Khinchin):
+                            arb_const_khinchin(self.value, prec(self))
+                        elif isinstance(mid, sage.symbolic.constants.Glaisher):
+                            arb_const_glaisher(self.value, prec(self))
+                        elif isinstance(mid, sage.symbolic.constants.EulerGamma):
+                            arb_const_euler(self.value, prec(self))
+                        else:
+                            raise TypeError("unsupported constant")
+                    finally:
+                        if _do_sig(prec(self)): sig_off()
+                elif isinstance(mid, sage.symbolic.expression.E):
+                    if _do_sig(prec(self)): sig_on()
+                    arb_const_e(self.value, prec(self))
+                    if _do_sig(prec(self)): sig_off()
+                else:
+                    raise TypeError("unsupported midpoint type")
 
         if rad is not None:
             mag_init(tmpm)

@@ -6551,7 +6551,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: set_random_seed(0)  # results are reproduceable
             sage: P = posets.BooleanLattice(4)
             sage: P.random_maximal_chain()
-            [0, 2, 10, 11, 15]
+            [0, 4, 5, 7, 15]
 
         TESTS::
 
@@ -6618,7 +6618,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: set_random_seed(0)  # results are reproduceable
             sage: P = posets.BooleanLattice(4)
             sage: P.random_linear_extension()
-            [0, 2, 8, 1, 9, 4, 5, 10, 6, 12, 14, 13, 3, 7, 11, 15]
+            [0, 4, 1, 2, 3, 8, 10, 5, 12, 9, 13, 11, 6, 14, 7, 15]
 
         TESTS::
 

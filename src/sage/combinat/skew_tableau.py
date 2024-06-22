@@ -50,6 +50,7 @@ from sage.combinat.words.words import Words
 from sage.misc.persist import register_unpickle_override
 
 lazy_import('sage.matrix.special', 'zero_matrix')
+lazy_import('sage.groups.perm_gps.permgroup', 'PermutationGroup')
 
 
 class SkewTableau(ClonableList,
@@ -1138,6 +1139,81 @@ class SkewTableau(ClonableList,
 
         """
         return [list(row) for row in self]
+
+    def row_stabilizer(self):
+        """
+        Return the :func:`PermutationGroup` corresponding to the row stabilizer of
+        ``self``.
+
+        This assumes that every integer from `1` to the size of ``self``
+        appears exactly once in ``self``.
+
+        EXAMPLES::
+
+            sage: # needs sage.groups
+            sage: rs = SkewTableau([[None,1,2,3],[4,5]]).row_stabilizer()
+            sage: rs.order() == factorial(3) * factorial(2)
+            True
+            sage: PermutationGroupElement([(1,3,2),(4,5)]) in rs
+            True
+            sage: PermutationGroupElement([(1,4)]) in rs
+            False
+            sage: rs = SkewTableau([[None,1,2],[3]]).row_stabilizer()
+            sage: PermutationGroupElement([(1,2),(3,)]) in rs
+            True
+            sage: rs.one().domain()
+            [1, 2, 3]
+            sage: rs = SkewTableau([[None,None,1],[None,2],[3]]).row_stabilizer()
+            sage: rs.order()
+            1
+            sage: rs = SkewTableau([[None,None,2,4,5],[1,3]]).row_stabilizer()
+            sage: rs.order()
+            12
+            sage: rs = SkewTableau([]).row_stabilizer()
+            sage: rs.order()
+            1
+        """
+        # Ensure that the permutations involve all elements of the
+        # tableau, by including the identity permutation on the set [1..k].
+        k = self.size()
+        gens = [list(range(1, k + 1))]
+        for row in self:
+            for j in range(len(row) - 1):
+                if row[j] is not None:
+                    gens.append((row[j], row[j + 1]))
+        return PermutationGroup(gens)
+
+    def column_stabilizer(self):
+        """
+        Return the :func:`PermutationGroup` corresponding to the column stabilizer
+        of ``self``.
+
+        This assumes that every integer from `1` to the size of ``self``
+        appears exactly once in ``self``.
+
+        EXAMPLES::
+
+            sage: # needs sage.groups
+            sage: cs = SkewTableau([[None,2,3],[1,5],[4]]).column_stabilizer()
+            sage: cs.order() == factorial(2) * factorial(2)
+            True
+            sage: PermutationGroupElement([(1,3,2),(4,5)]) in cs
+            False
+            sage: PermutationGroupElement([(1,4)]) in cs
+            True
+        """
+        # Ensure that the permutations involve all elements of the
+        # tableau, by including the identity permutation on the set [1..k].
+        k = self.size()
+        gens = [list(range(1, k + 1))]
+        ell = len(self)
+        while ell > 1:
+            ell -= 1
+            for i, val in enumerate(self[ell]):
+                top_neighbor = self[ell-1][i]
+                if top_neighbor is not None:
+                    gens.append((val, top_neighbor))
+        return PermutationGroup(gens)
 
     def shuffle(self, t2):
         r"""

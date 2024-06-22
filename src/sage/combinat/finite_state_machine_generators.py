@@ -268,8 +268,8 @@ class AutomatonGenerators:
 
         TESTS::
 
-            sage: from sage.rings.integer import is_Integer
-            sage: all(is_Integer(s.label()) for s in A.states())
+            sage: from sage.rings.integer import Integer
+            sage: all(isinstance(s.label(), Integer) for s in A.states())
             True
         """
         letters = list(word)
