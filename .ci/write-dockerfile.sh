@@ -260,6 +260,12 @@ case ${DOCKER_BUILDKIT-0} in
         CHECK_STATUS_THEN='STATUS=$(cat STATUS 2>/dev/null); case "$STATUS" in ""|0) ;; *) exit $STATUS;; esac; '
 esac
 
+if [ -n "$GITHUB_ACTIONS" ]; then
+    cat <<EOF
+ENV GITHUB_ACTIONS=1
+EOF
+fi
+
 cat <<EOF
 
 FROM with-system-packages as bootstrapped
