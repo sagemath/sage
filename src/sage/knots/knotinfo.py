@@ -2287,7 +2287,7 @@ class KnotInfoBase(Enum):
 
             try:
                 ki = l.get_knotinfo()
-                if type(ki) == tuple:
+                if type(ki) is tuple:
                     L, m = ki
                 else:
                     L, m = l.get_knotinfo().to_knotinfo()[0]

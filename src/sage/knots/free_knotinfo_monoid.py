@@ -259,7 +259,7 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid):
         """
         Create a tuple of element of this abelian monoid which possibly
         represent ``knot``. This method caches the performance relevant
-        part of :method:`from_knot`.
+        part of :meth:`from_knot`.
 
         INPUT:
 
@@ -356,13 +356,14 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid):
             sage: FKIM.from_knot(K)
             KnotInfo['K5_1m']
 
-            sage: K = Knot(KnotInfo.K9_12.braid())    # optional - database_knotinfo
-            sage: FKIM.from_knot(K)                   # optional - database_knotinfo, long time
+            sage: # optional - database_knotinfo
+            sage: K = Knot(KnotInfo.K9_12.braid())
+            sage: FKIM.from_knot(K)                   # long time
             Traceback (most recent call last):
             ...
             NotImplementedError: this (possibly non prime) knot cannot be identified uniquely by KnotInfo
             use keyword argument `unique` to obtain more details
-            sage: FKIM.from_knot(K, unique=False)     # optional - database_knotinfo, long time
+            sage: FKIM.from_knot(K, unique=False)     # long time
             (KnotInfo['K4_1']*KnotInfo['K5_2'], KnotInfo['K9_12'])
         """
         hp = knot.homfly_polynomial(normalization='vz')
