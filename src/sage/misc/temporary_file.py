@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 """
 Temporary file handling
 
@@ -413,6 +414,8 @@ class atomic_write:
 #################################################################
 # write to a temporary directory and move it in place
 #################################################################
+
+
 class atomic_dir:
     """
     Write to a given directory using a temporary directory and then rename it
@@ -524,6 +527,8 @@ class atomic_dir:
 
 
 _spyx_tmp = None
+
+
 def spyx_tmp():
     r"""
     The temporary directory used to store pyx files.

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Factory for cached representations
 
@@ -40,7 +41,6 @@ AUTHORS:
 - Robert Bradshaw (2008): initial version.
 - Simon King (2013): extended documentation.
 - Julian Rueth (2014-05-09): use ``_cache_key`` if parameters are unhashable
-
 """
 
 #*****************************************************************************
@@ -520,7 +520,7 @@ cdef class UniqueFactory(SageObject):
         The ``GF`` factory used to have a custom :meth:`other_keys`
         method, but this was removed in :issue:`16934`::
 
-            sage: # needs sage.libs.linbox sage.ring.finite_rings
+            sage: # needs sage.libs.linbox sage.rings.finite_rings
             sage: key, _ = GF.create_key_and_extra_args(27, 'k'); key
             (27, ('k',), x^3 + 2*x + 1, 'givaro', 3, 3, True, None, 'poly', True, True, True)
             sage: K = GF.create_object(0, key); K

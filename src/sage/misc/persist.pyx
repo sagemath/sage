@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 # cython: old_style_globals=True
 # The old_style_globals directive is important for load() to work correctly.
 # However, this should be removed in favor of user_globals; see
@@ -339,6 +340,7 @@ def dumps(obj, compress=True):
 
 # This is used below, and also by explain_pickle.py
 unpickle_override = {}
+
 
 def register_unpickle_override(module, name, callable, call_name=None):
     r"""
@@ -998,6 +1000,7 @@ def loads(s, compress=True, **kwargs):
 
 
 cdef bint make_pickle_jar = 'SAGE_PICKLE_JAR' in os.environ
+
 
 def picklejar(obj, dir=None):
     """

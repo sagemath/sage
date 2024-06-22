@@ -67,7 +67,6 @@ AUTHORS:
 
 - Thierry Monteil (2012-02-10): deprecated dead code and update related doc and
   tests.
-
 """
 
 # ****************************************************************************

@@ -55,5 +55,4 @@ Sage example in ./sol/domaines.tex, line 80::
   <class 'sage.modules.with_basis.morphism.TriangularModuleMorphismByLinearity_with_category'>
   sage: type(phi3)
   <class 'sage.modules.with_basis.morphism.DiagonalModuleMorphism_with_category'>
-
 """

@@ -212,7 +212,6 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         M._matrix_numpy = -self._matrix_numpy
         return M
 
-
     # x * __copy__
     #   * _list -- list of underlying elements (need not be a copy)
     #   * _dict -- sparse dictionary of underlying elements (need not be a copy)
@@ -348,10 +347,8 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             raise ZeroDivisionError("input matrix must be nonsingular")
         return M
 
-
     # def _list(self):
     # def _dict(self):
-
 
     ########################################################################
     # LEVEL 3 functionality (Optional)
@@ -364,7 +361,6 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
     #    compute_LU(self)
     #
     ########################################################################
-
 
     def condition(self, p='frob'):
         r"""
@@ -1785,7 +1781,6 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         import scipy.linalg
 
         return self._sage_dtype(scipy.linalg.det(self._matrix_numpy))
-
 
     def log_determinant(self):
         """

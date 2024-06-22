@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 import os
 import sys
 import operator

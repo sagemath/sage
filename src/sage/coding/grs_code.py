@@ -1548,13 +1548,11 @@ class GRSGaoDecoder(Decoder):
 
         INPUT:
 
-        - ``a, b`` -- polynomials over ``PolRing``
+        - ``a``, ``b`` -- polynomials over ``PolRing``
 
         - ``PolRing`` -- polynomial ring of the output
 
-        OUTPUT:
-
-        - a tuple of polynomials
+        OUTPUT: tuple of polynomials
 
         EXAMPLES::
 
@@ -2139,13 +2137,11 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
 
         INPUT:
 
-        - ``a, b`` -- polynomials over ``PolRing``
+        - ``a``, ``b`` -- polynomials over ``PolRing``
 
         - ``PolRing`` -- polynomial ring of the output
 
-        OUTPUT:
-
-        - a tuple of polynomials
+        OUTPUT: tuple of polynomials
 
         EXAMPLES::
 

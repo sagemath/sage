@@ -114,7 +114,6 @@ AUTHORS:
 
 - Timothy Brock (2006-04-17): added ``lfsr_autocorrelation`` and
   ``lfsr_connection_polynomial``.
-
 """
 
 ###########################################################################

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Listing Sage packages
 
@@ -66,7 +67,7 @@ def pkgname_split(name):
         sage: pkgname_split('hello_world-1.2')
         ['hello_world', '1.2']
     """
-    return (name.split('-',1) + [''])[:2]
+    return (name.split('-', 1) + [''])[:2]
 
 
 def pip_remote_version(pkg, pypi_url=DEFAULT_PYPI, ignore_URLError=False):
@@ -356,6 +357,7 @@ def list_packages(*pkg_types: str, pkg_sources: List[str] = ['normal', 'pip', 's
 
     return pkgs
 
+
 def _spkg_inst_dirs():
     """
     Generator for the installation manifest directories as resolved paths.
@@ -378,6 +380,7 @@ def _spkg_inst_dirs():
             if inst_dir.is_dir() and inst_dir != last_inst_dir:
                 yield inst_dir
                 last_inst_dir = inst_dir
+
 
 def installed_packages(exclude_pip=True):
     """

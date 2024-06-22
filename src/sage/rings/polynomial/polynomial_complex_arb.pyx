@@ -19,7 +19,6 @@ TESTS:
     sage: Pol.<x> = CBF[]
     sage: (x+1/2)^3
     x^3 + 1.500000000000000*x^2 + 0.7500000000000000*x + 0.1250000000000000
-
 """
 
 from cysignals.signals cimport sig_on, sig_off

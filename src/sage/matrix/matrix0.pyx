@@ -42,7 +42,7 @@ from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.rings import Rings
 
 import sage.rings.abc
-from sage.rings.integer_ring import is_IntegerRing
+from sage.rings.integer_ring import IntegerRing_class
 
 import sage.modules.free_module
 
@@ -155,6 +155,28 @@ cdef class Matrix(sage.structure.element.Matrix):
             [      y       x 2*x + y]
         """
         return list(self._list())
+
+    def dense_coefficient_list(self, order=None) -> list:
+        """
+        Return a list of *all* coefficients of ``self``.
+
+        By default, this is the same as :meth:`list`.
+
+        INPUT:
+
+        - ``order`` -- (optional) an ordering of the basis indexing set
+
+        EXAMPLES::
+
+            sage: A = matrix([[1,2,3], [4,5,6]])
+            sage: A.dense_coefficient_list()
+            [1, 2, 3, 4, 5, 6]
+            sage: A.dense_coefficient_list([(1,2), (1,0), (0,1), (0,2), (0,0), (1,1)])
+            [6, 4, 2, 3, 1, 5]
+        """
+        if order is None:
+            return self.list()
+        return [self[i] for i in order]
 
     def _list(self):
         """
@@ -1425,7 +1447,6 @@ cdef class Matrix(sage.structure.element.Matrix):
             row_index = <object>PyTuple_GET_ITEM(key_tuple, 0)
             col_index = <object>PyTuple_GET_ITEM(key_tuple, 1)
 
-
             if PyIndex_Check(col_index):
                 col = col_index
                 if col < 0:
@@ -1524,7 +1545,6 @@ cdef class Matrix(sage.structure.element.Matrix):
                 if col_list_len != len(value_row):
                     raise IndexError("value does not have the right number of columns")
 
-
         if single_row:
             if value_list_one_dimensional:
                 value_row = value_list
@@ -1558,9 +1578,6 @@ cdef class Matrix(sage.structure.element.Matrix):
                     for col in range(col_list_len):
                         self.set_unsafe(row, col_list[col], self._coerce_element(value_row[col]))
         return
-
-
-
 
     cdef _coerce_element(self, x):
         """
@@ -4220,7 +4237,6 @@ cdef class Matrix(sage.structure.element.Matrix):
         self.cache(key, True)
         return True
 
-
     def is_hermitian(self):
         r"""
         Return ``True`` if the matrix is equal to its conjugate-transpose.
@@ -5959,7 +5975,7 @@ cdef class Matrix(sage.structure.element.Matrix):
                 return (~self.lift_centered()).change_ring(R)
             except (TypeError, ZeroDivisionError):
                 raise ZeroDivisionError("input matrix must be nonsingular")
-        elif algorithm is None and is_IntegerRing(R):
+        elif algorithm is None and isinstance(R, IntegerRing_class):
             try:
                 return (~self).change_ring(R)
             except (TypeError, ZeroDivisionError):
@@ -6228,6 +6244,7 @@ cdef class Matrix(sage.structure.element.Matrix):
     cdef int _strassen_default_echelon_cutoff(self) except -2:
         return -1
 
+
 #######################
 # Unpickling
 #######################
@@ -6284,6 +6301,7 @@ def set_max_rows(n):
     deprecation(30552, "'set_max_rows' is replaced by 'matrix.options.max_rows'")
     from sage.matrix.constructor import options
     options.max_rows = n-1
+
 
 def set_max_cols(n):
     """

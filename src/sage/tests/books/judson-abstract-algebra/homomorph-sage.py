@@ -196,5 +196,4 @@ r"""
       From: Permutation Group with generators [(1,2,3), (4,5,6,7), (4,7)(5,6)]
       To:   Dihedral group of order 8 as a permutation group
       Defn: Projection( Group( [ (1,2,3), (4,5,6,7), (4,7)(5,6) ] ), 2 )
-
 """

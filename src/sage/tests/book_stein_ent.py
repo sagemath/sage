@@ -5,7 +5,6 @@ This file contains all the example code from the published book
 William Stein, Springer-Verlag, 2009.
 """
 
-
 """
 sage: prime_range(10,50)
 [11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]

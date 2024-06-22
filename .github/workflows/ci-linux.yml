@@ -118,7 +118,6 @@ jobs:
          "linuxmint-21.2",
          "fedora-38",
          "fedora-39",
-         "centos-stream-8-python3.9",
          "centos-stream-9-python3.9",
          "almalinux-8-python3.9",
          "gentoo-python3.10",

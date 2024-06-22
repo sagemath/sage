@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Graded Lie Conformal Algebras
 
