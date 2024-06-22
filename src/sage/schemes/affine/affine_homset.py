@@ -36,8 +36,6 @@ from copy import copy
 
 from sage.misc.verbose import verbose
 from sage.rings.integer_ring import ZZ
-from sage.rings.real_mpfr import RR
-from sage.rings.cc import CC
 from sage.rings.rational_field import RationalField
 from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields
@@ -268,6 +266,7 @@ class SchemeHomset_points_affine(SchemeHomset_points):
             if hasattr(X.base_ring(), 'precision'):
                 numerical = True
                 verbose("Warning: computations in the numerical fields are inexact;points may be computed partially or incorrectly.", level=0)
+                from sage.rings.real_mpfr import RR
                 zero_tol = RR(kwds.pop('zero_tolerance', 10**(-10)))
                 if zero_tol <= 0:
                     raise ValueError("tolerance must be positive")
@@ -438,7 +437,7 @@ class SchemeHomset_points_affine(SchemeHomset_points):
         """
         from sage.schemes.affine.affine_space import AffineSpace_generic
         if F is None:
-            F = CC
+            from sage.rings.cc import CC as F
         if F not in Fields() or not hasattr(F, 'precision'):
             raise TypeError('F must be a numerical field')
         X = self.codomain()
@@ -455,6 +454,7 @@ class SchemeHomset_points_affine(SchemeHomset_points):
             return []
 
         # if X zero-dimensional
+        from sage.rings.real_mpfr import RR
         zero_tol = RR(kwds.pop('zero_tolerance', 10**(-10)))
         if zero_tol <= 0:
             raise ValueError("tolerance must be positive")

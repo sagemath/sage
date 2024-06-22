@@ -116,7 +116,6 @@ from scipy.spatial import Voronoi
 from sage.arith.functions import lcm
 from sage.arith.misc import GCD, algdep
 from sage.ext.fast_callable import fast_callable
-from sage.functions.log import lambert_w
 from sage.graphs.graph import Graph
 from sage.groups.matrix_gps.finitely_generated import MatrixGroup
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -3107,6 +3106,8 @@ class RiemannSurface:
             n_steps = self._prec - 1
         else:
             n_steps = 15
+
+        from sage.functions.log import lambert_w
 
         V = VectorSpace(self._CC, self.genus)
         h = one

@@ -22,18 +22,18 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.arith.misc import binomial
-
 from sage.categories.fields import Fields
 from sage.categories.homset import Hom
-
-from sage.matrix.constructor import matrix
-
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import RationalField
-
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 from sage.schemes.projective.projective_morphism import SchemeMorphism_polynomial_projective_subscheme_field
+
+lazy_import('sage.dynamics.arithmetic_dynamics.generic_ds', 'DynamicalSystem')
+lazy_import('sage.matrix.constructor', 'matrix')
+lazy_import('sage.schemes.elliptic_curves.ell_generic', 'EllipticCurve_generic', as_='EllipticCurve')
 
 
 class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
@@ -183,8 +183,8 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         Something less obvious::
 
             sage: P3.<x,y,z,w,t> = ProjectiveSpace(4, QQ)
-            sage: X = P3.subscheme([x^2, x^2*y^2 + z^2*t^2, z^2 - w^2, 10*x^2 + w^2 - z^2])
-            sage: X
+            sage: X = P3.subscheme([x^2, x^2*y^2 + z^2*t^2,
+            ....:                   z^2 - w^2, 10*x^2 + w^2 - z^2]); X
             Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
               x^2,
               x^2*y^2 + z^2*t^2,
@@ -509,7 +509,6 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             ...
             TypeError: orbit bounds must be non-negative
         """
-        from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
         if not isinstance(f, DynamicalSystem):
             raise TypeError("map must be a dynamical system for iteration")
         if not isinstance(N, (list, tuple)):
@@ -753,11 +752,12 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             ...
             TypeError: subscheme must be in ambient space of domain of map
         """
-        dom = f.domain()
-        codom = f.codomain()
         if check:
             if not f.is_morphism():
                 raise TypeError("map must be a morphism")
+        dom = f.domain()
+        codom = f.codomain()
+        if check:
             if self.ambient_space() != dom:
                 raise TypeError("subscheme must be in ambient space of domain of map")
         CR_dom = dom.coordinate_ring()
@@ -1442,7 +1442,7 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P.subscheme([z^2 - 101*y^2 - 3*x*z])
-            sage: X.global_height()  # long time                                        # needs sage.libs.singular
+            sage: X.global_height()             # long time                             # needs sage.libs.singular
             4.61512051684126
         """
         return self.Chow_form().global_height(prec)

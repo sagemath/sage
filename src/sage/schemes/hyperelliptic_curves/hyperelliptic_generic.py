@@ -33,15 +33,18 @@ EXAMPLES::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+import sage.schemes.curves.projective_curve as plane_curve
+
+from sage.misc.lazy_import import lazy_import
 from sage.rings.big_oh import O
-from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.laurent_series_ring import LaurentSeriesRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.real_mpfr import RR
-from sage.functions.all import log
 from sage.structure.category_object import normalize_names
 
-import sage.schemes.curves.projective_curve as plane_curve
+lazy_import("sage.functions.all", "log")
+
 
 def is_HyperellipticCurve(C):
     """

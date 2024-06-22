@@ -20,18 +20,19 @@ import itertools
 
 from math import floor
 
-from sage.schemes.projective.projective_space import ProjectiveSpace
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.rings.real_mpfr import RealField
-from sage.rings.number_field.unit_group import UnitGroup
-from sage.arith.misc import gcd
 from sage.arith.functions import lcm
-from sage.matrix.constructor import matrix, column_matrix
-from sage.libs.pari.all import pari
-from sage.modules.free_module_element import vector
+from sage.arith.misc import gcd
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
-from sage.geometry.polyhedron.constructor import Polyhedron
+from sage.rings.rational_field import QQ
+from sage.schemes.projective.projective_space import ProjectiveSpace
+
+lazy_import('sage.geometry.polyhedron.constructor', 'Polyhedron')
+lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.matrix.constructor', ['matrix', 'column_matrix'])
+lazy_import('sage.modules.free_module_element', 'vector')
+lazy_import('sage.rings.number_field.unit_group', 'UnitGroup')
+lazy_import('sage.rings.real_mpfr', 'RealField')
 
 
 def ZZ_points_of_bounded_height(PS, dim, bound):
