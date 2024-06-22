@@ -234,7 +234,7 @@ class FourTi2():
 
         INPUT:
 
-        - ``kwds`` -- dict controlling what data is written to what files
+        - ``kwds`` -- dictionary controlling what data is written to what files
 
         OUTPUT: the value of the key ``project``
 

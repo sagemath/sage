@@ -112,38 +112,38 @@ class TestSuite:
 
     .. TODO::
 
-    - Allow for customized behavior in case of failing assertion
-      (warning, error, statistic accounting).
-      This involves reimplementing the methods fail / failIf / ...
-      of unittest.TestCase in InstanceTester
+        - Allow for customized behavior in case of failing assertion
+          (warning, error, statistic accounting).
+          This involves reimplementing the methods fail / failIf / ...
+          of unittest.TestCase in InstanceTester
 
-    - Don't catch the exceptions if ``TestSuite(..).run()`` is called
-      under the debugger, or with ``%pdb`` on (how to detect this? see
-      ``get_ipython()``, ``IPython.Magic.shell.call_pdb``, ...)
-      In the mean time, see the ``catch=False`` option.
+        - Don't catch the exceptions if ``TestSuite(..).run()`` is called
+          under the debugger, or with ``%pdb`` on (how to detect this? see
+          ``get_ipython()``, ``IPython.Magic.shell.call_pdb``, ...)
+          In the mean time, see the ``catch=False`` option.
 
-    - Run the tests according to the inheritance order, from most
-      generic to most specific, rather than alphabetically. Then, the
-      first failure will be the most relevant, the others being
-      usually consequences.
+        - Run the tests according to the inheritance order, from most
+          generic to most specific, rather than alphabetically. Then, the
+          first failure will be the most relevant, the others being
+          usually consequences.
 
-    - Improve integration with doctests (statistics on failing/passing tests)
+        - Improve integration with doctests (statistics on failing/passing tests)
 
-    - Add proper support for nested testsuites.
+        - Add proper support for nested testsuites.
 
-    - Integration with unittest:
-      Make TestSuite inherit from unittest.TestSuite?
-      Make ``.run(...)`` accept a result object
+        - Integration with unittest:
+          Make TestSuite inherit from unittest.TestSuite?
+          Make ``.run(...)`` accept a result object
 
-    - Add some standard option ``proof = True``, asking for the
-      test method to choose appropriately the elements so as to
-      prove the desired property. The test method may assume that
-      a parent implements properly all the super categories. For
-      example, the ``_test_commutative`` method of the category
-      ``CommutativeSemigroups()`` may just check that the
-      provided generators commute, implicitly assuming that
-      generators indeed generate the semigroup (as required by
-      ``Semigroups()``).
+        - Add some standard option ``proof = True``, asking for the
+          test method to choose appropriately the elements so as to
+          prove the desired property. The test method may assume that
+          a parent implements properly all the super categories. For
+          example, the ``_test_commutative`` method of the category
+          ``CommutativeSemigroups()`` may just check that the
+          provided generators commute, implicitly assuming that
+          generators indeed generate the semigroup (as required by
+          ``Semigroups()``).
     """
 
     def __init__(self, instance):

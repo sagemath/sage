@@ -232,7 +232,7 @@ class WordMorphism(SageObject):
 
     INPUT:
 
-    - ``data`` -- dict or str or an instance of WordMorphism, the map
+    - ``data`` -- dictionary or string or an instance of WordMorphism, the map
       giving the image of letters
     - ``domain`` -- (optional:``None``) set of words over a given
       alphabet. If ``None``, the domain alphabet is computed from ``data``

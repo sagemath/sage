@@ -100,7 +100,7 @@ class CuspidalSubmodule(ModularFormsSubmodule):
 
     def _compute_q_expansion_basis(self, prec):
         r"""
-        Compute a basis of q-expansions of self to the given precision. Not
+        Compute a basis of q-expansions of ``self`` to the given precision. Not
         implemented in this abstract base class.
 
         EXAMPLES::
@@ -115,7 +115,7 @@ class CuspidalSubmodule(ModularFormsSubmodule):
 
     def _repr_(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -126,7 +126,7 @@ class CuspidalSubmodule(ModularFormsSubmodule):
 
     def is_cuspidal(self):
         """
-        Return True since spaces of cusp forms are cuspidal.
+        Return ``True`` since spaces of cusp forms are cuspidal.
 
         EXAMPLES::
 
@@ -235,7 +235,7 @@ class CuspidalSubmodule_modsym_qexp(CuspidalSubmodule):
     """
     def _compute_q_expansion_basis(self, prec=None):
         """
-        Compute q-expansions of a basis for self (via modular symbols).
+        Compute q-expansions of a basis for ``self`` (via modular symbols).
 
         EXAMPLES::
 
@@ -320,7 +320,7 @@ class CuspidalSubmodule_level1_Q(CuspidalSubmodule):
     """
     def _compute_q_expansion_basis(self, prec=None):
         """
-        Compute q-expansions of a basis for self.
+        Compute q-expansions of a basis for ``self``.
 
         EXAMPLES::
 
@@ -540,7 +540,6 @@ class CuspidalSubmodule_wt1_gH(CuspidalSubmodule):
             [ 0  1  0  0  1  0  0]
             sage: C.hecke_matrix(23) == 0
             True
-
         """
         chars = self.group().characters_mod_H(sign=-1, galois_orbits=True)
         A = Matrix(QQ, 0, 0)

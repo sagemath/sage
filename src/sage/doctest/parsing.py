@@ -366,7 +366,8 @@ def unparse_optional_tags(tags, prefix='# '):
 
     INPUT:
 
-    - ``tags`` -- dict or iterable of tags, as output by :func:`parse_optional_tags`
+    - ``tags`` -- dictionary or iterable of tags, as output by
+      :func:`parse_optional_tags`
 
     - ``prefix`` -- to be put before a nonempty string
 

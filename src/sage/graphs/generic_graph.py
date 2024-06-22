@@ -11103,11 +11103,11 @@ class GenericGraph(GenericGraph_pyx):
           surfer who is randomly clicking on links will continue is a damping
           factor d.
 
-        - ``personalization`` -- dict (default: ``None``); a dictionary keyed
-          by vertices associating to each vertex a value. The personalization
-          can be specified for a subset of the vertices, if not specified a
-          nodes personalization value will be taken as zero. The sum of the
-          values must be nonzero.
+        - ``personalization`` -- dictionary (default: ``None``); a dictionary
+          keyed by vertices associating to each vertex a value. The
+          personalization can be specified for a subset of the vertices, if not
+          specified a nodes personalization value will be taken as zero. The
+          sum of the values must be nonzero.
           By default (``None``), a uniform distribution is used.
 
         - ``by_weight`` -- boolean (default: ``False``); if ``True``, the edges
@@ -11122,7 +11122,7 @@ class GenericGraph(GenericGraph_pyx):
         - ``check_weight`` -- boolean (default: ``True``); whether to check that
           the ``weight_function`` outputs a number for each edge
 
-        - ``dangling`` -- dict (default: ``None``); a dictionary keyed by a
+        - ``dangling`` -- dictionary (default: ``None``); a dictionary keyed by a
           vertex the outedge of "dangling" vertices, (i.e., vertices without
           any outedges) points to and the dict value is the weight of that
           outedge. By default, dangling vertices are given outedges according

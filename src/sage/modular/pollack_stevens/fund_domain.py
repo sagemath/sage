@@ -73,21 +73,21 @@ class PollackStevensModularDomain(SageObject):
 
     INPUT:
 
-    - ``N`` -- a positive integer, the level of the congruence subgroup
+    - ``N`` -- positive integer, the level of the congruence subgroup
       `\Gamma_0(N)`
 
-    - ``reps`` -- a list of `2 \times 2` matrices, the coset
+    - ``reps`` -- list of `2 \times 2` matrices, the coset
       representatives of `Div^0(P^1(\QQ))`
 
-    - ``indices`` -- a list of integers; indices of elements in
+    - ``indices`` -- list of integers; indices of elements in
       ``reps`` which are generators
 
-    - ``rels`` -- a list of list of triples ``(d, A, i)``, one for each
+    - ``rels`` -- list of list of triples ``(d, A, i)``, one for each
       coset representative of ``reps`` which describes how to express the
       elements of ``reps`` in terms of generators specified by ``indices``.
       See :meth:`relations` for a detailed explanations of these triples.
 
-    - ``equiv_ind`` -- a dictionary which maps normalized coordinates on
+    - ``equiv_ind`` -- dictionary which maps normalized coordinates on
       `P^1(\ZZ/N\ZZ)` to an integer such that a matrix whose bottom row is
       equivalent to `[a:b]` in `P^1(\ZZ/N\ZZ)` is in the coset of
       ``reps[equiv_ind[(a,b)]]``
@@ -110,7 +110,6 @@ class PollackStevensModularDomain(SageObject):
         Traceback (most recent call last):
         ...
         TypeError: unable to coerce <class 'sage.modular.arithgroup.congroup_gamma0.Gamma0_class_with_category'> to an integer
-
     """
     def __init__(self, N, reps, indices, rels, equiv_ind):
         r"""
@@ -220,11 +219,11 @@ class PollackStevensModularDomain(SageObject):
 
     def gen(self, n=0):
         r"""
-        Return the ``n``-th generator.
+        Return the `n`-th generator.
 
         INPUT:
 
-        - ``n`` -- integer (default: 0), which generator is desired
+        - ``n`` -- integer (default: 0); which generator is desired
 
         EXAMPLES::
 
@@ -283,7 +282,7 @@ class PollackStevensModularDomain(SageObject):
 
         INPUT:
 
-        - ``n`` -- integer (default: None)
+        - ``n`` -- integer (default: ``None``)
 
         OUTPUT:
 
@@ -320,7 +319,7 @@ class PollackStevensModularDomain(SageObject):
 
         INPUT:
 
-        - ``n`` -- integer (default: None)
+        - ``n`` -- integer (default: ``None``)
 
         OUTPUT:
 
@@ -535,7 +534,6 @@ class PollackStevensModularDomain(SageObject):
             sage: A = ManinRelations(11)
             sage: A.P1()
             The projective line over the integers modulo 11
-
         """
         return self._P
 
@@ -547,7 +545,7 @@ class ManinRelations(PollackStevensModularDomain):
 
     INPUT:
 
-    - ``N`` -- a positive integer, the level of `\Gamma_0(N)` to work with
+    - ``N`` -- positive integer, the level of `\Gamma_0(N)` to work with
 
     EXAMPLES::
 
@@ -576,7 +574,6 @@ class ManinRelations(PollackStevensModularDomain):
         Traceback (most recent call last):
         ...
         ValueError: N must be a positive integer
-
     """
     def __init__(self, N):
         r"""
@@ -584,7 +581,7 @@ class ManinRelations(PollackStevensModularDomain):
 
         INPUT:
 
-        - ``N`` -- a positive integer, the level of `\Gamma_0(N)` to work with
+        - ``N`` -- positive integer; the level of `\Gamma_0(N)` to work with
 
         EXAMPLES::
 
@@ -895,7 +892,7 @@ class ManinRelations(PollackStevensModularDomain):
         contains a point fixed by a `\Gamma_0(N)` element of order 2 (where the
         order is computed in `PSL_2(\ZZ)`).
 
-        OUTPUT: a list of integers
+        OUTPUT: list of integers
 
         EXAMPLES::
 
@@ -938,7 +935,7 @@ class ManinRelations(PollackStevensModularDomain):
         point fixed by a `\Gamma_0(N)` element of order 2 (where the order is
         computed in `PSL_2(\ZZ)`).
 
-        OUTPUT: a list of matrices
+        OUTPUT: list of matrices
 
         EXAMPLES::
 
@@ -1340,7 +1337,7 @@ class ManinRelations(PollackStevensModularDomain):
 
         INPUT:
 
-        - ``C`` -- a list of rational numbers coming from
+        - ``C`` -- list of rational numbers coming from
           ``self.form_list_of_cusps()``
 
         OUTPUT:
@@ -1543,7 +1540,7 @@ def basic_hecke_matrix(a, l):
 
     INPUT:
 
-    - `a` -- an integer or Infinity
+    - ``a`` -- integer or Infinity
     - ``l`` -- a prime
 
     OUTPUT: a `2 \times 2` matrix of determinant l

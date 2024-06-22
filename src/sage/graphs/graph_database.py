@@ -343,8 +343,8 @@ class GraphQuery(GenericGraphQuery):
         - ``graph_db`` -- :class:`~GraphDatabase` (default: ``None``); instance
           to apply the query to (If ``None``, then a new instance is created)
 
-        - ``query_dict`` -- dict (default: ``None``); a dictionary specifying
-          the query itself. Format is: ``{'table_name': 'tblname',
+        - ``query_dict`` -- dictionary (default: ``None``); a dictionary
+          specifying the query itself. Format is: ``{'table_name': 'tblname',
           'display_cols': ['col1', 'col2'], 'expression': [col, operator,
           value]}``. If not ``None``, ``query_dict`` will take precedence over
           all other arguments.

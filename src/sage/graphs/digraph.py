@@ -262,7 +262,7 @@ class DiGraph(GenericGraph):
          <https://networkx.github.io/>`__ digraph, or `igraph
          <http://igraph.org/python/>`__ digraph.
 
-    - ``pos`` -- dict (default: ``None``); a positioning dictionary. For
+    - ``pos`` -- dictionary (default: ``None``); a positioning dictionary. For
       example, the spring layout from NetworkX for the 5-cycle is::
 
          {0: [-0.91679746, 0.88169588],

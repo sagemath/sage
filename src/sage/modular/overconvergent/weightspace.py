@@ -281,8 +281,8 @@ class WeightSpace_class(Parent):
 
     def _coerce_in_wtchar(self, x):
         r"""
-        Convert in a weight-character whose parent is different from self (with
-        has the prime, but possibly different base ring).
+        Convert in a weight-character whose parent is different from ``self``
+        (with has the prime, but possibly different base ring).
 
         EXAMPLES::
 
@@ -336,7 +336,7 @@ class WeightCharacter(Element):
 
     def is_even(self) -> bool:
         r"""
-        Return True if this weight-character sends -1 to +1.
+        Return ``True`` if this weight-character sends -1 to +1.
 
         EXAMPLES::
 
@@ -393,7 +393,7 @@ class WeightCharacter(Element):
 
     def is_trivial(self) -> bool:
         r"""
-        Return True if and only if this is the trivial character.
+        Return ``True`` if and only if this is the trivial character.
 
         EXAMPLES::
 

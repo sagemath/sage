@@ -23,12 +23,10 @@ cpdef Ek_ZZ(int k, int prec=10):
 
     INPUT:
 
-    - `k` -- int
+    - ``k`` -- int
     - ``prec`` -- int
 
-    OUTPUT:
-
-    - list of Sage Integers.
+    OUTPUT: list of Sage Integers
 
     EXAMPLES::
 

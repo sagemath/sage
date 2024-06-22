@@ -53,13 +53,13 @@ def victor_miller_basis(k, prec=10, cusp_only=False, var='q'):
 
     INPUT:
 
-    - ``k`` -- an integer
+    - ``k`` -- integer
 
     - ``prec`` -- (default: 10) a positive integer
 
-    - ``cusp_only`` -- bool (default: ``False``)
+    - ``cusp_only`` -- boolean (default: ``False``)
 
-    - ``var`` -- string (default: 'q')
+    - ``var`` -- string (default: ``'q'``)
 
     OUTPUT: a sequence whose entries are power series in ``ZZ[[var]]``
 
@@ -130,7 +130,7 @@ def victor_miller_basis(k, prec=10, cusp_only=False, var='q'):
     if k % 2 == 1 or k == 2:
         return Sequence([])
     elif k < 0:
-        raise ValueError("k must be non-negative")
+        raise ValueError("k must be nonnegative")
     elif k == 0:
         return Sequence([PowerSeriesRing(ZZ,var)(1).add_bigoh(prec)], cr=True)
     e = k.mod(12)
@@ -278,7 +278,7 @@ def _delta_poly_modulo(N, prec=10):
 
     INPUT:
 
-    - `N` -- positive integer modulo which we want to compute `\Delta`
+    - ``N`` -- positive integer modulo which we want to compute `\Delta`
 
     - ``prec`` -- integer; the absolute precision of the output
 
@@ -331,12 +331,12 @@ def delta_qexp(prec=10, var='q', K=ZZ) :
 
     INPUT:
 
-    - ``prec`` -- integer (default 10), the absolute precision of the output
+    - ``prec`` -- integer (default: 10); the absolute precision of the output
       (must be positive)
 
-    - ``var`` -- string (default: 'q'), variable name
+    - ``var`` -- string (default: ``'q'``); variable name
 
-    - ``K`` -- ring (default: `\ZZ`), base ring of answer
+    - ``K`` -- ring (default: `\ZZ`); base ring of answer
 
     OUTPUT: a power series over K in the variable ``var``
 

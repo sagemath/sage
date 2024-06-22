@@ -60,7 +60,7 @@ class EisensteinSubmodule(submodule.ModularFormsSubmodule):
 
     def eisenstein_submodule(self):
         """
-        Return the Eisenstein submodule of self.
+        Return the Eisenstein submodule of ``self``.
         (Yes, this is just self.)
 
         EXAMPLES::
@@ -125,7 +125,7 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
     def parameters(self):
         r"""
         Return a list of parameters for each Eisenstein series
-        spanning self. That is, for each such series, return a triple
+        spanning ``self``. That is, for each such series, return a triple
         of the form (`\psi`, `\chi`, level), where `\psi` and `\chi`
         are the characters defining the Eisenstein series, and level
         is the smallest level at which this series occurs.
@@ -169,7 +169,7 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
 
     def new_submodule(self, p=None):
         r"""
-        Return the new submodule of self.
+        Return the new submodule of ``self``.
 
         EXAMPLES::
 
@@ -190,7 +190,7 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
 
     def _parameters_character(self):
         """
-        Return the character defining self.
+        Return the character defining ``self``.
 
         EXAMPLES::
 
@@ -201,7 +201,7 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
 
     def change_ring(self, base_ring):
         """
-        Return self as a module over base_ring.
+        Return ``self`` as a module over ``base_ring``.
 
         EXAMPLES::
 
@@ -332,7 +332,7 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
 
     def _compute_q_expansion_basis(self, prec=None, new=False):
         """
-        Compute a q-expansion basis for self to precision prec.
+        Compute a q-expansion basis for ``self`` to precision prec.
 
         EXAMPLES::
 
@@ -384,7 +384,7 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
         """
         Compute a q-expansion for a given element of self, expressed
         as a vector of coefficients for the basis vectors of self,
-        viewing self as a subspace of the corresponding space of
+        viewing ``self`` as a subspace of the corresponding space of
         modular forms.
 
         EXAMPLES::
@@ -429,7 +429,7 @@ class EisensteinSubmodule_gH_Q(EisensteinSubmodule_params):
     """
     def _parameters_character(self):
         """
-        Return the character defining self. Since self is
+        Return the character defining ``self``. Since ``self`` is
         a space of Eisenstein forms on GammaH(N) rather than a space with fixed
         character, we return the group GammaH(N) itself.
 
@@ -475,17 +475,15 @@ class EisensteinSubmodule_gH_Q(EisensteinSubmodule_params):
 
         INPUT:
 
-        - n: a positive integer
+        - ``n`` -- positive integer
 
-        - bound: an integer such that any element of this space with
+        - ``bound`` -- integer such that any element of this space with
           coefficients a_1, ..., a_b all zero must be the zero
           element. If this turns out not to be true, the code will
           increase the bound and try again. Setting bound = None is
           equivalent to setting bound = self.dimension().
 
-        OUTPUT:
-
-        - a matrix (over `\QQ`)
+        OUTPUT: matrix (over `\QQ`)
 
         ALGORITHM:
 
@@ -537,9 +535,9 @@ class EisensteinSubmodule_g1_Q(EisensteinSubmodule_gH_Q):
     """
     def _parameters_character(self):
         r"""
-        Return the character defining self.
+        Return the character defining ``self``.
 
-        Since self is a space of Eisenstein
+        Since ``self`` is a space of Eisenstein
         forms on `\Gamma_1(N)`, all characters modulo the level are possible,
         so we return the level.
 
@@ -586,7 +584,6 @@ class EisensteinSubmodule_eps(EisensteinSubmodule_params):
         q^4 - 2*zeta3*q^7 + O(q^10),
         q^5 + (zeta3 + 1)*q^8 + O(q^10)
         ]
-
     """
     # TODO
     #def _compute_q_expansion_basis(self, prec):

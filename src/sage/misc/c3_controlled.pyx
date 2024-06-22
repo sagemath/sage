@@ -909,7 +909,7 @@ cpdef tuple C3_sorted_merge(list lists, key=identity):
                 tailsets[-1].add(key(heads[-1]))
                 heads[-1] = O
             elif O != heads[-1]:
-                assert O_key not in tailsets[-1], "C3 should not have choosen this O"
+                assert O_key not in tailsets[-1], "C3 should not have chosen this O"
                 # Use a heap or something for fast sorted insertion?
                 # Since Python uses TimSort, that's probably not so bad.
                 tails[-1].append(O)

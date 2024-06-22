@@ -78,7 +78,7 @@ def eisenstein_series_qexp(k, prec=10, K=QQ, var='q', normalization='linear'):
         1 + 65520/691*q + 134250480/691*q^2 + 11606736960/691*q^3 + 274945048560/691*q^4 + O(q^5)
         sage: eisenstein_series_qexp(12, 5, normalization='linear')
         691/65520 + q + 2049*q^2 + 177148*q^3 + 4196353*q^4 + O(q^5)
-        sage: eisenstein_series_qexp(12, 50, K=GF(13), normalization="constant")
+        sage: eisenstein_series_qexp(12, 50, K=GF(13), normalization='constant')
         1 + O(q^50)
 
     TESTS:
@@ -95,20 +95,20 @@ def eisenstein_series_qexp(k, prec=10, K=QQ, var='q', normalization='linear'):
 
     We check that the function behaves properly over finite-characteristic base rings::
 
-        sage: eisenstein_series_qexp(12, 5, K = Zmod(691), normalization="integral")
+        sage: eisenstein_series_qexp(12, 5, K = Zmod(691), normalization='integral')
         566*q + 236*q^2 + 286*q^3 + 194*q^4 + O(q^5)
-        sage: eisenstein_series_qexp(12, 5, K = Zmod(691), normalization="constant")
+        sage: eisenstein_series_qexp(12, 5, K = Zmod(691), normalization='constant')
         Traceback (most recent call last):
         ...
         ValueError: The numerator of -B_k/(2*k) (=691) must be invertible in the ring Ring of integers modulo 691
-        sage: eisenstein_series_qexp(12, 5, K = Zmod(691), normalization="linear")
+        sage: eisenstein_series_qexp(12, 5, K = Zmod(691), normalization='linear')
         q + 667*q^2 + 252*q^3 + 601*q^4 + O(q^5)
 
-        sage: eisenstein_series_qexp(12, 5, K = Zmod(2), normalization="integral")
+        sage: eisenstein_series_qexp(12, 5, K = Zmod(2), normalization='integral')
         1 + O(q^5)
-        sage: eisenstein_series_qexp(12, 5, K = Zmod(2), normalization="constant")
+        sage: eisenstein_series_qexp(12, 5, K = Zmod(2), normalization='constant')
         1 + O(q^5)
-        sage: eisenstein_series_qexp(12, 5, K = Zmod(2), normalization="linear")
+        sage: eisenstein_series_qexp(12, 5, K = Zmod(2), normalization='linear')
         Traceback (most recent call last):
         ...
         ValueError: The denominator of -B_k/(2*k) (=65520) must be invertible in the ring Ring of integers modulo 2
@@ -401,9 +401,7 @@ def eisenstein_series_lseries(weight, prec=53,
 
     - ``max_asymp_coeffs`` -- integer
 
-    OUTPUT:
-
-    The L-series of the Eisenstein series.
+    OUTPUT: the L-series of the Eisenstein series
 
     EXAMPLES:
 
@@ -412,7 +410,7 @@ def eisenstein_series_lseries(weight, prec=53,
        sage: L = eisenstein_series_lseries(16)
        sage: L(1)
        -0.291657724743874
-       sage: L = eisenstein_series_lseries(20)
+      sage: L = eisenstein_series_lseries(20)
        sage: L(2)
        -5.02355351645998
 

@@ -45,7 +45,7 @@ class WordDatatype_morphic(WordDatatype_callable):
         - ``parent`` -- a parent
         - ``morphism`` -- a word morphism
         - ``letter`` -- a starting letter
-        - ``coding`` -- dict (default: ``None``); if ``None``
+        - ``coding`` -- dictionary (default: ``None``); if ``None``
           the identity map is used for the coding
         - ``length`` -- integer or ``'finite'`` or ``Infinity`` or
           ``'unknown'`` (default: ``Infinity``) the length of the word

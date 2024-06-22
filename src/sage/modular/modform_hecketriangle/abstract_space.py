@@ -51,19 +51,16 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         INPUT:
 
-        - ``group``       -- The Hecke triangle group (default: ``HeckeTriangleGroup(3)``)
+        - ``group`` -- the Hecke triangle group (default: ``HeckeTriangleGroup(3)``)
 
-        - ``k``           -- The weight (default: `0`)
+        - ``k`` -- the weight (default: `0`)
 
-        - ``ep``          -- The epsilon (default: ``None``).
-                             If ``None``, then k*(n-2) has to be divisible by `2` and
-                             ``ep=(-1)^(k*(n-2)/2)`` is used.
+        - ``ep`` -- the epsilon (default: ``None``); if ``None``, then `k(n-2)`
+          has to be divisible by `2` and ``ep=(-1)^(k*(n-2)/2)`` is used
 
-        - ``base_ring``   -- The base_ring (default: `\Z`).
+        - ``base_ring`` -- the base_ring (default: `\Z`)
 
-        OUTPUT:
-
-        The corresponding abstract (Hecke) forms space.
+        OUTPUT: the corresponding abstract (Hecke) forms space
 
         EXAMPLES::
 
@@ -380,7 +377,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
     def ambient_space(self):
         r"""
-        Return the ambient space of self.
+        Return the ambient space of ``self``.
 
         EXAMPLES::
 
@@ -401,7 +398,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
     def module(self):
         r"""
-        Return the module associated to self.
+        Return the module associated to ``self``.
 
         EXAMPLES::
 
@@ -420,7 +417,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
     def ambient_module(self):
         r"""
-        Return the module associated to the ambient space of self.
+        Return the module associated to the ambient space of ``self``.
 
         EXAMPLES::
 
@@ -544,7 +541,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         INPUT:
 
-        - ``vec`` -- A coordinate vector with respect to ``self.gens()``.
+        - ``vec`` -- a coordinate vector with respect to ``self.gens()``
 
         OUTPUT: an element of ``self`` corresponding to the coordinate vector ``vec``
 
@@ -586,7 +583,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         INPUT:
 
-        - ``vec`` -- An element of ``self.module()`` or ``self.ambient_module()``.
+        - ``vec`` -- an element of ``self.module()`` or ``self.ambient_module()``
 
         OUTPUT: an element of ``self`` corresponding to ``vec``
 
@@ -710,9 +707,9 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         INPUT:
 
-        - ``gamma``   -- An element of the group of ``self``.
+        - ``gamma`` -- an element of the group of ``self``
 
-        - ``t``       -- An element of the upper half plane.
+        - ``t`` -- an element of the upper half plane
 
         EXAMPLES::
 
@@ -777,9 +774,9 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         INPUT:
 
-        - ``order_1``  -- An integer (default: 0) denoting the desired order at
-                          ``-1`` in the case ``n = infinity``.
-                          If ``n != infinity`` the parameter is ignored.
+        - ``order_1`` -- an integer (default: 0) denoting the desired order at
+          ``-1`` in the case ``n = infinity``. If ``n != infinity`` the
+          parameter is ignored.
 
         EXAMPLES::
 
@@ -849,23 +846,21 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         INPUT:
 
-        - ``m``           -- An integer ``m <= order_inf = self._l1 - order_1``.
+        - ``m`` -- an integer ``m <= order_inf = self._l1 - order_1``
 
-        - ``order_1``     -- The order at ``-1`` of F_simple (default: 0).
-                             This parameter is ignored if ``n != infinity``.
+        - ``order_1`` -- the order at ``-1`` of F_simple (default: 0);
+          this parameter is ignored if ``n != infinity``
 
-        - ``fix_d``       -- If ``False`` (default) a formal parameter is used for ``d``.
-                             If ``True`` then the numerical value of ``d`` is used
-                             (resp. an exact value if the group is arithmetic).
-                             Otherwise the given value is used for ``d``.
+        - ``fix_d`` -- if ``False`` (default) a formal parameter is used for
+          ``d``. If ``True`` then the numerical value of ``d`` is used (resp.
+          an exact value if the group is arithmetic). Otherwise the given
+          value is used for ``d``.
 
-        - ``d_num_prec``  -- The precision to be used if a numerical value for ``d`` is substituted.
-                             Default: ``None`` in which case the default
-                             numerical precision of ``self.parent()`` is used.
+        - ``d_num_prec`` -- the precision to be used if a numerical value for
+          ``d`` is substituted. Default: ``None``, in which case the default
+          numerical precision of ``self.parent()`` is used.
 
-        OUTPUT:
-
-        The corresponding Faber polynomial ``P(q)``.
+        OUTPUT: the corresponding Faber polynomial ``P(q)``
 
         EXAMPLES::
 
@@ -1002,23 +997,21 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         INPUT:
 
-        - ``m``           -- An integer ``m <= self._l1 - order_1``.
+        - ``m`` -- integer; ``m <= self._l1 - order_1``
 
-        - ``order_1``     -- The order at ``-1`` of ``F_simple`` (default: 0).
-                             This parameter is ignored if ``n != infinity``.
+        - ``order_1`` -- the order at ``-1`` of ``F_simple`` (default: 0);
+          this parameter is ignored if ``n != infinity``
 
-        - ``fix_d``       -- If ``False`` (default) a formal parameter is used for ``d``.
-                             If ``True`` then the numerical value of ``d`` is used
-                             (resp. an exact value if the group is arithmetic).
-                             Otherwise the given value is used for ``d``.
+        - ``fix_d`` -- if ``False`` (default) a formal parameter is used for
+          ``d``. If ``True`` then the numerical value of ``d`` is used (resp.
+          an exact value if the group is arithmetic). Otherwise the given value
+          is used for ``d``.
 
-        - ``d_num_prec``  -- The precision to be used if a numerical value for ``d`` is substituted.
-                             Default: ``None`` in which case the default
-                             numerical precision of ``self.parent()`` is used.
+        - ``d_num_prec`` -- the precision to be used if a numerical value for
+          ``d`` is substituted. Default: ``None``, in which case the default
+          numerical precision of ``self.parent()`` is used.
 
-        OUTPUT:
-
-        The corresponding Faber polynomial ``p(q)``.
+        OUTPUT: the corresponding Faber polynomial ``p(q)``
 
         EXAMPLES::
 
@@ -1125,7 +1118,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
     def F_basis_pol(self, m, order_1=ZZ(0)):
         r"""
-        Returns a polynomial corresponding to the basis element of
+        Return a polynomial corresponding to the basis element of
         the corresponding space of weakly holomorphic forms of
         the same degree as ``self``. The basis element is determined
         by the property that the Fourier expansion is of the form
@@ -1136,10 +1129,10 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         INPUT:
 
-        - ``m``       -- An integer ``m <= self._l1``.
+        - ``m`` -- integer; ``m <= self._l1``
 
-        - ``order_1`` -- The order at ``-1`` of ``F_simple`` (default: 0).
-                         This parameter is ignored if ``n != infinity``.
+        - ``order_1`` -- the order at ``-1`` of ``F_simple`` (default: 0);
+          this parameter is ignored if ``n != infinity``
 
         OUTPUT:
 
@@ -1227,7 +1220,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
     def F_basis(self, m, order_1=ZZ(0)):
         r"""
-        Returns a weakly holomorphic element of ``self``
+        Return a weakly holomorphic element of ``self``
         (extended if necessarily) determined by the property that
         the Fourier expansion is of the form is of the form
         ``q^m + O(q^(order_inf + 1))``, where ``order_inf = self._l1 - order_1``.
@@ -1241,10 +1234,10 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         INPUT:
 
-        - ``m`` -- An integer ``m <= self._l1``.
+        - ``m`` -- integer; ``m <= self._l1``
 
-        - ``order_1`` -- The order at ``-1`` of ``F_simple`` (default: 0).
-                         This parameter is ignored if ``n != infinity``.
+        - ``order_1`` -- the order at ``-1`` of ``F_simple`` (default: 0);
+          this parameter is ignored if ``n != infinity``
 
         OUTPUT:
 
@@ -1365,25 +1358,20 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         INPUT:
 
-        - ``r``        -- An integer or ``None`` (default), indicating
-                          the desired power of ``E2`` If ``r=None``
-                          then all possible powers (``r``) are
-                          choosen.
+        - ``r`` -- an integer or ``None`` (default), indicating the desired
+          power of ``E2`` If ``r=None`` then all possible powers (``r``) are
+          chosen.
 
-        - ``min_exp``  -- An integer giving a lower bound for the
-                          first non-trivial Fourier coefficient of the
-                          generators (default: 0).
+        - ``min_exp`` -- integer (default: 0); a lower bound for the first
+          non-trivial Fourier coefficient of the generators
 
-        - ``max_exp``  -- An integer or ``infinity`` (default) giving
-                          an upper bound for the first non-trivial
-                          Fourier coefficient of the generators.  If
-                          ``max_exp==infinity`` then no upper bound is
-                          assumed.
+        - ``max_exp`` -- integer or ``infinity`` (default) giving an upper
+          bound for the first non-trivial Fourier coefficient of the
+          generators.  If ``max_exp==infinity`` then no upper bound is assumed.
 
-        - ``order_1``  -- A lower bound for the order at ``-1`` of all
-                          quasi parts of the basis elements (default:
-                          0). If ``n!=infinity`` this parameter is
-                          ignored.
+        - ``order_1`` -- a lower bound for the order at ``-1`` of all quasi
+          parts of the basis elements (default: 0). If ``n!=infinity`` this
+          parameter is ignored.
 
         OUTPUT:
 
@@ -1629,7 +1617,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
     def construct_form(self, laurent_series, order_1=ZZ(0), check=True, rationalize=False):
         r"""
-        Tries to construct an element of self with the given Fourier
+        Try to construct an element of ``self`` with the given Fourier
         expansion. The assumption is made that the specified Fourier
         expansion corresponds to a weakly holomorphic modular form.
 
@@ -1638,21 +1626,21 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         INPUT:
 
-        - ``laurent_series``  -- A Laurent or Power series.
+        - ``laurent_series`` -- a Laurent or Power series
 
-        - ``order_1``         -- A lower bound for the order at ``-1`` of the form (default: 0).
-                                 If ``n!=infinity`` this parameter is ignored.
+        - ``order_1`` -- a lower bound for the order at ``-1`` of the form
+          (default: 0). If ``n!=infinity`` this parameter is ignored.
 
-        - ``check``           -- If ``True`` (default) then the series expansion of the constructed
-                                 form is compared against the given series.
+        - ``check`` -- if ``True`` (default) then the series expansion of the
+          constructed form is compared against the given series
 
-        - ``rationalize``     -- If ``True`` (default: ``False``) then the series is
-                                 `rationalized` beforehand. Note that in non-exact or non-arithmetic
-                                 cases this is experimental and extremely unreliable!
+        - ``rationalize`` -- if ``True`` (default: ``False``) then the series
+          is "rationalized" beforehand. Note that in non-exact or
+          non-arithmetic cases this is experimental and extremely unreliable!
 
         OUTPUT:
 
-        If possible: An element of self with the same initial
+        If possible: An element of ``self`` with the same initial
         Fourier expansion as ``laurent_series``.
 
         Note: For modular spaces it is also possible to call
@@ -1763,15 +1751,16 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         INPUT:
 
-        - ``min_exp``       -- An integer (default: 0), namely the lower bound for the
-                               order at infinity resp. the exponent of the Laurent series.
+        - ``min_exp`` -- integer (default: 0), namely the lower bound for the
+          order at infinity resp. the exponent of the Laurent series
 
-        - ``order_1``       -- A lower bound for the order at ``-1`` of all quasi parts of the
-                               subspace (default: 0). If ``n!=infinity`` this parameter is ignored.
+        - ``order_1`` -- a lower bound for the order at ``-1`` of all quasi
+          parts of the subspace (default: 0). If ``n!=infinity`` this parameter
+          is ignored.
 
-        - ``incr_prec_by``  -- An integer (default: 0) which specifies how
-                               much the precision should be increased compared to
-                               the size of the corresponding basis.
+        - ``incr_prec_by`` -- integer (default: 0) which specifies how much the
+          precision should be increased compared to the size of the
+          corresponding basis
 
         OUTPUT: the corresponding base change matrix
 
@@ -1869,15 +1858,15 @@ class FormsSpace_abstract(FormsRing_abstract):
         .. NOTE::
 
             For ``n=infinity`` only the holomorphic case (``min_exp >= 0``)
-            is supported (in particular a non-negative order at ``-1`` is assumed).
+            is supported (in particular a nonnegative order at ``-1`` is assumed).
 
         INPUT:
 
-        - ``min_exp``  -- An integer (default: 0), namely the lower bound for the
-                          order at infinity resp. the exponent of the Laurent series.
+        - ``min_exp`` -- integer (default: 0); namely the lower bound for the
+          order at infinity resp. the exponent of the Laurent series
 
-        - ``order_1``  -- A lower bound for the order at ``-1`` for all quasi parts
-                          (default: 0). If ``n!=infinity`` this parameter is ignored.
+        - ``order_1`` -- a lower bound for the order at ``-1`` for all quasi
+          parts (default: 0). If ``n!=infinity`` this parameter is ignored.
 
         OUTPUT:
 
@@ -1909,7 +1898,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
     def construct_quasi_form(self, laurent_series, order_1=ZZ(0), check=True, rationalize=False):
         r"""
-        Try to construct an element of self with the given Fourier
+        Try to construct an element of ``self`` with the given Fourier
         expansion. The assumption is made that the specified Fourier
         expansion corresponds to a weakly holomorphic quasi modular form.
 
@@ -1918,21 +1907,22 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         INPUT:
 
-        - ``laurent_series``  -- A Laurent or Power series.
+        - ``laurent_series`` -- a Laurent or Power series
 
-        - ``order_1``         -- A lower bound for the order at ``-1`` for all quasi parts of the
-                                 form (default: 0). If ``n!=infinity`` this parameter is ignored.
+        - ``order_1`` -- a lower bound for the order at ``-1`` for all quasi
+          parts of the form (default: 0). If ``n!=infinity`` this parameter is
+          ignored.
 
-        - ``check``           -- If ``True`` (default) then the series expansion of the constructed
-                                 form is compared against the given (rationalized) series.
+        - ``check`` -- if ``True`` (default) then the series expansion of the
+          constructed form is compared against the given (rationalized) series.
 
-        - ``rationalize``     -- If ``True`` (default: ``False``) then the series is
-                                 `rationalized` beforehand. Note that in non-exact or non-arithmetic
-                                 cases this is experimental and extremely unreliable!
+        - ``rationalize`` -- if ``True`` (default: ``False``) then the series
+          is "rationalized" beforehand. Note that in non-exact or
+          non-arithmetic cases this is experimental and extremely unreliable!
 
         OUTPUT:
 
-        If possible: An element of self with the same initial
+        If possible: An element of ``self`` with the same initial
         Fourier expansion as ``laurent_series``.
 
         Note: For non modular spaces it is also possible to call
@@ -2075,14 +2065,17 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         INPUT:
 
-        - ``m``        -- An integer, indicating the desired initial Laurent exponent of the element.
-                          If ``m==None`` (default) then the whole basis is returned.
+        - ``m`` -- integer, indicating the desired initial Laurent exponent
+          of the element. If ``m==None`` (default) then the whole basis is
+          returned.
 
-        - ``min_exp``  -- An integer, indicating the minimal Laurent exponent (for each quasi part)
-                          of the subspace of ``self`` which should be considered (default: 0).
+        - ``min_exp`` -- integer (default: 0); the minimal Laurent exponent
+          (for each quasi part) of the subspace of ``self`` which should be
+          considered
 
-        - ``order_1``  -- A lower bound for the order at ``-1`` of all quasi parts of the subspace
-                          (default: 0). If ``n!=infinity`` this parameter is ignored.
+        - ``order_1`` -- a lower bound for the order at ``-1`` of all quasi
+          parts of the subspace (default: 0). If ``n!=infinity`` this parameter
+          is ignored.
 
         OUTPUT:
 
@@ -2184,35 +2177,33 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         INPUT:
 
-        - ``laurent_series``  -- A Laurent series. If the Laurent coefficients already
-                                 coerce into ``self.coeff_ring()`` with a formal parameter
-                                 then the Laurent series is returned as is.
+        - ``laurent_series`` -- a Laurent series. If the Laurent coefficients
+          already coerce into ``self.coeff_ring()`` with a formal parameter
+          then the Laurent series is returned as is.
 
-                                 Otherwise it is assumed that the series is normalized
-                                 in the sense that the first non-trivial coefficient
-                                 is a power of ``d`` (e.g. ``1``).
+          Otherwise it is assumed that the series is normalized in the sense
+          that the first non-trivial coefficient is a power of ``d`` (e.g.
+          ``1``).
 
-        - ``coeff_bound``     -- Either ``None`` resp. ``0`` or a positive real number
-                                 (default: ``1e-10``). If specified ``coeff_bound``
-                                 gives a lower bound for the size of the initial Laurent
-                                 coefficients. If a coefficient is smaller it is
-                                 assumed to be zero.
+        - ``coeff_bound`` -- either ``None`` resp. ``0`` or a positive real
+          number (default: ``1e-10``). If specified ``coeff_bound`` gives a
+          lower bound for the size of the initial Laurent coefficients. If a
+          coefficient is smaller it is assumed to be zero.
 
-                                 For calculations with very small coefficients (less than
-                                 ``1e-10``) ``coeff_bound`` should be set to something
-                                 even smaller or just ``0``.
+          For calculations with very small coefficients (less than ``1e-10``)
+          ``coeff_bound`` should be set to something even smaller or just ``0``.
 
-                                 Non-exact calculations often produce non-zero
-                                 coefficients which are supposed to be zero. In those
-                                 cases this parameter helps a lot.
+          Non-exact calculations often produce nonzero coefficients which are
+          supposed to be zero. In those cases this parameter helps a lot.
 
-        - ``denom_factor``    -- An integer (default: 1) whose factor might occur in
-                                 the denominator of the given Laurent coefficients
-                                 (in addition to naturally occurring factors).
+        - ``denom_factor`` -- integer (default: 1) whose factor might occur in
+          the denominator of the given Laurent coefficients (in addition to
+          naturally occurring factors).
 
         OUTPUT:
 
-        A Laurent series over ``self.coeff_ring()`` corresponding to the given Laurent series.
+        A Laurent series over ``self.coeff_ring()`` corresponding to the given
+        Laurent series.
 
         EXAMPLES::
 
@@ -2443,7 +2434,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         INPUT:
 
-        - ``v`` -- An element of ``self``.
+        - ``v`` -- an element of ``self``
 
         EXAMPLES::
 
@@ -2476,7 +2467,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         INPUT:
 
-        - ``v`` -- An element of ``self``.
+        - ``v`` -- an element of ``self``
 
         EXAMPLES::
 

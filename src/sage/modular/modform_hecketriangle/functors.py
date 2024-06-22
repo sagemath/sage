@@ -33,7 +33,7 @@ from .abstract_space import FormsSpace_abstract
 from .subspace import SubSpaceForms
 
 
-def _get_base_ring(ring, var_name="d"):
+def _get_base_ring(ring, var_name='d'):
     r"""
     Return the base ring of the given ``ring``:
 
@@ -56,7 +56,7 @@ def _get_base_ring(ring, var_name="d"):
     whose construction should be based on the returned base ring
     (and not on ``ring``!).
 
-    If ``var_name`` (default: "d") is specified then this variable
+    If ``var_name`` (default: ``'d'``) is specified then this variable
     name is used for the polynomial ring.
 
     EXAMPLES::
@@ -164,10 +164,10 @@ class FormsSubSpaceFunctor(ConstructionFunctor):
 
         INPUT:
 
-        - ``ambient_space_functor`` -- A FormsSpaceFunctor
+        - ``ambient_space_functor`` -- a FormsSpaceFunctor
 
-        - ``generators``            -- A list of elements of some ambient space
-                                       over some base ring.
+        - ``generators`` -- a list of elements of some ambient space
+          over some base ring
 
         OUTPUT: the construction functor for the corresponding forms sub space
 
@@ -266,7 +266,6 @@ class FormsSubSpaceFunctor(ConstructionFunctor):
         If ``other`` is not a ``FormsSubSpaceFunctor`` then ``self``
         is merged as if it was its ambient space functor.
 
-
         EXAMPLES::
 
             sage: from sage.modular.modform_hecketriangle.functors import (FormsSpaceFunctor, FormsSubSpaceFunctor)
@@ -357,13 +356,13 @@ class FormsSpaceFunctor(ConstructionFunctor):
 
         INPUT:
 
-        - ``analytic_type``  -- An element of ``AnalyticType()``.
+        - ``analytic_type`` -- an element of ``AnalyticType()``
 
-        - ``group``          -- The index of a Hecke Triangle group.
+        - ``group`` -- the index of a Hecke Triangle group
 
-        - ``k``              -- A rational number, the weight of the space.
+        - ``k`` -- a rational number, the weight of the space
 
-        - ``ep``             -- `1` or `-1`, the multiplier of the space.
+        - ``ep`` -- `1` or `-1`, the multiplier of the space
 
         OUTPUT: the construction functor for the corresponding forms space/ring
 
@@ -449,7 +448,6 @@ class FormsSpaceFunctor(ConstructionFunctor):
 
         Two ``FormsRingFunctors`` are merged to the corresponding
         (extended) ``FormsRingFunctor``.
-
 
         EXAMPLES::
 
@@ -541,12 +539,12 @@ class FormsRingFunctor(ConstructionFunctor):
 
         INPUT:
 
-        - ``analytic_type``  -- An element of ``AnalyticType()``.
+        - ``analytic_type`` -- an element of ``AnalyticType()``
 
-        - ``group``          -- The index of a Hecke Triangle group.
+        - ``group`` -- the index of a Hecke Triangle group
 
-        - ``red_hom``        -- A boolean variable for the parameter ``red_hom``
-                                (also see ``FormsRing_abstract``).
+        - ``red_hom`` -- a boolean variable for the parameter ``red_hom``
+          (also see ``FormsRing_abstract``)
 
         OUTPUT: the construction functor for the corresponding forms ring
 
@@ -637,7 +635,6 @@ class FormsRingFunctor(ConstructionFunctor):
 
         Two ``FormsRingFunctors`` are merged to the corresponding
         (extended) ``FormsRingFunctor``.
-
 
         EXAMPLES::
 

@@ -488,9 +488,9 @@ class Cusp(Element):
 
         OUTPUT:
 
-        -  a boolean -- ``True`` if ``self`` and ``other`` are equivalent
+        - a boolean -- ``True`` if ``self`` and ``other`` are equivalent
 
-        -  a matrix or an integer -- returned only if transformation is 'matrix'
+        - a matrix or an integer -- returned only if transformation is 'matrix'
           or 'corner', respectively
 
         EXAMPLES::
@@ -666,10 +666,10 @@ class Cusp(Element):
 
         - ``int`` -- 0, 1 or -1, gives further information
           about the equivalence: If the two cusps are u1/v1 and u2/v2, then
-           they are equivalent if and only if v1 = v2 (mod N) and u1 = u2 (mod
-           gcd(v1,N)) or v1 = -v2 (mod N) and u1 = -u2 (mod gcd(v1,N)) The
-           sign is +1 for the first and -1 for the second. If the two cusps
-           are not equivalent then 0 is returned.
+          they are equivalent if and only if v1 = v2 (mod N) and u1 = u2 (mod
+          gcd(v1,N)) or v1 = -v2 (mod N) and u1 = -u2 (mod gcd(v1,N)) The
+          sign is +1 for the first and -1 for the second. If the two cusps
+          are not equivalent then 0 is returned.
 
         EXAMPLES::
 

@@ -120,12 +120,12 @@ def gen_html_code(G,
 
     - ``vertex_partition`` -- list (default: ``[]``); a list of lists
       representing a partition of the vertex set. Vertices are then colored in
-      the graph according to the partition
+      the graph according to the partition.
 
-    - ``vertex_colors`` -- dict (default: ``None``); a dictionary representing a
-      partition of the vertex set. Keys are colors (ignored) and values are
-      lists of vertices. Vertices are then colored in the graph according to the
-      partition
+    - ``vertex_colors`` -- dictionary (default: ``None``); a dictionary
+      representing a partition of the vertex set. Keys are colors (ignored) and
+      values are lists of vertices. Vertices are then colored in the graph
+      according to the partition.
 
     - ``edge_partition`` -- list (default: ``[]``); same as
       ``vertex_partition``, with edges instead

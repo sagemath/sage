@@ -90,7 +90,7 @@ def str_to_index(x: str) -> tuple:
 
 def basis_f_odd_iterator(n, start=3) -> Iterator[tuple]:
     r"""
-    Return an iterator over compositions of ``n`` with odd parts.
+    Return an iterator over compositions of `n` with odd parts.
 
     Let `s` be the chosen odd start index. The allowed parts are the
     odd integers at least equal to `s`, in the set `s,s+2,s+4,s+6,\ldots`.
@@ -131,7 +131,7 @@ def basis_f_odd_iterator(n, start=3) -> Iterator[tuple]:
 
 def basis_f_iterator(n, start=3) -> Iterator[tuple]:
     r"""
-    Return an iterator for decompositions of ``n`` using ``2`` and odd integers.
+    Return an iterator for decompositions of `n` using `2` and odd integers.
 
     Let `s` be the chosen odd start index. The allowed odd parts are the
     odd integers at least equal to `s`, in the set `s,s+2,s+4,s+6,\ldots`.

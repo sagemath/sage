@@ -557,7 +557,7 @@ class Patch(SageObject):
     INPUT:
 
     - ``faces`` -- finite iterable of faces
-    - ``face_contour`` -- dict (default: ``None``); maps the face
+    - ``face_contour`` -- dictionary (default: ``None``); maps the face
       type to vectors describing the contour of unit faces. If ``None``,
       defaults contour are assumed for faces of type 1, 2, 3 or 1, 2, 3.
       Used in plotting methods only.
@@ -1008,7 +1008,7 @@ class Patch(SageObject):
              ``sorted(colormaps)``
            - ``list`` -- list of colors to assign cyclically to the faces
              A list of a single color colors all the faces with the same color
-           - ``dict`` -- dict of face types mapped to colors, to color the
+           - ``dict`` -- dictionary of face types mapped to colors, to color the
              faces according to their type
            - ``{}``, the empty dict -- shortcut for
              ``{1:'red', 2:'green', 3:'blue'}``

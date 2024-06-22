@@ -3590,7 +3590,7 @@ def CRT_vectors(X, moduli):
       integers of the same length
     - ``moduli`` -- list of len(X) moduli
 
-    OUTPUT:  ``list`` -- application of CRT componentwise
+    OUTPUT: ``list`` -- application of CRT componentwise
 
     EXAMPLES::
 
