@@ -89,16 +89,16 @@ from sage.structure.coerce import py_scalar_to_element
 from sage.structure.element import Element
 from sage.misc.misc_c import prod as mul
 from sage.misc.misc_c import prod
-from sage.misc.lazy_import import lazy_import
 from sage.misc.verbose import verbose as verbose_verbose
 
-from sage.functions.log import log
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.log", "log")
 
 from sage.matrix.matrix_space import MatrixSpace
 lazy_import('sage.libs.pari.all', 'pari')
 lazy_import("sage.functions.gamma", "gamma_inc")
 from math import sqrt
-from sage.interfaces.gp import gp
+lazy_import('sage.interfaces.gp', 'gp')
 from sage.misc.cachefunc import cached_method
 from copy import copy
 
@@ -106,7 +106,6 @@ Q = RationalField()
 C = ComplexField()
 R = RealField()
 Z = IntegerRing()
-IR = RealIntervalField(20)
 
 _MAX_HEIGHT = 21
 

@@ -236,6 +236,7 @@ space with a curve of `\ZZ_3`-orbifold singularities::
 
 Every cone defines a torus orbit closure, and hence a (co)homology class::
 
+    sage: # needs sage.libs.singular
     sage: HH.gens()
     ([3*z4], [3*z4], [z4], [z4], [z4])
     sage: list(map(HH, P4_11133.fan(1)))
@@ -248,6 +249,7 @@ Every cone defines a torus orbit closure, and hence a (co)homology class::
 We can compute intersection numbers by integrating top-dimensional
 cohomology classes::
 
+    sage: # needs sage.libs.singular
     sage: D = P4_11133.divisor(0)
     sage: HH(D)
     [3*z4]
@@ -302,7 +304,8 @@ implementing them on your own as a patch for inclusion!
 
 import sys
 
-from sage.functions.all import factorial
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.all", "factorial")
 import sage.geometry.abc
 from sage.geometry.cone import Cone
 from sage.geometry.fan import Fan

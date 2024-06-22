@@ -117,20 +117,18 @@ AUTHORS:
 
 import math
 
-from sage.rings.padics.factory import Qp
-from sage.rings.padics.precision_error import PrecisionError
-
+import sage.groups.generic as generic
 import sage.rings.abc
 
+from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import Infinity as oo
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+from sage.rings.padics.precision_error import PrecisionError
 from sage.rings.rational_field import QQ
 from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.real_mpfr import RealField
 from sage.rings.real_mpfr import RR
-import sage.groups.generic as generic
-
 from sage.structure.element import AdditiveGroupElement
 from sage.structure.sequence import Sequence
 from sage.structure.richcmp import richcmp
@@ -143,6 +141,8 @@ from sage.schemes.projective.projective_point import (SchemeMorphism_point_proje
 from sage.schemes.generic.morphism import is_SchemeMorphism
 
 from .constructor import EllipticCurve
+
+lazy_import('sage.rings.padics.factory', 'Qp')
 
 try:
     from sage.libs.pari.all import pari, PariError

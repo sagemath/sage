@@ -24,7 +24,6 @@ from sage.structure.sage_object import SageObject
 from sage.rings.real_mpfr import RealField
 from sage.rings.rational_field import RationalField
 from math import sqrt, log, ceil
-import sage.functions.exp_integral as exp_integral
 from sage.misc.verbose import verbose
 from sage.misc.cachefunc import cached_method
 
@@ -716,10 +715,12 @@ class Lseries_ell(SageObject):
             # positive, so L'(E,1) = 0.
             return (R.zero(), Rerror.zero())
 
+        from sage.functions.exp_integral import exponential_integral_1
+
         an = self.__E.anlist(k)  # list of Sage Integers
         pi = R.pi()
         sqrtN = R(self.__E.conductor()).sqrt()
-        v = exp_integral.exponential_integral_1(2*pi/sqrtN, k)
+        v = exponential_integral_1(2*pi/sqrtN, k)
 
         # Compute series sum and accumulate floating point errors
         L = R.zero()
