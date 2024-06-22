@@ -390,13 +390,14 @@ class GeneralizedYoungWall(CombinatorialElement):
         i = 0
         while i < len(new):
             r = new[i]
-            if r == [] or r in new[i+1:]:
+            if not r or r in new[i + 1:]:
                 new.pop(i)
-            elif r[0] == n and len(r) % (n+1) == 0:
-                for j in range(n+1):
-                    temp = [k % (n+1) for k in range(j+len(r)/(n+1)-1, j-1, -1)]
+            elif r[0] == n and not len(r) % (n + 1):
+                for j in range(n + 1):
+                    temp = [k % (n + 1)
+                            for k in range(j + len(r) // (n + 1) - 1, j - 1, -1)]
                     if temp not in new:
-                        new.insert(i+1, temp)
+                        new.insert(i + 1, temp)
                 new.pop(i)
             else:
                 i += 1
@@ -425,7 +426,7 @@ class GeneralizedYoungWall(CombinatorialElement):
             15
         """
         n = self.parent().cartan_type().rank() - 1
-        m = lambda i: len([1 for r in self.data if r and r[0] == (i-1) % (n+1)])
+        m = lambda i: len([1 for r in self.data if r and r[0] == (i - 1) % (n + 1)])
         for r in self.data:
             if r and r[0] == n:
                 raise ValueError('Statistic only valid for generalized Young walls in Y_0')
@@ -510,11 +511,12 @@ class GeneralizedYoungWall(CombinatorialElement):
             '\\begin{tikzpicture}[baseline=5,scale=.45] \n \\foreach \\x [count=\\s from 0] in \n{{},{1,0,3,2},{2,1},{3,2,1,0,3,2},{},{},{2}} \n{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\scriptsize] at (-\\t,\\s) {$\\y$}; \n \\draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \\draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \\draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \\draw[-,thick] (.5,\\s+1) to (.5,-.5) to (-\\t-1,-.5); } \n \\end{tikzpicture} \n'
         """
         s = ""
-        if self.data == []:
+        if not self.data:
             s += "\\emptyset"
         else:
             s += "\\begin{tikzpicture}[baseline=5,scale=.45] \n \\foreach \\x [count=\\s from 0] in \n"
-            s += "{" + ','.join("{" + ','.join(str(i) for i in r) + "}" for r in self.data) + "} \n"
+            s += "{" + ','.join("{" + ','.join(str(i) for i in r) + "}"
+                                for r in self.data) + "} \n"
             s += "{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\scriptsize] at (-\\t,\\s) {$\\y$}; \n \\draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \\draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \\draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \\draw[-,thick] (.5,\\s+1) to (.5,-.5) to (-\\t-1,-.5); } \n \\end{tikzpicture} \n"
         return s
 
@@ -529,11 +531,12 @@ class GeneralizedYoungWall(CombinatorialElement):
             '\\begin{tikzpicture}[baseline=5,scale=.25] \\foreach \\x [count=\\s from 0] in \n{{},{1,0,3,2},{2,1},{3,2,1,0,3,2},{},{},{2}} \n{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\tiny] at (-\\t,\\s) {$\\y$}; \n \\draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \\draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \\draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \\draw[-] (.5,\\s+1) to (.5,-.5) to (-\\t-1,-.5); } \n \\end{tikzpicture} \n'
         """
         s = ""
-        if self.data == []:
+        if not self.data:
             s += "\\emptyset"
         else:
             s += "\\begin{tikzpicture}[baseline=5,scale=.25] \\foreach \\x [count=\\s from 0] in \n"
-            s += "{" + ','.join("{" + ','.join(str(i) for i in r) + "}" for r in self.data) + "} \n"
+            s += "{" + ','.join("{" + ','.join(str(i) for i in r) + "}"
+                                for r in self.data) + "} \n"
             s += "{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\tiny] at (-\\t,\\s) {$\\y$}; \n \\draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \\draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \\draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \\draw[-] (.5,\\s+1) to (.5,-.5) to (-\\t-1,-.5); } \n \\end{tikzpicture} \n"
         return s
 
@@ -554,13 +557,13 @@ class GeneralizedYoungWall(CombinatorialElement):
             sage: x.weight(root_lattice=True)
             -2*alpha[0] - 3*alpha[1] - 5*alpha[2] - 3*alpha[3]
         """
-        E = self.cartan_type().root_system().weight_lattice(extended=True)
         L = self.cartan_type().root_system().root_lattice()
         alpha = L.simple_roots()
-        W = [-1*alpha[i] for r in self.data for i in r]
+        W = sum(-1 * alpha[i] for r in self.data for i in r)
         if not root_lattice:
-            return E(sum(W))
-        return L(sum(W))
+            E = self.cartan_type().root_system().weight_lattice(extended=True)
+            return E(W)
+        return L(W)
 
     def epsilon(self, i):
         r"""
@@ -584,7 +587,7 @@ class GeneralizedYoungWall(CombinatorialElement):
             self = self.e(i)
             if self is None:
                 break
-            eps = eps+1
+            eps += 1
         return eps
 
     def Epsilon(self):
@@ -598,7 +601,7 @@ class GeneralizedYoungWall(CombinatorialElement):
             Lambda[0] + 3*Lambda[2]
         """
         La = self.cartan_type().root_system().weight_lattice().fundamental_weights()
-        return sum(self.epsilon(i)*La[i] for i in self.index_set())
+        return sum(self.epsilon(i) * La[i] for i in self.index_set())
 
     def phi(self, i):
         r"""
@@ -632,7 +635,7 @@ class GeneralizedYoungWall(CombinatorialElement):
             2*Lambda[0] + Lambda[1] - Lambda[2] + Lambda[3]
         """
         La = self.cartan_type().root_system().weight_lattice(extended=True).fundamental_weights()
-        return sum(self.phi(i)*La[i] for i in self.index_set())
+        return sum(self.phi(i) * La[i] for i in self.index_set())
 
     def column(self, k):
         r"""
@@ -648,13 +651,8 @@ class GeneralizedYoungWall(CombinatorialElement):
             sage: hw.column(1)
             []
         """
-        C = []
-        for row in self.data:
-            if k-1 < len(row):
-                C.append(row[k-1])
-            else:
-                C.append(None)
-        return C
+        return [row[k - 1] if k - 1 < len(row) else None
+                for row in self.data]
 
     def a(self, i, k):
         r"""
@@ -713,14 +711,14 @@ class GeneralizedYoungWall(CombinatorialElement):
         ac = self.parent().weight_lattice_realization().simple_coroots()
         n = self.cartan_type().classical().rank()
         index_set = self.index_set()
-        for k in range(1, self.cols+1):
+        for k in range(1, self.cols + 1):
             for j in index_set:
-                if self.a(j, k) - self.a((j-1) % (n+1), k) <= 0:
+                if self.a(j, k) - self.a((j - 1) % (n + 1), k) <= 0:
                     continue
                 else:
                     p_not_found = True
                     for p in index_set:
-                        if (j+k) % (n+1) == (p+1) % (n+1) and self.a(j, k) - self.a((j-1) % (n+1), k) <= La.scalar(ac[p]):
+                        if (j + k - p - 1) % (n + 1) == 0 and self.a(j, k) - self.a((j - 1) % (n + 1), k) <= La.scalar(ac[p]):
                             p_not_found = False
                             continue
                         else:

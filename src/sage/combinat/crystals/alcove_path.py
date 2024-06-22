@@ -394,10 +394,10 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: C = crystals.AlcovePaths(['C',2],[1,0])
+            sage: C = crystals.AlcovePaths(['C', 2], [1, 0])
             sage: C.vertices()
             [[], [0], [0, 1], [0, 1, 2]]
-            sage: C = crystals.AlcovePaths(['C',2,1],[2,1],False)
+            sage: C = crystals.AlcovePaths(['C', 2, 1], [2, 1], False)
             sage: len(C.vertices())
             80
 
@@ -434,13 +434,13 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
             lst2 = []
             for x in lst:
                 suc = getattr(x[0], successors)()
-                for j in range(x[1][-1]+1, len_lambda_chain):
+                for j in range(x[1][-1] + 1, len_lambda_chain):
                     temp = x[0] * prod(
                             [s[k] for k in lambda_chain[j].root.associated_reflection()])
                     if temp in suc:
-                        lst2.append((temp, x[1]+[j]))
-                        l.append((temp, x[1]+[j]))
-            if lst2 == []:
+                        lst2.append((temp, x[1] + [j]))
+                        l.append((temp, x[1] + [j]))
+            if not lst2:
                 break
             else:
                 lst = lst2
@@ -677,7 +677,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
         weight = -self.parent().weight
         for i in self.value[::-1]:
             root = root_space(i.root)
-            weight = -i.height*root + weight.reflection(root)
+            weight = -i.height * root + weight.reflection(root)
 
         WLR = self.parent().weight_lattice_realization()
         if self.cartan_type().is_affine() and self.parent()._highest_weight_crystal:
@@ -855,7 +855,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
                     x = R(sign_Beta * Beta, k)
 
                     if (
-                        (j < len(J) - 1 and J[j] < x <= J[j+1]) or
+                        (j < len(J) - 1 and J[j] < x <= J[j + 1]) or
                         (j == len(J) - 1 and J[j] < x)
                     ):
                         signs[x] = sign_Beta
@@ -902,15 +902,15 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
         KR_test = finite_cartan_type and i == 0 and m_index < len(gi) - 1
         KR_test = KR_test and M >= 1
 
-        ######################################################################
+        ###################################################################
         # NOTE:
         # In the KR_case we want to insure that positions[m_index] is in J
         # If m_index > 0 then it's always true
         # If m_index == 0 then M >=1 guarantees this
-        ######################################################################
+        ###################################################################
 
-        if ((not finite_cartan_type or i != 0) and m_index < len(gi) - 1  # alpha_i is a simple root
-            ) or KR_test:
+        if ((not finite_cartan_type or i != 0) and m_index < len(gi) - 1) or KR_test:
+            # first condition above means that alpha_i is a simple root
 
             J.remove(positions[m_index])
             if m_index + 1 < len(positions):
@@ -1040,10 +1040,10 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
         #
         # otherwise if m_index - 1 > 0 then (C2) is enough
 
-        if ((not finite_cartan_type or i != 0) and M > 0  # alpha_i is a simple root
-            ) or KR_test:  # KR case
+        if ((not finite_cartan_type or i != 0) and M > 0) or KR_test:
+            # first condition above means that alpha_i is a simple root
 
-            J.append(positions[m_index-1])
+            J.append(positions[m_index - 1])
             if m_index < len(positions):
                 # if m_index != 'infinity'
                 # thus positions[m_index] makes sense
@@ -1658,8 +1658,9 @@ class RootsWithHeightElement(Element):
         if not 0 <= height < max_height:
             raise ValueError("%d out of allowed range [%d,%d)" % (height, 0, max_height))
 
-        v = [height/max_height]
-        v.extend(x/max_height for x in root.associated_coroot().to_vector())
+        v = [height / max_height]
+        v.extend(x / max_height
+                 for x in root.associated_coroot().to_vector())
         # v.insert(0, height/max_height)
 
         # the map from (root, height) --> _cmp_v is injective

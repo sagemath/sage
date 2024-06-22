@@ -1481,7 +1481,7 @@ class KR_type_CElement(KirillovReshetikhinGenericCrystalElement):
 
     EXAMPLES::
 
-        sage: K=crystals.KirillovReshetikhin(['C',3,1],1,2)
+        sage: K = crystals.KirillovReshetikhin(['C', 3, 1], 1, 2)
         sage: type(K.module_generators[0])
         <class 'sage.combinat.crystals.kirillov_reshetikhin.KR_type_C_with_category.element_class'>
     """
@@ -1493,7 +1493,7 @@ class KR_type_CElement(KirillovReshetikhinGenericCrystalElement):
 
         EXAMPLES::
 
-            sage: K=crystals.KirillovReshetikhin(['C',3,1],1,2)
+            sage: K = crystals.KirillovReshetikhin(['C', 3, 1], 1, 2)
             sage: b = K(rows=[])
             sage: b.e(0) # indirect doctest
             [[-1, -1]]
@@ -1511,7 +1511,7 @@ class KR_type_CElement(KirillovReshetikhinGenericCrystalElement):
 
         EXAMPLES::
 
-            sage: K=crystals.KirillovReshetikhin(['C',3,1],1,2)
+            sage: K = crystals.KirillovReshetikhin(['C', 3, 1], 1, 2)
             sage: b = K(rows=[])
             sage: b.f(0) # indirect doctest
             [[1, 1]]
@@ -2341,7 +2341,7 @@ class KR_type_BnElement(KirillovReshetikhinGenericCrystalElement):
 
     EXAMPLES::
 
-        sage: K=crystals.KirillovReshetikhin(['B',3,1],3,2)
+        sage: K = crystals.KirillovReshetikhin(['B', 3, 1], 3, 2)
         sage: type(K.module_generators[0])
         <class 'sage.combinat.crystals.kirillov_reshetikhin.KR_type_Bn_with_category.element_class'>
     """
@@ -2370,10 +2370,9 @@ class KR_type_BnElement(KirillovReshetikhinGenericCrystalElement):
 
         EXAMPLES::
 
-            sage: K=crystals.KirillovReshetikhin(['B',3,1],3,1)
+            sage: K = crystals.KirillovReshetikhin(['B', 3, 1], 3, 1)
             sage: b = K.module_generators[0]
             sage: b.f(0) # indirect doctest
-
         """
         b = self.parent().to_ambient_crystal()(self).f_string([0, 0])
         if b is None:
@@ -2387,7 +2386,7 @@ class KR_type_BnElement(KirillovReshetikhinGenericCrystalElement):
 
         EXAMPLES::
 
-            sage: K=crystals.KirillovReshetikhin(['B',3,1],3,1)
+            sage: K = crystals.KirillovReshetikhin(['B', 3, 1], 3, 1)
             sage: b = K.module_generators[0]
             sage: b.epsilon(0) # indirect doctest
             1
@@ -2402,7 +2401,7 @@ class KR_type_BnElement(KirillovReshetikhinGenericCrystalElement):
 
         EXAMPLES::
 
-            sage: K=crystals.KirillovReshetikhin(['B',3,1],3,1)
+            sage: K = crystals.KirillovReshetikhin(['B', 3, 1], 3, 1)
             sage: b = K.module_generators[0]
             sage: b.phi(0) # indirect doctest
             0
@@ -2512,7 +2511,7 @@ class KR_type_CnElement(KirillovReshetikhinGenericCrystalElement):
 
     EXAMPLES::
 
-        sage: K=crystals.KirillovReshetikhin(['C',3,1],3,2)
+        sage: K = crystals.KirillovReshetikhin(['C', 3, 1], 3, 2)
         sage: type(K.module_generators[0])
         <class 'sage.combinat.crystals.kirillov_reshetikhin.KR_type_Cn_with_category.element_class'>
     """
@@ -2526,7 +2525,7 @@ class KR_type_CnElement(KirillovReshetikhinGenericCrystalElement):
 
         EXAMPLES::
 
-            sage: K=crystals.KirillovReshetikhin(['C',3,1],3,2)
+            sage: K = crystals.KirillovReshetikhin(['C', 3, 1], 3, 2)
             sage: b = K.module_generators[0]
             sage: b.e(0) # indirect doctest
             [[1, 2], [2, 3], [3, -1]]
@@ -2580,7 +2579,7 @@ class KR_type_CnElement(KirillovReshetikhinGenericCrystalElement):
 
         EXAMPLES::
 
-            sage: K = crystals.KirillovReshetikhin(['C',3,1],3,1)
+            sage: K = crystals.KirillovReshetikhin(['C', 3, 1], 3, 1)
             sage: b = K.module_generators[0]
             sage: b.epsilon(0) # indirect doctest
             1
@@ -2597,7 +2596,7 @@ class KR_type_CnElement(KirillovReshetikhinGenericCrystalElement):
 
         EXAMPLES::
 
-            sage: K=crystals.KirillovReshetikhin(['C',3,1],3,1)
+            sage: K = crystals.KirillovReshetikhin(['C', 3, 1], 3, 1)
             sage: b = K.module_generators[0]
             sage: b.phi(0) # indirect doctest
             0
@@ -2806,7 +2805,7 @@ class KR_type_Dn_twistedElement(KirillovReshetikhinGenericCrystalElement):
 
     EXAMPLES::
 
-        sage: K=crystals.KirillovReshetikhin(['D',4,2],3,2)
+        sage: K = crystals.KirillovReshetikhin(['D', 4, 2], 3, 2)
         sage: type(K.module_generators[0])
         <class 'sage.combinat.crystals.kirillov_reshetikhin.KR_type_Dn_twisted_with_category.element_class'>
     """
@@ -2820,7 +2819,7 @@ class KR_type_Dn_twistedElement(KirillovReshetikhinGenericCrystalElement):
 
         EXAMPLES::
 
-            sage: K=crystals.KirillovReshetikhin(['D',4,2],3,3)
+            sage: K = crystals.KirillovReshetikhin(['D', 4, 2], 3, 3)
             sage: b = K.module_generators[0]
             sage: b.e(0) # indirect doctest
             [+++, [[2], [3], [0]]]
@@ -2888,7 +2887,7 @@ class KR_type_Dn_twistedElement(KirillovReshetikhinGenericCrystalElement):
 
         EXAMPLES::
 
-            sage: K=crystals.KirillovReshetikhin(['D',4,2],3,1)
+            sage: K = crystals.KirillovReshetikhin(['D', 4, 2], 3, 1)
             sage: b = K.module_generators[0]
             sage: b.epsilon(0) # indirect doctest
             1
