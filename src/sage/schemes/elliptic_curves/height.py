@@ -29,21 +29,22 @@ AUTHORS:
 import numpy
 import math
 import bisect
+
 from itertools import product
 
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.rings.infinity import infinity
-from sage.rings.cc import CC
-from sage.rings.complex_double import CDF
-from sage.rings.real_double import RDF
-from sage.rings.real_mpfr import RR
-
-from sage.misc.cachefunc import cached_method
 from sage.arith.functions import lcm
 from sage.arith.misc import factorial
 from sage.ext.fast_callable import fast_callable
+from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
+from sage.rings.cc import CC
+from sage.rings.complex_double import CDF
+from sage.rings.infinity import infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.real_double import RDF
+from sage.rings.real_mpfr import RR
+
 lazy_import("sage.functions.log", ["log", "exp"])
 lazy_import("sage.rings.cif", "CIF")
 lazy_import("sage.rings.real_mpfi", "RIF")

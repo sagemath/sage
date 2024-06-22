@@ -83,41 +83,38 @@ from itertools import product
 import sage.rings.abc
 
 from sage.arith.misc import gcd, binomial
-
+from sage.categories.fields import Fields
+from sage.categories.homset import Hom
+from sage.categories.map import Map
+from sage.categories.number_fields import NumberFields
+from sage.categories.rings import Rings
+from sage.combinat.integer_vector import IntegerVectors
+from sage.combinat.permutation import Permutation
+from sage.combinat.subset import Subsets
+from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod
+from sage.misc.persist import register_unpickle_override
 from sage.rings.finite_rings.finite_field_base import FiniteField
+from sage.rings.fraction_field import FractionField
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ, RationalField
-from sage.rings.fraction_field import FractionField
-
-from sage.categories.fields import Fields
-from sage.categories.rings import Rings
-from sage.categories.number_fields import NumberFields
-from sage.categories.homset import Hom
-from sage.categories.map import Map
-from sage.misc.latex import latex
-from sage.misc.lazy_import import lazy_import
-from sage.misc.misc_c import prod
-from sage.misc.persist import register_unpickle_override
-
+from sage.schemes.generic.ambient_space import AmbientSpace
 from sage.structure.category_object import normalize_names
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.combinat.integer_vector import IntegerVectors
-from sage.combinat.permutation import Permutation
-from sage.combinat.subset import Subsets
-from sage.schemes.generic.ambient_space import AmbientSpace
 from sage.schemes.projective.projective_homset import (SchemeHomset_points_projective_ring,
                                                        SchemeHomset_points_projective_field,
                                                        SchemeHomset_polynomial_projective_space)
-from sage.schemes.projective.projective_point import (SchemeMorphism_point_projective_ring,
-                                                      SchemeMorphism_point_projective_field,
-                                                      SchemeMorphism_point_projective_finite_field)
 from sage.schemes.projective.projective_morphism import (SchemeMorphism_polynomial_projective_space,
                                                          SchemeMorphism_polynomial_projective_space_field,
                                                          SchemeMorphism_polynomial_projective_space_finite_field)
+from sage.schemes.projective.projective_point import (SchemeMorphism_point_projective_ring,
+                                                      SchemeMorphism_point_projective_field,
+                                                      SchemeMorphism_point_projective_finite_field)
 
 lazy_import('sage.combinat.integer_vector_weighted', 'WeightedIntegerVectors')
 lazy_import('sage.combinat.tuple', ['Tuples', 'UnorderedTuples'])
