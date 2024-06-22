@@ -14,7 +14,6 @@ from sage.categories.algebras import Algebras
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.filtered_modules_with_basis import FilteredModulesWithBasis
-from sage.rings.integer import Integer
 
 GAP_FAIL = libgap.eval('fail')
 
@@ -33,24 +32,24 @@ def _is_conjugate(G, H1, H2):
     """
     return GAP_FAIL != libgap.RepresentativeAction(G, H1, H2)
 
-class SubgroupNameStore():
-    def __init__(self, basis_keys):
+class SubgroupStore():
+    def __init__(self):
         r"""
-        This class stores subgroup <-> name associations.
+        This class caches subgroup information and provides
+        helper methods to handle subgroup <-> name associations.
         """
-        self._key_constructor = basis_keys
         self._cache = dict() # invariant to subgroups
-        self._names = dict() # dictionary mapping subgroups to names
+        self._names = dict() # stores subgroup names
 
     def _group_invariant(self, H):
         return H.order()
 
     def _normalize(self, H):
-        key = self._key_constructor(H)
-        p = self._group_invariant(key._C)
+        # H is of type self.element_class
+        p = self._group_invariant(H._C)
         if p in self._cache:
             for H0 in self._cache[p]:
-                if _is_conjugate(key.subgroup_of(), key._C, H0):
+                if _is_conjugate(H.subgroup_of(), H._C, H0._C):
                     return H0
             else:
                 self._cache[p].append(H)
@@ -63,11 +62,10 @@ class SubgroupNameStore():
         Takes a subgroup as input and returns its associated name, if any.
         Otherwise, the generators are returned. Returns a string.
         """
-        # If name exists, I want to return that, otherwise I want a default name.
-        # But only basis_keys can provide that default name.
-        G = self._normalize(H)
+        key = self.element_class(self, H)
+        G = self._normalize(key)
         name = self._names.get(G, None)
-        return name if name else self._key_constructor(H).default_name()
+        return name if name else repr(G)
     
     def set_name(self, H, name):
         r"""
@@ -75,14 +73,16 @@ class SubgroupNameStore():
         """
         if not isinstance(name, str):
             raise ValueError("name must be a string")
-        G = self._normalize(H)
+        key = self.element_class(self, H)
+        G = self._normalize(key)
         self._names[G] = name
     
     def unset_name(self, H):
         r"""
         Takes a subgroup as input and removes its name, if any.
         """
-        G = self._normalize(H)
+        key = self.element_class(self, H)
+        G = self._normalize(key)
         self._names.pop(G, None)
 
 class ConjugacyClassOfSubgroups(Element):
@@ -103,9 +103,6 @@ class ConjugacyClassOfSubgroups(Element):
     def subgroup_of(self):
         return self.parent()._G
 
-    def default_name(self):
-        return repr(self._C.gens())
-
     def __hash__(self):
         r"""
         Return the hash of the representative of the conjugacy class.
@@ -120,27 +117,10 @@ class ConjugacyClassOfSubgroups(Element):
             True
         """
         return hash(self._C)
-
+    
     def _repr_(self):
-        r"""
-        Return a string representation of ``self``.
-
-        TESTS::
-
-            sage: G = SymmetricGroup(4)
-            sage: B = BurnsideRing(G)
-            sage: Z4 = CyclicPermutationGroup(4)
-            sage: B[Z4]
-            B[((1,2,3,4),)]
-            sage: B.set_name(Z4, "Z4")
-            sage: B[Z4] #indirect doctest
-            B[Z4]
-            sage: B.unset_name(Z4)
-            sage: B[Z4]
-            B[((1,2,3,4),)]
-        """
-        namefunc = self.parent()._namegetter
-        return namefunc(self._C) if namefunc else self.default_name()
+        name = self.parent()._names.get(self._C, None)
+        return name if name else repr(self._C.gens())
 
     def __le__(self, other):
         r"""
@@ -184,7 +164,7 @@ class ConjugacyClassOfSubgroups(Element):
         return (isinstance(other, ConjugacyClassOfSubgroups)
                 and _is_conjugate(self.subgroup_of(), self._C, other._C))
 
-class ConjugacyClassesOfSubgroups(Parent):
+class ConjugacyClassesOfSubgroups(Parent, SubgroupStore):
     def __init__(self, G):
         r"""
         Initialize the set of conjugacy classes of ``G``.
@@ -201,8 +181,8 @@ class ConjugacyClassesOfSubgroups(Parent):
             sage: TestSuite(C).run()
         """
         self._G = G
-        self._namegetter = None
         Parent.__init__(self, category=FiniteEnumeratedSets())
+        SubgroupStore.__init__(self)
 
     def __eq__(self, other):
         r"""
@@ -252,7 +232,8 @@ class ConjugacyClassesOfSubgroups(Parent):
             ((1,2,3,4),)
         """
         if x.is_subgroup(self._G):
-            return self.element_class(self, x)
+            key = self.element_class(self, x)
+            return self._normalize(key)
         raise ValueError(f"unable to convert {x} into {self}: not a subgroup of {self._G}")
 
     def __iter__(self):
@@ -318,8 +299,8 @@ class ConjugacyClassOfSubgroups_SymmetricGroup(ConjugacyClassOfSubgroups):
     def subgroup_of(self):
         return SymmetricGroup(self.grade())
 
-    def default_name(self):
-        return f"({self.grade()}, {repr(self._C.gens())})"
+    def _repr_(self):
+        return f"({self.grade()}, {super()._repr_()})"
 
     def grade(self):
         return self._C.degree()
@@ -337,7 +318,7 @@ class ConjugacyClassOfSubgroups_SymmetricGroup(ConjugacyClassOfSubgroups):
         Two elements compare equal if they are conjugate subgroups in the parent group.
         """
         return (isinstance(other, ConjugacyClassOfSubgroups_SymmetricGroup)
-                and self.grade() == other.grade() and _is_conjugate(SymmetricGroup(self._C), self._C, other._C))
+                and self.grade() == other.grade() and _is_conjugate(self.subgroup_of(), self._C, other._C))
 
 class ConjugacyClassesOfSubgroups_SymmetricGroup(ConjugacyClassesOfSubgroups):
     def __init__(self, n):
@@ -345,11 +326,11 @@ class ConjugacyClassesOfSubgroups_SymmetricGroup(ConjugacyClassesOfSubgroups):
 
     Element = ConjugacyClassOfSubgroups_SymmetricGroup
 
-class ConjugacyClassesOfSubgroups_SymmetricGroup_all(UniqueRepresentation, Parent):
+class ConjugacyClassesOfSubgroups_SymmetricGroup_all(UniqueRepresentation, Parent, SubgroupStore):
     def __init__(self):
-        self._namegetter = None
         category = SetsWithGrading().Infinite()
         Parent.__init__(self, category=category)
+        SubgroupStore.__init__(self)
 
     def _repr_(self):
         return "Conjugacy classes of subgroups of symmetric groups"
@@ -357,11 +338,15 @@ class ConjugacyClassesOfSubgroups_SymmetricGroup_all(UniqueRepresentation, Paren
     def subset(self, size):
         return ConjugacyClassesOfSubgroups_SymmetricGroup(size)
 
-    def _element_constructor_(self, H):
+    def _element_constructor_(self, x):
         r"""
-        H is a subgroup of a symmetric group.
+        x is a subgroup of a symmetric group.
         """
-        return self.element_class(self, H)
+        G = SymmetricGroup(x.degree())
+        if x.is_subgroup(G):
+            key = self.element_class(self, x)
+            return self._normalize(key)
+        raise ValueError(f"unable to convert {x} into {self}: not a subgroup of {G}")
 
     def __iter__(self):
         n = 0
@@ -377,7 +362,7 @@ class ConjugacyClassesOfSubgroups_SymmetricGroup_all(UniqueRepresentation, Paren
 
     Element = ConjugacyClassOfSubgroups_SymmetricGroup
 
-class BurnsideRing(CombinatorialFreeModule, SubgroupNameStore):
+class BurnsideRing(CombinatorialFreeModule):
     def __init__(self, G, base_ring=ZZ):
         r"""
         The Burnside ring of the group ``G``.
@@ -424,9 +409,8 @@ class BurnsideRing(CombinatorialFreeModule, SubgroupNameStore):
         category = Algebras(base_ring).Commutative().WithBasis()
         CombinatorialFreeModule.__init__(self, base_ring, basis_keys,
                                         category=category, prefix="B")
-        SubgroupNameStore.__init__(self, basis_keys)
-        basis_keys._namegetter = self.get_name
-        self.set_name(G, "1")
+        self._print_options['names'] = self._indices._names
+        self._indices.set_name(G, "1")
 
     def __getitem__(self, H):
         r"""
@@ -587,7 +571,7 @@ class BurnsideRing(CombinatorialFreeModule, SubgroupNameStore):
         """
         return "Burnside ring of " + repr(self._G)
 
-class PolynomialMolecularDecomposition(CombinatorialFreeModule, SubgroupNameStore):
+class PolynomialMolecularDecomposition(CombinatorialFreeModule):
     def __init__(self, base_ring=ZZ):
         basis_keys = ConjugacyClassesOfSubgroups_SymmetricGroup_all()
         category = GradedAlgebrasWithBasis(base_ring)
@@ -595,8 +579,7 @@ class PolynomialMolecularDecomposition(CombinatorialFreeModule, SubgroupNameStor
                                         basis_keys=basis_keys,
                                         category=category,
                                         prefix="PMD")
-        SubgroupNameStore.__init__(self, basis_keys)
-        basis_keys._namegetter = self.get_name
+        self._print_options['names'] = self._indices._names
 
     # FIXME: this is currently required, because the implementation of ``basis``
     # in CombinatorialFreeModule overrides that of GradedModulesWithBasis
