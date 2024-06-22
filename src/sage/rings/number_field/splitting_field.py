@@ -21,7 +21,7 @@ from sage.rings.integer import Integer
 from sage.arith.misc import factorial
 from sage.rings.number_field.number_field import NumberField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.rational_field import RationalField, is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.libs.pari.all import pari, PariError
 
 
@@ -382,7 +382,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
 
     # Kpol = PARI polynomial in y defining the extension found so far
     F = poly.base_ring()
-    if is_RationalField(F):
+    if isinstance(F, RationalField):
         Kpol = pari("'y")
     else:
         Kpol = F.pari_polynomial("y")

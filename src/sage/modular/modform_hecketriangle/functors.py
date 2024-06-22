@@ -78,12 +78,12 @@ def _get_base_ring(ring, var_name="d"):
         True
     """
 
-    # from sage.rings.fraction_field import is_FractionField
+    # from sage.rings.fraction_field import FractionField_generic
     from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
     from sage.categories.pushout import FractionField as FractionFieldFunctor
 
     base_ring = ring
-    # if (is_FractionField(base_ring)):
+    # if (isinstance(base_ring, FractionField_generic)):
     #    base_ring = base_ring.base()
     if (base_ring.construction() and base_ring.construction()[0] == FractionFieldFunctor()):
         base_ring = base_ring.construction()[1]

@@ -781,6 +781,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
         ParentLibGAP.__init__(self, libgap_fpgroup)
         Group.__init__(self, category=category)
 
+<<<<<<< HEAD
     def __hash__(self):
         """
         Make hashable.
@@ -813,7 +814,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
         other_data = (other._free_group, other._relations)
         return richcmp(self_data, other_data, op)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 
@@ -827,7 +828,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
             'Finitely presented group < a, b | a, b^3 >'
         """
         gens = ', '.join(self._free_group._gen_names)
-        rels = ', '.join([str(r) for r in self.relations()])
+        rels = ', '.join(str(r) for r in self.relations())
         return 'Finitely presented group ' + '< ' + gens + ' | ' + rels + ' >'
 
     def _latex_(self):

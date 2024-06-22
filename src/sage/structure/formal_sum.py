@@ -203,7 +203,7 @@ class FormalSum(ModuleElement):
         r"""
         EXAMPLES::
 
-            sage: latex(FormalSum([(1,2), (5, 8/9), (-3, 7)]))
+            sage: latex(FormalSum([(1,2), (5, 8/9), (-3, 7)]))                          # needs sage.rings.real_mpfr
             2 + 5\cdot \frac{8}{9} - 3\cdot 7
         """
         from sage.misc.latex import repr_lincomb
@@ -441,7 +441,7 @@ class FormalSums(UniqueRepresentation, Module):
         """
         EXAMPLES::
 
-            sage: A = FormalSums(RR);  A.get_action(RR)     # indirect doctest
+            sage: A = FormalSums(RR);  A.get_action(RR)     # indirect doctest          # needs sage.rings.real_mpfr
             Right scalar multiplication by Real Field with 53 bits of precision
              on Abelian Group of all Formal Finite Sums over Real Field with 53 bits of precision
 

@@ -72,10 +72,18 @@ def is_ModularFormElement(x):
 
         sage: from sage.modular.modform.element import is_ModularFormElement
         sage: is_ModularFormElement(5)
+        doctest:warning...
+        DeprecationWarning: The function is_ModularFormElement is deprecated;
+        use 'isinstance(..., ModularFormElement)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         False
         sage: is_ModularFormElement(ModularForms(11).0)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_ModularFormElement is deprecated; "
+                "use 'isinstance(..., ModularFormElement)' instead.")
     return isinstance(x, ModularFormElement)
 
 
@@ -3265,7 +3273,7 @@ class GradedModularFormElement(ModuleElement):
                     k = ZZ(k)
                     if k == 0:
                         forms_dictionary[k] = parent.base_ring().coerce(f)
-                    elif is_ModularFormElement(f):
+                    elif isinstance(f, ModularFormElement):
                         if f.weight() == k:
                             if parent.group().is_subgroup(f.group()) and parent.base_ring().has_coerce_map_from(f.base_ring()):
                                 M = parent.modular_forms_of_weight(f.weight()).change_ring(parent.base_ring())
@@ -3280,7 +3288,7 @@ class GradedModularFormElement(ModuleElement):
                     raise ValueError('at least one key (%s) of the defining dictionary is not an integer' % (k))
         elif isinstance(forms_datum, list):
             for f in forms_datum:
-                if is_ModularFormElement(f):
+                if isinstance(f, ModularFormElement):
                     chi = f.character(compute=False)
                     if (chi is not None) and (not chi.is_trivial()):
                         raise NotImplementedError("graded modular forms for non-trivial characters is not yet implemented")

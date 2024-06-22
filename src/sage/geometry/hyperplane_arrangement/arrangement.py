@@ -952,11 +952,19 @@ class HyperplaneArrangementElement(Element):
             ....:     m_perm = matrix(m_perm).transpose()
             ....:     charpoly = H(m_perm.rows()).characteristic_polynomial()
             ....:     assert charpoly == expected_charpoly
+
+        Check the corner case of the empty arrangement::
+
+            sage: E = H()
+            sage: E.characteristic_polynomial()
+            1
         """
         from sage.rings.polynomial.polynomial_ring import polygen
         x = polygen(QQ, 'x')
         if self.rank() == 1:
             return x**(self.dimension() - 1) * (x - len(self))
+        if self.rank() == 0:
+            return x ** 0
 
         H = self[0]
         R = self.restriction(H)

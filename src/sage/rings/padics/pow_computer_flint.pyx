@@ -588,6 +588,7 @@ cdef class PowComputer_flint_eis(PowComputer_flint_1step):
         self.f = 1
         fmpz_set(self.q, self.fprime)
 
+
 def PowComputer_flint_maker(prime, cache_limit, prec_cap, ram_prec_cap, in_field, poly, prec_type):
     """
     Return an appropriate FLINT PowComputer for the given input.

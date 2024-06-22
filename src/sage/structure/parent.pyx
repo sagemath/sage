@@ -2143,7 +2143,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
             sage: # needs sage.combinat sage.modules
             sage: R = QQ['q,t'].fraction_field()
-            sage: Sym = sage.combinat.sf.sf.SymmetricFunctions(R)
+            sage: Sym = SymmetricFunctions(R)
             sage: H = Sym.macdonald().H()
             sage: P = Sym.macdonald().P()
             sage: m = Sym.monomial()
@@ -2180,7 +2180,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
             sage: # needs sage.combinat sage.modules
             sage: R = QQ['q,t'].fraction_field()
-            sage: Sym = sage.combinat.sf.sf.SymmetricFunctions(R)
+            sage: Sym = SymmetricFunctions(R)
             sage: P = Sym.macdonald().P()
             sage: Ht = Sym.macdonald().Ht()
             sage: Ht._internal_coerce_map_from(P)

@@ -336,7 +336,6 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
         s += '\nInitial probabilities: %s'%self.initial_probabilities()
         return s
 
-
     def generate_sequence(self, Py_ssize_t length, starting_state=None):
         r"""
         Return a sample of the given length from this HMM.
@@ -1165,7 +1164,6 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
         return unpickle_gaussian_mixture_hmm_v1, \
                (self.A, self.B, self.pi, self.mixture)
 
-
     def __richcmp__(self, other, op):
         r"""
         Compare self and other, which must both be GaussianMixtureHiddenMarkovModel's.
@@ -1583,6 +1581,7 @@ def unpickle_gaussian_hmm_v1(A, B, pi, prob, n_out):
     m.prob = prob
     m.n_out = n_out
     return m
+
 
 def unpickle_gaussian_mixture_hmm_v1(A, B, pi, mixture):
     r"""
