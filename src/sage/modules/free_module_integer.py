@@ -894,13 +894,6 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             raise ValueError('No suitable vector found in basis.'
                              'This is a bug, please report it.')
 
-        elif algorithm == 'rounding_off':
-            # t = x*B might not have a solution over QQ so we instead solve
-            # the system x*B*B^T = t*B^T which will be the "closest" solution
-            # if it does not exist, same effect as using the psuedo-inverse
-            return vector(ZZ,
-                [QQ(x).round('even') for x in (B*B.T).solve_left(t*B.T)])*B
-
         elif algorithm == 'nearest_plane':
             G = B.gram_schmidt()[0]
 
@@ -909,7 +902,14 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
                 b -= B[i] * ((b * G[i]) / (G[i] * G[i])).round("even")
             return (t - b).change_ring(ZZ)
 
+        elif algorithm == 'rounding_off':
+            # t = x*B might not have a solution over QQ so we instead solve
+            # the system x*B*B^T = t*B^T which will be the "closest" solution
+            # if it does not exist, same effect as using the psuedo-inverse
+            return vector(ZZ,
+                [QQ(x).round('even') for x in (B*B.T).solve_left(t*B.T)])*B
+
         else:
-            raise ValueError("algorithm '{}' unknown".format(algorithm))
+            raise ValueError("algorithm must be one of 'embedding', 'nearest_plane' or 'rounding_off'")
 
     cvp = approximate_closest_vector
