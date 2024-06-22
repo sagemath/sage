@@ -75,7 +75,7 @@ ARG MAKE_BUILD=make-build
 ################################################################################
 # Image containing the run-time dependencies for Sage                          #
 ################################################################################
-FROM ubuntu:jammy as run-time-dependencies
+FROM ubuntu:jammy AS run-time-dependencies
 LABEL maintainer="Erik M. Bray <erik.bray@lri.fr>, Julian Rüth <julian.rueth@fsfe.org>, Sebastian Oehms <seb.oehms@gmail.com>"
 # Set sane defaults for common environment variables.
 ENV LC_ALL C.UTF-8
@@ -108,7 +108,7 @@ WORKDIR $HOME
 # Image containing everything so that a make in a clone of the Sage repository #
 # completes without errors                                                     #
 ################################################################################
-FROM run-time-dependencies as build-time-dependencies
+FROM run-time-dependencies AS build-time-dependencies
 # Install the build time dependencies & git & rdfind
 RUN sudo apt-get -qq update \
     && sudo apt-get -qq install -y wget build-essential automake m4 dpkg-dev python3 libssl-dev git rdfind \
@@ -118,7 +118,7 @@ RUN sudo apt-get -qq update \
 ################################################################################
 # Image with an empty git repository in $SAGE_ROOT.                            #
 ################################################################################
-FROM build-time-dependencies as source-clean
+FROM build-time-dependencies AS source-clean
 ARG SAGE_ROOT=/home/sage/sage
 RUN mkdir -p "$SAGE_ROOT"
 WORKDIR $SAGE_ROOT
@@ -135,7 +135,7 @@ RUN git remote add upstream https://github.com/sagemath/sage.git
 # build is not going to use the build-time-dependencies target but rely on     #
 # whatever tools are installed in ARTIFACT_BASE.                               #
 ################################################################################
-FROM $ARTIFACT_BASE as source-from-context
+FROM $ARTIFACT_BASE AS source-from-context
 WORKDIR $HOME
 COPY --chown=sage:sage . sage-context
 # Checkout the commit that is checked out in $HOME/sage-context
@@ -183,7 +183,7 @@ RUN patch -p1 < "$HOME"/sage-context.patch
 ################################################################################
 # Image with a built sage but without sage's documentation.                    #
 ################################################################################
-FROM source-from-context as make-build
+FROM source-from-context AS make-build
 # Make sure that the result runs on most CPUs.
 ENV SAGE_FAT_BINARY yes
 # Just to be sure Sage doesn't try to build its own GCC (even though
@@ -204,7 +204,7 @@ RUN make build
 ################################################################################
 # Image with a full build of sage and its documentation.                       #
 ################################################################################
-FROM $MAKE_BUILD as make-all
+FROM $MAKE_BUILD AS make-all
 # The docbuild needs quite some RAM (as of May 2018). It sometimes calls
 # os.fork() to spawn an external program which then exceeds easily the
 # overcommit limit of the system (no RAM is actually used, but this limit is
@@ -218,7 +218,7 @@ RUN make
 ################################################################################
 # Image with a full build of sage, ready to release.                           #
 ################################################################################
-FROM make-all as make-release
+FROM make-all AS make-release
 RUN make micro_release
 
 ################################################################################
@@ -226,7 +226,7 @@ RUN make micro_release
 # temporary build artifacts which is set up to start the command line          #
 # interface if no parameters are passed in.                                    #
 ################################################################################
-FROM run-time-dependencies as sagemath
+FROM run-time-dependencies AS sagemath
 ARG HOME=/home/sage
 ARG SAGE_ROOT=/home/sage/sage
 COPY --chown=sage:sage --from=make-release $SAGE_ROOT/ $SAGE_ROOT/
@@ -244,7 +244,7 @@ CMD ["sage"]
 # Image with a full build of sage and its documentation but everything         #
 # stripped that can be quickly rebuild by make.                                #
 ################################################################################
-FROM make-all as make-fast-rebuild-clean
+FROM make-all AS make-fast-rebuild-clean
 # Of course, without site-packages/sage, sage does not start but copying/compiling
 # them from build/pkgs/sagelib/src/build is very fast.
 RUN make fast-rebuild-clean; \
@@ -255,7 +255,7 @@ RUN make fast-rebuild-clean; \
 # identical to make-fast-rebuild-clean or contains a "patch" which can be used #
 # to upgrade ARTIFACT_BASE to make-fast-rebuild-clean.                         #
 ################################################################################
-FROM make-fast-rebuild-clean as sagemath-dev-patch
+FROM make-fast-rebuild-clean AS sagemath-dev-patch
 ARG ARTIFACT_BASE=source-clean
 ARG SAGE_ROOT=/home/sage/sage
 # Build a patch containing of a tar file which contains all the modified files
@@ -277,12 +277,12 @@ RUN if [ x"$ARTIFACT_BASE" != x"source-clean" ]; then \
 # the build artifacts intact so developers can make changes and rebuild        #
 # quickly                                                                      #
 ################################################################################
-FROM $ARTIFACT_BASE as sagemath-dev
+FROM $ARTIFACT_BASE AS sagemath-dev
 ARG SAGE_ROOT=/home/sage/sage
 # If docker is backed by aufs, then the following command adds the size of
 # ARTIFACT_BASE to the image size. As of mid 2018 this is notably the case with
 # the docker instances provided by setup_remote_docker on CircleCI. As a
-# result, the sagemath-dev images that are "build-from-latest" are twice as big
+# result, the sagemath-dev images that are "build-from-latest" are twice AS big
 # as the ones that are build on GitLab:
 # https://github.com/moby/moby/issues/6119#issuecomment-268870519
 COPY --chown=sage:sage --from=sagemath-dev-patch $SAGE_ROOT $SAGE_ROOT
