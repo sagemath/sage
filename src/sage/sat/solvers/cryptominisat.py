@@ -22,9 +22,9 @@ AUTHORS:
 from .satsolver import SatSolver
 
 from sage.misc.lazy_import import lazy_import
-from sage.features import PythonModule
-lazy_import('pycryptosat', ['Solver'],
-            feature=PythonModule('pycryptosat', spkg='pycryptosat'))
+from sage.features.sat import Pycryptosat
+
+lazy_import('pycryptosat', ['Solver'], feature=Pycryptosat())
 
 
 class CryptoMiniSat(SatSolver):
