@@ -1934,7 +1934,7 @@ def png(x, filename, density=150, debug=False,
         ....:     png(ZZ[x], f.name)
     """
     import sage.plot.all
-    if sage.plot.graphics.is_Graphics(x):
+    if isinstance(x, sage.plot.graphics.Graphics):
         x.save(filename)
         return
     # if not graphics: create a string of latex code to write in a file
