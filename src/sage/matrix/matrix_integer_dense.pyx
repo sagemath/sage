@@ -3332,6 +3332,15 @@ cdef class Matrix_integer_dense(Matrix_dense):
             False
             sage: L.is_LLL_reduced()
             True
+
+        The ``'sage'`` algorithm currently does not work for matrices with
+        linearly dependent rows::
+
+            sage: A = matrix(ZZ, [[1, 2, 3], [2, 4, 6]])
+            sage: A.is_LLL_reduced(algorithm='sage')
+            Traceback (most recent call last):
+            ...
+            ValueError: linearly dependent input for module version of Gram-Schmidt
         """
         if eta is None:
             eta = 0.501
