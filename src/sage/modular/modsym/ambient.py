@@ -79,7 +79,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
 from sage.misc.verbose import verbose
 from sage.modular.arithgroup.arithgroup_element import M2Z
-from sage.modular.dirichlet import TrivialCharacter, is_DirichletCharacter
+from sage.modular.dirichlet import DirichletCharacter, TrivialCharacter
 from sage.modular.hecke.ambient_module import AmbientHeckeModule
 from sage.modular.cusps import Cusp
 from sage.modular.modsym.apply import apply_to_monomial
@@ -2171,7 +2171,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
             sage: M.twisted_winding_element(0,eps)
             2*(1,23) - 2*(1,32) + 2*(1,34)
         """
-        if not is_DirichletCharacter(eps):
+        if not isinstance(eps, DirichletCharacter):
             raise TypeError("eps must be a Dirichlet character.")
         if (i < 0) or (i > self.weight() - 2):
             raise ValueError("i must be between 0 and k-2.")

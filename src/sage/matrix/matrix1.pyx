@@ -291,9 +291,9 @@ cdef class Matrix(Matrix0):
             sage: a._mathematica_init_()                                                # needs sage.symbolic
             '{{Pi, Sin[x]}, {Cos[x], Exp[-1]}}'
         """
-        return '{' + ', '.join([v._mathematica_init_() for v in self.rows()]) + '}'
+        return '{' + ', '.join(v._mathematica_init_() for v in self.rows()) + '}'
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         r"""
         Return a string that evaluates in the given Magma session to this
         matrix.
