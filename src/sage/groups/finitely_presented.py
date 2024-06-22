@@ -781,7 +781,6 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
         ParentLibGAP.__init__(self, libgap_fpgroup)
         Group.__init__(self, category=category)
 
-<<<<<<< HEAD
     def __hash__(self):
         """
         Make hashable.
