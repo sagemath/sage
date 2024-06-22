@@ -75,7 +75,7 @@ def _iterate_Up(Phi, p, M, ap, q, aq, check):
 
     - ``q`` -- prime
 
-    - ``aq`` -- hecke eigenvalue at `q`
+    - ``aq`` -- Hecke eigenvalue at `q`
 
     OUTPUT: Hecke-eigenvalue overconvergent modular symbol lifting self
 

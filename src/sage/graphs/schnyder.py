@@ -155,7 +155,7 @@ def _normal_label(g, comb_emb, external_face):
     - ``comb_emb`` -- a planar combinatorial embedding of g
     - ``external_face`` -- the list of three edges in the external face of g
 
-    OUTPUT: x -- tuple with entries
+    OUTPUT: x; tuple with entries
 
         x[0] = dict of dicts of normal labeling for each vertex of g and each
         adjacent neighbors u,v (u < v) of vertex:
@@ -374,7 +374,7 @@ def _realizer(g, x, example=False):
         x[1] = (v1, v2, v3) tuple of the three external vertices (also
         the roots of each tree)
 
-    OUTPUT: x -- tuple with entries
+    OUTPUT: x; tuple with entries
 
         x[0] = dict of lists of TreeNodes:
 

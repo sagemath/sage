@@ -563,7 +563,7 @@ class A000008(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -613,7 +613,7 @@ class A000009(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -709,7 +709,7 @@ class A000796(SloaneSequence):
 
         - ``n`` -- positive integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -812,7 +812,7 @@ class A003418(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -867,7 +867,7 @@ class A007318(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -930,7 +930,7 @@ class A008275(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1005,7 +1005,7 @@ class A008277(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1081,7 +1081,7 @@ class A049310(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1151,7 +1151,7 @@ class A000010(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1208,7 +1208,7 @@ class A000007(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1257,7 +1257,7 @@ class A005843(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1310,7 +1310,7 @@ class A000035(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1364,7 +1364,7 @@ class A000169(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1417,7 +1417,7 @@ class A000272(SloaneSequence):
 
         - ``n`` -- integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1471,7 +1471,7 @@ class A000312(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1527,7 +1527,7 @@ class A001477(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1580,7 +1580,7 @@ class A004526(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1631,7 +1631,7 @@ class A000326(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1686,7 +1686,7 @@ class A002378(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1740,7 +1740,7 @@ class A002620(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1791,7 +1791,7 @@ class A005408(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1844,7 +1844,7 @@ class A000012(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1891,7 +1891,7 @@ class A000120(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1956,7 +1956,7 @@ class A010060(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2007,7 +2007,7 @@ class A000069(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2054,7 +2054,7 @@ class A001969(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2105,7 +2105,7 @@ class A000290(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2156,7 +2156,7 @@ class A000225(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2208,7 +2208,7 @@ class A000015(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2268,7 +2268,7 @@ class A000016(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2326,7 +2326,7 @@ class A000032(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2390,7 +2390,7 @@ class A004086(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2444,7 +2444,7 @@ class A002113(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2536,7 +2536,7 @@ class A000030(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2595,7 +2595,7 @@ class A000040(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2649,7 +2649,7 @@ class A002808(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2736,7 +2736,7 @@ class A018252(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2792,7 +2792,7 @@ class A000043(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2856,7 +2856,7 @@ class A000668(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2923,7 +2923,7 @@ class A000396(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2977,7 +2977,7 @@ class A005100(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -3067,7 +3067,7 @@ class A005101(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -3157,7 +3157,7 @@ class A002110(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -3209,7 +3209,7 @@ class A000720(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -3264,7 +3264,7 @@ class A064553(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -3317,7 +3317,7 @@ class A001055(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -3398,7 +3398,7 @@ class A006530(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -3455,7 +3455,7 @@ class A000961(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -3542,7 +3542,7 @@ class A005117(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -3630,7 +3630,7 @@ class A020639(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -3718,7 +3718,7 @@ class A000041(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -3778,7 +3778,7 @@ class A000045(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -3878,7 +3878,7 @@ class A000108(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -3930,7 +3930,7 @@ class A001006(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -3981,7 +3981,7 @@ class A000079(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4032,7 +4032,7 @@ class A000578(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4085,7 +4085,7 @@ class A000244(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4138,7 +4138,7 @@ class A000302(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4189,7 +4189,7 @@ class A000583(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4245,7 +4245,7 @@ class A000142(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4296,7 +4296,7 @@ class A000085(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4348,7 +4348,7 @@ class A001189(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4403,7 +4403,7 @@ class A000670(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4458,7 +4458,7 @@ class A006318(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4512,7 +4512,7 @@ class A000165(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4564,7 +4564,7 @@ class A001147(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4615,7 +4615,7 @@ class A006882(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4716,7 +4716,7 @@ class A000984(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4766,7 +4766,7 @@ class A001405(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4816,7 +4816,7 @@ class A000292(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4866,7 +4866,7 @@ class A000330(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4985,7 +4985,7 @@ class A000153(ExtremesOfPermanentsSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5036,7 +5036,7 @@ class A000255(ExtremesOfPermanentsSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5092,7 +5092,7 @@ class A000261(ExtremesOfPermanentsSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5150,7 +5150,7 @@ class A001909(ExtremesOfPermanentsSequence):
 
         - ``n`` -- positive integer >= 2
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5208,7 +5208,7 @@ class A001910(ExtremesOfPermanentsSequence):
 
         - ``n`` -- positive integer `\geq 3`
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5291,7 +5291,7 @@ class A090010(ExtremesOfPermanentsSequence2):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5353,7 +5353,7 @@ class A055790(ExtremesOfPermanentsSequence2):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5416,7 +5416,7 @@ class A090012(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5487,7 +5487,7 @@ class A090013(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5558,7 +5558,7 @@ class A090014(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5629,7 +5629,7 @@ class A090015(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5702,7 +5702,7 @@ class A090016(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5765,7 +5765,7 @@ class A000166(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5825,7 +5825,7 @@ class A000203(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5883,7 +5883,7 @@ class A001157(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5934,7 +5934,7 @@ class A008683(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5986,7 +5986,7 @@ class A000204(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -6047,7 +6047,7 @@ class A000217(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -6102,7 +6102,7 @@ class A000124(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -6154,7 +6154,7 @@ class A002275(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -6270,7 +6270,7 @@ class A001110(RecurrenceSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -6331,7 +6331,7 @@ class A051959(RecurrenceSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -6394,7 +6394,7 @@ class A001221(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -6454,7 +6454,7 @@ class A001222(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -6512,7 +6512,7 @@ class A046660(SloaneSequence):
 
     - ``n`` -- positive integer
 
-    OUTPUT: integer -- function value
+    OUTPUT: integer; function value
 
     EXAMPLES::
 
@@ -6566,7 +6566,7 @@ class A001227(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -6630,7 +6630,7 @@ class A001358(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -6728,7 +6728,7 @@ class A001694(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -6884,7 +6884,7 @@ class A001836(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7051,7 +7051,7 @@ class A001906(RecurrenceSequence2):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7098,7 +7098,7 @@ class A001333(RecurrenceSequence2):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7146,7 +7146,7 @@ class A001045(RecurrenceSequence2):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7197,7 +7197,7 @@ class A000129(RecurrenceSequence2):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7242,7 +7242,7 @@ class A001109(RecurrenceSequence2):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7292,7 +7292,7 @@ class A015521(RecurrenceSequence2):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7338,7 +7338,7 @@ class A015523(RecurrenceSequence2):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7384,7 +7384,7 @@ class A015530(RecurrenceSequence2):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7432,7 +7432,7 @@ class A015531(RecurrenceSequence2):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7482,7 +7482,7 @@ class A015551(RecurrenceSequence2):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7562,7 +7562,7 @@ class A082411(RecurrenceSequence2):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7615,7 +7615,7 @@ class A083103(RecurrenceSequence2):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7670,7 +7670,7 @@ class A083104(RecurrenceSequence2):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7719,7 +7719,7 @@ class A083105(RecurrenceSequence2):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7775,7 +7775,7 @@ class A083216(RecurrenceSequence2):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7821,7 +7821,7 @@ class A061084(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7905,7 +7905,7 @@ class A000213(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7987,7 +7987,7 @@ class A000073(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -8110,7 +8110,7 @@ class A079922(SloaneSequence):
 
     - ``n`` -- positive integer
 
-    OUTPUT: integer -- function value
+    OUTPUT: integer; function value
 
     EXAMPLES::
 
@@ -8178,7 +8178,7 @@ class A079923(SloaneSequence):
 
     - ``n`` -- positive integer
 
-    OUTPUT: integer -- function value
+    OUTPUT: integer; function value
 
     EXAMPLES::
 
@@ -8254,7 +8254,7 @@ class A109814(SloaneSequence):
 
     - ``n`` -- nonnegative integer
 
-    OUTPUT: integer -- function value
+    OUTPUT: integer; function value
 
     EXAMPLES::
 
@@ -8337,7 +8337,7 @@ class A111774(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -8485,7 +8485,7 @@ class A111775(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -8572,7 +8572,7 @@ class A111787(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -8689,7 +8689,7 @@ class A000110(ExponentialNumbers):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- `B_n`
+        OUTPUT: integer; `B_n`
 
         EXAMPLES::
 
@@ -8741,7 +8741,7 @@ class A000587(ExponentialNumbers):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- `C_n`
+        OUTPUT: integer; `C_n`
 
         EXAMPLES::
 
@@ -8784,7 +8784,7 @@ class A000100(SloaneSequence):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT: integer -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 

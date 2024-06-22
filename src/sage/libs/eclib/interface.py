@@ -283,7 +283,7 @@ class mwrank_EllipticCurve(SageObject):
           2-isogeny) flag determining whether or not to do second
           descent.  *Default strongly recommended.*
 
-        OUTPUT: nothing -- nothing is returned
+        OUTPUT: nothing
 
         TESTS:
 

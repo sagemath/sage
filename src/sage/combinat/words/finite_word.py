@@ -442,7 +442,7 @@ class FiniteWord_class(Word_class):
 
         - ``exp`` -- integer; a rational, a float number or plus infinity
 
-        OUTPUT: word -- the ``exp``-th power of ``self``
+        OUTPUT: word; the ``exp``-th power of ``self``
 
         EXAMPLES:
 
@@ -2495,8 +2495,8 @@ class FiniteWord_class(Word_class):
         - ``l`` -- integer (default: ``None``); the length of the longest
           palindrome suffix of ````self[:-1]````, if known
 
-        OUTPUT: word -- If ``f`` is ``None``, the longest palindromic suffix of
-        ``self``; otherwise, the longest ``f``-palindromic suffix of ``self``
+        OUTPUT: word; if ``f`` is ``None``, the longest palindromic suffix of
+        ``self``. Otherwise, the longest ``f``-palindromic suffix of ``self``.
 
         EXAMPLES::
 
@@ -2840,9 +2840,8 @@ class FiniteWord_class(Word_class):
           it must be callable on letters as well as words (e.g.
           ``WordMorphism``)
 
-        OUTPUT: list -- The length of the maximal palindrome (or
-        ``f``-palindrome) with a given symmetry axis (letter or space between
-        two letters)
+        OUTPUT: list; the length of the maximal palindrome (or ``f``-palindrome)
+        with a given symmetry axis (letter or space between two letters)
 
         EXAMPLES::
 
@@ -2904,7 +2903,7 @@ class FiniteWord_class(Word_class):
           It must be callable on letters as well as words (e.g.
           ``WordMorphism``).
 
-        OUTPUT: list -- The length of the longest palindromic (or
+        OUTPUT: list; the length of the longest palindromic (or
         ``f``-palindromic) suffix of each prefix of ``self``
 
         EXAMPLES::
@@ -3376,7 +3375,7 @@ class FiniteWord_class(Word_class):
         Let `p(w)` be the period of a word `w`. The positive rational number
         `|w|/p(w)` is the *order* of `w`. See Chapter 8 of [Lot2002]_.
 
-        OUTPUT: rational -- the order
+        OUTPUT: rational; the order
 
         EXAMPLES::
 
@@ -3537,7 +3536,7 @@ class FiniteWord_class(Word_class):
         r"""
         Return the exponent of ``self``.
 
-        OUTPUT: integer -- the exponent
+        OUTPUT: integer; the exponent
 
         EXAMPLES::
 
@@ -5446,7 +5445,7 @@ class FiniteWord_class(Word_class):
         - ``f`` -- involution (default: ``None``) on the alphabet of ``self``;
           it must be callable on letters as well as words (e.g. ``WordMorphism``)
 
-        OUTPUT: word -- the left iterated ``f``-palindromic closure of ``self``
+        OUTPUT: word; the left iterated ``f``-palindromic closure of ``self``
 
         EXAMPLES::
 
@@ -6517,7 +6516,7 @@ class FiniteWord_class(Word_class):
         - ``self`` -- must be a word over the integers to get something other
           than ``False``
 
-        OUTPUT: boolean -- whether ``self`` is a smooth prefix or not
+        OUTPUT: boolean; whether ``self`` is a smooth prefix or not
 
         EXAMPLES::
 
@@ -6994,8 +6993,8 @@ class FiniteWord_class(Word_class):
 
         - ``self`` -- word
 
-        OUTPUT: boolean -- ``True`` if ``self`` is a Christoffel word,
-        ``False`` otherwise.
+        OUTPUT: boolean; ``True`` if ``self`` is a Christoffel word,
+        ``False`` otherwise
 
         EXAMPLES::
 

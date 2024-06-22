@@ -194,7 +194,7 @@ def saturation(A, proof=True, p=0, max_dets=5):
     - ``max_dets`` -- integer (default: 4); max number of dets of submatrices to
       compute
 
-    OUTPUT: matrix -- saturation of the matrix `A`
+    OUTPUT: matrix; saturation of the matrix `A`
 
     EXAMPLES::
 

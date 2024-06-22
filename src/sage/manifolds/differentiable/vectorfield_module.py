@@ -1133,7 +1133,7 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
         INPUT:
 
         - ``name`` -- string; name given to the metric
-        - ``signature`` -- (integer; default: ``None``) signature `S` of the
+        - ``signature`` -- integer (default: ``None``); signature `S` of the
           metric: `S = n_+ - n_-`, where `n_+` (resp. `n_-`) is the number of
           positive terms (resp. number of negative terms) in any diagonal
           writing of the metric components; if ``signature`` is not provided,
@@ -2321,7 +2321,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
         INPUT:
 
         - ``name`` -- string; name given to the metric
-        - ``signature`` -- (integer; default: ``None``) signature `S` of the
+        - ``signature`` -- integer (default: ``None``); signature `S` of the
           metric: `S = n_+ - n_-`, where `n_+` (resp. `n_-`) is the number of
           positive terms (resp. number of negative terms) in any diagonal
           writing of the metric components; if ``signature`` is not provided,

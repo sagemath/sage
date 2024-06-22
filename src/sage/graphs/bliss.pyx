@@ -93,7 +93,7 @@ cdef void add_gen(void *user_param, unsigned int n, const unsigned int *aut) noe
       a Python object which is a pair ``(list_of_current_generators,
       vert_to_integer_labelling)``.
 
-    - ``n`` -- ``int``; number of points in the graph
+    - ``n`` -- integer; number of points in the graph
 
     - ``aut`` -- ``int *``; an automorphism of the graph
     """
@@ -157,17 +157,17 @@ cdef Graph *bliss_graph_from_labelled_edges(int Vnr, int Lnr, Vout, Vin, labels,
 
     INPUT:
 
-    - ``Vnr`` -- ``int``; number of vertices, such that the vertices are `0,
+    - ``Vnr`` -- integer; number of vertices, such that the vertices are `0,
       \ldots, Vnr-1`
 
-    - ``Lnr`` -- ``int``; number of labels, such that the labels are `0, \ldots,
+    - ``Lnr`` -- integer; number of labels, such that the labels are `0, \ldots,
       Lnr-1`
 
-    - ``Vout`` -- ``list``; the list of vertices of outgoing edges
+    - ``Vout`` -- list; the list of vertices of outgoing edges
 
-    - ``Vin`` -- ``list``; the list of vertices of ingoing edges
+    - ``Vin`` -- list; the list of vertices of ingoing edges
 
-    - ``labels`` -- ``list``; the list of edge labels
+    - ``labels`` -- list; the list of edge labels
 
     - ``partition`` -- an ordered partition of the vertex set
     """
@@ -234,17 +234,17 @@ cdef Digraph *bliss_digraph_from_labelled_edges(int Vnr, int Lnr, Vout, Vin, lab
 
     INPUT:
 
-    - ``Vnr`` -- ``int``; number of vertices, such that the vertices are `0,
+    - ``Vnr`` -- integer; number of vertices, such that the vertices are `0,
       \ldots, Vnr-1`
 
-    - ``Lnr`` -- ``int``; number of labels, such that the labels are `0, \ldots,
+    - ``Lnr`` -- integer; number of labels, such that the labels are `0, \ldots,
       Lnr-1`
 
-    - ``Vout`` -- ``list``; the list of vertices of outgoing edges
+    - ``Vout`` -- list; the list of vertices of outgoing edges
 
-    - ``Vin`` -- ``list``; the list of vertices of ingoing edges
+    - ``Vin`` -- list; the list of vertices of ingoing edges
 
-    - ``labels`` -- ``list``; the list of edge labels
+    - ``labels`` -- list; the list of edge labels
 
     - ``partition`` -- a partition of the vertex set
     """
@@ -306,19 +306,19 @@ cdef canonical_form_from_edge_list(int Vnr, list Vout, list Vin, int Lnr=1, list
 
     INPUT:
 
-    - ``Vnr`` -- ``int``; number of vertices, such that the vertices are `0,
+    - ``Vnr`` -- integer; number of vertices, such that the vertices are `0,
       \ldots, Vnr-1`
 
-    - ``Vout`` -- ``list``; the list of vertices of outgoing edges
+    - ``Vout`` -- list; the list of vertices of outgoing edges
 
-    - ``Vin`` -- ``list``; the list of vertices of ingoing edges
+    - ``Vin`` -- list; the list of vertices of ingoing edges
 
-    - ``Lnr`` -- ``int`` (default: 1); number of labels, such that the labels
+    - ``Lnr`` -- integer (default: 1); number of labels, such that the labels
       are `0, \ldots, Lnr-1`
 
-    - ``labels`` -- ``list`` (default: ``[]``); the list of edge labels
+    - ``labels`` -- list (default: ``[]``); the list of edge labels
 
-    - ``partition`` -- ``list`` (default: ``None``); a partition of the vertex
+    - ``partition`` -- list (default: ``None``); a partition of the vertex
       set
 
     - ``directed`` -- boolean (default: ``False``); whether the edges are
@@ -389,7 +389,7 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
 
     - ``G`` -- a Sage (Di)Graph
 
-    - ``partition`` -- ``list`` (default: ``None``); a partition of the vertices
+    - ``partition`` -- list (default: ``None``); a partition of the vertices
       of ``G`` into color classes
 
     - ``return_graph`` -- boolean (default: ``False``); whether to return the
@@ -604,21 +604,21 @@ cdef automorphism_group_gens_from_edge_list(int Vnr, Vout, Vin, int Lnr=1, label
 
     INPUT:
 
-    - ``Vnr`` -- ``int``; number of vertices, such that the vertices are `0,
+    - ``Vnr`` -- integer; number of vertices, such that the vertices are `0,
       \ldots, Vnr-1`
 
-    - ``Vout`` -- ``list``; the list of vertices of outgoing edges
+    - ``Vout`` -- list; the list of vertices of outgoing edges
 
-    - ``Vin`` -- ``list``; the list of vertices of ingoing edges
+    - ``Vin`` -- list; the list of vertices of ingoing edges
 
-    - ``Lnr`` -- ``int`` (default: 1); number of labels, such that the labels
+    - ``Lnr`` -- integer (default: 1); number of labels, such that the labels
       are `0, \ldots, Lnr-1`
 
-    - ``labels`` -- ``list`` (default: ``[]``); the list of edge labels
+    - ``labels`` -- list (default: ``[]``); the list of edge labels
 
-    - ``int2vert`` -- ``list`` (default: ``[]``); ordering of the vertices
+    - ``int2vert`` -- list (default: ``[]``); ordering of the vertices
 
-    - ``partition`` -- ``list`` (default: ``None``); a partition of the vertex
+    - ``partition`` -- list (default: ``None``); a partition of the vertex
       set
 
     - ``directed`` -- boolean (default: ``False``); whether the edges are
@@ -664,7 +664,7 @@ cpdef automorphism_group(G, partition=None, use_edge_labels=True) noexcept:
 
     - ``G`` -- a Sage graph
 
-    - ``partition`` -- ``list`` (default: ``None``); a partition of the vertices
+    - ``partition`` -- list (default: ``None``); a partition of the vertices
       of ``G`` into color classes. Defaults to ``None``, which is equivalent to
       a partition of size 1.
 
@@ -855,9 +855,9 @@ cdef Graph *bliss_graph(G, partition, vert2int, int2vert) noexcept:
 
     - ``G`` -- a Sage Graph
 
-    - ``partition`` -- ``list``; a partition of the vertex set
+    - ``partition`` -- list; a partition of the vertex set
 
-    - ``vert2int, int2vert`` -- a empty ``dict`` and a empty ``list``; the
+    - ``vert2int, int2vert`` -- a empty ``dict`` and a empty list; the
       entries of the dictionary are later set to record the labeling of our
       graph. They are taken as arguments to avoid technicalities of returning
       Python objects in Cython functions.
@@ -889,9 +889,9 @@ cdef Digraph *bliss_digraph(G, partition, vert2int, int2vert) noexcept:
 
     - ``G`` -- a Sage DiGraph
 
-    - ``partition`` -- ``list``; a partition of the vertex set
+    - ``partition`` -- list; a partition of the vertex set
 
-    - ``vert2int, int2vert`` -- a empty ``dict`` and a empty ``list``; the
+    - ``vert2int, int2vert`` -- a empty ``dict`` and a empty list; the
       entries of the dictionary are later set to record the labeling of our
       graph. They are taken as arguments to avoid technicalities of returning
       Python objects in Cython functions.

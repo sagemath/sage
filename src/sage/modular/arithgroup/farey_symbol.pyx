@@ -910,8 +910,8 @@ cdef class Farey:
           which is one of 'dashed', 'dotted', 'solid', 'dashdot', or '--',
           ':', '-', '-.', respectively
 
-        - ``color`` -- fill color (default: ``'lightgray'``); fill
-          color for odd part of Dedekind tesselation
+        - ``color`` -- (default: ``'lightgray'``) fill color for odd part of
+          Dedekind tesselation
 
         - ``show_pairing`` -- boolean (default: ``True``); flag for pairing
 

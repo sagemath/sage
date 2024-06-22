@@ -62,7 +62,7 @@ class SageTimeit:
           ``preparse``, ``number``, ``repeat``, ``precision``. See
           :func:`~sage.misc.sage_timeit.sage_timeit` for details.
 
-        OUTPUT: string -- timing information as a string
+        OUTPUT: string; timing information
 
         EXAMPLES::
 

@@ -363,8 +363,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
         """
         INPUT:
 
-        - ``X`` -- abelian variety, finite group, or torsion
-          element
+        - ``X`` -- abelian variety, finite group, or torsion element
 
         OUTPUT: abelian variety, finite group, torsion element
 

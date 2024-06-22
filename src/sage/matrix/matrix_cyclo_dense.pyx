@@ -886,7 +886,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         """
         Return the denominator of the entries of this matrix.
 
-        OUTPUT: integer -- the smallest integer `d` so that ``d * self`` has
+        OUTPUT: integer; the smallest integer `d` so that ``d * self`` has
         entries in the ring of integers
 
         EXAMPLES::

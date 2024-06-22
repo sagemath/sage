@@ -5469,8 +5469,8 @@ cdef class Matroid(SageObject):
           to compute 3-connectivity:
 
           - ``None`` -- the most appropriate algorithm is chosen automatically
-          - ``'bridges'`` -- bixby and Cunningham's algorithm, based on bridges [BC1977]_
-            Note that this cannot return a separator
+          - ``'bridges'`` -- Bixby and Cunningham's algorithm, based on bridges
+            [BC1977]_; note that this cannot return a separator
           - ``'intersection'`` -- an algorithm based on matroid intersection
           - ``'shifting'`` -- an algorithm based on the shifting algorithm [Raj1987]_
 

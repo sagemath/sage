@@ -226,7 +226,7 @@ class experimental:
         - ``issue_number`` -- integer; the github issue number where this
           code was introduced
 
-        - ``stack_level`` -- integer (default: `4`); This is passed on to
+        - ``stack_level`` -- integer (default: `4`); this is passed on to
           :func:`warnings.warn`
 
         EXAMPLES::

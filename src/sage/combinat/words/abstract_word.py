@@ -832,7 +832,7 @@ class Word_class(SageObject):
         - ``f`` -- involution on the alphabet of ``self`` (default: ``None``);
           it must be callable on letters as well as words (e.g. WordMorphism)
 
-        OUTPUT: iterator -- the iterated (`f`-)palindromic closure of self
+        OUTPUT: iterator; the iterated (`f`-)palindromic closure of ``self``
 
         EXAMPLES::
 
@@ -896,7 +896,7 @@ class Word_class(SageObject):
         - ``f`` -- involution (default: ``None``) on the alphabet of ``self``;
           it must be callable on letters as well as words (e.g. WordMorphism)
 
-        OUTPUT: iterator -- the iterated (`f`-)palindromic closure of self
+        OUTPUT: iterator; the iterated (`f`-)palindromic closure of ``self``
 
         ALGORITHM:
 
@@ -994,7 +994,7 @@ class Word_class(SageObject):
             without having to recompute the longest `f`-palindromic suffix
             at each iteration [2].
 
-        OUTPUT: word -- the iterated (`f`-)palindromic closure of self
+        OUTPUT: word; the iterated (`f`-)palindromic closure of ``self``
 
         EXAMPLES::
 

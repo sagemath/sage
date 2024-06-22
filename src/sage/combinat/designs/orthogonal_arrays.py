@@ -752,7 +752,7 @@ def orthogonal_array(k,n,t=2,resolvable=False, check=True,existence=False,explai
 
     - ``n`` -- integer; number of symbols
 
-    - ``t`` -- (integer; default: 2); strength of the array
+    - ``t`` -- integer (default: 2); strength of the array
 
     - ``resolvable`` -- boolean (default: ``False``); set to ``True`` if you
       want the design to be resolvable. The `n` classes of the resolvable

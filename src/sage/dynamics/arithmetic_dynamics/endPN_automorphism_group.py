@@ -1710,7 +1710,7 @@ def which_group(list_of_elements):
     - ``list_of_elements`` -- a finite list of elements of `PGL(2,K)`
       that we know a priori form a group
 
-    OUTPUT: string -- the isomorphism type of the group
+    OUTPUT: string; the isomorphism type of the group
 
     EXAMPLES::
 

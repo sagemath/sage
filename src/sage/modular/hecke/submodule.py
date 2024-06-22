@@ -411,10 +411,10 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
         INPUT:
 
-        - ``level`` -- int, the level of the codomain of the
-          map (positive int)
+        - ``level`` -- positive integer; the level of the codomain of the
+          map
 
-        - ``t`` -- int, the parameter of the degeneracy map,
+        - ``t`` -- integer; the parameter of the degeneracy map,
           i.e., the map is related to `f(q)` - `f(q^t)`
 
         OUTPUT:

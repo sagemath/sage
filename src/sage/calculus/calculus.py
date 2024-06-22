@@ -700,7 +700,7 @@ def nintegral(ex, x, a, b,
     - ``maximum_num_subintervals`` -- (default: 200)
       maximal number of subintervals
 
-    OUTPUT: float -- approximation to the integral
+    OUTPUT: float; approximation to the integral
 
     - float: estimated absolute error of the
       approximation

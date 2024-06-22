@@ -1050,10 +1050,10 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         - ``self`` -- a mutable matrix
         - ``algorithm`` -- string:
 
-            - ``'heuristic'`` -- uses M4RI and PLUQ (default)
-            - ``'m4ri'`` -- uses M4RI
-            - ``'pluq'`` -- uses PLUQ factorization
-            - ``'classical'`` -- uses classical Gaussian elimination
+          - ``'heuristic'`` -- uses M4RI and PLUQ (default)
+          - ``'m4ri'`` -- uses M4RI
+          - ``'pluq'`` -- uses PLUQ factorization
+          - ``'classical'`` -- uses classical Gaussian elimination
 
         - ``k`` -- the parameter 'k' of the M4RI algorithm. It MUST be between 1
           and 16 (inclusive). If it is not specified it will be calculated as

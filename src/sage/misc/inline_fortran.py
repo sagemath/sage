@@ -77,8 +77,7 @@ class InlineFortran:
 
     def eval(self, x, globals=None, locals=None):
         """
-        Compile fortran code ``x`` and adds the functions in it to
-        ``globals``.
+        Compile fortran code ``x`` and adds the functions in it to ``globals``.
 
         INPUT:
 

@@ -1372,7 +1372,7 @@ class ModularAbelianVariety_abstract(Parent):
 
         OUTPUT:
 
-        - abelian variety - the quotient `Q` of ``self`` by `G`
+        - abelian variety; the quotient `Q` of ``self`` by `G`
 
         - ``morphism`` -- from ``self`` to the quotient `Q`
 
@@ -4701,7 +4701,7 @@ class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
 
         - ``p`` -- integer
 
-        OUTPUT: list -- of elementary invariants
+        OUTPUT: list of elementary invariants
 
         EXAMPLES::
 

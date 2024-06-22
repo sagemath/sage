@@ -105,7 +105,7 @@ def det_given_divisor(A, d, proof=True, stabilize=2):
       the determinant modulo `p` until ``stabilize`` successive modulo
       determinant computations stabilize.
 
-    OUTPUT: integer -- determinant
+    OUTPUT: integer; determinant
 
     EXAMPLES::
 
@@ -502,7 +502,7 @@ def pivots_of_hnf_matrix(H):
 
     - ``H`` -- a matrix that must be HNF
 
-    OUTPUT: list -- list of pivots
+    OUTPUT: list of pivots
 
     EXAMPLES::
 

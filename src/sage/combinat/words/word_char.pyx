@@ -250,7 +250,7 @@ cdef class WordDatatype_char(WordDatatype):
 
         - ``other`` -- a word (WordDatatype_char)
 
-        - ``op`` -- int, from 0 to 5
+        - ``op`` -- integer from 0 to 5
 
         TESTS::
 

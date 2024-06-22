@@ -165,7 +165,7 @@ def ModularForms(group=1,
 
     - ``group`` -- a congruence subgroup or a Dirichlet character eps
 
-    - ``weight`` -- int, the weight, which must be an integer >= 1
+    - ``weight`` -- integer; the weight (`\geq 1`)
 
     - ``base_ring`` -- the base ring (ignored if group is a Dirichlet character)
 

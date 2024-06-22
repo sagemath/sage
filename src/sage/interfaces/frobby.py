@@ -42,7 +42,7 @@ class Frobby:
         - ``options`` -- list of options without the dash in front
         - ``verbose`` -- boolean (default: ``False``); print detailed information
 
-        OUTPUT: string -- what Frobby wrote to the standard output stream
+        OUTPUT: string; what Frobby wrote to the standard output stream
 
         EXAMPLES:
 

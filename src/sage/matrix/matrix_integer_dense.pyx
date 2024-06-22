@@ -2742,7 +2742,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         - ``fp`` -- floating point number implementation
 
-            - ``None`` -- nTL's exact reduction or fpLLL's wrapper (default)
+            - ``None`` -- NTL's exact reduction or fpLLL's wrapper (default)
 
             - ``'fp'`` -- double precision: NTL's FP or fpLLL's double
 

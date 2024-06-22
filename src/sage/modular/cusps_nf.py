@@ -912,7 +912,7 @@ class NFCusp(Element):
 
         - ``N`` -- an ideal of the number field (level)
 
-        OUTPUT: boolean -- ``True`` if the cusps are equivalent
+        OUTPUT: boolean; ``True`` if the cusps are equivalent
 
         - a transformation matrix -- (if ``Transformation=True``) a list of
           integral elements [a, b, c, d] which are the entries of a 2x2 matrix
@@ -1117,7 +1117,7 @@ def number_of_Gamma0_NFCusps(N):
 
     - ``N`` -- a number field ideal
 
-    OUTPUT: integer -- the number of orbits of cusps under Gamma0(N)-action
+    OUTPUT: integer; the number of orbits of cusps under Gamma0(N)-action
 
     EXAMPLES::
 

@@ -2295,7 +2295,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``new`` -- ``int`` according to :func:`open` of :mod:`webbrowser`
+        - ``new`` -- integer according to :func:`open` of :mod:`webbrowser`
           (``0`` default, ``1`` new window, ``2`` new tab)
         - ``autoraise`` -- boolean (default: ``True``)
 
@@ -2314,7 +2314,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``new`` -- ``int`` according to :func:`open` of :mod:`webbrowser`
+        - ``new`` -- integer according to :func:`open` of :mod:`webbrowser`
           (``0`` default, ``1`` new window, ``2`` new tab)
         - ``autoraise`` -- boolean (default: ``True``)
 

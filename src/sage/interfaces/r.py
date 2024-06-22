@@ -800,7 +800,7 @@ class R(ExtraTabCompletion, Interface):
 
         - ``s`` -- string representing the function whose source code you want to see
 
-        OUTPUT: string -- source code
+        OUTPUT: string; source code
 
         EXAMPLES::
 
@@ -983,7 +983,7 @@ class R(ExtraTabCompletion, Interface):
 
         - ``command`` -- string
 
-        OUTPUT: HelpExpression -- a subclass of string whose ``__repr__``
+        OUTPUT: HelpExpression; a subclass of string whose ``__repr__``
         method is ``__str__``, so it prints nicely
 
         EXAMPLES::
@@ -1066,7 +1066,7 @@ class R(ExtraTabCompletion, Interface):
         """
         Return the result of calling an R function, with given args and keyword args.
 
-        OUTPUT: RElement -- an object in R
+        OUTPUT: RElement; an object in R
 
         EXAMPLES::
 
@@ -1094,7 +1094,7 @@ class R(ExtraTabCompletion, Interface):
         Return an element belonging to the R interpreter.  This is used
         behind the scenes when doing things like comparisons, etc.
 
-        OUTPUT: RElement -- an R element
+        OUTPUT: RElement; an R element
 
         EXAMPLES::
 
@@ -1144,7 +1144,7 @@ class R(ExtraTabCompletion, Interface):
         """
         Return the NA in R.
 
-        OUTPUT: RElement -- an element of R
+        OUTPUT: RElement; an element of R
 
         EXAMPLES::
 
@@ -1176,7 +1176,7 @@ class R(ExtraTabCompletion, Interface):
         """
         Return list of all commands defined in R.
 
-        OUTPUT: list -- a sorted list of strings
+        OUTPUT: list; a sorted list of strings
 
         EXAMPLES::
 
@@ -1408,7 +1408,7 @@ class R(ExtraTabCompletion, Interface):
 
         - ``s`` -- string
 
-        OUTPUT: RFunction -- the R function that in R has name s
+        OUTPUT: RFunction; the R function that in R has name s
 
         EXAMPLES::
 
@@ -1641,7 +1641,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
         - ``other`` -- RElement
         - ``symbol`` -- string
 
-        OUTPUT: RElement -- output is an R element; not a bool!
+        OUTPUT: RElement; output is an R element (not a bool!)
 
         TESTS::
 
@@ -1661,7 +1661,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
 
         - ``other`` -- RElement
 
-        OUTPUT: RElement -- an R element; not a bool!
+        OUTPUT: RElement; an R element (not a bool!)
 
         EXAMPLES:
 
@@ -1681,7 +1681,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
 
         - ``other`` -- RElement
 
-        OUTPUT: RElement -- an R element; not a bool!
+        OUTPUT: RElement; an R element (not a bool!)
 
         EXAMPLES:
 
@@ -1701,7 +1701,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
 
         - ``other`` -- RElement
 
-        OUTPUT: RElement -- an R element; not a bool!
+        OUTPUT: RElement; an R element (not a bool!)
 
         EXAMPLES:
 
@@ -1721,7 +1721,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
 
         - ``other`` -- RElement
 
-        OUTPUT: RElement -- an R element; not a bool!
+        OUTPUT: RElement; an R element (not a bool!)
 
         EXAMPLES::
 
@@ -1739,7 +1739,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
 
         - ``other`` -- RElement
 
-        OUTPUT: RElement -- an R element; not a bool!
+        OUTPUT: RElement; an R element (not a bool!)
 
         EXAMPLES::
 
@@ -1757,7 +1757,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
 
         - ``other`` -- RElement
 
-        OUTPUT: RElement -- an R element; not a bool!
+        OUTPUT: RElement; an R element (not a bool!)
 
         EXAMPLES::
 
@@ -1807,7 +1807,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
         names, they are translated to a Python dictionary, with anonymous
         list entries called ``#{number}``.
 
-        OUTPUT: object -- Python object
+        OUTPUT: object; Python object
 
         EXAMPLES::
 

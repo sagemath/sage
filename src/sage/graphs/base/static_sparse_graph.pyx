@@ -33,9 +33,9 @@ Data structure
 The data structure is actually pretty simple and compact. ``short_digraph`` has
 five fields
 
-- ``n`` -- ``int``; the number of vertices in the graph
+- ``n`` -- integer; the number of vertices in the graph
 
-- ``m`` -- ``int``; the number of edges in the graph
+- ``m`` -- integer; the number of edges in the graph
 
 - ``edges`` -- ``uint32_t *``; array whose length is the number of edges of the
   graph
@@ -48,7 +48,7 @@ five fields
   neighbors of vertex `n-1` : the last of them is the element addressed by
   ``neighbors[n]-1``.
 
-- ``edge_labels`` -- ``list``; this cython list associates a label to each edge
+- ``edge_labels`` -- list; this cython list associates a label to each edge
   of the graph. If a given edge is represented by ``edges[i]``, this its
   associated label can be found at ``edge_labels[i]``. This object is usually
   NULL, unless the call to ``init_short_digraph`` explicitly requires the labels

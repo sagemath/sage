@@ -2495,7 +2495,7 @@ class WehlerK3Surface_finite_field( WehlerK3Surface_field):
         Enumerate points over `\mathbb{P}^2`, and then count the points on the fiber of
         each of those points.
 
-        OUTPUT: integer -- total number of points on the surface
+        OUTPUT: integer; total number of points on the surface
 
         EXAMPLES::
 

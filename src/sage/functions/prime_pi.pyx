@@ -54,7 +54,7 @@ cdef class PrimePi(BuiltinFunction):
           possibly more) in computing ``prime_pi``, this can potentially
           speedup the time of computation, at a cost to memory usage.
 
-        OUTPUT: integer -- the number of primes :math:`\leq` ``x``
+        OUTPUT: integer; the number of primes :math:`\leq` ``x``
 
         EXAMPLES:
 
@@ -219,7 +219,7 @@ cpdef Integer legendre_phi(x, a):
 
     - ``a`` -- nonnegative integer
 
-    OUTPUT: integer -- the number of positive integers :math:`\leq` ``x`` that
+    OUTPUT: integer; the number of positive integers :math:`\leq` ``x`` that
     are not divisible by the first ``a`` primes
 
     EXAMPLES::

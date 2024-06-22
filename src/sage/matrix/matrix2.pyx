@@ -3117,7 +3117,7 @@ cdef class Matrix(Matrix1):
 
         - ``var`` -- a variable name (default: ``'x'``)
 
-        OUTPUT: polynomial -- the characteristic polynomial of ``self``
+        OUTPUT: polynomial; the characteristic polynomial of ``self``
 
         EXAMPLES:
 
@@ -10247,7 +10247,7 @@ cdef class Matrix(Matrix1):
         r"""
         Return the adjugate of this matrix.
 
-        OUTPUT: matrix -- the adjugate of the matrix
+        OUTPUT: matrix; the adjugate of the matrix
 
         EXAMPLES:
 
@@ -15490,13 +15490,13 @@ cdef class Matrix(Matrix1):
 
         - ``p`` -- one of the following options:
 
-            - ``1`` -- the largest column-sum norm
+          - ``1`` -- the largest column-sum norm
 
-            - ``2`` -- (default) the Euclidean norm
+          - ``2`` -- (default) the Euclidean norm
 
-            - ``Infinity`` -- the largest row-sum norm
+          - ``Infinity`` -- the largest row-sum norm
 
-            - ``'frob'`` -- the Frobenius (sum of squares) norm
+          - ``'frob'`` -- the Frobenius (sum of squares) norm
 
         OUTPUT: RDF number
 

@@ -1320,7 +1320,7 @@ class WordGenerator:
 
         - ``n`` -- the desired length of the prefix
 
-        OUTPUT: word -- the prefix
+        OUTPUT: word; the prefix
 
         .. NOTE::
 

@@ -288,8 +288,8 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
           self, or a positive integer (in which case Sage will use
           :meth:`~hecke_module_of_level` to find the "natural" module of the
           corresponding level).
-        - ``t`` -- int, the parameter of the degeneracy map, i.e., the map is
-          related to `f(q)` - `f(q^t)`
+        - ``t`` -- integer; the parameter of the degeneracy map, i.e., the map
+          is related to `f(q)` - `f(q^t)`
 
         OUTPUT: a morphism from ``self`` to ``codomain``
 
@@ -462,7 +462,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
 
         INPUT:
 
-        - ``self`` -- hecke module invariant under the Hecke operator of index
+        - ``self`` -- Hecke module invariant under the Hecke operator of index
            `n`
 
         - ``n`` --- a positive integer.

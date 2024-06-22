@@ -369,7 +369,7 @@ class ManinSymbolList(Parent):
         """
         Return the weight of the Manin symbols in this :class:`ManinSymbolList`.
 
-        OUTPUT: integer -- the weight of the Manin symbols in the list
+        OUTPUT: integer; the weight of the Manin symbols in the list
 
         EXAMPLES::
 
