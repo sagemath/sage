@@ -171,11 +171,11 @@ from sage.combinat.combination import Combinations
 import sage.geometry.abc
 from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.geometry.toric_lattice_element import ToricLatticeElement
-from sage.topology.simplicial_complex import SimplicialComplex
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
 from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.modules.free_module_element import vector
 from sage.modules.free_module import (FreeModule_ambient_field,
@@ -188,6 +188,8 @@ from sage.schemes.toric.divisor_class import ToricRationalDivisorClass
 from sage.schemes.toric.variety import CohomologyRing, ToricVariety_field
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element import Vector
+
+lazy_import('sage.topology.simplicial_complex', 'SimplicialComplex')
 
 
 def is_ToricDivisor(x):

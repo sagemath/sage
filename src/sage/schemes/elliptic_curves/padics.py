@@ -25,22 +25,23 @@ import math
 
 from sage.arith.functions import lcm as LCM
 from sage.arith.misc import valuation
-from sage.matrix.constructor import matrix
-from sage.misc.misc import newton_method_sizes
-from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-from sage.rings.padics.factory import Qp as pAdicField
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-import sage.schemes.hyperelliptic_curves.hypellfrob
-import sage.schemes.hyperelliptic_curves.monsky_washnitzer
-
+from sage.matrix.constructor import Matrix as matrix
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
+from sage.misc.misc import newton_method_sizes
 from sage.rings.big_oh import O
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Integers
 from sage.rings.integer import Integer
 from sage.rings.laurent_series_ring import LaurentSeriesRing
-from sage.rings.padics.factory import Qp, Zp
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import RationalField
+import sage.schemes.hyperelliptic_curves.hypellfrob
+import sage.schemes.hyperelliptic_curves.monsky_washnitzer
+
+lazy_import('sage.rings.padics.factory', ['Qp', 'Zp'])
+
 
 from . import padic_lseries as plseries
 
@@ -1188,7 +1189,7 @@ def padic_sigma(self, p, N=20, E2=None, check=False, check_hypotheses=True):
     # [Note: there are actually more digits available, but it's a bit
     # tricky to figure out exactly how many, and we only need p^(N-k+1)
     # for p-adic height purposes anyway]
-    K = pAdicField(p, N + 1)
+    K = Qp(p, N + 1)
 
     sigma = sigma.padded_list(N+1)
 
@@ -1372,7 +1373,7 @@ def padic_sigma_truncated(self, p, N=20, lamb=0, E2=None, check_hypotheses=True)
 
     # Convert the answer to power series over p-adics; drop the precision
     # of the t^j coefficient to p^{N - 2 + (3 - j)(lamb + 1)}).
-    K = pAdicField(p, N - 2 + 3*(lamb+1))
+    K = Qp(p, N - 2 + 3*(lamb+1))
 
     sigma = sigma.padded_list(trunc+1)
 
@@ -1555,7 +1556,7 @@ def padic_E2(self, p, prec=20, check=False, check_hypotheses=True, algorithm="au
     frob_p_n = frob_p**prec
 
     # todo: think about the sign of this. Is it correct?
-    output_ring = pAdicField(p, prec)
+    output_ring = Qp(p, prec)
 
     E2_of_X = output_ring( (-12 * frob_p_n[0,1] / frob_p_n[1,1]).lift() ) \
               + O(p**prec)
