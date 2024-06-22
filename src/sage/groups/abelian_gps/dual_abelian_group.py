@@ -345,7 +345,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: A*B^2*D^7 in Fd
             True
         """
-        return X.parent() == self and is_DualAbelianGroupElement(X)
+        return X.parent() == self and isinstance(X, DualAbelianGroupElement)
 
     def order(self):
         """

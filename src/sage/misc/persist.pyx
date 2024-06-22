@@ -341,6 +341,7 @@ def dumps(obj, compress=True):
 # This is used below, and also by explain_pickle.py
 unpickle_override = {}
 
+
 def register_unpickle_override(module, name, callable, call_name=None):
     r"""
     Python pickles include the module and class name of classes.
@@ -992,6 +993,7 @@ def loads(s, compress=True, **kwargs):
 
 
 cdef bint make_pickle_jar = 'SAGE_PICKLE_JAR' in os.environ
+
 
 def picklejar(obj, dir=None):
     """

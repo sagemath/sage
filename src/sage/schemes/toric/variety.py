@@ -226,7 +226,7 @@ space with a curve of `\ZZ_3`-orbifold singularities::
     sage: P4_11133 = toric_varieties.P4_11133()
     sage: P4_11133.is_smooth(), P4_11133.is_orbifold()
     (False, True)
-    sage: cone = P4_11133.fan(3)[8]
+    sage: cone = P4_11133.fan(3)[9]
     sage: cone.is_smooth(), cone.is_simplicial()
     (False, True)
     sage: HH = P4_11133.cohomology_ring();  HH

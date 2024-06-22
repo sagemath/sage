@@ -207,7 +207,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
             return False
         else:
-            from sage.rings.fraction_field import is_FractionField
+            from sage.rings.fraction_field import FractionField_generic
             from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
             from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
             from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic
@@ -220,7 +220,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             if R._is_numerical():
                 # Almost anything with a coercion into any precision of CC
                 return R not in (RLF, CLF)
-            elif is_PolynomialRing(R) or is_MPolynomialRing(R) or is_FractionField(R) or isinstance(R, LaurentPolynomialRing_generic):
+            elif is_PolynomialRing(R) or is_MPolynomialRing(R) or isinstance(R, FractionField_generic) or isinstance(R, LaurentPolynomialRing_generic):
                 base = R.base_ring()
                 return base is not self and self.has_coerce_map_from(base)
             elif (R is InfinityRing or R is UnsignedInfinityRing

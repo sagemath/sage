@@ -40,7 +40,7 @@ from .congroup_gamma import Gamma_class
 from .congroup_sl2z import SL2Z
 from sage.modular.cusps import Cusp
 
-from sage.misc.decorators import options, rename_keyword
+from sage.misc.decorators import options
 from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp cimport richcmp_not_equal
 

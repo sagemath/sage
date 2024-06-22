@@ -145,7 +145,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
                         x = []
                     else:
                         x = [x]
-        elif sage.rings.finite_rings.integer_mod.is_IntegerMod(x):
+        elif isinstance(x, sage.rings.finite_rings.integer_mod.IntegerMod_abstract):
             if not Integer(self.prime_pow.prime).divides(x.parent().order()):
                 raise TypeError("p does not divide modulus %s" % x.parent().order())
         elif isinstance(x, Element) and isinstance(x.parent(), FiniteField):

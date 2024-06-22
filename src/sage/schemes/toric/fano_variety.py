@@ -130,7 +130,7 @@ from sage.rings.rational_field import QQ
 
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-from sage.rings.fraction_field import is_FractionField
+from sage.rings.fraction_field import FractionField_generic
 
 from sage.schemes.toric.toric_subscheme import AlgebraicScheme_subscheme_toric
 from sage.schemes.toric.variety import (
@@ -1590,7 +1590,7 @@ def add_variables(field, variables):
     """
     if not variables:
         return field
-    if is_FractionField(field):
+    if isinstance(field, FractionField_generic):
         # Q(a) ---> Q(a, b) rather than Q(a)(b)
         R = field.ring()
         if is_PolynomialRing(R) or is_MPolynomialRing(R):

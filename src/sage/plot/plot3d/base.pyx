@@ -52,7 +52,6 @@ AUTHORS:
 from cpython.list cimport *
 
 import os
-import sys
 import zipfile
 
 from functools import reduce

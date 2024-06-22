@@ -36,7 +36,7 @@ AUTHORS:
 from sage.structure.element import Element
 from sage.structure.element import Expression
 import sage.rings.abc
-from sage.rings.real_mpfr import RR, is_RealNumber
+from sage.rings.real_mpfr import RR, RealNumber
 from sage.rings.padics.padic_generic_element import pAdicGenericElement
 from sage.rings.padics.padic_base_generic import pAdicBaseGeneric
 from sage.schemes.projective.projective_space import ProjectiveSpace
@@ -215,7 +215,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
                     # since we are over a field, we can normalize coordinates. all code assumes normalized coordinates
                     center.normalize_coordinates()
                     # make sure the radius coerces into the reals
-                    if not is_RealNumber(radius):
+                    if not isinstance(radius, RealNumber):
                         if isinstance(radius, Expression):
                             radius = RR(radius)
                         elif RR.has_coerce_map_from(radius.parent()):
@@ -258,7 +258,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
                             except (TypeError, ValueError):
                                 raise ValueError('could not convert %s to %s' % (center, self._base_space))
                     # make sure the radius coerces into the reals
-                    if not is_RealNumber(radius):
+                    if not isinstance(radius, RealNumber):
                         if isinstance(radius, Expression):
                             radius = RR(radius)
                         elif RR.has_coerce_map_from(radius.parent()):
@@ -388,7 +388,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
                         raise ValueError('radius univariate function but center is constant. ' +
                                          'this does not define a type IV point')
                     raise TypeError("symbolic radius must be a real number")
-            if (not is_RealNumber(radius)) and power is None:
+            if (not isinstance(radius, RealNumber)) and power is None:
                 if RR.has_coerce_map_from(radius.parent()):
                     self._radius = RR(radius)
                 else:

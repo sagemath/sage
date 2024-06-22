@@ -22,11 +22,9 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
-
-from cpython.object cimport Py_SIZE
 from cpython.long cimport PyLong_FromLong
 from cpython.longintrepr cimport _PyLong_New, py_long, digit, PyLong_SHIFT
 from sage.cpython.pycore_long cimport (ob_digit, _PyLong_IsNegative,

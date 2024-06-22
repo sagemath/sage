@@ -43,10 +43,18 @@ def is_ManinSymbol(x):
         sage: s
         [Y^2,(1,2)]
         sage: is_ManinSymbol(s)
+        doctest:warning...
+        DeprecationWarning: The function is_ManinSymbol is deprecated;
+        use 'isinstance(..., ManinSymbol)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         True
         sage: is_ManinSymbol(m[3])
         True
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38184,
+                       "The function is_ManinSymbol is deprecated; "
+                       "use 'isinstance(..., ManinSymbol)' instead.")
     return isinstance(x, ManinSymbol)
 
 

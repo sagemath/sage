@@ -278,7 +278,7 @@ class Gp(ExtraTabCompletion, Expect):
 
         EXAMPLES::
 
-            sage: gp # indirect doctest
+            sage: gp  # indirect doctest
             PARI/GP interpreter
         """
         return 'PARI/GP interpreter'
@@ -287,6 +287,7 @@ class Gp(ExtraTabCompletion, Expect):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.gp import gp
             sage: gp.__reduce__()
             (<function reduce_load_GP at 0x...>, ())
             sage: f, args = _

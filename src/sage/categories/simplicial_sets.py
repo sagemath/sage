@@ -9,21 +9,20 @@ Simplicial Sets
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.functions.generalized import sign
-from sage.matrix.special import identity_matrix
-from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_import import lazy_import
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.category_with_axiom import CategoryWithAxiom
-from sage.categories.sets_cat import Sets
 from sage.categories.homsets import HomsetsCategory
-from sage.matrix.constructor import matrix
+from sage.categories.sets_cat import Sets
+from sage.functions.generalized import sign
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 
 lazy_import('sage.matrix.constructor', 'matrix')
+lazy_import('sage.matrix.special', 'identity_matrix')
 
 
 class SimplicialSets(Category_singleton):
@@ -362,10 +361,10 @@ class SimplicialSets(Category_singleton):
 
                 TESTS::
 
-                    sage: RP2 = simplicial_sets.RealProjectiveSpace(2)                  # needs sage.groups
-                    sage: RP2._universal_cover_dict()                                   # needs sage.groups
+                    sage: RP2 = simplicial_sets.RealProjectiveSpace(2)                  # needs sage.graphs sage.groups
+                    sage: RP2._universal_cover_dict()                                   # needs sage.graphs sage.groups
                     (Finitely presented group < e | e^2 >, {f: e})
-                    sage: RP2.nondegenerate_simplices()                                 # needs sage.groups
+                    sage: RP2.nondegenerate_simplices()                                 # needs sage.graphs sage.groups
                     [1, f, f * f]
                 """
                 from sage.groups.free_group import FreeGroup
@@ -407,14 +406,14 @@ class SimplicialSets(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: RP2 = simplicial_sets.RealProjectiveSpace(2)                  # needs sage.groups
-                    sage: phi = RP2.universal_cover_map(); phi                          # needs sage.groups
+                    sage: RP2 = simplicial_sets.RealProjectiveSpace(2)                  # needs sage.graphs sage.groups
+                    sage: phi = RP2.universal_cover_map(); phi                          # needs sage.graphs sage.groups
                     Simplicial set morphism:
                       From: Simplicial set with 6 non-degenerate simplices
                       To:   RP^2
                       Defn: [(1, 1), (1, e), (f, 1), (f, e), (f * f, 1), (f * f, e)]
                             --> [1, 1, f, f, f * f, f * f]
-                    sage: phi.domain().face_data()                                      # needs sage.groups
+                    sage: phi.domain().face_data()                                      # needs sage.graphs sage.groups
                         {(1, 1): None,
                          (1, e): None,
                          (f, 1): ((1, e), (1, 1)),
@@ -561,7 +560,7 @@ class SimplicialSets(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: # needs sage.groups
+                    sage: # needs sage.graphs sage.groups
                     sage: RP3 = simplicial_sets.RealProjectiveSpace(3)
                     sage: C = RP3.universal_cover(); C
                     Simplicial set with 8 non-degenerate simplices
@@ -588,6 +587,7 @@ class SimplicialSets(Category_singleton):
 
                 EXAMPLES::
 
+                    sage: # needs sage.graphs
                     sage: X = simplicial_sets.Torus()
                     sage: d = X._canonical_twisting_operator()
                     sage: d
@@ -655,6 +655,7 @@ class SimplicialSets(Category_singleton):
 
                 EXAMPLES::
 
+                    sage: # needs sage.graphs
                     sage: W = simplicial_sets.Sphere(1).wedge(simplicial_sets.Sphere(2))
                     sage: W.nondegenerate_simplices()
                     [*, sigma_1, sigma_2]
@@ -669,6 +670,7 @@ class SimplicialSets(Category_singleton):
 
                 ::
 
+                    sage: # needs sage.graphs
                     sage: X = simplicial_sets.Torus()
                     sage: C = X.twisted_chain_complex()
                     sage: C.differential(1)
@@ -682,6 +684,7 @@ class SimplicialSets(Category_singleton):
 
                 ::
 
+                    sage: # needs sage.graphs
                     sage: Y = simplicial_sets.RealProjectiveSpace(2)
                     sage: C = Y.twisted_chain_complex()
                     sage: C.differential(1)
@@ -825,6 +828,7 @@ class SimplicialSets(Category_singleton):
 
                 EXAMPLES::
 
+                    sage: # needs sage.graphs
                     sage: X = simplicial_sets.Sphere(1).wedge(simplicial_sets.Sphere(2))
                     sage: X.twisted_homology(1)
                     Quotient module by Submodule of Ambient free module of rank 0 over the integral domain Multivariate Polynomial Ring in f1, f1inv over Integer Ring
@@ -837,6 +841,7 @@ class SimplicialSets(Category_singleton):
 
                 ::
 
+                    sage: # needs sage.graphs
                     sage: Y = simplicial_sets.Torus()
                     sage: Y.twisted_homology(1)
                     Quotient module by Submodule of Ambient free module of rank 5 over the integral domain Multivariate Polynomial Ring in f2, f2inv, f3, f3inv over Integer Ring
@@ -871,6 +876,7 @@ class SimplicialSets(Category_singleton):
 
                 TESTS::
 
+                    sage: # needs sage.graphs
                     sage: X = simplicial_sets.PresentationComplex(groups.presentation.FGAbelian((3,2)))
                     sage: TW2 = X.twisted_homology(2, reduced=True)
                     sage: M = TW2.relations_matrix()

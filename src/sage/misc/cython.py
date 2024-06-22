@@ -500,7 +500,7 @@ def cython_lambda(vars, expr, verbose=0, **kwds):
     if isinstance(vars, str):
         v = vars
     else:
-        v = ', '.join(['%s %s' % (typ, var) for typ, var in vars])
+        v = ', '.join('%s %s' % (typ, var) for typ, var in vars)
 
     s = """
 cdef class _s:

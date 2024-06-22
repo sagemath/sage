@@ -36,10 +36,18 @@ def is_ModularSymbolsElement(x) -> bool:
     EXAMPLES::
 
         sage: sage.modular.modsym.element.is_ModularSymbolsElement(ModularSymbols(11, 2).0)
+        doctest:warning...
+        DeprecationWarning: The function is_ModularSymbolsElement is deprecated;
+        use 'isinstance(..., ModularSymbolsElement)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         True
         sage: sage.modular.modsym.element.is_ModularSymbolsElement(13)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_ModularSymbolsElement is deprecated; "
+                "use 'isinstance(..., ModularSymbolsElement)' instead.")
     return isinstance(x, ModularSymbolsElement)
 
 

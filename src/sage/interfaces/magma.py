@@ -397,6 +397,7 @@ class Magma(ExtraTabCompletion, Expect):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.magma import magma
             sage: loads(dumps(magma)) is magma
             True
 

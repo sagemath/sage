@@ -93,15 +93,15 @@ cdef class Functor(SageObject):
         Category of rings
         sage: F.codomain()
         Category of commutative additive groups
-        sage: from sage.categories.functor import is_Functor
-        sage: is_Functor(F)
+        sage: from sage.categories.functor import Functor
+        sage: isinstance(F, Functor)
         True
         sage: I = IdentityFunctor(abgrps)
         sage: I
         The identity functor on Category of commutative additive groups
         sage: I.domain()
         Category of commutative additive groups
-        sage: is_Functor(I)
+        sage: isinstance(I, Functor)
         True
 
     Note that by default, an instance of the class Functor is coercion
@@ -415,10 +415,7 @@ def is_Functor(x):
     """
     Test whether the argument is a functor.
 
-    NOTE:
-
-    There is a deprecation warning when using it from top level.
-    Therefore we import it in our doc test.
+    This function is deprecated.
 
     EXAMPLES::
 
@@ -427,6 +424,10 @@ def is_Functor(x):
         sage: F1
         FractionField
         sage: is_Functor(F1)
+        doctest:warning...
+        DeprecationWarning: The function is_Functor is deprecated;
+        use 'isinstance(..., Functor)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         True
         sage: is_Functor(FractionField)
         False
@@ -436,6 +437,10 @@ def is_Functor(x):
         sage: is_Functor(F2)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_Functor is deprecated; "
+                "use 'isinstance(..., Functor)' instead.")
     return isinstance(x, Functor)
 
 

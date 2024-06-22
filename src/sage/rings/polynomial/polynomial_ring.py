@@ -3613,8 +3613,12 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
             return self(conway_polynomial(p, n))
         elif algorithm == "first_lexicographic":
             if p == 2:
-                from .polynomial_gf2x import GF2X_BuildIrred_list
-                return self(GF2X_BuildIrred_list(n))
+                try:
+                    from .polynomial_gf2x import GF2X_BuildIrred_list
+                except ImportError:
+                    pass
+                else:
+                    return self(GF2X_BuildIrred_list(n))
             else:
                 # Fallback to PolynomialRing_dense_finite_field.irreducible_element
                 pass
@@ -3628,8 +3632,12 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
                 raise NotImplementedError("'minimal_weight' option only implemented for p = 2")
         elif algorithm == "random":
             if p == 2:
-                from .polynomial_gf2x import GF2X_BuildRandomIrred_list
-                return self(GF2X_BuildRandomIrred_list(n))
+                try:
+                    from .polynomial_gf2x import GF2X_BuildRandomIrred_list
+                except ImportError:
+                    pass
+                else:
+                    return self(GF2X_BuildRandomIrred_list(n))
             else:
                 pass
 

@@ -13,7 +13,7 @@ Helper code for ternary quadratic forms
 # ****************************************************************************
 
 from sage.arith.misc import gcd, inverse_mod, xgcd
-from sage.matrix.constructor import matrix, identity_matrix, diagonal_matrix
+from sage.matrix.constructor import matrix
 from sage.misc.prandom import randint
 from sage.rings.finite_rings.integer_mod import mod
 from sage.rings.integer_ring import ZZ

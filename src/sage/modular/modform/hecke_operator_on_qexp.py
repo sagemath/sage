@@ -23,8 +23,8 @@ from sage.rings.power_series_ring_element import is_PowerSeries
 
 lazy_import('sage.rings.number_field.number_field', 'CyclotomicField')
 
-from sage.modular.dirichlet import DirichletGroup, is_DirichletCharacter
-from .element import is_ModularFormElement
+from sage.modular.dirichlet import DirichletGroup, DirichletCharacter
+from .element import ModularFormElement
 
 def hecke_operator_on_qexp(f, n, k, eps=None,
                            prec=None, check=True, _return_list=False):
@@ -87,16 +87,16 @@ def hecke_operator_on_qexp(f, n, k, eps=None,
         # ZZ can coerce to GF(p), but QQ can't.
         eps = DirichletGroup(1, base_ring=ZZ)[0]
     if check:
-        if not (is_PowerSeries(f) or is_ModularFormElement(f)):
+        if not (is_PowerSeries(f) or isinstance(f, ModularFormElement)):
             raise TypeError("f (=%s) must be a power series or modular form" % f)
-        if not is_DirichletCharacter(eps):
+        if not isinstance(eps, DirichletCharacter):
             raise TypeError("eps (=%s) must be a Dirichlet character" % eps)
         k = Integer(k)
         n = Integer(n)
     v = []
 
     if prec is None:
-        if is_ModularFormElement(f):
+        if isinstance(f, ModularFormElement):
             # always want at least three coefficients, but not too many, unless
             # requested
             pr = max(f.prec(), f.parent().prec(), (n+1)*3)
@@ -123,7 +123,7 @@ def hecke_operator_on_qexp(f, n, k, eps=None,
             v.append(am)
     if _return_list:
         return v
-    if is_ModularFormElement(f):
+    if isinstance(f, ModularFormElement):
         R = f.parent()._q_expansion_ring()
     else:
         R = f.parent()

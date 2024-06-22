@@ -84,7 +84,6 @@ cdef class HMM_Util:
             for k in range(i, j):
                 T._values[k] /= s
 
-
     cpdef TimeSeries initial_probs_to_TimeSeries(self, pi, bint normalize):
         """
         This function is used internally by the __init__ methods of
@@ -122,7 +121,6 @@ cdef class HMM_Util:
             # Now normalize
             self.normalize_probability_TimeSeries(T, 0, T._length)
         return T
-
 
     cpdef TimeSeries state_matrix_to_TimeSeries(self, A, int N, bint normalize):
         """

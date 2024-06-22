@@ -96,6 +96,10 @@ def is_IntegerRing(x):
 
         sage: from sage.rings.integer_ring import is_IntegerRing
         sage: is_IntegerRing(ZZ)
+        doctest:warning...
+        DeprecationWarning: The function is_IntegerRing is deprecated;
+        use 'isinstance(..., IntegerRing_class)' instead.
+        See https://github.com/sagemath/sage/issues/38128 for details.
         True
         sage: is_IntegerRing(QQ)
         False
@@ -104,6 +108,10 @@ def is_IntegerRing(x):
         sage: is_IntegerRing(parent(1/3))
         False
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38128,
+                       "The function is_IntegerRing is deprecated; "
+                       "use 'isinstance(..., IntegerRing_class)' instead.")
     return isinstance(x, IntegerRing_class)
 
 

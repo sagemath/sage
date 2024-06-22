@@ -9,7 +9,7 @@ Stopgaps
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 import warnings
@@ -17,6 +17,7 @@ import warnings
 
 from sage.doctest import DOCTEST_MODE
 cdef bint ENABLED = not DOCTEST_MODE
+
 
 def set_state(bint mode):
     """
@@ -41,6 +42,7 @@ def set_state(bint mode):
     global ENABLED
     ENABLED = mode
 
+
 class StopgapWarning(Warning):
     """
     This class is used to warn users of a known issue that may produce
@@ -48,9 +50,12 @@ class StopgapWarning(Warning):
     """
     pass
 
+
 warnings.filterwarnings('always', category=StopgapWarning)
 
-cdef set _stopgap_cache = set([])
+
+cdef set _stopgap_cache = set()
+
 
 def stopgap(message, int issue_no):
     r"""

@@ -219,13 +219,14 @@ class Category_singleton(Category):
              <class 'sage.categories.category.Category'>,
              <class 'sage.structure.unique_representation.UniqueRepresentation'>,
              <class 'sage.structure.unique_representation.CachedRepresentation'>,
+             <class 'sage.structure.unique_representation.WithPicklingByInitArgs'>,
              <class 'sage.misc.fast_methods.WithEqualityById'>,
              <class 'sage.structure.sage_object.SageObject'>,
              <class '__main__.R.subcategory_class'>,
              <class 'sage.categories.sets_cat.Sets.subcategory_class'>,
              <class 'sage.categories.sets_with_partial_maps.SetsWithPartialMaps.subcategory_class'>,
              <class 'sage.categories.objects.Objects.subcategory_class'>,
-             <... 'object'>]
+             <class 'object'>]
             sage: R() is R()
             True
             sage: R() is R().__class__()

@@ -61,6 +61,7 @@ from cpython.object cimport PyObject_Call, PyObject_RichCompare
 
 import types
 
+
 def is_lazy_string(obj):
     """
     Check if the given object is a lazy string.
@@ -74,6 +75,7 @@ def is_lazy_string(obj):
         True
     """
     return isinstance(obj, _LazyString)
+
 
 def lazy_string(f, *args, **kwargs):
     """
@@ -129,6 +131,7 @@ def _make_lazy_string(ftype, fpickle, args, kwargs):
     else:
         f = fpickle
     return _LazyString(f, args, kwargs)
+
 
 cdef class _LazyString():
     """

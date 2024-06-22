@@ -145,7 +145,7 @@ from sage.misc.lazy_import import lazy_import
 from sage.rings.polynomial.multi_polynomial_element import degree_lowest_rational_function
 from sage.rings.number_field.number_field import NumberField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.rational_field import is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.rings.infinity import infinity
 
 from sage.schemes.affine.affine_space import AffineSpace, AffineSpace_generic
@@ -1548,10 +1548,10 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
             pts = self.change_ring(F.embeddings(QQbar)[0]).rational_points()
             L = [t for pt in pts for t in pt]
             K = number_field_elements_from_algebraics(L)[0]
-            if is_RationalField(K):
+            if isinstance(K, RationalField):
                 return F.embeddings(F)[0]
             else:
-                if is_RationalField(F):
+                if isinstance(F, RationalField):
                     return F.embeddings(K)[0]
                 else:
                     # make sure the defining polynomial variable names are the same for K, N

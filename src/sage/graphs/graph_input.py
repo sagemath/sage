@@ -103,8 +103,8 @@ def from_sparse6(G, g6_string):
         k = int((ZZ(n) - 1).nbits())
         ords = [ord(i) for i in s]
         if any(o > 126 or o < 63 for o in ords):
-            raise RuntimeError("the string seems corrupt: valid characters are \n" + ''.join([chr(i) for i in range(63, 127)]))
-        bits = ''.join([int_to_binary_string(o-63).zfill(6) for o in ords])
+            raise RuntimeError("the string seems corrupt: valid characters are \n" + ''.join(chr(i) for i in range(63, 127)))
+        bits = ''.join(int_to_binary_string(o-63).zfill(6) for o in ords)
         if not k:
             b = [int(x) for x in bits]
             x = [0] * len(b)

@@ -468,6 +468,7 @@ class Singular(ExtraTabCompletion, Expect):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.singular import singular
             sage: singular.__reduce__()
             (<function reduce_load_Singular at 0x...>, ())
         """

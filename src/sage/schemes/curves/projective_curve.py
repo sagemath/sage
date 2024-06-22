@@ -154,7 +154,7 @@ from sage.rings.number_field.number_field import NumberField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar import (number_field_elements_from_algebraics,
                               QQbar)
-from sage.rings.rational_field import is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.rings.integer import Integer
 
 from sage.schemes.projective.projective_space import ProjectiveSpace, ProjectiveSpace_ring
@@ -1458,10 +1458,10 @@ class ProjectivePlaneCurve(ProjectiveCurve):
             pts = self.change_ring(F.embeddings(QQbar)[0]).rational_points()
             L = [t for pt in pts for t in pt]
             K = number_field_elements_from_algebraics(L)[0]
-            if is_RationalField(K):
+            if isinstance(K, RationalField):
                 return F.embeddings(F)[0]
             else:
-                if is_RationalField(F):
+                if isinstance(F, RationalField):
                     return F.embeddings(K)[0]
                 else:
                     # make sure the defining polynomial variable names are the same for K, N
@@ -1862,7 +1862,7 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
         """
         if self.genus():
             raise TypeError("this curve must have geometric genus zero")
-        if not is_RationalField(self.base_ring()):
+        if not isinstance(self.base_ring(), RationalField):
             raise TypeError("this curve must be defined over the rational field")
         singular.lib("paraplanecurves.lib")
         R = singular.paraPlaneCurve(self.defining_polynomial())

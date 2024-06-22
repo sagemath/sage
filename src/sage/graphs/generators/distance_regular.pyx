@@ -591,8 +591,9 @@ def UstimenkoGraph(const int m, const int q):
     Return the Ustimenko graph with parameters `(m, q)`.
 
     This is the distance 1 or 2 graph of the dual polar graph `C_{m-1}(q)`.
-    The graph is distance-regular with classical with parameters
-    `(d,q^2, qbinom(3,1,q) -1, qbinom(m+1,1,q) -1)`
+    The graph is distance-regular with parameters
+    `(d,q^2, \binom{3}{1}_q -1, \binom{m+1}{1}_q -1)`,
+    where `\binom{n}{k}_q` is the `q`-binomial coefficient.
 
     INPUT:
 
@@ -833,7 +834,7 @@ def HermitianFormsGraph(const int n, const int r):
     r"""
     Return the Hermitian forms graph with the given parameters.
 
-    We build a graph whose vertices are all ``n``x``n`` Hermitian matrices
+    We build a graph whose vertices are all `n \times n` Hermitian matrices
     over ``GF(r^2)``. Two  vertices are adjacent if the difference of the two
     vertices has rank 1.
 

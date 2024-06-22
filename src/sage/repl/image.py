@@ -1,4 +1,5 @@
 # sage_setup: distribution = sagemath-repl
+# sage.doctest: needs pillow
 """
 Sage Wrapper for Bitmap Images
 

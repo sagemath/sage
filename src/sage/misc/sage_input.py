@@ -2185,7 +2185,7 @@ class SIE_tuple(SageInputExpression):
         """
         kind = "list" if self._sie_is_list else "tuple"
         return "{%s: (%s)}" % \
-            (kind, ', '.join([repr(v) for v in self._sie_values]))
+            (kind, ', '.join(repr(v) for v in self._sie_values))
 
     def _sie_referenced(self):
         r"""
@@ -2290,8 +2290,8 @@ class SIE_dict(SageInputExpression):
             {dict: {{atomic:'keaton'}:{atomic:'general'}, {atomic:'chan'}:{atomic:'master'}}}
         """
         return "{dict: {%s}}" % \
-            ', '.join([repr(key) + ':' + repr(val)
-                       for key, val in self._sie_entries])
+            ', '.join(repr(key) + ':' + repr(val)
+                      for key, val in self._sie_entries)
 
     def _sie_referenced(self):
         r"""
@@ -2454,7 +2454,7 @@ class SIE_binary(SageInputExpression):
         op = self._sie_op
         fop = op
         if op == '**':
-            lhs = sif.format(self._sie_operands[0], _prec_exponent+1)
+            lhs = sif.format(self._sie_operands[0], _prec_exponent + 1)
             rhs = sif.format(self._sie_operands[1], _prec_exponent)
             if self._sie_builder.preparse():
                 return '%s^%s' % (lhs, rhs), _prec_exponent
@@ -2475,7 +2475,7 @@ class SIE_binary(SageInputExpression):
             raise ValueError('Unhandled op {} in SIE_binary'.format(op))
 
         lhs = sif.format(self._sie_operands[0], prec)
-        rhs = sif.format(self._sie_operands[1], prec+1)
+        rhs = sif.format(self._sie_operands[1], prec + 1)
         return '%s%s%s' % (lhs, fop, rhs), prec
 
 
@@ -2857,7 +2857,7 @@ class SIE_gens_constructor(SageInputExpression):
                     if len(self._sie_gens) == 1:
                         sif._commands += '%s = %s.gen()\n' % (self._sie_gens[0]._sie_get_varname(sif), self._sie_get_varname(sif))
                     else:
-                        sif._commands += '%s = %s.gens()\n' % (','.join([g._sie_get_varname(sif) for g in self._sie_gens]), self._sie_get_varname(sif))
+                        sif._commands += '%s = %s.gens()\n' % (','.join(g._sie_get_varname(sif) for g in self._sie_gens), self._sie_get_varname(sif))
             self._sie_generated = True
 
     def _sie_format(self, sif):

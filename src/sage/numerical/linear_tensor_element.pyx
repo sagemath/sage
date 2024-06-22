@@ -169,7 +169,7 @@ cdef class LinearTensor(ModuleElement):
             ...
             ValueError: x is from a different linear functions module
         """
-        if is_LinearFunction(x):
+        if isinstance(x, LinearFunction):
             if self.parent().linear_functions() != x.parent():
                 raise ValueError('x is from a different linear functions module')
             if len((<LinearFunction>x)._f) != 1:

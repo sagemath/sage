@@ -154,7 +154,7 @@ def initprimes(filename, verb=False):
 
         sage: import tempfile
         sage: with tempfile.NamedTemporaryFile(mode='w+t') as f:
-        ....:     data = ' '.join([str(p) for p in prime_range(10^7,10^7+20)])
+        ....:     data = ' '.join(str(p) for p in prime_range(10^7, 10^7 + 20))
         ....:     _ = f.write(data)
         ....:     f.flush()
         ....:     mwrank_initprimes(f.name, verb=True)

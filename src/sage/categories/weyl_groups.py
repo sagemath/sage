@@ -572,9 +572,10 @@ class WeylGroups(Category_singleton):
 
             - [Pon2010]_
             """
-            import sage.combinat.sf
             from sage.rings.rational_field import QQ
-            m = sage.combinat.sf.sf.SymmetricFunctions(QQ).monomial()
+            from sage.combinat.sf.sf import SymmetricFunctions
+
+            m = SymmetricFunctions(QQ).monomial()
             return m.from_polynomial_exp(self.stanley_symmetric_function_as_polynomial())
 
         @cached_in_parent_method

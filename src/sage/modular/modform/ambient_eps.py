@@ -124,7 +124,7 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
             sage: type(m)
             <class 'sage.modular.modform.ambient_eps.ModularFormsAmbient_eps_with_category'>
         """
-        if not dirichlet.is_DirichletCharacter(character):
+        if not isinstance(character, dirichlet.DirichletCharacter):
             raise TypeError("character (=%s) must be a Dirichlet character" % character)
         if base_ring is None:
             base_ring = character.base_ring()

@@ -580,6 +580,7 @@ cdef class CmpKeyNamed:
 
 _cmp_key_named = CmpKeyNamed()
 
+
 ##############################################################################
 
 def C3_merge(list lists):
@@ -657,6 +658,7 @@ def C3_merge(list lists):
             # No head is available
             raise ValueError("Cannot merge the items %s."%', '.join(repr(head) for head in heads))
     return out
+
 
 cpdef identity(x):
     r"""
@@ -1352,7 +1354,6 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         if not super_classes:
             super_classes = (object,)
         return dynamic_class("%s.cls"%self, super_classes)
-
 
     @cached_method
     def all_bases(self):
