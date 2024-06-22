@@ -1466,6 +1466,16 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
         vals = [sum(self.values() * mat) for mat in table]
         return self.__class__(self.parent(), self.size() + amount, vals)
     
+    def __getitem__(self, flag):
+        if (not isinstance(flag, Flag)) or (not flag.ftype()==self.ftype()) or (not self.size()==flag.size()):
+            raise TypeError("Indecies must be Flags with matching ftype and size, not {}".format(str(type(flag))))
+        return self.values()[self.flags().index(flag)]
+    
+    def __setitem__(self, flag, value):
+        if (not isinstance(flag, Flag)) or (not flag.ftype()==self.ftype()) or (not self.size()==flag.size()):
+            raise TypeError("Indecies must be Flags with matching ftype and size, not {}".format(str(type(flag))))
+        self.values()[self.flags().index(flag)] = value
+    
     def project(self, ftype_inj=tuple()):
         r"""
         Project this to a smaller ftype
