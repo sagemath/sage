@@ -68,8 +68,19 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.polynomial.polydict import PolyDict, ETuple
 
+class TropicalCurve(Parent):
+    def __init__(self, *args):
+        pass
+
+    def plot(self):
+        pass
+
 
 class TropicalMPolynomial(MPolynomial_polydict):
+    r"""
+    Generic multivariate tropical polynomial.
+
+    """
 
     def add_zero_coefficient(self, *args):
         """
@@ -111,27 +122,28 @@ class TropicalMPolynomial(MPolynomial_polydict):
 
         return R(new_dict)
     
-    def roots(self):
-        """
+    def tropical_curve(self):
+        r"""
+        Return tropical roots
 
         OUTPUT:
 
         - tropical_roots -- a list of lists, where the inner list is of the
-        form [[x0,y0], [x1,y1], gradient, order] with [x0, y0] and [x1,y1]
-        is the coordinates of point defining the line segment of tropical
-        roots (two variables only)
+        form [point, condition for parameter, order]
         
         EXAMPLES:
+
+        Some examples for tropical polynomials in two variables::
 
             sage: T = TropicalSemiring(QQ, use_min=False)
             sage: R = PolynomialRing(T, 'x,y')
             sage: dict1 = {(0,0):0, (1,0):0, (0,1):0}
             sage: p1 = R(dict1); p1
             0*x + 0*y + 0
-            sage: p1.roots()
-            [[[0, -Infinity], [0, 0], 'm = +Infinity', 'order = 1'],
-            [[-Infinity, 0], [0, 0], 'm = 0', 'order = 1'],
-            [[0, 0], [+Infinity, +Infinity], 'm = 1', 'order = 1']]
+            sage: p1.tropical_curve()
+            [[(0, r1), [r1 < 0], 'order = 1'],
+            [(r2, 0), [r2 < 0], 'order = 1'],
+            [(r3, r3), [r3 > 0], 'order = 1']]
 
         ::
 
@@ -140,16 +152,16 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: dict2 = {(2,0):0, (0,2):0}
             sage: p2 = R(c1) + R(dict2); p2
             0*x^2 + 3*x*y + 2*x + 0*y^2 + 2*y + 3
-            sage: p2.roots()
-            [[[1, -1], [2, -1], 'm = 0', 'order = 1'],
-            [[-1, 1], [-1, 2], 'm = +Infinity', 'order = 1'],
-            [[1, -1], [-1, 1], 'm = -1', 'order = 1'],
-            [[2, -1], [+Infinity, +Infinity], 'm = 1', 'order = 1'],
-            [[-1, 2], [+Infinity, +Infinity], 'm = 1', 'order = 1'],
-            [[1, -Infinity], [1, -1], 'm = +Infinity', 'order = 1'],
-            [[2, -Infinity], [2, -1], 'm = +Infinity', 'order = 1'],
-            [[-Infinity, 1], [-1, 1], 'm = 0', 'order = 1'],
-            [[-Infinity, 2], [-1, 2], 'm = 0', 'order = 1']]
+            sage: p2.tropical_curve()
+            [[(r4, -1), [1 < r4, r4 < 2], 'order = 1'],
+            [(-1, r5), [1 < r5, r5 < 2], 'order = 1'],
+            [(-r6, r6), [-1 < r6, r6 < 1], 'order = 1'],
+            [(r7 + 3, r7), [-1 < r7], 'order = 1'],
+            [(r8 - 3, r8), [2 < r8], 'order = 1'],
+            [(1, r10), [r10 < -1], 'order = 1'],
+            [(2, r11), [r11 < -1], 'order = 1'],
+            [(r13, 1), [r13 < -1], 'order = 1'],
+            [(r15, 2), [r15 < -1], 'order = 1']]
 
         ::
 
@@ -157,18 +169,29 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: dict3 = {(0,0):0, (1,0):0, (0,2):0}
             sage: p3 = R(c2) + R(dict3); p3
             (-1)*x^2 + 0*x + 0*y^2 + 0
-            sage: p3.roots()
-            [[[0, -Infinity], [0, 0], 'm = +Infinity', 'order = 1'],
-            [[-Infinity, 0], [0, 0], 'm = 0', 'order = 2'],
-            [[0, 0], [1, 1/2], 'm = 1/2', 'order = 1'],
-            [[1, -Infinity], [1, 1/2], 'm = +Infinity', 'order = 1'],
-            [[1, 1/2], [+Infinity, +Infinity], 'm = 1', 'order = 2']]
+            sage: p3.tropical_curve()
+            [[(0, r34), [r34 < 0], 'order = 1'],
+            [(r35, 0), [r35 < 0], 'order = 2'],
+            [(2*r37, r37), [0 < r37, r37 < (1/2)], 'order = 1'],
+            [(1, r38), [r38 < (1/2)], 'order = 1'],
+            [(r39 + 1/2, r39), [(1/2) < r39], 'order = 2']]
+
+        We can find tropical curve for any tropical polynomials in 
+        `n\geq 2` variables:
+
+            sage: T = TropicalSemiring(QQ, use_min=False)
+            sage: R = PolynomialRing(T, 'x,y,z')
+            sage: S.<x,y,z> = QQ[]
+            sage: p1 = R(x*y + (-1/2)*x*z + 4*z^2); p1
+            1*x*y + (-1/2)*x*z + 4*z^2
+            sage: p1.tropical_curve()
+            [[(r32, r31 - 3/2, r31), [r31 + 9/2 < r32], 'order = 1'],
+            [(2*r33 - r34 + 3, r34, r33), [r33 < r34 + 3/2], 'order = 1'],
+            [(r35 + 9/2, r36, r35), [r36 + 3/2 < r35], 'order = 1']]
 
         """
         from sage.symbolic.ring import SR
         from sage.symbolic.relation import solve
-        from sage.sets.real_set import RealSet
-        from sage.rings.infinity import infinity
         from itertools import combinations
         from sage.arith.misc import gcd
 
@@ -186,7 +209,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
             eq += self.dict()[key].lift()
             linear_eq[key] = eq
 
-        # checking for all combinations of two terms
+        # checking for all possible combinations of two terms
         for keys in combinations(self.dict(), 2):
             sol = solve(linear_eq[keys[0]]==linear_eq[keys[1]], variables)
             
@@ -194,67 +217,52 @@ class TropicalMPolynomial(MPolynomial_polydict):
             final_sol = []
             for s in sol[0]:
                 final_sol.append(s.right())
+            xy_interval = []
+            xy_interval.append(tuple(final_sol))
             
-            # cheking if it is maximum with other terms
-            temp_max = linear_eq[keys[0]]
+            # comparing with other terms
+            min_max = linear_eq[keys[0]]
             for i,v in enumerate(variables):
-                temp_max = temp_max.subs(v==final_sol[i])
-            sol_interval = RealSet().real_line()
+                min_max = min_max.subs(v==final_sol[i])
+            
+            all_sol_compare = []
+            no_solution = False
             for compare in self.dict():
                 if compare not in keys:
                     temp_compare = linear_eq[compare]
-                    for i,v in enumerate(variables):
+                    for i, v in enumerate(variables):
                         temp_compare = temp_compare.subs(v==final_sol[i])
-                    sol_compare = solve(temp_max>=temp_compare, variables)
-                    if len(sol_compare)==0: # no solution
-                        compare_interval = RealSet()
-                    elif isinstance(sol_compare[0], list):
-                        if not sol_compare[0]: # all of real line
-                            compare_interval = RealSet().real_line()
-                        else:
-                            compare_interval = RealSet(sol_compare[0][0])
-                    else: # solution is unbounded in one side
-                        compare_interval = RealSet(sol_compare[0])
-                    sol_interval = sol_interval.intersection(compare_interval)
-
-            # if it is really the maximum, then find two points that define 
-            # the line segment
-            if sol_interval:
-                lowerpoint = sol_interval[0].lower()
-                upperpoint = sol_interval[0].upper()
-                xy_interval = [[], []]
-                check_numeric = False
-                for i, s in enumerate(final_sol):
-                    if not s.is_numeric():
-                        variable = s.variables()[0] # take the parameter
-                        f_interval = []
-                        f_lower = s.subs(variable==lowerpoint)
-                        f_interval.append(f_lower)
-                        f_upper = s.subs(variable==upperpoint)
-                        f_interval.append(f_upper)
+                    if self.parent().base()._use_min:
+                        sol_compare = solve(min_max < temp_compare, variables)
                     else:
-                        check_numeric = True
-                        index_numeric = i
-                        f_interval = [s,s]
-                    for j, point in enumerate(f_interval):
-                        xy_interval[j].append(point)
-
-                # add gradient
-                if check_numeric:
-                    if index_numeric==0:
-                        gradient = infinity
+                        sol_compare = solve(min_max > temp_compare, variables)
+                    if sol_compare: # if there is solution
+                        if isinstance(sol_compare[0], list):
+                            if sol_compare[0]:
+                                all_sol_compare.append(sol_compare[0][0])
+                        else: # solution is unbounded on one side
+                            all_sol_compare.append(sol_compare[0])
                     else:
-                        gradient = 0
-                else:
-                    variable = final_sol[0].variables()[0]
-                    gradient = 1/final_sol[0].coefficient(variable, 1)
-                xy_interval.append(f"m = {gradient}")
+                        no_solution = True
+                        break
+
+            # solve the condition for parameter
+            if not no_solution:
+                parameter = set()
+                for sol in all_sol_compare:
+                    parameter = parameter.union(set(sol.variables()))
+                parameter_solution = solve(all_sol_compare, list(parameter))
                 
-                # calculate order
-                order = gcd(abs(keys[0][0]-keys[1][0]), abs(keys[0][1]-keys[1][1]))
-                xy_interval.append(f"order = {order}")
+                if parameter_solution:
+                    xy_interval.append(parameter_solution[0])
+                    # calculate order
+                    index_diff = []
+                    for i in range(len(keys[0])):
+                        index_diff.append(abs(keys[0][i]-keys[1][i]))
+                    order = gcd(index_diff)
+                    xy_interval.append(f"order = {order}")
 
-                tropical_roots.append(xy_interval)
+                    tropical_roots.append(xy_interval)
 
         return tropical_roots   
 
