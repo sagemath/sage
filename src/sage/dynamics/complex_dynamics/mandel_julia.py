@@ -51,7 +51,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.misc.prandom import randint
 from sage.calculus.var import var
-from sage.rings.fraction_field import is_FractionField
+from sage.rings.fraction_field import FractionField_generic
 from sage.categories.function_fields import FunctionFields
 
 lazy_import('sage.dynamics.arithmetic_dynamics.generic_ds', 'DynamicalSystem')
@@ -243,14 +243,14 @@ def mandelbrot_plot(f=None, **kwds):
         P = f.parent()
 
         if P.base_ring() is CC or P.base_ring() is CDF:
-            if is_FractionField(P):
+            if isinstance(P, FractionField_generic):
                 raise NotImplementedError("coefficients must be polynomials in the parameter")
             gen_list = list(P.gens())
             parameter = gen_list.pop(gen_list.index(parameter))
             variable = gen_list.pop()
 
         elif P.base_ring().base_ring() is CC or P.base_ring().base_ring() is CDF:
-            if is_FractionField(P.base_ring()):
+            if isinstance(P.base_ring(), FractionField_generic):
                 raise NotImplementedError("coefficients must be polynomials in the parameter")
             phi = P.flattening_morphism()
             f = phi(f)

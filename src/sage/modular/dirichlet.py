@@ -77,7 +77,7 @@ from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.power_series_ring import PowerSeriesRing
-from sage.rings.rational_field import QQ, is_RationalField
+from sage.rings.rational_field import QQ, RationalField
 from sage.structure.element import MultiplicativeGroupElement
 from sage.structure.factory import UniqueFactory
 from sage.structure.gens_py import multiplicative_iterator
@@ -172,10 +172,18 @@ def is_DirichletCharacter(x) -> bool:
 
         sage: from sage.modular.dirichlet import is_DirichletCharacter
         sage: is_DirichletCharacter(trivial_character(3))
+        doctest:warning...
+        DeprecationWarning: The function is_DirichletCharacter is deprecated;
+        use 'isinstance(..., DirichletCharacter)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         True
         sage: is_DirichletCharacter([1])
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_DirichletCharacter is deprecated; "
+                "use 'isinstance(..., DirichletCharacter)' instead.")
     return isinstance(x, DirichletCharacter)
 
 
@@ -262,7 +270,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             orders = parent.integers_mod().unit_group().gens_orders()
             if len(x) != len(orders):
                 raise ValueError("wrong number of values (= {}) on generators (want {})".format(x, len(orders)))
-            if free_module_element.is_FreeModuleElement(x):
+            if isinstance(x, free_module_element.FreeModuleElement):
                 x = parent._module(x)
                 if any(u * v for u, v in zip(x, orders)):
                     raise ValueError("values (= {} modulo {}) must have additive orders dividing {}, respectively"
@@ -276,7 +284,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
                                      .format(x, orders))
                 self.values_on_gens.set_cache(x)
         else:
-            if free_module_element.is_FreeModuleElement(x):
+            if isinstance(x, free_module_element.FreeModuleElement):
                 self.element.set_cache(x)
             else:
                 self.values_on_gens.set_cache(x)
@@ -1386,7 +1394,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         elif isinstance(K, sage.rings.abc.AlgebraicField):
             L = K
             zeta = L.zeta(m)
-        elif isinstance(K, sage.rings.abc.NumberField_cyclotomic) or is_RationalField(K):
+        elif isinstance(K, sage.rings.abc.NumberField_cyclotomic) or isinstance(K, RationalField):
             chi = chi.minimize_base_ring()
             n = lcm(m, G.zeta_order())
             L = CyclotomicField(n)
@@ -1467,7 +1475,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             from sage.rings.complex_mpfr import ComplexField
             CC = ComplexField(prec)
             phi = CC.coerce_map_from(K)
-        elif isinstance(K, sage.rings.abc.NumberField_cyclotomic) or is_RationalField(K):
+        elif isinstance(K, sage.rings.abc.NumberField_cyclotomic) or isinstance(K, RationalField):
             phi = K.complex_embedding(prec)
             CC = phi.codomain()
         else:
@@ -1688,7 +1696,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         """
         G = self.parent()
         K = G.base_ring()
-        if not (isinstance(K, sage.rings.abc.NumberField_cyclotomic) or is_RationalField(K)):
+        if not (isinstance(K, sage.rings.abc.NumberField_cyclotomic) or isinstance(K, RationalField)):
             raise NotImplementedError("Kloosterman sums only currently implemented when the base ring is a cyclotomic field or QQ.")
         phi = K.complex_embedding(prec)
         CC = phi.codomain()

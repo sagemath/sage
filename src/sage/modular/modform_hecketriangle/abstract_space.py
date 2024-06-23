@@ -17,7 +17,7 @@ AUTHORS:
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
-from sage.modules.free_module_element import is_FreeModuleElement
+from sage.modules.free_module_element import FreeModuleElement
 from sage.modules.free_module_element import vector
 from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
@@ -262,9 +262,9 @@ class FormsSpace_abstract(FormsRing_abstract):
                 return self.construct_form(el)
             else:
                 return self.construct_quasi_form(el)
-        if is_FreeModuleElement(el) and (self.module() is P or self.ambient_module() is P):
+        if isinstance(el, FreeModuleElement) and (self.module() is P or self.ambient_module() is P):
             return self.element_from_ambient_coordinates(el)
-        if (not self.is_ambient()) and (isinstance(el, list) or isinstance(el, tuple) or is_FreeModuleElement(el)) and len(el) == self.rank():
+        if (not self.is_ambient()) and (isinstance(el, list) or isinstance(el, tuple) or isinstance(el, FreeModuleElement)) and len(el) == self.rank():
             try:
                 return self.element_from_coordinates(el)
             except (ArithmeticError, TypeError):

@@ -21,7 +21,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.rational_field import is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from .con_field import ProjectiveConic_field
 
@@ -305,7 +305,7 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
                 if point or obstruction:
                     return True, pt
                 return True
-            if is_RationalField(B):
+            if isinstance(B, RationalField):
                 K = B
                 [KtoB, BtoK] = [K.hom(K) for i in range(2)]
             else:

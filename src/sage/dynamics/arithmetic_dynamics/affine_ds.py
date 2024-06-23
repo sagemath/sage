@@ -45,7 +45,7 @@ from sage.misc.classcall_metaclass import typecall
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.fraction_field import FractionField
-from sage.rings.fraction_field import is_FractionField
+from sage.rings.fraction_field import FractionField_generic
 from sage.rings.quotient_ring import is_QuotientRing
 from sage.schemes.affine.affine_morphism import SchemeMorphism_polynomial_affine_space
 from sage.schemes.affine.affine_morphism import SchemeMorphism_polynomial_affine_space_field
@@ -261,7 +261,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
             polys = [morphism_or_polys]
 
         PR = get_coercion_model().common_parent(*polys)
-        fraction_field = any(is_FractionField(poly.parent()) for poly in polys)
+        fraction_field = any(isinstance(poly.parent(), FractionField_generic) for poly in polys)
         if fraction_field:
             K = PR.base_ring().fraction_field()
             # Replace base ring with its fraction field

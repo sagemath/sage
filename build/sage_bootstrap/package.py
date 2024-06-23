@@ -31,7 +31,7 @@ class Package(object):
         if package_name.startswith("pypi/") or package_name.startswith("generic/"):
             package_name = "pkg:" + package_name
         if package_name.startswith("pkg:"):
-            package_name = package_name.replace('_', '-')
+            package_name = package_name.replace('_', '-').lower()
             if package_name.startswith("pkg:generic/"):  # fast path
                 try:
                     pkg = cls(package_name[len("pkg:generic/"):].replace('-', '_'))

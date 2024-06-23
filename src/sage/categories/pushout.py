@@ -1867,7 +1867,7 @@ class LaurentPolynomialFunctor(ConstructionFunctor):
             LaurentPolynomialFunctor
             sage: F1.merge(F2)(LaurentPolynomialRing(GF(2), 'a'))                       # needs sage.modules
             Multivariate Laurent Polynomial Ring in a, t over Finite Field of size 2
-            sage: F1.merge(F1)(LaurentPolynomialRing(GF(2), 'a'))                       # needs sage.modules
+            sage: F1.merge(F1)(LaurentPolynomialRing(GF(2), 'a'))
             Univariate Laurent Polynomial Ring in t over
              Univariate Laurent Polynomial Ring in a over Finite Field of size 2
 
@@ -3926,7 +3926,7 @@ class EquivariantSubobjectConstructionFunctor(ConstructionFunctor):
         """
         EXAMPLES::
 
-            sage: # needs sage.groups sage.modules
+            sage: # needs sage.combinat sage.groups sage.modules
             sage: G = SymmetricGroup(3); G.rename('S3')
             sage: M = FreeModule(ZZ, [1,2,3], prefix='M'); M.rename('M')
             sage: action = lambda g, x: M.term(g(x))
@@ -3976,14 +3976,20 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
     EXAMPLES::
 
         sage: from sage.categories.pushout import BlackBoxConstructionFunctor
+
+        sage: # needs sage.libs.gap
+        sage: from sage.interfaces.gap import gap
         sage: FG = BlackBoxConstructionFunctor(gap)
-        sage: FS = BlackBoxConstructionFunctor(singular)
         sage: FG
         BlackBoxConstructionFunctor
-        sage: FG(ZZ)                                                                    # needs sage.libs.gap
+        sage: FG(ZZ)
         Integers
-        sage: FG(ZZ).parent()                                                           # needs sage.libs.gap
+        sage: FG(ZZ).parent()
         Gap
+        sage: FG == loads(dumps(FG))
+        True
+
+        sage: FS = BlackBoxConstructionFunctor(singular)
         sage: FS(QQ['t'])                                                               # needs sage.libs.singular
         polynomial ring, over a field, global ordering
         //   coefficients: QQ
@@ -3993,8 +3999,6 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
         //        block   2 : ordering C
         sage: FG == FS                                                                  # needs sage.libs.gap sage.libs.singular
         False
-        sage: FG == loads(dumps(FG))                                                    # needs sage.libs.gap
-        True
     """
     rank = 100
 

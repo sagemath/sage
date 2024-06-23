@@ -660,9 +660,9 @@ def RandomBoundedToleranceGraph(n, seed=None):
 
 
 def RandomGNM(n, m, dense=False, seed=None):
-    """
-    Returns a graph randomly picked out of all graphs on n vertices
-    with m edges.
+    r"""
+    Return a graph randomly picked out of all graphs on `n` vertices with `m`
+    edges.
 
     INPUT:
 
@@ -683,7 +683,7 @@ def RandomGNM(n, m, dense=False, seed=None):
         sage: graphs.RandomGNM(5, 10).edges(sort=True, labels=False)                    # needs networkx
         [(0, 1), (0, 2), (0, 3), (0, 4), (1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4)]
 
-    We plot a random graph on 12 nodes with m = 12::
+    We plot a random graph on 12 nodes and 12 edges::
 
         sage: gnm = graphs.RandomGNM(12, 12)                                            # needs networkx
         sage: gnm.show()                        # long time                             # needs networkx sage.plot
@@ -1216,9 +1216,9 @@ def RandomChordalGraph(n, algorithm="growing", k=None, l=None, f=None, s=None, s
 
     .. SEEALSO::
 
-        - :meth:`~sage.graphs.graph_generators.growing_subtrees`
-        - :meth:`~sage.graphs.graph_generators.connecting_nodes`
-        - :meth:`~sage.graphs.graph_generators.pruned_tree`
+        - :meth:`~sage.graphs.generators.random.growing_subtrees`
+        - :meth:`~sage.graphs.generators.random.connecting_nodes`
+        - :meth:`~sage.graphs.generators.random.pruned_tree`
         - :wikipedia:`Chordal_graph`
         - :meth:`~sage.graphs.generic_graph.GenericGraph.is_chordal`
         - :meth:`~sage.graphs.graph_generators.GraphGenerators.IntersectionGraph`
@@ -1280,12 +1280,12 @@ def RandomChordalGraph(n, algorithm="growing", k=None, l=None, f=None, s=None, s
 
 
 def RandomLobster(n, p, q, seed=None):
-    """
-    Returns a random lobster.
+    r"""
+    Return a random lobster.
 
     A lobster is a tree that reduces to a caterpillar when pruning all
     leaf vertices. A caterpillar is a tree that reduces to a path when
-    pruning all leaf vertices (q=0).
+    pruning all leaf vertices (`q=0`).
 
     INPUT:
 
@@ -1336,14 +1336,14 @@ def RandomTree(n, seed=None):
     Returns a random tree on `n` nodes numbered `0` through `n-1`.
 
     By Cayley's theorem, there are `n^{n-2}` trees with vertex
-    set `\{0,1,...,n-1\}`. This constructor chooses one of these uniformly
+    set `\{0,1,\dots,n-1\}`. This constructor chooses one of these uniformly
     at random.
 
     ALGORITHM:
 
     The algorithm works by generating an `(n-2)`-long
     random sequence of numbers chosen independently and uniformly
-    from `\{0,1,\ldots,n-1\}` and then applies an inverse
+    from `\{0,1,\dots,n-1\}` and then applies an inverse
     Prufer transformation.
 
     INPUT:
@@ -1733,16 +1733,19 @@ def RandomToleranceGraph(n, seed=None):
     Return a random tolerance graph.
 
     The random tolerance graph is built from a random tolerance representation
-    by using the function `ToleranceGraph`. This representation is a list
-    `((l_0,r_0,t_0), (l_1,r_1,t_1), ..., (l_k,r_k,t_k))` where `k = n-1` and
-    `I_i = (l_i,r_i)` denotes a random interval and `t_i` a random positive
-    value. The width of the representation is limited to `n^2 * 2^n`.
+    by using the function
+    :meth:`~sage.graphs.generators.intersection.ToleranceGraph`. This
+    representation is a list `((l_0,r_0,t_0), (l_1,r_1,t_1), ...,
+    (l_k,r_k,t_k))` where `k = n-1` and `I_i = (l_i,r_i)` denotes a random
+    interval and `t_i` a random positive value. The width of the representation
+    is limited to `n^2 * 2^n`.
 
     .. NOTE::
 
-        The vertices are named 0, 1, ..., n-1. The tolerance representation used
-        to create the graph is saved with the graph and can be recovered using
-        ``get_vertex()`` or ``get_vertices()``.
+        The vertices are named `0, 1, \cdots, n-1`. The tolerance representation
+        used to create the graph is saved with the graph and can be recovered
+        using :meth:`~sage.graphs.generic_graph.GenericGraph.get_vertex` or
+        :meth:`~sage.graphs.generic_graph.GenericGraph.get_vertices`.
 
     INPUT:
 
