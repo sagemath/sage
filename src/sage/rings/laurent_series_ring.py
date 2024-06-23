@@ -679,7 +679,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             LaurentPolynomialRing_generic,
         )
         from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-        from sage.rings.power_series_ring import PowerSeriesRing
+        from sage.rings.power_series_ring import is_PowerSeriesRing
 
         if ((is_LaurentSeriesRing(P) or
              isinstance(P, LaurentPolynomialRing_generic) or
