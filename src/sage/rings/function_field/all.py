@@ -1,4 +1,9 @@
-from sage.rings.function_field.all__sagemath_categories import *
+from sage.rings.function_field.all__sagemath_modules import *
+
+try:
+    from sage.rings.function_field.all__sagemath_symbolics import *
+except ImportError:
+    pass
 
 from sage.misc.lazy_import import lazy_import
 

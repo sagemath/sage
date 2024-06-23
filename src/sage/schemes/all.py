@@ -21,6 +21,7 @@ all.py -- export of schemes to Sage
 # *****************************************************************************
 
 from sage.schemes.all__sagemath_categories import *
+from sage.schemes.all__sagemath_polyhedra import *
 
 from sage.schemes.jacobians.all import *
 
@@ -33,8 +34,6 @@ from sage.schemes.plane_conics.all import *
 from sage.schemes.elliptic_curves.all import *
 
 from sage.schemes.plane_quartics.all import *
-
-from sage.schemes.toric.all import *
 
 from sage.schemes.cyclic_covers.all import *
 

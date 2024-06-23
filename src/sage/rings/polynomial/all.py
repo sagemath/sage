@@ -19,6 +19,7 @@ Polynomials
 from sage.misc.lazy_import import lazy_import
 
 from sage.rings.polynomial.all__sagemath_categories import *
+from sage.rings.polynomial.all__sagemath_modules import *
 
 # Generic convolution
 from sage.rings.polynomial.convolution import convolution
@@ -32,9 +33,4 @@ lazy_import('sage.rings.polynomial.omega', 'MacMahonOmega')
 # Integer-valued Univariate Polynomial Ring
 lazy_import('sage.rings.polynomial.integer_valued_polynomials',
             'IntegerValuedPolynomialRing')
-
-# Ore Polynomial Rings
-lazy_import('sage.rings.polynomial.ore_polynomial_ring', 'OrePolynomialRing')
-SkewPolynomialRing = OrePolynomialRing
-
 del lazy_import

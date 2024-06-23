@@ -34,6 +34,8 @@ from sage.plot.colors import Color, hue, rainbow, colors, colormaps
 
 from sage.plot.step import plot_step_function
 
-from sage.plot.hyperbolic_arc import hyperbolic_arc
-from sage.plot.hyperbolic_polygon import hyperbolic_triangle, hyperbolic_polygon
+lazy_import("sage.plot.hyperbolic_arc", "hyperbolic_arc")
+lazy_import("sage.plot.hyperbolic_polygon", [
+            "hyperbolic_triangle", "hyperbolic_polygon"])
 lazy_import("sage.plot.hyperbolic_regular_polygon", "hyperbolic_regular_polygon")
+del lazy_import
