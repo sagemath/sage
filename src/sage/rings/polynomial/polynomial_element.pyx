@@ -7979,7 +7979,7 @@ cdef class Polynomial(CommutativePolynomial):
             4 + 4*T + O(T^2)
         """
         # Late import to avoid cyclic dependencies:
-        from sage.rings.power_series_ring import PowerSeriesRing
+        from sage.rings.power_series_ring import is_PowerSeriesRing
         if self.is_zero():
             return self  # return 0
         n = self.degree()
