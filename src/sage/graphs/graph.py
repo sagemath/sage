@@ -88,6 +88,11 @@ AUTHORS:
 - Jean-Florent Raymond (2019-04): is_redundant, is_dominating,
    private_neighbors
 
+- Janmenjaya Panda (2024-06-17): added
+  :meth:`~sage.graphs.graph.Graph.M_alternating_even_mark`,
+  :meth:`~sage.graphs.graph.Graph.is_bicritical` and
+  :meth:`~sage.graphs.graph.Graph.is_matching_covered`
+
 Graph Format
 ------------
 
@@ -4471,6 +4476,10 @@ class Graph(GenericGraph):
             :meth:`~sage.graphs.graph.Graph.is_factor_critical`,
             :meth:`~sage.graphs.graph.Graph.is_matching_covered`,
             :meth:`~sage.graphs.graph.Graph.is_bicritical`
+
+        AUTHORS:
+
+        - Janmenjaya Panda (2024-06-17)
         """
         G = self.to_simple()
 
