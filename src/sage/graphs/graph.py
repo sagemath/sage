@@ -5059,11 +5059,377 @@ class Graph(GenericGraph):
         return (True, None) if coNP_certificate else True
 
     @doc_index("Leftovers")
-    def is_matching_covered(self, *_, **__):
+    def is_matching_covered(self, matching=None, algorithm='Edmonds', coNP_certificate=False,
+                            solver=None, verbose=0, *, integrality_tolerance=0.001):
         r"""
         Check if the graph is matching covered.
+
+        A connected nontrivial graph wherein each edge participates in some
+        perfect matching is called a `matching` `covered` `graph`.
+
+        If a perfect matching of the graph is provided, for bipartite graph,
+        this method implements a linear time algorithm as proposed in [LM2024]_
+        that is based on the following theorem:
+
+        Given a connected bipartite graph `G[A, B]` with a perfect matching
+        `M`. Construct a directed graph `D` from `G` such that `V(D) := V(G)`
+        and for each edge in `G` direct the corresponding edge from `A` to `B`
+        in `D`, if it is in `M` or otherwise direct it from `B` to `A`. The
+        graph `G` is matching covered if and only if `D` is strongly connected.
+
+        For nonbipartite graph, if a perfect matching of the graph is provided,
+        this method implements an `\mathcal{O}(|V| \cdot |E|)` algorithm, where
+        `|V|` and `|E|` are the order and the size of the graph respectively.
+        This implementation is inspired by the `M`-`alternating` `tree` `search`
+        method explained in [LZ2001]_. For nonbipartite graph, the
+        implementation is based on the following theorem:
+
+        Given a nonbipartite graph `G` with a perfect matching `M`. The
+        graph `G` is matching covered if and only if for each edge `uv`
+        not in `M`, there exists an `M`-`alternating` odd length `uv`-path
+        starting and ending with edges not in `M`.
+
+        The time complexity may be dominated by the time needed to compute a
+        maximum matching of the graph, in case a perfect matching is not
+        provided. Also, note that for a disconnected or a trivial graph, a
+        :class:`ValueError` is returned.
+
+        INPUT:
+
+        - ``matching`` -- (default: ``None``); a perfect matching of the
+          graph, that can be given using any valid input format of
+          :class:`~sage.graphs.graph.Graph`.
+
+          If set to ``None``, a matching is computed using the other parameters.
+
+        - ``algorithm`` -- string (default: ``'Edmonds'``); the algorithm to be
+          used to compute a maximum matching of the graph among
+
+          - ``'Edmonds'`` selects Edmonds' algorithm as implemented in NetworkX,
+
+          - ``'LP'`` uses a Linear Program formulation of the matching problem.
+
+        - coNP_certificate -- boolean (default: ``False``); if set to ``True``
+          an edge of the graph, that does not participate in any perfect
+          matching, is returned if `G` is not matching covered or otherwise
+          ``None`` is returned.
+
+        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+          Linear Programming (MILP) solver to be used. If set to ``None``, the
+          default one is used. For more information on MILP solvers and which
+          default solver is used, see the method :meth:`solve
+          <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+          :class:`MixedIntegerLinearProgram
+          <sage.numerical.mip.MixedIntegerLinearProgram>`.
+
+        - ``verbose`` -- integer (default: ``0``); sets the level of verbosity:
+          set to 0 by default, which means quiet (only useful when ``algorithm
+          == 'LP'``).
+
+        - ``integrality_tolerance`` -- float; parameter for use with MILP
+          solvers over an inexact base ring; see
+          :meth:`MixedIntegerLinearProgram.get_values`.
+
+        OUTPUT:
+
+        - A boolean indicating whether the graph is matching covered or not.
+
+        - If ``coNP_certificate`` is set to ``True``, an edge is returned in
+          case the graph is not matching covered otherwise ``None`` is
+          returned.
+
+        EXAMPLES:
+
+        Petersen graph is matching covered::
+
+            sage: G = graphs.PetersenGraph()
+            sage: G.is_matching_covered()
+            True
+
+        A graph is matching covered if and only if the underlying simple graph
+        is matching covered::
+
+            sage: G = graphs.PetersenGraph()
+            sage: G.allow_multiple_edges(True)
+            sage: G.add_edge(0, 5)
+            sage: G.is_matching_covered()
+            True
+
+        A corollary to Tutte's fundamental result [Tut1947]_, as a
+        strengthening of Petersen's Theorem, states that every 2-connected
+        cubic graph is matching covered::
+
+            sage: G = Graph()
+            sage: G.add_edges([
+            ....:    (0, 1), (0, 2), (0, 3),
+            ....:    (1, 2), (1, 4), (2, 4),
+            ....:    (3, 5), (3, 6), (4, 7),
+            ....:    (5, 6), (5, 7), (6, 7)
+            ....: ])
+            sage: G.vertex_connectivity()
+            2
+            sage: degree_sequence = G.degree_sequence()
+            sage: min(degree_sequence) == max(degree_sequence) == 3
+            True
+            sage: G.is_matching_covered()
+            True
+
+        A connected bipartite graph `G[A, B]`, with `|A| = |B| \geq 2`, is
+        matching covered if and only if `|N(X)| \geq |X| + 1`, for all
+        `X \subset A` such that `1 \leq |X| \leq |A| - 1`. For instance,
+        the Hexahedral graph is matching covered, but not the path graphs on
+        even number of vertices, even though they have a perfect matching::
+
+            sage: G = graphs.HexahedralGraph()
+            sage: G.is_bipartite()
+            True
+            sage: G.is_matching_covered()
+            True
+            sage: P = graphs.PathGraph(10)
+            sage: P.is_bipartite()
+            True
+            sage: M = Graph(P.matching())
+            sage: set(P.vertices()) == set(M.vertices())
+            True
+            sage: P.is_matching_covered()
+            False
+
+        A connected bipartite graph `G[A, B]` of order six or more is matching
+        covered if and only if `G - a - b` has a perfect matching for some
+        vertex `a` in `A` and some vertex `b` in `B`::
+
+            sage: G = graphs.CircularLadderGraph(8)
+            sage: G.is_bipartite()
+            True
+            sage: G.is_matching_covered()
+            True
+            sage: A, B = G.bipartite_sets()
+            sage: import random
+            sage: a = random.choice(list(A))                                            # needs random
+            sage: b = random.choice(list(B))                                            # needs random
+            sage: G.delete_vertices([a, b])
+            sage: M = Graph(G.matching())
+            sage: set(M.vertices()) == set(G.vertices())
+            True
+            sage: cycle1 = graphs.CycleGraph(4)
+            sage: cycle2 = graphs.CycleGraph(6)
+            sage: cycle2.relabel(lambda v: v + 4)
+            sage: H = Graph()
+            sage: H.add_edges(cycle1.edges() + cycle2.edges())
+            sage: H.add_edge(3, 4)
+            sage: H.is_bipartite()
+            True
+            sage: H.is_matching_covered()
+            False
+            sage: H.delete_vertices([3, 4])
+            sage: N = Graph(H.matching())
+            sage: set(N.vertices()) == set(H.vertices())
+            False
+
+        One may specify a matching::
+
+            sage: G = graphs.WheelGraph(20)
+            sage: M = Graph(G.matching())
+            sage: G.is_matching_covered(matching=M)
+            True
+            sage: J = graphs.CycleGraph(4)
+            sage: J.add_edge(0, 2)
+            sage: N = J.matching()
+            sage: J.is_matching_covered(matching=N)
+            False
+
+        One may ask for a co-`\mathcal{NP}` certificate::
+
+            sage: G = graphs.CompleteGraph(14)
+            sage: G.is_matching_covered(coNP_certificate=True)
+            (True, None)
+            sage: H = graphs.PathGraph(20)
+            sage: M = H.matching()
+            sage: H.is_matching_covered(matching=M, coNP_certificate=True)
+            (False, (1, 2, None))
+
+        TESTS:
+
+        If the graph is not connected::
+
+            sage: cycle1 = graphs.CycleGraph(4)
+            sage: cycle2 = graphs.CycleGraph(6)
+            sage: cycle2.relabel(lambda v: v + 4)
+            sage: G = Graph()
+            sage: G.add_edges(cycle1.edges() + cycle2.edges())
+            sage: len(G.connected_components(sort=False))
+            2
+            sage: G.is_matching_covered()
+            Traceback (most recent call last):
+            ...
+            ValueError: the graph is not connected
+
+        If the graph is trivial::
+
+            sage: G = Graph()
+            sage: G.is_matching_covered()
+            Traceback (most recent call last):
+            ...
+            ValueError: the graph is trivial
+            sage: H = graphs.CycleGraph(1)
+            sage: H.is_matching_covered()
+            Traceback (most recent call last):
+            ...
+            ValueError: the graph is trivial
+
+        Providing with a wrong matching::
+
+            sage: G = graphs.CompleteGraph(6)
+            sage: M = Graph(G.matching())
+            sage: M.add_edges([(0, 1), (0, 2)])
+            sage: G.is_matching_covered(matching=M)
+            Traceback (most recent call last):
+            ...
+            ValueError: the input is not a matching
+            sage: N = Graph(G.matching())
+            sage: N.add_edge(6, 7)
+            sage: G.is_matching_covered(matching=N)
+            Traceback (most recent call last):
+            ...
+            ValueError: the input is not a matching of the graph
+            sage: J = Graph()
+            sage: J.add_edges([(0, 1), (2, 3)])
+            sage: G.is_matching_covered(matching=J)
+            Traceback (most recent call last):
+            ...
+            ValueError: the input is not a perfect matching of the graph
+
+        REFERENCES:
+
+        - [LM2024]_
+
+        - [LZ2001]_
+
+        - [Tut1947]_
+
+        .. SEEALSO::
+            :meth:`~sage.graphs.graph.Graph.is_factor_critical`,
+            :meth:`~sage.graphs.graph.Graph.is_bicritical`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph`
+
+        AUTHORS:
+
+        - Janmenjaya Panda (2024-06-23)
         """
-        raise NotImplementedError()
+        # The graph must be nontrivial
+        if self.order() < 2:
+            raise ValueError("the graph is trivial")
+
+        # The graph must be connected
+        if not self.is_connected():
+            raise ValueError("the graph is not connected")
+
+        # The graph must have an even order
+        if self.order() % 2:
+            return (False, self.edges()[0]) if coNP_certificate else False
+
+        # If the underlying simple graph is a complete graph of order two,
+        # the graph is matching covered
+        if self.order() == 2:
+            return (True, None) if coNP_certificate else True
+
+        if matching:
+            # The input matching must be a valid perfect matching of the graph
+            M = Graph(matching)
+            if any(d != 1 for d in M.degree()):
+                raise ValueError("the input is not a matching")
+            if not M.is_subgraph(self, induced=False):
+                raise ValueError("the input is not a matching of the graph")
+            if (self.order() != M.order()) or (self.order() != 2*M.size()):
+                raise ValueError("the input is not a perfect matching of the graph")
+        else:
+            # A maximum matching of the graph is computed
+            M = Graph(self.matching(algorithm=algorithm, solver=solver, verbose=verbose,
+                                    integrality_tolerance=integrality_tolerance))
+
+            # It must be a perfect matching
+            if self.order() != M.order():
+                return (False, M.edges()[0]) if coNP_certificate else False
+
+        G = self.to_simple()
+
+        '''
+        Biparite graph:
+
+        Given a connected bipartite graph G[A, B] with a perfect matching M.
+        Construct a directed graph D from G such that V(D) := V(G) and
+        for each edge in G direct the corresponding edge from A to B in D,
+        if it is in M or otherwise direct it from B to A. The graph G is
+        matching covered if and only if D is strongly connected.
+        '''
+        if G.is_bipartite():
+            A, _ = G.bipartite_sets()
+            color = dict()
+
+            for u in G:
+                color[u] = 0 if u in A else 1
+
+            from sage.graphs.digraph import DiGraph
+            H = DiGraph()
+
+            for edge in G.edges():
+                u, v = edge[0], edge[1]
+
+                if color[u] == 1:
+                    u, v = v, u
+
+                if M.has_edge(edge):
+                    H.add_edge(u, v)
+                else:
+                    H.add_edge(v, u)
+
+            # Check if H is strongly connected using Kosaraju's algorithm
+            def dfs(J, v, visited, p, parent, orientation):
+                visited[v] = True
+                parent[v] = p
+
+                if orientation == 'in':
+                    for u in J.neighbors_out(v):
+                        if not visited[u]:
+                            dfs(J, u, visited, v, parent, orientation)
+                else:
+                    for u in J.neighbors_in(v):
+                        if not visited[u]:
+                            dfs(J, u, visited, v, parent, orientation)
+
+            visited_in = {v: False for v in H.vertices()}
+            parent_in = {v: None for v in H.vertices()}
+            dfs(H, H.vertices()[0], visited_in, None, parent_in, 'in')
+
+            visited_out = {v: False for v in H.vertices()}
+            parent_out = {v: None for v in H.vertices()}
+            dfs(H, H.vertices()[0], visited_out, None, parent_out, 'out')
+
+            for edge in H.edges():
+                if (not visited_in[edge[0]]) or (not visited_out[edge[1]]):
+                    if not M.has_edge(edge):
+                        return (False, edge) if coNP_certificate else False
+
+            return (True, None) if coNP_certificate else True
+
+        '''
+        Nonbipartite graph:
+
+        Given a nonbipartite graph G with a perfect matching M. The graph G is
+        matching covered if and only if for each edge uv not in M, there exists
+        an M-alternating odd length uv-path starting and ending with edges not
+        in M.
+        '''
+        for u in G:
+            v = next(M.neighbor_iterator(u))
+
+            even = self.M_alternating_even_mark(u, M)
+
+            for w in G.neighbor_iterator(v):
+                if w != u and w not in even:
+                    return (False, (v, w)) if coNP_certificate else False
+
+        return (True, None) if coNP_certificate else True
 
     @doc_index("Algorithmically hard stuff")
     def has_homomorphism_to(self, H, core=False, solver=None, verbose=0,
