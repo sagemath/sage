@@ -21,80 +21,80 @@ from .graph import Graph
 
 
 class MatchingCoveredGraph(Graph):
-    def __init__(self):
-        pass
+    def __init__(self, *_, **__):
+        raise NotImplementedError()
 
-    def _upgrade_from_graph(self):
-        pass
+    def _upgrade_from_graph(self, *_, **__):
+        raise NotImplementedError()
 
-    def __repr__(self):
-        pass
+    def __repr__(self, *_, **__):
+        raise NotImplementedError()
 
-    def plot(self):
-        pass
+    def plot(self, *_, **__):
+        raise NotImplementedError()
 
-    def maximal_barrier(self):
-        pass
+    def maximal_barrier(self, *_, **__):
+        raise NotImplementedError()
 
-    def canonical_partition(self):
-        pass
+    def canonical_partition(self, *_, **__):
+        raise NotImplementedError()
 
-    def tight_cut_decomposition(self):
-        pass
+    def tight_cut_decomposition(self, *_, **__):
+        raise NotImplementedError()
 
-    def bricks_and_braces(self):
-        pass
+    def bricks_and_braces(self, *_, **__):
+        raise NotImplementedError()
 
-    def number_of_bricks(self):
-        pass
+    def number_of_bricks(self, *_, **__):
+        raise NotImplementedError()
 
-    def number_of_braces(self):
-        pass
+    def number_of_braces(self, *_, **__):
+        raise NotImplementedError()
 
-    def number_of_petersen_bricks(self):
-        pass
+    def number_of_petersen_bricks(self, *_, **__):
+        raise NotImplementedError()
 
-    def is_brick(self):
-        pass
+    def is_brick(self, *_, **__):
+        raise NotImplementedError()
 
-    def is_brace(self):
-        pass
+    def is_brace(self, *_, **__):
+        raise NotImplementedError()
 
-    def is_removable_edge(self):
-        pass
+    def is_removable_edge(self, *_, **__):
+        raise NotImplementedError()
 
-    def removable_edges(self):
-        pass
+    def removable_edges(self, *_, **__):
+        raise NotImplementedError()
 
-    def is_removable_doubleton(self):
-        pass
+    def is_removable_doubleton(self, *_, **__):
+        raise NotImplementedError()
 
-    def removable_doubletons(self):
-        pass
+    def removable_doubletons(self, *_, **__):
+        raise NotImplementedError()
 
-    def retract(self):
-        pass
+    def retract(self, *_, **__):
+        raise NotImplementedError()
 
-    def ear_decomposition(self):
-        pass
+    def ear_decomposition(self, *_, **__):
+        raise NotImplementedError()
 
-    def is_b_invariant_edge(self):
-        pass
+    def is_b_invariant_edge(self, *_, **__):
+        raise NotImplementedError()
 
-    def is_thin_edge(self):
-        pass
+    def is_thin_edge(self, *_, **__):
+        raise NotImplementedError()
 
-    def is_strictly_thin_edge(self):
-        pass
+    def is_strictly_thin_edge(self, *_, **__):
+        raise NotImplementedError()
 
-    def is_mccuaig_brace(self):
-        pass
+    def is_mccuaig_brace(self, *_, **__):
+        raise NotImplementedError()
 
-    def brace_generation_sequence(self):
-        pass
+    def brace_generation_sequence(self, *_, **__):
+        raise NotImplementedError()
 
-    def is_norine_thomas_brick(self):
-        pass
+    def is_norine_thomas_brick(self, *_, **__):
+        raise NotImplementedError()
 
-    def brick_generation_sequence(self):
-        pass
+    def brick_generation_sequence(self, *_, **__):
+        raise NotImplementedError()

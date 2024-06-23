@@ -4388,8 +4388,8 @@ class Graph(GenericGraph):
             sage: M = Graph(G.matching())
             sage: G.is_factor_critical(M)
             True
-            sage: for v in G.vertices():
-            ....:     if v not in M.vertices():
+            sage: for v in G:
+            ....:     if v not in M:
             ....:          break
             ....:
             sage: S = G.M_alternating_even_mark(v, M)
@@ -4427,7 +4427,8 @@ class Graph(GenericGraph):
             sage: M = Graph(G.matching())
             sage: G.is_bicritical(M)
             True
-            sage: u = random.choice(G.vertices())  # needs random
+            sage: import random
+            sage: u = random.choice(G.vertices())                                       # needs random
             sage: v = next(M.neighbor_iterator(u))
             sage: S = G.M_alternating_even_mark(u, M)
             sage: S == (set(G.vertices()) - {v})
@@ -4471,11 +4472,10 @@ class Graph(GenericGraph):
             :meth:`~sage.graphs.graph.Graph.is_matching_covered`,
             :meth:`~sage.graphs.graph.Graph.is_bicritical`
         """
-
         G = self.to_simple()
 
         # The input vertex must be a valid vertex of the graph
-        if vertex not in G.vertices():
+        if vertex not in self:
             raise ValueError("'{}' is not a vertex of the graph".format(vertex))
 
         # The input matching must be a valid matching of the graph
@@ -4497,8 +4497,8 @@ class Graph(GenericGraph):
         predecessor = {vertex: vertex}
         rank = {vertex: 0}
 
-        if vertex in M.vertices():
-            u = M.neighbors(vertex)[0]
+        if vertex in M:
+            u = next(M.neighbor_iterator(vertex))
             predecessor[u] = None
             rank[u] = -1
             odd.add(u)
@@ -4513,6 +4513,7 @@ class Graph(GenericGraph):
                     ancestor_x = [x]
                     ancestor_y = [y]
 
+                    # Loop over until the nearest common ancestor of x and y is reached
                     while ancestor_x[-1] != ancestor_y[-1]:
                         if rank[ancestor_x[-1]] > rank[ancestor_y[-1]]:
                             ancestor_x.append(predecessor[ancestor_x[-1]])
@@ -4526,16 +4527,17 @@ class Graph(GenericGraph):
                     ancestor_y.pop()
                     # Set t as pred of all vertices of the chains and add
                     # vertices marked odd to the queue
+                    next_rank_to_lcs_rank = rank[lcs] + 1
                     for a in itertools.chain(ancestor_x, ancestor_y):
                         predecessor[a] = lcs
-                        rank[a] = rank[lcs] + 1
+                        rank[a] = next_rank_to_lcs_rank
 
                         if a in odd:
                             even.add(a)
                             odd.discard(a)
                             q.put(a)
 
-                elif y in M.vertices():
+                elif y in M:
                     # y has not been visited yet
                     z = next(M.neighbor_iterator(y))
                     odd.add(y)
@@ -4785,7 +4787,7 @@ class Graph(GenericGraph):
 
           If set to ``None``, a matching is computed using the other parameters.
 
-        - ``algorithm`` -- string (default: ``Edmonds``); the algorithm to be
+        - ``algorithm`` -- string (default: ``'Edmonds'``); the algorithm to be
           used to compute a maximum matching of the graph among
 
           - ``'Edmonds'`` selects Edmonds' algorithm as implemented in NetworkX,
@@ -4859,19 +4861,19 @@ class Graph(GenericGraph):
             sage: H.is_bicritical()
             True
 
-        A graph with more that one component is not bicritical::
+        A graph (of order more than two) with more that one component is not bicritical::
 
             sage: cycle1 = graphs.CycleGraph(4)
             sage: cycle2 = graphs.CycleGraph(6)
             sage: cycle2.relabel(lambda v: v + 4)
             sage: G = Graph()
             sage: G.add_edges(cycle1.edges() + cycle2.edges())
-            sage: len(G.connected_components())
+            sage: len(G.connected_components(sort=False))
             2
             sage: G.is_bicritical()
             False
 
-        Graphs (of order more than two) with cut-vertices are not bicritical::
+        A graph (of order more than two) with a cut-vertex is not bicritical::
 
             sage: G = graphs.CycleGraph(6)
             sage: G.add_edges([(5, 6), (5, 7), (6, 7)])
@@ -4891,7 +4893,7 @@ class Graph(GenericGraph):
             sage: G.is_bicritical()
             True
 
-        Bipartite graphs of order three or more are not bicritical::
+        A bipartite graph of order three or more is not bicritical::
 
             sage: G = graphs.CompleteBipartiteGraph(3, 3)
             sage: G.has_perfect_matching()
@@ -4903,11 +4905,11 @@ class Graph(GenericGraph):
 
             sage: G = graphs.WheelGraph(10)
             sage: M = G.matching()
-            sage: G.is_bicritical(M)
+            sage: G.is_bicritical(matching=M)
             True
             sage: H = graphs.HexahedralGraph()
             sage: N = H.matching()
-            sage: H.is_bicritical()
+            sage: H.is_bicritical(matching=N)
             False
 
         One may ask for a co-`\mathcal{NP}` certificate::
@@ -4959,9 +4961,9 @@ class Graph(GenericGraph):
 
         REFERENCES:
 
-        - [LZ2001]_
-
         - [LM2024]_
+
+        - [LZ2001]_
 
         .. SEEALSO::
             :meth:`~sage.graphs.graph.Graph.is_factor_critical`,
@@ -4973,7 +4975,6 @@ class Graph(GenericGraph):
 
         - Janmenjaya Panda (2024-06-17)
         """
-
         # The graph must be nontrivial
         if self.order() < 2:
             raise ValueError("the graph is trivial")
@@ -4991,7 +4992,7 @@ class Graph(GenericGraph):
             if not coNP_certificate:
                 return False
 
-            components = self.connected_components()
+            components = self.connected_components(sort=False)
 
             # Check if there is an odd component with at least three vertices
             for component in components:
@@ -5018,15 +5019,11 @@ class Graph(GenericGraph):
             if not coNP_certificate:
                 return False
 
-            from sage.graphs.bipartite_graph import BipartiteGraph
-            H = BipartiteGraph(self)
-            color_class_A, color_class_B = H.bipartition()
-            del H
+            A, B = self.bipartite_sets()
 
-            if len(color_class_A) > 1:
-                return (False, set(list(color_class_A)[:2]))
-            else:
-                return (False, set(list(color_class_B)[:2]))
+            if len(A) > 1:
+                return (False, set(list(A)[:2]))
+            return (False, set(list(B)[:2]))
 
         if matching:
             # The input matching must be a valid perfect matching of the graph
@@ -5044,29 +5041,29 @@ class Graph(GenericGraph):
 
             # It must be a perfect matching
             if self.order() != M.order():
-                return (False, set([M.edges[0][0], M.edges[0][1]])) if coNP_certificate else False
+                return (False, set([M.edges()[0][0], M.edges()[0][1]])) if coNP_certificate else False
 
-        # G is bicritical iff for each vertex u with its M-matched neighbor being v,
+        # G is bicritical if and only if for each vertex u with its M-matched neighbor being v,
         # every vertex of the graph distinct from v must be reachable from u through an even length
         # M-alternating uv-path starting with an edge not in M and ending with an edge in M
 
-        for u in self.vertices():
+        for u in self:
             v = next(M.neighbor_iterator(u))
 
             even = self.M_alternating_even_mark(u, M)
 
-            for w in self.vertices():
+            for w in self:
                 if w != v and w not in even:
                     return (False, set([v, w])) if coNP_certificate else False
 
         return (True, None) if coNP_certificate else True
 
     @doc_index("Leftovers")
-    def is_matching_covered(self):
+    def is_matching_covered(self, *_, **__):
         r"""
         Check if the graph is matching covered.
         """
-        pass
+        raise NotImplementedError()
 
     @doc_index("Algorithmically hard stuff")
     def has_homomorphism_to(self, H, core=False, solver=None, verbose=0,
