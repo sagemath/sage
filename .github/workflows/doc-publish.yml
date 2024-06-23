@@ -14,9 +14,11 @@ permissions:
   pull-requests: write
 
 jobs:
-  upload-docs:
+  publish-doc:
     runs-on: ubuntu-latest
     if: github.event.workflow_run.conclusion == 'success'
+    env:
+      CAN_DEPLOY: ${{ secrets.NETLIFY_AUTH_TOKEN != '' &&  secrets.NETLIFY_SITE_ID != '' }}
     steps:
       - name: Get information about workflow origin
         uses: potiuk/get-workflow-origin@v1_5
@@ -24,44 +26,32 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           sourceRunId: ${{ github.event.workflow_run.id }}
+        if: env.CAN_DEPLOY == 'true'
 
-      # Once https://github.com/actions/download-artifact/issues/172 and/or https://github.com/actions/download-artifact/issues/60 is implemented, we can use the official download-artifact action
-      # For now use the solution from https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#using-data-from-the-triggering-workflow
-      - name: Download docs
-        uses: actions/github-script@v7.0.1
+      - name: Download doc
+        id: download-doc
+        uses: actions/download-artifact@v4
         with:
-          script: |
-            var artifacts = await github.rest.actions.listWorkflowRunArtifacts({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               run_id: ${{github.event.workflow_run.id }},
-            });
-            var matchArtifact = artifacts.data.artifacts.filter((artifact) => {
-              return artifact.name == "docs"
-            })[0];
-            var download = await github.rest.actions.downloadArtifact({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               artifact_id: matchArtifact.id,
-               archive_format: 'zip',
-            });
-            var fs = require('fs');
-            fs.writeFileSync('${{github.workspace}}/docs.zip', Buffer.from(download.data));
+          name: doc
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: ${{ github.event.workflow_run.id }}
+        if: steps.source-run-info.outputs.sourceEvent == 'pull_request' || (steps.source-run-info.outputs.sourceEvent == 'push' && steps.source-run-info.outputs.targetBranch == 'develop')
 
-      - name: Extract docs
-        run: unzip docs.zip -d docs && unzip docs/docs.zip -d docs/docs
+      - name: Extract doc
+        run: unzip doc.zip -d doc
+        if: steps.download-doc.outcome == 'success'
 
       - name: Deploy to Netlify
-        id: deploy-netlify
         uses: netlify/actions/cli@master
         with:
-          args: deploy --dir=docs/docs/docs ${NETLIFY_PRODUCTION:+"--prod"} --message ${NETLIFY_MESSAGE} --alias ${NETLIFY_ALIAS}
+          args: deploy --dir=doc/doc --message ${NETLIFY_MESSAGE} --alias ${NETLIFY_ALIAS}
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-          NETLIFY_PRODUCTION: ${{ github.ref == 'refs/heads/develop' }}
-          NETLIFY_MESSAGE: ${{ steps.source-run-info.outputs.pullRequestNumber }}
-          NETLIFY_ALIAS: preview-${{ steps.source-run-info.outputs.pullRequestNumber }}
+          NETLIFY_MESSAGE:  doc-${{ steps.source-run-info.outputs.pullRequestNumber && format('pr-{0}', steps.source-run-info.outputs.pullRequestNumber) || 'develop' }}
+          NETLIFY_ALIAS: doc-${{ steps.source-run-info.outputs.pullRequestNumber && format('pr-{0}', steps.source-run-info.outputs.pullRequestNumber) || 'develop' }}
+        if: steps.download-doc.outcome == 'success'
 
       # Add deployment as status check, PR comment and annotation
       # we could use the nwtgck/actions-netlify action for that, except for that it is not (yet) working in workflow_run context: https://github.com/nwtgck/actions-netlify/issues/545
@@ -74,6 +64,7 @@ jobs:
           message: |
             [Documentation preview for this PR](${{ steps.deploy-netlify.outputs.NETLIFY_URL }}/html/en) (built with commit ${{ steps.source-run-info.outputs.sourceHeadSha }}; [changes](${{ steps.deploy-netlify.outputs.NETLIFY_URL }}/CHANGES.html)) is ready! :tada:
             This preview will update shortly after each push to this PR.
+        if: steps.download-doc.outcome == 'success'
 
       - name: Update deployment status PR check
         uses: myrotvorets/set-commit-status-action@v2.0.1
@@ -95,43 +86,44 @@ jobs:
 
   publish-live-doc:
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'success' && github.repository == 'sagemath/sage' && github.event.workflow_run.head_branch == 'develop'
+    if: github.event.workflow_run.conclusion == 'success'
+    env:
+      CAN_DEPLOY: ${{ secrets.NETLIFY_AUTH_TOKEN != '' &&  secrets.NETLIFY_SITE_ID != '' }}
     steps:
-      - name: Download live doc
-        uses: actions/github-script@v7.0.1
+      - name: Get information about workflow origin
+        uses: potiuk/get-workflow-origin@v1_5
+        id: source-run-info
         with:
-          script: |
-            var artifacts = await github.rest.actions.listWorkflowRunArtifacts({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               run_id: ${{github.event.workflow_run.id }},
-            });
-            var matchArtifact = artifacts.data.artifacts.filter((artifact) => {
-              return artifact.name == "livedoc"
-            })[0];
-            var download = await github.rest.actions.downloadArtifact({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               artifact_id: matchArtifact.id,
-               archive_format: 'zip',
-            });
-            var fs = require('fs');
-            fs.writeFileSync('${{github.workspace}}/livedoc.zip', Buffer.from(download.data));
+          token: ${{ secrets.GITHUB_TOKEN }}
+          sourceRunId: ${{ github.event.workflow_run.id }}
+        if: env.CAN_DEPLOY == 'true'
+
+      - name: Download live doc
+        id: download-doc
+        uses: actions/download-artifact@v4
+        with:
+          name: livedoc
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: ${{ github.event.workflow_run.id }}
+        if: steps.source-run-info.outputs.sourceEvent == 'push' && steps.source-run-info.outputs.targetBranch != 'develop'
 
       - name: Extract live doc
-        run: unzip livedoc.zip -d doc && unzip doc/livedoc.zip -d doc/doc
+        run: unzip livedoc.zip -d livedoc
+        if: steps.download-doc.outcome == 'success'
 
       - name: Deploy to Netlify
-        id: deploy-netlify
         uses: netlify/actions/cli@master
         with:
-          args: deploy --dir=doc/doc/livedoc --message ${NETLIFY_MESSAGE} --alias ${NETLIFY_ALIAS}
+          args: deploy --dir=livedoc/livedoc --message ${NETLIFY_MESSAGE} --alias ${NETLIFY_ALIAS}
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-          NETLIFY_MESSAGE: Deployed live doc
-          NETLIFY_ALIAS: livedoc
+          NETLIFY_MESSAGE: doc-${{ steps.source-run-info.outputs.targetBranch }}
+          NETLIFY_ALIAS: doc-${{ steps.source-run-info.outputs.targetBranch }}
+        if: steps.download-doc.outcome == 'success'
 
       - name: Report deployment url
+        if: steps.download-doc.outcome == 'success'
         run: |
           echo "::notice::The live documentation has been deployed - ${{ steps.deploy-netlify.outputs.NETLIFY_URL }}"
