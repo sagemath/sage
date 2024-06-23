@@ -87,8 +87,8 @@ from sage.rings.complex_mpfr import ComplexField
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.finite_rings.integer_mod_ring import Zmod
-from sage.rings.fraction_field import (FractionField, is_FractionField, FractionField_1poly_field)
-from sage.rings.fraction_field_element import is_FractionFieldElement, FractionFieldElement
+from sage.rings.fraction_field import FractionField, FractionField_generic, FractionField_1poly_field
+from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.function_field.function_field import is_FunctionField
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -394,11 +394,11 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             # homogenize!
             f = morphism_or_polys
             aff_CR = f.parent()
-            if (not is_PolynomialRing(aff_CR) and not is_FractionField(aff_CR)
+            if (not is_PolynomialRing(aff_CR) and not isinstance(aff_CR, FractionField_generic)
                 and not (is_MPolynomialRing(aff_CR) and aff_CR.ngens() == 1)):
                 msg = '{} is not a single variable polynomial or rational function'
                 raise ValueError(msg.format(f))
-            if is_FractionField(aff_CR):
+            if isinstance(aff_CR, FractionField_generic):
                 polys = [f.numerator(),f.denominator()]
             else:
                 polys = [f, aff_CR(1)]
@@ -889,7 +889,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                         # do it again to divide out by denominators of coefficients
                         PHI = QR2[0].sage()
                         PHI = PHI.numerator()._maxima_().divide(PHI.denominator())[0].sage()
-                    if not is_FractionFieldElement(PHI):
+                    if not isinstance(PHI, FractionFieldElement):
                         from sage.symbolic.expression_conversions import polynomial
                         PHI = polynomial(PHI, ring=self.coordinate_ring())
                 except (TypeError, NotImplementedError): #something Maxima, or the conversion, can't handle
@@ -3533,7 +3533,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                         if hyperplane_found:
                             break
                 else:
-                    if is_PolynomialRing(R) or is_MPolynomialRing(R) or is_FractionField(R):
+                    if is_PolynomialRing(R) or is_MPolynomialRing(R) or isinstance(R, FractionField_generic):
                         # for polynomial rings, we can get an infinite family of hyperplanes
                         # by increasing the degree
                         var = R.gen()
@@ -3702,7 +3702,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             raise NotImplementedError("rational function of degree 1 not implemented")
         f = self.dehomogenize(1)
         R = PolynomialRing(f.base_ring(),'x')
-        if is_FractionFieldElement(f[0]):
+        if isinstance(f[0], FractionFieldElement):
             F = (f[0].numerator().univariate_polynomial(R))/f[0].denominator().univariate_polynomial(R)
         else:
             F = f[0].univariate_polynomial(R)
@@ -4880,7 +4880,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         if isinstance(R, FractionField_1poly_field) or is_FunctionField(R):
             raise NotImplementedError('periodic points not implemented for fraction function fields; '
                 'clear denominators and use the polynomial ring instead')
-        if is_FractionField(R):
+        if isinstance(R, FractionField_generic):
             if is_MPolynomialRing(R.ring()):
                 raise NotImplementedError('periodic points not implemented for fraction function fields; '
                     'clear denominators and use the polynomial ring instead')
@@ -5784,7 +5784,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                     X = X.change_ring(F)
                 else:
                     F = base_ring
-                    if is_FractionField(base_ring):
+                    if isinstance(base_ring, FractionField_generic):
                         if is_MPolynomialRing(base_ring.ring()) or is_PolynomialRing(base_ring.ring()):
                             f.normalize_coordinates()
                             f_ring = f.change_ring(base_ring.ring())
@@ -5886,7 +5886,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             return sigmas
 
         base_ring = dom.base_ring()
-        if is_FractionField(base_ring):
+        if isinstance(base_ring, FractionField_generic):
             base_ring = base_ring.ring()
         if (is_PolynomialRing(base_ring) or is_MPolynomialRing(base_ring)):
             base_ring = base_ring.base_ring()

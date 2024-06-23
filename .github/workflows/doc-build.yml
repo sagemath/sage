@@ -130,10 +130,10 @@ jobs:
           new_version=$(docker exec BUILD cat src/VERSION.txt)
           mkdir -p docs/
           docker cp BUILD:/sage/local/share/doc/sage/html docs/
-          # Wipe out chronic diffs between old doc and new doc
+          # Wipe out chronic diffs of old doc against new doc
           (cd docs && \
            find . -name "*.html" | xargs sed -i -e '/class="sidebar-brand-text"/ s/Sage [0-9a-z.]* /Sage '"$new_version"' /' \
-                                                -e '/This is documentation for/ s/ built with GitHub PR [^.]*././' \
+                                                -e '/<link rel="stylesheet"/ s/?v=[0-9a-f]*"/"/' \
                                                 -e 's;'"$mathjax_path_from"';'"$mathjax_path_to"';' \
                                                 -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d')
           # Create git repo from old doc
@@ -166,7 +166,13 @@ jobs:
           docker cp BUILD:/sage/local/share/doc/sage/html docs
           docker cp BUILD:/sage/local/share/doc/sage/index.html docs
           (cd docs && git commit -a -m 'new')
+          # Wipe out chronic diffs of new doc against old doc
+          (cd docs && \
+           find . -name "*.html" | xargs sed -i -e '/This is documentation for/ s/ built with GitHub PR .*. Doc/. Doc/' \
+                                                -e '/<link rel="stylesheet"/ s/?v=[0-9a-f]*"/"/')
           .ci/create-changes-html.sh $(cd docs && git rev-parse HEAD^) docs
+          # Restore the new doc from changes by "wipe out"
+          (cd docs && git checkout -f)
           (cd docs && rm -rf .git)
           mv CHANGES.html docs
           # We also need to replace the symlinks because netlify is not following them
@@ -176,15 +182,25 @@ jobs:
           zip -r docs.zip docs
 
       - name: Upload docs
+        id: upload
         if: (success() || failure()) && steps.copy.outcome == 'success'
         uses: actions/upload-artifact@v3
         with:
           name: docs
           path: docs.zip
 
+      - name: Save space
+        id: savespace
+        if: (success() || failure()) && steps.upload.outcome == 'success' && github.repository == 'sagemath/sage' && github.ref == 'refs/heads/develop'
+        run: |
+          set -ex
+          # Save space on runner device before we start to build livedoc
+          rm -rf docs/
+          rm -f docs.zip
+
       - name: Build live doc
         id: buildlivedoc
-        if: (success() || failure()) && steps.copy.outcome == 'success' && github.repository == 'sagemath/sage' && github.ref == 'refs/heads/develop'
+        if: (success() || failure()) && steps.savespace.outcome == 'success'
         run: |
           export MAKE="make -j5 --output-sync=recurse" SAGE_NUM_THREADS=5
           export PATH="build/bin:$PATH"
@@ -203,11 +219,11 @@ jobs:
         if: (success() || failure()) && steps.buildlivedoc.outcome == 'success'
         run: |
           mkdir -p ./livedoc
-          cp -r -L /sage/local/share/doc/sage/html ./livedoc
-          cp -r -L /sage/local/share/doc/sage/pdf ./livedoc
-          cp  /sage/local/share/doc/sage/index.html ./livedoc
+          # We copy everything to a local folder
+          docker cp --follow-link BUILD:/sage/local/share/doc/sage/html livedoc
+          docker cp --follow-link BUILD:/sage/local/share/doc/sage/pdf livedoc
+          docker cp BUILD:/sage/local/share/doc/sage/index.html livedoc
           zip -r livedoc.zip livedoc
-        shell: sh .ci/docker-exec-script.sh BUILD . {0}
 
       - name: Upload live doc
         if: (success() || failure()) && steps.copylivedoc.outcome == 'success'

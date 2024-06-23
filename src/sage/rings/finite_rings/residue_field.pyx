@@ -186,7 +186,7 @@ from sage.rings.ideal import is_Ideal
 from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
 from sage.rings.number_field.number_field_ideal import NumberFieldIdeal
 
-from sage.rings.fraction_field import is_FractionField
+from sage.rings.fraction_field import FractionField_generic
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
@@ -1138,7 +1138,7 @@ cdef class ReductionMap(Map):
                 return FiniteField_prime_modn._element_constructor_(self._F, x)
             except ZeroDivisionError:
                 raise ZeroDivisionError("Cannot reduce rational %s modulo %s: it has negative valuation" % (x, p.gen()))
-        elif is_FractionField(self._K):
+        elif isinstance(self._K, FractionField_generic):
             p = p.gen()
             if p.degree() == 1:
                 return self._F((x.numerator() % p)[0] / (x.denominator() % p)[0])
@@ -1656,7 +1656,7 @@ cdef class LiftingMap(Section):
         """
         if self._K is QQ or self._K is ZZ:
             return self._K(x.lift())  # x.lift() is in ZZ
-        elif is_FractionField(self._K):
+        elif isinstance(self._K, FractionField_generic):
             if self._F.p.degree() == 1:
                 return self._K(self._K.ring_of_integers()(x))
             else:
