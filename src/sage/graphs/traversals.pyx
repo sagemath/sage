@@ -87,7 +87,7 @@ def _is_valid_lex_BFS_order(G, L):
     """
     # Convert G to a simple undirected graph
     if G.has_loops() or G.has_multiple_edges() or G.is_directed():
-        G = G.to_simple(immutable=False, to_undirected=True)
+        G = G.to_simple(immutable=True, to_undirected=True)
 
     cdef int n = G.order()
 
@@ -422,7 +422,7 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
 
     # Convert G to a simple undirected graph
     if G.has_loops() or G.has_multiple_edges() or G.is_directed():
-        G = G.to_simple(immutable=False, to_undirected=True)
+        G = G.to_simple(immutable=True, to_undirected=True)
 
     cdef size_t n = G.order()
     if not n:
@@ -600,7 +600,7 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
 
     # Loops and multiple edges are not needed in Lex UP
     if G.allows_loops() or G.allows_multiple_edges():
-        G = G.to_simple(immutable=False)
+        G = G.to_simple(immutable=True)
 
     cdef int nV = G.order()
 
@@ -772,7 +772,7 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
 
     # Loops and multiple edges are not needed in Lex DFS
     if G.allows_loops() or G.allows_multiple_edges():
-        G = G.to_simple(immutable=False)
+        G = G.to_simple(immutable=True)
 
     cdef int nV = G.order()
 
@@ -946,7 +946,7 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
 
     # Loops and multiple edges are not needed in Lex DOWN
     if G.allows_loops() or G.allows_multiple_edges():
-        G = G.to_simple(immutable=False)
+        G = G.to_simple(immutable=True)
 
     cdef int nV = G.order()
 
