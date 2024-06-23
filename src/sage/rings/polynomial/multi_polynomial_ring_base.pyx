@@ -135,7 +135,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
              Multivariate Polynomial Ring in x, y over Rational Field
         """
         base = self.base_ring()
-        if isinstance(base, MPolynomialRing_base) or polynomial_ring.is_PolynomialRing(base):
+        if isinstance(base, MPolynomialRing_base) or polynomial_ring.isinstance(base, PolynomialRing_general):
             from sage.rings.polynomial.flatten import FlatteningMorphism
             return FlatteningMorphism(self)
         else:
@@ -597,7 +597,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
                 elif self.base_ring().has_coerce_map_from(P._mpoly_base_ring(self.variable_names())):
                     return self(x)
 
-            elif polynomial_ring.is_PolynomialRing(P):
+            elif polynomial_ring.isinstance(P, PolynomialRing_general):
                 if P.variable_name() in self.variable_names():
                     if self.has_coerce_map_from(P.base_ring()):
                         return self(x)

@@ -159,7 +159,7 @@ from sage.structure.richcmp import richcmp
 from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.rings.infinity import infinity, is_Infinite
 from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.power_series_ring_element import PowerSeries
 
@@ -393,7 +393,7 @@ class MPowerSeries(PowerSeries):
                 self._bg_value = parent._send_to_bg(x).add_bigoh(prec)
 
         # test whether x coerces to underlying polynomial ring of parent
-        elif is_PolynomialRing(xparent):
+        elif isinstance(xparent, PolynomialRing_general):
             self._bg_value = parent._send_to_bg(x).add_bigoh(prec)
 
         else:

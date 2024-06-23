@@ -188,23 +188,23 @@ def is_PolynomialRing(x):
 
     EXAMPLES::
 
-        sage: from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+        sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
         sage: from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
-        sage: is_PolynomialRing(2)
+        sage: isinstance(2, PolynomialRing_general)
         False
 
     This polynomial ring is not univariate.
 
     ::
 
-        sage: is_PolynomialRing(ZZ['x,y,z'])
+        sage: isinstance(ZZ['x,y,z'], PolynomialRing_general)
         False
         sage: isinstance(ZZ['x,y,z'], MPolynomialRing_base)
         True
 
     ::
 
-        sage: is_PolynomialRing(ZZ['w'])
+        sage: isinstance(ZZ['w'], PolynomialRing_general)
         True
 
     Univariate means not only in one variable, but is a specific data
@@ -216,7 +216,7 @@ def is_PolynomialRing(x):
         sage: # needs sage.libs.singular
         sage: R.<w> = PolynomialRing(ZZ, implementation="singular"); R
         Multivariate Polynomial Ring in w over Integer Ring
-        sage: is_PolynomialRing(R)
+        sage: isinstance(R, PolynomialRing_general)
         False
         sage: type(R)
         <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
@@ -618,7 +618,7 @@ class PolynomialRing_general(Ring):
         """
         from .multi_polynomial_ring import MPolynomialRing_base
         base = self.base_ring()
-        if is_PolynomialRing(base) or isinstance(base, MPolynomialRing_base):
+        if isinstance(base, PolynomialRing_general) or isinstance(base, MPolynomialRing_base):
             from .flatten import FlatteningMorphism
             return FlatteningMorphism(self)
         else:
@@ -803,7 +803,7 @@ class PolynomialRing_general(Ring):
 
         # polynomial rings in the same variable over a base that canonically
         # coerces into self.base_ring()
-        if is_PolynomialRing(P):
+        if isinstance(P, PolynomialRing_general):
             if self.construction()[0] != P.construction()[0]:
                 # Construction (including variable names) must be the
                 # same to allow coercion
@@ -1596,7 +1596,7 @@ class PolynomialRing_general(Ring):
             0
         """
         base_ring = self.base_ring()
-        if is_PolynomialRing(base_ring):
+        if isinstance(base_ring, PolynomialRing_general):
             return 0
         try:
             from sage.matrix.matrix_space import MatrixSpace

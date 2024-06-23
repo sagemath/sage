@@ -189,7 +189,7 @@ from sage.rings.number_field.number_field_ideal import NumberFieldIdeal
 from sage.rings.fraction_field import FractionField_generic
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.rings.polynomial.polynomial_element import Polynomial
 
 from sage.structure.element cimport Element, parent, Vector
@@ -339,7 +339,7 @@ class ResidueFieldFactory(UniqueFactory):
                     raise ValueError("p must be an ideal or element of a number field or function field.")
             if not p.is_prime():
                 raise ValueError("p (%s) must be prime" % p)
-            if is_PolynomialRing(p.ring()):
+            if isinstance(p.ring(), PolynomialRing_general):
                 if not p.ring().base_ring().is_finite():
                     raise ValueError("residue fields only supported for polynomial rings over finite fields")
                 if not p.ring().base_ring().is_prime_field():
@@ -375,7 +375,7 @@ class ResidueFieldFactory(UniqueFactory):
 
         if pring is ZZ:
             return ResidueFiniteField_prime_modn(p, names, p.gen(), None, None, None)
-        if is_PolynomialRing(pring):
+        if isinstance(pring, PolynomialRing_general):
             K = pring.fraction_field()
             Kbase = pring.base_ring()
             f = p.gen()
@@ -1403,7 +1403,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
         # No special code for residue fields of Z, since we just use the normal reduction map to GF(p)
         if self._K is ZZ:
             return self._F(x)
-        if is_PolynomialRing(self._K):
+        if isinstance(self._K, PolynomialRing_general):
             p = self._F.p.gen()
             if p.degree() == 1:
                 return self._F((x % p)[0])
@@ -1661,7 +1661,7 @@ cdef class LiftingMap(Section):
                 return self._K(self._K.ring_of_integers()(x))
             else:
                 return self._K(self._K.ring_of_integers()(x.polynomial().list()))
-        elif is_PolynomialRing(self._K):
+        elif isinstance(self._K, PolynomialRing_general):
             return self._K(x.polynomial().list())
         # Else the lifting map is just x |--> to_order(x * PB)
         x = self._F(x)

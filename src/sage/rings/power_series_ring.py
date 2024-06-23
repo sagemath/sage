@@ -149,7 +149,7 @@ from sage.rings import (
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.infinity import infinity
 from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
-from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.category_object import normalize_names
 from sage.structure.element import Expression, parent
@@ -711,7 +711,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         """
         if self.base_ring().has_coerce_map_from(S):
             return True
-        if (is_PolynomialRing(S) or is_PowerSeriesRing(S)) and self.base_ring().has_coerce_map_from(S.base_ring()) \
+        if (isinstance(S, PolynomialRing_general) or is_PowerSeriesRing(S)) and self.base_ring().has_coerce_map_from(S.base_ring()) \
            and self.variable_names() == S.variable_names():
             return True
 
