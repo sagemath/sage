@@ -7,13 +7,12 @@ from sage.rings.integer_ring import ZZ
 from sage.categories.sets_cat import cartesian_product
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.sets_with_grading import SetsWithGrading
+from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
+from sage.categories.algebras import Algebras
 from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroup_generic
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.libs.gap.libgap import libgap
-from sage.categories.algebras import Algebras
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
-from sage.categories.filtered_modules_with_basis import FilteredModulesWithBasis
 
 GAP_FAIL = libgap.eval('fail')
 
@@ -46,10 +45,12 @@ class SubgroupStore():
 
     def _normalize(self, H):
         # H is of type self.element_class
+        G = H.subgroup_of()
+        H._C = G.subgroup(H._C.gens_small())
         p = self._group_invariant(H._C)
         if p in self._cache:
             for H0 in self._cache[p]:
-                if _is_conjugate(H.subgroup_of(), H._C, H0._C):
+                if _is_conjugate(G, H._C, H0._C):
                     return H0
             else:
                 self._cache[p].append(H)
@@ -532,13 +533,17 @@ class BurnsideRing(CombinatorialFreeModule):
             sage: B.product_on_basis(C(Z2), C(Z3))
             B[((),)]
         """
+        def get_left_cosets(G,H):
+            right_transversal = libgap.List(libgap.RightTransversal(G, H))
+            libgap.Apply(right_transversal, libgap.Inverse)
+            left_transversal = [rep.sage(G) for rep in right_transversal]
+            return [frozenset(rep * h for h in H) for rep in left_transversal]
         #TODO: Find faster way to multiply
         assert g1.parent() == g2.parent()
         G = g1.subgroup_of()
-        dom1 = [frozenset(g) for g in G.cosets(g1._C, side="left")]
-        dom2 = [frozenset(g) for g in G.cosets(g2._C, side="left")]
+        dom1 = get_left_cosets(G, g1._C)
+        dom2 = get_left_cosets(G, g2._C)
         domain = cartesian_product([dom1, dom2])
-
         def action(g, pair):
             return (frozenset(g * h for h in pair[0]),
                     frozenset(g * h for h in pair[1]))
@@ -580,10 +585,6 @@ class PolynomialMolecularDecomposition(CombinatorialFreeModule):
                                         category=category,
                                         prefix="PMD")
         self._print_options['names'] = self._indices._names
-
-    # FIXME: this is currently required, because the implementation of ``basis``
-    # in CombinatorialFreeModule overrides that of GradedModulesWithBasis
-    basis = FilteredModulesWithBasis.ParentMethods.__dict__['basis']
 
     def __getitem__(self, x):
         r"""
