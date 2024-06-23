@@ -43,6 +43,7 @@ jobs:
         if: steps.download-doc.outcome == 'success'
 
       - name: Deploy to Netlify
+        id: deploy-netlify
         uses: netlify/actions/cli@master
         with:
           args: deploy --dir=doc/doc --message ${NETLIFY_MESSAGE} --alias ${NETLIFY_ALIAS}
@@ -113,6 +114,7 @@ jobs:
         if: steps.download-doc.outcome == 'success'
 
       - name: Deploy to Netlify
+        id: deploy-netlify
         uses: netlify/actions/cli@master
         with:
           args: deploy --dir=livedoc/livedoc --message ${NETLIFY_MESSAGE} --alias ${NETLIFY_ALIAS}
