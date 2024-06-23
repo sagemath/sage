@@ -507,8 +507,11 @@ def geodetic_closure(G, S):
     each vertex `u \in S`, the algorithm first performs a breadth first search
     from `u` to get distances, and then identifies the vertices of `G` lying on
     a shortest path from `u` to any `v\in S` using a reversal traversal from
-    vertices in `S`.  This algorithm has time complexity in `O(|S|(n + m))` and
-    space complexity in `O(n + m)`.
+    vertices in `S`.  This algorithm has time complexity in
+    `O(|S|(n + m) + (n + m\log{m}))` for ``SparseGraph``,
+    `O(|S|(n + m) + n^2\log{m})` for ``DenseGraph`` and space complexity in
+    `O(n + m)` (the extra `\log` factor is due to ``init_short_digraph`` being
+    called with ``sort_neighbors=True``).
 
     INPUT:
 
@@ -678,10 +681,10 @@ def is_geodetic(G):
     Check whether the input (di)graph is geodetic.
 
     A graph `G` is *geodetic* if there exists only one shortest path between
-    every pair of its vertices. This can be checked in time `O(nm)` in
-    unweighted (di)graphs with `n` nodes and `m` edges. Examples of geodetic
-    graphs are trees, cliques and odd cycles. See the
-    :wikipedia:`Geodetic_graph` for more details.
+    every pair of its vertices. This can be checked in time `O(nm)` for
+    ``SparseGraph`` and `O(nm+n^2)` for ``DenseGraph`` in unweighted (di)graphs
+    with `n` nodes and `m` edges. Examples of geodetic graphs are trees, cliques
+    and odd cycles. See the :wikipedia:`Geodetic_graph` for more details.
 
     (Di)graphs with multiple edges are not considered geodetic.
 

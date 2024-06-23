@@ -51,7 +51,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational import Rational
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.ideal import Ideal_fractional
-from sage.rings.rational_field import is_RationalField, QQ
+from sage.rings.rational_field import RationalField, QQ
 from sage.rings.infinity import infinity
 from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -429,7 +429,7 @@ class QuaternionAlgebra_abstract(Parent):
             ...
             NotImplementedError: base field must be rational numbers
         """
-        if not is_RationalField(self.base_ring()):
+        if not isinstance(self.base_ring(), RationalField):
             raise NotImplementedError("base field must be rational numbers")
         return self.discriminant() != 1
 
@@ -453,7 +453,7 @@ class QuaternionAlgebra_abstract(Parent):
             NotImplementedError: base field must be rational numbers
 
         """
-        if not is_RationalField(self.base_ring()):
+        if not isinstance(self.base_ring(), RationalField):
             raise NotImplementedError("base field must be rational numbers")
         return self.discriminant() == 1
 
@@ -678,7 +678,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         Parent.__init__(self, base=base_ring, names=names, category=cat)
         self._a = a
         self._b = b
-        if is_RationalField(base_ring) and a.denominator() == 1 == b.denominator():
+        if isinstance(base_ring, RationalField) and a.denominator() == 1 == b.denominator():
             self.Element = QuaternionAlgebraElement_rational_field
         elif (isinstance(base_ring, NumberField) and base_ring.degree() > 2 and base_ring.is_absolute() and
               a.denominator() == 1 == b.denominator() and base_ring.defining_polynomial().is_monic()):
@@ -1066,7 +1066,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             ...
             ValueError: base field must be rational numbers
         """
-        if not is_RationalField(self.base_ring()):
+        if not isinstance(self.base_ring(), RationalField):
             raise ValueError("base field must be rational numbers")
         a, b = self.invariants()
         return a < 0 and b < 0
@@ -1218,7 +1218,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             sage: QuaternionAlgebra(QQ[sqrt(2)], 3, 19).discriminant()                  # needs sage.symbolic
             Fractional ideal (1)
         """
-        if not is_RationalField(self.base_ring()):
+        if not isinstance(self.base_ring(), RationalField):
             try:
                 F = self.base_ring()
                 return F.hilbert_conductor(self._a, self._b)
@@ -1245,7 +1245,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             sage: QuaternionAlgebra(QQ, -58, -69).ramified_primes()
             [3, 23, 29]
         """
-        if not is_RationalField(self.base_ring()):
+        if not isinstance(self.base_ring(), RationalField):
             raise ValueError("base field must be the rational numbers")
 
         a, b = self._a, self._b
@@ -2517,7 +2517,7 @@ class QuaternionOrder(Parent):
         if other.quaternion_algebra() != Q:
             raise TypeError('not an order in the same quaternion algebra')
 
-        if not is_RationalField(Q.base_ring()):
+        if not isinstance(Q.base_ring(), RationalField):
             raise NotImplementedError('only implemented for orders in a rational quaternion algebra')
         if not Q.is_definite():
             raise NotImplementedError('only implemented for definite quaternion orders')

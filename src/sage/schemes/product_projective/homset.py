@@ -23,7 +23,7 @@ from sage.categories.number_fields import NumberFields
 from sage.misc.mrange import xmrange
 from sage.misc.misc_c import prod
 from sage.rings.finite_rings.finite_field_base import FiniteField
-from sage.rings.rational_field import is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 from sage.schemes.generic.homset import SchemeHomset_points
 
@@ -199,7 +199,7 @@ class SchemeHomset_points_product_projective_spaces_field(SchemeHomset_points_pr
                 return list(points)
         R = self.value_ring()
         points = []
-        if is_RationalField(R):
+        if isinstance(R, RationalField):
             if not B > 0:
                 raise TypeError("a positive bound B (= %s) must be specified" % B)
             alg = kwds.pop('algorithm', None)

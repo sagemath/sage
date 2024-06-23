@@ -1750,6 +1750,11 @@ def diameter(G, algorithm=None, source=None):
       error if the initial vertex is not in `G`.  This parameter is not used
       when ``algorithm=='standard'``.
 
+    .. NOTE::
+        As the graph is first converted to a short_digraph, all complexity
+        have an extra `O(m+n)` for ``SparseGraph`` and `O(n^2)` for
+        ``DenseGraph``.
+
     EXAMPLES::
 
         sage: from sage.graphs.distances_all_pairs import diameter
@@ -2278,6 +2283,14 @@ def szeged_index(G, algorithm=None):
       By default (``None``), the ``"low"`` algorithm is used for graphs and the
       ``"high"`` algorithm for digraphs.
 
+    .. NOTE::
+        As the graph is converted to a short_digraph, the complexity for the
+        case ``algorithm == "high"`` has an extra `O(m+n)` for ``SparseGraph``
+        and `O(n^2)` for ``DenseGraph``. If ``algorithm  == "low"``, the extra
+        complexity is `O(n + m\log{m})` for ``SparseGraph`` and `O(n^2\log{m})`
+        for ``DenseGraph`` (because ``init_short_digraph`` is called with
+        ``sort_neighbors=True``).
+
     EXAMPLES:
 
     True for any connected graph [KRG1996]_::
@@ -2351,7 +2364,7 @@ def szeged_index(G, algorithm=None):
     if G.is_directed() and not G.is_strongly_connected():
         raise ValueError("the Szeged index is defined for "
                          "strongly connected digraphs only")
-    if G.is_directed() and algorithm is "low":
+    if G.is_directed() and algorithm == "low":
         raise ValueError("the 'low' algorithm cannot be used on digraphs")
 
     if algorithm is None:
@@ -2360,7 +2373,7 @@ def szeged_index(G, algorithm=None):
     elif algorithm not in ["low", "high"]:
         raise ValueError(f"unknown algorithm '{algorithm}'")
 
-    if algorithm is "low" and (G.has_loops() or G.has_multiple_edges()):
+    if algorithm == "low" and (G.has_loops() or G.has_multiple_edges()):
         raise ValueError("the 'low' algorithm is for simple connected "
                          "undirected graphs only")
 
@@ -2370,7 +2383,7 @@ def szeged_index(G, algorithm=None):
     cdef short_digraph sd
     cdef uint64_t s
 
-    if algorithm is "low":
+    if algorithm == "low":
         init_short_digraph(sd, G, edge_labelled=False, vertex_list=list(G), sort_neighbors=True)
         s = c_szeged_index_low_memory(sd)
     else:

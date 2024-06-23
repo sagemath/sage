@@ -7,7 +7,7 @@ formatters. It has two main features, by default the displayhook
 contains a new facility for displaying lists of matrices in an easier
 to read format::
 
-    sage: [identity_matrix(i) for i in range(2,5)]
+    sage: [identity_matrix(i) for i in range(2, 5)]                                     # needs sage.modules
     [
                     [1 0 0 0]
            [1 0 0]  [0 1 0 0]
@@ -236,19 +236,23 @@ class SageDisplayFormatter(DisplayFormatter):
             sage: shell.run_cell('matrix.options.precision')  # indirect doctest        # needs sage.modules
             None
         """
-        from sage.matrix.constructor import options
-        s = change.new
-        if not s:
-            # unset the precision
-            options.precision = None
+        try:
+            from sage.matrix.constructor import options
+        except ImportError:
+            pass
         else:
-            try:
-                prec = int(s)
-                if prec >= 0:
-                    options.precision = prec
-                # otherwise ignore the change
-            except ValueError:
-                pass
+            s = change.new
+            if not s:
+                # unset the precision
+                options.precision = None
+            else:
+                try:
+                    prec = int(s)
+                    if prec >= 0:
+                        options.precision = prec
+                    # otherwise ignore the change
+                except ValueError:
+                    pass
 
 
 class SagePlainTextFormatter(PlainTextFormatter):

@@ -1023,8 +1023,9 @@ class Animation(WithEqualityById, SageObject):
         # afterwards.  Hence 'early_options' and 'ffmpeg_options'
         # The `-nostdin` is needed to avoid the command to hang, see
         # https://stackoverflow.com/questions/16523746/ffmpeg-hangs-when-run-in-background
-        cmd = 'cd {}; ffmpeg -nostdin -y -f image2 {} -i {} {} {}'.format(
-            shlex.quote(pngdir), early_options, shlex.quote(pngs), ffmpeg_options, shlex.quote(savefile))
+        cmd = 'cd {}; {} -nostdin -y -f image2 {} -i {} {} {}'.format(
+            shlex.quote(pngdir), shlex.quote(FFmpeg().absolute_filename()),
+            early_options, shlex.quote(pngs), ffmpeg_options, shlex.quote(savefile))
         from subprocess import check_call, CalledProcessError, PIPE
         try:
             if sage.misc.verbose.get_verbose() > 0:
