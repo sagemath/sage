@@ -6388,6 +6388,10 @@ REFERENCES:
 .. [TTWL2009] Trebst, Troyer, Wang and Ludwig, A short introduction to
               Fibonacci anyon models, :arxiv:`0902.3275`.
 
+.. [Tut1947] W.T. Tutte. *The factorization of linear graphs.* Journal of the
+             London Mathematical Society, vol. s1-22, issue 2, pages 107--111,
+             April 1947. :doi:`10.1112/jlms/s1-22.2.107`.
+
 .. [Tur1974] \R. J. Turyn *Hadamard matrices, Baumert-Hall units,
              four-symbol sequences, pulse compression, and surface wave encodings*.
              Journal of Combinatorial Theory, Series A 16.3 (1974), pp 313–333.
