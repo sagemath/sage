@@ -108,6 +108,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
           run-id: ${{ github.event.workflow_run.id }}
+        # if the doc was built for tag push (targetBranch contains the tag)
         if: steps.source-run-info.outputs.sourceEvent == 'push' && steps.source-run-info.outputs.targetBranch != 'develop'
 
       - name: Extract live doc
