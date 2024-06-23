@@ -1,5 +1,3 @@
-# Triggers after the documentation build has finished,
-# taking the artifact and uploading it to netlify
 name: Publish documentation
 
 on:
@@ -12,6 +10,20 @@ permissions:
   statuses: write
   checks: write
   pull-requests: write
+
+
+# This workflow runs after doc-build workflow, taking the artifact
+# (doc/livedoc) and deploying it to a netlify site.
+#
+# event (triggered doc-build)     URL (of the doc deployed to NETLIFY_SITE)
+# ---------------------------     ---------------------------------
+# on pull request                 https://doc-pr-12345--NETLIFY_SITE
+# on push branch develop          https://doc-develop--NETLIFY_SITE
+# on push tag                     https://doc-10-4-beta2--NETLIFY_SITE
+#
+# where NETLIFY_SITE is presently sagemath.netlify.app for repo sagemath/sage.
+#
+# This workflow runs only if secrets NETLIFY_AUTH_TOKEN and NETLIFY_SITE_ID are set.
 
 jobs:
   publish-doc:
@@ -54,8 +66,9 @@ jobs:
           NETLIFY_ALIAS: doc-${{ steps.source-run-info.outputs.pullRequestNumber && format('pr-{0}', steps.source-run-info.outputs.pullRequestNumber) || 'develop' }}
         if: steps.download-doc.outcome == 'success'
 
-      # Add deployment as status check, PR comment and annotation
-      # we could use the nwtgck/actions-netlify action for that, except for that it is not (yet) working in workflow_run context: https://github.com/nwtgck/actions-netlify/issues/545
+      # Add deployment as status check, PR comment and annotation we could use
+      # the nwtgck/actions-netlify action for that, except for that it is not
+      # (yet) working in workflow_run context: https://github.com/nwtgck/actions-netlify/issues/545
       - name: Add/Update deployment status PR comment
         uses: marocchino/sticky-pull-request-comment@v2
         with:
