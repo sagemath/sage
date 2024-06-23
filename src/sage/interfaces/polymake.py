@@ -155,6 +155,7 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.polymake import polymake
             sage: loads(dumps(polymake)) is polymake
             True
 

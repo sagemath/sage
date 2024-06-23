@@ -54,7 +54,7 @@ from sage.combinat import quickref, tutorial
 install_dict(__package__, {'quickref': quickref, 'tutorial': tutorial})
 del quickref, tutorial
 
-from sage.misc.lazy_import import lazy_import
+from sage.combinat.all__sagemath_categories import *
 
 from sage.combinat.all__sagemath_combinat import *
 from sage.combinat.all__sagemath_modules import *

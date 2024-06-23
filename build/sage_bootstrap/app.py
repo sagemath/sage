@@ -441,6 +441,7 @@ class Application(object):
                 if not version:
                     version = pypi_version.version
                 if dependencies is None:
+                    log.info('Requires-Python: {0}'.format(pypi_version.requires_python))
                     requires_dist = pypi_version.requires_dist
                     if requires_dist:
                         dependencies = []

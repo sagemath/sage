@@ -1,4 +1,7 @@
 # sage_setup: distribution = sagemath-categories
+
+from sage.arith.all__sagemath_objects import *
+
 from sage.misc.lazy_import import lazy_import
 
 from sage.arith.misc import (algdep, bernoulli, is_prime, is_prime_power,

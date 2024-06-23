@@ -82,6 +82,7 @@ __append_to_doc(
      "HouseXGraph",
      "LadderGraph",
      "LollipopGraph",
+     "MoebiusLadderGraph",
      "PathGraph",
      "StarGraph",
      "TadpoleGraph",
@@ -455,6 +456,8 @@ AUTHORS:
   added (random, bounded) tolerance graphs
 
 - Marco Cognetta (2016-03-03): added TuranGraph
+
+- Janmenjaya Panda (2024-05-26): added MoebiusLadderGraph
 
 
 Functions and methods
@@ -2507,6 +2510,7 @@ class GraphGenerators:
     HouseGraph = staticmethod(basic.HouseGraph)
     HouseXGraph = staticmethod(basic.HouseXGraph)
     LadderGraph = staticmethod(basic.LadderGraph)
+    MoebiusLadderGraph = staticmethod(basic.MoebiusLadderGraph)
     PathGraph = staticmethod(basic.PathGraph)
     StarGraph = staticmethod(basic.StarGraph)
     Toroidal6RegularGrid2dGraph = staticmethod(basic.Toroidal6RegularGrid2dGraph)

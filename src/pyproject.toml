@@ -96,6 +96,24 @@ requires-python = ">=3.9, <3.13"
 R = [
     'rpy2 >=3.3',
 ]
+bliss = [
+    'sagemath-bliss',
+]
+coxeter3 = [
+    'sagemath-coxeter3',
+]
+mcqd = [
+    'sagemath-mcqd',
+]
+meataxe = [
+    'sagemath-meataxe',
+]
+sirocco = [
+    'sagemath-sirocco',
+]
+tdlib    = [
+    'sagemath-tdlib',
+]
 
 [project.readme]
 file = "README.rst"

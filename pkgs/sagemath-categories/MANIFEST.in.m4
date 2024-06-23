@@ -189,6 +189,7 @@ exclude sage/rings/function_field/differential.*                        # module
 exclude sage/rings/function_field/divisor.*                             # module elements
 exclude sage/rings/function_field/hermite_form_polynomial.*             # cimports Matrix
 exclude sage/rings/function_field/valuation*.*                          # ??
+exclude sage/rings/function_field/khuri_makdisi.p*
 prune sage/rings/function_field/drinfeld_modules                        # needs ore_polynomial etc.
 
 include sage/rings/power_series_mpoly.p*

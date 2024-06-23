@@ -4,8 +4,8 @@
 #include <map>
 
 #include <boost/graph/adjacency_list.hpp>
-#include "tdlib/TD_combinations.hpp"
-#include "tdlib/TD_misc.hpp"
+#include <treedec/combinations.hpp>
+#include <treedec/misc.hpp>
 
 #ifndef TD_STRUCT_VERTEX
 #define TD_STRUCT_VERTEX
@@ -17,13 +17,6 @@ struct Vertex{
 #endif
 
 typedef boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS, Vertex> TD_graph_t;
-
-struct bag{
-    std::set<unsigned int> bag;
-};
-
-typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, bag> TD_tree_dec_t;
-
 
 void make_tdlib_graph(TD_graph_t &G, std::vector<unsigned int> &V, std::vector<unsigned int> &E){
     unsigned int max = 0;

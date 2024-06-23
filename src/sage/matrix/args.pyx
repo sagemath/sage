@@ -751,6 +751,9 @@ cdef class MatrixArgs:
                     break
         else:
             space = self.space
+            global MatrixSpace
+            if MatrixSpace is None:
+                from sage.matrix.matrix_space import MatrixSpace
             if not isinstance(space, MatrixSpace):
                 space = space.zero().matrix(side='left').parent()
             M = space(self, coerce=convert)
@@ -807,6 +810,9 @@ cdef class MatrixArgs:
         cdef Matrix M = self.matrix(convert=True)
         if immutable:
             M.set_immutable()
+        global MatrixSpace
+        if MatrixSpace is None:
+            from sage.matrix.matrix_space import MatrixSpace
         if isinstance(self.space, MatrixSpace):
             return M
         return self.space(matrix=M, side='left')

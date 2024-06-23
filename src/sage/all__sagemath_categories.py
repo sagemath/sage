@@ -3,7 +3,7 @@ from sage.all__sagemath_objects import *
 
 try:
     # For doctesting
-    from .all__sagemath_repl import *
+    from sage.all__sagemath_repl import *
 except ImportError:
     pass
 
@@ -24,4 +24,3 @@ from sage.calculus.all__sagemath_categories import *
 from sage.functions.all import *
 
 from sage.parallel.all import *
-

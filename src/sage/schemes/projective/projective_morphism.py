@@ -59,13 +59,20 @@ AUTHORS:
 # ****************************************************************************
 
 import sys
+
+import sage.rings.abc
+
 from sage.arith.functions import lcm
 from sage.arith.misc import GCD as gcd
+from sage.categories.fields import Fields
+from sage.categories.finite_fields import FiniteFields
+from sage.categories.homset import Hom, End
+from sage.categories.number_fields import NumberFields
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import lazy_import
-import sage.rings.abc
+from sage.misc.misc_c import prod
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.fraction_field import FractionField
 from sage.rings.integer import Integer
@@ -74,10 +81,6 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.rings.rational_field import QQ
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
-from sage.categories.finite_fields import FiniteFields
-from sage.categories.number_fields import NumberFields
-from sage.categories.homset import Hom, End
-from sage.categories.fields import Fields
 
 lazy_import('sage.dynamics.arithmetic_dynamics.generic_ds', 'DynamicalSystem')
 lazy_import('sage.dynamics.arithmetic_dynamics.projective_ds',

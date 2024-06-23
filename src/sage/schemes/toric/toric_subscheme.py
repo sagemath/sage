@@ -22,9 +22,10 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.misc.lazy_import import lazy_import
-lazy_import("sage.calculus.functions", "jacobian")
 from sage.rings.integer_ring import ZZ
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
+
+lazy_import("sage.calculus.functions", "jacobian")
 
 
 class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):

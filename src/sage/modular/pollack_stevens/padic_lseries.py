@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-schemes
-# sage.doctest: needs sage.ring.padics
+# sage.doctest: needs sage.rings.padics
 r"""
 `p`-adic `L`-series attached to overconvergent eigensymbols
 
@@ -175,7 +175,7 @@ class pAdicLseries(SageObject):
 
             sage: E = EllipticCurve('11a')
             sage: L = E.padic_lseries(11,implementation="pollackstevens",precision=6) # long time
-            sage: L == loads(dumps(L)) # indirect doctest long time
+            sage: L == loads(dumps(L)) # indirect doctest, long time
             True
         """
         if not isinstance(other, pAdicLseries):

@@ -596,7 +596,6 @@ cdef class pAdicGenericElement(LocalGenericElement):
         else:
             return infinity
 
-
     def artin_hasse_exp(self, prec=None, algorithm=None):
         r"""
         Return the Artin-Hasse exponential of this element.
@@ -968,7 +967,6 @@ cdef class pAdicGenericElement(LocalGenericElement):
             y *= b - y.log(algorithm=log_algorithm)
 
         return R(y)
-
 
     def minimal_polynomial(self, name='x', base=None):
         """
@@ -2971,7 +2969,6 @@ cdef class pAdicGenericElement(LocalGenericElement):
             retval = R(retval)
         return retval.add_bigoh(aprec)
 
-
     def _exp_generic(self, aprec):
         r"""
         Compute the exponential power series of this element, using Horner's
@@ -3159,7 +3156,6 @@ cdef class pAdicGenericElement(LocalGenericElement):
                 a *= 1+b
                 l += (1+b).log(aprec, algorithm=log_algorithm)
         return a
-
 
     def exp(self, aprec=None, algorithm=None):
         r"""
@@ -3392,7 +3388,6 @@ cdef class pAdicGenericElement(LocalGenericElement):
             raise ValueError("algorithm must be 'generic', 'binary_splitting', 'newton' or None")
         return ans.add_bigoh(aprec)
 
-
     def square_root(self, extend=True, all=False, algorithm=None):
         r"""
         Return the square root of this `p`-adic number.
@@ -3594,7 +3589,6 @@ cdef class pAdicGenericElement(LocalGenericElement):
             return []
         else:
             raise ValueError("element is not a square")
-
 
     def nth_root(self, n, all=False):
         """
@@ -3986,7 +3980,6 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
         return x, infinity
 
-
     def __abs__(self):
         """
         Return the `p`-adic absolute value of ``self``.
@@ -4344,7 +4337,9 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
 
 # Artin-Hasse exponential
-_AHE_coefficients_cache = { }
+_AHE_coefficients_cache = {}
+
+
 def _AHE_coefficients(p, N, prec):
     r"""
     Compute the first ``N`` coefficients of the ``p``-adic

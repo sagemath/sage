@@ -40,6 +40,10 @@ def is_FreeAlgebraQuotientElement(x):
         sage: from sage.algebras.free_algebra_quotient_element import is_FreeAlgebraQuotientElement
         sage: H, (i,j,k) = sage.algebras.free_algebra_quotient.hamilton_quatalg(QQ)
         sage: is_FreeAlgebraQuotientElement(i)
+        doctest:warning...
+        DeprecationWarning: The function is_FreeAlgebraQuotientElement is deprecated;
+        use 'isinstance(..., FreeAlgebraQuotientElement)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         True
 
     Of course this is testing the data type::
@@ -49,6 +53,10 @@ def is_FreeAlgebraQuotientElement(x):
         sage: is_FreeAlgebraQuotientElement(H(1))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_FreeAlgebraQuotientElement is deprecated; "
+                "use 'isinstance(..., FreeAlgebraQuotientElement)' instead.")
     return isinstance(x, FreeAlgebraQuotientElement)
 
 

@@ -396,6 +396,10 @@ def is_Rational(x):
 
         sage: from sage.rings.rational import is_Rational
         sage: is_Rational(2)
+        doctest:warning...
+        DeprecationWarning: The function is_Rational is deprecated;
+        use 'isinstance(..., Rational)' instead.
+        See https://github.com/sagemath/sage/issues/38128 for details.
         False
         sage: is_Rational(2/1)
         True
@@ -404,6 +408,10 @@ def is_Rational(x):
         sage: is_Rational('5')
         False
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38128,
+                       "The function is_Rational is deprecated; "
+                       "use 'isinstance(..., Rational)' instead.")
     return isinstance(x, Rational)
 
 
@@ -669,7 +677,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             temp_rational = x.rational_reconstruction()
             mpq_set(self.value, temp_rational.value)
 
-        elif isinstance(x, RealDouble_classes):
+        elif isinstance(x, (float, sage.rings.real_double.RealDoubleElement)):
             try:
                 from sage.rings.real_mpfr import RR, RealNumber
             except ImportError:

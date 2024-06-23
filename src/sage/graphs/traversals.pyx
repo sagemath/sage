@@ -257,7 +257,8 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
       - ``"fast"`` -- This algorithm uses the notion of *slices* to refine the
         position of the vertices in the ordering. The time complexity of this
         algorithm is in `O(n + m)`, and our implementation follows that
-        complexity. See [HMPV2000]_ and next section for more details.
+        complexity for ``SparseGraph``. For ``DenseGraph``, the complexity is
+        `O(n^2)`. See [HMPV2000]_ and next section for more details.
 
     ALGORITHM:
 
@@ -445,7 +446,7 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
     cdef int now, v, vi, int_neighbor
 
     # Perform Lex BFS
-    if algorithm is "fast":
+    if algorithm == "fast":
         lex_BFS_fast_short_digraph(sd, sigma_int, pred)
         sigma = [int_to_v[sigma_int[i]] for i in range(n)]
 
@@ -506,8 +507,9 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
     appended to the codes of all neighbors of the selected vertex that are left
     in the graph.
 
-    Time complexity is `O(n+m)` where `n` is the number of vertices and `m` is
-    the number of edges.
+    Time complexity is `O(n+m)` for ``SparseGraph`` and `O(n^2)` for
+    ``DenseGraph`` where `n` is the number of vertices and `m` is the number of
+    edges.
 
     See [Mil2017]_ for more details on the algorithm.
 
@@ -678,8 +680,9 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
     codes are updated. Lex DFS differs from Lex BFS only in the way codes are
     updated after each iteration.
 
-    Time complexity is `O(n+m)` where `n` is the number of vertices and `m` is
-    the number of edges.
+    Time complexity is `O(n+m)` for ``SparseGraph`` and `O(n^2)` for
+    ``DenseGraph`` where `n` is the number of vertices and `m` is the number of
+    edges.
 
     See [CK2008]_ for more details on the algorithm.
 
@@ -852,8 +855,9 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
     prepended to the codes of all neighbors of the selected vertex that are left
     in the graph.
 
-    Time complexity is `O(n+m)` where `n` is the number of vertices and `m` is
-    the number of edges.
+    Time complexity is `O(n+m)` for ``SparseGraph`` and `O(n^2)` for
+    ``DenseGraph`` where `n` is the number of vertices and `m` is the number of
+    edges.
 
     See [Mil2017]_ for more details on the algorithm.
 
@@ -1583,6 +1587,10 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
     chosen at each step `i` to be placed in position `n - i` in `\alpha`. This
     ordering can be computed in time `O(n + m)`.
 
+    Time complexity is `O(n+m)` for ``SparseGraph`` and `O(n^2)` for
+    ``DenseGraph`` where `n` is the number of vertices and `m` is the number of
+    edges.
+
     When the graph is chordal, the ordering returned by MCS is a *perfect
     elimination ordering*, like :meth:`~sage.graphs.traversals.lex_BFS`. So
     this ordering can be used to recognize chordal graphs. See [He2006]_ for
@@ -1594,7 +1602,7 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
 
     INPUT:
 
-    - ``G`` -- a Sage Graph
+    - ``G`` -- a Sage graph
 
     - ``reverse`` -- boolean (default: ``False``); whether to return the
       vertices in discovery order, or the reverse
@@ -1609,8 +1617,8 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
 
     By default, return the ordering `\alpha` as a list. When ``tree`` is
     ``True``, the method returns a tuple `(\alpha, T)`, where `T` is a directed
-    tree with the same set of vertices as `G`and a directed edge from `u` to `v`
-    if `u` was the first vertex to saw `v`.
+    tree with the same set of vertices as `G` and a directed edge from `u` to `v`
+    if `u` was the first vertex to see `v`.
 
     EXAMPLES:
 

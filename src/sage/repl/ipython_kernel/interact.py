@@ -42,13 +42,10 @@ from ipywidgets.widgets.interaction import interactive, signature
 
 import sage.rings.abc
 
-from sage.structure.element import parent, Matrix
-
-from .widgets import EvalText, SageColorPicker
-from sage.structure.element import parent
-import sage.rings.abc
 from sage.misc.lazy_import import lazy_import
-from sage.structure.element import Matrix
+from sage.repl.ipython_kernel.widgets import EvalText, SageColorPicker
+from sage.structure.element import Matrix, parent
+
 lazy_import("sage.plot.colors", "Color")
 
 

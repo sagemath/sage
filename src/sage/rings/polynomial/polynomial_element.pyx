@@ -55,7 +55,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-cdef is_FractionField
 cdef ZZ, QQ, RR, CC, RDF, CDF
 
 cimport cython
@@ -104,11 +103,11 @@ from sage.structure.element import coerce_binop
 from sage.structure.element cimport (parent, have_same_parent,
         Element, RingElement)
 
-from sage.rings.rational_field import QQ, is_RationalField
-from sage.rings.integer_ring import ZZ, is_IntegerRing
+from sage.rings.rational_field import QQ, RationalField
+from sage.rings.integer_ring import ZZ, IntegerRing_class
 from sage.rings.integer cimport Integer, smallInteger
 from sage.libs.gmp.mpz cimport *
-from sage.rings.fraction_field import FractionField, is_FractionField
+from sage.rings.fraction_field import FractionField
 from sage.rings.padics.padic_generic import pAdicGeneric
 
 from sage.structure.category_object cimport normalize_names
@@ -5027,7 +5026,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         n = None
 
-        if isinstance(R, sage.rings.abc.IntegerModRing) or is_IntegerRing(R):
+        if isinstance(R, sage.rings.abc.IntegerModRing) or isinstance(R, IntegerRing_class):
             try:
                 G = list(self._pari_with_name().factor())
             except PariError:
@@ -5841,7 +5840,7 @@ cdef class Polynomial(CommutativePolynomial):
         if self.degree() <= 1:
             return R.fraction_field()
 
-        if is_IntegerRing(R):
+        if isinstance(R, IntegerRing_class):
             from sage.rings.number_field.number_field import NumberField
             return NumberField(self, names)
 
@@ -6412,7 +6411,7 @@ cdef class Polynomial(CommutativePolynomial):
         from sage.categories.number_fields import NumberFields
 
         K = self.base_ring()
-        if K in NumberFields() or isinstance(K, sage.rings.abc.Order) or is_IntegerRing(K):
+        if K in NumberFields() or isinstance(K, sage.rings.abc.Order) or isinstance(K, IntegerRing_class):
             from sage.schemes.projective.projective_space import ProjectiveSpace
             P = ProjectiveSpace(K, self.number_of_terms() - 1)
             return P.point(self.coefficients()).global_height(prec=prec)
@@ -8933,7 +8932,7 @@ cdef class Polynomial(CommutativePolynomial):
         if L != K or isinstance(L, sage.rings.abc.AlgebraicField_common):
             # So far, the only "special" implementations are for real
             # and complex root isolation and for p-adic factorization
-            if (is_IntegerRing(K) or is_RationalField(K)
+            if (isinstance(K, IntegerRing_class) or isinstance(K, RationalField)
                 or isinstance(K, sage.rings.abc.AlgebraicRealField)) and \
                 isinstance(L, (sage.rings.abc.AlgebraicRealField, sage.rings.abc.RealIntervalField)):
 
@@ -8963,7 +8962,7 @@ cdef class Polynomial(CommutativePolynomial):
                 else:
                     return [rt for (rt, mult) in rts]
 
-            if (is_IntegerRing(K) or is_RationalField(K)
+            if (isinstance(K, IntegerRing_class) or isinstance(K, RationalField)
                 or isinstance(K, sage.rings.abc.AlgebraicField_common) or input_gaussian) and \
                 isinstance(L, (sage.rings.abc.ComplexIntervalField, sage.rings.abc.AlgebraicField_common)):
 
@@ -9996,8 +9995,8 @@ cdef class Polynomial(CommutativePolynomial):
             else:
                 raise NotImplementedError
         else:
-            from sage.rings.fraction_field import is_FractionField
-            if is_FractionField(p.parent()) and self._parent.has_coerce_map_from(p.parent().ring()):
+            from sage.rings.fraction_field import FractionField_generic
+            if isinstance(p.parent(), FractionField_generic) and self._parent.has_coerce_map_from(p.parent().ring()):
                 _p = self._parent.coerce(p.parent().ring()(p)) # here we require that p be integral.
             else:
                 raise TypeError("The polynomial, p, must have the same parent as self.")
@@ -11987,7 +11986,7 @@ cdef class Polynomial_generic_dense(Polynomial):
                 self._coeffs = x
             return
 
-        if sage.rings.fraction_field_element.is_FractionFieldElement(x):
+        if isinstance(x, sage.rings.fraction_field_element.FractionFieldElement):
             if x.denominator() != 1:
                 raise TypeError("denominator must be 1")
             else:

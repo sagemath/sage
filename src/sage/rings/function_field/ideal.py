@@ -529,7 +529,7 @@ class FunctionFieldIdeal(Element):
             sage: I.divisor_of_zeros()
             2*Place (1/x)
 
-            sage: # needs sage.modules sage.rings.function_field
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
             sage: O = L.maximal_order()
@@ -566,7 +566,7 @@ class FunctionFieldIdeal(Element):
             sage: I.divisor_of_poles()
             0
 
-            sage: # needs sage.modules sage.rings.function_field
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
             sage: O = L.maximal_order()

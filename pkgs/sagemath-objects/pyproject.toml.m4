@@ -45,6 +45,9 @@ version = {file = ["VERSION.txt"]}
     "cython_metaclass.h",
     "python_debug.h",
 ]
+"sage.ext" = [
+    "mod_int.h",
+]
 "sage.rings" = ["integer_fake.h"]
 
 [external]

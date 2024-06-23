@@ -219,7 +219,6 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
         """
         return self._power
 
-
     def __pow__(self,n,modulus):
         """
         Return the `n`-th iterate of this endomorphism.
@@ -240,8 +239,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
         """
         return self.__class__(self.domain(), self.power()*n)
 
-
-    def _composition(self,right):
+    def _composition(self, right):
         """
         Return self o right.
 
@@ -281,7 +279,6 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
         """
         return True
 
-
     def is_surjective(self):
         """
         Return ``True`` since any power of the Frobenius endomorphism
@@ -295,7 +292,6 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
             True
         """
         return True
-
 
     def is_identity(self):
         """

@@ -38,6 +38,7 @@ def foo(*args, **kwds):
     """
     return args, kwds
 
+
 function_map = {
   'foo': foo,
   'sqrt': math.sqrt,
@@ -45,6 +46,7 @@ function_map = {
   'cos': math.cos,
   'tan': math.tan,
 }
+
 
 cdef enum token_types:
     # leave room for ASCII character tokens such as '+'
