@@ -2578,9 +2578,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         if a.is_zero():
             return Infinity
         v = self(a).valuation(p)
-        if v % 2 == 1:
+        if v % 2:
             return v
-        # compute uniformizer pi
         pi = self.uniformizer(p)
         a = self(a) / pi**v
         F = p.residue_field()
@@ -2595,11 +2594,10 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         a = self(s**2) * a
         u = self(4).valuation(p)
         w = (a - 1).valuation(p)
-        R = PolynomialRing(F, 'x')
-        x = R.gen()
-        f = R(x**2 + x)
-        while w < u and w % 2 == 0:
-            s = self(q((a - 1) / pi**w).sqrt())
+        x = PolynomialRing(F, 'x').gen()
+        f = x**2 + x
+        while w < u and not w % 2:
+            s = F.lift(q((a - 1) / pi**w).sqrt())
             a = a / (1 + s*(pi**(w/2)))**2
             w = (a - 1).valuation(p)
         if w < u and w % 2:
