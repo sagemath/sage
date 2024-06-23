@@ -810,7 +810,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
     def approximate_closest_vector(self, t, delta=None, algorithm='embedding', *args, **kwargs):
         r"""
         Compute a vector `w` in this lattice which is close to the target vector `t`.
-        The ratio `\frac{|t-w|}{|t-u|}`, where `u` is the closest lattice vector to `t`, 
+        The ratio `\frac{|t-w|}{|t-u|}`, where `u` is the closest lattice vector to `t`,
         is exponential in the dimension of the lattice.
 
         This will check whether the basis is already `\delta`-LLL-reduced
@@ -864,7 +864,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             (1326, 1349, 1339, 1345)
 
             sage: # checking that the other algorithms work
-            sage: L.approximate_closest_vector(t, algorithm='nearest_plane') 
+            sage: L.approximate_closest_vector(t, algorithm='nearest_plane')
             (1326, 1349, 1339, 1345)
             sage: L.approximate_closest_vector(t, algorithm='rounding_off')
             (1331, 1324, 1349, 1334)
