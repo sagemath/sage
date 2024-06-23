@@ -359,10 +359,13 @@ class Package(object):
         """
         if self.__requirements is not None:
             return 'pip'
-        if self.tarball_pattern:
-            if self.tarball_pattern.endswith('.whl'):
+
+        tarballs = self.tarballs()
+        for key in tarballs:
+            if tarballs[key].filename.endswith('.whl'):
                 return 'wheel'
             return 'normal'
+
         if self.has_file('spkg-install') or self.has_file('spkg-install.in'):
             return 'script'
         return 'none'
