@@ -4080,7 +4080,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
         from sage.symbolic.ring import SymbolicRing
         from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
         from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
-        from sage.rings.power_series_ring import PowerSeriesRing
+        from sage.rings.power_series_ring import is_PowerSeriesRing
 
         if isinstance(P, SymbolicRing):
             from sage.symbolic.operators import add_vararg

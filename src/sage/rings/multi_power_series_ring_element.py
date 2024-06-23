@@ -160,7 +160,7 @@ from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.rings.infinity import infinity, is_Infinite
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.power_series_ring import is_PowerSeriesRing
 from sage.rings.power_series_ring_element import PowerSeries
 
 
@@ -368,7 +368,7 @@ class MPowerSeries(PowerSeries):
 
         # test whether x coerces to background univariate
         # power series ring of parent
-        from sage.rings.multi_power_series_ring import MPowerSeriesRing
+        from sage.rings.multi_power_series_ring import is_MPowerSeriesRing
         if is_PowerSeriesRing(xparent) or is_MPowerSeriesRing(xparent):
             # x is either a multivariate or univariate power series
             #
