@@ -16,6 +16,8 @@ from sage.categories.category import Category
 from sage.structure.category_object cimport CategoryObject
 from sage.structure.dynamic_class import DynamicMetaclass
 
+# I have no idea why this is necessary, but otherwise the type import fails (maybe because its shadowed by sage's cpython module?)
+from cpython.method cimport PyMethod_Check
 from cpython.type cimport PyType_IsSubtype
 
 # This helper class is used to implement Category_singleton.__contains__
