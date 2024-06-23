@@ -1,3 +1,5 @@
+from sage.groups.all__sagemath_categories import *
+
 from sage.misc.lazy_import import lazy_import
 
 from sage.groups.pari_group import PariGroup
@@ -6,9 +8,6 @@ from sage.groups.matrix_gps.all import *
 from sage.groups.abelian_gps.all import *
 
 from sage.groups.perm_gps.all import *
-
-from sage.groups.generic import (discrete_log, discrete_log_rho, discrete_log_lambda,
-                      linear_relation, multiple, multiples, order_from_multiple)
 
 lazy_import('sage.groups.class_function', 'ClassFunction')
 
@@ -28,10 +27,10 @@ lazy_import('sage.groups.affine_gps.euclidean_group', 'EuclideanGroup')
 lazy_import('sage.groups.artin', 'ArtinGroup')
 lazy_import('sage.groups.raag', 'RightAngledArtinGroup')
 
-lazy_import('sage.groups', 'groups_catalog', 'groups')
-
 lazy_import('sage.groups.semimonomial_transformations.semimonomial_transformation_group', 'SemimonomialTransformationGroup')
 
 lazy_import('sage.groups.group_exp', ['GroupExp', 'GroupExp_Class', 'GroupExpElement'])
 
 lazy_import('sage.groups.group_semidirect_product', ['GroupSemidirectProduct', 'GroupSemidirectProductElement'])
+
+del lazy_import
