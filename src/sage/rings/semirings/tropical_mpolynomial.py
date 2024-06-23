@@ -66,15 +66,8 @@ from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.rings.polynomial.polydict import PolyDict, ETuple
-
-class TropicalCurve(Parent):
-    def __init__(self, *args):
-        pass
-
-    def plot(self):
-        pass
-
+from sage.rings.polynomial.polydict import ETuple
+from sage.rings.semirings.tropical_hypersurface import TropicalHypersurface
 
 class TropicalMPolynomial(MPolynomial_polydict):
     r"""
@@ -82,54 +75,15 @@ class TropicalMPolynomial(MPolynomial_polydict):
 
     """
 
-    def add_zero_coefficient(self, *args):
-        """
-        Return a new tropical polynomial that include additional/modified
-        terms with coefficient equals 0
-        
-        INPUT:
-
-        *args: A variable number of arguments. Each argument should be of 
-        type tuple that represent the exponent of terms
-
-        EXAMPLES:
-
-            sage: T = TropicalSemiring(QQ, use_min=False)
-            sage: R = PolynomialRing(T, 'x,y')
-            sage: S.<x,y> = QQ[]
-            sage: c1 = 5+3*x+2*y+x*y
-            sage: p1 = R(c1); p1
-            1*x*y + 3*x + 2*y + 5
-            sage: p1.add_zero_coefficient((0,0),(3,0))
-            0*x^3 + 1*x*y + 3*x + 2*y + 0
-
-        TESTS:
-
-            sage: p1.add_zero_coefficient((1,2,1))
-            Traceback (most recent call last):
-            ...
-            ValueError: Lenght of tuple should not exceed 2
-
-        """
-        new_dict = self.dict()
-        R = self.parent()
-        for exponent in args:
-            if len(exponent) > len(R.variable_names()):
-                raise ValueError(f"Lenght of tuple should not exceed " \
-                                 f"{len(R.variable_names())}")
-            etuple = ETuple(exponent)
-            new_dict[etuple] = 0
-
-        return R(new_dict)
-    
-    def tropical_curve(self):
+    def tropical_hypersurface(self):
         r"""
-        Return tropical roots
+        Return tropical roots of ``self``. In multivariate case, the roots
+        can be represented by a tropical hypersurface. For 2 dimensions,
+        it is also called a tropical curve
 
         OUTPUT:
 
-        - tropical_roots -- a list of lists, where the inner list is of the
-        form [point, condition for parameter, order]
+        - tropical_roots -- TropicalHypersurface
         
         EXAMPLES:
 
@@ -140,43 +94,46 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: dict1 = {(0,0):0, (1,0):0, (0,1):0}
             sage: p1 = R(dict1); p1
             0*x + 0*y + 0
-            sage: p1.tropical_curve()
-            [[(0, r1), [r1 < 0], 'order = 1'],
-            [(r2, 0), [r2 < 0], 'order = 1'],
-            [(r3, r3), [r3 > 0], 'order = 1']]
+            sage: p1.tropical_hypersurface()
+            Tropical Hypersurface in 2 dimensions: 
+            [[(0, r1), [r1 < 0], 1]
+            [(r2, 0), [r2 < 0], 1]
+            [(r3, r3), [r3 > 0], 1]]
 
         ::
 
             sage: S.<x,y> = QQ[]
-            sage: c1 = 3+2*x+2*y+3*x*y
+            sage: c2 = 3+2*x+2*y+3*x*y
             sage: dict2 = {(2,0):0, (0,2):0}
-            sage: p2 = R(c1) + R(dict2); p2
+            sage: p2 = R(c2) + R(dict2); p2
             0*x^2 + 3*x*y + 2*x + 0*y^2 + 2*y + 3
-            sage: p2.tropical_curve()
-            [[(r4, -1), [1 < r4, r4 < 2], 'order = 1'],
-            [(-1, r5), [1 < r5, r5 < 2], 'order = 1'],
-            [(-r6, r6), [-1 < r6, r6 < 1], 'order = 1'],
-            [(r7 + 3, r7), [-1 < r7], 'order = 1'],
-            [(r8 - 3, r8), [2 < r8], 'order = 1'],
-            [(1, r10), [r10 < -1], 'order = 1'],
-            [(2, r11), [r11 < -1], 'order = 1'],
-            [(r13, 1), [r13 < -1], 'order = 1'],
-            [(r15, 2), [r15 < -1], 'order = 1']]
+            sage: p2.tropical_hypersurface()
+            Tropical Hypersurface in 2 dimensions: 
+            [[(r4, -1), [1 < r4, r4 < 2], 1]
+            [(-1, r5), [1 < r5, r5 < 2], 1]
+            [(-r6, r6), [-1 < r6, r6 < 1], 1]
+            [(r7 + 3, r7), [-1 < r7], 1]
+            [(r8 - 3, r8), [2 < r8], 1]
+            [(1, r10), [r10 < -1], 1]
+            [(2, r11), [r11 < -1], 1]
+            [(r13, 1), [r13 < -1], 1]
+            [(r15, 2), [r15 < -1], 1]]
 
         ::
 
-            sage: c2 = -1*x^2
+            sage: c3 = -1*x^2
             sage: dict3 = {(0,0):0, (1,0):0, (0,2):0}
-            sage: p3 = R(c2) + R(dict3); p3
+            sage: p3 = R(c3) + R(dict3); p3
             (-1)*x^2 + 0*x + 0*y^2 + 0
-            sage: p3.tropical_curve()
-            [[(0, r34), [r34 < 0], 'order = 1'],
-            [(r35, 0), [r35 < 0], 'order = 2'],
-            [(2*r37, r37), [0 < r37, r37 < (1/2)], 'order = 1'],
-            [(1, r38), [r38 < (1/2)], 'order = 1'],
-            [(r39 + 1/2, r39), [(1/2) < r39], 'order = 2']]
+            sage: p3.tropical_hypersurface()
+            Tropical Hypersurface in 2 dimensions: 
+            [[(0, r19), [r19 < 0], 1]
+            [(r20, 0), [r20 < 0], 2]
+            [(2*r22, r22), [0 < r22, r22 < (1/2)], 1]
+            [(1, r23), [r23 < (1/2)], 1]
+            [(r24 + 1/2, r24), [(1/2) < r24], 2]]
 
-        We can find tropical curve for any tropical polynomials in 
+        We can find tropical hypersurface for any tropical polynomials in 
         `n\geq 2` variables:
 
             sage: T = TropicalSemiring(QQ, use_min=False)
@@ -184,10 +141,11 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: S.<x,y,z> = QQ[]
             sage: p1 = R(x*y + (-1/2)*x*z + 4*z^2); p1
             1*x*y + (-1/2)*x*z + 4*z^2
-            sage: p1.tropical_curve()
-            [[(r32, r31 - 3/2, r31), [r31 + 9/2 < r32], 'order = 1'],
-            [(2*r33 - r34 + 3, r34, r33), [r33 < r34 + 3/2], 'order = 1'],
-            [(r35 + 9/2, r36, r35), [r36 + 3/2 < r35], 'order = 1']]
+            sage: p1.tropical_hypersurface()
+            Tropical Hypersurface in 3 dimensions: 
+            [[(r26, r25 - 3/2, r25), [r25 + 9/2 < r26], 1]
+            [(2*r27 - r28 + 3, r28, r27), [r27 < r28 + 3/2], 1]
+            [(r29 + 9/2, r30, r29), [r30 + 3/2 < r29], 1]]
 
         """
         from sage.symbolic.ring import SR
@@ -213,7 +171,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
         for keys in combinations(self.dict(), 2):
             sol = solve(linear_eq[keys[0]]==linear_eq[keys[1]], variables)
             
-            # parametric solution of these two terms
+            # parametric solution of the chosen two terms
             final_sol = []
             for s in sol[0]:
                 final_sol.append(s.right())
@@ -260,11 +218,11 @@ class TropicalMPolynomial(MPolynomial_polydict):
                     for i in range(len(keys[0])):
                         index_diff.append(abs(keys[0][i]-keys[1][i]))
                     order = gcd(index_diff)
-                    xy_interval.append(f"order = {order}")
+                    xy_interval.append(order)
 
                     tropical_roots.append(xy_interval)
 
-        return tropical_roots   
+        return TropicalHypersurface(*tropical_roots) 
 
 
 class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
