@@ -202,7 +202,12 @@ def is_PolynomialSequence(F):
         True
 
     """
-    return isinstance(F,PolynomialSequence_generic)
+    from sage.misc.superseded import deprecation
+    deprecation(38266,
+                "The function is_PolynomialSequence is deprecated; "
+                "use 'isinstance(..., PolynomialSequence_generic)' instead.")
+    return isinstance(F, PolynomialSequence_generic)
+
 
 def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
     """

@@ -29,6 +29,10 @@ from sage.rings.polynomial.polynomial_ring_constructor import (PolynomialRing,
 
 
 def is_MPolynomialRing(x):
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38266,
+                       "The function is_MPolynomialRing is deprecated; "
+                       "use 'isinstance(..., MPolynomialRing_base)' instead.")
     return isinstance(x, MPolynomialRing_base)
 
 

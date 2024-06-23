@@ -317,7 +317,7 @@ def is_MPolynomialIdeal(x) -> bool:
 
     EXAMPLES::
 
-        sage: from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
+        sage: from sage.rings.polynomial.multi_polynomial_ideal import is_MPolynomialIdeal
         sage: P.<x,y,z> = PolynomialRing(QQ)
         sage: I = [x + 2*y + 2*z - 1, x^2 + 2*y^2 + 2*z^2 - x, 2*x*y + 2*y*z - y]
 
@@ -325,15 +325,19 @@ def is_MPolynomialIdeal(x) -> bool:
     the ideal itself. This distinction is inconsistent with Singular
     but matches Magma's behavior. ::
 
-        sage: isinstance(I, MPolynomialIdeal)
+        sage: is_MPolynomialIdeal(I)
         False
 
     ::
 
         sage: I = Ideal(I)
-        sage: isinstance(I, MPolynomialIdeal)
+        sage: is_MPolynomialIdeal(I)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38266,
+                "The function is_MPolynomialIdeal is deprecated; "
+                "use 'isinstance(..., MPolynomialIdeal)' instead.")
     return isinstance(x, MPolynomialIdeal)
 
 

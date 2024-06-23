@@ -188,23 +188,23 @@ def is_PolynomialRing(x):
 
     EXAMPLES::
 
-        sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-        sage: from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
-        sage: isinstance(2, PolynomialRing_general)
+        sage: from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+        sage: from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
+        sage: is_PolynomialRing(2)
         False
 
     This polynomial ring is not univariate.
 
     ::
 
-        sage: isinstance(ZZ['x,y,z'], PolynomialRing_general)
+        sage: is_PolynomialRing(ZZ['x,y,z'])
         False
-        sage: isinstance(ZZ['x,y,z'], MPolynomialRing_base)
+        sage: is_MPolynomialRing(ZZ['x,y,z'])
         True
 
     ::
 
-        sage: isinstance(ZZ['w'], PolynomialRing_general)
+        sage: is_PolynomialRing(ZZ['w'])
         True
 
     Univariate means not only in one variable, but is a specific data
@@ -216,11 +216,15 @@ def is_PolynomialRing(x):
         sage: # needs sage.libs.singular
         sage: R.<w> = PolynomialRing(ZZ, implementation="singular"); R
         Multivariate Polynomial Ring in w over Integer Ring
-        sage: isinstance(R, PolynomialRing_general)
+        sage: is_PolynomialRing(R)
         False
         sage: type(R)
         <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38266,
+                "The function is_PolynomialRing is deprecated; "
+                "use 'isinstance(..., PolynomialRing_general)' instead.")
     return isinstance(x, PolynomialRing_general)
 
 

@@ -346,13 +346,13 @@ def is_QuotientRing(x):
 
     EXAMPLES::
 
-        sage: from sage.rings.quotient_ring import QuotientRing_nc
+        sage: from sage.rings.quotient_ring import is_QuotientRing
         sage: R.<x> = PolynomialRing(ZZ,'x')
         sage: I = R.ideal([4 + 3*x + x^2, 1 + x^2])
         sage: S = R.quotient_ring(I)
-        sage: isinstance(S, QuotientRing_nc)
+        sage: is_QuotientRing(S)
         True
-        sage: isinstance(R, QuotientRing_nc)
+        sage: is_QuotientRing(R)
         False
 
     ::
@@ -361,11 +361,15 @@ def is_QuotientRing(x):
         sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
         sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F
         sage: Q = F.quo(I)
-        sage: isinstance(Q, QuotientRing_nc)
+        sage: is_QuotientRing(Q)
         True
-        sage: isinstance(F, QuotientRing_nc)
+        sage: is_QuotientRing(F)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38266,
+                "The function is_QuotientRing is deprecated; "
+                "use 'isinstance(..., QuotientRing_nc)' instead.")
     return isinstance(x, QuotientRing_nc)
 
 

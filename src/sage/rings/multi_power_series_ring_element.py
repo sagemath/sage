@@ -170,19 +170,23 @@ def is_MPowerSeries(f):
 
     TESTS::
 
-        sage: from sage.rings.power_series_ring_element import PowerSeries
-        sage: from sage.rings.multi_power_series_ring_element import MPowerSeries
+        sage: from sage.rings.power_series_ring_element import is_PowerSeries
+        sage: from sage.rings.multi_power_series_ring_element import is_MPowerSeries
         sage: M = PowerSeriesRing(ZZ,4,'v')
-        sage: isinstance(M.random_element(10), PowerSeries)
+        sage: is_PowerSeries(M.random_element(10))
         True
-        sage: isinstance(M.random_element(10), MPowerSeries)
+        sage: is_MPowerSeries(M.random_element(10))
         True
         sage: T.<v> = PowerSeriesRing(RR)
-        sage: isinstance(1 - v + v^2 +O(v^3), MPowerSeries)
+        sage: is_MPowerSeries(1 - v + v^2 +O(v^3))
         False
-        sage: isinstance(1 - v + v^2 +O(v^3), PowerSeries)
+        sage: is_PowerSeries(1 - v + v^2 +O(v^3))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38266,
+                "The function is_MPowerSeries is deprecated; "
+                "use 'isinstance(..., MPowerSeries)' instead.")
     return isinstance(f, MPowerSeries)
 
 
