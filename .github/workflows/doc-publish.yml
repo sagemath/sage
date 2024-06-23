@@ -69,7 +69,6 @@ jobs:
 
       - name: Update deployment status PR check
         uses: myrotvorets/set-commit-status-action@v2.0.1
-        if: ${{ always() }}
         env:
           DEPLOY_SUCCESS: Successfully deployed preview.
           DEPLOY_FAILURE: Failed to deploy preview.
@@ -80,10 +79,12 @@ jobs:
           context: Deploy Documentation
           targetUrl: ${{ steps.deploy-netlify.outputs.NETLIFY_URL }}
           description: ${{ job.status == 'success' && env.DEPLOY_SUCCESS || env.DEPLOY_FAILURE }}
+        if: steps.download-doc.outcome == 'success'
 
       - name: Report deployment url
         run: |
           echo "::notice::The documentation has been deployed - ${{ steps.deploy-netlify.outputs.NETLIFY_URL }}"
+        if: steps.download-doc.outcome == 'success'
 
   publish-live-doc:
     runs-on: ubuntu-latest
@@ -126,6 +127,6 @@ jobs:
         if: steps.download-doc.outcome == 'success'
 
       - name: Report deployment url
-        if: steps.download-doc.outcome == 'success'
         run: |
           echo "::notice::The live documentation has been deployed - ${{ steps.deploy-netlify.outputs.NETLIFY_URL }}"
+        if: steps.download-doc.outcome == 'success'
