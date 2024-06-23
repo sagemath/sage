@@ -1401,8 +1401,8 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: f * (t^-2 + 1) + (1/2*t^4 + 1/2*t^3) * (t^-3 + 1)
             1
         """
-        from sage.rings.ideal import is_Ideal
-        if is_Ideal(m):
+        from sage.rings.ideal import Ideal_generic
+        if isinstance(m, Ideal_generic):
             v = m.gens_reduced()
             if len(v) > 1:
                 raise NotImplementedError("only inversion modulo principal ideals implemented")

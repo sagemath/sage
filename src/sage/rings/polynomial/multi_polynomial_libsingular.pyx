@@ -1099,8 +1099,8 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         coerce = kwds.get('coerce', True)
         if len(gens) == 1:
             gens = gens[0]
-        from sage.rings.ideal import is_Ideal
-        if is_Ideal(gens):
+        from sage.rings.ideal import Ideal_generic
+        if isinstance(gens, Ideal_generic):
             if gens.ring() is self:
                 return gens
             gens = gens.gens()

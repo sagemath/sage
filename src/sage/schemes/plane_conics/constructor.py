@@ -32,7 +32,7 @@ from sage.rings.fraction_field import FractionField_generic
 
 from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.polynomial.multi_polynomial import MPolynomial
-from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
+from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.schemes.affine.affine_point import SchemeMorphism_point_affine
@@ -242,7 +242,7 @@ def Conic(base_field, F=None, names=None, unique=True):
             return ProjectiveConic_rational_field(P2, F)
         if isinstance(base_field, NumberField):
             return ProjectiveConic_number_field(P2, F)
-        if isinstance(base_field, FractionField_generic) and (is_PolynomialRing(base_field.ring()) or is_MPolynomialRing(base_field.ring())):
+        if isinstance(base_field, FractionField_generic) and (is_PolynomialRing(base_field.ring()) or isinstance(base_field.ring(), MPolynomialRing_base)):
             return ProjectiveConic_rational_function_field(P2, F)
 
         return ProjectiveConic_field(P2, F)

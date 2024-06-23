@@ -123,16 +123,16 @@ def is_PowerSeries(x):
     EXAMPLES::
 
         sage: R.<x> = PowerSeriesRing(ZZ)
-        sage: from sage.rings.power_series_ring_element import is_PowerSeries
-        sage: is_PowerSeries(1 + x^2)
+        sage: from sage.rings.power_series_ring_element import PowerSeries
+        sage: isinstance(1 + x^2, PowerSeries)
         True
-        sage: is_PowerSeries(x - x)
+        sage: isinstance(x - x, PowerSeries)
         True
-        sage: is_PowerSeries(0)
+        sage: isinstance(0, PowerSeries)
         False
         sage: var('x')                                                                  # needs sage.symbolic
         x
-        sage: is_PowerSeries(1 + x^2)                                                   # needs sage.symbolic
+        sage: isinstance(1 + x^2, PowerSeries)                                                   # needs sage.symbolic
         False
     """
     return isinstance(x, PowerSeries)

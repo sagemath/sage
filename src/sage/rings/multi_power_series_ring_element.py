@@ -160,7 +160,7 @@ from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.rings.infinity import infinity, is_Infinite
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-from sage.rings.power_series_ring import is_PowerSeriesRing
+from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.power_series_ring_element import PowerSeries
 
 
@@ -170,17 +170,17 @@ def is_MPowerSeries(f):
 
     TESTS::
 
-        sage: from sage.rings.power_series_ring_element import is_PowerSeries
-        sage: from sage.rings.multi_power_series_ring_element import is_MPowerSeries
+        sage: from sage.rings.power_series_ring_element import PowerSeries
+        sage: from sage.rings.multi_power_series_ring_element import MPowerSeries
         sage: M = PowerSeriesRing(ZZ,4,'v')
-        sage: is_PowerSeries(M.random_element(10))
+        sage: isinstance(M.random_element(10), PowerSeries)
         True
-        sage: is_MPowerSeries(M.random_element(10))
+        sage: isinstance(M.random_element(10), MPowerSeries)
         True
         sage: T.<v> = PowerSeriesRing(RR)
-        sage: is_MPowerSeries(1 - v + v^2 +O(v^3))
+        sage: isinstance(1 - v + v^2 +O(v^3), MPowerSeries)
         False
-        sage: is_PowerSeries(1 - v + v^2 +O(v^3))
+        sage: isinstance(1 - v + v^2 +O(v^3), PowerSeries)
         True
     """
     return isinstance(f, MPowerSeries)
@@ -364,12 +364,12 @@ class MPowerSeries(PowerSeries):
 
         # test whether x coerces to background univariate
         # power series ring of parent
-        from sage.rings.multi_power_series_ring import is_MPowerSeriesRing
+        from sage.rings.multi_power_series_ring import MPowerSeriesRing
         if is_PowerSeriesRing(xparent) or is_MPowerSeriesRing(xparent):
             # x is either a multivariate or univariate power series
             #
             # test whether x coerces directly to designated parent
-            if is_MPowerSeries(x):
+            if isinstance(x, MPowerSeries):
                 try:
                     self._bg_value = parent._bg_ps_ring(x._bg_value)
                 except TypeError:

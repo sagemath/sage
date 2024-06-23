@@ -317,7 +317,7 @@ def is_MPolynomialIdeal(x) -> bool:
 
     EXAMPLES::
 
-        sage: from sage.rings.polynomial.multi_polynomial_ideal import is_MPolynomialIdeal
+        sage: from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
         sage: P.<x,y,z> = PolynomialRing(QQ)
         sage: I = [x + 2*y + 2*z - 1, x^2 + 2*y^2 + 2*z^2 - x, 2*x*y + 2*y*z - y]
 
@@ -325,13 +325,13 @@ def is_MPolynomialIdeal(x) -> bool:
     the ideal itself. This distinction is inconsistent with Singular
     but matches Magma's behavior. ::
 
-        sage: is_MPolynomialIdeal(I)
+        sage: isinstance(I, MPolynomialIdeal)
         False
 
     ::
 
         sage: I = Ideal(I)
-        sage: is_MPolynomialIdeal(I)
+        sage: isinstance(I, MPolynomialIdeal)
         True
     """
     return isinstance(x, MPolynomialIdeal)
@@ -597,7 +597,7 @@ class MPolynomialIdeal_singular_base_repr:
         from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
         F = self.base_ring()
         if (not isinstance(F, FractionField_generic) or
-            (not is_MPolynomialRing(F.ring()) and not is_PolynomialRing(F.ring()))):
+            (not isinstance(F.ring(), MPolynomialRing_base) and not is_PolynomialRing(F.ring()))):
             raise TypeError("the base ring must be a field with parameters")
         from sage.arith.functions import lcm
         from sage.libs.singular.function import lib, singular_function

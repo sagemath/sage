@@ -118,9 +118,9 @@ from sage.arith.functions import lcm
 
 from sage.rings.polynomial import polynomial_fateman
 
-from sage.rings.ideal import is_Ideal
+from sage.rings.ideal import Ideal_generic
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
+from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
 from sage.rings.polynomial.multi_polynomial cimport MPolynomial
 from sage.rings.polynomial.polynomial_quotient_ring_element import PolynomialQuotientRingElement
 from sage.misc.cachefunc import cached_function
@@ -1616,8 +1616,8 @@ cdef class Polynomial(CommutativePolynomial):
 
         - Robert Bradshaw (2007-05-31)
         """
-        from sage.rings.ideal import is_Ideal
-        if is_Ideal(m):
+        from sage.rings.ideal import Ideal_generic
+        if isinstance(m, Ideal_generic):
             v = m.gens_reduced()
             if len(v) > 1:
                 raise NotImplementedError("Don't know how to invert modulo non-principal ideal %s" % m)
@@ -7979,12 +7979,12 @@ cdef class Polynomial(CommutativePolynomial):
             4 + 4*T + O(T^2)
         """
         # Late import to avoid cyclic dependencies:
-        from sage.rings.power_series_ring import is_PowerSeriesRing
+        from sage.rings.power_series_ring import PowerSeriesRing
         if self.is_zero():
             return self  # return 0
         n = self.degree()
         base_ring = self._parent.base_ring()
-        if (is_MPolynomialRing(base_ring) or
+        if (isinstance(base_ring, MPolynomialRing_base) or
             is_PowerSeriesRing(base_ring)):
             # It is often cheaper to compute discriminant of simple
             # multivariate polynomial and substitute the real
@@ -9988,7 +9988,7 @@ cdef class Polynomial(CommutativePolynomial):
             _p = self._parent.coerce(p)
         elif p is infinity.infinity:
             return -self.degree()
-        elif is_Ideal(p) and p.ring() is self._parent: # eventually need to handle fractional ideals in the fraction field
+        elif isinstance(p, Ideal_generic) and p.ring() is self._parent: # eventually need to handle fractional ideals in the fraction field
             if self._parent.base_ring().is_field(): # common case
                 _p = p.gen()
             else:

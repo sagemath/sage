@@ -219,14 +219,14 @@ def is_Ideal(x):
     that Sage does not interpret rings objects themselves as ideals.
     However, one can still explicitly construct these ideals::
 
-        sage: from sage.rings.ideal import is_Ideal
+        sage: from sage.rings.ideal import Ideal_generic
         sage: R = ZZ
-        sage: is_Ideal(R)
+        sage: isinstance(R, Ideal_generic)
         False
-        sage: 1*R; is_Ideal(1*R)
+        sage: 1*R; isinstance(1*R, Ideal_generic)
         Principal ideal (1) of Integer Ring
         True
-        sage: 0*R; is_Ideal(0*R)
+        sage: 0*R; isinstance(0*R, Ideal_generic)
         Principal ideal (0) of Integer Ring
         True
 
@@ -235,9 +235,9 @@ def is_Ideal(x):
         sage: R = PolynomialRing(QQ, 'x'); x = R.gen()
         sage: I = R.ideal(x^2 + 1); I
         Principal ideal (x^2 + 1) of Univariate Polynomial Ring in x over Rational Field
-        sage: is_Ideal(I)
+        sage: isinstance(I, Ideal_generic)
         True
-        sage: is_Ideal((x^2 + 1)*R)
+        sage: isinstance((x^2 + 1)*R, Ideal_generic)
         True
     """
     return isinstance(x, Ideal_generic)

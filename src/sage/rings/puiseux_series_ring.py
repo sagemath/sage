@@ -30,7 +30,7 @@ from sage.misc.cachefunc import cached_method
 from sage.rings.infinity import infinity
 from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.laurent_series_ring_element import LaurentSeries
-from sage.rings.power_series_ring import is_PowerSeriesRing
+from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.power_series_ring_element import PowerSeries
 from sage.rings.puiseux_series_ring_element import PuiseuxSeries
 from sage.structure.element import parent

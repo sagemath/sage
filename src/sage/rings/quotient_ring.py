@@ -346,13 +346,13 @@ def is_QuotientRing(x):
 
     EXAMPLES::
 
-        sage: from sage.rings.quotient_ring import is_QuotientRing
+        sage: from sage.rings.quotient_ring import QuotientRing_nc
         sage: R.<x> = PolynomialRing(ZZ,'x')
         sage: I = R.ideal([4 + 3*x + x^2, 1 + x^2])
         sage: S = R.quotient_ring(I)
-        sage: is_QuotientRing(S)
+        sage: isinstance(S, QuotientRing_nc)
         True
-        sage: is_QuotientRing(R)
+        sage: isinstance(R, QuotientRing_nc)
         False
 
     ::
@@ -361,9 +361,9 @@ def is_QuotientRing(x):
         sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
         sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F
         sage: Q = F.quo(I)
-        sage: is_QuotientRing(Q)
+        sage: isinstance(Q, QuotientRing_nc)
         True
-        sage: is_QuotientRing(F)
+        sage: isinstance(F, QuotientRing_nc)
         False
     """
     return isinstance(x, QuotientRing_nc)

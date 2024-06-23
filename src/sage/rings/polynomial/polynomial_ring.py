@@ -189,7 +189,7 @@ def is_PolynomialRing(x):
     EXAMPLES::
 
         sage: from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-        sage: from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
+        sage: from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
         sage: is_PolynomialRing(2)
         False
 
@@ -199,7 +199,7 @@ def is_PolynomialRing(x):
 
         sage: is_PolynomialRing(ZZ['x,y,z'])
         False
-        sage: is_MPolynomialRing(ZZ['x,y,z'])
+        sage: isinstance(ZZ['x,y,z'], MPolynomialRing_base)
         True
 
     ::
@@ -616,9 +616,9 @@ class PolynomialRing_general(Ring):
             sage: QQ['x'].flattening_morphism()
             Identity endomorphism of Univariate Polynomial Ring in x over Rational Field
         """
-        from .multi_polynomial_ring import is_MPolynomialRing
+        from .multi_polynomial_ring import MPolynomialRing_base
         base = self.base_ring()
-        if is_PolynomialRing(base) or is_MPolynomialRing(base):
+        if is_PolynomialRing(base) or isinstance(base, MPolynomialRing_base):
             from .flatten import FlatteningMorphism
             return FlatteningMorphism(self)
         else:
@@ -842,8 +842,8 @@ class PolynomialRing_general(Ring):
             return PolynomialRingHomomorphism_from_base(RingHomset(P, self), f)
 
         # Last, we consider multivariate polynomial rings:
-        from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
-        if is_MPolynomialRing(P) and self.variable_name() in P.variable_names():
+        from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
+        if isinstance(P, MPolynomialRing_base) and self.variable_name() in P.variable_names():
             P_ = P.remove_var(self.variable_name())
             return self.base_ring() != P_ and self.base_ring().has_coerce_map_from(P_)
 

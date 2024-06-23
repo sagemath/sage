@@ -168,9 +168,9 @@ from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.infinity import Infinity
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
-from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
+from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.quotient_ring import is_QuotientRing
+from sage.rings.quotient_ring import QuotientRing_nc
 from sage.structure.sequence import Sequence_generic
 
 try:
@@ -197,8 +197,8 @@ def is_PolynomialSequence(F):
         sage: F = Sequence(I, P); F
         [x^2 + y^2, x^2 - y^2]
 
-        sage: from sage.rings.polynomial.multi_polynomial_sequence import is_PolynomialSequence
-        sage: is_PolynomialSequence(F)
+        sage: from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence_generic
+        sage: isinstance(F, PolynomialSequence_generic)
         True
 
     """
@@ -297,7 +297,7 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
     except ImportError:
         BooleanMonomialMonoid = ()
 
-    is_ring = lambda r: is_MPolynomialRing(r) or isinstance(r, BooleanMonomialMonoid) or (is_QuotientRing(r) and is_MPolynomialRing(r.cover_ring()))
+    is_ring = lambda r: isinstance(r, MPolynomialRing_base) or isinstance(r, BooleanMonomialMonoid) or (isinstance(r, QuotientRing_nc) and isinstance(r.cover_ring(), MPolynomialRing_base))
 
     if is_ring(arg1):
         ring, gens = arg1, arg2
@@ -958,7 +958,7 @@ class PolynomialSequence_generic(Sequence_generic):
              b^2 + 2*a*c + 2*b*d - c,
              a^127 + a]
         """
-        if is_PolynomialSequence(right) and right.ring() == self.ring():
+        if isinstance(right, PolynomialSequence_generic) and right.ring() == self.ring():
             return PolynomialSequence(self.ring(), self.parts() + right.parts())
 
         elif isinstance(right,(tuple,list)) and all((x.parent() == self.ring() for x in right)):

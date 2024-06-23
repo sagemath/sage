@@ -182,7 +182,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.finite_rings.finite_field_constructor import zech_log_bound, FiniteField as GF
 from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn
-from sage.rings.ideal import is_Ideal
+from sage.rings.ideal import Ideal_generic
 from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
 from sage.rings.number_field.number_field_ideal import NumberFieldIdeal
 
@@ -322,7 +322,7 @@ class ResidueFieldFactory(UniqueFactory):
             Residue field in abar of Fractional ideal (2*a^2 + 3*a - 10)
         """
         if check:
-            if not is_Ideal(p):
+            if not isinstance(p, Ideal_generic):
                 if isinstance(p, (int, Integer, Rational)):
                     p = ZZ.ideal(p)
                 elif isinstance(p, NumberFieldElement_base):

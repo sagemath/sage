@@ -236,7 +236,7 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
            w0^2 + 4*w0*w8 + 4*w8^2 + 2*w0*w13 + 4*w8*w13 + w13^2
     """
     from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-    from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
+    from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
 
     R = PolynomialRing(base_ring, *args, **kwds)
     if R in _cache:
@@ -246,7 +246,7 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
         # univariate case
         P = LaurentPolynomialRing_univariate(R)
     else:
-        assert is_MPolynomialRing(R)
+        assert isinstance(R, MPolynomialRing_base)
         P = LaurentPolynomialRing_mpair(R)
 
     _cache[R] = P

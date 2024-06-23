@@ -59,7 +59,7 @@ def is_LaurentSeriesRing(x):
 
     TESTS::
 
-        sage: from sage.rings.laurent_series_ring import is_LaurentSeriesRing
+        sage: from sage.rings.laurent_series_ring import LaurentSeriesRing
         sage: K.<q> = LaurentSeriesRing(QQ)
         sage: is_LaurentSeriesRing(K)
         True
@@ -679,7 +679,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             LaurentPolynomialRing_generic,
         )
         from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-        from sage.rings.power_series_ring import is_PowerSeriesRing
+        from sage.rings.power_series_ring import PowerSeriesRing
 
         if ((is_LaurentSeriesRing(P) or
              isinstance(P, LaurentPolynomialRing_generic) or

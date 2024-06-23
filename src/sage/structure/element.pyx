@@ -3208,8 +3208,8 @@ cdef class CommutativeRingElement(RingElement):
             sage: (x^2 + y^2 + z^2).mod( (x^3, y - z) )                                 # needs sage.libs.singular
             x^2 + 2*z^2
         """
-        from sage.rings.ideal import is_Ideal
-        if not is_Ideal(I) or not I.ring() is self._parent:
+        from sage.rings.ideal import Ideal_generic
+        if not isinstance(I, Ideal_generic) or not I.ring() is self._parent:
             I = self._parent.ideal(I)
             #raise TypeError, "I = %s must be an ideal in %s"%(I, self.parent())
         return I.reduce(self)

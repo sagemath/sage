@@ -150,8 +150,8 @@ def parent_to_repr_short(P):
     from sage.rings.real_mpfr import RR
     from sage.symbolic.ring import SR
     from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-    from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
-    from sage.rings.power_series_ring import is_PowerSeriesRing
+    from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
+    from sage.rings.power_series_ring import PowerSeriesRing
 
     def abbreviate(P):
         try:
@@ -168,7 +168,7 @@ def parent_to_repr_short(P):
             pass
         raise ValueError('Cannot abbreviate %s.' % (P,))
 
-    poly = is_PolynomialRing(P) or is_MPolynomialRing(P)
+    poly = is_PolynomialRing(P) or isinstance(P, MPolynomialRing_base)
     from sage.rings import multi_power_series_ring
     power = is_PowerSeriesRing(P) or \
             multi_power_series_ring.is_MPowerSeriesRing(P)

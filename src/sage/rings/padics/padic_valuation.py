@@ -122,7 +122,7 @@ class PadicValuationFactory(UniqueFactory):
         from sage.rings.rational_field import QQ
         from sage.rings.padics.padic_generic import pAdicGeneric
         from sage.rings.number_field.number_field_base import NumberField
-        from sage.rings.polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
+        from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
 
         if R.characteristic() != 0:
             # We do not support equal characteristic yet
@@ -132,7 +132,7 @@ class PadicValuationFactory(UniqueFactory):
             return self.create_key_for_integers(R, prime), {}
         elif isinstance(R, pAdicGeneric):
             return self.create_key_for_local_ring(R, prime), {}
-        elif isinstance(R.fraction_field(), NumberField) or is_PolynomialQuotientRing(R):
+        elif isinstance(R.fraction_field(), NumberField) or isinstance(R, PolynomialQuotientRing_generic):
             return self.create_key_and_extra_args_for_number_field(R, prime, approximants=approximants)
         else:
             raise NotImplementedError("p-adic valuations not implemented for %r" % (R,))
@@ -362,13 +362,13 @@ class PadicValuationFactory(UniqueFactory):
              x^2 + 1)
 
         """
-        from sage.rings.polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
+        from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
         from sage.rings.number_field.number_field_base import NumberField
         if isinstance(R.fraction_field(), NumberField):
             L = R.fraction_field()
             G = L.relative_polynomial()
             K = L.base_ring()
-        elif is_PolynomialQuotientRing(R):
+        elif isinstance(R, PolynomialQuotientRing_generic):
             from sage.categories.number_fields import NumberFields
             if R.base_ring().fraction_field() not in NumberFields():
                 raise NotImplementedError("cannot normalize quotients over %r" % (R.base_ring(),))
@@ -394,7 +394,7 @@ class PadicValuationFactory(UniqueFactory):
         from sage.rings.rational_field import QQ
         from sage.rings.padics.padic_generic import pAdicGeneric
         from sage.rings.valuation.valuation_space import DiscretePseudoValuationSpace
-        from sage.rings.polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
+        from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
         from sage.rings.number_field.number_field_base import NumberField
         R = key[0]
         parent = DiscretePseudoValuationSpace(R)
@@ -412,7 +412,7 @@ class PadicValuationFactory(UniqueFactory):
             K = R.fraction_field()
             if isinstance(K, NumberField):
                 G = K.relative_polynomial()
-            elif is_PolynomialQuotientRing(R):
+            elif isinstance(R, PolynomialQuotientRing_generic):
                 G = R.modulus()
             else:
                 raise NotImplementedError
@@ -800,9 +800,9 @@ class pAdicValuation_base(DiscreteValuation):
             if domain_fraction_field.is_subring(ring):
                 return pAdicValuation(domain_fraction_field, self).extensions(ring)
         if self.domain().is_subring(ring):
-            from sage.rings.polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
-            if is_PolynomialQuotientRing(ring):
-                if is_PolynomialQuotientRing(self.domain()):
+            from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
+            if isinstance(ring, PolynomialQuotientRing_generic):
+                if isinstance(self.domain(), PolynomialQuotientRing_generic):
                     if self.domain().modulus() == ring.modulus():
                         base_extensions = self._base_valuation.extensions(self._base_valuation.domain().change_ring(self._base_valuation.domain().base_ring().fraction_field()))
                         return [pAdicValuation(ring, base._initial_approximation) for base in base_extensions]
@@ -1463,8 +1463,8 @@ def _fraction_field(ring):
     if ring in Fields():
         return ring
 
-    from sage.rings.polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
-    if is_PolynomialQuotientRing(ring):
+    from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
+    if isinstance(ring, PolynomialQuotientRing_generic):
         from sage.categories.integral_domains import IntegralDomains
         if ring in IntegralDomains():
             return ring.base().change_ring(ring.base_ring().fraction_field()).quo(ring.modulus())

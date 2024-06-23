@@ -69,7 +69,7 @@ from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
 from sage.categories.integral_domains import IntegralDomains
 from sage.rings.infinity import Infinity
-from sage.rings.laurent_series_ring import is_LaurentSeriesRing
+from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.padics.factory import Qp as pAdicField
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.schemes.elliptic_curves.constructor import EllipticCurve

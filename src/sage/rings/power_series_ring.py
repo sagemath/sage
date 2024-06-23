@@ -148,7 +148,7 @@ from sage.rings import (
 )
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.infinity import infinity
-from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
+from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.category_object import normalize_names
@@ -466,7 +466,7 @@ def is_PowerSeriesRing(R):
 
     EXAMPLES::
 
-        sage: from sage.rings.power_series_ring import is_PowerSeriesRing
+        sage: from sage.rings.power_series_ring import PowerSeriesRing
         sage: is_PowerSeriesRing(10)
         False
         sage: is_PowerSeriesRing(QQ[['x']])
@@ -580,7 +580,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             K = base_ring
             names = K.variable_names() + (name,)
             self.__mpoly_ring = PolynomialRing(K.base_ring(), names=names)
-            assert is_MPolynomialRing(self.__mpoly_ring)
+            assert isinstance(self.__mpoly_ring, MPolynomialRing_base)
             self.Element = power_series_mpoly.PowerSeries_mpoly
         elif implementation == 'pari':
             from .power_series_pari import PowerSeries_pari
