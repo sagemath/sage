@@ -233,8 +233,8 @@ def is_MPowerSeriesRing(x):
 
     TESTS::
 
-        sage: from sage.rings.power_series_ring import PowerSeriesRing
-        sage: from sage.rings.multi_power_series_ring import MPowerSeriesRing
+        sage: from sage.rings.power_series_ring import is_PowerSeriesRing
+        sage: from sage.rings.multi_power_series_ring import is_MPowerSeriesRing
         sage: M = PowerSeriesRing(ZZ, 4, 'v')
         sage: is_PowerSeriesRing(M)
         False

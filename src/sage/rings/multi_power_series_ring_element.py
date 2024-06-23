@@ -174,8 +174,14 @@ def is_MPowerSeries(f):
         sage: from sage.rings.multi_power_series_ring_element import is_MPowerSeries
         sage: M = PowerSeriesRing(ZZ,4,'v')
         sage: is_PowerSeries(M.random_element(10))
+        doctest:warning...
+        DeprecationWarning: The function is_PowerSeries is deprecated; use 'isinstance(..., PowerSeries)' instead.
+        See https://github.com/sagemath/sage/issues/38266 for details.
         True
         sage: is_MPowerSeries(M.random_element(10))
+        doctest:warning...
+        DeprecationWarning: The function is_MPowerSeries is deprecated; use 'isinstance(..., MPowerSeries)' instead.
+        See https://github.com/sagemath/sage/issues/38266 for details.
         True
         sage: T.<v> = PowerSeriesRing(RR)
         sage: is_MPowerSeries(1 - v + v^2 +O(v^3))

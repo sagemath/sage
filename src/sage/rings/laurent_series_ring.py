@@ -59,7 +59,7 @@ def is_LaurentSeriesRing(x):
 
     TESTS::
 
-        sage: from sage.rings.laurent_series_ring import LaurentSeriesRing
+        sage: from sage.rings.laurent_series_ring import is_LaurentSeriesRing
         sage: K.<q> = LaurentSeriesRing(QQ)
         sage: is_LaurentSeriesRing(K)
         True
