@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 # distutils: libraries = flint
 r"""
 Arbitrary precision complex ball matrices

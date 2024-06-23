@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 # cython: binding=True
 r"""
 Hyperbolicity
@@ -149,19 +150,19 @@ Methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from libc.stdint cimport uint16_t, uint32_t, uint64_t
 from libc.string cimport memset
 from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport sig_on, sig_off
 from memory_allocator cimport MemoryAllocator
 
-from sage.graphs.distances_all_pairs cimport c_distances_all_pairs
 from sage.arith.misc import binomial
-from sage.rings.integer_ring import ZZ
+from sage.data_structures.bitset_base cimport *
 from sage.graphs.base.static_sparse_graph cimport short_digraph
 from sage.graphs.base.static_sparse_graph cimport init_short_digraph
 from sage.graphs.base.static_sparse_graph cimport free_short_digraph
-from libc.stdint cimport uint16_t, uint32_t, uint64_t
-from sage.data_structures.bitset_base cimport *
+from sage.graphs.distances_all_pairs cimport c_distances_all_pairs
+from sage.rings.integer_ring import ZZ
 
 
 # Defining a pair of vertices as a C struct

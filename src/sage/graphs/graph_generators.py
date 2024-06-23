@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 r"""
 Common graphs
 
@@ -1408,6 +1409,7 @@ class GraphGenerators:
             sage: (g[0][1].laplacian_matrix(normalized=True).charpoly()                 # needs sage.modules sage.symbolic
             ....:   == g[0][1].laplacian_matrix(normalized=True).charpoly())
             True
+
         """
         if matrix_function is None:
             matrix_function = lambda g: g.adjacency_matrix()

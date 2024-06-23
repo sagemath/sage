@@ -1,3 +1,6 @@
+# sage_setup: distribution = sagemath-combinat
+# sage.doctest: needs sage.combinat sage.modules
+
 # We put all definitions together, whether they appear in def.h or
 # macro.h
 cdef extern from 'symmetrica/def.h':
@@ -404,11 +407,8 @@ cdef void late_import() noexcept:
            SchubertPolynomialRing, SchubertPolynomial_class,\
            two, fifteen, thirty, zero, sage_maxint
 
-    if matrix_constructor is not None:
+    if Integer is not None:
         return
-
-    import sage.matrix.constructor
-    matrix_constructor = sage.matrix.constructor.matrix
 
     import sage.rings.integer
     Integer = sage.rings.integer.Integer
@@ -429,23 +429,12 @@ cdef void late_import() noexcept:
     Permutation = sage.combinat.permutation.Permutation
     Permutations = sage.combinat.permutation.Permutations
 
-    import sage.functions.all
-    sqrt = sage.functions.all.sqrt
-
-    import sage.misc.all
-    prod = sage.misc.all.prod
-
-    import sage.rings.polynomial.polynomial_ring_constructor
-    PolynomialRing =  sage.rings.polynomial.polynomial_ring_constructor.PolynomialRing
-
-    import sage.rings.all
-    QQ = sage.rings.all.QQ
-    Rational = sage.rings.all.Rational
-    ZZ = sage.rings.all.ZZ
-
-    #Symmetric Functions
-    import sage.combinat.sf.sf
-    SymmetricFunctions = sage.combinat.sf.sf.SymmetricFunctions
+    from sage.misc.functional import sqrt
+    from sage.misc.misc_c import prod
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+    from sage.rings.rational_field import QQ
+    from sage.rings.rational import Rational
+    from sage.rings.integer_ring import ZZ
 
     import builtins
     builtinlist = builtins.list
@@ -455,15 +444,24 @@ cdef void late_import() noexcept:
     import sage.rings.polynomial.multi_polynomial
     MPolynomial = sage.rings.polynomial.multi_polynomial.MPolynomial
 
-    import sage.combinat.schubert_polynomial
-    SchubertPolynomialRing = sage.combinat.schubert_polynomial.SchubertPolynomialRing
-    SchubertPolynomial_class = sage.combinat.schubert_polynomial.SchubertPolynomial_class
-
     two = Integer(2)
     fifteen = Integer(15)
     thirty = Integer(30)
     zero = Integer(0)
     sage_maxint = Integer(maxint)
+
+
+    #Symmetric Functions
+    import sage.combinat.sf.sf
+    SymmetricFunctions = sage.combinat.sf.sf.SymmetricFunctions
+
+    import sage.matrix.constructor
+    matrix_constructor = sage.matrix.constructor.matrix
+
+    import sage.combinat.schubert_polynomial
+    SchubertPolynomialRing = sage.combinat.schubert_polynomial.SchubertPolynomialRing
+    SchubertPolynomial_class = sage.combinat.schubert_polynomial.SchubertPolynomial_class
+
 
 ##########################################
 cdef object _py(OP a):

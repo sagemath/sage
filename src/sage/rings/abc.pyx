@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Abstract base classes for rings
 """

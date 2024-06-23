@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 r"""
 Dense matrices over `\ZZ/n\ZZ` for `n` small using the LinBox library (FFLAS/FFPACK)
 
@@ -1699,13 +1700,13 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             sage: A = random_matrix(GF(16007),  0, 10)
             sage: A.echelon_form()
             []
-            sage: A = random_matrix(GF(16007), 10,  0)
+            sage: A = random_matrix(GF(16007), 10,  0)                                  # needs sage.libs.pari
             sage: A.echelon_form()
             []
-            sage: A = random_matrix(GF(16007),  0,  0)
+            sage: A = random_matrix(GF(16007),  0,  0)                                  # needs sage.libs.pari
             sage: A.echelon_form()
             []
-            sage: A = matrix(GF(16007),  10,  10)
+            sage: A = matrix(GF(16007),  10,  10)                                       # needs sage.libs.pari
             sage: A.echelon_form()
             [0 0 0 0 0 0 0 0 0 0]
             [0 0 0 0 0 0 0 0 0 0]
@@ -2162,10 +2163,10 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             sage: A = random_matrix(GF(16007), 0, 0)
             sage: A.rank()
             0
-            sage: A = random_matrix(GF(16007), 1, 0)
+            sage: A = random_matrix(GF(16007), 1, 0)                                    # needs sage.libs.pari
             sage: A.rank()
             0
-            sage: A = random_matrix(GF(16007), 0, 1)
+            sage: A = random_matrix(GF(16007), 0, 1)                                    # needs sage.libs.pari
             sage: A.rank()
             0
         """
@@ -2189,18 +2190,18 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         EXAMPLES::
 
             sage: s = set()
-            sage: while s != set(GF(7)):
+            sage: while s != set(GF(7)):                                                # needs sage.libs.pari
             ....:     A = random_matrix(GF(7), 10, 10)
             ....:     s.add(A.determinant())
 
         ::
 
             sage: A = random_matrix(GF(7), 100, 100)
-            sage: A.determinant() == A.transpose().determinant()
+            sage: A.determinant() == A.transpose().determinant()                        # needs sage.libs.pari
             True
 
             sage: B = random_matrix(GF(7), 100, 100)
-            sage: (A*B).determinant() == A.determinant() * B.determinant()
+            sage: (A*B).determinant() == A.determinant() * B.determinant()              # needs sage.libs.pari
             True
 
         ::
@@ -2228,10 +2229,10 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             sage: A = random_matrix(GF(65521),200)
             sage: B = copy(A)
             sage: Parallelism().set('linbox', nproc=2)
-            sage: d = A.determinant()
+            sage: d = A.determinant()                                                   # needs sage.libs.pari
             sage: Parallelism().set('linbox', nproc=1) # switch off parallelization
-            sage: e = B.determinant()
-            sage: d==e
+            sage: e = B.determinant()                                                   # needs sage.libs.pari
+            sage: d==e                                                                  # needs sage.libs.pari
             True
 
         TESTS::

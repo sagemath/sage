@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Linear Groups
 
@@ -236,7 +237,7 @@ def SL(n, R, var='a'):
         Special Linear Group of degree 2 over Integer Ring
         sage: G.category()
         Category of infinite groups
-        sage: G.gens()
+        sage: G.gens()                                                                  # needs sage.libs.gap
         (
         [ 0  1]  [1 1]
         [-1  0], [0 1]

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 """
 Hypergeometric motives
 
@@ -1570,6 +1571,7 @@ class HypergeometricData:
         if 0 in alpha:
             return self._swap.H_value(p, f, ~t, ring)
         if ring is None:
+            from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
             ring = UniversalCyclotomicField()
         gamma = self.gamma_array()
         q = p**f
@@ -1578,6 +1580,8 @@ class HypergeometricData:
         D = -min(self.zigzag(x, flip_beta=True) for x in alpha + beta)
         # also: D = (self.weight() + 1 - m[0]) // 2
         M = self.M_value()
+
+        from sage.rings.finite_rings.finite_field_constructor import GF
 
         Fq = GF((p, f))
         gen = Fq.multiplicative_generator()

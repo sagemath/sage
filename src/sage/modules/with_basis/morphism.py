@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Morphisms of modules with a basis
 

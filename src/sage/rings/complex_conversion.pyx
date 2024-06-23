@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-modules
+
 from sage.rings.complex_double cimport ComplexDoubleElement
 from sage.rings.complex_mpfr cimport ComplexNumber
 from sage.libs.mpfr cimport mpfr_get_d, MPFR_RNDN

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # distutils: libraries = symmetrica
 """
 Symmetrica library

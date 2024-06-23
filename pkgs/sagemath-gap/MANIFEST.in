@@ -1,0 +1,46 @@
+include VERSION.txt
+
+prune sage
+
+graft             sage/coding/codecan
+include           sage/combinat/enumeration_mod_permgroup.p*
+include           sage/combinat/root_system/reflection_group*.p*
+include           sage/combinat/root_system/weyl_group.p*
+graft             sage/ext_data/gap
+include           sage/graphs/spanning_tree.p*
+graft             sage/groups/perm_gps
+prune             sage/groups/perm_gps/partn_ref                        # sagemath-categories
+include           sage/groups/*gap*.p*
+include           sage/groups/abelian_gps/abelian_group_gap.p*
+include           sage/groups/abelian_gps/abelian_aut.p*
+include           sage/groups/abelian_gps/abelian_group_morphism.p*
+include           sage/groups/galois_group_perm.p*
+include           sage/groups/matrix_gps/*_gap.*
+include           sage/groups/matrix_gps/heisenberg.p*
+include           sage/groups/matrix_gps/isometries.p*
+include           sage/groups/matrix_gps/binary_dihedral.p*
+
+include           sage/groups/semimonomial_transformations/all.py       # FIXME
+recursive-include sage/groups/semimonomial_transformations *.pxd        # FIXME
+
+include           sage/interfaces/gap*.p*
+graft             sage/libs/gap
+include           sage/matrix/matrix_gap.p*
+include           sage/rings/universal_cyclotomic_field.p*
+
+include           sage/geometry/ribbon_graph.p*
+
+global-exclude *.c
+global-exclude *.cpp
+
+global-exclude    all__sagemath_*.py
+global-include    all__sagemath_gap.py
+
+global-exclude __pycache__
+global-exclude *.py[co]
+global-exclude *.bak
+global-exclude *.so
+global-exclude *~
+prune .tox
+prune build
+prune dist

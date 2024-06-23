@@ -1,0 +1,13 @@
+set -e
+SAGE_VENV_PYODIDE_BUILD="$SAGE_ROOT/venv-pyodide-build"
+if [ ! -d "$SAGE_VENV_PYODIDE_BUILD" ]; then
+   python3 -m venv "$SAGE_VENV_PYODIDE_BUILD"
+fi
+cd "$SAGE_VENV_PYODIDE_BUILD"
+. ./bin/activate
+pip install pyodide-build==$PKG_VER
+# https://pyodide.org/en/stable/development/building-and-testing-packages.html#testing-packages-against-pyodide
+SAGE_VENV_PYODIDE="$SAGE_ROOT/venv-pyodide"
+if [ ! -d "$SAGE_VENV_PYODIDE" ]; then
+   pyodide venv "$SAGE_VENV_PYODIDE"
+fi

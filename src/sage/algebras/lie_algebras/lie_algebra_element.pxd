@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 from sage.structure.element cimport Element
 from sage.structure.element_wrapper cimport ElementWrapper
 from sage.structure.sage_object cimport SageObject

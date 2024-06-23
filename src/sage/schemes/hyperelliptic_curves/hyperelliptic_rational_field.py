@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 """
 Hyperelliptic curves over the rationals
 """
@@ -9,9 +10,10 @@ Hyperelliptic curves over the rationals
 
 import sage.rings.abc
 
-from sage.rings.padics.factory import Qp as pAdicField
-
+from sage.misc.lazy_import import lazy_import
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_field
+
+lazy_import('sage.rings.padics.factory', 'Qp', as_='pAdicField')
 
 from . import hyperelliptic_generic
 

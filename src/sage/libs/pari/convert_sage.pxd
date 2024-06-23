@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-pari
+
 from cypari2.gen cimport Gen
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational

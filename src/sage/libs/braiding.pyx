@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-libbraiding
 # distutils: libraries = braiding
 # distutils: language = c++
 r"""

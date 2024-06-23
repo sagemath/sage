@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 r"""
 List of faces
 
@@ -509,11 +510,19 @@ cdef class ListOfFaces:
 
         cdef size_t i
         cdef long j
-        for i in range(self.n_faces()):
-            j = face_next_atom(self.data.faces[i], 0)
-            while j != -1:
-                M.set_unsafe_int(i, j, 1)
-                j = face_next_atom(self.data.faces[i], j+1)
+        try:
+            for i in range(self.n_faces()):
+                j = face_next_atom(self.data.faces[i], 0)
+                while j != -1:
+                    M.set_unsafe_int(i, j, 1)
+                    j = face_next_atom(self.data.faces[i], j+1)
+        except AttributeError:
+            # Fall back to general matrix API
+            for i in range(self.n_faces()):
+                j = face_next_atom(self.data.faces[i], 0)
+                while j != -1:
+                    M[i, j] = 1
+                    j = face_next_atom(self.data.faces[i], j+1)
 
         M.set_immutable()
         return M

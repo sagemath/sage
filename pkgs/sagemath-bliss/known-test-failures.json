@@ -1,0 +1,13 @@
+{
+    "sage.graphs.bipartite_graph": {
+        "ntests": 329
+    },
+    "sage.graphs.bliss": {
+        "failed": true,
+        "ntests": 84
+    },
+    "sage.graphs.generic_graph": {
+        "failed": true,
+        "ntests": 2959
+    }
+}

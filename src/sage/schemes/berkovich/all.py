@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 """nodoctest
 all.py -- export of Berkovich spaces to all of Sage
 """

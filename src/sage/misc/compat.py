@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """Cross-platform compatibility routines and wrappers."""
 
 # *****************************************************************************

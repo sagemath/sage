@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Number-theoretic functions
 """
@@ -33,8 +34,8 @@ lazy_import('sage.rings.polynomial.polynomial_real_mpfr_dense', 'PolynomialRealD
 lazy_import('sage.rings.real_double', 'RDF')
 lazy_import('sage.rings.real_mpfr', ['RR', 'RealField', 'RealNumber'])
 
-lazy_import('sage.libs.mpmath.utils', 'call', as_='_mpmath_utils_call')
-lazy_import('mpmath', 'zeta', as_='_mpmath_zeta')
+lazy_import('sage.libs.mpmath.sage_utils', 'call', as_='_mpmath_call')
+lazy_import('sage.libs.mpmath.all', 'zeta', as_='_mpmath_zeta')
 
 
 class Function_zeta(GinacFunction):
@@ -272,7 +273,7 @@ class Function_HurwitzZeta(BuiltinFunction):
             sage: hurwitz_zeta(11/10, 1 + 1j).n()                                       # needs mpmath sage.rings.real_mpfr
             9.85014164287853 - 1.06139499403981*I
         """
-        return _mpmath_utils_call(_mpmath_zeta, s, x, parent=parent)
+        return _mpmath_call(_mpmath_zeta, s, x, parent=parent)
 
     def _derivative_(self, s, x, diff_param):
         r"""
@@ -389,7 +390,7 @@ class Function_zetaderiv(GinacFunction):
             sage: zetaderiv(2, 3 + I).n()                                               # needs sage.symbolic
             0.0213814086193841 - 0.174938812330834*I
         """
-        return _mpmath_utils_call(_mpmath_zeta, x, 1, n, parent=parent)
+        return _mpmath_call(_mpmath_zeta, x, 1, n, parent=parent)
 
     def _method_arguments(self, k, x, **args):
         r"""

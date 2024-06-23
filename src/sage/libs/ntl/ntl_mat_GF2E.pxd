@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 from sage.libs.ntl.types cimport mat_GF2E_c
 from sage.libs.ntl.ntl_GF2EContext cimport ntl_GF2EContext_class
 from sage.libs.ntl.ntl_GF2E cimport ntl_GF2E

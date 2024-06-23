@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 """
 Weighted Integer Vectors
 

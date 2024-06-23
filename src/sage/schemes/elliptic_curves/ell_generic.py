@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 Elliptic curves over a general ring
 
@@ -272,7 +273,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         """
         Internal function. Return a latex string for this elliptic curve.
 
-        Users will normally use latex() instead.
+        Users will normally use :func:`latex` instead.
 
         EXAMPLES::
 

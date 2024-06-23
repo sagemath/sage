@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.libs.gap sage.libs.flint sage.libs.pari sage.modules
 r"""
 Functions that compute some of the sequences in Sloane's tables

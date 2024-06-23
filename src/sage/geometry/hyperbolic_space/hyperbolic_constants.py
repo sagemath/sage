@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 from sage.matrix.constructor import matrix
 
 EPSILON = 10 ** -9

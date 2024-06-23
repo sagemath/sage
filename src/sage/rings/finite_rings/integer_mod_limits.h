@@ -1,3 +1,5 @@
+/* sage_setup: distribution = sagemath-categories
+ */
 #ifndef _SAGE_FINITE_RINGS_INTEGER_MOD_LIMITS_H
 #define _SAGE_FINITE_RINGS_INTEGER_MOD_LIMITS_H
 

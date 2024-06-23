@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-categories
+
 from sage.rings.ring cimport CommutativeRing, Ring
 from sage.structure.parent cimport Parent
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Discrete Gaussian Samplers over Lattices
 
@@ -59,20 +60,19 @@ EXAMPLES::
 # policies, either expressed or implied, of the FreeBSD Project.
 # *****************************************************************************/
 
-from sage.functions.log import exp
-from sage.rings.real_mpfr import RealField
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.stats.distributions.discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
-from sage.structure.sage_object import SageObject
-from sage.misc.cachefunc import cached_method
-from sage.misc.functional import sqrt
-from sage.misc.prandom import normalvariate
-from sage.misc.verbose import verbose
-from sage.symbolic.constants import pi
 from sage.matrix.constructor import matrix
+from sage.misc.lazy_import import lazy_import
 from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import vector
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RR
+from sage.rings.real_mpfr import RealField
+from sage.structure.sage_object import SageObject
+
+lazy_import("sage.functions.log", "exp")
+
+from .discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
 
 
 def _iter_vectors(n, lower, upper, step=None):

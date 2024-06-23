@@ -1,3 +1,5 @@
+/* sage_setup: distribution = sagemath-objects
+ */
 /*****************************************************************************
 #       Copyright (C) 2017 Erik M. Bray <erik.bray@lri.fr>
 #       Copyright (C) 2018 Jeroen Demeyer <J.Demeyer@UGent.be>

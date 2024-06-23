@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-modules
+
 r"""
 Base class for sparse matrices
 """

@@ -97,6 +97,7 @@ Other options:
        use at your own risk
    -n: automatically reply "n" for all prompts regarding
        experimental and old-style packages
+   -d: only download the package
    -o: allow fetching the package from its upstream URL
        when it is not available from the Sage mirrors (yet)
    -c: after installing, run the test suite for the package;

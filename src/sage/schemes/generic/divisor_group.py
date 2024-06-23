@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Divisor groups
 
@@ -15,11 +16,14 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*******************************************************************************
 
+from sage.misc.lazy_import import lazy_import
 from sage.schemes.generic.divisor import Divisor_generic, Divisor_curve
 from sage.structure.formal_sum import FormalSums
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
+
+lazy_import('sage.schemes.curves.curve', 'Curve_generic')
 
 
 def DivisorGroup(scheme, base_ring=None):
@@ -49,7 +53,6 @@ def DivisorGroup(scheme, base_ring=None):
     if base_ring is None:
         base_ring = ZZ
 
-    from sage.schemes.curves.curve import Curve_generic
     if isinstance(scheme, Curve_generic):
         DG = DivisorGroup_curve(scheme, base_ring)
     else:

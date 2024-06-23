@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 from cpython.ref cimport Py_INCREF
 
 cdef _hook_tp_functions_type(PyTypeObject *t, newfunc tp_new, destructor tp_dealloc, bint useGC):

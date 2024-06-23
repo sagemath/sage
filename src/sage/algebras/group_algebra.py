@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.groups sage.modules
 r"""
 Group algebras
@@ -6,7 +7,7 @@ This functionality has been moved to :mod:`sage.categories.algebra_functor`.
 
 TESTS:
 
-Check that unpicking old group algebra classes works::
+Check that unpickling old group algebra classes works::
 
     sage: G = loads(b"x\x9cM\xceM\n\xc20\x10\x86a\xac\xff\xf1$n\xb2\xf1\x04\x82"
     ....:           b"\xe8>\xe0:\xc4fL\x83i\xda\x99$K\xc1M\xf5\xdaj\x1a\xc1\xdd<"

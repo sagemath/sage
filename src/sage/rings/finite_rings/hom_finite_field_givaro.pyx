@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-linbox
 # distutils: libraries = givaro NTL_LIBRARIES gmp m
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR

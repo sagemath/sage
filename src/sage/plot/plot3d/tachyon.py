@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-plot
 r"""
 The Tachyon 3D Ray Tracer
 
@@ -265,14 +266,14 @@ class Tachyon(WithEqualityById, SageObject):
         sage: t.texture('t0', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(1,0,0))
         sage: t.texture('t1', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(0,1,0))
         sage: t.texture('t2', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(0,0,1))
-        sage: E = EllipticCurve('37a')                                                  # needs sage.schemes
-        sage: P = E([0,0])                                                              # needs sage.schemes
-        sage: Q = P                                                                     # needs sage.schemes
+        sage: E = EllipticCurve('37a')
+        sage: P = E([0,0])
+        sage: Q = P
         sage: n = 100
-        sage: for i in range(n):   # increase 20 for a better plot                      # needs sage.schemes
+        sage: for i in range(n):   # increase 20 for a better plot
         ....:    Q = Q + P
         ....:    t.sphere((Q[1], Q[0], ZZ(i)/n), 0.1, 't%s'%(i%3))
-        sage: t.show()                                                                  # needs sage.schemes
+        sage: t.show()
 
     A beautiful picture of rational points on a rank 1 elliptic curve.
 
@@ -289,16 +290,16 @@ class Tachyon(WithEqualityById, SageObject):
         sage: t.plane((0,0,0),(0,0,1),'grey')
         sage: t.cylinder((0,0,0),(1,0,0),.01,'black')
         sage: t.cylinder((0,0,0),(0,1,0),.01,'black')
-        sage: E = EllipticCurve('37a')                                                  # needs sage.schemes
-        sage: P = E([0,0])                                                              # needs sage.schemes
-        sage: Q = P                                                                     # needs sage.schemes
+        sage: E = EllipticCurve('37a')
+        sage: P = E([0,0])
+        sage: Q = P
         sage: n = 100
-        sage: for i in range(n):                                                        # needs sage.schemes
+        sage: for i in range(n):
         ....:    Q = Q + P
         ....:    c = i/n + .1
         ....:    t.texture('r%s'%i,color=(float(i/n),0,0))
         ....:    t.sphere((Q[0], -Q[1], .01), .04, 'r%s'%i)
-        sage: t.show()                          # long time                             # needs sage.schemes
+        sage: t.show()                          # long time
 
     A beautiful spiral.
 

@@ -1,3 +1,7 @@
+# sage_setup: distribution = sagemath-categories
+
+from sage.arith.all__sagemath_objects import *
+
 from sage.misc.lazy_import import lazy_import
 
 from sage.arith.misc import (algdep, bernoulli, is_prime, is_prime_power,
@@ -23,6 +27,10 @@ from sage.arith.misc import (algdep, bernoulli, is_prime, is_prime_power,
                              radical, binomial_coefficients, jacobi_symbol,
                              dedekind_sum,
                              prime_factors, prime_range, valuation)
+
+# These will be overridden by sage.functions.all
+from .misc import (integer_ceil as ceil,
+                   integer_floor as floor)
 
 from sage.arith.functions import lcm
 LCM = lcm

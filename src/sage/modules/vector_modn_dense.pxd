@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-modules
+
 from sage.ext.mod_int cimport mod_int
 from sage.modules.free_module_element cimport FreeModuleElement
 
