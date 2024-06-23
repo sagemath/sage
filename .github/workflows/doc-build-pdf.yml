@@ -136,13 +136,11 @@ jobs:
         id: copy
         if: (success() || failure()) && steps.docbuild.outcome == 'success'
         run: |
-          # For some reason the deploy step below cannot find /sage/...
-          # So copy everything from there to local folder
           mkdir -p ./doc
-          cp -r -L /sage/local/share/doc/sage/pdf ./doc
+          # We copy everything to a local folder
+          docker cp BUILD:/sage/local/share/doc/sage/pdf doc
           # Zip everything for increased performance
           zip -r doc-pdf.zip doc
-        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
       - name: Upload doc
         if: (success() || failure()) && steps.copy.outcome == 'success'
