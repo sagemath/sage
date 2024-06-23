@@ -86,7 +86,7 @@ def handle_AA_and_QQbar(func):
         from sage.misc.flatten import flatten
         from sage.rings.polynomial.polynomial_element import Polynomial
         from sage.rings.polynomial.multi_polynomial import MPolynomial
-        from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence, is_PolynomialSequence
+        from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence, PolynomialSequence_generic
         from sage.rings.ideal import Ideal, Ideal_generic
         from sage.rings.abc import AlgebraicField_common
 
