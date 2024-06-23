@@ -958,7 +958,7 @@ cdef class IntegerRing_class(CommutativeRing):
         """
         if isinstance(I, sage.rings.integer.Integer):
             n = I
-        elif sage.rings.ideal.isinstance(I, Ideal_generic):
+        elif isinstance(I, sage.rings.ideal.Ideal_generic):
             if not (I.ring() is self):
                 raise TypeError("I must be an ideal of ZZ")
             n = I.gens()[0]
@@ -1027,7 +1027,7 @@ cdef class IntegerRing_class(CommutativeRing):
         """
         if isinstance(prime, sage.rings.integer.Integer):
             p = self.ideal(prime)
-        elif sage.rings.ideal.isinstance(prime, Ideal_generic):
+        elif isinstance(prime, sage.rings.ideal.Ideal_generic):
             if not (prime.ring() is self):
                 raise TypeError("%s is not an ideal of ZZ" % prime)
             p = prime

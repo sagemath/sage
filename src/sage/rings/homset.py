@@ -55,7 +55,7 @@ def RingHomset(R, S, category=None):
         Set of Homomorphisms from Integer Ring to Rational Field
 
     """
-    if quotient_ring.isinstance(R, QuotientRing_nc):
+    if isinstance(R, quotient_ring.QuotientRing_nc):
         from .polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
         if not isinstance(R, PolynomialQuotientRing_generic):  # backwards compatibility
             return RingHomset_quo_ring(R, S, category=category)

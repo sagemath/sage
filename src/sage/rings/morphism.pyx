@@ -898,7 +898,7 @@ cdef class RingHomomorphism(RingMap):
             Ideal (xx, xx*yy + 3*xx) of Quotient of Multivariate Polynomial Ring
              in x, y over Rational Field by the ideal (x^2, y^2)
         """
-        if not ideal.isinstance(I, Ideal_generic):
+        if not isinstance(I, ideal.Ideal_generic):
             raise TypeError("I must be an ideal")
         R = self.codomain()
         return R.ideal([self(y) for y in I.gens()])
