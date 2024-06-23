@@ -15,4 +15,17 @@ class ChowRing(QuotientRing_nc, category=GradedAlgebrasWithBasis):
         return "Chow ring of {}".format(self._matroid)    
 
     def _latex_(self):
-        return "%s/%s" % (latex.latex(self.poly_ring), latex.latex(self._ideal))     
+        return "%s/%s" % (latex.latex(self.poly_ring), latex.latex(self._ideal))  
+
+class AugmentedChowRing(QuotientRing_nc, category=GradedAlgebrasWithBasis):
+    def __init__(self, R, M):
+        self._matroid = M
+        self._ideal = AugmentedChowRingIdeal(M, R)
+        self.poly_ring = self._ideal.poly_ring
+        QuotientRing_nc.__init__(R, self._ideal, names=self.poly_ring.variable_names, category=GradedAlgebrasWithBasis)
+
+    def _repr_(self):
+        return "Chow ring of {}".format(self._matroid)    
+
+    def _latex_(self):
+        return "%s/%s" % (latex.latex(self.poly_ring), latex.latex(self._ideal))
