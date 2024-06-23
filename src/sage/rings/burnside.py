@@ -609,26 +609,18 @@ class PolynomialMolecularDecomposition(CombinatorialFreeModule):
 
     def product_on_basis(self, g1, g2):
         n, m = g1.grade(), g2.grade()
-        H, K = g1._C, g2._C
-
-        def construct_element(h, k):
-            element = [None for _ in range(n+m)]
-            for i in range(n+m):
-                if i < n:
-                    element[i] = h(i+1)
-                else:
-                    element[i] = n + k(i-n+1)
-            return element
-        H_ast_K = [
-            construct_element(h, k)
-            for h in H
-            for k in K
-        ]
         # There is no way to create SymmetricGroup(0) using the
         # PermutationGroup constructor as used here, so a special
         # case has to be added.
         if n+m == 0:
             return self._from_dict({self._indices(SymmetricGroup(0)): 1})
+        # We only really need to multiply generators, since we are multiplying
+        # permutations acting on disjoint domains.
+        H_ast_K = [
+            h*k
+            for h in SymmetricGroup(n).gens_small()
+            for k in SymmetricGroup(range(n+1,n+m+1)).gens_small()
+        ]
         G = PermutationGroup(H_ast_K)
         return self._from_dict({self._indices(G): 1})
 
