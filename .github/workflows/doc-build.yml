@@ -122,7 +122,7 @@ jobs:
                      ${{ env.BUILD_IMAGE }} /bin/sh
 
       #
-      # On PRs and pushes to master or develop
+      # On PRs and pushes to develop
       #
 
       - name: Store old doc
