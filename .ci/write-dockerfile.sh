@@ -88,7 +88,7 @@ case $SYSTEM in
                 cat <<EOF
 RUN if command -v unminimize > /dev/null; then  \
         (yes | unminimize) || echo "(ignored)"; \
-        rm -f "$(command -v unminimize)";       \
+        rm -f "\$(command -v unminimize)";       \
     fi
 EOF
                 if [ -n "$DIST_UPGRADE" ]; then
@@ -264,6 +264,7 @@ cat <<EOF
 
 FROM with-system-packages as bootstrapped
 #:bootstrapping:
+RUN rm -rf /new /sage/.git
 $ADD Makefile VERSION.txt COPYING.txt condarc.yml README.md bootstrap bootstrap-conda configure.ac sage .homebrew-build-env tox.ini Pipfile.m4 .gitignore /new/
 $ADD config/config.rpath /new/config/config.rpath
 $ADD src/doc/bootstrap /new/src/doc/bootstrap
@@ -272,13 +273,14 @@ $ADD src/Pipfile.m4 src/pyproject.toml src/requirements.txt.m4 src/setup.cfg.m4 
 $ADD m4 /new/m4
 $ADD pkgs /new/pkgs
 $ADD build /new/build
-$ADD .ci /new/.ci
 $ADD .upstream.d /new/.upstream.d
+ADD .ci /.ci
 RUN if [ -d /sage ]; then                                               \
         echo "### Incremental build from \$(cat /sage/VERSION.txt)" &&  \
         printf '/src\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/src/VERSION.txt\n' >> /sage/.gitignore && \
         printf '/src\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/src/VERSION.txt\n' >> /new/.gitignore && \
-        if ! (cd /new && ./.ci/retrofit-worktree.sh worktree-image /sage); then \
+        if ! (cd /new && /.ci/retrofit-worktree.sh worktree-image /sage); then \
+            echo "retrofit-worktree.sh failed, falling back to replacing /sage"; \
             for a in local logs; do                                     \
                 if [ -d /sage/\$a ]; then mv /sage/\$a /new/; fi;       \
             done;                                                       \
@@ -338,11 +340,15 @@ ENV SAGE_CHECK_PACKAGES="!cython,!r,!python3,!gap,!cysignals,!linbox,!git,!ppl,!
 $ADD .gitignore /new/.gitignore
 $ADD src /new/src
 RUN cd /new && rm -rf .git && \
-    if ! /sage/.ci/retrofit-worktree.sh worktree-pre /sage; then \
+    if /.ci/retrofit-worktree.sh worktree-pre /sage; then \
+        cd /sage && touch configure build/make/Makefile; \
+    else \
+        echo "retrofit-worktree.sh failed, falling back to replacing /sage/src"; \
         rm -rf /sage/src;                                    \
         mv src /sage/src;                                    \
         cd /sage && ./bootstrap && ./config.status;          \
-    fi
+    fi; \
+    cd /sage && rm -rf /new .git
 
 ARG TARGETS="build"
 $RUN $CHECK_STATUS_THEN make SAGE_SPKG="sage-spkg -y -o" \${USE_MAKEFLAGS} \${TARGETS} $ENDRUN $THEN_SAVE_STATUS

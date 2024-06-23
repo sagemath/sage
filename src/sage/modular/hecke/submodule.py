@@ -59,16 +59,16 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
         INPUT:
 
-        - ``ambient`` - an ambient Hecke module
+        - ``ambient`` -- an ambient Hecke module
 
-        - ``submodule`` - a free module over the base ring which is a submodule
+        - ``submodule`` -- a free module over the base ring which is a submodule
           of the free module attached to the ambient Hecke module. This should
           be invariant under all Hecke operators.
 
-        - ``dual_free_module`` - the submodule of the dual of the ambient
+        - ``dual_free_module`` -- the submodule of the dual of the ambient
           module corresponding to this submodule (or None).
 
-        - ``check`` - whether or not to explicitly check that the submodule is
+        - ``check`` -- whether or not to explicitly check that the submodule is
           Hecke equivariant.
 
         EXAMPLES::
@@ -412,10 +412,10 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         INPUT:
 
 
-        -  ``level`` - int, the level of the codomain of the
+        -  ``level`` -- int, the level of the codomain of the
            map (positive int).
 
-        -  ``t`` - int, the parameter of the degeneracy map,
+        -  ``t`` -- int, the parameter of the degeneracy map,
            i.e., the map is related to `f(q)` - `f(q^t)`.
 
 
@@ -940,10 +940,10 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         INPUT:
 
 
-        -  ``V`` - submodule of ambient free module of the same
+        -  ``V`` -- submodule of ambient free module of the same
            rank as the rank of self.
 
-        -  ``check`` - whether to check that V is Hecke
+        -  ``check`` -- whether to check that V is Hecke
            equivariant.
 
 

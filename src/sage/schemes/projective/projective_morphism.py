@@ -43,7 +43,6 @@ AUTHORS:
 - Kwankyu Lee (2020-02): added indeterminacy_locus() and image()
 
 - Kwankyu Lee (2022-05): added graph(), projective_degrees(), and degree()
-
 """
 
 # ****************************************************************************
@@ -281,9 +280,9 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``x`` - a point or subscheme in domain of this map.
+        - ``x`` -- a point or subscheme in domain of this map.
 
-        - ``check`` - Boolean - if `False` assume that ``x`` is a point.
+        - ``check`` -- Boolean; if `False` assume that ``x`` is a point.
 
         EXAMPLES::
 

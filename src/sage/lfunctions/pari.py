@@ -6,7 +6,6 @@ This is a wrapper around the general PARI L-functions functionality.
 AUTHORS:
 
 - Frédéric Chapoton (2018) interface
-
 """
 # ****************************************************************************
 #       Copyright (C) 2018 Frédéric Chapoton <chapoton@unistra.fr>
@@ -47,7 +46,7 @@ class lfun_generic():
 
     - ``eps`` -- complex number; sign in functional equation
 
-    - ``poles`` -- (default: []) list of points where `L^*(s)` has
+    - ``poles`` -- (default: ``[]``) list of points where `L^*(s)` has
       (simple) poles; only poles with `Re(s)>weight/2` should be
       included
 

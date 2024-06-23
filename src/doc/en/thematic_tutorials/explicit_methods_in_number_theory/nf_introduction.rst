@@ -254,7 +254,6 @@ consider the cubic equation
   x^3 + \sqrt{2} x + 5 = 0.
 
 
-
 In Sage, we can create this equation, and find an exact symbolic
 solution.
 

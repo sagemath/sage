@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Homsets
 
@@ -477,6 +478,7 @@ def Hom(X, Y, category=None, check=True):
                 pass
     return H
 
+
 def hom(X, Y, f):
     """
     Return ``Hom(X,Y)(f)``, where ``f`` is data that defines an element of
@@ -490,6 +492,7 @@ def hom(X, Y, f):
         7
     """
     return Hom(X,Y)(f)
+
 
 def End(X, category=None):
     r"""
@@ -555,6 +558,7 @@ def End(X, category=None):
         Category of endsets of unital magmas and additive unital additive magmas
     """
     return Hom(X,X, category)
+
 
 def end(X, f):
     """

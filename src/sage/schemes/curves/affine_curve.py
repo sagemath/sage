@@ -114,7 +114,6 @@ AUTHORS:
 - Grayson Jorgenson (2016-08)
 
 - Kwankyu Lee (2019-05): added integral affine curves
-
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -146,7 +145,7 @@ from sage.misc.lazy_import import lazy_import
 from sage.rings.polynomial.multi_polynomial_element import degree_lowest_rational_function
 from sage.rings.number_field.number_field import NumberField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.rational_field import is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.rings.infinity import infinity
 
 from sage.schemes.affine.affine_space import AffineSpace, AffineSpace_generic
@@ -326,7 +325,7 @@ class AffinePlaneCurve(AffineCurve):
         OUTPUT:
 
 
-        -  ``list`` - The divisor of r represented as a list of
+        -  ``list`` -- The divisor of r represented as a list of
            coefficients and points. (TODO: This will change to a more
            structural output in the future.)
 
@@ -377,10 +376,10 @@ class AffinePlaneCurve(AffineCurve):
         INPUT:
 
 
-        -  ``pt`` - an F-rational point on X which is not a
+        -  ``pt`` -- an F-rational point on X which is not a
            point of ramification for the projection (x,y) - x.
 
-        -  ``n`` - the number of terms desired
+        -  ``n`` -- the number of terms desired
 
 
         OUTPUT: x = x0 + t y = y0 + power series in t
@@ -446,10 +445,10 @@ class AffinePlaneCurve(AffineCurve):
 
         INPUT:
 
-        -  ``*args`` - optional tuples (variable, minimum, maximum) for
+        -  ``*args`` -- optional tuples (variable, minimum, maximum) for
            plotting dimensions
 
-        -  ``**kwds`` - optional keyword arguments passed on to
+        -  ``**kwds`` -- optional keyword arguments passed on to
            ``implicit_plot``
 
         EXAMPLES:
@@ -613,7 +612,7 @@ class AffinePlaneCurve(AffineCurve):
 
         - ``P`` -- a point on this curve
 
-        - ``factor`` -- (default: True) whether to attempt computing the
+        - ``factor`` -- (default: ``True``) whether to attempt computing the
           polynomials of the individual tangent lines over the base field of this
           curve, or to just return the polynomial corresponding to the union of
           the tangent lines (which requires fewer computations)
@@ -1420,7 +1419,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
 
         INPUT:
 
-        - ``extend`` -- (default: False) specifies whether to extend the base
+        - ``extend`` -- (default: ``False``) specifies whether to extend the base
           field when necessary to find all singular points when this curve is
           defined over a number field. If ``extend`` is ``False``, then only
           singularities with coordinates in the base field of this curve will be
@@ -1549,10 +1548,10 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
             pts = self.change_ring(F.embeddings(QQbar)[0]).rational_points()
             L = [t for pt in pts for t in pt]
             K = number_field_elements_from_algebraics(L)[0]
-            if is_RationalField(K):
+            if isinstance(K, RationalField):
                 return F.embeddings(F)[0]
             else:
-                if is_RationalField(F):
+                if isinstance(F, RationalField):
                     return F.embeddings(K)[0]
                 else:
                     # make sure the defining polynomial variable names are the same for K, N

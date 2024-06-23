@@ -25,7 +25,6 @@ AUTHORS:
 - David Kohel (2006-01)
 
 - Grayson Jorgenson (2016-06)
-
 """
 # ********************************************************************
 #      Copyright (C) 2005 William Stein <wstein@gmail.com>

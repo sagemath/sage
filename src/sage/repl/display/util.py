@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 Utility functions for pretty-printing
 
@@ -63,7 +64,7 @@ class TallListFormatter():
 
         INPUT:
 
-        - ``the_list`` - The list (or a tuple).
+        - ``the_list`` -- The list (or a tuple).
 
         OUTPUT:
 

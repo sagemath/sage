@@ -467,7 +467,8 @@ class FMatrix(SageObject):
 
         INPUT:
 
-        - ``a, b, c, d`` -- basis elements of the associated :class:`FusionRing`
+        - ``a``, ``b``, ``c``, ``d`` -- basis elements of the associated
+          :class:`FusionRing`
 
         EXAMPLES::
 
@@ -600,7 +601,8 @@ class FMatrix(SageObject):
 
         INPUT:
 
-        - ``a, b, c, d`` -- basis elements of the associated :class:`FusionRing`
+        - ``a``, ``b``, ``c``, ``d`` -- basis elements of the associated
+          :class:`FusionRing`
 
         EXAMPLES::
 
@@ -624,7 +626,8 @@ class FMatrix(SageObject):
 
         INPUT:
 
-        - ``a, b, c, d`` -- basis elements of the associated :class:`FusionRing`
+        - ``a``, ``b``, ``c``, ``d`` -- basis elements of the associated
+          :class:`FusionRing`
 
         EXAMPLES::
 
@@ -1444,10 +1447,10 @@ class FMatrix(SageObject):
 
         - ``option`` -- a string determining equations to be set up:
 
-          * ``'hexagons'`` - get equations imposed on the F-matrix by
+          * ``'hexagons'`` -- get equations imposed on the F-matrix by
             the hexagon relations in the definition of a braided category
 
-          * ``'pentagons'`` - get equations imposed on the F-matrix by
+          * ``'pentagons'`` -- get equations imposed on the F-matrix by
             the pentagon relations in the definition of a monoidal category
 
         - ``output`` -- (default: ``True``) a boolean indicating whether

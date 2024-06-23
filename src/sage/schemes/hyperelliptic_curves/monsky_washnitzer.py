@@ -33,7 +33,6 @@ AUTHORS:
 - Robert Bradshaw (2007-04): generalization to hyperelliptic curves
 
 - Julian Rueth (2014-05-09): improved caching
-
 """
 
 # ****************************************************************************
@@ -57,7 +56,7 @@ from sage.misc.profiler import Profiler
 from sage.misc.repr import repr_lincomb
 from sage.modules.free_module_element import vector
 from sage.modules.free_module import FreeModule
-from sage.modules.free_module_element import is_FreeModuleElement
+from sage.modules.free_module_element import FreeModuleElement
 from sage.modules.module import Module
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Integers
 from sage.rings.integer import Integer
@@ -96,10 +95,10 @@ class SpecialCubicQuotientRingElement(ModuleElement):
 
         - ``parent`` -- a :class:`SpecialCubicQuotientRing`
 
-        - ``p0, p1, p2`` -- coefficients; must be coercible
+        - ``p0``, ``p1``, ``p2`` -- coefficients; must be coercible
           into parent.poly_ring()
 
-        - ``check`` -- bool (default True): whether to carry
+        - ``check`` -- bool (default: ``True``): whether to carry
           out coercion
 
         EXAMPLES::
@@ -604,10 +603,10 @@ class SpecialCubicQuotientRing(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``p0, p1, p2`` -- coefficients; must be coercible
+        - ``p0``, ``p1``, ``p2`` -- coefficients; must be coercible
           into poly_ring()
 
-        - ``check`` -- bool (default True): whether to carry
+        - ``check`` -- bool (default: ``True``): whether to carry
           out coercion
 
         EXAMPLES::
@@ -1024,7 +1023,7 @@ def reduce_all(Q, p, coeffs, offset, compute_exact_form=False):
 
     OUTPUT:
 
-    - ``A, B`` - pair such that the input differential is
+    - ``A``, ``B`` -- pair such that the input differential is
       cohomologous to (A + Bx) dx/y.
 
     .. NOTE::
@@ -1110,7 +1109,7 @@ def frobenius_expansion_by_newton(Q, p, M):
 
     OUTPUT:
 
-    - ``F0, F1`` -- elements of
+    - ``F0``, ``F1`` -- elements of
       ``SpecialCubicQuotientRing(Q)``, as described above
 
     - ``r`` -- non-negative integer, as described above
@@ -1298,7 +1297,7 @@ def frobenius_expansion_by_series(Q, p, M):
 
     OUTPUT:
 
-    - ``F0, F1`` -- elements of
+    - ``F0``, ``F1`` -- elements of
       ``SpecialCubicQuotientRing(Q)``, as described above
 
     - ``r`` -- non-negative integer, as described above
@@ -1895,7 +1894,7 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
             return
         if isinstance(val, tuple):
             val, offset = val
-        if isinstance(val, list) and val and is_FreeModuleElement(val[0]):
+        if isinstance(val, list) and val and isinstance(val[0], FreeModuleElement):
             val = transpose_list(val)
         self._f = parent._poly_ring(val)
         if offset != 0:

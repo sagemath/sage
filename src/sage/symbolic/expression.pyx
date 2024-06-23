@@ -4933,7 +4933,7 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        - ``symbol`` - a symbolic variable or symbolic equality such
+        - ``symbol`` -- a symbolic variable or symbolic equality such
           as ``x == 5``. If an equality is given, the expansion is
           around the value on the right hand side of the equality,
           otherwise at ``0``.
@@ -5010,9 +5010,9 @@ cdef class Expression(Expression_abc):
 
         -  ``*args`` -- the following notation is supported
 
-           - ``x, a, n`` -- variable, point, degree
+           - ``x``, ``a``, ``n`` -- variable, point, degree
 
-           - ``(x, a), (y, b), n`` -- variables with points, degree of polynomial
+           - ``(x, a)``, ``(y, b)``, ``n`` -- variables with points, degree of polynomial
 
         EXAMPLES::
 
@@ -5258,7 +5258,7 @@ cdef class Expression(Expression_abc):
            full expansion into sines and cosines immediately, set the optional
            parameter full to ``True``.
 
-        - ``half_angles`` - (default: ``False``) If ``True``, causes
+        - ``half_angles`` -- (default: ``False``) If ``True``, causes
           half-angles to be simplified away.
 
         -  ``plus`` -- (default: ``True``) Controls the sum rule;
@@ -6893,9 +6893,9 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        - ``s`` - expression
+        - ``s`` -- expression
 
-        - ``n`` - expression, default 1
+        - ``n`` -- expression, default 1
 
         OUTPUT:
 
@@ -7600,9 +7600,9 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        -  ``base_ring`` - (optional) the base ring for the polynomial
+        -  ``base_ring`` -- (optional) the base ring for the polynomial
 
-        -  ``ring`` - (optional) the parent for the polynomial
+        -  ``ring`` -- (optional) the parent for the polynomial
 
         You can specify either the base ring (``base_ring``) you want
         the output Laurent polynomial to be over, or you can specify the full
@@ -11014,9 +11014,9 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        - ``self`` - symbolic expression
+        - ``self`` -- symbolic expression
 
-        - ``expand`` - (default:True) if True, expands trigonometric
+        - ``expand`` -- (default: ``True``) if True, expands trigonometric
           and hyperbolic functions of sums of angles and of multiple
           angles occurring in ``self`` first. For best results,
           ``self`` should be expanded. See also :meth:`expand_trig` to
@@ -11062,9 +11062,9 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        - ``self`` - symbolic expression
+        - ``self`` -- symbolic expression
 
-        - ``algorithm`` - (default: 'full') string which switches the
+        - ``algorithm`` -- (default: 'full') string which switches the
           algorithm for simplifications. Possible values are
 
           - 'simple' (simplify rational functions into quotient of two
@@ -11074,7 +11074,7 @@ cdef class Expression(Expression_abc):
 
           - 'noexpand' (convert to common denominator and add)
 
-        - ``map`` - (default: ``False``) if ``True``, the result is an
+        - ``map`` -- (default: ``False``) if ``True``, the result is an
           expression whose leading operator is the same as that of the
           expression ``self`` but whose subparts are the results of
           applying simplification rules to the corresponding subparts
@@ -11285,7 +11285,7 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        - ``self`` - symbolic expression
+        - ``self`` -- symbolic expression
 
         EXAMPLES::
 
@@ -11505,9 +11505,9 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        - ``self`` - expression to be simplified
+        - ``self`` -- expression to be simplified
 
-        - ``algorithm`` - (default: None) optional, governs the condition
+        - ``algorithm`` -- (default: None) optional, governs the condition
           on `a` and `c` which must be satisfied to contract expression
           `a \log(b) + c \log(d)`. Values are
 
@@ -11653,9 +11653,9 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        - ``self`` - expression to be simplified
+        - ``self`` -- expression to be simplified
 
-        - ``algorithm`` - (default: 'products') optional, governs which
+        - ``algorithm`` -- (default: 'products') optional, governs which
           expression is expanded. Possible values are
 
           - 'nothing' (no expansion),
@@ -11875,9 +11875,9 @@ cdef class Expression(Expression_abc):
         INPUT:
 
 
-        -  ``self`` - a symbolic expression
+        -  ``self`` -- a symbolic expression
 
-        -  ``dontfactor`` - list (default: []), a list of
+        -  ``dontfactor`` -- list (default: ``[]``), a list of
            variables with respect to which factoring is not to occur.
            Factoring also will not take place with respect to any variables
            which are less important (using the variable ordering assumed for
@@ -13826,14 +13826,14 @@ cpdef new_Expression_from_pyobject(parent, x, bint force=True, bint recursive=Tr
 
     INPUT:
 
-    - ``parent`` - a symbolic ring.
+    - ``parent`` -- a symbolic ring.
 
-    - ``x`` - a Python object.
+    - ``x`` -- a Python object.
 
-    - ``force`` - bool, default ``True``, if True, the Python object
+    - ``force`` -- bool, default ``True``, if True, the Python object
       is taken as is without attempting coercion or list traversal.
 
-    - ``recursive`` - bool, default ``True``, disables recursive
+    - ``recursive`` -- bool, default ``True``, disables recursive
       traversal of lists.
 
     EXAMPLES::
@@ -13896,9 +13896,9 @@ cpdef new_Expression_wild(parent, unsigned int n=0):
 
     INPUT:
 
-    - ``parent`` - a symbolic ring.
+    - ``parent`` -- a symbolic ring.
 
-    - ``n`` - a nonnegative integer.
+    - ``n`` -- a nonnegative integer.
 
     OUTPUT:
 

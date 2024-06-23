@@ -9,13 +9,13 @@ computer; this should be the case, since GAP is included with Sage.
 The interface offers three pieces of functionality:
 
 
-#. ``gap_console()`` - A function that dumps you into
+#. ``gap_console()`` -- A function that dumps you into
    an interactive command-line GAP session.
 
-#. ``gap(expr)`` - Evaluation of arbitrary GAP
+#. ``gap(expr)`` -- Evaluation of arbitrary GAP
    expressions, with the result returned as a string.
 
-#. ``gap.new(expr)`` - Creation of a Sage object that
+#. ``gap.new(expr)`` -- Creation of a Sage object that
    wraps a GAP object. This provides a Pythonic interface to GAP. For
    example, if ``f=gap.new(10)``, then
    ``f.Factors()`` returns the prime factorization of
@@ -461,15 +461,15 @@ class Gap_generic(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        -  ``s`` - string containing GAP code.
+        -  ``s`` -- string containing GAP code.
 
-        -  ``newlines`` - bool (default: True); if False,
+        -  ``newlines`` -- bool (default: ``True``); if False,
            remove all backslash-newlines inserted by the GAP output
            formatter.
 
-        -  ``strip`` - ignored
+        -  ``strip`` -- ignored
 
-        -  ``split_lines`` -- bool (default: True); if True then each
+        -  ``split_lines`` -- bool (default: ``True``); if True then each
            line is evaluated separately.  If False, then the whole
            block of code is evaluated all at once.
 
@@ -644,6 +644,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
 
         TESTS::
 
+            sage: from sage.interfaces.gap import gap
             sage: gap._eval_line('2+2;')
             '4'
 
@@ -1124,6 +1125,7 @@ class Gap(Gap_generic):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.gap import gap
             sage: gap.__reduce__()
             (<function reduce_load_GAP at 0x...>, ())
             sage: f, args = _

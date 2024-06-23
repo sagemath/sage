@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 # sage.doctest: needs sage.misc.cython
 r"""
 Fast conversion of Python objects to C long

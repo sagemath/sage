@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Discrete Valuation Rings (DVR) and Fields (DVF)
 """
@@ -13,6 +14,7 @@ from sage.misc.abstract_method import abstract_method
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.euclidean_domains import EuclideanDomains
 from sage.categories.fields import Fields
+
 
 class DiscreteValuationRings(Category_singleton):
     """

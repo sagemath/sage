@@ -6,7 +6,6 @@ This is the helper file providing functionality for projective_ds.py.
 AUTHORS:
 
 - Dillon Rose (2014-01):  Speed enhancements
-
 """
 
 # ****************************************************************************
@@ -35,7 +34,7 @@ cpdef _fast_possible_periods(self, return_points=False):
 
     INPUT:
 
-    - ``return_points`` - (default: ``False``) boolean; if ``True``, then
+    - ``return_points`` -- (default: ``False``) boolean; if ``True``, then
       return the points as well as the possible periods
 
     OUTPUT:

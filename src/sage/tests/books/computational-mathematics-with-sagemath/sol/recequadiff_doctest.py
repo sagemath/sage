@@ -54,5 +54,4 @@ Sage example in ./sol/recequadiff.tex, line 80::
   sage: Y = [x*sol[0].rhs() , x*sol[1].rhs()]
   sage: Y[0]
   -sqrt(2*_C + 2*log(x))*x
-
 """

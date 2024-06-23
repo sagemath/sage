@@ -1,5 +1,5 @@
-# sage.doctest: optional - sage.rings.finite_rings               (because all doctests use finite fields)
-# sage.doctest: optional - sage.rings.function_field    (because almost all doctests use function field extensions)
+# sage.doctest: needs sage.rings.finite_rings               (because all doctests use finite fields)
+# sage.doctest: needs sage.rings.function_field    (because almost all doctests use function field extensions)
 """
 Divisors of function fields
 
@@ -37,7 +37,6 @@ We verify the Riemann-Roch theorem::
 AUTHORS:
 
 - Kwankyu Lee (2017-04-30): initial version
-
 """
 
 # ****************************************************************************

@@ -44,7 +44,7 @@ from sage.schemes.generic.homset import SchemeHomset_points, SchemeHomset_generi
 
 from sage.misc.verbose import verbose
 
-from sage.rings.rational_field import is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields
 from sage.rings.finite_rings.finite_field_base import FiniteField
@@ -83,21 +83,21 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
 
         kwds:
 
-        - ``bound`` - real number (optional, default: 0). The bound for the coordinates for
+        - ``bound`` -- real number (default: 0). The bound for the coordinates for
           subschemes with dimension at least 1.
 
-        - ``precision`` - integer (optional, default: 53). The precision to use to
+        - ``precision`` -- integer (default: 53). The precision to use to
           compute the elements of bounded height for number fields.
 
-        - ``point_tolerance`` - positive real number (optional, default: `10^{-10}`).
+        - ``point_tolerance`` -- positive real number (default: `10^{-10}`).
           For numerically inexact fields, two points are considered the same
           if their coordinates are within tolerance.
 
-        - ``zero_tolerance`` - positive real number (optional, default: `10^{-10}`).
+        - ``zero_tolerance`` -- positive real number (default: `10^{-10}`).
           For numerically inexact fields, points are on the subscheme if they
           satisfy the equations to within tolerance.
 
-        - ``tolerance`` - a rational number in (0,1] used in doyle-krumm algorithm-4
+        - ``tolerance`` -- a rational number in (0,1] used in doyle-krumm algorithm-4
           for enumeration over number fields.
 
         OUTPUT:
@@ -274,7 +274,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
         B = kwds.pop('bound', 0)
         tol = kwds.pop('tolerance', 1e-2)
         prec = kwds.pop('precision', 53)
-        if is_RationalField(R):
+        if isinstance(R, RationalField):
             if not B > 0:
                 raise TypeError("a positive bound B (= %s) must be specified" % B)
             if isinstance(X, AlgebraicScheme_subscheme): # sieve should only be called for subschemes
@@ -305,15 +305,15 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
 
         INPUT:
 
-        ``F`` - numerical ring
+        - ``F`` -- numerical ring
 
         kwds:
 
-        - ``point_tolerance`` - positive real number (optional, default: `10^{-10}`).
+        - ``point_tolerance`` -- positive real number (default: `10^{-10}`).
           For numerically inexact fields, two points are considered the same
           if their coordinates are within tolerance.
 
-        - ``zero_tolerance`` - positive real number (optional, default: `10^{-10}`).
+        - ``zero_tolerance`` -- positive real number (default: `10^{-10}`).
           For numerically inexact fields, points are on the subscheme if they
           satisfy the equations to within tolerance.
 
@@ -486,7 +486,7 @@ class SchemeHomset_points_projective_ring(SchemeHomset_points):
 
         INPUT:
 
-        - ``B`` -- integer (optional, default=0). The bound for the
+        - ``B`` -- integer (default: 0). The bound for the
           coordinates.
 
         EXAMPLES::

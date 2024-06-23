@@ -13,7 +13,6 @@ AUTHORS:
 
 - Eric Gourgoulhon (2019-05-24): initial version, refactoring the class
   ``GraphicsArray`` that was defined in the module :mod:`~sage.plot.graphics`.
-
 """
 import os
 from sage.misc.fast_methods import WithEqualityById

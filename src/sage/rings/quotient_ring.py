@@ -101,7 +101,6 @@ easily::
     sage: Q2 = F.quo(F*[F.prod(m) for m in product(F.gens(), repeat=2)]*F)
     sage: Q2.is_commutative()
     True
-
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -310,7 +309,7 @@ def QuotientRing(R, I, names=None, **kwds):
         kwds.pop('implementation')
         return BooleanPolynomialRing(R.ngens(), names=names, **kwds)
     # workaround to silence warning from #34806
-    from sage.rings.number_field.order import Order
+    from sage.rings.abc import Order
     if isinstance(R, Order):
         if not R.is_maximal():
             raise NotImplementedError('only implemented for maximal orders')
@@ -482,7 +481,7 @@ class QuotientRing_nc(Parent):
         if R not in _Rings:
             raise TypeError("The first argument must be a ring, but %s is not" % R)
         # workaround to silence warning from #34806
-        from sage.rings.number_field.order import Order
+        from sage.rings.abc import Order
         if isinstance(R, Order):
             M = R.number_field().ideal_monoid()
         else:
@@ -1262,7 +1261,7 @@ class QuotientRing_nc(Parent):
 
         INPUT:
 
-        -  ``singular`` - Singular instance (default: the
+        -  ``singular`` -- Singular instance (default: the
            default Singular instance)
 
         .. NOTE::
@@ -1326,7 +1325,7 @@ class QuotientRing_nc(Parent):
 
         INPUT:
 
-        -  ``magma`` - a Magma instance
+        -  ``magma`` -- a Magma instance
 
         EXAMPLES::
 

@@ -25,10 +25,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.calculus.functions import jacobian
-from sage.functions.hyperbolic import cosh, sinh
-from sage.functions.log import exp
 from sage.matrix.constructor import matrix
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.modules.free_module_element import vector
 from sage.rings.cc import CC
@@ -39,6 +37,10 @@ from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
+
+lazy_import("sage.calculus.functions", "jacobian")
+lazy_import("sage.functions.hyperbolic", ["cosh", "sinh"])
+lazy_import("sage.functions.log", "exp")
 
 
 def covariant_z0(F, z0_cov=False, prec=53, emb=None, error_limit=0.000001):
@@ -56,7 +58,7 @@ def covariant_z0(F, z0_cov=False, prec=53, emb=None, error_limit=0.000001):
     - ``z0_cov`` -- boolean, compute only the `z_0` invariant. Otherwise, solve
       the minimization problem
 
-    - ``prec``-- positive integer. precision to use in CC
+    - ``prec`` -- positive integer. precision to use in CC
 
     - ``emb`` -- embedding into CC
 
@@ -272,7 +274,7 @@ def epsinv(F, target, prec=53, target_tol=0.001, z=None, emb=None):
     - ``target`` --  positive real number. The value we want to attain, i.e.,
       the value we are taking the inverse of
 
-    - ``prec``-- positive integer. precision to use in CC
+    - ``prec`` -- positive integer. precision to use in CC
 
     - ``target_tol`` -- positive real number. The tolerance with which we
       attain the target value.
@@ -390,7 +392,7 @@ def get_bound_poly(F, prec=53, norm_type='norm', emb=None):
 
     - ``F`` -- binary form of degree at least 3 with no multiple roots
 
-    - ``prec``-- positive integer. precision to use in CC
+    - ``prec`` -- positive integer. precision to use in CC
 
     - ``norm_type`` -- string, either norm or height
 
@@ -446,7 +448,7 @@ def smallest_poly(F, prec=53, norm_type='norm', emb=None):
 
     - ``F`` -- binary form of degree at least 3 with no multiple roots
 
-    - ``norm_type`` -- string - ``norm`` or ``height`` controlling what ``smallest``
+    - ``norm_type`` -- string; ``norm`` or ``height`` controlling what ``smallest``
       means for the coefficients.
 
     OUTPUT: pair [poly, matrix]

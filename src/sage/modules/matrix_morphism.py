@@ -97,9 +97,9 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         """
         INPUT:
 
-        -  ``parent`` - a homspace
+        -  ``parent`` -- a homspace
 
-        -  ``A`` - matrix
+        -  ``A`` -- matrix
 
 
         EXAMPLES::
@@ -622,8 +622,6 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             Free module morphism defined as left-multiplication by the matrix
             [1 0]
             [0 1]...
-
-
 
         .. WARNING::
 
@@ -1242,7 +1240,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
         INPUT:
 
-        - ``other`` - a morphism to compare with ``self``
+        - ``other`` -- a morphism to compare with ``self``
 
         OUTPUT:
 

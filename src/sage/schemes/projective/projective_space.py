@@ -88,7 +88,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.rational_field import QQ, is_RationalField
+from sage.rings.rational_field import QQ, RationalField
 from sage.rings.fraction_field import FractionField
 from sage.rings.number_field.order import Order
 
@@ -264,7 +264,7 @@ def ProjectiveSpace(n, R=None, names=None):
     if R in _Fields:
         if isinstance(R, FiniteField):
             return ProjectiveSpace_finite_field(n, R, names)
-        if is_RationalField(R):
+        if isinstance(R, RationalField):
             return ProjectiveSpace_rational_field(n, R, names)
         else:
             return ProjectiveSpace_field(n, R, names)
@@ -520,7 +520,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         INPUT:
 
-        - ``right`` - a projective space, product of projective spaces, or subscheme.
+        - ``right`` -- a projective space, product of projective spaces, or subscheme.
 
         OUTPUT: a product of projective spaces or subscheme.
 
@@ -783,7 +783,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         - ``v`` -- anything that defines a point
 
-        - ``check`` -- boolean (optional, default: ``True``); whether
+        - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency
 
         OUTPUT: A point of this projective space.
@@ -953,7 +953,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         INPUT:
 
-        -  ``X`` - a list or tuple of equations.
+        -  ``X`` -- a list or tuple of equations.
 
         EXAMPLES::
 
@@ -1011,9 +1011,9 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         kwds:
 
-        - ``bound`` - a real number
+        - ``bound`` -- a real number
 
-        - ``precision`` - (default: 53) a positive integer
+        - ``precision`` -- (default: 53) a positive integer
 
         OUTPUT:
 
@@ -1170,10 +1170,10 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         # or the ring of integers
         is_ring_of_ints = False
 
-        if is_RationalField(R):
+        if isinstance(R, RationalField):
             field_type = False
         elif R in NumberFields():
-            # True for the rational field as well, so check is_RationalField first
+            # True for the rational field as well, so check RationalField first
             field_type = True
         elif (R is ZZ) or (isinstance(R, Order) and R.is_integrally_closed()): # Ensure ring of integers / maximal order
             is_ring_of_ints = True
@@ -1374,7 +1374,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         INPUT:
 
-        - ``other`` - A projective space with the same base ring as this space.
+        - ``other`` -- A projective space with the same base ring as this space.
 
         OUTPUT:
 
@@ -2126,9 +2126,9 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
 
         INPUT:
 
-        - ``Ch`` - a homogeneous polynomial.
+        - ``Ch`` -- a homogeneous polynomial.
 
-        - ``dim`` - the dimension of the associated scheme.
+        - ``dim`` -- the dimension of the associated scheme.
 
         OUTPUT: a projective subscheme.
 
@@ -2451,7 +2451,7 @@ class ProjectiveSpace_rational_field(ProjectiveSpace_field):
 
         INPUT:
 
-        -  ``bound`` - integer.
+        -  ``bound`` -- integer.
 
         EXAMPLES::
 

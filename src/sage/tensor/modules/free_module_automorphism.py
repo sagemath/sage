@@ -21,7 +21,6 @@ AUTHORS:
 REFERENCES:
 
 - Chaps. 15, 24 of R. Godement: *Algebra* [God1968]_
-
 """
 # *****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>

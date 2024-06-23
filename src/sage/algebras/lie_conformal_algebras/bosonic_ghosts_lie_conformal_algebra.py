@@ -32,6 +32,8 @@ AUTHORS:
 from sage.matrix.special import identity_matrix
 from sage.structure.indexed_generators import standardize_names_index_set
 from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
+
+
 class BosonicGhostsLieConformalAlgebra(GradedLieConformalAlgebra):
     r"""
     The Bosonic ghosts or `\beta-\gamma`-system Lie conformal

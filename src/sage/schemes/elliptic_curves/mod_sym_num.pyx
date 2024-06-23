@@ -143,7 +143,6 @@ can twist to a semistable curve, like in this example::
 AUTHORS:
 
 - Chris Wuthrich (2013-16)
-
 """
 
 # ***************************************************************************
@@ -850,7 +849,7 @@ cdef class ModularSymbolNumerical:
         - ``sign`` -- optional either +1 or -1, or 0 (default),
           in which case the sign passed to the class is taken.
 
-        - ``use_twist`` -- boolean (default: True); decides if we
+        - ``use_twist`` -- boolean (default: ``True``); decides if we
           allow to use a quadratic twist.
 
         OUTPUT: a rational number

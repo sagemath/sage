@@ -32,6 +32,7 @@ from sage.sets.family import Family
 from sage.sets.positive_integers import PositiveIntegers
 from sage.sets.set import Set
 
+
 class HeisenbergAlgebra_abstract(IndexedGenerators):
     """
     The common methods for the (non-matrix) Heisenberg algebras.
