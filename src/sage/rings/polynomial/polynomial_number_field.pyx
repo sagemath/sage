@@ -63,14 +63,14 @@ We can also construct polynomials over relative number fields::
     1
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Luis Felipe Tabera Alonso <taberalf@unican.es>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.rings.polynomial.polynomial_element_generic import Polynomial_generic_dense_field
 from sage.rings.rational_field import QQ
