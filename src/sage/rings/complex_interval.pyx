@@ -1002,7 +1002,6 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         """
         raise TypeError
 
-
     def _sage_input_(self, sib, coerce):
         r"""
         Produce an expression which will reproduce this value when evaluated.
