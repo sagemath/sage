@@ -191,6 +191,10 @@ def is_PolynomialRing(x):
         sage: from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
         sage: from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
         sage: is_PolynomialRing(2)
+        doctest:warning...
+        DeprecationWarning: The function is_PolynomialRing is deprecated;
+        use 'isinstance(..., PolynomialRing_general)' instead.
+        See https://github.com/sagemath/sage/issues/38266 for details.
         False
 
     This polynomial ring is not univariate.
@@ -200,6 +204,10 @@ def is_PolynomialRing(x):
         sage: is_PolynomialRing(ZZ['x,y,z'])
         False
         sage: is_MPolynomialRing(ZZ['x,y,z'])
+        doctest:warning...
+        DeprecationWarning: The function is_MPolynomialRing is deprecated;
+        use 'isinstance(..., MPolynomialRing_base)' instead.
+        See https://github.com/sagemath/sage/issues/38266 for details.
         True
 
     ::
