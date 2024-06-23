@@ -151,7 +151,7 @@ def parent_to_repr_short(P):
     from sage.symbolic.ring import SR
     from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
     from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
-    from sage.rings.power_series_ring import PowerSeriesRing
+    from sage.rings.power_series_ring import is_PowerSeriesRing
 
     def abbreviate(P):
         try:
