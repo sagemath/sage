@@ -677,7 +677,7 @@ class GraphLatex(SageObject):
         pre-built style and modify it (other than editing the latex string by
         hand after the fact).
 
-        - ``vertex_color`` -- (default: ``'black'``); a single color to use as
+        - ``vertex_color`` -- (default: ``'black'``) a single color to use as
           the default for outline of vertices. For the ``sphere`` shape this
           color is used for the entire vertex, which is drawn with a 3D shading.
           Colors must be specified as a string recognized by the matplotlib
@@ -694,7 +694,7 @@ class GraphLatex(SageObject):
           proper subset of the vertices. Specified values will supersede a
           default value.
 
-        - ``vertex_fill_color`` -- (default: ``'white'``); a single color to use
+        - ``vertex_fill_color`` -- (default: ``'white'``) a single color to use
           as the default for the fill color of vertices. See the explanation
           above for the ``vertex_color`` option to see possible values. This
           color is ignored for the ``sphere`` vertex shape.
@@ -738,7 +738,7 @@ class GraphLatex(SageObject):
           representation according to the ``_repr`` method. Support for
           arbitrarily-complicated mathematics is not especially robust.
 
-        - ``vertex_label_color`` -- (default: ``'black'``); a single color to
+        - ``vertex_label_color`` -- (default: ``'black'``) a single color to
           use as the default for labels of vertices. See the explanation above
           for the ``vertex_color`` option to see possible values.
 
@@ -749,7 +749,7 @@ class GraphLatex(SageObject):
           be specified for a proper subset of the vertices. Specified values
           will supersede a default value.
 
-        - ``vertex_label_placement`` -- (default: ``'center'``); if ``'center'``
+        - ``vertex_label_placement`` -- (default: ``'center'``) if ``'center'``
           the label is centered in the interior of the vertex and the vertex
           will expand to contain the label. Giving instead a pair of numbers
           will place the label exterior to the vertex at a certain distance from
@@ -760,7 +760,7 @@ class GraphLatex(SageObject):
           the vertices. See the explanation for ``vertex_label_placement`` for
           the possible values.
 
-        - ``edge_color`` -- (default: ``'black'``); a single color to use as the
+        - ``edge_color`` -- (default: ``'black'``) a single color to use as the
           default for an edge. See the explanation above for the
           ``vertex_color`` option to see possible values.
 
@@ -774,7 +774,7 @@ class GraphLatex(SageObject):
           second color running down the middle. This can be a useful effect for
           highlighting edge crossings.
 
-        - ``edge_fill_color`` -- (default: ``'black'``); a single color to use
+        - ``edge_fill_color`` -- (default: ``'black'``) a single color to use
           as the default for the fill color of an edge. The boolean switch
           ``edge_fills`` must be set to ``True`` for this to have an effect. See
           the explanation above for the ``vertex_color`` option to see possible
@@ -804,7 +804,7 @@ class GraphLatex(SageObject):
           ``vertex_labels_math`` option, which behaves identically.  Support for
           arbitrarily-complicated mathematics is not especially robust.
 
-        - ``edge_label_color`` -- (default: ``'black'``); a single color to use
+        - ``edge_label_color`` -- (default: ``'black'``) a single color to use
           as the default for labels of edges. See the explanation above for the
           ``vertex_color`` option to see possible values.
 
@@ -826,7 +826,7 @@ class GraphLatex(SageObject):
           subset of the edges.  See the ``edge_label_sloped`` option for a
           description of sloped edge labels.
 
-        - ``edge_label_placement`` -- (default: 0.50); either a number between
+        - ``edge_label_placement`` -- (default: 0.50) either a number between
           0.0 and 1.0, or one of: ``'above'``, ``'below'``, ``'left'``,
           ``'right'``. These adjust the location of an edge label along an
           edge. A number specifies how far along the edge the label is located.

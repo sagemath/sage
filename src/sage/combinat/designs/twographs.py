@@ -271,7 +271,7 @@ def twograph_descendant(G, v, name=None):
 
     - ``v`` -- a vertex of ``G``
 
-    - ``name`` -- (default: ``None``); no name, otherwise derive from the construction
+    - ``name`` -- (default: ``None``) no name, otherwise derive from the construction
 
     EXAMPLES:
 

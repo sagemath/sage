@@ -1546,9 +1546,9 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         - ``var`` -- variable
 
-        - ``min`` -- default: ``None``
+        - ``min`` -- (default: ``None``)
 
-        - ``max`` -- default: ``None``
+        - ``max`` -- (default: ``None``)
 
         OUTPUT: the definite integral if xmin is not ``None``
 

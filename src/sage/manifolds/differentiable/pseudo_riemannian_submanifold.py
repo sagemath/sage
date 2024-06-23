@@ -419,7 +419,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         INPUT:
 
         - ``name`` -- name given to the open subset
-        - ``latex_name`` -- (default: ``None``); LaTeX symbol to denote the
+        - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the
           subset; if none is provided, it is set to ``name``
         - ``coord_def`` -- (default: {}) definition of the subset in
           terms of coordinates; ``coord_def`` must a be dictionary with keys

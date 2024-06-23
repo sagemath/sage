@@ -82,17 +82,16 @@ def _iter_vectors(n, lower, upper, step=None):
 
     INPUT:
 
-    - ``n`` -- length, integer ``>0``,
-    - ``lower`` -- lower bound (inclusive), integer ``< upper``.
-    - ``upper`` -- upper bound (exclusive), integer ``> lower``.
-    - ``step`` -- used for recursion, ignore.
+    - ``n`` -- integer ``>0``; length
+    - ``lower`` -- integer ``< upper``; lower bound (inclusive)
+    - ``upper`` -- integer ``> lower``; upper bound (exclusive)
+    - ``step`` -- used for recursion, ignore
 
     EXAMPLES::
 
       sage: from sage.stats.distributions.discrete_gaussian_lattice import _iter_vectors
       sage: list(_iter_vectors(2, -1, 2))
       [(-1, -1), (0, -1), (1, -1), (-1, 0), (0, 0), (1, 0), (-1, 1), (0, 1), (1, 1)]
-
     """
     if step is None:
         if ZZ(lower) >= ZZ(upper):
@@ -160,9 +159,9 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
         INPUT:
 
-        - ``precision`` -- an integer `>= 53` nor ``None``.
+        - ``precision`` -- integer `>= 53` nor ``None``
         - ``sigma`` -- if ``precision`` is ``None`` then the precision of
-          ``sigma`` is used.
+          ``sigma`` is used
 
         EXAMPLES::
 
@@ -179,7 +178,6 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             200
             sage: DGL.compute_precision(None, 3)
             53
-
         """
         if precision is None:
             try:
@@ -434,8 +432,8 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
           [Pei2010]_; ignored for spherical Gaussian parameter; if not provided,
           set to be the maximal possible such that `\Sigma - rBB^T` is positive
           definite
-        - ``precision`` -- bit precision `\geq 53`.
-        - ``sigma_basis`` -- (default: ``False``) When set, ``sigma`` is treated as
+        - ``precision`` -- bit precision `\geq 53`
+        - ``sigma_basis`` -- boolean (default: ``False``); when set, ``sigma`` is treated as
             a (row) basis, i.e. the covariance matrix is computed by `\Sigma = SS^T`
 
         .. TODO::
@@ -856,7 +854,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             c_ = c.dot_product(b_) / b_.dot_product(b_)
             sigma_ = sigma / b_.norm()
             assert sigma_ > 0
-            z = DiscreteGaussianDistributionIntegerSampler(sigma=sigma_, c=c_, algorithm="uniform+online")()
+            z = DiscreteGaussianDistributionIntegerSampler(sigma=sigma_, c=c_, algorithm='uniform+online')()
             c = c - z * B[i]
             v = v + z * B[i]
         return v

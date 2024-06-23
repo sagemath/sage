@@ -2780,9 +2780,8 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``phi`` -- a morphism, so phi is callable and
-          phi.domain() and phi.codomain() are defined. The codomain must be a
-           ring.
+        - ``phi`` -- a morphism, so ``phi`` is callable and ``phi.domain()``
+          and ``phi.codomain()`` are defined. The codomain must be a ring
 
         OUTPUT: a matrix over the codomain of phi
 
@@ -4108,7 +4107,7 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``algorithm`` -- (default: ``'default'``); a keyword that selects the
+        - ``algorithm`` -- (default: ``'default'``) a keyword that selects the
           algorithm employed.  Allowable values are:
 
           - ``'default'`` -- allows the algorithm to be chosen automatically
@@ -4121,7 +4120,7 @@ cdef class Matrix(Matrix1):
             over the rationals and integers
           - ``'pluq'`` -- PLUQ matrix factorization for matrices mod 2
 
-        - ``basis`` -- (default: ``'default'``); a keyword that describes
+        - ``basis`` -- (default: ``'default'``) a keyword that describes
           the format of the basis returned.  Allowable values are:
 
           - 'default': uses 'echelon' over fields; 'computed' otherwise.
@@ -4806,7 +4805,7 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``algorithm`` -- (default: ``'default'``); a keyword that selects the
+        - ``algorithm`` -- (default: ``'default'``) a keyword that selects the
           algorithm employed.  Allowable values are:
 
           - ``'default'`` -- allows the algorithm to be chosen automatically
@@ -4819,7 +4818,7 @@ cdef class Matrix(Matrix1):
             over the rationals and integers
           - ``'pluq'`` -- PLUQ matrix factorization for matrices mod 2
 
-        - ``basis`` -- (default: ``'echelon'``); a keyword that describes the
+        - ``basis`` -- (default: ``'echelon'``) a keyword that describes the
           format of the basis used to construct the right kernel.
           Allowable values are:
 
@@ -5174,7 +5173,7 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``algorithm`` -- (default: ``'default'``); a keyword that selects the
+        - ``algorithm`` -- (default: ``'default'``) a keyword that selects the
           algorithm employed.  Allowable values are:
 
           - ``'default'`` -- allows the algorithm to be chosen automatically
@@ -5187,7 +5186,7 @@ cdef class Matrix(Matrix1):
             over the rationals and integers
           - ``'pluq'`` -- PLUQ matrix factorization for matrices mod 2
 
-        - ``basis`` -- (default: ``'echelon'``); a keyword that describes
+        - ``basis`` -- (default: ``'echelon'``) a keyword that describes
           the format of the basis used to construct the left kernel.
           Allowable values are:
 
@@ -6633,7 +6632,7 @@ cdef class Matrix(Matrix1):
         - ``self`` -- a square matrix over an exact field.  For inexact
           matrices consult the numerical or symbolic matrix classes
 
-        - ``format`` -- default: ``None``
+        - ``format`` -- (default: ``None``)
 
           - ``'all'`` -- attempts to create every eigenspace.  This will
             always be possible for matrices with rational entries
@@ -6644,7 +6643,7 @@ cdef class Matrix(Matrix1):
             in an algebraically closed field which is implemented.
             Otherwise, uses the 'galois' format.
 
-        - ``var`` -- (default: ``'a'``); variable name used to
+        - ``var`` -- (default: ``'a'``) variable name used to
           represent elements of the root field of each
           irreducible factor of the characteristic polynomial.
           If var='a', then the root fields will be in terms of
@@ -6652,7 +6651,7 @@ cdef class Matrix(Matrix1):
           the irreducible factors of the characteristic polynomial,
           even for linear factors.
 
-        - ``algebraic_multiplicity`` -- (default: ``False``); whether or
+        - ``algebraic_multiplicity`` -- (default: ``False``) whether or
           not to include the algebraic multiplicity of each eigenvalue
           in the output.  See the discussion below.
 
@@ -9433,7 +9432,7 @@ cdef class Matrix(Matrix1):
         INPUT:
 
         - ``A`` -- a matrix
-        - ``subdivide`` -- (default: ``True``); whether or not to return
+        - ``subdivide`` -- (default: ``True``) whether or not to return
           natural subdivisions with the matrix
 
         OUTPUT:
@@ -10486,7 +10485,7 @@ cdef class Matrix(Matrix1):
 
         INPUT:
 
-        - ``full`` -- (default: ``True``); if ``True`` then the
+        - ``full`` -- (default: ``True``) if ``True`` then the
           returned matrices have dimensions as described below.
           If ``False`` the ``R`` matrix has no zero rows and the
           columns of ``Q`` are a basis for the column space of
@@ -10928,7 +10927,7 @@ cdef class Matrix(Matrix1):
         INPUT:
 
         - ``self`` -- a matrix whose rows are to be orthogonalized
-        - ``orthonormal`` -- (default: ``False``); if ``True`` the
+        - ``orthonormal`` -- (default: ``False``) if ``True`` the
           returned orthogonal vectors are unit vectors.  This keyword
           is ignored if the matrix is over ``RDF`` or ``CDF`` and the
           results are always orthonormal.
@@ -12185,7 +12184,7 @@ cdef class Matrix(Matrix1):
         - ``other`` -- a matrix, which should be square, and of the same size
           as ``self``
 
-        - ``transformation`` -- (default: ``False``); if ``True``, the output
+        - ``transformation`` -- (default: ``False``) if ``True``, the output
           may include the change-of-basis matrix (also known as the similarity
           transformation). See below for an exact description.
 
@@ -12737,7 +12736,7 @@ cdef class Matrix(Matrix1):
         - ``v`` -- a vector with a degree equal to the size of the matrix
           and entries compatible with the entries of the matrix
 
-        - ``var`` -- (default: ``None``); if specified as a string or
+        - ``var`` -- (default: ``None``) if specified as a string or
           a generator of a polynomial ring, then this will be used
           to construct a polynomial reflecting a relation of linear
           dependence on the powers `A^iv` *and* this will cause
@@ -12745,7 +12744,7 @@ cdef class Matrix(Matrix1):
           A generator must create polynomials with coefficients from
           the same field as the matrix entries.
 
-        - ``basis`` -- (default: ``echelon``); the basis for the
+        - ``basis`` -- (default: ``echelon``) the basis for the
           subspace is "echelonized" by default, but the keyword
           'iterates' will return a subspace with a user basis
           equal to the largest linearly independent
@@ -13922,7 +13921,7 @@ cdef class Matrix(Matrix1):
         - ``algorithm`` -- ``'symmetric'`` or ``'hermitian'``,
           according to the corresponding property of the matrix
 
-        - ``check`` -- (default: ``True``); if ``True`` then
+        - ``check`` -- (default: ``True``) if ``True`` then
           performs the check that the matrix is consistent with the
           ``algorithm`` keyword
 
@@ -14184,7 +14183,7 @@ cdef class Matrix(Matrix1):
           ``'symmetric'`` or ``'hermitian'``, according to whether
           the input matrix is symmetric or hermitian
 
-        - ``check`` -- (default: ``True``); if ``True`` then
+        - ``check`` -- (default: ``True``) if ``True`` then
           performs the check that the matrix is consistent with the
           ``algorithm`` keyword
 
@@ -16907,10 +16906,10 @@ cdef class Matrix(Matrix1):
 
         - ``self`` -- a square matrix with entries from an exact field
 
-        - ``transformation`` -- (default: ``False``); if ``True`` return a
+        - ``transformation`` -- (default: ``False``) if ``True`` return a
           change-of-basis matrix relating the matrix and its ZigZag form
 
-        - ``subdivide`` -- (default: ``True``); if ``True`` the ZigZag
+        - ``subdivide`` -- (default: ``True``) if ``True`` the ZigZag
           form matrix is subdivided according to the companion matrices
           described in the output section below.
 
@@ -17182,14 +17181,14 @@ cdef class Matrix(Matrix1):
 
         - ``self`` -- a square matrix with entries from an exact field
 
-        - ``format`` -- (default: ``'right'``); one of ``'right'``, ``'bottom'``,
+        - ``format`` -- (default: ``'right'``) one of ``'right'``, ``'bottom'``,
           ``'left'``, ``'top'`` or ``'invariants'``.  The first four will cause
           a matrix to be returned with companion matrices dictated by the
           keyword.  The value 'invariants' will cause a list of lists to
           be returned, where each list contains coefficients of a
           polynomial associated with a companion matrix.
 
-        - ``subdivide`` -- (default: ``'True'``); if 'True' and a matrix is
+        - ``subdivide`` -- (default: ``'True'``) if 'True' and a matrix is
           returned, then it contains subdivisions delineating the
           companion matrices along the diagonal
 

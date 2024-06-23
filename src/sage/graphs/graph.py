@@ -4341,7 +4341,7 @@ class Graph(GenericGraph):
 
         INPUT:
 
-        - ``matching`` -- (default: ``None``); a near perfect matching of the
+        - ``matching`` -- (default: ``None``) a near perfect matching of the
           graph, that is a matching such that all vertices of the graph but one
           are incident to an edge of the matching. It can be given using any
           valid input format of :class:`~sage.graphs.graph.Graph`.
@@ -4657,7 +4657,7 @@ class Graph(GenericGraph):
 
         INPUT:
 
-        - ``solver`` -- (default: ``'PPL'``); specify a Linear Program (LP)
+        - ``solver`` -- (default: ``'PPL'``) specify a Linear Program (LP)
           solver to be used. If set to ``None``, the default one is used. For
           more information on LP solvers and which default solver is used, see
           the method :meth:`solve
@@ -4714,7 +4714,7 @@ class Graph(GenericGraph):
 
           - Else, the subgraph of `G` realizing the `MAD` is returned.
 
-        - ``solver`` -- (default: ``None``); specify a Linear Program (LP)
+        - ``solver`` -- (default: ``None``) specify a Linear Program (LP)
           solver to be used. If set to ``None``, the default one is used. For
           more information on LP solvers and which default solver is used, see
           the method
@@ -7088,7 +7088,7 @@ class Graph(GenericGraph):
           only the size of a maximum independent set is returned. Otherwise,
           a maximum independent set is returned as a list of vertices.
 
-        - ``reduction_rules`` -- (default: ``True``); specify if the reductions
+        - ``reduction_rules`` -- (default: ``True``) specify if the reductions
           rules from kernelization must be applied as pre-processing or not.
           See [ACFLSS04]_ for more details. Note that depending on the instance,
           it might be faster to disable reduction rules.
@@ -7184,7 +7184,7 @@ class Graph(GenericGraph):
           only the size of a minimum vertex cover is returned. Otherwise,
           a minimum vertex cover is returned as a list of vertices.
 
-        - ``reduction_rules`` -- (default: ``True``); specify if the reductions
+        - ``reduction_rules`` -- (default: ``True``) specify if the reductions
           rules from kernelization must be applied as pre-processing or not.
           See [ACFLSS04]_ for more details. Note that depending on the instance,
           it might be faster to disable reduction rules.

@@ -190,7 +190,7 @@ class FPModuleHomspace(Homset):
 
         INPUT:
 
-        - ``n`` -- an integer degree
+        - ``n`` -- integer degree
 
         OUTPUT: a basis for the set of all module homomorphisms of degree ``n``
 
@@ -237,7 +237,6 @@ class FPModuleHomspace(Homset):
               To:   Free graded left module on 2 generators over sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [3, 2, 1]
               Defn: g[1] |--> 0
                     g[3] |--> 0
-
         """
         ngens = len(self.domain().generator_degrees())
         return self.element_class(self, [self.codomain().zero()] * ngens)
@@ -306,7 +305,7 @@ class FPModuleHomspace(Homset):
 
         INPUT:
 
-        - ``n`` -- an integer degree
+        - ``n`` -- integer degree
         - ``basis`` -- boolean; decide if a basis should be returned or just
           a single homomorphism
 

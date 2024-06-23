@@ -65,10 +65,9 @@ empty_unicode_art = _unicode_art_factory.build_empty()
 
 def unicode_art(*obj, **kwds):
     r"""
-    Return an unicode art representation
+    Return an unicode art representation.
 
     INPUT:
-
 
     - ``*obj`` -- any number of positional arguments, of arbitrary
       type. The objects whose ascii art representation we want.

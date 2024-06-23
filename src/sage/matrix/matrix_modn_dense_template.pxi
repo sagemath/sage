@@ -1416,7 +1416,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         - ``algorithm`` -- ``generic`` or ``linbox`` (default:
           ``linbox``)
 
-        - ``proof`` -- (default: ``True``); whether to provably return
+        - ``proof`` -- (default: ``True``) whether to provably return
           the true minimal polynomial; if ``False``, we only guarantee
           to return a divisor of the minimal polynomial.  There are
           also certainly cases where the computed results is

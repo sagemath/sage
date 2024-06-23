@@ -2399,15 +2399,15 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
           unoriented name. To obtain the list of the individual links this
           keyword has to be set to ``True``.
 
-        - ``comp`` -- (default: ``None``); if given an integer for this
+        - ``comp`` -- (default: ``None``) if given an integer for this
           keyword the list is restriced to links having the according number
           of components. This keyword implies ``oriented=True``.
 
-        - ``det`` -- (default: ``None``); if given an integer for this
+        - ``det`` -- (default: ``None``) if given an integer for this
           keyword the list is restriced to links having the according value
           for its determinant. This keyword implies ``oriented=True``.
 
-        - ``homfly`` -- (default: ``None``); if given a HOMFLY-PT polynomial
+        - ``homfly`` -- (default: ``None``) if given a HOMFLY-PT polynomial
           having ``normalization='vz'`` for this keyword the list is restriced to
           links having the according value for its HOMFLY-PT polynomial. This
           keyword implies ``oriented=True``.

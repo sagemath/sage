@@ -339,7 +339,7 @@ class ModularFormsRing(Parent):
 
         - ``names`` -- list or tuple of names (strings), or a comma separated
           string
-        - ``gens`` -- (default: ``None``); (list) a list of generator of
+        - ``gens`` -- (default: ``None``) list of generator of
           ``self``. If ``gens`` is ``None`` then the generators returned by
           :meth:`~sage.modular.modform.find_generator.ModularFormsRing.gen_forms`
           is used instead

@@ -73,8 +73,7 @@ class DIMACS(SatSolver):
         - ``verbosity`` -- a verbosity level, where zero means silent
           and anything else means verbose output. (default: ``0``)
 
-        - ``**kwds`` -- accepted for compatibility with other solves,
-          ignored.
+        - ``**kwds`` -- accepted for compatibility with other solvers; ignored
 
         TESTS::
 
@@ -126,7 +125,7 @@ class DIMACS(SatSolver):
 
         INPUT:
 
-        - ``decision`` -- accepted for compatibility with other solvers, ignored.
+        - ``decision`` -- accepted for compatibility with other solvers; ignored
 
         EXAMPLES::
 
@@ -161,7 +160,7 @@ class DIMACS(SatSolver):
 
         INPUT:
 
-        - ``lits`` -- a tuple of integers != 0
+        - ``lits`` -- tuple of integers (``!= 0``)
 
         .. note::
 
@@ -304,7 +303,7 @@ class DIMACS(SatSolver):
 
         INPUT:
 
-        - ``clauses`` -- a list of clauses, either in simple format as a list of
+        - ``clauses`` -- list of clauses, either in simple format as a list of
           literals or in extended format for CryptoMiniSat: a tuple of literals,
           ``is_xor`` and ``rhs``.
 
@@ -498,7 +497,6 @@ class DIMACS(SatSolver):
             ....:     except ZeroDivisionError:
             ....:         pass
             sage: solve_sat(F, solver=sage.sat.solvers.RSat)    # optional - rsat, needs sage.rings.finite_rings sage.rings.polynomial.pbori
-
         """
         if assumptions is not None:
             raise NotImplementedError("Assumptions are not supported for DIMACS based solvers.")
@@ -554,7 +552,6 @@ class RSat(DIMACS):
         sage: solver.add_clause((-1,-2))
         sage: solver()                            # optional - rsat
         False
-
     """
     command = "rsat {input} -v -s"
 
@@ -620,7 +617,6 @@ class Glucose(DIMACS):
         c...
         s SATISFIABLE
         v -1 -2 ... 100 0
-
     """
     command = "glucose -verb=0 -model {input}"
 
@@ -684,13 +680,12 @@ class GlucoseSyrup(DIMACS):
         c...
         s SATISFIABLE
         v -1 -2 ... 100 0
-
     """
     command = "glucose-syrup -model -verb=0 {input}"
 
 class Kissat(DIMACS):
     """
-    An instance of the Kissat SAT solver
+    An instance of the Kissat SAT solver.
 
     For information on Kissat see: http://fmv.jku.at/kissat/
 
@@ -748,7 +743,6 @@ class Kissat(DIMACS):
         v ...
         v ...
         v ... 100 0
-
     """
 
     command = "kissat -q {input}"

@@ -225,7 +225,7 @@ class Groups(CategoryWithAxiom):
               * a list - a list of strings, where the length
                 of the list equals the number of elements.
 
-            - ``elements`` -- (default: ``None``);  A list of
+            - ``elements`` -- (default: ``None``) a list of
               elements of the group, in forms that can be
               coerced into the structure, eg. their string
               representations. This may be used to impose an

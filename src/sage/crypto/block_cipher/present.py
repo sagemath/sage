@@ -179,7 +179,7 @@ class PRESENT(SageObject):
 
         INPUT:
 
-        - ``keySchedule`` -- (default: ``80``); the key schedule that will be
+        - ``keySchedule`` -- (default: ``80``) the key schedule that will be
           used for encryption and decryption. Use ``80`` or ``128`` as a
           shortcut for the original key schedules from [BKLPPRSV2007]_.
 

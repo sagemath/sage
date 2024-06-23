@@ -63,20 +63,20 @@ class CompoundSymbol(SageObject):
                  middle_top=None, middle_bottom=None,
                  top_2=None, bottom_2=None):
         """
-        A multi-character (ascii/unicode art) symbol
+        A multi-character (ascii/unicode art) symbol.
 
         INPUT:
 
-        Instead of string, each of these can be unicode in Python 2:
+        Instead of a string, each of these can be unicode in Python 2:
 
-        - ``character`` -- string. The single-line version of the symbol.
+        - ``character`` -- string; the single-line version of the symbol
 
-        - ``top`` -- string. The top line of a multi-line symbol.
+        - ``top`` -- string; the top line of a multi-line symbol
 
-        - ``extension`` -- string. The extension line of a multi-line symbol (will
-          be repeated).
+        - ``extension`` -- string; the extension line of a multi-line symbol (will
+          be repeated)
 
-        - ``bottom`` -- string. The bottom line of a multi-line symbol.
+        - ``bottom`` -- string; the bottom line of a multi-line symbol
 
         - ``middle`` -- optional string. The middle part, for example
           in curly braces. Will be used only once for the symbol, and
@@ -90,9 +90,9 @@ class CompoundSymbol(SageObject):
           2-line middle part if the height of the symbol is even.
           Will be used only once for the symbol.
 
-        - ``top_2`` -- optional string. The upper half of a 2-line symbol.
+        - ``top_2`` -- optional string; the upper half of a 2-line symbol
 
-        - ``bottom_2`` -- optional string. The lower half of a 2-line symbol.
+        - ``bottom_2`` -- optional string; the lower half of a 2-line symbol
 
         EXAMPLES::
 
@@ -117,7 +117,7 @@ class CompoundSymbol(SageObject):
 
     def _repr_(self):
         """
-        Return string representation
+        Return string representation.
 
         EXAMPLES::
 
@@ -129,11 +129,11 @@ class CompoundSymbol(SageObject):
 
     def __call__(self, num_lines):
         r"""
-        Return the lines for a multi-line symbol
+        Return the lines for a multi-line symbol.
 
         INPUT:
 
-        - ``num_lines`` -- integer. The total number of lines.
+        - ``num_lines`` -- integer; the total number of lines
 
         OUTPUT: list of strings / unicode strings
 
@@ -160,13 +160,13 @@ class CompoundSymbol(SageObject):
 
     def print_to_stdout(self, num_lines):
         """
-        Print the multi-line symbol
+        Print the multi-line symbol.
 
         This method is for testing purposes.
 
         INPUT:
 
-        - ``num_lines`` -- integer. The total number of lines.
+        - ``num_lines`` -- integer; the total number of lines
 
         EXAMPLES::
 
@@ -193,7 +193,7 @@ class CompoundAsciiSymbol(CompoundSymbol):
 
     def character_art(self, num_lines):
         """
-        Return the ASCII art of the symbol
+        Return the ASCII art of the symbol.
 
         EXAMPLES::
 
@@ -211,7 +211,7 @@ class CompoundUnicodeSymbol(CompoundSymbol):
 
     def character_art(self, num_lines):
         """
-        Return the unicode art of the symbol
+        Return the unicode art of the symbol.
 
         EXAMPLES::
 

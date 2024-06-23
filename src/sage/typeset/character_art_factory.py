@@ -26,7 +26,7 @@ class CharacterArtFactory(SageObject):
                  art_type, string_type, magic_method_name,
                  parenthesis, square_bracet, curly_brace):
         r"""
-        Abstract base class for character art factory
+        Abstract base class for character art factory.
 
         This class is the common implementation behind
         :func:`~sage.typeset.ascii_art.ascii_art` and
@@ -38,10 +38,10 @@ class CharacterArtFactory(SageObject):
           :class:`~sage.typeset.character_art.CharacterArt`)
 
         - ``string_type`` -- type of strings (the lines in the
-          character art, e.g. ``str`` or ``unicode``).
+          character art, e.g. ``str`` or ``unicode``)
 
         - ``magic_method_name`` -- name of the Sage magic method (e.g.
-          ``'_ascii_art_'`` or ``'_unicode_art_'``).
+          ``'_ascii_art_'`` or ``'_unicode_art_'``)
 
         - ``parenthesis`` -- left/right pair of two multi-line
           symbols. The parenthesis, a.k.a. round brackets (used for printing
@@ -134,7 +134,7 @@ class CharacterArtFactory(SageObject):
 
     def build_empty(self):
         """
-        Return the empty character art object
+        Return the empty character art object.
 
         OUTPUT: character art instance
 
@@ -148,7 +148,7 @@ class CharacterArtFactory(SageObject):
 
     def build_from_magic_method(self, obj, baseline=None):
         """
-        Return the character art object created by the object's magic method
+        Return the character art object created by the object's magic method.
 
         OUTPUT: character art instance
 
@@ -408,7 +408,7 @@ class CharacterArtFactory(SageObject):
     def concatenate(self, iterable, separator, empty=None, baseline=0,
                     nested=False):
         r"""
-        Concatenate multiple character art instances
+        Concatenate multiple character art instances.
 
         The breakpoints are set as the breakpoints of the ``separator``
         together with the breakpoints of the objects in ``iterable``.
@@ -523,7 +523,7 @@ class CharacterArtFactory(SageObject):
 
         INPUT:
 
-        - ``kwds`` -- a dict
+        - ``kwds`` -- dictionary
 
         OUTPUT:
 

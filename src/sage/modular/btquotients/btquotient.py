@@ -3731,10 +3731,10 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         - ``prec`` -- a precision (default: ``None``). if not ``None`` should
           be a positive integer
 
-        - ``t`` -- (default: ``None``); the number of additional moments to store. If ``None``, determine
+        - ``t`` -- (default: ``None``) the number of additional moments to store. If ``None``, determine
           it automatically from ``prec``, ``U`` and the ``overconvergent`` flag
 
-        - ``R`` -- (default: ``None``); if specified, coefficient field of the automorphic forms.
+        - ``R`` -- (default: ``None``) if specified, coefficient field of the automorphic forms.
           If not specified it defaults to the base ring of the distributions ``U``, or to `\QQ_p`
           with the working precision ``prec``.
 

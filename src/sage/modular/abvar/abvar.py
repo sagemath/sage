@@ -3161,7 +3161,7 @@ class ModularAbelianVariety_abstract(Parent):
 
         INPUT:
 
-        - ``none_if_not_known`` -- (default: ``False``); if ``True``, return
+        - ``none_if_not_known`` -- (default: ``False``) if ``True``, return
           ``None`` instead of attempting to compute the degen map's `t`, if it
           isn't known. This ``None`` result is not cached.
 
@@ -3648,9 +3648,9 @@ class ModularAbelianVariety_abstract(Parent):
 
         INPUT:
 
-        - ``A`` -- (default: ``None``); if given, A must be an
-          abelian variety that contains self, in which case the complement of
-          ``self`` is taken inside A. Otherwise the complement is taken in the
+        - ``A`` -- (default: ``None``) if given, ``A`` must be an
+          abelian variety that contains ``self``, in which case the complement of
+          ``self`` is taken inside ``A``. Otherwise the complement is taken in the
           ambient product Jacobian.
 
         OUTPUT: abelian variety

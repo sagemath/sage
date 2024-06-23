@@ -133,11 +133,11 @@ cdef Py_ssize_t mpq_binary_search(mpq_t* v, Py_ssize_t n, mpq_t x, Py_ssize_t* i
 
 cdef int mpq_vector_get_entry(mpq_t ans, mpq_vector* v, Py_ssize_t n) except -1:
     """
-    Returns the n-th entry of the sparse vector v.  This
-    would be v[n] in Python syntax.
+    Return the n-th entry of the sparse vector v.  This
+    would be ``v[n]`` in Python syntax.
 
-    The return is done using the pointer ans, which is to an mpq_t
-    that *must* have been initialized using mpq_init.
+    The return is done using the pointer ``ans``, which is to an ``mpq_t``
+    that *must* have been initialized using ``mpq_init``.
     """
     if n >= v.degree:
         raise IndexError("Index must be between 0 and %s." % (v.degree - 1))
@@ -160,7 +160,7 @@ cdef bint mpq_vector_is_entry_zero_unsafe(mpq_vector* v, Py_ssize_t n) noexcept:
 
 cdef object mpq_vector_to_list(mpq_vector* v):
     """
-    Returns a Python list of 2-tuples (i,x), where x=v[i] runs
+    Return a Python list of 2-tuples (i,x), where ``x=v[i]`` runs
     through the nonzero elements of x, in order.
     """
     cdef object X
@@ -177,7 +177,7 @@ cdef object mpq_vector_to_list(mpq_vector* v):
 cdef int mpq_vector_set_entry(mpq_vector* v, Py_ssize_t n, mpq_t x) except -1:
     """
     Set the n-th component of the sparse vector v equal to x.
-    This would be v[n] = x in Python syntax.
+    This would be ``v[n] = x`` in Python syntax.
     """
     if n >= v.degree or n < 0:
         raise IndexError("Index must be between 0 and the degree minus 1.")
@@ -250,7 +250,7 @@ mpq_init(mpq_set_tmp)
 cdef int mpq_vector_set_entry_str(mpq_vector* v, Py_ssize_t n, char *x_str) except -1:
     """
     Set the n-th component of the sparse vector v equal to x.
-    This would be v[n] = x in Python syntax.
+    This would be ``v[n] = x`` in Python syntax.
     """
     mpq_set_str(mpq_set_tmp, x_str, 0)
     mpq_vector_set_entry(v, n, mpq_set_tmp)

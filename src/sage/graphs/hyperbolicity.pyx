@@ -1071,7 +1071,7 @@ def hyperbolicity(G,
 
     - ``G`` -- a connected Graph
 
-    - ``algorithm`` -- (default: ``'BCCM'``); specifies the algorithm to use
+    - ``algorithm`` -- (default: ``'BCCM'``) specifies the algorithm to use
       among:
 
           - ``'basic'`` is an exhaustive algorithm considering all possible

@@ -182,7 +182,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         r"""
         Return flatten list of generator numbers representing the trace.
 
-        OUTPUT: a list of generator indexes
+        OUTPUT: list of generator indexes
 
         TESTS::
 
@@ -229,7 +229,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         return DiGraph(graph)
 
     @cached_method
-    def hasse_diagram(self, algorithm="naive"):
+    def hasse_diagram(self, algorithm='naive'):
         r"""
         Return Hasse diagram of the trace.
 
@@ -766,9 +766,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
         r"""
         Return dependence relation over the monoid.
 
-        OUTPUT:
-
-        Set of non-commuting generator pairs.
+        OUTPUT: set of non-commuting generator pairs
 
         EXAMPLES::
 
@@ -797,7 +795,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
         """
         return Graph({frozenset((e1, e2)) if e1 != e2 else (e1, e2)
                       for e1, e2 in self.dependence()}, loops=True,
-                     format="list_of_edges",
+                     format='list_of_edges',
                      immutable=True)
 
     @cached_method

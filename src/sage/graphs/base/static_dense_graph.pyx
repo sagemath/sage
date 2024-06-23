@@ -64,7 +64,7 @@ cdef dict dense_graph_init(binary_matrix_t m, g, translation=None, force_undirec
 
     - ``g`` -- a graph or digraph
 
-    - ``translation`` -- (default: `None``); several options for this parameter
+    - ``translation`` -- (default: `None``) several options for this parameter
       used to specify the mapping from vertices to integers:
 
       - ``True``, ``False``, ``None`` -- the `i`-th vertex in the binary matrix

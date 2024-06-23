@@ -724,7 +724,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
 
         INPUT:
 
-        - ``p`` -- (default: ``None``); if not ``None``, return only
+        - ``p`` -- (default: ``None``) if not ``None``, return only
           the `p`-new submodule
 
         OUTPUT: the new or `p`-new submodule of ``self``, i.e. the intersection of
@@ -828,7 +828,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
 
         INPUT:
 
-        - ``p`` -- (default: ``None``); if not ``None``, return only the `p`-old
+        - ``p`` -- (default: ``None``) if not ``None``, return only the `p`-old
           submodule
 
         OUTPUT: the old or `p`-old submodule of ``self``

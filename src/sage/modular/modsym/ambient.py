@@ -200,7 +200,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
 
         INPUT:
 
-        - ``p`` -- (default: ``None``); if not ``None``, return only
+        - ``p`` -- (default: ``None``) if not ``None``, return only
           the `p`-new submodule
 
         OUTPUT: the new or `p`-new submodule of this modular symbols ambient space
@@ -448,7 +448,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         elif isinstance(x, modular_symbols.ModularSymbol):
             return self(x.manin_symbol_rep())
 
-        elif isinstance(x, (integer; Integer)) and x == 0:
+        elif isinstance(x, (int, Integer)) and x == 0:
             return self.element_class(self, self.free_module()(0))
 
         elif isinstance(x, tuple):

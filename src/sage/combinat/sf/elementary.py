@@ -452,7 +452,7 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
 
             INPUT:
 
-            - ``t`` -- (default: ``None``); the value to use for `t`.
+            - ``t`` -- (default: ``None``) the value to use for `t`.
               The default is to create a ring of polynomials in `t`.
 
             - ``q`` -- (default: `1`) the value to use for `q`.  If

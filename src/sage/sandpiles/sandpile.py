@@ -363,7 +363,7 @@ lazy_import("sage.plot.colors", "rainbow")
 
 def _sandpile_help(cls, usage, verbose=True):
     """
-    Prints help text for classes in this module; see the ``help()`` methods on
+    Print help text for classes in this module; see the ``help()`` methods on
     individual classes in this module for example usage.
     """
 
@@ -417,7 +417,6 @@ class Sandpile(DiGraph):
 
         OUTPUT: string
 
-
         EXAMPLES::
 
             sage: Sandpile.version()
@@ -436,7 +435,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``)
 
         OUTPUT: printed string
 
@@ -513,8 +512,8 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        - ``g`` -- dict for directed multigraph with edges weighted by
-          nonnegative integers (see NOTE), a Graph or DiGraph.
+        - ``g`` -- dictionary for directed multigraph with edges weighted by
+          nonnegative integers (see NOTE), a Graph or DiGraph
 
         - ``sink`` -- (optional) A sink vertex.  Any outgoing edges from the
           designated sink are ignored for the purposes of stabilization.  It is
@@ -765,7 +764,7 @@ class Sandpile(DiGraph):
 
     def _repr_(self):
         r"""
-        String representation of self.
+        String representation of ``self``.
 
         EXAMPLES::
 
@@ -821,7 +820,7 @@ class Sandpile(DiGraph):
         r"""
         A dictionary of dictionaries representing a directed graph.
 
-        OUTPUT: dict
+        OUTPUT: dictionary
 
         EXAMPLES::
 
@@ -935,10 +934,7 @@ class Sandpile(DiGraph):
         r"""
         The maximal stable configuration.
 
-        OUTPUT:
-
-        SandpileConfig (the maximal stable configuration)
-
+        OUTPUT: SandpileConfig (the maximal stable configuration)
 
         EXAMPLES::
 
@@ -1149,7 +1145,7 @@ class Sandpile(DiGraph):
         r"""
         A script for the minimal burning configuration.
 
-        OUTPUT: dict
+        OUTPUT: dictionary
 
         EXAMPLES::
 
@@ -1255,7 +1251,7 @@ class Sandpile(DiGraph):
 
     def _set_identity(self):
         r"""
-        Computes ``_identity``, the variable holding the identity configuration
+        Compute ``_identity``, the variable holding the identity configuration
         of the sandpile group, when ``identity()`` is first called by a user.
 
         EXAMPLES::
@@ -1271,16 +1267,13 @@ class Sandpile(DiGraph):
     def identity(self, verbose=True):
         r"""
         The identity configuration.  If ``verbose`` is ``False``, the
-        configuration are converted to a list of integers.
+        configuration is converted to a list of integers.
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``)
 
-        OUTPUT:
-
-        SandpileConfig or a list of integers  If ``verbose`` is ``False``, the
-        configuration are converted to a list of integers.
+        OUTPUT: SandpileConfig or a list of integers
 
         EXAMPLES::
 
@@ -1299,7 +1292,7 @@ class Sandpile(DiGraph):
 
     def _set_recurrents(self):
         """
-        Computes ``_recurrents``, the variable holding the list of recurrent
+        Compute ``_recurrents``, the variable holding the list of recurrent
         configurations, when ``recurrents()`` is first called by a user.
 
         EXAMPLES::
@@ -1338,10 +1331,9 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``)
 
         OUTPUT: list of recurrent configurations
-
 
         EXAMPLES::
 
@@ -1375,7 +1367,7 @@ class Sandpile(DiGraph):
 
     def _set_superstables(self):
         r"""
-        Computes ``_superstables``, the variable holding the list of superstable
+        Compute ``_superstables``, the variable holding the list of superstable
         configurations, when ``superstables()`` is first called by a user.
 
         EXAMPLES::
@@ -1395,10 +1387,9 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``)
 
         OUTPUT: list of SandpileConfig
-
 
         EXAMPLES::
 
@@ -1453,7 +1444,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``)
 
         OUTPUT:
 
@@ -1517,7 +1508,7 @@ class Sandpile(DiGraph):
 
     def _set_min_recurrents(self):
         r"""
-        Computes the minimal recurrent elements.  If the underlying graph is
+        Compute the minimal recurrent elements.  If the underlying graph is
         undirected, these are the recurrent elements of least degree.
 
         EXAMPLES::
@@ -1546,7 +1537,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``)
 
         OUTPUT: list of SandpileConfig
 
@@ -1581,7 +1572,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``)
 
         OUTPUT: tuple of SandpileConfig
 
@@ -1660,7 +1651,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        - ``multivariable`` -- (default: ``True``) boolean
+        - ``multivariable`` -- boolean (default: ``True``)
 
         OUTPUT: polynomial
 
@@ -1698,11 +1689,9 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``)
 
-        OUTPUT:
-
-        list (of divisors)
+        OUTPUT: list (of divisors)
 
         EXAMPLES::
 
@@ -1766,7 +1755,7 @@ class Sandpile(DiGraph):
 
     def _set_invariant_factors(self):
         r"""
-        Computes the variable holding the elementary divisors of the sandpile
+        Compute the variable holding the elementary divisors of the sandpile
         group when ``invariant_factors()`` is first called by the user.
 
         EXAMPLES::
@@ -1797,7 +1786,7 @@ class Sandpile(DiGraph):
 
     def _set_hilbert_function(self):
         """
-        Computes the variables holding the Hilbert function of the homogeneous
+        Compute the variables holding the Hilbert function of the homogeneous
         homogeneous toppling ideal, the first differences of the Hilbert
         function, and the postulation number for the zero-set of the sandpile
         ideal when any one of these is called by the user.
@@ -1985,11 +1974,9 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``)
 
-        OUTPUT:
-
-        list of SandpileDivisor (or of lists representing divisors)
+        OUTPUT: list of SandpileDivisor (or of lists representing divisors)
 
         EXAMPLES:
 
@@ -2041,11 +2028,9 @@ class Sandpile(DiGraph):
 
         - ``d`` -- integer
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``)
 
-        OUTPUT:
-
-        list of SandpileDivisors (or lists representing divisors)
+        OUTPUT: slist of SandpileDivisors (or lists representing divisors)
 
         EXAMPLES::
 
@@ -2075,7 +2060,6 @@ class Sandpile(DiGraph):
         INPUT:
 
         - ``smax`` -- (optional) SandpileConfig or list representing a SandpileConfig
-
 
         OUTPUT: generator for all stable configurations
 
@@ -2109,13 +2093,13 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        - ``state``  -- SandpileConfig, SandpileDivisor, or list representing one of these
+        - ``state`` -- SandpileConfig, SandpileDivisor, or list representing
+          one of these
 
-        - ``distrib`` -- (optional) list of nonnegative numbers summing to 1 (representing a prob. dist.)
+        - ``distrib`` -- (optional) list of nonnegative numbers summing to 1
+          (representing a prob. dist.)
 
-        OUTPUT:
-
-        generator for Markov chain (see NOTE)
+        OUTPUT: generator for Markov chain (see NOTE)
 
         EXAMPLES::
 
@@ -2342,10 +2326,7 @@ class Sandpile(DiGraph):
         r"""
         The support-complexes with non-trivial homology.  (See NOTE.)
 
-        OUTPUT:
-
-        list (of pairs [divisors, corresponding simplicial complex])
-
+        OUTPUT: list (of pairs [divisors, corresponding simplicial complex])
 
         EXAMPLES::
 
@@ -2466,7 +2447,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        - ``gens`` -- (default: ``False``) boolean
+        - ``gens`` -- boolean (default: ``False``)
 
         OUTPUT: ideal or, optionally, the generators of an ideal
 
@@ -2554,7 +2535,7 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``False``) boolean
+        - ``verbose`` -- boolean (default: ``False``)
 
         OUTPUT: free resolution of the toppling ideal
 
@@ -2592,7 +2573,7 @@ class Sandpile(DiGraph):
 
     def _set_groebner(self):
         r"""
-        Computes a Groebner basis for the homogeneous toppling ideal with
+        Compute a Groebner basis for the homogeneous toppling ideal with
         respect to the standard sandpile ordering (see ``ring``).
 
         EXAMPLES::
@@ -2628,10 +2609,9 @@ class Sandpile(DiGraph):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``)
 
         OUTPUT: Betti numbers for the sandpile
-
 
         EXAMPLES::
 
@@ -2808,7 +2788,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``)
 
         OUTPUT: printed string
 
@@ -2867,7 +2847,7 @@ class SandpileConfig(dict):
 
         - ``S`` -- Sandpile
 
-        - ``c`` -- dict or list representing a configuration
+        - ``c`` -- dictionary or list representing a configuration
 
         OUTPUT: SandpileConfig
 
@@ -2925,7 +2905,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        ``key``, ``item`` -- objects
+        - ``key``, ``item`` -- objects
 
         EXAMPLES::
 
@@ -3152,7 +3132,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        - ``other`` -- Integer
+        - ``other`` -- integer
 
         OUTPUT: SandpileConfig
 
@@ -3503,7 +3483,7 @@ class SandpileConfig(dict):
 
     def _set_stabilize(self):
         r"""
-        Computes the stabilized configuration and its firing vector.
+        Compute the stabilized configuration and its firing vector.
 
         EXAMPLES::
 
@@ -3535,7 +3515,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        - ``with_firing_vector`` -- (default: ``False``)  boolean
+        - ``with_firing_vector`` -- boolean (default: ``False``)
 
         OUTPUT: ``SandpileConfig`` or ``[SandpileConfig, firing_vector]``
 
@@ -3581,9 +3561,7 @@ class SandpileConfig(dict):
         r"""
         The vertices containing sand.
 
-        OUTPUT:
-
-        list - support of the configuration
+        OUTPUT: list - support of the configuration
 
         EXAMPLES::
 
@@ -3703,7 +3681,7 @@ class SandpileConfig(dict):
 
     def is_stable(self):
         r"""
-        Is the configuration stable?
+        Return whether this configuration is stable.
 
         OUTPUT: boolean
 
@@ -3724,7 +3702,7 @@ class SandpileConfig(dict):
 
     def _set_equivalent_recurrent(self):
         r"""
-        Sets the equivalent recurrent configuration and the corresponding
+        Set the equivalent recurrent configuration and the corresponding
         firing vector.
 
         EXAMPLES::
@@ -3757,10 +3735,9 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        - ``with_firing_vector`` -- (default: ``False``)  boolean
+        - ``with_firing_vector`` -- boolean (default: ``False``)
 
         OUTPUT: SandpileConfig or [SandpileConfig, firing_vector]
-
 
         EXAMPLES::
 
@@ -3788,7 +3765,7 @@ class SandpileConfig(dict):
 
     def _set_is_recurrent(self):
         r"""
-        Computes and stores whether the configuration is recurrent.
+        Compute and store whether the configuration is recurrent.
 
         EXAMPLES::
 
@@ -3810,7 +3787,7 @@ class SandpileConfig(dict):
 
     def is_recurrent(self):
         r"""
-        Is the configuration recurrent?
+        Return whether the configuration is recurrent.
 
         OUTPUT: boolean
 
@@ -3826,11 +3803,10 @@ class SandpileConfig(dict):
 
     def _set_equivalent_superstable(self):
         r"""
-        Sets the superstable configuration equivalent to the given
+        Set the superstable configuration equivalent to the given
         configuration and its corresponding firing vector.
 
         OUTPUT: [configuration, firing_vector]
-
 
         EXAMPLES::
 
@@ -3850,10 +3826,9 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        - ``with_firing_vector`` -- (default: ``False``) boolean
+        - ``with_firing_vector`` -- boolean (default: ``False``)
 
         OUTPUT: SandpileConfig or [SandpileConfig, firing_vector]
-
 
         EXAMPLES::
 
@@ -3881,7 +3856,7 @@ class SandpileConfig(dict):
 
     def _set_is_superstable(self):
         r"""
-        Computes and stores whether ``config`` is superstable.
+        Compute and store whether ``config`` is superstable.
 
         OUTPUT: boolean
 
@@ -3902,7 +3877,7 @@ class SandpileConfig(dict):
 
     def is_superstable(self):
         r"""
-        Is the configuration superstable?
+        Return whether the configuration is superstable.
 
         OUTPUT: boolean
 
@@ -3922,7 +3897,7 @@ class SandpileConfig(dict):
 
         INPUT:
 
-         - ``orbits`` -- list of lists of vertices
+        - ``orbits`` -- list of lists of vertices
 
         OUTPUT: boolean
 
@@ -3982,11 +3957,13 @@ class SandpileConfig(dict):
 
         INPUT:
 
-        - ``sink`` -- (default: ``True``) whether to show the sink
+        - ``sink`` -- boolean (default: ``True``); whether to show the sink
 
-        - ``colors`` -- (default: ``True``) whether to color-code the amount of sand on each vertex
+        - ``colors`` -- boolean (default: ``True``); whether to color-code the
+          amount of sand on each vertex
 
-        - ``heights`` -- (default: ``False``) whether to label each vertex with the amount of sand
+        - ``heights`` -- boolean (default: ``False``); whether to label each
+          vertex with the amount of sand
 
         - ``directed`` -- (optional) whether to draw directed edges
 
@@ -4059,7 +4036,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``)
 
         OUTPUT: printed string
 
@@ -4113,7 +4090,7 @@ class SandpileDivisor(dict):
 
         - ``S`` -- Sandpile
 
-        - ``D`` -- dict or list representing a divisor
+        - ``D`` -- dictionary or list representing a divisor
 
         OUTPUT: SandpileDivisor
 
@@ -4166,7 +4143,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        ``key``, ``item`` -- objects
+        - ``key``, ``item`` -- objects
 
         EXAMPLES::
 
@@ -4336,7 +4313,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        - ``other`` -- Integer
+        - ``other`` -- integer
 
         OUTPUT: SandpileDivisor
 
@@ -4723,7 +4700,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``)
 
         OUTPUT: SandpileDivisor or list representing SandpileDivisor
 
@@ -4793,7 +4770,7 @@ class SandpileDivisor(dict):
 
         - ``D`` -- SandpileDivisor or list, tuple, etc. representing a divisor
 
-        - ``with_firing_vector`` -- (default: ``False``) boolean
+        - ``with_firing_vector`` -- boolean (default: ``False``)
 
         OUTPUT: boolean or integer vector
 
@@ -4893,11 +4870,11 @@ class SandpileDivisor(dict):
 
     def _set_linear_system(self):
         r"""
-        Computes and stores the complete linear system of a divisor.
+        Compute and store the complete linear system of a divisor.
 
         OUTPUT:
 
-        dict - ``{num_homog: int, homog:list, num_inhomog:int, inhomog:list}``
+        dictionary; ``{num_homog: int, homog:list, num_inhomog:int, inhomog:list}``
 
         EXAMPLES::
 
@@ -5103,13 +5080,11 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``)
 
-        - ``with_firing_vectors`` -- (default: ``False``) boolean
+        - ``with_firing_vectors`` -- boolean (default: ``False``)
 
-        OUTPUT:
-
-        list (of divisors)
+        OUTPUT: list (of divisors)
 
         EXAMPLES::
 
@@ -5176,7 +5151,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``False``)  boolean
+        - ``verbose`` -- boolean (default: ``False``)
 
         EXAMPLES::
 
@@ -5247,11 +5222,9 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        - ``with_witness`` -- (default: ``False``) boolean
+        - ``with_witness`` -- boolean (default: ``False``)
 
-        OUTPUT:
-
-        integer or (integer, SandpileDivisor)
+        OUTPUT: integer or (integer, SandpileDivisor)
 
         EXAMPLES::
 
@@ -5307,12 +5280,12 @@ class SandpileDivisor(dict):
 
     def _set_r_of_D(self, verbose=False):
         r"""
-        Computes `r(D)` and an effective divisor `F` such that `|D - F|` is
+        Compute `r(D)` and an effective divisor `F` such that `|D - F|` is
         empty.
 
         INPUT:
 
-        - ``verbose`` -- (default: ``False``) boolean
+        - ``verbose`` -- boolean (default: ``False``)
 
         EXAMPLES::
 
@@ -5401,11 +5374,9 @@ class SandpileDivisor(dict):
 
         - ``v`` -- (default: ``sink``) vertex
 
-        - ``weight`` -- (default: ``True``) boolean
+        - ``weight`` -- boolean (default: ``True``)
 
-        OUTPUT:
-
-        list or (list of list) of integers
+        OUTPUT: list or (list of list) of integers
 
         EXAMPLES::
 
@@ -5440,7 +5411,7 @@ class SandpileDivisor(dict):
 
     def is_weierstrass_pt(self, v='sink'):
         r"""
-        Is the given vertex a Weierstrass point?
+        Return whether the given vertex is a Weierstrass point.
 
         INPUT:
 
@@ -5487,15 +5458,14 @@ class SandpileDivisor(dict):
 
     def weierstrass_pts(self, with_rank_seq=False):
         r"""
-        The Weierstrass points (vertices). Optionally, return the corresponding rank sequences.
+        The Weierstrass points (vertices). Optionally, return the corresponding
+        rank sequences.
 
         INPUT:
 
-        - ``with_rank_seq`` -- (default: ``False``) boolean
+        - ``with_rank_seq`` -- boolean (default: ``False``)
 
-        OUTPUT:
-
-        tuple of vertices or list of (vertex, rank sequence)
+        OUTPUT: tuple of vertices or list of (vertex, rank sequence)
 
         EXAMPLES::
 
@@ -5525,7 +5495,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``True``) boolean
+        - ``verbose`` -- boolean (default: ``True``)
 
         OUTPUT: SandpileDivisor
 
@@ -5572,7 +5542,7 @@ class SandpileDivisor(dict):
 
     def _set_Dcomplex(self):
         r"""
-        Computes the simplicial complex determined by the supports of the
+        Compute the simplicial complex determined by the supports of the
         linearly equivalent effective divisors.
 
         EXAMPLES::
@@ -5748,7 +5718,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        - ``cycle`` -- (default: ``False``) boolean
+        - ``cycle`` -- boolean (default: ``False``)
 
         OUTPUT: boolean or optionally, a list of SandpileDivisors
 
@@ -5794,7 +5764,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        - ``with_firing_vector`` -- (default: ``False``) boolean
+        - ``with_firing_vector`` -- boolean (default: ``False``)
 
         EXAMPLES::
 
@@ -5815,7 +5785,8 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        - ``heights`` -- (default: ``True``) whether to label each vertex with the amount of sand
+        - ``heights`` -- boolean (default: ``True``); whether to label each
+          vertex with the amount of sand
 
         - ``directed`` -- (optional) whether to draw directed edges
 
@@ -5852,14 +5823,14 @@ pretty.for_type(SandpileDivisor, pretty.for_type(dict, None))
 
 def sandlib(selector=None):
     r"""
-    Returns the sandpile identified by ``selector``.  If no argument is
+    Return the sandpile identified by ``selector``.  If no argument is
     given, a description of the sandpiles in the sandlib is printed.
 
     INPUT:
 
     - ``selector`` -- (optional) identifier or None
 
-    OUTPUT: sandpile or description
+    OUTPUT: Sandpile or description
 
     EXAMPLES::
 
@@ -6034,12 +6005,11 @@ def glue_graphs(g, h, glue_g, glue_h):
 
     INPUT:
 
-     - ``g``, ``h`` -- dictionaries for directed multigraphs
+    - ``g``, ``h`` -- dictionaries for directed multigraphs
 
-     - ``glue_h``, ``glue_g`` -- dictionaries for a vertex
+    - ``glue_h``, ``glue_g`` -- dictionaries for a vertex
 
     OUTPUT: dictionary for a directed multigraph
-
 
     EXAMPLES::
 
@@ -6115,7 +6085,7 @@ def glue_graphs(g, h, glue_g, glue_h):
 
 def firing_graph(S, eff):
     r"""
-    Creates a digraph with divisors as vertices and edges between two divisors
+    Create a digraph with divisors as vertices and edges between two divisors
     `D` and `E` if firing a single vertex in `D` gives `E`.
 
     INPUT:
@@ -6150,7 +6120,7 @@ def firing_graph(S, eff):
 
 def parallel_firing_graph(S, eff):
     r"""
-    Creates a digraph with divisors as vertices and edges between two divisors
+    Create a digraph with divisors as vertices and edges between two divisors
     `D` and `E` if firing all unstable vertices in `D` gives `E`.
 
     INPUT:
@@ -6308,16 +6278,14 @@ def min_cycles(G, v):
 
 def wilmes_algorithm(M):
     r"""
-    Computes an integer matrix `L` with the same integer row span as `M` and
+    Compute an integer matrix `L` with the same integer row span as `M` and
     such that `L` is the reduced Laplacian of a directed multigraph.
 
     INPUT:
 
     - ``M`` -- square integer matrix of full rank
 
-    OUTPUT:
-
-    integer matrix (``L``)
+    OUTPUT: integer matrix (``L``)
 
     EXAMPLES::
 

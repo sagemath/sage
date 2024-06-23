@@ -197,7 +197,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
         INPUT:
 
         - ``v`` -- list of positive integers
-        - ``nz`` -- (default: ``None``); if given specifies a column index
+        - ``nz`` -- (default: ``None``) if given specifies a column index
           such that the dual module has that column nonzero
 
         OUTPUT:

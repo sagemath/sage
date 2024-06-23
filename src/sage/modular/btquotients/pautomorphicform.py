@@ -1876,7 +1876,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
 
         INPUT:
 
-        - ``z`` -- (default: ``None``); if specified, returns the value of
+        - ``z`` -- (default: ``None``) if specified, returns the value of
           the form at the point ``z`` in the `p`-adic upper half
           plane
 
@@ -1935,7 +1935,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
 
         INPUT:
 
-        - ``z`` -- (default: ``None``); if specified, evaluates the derivative
+        - ``z`` -- (default: ``None``) if specified, evaluates the derivative
           at the point ``z`` in the `p`-adic upper half plane
 
         - ``level`` -- integer (default: 0); if ``method`` is
@@ -2032,7 +2032,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
         - ``t1``, ``t2`` -- elements of `P^1(\QQ_p)` (the endpoints
           of integration)
 
-        - ``E`` -- (default: ``None``); if specified, will not compute the
+        - ``E`` -- (default: ``None``) if specified, will not compute the
           covering adapted to ``t1`` and ``t2`` and instead use the
           given one. In that case, ``E`` should be a list of matrices
           corresponding to edges describing the open balls to be
@@ -2145,11 +2145,11 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
         - ``prec`` -- a precision (default: ``None``); if not ``None`` should
           be a positive integer
 
-        - ``t`` -- (default: ``None``); the number of additional moments to
+        - ``t`` -- (default: ``None``) the number of additional moments to
           store. If ``None``, determine it automatically from ``prec``, ``U``
           and the ``overconvergent`` flag.
 
-        - ``R`` -- (default: ``None``); if specified, coefficient field of the automorphic forms.
+        - ``R`` -- (default: ``None``) if specified, coefficient field of the automorphic forms.
           If not specified it defaults to the base ring of the distributions ``U``, or to `Q_p`
           with the working precision ``prec``.
 

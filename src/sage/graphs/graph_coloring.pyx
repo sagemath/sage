@@ -750,7 +750,7 @@ def fractional_chromatic_number(G, solver='PPL', verbose=0,
 
     - ``G`` -- a graph
 
-    - ``solver`` -- (default: ``'PPL'``); specify a Linear Program (LP) solver
+    - ``solver`` -- (default: ``'PPL'``) specify a Linear Program (LP) solver
       to be used. If set to ``None``, the default one is used. For more
       information on LP solvers and which default solver is used, see the method
       :meth:`solve <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the
@@ -861,7 +861,7 @@ def fractional_chromatic_index(G, solver='PPL', verbose_constraints=False, verbo
 
     - ``G`` -- a graph
 
-    - ``solver`` -- (default: ``'PPL'``); specify a Linear Program (LP) solver
+    - ``solver`` -- (default: ``'PPL'``) specify a Linear Program (LP) solver
       to be used. If set to ``None``, the default one is used. For more
       information on LP solvers and which default solver is used, see the method
       :meth:`solve <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the

@@ -2606,7 +2606,7 @@ class GenericGraph(GenericGraph_pyx):
           used to specify an ordering, or a :class:`TypeError` exception will
           be raised.
 
-        - ``default_weight`` -- (default: ``None``); specifies the weight to
+        - ``default_weight`` -- (default: ``None``) specifies the weight to
           replace any ``None`` edge label. When not specified an error is raised
           if the label of an edge is ``None``.
 
@@ -14059,7 +14059,7 @@ class GenericGraph(GenericGraph_pyx):
 
         INPUT:
 
-        - ``vertices`` -- (default: ``None``); an iterable container of
+        - ``vertices`` -- (default: ``None``) an iterable container of
           vertices, e.g. a list, set, graph, file or numeric array. If not
           passed (i.e., ``None``), defaults to the entire graph.
 
@@ -14225,7 +14225,7 @@ class GenericGraph(GenericGraph_pyx):
 
         INPUT:
 
-        - ``vertices`` -- (default: ``None``); an iterable container of
+        - ``vertices`` -- (default: ``None``) an iterable container of
           vertices, e.g. a list, set, graph, file or numeric array. If not
           passed (i.e., ``None``), defaults to the entire graph.
 
@@ -20598,16 +20598,16 @@ class GenericGraph(GenericGraph_pyx):
         - ``center`` -- tuple (default: ``(0, 0)``); position of the center of
           the circle
 
-        - ``radius`` -- (default: 1); the radius of the circle
+        - ``radius`` -- (default: 1) the radius of the circle
 
-        - ``shift`` -- (default: 0); rotation of the circle. A value of
+        - ``shift`` -- (default: 0) rotation of the circle. A value of
           ``shift=1`` will replace in the drawing the `i`-th element of the list
           by the `(i-1)`-th. Non-integer values are admissible, and a value of
           `\alpha` corresponds to a rotation of the circle by an angle of
           `\alpha 2\pi/n` (where `n` is the number of vertices set on the
           circle).
 
-        - ``angle`` -- (default: 0); rotate the embedding of all vertices. For
+        - ``angle`` -- (default: 0) rotate the embedding of all vertices. For
           instance, when ``angle == 0``, the first vertex get position
           ``(center[0] + radius, center[1])``. With a value of `\pi/2`, the
           first vertex get position ``(center[0], center[1] + radius)``.
@@ -21065,16 +21065,16 @@ class GenericGraph(GenericGraph_pyx):
         - ``center`` -- tuple (default: `(0, 0)`); position of the center of the
           circle
 
-        - ``radius`` -- (default: 1); the radius of the circle
+        - ``radius`` -- (default: 1) the radius of the circle
 
-        - ``shift`` -- (default: 0); rotation of the circle. A value of
+        - ``shift`` -- (default: 0) rotation of the circle. A value of
           ``shift=1`` will replace in the drawing the `i`-th element of the list
           by the `(i-1)`-th. Non-integer values are admissible, and a value of
           `\alpha` corresponds to a rotation of the circle by an angle of
           `\alpha 2\pi/n` (where `n` is the number of vertices set on the
           circle).
 
-        - ``angle`` -- (default: 0); rotate the embedding of all vertices. For
+        - ``angle`` -- (default: 0) rotate the embedding of all vertices. For
           instance, when ``angle == 0``, the first vertex get position
           ``(center[0] + radius, center[1])``. With a value of `\pi/2`, the
           first vertex get position ``(center[0], center[1] + radius)``.
@@ -22090,7 +22090,7 @@ class GenericGraph(GenericGraph_pyx):
         - ``edge_labels`` -- boolean (default: ``False``); whether to add the
           labels on edges
 
-        - ``edge_color`` -- (default: ``None``); specify a default color for the
+        - ``edge_color`` -- (default: ``None``) specify a default color for the
           edges. The color could be one of
 
           - a name given as a string such as ``'blue'`` or ``'orchid'``
@@ -22849,7 +22849,7 @@ class GenericGraph(GenericGraph_pyx):
 
         INPUT:
 
-        - ``x`` -- (default: ``'x'``); the variable of the characteristic
+        - ``x`` -- (default: ``'x'``) the variable of the characteristic
           polynomial
 
         - ``laplacian`` -- boolean (default: ``False``); if ``True``, use the
@@ -25573,7 +25573,7 @@ def graph_isom_equivalent_non_edge_labeled_graph(g, partition=None, standard_lab
       vertices as a list of lists of vertices. If given, the partition
       of the vertices is as well relabeled
 
-    - ``standard_label`` -- (default: ``None``); edges in ``g`` with
+    - ``standard_label`` -- (default: ``None``) edges in ``g`` with
       this label are preserved in the new graph
 
     - ``return_relabeling`` -- boolean (default: ``False``); whether

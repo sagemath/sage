@@ -1276,7 +1276,7 @@ class DiGraphGenerators:
 
         - ``p`` -- probability of an edge
 
-        - ``weight_max`` -- (default: ``None``); by default, the returned DAG is
+        - ``weight_max`` -- (default: ``None``) by default, the returned DAG is
           unweighted. When ``weight_max`` is set to a positive integer, edges
           are assigned a random integer weight between ``1`` and ``weight_max``.
 

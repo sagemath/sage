@@ -39,7 +39,7 @@ class CharacterArt(SageObject):
 
     def __init__(self, lines=[], breakpoints=[], baseline=None):
         r"""
-        Abstract base class for character art
+        Abstract base class for character art.
 
         INPUT:
 
@@ -96,7 +96,7 @@ class CharacterArt(SageObject):
     @classmethod
     def empty(cls):
         """
-        Return the empty character art object
+        Return the empty character art object.
 
         EXAMPLES::
 
@@ -290,7 +290,7 @@ class CharacterArt(SageObject):
 
         - ``size`` -- the maximum width of each chunk
 
-        - ``offset`` -- (default: ``0``); the first chunk has width at most
+        - ``offset`` -- (default: ``0``) the first chunk has width at most
           ``size - offset``
 
         TESTS::

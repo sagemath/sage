@@ -1056,7 +1056,7 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
     - ``extra1``, ..., ``extra5`` -- additional strings to require when
       searching.  Lines must match all of these, as well as ``string``
 
-    - ``whole_word`` -- (default: ``False``); if ``True``, search for
+    - ``whole_word`` -- (default: ``False``) if ``True``, search for
       ``string`` and ``extra1`` (etc.) as whole words only.  This
       assumes that each of these arguments is a single word, not a
       regular expression, and it might have unexpected results if used
@@ -1065,7 +1065,7 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
     - ``ignore_case`` -- boolean (default: ``True``); if ``False``, perform a
       case-sensitive search
 
-    - ``multiline`` -- (default: ``False``); if ``True``, search more
+    - ``multiline`` -- (default: ``False``) if ``True``, search more
       than one line at a time.  In this case, print any matching file
       names, but don't print line numbers.
 

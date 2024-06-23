@@ -142,7 +142,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
 
         INPUT:
 
-        - ``proj`` -- (default: ``True``); if the
+        - ``proj`` -- (default: ``True``) if the
           ambient space is affine or projective
 
         OUTPUT:

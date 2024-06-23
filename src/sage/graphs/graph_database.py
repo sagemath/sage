@@ -268,7 +268,7 @@ class GenericGraphQuery(SQLQuery):
 
         - ``query_string`` -- string representing the SQL query
 
-        - ``database`` -- (default: ``None``); the :class:`~GraphDatabase`
+        - ``database`` -- (default: ``None``) the :class:`~GraphDatabase`
           instance to query (if ``None`` then a new instance is created)
 
         - ``param_tuple`` -- tuple of strings (default: ``None``); what to

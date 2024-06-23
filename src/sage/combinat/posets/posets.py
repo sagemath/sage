@@ -363,7 +363,7 @@ def Poset(data=None, element_labels=None, cover_relations=False, linear_extensio
 
       6. A previously constructed poset (the poset itself is returned).
 
-    - ``element_labels`` -- (default: ``None``); an optional list or
+    - ``element_labels`` -- (default: ``None``) an optional list or
       dictionary of objects that label the poset elements
 
     - ``cover_relations`` -- boolean (default: ``False``); whether the
@@ -4366,7 +4366,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``algorithm`` -- (default: ``'singular'``); possible
+        - ``algorithm`` -- (default: ``'singular'``) possible
           values are ``'singular'``, ``'sage'``, ``'gap'``,
           ``'pari'``, ``'maple'``, ``'magma'``, ``'fricas'``
 

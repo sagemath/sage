@@ -1145,7 +1145,7 @@ class AbstractPartitionDiagrams(Parent, UniqueRepresentation):
     INPUT:
 
     - ``order`` -- integer or integer `+ 1/2`; the order of the diagrams
-    - ``category`` -- (default: ``FiniteEnumeratedSets()``); the category
+    - ``category`` -- (default: ``FiniteEnumeratedSets()``) the category
 
     All concrete classes should implement attributes
 

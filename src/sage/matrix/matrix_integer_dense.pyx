@@ -1793,7 +1793,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
           - ``'pari4'`` -- use PARI with flag 4 (use heuristic LLL)
 
-        - ``proof`` -- (default: ``True``); if proof=False certain
+        - ``proof`` -- (default: ``True``) if proof=False certain
           determinants are computed using a randomized hybrid p-adic
           multimodular strategy until it stabilizes twice (instead of up to
           the Hadamard bound). It is *incredibly* unlikely that one would
@@ -2124,7 +2124,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         INPUT:
 
-        - ``p`` -- (default: 0); if nonzero given, saturate
+        - ``p`` -- (default: 0) if nonzero given, saturate
           only at the prime `p`, i.e., return a matrix whose row span
           is a `\ZZ`-module `S` that contains ``self`` and
           such that the index of `S` in its saturation is coprime to
@@ -2134,7 +2134,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
           if ``False``, the determinant calculations are done with
           ``proof=False``
 
-        - ``max_dets`` -- (default: 5); technical parameter -
+        - ``max_dets`` -- (default: 5) technical parameter -
           max number of determinant to compute when bounding prime divisor of
           ``self`` in its saturation.
 
@@ -5312,7 +5312,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         - ``right`` -- a matrix, vector or free module element, whose
           dimensions are compatible with ``self``
 
-        - ``subdivide`` -- default: ``False`` -- request the resulting
+        - ``subdivide`` -- (default: ``False``) -- request the resulting
           matrix to have a new subdivision, separating ``self`` from ``right``
 
         OUTPUT:

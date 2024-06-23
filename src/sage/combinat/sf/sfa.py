@@ -6047,7 +6047,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
           specialization of order ``n`` or the stable principal
           specialization.
 
-        - ``q`` -- (default: ``None``); the value to use for `q`; the
+        - ``q`` -- (default: ``None``) the value to use for `q`; the
           default is to create a ring of polynomials in ``q``
           (or a field of rational functions in ``q``) over the
           given coefficient ring.
@@ -6295,7 +6295,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``t`` -- (default: ``None``); the value to use for `t`;
+        - ``t`` -- (default: ``None``) the value to use for `t`;
           the default is to create a ring of polynomials in ``t``
 
         - ``q`` -- (default: `1`) the value to use for `q`.  If

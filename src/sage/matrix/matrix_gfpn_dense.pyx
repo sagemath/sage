@@ -867,7 +867,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         INPUT:
 
         - ``i`` -- index of the first row to be extracted
-        - ``j`` -- (default: -1); -1, or index of the last
+        - ``j`` -- (default: -1) -1, or index of the last
           row to be extracted
 
         OUTPUT:

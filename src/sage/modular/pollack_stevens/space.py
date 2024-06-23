@@ -205,7 +205,7 @@ class PollackStevensModularSymbolspace(Module):
 
     - ``coefficients`` -- a coefficient module
 
-    - ``sign`` -- (default: 0); 0, -1, or 1
+    - ``sign`` -- (default: 0) 0, -1, or 1
 
     EXAMPLES::
 

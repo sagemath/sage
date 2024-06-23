@@ -196,7 +196,7 @@ empty_ascii_art = _ascii_art_factory.build_empty()
 
 def ascii_art(*obj, **kwds):
     r"""
-    Return an ASCII art representation
+    Return an ASCII art representation.
 
     INPUT:
 

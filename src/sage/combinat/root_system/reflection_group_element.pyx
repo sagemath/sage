@@ -186,7 +186,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
         Return ``self`` as a matrix acting on the underlying vector
         space.
 
-        - ``on_space`` -- (default: ``'primal'``); whether
+        - ``on_space`` -- (default: ``'primal'``) whether
           to act as the reflection representation on the given
           basis, or to act on the dual reflection representation
           on the dual basis
@@ -356,7 +356,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
 
         - ``vec`` -- vector in the basis given by the simple root
 
-        - ``on_space`` -- (default: ``'primal'``); whether
+        - ``on_space`` -- (default: ``'primal'``) whether
           to act as the reflection representation on the given
           basis, or to act on the dual reflection representation
           on the dual basis
@@ -875,10 +875,10 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
         Return ``self`` as a matrix acting on the underlying vector
         space.
 
-        - ``side`` -- (default: ``'right'``); whether the
+        - ``side`` -- (default: ``'right'``) whether the
           action of ``self`` is on the ``'left'`` or on the ``'right'``
 
-        - ``on_space`` -- (default: ``'primal'``); whether
+        - ``on_space`` -- (default: ``'primal'``) whether
           to act as the reflection representation on the given
           basis, or to act on the dual reflection representation
           on the dual basis
@@ -967,10 +967,10 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
 
         - ``vec`` -- vector in the basis given by the simple root
 
-        - ``side`` -- (default: ``'right'``); whether the
+        - ``side`` -- (default: ``'right'``) whether the
           action of ``self`` is on the ``'left'`` or on the ``'right'``
 
-        - ``on_space`` -- (default: ``'primal'``); whether
+        - ``on_space`` -- (default: ``'primal'``) whether
           to act as the reflection representation on the given
           basis, or to act on the dual reflection representation
           on the dual basis
@@ -1062,7 +1062,7 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
 
         - ``i`` -- index of the root to act on
 
-        - ``side`` -- (default: ``'right'``); whether the
+        - ``side`` -- (default: ``'right'``) whether the
           action is on the left or on the right
 
         EXAMPLES::
@@ -1098,7 +1098,7 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
 
         - ``root`` -- the root to act on
 
-        - ``side`` -- (default: ``'right'``); whether the
+        - ``side`` -- (default: ``'right'``) whether the
           action is on the left or on the right
 
         EXAMPLES::

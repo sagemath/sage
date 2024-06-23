@@ -1920,7 +1920,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
 
                 - ``n`` -- nonnegative integer; the number of variables
                   in the expansion
-                - ``alphabet`` -- (default: ``'x'``); the alphabet in
+                - ``alphabet`` -- (default: ``'x'``) the alphabet in
                   which ``self`` is to be expanded
 
                 OUTPUT: an expansion of ``self`` into the `n` variables

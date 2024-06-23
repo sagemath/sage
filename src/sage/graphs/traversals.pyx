@@ -240,7 +240,7 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm='fast')
       discovery directed tree (each vertex being linked to the one that saw
       it for the first time)
 
-    - ``initial_vertex`` -- (default: ``None``); the first vertex to
+    - ``initial_vertex`` -- (default: ``None``) the first vertex to
       consider
 
     - ``algorithm`` -- string (default: ``'fast'``); algorithm to use among:
@@ -493,7 +493,7 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
       discovery directed tree (each vertex being linked to the one that saw
       it for the first time)
 
-    - ``initial_vertex`` -- (default: ``None``); the first vertex to
+    - ``initial_vertex`` -- (default: ``None``) the first vertex to
       consider
 
     ALGORITHM:
@@ -666,7 +666,7 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
       discovery directed tree (each vertex being linked to the one that saw
       it for the first time)
 
-    - ``initial_vertex`` -- (default: ``None``); the first vertex to
+    - ``initial_vertex`` -- (default: ``None``) the first vertex to
       consider
 
     ALGORITHM:
@@ -839,7 +839,7 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
       discovery directed tree (each vertex being linked to the one that saw
       it for the first time)
 
-    - ``initial_vertex`` -- (default: ``None``); the first vertex to
+    - ``initial_vertex`` -- (default: ``None``) the first vertex to
       consider
 
     ALGORITHM:
@@ -1020,7 +1020,7 @@ def lex_M(self, triangulation=False, labels=False, initial_vertex=None, algorith
     - ``labels`` -- boolean (default: ``False``); whether to return the labels
       assigned to each vertex
 
-    - ``initial_vertex`` -- (default: ``None``); the first vertex to
+    - ``initial_vertex`` -- (default: ``None``) the first vertex to
       consider
 
     - ``algorithm`` -- string (default: ``None``); one of the following
@@ -1180,7 +1180,7 @@ def lex_M_slow(G, triangulation=False, labels=False, initial_vertex=None):
     - ``labels`` -- boolean (default: ``False``); whether to return the labels
       assigned to each vertex
 
-    - ``initial_vertex`` -- (default: ``None``); the first vertex to
+    - ``initial_vertex`` -- (default: ``None``) the first vertex to
       consider. If not specified, an arbitrary vertex is chosen.
 
     OUTPUT:
@@ -1333,7 +1333,7 @@ def lex_M_fast(G, triangulation=False, initial_vertex=None):
     - ``triangulation`` -- boolean (default: ``False``); whether to return the
       triangulation of given graph produced by the method
 
-    - ``initial_vertex`` -- (default: ``None``); the first vertex to consider
+    - ``initial_vertex`` -- (default: ``None``) the first vertex to consider
 
     OUTPUT:
 
@@ -1603,7 +1603,7 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
       discovery directed tree (each vertex being linked to the one that saw
       it for the first time)
 
-    - ``initial_vertex`` -- (default: ``None``); the first vertex to consider
+    - ``initial_vertex`` -- (default: ``None``) the first vertex to consider
 
     OUTPUT:
 
@@ -1931,7 +1931,7 @@ def maximum_cardinality_search_M(G, initial_vertex=None):
 
     - ``G`` -- a Sage graph
 
-    - ``initial_vertex`` -- (default: ``None``); the first vertex to consider
+    - ``initial_vertex`` -- (default: ``None``) the first vertex to consider
 
     OUTPUT: a tuple `(\alpha, F, X)`, where
 

@@ -1925,9 +1925,9 @@ class ClusterQuiver(SageObject):
 
         - ``nr_of_checks`` -- (default: ``None``) number of mutations applied;
           Standard is 500*(number of vertices of ``self``)
-        - ``return_path`` -- (default: ``False``); if ``True``, in case of
+        - ``return_path`` -- (default: ``False``) if ``True``, in case of
           ``self`` not being mutation finite, a path from ``self`` to a quiver
-          with an edge label `(a,-b)` and `a*b > 4` is returned.
+          with an edge label `(a,-b)` and `a*b > 4` is returned
 
         ALGORITHM:
 

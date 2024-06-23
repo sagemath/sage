@@ -349,11 +349,11 @@ class DES(SageObject):
         - ``rounds`` -- integer (default: ``None``); the number of rounds. If
           ``None`` the number of rounds of the key schedule is used.
 
-        - ``keySchedule`` -- (default: ``'DES_KS'``); the key schedule that
+        - ``keySchedule`` -- (default: ``'DES_KS'``) the key schedule that
           will be used for encryption and decryption. If ``'DES_KS'`` the
           default DES key schedule is used.
 
-        - ``keySize`` -- (default: ``64``); the key length in bits. Must be
+        - ``keySize`` -- (default: ``64``) the key length in bits. Must be
           ``56`` of ``64``. In the latter case the key contains 8 parity bits.
 
         - ``doFinalRound`` -- boolean (default: ``True``); if ``False`` a swap

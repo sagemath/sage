@@ -353,7 +353,7 @@ def tex_from_skew_array(array, with_lines=False, align='b'):
     - ``with_lines`` -- (default: ``False``) if ``True`` lines are drawn, if
       ``False`` they are not
 
-    - ``align`` -- (default: ``'b'``); determine the alignment on the latex
+    - ``align`` -- (default: ``'b'``) determine the alignment on the latex
       array environments
 
     EXAMPLES::

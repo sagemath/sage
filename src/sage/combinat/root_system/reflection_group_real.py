@@ -301,7 +301,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
 
         INPUT:
 
-        - ``algorithm`` -- (default: ``'breadth'``); must be one of
+        - ``algorithm`` -- (default: ``'breadth'``) must be one of
           the following:
 
           * ``'breadth'`` -- iterate over in a linear extension of the

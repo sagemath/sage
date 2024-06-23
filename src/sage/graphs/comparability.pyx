@@ -400,7 +400,7 @@ def is_comparability_MILP(g, certificate=False, solver=None, verbose=0):
     - ``certificate`` -- boolean; whether to return a certificate for
       yes instances. This method cannot return negative certificates.
 
-    - ``solver`` -- (default: ``None``); specify a Linear Program (LP) solver to
+    - ``solver`` -- (default: ``None``) specify a Linear Program (LP) solver to
       be used. If set to ``None``, the default one is used. For more information
       on LP solvers and which default solver is used, see the method
       :meth:`~sage.numerical.mip.MixedIntegerLinearProgram.solve` of the class
@@ -517,7 +517,7 @@ def is_comparability(g, algorithm='greedy', certificate=False, check=True,
       yes-certificates are indeed transitive. As it is very quick
       compared to the rest of the operation, it is enabled by default.
 
-    - ``solver`` -- (default: ``None``); specify a Linear Program (LP) solver to
+    - ``solver`` -- (default: ``None``) specify a Linear Program (LP) solver to
       be used. If set to ``None``, the default one is used. For more information
       on LP solvers and which default solver is used, see the method
       :meth:`~sage.numerical.mip.MixedIntegerLinearProgram.solve` of the class
@@ -605,7 +605,7 @@ def is_permutation(g, algorithm='greedy', certificate=False, check=True,
       indeed create the expected Permutation graph. Pretty cheap compared to the
       rest, hence a good investment. It is enabled by default.
 
-    - ``solver`` -- (default: ``None``); specify a Linear Program (LP) solver to
+    - ``solver`` -- (default: ``None``) specify a Linear Program (LP) solver to
       be used. If set to ``None``, the default one is used. For more information
       on LP solvers and which default solver is used, see the method
       :meth:`~sage.numerical.mip.MixedIntegerLinearProgram.solve` of the class

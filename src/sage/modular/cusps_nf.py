@@ -1157,7 +1157,7 @@ def NFCusps_ideal_reps_for_levelN(N, nlists=1):
 
     - ``N`` -- number field ideal
 
-    - ``nlists`` -- (default: 1); the number of lists of prime ideals
+    - ``nlists`` -- (default: 1) the number of lists of prime ideals
       we want
 
     OUTPUT:

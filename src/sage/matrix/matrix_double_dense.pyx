@@ -372,7 +372,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         INPUT:
 
-        - ``p`` -- (default: ``'frob'``); controls which norm is used
+        - ``p`` -- (default: ``'frob'``) controls which norm is used
           to compute the condition number, allowable values are
           'frob' (for the Frobenius norm), integers -2, -1, 1, 2,
           positive and negative infinity. See output discussion
@@ -559,7 +559,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         INPUT:
 
-        - ``p`` -- (default: 2); controls which norm is computed,
+        - ``p`` -- (default: 2) controls which norm is computed,
           allowable values are 'frob' (for the Frobenius norm),
           integers -2, -1, 1, 2, positive and negative infinity.  See
           output discussion for specifics.
@@ -696,7 +696,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         INPUT:
 
-        - ``eps`` -- (default: ``None``); the largest number which
+        - ``eps`` -- (default: ``None``) the largest number which
           will be considered to be zero.  May also be set to the
           string 'auto'.  See the discussion below.
 
@@ -1064,7 +1064,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
           solved; if ``algorithm`` is ``'symmetric'`` or ``'hermitian'``, `B`
           must be real symmetric or hermitian positive definite, respectively
 
-        - ``algorithm`` -- default: ``'default'``
+        - ``algorithm`` -- (default: ``'default'``)
 
           - ``'default'`` -- applicable to any matrix
             with double-precision floating point entries.
@@ -1084,7 +1084,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             This algorithm can be significantly faster than the
             ``'default'`` algorithm.
 
-        - ``'tol'`` -- (default: ``None``); if set to a value other than
+        - ``'tol'`` -- (default: ``None``) if set to a value other than
           ``None``, this is interpreted as a small real number used to aid in
           grouping eigenvalues that are numerically similar, but is ignored
           when ``homogeneous`` is set.  See the output description for more
@@ -2213,11 +2213,11 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         INPUT:
 
-        - ``tol`` -- (default: ``1e-12``); the largest value of the
+        - ``tol`` -- (default: ``1e-12``) the largest value of the
           absolute value of the difference between two matrix entries
           for which they will still be considered equal
 
-        - ``algorithm`` -- (default: ``'orthonormal'``); set to
+        - ``algorithm`` -- (default: ``'orthonormal'``) set to
           ``'orthonormal'`` for a stable procedure and set to 'naive' for a
           fast procedure
 
@@ -2403,11 +2403,11 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         INPUT:
 
-        - ``tol`` -- (default: ``1e-12``); the largest value of the
+        - ``tol`` -- (default: ``1e-12``) the largest value of the
           absolute value of the difference between two matrix entries
           for which they will still be considered equal
 
-        - ``skew`` -- (default: ``False``); specifies the type of the
+        - ``skew`` -- (default: ``False``) specifies the type of the
           test. Set to ``True`` to check whether the matrix is
           skew-Hermitian.
 
@@ -2521,7 +2521,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         INPUT:
 
-        - ``tol`` -- (default: ``1e-12``); the largest value of the
+        - ``tol`` -- (default: ``1e-12``) the largest value of the
           absolute value of the difference between two matrix entries
           for which they will still be considered equal.
 
@@ -2649,11 +2649,11 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         INPUT:
 
-        - ``tol`` -- (default: ``1e-12``); the largest value of the
+        - ``tol`` -- (default: ``1e-12``) the largest value of the
           absolute value of the difference between two matrix entries
           for which they will still be considered equal.
 
-        - ``algorithm`` -- (default: ``'orthonormal'``); set to
+        - ``algorithm`` -- (default: ``'orthonormal'``) set to
           ``'orthonormal'`` for a stable procedure and set to ``'naive'`` for a
           fast procedure
 
@@ -2770,11 +2770,11 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         INPUT:
 
-        - ``tol`` -- (default: ``1e-12``); the largest value of the
+        - ``tol`` -- (default: ``1e-12``) the largest value of the
           absolute value of the difference between two matrix entries
           for which they will still be considered equal.
 
-        - ``algorithm`` -- (default: ``'orthonormal'``); set to
+        - ``algorithm`` -- (default: ``'orthonormal'``) set to
           ``'orthonormal'`` for a stable procedure and set to ``'naive'`` for a
           fast procedure
 

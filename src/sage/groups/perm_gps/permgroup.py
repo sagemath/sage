@@ -3018,7 +3018,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         INPUT:
 
-        - ``reduced`` -- (default: ``False``); if ``True``,
+        - ``reduced`` -- (default: ``False``) if ``True``,
           :meth:`FinitelyPresentedGroup.simplified <sage.groups.finitely_presented.FinitelyPresentedGroup.simplified>`
           is called, attempting to simplify the presentation of the finitely presented group
           to be returned

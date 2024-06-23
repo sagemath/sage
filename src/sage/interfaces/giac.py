@@ -1146,9 +1146,9 @@ class GiacElement(ExpectElement):
 
         - ``var`` -- variable
 
-        - ``min`` -- default: ``None``
+        - ``min`` -- (default: ``None``)
 
-        - ``max`` -- default: ``None``
+        - ``max`` -- (default: ``None``)
 
         This returns the definite integral if xmin is not ``None``, otherwise
         an indefinite integral.
@@ -1184,9 +1184,9 @@ class GiacElement(ExpectElement):
 
         - ``var`` -- variable
 
-        - ``min`` -- default: ``None``
+        - ``min`` -- (default: ``None``)
 
-        - ``max`` -- default: ``None``
+        - ``max`` -- (default: ``None``)
 
         This returns the definite integral if xmin is not ``None``, otherwise
         an indefinite integral.

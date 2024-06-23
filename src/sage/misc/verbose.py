@@ -190,7 +190,7 @@ def set_verbose(level, files='all'):
 
     - ``level`` -- integer between 0 and 2, inclusive
 
-    - ``files`` -- (default: ``'all'``); list of files to make verbose, or
+    - ``files`` -- (default: ``'all'``) list of files to make verbose, or
       'all' to make ALL files verbose (the default)
 
     OUTPUT: changes the state of the verbosity flag and possibly

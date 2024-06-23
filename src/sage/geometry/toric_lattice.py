@@ -1730,7 +1730,7 @@ class ToricLattice_quotient(FGP_Module_class):
 
         - ``x`` -- element of ``self`` or convertible to ``self``
 
-        - ``reduce`` -- (default: ``False``); if ``True``, reduce coefficients
+        - ``reduce`` -- (default: ``False``) if ``True``, reduce coefficients
           modulo invariants
 
         OUTPUT: the coordinates as a vector

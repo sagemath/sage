@@ -410,7 +410,7 @@ def _bit_rep_to_Vrep_list_wrapper(ListOfFaces faces, index=0):
     INPUT:
 
     - ``faces`` -- a :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces`
-    - ``index`` -- (default: ``0``); the face to obtain
+    - ``index`` -- (default: ``0``) the face to obtain
 
     OUTPUT: the face as tuple of integers
 

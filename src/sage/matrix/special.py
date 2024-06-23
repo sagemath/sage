@@ -221,10 +221,10 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
 
     - ``nrows`` -- integer; number of rows
 
-    - ``ncols`` -- (default: ``None``); number of columns. If ``None``
+    - ``ncols`` -- (default: ``None``) number of columns. If ``None``
       defaults to ``nrows``.
 
-    - ``algorithm`` -- (default: ``'randomize'``); determines what properties
+    - ``algorithm`` -- (default: ``'randomize'``) determines what properties
       the matrix will have.  See examples below for possible additional
       arguments.
 
@@ -1021,11 +1021,11 @@ def ones_matrix(ring, nrows=None, ncols=None, sparse=False):
 
     INPUT:
 
-    - ``ring`` -- (default: ``ZZ``); base ring for the matrix
+    - ``ring`` -- (default: ``ZZ``) base ring for the matrix
     - ``nrows`` -- number of rows in the matrix
     - ``ncols`` -- number of columns in the matrix;
       if omitted, defaults to the number of rows, producing a square matrix
-    - ``sparse`` -- (default: ``False``); if ``True`` creates a sparse representation
+    - ``sparse`` -- (default: ``False``) if ``True`` creates a sparse representation
 
     OUTPUT:
 
@@ -2164,7 +2164,7 @@ def jordan_block(eigenvalue, size, sparse=False):
 
     - ``eigenvalue`` -- eigenvalue for the diagonal entries of the block
     - ``size`` -- size of the square matrix
-    - ``sparse`` -- (default: ``False``); if ``True``, return a sparse matrix
+    - ``sparse`` -- (default: ``False``) if ``True``, return a sparse matrix
 
     EXAMPLES::
 
@@ -2212,7 +2212,7 @@ def companion_matrix(poly, format='right'):
       A symbolic expression that might also be a polynomial is not
       proper input, see examples below.
 
-    - ``format`` -- (default: ``'right'``); specifies one of four
+    - ``format`` -- (default: ``'right'``) specifies one of four
       variations of a companion matrix.  Allowable values are
       ``'right'``, ``'left'``, ``'top'`` and ``'bottom'``, which indicates
       which border of the matrix contains the negatives of the coefficients.

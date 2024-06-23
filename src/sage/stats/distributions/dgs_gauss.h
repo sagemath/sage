@@ -36,7 +36,7 @@
 
   - ``mp`` -- multi-precision using MPFR, cf. ``dgs_gauss_mp.c``
 
-  - ``dp`` -- double precision using machine doubles, cf. ``dgs_gauss_dp.c``.
+  - ``dp`` -- double precision using machine doubles, cf. ``dgs_gauss_dp.c``
 
   For readers unfamiliar with the implemented algorithms it makes sense to start
   with ``dgs_gauss_dp.c`` which implements the same algorithms as

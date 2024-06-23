@@ -34,7 +34,7 @@ class FreeGradedModuleMorphism(FPModuleMorphism):
     - ``parent`` -- a homspace in the category of finitely generated free
       modules
 
-    - ``values`` -- a list of elements in the codomain; each element
+    - ``values`` -- list of elements in the codomain; each element
       corresponds (by their ordering) to a module generator in the domain
 
     EXAMPLES::

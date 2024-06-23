@@ -81,7 +81,7 @@ class BipartiteGraph(Graph):
 
       #. From a NetworkX bipartite graph.
 
-    - ``partition`` -- (default: ``None``); a tuple defining vertices of the left
+    - ``partition`` -- (default: ``None``) a tuple defining vertices of the left
       and right partition of the graph. Partitions will be determined
       automatically if ``partition`` is ``None``.
 
@@ -658,7 +658,7 @@ class BipartiteGraph(Graph):
 
         INPUT:
 
-        - ``name`` -- (default: ``None``); name of the new vertex. If no name is
+        - ``name`` -- (default: ``None``) name of the new vertex. If no name is
           specified, then the vertex will be represented by the least
           nonnegative integer not already representing a vertex. Name must be
           an immutable object and cannot be ``None``.
@@ -757,10 +757,10 @@ class BipartiteGraph(Graph):
 
         - ``vertices`` -- sequence of vertices to add
 
-        - ``left`` -- (default: ``False``); either ``True`` or sequence of same
+        - ``left`` -- (default: ``False``) either ``True`` or sequence of same
           length as ``vertices`` with ``True``/``False`` elements
 
-        - ``right`` -- (default: ``False``); either ``True`` or sequence of the
+        - ``right`` -- (default: ``False``) either ``True`` or sequence of the
           same length as ``vertices`` with ``True``/``False`` elements
 
         Only one of ``left`` and ``right`` keywords should be provided.  See
@@ -988,10 +988,10 @@ class BipartiteGraph(Graph):
 
         - ``u`` -- the tail of an edge
 
-        - ``v`` -- (default: ``None``); the head of an edge. If ``v=None``, then
+        - ``v`` -- (default: ``None``) the head of an edge. If ``v=None``, then
           attempt to understand ``u`` as a edge tuple
 
-        - ``label`` -- (default: ``None``); the label of the edge ``(u, v)``
+        - ``label`` -- (default: ``None``) the label of the edge ``(u, v)``
 
         The following forms are all accepted:
 
@@ -2268,7 +2268,7 @@ class BipartiteGraph(Graph):
           only the size of a minimum vertex cover is returned. Otherwise,
           a minimum vertex cover is returned as a list of vertices.
 
-        - ``reduction_rules`` -- (default: ``True``); specify if the reductions
+        - ``reduction_rules`` -- (default: ``True``) specify if the reductions
           rules from kernelization must be applied as pre-processing or not.
           See [ACFLSS04]_ for more details. Note that depending on the instance,
           it might be faster to disable reduction rules.  This parameter is
@@ -2396,14 +2396,14 @@ class BipartiteGraph(Graph):
 
         - ``vertices`` -- list (default: ``None``); list of vertices
 
-        - ``edges`` -- (default: ``None``); either a single edge or an iterable
+        - ``edges`` -- (default: ``None``) either a single edge or an iterable
           container of edges (e.g., a list, set, file, numeric array, etc.). If
           no edges are specified, then all edges are assumed and the returned
           graph is an induced subgraph. In the case of multiple edges,
           specifying an edge as `(u, v)` means to keep all edges `(u, v)`,
           regardless of the label.
 
-        - ``edge_property`` -- (default: ``None``); if specified, this is
+        - ``edge_property`` -- (default: ``None``) if specified, this is
           expected to be a function on edges, which is intersected with the
           edges specified, if any are
 
@@ -2477,7 +2477,7 @@ class BipartiteGraph(Graph):
 
         - ``vertices`` -- list (default: ``None``); list of vertices
 
-        - ``edges`` -- (default: ``None``); either a single edge or an iterable
+        - ``edges`` -- (default: ``None``) either a single edge or an iterable
           container of edges (e.g., a list, set, file, numeric array, etc.). If
           no edges are specified, then all edges are assumed and the returned
           graph is an induced subgraph. In the case of multiple edges,
@@ -2488,7 +2488,7 @@ class BipartiteGraph(Graph):
           current graph is modified in place by deleting the extra vertices and
           edges. Otherwise a modified copy of the graph is returned
 
-        - ``edge_property`` -- (default: ``None``); if specified, this is
+        - ``edge_property`` -- (default: ``None``) if specified, this is
           expected to be a function on edges, which is intersected with the
           edges specified, if any are
 

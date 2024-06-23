@@ -1683,17 +1683,17 @@ class Sigma:
 
         INPUT:
 
-        - ``xmin`` -- default: 1
+        - ``xmin`` -- (default: 1)
 
-        - ``xmax`` -- default: 50
+        - ``xmax`` -- (default: 50)
 
-        - ``k`` -- default: 1
+        - ``k`` -- (default: 1)
 
-        - ``pointsize`` -- default: 30
+        - ``pointsize`` -- (default: 30)
 
-        - ``rgbcolor`` -- default: (0,0,1)
+        - ``rgbcolor`` -- (default: (0,0,1))
 
-        - ``join`` -- default: ``True``; whether to join the points
+        - ``join`` -- (default: ``True``) whether to join the points
 
         - ``**kwds`` -- passed on
 
@@ -3108,13 +3108,13 @@ class Euler_Phi:
 
         INPUT:
 
-        - ``xmin`` -- default: 1
+        - ``xmin`` -- (default: 1)
 
-        - ``xmax`` -- default: 50
+        - ``xmax`` -- (default: 50)
 
-        - ``pointsize`` -- default: 30
+        - ``pointsize`` -- (default: 30)
 
-        - ``rgbcolor`` -- default: (0,0,1)
+        - ``rgbcolor`` -- (default: (0,0,1))
 
         - ``join`` -- boolean (default: ``True``); whether to join the points
 
@@ -4557,15 +4557,15 @@ class Moebius:
 
         INPUT:
 
-        - ``xmin`` -- default: 0
+        - ``xmin`` -- (default: 0)
 
-        - ``xmax`` -- default: 50
+        - ``xmax`` -- (default: 50)
 
-        - ``pointsize`` -- default: 30
+        - ``pointsize`` -- (default: 30)
 
-        - ``rgbcolor`` -- default: (0,0,1)
+        - ``rgbcolor`` -- (default: (0,0,1))
 
-        - ``join`` -- default: ``True``; whether to join the points
+        - ``join`` -- (default: ``True``) whether to join the points
            (very helpful in seeing their order)
 
         - ``**kwds`` -- passed on

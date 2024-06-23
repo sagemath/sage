@@ -569,7 +569,7 @@ def _polar_graph(m, q, g, intersection_size=None):
 
     - ``g`` -- the group acting
 
-    - ``intersection_size`` -- (default: ``None``); if ``None``, build the graph
+    - ``intersection_size`` -- (default: ``None``) if ``None``, build the graph
       on the isotropic points, with adjacency being orthogonality w.r.t. `F`.
       Otherwise, build the graph on the maximal totally isotropic subspaces,
       with adjacency specified by ``intersection_size`` being as given.

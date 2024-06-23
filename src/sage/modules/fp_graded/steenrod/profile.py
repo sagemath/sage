@@ -41,7 +41,7 @@ def profile_elt(elt, char=2):
 
     - ``elt`` -- element of the Steenrod algebra (or a sub-Hopf algebra
       of it) or list(s) representing it
-    - ``char`` (default: 2) -- the characteristic
+    - ``char`` -- (default: 2) the characteristic
 
     ``elt`` could also be a list (when ``char=2``) or a pair of lists
     (otherwise), in which case it is treated as corresponding to an
@@ -102,7 +102,7 @@ def enveloping_profile_elements(alist, char=2):
     INPUT:
 
     - ``alist`` -- list of Steenrod algebra elements
-    - ``char`` (default: 2) -- the characteristic
+    - ``char`` -- (default: 2) the characteristic
 
     As with :func:`profile_elt`, the entries of ``alist`` could also
     be iterables or pairs of iterables.
@@ -155,16 +155,14 @@ def enveloping_profile_elements(alist, char=2):
 def find_min_profile(prof, char=2):
     r"""
     Return the smallest valid profile function containing a tuple of
-    non-negative integers,
+    nonnegative integers.
 
     INPUT:
 
-    - ``prof`` -- a list or tuple of nonnegative integers
-    - ``char`` (default: 2) -- the characteristic
+    - ``prof`` -- list or tuple of nonnegative integers
+    - ``char`` -- (default: 2) the characteristic
 
-    OUTPUT:
-
-    - a valid profile containing ``prof``
+    OUTPUT: a valid profile containing ``prof``
 
     A profile function `e` must satisfy `e(r) \geq \min( e(r-i) - i,
     e(i))` for all `0 < i < r`, and at odd primes, if `k(i+j) = 1`,

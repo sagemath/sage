@@ -581,7 +581,7 @@ class Singular(ExtraTabCompletion, Expect):
 
         - ``x`` -- string (of code)
 
-        - ``allow_semicolon`` -- default: ``False``; if False then
+        - ``allow_semicolon`` -- (default: ``False``) if ``False`` then
           raise a :class:`TypeError` if the input line contains a semicolon
 
         - ``strip`` -- ignored
@@ -1700,13 +1700,13 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
 
         INPUT:
 
-        - ``R`` -- (default: ``None``); an optional polynomial ring.
+        - ``R`` -- (default: ``None``) an optional polynomial ring.
           If it is provided, then you have to make sure that it
           matches the current singular ring as, e.g., returned by
-          singular.current_ring(). By default, the output of
+          ``singular.current_ring()``. By default, the output of
           :meth:`sage_global_ring` is used.
 
-        - ``kcache`` -- (default: ``None``); an optional dictionary
+        - ``kcache`` -- (default: ``None``) an optional dictionary
           for faster finite field lookups, this is mainly useful for finite
           extension fields
 
@@ -1909,7 +1909,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
 
         INPUT:
 
-        - ``R`` -- (default: ``None``); an optional ring, over which
+        - ``R`` -- (default: ``None``) an optional ring, over which
           the resulting matrix is going to be defined.
           By default, the output of :meth:`sage_global_ring` is used.
 

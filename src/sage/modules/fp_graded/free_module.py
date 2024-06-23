@@ -79,7 +79,7 @@ You can also use the module action::
     sage: Sq(2) * x
     (Sq(4,1)+Sq(7))*g[0] + Sq(3,1)*g[1]
 
-Each non-zero element has a well-defined degree::
+Each nonzero element has a well-defined degree::
 
     sage: x.degree()
     5
@@ -549,7 +549,7 @@ class FreeGradedModule(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``coefficients`` -- a tuple of coefficient (i.e. elements of the
+        - ``coefficients`` -- tuple of coefficient (i.e. elements of the
           algebra for this module), an element of FreeGradedModule, or the
           zero integer constant
 
@@ -646,7 +646,7 @@ class FreeGradedModule(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         OUTPUT:
 
@@ -733,7 +733,7 @@ class FreeGradedModule(CombinatorialFreeModule):
         INPUT:
 
         - ``coordinates`` -- a sequence of elements of the ground ring
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         OUTPUT: a module element of degree ``n``
 
@@ -809,7 +809,7 @@ class FreeGradedModule(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``n`` -- an integer degree
+        - ``n`` -- integer degree
 
         OUTPUT:
 
@@ -919,7 +919,7 @@ class FreeGradedModule(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``t`` -- an integer
+        - ``t`` -- integer
 
         OUTPUT:
 
@@ -983,11 +983,11 @@ class FreeGradedModule(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``k`` -- a non-negative integer
+        - ``k`` -- nonnegative integer
         - ``top_dim`` -- stop the computation at this degree. Ignored,
           for compatibility with
           :meth:`sage.modules.fp_graded.module.FPModule.resolution`.
-        - ``verbose`` -- (default: ``False``) a boolean to control if
+        - ``verbose`` -- boolean (default: ``False``); a boolean to control if
           log messages should be emitted
 
         OUTPUT:
@@ -1024,7 +1024,7 @@ class FreeGradedModule(CombinatorialFreeModule):
              Module endomorphism of Free graded left module on 0 generators over The exterior algebra of rank 3 over Rational Field]
         """
         if k < 0:
-            raise ValueError('the length of the resolution must be non-negative')
+            raise ValueError('the length of the resolution must be nonnegative')
 
         # The first map \epsilon is the identity map
         ret_complex = [Hom(self, self).identity()]
