@@ -275,7 +275,7 @@ if echo "$PKG_SRC" | grep / >/dev/null; then
     exit 1
 fi
 PKG_NAME="$PKG_SRC"
-PKG_BASE=`echo "$PKG_NAME" | sed 's/-.*//'` # strip version number
+export PKG_BASE=`echo "$PKG_NAME" | sed 's/-.*//'` # strip version number
 
 case $# in
     1)
@@ -302,7 +302,7 @@ export SAGE_SPKG_WHEELS="$SAGE_INST_LOCAL/var/lib/sage/wheels"
 # PKG_SRC should look like "package-VERSION" or just "package".
 # VERSION, if provided, must match the version in build/pkgs.
 PKG_VER="${PKG_NAME#${PKG_BASE}}"
-PKG_VER="${PKG_VER#-}"
+export PKG_VER="${PKG_VER#-}"
 eval $(sage-package properties --format=shell $PKG_BASE)
 eval PKG_SCRIPTS=\$path_$PKG_BASE \
      PKG_TYPE=\$type_$PKG_BASE \
@@ -313,9 +313,9 @@ if [ -n "$PKG_VER" -a "$PKG_VER" != "$LOCAL_PKG_VER" ]; then
     exit 1
 fi
 if [ -z "$PKG_VER" ]; then
-    PKG_NAME="${PKG_BASE}"
+    export PKG_NAME="${PKG_BASE}"
 else
-    PKG_NAME="${PKG_BASE}-${PKG_VER}"
+    export PKG_NAME="${PKG_BASE}-${PKG_VER}"
 fi
 
 # Set the $SAGE_DESTDIR variable to be passed to the spkg-install

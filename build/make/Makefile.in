@@ -749,12 +749,6 @@ $(1)-$(4)-no-deps:
 		. '$$(SAGE_ROOT)/src/bin/sage-env' && \
 		. '$$(SAGE_ROOT)/build/bin/sage-build-env-config' && \
 		. '$$(SAGE_ROOT)/build/bin/sage-build-env' && \
-		PKG_BASE="$(1)" \
-		PKG_VER="$(2)" \
-		PKG_NAME="$(1)-$(2)" \
-		SAGE_SPKG_WHEELS=$$($(4))/var/lib/sage/wheels \
-		SAGE_SPKG_SCRIPTS=$$($(4))/var/lib/sage/scripts \
-		SAGE_INST_LOCAL=$$($(4)) \
 		SAGE_CHECK=$$(SAGE_CHECK_$(1)) \
 		sage-logger -p 'SAGE_CHECK=$$(SAGE_CHECK_$(1)) PATH=$$(SAGE_SRC)/bin:$$($(4))/bin:$$$$PATH $$(SAGE_SPKG) $$(SAGE_SPKG_OPTIONS) \
 		$(if $(filter $(1),$(TOOLCHAIN_DEPS)),--keep-existing) \
