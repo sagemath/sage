@@ -183,7 +183,8 @@ jobs:
           # Restore the new doc from changes by "wipe out"
           (cd doc && git checkout -f)
           # Sometimes rm -rf .git errors out because of some diehard hidden files
-          (cd doc && rm -rf .git 2>/dev/null && rm .gitattributes 2>/dev/null)
+          # So we simply move it out of the doc directory
+          (cd doc && mv .git ../git && mv .gitattributes ../gitattributes)
           mv CHANGES.html doc
           # Zip everything for increased performance
           zip -r doc.zip doc
