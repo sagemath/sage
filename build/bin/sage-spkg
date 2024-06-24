@@ -149,16 +149,6 @@ exit_with_error_msg()
     exit 1
 }
 
-write_to_tty()
-{
-    # Try writing to terminal.  Suppress the possible error message
-    if ! ( cat > /dev/tty ) 2> /dev/null ; then
-        # Fall back to writing to stdout
-        cat
-        return 1
-    fi
-}
-
 # Handle -n, -t, -q options for recursive make
 # See Issue #12016.
 if echo "$MAKE $MAKEFLAGS -$MAKEFLAGS" |grep '[ ]-[A-Za-z]*[qnt]' >/dev/null; then
