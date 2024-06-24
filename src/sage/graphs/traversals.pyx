@@ -267,8 +267,8 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
         algorithm is in `O(n + m)`, and our implementation follows that
         complexity. See [HMPV2000]_ and next section for more details.
 
-    Loops and multiple edges are ignored during the computation of lex_BFS and
-    directed graphs are converted to undirected graphs.
+    Loops and multiple edges are ignored during the computation of ``lex_BFS``
+    and directed graphs are converted to undirected graphs.
 
     ALGORITHM:
 
@@ -509,8 +509,8 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
     - ``initial_vertex`` -- (default: ``None``); the first vertex to
       consider
 
-    Loops and multiple edges are ignored during the computation of lex_UP and
-    directed graphs are converted to undirected graphs.
+    Loops and multiple edges are ignored during the computation of ``lex_UP``
+    and directed graphs are converted to undirected graphs.
 
     ALGORITHM:
 
@@ -686,8 +686,8 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
     - ``initial_vertex`` -- (default: ``None``); the first vertex to
       consider
 
-    Loops and multiple edges are ignored during the computation of lex_DFS and
-    directed graphs are converted to undirected graphs.
+    Loops and multiple edges are ignored during the computation of ``lex_DFS``
+    and directed graphs are converted to undirected graphs.
 
     ALGORITHM:
 
@@ -863,8 +863,8 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
     - ``initial_vertex`` -- (default: ``None``); the first vertex to
       consider
 
-    Loops and multiple edges are ignored during the computation of lex_DOWN and
-    directed graphs are converted to undirected graphs.
+    Loops and multiple edges are ignored during the computation of ``lex_DOWN``
+    and directed graphs are converted to undirected graphs.
 
     ALGORITHM:
 
