@@ -509,6 +509,9 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
     - ``initial_vertex`` -- (default: ``None``); the first vertex to
       consider
 
+    Loops and multiple edges are ignored during the computation of lex_UP and
+    directed graphs are converted to undirected graphs.
+
     ALGORITHM:
 
     This algorithm maintains for each vertex left in the graph a code
@@ -549,8 +552,9 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
     The method also works for directed graphs::
 
         sage: G = DiGraph([(1, 2), (2, 3), (1, 3)])
-        sage: G.lex_UP(initial_vertex=2)
-        [2, 3, 1]
+        sage: correct_anwsers = [[2, 1, 3], [2, 3, 1]]
+        sage: G.lex_UP(initial_vertex=2) in correct_anwsers
+        True
 
     Different orderings for different traversals::
 
@@ -598,9 +602,9 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
     if initial_vertex is not None and initial_vertex not in G:
         raise ValueError("'{}' is not a graph vertex".format(initial_vertex))
 
-    # Loops and multiple edges are not needed in Lex UP
-    if G.allows_loops() or G.allows_multiple_edges():
-        G = G.to_simple(immutable=True)
+    # Convert G to a simple undirected graph
+    if G.has_loops() or G.has_multiple_edges() or G.is_directed():
+        G = G.to_simple(immutable=True, to_undirected=True)
 
     cdef int nV = G.order()
 
@@ -682,6 +686,9 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
     - ``initial_vertex`` -- (default: ``None``); the first vertex to
       consider
 
+    Loops and multiple edges are ignored during the computation of lex_DFS and
+    directed graphs are converted to undirected graphs.
+
     ALGORITHM:
 
     This algorithm maintains for each vertex left in the graph a code
@@ -721,8 +728,9 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
     The method also works for directed graphs::
 
         sage: G = DiGraph([(1, 2), (2, 3), (1, 3)])
-        sage: G.lex_DFS(initial_vertex=2)
-        [2, 3, 1]
+        sage: correct_anwsers = [[2, 1, 3], [2, 3, 1]]
+        sage: G.lex_DFS(initial_vertex=2) in correct_anwsers
+        True
 
     Different orderings for different traversals::
 
@@ -770,9 +778,9 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
     if initial_vertex is not None and initial_vertex not in G:
         raise ValueError("'{}' is not a graph vertex".format(initial_vertex))
 
-    # Loops and multiple edges are not needed in Lex DFS
-    if G.allows_loops() or G.allows_multiple_edges():
-        G = G.to_simple(immutable=True)
+    # Convert G to a simple undirected graph
+    if G.has_loops() or G.has_multiple_edges() or G.is_directed():
+        G = G.to_simple(immutable=True, to_undirected=True)
 
     cdef int nV = G.order()
 
@@ -855,6 +863,9 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
     - ``initial_vertex`` -- (default: ``None``); the first vertex to
       consider
 
+    Loops and multiple edges are ignored during the computation of lex_DOWN and
+    directed graphs are converted to undirected graphs.
+
     ALGORITHM:
 
     This algorithm maintains for each vertex left in the graph a code
@@ -895,8 +906,9 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
     The method also works for directed graphs::
 
         sage: G = DiGraph([(1, 2), (2, 3), (1, 3)])
-        sage: G.lex_DOWN(initial_vertex=2)
-        [2, 3, 1]
+        sage: correct_anwsers = [[2, 1, 3], [2, 3, 1]]
+        sage: G.lex_DOWN(initial_vertex=2) in correct_anwsers
+        True
 
     Different orderings for different traversals::
 
@@ -944,9 +956,9 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
     if initial_vertex is not None and initial_vertex not in G:
         raise ValueError("'{}' is not a graph vertex".format(initial_vertex))
 
-    # Loops and multiple edges are not needed in Lex DOWN
-    if G.allows_loops() or G.allows_multiple_edges():
-        G = G.to_simple(immutable=True)
+    # Convert G to a simple undirected graph
+    if G.has_loops() or G.has_multiple_edges() or G.is_directed():
+        G = G.to_simple(immutable=True, to_undirected=True)
 
     cdef int nV = G.order()
 
