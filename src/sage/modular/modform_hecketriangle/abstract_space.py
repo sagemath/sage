@@ -22,9 +22,9 @@ from sage.modules.free_module_element import vector
 from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.laurent_series_ring import LaurentSeriesRing
+from sage.rings.laurent_series_ring import is_LaurentSeriesRing
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.power_series_ring import is_PowerSeriesRing
 from sage.rings.rational_field import QQ
 from sage.structure.element import parent
 
