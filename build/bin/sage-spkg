@@ -313,7 +313,7 @@ export SAGE_SPKG_WHEELS="$SAGE_INST_LOCAL/var/lib/sage/wheels"
 # VERSION, if provided, must match the version in build/pkgs.
 PKG_VER="${PKG_NAME#${PKG_BASE}}"
 PKG_VER="${PKG_VER#-}"
-eval $(sage-package properties $PKG_BASE)
+eval $(sage-package properties --format=shell $PKG_BASE)
 eval PKG_SCRIPTS=\$path_$PKG_BASE \
      PKG_TYPE=\$type_$PKG_BASE \
      PKG_SRC_TYPE=\$source_$PKG_BASE \
