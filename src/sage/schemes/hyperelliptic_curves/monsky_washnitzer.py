@@ -56,7 +56,7 @@ from sage.misc.profiler import Profiler
 from sage.misc.repr import repr_lincomb
 from sage.modules.free_module_element import vector
 from sage.modules.free_module import FreeModule
-from sage.modules.free_module_element import is_FreeModuleElement
+from sage.modules.free_module_element import FreeModuleElement
 from sage.modules.module import Module
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Integers
 from sage.rings.integer import Integer
@@ -1894,7 +1894,7 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
             return
         if isinstance(val, tuple):
             val, offset = val
-        if isinstance(val, list) and val and is_FreeModuleElement(val[0]):
+        if isinstance(val, list) and val and isinstance(val[0], FreeModuleElement):
             val = transpose_list(val)
         self._f = parent._poly_ring(val)
         if offset != 0:
