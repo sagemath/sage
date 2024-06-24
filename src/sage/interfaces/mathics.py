@@ -341,7 +341,7 @@ OTHER Examples::
 ::
 
     sage: mathics('10.^80')         # optional - mathics
-    1.*^80
+    1.×10^80
     sage: mathics('10.^80').sage()  # optional - mathics
     1.00000000000000e80
 
@@ -483,6 +483,7 @@ class Mathics(Interface):
         self._seed = seed
         self._initialized = False  # done lazily
         self._session = None
+        os.environ['MATHICS_CHARACTER_ENCODING'] = 'ASCII'  # see :issue:`37395`
 
     def _lazy_init(self):
         r"""
@@ -603,7 +604,7 @@ optional Sage package Mathics installed.
 
             sage: mathics.set('u', '2*x +E')        # optional - mathics
             sage: mathics.get('u')                  # optional - mathics
-            'E + 2 x'
+            '2 x + E'
         """
         return self.eval(var)
 
@@ -719,9 +720,9 @@ optional Sage package Mathics installed.
 
             sage: bignum = mathics('10.^80')       # optional - mathics
             sage: repr(bignum)                     # optional - mathics
-            '1.*^80'
+            '1.×10^80'
             sage: repr(bignum).replace(mathics._exponent_symbol(), 'e').strip() # optional - mathics
-            '1.e80'
+            '1.×10^80'
         """
         return '*^'
 
@@ -774,34 +775,25 @@ optional Sage package Mathics installed.
         EXAMPLES::
 
             sage: mathics.help('Sin')                   # optional - mathics
-            "\n  'Sin[z]'\n    returns the sine of z.\n"
+            'sine function\n'
 
             sage: print(_)                              # optional - mathics
-            <BLANKLINE>
-            'Sin[z]'
-              returns the sine of z.
+            sine function
             <BLANKLINE>
 
             sage: print(mathics.help('Sin', long=True)) # optional - mathics
-            <BLANKLINE>
-              'Sin[z]'
-                returns the sine of z.
+            sine function
             <BLANKLINE>
             Attributes[Sin] = {Listable, NumericFunction, Protected}
             <BLANKLINE>
 
             sage: print(mathics.Factorial.__doc__)  # optional - mathics
-            <BLANKLINE>
-            'Factorial[n]'
-              'n!'
-              computes the factorial of n.
+            factorial
             <BLANKLINE>
 
             sage: u = mathics('Pi')                 # optional - mathics
             sage: print(u.Cos.__doc__)              # optional - mathics
-            <BLANKLINE>
-            'Cos[z]'
-              returns the cosine of z.
+            cosine function
             <BLANKLINE>
         """
         if long:
@@ -854,7 +846,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
         sage: expr = res.last_eval; expr
         <Symbol: System`E>
         sage: type(expr)
-        <class 'mathics.core.expression.Symbol'>
+        <class 'mathics.core.symbols.Symbol'>
 
     Applying Mathics methods::
 
@@ -865,8 +857,6 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
         'System`E'
         sage: me.is_inexact()
         False
-        sage: me.is_symbol()
-        True
 
     Conversion to Sage::
 
