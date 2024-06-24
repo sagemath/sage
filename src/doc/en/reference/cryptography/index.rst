@@ -33,5 +33,6 @@ Cryptography
 
    sage/crypto/lattice
    sage/crypto/lwe
+   sage/crypto/historical/enigma
 
 .. include:: ../footer.txt
