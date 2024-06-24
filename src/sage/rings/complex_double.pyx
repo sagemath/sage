@@ -706,10 +706,18 @@ def is_ComplexDoubleElement(x):
 
         sage: from sage.rings.complex_double import is_ComplexDoubleElement
         sage: is_ComplexDoubleElement(0)
+        doctest:warning...
+        DeprecationWarning: The function is_ComplexDoubleElement is deprecated;
+        use 'isinstance(..., ComplexDoubleElement)' instead.
+        See https://github.com/sagemath/sage/issues/38128 for details.
         False
         sage: is_ComplexDoubleElement(CDF(0))
         True
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38128,
+                       "The function is_ComplexDoubleElement is deprecated; "
+                       "use 'isinstance(..., ComplexDoubleElement)' instead.")
     return isinstance(x, ComplexDoubleElement)
 
 

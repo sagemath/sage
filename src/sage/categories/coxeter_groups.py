@@ -937,22 +937,27 @@ class CoxeterGroups(Category_singleton):
             from sage.sets.family import Family
             return Family(self.index_set(), lambda i: self.simple_projection(i, side=side, length_increasing=length_increasing))
 
-        def sign_representation(self, base_ring=None, side="twosided"):
+        def sign_representation(self, base_ring=None):
             r"""
             Return the sign representation of ``self`` over ``base_ring``.
 
             INPUT:
 
             - ``base_ring`` -- (optional) the base ring; the default is `\ZZ`
-            - ``side`` -- ignored
 
             EXAMPLES::
 
-                sage: W = WeylGroup(["A", 1, 1])                                        # needs sage.combinat sage.groups
-                sage: W.sign_representation()                                           # needs sage.combinat sage.groups
+                sage: W = WeylGroup(['D', 4])                                           # needs sage.combinat sage.groups
+                sage: W.sign_representation(QQ)                                         # needs sage.combinat sage.groups
                 Sign representation of
-                 Weyl Group of type ['A', 1, 1] (as a matrix group acting on the root space)
-                 over Integer Ring
+                 Weyl Group of type ['D', 4] (as a matrix group acting on the ambient space)
+                 over Rational Field
+
+                sage: # optional - gap3
+                sage: W = CoxeterGroup(['B',3], implementation="coxeter3")
+                sage: W.sign_representation()
+                Sign representation of Coxeter group of type ['B', 3]
+                 implemented by Coxeter3 over Integer Ring
             """
             if base_ring is None:
                 from sage.rings.integer_ring import ZZ

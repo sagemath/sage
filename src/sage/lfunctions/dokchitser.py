@@ -467,12 +467,12 @@ class Dokchitser(SageObject):
             raise TypeError("v (=%s) must be a list, tuple, or string" % v)
         else:
             CC = self.__CC
-            v = ','.join([CC(a)._pari_init_() for a in v])
+            v = ','.join(CC(a)._pari_init_() for a in v)
             self._gp_eval('Avec = [%s]' % v)
             if w is None:
                 self._gp_call_inst('initLdata', '"Avec[k]"', cutoff)
             else:
-                w = ','.join([CC(a)._pari_init_() for a in w])
+                w = ','.join(CC(a)._pari_init_() for a in w)
                 self._gp_eval('Bvec = [%s]' % w)
                 self._gp_call_inst('initLdata', '"Avec[k]"', cutoff,
                                    '"Bvec[k]"')
