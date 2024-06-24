@@ -292,13 +292,15 @@ def meet_irr_label(L, c, m):
 
 def downward_labels(L, c, z):
     r"""
+    Return the list of downward labels of ``z`` in the lattice ``L``.
+
     INPUT:
 
-    ``L`` -- a trim lattice L
+    - ``L`` -- a trim lattice
 
-    ``c`` -- a left-modular chain c
+    - ``c`` -- a left-modular chain in ``L``
 
-    ``z`` -- an element z in the lattice ``L``
+    - ``z`` -- an element in the lattice ``L``
 
     OUTPUT:
 
