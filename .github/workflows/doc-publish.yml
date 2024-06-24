@@ -20,6 +20,7 @@ permissions:
 # on pull request                 https://doc-pr-12345--NETLIFY_SITE
 # on push branch develop          https://doc-develop--NETLIFY_SITE
 # on push tag                     https://doc-10-4-beta2--NETLIFY_SITE
+# on push tag                     https://doc-release--NETLIFY_SITE
 #
 # where NETLIFY_SITE is presently sagemath.netlify.app for repo sagemath/sage.
 #
@@ -128,7 +129,7 @@ jobs:
         run: unzip livedoc.zip -d livedoc
         if: steps.download-doc.outcome == 'success'
 
-      - name: Deploy to Netlify
+      - name: Deploy to netlify with doc-TAG alias
         id: deploy-netlify
         uses: netlify/actions/cli@master
         with:
@@ -138,6 +139,15 @@ jobs:
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
           NETLIFY_MESSAGE: doc-${{ steps.source-run-info.outputs.targetBranch }}
           NETLIFY_ALIAS: doc-${{ steps.source-run-info.outputs.targetBranch }}
+        if: steps.download-doc.outcome == 'success'
+
+      - name: Deploy to netlify with doc-release alias
+        uses: netlify/actions/cli@master
+        with:
+          args: deploy --dir=livedoc/livedoc --message doc-release --alias doc-release
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         if: steps.download-doc.outcome == 'success'
 
       - name: Report deployment url
