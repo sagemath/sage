@@ -67,8 +67,8 @@ class FreeKnotInfoMonoidElement(IndexedFreeAbelianMonoidElement):
     def to_knotinfo(self):
         r"""
         Return a word representing ``self`` as a list of pairs where each pair
-        ``(ki, sym)`` consists of a :class:`KontInfoBase` instance ``ki`` and
-        :class:`SymmetryMutant` instance ``sym``.
+        ``(ki, sym)`` consists of a :class:`~sage.knots.knotinfo.KontInfoBase` instance ``ki`` and
+        :class:`~sage.knots.knotinfo.SymmetryMutant` instance ``sym``.
 
         EXAMPLES::
 
