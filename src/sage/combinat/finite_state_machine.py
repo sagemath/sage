@@ -10790,8 +10790,8 @@ class FiniteStateMachine(SageObject):
             else:
                 base_ring = transition_matrix.parent().base_ring()
                 from sage.rings.polynomial.multi_polynomial_ring \
-                    import is_MPolynomialRing
-                if is_MPolynomialRing(base_ring):
+                    import MPolynomialRing_base
+                if isinstance(base_ring, MPolynomialRing_base):
                     # if base_ring is already a multivariate polynomial
                     # ring, extend it instead of creating a univariate
                     # polynomial ring over a polynomial ring.  This

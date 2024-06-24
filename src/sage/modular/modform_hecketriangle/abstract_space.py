@@ -23,7 +23,7 @@ from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.laurent_series_ring import is_LaurentSeriesRing
-from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.rings.power_series_ring import is_PowerSeriesRing
 from sage.rings.rational_field import QQ
 from sage.structure.element import parent
@@ -1721,7 +1721,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         """
 
         base_ring = laurent_series.base_ring()
-        if is_PolynomialRing(base_ring.base()):
+        if isinstance(base_ring.base(), PolynomialRing_general):
             if not (self.coeff_ring().has_coerce_map_from(base_ring)):
                 raise ValueError("The Laurent coefficients don't coerce into the coefficient ring of self!")
         elif rationalize:
@@ -2015,7 +2015,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         """
 
         base_ring = laurent_series.base_ring()
-        if is_PolynomialRing(base_ring.base()):
+        if isinstance(base_ring.base(), PolynomialRing_general):
             if not (self.coeff_ring().has_coerce_map_from(base_ring)):
                 raise ValueError("The Laurent coefficients don't coerce into the coefficient ring of self!")
         elif rationalize:
@@ -2282,7 +2282,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         # If the coefficients already coerce to our coefficient ring
         # and are in polynomial form we simply return the Laurent series
-        if (is_PolynomialRing(base_ring.base())):
+        if (isinstance(base_ring.base(), PolynomialRing_general)):
             if (self.coeff_ring().has_coerce_map_from(base_ring)):
                 return laurent_series
             else:

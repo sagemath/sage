@@ -510,10 +510,10 @@ class FractionWithFactoredDenominator(RingElement):
             sage: F.dimension()
             2
         """
-        from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-        from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+        from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
         R = self.denominator_ring
-        if is_PolynomialRing(R) or is_MPolynomialRing(R):
+        if isinstance(R, PolynomialRing_general) or isinstance(R, MPolynomialRing_base):
             return R.ngens()
         raise NotImplementedError('only polynomial rings are supported as base')
 
@@ -3222,9 +3222,9 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Parent):
             p = numerator
             q = R(denominator)
 
-            from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-            from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
-            if is_PolynomialRing(R) or is_MPolynomialRing(R):
+            from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+            from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
+            if isinstance(R, PolynomialRing_general) or isinstance(R, MPolynomialRing_base):
                 if not R(q).is_unit():
                     # Factor denominator
                     try:
@@ -3292,9 +3292,9 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Parent):
         from sage.rings.fraction_field import FractionField_generic
         if isinstance(P, FractionField_generic):
             B = P.base()
-            from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-            from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
-            if is_PolynomialRing(B) or is_MPolynomialRing(B):
+            from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+            from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
+            if isinstance(B, PolynomialRing_general) or isinstance(B, MPolynomialRing_base):
                 if self.base().has_coerce_map_from(B):
                     return True
 
