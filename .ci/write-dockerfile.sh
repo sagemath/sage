@@ -197,10 +197,6 @@ EOF
         RUN="RUN . /opt/conda/etc/profile.d/conda.sh; conda activate base; "  # to activate the conda env
         ;;
     *)
-        cat <<EOF
-ARG BASE_IMAGE
-FROM \${BASE_IMAGE} as with-system-packages
-EOF
         INSTALL=$(sage-print-system-package-command $SYSTEM install " ")
         ;;
 esac
