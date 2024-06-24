@@ -31,13 +31,22 @@ EXAMPLES:
     sage: dict2 = {(0,0):0, (1,0):0, (0,2):0}
     sage: p2 = R(c2) + R(dict2)
     sage: th2 = p2.tropical_hypersurface(); th2
-    Tropical Hypersurface in 2 dimensions: 
+    Tropical Hypersurface in 2 dimensions:
     [[(0, r4), [r4 < 0], 1]
     [(r5, 0), [r5 < 0], 2]
     [(2*r7, r7), [0 < r7, r7 < (1/2)], 1]
     [(1, r8), [r8 < (1/2)], 1]
     [(r9 + 1/2, r9), [(1/2) < r9], 2]]
     sage: th2.plot()
+
+::
+
+    sage: c3 = 7+4*x+4*x*y+3*y^2+(-3)*x^2
+    sage: dict3 = {(0,1):0}
+    sage: p3 = R(c3) + R(dict3); p3
+    (-3)*x^2 + 4*x*y + 4*x + 3*y^2 + 0*y + 7
+    sage: th3 = p3.tropical_hypersurface()
+    sage: th3.plot()
 
 TESTS:
 
@@ -80,6 +89,7 @@ from sage.structure.sage_object import SageObject
 from sage.rings.rational_field import QQ
 from sage.plot.graphics import Graphics
 from sage.plot.plot import parametric_plot
+from sage.rings.infinity import infinity
 
 class TropicalHypersurface(SageObject):
     r""""
@@ -103,11 +113,59 @@ class TropicalHypersurface(SageObject):
     
     def components(self):
         return len(self._hypersurface)
+    
+    def vertex(self):
+        r"""
+        Return all vertex of the tropical curve of ``self``, which is the
+        point where three or more line segments intersect
+
+        OUTPUT: A set of `(x,y)` points
+
+        """
+
+        vertex = set()
+        for i, component in enumerate(self._hypersurface):
+            parametric_function = component[0]
+            var = component[1][0].variables()[0]
+            interval = self._parameter_intervals()[i]
+            lower = interval[0].lower()
+            upper = interval[0].upper()
+            if lower != -infinity:
+                x = parametric_function[0].subs(var==lower)
+                y = parametric_function[1].subs(var==lower)
+                vertex.add((x,y))
+            if upper != infinity:
+                x = parametric_function[0].subs(var==upper)
+                y = parametric_function[1].subs(var==upper)
+                vertex.add((x,y))
+        return vertex
+
+
+    def _parameter_intervals(self):
+        r"""
+        Return the intervals of each parameter of ``self``
+
+        OUTPUT: A list of ``RealSet``
+
+        """
+        from sage.sets.real_set import RealSet
+
+        intervals = []
+        for component in self._hypersurface:
+            if len(component[1]) == 1:
+                interval = RealSet(component[1][0])
+            else:
+                lower = QQ(component[1][0].left())
+                upper = QQ(component[1][1].right())
+                interval = RealSet([lower,upper])
+            intervals.append(interval)
+        
+        return intervals
+                
 
     def plot(self):
         """
-        Return the plot of the tropical hypersurface ``self``
-
+        Return the plot of ``self``
 
         """
         from sage.plot.text import text
@@ -117,41 +175,30 @@ class TropicalHypersurface(SageObject):
                                       f" in {self.dimension()} dimensions")
         
         combined_plot = Graphics()
-        for component in self._hypersurface:
+        large_int = 1000
+        intervals = self._parameter_intervals()
+        for i, component in enumerate(self._hypersurface):
             var = component[1][0].variables()[0]
             parametric_function = component[0]
             order = component[2]
-            if len(component[1]) == 2:
-                lower = QQ(component[1][0].left())
-                upper = QQ(component[1][1].right())
+            interval = intervals[i]
+            if interval[0].lower() == -infinity:
+                lower = interval[0].upper() - large_int
+                upper = interval[0].upper()
+                midpoint = upper - 0.5
+            elif interval[0].upper() == infinity:
+                lower = interval[0].lower()
+                upper = interval[0].lower() + large_int
+                midpoint = lower + 0.5
             else:
-                inequality = component[1][0]
-                symbol = str(inequality).split()[1]
-                if inequality.left().is_numeric():
-                    number = QQ(inequality.left())
-                    if symbol == '<':
-                        pos_number = 'left'
-                    else:
-                        pos_number = 'right'
-                else:
-                    number = QQ(inequality.right())
-                    if symbol == '<':
-                        pos_number = 'right'
-                    else:
-                        pos_number = 'left'
+                lower = interval[0].lower()
+                upper = interval[0].upper()
+                midpoint = (lower+upper)/2
                 
-                if pos_number == 'left':
-                    lower = number
-                    upper = number + 1
-                else:
-                    lower = number - 1
-                    upper = number
-            
             plot = parametric_plot(parametric_function, (var, lower, upper),
                                     color='red')
 
-            if component[2] > 1:
-                midpoint = (lower + upper)/2
+            if component[2] > 1: # add order if >= 2
                 point = []
                 for eq in component[0]:
                     value = eq.subs(var==midpoint)
@@ -161,8 +208,25 @@ class TropicalHypersurface(SageObject):
                 combined_plot += plot + text_order
             else:
                 combined_plot += plot
-                    
-        return combined_plot   
+        
+        xmin = xmax = list(self.vertex())[0][0]
+        for vertice in self.vertex():
+            if vertice[0] < xmin:
+                xmin = vertice[0]
+            elif vertice[0] > xmax:
+                xmax = vertice[0]
+        
+        ymin = ymax = list(self.vertex())[0][1]
+        for vertice in self.vertex():
+            if vertice[1] < ymin:
+                ymin = vertice[1]
+            elif vertice[1] > ymax:
+                ymax = vertice[1]
+
+        # set default axes
+        combined_plot.set_axes_range(xmin=xmin-1, xmax=xmax+1, 
+                                     ymin=ymin-1, ymax=ymax+1)
+        return combined_plot
 
     def _repr_(self):
         components = "\n".join([f"{row}" for row in self._hypersurface])
