@@ -1,4 +1,4 @@
-# sage.doctest: needs sage.graphs
+# sage.doctest: needs sage.graphs sage.groups
 r"""
 Knots
 
@@ -54,7 +54,6 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
 
     We construct the knot `8_{14}` and compute some invariants::
 
-        sage: # needs sage.groups
         sage: B = BraidGroup(4)
         sage: K = Knot(B([1,1,1,2,-1,2,-3,2,-3]))
 
@@ -67,7 +66,6 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
 
     ::
 
-        sage: # needs sage.groups
         sage: K.alexander_polynomial()
         -2*t^-2 + 8*t^-1 - 11 + 8*t - 2*t^2
         sage: K.jones_polynomial()
@@ -91,7 +89,6 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: B = BraidGroup(8)
             sage: K = Knot(B([-1, -1, -1, 2, 1, -2, 3, -2, 3]))
             sage: type(K)
@@ -105,7 +102,6 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
 
         TESTS::
 
-            sage: # needs sage.groups
             sage: B = BraidGroup(8)
             sage: K = Knot(B([1, -2, 1, -2]))
             sage: TestSuite(K).run()
@@ -135,7 +131,6 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: B = BraidGroup(8)
             sage: K = Knot(B([1, 2, 1, 2]))
             sage: K
@@ -275,10 +270,9 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
         EXAMPLES::
 
             sage: K = Knot([[1,5,2,4],[5,3,6,2],[3,1,4,6]])
-            sage: K.dt_code()                                                           # needs sage.groups
+            sage: K.dt_code()
             [4, 6, 2]
 
-            sage: # needs sage.groups
             sage: B = BraidGroup(4)
             sage: K = Knot(B([1, 2, 1, 2]))
             sage: K.dt_code()
@@ -286,7 +280,7 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
 
             sage: K = Knot([[[1, -2, 3, -4, 5, -1, 2, -3, 4, -5]],
             ....:          [1, 1, 1, 1, 1]])
-            sage: K.dt_code()                                                           # needs sage.groups
+            sage: K.dt_code()
             [6, 8, 10, 2, 4]
         """
         b = self.braid().Tietze()
@@ -342,7 +336,6 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: B = BraidGroup(4)
             sage: K = Knot(B([-1, 2, 1, 2]))
             sage: K.arf_invariant()
@@ -381,7 +374,6 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: W = Knots()
             sage: K = W.from_dowker_code([-4,-6,-2])
             sage: K.colored_jones_polynomial(2)
@@ -393,7 +385,7 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
             -t^-4 - t^-3 - t^-1
 
             sage: R.<t> = ZZ[]
-            sage: K.colored_jones_polynomial(2, t+1)                                    # needs sage.groups
+            sage: K.colored_jones_polynomial(2, t+1)
             (t^3 + 3*t^2 + 4*t + 1)/(t^4 + 4*t^3 + 6*t^2 + 4*t + 1)
         """
         return self.braid().colored_jones_polynomial(N=N, variab=variab,
@@ -418,7 +410,6 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: B = BraidGroup(2)
             sage: trefoil = Knot(B([1,1,1]))
             sage: K = trefoil.connected_sum(trefoil); K
@@ -436,7 +427,6 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
 
         ::
 
-            sage: # needs sage.groups
             sage: rev_trefoil = Knot(B([-1,-1,-1]))
             sage: K2 = trefoil.connected_sum(rev_trefoil); K2
             Knot represented by 6 crossings
@@ -456,7 +446,6 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
         the constructing from DT-code may not be unique for non prime knots, see
         :meth:`from_dowker_code`)::
 
-            sage: # needs sage.groups
             sage: K.dowker_notation()
             [(4, 1), (2, 5), (6, 3), (10, 7), (8, 11), (12, 9)]
             sage: K2.dowker_notation()
@@ -466,7 +455,6 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
 
         TESTS::
 
-            sage: # needs sage.groups
             sage: B = BraidGroup(2)
             sage: trivial = Knots().one()
             sage: trivial * trivial
@@ -567,7 +555,7 @@ class Knots(Singleton, Parent):
 
             sage: W = Knots()
             sage: K1 = W.from_gauss_code([2, -1, 3, -2, 1, -3])
-            sage: K1.alexander_polynomial()                                             # needs sage.groups
+            sage: K1.alexander_polynomial()
             t^-1 - 1 + t
         """
         orientations = recover_orientations(gauss)[3]
@@ -653,13 +641,11 @@ class Knots(Singleton, Parent):
 
         EXAMPLES::
 
-            sage: # needs sage.groups
             sage: K1 = Knots().from_table(6,3); K1
             Knot represented by 6 crossings
             sage: K1.alexander_polynomial()
             t^-2 - 3*t^-1 + 5 - 3*t + t^2
 
-            sage: # needs sage.groups
             sage: K2 = Knots().from_table(8,4); K2
             Knot represented by 9 crossings
             sage: K2.determinant()
@@ -667,14 +653,12 @@ class Knots(Singleton, Parent):
             sage: K2.signature()
             2
 
-            sage: # needs sage.groups
             sage: K3 = Knots().from_table(10,56); K3
             Knot represented by 11 crossings
             sage: K3.jones_polynomial()
             t^10 - 3*t^9 + 6*t^8 - 9*t^7 + 10*t^6 - 11*t^5 + 10*t^4 - 7*t^3
             + 5*t^2 - 2*t + 1
 
-            sage: # needs sage.groups
             sage: K4 = Knots().from_table(10,100)
             sage: K4.genus()
             4
