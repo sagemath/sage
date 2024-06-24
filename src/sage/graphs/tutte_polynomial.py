@@ -9,7 +9,7 @@ the Tutte polynomial as described in the paper [HPR2010]_.
     :widths: 30, 70
     :delim: |
 
-    :func:`tutte_polynomial` | Computes the Tutte polynomial of the input graph
+    :func:`tutte_polynomial` | Compute the Tutte polynomial of the input graph
 
 Authors:
 

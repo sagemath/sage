@@ -214,7 +214,7 @@ can be applied on both. Here is what it can do:
     :delim: |
 
     :meth:`~GenericGraph.centrality_betweenness` | Return the betweenness centrality
-    :meth:`~GenericGraph.centrality_closeness` | Returns the closeness centrality (1/average distance to all vertices)
+    :meth:`~GenericGraph.centrality_closeness` | Return the closeness centrality (1/average distance to all vertices)
     :meth:`~GenericGraph.distance` | Return the (directed) distance from u to v in the (di)graph
     :meth:`~GenericGraph.distance_all_pairs` | Return the distances between all pairs of vertices.
     :meth:`~GenericGraph.distances_distribution` | Return the distances distribution of the (di)graph in a dictionary.
@@ -257,7 +257,7 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.transitive_reduction` | Return a transitive reduction of a graph.
     :meth:`~GenericGraph.min_spanning_tree` | Return the edges of a minimum spanning tree.
     :meth:`~GenericGraph.spanning_trees_count` | Return the number of spanning trees in a graph.
-    :meth:`~GenericGraph.dominator_tree`    | Returns a dominator tree of the graph.
+    :meth:`~GenericGraph.dominator_tree`    | Return a dominator tree of the graph.
     :meth:`~GenericGraph.connected_subgraph_iterator` | Iterator over the induced connected subgraphs of order at most `k`
 
 **Plot/embedding-related methods:**
@@ -503,7 +503,7 @@ class GenericGraph(GenericGraph_pyx):
 
     def __add__(self, other):
         """
-        Return a graph isomorphic to disjoint union of this graph with `other`.
+        Return a graph isomorphic to disjoint union of this graph with ``other``.
 
         Labels of the resulting graph will always be consecutive integers
         starting from zero.
@@ -677,9 +677,9 @@ class GenericGraph(GenericGraph_pyx):
         TESTS:
 
         Equality and hash do not depend on ordering of vertices. In other words,
-        `G1 == G2` can be `True` even when
+        `G1 == G2` can be ``True`` even when
         `G1.vertices(sort=True) == G2.vertices(sort=True)` is
-        `False`. This is parts 1 and 2 of issue :issue:`17086`. ::
+        ``False``. This is parts 1 and 2 of issue :issue:`17086`. ::
 
             sage: import functools
             sage: @functools.total_ordering
@@ -10973,18 +10973,18 @@ class GenericGraph(GenericGraph_pyx):
           :class:`MixedIntegerLinearProgram
           <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-          Only used when `àlgorithm`` is ``'LP'``.
+          Only used when ``algorithm`` is ``'LP'``.
 
         - ``verbose`` -- integer (default: 0); sets the level of
           verbosity. Set to 0 by default, which means quiet.
 
-          Only used when `àlgorithm`` is ``'LP'``.
+          Only used when ``algorithm`` is ``'LP'``.
 
         - ``integrality_tolerance`` -- float; parameter for use with MILP
           solvers over an inexact base ring; see
           :meth:`MixedIntegerLinearProgram.get_values`.
 
-          Only used when `àlgorithm`` is ``'LP'``.
+          Only used when ``algorithm`` is ``'LP'``.
 
         .. NOTE::
 
@@ -12114,7 +12114,7 @@ class GenericGraph(GenericGraph_pyx):
         `\exists v'\in S: (u,v')\in G`.
 
         The new vertex is named after the first vertex in the list given in
-        argument. If this first name is `None`, a new vertex is created.
+        argument. If this first name is ``None``, a new vertex is created.
 
         In the case of multigraphs, the multiplicity is preserved.
 
@@ -16166,7 +16166,7 @@ class GenericGraph(GenericGraph_pyx):
 
         INPUT:
 
-        - ``by_weight`` -- boolean (default: `False``); if ``True``, the edges in
+        - ``by_weight`` -- boolean (default: ``False``); if ``True``, the edges in
           the graph are weighted. If ``False``, all edges have weight 1.
 
         - ``algorithm`` -- string (default: ``None``); one of the following

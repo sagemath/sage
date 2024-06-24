@@ -1820,7 +1820,7 @@ class NormalFormGame(SageObject, MutableMapping):
 
     def _solve_LP(self, solver='glpk', maximization=True):
         r"""
-        Solves a constant sum :class:`NormalFormGame` using
+        Solve a constant sum :class:`NormalFormGame` using
         the specified LP solver.
 
         INPUT:

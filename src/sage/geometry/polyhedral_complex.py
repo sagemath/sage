@@ -2459,7 +2459,7 @@ class PolyhedralComplex(GenericCellComplex):
             return PolyhedralComplex(cones, maximality_check=False,
                                      backend=self._backend)
         else:
-            # TODO: `self`` is unbounded, make it projectively simplicial.
+            # TODO: ``self`` is unbounded, make it projectively simplicial.
             # (1) homogenize self of dim d to fan in space of dim d+1;
             # (2) call fan.subdivide(make_simplicial=True);
             # (3) take section back to the space of dim d.

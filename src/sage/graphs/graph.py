@@ -9538,7 +9538,7 @@ class Graph(GenericGraph):
 
         INPUT:
 
-        - ``nonedgesonly`` -- boolean (default: `True`); if ``True``, assign zero
+        - ``nonedgesonly`` -- boolean (default: ``True``); if ``True``, assign zero
           resistance to pairs of adjacent vertices
 
         OUTPUT: list

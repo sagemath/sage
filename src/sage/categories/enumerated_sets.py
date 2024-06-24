@@ -751,7 +751,7 @@ class EnumeratedSets(CategoryWithAxiom):
             ``self.rank(x)`` returns the rank of `x`, that is its
             position in the enumeration of ``self``. This is an
             integer between ``0`` and ``n-1`` where ``n`` is the
-            cardinality of ``self``, or None if `x` is not in `self`.
+            cardinality of ``self``, or None if `x` is not in ``self``.
 
             This is the default (brute force) implementation from the
             category ``EnumeratedSets()`` which can be used when the

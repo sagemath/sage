@@ -2030,7 +2030,7 @@ class FancyTuple(tuple):
     def __getitem__(self, x):
         r"""
         If ``x`` is a slice return the corresponding sub FancyTuple,
-        else return the `̀`x``-th item of ``self``.
+        else return the ``x``-th item of ``self``.
 
         TESTS::
 

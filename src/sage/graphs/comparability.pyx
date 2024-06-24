@@ -15,12 +15,12 @@ The following methods are implemented in this module
     :widths: 30, 70
     :delim: |
 
-    :meth:`~is_comparability_MILP` | Tests whether the graph is a comparability graph (MILP)
-    :meth:`~greedy_is_comparability` | Tests whether the graph is a comparability graph (greedy algorithm)
-    :meth:`~greedy_is_comparability_with_certificate` | Tests whether the graph is a comparability graph and returns certificates (greedy algorithm)
-    :meth:`~is_comparability` | Tests whether the graph is a comparability graph
-    :meth:`~is_permutation` | Tests whether the graph is a permutation graph.
-    :meth:`~is_transitive` | Tests whether the digraph is transitive.
+    :meth:`~is_comparability_MILP` | Test whether the graph is a comparability graph (MILP)
+    :meth:`~greedy_is_comparability` | Test whether the graph is a comparability graph (greedy algorithm)
+    :meth:`~greedy_is_comparability_with_certificate` | Test whether the graph is a comparability graph and returns certificates (greedy algorithm)
+    :meth:`~is_comparability` | Test whether the graph is a comparability graph
+    :meth:`~is_permutation` | Test whether the graph is a permutation graph.
+    :meth:`~is_transitive` | Test whether the digraph is transitive.
 
 Author:
 

@@ -186,7 +186,7 @@ cdef class GraphicMatroid(Matroid):
         groundset_set = frozenset(groundset)
 
         # if the provided groundset is incomplete, it gets overwritten
-        # invalidate `None` as label
+        # invalidate ``None`` as label
         if None in groundset_set or len(groundset_set) != G.num_edges():
             groundset = range(G.num_edges())
             groundset_set = frozenset(groundset)

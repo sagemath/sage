@@ -1420,9 +1420,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
           the normal vector, all the other ones with the orthogonal projection
           operator.
 
-        OUTPUT:
-
-        - tensor field of rank `k`-``len(indices)``
+        OUTPUT: tensor field of rank `k`-``len(indices)``
 
         EXAMPLES:
 

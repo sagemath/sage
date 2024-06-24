@@ -851,7 +851,7 @@ class SQLQuery(SageObject):
 
               {'join_table1':('corr_base_col1', 'col1'), 'join_table2':('corr_base_col2', 'col2')}
 
-          where ``join_table1` is to be joined with ``join_table`` on
+          where ``join_table1`` is to be joined with ``join_table`` on
           ``join_table.corr_base_col1=join_table1.col1``
 
         EXAMPLES::

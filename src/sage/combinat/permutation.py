@@ -32,110 +32,110 @@ Below are listed all methods and classes defined in this file.
     :widths: 30, 70
     :delim: |
 
-    :meth:`~sage.combinat.permutation.Permutation.left_action_product` | Returns the product of ``self`` with another permutation, in which the other permutation is applied first.
-    :meth:`~sage.combinat.permutation.Permutation.right_action_product` | Returns the product of ``self`` with another permutation, in which ``self`` is applied first.
-    :meth:`~sage.combinat.permutation.Permutation.size` | Returns the size of the permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.cycle_string` | Returns the disjoint-cycles representation of ``self`` as string.
-    :meth:`~sage.combinat.permutation.Permutation.next` | Returns the permutation that follows ``self`` in lexicographic order (in the same symmetric group as ``self``).
-    :meth:`~sage.combinat.permutation.Permutation.prev` | Returns the permutation that comes directly before ``self`` in lexicographic order (in the same symmetric group as ``self``).
-    :meth:`~sage.combinat.permutation.Permutation.to_tableau_by_shape` | Returns a tableau of shape ``shape`` with the entries in ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.to_cycles` | Returns the permutation ``self`` as a list of disjoint cycles.
+    :meth:`~sage.combinat.permutation.Permutation.left_action_product` | Return the product of ``self`` with another permutation, in which the other permutation is applied first.
+    :meth:`~sage.combinat.permutation.Permutation.right_action_product` | Return the product of ``self`` with another permutation, in which ``self`` is applied first.
+    :meth:`~sage.combinat.permutation.Permutation.size` | Return the size of the permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.cycle_string` | Return the disjoint-cycles representation of ``self`` as string.
+    :meth:`~sage.combinat.permutation.Permutation.next` | Return the permutation that follows ``self`` in lexicographic order (in the same symmetric group as ``self``).
+    :meth:`~sage.combinat.permutation.Permutation.prev` | Return the permutation that comes directly before ``self`` in lexicographic order (in the same symmetric group as ``self``).
+    :meth:`~sage.combinat.permutation.Permutation.to_tableau_by_shape` | Return a tableau of shape ``shape`` with the entries in ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.to_cycles` | Return the permutation ``self`` as a list of disjoint cycles.
     :meth:`~sage.combinat.permutation.Permutation.forget_cycles` | Return ``self`` under the forget cycle map.
-    :meth:`~sage.combinat.permutation.Permutation.to_permutation_group_element` | Returns a ``PermutationGroupElement`` equal to ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.signature` | Returns the signature of the permutation ``sef``.
-    :meth:`~sage.combinat.permutation.Permutation.is_even` | Returns ``True`` if the permutation ``self`` is even, and ``False`` otherwise.
-    :meth:`~sage.combinat.permutation.Permutation.to_matrix` | Returns a matrix representing the permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.rank` | Returns the rank of ``self`` in lexicographic ordering (on the symmetric group containing ``self``).
-    :meth:`~sage.combinat.permutation.Permutation.to_inversion_vector` | Returns the inversion vector of a permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.inversions` | Returns a list of the inversions of permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.stack_sort` | Returns the permutation obtained by sorting ``self`` through one stack.
+    :meth:`~sage.combinat.permutation.Permutation.to_permutation_group_element` | Return a ``PermutationGroupElement`` equal to ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.signature` | Return the signature of the permutation ``sef``.
+    :meth:`~sage.combinat.permutation.Permutation.is_even` | Return ``True`` if the permutation ``self`` is even, and ``False`` otherwise.
+    :meth:`~sage.combinat.permutation.Permutation.to_matrix` | Return a matrix representing the permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.rank` | Return the rank of ``self`` in lexicographic ordering (on the symmetric group containing ``self``).
+    :meth:`~sage.combinat.permutation.Permutation.to_inversion_vector` | Return the inversion vector of a permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.inversions` | Return a list of the inversions of permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.stack_sort` | Return the permutation obtained by sorting ``self`` through one stack.
     :meth:`~sage.combinat.permutation.Permutation.to_digraph` | Return a digraph representation of ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.show` | Displays the permutation as a drawing.
-    :meth:`~sage.combinat.permutation.Permutation.number_of_inversions` | Returns the number of inversions in the permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.noninversions` | Returns the ``k``-noninversions in the permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.number_of_noninversions` | Returns the number of ``k``-noninversions in the permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.length` | Returns the Coxeter length of a permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.inverse` | Returns the inverse of a permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.ishift` | Returns the ``i``-shift of ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.iswitch` | Returns the ``i``-switch of ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.runs` | Returns a list of the runs in the permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.longest_increasing_subsequence_length` | Returns the length of the longest increasing subsequences of ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.longest_increasing_subsequences` | Returns the list of the longest increasing subsequences of ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.longest_increasing_subsequences_number` | Returns the number of longest increasing subsequences
-    :meth:`~sage.combinat.permutation.Permutation.cycle_type` | Returns the cycle type of ``self`` as a partition of ``len(self)``.
-    :meth:`~sage.combinat.permutation.Permutation.foata_bijection` | Returns the image of the permutation ``self`` under the Foata bijection `\phi`.
-    :meth:`~sage.combinat.permutation.Permutation.foata_bijection_inverse` | Returns the image of the permutation ``self`` under the inverse of the Foata bijection `\phi`.
-    :meth:`~sage.combinat.permutation.Permutation.fundamental_transformation` | Returns the image of the permutation ``self`` under the Renyi-Foata-Schuetzenberger fundamental transformation.
-    :meth:`~sage.combinat.permutation.Permutation.fundamental_transformation_inverse` | Returns the image of the permutation ``self`` under the inverse of the Renyi-Foata-Schuetzenberger fundamental transformation.
+    :meth:`~sage.combinat.permutation.Permutation.show` | Display the permutation as a drawing.
+    :meth:`~sage.combinat.permutation.Permutation.number_of_inversions` | Return the number of inversions in the permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.noninversions` | Return the ``k``-noninversions in the permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.number_of_noninversions` | Return the number of ``k``-noninversions in the permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.length` | Return the Coxeter length of a permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.inverse` | Return the inverse of a permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.ishift` | Return the ``i``-shift of ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.iswitch` | Return the ``i``-switch of ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.runs` | Return a list of the runs in the permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.longest_increasing_subsequence_length` | Return the length of the longest increasing subsequences of ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.longest_increasing_subsequences` | Return the list of the longest increasing subsequences of ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.longest_increasing_subsequences_number` | Return the number of longest increasing subsequences
+    :meth:`~sage.combinat.permutation.Permutation.cycle_type` | Return the cycle type of ``self`` as a partition of ``len(self)``.
+    :meth:`~sage.combinat.permutation.Permutation.foata_bijection` | Return the image of the permutation ``self`` under the Foata bijection `\phi`.
+    :meth:`~sage.combinat.permutation.Permutation.foata_bijection_inverse` | Return the image of the permutation ``self`` under the inverse of the Foata bijection `\phi`.
+    :meth:`~sage.combinat.permutation.Permutation.fundamental_transformation` | Return the image of the permutation ``self`` under the Renyi-Foata-Schuetzenberger fundamental transformation.
+    :meth:`~sage.combinat.permutation.Permutation.fundamental_transformation_inverse` | Return the image of the permutation ``self`` under the inverse of the Renyi-Foata-Schuetzenberger fundamental transformation.
     :meth:`~sage.combinat.permutation.Permutation.destandardize` |  Return destandardization of ``self`` with respect to ``weight`` and ``ordered_alphabet``.
-    :meth:`~sage.combinat.permutation.Permutation.to_lehmer_code` | Returns the Lehmer code of the permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.to_lehmer_cocode` | Returns the Lehmer cocode of ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.reduced_word` | Returns the reduced word of the permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.reduced_words` | Returns a list of the reduced words of the permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.to_lehmer_code` | Return the Lehmer code of the permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.to_lehmer_cocode` | Return the Lehmer cocode of ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.reduced_word` | Return the reduced word of the permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.reduced_words` | Return a list of the reduced words of the permutation ``self``.
     :meth:`~sage.combinat.permutation.Permutation.reduced_words_iterator` | An iterator for the reduced words of the permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.reduced_word_lexmin` | Returns a lexicographically minimal reduced word of a permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.fixed_points` | Returns a list of the fixed points of the permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.is_derangement` | Returns ``True`` if the permutation ``self`` is a derangement, and ``False`` otherwise.
-    :meth:`~sage.combinat.permutation.Permutation.is_simple` | Returns ``True`` if the permutation ``self`` is simple, and ``False`` otherwise.
-    :meth:`~sage.combinat.permutation.Permutation.number_of_fixed_points` | Returns the number of fixed points of the permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.recoils` | Returns the list of the positions of the recoils of the permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.number_of_recoils` | Returns the number of recoils of the permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.recoils_composition` | Returns the composition corresponding to the recoils of ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.descents` | Returns the list of the descents of the permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.idescents` | Returns a list of the idescents of ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.idescents_signature` | Returns the list obtained by mapping each position in ``self`` to `-1` if it is an idescent and `1` if it is not an idescent.
-    :meth:`~sage.combinat.permutation.Permutation.number_of_descents` | Returns the number of descents of the permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.number_of_idescents` | Returns the number of idescents of the permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.descents_composition` | Returns the composition corresponding to the descents of ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.descent_polynomial` | Returns the descent polynomial of the permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.major_index` | Returns the major index of the permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.imajor_index` | Returns the inverse major index of the permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.to_major_code` | Returns the major code of the permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.peaks` | Returns a list of the peaks of the permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.number_of_peaks` | Returns the number of peaks of the permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.saliances` | Returns a list of the saliances of the permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.number_of_saliances` | Returns the number of saliances of the permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.bruhat_lequal` | Returns ``True`` if ``self`` is less or equal to ``p2`` in the Bruhat order.
-    :meth:`~sage.combinat.permutation.Permutation.weak_excedences` | Returns all the numbers ``self[i]`` such that ``self[i] >= i+1``.
-    :meth:`~sage.combinat.permutation.Permutation.bruhat_inversions` | Returns the list of inversions of ``self`` such that the application of this inversion to ``self`` decrements its number of inversions.
-    :meth:`~sage.combinat.permutation.Permutation.bruhat_inversions_iterator` | Returns an iterator over Bruhat inversions of ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.bruhat_succ` | Returns a list of the permutations covering ``self`` in the Bruhat order.
+    :meth:`~sage.combinat.permutation.Permutation.reduced_word_lexmin` | Return a lexicographically minimal reduced word of a permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.fixed_points` | Return a list of the fixed points of the permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.is_derangement` | Return ``True`` if the permutation ``self`` is a derangement, and ``False`` otherwise.
+    :meth:`~sage.combinat.permutation.Permutation.is_simple` | Return ``True`` if the permutation ``self`` is simple, and ``False`` otherwise.
+    :meth:`~sage.combinat.permutation.Permutation.number_of_fixed_points` | Return the number of fixed points of the permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.recoils` | Return the list of the positions of the recoils of the permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.number_of_recoils` | Return the number of recoils of the permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.recoils_composition` | Return the composition corresponding to the recoils of ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.descents` | Return the list of the descents of the permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.idescents` | Return a list of the idescents of ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.idescents_signature` | Return the list obtained by mapping each position in ``self`` to `-1` if it is an idescent and `1` if it is not an idescent.
+    :meth:`~sage.combinat.permutation.Permutation.number_of_descents` | Return the number of descents of the permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.number_of_idescents` | Return the number of idescents of the permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.descents_composition` | Return the composition corresponding to the descents of ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.descent_polynomial` | Return the descent polynomial of the permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.major_index` | Return the major index of the permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.imajor_index` | Return the inverse major index of the permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.to_major_code` | Return the major code of the permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.peaks` | Return a list of the peaks of the permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.number_of_peaks` | Return the number of peaks of the permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.saliances` | Return a list of the saliances of the permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.number_of_saliances` | Return the number of saliances of the permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.bruhat_lequal` | Return ``True`` if ``self`` is less or equal to ``p2`` in the Bruhat order.
+    :meth:`~sage.combinat.permutation.Permutation.weak_excedences` | Return all the numbers ``self[i]`` such that ``self[i] >= i+1``.
+    :meth:`~sage.combinat.permutation.Permutation.bruhat_inversions` | Return the list of inversions of ``self`` such that the application of this inversion to ``self`` decrements its number of inversions.
+    :meth:`~sage.combinat.permutation.Permutation.bruhat_inversions_iterator` | Return an iterator over Bruhat inversions of ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.bruhat_succ` | Return a list of the permutations covering ``self`` in the Bruhat order.
     :meth:`~sage.combinat.permutation.Permutation.bruhat_succ_iterator` | An iterator for the permutations covering ``self`` in the Bruhat order.
-    :meth:`~sage.combinat.permutation.Permutation.bruhat_pred` | Returns a list of the permutations covered by ``self`` in the Bruhat order.
+    :meth:`~sage.combinat.permutation.Permutation.bruhat_pred` | Return a list of the permutations covered by ``self`` in the Bruhat order.
     :meth:`~sage.combinat.permutation.Permutation.bruhat_pred_iterator` | An iterator for the permutations covered by ``self`` in the Bruhat order.
-    :meth:`~sage.combinat.permutation.Permutation.bruhat_smaller` | Returns the combinatorial class of permutations smaller than or equal to ``self`` in the Bruhat order.
-    :meth:`~sage.combinat.permutation.Permutation.bruhat_greater` | Returns the combinatorial class of permutations greater than or equal to ``self`` in the Bruhat order.
-    :meth:`~sage.combinat.permutation.Permutation.permutohedron_lequal` | Returns ``True`` if ``self`` is less or equal to ``p2`` in the permutohedron order.
-    :meth:`~sage.combinat.permutation.Permutation.permutohedron_succ` | Returns a list of the permutations covering ``self`` in the permutohedron order.
-    :meth:`~sage.combinat.permutation.Permutation.permutohedron_pred` | Returns a list of the permutations covered by ``self`` in the permutohedron order.
-    :meth:`~sage.combinat.permutation.Permutation.permutohedron_smaller` | Returns a list of permutations smaller than or equal to ``self`` in the permutohedron order.
-    :meth:`~sage.combinat.permutation.Permutation.permutohedron_greater` | Returns a list of permutations greater than or equal to ``self`` in the permutohedron order.
-    :meth:`~sage.combinat.permutation.Permutation.right_permutohedron_interval_iterator` | Returns an iterator over permutations in an interval of the permutohedron order.
-    :meth:`~sage.combinat.permutation.Permutation.right_permutohedron_interval` | Returns a list of permutations in an interval of the permutohedron order.
-    :meth:`~sage.combinat.permutation.Permutation.has_pattern` | Tests whether the permutation ``self`` matches the pattern.
-    :meth:`~sage.combinat.permutation.Permutation.avoids` | Tests whether the permutation ``self`` avoids the pattern.
-    :meth:`~sage.combinat.permutation.Permutation.pattern_positions` | Returns the list of positions where the pattern ``patt`` appears in ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.reverse` | Returns the permutation obtained by reversing the 1-line notation of ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.complement` | Returns the complement of the permutation which is obtained by replacing each value `x` in the 1-line notation of ``self`` with `n - x + 1`.
-    :meth:`~sage.combinat.permutation.Permutation.permutation_poset` | Returns the permutation poset of ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.dict` | Returns a dictionary corresponding to the permutation ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.action` | Returns the action of the permutation ``self`` on a list.
-    :meth:`~sage.combinat.permutation.Permutation.robinson_schensted` | Returns the pair of standard tableaux obtained by running the Robinson-Schensted Algorithm on ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.left_tableau` | Returns the left standard tableau after performing the RSK algorithm.
-    :meth:`~sage.combinat.permutation.Permutation.right_tableau` | Returns the right standard tableau after performing the RSK algorithm.
-    :meth:`~sage.combinat.permutation.Permutation.increasing_tree` | Returns the increasing tree of ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.increasing_tree_shape` | Returns the shape of the increasing tree of ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.binary_search_tree` | Returns the binary search tree of ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.sylvester_class` | Iterates over the equivalence class of ``self`` under sylvester congruence
-    :meth:`~sage.combinat.permutation.Permutation.RS_partition` | Returns the shape of the tableaux obtained by the RSK algorithm.
-    :meth:`~sage.combinat.permutation.Permutation.remove_extra_fixed_points` | Returns the permutation obtained by removing any fixed points at the end of ``self``.
-    :meth:`~sage.combinat.permutation.Permutation.retract_plain` | Returns the plain retract of ``self`` to a smaller symmetric group `S_m`.
-    :meth:`~sage.combinat.permutation.Permutation.retract_direct_product` | Returns the direct-product retract of ``self`` to a smaller symmetric group `S_m`.
-    :meth:`~sage.combinat.permutation.Permutation.retract_okounkov_vershik` | Returns the Okounkov-Vershik retract of ``self`` to a smaller symmetric group `S_m`.
-    :meth:`~sage.combinat.permutation.Permutation.hyperoctahedral_double_coset_type` | Returns the coset-type of ``self`` as a partition.
-    :meth:`~sage.combinat.permutation.Permutation.binary_search_tree_shape` | Returns the shape of the binary search tree of ``self`` (a non labelled binary tree).
-    :meth:`~sage.combinat.permutation.Permutation.shifted_concatenation` | Returns the right (or left) shifted concatenation of ``self`` with a permutation ``other``.
-    :meth:`~sage.combinat.permutation.Permutation.shifted_shuffle` | Returns the shifted shuffle of ``self`` with a permutation ``other``.
+    :meth:`~sage.combinat.permutation.Permutation.bruhat_smaller` | Return the combinatorial class of permutations smaller than or equal to ``self`` in the Bruhat order.
+    :meth:`~sage.combinat.permutation.Permutation.bruhat_greater` | Return the combinatorial class of permutations greater than or equal to ``self`` in the Bruhat order.
+    :meth:`~sage.combinat.permutation.Permutation.permutohedron_lequal` | Return ``True`` if ``self`` is less or equal to ``p2`` in the permutohedron order.
+    :meth:`~sage.combinat.permutation.Permutation.permutohedron_succ` | Return a list of the permutations covering ``self`` in the permutohedron order.
+    :meth:`~sage.combinat.permutation.Permutation.permutohedron_pred` | Return a list of the permutations covered by ``self`` in the permutohedron order.
+    :meth:`~sage.combinat.permutation.Permutation.permutohedron_smaller` | Return a list of permutations smaller than or equal to ``self`` in the permutohedron order.
+    :meth:`~sage.combinat.permutation.Permutation.permutohedron_greater` | Return a list of permutations greater than or equal to ``self`` in the permutohedron order.
+    :meth:`~sage.combinat.permutation.Permutation.right_permutohedron_interval_iterator` | Return an iterator over permutations in an interval of the permutohedron order.
+    :meth:`~sage.combinat.permutation.Permutation.right_permutohedron_interval` | Return a list of permutations in an interval of the permutohedron order.
+    :meth:`~sage.combinat.permutation.Permutation.has_pattern` | Test whether the permutation ``self`` matches the pattern.
+    :meth:`~sage.combinat.permutation.Permutation.avoids` | Test whether the permutation ``self`` avoids the pattern.
+    :meth:`~sage.combinat.permutation.Permutation.pattern_positions` | Return the list of positions where the pattern ``patt`` appears in ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.reverse` | Return the permutation obtained by reversing the 1-line notation of ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.complement` | Return the complement of the permutation which is obtained by replacing each value `x` in the 1-line notation of ``self`` with `n - x + 1`.
+    :meth:`~sage.combinat.permutation.Permutation.permutation_poset` | Return the permutation poset of ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.dict` | Return a dictionary corresponding to the permutation ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.action` | Return the action of the permutation ``self`` on a list.
+    :meth:`~sage.combinat.permutation.Permutation.robinson_schensted` | Return the pair of standard tableaux obtained by running the Robinson-Schensted Algorithm on ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.left_tableau` | Return the left standard tableau after performing the RSK algorithm.
+    :meth:`~sage.combinat.permutation.Permutation.right_tableau` | Return the right standard tableau after performing the RSK algorithm.
+    :meth:`~sage.combinat.permutation.Permutation.increasing_tree` | Return the increasing tree of ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.increasing_tree_shape` | Return the shape of the increasing tree of ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.binary_search_tree` | Return the binary search tree of ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.sylvester_class` | Iterate over the equivalence class of ``self`` under sylvester congruence
+    :meth:`~sage.combinat.permutation.Permutation.RS_partition` | Return the shape of the tableaux obtained by the RSK algorithm.
+    :meth:`~sage.combinat.permutation.Permutation.remove_extra_fixed_points` | Return the permutation obtained by removing any fixed points at the end of ``self``.
+    :meth:`~sage.combinat.permutation.Permutation.retract_plain` | Return the plain retract of ``self`` to a smaller symmetric group `S_m`.
+    :meth:`~sage.combinat.permutation.Permutation.retract_direct_product` | Return the direct-product retract of ``self`` to a smaller symmetric group `S_m`.
+    :meth:`~sage.combinat.permutation.Permutation.retract_okounkov_vershik` | Return the Okounkov-Vershik retract of ``self`` to a smaller symmetric group `S_m`.
+    :meth:`~sage.combinat.permutation.Permutation.hyperoctahedral_double_coset_type` | Return the coset-type of ``self`` as a partition.
+    :meth:`~sage.combinat.permutation.Permutation.binary_search_tree_shape` | Return the shape of the binary search tree of ``self`` (a non labelled binary tree).
+    :meth:`~sage.combinat.permutation.Permutation.shifted_concatenation` | Return the right (or left) shifted concatenation of ``self`` with a permutation ``other``.
+    :meth:`~sage.combinat.permutation.Permutation.shifted_shuffle` | Return the shifted shuffle of ``self`` with a permutation ``other``.
 
 **Other classes defined in this file**
 
@@ -182,21 +182,21 @@ Below are listed all methods and classes defined in this file.
     :widths: 30, 70
     :delim: |
 
-    :meth:`from_major_code` | Returns the permutation corresponding to major code ``mc``.
-    :meth:`from_permutation_group_element` | Returns a Permutation give a ``PermutationGroupElement`` ``pge``.
-    :meth:`from_rank` | Returns the permutation with the specified lexicographic rank.
-    :meth:`from_inversion_vector` | Returns the permutation corresponding to inversion vector ``iv``.
-    :meth:`from_cycles` | Returns the permutation with given disjoint-cycle representation ``cycles``.
-    :meth:`from_lehmer_code` | Returns the permutation with Lehmer code ``lehmer``.
-    :meth:`from_reduced_word` | Returns the permutation corresponding to the reduced word ``rw``.
-    :meth:`bistochastic_as_sum_of_permutations` | Returns a given bistochastic matrix as a nonnegative linear combination of permutations.
-    :meth:`bounded_affine_permutation` | Returns a partial permutation representing the bounded affine permutation of a matrix.
-    :meth:`descents_composition_list` | Returns a list of all the permutations in a given descent class (i. e., having a given descents composition).
-    :meth:`descents_composition_first` | Returns the smallest element of a descent class.
-    :meth:`descents_composition_last` | Returns the largest element of a descent class.
-    :meth:`bruhat_lequal` | Returns ``True`` if ``p1`` is less or equal to ``p2`` in the Bruhat order.
-    :meth:`permutohedron_lequal` | Returns ``True`` if ``p1`` is less or equal to ``p2`` in the permutohedron order.
-    :meth:`to_standard` | Returns a standard permutation corresponding to the permutation ``self``.
+    :meth:`from_major_code` | Return the permutation corresponding to major code ``mc``.
+    :meth:`from_permutation_group_element` | Return a Permutation give a ``PermutationGroupElement`` ``pge``.
+    :meth:`from_rank` | Return the permutation with the specified lexicographic rank.
+    :meth:`from_inversion_vector` | Return the permutation corresponding to inversion vector ``iv``.
+    :meth:`from_cycles` | Return the permutation with given disjoint-cycle representation ``cycles``.
+    :meth:`from_lehmer_code` | Return the permutation with Lehmer code ``lehmer``.
+    :meth:`from_reduced_word` | Return the permutation corresponding to the reduced word ``rw``.
+    :meth:`bistochastic_as_sum_of_permutations` | Return a given bistochastic matrix as a nonnegative linear combination of permutations.
+    :meth:`bounded_affine_permutation` | Return a partial permutation representing the bounded affine permutation of a matrix.
+    :meth:`descents_composition_list` | Return a list of all the permutations in a given descent class (i. e., having a given descents composition).
+    :meth:`descents_composition_first` | Return the smallest element of a descent class.
+    :meth:`descents_composition_last` | Return the largest element of a descent class.
+    :meth:`bruhat_lequal` | Return ``True`` if ``p1`` is less or equal to ``p2`` in the Bruhat order.
+    :meth:`permutohedron_lequal` | Return ``True`` if ``p1`` is less or equal to ``p2`` in the permutohedron order.
+    :meth:`to_standard` | Return a standard permutation corresponding to the permutation ``self``.
 
 AUTHORS:
 

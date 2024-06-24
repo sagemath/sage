@@ -42,7 +42,7 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
       *LARGE* instances (try it to know whether it is useful for you).
 
     - ``algorithm`` -- (default: ``'Sage'``) this function uses the
-      algorithm implemented in ```sage.graphs.graph_generators_pyx.pyx``. When
+      algorithm implemented in ``sage.graphs.graph_generators_pyx.pyx``. When
       ``algorithm='networkx'``, this function calls the NetworkX function
       ``fast_gnp_random_graph``, unless ``fast=False``, then
       ``gnp_random_graph``. Try them to know which algorithm is the best for

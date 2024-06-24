@@ -102,7 +102,7 @@ def it(M, B1, nB1, lps):
        the triangle as keys.
     2. A list of 3 lists of elements of ``M.simplify.groundset()`` that can
        be placed on the 3 sides of the triangle.
-    3. A list of elements of `M.simplify.groundset()`` that cane be placed
+    3. A list of elements of ``M.simplify.groundset()`` that cane be placed
        inside the triangle in the geometric representation.
     4. A list of lists of elements of ``M.simplify.groundset()`` that
        correspond to lines in the geometric representation other than the sides

@@ -155,7 +155,7 @@ def column_matrix(*args, **kwds):
     The most compelling use of this function is when you have a
     collection of lists or vectors that you would like to become the
     columns of a matrix. In almost any other situation, the
-    :func:`matrix`` constructor can probably do the
+    :func:`matrix` constructor can probably do the
     job just as easily, or easier. ::
 
         sage: col_1 = [1,2,3]

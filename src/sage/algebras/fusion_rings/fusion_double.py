@@ -691,7 +691,8 @@ class FusionDouble(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``a`, ``b`` -- keys for the dictionary ``self._names`` representing simple objects
+        - ``a``, ``b`` -- keys for the dictionary ``self._names`` representing
+          simple objects
 
         EXAMPLES::
 

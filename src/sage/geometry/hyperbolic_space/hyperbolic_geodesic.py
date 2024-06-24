@@ -1908,7 +1908,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
         # is ``infinity``.
         if infinity in [q1, q2]:
             p1, p2, q1, q2 = q1, q2, p1, p2
-        # Then, if ``p1`` is infinity, swap ``p1` and ``p2`. This
+        # Then, if ``p1`` is infinity, swap ``p1`` and ``p2``. This
         # ensures that if any element of ``{p1, p2}`` is ``infinity``,
         # then that element is now ``p2``.
         if p1 == infinity:

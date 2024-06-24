@@ -140,10 +140,10 @@ class FullyCommutativeElement(NormalizedClonableList):
         r"""
         Check if ``self`` is the reduced word of an FC element.
 
-        To check if `self` is FC, we use the well-known characterization that an
-        element `w` in a Coxeter system `(W,S)` is FC if and only if for every
-        pair of generators `s,t \in S` for which `m(s,t)>2`, no reduced word of
-        `w` contains the 'braid' word `sts...` of length `m(s,t)` as a
+        To check if ``self`` is FC, we use the well-known characterization that
+        an element `w` in a Coxeter system `(W,S)` is FC if and only if for
+        every pair of generators `s,t \in S` for which `m(s,t)>2`, no reduced
+        word of `w` contains the 'braid' word `sts...` of length `m(s,t)` as a
         contiguous subword. See [Ste1996]_.
 
         :func:`check` is an alias of this method, and is called automatically

@@ -21,7 +21,7 @@ The functions defined here are
     :meth:`mutually_orthogonal_latin_squares` | Return `k` Mutually Orthogonal `n\times n` Latin Squares.
     :meth:`are_mutually_orthogonal_latin_squares` | Check that the list ``l`` of matrices in are MOLS.
     :meth:`latin_square_product` | Return the product of two (or more) latin squares.
-    :meth:`MOLS_table` | Prints the MOLS table.
+    :meth:`MOLS_table` | Print the MOLS table.
 
 **Table of MOLS**
 

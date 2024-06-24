@@ -521,7 +521,7 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
         OUTPUT: does not output anything but sets private fields used by
         :meth:`sage.coding.information_set_decoder.InformationSetAlgorithm.parameters()`
         and
-        :meth:`sage.coding.information_set_decoder.InformationSetAlgorithm.time_estimate()``.
+        :meth:`sage.coding.information_set_decoder.InformationSetAlgorithm.time_estimate()`.
 
         EXAMPLES::
 

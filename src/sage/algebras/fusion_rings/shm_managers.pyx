@@ -177,7 +177,7 @@ cdef class KSHandler:
 
     cpdef update(self, list eqns):
         r"""
-        Update ```self``'s ``shared_memory``-backed dictionary of known
+        Update ``self``'s ``shared_memory``-backed dictionary of known
         squares. Keys are variable indices and corresponding values
         are the squares.
 

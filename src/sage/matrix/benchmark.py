@@ -1207,7 +1207,7 @@ def nullspace_RDF(n=300, min=0, max=10, system='sage'):
 
     - ``n`` -- matrix dimension (default: ``300``)
     - ``min`` -- minimal value for entries of matrix (default: ``0``)
-    - ``max`` -- maximal value for entries of matrix (default: `10``)
+    - ``max`` -- maximal value for entries of matrix (default: ``10``)
     - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
 
     EXAMPLES::

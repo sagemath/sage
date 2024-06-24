@@ -116,11 +116,11 @@ from sage.misc.cachefunc import cached_function
 
 cpdef is_LinearFunction(x):
     """
-    Test whether ``x`` is a linear function
+    Test whether ``x`` is a linear function.
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
     OUTPUT: boolean
 
@@ -147,11 +147,11 @@ cpdef is_LinearFunction(x):
 
 def is_LinearConstraint(x):
     """
-    Test whether ``x`` is a linear constraint
+    Test whether ``x`` is a linear constraint.
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
     OUTPUT: boolean
 
@@ -193,8 +193,8 @@ def LinearFunctionsParent(base_ring):
 
     INPUT:
 
-    - ``base_ring`` -- a ring. The coefficient ring for the linear
-      functions.
+    - ``base_ring`` -- a ring; the coefficient ring for the linear
+      functions
 
     OUTPUT: the parent of the linear functions over ``base_ring``
 
@@ -217,9 +217,9 @@ def LinearConstraintsParent(linear_functions_parent):
 
     INPUT:
 
-     - ``linear_functions_parent`` -- a
-       :class:`LinearFunctionsParent_class`. The type of linear
-       functions that the constraints are made out of.
+    - ``linear_functions_parent`` -- a
+       :class:`LinearFunctionsParent_class`; the type of linear
+       functions that the constraints are made out of
 
     OUTPUT: the parent of the linear constraints with the given linear functions
 
@@ -541,7 +541,7 @@ cdef class LinearFunctionsParent_class(Parent):
     """
     def __cinit__(self):
         """
-        Cython initializer
+        Cython initializer.
 
         TESTS::
 
@@ -556,7 +556,7 @@ cdef class LinearFunctionsParent_class(Parent):
 
     def __init__(self, base_ring):
         """
-        The Python constructor
+        The Python constructor.
 
         TESTS::
 
@@ -573,8 +573,8 @@ cdef class LinearFunctionsParent_class(Parent):
 
         INPUT:
 
-        - ``symbol`` -- string, default: ``'*'``. The multiplication
-          symbol to be used.
+        - ``symbol`` -- string (default: ``'*'``); the multiplication
+          symbol to be used
 
         EXAMPLES::
 
@@ -616,7 +616,7 @@ cdef class LinearFunctionsParent_class(Parent):
         INPUT:
 
         - ``free_module`` -- vector space or matrix space over the
-          same base ring.
+          same base ring
 
         OUTPUT:
 
@@ -643,7 +643,7 @@ cdef class LinearFunctionsParent_class(Parent):
 
         INPUT:
 
-        - ``i`` -- non-negative integer.
+        - ``i`` -- nonnegative integer
 
         OUTPUT: the linear function `x_i`
 
@@ -657,7 +657,7 @@ cdef class LinearFunctionsParent_class(Parent):
 
     def _repr_(self):
         """
-        Return as string representation
+        Return as string representation.
 
         EXAMPLES::
 
@@ -702,9 +702,9 @@ cdef class LinearFunctionsParent_class(Parent):
 
         INPUT:
 
-        - ``R`` -- a ring.
+        - ``R`` -- a ring
 
-        OUTPUT: boolean. Whether there is a coercion map
+        OUTPUT: boolean; whether there is a coercion map
 
         EXAMPLES::
 
@@ -722,7 +722,7 @@ cdef class LinearFunctionsParent_class(Parent):
 
     def _an_element_(self):
         """
-        Returns an element
+        Return an element.
 
         OUTPUT: a linear function
 
@@ -851,8 +851,8 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
 
         INPUT:
 
-        - ``x`` -- a linear variable or an integer. If an integer `i`
-          is passed, then `x_i` is used as linear variable.
+        - ``x`` -- a linear variable or an integer; if an integer `i`
+          is passed, then `x_i` is used as linear variable
 
         OUTPUT:
 
@@ -906,7 +906,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
 
     cpdef _add_(self, b):
         r"""
-        Defining the + operator
+        Defining the ``+`` operator.
 
         EXAMPLES::
 
@@ -956,7 +956,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
 
     cpdef _lmul_(self, Element b):
         r"""
-        Multiplication by scalars
+        Multiplication by scalars.
 
         EXAMPLES::
 
@@ -1027,11 +1027,11 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
 
     def _coeff_formatter(self, coeff, constant_term=False):
         """
-        Pretty-print multiplicative coefficient ``x``
+        Pretty-print multiplicative coefficient ``x``.
 
         OUTPUT:
 
-        String, including a trailing space if the coefficient is not
+        string, including a trailing space if the coefficient is not
         one. Empty string otherwise.
 
         EXAMPLES::
@@ -1086,7 +1086,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
 
     def _repr_(self):
         r"""
-        Returns a string version of the linear function.
+        Return a string version of the linear function.
 
         EXAMPLES::
 
@@ -1171,7 +1171,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
 
 cdef class LinearConstraintsParent_class(Parent):
     """
-    Parent for :class:`LinearConstraint`
+    Parent for :class:`LinearConstraint`.
 
     .. warning::
 
@@ -1193,7 +1193,7 @@ cdef class LinearConstraintsParent_class(Parent):
     """
     def __cinit__(self, linear_functions_parent):
         """
-        Cython initializer
+        Cython initializer.
 
         TESTS::
 
@@ -1213,7 +1213,7 @@ cdef class LinearConstraintsParent_class(Parent):
 
     def __init__(self, linear_functions_parent):
         """
-        The Python constructor
+        The Python constructor.
 
         INPUT/OUTPUT: see :func:`LinearFunctionsParent`
 
@@ -1233,7 +1233,7 @@ cdef class LinearConstraintsParent_class(Parent):
 
     def linear_functions_parent(self):
         """
-        Return the parent for the linear functions
+        Return the parent for the linear functions.
 
         EXAMPLES::
 
@@ -1245,7 +1245,7 @@ cdef class LinearConstraintsParent_class(Parent):
 
     def _repr_(self):
         """
-        Return a string representation
+        Return a string representation.
 
         OUTPUT: string
 
@@ -1268,10 +1268,10 @@ cdef class LinearConstraintsParent_class(Parent):
           :class:`LinearConstraint`.
 
         - ``right`` -- a :class:`LinearFunction` or ``None``
-          (default).
+          (default)
 
-        - ``equality`` -- boolean (default: ``True``). Whether to
-          construct an equation or an inequality.
+        - ``equality`` -- boolean (default: ``True``); whether to
+          construct an equation or an inequality
 
         OUTPUT: the :class:`LinearConstraint` constructed from the input data
 
@@ -1336,7 +1336,7 @@ cdef class LinearConstraintsParent_class(Parent):
 
     def _an_element_(self):
         """
-        Returns an element
+        Return an element.
 
         EXAMPLES::
 
@@ -1380,15 +1380,15 @@ cdef class LinearConstraint(LinearFunctionOrConstraint):
 
     INPUT:
 
-    - ``parent`` -- the parent, a :class:`LinearConstraintsParent_class`
+    - ``parent`` -- the parent; a :class:`LinearConstraintsParent_class`
 
-    - ``terms`` -- a list/tuple/iterable of two or more linear
+    - ``terms`` -- list/tuple/iterable of two or more linear
       functions (or things that can be converted into linear
-      functions).
+      functions)
 
-    - ``equality`` -- boolean (default: ``False``). Whether the terms
+    - ``equality`` -- boolean (default: ``False``); whether the terms
       are the entries of a chained less-or-equal (``<=``) inequality
-      or a chained equality.
+      or a chained equality
 
     EXAMPLES::
 
@@ -1400,7 +1400,7 @@ cdef class LinearConstraint(LinearFunctionOrConstraint):
 
     def __init__(self, parent, terms, equality=False):
         r"""
-        Constructor for ``LinearConstraint``
+        Constructor for ``LinearConstraint``.
 
         INPUT:
 
@@ -1452,7 +1452,7 @@ cdef class LinearConstraint(LinearFunctionOrConstraint):
 
     def is_equation(self):
         """
-        Whether the constraint is a chained equation
+        Whether the constraint is a chained equation.
 
         OUTPUT: boolean
 
@@ -1469,7 +1469,7 @@ cdef class LinearConstraint(LinearFunctionOrConstraint):
 
     def is_less_or_equal(self):
         """
-        Whether the constraint is a chained less-or_equal inequality
+        Whether the constraint is a chained less-or_equal inequality.
 
         OUTPUT: boolean
 
@@ -1506,7 +1506,7 @@ cdef class LinearConstraint(LinearFunctionOrConstraint):
 
     def __iter__(self):
         """
-        Iterate over the terms of the chained (in)-equality
+        Iterate over the terms of the chained (in)-equality.
 
         OUTPUT:
 
@@ -1534,7 +1534,7 @@ cdef class LinearConstraint(LinearFunctionOrConstraint):
 
     def equations(self):
         """
-        Iterate over the unchained(!) equations
+        Iterate over the unchained(!) equations.
 
         OUTPUT:
 
@@ -1569,7 +1569,7 @@ cdef class LinearConstraint(LinearFunctionOrConstraint):
 
     def inequalities(self):
         """
-        Iterate over the unchained(!) inequalities
+        Iterate over the unchained(!) inequalities.
 
         OUTPUT:
 
@@ -1605,7 +1605,7 @@ cdef class LinearConstraint(LinearFunctionOrConstraint):
 
     def _repr_(self):
         r"""
-        Returns a string representation of the constraint.
+        Return a string representation of the constraint.
 
         OUTPUT: string
 
@@ -1630,7 +1630,7 @@ cdef class LinearConstraint(LinearFunctionOrConstraint):
 
     def __bool__(self):
         """
-        Part of the hack to allow chained (in)equalities
+        Part of the hack to allow chained (in)equalities.
 
         EXAMPLES::
 

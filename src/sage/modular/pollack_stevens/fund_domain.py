@@ -367,7 +367,7 @@ class PollackStevensModularDomain(SageObject):
 
         A `\ZZ[\Gamma_0(N)]`-relation expressing the divisor attached to ``A``
         in terms of the generating set. The relation is given as a list of
-        triples ``(d, B, i)`` such that the divisor attached to `A`` is the sum
+        triples ``(d, B, i)`` such that the divisor attached to ``A`` is the sum
         of ``d`` times the divisor attached to ``B^{-1} * self.reps(i)``.
 
         If ``A`` is an integer, then return this data for the ``A``-th

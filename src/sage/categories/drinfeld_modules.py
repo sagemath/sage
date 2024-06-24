@@ -205,7 +205,7 @@ class DrinfeldModules(Category_over_base_ring):
 
     def __init__(self, base_field, name='t'):
         r"""
-        Initialize `self`.
+        Initialize ``self``.
 
         INPUT:
 

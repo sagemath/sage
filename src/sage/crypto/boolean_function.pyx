@@ -365,7 +365,7 @@ cdef class BooleanFunction(SageObject):
 
     def __invert__(self):
         """
-        Return the complement Boolean function of `self`.
+        Return the complement Boolean function of ``self``.
 
         EXAMPLES::
 

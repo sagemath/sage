@@ -587,7 +587,7 @@ class KenzoChainComplex(KenzoObject):
         - If ``dim`` and ``comb`` are not ``None``, it returns a Kenzo combination
           representing the differential of the formal combination represented by
           ``comb`` in the chain complex ``self`` in dimension ``dim``. On the other
-          hand, if `dim`` or ``comb`` (or both) take ``None`` value, the differential
+          hand, if ``dim`` or ``comb`` (or both) take ``None`` value, the differential
           :class:`KenzoMorphismChainComplex` of ``self`` is returned.
 
         EXAMPLES::
@@ -1668,7 +1668,7 @@ class KenzoChainComplexMorphism(KenzoObject):
         OUTPUT:
 
         A :class:`KenzoChainComplexMorphism`, difference of the morphism
-        `self`` and the morphism(s) given by ``object`` (if ``object`` is
+        ``self`` and the morphism(s) given by ``object`` (if ``object`` is
         ``None``, ``self`` morphism is returned). For example, if ``object`` =
         (mrph1, mrph2, mrph3) the result is ``self`` - mrph1 - mrph2 - mrph3.
 

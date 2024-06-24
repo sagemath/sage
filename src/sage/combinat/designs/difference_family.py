@@ -1141,7 +1141,7 @@ def hadamard_difference_set_product_parameters(N):
     Check whether a product construction is available for Hadamard difference
     set with parameter ``N``.
 
-    This function looks for two integers `N_1` and `N_2`` greater than `1`
+    This function looks for two integers `N_1` and `N_2` greater than `1`
     and so that `N = 2 N_1 N_2` and there exists Hadamard difference set with
     parameters `(4 N_i^2, 2N_i^2 - N_i, N_i^2 - N_i)`. If such pair exists,
     the output is the pair ``(N_1, N_2)`` otherwise it is ``None``.
@@ -3474,7 +3474,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
     OUTPUT:
 
     A pair ``(G,D)`` made of a group `G` and a difference family `D` on that
-    group. Or, if ``existence=True``` a troolean or if
+    group. Or, if ``existence=True`` a troolean or if
     ``explain_construction=True`` a string.
 
     EXAMPLES::

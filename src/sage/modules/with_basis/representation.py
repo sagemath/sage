@@ -671,7 +671,7 @@ class Representation_abstract:
         - ``check`` -- ignored
         - ``already_echelonized`` -- (default: ``False``) whether
           the elements of ``gens`` are already in (not necessarily
-           reduced) echelon form
+          reduced) echelon form
         - ``is_closed`` -- (keyword only; default: ``False``) whether ``gens``
           already spans the subspace closed under the semigroup action
 

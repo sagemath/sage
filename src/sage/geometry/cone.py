@@ -653,7 +653,7 @@ def integral_length(v):
 
     OUTPUT:
 
-    Rational number `r`` such that ``v = r * u``, where ``u`` is the
+    Rational number ``r`` such that ``v = r * u``, where ``u`` is the
     primitive integral vector in the direction of ``v``.
 
     EXAMPLES::

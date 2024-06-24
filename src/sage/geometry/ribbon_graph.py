@@ -45,7 +45,7 @@ def _find(l, k):
     OUTPUT:
 
     A list with two integers describing the position of the first
-    instance of `k`` in ``l``.
+    instance of ``k`` in ``l``.
 
     TESTS::
 

@@ -39,19 +39,19 @@ of :ref:`examples <finite_state_machine_examples>`.
     :widths: 30, 70
     :delim: |
 
-    :meth:`~TransducerGenerators.Identity` | Returns a transducer realizing the identity map.
-    :meth:`~TransducerGenerators.abs` | Returns a transducer realizing absolute value.
-    :meth:`~TransducerGenerators.map` | Returns a transducer realizing a function.
-    :meth:`~TransducerGenerators.operator` | Returns a transducer realizing a binary operation.
-    :meth:`~TransducerGenerators.all` | Returns a transducer realizing logical ``and``.
-    :meth:`~TransducerGenerators.any` | Returns a transducer realizing logical ``or``.
-    :meth:`~TransducerGenerators.add` | Returns a transducer realizing addition.
-    :meth:`~TransducerGenerators.sub` | Returns a transducer realizing subtraction.
-    :meth:`~TransducerGenerators.CountSubblockOccurrences` | Returns a transducer counting the occurrences of a subblock.
-    :meth:`~TransducerGenerators.Wait` | Returns a transducer writing ``False`` until first (or `k`-th) true input is read.
-    :meth:`~TransducerGenerators.weight` | Returns a transducer realizing the Hamming weight.
-    :meth:`~TransducerGenerators.GrayCode` | Returns a transducer realizing binary Gray code.
-    :meth:`~TransducerGenerators.Recursion` | Returns a transducer defined by recursions.
+    :meth:`~TransducerGenerators.Identity` | Return a transducer realizing the identity map.
+    :meth:`~TransducerGenerators.abs` | Return a transducer realizing absolute value.
+    :meth:`~TransducerGenerators.map` | Return a transducer realizing a function.
+    :meth:`~TransducerGenerators.operator` | Return a transducer realizing a binary operation.
+    :meth:`~TransducerGenerators.all` | Return a transducer realizing logical ``and``.
+    :meth:`~TransducerGenerators.any` | Return a transducer realizing logical ``or``.
+    :meth:`~TransducerGenerators.add` | Return a transducer realizing addition.
+    :meth:`~TransducerGenerators.sub` | Return a transducer realizing subtraction.
+    :meth:`~TransducerGenerators.CountSubblockOccurrences` | Return a transducer counting the occurrences of a subblock.
+    :meth:`~TransducerGenerators.Wait` | Return a transducer writing ``False`` until first (or `k`-th) true input is read.
+    :meth:`~TransducerGenerators.weight` | Return a transducer realizing the Hamming weight.
+    :meth:`~TransducerGenerators.GrayCode` | Return a transducer realizing binary Gray code.
+    :meth:`~TransducerGenerators.Recursion` | Return a transducer defined by recursions.
 
 AUTHORS:
 

@@ -45,7 +45,7 @@ def is_LinearTensorConstraint(x):
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
     OUTPUT: boolean
 
@@ -139,7 +139,7 @@ class LinearTensorConstraint(Element):
       :class:`sage.numerical.linear_tensor_element.LinearTensor`. The
       left and right hand side of the constraint (in)equality.
 
-    - ``equality`` -- boolean (default: ``False``). Whether the
+    - ``equality`` -- boolean (default: ``False``); whether the
       constraint is an equality.  If ``False``, it is a ``<=``
       inequality.
 
@@ -152,7 +152,7 @@ class LinearTensorConstraint(Element):
 
     def __init__(self, parent, lhs, rhs, equality):
         r"""
-        Constructor for ``LinearTensorConstraint``
+        Constructor for ``LinearTensorConstraint``.
 
         INPUT:
 
@@ -171,7 +171,7 @@ class LinearTensorConstraint(Element):
 
     def is_equation(self):
         """
-        Whether the constraint is a chained equation
+        Whether the constraint is a chained equation.
 
         OUTPUT: boolean
 
@@ -187,7 +187,7 @@ class LinearTensorConstraint(Element):
 
     def is_less_or_equal(self):
         """
-        Whether the constraint is a chained less-or_equal inequality
+        Whether the constraint is a chained less-or_equal inequality.
 
         OUTPUT: boolean
 
@@ -239,7 +239,7 @@ class LinearTensorConstraint(Element):
 
     def _ascii_art_(self):
         """
-        Return Ascii Art
+        Return Ascii Art.
 
         OUTPUT:
 
@@ -264,7 +264,7 @@ class LinearTensorConstraint(Element):
 
     def _repr_(self):
         r"""
-        Returns a string representation of the constraint.
+        Return a string representation of the constraint.
 
         OUTPUT: string
 
@@ -294,7 +294,7 @@ class LinearTensorConstraint(Element):
 
 class LinearTensorConstraintsParent_class(Parent):
     """
-    Parent for :class:`LinearTensorConstraint`
+    Parent for :class:`LinearTensorConstraint`.
 
     .. warning::
 
@@ -323,12 +323,12 @@ class LinearTensorConstraintsParent_class(Parent):
 
     def __init__(self, linear_tensor_parent):
         """
-        The Python constructor
+        The Python constructor.
 
         INPUT:
 
         - ``linear_tensor_parent`` -- instance of
-          :class:`LinearTensorParent_class`.
+          :class:`LinearTensorParent_class`
 
         TESTS::
 
@@ -348,7 +348,7 @@ class LinearTensorConstraintsParent_class(Parent):
 
     def linear_tensors(self):
         """
-        Return the parent for the linear functions
+        Return the parent for the linear functions.
 
         OUTPUT: instance of :class:`sage.numerical.linear_tensor.LinearTensorParent_class`
 
@@ -364,7 +364,7 @@ class LinearTensorConstraintsParent_class(Parent):
 
     def linear_functions(self):
         """
-        Return the parent for the linear functions
+        Return the parent for the linear functions.
 
         OUTPUT: instance of :class:`sage.numerical.linear_functions.LinearFunctionsParent_class`
 
@@ -379,7 +379,7 @@ class LinearTensorConstraintsParent_class(Parent):
 
     def _repr_(self):
         """
-        Return a string representation
+        Return a string representation.
 
         OUTPUT: string
 
@@ -407,10 +407,10 @@ class LinearTensorConstraintsParent_class(Parent):
           :class:`LinearTensorConstraint`.
 
         - ``right`` -- a :class:`LinearTensor` or ``None``
-          (default).
+          (default)
 
-        - ``equality`` -- boolean. Whether to
-          construct an equation or a less-or-equal inequality.
+        - ``equality`` -- boolean; whether to
+          construct an equation or a less-or-equal inequality
 
         OUTPUT: the :class:`LinearTensorConstraint` constructed from the input data
 

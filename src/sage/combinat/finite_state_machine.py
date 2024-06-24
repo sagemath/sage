@@ -61,10 +61,10 @@ Accessing parts of a finite state machine
     :widths: 30, 70
     :delim: |
 
-    :meth:`~FiniteStateMachine.empty_copy` | Returns an empty deep copy
-    :meth:`~FiniteStateMachine.deepcopy` | Returns a deep copy
-    :meth:`~FiniteStateMachine.relabeled` | Returns a relabeled deep copy
-    :meth:`Automaton.with_output` | Extends an automaton to a transducer
+    :meth:`~FiniteStateMachine.empty_copy` | Return an empty deep copy
+    :meth:`~FiniteStateMachine.deepcopy` | Return a deep copy
+    :meth:`~FiniteStateMachine.relabeled` | Return a relabeled deep copy
+    :meth:`Automaton.with_output` | Extend an automaton to a transducer
 
 
 Manipulation
@@ -101,18 +101,18 @@ Properties
     :widths: 30, 70
     :delim: |
 
-    :meth:`~FiniteStateMachine.has_state` | Checks for a state
-    :meth:`~FiniteStateMachine.has_initial_state` | Checks for an initial state
-    :meth:`~FiniteStateMachine.has_initial_states` | Checks for initial states
-    :meth:`~FiniteStateMachine.has_final_state` | Checks for a final state
-    :meth:`~FiniteStateMachine.has_final_states` | Checks for final states
-    :meth:`~FiniteStateMachine.has_transition` | Checks for a transition
-    :meth:`~FiniteStateMachine.is_deterministic` | Checks for a deterministic machine
-    :meth:`~FiniteStateMachine.is_complete` | Checks for a complete machine
-    :meth:`~FiniteStateMachine.is_connected` | Checks for a connected machine
-    :meth:`Automaton.is_equivalent` | Checks for equivalent automata
-    :meth:`~FiniteStateMachine.is_Markov_chain` | Checks for a Markov chain
-    :meth:`~FiniteStateMachine.is_monochromatic` | Checks whether the colors of all states are equal
+    :meth:`~FiniteStateMachine.has_state` | Check for a state
+    :meth:`~FiniteStateMachine.has_initial_state` | Check for an initial state
+    :meth:`~FiniteStateMachine.has_initial_states` | Check for initial states
+    :meth:`~FiniteStateMachine.has_final_state` | Check for a final state
+    :meth:`~FiniteStateMachine.has_final_states` | Check for final states
+    :meth:`~FiniteStateMachine.has_transition` | Check for a transition
+    :meth:`~FiniteStateMachine.is_deterministic` | Check for a deterministic machine
+    :meth:`~FiniteStateMachine.is_complete` | Check for a complete machine
+    :meth:`~FiniteStateMachine.is_connected` | Check for a connected machine
+    :meth:`Automaton.is_equivalent` | Check for equivalent automata
+    :meth:`~FiniteStateMachine.is_Markov_chain` | Check for a Markov chain
+    :meth:`~FiniteStateMachine.is_monochromatic` | Check whether the colors of all states are equal
     :meth:`~FiniteStateMachine.number_of_words` | Determine the number of successful paths
     :meth:`~FiniteStateMachine.asymptotic_moments` | Main terms of expectation and variance of sums of labels
     :meth:`~FiniteStateMachine.moments_waiting_time` | Moments of the waiting time for first true output
@@ -211,12 +211,12 @@ LaTeX output
     :delim: |
 
     :attr:`~FSMState.final_word_out` | Final output of a state
-    :attr:`~FSMState.is_final` | Describes whether a state is final or not
-    :attr:`~FSMState.is_initial` | Describes whether a state is initial or not
+    :attr:`~FSMState.is_final` | Describe whether a state is final or not
+    :attr:`~FSMState.is_initial` | Describe whether a state is initial or not
     :attr:`~FSMState.initial_probability` | Probability of starting in this state as part of a Markov chain
     :meth:`~FSMState.label` | Label of a state
-    :meth:`~FSMState.relabeled` | Returns a relabeled deep copy of a state
-    :meth:`~FSMState.fully_equal` | Checks whether two states are fully equal (including all attributes)
+    :meth:`~FSMState.relabeled` | Return a relabeled deep copy of a state
+    :meth:`~FSMState.fully_equal` | Check whether two states are fully equal (including all attributes)
 
 
 :class:`FSMTransition`
@@ -231,7 +231,7 @@ LaTeX output
     :attr:`~FSMTransition.to_state` | State in which transition ends
     :attr:`~FSMTransition.word_in` | Input word of the transition
     :attr:`~FSMTransition.word_out` | Output word of the transition
-    :meth:`~FSMTransition.deepcopy` | Returns a deep copy of the transition
+    :meth:`~FSMTransition.deepcopy` | Return a deep copy of the transition
 
 
 :class:`FSMProcessIterator`
@@ -242,9 +242,9 @@ LaTeX output
     :widths: 30, 70
     :delim: |
 
-    :meth:`~FSMProcessIterator.next` | Makes one step in processing the input tape
-    :meth:`~FSMProcessIterator.preview_word` | Reads a word from the input tape
-    :meth:`~FSMProcessIterator.result` | Returns the finished branches during process
+    :meth:`~FSMProcessIterator.next` | Make one step in processing the input tape
+    :meth:`~FSMProcessIterator.preview_word` | Read a word from the input tape
+    :meth:`~FSMProcessIterator.result` | Return the finished branches during process
 
 
 Helper Functions
@@ -255,14 +255,14 @@ Helper Functions
     :widths: 30, 70
     :delim: |
 
-    :func:`equal` | Checks whether all elements of ``iterator`` are equal
+    :func:`equal` | Check whether all elements of ``iterator`` are equal
     :func:`full_group_by` | Group iterable by values of some key
     :func:`startswith` | Determine whether list starts with the given prefix
-    :func:`FSMLetterSymbol` | Returns a string associated to the input letter
-    :func:`FSMWordSymbol` | Returns a string associated to a word
-    :func:`is_FSMState` | Tests whether an object inherits from :class:`FSMState`
-    :func:`is_FSMTransition` | Tests whether an object inherits from :class:`FSMTransition`
-    :func:`is_FiniteStateMachine` | Tests whether an object inherits from :class:`FiniteStateMachine`
+    :func:`FSMLetterSymbol` | Return a string associated to the input letter
+    :func:`FSMWordSymbol` | Return a string associated to a word
+    :func:`is_FSMState` | Test whether an object inherits from :class:`FSMState`
+    :func:`is_FSMTransition` | Test whether an object inherits from :class:`FSMTransition`
+    :func:`is_FiniteStateMachine` | Test whether an object inherits from :class:`FiniteStateMachine`
     :func:`duplicate_transition_ignore` |  Default function for handling duplicate transitions
     :func:`duplicate_transition_raise_error` | Raise error when inserting a duplicate transition
     :func:`duplicate_transition_add_input` | Add input when inserting a duplicate transition

@@ -116,7 +116,7 @@ def is_LinearTensor(x):
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
     OUTPUT: boolean
 
@@ -157,11 +157,10 @@ def LinearTensorParent(free_module_parent, linear_functions_parent):
 
     INPUT:
 
-    - ``free_module_parent`` -- module. A free module, like vector or
-      matrix space.
+    - ``free_module_parent`` -- a free module, like vector or matrix space
 
-    - ``linear_functions_parent`` -- linear functions. The linear
-      functions parent.
+    - ``linear_functions_parent`` -- linear functions; the linear functions
+      parent
 
     OUTPUT:
 
@@ -214,7 +213,7 @@ class LinearTensorParent_class(Parent):
 
     def __init__(self, free_module, linear_functions):
         """
-        The Python constructor
+        The Python constructor.
 
         INPUT/OUTPUT: see :func:`LinearTensorParent`
 
@@ -319,7 +318,7 @@ class LinearTensorParent_class(Parent):
 
     def _repr_(self):
         """
-        Return a string representation
+        Return a string representation.
 
         OUTPUT: string
 
@@ -431,9 +430,9 @@ class LinearTensorParent_class(Parent):
 
         INPUT:
 
-        - ``R`` -- a ring.
+        - ``R`` -- a ring
 
-        OUTPUT: boolean. Whether there is a coercion map
+        OUTPUT: boolean; whether there is a coercion map
 
         EXAMPLES::
 
@@ -458,7 +457,7 @@ class LinearTensorParent_class(Parent):
 
     def _an_element_(self):
         """
-        Returns an element
+        Return an element.
 
         OUTPUT: a linear function tensored with a free module
 

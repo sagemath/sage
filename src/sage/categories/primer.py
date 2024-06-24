@@ -1368,7 +1368,7 @@ prefer right away the more flexible notation::
     How far should this be pushed? :class:`Fields` should definitely
     stay, but should :class:`FiniteGroups` or :class:`DivisionRings`
     be removed from the global namespace? Do we want to further
-    completely deprecate the notation ``FiniteGroups()` in favor of
+    completely deprecate the notation ``FiniteGroups()`` in favor of
     ``Groups().Finite()``?
 
 .. _category-primer-axioms-explosion:

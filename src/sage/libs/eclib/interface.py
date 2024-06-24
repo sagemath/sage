@@ -1229,7 +1229,7 @@ class mwrank_MordellWeil(SageObject):
 
         INPUT:
 
-        - ``height_limit`` (float, default: 18) -- search up to this
+        - ``height_limit``-- float (default: 18); search up to this
           logarithmic height
 
         .. note::

@@ -53,7 +53,7 @@ class FacadeSets(CategoryWithAxiom):
             - ``element`` -- any object
 
             This default implementation returns ``element`` if
-            ``self`` is a facade for ``parent(element)`. Otherwise it
+            ``self`` is a facade for ``parent(element)``. Otherwise it
             attempts in turn to coerce ``element`` into each parent
             ``self`` is a facade for.
 

@@ -419,7 +419,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
             if self in category:
                 typ = "A " + category._repr_object_names()[:-1]
         for category in [Groups(), Monoids(), Semigroups()]:
-            if self.ambient() in category and ``self`` in category.Subobjects():
+            if self.ambient() in category and self in category.Subobjects():
                 typ = "A sub" + category._repr_object_names()[:-1]
                 break
         if self._mul is operator.mul:

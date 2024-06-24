@@ -2686,7 +2686,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
             def _repr_(self):
                 r"""
-                Return the string representation of `self`.
+                Return the string representation of ``self``.
 
                 EXAMPLES::
 

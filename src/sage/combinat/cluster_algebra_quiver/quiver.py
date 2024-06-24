@@ -1771,7 +1771,7 @@ class ClusterQuiver(SageObject):
 
         INPUT:
 
-        - ``depth`` -- (default: ``infinity`) integer, only seeds with
+        - ``depth`` -- (default: ``infinity``) integer, only seeds with
           distance at most depth from ``self`` are returned
         - ``show_depth`` -- boolean (default: ``False``); if ``True``, the
           actual depth of the mutation is shown

@@ -36,9 +36,9 @@ This module's methods are the following:
     :widths: 30, 70
     :delim: |
 
-    :meth:`~TwoGraph.is_regular_twograph` | tests if ``self`` is a regular two-graph, i.e. a 2-design
-    :meth:`~TwoGraph.complement` | returns the complement of ``self``
-    :meth:`~TwoGraph.descendant` | returns the descendant graph at `w`
+    :meth:`~TwoGraph.is_regular_twograph` | Test if ``self`` is a regular two-graph, i.e. a 2-design
+    :meth:`~TwoGraph.complement` | Return the complement of ``self``
+    :meth:`~TwoGraph.descendant` | Return the descendant graph at `w`
 
 This module's functions are the following:
 
@@ -47,9 +47,9 @@ This module's functions are the following:
     :widths: 30, 70
     :delim: |
 
-    :func:`~taylor_twograph` | constructs Taylor's two-graph for `U_3(q)`
-    :func:`~is_twograph`         | checks that the incidence system is a two-graph
-    :func:`~twograph_descendant`  | returns the descendant graph w.r.t. a given vertex of the two-graph of a given graph
+    :func:`~taylor_twograph` | Construct Taylor's two-graph for `U_3(q)`
+    :func:`~is_twograph`         | Check that the incidence system is a two-graph
+    :func:`~twograph_descendant`  | Return the descendant graph w.r.t. a given vertex of the two-graph of a given graph
 
 Methods
 ---------

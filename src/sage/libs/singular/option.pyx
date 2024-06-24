@@ -492,7 +492,7 @@ cdef class LibSingularVerboseOptions(LibSingularOptions_abstract):
       a basis is not a standard basis
     - ``contentSB`` or ``content_sb`` -- avoids to divide by the
       content of a polynomial in ``std`` and related algorithms.
-       Should usually not be used.
+      Should usually not be used.
     - ``cancelunit`` -- avoids to divide polynomials by non-constant
       units in ``std`` in the local case. Should usually not be used
 

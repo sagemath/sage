@@ -134,7 +134,7 @@ class ModuleMorphism(Morphism):
 
     - ``domain`` -- a parent in ``ModulesWithBasis(...)``
     - ``codomain`` -- a parent in ``Modules(...)``
-    - ``category`` -- a category or ``None`` (default: `None``)
+    - ``category`` -- a category or ``None`` (default: ``None``)
     - ``affine`` -- whether we define an affine module morphism
       (default: ``False``)
 

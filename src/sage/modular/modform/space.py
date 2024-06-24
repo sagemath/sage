@@ -87,7 +87,7 @@ WARN = False
 
 def is_ModularFormsSpace(x):
     r"""
-    Return ``True`` if x is a ```ModularFormsSpace```.
+    Return ``True`` if x is a ``ModularFormsSpace``.
 
     EXAMPLES::
 

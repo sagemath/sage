@@ -200,7 +200,7 @@ class ModularFormsRing(Parent):
         - ``group`` -- a congruence subgroup of `\SL_2(\ZZ)`, or a
           positive integer `N` (interpreted as `\Gamma_0(N)`)
 
-        - ``base_ring`` (ring, default: `\QQ`) -- a base ring, which should be
+        - ``base_ring``-- ring (default: `\QQ`); a base ring, which should be
           `\QQ`, `\ZZ`, or the integers mod `p` for some prime `p`
 
         TESTS:
@@ -656,13 +656,13 @@ class ModularFormsRing(Parent):
 
         INPUT:
 
-        - ``maxweight`` (integer, default: 8) -- check up to this weight for
+        - ``maxweight``-- integer (default: 8); check up to this weight for
           generators
 
-        - ``prec`` (integer, default: 10) -- return `q`-expansions to this
+        - ``prec``-- integer (default: 10); return `q`-expansions to this
           precision
 
-        - ``start_gens`` (list, default: ``[]``) -- list of pairs `(k, f)`, or
+        - ``start_gens``-- list (default: ``[]``); list of pairs `(k, f)`, or
           triples `(k, f, F)`, where:
 
           - `k` is an integer,
@@ -815,14 +815,14 @@ class ModularFormsRing(Parent):
 
         INPUT:
 
-        - ``maxweight`` (integer, default: 8) -- calculate forms generating all
+        - ``maxweight``-- integer (default: 8); calculate forms generating all
           forms up to this weight
 
-        - ``start_gens`` (list, default: ``[]``) -- list of modular forms. If
+        - ``start_gens``-- list (default: ``[]``); list of modular forms. If
           this list is nonempty, we find a minimal generating set containing
           these forms
 
-        - ``start_weight`` (integer, default: 2) -- calculate the graded
+        - ``start_weight``-- integer (default: 2); calculate the graded
           subalgebra of forms of weight at least ``start_weight``
 
         .. NOTE::
@@ -861,7 +861,7 @@ class ModularFormsRing(Parent):
         - ``start_weight`` -- minimum weight to try
         - ``start_gens`` -- a sequence of tuples of the form `(k, f, F)`, where
           `F` is a modular form of weight `k` and `f` is its `q`-expansion
-          coerced into ``self.base_ring()`. Either (but not both) of `f` and `F`
+          coerced into ``self.base_ring()``. Either (but not both) of `f` and `F`
           may be ``None``.
 
         OUTPUT: list of tuples, formatted as with ``start_gens``

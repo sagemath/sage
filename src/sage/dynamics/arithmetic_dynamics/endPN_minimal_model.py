@@ -912,7 +912,7 @@ def get_bound_dynamical(F, f, m=1, dynatomic=True, prec=53, emb=None):
 
     This defines the maximum possible distance from `j` to the `z_0` covariant
     of the associated binary form `F` in the hyperbolic 3-space
-    for which the map `f`` could have smaller coefficients.
+    for which the map `f` could have smaller coefficients.
 
     INPUT:
 

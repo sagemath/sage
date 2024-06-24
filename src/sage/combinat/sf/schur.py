@@ -234,7 +234,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
             - ``self`` -- an element of the Schur symmetric function basis
             - ``n`` -- nonnegative integer
 
-            OUTPUT: the ``n`-th power of an instance of ``self`` in the Schur basis
+            OUTPUT: the `n`-th power of an instance of ``self`` in the Schur basis
 
             See ``Monoids.Element.__pow__`` and ``Monoids.Element._pow_naive``.
 

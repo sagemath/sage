@@ -5929,7 +5929,7 @@ class FreeModule_ambient(FreeModule_generic):
 
         - ``prob`` -- float. Each coefficient will be set to zero with
           probability `1-prob`. Otherwise coefficients will be chosen
-           randomly from base ring (and may be zero).
+          randomly from base ring (and may be zero).
 
         - ``*args``, ``**kwds`` -- passed on to random_element function of base
           ring

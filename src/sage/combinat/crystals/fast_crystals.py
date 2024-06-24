@@ -45,7 +45,7 @@ class FastCrystal(UniqueRepresentation, Parent):
     - ``shape`` -- a shape is of the form ``[l1,l2]`` where ``l1`` and ``l2``
       are either integers or (in type `B_2`) half integers such that
       ``l1 - l2`` is integral. It is assumed that ``l1 >= l2 >= 0``. If
-      ``l1`` and ``l2` are integers, this will produce a crystal
+      ``l1`` and ``l2`` are integers, this will produce a crystal
       isomorphic to the one obtained by
       ``crystals.Tableaux(type, shape=[l1,l2])``. Furthermore
       ``crystals.FastRankTwo(['B', 2], l1+1/2, l2+1/2)`` produces a crystal

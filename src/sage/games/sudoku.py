@@ -26,7 +26,7 @@ from sage.structure.sage_object import SageObject
 
 def sudoku(m):
     r"""
-    Solves Sudoku puzzles described by matrices.
+    Solve Sudoku puzzles described by matrices.
 
     INPUT:
 

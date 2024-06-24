@@ -183,7 +183,7 @@ class PoorManMap(sage.structure.sage_object.SageObject):
         - ``self`` -- a map `f`
         - ``other`` -- a map `g`
 
-        Returns the composition map `f\circ g` of `f`` and `g`
+        Returns the composition map `f\circ g` of `f` and `g`
 
         EXAMPLES::
 

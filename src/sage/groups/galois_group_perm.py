@@ -88,7 +88,7 @@ class GaloisGroup_perm(_GaloisMixin, PermutationGroup_generic):
         r"""
         The number of moved points in the permutation representation.
 
-        This will be the degree of the original number field if `_gc_numbering``
+        This will be the degree of the original number field if ``_gc_numbering``
         is ``False``, or the degree of the Galois closure otherwise.
 
         EXAMPLES::

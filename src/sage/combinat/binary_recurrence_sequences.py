@@ -626,7 +626,7 @@ class BinaryRecurrenceSequence(SageObject):
         #power if and only if it is a ``p`` th power modulo every prime `\\ell`.  This condition
         #gives nontrivial information if ``p`` divides the order of the multiplicative group of
         #`\\Bold(F)_{\\ell}`, i.e. if `\\ell` is ` 1 \mod{p}`, as then only `1/p` terms are ``p`` th
-        #powers modulo `\\ell``.
+        #powers modulo `\\ell`.
 
         #Thus, given such an `\\ell`, we get a set of necessary congruences for the index modulo the
         #the period of the sequence mod `\\ell`.  Then we intersect these congruences for many primes

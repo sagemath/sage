@@ -717,7 +717,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
 
                 .. WARNING::
 
-                    If `i`` is not a reduced expression then the basis element
+                    If ``i`` is not a reduced expression then the basis element
                     indexed by the corresponding element of the algebra is
                     returned rather than the corresponding product of the
                     generators::

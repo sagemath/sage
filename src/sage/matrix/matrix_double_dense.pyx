@@ -2343,7 +2343,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         """
         if self.dimensions() == (0,0):
             # The "orthonormal" algorithm would otherwise fail in this
-            # corner case. Returning `True` is consistent with the
+            # corner case. Returning ``True`` is consistent with the
             # other implementations of this method.
             return True
 

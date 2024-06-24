@@ -206,10 +206,10 @@ def gale_transform_to_polytope(vectors, base_ring=None, backend=None):
 
     - ``vectors`` -- the vectors of the Gale transform
 
-    - ``base_ring`` -- string (default: `None`);
+    - ``base_ring`` -- string (default: ``None``);
       the base ring to be used for the construction
 
-    - ``backend`` -- string (default: `None`);
+    - ``backend`` -- string (default: ``None``);
       the backend to use to create the polytope
 
     .. NOTE::
@@ -331,10 +331,10 @@ def gale_transform_to_primal(vectors, base_ring=None, backend=None):
 
     - ``vectors`` -- the ordered vectors of the Gale transform
 
-    - ``base_ring`` -- string (default: `None`);
+    - ``base_ring`` -- string (default: ``None``);
       the base ring to be used for the construction
 
-    - ``backend`` -- string (default: `None`);
+    - ``backend`` -- string (default: ``None``);
       the backend to be use to construct a polyhedral,
       used internally in case the center is not the origin,
       see :func:`~sage.geometry.polyhedron.constructor.Polyhedron`

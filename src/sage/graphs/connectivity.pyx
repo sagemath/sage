@@ -48,7 +48,7 @@ Here is what the module can do:
     :widths: 30, 70
     :delim: |
 
-    :meth:`bridges` | Returns an iterator over the bridges (or cut edges) of given undirected graph.
+    :meth:`bridges` | Return an iterator over the bridges (or cut edges) of given undirected graph.
     :meth:`cleave` | Return the connected subgraphs separated by the input vertex cut.
     :meth:`is_triconnected` | Check whether the graph is triconnected.
     :meth:`spqr_tree` | Return a SPQR-tree representing the triconnected components of the graph.

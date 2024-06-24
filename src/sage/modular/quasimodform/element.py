@@ -225,7 +225,7 @@ class QuasiModularFormsElement(ModuleElement):
 
     def __neg__(self):
         r"""
-        The negation of ``self```.
+        The negation of ``self``.
 
         TESTS::
 

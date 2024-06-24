@@ -2493,7 +2493,7 @@ class FiniteWord_class(Word_class):
         - ``f`` -- involution (default: ``None``) on the alphabet of ``self``.
           It must be callable on letters as well as words (e.g. ``WordMorphism``)
         - ``l`` -- integer (default: ``None``); the length of the longest
-          palindrome suffix of ````self[:-1]````, if known
+          palindrome suffix of ``self[:-1]``, if known
 
         OUTPUT: word; if ``f`` is ``None``, the longest palindromic suffix of
         ``self``. Otherwise, the longest ``f``-palindromic suffix of ``self``.

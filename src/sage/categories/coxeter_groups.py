@@ -2366,10 +2366,10 @@ class CoxeterGroups(Category_singleton):
             Iterating through this set is Constant Amortized Time
             (counting arithmetic operations in the Coxeter group as
             constant time) complexity, and memory linear in the length
-            of `self`.
+            of ``self``.
 
             One can pass as optional argument a predicate p such that
-            `p(u)` implies `p(u')` for any `u` left factor of `self`
+            `p(u)` implies `p(u')` for any `u` left factor of ``self``
             and `u'` left factor of `u`. Then this returns only the
             factorizations `self = uv` such `p(u)` holds.
 

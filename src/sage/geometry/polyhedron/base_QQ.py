@@ -1088,8 +1088,7 @@ class Polyhedron_QQ(Polyhedron_base):
     def _Hstar_function_normaliz(self, acting_group=None, output=None):
         r"""
         Return `H^*` as a rational function in `t` with coefficients in
-        the ring of class functions of the ``acting_group`'
-        of ``self``.
+        the ring of class functions of the ``acting_group`` of ``self``.
 
         INPUT:
 

@@ -24,7 +24,7 @@ from .dancing_links import dlx_solver
 
 def DLXCPP(rows):
     """
-    Solves the Exact Cover problem by using the Dancing Links algorithm
+    Solve the Exact Cover problem by using the Dancing Links algorithm
     described by Knuth.
 
     Consider a matrix M with entries of 0 and 1, and compute a subset
@@ -89,7 +89,7 @@ def DLXCPP(rows):
 
 def AllExactCovers(M):
     """
-    Solves the exact cover problem on the matrix M (treated as a dense
+    Solve the exact cover problem on the matrix M (treated as a dense
     binary matrix).
 
     EXAMPLES: No exact covers::
@@ -117,7 +117,7 @@ def AllExactCovers(M):
 
 def OneExactCover(M):
     """
-    Solves the exact cover problem on the matrix M (treated as a dense
+    Solve the exact cover problem on the matrix M (treated as a dense
     binary matrix).
 
     EXAMPLES::

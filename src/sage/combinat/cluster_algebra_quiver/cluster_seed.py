@@ -3623,7 +3623,7 @@ class ClusterSeed(SageObject):
 
         INPUT:
 
-        - ``depth`` -- (default: ``infinity`) integer, only seeds with
+        - ``depth`` -- (default: ``infinity``) integer, only seeds with
           distance at most depth from ``self`` are returned
         - ``show_depth`` -- boolean (default: ``False``); if ``True``, the
           actual depth of the mutation is shown
@@ -5089,7 +5089,7 @@ def _multi_concatenate(l1, l2):
 
     INPUT:
 
-    - ``l1``` -- a 2-dimensional array
+    - ``l1`` -- a 2-dimensional array
     - ``l2`` -- a single array
 
     OUTPUT: a 2-dimensional array

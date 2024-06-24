@@ -2044,7 +2044,7 @@ cdef class CachedMethodCaller(CachedFunction):
             True
 
         Any instance of ``Bar`` gets its own instance of
-        :class:`CachedMethodCaller``::
+        :class:`CachedMethodCaller`::
 
             sage: b1.f is b2.f
             False
@@ -2443,7 +2443,7 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
             <class 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
 
         Any instance of ``Bar`` gets its own instance of
-        :class:`CachedMethodCaller``::
+        :class:`CachedMethodCaller`::
 
             sage: b1.f is b2.f
             False

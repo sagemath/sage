@@ -34,7 +34,7 @@ from sage.numerical.linear_functions cimport LinearFunction, is_LinearFunction
 
 cdef class LinearTensor(ModuleElement):
     r"""
-    A linear function tensored with a free module
+    A linear function tensored with a free module.
 
     .. warning::
 
@@ -56,9 +56,9 @@ cdef class LinearTensor(ModuleElement):
         INPUT:
 
         - ``parent`` -- the parent
-          :class:`~sage.numerical.linear_tensor.LinearTensorParent_class`.
+          :class:`~sage.numerical.linear_tensor.LinearTensorParent_class`
 
-        - ``f`` -- A linear function tensored by a free module is
+        - ``f`` -- a linear function tensored by a free module is
           represented as a dictionary. The values are the coefficient
           (free module elements) of the variable represented by the
           keys. The key ``-1`` corresponds to the constant term.
@@ -263,7 +263,7 @@ cdef class LinearTensor(ModuleElement):
 
         INPUT:
 
-        - ``b`` -- a :class:`LinearTensor`.
+        - ``b`` -- a :class:`LinearTensor`
 
         OUTPUT: a :class:`LinearTensor`
 
@@ -303,7 +303,7 @@ cdef class LinearTensor(ModuleElement):
 
         INPUT:
 
-        - ``b`` -- a :class:`LinearTensor`.
+        - ``b`` -- a :class:`LinearTensor`
 
         OUTPUT: a :class:`LinearTensor`
 
@@ -327,7 +327,7 @@ cdef class LinearTensor(ModuleElement):
 
         INPUT:
 
-        - ``b`` -- base ring element. The scalar to multiply by.
+        - ``b`` -- base ring element; the scalar to multiply by
 
         OUTPUT: a :class:`LinearTensor`
 

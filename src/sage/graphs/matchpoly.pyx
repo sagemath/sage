@@ -10,7 +10,7 @@ This module contains the following methods:
     :widths: 30, 70
     :delim: |
 
-    :meth:`matching_polynomial` | Computes the matching polynomial of a given graph
+    :meth:`matching_polynomial` | Compute the matching polynomial of a given graph.
     :meth:`complete_poly` | Compute the matching polynomial of the complete graph on `n` vertices.
 
 AUTHORS:

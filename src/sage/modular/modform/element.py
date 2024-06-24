@@ -1989,7 +1989,7 @@ class Newform(ModularForm_abstract):
           ``'arithmetic'``; see below
 
         - ``embedding`` -- (optional) embedding of the coefficient field of `f`
-          into another ring; ignored if `'normalization='arithmetic'``
+          into another ring; ignored if ``'normalization='arithmetic'``
 
         OUTPUT:
 

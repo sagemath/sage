@@ -3136,7 +3136,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         - ``vertices`` -- list of vertex labels
         - ``modus`` -- integer representing the modus:
           - ``0`` -- initialize ``other`` to be the subgraph induced by the vertices;
-            see :meth:`subgraph_given_vertices``
+            see :meth:`subgraph_given_vertices`
           - ``1`` -- test whether subgraph of ``self`` induced by the vertices is a subgraph of ``other``
           - ``2`` -- as ``1`` but ignore the labels
         """

@@ -593,7 +593,7 @@ def latex_extra_preamble():
 def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_in_background=False):
     """
     This runs LaTeX on the TeX file "filename.tex".  It produces files
-    ``filename.dvi`` (or ``filename.pdf``` if ``engine`` is either ``'pdflatex'``,
+    ``filename.dvi`` (or ``filename.pdf`` if ``engine`` is either ``'pdflatex'``,
     ``'xelatex'``, or ``'lualatex'``) and if ``png`` is ``True``, ``filename.png``.
     If ``png`` is ``True`` and ``dvipng`` cannot convert the dvi file to png
     (because of postscript specials or other issues), then ``dvips`` is called, and

@@ -1853,7 +1853,7 @@ cpdef latin_squares_graph_parameters(int v, int k, int l,int mu):
 
     OUTPUT:
 
-    - ``(g, n)`` -- parameters of an `L_g(n)` graph, or `None`
+    - ``(g, n)`` -- parameters of an `L_g(n)` graph, or ``None``
 
     TESTS::
 

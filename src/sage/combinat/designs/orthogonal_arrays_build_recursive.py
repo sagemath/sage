@@ -23,10 +23,10 @@ called.
     :func:`~sage.combinat.designs.orthogonal_arrays_build_recursive.construction_3_6` | Return a `OA(k,nm+i)`.
     :func:`~sage.combinat.designs.orthogonal_arrays_build_recursive.construction_q_x` | Return an `OA(k,(q-1)*(q-x)+x+2)` using the `q-x` construction.
     :func:`OA_and_oval` | Return a `OA(q+1,q)` whose blocks contains `\leq 2` zeroes in the last `q` columns.
-    :func:`thwart_lemma_3_5` | Returns an `OA(k,nm+a+b+c+d)`.
-    :func:`thwart_lemma_4_1` | Returns an `OA(k,nm+4(n-2))`.
-    :func:`three_factor_product` | Returns an `OA(k+1,n_1n_2n_3)`.
-    :func:`brouwer_separable_design` | Returns a `OA(k,t(q^2+q+1)+x)` using Brouwer's result on separable designs.
+    :func:`thwart_lemma_3_5` | Return an `OA(k,nm+a+b+c+d)`.
+    :func:`thwart_lemma_4_1` | Return an `OA(k,nm+4(n-2))`.
+    :func:`three_factor_product` | Return an `OA(k+1,n_1n_2n_3)`.
+    :func:`brouwer_separable_design` | Return a `OA(k,t(q^2+q+1)+x)` using Brouwer's result on separable designs.
 
 Functions
 ---------
@@ -1037,7 +1037,7 @@ def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
 
         Two lists of classes ``g1_parall`` and ``parallel`` which are respectively
         `g_1`-parallel and parallel classes such that ``g1_parall+parallel`` is an
-        `OA(k,g1*g2)``.
+        ``OA(k,g1*g2)``.
         """
         if check:
             for classs in g1_parall:

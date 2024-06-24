@@ -831,7 +831,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
     def de_solve(self, de, vars, ics=None):
         """
-        Solves a 1st or 2nd order ordinary differential equation (ODE) in
+        Solve a 1st or 2nd order ordinary differential equation (ODE) in
         two variables, possibly with initial conditions.
 
         INPUT:
@@ -873,7 +873,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
     def de_solve_laplace(self, de, vars, ics=None):
         """
-        Solves an ordinary differential equation (ODE) using Laplace
+        Solve an ordinary differential equation (ODE) using Laplace
         transforms.
 
         INPUT:

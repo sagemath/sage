@@ -60,13 +60,13 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
 
     - ``**kwds`` -- parameters can be passed to the converter and the
       solver by prefixing them with ``c_`` and ``s_`` respectively. For
-       example, to increase CryptoMiniSat's verbosity level, pass
-       ``s_verbosity=1``.
+      example, to increase CryptoMiniSat's verbosity level, pass
+      ``s_verbosity=1``.
 
     OUTPUT:
 
-        A list of dictionaries, each of which contains a variable
-        assignment solving ``F``.
+    A list of dictionaries, each of which contains a variable assignment
+    solving ``F``.
 
     EXAMPLES:
 

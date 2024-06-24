@@ -358,23 +358,23 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
           ambient parent is this space of modular symbols. (TODO: make more
           sophisticated)
 
-        -  0 -- the integer 0; results in the 0 modular symbol
+        - 0 -- the integer 0; results in the 0 modular symbol
 
-        -  3-tuple -- Given a 3-tuple (i,u,v), returns the modular symbol
+        - 3-tuple -- Given a 3-tuple (i,u,v), returns the modular symbol
           element defined by the Manin symbol
           `[X^{i}\cdot Y^{k-2-i}, (u,v)]`, where k is the weight.
           Note that we must have `0\leq i \leq k-2`.
 
-        -  2-tuple -- Given a 2-tuple (u,v), returns the element defined by
+        - 2-tuple -- Given a 2-tuple (u,v), returns the element defined by
           the Manin symbol `[X^0 \cdot Y^{2-k}, (u,v)]`
 
-        -  2-elements list -- Given a list ``[alpha, beta]``,
+        - 2-elements list -- Given a list ``[alpha, beta]``,
           where `\alpha` and `\beta` are (coercible to)
           cusps, return the modular symbol `\{\alpha, \beta\}`. When
           the weight `k > 2` return
           `Y^{k-2} \{\alpha, \beta\}`.
 
-        -  3-element list -- Given a list ``[i, alpha, beta]``,
+        - 3-element list -- Given a list ``[i, alpha, beta]``,
           where `i` is an integer, and `\alpha`,
           `\beta` are (coercible to) cusps, return the modular symbol
           `X^i Y^{k-2-i} \{\alpha, \beta\}`.

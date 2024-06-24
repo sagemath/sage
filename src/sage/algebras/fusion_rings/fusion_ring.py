@@ -773,7 +773,7 @@ class FusionRing(WeylCharacterRing):
 
         This is the same as `N_{ij}^{k\ast}`, where `N_{ij}^k` are
         the structure coefficients of the ring (see :meth:`Nk_ij`),
-        and `k\ast`` denotes the dual element. The coefficient `N_{ijk}`
+        and `k\ast` denotes the dual element. The coefficient `N_{ijk}`
         is unchanged under permutations of the three basis vectors.
 
         EXAMPLES::

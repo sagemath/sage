@@ -61,9 +61,9 @@ class OperationTable(SageObject):
     - ``elements`` -- (default: ``None``)  A list of elements of ``S``,
       in forms that can be coerced into the structure, eg. their
       string representations. This may be used to impose an alternate
-      ordering on the elements of `S``, perhaps when this is used in
+      ordering on the elements of ``S``, perhaps when this is used in
       the context of a particular structure. The default is to use
-      whatever ordering the ``S.list()`` method returns. `elements``
+      whatever ordering the ``S.list()`` method returns. ``elements``
       can also be a subset which is closed under the operation, useful
       perhaps when the set is infinite.
 
