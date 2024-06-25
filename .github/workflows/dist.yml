@@ -161,17 +161,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        os:      [ubuntu-latest]
+        arch:    [x86_64, i686, aarch64]
+        build:   [manylinux, musllinux]
         include:
-          - os: ubuntu-latest
-            arch: x86_64
-          - os: ubuntu-latest
-            arch: i686
-          - os: ubuntu-latest
-            arch: aarch64
-            build: manylinux
-          - os: ubuntu-latest
-            arch: aarch64
-            build: musllinux
           - os: macos-13
             arch: x86_64
           - os: macos-14
