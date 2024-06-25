@@ -166,6 +166,8 @@ jobs:
             arch: x86_64
           - os: ubuntu-latest
             arch: i686
+          - os: ubuntu-latest
+            arch: aarch64
           - os: macos-13
             arch: x86_64
           - os: macos-14
@@ -189,6 +191,12 @@ jobs:
       CIBW_BUILD_FRONTEND: build
     steps:
       - uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        if: runner.os == 'Linux' && matrix.arch != 'x86_64' && matrix.arch != 'i686'
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: all
 
       - uses: actions/download-artifact@v4
         with:
