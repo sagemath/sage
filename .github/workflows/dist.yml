@@ -155,7 +155,7 @@ jobs:
         if: env.CAN_DEPLOY == 'true'
 
   build_wheels:
-    name: Build wheels on ${{ matrix.os }}, arch ${{ matrix.arch }}
+    name: Build wheels on ${{ matrix.os }}, arch ${{ matrix.arch }} ${{ matrix.build }}
     runs-on: ${{ matrix.os }}
     needs: sdists_for_pypi
     strategy:
@@ -168,6 +168,10 @@ jobs:
             arch: i686
           - os: ubuntu-latest
             arch: aarch64
+            build: manylinux
+          - os: ubuntu-latest
+            arch: aarch64
+            build: musllinux
           - os: macos-13
             arch: x86_64
           - os: macos-14
@@ -178,6 +182,7 @@ jobs:
       SPKGS: _bootstrap _prereq
       # Non-Python packages to install as spkgs
       TARGETS_PRE: gmp mpfr mpc bliss coxeter3 mcqd meataxe sirocco boost_cropped tdlib
+      CIBW_BUILD: "*${{ matrix.build }}*"
       # Disable building PyPy wheels on all platforms
       CIBW_SKIP: "pp*"
       #
@@ -244,7 +249,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.os }}-${{ matrix.arch }}-wheels
+          name: ${{ matrix.os }}-${{ matrix.build }}-${{ matrix.arch }}-wheels
           path: ./wheelhouse/*.whl
 
   upload_wheels:
@@ -257,7 +262,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          pattern: "*-*-wheels"
+          pattern: "*-*-*-wheels"
           path: wheelhouse
           merge-multiple: true
 
