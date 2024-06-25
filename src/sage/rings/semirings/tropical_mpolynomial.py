@@ -99,7 +99,7 @@ from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.polynomial.polydict import ETuple
-from sage.rings.semirings.tropical_hypersurface import TropicalHypersurface
+from sage.rings.semirings.tropical_variety import TropicalCurve
 from sage.plot.plot3d.list_plot3d import list_plot3d
 
 class TropicalMPolynomial(MPolynomial_polydict):
@@ -166,7 +166,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
 
         OUTPUT:
 
-        - tropical_roots -- TropicalHypersurface object. This object is 
+        - tropical_roots -- TropicalCurve object. This object is 
         displayed as list of lists, where the inner list is of the form
         [parametric equation, condition of parameter, order]
         
@@ -287,7 +287,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
                     xy_interval.append(order)
                     tropical_roots.append(xy_interval)
 
-        return TropicalHypersurface(*tropical_roots) 
+        return TropicalCurve(*tropical_roots) 
 
 
 class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):

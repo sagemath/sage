@@ -1,7 +1,11 @@
 r"""
 Base class for tropical variety objects
 
-
+The TropicalVariety represents the solution set of a system of tropical 
+polynomial equations. In tropical geometry, a tropical variety is defined by 
+taking the minimum (maximum) of polynomials and considering the loci where 
+these minima (maxima) are attained multiple times. This module provides 
+functionality to compute, visualize, and analyze tropical varieties.
 
 AUTHORS:
 
@@ -89,6 +93,7 @@ from sage.rings.rational_field import QQ
 from sage.plot.graphics import Graphics
 from sage.plot.plot import parametric_plot
 from sage.rings.infinity import infinity
+from sage.symbolic.ring import SR
 
 class TropicalVariety(SageObject):
     pass
@@ -192,6 +197,8 @@ class TropicalCurve(SageObject):
         """
         Return the plot of ``self``
 
+        OUTPUT: A Graphics object
+
         """
         from sage.plot.text import text
 
@@ -243,6 +250,9 @@ class TropicalCurve(SageObject):
         return combined_plot
 
     def _repr_(self):
+        num_params = self.parent().ngens() - 1
+        param_names = ['t{}'.format(i) for i in range(num_params)]
+        params = SR.var(param_names)
         components = "\n".join([f"{row}" for row in self._hypersurface])
         return (f"Tropical Hypersurface in {self.dimension()} dimensions: \n"
                 f"[{components}]")
