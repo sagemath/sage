@@ -182,7 +182,6 @@ class TropicalMPolynomial(MPolynomial_polydict):
             min_max = linear_eq[keys[0]]
             for i,v in enumerate(variables):
                 min_max = min_max.subs(v==final_sol[i])
-            
             all_sol_compare = []
             no_solution = False
             for compare in self.dict():
@@ -210,7 +209,6 @@ class TropicalMPolynomial(MPolynomial_polydict):
                 for sol in all_sol_compare:
                     parameter = parameter.union(set(sol.variables()))
                 parameter_solution = solve(all_sol_compare, list(parameter))
-                
                 if parameter_solution:
                     xy_interval.append(parameter_solution[0])
                     # calculate order
@@ -219,7 +217,6 @@ class TropicalMPolynomial(MPolynomial_polydict):
                         index_diff.append(abs(keys[0][i]-keys[1][i]))
                     order = gcd(index_diff)
                     xy_interval.append(order)
-
                     tropical_roots.append(xy_interval)
 
         return TropicalHypersurface(*tropical_roots) 
@@ -272,4 +269,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         R = PolynomialRing(self.base().base_ring(), self.variable_names())
 
         return self(R.random_element())
+    
+    def ngens(self):
+        return len(self.variable_names())
         
