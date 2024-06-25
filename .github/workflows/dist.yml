@@ -155,7 +155,7 @@ jobs:
         if: env.CAN_DEPLOY == 'true'
 
   build_wheels:
-    name: wheels ${{ matrix.arch }} ${{ matrix.build }} on ${{ matrix.os }}
+    name: wheels ${{ matrix.build }}*_${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
     needs: sdists_for_pypi
     strategy:
@@ -167,8 +167,10 @@ jobs:
         include:
           - os: macos-13
             arch: x86_64
+            build: macosx
           - os: macos-14
             arch: arm64
+            build: macosx
     env:
       CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
       # SPKGs to install as system packages
