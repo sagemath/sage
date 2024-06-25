@@ -1263,7 +1263,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             ValueError: base field must be rational numbers or a number field
         """
         F = self.base_ring()
-        if is_RationalField(F):
+        if isinstance(F, RationalField):
             return self.is_definite()
 
         if F not in NumberFields():
@@ -1382,7 +1382,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         # For efficiency (and to not convert QQ into a number field manually),
         # we handle the case F = QQ first
-        if is_RationalField(F):
+        if isinstance(F, RationalField):
             ram_fin = sorted([p for p in set([2]).union(
                     prime_divisors(a.numerator()), prime_divisors(a.denominator()),
                     prime_divisors(b.numerator()), prime_divisors(b.denominator()))
@@ -1510,7 +1510,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             ValueError: base field must be rational numbers or a number field
         """
         F = self.base_ring()
-        if is_RationalField(F):
+        if isinstance(F, RationalField):
             return ZZ.prod(self.ramified_places(inf=False))
 
         return F.ideal(F.prod(self.ramified_places(inf=False)))
@@ -1555,7 +1555,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         if F is not A.base_ring():
             raise ValueError("both quaternion algebras must be defined over the same ring")
 
-        if is_RationalField(F):
+        if isinstance(F, RationalField):
             return self.ramified_places(inf=False) == A.ramified_places(inf=False)
 
         try:
