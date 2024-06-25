@@ -4293,7 +4293,7 @@ class Link(SageObject):
             ....:  [10, 15, 11, 16], [12, 21, 13, 22], [14, 11, 15, 12], [16, 9, 17, 10],
             ....:  [18, 25, 19, 26], [20, 23, 21, 24], [22, 13, 23, 14], [24, 19, 25, 20],
             ....:  [26, 17, 1, 18]])
-            sage: K.get_knotinfo()    # - database_knotinfo, long time
+            sage: K.get_knotinfo()    # optional - database_knotinfo, long time
             KnotInfo['K4_1']*KnotInfo['K9_2m']
 
         TESTS::
