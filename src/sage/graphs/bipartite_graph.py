@@ -1783,7 +1783,7 @@ class BipartiteGraph(Graph):
         # read adjacency information
         for cidx in range(num_cols):
             for ridx in map(int, fi.readline().split()):
-                # A-list uses 1-based indices with 0's as place-holders
+                # A-list uses 1-based indices with 0s as place-holders
                 if ridx > 0:
                     self.add_edge(cidx, num_cols + ridx - 1)
 

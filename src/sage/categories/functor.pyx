@@ -629,7 +629,7 @@ def IdentityFunctor(C):
 
     INPUT:
 
-    A category, ``C``.
+    - ``C`` -- a category
 
     OUTPUT: the identity functor in ``C``
 

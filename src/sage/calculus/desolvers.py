@@ -1391,7 +1391,7 @@ def desolve_system_rk4(des, vars, ics=None, ivar=None, end_points=None, step=0.1
 
     INPUT:
 
-    input is similar to desolve_system and desolve_rk4 commands
+    Input is similar to ``desolve_system`` and ``desolve_rk4`` commands
 
     - ``des`` -- right hand sides of the system
 

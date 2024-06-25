@@ -433,8 +433,9 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         underlying data and pickle version.
 
         OUTPUT:
-            data -- output of pickle
-            version -- integer
+
+        - data; output of pickle
+        - version; integer
 
         EXAMPLES::
 
@@ -800,8 +801,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         """
         Return the negative of this matrix.
 
-        OUTPUT:
-            matrix
+        OUTPUT: matrix
 
         EXAMPLES::
 

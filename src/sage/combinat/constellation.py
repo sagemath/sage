@@ -1631,11 +1631,9 @@ def perm_invert(p):
 
     INPUT:
 
-    a permutation of {0,..,n-1} given by a list of values
+    - ``p`` -- a permutation of {0,..,n-1} given by a list of values
 
-    OUTPUT:
-
-    a permutation of {0,..,n-1} given by a list of values
+    OUTPUT: a permutation of {0,..,n-1} given by a list of values
 
     EXAMPLES::
 
@@ -1651,15 +1649,13 @@ def perm_invert(p):
 
 def perm_conjugate(p, s):
     """
-    Return the conjugate of the permutation `p`  by the permutation `s`.
+    Return the conjugate of the permutation `p` by the permutation `s`.
 
     INPUT:
 
-    two permutations of {0,..,n-1} given by lists of values
+    - ``p``, ``s`` -- two permutations of {0,..,n-1} given by lists of values
 
-    OUTPUT:
-
-    a permutation of {0,..,n-1} given by a list of values
+    OUTPUT: a permutation of {0,..,n-1} given by a list of values
 
     EXAMPLES::
 

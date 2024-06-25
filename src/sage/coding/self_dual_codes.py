@@ -54,10 +54,10 @@ Here's a rather naive construction of self-dual codes in the binary
 case:
 
 For even `m`, let `A_m` denote the `m\times m` matrix over `\GF{2}`
-given by adding the all 1's matrix to the identity matrix (in
+given by adding the all 1s matrix to the identity matrix (in
 ``MatrixSpace(GF(2),m,m)`` of course). If `M_1, ..., M_r` are square
 matrices, let `diag(M_1,M_2,...,M_r)` denote the "block diagonal"
-matrix with the matrices `M_i` on the diagonal and 0's elsewhere. Let
+matrix with the matrices `M_i` on the diagonal and 0s elsewhere. Let
 `C(m_1,...,m_r,s)` denote the linear code with generator matrix
 having block form `G = (I, A)`, where
 `A = diag(A_{m_1},A_{m_2},...,A_{m_r},I_s)`, for some

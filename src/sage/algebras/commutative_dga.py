@@ -4173,7 +4173,7 @@ def exterior_algebra_basis(n, degrees):
     - ``degrees`` -- iterable of integers
 
     Return list of lists, each list representing exponents for the
-    corresponding generators. (So each list consists of 0's and 1's.)
+    corresponding generators. (So each list consists of 0s and 1s.)
 
     EXAMPLES::
 

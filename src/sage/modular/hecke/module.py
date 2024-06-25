@@ -1599,7 +1599,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         got from rows `n` through `m` of `B^{-1}`.
         This is because projection with respect to the B basis is just
         given by an `m-n+1` row slice `P` of a diagonal
-        matrix D with 1's in the `n` through `m` positions,
+        matrix D with 1s in the `n` through `m` positions,
         so projection with respect to the standard basis is given by
         `P\cdot B^{-1}`, which is just rows `n`
         through `m` of `B^{-1}`.

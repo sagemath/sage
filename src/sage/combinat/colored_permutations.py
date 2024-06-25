@@ -815,8 +815,8 @@ class ShephardToddFamilyGroup(UniqueRepresentation, Parent):
 
         INPUT:
 
-        Either a list of pairs ``(color, element)``
-        or a pair of lists ``(colors, elements)``.
+        - ``x`` -- either a list of pairs ``(color, element)`` or a pair of
+          lists ``(colors, elements)``
 
         TESTS::
 

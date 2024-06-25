@@ -1997,7 +1997,7 @@ class WordGenerator:
         .. MATH::
 
             b_n = \begin{cases}
-            1,      & \text{if the binary representation of} n \text{ contains no block of consecutive 0's of odd length}\\
+            1,      & \text{if the binary representation of} n \text{ contains no block of consecutive 0s of odd length}\\
             0,      & \text{otherwise}\\
             \end{cases}\\
 

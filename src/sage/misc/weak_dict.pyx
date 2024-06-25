@@ -168,7 +168,7 @@ cdef class WeakValueDictEraser:
         """
         INPUT:
 
-        A :class:`sage.misc.weak_dict.WeakValueDictionary`.
+        - ``D`` -- a :class:`sage.misc.weak_dict.WeakValueDictionary`
 
         EXAMPLES::
 
@@ -186,7 +186,7 @@ cdef class WeakValueDictEraser:
         """
         INPUT:
 
-        A weak reference with key.
+        - ``r`` -- a weak reference with key
 
         When this is called with a weak reference ``r``, then an entry from the
         dictionary pointed to by ``self.D`` is removed that has ``r`` as a value

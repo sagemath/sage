@@ -694,7 +694,7 @@ class AlternatingSignMatrix(Element,
 
         Given an `n \times n` alternating sign matrix `A`, there are as many
         ASM's of size `n+1` compatible with `A` as 2 raised to the power of
-        the number of 1's in `A` [EKLP1992]_.
+        the number of 1s in `A` [EKLP1992]_.
 
         EXAMPLES::
 

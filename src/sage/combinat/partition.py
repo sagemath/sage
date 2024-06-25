@@ -1707,7 +1707,7 @@ class Partition(CombinatorialElement):
         # if there is no max, the next partition just tacks a '1' on to the end!
         if max is None:
             return _Partitions(p + [1])
-        # extend p and min to include 0's at the end
+        # extend p and min to include 0s at the end
         p = p + [0] * (len(max) - len(p))
         min = min + [0] * (len(max) - len(min))
         # finally, run the algo to find next_p
@@ -4359,8 +4359,8 @@ class Partition(CombinatorialElement):
         that in English convention, a 1 corresponds to an East step, and
         a 0 corresponds to a North step.
 
-        Note that every full `0-1` sequence starts with infinitely many 0's and
-        ends with infinitely many 1's.
+        Note that every full `0-1` sequence starts with infinitely many 0s and
+        ends with infinitely many 1s.
 
         One place where these arise is in the affine symmetric group where
         one takes an affine permutation `w` and every `i` such that
@@ -4375,7 +4375,7 @@ class Partition(CombinatorialElement):
         OUTPUT:
 
         The finite `0-1` sequence is obtained from the full `0-1`
-        sequence by omitting all heading 0's and trailing 1's. The
+        sequence by omitting all heading 0s and trailing 1s. The
         output sequence is finite, starts with a 1 and ends with a
         0 (unless it is empty, for the empty partition). Its length
         is the sum of the first part of the partition with the
@@ -6636,8 +6636,8 @@ class Partitions_all(Partitions):
         that in English convention, a 1 corresponds to an East step, and
         a 0 corresponds to a North step.
 
-        Note that every full `0-1` sequence starts with infinitely many 0's and
-        ends with infinitely many 1's.
+        Note that every full `0-1` sequence starts with infinitely many 0s and
+        ends with infinitely many 1s.
 
         .. SEEALSO::
 
@@ -6645,8 +6645,8 @@ class Partitions_all(Partitions):
 
         INPUT:
 
-        The input should be a finite sequence of 0's and 1's. The
-        heading 0's and trailing 1's will be discarded.
+        The input should be a finite sequence of 0s and 1s. The
+        heading 0s and trailing 1s will be discarded.
 
         EXAMPLES::
 
@@ -6657,7 +6657,7 @@ class Partitions_all(Partitions):
             sage: Partitions().from_zero_one([1, 1, 1, 1, 0, 1, 0])
             [5, 4]
 
-        Heading 0's and trailing 1's are correctly handled::
+        Heading 0s and trailing 1s are correctly handled::
 
             sage: Partitions().from_zero_one([0,0,1,1,1,1,0,1,0,1,1,1])
             [5, 4]

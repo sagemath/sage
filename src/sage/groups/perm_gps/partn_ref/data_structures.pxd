@@ -141,11 +141,13 @@ cdef inline int OP_merge_list_perm(OrbitPartition *OP, int *gamma) noexcept:
     Joins the cells of OP which intersect the same orbit of gamma.
 
     INPUT:
-        gamma - an integer array representing i -> gamma[i].
+
+    - ``gamma`` - an integer array representing ``i -> gamma[i]``.
 
     OUTPUT:
-        1 - something changed
-        0 - orbits of gamma all contained in cells of OP
+
+    - 1 -- something changed
+    - 0 -- orbits of gamma all contained in cells of OP
     """
     cdef int i, i_root, gamma_i_root, changed = 0
     for i from 0 <= i < OP.degree:
@@ -319,13 +321,13 @@ cdef inline int split_point_and_refine(PartitionStack *PS, int v, void *S,
     the refinement function.
 
     INPUT:
-    PS -- the partition stack to refine
-    v -- the point to split
-    S -- the structure
-    refine_and_return_invariant -- the refinement function provided
-    cells_to_refine_by -- an array, contents ignored
-    group -- the containing group, NULL for full S_n
-    perm_stack -- represents a partial traversal decomposition for group
+    - ``PS`` -- the partition stack to refine
+    - ``v`` -- the point to split
+    - ``S`` -- the structure
+    - ``refine_and_return_invariant`` -- the refinement function provided
+    - ``cells_to_refine_by`` -- an array, contents ignored
+    - ``group`` -- the containing group, NULL for full S_n
+    - ``perm_stack`` -- represents a partial traversal decomposition for group
     """
     PS.depth += 1
     PS_clear(PS)

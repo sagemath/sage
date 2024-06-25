@@ -1713,7 +1713,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
         INPUT:
 
-        `i` -- an integer defining a position in the word `Q`
+        - ``i`` -- an integer defining a position in the word `Q`
 
         EXAMPLES::
 

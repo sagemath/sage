@@ -2432,7 +2432,7 @@ def phi_on_basis(L):
 
     INPUT:
 
-    a list of compositions, each composition in the hardcoded basis
+    - ``L`` -- list of compositions; each composition in the hardcoded basis
 
     This encodes a product of multiple zeta values.
 

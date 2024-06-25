@@ -235,6 +235,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         A[i,j] = value without bound checks.
 
         INPUT:
+
         - ``i`` -- row index
         - ``j`` -- column index
         - ``value`` -- a finite field element (not checked but assumed)
@@ -262,6 +263,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         Get A[i,j] without bound checks.
 
         INPUT:
+
         - ``i`` -- row index
         - ``j`` -- column index
 

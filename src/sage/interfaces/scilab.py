@@ -405,10 +405,10 @@ class Scilab(Expect):
         Return a Scilab matrix from a Sage matrix.
 
         INPUT:
-            A Sage matrix with entries in the rationals or reals.
 
-        OUTPUT:
-            A string that evaluates to a Scilab matrix.
+        - ``A`` -- Sage matrix with entries in the rationals or reals
+
+        OUTPUT: string that evaluates to a Scilab matrix
 
         EXAMPLES::
 

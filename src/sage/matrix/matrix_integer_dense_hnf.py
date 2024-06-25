@@ -287,13 +287,12 @@ def add_column_fallback(B, a, proof):
 
     INPUT:
 
-        B -- a square matrix (may be singular)
-        a -- an n x 1 matrix, where B has n rows
-        proof -- boolean; whether to prove result correct
+    - ``B`` -- a square matrix (may be singular)
+    - ``a`` -- an n x 1 matrix, where B has n rows
+    - ``proof`` -- boolean; whether to prove result correct
 
-    OUTPUT:
-
-    - x -- a vector such that H' = H_B.augment(x) is the HNF of A = B.augment(a)
+    OUTPUT: x; a vector such that ``H' = H_B.augment(x)`` is the HNF of
+    ``A = B.augment(a)``
 
     EXAMPLES::
 

@@ -892,7 +892,7 @@ def list_to_dict(l):
 
     INPUT:
 
-    a list ``l`` with possibly repeated elements
+    - ``l`` -- list with possibly repeated elements
 
     The keys are the elements of ``l`` (in the same order in which they appear)
     and values are the multiplicities of each element in ``l``.

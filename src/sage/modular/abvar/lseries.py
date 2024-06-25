@@ -320,7 +320,7 @@ class Lseries_padic(Lseries):
 
         INPUT:
 
-        other -- object
+        - ``other`` -- object
 
         OUTPUT: boolean
 
@@ -347,7 +347,7 @@ class Lseries_padic(Lseries):
 
         INPUT:
 
-        other -- object
+        - ``other`` -- object
 
         OUTPUT: boolean
 

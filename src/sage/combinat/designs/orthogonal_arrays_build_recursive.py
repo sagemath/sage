@@ -1021,7 +1021,7 @@ def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
 
         INPUT:
 
-        - ``OA1`` (an `OA(k,g_1)`
+        - ``OA1`` -- (an `OA(k,g_1)`
 
         - ``k``, ``g1``, ``g2`` -- integers
 

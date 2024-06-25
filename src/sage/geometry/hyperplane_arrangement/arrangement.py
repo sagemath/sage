@@ -1723,7 +1723,7 @@ class HyperplaneArrangementElement(Element):
                 v[pivot] = 1
                 complement_basis.append(vector(R, v))
         # reduce the hyperplane equations
-        echelon_pivots = []   # the column indices where N has 1's from the echelonization
+        echelon_pivots = []   # the column indices where N has 1s from the echelonization
         for pivot, row in echelon_col_iter(complement_basis):
             assert row[pivot] == 1
             echelon_pivots.append(pivot)

@@ -1630,12 +1630,6 @@ class FSMState(SageObject):
         """
         Return the label of the state.
 
-        INPUT:
-
-        Nothing.
-
-        OUTPUT: the label of the state
-
         EXAMPLES::
 
             sage: from sage.combinat.finite_state_machine import FSMState
@@ -1648,10 +1642,6 @@ class FSMState(SageObject):
     def __copy__(self):
         """
         Return a (shallow) copy of the state.
-
-        INPUT:
-
-        Nothing.
 
         OUTPUT: a new state
 
@@ -1791,10 +1781,6 @@ class FSMState(SageObject):
         """
         Return state for pickling excluding outgoing transitions.
 
-        INPUT:
-
-        None
-
         OUTPUT: a dictionary
 
         Outgoing transitions are in fact stored in states,
@@ -1850,10 +1836,6 @@ class FSMState(SageObject):
     def _repr_(self):
         """
         Return the string "label".
-
-        INPUT:
-
-        Nothing.
 
         OUTPUT: string
 
@@ -2327,10 +2309,6 @@ class FSMTransition(SageObject):
     def _repr_(self):
         """
         Represent a transitions as from state to state and input, output.
-
-        INPUT:
-
-        Nothing.
 
         OUTPUT: string
 
@@ -3474,10 +3452,6 @@ class FiniteStateMachine(SageObject):
         Since finite state machines are mutable, they should not be
         hashable, so we return a type error.
 
-        INPUT:
-
-        Nothing.
-
         OUTPUT: the hash of this finite state machine
 
         EXAMPLES::
@@ -4095,10 +4069,6 @@ class FiniteStateMachine(SageObject):
         """
         Represent the finite state machine as "Finite state machine
         with n states" where n is the number of states.
-
-        INPUT:
-
-        Nothing.
 
         OUTPUT: string
 
@@ -6859,10 +6829,6 @@ class FiniteStateMachine(SageObject):
         Return a new finite state machine with the accessible states
         of ``self`` and all transitions between those states.
 
-        INPUT:
-
-        Nothing.
-
         OUTPUT:
 
         A finite state machine with the accessible states of ``self`` and
@@ -8609,10 +8575,6 @@ class FiniteStateMachine(SageObject):
         transition to the earliest possible preceding transition of
         the path.
 
-        INPUT:
-
-        Nothing.
-
         OUTPUT: nothing
 
         Apply the following to each state `s` (except initial states) of the
@@ -8986,10 +8948,6 @@ class FiniteStateMachine(SageObject):
         Merges transitions which have the same ``from_state``,
         ``to_state`` and ``word_out`` while adding their ``word_in``.
 
-        INPUT:
-
-        Nothing.
-
         OUTPUT:
 
         A finite state machine with merged transitions. If no mergers occur,
@@ -9056,10 +9014,6 @@ class FiniteStateMachine(SageObject):
         """
         Consider ``self`` as Markov chain with probabilities as input labels
         and simplify it.
-
-        INPUT:
-
-        Nothing.
 
         OUTPUT: simplified version of ``self``
 
@@ -9497,10 +9451,6 @@ class FiniteStateMachine(SageObject):
         """
         Plots a graph of the finite state machine with labeled
         vertices and labeled edges.
-
-        INPUT:
-
-        Nothing.
 
         OUTPUT: a plot of the graph of the finite state machine
 
@@ -10782,10 +10732,6 @@ class Automaton(FiniteStateMachine):
         Represent the finite state machine as "Automaton with n
         states" where n is the number of states.
 
-        INPUT:
-
-        Nothing.
-
         OUTPUT: string
 
         EXAMPLES::
@@ -11957,10 +11903,6 @@ class Transducer(FiniteStateMachine):
         """
         Represent the transducer as "Transducer with n states" where
         n is the number of states.
-
-        INPUT:
-
-        Nothing.
 
         OUTPUT: string
 
@@ -14174,10 +14116,6 @@ class FSMProcessIterator(SageObject, Iterator):
     def __next__(self):
         """
         Makes one step in processing the input tape.
-
-        INPUT:
-
-        Nothing.
 
         OUTPUT:
 

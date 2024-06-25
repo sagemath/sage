@@ -710,8 +710,7 @@ def construction_four_symbol_delta_code_I(X, Y, Z, W):
     - ``Z`` -- list; the third sequence (length `n`)
     - ``W`` -- list; the fourth sequence (length `n`)
 
-    OUTPUT:
-        A tuple containing the 4-symbol `\delta` code of length `2n+1`.
+    OUTPUT: tuple containing the 4-symbol `\delta` code of length `2n+1`
 
     EXAMPLES::
 
@@ -780,8 +779,7 @@ def construction_four_symbol_delta_code_II(X, Y, Z, W):
     - ``Z`` -- list; the third sequence (length `n`)
     - ``W`` -- list; the fourth sequence (length `n`)
 
-    OUTPUT:
-        A tuple containing the four 4-symbol `\delta` code of length `4n+3`.
+    OUTPUT: tuple containing the four 4-symbol `\delta` code of length `4n+3`
 
     EXAMPLES::
 

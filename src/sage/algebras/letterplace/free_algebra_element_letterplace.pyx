@@ -708,8 +708,8 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
 
         INPUT:
 
-        A twosided homogeneous ideal `I` of the parent `F` of
-        this element, `x`.
+        - ``I`` -- a twosided homogeneous ideal of the parent `F` of
+          this element, `x`
 
         OUTPUT: the normal form of `x` wrt. `I`
 

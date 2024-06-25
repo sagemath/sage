@@ -121,10 +121,6 @@ def version_dict():
     """
     A dictionary describing the version of Sage.
 
-    INPUT:
-
-    nothing
-
     OUTPUT: dictionary with keys 'major', 'minor', 'tiny', 'prerelease'
 
     This process the Sage version string and produces a dictionary.

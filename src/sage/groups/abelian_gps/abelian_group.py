@@ -334,7 +334,7 @@ def _normalize(n, gens_orders=None, names='f'):
 
     INPUT:
 
-    See :func:`AbelianGroup`
+    See :func:`AbelianGroup`.
 
     OUTPUT:
 

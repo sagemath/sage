@@ -2020,7 +2020,7 @@ class FockSpaceTruncated(FockSpace):
 
             # For non-interior partitions
             # Construct the d's and the partition ``a``
-            a = list(la) + [0]*(k - 1 - len(la)) # Add 0's to get the correct length
+            a = list(la) + [0]*(k - 1 - len(la)) # Add 0s to get the correct length
             a = [a[i] + (k - 1 - i) for i in range(k-1)] # Shift the diagram
             #shifted = list(a) # Make a copy of the shifted partition in case we need it later
             d = [(a[i] - a[i+1]) % n for i in range(k-2)]

@@ -3383,7 +3383,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
         INPUT:
 
-        same arguments as :func:`~sage.schemes.toric.variety.ToricVariety`
+        Same arguments as :func:`~sage.schemes.toric.variety.ToricVariety`.
 
         OUTPUT: a toric variety
 

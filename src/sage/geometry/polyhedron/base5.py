@@ -2407,7 +2407,8 @@ class Polyhedron_base5(Polyhedron_base4):
         if `v` is a vertex.
 
         INPUT:
-            - ``v`` -- a vertex of ``self`` or a point outside it
+
+        - ``v`` -- a vertex of ``self`` or a point outside it
 
         EXAMPLES::
 

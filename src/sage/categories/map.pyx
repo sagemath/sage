@@ -1357,7 +1357,7 @@ cdef class Section(Map):
         """
         INPUT:
 
-        A map.
+        - ``map`` -- a map
 
         TESTS::
 

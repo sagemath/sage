@@ -424,7 +424,8 @@ def latin_square_product(M, N, *others):
 
     INPUT:
 
-    An arbitrary number of latin squares (greater than 2).
+    - ``M``, ``N``, ``*others`` -- an arbitrary number of latin squares
+      (greater than or equal to 2)
 
     EXAMPLES::
 

@@ -92,7 +92,8 @@ cpdef int lex_cmp(ClonableIntArray v1, ClonableIntArray v2) noexcept:
 
     INPUT:
 
-    Two instances `v_1, v_2` of :class:`~sage.structure.list_clone.ClonableIntArray`
+    - ``v1``, ``v2`` -- two instances of
+      :class:`~sage.structure.list_clone.ClonableIntArray`
 
     OUTPUT:
 

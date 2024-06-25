@@ -2379,7 +2379,7 @@ def companion_matrix(poly, format='right'):
         M = sage.matrix.constructor.matrix(poly.universe(), n, n)
     except TypeError:
         raise TypeError("unable to find common ring for coefficients from polynomial")
-    # 1's below diagonal, or above diagonal
+    # 1s below diagonal, or above diagonal
     if format in ['right', 'top']:
         for i in range(n - 1):
             M[i+1, i] = 1

@@ -1838,7 +1838,7 @@ class A005408(SloaneSequence):
 class A000012(SloaneSequence):
     def __init__(self):
         r"""
-        The all 1's sequence.
+        The all 1s sequence.
 
         INPUT:
 
@@ -1849,7 +1849,7 @@ class A000012(SloaneSequence):
         EXAMPLES::
 
             sage: a = sloane.A000012; a
-            The all 1's sequence.
+            The all 1s sequence.
             sage: a(1)
             1
             sage: a(2007)
@@ -1868,9 +1868,9 @@ class A000012(SloaneSequence):
         EXAMPLES::
 
             sage: sloane.A000012._repr_()
-            "The all 1's sequence."
+            "The all 1s sequence."
         """
-        return "The all 1's sequence."
+        return "The all 1s sequence."
 
     def _eval(self, n):
         """
@@ -1885,7 +1885,7 @@ class A000012(SloaneSequence):
 class A000120(SloaneSequence):
     def __init__(self):
         r"""
-        1's-counting sequence: number of 1's in binary expansion of `n`.
+        1s-counting sequence: number of 1s in binary expansion of `n`.
 
         INPUT:
 
@@ -1896,7 +1896,7 @@ class A000120(SloaneSequence):
         EXAMPLES::
 
             sage: a = sloane.A000120;a
-            1's-counting sequence: number of 1's in binary expansion of n.
+            1s-counting sequence: number of 1s in binary expansion of n.
             sage: a(0)
             0
             sage: a(2)
@@ -1917,9 +1917,9 @@ class A000120(SloaneSequence):
         EXAMPLES::
 
             sage: sloane.A000120._repr_()
-            "1's-counting sequence: number of 1's in binary expansion of n."
+            "1s-counting sequence: number of 1s in binary expansion of n."
         """
-        return "1's-counting sequence: number of 1's in binary expansion of n."
+        return "1s-counting sequence: number of 1s in binary expansion of n."
 
     def f(self, n):
         """
@@ -1950,7 +1950,7 @@ class A010060(SloaneSequence):
         Let `A_k` denote the first `2^k` terms; then
         `A_0 = 0`, and for `k \ge 0`,
         `A_{k+1} = A_k B_k`, where `B_k` is obtained
-        from `A_k` by interchanging 0's and 1's.
+        from `A_k` by interchanging 0s and 1s.
 
         INPUT:
 
@@ -2001,7 +2001,7 @@ class A010060(SloaneSequence):
 class A000069(SloaneSequence):
     def __init__(self):
         r"""
-        Odious numbers: odd number of 1's in binary expansion.
+        Odious numbers: odd number of 1s in binary expansion.
 
         INPUT:
 
@@ -2012,7 +2012,7 @@ class A000069(SloaneSequence):
         EXAMPLES::
 
             sage: a = sloane.A000069; a
-            Odious numbers: odd number of 1's in binary expansion.
+            Odious numbers: odd number of 1s in binary expansion.
             sage: a(0)
             1
             sage: a(2)
@@ -2031,9 +2031,9 @@ class A000069(SloaneSequence):
         EXAMPLES::
 
             sage: sloane.A000069._repr_()
-            "Odious numbers: odd number of 1's in binary expansion."
+            "Odious numbers: odd number of 1s in binary expansion."
         """
-        return "Odious numbers: odd number of 1's in binary expansion."
+        return "Odious numbers: odd number of 1s in binary expansion."
 
     def _eval(self, n):
         """
@@ -2048,7 +2048,7 @@ class A000069(SloaneSequence):
 class A001969(SloaneSequence):
     def __init__(self):
         r"""
-        Evil numbers: even number of 1's in binary expansion.
+        Evil numbers: even number of 1s in binary expansion.
 
         INPUT:
 
@@ -2059,7 +2059,7 @@ class A001969(SloaneSequence):
         EXAMPLES::
 
             sage: a = sloane.A001969;a
-            Evil numbers: even number of 1's in binary expansion.
+            Evil numbers: even number of 1s in binary expansion.
             sage: a(0)
             0
             sage: a(1)
@@ -2082,9 +2082,9 @@ class A001969(SloaneSequence):
         EXAMPLES::
 
             sage: sloane.A001969._repr_()
-            "Evil numbers: even number of 1's in binary expansion."
+            "Evil numbers: even number of 1s in binary expansion."
         """
-        return "Evil numbers: even number of 1's in binary expansion."
+        return "Evil numbers: even number of 1s in binary expansion."
 
     def _eval(self, n):
         """
@@ -5759,7 +5759,7 @@ class A000166(SloaneSequence):
         permutations of `n` elements with no fixed points.
 
         With offset 1 also the permanent of a (0,1)-matrix of order
-        `n` with `n` 0's not on a line.
+        `n` with `n` 0s not on a line.
 
         INPUT:
 

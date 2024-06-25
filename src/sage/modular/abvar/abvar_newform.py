@@ -36,7 +36,8 @@ class ModularAbelianVariety_newform(ModularAbelianVariety_modsym_abstract):
         newform `f`.
 
         INPUT:
-            f -- a newform
+
+        - ``f`` -- a newform
 
         EXAMPLES::
 

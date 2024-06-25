@@ -319,8 +319,9 @@ cdef class DenseGraph(CGraph):
         - ``l`` -- positive integer label, or zero for no label, or ``-1`` for any label
 
         OUTPUT:
-            0 -- False
-            1 -- True
+
+        - 0 -- False
+        - 1 -- True
         """
         if unlikely(l > 0):
             raise ValueError("cannot locate labeled arc in unlabeled graph")

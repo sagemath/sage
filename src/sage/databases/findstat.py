@@ -4715,7 +4715,7 @@ class FindStatCollections(UniqueRepresentation, Parent):
 
         INPUT:
 
-        see :class:`FindStatCollection`.
+        See :class:`FindStatCollection`.
 
         TESTS:
 

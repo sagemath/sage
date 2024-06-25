@@ -591,7 +591,7 @@ class EisensteinSubmodule_eps(EisensteinSubmodule_params):
         #raise NotImplementedError, "must restrict scalars down correctly."
 
 
-def cyclotomic_restriction(L,K):
+def cyclotomic_restriction(L, K):
     r"""
     Given two cyclotomic fields L and K, compute the compositum
     M of K and L, and return a function and the index [M:K]. The
@@ -599,7 +599,7 @@ def cyclotomic_restriction(L,K):
 
     INPUT:
 
-    element alpha in L
+    - ``L``, ``K`` -- element alpha in L
 
     OUTPUT:
 
@@ -636,11 +636,11 @@ def cyclotomic_restriction(L,K):
 
             INPUT:
 
-            element alpha in L
+            - ``x`` -- element alpha in L
 
             OUTPUT:
 
-            a polynomial `f(x)` in `K[x]` such that `f(\zeta_m) = \alpha`,
+            A polynomial `f(x)` in `K[x]` such that `f(\zeta_m) = \alpha`,
             where we view alpha as living in `M`. (Note that `\zeta_m`
             generates `M`, not `L`.)
 
@@ -659,15 +659,14 @@ def cyclotomic_restriction(L,K):
                euler_phi(L.zeta_order())//euler_phi(K.zeta_order())
 
 
-def cyclotomic_restriction_tower(L,K):
+def cyclotomic_restriction_tower(L, K):
     """
     Suppose L/K is an extension of cyclotomic fields and L=Q(zeta_m).
     This function computes a map with the following property:
 
-
     INPUT:
 
-    an element alpha in L
+    - ``L``, ``K`` -- an element alpha in L
 
     OUTPUT:
 
@@ -698,7 +697,7 @@ def cyclotomic_restriction_tower(L,K):
 
         INPUT:
 
-        an element alpha in L
+        - ``a`` -- element alpha in L
 
         OUTPUT:
 

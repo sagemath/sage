@@ -109,8 +109,8 @@ cdef class FieldConverter_class:
         """
         INPUT:
 
-        A finite field with Givaro implementation and at most 251
-        elements. These assumptions are not tested.
+        - ``field`` -- a finite field with Givaro implementation and at most 251
+          elements. These assumptions are not tested.
 
         EXAMPLES::
 
@@ -202,8 +202,8 @@ cdef class PrimeFieldConverter_class(FieldConverter_class):
         """
         INPUT:
 
-        A finite *prime* field with at most 251 elements.
-        This assumption is not tested.
+        - ``field`` -- a finite *prime* field with at most 251 elements.
+          This assumption is not tested.
 
         EXAMPLES::
 

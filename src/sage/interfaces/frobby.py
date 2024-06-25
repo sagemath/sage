@@ -145,11 +145,11 @@ class Frobby:
 
         INPUT:
 
-            monomial_ideal -- A monomial ideal.
+        - ``monomial_ideal`` -- a monomial ideal
 
         OUTPUT:
 
-            A polynomial in the same ring as the ideal.
+        A polynomial in the same ring as the ideal.
 
         EXAMPLES::
 

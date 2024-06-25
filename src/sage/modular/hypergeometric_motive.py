@@ -417,7 +417,7 @@ class HypergeometricData:
 
         INPUT:
 
-        three possibilities are offered, each describing a quotient
+        Three possibilities are offered, each describing a quotient
         of products of cyclotomic polynomials.
 
         - ``cyclotomic`` -- a pair of lists of nonnegative integers,

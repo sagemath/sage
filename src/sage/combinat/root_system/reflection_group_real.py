@@ -53,7 +53,7 @@ from sage.misc.sage_eval import sage_eval
 from sage.combinat.root_system.reflection_group_element import RealReflectionGroupElement
 
 
-def ReflectionGroup(*args,**kwds):
+def ReflectionGroup(*args, **kwds):
     r"""
     Construct a finite (complex or real) reflection group as a Sage
     permutation group by fetching the permutation representation of the
@@ -61,7 +61,7 @@ def ReflectionGroup(*args,**kwds):
 
     INPUT:
 
-    can be one or multiple of the following:
+    Can be one or multiple of the following:
 
     - a triple `(r, p, n)` with `p` divides `r`, which denotes the group
       `G(r, p, n)`

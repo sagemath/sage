@@ -1019,9 +1019,9 @@ cdef class BinaryCode:
 
     def _word(self, coords):
         """
-        Considering coords as an integer in binary, think of the 0's and 1's as
-        coefficients of the basis given by self.matrix(). This function returns
-        a string representation of that word.
+        Considering ``coords`` as an integer in binary, think of the 0s and 1s
+        as coefficients of the basis given by ``self.matrix()``. This function
+        returns a string representation of that word.
 
         EXAMPLES::
 
@@ -3148,14 +3148,15 @@ cdef class BinaryCodeClassifier:
         - ``verbosity`` -- nonnegative integer
 
         OUTPUT:
-            a tuple, (gens, labeling, size, base)
-            gens -- list of permutations (in list form) representing generators
-                of the permutation automorphism group of the code CC.
-            labeling -- a permutation representing the canonical labeling of the
-                code. mostly for internal use; entries describe the relabeling
-                on the columns.
-            size -- the order of the automorphism group.
-            base -- a set of cols whose action determines the action on all cols
+
+        a tuple, (gens, labeling, size, base)
+        - gens; list of permutations (in list form) representing generators
+          of the permutation automorphism group of the code CC
+        - labeling; a permutation representing the canonical labeling of the
+          code. mostly for internal use; entries describe the relabeling
+          on the columns.
+        - size; the order of the automorphism group
+        - base; a set of cols whose action determines the action on all cols
 
         EXAMPLES::
 

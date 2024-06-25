@@ -97,9 +97,7 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
         r"""
         Return the Cholesky decomposition of a Hermitian matrix.
 
-        INPUT:
-
-        A positive-definite matrix over ``RDF`` or ``CDF``.
+        Applies to a positive-definite matrix over ``RDF`` or ``CDF``.
 
         OUTPUT:
 

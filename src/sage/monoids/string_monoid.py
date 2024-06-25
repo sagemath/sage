@@ -168,7 +168,7 @@ class BinaryStringMonoid(StringMonoid_class):
         Return ``x`` coerced into this free monoid.
 
         One can create a free binary string monoid element from a
-        Python string of 0's and 1's or list of integers.
+        Python string of 0s and 1s or list of integers.
 
         NOTE: Due to the ambiguity of the second generator '1' with
         the identity element '' of the monoid, the syntax S(1) is not
@@ -288,7 +288,7 @@ class OctalStringMonoid(StringMonoid_class):
         Return ``x`` coerced into this free monoid.
 
         One can create a free octal string monoid element from a
-        Python string of 0's to 7's or list of integers.
+        Python string of 0s to 7s or list of integers.
 
         EXAMPLES::
 

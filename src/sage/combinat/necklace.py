@@ -461,7 +461,7 @@ def _sfc(content, equality=False):
 
     .. WARNING::
 
-        You will get incorrect results if there are leading 0's in ``content``.
+        You will get incorrect results if there are leading 0s in ``content``.
         See :issue:`12997` and :issue:`17436`.
 
     EXAMPLES::

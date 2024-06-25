@@ -200,7 +200,7 @@ class LetterplaceIdeal(Ideal_nc):
 
         INPUT:
 
-        - ``degbound`` (optional integer, or Infinity): If it is provided,
+        - ``degbound`` -- optional integer, or Infinity; if it is provided,
           a Groebner basis at least out to that degree is returned. By
           default, the current degree bound of the underlying ring is used.
 

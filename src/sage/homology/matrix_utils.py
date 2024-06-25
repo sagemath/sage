@@ -56,7 +56,7 @@ def dhsw_snf(mat, verbose=False):
     Suppose that there were `N` of these.
 
     The resulting matrix should be much smaller; we then feed it
-    to Sage's ``elementary_divisors`` function, and prepend `N` 1's to
+    to Sage's ``elementary_divisors`` function, and prepend `N` 1s to
     account for the rows deleted in the previous step.
 
     EXAMPLES::

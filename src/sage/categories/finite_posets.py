@@ -1360,10 +1360,10 @@ class FinitePosets(CategoryWithAxiom):
 
             INPUT:
 
-            - ``element_constructor`` (defaults to ``set``) -- a type
+            - ``element_constructor`` -- (default: ``set``) a type
               constructor (``set``, ``tuple``, ``list``, ``frozenset``,
               ``iter``, etc.) which is to be applied to the antichains
-              before they are returned.
+              before they are returned
 
             OUTPUT:
 
@@ -1422,10 +1422,10 @@ class FinitePosets(CategoryWithAxiom):
 
             INPUT:
 
-            - ``element_constructor`` (defaults to ``set``) -- a type
+            - ``element_constructor`` -- (default: ``set``) a type
               constructor (``set``, ``tuple``, ``list``, ``frozenset``,
               ``iter``, etc.) which is to be applied to the antichains
-              before they are returned.
+              before they are returned
 
             OUTPUT:
 

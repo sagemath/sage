@@ -328,8 +328,7 @@ cdef class GenericGraphBackend(SageObject):
 
         - ``v`` -- vertex label
 
-        OUTPUT:
-            boolean
+        OUTPUT: boolean
 
         TESTS::
 
@@ -382,9 +381,8 @@ cdef class GenericGraphBackend(SageObject):
         - ``vertices`` -- list of vertex labels
         - ``labels`` -- boolean
 
-        OUTPUT:
-            a generator which yields edges, with or without labels
-            depending on the labels parameter.
+        OUTPUT: a generator which yields edges, with or without labels
+        depending on the labels parameter
 
         TESTS::
 

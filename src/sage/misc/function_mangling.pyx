@@ -233,7 +233,7 @@ cdef class ArgumentFixer:
 
         INPUT:
 
-        Any positional or named arguments
+        - ``*args``, ``**kwds`` -- any positional or named arguments
 
         OUTPUT: we return a tuple
 

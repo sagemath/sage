@@ -102,10 +102,10 @@ cdef class ntl_GF2X():
         extension fields over GF(2) (uses modulus).
 
         INPUT:
-            x -- value to be assigned to this element. See examples.
 
-        OUTPUT:
-            a new ntl.GF2X element
+        - ``x`` -- value to be assigned to this element. See examples.
+
+        OUTPUT: a new ntl.GF2X element
 
         EXAMPLES::
 
@@ -369,7 +369,8 @@ cdef class ntl_GF2X():
         `X^i`).
 
         INPUT:
-            i -- offset/power of X
+
+        - ``i`` -- offset/power of X
 
         EXAMPLES::
 
@@ -388,7 +389,8 @@ cdef class ntl_GF2X():
         `X^i`).
 
         INPUT:
-            i -- offset/power of X
+
+        - ``i`` -- offset/power of X
 
         EXAMPLES::
 
@@ -406,7 +408,8 @@ cdef class ntl_GF2X():
         Return GCD of ``self`` and ``other``.
 
         INPUT:
-            other -- ntl.GF2X
+
+        - ``other`` -- ntl.GF2X
 
         EXAMPLES::
 
@@ -430,7 +433,8 @@ cdef class ntl_GF2X():
             r = s  * self + t  * other.
 
         INPUT:
-            other -- ntl.GF2X
+
+        - ``other`` -- ntl.GF2X
 
         EXAMPLES::
 
@@ -474,9 +478,8 @@ cdef class ntl_GF2X():
              sage: e.list()
              [1, 1, 1, 1, 1, 1, 1, 1]
 
-        OUTPUT:
-             a list of digits representing the coefficients in this element's
-             polynomial representation
+        OUTPUT: list of digits representing the coefficients in this element's
+        polynomial representation
         """
         return [self[i] for i in range(GF2X_deg(self.x)+1)]
 

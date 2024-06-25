@@ -68,6 +68,7 @@ class OperationTable(SageObject):
       perhaps when the set is infinite.
 
     OUTPUT:
+
     An object with methods that abstracts multiplication tables,
     addition tables, Cayley tables, etc. It should be general
     enough to be useful for any finite algebraic structure
@@ -493,6 +494,7 @@ class OperationTable(SageObject):
         Helper function to create names of elements of algebraic structures.
 
         INPUT:
+
         Identical to the input for :class:`OperationTable` and :meth:`change_names`,
         so look there for details.
 
@@ -606,6 +608,7 @@ class OperationTable(SageObject):
         - ``pair`` -- two elements of the structure
 
         OUTPUT:
+
         The element of the structure computed by the operation for
         the two input elements (in the order provided).
 
@@ -667,6 +670,7 @@ class OperationTable(SageObject):
         - ``other`` -- a second table to compare to ``self``
 
         OUTPUT:
+
         Tables are equal if they have the same operation and elements.
 
         EXAMPLES::
@@ -813,6 +817,7 @@ class OperationTable(SageObject):
         Return a dictionary associating names with elements.
 
         OUTPUT:
+
         A dictionary whose keys are strings used as names
         for entries of the table and values that are the
         actual elements of the algebraic structure.
@@ -833,6 +838,7 @@ class OperationTable(SageObject):
         using integers to reference the elements.
 
         OUTPUT:
+
         The rows of the table, as a list of rows, each row
         being a list of integer entries.  The integers correspond
         to the order of the elements in the headings of the table

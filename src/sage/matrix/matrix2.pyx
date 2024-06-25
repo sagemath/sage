@@ -1570,9 +1570,9 @@ cdef class Matrix(Matrix1):
         maximal permanental minor is just the permanent.
 
         For a (0,1)-matrix `A` the permanental `k`-minor
-        counts the number of different selections of `k` 1's of
-        `A` with no two of the 1's on the same row and no two of the
-        1's on the same column.
+        counts the number of different selections of `k` 1s of
+        `A` with no two of the 1s on the same row and no two of the
+        1s on the same column.
 
         See Brualdi and Ryser: Combinatorial Matrix Theory, p. 203. Note
         the typo `p_0(A) = 0` in that reference! For applications
@@ -1865,7 +1865,7 @@ cdef class Matrix(Matrix1):
         - ``complement`` -- boolean (default: ``False``); whether we consider the
           rook vector of the complement matrix. If set to ``True`` then the
           matrix must have entries in {0, 1} and the complement matrix is the
-          one for which the 0's are replaced by 1's and 1's by 0's.
+          one for which the 0s are replaced by 1s and 1s by 0s.
 
         - ``use_complement`` -- boolean (default: ``None``); whether to compute the
           rook vector of a (0,1)-matrix from its complement. By default this is
@@ -12955,14 +12955,11 @@ cdef class Matrix(Matrix1):
         r"""
         Return the Cholesky decomposition of a Hermitian matrix.
 
-        INPUT:
-
-        A positive-definite matrix. Generally, the base ring for the
-        entries of the matrix needs to be a subfield of the algebraic
-        numbers (``QQbar``). Examples include the rational numbers
-        (``QQ``), some number fields, and real algebraic numbers and
-        the algebraic numbers themselves. Symbolic matrices can also
-        occasionally be factored.
+        Applies to a positive-definite matrix. Generally, the base ring for the
+        entries of the matrix needs to be a subfield of the algebraic numbers
+        (``QQbar``). Examples include the rational numbers (``QQ``), some
+        number fields, and real algebraic numbers and the algebraic numbers
+        themselves. Symbolic matrices can also occasionally be factored.
 
         OUTPUT:
 

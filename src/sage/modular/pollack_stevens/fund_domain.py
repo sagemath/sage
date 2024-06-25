@@ -115,7 +115,7 @@ class PollackStevensModularDomain(SageObject):
         r"""
         INPUT:
 
-            See :class:`PollackStevensModularDomain`.
+        See :class:`PollackStevensModularDomain`.
 
         EXAMPLES::
 

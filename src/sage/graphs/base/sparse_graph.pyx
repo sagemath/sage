@@ -587,8 +587,9 @@ cdef class SparseGraph(CGraph):
         - ``u``, ``v`` -- nonnegative integers
 
         OUTPUT:
-            0 -- No error.
-            1 -- No arc to delete.
+
+        - 0 -- no error
+        - 1 -- no arc to delete
         """
         cdef int n_arcs = self._del_arc_unsafe(u, v, self.vertices)
         if u != v or self.is_directed():
@@ -1027,8 +1028,9 @@ cdef class SparseGraph(CGraph):
         Delete an arc (u, v) with label l.
 
         OUTPUT:
-            0 -- No error.
-            1 -- No arc with label l.
+
+        - 0 -- no error
+        - 1 -- no arc with label l
         """
         cdef int i = (u * self.hash_length) + (v & self.hash_mask)
         cdef SparseGraphBTNode **old_parent = parent

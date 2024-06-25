@@ -278,7 +278,7 @@ class SimplicialSets(Category_singleton):
 
                 INPUT:
 
-                - ``simplify`` (bool, optional ``True``) -- if
+                - ``simplify`` -- boolean (default: ``True``); if
                   ``False``, then return a presentation of the group
                   in terms of generators and relations. If ``True``,
                   the default, simplify as much as GAP is able to.

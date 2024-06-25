@@ -2592,8 +2592,8 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-            See the method :meth:`rauzy_fractal_plot` for a description
-            of the options and more examples.
+        See the method :meth:`rauzy_fractal_plot` for a description
+        of the options and more examples.
 
         OUTPUT: dictionary of list of points
 

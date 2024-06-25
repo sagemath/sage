@@ -2400,7 +2400,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         """
         if not all(x in (0, 1) for x in nums):
             raise ValueError("The tuple %s should consist " % (nums,) +
-                             "only of 0's and 1's")
+                             "only of 0s and 1s")
         else:
             if self.basis_name() != 'milnor':
                 return self(SteenrodAlgebra(p=self.prime(),
@@ -4022,7 +4022,7 @@ def SteenrodAlgebra(p=2, basis='milnor', generic='auto', **kwds):
     following::
 
         sage: A2 = SteenrodAlgebra(profile=[3,2,1])
-        sage: B2 = SteenrodAlgebra(profile=[3,2,1,0,0]) # trailing 0's ignored
+        sage: B2 = SteenrodAlgebra(profile=[3,2,1,0,0]) # trailing 0s ignored
         sage: A2 == B2
         True
         sage: C2 = SteenrodAlgebra(profile=lambda n: max(4-n, 0), truncation_type=0)

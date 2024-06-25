@@ -670,8 +670,9 @@ def _convert_matrix_from_modsyms(symbs, T):
     the Atkin-Lehner operators, for instance, when there are oldforms present.
 
     OUTPUT:
-        A pair `(T_e, ps)` with `T_e` the converted matrix and `ps` a list
-        of pivot elements of the echelon basis.
+
+    A pair `(T_e, ps)` with `T_e` the converted matrix and `ps` a list
+    of pivot elements of the echelon basis.
 
     EXAMPLES::
 

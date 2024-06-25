@@ -91,12 +91,12 @@ cdef class ntl_GF2E():
         NTL.  So e.g. '[0 1]' == '0x2' == x.
 
         INPUT:
-            x -- value to be assigned to this element. Same types as
-                 ntl.GF2X() are accepted.
-            modulus -- the context/modulus of the field
 
-        OUTPUT:
-            a new ntl.GF2E element
+        - ``x`` -- value to be assigned to this element. Same types as
+          ``ntl.GF2X()`` are accepted.
+        - ``modulus`` -- the context/modulus of the field
+
+        OUTPUT: a new ``ntl.GF2E`` element
 
         EXAMPLES::
 
@@ -425,9 +425,8 @@ cdef class ntl_GF2E():
              sage: e.list()
              [1, 1, 1, 1, 1, 1, 1, 1]
 
-        OUTPUT:
-             a list of digits representing the coefficients in this element's
-             polynomial representation
+        OUTPUT: list of digits representing the coefficients in this element's
+        polynomial representation
         """
         cdef int i
         cdef GF2X_c x = GF2E_rep(self.x)

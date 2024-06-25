@@ -275,7 +275,7 @@ class FqfOrthogonalGroup(AbelianGroupAutomorphismGroup_subgroup):
 
         INPUT:
 
-        Something that acts on the domain.
+        - ``f`` -- something that acts on the domain
 
         EXAMPLES::
 

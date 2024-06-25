@@ -978,7 +978,7 @@ class FGP_Module_class(Module):
         r"""
         Return the diagonal entries of the Smith form of the relative
         matrix that defines ``self`` (see :meth:`._relative_matrix`)
-        padded with zeros, excluding 1's by default.   Thus if ``v`` is the
+        padded with zeros, excluding 1s by default.   Thus if ``v`` is the
         list of integers returned, then ``self`` is abstractly isomorphic to
         the product of cyclic groups `\ZZ/n\ZZ` where `n` is in ``v``.
 

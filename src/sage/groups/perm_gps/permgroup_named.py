@@ -948,11 +948,11 @@ class DiCyclicGroup(PermutationGroup_unique):
     """
     def __init__(self, n):
         r"""
-        The dicyclic group of order `4*n`, as a permutation group.
+        The dicyclic group of order `4n`, as a permutation group.
 
         INPUT:
 
-        n -- a positive integer, two or greater
+        - ``n`` -- a positive integer; 2 or greater
 
         EXAMPLES::
 

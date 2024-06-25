@@ -502,8 +502,8 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
 
         INPUT:
 
-        `g` (list) -- `g=[a,b,c,d]` where `a,b,c,d` are integers
-        defining a `2\times2` integer matrix.
+        - ``g`` -- list; `g=[a,b,c,d]` where `a,b,c,d` are integers
+          defining a `2\times2` integer matrix
 
         OUTPUT:
 
@@ -2831,7 +2831,7 @@ class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
     """
     def __init__(self, N, sign, F, custom_init=None, category=None):
         """
-        Initialize a space of modular symbols. INPUT:
+        Initialize a space of modular symbols.
 
         INPUT:
 

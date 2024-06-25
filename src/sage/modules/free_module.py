@@ -4987,7 +4987,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
         list being empty, so this provides a test - see the examples below.
 
         The returned vectors are always independent, and with ``zeros`` set to
-        ``'left'`` they have 1's in their first nonzero entries and a qualitative
+        ``'left'`` they have 1s in their first nonzero entries and a qualitative
         disposition to having zeros in the low-index entries.  With ``zeros`` set
         to ``'right'`` the situation is reversed with a qualitative disposition
         for zeros in the high-index entries.

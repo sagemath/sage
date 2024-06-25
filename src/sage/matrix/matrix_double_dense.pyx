@@ -908,7 +908,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         Effectively, ``P`` permutes the rows of ``A``.  Then ``L``
         can be viewed as a sequence of row operations on this matrix,
         where each operation is adding a multiple of a row to a
-        subsequent row.  There is no scaling (thus 1's on the diagonal
+        subsequent row.  There is no scaling (thus 1s on the diagonal
         of ``L``) and no row-swapping (``P`` does that).  As a result
         ``U`` is close to being the result of Gaussian-elimination.
         However, round-off errors can make it hard to determine
@@ -2010,9 +2010,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         Return a factorization into a unitary matrix and an
         upper-triangular matrix.
 
-        INPUT:
-
-        Any matrix over ``RDF`` or ``CDF``.
+        Applies to any matrix over ``RDF`` or ``CDF``.
 
         OUTPUT:
 
@@ -3448,9 +3446,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         eigenvalues and only positive determinants of leading
         principal submatrices.
 
-        INPUT:
-
-        Any matrix over ``RDF`` or ``CDF``.
+        Applies to any matrix over ``RDF`` or ``CDF``.
 
         OUTPUT:
 

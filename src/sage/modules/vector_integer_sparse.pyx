@@ -87,12 +87,15 @@ cdef Py_ssize_t mpz_binary_search(mpz_t* v, Py_ssize_t n, mpz_t x, Py_ssize_t* i
     obtain an ordered array.
 
     INPUT:
-       v -- array of mpz_t  (integer)
-       n -- integer (length of array v)
-       x -- mpz_t  (integer)
+
+    - ``v`` -- array of mpz_t  (integer)
+    - ``n`` -- integer (length of array v)
+    - ``x`` -- mpz_t  (integer)
+
     OUTPUT:
-       position of x (as a Py_ssize_t)
-       ins -- (call be pointer), the insertion point if x is not found.
+
+    position of x (as a Py_ssize_t)
+    ins -- (call be pointer), the insertion point if x is not found.
     """
     cdef Py_ssize_t i, j, k, c
     if n == 0:

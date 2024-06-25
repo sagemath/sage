@@ -40,7 +40,8 @@ class MPolynomialSystemGenerator(SageObject):
         encoded.
 
         INPUT:
-            name -- string
+
+        - ``name`` -- string
 
         EXAMPLES::
 
@@ -61,8 +62,9 @@ class MPolynomialSystemGenerator(SageObject):
         This function is typically used by self._vars.
 
         INPUT:
-            name -- string
-            round -- integer index
+
+        - ``name`` -- string
+        - ``round`` -- integer index
 
         EXAMPLES::
 
@@ -81,8 +83,9 @@ class MPolynomialSystemGenerator(SageObject):
         index 'round'.
 
         INPUT:
-            name -- string
-            round -- integer index
+
+        - ``name`` -- string
+        - ``round`` -- integer index
 
         EXAMPLES::
 
@@ -131,8 +134,9 @@ class MPolynomialSystemGenerator(SageObject):
         Encrypt plaintext P using the key K.
 
         INPUT:
-            P -- plaintext (vector, list)
-            K -- key (vector, list)
+
+        - ``P`` -- plaintext (vector, list)
+        - ``K`` -- key (vector, list)
 
         EXAMPLES::
 
@@ -167,8 +171,9 @@ class MPolynomialSystemGenerator(SageObject):
         to their solutions.
 
         INPUT:
-            P -- plaintext (vector, list)
-            K -- key (vector, list)
+
+        - ``P`` -- plaintext (vector, list)
+        - ``K`` -- key (vector, list)
 
         EXAMPLES::
 

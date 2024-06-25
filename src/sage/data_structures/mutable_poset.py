@@ -430,10 +430,6 @@ class MutablePosetShell(SageObject):
         r"""
         Return the representation of this shell.
 
-        INPUT:
-
-        Nothing.
-
         OUTPUT: string
 
         .. NOTE::
@@ -466,10 +462,6 @@ class MutablePosetShell(SageObject):
     def __hash__(self):
         r"""
         Return the hash of this shell.
-
-        INPUT:
-
-        Nothing.
 
         OUTPUT: a hash value
 
@@ -1395,10 +1387,6 @@ class MutablePoset(SageObject):
         r"""
         Remove all elements from this poset.
 
-        INPUT:
-
-        Nothing.
-
         OUTPUT: nothing
 
         .. SEEALSO::
@@ -1432,10 +1420,6 @@ class MutablePoset(SageObject):
     def __len__(self):
         r"""
         Return the number of elements contained in this poset.
-
-        INPUT:
-
-        Nothing.
 
         OUTPUT: integer
 
@@ -3175,10 +3159,6 @@ class MutablePoset(SageObject):
         r"""
         Return an iterator over the maximal elements of this poset.
 
-        INPUT:
-
-        Nothing.
-
         OUTPUT: an iterator
 
         EXAMPLES::
@@ -3203,10 +3183,6 @@ class MutablePoset(SageObject):
     def minimal_elements(self):
         r"""
         Return an iterator over the minimal elements of this poset.
-
-        INPUT:
-
-        Nothing.
 
         OUTPUT: an iterator
 

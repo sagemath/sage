@@ -167,7 +167,8 @@ cdef class ntl_ZZ_pContext_factory():
         Create a new ZZ_pContext.
 
         INPUT:
-        v -- an ntl_ZZ
+
+        - ``v`` -- an ntl_ZZ
         """
         cdef ntl_ZZ_pContext_class context
         if v in self.context_dict:

@@ -566,7 +566,8 @@ class Knots(Singleton, Parent):
 
         INPUT:
 
-        a list of signed even numbers, the Dowker-Thistlethwaite code of a knot
+        - ``code`` -- list of signed even numbers; the Dowker-Thistlethwaite
+          code of a knot
 
         OUTPUT: a knot
 

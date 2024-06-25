@@ -460,11 +460,12 @@ class Kash(Expect):
                  server_tmpdir=None):
         """
         INPUT:
-            max_workspace_size -- (default: ``None``)
-                    set maximal workspace memory usage to <mem>
-                    <mem> stands for byte-wise allocation
-                    <mem>k stands for kilobyte-wise allocation
-                    <mem>m stands for megabyte-wise allocation
+
+        - ``max_workspace_size`` -- (default: ``None``)
+          set maximal workspace memory usage to <mem>
+          <mem> stands for byte-wise allocation
+          <mem>k stands for kilobyte-wise allocation
+          <mem>m stands for megabyte-wise allocation
         """
         cmd = "kash3 -b -c -d  "
         if max_workspace_size is not None:

@@ -4120,7 +4120,7 @@ class CompleteDyckWords_size(CompleteDyckWords, DyckWords_size):
         Return a random complete Dyck word of semilength `n`.
 
         The algorithm is based on a classical combinatorial fact. One
-        chooses at random a word with `n` 0's and `n+1` 1's. One then
+        chooses at random a word with `n` 0s and `n+1` 1s. One then
         considers every 1 as an ascending step and every 0 as a
         descending step, and one finds the lowest point of the path
         (with respect to a slightly tilted slope). One then cuts the

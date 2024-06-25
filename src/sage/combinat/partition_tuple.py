@@ -341,9 +341,9 @@ class PartitionTuple(CombinatorialElement):
 
     INPUT:
 
-        Anything which can reasonably be interpreted as a tuple of partitions.
-        That is, a list or tuple of partitions or valid input to
-        :class:`Partition`.
+    Anything which can reasonably be interpreted as a tuple of partitions.
+    That is, a list or tuple of partitions or valid input to
+    :class:`Partition`.
 
     EXAMPLES::
 

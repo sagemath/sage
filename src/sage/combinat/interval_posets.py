@@ -3407,8 +3407,8 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
 
         INPUT:
 
-        a minimal Schnyder wood, given as a graph with colored and
-        oriented edges, without the three exterior unoriented edges
+        - ``graph`` -- a minimal Schnyder wood, given as a graph with colored
+          and oriented edges, without the three exterior unoriented edges
 
         The three boundary vertices must be -1, -2 and -3.
 

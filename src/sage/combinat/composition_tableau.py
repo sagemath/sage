@@ -278,16 +278,12 @@ class CompositionTableaux(UniqueRepresentation, Parent):
 
     INPUT:
 
-    Keyword arguments:
-
     - ``size`` -- the size of the composition tableaux
     - ``shape`` -- the shape of the composition tableaux
     - ``max_entry`` -- the maximum entry for the composition tableaux
 
-    Positional arguments:
-
-    - The first argument is interpreted as ``size`` or ``shape`` depending on
-      whether it is an integer or a composition.
+    The first argument is interpreted as ``size`` or ``shape`` depending on
+    whether it is an integer or a composition.
 
     EXAMPLES::
 

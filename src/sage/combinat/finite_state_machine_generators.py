@@ -981,10 +981,6 @@ class TransducerGenerators:
         Return a transducer converting the standard binary
         expansion to Gray code.
 
-        INPUT:
-
-        Nothing.
-
         OUTPUT: a transducer
 
         Cf. the :wikipedia:`Gray_code` for a description of the Gray code.

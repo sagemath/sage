@@ -792,7 +792,7 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
             sage: C = InfinityCrystalOfNakajimaMonomials._normalize_c(c, 2)
             Traceback (most recent call last):
             ...
-            ValueError: the c matrix must have 0's on the diagonal
+            ValueError: the c matrix must have 0s on the diagonal
             sage: c = matrix([[0,2],[-1,0]])
             sage: C = InfinityCrystalOfNakajimaMonomials._normalize_c(c, 2)
             Traceback (most recent call last):
@@ -811,7 +811,7 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
         c = MS(c)
         c.set_immutable()
         if any(c[i,i] != 0 for i in range(n)):
-            raise ValueError("the c matrix must have 0's on the diagonal")
+            raise ValueError("the c matrix must have 0s on the diagonal")
         if any(c[i,j] + c[j,i] != 1 for i in range(n) for j in range(i)):
             raise ValueError("transpose entries do not sum to 1")
         if any(c[i,j] < 0 or c[j,i] < 0 for i in range(n) for j in range(i)):

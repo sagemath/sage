@@ -4749,7 +4749,7 @@ def construction_tower(R):
 
     INPUT:
 
-    An object
+    - ``R`` -- an object
 
     OUTPUT:
 
@@ -4788,7 +4788,8 @@ def expand_tower(tower):
 
     INPUT:
 
-    A construction tower as returned by :func:`construction_tower`.
+    - ``tower`` -- a construction tower as returned by
+      :func:`construction_tower`
 
     OUTPUT: a new construction tower with all the construction functors expanded
 
@@ -4826,7 +4827,7 @@ def type_to_parent(P):
 
     INPUT:
 
-    A type
+    - ``P`` -- a type
 
     OUTPUT: a Sage parent structure corresponding to the given type
 

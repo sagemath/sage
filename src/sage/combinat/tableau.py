@@ -1257,7 +1257,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         r"""
         Return the sign matrix of ``self``.
 
-        A sign matrix is an `m \times n` matrix of 0's, 1's and -1's such that the
+        A sign matrix is an `m \times n` matrix of 0s, 1s, and -1s such that the
         partial sums of each column is either 0 or 1 and the partial sums of
         each row is nonnegative. [Ava2007]_
 

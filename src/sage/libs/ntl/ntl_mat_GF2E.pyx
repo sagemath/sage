@@ -54,10 +54,11 @@ cdef class ntl_mat_GF2E():
         Construct a matrix over ntl.GF2E.
 
         INPUT:
-            modulus -- GF2E context
-            nrows -- number of rows
-            ncols -- number of columns
-            v     -- either a list or a matrix over GF(2^x)
+
+        - ``modulus`` -- GF2E context
+        - ``nrows`` -- number of rows
+        - ``ncols`` -- number of columns
+        - ``v`` -- either a list or a matrix over GF(2^x)
 
         EXAMPLES::
 
@@ -519,8 +520,7 @@ cdef class ntl_mat_GF2E():
 
         - ``k`` -- optional GF(2**deg)
 
-        OUTPUT:
-            Matrix over k
+        OUTPUT: Matrix over k
 
         EXAMPLES::
 

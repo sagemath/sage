@@ -410,35 +410,36 @@ cdef aut_gp_and_can_lab *get_aut_gp_and_can_lab(void *S,
     Traverse the search space for subgroup/canonical label calculation.
 
     INPUT:
-    S -- pointer to the structure
-    partition -- PartitionStack representing a partition of the points
-    len_partition -- length of the partition
-    n -- the number of points (points are assumed to be 0,1,...,n-1)
-    canonical_label -- whether to search for canonical label; if True, return
+
+    - ``S`` -- pointer to the structure
+    - ``partition`` -- PartitionStack representing a partition of the points
+    - ``len_partition`` -- length of the partition
+    - ``n`` -- the number of points (points are assumed to be 0,1,...,n-1)
+    - ``canonical_label`` -- whether to search for canonical label; if True, return
         the permutation taking S to its canonical label
-    all_children_are_equivalent -- pointer to a function
+    - ``all_children_are_equivalent`` -- pointer to a function
         INPUT:
-        PS -- pointer to a partition stack
-        S -- pointer to the structure
+        - ``PS`` -- pointer to a partition stack
+        - ``S`` -- pointer to the structure
         OUTPUT:
-        bint -- returns True if it can be determined that all refinements below
-            the current one will result in an equivalent discrete partition
-    refine_and_return_invariant -- pointer to a function
+        bint; returns ``True`` if it can be determined that all refinements below
+        the current one will result in an equivalent discrete partition
+    - ``refine_and_return_invariant`` -- pointer to a function
         INPUT:
-        PS -- pointer to a partition stack
-        S -- pointer to the structure
-        alpha -- an array consisting of numbers, which indicate the starting
-            positions of the cells to refine against (will likely be modified)
+        - ``PS`` -- pointer to a partition stack
+        - ``S`` -- pointer to the structure
+        - ``alpha`` -- an array consisting of numbers, which indicate the starting
+          positions of the cells to refine against (will likely be modified)
         OUTPUT:
-        int -- returns an invariant under application of arbitrary permutations
-    compare_structures -- pointer to a function
+        integer; returns an invariant under application of arbitrary permutations
+    - ``compare_structures`` -- pointer to a function
         INPUT:
-        gamma_1, gamma_2 -- (list) permutations of the points of S1 and S2
-        S1, S2 -- pointers to the structures
-        degree -- degree of gamma_1 and 2
+        - ``gamma_1``, ``gamma_2`` -- (list) permutations of the points of S1 and S2
+        - ``S1``, ``S2`` -- pointers to the structures
+        - ``degree`` -- degree of gamma_1 and 2
         OUTPUT:
-        int -- 0 if gamma_1(S1) = gamma_2(S2), otherwise -1 or 1 (see docs for cmp),
-            such that the set of all structures is well-ordered
+        integer; 0 if gamma_1(S1) = gamma_2(S2), otherwise -1 or 1 (see docs for cmp),
+        such that the set of all structures is well-ordered
 
     .. NOTE::
 

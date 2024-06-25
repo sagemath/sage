@@ -491,11 +491,12 @@ cdef class ntl_mat_ZZ():
         precision uniformly throughout.
 
         INPUT:
-            U -- optional permutation matrix (see LLL, default: None)
-            delta -- reduction parameter (default: 0.99)
-            BlockSize -- see above (default: 10)
-            prune -- see above (default: 0)
-            verbose -- print verbose output (default: ``False``)
+
+        - ``U`` -- optional permutation matrix (see LLL, default: None)
+        - ``delta`` -- reduction parameter (default: 0.99)
+        - ``BlockSize`` -- see above (default: 10)
+        - ``prune`` -- see above (default: 0)
+        - ``verbose`` -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -561,11 +562,12 @@ cdef class ntl_mat_ZZ():
         precision uniformly throughout.
 
         INPUT:
-            U -- optional permutation matrix (see LLL, default: None)
-            delta -- reduction parameter (default: 0.99)
-            BlockSize -- see above (default: 10)
-            prune -- see above (default: 0)
-            verbose -- print verbose output (default: ``False``)
+
+        - ``U`` -- optional permutation matrix (see LLL, default: None)
+        - ``delta`` -- reduction parameter (default: 0.99)
+        - ``BlockSize`` -- see above (default: 10)
+        - ``prune`` -- see above (default: 0)
+        - ``verbose`` -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -631,11 +633,12 @@ cdef class ntl_mat_ZZ():
         precision uniformly throughout.
 
         INPUT:
-            U -- optional permutation matrix (see LLL, default: None)
-            delta -- reduction parameter (default: 0.99)
-            BlockSize -- see above (default: 10)
-            prune -- see above (default: 0)
-            verbose -- print verbose output (default: ``False``)
+
+        - ``U`` -- optional permutation matrix (see LLL, default: None)
+        - ``delta`` -- reduction parameter (default: 0.99)
+        - ``BlockSize`` -- see above (default: 10)
+        - ``prune`` -- see above (default: 0)
+        - ``verbose`` -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -701,11 +704,12 @@ cdef class ntl_mat_ZZ():
         precision uniformly throughout.
 
         INPUT:
-            U -- optional permutation matrix (see LLL, default: None)
-            delta -- reduction parameter (default: 0.99)
-            BlockSize -- see above (default: 10)
-            prune -- see above (default: 0)
-            verbose -- print verbose output (default: ``False``)
+
+        - ``U`` -- optional permutation matrix (see LLL, default: None)
+        - ``delta`` -- reduction parameter (default: 0.99)
+        - ``BlockSize`` -- see above (default: 10)
+        - ``prune`` -- see above (default: 0)
+        - ``verbose`` -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -771,11 +775,12 @@ cdef class ntl_mat_ZZ():
         precision uniformly throughout.
 
         INPUT:
-            U -- optional permutation matrix (see LLL, default: None)
-            delta -- reduction parameter (default: 0.99)
-            BlockSize -- see above (default: 10)
-            prune -- see above (default: 0)
-            verbose -- print verbose output (default: ``False``)
+
+        - ``U`` -- optional permutation matrix (see LLL, default: None)
+        - ``delta`` -- reduction parameter (default: 0.99)
+        - ``BlockSize`` -- see above (default: 10)
+        - ``prune`` -- see above (default: 0)
+        - ``verbose`` -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -841,11 +846,12 @@ cdef class ntl_mat_ZZ():
         precision uniformly throughout.
 
         INPUT:
-            U -- optional permutation matrix (see LLL, default: None)
-            delta -- reduction parameter (default: 0.99)
-            BlockSize -- see above (default: 10)
-            prune -- see above (default: 0)
-            verbose -- print verbose output (default: ``False``)
+
+        - ``U`` -- optional permutation matrix (see LLL, default: None)
+        - ``delta`` -- reduction parameter (default: 0.99)
+        - ``BlockSize`` -- see above (default: 10)
+        - ``prune`` -- see above (default: 0)
+        - ``verbose`` -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -911,11 +917,12 @@ cdef class ntl_mat_ZZ():
         precision uniformly throughout.
 
         INPUT:
-            U -- optional permutation matrix (see LLL, default: None)
-            delta -- reduction parameter (default: 0.99)
-            BlockSize -- see above (default: 10)
-            prune -- see above (default: 0)
-            verbose -- print verbose output (default: ``False``)
+
+        - ``U`` -- optional permutation matrix (see LLL, default: None)
+        - ``delta`` -- reduction parameter (default: 0.99)
+        - ``BlockSize`` -- see above (default: 10)
+        - ``prune`` -- see above (default: 0)
+        - ``verbose`` -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -981,11 +988,12 @@ cdef class ntl_mat_ZZ():
         precision uniformly throughout.
 
         INPUT:
-            U -- optional permutation matrix (see LLL, default: None)
-            delta -- reduction parameter (default: 0.99)
-            BlockSize -- see above (default: 10)
-            prune -- see above (default: 0)
-            verbose -- print verbose output (default: ``False``)
+
+        - ``U`` -- optional permutation matrix (see LLL, default: None)
+        - ``delta`` -- reduction parameter (default: 0.99)
+        - ``BlockSize`` -- see above (default: 10)
+        - ``prune`` -- see above (default: 0)
+        - ``verbose`` -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -1051,11 +1059,12 @@ cdef class ntl_mat_ZZ():
         precision uniformly throughout.
 
         INPUT:
-            U -- optional permutation matrix (see LLL, default: None)
-            delta -- reduction parameter (default: 0.99)
-            BlockSize -- see above (default: 10)
-            prune -- see above (default: 0)
-            verbose -- print verbose output (default: ``False``)
+
+        - ``U`` -- optional permutation matrix (see LLL, default: None)
+        - ``delta`` -- reduction parameter (default: 0.99)
+        - ``BlockSize`` -- see above (default: 10)
+        - ``prune`` -- see above (default: 0)
+        - ``verbose`` -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -1121,11 +1130,12 @@ cdef class ntl_mat_ZZ():
         precision uniformly throughout.
 
         INPUT:
-            U -- optional permutation matrix (see LLL, default: None)
-            delta -- reduction parameter (default: 0.99)
-            BlockSize -- see above (default: 10)
-            prune -- see above (default: 0)
-            verbose -- print verbose output (default: ``False``)
+
+        - ``U`` -- optional permutation matrix (see LLL, default: None)
+        - ``delta`` -- reduction parameter (default: 0.99)
+        - ``BlockSize`` -- see above (default: 10)
+        - ``prune`` -- see above (default: 0)
+        - ``verbose`` -- print verbose output (default: ``False``)
 
         EXAMPLES::
 

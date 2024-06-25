@@ -520,11 +520,11 @@ def tutte_polynomial(G, edge_selector=None, cache=None):
 
     INPUT:
 
-    - ``edge_selector`` (optional; method) this argument allows the user
+    - ``edge_selector`` -- method (optional); this argument allows the user
       to specify his own heuristic for selecting edges used in the deletion
       contraction recurrence
 
-    - ``cache`` -- (optional; dict) a dictionary to cache the Tutte
+    - ``cache`` -- (optional) dictionary to cache the Tutte
       polynomials generated in the recursive process.  One will be
       created automatically if not provided.
 

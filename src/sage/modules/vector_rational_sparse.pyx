@@ -94,12 +94,15 @@ cdef Py_ssize_t mpq_binary_search(mpq_t* v, Py_ssize_t n, mpq_t x, Py_ssize_t* i
     obtain an ordered array.
 
     INPUT:
-       v -- array of mpq_t  (rational)
-       n -- integer (length of array v)
-       x -- mpq_t  (rational)
+
+    - ``v`` -- array of mpq_t  (rational)
+    - ``n`` -- integer (length of array v)
+    - ``x`` -- mpq_t  (rational)
+
     OUTPUT:
-       position of x (as an Py_ssize_t)
-       ins -- (call be pointer), the insertion point if x is not found.
+
+    position of x (as an Py_ssize_t)
+    ins -- (call be pointer), the insertion point if x is not found.
     """
     cdef Py_ssize_t i, j, k, c
     if n == 0:

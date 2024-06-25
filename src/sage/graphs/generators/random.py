@@ -2259,7 +2259,7 @@ def RandomBicubicPlanar(n, seed=None):
 
     INPUT:
 
-    `n` -- an integer (at least `1`)
+    - ``n`` -- integer (at least `1`)
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)

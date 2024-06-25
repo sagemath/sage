@@ -655,9 +655,7 @@ class GammaH_class(CongruenceSubgroup):
         - ``uu`` -- integer
         - ``vv`` -- integer
 
-        OUTPUT:
-
-        pair of integers that are equivalent to (uu,vv).
+        OUTPUT: pair of integers that are equivalent to (uu,vv)
 
         .. NOTE::
 
