@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Curves in Manifolds
 
@@ -22,7 +21,6 @@ REFERENCES:
 
 - Chap. 1 of [KN1963]_
 - Chap. 3 of [Lee2013]_
-
 """
 
 #*****************************************************************************

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 # sage.doctest: needs sage.rings.finite_rings sage.schemes
 # cython: cdivision=True
 r"""
@@ -74,7 +73,7 @@ def find_recursive_construction(k, n):
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     OUTPUT:
 
@@ -130,7 +129,7 @@ cpdef find_product_decomposition(int k,int n):
 
     INPUT:
 
-    - ``k,n`` (integers) -- see above.
+    - ``k``, ``n`` -- integers
 
     OUTPUT:
 
@@ -168,7 +167,7 @@ cpdef find_wilson_decomposition_with_one_truncated_group(int k,int n):
 
     INPUT:
 
-    - ``k,n`` (integers) -- see above
+    - ``k``, ``n`` -- integers
 
     OUTPUT:
 
@@ -219,7 +218,7 @@ cpdef find_wilson_decomposition_with_two_truncated_groups(int k,int n):
 
     INPUT:
 
-    - ``k,n`` (integers) -- see above
+    - ``k``, ``n`` -- integers
 
     OUTPUT:
 
@@ -277,7 +276,7 @@ cpdef find_construction_3_3(int k,int n):
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     .. SEEALSO::
 
@@ -316,7 +315,7 @@ cpdef find_construction_3_4(int k,int n):
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     .. SEEALSO::
 
@@ -359,7 +358,7 @@ cpdef find_construction_3_5(int k,int n):
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     .. SEEALSO::
 
@@ -409,7 +408,7 @@ cpdef find_construction_3_6(int k,int n):
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     .. SEEALSO::
 
@@ -462,7 +461,7 @@ cpdef find_q_x(int k,int n):
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     .. SEEALSO::
 
@@ -624,7 +623,7 @@ cpdef find_thwart_lemma_4_1(int k,int n):
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     .. SEEALSO::
 
@@ -673,7 +672,7 @@ cpdef find_three_factor_product(int k,int n):
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     .. SEEALSO::
 
@@ -718,7 +717,7 @@ cpdef find_brouwer_separable_design(int k,int n):
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     The assumptions made on the parameters `t,q,x` are explained in the
     documentation of
@@ -899,7 +898,7 @@ cpdef find_brouwer_van_rees_with_one_truncated_column(int k,int n):
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
     EXAMPLES::
 
@@ -958,7 +957,7 @@ cdef int is_available(int k,int n) except -1:
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
     """
     if n >= _OA_cache_size:
         return orthogonal_array(k,n,existence=True) is True

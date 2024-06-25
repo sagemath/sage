@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 # sage.doctest: needs sage.graphs sage.modules
 r"""
 This file contains doctests of the article ::
@@ -627,5 +626,4 @@ Sage example in fsm-in-sage.tex, line 1216::
 
     sage: latex(moments['expectation'])                                                 # needs sage.symbolic
     \frac{5}{9} \, k + \mathcal{O}\left(1\right)
-
 """

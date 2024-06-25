@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Coordinate calculus methods
 
@@ -10,7 +9,6 @@ AUTHORS:
 - Marco Mancini (2017): initial version
 - Eric Gourgoulhon (2019): add :meth:`~CalculusMethod.set_simplify_function`
   and various accessors
-
 """
 
 # *****************************************************************************

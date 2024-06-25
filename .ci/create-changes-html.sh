@@ -51,7 +51,7 @@ diffParagraphs.forEach(paragraph => {
 EOF
 echo '</head>' >> CHANGES.html
 echo '<body>' >> CHANGES.html
-(cd $DOC_REPOSITORY && git diff $BASE_DOC_COMMIT -- *.html) > diff.txt
+(cd $DOC_REPOSITORY && git diff $BASE_DOC_COMMIT -- "*.html") > diff.txt
 python3 - << EOF
 import os, re, html
 with open('diff.txt', 'r') as f:
@@ -82,7 +82,7 @@ for block in diff_blocks:
         if content:
             with open(file_path, 'w') as file:
                 file.writelines(content)
-        path = 'html/' + doc
+        path = doc
         hunks = '&nbsp;'.join(f'<a href="{path}#hunk{i+1}" class="hunk" target="_blank">#{i + 1}</a>' for i in range(count))
         out_blocks.append(f'<p class="diff"><a href="{path}">{doc}</a>&nbsp;' + hunks + '&emsp;</p>'
                             + '\n<pre><code class="language-diff">'

@@ -1,10 +1,8 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Topological Closures of Manifold Subsets
 
 :class:`ManifoldSubsetClosure` implements the topological closure
 of a manifold subset in the topology of the manifold.
-
 """
 
 # ****************************************************************************

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 #############################################################
 #
 #    Sparse Vector over mpq_t (the GMP rationals)
@@ -244,7 +243,6 @@ cdef int mpq_vector_set_entry(mpq_vector* v, Py_ssize_t n, mpq_t x) except -1:
             v.positions[i] = pos[i-1]
         sig_free(e)
         sig_free(pos)
-
 
 
 cdef mpq_t mpq_set_tmp

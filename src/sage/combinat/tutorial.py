@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 r"""
 Introduction to combinatorics in Sage
 
@@ -1855,5 +1854,4 @@ REFERENCES:
    of `G`, i.e., its automorphism group, to reduce the number of
    children to explore, and to reduce the cost of each test of
    canonicity.
-
 """

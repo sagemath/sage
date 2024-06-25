@@ -1077,7 +1077,8 @@ def lazy_import(module, names, as_=None, *,
         ....:             deprecation=14275)
         sage: my_Qp(5)                                                                  # needs sage.rings.padics
         doctest:...: DeprecationWarning:
-        Importing my_Qp from here is deprecated; please use "from sage.rings.padics.factory import Qp as my_Qp" instead.
+        Importing my_Qp from here is deprecated;
+        please use "from sage.rings.padics.factory import Qp as my_Qp" instead.
         See https://github.com/sagemath/sage/issues/14275 for details.
         5-adic Field with capped relative precision 20
 
@@ -1097,10 +1098,12 @@ def lazy_import(module, names, as_=None, *,
         ....:             feature=PythonModule('ppl', spkg='pplpy', type='standard'))
         sage: equation                                                                  # needs pplpy
         <cyfunction equation at ...>
-        sage: lazy_import('PyNormaliz', 'NmzListConeProperties', feature=PythonModule('PyNormaliz', spkg='pynormaliz'))  # optional - pynormaliz
-        sage: NmzListConeProperties  # optional - pynormaliz
+        sage: lazy_import('PyNormaliz', 'NmzListConeProperties',
+        ....:             feature=PythonModule('PyNormaliz', spkg='pynormaliz'))
+        sage: NmzListConeProperties                             # optional - pynormaliz
         <built-in function NmzListConeProperties>
-        sage: lazy_import('foo', 'not_there', feature=PythonModule('foo', spkg='non-existing-package'))
+        sage: lazy_import('foo', 'not_there',
+        ....:             feature=PythonModule('foo', spkg='non-existing-package'))
         sage: not_there
         Failed lazy import:
         foo is not available.
@@ -1133,6 +1136,7 @@ def lazy_import(module, names, as_=None, *,
 
 star_imports = None
 
+
 def save_cache_file():
     """
     Used to save the cached * import names.
@@ -1154,6 +1158,7 @@ def save_cache_file():
     os.makedirs(cache_dir, exist_ok=True)
     with atomic_write(cache_file, binary=True) as f:
         pickle.dump(star_imports, f)
+
 
 def get_star_imports(module_name):
     """

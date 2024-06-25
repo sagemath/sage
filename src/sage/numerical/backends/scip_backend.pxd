@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 #*****************************************************************************
 #       Copyright (C) 2017 Matthias Koeppe <mkoeppe@math.ucdavis.edu>
 #

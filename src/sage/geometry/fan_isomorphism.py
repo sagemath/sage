@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 """
 Find isomorphisms between fans
 """
@@ -196,7 +195,7 @@ def find_isomorphism(fan1, fan2, check=False):
 
     - ``fan1``, ``fan2`` -- two fans.
 
-    - ``check`` -- boolean (default: False). Passed to the fan
+    - ``check`` -- boolean (default: ``False``). Passed to the fan
       morphism constructor, see
       :func:`~sage.geometry.fan_morphism.FanMorphism`.
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.flint sage.libs.pari
 """
 Elements of modular forms spaces
@@ -45,7 +44,7 @@ from sage.misc.verbose import verbose
 from sage.modular.dirichlet import DirichletGroup
 from sage.modular.modsym.modsym import ModularSymbols
 from sage.modular.modsym.p1list import lift_to_sl2z
-from sage.modular.modsym.space import is_ModularSymbolsSpace
+from sage.modular.modsym.space import ModularSymbolsSpace
 from sage.modules.free_module_element import vector
 from sage.rings.complex_mpfr import ComplexField
 from sage.rings.fast_arith import prime_range
@@ -73,10 +72,18 @@ def is_ModularFormElement(x):
 
         sage: from sage.modular.modform.element import is_ModularFormElement
         sage: is_ModularFormElement(5)
+        doctest:warning...
+        DeprecationWarning: The function is_ModularFormElement is deprecated;
+        use 'isinstance(..., ModularFormElement)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         False
         sage: is_ModularFormElement(ModularForms(11).0)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_ModularFormElement is deprecated; "
+                "use 'isinstance(..., ModularFormElement)' instead.")
     return isinstance(x, ModularFormElement)
 
 
@@ -407,7 +414,7 @@ class ModularForm_abstract(ModuleElement):
 
         INPUT:
 
-        - ``n`` (int, Integer) - A non-negative integer.
+        - ``n`` -- non-negative integer
 
         EXAMPLES::
 
@@ -854,16 +861,16 @@ class ModularForm_abstract(ModuleElement):
 
         INPUT:
 
-        - ``embedding`` - either an embedding of the coefficient field of self
+        - ``embedding`` -- either an embedding of the coefficient field of self
           into `\CC`, or an integer `i` between 0 and D-1 where D is the degree
           of the coefficient field (meaning to pick the `i`-th embedding).
           (Default: 0)
 
-        - ``prec`` - integer (bits precision). Default: 53.
+        - ``prec`` -- integer (bits precision). Default: 53.
 
-        - ``max_imaginary_part`` - real number. Default: 0.
+        - ``max_imaginary_part`` -- real number. Default: 0.
 
-        - ``max_asymp_coeffs`` - integer. Default: 40.
+        - ``max_asymp_coeffs`` -- integer. Default: 40.
 
         For more information on the significance of the last three arguments,
         see :mod:`~sage.lfunctions.dokchitser`.
@@ -1379,13 +1386,13 @@ class Newform(ModularForm_abstract):
 
         INPUT:
 
-        - ``parent`` - An ambient cuspidal space of modular forms for
+        - ``parent`` -- An ambient cuspidal space of modular forms for
           which self is a newform.
 
-        - ``component`` - A simple component of a cuspidal modular
+        - ``component`` -- A simple component of a cuspidal modular
           symbols space of any sign corresponding to this newform.
 
-        - ``check`` - If check is ``True``, check that parent and
+        - ``check`` -- If check is ``True``, check that parent and
           component have the same weight, level, and character, that
           component has sign 1 and is simple, and that the types are
           correct on all inputs.
@@ -1398,11 +1405,11 @@ class Newform(ModularForm_abstract):
             sage: f = Newforms(DirichletGroup(5).0, 7,names='a')[0]; f[2].trace(f.base_ring().base_field())
             -5*zeta4 - 5
         """
-        from .space import is_ModularFormsSpace
+        from .space import ModularFormsSpace
         if check:
-            if not is_ModularFormsSpace(parent):
+            if not isinstance(parent, ModularFormsSpace):
                 raise TypeError("parent must be a space of modular forms")
-            if not is_ModularSymbolsSpace(component):
+            if not isinstance(component, ModularSymbolsSpace):
                 raise TypeError("component must be a space of modular symbols")
             if parent.group() != component.group():
                 raise ValueError("parent and component must be defined by the same congruence subgroup")
@@ -1537,7 +1544,7 @@ class Newform(ModularForm_abstract):
 
         INPUT:
 
-        - ``n`` - a positive integer
+        - ``n`` -- a positive integer
 
         OUTPUT:
 
@@ -2425,16 +2432,16 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
 
         INPUT:
 
-        - ``parent`` - ModularForms (an ambient space of modular forms)
+        - ``parent`` -- ModularForms (an ambient space of modular forms)
 
-        - ``x`` - a vector on the basis for parent
+        - ``x`` -- a vector on the basis for parent
 
-        - ``check`` - if check is ``True``, check the types of the
+        - ``check`` -- if check is ``True``, check the types of the
           inputs.
 
         OUTPUT:
 
-        - ``ModularFormElement`` - a modular form
+        - ``ModularFormElement`` -- a modular form
 
         EXAMPLES::
 
@@ -3266,7 +3273,7 @@ class GradedModularFormElement(ModuleElement):
                     k = ZZ(k)
                     if k == 0:
                         forms_dictionary[k] = parent.base_ring().coerce(f)
-                    elif is_ModularFormElement(f):
+                    elif isinstance(f, ModularFormElement):
                         if f.weight() == k:
                             if parent.group().is_subgroup(f.group()) and parent.base_ring().has_coerce_map_from(f.base_ring()):
                                 M = parent.modular_forms_of_weight(f.weight()).change_ring(parent.base_ring())
@@ -3281,7 +3288,7 @@ class GradedModularFormElement(ModuleElement):
                     raise ValueError('at least one key (%s) of the defining dictionary is not an integer' % (k))
         elif isinstance(forms_datum, list):
             for f in forms_datum:
-                if is_ModularFormElement(f):
+                if isinstance(f, ModularFormElement):
                     chi = f.character(compute=False)
                     if (chi is not None) and (not chi.is_trivial()):
                         raise NotImplementedError("graded modular forms for non-trivial characters is not yet implemented")

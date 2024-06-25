@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Vector Bundle Fiber Elements
 
@@ -8,7 +7,6 @@ a vector bundle.
 AUTHORS:
 
 - Michael Jung (2019): initial version
-
 """
 
 #******************************************************************************

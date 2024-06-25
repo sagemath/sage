@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 ##          Sage Doctest File         ##
 #**************************************#
 #*    Generated from PreTeXt source   *#
@@ -160,5 +159,4 @@ r"""
     Traceback (most recent call last):
     ...
     NotImplementedError
-
 """

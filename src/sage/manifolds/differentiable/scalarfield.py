@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Differentiable Scalar Fields
 
@@ -25,7 +24,6 @@ REFERENCES:
 - [KN1963]_
 - [Lee2013]_
 - [ONe1983]_
-
 """
 
 #******************************************************************************

@@ -18,4 +18,6 @@ Finite Fields
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.rings.finite_rings.all__sagemath_categories import *
+from sage.rings.finite_rings.finite_field_constructor import FiniteField
+from sage.rings.finite_rings.conway_polynomials import conway_polynomial, exists_conway_polynomial
+GF = FiniteField

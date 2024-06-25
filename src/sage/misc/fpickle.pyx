@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 # cython: old_style_globals=True
 # cython: binding=True
 """
@@ -61,6 +60,7 @@ def reduce_code(co):
 
 
 copyreg.pickle(types.CodeType, reduce_code)
+
 
 def pickle_function(func):
     """

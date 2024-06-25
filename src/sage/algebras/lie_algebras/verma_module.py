@@ -697,6 +697,7 @@ class VermaModule(CombinatorialFreeModule):
 #####################################################################
 ## Morphisms and Homset
 
+
 class VermaModuleMorphism(Morphism):
     """
     A morphism of Verma modules.
@@ -980,6 +981,7 @@ class VermaModuleMorphism(Morphism):
             False
         """
         return self.domain() == self.codomain() and bool(self._scalar)
+
 
 class VermaModuleHomset(Homset):
     r"""

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Ambient lattices and ambient spaces
 """
@@ -296,7 +295,7 @@ class AmbientSpace(CombinatorialFreeModule):
         """
         INPUT:
 
-        - ``weight`` - a vector or tuple representing a weight
+        - ``weight`` -- a vector or tuple representing a weight
 
         Returns an element of self. If the weight lattice is not
         of full rank, it coerces it into the weight lattice, or

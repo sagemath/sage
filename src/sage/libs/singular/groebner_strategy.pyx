@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-singular
 """
 Singular's Groebner Strategy Objects
 
@@ -54,7 +53,7 @@ cdef class GroebnerStrategy(SageObject):
 
         INPUT:
 
-        - ``L`` - a multivariate polynomial ideal
+        - ``L`` -- a multivariate polynomial ideal
 
         EXAMPLES::
 
@@ -317,7 +316,7 @@ cdef class NCGroebnerStrategy(SageObject):
 
         INPUT:
 
-        - ``L`` - an ideal in a g-algebra
+        - ``L`` -- an ideal in a g-algebra
 
         EXAMPLES::
 

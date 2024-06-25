@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Solving ODE numerically by GSL
 
@@ -7,7 +6,6 @@ AUTHORS:
 - Joshua Kantor (2004-2006)
 
 - Robert Marik (2010 - fixed docstrings)
-
 """
 
 #*****************************************************************************

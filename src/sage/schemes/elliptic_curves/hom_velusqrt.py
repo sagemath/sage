@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 r"""
 Square‑root Vélu algorithm for elliptic-curve isogenies
 
@@ -1013,7 +1012,8 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
 
         INPUT:
 
-        - ``left, right`` -- :class:`~sage.schemes.elliptic_curves.hom.EllipticCurveHom` objects
+        - ``left``, ``right`` -- :class:`~sage.schemes.elliptic_curves.hom.EllipticCurveHom`
+          objects
 
         ALGORITHM:
 

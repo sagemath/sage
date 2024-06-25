@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 
 from sage.misc.lazy_import import lazy_import
 
@@ -19,7 +18,6 @@ lazy_import("sage.graphs.graph_database", "graph_db_info")
 lazy_import("sage.graphs.graph_editor", "graph_editor")
 
 from sage.graphs.isgci import graph_classes
-
 """
 TESTS:
 

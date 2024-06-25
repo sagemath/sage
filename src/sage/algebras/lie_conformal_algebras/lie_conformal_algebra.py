@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 r"""
 Lie Conformal Algebra
@@ -179,6 +178,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.sets.family import Family
 from sage.categories.commutative_rings import CommutativeRings
 from sage.structure.parent import Parent
+
 
 class LieConformalAlgebra(UniqueRepresentation, Parent):
     r"""

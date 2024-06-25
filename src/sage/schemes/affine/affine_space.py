@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Affine `n` space over a ring
 """
@@ -15,7 +14,7 @@ from itertools import product
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.rational_field import is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.finite_rings.finite_field_base import FiniteField
@@ -47,12 +46,17 @@ def is_AffineSpace(x) -> bool:
 
         sage: from sage.schemes.affine.affine_space import is_AffineSpace
         sage: is_AffineSpace(AffineSpace(5, names='x'))
+        doctest:warning...
+        DeprecationWarning: The function is_AffineSpace is deprecated; use 'isinstance(..., AffineSpace_generic)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
         sage: is_AffineSpace(AffineSpace(5, GF(9, 'alpha'), names='x'))                 # needs sage.rings.finite_rings
         True
         sage: is_AffineSpace(Spec(ZZ))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_AffineSpace is deprecated; use 'isinstance(..., AffineSpace_generic)' instead.")
     return isinstance(x, AffineSpace_generic)
 
 
@@ -555,7 +559,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         INPUT:
 
-        - ``right`` - an affine space or subscheme.
+        - ``right`` -- an affine space or subscheme.
 
         OUTPUT: an affine space.= or subscheme.
 
@@ -796,7 +800,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         INPUT:
 
-        -  ``X`` - a list or tuple of equations.
+        -  ``X`` -- a list or tuple of equations.
 
         EXAMPLES::
 
@@ -1030,11 +1034,11 @@ class AffineSpace_field(AffineSpace_generic):
 
         kwds:
 
-        - ``bound`` - a real number
+        - ``bound`` -- a real number
 
-        - ``tolerance`` - a rational number in (0,1] used in doyle-krumm algorithm-4
+        - ``tolerance`` -- a rational number in (0,1] used in doyle-krumm algorithm-4
 
-        - ``precision`` - the precision to use for computing the elements of bounded height of number fields
+        - ``precision`` -- the precision to use for computing the elements of bounded height of number fields
 
         OUTPUT:
 
@@ -1059,7 +1063,7 @@ class AffineSpace_field(AffineSpace_generic):
             sage: len(list(A.points_of_bounded_height(bound=2, tolerance=0.1)))         # needs sage.rings.number_field
             529
         """
-        if is_RationalField(self.base_ring()):
+        if isinstance(self.base_ring(), RationalField):
             ftype = False  # stores whether field is a number field or the rational field
         elif self.base_ring() in NumberFields():  # true for rational field as well, so check is_RationalField first
             ftype = True

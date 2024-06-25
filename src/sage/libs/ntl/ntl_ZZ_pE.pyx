@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-ntl
 # distutils: libraries = NTL_LIBRARIES gmp m
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR
@@ -267,7 +266,6 @@ cdef class ntl_ZZ_pE():
         ZZ_pE_power(r.x, self.x, e)
         sig_off()
         return r
-
 
     cdef ntl_ZZ_pX get_as_ZZ_pX(ntl_ZZ_pE self):
         r"""

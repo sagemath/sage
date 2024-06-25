@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Operators for vector calculus
 
@@ -32,7 +31,6 @@ module :mod:`~sage.misc.functional`.
 AUTHORS:
 
 - Eric Gourgoulhon (2018): initial version
-
 """
 
 #*****************************************************************************

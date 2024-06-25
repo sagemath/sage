@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.singular
 """
 Base class of curves
@@ -20,7 +19,6 @@ EXAMPLES::
 AUTHORS:
 
 - William Stein (2005)
-
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>

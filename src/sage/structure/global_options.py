@@ -266,7 +266,6 @@ the supplied options. For example, the generated documentation for the options
       Reward for good service
 
 
-
     The END!
 
     See :class:`~sage.structure.global_options.GlobalOptions` for more features of these options.
@@ -561,7 +560,7 @@ class Option():
 
         EXAMPLES::
 
-            sage: Partitions.options.display # indirect doctest                         # needs sage.combinat
+            sage: Partitions.options.display  # indirect doctest                        # needs sage.combinat
             list
         """
         # NOTE: we intentionally use str() instead of repr()
@@ -1390,7 +1389,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
 
         EXAMPLES::
 
-            sage: Partitions.options == PartitionsGreatestLE.options # indirect doctest             # needs sage.combinat
+            sage: Partitions.options == PartitionsGreatestLE.options  # indirect doctest            # needs sage.combinat
             True
             sage: Partitions.options == Tableaux.options                                # needs sage.combinat
             False

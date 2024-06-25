@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-groups
 """
 all.py -- export of abelian groups to Sage
 """
@@ -18,8 +17,13 @@ all.py -- export of abelian groups to Sage
 #
 #  The full text of the GPL is available at:
 #
-#                  https://www.gnu.org/licenses/
-# *****************************************************************************
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
 
-from sage.groups.abelian_gps.all__sagemath_modules import *
-from sage.groups.abelian_gps.all__sagemath_gap import *
+#from dual_abelian_group import DualAbelianGroup
+from sage.groups.abelian_gps.abelian_group import AbelianGroup, word_problem
+from sage.groups.abelian_gps.values import AbelianGroupWithValues
+
+# TODO:
+# Implement group homset, conversion of generator images to morphism
+from sage.groups.abelian_gps.abelian_group_morphism import AbelianGroupMorphism

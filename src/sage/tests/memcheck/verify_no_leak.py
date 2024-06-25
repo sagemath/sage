@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 from typing import Tuple, Sequence, List, Callable, Any
 import valgrind
 

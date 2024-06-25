@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 # sage.doctest: needs sage.symbolic
 """
 Benchmarks
@@ -1817,7 +1816,6 @@ class FiniteExtFieldAdd(Benchmark):
    * symbolic det
    * poly factor
    * multivariate poly factor
-
 """
 
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 r"""
 Kodaira symbols
 
@@ -42,7 +41,6 @@ AUTHORS:
 - David Roe       <roed@math.harvard.edu>
 
 - John Cremona
-
 """
 
 # ****************************************************************************

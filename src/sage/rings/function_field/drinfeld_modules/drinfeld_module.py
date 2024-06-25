@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.finite_rings
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Drinfeld modules
 
@@ -2066,7 +2066,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi = DrinfeldModule(A, [z, 0, 1, z])
             sage: phi
             Drinfeld module defined by T |--> z*t^3 + t^2 + z
-            sage: phi.hom(T)
+            sage: phi.hom(T)  # indirect doctest
             Endomorphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z
               Defn: z*t^3 + t^2 + z
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 # ****************************************************************************
 #       Copyright (C) 2021 Xavier Caruso <xavier.caruso@normalesup.org>
 #

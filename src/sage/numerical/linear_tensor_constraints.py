@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 """
 Constraints on Linear Functions Tensored with a Free Module
 
@@ -58,10 +57,18 @@ def is_LinearTensorConstraint(x):
         sage: vector_ieq = (x[0] * vector([1,2]) <= x[1] * vector([2,3]))
         sage: from sage.numerical.linear_tensor_constraints import is_LinearTensorConstraint
         sage: is_LinearTensorConstraint(vector_ieq)
+        doctest:warning...
+        DeprecationWarning: The function is_LinearTensorConstraint is deprecated;
+        use 'isinstance(..., LinearTensorConstraint)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         True
         sage: is_LinearTensorConstraint('a string')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_LinearTensorConstraint is deprecated; "
+                "use 'isinstance(..., LinearTensorConstraint)' instead.")
     return isinstance(x, LinearTensorConstraint)
 
 

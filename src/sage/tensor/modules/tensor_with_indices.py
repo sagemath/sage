@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.groups
 r"""
 Index notation for tensors
@@ -7,7 +6,6 @@ AUTHORS:
 
 - Eric Gourgoulhon, Michal Bejger (2014-2015): initial version
 - Léo Brunswic (2019): add multiple symmetries and multiple contractions
-
 """
 #******************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>

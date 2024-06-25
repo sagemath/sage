@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Rankers
 """
@@ -27,11 +26,11 @@ def from_list(l):
 
     INPUT:
 
-    -  ``l`` - a list
+    -  ``l`` -- a list
 
     OUTPUT:
 
-    - ``[rank, unrank]`` - functions
+    - ``[rank, unrank]`` -- functions
 
     EXAMPLES::
 

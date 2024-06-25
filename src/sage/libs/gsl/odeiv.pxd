@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # distutils: libraries = GSL_LIBRARIES
 # distutils: library_dirs = GSL_LIBDIR
 # distutils: include_dirs = GSL_INCDIR
@@ -13,8 +12,6 @@ cdef extern from "gsl/gsl_odeiv.h":
   # no:
   #define GSL_ODEIV_FN_EVAL(S,t,y,f)  (*((S)->function))(t,y,f,(S)->params)
   #define GSL_ODEIV_JA_EVAL(S,t,y,dfdy,dfdt)  (*((S)->jacobian))(t,y,dfdy,dfdt,(S)->params)
-
-
 
 
   ctypedef struct gsl_odeiv_step_type

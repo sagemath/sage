@@ -15,6 +15,7 @@ from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.covariant_functorial_construction import RegressiveCovariantConstructionCategory
 from sage.categories.sets_cat import Sets
 
+
 class TopologicalSpacesCategory(RegressiveCovariantConstructionCategory):
 
     _functor_category = "Topological"
@@ -27,6 +28,7 @@ class TopologicalSpacesCategory(RegressiveCovariantConstructionCategory):
             Category of topological groups
         """
         return "topological {}".format(self.base_category()._repr_object_names())
+
 
 class TopologicalSpaces(TopologicalSpacesCategory):
     """

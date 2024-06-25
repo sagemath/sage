@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 """
 Low-level memory allocation functions
 
@@ -93,5 +92,6 @@ def init_memory_functions():
         sage: init_memory_functions()
     """
     mp_set_memory_functions(sage_sig_malloc, sage_sig_realloc, sage_sig_free)
+
 
 init_memory_functions()

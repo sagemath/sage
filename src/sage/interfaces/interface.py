@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.libs.gap sage.libs.pari sage.libs.singular sage.symbolic
 r"""
 Common Interface Functionality
@@ -639,6 +638,7 @@ class Interface(WithEqualityById, ParentWithBase):
         TESTS::
 
             sage: from sage.structure.parent_base import ParentWithBase
+            sage: from sage.interfaces.singular import singular
             sage: ParentWithBase.__getattribute__(singular, '_coerce_map_from_')
             <bound method Singular._coerce_map_from_ of Singular>
         """

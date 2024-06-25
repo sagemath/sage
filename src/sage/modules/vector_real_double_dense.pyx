@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: optional - numpy
 r"""
 Dense real double vectors using a NumPy backend
@@ -78,7 +77,6 @@ cdef class Vector_real_double_dense(Vector_double_dense):
         """
         import scipy.stats
         return self._sage_dtype(scipy.stats.skew(self._vector_numpy))
-
 
     def __reduce__(self):
         """

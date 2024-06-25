@@ -861,7 +861,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
         - ``out`` -- a function for writing the output (defaults to
           :func:`sys.stdout.write`).
 
-        - ``clear_globs`` -- boolean (default True): whether to clear
+        - ``clear_globs`` -- boolean (default: ``True``): whether to clear
           the namespace after running this doctest.
 
         OUTPUT:
@@ -1370,7 +1370,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: FDS = FileDocTestSource(filename, DD)
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: ex = doctests[0].examples[0]
-            sage: ex.walltime = 0.0
+            sage: ex.walltime = 0.0r
             sage: DTR.report_success(sys.stdout.write, doctests[0], ex, '1764')
             ok [0.00 s]
         """
@@ -1543,8 +1543,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: FDS = FileDocTestSource(filename, DD)
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: ex = doctests[0].examples[0]
-            sage: ex.walltime = 1.23
-            sage: DTR.report_overtime(sys.stdout.write, doctests[0], ex, 'BAD ANSWER\n', check_duration=2.34)
+            sage: ex.walltime = 1.23r
+            sage: DTR.report_overtime(sys.stdout.write, doctests[0], ex, 'BAD ANSWER\n', check_duration=2.34r)
             **********************************************************************
             File ".../sage/doctest/forker.py", line 12, in sage.doctest.forker
             Warning, slow doctest:
@@ -1579,6 +1579,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.sage0 import sage0
             sage: sage0.quit()
             sage: _ = sage0.eval("import doctest, sys, os, multiprocessing, subprocess")
             sage: _ = sage0.eval("from sage.doctest.parsing import SageOutputChecker")
@@ -1674,11 +1675,12 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: DTR.run(doctests[0])
             TestResults(failed=0, attempted=4)
             sage: T.stop().annotate(DTR)
-            sage: D = DictAsObject({'cputime':[],'walltime':[],'err':None})
+            sage: D = DictAsObject({'cputime': [], 'walltime': [], 'err': None})
             sage: DTR.update_results(D)
             0
             sage: sorted(list(D.items()))
-            [('cputime', [...]), ('err', None), ('failures', 0), ('tests', 4), ('walltime', [...]), ('walltime_skips', 0)]
+            [('cputime', [...]), ('err', None), ('failures', 0), ('tests', 4),
+             ('walltime', [...]), ('walltime_skips', 0)]
         """
         for key in ["cputime", "walltime"]:
             if key not in D:

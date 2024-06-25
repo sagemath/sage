@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.rings.number_field
 r"""
 Dual groups of Finite Multiplicative Abelian Groups
@@ -79,7 +78,7 @@ from sage.groups.group import AbelianGroup as AbelianGroupBase
 
 def is_DualAbelianGroup(x):
     """
-    Return True if `x` is the dual group of an abelian group.
+    Return ``True`` if `x` is the dual group of an abelian group.
 
     EXAMPLES::
 
@@ -87,6 +86,10 @@ def is_DualAbelianGroup(x):
         sage: F = AbelianGroup(5,[3,5,7,8,9], names=list("abcde"))
         sage: Fd = F.dual_group()
         sage: is_DualAbelianGroup(Fd)
+        doctest:warning...
+        DeprecationWarning: the function is_DualAbelianGroup is deprecated;
+        use 'isinstance(..., DualAbelianGroup_class)' instead
+        See https://github.com/sagemath/sage/issues/37898 for details.
         True
         sage: F = AbelianGroup(3,[1,2,3], names='a')
         sage: Fd = F.dual_group()
@@ -95,6 +98,8 @@ def is_DualAbelianGroup(x):
         sage: F.gens()
         (1, a1, a2)
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37898, "the function is_DualAbelianGroup is deprecated; use 'isinstance(..., DualAbelianGroup_class)' instead")
     return isinstance(x, DualAbelianGroup_class)
 
 
@@ -118,7 +123,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
     def __init__(self, G, names, base_ring):
         """
-        The Python constructor
+        The Python constructor.
 
         EXAMPLES::
 
@@ -272,9 +277,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         """
         Return the generators for the group.
 
-        OUTPUT:
-
-        A tuple of group elements generating the group.
+        OUTPUT: tuple of group elements generating the group
 
         EXAMPLES::
 
@@ -302,9 +305,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         """
         The orders of the generators of the dual group.
 
-        OUTPUT:
-
-        A tuple of integers.
+        OUTPUT: tuple of integers
 
         EXAMPLES::
 
@@ -333,7 +334,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
     def __contains__(self, X):
         """
-        Implements "in".
+        Implement "in".
 
         EXAMPLES::
 
@@ -344,7 +345,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: A*B^2*D^7 in Fd
             True
         """
-        return X.parent() == self and is_DualAbelianGroupElement(X)
+        return X.parent() == self and isinstance(X, DualAbelianGroupElement)
 
     def order(self):
         """
@@ -362,7 +363,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
     def is_commutative(self):
         """
-        Return True since this group is commutative.
+        Return ``True`` since this group is commutative.
 
         EXAMPLES::
 
@@ -378,7 +379,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
     @cached_method
     def list(self):
         """
-        Return tuple of all elements of this group.
+        Return a tuple of all elements of this group.
 
         EXAMPLES::
 

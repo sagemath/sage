@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.graphs
 r"""
 Nonsymmetric Macdonald polynomials
@@ -1321,7 +1320,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
 
         - ``KL`` -- algebra over weight space
         - ``q``, ``q1``, ``q2`` -- parameters
-        - ``normalized`` -- a boolean (default: True)
+        - ``normalized`` -- a boolean (default: ``True``)
            whether to normalize the result to have leading coefficient 1
 
         EXAMPLES::

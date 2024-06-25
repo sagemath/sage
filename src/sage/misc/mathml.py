@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 MathML output support
 
@@ -6,7 +5,7 @@ In order to support MathML formatting, an object should define a special
 method _mathml_(self) that returns its MathML representation.
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #
 #   Sage: Open Source Mathematical Software
 #
@@ -22,7 +21,7 @@ method _mathml_(self) that returns its MathML representation.
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 
 def list_function(x):

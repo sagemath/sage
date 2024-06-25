@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 #############################################################
 #
 #    Sparse Vector over mpz_t (the GMP integers)
@@ -237,7 +236,6 @@ cdef int mpz_vector_set_entry(mpz_vector* v, Py_ssize_t n, mpz_t x) except -1:
             v.positions[i] = pos[i-1]
         sig_free(e)
         sig_free(pos)
-
 
 
 cdef mpz_t mpz_set_tmp

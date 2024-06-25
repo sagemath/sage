@@ -1,12 +1,11 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Individual matroids in the catalog
 
 This module imports the individual matroids accessible through
 :mod:`matroids.catalog <sage.matroids.catalog>` (type this and hit :kbd:`Tab`
 for a list).
-
 """
+
 from sage.matroids.database_matroids import (
     U24, U25, U35, K4, Whirl3, Q6, P6, U36, R6,
     Fano, FanoDual, NonFano, NonFanoDual, O7, P7,
@@ -17,6 +16,7 @@ from sage.matroids.database_matroids import (
     R12, ExtendedTernaryGolayCode, T12,
     PG23,
 )
+
 from sage.matroids.database_matroids import (
     RelaxedNonFano, TippedFree3spike,
     AG23minusDY, TQ8, P8p, KP8, Sp8, Sp8pp, LP8, WQ8,
@@ -31,6 +31,7 @@ from sage.matroids.database_matroids import (
     FA15,
     N4,
 )
+
 from sage.matroids.database_matroids import (
     NonVamos, NotP8, AG23minus,
     P9, R9A, R9B, Block_9_4, TicTacToe,

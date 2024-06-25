@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 r"""
 Neveu-Schwarz Super Lie Conformal Algebra
@@ -27,6 +26,7 @@ AUTHORS:
 #*****************************************************************************
 
 from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
+
 
 class NeveuSchwarzLieConformalAlgebra(GradedLieConformalAlgebra):
     """

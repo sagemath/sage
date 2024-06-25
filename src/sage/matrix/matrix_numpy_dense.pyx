@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: optional - numpy
 """
 Dense matrices using a NumPy backend
@@ -337,7 +336,7 @@ cdef class Matrix_numpy_dense(Matrix_dense):
 
         INPUT:
 
-        - ``tol`` -  the largest value of the absolute value of the
+        - ``tol`` --  the largest value of the absolute value of the
           difference between two matrix entries for which they will
           still be considered equal.
 
@@ -375,7 +374,7 @@ cdef class Matrix_numpy_dense(Matrix_dense):
 
         INPUT:
 
-        - ``dtype`` - The desired data-type for the array. If not given,
+        - ``dtype`` -- The desired data-type for the array. If not given,
           then the type will be determined as the minimum type required
           to hold the objects in the sequence.
 

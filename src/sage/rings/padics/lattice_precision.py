@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 r"""
 Lattice precision for the parents ``ZpLC``/``QpLC`` and ``ZpLF``/``QpLF``
 
@@ -1637,7 +1636,7 @@ class PrecisionLattice(UniqueRepresentation, DifferentialPrecisionGeneric):
         - ``index`` -- an integer, the starting row for which the reduction
           is performed
 
-        - ``partial`` -- a boolean (default: False) specifying whether a
+        - ``partial`` -- a boolean (default: ``False``) specifying whether a
           partial or a full Hermite reduction should be performed
 
         NOTE:

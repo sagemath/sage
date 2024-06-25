@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 """
 Base class for generic `p`-adic polynomials
 
@@ -10,7 +9,6 @@ AUTHORS:
 - Jeroen Demeyer (2013-11-22): initial version, split off from other
   files, made Polynomial_padic the common base class for all p-adic
   polynomials.
-
 """
 
 #*****************************************************************************
@@ -276,7 +274,7 @@ class Polynomial_padic(Polynomial):
 
         * ``check_irreducible`` -- check whether the polynomial is irreducible
 
-        * ``kwds`` -- see :meth:`sage.ring.padics.padic_generic.pAdicGeneric.extension`
+        * ``kwds`` -- see :meth:`sage.rings.padics.padic_generic.pAdicGeneric.extension`
 
         EXAMPLES::
 

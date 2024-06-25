@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Parallel iterator built using the ``fork()`` system call
 """
@@ -66,10 +65,10 @@ class p_iter_fork():
         subprocesses to spawn
     - ``timeout`` -- (float, default: 0) wall time in seconds until
         a subprocess is automatically killed
-    - ``verbose`` -- (default: False) whether to print
+    - ``verbose`` -- (default: ``False``) whether to print
         anything about what the iterator does (e.g., killing
         subprocesses)
-    - ``reset_interfaces`` -- (default: True) whether to reset
+    - ``reset_interfaces`` -- (default: ``True``) whether to reset
         all pexpect interfaces
 
     EXAMPLES::

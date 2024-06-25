@@ -158,12 +158,6 @@ class Feature(TrivialUniqueRepresentation):
         self._hidden = False
         self._type = type
 
-        # For multiprocessing of doctests, the data self._num_hidings should be
-        # shared among subprocesses. Thus we use the Value class from the
-        # multiprocessing module (cf. self._seen of class AvailableSoftware)
-        from multiprocessing import Value
-        self._num_hidings = Value('i', 0, lock=False)
-
         try:
             from sage.misc.package import spkg_type
         except ImportError:  # may have been surgically removed in a downstream distribution
@@ -220,10 +214,6 @@ class Feature(TrivialUniqueRepresentation):
             self._cache_is_present = res
 
         if self._hidden:
-            if self._num_hidings.value > 0:
-                self._num_hidings.value += 1
-            elif self._cache_is_present:
-                self._num_hidings.value = 1
             return FeatureTestResult(self, False, reason="Feature `{name}` is hidden.".format(name=self.name))
 
         return self._cache_is_present
@@ -354,7 +344,6 @@ class Feature(TrivialUniqueRepresentation):
             sage: from sage.features.databases import DatabaseCremona
             sage: DatabaseCremona().is_standard()
             False
-
         """
         if self.name.startswith('sage.'):
             return True
@@ -369,7 +358,6 @@ class Feature(TrivialUniqueRepresentation):
             sage: from sage.features.databases import DatabaseCremona
             sage: DatabaseCremona().is_optional()
             True
-
         """
         return self._spkg_type() == 'optional'
 
@@ -394,7 +382,6 @@ class Feature(TrivialUniqueRepresentation):
             Use method `unhide` to make it available again.
 
             sage: Benzene().unhide()            # optional - benzene, needs sage.graphs
-            1
             sage: len(list(graphs.fusenes(2)))  # optional - benzene, needs sage.graphs
             1
         """
@@ -404,8 +391,6 @@ class Feature(TrivialUniqueRepresentation):
         r"""
         Revert what :meth:`hide` did.
 
-        OUTPUT: The number of events a present feature has been hidden.
-
         EXAMPLES:
 
             sage: from sage.features.sagemath import sage__plot
@@ -413,15 +398,28 @@ class Feature(TrivialUniqueRepresentation):
             sage: sage__plot().is_present()
             FeatureTestResult('sage.plot', False)
             sage: sage__plot().unhide()                                                 # needs sage.plot
-            1
             sage: sage__plot().is_present()                                             # needs sage.plot
             FeatureTestResult('sage.plot', True)
         """
-        num_hidings = self._num_hidings.value
-        self._num_hidings.value = 0
         self._hidden = False
-        return int(num_hidings)
 
+    def is_hidden(self):
+        r"""
+        Return whether ``self`` is present but currently hidden.
+
+        EXAMPLES:
+
+            sage: from sage.features.sagemath import sage__plot
+            sage: sage__plot().hide()
+            sage: sage__plot().is_hidden()                                              # needs sage.plot
+            True
+            sage: sage__plot().unhide()
+            sage: sage__plot().is_hidden()
+            False
+        """
+        if self._hidden and self._is_present():
+            return True
+        return False
 
 class FeatureNotPresentError(RuntimeError):
     r"""
@@ -608,7 +606,7 @@ class FileFeature(Feature):
     To work with the file described by the feature, use the method :meth:`absolute_filename`.
     A :class:`FeatureNotPresentError` is raised if the file cannot be found::
 
-        sage: Executable(name="does-not-exist", executable="does-not-exist-xxxxyxyyxyy").absolute_path()
+        sage: Executable(name="does-not-exist", executable="does-not-exist-xxxxyxyyxyy").absolute_filename()
         Traceback (most recent call last):
         ...
         sage.features.FeatureNotPresentError: does-not-exist is not available.
@@ -655,32 +653,6 @@ class FileFeature(Feature):
         # the distribution sagemath-objects, which is not an install-requires of
         # the distribution sagemath-environment.
         raise NotImplementedError
-
-    def absolute_path(self):
-        r"""
-        Deprecated alias for :meth:`absolute_filename`.
-
-        Deprecated to make way for a method of this name returning a ``Path``.
-
-        EXAMPLES::
-
-            sage: from sage.features import Executable
-            sage: Executable(name="sh", executable="sh").absolute_path()
-            doctest:warning...
-            DeprecationWarning: method absolute_path has been replaced by absolute_filename
-            See https://github.com/sagemath/sage/issues/31292 for details.
-            '/...bin/sh'
-        """
-        try:
-            from sage.misc.superseded import deprecation
-        except ImportError:
-            # The import can fail because sage.misc.superseded is provided by
-            # the distribution sagemath-objects, which is not an
-            # install-requires of the distribution sagemath-environment.
-            pass
-        else:
-            deprecation(31292, 'method absolute_path has been replaced by absolute_filename')
-        return self.absolute_filename()
 
 
 class Executable(FileFeature):
@@ -766,7 +738,7 @@ class Executable(FileFeature):
 
         A :class:`FeatureNotPresentError` is raised if the file cannot be found::
 
-            sage: Executable(name="does-not-exist", executable="does-not-exist-xxxxyxyyxyy").absolute_path()
+            sage: Executable(name="does-not-exist", executable="does-not-exist-xxxxyxyyxyy").absolute_filename()
             Traceback (most recent call last):
             ...
             sage.features.FeatureNotPresentError: does-not-exist is not available.
@@ -948,7 +920,10 @@ class CythonFeature(Feature):
             # Available since https://setuptools.pypa.io/en/latest/history.html#v59-0-0
             from setuptools.errors import CCompilerError
         except ImportError:
-            from distutils.errors import CCompilerError
+            try:
+                from distutils.errors import CCompilerError
+            except ImportError:
+                CCompilerError = ()
         with open(tmp_filename(ext=".pyx"), 'w') as pyx:
             pyx.write(self.test_code)
         try:

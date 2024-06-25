@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Matrices over an arbitrary ring
 
@@ -277,7 +276,6 @@ We can also count backwards to flip the matrix upside down::
     [300   0  -2  -1]
     [  1   3   2   1]
     [  6   8   3   4]
-
 
 
 We save and load a matrix::

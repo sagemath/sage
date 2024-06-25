@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Sets
 
@@ -18,7 +17,6 @@ AUTHORS:
 
 - Julian Rueth (2013-04-09) - Collected common code in
   :class:`Set_object_binary`, fixed ``__hash__``.
-
 """
 
 # ****************************************************************************
@@ -493,8 +491,8 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             '<class 'sage.sets.set.Set_object_enumerated_with_category'>'
             and 'Integer Ring'
         """
-        from sage.rings.integer import is_Integer
-        if isinstance(X, int) or is_Integer(X):
+        from sage.rings.integer import Integer
+        if isinstance(X, int) or isinstance(X, Integer):
             # The coercion model will try to call Set_object(0)
             raise ValueError('underlying object cannot be an integer')
 
@@ -1721,7 +1719,9 @@ class Set_object_difference(Set_object_binary):
             sage: S = Set(QQ)
             sage: T = Set(ZZ)
             sage: X = S.difference(T); X
-            Set-theoretic difference of Set of elements of Rational Field and Set of elements of Integer Ring
+            Set-theoretic difference of
+             Set of elements of Rational Field and
+             Set of elements of Integer Ring
             sage: X.category()
             Category of sets
             sage: latex(X)

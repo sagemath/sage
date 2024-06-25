@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Field `\QQ` of Rational Numbers
 
@@ -52,7 +51,6 @@ AUTHORS:
   Removed duplicates of ``discriminant()`` and ``signature()``.
 
 - Anna Haensch (2018-03): Added function ``quadratic_defect()``
-
 """
 
 from sage.rings.integer import Integer
@@ -1703,10 +1701,18 @@ def is_RationalField(x) -> bool:
 
         sage: from sage.rings.rational_field import is_RationalField as is_RF
         sage: is_RF(QQ)
+        doctest:warning...
+        DeprecationWarning: The function is_RationalField is deprecated;
+        use 'isinstance(..., RationalField)' instead.
+        See https://github.com/sagemath/sage/issues/38128 for details.
         True
         sage: is_RF(ZZ)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38128,
+                "The function is_RationalField is deprecated; "
+                "use 'isinstance(..., RationalField)' instead.")
     return isinstance(x, RationalField)
 
 

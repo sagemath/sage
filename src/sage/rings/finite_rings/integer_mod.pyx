@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Elements of `\ZZ/n\ZZ`
 
@@ -164,6 +163,7 @@ mod = Mod
 register_unpickle_override('sage.rings.integer_mod', 'Mod', Mod)
 register_unpickle_override('sage.rings.integer_mod', 'mod', mod)
 
+
 def IntegerMod(parent, value):
     """
     Create an integer modulo `n` with the given parent.
@@ -213,10 +213,18 @@ def is_IntegerMod(x):
 
         sage: from sage.rings.finite_rings.integer_mod import is_IntegerMod
         sage: is_IntegerMod(5)
+        doctest:warning...
+        DeprecationWarning: The function is_IntegerMod is deprecated;
+        use 'isinstance(..., IntegerMod_abstract)' instead.
+        See https://github.com/sagemath/sage/issues/38128 for details.
         False
         sage: is_IntegerMod(Mod(5,10))
         True
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38128,
+                       "The function is_IntegerMod is deprecated; "
+                       "use 'isinstance(..., IntegerMod_abstract)' instead.")
     return isinstance(x, IntegerMod_abstract)
 
 
@@ -640,9 +648,9 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         INPUT:
 
 
-        -  ``self`` - unit modulo `n`
+        -  ``self`` -- unit modulo `n`
 
-        -  ``b`` - a unit modulo `n`. If ``b`` is not given,
+        -  ``b`` -- a unit modulo `n`. If ``b`` is not given,
            ``R.multiplicative_generator()`` is used, where
            ``R`` is the parent of ``self``.
 
@@ -1111,12 +1119,12 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         INPUT:
 
-        -  ``extend`` - bool (default: ``True``);
+        -  ``extend`` -- bool (default: ``True``);
            if ``True``, return a square root in an extension ring,
            if necessary. Otherwise, raise a ``ValueError`` if the
            square root is not in the base ring.
 
-        -  ``all`` - bool (default: ``False``); if
+        -  ``all`` -- bool (default: ``False``); if
            ``True``, return {all} square roots of self, instead of
            just one.
 
@@ -1333,21 +1341,21 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         INPUT:
 
-        - ``n`` - integer `\geq 1`
+        - ``n`` -- integer `\geq 1`
 
-        - ``extend`` - bool (default: True); if True, return an nth
+        - ``extend`` -- bool (default: ``True``); if True, return an nth
           root in an extension ring, if necessary. Otherwise, raise a
           ValueError if the root is not in the base ring.  Warning:
           this option is not implemented!
 
-        - ``all`` - bool (default: ``False``); if ``True``, return all `n`\th
+        - ``all`` -- bool (default: ``False``); if ``True``, return all `n`\th
           roots of ``self``, instead of just one.
 
-        - ``algorithm`` - string (default: None); The algorithm for the prime modulus case.
+        - ``algorithm`` -- string (default: None); The algorithm for the prime modulus case.
           CRT and p-adic log techniques are used to reduce to this case.
           'Johnston' is the only currently supported option.
 
-        - ``cunningham`` - bool (default: ``False``); In some cases,
+        - ``cunningham`` -- bool (default: ``False``); In some cases,
           factorization of ``n`` is computed. If cunningham is set to ``True``,
           the factorization of ``n`` is computed using trial division for all
           primes in the so called Cunningham table. Refer to
@@ -2048,7 +2056,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
 
         INPUT:
 
-        - ``k`` - Integer of type ``long``
+        - ``k`` -- Integer of type ``long``
 
         OUTPUT:
 
@@ -2714,7 +2722,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
 
         INPUT:
 
-        - ``k`` - Integer of type ``int``
+        - ``k`` -- Integer of type ``int``
 
         OUTPUT:
 
@@ -2902,12 +2910,12 @@ cdef class IntegerMod_int(IntegerMod_abstract):
 
         INPUT:
 
-        -  ``extend`` - bool (default: ``True``);
+        -  ``extend`` -- bool (default: ``True``);
            if ``True``, return a square root in an extension ring,
            if necessary. Otherwise, raise a ``ValueError`` if the
            square root is not in the base ring.
 
-        -  ``all`` - bool (default: ``False``); if
+        -  ``all`` -- bool (default: ``False``); if
            ``True``, return {all} square roots of self, instead of
            just one.
 
@@ -3463,7 +3471,6 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         """
         return self._new_c((self.ivalue * (<IntegerMod_int64>right).ivalue) % self._modulus.int64)
 
-
     cpdef _div_(self, right):
         """
         EXAMPLES::
@@ -3534,7 +3541,7 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
 
         INPUT:
 
-        - ``k`` - Integer of type ``int``
+        - ``k`` -- Integer of type ``int``
 
         OUTPUT:
 
@@ -3996,6 +4003,7 @@ def square_root_mod_prime_power(IntegerMod_abstract a, p, e):
         x *= p**(val//2)
     return x
 
+
 cpdef square_root_mod_prime(IntegerMod_abstract a, p=None):
     r"""
     Calculates the square root of `a`, where `a` is an
@@ -4213,18 +4221,18 @@ def lucas(k, P, Q=1, n=None):
     """
     cdef IntegerMod_abstract p,q
 
-    if n is None and not is_IntegerMod(P):
+    if n is None and not isinstance(P, IntegerMod_abstract):
         raise ValueError
 
     if n is None:
         n = P.modulus()
 
-    if not is_IntegerMod(P):
+    if not isinstance(P, IntegerMod_abstract):
         p = Mod(P,n)
     else:
         p = P
 
-    if not is_IntegerMod(Q):
+    if not isinstance(Q, IntegerMod_abstract):
         q = Mod(Q,n)
     else:
         q = Q

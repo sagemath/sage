@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 """
 Callable Symbolic Expressions
 
@@ -177,7 +176,7 @@ class CallableSymbolicExpressionFunctor(ConstructionFunctor):
 
         INPUT:
 
-        -  ``x`` - A CallableSymbolicExpression
+        -  ``x`` -- A CallableSymbolicExpression
 
         OUTPUT: A tuple of variables.
 

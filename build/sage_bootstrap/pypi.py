@@ -5,7 +5,8 @@ PyPi Version Information
 
 
 # ****************************************************************************
-#       Copyright (C) 2016 Volker Braun <vbraun.name@gmail.com>
+#       Copyright (C) 2016      Volker Braun <vbraun.name@gmail.com>
+#                     2020-2023 Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -105,6 +106,20 @@ class PyPiVersion(object):
         Return the package summary
         """
         return self.json['info']['summary']
+
+    @property
+    def requires_dist(self):
+        """
+        Return the dependencies
+        """
+        return self.json['info']['requires_dist']
+
+    @property
+    def requires_python(self):
+        """
+        Return the requires_python attribute
+        """
+        return self.json['info']['requires_python']
 
     def update(self, package=None):
         if package is None:

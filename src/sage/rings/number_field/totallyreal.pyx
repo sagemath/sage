@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 r"""
 Enumeration of primitive totally real fields
 
@@ -72,7 +71,6 @@ AUTHORS:
   recomputations; separated DSage component
 - Craig Citro and John Voight (2007-11-04): additional doctests and type checking
 - Craig Citro and John Voight (2008-02-10): final modifications for submission
-
 """
 
 # ****************************************************************************
@@ -186,7 +184,7 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
     - ``keep_fields`` -- (boolean or integer, default: ``False``) If
       ``keep_fields`` is ``True``, then keep fields up to ``B*log(B)``; if
       ``keep_fields`` is an integer, then keep fields up to that integer.
-    - ``t_2`` -- (boolean or integer, default: False) If ``t_2 = T``, then
+    - ``t_2`` -- (boolean or integer, default: ``False``) If ``t_2 = T``, then
       keep only polynomials with t_2 norm >= T.
     - ``just_print`` -- (boolean, default: ``False``): if ``just_print`` is not
       ``False``, instead of creating a sorted list of totally real number
@@ -466,6 +464,7 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
         Px = PolynomialRing(QQ, 'x')
         return [[ZZ(s[0]), Px([QQ(x) for x in s[1].list()])]
                 for s in S]
+
 
 def weed_fields(S, Py_ssize_t lenS=0):
     r"""

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 # cython: binding=True
 r"""
 Weakly chordal graphs
@@ -164,8 +163,9 @@ def is_long_hole_free(g, certificate=False):
     This is done through a depth-first-search. For efficiency, the auxiliary
     graph is constructed on-the-fly and never stored in memory.
 
-    The run time of this algorithm is `O(m^2)` [NP2007]_ ( where
-    `m` is the number of edges of the graph ) .
+    The run time of this algorithm is `O(n+m^2)` for ``SparseGraph`` and
+    `O(n^2 + m^2)` for ``DenseGraph`` [NP2007]_ (where `n` is the number of
+    vertices and `m` is the number of edges of the graph).
 
     EXAMPLES:
 
@@ -213,7 +213,8 @@ def is_long_hole_free(g, certificate=False):
     cdef int n = g.order()
     cdef list id_label = list(g)
     cdef short_digraph sd
-    init_short_digraph(sd, g, edge_labelled=False, vertex_list=id_label)
+    init_short_digraph(sd, g, edge_labelled=False, vertex_list=id_label,
+                       sort_neighbors=False)
 
     # Make a dense copy of the graph for quick adjacency tests
     cdef bitset_t dense_graph
@@ -393,8 +394,9 @@ def is_long_antihole_free(g, certificate=False):
     This is done through a depth-first-search. For efficiency, the auxiliary
     graph is constructed on-the-fly and never stored in memory.
 
-    The run time of this algorithm is `O(m^2)` [NP2007]_ (where
-    `m` is the number of edges of the graph).
+    The run time of this algorithm is `O(n+m^2)` for ``SparseGraph`` and
+    `O(n^2\log{m} + m^2)` for ``DenseGraph`` [NP2007]_ (where `n` is the number
+    of vertices and `m` is the number of edges of the graph).
 
     EXAMPLES:
 
@@ -526,7 +528,9 @@ def is_weakly_chordal(g, certificate=False):
     contain an induced cycle of length at least 5.
 
     Using is_long_hole_free() and is_long_antihole_free() yields a run time
-    of `O(m^2)` (where `m` is the number of edges of the graph).
+    of `O(n+m^2)` for ``SparseGraph`` and `O(n^2\log{m} + m^2)` for
+    ``DenseGraph`` (where `n` is the number of vertices and `m` is the number of
+    edges of the graph).
 
     EXAMPLES:
 

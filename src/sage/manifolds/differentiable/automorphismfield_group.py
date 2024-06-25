@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Group of Tangent-Space Automorphism Fields
 
@@ -27,7 +26,6 @@ AUTHORS:
 REFERENCES:
 
 - Chap. 15 of [God1968]_
-
 """
 
 #******************************************************************************

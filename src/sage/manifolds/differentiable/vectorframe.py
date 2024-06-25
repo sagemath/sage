@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Vector Frames
 
@@ -204,7 +203,6 @@ The change-of-frame automorphisms and their matrices::
     sage: M.change_of_frame(e, c_spher.frame())[:]
     [      1       0]
     [      0 sin(th)]
-
 """
 
 # *****************************************************************************

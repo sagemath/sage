@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 r"""
 Two-graphs
 
@@ -104,7 +103,7 @@ class TwoGraph(IncidenceStructure):
 
         INPUT:
 
-        - ``alpha`` -- (optional, default is ``False``) return the value of
+        - ``alpha`` -- (default: ``False``) return the value of
           ``alpha``, if possible.
 
         EXAMPLES::
@@ -273,7 +272,7 @@ def twograph_descendant(G, v, name=None):
 
     - ``v`` -- a vertex of ``G``
 
-    - ``name`` -- (optional) ``None`` - no name, otherwise derive from the construction
+    - ``name`` -- (default: ``None``); no name, otherwise derive from the construction
 
     EXAMPLES:
 

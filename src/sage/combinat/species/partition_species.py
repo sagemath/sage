@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.libs.flint
 """
 Partition Species
@@ -267,8 +266,6 @@ class PartitionSpecies(GenericCombinatorialSpecies):
         .. MATH::
 
              exp \sum_{n \ge 1} \frac{1}{n} \left( exp \left( \sum_{k \ge 1} \frac{x_{kn}}{k} \right) -1 \right).
-
-
 
         EXAMPLES::
 

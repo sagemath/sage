@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Elements of free modules of finite rank
 
@@ -17,7 +16,6 @@ REFERENCES:
 - Chap. 12 of J. M. Lee: *Introduction to Smooth Manifolds* [Lee2013]_ (only
   when the free module is a vector space)
 - Chap. 2 of B. O'Neill: *Semi-Riemannian Geometry* [ONe1983]_
-
 """
 
 #******************************************************************************

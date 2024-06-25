@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 r"""
 Elliptic curves with prescribed good reduction
 
@@ -72,7 +71,6 @@ required have conductors 13068 and 52272 so are in the database)::
 AUTHORS:
 
 - John Cremona (6 April 2009): initial version (over `\QQ` only).
-
 """
 
 # ****************************************************************************

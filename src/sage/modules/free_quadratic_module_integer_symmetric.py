@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Integral lattices
 
@@ -58,7 +57,7 @@ from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
 from sage.modules.free_quadratic_module import FreeQuadraticModule_submodule_with_basis_pid, FreeQuadraticModule
 from sage.matrix.constructor import matrix
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.arith.misc import gcd
 from sage.misc.cachefunc import cached_method
 
@@ -234,7 +233,7 @@ def IntegralLattice(data, basis=None):
         ...
         ValueError: lattices must be nondegenerate; use FreeQuadraticModule instead
     """
-    if is_Matrix(data):
+    if isinstance(data, Matrix):
         inner_product_matrix = data
     elif isinstance(data, Integer):
         inner_product_matrix = matrix.identity(ZZ, data)

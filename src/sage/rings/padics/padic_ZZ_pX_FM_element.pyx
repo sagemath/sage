@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-ntl
 # distutils: libraries = NTL_LIBRARIES gmp m
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR
@@ -146,7 +145,7 @@ from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
 from sage.rings.rational cimport Rational
 from sage.libs.pari.all import pari_gen
 from sage.interfaces.abc import GpElement
-from sage.rings.finite_rings.integer_mod import is_IntegerMod
+from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 
 
@@ -234,7 +233,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
                 x = L
             else:
                 raise TypeError("unsupported coercion from pari: only p-adics, integers, rationals, polynomials and pol_mods allowed")
-        elif is_IntegerMod(x):
+        elif isinstance(x, IntegerMod_abstract):
             if (<Integer>x.modulus())._is_power_of(<Integer>parent.prime()):
                 x = x.lift()
             else:

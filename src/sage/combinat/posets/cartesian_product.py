@@ -1,11 +1,9 @@
-# sage_setup: distribution = sagemath-graphs
 """
 Cartesian products of Posets
 
 AUTHORS:
 
 - Daniel Krenn (2015)
-
 """
 # ****************************************************************************
 #  Copyright (C) 2015 Daniel Krenn <dev@danielkrenn.at>

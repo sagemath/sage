@@ -15,6 +15,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.tensor import TensorProductsCategory
 
+
 class FiniteCrystals(CategoryWithAxiom):
     """
     The category of finite crystals.

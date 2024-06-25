@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 # distutils: libraries = gmp NTL_LIBRARIES
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR
@@ -588,6 +587,7 @@ cdef class PowComputer_flint_eis(PowComputer_flint_1step):
         self.e = fmpz_poly_degree(self.modulus)
         self.f = 1
         fmpz_set(self.q, self.fprime)
+
 
 def PowComputer_flint_maker(prime, cache_limit, prec_cap, ram_prec_cap, in_field, poly, prec_type):
     """

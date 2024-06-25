@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Function Fields
 
@@ -191,7 +190,7 @@ quartic over `\GF{2}` and gap numbers for ordinary places::
 
 The gap numbers for Weierstrass places are of course not ordinary::
 
-    sage: # needs sage.modules sage.rings.function_field
+    sage: # needs sage.rings.function_field
     sage: p1,p2,p3 = L.weierstrass_places()[:3]
     sage: p1.gaps()
     [1, 2, 4]
@@ -223,7 +222,6 @@ AUTHORS:
 
 - Sebastian A. Spindler (2024-03-06): implemented Hilbert symbols for global
   function fields
-
 """
 
 # *****************************************************************************
@@ -534,9 +532,9 @@ class FunctionField(Field):
             sage: O.basis()                                                             # needs sage.modules
             (1, y, y^2)
 
-            sage: Z = K.order(x); Z                                                     # needs sage.modules sage.rings.function_field
+            sage: Z = K.order(x); Z                                                     # needs sage.rings.function_field
             Order in Rational function field in x over Rational Field
-            sage: Z.basis()                                                             # needs sage.modules sage.rings.function_field
+            sage: Z.basis()                                                             # needs sage.rings.function_field
             (1,)
 
         Orders with multiple generators are not yet supported::
@@ -621,7 +619,7 @@ class FunctionField(Field):
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
             sage: L.<y> = K.extension(y^3 + x^3 + 4*x + 1)                              # needs sage.rings.function_field
-            sage: L.order_infinite(y)           # not implemented                       # needs sage.modules sage.rings.function_field
+            sage: L.order_infinite(y)           # not implemented                       # needs sage.rings.function_field
 
             sage: Z = K.order(x); Z                                                     # needs sage.modules
             Order in Rational function field in x over Rational Field
@@ -1018,7 +1016,7 @@ class FunctionField(Field):
 
             sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                        # needs sage.rings.function_field
-            sage: L.space_of_differentials()                                            # needs sage.modules sage.rings.function_field
+            sage: L.space_of_differentials()                                            # needs sage.rings.function_field
             Space of differentials of Function field in y
              defined by y^3 + (4*x^3 + 1)/(x^3 + 3)
         """
@@ -1042,7 +1040,7 @@ class FunctionField(Field):
 
             sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                        # needs sage.rings.function_field
-            sage: L.space_of_holomorphic_differentials()                                # needs sage.modules sage.rings.function_field
+            sage: L.space_of_holomorphic_differentials()                                # needs sage.rings.function_field
             (Vector space of dimension 4 over Finite Field of size 5,
              Linear map:
                From: Vector space of dimension 4 over Finite Field of size 5
@@ -1069,7 +1067,7 @@ class FunctionField(Field):
 
             sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                        # needs sage.rings.function_field
-            sage: L.basis_of_holomorphic_differentials()                                # needs sage.modules sage.rings.function_field
+            sage: L.basis_of_holomorphic_differentials()                                # needs sage.rings.function_field
             [((x/(x^3 + 4))*y) d(x),
              ((1/(x^3 + 4))*y) d(x),
              ((x/(x^3 + 4))*y^2) d(x),
@@ -1091,12 +1089,12 @@ class FunctionField(Field):
 
             sage: _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 - (t^3 - 1)/(t^3 - 2))                        # needs sage.rings.function_field
-            sage: L.divisor_group()                                                     # needs sage.modules sage.rings.function_field
+            sage: L.divisor_group()                                                     # needs sage.rings.function_field
             Divisor group of Function field in y defined by y^3 + (-t^3 + 1)/(t^3 - 2)
 
             sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                        # needs sage.rings.function_field
-            sage: L.divisor_group()                                                     # needs sage.modules sage.rings.function_field
+            sage: L.divisor_group()                                                     # needs sage.rings.function_field
             Divisor group of Function field in y defined by y^3 + (4*x^3 + 1)/(x^3 + 3)
         """
         from .divisor import DivisorGroup
@@ -1367,3 +1365,102 @@ class FunctionField(Field):
         """
         from .extensions import ConstantFieldExtension
         return ConstantFieldExtension(self, k)
+
+    @cached_method
+    def jacobian(self, model=None, base_div=None, **kwds):
+        """
+        Return the Jacobian of the function field.
+
+        INPUT:
+
+        - ``model`` -- (default: ``'hess'``) model to use for arithmetic
+
+        - ``base_div`` -- an effective divisor
+
+        The degree of the base divisor should satisfy certain degree condition
+        corresponding to the model used. The following table lists these
+        conditions. Let `g` be the genus of the function field.
+
+        - ``hess``: ideal-based arithmetic; requires base divisor of degree `g`
+
+        - ``km_large``: Khuri-Makdisi's large model; requires base divisor of
+          degree at least `2g + 1`
+
+        - ``km_medium``: Khuri-Makdisi's medium model; requires base divisor of
+          degree at least `2g + 1`
+
+        - ``km_small``: Khuri-Makdisi's small model requires base divisor of
+          degree at least `g + 1`
+
+        We assume the function field has a rational place. If a base divisor is
+        not given, one is constructed using an arbitrary rational place.
+
+        EXAMPLES::
+
+            sage: A.<x,y> = AffineSpace(GF(5), 2)
+            sage: C = Curve(y^2*(x^3 - 1) - (x^3 - 2))
+            sage: F = C.function_field()
+            sage: F.jacobian()
+            Jacobian of Function field in y defined by (x^3 + 4)*y^2 + 4*x^3 + 2 (Hess model)
+
+        TESTS:
+
+            sage: A.<x,y> = AffineSpace(QQ, 2)
+            sage: C = Curve(y^2 - x^3 - 1, A).projective_closure()
+            sage: C.jacobian(model='hess')
+            Traceback (most recent call last):
+            ...
+            ValueError: failed to obtain a rational place; provide a base divisor
+        """
+        from .place import FunctionFieldPlace
+
+        if model is None:
+            model = 'hess'
+
+        if base_div is None:
+            try:
+                base_place = self.get_place(1)
+            except AttributeError:
+                raise ValueError('failed to obtain a rational place; provide a base divisor')
+            if base_place is None:
+                raise ValueError('the function field has no rational place')
+            # appropriate base divisor is constructed below.
+        else:
+            if isinstance(base_div, FunctionFieldPlace):
+                base_div = base_div.divisor()
+
+        g = self.genus()
+        curve = kwds.get('curve')
+
+        if model.startswith('km'):
+            from .jacobian_khuri_makdisi import Jacobian
+            if model == 'km' or model.endswith('large'):
+                if base_div is None:
+                    base_div = (2*g + 1) * base_place
+                if not base_div.degree() >= 2*g + 1:
+                    raise ValueError("Khuri-Makdisi large model requires base divisor of degree "
+                                     "at least 2*g + 1 for genus g")
+                return Jacobian(self, base_div, model='large', curve=curve)
+            elif model.endswith('medium'):
+                if base_div is None:
+                    base_div = (2*g + 1) * base_place
+                if not base_div.degree() >= 2*g + 1:
+                    raise ValueError("Khuri-Makdisi medium model requires base divisor of degree "
+                                     "at least 2*g + 1 for genus g")
+                return Jacobian(self, base_div, model='medium', curve=curve)
+            elif model.endswith('small'):
+                if base_div is None:
+                    base_div = (g + 1) * base_place
+                if not base_div.degree() >= g + 1:
+                    raise ValueError("Khuri-Makdisi small model requires base divisor of degree "
+                                     "at least g + 1 for genus g")
+                return Jacobian(self, base_div, model='small', curve=curve)
+        elif model == 'hess':
+            from .jacobian_hess import Jacobian
+            if base_div is None:
+                base_div = g * base_place
+            if base_div.degree() != g:
+                raise ValueError("Hess model requires base divisor of degree g for genus g")
+            return Jacobian(self, base_div, curve=curve)
+
+        raise ValueError("unknown model")

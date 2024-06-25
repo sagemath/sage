@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.numerical.mip
 r"""
 Solve SAT problems Integer Linear Programming
@@ -83,7 +82,7 @@ class SatLP(SatSolver):
 
         INPUT:
 
-        - ``lits`` - a tuple of integers != 0
+        - ``lits`` -- a tuple of integers != 0
 
         .. note::
 

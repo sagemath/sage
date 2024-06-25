@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.rings.finite_rings
 """
 Finite field morphisms
@@ -184,7 +183,6 @@ cdef class SectionFiniteFieldHomomorphism_generic(Section):
             '\\verb"Section of "\\Bold{F}_{3^{7}} \\hookrightarrow \\Bold{F}_{3^{21}}'
         """
         return '\\verb"Section of "' + self._inverse._latex_()
-
 
 
 cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):

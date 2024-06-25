@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.rings.number_field
 r"""
 Projective plane conics over a number field
@@ -6,7 +5,6 @@ Projective plane conics over a number field
 AUTHORS:
 
 - Marco Streng (2010-07-20)
-
 """
 # ****************************************************************************
 #       Copyright (C) 2009/2010 Marco Streng <marco.streng@gmail.com>
@@ -23,7 +21,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.rational_field import is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from .con_field import ProjectiveConic_field
 
@@ -307,7 +305,7 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
                 if point or obstruction:
                     return True, pt
                 return True
-            if is_RationalField(B):
+            if isinstance(B, RationalField):
                 K = B
                 [KtoB, BtoK] = [K.hom(K) for i in range(2)]
             else:

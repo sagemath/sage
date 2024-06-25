@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Permutations (Cython file)
 
@@ -20,8 +19,6 @@ to slow code.
 
 For those willing to sacrifice a (very small) amount of
 speed, we provide a class that wraps our struct.
-
-
 """
 # ****************************************************************************
 #       Copyright (C) 2010 Tom Boothby <tomas.boothby@gmail.com>

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-ntl
 # distutils: libraries = NTL_LIBRARIES gmp
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR
@@ -223,7 +222,6 @@ def bernoulli_mod_p(int p):
         gSqrPower = ((<llong> gSqrPower) * g) % p
 
     return output
-
 
 
 def bernoulli_mod_p_single(long p, long k):

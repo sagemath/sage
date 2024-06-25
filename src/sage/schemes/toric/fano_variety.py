@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 # sage.doctest: needs sage.geometry.polyhedron sage.graphs
 r"""
 Fano toric varieties
@@ -131,7 +130,7 @@ from sage.rings.rational_field import QQ
 
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-from sage.rings.fraction_field import is_FractionField
+from sage.rings.fraction_field import FractionField_generic
 
 from sage.schemes.toric.toric_subscheme import AlgebraicScheme_subscheme_toric
 from sage.schemes.toric.variety import (
@@ -171,6 +170,9 @@ def is_CPRFanoToricVariety(x):
 
         sage: from sage.schemes.toric.fano_variety import is_CPRFanoToricVariety
         sage: is_CPRFanoToricVariety(1)
+        doctest:warning...
+        DeprecationWarning: The function is_CPRFanoToricVariety is deprecated; use 'isinstance(..., CPRFanoToricVariety_field)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         False
         sage: FTV = toric_varieties.P2()
         sage: FTV
@@ -180,6 +182,8 @@ def is_CPRFanoToricVariety(x):
         sage: is_CPRFanoToricVariety(ProjectiveSpace(2))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_CPRFanoToricVariety is deprecated; use 'isinstance(..., CPRFanoToricVariety_field)' instead.")
     return isinstance(x, CPRFanoToricVariety_field)
 
 
@@ -1143,7 +1147,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
             sage: P1xP2.Delta_polar()
             3-d reflexive polytope in 3-d lattice N+N
         """
-        if is_CPRFanoToricVariety(other):
+        if isinstance(other, CPRFanoToricVariety_field):
             fan = self.fan().cartesian_product(other.fan())
             Delta_polar = LatticePolytope(fan.rays())
 
@@ -1315,7 +1319,7 @@ class AnticanonicalHypersurface(AlgebraicScheme_subscheme_toric):
               s^2*x^2 + s*t*x^2 + t^2*x^2 + s^2*x*y + s*t*x*y
               + t^2*x*y + s^2*y^2 + s*t*y^2 + t^2*y^2
         """
-        if not is_CPRFanoToricVariety(P_Delta):
+        if not isinstance(P_Delta, CPRFanoToricVariety_field):
             raise TypeError("anticanonical hypersurfaces can only be "
                             "constructed for CPR-Fano toric varieties!"
                             "\nGot: %s" % P_Delta)
@@ -1429,7 +1433,7 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
               b1*z1*z2^2 + b2*z2^2*z4 + b5*z1*z2*z5
               + b4*z2*z4*z5 + b3*z1*z5^2 + b0*z4*z5^2
         """
-        if not is_CPRFanoToricVariety(P_Delta):
+        if not isinstance(P_Delta, CPRFanoToricVariety_field):
             raise TypeError("nef complete intersections can only be "
                             "constructed for CPR-Fano toric varieties!"
                             "\nGot: %s" % P_Delta)
@@ -1559,9 +1563,9 @@ def add_variables(field, variables):
 
     INPUT:
 
-    - ``field`` - a field;
+    - ``field`` -- a field;
 
-    - ``variables`` - a list of strings.
+    - ``variables`` -- a list of strings.
 
     OUTPUT:
 
@@ -1586,7 +1590,7 @@ def add_variables(field, variables):
     """
     if not variables:
         return field
-    if is_FractionField(field):
+    if isinstance(field, FractionField_generic):
         # Q(a) ---> Q(a, b) rather than Q(a)(b)
         R = field.ring()
         if is_PolynomialRing(R) or is_MPolynomialRing(R):

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Submanifolds of topological manifolds
 
@@ -31,7 +30,6 @@ AUTHORS:
 REFERENCES:
 
 - \J. M. Lee:  *Introduction to Smooth Manifolds* [Lee2013]_
-
 """
 
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 
 from sage.rings.number_field.number_field import (NumberField, NumberFieldTower, CyclotomicField, QuadraticField,
                                                   is_fundamental_discriminant, is_real_place)

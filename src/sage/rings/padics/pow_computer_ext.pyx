@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-ntl
 # distutils: libraries = NTL_LIBRARIES gmp m
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR
@@ -298,6 +297,7 @@ def ZZ_pX_eis_shift_test(_shifter, _a, _n, _finalprec):
     cdef long finalprec = _finalprec
     ZZ_pX_eis_shift_p(shifter, &x.x, &a.x, n, finalprec)
     return x
+
 
 cdef int ZZ_pX_eis_shift_p(PowComputer_ZZ_pX self, ZZ_pX_c* x, ZZ_pX_c* a, long n, long finalprec) except -1:
     """
@@ -674,7 +674,6 @@ cdef class PowComputer_ext(PowComputer_class):
         cdef ntl_ZZ ans = ntl_ZZ.__new__(ntl_ZZ)
         ZZ_mul(ans.x, self.pow_ZZ_tmp(mpz_get_ui((<Integer>m).value))[0], self.pow_ZZ_tmp(mpz_get_ui((<Integer>n).value))[0])
         return ans
-
 
     cdef mpz_srcptr pow_mpz_t_top(self) noexcept:
         """
@@ -1841,7 +1840,6 @@ cdef class PowComputer_ZZ_pX_small_Eis(PowComputer_ZZ_pX_small):
         else:
             raise IndexError
 
-
     def __dealloc__(self):
         """
         Deallocates low_shifter and high_shifter.
@@ -2272,7 +2270,6 @@ cdef class PowComputer_ZZ_pX_big_Eis(PowComputer_ZZ_pX_big):
         else:
             raise IndexError
 
-
     def __dealloc__(self):
         """
         Deallocates low_shifter and high_shifter.
@@ -2324,6 +2321,7 @@ cdef class PowComputer_ZZ_pX_big_Eis(PowComputer_ZZ_pX_big):
             [316 53 3123 3]
         """
         return ZZ_pX_eis_shift_p(self, x, a, n, finalprec)
+
 
 def PowComputer_ext_maker(prime, cache_limit, prec_cap, ram_prec_cap, in_field, poly, prec_type = "small", ext_type = "u", shift_seed = None):
     r"""

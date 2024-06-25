@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 "Interface to the free online MAGMA calculator"
 
 # ****************************************************************************

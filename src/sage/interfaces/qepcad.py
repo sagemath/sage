@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Interface to QEPCAD
 ===================
@@ -628,7 +627,7 @@ def _qepcad_atoms(formula):
 
     INPUT:
 
-    - `formula` (string) - a quantifier-free formula.
+    - `formula` (string) -- a quantifier-free formula.
 
     .. NOTE::
 

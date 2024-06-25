@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 # sage.doctest: needs sage.geometry.polyhedron sage.libs.linbox sage.modules sage.rings.number_field
 r"""
 Enumeration of totally real fields: relative extensions
@@ -288,7 +287,7 @@ class tr_data_rel:
         Z_Fbasis = self.Z_F.basis()
 
         # Initialize variables.
-        if a == []:
+        if not a:
             # No starting input, all polynomials will be found; initialize to zero.
             self.a = [0]*m + [1]
             self.amaxvals = [[]]*m
@@ -302,7 +301,7 @@ class tr_data_rel:
             import numpy
             for i in range(len(anm1s)):
                 Q = [[v(m*x) for v in self.Foo] + [0] for x in Z_Fbasis] + [[v(anm1s[i]) for v in self.Foo] + [10**6]]
-                pari_string = '['+';'.join([','.join(["%s" % ii for ii in row]) for row in zip(*Q)])+']'
+                pari_string = '[' + ';'.join(','.join("%s" % ii for ii in row) for row in zip(*Q)) + ']'
                 adj = pari(pari_string).qflll()[self.d]
                 anm1s[i] += sum([m*Z_Fbasis[ii]*int(adj[ii])//int(adj[self.d]) for ii in range(self.d)])
 
@@ -922,7 +921,7 @@ def enumerate_totallyreal_fields_all(n, B, verbose=0, return_seqs=False,
       the polynomials as sequences (for easier exporting to a file). This
       also returns a list of four numbers, as explained in the OUTPUT
       section below.
-    - ``return_pari_objects`` -- (boolean, default: True) if both
+    - ``return_pari_objects`` -- (boolean, default: ``True``) if both
       ``return_seqs`` and ``return_pari_objects`` are ``False`` then it
       returns the elements as Sage objects; otherwise it returns PARI
       objects.

@@ -19,6 +19,7 @@ for these two notions.
 
 from sage.categories.filtered_modules import FilteredModulesCategory
 
+
 class FilteredAlgebrasWithBasis(FilteredModulesCategory):
     """
     The category of filtered algebras with a distinguished

@@ -164,8 +164,9 @@ def initialize_globals(all, g=None):
 
 def get_global(name):
     """
-    Return the value of global variable ``name``. Raise ``NameError``
-    if there is no such global variable.
+    Return the value of global variable ``name``.
+
+    Raise :class:`NameError` if there is no such global variable.
 
     INPUT:
 

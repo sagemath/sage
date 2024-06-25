@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-ntl
 # distutils: libraries = NTL_LIBRARIES
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR
@@ -51,7 +50,7 @@ from sage.rings.finite_rings.finite_field_ntl_gf2e import FiniteField_ntl_gf2e
 from sage.interfaces.abc import GapElement
 
 
-cdef object is_IntegerMod
+cdef object IntegerMod_abstract
 cdef object Integer
 cdef object Rational
 cdef object MPolynomial
@@ -65,7 +64,7 @@ cdef int late_import() except -1:
     i.e. after the module was loaded. This is needed to avoid circular
     imports.
     """
-    global is_IntegerMod, \
+    global IntegerMod_abstract, \
            Integer, \
            Rational, \
            MPolynomial, \
@@ -73,11 +72,11 @@ cdef int late_import() except -1:
            GF, \
            GF2, GF2_0, GF2_1
 
-    if is_IntegerMod is not None:
+    if IntegerMod_abstract is not None:
         return 0
 
     import sage.rings.finite_rings.integer_mod
-    is_IntegerMod = sage.rings.finite_rings.integer_mod.is_IntegerMod
+    IntegerMod_abstract = sage.rings.finite_rings.integer_mod.IntegerMod_abstract
 
     import sage.rings.rational
     Rational = sage.rings.rational.Rational
@@ -276,7 +275,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
         cdef FiniteField_ntl_gf2eElement g
         cdef Py_ssize_t i
 
-        if is_IntegerMod(e):
+        if isinstance(e, IntegerMod_abstract):
             e = e.lift()
         if isinstance(e, (int, Integer)):
             GF2E_conv_long(res.x,int(e&1))
@@ -1314,6 +1313,7 @@ def unpickleFiniteField_ntl_gf2eElement(parent, elem):
         True
     """
     return parent(elem)
+
 
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.rings.finite_field_ntl_gf2e', 'unpickleFiniteField_ntl_gf2eElement', unpickleFiniteField_ntl_gf2eElement)

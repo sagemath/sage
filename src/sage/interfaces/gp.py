@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 # sage.doctest: needs sage.libs.pari
 r"""
 Interface to the GP calculator of PARI/GP
@@ -271,7 +270,7 @@ class Gp(ExtraTabCompletion, Expect):
 
         EXAMPLES::
 
-            sage: gp # indirect doctest
+            sage: gp  # indirect doctest
             PARI/GP interpreter
         """
         return 'PARI/GP interpreter'
@@ -280,6 +279,7 @@ class Gp(ExtraTabCompletion, Expect):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.gp import gp
             sage: gp.__reduce__()
             (<function reduce_load_GP at 0x...>, ())
             sage: f, args = _
@@ -467,7 +467,7 @@ class Gp(ExtraTabCompletion, Expect):
         INPUT:
 
 
-        -  ``t`` - (default: None); if not None, then returns
+        -  ``t`` -- (default: None); if not None, then returns
            time since t
 
 

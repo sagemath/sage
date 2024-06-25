@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.pari sage.rings.number_field
 r"""
 Modular forms with character
@@ -111,11 +110,11 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
 
         INPUT:
 
-        - ``weight`` - int
+        - ``weight`` -- int
 
-        - ``character`` - dirichlet.DirichletCharacter
+        - ``character`` -- dirichlet.DirichletCharacter
 
-        - ``base_ring`` - base field
+        - ``base_ring`` -- base field
 
         EXAMPLES::
 
@@ -125,7 +124,7 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
             sage: type(m)
             <class 'sage.modular.modform.ambient_eps.ModularFormsAmbient_eps_with_category'>
         """
-        if not dirichlet.is_DirichletCharacter(character):
+        if not isinstance(character, dirichlet.DirichletCharacter):
             raise TypeError("character (=%s) must be a Dirichlet character" % character)
         if base_ring is None:
             base_ring = character.base_ring()

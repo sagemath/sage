@@ -710,7 +710,7 @@ class CoxeterGroups(Category_singleton):
 
             INPUT:
 
-            - ``i`` - an element of the index set of ``self``
+            - ``i`` -- an element of the index set of ``self``
 
             See :meth:`.simple_projections` for the options and for
             the definition of the simple projections.
@@ -937,22 +937,27 @@ class CoxeterGroups(Category_singleton):
             from sage.sets.family import Family
             return Family(self.index_set(), lambda i: self.simple_projection(i, side=side, length_increasing=length_increasing))
 
-        def sign_representation(self, base_ring=None, side="twosided"):
+        def sign_representation(self, base_ring=None):
             r"""
             Return the sign representation of ``self`` over ``base_ring``.
 
             INPUT:
 
             - ``base_ring`` -- (optional) the base ring; the default is `\ZZ`
-            - ``side`` -- ignored
 
             EXAMPLES::
 
-                sage: W = WeylGroup(["A", 1, 1])                                        # needs sage.combinat sage.groups
-                sage: W.sign_representation()                                           # needs sage.combinat sage.groups
+                sage: W = WeylGroup(['D', 4])                                           # needs sage.combinat sage.groups
+                sage: W.sign_representation(QQ)                                         # needs sage.combinat sage.groups
                 Sign representation of
-                 Weyl Group of type ['A', 1, 1] (as a matrix group acting on the root space)
-                 over Integer Ring
+                 Weyl Group of type ['D', 4] (as a matrix group acting on the ambient space)
+                 over Rational Field
+
+                sage: # optional - gap3
+                sage: W = CoxeterGroup(['B',3], implementation="coxeter3")
+                sage: W.sign_representation()
+                Sign representation of Coxeter group of type ['B', 3]
+                 implemented by Coxeter3 over Integer Ring
             """
             if base_ring is None:
                 from sage.rings.integer_ring import ZZ
@@ -1536,10 +1541,10 @@ class CoxeterGroups(Category_singleton):
 
             INPUT:
 
-            - ``index_set`` - a subset (as a list or iterable) of the nodes of the Dynkin diagram;
+            - ``index_set`` -- a subset (as a list or iterable) of the nodes of the Dynkin diagram;
               (default: all of them)
-            - ``side`` - 'left' or 'right' (default: 'right')
-            - ``positive`` - a boolean (default: ``False``)
+            - ``side`` -- 'left' or 'right' (default: 'right')
+            - ``positive`` -- a boolean (default: ``False``)
 
             The ``index_set`` option can be used to restrict to the
             parabolic subgroup indexed by ``index_set``.
@@ -2276,8 +2281,8 @@ class CoxeterGroups(Category_singleton):
 
             INPUT:
 
-            - ``index_set`` - a subset (or iterable) of the nodes of the Dynkin diagram
-            - ``side`` - 'left' or 'right'
+            - ``index_set`` -- a subset (or iterable) of the nodes of the Dynkin diagram
+            - ``side`` -- 'left' or 'right'
 
             EXAMPLES::
 
@@ -2323,9 +2328,9 @@ class CoxeterGroups(Category_singleton):
 
             INPUT:
 
-            - ``i`` - an element of the index set of the Coxeter group
-            - ``side`` - 'left' or 'right' (default: 'right')
-            - ``length_increasing`` - a boolean (default: True) specifying
+            - ``i`` -- an element of the index set of the Coxeter group
+            - ``side`` -- 'left' or 'right' (default: 'right')
+            - ``length_increasing`` -- a boolean (default: ``True``) specifying
               the direction of the projection
 
             See :meth:`CoxeterGroups.ParentMethods.simple_projections`
@@ -2793,7 +2798,7 @@ class CoxeterGroups(Category_singleton):
             INPUT:
 
             - side -- 'left' or 'right'  (default: 'right')
-            - positive -- a boolean (default: False)
+            - positive -- a boolean (default: ``False``)
             - index_set -- a list of indices or None
 
             OUTPUT: a list
@@ -2840,7 +2845,7 @@ class CoxeterGroups(Category_singleton):
 
             INPUT:
 
-            - ``c``-- a Coxeter element.
+            - ``c`` -- a Coxeter element.
 
             OUTPUT:
 
@@ -2912,7 +2917,7 @@ class CoxeterGroups(Category_singleton):
 
             Number of `c`-sortable elements in `A_3` (Catalan number)::
 
-                sage: len([w for w in W if w.is_coxeter_sortable(c)])
+                sage: len([w for w in W if w.is_coxeter_sortable(c)])                   # needs sage.rings.number_field
                 14
 
             TESTS::
@@ -2965,7 +2970,7 @@ class CoxeterGroups(Category_singleton):
                 applied. If ``side`` is 'left' then the operation is
                 applied on the left.
 
-            - ``length_increasing`` -- a boolean (default True)
+            - ``length_increasing`` -- a boolean (default: ``True``)
                 whether to act length increasingly or decreasingly
 
             EXAMPLES::

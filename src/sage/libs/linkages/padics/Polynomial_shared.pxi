@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 r"""
 This linkage file implements the padics API using Sage Polynomials.
 
@@ -15,7 +14,6 @@ where functions that depend on the ramification of the defining polynomial are p
 AUTHORS:
 
 - David Roe, Julian Rüth (2017-06-11): initial version
-
 """
 #*****************************************************************************
 #       Copyright (C) 2017 David Roe <roed.math@gmail.com>

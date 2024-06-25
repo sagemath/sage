@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 r"""
 View classes
 
@@ -717,7 +716,7 @@ cdef class EdgesView:
 
         INPUT:
 
-        - ``left,right`` -- :class:`EdgesView` or list of edges
+        - ``left``, ``right`` -- :class:`EdgesView` or list of edges
 
         EXAMPLES::
 

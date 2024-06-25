@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Fraction Field of Integral Domains
 
@@ -152,10 +151,18 @@ def is_FractionField(x) -> bool:
 
         sage: from sage.rings.fraction_field import is_FractionField
         sage: is_FractionField(Frac(ZZ['x']))
+        doctest:warning...
+        DeprecationWarning: The function is_FractionField is deprecated;
+        use 'isinstance(..., FractionField_generic)' instead.
+        See https://github.com/sagemath/sage/issues/38128 for details.
         True
         sage: is_FractionField(QQ)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38128,
+                "The function is_FractionField is deprecated; "
+                "use 'isinstance(..., FractionField_generic)' instead.")
     return isinstance(x, FractionField_generic)
 
 
@@ -681,7 +688,11 @@ class FractionField_generic(ring.Field):
         x = py_scalar_to_element(x)
         y = py_scalar_to_element(y)
 
-        from sage.libs.pari.all import pari_gen
+        try:
+            from sage.libs.pari.all import pari_gen
+        except ImportError:
+            pari_gen = ()
+
         if isinstance(x, pari_gen) and x.type() == 't_POL':
             # This recursive approach is needed because PARI
             # represents multivariate polynomials as iterated

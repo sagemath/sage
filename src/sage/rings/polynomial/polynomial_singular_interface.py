@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Polynomial Interfaces to Singular
 
@@ -17,7 +16,6 @@ TESTS::
     sage: P.<a,b> = PolynomialRing(GF(7), 2)
     sage: f = (a^3 + 2*b^2*a)^7; f
     a^21 + 2*a^7*b^14
-
 """
 #################################################################
 #
@@ -42,18 +40,14 @@ import sage.rings.fraction_field
 import sage.rings.abc
 import sage.rings.number_field as number_field
 
-try:
-    from sage.interfaces.singular import singular
-except ImportError:
-    singular = None
-
-from sage.rings.rational_field import is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.rings.function_field.function_field_rational import RationalFunctionField
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.number_field_base import NumberField
 
 import sage.rings.finite_rings.finite_field_constructor
+
 
 def _do_singular_init_(singular, base_ring, char, _vars, order):
     r"""
@@ -80,7 +74,7 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
     if base_ring is ZZ:
         return make_ring("(ZZ)"), None
 
-    if sage.rings.rational_field.is_RationalField(base_ring):
+    if isinstance(base_ring, sage.rings.rational_field.RationalField):
         return make_ring("(QQ)"), None
 
     elif isinstance(base_ring, sage.rings.abc.RealField):
@@ -142,7 +136,7 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
 
         return R, minpoly
 
-    elif sage.rings.fraction_field.is_FractionField(base_ring):
+    elif isinstance(base_ring, sage.rings.fraction_field.FractionField_generic):
         if base_ring.ngens() == 1:
             gens = str(base_ring.gen())
         else:
@@ -184,7 +178,7 @@ class PolynomialRing_singular_repr:
     polynomial rings which support conversion from and to Singular
     rings.
     """
-    def _singular_(self, singular=singular):
+    def _singular_(self, singular=None):
         r"""
         Return a Singular ring for this polynomial ring.
 
@@ -193,7 +187,7 @@ class PolynomialRing_singular_repr:
 
         INPUT:
 
-        - ``singular`` - Singular instance
+        - ``singular`` -- Singular instance
 
         OUTPUT: Singular ring matching this ring
 
@@ -332,9 +326,11 @@ class PolynomialRing_singular_repr:
             - Singular represents precision of floating point numbers base 10
               while Sage represents floating point precision base 2.
         """
+        if singular is None:
+            from sage.interfaces.singular import singular
         try:
             R = self.__singular
-            if not (R.parent() is singular):
+            if R.parent() is not singular:
                 raise ValueError
             R._check_valid()
             if self.base_ring() is ZZ or self.base_ring().is_prime_field():
@@ -349,7 +345,7 @@ class PolynomialRing_singular_repr:
         except (AttributeError, ValueError):
             return self._singular_init_(singular)
 
-    def _singular_init_(self, singular=singular):
+    def _singular_init_(self, singular=None):
         """
         Return a newly created Singular ring matching this ring.
 
@@ -374,6 +370,9 @@ class PolynomialRing_singular_repr:
         else:
             _vars = str(self.gens())
             order = self.term_order().singular_str()
+
+        if singular is None:
+            from sage.interfaces.singular import singular
 
         self.__singular, self.__minpoly = _do_singular_init_(singular, self.base_ring(), self.characteristic(), _vars, order)
 
@@ -431,7 +430,7 @@ def can_convert_to_singular(R):
 
     base_ring = R.base_ring()
     if (base_ring is ZZ
-        or is_RationalField(base_ring)
+        or isinstance(base_ring, RationalField)
         or isinstance(base_ring, (sage.rings.abc.IntegerModRing,
                                   sage.rings.abc.RealField, sage.rings.abc.ComplexField,
                                   sage.rings.abc.RealDoubleField, sage.rings.abc.ComplexDoubleField))):
@@ -440,7 +439,7 @@ def can_convert_to_singular(R):
         return base_ring.characteristic() <= 2147483647
     elif isinstance(base_ring, NumberField):
         return base_ring.is_absolute()
-    elif sage.rings.fraction_field.is_FractionField(base_ring):
+    elif isinstance(base_ring, sage.rings.fraction_field.FractionField_generic):
         B = base_ring.base_ring()
         return (B.is_prime_field() or B is ZZ
                 or (isinstance(B, FiniteField) and B.characteristic() <= 2147483647))
@@ -461,20 +460,24 @@ class Polynomial_singular_repr:
     Due to the incompatibility of Python extension classes and multiple inheritance,
     this just defers to module-level functions.
     """
-    def _singular_(self, singular=singular):
+    def _singular_(self, singular=None):
+        if singular is None:
+            from sage.interfaces.singular import singular
         return _singular_func(self, singular)
 
-    def _singular_init_func(self, singular=singular):
+    def _singular_init_func(self, singular=None):
+        if singular is None:
+            from sage.interfaces.singular import singular
         return _singular_init_func(self, singular)
 
 
-def _singular_func(self, singular=singular):
+def _singular_func(self, singular=None):
     """
     Return Singular polynomial matching this polynomial.
 
     INPUT:
 
-    - ``singular`` - Singular instance to use.
+    - ``singular`` -- Singular instance to use.
 
     EXAMPLES::
 
@@ -501,8 +504,9 @@ def _singular_func(self, singular=singular):
         sage: R(h^20) == f^20
         True
     """
+    if singular is None:
+        from sage.interfaces.singular import singular
     self.parent()._singular_(singular).set_ring()  # this is expensive
-
     try:
         self.__singular._check_valid()
         if self.__singular.parent() is singular:
@@ -512,13 +516,15 @@ def _singular_func(self, singular=singular):
     return _singular_init_func(self, singular)
 
 
-def _singular_init_func(self, singular=singular):
+def _singular_init_func(self, singular=None):
     """
     Return corresponding Singular polynomial but enforce that a new
     instance is created in the Singular interpreter.
 
     Use ``self._singular_()`` instead.
     """
+    if singular is None:
+        from sage.interfaces.singular import singular
     self.parent()._singular_(singular).set_ring()  # this is expensive
     self.__singular = singular(str(self))
     return self.__singular

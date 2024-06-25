@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.combinat
 r"""
 F-algebra for motivic multiple zeta values.
@@ -19,7 +18,6 @@ general, allowing any positive odd integer as start index.
 AUTHORS:
 
 - Frédéric Chapoton (2022-09): Initial version
-
 """
 # ****************************************************************************
 #  Copyright (C) 2022 Frédéric Chapoton <chapoton-unistra-fr>

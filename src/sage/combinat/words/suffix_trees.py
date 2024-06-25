@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 r"""
 Suffix Tries and Suffix Trees
 """
@@ -323,7 +322,7 @@ class SuffixTrie(SageObject):
 
         INPUT:
 
-        - ``state`` - a state
+        - ``state`` -- a state
 
         EXAMPLES::
 
@@ -834,7 +833,7 @@ class ImplicitSuffixTree(SageObject):
 
         INPUT:
 
-        -  ``word_labels`` - boolean (default: ``False``) if ``False``, labels
+        -  ``word_labels`` -- boolean (default: ``False``) if ``False``, labels
            the edges by pairs `(i, j)`; if ``True``, labels the edges by
            ``word[i:j]``.
 
@@ -867,14 +866,14 @@ class ImplicitSuffixTree(SageObject):
 
         INPUT:
 
-        -  ``word_labels`` - boolean (default: ``False``) if ``False``, labels
+        -  ``word_labels`` -- boolean (default: ``False``) if ``False``, labels
            the edges by pairs `(i, j)`; if ``True``, labels the edges by
            ``word[i:j]``.
-        -  ``layout`` - (default: ``'tree'``)
-        -  ``tree_root`` - (default: 0)
-        -  ``tree_orientation`` - (default: ``'up'``)
-        -  ``vertex_colors`` - (default: ``None``)
-        -  ``edge_labels`` - (default: ``True``)
+        -  ``layout`` -- (default: ``'tree'``)
+        -  ``tree_root`` -- (default: 0)
+        -  ``tree_orientation`` -- (default: ``'up'``)
+        -  ``vertex_colors`` -- (default: ``None``)
+        -  ``edge_labels`` -- (default: ``True``)
 
         EXAMPLES::
 
@@ -909,7 +908,7 @@ class ImplicitSuffixTree(SageObject):
 
         INPUT:
 
-        -  ``word_labels`` - (default: ``None``) if ``False``, labels the
+        -  ``word_labels`` -- (default: ``None``) if ``False``, labels the
            edges by pairs `(i, j)`; if ``True``, labels the edges by
            ``word[i:j]``.
 
@@ -1025,7 +1024,7 @@ class ImplicitSuffixTree(SageObject):
 
         INPUT:
 
-        - ``state`` - a state
+        - ``state`` -- a state
 
         EXAMPLES::
 
@@ -1151,7 +1150,7 @@ class ImplicitSuffixTree(SageObject):
 
         INPUT:
 
-        -  ``n`` - an integer, or ``None``.
+        -  ``n`` -- an integer, or ``None``.
 
         OUTPUT:
 
@@ -1237,7 +1236,7 @@ class ImplicitSuffixTree(SageObject):
 
         INPUT:
 
-        -  ``n`` - an integer, or ``None``.
+        -  ``n`` -- an integer, or ``None``.
 
         OUTPUT:
 
@@ -1741,7 +1740,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
         D = self.transition_function_dictionary()
         string_depth = {0: 0}
         n = len(self.word())
-        labeling = dict()
+        labeling = {}
         treat_node(0, None)
         return labeling
 
@@ -1828,7 +1827,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
                             walk_chain(current_node, child, l, square_start)
 
         prelabeling = self._partial_labeling()
-        labeling = dict()
+        labeling = {}
         D = self.transition_function_dictionary()
         treat_node(0, 0, 0)
         return labeling

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs numpy
 r"""
 Continuous Emission Hidden Markov Models
@@ -24,7 +23,7 @@ cdef double sqrt2pi = sqrt(2*M_PI)
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.misc.flatten  import flatten
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 
 from sage.stats.time_series cimport TimeSeries
 from sage.stats.intlist cimport IntList
@@ -221,7 +220,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
         # B should be a matrix of N rows, with column 0 the mean and 1
         # the standard deviation.
-        if is_Matrix(B):
+        if isinstance(B, Matrix):
             B = B.list()
         else:
             B = flatten(B)
@@ -336,7 +335,6 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
         s += '\nEmission parameters:\n%s'%self.emission_parameters()
         s += '\nInitial probabilities: %s'%self.initial_probabilities()
         return s
-
 
     def generate_sequence(self, Py_ssize_t length, starting_state=None):
         r"""
@@ -1166,7 +1164,6 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
         return unpickle_gaussian_mixture_hmm_v1, \
                (self.A, self.B, self.pi, self.mixture)
 
-
     def __richcmp__(self, other, op):
         r"""
         Compare self and other, which must both be GaussianMixtureHiddenMarkovModel's.
@@ -1584,6 +1581,7 @@ def unpickle_gaussian_hmm_v1(A, B, pi, prob, n_out):
     m.prob = prob
     m.n_out = n_out
     return m
+
 
 def unpickle_gaussian_mixture_hmm_v1(A, B, pi, mixture):
     r"""

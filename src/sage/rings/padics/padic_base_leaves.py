@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 r"""
 `p`-adic Base Leaves
 
@@ -175,7 +174,6 @@ TESTS::
     sage: repr(R(2777))[3:]
     '0&0&0&0&0&0&0&0&0&0&4&2&1&0&2'
     sage: TestSuite(R).run()                                                            # needs sage.geometry.polyhedron
-
 """
 
 #*****************************************************************************

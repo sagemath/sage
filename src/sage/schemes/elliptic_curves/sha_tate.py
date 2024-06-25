@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 r"""
 Tate-Shafarevich group
 
@@ -69,7 +68,6 @@ AUTHORS:
 
 - Aly Deines, Chris Wuthrich, Jeaninne Van Order (2016-03): Added
   functionality that tests the Skinner-Urban condition.
-
 """
 # ****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>

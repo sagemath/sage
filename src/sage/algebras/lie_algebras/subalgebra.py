@@ -24,6 +24,7 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.sets.family import Family
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from sage.structure.parent import Parent
+from sage.structure.element import parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 
@@ -388,7 +389,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             sage: S._an_element_()
             X
         """
-        return self.element_class(self, self.lie_algebra_generators()[0])
+        return self.lie_algebra_generators()[0]
 
     def _element_constructor_(self, x):
         """
@@ -425,14 +426,13 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             sage: S([S(x), S(y)]) == S(L[x, y])
             True
         """
-        try:
-            P = x.parent()
-            if P is self:
-                return x
-            if P == self._ambient:
-                return self.retract(x)
-        except AttributeError:
-            pass
+        P = parent(x)
+        if P is self:
+            return x
+        if P == self._ambient:
+            return self.retract(x)
+        if isinstance(P, type(self)) and P._ambient == self._ambient:
+            return self.retract(x.value)
 
         if x in self.module():
             return self.from_vector(x)
@@ -887,71 +887,6 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
         if A == self._ambient and self._is_ideal:
             return True
         return super().is_ideal(A)
-
-    def reduce(self, X):
-        r"""
-        Reduce an element of the ambient Lie algebra modulo the
-        ideal ``self``.
-
-        INPUT:
-
-        - ``X`` -- an element of the ambient Lie algebra
-
-        OUTPUT:
-
-        An element `Y` of the ambient Lie algebra that is contained in a fixed
-        complementary submodule `V` to ``self`` such that `X = Y` mod ``self``.
-
-        When the base ring of ``self`` is a field, the complementary submodule
-        `V` is spanned by the elements of the basis that are not the leading
-        supports of the basis of ``self``.
-
-        EXAMPLES:
-
-        An example reduction in a 6 dimensional Lie algebra::
-
-            sage: sc = {('a','b'): {'d': 1}, ('a','c'): {'e': 1},
-            ....:       ('b','c'): {'f': 1}}
-            sage: L.<a,b,c,d,e,f> = LieAlgebra(QQ, sc)
-            sage: I =  L.ideal(c)
-            sage: I.reduce(a + b + c + d + e + f)
-            a + b + d
-
-        The reduction of an element is zero if and only if the
-        element belongs to the subalgebra::
-
-            sage: I.reduce(c + e)
-            0
-            sage: c + e in I
-            True
-
-        Over non-fields, the complementary submodule may not be spanned by
-        a subset of the basis of the ambient Lie algebra::
-
-            sage: L.<X,Y,Z> = LieAlgebra(ZZ, {('X','Y'): {'Z': 3}})
-            sage: I = L.ideal(Y)
-            sage: I.basis()
-            Family (Y, 3*Z)
-            sage: I.reduce(3*Z)
-            0
-            sage: I.reduce(Y + 14*Z)
-            2*Z
-        """
-        R = self.base_ring()
-        for Y in self.basis():
-            Y = self.lift(Y)
-            k, c = Y.leading_item(key=self._order)
-
-            if R.is_field():
-                X = X - X[k] / c * Y
-            else:
-                try:
-                    q, _ = X[k].quo_rem(c)
-                    X = X - q * Y
-                except AttributeError:
-                    pass
-
-        return X
 
     class Element(LieSubalgebraElementWrapper):
         def adjoint_matrix(self, sparse=False):

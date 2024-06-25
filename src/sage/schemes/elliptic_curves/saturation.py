@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.rings.finite_rings sage.rings.number_field
 r"""
 Saturation of Mordell-Weil groups of elliptic curves over number fields
@@ -37,7 +36,6 @@ AUTHORS:
 - Robert Bradshaw
 
 - John Cremona
-
 """
 #*****************************************************************************
 #       Copyright (C) 2017 Robert Bradshaw <robertwb@math.washington.edu>

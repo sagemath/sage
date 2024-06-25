@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-plot
 # sage.doctest: needs sage.symbolic
 """
 Regular polygons in the upper half model for hyperbolic plane
@@ -18,16 +17,18 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
+from sage.matrix.constructor import matrix
+from sage.misc.decorators import options, rename_keyword
+from sage.misc.functional import is_odd
+from sage.misc.lazy_import import lazy_import
 from sage.plot.hyperbolic_polygon import HyperbolicPolygon
-from sage.plot.all import Graphics
+from sage.plot.plot import Graphics
 from sage.rings.cc import CC
 from sage.rings.integer import Integer
-from sage.misc.decorators import options, rename_keyword
-from sage.symbolic.constants import pi, e
-from sage.functions.hyperbolic import arccosh
-from sage.functions.trig import sin, cos, cot
-from sage.misc.functional import is_odd
-from sage.matrix.constructor import matrix
+
+lazy_import("sage.functions.hyperbolic", "arccosh")
+lazy_import("sage.functions.trig", ["sin", "cos", "cot"])
+lazy_import("sage.symbolic.constants", ["pi", "e"])
 
 
 class HyperbolicRegularPolygon(HyperbolicPolygon):
@@ -43,7 +44,7 @@ class HyperbolicRegularPolygon(HyperbolicPolygon):
 
     - ``i_angle`` -- interior angle of the polygon
 
-    - ``center``-- center point as a complex number of the polygon
+    - ``center`` -- center point as a complex number of the polygon
 
     EXAMPLES:
 
@@ -118,7 +119,7 @@ class HyperbolicRegularPolygon(HyperbolicPolygon):
             raise ValueError("interior angle %s must be in (0, pi) interval" % (i_angle))
         if pi*(sides-2) - sides*i_angle <= 0:
             raise ValueError("there exists no hyperbolic regular compact polygon,"
-                             " for sides=%s the interior angle must be less than %s" % (sides, pi * (sides-2) / sides))
+                             " for sides={} the interior angle must be less than {}".format(sides, pi * (sides-2) / sides))
         self.sides = sides
         self.i_angle = i_angle
         beta = 2 * pi / self.sides # compute the rotation angle to be used ahead
@@ -169,8 +170,7 @@ class HyperbolicRegularPolygon(HyperbolicPolygon):
             sage: HyperbolicRegularPolygon(5,pi/2,I, {})
             Hyperbolic regular polygon (sides=5, i_angle=1/2*pi, center=1.00000000000000*I)
         """
-        return ("Hyperbolic regular polygon (sides=%s, i_angle=%s, center=%s)"
-                % (self.sides, self.i_angle, self.center))
+        return ("Hyperbolic regular polygon (sides={}, i_angle={}, center={})".format(self.sides, self.i_angle, self.center))
 
     def _i_rotation(self, z, alpha):
         r"""
@@ -179,10 +179,10 @@ class HyperbolicRegularPolygon(HyperbolicPolygon):
 
         INPUT:
 
-        - ``z``-- point in the upper complex halfplane to which
+        - ``z`` -- point in the upper complex halfplane to which
           apply the isometry
 
-        - ``alpha``-- angle of rotation (radians, counterclockwise)
+        - ``alpha`` -- angle of rotation (radians, counterclockwise)
 
         OUTPUT:
 
@@ -200,6 +200,7 @@ class HyperbolicRegularPolygon(HyperbolicPolygon):
         _s = sin(_a)
         G = matrix([[_c, _s], [-_s, _c]])
         return (G[0][0] * z + G[0][1]) / (G[1][0] * z + G[1][1])
+
 
 @rename_keyword(color='rgbcolor')
 @options(alpha=1, fill=False, thickness=1, rgbcolor="blue", zorder=2,

@@ -1,11 +1,9 @@
-# sage_setup: distribution = sagemath-schemes
 r"""
 Graded rings of modular forms for Hecke triangle groups
 
 AUTHORS:
 
 - Jonas Jermann (2013): initial version
-
 """
 
 # ****************************************************************************

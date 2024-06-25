@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.flint
 r"""
 Manin symbols
@@ -44,10 +43,18 @@ def is_ManinSymbol(x):
         sage: s
         [Y^2,(1,2)]
         sage: is_ManinSymbol(s)
+        doctest:warning...
+        DeprecationWarning: The function is_ManinSymbol is deprecated;
+        use 'isinstance(..., ManinSymbol)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         True
         sage: is_ManinSymbol(m[3])
         True
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38184,
+                       "The function is_ManinSymbol is deprecated; "
+                       "use 'isinstance(..., ManinSymbol)' instead.")
     return isinstance(x, ManinSymbol)
 
 
@@ -274,8 +281,8 @@ cdef class ManinSymbol(Element):
         if self.weight() > 2:
             raise NotImplementedError("ModSym * Matrix only implemented "
                                       "in weight 2")
-        from sage.structure.element import is_Matrix
-        if is_Matrix(matrix):
+        from sage.structure.element import Matrix
+        if isinstance(matrix, Matrix):
             if (not matrix.nrows() == 2) or (not matrix.ncols() == 2):
                 raise ValueError("matrix(=%s) must be 2x2" % matrix)
             matrix = matrix.list()

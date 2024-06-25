@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.libs.singular
 r"""
 Symmetric Reduction of Infinite Polynomials
@@ -104,7 +103,6 @@ Symmetric Reduction Strategy is created::
     with tailreduction
     sage: S2.reduce(x[3] + 2*x[2]*y[1]^2 + 3*y[2]^2*x[1])                               # needs sage.combinat
     x_3
-
 """
 
 # ****************************************************************************
@@ -284,7 +282,7 @@ cdef class SymmetricReductionStrategy:
 
         INPUT:
 
-        ``L`` -- a list of elements of the underlying infinite polynomial ring.
+        - ``L`` -- a list of elements of the underlying infinite polynomial ring.
 
         .. NOTE::
 

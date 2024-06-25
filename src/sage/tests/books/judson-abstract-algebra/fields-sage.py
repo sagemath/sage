@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 ##          Sage Doctest File         ##
 #**************************************#
 #*    Generated from PreTeXt source   *#
@@ -296,5 +295,4 @@ r"""
 
     sage: log(QQ[cos(pi/9)].degree(), 2) in ZZ
     False
-
 """

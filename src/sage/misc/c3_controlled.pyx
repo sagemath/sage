@@ -296,7 +296,7 @@ Depending on the linear extension `l` it was necessary to add between
 one and five bases for control; for example, `216` linear extensions
 required the addition of four bases::
 
-    sage: sorted(Word(stats).evaluation_sparse())                                       # needs sage.graphs sage.modules
+    sage: sorted(Word(stats).evaluation_sparse())                                       # needs sage.combinat sage.graphs sage.modules
     [(1, 36), (2, 108), (3, 180), (4, 216), (5, 180)]
 
 We now consider a hierarchy of categories::
@@ -320,9 +320,9 @@ For a typical category, few bases, if any, need to be added to force
     sage: x.mro == x.mro_standard
     False
     sage: x.all_bases_len()
-    70
+    72
     sage: x.all_bases_controlled_len()
-    74
+    76
 
     sage: C = GradedHopfAlgebrasWithBasis(QQ)
     sage: x = HierarchyElement(C, attrcall("super_categories"), attrgetter("_cmp_key"))
@@ -582,6 +582,7 @@ cdef class CmpKeyNamed:
 
 _cmp_key_named = CmpKeyNamed()
 
+
 ##############################################################################
 
 def C3_merge(list lists):
@@ -659,6 +660,7 @@ def C3_merge(list lists):
             # No head is available
             raise ValueError("Cannot merge the items %s."%', '.join(repr(head) for head in heads))
     return out
+
 
 cpdef identity(x):
     r"""
@@ -1354,7 +1356,6 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         if not super_classes:
             super_classes = (object,)
         return dynamic_class("%s.cls"%self, super_classes)
-
 
     @cached_method
     def all_bases(self):

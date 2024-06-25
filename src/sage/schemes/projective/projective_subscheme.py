@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Subschemes of projective space
 
@@ -31,7 +30,7 @@ from sage.matrix.constructor import matrix
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.rational_field import is_RationalField
+from sage.rings.rational_field import RationalField
 
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 from sage.schemes.projective.projective_morphism import SchemeMorphism_polynomial_projective_subscheme_field
@@ -79,7 +78,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         - ``v`` -- anything that defines a point
 
-        - ``check`` -- boolean (optional, default: ``True``); whether
+        - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency
 
         OUTPUT: A point of the subscheme.
@@ -116,8 +115,8 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
                 raise ValueError("%s not well defined in dimension > 1" % v)
             v = [1, 0]
         # todo: update elliptic curve stuff to take point_homset as argument
-        from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
-        if is_EllipticCurve(self):
+        from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
+        if isinstance(self, EllipticCurve_generic):
             try:
                 return self._point(self.point_homset(), v, check=check)
             except AttributeError:  # legacy code without point_homset
@@ -792,9 +791,9 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``f`` - a map whose codomain contains this scheme
+        - ``f`` -- a map whose codomain contains this scheme
 
-        - ``k`` - a positive integer
+        - ``k`` -- a positive integer
 
         - ``check`` -- Boolean, if ``False`` no input checking is done
 
@@ -976,7 +975,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         from sage.libs.singular.function_factory import ff
 
         K = self.base_ring()
-        if not (is_RationalField(K) or K in Fields().Finite()):
+        if not (isinstance(K, RationalField) or K in Fields().Finite()):
             raise NotImplementedError("base ring must be QQ or a finite field")
         I = self.defining_ideal()
         m = I.ngens()

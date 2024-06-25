@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 """
 Matrix windows
 """
@@ -125,7 +124,6 @@ cdef class MatrixWindow:
         Returns the underlying matrix that this window is a view of.
         """
         return self._matrix
-
 
     cpdef to_matrix(MatrixWindow self):
         """

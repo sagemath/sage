@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 # sage.doctest: needs sage.libs.ntl
 """
 p-adic Capped Relative Dense Polynomials
@@ -954,7 +953,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
         INPUT:
 
-        - ``degree`` (``None`` or an integer) - if specified, truncate or zero
+        - ``degree`` (``None`` or an integer) -- if specified, truncate or zero
           pad the list of coefficients to this degree before reversing it.
 
         EXAMPLES::

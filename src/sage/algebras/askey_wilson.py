@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 """
 Askey-Wilson Algebras
@@ -770,6 +769,7 @@ class AskeyWilsonAlgebra(CombinatorialFreeModule):
 
     pi = loop_representation
 
+
 def _basis_key(t):
     """
     Return a key for the basis element of the Askey-Wilson algebra
@@ -783,6 +783,7 @@ def _basis_key(t):
         (13, (0, 2, 3, 1, 2, 5))
     """
     return (sum(t), t.value)
+
 
 class AlgebraMorphism(ModuleMorphismByLinearity):
     """

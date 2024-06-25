@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 from sage.misc.lazy_import import lazy_import
 
 from sage.modular.modsym.element import set_modsym_print_mode
