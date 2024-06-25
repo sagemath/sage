@@ -41,7 +41,7 @@ class Lseries(SageObject):
     """
     def __init__(self, abvar):
         """
-        Called when creating an L-series.
+        Called when creating an `L`-series.
 
         INPUT:
 

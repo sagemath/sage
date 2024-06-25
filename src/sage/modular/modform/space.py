@@ -615,7 +615,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
     @cached_method
     def _q_expansion_module(self):
         """
-        Return module spanned by coefficients of q-expansions to sufficient
+        Return module spanned by coefficients of `q`-expansions to sufficient
         precision to determine elements of this space.
 
         EXAMPLES::
@@ -638,7 +638,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def q_expansion_basis(self, prec=None):
         """
-        Return a sequence of q-expansions for the basis of this space
+        Return a sequence of `q`-expansions for the basis of this space
         computed to the given input precision.
 
         INPUT:
@@ -646,12 +646,12 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         - ``prec`` -- integer (>=0) or None
 
         If prec is None, the prec is computed to be *at least* large
-        enough so that each q-expansion determines the form as an element
+        enough so that each `q`-expansion determines the form as an element
         of this space.
 
         .. note::
 
-           In fact, the q-expansion basis is always computed to
+           In fact, the `q`-expansion basis is always computed to
            *at least* ``self.prec()``.
 
         EXAMPLES::
@@ -745,7 +745,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
     def q_echelon_basis(self, prec=None):
         r"""
         Return the echelon form of the basis of `q`-expansions of
-        ``self`` up to precision prec.
+        ``self`` up to precision ``prec``.
 
         The `q`-expansions are power series (not actual modular
         forms). The number of `q`-expansions returned equals the
@@ -848,7 +848,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
     @cached_method
     def _q_expansion_ring(self):
         """
-        Return the parent for q-expansions of modular forms in ``self``.
+        Return the parent for `q`-expansions of modular forms in ``self``.
 
         EXAMPLES::
 
@@ -861,7 +861,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
     @cached_method
     def _q_expansion_zero(self):
         """
-        Return the q-expansion of the modular form 0.
+        Return the `q`-expansion of the modular form 0.
 
         EXAMPLES::
 
@@ -876,7 +876,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
     def _q_expansion(self, element, prec):
         """
         Take an element of ``self`` (specified as a list, tuple, or vector),
-        and return the corresponding q-expansion.
+        and return the corresponding `q`-expansion.
 
         EXAMPLES::
 
@@ -991,11 +991,11 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def _element_constructor_(self, x, check=True):
         """
-        Try to coerce x into ``self``. If x is a vector of length
-        self.dimension(), interpret it as a list of coefficients for
-        self.basis() and return that linear combination. If x is a power
-        series, it tries to determine whether or not x lives in ``self``. If
-        so, it returns x as an element of M, and throws an error if not.
+        Try to coerce ``x`` into ``self``. If ``x`` is a vector of length
+        ``self.dimension()``, interpret it as a list of coefficients for
+        ``self.basis()`` and return that linear combination. If ``x`` is a power
+        series, it tries to determine whether or not ``x`` lives in ``self``. If
+        so, it returns ``x`` as an element of M, and throws an error if not.
 
         EXAMPLES::
 
@@ -1178,7 +1178,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def __richcmp__(self, x, op):
         """
-        Compare ``self`` and x.
+        Compare ``self`` and ``x``.
 
         For spaces of modular forms, we order first by signature, then by
         dimension, and then by the ordering on the underlying free
@@ -1447,9 +1447,9 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         r"""
         For a space M of modular forms, this function returns an integer B
         such that two modular forms in either ``self`` or M are equal if and
-        only if their q-expansions are equal to precision B (note that this
+        only if their `q`-expansions are equal to precision B (note that this
         is 1+ the usual Sturm bound, since `O(q^\mathrm{prec})` has
-        precision prec). If M is none, then M is set equal to ``self``.
+        precision ``prec``). If M is none, then M is set equal to ``self``.
 
         EXAMPLES::
 
@@ -1611,7 +1611,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         """
         Return the new submodule of ``self``.
 
-        If p is specified, return the p-new submodule of ``self``.
+        If `p` is specified, return the `p`-new submodule of ``self``.
 
         .. note::
 
@@ -1853,7 +1853,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         - ``f`` -- a modular form or power series
 
         - ``forms`` -- (default: ``None``) a specific list of
-          modular forms or q-expansions
+          modular forms or `q`-expansions
 
         - ``prec`` -- if forms are given, compute with them to
           the given precision

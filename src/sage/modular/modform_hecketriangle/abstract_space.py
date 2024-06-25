@@ -857,8 +857,8 @@ class FormsSpace_abstract(FormsRing_abstract):
           value is used for ``d``.
 
         - ``d_num_prec`` -- the precision to be used if a numerical value for
-          ``d`` is substituted. Default: ``None``, in which case the default
-          numerical precision of ``self.parent()`` is used.
+          ``d`` is substituted (default: ``None``), otherwise the default
+          numerical precision of ``self.parent()`` is used
 
         OUTPUT: the corresponding Faber polynomial ``P(q)``
 
@@ -1008,8 +1008,8 @@ class FormsSpace_abstract(FormsRing_abstract):
           is used for ``d``.
 
         - ``d_num_prec`` -- the precision to be used if a numerical value for
-          ``d`` is substituted. Default: ``None``, in which case the default
-          numerical precision of ``self.parent()`` is used.
+          ``d`` is substituted (default: ``None``), otherwise the default
+          numerical precision of ``self.parent()`` is used
 
         OUTPUT: the corresponding Faber polynomial ``p(q)``
 

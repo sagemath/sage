@@ -34,7 +34,7 @@ scipy = None
 @richcmp_method
 class NumericalEigenforms(SageObject):
     """
-    Numerical_eigenforms(group, weight=2, eps=1e-20, delta=1e-2, tp=[2,3,5]).
+    numerical_eigenforms(group, weight=2, eps=1e-20, delta=1e-2, tp=[2,3,5]).
 
     INPUT:
 
@@ -367,7 +367,7 @@ class NumericalEigenforms(SageObject):
 
         - ``p`` -- integer; a prime number
 
-        OUTPUT: ``list`` -- list of double precision complex numbers
+        OUTPUT: list of double precision complex numbers
 
         EXAMPLES::
 

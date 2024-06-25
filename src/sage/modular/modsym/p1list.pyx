@@ -595,7 +595,7 @@ cdef int p1_normalize_xgcdtable(int N, int u, int v,
 
     - ``compute_s`` -- do not compute s if ``compute_s == 0``
 
-    - ``t_g``, ``t_a``, ``t_b`` -- int arrays
+    - ``t_g``, ``t_a``, ``t_b`` -- integer arrays
 
     OUTPUT: ``uu, vv, ss`` -- reduced representative and normalizing
     scalar

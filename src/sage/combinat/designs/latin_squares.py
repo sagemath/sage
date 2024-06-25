@@ -211,7 +211,7 @@ def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
 
     INPUT:
 
-    - ``k`` -- integer; number of MOLS. If ``k=None`` it is set to the largest
+    - ``k`` -- integer; number of MOLS. If ``k`` is ``None`` it is set to the largest
       value available
 
     - ``n`` -- integer; size of the latin square

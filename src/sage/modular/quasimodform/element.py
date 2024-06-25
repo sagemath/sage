@@ -774,7 +774,7 @@ class QuasiModularFormsElement(ModuleElement):
 
     def _compute(self, X):
         r"""
-        Compute the coefficients of `q^n` of the q-expansion of this,
+        Compute the coefficients of `q^n` of the `q`-expansion of this,
         graded quasimodular form for `n` in the list `X`.
 
         The results are not cached.  (Use coefficients for cached results).
@@ -797,7 +797,7 @@ class QuasiModularFormsElement(ModuleElement):
 
     def coefficients(self, X):
         r"""
-        Return the coefficients of `q^n` of the q-expansion of this,
+        Return the coefficients of `q^n` of the `q`-expansion of this,
         graded quasimodular form for `n` in the list `X`.
 
         If X is an integer, return coefficients for indices from 1

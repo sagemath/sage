@@ -205,9 +205,9 @@ def T_relation_matrix_wtk_g0(syms, mod, field, sparse):
     - ``mod`` -- list that gives quotient modulo some two-term relations, i.e.,
       the S relations, and if sign is nonzero, the I relations
 
-    - ``field`` -- base_ring
+    - ``field`` -- ``base_ring``
 
-    - ``sparse`` -- (True or False) whether to use sparse rather than dense
+    - ``sparse`` -- boolean; whether to use sparse rather than dense
       linear algebra
 
     OUTPUT: a sparse matrix whose rows correspond to the reduction of
@@ -272,7 +272,7 @@ def gens_to_basis_matrix(syms, relation_matrix, mod, field, sparse):
 
     - ``field`` -- base field
 
-    - ``sparse`` -- (bool): whether or not matrix should be sparse
+    - ``sparse`` -- boolean; whether or not matrix should be sparse
 
     OUTPUT:
 

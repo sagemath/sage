@@ -966,7 +966,7 @@ class ManinSymbolList_character(ManinSymbolList):
         """
         Return the level of this :class:`ManinSymbolList`.
 
-        OUTPUT: ``integer`` -- the level of the symbols in this list
+        OUTPUT: integer; the level of the symbols in this list
 
         EXAMPLES::
 

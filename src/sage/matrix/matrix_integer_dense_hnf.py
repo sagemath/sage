@@ -1031,7 +1031,7 @@ def hnf(A, include_zero_rows=True, proof=True):
       rows in the output matrix
     - ``proof`` -- whether or not to prove the result correct
 
-    OUTPUT:
+    OUTPUT: tuple of:
 
     - ``matrix`` -- the Hermite normal form of A
     - ``pivots`` -- the pivot column positions of A
@@ -1105,7 +1105,7 @@ def hnf_with_transformation(A, proof=True):
     - ``A`` -- an n x m matrix A over the integers
     - ``proof`` -- whether or not to prove the result correct
 
-    OUTPUT:
+    OUTPUT: tuple of:
 
     - ``matrix`` -- the Hermite normal form H of A
     - ``U`` -- a unimodular matrix such that U * A = H

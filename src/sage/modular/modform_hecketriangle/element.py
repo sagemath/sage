@@ -182,7 +182,7 @@ class FormsElement(FormsRingElement):
 
     def lseries(self, num_prec=None, max_imaginary_part=0, max_asymp_coeffs=40):
         r"""
-        Return the L-series of ``self`` if ``self`` is modular and holomorphic.
+        Return the `L`-series of ``self`` if ``self`` is modular and holomorphic.
 
         This relies on the (pari) based function ``Dokchitser``.
 
@@ -193,13 +193,13 @@ class FormsElement(FormsRingElement):
           numerical precision of the parent of ``self`` is used.
 
         - ``max_imaginary_part`` -- a real number (default: 0), indicating up
-          to which imaginary part the L-series is going to be studied
+          to which imaginary part the `L`-series is going to be studied
 
         - ``max_asymp_coeffs`` -- integer (default: 40)
 
         OUTPUT:
 
-        An interface to Tim Dokchitser's program for computing L-series, namely
+        An interface to Tim Dokchitser's program for computing `L`-series, namely
         the series given by the Fourier coefficients of ``self``.
 
         EXAMPLES::

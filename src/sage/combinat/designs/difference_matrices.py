@@ -132,7 +132,7 @@ def difference_matrix(g,k,lmbda=1,existence=False,check=True):
 
     INPUT:
 
-    - ``k`` -- integer; number of columns. If ``k=None`` it is set to the
+    - ``k`` -- integer; number of columns. If ``k`` is ``None`` it is set to the
       largest value available
 
     - ``g`` -- integer; cardinality of the group `G`

@@ -56,23 +56,23 @@ def canonical_parameters(group, level, weight, base_ring):
 
     INPUT:
 
-    - ``group`` -- int, long, Sage integer, group, or Dirichlet character
+    - ``group`` -- integer, group, or Dirichlet character
 
-    - ``level`` -- int, long, Sage integer, or group
+    - ``level`` -- integer or group
 
-    - ``weight`` -- coercible to Sage integer
+    - ``weight`` -- coercible to integer
 
-    - ``base_ring`` -- commutative Sage ring
+    - ``base_ring`` -- commutative ring
 
     OUTPUT:
 
-    - ``level`` -- sage integer
+    - ``level`` -- integer
 
     - ``group`` -- congruence subgroup
 
-    - ``weight`` -- sage integer
+    - ``weight`` -- integer
 
-    - ``ring`` -- commutative Sage ring
+    - ``ring`` -- commutative ring
 
     EXAMPLES::
 

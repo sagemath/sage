@@ -201,7 +201,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
     ################################
     def _compute_dual_hecke_matrix(self, n):
         """
-        Compute the matrix for the n-th Hecke operator acting on
+        Compute the matrix for the `n`-th Hecke operator acting on
         the dual of ``self``.
 
         EXAMPLES::
@@ -223,9 +223,9 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
     def _compute_hecke_matrix(self, n):
         r"""
-        Compute the matrix of the n-th Hecke operator acting on this space, by
+        Compute the matrix of the `n`-th Hecke operator acting on this space, by
         calling the corresponding function for the ambient space and
-        restricting. If n is not coprime to the level, we check that the
+        restricting. If `n` is not coprime to the level, we check that the
         restriction is well-defined.
 
         EXAMPLES::
@@ -405,9 +405,9 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
     def degeneracy_map(self, level, t=1):
         """
-        The t-th degeneracy map from ``self`` to the space of ambient modular
+        The `t`-th degeneracy map from ``self`` to the space of ambient modular
         symbols of the given level. The level of ``self`` must be a divisor or
-        multiple of level, and t must be a divisor of the quotient.
+        multiple of level, and `t` must be a divisor of the quotient.
 
         INPUT:
 
@@ -460,9 +460,9 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         the characteristic is not 0. In all these cases we raise a
         :class:`RuntimeError` exception.
 
-        If use_star is ``True`` (which is the default), we also use the +/-
+        If ``use_star`` is ``True`` (which is the default), we also use the +/-
         eigenspaces for the star operator to find the dual free module of ``self``.
-        If ``self`` does not have a star involution, use_star will automatically be
+        If ``self`` does not have a star involution, ``use_star`` will automatically be
         set to ``False``.
 
         EXAMPLES::
@@ -692,7 +692,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
     def is_new(self, p=None):
         """
-        Return ``True`` if this Hecke module is p-new. If p is None,
+        Return ``True`` if this Hecke module is `p`-new. If `p` is None,
         returns ``True`` if it is new.
 
         EXAMPLES::
@@ -714,7 +714,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
     def is_old(self, p=None):
         """
-        Return ``True`` if this Hecke module is p-old. If p is None,
+        Return ``True`` if this Hecke module is `p`-old. If `p` is ``None``,
         returns ``True`` if it is old.
 
         EXAMPLES::
@@ -788,7 +788,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
     def new_submodule(self, p=None):
         """
-        Return the new or p-new submodule of this space of modular
+        Return the new or `p`-new submodule of this space of modular
         symbols.
 
         EXAMPLES::
@@ -846,7 +846,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
     def old_submodule(self, p=None):
         r"""
-        Return the old or p-old submodule of this space of modular
+        Return the old or `p`-old submodule of this space of modular
         symbols.
 
         EXAMPLES: We compute the old and new submodules of

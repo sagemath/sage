@@ -1601,8 +1601,8 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
           Otherwise the given value is used for ``d``.
 
         - ``d_num_prec`` -- the precision to be used if a numerical value for
-          ``d`` is substituted. Default: ``None``, in which case the default
-          numerical precision of ``self.parent()`` is used.
+          ``d`` is substituted (default: ``None``), otherwise the default
+          numerical precision of ``self.parent()`` is used
 
         - ``fix_prec`` -- if ``fix_prec`` is not ``False`` (default)
           then the precision of the ``MFSeriesConstructor`` is
@@ -1701,8 +1701,8 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
           ``self.parent()`` is used.
 
         - ``d_num_prec`` -- the precision to be used if a numerical value for
-          ``d`` is substituted. Default: ``None``, in which case the default
-          numerical precision of ``self.parent()`` is used.
+          ``d`` is substituted (default: ``None``), otherwise the default
+          numerical precision of ``self.parent()`` is used
 
         - ``fix_prec`` -- if ``fix_prec`` is not ``False`` (default)
           then the precision of the ``MFSeriesConstructor`` is
@@ -1844,7 +1844,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         - ``prec`` -- integer, namely the precision used for the
           Fourier expansion. If ``prec == None`` (default)
-          then the default precision of ``self.parent()`` is used.
+          then the default precision of ``self.parent()`` is used
 
         - ``num_prec`` -- integer, namely the minimal numerical precision
           used for ``tau`` and ``d``. If ``num_prec == None``

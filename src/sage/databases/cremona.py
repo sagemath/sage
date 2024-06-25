@@ -402,7 +402,7 @@ def parse_lmfdb_label(label, numerical_class_code=False):
     database), is determined by the following two orders:
 
     - Isogeny classes with the same conductor are ordered
-      lexicographically by the coefficients in the q-expansion of the
+      lexicographically by the coefficients in the `q`-expansion of the
       associated modular form.
 
     - Curves within the same isogeny class are ordered

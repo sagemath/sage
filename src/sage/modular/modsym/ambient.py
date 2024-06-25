@@ -848,13 +848,13 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
 
         - ``p`` -- integer; a prime number
 
-        - ``rows`` (list or None (default)) -- if not None, a list of
-          the rows which should be computed; otherwise the complete
-          matrix will be computed,
+        - ``rows`` -- list or ``None`` (default); if not ``None``, a list of
+          the rows which should be computed, otherwise the complete
+          matrix will be computed
 
         .. note::
 
-           `p` does not have to be, prime despite the function name.
+           `p` does not have to be prime despite the function name.
 
         OUTPUT:
 
@@ -3041,9 +3041,7 @@ class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
 
         - ``v`` -- list of positive integer
 
-        OUTPUT:
-
-        - ``matrix`` -- whose rows are the Hecke images
+        OUTPUT: matrix whose rows are the Hecke images
 
         EXAMPLES::
 

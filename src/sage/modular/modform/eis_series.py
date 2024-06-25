@@ -30,7 +30,7 @@ lazy_import('sage.rings.number_field.number_field', 'CyclotomicField')
 def eisenstein_series_qexp(k, prec=10, K=QQ, var='q', normalization='linear'):
     r"""
     Return the `q`-expansion of the normalized weight `k` Eisenstein series on
-    `\SL_2(\ZZ)` to precision prec in the ring `K`. Three normalizations
+    `\SL_2(\ZZ)` to precision ``prec`` in the ring `K`. Three normalizations
     are available, depending on the parameter ``normalization``; the default
     normalization is the one for which the linear coefficient is 1.
 
@@ -42,7 +42,7 @@ def eisenstein_series_qexp(k, prec=10, K=QQ, var='q', normalization='linear'):
 
     - ``K`` -- (default: `\QQ`) a ring
 
-    - ``var`` -- (default: ``'q'``) variable name to use for q-expansion
+    - ``var`` -- (default: ``'q'``) variable name to use for `q`-expansion
 
     - ``normalization`` -- (default: ``'linear'``) normalization to use. If this
       is ``'linear'``, then the series will be normalized so that the linear
@@ -385,11 +385,11 @@ def eisenstein_series_lseries(weight, prec=53,
                max_imaginary_part=0,
                max_asymp_coeffs=40):
     r"""
-    Return the L-series of the weight `2k` Eisenstein series
+    Return the `L`-series of the weight `2k` Eisenstein series
     on `\SL_2(\ZZ)`.
 
     This actually returns an interface to Tim Dokchitser's program
-    for computing with the L-series of the Eisenstein series
+    for computing with the `L`-series of the Eisenstein series
 
     INPUT:
 
@@ -401,11 +401,11 @@ def eisenstein_series_lseries(weight, prec=53,
 
     - ``max_asymp_coeffs`` -- integer
 
-    OUTPUT: the L-series of the Eisenstein series
+    OUTPUT: the `L`-series of the Eisenstein series
 
     EXAMPLES:
 
-    We compute with the L-series of `E_{16}` and then `E_{20}`::
+    We compute with the `L`-series of `E_{16}` and then `E_{20}`::
 
        sage: L = eisenstein_series_lseries(16)
        sage: L(1)

@@ -352,8 +352,8 @@ class LCalc(SageObject):
 
         - ``L`` -- defines `L`-function (default: Riemann zeta function)
 
-        OUTPUT: ``dict`` -- keys are the discriminants `d`, and values are list
-        of corresponding zeros.
+        OUTPUT: dictionary; keys are the discriminants `d`, and values are list
+        of corresponding zeros
 
         EXAMPLES::
 

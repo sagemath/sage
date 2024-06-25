@@ -171,7 +171,7 @@ def hecke_operator_on_basis(B, n, k, eps=None, already_echelonized=False):
 
     INPUT:
 
-    - ``B`` -- list of q-expansions
+    - ``B`` -- list of `q`-expansions
 
     - ``n`` -- integer >= 1
 

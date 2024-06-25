@@ -175,7 +175,7 @@ cdef class Heilbronn:
 
         - ``u``, ``v``, ``N`` -- integers
 
-        - ``a``, ``b`` -- preallocated int arrays of the length of ``self``
+        - ``a``, ``b`` -- preallocated integer arrays of the length of ``self``
 
         OUTPUT: sets the entries of `a`, `b`
 

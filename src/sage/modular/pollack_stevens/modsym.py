@@ -77,7 +77,7 @@ def _iterate_Up(Phi, p, M, ap, q, aq, check):
 
     - ``aq`` -- Hecke eigenvalue at `q`
 
-    OUTPUT: Hecke-eigenvalue overconvergent modular symbol lifting self
+    OUTPUT: Hecke-eigenvalue overconvergent modular symbol lifting ``self``
 
     EXAMPLES::
 
@@ -1575,14 +1575,14 @@ class PSModularSymbolElement_dist(PSModularSymbolElement):
 
     def padic_lseries(self,*args, **kwds):
         """
-        Return the `p`-adic L-series of this modular symbol.
+        Return the `p`-adic `L`-series of this modular symbol.
 
         EXAMPLES::
 
             sage: E = EllipticCurve('37a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: L = phi.lift(37, M=6, eigensymbol=True).padic_lseries(); L  # long time
-            37-adic L-series of Modular symbol of level 37 with values in Space of 37-adic distributions with k=0 action and precision cap 7
+            37-adic `L`-series of Modular symbol of level 37 with values in Space of 37-adic distributions with k=0 action and precision cap 7
             sage: L.series(2) # long time
             O(37^6) + (4 + 37 + 36*37^2 + 19*37^3 + 21*37^4 + O(37^5))*T + O(T^2)
         """

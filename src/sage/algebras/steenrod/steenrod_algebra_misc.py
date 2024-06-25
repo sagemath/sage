@@ -199,7 +199,7 @@ def is_valid_profile(profile, truncation_type, p=2, generic=None):
 
     - ``generic`` -- boolean (default: ``None``)
 
-    OUTPUT: ``True`` if the profile function is valid, False otherwise
+    OUTPUT: ``True`` if the profile function is valid, ``False`` otherwise
 
     See the documentation for :mod:`sage.algebras.steenrod.steenrod_algebra`
     for descriptions of profile functions and how they correspond to

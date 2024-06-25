@@ -9,7 +9,7 @@ class GrossZagierLseries(SageObject):
 
     def __init__(self, E, A, prec=53):
         r"""
-        Class for the Gross-Zagier L-series.
+        Class for the Gross-Zagier `L`-series.
 
         This is attached to a pair `(E,A)` where `E` is an elliptic curve over
         `\QQ` and `A` is an ideal class in an imaginary quadratic number field.

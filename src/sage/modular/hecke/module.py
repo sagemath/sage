@@ -446,7 +446,7 @@ class HeckeModule_generic(Module):
 
         - ``ModularSymbols self`` -- an arbitrary space of modular symbols
 
-        OUTPUT: ``int`` -- the level
+        OUTPUT: integer; the level
 
         EXAMPLES::
 
@@ -533,7 +533,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
     def __getitem__(self, n):
         r"""
-        Return the n-th term in the decomposition of ``self``.
+        Return the `n`-th term in the decomposition of ``self``.
 
         See the docstring for :meth:`decomposition` for further information.
 
@@ -615,7 +615,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         Return `T_n(x)` where `x` is a sparse modular
         symbol such that the image of `x` is nonzero under the dual
         projection map associated to this space, and `T_n` is the
-        n-th Hecke operator.
+        `n`-th Hecke operator.
 
         Used in the :meth:`dual_eigenvector` and :meth:`eigenvalue` methods.
 
@@ -1203,7 +1203,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
     def dual_hecke_matrix(self, n):
         """
-        Return the matrix of the n-th Hecke operator acting on the dual
+        Return the matrix of the `n`-th Hecke operator acting on the dual
         embedded representation of ``self``.
 
         EXAMPLES::
@@ -1225,7 +1225,7 @@ class HeckeModule_free_module(HeckeModule_generic):
     def eigenvalue(self, n, name='alpha'):
         r"""
         Assuming that ``self`` is a simple space, return the eigenvalue of the
-        n-th Hecke operator on ``self``.
+        `n`-th Hecke operator on ``self``.
 
         INPUT:
 
@@ -1378,7 +1378,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
     def hecke_matrix(self, n):
         """
-        Return the matrix of the n-th Hecke operator acting on given basis.
+        Return the matrix of the `n`-th Hecke operator acting on given basis.
 
         EXAMPLES::
 
@@ -1397,7 +1397,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
     def hecke_operator(self, n):
         """
-        Return the n-th Hecke operator `T_n`.
+        Return the `n`-th Hecke operator `T_n`.
 
         INPUT:
 
@@ -1465,7 +1465,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
     def T(self, n):
         r"""
-        Return the n-th Hecke operator `T_n`.
+        Return the `n`-th Hecke operator `T_n`.
 
         This function is a synonym for :meth:`hecke_operator`.
 
@@ -1479,7 +1479,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
     def hecke_polynomial(self, n, var='x'):
         """
-        Return the characteristic polynomial of the n-th Hecke operator
+        Return the characteristic polynomial of the `n`-th Hecke operator
         acting on this space.
 
         INPUT:
@@ -1736,7 +1736,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         - ``self`` -- an arbitrary Hecke module
 
-        OUTPUT: ``int`` -- the weight
+        OUTPUT: integer; the weight
 
         EXAMPLES::
 

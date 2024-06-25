@@ -3390,7 +3390,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         return z
 
     def rational_reconstruction(self, N):
-        """
+        r"""
         Use rational reconstruction to lift ``self`` to a matrix over the
         rational numbers (if possible), where we view ``self`` as a matrix
         modulo N.
@@ -3399,9 +3399,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         - ``N`` -- integer
 
-        OUTPUT:
-
-        - ``matrix`` -- over QQ or raise a ValueError
+        OUTPUT: matrix over `\QQ` or raise a :exc:`ValueError`
 
         EXAMPLES: We create a random 4x4 matrix over ZZ.
 
@@ -4823,9 +4821,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
             return decomp_seq([(W.intersection(V), t) for W, t in X])
 
     def _add_row_and_maintain_echelon_form(self, row, pivots):
-        """
+        r"""
         Assuming ``self`` is a full rank n x m matrix in reduced row Echelon
-        form over ZZ and row is a vector of degree m, this function creates
+        form over `\ZZ` and row is a vector of degree m, this function creates
         a new matrix that is the echelon form of ``self`` with row appended to
         the bottom.
 
@@ -4835,15 +4833,15 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         INPUT:
 
-        - ``row`` -- a vector of degree m over ZZ
+        - ``row`` -- a vector of degree m over `\ZZ`
 
         - ``pivots`` -- list of integers that are the pivot
           columns of ``self``
 
-        OUTPUT:
+        OUTPUT: tuple of
 
         - ``matrix`` -- a matrix of in reduced row echelon form
-          over ZZ
+          over `\ZZ`
 
         - ``pivots`` -- list of integers
 

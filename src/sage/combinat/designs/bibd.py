@@ -685,7 +685,7 @@ def BIBD_from_difference_family(G, D, lambd=None, check=True):
     - ``lambd`` -- the `\lambda` parameter (optional, only used if ``check`` is
       ``True``)
 
-    - ``check`` -- boolean (default ``True``); whether or not we check the output
+    - ``check`` -- boolean (default: ``True``); whether or not we check the output
 
     EXAMPLES::
 

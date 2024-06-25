@@ -353,7 +353,7 @@ class WeightCharacter(Element):
 
     def pAdicEisensteinSeries(self, ring, prec=20):
         r"""
-        Calculate the q-expansion of the p-adic Eisenstein series of given
+        Calculate the `q`-expansion of the `p`-adic Eisenstein series of given
         weight-character, normalised so the constant term is 1.
 
         EXAMPLES::

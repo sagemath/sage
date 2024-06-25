@@ -410,7 +410,7 @@ class FormsRing_abstract(Parent):
         - ``analytic_type`` -- an ``AnalyticType`` or something which
           coerces into it (default: ``None``)
 
-        - ``ring`` -- Whether to extend to a graded ring (default: ``False``)
+        - ``ring`` -- whether to extend to a graded ring (default: ``False``)
 
         OUTPUT: the new extended space
 
@@ -719,8 +719,8 @@ class FormsRing_abstract(Parent):
           is used for ``d``.
 
         - ``d_num_prec`` -- the precision to be used if a numerical value for
-          ``d`` is substituted. Default: ``None``, in which case the default
-          numerical precision of ``self.parent()`` is used.
+          ``d`` is substituted (default: ``None``), otherwise the default
+          numerical precision of ``self.parent()`` is used
 
         OUTPUT:
 
@@ -1782,9 +1782,9 @@ class FormsRing_abstract(Parent):
         INPUT:
 
         - ``k`` -- a nonnegative even integer, namely the weight.
-          If ``k=None`` (default) then the weight of ``self`` is chosen if
-          ``self`` is homogeneous and the weight is possible, otherwise ``k=0``
-          is set.
+          If ``k`` is ``None`` (default) then the weight of ``self`` is chosen if
+          ``self`` is homogeneous and the weight is possible, otherwise ``k``
+          is set to `0`.
 
         OUTPUT:
 

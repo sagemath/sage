@@ -384,7 +384,7 @@ def gens(x):
 
 def hecke_operator(x, n):
     r"""
-    Return the n-th Hecke operator `T_n` acting on ``x``.
+    Return the `n`-th Hecke operator `T_n` acting on ``x``.
 
     EXAMPLES::
 

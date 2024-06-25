@@ -2013,7 +2013,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             - ``alcoves`` -- one of the following (default: ``True``):
 
-              * A boolean -- Whether to display the alcoves
+              * A boolean -- whether to display the alcoves
               * A list of alcoves -- The alcoves to be drawn. Each alcove is
                 specified by the coordinates of its center in the root lattice
                 (affine type only). Otherwise the alcoves that intersect the
@@ -2021,7 +2021,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             - ``alcove_labels`` -- one of the following (default: ``False``):
 
-              * A boolean -- Whether to display the elements of the Weyl group
+              * A boolean -- whether to display the elements of the Weyl group
                 indexing the alcoves. This currently requires to also
                 set the ``alcoves`` option.
               * A number `l` -- the label is drawn at level `l` (affine type

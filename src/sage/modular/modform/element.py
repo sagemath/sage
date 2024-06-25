@@ -90,14 +90,14 @@ def is_ModularFormElement(x):
 def delta_lseries(prec=53, max_imaginary_part=0,
                   max_asymp_coeffs=40, algorithm=None):
     r"""
-    Return the L-series of the modular form `\Delta`.
+    Return the `L`-series of the modular form `\Delta`.
 
     If algorithm is ``'gp'``, this returns an interface to Tim
-    Dokchitser's program for computing with the L-series of the
+    Dokchitser's program for computing with the `L`-series of the
     modular form `\Delta`.
 
     If algorithm is ``'pari'``, this returns instead an interface to Pari's
-    own general implementation of L-functions.
+    own general implementation of `L`-functions.
 
     INPUT:
 
@@ -111,7 +111,7 @@ def delta_lseries(prec=53, max_imaginary_part=0,
 
     OUTPUT:
 
-    The L-series of `\Delta`.
+    The `L`-series of `\Delta`.
 
     EXAMPLES::
 
@@ -221,7 +221,7 @@ class ModularForm_abstract(ModuleElement):
 
     def __call__(self, x, prec=None):
         """
-        Evaluate the q-expansion of this modular form at x.
+        Evaluate the `q`-expansion of this modular form at x.
 
         EXAMPLES::
 
@@ -437,7 +437,7 @@ class ModularForm_abstract(ModuleElement):
     def padded_list(self, n):
         """
         Return a list of length n whose entries are the first n
-        coefficients of the q-expansion of ``self``.
+        coefficients of the `q`-expansion of ``self``.
 
         EXAMPLES::
 
@@ -852,11 +852,11 @@ class ModularForm_abstract(ModuleElement):
     def lseries(self, embedding=0, prec=53, max_imaginary_part=0,
                 max_asymp_coeffs=40):
         r"""
-        Return the L-series of the weight k cusp form
+        Return the `L`-series of the weight k cusp form
         `f` on `\Gamma_0(N)`.
 
         This actually returns an interface to Tim Dokchitser's program for
-        computing with the L-series of the cusp form.
+        computing with the `L`-series of the cusp form.
 
         INPUT:
 
@@ -882,7 +882,7 @@ class ModularForm_abstract(ModuleElement):
 
         OUTPUT:
 
-        The L-series of the cusp form, as a
+        The `L`-series of the cusp form, as a
         :class:`sage.lfunctions.dokchitser.Dokchitser` object.
 
         EXAMPLES::
@@ -924,7 +924,7 @@ class ModularForm_abstract(ModuleElement):
             sage: f.lseries(embedding=1)(1)
             0.298115272465799 + 0.0402203326076732*I
 
-        We compute with the L-series of the Eisenstein series `E_4`::
+        We compute with the `L`-series of the Eisenstein series `E_4`::
 
             sage: f = ModularForms(1,4).0
             sage: L = f.lseries()
@@ -1036,7 +1036,7 @@ class ModularForm_abstract(ModuleElement):
 
     def symsquare_lseries(self, chi=None, embedding=0, prec=53):
         r"""
-        Compute the symmetric square L-series of this modular form, twisted by
+        Compute the symmetric square `L`-series of this modular form, twisted by
         the character `\chi`.
 
         INPUT:
@@ -1047,7 +1047,7 @@ class ModularForm_abstract(ModuleElement):
           `\CC`, or an integer `i` (in which case take the `i`-th embedding)
         - ``prec`` -- the desired precision in bits (default: 53)
 
-        OUTPUT: the symmetric square L-series of the cusp form, as a
+        OUTPUT: the symmetric square `L`-series of the cusp form, as a
         :class:`sage.lfunctions.dokchitser.Dokchitser` object.
 
         EXAMPLES::
@@ -1216,7 +1216,7 @@ class ModularForm_abstract(ModuleElement):
         This function takes as input a modular form, ``self`` and a
         Dirichlet character ``eps`` and returns an integer bound such
         that if ``self`` and its twist by ``eps`` have the same
-        q-expansion up to this bound, then they are equal.
+        `q`-expansion up to this bound, then they are equal.
 
         The bound is taken from [Mu1997]_. See also [Shi1971]_, Proposition
         3.64.
@@ -1437,7 +1437,7 @@ class Newform(ModularForm_abstract):
 
     def _compute_q_expansion(self, prec):
         """
-        Return the q-expansion of ``self`` to precision prec.
+        Return the `q`-expansion of ``self`` to precision ``prec``.
 
         EXAMPLES::
 
@@ -1539,7 +1539,7 @@ class Newform(ModularForm_abstract):
 
         - ``n`` -- positive integer
 
-        OUTPUT: the coefficient of `q^n` in the power series of self
+        OUTPUT: the coefficient of `q^n` in the power series of ``self``
 
         EXAMPLES::
 
@@ -2422,7 +2422,8 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
 
         INPUT:
 
-        - ``parent`` -- modularForms (an ambient space of modular forms)
+        - ``parent`` -- :class:`ModularFormsSpace` (an ambient space of modular
+          forms)
 
         - ``x`` -- a vector on the basis for parent
 
@@ -2445,7 +2446,7 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
 
     def _compute_q_expansion(self, prec):
         """
-        Compute the q-expansion of ``self`` to precision prec.
+        Compute the `q`-expansion of ``self`` to precision ``prec``.
 
         EXAMPLES::
 
@@ -2911,7 +2912,7 @@ class EisensteinSeries(ModularFormElement):
 
     def _compute_q_expansion(self, prec=None):
         """
-        Compute the q-expansion of ``self`` to precision prec.
+        Compute the `q`-expansion of ``self`` to precision ``prec``.
 
         EXAMPLES::
 
@@ -3460,7 +3461,7 @@ class GradedModularFormElement(ModuleElement):
 
     def __call__(self, x, prec=None):
         r"""
-        Evaluate the q-expansion of this graded modular form at x.
+        Evaluate the `q`-expansion of this graded modular form at x.
 
         EXAMPLES::
 

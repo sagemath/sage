@@ -210,7 +210,7 @@ class CuspidalSubgroup(CuspidalSubgroup_generic):
         Returned cached tuple of vectors that define elements of the
         rational homology that generate this finite subgroup.
 
-        OUTPUT: ``tuple`` -- cached
+        OUTPUT: tuple (cached)
 
         EXAMPLES::
 

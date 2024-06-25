@@ -332,7 +332,7 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
 
     def _compute_q_expansion_basis(self, prec=None, new=False):
         """
-        Compute a q-expansion basis for ``self`` to precision prec.
+        Compute a `q`-expansion basis for ``self`` to precision ``prec``.
 
         EXAMPLES::
 
@@ -382,7 +382,7 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
 
     def _q_expansion(self, element, prec):
         """
-        Compute a q-expansion for a given element of self, expressed
+        Compute a `q`-expansion for a given element of self, expressed
         as a vector of coefficients for the basis vectors of self,
         viewing ``self`` as a subspace of the corresponding space of
         modular forms.
@@ -490,7 +490,7 @@ class EisensteinSubmodule_gH_Q(EisensteinSubmodule_params):
             This uses the usual pairing between modular symbols and
             modular forms, but in a slightly non-standard way. As for
             cusp forms, we can find a basis for this space made up of
-            forms with q-expansions `c_m(f) = a_{i,j}(T_m)`, where
+            forms with `q`-expansions `c_m(f) = a_{i,j}(T_m)`, where
             `T_m` denotes the matrix of the Hecke operator on the
             corresponding modular symbols space. Then `c_m(T_n f) =
             a_{i,j}(T_n* T_m)`. But we can't find the constant terms

@@ -539,7 +539,7 @@ cdef class _mw:
 
         - ``curve`` -- _Curvedata; an elliptic curve
 
-        - ``verb`` (bool, default ``False``) -- verbosity flag (controls
+        - ``verb`` -- boolean (default: ``False``); verbosity flag (controls
           amount of output produced in point searches)
 
         - ``pp`` -- integer (default: 1); process points flag (if nonzero,

@@ -154,8 +154,8 @@ class Symk_factory(UniqueFactory):
 
     - ``k`` -- integer; the degree (degree `k` corresponds to weight `k + 2`
       modular forms)
-    - ``base`` -- ring (default: ``None``); the base ring (None is interpreted
-      as `\QQ`)
+    - ``base`` -- ring (default: ``None``); the base ring (``None`` is
+      interpreted as `\QQ`)
     - ``character`` -- Dirichlet character or ``None`` (default: ``None``)
     - ``adjuster`` -- ``None`` or a callable that turns `2 \times 2` matrices
       into a 4-tuple (default: ``None``)

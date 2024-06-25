@@ -1800,7 +1800,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
 
         - ``p`` -- a prime that splits completely in the cyclotomic base field
 
-        OUTPUT:
+        OUTPUT: tuple of
 
         - ``matrix`` -- Lift via CRT of the echelon forms of ``self`` modulo
           each of the primes over p.

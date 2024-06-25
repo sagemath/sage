@@ -816,7 +816,7 @@ class CubicHeckeMatrixSpace(MatrixSpace):
 
         - ``mat`` -- matrix over the original base ring
 
-        OUTPUT: ``mat`` over the base ring of ``self``
+        OUTPUT: matrix over the base ring of ``self``
 
         EXAMPLES::
 

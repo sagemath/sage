@@ -449,7 +449,7 @@ def complementary_spaces_modp(N, p, k0, n, elldash, LWBModp, bound):
 def complementary_spaces(N, p, k0, n, mdash, elldashp, elldash, modformsring, bound):
     r"""
     Return a list ``Ws``, each element in which is a list ``Wi`` of
-    q-expansions modulo `(p^\text{mdash},q^\text{elldashp})`. The list ``Wi`` is
+    `q`-expansions modulo `(p^\text{mdash},q^\text{elldashp})`. The list ``Wi`` is
     a basis for a choice of complementary space in level `\Gamma_0(N)` and
     weight `k` to the image of weight `k - (p-1)` forms under multiplication by
     the Eisenstein series `E_{p-1}`.
@@ -478,7 +478,7 @@ def complementary_spaces(N, p, k0, n, mdash, elldashp, elldash, modformsring, bo
 
     OUTPUT:
 
-    - list of lists of q-expansions modulo
+    - list of lists of `q`-expansions modulo
       `(p^\text{mdash},q^\text{elldashp})`.
 
     EXAMPLES::
@@ -786,9 +786,9 @@ def higher_level_UpGj(p, N, klist, m, modformsring, bound, extra_data=False):
 
 def compute_Wi(k, p, h, hj, E4, E6):
     r"""
-    This function computes a list `W_i` of q-expansions, together with an
+    This function computes a list `W_i` of `q`-expansions, together with an
     auxiliary quantity `h^j` (see below) which is to be used on the next
-    call of this function. (The precision is that of input q-expansions.)
+    call of this function. (The precision is that of input `q`-expansions.)
 
     The list `W_i` is a certain subset of a basis of the modular forms of
     weight `k` and level 1. Suppose `(a, b)` is the pair of nonnegative
@@ -815,14 +815,14 @@ def compute_Wi(k, p, h, hj, E4, E6):
 
     - ``k`` -- nonnegative integer
     - ``p`` -- prime at least 5
-    - ``h`` -- q-expansion of `h` (to some finite precision)
-    - ``hj`` -- q-expansion of `h^j` where `j` is the dimension of the space of
+    - ``h`` -- `q`-expansion of `h` (to some finite precision)
+    - ``hj`` -- `q`-expansion of `h^j` where `j` is the dimension of the space of
       modular forms of level 1 and weight `k - (p-1)` (to same finite
       precision)
     - ``E4`` -- `q`-expansion of `E_4` (to same finite precision)
     - ``E6`` -- `q`-expansion of `E_6` (to same finite precision)
 
-    The Eisenstein series q-expansions should be normalized to have constant
+    The Eisenstein series `q`-expansions should be normalized to have constant
     term 1.
 
     OUTPUT:

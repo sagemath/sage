@@ -747,7 +747,7 @@ def orthogonal_array(k,n,t=2,resolvable=False, check=True,existence=False,explai
 
     INPUT:
 
-    - ``k`` -- integer; number of columns. If ``k=None`` it is set to the
+    - ``k`` -- integer; number of columns. If ``k`` is ``None`` it is set to the
       largest value available.
 
     - ``n`` -- integer; number of symbols

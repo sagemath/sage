@@ -818,7 +818,7 @@ If this all works, you can then make calls like:
         INPUT:
 
         - ``line`` -- string; a command
-        - ``restart_if_needed`` -- boolean (default ``True``);
+        - ``restart_if_needed`` -- boolean (default: ``True``);
           if it is ``True``, the command evaluation is evaluated
           a second time after restarting the interface, if an
           :class:`EOFError` occurred.
@@ -915,11 +915,11 @@ If this all works, you can then make calls like:
         INPUT:
 
         - ``line`` -- string; a command
-        - ``allow_use_file`` -- boolean (default ``True``);
+        - ``allow_use_file`` -- boolean (default: ``True``);
           allow to evaluate long commands using :meth:`_eval_line_using_file`.
-        - ``wait_for_prompt`` -- boolean (default ``True``);
+        - ``wait_for_prompt`` -- boolean (default: ``True``);
           wait until the prompt appears in the sub-process' output.
-        - ``restart_if_needed`` -- boolean (default ``True``);
+        - ``restart_if_needed`` -- boolean (default: ``True``);
           if it is ``True``, the command evaluation is evaluated
           a second time after restarting the interface, if an
           :class:`EOFError` occurred.

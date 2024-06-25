@@ -465,7 +465,7 @@ def xi_degrees(n, p=2, reverse=True):
     - ``p`` -- prime number (default: 2)
     - ``reverse`` -- boolean (default: ``True``)
 
-    OUTPUT: ``list`` -- list of integers
+    OUTPUT: list of integers
 
     When `p=2`: decreasing list of the degrees of the `\xi_i`'s with
     degree at most `n`.

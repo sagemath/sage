@@ -216,7 +216,7 @@ def victor_miller_basis(k, prec=10, cusp_only=False, var='q'):
 
 def _delta_poly(prec=10):
     """
-    Return the q-expansion of Delta as a FLINT polynomial. Used internally by
+    Return the `q`-expansion of Delta as a FLINT polynomial. Used internally by
     the :func:`~delta_qexp` function. See the docstring of :func:`~delta_qexp`
     for more information.
 
@@ -226,7 +226,7 @@ def _delta_poly(prec=10):
 
     OUTPUT:
 
-        the q-expansion of Delta to precision ``prec``, as a FLINT
+        the `q`-expansion of Delta to precision ``prec``, as a FLINT
         :class:`~sage.libs.flint.fmpz_poly.Fmpz_poly` object.
 
     EXAMPLES::
@@ -272,7 +272,7 @@ def _delta_poly(prec=10):
 
 def _delta_poly_modulo(N, prec=10):
     r"""
-    Return the q-expansion of `\Delta` modulo `N`. Used internally by
+    Return the `q`-expansion of `\Delta` modulo `N`. Used internally by
     the :func:`~delta_qexp` function. See the docstring of :func:`~delta_qexp`
     for more information.
 

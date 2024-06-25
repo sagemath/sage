@@ -695,11 +695,11 @@ def sets_modulo_perm_group(list generators, int max_size,
 
     INPUT:
 
-    - ``generators`` -- (list of lists) list of generators in list form
-    - ``max_size`` -- (int) maximum size of subsets to be generated
-    - ``indicate_mem_err`` -- (bool) whether to raise an error
-        if we run out of memory, or simply append a :class:`MemoryError`
-        instance to the end of the output
+    - ``generators`` -- list of generators in list form
+    - ``max_size`` -- integer; maximum size of subsets to be generated
+    - ``indicate_mem_err`` -- boolean; whether to raise an error.
+      If we run out of memory, or simply append a :class:`MemoryError`
+      instance to the end of the output.
 
     EXAMPLES::
 

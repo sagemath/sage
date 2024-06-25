@@ -474,8 +474,8 @@ class ModularFormsRing(Parent):
 
         INPUT:
 
-        - ``forms_datum`` -- dict, list, ModularFormElement,
-          GradedModularFormElement, RingElement, Multivariate polynomial; try
+        - ``forms_datum`` -- dictionary, list, ModularFormElement,
+          GradedModularFormElement, RingElement, or Multivariate polynomial; try
           to coerce ``forms_datum`` into ``self``
 
         TESTS::
@@ -680,7 +680,7 @@ class ModularFormsRing(Parent):
 
         OUTPUT:
 
-        a list of pairs (k, f), where f is the q-expansion to precision
+        a list of pairs (k, f), where f is the `q`-expansion to precision
         ``prec`` of a modular form of weight k.
 
         .. SEEALSO::
@@ -973,7 +973,7 @@ class ModularFormsRing(Parent):
     @cached_method
     def q_expansion_basis(self, weight, prec=None, use_random=True):
         r"""
-        Calculate a basis of q-expansions for the space of modular forms of the
+        Calculate a basis of `q`-expansions for the space of modular forms of the
         given weight for this group, calculated using the ring generators given
         by ``find_generators``.
 

@@ -100,7 +100,7 @@ class CuspidalSubmodule(ModularFormsSubmodule):
 
     def _compute_q_expansion_basis(self, prec):
         r"""
-        Compute a basis of q-expansions of ``self`` to the given precision. Not
+        Compute a basis of `q`-expansions of ``self`` to the given precision. Not
         implemented in this abstract base class.
 
         EXAMPLES::
@@ -231,11 +231,11 @@ class CuspidalSubmodule_R(CuspidalSubmodule):
 
 class CuspidalSubmodule_modsym_qexp(CuspidalSubmodule):
     """
-    Cuspidal submodule with q-expansions calculated via modular symbols.
+    Cuspidal submodule with `q`-expansions calculated via modular symbols.
     """
     def _compute_q_expansion_basis(self, prec=None):
         """
-        Compute q-expansions of a basis for ``self`` (via modular symbols).
+        Compute `q`-expansions of a basis for ``self`` (via modular symbols).
 
         EXAMPLES::
 
@@ -272,7 +272,7 @@ class CuspidalSubmodule_modsym_qexp(CuspidalSubmodule):
 
     def hecke_polynomial(self, n, var='x'):
         r"""
-        Return the characteristic polynomial of the Hecke operator T_n on this
+        Return the characteristic polynomial of the Hecke operator `T_n` on this
         space. This is computed via modular symbols, and in particular is
         faster to compute than the matrix itself.
 
@@ -320,7 +320,7 @@ class CuspidalSubmodule_level1_Q(CuspidalSubmodule):
     """
     def _compute_q_expansion_basis(self, prec=None):
         """
-        Compute q-expansions of a basis for ``self``.
+        Compute `q`-expansions of a basis for ``self``.
 
         EXAMPLES::
 
@@ -358,7 +358,7 @@ class CuspidalSubmodule_wt1_eps(CuspidalSubmodule):
 
     def _compute_q_expansion_basis(self, prec=None):
         r"""
-        Compute q-expansion basis using Schaeffer's algorithm.
+        Compute `q`-expansion basis using Schaeffer's algorithm.
 
         EXAMPLES::
 
@@ -383,7 +383,7 @@ class CuspidalSubmodule_wt1_gH(CuspidalSubmodule):
 
     def _compute_q_expansion_basis(self, prec=None):
         r"""
-        Compute q-expansion basis using Schaeffer's algorithm.
+        Compute `q`-expansion basis using Schaeffer's algorithm.
 
         EXAMPLES::
 
@@ -589,9 +589,9 @@ class CuspidalSubmodule_gH_Q(CuspidalSubmodule_modsym_qexp):
 
     def _compute_hecke_matrix(self, n):
         r"""
-        Compute the matrix of the Hecke operator T_n acting on this space.
+        Compute the matrix of the Hecke operator `T_n` acting on this space.
         This is done directly using modular symbols, rather than using
-        q-expansions as for spaces with fixed character.
+        `q`-expansions as for spaces with fixed character.
 
         EXAMPLES::
 

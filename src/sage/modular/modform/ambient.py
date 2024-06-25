@@ -365,7 +365,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
 
         - ``new_prec`` -- positive integer (default: ``None``)
 
-        OUTPUT: if ``new_prec`` is None, returns the current precision
+        OUTPUT: if ``new_prec`` is ``None``, returns the current precision
 
         EXAMPLES::
 
@@ -512,7 +512,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
 
     def _q_expansion(self, element, prec):
         r"""
-        Return the q-expansion of a particular element of this space of
+        Return the `q`-expansion of a particular element of this space of
         modular forms, where the element should be a vector, list, or tuple
         (not a ModularFormElement). Here element should have length =
         self.dimension(). If element = [ a_i ] and self.basis() = [ v_i
@@ -522,7 +522,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
 
         - ``element`` -- vector, list or tuple
 
-        - ``prec`` -- desired precision of q-expansion
+        - ``prec`` -- desired precision of `q`-expansion
 
         EXAMPLES::
 
@@ -744,7 +744,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
 
     def _compute_hecke_matrix(self, n):
         """
-        Compute the matrix of the Hecke operator T_n acting on ``self``.
+        Compute the matrix of the Hecke operator `T_n` acting on ``self``.
 
         .. NOTE:
 
@@ -822,7 +822,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
 
     def hecke_polynomial(self, n, var='x'):
         r"""
-        Compute the characteristic polynomial of the Hecke operator T_n acting
+        Compute the characteristic polynomial of the Hecke operator `T_n` acting
         on this space. Except in level 1, this is computed via modular symbols,
         and in particular is faster to compute than the matrix itself.
 

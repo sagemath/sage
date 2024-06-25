@@ -855,7 +855,7 @@ class CuspFamily(SageObject):
 
 def qexp_eta(ps_ring, prec):
     r"""
-    Return the q-expansion of `\eta(q) / q^{1/24}`.
+    Return the `q`-expansion of `\eta(q) / q^{1/24}`.
 
     Here `\eta(q)` is Dedekind's function
 
@@ -871,7 +871,7 @@ def qexp_eta(ps_ring, prec):
 
     - ``prec`` -- integer; the number of terms to compute
 
-    OUTPUT: an element of ps_ring which is the q-expansion of
+    OUTPUT: an element of ``ps_ring`` which is the `q`-expansion of
     `\eta(q)/q^{1/24}` truncated to prec terms.
 
     ALGORITHM: We use the Euler identity

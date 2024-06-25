@@ -2589,7 +2589,7 @@ class ModularAbelianVariety_abstract(Parent):
     ###############################################################################
     def hecke_operator(self, n):
         """
-        Return the n-th Hecke operator on the modular abelian
+        Return the `n`-th Hecke operator on the modular abelian
         variety, if this makes sense [[elaborate]]. Otherwise raise a
         ``ValueError``.
 
@@ -2628,7 +2628,7 @@ class ModularAbelianVariety_abstract(Parent):
 
     def hecke_polynomial(self, n, var='x'):
         r"""
-        Return the characteristic polynomial of the n-th Hecke
+        Return the characteristic polynomial of the `n`-th Hecke
         operator `T_n` acting on ``self``. Raises an ``ArithmeticError``
         if ``self`` is not Hecke equivariant.
 
@@ -4185,7 +4185,7 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
 
     def _compute_hecke_polynomial(self, n, var='x'):
         r"""
-        Return the characteristic polynomial of the n-th Hecke
+        Return the characteristic polynomial of the `n`-th Hecke
         operator on ``self``.
 
         .. note::

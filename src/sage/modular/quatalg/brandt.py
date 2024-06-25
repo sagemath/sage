@@ -117,7 +117,7 @@ The Hecke structure defined on the Brandt module is given by the
 Brandt matrices which can be computed using the definition of the
 Hecke operators given earlier.
 
-``hecke_matrix_from_defn(self,n)`` returns the matrix of the n-th Hecke
+``hecke_matrix_from_defn(self,n)`` returns the matrix of the `n`-th Hecke
 operator `B_{0}(n)` acting on self, computed directly from the
 definition.
 
@@ -129,7 +129,7 @@ the theta series of the lattice `I_{i}\overline{I_{j}}` and the first
 coefficient in the theta series of the lattice
 `I_{i}\overline{I_{i}}`.
 
-``compute_hecke_matrix_brandt(self,n)`` returns the n-th Hecke matrix,
+``compute_hecke_matrix_brandt(self,n)`` returns the `n`-th Hecke matrix,
 computed using theta series.
 
 EXAMPLES::
@@ -932,7 +932,7 @@ class BrandtModule_class(AmbientHeckeModule):
 
     def hecke_matrix(self, n, algorithm='default', sparse=False, B=None):
         """
-        Return the matrix of the n-th Hecke operator.
+        Return the matrix of the `n`-th Hecke operator.
 
         INPUT:
 
@@ -1035,7 +1035,7 @@ class BrandtModule_class(AmbientHeckeModule):
     def _compute_hecke_matrix_directly(self, n, B=None, sparse=False):
         """
         Given an integer `n` coprime to the level, return the matrix of
-        the n-th Hecke operator on ``self``, computed on our fixed basis
+        the `n`-th Hecke operator on ``self``, computed on our fixed basis
         by directly using the definition of the Hecke action in terms
         of fractional ideals.
 
@@ -1181,10 +1181,10 @@ class BrandtModule_class(AmbientHeckeModule):
 
     def _compute_hecke_matrix_brandt(self, n, sparse=False):
         """
-        Return the n-th Hecke matrix, computed using Brandt matrices
+        Return the `n`-th Hecke matrix, computed using Brandt matrices
         (theta series).
 
-        When the n-th Hecke operator is requested, we computed theta
+        When the `n`-th Hecke operator is requested, we computed theta
         series to precision `2n+20`, since it only takes slightly
         longer, and this means that any Hecke operator `T_m` can
         quickly be computed, for `m<2n+20`.

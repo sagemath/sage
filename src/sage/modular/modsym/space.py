@@ -612,10 +612,10 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
     def q_expansion_basis(self, prec=None, algorithm='default'):
         r"""
-        Return a basis of q-expansions (as power series) to precision prec
+        Return a basis of `q`-expansions (as power series) to precision ``prec``
         of the space of modular forms associated to ``self``.
 
-        The q-expansions are defined over the same base ring as ``self``,
+        The `q`-expansions are defined over the same base ring as ``self``,
         and a put in echelon form.
 
         INPUT:
@@ -1038,7 +1038,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         INPUT:
 
-        - ``prec`` -- integer; number of q-expansion terms to calculate
+        - ``prec`` -- integer; number of `q`-expansion terms to calculate
 
         EXAMPLES::
 
@@ -1128,7 +1128,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
         The congruence number is defined as follows. If `V` is the
         submodule of integral cusp forms corresponding to ``self`` (saturated in
         `\ZZ[[q]]`, by definition) and `W` is the
-        submodule corresponding to other, each computed to precision prec,
+        submodule corresponding to other, each computed to precision ``prec``,
         the congruence number is the index of `V+W` in its
         saturation in `\ZZ[[q]]`.
 
@@ -1235,7 +1235,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
     def q_eigenform(self, prec, names=None):
         """
-        Return the q-expansion to precision ``prec`` of a new eigenform
+        Return the `q`-expansion to precision ``prec`` of a new eigenform
         associated to ``self``.
 
         Here ``self`` must be new, cuspidal, and simple.
@@ -1308,7 +1308,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
     def q_expansion_cuspforms(self, prec=None):
         r"""
         Return a function f(i,j) such that each value f(i,j) is the
-        q-expansion, to the given precision, of an element of the
+        `q`-expansion, to the given precision, of an element of the
         corresponding space `S` of cusp forms.
 
         Together these functions span `S`. Here `i,j` are integers
@@ -1366,7 +1366,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
     def _q_expansion_basis_hecke_dual(self, prec):
         r"""
-        Compute a basis of q-expansions for the associated space of cusp forms
+        Compute a basis of `q`-expansions for the associated space of cusp forms
         to the given precision, by using linear functionals on the Hecke
         algebra as described in William Stein's book (Algorithm 3.26, page 56)
 
@@ -1689,7 +1689,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
     def integral_hecke_matrix(self, n):
         r"""
-        Return the matrix of the n-th Hecke operator acting on the integral
+        Return the matrix of the `n`-th Hecke operator acting on the integral
         structure on ``self`` (as returned by ``self.integral_structure()``).
 
         This is often (but not always) different from the matrix

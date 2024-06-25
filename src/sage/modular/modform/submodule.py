@@ -85,7 +85,8 @@ class ModularFormsSubmodule(ModularFormsSpace,
 
     def _compute_q_expansion_basis(self, prec):
         """
-        Compute q_expansions to precision prec for each element in self.basis().
+        Compute ``q_expansions`` to precision ``prec`` for each element in
+        ``self.basis()``.
 
         EXAMPLES::
 

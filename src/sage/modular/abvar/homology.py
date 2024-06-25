@@ -69,8 +69,8 @@ class Homology(HeckeModule_free_module):
     action.
     """
     def hecke_polynomial(self, n, var='x'):
-        """
-        Return the n-th Hecke polynomial in the given variable.
+        r"""
+        Return the `n`-th Hecke polynomial in the given variable.
 
         INPUT:
 
@@ -78,7 +78,7 @@ class Homology(HeckeModule_free_module):
 
         - ``var`` -- string (default: ``'x'``); the variable name
 
-        OUTPUT: a polynomial over ZZ in the given variable
+        OUTPUT: a polynomial over `\ZZ` in the given variable
 
         EXAMPLES::
 
@@ -248,7 +248,7 @@ class Homology_abvar(Homology):
 
     def hecke_matrix(self, n):
         """
-        Return the matrix of the n-th Hecke operator acting on this
+        Return the matrix of the `n`-th Hecke operator acting on this
         homology group.
 
         INPUT:
@@ -373,7 +373,7 @@ class IntegralHomology(Homology_abvar):
 
     def hecke_matrix(self, n):
         """
-        Return the matrix of the n-th Hecke operator acting on this
+        Return the matrix of the `n`-th Hecke operator acting on this
         homology group.
 
         EXAMPLES::
@@ -393,7 +393,7 @@ class IntegralHomology(Homology_abvar):
 
     def hecke_polynomial(self, n, var='x'):
         """
-        Return the n-th Hecke polynomial on this integral homology group.
+        Return the `n`-th Hecke polynomial on this integral homology group.
 
         EXAMPLES::
 
@@ -447,7 +447,7 @@ class RationalHomology(Homology_abvar):
 
     def hecke_matrix(self, n):
         """
-        Return the matrix of the n-th Hecke operator acting on this
+        Return the matrix of the `n`-th Hecke operator acting on this
         homology group.
 
         EXAMPLES::
@@ -472,7 +472,7 @@ class RationalHomology(Homology_abvar):
 
     def hecke_polynomial(self, n, var='x'):
         """
-        Return the n-th Hecke polynomial on this rational homology group.
+        Return the `n`-th Hecke polynomial on this rational homology group.
 
         EXAMPLES::
 
@@ -531,7 +531,7 @@ class Homology_over_base(Homology_abvar):
 
     def hecke_matrix(self, n):
         """
-        Return the matrix of the n-th Hecke operator acting on this
+        Return the matrix of the `n`-th Hecke operator acting on this
         homology group.
 
         EXAMPLES::
@@ -684,7 +684,7 @@ class Homology_submodule(Homology):
 
     def hecke_matrix(self, n):
         """
-        Return the matrix of the n-th Hecke operator acting on this
+        Return the matrix of the `n`-th Hecke operator acting on this
         homology group.
 
         EXAMPLES::

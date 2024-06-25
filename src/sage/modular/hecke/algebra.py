@@ -311,7 +311,7 @@ class HeckeAlgebra_base(CachedRepresentation, CommutativeRing):
 
     def gen(self, n):
         """
-        Return the n-th Hecke operator.
+        Return the `n`-th Hecke operator.
 
         EXAMPLES::
 
@@ -544,7 +544,7 @@ class HeckeAlgebra_base(CachedRepresentation, CommutativeRing):
     @cached_method(key=lambda self, n: int(n))
     def hecke_operator(self, n):
         """
-        Return the n-th Hecke operator `T_n`.
+        Return the `n`-th Hecke operator `T_n`.
 
         EXAMPLES::
 
@@ -556,7 +556,7 @@ class HeckeAlgebra_base(CachedRepresentation, CommutativeRing):
 
     def hecke_matrix(self, n, *args, **kwds):
         """
-        Return the matrix of the n-th Hecke operator `T_n`.
+        Return the matrix of the `n`-th Hecke operator `T_n`.
 
         EXAMPLES::
 
@@ -691,7 +691,7 @@ class HeckeAlgebra_anemic(HeckeAlgebra_base):
 
     def hecke_operator(self, n):
         """
-        Return the n-th Hecke operator, for `n` any
+        Return the `n`-th Hecke operator, for `n` any
         positive integer coprime to the level.
 
         EXAMPLES::

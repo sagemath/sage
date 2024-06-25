@@ -692,7 +692,7 @@ cdef class LFunctionZeroSum_abstract(SageObject):
 
     def _zerosum_gaussian(self, Delta=1):
         r"""
-        Return an upper bound on the analytic rank of the L-series attached
+        Return an upper bound on the analytic rank of the `L`-series attached
         to ``self`` by computing `\sum_{\gamma} f(\Delta*\gamma)`,
         where `\gamma` ranges over the imaginary parts of the zeros of `L_E(s)`
         along the critical strip, and `f(x) = \exp(-x^2)`.
