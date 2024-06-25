@@ -1078,29 +1078,6 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         """
         return self._a, self._b
 
-    def is_definite(self):
-        """
-        Checks whether the quaternion algebra ``self`` is definite, i.e. whether it ramifies at the
-        unique Archimedean place of its base field QQ. This is the case if and only if both
-        invariants of ``self`` are negative.
-
-        EXAMPLES::
-
-            sage: QuaternionAlgebra(QQ,-5,-2).is_definite()
-            True
-            sage: QuaternionAlgebra(1).is_definite()
-            False
-
-            sage: QuaternionAlgebra(RR(2.),1).is_definite()
-            Traceback (most recent call last):
-            ...
-            ValueError: base field must be rational numbers
-        """
-        if not isinstance(self.base_ring(), RationalField):
-            raise ValueError("base field must be rational numbers")
-        a, b = self.invariants()
-        return a < 0 and b < 0
-
     def __eq__(self, other):
         """
         Compare self and other.
@@ -1248,7 +1225,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             ...
             ValueError: base field must be rational numbers
         """
-        if not is_RationalField(self.base_ring()):
+        if not isinstance(self.base_ring(), RationalField):
             raise ValueError("base field must be rational numbers")
         a, b = self.invariants()
         return a < 0 and b < 0
