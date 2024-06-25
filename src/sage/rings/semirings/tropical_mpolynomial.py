@@ -1,7 +1,10 @@
 r"""
 Multivariate Tropical Polynomial Semirings
 
-<Description>
+This module provides the implementation of parent and element class for 
+multivariate tropical polynomials. When working with multivariate case, the
+tropical roots is no longer a point. Instead it become a curve in 2d, a
+surface in 3d, and a hypersurface in higher dimension.
 
 AUTHORS:
 
@@ -37,6 +40,35 @@ Some basic arithmetic operations::
     4*a^2*b^2 + 4*a^2*b + 1*a^2 + 4*a*b^2 + 1*a*b + 0*b^2
     sage: T(2) * p1
     5*a*b + 2*a + 1*b
+    sage: p1(T(1),T(2))
+    6
+
+Let's look at the different result for tropical curve and graph of tropical
+polynomial in two variables when the min-plus or max-plus algebra is used:
+
+    sage: T = TropicalSemiring(QQ, use_min=True)
+    sage: R = PolynomialRing(T, 'a,b')
+    sage: dict1 = {(1,0):0, (0,1):-1, (1,1):3}
+    sage: p1 = R(dict1)
+    sage: p1.tropical_hypersurface()
+    Tropical Hypersurface in 2 dimensions: 
+    [[(r37 - 1, r37), [r37 > -3], 1]
+    [(r38, -3), [r38 < -4], 1]
+    [(-4, r39), [r39 < -3], 1]]
+    sage: plot(p1.tropical_hypersurface())
+    sage: p1.plot3d()
+
+    sage: T = TropicalSemiring(QQ, use_min=False)
+    sage: R = PolynomialRing(T, 'a,b')
+    sage: dict1 = {(1,0):0, (0,1):-1, (1,1):3}
+    sage: p1 = R(dict1)
+    sage: p1.tropical_hypersurface()
+    Tropical Hypersurface in 2 dimensions: 
+    [[(r43 - 1, r43), [r43 < -3], 1]
+    [(r44, -3), [r44 > -4], 1]
+    [(-4, r45), [r45 > -3], 1]]
+    sage: plot(p1.tropical_hypersurface())
+    sage: p1.plot3d()
 
 TESTS:
 
@@ -68,12 +100,63 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.polynomial.polydict import ETuple
 from sage.rings.semirings.tropical_hypersurface import TropicalHypersurface
+from sage.plot.plot3d.list_plot3d import list_plot3d
 
 class TropicalMPolynomial(MPolynomial_polydict):
     r"""
     Generic multivariate tropical polynomial.
 
     """
+
+    def plot3d(self):
+        """
+        Return the 3d plot of ``self``
+
+        OUTPUT: A Graphics3d Object
+
+        EXAMPLE:
+
+            sage: T = TropicalSemiring(QQ, use_min=False)
+            sage: R = PolynomialRing(T, 'x,y')
+            sage: S.<x,y> = QQ[]
+            sage: c1 = 3+2*x+2*y+3*x*y
+            sage: dict1 = {(2,0):0, (0,2):0}
+            sage: p1 = R(c1) + R(dict1); p1
+            0*x^2 + 3*x*y + 2*x + 0*y^2 + 2*y + 3
+            sage: p1.plot3d()
+
+        TESTS:
+
+            sage: T = TropicalSemiring(QQ, use_min=True)
+            sage: R = PolynomialRing(T, 'x,y,z')
+            sage: S.<x,y,z> = QQ[]
+            sage: p1 = R(x*y*z)
+            sage: p1.plot3d()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Can only plot the graph of tropical 
+            multivariate polynomial in two variables 
+
+        """
+        from sage.arith.srange import srange
+
+        if len(self.parent().variable_names()) == 2:
+            axes = self.tropical_hypersurface()._axes()
+            xmin, xmax = axes[0][0], axes[0][1]
+            ymin, ymax = axes[1][0], axes[1][1]
+            step = 0.5
+            x_point = srange(xmin-1, xmax+1+step, step)
+            y_point = srange(ymin-1, ymax+1+step, step)
+            res = []
+            T = self.parent().base()
+            for x in x_point:
+                for y in y_point:
+                    val = self(T(x),T(y)).lift()
+                    res.append([x,y,val])
+            return list_plot3d(res, point_list=True)
+        else:
+            raise NotImplementedError("Can only plot the graph of tropical" \
+                                " multivariate polynomial in two variables")
 
     def tropical_hypersurface(self):
         r"""
@@ -83,7 +166,9 @@ class TropicalMPolynomial(MPolynomial_polydict):
 
         OUTPUT:
 
-        - tropical_roots -- TropicalHypersurface
+        - tropical_roots -- TropicalHypersurface object. This object is 
+        displayed as list of lists, where the inner list is of the form
+        [parametric equation, condition of parameter, order]
         
         EXAMPLES:
 
@@ -103,29 +188,11 @@ class TropicalMPolynomial(MPolynomial_polydict):
         ::
 
             sage: S.<x,y> = QQ[]
-            sage: c2 = 3+2*x+2*y+3*x*y
-            sage: dict2 = {(2,0):0, (0,2):0}
+            sage: c2 = -1*x^2
+            sage: dict2 = {(0,0):0, (1,0):0, (0,2):0}
             sage: p2 = R(c2) + R(dict2); p2
-            0*x^2 + 3*x*y + 2*x + 0*y^2 + 2*y + 3
-            sage: p2.tropical_hypersurface()
-            Tropical Hypersurface in 2 dimensions: 
-            [[(r4, -1), [1 < r4, r4 < 2], 1]
-            [(-1, r5), [1 < r5, r5 < 2], 1]
-            [(-r6, r6), [-1 < r6, r6 < 1], 1]
-            [(r7 + 3, r7), [-1 < r7], 1]
-            [(r8 - 3, r8), [2 < r8], 1]
-            [(1, r10), [r10 < -1], 1]
-            [(2, r11), [r11 < -1], 1]
-            [(r13, 1), [r13 < -1], 1]
-            [(r15, 2), [r15 < -1], 1]]
-
-        ::
-
-            sage: c3 = -1*x^2
-            sage: dict3 = {(0,0):0, (1,0):0, (0,2):0}
-            sage: p3 = R(c3) + R(dict3); p3
             (-1)*x^2 + 0*x + 0*y^2 + 0
-            sage: p3.tropical_hypersurface()
+            sage: p2.tropical_hypersurface()
             Tropical Hypersurface in 2 dimensions: 
             [[(0, r19), [r19 < 0], 1]
             [(r20, 0), [r20 < 0], 2]
@@ -136,16 +203,17 @@ class TropicalMPolynomial(MPolynomial_polydict):
         We can find tropical hypersurface for any tropical polynomials in 
         `n\geq 2` variables:
 
-            sage: T = TropicalSemiring(QQ, use_min=False)
+            sage: T = TropicalSemiring(QQ, use_min=True)
             sage: R = PolynomialRing(T, 'x,y,z')
             sage: S.<x,y,z> = QQ[]
             sage: p1 = R(x*y + (-1/2)*x*z + 4*z^2); p1
             1*x*y + (-1/2)*x*z + 4*z^2
             sage: p1.tropical_hypersurface()
-            Tropical Hypersurface in 3 dimensions: 
-            [[(r26, r25 - 3/2, r25), [r25 + 9/2 < r26], 1]
-            [(2*r27 - r28 + 3, r28, r27), [r27 < r28 + 3/2], 1]
-            [(r29 + 9/2, r30, r29), [r30 + 3/2 < r29], 1]]
+            sage: p1.tropical_hypersurface()
+            Tropical Hypersurface in 3 dimensions:
+            [[(r2, r1 - 3/2, r1), [r2 < r1 + 9/2], 1]
+            [(2*r3 - r4 + 3, r4, r3), [r4 + 3/2 < r3], 1]
+            [(r5 + 9/2, r6, r5), [r5 < r6 + 3/2], 1]]
 
         """
         from sage.symbolic.ring import SR
@@ -225,6 +293,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
 class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
     """
     Semiring structure of tropical polynomials in multiple variables
+
     """
 
     def __init__(self, base_semiring, names):
@@ -242,16 +311,12 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         - ``x`` -- dict or MPolynomial
 
         """
-
         C = self.element_class
         new_dict = {}
-
         if isinstance(x, MPolynomial):
             x = x.dict()
-
         for key, value in x.items(): # convert each coefficient to tropical
             new_dict[key] = self.base()(value)
-
         return C(self, new_dict)
     
     def _repr_(self):
@@ -263,11 +328,9 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         Return a random element from this semiring
 
         """
-
         from sage.rings.polynomial.polynomial_ring_constructor import \
             PolynomialRing
         R = PolynomialRing(self.base().base_ring(), self.variable_names())
-
         return self(R.random_element())
     
     def ngens(self):
