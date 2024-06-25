@@ -1,7 +1,7 @@
 r"""
-Base class for tropical hypersurface objects
+Base class for tropical variety objects
 
-<Description>
+
 
 AUTHORS:
 
@@ -43,8 +43,7 @@ EXAMPLES:
 
     sage: c3 = 7+4*x+4*x*y+3*y^2+(-3)*x^2
     sage: dict3 = {(0,1):0}
-    sage: p3 = R(c3) + R(dict3); p3
-    (-3)*x^2 + 4*x*y + 4*x + 3*y^2 + 0*y + 7
+    sage: p3 = R(c3) + R(dict3)
     sage: th3 = p3.tropical_hypersurface()
     sage: th3.plot()
 
@@ -91,12 +90,14 @@ from sage.plot.graphics import Graphics
 from sage.plot.plot import parametric_plot
 from sage.rings.infinity import infinity
 
-class TropicalHypersurface(SageObject):
-    r""""
-    Represents a tropical hypersurface in `n\geq 2` dimensions. The representation
-    is in the form of list of lists, where the inner list represent each
-    component of the surfaces
+class TropicalVariety(SageObject):
+    pass
 
+class TropicalCurve(SageObject):
+    r""""
+    Represents a tropical hypersurface in `n=2` dimensions. The representation
+    is in the form of list of lists, where the inner list represent each
+    of the line segments of tropical roots
     """
 
     def __init__(self, *args):
@@ -114,10 +115,34 @@ class TropicalHypersurface(SageObject):
     def components(self):
         return len(self._hypersurface)
     
+    def _axes(self):
+        """
+        Return the default axes for ``self``
+
+        OUTPUT: A list of two lists, where the first inner list represent
+        value of x-axis and the second inner list represent value of y-axis
+
+        """
+        xmin = xmax = list(self.vertex())[0][0]
+        for vertice in self.vertex():
+            if vertice[0] < xmin:
+                xmin = vertice[0]
+            elif vertice[0] > xmax:
+                xmax = vertice[0]
+        
+        ymin = ymax = list(self.vertex())[0][1]
+        for vertice in self.vertex():
+            if vertice[1] < ymin:
+                ymin = vertice[1]
+            elif vertice[1] > ymax:
+                ymax = vertice[1]
+        
+        return [[xmin, xmax], [ymin, ymax]]
+    
     def vertex(self):
         r"""
-        Return all vertex of the tropical curve of ``self``, which is the
-        point where three or more line segments intersect
+        Return all vertex of ``self``, which is the point where three or 
+        more line segments intersect
 
         OUTPUT: A set of `(x,y)` points
 
@@ -208,22 +233,11 @@ class TropicalHypersurface(SageObject):
                 combined_plot += plot + text_order
             else:
                 combined_plot += plot
-        
-        xmin = xmax = list(self.vertex())[0][0]
-        for vertice in self.vertex():
-            if vertice[0] < xmin:
-                xmin = vertice[0]
-            elif vertice[0] > xmax:
-                xmax = vertice[0]
-        
-        ymin = ymax = list(self.vertex())[0][1]
-        for vertice in self.vertex():
-            if vertice[1] < ymin:
-                ymin = vertice[1]
-            elif vertice[1] > ymax:
-                ymax = vertice[1]
 
         # set default axes
+        axes = self._axes()
+        xmin, xmax = axes[0][0], axes[0][1]
+        ymin, ymax = axes[1][0], axes[1][1]
         combined_plot.set_axes_range(xmin=xmin-1, xmax=xmax+1, 
                                      ymin=ymin-1, ymax=ymax+1)
         return combined_plot
