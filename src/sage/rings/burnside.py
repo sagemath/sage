@@ -505,9 +505,9 @@ class BurnsideRing(CombinatorialFreeModule):
         """
         return self._indices(self._G)
 
-    def product_on_basis(self, g1, g2):
+    def product_on_basis(self, H, K):
         r"""
-        Return the product of the basis elements indexed by ``g1`` and ``g2``.
+        Return the product of the basis elements indexed by ``H`` and ``K``.
 
         For the symmetric group, this is also known as the Hadamard
         or tensor product of group actions.
@@ -533,22 +533,16 @@ class BurnsideRing(CombinatorialFreeModule):
             sage: B.product_on_basis(C(Z2), C(Z3))
             B[((),)]
         """
-        def get_left_cosets(G,H):
-            right_transversal = libgap.List(libgap.RightTransversal(G, H))
-            libgap.Apply(right_transversal, libgap.Inverse)
-            left_transversal = [rep.sage(G) for rep in right_transversal]
-            return [frozenset(rep * h for h in H) for rep in left_transversal]
-        #TODO: Find faster way to multiply
-        assert g1.parent() == g2.parent()
-        G = g1.subgroup_of()
-        dom1 = get_left_cosets(G, g1._C)
-        dom2 = get_left_cosets(G, g2._C)
-        domain = cartesian_product([dom1, dom2])
-        def action(g, pair):
-            return (frozenset(g * h for h in pair[0]),
-                    frozenset(g * h for h in pair[1]))
-
-        return self.construct_from_action(action, domain)
+        #is it correct to use DoubleCosetRepsAndSizes? It may return ANY element of the double coset!
+        # g_reps = [rep for rep, size in libgap.DoubleCosetRepsAndSizes(self._G, H._C, K._C)]
+        g_reps = libgap.List(libgap.DoubleCosets(self._G, H._C, K._C), libgap.Representative)
+        from collections import Counter
+        C = Counter()
+        for g in g_reps:
+            g_sup_K = libgap.ConjugateSubgroup(K._C, g)
+            P = self._G.subgroup(gap_group=libgap.Intersection(H._C, g_sup_K))
+            C[self._indices(P)] += 1
+        return self._from_dict(dict(C))
 
     def group(self):
         r"""
