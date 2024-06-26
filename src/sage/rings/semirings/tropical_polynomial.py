@@ -565,11 +565,6 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         return super().__classcall__(cls, base_semiring, tuple(names))
 
     def __init__(self, base_semiring, names):
-        """
-        EXAMPLES:
-
-
-        """
         Parent.__init__(self, base=base_semiring, names=names, category=Semirings())
 
     Element = TropicalPolynomial
