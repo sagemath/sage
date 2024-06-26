@@ -51,10 +51,10 @@ polynomial in two variables when the min-plus or max-plus algebra is used:
     sage: dict1 = {(1,0):0, (0,1):-1, (1,1):3}
     sage: p1 = R(dict1)
     sage: p1.tropical_hypersurface()
-    Tropical Hypersurface in 2 dimensions: 
-    [[(r37 - 1, r37), [r37 > -3], 1]
-    [(r38, -3), [r38 < -4], 1]
-    [(-4, r39), [r39 < -3], 1]]
+    Tropical curve of 3*a*b + 0*a + (-1)*b are 
+    [[(t1 - 1, t1), [t1 >= -3], 1]
+    [(t1, -3), [t1 <= -4], 1]
+    [(-4, t1), [t1 <= -3], 1]]
     sage: plot(p1.tropical_hypersurface())
     sage: p1.plot3d()
 
@@ -63,10 +63,10 @@ polynomial in two variables when the min-plus or max-plus algebra is used:
     sage: dict1 = {(1,0):0, (0,1):-1, (1,1):3}
     sage: p1 = R(dict1)
     sage: p1.tropical_hypersurface()
-    Tropical Hypersurface in 2 dimensions: 
-    [[(r43 - 1, r43), [r43 < -3], 1]
-    [(r44, -3), [r44 > -4], 1]
-    [(-4, r45), [r45 > -3], 1]]
+    Tropical curve of 3*a*b + 0*a + (-1)*b are 
+    [[(t1 - 1, t1), [t1 <= -3], 1]
+    [(t1, -3), [t1 >= -4], 1]
+    [(-4, t1), [t1 >= -3], 1]]
     sage: plot(p1.tropical_hypersurface())
     sage: p1.plot3d()
 
@@ -99,8 +99,9 @@ from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.polynomial.polydict import ETuple
-from sage.rings.semirings.tropical_variety import TropicalCurve
+from sage.rings.semirings.tropical_variety import TropicalCurve, TropicalVariety
 from sage.plot.plot3d.list_plot3d import list_plot3d
+from sage.symbolic.ring import SR
 
 class TropicalMPolynomial(MPolynomial_polydict):
     r"""
@@ -172,7 +173,8 @@ class TropicalMPolynomial(MPolynomial_polydict):
         
         EXAMPLES:
 
-        Some examples for tropical polynomials in two variables::
+        Some examples of tropical curve for tropical polynomials in two 
+        variables::
 
             sage: T = TropicalSemiring(QQ, use_min=False)
             sage: R = PolynomialRing(T, 'x,y')
@@ -180,10 +182,10 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: p1 = R(dict1); p1
             0*x + 0*y + 0
             sage: p1.tropical_hypersurface()
-            Tropical Hypersurface in 2 dimensions: 
-            [[(0, r1), [r1 < 0], 1]
-            [(r2, 0), [r2 < 0], 1]
-            [(r3, r3), [r3 > 0], 1]]
+            Tropical curve of 0*x + 0*y + 0 are 
+            [[(0, t1), [t1 <= 0], 1]
+            [(t1, 0), [t1 <= 0], 1]
+            [(t1, t1), [t1 >= 0], 1]]
 
         ::
 
@@ -193,15 +195,15 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: p2 = R(c2) + R(dict2); p2
             (-1)*x^2 + 0*x + 0*y^2 + 0
             sage: p2.tropical_hypersurface()
-            Tropical Hypersurface in 2 dimensions: 
-            [[(0, r19), [r19 < 0], 1]
-            [(r20, 0), [r20 < 0], 2]
-            [(2*r22, r22), [0 < r22, r22 < (1/2)], 1]
-            [(1, r23), [r23 < (1/2)], 1]
-            [(r24 + 1/2, r24), [(1/2) < r24], 2]]
+            Tropical curve of (-1)*x^2 + 0*x + 0*y^2 + 0 are 
+            [[(0, t1), [t1 <= 0], 1]
+            [(t1, 0), [t1 <= 0], 2]
+            [(2*t1, t1), [0 <= t1, t1 <= (1/2)], 1]
+            [(1, t1), [t1 <= (1/2)], 1]
+            [(t1 + 1/2, t1), [(1/2) <= t1], 2]]
 
-        We can find tropical hypersurface for any tropical polynomials in 
-        `n\geq 2` variables:
+        We can also find tropical hypersurface for any tropical polynomials 
+        in `n\geq 2` variables:
 
             sage: T = TropicalSemiring(QQ, use_min=True)
             sage: R = PolynomialRing(T, 'x,y,z')
@@ -209,14 +211,12 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: p1 = R(x*y + (-1/2)*x*z + 4*z^2); p1
             1*x*y + (-1/2)*x*z + 4*z^2
             sage: p1.tropical_hypersurface()
-            sage: p1.tropical_hypersurface()
-            Tropical Hypersurface in 3 dimensions:
-            [[(r2, r1 - 3/2, r1), [r2 < r1 + 9/2], 1]
-            [(2*r3 - r4 + 3, r4, r3), [r4 + 3/2 < r3], 1]
-            [(r5 + 9/2, r6, r5), [r5 < r6 + 3/2], 1]]
+            Tropical hypersurface of 1*x*y + (-1/2)*x*z + 4*z^2 are 
+            [[(t1, t2 - 3/2, t2), [t1 - 9/2 <= t2], 1]
+            [(2*t1 - t2 + 3, t2, t1), [t2 + 3/2 <= t1], 1]
+            [(t1 + 9/2, t2, t1), [t1 <= t2 + 3/2], 1]]
 
         """
-        from sage.symbolic.ring import SR
         from sage.symbolic.relation import solve
         from itertools import combinations
         from sage.arith.misc import gcd
@@ -287,13 +287,15 @@ class TropicalMPolynomial(MPolynomial_polydict):
                     xy_interval.append(order)
                     tropical_roots.append(xy_interval)
 
-        return TropicalCurve(*tropical_roots) 
+        if self.parent().ngens() == 2:
+            return TropicalCurve(self, tropical_roots)
+        else:
+            return TropicalVariety(self, tropical_roots)
 
 
 class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
     """
     Semiring structure of tropical polynomials in multiple variables
-
     """
 
     def __init__(self, base_semiring, names):
@@ -303,8 +305,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
 
     def _element_constructor_(self, x):
         """"
-        Construct the element of this tropical multivariate polynomial
-        semiring
+        Convert ``x`` into this tropical multivariate polynomial semiring
 
         INPUT:
 
@@ -326,13 +327,19 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
     def random_element(self):
         """
         Return a random element from this semiring
-
         """
         from sage.rings.polynomial.polynomial_ring_constructor import \
             PolynomialRing
         R = PolynomialRing(self.base().base_ring(), self.variable_names())
         return self(R.random_element())
     
+    def gens(self):
+        gens = []
+        for v in self.variable_names():
+            gen = SR.var(v)
+            gens.append(gen)
+        return tuple(gens)
+
     def ngens(self):
         return len(self.variable_names())
         
