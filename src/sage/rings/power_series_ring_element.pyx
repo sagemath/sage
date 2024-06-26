@@ -96,7 +96,7 @@ With power series the behavior is the same.
 # ****************************************************************************
 
 from cpython.object cimport Py_EQ, Py_NE
-from sage.rings.infinity import infinity, is_Infinite
+from sage.rings.infinity import infinity, InfinityElement
 
 from sage.rings.rational_field import QQ
 
