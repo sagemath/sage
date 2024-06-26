@@ -97,9 +97,38 @@ from sage.symbolic.ring import SR
 import operator
 
 class TropicalVariety(SageObject):
-    pass
+    
+    def __init__(self, lhs, rhs):
+        """
+        INPUT:
 
-class TropicalCurve(SageObject):
+        - lhs -- a list of tropical polynomials
+        - rhs -- a list of tropical polynomials 
+        """
+        from sage.rings.semirings.tropical_polynomial import TropicalPolynomial
+        from sage.rings.semirings.tropical_mpolynomial import TropicalMPolynomial
+        
+        SageObject.__init__(self)
+        if len(lhs) != len(rhs):
+            raise ValueError("The length of inputs has to be equal")
+        
+        for i in range(len(lhs)):
+            if not isinstance(lhs[i], (TropicalPolynomial, TropicalMPolynomial)):
+                raise ValueError("Each input has to be a tropical polynomial")
+            if not isinstance(rhs[i], (TropicalPolynomial, TropicalMPolynomial)):
+                raise ValueError("Each input has to be a tropical polynomial") 
+        self.lhs = lhs
+        self.rhs = rhs
+
+    def _repr_(self):
+        equations = []
+        for i in range(len(self.lhs)):
+            equation = " = ".join([f"{self.lhs[i]}", f"{self.rhs[i]}"])
+            equations.append(equation)
+        all_eq = "\n".join([f"{row}" for row in equations])
+        return (f"Tropical variety defined by \n{all_eq} ")
+
+class TropicalCurve(TropicalVariety):
     r""""
     Represents a tropical hypersurface in `n=2` dimensions. The representation
     is in the form of list of lists, where the inner list represent each
@@ -147,7 +176,7 @@ class TropicalCurve(SageObject):
     def dimension(self):
         return len(self._hypersurface[0][0])
     
-    def components(self):
+    def number_of_components(self):
         return len(self._hypersurface)
     
     def _axes(self):

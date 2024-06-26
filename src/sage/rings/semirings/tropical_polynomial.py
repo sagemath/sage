@@ -554,7 +554,6 @@ class TropicalPolynomial(Polynomial_generic_sparse):
 class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
     """
     Semiring structure of tropical polynomials in one variable
-
     """
 
     @staticmethod
@@ -566,11 +565,19 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         return super().__classcall__(cls, base_semiring, tuple(names))
 
     def __init__(self, base_semiring, names):
+        """
+        EXAMPLES:
+
+
+        """
         Parent.__init__(self, base=base_semiring, names=names, category=Semirings())
 
     Element = TropicalPolynomial
 
     def _element_constructor_(self, x, check=True):
+        """
+        Convert ``x`` into this tropical polynomial semiring
+        """
         C = self.element_class
         if isinstance(x, (list, tuple)):
             for i, coeff in enumerate(x):
@@ -582,4 +589,9 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         return (f"Univariate Tropical Polynomial Semiring in {self.variable_name()}"
             f" over {self.base_ring().base_ring()}")
 
-    
+    def gens(self):
+        gens = []
+        for v in self.variable_names():
+            gen = SR.var(v)
+            gens.append(gen)
+        return tuple(gens)
