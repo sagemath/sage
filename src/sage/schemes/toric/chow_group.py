@@ -1243,11 +1243,11 @@ def is_ChowCycle(x) -> bool:
         sage: P2 = toric_varieties.P2()
         sage: A = P2.Chow_group()
         sage: from sage.schemes.toric.chow_group import *
-        sage: isinstance(A, ChowCycle)
+        sage: is_ChowCycle(A)
         False
-        sage: isinstance(A.an_element(), ChowCycle)
+        sage: is_ChowCycle(A.an_element())
         True
-        sage: isinstance('Victoria', ChowCycle)
+        sage: is_ChowCycle('Victoria')
         False
     """
     return isinstance(x, ChowCycle)

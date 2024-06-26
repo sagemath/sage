@@ -205,13 +205,13 @@ def is_ToricDivisor(x):
 
     EXAMPLES::
 
-        sage: from sage.schemes.toric.divisor import ToricDivisor_generic
-        sage: isinstance(1, ToricDivisor_generic)
+        sage: from sage.schemes.toric.divisor import is_ToricDivisor
+        sage: is_ToricDivisor(1)
         False
         sage: P2 = toric_varieties.P2()
         sage: D = P2.divisor(0); D
         V(x)
-        sage: isinstance(D, ToricDivisor_generic)
+        sage: is_ToricDivisor(D)
         True
     """
     return isinstance(x, ToricDivisor_generic)
