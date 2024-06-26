@@ -107,12 +107,12 @@ def is_Divisor(x):
 
     EXAMPLES::
 
-        sage: from sage.schemes.generic.divisor import is_Divisor
+        sage: from sage.schemes.generic.divisor import Divisor_generic
         sage: x,y = AffineSpace(2, GF(5), names='xy').gens()
         sage: C = Curve(y^2 - x^9 - x)
-        sage: is_Divisor(C.divisor([]))
+        sage: isinstance(C.divisor([]), Divisor_generic)
         True
-        sage: is_Divisor("Ceci n'est pas un diviseur")
+        sage: isinstance("Ceci n'est pas un diviseur", Divisor_generic)
         False
     """
     return isinstance(x, Divisor_generic)

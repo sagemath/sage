@@ -72,7 +72,7 @@ def is_DivisorGroup(x):
 
     EXAMPLES::
 
-        sage: from sage.schemes.generic.divisor_group import is_DivisorGroup, DivisorGroup
+        sage: from sage.schemes.generic.divisor_group import Divisor_genericGroup, DivisorGroup
         sage: Div = DivisorGroup(Spec(ZZ), base_ring=QQ)
         sage: is_DivisorGroup(Div)
         doctest:warning...

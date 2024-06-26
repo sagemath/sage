@@ -205,13 +205,13 @@ def is_ToricDivisor(x):
 
     EXAMPLES::
 
-        sage: from sage.schemes.toric.divisor import is_ToricDivisor
-        sage: is_ToricDivisor(1)
+        sage: from sage.schemes.toric.divisor import ToricDivisor_generic
+        sage: isinstance(1, ToricDivisor_generic)
         False
         sage: P2 = toric_varieties.P2()
         sage: D = P2.divisor(0); D
         V(x)
-        sage: is_ToricDivisor(D)
+        sage: isinstance(D, ToricDivisor_generic)
         True
     """
     return isinstance(x, ToricDivisor_generic)
@@ -1817,7 +1817,7 @@ class ToricDivisorGroup(DivisorGroup_generic):
             sage: TDiv(TDiv.gen(0), check=True)
             V(x)
         """
-        if is_ToricDivisor(x):
+        if isinstance(x, ToricDivisor_generic):
             if x.parent() is self:
                 return x
             else:
@@ -2012,7 +2012,7 @@ class ToricRationalDivisorClassGroup(FreeModule_ambient_field, UniqueRepresentat
             sage: Cl(D)
             Divisor class [0, 0, 1, 0]
         """
-        if is_ToricDivisor(x):
+        if isinstance(x, ToricDivisor_generic):
             x = self._projection_matrix * vector(x)
         if isinstance(x, Vector):
             x = list(x)

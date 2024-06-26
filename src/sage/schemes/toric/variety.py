@@ -3303,12 +3303,12 @@ def is_CohomologyClass(x):
 
         sage: P2 = toric_varieties.P2()
         sage: HH = P2.cohomology_ring()
-        sage: from sage.schemes.toric.variety import is_CohomologyClass
-        sage: is_CohomologyClass( HH.one() )                                            # needs sage.libs.singular
+        sage: from sage.schemes.toric.variety import CohomologyClass
+        sage: isinstance( HH.one() , CohomologyClass)                                            # needs sage.libs.singular
         True
         sage: is_CohomologyClass( HH(P2.fan(1)[0]) )                                    # needs sage.libs.singular
         True
-        sage: is_CohomologyClass('z')
+        sage: isinstance('z', CohomologyClass)
         False
     """
     return isinstance(x, CohomologyClass)
