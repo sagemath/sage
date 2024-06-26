@@ -295,6 +295,18 @@ cdef class Flag(Element):
         return 'Flag on {} points, ftype from {} with {}'.format(self.size(), self.ftype_points(), strblocks)
     
     def raw_numbers(self):
+        r"""
+        Return a list of numbers uniquely describing this flag.
+        
+        This is used in saving and loading calculations
+
+        EXAMPLES::
+
+            sage: from sage.algebras.flag_algebras import *
+            sage: GraphTheory(2, edges=[[0, 1]], ftype=[0]).raw_numbers()
+            [2, 0, 15, 0, 1, 15]
+            
+        """
         numbers = [self.size()] + self.ftype_points() + [15]
         blocks = self.blocks()
         for xx in blocks:
