@@ -207,6 +207,10 @@ def is_ToricDivisor(x):
 
         sage: from sage.schemes.toric.divisor import is_ToricDivisor
         sage: is_ToricDivisor(1)
+        doctest:warning...
+        DeprecationWarning: The function is_ToricDivisor is deprecated;
+        use 'isinstance(..., ToricDivisor_generic)' instead.
+        See https://github.com/sagemath/sage/issues/38277 for details.
         False
         sage: P2 = toric_varieties.P2()
         sage: D = P2.divisor(0); D
@@ -214,6 +218,10 @@ def is_ToricDivisor(x):
         sage: is_ToricDivisor(D)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38277,
+                "The function is_ToricDivisor is deprecated; "
+                "use 'isinstance(..., ToricDivisor_generic)' instead.")
     return isinstance(x, ToricDivisor_generic)
 
 

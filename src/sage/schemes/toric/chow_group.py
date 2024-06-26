@@ -1244,10 +1244,18 @@ def is_ChowCycle(x) -> bool:
         sage: A = P2.Chow_group()
         sage: from sage.schemes.toric.chow_group import *
         sage: is_ChowCycle(A)
+        doctest:warning...
+        DeprecationWarning: The function is_ChowCycle is deprecated;
+        use 'isinstance(..., ChowCycle)' instead.
+        See https://github.com/sagemath/sage/issues/38277 for details.
         False
         sage: is_ChowCycle(A.an_element())
         True
         sage: is_ChowCycle('Victoria')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38277,
+                "The function is_ChowCycle is deprecated; "
+                "use 'isinstance(..., ChowCycle)' instead.")
     return isinstance(x, ChowCycle)
