@@ -19,9 +19,9 @@ EXAMPLES:
     sage: p1 = R(dict1)
     sage: th1 = p1.tropical_hypersurface(); th1
     Tropical Hypersurface in 2 dimensions: 
-    [[(0, r1), [r1 < 0], 1]
-    [(r2, 0), [r2 < 0], 1]
-    [(r3, r3), [r3 > 0], 1]]
+    [[(0, r1), [r1 <= 0], 1]
+    [(r2, 0), [r2 <= 0], 1]
+    [(r3, r3), [r3 >= 0], 1]]
     sage: th1.dimension()
     2
     sage: th1.components()
@@ -36,11 +36,11 @@ EXAMPLES:
     sage: p2 = R(c2) + R(dict2)
     sage: th2 = p2.tropical_hypersurface(); th2
     Tropical Hypersurface in 2 dimensions:
-    [[(0, r4), [r4 < 0], 1]
-    [(r5, 0), [r5 < 0], 2]
-    [(2*r7, r7), [0 < r7, r7 < (1/2)], 1]
-    [(1, r8), [r8 < (1/2)], 1]
-    [(r9 + 1/2, r9), [(1/2) < r9], 2]]
+    [[(0, r4), [r4 <= 0], 1]
+    [(r5, 0), [r5 <= 0], 2]
+    [(2*r7, r7), [0 <= r7, r7 <= (1/2)], 1]
+    [(1, r8), [r8 <= (1/2)], 1]
+    [(r9 + 1/2, r9), [(1/2) <= r9], 2]]
     sage: th2.plot()
 
 ::
@@ -94,6 +94,7 @@ from sage.plot.graphics import Graphics
 from sage.plot.plot import parametric_plot
 from sage.rings.infinity import infinity
 from sage.symbolic.ring import SR
+import operator
 
 class TropicalVariety(SageObject):
     pass
@@ -102,17 +103,46 @@ class TropicalCurve(SageObject):
     r""""
     Represents a tropical hypersurface in `n=2` dimensions. The representation
     is in the form of list of lists, where the inner list represent each
-    of the line segments of tropical roots
+    line segments of tropical roots
     """
 
     def __init__(self, *args):
         SageObject.__init__(self)
         self._hypersurface = []
+        dim_param = len(args[0][0]) - 1
+        vars = [SR.var('t{}'.format(i)) for i in range(1, dim_param+1)]
         for arg in args:
             if not isinstance(arg, list):
                 raise ValueError("Input must be a list")
             else:
-                self._hypersurface.append(arg)
+                subs_dict = {}
+                index_vars = 0
+                new_eq = []
+                for eq in arg[0]:
+                    var_eq = eq.variables()
+                    for var in var_eq:
+                        if var not in subs_dict:
+                            subs_dict[var] = vars[index_vars]
+                            index_vars += 1
+                    new_eq.append(eq.subs(subs_dict))
+                new_eq = tuple(new_eq)
+                arg.remove(arg[0])
+                arg.insert(0, new_eq)
+
+                params = arg[1]
+                arg.remove(params)
+                new_param = []
+                for param in params:
+                    lhs = param.lhs().subs(subs_dict)
+                    rhs = param.rhs().subs(subs_dict)
+                    if param.operator() == operator.gt:
+                        expr = lhs >= rhs
+                    else:
+                        expr = lhs <= rhs
+                    new_param.append(expr)
+                arg.insert(1, new_param)
+
+            self._hypersurface.append(arg)           
 
     def dimension(self):
         return len(self._hypersurface[0][0])
@@ -122,7 +152,7 @@ class TropicalCurve(SageObject):
     
     def _axes(self):
         """
-        Return the default axes for ``self``
+        Set the default axes for ``self``
 
         OUTPUT: A list of two lists, where the first inner list represent
         value of x-axis and the second inner list represent value of y-axis
@@ -152,7 +182,6 @@ class TropicalCurve(SageObject):
         OUTPUT: A set of `(x,y)` points
 
         """
-
         vertex = set()
         for i, component in enumerate(self._hypersurface):
             parametric_function = component[0]
@@ -250,9 +279,6 @@ class TropicalCurve(SageObject):
         return combined_plot
 
     def _repr_(self):
-        num_params = self.parent().ngens() - 1
-        param_names = ['t{}'.format(i) for i in range(num_params)]
-        params = SR.var(param_names)
         components = "\n".join([f"{row}" for row in self._hypersurface])
         return (f"Tropical Hypersurface in {self.dimension()} dimensions: \n"
                 f"[{components}]")
