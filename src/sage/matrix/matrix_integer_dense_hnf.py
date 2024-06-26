@@ -862,8 +862,8 @@ def probable_hnf(A, include_zero_rows, proof):
     INPUT:
 
     - ``A`` -- a matrix
-    - ``include_zero_rows`` -- bool
-    - ``proof`` -- bool
+    - ``include_zero_rows`` -- boolean
+    - ``proof`` -- boolean
 
     OUTPUT:
 

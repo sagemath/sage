@@ -939,7 +939,7 @@ cdef class TimeSeries:
     def add_entries(self, t):
         r"""
         Add corresponding entries of ``self`` and ``t`` together,
-        extending either ``self`` or ``t`` by 0's if they do
+        extending either ``self`` or ``t`` by 0s if they do
         not have the same length.
 
         .. NOTE::

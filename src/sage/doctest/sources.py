@@ -1268,8 +1268,8 @@ class TexSource(SourceLanguage):
 
         - ``line`` -- string, one line of an input file
 
-        OUTPUT: a boolean giving whether the input line marks the
-        start of a docstring (verbatim block)
+        OUTPUT: boolean; whether the input line marks the start of a docstring
+        (verbatim block)
 
         EXAMPLES::
 

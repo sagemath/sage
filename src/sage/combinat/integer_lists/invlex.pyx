@@ -1177,7 +1177,7 @@ class IntegerListsLexIter(builtins.object):
         The push may fail if it is discovered that
         ``self._current_list`` cannot be extended in a valid way.
 
-        OUTPUT: a boolean: whether the push succeeded
+        OUTPUT: boolean; whether the push succeeded
 
         EXAMPLES::
 

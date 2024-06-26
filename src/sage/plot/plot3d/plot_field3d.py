@@ -26,25 +26,25 @@ from sage.plot.plot import plot
 def plot_vector_field3d(functions, xrange, yrange, zrange,
                         plot_points=5, colors='jet', center_arrows=False, **kwds):
     r"""
-    Plot a 3d vector field
+    Plot a 3d vector field.
 
     INPUT:
 
-    - ``functions`` -- a list of three functions, representing the x-,
+    - ``functions`` -- list of three functions, representing the x-,
       y-, and z-coordinates of a vector
 
     - ``xrange``, ``yrange``, and ``zrange`` -- three tuples of the
       form (var, start, stop), giving the variables and ranges for each axis
 
-    - ``plot_points`` -- (default 5) either a number or list of three
+    - ``plot_points`` -- (default: 5) either a number or list of three
       numbers, specifying how many points to plot for each axis
 
-    - ``colors`` -- (default ``'jet'``) a color, list of colors (which are
+    - ``colors`` -- (default: ``'jet'``) a color, list of colors (which are
       interpolated between), or matplotlib colormap name, giving the coloring
       of the arrows.  If a list of colors or a colormap is given,
       coloring is done as a function of length of the vector
 
-    - ``center_arrows`` -- (default ``False``) If ``True``, draw the arrows
+    - ``center_arrows`` -- (default: ``False``) if ``True``, draw the arrows
       centered on the points; otherwise, draw the arrows with the tail
       at the point
 

@@ -676,7 +676,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         - A list of positions, i.e. integers in the range 0 to `n-1` where `n`
           is the length of ``self``.
 
-        OUTPUT: a boolean indicating whether the positions form an information set
+        OUTPUT: boolean indicating whether the positions form an information set
 
         EXAMPLES::
 

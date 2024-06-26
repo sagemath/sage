@@ -2131,7 +2131,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         - ``D`` -- integer whose squarefree part will define the
           quadratic field
 
-        OUTPUT: a boolean describing whether the quadratic field is admissible
+        OUTPUT: boolean describing whether the quadratic field is admissible
 
         EXAMPLES::
 

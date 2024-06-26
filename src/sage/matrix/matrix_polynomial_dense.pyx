@@ -4485,8 +4485,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         - ``row_wise`` -- boolean (default: ``True``); if ``True`` then
           check for row-wise completion, else check for column-wise completion
 
-        OUTPUT: a boolean indicating whether this matrix is a completion of
-        ``mat``.
+        OUTPUT: boolean indicating whether this matrix is a completion of ``mat``
 
         EXAMPLES:
 

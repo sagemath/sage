@@ -1458,7 +1458,7 @@ class HyperplaneArrangementElement(Element):
         r"""
         Test whether all hyperplanes pass through the origin.
 
-        OUTPUT: a boolean. Whether all the hyperplanes pass through the origin
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1489,7 +1489,7 @@ class HyperplaneArrangementElement(Element):
 
             :meth:`essentialization`
 
-        OUTPUT: a boolean indicating whether the hyperplane arrangement is essential
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1620,7 +1620,7 @@ class HyperplaneArrangementElement(Element):
         are linearly independent. A hyperplane arrangement is said to be
         simplicial if every region is simplicial.
 
-        OUTPUT: a boolean whether the hyperplane arrangement is simplicial
+        OUTPUT: boolean; whether the hyperplane arrangement is simplicial
 
         EXAMPLES::
 
