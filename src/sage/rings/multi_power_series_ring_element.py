@@ -1956,7 +1956,7 @@ class MPowerSeries(PowerSeries):
         assert (val >= 1)
 
         prec = min(prec, self.prec())
-        if is_Infinite(prec):
+        if isinstance(prec, InfinityElement):
             prec = R.default_prec()
         n_inv_factorial = R.base_ring().one()
         x_pow_n = Rbg.one()
@@ -2053,7 +2053,7 @@ class MPowerSeries(PowerSeries):
         assert (val >= 1)
 
         prec = min(prec, self.prec())
-        if is_Infinite(prec):
+        if isinstance(prec, InfinityElement):
             prec = R.default_prec()
         x_pow_n = Rbg.one()
         log_x = Rbg.zero().add_bigoh(prec)
