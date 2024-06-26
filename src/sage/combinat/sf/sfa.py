@@ -4656,9 +4656,6 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             True
             sage: all( h([n]).internal_coproduct() == sum([tensor([h(lam), h(m(lam))]) for lam in Partitions(n)])
             ....:      for n in range(6) )
-            doctest:warning...
-            DeprecationWarning: The function is_SymmetricFunction is deprecated; use 'isinstance(..., SymmetricFunctionAlgebra_generic.Element)' instead.
-            See https://github.com/sagemath/sage/issues/38279 for details.
             True
             sage: all( factorial(n) * h([n]).internal_coproduct()
             ....:      == sum([lam.conjugacy_class_size() * tensor([h(p(lam)), h(p(lam))])
