@@ -33,17 +33,18 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.structure.element import Element
-from sage.structure.element import Expression
 import sage.rings.abc
-from sage.rings.real_mpfr import RR, RealNumber
-from sage.rings.padics.padic_generic_element import pAdicGenericElement
-from sage.rings.padics.padic_base_generic import pAdicBaseGeneric
-from sage.schemes.projective.projective_space import ProjectiveSpace
-from sage.schemes.projective.projective_point import SchemeMorphism_point_projective_field
-from sage.rings.rational_field import QQ
-from sage.rings.integer_ring import ZZ
+
+from sage.categories.function_fields import FunctionFields
 from sage.rings.infinity import Infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.padics.padic_base_generic import pAdicBaseGeneric
+from sage.rings.padics.padic_generic_element import pAdicGenericElement
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RealNumber, RR
+from sage.schemes.projective.projective_point import SchemeMorphism_point_projective_field
+from sage.schemes.projective.projective_space import ProjectiveSpace
+from sage.structure.element import Element, Expression
 
 
 class Berkovich_Element(Element):
@@ -82,7 +83,6 @@ class Berkovich_Element_Cp(Berkovich_Element):
             sage: B(4)
             Type I point centered at 4 + O(5^20)
         """
-        from sage.rings.function_field.element import is_FunctionFieldElement
         from sage.rings.polynomial.polynomial_element import Polynomial
         from sage.rings.fraction_field_element import FractionFieldElement_1poly_field
         self._type = None
@@ -107,8 +107,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
             if not error_check:
                 return
 
-        # is_FunctionFieldElement calls .parent
-        elif hasattr(center, "parent") and hasattr(radius, 'parent'):
+        elif isinstance(center, Element) and isinstance(radius, Element):
             from sage.rings.polynomial.multi_polynomial import MPolynomial
             if isinstance(center, MPolynomial):
                 try:
@@ -117,10 +116,10 @@ class Berkovich_Element_Cp(Berkovich_Element):
                     raise TypeError('center was %s, a multivariable polynomial' % center)
 
             # check if the radius and the center are functions
-            center_func_check = is_FunctionFieldElement(center) or isinstance(center, Polynomial) or\
-                isinstance(center, FractionFieldElement_1poly_field) or isinstance(center, Expression)
-            radius_func_check = is_FunctionFieldElement(radius) or isinstance(radius, Polynomial) or\
-                isinstance(radius, FractionFieldElement_1poly_field) or isinstance(radius, Expression)
+            center_func_check = center.parent() in FunctionFields() or \
+                isinstance(center, (Polynomial, FractionFieldElement_1poly_field, Expression))
+            radius_func_check = radius.parent() in FunctionFields() or \
+                isinstance(radius, (Polynomial, FractionFieldElement_1poly_field, Expression))
 
             if center_func_check:
                 # check that both center and radii are supported univariate function
