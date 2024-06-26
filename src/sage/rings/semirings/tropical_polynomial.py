@@ -99,13 +99,13 @@ conjugate of `p(x)`. The conjugate can be a convex or cancave function::
     (0) * (0*y + -3) * (0*y + 2)^2
     
 Because we are using max-plus algebra, then we can check that the induced 
-tropical polynomial function of `p(x)` and its convex conjugate is the same::
+tropical polynomial function of `p(x)` and its convex conjugate is equal::
 
     sage: p1.piecewise_function()
-    piecewise(x|-->1 on (-oo, -3), x|-->x + 4 on [-3, 2], x|-->3*x on 
-    (2, +oo); x)
+    piecewise(x|-->1 on (-oo, -3], x|-->x + 4 on (-3, 2), x|-->3*x on 
+    [2, +oo); x)
     sage: p1.convex_conjugate().piecewise_function()
-    piecewise(x|-->1 on (-oo, -3), x|-->x + 4 on (-3, 2), x|-->3*x on 
+    piecewise(x|-->1 on (-oo, -3], x|-->x + 4 on (-3, 2), x|-->3*x on 
     (2, +oo); x)
 
 Plot the graph of some tropical polynomials::
@@ -139,6 +139,8 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.sets.real_set import RealSet
+from sage.symbolic.ring import SR
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.rings.polynomial.polynomial_element_generic import \
@@ -164,7 +166,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         OUTPUT:
 
         - ``tropical_roots`` -- list; Contains tropical roots of ``self``
-        counted with multiplicity after being sorted
+         after being sorted counted with multiplicity
 
         EXAMPLES:
 
@@ -383,7 +385,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
 
         OUTPUT:
 
-        - ``f`` -- a piecewise function in single variable
+        - ``f`` -- a piecewise function
 
         EXAMPLES:
 
@@ -392,7 +394,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             sage: p1 = R([4,2,1,3]); p1
             3*x^3 + 1*x^2 + 2*x + 4
             sage: p1.piecewise_function()
-            piecewise(x|-->4 on (-oo, 1/3), x|-->3*x + 3 on (1/3, +oo); x)
+            piecewise(x|-->4 on (-oo, 1/3], x|-->3*x + 3 on (1/3, +oo); x)
 
         A constant tropical polynomial will result in a constant function::
 
@@ -415,17 +417,19 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         x = SR.var('x')
         R = self.parent().base().base_ring()
         if self.roots() == []:
-            f = R(str(self.dict()[0]))
+            # f = R(str(self.dict()[0]))
+            f = self.dict()[0].lift()
             return f
         
         if len(self.dict()) == 1:
             gradient = list(self.dict())[0]
-            intercept = R(str(self.dict()[gradient]))
+            intercept = self.dict()[gradient].lift()
             f = intercept+gradient*x
             return f
 
         unique_root = sorted(list(set(self.roots())))
         pieces = []
+        domain = []
         for i in range(len(unique_root)+1):
             if i == 0:
                 test_number = self.base_ring()(unique_root[i]-1)
@@ -446,18 +450,26 @@ class TropicalPolynomial(Polynomial_generic_sparse):
                     found_key = key
                     break
             gradient = found_key
-            intercept = R(str(self.dict()[found_key]))
+            intercept = self.dict()[found_key].lift()
 
             if i == 0:
-                piecewise_linear = ((-infinity, unique_root[i]), \
-                                    intercept+gradient*x)
+                interval = RealSet.unbounded_below_closed(unique_root[i])
+                piecewise_linear = (interval, intercept+gradient*x)
+                domain.append(interval)
             elif i == len(unique_root):
-                piecewise_linear = ((unique_root[i-1], infinity), \
-                                    intercept+gradient*x)
+                if domain[0][0].upper_closed():
+                    interval = RealSet.unbounded_above_open(unique_root[i-1])
+                else:
+                    interval = RealSet.unbounded_above_closed(unique_root[i-1])
+                piecewise_linear = (interval, intercept+gradient*x)
+                domain.append(interval)
             else:
-                piecewise_linear = ((unique_root[i-1], unique_root[i]), \
-                                    intercept+gradient*x)
-
+                if domain[i-1][0].upper_closed():
+                    interval = RealSet((unique_root[i-1], unique_root[i]))
+                else:
+                    interval = RealSet([unique_root[i-1], unique_root[i]])
+                piecewise_linear = (interval, intercept+gradient*x)
+                domain.append(interval)
             pieces.append(piecewise_linear)
 
         f = piecewise(pieces)
@@ -569,3 +581,5 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
     def _repr_(self):
         return (f"Univariate Tropical Polynomial Semiring in {self.variable_name()}"
             f" over {self.base_ring().base_ring()}")
+
+    
