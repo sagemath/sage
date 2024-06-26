@@ -157,7 +157,7 @@ AUTHORS:
 from sage.structure.richcmp import richcmp
 
 from sage.rings.finite_rings.integer_mod_ring import Zmod
-from sage.rings.infinity import infinity, is_Infinite
+from sage.rings.infinity import infinity, InfinityElement
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.power_series_ring import is_PowerSeriesRing
