@@ -89,7 +89,7 @@ from sage.misc.misc_c import prod
 from sage.modules.free_module_morphism import FreeModuleMorphism
 from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import ZZ
-from sage.rings.infinity import is_Infinite
+from sage.rings.infinity import InfinityElement
 from functools import reduce
 
 
@@ -1458,7 +1458,7 @@ class FanMorphism(FreeModuleMorphism):
             sage: phi.is_surjective()
             False
         """
-        if is_Infinite(self.index()):
+        if isinstance(self.index(), InfinityElement):
             return False    # Not surjective between vector spaces.
         for dcones in self.codomain_fan().cones():
             for sigma_p in dcones:
