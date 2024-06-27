@@ -468,6 +468,10 @@ def is_PowerSeriesRing(R):
 
         sage: from sage.rings.power_series_ring import is_PowerSeriesRing
         sage: is_PowerSeriesRing(10)
+        doctest:warning...
+        DeprecationWarning: The function is_PowerSeriesRing is deprecated;
+        use 'isinstance(..., (PowerSeriesRing_generic, LazyPowerSeriesRing) and ....ngens() == 1)' instead.
+        See https://github.com/sagemath/sage/issues/38290 for details.
         False
         sage: is_PowerSeriesRing(QQ[['x']])
         True
@@ -476,6 +480,10 @@ def is_PowerSeriesRing(R):
         sage: is_PowerSeriesRing(LazyPowerSeriesRing(QQ, 'x, y'))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38290,
+                "The function is_PowerSeriesRing is deprecated; "
+                "use 'isinstance(..., (PowerSeriesRing_generic, LazyPowerSeriesRing) and ....ngens() == 1)' instead.")
     from sage.rings.lazy_series_ring import LazyPowerSeriesRing
     if isinstance(R, (PowerSeriesRing_generic, LazyPowerSeriesRing)):
         return R.ngens() == 1
