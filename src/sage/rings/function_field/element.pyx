@@ -64,8 +64,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.structure.element cimport FieldElement
+from sage.categories.function_fields import FunctionFields
 from sage.misc.cachefunc import cached_method
+from sage.structure.element cimport FieldElement
 
 
 def is_FunctionFieldElement(x):
@@ -90,8 +91,10 @@ def is_FunctionFieldElement(x):
                        "use '....parent() in FunctionFields()' instead.")
     if isinstance(x, FunctionFieldElement):
         return True
-    from sage.rings.function_field.function_field import is_FunctionField
-    return is_FunctionField(x.parent())
+    from sage.rings.function_field.function_field import FunctionField
+    if isinstance(x.parent(), FunctionField):
+        return True
+    return x.parent() in FunctionFields()
 
 
 def make_FunctionFieldElement(parent, element_class, representing_element):
