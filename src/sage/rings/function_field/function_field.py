@@ -263,10 +263,17 @@ def is_FunctionField(x):
 
         sage: from sage.rings.function_field.function_field import is_FunctionField
         sage: is_FunctionField(QQ)
+        doctest:warning...
+        DeprecationWarning: The function is_FunctionField is deprecated; use '... in FunctionFields()' instead.
+        See https://github.com/sagemath/sage/issues/38289 for details.
         False
         sage: is_FunctionField(FunctionField(QQ, 't'))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38289,
+                "The function is_FunctionField is deprecated; "
+                "use '... in FunctionFields()' instead.")
     if isinstance(x, FunctionField):
         return True
     return x in FunctionFields()
