@@ -28,7 +28,14 @@ Functions, Classes and Methods
 # ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.structure.sage_object import SageObject
+
+lazy_import('sage.rings.lazy_series_ring', 'LazyPowerSeriesRing')
+lazy_import('sage.rings.multi_power_series_ring', 'MPowerSeriesRing_generic')
+lazy_import('sage.rings.polynomial.multi_polynomial_ring_base', 'MPolynomialRing_base')
+lazy_import('sage.rings.polynomial.polynomial_ring', 'PolynomialRing_general')
+lazy_import('sage.rings.power_series_ring', 'PowerSeriesRing_generic')
 
 
 def repr_short_to_parent(s):
@@ -149,9 +156,6 @@ def parent_to_repr_short(P):
     from sage.rings.real_mpfi import RIF
     from sage.rings.real_mpfr import RR
     from sage.symbolic.ring import SR
-    from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-    from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
-    from sage.rings.power_series_ring import is_PowerSeriesRing
 
     def abbreviate(P):
         try:
@@ -168,10 +172,8 @@ def parent_to_repr_short(P):
             pass
         raise ValueError('Cannot abbreviate %s.' % (P,))
 
-    poly = isinstance(P, PolynomialRing_general) or isinstance(P, MPolynomialRing_base)
-    from sage.rings import multi_power_series_ring
-    power = is_PowerSeriesRing(P) or \
-            multi_power_series_ring.is_MPowerSeriesRing(P)
+    poly = isinstance(P, (PolynomialRing_general, MPolynomialRing_base))
+    power = isinstance(P, (PowerSeriesRing_generic, MPowerSeriesRing_generic, LazyPowerSeriesRing))
 
     if poly or power:
         if poly:
