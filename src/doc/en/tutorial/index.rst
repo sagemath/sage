@@ -41,8 +41,8 @@ __ http://creativecommons.org/licenses/by-sa/3.0/
    appendix
    bibliography
 
-Indices and tables
-==================
+Index and Search
+================
 
 * :ref:`genindex`
 * :ref:`search`
