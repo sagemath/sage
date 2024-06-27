@@ -239,6 +239,10 @@ def is_MPowerSeriesRing(x):
         sage: is_PowerSeriesRing(M)
         False
         sage: is_MPowerSeriesRing(M)
+        doctest:warning...
+        DeprecationWarning: The function is_MPowerSeriesRing is deprecated;
+        use 'isinstance(..., (MPowerSeriesRing_generic, LazyPowerSeriesRing))' instead.
+        See https://github.com/sagemath/sage/issues/38290 for details.
         True
         sage: T = PowerSeriesRing(RR, 'v')
         sage: is_PowerSeriesRing(T)
@@ -252,6 +256,10 @@ def is_MPowerSeriesRing(x):
         sage: is_MPowerSeriesRing(L)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38290,
+                "The function is_MPowerSeriesRing is deprecated; "
+                "use 'isinstance(..., (MPowerSeriesRing_generic, LazyPowerSeriesRing))' instead.")
     from sage.rings.lazy_series_ring import LazyPowerSeriesRing
     return isinstance(x, (MPowerSeriesRing_generic, LazyPowerSeriesRing))
 
