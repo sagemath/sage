@@ -686,13 +686,13 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         from sage.rings.polynomial.laurent_polynomial_ring_base import (
             LaurentPolynomialRing_generic,
         )
-        from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
         from sage.rings.power_series_ring import is_PowerSeriesRing
 
         if ((is_LaurentSeriesRing(P) or
              isinstance(P, LaurentPolynomialRing_generic) or
              is_PowerSeriesRing(P) or
-             is_PolynomialRing(P))
+             isinstance(P, PolynomialRing_general))
             and P.variable_name() == self.variable_name()
             and A.has_coerce_map_from(P.base_ring())):
             return True

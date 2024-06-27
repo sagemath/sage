@@ -207,9 +207,9 @@ import sage.misc.latex as latex
 
 from sage.rings.infinity import infinity
 from sage.rings.multi_power_series_ring_element import MPowerSeries
-from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
+from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
 from sage.rings.polynomial.term_order import TermOrder
 from sage.rings.power_series_ring import PowerSeriesRing, PowerSeriesRing_generic, is_PowerSeriesRing
 from sage.rings.ring import CommutativeRing
@@ -671,8 +671,8 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             True
         """
         P = f.parent()
-        if is_MPolynomialRing(P) or is_MPowerSeriesRing(P) \
-               or is_PolynomialRing(P) or is_PowerSeriesRing(P):
+        if isinstance(P, MPolynomialRing_base) or is_MPowerSeriesRing(P) \
+               or isinstance(P, PolynomialRing_general) or is_PowerSeriesRing(P):
             if set(P.variable_names()).issubset(set(self.variable_names())):
                 if self.has_coerce_map_from(P.base_ring()):
                     return self(f)
@@ -835,8 +835,8 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             sage: R.has_coerce_map_from(L)
             True
         """
-        if is_MPolynomialRing(P) or is_MPowerSeriesRing(P) \
-                   or is_PolynomialRing(P) or is_PowerSeriesRing(P):
+        if isinstance(P, MPolynomialRing_base) or is_MPowerSeriesRing(P) \
+                   or isinstance(P, PolynomialRing_general) or is_PowerSeriesRing(P):
             if set(P.variable_names()).issubset(set(self.variable_names())):
                 if self.has_coerce_map_from(P.base_ring()):
                     return True

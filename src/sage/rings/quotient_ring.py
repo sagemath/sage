@@ -351,6 +351,10 @@ def is_QuotientRing(x):
         sage: I = R.ideal([4 + 3*x + x^2, 1 + x^2])
         sage: S = R.quotient_ring(I)
         sage: is_QuotientRing(S)
+        doctest:warning...
+        DeprecationWarning: The function is_QuotientRing is deprecated;
+        use 'isinstance(..., QuotientRing_nc)' instead.
+        See https://github.com/sagemath/sage/issues/38266 for details.
         True
         sage: is_QuotientRing(R)
         False
@@ -366,6 +370,10 @@ def is_QuotientRing(x):
         sage: is_QuotientRing(F)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38266,
+                "The function is_QuotientRing is deprecated; "
+                "use 'isinstance(..., QuotientRing_nc)' instead.")
     return isinstance(x, QuotientRing_nc)
 
 

@@ -222,6 +222,9 @@ def is_Ideal(x):
         sage: from sage.rings.ideal import is_Ideal
         sage: R = ZZ
         sage: is_Ideal(R)
+        doctest:warning...
+        DeprecationWarning: The function is_Ideal is deprecated; use 'isinstance(..., Ideal_generic)' instead.
+        See https://github.com/sagemath/sage/issues/38266 for details.
         False
         sage: 1*R; is_Ideal(1*R)
         Principal ideal (1) of Integer Ring
@@ -240,6 +243,10 @@ def is_Ideal(x):
         sage: is_Ideal((x^2 + 1)*R)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38266,
+                "The function is_Ideal is deprecated; "
+                "use 'isinstance(..., Ideal_generic)' instead.")
     return isinstance(x, Ideal_generic)
 
 
