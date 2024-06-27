@@ -94,14 +94,20 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.polynomial.multi_polynomial import MPolynomial
-from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
+from sage.misc.cachefunc import cached_method
+
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.rings.polynomial.polydict import ETuple
-from sage.rings.semirings.tropical_variety import TropicalCurve, TropicalVariety
 from sage.plot.plot3d.list_plot3d import list_plot3d
 from sage.symbolic.ring import SR
+from sage.categories.semirings import Semirings
+
+from sage.rings.polynomial.term_order import TermOrder
+from sage.rings.polynomial.multi_polynomial import MPolynomial
+from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
+# from sage.rings.polynomial.polydict import ETuple
+from sage.rings.semirings.tropical_semiring import TropicalSemiring
+from sage.rings.semirings.tropical_variety import TropicalCurve, TropicalVariety
 
 class TropicalMPolynomial(MPolynomial_polydict):
     r"""
@@ -298,9 +304,24 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
     Semiring structure of tropical polynomials in multiple variables
     """
 
-    def __init__(self, base_semiring, names):
-        Parent.__init__(self, base=base_semiring, names=names)
+    def __init__(self, base_semiring, n, names, order='degrevlex'):
+        """
+        EXAMPLES:
 
+            sage: T = TropicalSemiring(QQ, use_min=True)
+            sage: R.<x,y,z> = PolynomialRing(T)
+            sage: T(1)*x*y*z + x
+            1*x*y*z + 0*x
+            sage: (x+y+z)^2
+            0*x^2 + 0*x*y + 0*y^2 + 0*x*z + 0*y*z + 0*z^2
+
+        """
+        if not isinstance(base_semiring, TropicalSemiring):
+            raise ValueError(f"{base_semiring} is not a tropical semiring")
+        Parent.__init__(self, base=base_semiring, names=names, category=Semirings())
+        order = TermOrder(order, n)
+        self._term_order = order
+        
     Element = TropicalMPolynomial
 
     def _element_constructor_(self, x):
@@ -316,30 +337,54 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         new_dict = {}
         if isinstance(x, MPolynomial):
             x = x.dict()
-        for key, value in x.items(): # convert each coefficient to tropical
-            new_dict[key] = self.base()(value)
+        elif x in self.base().base_ring(): # constant
+            term = [0 for _ in range(self.ngens())]
+            x = {tuple(term):x}
+        
+        if isinstance(x, dict):
+            for key, value in x.items(): # convert each coefficient to tropical
+                new_dict[key] = self.base()(value)
+
         return C(self, new_dict)
     
     def _repr_(self):
-        return (f"Multivarite Tropical Polynomial Semiring in {', '.join(self.variable_names())}"
+        return (f"Multivariate Tropical Polynomial Semiring in {', '.join(self.variable_names())}"
             f" over {self.base_ring().base_ring()}")
     
-    def random_element(self):
+    def term_order(self):
+        return self._term_order
+    
+    def random_element(self, degree=2, terms=None, choose_degree=False,
+                       *args, **kwargs):
         """
-        Return a random element from this semiring
+        Return a random polynomial
         """
         from sage.rings.polynomial.polynomial_ring_constructor import \
             PolynomialRing
         R = PolynomialRing(self.base().base_ring(), self.variable_names())
-        return self(R.random_element())
+        return self(R.random_element(degree=degree, terms=terms, choose_degree=choose_degree, 
+                                     *args, **kwargs))
+    
+    @cached_method
+    def gen(self, n=0):
+        """
+        Return the indeterminate generator of this polynomial ring.
+        """
+        term = [0 for _ in range(len(self.variable_names()))]
+        term[n] = 1
+        return self.element_class(self, {tuple(term):self.base()(0)})
     
     def gens(self):
-        gens = []
-        for v in self.variable_names():
-            gen = SR.var(v)
-            gens.append(gen)
-        return tuple(gens)
-
+        """
+        Return a tuple whose entries are the generators for this
+        object, in order.
+        """
+        self._gens = tuple(self.gen(i) for i in range(self.ngens()))
+        return self._gens
+    
     def ngens(self):
+        """
+        Return the number of generators of this polynomial ring.
+        """
         return len(self.variable_names())
         

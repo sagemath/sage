@@ -110,7 +110,7 @@ tropical polynomial function of `p(x)` and its convex conjugate is equal::
 
 Plot the graph of some tropical polynomials::
     sage: p1.plot()
-    sage: plot(p2, xmin=0, xmax=2)
+    sage: plot(p2, xmin=-1, xmax=3)
 
 TESTS:
 
@@ -139,15 +139,19 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from itertools import combinations
+from sage.misc.cachefunc import cached_method
+
 from sage.sets.real_set import RealSet
 from sage.symbolic.ring import SR
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
+from sage.categories.semirings import Semirings
+
 from sage.rings.polynomial.polynomial_element_generic import \
 Polynomial_generic_sparse
-from sage.categories.semirings import Semirings
 from sage.rings.semirings.tropical_semiring import TropicalSemiring
-from itertools import combinations
+from sage.rings.polynomial.polynomial_element import Polynomial
 
 class TropicalPolynomial(Polynomial_generic_sparse):
     """
@@ -565,6 +569,21 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         return super().__classcall__(cls, base_semiring, tuple(names))
 
     def __init__(self, base_semiring, names):
+        """
+        EXAMPLES:
+
+            sage: T = TropicalSemiring(QQ, use_min=False)
+            sage: R.<x> = PolynomialRing(T)
+            sage: x.parent()
+            Univariate Tropical Polynomial Semiring in x over Rational Field
+            sage: (x + T(1)*x^2) * R(3)
+            4*x^2 + 3*x
+            sage: category(R)
+            Category of semirings
+
+        """
+        if not isinstance(base_semiring, TropicalSemiring):
+            raise ValueError(f"{base_semiring} is not a tropical semiring")
         Parent.__init__(self, base=base_semiring, names=names, category=Semirings())
 
     Element = TropicalPolynomial
@@ -584,9 +603,39 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         return (f"Univariate Tropical Polynomial Semiring in {self.variable_name()}"
             f" over {self.base_ring().base_ring()}")
 
+    @cached_method
+    def gen(self, n=0):
+        """
+        Return the indeterminate generator of this polynomial ring.
+        """
+        if n != 0:
+            raise IndexError("generator n not defined")
+        term = [0, self.base()(0)]
+        return self.element_class(self, term, is_gen=True)
+    
     def gens(self):
-        gens = []
-        for v in self.variable_names():
-            gen = SR.var(v)
-            gens.append(gen)
-        return tuple(gens)
+        """
+        Return a tuple whose entries are the generators for this
+        object, in order.
+        """
+        self._gens = tuple(self.gen(i) for i in range(self.ngens()))
+        return self._gens
+    
+    def ngens(self):
+        """
+        Return the number of generators of this polynomial ring, which is 1
+        since it is a univariate polynomial ring.
+        """
+        return 1
+
+    def random_element(self, degree=(-1, 2), monic=False, *args, **kwds):
+        """
+        Return a random polynomial
+        """
+        from sage.rings.polynomial.polynomial_ring_constructor import \
+            PolynomialRing
+        R = PolynomialRing(self.base().base_ring(), self.variable_names())
+        return self(R.random_element(degree=degree, monic=monic, *args, **kwds))
+    
+    def is_sparse(self):
+        return True

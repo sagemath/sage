@@ -723,7 +723,7 @@ def PolynomialRing(base_ring, *args, **kwds):
 
     if multivariate or len(names) != 1:
         if is_tropical:
-            return TropicalMPolynomialSemiring(base_ring, names)
+            return TropicalMPolynomialSemiring(base_ring, n, names, **kwds)
         else:
             return _multi_variate(base_ring, names, **kwds)
     else:
