@@ -1947,22 +1947,18 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: result, certificate
             (False, (OneSumNode (9×9) with 2 children, ((3, 2, 0), (3, 1, 0))))
             sage: unicode_art(certificate[0])
-            ╭──────OneSumNode (9×9) with 2 children──────╮
-            │                                            │
-            SubmatrixNode (5×4)                          UnknownNode (4×5)
-            │
-            Isomorphic to a minor of |det| = 2 submatrix
+            ╭OneSumNode (9×9) with 2 children─╮
+            │                                 │
+            ThreeConnectedIrregularNode (5×4) UnknownNode (4×5)
             sage: result, certificate = M.is_totally_unimodular(
             ....:                           certificate=True,
             ....:                           stop_when_nonTU=False)
             sage: result, certificate
             (False, (OneSumNode (9×9) with 2 children, ((3, 2, 0), (3, 1, 0))))
             sage: unicode_art(certificate[0])
-            ╭──────OneSumNode (9×9) with 2 children──────╮
-            │                                            │
-            SubmatrixNode (5×4)                          SubmatrixNode (4×5)
-            │                                            │
-            Isomorphic to a minor of |det| = 2 submatrix Isomorphic to a minor of |det| = 2 submatrix
+            ╭OneSumNode (9×9) with 2 children─╮
+            │                                 │
+            ThreeConnectedIrregularNode (5×4) ThreeConnectedIrregularNode (4×5)
         """
         base_ring = self.parent().base_ring()
         if base_ring.characteristic() not in [0, 3] :
