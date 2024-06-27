@@ -125,6 +125,9 @@ def is_PowerSeries(x):
         sage: R.<x> = PowerSeriesRing(ZZ)
         sage: from sage.rings.power_series_ring_element import is_PowerSeries
         sage: is_PowerSeries(1 + x^2)
+        doctest:warning...
+        DeprecationWarning: The function is_PowerSeries is deprecated; use 'isinstance(..., PowerSeries)' instead.
+        See https://github.com/sagemath/sage/issues/38266 for details.
         True
         sage: is_PowerSeries(x - x)
         True
@@ -135,6 +138,10 @@ def is_PowerSeries(x):
         sage: is_PowerSeries(1 + x^2)                                                   # needs sage.symbolic
         False
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38266,
+                       "The function is_PowerSeries is deprecated; "
+                       "use 'isinstance(..., PowerSeries)' instead.")
     return isinstance(x, PowerSeries)
 
 

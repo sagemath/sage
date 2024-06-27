@@ -148,8 +148,8 @@ from sage.rings import (
 )
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.infinity import infinity
-from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
-from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.category_object import normalize_names
 from sage.structure.element import Expression, parent
@@ -174,6 +174,8 @@ try:
 except ImportError:
     LaurentSeriesRing = ()
     LaurentSeries = ()
+
+lazy_import('sage.rings.lazy_series_ring', 'LazyPowerSeriesRing')
 
 
 def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
@@ -468,6 +470,10 @@ def is_PowerSeriesRing(R):
 
         sage: from sage.rings.power_series_ring import is_PowerSeriesRing
         sage: is_PowerSeriesRing(10)
+        doctest:warning...
+        DeprecationWarning: The function is_PowerSeriesRing is deprecated;
+        use 'isinstance(..., (PowerSeriesRing_generic, LazyPowerSeriesRing) and ....ngens() == 1)' instead.
+        See https://github.com/sagemath/sage/issues/38290 for details.
         False
         sage: is_PowerSeriesRing(QQ[['x']])
         True
@@ -476,7 +482,10 @@ def is_PowerSeriesRing(R):
         sage: is_PowerSeriesRing(LazyPowerSeriesRing(QQ, 'x, y'))
         False
     """
-    from sage.rings.lazy_series_ring import LazyPowerSeriesRing
+    from sage.misc.superseded import deprecation
+    deprecation(38290,
+                "The function is_PowerSeriesRing is deprecated; "
+                "use 'isinstance(..., (PowerSeriesRing_generic, LazyPowerSeriesRing) and ....ngens() == 1)' instead.")
     if isinstance(R, (PowerSeriesRing_generic, LazyPowerSeriesRing)):
         return R.ngens() == 1
     else:
@@ -580,7 +589,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             K = base_ring
             names = K.variable_names() + (name,)
             self.__mpoly_ring = PolynomialRing(K.base_ring(), names=names)
-            assert is_MPolynomialRing(self.__mpoly_ring)
+            assert isinstance(self.__mpoly_ring, MPolynomialRing_base)
             self.Element = power_series_mpoly.PowerSeries_mpoly
         elif implementation == 'pari':
             from .power_series_pari import PowerSeries_pari
@@ -711,8 +720,9 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         """
         if self.base_ring().has_coerce_map_from(S):
             return True
-        if (is_PolynomialRing(S) or is_PowerSeriesRing(S)) and self.base_ring().has_coerce_map_from(S.base_ring()) \
-           and self.variable_names() == S.variable_names():
+        if (isinstance(S, (PolynomialRing_general, PowerSeriesRing_generic, LazyPowerSeriesRing))
+                and self.base_ring().has_coerce_map_from(S.base_ring())
+                and self.variable_names() == S.variable_names()):
             return True
 
     def _element_constructor_(self, f, prec=infinity, check=True):
@@ -946,7 +956,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         """
         try:
             P = x.parent()
-            if is_PowerSeriesRing(P):
+            if isinstance(P, (PowerSeriesRing_generic, LazyPowerSeriesRing)):
                 if P.variable_name() == self.variable_name():
                     if self.has_coerce_map_from(P.base_ring()):
                         return self(x)
@@ -985,7 +995,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         if base_map is None and not codomain.has_coerce_map_from(self.base_ring()):
             return False
         v = im_gens[0]
-        if is_PowerSeriesRing(codomain) or isinstance(codomain, LaurentSeriesRing):
+        if isinstance(codomain, (PowerSeriesRing_generic, LazyPowerSeriesRing, LaurentSeriesRing)):
             try:
                 return v.valuation() > 0 or v.is_nilpotent()
             except NotImplementedError:

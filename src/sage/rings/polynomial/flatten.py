@@ -38,8 +38,8 @@ from sage.categories.homset import Homset
 from sage.categories.morphism import Morphism
 from sage.misc.cachefunc import cached_method
 from .polynomial_ring_constructor import PolynomialRing
-from .polynomial_ring import is_PolynomialRing
-from .multi_polynomial_ring_base import is_MPolynomialRing
+from .polynomial_ring import PolynomialRing_general
+from .multi_polynomial_ring_base import MPolynomialRing_base
 from sage.rings.fraction_field import FractionField_generic
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.polynomial.polydict import ETuple
@@ -160,14 +160,14 @@ class FlatteningMorphism(Morphism):
             sage: fl.section()(fl(p)) == p
             True
         """
-        if not is_PolynomialRing(domain) and not is_MPolynomialRing(domain):
+        if not isinstance(domain, PolynomialRing_general) and not isinstance(domain, MPolynomialRing_base):
             raise ValueError("domain should be a polynomial ring")
 
         ring = domain
         variables = []
         intermediate_rings = []
 
-        while is_PolynomialRing(ring) or is_MPolynomialRing(ring):
+        while isinstance(ring, PolynomialRing_general) or isinstance(ring, MPolynomialRing_base):
             intermediate_rings.append(ring)
             v = ring.variable_names()
             variables.extend(reversed(v))
@@ -181,7 +181,7 @@ class FlatteningMorphism(Morphism):
                     if b not in variables:  # not just variables[:i]!
                         break
                 variables[i] = b
-        if is_MPolynomialRing(domain):
+        if isinstance(domain, MPolynomialRing_base):
             codomain = PolynomialRing(ring, variables, len(variables))
         else:
             codomain = PolynomialRing(ring, variables)
@@ -221,12 +221,12 @@ class FlatteningMorphism(Morphism):
 
         for ring in self._intermediate_rings:
             new_p = {}
-            if is_PolynomialRing(ring):
+            if isinstance(ring, PolynomialRing_general):
                 for mon, pp in p.items():
                     assert pp.parent() is ring
                     for i, j in pp.dict().items():
                         new_p[(i,)+(mon)] = j
-            elif is_MPolynomialRing(ring):
+            elif isinstance(ring, MPolynomialRing_base):
                 for mon, pp in p.items():
                     assert pp.parent() is ring
                     for mmon, q in pp.dict().items():
@@ -345,17 +345,17 @@ class UnflatteningMorphism(Morphism):
             ...
             ValueError: rings must have the same number of variables
         """
-        if not is_MPolynomialRing(domain):
+        if not isinstance(domain, MPolynomialRing_base):
             raise ValueError("domain should be a multivariate polynomial ring")
-        if not is_PolynomialRing(codomain) and not is_MPolynomialRing(codomain):
+        if not isinstance(codomain, PolynomialRing_general) and not isinstance(codomain, MPolynomialRing_base):
             raise ValueError("codomain should be a polynomial ring")
 
         ring = codomain
         intermediate_rings = []
 
         while True:
-            is_polynomial_ring = is_PolynomialRing(ring)
-            if not (is_polynomial_ring or is_MPolynomialRing(ring)):
+            is_polynomial_ring = isinstance(ring, PolynomialRing_general)
+            if not (is_polynomial_ring or isinstance(ring, MPolynomialRing_base)):
                 break
             intermediate_rings.append((ring, is_polynomial_ring))
             ring = ring.base_ring()
@@ -499,7 +499,7 @@ class SpecializationMorphism(Morphism):
               Defn: Defined on coordinates by sending (z) to
                     (z^2 + 1.00000000000000)
         """
-        if not is_PolynomialRing(domain) and not is_MPolynomialRing(domain):
+        if not isinstance(domain, PolynomialRing_general) and not isinstance(domain, MPolynomialRing_base):
             raise TypeError("domain should be a polynomial ring")
 
         # use only the generators that are in the stack somewhere,
@@ -538,7 +538,7 @@ class SpecializationMorphism(Morphism):
         # Construct unflattened codomain R
         new_vars = []
         R = domain
-        while is_PolynomialRing(R) or is_MPolynomialRing(R) or isinstance(R, FractionField_generic):
+        while isinstance(R, PolynomialRing_general) or isinstance(R, MPolynomialRing_base) or isinstance(R, FractionField_generic):
             if isinstance(R, FractionField_generic):
                 # We've hit base_ring, so set _sub_specialization and exit the loop
                 field_over = R.base()
@@ -563,7 +563,7 @@ class SpecializationMorphism(Morphism):
             # We're still in the polynomials, so keep track of the tower
             old = R.gens()
             new = [t for t in old if t not in D]
-            force_multivariate = ((len(old) == 1) and is_MPolynomialRing(R))
+            force_multivariate = ((len(old) == 1) and isinstance(R, MPolynomialRing_base))
             new_vars.append((new, force_multivariate, old))
             R = R.base_ring()
 

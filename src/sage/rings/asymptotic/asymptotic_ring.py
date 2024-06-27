@@ -414,14 +414,23 @@ Classes and Methods
 # https://www.gnu.org/licenses/
 # *****************************************************************************
 
+import sage.rings.abc
+
+from sage.categories.pushout import ConstructionFunctor
+from sage.misc.defaults import series_precision
+from sage.misc.lazy_import import lazy_import
+from sage.rings.real_mpfi import RIF
 from sage.structure.element import CommutativeAlgebraElement
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.misc.defaults import series_precision
-from sage.categories.pushout import ConstructionFunctor
-import sage.rings.abc
-from sage.rings.real_mpfi import RIF
+
 from .misc import WithLocals
+
+lazy_import('sage.rings.lazy_series_ring', 'LazyPowerSeriesRing')
+lazy_import('sage.rings.polynomial.multi_polynomial_ring_base', 'MPolynomialRing_base')
+lazy_import('sage.rings.polynomial.polynomial_ring', 'PolynomialRing_general')
+lazy_import('sage.rings.power_series_ring', 'PowerSeriesRing_generic')
+lazy_import('sage.symbolic.ring', 'SymbolicRing')
 
 
 class NoConvergenceError(RuntimeError):
@@ -4077,10 +4086,6 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
             return self.create_summand('exact', data)
 
         from .misc import combine_exceptions
-        from sage.symbolic.ring import SymbolicRing
-        from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-        from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
-        from sage.rings.power_series_ring import is_PowerSeriesRing
 
         if isinstance(P, SymbolicRing):
             from sage.symbolic.operators import add_vararg
@@ -4097,7 +4102,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
                                        (data, self)), e)
                 return sum(summands, self.zero())
 
-        elif is_PolynomialRing(P):
+        elif isinstance(P, PolynomialRing_general):
             p = P.gen()
             try:
                 return sum(iter(self.create_summand('exact', growth=p**i,
@@ -4108,7 +4113,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
                 raise combine_exceptions(
                     ValueError('Polynomial %s is not in %s' % (data, self)), e)
 
-        elif is_MPolynomialRing(P):
+        elif isinstance(P, MPolynomialRing_base):
             try:
                 return sum(iter(self.create_summand('exact', growth=g, coefficient=c)
                                 for c, g in iter(data)),
@@ -4117,7 +4122,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
                 raise combine_exceptions(
                     ValueError('Polynomial %s is not in %s' % (data, self)), e)
 
-        elif is_PowerSeriesRing(P):
+        elif isinstance(P, (PowerSeriesRing_generic, LazyPowerSeriesRing)):
             raise NotImplementedError(
                 'cannot convert %s from the %s to an asymptotic expansion '
                 'in %s, since growths at other points than +oo are not yet '

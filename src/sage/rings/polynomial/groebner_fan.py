@@ -65,7 +65,7 @@ from sage.misc.sage_eval import sage_eval
 
 from sage.structure.sage_object import SageObject
 from sage.interfaces.gfan import gfan
-from .multi_polynomial_ideal import is_MPolynomialIdeal
+from .multi_polynomial_ideal import MPolynomialIdeal
 from .polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
@@ -824,7 +824,7 @@ class GroebnerFan(SageObject):
         if symmetry:
             print("WARNING! Symmetry option not yet implemented!!")
         self.__verbose = verbose
-        if not is_MPolynomialIdeal(I):
+        if not isinstance(I, MPolynomialIdeal):
             raise TypeError("I must be a multivariate polynomial ideal")
         if not prefix_check([str(R_gen) for R_gen in I.ring().gens()]):
             raise RuntimeError("Ring variables cannot contain each other as prefixes")

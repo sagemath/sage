@@ -22,15 +22,16 @@ from sage.modules.free_module_element import vector
 from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.laurent_series_ring import is_LaurentSeriesRing
-from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-from sage.rings.power_series_ring import is_PowerSeriesRing
+from sage.rings.laurent_series_ring import LaurentSeriesRing
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.power_series_ring import PowerSeriesRing_generic
 from sage.rings.rational_field import QQ
 from sage.structure.element import parent
 
 from .abstract_ring import FormsRing_abstract
 
 lazy_import('sage.rings.imaginary_unit', 'I')
+lazy_import('sage.rings.lazy_series_ring', ('LazyLaurentSeriesRing', 'LazyPowerSeriesRing'))
 lazy_import('sage.rings.qqbar', 'QQbar')
 
 
@@ -257,8 +258,9 @@ class FormsSpace_abstract(FormsRing_abstract):
         # can be changed in construct_form
         # resp. construct_quasi_form))
         P = parent(el)
-        if is_LaurentSeriesRing(P) or is_PowerSeriesRing(P):
-            if (self.is_modular()):
+        if isinstance(P, (LaurentSeriesRing, PowerSeriesRing_generic,
+                          LazyLaurentSeriesRing, LazyPowerSeriesRing)):
+            if self.is_modular():
                 return self.construct_form(el)
             else:
                 return self.construct_quasi_form(el)
@@ -1721,7 +1723,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         """
 
         base_ring = laurent_series.base_ring()
-        if is_PolynomialRing(base_ring.base()):
+        if isinstance(base_ring.base(), PolynomialRing_general):
             if not (self.coeff_ring().has_coerce_map_from(base_ring)):
                 raise ValueError("The Laurent coefficients don't coerce into the coefficient ring of self!")
         elif rationalize:
@@ -2015,7 +2017,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         """
 
         base_ring = laurent_series.base_ring()
-        if is_PolynomialRing(base_ring.base()):
+        if isinstance(base_ring.base(), PolynomialRing_general):
             if not (self.coeff_ring().has_coerce_map_from(base_ring)):
                 raise ValueError("The Laurent coefficients don't coerce into the coefficient ring of self!")
         elif rationalize:
@@ -2282,7 +2284,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         # If the coefficients already coerce to our coefficient ring
         # and are in polynomial form we simply return the Laurent series
-        if (is_PolynomialRing(base_ring.base())):
+        if (isinstance(base_ring.base(), PolynomialRing_general)):
             if (self.coeff_ring().has_coerce_map_from(base_ring)):
                 return laurent_series
             else:

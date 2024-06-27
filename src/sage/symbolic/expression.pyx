@@ -7710,10 +7710,10 @@ cdef class Expression(Expression_abc):
             TypeError: y is not a variable of Multivariate Polynomial Ring in x over Ring of integers modulo 4
         """
         from sage.symbolic.ring import SR
-        from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
+        from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
         base_ring = R.base_ring()
         if base_ring == SR:
-            if is_MPolynomialRing(R):
+            if isinstance(R, MPolynomialRing_base):
                 return R({tuple([0]*R.ngens()):self})
             else:
                 return R([self])

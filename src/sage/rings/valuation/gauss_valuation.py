@@ -89,8 +89,8 @@ class GaussValuationFactory(UniqueFactory):
             ValueError: the domain of v must be the base ring of domain but 2-adic valuation is not defined over Integer Ring but over Rational Field
 
         """
-        from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-        if not is_PolynomialRing(domain):
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+        if not isinstance(domain, PolynomialRing_general):
             raise TypeError("GaussValuations can only be created over polynomial rings but %r is not a polynomial ring" % (domain,))
         if not domain.ngens() == 1:
             raise NotImplementedError("domain must be univariate but %r is not univariate" % (domain,))
@@ -527,8 +527,8 @@ class GaussValuation_generic(NonFinalInductiveValuation):
             Gauss valuation induced by 2-adic valuation
 
         """
-        from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-        if is_PolynomialRing(ring) and ring.ngens() == 1:
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+        if isinstance(ring, PolynomialRing_general) and ring.ngens() == 1:
             base_valuation = self._base_valuation.change_domain(ring.base_ring())
             return GaussValuation(self.domain().change_ring(ring.base_ring()), base_valuation)
         return super().change_domain(ring)
@@ -546,8 +546,8 @@ class GaussValuation_generic(NonFinalInductiveValuation):
             [Gauss valuation induced by 2-adic valuation]
 
         """
-        from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-        if is_PolynomialRing(ring) and ring.ngens() == 1:
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+        if isinstance(ring, PolynomialRing_general) and ring.ngens() == 1:
             if self.domain().is_subring(ring):
                 return [GaussValuation(ring, w) for w in self._base_valuation.extensions(ring.base_ring())]
         return super().extensions(ring)
@@ -567,8 +567,8 @@ class GaussValuation_generic(NonFinalInductiveValuation):
         """
         if ring.is_subring(self.domain().base_ring()):
             return self._base_valuation.restriction(ring)
-        from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-        if is_PolynomialRing(ring) and ring.ngens() == 1:
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+        if isinstance(ring, PolynomialRing_general) and ring.ngens() == 1:
             if ring.base().is_subring(self.domain().base()):
                 return GaussValuation(ring, self._base_valuation.restriction(ring.base()))
         return super().restriction(ring)
