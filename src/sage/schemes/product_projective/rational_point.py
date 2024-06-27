@@ -41,7 +41,6 @@ AUTHORS:
 - Volker Braun and Ben Hutz (2014): initial version
 
 - Raghukul Raman (2018): code cleanup and added support for rational fields
-
 """
 
 # ****************************************************************************

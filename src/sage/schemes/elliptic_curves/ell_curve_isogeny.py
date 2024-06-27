@@ -2630,8 +2630,8 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         - ``E`` -- an elliptic curve
 
-        - ``psi, psi_pr, phi, phi_pr`` -- univariate polynomials over
-          the base field of ``E``, where ``psi`` is the kernel
+        - ``psi``, ``psi_pr``, ``phi``, ``phi_pr`` -- univariate polynomials
+          over the base field of ``E``, where ``psi`` is the kernel
           polynomial and ``phi`` the numerator of the `X`-coordinate
           of the isogeny, together with their derivatives
 

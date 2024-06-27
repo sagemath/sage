@@ -6,7 +6,6 @@ AUTHORS:
 - William Stein (2007-12): initial version
 
 - William Stein and Robert Bradshaw (2008-01): Many improvements
-
 """
 #*****************************************************************************
 #      Copyright (C) 2007 William Stein <wstein@gmail.com>

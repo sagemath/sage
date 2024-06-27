@@ -66,7 +66,7 @@ from copy import copy
 import sage.matrix.matrix_space as matrix_space
 from sage.categories.rings import Rings
 from sage.modules.free_module_element import vector
-from sage.structure.element import is_Matrix, parent
+from sage.structure.element import Matrix, parent, RingElement
 from sage.structure.sequence import Sequence
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -1411,7 +1411,6 @@ def elementary_matrix(arg0, arg1=None, **kwds):
 
     - Rob Beezer (2011-03-04)
     """
-    import sage.structure.element
     # determine ring and matrix size
     if arg1 is not None and arg0 not in Rings():
         raise TypeError('optional first parameter must be a ring, not {0}'.format(arg0))
@@ -1420,7 +1419,7 @@ def elementary_matrix(arg0, arg1=None, **kwds):
         R = arg0
         arg0 = arg1
     elif scale is not None:
-        if not sage.structure.element.is_RingElement(scale):
+        if not isinstance(scale, RingElement):
             raise TypeError('scale must be an element of some ring, not {0}'.format(scale))
         R = scale.parent()
     else:
@@ -1598,7 +1597,7 @@ def _determine_block_matrix_grid(sub_matrices):
                 M = sub_matrices[i][j]
                 sub_width = None
                 sub_height = None
-                if is_Matrix(M):
+                if isinstance(M, Matrix):
                     sub_width = M.ncols()
                     sub_height = M.nrows()
                 elif M:  # non-zero scalar is interpreted as a square matrix
@@ -1669,7 +1668,7 @@ def _determine_block_matrix_rows(sub_matrices):
         # of this row
         found_zeroes = False
         for M in R:
-            if is_Matrix(M):
+            if isinstance(M, Matrix):
                 if height is None:
                     height = M.nrows()
                 elif height != M.nrows():
@@ -1684,7 +1683,7 @@ def _determine_block_matrix_rows(sub_matrices):
         if height is not None and not found_zeroes:
             width = 0
             for M in R:
-                if is_Matrix(M):
+                if isinstance(M, Matrix):
                     width += M.ncols()
                 else:
                     # non-zero scalar
@@ -1719,7 +1718,7 @@ def _determine_block_matrix_rows(sub_matrices):
             height = None
             for j in range(len(R)):
                 M = R[j]
-                if is_Matrix(M):
+                if isinstance(M, Matrix):
                     height = M.nrows()
                     width += M.ncols()
                     if zero_state == 1:
@@ -1983,7 +1982,7 @@ def block_matrix(*args, **kwds):
 
     sub_matrices = args[0]
 
-    if is_Matrix(sub_matrices):
+    if isinstance(sub_matrices, Matrix):
         M = sub_matrices
         # a single matrix (check nrows/ncols/ring)
         if (nrows is not None and nrows != 1) or \
@@ -2043,7 +2042,7 @@ def block_matrix(*args, **kwds):
         ring = ZZ
         for row in sub_matrices:
             for M in row:
-                R = M.base_ring() if is_Matrix(M) else parent(M)
+                R = M.base_ring() if isinstance(M, Matrix) else parent(M)
                 if R is not ZZ:
                     ring = sage.categories.pushout.pushout(ring, R)
 
@@ -2051,7 +2050,7 @@ def block_matrix(*args, **kwds):
         sparse = True
         for row in sub_matrices:
             for M in row:
-                if sparse and is_Matrix(M) and not M.is_sparse():
+                if sparse and isinstance(M, Matrix) and not M.is_sparse():
                     sparse = False
 
     row_heights = None
@@ -2081,7 +2080,7 @@ def block_matrix(*args, **kwds):
         for j in range(len(R)):
             M = R[j]
 
-            if is_Matrix(M):
+            if isinstance(M, Matrix):
                 if M.base_ring() is not ring:
                     M = M.change_ring(ring)
                 if M.is_sparse() != sparse:

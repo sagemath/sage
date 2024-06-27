@@ -14,7 +14,6 @@ AUTHORS:
 - William Stein: original implementation
 
 - Joel B. Mohler: latex_variable_name() drastic rewrite and many doc-tests
-
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -687,7 +686,7 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
     from sage.features.dvipng import dvipng
     if png:
         if ((not engine or engine == "latex")
-            and not (dvipng().is_present() or ImageMagick().is_present())):
+                and not (dvipng().is_present() or ImageMagick().is_present())):
             print()
             print("Error: neither dvipng nor magick/convert (from the ImageMagick suite)")
             print("appear to be installed. Displaying LaTeX, PDFLaTeX output")
@@ -1936,7 +1935,7 @@ def png(x, filename, density=150, debug=False,
         ....:     png(ZZ[x], f.name)
     """
     import sage.plot.all
-    if sage.plot.graphics.is_Graphics(x):
+    if isinstance(x, sage.plot.graphics.Graphics):
         x.save(filename)
         return
     # if not graphics: create a string of latex code to write in a file

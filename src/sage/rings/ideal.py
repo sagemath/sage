@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Ideals of commutative rings
 
@@ -539,8 +540,8 @@ class Ideal_generic(MonoidElement):
             sage: taus[1](B)                                                            # needs sage.rings.number_fields
             Fractional ideal (2, a + 1)
         """
-        from sage.categories.morphism import is_Morphism
-        if not is_Morphism(phi):
+        from sage.categories.morphism import Morphism
+        if not isinstance(phi, Morphism):
             raise TypeError("phi must be a morphism")
         # delegate: morphisms know how to apply themselves to ideals
         return phi(self)

@@ -326,6 +326,10 @@ def is_Integer(x):
 
         sage: from sage.rings.integer import is_Integer
         sage: is_Integer(2)
+        doctest:warning...
+        DeprecationWarning: The function is_Integer is deprecated;
+        use 'isinstance(..., Integer)' instead.
+        See https://github.com/sagemath/sage/issues/38128 for details.
         True
         sage: is_Integer(2/1)
         False
@@ -334,6 +338,10 @@ def is_Integer(x):
         sage: is_Integer('5')
         False
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38128,
+                       "The function is_Integer is deprecated; "
+                       "use 'isinstance(..., Integer)' instead.")
     return isinstance(x, Integer)
 
 

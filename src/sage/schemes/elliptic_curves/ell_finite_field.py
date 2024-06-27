@@ -95,7 +95,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
         INPUT:
 
-        - ``*args, **kwds`` -- all other options are passed
+        - ``*args``, ``**kwds`` -- all other options are passed
           to the circle graphing primitive.
 
         EXAMPLES::

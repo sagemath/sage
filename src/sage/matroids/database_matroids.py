@@ -913,7 +913,7 @@ def L8(groundset=None):
 
         sage: K4 = matroids.catalog.K4(range(6))
         sage: Bext = [list(b) for b in K4.bases()] + [list(I)+[6] for I in
-        ....:                                         K4.independent_r_sets(2)]
+        ....:                                         K4.independent_sets(2)]
         sage: K4ext = Matroid(bases=Bext)
         sage: import random
         sage: e = random.choice(list(M.groundset()))
@@ -1236,6 +1236,7 @@ def K33dual(groundset='abcdefghi'):
 
     EXAMPLES::
 
+        sage: # needs sage.graphs
         sage: M = matroids.catalog.K33dual(); M
         M*(K3, 3): Regular matroid of rank 4 on 9 elements with 81 bases
         sage: any(N.is_3connected() for N in M.linear_extensions(simple=True))
@@ -1266,6 +1267,7 @@ def K33(groundset='abcdefghi'):
 
     EXAMPLES::
 
+        sage: # needs sage.graphs
         sage: M = matroids.catalog.K33(); M
         M(K3, 3): Regular matroid of rank 5 on 9 elements with 81 bases
         sage: M.is_valid()
