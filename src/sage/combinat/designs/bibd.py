@@ -125,7 +125,7 @@ def balanced_incomplete_block_design(v, k, lambd=1, existence=False, use_LJCR=Fa
 
     INPUT:
 
-    - ``v,k,lambd`` (integers)
+    - ``v``, ``k``, ``lambd`` -- integers
 
     - ``existence`` (boolean) -- instead of building the design, return:
 
@@ -371,7 +371,7 @@ def BruckRyserChowla_check(v, k, lambd):
 
     INPUT:
 
-    - ``v, k, lambd`` -- integers; parameters to check
+    - ``v``, ``k``, ``lambd`` -- integers; parameters to check
 
     OUTPUT:
 
@@ -528,7 +528,7 @@ def BIBD_from_TD(v,k,existence=False):
 
     INPUT:
 
-    - ``v,k`` -- (integers) computes a `(v,k,1)`-BIBD.
+    - ``v``, ``k`` -- (integers) computes a `(v,k,1)`-BIBD.
 
     - ``existence``  -- (boolean) instead of building the design, return:
 
@@ -681,14 +681,14 @@ def BIBD_from_difference_family(G, D, lambd=None, check=True):
 
     INPUT:
 
-    - ``G`` - a finite additive Abelian group
+    - ``G`` -- a finite additive Abelian group
 
-    - ``D`` - a difference family on ``G`` (short blocks are allowed).
+    - ``D`` -- a difference family on ``G`` (short blocks are allowed).
 
-    - ``lambd`` - the `\lambda` parameter (optional, only used if ``check`` is
+    - ``lambd`` -- the `\lambda` parameter (optional, only used if ``check`` is
       ``True``)
 
-    - ``check`` - whether or not we check the output (default: ``True``)
+    - ``check`` -- whether or not we check the output (default: ``True``)
 
     EXAMPLES::
 
@@ -852,7 +852,7 @@ def BIBD_from_PBD(PBD, v, k, check=True, base_cases=None):
 
     INPUT:
 
-    - ``v,k`` -- integers.
+    - ``v``, ``k`` -- integers.
 
     - ``PBD`` -- A PBD on `r=(v-1)/(k-1)` points, such that for any block of
       ``PBD`` of size `s` there must exist a `((k-1)s+1,k,1)`-BIBD.
@@ -1233,7 +1233,7 @@ def PBD_from_TD(k,t,u):
 
     INPUT:
 
-    - ``k,t,u`` -- integers such that `0\leq u \leq t`.
+    - ``k``, ``t``, ``u`` -- integers such that `0\leq u \leq t`.
 
     EXAMPLES::
 
@@ -1308,7 +1308,7 @@ def BIBD_from_arc_in_desarguesian_projective_plane(n,k,existence=False):
 
     INPUT:
 
-    - ``n,k`` (integers) -- must be powers of two (among other restrictions).
+    - ``n``, ``k`` (integers) -- must be powers of two (among other restrictions).
 
     - ``existence`` (boolean) -- whether to return the BIBD obtained through
       this construction (default), or to merely indicate with a boolean return
@@ -1553,7 +1553,7 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
 
         INPUT:
 
-        - ``s`` - (default to ``2``) the maximum number of points from the arc
+        - ``s`` -- (default to ``2``) the maximum number of points from the arc
           in each block
 
         - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear

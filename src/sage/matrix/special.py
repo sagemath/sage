@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Constructors for special matrices
 
@@ -67,7 +66,7 @@ from copy import copy
 import sage.matrix.matrix_space as matrix_space
 from sage.categories.rings import Rings
 from sage.modules.free_module_element import vector
-from sage.structure.element import is_Matrix, parent
+from sage.structure.element import Matrix, parent, RingElement
 from sage.structure.sequence import Sequence
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -685,19 +684,19 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
 
     INPUT:
 
-    - ``entries`` - the values to place along the diagonal
+    - ``entries`` -- the values to place along the diagonal
       of the returned matrix.  This may be a flat list, a
       flat tuple, a vector or free module element, or
       a one-dimensional NumPy array.
 
-    - ``nrows`` - the size of the returned matrix, which
+    - ``nrows`` -- the size of the returned matrix, which
       will have an equal number of columns
 
-    - ``ring`` - the ring containing the entries of the
+    - ``ring`` -- the ring containing the entries of the
       diagonal entries.  This may not be specified in
       combination with a NumPy array.
 
-    - ``sparse`` - default: ``True`` - whether or not
+    - ``sparse`` -- (default: ``True``); whether or not
       the result has a sparse implementation.
 
     OUTPUT:
@@ -1024,11 +1023,11 @@ def ones_matrix(ring, nrows=None, ncols=None, sparse=False):
 
     INPUT:
 
-    - ``ring`` - default: ``ZZ`` - base ring for the matrix.
-    - ``nrows`` - number of rows in the matrix.
-    - ``ncols`` - number of columns in the matrix.
+    - ``ring`` -- (default: ``ZZ``); base ring for the matrix.
+    - ``nrows`` -- number of rows in the matrix.
+    - ``ncols`` -- number of columns in the matrix.
       If omitted, defaults to the number of rows, producing a square matrix.
-    - ``sparse`` - default: ``False`` - if ``True`` creates a sparse representation.
+    - ``sparse`` -- (default: ``False``); if ``True`` creates a sparse representation.
 
     OUTPUT:
 
@@ -1412,7 +1411,6 @@ def elementary_matrix(arg0, arg1=None, **kwds):
 
     - Rob Beezer (2011-03-04)
     """
-    import sage.structure.element
     # determine ring and matrix size
     if arg1 is not None and arg0 not in Rings():
         raise TypeError('optional first parameter must be a ring, not {0}'.format(arg0))
@@ -1421,7 +1419,7 @@ def elementary_matrix(arg0, arg1=None, **kwds):
         R = arg0
         arg0 = arg1
     elif scale is not None:
-        if not sage.structure.element.is_RingElement(scale):
+        if not isinstance(scale, RingElement):
             raise TypeError('scale must be an element of some ring, not {0}'.format(scale))
         R = scale.parent()
     else:
@@ -1599,7 +1597,7 @@ def _determine_block_matrix_grid(sub_matrices):
                 M = sub_matrices[i][j]
                 sub_width = None
                 sub_height = None
-                if is_Matrix(M):
+                if isinstance(M, Matrix):
                     sub_width = M.ncols()
                     sub_height = M.nrows()
                 elif M:  # non-zero scalar is interpreted as a square matrix
@@ -1670,7 +1668,7 @@ def _determine_block_matrix_rows(sub_matrices):
         # of this row
         found_zeroes = False
         for M in R:
-            if is_Matrix(M):
+            if isinstance(M, Matrix):
                 if height is None:
                     height = M.nrows()
                 elif height != M.nrows():
@@ -1685,7 +1683,7 @@ def _determine_block_matrix_rows(sub_matrices):
         if height is not None and not found_zeroes:
             width = 0
             for M in R:
-                if is_Matrix(M):
+                if isinstance(M, Matrix):
                     width += M.ncols()
                 else:
                     # non-zero scalar
@@ -1720,7 +1718,7 @@ def _determine_block_matrix_rows(sub_matrices):
             height = None
             for j in range(len(R)):
                 M = R[j]
-                if is_Matrix(M):
+                if isinstance(M, Matrix):
                     height = M.nrows()
                     width += M.ncols()
                     if zero_state == 1:
@@ -1785,18 +1783,18 @@ def block_matrix(*args, **kwds):
     ``nrows`` and ``ncols`` to determine their layout), or a list
     of lists of matrices, where each list forms a row.
 
-    -  ``ring`` - the base ring
+    -  ``ring`` -- the base ring
 
-    -  ``nrows`` - the number of block rows
+    -  ``nrows`` -- the number of block rows
 
-    -  ``ncols`` - the number of block cols
+    -  ``ncols`` -- the number of block cols
 
-    -  ``sub_matrices`` - matrices (see below for syntax)
+    -  ``sub_matrices`` -- matrices (see below for syntax)
 
-    -  ``subdivide`` - boolean, whether or not to add
+    -  ``subdivide`` -- boolean, whether or not to add
        subdivision information to the matrix
 
-    -  ``sparse`` - boolean, whether to make the resulting matrix sparse
+    -  ``sparse`` -- boolean, whether to make the resulting matrix sparse
 
 
     EXAMPLES::
@@ -1984,7 +1982,7 @@ def block_matrix(*args, **kwds):
 
     sub_matrices = args[0]
 
-    if is_Matrix(sub_matrices):
+    if isinstance(sub_matrices, Matrix):
         M = sub_matrices
         # a single matrix (check nrows/ncols/ring)
         if (nrows is not None and nrows != 1) or \
@@ -2044,7 +2042,7 @@ def block_matrix(*args, **kwds):
         ring = ZZ
         for row in sub_matrices:
             for M in row:
-                R = M.base_ring() if is_Matrix(M) else parent(M)
+                R = M.base_ring() if isinstance(M, Matrix) else parent(M)
                 if R is not ZZ:
                     ring = sage.categories.pushout.pushout(ring, R)
 
@@ -2052,7 +2050,7 @@ def block_matrix(*args, **kwds):
         sparse = True
         for row in sub_matrices:
             for M in row:
-                if sparse and is_Matrix(M) and not M.is_sparse():
+                if sparse and isinstance(M, Matrix) and not M.is_sparse():
                     sparse = False
 
     row_heights = None
@@ -2082,7 +2080,7 @@ def block_matrix(*args, **kwds):
         for j in range(len(R)):
             M = R[j]
 
-            if is_Matrix(M):
+            if isinstance(M, Matrix):
                 if M.base_ring() is not ring:
                     M = M.change_ring(ring)
                 if M.is_sparse() != sparse:
@@ -2169,7 +2167,7 @@ def jordan_block(eigenvalue, size, sparse=False):
 
     -  ``eigenvalue`` -- eigenvalue for the diagonal entries of the block
     -  ``size`` -- size of the square matrix
-    -  ``sparse`` -- (default: ``False``) - if ``True``, return a sparse matrix
+    -  ``sparse`` -- (default: ``False``); if ``True``, return a sparse matrix
 
     EXAMPLES::
 
@@ -2217,7 +2215,7 @@ def companion_matrix(poly, format='right'):
       A symbolic expression that might also be a polynomial is not
       proper input, see examples below.
 
-    - ``format`` -- default: 'right' - specifies one of four
+    - ``format`` -- (default: 'right'); specifies one of four
       variations of a companion matrix.  Allowable values are
       'right', 'left', 'top' and 'bottom', which indicates which
       border of the matrix contains the negatives of the coefficients.
@@ -2595,7 +2593,7 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
       Set ``upper_bound`` to 1 more than the maximum value entries can achieve.
       If None, no size control occurs. But see the warning below.  (default: None)
 
-    - ``max_tries`` - If designated, number of tries used to generate each new random row;
+    - ``max_tries`` -- If designated, number of tries used to generate each new random row;
       only matters when upper_bound!=None. Used to prevent endless looping. (default: 100)
 
     OUTPUT:
@@ -2800,10 +2798,10 @@ def random_subspaces_matrix(parent, rank=None):
 
     INPUT:
 
-    - ``parent`` - A matrix space specifying the base ring, dimensions, and
+    - ``parent`` -- A matrix space specifying the base ring, dimensions, and
       representation (dense/sparse) for the result.  The base ring must be exact.
 
-    - ``rank`` - The desired rank of the return matrix (default: None).
+    - ``rank`` -- The desired rank of the return matrix (default: None).
 
     OUTPUT:
 
@@ -2947,15 +2945,15 @@ def random_unimodular_matrix(parent, upper_bound=None, max_tries=100):
 
     INPUT:
 
-    - ``parent`` - A matrix space specifying the base ring, dimensions
+    - ``parent`` -- A matrix space specifying the base ring, dimensions
       and representation (dense/sparse) for the result.  The base ring
       must be exact.
 
-    - ``upper_bound`` - For large matrices over QQ or ZZ,
+    - ``upper_bound`` -- For large matrices over QQ or ZZ,
       ``upper_bound`` is the largest value matrix entries can achieve.  But
       see the warning below.
 
-    - ``max_tries`` - If designated, number of tries used to generate each new random row;
+    - ``max_tries`` -- If designated, number of tries used to generate each new random row;
       only matters when upper_bound!=None. Used to prevent endless looping. (default: 100)
 
     A matrix not in reduced row-echelon form with the desired dimensions and properties.
@@ -3284,7 +3282,7 @@ def vector_on_axis_rotation_matrix(v, i, ring=None):
 
     - ``v`` -- vector
     - ``i`` -- integer
-    - ``ring`` -- ring (optional, default: ``None``) of the resulting matrix
+    - ``ring`` -- ring (default: ``None``) of the resulting matrix
 
     OUTPUT:
 
@@ -3355,7 +3353,7 @@ def ith_to_zero_rotation_matrix(v, i, ring=None):
 
     - ``v`` -- vector
     - ``i`` -- integer
-    - ``ring`` -- ring (optional, default: ``None``) of the resulting matrix
+    - ``ring`` -- ring (default: ``None``) of the resulting matrix
 
     OUTPUT:
 
@@ -3475,7 +3473,7 @@ def hilbert(dim, ring=QQ):
 
     - ``dim`` -- integer, the dimension of the Hilbert matrix
 
-    - ``ring`` -- base ring (optional, default: \\QQ) of the resulting matrix
+    - ``ring`` -- base ring (default: \\QQ) of the resulting matrix
 
     EXAMPLES::
 
@@ -3509,7 +3507,7 @@ def vandermonde(v, ring=None):
 
     - ``v`` -- vector, the second column of the Vandermonde matrix
 
-    - ``ring`` -- base ring (optional, default: None) of the resulting matrix
+    - ``ring`` -- base ring (default: None) of the resulting matrix
 
     EXAMPLES:
 
@@ -3544,7 +3542,7 @@ def toeplitz(c, r, ring=None):
     - ``r`` -- vector, first row of the Toeplitz matrix, counting from the
       second column
 
-    - ``ring`` -- base ring (optional, default: None) of the resulting matrix
+    - ``ring`` -- base ring (default: None) of the resulting matrix
 
     EXAMPLES:
 
@@ -3593,10 +3591,10 @@ def hankel(c, r=None, ring=None):
 
     - ``c`` -- vector, first column of the Hankel matrix
 
-    - ``r`` -- vector (optional, default: None), last row of the Hankel matrix, from
+    - ``r`` -- vector (default: None), last row of the Hankel matrix, from
       the second to the last column
 
-    - ``ring`` -- base ring (optional, default: None) of the resulting matrix
+    - ``ring`` -- base ring (default: None) of the resulting matrix
 
     EXAMPLES:
 

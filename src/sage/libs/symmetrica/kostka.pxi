@@ -98,7 +98,6 @@ def kostka_tab_symmetrica(shape, content):
         _op_partition(shape, cshape)
 
 
-
     #Check to make sure the content is compatible with the shape.
 
     _op_il_vector(content, ccontent)

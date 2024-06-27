@@ -843,7 +843,7 @@ class BinaryQF(SageObject):
 
         - ``self`` -- binary quadratic form of non-square discriminant
 
-        - ``transformation`` -- boolean (default: False): if ``True``, return
+        - ``transformation`` -- boolean (default: ``False``): if ``True``, return
           both the reduced form and a matrix whose :meth:`matrix_action_right`
           transforms ``self`` into the reduced form.
 

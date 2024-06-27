@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Examples of posets
 """
@@ -14,6 +15,7 @@ from sage.categories.posets import Posets
 from sage.structure.element_wrapper import ElementWrapper
 from sage.sets.set import Set, Set_object_enumerated
 from sage.sets.positive_integers import PositiveIntegers
+
 
 class FiniteSetsOrderedByInclusion(UniqueRepresentation, Parent):
     r"""
@@ -107,6 +109,7 @@ class FiniteSetsOrderedByInclusion(UniqueRepresentation, Parent):
     class Element(ElementWrapper):
 
         wrapped_class = Set_object_enumerated
+
 
 class PositiveIntegersOrderedByDivisibilityFacade(UniqueRepresentation, Parent):
     r"""

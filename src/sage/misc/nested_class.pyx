@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Fixing pickle for nested classes
 
@@ -344,6 +345,7 @@ class MainClass(object, metaclass=NestedClassMetaclass):
                 """
                 pass
 
+
 class SubClass(MainClass):
     r"""
     A simple class to test nested_pickle.
@@ -358,10 +360,13 @@ class SubClass(MainClass):
     """
     pass
 
+
 nested_pickle(SubClass)
+
 
 def _provide_SubClass():
     return SubClass
+
 
 class CopiedClass():
     r"""
@@ -379,7 +384,9 @@ class CopiedClass():
     NestedSubClass = MainClass.NestedClass.NestedSubClass
     SubClass = _provide_SubClass()
 
+
 nested_pickle(CopiedClass)
+
 
 # Further classes for recursive tests
 

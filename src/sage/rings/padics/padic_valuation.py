@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 `p`-adic Valuations on Number Fields and Their Subrings and Completions
 
@@ -32,7 +31,6 @@ REFERENCES:
 
 The theory used here was originally developed in [Mac1936I]_ and [Mac1936II]_. An
 overview can also be found in Chapter 4 of [Rüt2014]_.
-
 """
 #*****************************************************************************
 #       Copyright (C) 2013-2020 Julian Rüth <julian.rueth@fsfe.org>

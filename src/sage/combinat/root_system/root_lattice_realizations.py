@@ -3160,10 +3160,10 @@ class RootLatticeRealizations(Category_over_base_ring):
             - ``plot_labels`` -- (default: ``True``) can be one of the
               following:
 
-              * ``True`` - use the latex labels
-              * ``'circles'`` - use circles for multiplicity up to 4; if the
+              * ``True`` -- use the latex labels
+              * ``'circles'`` -- use circles for multiplicity up to 4; if the
                 multiplicity is larger, then it uses the multiplicity
-              * ``'multiplicities'`` - use the multiplicities
+              * ``'multiplicities'`` -- use the multiplicities
 
             - ``label_color`` -- (default: ``'black'``) the color of the
               labels

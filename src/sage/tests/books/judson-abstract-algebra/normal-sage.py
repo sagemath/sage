@@ -1,4 +1,3 @@
-##      -*-   coding: utf-8   -*-     ##
 ##          Sage Doctest File         ##
 #**************************************#
 #*    Generated from PreTeXt source   *#
@@ -130,5 +129,4 @@ r"""
     sage: N = G.normal_subgroups()
     sage: l=[H.order() for H in N]; l.sort(); l
     [1, 2, 4, 8, 8, 8, 16]
-
 """

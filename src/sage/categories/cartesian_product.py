@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Cartesian Product Functorial Construction
 
@@ -17,6 +18,7 @@ from sage.categories.covariant_functorial_construction import CovariantFunctoria
 from sage.categories.pushout import MultivariateConstructionFunctor
 
 native_python_containers = {tuple, list, set, frozenset, range}
+
 
 class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConstructionFunctor):
     """
@@ -215,6 +217,7 @@ class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConst
             False
         """
         return not (self == other)
+
 
 class CartesianProductsCategory(CovariantConstructionCategory):
     r"""

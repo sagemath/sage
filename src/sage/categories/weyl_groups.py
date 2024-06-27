@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat sage.groups
 r"""
 Weyl Groups
@@ -166,14 +167,14 @@ class WeylGroups(Category_singleton):
 
             INPUT:
 
-            - ``x`` - an element in the group `W`
+            - ``x`` -- an element in the group `W`
 
-            - ``y`` - an element in the group `W`
+            - ``y`` -- an element in the group `W`
 
             - ``side`` (default: ``'upper'``) -- must be one of the following:
 
-              * ``'upper'`` - return the upper Bruhat cone of the interval [``x``, ``y``]
-              * ``'lower'`` - return the lower Bruhat cone of the interval [``x``, ``y``]
+              * ``'upper'`` -- return the upper Bruhat cone of the interval [``x``, ``y``]
+              * ``'lower'`` -- return the lower Bruhat cone of the interval [``x``, ``y``]
 
             - ``backend`` -- string (default: ``'cdd'``); the backend to use to create the polyhedron
 
@@ -571,9 +572,10 @@ class WeylGroups(Category_singleton):
 
             - [Pon2010]_
             """
-            import sage.combinat.sf
             from sage.rings.rational_field import QQ
-            m = sage.combinat.sf.sf.SymmetricFunctions(QQ).monomial()
+            from sage.combinat.sf.sf import SymmetricFunctions
+
+            m = SymmetricFunctions(QQ).monomial()
             return m.from_polynomial_exp(self.stanley_symmetric_function_as_polynomial())
 
         @cached_in_parent_method

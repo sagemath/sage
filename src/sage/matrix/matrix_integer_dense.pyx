@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # distutils: extra_compile_args = NTL_CFLAGS M4RI_CFLAGS
 # distutils: libraries = iml NTL_LIBRARIES gmp m CBLAS_LIBRARIES
 # distutils: library_dirs = NTL_LIBDIR CBLAS_LIBDIR
@@ -47,7 +46,6 @@ TESTS::
     sage: TestSuite(a).run()
     sage: Matrix(ZZ,0,0).inverse()
     []
-
 """
 
 #*****************************************************************************
@@ -114,7 +112,7 @@ from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
 from sage.structure.element cimport Element, Vector
-from sage.structure.element import is_Vector
+from sage.structure.element import Vector
 
 from sage.matrix.matrix_modn_dense_float cimport Matrix_modn_dense_template
 from sage.matrix.matrix_modn_dense_float cimport Matrix_modn_dense_float
@@ -701,7 +699,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
     def is_one(self):
         r"""
-        Tests whether self is the identity matrix.
+        Test whether ``self`` is the identity matrix.
 
         EXAMPLES::
 
@@ -713,8 +711,6 @@ cdef class Matrix_integer_dense(Matrix_dense):
             False
         """
         return self.is_square() and fmpz_mat_is_one(self._matrix)
-
-
 
     def _multiply_linbox(self, Matrix_integer_dense right):
         """
@@ -1060,7 +1056,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         INPUT:
 
-        -  ``v`` - a free module element.
+        -  ``v`` -- a free module element.
 
         OUTPUT: The vector times matrix product ``v*A``.
 
@@ -1245,12 +1241,11 @@ cdef class Matrix_integer_dense(Matrix_dense):
         finally:
             fmpz_mat_clear(m)
 
-
     def _clear_denom(self):
         """
         INPUT:
 
-        -  ``self`` - a matrix
+        -  ``self`` -- a matrix
 
         OUTPUT:  self, 1
 
@@ -1274,9 +1269,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
         INPUT:
 
 
-        -  ``var`` - a variable name
+        -  ``var`` -- a variable name
 
-        -  ``algorithm`` - (optional) either 'generic', 'flint' or 'linbox'.
+        -  ``algorithm`` -- (optional) either 'generic', 'flint' or 'linbox'.
            Default is set to 'linbox'.
 
         EXAMPLES::
@@ -1392,9 +1387,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
         INPUT:
 
 
-        -  ``var`` - a variable name
+        -  ``var`` -- a variable name
 
-        -  ``algorithm`` - (optional) either 'linbox' (default) or 'generic'
+        -  ``algorithm`` -- (optional) either 'linbox' (default) or 'generic'
 
         EXAMPLES::
 
@@ -1784,36 +1779,36 @@ cdef class Matrix_integer_dense(Matrix_dense):
             Up to 75 rows or columns with no transformation matrix,
             use pari with flag 0; otherwise, use flint.
 
-          - ``'flint'`` - use flint
+          - ``'flint'`` -- use flint
 
-          - ``'ntl'`` - use NTL (only works for square matrices of
+          - ``'ntl'`` -- use NTL (only works for square matrices of
             full rank!)
 
-          - ``'padic'`` - an asymptotically fast p-adic modular
+          - ``'padic'`` -- an asymptotically fast p-adic modular
             algorithm, If your matrix has large coefficients and is
             small, you may also want to try this.
 
-          - ``'pari'`` - use PARI with flag 1
+          - ``'pari'`` -- use PARI with flag 1
 
-          - ``'pari0'`` - use PARI with flag 0
+          - ``'pari0'`` -- use PARI with flag 0
 
-          - ``'pari1'`` - use PARI with flag 1
+          - ``'pari1'`` -- use PARI with flag 1
 
-          - ``'pari4'`` - use PARI with flag 4 (use heuristic LLL)
+          - ``'pari4'`` -- use PARI with flag 4 (use heuristic LLL)
 
-        -  ``proof`` - (default: True); if proof=False certain
+        -  ``proof`` -- (default: ``True``); if proof=False certain
            determinants are computed using a randomized hybrid p-adic
            multimodular strategy until it stabilizes twice (instead of up to
            the Hadamard bound). It is *incredibly* unlikely that one would
            ever get an incorrect result with proof=False.
 
-        -  ``include_zero_rows`` - (default: True) if False,
+        -  ``include_zero_rows`` -- (default: ``True``) if False,
            don't include zero rows
 
-        -  ``transformation`` - if given, also compute
+        -  ``transformation`` -- if given, also compute
            transformation matrix; only valid for flint and padic algorithm
 
-        -  ``D`` - (default: None) if given and the algorithm
+        -  ``D`` -- (default: None) if given and the algorithm
            is 'ntl', then D must be a multiple of the determinant and this
            function will use that fact.
 
@@ -2132,17 +2127,17 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         INPUT:
 
-        -  ``p`` - (default: 0); if nonzero given, saturate
+        -  ``p`` -- (default: 0); if nonzero given, saturate
            only at the prime `p`, i.e., return a matrix whose row span
            is a `\ZZ`-module `S` that contains self and
            such that the index of `S` in its saturation is coprime to
            `p`. If `p` is None, return full saturation of
            self.
 
-        -  ``proof`` - (default: use proof.linear_algebra());
+        -  ``proof`` -- (default: use proof.linear_algebra());
            if False, the determinant calculations are done with proof=False.
 
-        -  ``max_dets`` - (default: 5); technical parameter -
+        -  ``max_dets`` -- (default: 5); technical parameter -
            max number of determinant to compute when bounding prime divisor of
            self in its saturation.
 
@@ -2150,7 +2145,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         OUTPUT:
 
 
-        -  ``matrix`` - a matrix over ZZ
+        -  ``matrix`` -- a matrix over ZZ
 
 
         .. NOTE::
@@ -2209,14 +2204,14 @@ cdef class Matrix_integer_dense(Matrix_dense):
         INPUT:
 
 
-        -  ``proof`` - (default: use proof.linear_algebra());
+        -  ``proof`` -- (default: use proof.linear_algebra());
            if False, the determinant calculations are done with proof=False.
 
 
         OUTPUT:
 
 
-        -  ``positive integer`` - the index of the row span of
+        -  ``positive integer`` -- the index of the row span of
            this matrix in its saturation
 
 
@@ -2299,13 +2294,13 @@ cdef class Matrix_integer_dense(Matrix_dense):
         INPUT:
 
 
-        -  ``self`` - matrix
+        -  ``self`` -- matrix
 
-        -  ``algorithm`` - (default: 'pari')
+        -  ``algorithm`` -- (default: 'pari')
 
            - ``'pari'``: works robustly, but is slower.
 
-           - ``'linbox'`` - use linbox (currently off, broken)
+           - ``'linbox'`` -- use linbox (currently off, broken)
 
 
         OUTPUT: list of integers
@@ -2561,15 +2556,15 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         INPUT:
 
-        - ``algorithm`` - determines which algorithm to use, options are:
+        - ``algorithm`` -- determines which algorithm to use, options are:
 
-          - 'flint' - use the algorithm from the FLINT library
-          - 'pari' - use the :pari:`matkerint` function from the PARI library
-          - 'padic' - use the p-adic algorithm from the IML library
-          - 'default' - use a heuristic to decide which of the three above
+          - 'flint' -- use the algorithm from the FLINT library
+          - 'pari' -- use the :pari:`matkerint` function from the PARI library
+          - 'padic' -- use the p-adic algorithm from the IML library
+          - 'default' -- use a heuristic to decide which of the three above
             routines is fastest.  This is the default value.
 
-        - ``proof`` - this is passed to the p-adic IML algorithm.
+        - ``proof`` -- this is passed to the p-adic IML algorithm.
           If not specified, the global flag for linear algebra will be used.
 
         OUTPUT:
@@ -3027,17 +3022,17 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         AVAILABLE ALGORITHMS:
 
-        - ``'NTL:LLL'`` - NTL's LLL + choice of ``fp``.
+        - ``'NTL:LLL'`` -- NTL's LLL + choice of ``fp``.
 
-        - ``'fpLLL:heuristic'`` - fpLLL's heuristic + choice of ``fp``.
+        - ``'fpLLL:heuristic'`` -- fpLLL's heuristic + choice of ``fp``.
 
-        - ``'fpLLL:fast'`` - fpLLL's fast + choice of ``fp``.
+        - ``'fpLLL:fast'`` -- fpLLL's fast + choice of ``fp``.
 
-        - ``'fpLLL:proved'`` - fpLLL's proved + choice of ``fp``.
+        - ``'fpLLL:proved'`` -- fpLLL's proved + choice of ``fp``.
 
-        - ``'fpLLL:wrapper'`` - fpLLL's automatic choice (default).
+        - ``'fpLLL:wrapper'`` -- fpLLL's automatic choice (default).
 
-        - ``'pari'`` - pari's qflll.
+        - ``'pari'`` -- pari's qflll.
 
         OUTPUT:
 
@@ -3418,13 +3413,13 @@ cdef class Matrix_integer_dense(Matrix_dense):
         INPUT:
 
 
-        -  ``N`` - an integer
+        -  ``N`` -- an integer
 
 
         OUTPUT:
 
 
-        -  ``matrix`` - over QQ or raise a ValueError
+        -  ``matrix`` -- over QQ or raise a ValueError
 
 
         EXAMPLES: We create a random 4x4 matrix over ZZ.
@@ -3476,18 +3471,18 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         INPUT:
 
-        -  ``self`` - a mutable matrix over ZZ
+        -  ``self`` -- a mutable matrix over ZZ
 
-        -  ``density`` - a float between 0 and 1
+        -  ``density`` -- a float between 0 and 1
 
-        -  ``x, y`` - if not ``None``, these are passed to the
+        -  ``x, y`` -- if not ``None``, these are passed to the
            ``ZZ.random_element`` function as the upper and lower endpoints in
            the  uniform distribution
 
-        -  ``distribution`` - would also be passed into ``ZZ.random_element``
+        -  ``distribution`` -- would also be passed into ``ZZ.random_element``
            if given
 
-        -  ``nonzero`` - bool (default: ``False``); whether the new entries
+        -  ``nonzero`` -- bool (default: ``False``); whether the new entries
            are guaranteed to be zero
 
         OUTPUT:
@@ -3684,17 +3679,17 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
           - ``'flint'`` -- let flint do the determinant
 
-          - ``'padic'`` -  uses a p-adic / multimodular
+          - ``'padic'`` --  uses a p-adic / multimodular
             algorithm that relies on code in IML and linbox
 
-          - ``'linbox'`` - calls linbox det (you *must* set
+          - ``'linbox'`` -- calls linbox det (you *must* set
             proof=False to use this!)
 
-          - ``'ntl'`` - calls NTL's det function
+          - ``'ntl'`` -- calls NTL's det function
 
-          - ``'pari'`` - uses PARI
+          - ``'pari'`` -- uses PARI
 
-        -  ``proof`` - bool or None; if None use
+        -  ``proof`` -- bool or None; if None use
            proof.linear_algebra(); only relevant for the padic algorithm.
 
            .. NOTE::
@@ -3702,7 +3697,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
               It would be *VERY VERY* hard for det to fail even with
               proof=False.
 
-        -  ``stabilize`` - if proof is False, require det to be
+        -  ``stabilize`` -- if proof is False, require det to be
            the same for this many CRT primes in a row. Ignored if proof is
            True.
 
@@ -3838,7 +3833,6 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         self.cache('det', d)
         return d
-
 
     def _det_linbox(self):
         """
@@ -4008,22 +4002,22 @@ cdef class Matrix_integer_dense(Matrix_dense):
         INPUT:
 
 
-        -  ``self`` - an invertible matrix
+        -  ``self`` -- an invertible matrix
 
-        -  ``use_nullspace`` - (default: False): whether to
+        -  ``use_nullspace`` -- (default: ``False``): whether to
            use nullspace algorithm, which is slower, but doesn't require
            checking that the matrix is invertible as a precondition.
 
-        -  ``check_invertible`` - (default: True) whether to
+        -  ``check_invertible`` -- (default: ``True``) whether to
            check that the matrix is invertible.
 
 
         OUTPUT: A, d such that ``A*self == d``
 
 
-        -  ``A`` - a matrix over ZZ
+        -  ``A`` -- a matrix over ZZ
 
-        -  ``d`` - an integer
+        -  ``d`` -- an integer
 
 
         ALGORITHM: Uses IML's p-adic nullspace function.
@@ -4072,14 +4066,14 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         INPUT:
 
-        -  ``self`` - an invertible matrix
+        -  ``self`` -- an invertible matrix
 
         OUTPUT: A, d such that ``A*self == d``
 
 
-        -  ``A`` - a matrix over ZZ
+        -  ``A`` -- a matrix over ZZ
 
-        -  ``d`` - an integer
+        -  ``d`` -- an integer
 
 
         EXAMPLES::
@@ -4206,12 +4200,12 @@ cdef class Matrix_integer_dense(Matrix_dense):
         INPUT:
 
 
-        -  ``B`` - a matrix or vector
+        -  ``B`` -- a matrix or vector
 
-        -  ``check_rank`` - bool (default: True); if True
+        -  ``check_rank`` -- bool (default: ``True``); if True
            verify that in fact the rank is full.
 
-        - ``algorithm`` - ``'iml'`` (default) or ``'flint'``
+        - ``algorithm`` -- ``'iml'`` (default) or ``'flint'``
 
         OUTPUT: a matrix or vector over `\QQ`
 
@@ -4296,7 +4290,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         if not self.is_square():
             raise NotImplementedError("the input matrix must be square.")
 
-        if is_Vector(B):
+        if isinstance(B, Vector):
             if self.nrows() != B.degree():
                 raise ValueError("number of rows of self must equal degree of B.")
         elif self.nrows() != B.nrows():
@@ -4308,7 +4302,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         matrix = True
         C = B
         if not isinstance(B, Matrix_integer_dense):
-            if is_Vector(B):
+            if isinstance(B, Vector):
                 matrix = False
                 C = self.matrix_space(self.nrows(), 1)(B.list())
             else:
@@ -4343,9 +4337,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
         OUTPUT:
 
 
-        -  ``C`` - integer matrix
+        -  ``C`` -- integer matrix
 
-        -  ``d`` - integer denominator
+        -  ``d`` -- integer denominator
 
 
         EXAMPLES::
@@ -4509,9 +4503,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
         OUTPUT:
 
 
-        -  ``C`` - integer matrix
+        -  ``C`` -- integer matrix
 
-        -  ``d`` - integer denominator
+        -  ``d`` -- integer denominator
 
 
         EXAMPLES::
@@ -4640,22 +4634,22 @@ cdef class Matrix_integer_dense(Matrix_dense):
         INPUT:
 
 
-        -  ``self`` - a matrix over the integers.
+        -  ``self`` -- a matrix over the integers.
 
-        - ``solver`` - either ``'iml'`` (default) or ``'flint'``
+        - ``solver`` -- either ``'iml'`` (default) or ``'flint'``
 
         OUTPUT:
 
 
-        -  ``pivots`` - ordered list of integers that give the
+        -  ``pivots`` -- ordered list of integers that give the
            pivot column positions
 
-        -  ``nonpivots`` - ordered list of the nonpivot column
+        -  ``nonpivots`` -- ordered list of the nonpivot column
            positions
 
-        -  ``X`` - matrix with integer entries
+        -  ``X`` -- matrix with integer entries
 
-        -  ``d`` - integer
+        -  ``d`` -- integer
 
 
         If you put standard basis vectors in order at the pivot columns,
@@ -4811,8 +4805,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             if pivots_are_right:
                 break
 
-        #end while
-
+        # end while
 
         # Finally, return the answer.
         return pivots, non_pivots, X, d
@@ -4829,9 +4822,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
         INPUT:
 
 
-        -  ``self`` - a matrix over the integers
+        -  ``self`` -- a matrix over the integers
 
-        -  ``**kwds`` - these are passed onto to the
+        -  ``**kwds`` -- these are passed onto to the
            decomposition over QQ command.
 
 
@@ -4884,19 +4877,19 @@ cdef class Matrix_integer_dense(Matrix_dense):
         INPUT:
 
 
-        -  ``row`` - a vector of degree m over ZZ
+        -  ``row`` -- a vector of degree m over ZZ
 
-        -  ``pivots`` - a list of integers that are the pivot
+        -  ``pivots`` -- a list of integers that are the pivot
            columns of self.
 
 
         OUTPUT:
 
 
-        -  ``matrix`` - a matrix of in reduced row echelon form
+        -  ``matrix`` -- a matrix of in reduced row echelon form
            over ZZ
 
-        -  ``pivots`` - list of integers
+        -  ``pivots`` -- list of integers
 
 
         ALGORITHM: For each pivot column of self, we use the extended
@@ -5086,7 +5079,6 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 k += 1
         sig_free(res_l)
 
-
     cdef int* _hnf_modn_impl(Matrix_integer_dense self, unsigned int det,
             Py_ssize_t nrows, Py_ssize_t ncols) except NULL:
         # NOTE: det should be at most 2^31-1, such that anything modulo
@@ -5187,7 +5179,6 @@ cdef class Matrix_integer_dense(Matrix_dense):
                     T_rows[i][i] = R
                 continue
 
-
             j += 1
             if T_rows[j][i] == 0:
                 continue
@@ -5222,9 +5213,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         INPUT:
 
-        -  ``i`` - integer
+        -  ``i`` -- integer
 
-        -  ``from_list`` - ignored
+        -  ``from_list`` -- ignored
 
         EXAMPLES::
 
@@ -5265,9 +5256,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         INPUT:
 
-        -  ``i`` - integer
+        -  ``i`` -- integer
 
-        -  ``from_list`` - ignored
+        -  ``from_list`` -- ignored
 
         EXAMPLES::
 
@@ -5364,10 +5355,10 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         INPUT:
 
-        - ``right`` - a matrix, vector or free module element, whose
+        - ``right`` -- a matrix, vector or free module element, whose
           dimensions are compatible with ``self``.
 
-        - ``subdivide`` - default: ``False`` - request the resulting
+        - ``subdivide`` -- default: ``False`` -- request the resulting
           matrix to have a new subdivision, separating ``self`` from ``right``.
 
         OUTPUT:
@@ -5449,9 +5440,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         INPUT:
 
-        - ``index`` - integer
+        - ``index`` -- integer
 
-        - ``row`` - a vector
+        - ``row`` -- a vector
 
         EXAMPLES::
 
@@ -5529,7 +5520,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         INPUT:
 
-        -  ``cols`` - list of nonnegative integers
+        -  ``cols`` -- list of nonnegative integers
 
         OUTPUT: matrix
 
@@ -5653,7 +5644,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         INPUT:
 
 
-        -  ``singular`` - Singular interface instance (default:
+        -  ``singular`` -- Singular interface instance (default:
            None)
 
 
@@ -5929,7 +5920,6 @@ cdef class Matrix_integer_dense(Matrix_dense):
         from sage.matrix.compute_J_ideal import ComputeMinimalPolynomials
         return ComputeMinimalPolynomials(self).p_minimal_polynomials(p, s_max)
 
-
     def null_ideal(self, b=0):
         r"""
         Return the `(b)`-ideal of this matrix.
@@ -5969,7 +5959,6 @@ cdef class Matrix_integer_dense(Matrix_dense):
         """
         from sage.matrix.compute_J_ideal import ComputeMinimalPolynomials
         return ComputeMinimalPolynomials(self).null_ideal(b)
-
 
     def integer_valued_polynomials_generators(self):
         r"""

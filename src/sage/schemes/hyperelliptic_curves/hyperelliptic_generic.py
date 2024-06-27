@@ -51,8 +51,13 @@ def is_HyperellipticCurve(C):
         sage: R.<x> = QQ[]; C = HyperellipticCurve(x^3 + x - 1); C
         Hyperelliptic Curve over Rational Field defined by y^2 = x^3 + x - 1
         sage: is_HyperellipticCurve(C)
+        doctest:warning...
+        DeprecationWarning: The function is_HyperellipticCurve is deprecated; use 'isinstance(..., HyperellipticCurve_generic)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_HyperellipticCurve is deprecated; use 'isinstance(..., HyperellipticCurve_generic)' instead.")
     return isinstance(C, HyperellipticCurve_generic)
 
 
