@@ -240,6 +240,10 @@ def is_MPowerSeriesRing(x):
         sage: from sage.rings.multi_power_series_ring import is_MPowerSeriesRing
         sage: M = PowerSeriesRing(ZZ, 4, 'v')
         sage: is_PowerSeriesRing(M)
+        doctest:warning...
+        DeprecationWarning: The function is_PowerSeriesRing is deprecated;
+        use 'isinstance(..., (PowerSeriesRing_generic, LazyPowerSeriesRing) and ....ngens() == 1)' instead.
+        See https://github.com/sagemath/sage/issues/38290 for details.
         False
         sage: is_MPowerSeriesRing(M)
         doctest:warning...
