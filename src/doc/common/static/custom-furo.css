@@ -24,14 +24,51 @@ a.pdf:hover {
 /* Style for announcement banner */
 
 .announcement {
-    background: orange;
+  background: orange;
 }
 
 .announcement-content {
-    color: black;
+  color: black;
 }
 
 .announcement-content a {
+  color: white;
+  text-decoration: none;
+}
+
+/* Style for the floating versions menu */
+
+.sidebar-drawer {
+  z-index: 100;
+}
+
+#versions-menu {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  padding: 5px;
+  font-size: small;
+  opacity: 1;
+  background-color: white;
+  color: blue;
+}
+
+body[data-theme="dark"] {
+  #versions-menu {
+    background-color: black;
     color: white;
-    text-decoration: none;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  body[data-theme="auto"] {  /* the same styles with body[data-theme="dark"] */
+    #versions-menu {
+      background-color: black;
+      color: white;
+    }
+  }
+}
+
+#versions-menu:hover {
+    opacity: 1
 }

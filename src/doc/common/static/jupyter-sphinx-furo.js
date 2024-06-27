@@ -58,6 +58,79 @@ const observer2 = new MutationObserver(callback);
 observer2.observe(document.getElementsByClassName("content")[0], { childList: true, subtree: true });
 
 
+//
+// Version selector
+//
+
+var versionMap = {};
+
+async function fetchVersions() {
+    try {
+        let versions_file = "https://raw.githubusercontent.com/sagemath/sage/develop/src/doc/versions.txt"
+        let response = await fetch(versions_file);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        let text = await response.text();
+        let lines = text.split('\n');
+
+        // Parse the versions.txt file
+        lines.forEach(line => {
+            if (!line.startsWith('#')) { // Ignore the comment line
+                let [ver, url] = line.split(' ');
+                if (ver && url) {
+                    if (!url.startsWith("https://")) {
+                        url = "https://" + url;
+                    }
+                    versionMap[ver] = url;
+                }
+            }
+        });
+    } catch (error) {
+        console.error("Failed to fetch versions.txt file:", error);
+    }
+
+    if (Object.keys(versionMap).length > 0) {
+        // Populate the versions menu
+        let dropdown = document.getElementById("versions-menu");
+        Object.keys(versionMap).forEach(ver => {
+            let option = document.createElement("option");
+            option.value = ver;
+            option.text = ver;
+            dropdown.add(option);
+        });
+    } else {
+        document.getElementById('versions-menu').style.display = 'none';
+    }
+
+    let urlParams = new URLSearchParams(window.location.search);
+    let version = urlParams.get("ver");
+    // Check if the version exists in the map and redirect
+    if (version in versionMap) {
+        let targetUrl = versionMap[version];
+        window.location.href = targetUrl + window.location.pathname;
+    } else {
+        console.error("Version not found in versions.txt.");
+    }
+}
+
+fetchVersions()
+
+// Function to change the version based on versions menu selection
+function changeVersion() {
+    let selectedVersion = document.getElementById("versions-menu").value;
+    if (selectedVersion) {
+       // Check if the version exists in the map and redirect
+        if (selectedVersion in versionMap) {
+            let targetUrl = versionMap[selectedVersion];
+            window.location.href = targetUrl + window.location.pathname;
+        } else {
+            console.error("Version not found in versions.txt.");
+        }
+    }
+}
+
+
 // Listen to the kernel status changes
 // https://thebe.readthedocs.io/en/stable/events.html
 thebelab.on("status", function (evt, data) {

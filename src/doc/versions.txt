@@ -1,0 +1,17 @@
+# This file is used by the version selector of the sage doc
+# and updated by the script src/bin/sage-update-version
+# run by the release manager to prepare a new release
+#
+# The first line is reserved for develop version
+# The other lines are for recent stable releases (at most 10 lines)
+# A line consists of the version and the URL to the doc
+#
+# The sage-update-version script adds a new line for a new stable release
+#
+# Do not edit manually
+dev doc-release--sagemath.netlify.app
+10.4 doc-10-4--sagemath.netlify.app
+10.3 doc-10-3--sagemath.netlify.app
+10.2 doc-10-2--sagemath.netlify.app
+10.1 doc-10-1--sagemath.netlify.app
+10.0 doc-10-0--sagemath.netlify.app
