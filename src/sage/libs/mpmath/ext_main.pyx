@@ -2137,6 +2137,7 @@ cdef class mpf(mpf_base):
 
     def __round__(self, *args):
         return round(float(self), *args)
+
     def __richcmp__(self, other, int op):
         """
         Compares numbers ::
