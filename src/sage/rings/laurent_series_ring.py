@@ -62,11 +62,19 @@ def is_LaurentSeriesRing(x):
         sage: from sage.rings.laurent_series_ring import is_LaurentSeriesRing
         sage: K.<q> = LaurentSeriesRing(QQ)
         sage: is_LaurentSeriesRing(K)
+        doctest:warning...
+        DeprecationWarning: The function is_LaurentSeriesRing is deprecated;
+        use 'isinstance(..., (LaurentSeriesRing, LazyLaurentSeriesRing))' instead.
+        See https://github.com/sagemath/sage/issues/38290 for details.
         True
         sage: L.<z> = LazyLaurentSeriesRing(QQ)
         sage: is_LaurentSeriesRing(L)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38290,
+                "The function is_LaurentSeriesRing is deprecated; "
+                "use 'isinstance(..., (LaurentSeriesRing, LazyLaurentSeriesRing))' instead.")
     from sage.rings.lazy_series_ring import LazyLaurentSeriesRing
     return isinstance(x, (LaurentSeriesRing, LazyLaurentSeriesRing))
 
