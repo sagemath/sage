@@ -108,7 +108,7 @@ fi
 echo "Testing importing of various modules..."
 import_errors=false
 # Issue #31160: We no longer check for readline here.
-test_modules="ctypes math hashlib crypt socket zlib sqlite3 ssl"
+test_modules="ctypes math hashlib socket zlib sqlite3 ssl"
 if [ "$UNAME" = "Darwin" ]; then
     test_modules="$test_modules _scproxy"
 fi

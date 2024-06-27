@@ -1,1 +1,2 @@
-meson-python
+# per https://github.com/scipy/scipy/blob/maintenance/1.13.x/pyproject.toml
+meson-python >=0.15.0
