@@ -688,7 +688,8 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             True
         """
         A = self.base_ring()
-        if (isinstance(P, (LaurentSeriesRing, LaurentPolynomialRing_generic,
+        if (isinstance(P, (LaurentSeriesRing, LazyLaurentSeriesRing,
+                           LaurentPolynomialRing_generic,
                            PowerSeriesRing_generic, LazyPowerSeriesRing,
                            PolynomialRing_general))
                 and P.variable_name() == self.variable_name()
