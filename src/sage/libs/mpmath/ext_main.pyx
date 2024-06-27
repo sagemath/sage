@@ -1815,7 +1815,7 @@ cdef class mpf_base(mpnumber):
             sage: X().to_fixed(30)
             3489660928
         """
-        return libmp.to_fixed(self._mpf_, prec)    
+        return libmp.to_fixed(self._mpf_, prec)
 
     def __getstate__(self):
         return libmp.to_pickable(self._mpf_)
@@ -2137,7 +2137,6 @@ cdef class mpf(mpf_base):
 
     def __round__(self, *args):
         return round(float(self), *args)
-    
     def __richcmp__(self, other, int op):
         """
         Compares numbers ::
