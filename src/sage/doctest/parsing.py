@@ -1082,6 +1082,12 @@ class SageOutputChecker(doctest.OutputChecker):
             got = ld_pie_warning_regex.sub('', got)
             did_fixup = True
 
+        if "R[write to console]" in got:
+            # Supress R warnings
+            r_warning_regex = re.compile(r'R\[write to console\]:.*')
+            got = r_warning_regex.sub('', got)
+            did_fixup = True
+
         return did_fixup, want, got
 
     def output_difference(self, example, got, optionflags):
