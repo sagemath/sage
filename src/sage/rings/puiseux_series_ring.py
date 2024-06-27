@@ -38,6 +38,7 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import('sage.rings.lazy_series_ring', 'LazyPowerSeriesRing')
+lazy_import('sage.rings.power_series_ring', 'PowerSeriesRing_generic')
 
 
 class PuiseuxSeriesRing(UniqueRepresentation, Parent):
