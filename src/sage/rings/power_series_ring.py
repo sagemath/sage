@@ -719,8 +719,9 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         """
         if self.base_ring().has_coerce_map_from(S):
             return True
-        if (isinstance(S, PolynomialRing_general) or is_PowerSeriesRing(S)) and self.base_ring().has_coerce_map_from(S.base_ring()) \
-           and self.variable_names() == S.variable_names():
+        if (isinstance(S, (PolynomialRing_general, PowerSeriesRing_generic, LazyPowerSeriesRing))
+                and self.base_ring().has_coerce_map_from(S.base_ring())
+                and self.variable_names() == S.variable_names()):
             return True
 
     def _element_constructor_(self, f, prec=infinity, check=True):
@@ -954,7 +955,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         """
         try:
             P = x.parent()
-            if is_PowerSeriesRing(P):
+            if isinstance(P, (PowerSeriesRing_generic, LazyPowerSeriesRing)):
                 if P.variable_name() == self.variable_name():
                     if self.has_coerce_map_from(P.base_ring()):
                         return self(x)
@@ -993,7 +994,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         if base_map is None and not codomain.has_coerce_map_from(self.base_ring()):
             return False
         v = im_gens[0]
-        if is_PowerSeriesRing(codomain) or isinstance(codomain, LaurentSeriesRing):
+        if isinstance(codomain, (PowerSeriesRing_generic, LazyPowerSeriesRing, LaurentSeriesRing)):
             try:
                 return v.valuation() > 0 or v.is_nilpotent()
             except NotImplementedError:
