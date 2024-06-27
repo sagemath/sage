@@ -2259,7 +2259,7 @@ class KnotInfoBase(Enum):
             sage: L5a1_0.is_recoverable(unique=False)
             True
         """
-        def recover(mirror, braid):
+        def recover(sym_mut, braid):
             r"""
             Check if ``self`` can be recovered form its associated
             Sage link.
@@ -2268,41 +2268,42 @@ class KnotInfoBase(Enum):
                 l = self.link(self.items.braid_notation)
             else:
                 l = self.link()
-            if mirror:
-                if self.is_amphicheiral():
-                    # no need to test again
-                    return True
+            if sym_mut is SymmetryMutant.mirror_image:
                 l = l.mirror_image()
+            elif sym_mut is SymmetryMutant.reverse:
+                l = l.reverse()
+            elif sym_mut is SymmetryMutant.concordance_inverse:
+                l = l.mirror_image().reservse()
 
-            def check_result(L, m):
+            def check_result(res):
                 r"""
                 Check a single result from ``get_knotinfo``.
                 """
+                if type(res) is tuple:
+                    L, s = res
+                else:
+                    L, s = res.to_knotinfo()[0]
+                if not isinstance(L, KnotInfoBase):
+                    return False
                 if L != self:
                     return False
-                if mirror:
-                    return m is SymmetryMutant.mirror_image
-                else:
-                    return m is SymmetryMutant.itself
+                return s == sym_mut
 
             try:
-                ki = l.get_knotinfo()
-                if type(ki) is tuple:
-                    L, m = ki
-                else:
-                    L, m = l.get_knotinfo().to_knotinfo()[0]
-                if isinstance(L, KnotInfoBase):
-                    return check_result(L, m)
-                elif unique:
-                    return False
+                res = l.get_knotinfo(unique=unique)
             except NotImplementedError:
-                if unique:
-                    return False
-            Llist = l.get_knotinfo(unique=False)
-            return any(check_result(L, m) for (L, m) in Llist)
+                return False
+            if unique:
+                return check_result(res)
+            else:
+                return any(check_result(r) for r in res)
 
         from sage.misc.misc import some_tuples
-        return all(recover(mirror, braid) for mirror, braid in some_tuples([True, False], 2, 4))
+        if SymmetryMutant.unknown.matches(self):
+            sym_muts = [SymmetryMutant.unknown]
+        else:
+            sym_muts = [s for s in SymmetryMutant if s.is_minimal(self)]
+        return all(recover(sym, braid) for sym, braid in some_tuples(sym_muts, 2, 8))
 
     def inject(self, verbose=True):
         """

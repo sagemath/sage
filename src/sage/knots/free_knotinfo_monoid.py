@@ -318,15 +318,14 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid):
                             res_rec = search_composition(max_cr - c, h)
                             if res_rec:
                                 res += [Kgen * k for k in res_rec]
-                res_t = tuple(res)
-                if c > former_cr and res_t:
-                    k = self._check_elements(knot, res_t)
+                if c > former_cr and res:
+                    k = self._check_elements(knot, tuple(res))
                     if k:
                         # matching item found
                         return tuple([k])
                     former_cr = c
 
-            return tuple(sorted(set(res_t)))
+            return tuple(sorted(set(res)))
 
         hp = knot.homfly_polynomial(normalization='vz')
         return search_composition(13, hp)
