@@ -56,7 +56,7 @@ def _span_of_forms_in_weight(forms, weight, prec, stop_dim=None, use_random=Fals
       series (all over the same base ring)
     - ``weight`` -- integer
     - ``prec`` -- integer (less than or equal to the precision of all the
-      forms in ``forms``) -- precision to use in power series computations
+      forms in ``forms``); precision to use in power series computations
     - ``stop_dim`` -- integer; stop as soon as we have enough forms to span
       a submodule of this rank (a saturated one if the base ring is `\ZZ`).
       Ignored if ``use_random`` is ``False``.

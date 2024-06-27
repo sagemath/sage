@@ -6956,7 +6956,7 @@ class GenericGraph(GenericGraph_pyx):
           ``None`` as a weight of `1`. If ``weighted=False`` (default) all edges
           are considered to have a weight of `1`.
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -7118,7 +7118,7 @@ class GenericGraph(GenericGraph_pyx):
           arborescences when the graph is directed.  If set to ``None``, the
           first vertex in the graph is picked.
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -7416,7 +7416,7 @@ class GenericGraph(GenericGraph_pyx):
           * If ``algorithm = None``, the problem is solved using the default
             maximum flow algorithm (see :meth:`flow`)
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -7643,7 +7643,7 @@ class GenericGraph(GenericGraph_pyx):
           the two sets of vertices that are disconnected by the cut. Implies
           ``value_only`` set to ``False``.
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -7772,7 +7772,7 @@ class GenericGraph(GenericGraph_pyx):
           defined by its label (if an edge has no label, `1` is assumed), or to
           compute a cut of minimum cardinality (i.e., edge weights are set to 1)
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -7911,7 +7911,7 @@ class GenericGraph(GenericGraph_pyx):
           two sets of vertices that are disconnected by the cut. This implies
           ``value_only=False``.
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -8073,7 +8073,7 @@ class GenericGraph(GenericGraph_pyx):
           considered as a weight of `1`), or to compute a cycle with the largest
           possible number of edges (i.e., edge weights are set to 1)
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -8401,7 +8401,7 @@ class GenericGraph(GenericGraph_pyx):
             parameters ``s``, ``t`` and ``use_edge_labels``. An error is raised
             if these parameters are set.
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -8820,7 +8820,7 @@ class GenericGraph(GenericGraph_pyx):
           * The backtrack algorithm does not support edge weighting, so setting
             ``use_edge_labels=True`` will force the use of the MILP algorithm.
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -9061,7 +9061,7 @@ class GenericGraph(GenericGraph_pyx):
           (or Hamiltonian cycle). This parameter is considered only if
           ``use_edge_labels == True``.
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -9567,7 +9567,7 @@ class GenericGraph(GenericGraph_pyx):
         - ``algorithm`` -- string (default: ``'tsp'``); one of 'tsp' or
           'backtrack'
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -9692,7 +9692,7 @@ class GenericGraph(GenericGraph_pyx):
           the minimum cardinal of a minimum vertex set, or the ``Set`` of
           vertices of a minimal feedback vertex set
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -9967,7 +9967,7 @@ class GenericGraph(GenericGraph_pyx):
           True``, otherwise, we use ``igraph`` if it is available, ``FF`` if it
           is not available.
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -10259,7 +10259,7 @@ class GenericGraph(GenericGraph_pyx):
         - ``k`` -- integer (default: `6`); when set to a positive integer
           `\geq 2`, search for a `k`-nowhere zero flow
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -10650,7 +10650,7 @@ class GenericGraph(GenericGraph_pyx):
           units of flow even though ``vertex_bound`` is set to ``True``, as this
           parameter is meant to represent topological properties.
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -10903,7 +10903,7 @@ class GenericGraph(GenericGraph_pyx):
 
         - ``pairs`` -- list of pairs of vertices
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -10965,7 +10965,7 @@ class GenericGraph(GenericGraph_pyx):
 
           * ``'LP'``, the flow problem is solved using Linear Programming
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -11031,7 +11031,7 @@ class GenericGraph(GenericGraph_pyx):
 
         - ``s``, ``t`` -- two vertices of the graph
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -15232,7 +15232,7 @@ class GenericGraph(GenericGraph_pyx):
 
         - ``certificate`` -- boolean (default: ``False``)
 
-          - When ``certificate=False``, returns ``True`` is the graph is an
+          - When ``certificate=False``, returns ``True`` if the graph is an
             interval graph and ``False`` otherwise
 
           - When ``certificate=True``, returns either ``(False, None)`` or
@@ -23649,13 +23649,13 @@ class GenericGraph(GenericGraph_pyx):
           otherwise computes the subgroup of the full automorphism group
           respecting the partition.
 
-        - ``edge_labels`` -- default ``False``, otherwise allows
+        - ``edge_labels`` -- (default: ``False``) whether to allow
           only permutations respecting edge labels
 
         - ``order`` -- (default: ``False``) if ``True``, compute the
           order of the automorphism group
 
-        - ``return_group`` -- default ``True``
+        - ``return_group`` -- (default: ``True``)
 
         - ``orbits`` -- returns the orbits of the group acting
           on the vertices of the graph
@@ -24064,7 +24064,7 @@ class GenericGraph(GenericGraph_pyx):
 
         INPUT:
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve

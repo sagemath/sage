@@ -562,7 +562,7 @@ class GraphGenerators:
     - ``sparse`` -- (default: ``True``) whether to use a sparse or dense data
       structure. See the documentation of :class:`~sage.graphs.graph.Graph`.
 
-    - ``copy`` -- boolean; If set to ``True`` (default)
+    - ``copy`` -- boolean; if set to ``True`` (default)
       this method makes copies of the graphs before returning
       them. If set to ``False`` the method returns the graph it
       is working on. The second alternative is faster, but modifying

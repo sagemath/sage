@@ -1528,7 +1528,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         - ``*lists`` -- any instance of ``MIPVariable`` (or one of its
           elements), or lists of them
 
-        - ``convert`` -- ``None`` -- default, ``ZZ``, ``bool``, or ``True``:
+        - ``convert`` -- (default: ``None``) ``ZZ``, ``bool``, or ``True``:
 
           - if ``convert=None`` (default), return all variable values as the
             backend provides them, i.e., as an element of :meth:`base_ring` or a

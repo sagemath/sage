@@ -4487,7 +4487,7 @@ class NefPartition(SageObject, Hashable):
 
         INPUT:
 
-        - ``i`` -- integer; If not given, `\Delta` will be returned
+        - ``i`` -- integer; if not given, `\Delta` will be returned
 
         OUTPUT: a :class:`lattice polytope <LatticePolytopeClass>`
 

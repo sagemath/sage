@@ -1653,9 +1653,9 @@ end_scene""".format(
           With 'tachyon', the resolution (in number of pixels) is 100 times
           ``figsize``. This is ignored for the jmol embedded renderer.
 
-        - ``aspect_ratio`` -- (default: ``'automatic'``) -- aspect
-          ratio of the coordinate system itself. Give [1,1,1] or 1 to make spheres
-          look round.
+        - ``aspect_ratio`` -- (default: ``'automatic'``) aspect
+          ratio of the coordinate system itself; give [1,1,1] or 1 to make
+          spheres look round
 
         - ``frame_aspect_ratio`` -- (default: ``'automatic'``)
           aspect ratio of frame that contains the 3d scene

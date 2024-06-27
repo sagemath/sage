@@ -84,7 +84,7 @@ List of Poset methods
     :meth:`~FinitePoset.is_incomparable_chain_free` | Return ``True`` if the poset is (m+n)-free.
     :meth:`~FinitePoset.is_slender` | Return ``True`` if the poset is slender.
     :meth:`~FinitePoset.is_sperner` | Return ``True`` if the poset is Sperner.
-    :meth:`~FinitePoset.is_join_semilattice` | Return ``True`` is the poset has a join operation.
+    :meth:`~FinitePoset.is_join_semilattice` | Return ``True`` if the poset has a join operation.
     :meth:`~FinitePoset.is_meet_semilattice` | Return ``True`` if the poset has a meet operation.
 
 **Minimal and maximal elements**

@@ -628,7 +628,7 @@ class TransducerGenerators:
         EXAMPLES:
 
         The following binary transducer realizes component-wise
-        addition (this transducer is also available as :meth:`.add`)::
+        addition (this transducer is also available as :meth:`add`)::
 
             sage: import operator
             sage: T = transducers.operator(operator.add, [0, 1])

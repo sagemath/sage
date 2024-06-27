@@ -3696,7 +3696,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         INPUT:
 
-        - ``certificate`` -- boolean; Whether to return a certificate
+        - ``certificate`` -- boolean; whether to return a certificate
 
           * If ``certificate = False`` (default), returns ``True`` or
             ``False`` accordingly.

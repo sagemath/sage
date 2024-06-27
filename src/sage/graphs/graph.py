@@ -2941,7 +2941,7 @@ class Graph(GenericGraph):
             real values ``(min,max)`` corresponding to the values
             `(f(v),g(v))`.
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -3159,7 +3159,7 @@ class Graph(GenericGraph):
           - When set to ``False`` (default), gives a weight of 1 to all the
             edges.
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -3268,7 +3268,7 @@ class Graph(GenericGraph):
          * A function associating to each vertex its associated maximum
            out-degree.
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -3610,7 +3610,7 @@ class Graph(GenericGraph):
 
         INPUT:
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -3709,7 +3709,7 @@ class Graph(GenericGraph):
             that the speed of the above algorithms depends on the size and
             structure of the graph.
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -3843,7 +3843,7 @@ class Graph(GenericGraph):
         - ``hex_colors`` -- boolean (default: ``False``); if ``True``, return a
           dictionary which can easily be used for plotting
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -4163,7 +4163,7 @@ class Graph(GenericGraph):
 
           - when set to ``False``, each edge has weight `1`
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -4355,7 +4355,7 @@ class Graph(GenericGraph):
 
           - ``'LP'`` uses a Linear Program formulation of the matching problem
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -4547,7 +4547,7 @@ class Graph(GenericGraph):
           of the mapping's image (see note below). This is set to ``False`` by
           default.
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -4837,7 +4837,7 @@ class Graph(GenericGraph):
         - ``family`` -- list of lists defining the family `F` (actually, a
           Family of subsets of ``G.vertices(sort=False)``)
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -4963,7 +4963,7 @@ class Graph(GenericGraph):
 
         - ``H`` -- the minor to find for in the current graph
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -6423,7 +6423,7 @@ class Graph(GenericGraph):
 
         - ``H`` -- the topological minor to find in the current graph
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -6726,7 +6726,7 @@ class Graph(GenericGraph):
             (`<http://www.sicmm.org/~konc/maxclique/>`_). Note that the MCQD
             package must be installed.
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -6824,7 +6824,7 @@ class Graph(GenericGraph):
         - ``cliques`` -- an optional list of cliques that can be input if
           already computed. Ignored unless ``algorithm=="networkx"``.
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -7093,7 +7093,7 @@ class Graph(GenericGraph):
           See [ACFLSS04]_ for more details. Note that depending on the instance,
           it might be faster to disable reduction rules.
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -7189,7 +7189,7 @@ class Graph(GenericGraph):
           See [ACFLSS04]_ for more details. Note that depending on the instance,
           it might be faster to disable reduction rules.
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -8705,7 +8705,7 @@ class Graph(GenericGraph):
 
         INPUT:
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve
@@ -9149,7 +9149,7 @@ class Graph(GenericGraph):
             each vertex `v`, require that the sum of the values of the edges
             incident to `v` is 1.
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve

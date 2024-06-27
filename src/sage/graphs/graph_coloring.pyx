@@ -484,7 +484,7 @@ def vertex_coloring(g, k=None, value_only=False, hex_colors=False, solver=None, 
       partition returned is a dictionary whose keys are colors and whose values
       are the color classes (ideal for plotting).
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve
@@ -1003,7 +1003,7 @@ def grundy_coloring(g, k, value_only=True, solver=None, verbose=0,
       coloring)`` is returned, where ``coloring`` is a dictionary associating
       its color (integer) to each vertex of the graph.
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve
@@ -1157,7 +1157,7 @@ def b_coloring(g, k, value_only=True, solver=None, verbose=0,
       coloring)`` is returned, where ``coloring`` is a dictionary associating
       its color (integer) to each vertex of the graph.
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve
@@ -1328,7 +1328,7 @@ def edge_coloring(g, value_only=False, vizing=False, hex_colors=False, solver=No
       partition returned is a dictionary whose keys are colors and whose values
       are the color classes (ideal for plotting)
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve
@@ -1805,7 +1805,7 @@ def linear_arboricity(g, plus_one=None, hex_colors=False, value_only=False,
       - If ``value_only = False``, returns the color classes according to the
         value of ``hex_colors``
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve
@@ -2013,7 +2013,7 @@ def acyclic_edge_coloring(g, hex_colors=False, value_only=False, k=0,
       - If ``k = None``, computes a decomposition using the least possible
         number of colors.
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve

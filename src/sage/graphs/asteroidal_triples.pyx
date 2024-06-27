@@ -78,7 +78,7 @@ def is_asteroidal_triple_free(G, certificate=False):
     asteroidal triples. See the :mod:`module's documentation
     <sage.graphs.asteroidal_triples>` for more details.
 
-    This method returns ``True`` is the graph is AT-free and ``False`` otherwise.
+    This method returns ``True`` if the graph is AT-free and ``False`` otherwise.
 
     INPUT:
 

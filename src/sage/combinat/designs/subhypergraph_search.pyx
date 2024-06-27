@@ -31,20 +31,20 @@ over `|V(H_1)|` points. In particular, two sets of distinct cardinalities
 require the same memory space. A hypergraph is a C struct with the following
 fields:
 
-* ``n,m`` (``int``) -- number of points and edges.
+* ``n``, ``m`` -- (``int``) number of points and edges
 
-* ``limbs`` (``int``) -- number of 64-bits blocks per set.
+* ``limbs`` -- (``int``) number of 64-bits blocks per set
 
-* ``set_space`` (``uint64_t *``) -- address of the memory used to store the
-  sets.
+* ``set_space`` -- (``uint64_t *``) address of the memory used to store the
+  sets
 
-* ``sets`` (``uint64_t **``) -- ``sets[i]`` points toward the ``limbs``
+* ``sets`` -- (``uint64_t **``) ``sets[i]`` points toward the ``limbs``
   blocks encoding set `i`. Note also that ``sets[i][limbs]`` is equal to the
   cardinality of ``set[i]``, so that ``sets`` has length
   ``m*(limbs+1)*sizeof(uint64_t)``.
 
-* ``names`` (``int *``) -- associates an integer 'name' to each of the ``n``
-  points.
+* ``names`` -- (``int *``) associates an integer 'name' to each of the ``n``
+  points
 
 The operations used on this data structure are:
 

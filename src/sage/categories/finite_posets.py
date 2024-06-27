@@ -1676,19 +1676,19 @@ class FinitePosets(CategoryWithAxiom):
             - ``oideal`` -- an order ideal of ``self``, given as an
               iterable
 
-            - ``element_constructor`` (defaults to ``set``) -- a type
+            - ``element_constructor`` -- (defaults to ``set``) a type
               constructor (``set``, ``tuple``, ``list``, ``frozenset``,
               ``iter``, etc.) which is to be applied to the order
-              ideals before they are yielded.
+              ideals before they are yielded
 
             - ``stop`` -- boolean (default: ``True``);
               whether the iterator should stop once it completes its
               cycle (this happens when it is set to ``True``) or go on
-              forever (this happens when it is set to ``False``).
+              forever (this happens when it is set to ``False``)
 
             - ``check`` -- boolean (default: ``True``);
               whether ``oideal`` should be checked for being an
-              order ideal.
+              order ideal
 
             OUTPUT:
 
@@ -1785,7 +1785,7 @@ class FinitePosets(CategoryWithAxiom):
             - ``oideal`` -- an order ideal of ``self``, given as an
               iterable
 
-            - ``element_constructor`` (defaults to ``set``) -- a type
+            - ``element_constructor`` -- (default: ``set``) a type
               constructor (``set``, ``tuple``, ``list``, ``frozenset``,
               ``iter``, etc.) which is to be applied to the order
               ideals before they are yielded.

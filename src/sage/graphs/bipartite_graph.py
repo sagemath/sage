@@ -2082,7 +2082,7 @@ class BipartiteGraph(Graph):
 
           - when set to ``False``, each edge has weight `1`
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed
+        - ``solver`` -- string (default: ``None``); specifies a Mixed
           Integer Linear Programming (MILP) solver to be used. If set
           to ``None``, the default one is used. For more information
           on MILP solvers and which default solver is used, see the
@@ -2274,7 +2274,7 @@ class BipartiteGraph(Graph):
           it might be faster to disable reduction rules.  This parameter is
           currently ignored when ``algorithm == "Konig"``.
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve

@@ -342,7 +342,7 @@ def bezier_path(path, **options):
     - ``thickness`` -- (default: 1)
     - ``linestyle`` -- (default: ``'solid'``) the style of the line, which is one
       of ``'dashed'``, ``'dotted'``, ``'solid'``, ``'dashdot'``, or ``'--'``,
-       ``':'``, ``'-'``, ``'-.'``, respectively
+      ``':'``, ``'-'``, ``'-.'``, respectively
     - ``rgbcolor`` -- (default: (0,0,0))
     - ``zorder`` -- the layer in which to draw
 

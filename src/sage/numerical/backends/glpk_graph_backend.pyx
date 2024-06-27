@@ -729,8 +729,8 @@ cdef class GLPKGraphBackend():
         value of the triple is a dictionary containing the following edge
         parameters:
 
-            * ``low`` -- The minimum flow through the edge
-            * ``cap`` -- The maximum capacity of the edge
+            * ``low`` -- the minimum flow through the edge
+            * ``cap`` -- the maximum capacity of the edge
             * ``cost`` -- the cost of transporting one unit through the edge
             * ``x`` -- the actual flow through the edge after solving
 
@@ -902,7 +902,7 @@ cdef class GLPKGraphBackend():
 
         - ``u`` -- the name (as string) of the tail vertex of the edge
         - ``v`` -- the name (as string) of the tail vertex of the edge
-        - ``params`` -- ``params`` -- an optional dictionary containing the edge
+        - ``params`` -- an optional dictionary containing the edge
           parameters (see :meth:`add_edge`). If this parameter
           is not provided, all edges connecting ``u`` and ``v`` are deleted.
           Otherwise only edges with matching parameters are deleted.

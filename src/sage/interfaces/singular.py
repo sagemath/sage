@@ -2320,7 +2320,7 @@ class SingularFunctionElement(FunctionElement):
 
 def is_SingularElement(x):
     r"""
-    Return ``True`` is ``x`` is of type :class:`SingularElement`.
+    Return ``True`` if ``x`` is of type :class:`SingularElement`.
 
     This function is deprecated; use :func:`isinstance`
     (of :class:`sage.interfaces.abc.SingularElement`) instead.

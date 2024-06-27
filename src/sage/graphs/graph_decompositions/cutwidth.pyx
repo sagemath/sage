@@ -286,7 +286,7 @@ def cutwidth(G, algorithm='exponential', cut_off=0, solver=None, verbose=False,
       solution with width at most ``cut_off`` is found, if any. If this bound
       cannot be reached, the best solution found is returned.
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve
@@ -616,7 +616,7 @@ def cutwidth_MILP(G, lower_bound=0, solver=None, verbose=0,
       optimal. If the given bound is too high, the algorithm might not be able
       to find a feasible solution.
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve

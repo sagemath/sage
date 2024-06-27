@@ -2728,10 +2728,10 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
 
     - ``pegs`` -- the number of pegs in the puzzle, 2 or greater
     - ``disks`` -- the number of disks in the puzzle, 1 or greater
-    - ``labels`` -- (default: ``True``,) if ``True`` the graph contains
+    - ``labels`` -- (default: ``True``) if ``True`` the graph contains
       more meaningful labels, see explanation below.  For large instances,
       turn off labels for much faster creation of the graph.
-    - ``positions`` -- (default: ``True``,) if ``True`` the graph contains
+    - ``positions`` -- (default: ``True``) if ``True`` the graph contains
       layout information.  This creates a planar layout for the case
       of three pegs.  For large instances, turn off layout information
       for much faster creation of the graph.

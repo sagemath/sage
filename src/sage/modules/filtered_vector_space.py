@@ -1126,8 +1126,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
         INPUT:
 
-        - ``n`` -- integer; Exterior product of how many copies of
-          ``self``
+        - ``n`` -- integer; exterior product of how many copies of ``self``
 
         OUTPUT:
 

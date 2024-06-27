@@ -1189,7 +1189,7 @@ class InteractiveLPProblem(SageObject):
         r"""
         Check if ``self`` is bounded.
 
-        OUTPUT: ``True`` is ``self`` is bounded, ``False`` otherwise
+        OUTPUT: ``True`` if ``self`` is bounded, ``False`` otherwise
 
         EXAMPLES::
 
@@ -1296,7 +1296,7 @@ class InteractiveLPProblem(SageObject):
         - anything that can be interpreted as a valid solution for
           this problem, i.e. a sequence of values for all decision variables
 
-        OUTPUT: ``True`` is the given solution is optimal, ``False`` otherwise
+        OUTPUT: ``True`` if the given solution is optimal, ``False`` otherwise
 
         EXAMPLES::
 

@@ -344,7 +344,7 @@ class CharacteristicCohomologyClassRingElement(IndexedFreeModuleElement):
             self._latex_name = self._name
         else:
             self._latex_name = latex_name
-        self._mixed_forms = {}  # dict. of characteristic forms of ``self``
+        self._mixed_forms = {}  # dict. of characteristic forms of self
                                 # (key: bundle connection)
         super().__init__(parent, x)
 

@@ -507,7 +507,7 @@ def pathwidth(self, k=None, certificate=False, algorithm='BAB', verbose=False,
       number of stored prefixes used to prevent using too much memory. This
       parameter is used only when ``algorithm=="BAB"``.
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve
@@ -737,7 +737,7 @@ def vertex_separation(G, algorithm='BAB', cut_off=None, upper_bound=None, verbos
       number of stored prefixes used to prevent using too much memory. This
       parameter is used only when ``algorithm=="BAB"``.
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve
@@ -1283,7 +1283,7 @@ def _vertex_separation_MILP_formulation(G, integrality=False, solver=None):
       no impact on the validity of the solution, but it is sometimes faster to
       solve the problem using binary variables only.
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve
@@ -1387,7 +1387,7 @@ def vertex_separation_MILP(G, integrality=False, solver=None, verbose=0,
       no impact on the validity of the solution, but it is sometimes faster to
       solve the problem using binary variables only.
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve

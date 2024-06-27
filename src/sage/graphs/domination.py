@@ -263,7 +263,7 @@ def dominating_sets(g, k=1, independent=False, total=False, connected=False,
     - ``connected`` -- boolean (default: ``False``); when ``True``, computes
       connected dominating sets (see :wikipedia:`Connected_dominating_set`)
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve
@@ -519,7 +519,7 @@ def dominating_set(g, k=1, independent=False, total=False, connected=False, valu
       cardinality of the computed dominating set, or to return its list of
       vertices (default)
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve
@@ -1298,7 +1298,7 @@ def maximum_leaf_number(G, solver=None, verbose=0, integrality_tolerance=1e-3):
 
     - ``G`` -- a Graph
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve

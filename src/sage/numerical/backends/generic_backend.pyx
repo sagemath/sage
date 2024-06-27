@@ -168,7 +168,7 @@ cdef class GenericBackend:
     @classmethod
     def _test_add_variables(cls, tester=None, **options):
         """
-        Run tests on the method :meth:`.add_linear_constraints`.
+        Run tests on the method :meth:`add_linear_constraints`.
 
         TESTS::
 
@@ -533,7 +533,7 @@ cdef class GenericBackend:
     @classmethod
     def _test_add_linear_constraint_vector(cls, tester=None, **options):
         """
-        Run tests on the method :meth:`.add_linear_constraint_vector`.
+        Run tests on the method :meth:`add_linear_constraint_vector`.
 
         TESTS::
 
@@ -601,7 +601,7 @@ cdef class GenericBackend:
     @classmethod
     def _test_add_col(cls, tester=None, **options):
         """
-        Run tests on the method :meth:`.add_col`.
+        Run tests on the method :meth:`add_col`.
 
         TESTS::
 
@@ -655,7 +655,7 @@ cdef class GenericBackend:
     @classmethod
     def _test_add_linear_constraints(cls, tester=None, **options):
         """
-        Run tests on the method :meth:`.add_linear_constraints`.
+        Run tests on the method :meth:`add_linear_constraints`.
 
         TESTS::
 

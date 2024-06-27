@@ -1534,7 +1534,7 @@ class DiGraph(GenericGraph):
           use constraint generation when solving the Mixed Integer Linear
           Program.
 
-        - ``solver`` -- string (default: ``None``); specify a Mixed Integer
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
           default one is used. For more information on MILP solvers and which
           default solver is used, see the method :meth:`solve

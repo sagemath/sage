@@ -1024,7 +1024,7 @@ def edge_connectivity(G,
       - When set to ``True``, also returns the two sets of vertices that are
         disconnected by the cut. Implies ``value_only=False``.
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve
@@ -1342,7 +1342,7 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
       connectivity of the (di)graph is larger or equal to `k`. The method thus
       outputs a boolean only.
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve
@@ -2085,7 +2085,7 @@ def cleave(G, cut_vertices=None, virtual_edges=True, solver=None, verbose=0,
       edges to the sides of the cut or not. A virtual edge is an edge between a
       pair of vertices of the cut that are not connected by an edge in ``G``.
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve
@@ -2306,7 +2306,7 @@ def spqr_tree(G, algorithm='Hopcroft_Tarjan', solver=None, verbose=0,
 
       - ``'cleave'`` -- using method :meth:`~sage.graphs.connectivity.cleave`
 
-    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
       used, see the method :meth:`solve

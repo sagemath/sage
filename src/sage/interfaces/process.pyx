@@ -186,7 +186,7 @@ def terminate(sp, interval=1, signals=[signal.SIGTERM, signal.SIGKILL]):
     INPUT:
 
     - ``sp`` -- a `subprocess.Popen` instance
-    - ``interval`` -- (float, default 1) interval in seconds between
+    - ``interval`` -- float (default: 1); interval in seconds between
       termination attempts
     - ``signals`` -- (list, default [signal.SIGTERM, signal.SIGKILL]) the
       signals to send the process in order to terminate it

@@ -62,7 +62,7 @@ class p_iter_fork():
     INPUT:
 
     - ``ncpus`` -- the maximal number of simultaneous subprocesses to spawn
-    - ``timeout`` -- (float, default: 0) wall time in seconds until a
+    - ``timeout`` -- float (default: 0); wall time in seconds until a
       subprocess is automatically killed
     - ``verbose`` -- boolean (default: ``False``); whether to print anything
       about what the iterator does (e.g., killing subprocesses)

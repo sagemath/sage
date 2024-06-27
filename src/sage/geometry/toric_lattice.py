@@ -1659,7 +1659,7 @@ class ToricLattice_quotient(FGP_Module_class):
         r"""
         Check if ``self`` is torsion-free.
 
-        OUTPUT: ``True`` is ``self`` has no torsion and ``False`` otherwise
+        OUTPUT: ``True`` if ``self`` has no torsion and ``False`` otherwise
 
         EXAMPLES::
 

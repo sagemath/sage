@@ -338,7 +338,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             space
           * ``irrational_primal`` -- boolean; triangulate in the dual space,
             signed-decompose in the primal space using irrationalization.
-          * ``irrational_all_primal`` -- boolean; Triangulate and signed-decompose
+          * ``irrational_all_primal`` -- boolean; triangulate and signed-decompose
             in the primal space using irrationalization.
           * ``maxdet`` -- integer; decompose down to an index (determinant) of
             ``maxdet`` instead of index 1 (unimodular cones).

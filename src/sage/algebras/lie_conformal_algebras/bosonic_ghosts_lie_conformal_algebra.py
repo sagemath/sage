@@ -47,7 +47,7 @@ class BosonicGhostsLieConformalAlgebra(GradedLieConformalAlgebra):
       algebra.
     - ``names`` -- list of ``str``; alternative names for the
       generators
-    - ``index_set`` -- an enumerated set; An indexing set for the
+    - ``index_set`` -- an enumerated set; an indexing set for the
       generators
 
     OUTPUT:
