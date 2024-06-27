@@ -379,10 +379,10 @@ class PuiseuxSeriesRing(UniqueRepresentation, Parent):
 
         # Laurent series rings, power series rings, and polynomial rings with
         # the same variable name and the base rings are coercible
-        if ((isinstance(P, PuiseuxSeriesRing) or isinstance(P, LaurentSeriesRing) or
-             is_PowerSeriesRing(P)) and
-                P.variable_name() == self.variable_name() and
-                A.has_coerce_map_from(P.base_ring())):
+        if (isinstance(P, (PuiseuxSeriesRing, LaurentSeriesRing,
+                           PowerSeriesRing_generic, LazyPowerSeriesRing))
+                and P.variable_name() == self.variable_name()
+                and A.has_coerce_map_from(P.base_ring())):
             return True
 
         # # other Puiseux series rings with the same variable name and
