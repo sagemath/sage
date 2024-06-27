@@ -175,6 +175,8 @@ except ImportError:
     LaurentSeriesRing = ()
     LaurentSeries = ()
 
+lazy_import('sage.rings.lazy_series_ring', 'LazyPowerSeriesRing')
+
 
 def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
                     sparse=False, default_prec=None, order='negdeglex',
@@ -484,7 +486,6 @@ def is_PowerSeriesRing(R):
     deprecation(38290,
                 "The function is_PowerSeriesRing is deprecated; "
                 "use 'isinstance(..., (PowerSeriesRing_generic, LazyPowerSeriesRing) and ....ngens() == 1)' instead.")
-    from sage.rings.lazy_series_ring import LazyPowerSeriesRing
     if isinstance(R, (PowerSeriesRing_generic, LazyPowerSeriesRing)):
         return R.ngens() == 1
     else:
