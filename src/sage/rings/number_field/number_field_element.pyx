@@ -104,7 +104,7 @@ def is_NumberFieldElement(x):
         sage: is_NumberFieldElement(2)
         doctest:warning...
         DeprecationWarning: is_NumberFieldElement is deprecated;
-        use isinstance(..., sage.structure.element.NumberFieldElement) instead
+        use isinstance(..., sage.rings.number_field.number_field_element_base.NumberFieldElement_base) instead
         See https://github.com/sagemath/sage/issues/34931 for details.
         False
         sage: x = polygen(ZZ, 'x')
@@ -115,7 +115,7 @@ def is_NumberFieldElement(x):
     from sage.misc.superseded import deprecation
     deprecation(34931,
                 'is_NumberFieldElement is deprecated; '
-                'use isinstance(..., sage.structure.element.NumberFieldElement) instead')
+                'use isinstance(..., sage.rings.number_field.number_field_element_base.NumberFieldElement_base) instead')
     return isinstance(x, NumberFieldElement)
 
 
