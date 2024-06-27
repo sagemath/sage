@@ -1500,6 +1500,21 @@ cdef class MatrixArgs:
             Traceback (most recent call last):
             ...
             NameError: name 'a' is not defined
+
+        Check that :issue:`38221` is fixed::
+
+            sage: # needs sage.groups
+            sage: G = CyclicPermutationGroup(7)
+            sage: R = GF(2)
+            sage: A = G.algebra(R)
+            sage: matrix(A, 3, 3, A.zero())
+            [0 0 0]
+            [0 0 0]
+            [0 0 0]
+            sage: matrix(A, 3, 3, A.one())
+            [()  0  0]
+            [ 0 ()  0]
+            [ 0  0 ()]
         """
         # Check basic Python types. This is very fast, so it doesn't
         # hurt to do these first.
@@ -1524,6 +1539,8 @@ cdef class MatrixArgs:
         cdef bint is_elt = isinstance(self.entries, Element)
         if is_elt and isinstance(self.entries, Matrix):
             return MA_ENTRIES_MATRIX
+        if is_elt and self.base is not None and self.entries.parent() == self.base:
+            return MA_ENTRIES_SCALAR
         t = type(self.entries)
         try:
             f = t._matrix_
