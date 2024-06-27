@@ -8,7 +8,7 @@ Images are produced by calling the ``save_image`` method on each input
 object, creating a sequence of PNG files.
 These are then assembled to various target formats using different
 tools.
-In particular, the ``convert`` program from ImageMagick_ can be used to
+In particular, the ``magick/convert`` program from ImageMagick_ can be used to
 generate an animated GIF file.
 FFmpeg_ (with the command line program ``ffmpeg``) provides support for
 various video formats, but also an alternative method of generating
@@ -20,7 +20,7 @@ alternative which works without any extra dependencies.
 
     Note that ``ImageMagick`` and ``FFmpeg`` are not included with Sage, and
     must be installed by the user.  On unix systems, type ``which
-    convert`` at a command prompt to see if ``convert`` (part of the
+    magick`` at a command prompt to see if ``magick`` (part of the
     ``ImageMagick`` suite) is installed.  If it is, you will be given its
     location.  Similarly, you can check for ``ffmpeg`` with ``which
     ffmpeg``.  See the websites of ImageMagick_ or FFmpeg_ for
@@ -567,11 +567,11 @@ class Animation(WithEqualityById, SageObject):
         objects in self.
 
         This method will only work if either (a) the ImageMagick
-        software suite is installed, i.e., you have the ``convert``
+        software suite is installed, i.e., you have the ``magick/convert``
         command or (b) ``ffmpeg`` is installed.  See the web sites of
         ImageMagick_ and FFmpeg_ for more details.  By default, this
-        produces the gif using ``convert`` if it is present.  If this
-        can't find ``convert`` or if ``use_ffmpeg`` is True, then it
+        produces the gif using Imagemagick if it is present.  If this
+        can't find ImageMagick or if ``use_ffmpeg`` is True, then it
         uses ``ffmpeg`` instead.
 
         INPUT:
@@ -589,7 +589,7 @@ class Animation(WithEqualityById, SageObject):
            print the path to the saved file
 
         - ``use_ffmpeg`` -- boolean (default: ``False``); if True, use
-          'ffmpeg' by default instead of 'convert'.
+          'ffmpeg' by default instead of ImageMagick
 
         If ``savefile`` is not specified: in notebook mode, display the
         animation; otherwise, save it to a default file name.
@@ -651,7 +651,7 @@ class Animation(WithEqualityById, SageObject):
         the frames in ``self``.
 
         This method will only work if ``imagemagick`` is installed (command
-        ``convert``). See https://www.imagemagick.org for information
+        ``magick`` or ``convert``). See https://www.imagemagick.org for information
         about ``imagemagick``.
 
         INPUT:
@@ -690,12 +690,12 @@ class Animation(WithEqualityById, SageObject):
            like this::
 
               FeatureNotPresentError: imagemagick is not available.
-              Executable 'convert' not found on PATH.
+              Executable 'magick' not found on PATH.
               Further installation instructions might be available at
               https://www.imagemagick.org/.
 
         """
-        from sage.features.imagemagick import ImageMagick
+        from sage.features.imagemagick import ImageMagick, Magick
         ImageMagick().require()
 
         if not savefile:
@@ -706,7 +706,7 @@ class Animation(WithEqualityById, SageObject):
 
         # running the command
         directory = self.png()
-        cmd = ['convert', '-dispose', 'Background',
+        cmd = [Magick().executable, '-dispose', 'Background',
                 '-delay', '%s' % int(delay), '-loop', '%s' % int(iterations),
                 '*.png', savefile]
         from subprocess import run
@@ -721,7 +721,7 @@ class Animation(WithEqualityById, SageObject):
                                         result.stderr.strip(),
                                         result.stdout.strip()))
             raise OSError("Error: Cannot generate GIF animation. "
-                    "The convert command (ImageMagick) is present but does "
+                    "The magick/convert command (ImageMagick) is present but does "
                     "not seem to be functional. Verify that the objects "
                     "passed to the animate command can be saved in PNG "
                     "image format. "
@@ -825,7 +825,7 @@ class Animation(WithEqualityById, SageObject):
            Currently this is done using an animated gif, though this
            could change in the future. This requires that either
            ffmpeg or the ImageMagick suite (in particular, the
-           ``convert`` command) is installed.
+           ``magick/convert`` command) is installed.
 
         See also the :meth:`ffmpeg` method.
 
@@ -1121,7 +1121,7 @@ class Animation(WithEqualityById, SageObject):
            print the path to the saved file
 
         - ``use_ffmpeg`` -- boolean (default: ``False``); if True, use
-          'ffmpeg' by default instead of 'convert' when creating GIF
+          'ffmpeg' by default instead of ImageMagick when creating GIF
           files.
 
         If filename is None, then in notebook mode, display the

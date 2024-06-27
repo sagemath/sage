@@ -275,7 +275,7 @@ def has_ffmpeg():
 
 def has_imagemagick():
     """
-    Test if ImageMagick (command convert) is available.
+    Test if ImageMagick (command magick or convert) is available.
 
     EXAMPLES::
 

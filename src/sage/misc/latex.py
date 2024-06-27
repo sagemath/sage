@@ -681,14 +681,14 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
     else:
         raise ValueError("Unsupported LaTeX engine.")
 
-    # if png output + latex, check to see if dvipng or convert is installed.
+    # if png output + latex, check to see if dvipng or magick/convert is installed.
     from sage.features.imagemagick import ImageMagick
     from sage.features.dvipng import dvipng
     if png:
         if ((not engine or engine == "latex")
                 and not (dvipng().is_present() or ImageMagick().is_present())):
             print()
-            print("Error: neither dvipng nor convert (from the ImageMagick suite)")
+            print("Error: neither dvipng nor magick/convert (from the ImageMagick suite)")
             print("appear to be installed. Displaying LaTeX, PDFLaTeX output")
             print("requires at least one of these programs, so please install")
             print("and try again.")
@@ -696,7 +696,7 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
             print("Go to http://sourceforge.net/projects/dvipng/ and")
             print("http://www.imagemagick.org to download these programs.")
             return "Error"
-        # if png output + [pdf|xe|lua]latex, check to see if convert is installed.
+        # if png output + [pdf|xe|lua]latex, check to see if magick/convert is installed.
         elif engine in ["pdflatex", "xelatex", "lualatex"]:
             ImageMagick().require()
     # check_validity: check to see if the dvi file is okay by trying
@@ -705,7 +705,7 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
     # function.
     #
     # thus if not png output, check validity of dvi output if dvipng
-    # or convert is installed.
+    # or magick/convert is installed.
     else:
         check_validity = dvipng().is_present()
     # set up filenames, other strings:
@@ -733,10 +733,11 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
 
     ps2pdf = ['ps2pdf', filename + '.ps']
 
-    # We seem to need a larger size when using convert compared to
+    # We seem to need a larger size when using magick/convert compared to
     # when using dvipng:
     density = int(1.4 * density / 1.3)
-    convert = ['convert', '-density',
+    from sage.features.imagemagick import Magick
+    magick = [Magick().executable, '-density',
                '{0}x{0}'.format(density), '-trim', filename + '.' + suffix,
                filename + '.png']
 
@@ -754,10 +755,10 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
         if debug:
             print(lt)
             if png:
-                print(convert)
+                print(magick)
         e = subpcall(lt)
         if png:
-            e = e and subpcall(convert)
+            e = e and subpcall(magick)
     else:  # latex
         if (png or check_validity):
             if dvipng().is_present():
@@ -768,19 +769,19 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
                 dvipng_error = not os.path.exists(os.path.join(base, filename + '.png'))
                 # If there is no png file, then either the latex
                 # process failed or dvipng failed.  Assume that dvipng
-                # failed, and try running dvips and convert.  (If the
-                # latex process failed, then dvips and convert will
+                # failed, and try running dvips and magick/convert.  (If the
+                # latex process failed, then dvips and magick/convert will
                 # fail also, so we'll still catch the error.)
                 if dvipng_error:
                     if png:
                         if ImageMagick().is_present():
                             if debug:
-                                print("'dvipng' failed; trying 'convert' instead...")
+                                print("'dvipng' failed; trying 'magick/convert' instead...")
                                 print(dvips)
-                                print(convert)
-                            e = subpcall(dvips) and subpcall(convert)
+                                print(magick)
+                            e = subpcall(dvips) and subpcall(magick)
                         else:
-                            print("Error: 'dvipng' failed and 'convert' is not installed.")
+                            print("Error: 'dvipng' failed and 'magick/convert' is not installed.")
                             return "Error: dvipng failed."
                     else:  # not png, i.e., check_validity
                         return_suffix = "pdf"
@@ -796,12 +797,12 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
                                 print("error running dvips and ps2pdf; trying pdflatex instead...")
                                 print(pdflt)
                             e = subpcall(pdflt)
-            else:  # do not have dvipng, so must have convert.  run latex, dvips, convert.
+            else:  # do not have dvipng, so must have magick/convert.  run latex, dvips, magick/convert.
                 if debug:
                     print(lt)
                     print(dvips)
-                    print(convert)
-                e = subpcall(lt) and subpcall(dvips) and subpcall(convert)
+                    print(magick)
+                e = subpcall(lt) and subpcall(dvips) and subpcall(magick)
     if not e:
         print("An error occurred.")
         try:
@@ -902,7 +903,7 @@ class Latex(LatexCall):
 
     .. WARNING::
 
-       You must have dvipng (or dvips and convert) installed
+       You must have dvipng (or dvips and magick/convert) installed
        on your operating system, or this command will not work.
 
     EXAMPLES::
@@ -1013,9 +1014,9 @@ class Latex(LatexCall):
         .. WARNING::
 
             When using ``'latex'`` (the default), you must have ``dvipng`` (or
-            ``dvips`` and ``convert``) installed on your operating system, or
+            ``dvips`` and ``magick/convert``) installed on your operating system, or
             this command will not work.  When using ``'pdflatex'``, ``'xelatex'``
-            or ``'lualatex'``, you must have ``convert`` installed.
+            or ``'lualatex'``, you must have ``magick/convert`` installed.
 
         OUTPUT:
 

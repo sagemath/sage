@@ -60,7 +60,7 @@ As a broad overview, the following options are supported:
   the four compass points
 
 To use LaTeX in Sage you of course need a working TeX installation and it will
-work best if you have the ``dvipng`` and ``convert`` utilities.  For graphs you
+work best if you have the ``dvipng`` and ``magick`` utilities.  For graphs you
 need the ``tkz-graph.sty`` and ``tkz-berge.sty`` style files of the tkz-graph
 package.  TeX, dvipng, and convert should be widely available through package
 managers or installers.  You may need to install the tkz-graph style files in
@@ -69,7 +69,7 @@ Primary locations for these programs are:
 
 - TeX: http://ctan.org/
 - dvipng: http://sourceforge.net/projects/dvipng/
-- convert: http://www.imagemagick.org (the ImageMagick suite)
+- magick: http://www.imagemagick.org (the ImageMagick suite)
 - tkz-graph: https://www.ctan.org/pkg/tkz-graph
 
 Customizing the output is accomplished in several ways.  Suppose ``g`` is a
