@@ -199,6 +199,10 @@ cdef extern from "cmr/matroid.h":
     CMR_ERROR CMRminorCreate(CMR* cmr, CMR_MINOR** pminor, size_t numPivots, CMR_SUBMAT* submatrix, CMR_MINOR_TYPE type)
     CMR_ERROR CMRminorFree(CMR* cmr, CMR_MINOR** pminor)
     CMR_MINOR_TYPE CMRminorType(CMR_MINOR* minor)
+    size_t CMRminorNumPivots(CMR_MINOR* minor)
+    size_t* CMRminorPivotRows(CMR_MINOR* minor)
+    size_t* CMRminorPivotColumns(CMR_MINOR* minor)
+    CMR_SUBMAT* CMRminorSubmatrix(CMR_MINOR* minor)
     # CMR_ERROR CMRminorWriteToFile(CMR* cmr, CMR_MINOR* minor, size_t numRows, size_t numColumns, const char* fileName)
 
 cdef extern from "cmr/separation.h":
@@ -286,10 +290,10 @@ cdef extern from "cmr/series_parallel.h":
     bint CMRspIsCopy(CMR_SP_REDUCTION reduction)
     bint CMRspIsValid(CMR_SP_REDUCTION reduction)
 
-    CMR_ERROR CMRtestBinarySeriesParallel(CMR* cmr, CMR_CHRMAT* matrix, bool* pisSeriesParallel, CMR_SP_REDUCTION* reductions, size_t* pnumReductions, CMR_SUBMAT** preducedSubmatrix, CMR_SUBMAT** pviolatorSubmatrix, CMR_SP_STATISTICS* stats, double timeLimit)
-    CMR_ERROR CMRtestTernarySeriesParallel(CMR* cmr, CMR_CHRMAT* matrix, bool* pisSeriesParallel, CMR_SP_REDUCTION* reductions, size_t* pnumReductions, CMR_SUBMAT** preducedSubmatrix, CMR_SUBMAT** pviolatorSubmatrix, CMR_SP_STATISTICS* stats, double timeLimit)
-    CMR_ERROR CMRdecomposeBinarySeriesParallel(CMR* cmr, CMR_CHRMAT* matrix, bool* pisSeriesParallel, CMR_SP_REDUCTION* reductions, size_t maxNumReductions, size_t* pnumReductions, CMR_SUBMAT** preducedSubmatrix, CMR_SUBMAT** pviolatorSubmatrix, CMR_SEPA** pseparation, CMR_SP_STATISTICS* stats, double timeLimit)
-    CMR_ERROR CMRdecomposeTernarySeriesParallel(CMR* cmr, CMR_CHRMAT* matrix, bool* pisSeriesParallel, CMR_SP_REDUCTION* reductions, size_t maxNumReductions, size_t* pnumReductions, CMR_SUBMAT** preducedSubmatrix, CMR_SUBMAT** pviolatorSubmatrix, CMR_SEPA** pseparation, CMR_SP_STATISTICS* stats, double timeLimit)
+    CMR_ERROR CMRspTestBinary(CMR* cmr, CMR_CHRMAT* matrix, bool* pisSeriesParallel, CMR_SP_REDUCTION* reductions, size_t* pnumReductions, CMR_SUBMAT** preducedSubmatrix, CMR_SUBMAT** pviolatorSubmatrix, CMR_SP_STATISTICS* stats, double timeLimit)
+    CMR_ERROR CMRspTestTernary(CMR* cmr, CMR_CHRMAT* matrix, bool* pisSeriesParallel, CMR_SP_REDUCTION* reductions, size_t* pnumReductions, CMR_SUBMAT** preducedSubmatrix, CMR_SUBMAT** pviolatorSubmatrix, CMR_SP_STATISTICS* stats, double timeLimit)
+    CMR_ERROR CMRspDecomposeBinary(CMR* cmr, CMR_CHRMAT* matrix, bool* pisSeriesParallel, CMR_SP_REDUCTION* reductions, size_t maxNumReductions, size_t* pnumReductions, CMR_SUBMAT** preducedSubmatrix, CMR_SUBMAT** pviolatorSubmatrix, CMR_SEPA** pseparation, CMR_SP_STATISTICS* stats, double timeLimit)
+    CMR_ERROR CMRspDecomposeTernary(CMR* cmr, CMR_CHRMAT* matrix, bool* pisSeriesParallel, CMR_SP_REDUCTION* reductions, size_t maxNumReductions, size_t* pnumReductions, CMR_SUBMAT** preducedSubmatrix, CMR_SUBMAT** pviolatorSubmatrix, CMR_SEPA** pseparation, CMR_SP_STATISTICS* stats, double timeLimit)
 
 cdef extern from "cmr/network.h":
 
@@ -513,7 +517,7 @@ cdef extern from "cmr/ctu.h":
 
     CMR_ERROR CMRstatsComplementTotalUnimodularityInit(CMR_CTU_STATS* stats)
     # CMR_ERROR CMRstatsComplementTotalUnimodularityPrint(FILE* stream, CMR_CTU_STATS* stats, const char* prefix)
-    CMR_ERROR CMRcomplementRowColumn(CMR* cmr, CMR_CHRMAT* matrix, size_t complementRow, size_t complementColumn, CMR_CHRMAT** presult)
+    CMR_ERROR CMRctuComplementRowColumn(CMR* cmr, CMR_CHRMAT* matrix, size_t complementRow, size_t complementColumn, CMR_CHRMAT** presult)
     CMR_ERROR CMRctuTest(CMR* cmr, CMR_CHRMAT* matrix, bool* pisComplementTotallyUnimodular, size_t* pcomplementRow, size_t* pcomplementColumn, CMR_CTU_PARAMS* params, CMR_CTU_STATS* stats, double timeLimit)
 
 

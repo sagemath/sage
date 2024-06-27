@@ -862,6 +862,14 @@ cdef class DecompositionNode(SageObject):
     def _create_minor(self, index):
         cdef CMR_MINOR * minor = CMRseymourMinor(self._dec, index)
         cdef CMR_MINOR_TYPE typ = CMRminorType(minor)
+        cdef size_t npivots = CMRminorNumPivots(minor)
+        cdef size_t *pivot_rows = CMRminorPivotRows(minor)
+        cdef size_t *pivot_columns = CMRminorPivotColumns(minor)
+        cdef CMR_SUBMAT *submat = CMRminorSubmatrix(minor)
+
+        pivots_tuple = tuple((pivot_rows[i], pivot_columns[i]) for i in range(npivots))
+        submat_tuple = (tuple(submat.rows[i] for i in range(submat.numRows)),
+                            tuple(submat.columns[i] for i in range(submat.numColumns)))
         import sage.matroids.matroids_catalog as matroids
         from sage.graphs.graph_generators import graphs
         from sage.matroids.matroid import Matroid
@@ -881,22 +889,41 @@ cdef class DecompositionNode(SageObject):
         if typ == CMR_MINOR_TYPE_K33_DUAL:
             return matroids.catalog.K33dual()
         if typ == CMR_MINOR_TYPE_DETERMINANT:
-            return '|det| = 2 submatrix'
+            return '|det| = 2 submatrix', submat_tuple
         if typ == CMR_MINOR_TYPE_ENTRY:
             return 'bad entry'
         if typ == CMR_MINOR_TYPE_CUSTOM:
             return 'custom'
 
-    def _minors(self):
+    def minors(self):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 9, sparse=True),
+            ....:                           [[1, 1, 0, 0, 0, 0, 0, 0, 0],
+            ....:                            [1, 1, 1, 0, 0, 0, 0, 0, 0],
+            ....:                            [1, 0, 0, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 1, 1, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 0, 1, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 0, 0, 0, 1, 1, 1, 0, 0],
+            ....:                            [0, 0, 0, 0, 1, 1, 0, 1, 0],
+            ....:                            [0, 0, 0, 0, 0, 1, 0, 1, 1],
+            ....:                            [0, 0, 0, 0, 0, 0, 1, 1, 1]])
+            sage: from sage.matrix.seymour_decomposition import UnknownNode
+            sage: C0 = UnknownNode(M).complete_decomposition()
+            sage: C1, C2 = C0.child_nodes()
+            sage: C1.minors()
+            (('|det| = 2 submatrix', ((4, 3, 1), (2, 3, 0))),)
+            sage: C2.minors()
+            (('|det| = 2 submatrix', ((2, 1, 0), (4, 2, 1))),)
+        """
         if self._minors is not None:
             return self._minors
         minors_tuple = tuple(self._create_minor(index)
                                for index in range(self.nminors()))
         self._minors = minors_tuple
         return self._minors
-
-    def minors(self):
-        return self._minors()
 
     def complete_decomposition(self, *, time_limit=60.0,
                                use_direct_graphicness_test=True,

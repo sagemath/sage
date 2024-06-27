@@ -10,6 +10,7 @@ cdef class DecompositionNode(SageObject):
     cdef object _row_keys
     cdef object _column_keys
     cdef object _child_nodes
+    cdef object _minors
 
     cdef _set_dec(self, CMR_SEYMOUR_NODE *dec)
     cdef _set_root_dec(self)
