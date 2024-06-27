@@ -38,6 +38,7 @@ from sage.categories.fields import Fields
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.rings import Rings
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.laurent_series_ring_element import LaurentSeries
@@ -48,6 +49,8 @@ try:
     from sage.libs.pari.all import pari_gen
 except ImportError:
     pari_gen = ()
+
+lazy_import('sage.rings.lazy_series_ring', 'LazyLaurentSeriesRing')
 
 
 def is_LaurentSeriesRing(x):
@@ -75,7 +78,6 @@ def is_LaurentSeriesRing(x):
     deprecation(38290,
                 "The function is_LaurentSeriesRing is deprecated; "
                 "use 'isinstance(..., (LaurentSeriesRing, LazyLaurentSeriesRing))' instead.")
-    from sage.rings.lazy_series_ring import LazyLaurentSeriesRing
     return isinstance(x, (LaurentSeriesRing, LazyLaurentSeriesRing))
 
 
