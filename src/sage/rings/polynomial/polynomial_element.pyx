@@ -7979,13 +7979,16 @@ cdef class Polynomial(CommutativePolynomial):
             4 + 4*T + O(T^2)
         """
         # Late import to avoid cyclic dependencies:
-        from sage.rings.power_series_ring import is_PowerSeriesRing
+        from sage.rings.power_series_ring import PowerSeriesRing_generic
+        try:
+            from sage.rings.lazy_series_ring import LazyPowerSeriesRing
+        except ImportError:
+            LazyPowerSeriesRing = ()
         if self.is_zero():
             return self  # return 0
         n = self.degree()
         base_ring = self._parent.base_ring()
-        if (isinstance(base_ring, MPolynomialRing_base) or
-            is_PowerSeriesRing(base_ring)):
+        if isinstance(base_ring, (MPolynomialRing_base, PowerSeriesRing_generic, LazyPowerSeriesRing)):
             # It is often cheaper to compute discriminant of simple
             # multivariate polynomial and substitute the real
             # coefficients into that result (see #16014).
