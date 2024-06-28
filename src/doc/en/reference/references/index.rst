@@ -1678,6 +1678,10 @@ REFERENCES:
             bi-matrix
             games*. http://vknight.org/unpeudemath/code/2015/06/25/on_testing_degeneracy_of_games/ (2015)
 
+.. [CKWL2019] Marcelo H. de Carvalho, Nishad Kothari, Xiumei Wang and Yixun
+              Linc. *Birkhoff-von Neumann graphs that are PM-compact*. 2019.
+              :doi:`10.48550/arXiv.1807.07339`.
+
 .. [CL1996] Chartrand, G. and Lesniak, L.: *Graphs and Digraphs*.
             Chapman and Hall/CRC, 1996.
 
