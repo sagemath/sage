@@ -42,14 +42,16 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.integer_ring import ZZ
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_element import Polynomial
-
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.schemes.generic.homset import SchemeHomset_points
-from sage.schemes.generic.morphism import is_SchemeMorphism
-from .jacobian_morphism import JacobianMorphism_divisor_class_field
+from sage.schemes.hyperelliptic_curves.jacobian_morphism import JacobianMorphism_divisor_class_field
+
+lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
+lazy_import('sage.schemes.elliptic_curves.ell_point', 'EllipticCurvePoint_field')
 
 
 class JacobianHomset_divisor_classes(SchemeHomset_points):
@@ -139,12 +141,13 @@ class JacobianHomset_divisor_classes(SchemeHomset_points):
                     return JacobianMorphism_divisor_class_field(self, (P1, P2))
                 if isinstance(P1, Polynomial) and isinstance(P2, Polynomial):
                     return JacobianMorphism_divisor_class_field(self, tuple(P))
-                if is_SchemeMorphism(P1) and is_SchemeMorphism(P2):
+                if (isinstance(P1, (SchemeMorphism, EllipticCurvePoint_field))
+                        and isinstance(P2, (SchemeMorphism, EllipticCurvePoint_field))):
                     return self(P1) - self(P2)
             raise TypeError("argument P (= %s) must have length 2" % P)
         elif isinstance(P, JacobianMorphism_divisor_class_field) and self == P.parent():
             return P
-        elif is_SchemeMorphism(P):
+        elif isinstance(P, (SchemeMorphism, EllipticCurvePoint_field)):
             x0 = P[0]
             y0 = P[1]
             R, x = PolynomialRing(self.value_ring(), 'x').objgen()

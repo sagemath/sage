@@ -362,23 +362,23 @@ fan::
 # the toric varieties level from Morphism. See
 # https://groups.google.com/d/msg/sage-devel/qF4yU6Vdmao/wQlNrneSmWAJ
 from sage.categories.morphism import Morphism
-
 from sage.structure.richcmp import richcmp_not_equal, richcmp
-
 from sage.structure.sequence import Sequence
 from sage.rings.integer_ring import ZZ
 from sage.arith.misc import GCD as gcd
 from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import matrix, identity_matrix
+from sage.misc.lazy_import import lazy_import
 from sage.modules.free_module_element import vector
 from sage.geometry.cone import Cone
 from sage.geometry.fan import Fan
 
 from sage.schemes.generic.scheme import Scheme
 from sage.schemes.generic.morphism import (
-    is_SchemeMorphism,
     SchemeMorphism, SchemeMorphism_point, SchemeMorphism_polynomial
 )
+
+lazy_import('sage.schemes.elliptic_curves.ell_point', 'EllipticCurvePoint_field')
 
 
 ############################################################################
@@ -431,7 +431,7 @@ class SchemeMorphism_point_toric_field(SchemeMorphism_point, Morphism):
         if check:
             # Verify that there are the right number of coords
             # Why is it not done in the parent?
-            if is_SchemeMorphism(coordinates):
+            if isinstance(coordinates, (SchemeMorphism, EllipticCurvePoint_field)):
                 coordinates = list(coordinates)
             if not isinstance(coordinates, (list, tuple)):
                 raise TypeError("coordinates must be a scheme point, list, "
