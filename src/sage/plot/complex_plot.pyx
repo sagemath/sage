@@ -1282,15 +1282,13 @@ def rgb_to_hls(rgb):
         raise ValueError("Last dimension of input array must be 3; "
                          "shape {} was found.".format(rgb.shape))
     in_shape = rgb.shape
-    rgb = np.array(
-        rgb, copy=False, dtype=np.dtype(float), ndmin=2
-    )
+    rgb = np.asarray(rgb, dtype=np.dtype(float))
     rgb_max = rgb.max(-1)
     rgb_min = rgb.min(-1)
     l = (rgb_max + rgb_min)/2.0  # lightness
 
     hls = np.zeros_like(rgb)
-    delta = rgb.ptp(-1)
+    delta = np.ptp(rgb, -1)
     s = np.zeros_like(delta)
 
     ipos = delta > 0

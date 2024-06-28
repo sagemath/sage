@@ -2754,7 +2754,7 @@ class Graphics(WithEqualityById, SageObject):
             sage: xmin, xmax = sub.get_xlim()
             sage: ymin, ymax = sub.get_ylim()
             sage: xmin > xmax, ymin > ymax
-            (True, True)
+            (...True..., ...True...)
         """
         if not isinstance(ticks, (list, tuple)):
             ticks = (ticks, None)

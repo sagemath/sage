@@ -2277,7 +2277,7 @@ def power_mod(a, n, m):
 
         sage: from numpy import int32                                                   # needs numpy
         sage: power_mod(int32(2), int32(390), int32(391))                               # needs numpy
-        285
+        ...285...
         sage: from gmpy2 import mpz
         sage: power_mod(mpz(2), mpz(390), mpz(391))
         mpz(285)

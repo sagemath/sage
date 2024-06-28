@@ -964,6 +964,9 @@ cdef class BuiltinFunction(Function):
             mpc(real='0.83373002513114902', imag='-0.98889770576286506')
 
             sage: import numpy                                                          # needs numpy
+            sage: if int(numpy.version.short_version[0]) > 1:                           # needs numpy
+            ....:     numpy.set_printoptions(legacy="1.25")                             # needs numpy
+
             sage: sin(numpy.int32(0))                                                   # needs numpy
             0.0
             sage: type(_)                                                               # needs numpy
