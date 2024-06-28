@@ -2135,6 +2135,9 @@ cdef class mpf(mpf_base):
         MPF_sqrt(&r.value, &s.value, global_opts)
         return r
 
+    def __round__(self, *args):
+        return round(float(self), *args)
+
     def __richcmp__(self, other, int op):
         """
         Compares numbers ::
