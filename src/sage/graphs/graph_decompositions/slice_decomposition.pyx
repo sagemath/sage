@@ -306,6 +306,8 @@ def slice_decomposition(G, initial_vertex=None):
     The tree corresponding to the slice decomposition can be displayed using
     ``view``::
 
+        sage: from sage.graphs.graph_latex import check_tkz_graph
+        sage: check_tkz_graph() # random - depends on Tex installation
         sage: view(G) # not tested
         sage: latex(G) # to obtain the corresponding LaTeX code
         \begin{tikzpicture}
@@ -905,6 +907,8 @@ cdef class SliceDecomposition(SageObject):
         r"""
         TESTS:
 
+            sage: from sage.graphs.graph_latex import check_tkz_graph
+            sage: check_tkz_graph() # random - depends on Tex installation
             sage: G = graphs.PetersenGraph(); SD = G.slice_decomposition()
             sage: latex(SD)
             \begin{tikzpicture}
