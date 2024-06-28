@@ -74,20 +74,23 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-
 import operator
-from sage.structure.element import Element, parent, coercion_model
+
 from sage.arith.power import generic_power
-from sage.structure.richcmp import richcmp
-from sage.structure.sequence import Sequence
 from sage.categories.homset import Homset, Hom, End
-from sage.rings.fraction_field_element import FractionFieldElement
-from sage.rings.fraction_field import FractionField_generic
 from sage.categories.map import FormalCompositeMap, Map
+from sage.categories.morphism import SetMorphism
 from sage.misc.constant_function import ConstantFunction
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.categories.morphism import SetMorphism
+from sage.misc.lazy_import import lazy_import
+from sage.rings.fraction_field import FractionField_generic
+from sage.rings.fraction_field_element import FractionFieldElement
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
+from sage.structure.element import Element, parent, coercion_model
+from sage.structure.richcmp import richcmp
+from sage.structure.sequence import Sequence
+
+lazy_import('sage.schemes.elliptic_curves.ell_point', 'EllipticCurvePoint_field')
 
 
 def is_SchemeMorphism(f):
@@ -111,9 +114,16 @@ def is_SchemeMorphism(f):
           Defn: Defined on coordinates by sending (x, y) to (y, x^2 + y)
         sage: from sage.schemes.generic.morphism import is_SchemeMorphism
         sage: is_SchemeMorphism(f)
+        doctest:warning...
+        DeprecationWarning: The function is_SchemeMorphism is deprecated;
+        use 'isinstance(..., (SchemeMorphism, EllipticCurvePoint_field))' instead.
+        See https://github.com/sagemath/sage/issues/38296 for details.
         True
     """
-    from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
+    from sage.misc.superseded import deprecation
+    deprecation(38296,
+                "The function is_SchemeMorphism is deprecated; "
+                "use 'isinstance(..., (SchemeMorphism, EllipticCurvePoint_field))' instead.")
     return isinstance(f, (SchemeMorphism, EllipticCurvePoint_field))
 
 

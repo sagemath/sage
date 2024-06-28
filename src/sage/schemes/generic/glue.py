@@ -8,10 +8,14 @@ Scheme obtained by gluing two other schemes
 #                  http://www.gnu.org/licenses/
 #*******************************************************************************
 
-from . import morphism
-from . import scheme
+from sage.misc.lazy_import import lazy_import
+from sage.schemes.generic.scheme import Scheme
 
-class GluedScheme(scheme.Scheme):
+lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
+lazy_import('sage.schemes.elliptic_curves.ell_point', 'EllipticCurvePoint_field')
+
+
+class GluedScheme(Scheme):
     r"""
     INPUT:
 
@@ -48,9 +52,9 @@ class GluedScheme(scheme.Scheme):
     """
     def __init__(self, f, g, check=True):
         if check:
-            if not morphism.is_SchemeMorphism(f):
+            if not isinstance(f, (SchemeMorphism, EllipticCurvePoint_field)):
                 raise TypeError("f (=%s) must be a scheme morphism" % f)
-            if not morphism.is_SchemeMorphism(g):
+            if not isinstance(g, (SchemeMorphism, EllipticCurvePoint_field)):
                 raise TypeError("g (=%s) must be a scheme morphism" % g)
             if f.domain() != g.domain():
                 raise ValueError("f (=%s) and g (=%s) must have the same domain" % (f,g))
