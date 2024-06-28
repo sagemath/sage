@@ -308,7 +308,7 @@ class DrinfeldModule_finite(DrinfeldModule):
             - ``'gekeler'`` -- it tries to identify coefficients by
               writing that the characteristic polynomial annihilates the
               Frobenius endomorphism; this algorithm may fail is some
-              cases (see [Gek1991]_).
+              cases (see [Gek2008]_).
             - ``'motive'`` -- it uses the action of the Frobenius on the
               Anderson motive (see Chapter 2 of [CL2023]_).
 
