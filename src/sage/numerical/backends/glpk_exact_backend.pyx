@@ -131,9 +131,9 @@ cdef class GLPKExactBackend(GLPKBackend):
 
         - ``integer`` -- ``True`` if the variable is binary (default: ``False``)
 
-        - ``obj`` -- (optional) coefficient of all variables in the objective function (default: 0.0)
+        - ``obj`` -- coefficient of all variables in the objective function (default: 0.0)
 
-        - ``names`` -- optional list of names (default: ``None``)
+        - ``names`` -- list of names (default: ``None``)
 
         OUTPUT: the index of the variable created last
 

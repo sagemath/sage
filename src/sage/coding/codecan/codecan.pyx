@@ -146,7 +146,7 @@ cdef class InnerGroup:
             * "permutational -- no field automorphisms and no column multiplications
               i.e. `G = GL(k,q)`
 
-        - ``transporter`` -- optional; set to an element of the group
+        - ``transporter`` -- (optional) set to an element of the group
           :class:`sage.groups.semimonomial_transformations.semimonomial_transformation_group.SemimonomialTransformationGroup`
           if you would like to modify this element simultaneously
 

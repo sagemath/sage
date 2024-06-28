@@ -32,7 +32,7 @@ class PicoSAT(SatSolver):
 
     INPUT:
 
-    - ``verbosity`` -- integer between 0 and 2 (default: 0); verbosity
+    - ``verbosity`` -- integer between 0 and 2 (default: 0)
 
     - ``prop_limit`` -- integer (default: 0); the propagation limit
 

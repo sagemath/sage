@@ -332,9 +332,9 @@ cdef class PPLBackend(GenericBackend):
 
         - ``integer`` -- ``True`` if the variable is integral (default: ``False``)
 
-        - ``obj`` -- (optional) coefficient of all variables in the objective function (default: 0)
+        - ``obj`` -- coefficient of all variables in the objective function (default: 0)
 
-        - ``names`` -- optional list of names (default: ``None``)
+        - ``names`` -- list of names (default: ``None``)
 
         OUTPUT: the index of the variable created last
 

@@ -136,7 +136,7 @@ def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
 
     - ``G`` -- group of cardinality ``v``
     - ``D`` -- set of ``k``-subsets of ``G``
-    - ``v``, ``k`` and ``l`` -- optional parameters of the difference family
+    - ``v``, ``k``, ``l`` -- (optional) parameters of the difference family
     - ``verbose`` -- boolean (default: ``False``); whether to print additional
       information
 

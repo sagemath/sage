@@ -66,7 +66,7 @@ cdef class StaticSparseCGraph(CGraph):
 
         - ``G`` -- a :class:`Graph` object
 
-        - ``vertex_list`` -- optional list of all vertices of ``G``
+        - ``vertex_list`` -- (optional) list of all vertices of ``G``
 
         The optional argument ``vertex_list`` is assumed to be a list of all
         vertices of the graph ``G`` in some order.

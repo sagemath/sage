@@ -242,7 +242,7 @@ class Cube(SageObject):
 
     def __getitem__(self, n):
         """
-        Return the nth interval in this cube.
+        Return the `n`-th interval in this cube.
 
         INPUT:
 
@@ -344,11 +344,11 @@ class Cube(SageObject):
 
     def face(self, n, upper=True):
         """
-        The nth primary face of this cube.
+        The `n`-th primary face of this cube.
 
         INPUT:
 
-        - ``n`` -- an integer between 0 and one less than the dimension
+        - ``n`` -- integer between 0 and one less than the dimension
           of this cube
         - ``upper`` -- boolean (default=True);if ``True``, return the "upper"
           `n`-th primary face; otherwise, return the "lower" `n`-th primary
@@ -373,10 +373,10 @@ class Cube(SageObject):
             sage: C.face(3)
             Traceback (most recent call last):
             ...
-            ValueError: can only compute the nth face if 0 <= n < dim
+            ValueError: can only compute the n-th face if 0 <= n < dim
         """
         if n < 0 or n >= self.dimension():
-            raise ValueError("can only compute the nth face if 0 <= n < dim")
+            raise ValueError("can only compute the n-th face if 0 <= n < dim")
         idx = self.nondegenerate_intervals()[n]
         t = self.__tuple
         if upper:
@@ -1169,13 +1169,13 @@ class CubicalComplex(GenericCellComplex):
         INPUT:
 
         - ``dimensions`` -- if ``None``, compute the chain complex in all
-           dimensions.  If a list or tuple of integers, compute the
-           chain complex in those dimensions, setting the chain groups
-           in all other dimensions to zero.  NOT IMPLEMENTED YET: this
-           function always returns the entire chain complex
+          dimensions.  If a list or tuple of integers, compute the
+          chain complex in those dimensions, setting the chain groups
+          in all other dimensions to zero.  NOT IMPLEMENTED YET: this
+          function always returns the entire chain complex
         - ``base_ring`` -- commutative ring (default: ZZ)
         - ``subcomplex`` -- a subcomplex of this cubical complex (default: empty).
-           Compute the chain complex relative to this subcomplex.
+          Compute the chain complex relative to this subcomplex.
         - ``augmented`` -- boolean (default: ``False``); if ``True``, return
           the augmented chain complex (that is, include a class in dimension
           `-1` corresponding to the empty cell).  This is ignored if
@@ -1319,7 +1319,7 @@ class CubicalComplex(GenericCellComplex):
         - ``dim`` -- integer between 0 and one more than the
           dimension of this cube
 
-        OUTPUT: a list containing triples ``(coeff, left, right)``
+        OUTPUT: list containing triples ``(coeff, left, right)``
 
         EXAMPLES::
 
@@ -1473,7 +1473,7 @@ class CubicalComplex(GenericCellComplex):
             NotImplementedError: suspensions are not implemented for cubical complexes
         """
 #         if n<0:
-#             raise ValueError, "n must be non-negative."
+#             raise ValueError, "n must be nonnegative."
 #         if n==0:
 #             return self
 #         if n==1:
@@ -1570,7 +1570,7 @@ class CubicalComplex(GenericCellComplex):
 
     def connected_sum(self, other):
         """
-        Return the connected sum of self with other.
+        Return the connected sum of ``self`` with ``other``.
 
         INPUT:
 
@@ -1580,7 +1580,7 @@ class CubicalComplex(GenericCellComplex):
 
         .. warning::
 
-           This does not check that self and other are manifolds, only
+           This does not check that ``self`` and ``other`` are manifolds, only
            that their facets all have the same dimension.  Since a
            (more or less) random facet is chosen from each complex and
            then glued together, this method may return random
@@ -1683,8 +1683,7 @@ class CubicalComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``base_ring`` -- coefficient ring (default:
-          ``QQ``). Must be a field.
+        - ``base_ring`` -- coefficient ring (default: ``QQ``); must be a field
 
         Denote by `C` the chain complex associated to this cubical
         complex. The algebraic topological model is a chain complex
@@ -1734,7 +1733,7 @@ class CubicalComplex(GenericCellComplex):
 
     def _simplicial_(self):
         r"""
-        Simplicial complex constructed from self.
+        Simplicial complex constructed from ``self``.
 
         ALGORITHM:
 
@@ -1910,7 +1909,7 @@ class CubicalComplexExamples:
 
     def SurfaceOfGenus(self, g, orientable=True):
         """
-        A surface of genus g as a cubical complex.
+        A surface of genus `g` as a cubical complex.
 
         INPUT:
 
@@ -1936,9 +1935,9 @@ class CubicalComplexExamples:
         try:
             g = Integer(g)
         except TypeError:
-            raise ValueError("genus must be a non-negative integer")
+            raise ValueError("genus must be a nonnegative integer")
         if g < 0:
-            raise ValueError("genus must be a non-negative integer")
+            raise ValueError("genus must be a nonnegative integer")
         if g == 0:
             if not orientable:
                 raise ValueError("no non-orientable surface of genus zero")

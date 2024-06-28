@@ -61,14 +61,14 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
         INPUT:
 
         - ``self`` -- a homogeneous basis of symmetric functions
-        - ``scalar`` -- optional input which specifies a function ``zee``
+        - ``scalar`` -- (optional) input which specifies a function ``zee``
           on partitions. The function ``zee`` determines the scalar
           product on the power sum basis with normalization
           `\langle p_\mu, p_\mu \rangle = \mathrm{zee}(mu)`.
           (default: uses standard ``zee`` function)
         - ``scalar_name`` -- specifies the name of the scalar function
           (optional)
-        - ``prefix`` -- optional input, specifies the prefix to be
+        - ``prefix`` -- (optional) input which specifies the prefix to be
           used to display the basis
 
         OUTPUT:

@@ -4120,7 +4120,7 @@ class SandpileDivisor(dict):
 
         INPUT:
 
-        memo -- (optional) dict
+        - ``memo`` -- (optional) dictionary
 
         EXAMPLES::
 

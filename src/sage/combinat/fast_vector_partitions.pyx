@@ -287,7 +287,7 @@ def fast_vector_partitions(v, min_vals=None):
     - ``v`` -- list of nonnegative integers, understood as the vector
       to be partitioned
 
-    - ``min_vals`` -- optional list of nonnegative integers, of same
+    - ``min_vals`` -- (optional) list of nonnegative integers, of same
       length as ``v``
 
     OUTPUT: list of lists, each representing a vector partition of ``v``

@@ -195,7 +195,7 @@ def enumerate_hypergeometric_data(d, weight=None):
 
     - ``d`` -- the degree
 
-    - ``weight`` -- optional integer, to specify the motivic weight
+    - ``weight`` -- (optional) integer; specifies the motivic weight
 
     EXAMPLES::
 
@@ -229,7 +229,7 @@ def possible_hypergeometric_data(d, weight=None) -> list:
 
     - ``d`` -- the degree
 
-    - ``weight`` -- optional integer, to specify the motivic weight
+    - ``weight`` -- (optional) integer; specifies the motivic weight
 
     EXAMPLES::
 
@@ -926,7 +926,7 @@ class HypergeometricData:
 
         INPUT:
 
-        - ``vars`` -- optional pair of variables (default: `u,v`)
+        - ``vars`` -- (optional) pair of variables (default: `u,v`)
 
         REFERENCES:
 

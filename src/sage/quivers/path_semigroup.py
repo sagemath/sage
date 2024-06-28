@@ -746,9 +746,9 @@ class PathSemigroup(UniqueRepresentation, Parent):
 
         - ``k`` -- a commutative ring
 
-        - ``order`` -- optional string, one of "negdegrevlex" (default),
-          "degrevlex", "negdeglex" or "deglex", defining the monomial order to
-          be used.
+        - ``order`` -- (optional) string, one of ``'negdegrevlex'`` (default),
+          ``'degrevlex'``, ``'negdeglex'`` or ``'deglex'``, defining the
+          monomial order to be used
 
         .. NOTE::
 

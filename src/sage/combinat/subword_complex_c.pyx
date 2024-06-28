@@ -11,7 +11,7 @@ cpdef int _flip_c(W, set positions, list extended_root_conf_indices,
     - ``positions`` -- the positions of the elements of the facet
     - ``extended_root_conf_indices`` -- also attached to the facet ?
     - ``i`` -- the position where to flip
-    - ``side`` -- optional, can be ``'positive'``, ``'negative'`` or ``'both'`` (default)
+    - ``side`` -- string; ``'positive'``, ``'negative'``, or ``'both'`` (default)
 
     OUTPUT: the new position `j` that has replaced `i`
 

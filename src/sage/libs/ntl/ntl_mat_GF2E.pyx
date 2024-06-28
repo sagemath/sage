@@ -518,7 +518,7 @@ cdef class ntl_mat_GF2E():
 
         INPUT:
 
-        - ``k`` -- optional GF(2**deg)
+        - ``k`` -- (optional) GF(2**deg)
 
         OUTPUT: Matrix over k
 

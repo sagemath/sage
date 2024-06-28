@@ -589,7 +589,7 @@ class CyclicCode(AbstractLinearCode):
 
         INPUT:
 
-        - ``primitive_root`` -- optional; a primitive root of the extension
+        - ``primitive_root`` -- (optional) a primitive root of the extension
           field
 
         EXAMPLES:

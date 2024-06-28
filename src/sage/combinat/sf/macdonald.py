@@ -955,7 +955,7 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
             INPUT:
 
             - ``self`` -- an element of a Macdonald basis
-            - ``q``, ``t`` -- optional parameters to specialize
+            - ``q``, ``t`` -- (optional) parameters to specialize
             - ``power`` -- integer (default: 1)
 
             OUTPUT: the symmetric function of `\nabla` acting on ``self``
@@ -1640,7 +1640,7 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
             INPUT:
 
             - ``self`` -- an element of the Macdonald `Ht` basis
-            - ``q``, ``t`` -- optional parameters to specialize
+            - ``q``, ``t`` -- (optional) parameters to specialize
             - ``power`` -- integer (default: 1)
 
             OUTPUT: the symmetric function of `\nabla` acting on ``self``

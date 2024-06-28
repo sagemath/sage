@@ -1389,12 +1389,11 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                     INPUT:
 
-                    - ``positive`` -- optional boolean (default: ``False``);
-                      if ``True``, return instead the positive Fuss-Catalan
-                      number
-                    - ``polynomial`` -- optional boolean (default: ``False``);
-                      if ``True``, return instead the `q`-analogue as a
-                      polynomial in `q`
+                    - ``positive`` -- boolean (default: ``False``); if
+                      ``True``, return instead the positive Fuss-Catalan number
+                    - ``polynomial`` -- boolean (default: ``False``); if
+                      ``True``, return instead the `q`-analogue as a polynomial
+                      in `q`
 
                     See [Ar2006]_ for further information.
 
@@ -1466,12 +1465,11 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                     INPUT:
 
-                    - ``positive`` -- optional boolean (default: ``False``);
-                      if ``True``, return instead the positive Catalan
-                      number
-                    - ``polynomial`` -- optional boolean (default: ``False``);
-                      if ``True``, return instead the `q`-analogue as a
-                      polynomial in `q`
+                    - ``positive`` -- boolean (default: ``False``); if
+                      ``True``, return instead the positive Catalan number
+                    - ``polynomial`` -- boolean (default: ``False``); if
+                      ``True``, return instead the `q`-analogue as a polynomial
+                      in `q`
 
                     .. NOTE::
 

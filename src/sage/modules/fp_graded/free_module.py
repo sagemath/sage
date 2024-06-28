@@ -306,7 +306,7 @@ class FreeGradedModule(CombinatorialFreeModule):
     - ``generator_degrees`` -- tuple of integers defining the number
       of generators of the module, and their degrees
 
-    - ``names`` -- optional, the names of the generators. If ``names``
+    - ``names`` -- (optional) the names of the generators. If ``names``
       is a comma-separated string like ``'a, b, c'``, then those will
       be the names. Otherwise, for example if ``names`` is ``abc``,
       then the names will be ``abc(d,i)``.

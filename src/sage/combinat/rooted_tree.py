@@ -429,7 +429,7 @@ class RootedTree(AbstractClonableTree, NormalizedClonableList,
 
         - ``grafting_function`` -- list of paths in ``self``
 
-        - ``path_prefix`` -- optional tuple (default: ``()``)
+        - ``path_prefix`` -- tuple (default: ``()``)
 
         The ``path_prefix`` argument is only used for internal recursion.
 

@@ -1065,9 +1065,9 @@ class SkewTableau(ClonableList,
 
         INPUT:
 
-        - ``algorithm`` -- optional: if set to ``'jdt'``, rectifies by jeu de
+        - ``algorithm`` -- (optional) if set to ``'jdt'``, rectifies by jeu de
           taquin; if set to ``'schensted'``, rectifies by Schensted insertion
-          of the reading word; otherwise, guesses which will be faster.
+          of the reading word. Otherwise, guesses which will be faster.
 
         EXAMPLES::
 

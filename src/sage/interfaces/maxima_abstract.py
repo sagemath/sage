@@ -792,7 +792,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         - ``vrange`` -- [vmin, vmax] are lists of numbers with
           umin umax, vmin vmax
 
-        - ``options`` -- optional string representing plot2d
+        - ``options`` -- (optional) string representing plot2d
           options in gnuplot format
 
         OUTPUT: displays a plot on screen or saves to a file

@@ -87,7 +87,7 @@ class SageTimeit:
         - ``code`` -- string; a line or block of code, which may
           contain newlines
 
-        - ``globals`` -- optional global variables; if not given the
+        - ``globals`` -- (optional) global variables; if not given the
           globals of the calling module are used (e.g., if using this
           from the command line, the globals of the command line are
           used).

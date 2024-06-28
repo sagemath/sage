@@ -188,7 +188,7 @@ class Disk(GraphicPrimitive):
 
         INPUT:
 
-        - ``z`` -- optional 3D height above `xy`-plane
+        - ``z`` -- (optional) 3D height above `xy`-plane
 
         AUTHORS:
 

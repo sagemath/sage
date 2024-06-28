@@ -1797,11 +1797,9 @@ class SR_generic(MPolynomialSystemGenerator):
 
         - ``i`` -- round number
 
-        - ``plaintext`` -- optional plaintext (mandatory in
-          first round)
+        - ``plaintext`` -- plaintext (optional, mandatory in first round)
 
-        - ``ciphertext`` -- optional ciphertext (mandatory in
-          last round)
+        - ``ciphertext`` -- ciphertext (optional, mandatory in last round)
 
         OUTPUT: tuple
 

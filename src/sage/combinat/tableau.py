@@ -5432,7 +5432,7 @@ class Tableaux(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``n`` -- optional; a nonnegative integer
+    - ``n`` -- (optional) nonnegative integer
 
     OUTPUT:
 

@@ -1142,7 +1142,7 @@ class Multizetas(CombinatorialFreeModule):
 
             INPUT:
 
-            - ``basis`` -- optional; either ``None`` or a function such that
+            - ``basis`` -- either ``None`` (default) or a function such that
               ``basis(d)`` is a basis of the weight ``d`` multiple zeta values.
               If ``None``, the Hoffman basis is used.
 
@@ -1618,7 +1618,7 @@ class Multizetas_iterated(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``basering`` -- optional choice of the coefficient ring
+        - ``basering`` -- (optional) choice of the coefficient ring
 
         EXAMPLES::
 

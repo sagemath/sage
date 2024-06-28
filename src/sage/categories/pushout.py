@@ -1720,9 +1720,9 @@ class LaurentPolynomialFunctor(ConstructionFunctor):
         INPUT:
 
         - ``var`` -- string or a list of strings
-        - ``multi_variate`` -- optional boolean, default ``False`` if ``var`` is a string
-          and ``True`` otherwise: If ``True``, application to a Laurent polynomial
-          ring yields a multivariate Laurent polynomial ring.
+        - ``multi_variate`` -- boolean (default: ``False``); if ``var`` is a
+          string and ``True`` otherwise: If ``True``, application to a Laurent
+          polynomial ring yields a multivariate Laurent polynomial ring.
 
         TESTS::
 

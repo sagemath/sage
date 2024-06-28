@@ -944,7 +944,7 @@ class SageDocTestParser(doctest.DocTestParser):
         INPUT:
 
         - ``string`` -- the string to parse
-        - ``name`` -- optional string giving the name identifying string,
+        - ``name`` -- (optional) string giving the name identifying string,
           to be used in error messages
 
         OUTPUT:

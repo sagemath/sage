@@ -62,7 +62,7 @@ class KeyConvertingDict(dict):
 
     - ``key_conversion_function`` -- a function which will be
       applied to all method arguments which represent keys
-    - ``data`` -- optional dictionary or sequence of key-value pairs
+    - ``data`` -- (optional) dictionary or sequence of key-value pairs
       to initialize this mapping
 
     EXAMPLES::

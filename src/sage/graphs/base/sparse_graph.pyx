@@ -243,9 +243,9 @@ cdef class SparseGraph(CGraph):
     - ``extra_vertices`` -- nonnegative integer (default: 0); how many extra
       vertices to allocate
 
-    - ``verts`` -- optional list of vertices to add
+    - ``verts`` -- (optional) list of vertices to add
 
-    - ``arcs`` -- optional list of arcs to add
+    - ``arcs`` -- (optional) list of arcs to add
 
     The first ``nverts`` are created as vertices of the graph, and the next
     ``extra_vertices`` can be freely added without reallocation. See top level

@@ -551,7 +551,7 @@ cdef class QuiverPath(MonoidElement):
 
         INPUT:
 
-        A :class:`QuiverPath` ``P``
+        - ``P`` -- a :class:`QuiverPath`
 
         OUTPUT:
 

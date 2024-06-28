@@ -55,10 +55,10 @@ space.
 
 For any simplicial complex `K` and any commutative ring `R` there is
 an associated chain complex, with differential of degree `-1`.  The
-`n^{th}` term is the free `R`-module with basis given by the
+`n`-th term is the free `R`-module with basis given by the
 `n`-simplices of `K`.  The differential is determined by its value on
 any simplex: on the `n`-simplex with vertices `(v_0, v_1, ..., v_n)`,
-the differential is the alternating sum with `i^{th}` summand `(-1)^i`
+the differential is the alternating sum with `i`-th summand `(-1)^i`
 multiplied by the `(n-1)`-simplex obtained by omitting vertex `v_i`.
 
 In the implementation here, the vertex set must be finite. To define a
@@ -303,9 +303,9 @@ def rename_vertex(n, keep, left=True):
     INPUT:
 
     - ``n`` -- a 'vertex'; either an integer or a string
-    - ``keep`` -- a list of three vertices
-    - ``left`` -- boolean (default: ``True``); if ``True``, rename for use in left
-      factor
+    - ``keep`` -- list of three vertices
+    - ``left`` -- boolean (default: ``True``); if ``True``, rename for use in
+      left factor
 
     This is used by the :meth:`~SimplicialComplex.connected_sum` method for
     simplicial complexes.
@@ -506,7 +506,7 @@ class Simplex(SageObject):
 
         INPUT:
 
-        - ``n`` -- an integer between 0 and the dimension of this simplex
+        - ``n`` -- integer between 0 and the dimension of this simplex
 
         OUTPUT: the simplex obtained by removing the `n`-th vertex from this
         simplex
@@ -522,7 +522,7 @@ class Simplex(SageObject):
         if n >= 0 and n <= self.dimension():
             return Simplex(self.__tuple[:n] + self.__tuple[n+1:])
         else:
-            raise IndexError("{} does not have an nth face for n={}".format(self, n))
+            raise IndexError("{} does not have an n-th face for n={}".format(self, n))
 
     def faces(self):
         """
@@ -575,7 +575,7 @@ class Simplex(SageObject):
 
         - ``right`` -- the other simplex (the right-hand factor)
 
-        - ``rename_vertices`` -- boolean (default ``True``); If this is ``True``,
+        - ``rename_vertices`` -- boolean (default: ``True``); If this is ``True``,
           the vertices in the join will be renamed by this formula: vertex "v"
           in the left-hand factor --> vertex "Lv" in the join, vertex "w" in
           the right-hand factor --> vertex "Rw" in the join.  If this is
@@ -607,7 +607,7 @@ class Simplex(SageObject):
 
         - ``other`` -- the other simplex
 
-        - ``rename_vertices`` -- boolean (default ``True``); if this is
+        - ``rename_vertices`` -- boolean (default: ``True``); if this is
           ``False``, then the vertices in the product are the set of ordered
           pairs `(v,w)` where `v` is a vertex in the left-hand factor
           (``self``) and `w` is a vertex in the right-hand factor (``other``).
@@ -622,7 +622,7 @@ class Simplex(SageObject):
         triangulated as follows: for each path `f` from `(0,0)` to
         `(m,n)` along the integer grid in the plane, going up or right
         at each lattice point, associate an `(m+n)`-simplex with
-        vertices `v_0`, `v_1`, ..., where `v_k` is the `k^{th}` vertex
+        vertices `v_0`, `v_1`, ..., where `v_k` is the `k`-th vertex
         in the path `f`.
 
         Note that there are `m+n` choose `n` such paths.  Note also
@@ -1330,7 +1330,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         INPUT:
 
         - ``subcomplex`` -- a subcomplex of this simplicial complex (default:
-          ``None``). Return faces which are not in this subcomplex.
+          ``None``); return faces which are not in this subcomplex
 
         EXAMPLES::
 
@@ -1780,8 +1780,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         INPUT:
 
-        - ``right`` -- the other simplicial complex (the right-hand
-           factor)
+        - ``right`` -- the other simplicial complex (the right-hand factor)
 
         - ``rename_vertices`` -- boolean (default: ``True``); if this is
           ``False``, then the vertices in the product are the set of ordered
@@ -1796,7 +1795,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
           output is mutable
 
         The vertices in the product will be the set of ordered pairs
-        `(v,w)` where `v` is a vertex in self and `w` is a vertex in
+        `(v,w)` where `v` is a vertex in ``self`` and `w` is a vertex in
         right.
 
         .. WARNING::
@@ -2101,9 +2100,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
         INPUT:
 
         - ``dimensions`` -- if ``None``, compute the chain complex in all
-           dimensions.  If a list or tuple of integers, compute the
-           chain complex in those dimensions, setting the chain groups
-           in all other dimensions to zero.
+          dimensions.  If a list or tuple of integers, compute the
+          chain complex in those dimensions, setting the chain groups
+          in all other dimensions to zero.
         - ``base_ring`` -- commutative ring (default: ``ZZ``)
         - ``subcomplex`` -- a subcomplex of this simplicial complex (default:
           empty); compute the chain complex relative to this subcomplex
@@ -2464,8 +2463,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         INPUT:
 
-        - ``base_ring`` -- coefficient ring (default:
-          ``QQ``). Must be a field.
+        - ``base_ring`` -- coefficient ring (default: ``QQ``); must be a field
 
         Denote by `C` the chain complex associated to this simplicial
         complex. The algebraic topological model is a chain complex
@@ -2817,7 +2815,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         INPUT:
 
-        - ``faces`` -- a list (or any iterable) of faces of the simplicial
+        - ``faces`` -- list (or any iterable) of faces of the simplicial
           complex
 
         - ``check`` -- boolean (default: ``False``); if ``True``, raise an
@@ -3031,7 +3029,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         INPUT:
 
-        - ``base_ring`` -- (default: ``QQ``) the base ring.
+        - ``base_ring`` -- (default: ``QQ``) the base ring
 
         - ``ncpus`` -- (default: 0) number of cpus used for the
           computation. If this is 0, determine the number of cpus
@@ -3109,7 +3107,6 @@ class SimplicialComplex(Parent, GenericCellComplex):
             Minimal triangulation of the 2-sphere
             sage: S.generated_subcomplex([0,1,2])
             Simplicial complex with vertex set (0, 1, 2) and facets {(0, 1, 2)}
-
         """
         if not set(self.vertices()).issuperset(sub_vertex_set):
             raise ValueError("input must be a subset of the vertex set")
@@ -4739,7 +4736,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
           and ``self`` is partitionable, then return a list of pairs `(R,F)`
           that form a partitioning.
 
-        - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear Programming
+        - ``solver`` -- (default: ``None``) specifies a Mixed Integer Linear Programming
           (MILP) solver to be used. If set to ``None``, the default one is used. For
           more information on MILP solvers and which default solver is used, see
           the method

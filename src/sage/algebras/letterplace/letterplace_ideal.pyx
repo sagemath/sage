@@ -165,7 +165,7 @@ class LetterplaceIdeal(Ideal_nc):
         - ``gens`` -- list, tuple or sequence of generators
         - ``coerce`` -- boolean (default: ``True``); whether ``gens`` shall be
           coerced first
-        - ``side`` -- optional string, one of ``'twosided'`` (default),
+        - ``side`` -- string; one of ``'twosided'`` (default),
           ``'left'`` or ``'right'``. Determines whether the ideal
           is a left, right or twosided ideal. Groebner bases or
           only supported in the twosided case.
@@ -200,7 +200,7 @@ class LetterplaceIdeal(Ideal_nc):
 
         INPUT:
 
-        - ``degbound`` -- optional integer, or Infinity; if it is provided,
+        - ``degbound`` -- (optional) integer or Infinity; if it is provided,
           a Groebner basis at least out to that degree is returned. By
           default, the current degree bound of the underlying ring is used.
 

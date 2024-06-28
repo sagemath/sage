@@ -143,7 +143,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
 
         - ``n`` -- the number of new variables (must be > 0)
 
-        - ``names`` -- optional list of names (default: ``None``)
+        - ``names`` -- list of names (default: ``None``)
 
         OUTPUT: the index of the variable created last
 

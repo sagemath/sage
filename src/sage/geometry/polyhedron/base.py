@@ -103,9 +103,9 @@ class Polyhedron_base(Polyhedron_base7):
       H-representation of the polyhedron; if ``None``, the polyhedron
       is determined by the V-representation
 
-    - ``Vrep_minimal`` -- optional; see below
+    - ``Vrep_minimal`` -- (optional) see below
 
-    - ``Hrep_minimal`` -- optional; see below
+    - ``Hrep_minimal`` -- (optional) see below
 
     - ``pref_rep`` -- string (default: ``None``);
       one of ``Vrep`` or ``Hrep`` to pick this in case the backend

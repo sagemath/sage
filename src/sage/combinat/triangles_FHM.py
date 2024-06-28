@@ -60,7 +60,7 @@ def _matrix_display(self, variables=None):
 
     INPUT:
 
-    - ``variables`` -- optional choice of 2 variables
+    - ``variables`` -- (optional) choice of 2 variables
 
     OUPUT:
 

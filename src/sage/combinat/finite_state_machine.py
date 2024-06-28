@@ -7413,7 +7413,7 @@ class FiniteStateMachine(SageObject):
           \ldots, B_d)`. If there is no transition from `A` to `B`,
           then ``function`` should raise a :class:`LookupError`.
 
-        - ``new_input_alphabet`` -- optional; the new input alphabet
+        - ``new_input_alphabet`` -- (optional) the new input alphabet
           as a list
 
         - ``only_accessible_components`` -- if ``True`` (default), then

@@ -203,7 +203,7 @@ def ascii_art(*obj, **kwds):
     - ``*obj`` -- any number of positional arguments, of arbitrary
       type. The objects whose ascii art representation we want.
 
-    - ``sep`` -- optional ``'sep=...'`` keyword argument (or ``'separator'``).
+    - ``sep`` -- (optional) ``'sep=...'`` keyword argument (or ``'separator'``).
       Anything that can be converted to ascii art (default: empty ascii
       art). The separator in-between a list of objects. Only used if
       more than one object given.

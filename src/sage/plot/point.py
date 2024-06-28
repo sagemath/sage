@@ -141,7 +141,7 @@ class Point(GraphicPrimitive_xydata):
 
         INPUT:
 
-        - ``z`` -- optional 3D height above `xy`-plane; may be a list
+        - ``z`` -- (optional) 3D height above `xy`-plane; may be a list
           if ``self`` is a list of points
 
         EXAMPLES:

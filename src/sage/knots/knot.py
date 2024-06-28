@@ -46,7 +46,7 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
     INPUT:
 
     - ``data`` -- see :class:`Link` for the allowable inputs
-    - ``check`` -- optional, default ``True``. If ``True``, make sure
+    - ``check`` -- boolean (default: ``True``); if ``True``, make sure
       that the data define a knot, not a link
 
     EXAMPLES:

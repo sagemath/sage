@@ -1035,8 +1035,8 @@ class HasseDiagram(DiGraph):
 
         INPUT:
 
-        - ``algorithm`` -- optional, ``'recursive'``, ``'matrix'``
-          or ``'cython'`` (default)
+        - ``algorithm`` -- ``'recursive'``, ``'matrix'`` or ``'cython'``
+          (default)
 
         This uses either the recursive formula, a generic matrix inversion
         or a specific matrix inversion coded in Cython.
@@ -1148,7 +1148,7 @@ class HasseDiagram(DiGraph):
 
         INPUT:
 
-        - ``algorithm`` -- optional, ``'cython'`` (default) or ``'matrix'``
+        - ``algorithm`` -- ``'cython'`` (default) or ``'matrix'``
 
         This uses either a specific matrix code in Cython, or generic matrices.
 

@@ -4654,7 +4654,7 @@ def continuant(v, n=None):
     INPUT:
 
     - ``v`` -- list or tuple of elements of a ring
-    - ``n`` -- optional integer
+    - ``n`` -- (optional) integer
 
     OUTPUT: element of ring (integer, polynomial, etcetera).
 

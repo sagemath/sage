@@ -4790,8 +4790,8 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``q``, ``t`` -- optional parameters (default: ``None``, in which
-          case ``q`` and ``t`` are used)
+        - ``q``, ``t`` -- parameters (default: ``None``, in which case ``q``
+          and ``t`` are used)
         - ``power`` -- (default: ``1``) an integer indicating how many times to
           apply the operator `\nabla`.  Negative values of ``power``
           indicate powers of `\nabla^{-1}`.

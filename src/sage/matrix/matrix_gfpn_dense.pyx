@@ -680,10 +680,10 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
         INPUT:
 
-        - ``density`` -- optional real number between zero and one
-          the expected density of the resulting matrix
-        - ``nonzero`` -- boolean (default: ``False``);
-          if ``True``, all inserted marks are nonzero
+        - ``density`` -- (optional) real number between zero and one the
+          expected density of the resulting matrix
+        - ``nonzero`` -- boolean (default: ``False``); if ``True``, all
+          inserted marks are nonzero
 
         EXAMPLES::
 

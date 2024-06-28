@@ -134,7 +134,7 @@ class MatrixGroup_base(Group):
         - ``x`` -- a Sage matrix in the correct matrix space (degree
           and base ring)
 
-        - ``*args`` -- optional other representations of ``x``,
+        - ``*args`` -- (optional) other representations of ``x``,
           depending on the group implementation. Ignored by default
 
         OUTPUT: a :class:`TypeError` must be raised if ``x`` is invalid

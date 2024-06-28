@@ -689,7 +689,7 @@ cdef class PathAlgebraElement(RingElement):
 
         INPUT:
 
-        An element of the underlying partial semigroup.
+        - ``P`` -- an element of the underlying partial semigroup
 
         OUTPUT:
 

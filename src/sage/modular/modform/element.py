@@ -107,7 +107,7 @@ def delta_lseries(prec=53, max_imaginary_part=0,
 
     - ``max_asymp_coeffs`` -- integer
 
-    - ``algorithm`` -- optional string: 'gp' (default), 'pari'
+    - ``algorithm`` -- string; ``'gp'`` (default), ``'pari'``
 
     OUTPUT:
 

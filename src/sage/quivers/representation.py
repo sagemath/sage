@@ -480,16 +480,16 @@ class QuiverRepFactory(UniqueFactory):
     are ignored; the keywords are only checked in the event that the argument
     list does not have enough entries after ``P``.
 
-    - ``spaces`` -- dictionary (default: empty); a dictionary associating to
-      each vertex a free module over the base ring `k`.  Not all vertices must
-      be specified; unspecified vertices are automatically set to `k^0`.  Keys
-      of the dictionary  that don't correspond to vertices are ignored.
+    - ``spaces`` -- dictionary (default: empty) associating to each vertex a
+      free module over the base ring `k`.  Not all vertices must be specified;
+      unspecified vertices are automatically set to `k^0`.  Keys of the
+      dictionary  that don't correspond to vertices are ignored.
 
-    - ``maps`` -- dictionary (default: empty); a dictionary associating to each
-      edge a map whose domain and codomain are the spaces associated to the
-      initial and terminal vertex of the edge respectively.  Not all edges must
-      be specified; unspecified edges are automatically set to the zero map.
-      Keys of the dictionary that don't correspond to edges are ignored.
+    - ``maps`` -- dictionary (default: empty) associating to each edge a map
+      whose domain and codomain are the spaces associated to the initial and
+      terminal vertex of the edge respectively.  Not all edges must be
+      specified; unspecified edges are automatically set to the zero map. Keys
+      of the dictionary that don't correspond to edges are ignored.
 
     The second option is the ``paths`` option which creates a module by
     generating a right ideal from a list of paths.  Thus the basis elements
@@ -823,11 +823,11 @@ class QuiverRepElement(ModuleElement):
     - ``module`` -- :class:`QuiverRep` (default: ``None``); the module to
       which the element belongs
 
-    - ``elements`` -- dictionary (default: empty); a dictionary associating to
-      each vertex a vector or an object from which sage can create a vector.
-      Not all vertices must be specified, unspecified vertices will be
-      assigned the zero vector of the space associated to that vertex in
-      the given module.  Keys that do not correspond to a vertex are ignored.
+    - ``elements`` -- dictionary (default: empty) associating to each vertex a
+      vector or an object from which sage can create a vector. Not all vertices
+      must be specified, unspecified vertices will be assigned the zero vector
+      of the space associated to that vertex in the given module.  Keys that do
+      not correspond to a vertex are ignored.
 
     - ``name`` -- string (default: ``None``); the name of the element
 
@@ -1304,18 +1304,16 @@ class QuiverRep_generic(WithEqualityById, Module):
 
     - ``P`` -- the path semigroup of the quiver `Q` of the representation
 
-    - ``spaces`` -- dictionary (default: empty); a dictionary associating to
-      each vertex a free module over the base ring `k`.  Not all vertices need
-      to be specified, unspecified vertices are automatically set to
-      `k^0`.  Keys of the dictionary that don't correspond to vertices are
-      ignored.
+    - ``spaces`` -- dictionary (default: empty) associating to each vertex a
+      free module over the base ring `k`.  Not all vertices need to be
+      specified, unspecified vertices are automatically set to `k^0`.  Keys of
+      the dictionary that don't correspond to vertices are ignored.
 
-    - ``maps`` -- dictionary (default: empty); a dictionary associating to
-      each edge a map whose domain and codomain are the spaces associated to
-      the initial and terminal vertex of the edge respectively.  Not all
-      edges need to be specified, unspecified edges are automatically set
-      to the zero map.  Keys of the dictionary that don't correspond to
-      edges are ignored.
+    - ``maps`` -- dictionary (default: empty) associating to each edge a map
+      whose domain and codomain are the spaces associated to the initial and
+      terminal vertex of the edge respectively.  Not all edges need to be
+      specified, unspecified edges are automatically set to the zero map.  Keys
+      of the dictionary that don't correspond to edges are ignored.
 
     OUTPUT: :class:`QuiverRep`
 
@@ -2036,10 +2034,9 @@ class QuiverRep_generic(WithEqualityById, Module):
         - ``elements`` -- a collection of QuiverRepElements (default:
           empty list), each should be an element of ``self``
 
-        - ``spaces`` -- dictionary (default: empty); this dictionary
-          should contain entries of the form ``{v: S}`` where `v` is a
-          vertex of the quiver and `S` is a subspace of the vector space
-          associated to `v`
+        - ``spaces`` -- dictionary (default: empty); should contain entries of
+          the form ``{v: S}`` where `v` is a vertex of the quiver and `S` is a
+          subspace of the vector space associated to `v`
 
         OUTPUT:
 

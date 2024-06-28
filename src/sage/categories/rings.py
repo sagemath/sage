@@ -754,7 +754,7 @@ class Rings(CategoryWithAxiom):
             - an element or a list/tuple/sequence of elements
             - ``coerce`` -- boolean (default: ``True``);
               first coerce the elements into this ring
-            - ``side`` -- optional string, one of ``'twosided'``
+            - ``side`` -- (optional) string, one of ``'twosided'``
               (default), ``'left'``, ``'right'``; determines
               whether the resulting ideal is twosided, a left
               ideal or a right ideal

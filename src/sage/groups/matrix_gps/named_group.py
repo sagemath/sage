@@ -74,9 +74,8 @@ def normalize_args_vectorspace(*args, **kwds):
         space. If an integer is given, it must be a prime power and
         the corresponding finite field is constructed.
 
-      - ``var='a'`` -- optional keyword argument to specify the finite
-        field generator name in the case where ``ring`` is a prime
-        power.
+      - ``var='a'`` -- (optional) keyword argument to specify the finite
+        field generator name in the case where ``ring`` is a prime power
 
     OUTPUT: a pair ``(degree, ring)``
 

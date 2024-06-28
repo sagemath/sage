@@ -689,9 +689,9 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
 
             INPUT:
 
-            - ``point`` -- optional, a point given by its coordinates in
+            - ``point`` -- (optional) a point given by its coordinates in
               the weight basis (default: `(1, 1, 1, \ldots)`)
-            - ``base_ring`` -- optional, the base ring of the polytope
+            - ``base_ring`` -- (optional) the base ring of the polytope
 
             .. NOTE::
 

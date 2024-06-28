@@ -35,7 +35,7 @@ class IncreasingChains(RecursivelyEnumeratedSet_forest):
 
     - ``exclude`` -- list of integers that should not belong to the chains
 
-    - ``conversion`` -- optional list of elements of the poset
+    - ``conversion`` -- (optional) list of elements of the poset
 
     If ``conversion`` is provided, it is used to convert chain elements
     to elements of this list.

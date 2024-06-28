@@ -3454,12 +3454,12 @@ class Permutation(CombinatorialElement):
 
         INPUT:
 
-        - ``final_descent`` -- boolean (default: ``False``);
-          if ``True``, the last position of a non-empty
-          permutation is also considered as a descent
+        - ``final_descent`` -- boolean (default: ``False``); if ``True``, the
+          last position of a non-empty permutation is also considered as a
+          descent
 
-        - ``from_zero`` -- optional boolean (default: ``False``);
-          if ``False``, return the positions starting from `1`
+        - ``from_zero`` -- boolean (default: ``False``); if ``False``, return
+          the positions starting from `1`
 
         EXAMPLES::
 

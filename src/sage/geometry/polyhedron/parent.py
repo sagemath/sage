@@ -579,7 +579,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         - ``convert`` -- boolean (default: ``True``); whether to convert the
           coordinates into the base ring
 
-        - ``**kwds`` -- optional remaining keywords that are passed to the
+        - ``**kwds`` -- (optional) remaining keywords that are passed to the
           polyhedron constructor
 
         EXAMPLES::

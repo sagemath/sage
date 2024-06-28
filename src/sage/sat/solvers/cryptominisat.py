@@ -33,7 +33,7 @@ class CryptoMiniSat(SatSolver):
 
     INPUT:
 
-    - ``verbosity`` -- integer between 0 and 15 (default: 0); verbosity
+    - ``verbosity`` -- integer between 0 and 15 (default: 0)
 
     - ``confl_limit`` -- integer (default: ``None``); abort after this many
       conflicts. If set to ``None``, never aborts.

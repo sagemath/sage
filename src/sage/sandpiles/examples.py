@@ -51,11 +51,7 @@ class SandpileExamples:
     """
     def __call__(self):
         r"""
-        If sandpiles() is executed, return a helpful message.
-
-        INPUT:
-
-        None
+        If ``sandpiles()`` is executed, return a helpful message.
 
         OUTPUT: none
 

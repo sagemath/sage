@@ -385,8 +385,8 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``force`` -- optional boolean. If set to ``True`` the existing
-          file-cache is overwritten
+        - ``force`` -- boolean (default: ``False``); if set to ``True`` the
+          existing file-cache is overwritten
 
         EXAMPLES::
 

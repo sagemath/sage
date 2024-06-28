@@ -1955,7 +1955,7 @@ def _greedy_facet(Q, w, side='negative', n=None, pos=0, l=None, elems=[]):
 
     - ``Q`` -- a word
     - ``w`` -- an element in the Coxeter group
-    - ``side`` -- optional, either ``'negative'`` (default) or ``'positive'``
+    - ``side`` -- string; either ``'negative'`` (default) or ``'positive'``
     - ``n`` -- integer (default: the length of `Q`)
     - ``pos`` -- integer (default: 0)
     - ``l`` -- integer (default: the length of `w`)

@@ -470,9 +470,9 @@ def q_catalan_number(n, q=None, m=1):
 
     INPUT:
 
-    - ``q`` -- optional variable
+    - ``q`` -- (optional) variable
 
-    - ``m`` -- (optional integer) to get instead the ``m``-Fuss-Catalan numbers
+    - ``m`` -- (optional) integer; to get instead the ``m``-Fuss-Catalan numbers
 
     If `q` is unspecified, then it defaults to using the generator `q` for
     a univariate polynomial ring over the integers.
@@ -872,7 +872,7 @@ def q_stirling_number1(n, k, q=None):
 
     - ``n``, ``k`` -- integers with `1 \leq k \leq n`
 
-    - ``q`` -- optional variable (default: `q`)
+    - ``q`` -- variable (default: `q`)
 
     OUTPUT: a polynomial in the variable `q`
 
@@ -938,7 +938,7 @@ def q_stirling_number2(n, k, q=None):
 
     - ``n``, ``k`` -- integers with `1 \leq k \leq n`
 
-    - ``q`` -- optional variable (default: `q`)
+    - ``q`` -- variable (default: `q`)
 
     OUTPUT: a polynomial in the variable `q`
 

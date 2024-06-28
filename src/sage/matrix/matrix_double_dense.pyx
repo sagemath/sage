@@ -2964,9 +2964,9 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         INPUT:
 
-        - ``base_ring`` -- optional, defaults to the base ring of ``self``.
-          Use this to request the base ring of the returned matrices, which
-          will affect the format of the results.
+        - ``base_ring`` -- defaults to the base ring of ``self``; use this to
+          request the base ring of the returned matrices, which will affect the
+          format of the results
 
         OUTPUT:
 

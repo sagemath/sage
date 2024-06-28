@@ -109,8 +109,8 @@ def permanental_minor_polynomial(A, permanent_only=False, var='t', prec=None):
 
     - ``A`` -- matrix
 
-    - ``permanent_only`` -- optional boolean; if ``True``, only the permanent
-      is computed (might be faster)
+    - ``permanent_only`` -- boolean (default: ``False``); if ``True``, only the
+      permanent is computed (might be faster)
 
     - ``var`` -- a variable name
 

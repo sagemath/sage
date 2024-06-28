@@ -137,7 +137,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
     - ``morphism_or_polys`` -- a SchemeMorphism, a polynomial, a
       rational function, or a list or tuple of homogeneous polynomials
 
-    - ``domain`` -- optional projective space or projective subscheme
+    - ``domain`` -- (optional) projective space or projective subscheme
 
     - ``names`` -- tuple of strings (default: ``'X','Y'``) to be used as coordinate
       names for a projective space that is constructed

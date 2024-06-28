@@ -160,7 +160,7 @@ class DIMACS(SatSolver):
 
         INPUT:
 
-        - ``lits`` -- tuple of integers (``!= 0``)
+        - ``lits`` -- tuple of nonzero integers
 
         .. note::
 

@@ -902,7 +902,7 @@ def _relabel_bibd(B,n,p=None):
 
     - ``n`` -- integer; number of points
 
-    - ``p`` -- optional; the point that will be labeled with `n-1`
+    - ``p`` -- (optional) the point that will be labeled with `n-1`
 
     EXAMPLES::
 

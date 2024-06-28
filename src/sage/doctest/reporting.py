@@ -230,7 +230,7 @@ class DocTestReporter(SageObject):
 
         - ``event`` -- string
 
-        - ``output`` -- optional string
+        - ``output`` -- (optional) string
 
         EXAMPLES::
 

@@ -84,8 +84,8 @@ cdef class FiniteZZsubmodule_iterator:
     INPUT:
 
         - ``basis`` -- the elements `(g_0, \ldots, g_n)`
-        - ``order`` -- optional; the additive_orders `m_i` of `g_i`
-        - ``coset_rep`` -- optional; an element of g,
+        - ``order`` -- (optional) the additive_orders `m_i` of `g_i`
+        - ``coset_rep`` -- (optional) an element of `g`,
           if one aims to compute a coset of the `\ZZ`-submodule `M`
         - ``immutable`` -- boolean (default: ``False``); set it to
           ``True`` to return immutable elements. Setting this to
@@ -233,7 +233,7 @@ cdef class FiniteFieldsubspace_iterator(FiniteZZsubmodule_iterator):
           vectors is provided, then the linear independence of the vectors
           is not checked.
 
-        - ``coset_rep`` -- optional; a vector in the same ambient space,
+        - ``coset_rep`` -- (optional) a vector in the same ambient space,
           if one aims to compute a coset of the vector space given by ``basis``
 
         - ``immutable`` -- boolean (default: ``False``); set it to

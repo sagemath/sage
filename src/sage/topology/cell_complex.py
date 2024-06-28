@@ -242,7 +242,7 @@ class GenericCellComplex(SageObject):
 
     def f_vector(self):
         """
-        The `f`-vector of this cell complex: a list whose `n^{th}`
+        The `f`-vector of this cell complex: a list whose n-th
         item is the number of `(n-1)`-cells.  Note that, like all
         lists in Sage, this is indexed starting at 0: the 0th element
         in this list is the number of `(-1)`-cells (which is 1: the
@@ -407,8 +407,7 @@ class GenericCellComplex(SageObject):
     #
     #     INPUT:
     #
-    #     -  ``n`` -- positive integer (default: 1): suspend this
-    #        many times.
+    #     - ``n`` -- positive integer (default: 1); suspend this many times.
     #     """
     #     raise NotImplementedError
 
@@ -436,14 +435,14 @@ class GenericCellComplex(SageObject):
         - ``check`` -- a bool: whether to check that the each
           composite of two consecutive differentials is zero
         - ``dimensions`` -- if ``None``, compute the chain complex in all
-           dimensions.  If a list or tuple of integers, compute the
-           chain complex in those dimensions, setting the chain groups
-           in all other dimensions to zero.
+          dimensions.  If a list or tuple of integers, compute the
+          chain complex in those dimensions, setting the chain groups
+          in all other dimensions to zero.
 
         Definitely implement the following:
 
-        -  ``base_ring`` -- commutative ring (default: ZZ)
-        -  ``cochain`` -- a bool: whether to return the cochain complex
+        - ``base_ring`` -- commutative ring (default: ZZ)
+        - ``cochain`` -- a bool: whether to return the cochain complex
 
         EXAMPLES::
 
@@ -471,7 +470,7 @@ class GenericCellComplex(SageObject):
           to ``max(dim)``.)
         - ``base_ring`` -- commutative ring (default: ``ZZ``); must be `\ZZ` or
           a field
-        - ``subcomplex`` -- (default: empty); a subcomplex of this simplicial
+        - ``subcomplex`` -- (default: empty) a subcomplex of this simplicial
           complex. Compute the homology relative to this subcomplex.
         - ``generators`` -- boolean (default: ``False``); if ``True``, return
           generators for the homology groups along with the groups.
@@ -669,7 +668,7 @@ class GenericCellComplex(SageObject):
         r"""
         The Betti numbers of this simplicial complex as a dictionary
         (or a single Betti number, if only one dimension is given):
-        the ith Betti number is the rank of the ith homology group.
+        the `i`-th Betti number is the rank of the `i`-th homology group.
 
         INPUT:
 
@@ -728,7 +727,7 @@ class GenericCellComplex(SageObject):
 
         INPUT:
 
-        - ``base_ring`` -- (default: ``ZZ``); compute homology
+        - ``base_ring`` -- (default: ``ZZ``) compute homology
           with coefficients in this ring
 
         EXAMPLES::

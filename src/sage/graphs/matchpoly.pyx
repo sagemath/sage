@@ -68,7 +68,7 @@ def matching_polynomial(G, complement=True, name=None):
       theorem to compute the matching polynomial from that of the graphs
       complement (see ALGORITHM)
 
-    - ``name`` -- optional string for the variable name in the polynomial
+    - ``name`` -- (optional) string for the variable name in the polynomial
 
     .. NOTE::
 

@@ -14,7 +14,7 @@ and Zilber [EZ1950]_, although they called them "semi-simplicial complexes".
 
 A `\Delta`-complex is a generalization of a :mod:`simplicial complex
 <sage.homology.simplicial_complex>`; a `\Delta`-complex `X` consists
-of sets `X_n` for each non-negative integer `n`, the elements of which
+of sets `X_n` for each nonnegative integer `n`, the elements of which
 are called *n-simplices*, along with *face maps* between these sets of
 simplices: for each `n` and for all `0 \leq i \leq n`, there are
 functions `d_i` from `X_n` to `X_{n-1}`, with `d_i(s)` equal to the
@@ -80,11 +80,11 @@ class DeltaComplex(GenericCellComplex):
     - ``data`` may be a dictionary indexed by simplices.  The value
       associated to a d-simplex `S` can be any of:
 
-      - a list or tuple of (d-1)-simplices, where the ith entry is the
-        ith face of S, given as a simplex,
+      - a list or tuple of (d-1)-simplices, where the i-th entry is the
+        i-th face of S, given as a simplex,
 
-      - another d-simplex `T`, in which case the ith face of `S` is
-        declared to be the same as the ith face of `T`: `S` and `T`
+      - another d-simplex `T`, in which case the i-th face of `S` is
+        declared to be the same as the i-th face of `T`: `S` and `T`
         are glued along their entire boundary,
 
       - ``None`` or ``True`` or ``False`` or anything other than the previous two
@@ -141,8 +141,8 @@ class DeltaComplex(GenericCellComplex):
       by omitting the lowest numbered vertex, etc., and so the
       boundary consists of the edges ``[1,2]``, ``[0,2]``, and
       ``[0,1]``, in that order.  The boundary of the second is, on the
-      one hand, computed the same way: the nth face is obtained by
-      omitting the nth vertex.  On the other hand, the boundary is
+      one hand, computed the same way: the n-th face is obtained by
+      omitting the n-th vertex.  On the other hand, the boundary is
       explicitly declared to be edges ``[0,1]``, ``[0,2]``, and
       ``[1,2]``, in that order.  This glues the second triangle to the
       first in the prescribed way.  The three edges each start and end
@@ -150,10 +150,10 @@ class DeltaComplex(GenericCellComplex):
 
       .. image:: ../../media/torus_labelled.png
 
-    - ``data`` may be nested lists or tuples.  The nth entry in the
+    - ``data`` may be nested lists or tuples.  The n-th entry in the
       list is a list of the n-simplices in the complex, and each
-      n-simplex is encoded as a list, the ith entry of which is its
-      ith face.  Each face is represented by an integer, giving its
+      n-simplex is encoded as a list, the i-th entry of which is its
+      i-th face.  Each face is represented by an integer, giving its
       index in the list of (n-1)-faces.  For example, consider this::
 
         sage: P = DeltaComplex( [ [(), ()],  [(1,0), (1,0), (0,0)],
@@ -396,7 +396,7 @@ class DeltaComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``data`` -- a dictionary indexed by dimension or a list (or
+        - ``data`` -- dictionary indexed by dimension or a list (or
           tuple); in either case, data[n] should be the list (or tuple
           or set) of the indices of the simplices to be included in
           the subcomplex
@@ -526,8 +526,8 @@ class DeltaComplex(GenericCellComplex):
         The cells of this `\Delta`-complex, in the form of a dictionary:
         the keys are integers, representing dimension, and the value
         associated to an integer d is the list of d-cells.  Each
-        d-cell is further represented by a list, the ith entry of
-        which gives the index of its ith face in the list of
+        d-cell is further represented by a list, the i-th entry of
+        which gives the index of its i-th face in the list of
         (d-1)-cells.
 
         If the optional argument ``subcomplex`` is present, then
@@ -581,10 +581,10 @@ class DeltaComplex(GenericCellComplex):
         INPUT:
 
         - ``dimensions`` -- if ``None``, compute the chain complex in all
-           dimensions.  If a list or tuple of integers, compute the
-           chain complex in those dimensions, setting the chain groups
-           in all other dimensions to zero.  NOT IMPLEMENTED YET: this
-           function always returns the entire chain complex
+          dimensions.  If a list or tuple of integers, compute the
+          chain complex in those dimensions, setting the chain groups
+          in all other dimensions to zero.  NOT IMPLEMENTED YET: this
+          function always returns the entire chain complex
         - ``base_ring`` -- commutative ring (default: ``ZZ``)
         - ``subcomplex`` -- a subcomplex of this simplicial complex (default:
           empty). Compute the chain complex relative to this subcomplex.
@@ -710,7 +710,7 @@ class DeltaComplex(GenericCellComplex):
         - ``dim_left`` -- integer between 0 and one more than the
           dimension of this simplex
 
-        OUTPUT: a list containing just the triple ``(1, left,
+        OUTPUT: list containing just the triple ``(1, left,
         right)``, where ``left`` and ``right`` are the two cells
         described above, each given as pairs ``(idx, tuple)``.
 
@@ -798,7 +798,7 @@ class DeltaComplex(GenericCellComplex):
         `\Delta`-complex `S*T` with simplices of the form `[v_0, ...,
         v_k, w_0, ..., w_n]` for all simplices `[v_0, ..., v_k]` in
         `S` and `[w_0, ..., w_n]` in `T`.  The faces are computed
-        accordingly: the ith face of such a simplex is either `(d_i S)
+        accordingly: the i-th face of such a simplex is either `(d_i S)
         * T` if `i \leq k`, or `S * (d_{i-k-1} T)` if `i > k`.
 
         EXAMPLES::
@@ -921,7 +921,7 @@ class DeltaComplex(GenericCellComplex):
             {0: 0, 1: 0, 2: 0, 3: Z}
         """
         if n < 0:
-            raise ValueError("n must be non-negative")
+            raise ValueError("n must be nonnegative")
         if n == 0:
             return self
         if n == 1:
@@ -1119,7 +1119,7 @@ class DeltaComplex(GenericCellComplex):
 
     def connected_sum(self, other):
         r"""
-        Return the connected sum of self with other.
+        Return the connected sum of ``self`` with ``other``.
 
         INPUT:
 
@@ -1129,8 +1129,8 @@ class DeltaComplex(GenericCellComplex):
 
         .. warning::
 
-           This does not check that self and other are manifolds.  It
-           doesn't even check that their facets all have the same
+           This does not check that ``self`` and ``other`` are manifolds.
+           It doesn't even check that their facets all have the same
            dimension.  It just chooses top-dimensional simplices from
            each complex, checks that they have the same dimension,
            removes them, and glues the remaining pieces together.
@@ -1381,7 +1381,7 @@ class DeltaComplex(GenericCellComplex):
         """
         if dim is None:
             dim = self.dimension()
-        # the output is easier to read if the entries are non-negative.
+        # the output is easier to read if the entries are nonnegative.
         if idx == -1:
             idx = len(self.n_cells(dim)) - 1
         simplex = SimplicialComplex([Simplex(dim)]).delta_complex(sort_simplices=True)
@@ -1568,8 +1568,7 @@ class DeltaComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``base_ring`` -- coefficient ring (default:
-          ``QQ``). Must be a field.
+        - ``base_ring`` -- coefficient ring (default: ``QQ``); must be a field
 
         Denote by `C` the chain complex associated to this
         `\Delta`-complex. The algebraic topological model is a chain complex
@@ -1751,8 +1750,8 @@ class DeltaComplexExamples:
         INPUT:
 
         - ``g`` -- nonnegative integer; the genus
-        - ``orientable`` -- boolean (default: ``True``); whether the surface should
-          be orientable
+        - ``orientable`` -- boolean (default: ``True``); whether the surface
+          should be orientable
 
         In the orientable case, return a sphere if `g` is zero, and
         otherwise return a `g`-fold connected sum of a torus with
@@ -1785,9 +1784,9 @@ class DeltaComplexExamples:
         try:
             g = Integer(g)
         except TypeError:
-            raise ValueError("genus must be a non-negative integer")
+            raise ValueError("genus must be a nonnegative integer")
         if g < 0:
-            raise ValueError("genus must be a non-negative integer")
+            raise ValueError("genus must be a nonnegative integer")
         if g == 0:
             if not orientable:
                 raise ValueError("no non-orientable surface of genus zero")

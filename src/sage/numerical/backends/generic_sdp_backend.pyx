@@ -101,9 +101,9 @@ cdef class GenericSDPBackend:
 
         - ``n`` -- the number of new variables (must be > 0)
 
-        - ``obj`` -- (optional) coefficient of all variables in the objective function (default: 0.0)
+        - ``obj`` -- coefficient of all variables in the objective function (default: 0.0)
 
-        - ``names`` -- optional list of names (default: ``None``)
+        - ``names`` -- list of names (default: ``None``)
 
         OUTPUT: the index of the variable created last
 

@@ -361,14 +361,14 @@ class FreeGroupElement(ElementLibGAP):
           derivative will be computed. If this is `x_j`, then the
           method will return `\partial_j`.
 
-        - ``im_gens`` -- optional; the images of the generators
+        - ``im_gens`` -- (optional) the images of the generators
           (given as a list or iterable). This is the list
           `(a_1, a_2, \ldots, a_n)`.
           If not provided, it defaults to
           `(x_1, x_2, \ldots, x_n)` in the group ring
           `\ZZ [F]`.
 
-        - ``ring`` -- optional; the ring in which the elements
+        - ``ring`` -- (optional) the ring in which the elements
           of the list  `(a_1, a_2, \ldots, a_n)` lie. If not
           provided, this ring is inferred from these elements.
 

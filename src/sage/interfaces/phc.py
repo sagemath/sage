@@ -625,19 +625,23 @@ class PHC:
 
     def path_track(self, start_sys, end_sys, input_ring, c_skew=.001, saved_start=None):
         """
-        This function computes homotopy paths between the solutions of start_sys and end_sys.
+        This function computes homotopy paths between the solutions of
+        ``start_sys`` and ``end_sys``.
 
         INPUT:
 
-        - ``start_sys`` -- a square polynomial system, given as a list of polynomials
-        - ``end_sys`` -- same type as start_sys
+        - ``start_sys`` -- a square polynomial system, given as a list of
+          polynomials
+        - ``end_sys`` -- same type as ``start_sys``
         - ``input_ring`` -- for coercion of the variables into the desired ring
-        - ``c_skew`` -- optional; the imaginary part of homotopy multiplier; nonzero values
-          are often necessary to avoid intermediate path collisions
-        - ``saved_start`` -- optional;  a phc output file.  If not given, start system solutions
-          are computed via the phc.blackbox function.
+        - ``c_skew`` -- (optional) the imaginary part of homotopy multiplier;
+          nonzero values are often necessary to avoid intermediate path
+          collisions
+        - ``saved_start`` -- (optional) a phc output file; if not given, start
+          system solutions are computed via the ``phc.blackbox`` function
 
-        OUTPUT: list of paths as dictionaries, with the keys variables and t-values on the path
+        OUTPUT: list of paths as dictionaries, with the keys variables and
+        t-values on the path
 
         EXAMPLES::
 
@@ -665,14 +669,17 @@ class PHC:
 
         INPUT:
 
-        - ``start_sys`` -- a square polynomial system, given as a list of polynomials
+        - ``start_sys`` -- a square polynomial system, given as a list of
+          polynomials
         - ``end_sys`` -- same type as start_sys
         - ``input_ring`` -- for coercion of the variables into the desired ring
-        - ``c_skew`` -- optional; the imaginary part of homotopy multiplier; nonzero values
-          are often necessary to avoid intermediate path collisions
-        - ``endpoints`` -- optional;  whether to draw in the ends of paths as points
-        - ``saved_start`` -- optional;  a phc output file.  If not given, start system solutions
-          are computed via the phc.blackbox function.
+        - ``c_skew`` -- (optional) the imaginary part of homotopy multiplier;
+          nonzero values are often necessary to avoid intermediate path
+          collisions
+        - ``endpoints`` -- (optional) whether to draw in the ends of paths as
+          points
+        - ``saved_start`` -- (optional) a phc output file; if not given, start
+          system solutions are computed via the ``phc.blackbox`` function
 
         OUTPUT: lines and points of solution paths
 

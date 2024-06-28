@@ -878,8 +878,8 @@ class LinearCodeInformationSetDecoder(Decoder):
 
         INPUT:
 
-        - ``dictionary`` -- optional; if set to ``True``, return a ``dict``
-          mapping decoding algorithm name to its class
+        - ``dictionary`` -- boolean (default: ``False``); if set to ``True``,
+          return a ``dict`` mapping decoding algorithm name to its class
 
         OUTPUT: list of strings or a ``dict`` from string to ISD algorithm class
 

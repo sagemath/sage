@@ -78,21 +78,21 @@ class CompoundSymbol(SageObject):
 
         - ``bottom`` -- string; the bottom line of a multi-line symbol
 
-        - ``middle`` -- optional string. The middle part, for example
+        - ``middle`` -- (optional) string; the middle part, for example
           in curly braces. Will be used only once for the symbol, and
           only if its height is odd.
 
-        - ``middle_top`` -- optional string. The upper half of the
+        - ``middle_top`` -- (optional) string; the upper half of the
           2-line middle part if the height of the symbol is even.
           Will be used only once for the symbol.
 
-        - ``middle_bottom`` -- optional string. The lower half of the
+        - ``middle_bottom`` -- (optional) string; the lower half of the
           2-line middle part if the height of the symbol is even.
           Will be used only once for the symbol.
 
-        - ``top_2`` -- optional string; the upper half of a 2-line symbol
+        - ``top_2`` -- (optional) string; the upper half of a 2-line symbol
 
-        - ``bottom_2`` -- optional string; the lower half of a 2-line symbol
+        - ``bottom_2`` -- (optional) string; the lower half of a 2-line symbol
 
         EXAMPLES::
 

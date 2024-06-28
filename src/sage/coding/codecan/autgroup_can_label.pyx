@@ -192,10 +192,10 @@ class LinearCodeAutGroupCanLabel:
 
         - ``C`` -- a linear code
 
-        - ``P`` -- optional; a coloring of the coordinates i.e. a partition
+        - ``P`` -- (optional) a coloring of the coordinates i.e. a partition
           (list of disjoint lists) of [0 , ..., C.length()-1 ]
 
-        - ``algorithm_type`` -- optional; defines the acting group, either
+        - ``algorithm_type`` -- (optional) defines the acting group, either
 
             * ``permutational``
 

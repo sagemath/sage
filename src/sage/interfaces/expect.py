@@ -1585,7 +1585,7 @@ class StdOutContext:
 
         - ``silent`` -- if ``True`` this context does nothing
 
-        - ``stdout`` -- optional parameter for alternative stdout device (default: ``None``)
+        - ``stdout`` -- (optional) parameter for alternative stdout device (default: ``None``)
 
         EXAMPLES::
 

@@ -78,7 +78,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
       rational function, or a list or tuple of polynomials or rational
       functions
 
-    - ``domain`` -- optional affine space or subscheme of such;
+    - ``domain`` -- (optional) affine space or subscheme of such;
       the following combinations of ``morphism_or_polys`` and
       ``domain`` are meaningful:
 

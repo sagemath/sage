@@ -301,13 +301,13 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm='default',
 
     - ``x0`` -- initial point for finding minimum
 
-    - ``gradient`` -- optional gradient function. This will be computed
+    - ``gradient`` -- (optional) gradient function. This will be computed
       automatically for symbolic functions.  For Python functions, it allows
       the use of algorithms requiring derivatives.  It should accept a
       tuple of arguments and return a NumPy array containing the partial
       derivatives at that point.
 
-    - ``hessian`` -- optional hessian function. This will be computed
+    - ``hessian`` -- (optional) hessian function. This will be computed
       automatically for symbolic functions. For Python functions, it allows
       the use of algorithms requiring derivatives. It should accept a tuple
       of arguments and return a NumPy array containing the second partial
@@ -447,14 +447,14 @@ def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args)
 
     - ``x0`` -- initial point for finding minimum
 
-    - ``algorithm`` -- optional, specify the algorithm to use:
+    - ``algorithm`` -- (optional) specify the algorithm to use:
 
       - ``'default'`` -- default choices
 
       - ``'l-bfgs-b'`` -- only effective if you specify bound constraints;
         see [ZBN1997]_
 
-    - ``gradient`` -- optional gradient function. This will be computed
+    - ``gradient`` -- (optional) gradient function. This will be computed
       automatically for symbolic functions. This is only used when the
       constraints are specified as a list of intervals.
 

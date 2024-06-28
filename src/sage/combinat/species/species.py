@@ -350,9 +350,9 @@ class GenericCombinatorialSpecies(SageObject):
 
         INPUT:
 
-        - ``min`` -- optional integer
+        - ``min`` -- (optional) integer
 
-        - ``max`` -- optional integer
+        - ``max`` -- (optional) integer
 
         EXAMPLES::
 

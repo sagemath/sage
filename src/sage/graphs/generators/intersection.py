@@ -167,7 +167,7 @@ def PermutationGraph(second_permutation, first_permutation=None):
       or the second of the two (if the graph is to be built from two
       permutations/lists)
 
-    - ``first_permutation`` -- optional; the first of the two
+    - ``first_permutation`` -- (optional) the first of the two
       permutations/lists from which the graph should be built, if it is to be
       built from two permutations/lists
 

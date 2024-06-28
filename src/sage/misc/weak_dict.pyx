@@ -335,7 +335,7 @@ cdef class WeakValueDictionary(dict):
 
         INPUT:
 
-        - ``data`` -- optional iterable of key-value pairs
+        - ``data`` -- (optional) iterable of key-value pairs
 
         EXAMPLES::
 
@@ -1185,7 +1185,7 @@ cdef class CachedWeakValueDictionary(WeakValueDictionary):
 
         INPUT:
 
-        - ``data`` -- optional iterable of key-value pairs
+        - ``data`` -- (optional) iterable of key-value pairs
 
         - ``cache`` -- (default: 16) number of values with strong
           references

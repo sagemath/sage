@@ -41,9 +41,9 @@ class PathAlgebra(CombinatorialFreeModule):
 
     - ``P`` -- the path semigroup of a quiver `Q`
 
-    - ``order`` -- optional string, one of "negdegrevlex" (default),
-      "degrevlex", "negdeglex" or "deglex", defining the monomial order to be
-      used.
+    - ``order`` -- string; one of ``'negdegrevlex'`` (default),
+      ``'degrevlex'``, ``'negdeglex'`` or ``'deglex'``, defining the monomial
+      order to be used
 
     OUTPUT: the path algebra `kP` with the given monomial order
 
@@ -424,8 +424,8 @@ class PathAlgebra(CombinatorialFreeModule):
 
         INPUT:
 
-        A list providing the indices of the path algebra generators occurring
-        in the monomial.
+        - ``data`` -- list providing the indices of the path algebra
+          generators occurring in the monomial
 
         EXAMPLES::
 
@@ -446,8 +446,8 @@ class PathAlgebra(CombinatorialFreeModule):
 
         INPUT:
 
-        A list providing the indices of the path algebra generators occurring
-        in the monomial.
+        - ``data`` -- list providing the indices of the path algebra
+          generators occurring in the monomial
 
         EXAMPLES::
 

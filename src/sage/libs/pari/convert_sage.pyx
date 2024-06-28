@@ -60,7 +60,7 @@ cpdef gen_to_sage(Gen z, locals=None):
 
     - ``z`` -- PARI ``gen``
 
-    - ``locals`` -- optional dictionary used in fallback cases that
+    - ``locals`` -- (optional) dictionary used in fallback cases that
       involve :func:`sage_eval`
 
     OUTPUT: one of the following depending on the PARI type of ``z``
