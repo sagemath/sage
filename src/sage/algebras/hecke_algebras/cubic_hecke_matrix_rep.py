@@ -551,7 +551,7 @@ class CubicHeckeMatrixRep(Matrix_generic_dense):
 
         OUTPUT:
 
-        An instance of :class:`Matrix_generic_dense` with exactly one non zero block
+        An instance of :class:`Matrix_generic_dense` with exactly one nonzero block
         according to ``irr``.
 
         EXAMPLES::

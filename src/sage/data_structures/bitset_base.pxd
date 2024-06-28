@@ -274,7 +274,7 @@ cdef inline void bitset_fix(fused_bitset_t bits) noexcept:
 
 cdef inline void sparse_bitset_set_non_zero(sparse_bitset_t bits) noexcept nogil:
     """
-    Set the non zero chunks of ``bits``.
+    Set the nonzero chunks of ``bits``.
     """
     bits.n_non_zero_chunks = _set_non_zero(bits.bits, bits.non_zero_chunks, bits.limbs)
     bits.non_zero_chunks_are_initialized = True
@@ -681,7 +681,7 @@ cdef inline void sparse_bitset_intersection(sparse_bitset_t r, fused_bitset_t a,
     """
     Set r to the intersection of a and b, overwriting r.
 
-    Also set the non zero positions of ``r``.
+    Also set the nonzero positions of ``r``.
 
     We assume ``a.limbs >= r.limbs == b.limbs``.
     """
@@ -713,7 +713,7 @@ cdef inline void sparse_bitset_union(sparse_bitset_t r, fused_bitset_t a, fused_
     """
     Set r to the union of a and b, overwriting r.
 
-    Also set the non zero positions of ``r``.
+    Also set the nonzero positions of ``r``.
 
     We assume ``r.limbs >= a.limbs >= b.limbs`` and either ``r is a``
     or ``r.limbs == b.limbs``.
@@ -749,7 +749,7 @@ cdef inline void sparse_bitset_difference(sparse_bitset_t r, fused_bitset_t a, f
     Set r to the difference of a and b (i.e., things in a that are not
     in b), overwriting r.
 
-    Also set the non zero positions of ``r``.
+    Also set the nonzero positions of ``r``.
 
     We assume ``r.limbs >= a.limbs >= b.limbs`` and either ``r is a``
     or ``r.limbs == b.limbs``.
@@ -772,7 +772,7 @@ cdef inline void sparse_bitset_symmetric_difference(sparse_bitset_t r, fused_bit
     """
     Set r to the symmetric difference of a and b, overwriting r.
 
-    Also set the non zero positions of ``r``.
+    Also set the nonzero positions of ``r``.
 
     We assume ``r.limbs >= a.limbs >= b.limbs`` and either ``r is a``
     or ``r.limbs == b.limbs``.

@@ -303,7 +303,7 @@ def _giac(s):
         sage: A = libgiac.table(()); A  # create an empty giac table
         table(
         )
-        sage: A[2,3] = 33; A[0,2] = '2/7' # set non zero entries of the sparse matrix
+        sage: A[2,3] = 33; A[0,2] = '2/7' # set nonzero entries of the sparse matrix
         sage: A*A  # basic matrix operation are supported with sparse matrices
         table(
         (0,3) = 66/7

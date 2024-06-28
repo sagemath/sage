@@ -149,7 +149,7 @@ class SpinorOperators(AbelianGroupGap):
 
         - ``p`` -- a prime
 
-        - ``x``` -- a non zero rational number
+        - ``x`` -- nonzero rational number
 
         EXAMPLES::
 
@@ -166,7 +166,7 @@ class SpinorOperators(AbelianGroupGap):
         """
         x = QQ(x)
         if x == 0:
-            raise ValueError("x must be non zero")
+            raise ValueError("x must be nonzero")
         if p not in self._primes:
             raise ValueError("not a coordinate prime")
         v, u = x.val_unit(p)
@@ -194,11 +194,10 @@ class SpinorOperators(AbelianGroupGap):
 
         INPUT:
 
-        - ``r`` -- a non zero integer;
-          if ``prime`` is ``None``, ``r`` must not be divisible
-          by the defining primes of ``self``
+        - ``r`` -- a nonzero integer; if ``prime`` is ``None``, ``r`` must not
+          be divisible by the defining primes of ``self``
 
-        - ``prime`` -- (default:``None``) a prime or `-1`
+        - ``prime`` -- (default: ``None``) a prime or `-1`
 
         OUTPUT:
 

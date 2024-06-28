@@ -76,14 +76,12 @@ def quadratic_form_from_invariants(F, rk, det, P, sminus):
     - ``F`` -- the base field; currently only ``QQ`` is allowed
     - ``rk`` -- integer; the rank
     - ``det`` -- rational; the determinant
-    - ``P`` -- a list of primes where Cassel's Hasse invariant
+    - ``P`` -- list of primes where Cassel's Hasse invariant
       is negative
     - ``sminus`` -- integer; the number of negative eigenvalues
       of any Gram matrix
 
-    OUTPUT:
-
-    - a quadratic form with the specified invariants
+    OUTPUT: a quadratic form with the specified invariants
 
     Let `(a_1, \ldots, a_n)` be the gram marix of a regular quadratic space.
     Then Cassel's Hasse invariant is defined as
@@ -194,8 +192,8 @@ class QuadraticForm(SageObject):
     #. ``QuadraticForm(R, n, entries)``, where
 
        - ``R`` -- ring for which the quadratic form is defined
-       - ``n`` -- an integer `\geq 0`
-       - ``entries`` -- a list of `n(n+1)/2` coefficients of the quadratic form
+       - ``n`` -- integer `\geq 0`
+       - ``entries`` -- list of `n(n+1)/2` coefficients of the quadratic form
          in `R` (given lexicographically, or equivalently, by rows of the
          matrix)
 
@@ -220,7 +218,6 @@ class QuadraticForm(SageObject):
 
     - ``number_of_automorphisms``
     - ``determinant``
-
 
     OUTPUT: quadratic form
 
@@ -503,7 +500,7 @@ class QuadraticForm(SageObject):
 
     # Genus
     lazy_import("sage.quadratic_forms.genera.genus",
-                "_genera_staticmethod", as_="genera")
+                "_genera_staticmethod", as_='genera')
 
     def __init__(self, R, n=None, entries=None, unsafe_initialization=False, number_of_automorphisms=None, determinant=None):
         """
@@ -539,7 +536,7 @@ class QuadraticForm(SageObject):
             sage: QuadraticForm(ZZ, -1)
             Traceback (most recent call last):
             ...
-            ValueError: the size must be a non-negative integer, not -1
+            ValueError: the size must be a nonnegative integer, not -1
 
             sage: x = polygen(ZZ, 'x')
             sage: QuadraticForm(x**2)
@@ -618,7 +615,7 @@ class QuadraticForm(SageObject):
         # Verify the size of the matrix is an integer >= 0
         n = ZZ(n)
         if n < 0:
-            raise ValueError(f"the size must be a non-negative integer, not {n}")
+            raise ValueError(f"the size must be a nonnegative integer, not {n}")
 
         # Store the relevant variables
         N = n * (n + 1) // 2
@@ -702,7 +699,6 @@ class QuadraticForm(SageObject):
             sage: Q = QuadraticForm(ZZ, 2, [1,0,5])
             sage: Q.__pari__()                                                          # needs sage.libs.pari
             [2, 0; 0, 10]
-
         """
         return self.matrix().__pari__()
 
@@ -780,7 +776,6 @@ class QuadraticForm(SageObject):
             [1 2 3]
             [2 4 5]
             [3 5 6]
-
         """
         # Unpack the list of indices
         i, j = ij
@@ -813,7 +808,6 @@ class QuadraticForm(SageObject):
             [ 1 2 3 ]
             [ * 4 17 ]
             [ * * 6 ]
-
         """
         # Unpack the list of indices
         i, j = ij
@@ -869,7 +863,6 @@ class QuadraticForm(SageObject):
             False
             sage: Q1 == Q2
             False
-
         """
         if not isinstance(right, QuadraticForm):
             return False
@@ -1043,7 +1036,6 @@ class QuadraticForm(SageObject):
             sage: Q(M)
             Quadratic form in 1 variables over Integer Ring with coefficients:
             [ 14 ]
-
         """
         # If we are passed a matrix A, return the quadratic form Q(A(x))
         # (In matrix notation: A^t * Q * A)
@@ -1081,7 +1073,7 @@ class QuadraticForm(SageObject):
 
     def _is_even_symmetric_matrix_(self, A, R=None):
         """
-        Tests if a matrix is symmetric, defined over `R`, and has even diagonal in `R`.
+        Test if a matrix is symmetric, defined over `R`, and has even diagonal in `R`.
 
         INPUT:
 
@@ -1101,7 +1093,6 @@ class QuadraticForm(SageObject):
             sage: A[0,0] = 1
             sage: Q._is_even_symmetric_matrix_(A)
             False
-
         """
         if not isinstance(A, Matrix):
             raise TypeError("A is not a matrix.")
@@ -1148,7 +1139,6 @@ class QuadraticForm(SageObject):
             [ 0  1  2]
             [ 1  6  4]
             [ 2  4 10]
-
         """
         return self.Hessian_matrix()
 
@@ -1167,7 +1157,6 @@ class QuadraticForm(SageObject):
             [2 6]
             sage: Q.matrix().base_ring()
             Rational Field
-
         """
         mat_entries = []
         for i in range(self.dim()):
@@ -1200,7 +1189,6 @@ class QuadraticForm(SageObject):
             [0 0 0 7]
             sage: A.base_ring()
             Rational Field
-
         """
         return (ZZ(1) / ZZ(2)) * self.matrix()
 
@@ -1258,7 +1246,6 @@ class QuadraticForm(SageObject):
             sage: Q = QuadraticForm(ZZ, 2, [4,5,6])
             sage: Q.has_integral_Gram_matrix()
             False
-
         """
         # Warning over fields
         if self.base_ring() in Fields():
@@ -1436,7 +1423,6 @@ class QuadraticForm(SageObject):
             Quadratic form in 2 variables over Integer Ring with coefficients:
             [ 3 -2 ]
             [ *  1 ]
-
         """
         return QuadraticForm(self.Hessian_matrix().adjoint_classical()).primitive()
 
@@ -1581,7 +1567,7 @@ class QuadraticForm(SageObject):
         generator for the smallest ideal `N` of `R` such that `N\cdot (` the matrix of
         `2*Q` `)^{(-1)}` is in `R` with diagonal in `2R`.
 
-        Over `\ZZ` this returns a non-negative number.
+        Over `\ZZ` this returns a nonnegative number.
 
         (Caveat: This always returns the unit ideal when working over a field!)
 
@@ -1680,7 +1666,7 @@ class QuadraticForm(SageObject):
 
     def bilinear_map(self, v, w):
         r"""
-        Return the value of the associated bilinear map on two vectors
+        Return the value of the associated bilinear map on two vectors.
 
         Given a quadratic form `Q` over some base ring `R` with
         characteristic not equal to 2, this gives the image of two

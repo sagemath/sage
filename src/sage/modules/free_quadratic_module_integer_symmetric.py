@@ -1572,7 +1572,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         except TypeError:
             raise ValueError("the scaling factor must be an element of the base ring.")
         if s == 0:
-            raise ValueError("the scaling factor must be non zero")
+            raise ValueError("the scaling factor must be nonzero")
         if discard_basis:
             return IntegralLattice(s * self.gram_matrix())
         else:

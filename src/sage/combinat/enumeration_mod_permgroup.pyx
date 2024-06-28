@@ -20,7 +20,7 @@ cpdef list all_children(ClonableIntArray v, int max_part):
     an integer vector ``v`` whose entries have the sum `n` are all integer
     vectors of sum `n+1` which follow ``v`` in the lexicographic order.
 
-    That means this function adds `1` on the last non zero entries and the
+    That means this function adds `1` on the last nonzero entries and the
     following ones. For an integer vector `v` such that
 
     .. MATH::

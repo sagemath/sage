@@ -3274,7 +3274,7 @@ def complementary_difference_setsIII(n, check=True):
     Construct complementary difference sets in a group of order `n = 2m + 1`, where `4m + 3` is a prime power.
 
     Consider a finite field `G` of order `n` and let `\rho` be a primite element
-    of this group. Now let `Q` be the set of non zero quadratic residues in `G`,
+    of this group. Now let `Q` be the set of nonzero quadratic residues in `G`,
     and let `A = \{ a | \rho^{2a} - 1 \in Q\}`, `B' = \{ b | -(\rho^{2b} + 1) \in Q\}`.
     Then `A` and `B = Q \setminus B'` are complementary difference sets over the ring
     of integers modulo `n`. For more details, see [Sz1969]_.

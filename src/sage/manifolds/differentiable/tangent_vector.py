@@ -210,7 +210,7 @@ class TangentVector(FiniteRankFreeModuleElement):
         - ``color`` -- (default: ``'blue'``) color of the arrow representing the
           vector
 
-        - ``print_label`` -- (boolean; default: ``True``) determines whether a
+        - ``print_label`` -- boolean (default: ``True``); determines whether a
           label is printed next to the arrow representing the vector
 
         - ``label`` -- (string; default: ``None``) label printed next to the

@@ -882,7 +882,7 @@ class IntegratedCurve(DifferentiableCurve):
             des[i] = diff(y[i],par) == des[i]
             for j in range(dim):
                 coord = self._chart[:][j] # important to use '[:]' on
-                # 'chart' to avoid problems due to non zero starting
+                # 'chart' to avoid problems due to nonzero starting
                 # index (i0)
                 veloc = self._velocities[j]
                 des[dim+i] = des[dim+i].substitute({coord: y[j]})
@@ -895,7 +895,7 @@ class IntegratedCurve(DifferentiableCurve):
         y_ics_second_half = []
         for i in range(dim):
             coord = self._chart[:][i] # important to use '[:]'
-            # on 'chart' to avoid problems due to non zero
+            # on 'chart' to avoid problems due to nonzero
             # starting index (i0)
             veloc = self._velocities[i]
             str_var_coord = "{}_0".format(coord)
@@ -1307,7 +1307,7 @@ class IntegratedCurve(DifferentiableCurve):
                             for j in range(dim):
                                 coord = chart[:][j] # important to use
                                 # '[:]' on 'chart' to avoid problems due
-                                # to non zero starting index (i0)
+                                # to nonzero starting index (i0)
                                 vel = self._velocities[j]
                                 AUX = eqns_num[i].derivative(coord)
                                 AUX2 = eqns_num[i].derivative(vel)
@@ -1316,7 +1316,7 @@ class IntegratedCurve(DifferentiableCurve):
                                 for k in range(dim):
                                     coordin = chart[:][k] # important to
                                     # use '[:]' on 'chart' to avoid
-                                    # problems due to non zero starting
+                                    # problems due to nonzero starting
                                     # index (i0)
                                     veloc = self._velocities[k]
                                     AUX = AUX.substitute({coordin: y[k]})
@@ -1335,7 +1335,7 @@ class IntegratedCurve(DifferentiableCurve):
                             for m in range(dim):
                                 coordin = chart[:][m] # important to use
                                 # '[:]' on 'chart' to avoid problems due
-                                # to non zero starting index (i0)
+                                # to nonzero starting index (i0)
                                 veloc = self._velocities[m]
                                 AUX3 = AUX3.substitute({coordin: y[m]})
                                 AUX3 = AUX3.substitute({veloc: y[dim+m]})
@@ -3148,7 +3148,7 @@ class IntegratedAutoparallelCurve(IntegratedCurve):
     The vectors tangent to such a curve make an angle different from 0
     or `\pi/2` with the lines of latitude and longitude.
     Then, compute a curve such that both components of its initial
-    tangent vectors are non zero::
+    tangent vectors are nonzero::
 
         sage: sol = c.solve(solution_key='sol-angle',
         ....:  parameters_values={tmin:0,tmax:2,th0:pi/4,ph0:0.1,v_th0:1,v_ph0:8})

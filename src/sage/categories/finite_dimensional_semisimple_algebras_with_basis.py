@@ -144,7 +144,7 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
                 dimension 1 subalgebras. The algorithm is
                 recursive and proceeds as follows:
 
-                0. If `A` is of dimension 1, return a non zero
+                0. If `A` is of dimension 1, return a nonzero
                    element.
 
                 1. Otherwise: find one of the generators such

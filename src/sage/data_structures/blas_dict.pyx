@@ -19,7 +19,7 @@ meaningful in those cases. We are also assuming that ``-1 * x = -x``
 and ``bool(x) == bool(-x)`` for all ``x`` in `K`.
 
 Unless stated overwise, all values `v` in the dictionaries should be
-non zero (as tested with `bool(v)`).
+nonzero (as tested with `bool(v)`).
 
 This is mostly used by :class:`CombinatorialFreeModule`.
 """

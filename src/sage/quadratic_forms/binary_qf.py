@@ -298,7 +298,7 @@ class BinaryQF(SageObject):
 
         INPUT:
 
-        - args -- x and y values, as a pair x, y or a list, tuple, or
+        - ``args`` -- x and y values, as a pair x, y or a list, tuple, or
           vector
 
         EXAMPLES::
@@ -769,9 +769,9 @@ class BinaryQF(SageObject):
 
         INPUT:
 
-        - ``transformation`` -- bool (default: ``False``); if ``True``,
-          return both the reduced form and a matrix transforming
-          ``self`` into the reduced form.
+        - ``transformation`` -- boolean (default: ``False``); if ``True``,
+          return both the reduced form and a matrix transforming ``self`` into
+          the reduced form
 
         TESTS::
 
@@ -831,7 +831,7 @@ class BinaryQF(SageObject):
         return Q
 
     @cached_method
-    def reduced_form(self, transformation=False, algorithm="default"):
+    def reduced_form(self, transformation=False, algorithm='default'):
         """
         Return a reduced form equivalent to ``self``.
 
@@ -839,9 +839,9 @@ class BinaryQF(SageObject):
 
         - ``self`` -- binary quadratic form of non-square discriminant
 
-        - ``transformation`` -- boolean (default: ``False``): if ``True``, return
+        - ``transformation`` -- boolean (default: ``False``); if ``True``, return
           both the reduced form and a matrix whose :meth:`matrix_action_right`
-          transforms ``self`` into the reduced form.
+          transforms ``self`` into the reduced form
 
         - ``algorithm`` -- string; the algorithm to use. Valid options are:
 
@@ -1279,7 +1279,7 @@ class BinaryQF(SageObject):
 
     def is_nonsingular(self):
         """
-        Return whether this form is nonsingular, i.e., has non-zero discriminant.
+        Return whether this form is nonsingular, i.e., has nonzero discriminant.
 
         EXAMPLES::
 
@@ -1298,7 +1298,7 @@ class BinaryQF(SageObject):
 
         INPUT:
 
-        - ``proper`` -- bool (default: ``True``); if ``True`` use proper
+        - ``proper`` -- boolean (default: ``True``); if ``True`` use proper
           equivalence
         - ``other`` -- a binary quadratic form
 
@@ -1604,17 +1604,17 @@ class BinaryQF(SageObject):
                 raise ValueError("Unable to find a prime value of %s" % self)
             B += 10
 
-    def solve_integer(self, n, *, algorithm="general", _flag=2):
+    def solve_integer(self, n, *, algorithm='general', _flag=2):
         r"""
         Solve `Q(x, y) = n` in integers `x` and `y` where `Q` is this
         quadratic form.
 
         INPUT:
 
-        - ``n`` -- a positive integer or a
+        - ``n`` -- positive integer or a
           `:sage:`~sage.structure.factorization.Factorization` object
 
-        - ``algorithm`` -- ``"general"`` (default) or ``"cornacchia"``
+        - ``algorithm`` -- ``'general'`` (default) or ``'cornacchia'``
 
         - ``_flag`` -- ``1``, ``2`` (default) or ``3``; passed onto the pari
           function``qfbsolve``. For internal use only.
@@ -1685,7 +1685,7 @@ class BinaryQF(SageObject):
             sage: xy is None or Q(*xy) == n                                             # needs sage.libs.pari
             True
 
-        Also when using the ``"cornacchia"`` algorithm::
+        Also when using the ``'cornacchia'`` algorithm::
 
             sage: # needs sage.libs.pari
             sage: n = random_prime(10^9)
@@ -1829,12 +1829,12 @@ def BinaryQF_reduced_representatives(D, primitive_only=False, proper=True):
 
     INPUT:
 
-    - ``D`` -- (integer) a discriminant
+    - ``D`` -- integer; a discriminant
 
-    - ``primitive_only`` -- (boolean; default: ``True``): if ``True``, only
-      return primitive forms.
+    - ``primitive_only`` -- boolean (default: ``True``); if ``True``, only
+      return primitive forms
 
-    - ``proper`` -- (boolean; default: ``True``)
+    - ``proper`` -- boolean (default: ``True``)
 
     OUTPUT:
 
