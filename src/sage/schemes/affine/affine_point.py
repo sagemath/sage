@@ -27,7 +27,6 @@ from sage.rings.integer_ring import ZZ
 from sage.schemes.generic.morphism import SchemeMorphism_point, SchemeMorphism
 from sage.structure.sequence import Sequence
 
-lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
 lazy_import('sage.schemes.elliptic_curves.ell_point', 'EllipticCurvePoint_field')
 
 _NumberFields = NumberFields()
