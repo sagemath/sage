@@ -883,7 +883,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             L = matrix(QQ, B.nrows()+1, B.ncols()+1)
             L.set_block(0, 0, B)
             L.set_block(B.nrows(), 0, matrix(t))
-            weight = (B[-1]*B[-1]).isqrt()+1 # norm of the largest vector
+            weight = (B[-1]*B[-1]).isqrt()+1  # norm of the largest vector
             L[-1, -1] = weight
 
             # the vector should be the last row but we iterate
@@ -906,8 +906,8 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             # t = x*B might not have a solution over QQ so we instead solve
             # the system x*B*B^T = t*B^T which will be the "closest" solution
             # if it does not exist, same effect as using the psuedo-inverse
-            return vector(ZZ,
-                [QQ(x).round('even') for x in (B*B.T).solve_left(t*B.T)])*B
+            sol = (B*B.T).solve_left(t*B.T)
+            return vector(ZZ, [QQ(x).round('even') for x in sol])*B
 
         else:
             raise ValueError("algorithm must be one of 'embedding', 'nearest_plane' or 'rounding_off'")
