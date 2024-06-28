@@ -134,7 +134,7 @@ cdef void extended_lex_BFS(
     adjacency list of vertices (by using, for example, a static sparse graph)
     to force the computed LexBFS order to respect a previous one.
 
-    EXAMPLE:
+    EXAMPLES:
 
     To see how it can be used, see the code of the lex_BFS method (in
     traversals.pyx) or of the class SliceDecomposition in this module.
