@@ -639,3 +639,86 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
     
     def is_sparse(self):
         return True
+    
+    def interpolation(self, points):
+        """
+        Return a tropical polynomial with its function goes through each point
+        in ``points`` if possible
+
+        INPUT:
+
+        - points -- a list of tuple (x,y)
+
+        EXAMPLES:
+
+            sage: T = TropicalSemiring(QQ, use_min=True)
+            sage: R = PolynomialRing(T, 'x')
+            sage: points = [(-2,-3),(1,3),(2,4)]
+            sage: p1 = R.interpolation(points); p1
+            1*x^2 + 2*x + 4
+            sage: p1.plot()
+
+        ::
+
+            sage: T = TropicalSemiring(QQ, use_min=False)
+            sage: R = PolynomialRing(T,'x')
+            sage: points = [(0,0),(1,1),(2,4)]
+            sage: p1 = R.interpolation(points); p1
+            -2*x^3 + -1*x^2 + 0*x + 0
+            sage: p1.plot()
+        
+        TESTS:
+
+        Every piecewise linear component of tropical polynomial function has
+        to have an integer slope::
+
+            sage: T = TropicalSemiring(QQ, use_min=False)
+            sage: R = PolynomialRing(T,'x')
+            sage: points = [(0,0),(2,3)]
+            sage: R.interpolation(points)
+            Traceback (most recent call last):
+            ...
+            ValueError: the slope is not an integer
+        
+        For max-plus algebra, the slope of the componenets has to be increasing
+        as we move from left to right. Conversely for min-plus algebra, the 
+        slope of the componenets has to be decreasing from left to right::
+
+            sage: T = TropicalSemiring(QQ, use_min=False)
+            sage: R = PolynomialRing(T,'x')
+            sage: points = [(-2,-3),(1,3),(2,4)]
+            sage: R.interpolation(points)
+            Traceback (most recent call last):
+            ...
+            ValueError: can not interpolate these points
+        """
+        points = sorted(points, key=lambda point: point[0])
+        all_slope = [0]
+        roots = {}
+        if self.base()._use_min:
+            point_order = range(len(points)-1, 0, -1)
+        else:
+            point_order = range(len(points)-1)
+        for i in point_order:
+            if self.base()._use_min:
+                slope = (points[i-1][1]-points[i][1])/(points[i-1][0]-points[i][0])
+            else:
+                slope = (points[i+1][1]-points[i][1])/(points[i+1][0]-points[i][0])
+            if not slope.is_integer():
+                raise ValueError("the slope is not an integer")
+            if slope < all_slope[-1]:
+                raise ValueError("can not interpolate these points")
+            elif slope > all_slope[-1]:
+                order = slope - all_slope[-1]
+                all_slope.append(slope)
+                roots[points[i][0]] = order
+        if len(all_slope) == 1: # constant polynomial
+            return self(points[0][1])
+        
+        result = self()
+        for root, ord in roots.items():
+            result *= self([root,0])**ord
+        test_value = result(self.base()(points[0][0]))
+        unit = self.base()(points[0][1]-test_value.lift())
+        result *= unit
+        return result
