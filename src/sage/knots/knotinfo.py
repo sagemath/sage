@@ -2258,6 +2258,11 @@ class KnotInfoBase(Enum):
             False
             sage: L5a1_0.is_recoverable(unique=False)
             True
+
+        TESTS:
+
+            sage: KnotInfo.K12a_165.is_recoverable(unique=False)  # optional - database_knotinfo, long time
+            True
         """
         def recover(sym_mut, braid):
             r"""

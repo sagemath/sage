@@ -363,7 +363,7 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid):
             NotImplementedError: this (possibly non prime) knot cannot be identified uniquely by KnotInfo
             use keyword argument `unique` to obtain more details
             sage: FKIM.from_knot(K, unique=False)     # long time
-            (KnotInfo['K4_1']*KnotInfo['K5_2'], KnotInfo['K9_12'])
+            [KnotInfo['K4_1']*KnotInfo['K5_2'], KnotInfo['K9_12']]
         """
         hp = knot.homfly_polynomial(normalization='vz')
         num_summands = sum(e for f, e in hp.factor())
@@ -373,13 +373,19 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid):
         res = self._from_knot(knot)
         if res:
             if len(res) == 1:
-                return res[0]
+                if unique:
+                    return res[0]
+                else:
+                    return [res[0]]  # to be consistent with get_knotinfo
             k = self._check_elements(knot, res)
             if k:
-                return k
+                if unique:
+                    return k
+                else:
+                    return[k]  # to be consistent with get_knotinfo
 
         if res and not unique:
-            return res
+            return sorted(list(set(res)))
         if unique and len(res) > 1:
             non_unique_hint = '\nuse keyword argument `unique` to obtain more details'
             raise NotImplementedError('this (possibly non prime) knot cannot be identified uniquely by KnotInfo%s' % non_unique_hint)
