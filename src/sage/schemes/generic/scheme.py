@@ -19,13 +19,17 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.parent import Parent
-from sage.misc.cachefunc import cached_method
-from sage.rings.integer_ring import ZZ
 from sage.categories.commutative_rings import CommutativeRings
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.rings.ideal import is_Ideal
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.rings.integer_ring import ZZ
 from sage.schemes.generic.point import SchemeTopologicalPoint_prime_ideal
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
+lazy_import('sage.schemes.elliptic_curves.ell_point', 'EllipticCurvePoint_field')
 
 
 def is_Scheme(x):
@@ -104,7 +108,6 @@ class Scheme(Parent):
             sage: TestSuite(X).run()                                                    # needs sage.libs.singular
 
         """
-        from sage.schemes.generic.morphism import is_SchemeMorphism
         from sage.categories.map import Map
         from sage.categories.rings import Rings
 
@@ -112,7 +115,7 @@ class Scheme(Parent):
             self._base_ring = ZZ
         elif isinstance(X, Scheme):
             self._base_scheme = X
-        elif is_SchemeMorphism(X):
+        elif isinstance(X, (SchemeMorphism, EllipticCurvePoint_field)):
             self._base_morphism = X
         elif X in CommutativeRings():
             self._base_ring = X
