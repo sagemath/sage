@@ -1167,7 +1167,7 @@ cdef class Expression(Expression_abc):
             sage: unicode_art(SR(13 - I))
             13 - ⅈ
             sage: unicode_art(SR(1.3 - I))
-            1.3 - ⅈ
+            1.3 - ...ⅈ
             sage: unicode_art(cos(I))
             cosh(1)
 

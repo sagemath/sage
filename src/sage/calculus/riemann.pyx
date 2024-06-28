@@ -44,6 +44,9 @@ from sage.calculus.integration import numerical_integral
 import numpy as np
 cimport numpy as np
 
+if int(np.version.short_version[0]) > 1:
+    np.set_printoptions(legacy="1.25")
+
 from math import pi
 from math import sin
 from math import cos

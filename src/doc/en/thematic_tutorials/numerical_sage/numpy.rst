@@ -7,6 +7,8 @@ import it.
 ::
 
     sage: import numpy
+    sage: if int(numpy.version.short_version[0]) > 1:
+    ....:     numpy.set_printoptions(legacy="1.25")  # to ensure numpy 2.0 compatibility
 
 The basic object of computation in NumPy is an array. It is simple to
 create an array.
