@@ -912,4 +912,8 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         else:
             raise ValueError("algorithm must be one of 'embedding', 'nearest_plane' or 'rounding_off'")
 
-    cvp = approximate_closest_vector
+    def babai(self, *args, **kwargs):
+        """
+        Alias for :meth:`approximate_closest_vector`.
+        """
+        return self.approximate_closest_vector(*args, **kwargs)
