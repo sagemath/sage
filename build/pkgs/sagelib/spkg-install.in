@@ -24,7 +24,6 @@ export SAGE_ROOT=/doesnotexist
 export SAGE_SRC=/doesnotexist
 export SAGE_SRC_ROOT=/doesnotexist
 export SAGE_DOC_SRC=/doesnotexist
-export SAGE_BUILD_DIR=/doesnotexist
 
 # We also poison all directories below SAGE_LOCAL
 # except for SAGE_SPKG_SCRIPTS, which is needed by sage-dist-helpers
