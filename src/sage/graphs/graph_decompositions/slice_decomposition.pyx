@@ -506,7 +506,7 @@ cdef class SliceDecomposition(SageObject):
             LookupError: vertex (John) does not appear in the slice decomposition
         """
         if v not in self.sigma_inv:
-            raise LookupError(f"vertex ({v}) does not appear in the slice "\
+            raise LookupError(f"vertex ({v}) does not appear in the slice "
                               "decomposition")
         i = self.sigma_inv[v]
         return {'pivot': v,
@@ -617,7 +617,7 @@ cdef class SliceDecomposition(SageObject):
             LookupError: vertex (Michael) does not appear in the slice decomposition
         """
         if v not in self.sigma_inv:
-            raise LookupError(f"vertex ({v}) does not appear in the slice "\
+            raise LookupError(f"vertex ({v}) does not appear in the slice "
                               "decomposition")
         i = self.sigma_inv[v]
         return self._slice(i)
@@ -689,7 +689,7 @@ cdef class SliceDecomposition(SageObject):
             LookupError: vertex (Terry) does not appear in the slice decomposition
         """
         if v not in self.sigma_inv:
-            raise LookupError(f"vertex ({v}) does not appear in the slice "\
+            raise LookupError(f"vertex ({v}) does not appear in the slice "
                               "decomposition")
         i = self.sigma_inv[v]
         return self._xslice_sequence(i)
@@ -731,7 +731,7 @@ cdef class SliceDecomposition(SageObject):
             LookupError: vertex (Eric) does not appear in the slice decomposition
         """
         if v not in self.sigma_inv:
-            raise LookupError(f"vertex ({v}) does not appear in the slice "\
+            raise LookupError(f"vertex ({v}) does not appear in the slice "
                               "decomposition")
         i = self.sigma_inv[v]
         return self._xslice_lex_label(i)
@@ -787,7 +787,7 @@ cdef class SliceDecomposition(SageObject):
             LookupError: vertex (Graham) does not appear in the slice decomposition
         """
         if v not in self.sigma_inv:
-            raise LookupError(f"vertex ({v}) does not appear in the slice "\
+            raise LookupError(f"vertex ({v}) does not appear in the slice "
                               "decomposition")
         i = self.sigma_inv[v]
         return self._xslice_active_edges(i)
@@ -935,9 +935,9 @@ cdef class SliceDecomposition(SageObject):
         slices = [[] for _ in self.sigma]
 
         lines = [ r"\begin{tikzpicture}" ]
-        lines.append(r"\graph [tree layout,level distance=0,level sep=1em,"\
-                     r"sibling distance=0,sibling sep=0.6em,"\
-                     r"tail anchor=center,head anchor=north,"\
+        lines.append(r"\graph [tree layout,level distance=0,level sep=1em,"
+                     r"sibling distance=0,sibling sep=0.6em,"
+                     r"tail anchor=center,head anchor=north,"
                      r"nodes={draw,rectangle,inner xsep=0.2em},edges={thick}]")
         lines.append("{")
         bo, bc = "{", "}" # to write { and } if f-strings
@@ -959,7 +959,7 @@ cdef class SliceDecomposition(SageObject):
         # Add dahsed red boxes around xslices
         for i, S in enumerate(slices):
             fit=" ".join(f"({s})" for s in S)
-            lines.append(rf"\node (s{i}) [rectangle,inner xsep=0.2em,draw=red,"\
+            lines.append(rf"\node (s{i}) [rectangle,inner xsep=0.2em,draw=red,"
                          f"densely dashed,fit={fit}]{bo}{bc};")
 
         lines.append(r"\end{tikzpicture}")

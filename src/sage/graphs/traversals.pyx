@@ -503,7 +503,7 @@ def lex_BFS(
         initial_v_int = Gbackend.get_vertex(initial_vertex)
     else:
         initial_v_int = -1
-    extended_lex_BFS(cg, sigma_int, NULL, initial_v_int, &pred, NULL, NULL);
+    extended_lex_BFS(cg, sigma_int, NULL, initial_v_int, &pred, NULL, NULL)
     sigma = [ Gbackend.vertex_label(vi) for vi in sigma_int ]
     predecessor = { u: sigma[i] for u, i in zip(sigma, pred) if i != -1 }
 
