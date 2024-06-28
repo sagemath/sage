@@ -66,19 +66,20 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-
 from sage.arith.misc import euler_phi
-from sage.functions.other import ceil, binomial, floor
-from sage.functions.log import log
+from sage.matrix.constructor import matrix, zero_matrix
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
+from sage.modules.free_module_element import vector
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
-from sage.rings.padics.factory import Zp, Zq, Qq
-from sage.rings.integer_ring import ZZ
-from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from sage.matrix.constructor import matrix, zero_matrix
-from sage.modules.free_module_element import vector
-from sage.schemes.hyperelliptic_curves.hypellfrob import interval_products
-from sage.misc.cachefunc import cached_method
+
+lazy_import("sage.functions.log", "log")
+lazy_import("sage.functions.other", ["ceil", "binomial", "floor"])
+lazy_import('sage.rings.padics.factory', ['Zp', 'Zq', 'Qq'])
+lazy_import('sage.schemes.hyperelliptic_curves.hypellfrob', 'interval_products')
 
 from .charpoly_frobenius import charpoly_frobenius
 from . import cycliccover_generic

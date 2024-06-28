@@ -56,11 +56,13 @@ from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.arith.misc import binomial
 from sage.rings.power_series_ring import PowerSeriesRing
 from . import hyperelliptic_generic
-from sage.schemes.hyperelliptic_curves.hypellfrob import hypellfrob
 from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import identity_matrix, matrix
 from sage.misc.functional import rank
-from sage.libs.pari.all import pari
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.schemes.hyperelliptic_curves.hypellfrob', 'hypellfrob')
 
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_finite_field
 

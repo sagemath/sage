@@ -32,6 +32,7 @@ include sage/misc/classcall_metaclass.*
 include sage/misc/inherit_comparison*.*
 include sage/misc/weak_dict.*
 include sage/misc/nested_class*.*
+include sage/misc/test_nested_class*.p*
 include sage/misc/abstract_method.*
 include sage/misc/cachefunc.*
 include sage/misc/decorators.*
@@ -46,41 +47,55 @@ include sage/misc/constant_function.*
 include sage/misc/call.*
 include sage/misc/bindable_class.*
 include sage/misc/namespace_package.p*
-include sage/misc/package_dir.py
 
 include sage/misc/verbose.*
 include sage/misc/repr.*
 include sage/misc/superseded.*
 include sage/misc/misc_c.*              # prod
 include sage/misc/flatten.*             # dep of sage/categories/coxeter_groups.py
-
+include sage/misc/lazy_list.p*
 include sage/misc/lazy_import*.*
 include sage/misc/sageinspect.*          # dep of sage/misc/lazy_import
 include sage/misc/instancedoc.*          # dep of sage/misc/lazy_import
 
 include sage/misc/persist.*
 include sage/misc/sage_unittest.*        # dep of sage/misc/persist
+include sage/misc/fpickle.p*
 
 include sage/misc/randstate.*         # used in sage.doctest
 include sage/misc/prandom.*              # dep of sage/rings/ring
 
 include sage/ext/stdsage.pxd
+include sage/ext/mod_int.*
+include sage/ext/cplusplus.pxd
 include sage/sets/pythonclass.*
 include sage/arith/power.*
 include sage/arith/numerical_approx.*
 # integers...
 include sage/arith/long.*
 include sage/rings/integer_fake.*
-graft sage/libs/gmp
+# coerce actions needs is_Group
+include sage/groups/group.*
+include sage/groups/old.*
 
+# needed for sage.structure.formal_sum
+include sage/modules/module.p*
+
+graft sage/libs/gmp
+include sage/libs/gmpxx.pxd
 
 ## What we do not want:
 # sage/misc/latex         -- this should really go to another package
 
 
-## FIXME: Needed for doctesting
+## Needed for doctesting; we keep sagemath-repl pure Python
 include sage/misc/misc.*                # some_tuples used in sage.misc.sage_unittest
 include sage/misc/timing.p*             # walltime, cputime used in sage.doctest
+include sage/misc/globals.p*
+include sage/misc/sage_timeit*.p*
+include sage/misc/session.p*
+include sage/misc/reset.p*
+include sage/misc/sage_ostools.p*
 
 global-exclude all__*.py
 global-include all__sagemath_objects.py

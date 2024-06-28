@@ -175,7 +175,7 @@ jobs:
       # SPKGs to install as system packages
       SPKGS: _bootstrap _prereq
       # Non-Python packages to install as spkgs
-      TARGETS_PRE: gmp mpfr mpc bliss coxeter3 mcqd meataxe sirocco boost_cropped tdlib
+      TARGETS_PRE: gmp mpfr mpc bliss coxeter3 mcqd meataxe sirocco boost_cropped tdlib brial
       # Disable building PyPy wheels on all platforms
       # Disable musllinux until #33083 provides alpine package information
       CIBW_SKIP: "pp* *-musllinux*"
@@ -227,7 +227,7 @@ jobs:
           export PATH=build/bin:$PATH
           export CIBW_BEFORE_ALL="( $(sage-print-system-package-command debian --yes --no-install-recommends install $(sage-get-system-packages debian $SPKGS)) || $(sage-print-system-package-command fedora --yes --no-install-recommends install $(sage-get-system-packages fedora $SPKGS | sed s/pkg-config/pkgconfig/)) || ( $(sage-print-system-package-command homebrew --yes --no-install-recommends install $(sage-get-system-packages homebrew $SPKGS)) || echo error ignored) ) && if cp /host/sage-\$AUDITWHEEL_PLAT/config.status . 2>/dev/null; then chmod +x config.status; fi && if [ -x ./config.status ]; then ./config.status; else ./configure --enable-build-as-root ${{ startsWith(matrix.os, 'ubuntu') && '--prefix=/host/sage-\$AUDITWHEEL_PLAT' || '' }} && cp config.status prefix/; fi && MAKE=\"make -j6\" make V=0 $TARGETS_PRE && (echo \"sage_conf @ file://\$(pwd)/pkgs/sage-conf\" && echo \"sage_setup @ file://\$(pwd)/pkgs/sage-setup\") > constraints.txt"
           mkdir -p unpacked
-          for pkg in sagemath*objects sagemath*categories sagemath*bliss sagemath*coxeter3 sagemath*mcqd sagemath*tdlib; do
+          for pkg in sagemath*objects sagemath*categories sagemath*bliss sagemath*brial sagemath*coxeter3 sagemath*mcqd sagemath*tdlib; do
               case "$pkg:${{ matrix.arch }}" in
                   sagemath*tdlib:i686) continue;;  # broken - boost-related
               esac

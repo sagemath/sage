@@ -148,6 +148,7 @@ def load_submodules(module=None, exclude_pattern=None):
     EXAMPLES::
 
         sage: sage.misc.dev_tools.load_submodules(sage.combinat)
+        load sage.combinat.SJT... succeeded
         load sage.combinat.algebraic_combinatorics... succeeded
         ...
         load sage.combinat.words.suffix_trees... succeeded
@@ -277,6 +278,8 @@ def find_objects_from_name(name, module_name=None, include_lazy_imports=False):
     obj = []
     for smodule_name, smodule in sys.modules.items():
         if module_name and not smodule_name.startswith(module_name):
+            continue
+        if smodule_name.rpartition('.')[2].startswith('all__sagemath_'):
             continue
         if hasattr(smodule, '__dict__') and name in smodule.__dict__:
             u = smodule.__dict__[name]
