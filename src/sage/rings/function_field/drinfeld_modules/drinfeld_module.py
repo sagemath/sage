@@ -759,27 +759,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         from sage.rings.function_field.drinfeld_modules.homset import DrinfeldModuleHomset
         return DrinfeldModuleHomset(self, other, category)
 
-    def _check_rank_two(self):
-        r"""
-        Raise ``NotImplementedError`` if the rank is not two.
-
-        TESTS::
-
-            sage: Fq = GF(25)
-            sage: A.<T> = Fq[]
-            sage: K.<z12> = Fq.extension(6)
-            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
-            sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
-            sage: phi._check_rank_two()
-            sage: phi = DrinfeldModule(A, [p_root, 1])
-            sage: phi._check_rank_two()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: rank must be 2
-        """
-        if self.rank() != 2:
-            raise NotImplementedError('rank must be 2')
-
     def _latex_(self):
         r"""
         Return a LaTeX representation of the Drinfeld module.
