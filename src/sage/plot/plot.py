@@ -950,7 +950,7 @@ def plot(funcs, *args, **kwds):
 
     COLOR OPTIONS:
 
-    - ``'color'`` -- (default: 'blue') one of:
+    - ``color`` -- (default: ``'blue'``) one of:
 
       - an RGB tuple (r,g,b) with each of r,g,b between 0 and 1.
 
@@ -965,11 +965,11 @@ def plot(funcs, *args, **kwds):
       - ``'automatic'`` -- maps to default ('blue') if `X` is a single Sage object; and
         maps to a fixed sequence of regularly spaced colors if `X` is a list
 
-    - ``'legend_color'`` -- the color of the text for `X` (or each item in `X`) in the legend.
-        Default color is 'black'. Options are as in ``color`` above, except that the choice 'automatic' maps to 'black' if `X` is a single Sage object
+    - ``legend_color`` -- the color of the text for `X` (or each item in `X`) in the legend.
+      Default color is 'black'. Options are as in ``color`` above, except that the choice 'automatic' maps to 'black' if `X` is a single Sage object
 
-    - ``'fillcolor'`` -- the color of the fill for the plot of `X` (or each item in `X`).
-        Default color is 'gray' if `X` is a single Sage object or if ``color`` is a single color. Otherwise, options are as in ``color`` above
+    - ``fillcolor`` -- the color of the fill for the plot of `X` (or each item in `X`).
+      Default color is 'gray' if `X` is a single Sage object or if ``color`` is a single color. Otherwise, options are as in ``color`` above
 
     APPEARANCE OPTIONS:
 
@@ -995,7 +995,7 @@ def plot(funcs, *args, **kwds):
 
       - ``'-'`` or ``'solid'``
       - ``'--'`` or ``'dashed'``
-      - ``'-.'`` or ``"dash dot"``
+      - ``'-.'`` or ``'dash dot'``
       - ``':'`` or ``'dotted'``
       - ``"None"`` or ``" "`` or ``""`` (nothing)
       - a list or dictionary (see below)

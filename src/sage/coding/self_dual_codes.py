@@ -6,12 +6,12 @@ This module implements functions useful for studying binary self-dual codes.
 The main function is ``self_dual_binary_codes``, which is a case-by-case list
 of entries, each represented by a Python dictionary.
 
-Format of each entry: a Python dictionary with keys ``"order autgp"``, ``'spectrum'``,
+Format of each entry: a Python dictionary with keys ``'order autgp'``, ``'spectrum'``,
 ``'code'``, ``'Comment'``, ``'Type'``, where
 
 - ``'code'`` -- a sd code `C` of length `n`, dim `n/2`, over `\GF{2}`
 
-- ``"order autgp"`` -- order of the permutation automorphism group of `C`
+- ``'order autgp'`` -- order of the permutation automorphism group of `C`
 
 - ``'Type'`` -- the type of `C` (which can be ``'I'`` or ``'II'``, in the binary case)
 

@@ -482,7 +482,7 @@ class Tachyon(WithEqualityById, SageObject):
 
         - ``verbose`` -- integer (default: ``None``); if no verbosity setting
           is supplied, the verbosity level set by
-          s``sage.misc.verbose.set_verbose`` is used.
+          ``sage.misc.verbose.set_verbose`` is used.
 
         - ``0`` -- silent
 

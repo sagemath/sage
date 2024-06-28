@@ -1860,7 +1860,7 @@ class Partition(CombinatorialElement):
         of ``self`` as its ground set. The order relation of the poset
         depends on the ``orientation`` variable (which defaults to
         ``'SE'``). Concretely, ``orientation`` has to be specified to
-        one of the strings ``"NW"``, ``"NE"``, ``'SW'``, and ``'SE'``,
+        one of the strings ``'NW'``, ``'NE'``, ``'SW'``, and ``'SE'``,
         standing for "northwest", "northeast", "southwest" and
         "southeast", respectively. If ``orientation`` is ``'SE'``, then
         the order relation of the poset is such that a cell `u` is

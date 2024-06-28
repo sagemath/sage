@@ -249,10 +249,10 @@ def circle(center, radius, **options):
       line, which is one of ``'dashed'``, ``'dotted'``, ``'solid'``, ``'dashdot'``,
       or ``'--'``, ``':'``, ``'-'``, ``'-.'``, respectively
 
-    - ``edgecolor`` -- (default: ``'blue'``) (2D plotting only)
+    - ``edgecolor`` -- (default: ``'blue'``) 2D plotting only
 
-    - ``facecolor`` -- (default: ``'blue'``) (2D plotting only, useful only
-      if ``fill=True``)
+    - ``facecolor`` -- (default: ``'blue'``) 2D plotting only, useful only
+      if ``fill=True``
 
     - ``rgbcolor`` -- 2D or 3D plotting.  This option overrides
       ``edgecolor`` and ``facecolor`` for 2D plotting

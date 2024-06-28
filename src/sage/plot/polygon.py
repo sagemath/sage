@@ -99,7 +99,7 @@ class Polygon(GraphicPrimitive_xydata):
         """
         Return `i`-th vertex of Polygon primitive.
 
-        It is starting count from `0`-th vertex.
+        It is starting count from 0th vertex.
 
         EXAMPLES::
 
@@ -114,7 +114,7 @@ class Polygon(GraphicPrimitive_xydata):
         """
         Change `i`-th vertex of Polygon primitive.
 
-        It is starting count from `0`-th vertex.
+        It is starting count from 0th vertex.
 
         Note that this only changes a vertex, but does not create new vertices.
 

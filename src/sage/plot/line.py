@@ -347,7 +347,7 @@ def line2d(points, **options):
     - ``linestyle`` -- (default: ``'-'``) the style of the line, which is one of
        - ``'-'`` or ``'solid'``
        - ``'--'`` or ``'dashed'``
-       - ``'-.'`` or ``"dash dot"``
+       - ``'-.'`` or ``'dash dot'``
        - ``':'`` or ``'dotted'``
        - ``"None"`` or ``" "`` or ``""`` (nothing)
 

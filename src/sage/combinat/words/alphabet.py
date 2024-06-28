@@ -80,8 +80,8 @@ def build_alphabet(data=None, names=None, name=None):
       punctuation'`` represents the union of the two alphabets ``'lower'`` and
       ``'punctuation'``.
 
-      Alternatively, ``name`` can be set to ``"positive integers"`` (or
-      ``'PP'``) or ``"natural numbers"`` (or ``'NN'``).
+      Alternatively, ``name`` can be set to ``'positive integers'`` (or
+      ``'PP'``) or ``'natural numbers'`` (or ``'NN'``).
 
       ``name`` cannot be combined with ``data``.
 

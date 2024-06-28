@@ -332,7 +332,7 @@ def get_matplotlib_linestyle(linestyle, return_type):
     - ``linestyle`` -- the style of the line, which is one of
        - ``'-'`` or ``'solid'``
        - ``'--'`` or ``'dashed'``
-       - ``'-.'`` or ``"dash dot"``
+       - ``'-.'`` or ``'dash dot'``
        - ``':'`` or ``'dotted'``
        - ``"None"`` or ``" "`` or ``""`` (nothing)
 
