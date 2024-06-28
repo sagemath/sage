@@ -8,8 +8,6 @@ fi
 BASE_DOC_COMMIT="$1"
 DOC_REPOSITORY="$2"
 
-# Wipe out chronic diffs between old doc and new doc
-(cd $DOC_REPOSITORY && find . -name "*.html" | xargs sed -i -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d')
 # Create CHANGES.html
 echo '<html>' > CHANGES.html
 echo '<head>' >> CHANGES.html
@@ -19,7 +17,9 @@ echo '<script>hljs.highlightAll();</script>' >> CHANGES.html
 cat >> CHANGES.html << EOF
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-const baseDocURL = 'https://sagemath.netlify.app'
+// This URL is hardcoded in the file .github/workflows/doc-publish.yml.
+// See NETLIFY_ALIAS of the "Deploy to Netlify" step.
+const baseDocURL = 'https://doc-develop--sagemath.netlify.app'
 const diffSite = 'https://pianomister.github.io/diffsite'
 const diffParagraphs = document.querySelectorAll('p.diff');
 diffParagraphs.forEach(paragraph => {

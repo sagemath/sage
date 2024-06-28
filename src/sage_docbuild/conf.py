@@ -354,7 +354,7 @@ def set_intersphinx_mappings(app, config):
     for directory in os.listdir(os.path.join(invpath)):
         if directory == 'jupyter_execute':
             # This directory is created by jupyter-sphinx extension for
-            # internal use and should be ignored here. See trac #33507.
+            # internal use and should be ignored here. See Issue #33507.
             continue
         if os.path.isdir(os.path.join(invpath, directory)):
             src = os.path.join(refpath, directory)
@@ -442,7 +442,9 @@ html_theme_options = {
 }
 
 if not version.split('.')[-1].isnumeric():  # develop version
-    ver = f'<a href="https://livedoc--sagemath.netlify.app/html/en/index.html">{version}</a>'
+    # This URL is hardcoded in the file .github/workflows/doc-publish.yml.
+    # See NETLIFY_ALIAS of the "Deploy to Netlify" step.
+    ver = f'<a href="https://doc-develop--sagemath.netlify.app/html/en/index.html">{version}</a>'
     github_ref = os.environ.get('GITHUB_REF', '')
     if github_ref:
         match = re.search(r'refs/pull/(\d+)/merge', github_ref)
@@ -631,7 +633,7 @@ latex_elements['preamble'] = r"""
 \let\textLaTeX\LaTeX
 \AtBeginDocument{\renewcommand*{\LaTeX}{\hbox{\textLaTeX}}}
 
-% Workaround for a LaTeX bug -- see trac #31397 and
+% Workaround for a LaTeX bug -- see Issue #31397 and
 % https://tex.stackexchange.com/questions/583391/mactex-2020-error-with-report-hyperref-mathbf-in-chapter.
 \makeatletter
 \pdfstringdefDisableCommands{%
