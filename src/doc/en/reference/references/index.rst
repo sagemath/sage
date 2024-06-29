@@ -5090,6 +5090,10 @@ REFERENCES:
             :doi:`10.1007/s00453-006-1225-y`,
             http://www.cs.uoi.gr/~stavros/C-Papers/C-2004-SODA.pdf
 
+.. [NT2007] Serguei Norine and Robin Thomas. *Minimally Non-Pfaffian Graphs*.
+            Combinatorica, vol. 27, no. 5, pages: 587 -- 600, Springer. 2007.
+            :doi:`10.1016/j.jctb.2007.12.005`.
+
 .. [NWS2002] Newman, M.E.J., Watts, D.J. and Strogatz, S.H.  *Random
              graph models of social networks*. Proc. Nat. Acad. Sci. USA
              99:1 (2002), 2566-2572. :doi:`10.1073/pnas.012582999`
