@@ -624,7 +624,7 @@ class GenericGraph(GenericGraph_pyx):
         Helper method for method ``__hash__``.
 
         This method checks whether parameter ``hash_labels`` has been specified
-        by the user. Otherwise, defaults to the value of parameter ``weigthed``.
+        by the user. Otherwise, defaults to the value of parameter ``weighted``.
 
         TESTS::
 
@@ -25854,7 +25854,7 @@ def graph_isom_equivalent_non_edge_labeled_graph(g, partition=None, standard_lab
             # The groups are ordered by increasing multiplicity
             edge_partition = [tmp[mu] for mu in sorted(tmp.keys())]
 
-            # Now the edges are partitionned according to the multiplicity they
+            # Now the edges are partitioned according to the multiplicity they
             # represent, and edge labels are forgotten.
 
         else:
