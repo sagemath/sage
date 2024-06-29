@@ -2229,18 +2229,23 @@ def _is_function(v):
     # note that Sage variables are callable, so we only check the type
     return isinstance(v, Function) or isinstance(v, FunctionType)
 
+
 def _parse_maxima_conj(s):
     r"""
-    Function to parse maxima conjugates of a maxima string
-    within an inequality expression. Private helper function,
-    only takes in from preparsed maxima strings.
+    Parse maxima conjugates of a maxima string
+    within an inequality expression.
+
+    Private helper function, this
+    only takes as input preparsed ``Maxima`` strings.
 
     INPUT:
-    - ``s`` -- a string that has been preparsed from maxima
+
+    - ``s`` -- a string that has been preparsed from ``Maxima``
 
     TESTS:
 
     Check if real and imaginary parts are fixed::
+
         sage: x = var('x')
         sage: maxima("realpart(3 < _SAGE_VAR_x) + %i*imagpart(3 < _SAGE_VAR_x)").sage()
         (3*I + 3) < (I + 1)*x
@@ -2250,7 +2255,6 @@ def _parse_maxima_conj(s):
         [(8*I) < I*x - 2*I, x + 4 < 6]
         sage: maxima('realpart(_SAGE_VAR_x > -((13*sqrt(455))/(18*sqrt(113146))))+imagpart(%i*(_SAGE_VAR_x > -((13*sqrt(455))/(18*sqrt(113146)))))').sage()
         x > -13/2036628*sqrt(113146)*sqrt(455)
-
     """
     if "realpart" in s:
         # realpart always comes first therefore is OK to rfind bracket before I
