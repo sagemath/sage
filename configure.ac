@@ -537,6 +537,19 @@ AC_CONFIG_COMMANDS(mkdirs,
             AC_MSG_NOTICE([[creating symbolic link lib64 -> lib]])
             ln -s lib "$SAGE_LOCAL/lib64"
         fi
+        dnl Check that the file system is sufficiently functional
+        if test -z "$SAGE_BUILD_DIR"; then
+            SAGE_BUILD_DIR="$SAGE_LOCAL/var/tmp/sage/build"
+        fi
+        AC_MSG_NOTICE([creating directory $SAGE_BUILD_DIR])
+        mkdir -p "$SAGE_BUILD_DIR" || AC_MSG_ERROR([error creating directory $SAGE_BUILD_DIR (SAGE_BUILD_DIR)])
+        rm -f "$SAGE_BUILD_DIR"/conftest
+        touch "$SAGE_BUILD_DIR"/conftest || AC_MSG_ERROR([error creating a file in $SAGE_BUILD_DIR])
+        chmod +x "$SAGE_BUILD_DIR"/conftest || AC_MSG_ERROR([error setting file permissions +x in $SAGE_BUILD_DIR])
+        test -x "$SAGE_BUILD_DIR"/conftest || AC_MSG_ERROR([file permissions +x did not persist in $SAGE_BUILD_DIR])
+        chmod -x "$SAGE_BUILD_DIR"/conftest || AC_MSG_ERROR([error setting file permissions -x in $SAGE_BUILD_DIR])
+        test -x "$SAGE_BUILD_DIR"/conftest && AC_MSG_ERROR([file permissions -x did not persist in $SAGE_BUILD_DIR])
+        rm -f "$SAGE_BUILD_DIR"/conftest
     ],
     [
         SAGE_LOGS="$SAGE_ROOT/logs/pkgs"
