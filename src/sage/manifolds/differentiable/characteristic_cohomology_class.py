@@ -966,7 +966,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
                 class_type = 'Pfaffian'
                 val = x
             else:
-                ValueError(f'predefined class "{val}" unknown')
+                raise ValueError(f'predefined class "{val}" unknown')
 
         # turn symbolic expression into a polynomial via Taylor expansion
         if isinstance(val, Expression):
@@ -978,7 +978,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
             elif vbundle._field_type == 'complex':
                 pow_range = dim // 2
             else:
-                ValueError(f'field type of {vbundle} must be real or complex')
+                raise ValueError(f'field type of {vbundle} must be real or complex')
 
             val = P(val.taylor(x, 0, pow_range))
 
@@ -1004,7 +1004,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
                 val = P([(-1) ** k * val[2 * k + 1] for k in range(n + 1)])
                 sym = multiplicative_sequence(val, n)
             else:
-                AttributeError('unkown class type')
+                raise AttributeError('unkown class type')
 
             d = {}
             w_vec = self._weighted_vectors

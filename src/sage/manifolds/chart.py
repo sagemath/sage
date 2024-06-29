@@ -401,7 +401,7 @@ class Chart(UniqueRepresentation, SageObject):
         # Initialization of the set of charts which the current chart is a
         # restriction of:
         self._supercharts = set([self])
-        #
+
         self._dom_restrict = {}  # dict. of the restrictions of self to
                                  # subsets of self._domain, with the
                                  # subsets as keys
