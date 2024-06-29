@@ -51,9 +51,13 @@ class TensorFreeSubmoduleBasis_sym(Basis_abstract):
             sage: e_T11 = T11.basis('e')
             sage: TestSuite(e_T11).run()
         """
-        base_module = tensor_module.base_module()
-        base_module_basis = base_module.basis(symbol, latex_symbol, indices,
-                                              latex_indices, symbol_dual, latex_symbol_dual)
+        base_modules = tensor_module._fmodule
+
+        # define basis for all the module in _fmodule
+        base_module_basis = list()
+        for base_module in base_modules:
+            base_module_basis += base_module.basis(symbol, latex_symbol, indices,
+                                                latex_indices, symbol_dual, latex_symbol_dual)
         super().__init__(tensor_module, symbol, latex_symbol, indices, latex_indices)
         self._base_module_basis = base_module_basis
         self._comp = tensor_module._basis_sym()
