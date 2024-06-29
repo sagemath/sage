@@ -111,16 +111,16 @@ class SymbolicSubringFactory(UniqueFactory):
 
     Specify one of the following keywords to create a subring.
 
-    - ``accepting_variables`` (default: ``None``) -- a tuple or other
+    - ``accepting_variables`` -- (default: ``None``) a tuple or other
       iterable of variables. If specified, then a symbolic subring of
       expressions in only these variables is created.
 
-    - ``rejecting_variables`` (default: ``None``) -- a tuple or other
+    - ``rejecting_variables`` -- (default: ``None``) a tuple or other
       iterable of variables. If specified, then a symbolic subring of
       expressions in variables distinct to these variables is
       created.
 
-    - ``no_variables`` -- boolean (default: ``False``); If set,
+    - ``no_variables`` -- boolean (default: ``False``); if set,
       then a symbolic subring of constant expressions (i.e.,
       expressions without a variable) is created.
 
@@ -254,7 +254,7 @@ class GenericSymbolicSubring(SymbolicRing):
 
         INPUT:
 
-        - ``vars`` -- a tuple of symbolic variables.
+        - ``vars`` -- tuple of symbolic variables
 
         TESTS::
 
@@ -312,7 +312,7 @@ class GenericSymbolicSubring(SymbolicRing):
 
         INPUT:
 
-        - ``variable`` -- a symbolic variable.
+        - ``variable`` -- a symbolic variable
 
         OUTPUT: boolean
 
@@ -328,11 +328,11 @@ class GenericSymbolicSubring(SymbolicRing):
 
     def _element_constructor_(self, x):
         r"""
-        Creates the element of this subring specified by the input ``x``.
+        Create the element of this subring specified by the input ``x``.
 
         INPUT:
 
-        - ``x`` -- an object.
+        - ``x`` -- an object
 
         OUTPUT: an element of this symbolic subring
 
@@ -362,9 +362,9 @@ class GenericSymbolicSubring(SymbolicRing):
 
         INPUT:
 
-        - ``P`` -- a parent.
+        - ``P`` -- a parent
 
-        OUTPUT: a boolean or ``None``
+        OUTPUT: boolean or ``None``
 
         TESTS::
 
@@ -479,7 +479,7 @@ class GenericSymbolicSubringFunctor(ConstructionFunctor):
 
     INPUT:
 
-    - ``vars`` -- a tuple, set, or other iterable of symbolic variables.
+    - ``vars`` -- tuple, set, or other iterable of symbolic variables
 
     EXAMPLES::
 
@@ -557,7 +557,7 @@ class GenericSymbolicSubringFunctor(ConstructionFunctor):
 
         INPUT:
 
-        - ``other`` -- a functor.
+        - ``other`` -- a functor
 
         OUTPUT: a functor or ``None``
 
@@ -577,7 +577,7 @@ class GenericSymbolicSubringFunctor(ConstructionFunctor):
 
         INPUT:
 
-        - ``other`` -- a functor.
+        - ``other`` -- a functor
 
         OUTPUT: boolean
 
@@ -596,7 +596,7 @@ class GenericSymbolicSubringFunctor(ConstructionFunctor):
 
         INPUT:
 
-        - ``other`` -- a functor.
+        - ``other`` -- a functor
 
         OUTPUT: boolean
 
@@ -636,7 +636,7 @@ class SymbolicSubringAcceptingVars(GenericSymbolicSubring):
 
         INPUT:
 
-        - ``variable`` -- a symbolic variable.
+        - ``variable`` -- a symbolic variable
 
         OUTPUT: boolean
 
@@ -676,9 +676,9 @@ class SymbolicSubringAcceptingVars(GenericSymbolicSubring):
 
         INPUT:
 
-        - ``P`` -- a parent.
+        - ``P`` -- a parent
 
-        OUTPUT: a boolean or ``None``
+        OUTPUT: boolean or ``None``
 
         TESTS::
 
@@ -723,7 +723,7 @@ class SymbolicSubringAcceptingVarsFunctor(GenericSymbolicSubringFunctor):
 
         INPUT:
 
-        - ``other`` -- a functor.
+        - ``other`` -- a functor
 
         OUTPUT: a functor or ``None``
 
@@ -751,7 +751,7 @@ class SymbolicSubringAcceptingVarsFunctor(GenericSymbolicSubringFunctor):
 
         INPUT:
 
-        - ``R`` -- a symbolic ring.
+        - ``R`` -- a symbolic ring
 
         OUTPUT: a subring of ``R``
 
@@ -803,7 +803,7 @@ class SymbolicSubringRejectingVars(GenericSymbolicSubring):
 
         INPUT:
 
-        - ``variable`` -- a symbolic variable.
+        - ``variable`` -- a symbolic variable
 
         OUTPUT: boolean
 
@@ -843,9 +843,9 @@ class SymbolicSubringRejectingVars(GenericSymbolicSubring):
 
         INPUT:
 
-        - ``P`` -- a parent.
+        - ``P`` -- a parent
 
-        OUTPUT: a boolean or ``None``
+        OUTPUT: boolean or ``None``
 
         TESTS::
 
@@ -912,7 +912,7 @@ class SymbolicSubringRejectingVarsFunctor(GenericSymbolicSubringFunctor):
 
         INPUT:
 
-        - ``other`` -- a functor.
+        - ``other`` -- a functor
 
         OUTPUT: a functor or ``None``
 
@@ -940,7 +940,7 @@ class SymbolicSubringRejectingVarsFunctor(GenericSymbolicSubringFunctor):
 
         INPUT:
 
-        - ``R`` -- a symbolic ring.
+        - ``R`` -- a symbolic ring
 
         OUTPUT: a subring of ``R``
 
@@ -990,7 +990,7 @@ class SymbolicConstantsSubring(SymbolicSubringAcceptingVars):
 
         INPUT:
 
-        - ``variable`` -- a symbolic variable.
+        - ``variable`` -- a symbolic variable
 
         OUTPUT: boolean
 

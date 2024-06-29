@@ -9,11 +9,11 @@ return a number.
 
 def string_length(expr):
     """
-    Returns the length of ``expr`` after converting it to a string.
+    Return the length of ``expr`` after converting it to a string.
 
     INPUT:
 
-    - ``expr`` -- the expression whose complexity we want to measure.
+    - ``expr`` -- the expression whose complexity we want to measure
 
     OUTPUT: a real number representing the complexity of ``expr``
 
@@ -30,6 +30,5 @@ def string_length(expr):
         sage: f = x^2
         sage: string_length(f)
         3
-
     """
     return len(str(expr))

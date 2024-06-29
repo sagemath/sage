@@ -6716,7 +6716,7 @@ class FiniteStateMachine(SageObject):
 
     def delete_transition(self, t):
         """
-        Deletes a transition by removing it from the list of transitions of
+        Delete a transition by removing it from the list of transitions of
         the state, where the transition starts.
 
         INPUT:
@@ -6737,7 +6737,7 @@ class FiniteStateMachine(SageObject):
 
     def delete_state(self, s):
         """
-        Deletes a state and all transitions coming or going to this state.
+        Delete a state and all transitions coming or going to this state.
 
         INPUT:
 

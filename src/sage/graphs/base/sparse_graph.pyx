@@ -580,7 +580,7 @@ cdef class SparseGraph(CGraph):
 
     cdef int del_arc_unsafe(self, int u, int v) except -1:
         """
-        Deletes *all* arcs from u to v.
+        Delete *all* arcs from u to v.
 
         INPUT:
 

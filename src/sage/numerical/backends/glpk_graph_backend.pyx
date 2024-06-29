@@ -894,7 +894,7 @@ cdef class GLPKGraphBackend():
 
     cpdef delete_edge(self, u, v, dict params=None):
         """
-        Deletes an edge from the graph.
+        Delete an edge from the graph.
 
         If an edge does not exist it is ignored.
 
@@ -973,7 +973,7 @@ cdef class GLPKGraphBackend():
 
     def delete_edges(self, edges):
         """
-        Deletes edges from the graph.
+        Delete edges from the graph.
 
         Non existing edges are ignored.
 

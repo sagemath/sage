@@ -141,7 +141,7 @@ cdef class SymbolicSeries(Expression):
 
     def is_terminating_series(self):
         """
-        Return True if the series is without order term.
+        Return ``True`` if the series is without order term.
 
         A series is terminating if it can be represented exactly,
         without requiring an order term. You can explicitly
@@ -205,10 +205,10 @@ cdef class SymbolicSeries(Expression):
 
         INPUT:
 
-        -  ``x`` -- optional variable.
+        - ``x`` -- (optional) variable
 
-        -  ``sparse`` -- Boolean. If ``False`` return a list with as much
-            entries as the order of the series.
+        - ``sparse`` -- boolean (default: ``True``); if ``False`` return a list
+          with as much entries as the order of the series
 
         OUTPUT: depending on the value of ``sparse``,
 
@@ -216,7 +216,7 @@ cdef class SymbolicSeries(Expression):
           expression and ``n`` is a power (``sparse=True``, default)
 
         - A list of expressions where the ``n``-th element is the coefficient of
-          ``x^n`` when self is seen as polynomial in ``x`` (``sparse=False``).
+          ``x^n`` when ``self`` is seen as polynomial in ``x`` (``sparse=False``).
 
         EXAMPLES::
 

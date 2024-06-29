@@ -57,7 +57,7 @@ cdef SubstitutionMap new_SubstitutionMap_from_GExMap(const GExMap& smap):
 
     INPUT:
 
-    - ``smap`` --  a Pynac ``exmap``.
+    - ``smap`` -- a Pynac ``exmap``
 
     OUTPUT: a new Python :class:`SubstitutionMap`
 

@@ -83,7 +83,6 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             sage: isinstance(SR, sage.symbolic.ring.SymbolicRing)
             True
             sage: TestSuite(SR).run(skip=['_test_divides'])
-
         """
         if base_ring is None:
             base_ring = self
@@ -384,13 +383,13 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
         INPUT:
 
-        - ``x`` -- a Python object.
+        - ``x`` -- a Python object
 
-        - ``force`` -- bool, default ``False``, if True, the Python object
-          is taken as is without attempting coercion or list traversal.
+        - ``force`` -- boolean (default: ``False``); if ``True``, the Python object
+          is taken as is without attempting coercion or list traversal
 
-        - ``recursive`` -- bool, default ``True``, disables recursive
-          traversal of lists.
+        - ``recursive`` -- boolean (default: ``True``); disables recursive
+          traversal of lists
 
         EXAMPLES::
 
@@ -442,11 +441,9 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
         INPUT:
 
-        - ``n`` -- a nonnegative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``n``-th wildcard expression
+        OUTPUT: n-th wildcard expression
 
         EXAMPLES::
 
@@ -477,7 +474,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
     def __contains__(self, x):
         r"""
-        True if there is an element of the symbolic ring that is equal to x
+        ``True`` if there is an element of the symbolic ring that is equal to x
         under ``==``.
 
         EXAMPLES:
@@ -511,9 +508,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
         """
         Return the characteristic of the symbolic ring, which is 0.
 
-        OUTPUT:
-
-        - a Sage integer
+        OUTPUT: a Sage integer
 
         EXAMPLES::
 
@@ -538,7 +533,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
     def is_field(self, proof=True):
         """
-        Returns True, since the symbolic expression ring is (for the most
+        Return ``True``, since the symbolic expression ring is (for the most
         part) a field.
 
         EXAMPLES::
@@ -1050,16 +1045,16 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
         Choose one of the following keywords to create a subring.
 
-        - ``accepting_variables`` (default: ``None``) -- a tuple or other
+        - ``accepting_variables`` -- (default: ``None``) a tuple or other
           iterable of variables. If specified, then a symbolic subring of
           expressions in only these variables is created.
 
-        - ``rejecting_variables`` (default: ``None``) -- a tuple or other
+        - ``rejecting_variables`` -- (default: ``None``) a tuple or other
           iterable of variables. If specified, then a symbolic subring of
           expressions in variables distinct to these variables is
           created.
 
-        - ``no_variables`` -- boolean (default: ``False``); If set,
+        - ``no_variables`` -- boolean (default: ``False``); if set,
           then a symbolic subring of constant expressions (i.e.,
           expressions without a variable) is created.
 
@@ -1336,9 +1331,9 @@ def isidentifier(x):
 
     INPUT:
 
-    - ``x`` -- a string
+    - ``x`` -- string
 
-    OUTPUT: boolean. Whether the string ``x`` can be used as a variable name
+    OUTPUT: boolean; whether the string ``x`` can be used as a variable name
 
     This function should return ``False`` for keywords, so we can not
     just use the ``isidentifier`` method of strings,
