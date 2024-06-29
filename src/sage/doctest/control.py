@@ -1282,7 +1282,7 @@ class DocTestController(SageObject):
             sage: from sage.doctest.control import DocTestDefaults, DocTestController
             sage: DC = DocTestController(DocTestDefaults(timeout=123), ["hello_world.py"])
             sage: print(DC._assemble_cmd())
-            ...python... -m sage.doctest --serial --timeout=123 hello_world.py
+            ...python... -m sage.doctest --serial... --timeout=123... hello_world.py
         """
         cmd = f"{shlex.quote(sys.executable)} -m sage.doctest --serial "
         opt = dict_difference(self.options.__dict__, DocTestDefaults(runtest_default=True).__dict__)
@@ -1325,14 +1325,14 @@ class DocTestController(SageObject):
             sage: DD = DocTestDefaults(gdb=True)
             sage: DC = DocTestController(DD, ["hello_world.py"])
             sage: DC.run_val_gdb(testing=True)
-            exec gdb --eval-command="run" --args ...python... -m sage.doctest --serial --timeout=0 hello_world.py
+            exec gdb --eval-command="run" --args ...python... -m sage.doctest --serial... --timeout=0... hello_world.py
 
         ::
 
             sage: DD = DocTestDefaults(valgrind=True, optional='all', timeout=172800)
             sage: DC = DocTestController(DD, ["hello_world.py"])
             sage: DC.run_val_gdb(testing=True)
-            exec valgrind --tool=memcheck --leak-resolution=high --leak-check=full --num-callers=25 --suppressions=.../valgrind/pyalloc.supp --suppressions=.../valgrind/sage.supp --suppressions=.../valgrind/sage-additional.supp --suppressions=.../valgrind/valgrind-python.supp  --log-file=.../valgrind/sage-memcheck.%p ...python... -m sage.doctest --serial --timeout=172800 --optional=all hello_world.py
+            exec valgrind --tool=memcheck --leak-resolution=high --leak-check=full --num-callers=25 --suppressions=.../valgrind/pyalloc.supp --suppressions=.../valgrind/sage.supp --suppressions=.../valgrind/sage-additional.supp --suppressions=.../valgrind/valgrind-python.supp  --log-file=.../valgrind/sage-memcheck.%p ...python... -m sage.doctest --serial... --timeout=172800... --optional=all hello_world.py
         """
         try:
             sage_cmd = self._assemble_cmd()
