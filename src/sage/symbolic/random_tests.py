@@ -80,11 +80,11 @@ def normalize_prob_list(pl, extra=()):
     r"""
     INPUT:
 
-    - ``pl`` - A list of tuples, where the first element of each tuple is
+    - ``pl`` -- A list of tuples, where the first element of each tuple is
       a floating-point number (representing a relative probability).  The
       second element of each tuple may be a list or any other kind of object.
 
-    - ``extra`` - A tuple which is to be appended to every tuple in ``pl``.
+    - ``extra`` -- A tuple which is to be appended to every tuple in ``pl``.
 
     This function takes such a list of tuples (a "probability list") and
     normalizes the probabilities so that they sum to one.  If any of the
@@ -110,7 +110,7 @@ def normalize_prob_list(pl, extra=()):
     if len(pl) == 0:
         return pl
     result = []
-    total = sum([float(p[0]) for p in pl])
+    total = sum(float(p[0]) for p in pl)
     for p in pl:
         prob = p[0]
         val = p[1]
@@ -120,8 +120,8 @@ def normalize_prob_list(pl, extra=()):
             p_extra = extra
         if isinstance(val, list):
             norm_val = normalize_prob_list(val, extra=p_extra)
-            for np in norm_val:
-                result.append(((prob / total) * np[0], np[1]) + np[2:])
+            result.extend(((prob / total) * np[0], np[1]) + np[2:]
+                          for np in norm_val)
         else:
             result.append(((prob / total), val) + p_extra)
     return result
@@ -131,7 +131,7 @@ def choose_from_prob_list(lst):
     r"""
     INPUT:
 
-    - ``lst`` - A list of tuples, where the first element of each tuple
+    - ``lst`` -- A list of tuples, where the first element of each tuple
       is a nonnegative float (a probability), and the probabilities sum
       to one.
 

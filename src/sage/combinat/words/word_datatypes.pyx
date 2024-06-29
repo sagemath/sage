@@ -86,8 +86,8 @@ cdef class WordDatatype_list(WordDatatype):
 
         INPUT:
 
-        - ``parent`` - an instance of :class:`Words_all`
-        - ``data`` - an iterable
+        - ``parent`` -- an instance of :class:`Words_all`
+        - ``data`` -- an iterable
 
         EXAMPLES::
 
@@ -110,7 +110,7 @@ cdef class WordDatatype_list(WordDatatype):
 
         INPUT:
 
-        - ``a`` - anything
+        - ``a`` -- anything
 
         OUTPUT:
 
@@ -147,8 +147,8 @@ cdef class WordDatatype_list(WordDatatype):
 
         INPUT:
 
-        - ``other`` - a word
-        - ``op`` - integer: 0, 1, 2, 3, 4 or 5
+        - ``other`` -- a word
+        - ``op`` -- integer: 0, 1, 2, 3, 4 or 5
 
         OUTPUT:
 
@@ -221,7 +221,7 @@ cdef class WordDatatype_list(WordDatatype):
 
         INPUT:
 
-        - ``key`` - integer
+        - ``key`` -- integer
 
         EXAMPLES::
 
@@ -246,7 +246,7 @@ cdef class WordDatatype_list(WordDatatype):
 
         INPUT:
 
-        - ``other`` - word represented by a list
+        - ``other`` -- word represented by a list
 
         OUTPUT:
 
@@ -279,7 +279,7 @@ cdef class WordDatatype_list(WordDatatype):
 
         INPUT:
 
-        -  ``a`` - a letter
+        -  ``a`` -- a letter
 
         OUTPUT:
 
@@ -315,8 +315,8 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``parent`` - instance of :class:`Words_all`
-        - ``data`` - string
+        - ``parent`` -- instance of :class:`Words_all`
+        - ``data`` -- string
 
         EXAMPLES::
 
@@ -354,8 +354,8 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``other`` - a word
-        - ``op`` - integer: 0, 1, 2, 3, 4 or 5
+        - ``other`` -- a word
+        - ``op`` -- integer: 0, 1, 2, 3, 4 or 5
 
         OUTPUT:
 
@@ -399,7 +399,7 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``a`` - anything
+        - ``a`` -- anything
 
         EXAMPLES::
 
@@ -429,7 +429,7 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``w`` - a word, or something that behaves like one (list, tuple, str, ...)
+        - ``w`` -- a word, or something that behaves like one (list, tuple, str, ...)
 
         OUTPUT:
 
@@ -457,10 +457,10 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        -  ``sub`` - string or word to search for.
-        -  ``start`` - non negative integer (default: 0) specifying
+        -  ``sub`` -- string or word to search for.
+        -  ``start`` -- non negative integer (default: 0) specifying
            the position from which to start the search.
-        -  ``end`` - non negative integer (default: None) specifying
+        -  ``end`` -- non negative integer (default: None) specifying
            the position at which the search must stop. If None, then
            the search is performed up to the end of the string.
 
@@ -495,10 +495,10 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        -  ``sub`` - string or word to search for.
-        -  ``start`` - non negative integer (default: 0) specifying
+        -  ``sub`` -- string or word to search for.
+        -  ``start`` -- non negative integer (default: 0) specifying
            the position at which the search must stop.
-        -  ``end`` - non negative integer (default: None) specifying
+        -  ``end`` -- non negative integer (default: None) specifying
            the position from which to start the search. If None, then
            the search is performed up to the end of the string.
 
@@ -583,7 +583,7 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``other`` - word represented by a str
+        - ``other`` -- word represented by a str
 
         OUTPUT:
 
@@ -615,7 +615,7 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``letter`` - a letter
+        - ``letter`` -- a letter
 
         OUTPUT:
 
@@ -660,9 +660,9 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``sep`` - string or word (optional, default: None)
+        - ``sep`` -- string or word (default: None)
 
-        - ``maxsplit`` - positive integer (optional, default: None)
+        - ``maxsplit`` -- positive integer (default: None)
 
         OUTPUT:
 
@@ -730,7 +730,7 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``sep`` - string or word
+        - ``sep`` -- string or word
 
         EXAMPLES::
 
@@ -767,7 +767,7 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``other`` - a word (an instance of :class:`Word_class`) or a
+        - ``other`` -- a word (an instance of :class:`Word_class`) or a
           :class:`str`.
 
         OUTPUT:
@@ -808,7 +808,7 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``other`` - a word (an instance of :class:`Word_class`) or a
+        - ``other`` -- a word (an instance of :class:`Word_class`) or a
           :class:`str`.
 
         OUTPUT:
@@ -840,7 +840,7 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``other`` - a word (an instance of :class:`Word_class`) or a
+        - ``other`` -- a word (an instance of :class:`Word_class`) or a
           :class:`str`.
 
         OUTPUT:
@@ -879,7 +879,7 @@ cdef class WordDatatype_str(WordDatatype):
 
         INPUT:
 
-        - ``other`` - a word (an instance of :class:`Word_class`) or a
+        - ``other`` -- a word (an instance of :class:`Word_class`) or a
           :class:`str`.
 
         OUTPUT:
@@ -926,8 +926,8 @@ cdef class WordDatatype_tuple(WordDatatype):
 
         INPUT:
 
-        - ``parent`` - instance of :class:`Words_all`
-        - ``data`` - iterable
+        - ``parent`` -- instance of :class:`Words_all`
+        - ``data`` -- iterable
 
         EXAMPLES::
 
@@ -967,8 +967,8 @@ cdef class WordDatatype_tuple(WordDatatype):
 
         INPUT:
 
-        - ``other`` - a word
-        - ``op`` - integer: 0, 1, 2, 3, 4 or 5
+        - ``other`` -- a word
+        - ``op`` -- integer: 0, 1, 2, 3, 4 or 5
 
         OUTPUT:
 
@@ -1043,7 +1043,7 @@ cdef class WordDatatype_tuple(WordDatatype):
 
         INPUT:
 
-        - ``a`` - anything
+        - ``a`` -- anything
 
         EXAMPLES::
 
@@ -1062,7 +1062,7 @@ cdef class WordDatatype_tuple(WordDatatype):
 
         INPUT:
 
-        - ``key`` - an integer
+        - ``key`` -- an integer
 
         OUTPUT:
 
@@ -1091,7 +1091,7 @@ cdef class WordDatatype_tuple(WordDatatype):
 
         INPUT:
 
-        - ``other`` - word represented by a tuple
+        - ``other`` -- word represented by a tuple
 
         OUTPUT:
 

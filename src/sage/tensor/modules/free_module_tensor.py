@@ -181,7 +181,6 @@ tensor ``t`` acts on pairs formed by a linear form and a module element::
     Element b of the Rank-3 free module M over the Integer Ring
     sage: t(a,b)
     -2
-
 """
 # *****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
@@ -1496,12 +1495,10 @@ class FreeModuleTensor(ModuleElementWithMutability):
         if basis is None:
             basis = self._fmodule._def_basis
         if basis not in self._components:
-            raise ValueError("the components w.r.t. the {}".format(basis) +
+            raise ValueError(f"the components w.r.t. the {basis}"
                              " have not been defined")
-        to_be_deleted = []
-        for other_basis in self._components:
-            if other_basis != basis:
-                to_be_deleted.append(other_basis)
+        to_be_deleted = [other_basis for other_basis in self._components
+                         if other_basis != basis]
         for other_basis in to_be_deleted:
             del self._components[other_basis]
 

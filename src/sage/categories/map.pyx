@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Base class for maps
 
@@ -62,8 +63,13 @@ def is_Map(x):
         sage: f = R.hom([x+y, x-y], R)
         sage: from sage.categories.map import is_Map
         sage: is_Map(f)
+        doctest:warning...
+        DeprecationWarning: The function is_Map is deprecated; use 'isinstance(..., Map)' instead.
+        See https://github.com/sagemath/sage/issues/38103 for details.
         True
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38103, "The function is_Map is deprecated; use 'isinstance(..., Map)' instead.")
     return isinstance(x, Map)
 
 

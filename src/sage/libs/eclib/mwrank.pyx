@@ -154,7 +154,7 @@ def initprimes(filename, verb=False):
 
         sage: import tempfile
         sage: with tempfile.NamedTemporaryFile(mode='w+t') as f:
-        ....:     data = ' '.join([str(p) for p in prime_range(10^7,10^7+20)])
+        ....:     data = ' '.join(str(p) for p in prime_range(10^7, 10^7 + 20))
         ....:     _ = f.write(data)
         ....:     f.flush()
         ....:     mwrank_initprimes(f.name, verb=True)
@@ -173,6 +173,7 @@ def initprimes(filename, verb=False):
         raise IOError('No such file or directory: %s' % filename)
     filename = str_to_bytes(filename, FS_ENCODING, 'surrogateescape')
     mwrank_initprimes(filename, verb)
+
 
 ############# bigint ###########################################
 #
@@ -529,6 +530,7 @@ def parse_point_list(s):
         return []
     pts = s[2:-2].split('],[')
     return [[Integer(x) for x in pt.split(",")] for pt in pts]
+
 
 cdef class _mw:
     """

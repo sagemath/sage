@@ -12,7 +12,6 @@ This file is based off the class
 :func:`DyckWords<sage.combinat.dyck_word.DyckWord>` written by Mike Hansen, Dan
 Drake, Florent Hivert, Christian Stump, Mike Zabrocki, Jean--Baptiste Priez
 and Travis Scrimshaw
-
 """
 # ****************************************************************************
 #       Copyright (C) 2020 Aram Dermenjian <aram.dermenjian@gmail.com>,
@@ -84,7 +83,7 @@ def replace_dyck_char(x):
 
     INPUT:
 
-    - ``x`` -- str - A ``'1'``, ``'0'``, ``'N'``, ``'E'``, ``'('`` or ``')'``
+    - ``x`` -- string; a ``'1'``, ``'0'``, ``'N'``, ``'E'``, ``'('`` or ``')'``
 
     OUTPUT:
 

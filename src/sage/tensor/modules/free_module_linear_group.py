@@ -18,7 +18,6 @@ AUTHORS:
 REFERENCES:
 
 - Chap. 15 of R. Godement : *Algebra* [God1968]_
-
 """
 #******************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>

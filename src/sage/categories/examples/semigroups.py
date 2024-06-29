@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Examples of semigroups
 """
@@ -14,6 +15,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element_wrapper import ElementWrapper
 from sage.categories.semigroups import Semigroups
 from sage.sets.family import Family
+
 
 class LeftZeroSemigroup(UniqueRepresentation, Parent):
     r"""

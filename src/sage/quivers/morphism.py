@@ -37,7 +37,7 @@ class QuiverRepHom(CallMorphism):
 
     - ``codomain`` -- :class:`QuiverRep`, the codomain of the homomorphism
 
-    - ``data`` - dict, list, or :class:`QuiverRepElement`
+    - ``data`` -- dict, list, or :class:`QuiverRepElement`
       (default: empty dict),
       with the following meaning:
 
@@ -267,11 +267,11 @@ class QuiverRepHom(CallMorphism):
                 start_index += dim
 
         # Get the coordinates of the vector
-        from sage.categories.map import is_Map
+        from sage.categories.map import Map
         vector = []
         for v in self._quiver:
             if v in maps_dict:
-                if is_Map(maps_dict[v]):
+                if isinstance(maps_dict[v], Map):
                     try:
                         m = maps_dict[v].matrix()
                     except (AttributeError, ValueError):
