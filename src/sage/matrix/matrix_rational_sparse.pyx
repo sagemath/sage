@@ -651,7 +651,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         """
         Set row i of ``self`` to -(row r of A), but where we only take the
         given column positions in that row of A.  Note that we *DO*
-        zero out the other entries of self's row i.
+        zero out the other entries of ``self``'s row i.
 
         INPUT:
 

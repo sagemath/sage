@@ -6,7 +6,7 @@ The :class:`Factorization` class provides a structure for holding quite
 general lists of objects with integer multiplicities.  These may hold
 the results of an arithmetic or algebraic factorization, where the
 objects may be primes or irreducible polynomials and the
-multiplicities are the (non-zero) exponents in the factorization.  For
+multiplicities are the (nonzero) exponents in the factorization.  For
 other types of examples, see below.
 
 :class:`Factorization` class objects contain a ``list``, so can be
@@ -227,19 +227,19 @@ class Factorization(SageObject):
 
         INPUT:
 
-        - ``x`` -- a list of pairs (p, e) with e an integer;
+        - ``x`` -- list of pairs (p, e) with e an integer
           otherwise a :class:`TypeError` is raised
 
-        - ``unit`` -- (default: 1); the unit part of the factorization.
+        - ``unit`` -- (default: 1) the unit part of the factorization
 
-        - ``cr`` -- (default: ``False``); if ``True``, print the factorization
-          with carriage returns between factors.
+        - ``cr`` -- (default: ``False``) if ``True``, print the factorization
+          with carriage returns between factors
 
-        - ``sort`` -- (default: ``True``); if ``True``, sort the factors by
+        - ``sort`` -- (default: ``True``) if ``True``, sort the factors by
           calling the sort function ``self.sort()`` after creating
           the factorization
 
-        - ``simplify`` -- (default: ``True``); if ``True``, remove duplicate
+        - ``simplify`` -- (default: ``True``) if ``True``, remove duplicate
           factors from the factorization.  See the documentation for
           self.simplify.
 
@@ -326,7 +326,7 @@ class Factorization(SageObject):
 
     def __getitem__(self, i):
         """
-        Return `i^{th}` factor of ``self``.
+        Return `i`-th factor of ``self``.
 
         EXAMPLES::
 
@@ -347,7 +347,7 @@ class Factorization(SageObject):
 
     def __setitem__(self, i, v):
         """
-        Set the `i^{th}` factor of ``self``.
+        Set the `i`-th factor of ``self``.
 
         .. warning::
 
@@ -662,11 +662,9 @@ class Factorization(SageObject):
 
         INPUT:
 
-        - ``key`` -- (default: ``None``); comparison key
+        - ``key`` -- (default: ``None``) comparison key
 
-        OUTPUT:
-
-        - changes this factorization to be sorted (inplace)
+        OUTPUT: changes this factorization to be sorted (inplace)
 
         If ``key`` is ``None``, we determine the comparison key as
         follows:
@@ -919,7 +917,6 @@ class Factorization(SageObject):
             sage: g = factor(x^10 - 1)                                                  # needs sage.libs.pari
             sage: pari(g)                                                               # needs sage.libs.pari
             [x - 1, 1; x + 1, 1; x^4 - x^3 + x^2 - x + 1, 1; x^4 + x^3 + x^2 + x + 1, 1]
-
         """
         from sage.libs.pari.all import pari
         from itertools import chain
@@ -1100,7 +1097,7 @@ class Factorization(SageObject):
 
     def __pow__(self, n):
         """
-        Return the `n^{th}` power of a factorization, which is got by
+        Return the `n`-th power of a factorization, which is got by
         combining together like factors.
 
         EXAMPLES::
@@ -1357,7 +1354,7 @@ class Factorization(SageObject):
 
     def is_integral(self) -> bool:
         r"""
-        Return whether all exponents of this Factorization are non-negative.
+        Return whether all exponents of this Factorization are nonnegative.
 
         EXAMPLES::
 

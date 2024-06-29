@@ -271,12 +271,12 @@ cdef class Functor(SageObject):
 
     def _coerce_into_domain(self, x):
         """
-        Interprete the argument as an object of self's domain.
+        Interpret the argument as an object of ``self``'s domain.
 
         NOTE:
 
         A subclass of :class:`Functor` may overload this method. It should
-        return an object of self's domain, and should raise a
+        return an object of ``self``'s domain, and should raise a
         :class:`TypeError` if this is impossible.
 
         By default, the argument will not be changed, but a

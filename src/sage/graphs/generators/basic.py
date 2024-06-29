@@ -1182,7 +1182,7 @@ def MoebiusLadderGraph(n):
 
     INPUT:
 
-    - ``n`` -- a non negative integer; number of nodes is `2n`
+    - ``n`` -- a nonnegative integer; number of nodes is `2n`
 
     OUTPUT:
 
@@ -1214,12 +1214,12 @@ def MoebiusLadderGraph(n):
 
     TESTS:
 
-    The input parameter must be a non negative integer::
+    The input parameter must be a nonnegative integer::
 
         sage: G = graphs.MoebiusLadderGraph(-1)
         Traceback (most recent call last):
         ...
-        ValueError: parameter n must be a non negative integer
+        ValueError: parameter n must be a nonnegative integer
 
     REFERENCES:
 
@@ -1235,7 +1235,7 @@ def MoebiusLadderGraph(n):
     - Janmenjaya Panda (2024-05-26)
     """
     if n < 0:
-        raise ValueError("parameter n must be a non negative integer")
+        raise ValueError("parameter n must be a nonnegative integer")
 
     G = Graph(2 * n, name="Moebius ladder graph")
     G._circle_embedding(list(range(2 * n)), angle=pi/2)

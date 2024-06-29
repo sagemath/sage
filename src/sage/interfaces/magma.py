@@ -2425,8 +2425,10 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
     def set_magma_attribute(self, attrname, value):
         """
-        INPUT: attrname - string value - something coercible to a
-        MagmaElement
+        INPUT:
+
+        - ``attrname`` -- string
+        - ``value`` -- something coercible to a MagmaElement
 
         EXAMPLES::
 

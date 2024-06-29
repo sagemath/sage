@@ -25,7 +25,7 @@ from sage.repl.rich_output.output_catalog import *
 
 class BackendIPython(BackendBase):
     """
-    Common base for the IPython UIs
+    Common base for the IPython UIs.
 
     EXAMPLES::
 
@@ -38,11 +38,11 @@ class BackendIPython(BackendBase):
 
     def install(self, **kwds):
         """
-        Switch the Sage rich output to the IPython backend
+        Switch the Sage rich output to the IPython backend.
 
         INPUT:
 
-        - ``shell`` -- keyword argument. The IPython shell.
+        - ``shell`` -- keyword argument; the IPython shell
 
         No tests since switching away from the doctest rich output
         backend will break the doctests.
@@ -70,7 +70,7 @@ class BackendIPython(BackendBase):
 
         INPUT:
 
-        - ``obj`` -- anything.
+        - ``obj`` -- anything
 
         EXAMPLES::
 
@@ -113,7 +113,7 @@ class BackendIPython(BackendBase):
 
 class BackendIPythonCommandline(BackendIPython):
     """
-    Backend for the IPython Command Line
+    Backend for the IPython Command Line.
 
     EXAMPLES::
 
@@ -124,7 +124,7 @@ class BackendIPythonCommandline(BackendIPython):
 
     def default_preferences(self):
         """
-        Return the backend's display preferences
+        Return the backend's display preferences.
 
         The default for the commandline is to not plot graphs since
         the launching of an external viewer is considered too
@@ -151,7 +151,7 @@ class BackendIPythonCommandline(BackendIPython):
 
     def _repr_(self):
         """
-        Return a string representation
+        Return a string representation.
 
         OUTPUT: string
 
@@ -195,7 +195,7 @@ class BackendIPythonCommandline(BackendIPython):
 
     def displayhook(self, plain_text, rich_output):
         """
-        Backend implementation of the displayhook
+        Backend implementation of the displayhook.
 
         INPUT:
 
@@ -307,10 +307,10 @@ class BackendIPythonCommandline(BackendIPython):
 
         INPUT:
 
-        - ``image_file`` -- string. File name of the image file.
+        - ``image_file`` -- string; file name of the image file
 
-        - ``plain_text`` -- string. The plain text representation of
-          the image file.
+        - ``plain_text`` -- string; the plain text representation of
+          the image file
 
         OUTPUT:
 
@@ -338,19 +338,19 @@ class BackendIPythonCommandline(BackendIPython):
 
     def launch_jmol(self, output_jmol, plain_text):
         """
-        Launch the stand-alone jmol viewer
+        Launch the stand-alone jmol viewer.
 
         INPUT:
 
         - ``output_jmol`` --
-          :class:`~sage.repl.rich_output.output_graphics3d.OutputSceneJmol`. The
-          scene to launch Jmol with.
+          :class:`~sage.repl.rich_output.output_graphics3d.OutputSceneJmol`; the
+          scene to launch Jmol with
 
-        - ``plain_text`` -- string. The plain text representation.
+        - ``plain_text`` -- string; the plain text representation
 
         OUTPUT:
 
-        String. Human-readable message indicating that the viewer was launched.
+        string; human-readable message indicating that the viewer was launched.
 
         EXAMPLES::
 
@@ -374,7 +374,7 @@ class BackendIPythonCommandline(BackendIPython):
 
     def is_in_terminal(self):
         """
-        Test whether the UI is meant to run in a terminal
+        Test whether the UI is meant to run in a terminal.
 
         See
         :meth:`sage.repl.rich_output.display_manager.DisplayManager.is_in_terminal`
@@ -393,7 +393,7 @@ class BackendIPythonCommandline(BackendIPython):
 
     def threejs_offline_scripts(self):
         """
-        Three.js script for the IPython command line
+        Three.js script for the IPython command line.
 
         OUTPUT: string containing script tag
 
@@ -426,7 +426,7 @@ IFRAME_TEMPLATE = """
 
 class BackendIPythonNotebook(BackendIPython):
     """
-    Backend for the IPython Notebook
+    Backend for the IPython Notebook.
 
     EXAMPLES::
 
@@ -437,7 +437,7 @@ class BackendIPythonNotebook(BackendIPython):
 
     def _repr_(self):
         """
-        Return string representation of the backend
+        Return string representation of the backend.
 
         OUTPUT: string
 
@@ -485,7 +485,7 @@ class BackendIPythonNotebook(BackendIPython):
 
     def displayhook(self, plain_text, rich_output):
         """
-        Backend implementation of the displayhook
+        Backend implementation of the displayhook.
 
         INPUT:
 
@@ -573,7 +573,7 @@ class BackendIPythonNotebook(BackendIPython):
 
     def threejs_offline_scripts(self):
         """
-        Three.js script for the IPython notebook
+        Three.js script for the IPython notebook.
 
         OUTPUT: string containing script tag
 

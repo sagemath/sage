@@ -85,7 +85,7 @@ class InterfaceMagic():
     @classmethod
     def all_iter(cls):
         """
-        Iterate over the available interfaces
+        Iterate over the available interfaces.
 
         EXAMPLES::
 
@@ -104,7 +104,7 @@ class InterfaceMagic():
     @classmethod
     def register_all(cls, shell=None):
         """
-        Register all available interfaces
+        Register all available interfaces.
 
         EXAMPLES::
 
@@ -144,14 +144,13 @@ class InterfaceMagic():
     @classmethod
     def find(cls, name):
         """
-        Find a particular magic by name
+        Find a particular magic by name.
 
         This method is for doctesting purposes only.
 
         INPUT:
 
-        - ``name`` -- string. The name of the interface magic to
-          search for.
+        - ``name`` -- string; the name of the interface magic to search for
 
         OUTPUT: the corresponding :class:`InterfaceMagic` instance
 
@@ -167,17 +166,17 @@ class InterfaceMagic():
 
     def __init__(self, name, interface):
         """
-        Interface Magic
+        Interface Magic.
 
         This class is a wrapper around interface objects to provide
         them with magics.
 
         INPUT:
 
-        - ``name`` -- string. The interface name
+        - ``name`` -- string; the interface name
 
-        - ``interface`` -- :class:`sage.interfaces.expect.Expect`. The
-          interface to wrap.
+        - ``interface`` -- :class:`sage.interfaces.expect.Expect`; the
+          interface to wrap
 
         EXAMPLES::
 
@@ -190,7 +189,7 @@ class InterfaceMagic():
 
     def line_magic_factory(self):
         """
-        Factory for line magic
+        Factory for line magic.
 
         OUTPUT: a function suitable to be used as line magic
 
@@ -233,7 +232,7 @@ class InterfaceMagic():
 
     def cell_magic_factory(self):
         r"""
-        Factory for cell magic
+        Factory for cell magic.
 
         OUTPUT: a function suitable to be used as cell magic
 
@@ -272,15 +271,15 @@ class InterfaceMagic():
         """
         def cell_magic(line, cell):
             """
-            Evaluate cell magic
+            Evaluate cell magic.
 
-            Docstring is overwritten in the instance
+            Docstring is overwritten in the instance.
 
             INPUT:
 
-            - ``line`` -- string. The option part of the cell magic.
+            - ``line`` -- string; the option part of the cell magic
 
-            - ``cell`` -- string. The lines of the cell magic.
+            - ``cell`` -- string; the lines of the cell magic
 
             OUTPUT: prints the interface output
 

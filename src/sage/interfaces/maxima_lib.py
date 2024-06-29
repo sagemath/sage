@@ -343,8 +343,6 @@ class MaximaLib(MaximaAbstract):
     """
     Interface to Maxima as a Library.
 
-    INPUT: none
-
     OUTPUT: Maxima interface as a Library
 
     EXAMPLES::
@@ -414,8 +412,6 @@ class MaximaLib(MaximaAbstract):
     def __reduce__(self):
         r"""
         Implement __reduce__ for ``MaximaLib``.
-
-        INPUT: none
 
         OUTPUT: a couple consisting of:
 
@@ -637,8 +633,6 @@ class MaximaLib(MaximaAbstract):
         r"""
         Return the Python class of Maxima functions.
 
-        INPUT: none
-
         OUTPUT: type
 
         EXAMPLES::
@@ -652,8 +646,6 @@ class MaximaLib(MaximaAbstract):
     def _object_class(self):
         r"""
         Return the Python class of Maxima elements.
-
-        INPUT: none
 
         OUTPUT: type
 
@@ -669,8 +661,6 @@ class MaximaLib(MaximaAbstract):
         r"""
         Return the Python class of Maxima functions of elements.
 
-        INPUT: none
-
         OUTPUT: type
 
         EXAMPLES::
@@ -684,8 +674,6 @@ class MaximaLib(MaximaAbstract):
     def _object_function_class(self):
         r"""
         Return the Python class of Maxima user-defined functions.
-
-        INPUT: none
 
         OUTPUT: type
 
@@ -1107,8 +1095,6 @@ class MaximaLibElement(MaximaAbstractElement):
     def ecl(self):
         r"""
         Return the underlying ECL object of this MaximaLib object.
-
-        INPUT: none
 
         OUTPUT: ECL object
 

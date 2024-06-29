@@ -3487,7 +3487,9 @@ class VigenereCryptosystem(SymmetricKeyCryptosystem):
         """
         Create a Vigenere cipher.
 
-        INPUT: A key which specifies a block permutation.
+        INPUT:
+
+        - ``K`` -- a key which specifies a block permutation
 
         EXAMPLES::
 

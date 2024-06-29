@@ -103,8 +103,8 @@ cdef type FractionType = <type>Fraction
 
 cpdef py_scalar_parent(py_type):
     """
-    Returns the Sage equivalent of the given python type, if one exists.
-    If there is no equivalent, return None.
+    Return the Sage equivalent of the given python type, if one exists.
+    If there is no equivalent, return ``None``.
 
     EXAMPLES::
 
@@ -750,7 +750,7 @@ cdef class CoercionModel:
 
     def exception_stack(self):
         r"""
-        Returns the list of exceptions that were caught in the course of
+        Return the list of exceptions that were caught in the course of
         executing the last binary operation. Useful for diagnosis when
         user-defined maps or actions raise exceptions that are caught in
         the course of coercion detection.
@@ -1033,7 +1033,7 @@ cdef class CoercionModel:
 
         INPUT:
 
-        - ``args`` -- a set of elements and/or parents
+        - ``args`` -- set of elements and/or parents
 
         OUTPUT:
 
@@ -1523,7 +1523,6 @@ cdef class CoercionModel:
             sage: N2 = len(list(o for o in gc.get_objects() if type(o) is T))
             sage: N2 - N0
             0
-
         """
         try:
             refs = self._coercion_maps.get(R, S, None)
@@ -1829,11 +1828,9 @@ cdef class CoercionModel:
         - ``S`` -- the right :class:`Parent` (or type)
         - ``op`` -- the operand, typically an element of the :mod:`operator` module
         - ``r`` -- (optional) element of `R`
-        - ``s`` -- (optional) element of `S`.
+        - ``s`` -- (optional) element of `S`
 
-        OUTPUT:
-
-        - An action `A` such that `s` ``op`` `r` is given by `A(s,r)`.
+        OUTPUT: an action `A` such that `s` ``op`` `r` is given by `A(s,r)`
 
         The steps taken are illustrated below.
 

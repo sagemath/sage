@@ -108,8 +108,8 @@ def set_globals(g):
 
     INPUT:
 
-    - ``g`` -- a dictionary. Typically, this will be some dictionary
-      given by the user interface or just ``globals()``.
+    - ``g`` -- dictionary; typically, this will be some dictionary
+      given by the user interface or just ``globals()``
 
     EXAMPLES::
 
@@ -132,7 +132,7 @@ def initialize_globals(all, g=None):
 
     - ``all`` -- a module whose globals will be injected
 
-    - ``g`` -- a dictionary, see :func:`set_globals`. If this is
+    - ``g`` -- dictionary; see :func:`set_globals`. If this is
       ``None``, keep the current globals dictionary.
 
     EXAMPLES::
@@ -170,7 +170,7 @@ def get_global(name):
 
     INPUT:
 
-    - ``name`` -- a string representing a variable name
+    - ``name`` -- string representing a variable name
 
     OUTPUT: the value of variable ``name``
 
@@ -199,7 +199,7 @@ def set_global(name, value):
 
     INPUT:
 
-    - ``name`` -- a string representing a variable name
+    - ``name`` -- string representing a variable name
 
     - ``value`` -- a value to assign to the variable
 

@@ -2327,7 +2327,9 @@ class AbstractLabelledClonableTree(AbstractLabelledTree,
         """
         Set the label of the root of ``self``.
 
-        INPUT: ``label`` -- any Sage object
+        INPUT:
+
+        - ``label`` -- any Sage object
 
         OUTPUT: ``None``, ``self`` is modified in place
 

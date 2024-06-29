@@ -5283,7 +5283,9 @@ def all_cached_data(polytopes):
     polytopes in the given sequence should be constructed as the polar
     polytope to another one.
 
-    INPUT: a sequence of lattice polytopes.
+    INPUT:
+
+    - ``polytopes`` -- a sequence of lattice polytopes
 
     EXAMPLES: This function has no output, it is just a fast way to
     work with long sequences of polytopes. Of course, you can use short
@@ -5314,7 +5316,9 @@ def all_nef_partitions(polytopes, keep_symmetric=False):
     ``all_polars`` on the sequence of
     ``polytopes`` before using this function.
 
-    INPUT: a sequence of lattice polytopes.
+    INPUT:
+
+    - ``polytopes`` -- a sequence of lattice polytopes
 
     EXAMPLES: This function has no output, it is just a fast way to
     work with long sequences of polytopes. Of course, you can use short
@@ -5363,7 +5367,9 @@ def all_points(polytopes):
     ``LatticePolytope`` during the first run. So it is recommended to
     use this functions if you work with big sets of data.
 
-    INPUT: a sequence of lattice polytopes.
+    INPUT:
+
+    - ``polytopes`` -- a sequence of lattice polytopes
 
     EXAMPLES: This function has no output, it is just a fast way to
     work with long sequences of polytopes. Of course, you can use short
@@ -5416,7 +5422,9 @@ def all_polars(polytopes):
     ``LatticePolytope`` during the first run. So it is recommended to
     use this functions if you work with big sets of data.
 
-    INPUT: a sequence of lattice polytopes.
+    INPUT:
+
+    - ``polytopes`` -- a sequence of lattice polytopes
 
     EXAMPLES: This function has no output, it is just a fast way to
     work with long sequences of polytopes. Of course, you can use short

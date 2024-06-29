@@ -161,8 +161,6 @@ class HillCipher(SymmetricKeyCipher):
         """
         Create a Hill cipher.
 
-        INPUT: Parent and key
-
         EXAMPLES::
 
             sage: # needs sage.modules
@@ -384,8 +382,6 @@ class SubstitutionCipher(SymmetricKeyCipher):
         """
         Create a substitution cipher.
 
-        INPUT: Parent and key
-
         EXAMPLES::
 
             sage: S = AlphabeticStrings()
@@ -459,8 +455,6 @@ class TranspositionCipher(SymmetricKeyCipher):
         """
         Create a transposition cipher.
 
-        INPUT: Parent and key
-
         EXAMPLES::
 
             sage: # needs sage.groups
@@ -530,8 +524,6 @@ class VigenereCipher(SymmetricKeyCipher):
     def __init__(self, parent, key):
         """
         Create a Vigenere cipher.
-
-        INPUT: Parent and key
 
         EXAMPLES::
 

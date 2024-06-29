@@ -59,7 +59,9 @@ def WehlerK3Surface(polys):
     Define a K3 Surface over `\mathbb{P}^2 \times \mathbb{P}^2` defined as
     the intersection of a bilinear and biquadratic form. [Weh1998]_
 
-    INPUT: Bilinear and biquadratic polynomials as a tuple or list
+    INPUT:
+
+    - ``polys`` -- bilinear and biquadratic polynomials as a tuple or list
 
     OUTPUT: :class:`WehlerK3Surface_ring`
 
@@ -92,7 +94,9 @@ def random_WehlerK3Surface(PP):
     Produces a random K3 surface in `\mathbb{P}^2 \times \mathbb{P}^2` defined as the
     intersection of a bilinear and biquadratic form. [Weh1998]_
 
-    INPUT: Projective space cartesian product
+    INPUT:
+
+    - ``PP`` -- projective space cartesian product
 
     OUTPUT: :class:`WehlerK3Surface_ring`
 
@@ -163,7 +167,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         r"""
         Changes the base ring on which the Wehler K3 Surface is defined.
 
-        INPUT: ``R`` -- ring
+        INPUT:
+
+        - ``R`` -- ring
 
         OUTPUT: K3 Surface defined over input ring
 
@@ -188,7 +194,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         r"""
         Function checks to see if point ``P`` lies on the K3 Surface.
 
-        INPUT: ``P`` -- point in `\mathbb{P}^2 \times \mathbb{P}^2`
+        INPUT:
+
+        - ``P`` -- point in `\mathbb{P}^2 \times \mathbb{P}^2`
 
         OUTPUT: ``True`` if the point is not on the surface; ``AttributeError``
         otherwise
@@ -471,7 +479,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         Notation and definition from: [CS1996]_
 
-        INPUT: ``a`` -- point in `\mathbb{P}^2`
+        INPUT:
+
+        - ``a`` -- point in `\mathbb{P}^2`
 
         OUTPUT: a polynomial representing the fiber
 
@@ -546,7 +556,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         Notation and definition from: [CS1996]_
 
-        INPUT: ``b`` -- point in projective space
+        INPUT:
+
+        - ``b`` -- point in projective space
 
         OUTPUT: a polynomial representing the fiber
 
@@ -661,7 +673,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         The roots of this polynomial will either be degenerate fibers or fixed points
         of the involutions `\sigma_x` or `\sigma_y` for more information, see [CS1996]_.
 
-        INPUT: ``i`` -- integer; either 0 (polynomial in y) or 1 (polynomial in x)
+        INPUT:
+
+        - ``i`` -- integer; either 0 (polynomial in y) or 1 (polynomial in x)
 
         OUTPUT: polynomial in the coordinate ring of the ambient space
 
@@ -890,7 +904,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         Raises an error if the surface is degenerate.
         Works only for ``ZZ`` or ``QQ``.
 
-        INPUT: ``check`` -- boolean (default: ``True``); whether the primes are verified
+        INPUT:
+
+        - ``check`` -- boolean (default: ``True``); whether the primes are verified
 
         ALGORITHM:
 

@@ -198,7 +198,7 @@ class JSMolHtml(SageObject):
 
     def _repr_(self):
         """
-        Return as string representation
+        Return as string representation.
 
         OUTPUT: string
 
@@ -213,7 +213,7 @@ class JSMolHtml(SageObject):
 
     def inner_html(self):
         """
-        Return a HTML document containing a JSmol applet
+        Return a HTML document containing a JSmol applet.
 
         EXAMPLES::
 
@@ -239,7 +239,7 @@ class JSMolHtml(SageObject):
 
     def iframe(self):
         """
-        Return HTML iframe
+        Return HTML iframe.
 
         OUTPUT: string
 
@@ -260,7 +260,7 @@ class JSMolHtml(SageObject):
 
     def outer_html(self):
         """
-        Return a HTML document containing an iframe with a JSmol applet
+        Return a HTML document containing an iframe with a JSmol applet.
 
         OUTPUT: string
 

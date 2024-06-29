@@ -370,8 +370,6 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         maxima session from this interface. To interact with this session,
         you should instead use ``maxima.interact()``.
 
-        INPUT: none
-
         OUTPUT: none
 
         EXAMPLES::
@@ -423,8 +421,6 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         r"""
         Return the version of Maxima that Sage includes.
 
-        INPUT: none
-
         OUTPUT: none
 
         EXAMPLES::
@@ -441,8 +437,6 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
     def _assign_symbol(self):
         r"""
         Return the assign symbol in Maxima.
-
-        INPUT: none
 
         OUTPUT: string
 
@@ -461,8 +455,6 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         """
         Return the true symbol in Maxima.
 
-        INPUT: none
-
         OUTPUT: string
 
         EXAMPLES::
@@ -478,8 +470,6 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         """
         Return the false symbol in Maxima.
 
-        INPUT: none
-
         OUTPUT: string
 
         EXAMPLES::
@@ -494,8 +484,6 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
     def _equality_symbol(self):
         """
         Return the equality symbol in Maxima.
-
-        INPUT: none
 
         OUTPUT: string
 
@@ -514,8 +502,6 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         """
         Return the inequality symbol in Maxima.
 
-        INPUT: none
-
         OUTPUT: string
 
         EXAMPLES::
@@ -531,8 +517,6 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         """
         Return the Python class of Maxima functions.
 
-        INPUT: none
-
         OUTPUT: type
 
         EXAMPLES::
@@ -545,8 +529,6 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
     def _object_class(self):
         """
         Return the Python class of Maxima elements.
-
-        INPUT: none
 
         OUTPUT: type
 
@@ -561,8 +543,6 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         """
         Return the Python class of Maxima functions of elements.
 
-        INPUT: none
-
         OUTPUT: type
 
         EXAMPLES::
@@ -575,8 +555,6 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
     def _object_function_class(self):
         """
         Return the Python class of Maxima user-defined functions.
-
-        INPUT: none
 
         OUTPUT: type
 
@@ -1109,8 +1087,6 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         """
         Printing an object explicitly gives ASCII art.
 
-        INPUT: none
-
         OUTPUT: string
 
         EXAMPLES::
@@ -1128,8 +1104,6 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
     def __bool__(self):
         """
         Convert ``self`` into a boolean.
-
-        INPUT: none
 
         OUTPUT: boolean
 
@@ -1203,8 +1177,6 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         Attempt to make a native Sage object out of this Maxima object.
         This is useful for automatic coercions in addition to other
         things.
-
-        INPUT: none
 
         OUTPUT: Sage object
 
@@ -1285,8 +1257,6 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
     def __complex__(self):
         """
         Return a complex number equivalent to this Maxima object.
-
-        INPUT: none
 
         OUTPUT: complex
 
@@ -1379,8 +1349,6 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         """
         Return the real part of this Maxima element.
 
-        INPUT: none
-
         OUTPUT: Maxima real
 
         EXAMPLES::
@@ -1394,8 +1362,6 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         """
         Return the imaginary part of this Maxima element.
 
-        INPUT: none
-
         OUTPUT: Maxima real
 
         EXAMPLES::
@@ -1408,8 +1374,6 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
     def numer(self):
         """
         Return numerical approximation to ``self`` as a Maxima object.
-
-        INPUT: none
 
         OUTPUT: Maxima object
 
@@ -1425,8 +1389,6 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
     def str(self):
         """
         Return string representation of this Maxima object.
-
-        INPUT: none
 
         OUTPUT: string
 
@@ -1591,8 +1553,6 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         """
         Return floating point version of this Maxima element.
 
-        INPUT: none
-
         OUTPUT: real
 
         EXAMPLES::
@@ -1612,8 +1572,6 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
     def __len__(self):
         """
         Return the length of a list.
-
-        INPUT: none
 
         OUTPUT: integer
 
@@ -1685,8 +1643,6 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         """
         Return an iterator for ``self``.
 
-        INPUT: none
-
         OUTPUT: iterator
 
         EXAMPLES::
@@ -1744,8 +1700,6 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
     def _latex_(self):
         r"""
         Return Latex representation of this Maxima object.
-
-        INPUT: none
 
         OUTPUT: string
 
@@ -1982,8 +1936,6 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
         """
         Implement __reduce__ for ``MaximaAbstractElementFunction``.
 
-        INPUT: none
-
         OUTPUT: a couple consisting of:
 
         - the function to call for unpickling
@@ -2027,8 +1979,6 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
     def _repr_(self):
         """
         Return print representation of this Maxima function.
-
-        INPUT: none
 
         OUTPUT: string
 

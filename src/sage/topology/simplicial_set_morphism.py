@@ -598,9 +598,11 @@ class SimplicialSetMorphism(Morphism):
 
     def __call__(self, x):
         """
-        INPUT: a simplex of the domain.
+        Return the image of ``x`` under this morphism.
 
-        Return its image under this morphism.
+        INPUT:
+
+        - ``x`` -- a simplex of the domain
 
         EXAMPLES::
 

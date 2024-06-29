@@ -84,7 +84,7 @@ class SageDisplayFormatter(DisplayFormatter):
 
     def __init__(self, *args, **kwds):
         """
-        This is where the Sage rich objects are translated to IPython
+        This is where the Sage rich objects are translated to IPython.
 
         INPUT/OUTPUT: see the IPython documentation
 
@@ -111,7 +111,7 @@ class SageDisplayFormatter(DisplayFormatter):
 
     def format(self, obj, include=None, exclude=None):
         r"""
-        Use the Sage rich output instead of IPython
+        Use the Sage rich output instead of IPython.
 
         INPUT/OUTPUT: see the IPython documentation
 
@@ -288,7 +288,7 @@ class SagePlainTextFormatter(PlainTextFormatter):
 
         INPUT:
 
-        - ``obj`` -- anything.
+        - ``obj`` -- anything
 
         OUTPUT: string; the plain text representation
 

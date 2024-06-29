@@ -38,7 +38,9 @@ def M2Z(x):
     r"""
     Create an immutable `2 \times 2` integer matrix from ``x``.
 
-    INPUT: anything that can be converted into a `2 \times 2` matrix.
+    INPUT:
+
+    - ``x`` -- anything that can be converted into a `2 \times 2` matrix
 
     EXAMPLES::
 

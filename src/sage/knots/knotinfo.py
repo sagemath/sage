@@ -2557,7 +2557,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
         l = self.list()
         max_item = len(l)
         if item < 0 or item > max_item:
-            raise ValueError('item must be non negative and smaller than %s' % (max_item))
+            raise ValueError('item must be nonnegative and smaller than %s' % (max_item))
 
         return l[item]
 

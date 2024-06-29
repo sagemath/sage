@@ -240,10 +240,6 @@ def get_verbose():
     """
     Return the global Sage verbosity level.
 
-    INPUT: int level: an integer between 0 and 2, inclusive.
-
-    OUTPUT: changes the state of the verbosity flag
-
     EXAMPLES::
 
         sage: get_verbose()

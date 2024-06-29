@@ -573,10 +573,10 @@ cdef class Element(SageObject):
 
     def __setstate__(self, state):
         """
-        Initializes the state of the object from data saved in a pickle.
+        Initialize the state of the object from data saved in a pickle.
 
-        During unpickling __init__ methods of classes are not called, the saved
-        data is passed to the class via this function instead.
+        During unpickling ``__init__`` methods of classes are not called, the
+        saved data is passed to the class via this function instead.
 
         TESTS::
 
@@ -595,9 +595,7 @@ cdef class Element(SageObject):
         """
         Return a copy of ``self``.
 
-        OUTPUT:
-
-          - a new object which is a copy of ``self``.
+        OUTPUT: a new object which is a copy of ``self``
 
         This implementation ensures that ``self.__dict__`` is properly copied
         when it exists (typically for instances of classes deriving from
@@ -795,9 +793,7 @@ cdef class Element(SageObject):
 
         - ``**kwds`` -- named parameters
 
-        OUTPUT:
-
-        - new object if substitution is possible, otherwise self.
+        OUTPUT: new object if substitution is possible, otherwise ``self``
 
         EXAMPLES::
 
@@ -1032,7 +1028,6 @@ cdef class Element(SageObject):
             True
             sage: bool(v + w)
             False
-
         """
         try:
             zero = self._parent.zero()
@@ -2309,7 +2304,6 @@ cdef class ElementWithCachedMethod(Element):
         <-5>
         sage: epython.element_cache_test() is epython.element_cache_test()              # needs sage.misc.cython
         True
-
     """
     cdef getattr_from_category(self, name):
         """
@@ -2381,7 +2375,7 @@ cdef class ModuleElement(Element):
     """
     cpdef _add_(self, other):
         """
-        Abstract addition method
+        Abstract addition method.
 
         TESTS::
 
@@ -2449,13 +2443,13 @@ cdef class ModuleElement(Element):
     ##################################################
     def order(self):              ### DO NOT OVERRIDE THIS!!! Instead, override additive_order.
         """
-        Return the additive order of self.
+        Return the additive order of ``self``.
         """
         return self.additive_order()
 
     def additive_order(self):
         """
-        Return the additive order of self.
+        Return the additive order of ``self``.
         """
         raise NotImplementedError
 
@@ -2495,7 +2489,7 @@ cdef class ModuleElementWithMutability(ModuleElement):
 
     cpdef bint is_mutable(self) noexcept:
         """
-        Return True if this vector is mutable, i.e., the entries can be
+        Return ``True`` if this vector is mutable, i.e., the entries can be
         changed.
 
         EXAMPLES::
@@ -2510,7 +2504,7 @@ cdef class ModuleElementWithMutability(ModuleElement):
 
     cpdef bint is_immutable(self) noexcept:
         """
-        Return True if this vector is immutable, i.e., the entries cannot
+        Return ``True`` if this vector is immutable, i.e., the entries cannot
         be changed.
 
         EXAMPLES::
@@ -2548,19 +2542,19 @@ cdef class MonoidElement(Element):
     #############################################################
     def order(self):
         """
-        Return the multiplicative order of self.
+        Return the multiplicative order of ``self``.
         """
         return self.multiplicative_order()
 
     def multiplicative_order(self):
         """
-        Return the multiplicative order of self.
+        Return the multiplicative order of ``self``.
         """
         raise NotImplementedError
 
     cpdef _pow_int(self, n):
         """
-        Return the (integral) power of self.
+        Return the (integral) power of ``self``.
         """
         return arith_generic_power(self, n)
 
@@ -2628,7 +2622,7 @@ cdef class MultiplicativeGroupElement(MonoidElement):
     """
     def order(self):
         """
-        Return the multiplicative order of self.
+        Return the multiplicative order of ``self``.
         """
         return self.multiplicative_order()
 
@@ -2661,7 +2655,7 @@ def is_RingElement(x):
 cdef class RingElement(ModuleElement):
     cpdef _mul_(self, other):
         """
-        Abstract multiplication method
+        Abstract multiplication method.
 
         TESTS::
 
@@ -2899,9 +2893,9 @@ cdef class RingElement(ModuleElement):
 
     def is_prime(self):
         """
-        Is ``self`` a prime element?
+        Check whether ``self`` is a prime element.
 
-        A *prime* element is a non-zero, non-unit element `p` such that,
+        A *prime* element is a nonzero, non-unit element `p` such that,
         whenever `p` divides `ab` for some `a` and `b`, then `p`
         divides `a` or `p` divides `b`.
 
@@ -3165,7 +3159,6 @@ cdef class CommutativeRingElement(RingElement):
             sage: n.mod([15,6])
             2
 
-
         EXAMPLES: Univariate polynomials
 
         ::
@@ -3227,15 +3220,15 @@ cdef class CommutativeRingElement(RingElement):
 
         INPUT:
 
-        - ``root`` -- whether or not to also return a square
-          root (default: ``False``)
+        - ``root`` -- boolean (default: ``False``); whether or not to also
+          return a square root
 
         OUTPUT:
 
-        - ``bool`` -- whether or not a square
+        - boolean; whether or not a square
 
-        - ``object`` -- (optional) an actual square root if
-          found, and ``None`` otherwise.
+        - object; (optional) an actual square root if found, and ``None``
+          otherwise
 
         EXAMPLES::
 
@@ -3268,13 +3261,13 @@ cdef class CommutativeRingElement(RingElement):
         INPUT:
 
         - ``extend`` -- boolean (default: ``True``); whether to make a ring
-           extension containing a square root if ``self`` is not a square
+          extension containing a square root if ``self`` is not a square
 
         - ``all`` -- boolean (default: ``False``); whether to return a list of
-           all square roots or just a square root
+          all square roots or just a square root
 
         - ``name`` -- required when ``extend=True`` and ``self`` is not a
-           square. This will be the name of the generator of the extension.
+          square; this will be the name of the generator of the extension
 
         OUTPUT:
 
@@ -3297,11 +3290,11 @@ cdef class CommutativeRingElement(RingElement):
             x
             sage: f = x^2 - 4*x + 4; f.sqrt(all=True)
             [x - 2, -x + 2]
-            sage: sqrtx = x.sqrt(name="y"); sqrtx
+            sage: sqrtx = x.sqrt(name='y'); sqrtx
             y
             sage: sqrtx^2
             x
-            sage: x.sqrt(all=true, name="y")
+            sage: x.sqrt(all=true, name='y')
             [y, -y]
             sage: x.sqrt(extend=False, all=True)
             []
@@ -3342,11 +3335,11 @@ cdef class CommutativeRingElement(RingElement):
             sage: R.<x> = QQ[]
             sage: a = 2*(x+1)^2 / (2*(x-1)^2); a.sqrt()
             (x + 1)/(x - 1)
-            sage: sqrtx=(1/x).sqrt(name="y"); sqrtx
+            sage: sqrtx=(1/x).sqrt(name='y'); sqrtx
             y
             sage: sqrtx^2
             1/x
-            sage: (1/x).sqrt(all=true, name="y")
+            sage: (1/x).sqrt(all=true, name='y')
             [y, -y]
             sage: (1/x).sqrt(extend=False, all=True)
             []
@@ -3430,7 +3423,7 @@ cdef class Vector(ModuleElementWithMutability):
 
     def __mul__(left, right):
         """
-        Multiplication of vector by vector, matrix, or scalar
+        Multiplication of vector by vector, matrix, or scalar.
 
         AUTHOR:
 
@@ -3805,7 +3798,7 @@ cdef class Matrix(ModuleElement):
 
     def __mul__(left, right):
         """
-        Multiplication of matrix by matrix, vector, or scalar
+        Multiplication of matrix by matrix, vector, or scalar.
 
         AUTHOR:
 
@@ -4330,7 +4323,7 @@ cdef class EuclideanDomainElement(PrincipalIdealDomainElement):
 
     cpdef _floordiv_(self, right):
         """
-        Quotient of division of ``self`` by other.  This is denoted //.
+        Quotient of division of ``self`` by ``other``.  This is denoted ``//``.
 
         This default implementation assumes that ``quo_rem`` has been
         implemented.
@@ -4353,7 +4346,7 @@ cdef class EuclideanDomainElement(PrincipalIdealDomainElement):
 
     cpdef _mod_(self, other):
         """
-        Remainder of division of ``self`` by other.
+        Remainder of division of ``self`` by ``other``.
 
         This default implementation assumes that ``quo_rem`` has been
         implemented.
@@ -4395,7 +4388,7 @@ def is_FieldElement(x):
 cdef class FieldElement(CommutativeRingElement):
     cpdef _floordiv_(self, right):
         """
-        Return the quotient of self and other. Since these are field
+        Return the quotient of ``self`` and ``other``. Since these are field
         elements, the floor division is exactly the same as usual division.
 
         EXAMPLES::
@@ -4439,7 +4432,7 @@ cdef class FieldElement(CommutativeRingElement):
 
     def _lcm(self, FieldElement other):
         """
-        Return the least common multiple of ``self`` and other.
+        Return the least common multiple of ``self`` and ``other``.
         """
         if self.is_zero() and other.is_zero():
             return self
@@ -4470,10 +4463,10 @@ cdef class FieldElement(CommutativeRingElement):
 
     def divides(self, FieldElement other):
         r"""
-        Check whether ``self`` divides other, for field elements.
+        Check whether ``self`` divides ``other``, for field elements.
 
         Since this is a field, all values divide all other values,
-        except that zero does not divide any non-zero values.
+        except that zero does not divide any nonzero values.
 
         EXAMPLES::
 

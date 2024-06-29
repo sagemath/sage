@@ -1439,7 +1439,7 @@ cdef class TreelengthConnected:
                 else:
                     self.tree = Graph(name=self.name)
             self.length = 0 if self.n <= 1 else G.diameter(algorithm='DHV')
-            self.leq_k = True  # We know that k is non negative
+            self.leq_k = True  # We know that k is nonnegative
             return
 
         if self.k_is_defined and not k:

@@ -144,15 +144,15 @@ Test that there are no warnings being ignored internally::
 
 def dummy(argument, optional=None):
     """
-    Dummy Docstring Title
+    Dummy Docstring Title.
 
     Dummy docstring explanation.
 
     INPUT:
 
-    - ``argument`` -- anything. Dummy argument.
+    - ``argument`` -- anything; dummy argument
 
-    - ``optional`` -- anything (optional). Dummy optional.
+    - ``optional`` -- anything (optional); dummy optional
 
     EXAMPLES::
 

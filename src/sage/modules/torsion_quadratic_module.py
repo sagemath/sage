@@ -772,7 +772,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
         s_plus = ZZ(signature_pair[0])
         s_minus = ZZ(signature_pair[1])
         if s_plus < 0 or s_minus < 0:
-            raise ValueError("signature invariants must be non negative")
+            raise ValueError("signature invariants must be nonnegative")
         rank = s_plus + s_minus
         signature = s_plus - s_minus
         D = self.cardinality()

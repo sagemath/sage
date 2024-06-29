@@ -639,10 +639,11 @@ cdef class BooleanFunction(SageObject):
         """
         Return the value of the function for the given input.
 
-        INPUT: either
+        INPUT:
 
-        - a list -- then all elements are evaluated as Booleans
-        - an integer -- then we consider its binary representation
+        - ``x`` -- either:
+          - a list: then all elements are evaluated as booleans
+          - an integer: then we consider its binary representation
 
         EXAMPLES::
 

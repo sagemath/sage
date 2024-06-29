@@ -67,7 +67,7 @@ class SagePrettyPrinter(PrettyPrinter):
 
     def __init__(self, output, max_width, newline, max_seq_length=None):
         """
-        Pretty print Sage objects for the commandline
+        Pretty print Sage objects for the commandline.
 
         INPUT:
 
@@ -111,13 +111,13 @@ class SagePrettyPrinter(PrettyPrinter):
 
     def pretty(self, obj):
         r"""
-        Pretty print ``obj``
+        Pretty print ``obj``.
 
         This is the only method that outside code should invoke.
 
         INPUT:
 
-        - ``obj`` -- anything.
+        - ``obj`` -- anything
 
         OUTPUT: string representation for object
 

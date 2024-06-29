@@ -815,7 +815,7 @@ cdef class lazy_list_generic():
         if step == 0:
             raise TypeError("step may not be 0")
         if step < 0 or start < 0 or stop < 0:
-            raise ValueError("slice indices must be non negative")
+            raise ValueError("slice indices must be nonnegative")
 
         step = step * self.step
         start = self.start + start * self.step

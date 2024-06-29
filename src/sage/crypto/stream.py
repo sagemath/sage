@@ -33,7 +33,9 @@ class LFSRCryptosystem(SymmetricKeyCryptosystem):
         """
         Create a linear feedback shift cryptosystem.
 
-        INPUT: A string monoid over a binary alphabet.
+        INPUT:
+
+        - ``field`` -- (default: ``None``) string monoid over a binary alphabet
 
         EXAMPLES::
 
@@ -66,7 +68,9 @@ class LFSRCryptosystem(SymmetricKeyCryptosystem):
         """
         Create a LFSR cipher.
 
-        INPUT: A polynomial and initial state of the LFSR.
+        INPUT:
+
+        - ``key`` -- a polynomial and initial state of the LFSR
         """
         if not isinstance(key, (list, tuple)) and len(key) == 2:
             raise TypeError("Argument key (= %s) must be a list of tuple of length 2" % key)
@@ -105,7 +109,9 @@ class ShrinkingGeneratorCryptosystem(SymmetricKeyCryptosystem):
         """
         Create a shrinking generator cryptosystem.
 
-        INPUT: A string monoid over a binary alphabet.
+        INPUT:
+
+        - ``field`` -- (default: ``None``) string monoid over a binary alphabet
 
         EXAMPLES::
 
@@ -125,7 +131,9 @@ class ShrinkingGeneratorCryptosystem(SymmetricKeyCryptosystem):
         """
         Create a Shrinking generator cipher.
 
-        INPUT: A list or tuple consisting of two LFSR ciphers (e1,e2).
+        INPUT:
+
+        - ``key`` -- list or tuple consisting of two LFSR ciphers (e1,e2)
 
         OUTPUT: the shrinking generator cipher with key stream generator e1
         and decimating cipher e2

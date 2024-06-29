@@ -1751,7 +1751,7 @@ class FiniteWordPath_2d(FiniteWordPath_all):
         between the highest and the lowest `y`-coordinate of each
         points traced by it.
 
-        OUTPUT: non negative real number
+        OUTPUT: nonnegative real number
 
         EXAMPLES::
 
@@ -1816,7 +1816,7 @@ class FiniteWordPath_2d(FiniteWordPath_all):
         between the rightmost and the leftmost `x`-coordinate of each
         points traced by it.
 
-        OUTPUT: non negative real number
+        OUTPUT: nonnegative real number
 
         EXAMPLES::
 

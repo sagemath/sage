@@ -2652,7 +2652,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         """
         Set row i of ``self`` to -(row r of A), but where we only take the
         given column positions in that row of A. We do not zero out the
-        other entries of self's row i either.
+        other entries of ``self``'s row i either.
 
         .. NOTE::
 

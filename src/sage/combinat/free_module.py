@@ -923,7 +923,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         Set the order of the elements of the basis.
 
         If :meth:`set_order` has not been called, then the ordering is
-        the one used in the generation of the elements of self's
+        the one used in the generation of the elements of ``self``'s
         associated enumerated set.
 
         .. WARNING::

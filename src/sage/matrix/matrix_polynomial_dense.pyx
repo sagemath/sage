@@ -734,7 +734,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         ``ArithmeticError`` if ``self`` is nonsquare; and raises a
         ``ValueError`` if the precision ``d`` is not positive.
 
-        INPUT: a positive integer `d` .
+        INPUT:
+
+        - ``d`` -- positive integer
 
         OUTPUT: the unique polynomial matrix `B` of degree less than `d` such
         that `AB` and `BA` are the identity matrix modulo `x^d`, where `A` is

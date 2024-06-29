@@ -223,7 +223,9 @@ def _extract_embedded_position(docstring):
     If docstring has a Cython embedded position, return a tuple
     (original_docstring, filename, line).  If not, return None.
 
-    INPUT: ``docstring`` (string)
+    INPUT:
+
+    - ``docstring`` -- string
 
     EXAMPLES::
 
@@ -300,7 +302,9 @@ def _extract_embedded_signature(docstring, name):
 
     See :issue:`17814`.
 
-    INPUT: ``docstring`` (string)
+    INPUT:
+
+    - ``docstring`` -- string
 
     EXAMPLES::
 

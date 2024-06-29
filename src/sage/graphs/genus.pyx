@@ -401,7 +401,7 @@ cdef class simple_connected_genus_backtracker:
 
     def genus(self, int style=1, int cutoff=0, bint record_embedding=False):
         r"""
-        Compute the minimal or maximal genus of self's graph.
+        Compute the minimal or maximal genus of ``self``'s graph.
 
         Note, this is a remarkably naive algorithm for a very difficult problem.
         Most interesting cases will take millennia to finish, with the exception
@@ -421,7 +421,7 @@ cdef class simple_connected_genus_backtracker:
           to remember the best embedding seen. This embedding can be retrieved
           with ``self.get_embedding()``.
 
-        OUTPUT: the minimal or maximal genus for self's graph
+        OUTPUT: the minimal or maximal genus for ``self``'s graph
 
         EXAMPLES::
 
@@ -477,8 +477,8 @@ cdef class simple_connected_genus_backtracker:
         """
         Here's the main backtracking routine.
 
-        We iterate over all embeddings of self's graph by considering all
-        cyclic orderings of `self.vertex_darts`.  We use the Steinhaus-
+        We iterate over all embeddings of ``self``'s graph by considering all
+        cyclic orderings of ``self.vertex_darts``.  We use the Steinhaus-
         Johnson-Trotter algorithm to enumerate these by walking over a poly-ary
         Gray code, and each time the Gray code would flip a bit, we apply the
         next adjacent transposition from S-J-T at that vertex.

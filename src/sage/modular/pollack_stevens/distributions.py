@@ -825,7 +825,9 @@ class OverconvergentDistributions_class(OverconvergentDistributions_abstract):
         """
         Return space of distributions like this one, but with the base ring changed.
 
-        INPUT: a ring over which the distribution can be coerced.
+        INPUT:
+
+        - ``new_base_ring`` -- a ring over which the distribution can be coerced
 
         EXAMPLES::
 

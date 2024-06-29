@@ -789,7 +789,7 @@ class InterfaceElement(Element):
 
     def __reduce__(self):
         """
-        The default linearisation is to return self's parent,
+        The default linearisation is to return ``self``'s parent,
         which will then get the items returned by :meth:`_reduce`
         as arguments to reconstruct the element.
 

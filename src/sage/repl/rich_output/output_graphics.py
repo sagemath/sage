@@ -26,7 +26,7 @@ class OutputImagePng(OutputBase):
 
     def __init__(self, png):
         """
-        PNG Image
+        PNG Image.
 
         .. NOTE::
 
@@ -53,7 +53,7 @@ class OutputImagePng(OutputBase):
     @classmethod
     def example(cls):
         r"""
-        Construct a sample PNG output container
+        Construct a sample PNG output container.
 
         This static method is meant for doctests, so they can easily
         construct an example.
@@ -77,7 +77,7 @@ class OutputImageGif(OutputBase):
 
     def __init__(self, gif):
         """
-        GIF Image (possibly animated)
+        GIF Image (possibly animated).
 
         INPUT:
 
@@ -99,7 +99,7 @@ class OutputImageGif(OutputBase):
     @classmethod
     def example(cls):
         r"""
-        Construct a sample GIF output container
+        Construct a sample GIF output container.
 
         This static method is meant for doctests, so they can easily
         construct an example.
@@ -120,7 +120,7 @@ class OutputImageGif(OutputBase):
 
     def html_fragment(self):
         """
-        Return a self-contained HTML fragment displaying the image
+        Return a self-contained HTML fragment displaying the image.
 
         This is a workaround for the Jupyter notebook which doesn't support GIF directly.
 
@@ -140,7 +140,7 @@ class OutputImageJpg(OutputBase):
 
     def __init__(self, jpg):
         """
-        JPEG Image
+        JPEG Image.
 
         INPUT:
 
@@ -162,7 +162,7 @@ class OutputImageJpg(OutputBase):
     @classmethod
     def example(cls):
         r"""
-        Construct a sample JPEG output container
+        Construct a sample JPEG output container.
 
         This static method is meant for doctests, so they can easily
         construct an example.
@@ -186,7 +186,7 @@ class OutputImageSvg(OutputBase):
 
     def __init__(self, svg):
         """
-        SVG Image
+        SVG Image.
 
         INPUT:
 
@@ -208,7 +208,7 @@ class OutputImageSvg(OutputBase):
     @classmethod
     def example(cls):
         r"""
-        Construct a sample SVG output container
+        Construct a sample SVG output container.
 
         This static method is meant for doctests, so they can easily
         construct an example.
@@ -232,7 +232,7 @@ class OutputImagePdf(OutputBase):
 
     def __init__(self, pdf):
         """
-        PDF Image
+        PDF Image.
 
         INPUT:
 
@@ -254,7 +254,7 @@ class OutputImagePdf(OutputBase):
     @classmethod
     def example(cls):
         r"""
-        Construct a sample PDF output container
+        Construct a sample PDF output container.
 
         This static method is meant for doctests, so they can easily
         construct an example.
@@ -278,7 +278,7 @@ class OutputImageDvi(OutputBase):
 
     def __init__(self, dvi):
         """
-        DVI Image
+        DVI Image.
 
         INPUT:
 
@@ -300,7 +300,7 @@ class OutputImageDvi(OutputBase):
     @classmethod
     def example(cls):
         r"""
-        Construct a sample DVI output container
+        Construct a sample DVI output container.
 
         This static method is meant for doctests, so they can easily
         construct an example.

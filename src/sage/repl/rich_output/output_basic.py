@@ -69,7 +69,7 @@ class OutputBase(SageObject):
     @classmethod
     def example(cls):
         """
-        Construct a sample instance
+        Construct a sample instance.
 
         This static method is meant for doctests, so they can easily
         construct an example.
@@ -91,7 +91,7 @@ class OutputPlainText(OutputBase):
 
     def __init__(self, plain_text):
         """
-        Plain Text Output
+        Plain Text Output.
 
         INPUT:
 
@@ -118,7 +118,7 @@ class OutputPlainText(OutputBase):
     @classmethod
     def example(cls):
         """
-        Construct a sample plain text output container
+        Construct a sample plain text output container.
 
         This static method is meant for doctests, so they can easily
         construct an example.
@@ -155,7 +155,7 @@ class OutputAsciiArt(OutputBase):
 
     def __init__(self, ascii_art):
         """
-        ASCII Art Output
+        ASCII Art Output.
 
         INPUT:
 
@@ -177,7 +177,7 @@ class OutputAsciiArt(OutputBase):
     @classmethod
     def example(cls):
         r"""
-        Construct a sample ascii art output container
+        Construct a sample ascii art output container.
 
         This static method is meant for doctests, so they can easily
         construct an example.
@@ -218,7 +218,7 @@ class OutputUnicodeArt(OutputBase):
 
     def __init__(self, unicode_art):
         """
-        Unicode Art Output
+        Unicode Art Output.
 
         Similar to :class:`OutputAsciiArt` but using the entire
         unicode range.
@@ -247,7 +247,7 @@ class OutputUnicodeArt(OutputBase):
     @classmethod
     def example(cls):
         r"""
-        Construct a sample unicode art output container
+        Construct a sample unicode art output container.
 
         This static method is meant for doctests, so they can easily
         construct an example.
@@ -290,7 +290,7 @@ class OutputLatex(OutputBase):
 
     def __init__(self, latex):
         """
-        LaTeX Output
+        LaTeX Output.
 
         .. note::
 
@@ -317,7 +317,7 @@ class OutputLatex(OutputBase):
 
     def display_equation(self):
         r"""
-        Return the LaTeX code for a display equation
+        Return the LaTeX code for a display equation.
 
         OUTPUT: string
 
@@ -337,7 +337,7 @@ class OutputLatex(OutputBase):
 
     def inline_equation(self):
         r"""
-        Return the LaTeX code for an inline equation
+        Return the LaTeX code for an inline equation.
 
         OUTPUT: string
 
@@ -357,7 +357,7 @@ class OutputLatex(OutputBase):
     @classmethod
     def example(cls):
         r"""
-        Construct a sample LaTeX output container
+        Construct a sample LaTeX output container.
 
         This static method is meant for doctests, so they can easily
         construct an example.

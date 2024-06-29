@@ -1414,7 +1414,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         Return sequence of degrees of normalized iterates starting with
         the degree of this dynamical system.
 
-        INPUT: ``iterates`` -- (default: 2) positive integer
+        INPUT:
+
+        - ``iterates`` -- (default: 2) positive integer
 
         OUTPUT: list of integers
 
@@ -4528,7 +4530,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         if n <= 0:
             raise ValueError("a positive integer period must be specified")
         if m < 0:
-            raise ValueError("a non negative preperiod must be specified")
+            raise ValueError("a nonnegative preperiod must be specified")
         R = kwds.pop('R', None)
         if R is None:
             f_sub = self
