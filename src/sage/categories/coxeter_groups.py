@@ -827,7 +827,7 @@ class CoxeterGroups(Category_singleton):
                 sage: len(W.kazhdan_lusztig_cells())
                 10
 
-            Computing the two sided cells in `B_3`::
+            Computing the two-sided cells in `B_3`::
 
                 sage: # optional - coxeter3, needs sage.combinat sage.groups sage.libs.gap sage.modules sage.rings.number_field
                 sage: W = CoxeterGroup('B3', implementation='coxeter3')
@@ -2064,9 +2064,8 @@ class CoxeterGroups(Category_singleton):
             """
             reflections = self.absolute_chain_reflections()
             P = self.parent()
-            chain = [P.prod(reversed(reflections[:i]))
-                    for i in range(len(reflections)+1)]
-            return chain
+            return [P.prod(reversed(reflections[:i]))
+                    for i in range(len(reflections) + 1)]
 
         def absolute_chain_reflections(self):
             r"""
