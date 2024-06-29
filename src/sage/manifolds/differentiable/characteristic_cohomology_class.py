@@ -905,7 +905,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
                     name = 'c'
                 class_type = 'multiplicative'
                 val = 1 + x
-            if val == 'Pontryagin':
+            elif val == 'Pontryagin':
                 if vbundle._field_type != 'real':
                     raise ValueError(f'total Pontryagin class not defined on {vbundle}')
                 if name is None:
