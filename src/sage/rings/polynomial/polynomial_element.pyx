@@ -11554,7 +11554,6 @@ cdef class Polynomial(CommutativePolynomial):
             phi = SpecializationMorphism(self._parent,D)
         return phi(self)
 
-
     def _log_series(self, long n):
         r"""
         Return the power series expansion of logarithm of this polynomial,
@@ -11711,6 +11710,7 @@ cdef class Polynomial(CommutativePolynomial):
         """
         raise NotImplementedError
 
+
 # ----------------- inner functions -------------
 # Cython can't handle function definitions inside other function
 
@@ -11765,6 +11765,7 @@ cdef list do_schoolbook_product(list x, list y, Py_ssize_t deg):
             sum = sum + x[i] * y[k-i]
         coeffs[k] = sum
     return coeffs
+
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -11847,6 +11848,7 @@ cdef list do_karatsuba_different_size(list left, list right, Py_ssize_t K_thresh
                 output[mi+j] = output[mi+j] + carry[j]
             output.extend(carry[n-1:])
         return output
+
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -12580,6 +12582,7 @@ cdef class Polynomial_generic_dense(Polynomial):
                 n -= 1
         self._coeffs = self._coeffs[:n]
         return self
+
 
 def make_generic_polynomial(parent, coeffs):
     return parent(coeffs)

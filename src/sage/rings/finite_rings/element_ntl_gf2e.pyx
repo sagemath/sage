@@ -1021,7 +1021,6 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         cdef int pow = n/d
         return f if pow == 1 else f**pow
 
-
     def minpoly(self, var='x'):
         r"""
         Return the minimal polynomial of ``self``, which is the smallest
@@ -1301,6 +1300,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
         x = pari.fflog(self, base, (base_order, fac))
         return Integer(x)
+
 
 def unpickleFiniteField_ntl_gf2eElement(parent, elem):
     """

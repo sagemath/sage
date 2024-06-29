@@ -232,8 +232,6 @@ cdef class CompiledPolynomialFunction:
 
         The r == 0 case in step 3 is equivalent to binary exponentiation.
         """
-
-
         cdef int m,n,k,r,half
         cdef generic_pd T,N,H
         cdef dummy_pd M

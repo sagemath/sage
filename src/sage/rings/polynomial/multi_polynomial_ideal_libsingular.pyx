@@ -145,6 +145,7 @@ cdef ideal *sage_ideal_to_singular_ideal(I) except NULL:
             raise TypeError("All generators must be of type MPolynomial_libsingular.")
     return i
 
+
 def kbase_libsingular(I, degree=None):
     """
     SINGULAR's ``kbase()`` algorithm.
@@ -201,6 +202,7 @@ def kbase_libsingular(I, degree=None):
 
     return res
 
+
 def std_libsingular(I):
     """
     SINGULAR's ``std()`` algorithm.
@@ -223,7 +225,6 @@ def std_libsingular(I):
     sig_off()
 
     idSkipZeroes(result)
-
 
     id_Delete(&i,r)
 
@@ -272,6 +273,7 @@ def slimgb_libsingular(I):
     id_Delete(&result,r)
     return res
 
+
 def interred_libsingular(I):
     """
     SINGULAR's ``interred()`` command.
@@ -317,7 +319,6 @@ def interred_libsingular(I):
     result = kInterRed(i,NULL)
     sig_off()
     singular_options = bck
-
 
     # divide head by coefficients
     if r.cf.type != n_Z and r.cf.type != n_Znm and r.cf.type != n_Zn and r.cf.type != n_Z2m :

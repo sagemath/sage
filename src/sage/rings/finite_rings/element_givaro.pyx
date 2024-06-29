@@ -1729,6 +1729,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
         """
         return unpickle_FiniteField_givaroElement,(self.parent(),self.element)
 
+
 def unpickle_FiniteField_givaroElement(parent, int x):
     """
     TESTS::

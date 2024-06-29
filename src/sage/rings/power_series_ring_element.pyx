@@ -794,7 +794,6 @@ cdef class PowerSeries(AlgebraElement):
             s += " + %s"%bigoh
         return s.lstrip(" ")
 
-
     def truncate(self, prec=infinity):
         """
         The polynomial obtained from power series by truncation.
@@ -2724,7 +2723,6 @@ cdef class PowerSeries(AlgebraElement):
             1 - 12*x^2 + O(x^4)
         """
         return multi_derivative(self, args)
-
 
     def __setitem__(self, n, value):
         """
