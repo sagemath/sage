@@ -542,13 +542,13 @@ AC_CONFIG_COMMANDS(mkdirs,
             SAGE_BUILD_DIR="$SAGE_LOCAL/var/tmp/sage/build"
         fi
         AC_MSG_NOTICE([creating directory $SAGE_BUILD_DIR])
-        mkdir -p "$SAGE_BUILD_DIR" || AC_MSG_ERROR([could not create $SAGE_BUILD_DIR])
+        mkdir -p "$SAGE_BUILD_DIR" || AC_MSG_ERROR([error creating directory $SAGE_BUILD_DIR (SAGE_BUILD_DIR)])
         rm -f "$SAGE_BUILD_DIR"/conftest
-        touch "$SAGE_BUILD_DIR"/conftest || AC_MSG_ERROR([could not create a file in $SAGE_BUILD_DIR])
-        chmod -w "$SAGE_BUILD_DIR"/conftest || AC_MSG_ERROR([could not set file permissions -w in $SAGE_BUILD_DIR])
-        test -w "$SAGE_BUILD_DIR"/conftest && AC_MSG_ERROR([file permissions -w did not persist in $SAGE_BUILD_DIR])
-        chmod +w "$SAGE_BUILD_DIR"/conftest || AC_MSG_ERROR([could not set file permissions +w in $SAGE_BUILD_DIR])
-        test -w "$SAGE_BUILD_DIR"/conftest || AC_MSG_ERROR([file permissions +w did not persist in $SAGE_BUILD_DIR])
+        touch "$SAGE_BUILD_DIR"/conftest || AC_MSG_ERROR([error creating a file in $SAGE_BUILD_DIR])
+        chmod +x "$SAGE_BUILD_DIR"/conftest || AC_MSG_ERROR([error setting file permissions +x in $SAGE_BUILD_DIR])
+        test -x "$SAGE_BUILD_DIR"/conftest || AC_MSG_ERROR([file permissions +x did not persist in $SAGE_BUILD_DIR])
+        chmod -x "$SAGE_BUILD_DIR"/conftest || AC_MSG_ERROR([error setting file permissions -x in $SAGE_BUILD_DIR])
+        test -x "$SAGE_BUILD_DIR"/conftest && AC_MSG_ERROR([file permissions -x did not persist in $SAGE_BUILD_DIR])
         rm -f "$SAGE_BUILD_DIR"/conftest
     ],
     [
