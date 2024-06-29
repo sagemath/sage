@@ -4806,7 +4806,7 @@ def TL_diagram_ascii_art(diagram, use_unicode=False, blobs=[]):
                 # Singleton intervals are vertical lines,
                 #   so we don't need to worry about them
                 if len(I) > 1 and I[0] < cur[0]:
-                    cur, I = I, cur
+                    cur, level[j] = level[j], cur
                     level.append([cur[0]])
                     level.append([cur[1]])
                     break
