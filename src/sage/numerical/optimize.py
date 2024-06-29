@@ -400,7 +400,9 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
         fast_f = fast_callable(func, vars=var_names, domain=float)
         f = lambda p: fast_f(*p)
         gradient_list = func.gradient()
-        fast_gradient_functions = [fast_callable(gradient_list[i], vars=var_names, domain=float)  for i in range(len(gradient_list))]
+        fast_gradient_functions = [fast_callable(gradient_list[i],
+                                                 vars=var_names, domain=float)
+                                   for i in range(len(gradient_list))]
         gradient = lambda p: numpy.array([ a(*p) for a in fast_gradient_functions])
     else:
         f = func

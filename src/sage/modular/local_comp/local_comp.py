@@ -20,22 +20,22 @@ AUTHORS:
 - Jared Weinstein
 """
 
-from sage.structure.sage_object     import SageObject
-from sage.rings.integer_ring        import ZZ
+from sage.structure.sage_object import SageObject
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.misc.abstract_method      import abstract_method
-from sage.misc.cachefunc            import cached_method
-from sage.misc.lazy_import          import lazy_import
-from sage.misc.verbose              import verbose
-from sage.misc.flatten              import flatten
-from sage.modular.modform.element   import Newform
-from sage.structure.sequence        import Sequence
+from sage.misc.abstract_method import abstract_method
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
+from sage.misc.verbose import verbose
+from sage.misc.flatten import flatten
+from sage.modular.modform.element import Newform
+from sage.structure.sequence import Sequence
 
 lazy_import('sage.rings.qqbar', 'QQbar')
 
-from .type_space                    import TypeSpace
-from .smoothchar                    import SmoothCharacterGroupQp, SmoothCharacterGroupUnramifiedQuadratic, SmoothCharacterGroupRamifiedQuadratic
+from .type_space import TypeSpace
+from .smoothchar import SmoothCharacterGroupQp, SmoothCharacterGroupUnramifiedQuadratic, SmoothCharacterGroupRamifiedQuadratic
 
 def LocalComponent(f, p, twist_factor=None):
     r"""

@@ -1210,10 +1210,10 @@ def bipartite_ribbon_graph(p, q):
     sigma = []
     rho = []
     for i in range(p):
-        aux_tuple = [i*q + j + 1  for j in range(q)]
+        aux_tuple = [i*q + j + 1 for j in range(q)]
         sigma += [aux_tuple]
     for i in range(q):
-        aux_tuple = [p*q + i*p + j + 1  for j in range(p)]
+        aux_tuple = [p*q + i*p + j + 1 for j in range(p)]
         sigma += [aux_tuple]
     for i in range(p*q):
         if (i+1) % q == 0:

@@ -43,7 +43,7 @@ from sage.matrix.constructor import Matrix
 from sage.matrix.special import identity_matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
-from sage.misc.verbose  import verbose
+from sage.misc.verbose import verbose
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
 

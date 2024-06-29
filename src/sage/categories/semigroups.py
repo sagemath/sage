@@ -344,7 +344,7 @@ class Semigroups(CategoryWithAxiom):
                     generators = self.semigroup_generators()
             if isinstance(generators, (list, tuple)):
                 generators = {self(g): self(g) for g in generators}
-            left = (side == "left"  or side == "twosided")
+            left = (side == "left" or side == "twosided")
             right = (side == "right" or side == "twosided")
 
             def add_edge(source, target, label, side_label):
