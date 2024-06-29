@@ -1728,7 +1728,7 @@ class Euclidean3dimSpace(EuclideanSpace):
                 symbols = 'r ph:\\phi z'
         self._spherical_chart = None    # to be constructed later if necessary
         self._spherical_frame = None    # orthonormal frame
-        self._cylindrical_chart = None  #
+        self._cylindrical_chart = None
         self._cylindrical_frame = None  # orthonormal frame
         init_coord_methods = {'Cartesian': self._init_cartesian,
                               'spherical': self._init_spherical,

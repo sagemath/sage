@@ -1083,5 +1083,5 @@ class FreeModuleBasis(Basis_abstract):
         # of changes of bases:
         fmodule._basis_changes[(self, the_new_basis)] = transf
         fmodule._basis_changes[(the_new_basis, self)] = inv_transf
-        #
+
         return the_new_basis

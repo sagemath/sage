@@ -582,11 +582,11 @@ class TopologicalManifold(ManifoldSubset):
                                 category=category)
         self._is_open = True
         self._open_covers.append([self])  # list of open covers of self
-        #
+
         if not isinstance(start_index, (int, Integer)):
             raise TypeError("the starting index must be an integer")
         self._sindex = start_index
-        #
+
         self._atlas = []  # list of charts defined on subsets of self
         self._top_charts = []  # list of charts defined on subsets of self
                         # that are not subcharts of charts on larger subsets

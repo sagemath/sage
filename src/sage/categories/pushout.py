@@ -1409,7 +1409,7 @@ class InfinitePolynomialFunctor(ConstructionFunctor):
         """
         if isinstance(other, IdentityConstructionFunctor):
             return self
-        if isinstance(other, self.__class__): #
+        if isinstance(other, self.__class__):
             INT = set(self._gens).intersection(other._gens)
             if INT:
                 # if there is overlap of generators, it must only be at the ends, so that

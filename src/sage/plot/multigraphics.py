@@ -139,11 +139,10 @@ class MultiGraphics(WithEqualityById, SageObject):
             sage: G = MultiGraphics([c, (c, (0.7, 0.6, 0.2, 0.2))])
             sage: print(G)
             Multigraphics with 2 elements
-
         """
         self._glist = []
         self._positions = []
-        #
+
         for ins in graphics_list:
             if isinstance(ins, Graphics):
                 self.append(ins)  # default position

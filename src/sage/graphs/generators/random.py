@@ -2355,17 +2355,17 @@ def RandomBicubicPlanar(n, seed=None):
     Z3 = Zmod(3)
     colour = Z3.zero()
     not_touched = [i for i, v in enumerate(w) if v[0] in ['x', 'xb']]
-    for i, v in enumerate(w):
+    for i, wi in enumerate(w):
         # internal edges
-        if v[0] == 'i':
+        if wi[0] == 'i':
             colour += 1
             if w[i + 1][0] == 'n':
-                G.add_edge((w[i], w[i + 1], colour))
-        elif v[0] == 'n':
+                G.add_edge((wi, w[i + 1], colour))
+        elif wi[0] == 'n':
             colour += 2
-        elif v[0] == 'x':
+        elif wi[0] == 'x':
             pile.append(i)
-        elif v[0] == 'xb' and i in not_touched:
+        elif wi[0] == 'xb' and i in not_touched:
             if pile:
                 j = pile.pop()
                 G.add_edge((w[i + 1], w[j - 1], colour))

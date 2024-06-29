@@ -744,11 +744,11 @@ class VectorFrame(FreeModuleBasis):
         if dest_map is self._domain.identity_map():
             # The frame is added to the list of the domain's covering frames:
             self._domain._set_covering_frame(self)
-        #
+
         # Dual coframe
         self._coframe = self.dual_basis()  # self._coframe = a shortcut for
                                            # self._dual_basis
-        #
+
         # Derived quantities:
         # Initialization of the set of frames that are restrictions of the
         # current frame to subdomains of the frame domain:
@@ -756,7 +756,7 @@ class VectorFrame(FreeModuleBasis):
         # Initialization of the set of frames which the current frame is a
         # restriction of:
         self._superframes = set([self])
-        #
+
         self._restrictions = {} # dict. of the restrictions of self to
                                # subdomains of self._domain, with the
                                # subdomains as keys
