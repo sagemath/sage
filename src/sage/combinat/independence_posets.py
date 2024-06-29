@@ -189,6 +189,8 @@ def poset_of_mops(G):
 
 def complete_mop(G, S):
     r"""
+    Return a list of maximal orthogonal pairs in ``G`` extending ``S``.
+
     INPUT:
 
     - ``G`` -- an acyclic directed graph
@@ -197,7 +199,7 @@ def complete_mop(G, S):
 
     OUTPUT:
 
-    a set containing the maximal elements in a poset
+    the list of maximal elements in the poset
     of orthogonal pairs `(X, Y)` such that `X \subset S`
 
     EXAMPLES:
