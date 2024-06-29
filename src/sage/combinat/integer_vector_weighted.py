@@ -185,7 +185,7 @@ class WeightedIntegerVectors(Parent, UniqueRepresentation):
             return False
         s = 0
         for i, xi in enumerate(x):
-            if (not isinstance(xi, (int, Integer))) and (xi not in ZZ):
+            if not isinstance(xi, (int, Integer)) and xi not in ZZ:
                 return False
             s += xi * self._weights[i]
         return s == self._n
