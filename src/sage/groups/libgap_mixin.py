@@ -16,6 +16,7 @@ from sage.libs.gap.libgap import libgap
 from sage.libs.gap.element import GapElement
 from sage.structure.element import parent
 from sage.misc.cachefunc import cached_method
+from sage.misc.superseded import deprecation
 from sage.groups.class_function import ClassFunction_libgap
 from sage.groups.libgap_wrapper import ElementLibGAP
 
@@ -509,15 +510,20 @@ class GroupMixinLibGAP:
 
     def conjugacy_classes_subgroups(self):
         r"""
-        Return a complete list of representatives of conjugacy classes of
+        Return a list of representatives of conjugacy classes of
         subgroups in ``self``.
 
         The ordering is that given by GAP.
 
+        .. NOTE:: This will soon be become an iterator.
+
         EXAMPLES::
 
             sage: G = groups.matrix.GL(2,2)
-            sage: G.conjugacy_classes_subgroups()
+            sage: list(G.conjugacy_classes_subgroups())
+            doctest:warning...:
+            DeprecationWarning: this method will soon become an iterator
+            See https://github.com/sagemath/sage/issues/38317 for details.
             [Subgroup with 0 generators ()
                of General Linear Group of degree 2 over Finite Field of size 2,
              Subgroup with 1 generators (
@@ -534,15 +540,25 @@ class GroupMixinLibGAP:
              ) of General Linear Group of degree 2 over Finite Field of size 2]
 
             sage: H = groups.matrix.Heisenberg(2)
-            sage: H.conjugacy_classes_subgroups()
+            sage: list(H.conjugacy_classes_subgroups())
             Traceback (most recent call last):
             ...
             NotImplementedError: group must be finite
         """
+        deprecation(38317, "this method will soon become an iterator")
+        return list(self._conjugacy_classes_subgroups_iter())
+
+    def _conjugacy_classes_subgroups_iter(self):
+        """
+        DO NOT USE DIRECTLY.
+
+        The code here will soon be moved
+        to :meth:`conjugacy_classes_subgroups`.
+        """
         if not self.is_finite():
             raise NotImplementedError("group must be finite")
-        return [self.subgroup(sub.Representative().GeneratorsOfGroup())
-                for sub in self.gap().ConjugacyClassesSubgroups()]
+        for sub in self.gap().ConjugacyClassesSubgroups():
+            yield self.subgroup(sub.Representative().GeneratorsOfGroup())
 
     def group_id(self):
         r"""
