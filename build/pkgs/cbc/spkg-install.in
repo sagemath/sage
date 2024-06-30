@@ -2,4 +2,4 @@ set -e
 PROJECT=cbc
 mkdir -p "$SAGE_ROOT"/coin_pkgs
 cd "$SAGE_ROOT"/coin_pkgs
-coinbrew build $PROJECT@$(cat $SAGE_ROOT/build/pkgs/$PROJECT/package-version.txt) --prefix "$SAGE_LOCAL" --build-dir "$SAGE_ROOT/coin_pkgs/build" --skip ThirdParty/Glpk --parallel-jobs $SAGE_NUM_THREADS $COINBREW_OPTIONS $MIBS_OPTIONS
+coinbrew build $PROJECT@$PKG_VER --no-third-party --prefix "$SAGE_LOCAL" --build-dir "$SAGE_ROOT/coin_pkgs/build" --skip ThirdParty/Glpk --parallel-jobs $SAGE_NUM_THREADS $COINBREW_OPTIONS $MIBS_OPTIONS
