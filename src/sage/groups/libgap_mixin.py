@@ -509,15 +509,17 @@ class GroupMixinLibGAP:
 
     def conjugacy_classes_subgroups(self):
         r"""
-        Return a complete list of representatives of conjugacy classes of
+        Iterate over representatives of conjugacy classes of
         subgroups in ``self``.
 
         The ordering is that given by GAP.
 
+        This was previously returning a list.
+
         EXAMPLES::
 
             sage: G = groups.matrix.GL(2,2)
-            sage: G.conjugacy_classes_subgroups()
+            sage: list(G.conjugacy_classes_subgroups())
             [Subgroup with 0 generators ()
                of General Linear Group of degree 2 over Finite Field of size 2,
              Subgroup with 1 generators (
@@ -534,15 +536,15 @@ class GroupMixinLibGAP:
              ) of General Linear Group of degree 2 over Finite Field of size 2]
 
             sage: H = groups.matrix.Heisenberg(2)
-            sage: H.conjugacy_classes_subgroups()
+            sage: list(H.conjugacy_classes_subgroups())
             Traceback (most recent call last):
             ...
             NotImplementedError: group must be finite
         """
         if not self.is_finite():
             raise NotImplementedError("group must be finite")
-        return [self.subgroup(sub.Representative().GeneratorsOfGroup())
-                for sub in self.gap().ConjugacyClassesSubgroups()]
+        for sub in self.gap().ConjugacyClassesSubgroups():
+            yield self.subgroup(sub.Representative().GeneratorsOfGroup())
 
     def group_id(self):
         r"""
