@@ -2572,6 +2572,16 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: p = K.primes_above(2)[0]
             sage: K.quadratic_defect(5, p)
             +Infinity
+
+        TESTS::
+
+            sage: x = polygen(QQ, 'x')
+            sage: K.<t> = NumberField(x^10 - x^8 - 2*x^7 - x^6 + 2*x^5 + 2*x^4 - x^2 + 1)
+            sage: p = K.prime_factors(2)[0]
+            sage: pi = K.uniformizer(p)
+            sage: a = 1 + pi^3
+            sage: K.quadratic_defect(a, p)
+            3
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         if a not in self:
