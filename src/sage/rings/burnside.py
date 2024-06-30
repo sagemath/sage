@@ -46,15 +46,18 @@ class SubgroupStore():
     def _normalize(self, H):
         # H is of type self.element_class
         G = H.subgroup_of()
-        H._C = G.subgroup(H._C.gens_small())
         p = self._group_invariant(H._C)
         if p in self._cache:
             for H0 in self._cache[p]:
                 if _is_conjugate(G, H._C, H0._C):
                     return H0
             else:
+                g = H._C.gens_small()
+                H._C = G.subgroup(g)
                 self._cache[p].append(H)
         else:
+            g = H._C.gens_small()
+            H._C = G.subgroup(g)
             self._cache[p] = [H]
         return H
 
@@ -164,6 +167,21 @@ class ConjugacyClassOfSubgroups(Element):
         """
         return (isinstance(other, ConjugacyClassOfSubgroups)
                 and _is_conjugate(self.subgroup_of(), self._C, other._C))
+
+    def __lt__(self, other):
+        r"""
+        Return if this element is less than ``other``.
+        """
+        return (isinstance(other, ConjugacyClassOfSubgroups_SymmetricGroup)
+                and self.grade() < other.grade()
+                and (GAP_FAIL != libgap.ContainedConjugates(
+                self.subgroup_of(), other._C, self._C, True)))
+
+    def __le__(self, other):
+        r"""
+        Return if this element is less than or equal to ``other``.
+        """
+        return self == other or self < other
 
 class ConjugacyClassesOfSubgroups(Parent, SubgroupStore):
     def __init__(self, G):
@@ -319,7 +337,23 @@ class ConjugacyClassOfSubgroups_SymmetricGroup(ConjugacyClassOfSubgroups):
         Two elements compare equal if they are conjugate subgroups in the parent group.
         """
         return (isinstance(other, ConjugacyClassOfSubgroups_SymmetricGroup)
-                and self.grade() == other.grade() and _is_conjugate(self.subgroup_of(), self._C, other._C))
+                and self.grade() == other.grade()
+                and _is_conjugate(self.subgroup_of(), self._C, other._C))
+
+    def __lt__(self, other):
+        r"""
+        Return if this element is less than ``other``.
+        """
+        return (isinstance(other, ConjugacyClassOfSubgroups_SymmetricGroup)
+                and self.grade() < other.grade()
+                and (GAP_FAIL != libgap.ContainedConjugates(
+                self.subgroup_of(), other._C, self._C, True)))
+
+    def __le__(self, other):
+        r"""
+        Return if this element is less than or equal to ``other``.
+        """
+        return self == other or self < other
 
 class ConjugacyClassesOfSubgroups_SymmetricGroup(ConjugacyClassesOfSubgroups):
     def __init__(self, n):
@@ -332,6 +366,9 @@ class ConjugacyClassesOfSubgroups_SymmetricGroup_all(UniqueRepresentation, Paren
         category = SetsWithGrading().Infinite()
         Parent.__init__(self, category=category)
         SubgroupStore.__init__(self)
+
+    def _group_invariant(self, H):
+        return (H.order(), H.degree())
 
     def _repr_(self):
         return "Conjugacy classes of subgroups of symmetric groups"
@@ -533,9 +570,7 @@ class BurnsideRing(CombinatorialFreeModule):
             sage: B.product_on_basis(C(Z2), C(Z3))
             B[((),)]
         """
-        #is it correct to use DoubleCosetRepsAndSizes? It may return ANY element of the double coset!
-        # g_reps = [rep for rep, size in libgap.DoubleCosetRepsAndSizes(self._G, H._C, K._C)]
-        g_reps = libgap.List(libgap.DoubleCosets(self._G, H._C, K._C), libgap.Representative)
+        g_reps = [rep for rep, size in libgap.DoubleCosetRepsAndSizes(self._G, H._C, K._C)]
         from collections import Counter
         C = Counter()
         for g in g_reps:
@@ -573,7 +608,7 @@ class BurnsideRing(CombinatorialFreeModule):
 class PolynomialMolecularDecomposition(CombinatorialFreeModule):
     def __init__(self, base_ring=ZZ):
         basis_keys = ConjugacyClassesOfSubgroups_SymmetricGroup_all()
-        category = GradedAlgebrasWithBasis(base_ring)
+        category = GradedAlgebrasWithBasis(base_ring).Commutative()
         CombinatorialFreeModule.__init__(self, base_ring,
                                         basis_keys=basis_keys,
                                         category=category,
@@ -601,8 +636,8 @@ class PolynomialMolecularDecomposition(CombinatorialFreeModule):
     # is equivalent to [S_n/H] where H is some conjugacy class
     # of subgroups of S_n.
 
-    def product_on_basis(self, g1, g2):
-        n, m = g1.grade(), g2.grade()
+    def product_on_basis(self, H, K):
+        n, m = H.grade(), K.grade()
         # There is no way to create SymmetricGroup(0) using the
         # PermutationGroup constructor as used here, so a special
         # case has to be added.
@@ -610,12 +645,15 @@ class PolynomialMolecularDecomposition(CombinatorialFreeModule):
             return self._from_dict({self._indices(SymmetricGroup(0)): 1})
         # We only really need to multiply generators, since we are multiplying
         # permutations acting on disjoint domains.
-        H_ast_K = [
-            h*k
-            for h in SymmetricGroup(n).gens_small()
-            for k in SymmetricGroup(range(n+1,n+m+1)).gens_small()
-        ]
-        G = PermutationGroup(H_ast_K)
+        H_action = lambda g, e: g(e) if e<=n else e
+        H_extend = PermutationGroup(H._C.gens_small(), action=H_action, domain=range(1,n+m+1))
+        K_action = lambda g, e: n + g(e-n) if e>n else e
+        K_restrict = PermutationGroup(K._C.gens_small(), action=K_action, domain=range(1,n+m+1))
+        # We need to add the identity elements to the generating sets
+        # to obtain a generating set for H*K.
+        G = PermutationGroup(H_extend.gens_small()
+                             + K_restrict.gens_small()
+                             + [H_extend.identity()], domain=range(1,n+m+1))
         return self._from_dict({self._indices(G): 1})
 
     def degree_on_basis(self, x):
