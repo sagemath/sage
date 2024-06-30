@@ -43,23 +43,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        os:      [ubuntu-latest]
+        arch:    [x86_64, i686, aarch64]
+        build:   [manylinux, musllinux]
         include:
-          - os: ubuntu-latest
-            arch: x86_64
-          - os: ubuntu-latest
-            arch: i686
           - os: macos-13
             arch: x86_64
+            build: macosx
           - os: macos-14
             arch: arm64
+            build: macosx
     env:
       # SPKGs to install as system packages
       SPKGS: _bootstrap _prereq
       # Non-Python packages to install as spkgs
       TARGETS_PRE: {{cookiecutter.project_name}}-build-deps
+      #
+      CIBW_BUILD: "*{{"${{"}} matrix.build {{"}}"}}*"
       # Disable building PyPy wheels on all platforms
-      # Disable musllinux until #33083 provides alpine package information
-      CIBW_SKIP: "pp* *-musllinux*"
+      CIBW_SKIP: "pp*"
       #
       CIBW_ARCHS: {{"${{"}} matrix.arch {{"}}"}}
       # https://cibuildwheel.readthedocs.io/en/stable/options/#requires-python
@@ -73,6 +75,12 @@ jobs:
         with:
           repository:   sagemath/sage
           ref:          develop
+
+      - name: Set up QEMU
+        if: runner.os == 'Linux' && matrix.arch != 'x86_64' && matrix.arch != 'i686'
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: all
 
       - uses: actions/download-artifact@v4
         with:
@@ -106,7 +114,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: {{"${{"}} matrix.os {{"}}"}}-{{"${{"}} matrix.arch {{"}}"}}-wheels
+          name: {{"${{"}} matrix.os {{"}}"}}-{{"${{"}} matrix.build {{"}}"}}-{{"${{"}} matrix.arch {{"}}"}}-wheels
           path: ./wheelhouse/*.whl
 
   pypi-publish:
