@@ -17,7 +17,6 @@ AUTHORS:
 - Robert Bradshaw
 - John Cremona
 - William Stein
-
 """
 
 # ****************************************************************************

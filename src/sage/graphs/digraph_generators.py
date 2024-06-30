@@ -51,7 +51,6 @@ AUTHORS:
 
 Functions and methods
 ---------------------
-
 """
 # ****************************************************************************
 #           Copyright (C) 2006 Robert L. Miller <rlmillster@gmail.com>
@@ -79,9 +78,9 @@ class DiGraphGenerators:
     A class consisting of constructors for several common digraphs,
     including orderly generation of isomorphism class representatives.
 
-    A list of all graphs and graph structures in this database is
-    available via tab completion. Type "digraphs." and then hit tab to
-    see which graphs are available.
+    A list of all graphs and graph structures in this database is available via
+    tab completion. Type ``digraphs.`` and then hit :kbd:`Tab` to see which
+    digraphs are available.
 
     The docstrings include educational information about each named
     digraph with the hopes that this class can be used as a reference.
@@ -108,7 +107,6 @@ class DiGraphGenerators:
                     - RandomTournament
                     - TransitiveTournament
                     - tournaments_nauty
-
 
 
     ORDERLY GENERATION: digraphs(vertices, property=lambda x: True,
@@ -569,7 +567,7 @@ class DiGraphGenerators:
 
         - ``options`` -- string; anything else that should be forwarded as input
           to Nauty's genbg. See its documentation for more information :
-          `<http://cs.anu.edu.au/~bdm/nauty/>`_.
+          `<https://pallini.di.uniroma1.it>`_.
 
         EXAMPLES::
 
@@ -641,7 +639,7 @@ class DiGraphGenerators:
         r"""
         Return an iterator yielding digraphs using nauty's ``directg`` program.
 
-        Description from directg --help:
+        Description from ``directg --help``:
         Read undirected graphs and orient their edges in all possible ways.
         Edges can be oriented in either or both directions (3 possibilities).
         Isomorphic directed graphs derived from the same input are suppressed.
@@ -653,8 +651,8 @@ class DiGraphGenerators:
           :class:`Graph`.  The graph6 string of these graphs is used as an input
           for ``directg``.
 
-        - ``options`` (str) -- a string passed to directg as if it was run at
-          a system command line. Available options from directg --help::
+        - ``options`` -- a string passed to ``directg`` as if it was run at
+          a system command line. Available options from ``directg --help``::
 
             -e<int> | -e<int>:<int>  specify a value or range of the total number of arcs
             -o       orient each edge in only one direction, never both
@@ -666,8 +664,8 @@ class DiGraphGenerators:
                      the part number (first is 0) and the second is the number of
                      parts. Splitting is done per input graph independently.
 
-        - ``debug`` -- boolean (default: ``False``); if ``True``
-          directg standard error and standard output are displayed.
+        - ``debug`` -- boolean (default: ``False``); if ``True`` ``directg``
+          standard error and standard output are displayed.
 
         EXAMPLES::
 
@@ -809,7 +807,8 @@ class DiGraphGenerators:
         r"""
         Return the circuit on `n` vertices.
 
-        The circuit is an oriented ``CycleGraph``.
+        The circuit is an oriented
+        :meth:`~sage.graphs.graph_generators.GraphGenerators.CycleGraph`.
 
         EXAMPLES:
 
@@ -840,8 +839,8 @@ class DiGraphGenerators:
         - ``n`` -- integer; number of vertices
 
         - ``integers`` -- iterable container (list, set, etc.) of integers such
-          that there is an edge from `i` to `j` if and only if ``(j-i)%n in
-          integers``
+          that there is an edge from `i` to `j` if and only if `(j-i) \pmod{n}`
+          is an integer
 
         EXAMPLES::
 

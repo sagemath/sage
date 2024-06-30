@@ -5,7 +5,6 @@ AUTHORS:
 
 - Nathann Cohen (2010-10)      : generic_backend template
 - Matthias Koeppe (2016-03)    : this backend
-
 """
 
 # ****************************************************************************
@@ -556,7 +555,6 @@ cdef class InteractiveLPBackend:
         self.lp = InteractiveLPProblem(A, b, c, x,
                                        constraint_types, variable_types,
                                        problem_type, ring, objective_constant_term=d)
-
 
     cpdef add_col(self, indices, coeffs):
         """

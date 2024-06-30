@@ -7,7 +7,6 @@ Representation of a bijection between a message space and a code.
 AUTHORS:
 
 - David Lucas (2015): initial version
-
 """
 #*****************************************************************************
 #       Copyright (C) 2015 David Lucas <david.lucas@inria.fr>

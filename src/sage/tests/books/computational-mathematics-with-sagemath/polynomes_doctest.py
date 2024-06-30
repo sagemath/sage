@@ -401,5 +401,4 @@ Sage example in ./polynomes.tex, line 2158::
   sage: R = PolynomialRing(ZZ, 'x', sparse=True)
   sage: p = R.cyclotomic_polynomial(2^50); p, p.derivative()
   (x^562949953421312 + 1, 562949953421312*x^562949953421311)
-
 """

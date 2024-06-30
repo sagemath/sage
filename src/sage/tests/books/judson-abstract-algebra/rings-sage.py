@@ -409,5 +409,4 @@ r"""
 
     sage: b.parent()
     Rational Field
-
 """

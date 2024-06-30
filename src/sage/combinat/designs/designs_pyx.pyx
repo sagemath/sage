@@ -222,7 +222,7 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology="O
 
     - ``OA`` -- the Orthogonal Array to be tested
 
-    - ``k,n,t`` (integers) -- only implemented for `t=2`.
+    - ``k``, ``n``, ``t`` (integers) -- only implemented for `t=2`.
 
     - ``verbose`` (boolean) -- whether to display some information when ``OA``
       is not an orthogonal array `OA(k,n)`.
@@ -755,7 +755,7 @@ def is_quasi_difference_matrix(M,G,int k,int lmbda,int mu,int u,verbose=False):
 
     - ``G`` -- a group
 
-    - ``k,lmbda,mu,u`` -- integers
+    - ``k``, ``lmbda``, ``mu``, ``u`` -- integers
 
     - ``verbose`` (boolean) -- whether to print some information when the answer
       is ``False``.
@@ -960,7 +960,7 @@ cpdef _OA_cache_set(int k,int n,truth_value):
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` (integers)
 
     - ``truth_value`` -- one of ``True,False,Unknown``
     """
@@ -995,7 +995,7 @@ cpdef _OA_cache_get(int k,int n):
 
     INPUT:
 
-    ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
     """
     if n>=_OA_cache_size:
         return None
@@ -1014,7 +1014,7 @@ cpdef _OA_cache_construction_available(int k,int n):
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
     """
     if n>=_OA_cache_size:
         return Unknown

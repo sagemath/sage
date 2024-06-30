@@ -28,7 +28,6 @@ The nonperiodic autocorrelation of a familiy of sequences `X=\{A_1, A_2, ..., A_
 AUTHORS:
 
 - Matteo Cati (2022-11-16): initial version
-
 """
 
 # ***************************************************************************
