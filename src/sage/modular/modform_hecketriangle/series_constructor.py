@@ -210,29 +210,24 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
             sage: MFSeriesConstructor(group=infinity, prec=3).J_inv_ZZ()
             q^-1 + 3/8 + 69/1024*q + O(q^2)
         """
+        F1 = lambda a, b: self._series_ring(
+            [ZZ.zero()]
+            + [rising_factorial(a,k) * rising_factorial(b,k) / (ZZ(k).factorial())**2
+               * sum(ZZ.one()/(a+j) + ZZ.one()/(b+j) - ZZ(2)/ZZ(1+j)
+                     for j in range(k))
+                for k in range(1, self._prec+1)
+            ],
+            ZZ(self._prec+1)
+        )
 
-        F1 = lambda a,b:   self._series_ring(
-                       [ ZZ(0) ]
-                       + [
-                           rising_factorial(a,k) * rising_factorial(b,k) / (ZZ(k).factorial())**2
-                           * sum(ZZ(1)/(a+j) + ZZ(1)/(b+j) - ZZ(2)/ZZ(1+j)
-                                  for j in range(ZZ(0),ZZ(k))
-                             )
-                           for k in range(ZZ(1), ZZ(self._prec+1))
-                       ],
-                       ZZ(self._prec+1)
-                   )
-
-        F = lambda a,b,c: self._series_ring(
-                       [
-                         rising_factorial(a,k) * rising_factorial(b,k) / rising_factorial(c,k) / ZZ(k).factorial()
-                         for k in range(ZZ(0), ZZ(self._prec+1))
-                       ],
-                       ZZ(self._prec+1)
-                   )
+        F = lambda a, b, c: self._series_ring(
+            [rising_factorial(a,k) * rising_factorial(b,k) / rising_factorial(c,k) / ZZ(k).factorial()
+             for k in range(self._prec+1)],
+            ZZ(self._prec+1)
+        )
         a = self._group.alpha()
         b = self._group.beta()
-        Phi = F1(a,b) / F(a,b,ZZ(1))
+        Phi = F1(a, b) / F(a, b, ZZ.one())
         q = self._series_ring.gen()
 
         # the current implementation of power series reversion is slow
@@ -240,7 +235,7 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
 
         temp_f = (q*Phi.exp()).polynomial()
         new_f = temp_f.revert_series(temp_f.degree()+1)
-        J_inv_ZZ = ZZ(1) / (new_f + O(q**(temp_f.degree()+1)))
+        J_inv_ZZ = ZZ.one() / (new_f + O(q**(temp_f.degree()+1)))
 
         return J_inv_ZZ
 
