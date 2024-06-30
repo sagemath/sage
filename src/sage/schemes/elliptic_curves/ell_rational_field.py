@@ -694,7 +694,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
     def database_curve(self):
         r"""
         Return the curve in the elliptic curve database isomorphic to this
-        curve, if possible. Otherwise raise a ``LookupError`` exception.
+        curve, if possible.
+
+        Otherwise this raises a :class:`LookupError` exception.
 
         Since :issue:`11474`, this returns exactly the same curve as
         :meth:`minimal_model`; the only difference is the additional
@@ -1515,7 +1517,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         TESTS:
 
         When the input is horrendous, some of the algorithms just bomb
-        out with a ``RuntimeError``::
+        out with a :class:`RuntimeError`::
 
             sage: EllipticCurve([1234567,89101112]).analytic_rank(algorithm='rubinstein')
             Traceback (most recent call last):
@@ -4100,7 +4102,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
     def cremona_label(self, space=False):
         r"""
         Return the Cremona label associated to (the minimal model) of this
-        curve, if it is known. If not, raise a ``LookupError`` exception.
+        curve, if it is known.
+
+        If not, this raises a :class:`LookupError` exception.
 
         EXAMPLES::
 

@@ -1418,7 +1418,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
               To:   Finite Field of size 5
 
         There might not be a natural morphism, in which case a
-        ``TypeError`` is raised::
+        :class:`TypeError` is raised::
 
             sage: QQ.hom(ZZ)
             Traceback (most recent call last):
